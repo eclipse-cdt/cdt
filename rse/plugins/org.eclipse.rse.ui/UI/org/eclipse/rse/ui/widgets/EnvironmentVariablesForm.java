@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others.
+ * Copyright (c) 2002, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty()
  * Justin Lin (IBM) - [244051] JJ: Environment Variables property page allows duplicates...
+ * David McKnight  (IBM)         - [370883] [api] Environment variables form should allow setting the message text
  *******************************************************************************/
 
 package org.eclipse.rse.ui.widgets;
@@ -54,6 +55,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -82,7 +84,8 @@ public class EnvironmentVariablesForm extends SystemBaseForm implements Selectio
 	private String invalidNameChars;
 
 	private Button addButton, changeButton, removeButton, moveUpButton, moveDownButton;
-
+	private Label formLabel;
+	
 	// Temporary class for storing environment variable information
 	// until we pass it to the commands subsystem.
 	public class EnvironmentVariable {
@@ -253,14 +256,22 @@ public class EnvironmentVariablesForm extends SystemBaseForm implements Selectio
 			systemType = ((ISubSystem) selectedObject).getHost().getSystemType();
 		}
 
-	}
+	} 
 
+	/**
+	 * Use this method to customize the label for this form.
+	 * @since 3.3
+	 */
+	public void setLabel(String label){
+		formLabel.setText(label);
+	}
+	
 	/**
 	 * @see org.eclipse.rse.ui.SystemBaseForm#createContents(Composite)
 	 */
 	public Control createContents(Composite parent) {
 
-		SystemWidgetHelpers.createLabel(parent, SystemResources.RESID_SUBSYSTEM_ENVVAR_DESCRIPTION);
+		formLabel = SystemWidgetHelpers.createLabel(parent, SystemResources.RESID_SUBSYSTEM_ENVVAR_DESCRIPTION);
 
 		// Environment Variables List
 		envVarTable = new Table(parent, SWT.FULL_SELECTION |SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);

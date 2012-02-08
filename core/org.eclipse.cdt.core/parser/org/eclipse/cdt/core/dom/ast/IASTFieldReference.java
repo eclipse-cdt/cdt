@@ -6,20 +6,19 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Doug Schaefer (IBM) - Initial API and implementation
+ *     Doug Schaefer (IBM) - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
 /**
- * This interface represents expressions that access a field reference. e.g. a.b =>
- * a is the expression, b is the field name. e.g. a()->def => a() is the
+ * This interface represents expressions that access a field reference. e.g. a.b => a
+ * is the expression, b is the field name. e.g. a()->def => a() is the
  * expression, def is the field name.
  * 
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTFieldReference extends IASTExpression, IASTNameOwner {
-
 	/**
 	 * <code>FIELD_OWNER</code> represents the relationship between a
 	 * <code>IASTFieldReference</code> and its <code>IASTExpression</code>
@@ -37,46 +36,44 @@ public interface IASTFieldReference extends IASTExpression, IASTNameOwner {
 			"IASTFieldReference.FIELD_NAME - IASTName for IASTFieldReference"); //$NON-NLS-1$
 
 	/**
-	 * This returns an expression for the object containing the field.
+	 * Returns an expression for the object containing the field.
 	 * 
 	 * @return the field owner
 	 */
 	public IASTExpression getFieldOwner();
 
 	/**
-	 * Set the expression for the object containing the field.
+	 * Sets the expression for the object containing the field.
 	 * 
 	 * @param expression
 	 */
 	public void setFieldOwner(IASTExpression expression);
 
 	/**
-	 * This returns the name of the field being dereferenced.
+	 * Returns the name of the field being dereferenced.
 	 * 
 	 * @return the name of the field (<code>IASTName</code>)
 	 */
 	public IASTName getFieldName();
 
 	/**
-	 * Set the name of the field.
+	 * Sets the name of the field.
 	 * 
-	 * @param name
-	 *            <code>IASTName</code>
+	 * @param name the new name
 	 */
 	public void setFieldName(IASTName name);
 
 	/**
-	 * This returns true of this is the arrow operator and not the dot operator.
+	 * Returns true of this is the arrow operator and not the dot operator.
 	 * 
 	 * @return is this a pointer dereference
 	 */
 	public boolean isPointerDereference();
 
 	/**
-	 * Set whether or not this is a pointer dereference (default == no).
+	 * Sets whether or not this is a pointer dereference (default == no).
 	 * 
-	 * @param value
-	 *            boolean
+	 * @param value the new value
 	 */
 	public void setIsPointerDereference(boolean value);
 	
@@ -91,5 +88,4 @@ public interface IASTFieldReference extends IASTExpression, IASTNameOwner {
 	 */
 	@Override
 	public IASTFieldReference copy(CopyStyle style);
-
 }

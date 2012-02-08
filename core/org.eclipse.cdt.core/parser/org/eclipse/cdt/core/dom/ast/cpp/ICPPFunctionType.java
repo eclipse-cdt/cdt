@@ -20,7 +20,6 @@ import org.eclipse.cdt.core.dom.ast.IPointerType;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPFunctionType extends IFunctionType {
-
 	/**
 	 * Returns <code>true</code> for a constant method
 	 */
@@ -36,7 +35,6 @@ public interface ICPPFunctionType extends IFunctionType {
 	 * @since 5.2
 	 */
 	public boolean takesVarArgs();
-	
 	
 	/**
 	 * @deprecated function types don't relate to this pointers at all.

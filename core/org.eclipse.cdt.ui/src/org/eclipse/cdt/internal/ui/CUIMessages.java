@@ -71,6 +71,13 @@ public final class CUIMessages extends NLS {
 	public static String FileTransferDragAdapter_refreshing;
 	public static String FileTransferDragAdapter_problem;
 	public static String FileTransferDragAdapter_problemTitle;
+	public static String NewCDTProjectWizard_mainPageDesc;
+	public static String NewCDTProjectWizard_mainPageTitle;
+	public static String NewCDTProjectWizard_refPageDesc;
+	public static String NewCDTProjectWizard_refPageTitle;
+	public static String NewCDTProjectWizard_templatePageDesc;
+	public static String NewCDTProjectWizard_templatePageTitle;
+	public static String NewCDTProjectWizard_windowTitle;
 
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, CUIMessages.class);

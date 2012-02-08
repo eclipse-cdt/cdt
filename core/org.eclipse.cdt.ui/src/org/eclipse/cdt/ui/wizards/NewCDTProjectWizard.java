@@ -11,6 +11,8 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 import org.eclipse.ui.dialogs.WizardNewProjectReferencePage;
 
+import org.eclipse.cdt.internal.ui.CUIMessages;
+
 /**
  * This is the new CDT project wizard.
  * 
@@ -32,7 +34,7 @@ public class NewCDTProjectWizard extends Wizard implements INewWizard {
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		this.selection = selection;
 		setNeedsProgressMonitor(true);
-		setWindowTitle(Messages.NewCDTProjectWizard_windowTitle);
+		setWindowTitle(CUIMessages.NewCDTProjectWizard_windowTitle);
 	}
 
 	@Override
@@ -56,22 +58,22 @@ public class NewCDTProjectWizard extends Wizard implements INewWizard {
 				Dialog.applyDialogFont(getControl());
 			}
 		}; 
-		mainPage.setTitle(Messages.NewCDTProjectWizard_mainPageTitle);
-		mainPage.setDescription(Messages.NewCDTProjectWizard_mainPageDesc);
+		mainPage.setTitle(CUIMessages.NewCDTProjectWizard_mainPageTitle);
+		mainPage.setDescription(CUIMessages.NewCDTProjectWizard_mainPageDesc);
 		addPage(mainPage);
 
 		templatePage = new TemplateSelectionPage();
-		templatePage.setTitle(Messages.NewCDTProjectWizard_templatePageTitle);
-		templatePage.setDescription(Messages.NewCDTProjectWizard_templatePageDesc);
+		templatePage.setTitle(CUIMessages.NewCDTProjectWizard_templatePageTitle);
+		templatePage.setDescription(CUIMessages.NewCDTProjectWizard_templatePageDesc);
 		addPage(templatePage);
 		
 		// only add page if there are already projects in the workspace
 		if (ResourcesPlugin.getWorkspace().getRoot().getProjects().length > 0) {
 			referencePage = new WizardNewProjectReferencePage(
 					"basicReferenceProjectPage");//$NON-NLS-1$
-			referencePage.setTitle(Messages.NewCDTProjectWizard_refPageTitle);
+			referencePage.setTitle(CUIMessages.NewCDTProjectWizard_refPageTitle);
 			referencePage
-					.setDescription(Messages.NewCDTProjectWizard_refPageDesc);
+					.setDescription(CUIMessages.NewCDTProjectWizard_refPageDesc);
 			this.addPage(referencePage);
 		}
 	}

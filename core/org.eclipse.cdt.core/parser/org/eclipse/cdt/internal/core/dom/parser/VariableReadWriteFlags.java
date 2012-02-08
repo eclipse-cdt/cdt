@@ -105,8 +105,18 @@ public abstract class VariableReadWriteFlags {
 	}
 
 	protected int rwInExpression(IASTExpression expr, IASTNode node, int indirection) {
+		if (expr instanceof IASTIdExpression) {
+			return rwAnyNode(expr, indirection);
+		}
 		if (expr instanceof IASTBinaryExpression) {
 			return rwInBinaryExpression(node, (IASTBinaryExpression) expr, indirection);			
+		}
+		if (expr instanceof IASTFieldReference) {
+			if (node.getPropertyInParent() != IASTFieldReference.FIELD_OWNER ||
+					!((IASTFieldReference) expr).isPointerDereference()) {
+				return rwAnyNode(expr, indirection);
+			}
+			return READ;
 		}
 		if (expr instanceof IASTCastExpression) { // must be ahead of unary
 			return rwAnyNode(expr, indirection);
@@ -134,24 +144,11 @@ public abstract class VariableReadWriteFlags {
 			}
 			return 0;
 		}
-		if (expr instanceof IASTFieldReference) {
-			if (node.getPropertyInParent() == IASTFieldReference.FIELD_NAME) {
-				return rwAnyNode(expr, indirection);
-			}
-//			if (node.getPropertyInParent() == IASTFieldReference.FIELD_OWNER &&
-//					!((IASTFieldReference) expr).isPointerDereference()) {
-//				return rwAnyNode(expr, indirection);
-//			}
-			return READ;
-		}
 		if (expr instanceof IASTFunctionCallExpression) {
 			if (node.getPropertyInParent() == IASTFunctionCallExpression.FUNCTION_NAME) {
 				return READ;
 			}
 			return rwArgumentForFunctionCall((IASTFunctionCallExpression) expr, node, indirection);
-		}
-		if (expr instanceof IASTIdExpression) {
-			return rwAnyNode(expr, indirection);
 		}
 		if (expr instanceof IASTProblemExpression) {
 			return READ | WRITE;			
@@ -180,7 +177,6 @@ public abstract class VariableReadWriteFlags {
 		}
 		return READ | WRITE;  // fallback
 	}
-
 
 	protected int rwArgumentForFunctionCall(IFunctionType type, int parameterIdx, int indirection) {
 		IType[] ptypes= type.getParameterTypes();
@@ -249,11 +245,11 @@ public abstract class VariableReadWriteFlags {
 			return rwAnyNode(expr, indirection);
 		
 		case IASTUnaryExpression.op_amper:
-			return rwAnyNode(expr, indirection+1);
+			return rwAnyNode(expr, indirection + 1);
 
 		case IASTUnaryExpression.op_star:
 			if (indirection > 0) {
-				return rwAnyNode(expr, indirection-1);
+				return rwAnyNode(expr, indirection - 1);
 			}
 			return READ;
 			

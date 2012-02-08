@@ -68,14 +68,14 @@ public class VariableReadWriteFlagsTest extends AST2BaseTest {
 			return buf.toString();
 		}
 	}
-	
+
 	public VariableReadWriteFlagsTest() {
 	}
-	
+
 	public VariableReadWriteFlagsTest(String name) {
 		super(name);
 	}
-	
+
 	public static TestSuite suite() {
 		return suite(VariableReadWriteFlagsTest.class);
 	}
@@ -113,11 +113,11 @@ public class VariableReadWriteFlagsTest extends AST2BaseTest {
 	//	  A a;
 	//	  a.x = 1;
 	//	};
-	public void _testFieldAccess() throws Exception {
+	public void testFieldAccess() throws Exception {
 		AssertionHelper a = getCPPAssertionHelper();
 		a.assertReadWriteFlags("a.", WRITE);
 	}
-	
+
 	//	struct A { int x; };
 	//
 	//	void test(A* a) {
@@ -127,7 +127,21 @@ public class VariableReadWriteFlagsTest extends AST2BaseTest {
 		AssertionHelper a = getCPPAssertionHelper();
 		a.assertReadWriteFlags("a->", READ);
 	}
-	
+
+	//	void f(int* x);
+	//	void g(const int* x);
+	//
+	//	void test() {
+	//	  int a, b;
+	//	  f(&a);
+	//	  g(&b);
+	//	};
+	public void testExplicitArgument() throws Exception {
+		AssertionHelper a = getCPPAssertionHelper();
+		a.assertReadWriteFlags("a)", READ | WRITE);
+		a.assertReadWriteFlags("b)", READ);
+	}
+
 	//	struct A {
 	//	  void m1();
 	//	  void m2() const;
@@ -138,7 +152,7 @@ public class VariableReadWriteFlagsTest extends AST2BaseTest {
 	//	  a.m1();
 	//	  a.m2();
 	//	};
-	public void _testMethodCall() throws Exception {
+	public void _testImplicitArgument() throws Exception {
 		AssertionHelper a = getCPPAssertionHelper();
 		a.assertReadWriteFlags("a.m1", READ | WRITE);
 		a.assertReadWriteFlags("a.m2", READ);

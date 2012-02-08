@@ -875,6 +875,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//int extracted(A b, A* a) {
 	//	return a->method() + b.const_method();
 	//}
+	//
 	//int test() {
 	//	A a, b;
 	//	return extracted(b, &a) + a.const_method();

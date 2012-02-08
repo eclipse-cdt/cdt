@@ -146,7 +146,7 @@ public abstract class VariableReadWriteFlags {
 		}
 		if (expr instanceof IASTFunctionCallExpression) {
 			if (node.getPropertyInParent() == IASTFunctionCallExpression.FUNCTION_NAME) {
-				return READ;
+				return rwFunctionName((IASTExpression) node);
 			}
 			return rwArgumentForFunctionCall((IASTFunctionCallExpression) expr, node, indirection);
 		}
@@ -158,6 +158,10 @@ public abstract class VariableReadWriteFlags {
 		}
 
 		return READ | WRITE;  // fall back
+	}
+
+	protected int rwFunctionName(IASTExpression node) {
+		return READ;
 	}
 
 	protected int rwArgumentForFunctionCall(final IASTFunctionCallExpression funcCall,

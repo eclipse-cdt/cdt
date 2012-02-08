@@ -152,7 +152,7 @@ public class VariableReadWriteFlagsTest extends AST2BaseTest {
 	//	  a.m1();
 	//	  a.m2();
 	//	};
-	public void _testImplicitArgument() throws Exception {
+	public void testImplicitArgument() throws Exception {
 		AssertionHelper a = getCPPAssertionHelper();
 		a.assertReadWriteFlags("a.m1", READ | WRITE);
 		a.assertReadWriteFlags("a.m2", READ);

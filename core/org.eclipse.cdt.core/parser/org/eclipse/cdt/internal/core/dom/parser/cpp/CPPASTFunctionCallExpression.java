@@ -14,8 +14,15 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.*;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.*;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.prvalueType;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.typeFromFunctionCall;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.typeFromReturnType;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.valueCategoryFromFunctionCall;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.valueCategoryFromReturnType;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.CVTYPE;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.REF;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getNestedType;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -46,16 +53,13 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.LookupData;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
-
-public class CPPASTFunctionCallExpression extends ASTNode implements
-        ICPPASTFunctionCallExpression, IASTAmbiguityParent {
-	
+public class CPPASTFunctionCallExpression extends ASTNode
+		implements ICPPASTFunctionCallExpression, IASTAmbiguityParent {
     private IASTExpression functionName;
     private IASTInitializerClause[] fArguments;
 
     private IASTImplicitName[] implicitNames;
     private ICPPFunction overload= UNINITIALIZED_FUNCTION;
-    
     
     public CPPASTFunctionCallExpression() {
     	setArguments(null);
@@ -144,7 +148,7 @@ public class CPPASTFunctionCallExpression extends ASTNode implements
 				}
 			}
 			
-			// create separate implicit names for the two brackets
+			// Create separate implicit names for the two brackets
 			CPPASTImplicitName n1 = new CPPASTImplicitName(OverloadableOperator.PAREN, this);
 			n1.setBinding(overload);
 
@@ -158,16 +162,18 @@ public class CPPASTFunctionCallExpression extends ASTNode implements
 					IToken lparen = functionName.getTrailingSyntax();
 					IToken rparen = lparen.getNext();
 					
-					if (lparen.getType() == IToken.tLPAREN)
+					if (lparen.getType() == IToken.tLPAREN) {
 						n1.setOffsetAndLength(idEndOffset + lparen.getOffset(), 1);
-					else
+					} else {
 						n1.setOffsetAndLength(idEndOffset + lparen.getEndOffset(), 0);
+					}
 						
-					if (rparen.getType() == IToken.tRPAREN)
+					if (rparen.getType() == IToken.tRPAREN) {
 						n2.setOffsetAndLength(idEndOffset + rparen.getOffset(), 1);
-					else
+					} else {
 						n2.setOffsetAndLength(idEndOffset + rparen.getEndOffset(), 0);
-				} catch(ExpansionOverlapsBoundaryException e) {
+					}
+				} catch (ExpansionOverlapsBoundaryException e) {
 					n1.setOffsetAndLength(idEndOffset, 0);
 					n2.setOffsetAndLength(idEndOffset, 0);
 				}

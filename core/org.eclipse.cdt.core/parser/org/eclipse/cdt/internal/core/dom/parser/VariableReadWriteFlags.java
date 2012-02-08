@@ -138,6 +138,10 @@ public abstract class VariableReadWriteFlags {
 			if (node.getPropertyInParent() == IASTFieldReference.FIELD_NAME) {
 				return rwAnyNode(expr, indirection);
 			}
+//			if (node.getPropertyInParent() == IASTFieldReference.FIELD_OWNER &&
+//					!((IASTFieldReference) expr).isPointerDereference()) {
+//				return rwAnyNode(expr, indirection);
+//			}
 			return READ;
 		}
 		if (expr instanceof IASTFunctionCallExpression) {

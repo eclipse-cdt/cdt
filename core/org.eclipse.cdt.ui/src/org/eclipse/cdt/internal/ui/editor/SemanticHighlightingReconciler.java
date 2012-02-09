@@ -287,18 +287,18 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 	/** The C editor this semantic highlighting reconciler is installed on */
 	private CEditor fEditor;
 	/** The semantic highlighting presenter */
-	private SemanticHighlightingPresenter fPresenter;
+	protected SemanticHighlightingPresenter fPresenter;
 	/** Semantic highlightings */
-	private SemanticHighlighting[] fSemanticHighlightings;
+	protected SemanticHighlighting[] fSemanticHighlightings;
 	/** Highlightings */
 	private HighlightingStyle[] fHighlightings;
 
 	/** Background job's added highlighted positions */
-	private List<HighlightedPosition> fAddedPositions= new ArrayList<HighlightedPosition>();
+	protected List<HighlightedPosition> fAddedPositions= new ArrayList<HighlightedPosition>();
 	/** Background job's removed highlighted positions */
-	private List<HighlightedPosition> fRemovedPositions= new ArrayList<HighlightedPosition>();
+	protected List<HighlightedPosition> fRemovedPositions= new ArrayList<HighlightedPosition>();
 	/** Number of removed positions */
-	private int fNOfRemovedPositions;
+	protected int fNOfRemovedPositions;
 
 	/** Background job */
 	private Job fJob;
@@ -313,9 +313,9 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 	private boolean fIsReconciling= false;
 
 	/** The semantic highlighting presenter - cache for background thread, only valid during {@link #reconciled(IASTTranslationUnit, boolean, IProgressMonitor)} */
-	private SemanticHighlightingPresenter fJobPresenter;
+	protected SemanticHighlightingPresenter fJobPresenter;
 	/** Semantic highlightings - cache for background thread, only valid during {@link #reconciled(IASTTranslationUnit, boolean, IProgressMonitor)} */
-	private SemanticHighlighting[] fJobSemanticHighlightings;
+	protected SemanticHighlighting[] fJobSemanticHighlightings;
 	/** Highlightings - cache for background thread, only valid during {@link #reconciled(IASTTranslationUnit, boolean, IProgressMonitor)} */
 	private HighlightingStyle[] fJobHighlightings;
 
@@ -387,7 +387,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 	/**
 	 * Start reconciling positions.
 	 */
-	private void startReconcilingPositions() {
+	protected void startReconcilingPositions() {
 		fJobPresenter.addAllPositions(fRemovedPositions);
 		fNOfRemovedPositions= fRemovedPositions.size();
 	}
@@ -449,7 +449,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 	/**
 	 * Stop reconciling positions.
 	 */
-	private void stopReconcilingPositions() {
+	protected void stopReconcilingPositions() {
 		fRemovedPositions.clear();
 		fNOfRemovedPositions= 0;
 		fAddedPositions.clear();

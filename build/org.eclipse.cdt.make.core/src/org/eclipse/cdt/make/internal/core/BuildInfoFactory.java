@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 QNX Software Systems and others.
+ * Copyright (c) 2000, 2012 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Baltasar Belyavsky (Texas Instruments) - bug 340219: Project metadata files are saved unnecessarily
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.core;
 
@@ -18,6 +19,10 @@ import java.util.Map.Entry;
 import java.util.StringTokenizer;
 
 import org.eclipse.cdt.core.ErrorParserManager;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.core.settings.model.extension.CBuildData;
 import org.eclipse.cdt.make.core.IMakeBuilderInfo;
 import org.eclipse.cdt.make.core.IMakeCommonBuildInfo;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
@@ -493,12 +498,27 @@ public class BuildInfoFactory {
 		BuildInfoProject(IProject project, String builderID) throws CoreException {
 			this.project = project;
 			this.builderID = builderID;
-			ICommand builder;
-			builder = MakeProjectNature.getBuildSpec(project.getDescription(), builderID);
-			if (builder == null) {
-				throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1,
-						MakeMessages.getString("BuildInfoFactory.Missing_Builder") + builderID, null)); //$NON-NLS-1$
+
+			ICommand builder = null;
+
+			// first, give the build-system a chance to return the build-command overlayed with data managed by it
+			ICProjectDescription cProjectDescription = CoreModel.getDefault().getProjectDescription(project, false);
+			if(cProjectDescription != null) {
+				ICConfigurationDescription cConfigDescription = cProjectDescription.getActiveConfiguration();
+				CBuildData buildData = cConfigDescription.getConfigurationData().getBuildData();
+				if(buildData != null) {
+					builder = buildData.getBuildSpecCommand();
+				}
 			}
+
+			if(builder == null) {
+				builder = MakeProjectNature.getBuildSpec(project.getDescription(), builderID);
+				if (builder == null) {
+					throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1,
+							MakeMessages.getString("BuildInfoFactory.Missing_Builder") + builderID, null)); //$NON-NLS-1$
+				}
+			}
+
 			Map<String, String> builderArgs = builder.getArguments();
 			args = builderArgs;
 		}

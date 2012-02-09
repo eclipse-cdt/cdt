@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Intel Corporation and others.
+ * Copyright (c) 2007, 2012 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * Baltasar Belyavsky (Texas Instruments) - bug 340219: Project metadata files are saved unnecessarily
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
@@ -25,7 +26,6 @@ import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
-import org.eclipse.cdt.managedbuilder.core.ManagedCProjectNature;
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -59,7 +59,6 @@ public class BuilderFactory {
 	static final String CONTENTS_BUILDER = PREFIX + ".builder"; //$NON-NLS-1$ 
 	static final String CONTENTS_BUILDER_CUSTOMIZATION = PREFIX + ".builderCustomization"; //$NON-NLS-1$ 
 	static final String CONTENTS_CONFIGURATION_IDS = PREFIX + ".configurationIds"; //$NON-NLS-1$ 
-	static final String CONTENTS_ACTIVE_CFG_SETTINGS = PREFIX + ".activeConfigSettings"; //$NON-NLS-1$ 
 
 //	static final String IDS = PREFIX + ".ids"; //$NON-NLS-1$ 
 	static final String CONFIGURATION_IDS = PREFIX + ".configurationIds"; //$NON-NLS-1$
@@ -225,19 +224,6 @@ public class BuilderFactory {
 		return el.toStringMap();
 	}
 
-	private static Map<String, String> builderBuildArgsMap(IBuilder builder){
-		MapStorageElement el = new BuildArgsStorageElement("", null);  //$NON-NLS-1$
-		((Builder)builder).serializeRawData(el);
-		
-		Boolean d = Boolean.valueOf(builder.isDefaultBuildCmd());
-		el.setAttribute(BuilderFactory.USE_DEFAULT_BUILD_CMD, d.toString());
-		
-		Map<String, String> map = el.toStringMap();
-		map.put(CONTENTS, CONTENTS_ACTIVE_CFG_SETTINGS);
-		
-		return map;
-	}
-
 	public static IBuilder createCustomBuilder(IConfiguration cfg, String builderId) throws CoreException{
 		IBuilder builder = cfg.getBuilder();
 		if(!builderId.equals(builder.getId())){
@@ -291,6 +277,31 @@ public class BuilderFactory {
 //		}
 //		
 //		return createBuilder(cfg, args);
+	}
+	
+	/**
+	 * Creates a new build-command containing data dynamically obtained from the Builder.
+	 */
+	public static ICommand createCommandFromBuilder(IBuilder builder) throws CoreException {
+		IProject project = builder.getParent().getParent().getOwner().getProject();
+		ICommand command = getBuildSpec(project.getDescription(), CommonBuilder.BUILDER_ID);
+		if(command == null)
+			return null;
+
+		MapStorageElement el = new BuildArgsStorageElement("", null);  //$NON-NLS-1$
+		((Builder)builder).serializeRawData(el);
+		
+		// always set to false - the raw data will always explicitly contain the build-command
+		el.setAttribute(BuilderFactory.USE_DEFAULT_BUILD_CMD, Boolean.FALSE.toString());
+		
+		command.setArguments(el.toStringMap());
+
+		command.setBuilding(IncrementalProjectBuilder.AUTO_BUILD, builder.isAutoBuildEnable());
+		command.setBuilding(IncrementalProjectBuilder.FULL_BUILD, builder.isFullBuildEnabled());
+		command.setBuilding(IncrementalProjectBuilder.INCREMENTAL_BUILD, builder.isIncrementalBuildEnabled());
+		command.setBuilding(IncrementalProjectBuilder.CLEAN_BUILD, builder.isCleanBuildEnabled());
+		
+		return command;
 	}
 	
 	public static ICommand getBuildSpec(IProjectDescription description, String builderID) {
@@ -350,6 +361,7 @@ public class BuilderFactory {
 				IConfiguration cfg = info.getDefaultConfiguration();
 				IBuilder builder = cfg.getEditableBuilder();
 				builders = new IBuilder[]{builder};
+				
 			} else {
 				String type = args.get(CONTENTS);
 				if(type == null || CONTENTS_BUILDER_CUSTOMIZATION.equals(type)){
@@ -360,12 +372,6 @@ public class BuilderFactory {
 					} else {
 						builder = createBuilder(cfg, args, true);
 					}
-					builders = new IBuilder[]{builder};
-				} else if (CONTENTS_ACTIVE_CFG_SETTINGS.equals(type)) {
-					IConfiguration cfg = info.getDefaultConfiguration();
-					
-					IBuilder builder = cfg.getEditableBuilder();
-					
 					builders = new IBuilder[]{builder};
 					
 				} else if (CONTENTS_BUILDER.equals(type)){
@@ -379,6 +385,7 @@ public class BuilderFactory {
 						}
 						builders = list.toArray(new IBuilder[list.size()]);
 					}
+
 				} else if (CONTENTS_CONFIGURATION_IDS.equals(type)){
 					IConfiguration cfgs[] = configsFromMap(args, info);
 					if(cfgs.length != 0){
@@ -388,6 +395,17 @@ public class BuilderFactory {
 						}
 						builders = list.toArray(new IBuilder[list.size()]);
 					}
+				
+				} else if ("org.eclipse.cdt.make.core.activeConfigSettings".equals(type)) { //$NON-NLS-1$
+					/* NOTE: Here, only for backwards-compatibility support, since bug 340219 was fixed.
+					 * Existing projects will still be going through this execution path, but new
+					 * projects will no longer store the active-configuration's builder-arguments in the
+					 * build-command, and will be going through the "args == null" condition above.
+					 */
+					IConfiguration cfg = info.getDefaultConfiguration();
+					IBuilder builder = cfg.getEditableBuilder();
+					builders = new IBuilder[]{builder};
+					
 				} /*else if (CONTENTS_BUILDER_CUSTOMIZATION.equals(type)){
 					String idsString = (String)args.get(CONFIGURATION_IDS);
 					if(idsString != null){
@@ -415,39 +433,4 @@ public class BuilderFactory {
 		return EMPTY_BUILDERS_ARRAY;
 	}
 
-	public static int applyBuilder(IProjectDescription eDes, IBuilder builder){
-		return applyBuilder(eDes, CommonBuilder.BUILDER_ID, builder);
-	}
-
-	public static final int CMD_UNDEFINED = -1;
-	public static final int NO_CHANGES = 0;
-	public static final int CMD_CHANGED = 1;
-	
-	public static int applyBuilder(IProjectDescription eDes, String eBuilderId, IBuilder builder){
-		ICommand cmd = ManagedCProjectNature.getBuildSpec(eDes, eBuilderId);
-		if(cmd == null)
-			return CMD_UNDEFINED;
-		
-		if(applyBuilder(cmd, builder)){
-			ManagedCProjectNature.setBuildSpec(eDes, cmd);
-			return CMD_CHANGED; 
-		}
-		return NO_CHANGES;
-	}
-	
-	public static boolean applyBuilder(ICommand cmd, IBuilder builder) {
-		Map<String, String> oldMap = cmd.getArguments();
-		Map<String, String> map = builderBuildArgsMap(builder);
-		
-		if(oldMap.equals(map))
-			return false;
-		
-		cmd.setArguments(map);
-		
-		cmd.setBuilding(IncrementalProjectBuilder.AUTO_BUILD, builder.isAutoBuildEnable());
-		cmd.setBuilding(IncrementalProjectBuilder.FULL_BUILD, builder.isFullBuildEnabled());
-		cmd.setBuilding(IncrementalProjectBuilder.INCREMENTAL_BUILD, builder.isIncrementalBuildEnabled());
-		cmd.setBuilding(IncrementalProjectBuilder.CLEAN_BUILD, builder.isCleanBuildEnabled());
-		return true;
-	}
 }

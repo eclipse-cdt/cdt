@@ -871,6 +871,42 @@ public class ClassTypeHelper {
 	}
 
 	/**
+	 * Returns <code>true</code> if and only if the given class has a trivial default constructor.
+	 * A default constructor is trivial if:
+	 * <ul>
+	 * <li>it is implicitly defined by the compiler, and</li>
+	 * <li>every direct base class has trivial default constructor, and</li>
+	 * <li>for every nonstatic data member that has class type or array of class type, that type
+	 * has trivial default constructor.</li>
+	 * </ul>
+	 * Similar to <code>std::tr1::has_trivial_default_constructor</code>.
+	 *
+	 * @param classTarget the class to check
+	 * @return <code>true</code> if the class has a trivial default constructor
+	 */
+	public static boolean hasTrivialDefaultConstructor(ICPPClassType classTarget) {
+		for (ICPPConstructor ctor : classTarget.getConstructors()) {
+			if (!ctor.isImplicit() && ctor.getParameters().length == 0)
+				return false;
+		}
+		for (ICPPClassType baseClass : getAllBases(classTarget)) {
+			if (!classTarget.isSameType(baseClass) && !hasTrivialDefaultConstructor(baseClass))
+				return false;
+		}
+		for (ICPPField field : classTarget.getDeclaredFields()) {
+			if (!field.isStatic()) {
+				IType type = field.getType();
+				type = SemanticUtil.getNestedType(type, TDEF | CVTYPE | ARRAY);
+				if (type instanceof ICPPClassType && !classTarget.isSameType(type) &&
+						!hasTrivialDefaultConstructor((ICPPClassType) type)) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
+	/**
 	 * Returns <code>true</code> if and only if the given class has a trivial destructor.
 	 * A destructor is trivial if:
 	 * <ul>

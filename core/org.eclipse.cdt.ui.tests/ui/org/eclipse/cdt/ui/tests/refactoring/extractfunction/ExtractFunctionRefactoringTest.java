@@ -881,7 +881,6 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//	return extracted(b, &a) + a.const_method();
 	//}
 	public void _testOutputParameterWithMethodCall() throws Exception {
-		// Currently fails due to http://bugs.eclipse.org/bugs/show_bug.cgi?id=370887
 		getPreferenceStore().setValue(PreferenceConstants.FUNCTION_PASS_OUTPUT_PARAMETERS_BY_POINTER, true);
 		assertRefactoringSuccess();
 	}

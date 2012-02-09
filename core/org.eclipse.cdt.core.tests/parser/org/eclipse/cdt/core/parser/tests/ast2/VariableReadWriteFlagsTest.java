@@ -32,19 +32,14 @@ public class VariableReadWriteFlagsTest extends AST2BaseTest {
 			super(contents, isCPP);
 		}
 
-		void assertReadWriteFlags(String section, int expectedFlags) throws Exception {
-			int len;
-			for (len = 0; len < section.length(); len++) {
-				if (!Character.isJavaIdentifierPart(section.charAt(len)))
-					break;
-			}
-			assertReadWriteFlags(section, len, expectedFlags);
-		}
-
-		void assertReadWriteFlags(String section, int len, int expectedFlags) throws Exception {
-			IASTName variable = findName(section, len);
+		void assertReadWriteFlags(String context, String name, int expectedFlags) throws Exception {
+			IASTName variable = findName(context, name);
 			assertNotNull(variable);
 			assertEquals(flagsToString(expectedFlags), flagsToString(getReadWriteFlags(variable)));
+		}
+
+		void assertReadWriteFlags(String name, int expectedFlags) throws Exception {
+			assertReadWriteFlags(null, name, expectedFlags);
 		}
 
 		int getReadWriteFlags(IASTName variable) {
@@ -90,71 +85,101 @@ public class VariableReadWriteFlagsTest extends AST2BaseTest {
 		return new AssertionHelper(code, true);
 	}
 
-	//	int test() {
-	//	  int a;
+	//	int test(int a) {
 	//	  a = 2;
+	//	  a *= 3;
 	//	  return a + 1;
 	//	}
 	public void testSimpleAccess() throws Exception {
 		AssertionHelper a = getCPPAssertionHelper();
-		a.assertReadWriteFlags("a = 2", WRITE);
-		a.assertReadWriteFlags("a +", READ);
+		a.assertReadWriteFlags("a = 2", "a", WRITE);
+		a.assertReadWriteFlags("a *= 3", "a", READ | WRITE);
+		a.assertReadWriteFlags("a + 1", "a", READ);
 	}
 
-	//	int a = 1;
-	public void _testEqualsInitializer() throws Exception {
+	//	class C {
+	//	public:
+	//	  C(int);
+	//	};
+	//
+	//	class D {
+	//	public:
+	//	  D();
+	//	};
+	//
+	//	int a;
+	//	int b = 1;
+	//	C c;
+	//	D d;
+	//	C e(1);
+	//	template<typename T> void foo(T p) {
+	//	  T f;
+	//	}
+	public void testVariableDeclaration() throws Exception {
 		AssertionHelper a = getCPPAssertionHelper();
-		a.assertReadWriteFlags("a", WRITE);
+		a.assertReadWriteFlags("int a", "a", 0);
+		a.assertReadWriteFlags("int b = 1", "b", WRITE);
+		a.assertReadWriteFlags("C c", "c", 0);
+		a.assertReadWriteFlags("D d", "d", WRITE);
+		a.assertReadWriteFlags("C e(1)", "e", WRITE);
+		a.assertReadWriteFlags("T f", "f", WRITE);
 	}
 
 	//	struct A { int x; };
 	//
-	//	void test() {
-	//	  A a;
+	//	void test(A a, A* ap) {
 	//	  a.x = 1;
+	//	  (&a)->x = 1;
+	//	  ap->x = 1;
 	//	};
 	public void testFieldAccess() throws Exception {
 		AssertionHelper a = getCPPAssertionHelper();
-		a.assertReadWriteFlags("a.", WRITE);
+		a.assertReadWriteFlags("a.x", "a", WRITE);
+		a.assertReadWriteFlags("a.x", "x", WRITE);
+		a.assertReadWriteFlags("(&a)->x", "a", WRITE);
+		a.assertReadWriteFlags("(&a)->x", "x", WRITE);
+		a.assertReadWriteFlags("ap->x", "ap", READ);
+		a.assertReadWriteFlags("ap->x", "x", WRITE);
 	}
 
-	//	struct A { int x; };
+	//	void f(int* x, int& y);
+	//	void g(const int* x, const int& y, int z);
 	//
-	//	void test(A* a) {
-	//	  a->x = 1;
+	//	void test(int a, int b, int c) {
+	//	  f(&a, b);
+	//	  g(&a, b, c);
 	//	};
-	public void testFieldAccessWithDereference() throws Exception {
+	public void testFunctionCall() throws Exception {
 		AssertionHelper a = getCPPAssertionHelper();
-		a.assertReadWriteFlags("a->", READ);
-	}
-
-	//	void f(int* x);
-	//	void g(const int* x);
-	//
-	//	void test() {
-	//	  int a, b;
-	//	  f(&a);
-	//	  g(&b);
-	//	};
-	public void testExplicitArgument() throws Exception {
-		AssertionHelper a = getCPPAssertionHelper();
-		a.assertReadWriteFlags("a)", READ | WRITE);
-		a.assertReadWriteFlags("b)", READ);
+		a.assertReadWriteFlags("f(&a, b)", "a", READ | WRITE);
+		a.assertReadWriteFlags("f(&a, b)", "b", READ | WRITE);
+		a.assertReadWriteFlags("f(&a, b)", "f", READ);
+		a.assertReadWriteFlags("g(&a, b, c)", "a", READ);
+		a.assertReadWriteFlags("g(&a, b, c)", "b", READ);
+		a.assertReadWriteFlags("g(&a, b, c)", "c", READ);
 	}
 
 	//	struct A {
-	//	  void m1();
-	//	  void m2() const;
+	//	  void m();
+	//	  void mc() const;
 	//	};
 	//
-	//	void test() {
-	//	  A a;
-	//	  a.m1();
-	//	  a.m2();
+	//	void test(A a, A* ap) {
+	//	  a.m();
+	//	  a.mc();
+	//	  (&a)->m();
+	//	  (&a)->mc();
+	//	  ap->m();
+	//	  (*ap).m();
 	//	};
-	public void testImplicitArgument() throws Exception {
+	public void testMethodCall() throws Exception {
 		AssertionHelper a = getCPPAssertionHelper();
-		a.assertReadWriteFlags("a.m1", READ | WRITE);
-		a.assertReadWriteFlags("a.m2", READ);
+		a.assertReadWriteFlags("a.m()", "a", READ | WRITE);
+		a.assertReadWriteFlags("a.m()", "m", READ);
+		a.assertReadWriteFlags("a.mc()", "a", READ);
+		a.assertReadWriteFlags("(&a)->m()", "a", READ | WRITE);
+		a.assertReadWriteFlags("(&a)->m()", "m", READ);
+		a.assertReadWriteFlags("ap->m()", "ap", READ);
+		a.assertReadWriteFlags("(*ap).m()", "ap", READ);
 	}
 }

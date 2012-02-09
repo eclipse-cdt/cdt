@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -25,11 +26,14 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.VariableReadWriteFlags;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownType;
 
 /**
  * Helper class to determine whether a variable is accessed for reading and/or writing.
@@ -52,6 +56,17 @@ public final class CPPVariableReadWriteFlags extends VariableReadWriteFlags {
 		return super.rwAnyNode(node, indirection);
 	}
 	
+	@Override
+	protected int rwInDeclarator(IASTDeclarator parent, int indirection) {
+		IType type = CPPVisitor.createType(parent);
+		if (type instanceof ICPPUnknownType ||
+				type instanceof ICPPClassType &&
+				!ClassTypeHelper.hasTrivialDefaultConstructor((ICPPClassType) type)) {
+			return WRITE;
+		}
+		return super.rwInDeclarator(parent, indirection);
+	}
+
 	private int rwInCtorInitializer(IASTNode node, int indirection, ICPPASTConstructorInitializer parent) {
 		IASTNode grand= parent.getParent();
 		if (grand instanceof IASTDeclarator) {
@@ -94,10 +109,12 @@ public final class CPPVariableReadWriteFlags extends VariableReadWriteFlags {
 	}
 
 	@Override
-	protected int rwFunctionName(IASTExpression node) {
-		IType type= node.getExpressionType();
-		if (type instanceof ICPPFunctionType && !((ICPPFunctionType) type).isConst())
-			return READ | WRITE;
+	protected int rwInFunctionName(IASTExpression node) {
+		if (!(node instanceof IASTIdExpression)) {
+			IType type= node.getExpressionType();
+			if (type instanceof ICPPFunctionType && !((ICPPFunctionType) type).isConst())
+				return READ | WRITE;
+		}
 		return READ;
 	}
 

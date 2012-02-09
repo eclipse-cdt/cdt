@@ -597,11 +597,27 @@ public class AST2BaseTest extends BaseTestCase {
     	
     	public IASTName findName(String section, int len) {
     		final int offset = contents.indexOf(section);
-    		assertTrue(offset >= 0);
+    		assertTrue("Section \"" + section + "\" not found", offset >= 0);
     		IASTNodeSelector selector = tu.getNodeSelector(null);
     		return selector.findName(offset, len);
     	}
  
+    	public IASTName findName(String context, String name) {
+    		if (context == null) {
+    			context = contents;
+    		}
+    		int offset = contents.indexOf(context);
+    		assertTrue("Context \"" + context + "\" not found", offset >= 0);
+    		int nameOffset = context.indexOf(name);
+    		assertTrue("Name \"" + name + "\" not found", nameOffset >= 0);
+    		IASTNodeSelector selector = tu.getNodeSelector(null);
+    		return selector.findName(offset + nameOffset, name.length());
+    	}
+
+    	public IASTName findName(String name) {
+    		return findName(contents, name);
+    	}
+
     	public IASTName findImplicitName(String section, int len) {
     		final int offset = contents.indexOf(section);
     		assertTrue(offset >= 0);

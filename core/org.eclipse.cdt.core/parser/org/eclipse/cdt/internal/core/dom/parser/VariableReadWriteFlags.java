@@ -57,15 +57,14 @@ public abstract class VariableReadWriteFlags {
 	protected static final int READ = PDOMName.READ_ACCESS;
 	protected static final int WRITE = PDOMName.WRITE_ACCESS;
 	
-	protected VariableReadWriteFlags() {
-	}
-
 	protected int rwAnyNode(IASTNode node, int indirection) {
 		final IASTNode parent = node.getParent();
 		if (parent instanceof IASTExpression) {
 			return rwInExpression((IASTExpression) parent, node, indirection);
 		} else if (parent instanceof IASTStatement) {
 			return rwInStatement((IASTStatement) parent, node, indirection);
+		} else if (parent instanceof IASTDeclarator) {
+			return rwInDeclarator((IASTDeclarator) parent, indirection);
 		} else if (parent instanceof IASTEqualsInitializer) {
 			return rwInEqualsInitializer((IASTEqualsInitializer) parent, indirection);
 		} else if (parent instanceof IASTArrayModifier) {
@@ -74,6 +73,12 @@ public abstract class VariableReadWriteFlags {
 			return rwInInitializerList((IASTInitializerList) parent, indirection);
 		}
 		return READ | WRITE; // fallback
+	}
+
+	protected int rwInDeclarator(IASTDeclarator parent, int indirection) {
+		if (parent.getInitializer() != null)
+			return WRITE;
+		return 0;
 	}
 
 	protected int rwInEqualsInitializer(IASTEqualsInitializer parent, int indirection) {
@@ -112,11 +117,7 @@ public abstract class VariableReadWriteFlags {
 			return rwInBinaryExpression(node, (IASTBinaryExpression) expr, indirection);			
 		}
 		if (expr instanceof IASTFieldReference) {
-			if (node.getPropertyInParent() != IASTFieldReference.FIELD_OWNER ||
-					!((IASTFieldReference) expr).isPointerDereference()) {
-				return rwAnyNode(expr, indirection);
-			}
-			return READ;
+			return rwInFieldReference(node, (IASTFieldReference) expr, indirection);
 		}
 		if (expr instanceof IASTCastExpression) { // must be ahead of unary
 			return rwAnyNode(expr, indirection);
@@ -126,7 +127,7 @@ public abstract class VariableReadWriteFlags {
 		}
 		if (expr instanceof IASTArraySubscriptExpression) {
 			if (indirection > 0 && node.getPropertyInParent() == IASTArraySubscriptExpression.ARRAY) {
-				return rwAnyNode(expr, indirection-1);
+				return rwAnyNode(expr, indirection - 1);
 			}
 			return READ;
 		}
@@ -146,7 +147,7 @@ public abstract class VariableReadWriteFlags {
 		}
 		if (expr instanceof IASTFunctionCallExpression) {
 			if (node.getPropertyInParent() == IASTFunctionCallExpression.FUNCTION_NAME) {
-				return rwFunctionName((IASTExpression) node);
+				return rwInFunctionName((IASTExpression) node);
 			}
 			return rwArgumentForFunctionCall((IASTFunctionCallExpression) expr, node, indirection);
 		}
@@ -160,7 +161,20 @@ public abstract class VariableReadWriteFlags {
 		return READ | WRITE;  // fall back
 	}
 
-	protected int rwFunctionName(IASTExpression node) {
+	protected int rwInFieldReference(IASTNode node, IASTFieldReference expr, int indirection) {
+		if (node.getPropertyInParent() == IASTFieldReference.FIELD_NAME) {
+			if (expr.getPropertyInParent() != IASTFunctionCallExpression.FUNCTION_NAME)
+				return rwAnyNode(expr, indirection);
+		} else {  // IASTFieldReference.FIELD_OWNER
+			if (expr.isPointerDereference())
+				--indirection;
+			if (indirection >= 0)
+				return rwAnyNode(expr, indirection);
+		}
+		return READ;
+	}
+
+	protected int rwInFunctionName(IASTExpression node) {
 		return READ;
 	}
 
@@ -206,7 +220,7 @@ public abstract class VariableReadWriteFlags {
 			while (parent instanceof IASTCompoundStatement) {
 				IASTCompoundStatement compound= (IASTCompoundStatement) parent;
 				IASTStatement[] statements= compound.getStatements();
-				if (statements[statements.length-1] != stmt) {
+				if (statements[statements.length - 1] != stmt) {
 					return 0;
 				}
 				stmt= compound;

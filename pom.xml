@@ -19,7 +19,7 @@
 		<platform-version>3.6</platform-version>
 		<platform-site>http://download.eclipse.org/eclipse/updates/${platform-version}</platform-site>
 		<orbit-version>R20090825191606</orbit-version>
-		<orbit-site>http://download.eclipse.org/tools/orbit/downloads/drops/${orbit-version}/updateSite</orbit-site>
+		<orbit-site>http://archive.eclipse.org/tools/orbit/downloads/drops/${orbit-version}/updateSite</orbit-site>
 		<tm-version>3.2</tm-version>
 		<tm-site>http://download.eclipse.org/tm/updates/${tm-version}</tm-site>
 		<cdt-branch>cdt_7_0</cdt-branch>

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Intel Corporation and others.
+ * Copyright (c) 2007, 2012 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,9 +7,11 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * Baltasar Belyavsky (Texas Instruments) - bug 340219: Project metadata files are saved unnecessarily
  *******************************************************************************/
 package org.eclipse.cdt.projectmodel.tests;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -56,6 +58,7 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -685,6 +688,69 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 
 	}
 
+	/**
+	 * Verifies that project-model is not re-serialized unnecessarily. 
+	 */
+	public void testCompulsiveSerialization_Bug340219() throws Exception {
+		final String projectName = "test_bug340219";
+
+		CoreModel coreModel = CoreModel.getDefault();
+
+		IProject project = null;
+		try {
+			project = createProject(projectName, "cdt.managedbuild.target.gnu30.exe");
+	
+			File projectFile = project.getFile(".project").getLocation().toFile();
+			File cprojectFile = project.getFile(".cproject").getLocation().toFile();
+			
+			final long projectFileStamp = projectFile.lastModified();
+			final long cprojectFileStamp = cprojectFile.lastModified();
+			
+			ICProjectDescription des = coreModel.getProjectDescription(project);
+			ICConfigurationDescription[] cfgs = des.getConfigurations();
+
+			// verify pre-condition - there are two configurations, and the first one is active by default
+			assertEquals(2, cfgs.length);
+			assertTrue(cfgs[0].isActive());
+
+			// verify that changing active or setting configuration does not touch project-model files
+			des.setActiveConfiguration(cfgs[1]);
+			des.setDefaultSettingConfiguration(cfgs[1]);
+			coreModel.setProjectDescription(project, des);
+			assertEquals(cfgs[1].getId(), des.getActiveConfiguration().getId());
+			assertEquals(projectFileStamp, projectFile.lastModified());
+			assertEquals(cprojectFileStamp, cprojectFile.lastModified());
+	
+			// verify that closing/reopening the project preserves active configuration and does not touch project-model files
+			project.close(null);
+			project.open(null);
+			des = coreModel.getProjectDescription(project);
+			cfgs = des.getConfigurations();
+			assertEquals(cfgs[1].getId(), des.getActiveConfiguration().getId());
+			assertEquals(projectFileStamp, projectFile.lastModified());
+			assertEquals(cprojectFileStamp, cprojectFile.lastModified());
+			
+			// verify that deleting/reimporting the project resets active configuration but does not touch project-model files
+			project.delete(false, true, null);
+			project.create(null);
+			project.open(null);
+			des = coreModel.getProjectDescription(project);
+			cfgs = des.getConfigurations();
+			assertEquals(cfgs[0].getId(), des.getActiveConfiguration().getId());
+			assertEquals(projectFileStamp, projectFile.lastModified());
+			assertEquals(cprojectFileStamp, cprojectFile.lastModified());
+			
+			// verify that building the project does not touch project-model files
+			project.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, null);
+			assertEquals(projectFileStamp, projectFile.lastModified());
+			assertEquals(cprojectFileStamp, cprojectFile.lastModified());
+		}
+		finally {
+			if(project != null)
+				project.delete(true, null);
+		}
+	}
+	
 	private void checkArrays(Object[] a1, Object[] a2){
 		if(a1 == null){
 			assertTrue(a2 == null);

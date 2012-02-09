@@ -7,17 +7,15 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  * 
  * Contributors: 
- * Institute for Software (IFS)- initial API and implementation 
+ *     Institute for Software (IFS)- initial API and implementation 
  ******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
 /**
  * @author Emanuel Graf IFS
  * @since 5.3
- * 
  */
 public interface IASTCopyLocation extends IASTNodeLocation {
-	
-	public IASTNode getOriginalNode();
 
+	public IASTNode getOriginalNode();
 }

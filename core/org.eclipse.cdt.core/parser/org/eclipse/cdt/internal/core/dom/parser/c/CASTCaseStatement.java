@@ -40,7 +40,7 @@ public class CASTCaseStatement extends ASTNode implements IASTCaseStatement, IAS
 
 	@Override
 	public CASTCaseStatement copy(CopyStyle style) {
-		CASTCaseStatement copy = new CASTCaseStatement(expression == null ? null : expression.copy());
+		CASTCaseStatement copy = new CASTCaseStatement(expression == null ? null : expression.copy(style));
 		copy.setOffsetAndLength(this);
 		if (style == CopyStyle.withLocations) {
 			copy.setCopyLocation(this);

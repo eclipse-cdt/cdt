@@ -57,7 +57,12 @@ import org.eclipse.cdt.internal.ui.refactoring.NameInformation;
  * 
  * @author Mirko Stocker
  */
-public class ExtractExpression extends ExtractedFunctionConstructionHelper {
+public class ExpressionExtractor extends FunctionExtractor {
+	@Override
+	public boolean canChooseReturnValue() {
+		return false;
+	}
+
 	@Override
 	public void constructMethodBody(IASTCompoundStatement compound, List<IASTNode> nodes,
 			List<NameInformation> parameters, ASTRewrite rewrite, TextEditGroup group) {

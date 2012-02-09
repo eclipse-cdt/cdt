@@ -69,7 +69,7 @@ public class CPPASTIdExpression extends ASTNode implements IASTIdExpression, ICP
 
 	@Override
 	public CPPASTIdExpression copy(CopyStyle style) {
-		CPPASTIdExpression copy = new CPPASTIdExpression(name == null ? null : name.copy());
+		CPPASTIdExpression copy = new CPPASTIdExpression(name == null ? null : name.copy(style));
 		copy.setOffsetAndLength(this);
 		if (style == CopyStyle.withLocations) {
 			copy.setCopyLocation(this);

@@ -46,7 +46,7 @@ public class CASTArrayDeclarator extends CASTDeclarator implements IASTArrayDecl
 		CASTArrayDeclarator copy = new CASTArrayDeclarator();
 		copyBaseDeclarator(copy, style);
 		for (IASTArrayModifier modifier : getArrayModifiers())
-			copy.addArrayModifier(modifier == null ? null : modifier.copy());
+			copy.addArrayModifier(modifier == null ? null : modifier.copy(style));
 		if (style == CopyStyle.withLocations) {
 			copy.setCopyLocation(this);
 		}

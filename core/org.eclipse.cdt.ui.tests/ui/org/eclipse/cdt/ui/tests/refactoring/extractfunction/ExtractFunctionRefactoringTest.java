@@ -880,7 +880,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//	A a, b;
 	//	return extracted(b, &a) + a.const_method();
 	//}
-	public void _testOutputParameterWithMethodCall() throws Exception {
+	public void testOutputParameterWithMethodCall() throws Exception {
 		getPreferenceStore().setValue(PreferenceConstants.FUNCTION_PASS_OUTPUT_PARAMETERS_BY_POINTER, true);
 		assertRefactoringSuccess();
 	}

@@ -100,7 +100,7 @@ public class CASTDesignatedInitializer extends ASTNode implements ICASTDesignate
 			return (IASTInitializer) rhs;
 		}
 		if (rhs instanceof IASTExpression) {
-			CASTEqualsInitializer init = new CASTEqualsInitializer(((IASTExpression)rhs).copy());
+			CASTEqualsInitializer init = new CASTEqualsInitializer(((IASTExpression) rhs).copy());
 			init.setParent(this);
 			init.setPropertyInParent(OPERAND);
 			return init;

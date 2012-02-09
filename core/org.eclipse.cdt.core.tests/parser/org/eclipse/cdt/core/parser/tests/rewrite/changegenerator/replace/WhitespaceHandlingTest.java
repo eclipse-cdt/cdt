@@ -13,8 +13,9 @@ package org.eclipse.cdt.core.parser.tests.rewrite.changegenerator.replace;
 
 import junit.framework.Test;
 
-import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTNode.CopyStyle;
+import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTForStatement;
 import org.eclipse.cdt.core.parser.tests.rewrite.changegenerator.ChangeGeneratorTest;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNodeFactory;
@@ -60,7 +61,7 @@ public class WhitespaceHandlingTest extends ChangeGeneratorTest {
 					ICPPASTForStatement forStatement = (ICPPASTForStatement) statement;
 					CPPNodeFactory nf = CPPNodeFactory.getDefault();
 					
-					ICPPASTForStatement newFor = forStatement.copy();
+					ICPPASTForStatement newFor = forStatement.copy(CopyStyle.withLocations);
 					newFor.setBody(nf.newNullStatement());
 					
 					ASTModification modification = new ASTModification(ASTModification.ModificationKind.REPLACE, forStatement, newFor, null);

@@ -44,8 +44,8 @@ public class CPPASTBinaryTypeIdExpression extends ASTNode implements IASTBinaryT
 	@Override
 	public CPPASTBinaryTypeIdExpression copy(CopyStyle style) {
 		CPPASTBinaryTypeIdExpression copy = new CPPASTBinaryTypeIdExpression(fOperator, 
-				fOperand1 == null ? null : fOperand1.copy(),
-				fOperand2 == null ? null : fOperand2.copy());
+				fOperand1 == null ? null : fOperand1.copy(style),
+				fOperand2 == null ? null : fOperand2.copy(style));
 		copy.setOffsetAndLength(this);
 		if (style == CopyStyle.withLocations) {
 			copy.setCopyLocation(this);

@@ -36,7 +36,12 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.ASTHelper;
 /**
  * @author Mirko Stocker
  */
-public class ExtractStatement extends ExtractedFunctionConstructionHelper {
+public class StatementExtractor extends FunctionExtractor {
+	@Override
+	public boolean canChooseReturnValue() {
+		return true;
+	}
+
 	@Override
 	public void constructMethodBody(IASTCompoundStatement compound, List<IASTNode> nodes,
 			List<NameInformation> parameters, ASTRewrite rewrite, TextEditGroup group) {

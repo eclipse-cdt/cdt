@@ -139,7 +139,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 
 	HashMap<String, Integer> nameTrail;
 
-	private ExtractedFunctionConstructionHelper functionConstructionHelper;
+	private FunctionExtractor extractor;
 	private INodeFactory nodeFactory;
 	DefaultCodeFormatterOptions formattingOptions;
 
@@ -204,7 +204,9 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 				if (initStatus.hasFatalError())
 					return initStatus;
 
-				if (info.getMandatoryReturnVariable() == null) {
+				extractor =	FunctionExtractor.createFor(container.getNodesToWrite());
+
+				if (extractor.canChooseReturnValue() && info.getMandatoryReturnVariable() == null) {
 					chooseReturnVariable();
 				}
 
@@ -213,9 +215,6 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 						PreferenceConstants.FUNCTION_OUTPUT_PARAMETERS_BEFORE_INPUT, false,
 						PreferenceConstants.getPreferenceScopes(project.getProject()));
 				info.sortParameters(outFirst);
-
-				functionConstructionHelper =
-						ExtractedFunctionConstructionHelper.createFor(container.getNodesToWrite());
 
 				boolean isExtractExpression = container.getNodesToWrite().get(0) instanceof IASTExpression;
 				info.setExtractExpression(isExtractExpression);
@@ -639,7 +638,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 		func.setDeclSpecifier(returnType);
 		
 		IASTStandardFunctionDeclarator createdFunctionDeclarator =
-				functionConstructionHelper.createFunctionDeclarator(qname,
+				extractor.createFunctionDeclarator(qname,
 						info.getDeclarator(), info.getReturnVariable(), container.getNodesToWrite(),
 						info.getParameters(), nodeFactory);
 		func.setDeclarator(createdFunctionDeclarator);
@@ -664,7 +663,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 			subRewrite = rewrite.insertBefore(parent, insertPoint, func, group);
 		}
 
-		functionConstructionHelper.constructMethodBody(compound, container.getNodesToWrite(),
+		extractor.constructMethodBody(compound, container.getNodesToWrite(),
 				info.getParameters(), subRewrite, group);
 
 		// Set return value
@@ -689,7 +688,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 	private IASTDeclSpecifier getReturnType() {
 		IASTNode firstNodeToWrite = container.getNodesToWrite().get(0);
 		NameInformation returnVariable = info.getReturnVariable();
-		return functionConstructionHelper.determineReturnType(firstNodeToWrite,
+		return extractor.determineReturnType(firstNodeToWrite,
 				returnVariable);
 	}
 
@@ -813,13 +812,13 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 	private IASTNode getReturnAssignment(IASTExpressionStatement stmt,
 			IASTExpression callExpression) {
 		IASTNode node = container.getNodesToWrite().get(0);
-		return functionConstructionHelper.createReturnAssignment(node, stmt, callExpression);
+		return extractor.createReturnAssignment(node, stmt, callExpression);
 	}
 	
 	private IASTSimpleDeclaration getDeclaration(IASTName name) {
 		IASTSimpleDeclaration simpleDecl = new CPPASTSimpleDeclaration();
 		IASTStandardFunctionDeclarator declarator =
-				functionConstructionHelper.createFunctionDeclarator(name,
+				extractor.createFunctionDeclarator(name,
 						info.getDeclarator(), info.getReturnVariable(), container.getNodesToWrite(),
 						info.getParameters(), nodeFactory);
 		simpleDecl.addDeclarator(declarator);
@@ -834,7 +833,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 		}
 		simpleDecl.setParent(ast);
 		IASTStandardFunctionDeclarator declarator =
-				functionConstructionHelper.createFunctionDeclarator(name,
+				extractor.createFunctionDeclarator(name,
 						info.getDeclarator(), info.getReturnVariable(), container.getNodesToWrite(),
 						info.getParameters(), nodeFactory);
 		simpleDecl.addDeclarator(declarator);

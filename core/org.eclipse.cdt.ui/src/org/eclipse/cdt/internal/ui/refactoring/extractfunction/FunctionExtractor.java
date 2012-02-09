@@ -47,15 +47,17 @@ import org.eclipse.cdt.internal.ui.refactoring.NameInformation.Indirection;
 /**
  * @author Mirko Stocker
  */
-public abstract class ExtractedFunctionConstructionHelper {
+public abstract class FunctionExtractor {
 	
-	public static ExtractedFunctionConstructionHelper createFor(List<IASTNode> list) {
+	public static FunctionExtractor createFor(List<IASTNode> list) {
 		if (list.get(0) instanceof IASTExpression) {
-			return new ExtractExpression();
+			return new ExpressionExtractor();
 		}
-		return new ExtractStatement();
+		return new StatementExtractor();
 	}
 	
+	public abstract boolean canChooseReturnValue();
+
 	public abstract void constructMethodBody(IASTCompoundStatement compound, List<IASTNode> nodes,
 			List<NameInformation> parameters, ASTRewrite rewrite, TextEditGroup group);
 

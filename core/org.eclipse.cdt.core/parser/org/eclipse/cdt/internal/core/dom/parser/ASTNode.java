@@ -8,6 +8,7 @@
  * Contributors:
  *     John Camelon - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigoin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
 
@@ -36,7 +37,6 @@ import org.eclipse.cdt.internal.core.parser.scanner.Token;
  */
 public abstract class ASTNode implements IASTNode {
 	protected static final ICPPFunction UNINITIALIZED_FUNCTION = new CPPFunction(null);
-    private static final IASTNodeLocation[] EMPTY_LOCATION_ARRAY = {};
 
     private IASTNode parent;
     private ASTNodeProperty property;
@@ -139,18 +139,18 @@ public abstract class ASTNode implements IASTNode {
 
     @Override
 	public IASTNodeLocation[] getNodeLocations() {
-        if (locations != null)
-            return locations;
-        if (length == 0) {
-        	locations= EMPTY_LOCATION_ARRAY;
-        } else {
-        	final IASTTranslationUnit tu= getTranslationUnit();
-        	if (tu != null) {
-        		ILocationResolver l= (ILocationResolver) tu.getAdapter(ILocationResolver.class);
-        		if (l != null) {
-        			locations= l.getLocations(getOffset(), length);
-        		}
-        	}
+        if (locations == null) {
+	        if (length != 0) {
+	        	final IASTTranslationUnit tu= getTranslationUnit();
+	        	if (tu != null) {
+	        		ILocationResolver l= (ILocationResolver) tu.getAdapter(ILocationResolver.class);
+	        		if (l != null) {
+	        			locations= l.getLocations(getOffset(), length);
+	        		}
+	        	}
+	        }
+	        if (locations == null)
+	        	locations= IASTNodeLocation.EMPTY_ARRAY;
         }
         return locations;
     }

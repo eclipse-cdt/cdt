@@ -64,7 +64,7 @@ public class NamespaceHelper {
 			@Override
 			public int visit(ICPPASTNamespaceDefinition namespace) {
 				if (checkFileNameAndLocation(translationUnit.getLocation(), offset, namespace)) {
-					qualifiedName.addName((namespace).getName().copy()); 
+					qualifiedName.addName((namespace).getName().copy(CopyStyle.withLocations)); 
 				}
 				
 				return super.visit(namespace);

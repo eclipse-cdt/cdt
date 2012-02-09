@@ -55,6 +55,7 @@ public class RSEFileSubsystemTestSuite extends DelegatingTestSuiteHolder {
 		// we run in problems with that. The test needs to be executed manually with
 		// the ftp server to use possibly changed to whatever host will do.
 		suite.addTestSuite(FTPFileSubsystemTestCase.class);
+		suite.addTestSuite(ScpFileSubsystemTestCase.class);
 		suite.addTestSuite(FileServiceTgzArchiveTest.class);
 		suite.addTest(RSEFileStoreTest.suite());
 

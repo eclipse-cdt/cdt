@@ -52,6 +52,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.formatter.CodeFormatter;
 import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification.ModificationKind;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModificationMap;
@@ -63,7 +64,6 @@ import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.ProblemRuntimeExcepti
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 import org.eclipse.cdt.internal.core.dom.rewrite.util.FileHelper;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
@@ -124,7 +124,8 @@ public class ChangeGenerator extends ASTVisitor {
 		rootNode.accept(pathProvider);
 		for (IFile currentFile : changes.keySet()) {
 			MultiTextEdit edit = changes.get(currentFile);
-			edit = formatChangedCode(edit, rootNode.getTranslationUnit().getRawSignature(), currentFile.getProject());
+			IASTTranslationUnit ast = rootNode.getTranslationUnit();
+			edit = formatChangedCode(edit, ast.getRawSignature(), ast.getOriginatingTranslationUnit());
 			TextFileChange subchange= ASTRewriteAnalyzer.createCTextFileChange(currentFile);
 			subchange.setEdit(edit);
 			change.add(subchange);
@@ -317,11 +318,11 @@ public class ChangeGenerator extends ASTVisitor {
 	 * 
 	 * @param multiEdit The text edit produced by refactoring.
 	 * @param code The code being modified.
-	 * @param project The project containing the code.
+	 * @param tu The translation unit containing the code.
 	 * @return The text edit containing formatted refactoring changes, or the original text edit
 	 *     in case of errors.
 	 */
-	private MultiTextEdit formatChangedCode(MultiTextEdit multiEdit, String code, IProject project) {
+	private MultiTextEdit formatChangedCode(MultiTextEdit multiEdit, String code, ITranslationUnit tu) {
 		IDocument document = new Document(code);
 		try {
 			// Apply refactoring changes to a temporary document.
@@ -364,8 +365,9 @@ public class ChangeGenerator extends ASTVisitor {
 			}
 
 			// Calculate formatting changes for the regions after the refactoring changes.
-			ICProject proj = CCorePlugin.getDefault().getCoreModel().create(project);
-			Map<String, String> options = proj.getOptions(true);
+			ICProject project = tu.getCProject();
+	        Map<String, Object> options = new HashMap<String, Object>(project.getOptions(true));
+	        options.put(DefaultCodeFormatterConstants.FORMATTER_TRANSLATION_UNIT, tu);
 			// Allow all comments to be indented.
 			options.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_NEVER_INDENT_LINE_COMMENTS_ON_FIRST_COLUMN,
 					DefaultCodeFormatterConstants.FALSE);

@@ -15,8 +15,10 @@
 package org.eclipse.cdt.internal.ui.wizards.classwizard;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -44,6 +46,7 @@ import org.eclipse.cdt.core.browser.IQualifiedTypeName;
 import org.eclipse.cdt.core.browser.ITypeReference;
 import org.eclipse.cdt.core.browser.QualifiedTypeName;
 import org.eclipse.cdt.core.formatter.CodeFormatter;
+import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICContainer;
@@ -352,17 +355,19 @@ public class NewClassCodeGenerator {
 	 */
 	private String formatSource(String content, ITranslationUnit tu) throws CModelException {
         String lineDelimiter= StubUtility.getLineDelimiterUsed(tu);
-        TextEdit edit= CodeFormatterUtil.format(CodeFormatter.K_TRANSLATION_UNIT, content, 0, lineDelimiter,
-        		tu.getCProject().getOptions(true));
+        Map<String, Object> options = new HashMap<String, Object>(tu.getCProject().getOptions(true));
+        options.put(DefaultCodeFormatterConstants.FORMATTER_TRANSLATION_UNIT, tu);
+		TextEdit edit= CodeFormatterUtil.format(CodeFormatter.K_TRANSLATION_UNIT, content, 0,
+				lineDelimiter, options);
         if (edit != null) {
         	IDocument doc= new Document(content);
         	try {
 				edit.apply(doc);
             	content= doc.get();
-			} catch (MalformedTreeException exc) {
-				CUIPlugin.log(exc);
-			} catch (BadLocationException exc) {
-				CUIPlugin.log(exc);
+			} catch (MalformedTreeException e) {
+				CUIPlugin.log(e);
+			} catch (BadLocationException e) {
+				CUIPlugin.log(e);
 			}
         }
         return content;

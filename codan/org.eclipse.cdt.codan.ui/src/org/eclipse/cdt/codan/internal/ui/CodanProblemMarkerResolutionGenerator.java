@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Andrew Gvozdev  - initial API and implementation
+ *     Andrew Gvozdev  - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.ui;
 
@@ -32,22 +32,22 @@ import org.eclipse.ui.IMarkerResolutionGenerator;
 
 public class CodanProblemMarkerResolutionGenerator implements IMarkerResolutionGenerator {
 	private static final String EXTENSION_POINT_NAME = "codanMarkerResolution"; //$NON-NLS-1$
-	private static Map<String, Collection<ConditionalResolution>> resolutions = new HashMap<String, Collection<ConditionalResolution>>();
-	private static boolean resolutionsLoaded = false;
+	private static final Map<String, Collection<ConditionalResolution>> resolutions = new HashMap<String, Collection<ConditionalResolution>>();
+	private static boolean resolutionsLoaded;
 
 	static class ConditionalResolution {
 		IMarkerResolution res;
 		String messagePattern;
 
-		public ConditionalResolution(IMarkerResolution res2, String messagePattern2) {
-			res = res2;
-			messagePattern = messagePattern2;
+		public ConditionalResolution(IMarkerResolution res, String messagePattern) {
+			this.res = res;
+			this.messagePattern = messagePattern;
 		}
 	}
 
 	@Override
 	public IMarkerResolution[] getResolutions(IMarker marker) {
-		if (resolutionsLoaded == false) {
+		if (!resolutionsLoaded) {
 			readExtensions();
 		}
 		String id = marker.getAttribute(ICodanProblemMarker.ID, null);

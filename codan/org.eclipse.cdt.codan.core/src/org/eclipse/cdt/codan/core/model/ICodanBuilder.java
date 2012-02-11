@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Alena Laskavaia  - initial API and implementation
+ *     Alena Laskavaia  - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.model;
 

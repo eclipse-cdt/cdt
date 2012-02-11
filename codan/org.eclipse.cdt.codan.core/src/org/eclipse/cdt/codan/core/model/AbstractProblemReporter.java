@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    QNX Software Systems (Alena Laskavaia)  - initial API and implementation
+ *     QNX Software Systems (Alena Laskavaia)  - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.model;
 
@@ -16,7 +16,7 @@ import org.eclipse.core.resources.IResource;
 
 /**
  * Abstract implementation of a IProblemReporter
- * 
+ *
  * @since 2.0
  */
 public abstract class AbstractProblemReporter implements IProblemReporter {
@@ -30,7 +30,7 @@ public abstract class AbstractProblemReporter implements IProblemReporter {
 		IProblem problem = CheckersRegistry.getInstance().getResourceProfile(file).findProblem(id);
 		if (problem == null)
 			throw new IllegalArgumentException("Id is not registered:" + id); //$NON-NLS-1$
-		if (problem.isEnabled() == false)
+		if (!problem.isEnabled())
 			return; // skip
 		ICodanProblemMarker codanProblemMarker = new CodanProblemMarker(problem, loc, args);
 		reportProblem(codanProblemMarker);

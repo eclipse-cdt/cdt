@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Gil Barash  - Initial implementation
+ *     Gil Barash - Initial implementation
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.checkers.ui.quickfix;
 
@@ -33,7 +33,7 @@ import org.eclipse.ltk.core.refactoring.Change;
 public class CaseBreakQuickFixBreak extends AbstractAstRewriteQuickFix {
 	@Override
 	public boolean isApplicable(IMarker marker) {
-		int line = marker.getAttribute(IMarker.LINE_NUMBER, -1) - 1;
+		int line = marker.getAttribute(IMarker.LINE_NUMBER, 0) - 1;
 		if (line < 0)
 			return false;
 		return true;
@@ -45,17 +45,18 @@ public class CaseBreakQuickFixBreak extends AbstractAstRewriteQuickFix {
 	}
 
 	protected IASTStatement getStmtBeforeBreak(IMarker marker, IASTTranslationUnit ast) throws BadLocationException {
-		int line = marker.getAttribute(IMarker.LINE_NUMBER, -1) - 1;
+		int line = marker.getAttribute(IMarker.LINE_NUMBER, 0) - 1;
 		if (line < 0)
 			return null;
 		IRegion lineInformation = getDocument().getLineInformation(line);
 		IASTNodeSelector nodeSelector = ast.getNodeSelector(null);
 		IASTNode containedNode = nodeSelector.findFirstContainedNode(lineInformation.getOffset(), lineInformation.getLength());
 		IASTNode beforeBreakNode = null;
-		if (containedNode != null)
+		if (containedNode != null) {
 			beforeBreakNode = CxxAstUtils.getEnclosingStatement(containedNode);
-		else
+		} else {
 			beforeBreakNode = nodeSelector.findEnclosingNode(lineInformation.getOffset(), lineInformation.getLength());
+		}
 		if (beforeBreakNode instanceof IASTCompoundStatement) {
 			while (beforeBreakNode != null) {
 				if (beforeBreakNode.getParent() instanceof IASTCompoundStatement
@@ -79,7 +80,7 @@ public class CaseBreakQuickFixBreak extends AbstractAstRewriteQuickFix {
 		try {
 			IASTTranslationUnit ast = getTranslationUnitViaEditor(marker).getAST(index, ITranslationUnit.AST_SKIP_INDEXED_HEADERS);
 			IASTStatement beforeBreak = getStmtBeforeBreak(marker, ast);
-			if (beforeBreak.getParent() instanceof IASTCompoundStatement) {
+			if (beforeBreak != null && beforeBreak.getParent() instanceof IASTCompoundStatement) {
 				IASTCompoundStatement enclosingStatement = (IASTCompoundStatement) beforeBreak.getParent();
 				IASTStatement after = getAfterStatement(beforeBreak);
 				ASTRewrite r = ASTRewrite.create(enclosingStatement.getTranslationUnit());

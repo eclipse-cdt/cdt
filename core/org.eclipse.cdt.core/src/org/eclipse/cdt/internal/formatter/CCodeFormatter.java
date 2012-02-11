@@ -37,6 +37,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.Region;
 import org.eclipse.text.edits.TextEdit;
 
 public class CCodeFormatter extends CodeFormatter {
@@ -108,10 +109,10 @@ public class CCodeFormatter extends CodeFormatter {
 		if (options != null) {
 			this.options= options;
 			Map<String, String> formatterPrefs= new HashMap<String, String>(options.size());
-			for (Map.Entry<String, ?> entry : options.entrySet()) {
-				Object value = entry.getValue();
+			for (String key : options.keySet()) {
+				Object value= options.get(key);
 				if (value instanceof String) {
-					formatterPrefs.put(entry.getKey(), (String) value);
+					formatterPrefs.put(key, (String) value);
 				}
 			}
 			preferences= new DefaultCodeFormatterOptions(formatterPrefs);
@@ -122,66 +123,10 @@ public class CCodeFormatter extends CodeFormatter {
 	}
 
 	@Override
-	public TextEdit format(int kind, String source, int offset, int length, int indentationLevel, String lineSeparator) {
-		TextEdit edit= null;
-		if (lineSeparator != null) {
-			preferences.line_separator = lineSeparator;
-		} else {
-			preferences.line_separator = System.getProperty("line.separator"); //$NON-NLS-1$
-		}
+	public TextEdit format(int kind, String source, int offset, int length, int indentationLevel,
+			String lineSeparator) {
 		preferences.initial_indentation_level = indentationLevel;
-
-		ITranslationUnit tu = getTranslationUnit(source);
-		if (tu != null) {
-			IIndex index;
-			try {
-				index = CCorePlugin.getIndexManager().getIndex(tu.getCProject());
-				index.acquireReadLock();
-			} catch (CoreException e) {
-				throw new AbortFormatting(e);
-			} catch (InterruptedException e) {
-				return null;
-			}
-			IASTTranslationUnit ast;
-			try {
-				try {
-					ast= tu.getAST(index, ITranslationUnit.AST_SKIP_INDEXED_HEADERS);
-				} catch (CoreException exc) {
-					throw new AbortFormatting(exc);
-				}
-				CodeFormatterVisitor codeFormatter = new CodeFormatterVisitor(preferences, offset, length);
-				edit= codeFormatter.format(source, ast);
-				IStatus status= codeFormatter.getStatus();
-				if (!status.isOK()) {
-					CCorePlugin.log(status);
-				}
-			} finally {
-				index.releaseReadLock();
-			}
-		} else {
-			IncludeFileContentProvider contentProvider = IncludeFileContentProvider.getSavedFilesProvider();
-			IScannerInfo scanInfo = new ScannerInfo();
-			FileContent content = FileContent.create("<text>", source.toCharArray()); //$NON-NLS-1$
-			
-			ILanguage language= (ILanguage) options.get(DefaultCodeFormatterConstants.FORMATTER_LANGUAGE);
-			if (language == null) {
-				language= GPPLanguage.getDefault();
-			}
-			IASTTranslationUnit ast;
-			try {
-				ast= language.getASTTranslationUnit(content, scanInfo, contentProvider, null, 0,
-						ParserUtil.getParserLogService());
-				CodeFormatterVisitor codeFormatter = new CodeFormatterVisitor(preferences, offset, length);
-				edit= codeFormatter.format(source, ast);
-				IStatus status= codeFormatter.getStatus();
-				if (!status.isOK()) {
-					CCorePlugin.log(status);
-				}
-			} catch (CoreException e) {
-				throw new AbortFormatting(e);
-			}
-		}
-		return edit;
+		return format(kind, source, new IRegion[] { new Region(offset, length) }, lineSeparator)[0];
 	}
 
 	@Override

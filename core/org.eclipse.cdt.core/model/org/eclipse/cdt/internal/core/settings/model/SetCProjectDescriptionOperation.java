@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Intel Corporation and others.
+ * Copyright (c) 2007, 2012 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  * Intel Corporation - Initial API and implementation
  * James Blackburn (Broadcom Corp.)
+ * Baltasar Belyavsky (Texas Instruments) - bug 340219: Project metadata files are saved unnecessarily
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.settings.model;
 
@@ -65,14 +66,14 @@ public class SetCProjectDescriptionOperation extends CModelOperation {
 		AbstractCProjectDescriptionStorage.fireAboutToApplyEvent(fSetDescription, fOldDescriptionCache);
 		CProjectDescription fNewDescriptionCache = null;
 		SettingsContext context = new SettingsContext(project);
-		boolean modified = false;
+		boolean needsSerialization = false;
 
 		if(fSetDescription != null){
 			ICStorageElement newEl = null;
 			ICSettingsStorage newStorage = null;
 			try {
 				ICStorageElement base = fSetDescription.getRootStorageElement();
-				modified = fSetDescription.isModified();
+				needsSerialization = fSetDescription.needsDescriptionPersistence();
 //				el = base;
 				// FIXME JBB there is deep magic going on here.  The project descriptions are being
 				//           changed in non-obvious ways
@@ -94,13 +95,11 @@ public class SetCProjectDescriptionOperation extends CModelOperation {
 			boolean envStates[] = getEnvStates(fNewDescriptionCache);
 			try {
 				fPrjDescStorage.setThreadLocalProjectDesc(fNewDescriptionCache);
-				modified |= fNewDescriptionCache.applyDatas(context);
+				fNewDescriptionCache.applyDatas(context);
 			} finally {
 				fPrjDescStorage.setThreadLocalProjectDesc(null);
 				setEnvStates(fNewDescriptionCache, envStates);
 			}
-		} else {
-			modified = fOldDescriptionCache != null;
 		}
 
 		ICDescriptionDelta delta = mngr.createDelta(fNewDescriptionCache, fOldDescriptionCache);
@@ -143,7 +142,7 @@ public class SetCProjectDescriptionOperation extends CModelOperation {
 		try {
 			IWorkspaceRunnable toRun = null;
 			if(fNewDescriptionCache != null && !CProjectDescriptionManager.checkFlags(fFlags, ICProjectDescriptionManager.SET_NO_SERIALIZE)){
-				if(modified || isPersistentCoreSettingChanged(event)){
+				if(needsSerialization || isPersistentCoreSettingChanged(event)){
 					toRun = fPrjDescStorage.createDesSerializationRunnable();
 					if (toRun != null)
 						context.addWorkspaceRunnable(toRun);
@@ -182,7 +181,8 @@ public class SetCProjectDescriptionOperation extends CModelOperation {
 			return true;
 
 		int flags = delta.getChangeFlags();
-		if(flags != 0 && flags != ICDescriptionDelta.ACTIVE_CFG)
+		// check for any flag except ACTIVE_CFG and SETTING_CFG
+		if((flags & ~(ICDescriptionDelta.ACTIVE_CFG | ICDescriptionDelta.SETTING_CFG)) != 0)
 			return true;
 
 		return false;

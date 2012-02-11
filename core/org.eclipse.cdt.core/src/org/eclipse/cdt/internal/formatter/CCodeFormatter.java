@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.FileContent;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IncludeFileContentProvider;
@@ -258,6 +259,9 @@ public class CCodeFormatter extends CodeFormatter {
 		}
 		if (tu != null && source != null) {
 			try {
+				// Create a private working copy and set it contents to source.
+				if (tu.isWorkingCopy())
+					tu = ((IWorkingCopy) tu).getOriginalElement();
 				tu = tu.getWorkingCopy();
 				tu.getBuffer().setContents(source);
 			} catch (CModelException e) {

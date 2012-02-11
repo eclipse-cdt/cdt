@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -8,15 +8,14 @@
  *  
  * Contributors: 
  *     Institute for Software - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.astwriter;
 
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.IASTComment;
-import org.eclipse.cdt.core.dom.ast.IASTCopyLocation;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 
 /**
@@ -108,11 +107,9 @@ public class NodeWriter {
 
 	private List<IASTComment> getTrailingComments(IASTNode node) {
 		List<IASTComment> trailingComments = commentMap.getTrailingCommentsForNode(node);
-		IASTNodeLocation[] locs = node.getNodeLocations();
-		if (locs != null && locs.length > 0 && locs[0] instanceof IASTCopyLocation) {
-			IASTCopyLocation loc = (IASTCopyLocation) locs[0];
-			trailingComments.addAll(commentMap.getTrailingCommentsForNode(loc.getOriginalNode()));
-		}
+		IASTNode originalNode = node.getOriginalNode();
+		if (originalNode != node)
+			trailingComments.addAll(commentMap.getTrailingCommentsForNode(originalNode));
 		return trailingComments;
 	}
 
@@ -122,11 +119,9 @@ public class NodeWriter {
 
 	private List<IASTComment> getFreestandingComments(IASTNode node) {
 		List<IASTComment> freestandingComments = commentMap.getFreestandingCommentsForNode(node);
-		IASTNodeLocation[] locs = node.getNodeLocations();
-		if (locs != null && locs.length > 0 && locs[0] instanceof IASTCopyLocation) {
-			IASTCopyLocation loc = (IASTCopyLocation) locs[0];
-			freestandingComments.addAll(commentMap.getFreestandingCommentsForNode(loc.getOriginalNode()));
-		}
+		IASTNode originalNode = node.getOriginalNode();
+		if (originalNode != node)
+			freestandingComments.addAll(commentMap.getFreestandingCommentsForNode(originalNode));
 		return freestandingComments;
 	}
 

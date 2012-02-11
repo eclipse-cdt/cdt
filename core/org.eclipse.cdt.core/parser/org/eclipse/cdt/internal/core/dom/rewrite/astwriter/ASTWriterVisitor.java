@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Institute for Software, HSR Hochschule fuer Technik
+ * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -19,7 +19,6 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
-import org.eclipse.cdt.core.dom.ast.IASTCopyLocation;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -27,7 +26,6 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
@@ -130,11 +128,9 @@ public class ASTWriterVisitor extends ASTVisitor {
 
 	private List<IASTComment> getLeadingComments(IASTNode node) {
 		List<IASTComment> leadingComments = commentMap.getLeadingCommentsForNode(node);
-		IASTNodeLocation[] locs = node.getNodeLocations();
-		if (locs != null && locs.length > 0 && locs[0] instanceof IASTCopyLocation) {
-			IASTCopyLocation copyLoc = (IASTCopyLocation) locs[0];
-			leadingComments.addAll(commentMap.getLeadingCommentsForNode(copyLoc.getOriginalNode()));
-		}
+		IASTNode originalNode = node.getOriginalNode();
+		if (originalNode != node)
+			leadingComments.addAll(commentMap.getLeadingCommentsForNode(originalNode));
 		return leadingComments;
 	}
 

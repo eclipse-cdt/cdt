@@ -280,6 +280,11 @@ public class PDOMASTAdapter {
 		public boolean isQualified() {
 			return fDelegate.isQualified();
 		}
+
+		@Override
+		public IASTNode getOriginalNode() {
+			return this;
+		}
 	}
 
 	private static class AnonymousEnumeration implements IEnumeration {

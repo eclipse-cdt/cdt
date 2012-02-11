@@ -277,4 +277,11 @@ public interface IASTNode {
 	 *             if this node or one of its descendants does not support copying
 	 */
 	public IASTNode copy(CopyStyle style);
+
+	/**
+	 * If the node is a copy of some other node, returns the original node.
+	 * Otherwise returns the node itself.
+	 * @since 5.4
+	 */
+	public IASTNode getOriginalNode();
 }

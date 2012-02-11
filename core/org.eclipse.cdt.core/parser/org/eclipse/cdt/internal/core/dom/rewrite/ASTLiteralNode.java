@@ -131,4 +131,9 @@ public class ASTLiteralNode implements IASTNode {
 	public boolean isActive() {
 		return true;
 	}
+
+	@Override
+	public IASTNode getOriginalNode() {
+		return this;
+	}
 }

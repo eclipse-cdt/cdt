@@ -13,9 +13,13 @@ package org.eclipse.cdt.core.dom.ast;
 
 /**
  * @author Emanuel Graf IFS
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
  * @since 5.3
  */
 public interface IASTCopyLocation extends IASTNodeLocation {
-
+	/**
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
 	public IASTNode getOriginalNode();
 }

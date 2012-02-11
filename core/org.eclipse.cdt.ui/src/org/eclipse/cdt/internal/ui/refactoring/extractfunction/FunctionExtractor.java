@@ -39,8 +39,6 @@ import org.eclipse.cdt.core.dom.ast.INodeFactory;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
 
-import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
-
 import org.eclipse.cdt.internal.ui.refactoring.NameInformation;
 import org.eclipse.cdt.internal.ui.refactoring.NameInformation.Indirection;
 
@@ -134,7 +132,7 @@ public abstract class FunctionExtractor {
 
 			@Override
 			public int visit(IASTName name) {
-				NameInformation param = changedParameters.get(((ASTNode) name).getOriginalNode());
+				NameInformation param = changedParameters.get(name.getOriginalNode());
 				if (param != null) {
 					IASTName newName = null;
 					if (param.isRenamed()) {

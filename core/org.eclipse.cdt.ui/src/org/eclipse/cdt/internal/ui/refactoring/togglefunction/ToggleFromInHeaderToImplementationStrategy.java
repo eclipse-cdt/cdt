@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2011, 2012 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -7,7 +7,8 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  * 
  * Contributors: 
- * 	   Martin Schwab & Thomas Kallenberg - initial API and implementation 
+ * 	   Martin Schwab & Thomas Kallenberg - initial API and implementation
+ * 	   Sergey Prigogin (Google) 
  ******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.togglefunction;
 
@@ -18,7 +19,6 @@ import org.eclipse.text.edits.TextEditGroup;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTComment;
-import org.eclipse.cdt.core.dom.ast.IASTCopyLocation;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -229,9 +229,9 @@ public class ToggleFromInHeaderToImplementationStrategy implements IToggleRefact
 
 			private void copyComments(IASTNode node, ASTRewrite newRewriter, ASTRewrite oldRewriter,
 					CommentPosition pos) {
-				if (node.getNodeLocations().length > 0 && node.getNodeLocations()[0] instanceof IASTCopyLocation) {
-					IASTCopyLocation copyLoc = (IASTCopyLocation) node.getNodeLocations()[0];
-					List<IASTComment> comments = oldRewriter.getComments(copyLoc.getOriginalNode(), pos);
+				IASTNode originalNode = node.getOriginalNode();
+				if (originalNode != node) {
+					List<IASTComment> comments = oldRewriter.getComments(originalNode, pos);
 					for (IASTComment comment : comments) {
 						newRewriter.addComment(node, comment, pos);
 					}

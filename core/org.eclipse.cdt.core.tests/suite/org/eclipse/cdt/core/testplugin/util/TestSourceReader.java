@@ -117,7 +117,7 @@ public class TestSourceReader {
 			    	if (line.startsWith("//")) {
 			    		content.append(line.substring(2) + "\n");
 			    	} else {
-			    		if (content.length() > 0) {
+			    		if (!line.startsWith("@") && content.length() > 0) {
 			    			contents.add(content);
 			    			if (sections > 0 && contents.size() == sections + 1)
 			    				contents.remove(0);
@@ -128,7 +128,9 @@ public class TestSourceReader {
 			    			if (idx != -1 && !Character.isJavaIdentifierPart(line.charAt(idx + testName.length()))) {
 			    				return contents.toArray(new StringBuilder[contents.size()]);
 			    			}
-			    			contents.clear();
+			    			if (!line.startsWith("@")) {
+			    				contents.clear();
+			    			}
 			    		}
 			    	}
 			    }

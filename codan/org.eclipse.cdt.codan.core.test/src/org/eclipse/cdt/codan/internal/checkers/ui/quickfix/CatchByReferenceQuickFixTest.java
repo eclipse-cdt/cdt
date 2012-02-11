@@ -16,8 +16,8 @@ import org.eclipse.cdt.codan.ui.AbstractCodanCMarkerResolution;
 /**
  * @author Tomasz Wesolowski
  */
+@SuppressWarnings("restriction")
 public class CatchByReferenceQuickFixTest extends QuickFixTestCase {
-
 	@Override
 	public void setUp() throws Exception {
 		super.setUp();
@@ -41,7 +41,6 @@ public class CatchByReferenceQuickFixTest extends QuickFixTestCase {
 	//    } catch (C exception) {
 	//    }
 	// }
-	@SuppressWarnings("restriction")
 	public void testCatchByReference() throws Exception {
 		setQuickFix(new CatchByReferenceQuickFix());
 		loadcode(getAboveComment());
@@ -56,7 +55,6 @@ public class CatchByReferenceQuickFixTest extends QuickFixTestCase {
 	//    } catch (C) {
 	//    }
 	// }
-	@SuppressWarnings("restriction")
 	public void testCatchByReferenceNoDeclName() throws Exception {
 		setQuickFix(new CatchByReferenceQuickFix());
 		loadcode(getAboveComment());
@@ -71,7 +69,6 @@ public class CatchByReferenceQuickFixTest extends QuickFixTestCase {
 	//    } catch (C exception) {
 	//    }
 	// }
-	@SuppressWarnings("restriction")
 	public void testCatchByConstReference() throws Exception {
 		setQuickFix(new CatchByConstReferenceQuickFix());
 		loadcode(getAboveComment());
@@ -86,7 +83,6 @@ public class CatchByReferenceQuickFixTest extends QuickFixTestCase {
 	//    } catch (C) {
 	//    }
 	// }
-	@SuppressWarnings("restriction")
 	public void testCatchByConstReferenceNoDeclName() throws Exception {
 		setQuickFix(new CatchByConstReferenceQuickFix());
 		loadcode(getAboveComment());

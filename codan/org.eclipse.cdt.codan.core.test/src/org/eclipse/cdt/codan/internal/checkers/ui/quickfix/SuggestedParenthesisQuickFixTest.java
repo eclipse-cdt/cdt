@@ -39,17 +39,16 @@ public class SuggestedParenthesisQuickFixTest extends QuickFixTestCase {
 
 	// @file:header.h
 	// int foo();
-	/* ---- */
+
 	// @file:main.c
 	// #include "header.h"
 	// main() {
 	//   foo();
 	// }
-	/*
-	 * this test is using two files, there was not actually bugs here so
-	 * quick fix is not called
-	 */
 	public void test2FilesExample() throws Exception {
+		/*
+		 * There are no problems in either of the two files, so quick fix is not called.
+		 */
 		CharSequence[] code = getContents(2);
 		File f1 = loadcode(code[0].toString());
 		File f2 = loadcode(code[1].toString());

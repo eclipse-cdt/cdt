@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 Tomasz Wesolowski and others
+ * Copyright (c) 2010, 2012 Tomasz Wesolowski and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,41 +20,42 @@ public class CaseBreakQuickFixTest extends QuickFixTestCase {
 		return new CaseBreakQuickFixBreak();
 	}
 
-	// void func() {
-	//	 int a;
-	//   switch(a) {
-	//	   case 1:
-	//	     hello();
-	//     case 2:
-	//	 }
-	// }
+	//void func() {
+	//	int a;
+	//	switch(a) {
+	//	case 1:
+	//		hello();
+	//	case 2:
+	//		break;
+	//	}
+	//}
 	public void testMiddleCase() throws Exception {
 		loadcode(getAboveComment());
 		String result = runQuickFixOneFile();
-		assertContainedIn("break;     case 2:", result);
+		assertContainedIn("break;\tcase 2:", result);
 	}
 
-	// void func() {
-	//	 int a;
-	//   switch(a) {
-	//	   case 1:
-	//	     hello();
-	//	 }
-	// }
+	//void func() {
+	//	int a;
+	//	switch(a) {
+	//	case 1:
+	//		hello();
+	//	}
+	//}
 	public void testLastCase() throws Exception {
 		loadcode(getAboveComment());
 		String result = runQuickFixOneFile();
-		assertContainedIn("break;	 }", result);
+		assertContainedIn("break;\t}", result);
 	}
 
-	// void func() {
-	//	 int a;
-	//   switch(a) {
-	//	   case 1: {
-	//	     hello();
-	//     }
-	//	 }
-	// }
+	//void func() {
+	//	int a;
+	//	switch(a) {
+	//	case 1: {
+	//		hello();
+	//	}
+	//	}
+	//}
 	public void testLastCaseComp() throws Exception {
 		loadcode(getAboveComment());
 		String result = runQuickFixOneFile();

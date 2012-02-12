@@ -15,7 +15,6 @@ import org.eclipse.cdt.codan.internal.checkers.ClassMembersInitializationChecker
 
 /**
  * Test for {@see ClassMembersInitializationChecker} class
- *
  */
 public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 	@Override
@@ -476,5 +475,4 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLines(8,9,10,11);
 	}
-
 }

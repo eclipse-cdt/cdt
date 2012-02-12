@@ -140,8 +140,7 @@ public class CodanMarkerProblemReporter extends AbstractProblemReporter
 		}
 		ICheckersRegistry reg = CodanRuntime.getInstance().getCheckersRegistry();
 		Collection<IProblem> problems = reg.getRefProblems(checker);
-		for (int i = 0; i < markers.length; i++) {
-			IMarker m = markers[i];
+		for (IMarker m : markers) {
 			String id = m.getAttribute(ICodanProblemMarker.ID, ""); //$NON-NLS-1$
 			for (IProblem problem : problems) {
 				if (problem.getId().equals(id)) {

@@ -41,7 +41,7 @@ public class TestUtils {
 	public static String loadFile(InputStream st) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(st));
 		String buffer;
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		while ((buffer = br.readLine()) != null) {
 			result.append(buffer);
 		}

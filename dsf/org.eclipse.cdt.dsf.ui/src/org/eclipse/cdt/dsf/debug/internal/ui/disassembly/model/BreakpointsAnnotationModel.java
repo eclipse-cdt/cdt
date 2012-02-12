@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2012 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,8 @@
  *
  * Contributors:
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
- *     Patrick Chuong (Texas Instruments) - bug 300053
+ *     Patrick Chuong (Texas Instruments) - Bug 300053
+ *     Patrick Chuong (Texas Instruments) - Bug 369998
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.internal.ui.disassembly.model;
 
@@ -25,6 +26,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointListener;
 import org.eclipse.debug.core.IBreakpointManager;
@@ -47,7 +49,12 @@ import org.eclipse.ui.texteditor.SimpleMarkerAnnotation;
 public class BreakpointsAnnotationModel extends DisassemblyAnnotationModel implements IBreakpointListener, IDocumentListener {
 	
 	private Runnable fCatchup;
-
+	private IAdaptable fDebugContext;
+	
+	public BreakpointsAnnotationModel(IAdaptable debugContext) {
+		fDebugContext = debugContext;
+	}
+	
 	@Override
 	public void connect(IDocument document) {
 		super.connect(document);
@@ -159,14 +166,14 @@ public class BreakpointsAnnotationModel extends DisassemblyAnnotationModel imple
 		if (locationProvider != null) {
 
 			/* if there is source info, than create a source line position */
-			String sourceFile = locationProvider.getSourceFile(breakpoint);
+			String sourceFile = locationProvider.getSourceFile(breakpoint, fDebugContext);
 			if (sourceFile != null) {
-				int lineNumber = locationProvider.getLineNumber(breakpoint) - 1;
+				int lineNumber = locationProvider.getLineNumber(breakpoint, fDebugContext) - 1;
 				return createPositionFromSourceLine(sourceFile, lineNumber);
 			
 			} else {
 				/* if there is label info, than create a label position */
-				IAddress labelAddress = locationProvider.getLabelAddress(breakpoint);
+				IAddress labelAddress = locationProvider.getLabelAddress(breakpoint, fDebugContext);
 				if (labelAddress != null) {
 					return createPositionFromLabel(labelAddress.getValue());
 				
@@ -178,7 +185,7 @@ public class BreakpointsAnnotationModel extends DisassemblyAnnotationModel imple
 					//
 					// So for now, we only create an annotation for the first valid address. We can add 
 					// support for multiple annotations per breakpoint when it's needed.
-					IAddress[] addresses = locationProvider.getAddresses(breakpoint);
+					IAddress[] addresses = locationProvider.getAddresses(breakpoint, fDebugContext);
 					for (int i = 0; addresses != null && i < addresses.length; ++i) {
 						BigInteger address = addresses[i].getValue();
 						Position position = createPositionFromAddress(address);

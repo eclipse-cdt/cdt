@@ -20,7 +20,6 @@ package org.eclipse.cdt.core.dom.rewrite;
  * @noextend This interface is not intended to be extended by clients.
  */
 public interface ITrackedNodePosition {
-	
 	/**
 	 * Returns the original or modified start position of the tracked node depending if called before
 	 * or after the rewrite is applied. <code>-1</code> is returned for removed nodes.

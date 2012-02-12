@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Anton Gorenkov   - initial implementation
+ *     Anton Gorenkov   - initial implementation
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.internal.checkers;
 
@@ -15,7 +15,6 @@ import org.eclipse.cdt.codan.internal.checkers.ClassMembersInitializationChecker
 
 /**
  * Test for {@see ClassMembersInitializationChecker} class
- *
  */
 public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 	@Override
@@ -183,10 +182,11 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 	//   T1 t1;
 	//   T2 t2;
 	// };
-	// C::C() : i1(0), t1(T1()) {}  // 1 warning for: i2.
+	// template <typename T1, typename T2>
+	// C<T1,T2>::C() : i1(0), t1(T1()) {}  // 1 warning for: i2.
 	public void testExternalConstructorOfTemplateClassHandling() {
 		loadCodeAndRun(getAboveComment());
-		checkErrorLines(8);
+		checkErrorLines(9);
 	}
 
 	// class C {
@@ -476,5 +476,4 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLines(8,9,10,11);
 	}
-
 }

@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
-
 /**
  * This interface represents a binary expression.
  * 
@@ -36,15 +35,14 @@ public interface IASTBinaryExpression extends IASTExpression {
 			"IASTBinaryExpression.OPERAND_TWO - IASTExpression for RHS"); //$NON-NLS-1$
 
 	/**
-	 * Set the operator.
+	 * Sets the operator.
 	 * 
-	 * @param op
-	 *            Value to set.
+	 * @param op value to set.
 	 */
 	public void setOperator(int op);
 
 	/**
-	 * Get the operator.
+	 * Returns the operator.
 	 * 
 	 * @return int value as operator
 	 */
@@ -244,7 +242,6 @@ public interface IASTBinaryExpression extends IASTExpression {
 	 * @param expression
 	 *            <code>IASTExpression</code> value.
 	 */
-
 	public void setOperand1(IASTExpression expression);
 
 	/**

@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTNode.CopyStyle;
 import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroExpansion;
@@ -170,7 +171,7 @@ public final class CxxAstUtils {
 			simpleDeclaration.addDeclarator(declarator);
 			return simpleDeclaration;
 		} else { // Fallback - return a `void` declaration
-			IASTDeclarator declarator = factory.newDeclarator(astName.copy());
+			IASTDeclarator declarator = factory.newDeclarator(astName.copy(CopyStyle.withLocations));
 			IASTSimpleDeclSpecifier declspec = factory.newSimpleDeclSpecifier();
 			declspec.setType(Kind.eInt);
 			IASTSimpleDeclaration simpleDeclaration = factory.newSimpleDeclaration(declspec);
@@ -273,9 +274,9 @@ public final class CxxAstUtils {
 						if (child instanceof IASTParameterDeclaration) {
 							if (nthParam == targetParameterNum) {
 								IASTParameterDeclaration pd = (IASTParameterDeclaration) child;
-								IASTDeclSpecifier declspec = pd.getDeclSpecifier().copy();
-								IASTDeclarator declarator = pd.getDeclarator().copy();
-								setNameInNestedDeclarator(declarator, astName.copy());
+								IASTDeclSpecifier declspec = pd.getDeclSpecifier().copy(CopyStyle.withLocations);
+								IASTDeclarator declarator = pd.getDeclarator().copy(CopyStyle.withLocations);
+								setNameInNestedDeclarator(declarator, astName.copy(CopyStyle.withLocations));
 								IASTSimpleDeclaration declaration = factory.newSimpleDeclaration(declspec);
 								declaration.addDeclarator(declarator);
 								return declaration;

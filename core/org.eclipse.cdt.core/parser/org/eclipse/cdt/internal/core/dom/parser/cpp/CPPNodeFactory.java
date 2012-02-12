@@ -113,12 +113,10 @@ import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.internal.core.dom.parser.NodeFactory;
 import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
 
-
 /**
  * Abstract factory implementation that creates C++ AST nodes.
  */
 public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
-
 	private static final CPPNodeFactory DEFAULT_INSTANCE = new CPPNodeFactory();
 	
 	public static CPPNodeFactory getDefault() {

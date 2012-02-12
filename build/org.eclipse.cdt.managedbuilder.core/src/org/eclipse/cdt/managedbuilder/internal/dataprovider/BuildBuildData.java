@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2012 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * Baltasar Belyavsky (Texas Instruments) - bug 340219: Project metadata files are saved unnecessarily
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.dataprovider;
 
@@ -14,8 +15,12 @@ import org.eclipse.cdt.core.envvar.IEnvironmentContributor;
 import org.eclipse.cdt.core.settings.model.ICOutputEntry;
 import org.eclipse.cdt.core.settings.model.extension.CBuildData;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.internal.core.Builder;
+import org.eclipse.cdt.managedbuilder.internal.core.BuilderFactory;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
+import org.eclipse.core.resources.ICommand;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
@@ -32,7 +37,7 @@ public class BuildBuildData extends CBuildData {
 	public IPath getBuilderCWD() {
 		return new Path(fBuilder.getBuildPath());//ManagedBuildManager.getBuildLocation(fCfg, fBuilder);
 	}
-	
+
 //	private IPath createAbsolutePathFromWorkspacePath(IPath path){
 //		IStringVariableManager mngr = VariablesPlugin.getDefault().getStringVariableManager();
 //		String locationString = mngr.generateVariableExpression("workspace_loc", path.toString()); //$NON-NLS-1$
@@ -90,7 +95,18 @@ public class BuildBuildData extends CBuildData {
 //		return fEnvContibutor;
 		return new BuildEnvironmentContributor(this);
 	}
-	
+
+	@Override
+	public ICommand getBuildSpecCommand() {
+		try {
+			return BuilderFactory.createCommandFromBuilder(this.fBuilder);
+		}
+		catch(CoreException cx) {
+			ManagedBuilderCorePlugin.log(cx);
+			return null;
+		}
+	}
+
 	public IBuilder getBuilder(){
 		return fBuilder;
 	}

@@ -14,7 +14,13 @@ package org.eclipse.cdt.ui.wizards;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
@@ -90,7 +96,7 @@ public class TemplateSelectionPage extends WizardPage {
 	
 	private TreeViewer templateTree;
 	private Template selectedTemplate;
-	private IWizardPage[] nextPages;
+	private IWizardPage nextPage;
 	
 	public TemplateSelectionPage() {
 		super("templateSelection"); //$NON-NLS-1$
@@ -179,7 +185,7 @@ public class TemplateSelectionPage extends WizardPage {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				selectedTemplate = null;
-				nextPages = null;
+				nextPage = null;
 				IStructuredSelection selection = (IStructuredSelection)templateTree.getSelection();
 				Object selObj = selection.getFirstElement();
 				if (selObj instanceof Node) {
@@ -187,8 +193,19 @@ public class TemplateSelectionPage extends WizardPage {
 					if (object instanceof Template) {
 						IWizard wizard = getWizard();
 						selectedTemplate = (Template)object;
-						nextPages = selectedTemplate.getTemplateWizardPages(TemplateSelectionPage.this,
+						
+						// Get the template pages
+						IWizardPage[] templatePages = selectedTemplate.getTemplateWizardPages(TemplateSelectionPage.this,
 								wizard.getNextPage(TemplateSelectionPage.this), wizard);
+						if (templatePages != null && templatePages.length > 0)
+							nextPage = templatePages[0];
+						
+						String projectType = selectedTemplate.getTemplateInfo().getProjectType();
+						ProjectTypePage projectTypePage = getProjectTypePage(projectType);
+						if (projectTypePage != null) {
+							if (projectTypePage.init(selectedTemplate, wizard, nextPage))
+								nextPage = projectTypePage;
+						}
 						setPageComplete(true);
 					} else {
 						setPageComplete(false);
@@ -215,8 +232,8 @@ public class TemplateSelectionPage extends WizardPage {
 	
 	@Override
 	public IWizardPage getNextPage() {
-		if (nextPages != null && nextPages.length > 0)
-			return nextPages[0];
+		if (nextPage != null)
+			return nextPage;
 		return super.getNextPage();
 	}
 	
@@ -286,6 +303,35 @@ public class TemplateSelectionPage extends WizardPage {
 		}
 
 		return nodes;
+	}
+	
+	private ProjectTypePage getProjectTypePage(String projectType) {
+		if (projectType != null && !projectType.isEmpty()) {
+			IExtensionRegistry reg = Platform.getExtensionRegistry();
+			IExtensionPoint point = reg.getExtensionPoint(CUIPlugin.PLUGIN_ID, "projectTypePages"); //$NON-NLS-1$
+			if (point == null)
+				return null;
+			IExtension[] exts = point.getExtensions();
+			for (IExtension ext : exts) {
+				IConfigurationElement[] elems = ext.getConfigurationElements();
+				for (IConfigurationElement elem : elems) {
+					if (elem.getName().equals("projectTypePage")) { //$NON-NLS-1$
+						String ept = elem.getAttribute("projectType"); //$NON-NLS-1$
+						if (projectType.equals(ept)) {
+							try {
+								Object obj = elem.createExecutableExtension("class"); //$NON-NLS-1$
+								if (obj instanceof ProjectTypePage)
+									return (ProjectTypePage)obj;
+							} catch (CoreException e) {
+								CUIPlugin.log(e.getStatus());
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		return null;
 	}
 	
 }

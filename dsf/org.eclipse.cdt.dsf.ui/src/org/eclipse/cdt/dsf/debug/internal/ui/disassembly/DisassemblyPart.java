@@ -9,9 +9,10 @@
  *     Wind River Systems - initial API and implementation
  *     Patrick Chuong (Texas Instruments) - Bug 326670
  *     Patrick Chuong (Texas Instruments) - Bug 329682
- *     Patrick Chuong (Texas Instruments) - bug 330259
+ *     Patrick Chuong (Texas Instruments) - Bug 330259
  *     Patrick Chuong (Texas Instruments) - Pin and Clone Supports (331781)
  *     Patrick Chuong (Texas Instruments) - Bug 364405
+ *     Patrick Chuong (Texas Instruments) - Bug 369998
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.internal.ui.disassembly;
 
@@ -303,7 +304,8 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	protected boolean fTrackExpression = false;
 	private String fPCLastLocationTxt = DisassemblyMessages.Disassembly_GotoLocation_initial_text;
 	private BigInteger fPCLastAddress = PC_UNKNOWN;
-
+	private IAdaptable fDebugContext;
+	
 	private String fPCAnnotationColorKey;
 
 	private ArrayList<Runnable> fRunnableQueue = new ArrayList<Runnable>();
@@ -1851,22 +1853,22 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	}
 
 	protected void updateDebugContext() {
-		IAdaptable context = DebugUITools.getPartDebugContext(getSite());
+		fDebugContext = DebugUITools.getPartDebugContext(getSite());
 		IDisassemblyBackend prevBackend = fBackend;
 		IDisassemblyBackend newBackend = null;
 		fDebugSessionId = null;
 		boolean needUpdate = false;
-		if (context != null) {
-			IDisassemblyBackend contextBackend = (IDisassemblyBackend)context.getAdapter(IDisassemblyBackend.class);
+		if (fDebugContext != null) {
+			IDisassemblyBackend contextBackend = (IDisassemblyBackend)fDebugContext.getAdapter(IDisassemblyBackend.class);
 			// Need to compare the backend classes to prevent reusing the same backend object.
 			// sub class can overwrite the standard disassembly backend to provide its own customization.
-			if ((prevBackend != null) && (contextBackend != null) && prevBackend.getClass().equals(contextBackend.getClass()) && prevBackend.supportsDebugContext(context)) {
+			if ((prevBackend != null) && (contextBackend != null) && prevBackend.getClass().equals(contextBackend.getClass()) && prevBackend.supportsDebugContext(fDebugContext)) {
 				newBackend = prevBackend;
 			} else {
 				needUpdate = true;
-				newBackend = (IDisassemblyBackend)context.getAdapter(IDisassemblyBackend.class);
+				newBackend = (IDisassemblyBackend)fDebugContext.getAdapter(IDisassemblyBackend.class);
 				if (newBackend != null) {
-					if (newBackend.supportsDebugContext(context)) {
+					if (newBackend.supportsDebugContext(fDebugContext)) {
 						newBackend.init(this);
 					} else {
 						newBackend = null;
@@ -1876,7 +1878,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		}
 		fBackend = newBackend;
 		if (newBackend != null) {
-			IDisassemblyBackend.SetDebugContextResult result = newBackend.setDebugContext(context);
+			IDisassemblyBackend.SetDebugContextResult result = newBackend.setDebugContext(fDebugContext);
 			if (result != null) {
 				fDebugSessionId = result.sessionId;
 				if (result.contextChanged) {
@@ -1981,7 +1983,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		IAnnotationModel annotationModel = fViewer.getAnnotationModel();
 		if (annotationModel instanceof IAnnotationModelExtension) {
 			IAnnotationModelExtension ame= (IAnnotationModelExtension) annotationModel;
-			ame.addAnnotationModel(BREAKPOINT_ANNOTATIONS, new BreakpointsAnnotationModel());
+			ame.addAnnotationModel(BREAKPOINT_ANNOTATIONS, new BreakpointsAnnotationModel(fDebugContext));
 		}
 	}
 

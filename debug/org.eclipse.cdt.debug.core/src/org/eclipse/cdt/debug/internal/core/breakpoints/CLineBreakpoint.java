@@ -14,6 +14,9 @@ import com.ibm.icu.text.MessageFormat;
 import java.util.Map;
 
 import org.eclipse.cdt.debug.core.CDebugUtils;
+import org.eclipse.cdt.debug.core.model.ICBreakpoint;
+import org.eclipse.cdt.debug.core.model.ICLineBreakpoint2;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 
@@ -34,7 +37,7 @@ public class CLineBreakpoint extends AbstractLineBreakpoint {
 	/**
 	 * Constructor for CLineBreakpoint.
 	 */
-	public CLineBreakpoint( IResource resource, Map attributes, boolean add ) throws CoreException {
+	public CLineBreakpoint( IResource resource, Map<String, Object> attributes, boolean add ) throws CoreException {
 		super( resource, getMarkerType(), attributes, add );
 	}
 
@@ -50,6 +53,27 @@ public class CLineBreakpoint extends AbstractLineBreakpoint {
 	 */
 	@Override
 	protected String getMarkerMessage() throws CoreException {
-		return MessageFormat.format( BreakpointMessages.getString( "CLineBreakpoint.0" ), new String[] { CDebugUtils.getBreakpointText( this, false ) } ); //$NON-NLS-1$
+		IMarker marker = this.getMarker();
+		int bp_line = 0;
+		int bp_request_line = 0;
+		String bp_file = null;
+		String bp_reqest_file = null;
+		
+		if (marker != null) {
+			bp_line = marker.getAttribute(IMarker.LINE_NUMBER, -1);
+			bp_request_line = marker.getAttribute(ICLineBreakpoint2.REQUESTED_LINE, -1);
+			bp_file = marker.getAttribute(ICBreakpoint.SOURCE_HANDLE, (String)null);
+            bp_reqest_file = marker.getAttribute(ICLineBreakpoint2.REQUESTED_SOURCE_HANDLE, (String)null);
+		}
+		
+		if (bp_line != bp_request_line || 
+		    (bp_file == null && bp_reqest_file != null) ||  
+		    (bp_file != null && !bp_file.equals(bp_reqest_file)) ) 
+		{
+			return MessageFormat.format( BreakpointMessages.getString( "CLineBreakpoint.1" ), (Object[])new String[] { CDebugUtils.getBreakpointText( this, false ) } ); //$NON-NLS-1$			
+		}
+		else {
+			return MessageFormat.format( BreakpointMessages.getString( "CLineBreakpoint.0" ), (Object[])new String[] { CDebugUtils.getBreakpointText( this, false ) } ); //$NON-NLS-1$
+		}
 	}
 }

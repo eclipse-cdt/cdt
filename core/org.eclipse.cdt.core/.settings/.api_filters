@@ -14,6 +14,19 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="parser/org/eclipse/cdt/core/dom/ast/IASTCopyLocation.java" type="org.eclipse.cdt.core.dom.ast.IASTCopyLocation">
+        <filter id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.core.dom.ast.IASTCopyLocation"/>
+            </message_arguments>
+        </filter>
+        <filter id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.core.dom.ast.IASTCopyLocation"/>
+                <message_argument value="getOriginalNode()"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="parser/org/eclipse/cdt/core/parser/util/ArrayUtil.java" type="org.eclipse.cdt.core.parser.util.ArrayUtil">
         <filter id="420679712">
             <message_arguments>

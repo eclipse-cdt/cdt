@@ -16,4 +16,6 @@
    <feature url="features/org.eclipse.cdt.launch.remote_0.0.0.qualifier.jar" id="org.eclipse.cdt.launch.remote" version="0.0.0"/>
    <feature url="features/org.eclipse.cdt.msw_0.0.0.qualifier.jar" id="org.eclipse.cdt.msw" version="0.0.0"/>
    <feature url="features/org.eclipse.cdt.examples.dsf_0.0.0.qualifier.jar" id="org.eclipse.cdt.examples.dsf" version="0.0.0"/>
+   <feature url="features/org.eclipse.cdt.visualizer_0.0.0.qualifier.jar" id="org.eclipse.cdt.visualizer" version="0.0.0"/>
+   <feature url="features/org.eclipse.cdt.gnu.multicorevisualizer_0.0.0.qualifier.jar" id="org.eclipse.cdt.gnu.multicorevisualizer" version="0.0.0"/>
 </site>

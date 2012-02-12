@@ -48,7 +48,7 @@ public abstract class CBreakpoint extends Breakpoint implements ICBreakpoint, IC
      * Map of breakpoint extensions.  The keys to the map are debug model IDs 
      * and values are arrays of breakpoint extensions.
      */
-	private Map fExtensions = new HashMap(1);
+	private Map<String, ICBreakpointExtension[]> fExtensions = new HashMap<String, ICBreakpointExtension[]>(1);
 	
 	/**
 	 * The number of debug targets the breakpoint is installed in. We don't use
@@ -67,7 +67,7 @@ public abstract class CBreakpoint extends Breakpoint implements ICBreakpoint, IC
 	/**
 	 * Constructor for CBreakpoint.
 	 */
-	public CBreakpoint( final IResource resource, final String markerType, final Map attributes, final boolean add ) throws CoreException {
+	public CBreakpoint( final IResource resource, final String markerType, final Map<String, Object> attributes, final boolean add ) throws CoreException {
 	    this();
 		IWorkspaceRunnable wr = new IWorkspaceRunnable() {
 
@@ -86,7 +86,7 @@ public abstract class CBreakpoint extends Breakpoint implements ICBreakpoint, IC
 		run( wr );
 	}
 
-	public void createMarker( final IResource resource, final String markerType, final Map attributes, final boolean add ) throws DebugException {
+	public void createMarker( final IResource resource, final String markerType, final Map<String, Object> attributes, final boolean add ) throws DebugException {
 		IWorkspaceRunnable wr = new IWorkspaceRunnable() {
 			@Override
 			public void run( IProgressMonitor monitor ) throws CoreException {
@@ -338,11 +338,11 @@ public abstract class CBreakpoint extends Breakpoint implements ICBreakpoint, IC
 		StringBuffer sb = new StringBuffer();
 		int ignoreCount = getIgnoreCount();
 		if ( ignoreCount > 0 ) {
-			sb.append( MessageFormat.format( BreakpointMessages.getString( "CBreakpoint.1" ), new Integer[] { new Integer( ignoreCount ) } ) ); //$NON-NLS-1$
+			sb.append( MessageFormat.format( BreakpointMessages.getString( "CBreakpoint.1" ), new Object[] { new Integer( ignoreCount ) } ) ); //$NON-NLS-1$
 		}
 		String condition = getCondition();
 		if ( condition != null && condition.length() > 0 ) {
-			sb.append( MessageFormat.format( BreakpointMessages.getString( "CBreakpoint.2" ), new String[] { condition } ) ); //$NON-NLS-1$
+			sb.append( MessageFormat.format( BreakpointMessages.getString( "CBreakpoint.2" ), new Object[] { condition } ) ); //$NON-NLS-1$
 		}
 		return sb.toString();
 	}
@@ -376,11 +376,13 @@ public abstract class CBreakpoint extends Breakpoint implements ICBreakpoint, IC
 	}
 	
 	@Override
-	public ICBreakpointExtension getExtension(String debugModelId, Class extensionType) throws CoreException {
+	public <V extends ICBreakpointExtension> V getExtension(String debugModelId, Class<V> extensionType) throws CoreException {
 	    ICBreakpointExtension[] extensions = getExtensionsForModelId(debugModelId);
 	    for (int i = 0; i < extensions.length; i++) {
 	        if ( extensionType.isAssignableFrom(extensions[i].getClass()) ) {
-	            return extensions[i];
+	            @SuppressWarnings("unchecked")
+                V retVal = (V) extensions[i];
+	            return retVal;
 	        }
 	    }
         throw new CoreException(new Status(IStatus.ERROR, CDebugCorePlugin.getUniqueIdentifier(), DebugPlugin.ERROR, "Extension " + extensionType + " not defined for breakpoint " + this, null)); //$NON-NLS-1$ //$NON-NLS-2$
@@ -402,7 +404,7 @@ public abstract class CBreakpoint extends Breakpoint implements ICBreakpoint, IC
     	    IMarker marker = ensureMarker();
     
     	    // Read the extension registry and create applicable extensions.
-    	    List extensions = new ArrayList(4);
+    	    List<ICBreakpointExtension> extensions = new ArrayList<ICBreakpointExtension>(4);
             IExtensionPoint ep = Platform.getExtensionRegistry().getExtensionPoint(CDebugCorePlugin.getUniqueIdentifier(), CDebugCorePlugin.BREAKPOINT_EXTENSION_EXTENSION_POINT_ID);
             IConfigurationElement[] elements = ep.getConfigurationElements();
             for (int i= 0; i < elements.length; i++) {
@@ -432,7 +434,7 @@ public abstract class CBreakpoint extends Breakpoint implements ICBreakpoint, IC
             }	
             fExtensions.put(debugModelId, extensions.toArray(new ICBreakpointExtension[extensions.size()]));
 	    }        
-        return (ICBreakpointExtension[])fExtensions.get(debugModelId);
+        return fExtensions.get(debugModelId);
 	}
 	
 	

@@ -12,10 +12,17 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring.extractfunction;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import junit.framework.Test;
 
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ltk.core.refactoring.Refactoring;
 
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.tests.refactoring.RefactoringTestBase;
 
 import org.eclipse.cdt.internal.ui.refactoring.NameInformation;
@@ -31,6 +38,10 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	private ExtractFunctionInformation refactoringInfo;
 	private String extractedFunctionName = "extracted";
 	private String returnValue;
+	// Map from old names to new ones.
+	private Map<String, String> parameterRename = new HashMap<String, String>();
+	// New positions of parameters, or null.
+	private int[] parameterOrder;
 	private VisibilityEnum visibility = VisibilityEnum.v_private;
 	private boolean virtual;
 	private boolean replaceDuplicates = true;
@@ -48,6 +59,26 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	}
 
 	@Override
+	public void setUp() throws Exception {
+		super.setUp();
+		resetPreferences();
+	}
+
+	@Override
+	public void tearDown() throws Exception {
+		super.tearDown();
+		resetPreferences();
+	}
+	
+	private void resetPreferences() {
+		getPreferenceStore().setToDefault(PreferenceConstants.FUNCTION_PASS_OUTPUT_PARAMETERS_BY_POINTER);
+	}
+
+	private IPreferenceStore getPreferenceStore() {
+		return CUIPlugin.getDefault().getPreferenceStore();
+	}
+	
+	@Override
 	protected Refactoring createRefactoring() {
 		refactoringInfo = new ExtractFunctionInformation();
 		return new ExtractFunctionRefactoring(getSelectedFile(), getSelection(), refactoringInfo,
@@ -61,12 +92,30 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 		if (refactoringInfo.getMandatoryReturnVariable() == null) {
 			if (returnValue != null) {
 				for (NameInformation nameInfo : refactoringInfo.getParameters()) {
-					nameInfo.setReturnValue(returnValue.equals(String.valueOf(nameInfo.getName().getSimpleID())));
+					nameInfo.setReturnValue(returnValue.equals(getName(nameInfo)));
 				}
+			}
+		}
+		if (!parameterRename.isEmpty()) {
+			for (NameInformation nameInfo : refactoringInfo.getParameters()) {
+				String newName = parameterRename.get(getName(nameInfo));
+				if (newName != null)
+					nameInfo.setNewName(newName);
+			}
+		}
+		if (parameterOrder != null) {
+			List<NameInformation> parameters = refactoringInfo.getParameters();
+			NameInformation[] originalParameters = parameters.toArray(new NameInformation[parameters.size()]);
+			for (int i = 0; i < parameterOrder.length; i++) {
+				parameters.set(parameterOrder[i], originalParameters[i]);
 			}
 		}
 		refactoringInfo.setVisibility(visibility);
 		refactoringInfo.setVirtual(virtual);
+	}
+
+	private String getName(NameInformation nameInfo) {
+		return String.valueOf(nameInfo.getName().getSimpleID());
 	}
 
 	//A.h
@@ -536,7 +585,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//A.cpp
 	//#include "A.h"
 	//
-	//#define ZWO 2
+	//#define TWO 2
 	//
 	//A::A() {
 	//}
@@ -547,7 +596,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//int A::foo() {
 	//	int i = 2;
 	//	/*$*/++i;
-	//	i += ZWO;
+	//	i += TWO;
 	//	help();/*$$*/
 	//	return i;
 	//}
@@ -558,7 +607,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//====================
 	//#include "A.h"
 	//
-	//#define ZWO 2
+	//#define TWO 2
 	//
 	//A::A() {
 	//}
@@ -568,7 +617,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//
 	//int A::extracted(int i) {
 	//	++i;
-	//	i += ZWO;
+	//	i += TWO;
 	//	help();
 	//	return i;
 	//}
@@ -698,7 +747,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//
 	//private:
 	//	int help();
-	//	void extracted(int* i);
+	//	void extracted(int* j);
 	//};
 	//
 	//#endif /*A_H_*/
@@ -731,8 +780,8 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//A::~A() {
 	//}
 	//
-	//void A::extracted(int* i) {
-	//	++*i;
+	//void A::extracted(int* j) {
+	//	++*j;
 	//	help();
 	//}
 	//
@@ -745,7 +794,94 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//int A::help() {
 	//	return 42;
 	//}
-	public void testPointer() throws Exception {
+	public void testRenamedParameter() throws Exception {
+		parameterRename.put("i", "j");
+		assertRefactoringSuccess();
+	}
+
+	//A.c
+	//struct A {
+	//	int i;
+	//	int j;
+	//};
+	//
+	//int test() {
+	//	struct A a = { 1, 2 };
+	//	return /*$*/a.i + a.j/*$$*/;
+	//}
+	//====================
+	//struct A {
+	//	int i;
+	//	int j;
+	//};
+	//
+	//int extracted(const struct A* a) {
+	//	return a->i + a->j;
+	//}
+	//
+	//int test() {
+	//	struct A a = { 1, 2 };
+	//	return extracted(&a);
+	//}
+	public void testInputParameterPassedByPointer() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//A.c
+	//int test() {
+	//	int i = 0;
+	//	int j = 1;
+	//	/*$*/int k = i;
+	//	i = j;
+	//	j = k;/*$$*/
+	//	return i - j;
+	//}
+	//====================
+	//void swap(int* i, int* j) {
+	//	int k = *i;
+	//	*i = *j;
+	//	*j = k;
+	//}
+	//
+	//int test() {
+	//	int i = 0;
+	//	int j = 1;
+	//	swap(&i, &j);
+	//	return i - j;
+	//}
+	public void testOutputParameterPassedByPointer() throws Exception {
+		extractedFunctionName = "swap";
+		returnValue = NO_RETURN_VALUE;
+		assertRefactoringSuccess();
+	}
+
+	//A.h
+	//class A {
+	//public:
+	//	int method();
+	//  int const_method() const;
+	//};
+
+	//A.cpp
+	//#include "A.h"
+	//
+	//int test() {
+	//	A a, b;
+	//	return /*$*/a.method() + b.const_method()/*$$*/ + a.const_method();
+	//}
+	//====================
+	//#include "A.h"
+	//
+	//int extracted(A b, A* a) {
+	//	return a->method() + b.const_method();
+	//}
+	//
+	//int test() {
+	//	A a, b;
+	//	return extracted(b, &a) + a.const_method();
+	//}
+	public void testOutputParameterWithMethodCall() throws Exception {
+		getPreferenceStore().setValue(PreferenceConstants.FUNCTION_PASS_OUTPUT_PARAMETERS_BY_POINTER, true);
 		assertRefactoringSuccess();
 	}
 
@@ -2562,91 +2698,6 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	public void testDuplicates() throws Exception {
 		assertRefactoringSuccess();
 	}
-
-	//A.h
-	//#ifndef A_H_
-	//#define A_H_
-	//
-	//class A {
-	//public:
-	//	A();
-	//	virtual ~A();
-	//	int foo();
-	//
-	//private:
-	//	int help();
-	//};
-	//
-	//#endif /*A_H_*/
-	//====================
-	//#ifndef A_H_
-	//#define A_H_
-	//
-	//class A {
-	//public:
-	//	A();
-	//	virtual ~A();
-	//	int foo();
-	//
-	//private:
-	//	int help();
-	//	int extracted(int i);
-	//};
-	//
-	//#endif /*A_H_*/
-
-	//A.cpp
-	//#include "A.h"
-	//
-	//A::A() {
-	//}
-	//
-	//A::~A() {
-	//	int oo = 99;
-	//	++oo;
-	//	help();
-	//}
-	//
-	//int A::foo() {
-	//	int i = 2;
-	//	/*$*/++i;
-	//	help();/*$$*/
-	//	return i;
-	//}
-	//
-	//int A::help() {
-	//	return 42;
-	//}
-	//====================
-	//#include "A.h"
-	//
-	//A::A() {
-	//}
-	//
-	//A::~A() {
-	//	int oo = 99;
-	//	oo = extracted(oo);
-	//}
-	//
-	//int A::extracted(int i) {
-	//	++i;
-	//	help();
-	//	return i;
-	//}
-	//
-	//int A::foo() {
-	//	int i = 2;
-	//	i = extracted(i);
-	//	return i;
-	//}
-	//
-	//int A::help() {
-	//	return 42;
-	//}
-	public void testDuplicatesWithDifferentNames() throws Exception {
-		assertRefactoringSuccess();
-	}
-
 	//A.h
 	//#ifndef A_H_
 	//#define A_H_
@@ -2930,7 +2981,96 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//int A::help() {
 	//	return 42;
 	//}
-	public void testDuplicatesWithDifferentNamesAndReturnType() throws Exception {
+	public void testDuplicatesWithDifferentNames() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//A.h
+	//#ifndef A_H_
+	//#define A_H_
+	//
+	//class A {
+	//public:
+	//	A();
+	//	virtual ~A();
+	//	int foo();
+	//
+	//private:
+	//	int help();
+	//};
+	//
+	//#endif /*A_H_*/
+	//====================
+	//#ifndef A_H_
+	//#define A_H_
+	//
+	//class A {
+	//public:
+	//	A();
+	//	virtual ~A();
+	//	int foo();
+	//
+	//private:
+	//	int help();
+	//	int extracted(int j, int i);
+	//};
+	//
+	//#endif /*A_H_*/
+
+	//A.cpp
+	//#include "A.h"
+	//
+	//A::A() {
+	//}
+	//
+	//A::~A() {
+	//	int aa = 9;
+	//	int bb = 99;
+	//	aa += bb;
+	//	help();
+	//}
+	//
+	//int A::foo() {
+	//	int i = 2;
+	//	int j = 3;
+	//	/*$*/i += j;
+	//	help();/*$$*/
+	//	return i;
+	//}
+	//
+	//int A::help() {
+	//	return 42;
+	//}
+	//====================
+	//#include "A.h"
+	//
+	//A::A() {
+	//}
+	//
+	//A::~A() {
+	//	int aa = 9;
+	//	int bb = 99;
+	//	aa = extracted(bb, aa);
+	//}
+	//
+	//int A::extracted(int j, int i) {
+	//	i += j;
+	//	help();
+	//	return i;
+	//}
+	//
+	//int A::foo() {
+	//	int i = 2;
+	//	int j = 3;
+	//	i = extracted(j, i);
+	//	return i;
+	//}
+	//
+	//int A::help() {
+	//	return 42;
+	//}
+	public void testDuplicatesWithDifferentNamesAndReordering() throws Exception {
+		parameterOrder = new int[] { 1, 0 };
 		assertRefactoringSuccess();
 	}
 
@@ -3105,7 +3245,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//int A::help() {
 	//	return 42;
 	//}
-	public void testDuplicateNameUsedAfterwardsInDuplicateButNotInOriginalSelectionThisIsNoDuplicate() throws Exception {
+	public void testOutputParameterInDuplicateButNotInOriginal() throws Exception {
 		assertRefactoringSuccess();
 	}
 

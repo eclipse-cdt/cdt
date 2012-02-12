@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Intel Corporation and others.
+ * Copyright (c) 2007, 2012 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  * Intel Corporation - Initial API and implementation
  * James Blackburn (Broadcom Corp.)
+ * Baltasar Belyavsky (Texas Instruments) - bug 340219: Project metadata files are saved unnecessarily
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.settings.model;
 
@@ -50,7 +51,6 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 	private boolean fIsReadOnly;
 	private boolean fIsModified;
 	private HashMap<QualifiedName, Object> fPropertiesMap;
-//	private boolean fNeedsActiveCfgIdPersistence;
 	private boolean fIsLoading;
 	private boolean fIsApplying;
 	private boolean fIsCreating;
@@ -549,15 +549,8 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 		return cfg;
 	}
 
-	@Override
-	public boolean isModified() {
+	boolean needsDescriptionPersistence() {
 		if(fIsModified)
-			return true;
-
-		if(fActiveCfgInfo.fIsCfgModified)
-			return true;
-
-		if(fSettingCfgInfo.fIsCfgModified)
 			return true;
 
 		if(fPrefs.isModified())
@@ -569,6 +562,20 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 		for(ICConfigurationDescription cfgDes : fCfgMap.values())
 			if(cfgDes.isModified())
 				return true;
+
+		return false;
+	}
+
+	@Override
+	public boolean isModified() {
+		if(needsDescriptionPersistence())
+			return true;
+
+		if(needsActiveCfgPersistence())
+			return true;
+
+		if(needsSettingCfgPersistence())
+			return true;
 
 		return false;
 	}
@@ -664,13 +671,6 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 			}
 		}
 	}
-
-//	boolean checkPersistCfgChanges(boolean force){
-//		boolean stored = false;
-//		stored |= checkPersistActiveCfg(force);
-//		stored |= checkPersistSettingCfg(force);
-//		return stored;
-//	}
 
 	boolean checkPersistActiveCfg(String oldId, boolean force){
 		return fActiveCfgInfo.store(oldId, force);

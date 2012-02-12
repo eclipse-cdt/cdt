@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 QNX Software Systems and others.
+ * Copyright (c) 2000, 2012 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     QNX Software Systems - Initial API and implementation
  *     Norbert Ploett, Siemens AG - fix for bug 119370
  *     Hewlett-Packard Development Company - fix for bug 109733 (null check in setPrompt)
+ *     Marc Khouzam (Ericsson) - Bug 369594: GDB 7.4 now reports solib events in MI, but no longer in CLI
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core;
 
@@ -306,7 +307,7 @@ public class RxThread extends Thread {
 				}
 
 				// GDB does not provide reason when stopping on a shared library
-				// event or because of a catchpoint (in gdb < 7.0).
+				// event  (gdb < 7.4) or because of a catchpoint (in gdb < 7.0).
 				// Hopefully this will be fixed in a future version. Meanwhile,
 				// we will use a hack to cope. On most platform we can detect by
 				// looking at the console stream for phrase. Although it is a
@@ -427,13 +428,13 @@ public class RxThread extends Thread {
 				}
 			}
 		}
-		// GDB does not have reason when stopping on shared, hopefully
-		// this will be fix in newer version meanwhile, we will use a hack
+		// GDB does not have reason when stopping on shared (gdb < 7.4)
+		// we will use a hack
 		// to cope.  On most platform we can detect this state by looking at the
 		// console stream for the phrase:
 		// 	~"Stopped due to shared library event\n"
 		//
-		// Althought it is a _real_ bad idea to do this, we do not have
+		// Although it is a _real_ bad idea to do this, we do not have
 		// any other alternatives.
 		if (list.isEmpty()) {
 			String[] logs = getStreamRecords();
@@ -533,7 +534,10 @@ public class RxThread extends Thread {
 				event = new MIInferiorSignalExitEvent(session, rr);
 			}
 			session.getMIInferior().setTerminated(0,false);
-		} else if ("shlib-event".equals(reason)) { //$NON-NLS-1$
+		} else if ("shlib-event".equals(reason) ||  //$NON-NLS-1$
+				// GDB 7.4 reports this event as "solib-event"
+				// Bug 369594
+				   "solib-event".equals(reason)) {//$NON-NLS-1$
 			if (exec != null) {
 				event = new MISharedLibEvent(session, exec);
 			} else if (rr != null) {

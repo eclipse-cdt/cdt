@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -8,11 +8,13 @@
  *  
  * Contributors: 
  *     Institute for Software - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.extractfunction;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.text.edits.TextEditGroup;
 
@@ -24,7 +26,6 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
-import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNode.CopyStyle;
@@ -44,7 +45,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTBinaryExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFieldReference;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFunctionDefinition;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTLiteralExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTReturnStatement;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration;
@@ -57,31 +57,33 @@ import org.eclipse.cdt.internal.ui.refactoring.NameInformation;
  * 
  * @author Mirko Stocker
  */
-public class ExtractExpression extends ExtractedFunctionConstructionHelper {
-	final static char[] ZERO= { '0' };
-
+public class ExpressionExtractor extends FunctionExtractor {
 	@Override
-	public void constructMethodBody(IASTCompoundStatement compound, List<IASTNode> list,
-			ASTRewrite rewrite, TextEditGroup group) {
-		CPPASTReturnStatement statement = new CPPASTReturnStatement();
-		IASTExpression nullReturnExp =
-				new CPPASTLiteralExpression(IASTLiteralExpression.lk_integer_constant, ZERO); 
-		statement.setReturnValue(nullReturnExp);
-		ASTRewrite nestedRewrite = rewrite.insertBefore(compound, null, statement, group);
-		
-		nestedRewrite.replace(nullReturnExp, getExpression(list), group);
+	public boolean canChooseReturnValue() {
+		return false;
 	}
 
-	private IASTExpression getExpression(List<IASTNode> list) {
-		if (list.size() > 1) {
-			CPPASTBinaryExpression bExp = new CPPASTBinaryExpression();
-			bExp.setParent(list.get(0).getParent());
-			bExp.setOperand1((IASTExpression) list.get(0).copy(CopyStyle.withLocations));
-			bExp.setOperator(((IASTBinaryExpression) list.get(1).getParent()).getOperator());
-			bExp.setOperand2(getExpression(list.subList(1, list.size())));
-			return bExp;
+	@Override
+	public void constructMethodBody(IASTCompoundStatement compound, List<IASTNode> nodes,
+			List<NameInformation> parameters, ASTRewrite rewrite, TextEditGroup group) {
+		CPPASTReturnStatement statement = new CPPASTReturnStatement();
+		statement.setReturnValue(getExpression(nodes));
+		ASTRewrite subRewrite = rewrite.insertBefore(compound, null, statement, group);
+		Map<IASTName, NameInformation> changedParameters = getChangedParameterReferences(parameters);
+		INodeFactory nodeFactory = nodes.get(0).getTranslationUnit().getASTNodeFactory();
+		adjustParameterReferences(statement, changedParameters, nodeFactory, subRewrite, group);
+	}
+
+	private IASTExpression getExpression(List<IASTNode> nodes) {
+		if (nodes.size() > 1) {
+			CPPASTBinaryExpression expression = new CPPASTBinaryExpression();
+			expression.setParent(nodes.get(0).getParent());
+			expression.setOperand1((IASTExpression) nodes.get(0).copy(CopyStyle.withLocations));
+			expression.setOperator(((IASTBinaryExpression) nodes.get(1).getParent()).getOperator());
+			expression.setOperand2(getExpression(nodes.subList(1, nodes.size())));
+			return expression;
 		} else {
-			return (IASTExpression) list.get(0).copy(CopyStyle.withLocations);
+			return (IASTExpression) nodes.get(0).copy(CopyStyle.withLocations);
 		}
 	}
 

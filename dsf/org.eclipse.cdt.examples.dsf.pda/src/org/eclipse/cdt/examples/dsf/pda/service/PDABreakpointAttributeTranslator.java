@@ -15,9 +15,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
+import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.debug.service.BreakpointsMediator;
-import org.eclipse.cdt.dsf.debug.service.IBreakpointAttributeTranslator;
-import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointDMContext;
+import org.eclipse.cdt.dsf.debug.service.BreakpointsMediator2;
+import org.eclipse.cdt.dsf.debug.service.BreakpointsMediator2.BreakpointEventType;
+import org.eclipse.cdt.dsf.debug.service.BreakpointsMediator2.ITargetBreakpointInfo;
+import org.eclipse.cdt.dsf.debug.service.IBreakpointAttributeTranslator2;
+import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
 import org.eclipse.cdt.examples.dsf.pda.PDAPlugin;
 import org.eclipse.cdt.examples.dsf.pda.breakpoints.PDALineBreakpoint;
 import org.eclipse.cdt.examples.dsf.pda.breakpoints.PDAWatchpoint;
@@ -38,7 +43,7 @@ import org.eclipse.debug.core.model.IBreakpoint;
  * functionality of synchronizing target side and IDE-side breakpoint objects.  
  * </p>
  */
-public class PDABreakpointAttributeTranslator implements IBreakpointAttributeTranslator {
+public class PDABreakpointAttributeTranslator implements IBreakpointAttributeTranslator2 {
 
     // Arrays of common attributes between the two breakpoint types.  These 
     // attributes can be copied directly without translation.
@@ -56,14 +61,25 @@ public class PDABreakpointAttributeTranslator implements IBreakpointAttributeTra
 
     // PDA breakpoints translator doesn't keep any state and it doesn't 
     // need to initialize or clean up.
-    public void initialize(BreakpointsMediator mediator) {
+    public void initialize(BreakpointsMediator2 mediator) {
     }
+
 
     public void dispose() {
     }
 
-    public List<Map<String, Object>> getBreakpointAttributes(IBreakpoint bp, boolean bpManagerEnabled) 
-    throws CoreException 
+    private List<Map<String, Object>> getBreakpointAttributes(IBreakpoint bp, boolean bpManagerEnabled) 
+        throws CoreException 
+    {
+        if (bp instanceof ICLineBreakpoint) {
+            return getCBreakpointAttributes((ICLineBreakpoint)bp, bpManagerEnabled);
+        } else {
+            return getPDABreakpointAttributes(bp, bpManagerEnabled);
+        }
+    }
+
+    private List<Map<String, Object>> getCBreakpointAttributes(ICLineBreakpoint bp, boolean bpManagerEnabled) 
+        throws CoreException 
     {
         Map<String, Object> attrs = new HashMap<String, Object>(); 
 
@@ -76,7 +92,41 @@ public class PDABreakpointAttributeTranslator implements IBreakpointAttributeTra
             throw new DebugException(new Status(IStatus.ERROR, PDAPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, "Breakpoint marker does not exist", null)); 
         }
         // Suppress cast warning: platform is still on Java 1.3
-        @SuppressWarnings("unchecked")
+        Map<String, Object> platformBpAttrs = marker.getAttributes();
+
+        // Copy breakpoint attributes.
+        attrs.put(PDABreakpoints.ATTR_BREAKPOINT_TYPE, PDABreakpoints.PDA_LINE_BREAKPOINT);
+        attrs.put(PDABreakpoints.ATTR_PROGRAM_PATH, bp.getFileName());
+
+        copyAttributes(platformBpAttrs, attrs, fgPDALineBreakpointAttributes);
+
+        // If the breakpoint manager is disabled, override the enabled attribute.
+        if (!bpManagerEnabled) {
+            attrs.put(IBreakpoint.ENABLED, false);
+        }
+
+        // The breakpoint mediator allows for multiple target-side breakpoints 
+        // to be created for each IDE breakpoint.  Although in case of PDA this 
+        // feature is never used, we still have to return a list of attributes.
+        List<Map<String, Object>> retVal = new ArrayList<Map<String, Object>>(1);
+        retVal.add(attrs);
+        return retVal;        
+    }
+    
+    private List<Map<String, Object>> getPDABreakpointAttributes(IBreakpoint bp, boolean bpManagerEnabled) 
+        throws CoreException 
+    {
+        Map<String, Object> attrs = new HashMap<String, Object>(); 
+
+        // Check that the marker exists and retrieve its attributes.  
+        // Due to accepted race conditions, the breakpiont marker may become null 
+        // while this method is being invoked.  In this case throw an exception
+        // and let the caller handle it.
+        IMarker marker = bp.getMarker();
+        if (marker == null || !marker.exists()) {
+            throw new DebugException(new Status(IStatus.ERROR, PDAPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, "Breakpoint marker does not exist", null)); 
+        }
+        // Suppress cast warning: platform is still on Java 1.3
         Map<String, Object> platformBpAttrs = marker.getAttributes();
 
         // Copy breakpoint attributes.
@@ -112,11 +162,13 @@ public class PDABreakpointAttributeTranslator implements IBreakpointAttributeTra
         }
     }
 
-    public boolean canUpdateAttributes(IBreakpointDMContext bp, Map<String, Object> delta) {
+    public boolean canUpdateAttributes(IBreakpoint bp, IBreakpointsTargetDMContext context, 
+        Map<String, Object> attributes) 
+    {
         // PDA debugger only allows updating of the action property of the watchpoint.
         // All other breakpoint updates will require a re-installation.
         if (bp instanceof PDAWatchpoint) {
-            Map<String, Object> deltaCopy = new HashMap<String, Object>(delta);
+            Map<String, Object> deltaCopy = new HashMap<String, Object>(attributes);
             deltaCopy.remove(PDAWatchpoint.ACCESS);
             deltaCopy.remove(PDAWatchpoint.MODIFICATION);
             return !deltaCopy.isEmpty();
@@ -125,11 +177,58 @@ public class PDABreakpointAttributeTranslator implements IBreakpointAttributeTra
     }
 
     public boolean supportsBreakpoint(IBreakpoint bp) {
-        return bp.getModelIdentifier().equals(PDAPlugin.ID_PDA_DEBUG_MODEL);
+        return bp.getModelIdentifier().equals(PDAPlugin.ID_PDA_DEBUG_MODEL) ||
+            bp instanceof ICLineBreakpoint;
     }
 
-    public void updateBreakpointStatus(IBreakpoint bp) {
-        // PDA breakpoints do not support status reporting
+    public void updateBreakpointsStatus(
+        Map<IBreakpoint, Map<IBreakpointsTargetDMContext, ITargetBreakpointInfo[]>> bpsInfo,
+        BreakpointEventType eventType) 
+    {
+        for (IBreakpoint bp : bpsInfo.keySet()) {
+            if (!(bp instanceof ICLineBreakpoint)) {
+                continue;
+            }
+            ICLineBreakpoint cbp = (ICLineBreakpoint)bp;
+            try {
+                if (eventType == BreakpointEventType.ADDED) {
+                    cbp.incrementInstallCount();
+// Testing for Bug 360280 - [breakpoints] Reposition breakpoints when planted on invalid line                    
+//                    if (cbp instanceof ICLineBreakpoint2) {
+//                        ICLineBreakpoint2 lbp2 = (ICLineBreakpoint2)cbp;
+//                        lbp2.setInstalledLineNumber(lbp2.getRequestedLine() + 1);
+//                    }
+                } else if (eventType == BreakpointEventType.REMOVED) {
+                    cbp.decrementInstallCount();
+                }
+            } catch (CoreException e) {}
+        }
     }
 
+    public void resolveBreakpoint(IBreakpointsTargetDMContext context, IBreakpoint breakpoint,
+        Map<String, Object> bpAttributes, DataRequestMonitor<List<Map<String, Object>>> drm) 
+    {
+        try {
+            drm.setData( getBreakpointAttributes(breakpoint, true) );
+        } catch (CoreException e) {
+            drm.setStatus(e.getStatus());
+        }
+        drm.done();
+    }
+
+    public Map<String, Object> getAllBreakpointAttributes(IBreakpoint platformBP, boolean bpManagerEnabled)
+        throws CoreException 
+    {
+        IMarker marker = platformBP.getMarker(); 
+        if (marker == null) {
+            throw new DebugException(new Status(IStatus.ERROR, PDAPlugin.PLUGIN_ID, "Null marker for breakpoint: " + platformBP));
+        }
+        return marker.getAttributes();
+    }
+
+    public Map<String, Object> convertAttributes(Map<String, Object> platformBPAttr) {
+        return platformBPAttr;
+    }
+
+    
 }

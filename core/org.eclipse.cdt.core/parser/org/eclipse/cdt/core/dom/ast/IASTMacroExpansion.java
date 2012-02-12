@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     IBM - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
@@ -16,10 +16,8 @@ package org.eclipse.cdt.core.dom.ast;
  */
 @Deprecated
 public interface IASTMacroExpansion extends IASTNodeLocation {
-
 	/**
 	 * The macro definition used for the expansion
-	 * 
 	 */
 	public IASTPreprocessorMacroDefinition getMacroDefinition();
 

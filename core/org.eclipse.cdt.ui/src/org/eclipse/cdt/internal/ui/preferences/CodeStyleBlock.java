@@ -23,14 +23,21 @@ import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
 
 /**
- * Configures C Editor typing preferences.
+ * Configures elements of C/C++ code style affecting refactoring.
  */
 class CodeStyleBlock extends OptionsConfigurationBlock {
-	private static final Key CLASS_MEMBER_ASCENDING_VISIBILITY_ORDER = getCDTUIKey(PreferenceConstants.CLASS_MEMBER_ASCENDING_VISIBILITY_ORDER);
+	private static final Key CLASS_MEMBER_ASCENDING_VISIBILITY_ORDER =
+			getCDTUIKey(PreferenceConstants.CLASS_MEMBER_ASCENDING_VISIBILITY_ORDER);
+	private static final Key FUNCTION_OUTPUT_PARAMETERS_BEFORE_INPUT =
+			getCDTUIKey(PreferenceConstants.FUNCTION_OUTPUT_PARAMETERS_BEFORE_INPUT);
+	private static final Key FUNCTION_PASS_OUTPUT_PARAMETERS_BY_POINTER =
+			getCDTUIKey(PreferenceConstants.FUNCTION_PASS_OUTPUT_PARAMETERS_BY_POINTER);
 
 	private static Key[] getAllKeys() {
 		return new Key[] {
 				CLASS_MEMBER_ASCENDING_VISIBILITY_ORDER,
+				FUNCTION_OUTPUT_PARAMETERS_BEFORE_INPUT,
+				FUNCTION_PASS_OUTPUT_PARAMETERS_BY_POINTER,
 			};
 	}
 
@@ -52,6 +59,12 @@ class CodeStyleBlock extends OptionsConfigurationBlock {
 		Composite composite = addSubsection(control, PreferencesMessages.CodeStyleBlock_class_member_order); 
 		fillClassMemberOrderSection(composite);
 		
+		composite = addSubsection(control, PreferencesMessages.CodeStyleBlock_function_parameter_order); 
+		fillFunctionParameterOrderSection(composite);
+
+		composite = addSubsection(control, PreferencesMessages.CodeStyleBlock_function_output_parameter_style); 
+		fillFunctionOutputParameterStyleSection(composite);
+
 		scrolled.setContent(control);
 		final Point size= control.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 		scrolled.setMinSize(size.x, size.y);
@@ -67,6 +80,28 @@ class CodeStyleBlock extends OptionsConfigurationBlock {
 				CLASS_MEMBER_ASCENDING_VISIBILITY_ORDER, FALSE_TRUE, 0);
 		addRadioButton(composite, PreferencesMessages.CodeStyleBlock_private_public,
 				CLASS_MEMBER_ASCENDING_VISIBILITY_ORDER, TRUE_FALSE, 0);
+	}
+
+	private void fillFunctionParameterOrderSection(Composite composite) {
+		GridLayout layout= new GridLayout();
+		layout.numColumns= 3;
+		composite.setLayout(layout);
+
+		addRadioButton(composite, PreferencesMessages.CodeStyleBlock_input_output,
+				FUNCTION_OUTPUT_PARAMETERS_BEFORE_INPUT, FALSE_TRUE, 0);
+		addRadioButton(composite, PreferencesMessages.CodeStyleBlock_output_input,
+				FUNCTION_OUTPUT_PARAMETERS_BEFORE_INPUT, TRUE_FALSE, 0);
+	}
+
+	private void fillFunctionOutputParameterStyleSection(Composite composite) {
+		GridLayout layout= new GridLayout();
+		layout.numColumns= 3;
+		composite.setLayout(layout);
+
+		addRadioButton(composite, PreferencesMessages.CodeStyleBlock_pass_by_reference,
+				FUNCTION_PASS_OUTPUT_PARAMETERS_BY_POINTER, FALSE_TRUE, 0);
+		addRadioButton(composite, PreferencesMessages.CodeStyleBlock_pass_by_pointer,
+				FUNCTION_PASS_OUTPUT_PARAMETERS_BY_POINTER, TRUE_FALSE, 0);
 	}
 
 	@Override

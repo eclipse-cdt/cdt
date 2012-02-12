@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  Copyright (c) 2000, 2012 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -45,7 +45,7 @@ public class SemanticHighlightingManager implements IPropertyChangeListener {
 	/**
 	 * Highlighting style.
 	 */
-	static class HighlightingStyle {
+	public static class HighlightingStyle {
 
 		/** Text attribute */
 		private TextAttribute fTextAttribute;
@@ -94,7 +94,7 @@ public class SemanticHighlightingManager implements IPropertyChangeListener {
 	/**
 	 * Highlighted Positions.
 	 */
-	static class HighlightedPosition extends Position {
+	public static class HighlightedPosition extends Position {
 
 		/** Highlighting of the position */
 		private HighlightingStyle fStyle;
@@ -260,30 +260,30 @@ public class SemanticHighlightingManager implements IPropertyChangeListener {
 	}
 
 	/** Semantic highlighting presenter */
-	private SemanticHighlightingPresenter fPresenter;
+	protected SemanticHighlightingPresenter fPresenter;
 	/** Semantic highlighting reconciler */
 	private SemanticHighlightingReconciler fReconciler;
 
 	/** Semantic highlightings */
-	private SemanticHighlighting[] fSemanticHighlightings;
+	protected SemanticHighlighting[] fSemanticHighlightings;
 	/** Highlightings */
-	private HighlightingStyle[] fHighlightings;
+	protected HighlightingStyle[] fHighlightings;
 
 	/** The editor */
 	private CEditor fEditor;
 	/** The source viewer */
-	private CSourceViewer fSourceViewer;
+	protected CSourceViewer fSourceViewer;
 	/** The color manager */
-	private IColorManager fColorManager;
+	protected IColorManager fColorManager;
 	/** The preference store */
-	private IPreferenceStore fPreferenceStore;
+	protected IPreferenceStore fPreferenceStore;
 	/** The source viewer configuration */
-	private CSourceViewerConfiguration fConfiguration;
+	protected CSourceViewerConfiguration fConfiguration;
 	/** The presentation reconciler */
-	private CPresentationReconciler fPresentationReconciler;
+	protected CPresentationReconciler fPresentationReconciler;
 
 	/** The hard-coded ranges */
-	private HighlightedRange[][] fHardcodedRanges;
+	protected HighlightedRange[][] fHardcodedRanges;
 
 	/**
 	 * Install the semantic highlighting on the given editor infrastructure
@@ -347,7 +347,7 @@ public class SemanticHighlightingManager implements IPropertyChangeListener {
 	 *
 	 * @return the hard-coded positions
 	 */
-	private HighlightedPosition[] createHardcodedPositions() {
+	protected HighlightedPosition[] createHardcodedPositions() {
 		List<HighlightedPosition> positions= new ArrayList<HighlightedPosition>();
 		for (int i= 0; i < fHardcodedRanges.length; i++) {
 			HighlightedRange range= null;
@@ -421,14 +421,14 @@ public class SemanticHighlightingManager implements IPropertyChangeListener {
 	/**
 	 * @return <code>true</code> iff semantic highlighting is enabled in the preferences
 	 */
-	private boolean isEnabled() {
+	protected boolean isEnabled() {
 		return SemanticHighlightings.isEnabled(fPreferenceStore);
 	}
 
 	/**
 	 * Initialize semantic highlightings.
 	 */
-	private void initializeHighlightings() {
+	protected void initializeHighlightings() {
 		fSemanticHighlightings= SemanticHighlightings.getSemanticHighlightings();
 		fHighlightings= new HighlightingStyle[fSemanticHighlightings.length];
 
@@ -461,7 +461,7 @@ public class SemanticHighlightingManager implements IPropertyChangeListener {
 	/**
 	 * Dispose the semantic highlightings.
 	 */
-	private void disposeHighlightings() {
+	protected void disposeHighlightings() {
 		for (int i= 0, n= fSemanticHighlightings.length; i < n; i++)
 			removeColor(SemanticHighlightings.getColorPreferenceKey(fSemanticHighlightings[i]));
 
@@ -481,10 +481,11 @@ public class SemanticHighlightingManager implements IPropertyChangeListener {
 	 * Handle the given property change event
 	 *
 	 * @param event The event
+	 * @return 
 	 */
-	private void handlePropertyChangeEvent(PropertyChangeEvent event) {
+	protected boolean handlePropertyChangeEvent(PropertyChangeEvent event) {
 		if (fPreferenceStore == null)
-			return; // Uninstalled during event notification
+			return false; // Uninstalled during event notification
 
 		if (fConfiguration != null)
 			fConfiguration.handlePropertyChangeEvent(event);
@@ -497,7 +498,7 @@ public class SemanticHighlightingManager implements IPropertyChangeListener {
 		}
 
 		if (!isEnabled())
-			return;
+			return false;
 		
 		boolean refreshNeeded= false;
 
@@ -555,6 +556,8 @@ public class SemanticHighlightingManager implements IPropertyChangeListener {
 		
 		if (refreshNeeded && fReconciler != null)
 			fReconciler.refresh();
+		
+		return refreshNeeded;
 	}
 
 	private void adaptToEnablementChange(HighlightingStyle highlighting, PropertyChangeEvent event) {

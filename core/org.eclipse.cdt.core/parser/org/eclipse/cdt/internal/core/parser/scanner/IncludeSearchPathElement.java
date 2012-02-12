@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.parser.scanner;
 
@@ -19,7 +19,6 @@ final class IncludeSearchPathElement {
 	private static final boolean NON_SLASH_SEPARATOR = File.separatorChar != '/';
 	public static final String FRAMEWORK_VAR = "__framework__"; //$NON-NLS-1$
 	public static final String FILE_VAR = "__header__"; //$NON-NLS-1$
-
 
 	private final String fPath;
 	private final boolean fForQuoteIncludesOnly;
@@ -47,7 +46,7 @@ final class IncludeSearchPathElement {
 				return null;
 			}
 			String framework = includeDirective.substring(0, firstSep);
-			String file= includeDirective.substring(firstSep+1);
+			String file= includeDirective.substring(firstSep + 1);
 			if (file.length() == 0)
 				return null;
 			
@@ -70,7 +69,15 @@ final class IncludeSearchPathElement {
 	private void replace(StringBuilder buf, String find, final String replace) {
 		int idx= buf.indexOf(find);
 		if (idx >= 0) {
-			buf.replace(idx, idx+find.length(), replace);
+			buf.replace(idx, idx + find.length(), replace);
 		}
+	}
+
+	/**
+	 * For debugging only.
+	 */
+	@Override
+	public String toString() {
+		return fPath;
 	}
 }

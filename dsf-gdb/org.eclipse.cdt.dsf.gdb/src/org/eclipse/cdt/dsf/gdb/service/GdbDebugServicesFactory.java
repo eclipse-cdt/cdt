@@ -10,6 +10,7 @@
  *     Nokia - create and use backend service. 
  *     Onur Akdemir (TUBITAK BILGEM-ITI) - Multi-process debugging (Bug 237306)
  *     Marc Khouzam (Ericsson) - Support for GDB 7.4 (Bug 367788)
+ *     Marc Khouzam (Ericsson) - Include IGDBHardware service for the multicore visualizer (Bug 335027)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
@@ -95,7 +96,13 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 					return (V)createTraceControlService(session, (ILaunchConfiguration)arg);
 				}
 			}
-		}
+		} else if (IGDBHardware.class.isAssignableFrom(clazz)) {
+			for (Object arg : optionalArguments) {
+				if (arg instanceof ILaunchConfiguration) {
+					return (V)createHardwareService(session, (ILaunchConfiguration)arg);
+				}
+			}
+	}
 
         return super.createService(clazz, session);
 	}
@@ -213,5 +220,10 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 		// but the service would have to be properly coded, as some MI commands don't exists
 		// in those older GDB versions.  Also, gdbserver only supports tracing starting with 7.2
 		return null;		
+	}
+	
+	/** @since 4.1 */
+	protected IGDBHardware createHardwareService(DsfSession session, ILaunchConfiguration config) {
+		return new GDBHardware(session);
 	}
 }

@@ -357,7 +357,7 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 
 		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
 		
-		assertOccurrences(2, 1);
+		assertOccurrences(2, 0);
 		assertOccurrencesInWidget();
 	}
 	

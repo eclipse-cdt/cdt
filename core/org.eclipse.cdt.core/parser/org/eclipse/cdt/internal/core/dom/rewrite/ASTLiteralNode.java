@@ -61,7 +61,7 @@ public class ASTLiteralNode implements IASTNode {
 
 	@Override
 	public IASTNodeLocation[] getNodeLocations() {
-		return null;
+		return IASTNodeLocation.EMPTY_ARRAY;
 	}
 
 	@Override
@@ -130,5 +130,10 @@ public class ASTLiteralNode implements IASTNode {
 	@Override
 	public boolean isActive() {
 		return true;
+	}
+
+	@Override
+	public IASTNode getOriginalNode() {
+		return this;
 	}
 }

@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM) - Initial API and implementation
- *    Mike Kucera (IBM)
- *    Sergey Prigogin (Google)
+ *     John Camelon (IBM) - Initial API and implementation
+ *     Mike Kucera (IBM)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
@@ -22,7 +22,6 @@ import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPASTBinaryExpression extends IASTBinaryExpression, IASTImplicitNameOwner {
-
 	/**
 	 * <code>op_pmdot</code> pointer-to-member field dereference.
 	 */

@@ -198,6 +198,12 @@ public final class PreferencesMessages extends NLS {
 	public static String CodeStyleBlock_class_member_order;
 	public static String CodeStyleBlock_public_private;
 	public static String CodeStyleBlock_private_public;
+	public static String CodeStyleBlock_function_parameter_order;
+	public static String CodeStyleBlock_input_output;
+	public static String CodeStyleBlock_output_input;
+	public static String CodeStyleBlock_function_output_parameter_style;
+	public static String CodeStyleBlock_pass_by_reference;
+	public static String CodeStyleBlock_pass_by_pointer;
 
 	public static String TodoTaskPreferencePage_title;
 	public static String TodoTaskPreferencePage_description;

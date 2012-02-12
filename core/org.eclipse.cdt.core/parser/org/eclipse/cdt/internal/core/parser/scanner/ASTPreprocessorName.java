@@ -164,9 +164,9 @@ class ASTBuiltinName extends ASTPreprocessorDefinition {
 	@Override
 	public IASTNodeLocation[] getNodeLocations() {
 		if (fFileLocation == null) {
-			return new IASTNodeLocation[0];
+			return IASTNodeLocation.EMPTY_ARRAY;
 		}
-		return new IASTNodeLocation[]{fFileLocation};
+		return new IASTNodeLocation[] { fFileLocation };
 	}
 
 	@Override

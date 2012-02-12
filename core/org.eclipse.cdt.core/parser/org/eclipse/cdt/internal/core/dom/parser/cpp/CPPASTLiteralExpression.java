@@ -51,8 +51,8 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 	
 	@Override
 	public CPPASTLiteralExpression copy(CopyStyle style) {
-		CPPASTLiteralExpression copy = new CPPASTLiteralExpression(kind, value == null ? null
-				: value.clone());
+		CPPASTLiteralExpression copy = new CPPASTLiteralExpression(kind,
+				value == null ? null : value.clone());
 		copy.setOffsetAndLength(this);
 		if (style == CopyStyle.withLocations) {
 			copy.setCopyLocation(this);

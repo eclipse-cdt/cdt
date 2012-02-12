@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTMacroExpansionLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -73,6 +74,8 @@ public class NodeContainer {
 			return;
 		}
 		names = new ArrayList<NameInformation>();
+		final int startOffset = getStartOffset();
+		final int endOffset = getEndOffset();
 
 		IPreferencesService preferences = Platform.getPreferencesService();
 		final boolean passOutputByPointer = preferences.getBoolean(CUIPlugin.PLUGIN_ID,
@@ -87,34 +90,36 @@ public class NodeContainer {
 
 				@Override
 				public int visit(IASTName name) {
-					IBinding binding = name.resolveBinding();
-
-					if (binding instanceof ICPPBinding && !(binding instanceof ICPPTemplateTypeParameter)) {
-						ICPPBinding cppBinding = (ICPPBinding) binding;
-						try {
-							if (!cppBinding.isGloballyQualified()) {
-								NameInformation nameInfo = new NameInformation(name);
-								nameInfo.setPassOutputByPointer(passOutputByPointer);
-								IASTName[] refs = name.getTranslationUnit().getReferences(binding);
-								for (IASTName ref : refs) {
-									nameInfo.addReference(ref);
+					if (name.getPropertyInParent() != IASTFieldReference.FIELD_NAME) {
+						IBinding binding = name.resolveBinding();
+	
+						if (binding instanceof ICPPBinding && !(binding instanceof ICPPTemplateTypeParameter)) {
+							ICPPBinding cppBinding = (ICPPBinding) binding;
+							try {
+								if (!cppBinding.isGloballyQualified()) {
+									NameInformation nameInfo = new NameInformation(name);
+									nameInfo.setPassOutputByPointer(passOutputByPointer);
+									IASTName[] refs = name.getTranslationUnit().getReferences(binding);
+									for (IASTName ref : refs) {
+										nameInfo.addReference(ref, startOffset, endOffset);
+									}
+									names.add(nameInfo);
 								}
-								names.add(nameInfo);
+							} catch (DOMException e) {
+								ILog logger = CUIPlugin.getDefault().getLog();
+								IStatus status = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID,
+										e.getMessage(), e);
+								logger.log(status);
 							}
-						} catch (DOMException e) {
-							ILog logger = CUIPlugin.getDefault().getLog();
-							IStatus status = new Status(IStatus.WARNING,
-									CUIPlugin.PLUGIN_ID, IStatus.OK, e.getMessage(), e);
-							logger.log(status);
+						} else if (binding instanceof IVariable) {
+							NameInformation nameInformation = new NameInformation(name);
+	
+							IASTName[] refs = name.getTranslationUnit().getReferences(binding);
+							for (IASTName ref : refs) {
+								nameInformation.addReference(ref, startOffset, endOffset);
+							}
+							names.add(nameInformation);
 						}
-					} else if (binding instanceof IVariable) {
-						NameInformation nameInformation = new NameInformation(name);
-
-						IASTName[] refs = name.getTranslationUnit().getReferences(binding);
-						for (IASTName ref : refs) {
-							nameInformation.addReference(ref);
-						}
-						names.add(nameInformation);
 					}
 					return super.visit(name);
 				}
@@ -152,12 +157,11 @@ public class NodeContainer {
 			Set<IASTName> declarations = new HashSet<IASTName>();
 			interfaceNames = new ArrayList<NameInformation>();
 	
-			int endOffset = getEndOffset();
 			for (NameInformation nameInfo : names) {
 				IASTName declarationName = nameInfo.getDeclarationName();
 				if (declarations.add(declarationName)) {
 					if (isDeclaredInSelection(nameInfo)) {
-						if (nameInfo.isReferencedAfterSelection(endOffset)) {
+						if (nameInfo.isReferencedAfterSelection()) {
 							nameInfo.setMustBeReturnValue(true);
 							interfaceNames.add(nameInfo);
 						}
@@ -173,7 +177,7 @@ public class NodeContainer {
 									}
 								}
 							}
-							if (nameInfo.isWriteAccess() && nameInfo.isReferencedAfterSelection(endOffset)) {
+							if (nameInfo.isWriteAccess() && nameInfo.isReferencedAfterSelection()) {
 								nameInfo.setOutput(true);
 							}
 						}

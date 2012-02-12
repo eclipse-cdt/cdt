@@ -34,7 +34,7 @@ class LocationCtxMacroExpansion extends LocationCtx {
 		fLength= length;
 		fLocationInfos= imageLocations;
 		fExpansionName= expansionName;
-		if (expansionName.getParent() instanceof ASTMacroExpansion == false) {
+		if (!(expansionName.getParent() instanceof ASTMacroExpansion)) {
 			throw new IllegalArgumentException(expansionName.toString() + " is not a macro expansion name"); //$NON-NLS-1$
 		}
 	}

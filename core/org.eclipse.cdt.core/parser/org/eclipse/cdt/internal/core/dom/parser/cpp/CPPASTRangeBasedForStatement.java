@@ -152,7 +152,8 @@ public class CPPASTRangeBasedForStatement extends ASTNode implements ICPPASTRang
 				CPPASTName name = new CPPASTName(CPPVisitor.BEGIN);
 				name.setOffset(position.getOffset());
 				CPPASTIdExpression fname = new CPPASTIdExpression(name);
-				IASTExpression expr= new CPPASTFunctionCallExpression(fname, new IASTInitializerClause[] {forInit.copy()});
+				IASTExpression expr= new CPPASTFunctionCallExpression(fname,
+						new IASTInitializerClause[] { forInit.copy() });
 				expr.setParent(this);
 				expr.setPropertyInParent(ICPPASTRangeBasedForStatement.INITIALIZER);
 				

@@ -119,7 +119,7 @@
     <module>org.eclipse.tm.rse/features/org.eclipse.rse.core.source</module>                                                                                                       
     <module>org.eclipse.tm.rse/features/org.eclipse.rse.dstore-feature</module>                                                                                                    
     <module>org.eclipse.tm.rse/features/org.eclipse.rse.dstore.source</module>                                                                                                     
-    <module>org.eclipse.tm.rse/features/org.eclipse.rse.efs-feature</module>                                                                                                       
+<!--    <module>org.eclipse.tm.rse/features/org.eclipse.rse.efs-feature</module> -->                                                                                                       
     <module>org.eclipse.tm.rse/features/org.eclipse.rse.ftp-feature</module>                                                                                                       
     <module>org.eclipse.tm.rse/features/org.eclipse.rse.ftp-patch</module>                                                                                                         
     <module>org.eclipse.tm.rse/features/org.eclipse.rse.ftp.source</module>                                                                                                        

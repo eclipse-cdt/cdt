@@ -287,7 +287,8 @@
         <artifactId>tycho-source-plugin</artifactId>                                                                                                                               
         <version>${tycho-version}</version>                                                                                                                                        
         <configuration>                                                                                                                                                            
-          <encoding>UTF-8</encoding>                                                                                                                                               
+          <encoding>UTF-8</encoding> 
+          <strictSrcIncludes>false</strictSrcIncludes>                                                                                                                                              
         </configuration>                                                                                                                                                           
         <executions>                                                                                                                                                               
           <execution>                                                                                                                                                              
@@ -297,7 +298,15 @@
             </goals>                                                                                                                                                               
           </execution>                                                                                                                                                             
         </executions>                                                                                                                                                              
-      </plugin>                                                                                                                                                                    
+      </plugin>
+      <plugin>
+      <groupId>org.eclipse.tycho</groupId>
+      <artifactId>tycho-packaging-plugin</artifactId>
+      <configuration>
+        <strictBinIncludes>false</strictBinIncludes>
+        <archiveSite>true</archiveSite>
+      </configuration>
+    </plugin>                                                                                                                                                                    
     </plugins>                                                                                                                                                                     
     <pluginManagement>                                                                                                                                                             
       <plugins>                                                                                                                                                                    

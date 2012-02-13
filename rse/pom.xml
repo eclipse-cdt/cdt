@@ -29,7 +29,7 @@
     </license>                                                     
   </licenses>                                                      
   <properties>                                                     
-    <tycho-version>0.13.0</tycho-version>                          
+    <tycho-version>0.14.0</tycho-version>                          
     <!-- <platform-version>3.7</platform-version> -->              
     <platform-version-name>indigo</platform-version-name>          
     <platform-site>http://download.eclipse.org/eclipse/updates/${platform-version-name}</platform-site>
@@ -42,7 +42,13 @@
     <pluginRepository>                                                                                                                                                             
       <id>maven.eclipse.org</id>                                                                                                                                                   
       <url>http://maven.eclipse.org/nexus/content/groups/public/</url>                                                                                                             
-    </pluginRepository>                                                                                                                                                            
+    </pluginRepository>
+    <pluginRepositories>
+	<pluginRepository>
+		<id>tycho-0.14.0-staged</id>
+		<url>https://oss.sonatype.org/content/repositories/orgeclipsetycho-004/</url>
+	</pluginRepository>
+</pluginRepositories>                                                                                                                                                            
   </pluginRepositories>                                                                                                                                                            
   <repositories>                                                                                                                                                                   
     <repository>                                                                                                                                                                   

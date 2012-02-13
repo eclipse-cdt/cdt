@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2011 IBM Corporation and others.
+ * Copyright (c) 2002, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,6 +27,7 @@
  * Noriaki Takatsu  (IBM) - [289678][api][breaking] ServerSocket creation in multiple IP addresses
  * David McKnight   (IBM) - [283613] [dstore] Create a Constants File for all System Properties we support
  * David McKnight   (IBM) - [368072] [dstore][ssl] no exception logged upon bind error
+ * David McKnight   (IBM) - [371401] [dstore][multithread] avoid use of static variables - causes memory leak after disconnect
  *******************************************************************************/
 
 package org.eclipse.dstore.core.server;
@@ -76,7 +77,7 @@ public class ConnectionEstablisher
 
 
 	private ServerSocket _serverSocket;
-	private static boolean _continue;
+	private boolean _continue; 
 
 	private ArrayList _receivers;
 

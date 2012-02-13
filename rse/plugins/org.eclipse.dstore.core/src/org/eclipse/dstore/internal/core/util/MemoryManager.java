@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 IBM Corporation and others.
+ * Copyright (c) 2009, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
  * David McKnight  (IBM)  - [261644] [dstore] remote search improvements
  * David McKnight  (IBM)  - [277764] [dstore][regression] IllegalAccessException thrown when connecting to a running server
  * David McKnight   (IBM) - [283613] [dstore] Create a Constants File for all System Properties we support
+ * David McKnight   (IBM) - [371401] [dstore][multithread] avoid use of static variables - causes memory leak after disconnect
  ********************************************************************************/
 
 package org.eclipse.dstore.internal.core.util;
@@ -27,20 +28,13 @@ import org.eclipse.dstore.internal.core.model.IDataStoreSystemProperties;
 
 public class MemoryManager {
 	private Object mbean;
-	private static MemoryManager _instance;
 	private DataStore _dataStore;
 
-	private MemoryManager(DataStore dataStore) {
+	public MemoryManager(DataStore dataStore) {
 		init();
 		_dataStore = dataStore;
 	}
 
-	public static MemoryManager getInstance(DataStore dataStore){
-		if (_instance == null){
-			_instance = new MemoryManager(dataStore);
-		}
-		return _instance;
-	}
 
 	private void init(){
 		String thresholdString = System.getProperty(IDataStoreSystemProperties.SEARCH_THRESHOLD); 

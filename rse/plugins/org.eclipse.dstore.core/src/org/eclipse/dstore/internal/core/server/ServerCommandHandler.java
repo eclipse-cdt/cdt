@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2011 IBM Corporation and others.
+ * Copyright (c) 2002, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@
  *  Noriaki Takatsu  (IBM) - [283656] [dstore][multithread] Serviceability issue
  *  David McKnight   (IBM) - [294933] [dstore] RSE goes into loop
  *  David McKnight   (IBM) - [282364] [dstore][multithread] timer-threads stay active after disconnect
+ *  David McKnight   (IBM) - [371401] [dstore][multithread] avoid use of static variables - causes memory leak after disconnect
  *******************************************************************************/
 
 package org.eclipse.dstore.internal.core.server;

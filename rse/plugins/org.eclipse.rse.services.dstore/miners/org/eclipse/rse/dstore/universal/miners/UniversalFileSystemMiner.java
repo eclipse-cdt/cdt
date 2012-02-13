@@ -42,6 +42,7 @@
  * David McKnight  (IBM)  - [243495] [api] New: Allow file name search in Remote Search to not be case sensitive
  * David McKnight  (IBM)  - [283617] [dstore] UniversalFileSystemMiner.handleQueryGetRemoteObject does not return correct result when the queried file does not exist.
  * David McKnight  (IBM)  - [dstore] cancelable threads not removed fast enough from Hashmap, resulting in OOM
+ * David McKnight   (IBM) - [371401] [dstore][multithread] avoid use of static variables - causes memory leak after disconnect
  *******************************************************************************/
 
 package org.eclipse.rse.dstore.universal.miners;
@@ -111,6 +112,7 @@ public class UniversalFileSystemMiner extends Miner {
 	public static final String CLASSNAME = "UniversalFileSystemMiner"; //$NON-NLS-1$
 
 	protected HashMap _cancellableThreads;
+	private FileDescriptors _fileDescriptors;
 	
 	private static final int PERMISSION_OWNER = 0;
 	private static final int PERMISSION_GROUP = 1; 
@@ -128,6 +130,8 @@ public class UniversalFileSystemMiner extends Miner {
 		_archiveHandlerManager.setRegisteredHandler("tar.gz", SystemTgzHandler.class); //$NON-NLS-1$
 		_archiveHandlerManager.setRegisteredHandler("tgz", SystemTgzHandler.class); //$NON-NLS-1$
 		_archiveHandlerManager.setRegisteredHandler("tar", SystemTarHandler.class); //$NON-NLS-1$
+		
+		_fileDescriptors = new FileDescriptors();
 	}
 
 	/**
@@ -443,7 +447,7 @@ public class UniversalFileSystemMiner extends Miner {
 			int inclusion, DataElement status) {
 
 		// do query on a thread
-		FileQueryThread queryThread = new FileQueryThread(subject, fileobj, queryType, filter, caseSensitive, inclusion, showHidden, _isWindows, status);
+		FileQueryThread queryThread = new FileQueryThread(subject, fileobj, queryType, filter, caseSensitive, inclusion, showHidden, _isWindows, status, _fileDescriptors);
 		queryThread.start();
 
 		updateCancellableThreads(status.getParent(), queryThread);
@@ -1507,15 +1511,15 @@ public class UniversalFileSystemMiner extends Miner {
 		// Define filesystem descriptors
 		DataElement UniversalFilter = createObjectDescriptor(schemaRoot,
 				IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR);
-		FileDescriptors._deUniversalFileObject = createObjectDescriptor(schemaRoot,
+		_fileDescriptors._deUniversalFileObject = createObjectDescriptor(schemaRoot,
 				IUniversalDataStoreConstants.UNIVERSAL_FILE_DESCRIPTOR);
-		FileDescriptors._deUniversalFolderObject = createObjectDescriptor(schemaRoot,
+		_fileDescriptors._deUniversalFolderObject = createObjectDescriptor(schemaRoot,
 				IUniversalDataStoreConstants.UNIVERSAL_FOLDER_DESCRIPTOR);
-		FileDescriptors._deUniversalArchiveFileObject = createObjectDescriptor(
+		_fileDescriptors._deUniversalArchiveFileObject = createObjectDescriptor(
 				schemaRoot, IUniversalDataStoreConstants.UNIVERSAL_ARCHIVE_FILE_DESCRIPTOR);
-		FileDescriptors._deUniversalVirtualFileObject = createObjectDescriptor(
+		_fileDescriptors._deUniversalVirtualFileObject = createObjectDescriptor(
 				schemaRoot, IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FILE_DESCRIPTOR);
-		FileDescriptors._deUniversalVirtualFolderObject = createObjectDescriptor(
+		_fileDescriptors._deUniversalVirtualFolderObject = createObjectDescriptor(
 				schemaRoot, IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FOLDER_DESCRIPTOR);
 
 		_dataStore.refresh(schemaRoot);
@@ -1536,23 +1540,23 @@ public class UniversalFileSystemMiner extends Miner {
 		createCommandDescriptor(UniversalFilter, "Filter", IUniversalDataStoreConstants.C_QUERY_ROOTS); //$NON-NLS-1$
 
 
-		DataElement queryAllDescriptor = createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "Filter", IUniversalDataStoreConstants.C_QUERY_VIEW_ALL); //$NON-NLS-1$
+		DataElement queryAllDescriptor = createCommandDescriptor(_fileDescriptors._deUniversalFolderObject, "Filter", IUniversalDataStoreConstants.C_QUERY_VIEW_ALL); //$NON-NLS-1$
 		_dataStore.createReference(cancellable, queryAllDescriptor, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by);
 
-		DataElement queryFilesDescriptor = createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "Filter", IUniversalDataStoreConstants.C_QUERY_VIEW_FILES); //$NON-NLS-1$
+		DataElement queryFilesDescriptor = createCommandDescriptor(_fileDescriptors._deUniversalFolderObject, "Filter", IUniversalDataStoreConstants.C_QUERY_VIEW_FILES); //$NON-NLS-1$
 		_dataStore.createReference(cancellable, queryFilesDescriptor, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by);
 
-		DataElement queryFolderDescriptor = createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "Filter", IUniversalDataStoreConstants.C_QUERY_VIEW_FOLDERS); //$NON-NLS-1$
+		DataElement queryFolderDescriptor = createCommandDescriptor(_fileDescriptors._deUniversalFolderObject, "Filter", IUniversalDataStoreConstants.C_QUERY_VIEW_FOLDERS); //$NON-NLS-1$
 		_dataStore.createReference(cancellable, queryFolderDescriptor, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by);
 
 
-		DataElement queryAllArchiveDescriptor = createCommandDescriptor(FileDescriptors._deUniversalArchiveFileObject, "Filter", IUniversalDataStoreConstants.C_QUERY_VIEW_ALL); //$NON-NLS-1$
+		DataElement queryAllArchiveDescriptor = createCommandDescriptor(_fileDescriptors._deUniversalArchiveFileObject, "Filter", IUniversalDataStoreConstants.C_QUERY_VIEW_ALL); //$NON-NLS-1$
 		_dataStore.createReference(cancellable, queryAllArchiveDescriptor, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by);
 
-		DataElement queryFilesArchiveDescriptor = createCommandDescriptor(FileDescriptors._deUniversalArchiveFileObject, "Filter", IUniversalDataStoreConstants.C_QUERY_VIEW_FILES); //$NON-NLS-1$
+		DataElement queryFilesArchiveDescriptor = createCommandDescriptor(_fileDescriptors._deUniversalArchiveFileObject, "Filter", IUniversalDataStoreConstants.C_QUERY_VIEW_FILES); //$NON-NLS-1$
 		_dataStore.createReference(cancellable, queryFilesArchiveDescriptor, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by);
 
-		DataElement queryFolderArchiveDescriptor = createCommandDescriptor(FileDescriptors._deUniversalArchiveFileObject, "Filter", IUniversalDataStoreConstants.C_QUERY_VIEW_FOLDERS); //$NON-NLS-1$
+		DataElement queryFolderArchiveDescriptor = createCommandDescriptor(_fileDescriptors._deUniversalArchiveFileObject, "Filter", IUniversalDataStoreConstants.C_QUERY_VIEW_FOLDERS); //$NON-NLS-1$
 		_dataStore.createReference(cancellable, queryFolderArchiveDescriptor, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by);
 
 		createCommandDescriptor(UniversalFilter, "GetOSType", IUniversalDataStoreConstants.C_GET_OSTYPE); //$NON-NLS-1$
@@ -1565,90 +1569,90 @@ public class UniversalFileSystemMiner extends Miner {
 		createCommandDescriptor(UniversalFilter, "SetLastModified", IUniversalDataStoreConstants.C_SET_LASTMODIFIED); //$NON-NLS-1$
 
 
-		_dataStore.createReference(FileDescriptors._deUniversalFileObject,
-				FileDescriptors._deUniversalArchiveFileObject, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by);
-		_dataStore.createReference(FileDescriptors._deUniversalFolderObject,
-				FileDescriptors._deUniversalArchiveFileObject, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by);
-		_dataStore.createReference(FileDescriptors._deUniversalFileObject,
-				FileDescriptors._deUniversalVirtualFileObject, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by);
-		_dataStore.createReference(FileDescriptors._deUniversalFolderObject,
-				FileDescriptors._deUniversalVirtualFolderObject, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by);
+		_dataStore.createReference(_fileDescriptors._deUniversalFileObject,
+				_fileDescriptors._deUniversalArchiveFileObject, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by);
+		_dataStore.createReference(_fileDescriptors._deUniversalFolderObject,
+				_fileDescriptors._deUniversalArchiveFileObject, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by);
+		_dataStore.createReference(_fileDescriptors._deUniversalFileObject,
+				_fileDescriptors._deUniversalVirtualFileObject, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by);
+		_dataStore.createReference(_fileDescriptors._deUniversalFolderObject,
+				_fileDescriptors._deUniversalVirtualFolderObject, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by);
 
 		// create the search descriptor and make it cancelable
-		DataElement searchDescriptor = createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "Search", IUniversalDataStoreConstants.C_SEARCH); //$NON-NLS-1$
+		DataElement searchDescriptor = createCommandDescriptor(_fileDescriptors._deUniversalFolderObject, "Search", IUniversalDataStoreConstants.C_SEARCH); //$NON-NLS-1$
 		_dataStore.createReference(cancellable, searchDescriptor, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by);
 
 
-		createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "GetAdvanceProperty", IUniversalDataStoreConstants.C_QUERY_ADVANCE_PROPERTY); //$NON-NLS-1$
+		createCommandDescriptor(_fileDescriptors._deUniversalFolderObject, "GetAdvanceProperty", IUniversalDataStoreConstants.C_QUERY_ADVANCE_PROPERTY); //$NON-NLS-1$
 		createCommandDescriptor(tempnode, "Filter", IUniversalDataStoreConstants.C_CREATE_TEMP); //$NON-NLS-1$
 		//create deleteDescriptor and make it cancelable
-		DataElement deleteFileDescriptor = createCommandDescriptor(FileDescriptors._deUniversalFileObject, "Delete", IUniversalDataStoreConstants.C_DELETE); //$NON-NLS-1$
+		DataElement deleteFileDescriptor = createCommandDescriptor(_fileDescriptors._deUniversalFileObject, "Delete", IUniversalDataStoreConstants.C_DELETE); //$NON-NLS-1$
 		_dataStore.createReference(cancellable, deleteFileDescriptor, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by);
 		//create deleteBatchDescriptor and make it cancelable
-		DataElement deleteBatchFileDescriptor = createCommandDescriptor(FileDescriptors._deUniversalFileObject, "DeleteBatch", IUniversalDataStoreConstants.C_DELETE_BATCH); //$NON-NLS-1$
+		DataElement deleteBatchFileDescriptor = createCommandDescriptor(_fileDescriptors._deUniversalFileObject, "DeleteBatch", IUniversalDataStoreConstants.C_DELETE_BATCH); //$NON-NLS-1$
 		_dataStore.createReference(cancellable, deleteBatchFileDescriptor, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by);
 		//create createNewFileDescriptor and make it cancelable
-		DataElement createNewFileDescriptor = createCommandDescriptor(FileDescriptors._deUniversalFileObject, "CreateNewFile", IUniversalDataStoreConstants.C_CREATE_FILE); //$NON-NLS-1$
+		DataElement createNewFileDescriptor = createCommandDescriptor(_fileDescriptors._deUniversalFileObject, "CreateNewFile", IUniversalDataStoreConstants.C_CREATE_FILE); //$NON-NLS-1$
 		_dataStore.createReference(cancellable, createNewFileDescriptor, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by);
 		//create createNewFolderDescriptor and make it cancelable
-		DataElement createNewFolderDescriptor = createCommandDescriptor(FileDescriptors._deUniversalFileObject, "CreateNewFolder", IUniversalDataStoreConstants.C_CREATE_FOLDER); //$NON-NLS-1$
+		DataElement createNewFolderDescriptor = createCommandDescriptor(_fileDescriptors._deUniversalFileObject, "CreateNewFolder", IUniversalDataStoreConstants.C_CREATE_FOLDER); //$NON-NLS-1$
 		_dataStore.createReference(cancellable, createNewFolderDescriptor, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by);
 		//create renameDescriptor and make it cancelable
-		DataElement renameFileDescriptor = createCommandDescriptor(FileDescriptors._deUniversalFileObject, "Rename", IUniversalDataStoreConstants.C_RENAME); //$NON-NLS-1$
+		DataElement renameFileDescriptor = createCommandDescriptor(_fileDescriptors._deUniversalFileObject, "Rename", IUniversalDataStoreConstants.C_RENAME); //$NON-NLS-1$
 		_dataStore.createReference(cancellable, renameFileDescriptor, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by);
-		createCommandDescriptor(FileDescriptors._deUniversalFileObject, "SetReadOnly", IUniversalDataStoreConstants.C_SET_READONLY); //$NON-NLS-1$
-		createCommandDescriptor(FileDescriptors._deUniversalFileObject, "SetLastModified", IUniversalDataStoreConstants.C_SET_LASTMODIFIED); //$NON-NLS-1$
-		createCommandDescriptor(FileDescriptors._deUniversalFileObject, "GetAdvanceProperty", IUniversalDataStoreConstants.C_QUERY_ADVANCE_PROPERTY); //$NON-NLS-1$
-		createCommandDescriptor(FileDescriptors._deUniversalFileObject, "GetBasicProperty", IUniversalDataStoreConstants.C_QUERY_BASIC_PROPERTY); //$NON-NLS-1$
+		createCommandDescriptor(_fileDescriptors._deUniversalFileObject, "SetReadOnly", IUniversalDataStoreConstants.C_SET_READONLY); //$NON-NLS-1$
+		createCommandDescriptor(_fileDescriptors._deUniversalFileObject, "SetLastModified", IUniversalDataStoreConstants.C_SET_LASTMODIFIED); //$NON-NLS-1$
+		createCommandDescriptor(_fileDescriptors._deUniversalFileObject, "GetAdvanceProperty", IUniversalDataStoreConstants.C_QUERY_ADVANCE_PROPERTY); //$NON-NLS-1$
+		createCommandDescriptor(_fileDescriptors._deUniversalFileObject, "GetBasicProperty", IUniversalDataStoreConstants.C_QUERY_BASIC_PROPERTY); //$NON-NLS-1$
 
-		createCommandDescriptor(FileDescriptors._deUniversalFileObject, "GetcanWriteProperty", IUniversalDataStoreConstants.C_QUERY_CAN_WRITE_PROPERTY); //$NON-NLS-1$
-		createCommandDescriptor(FileDescriptors._deUniversalFileObject, "Exists", IUniversalDataStoreConstants.C_QUERY_EXISTS); //$NON-NLS-1$
+		createCommandDescriptor(_fileDescriptors._deUniversalFileObject, "GetcanWriteProperty", IUniversalDataStoreConstants.C_QUERY_CAN_WRITE_PROPERTY); //$NON-NLS-1$
+		createCommandDescriptor(_fileDescriptors._deUniversalFileObject, "Exists", IUniversalDataStoreConstants.C_QUERY_EXISTS); //$NON-NLS-1$
 
 		//create deleteDescriptor and make it cancelable
-		DataElement deleteFolderDescriptor = createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "Delete", IUniversalDataStoreConstants.C_DELETE); //$NON-NLS-1$
+		DataElement deleteFolderDescriptor = createCommandDescriptor(_fileDescriptors._deUniversalFolderObject, "Delete", IUniversalDataStoreConstants.C_DELETE); //$NON-NLS-1$
 		_dataStore.createReference(cancellable, deleteFolderDescriptor, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by);
 		//create deleteBatchDescriptor and make it cancelable
-		DataElement deleteBatchFolderDescriptor = createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "DeleteBatch", IUniversalDataStoreConstants.C_DELETE_BATCH); //$NON-NLS-1$
+		DataElement deleteBatchFolderDescriptor = createCommandDescriptor(_fileDescriptors._deUniversalFolderObject, "DeleteBatch", IUniversalDataStoreConstants.C_DELETE_BATCH); //$NON-NLS-1$
 		_dataStore.createReference(cancellable, deleteBatchFolderDescriptor, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by);
 		//create renameDescriptor and make it cancelable
-		DataElement renameFolderDescriptor = createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "Rename", IUniversalDataStoreConstants.C_RENAME); //$NON-NLS-1$
+		DataElement renameFolderDescriptor = createCommandDescriptor(_fileDescriptors._deUniversalFolderObject, "Rename", IUniversalDataStoreConstants.C_RENAME); //$NON-NLS-1$
 		_dataStore.createReference(cancellable, renameFolderDescriptor, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by);
 		//create copyDescriptor and make it cancelable
-		DataElement copyFolderDescriptor = createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "Copy", IUniversalDataStoreConstants.C_COPY); //$NON-NLS-1$
+		DataElement copyFolderDescriptor = createCommandDescriptor(_fileDescriptors._deUniversalFolderObject, "Copy", IUniversalDataStoreConstants.C_COPY); //$NON-NLS-1$
 		_dataStore.createReference(cancellable, copyFolderDescriptor, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by);
 		//create copyFolderBatchDescriptor and make it cancelable
-		DataElement copyBatchFolderDescriptor = createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "CopyBatch", IUniversalDataStoreConstants.C_COPY_BATCH); //$NON-NLS-1$
+		DataElement copyBatchFolderDescriptor = createCommandDescriptor(_fileDescriptors._deUniversalFolderObject, "CopyBatch", IUniversalDataStoreConstants.C_COPY_BATCH); //$NON-NLS-1$
 		_dataStore.createReference(cancellable, copyBatchFolderDescriptor, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by);
-		createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "SetReadOnly", IUniversalDataStoreConstants.C_SET_READONLY); //$NON-NLS-1$
-		createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "SetLastModified", IUniversalDataStoreConstants.C_SET_LASTMODIFIED); //$NON-NLS-1$
-		createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "GetBasicProperty", IUniversalDataStoreConstants.C_QUERY_BASIC_PROPERTY); //$NON-NLS-1$
-		createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "GetcanWriteProperty", IUniversalDataStoreConstants.C_QUERY_CAN_WRITE_PROPERTY); //$NON-NLS-1$
+		createCommandDescriptor(_fileDescriptors._deUniversalFolderObject, "SetReadOnly", IUniversalDataStoreConstants.C_SET_READONLY); //$NON-NLS-1$
+		createCommandDescriptor(_fileDescriptors._deUniversalFolderObject, "SetLastModified", IUniversalDataStoreConstants.C_SET_LASTMODIFIED); //$NON-NLS-1$
+		createCommandDescriptor(_fileDescriptors._deUniversalFolderObject, "GetBasicProperty", IUniversalDataStoreConstants.C_QUERY_BASIC_PROPERTY); //$NON-NLS-1$
+		createCommandDescriptor(_fileDescriptors._deUniversalFolderObject, "GetcanWriteProperty", IUniversalDataStoreConstants.C_QUERY_CAN_WRITE_PROPERTY); //$NON-NLS-1$
 
-		createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "Exists", IUniversalDataStoreConstants.C_QUERY_EXISTS); //$NON-NLS-1$
+		createCommandDescriptor(_fileDescriptors._deUniversalFolderObject, "Exists", IUniversalDataStoreConstants.C_QUERY_EXISTS); //$NON-NLS-1$
 		//create createFolderDescriptor and make it cancelable
-		DataElement createNewFileInFolderDescriptor = createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "CreateNewFile", IUniversalDataStoreConstants.C_CREATE_FILE); //$NON-NLS-1$
+		DataElement createNewFileInFolderDescriptor = createCommandDescriptor(_fileDescriptors._deUniversalFolderObject, "CreateNewFile", IUniversalDataStoreConstants.C_CREATE_FILE); //$NON-NLS-1$
 		_dataStore.createReference(cancellable, createNewFileInFolderDescriptor, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by);
 		//create createFolderDescriptor and make it cancelable
-		DataElement createNewFolderInFolderDescriptor = createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "CreateNewFolder", IUniversalDataStoreConstants.C_CREATE_FOLDER); //$NON-NLS-1$
+		DataElement createNewFolderInFolderDescriptor = createCommandDescriptor(_fileDescriptors._deUniversalFolderObject, "CreateNewFolder", IUniversalDataStoreConstants.C_CREATE_FOLDER); //$NON-NLS-1$
 		_dataStore.createReference(cancellable, createNewFolderInFolderDescriptor, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by);
-		createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "GetOSType", IUniversalDataStoreConstants.C_GET_OSTYPE); //$NON-NLS-1$
-		createCommandDescriptor(FileDescriptors._deUniversalFileObject, "GetOSType", IUniversalDataStoreConstants.C_GET_OSTYPE); //$NON-NLS-1$
+		createCommandDescriptor(_fileDescriptors._deUniversalFolderObject, "GetOSType", IUniversalDataStoreConstants.C_GET_OSTYPE); //$NON-NLS-1$
+		createCommandDescriptor(_fileDescriptors._deUniversalFileObject, "GetOSType", IUniversalDataStoreConstants.C_GET_OSTYPE); //$NON-NLS-1$
         //make sure C_QUERY_GET_REMOTE_OBJECT command also available for file and folder objects
-		createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "GetRemoteObject", IUniversalDataStoreConstants.C_QUERY_GET_REMOTE_OBJECT); //$NON-NLS-1$
-		createCommandDescriptor(FileDescriptors._deUniversalFileObject, "GetRemoteObject", IUniversalDataStoreConstants.C_QUERY_GET_REMOTE_OBJECT); //$NON-NLS-1$
-		createCommandDescriptor(FileDescriptors._deUniversalArchiveFileObject, "GetRemoteObject", IUniversalDataStoreConstants.C_QUERY_GET_REMOTE_OBJECT); //$NON-NLS-1$
-		createCommandDescriptor(FileDescriptors._deUniversalVirtualFileObject, "GetRemoteObject", IUniversalDataStoreConstants.C_QUERY_GET_REMOTE_OBJECT); //$NON-NLS-1$
-		createCommandDescriptor(FileDescriptors._deUniversalVirtualFolderObject, "GetRemoteObject", IUniversalDataStoreConstants.C_QUERY_GET_REMOTE_OBJECT); //$NON-NLS-1$
+		createCommandDescriptor(_fileDescriptors._deUniversalFolderObject, "GetRemoteObject", IUniversalDataStoreConstants.C_QUERY_GET_REMOTE_OBJECT); //$NON-NLS-1$
+		createCommandDescriptor(_fileDescriptors._deUniversalFileObject, "GetRemoteObject", IUniversalDataStoreConstants.C_QUERY_GET_REMOTE_OBJECT); //$NON-NLS-1$
+		createCommandDescriptor(_fileDescriptors._deUniversalArchiveFileObject, "GetRemoteObject", IUniversalDataStoreConstants.C_QUERY_GET_REMOTE_OBJECT); //$NON-NLS-1$
+		createCommandDescriptor(_fileDescriptors._deUniversalVirtualFileObject, "GetRemoteObject", IUniversalDataStoreConstants.C_QUERY_GET_REMOTE_OBJECT); //$NON-NLS-1$
+		createCommandDescriptor(_fileDescriptors._deUniversalVirtualFolderObject, "GetRemoteObject", IUniversalDataStoreConstants.C_QUERY_GET_REMOTE_OBJECT); //$NON-NLS-1$
 
 		// create a download command descriptor and make it cancelable
 		DataElement downloadDescriptor = createCommandDescriptor(
-				FileDescriptors._deUniversalFileObject, "DownloadFile", IUniversalDataStoreConstants.C_DOWNLOAD_FILE); //$NON-NLS-1$
+				_fileDescriptors._deUniversalFileObject, "DownloadFile", IUniversalDataStoreConstants.C_DOWNLOAD_FILE); //$NON-NLS-1$
 		_dataStore.createReference(cancellable, downloadDescriptor,
 				DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by);
 
 
 		DataElement adownloadDescriptor = createCommandDescriptor(
-				FileDescriptors._deUniversalArchiveFileObject, "DownloadFile", IUniversalDataStoreConstants.C_DOWNLOAD_FILE); //$NON-NLS-1$
+				_fileDescriptors._deUniversalArchiveFileObject, "DownloadFile", IUniversalDataStoreConstants.C_DOWNLOAD_FILE); //$NON-NLS-1$
 		_dataStore.createReference(cancellable, adownloadDescriptor,
 				DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by);
 
@@ -1658,10 +1662,10 @@ public class UniversalFileSystemMiner extends Miner {
 		createCommandDescriptor(tempnode, "UnusedPort", IUniversalDataStoreConstants.C_QUERY_UNUSED_PORT); //$NON-NLS-1$
 
 		// command descriptor to retrieve package name for a class file
-		createCommandDescriptor(FileDescriptors._deUniversalFileObject, "GetQualifiedClassName", IUniversalDataStoreConstants.C_QUERY_CLASSNAME); //$NON-NLS-1$
+		createCommandDescriptor(_fileDescriptors._deUniversalFileObject, "GetQualifiedClassName", IUniversalDataStoreConstants.C_QUERY_CLASSNAME); //$NON-NLS-1$
 
 		// command descriptor to retrieve qualified class name for class file
-		createCommandDescriptor(FileDescriptors._deUniversalFileObject, "GetFullClassName", //$NON-NLS-1$
+		createCommandDescriptor(_fileDescriptors._deUniversalFileObject, "GetFullClassName", //$NON-NLS-1$
 				IUniversalDataStoreConstants.C_QUERY_QUALIFIED_CLASSNAME);
 
 
@@ -1669,14 +1673,14 @@ public class UniversalFileSystemMiner extends Miner {
 		if (!_isWindows) {
 			// descriptors for permissions
 			createCommandDescriptor(UniversalFilter, "GetPermissions", IUniversalDataStoreConstants.C_QUERY_FILE_PERMISSIONS); //$NON-NLS-1$
-			createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "GetPermissions", IUniversalDataStoreConstants.C_QUERY_FILE_PERMISSIONS); //$NON-NLS-1$
-			createCommandDescriptor(FileDescriptors._deUniversalFileObject, "GetPermissions", IUniversalDataStoreConstants.C_QUERY_FILE_PERMISSIONS); //$NON-NLS-1$
-			createCommandDescriptor(FileDescriptors._deUniversalArchiveFileObject, "GetPermissions",IUniversalDataStoreConstants.C_QUERY_FILE_PERMISSIONS); //$NON-NLS-1$
+			createCommandDescriptor(_fileDescriptors._deUniversalFolderObject, "GetPermissions", IUniversalDataStoreConstants.C_QUERY_FILE_PERMISSIONS); //$NON-NLS-1$
+			createCommandDescriptor(_fileDescriptors._deUniversalFileObject, "GetPermissions", IUniversalDataStoreConstants.C_QUERY_FILE_PERMISSIONS); //$NON-NLS-1$
+			createCommandDescriptor(_fileDescriptors._deUniversalArchiveFileObject, "GetPermissions",IUniversalDataStoreConstants.C_QUERY_FILE_PERMISSIONS); //$NON-NLS-1$
 
 			createCommandDescriptor(UniversalFilter, "SetPermissions", IUniversalDataStoreConstants.C_SET_FILE_PERMISSIONS); //$NON-NLS-1$
-			createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "SetPermissions", IUniversalDataStoreConstants.C_SET_FILE_PERMISSIONS); //$NON-NLS-1$
-			createCommandDescriptor(FileDescriptors._deUniversalFileObject, "SetPermissions", IUniversalDataStoreConstants.C_SET_FILE_PERMISSIONS); //$NON-NLS-1$
-			createCommandDescriptor(FileDescriptors._deUniversalArchiveFileObject, "SetPermissions",IUniversalDataStoreConstants.C_SET_FILE_PERMISSIONS); //$NON-NLS-1$
+			createCommandDescriptor(_fileDescriptors._deUniversalFolderObject, "SetPermissions", IUniversalDataStoreConstants.C_SET_FILE_PERMISSIONS); //$NON-NLS-1$
+			createCommandDescriptor(_fileDescriptors._deUniversalFileObject, "SetPermissions", IUniversalDataStoreConstants.C_SET_FILE_PERMISSIONS); //$NON-NLS-1$
+			createCommandDescriptor(_fileDescriptors._deUniversalArchiveFileObject, "SetPermissions",IUniversalDataStoreConstants.C_SET_FILE_PERMISSIONS); //$NON-NLS-1$
 		}
 	}
 

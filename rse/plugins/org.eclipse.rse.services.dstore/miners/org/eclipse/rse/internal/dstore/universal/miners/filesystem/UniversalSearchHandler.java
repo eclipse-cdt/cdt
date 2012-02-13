@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 IBM Corporation and others.
+ * Copyright (c) 2006, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,7 @@
  * David McKnight   (IBM) - [283613] [dstore] Create a Constants File for all System Properties we support
  * David McKnight  (IBM)  - [358301] [DSTORE] Hang during debug source look up
  * Noriaki Takatsu  (IBM) - [362025] [dstore] Search for text hung in encountering a device definition
+ * David McKnight   (IBM) - [371401] [dstore][multithread] avoid use of static variables - causes memory leak after disconnect
  ********************************************************************************/
 
 package org.eclipse.rse.internal.dstore.universal.miners.filesystem;
@@ -95,7 +96,7 @@ public class UniversalSearchHandler extends SecuredThread implements ICancellabl
 	public UniversalSearchHandler(DataStore dataStore, UniversalFileSystemMiner miner, SystemSearchString searchString, boolean fsCaseSensitive, File theFile, DataElement status) {
 		super(dataStore);
 		
-		_memoryManager = MemoryManager.getInstance(dataStore);
+		_memoryManager = new MemoryManager(dataStore);
 		_miner = miner;
 		_searchString = searchString;
 		_fsCaseSensitive = fsCaseSensitive;

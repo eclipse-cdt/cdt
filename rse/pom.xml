@@ -47,7 +47,6 @@
 		<id>tycho-0.14.0-staged</id>
 		<url>https://oss.sonatype.org/content/repositories/orgeclipsetycho-004/</url>
 	</pluginRepository>
-</pluginRepositories>                                                                                                                                                            
   </pluginRepositories>                                                                                                                                                            
   <repositories>                                                                                                                                                                   
     <repository>                                                                                                                                                                   

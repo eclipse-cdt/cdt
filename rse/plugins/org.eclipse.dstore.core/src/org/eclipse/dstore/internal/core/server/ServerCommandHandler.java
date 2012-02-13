@@ -206,7 +206,7 @@ public class ServerCommandHandler extends CommandHandler
 			_serverIdleThread._serverTimedOut=true; // ensures that the wait loop won't continue after the interrupt
 			_serverIdleThread.interrupt();
 		}
-
+		_serverIdleThread = null;
 		if (_minerLoader != null)
 			_minerLoader.finishMiners();
 		super.finish();

@@ -32,7 +32,7 @@
     <tycho-version>0.14.0</tycho-version>                          
     <!-- <platform-version>3.7</platform-version> -->              
     <platform-version-name>indigo</platform-version-name>          
-    <platform-site>http://download.eclipse.org/eclipse/updates/${platform-version-name}</platform-site>
+    <platform-site>http://download.eclipse.org/releases/${platform-version-name}</platform-site>
     <orbit-version>R20110523182458</orbit-version>                                                     
     <orbit-site>http://download.eclipse.org/tools/orbit/downloads/drops/${orbit-version}/repository</orbit-site>
     <rxtx-version>1.0.0.7837QcJa5vE7MnhE77YA7AU3SWUlbntVZAnlDoIGojcQd</rxtx-version>                                                                                               

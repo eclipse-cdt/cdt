@@ -24,7 +24,7 @@
                     <testClass>org.eclipse.rse.tests.RSECombinedTestSuite</testClass>
                     <useUIHarness>true</useUIHarness>
                     <useUIThread>true</useUIThread>
-                    <product>org.eclipse.sdk.ide</product><includes>
+                    <product>org.eclipse.sdk.ide</product>
 					<testFailureIgnore>true</testFailureIgnore>
 				</configuration>
 			</plugin>

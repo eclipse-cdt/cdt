@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2011 IBM Corporation and others.
+ * Copyright (c) 2002, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@
  * David McKnight     (IBM)      - [229610] [api] File transfers should use workspace text file encoding
  * David McKnight     (IBM)      - [238314] Default user ID on host properties page not disabled
  * David McKnight     (IBM)      - [353377] Connection name with ":" causes problems
+ * Anna Dushistova  (MontaVista) - [352072] RSE attempts to use proxy where it should not
  *******************************************************************************/
 
 package org.eclipse.rse.ui;
@@ -41,6 +42,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.IWizardPage;
@@ -82,9 +84,12 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchPropertyPage;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.ide.IDEEncoding;
 
@@ -778,6 +783,18 @@ public class SystemConnectionForm implements Listener, SelectionListener, Runnab
 			SystemWidgetHelpers.setHelp(workOfflineCB, RSEUIPlugin.HELPPREFIX + "wofp0000"); //$NON-NLS-1$
 		}
 
+		//AD: link to a network preference page
+		Link proxyLink = new Link(composite_prompts,SWT.NONE);
+		proxyLink.setText("<A>"+SystemResources.SystemConnectionForm_0+"</A>");  //$NON-NLS-1$ //$NON-NLS-2$
+		proxyLink.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent evt) {
+		        PreferenceDialog dialog = PreferencesUtil.createPreferenceDialogOn(
+		        		PlatformUI.getWorkbench().getDisplay().getActiveShell(), "org.eclipse.ui.net.NetPreferences", //$NON-NLS-1$
+		                null, null);
+				dialog.open();
+			}
+		});
+		//
 		connectionNameEmpty = (textConnectionName.getText().trim().length() == 0); // d43191
 
 		textConnectionName.setFocus();
@@ -969,7 +986,7 @@ public class SystemConnectionForm implements Listener, SelectionListener, Runnab
 			}
 			else {
 				String workspaceDefault = SystemEncodingUtil.getInstance().getLocalDefaultEncoding();
-				otherEncodingCombo.setText(workspaceDefault); //$NON-NLS-1$
+				otherEncodingCombo.setText(workspaceDefault); 
 			}
 		}
 		

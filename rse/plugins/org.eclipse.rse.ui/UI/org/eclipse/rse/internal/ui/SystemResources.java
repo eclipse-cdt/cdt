@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,7 +25,8 @@
  * David Dykstal (IBM) - [188150] adding "go up one level" tooltip
  * David Dykstal (IBM) - [233678] title string is constructed by concatenation, should be substituted
  * David McKnight (IBM) - [248922]  [dnd] Remote to local overwrite copy does not work
- *******************************************************************************/
+ * Anna Dushistova  (MontaVista) - [352072] RSE attempts to use proxy where it should not
+*******************************************************************************/
 
 package org.eclipse.rse.internal.ui;
 
@@ -1013,6 +1014,8 @@ public class SystemResources extends NLS
 
 	public static String RESID_IMPORT_CONNECTION_LABEL_LONG;
 	
+	public static String SystemConnectionForm_0;
+
 	public static String SystemExportConnectionAction_CoreExceptionFound;
 
 	public static String SystemExportConnectionAction_Error;

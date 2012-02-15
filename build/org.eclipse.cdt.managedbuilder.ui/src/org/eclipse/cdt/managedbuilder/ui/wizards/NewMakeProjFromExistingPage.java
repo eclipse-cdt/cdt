@@ -143,7 +143,11 @@ public class NewMakeProjFromExistingPage extends WizardPage {
 		File file= new File(location.getText());
 		if (file.isDirectory()) {
 			setErrorMessage(null);
-			projectName.setText(file.getName());
+			// Set the project name to the directory name but not if a 
+			// name has already been specified (bugzilla 368987)
+			if (projectName.getText().isEmpty()) {
+				projectName.setText(file.getName());
+			}
 		} else
 			setErrorMessage(Messages.NewMakeProjFromExistingPage_8);
 	}

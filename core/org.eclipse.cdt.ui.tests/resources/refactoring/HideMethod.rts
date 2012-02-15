@@ -1361,7 +1361,7 @@ private:
 //#org.eclipse.cdt.ui.tests.refactoring.hidemethod.HideMethodRefactoringTest
 //@.config
 filename=A.cpp
-fatalerrors=1
+fatalerror=true
 //@A.cpp
 int /*$*/main/*$$*/() {
 	int i = 2;

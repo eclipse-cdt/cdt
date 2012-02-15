@@ -27,7 +27,7 @@ public class ExtractLocalVariableRefactoringContribution extends CRefactoringCon
 	public RefactoringDescriptor createDescriptor(String id, String project, String description,
 			String comment, Map arguments, int flags) throws IllegalArgumentException {
 		if (id.equals(ExtractLocalVariableRefactoring.ID)) {
-			return new ExtractLocalVariableRefactoringDescription(project, description, comment, arguments);
+			return new ExtractLocalVariableRefactoringDescriptor(project, description, comment, arguments);
 		} else {
 			return null;
 		}

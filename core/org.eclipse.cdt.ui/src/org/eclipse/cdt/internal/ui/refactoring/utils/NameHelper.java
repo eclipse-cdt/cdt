@@ -30,7 +30,7 @@ import org.eclipse.cdt.core.parser.util.CharArrayIntMap;
 
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTQualifiedName;
 
-import org.eclipse.cdt.internal.ui.refactoring.RefactoringASTCache;
+import org.eclipse.cdt.internal.ui.refactoring.CRefactoringContext;
 
 /**
  * Helps with IASTNames.
@@ -68,7 +68,7 @@ public class NameHelper {
 	 */
 	public static ICPPASTQualifiedName createQualifiedNameFor(IASTName declaratorName,
 			ITranslationUnit declarationTu, int selectionOffset, ITranslationUnit insertFileTu,
-			int insertLocation, RefactoringASTCache astCache) throws CoreException {
+			int insertLocation, CRefactoringContext astCache) throws CoreException {
 		ICPPASTQualifiedName qname = new CPPASTQualifiedName();
 		
 		IASTName[] declarationNames = NamespaceHelper.getSurroundingNamespace(declarationTu,

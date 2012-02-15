@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Google, Inc and others.
+ * Copyright (c) 2011, 2012 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.ui.refactoring;
 
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.window.IShellProvider;
+import org.eclipse.ltk.ui.refactoring.RefactoringWizard;
 
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
@@ -23,27 +24,26 @@ import org.eclipse.cdt.core.model.ICProject;
 public abstract class RefactoringRunner2 {
 	protected final ISelection selection;
 	protected final ICElement element;
-	protected final IShellProvider shellProvider;
 	protected final ICProject project;
-	protected final RefactoringStarter starter;
+	private final IShellProvider shellProvider;
 
 	public RefactoringRunner2(ICElement element, ISelection selection, IShellProvider shellProvider,
 			ICProject cProject) {
 		this.selection = selection;
 		this.element= element;
-		this.shellProvider= shellProvider;
 		this.project = cProject;
-		this.starter = new RefactoringStarter();
+		this.shellProvider= shellProvider;
 	}
 
-	public final void run() {
-		RefactoringASTCache astCache = new RefactoringASTCache();
+	public abstract void run();
+
+	protected final void run(RefactoringWizard wizard, CRefactoring2 refactoring, int saveMode) {
+		CRefactoringContext context = new CRefactoringContext(refactoring);
 		try {
-			run(astCache);
+			RefactoringStarter starter = new RefactoringStarter();
+			starter.activate(wizard, shellProvider.getShell(), refactoring.getName(), saveMode);
 		} finally {
-			astCache.dispose();
+			context.dispose();
 		}
 	}
-
-	protected abstract void run(RefactoringASTCache astCache);
 }

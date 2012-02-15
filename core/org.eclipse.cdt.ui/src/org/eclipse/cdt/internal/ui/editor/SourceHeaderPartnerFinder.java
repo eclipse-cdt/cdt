@@ -52,7 +52,7 @@ import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
 
-import org.eclipse.cdt.internal.ui.refactoring.RefactoringASTCache;
+import org.eclipse.cdt.internal.ui.refactoring.CRefactoringContext;
 
 /**
  * A collection of static methods for finding the source file corresponding to a header
@@ -330,7 +330,7 @@ public final class SourceHeaderPartnerFinder {
 	}
 	
 	public static ITranslationUnit getPartnerTranslationUnit(ITranslationUnit tu,
-			RefactoringASTCache astCache) throws CoreException {
+			CRefactoringContext astCache) throws CoreException {
 		ITranslationUnit partnerUnit= getPartnerFileFromFilename(tu);
 
 		if (partnerUnit == null) {

@@ -24,9 +24,12 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.Refactoring;
+import org.eclipse.ltk.core.refactoring.RefactoringContext;
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.RefactoringStatusEntry;
@@ -36,13 +39,18 @@ import org.osgi.framework.Bundle;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.testplugin.CTestPlugin;
 
-import org.eclipse.cdt.internal.ui.refactoring.RefactoringASTCache;
+import org.eclipse.cdt.internal.ui.refactoring.CRefactoring2;
+import org.eclipse.cdt.internal.ui.refactoring.CRefactoringContext;
 
 /**
  * Common base for refactoring tests.
@@ -51,8 +59,9 @@ public abstract class RefactoringTestBase extends BaseTestCase {
 	private static final int INDEXER_TIMEOUT_SEC = 360;
 	protected static final NullProgressMonitor NULL_PROGRESS_MONITOR = new NullProgressMonitor();
 
+	protected boolean createEmptyFiles = true;
+	protected boolean ascendingVisibilityOrder;
 	private boolean cpp = true;
-	private RefactoringASTCache astCache;
 	private ICProject cproject;
 	private final Set<TestSourceFile> testFiles = new LinkedHashSet<TestSourceFile>();
 	private TestSourceFile selectedFile;
@@ -70,6 +79,7 @@ public abstract class RefactoringTestBase extends BaseTestCase {
 	@Override
 	public void setUp() throws Exception {
 		super.setUp();
+		resetPreferences();
 		cproject = cpp ?
 				CProjectHelper.createCCProject(getName() + System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER) :
 				CProjectHelper.createCProject(getName() + System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER);
@@ -95,7 +105,7 @@ public abstract class RefactoringTestBase extends BaseTestCase {
 			}
 			reader.close();
 
-			if (!testFile.getSource().isEmpty()) {
+			if (createEmptyFiles || !testFile.getSource().isEmpty()) {
 				TestSourceReader.createFile(cproject.getProject(), new Path(testFile.getName()),
 						testFile.getSource());
 			}
@@ -111,16 +121,15 @@ public abstract class RefactoringTestBase extends BaseTestCase {
 		CCorePlugin.getIndexManager().setIndexerId(cproject, IPDOMManager.ID_FAST_INDEXER);
 		assertTrue(CCorePlugin.getIndexManager().joinIndexer(INDEXER_TIMEOUT_SEC * 1000,
 				NULL_PROGRESS_MONITOR));
-		astCache = new RefactoringASTCache();
 	}
 
 	@Override
 	public void tearDown() throws Exception {
-		astCache.dispose();
 		if (cproject != null) {
 			cproject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT,
 					NULL_PROGRESS_MONITOR);
 		}
+		resetPreferences();
 		super.tearDown();
 	}
 
@@ -134,30 +143,45 @@ public abstract class RefactoringTestBase extends BaseTestCase {
 	}
 
 	private void executeRefactoring(boolean expectedSuccess) throws Exception {
+		if (ascendingVisibilityOrder) {
+			getPreferenceStore().setValue(PreferenceConstants.CLASS_MEMBER_ASCENDING_VISIBILITY_ORDER,
+					ascendingVisibilityOrder);
+		}
 		if (historyScript != null) {
 			executeHistoryRefactoring(expectedSuccess);
 			return;
 		}
 
 		Refactoring refactoring = createRefactoring();
-		executeRefactoring(refactoring, true, expectedSuccess);
+		RefactoringContext context;
+		if (refactoring instanceof CRefactoring2) {
+			context = new CRefactoringContext((CRefactoring2) refactoring);
+		} else {
+			context = new RefactoringContext(refactoring);
+		}
+		executeRefactoring(refactoring, context, true, expectedSuccess);
 	}
 
-	protected void executeRefactoring(Refactoring refactoring, boolean withUserInput,
-			boolean expectedSuccess) throws CoreException, Exception {
-		RefactoringStatus initialStatus = refactoring.checkInitialConditions(NULL_PROGRESS_MONITOR);
-		if (!expectedSuccess) {
-			assertStatusFatalError(initialStatus);
-			return;
-		}
+	protected void executeRefactoring(Refactoring refactoring, RefactoringContext context,
+			boolean withUserInput, boolean expectedSuccess) throws CoreException, Exception {
+		try {
+			RefactoringStatus initialStatus = refactoring.checkInitialConditions(NULL_PROGRESS_MONITOR);
+			if (!expectedSuccess) {
+				assertStatusFatalError(initialStatus);
+				return;
+			}
 
-		assertStatusOk(initialStatus);
-		if (withUserInput)
-			simulateUserInput();
-		RefactoringStatus finalStatus = refactoring.checkFinalConditions(NULL_PROGRESS_MONITOR);
-		assertStatusOk(finalStatus);
-		Change change = refactoring.createChange(NULL_PROGRESS_MONITOR);
-		change.perform(NULL_PROGRESS_MONITOR);
+			assertStatusOk(initialStatus);
+			if (withUserInput)
+				simulateUserInput();
+			RefactoringStatus finalStatus = refactoring.checkFinalConditions(NULL_PROGRESS_MONITOR);
+			assertStatusOk(finalStatus);
+			Change change = refactoring.createChange(NULL_PROGRESS_MONITOR);
+			change.perform(NULL_PROGRESS_MONITOR);
+		} finally {
+			if (context != null)
+				context.dispose();
+		}
 	}
 
 	private void executeHistoryRefactoring(boolean expectedSuccess) throws Exception {
@@ -166,11 +190,11 @@ public abstract class RefactoringTestBase extends BaseTestCase {
 		RefactoringHistory history = RefactoringHistoryService.getInstance().readRefactoringHistory(
 				new ByteArrayInputStream(scriptSource.getBytes()), 0);
 		for (RefactoringDescriptorProxy proxy : history.getDescriptors()) {
+			RefactoringDescriptor descriptor = proxy.requestDescriptor(NULL_PROGRESS_MONITOR);
 			RefactoringStatus status = new RefactoringStatus();
-			Refactoring refactoring =
-					proxy.requestDescriptor(NULL_PROGRESS_MONITOR).createRefactoring(status);
+			RefactoringContext context = descriptor.createRefactoringContext(status);
 			assertTrue(status.isOK());
-			executeRefactoring(refactoring, false, expectedSuccess);
+			executeRefactoring(context.getRefactoring(), context, false, expectedSuccess);
 		}
 	}
 
@@ -197,6 +221,13 @@ public abstract class RefactoringTestBase extends BaseTestCase {
 		if (selectedFile == null)
 			return null;
 		return cproject.getProject().getFile(new Path(selectedFile.getName()));
+	}
+
+	protected ITranslationUnit getSelectedTranslationUnit() {
+		IFile file = getSelectedFile();
+		if (file == null)
+			return null;
+		return (ITranslationUnit) CoreModel.getDefault().create(file);
 	}
 
 	protected TestSourceFile getHistoryScriptFile() {
@@ -305,14 +336,21 @@ public abstract class RefactoringTestBase extends BaseTestCase {
 	}
 
 	protected String getFileContents(IFile file) throws Exception {
-		BufferedReader reader = new BufferedReader(new InputStreamReader(file.getContents()));
-		StringBuilder code = new StringBuilder();
-		String line;
-		while ((line = reader.readLine()) != null) {
-			code.append(line);
-			code.append('\n');
-		}
+		BufferedReader reader = new BufferedReader(new InputStreamReader(file.getContents(), "UTF-8"));
+		StringBuilder buffer = new StringBuilder();
+		char[] part= new char[2048];
+		int read= 0;
+		while ((read= reader.read(part)) != -1)
+			buffer.append(part, 0, read);
 		reader.close();
-		return code.toString();
+		return buffer.toString();
+	}
+
+	protected void resetPreferences() {
+		getPreferenceStore().setToDefault(PreferenceConstants.CLASS_MEMBER_ASCENDING_VISIBILITY_ORDER);
+	}
+
+	protected IPreferenceStore getPreferenceStore() {
+		return CUIPlugin.getDefault().getPreferenceStore();
 	}
 }

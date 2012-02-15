@@ -50,7 +50,6 @@ import org.eclipse.cdt.internal.ui.refactoring.CRefactoring2;
 import org.eclipse.cdt.internal.ui.refactoring.ClassMemberInserter;
 import org.eclipse.cdt.internal.ui.refactoring.Container;
 import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
-import org.eclipse.cdt.internal.ui.refactoring.RefactoringASTCache;
 import org.eclipse.cdt.internal.ui.refactoring.implementmethod.InsertLocation;
 import org.eclipse.cdt.internal.ui.refactoring.implementmethod.MethodDefinitionInsertLocationFinder;
 import org.eclipse.cdt.internal.ui.refactoring.utils.Checks;
@@ -93,8 +92,8 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring2 {
 	private InsertLocation definitionInsertLocation;	
 	
 	public GenerateGettersAndSettersRefactoring(ICElement element, ISelection selection,
-			ICProject project, RefactoringASTCache astCache) {
-		super(element, selection, project, astCache);
+			ICProject project) {
+		super(element, selection, project);
 		context = new GetterSetterContext();
 	}
 	
@@ -148,7 +147,7 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring2 {
 	}
 
 	private void initRefactoring(IProgressMonitor pm) throws OperationCanceledException, CoreException {
-		IASTTranslationUnit ast = astCache.getAST(tu, null);
+		IASTTranslationUnit ast = getAST(tu, null);
 		context.selectedName = getSelectedName(ast);
 		IASTCompositeTypeSpecifier compositeTypeSpecifier = null;
 		if (context.selectedName != null) {
@@ -279,7 +278,7 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring2 {
 		IASTSimpleDeclaration decl = context.existingFields.get(0);
 		MethodDefinitionInsertLocationFinder locationFinder = new MethodDefinitionInsertLocationFinder();
 		InsertLocation location = locationFinder.find(tu, decl.getFileLocation(), decl.getParent(),
-				astCache, pm);
+				refactoringContext, pm);
 
 		if (location.getFile() == null || NodeHelper.isContainedInTemplateDeclaration(decl)) {
 			location.setNodeToInsertAfter(NodeHelper.findTopLevelParent(decl), tu);

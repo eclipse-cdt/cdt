@@ -65,19 +65,18 @@ public class ToggleFileCreator {
 		}
 		return result;
 	}
-	
+
 	public void createNewFile() {
-		CreateFileChange change;
 		String filename = getNewFileName();
 		try {
-			change = new CreateFileChange(filename, new	Path(getPath() + filename), 
+			CreateFileChange change = new CreateFileChange(filename, new Path(getPath() + filename), 
 					EMPTY_STRING, context.getSelectionFile().getCharset());
 			change.perform(new NullProgressMonitor());
 		} catch (CoreException e) {
 			throw new NotSupportedException(Messages.ToggleFileCreator_CanNotCreateNewFile);
 		}
 	}
-	
+
 	public boolean askUserForFileCreation(final ToggleRefactoringContext context) {
 		if (context.isSettedDefaultAnswer()) {
 			return context.getDefaultAnswer();

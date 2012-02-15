@@ -34,7 +34,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 
 import org.eclipse.cdt.internal.ui.editor.SourceHeaderPartnerFinder;
-import org.eclipse.cdt.internal.ui.refactoring.RefactoringASTCache;
+import org.eclipse.cdt.internal.ui.refactoring.CRefactoringContext;
 import org.eclipse.cdt.internal.ui.refactoring.utils.DefinitionFinder;
 import org.eclipse.cdt.internal.ui.refactoring.utils.NodeHelper;
 
@@ -53,7 +53,7 @@ public class MethodDefinitionInsertLocationFinder {
 			new HashMap<IASTSimpleDeclaration, IASTName>();
 
 	public InsertLocation find(ITranslationUnit declarationTu, IASTFileLocation methodDeclarationLocation,
-			IASTNode parent, RefactoringASTCache astCache, IProgressMonitor pm) throws CoreException {
+			IASTNode parent, CRefactoringContext astCache, IProgressMonitor pm) throws CoreException {
 		IASTDeclaration[] declarations = NodeHelper.getDeclarations(parent);
 		InsertLocation insertLocation = new InsertLocation();
 

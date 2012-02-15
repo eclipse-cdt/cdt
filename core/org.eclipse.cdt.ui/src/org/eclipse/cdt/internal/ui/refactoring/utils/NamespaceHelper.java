@@ -32,7 +32,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleTypeTemplatePara
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTemplateId;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTypeId;
 
-import org.eclipse.cdt.internal.ui.refactoring.RefactoringASTCache;
+import org.eclipse.cdt.internal.ui.refactoring.CRefactoringContext;
 
 /**
  * Helper class to find Namespace informations.
@@ -48,7 +48,7 @@ public class NamespaceHelper {
 	 * @return ICPPASTQualifiedName with the names of all namespaces
 	 * @throws CoreException 
 	 */
-	public static ICPPASTQualifiedName getSurroundingNamespace(final ITranslationUnit translationUnit, final int offset, RefactoringASTCache astCache)
+	public static ICPPASTQualifiedName getSurroundingNamespace(final ITranslationUnit translationUnit, final int offset, CRefactoringContext astCache)
 			throws CoreException {
 		final CPPASTQualifiedName qualifiedName = new CPPASTQualifiedName();
 	

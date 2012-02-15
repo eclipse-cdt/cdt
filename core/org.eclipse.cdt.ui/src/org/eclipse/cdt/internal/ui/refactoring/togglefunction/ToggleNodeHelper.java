@@ -336,7 +336,7 @@ public class ToggleNodeHelper extends NodeHelper {
 				for (IIndexFile thisFile : thisFileVariants) {
 					for (IIndexInclude include : projectIndex.findIncludes(thisFile)) {
 						if (ToggleNodeHelper.getFilenameWithoutExtension(include.getFullName()).equals(fileName)) {
-							if (include.getIncludesLocation() == null){
+							if (include.getIncludesLocation() == null) {
 								throw new NotSupportedException("The include file does not exist"); //$NON-NLS-1$
 							}
 							String loc = include.getIncludesLocation().getFullPath();

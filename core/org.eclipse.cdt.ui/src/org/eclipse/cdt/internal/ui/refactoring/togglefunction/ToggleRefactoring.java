@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2011, 2012 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -7,7 +7,8 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  * 
  * Contributors: 
- * 		Martin Schwab & Thomas Kallenberg - initial API and implementation 
+ * 		Martin Schwab & Thomas Kallenberg - initial API and implementation
+ * 		Sergey Prigogin (Google)
  ******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.togglefunction;
 
@@ -38,17 +39,16 @@ import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
  * position.
  */
 public class ToggleRefactoring extends CRefactoring {
-
 	private ITextSelection selection;
 	private IToggleRefactoringStrategy strategy;
-	protected ToggleRefactoringContext context;
+	private ToggleRefactoringContext context;
 	private IIndex fIndex;
 	
 	public ToggleRefactoring(IFile file, ITextSelection selection, ICProject proj) {
 		super(file, selection, null, proj);
 		if (selection == null || file == null || project == null)
 			initStatus.addFatalError(Messages.ToggleRefactoring_InvalidSelection);
-		if (!IDE.saveAllEditors(new IResource[] {ResourcesPlugin.getWorkspace().getRoot()}, false))
+		if (!IDE.saveAllEditors(new IResource[] { ResourcesPlugin.getWorkspace().getRoot() }, false))
 			initStatus.addFatalError(Messages.ToggleRefactoring_CanNotSaveFiles);
 		this.selection = selection;
 	}
@@ -96,5 +96,9 @@ public class ToggleRefactoring extends CRefactoring {
 	@Override
 	protected RefactoringDescriptor getRefactoringDescriptor() {
 		return new EmptyRefactoringDescription();
+	}
+
+	public ToggleRefactoringContext getContext() {
+		return context;
 	}
 }

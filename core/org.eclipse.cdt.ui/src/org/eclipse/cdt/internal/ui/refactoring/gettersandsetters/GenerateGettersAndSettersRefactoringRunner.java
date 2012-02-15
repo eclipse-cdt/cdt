@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.ui.refactoring.gettersandsetters;
 
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.window.IShellProvider;
+import org.eclipse.ltk.ui.refactoring.RefactoringWizard;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.ITextEditor;
@@ -22,7 +23,6 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 
 import org.eclipse.cdt.internal.ui.refactoring.RefactoringRunner2;
-import org.eclipse.cdt.internal.ui.refactoring.RefactoringASTCache;
 import org.eclipse.cdt.internal.ui.refactoring.RefactoringSaveHelper;
 
 /**
@@ -36,14 +36,13 @@ public class GenerateGettersAndSettersRefactoringRunner extends RefactoringRunne
 	}
 
 	@Override
-	public void run(RefactoringASTCache astCache) {
+	public void run() {
 		if (getActiveEditor() instanceof ITextEditor) {
 			GenerateGettersAndSettersRefactoring refactoring =
-					new GenerateGettersAndSettersRefactoring(element, selection, project, astCache);
-			GenerateGettersAndSettersRefactoringWizard wizard =
+					new GenerateGettersAndSettersRefactoring(element, selection, project);
+			RefactoringWizard wizard =
 					new GenerateGettersAndSettersRefactoringWizard(refactoring);
-			starter.activate(wizard, shellProvider.getShell(), refactoring.getName(),
-					RefactoringSaveHelper.SAVE_REFACTORING);
+			run(wizard, refactoring, RefactoringSaveHelper.SAVE_REFACTORING);
 		}
 	}
 

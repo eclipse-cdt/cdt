@@ -35,7 +35,7 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.corext.util.CModelUtil;
 
 import org.eclipse.cdt.internal.ui.editor.ITranslationUnitEditorInput;
-import org.eclipse.cdt.internal.ui.refactoring.RefactoringASTCache;
+import org.eclipse.cdt.internal.ui.refactoring.CRefactoringContext;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
 
 /**
@@ -44,7 +44,7 @@ import org.eclipse.cdt.internal.ui.util.EditorUtility;
 public class DefinitionFinder {
 
 	public static IASTName getDefinition(IASTSimpleDeclaration simpleDeclaration,
-			RefactoringASTCache astCache, IProgressMonitor pm) throws CoreException {
+			CRefactoringContext astCache, IProgressMonitor pm) throws CoreException {
 		IIndex index = astCache.getIndex();
 		IASTDeclarator declarator = simpleDeclaration.getDeclarators()[0];
 		if (index == null) {
@@ -58,7 +58,7 @@ public class DefinitionFinder {
 	}
 
 	private static IASTName getDefinition(IIndexBinding binding,
-			RefactoringASTCache astCache, IIndex index, IProgressMonitor pm) throws CoreException {
+			CRefactoringContext astCache, IIndex index, IProgressMonitor pm) throws CoreException {
 		Set<String> searchedFiles = new HashSet<String>();
 		List<IASTName> definitions = new ArrayList<IASTName>();
 		IEditorPart[] dirtyEditors = EditorUtility.getDirtyEditors(true);
@@ -91,7 +91,7 @@ public class DefinitionFinder {
 	}
 
 	private static void findDefinitionsInTranslationUnit(IIndexBinding binding, ITranslationUnit tu,
-			RefactoringASTCache astCache, List<IASTName> definitions, IProgressMonitor pm)
+			CRefactoringContext astCache, List<IASTName> definitions, IProgressMonitor pm)
 			throws OperationCanceledException, CoreException {
 		IASTTranslationUnit ast = astCache.getAST(tu, pm);
 		findDefinitionsInAST(binding, ast, tu, definitions);

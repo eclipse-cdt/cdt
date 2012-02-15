@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -9,6 +9,7 @@
  * Contributors: 
  *     Institute for Software - initial API and implementation
  *     Marc-Andre Laperle
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring.implementmethod;
 
@@ -16,8 +17,6 @@ import java.util.Collection;
 import java.util.Properties;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.ltk.core.refactoring.Change;
-import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
@@ -31,9 +30,6 @@ import org.eclipse.cdt.internal.ui.refactoring.implementmethod.ImplementMethodRe
  * @author Mirko Stocker
  */
 public class ImplementMethodRefactoringTest extends RefactoringTest {
-	protected int finalWarnings;
-	private int initialWarnings;
-	private int infos;
 
 	public ImplementMethodRefactoringTest(String name, Collection<TestSourceFile> files) {
 		super(name, files);
@@ -43,28 +39,8 @@ public class ImplementMethodRefactoringTest extends RefactoringTest {
 	protected void runTest() throws Throwable {
 		IFile refFile = project.getFile(fileName);
 		ICElement element = CoreModel.getDefault().create(refFile);
-		CRefactoring2 refactoring = new ImplementMethodRefactoring(element, selection, cproject, astCache);
-		RefactoringStatus checkInitialConditions = refactoring.checkInitialConditions(NULL_PROGRESS_MONITOR);
-
-		if (initialWarnings == 0) {
-			assertConditionsOk(checkInitialConditions);
-		} else {
-			assertConditionsFatalError(checkInitialConditions, initialWarnings);
-			return;
-		}
-
-		RefactoringStatus finalConditions = refactoring.checkFinalConditions(NULL_PROGRESS_MONITOR);
-		Change createChange = refactoring.createChange(NULL_PROGRESS_MONITOR);
-		
-		if (finalWarnings > 0) {
-			assertConditionsWarning(finalConditions, finalWarnings);
-		} else if (infos > 0) {
-			assertConditionsInfo(finalConditions, infos);
-		} else {
-			assertConditionsOk(finalConditions);
-		}
-		
-		createChange.perform(NULL_PROGRESS_MONITOR);
+		CRefactoring2 refactoring = new ImplementMethodRefactoring(element, selection, cproject);
+		executeRefactoring(refactoring);
 		compareFiles(fileMap);
 	}
 
@@ -72,6 +48,6 @@ public class ImplementMethodRefactoringTest extends RefactoringTest {
 	protected void configureRefactoring(Properties refactoringProperties) {
 		finalWarnings = new Integer(refactoringProperties.getProperty("finalWarnings", "0")).intValue();  //$NON-NLS-1$//$NON-NLS-2$
 		initialWarnings = Integer.parseInt(refactoringProperties.getProperty("initialWarnings", "0"));  //$NON-NLS-1$//$NON-NLS-2$
-		infos = Integer.parseInt(refactoringProperties.getProperty("infos", "0"));  //$NON-NLS-1$//$NON-NLS-2$
+		finalInfos = Integer.parseInt(refactoringProperties.getProperty("infos", "0"));  //$NON-NLS-1$//$NON-NLS-2$
 	}
 }

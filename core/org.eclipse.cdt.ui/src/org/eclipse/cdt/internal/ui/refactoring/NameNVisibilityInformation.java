@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring;
 
@@ -17,10 +17,8 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.VisibilityEnum;
 
 /**
  * Associate a name with a visibility and holds a list of used names.
- *
  */
 public class NameNVisibilityInformation {
-	
 	private String name = "";	 //$NON-NLS-1$
 	private VisibilityEnum visibility = VisibilityEnum.v_public;
 	private final ArrayList<String> usedNames = new ArrayList<String>();
@@ -52,5 +50,4 @@ public class NameNVisibilityInformation {
 	public void addNamesToUsedNames(ArrayList<String> names) {
 		usedNames.addAll(names);
 	}
-	
 }

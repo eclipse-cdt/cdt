@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -17,6 +17,10 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Properties;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.ltk.core.refactoring.Change;
+import org.eclipse.ltk.core.refactoring.Refactoring;
+import org.eclipse.ltk.core.refactoring.RefactoringContext;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.RefactoringStatusEntry;
 
@@ -25,17 +29,23 @@ import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.ui.testplugin.CTestPlugin;
 
-import org.eclipse.cdt.internal.ui.refactoring.RefactoringASTCache;
+import org.eclipse.cdt.internal.ui.refactoring.CRefactoring2;
+import org.eclipse.cdt.internal.ui.refactoring.CRefactoringContext;
 
 /**
+ * Don't create new tests based on this class. Use RefactoringTestBase instead.
+ * 
  * @author Emanuel Graf
  */
 public abstract class RefactoringTest extends RefactoringBaseTest {
 	private static final String CONFIG_FILE_NAME = ".config"; //$NON-NLS-1$
 
 	protected String fileName;
-	protected RefactoringASTCache astCache;
 	protected boolean fatalError;
+	protected int initialErrors;
+	protected int initialWarnings;
+	protected int finalWarnings;
+	protected int finalInfos;
 
 	public RefactoringTest(String name, Collection<TestSourceFile> files) {
 		super(name, files);
@@ -43,6 +53,62 @@ public abstract class RefactoringTest extends RefactoringBaseTest {
 	}
 
 	protected abstract void configureRefactoring(Properties refactoringProperties);
+
+	protected void executeRefactoring(Refactoring refactoring) throws CoreException {
+		RefactoringContext context = refactoring instanceof CRefactoring2 ?
+				new CRefactoringContext((CRefactoring2) refactoring) :
+				new RefactoringContext(refactoring);
+		executeRefactoring(refactoring, context, true);
+	}
+
+	protected void executeRefactoring(Refactoring refactoring, boolean withUserInput) throws CoreException {
+		RefactoringContext context = refactoring instanceof CRefactoring2 ?
+				new CRefactoringContext((CRefactoring2) refactoring) :
+				new RefactoringContext(refactoring);
+		executeRefactoring(refactoring, context, withUserInput);
+	}
+
+	protected void executeRefactoring(Refactoring refactoring, RefactoringContext context,
+			boolean withUserInput) throws CoreException {
+		try {
+			RefactoringStatus checkInitialConditions = refactoring.checkInitialConditions(NULL_PROGRESS_MONITOR);
+			
+			if (fatalError) {
+				assertConditionsFatalError(checkInitialConditions);
+				return;
+			}
+			if (initialErrors != 0) {
+				assertConditionsError(checkInitialConditions, initialErrors);
+			} else if (initialWarnings != 0) {
+				assertConditionsFatalError(checkInitialConditions, initialWarnings);
+			} else {
+				assertConditionsOk(checkInitialConditions);
+			}
+
+			if (withUserInput)
+				simulateUserInput();
+
+			RefactoringStatus finalConditions = refactoring.checkFinalConditions(NULL_PROGRESS_MONITOR);
+			if (finalWarnings > 0) {
+				assertConditionsWarning(finalConditions, finalWarnings);
+			} else if (finalInfos > 0) {
+				assertConditionsInfo(finalConditions, finalInfos);
+			} else {
+				assertConditionsOk(finalConditions);
+			}
+			Change change = refactoring.createChange(NULL_PROGRESS_MONITOR);
+			change.perform(NULL_PROGRESS_MONITOR);
+		} finally {
+			if (context != null)
+				context.dispose();
+		}
+	}
+
+	/**
+	 * Subclasses can override to simulate user input.
+	 */
+	protected void simulateUserInput() {
+	}
 
 	@Override
 	protected void setUp() throws Exception {
@@ -52,12 +118,10 @@ public abstract class RefactoringTest extends RefactoringBaseTest {
 		CCorePlugin.getIndexManager().reindex(cproject);
 		boolean joined = CCorePlugin.getIndexManager().joinIndexer(IIndexManager.FOREVER, NULL_PROGRESS_MONITOR);
 		assertTrue(joined);
-		astCache = new RefactoringASTCache();
 	}
 
 	@Override
 	protected void tearDown() throws Exception {
-		astCache.dispose();
 		super.tearDown();
 	}
 

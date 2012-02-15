@@ -18,10 +18,8 @@ import java.util.Map;
 
 import junit.framework.Test;
 
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ltk.core.refactoring.Refactoring;
 
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.tests.refactoring.RefactoringTestBase;
 
@@ -59,25 +57,12 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	}
 
 	@Override
-	public void setUp() throws Exception {
-		super.setUp();
-		resetPreferences();
-	}
-
-	@Override
-	public void tearDown() throws Exception {
-		super.tearDown();
-		resetPreferences();
-	}
-	
-	private void resetPreferences() {
+	protected void resetPreferences() {
+		super.resetPreferences();
+		getPreferenceStore().setToDefault(PreferenceConstants.FUNCTION_OUTPUT_PARAMETERS_BEFORE_INPUT);
 		getPreferenceStore().setToDefault(PreferenceConstants.FUNCTION_PASS_OUTPUT_PARAMETERS_BY_POINTER);
 	}
 
-	private IPreferenceStore getPreferenceStore() {
-		return CUIPlugin.getDefault().getPreferenceStore();
-	}
-	
 	@Override
 	protected Refactoring createRefactoring() {
 		refactoringInfo = new ExtractFunctionInformation();

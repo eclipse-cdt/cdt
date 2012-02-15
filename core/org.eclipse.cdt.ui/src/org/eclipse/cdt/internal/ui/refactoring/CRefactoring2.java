@@ -15,6 +15,7 @@ package org.eclipse.cdt.internal.ui.refactoring;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -47,6 +48,7 @@ import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
+import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
@@ -68,14 +70,12 @@ public abstract class CRefactoring2 extends Refactoring {
 	protected String name = Messages.Refactoring_name; 
 	protected final ICProject project;
 	protected final ITranslationUnit tu;
-	protected final RefactoringStatus initStatus;
-	protected final RefactoringASTCache astCache;
 	protected Region selectedRegion;
+	protected final RefactoringStatus initStatus;
+	protected CRefactoringContext refactoringContext;
 
-	public CRefactoring2(ICElement element, ISelection selection, ICProject project, 
-			RefactoringASTCache astCache) {
+	public CRefactoring2(ICElement element, ISelection selection, ICProject project) {
 		this.project = project;
-		this.astCache = astCache;
 		this.initStatus= new RefactoringStatus();
 		if (!(element instanceof ISourceReference)) {
 			this.tu = null;
@@ -98,70 +98,10 @@ public abstract class CRefactoring2 extends Refactoring {
 		}
 	}
 
-	private class ProblemFinder extends ASTVisitor {
-		private boolean problemFound = false;
-		private final RefactoringStatus status;
-		
-		public ProblemFinder(RefactoringStatus status) {
-			this.status = status;
-		}
 
-		{
-			shouldVisitProblems = true;
-			shouldVisitDeclarations = true;
-			shouldVisitExpressions = true;
-			shouldVisitStatements = true;
-			shouldVisitTypeIds = true;
-		}
-
-		@Override
-		public int visit(IASTProblem problem) {
-			addWarningToState();
-			return ASTVisitor.PROCESS_CONTINUE;
-		}
-
-		@Override
-		public int visit(IASTDeclaration declaration) {
-			if (declaration instanceof IASTProblemDeclaration) {
-				addWarningToState();
-			}
-			return ASTVisitor.PROCESS_CONTINUE;
-		}
-
-		@Override
-		public int visit(IASTExpression expression) {
-			if (expression instanceof IASTProblemExpression) {
-				addWarningToState();
-			}
-			return ASTVisitor.PROCESS_CONTINUE;
-		}
-
-		@Override
-		public int visit(IASTStatement statement) {
-			if (statement instanceof IASTProblemStatement) {
-				addWarningToState();
-			}
-			return ASTVisitor.PROCESS_CONTINUE;
-		}
-
-		@Override
-		public int visit(IASTTypeId typeId) {
-			if (typeId instanceof IASTProblemTypeId) {
-				addWarningToState();
-			}
-			return ASTVisitor.PROCESS_CONTINUE;
-		}
-
-		public boolean hasProblem() {
-			return problemFound;
-		}
-
-		private void addWarningToState() {
-			if (!problemFound) {
-				status.addWarning(Messages.Refactoring_CompileErrorInTU); 
-				problemFound = true;
-			}
-		}
+	public void setContext(CRefactoringContext refactoringContext) {
+		Assert.isNotNull(refactoringContext);
+		this.refactoringContext = refactoringContext;
 	}
 
 	@Override
@@ -248,7 +188,11 @@ public abstract class CRefactoring2 extends Refactoring {
 
 	protected IASTTranslationUnit getAST(ITranslationUnit tu, IProgressMonitor pm)
 			throws CoreException, OperationCanceledException {
-		return astCache.getAST(tu, pm);
+		return refactoringContext.getAST(tu, pm);
+	}
+
+	protected IIndex getIndex() throws OperationCanceledException, CoreException {
+		return refactoringContext.getIndex();
 	}
 
 	protected boolean checkAST(IASTTranslationUnit ast) {
@@ -283,5 +227,71 @@ public abstract class CRefactoring2 extends Refactoring {
 		result.add(new ValidateEditChecker(getValidationContext()));
 		result.add(new ResourceChangeChecker());
 		return result;
+	}
+
+	private class ProblemFinder extends ASTVisitor {
+		private boolean problemFound = false;
+		private final RefactoringStatus status;
+		
+		public ProblemFinder(RefactoringStatus status) {
+			this.status = status;
+		}
+
+		{
+			shouldVisitProblems = true;
+			shouldVisitDeclarations = true;
+			shouldVisitExpressions = true;
+			shouldVisitStatements = true;
+			shouldVisitTypeIds = true;
+		}
+
+		@Override
+		public int visit(IASTProblem problem) {
+			addWarningToState();
+			return ASTVisitor.PROCESS_CONTINUE;
+		}
+
+		@Override
+		public int visit(IASTDeclaration declaration) {
+			if (declaration instanceof IASTProblemDeclaration) {
+				addWarningToState();
+			}
+			return ASTVisitor.PROCESS_CONTINUE;
+		}
+
+		@Override
+		public int visit(IASTExpression expression) {
+			if (expression instanceof IASTProblemExpression) {
+				addWarningToState();
+			}
+			return ASTVisitor.PROCESS_CONTINUE;
+		}
+
+		@Override
+		public int visit(IASTStatement statement) {
+			if (statement instanceof IASTProblemStatement) {
+				addWarningToState();
+			}
+			return ASTVisitor.PROCESS_CONTINUE;
+		}
+
+		@Override
+		public int visit(IASTTypeId typeId) {
+			if (typeId instanceof IASTProblemTypeId) {
+				addWarningToState();
+			}
+			return ASTVisitor.PROCESS_CONTINUE;
+		}
+
+		public boolean hasProblem() {
+			return problemFound;
+		}
+
+		private void addWarningToState() {
+			if (!problemFound) {
+				status.addWarning(Messages.Refactoring_CompileErrorInTU); 
+				problemFound = true;
+			}
+		}
 	}
 }

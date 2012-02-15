@@ -395,7 +395,8 @@ public class StatementWriter extends NodeWriter {
 	protected IASTStatement[] getNestedStatements(IASTCompoundStatement compoundStatement) {
 		return compoundStatement.getStatements();
 	}	
-	
+
+	// TODO(sprigogin): Rename second parameter
 	protected void writeBodyStatement(IASTStatement statement, boolean isDoStatement) {
 		if (statement instanceof IASTCompoundStatement) {
 			//TODO hsr existiert noch eine methode

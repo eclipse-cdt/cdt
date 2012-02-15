@@ -590,6 +590,10 @@ public class ChangeGenerator extends ASTVisitor {
 				}
 			}
 			newNode.accept(writer);
+			// TODO(sprigogin): Temporary workaround for invalid handling of line breaks in StatementWriter
+			if (!writer.toString().endsWith("\n")) //$NON-NLS-1$
+				writer.newLine();
+			
 		}
 		if (prevNode != null) {
 			IASTNode nextNode = getNextSiblingOrPreprocessorNode(prevNode);

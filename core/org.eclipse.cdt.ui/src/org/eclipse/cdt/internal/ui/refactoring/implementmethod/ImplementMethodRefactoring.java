@@ -9,6 +9,7 @@
  * Contributors: 
  *     Institute for Software - initial API and implementation
  *     Marc-Andre Laperle
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.implementmethod;
 
@@ -59,7 +60,6 @@ import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoring2;
 import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
-import org.eclipse.cdt.internal.ui.refactoring.RefactoringASTCache;
 import org.eclipse.cdt.internal.ui.refactoring.utils.Checks;
 import org.eclipse.cdt.internal.ui.refactoring.utils.NameHelper;
 import org.eclipse.cdt.internal.ui.refactoring.utils.NodeHelper;
@@ -78,8 +78,8 @@ public class ImplementMethodRefactoring extends CRefactoring2 {
 	private Map<IASTSimpleDeclaration, InsertLocation> insertLocations;
 	private static ICPPNodeFactory nodeFactory = ASTNodeFactoryFactory.getDefaultCPPNodeFactory();
 	
-	public ImplementMethodRefactoring(ICElement element, ISelection selection, ICProject project, RefactoringASTCache astCache) {
-		super(element, selection, project, astCache);
+	public ImplementMethodRefactoring(ICElement element, ISelection selection, ICProject project) {
+		super(element, selection, project);
 		data = new ImplementMethodData();
 		methodDefinitionInsertLocationFinder = new MethodDefinitionInsertLocationFinder();
 		insertLocations = new HashMap<IASTSimpleDeclaration, InsertLocation>();
@@ -99,7 +99,8 @@ public class ImplementMethodRefactoring extends CRefactoring2 {
 				data.setMethodDeclarations(unimplementedMethodDeclarations);
 
 				if (selectedRegion.getLength() > 0) {
-					IASTSimpleDeclaration methodDeclaration = SelectionHelper.findFirstSelectedDeclaration(selectedRegion, astCache.getAST(tu, pm));
+					IASTSimpleDeclaration methodDeclaration =
+							SelectionHelper.findFirstSelectedDeclaration(selectedRegion, getAST(tu, pm));
 					if (NodeHelper.isMethodDeclaration(methodDeclaration)) {
 						for (MethodToImplementConfig config : data.getMethodDeclarations()) {
 							if (config.getDeclaration() == methodDeclaration) {
@@ -114,8 +115,9 @@ public class ImplementMethodRefactoring extends CRefactoring2 {
 		return initStatus;
 	}
 
-	private List<IASTSimpleDeclaration> findUnimplementedMethodDeclarations(IProgressMonitor pm) throws OperationCanceledException, CoreException {
-		IASTTranslationUnit ast = astCache.getAST(tu, pm);
+	private List<IASTSimpleDeclaration> findUnimplementedMethodDeclarations(IProgressMonitor pm)
+			throws OperationCanceledException, CoreException {
+		IASTTranslationUnit ast = getAST(tu, pm);
 		final List<IASTSimpleDeclaration> list = new ArrayList<IASTSimpleDeclaration>();
 		ast.accept(new ASTVisitor() {
 			{
@@ -151,8 +153,8 @@ public class ImplementMethodRefactoring extends CRefactoring2 {
 			}
 			
 			try {
-				IIndexName[] indexNames = astCache.getIndex().findNames(binding, IIndex.FIND_DEFINITIONS
-								| IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES);
+				IIndexName[] indexNames = getIndex().findNames(binding,
+						IIndex.FIND_DEFINITIONS | IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES);
 				if (indexNames.length == 0) {
 					return true;
 				}
@@ -166,7 +168,7 @@ public class ImplementMethodRefactoring extends CRefactoring2 {
 
 	@Override
 	protected void collectModifications(IProgressMonitor pm, ModificationCollector collector)
-			throws CoreException,	OperationCanceledException {
+			throws CoreException, OperationCanceledException {
 		List<MethodToImplementConfig> methodsToImplement = data.getMethodsToImplement();
 		SubMonitor sm = SubMonitor.convert(pm, 4 * methodsToImplement.size());
 		for (MethodToImplementConfig config : methodsToImplement) {
@@ -174,8 +176,8 @@ public class ImplementMethodRefactoring extends CRefactoring2 {
 		}
 	}
 
-	protected void createDefinition(ModificationCollector collector,
-			MethodToImplementConfig config, IProgressMonitor subMonitor) throws CoreException, OperationCanceledException {
+	protected void createDefinition(ModificationCollector collector, MethodToImplementConfig config,
+			IProgressMonitor subMonitor) throws CoreException, OperationCanceledException {
 		if (subMonitor.isCanceled()) {
 			throw new OperationCanceledException();
 		}
@@ -228,7 +230,9 @@ public class ImplementMethodRefactoring extends CRefactoring2 {
 		if (insertLocations.containsKey(methodDeclaration)) {
 			return insertLocations.get(methodDeclaration);
 		}
-		InsertLocation insertLocation = methodDefinitionInsertLocationFinder.find(tu, methodDeclaration.getFileLocation(), methodDeclaration.getParent(), astCache, subMonitor);
+		InsertLocation insertLocation =
+				methodDefinitionInsertLocationFinder.find(tu, methodDeclaration.getFileLocation(),
+						methodDeclaration.getParent(), refactoringContext, subMonitor);
 		
 		if (insertLocation.getTranslationUnit() == null || NodeHelper.isContainedInTemplateDeclaration(methodDeclaration)) {
 			insertLocation.setNodeToInsertAfter(NodeHelper.findTopLevelParent(methodDeclaration), tu);
@@ -286,7 +290,7 @@ public class ImplementMethodRefactoring extends CRefactoring2 {
 		int insertOffset = insertLocation.getInsertPosition();
 		return NameHelper.createQualifiedNameFor(
 				functionDeclarator.getName(), tu, functionDeclarator.getFileLocation().getNodeOffset(),
-				insertLocation.getTranslationUnit(), insertOffset, astCache);
+				insertLocation.getTranslationUnit(), insertOffset, refactoringContext);
 	}
 	
 	public ImplementMethodData getRefactoringData() {

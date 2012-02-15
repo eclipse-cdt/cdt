@@ -20,7 +20,8 @@
 				<version>${tycho-version}</version>
 				<configuration>
 					<argLine>-Xms256m -Xmx512m -XX:MaxPermSize=256M</argLine>
-                    <testClass>org.eclipse.rse.tests.RSECombinedTestSuite</testClass>
+<!--                    <testClass>org.eclipse.rse.tests.RSECombinedTestSuite</testClass>
+-->
                     <useUIHarness>true</useUIHarness>
                     <useUIThread>true</useUIThread>
                     <product>org.eclipse.sdk.ide</product>

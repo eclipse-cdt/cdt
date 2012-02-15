@@ -43,7 +43,6 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.source.Annotation;
-import org.eclipse.jface.text.source.AnnotationModel;
 import org.eclipse.jface.text.source.AnnotationModelEvent;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModelListener;
@@ -887,21 +886,24 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		IProblemRequestor requestor= tuInfo.fModel instanceof IProblemRequestor ? (IProblemRequestor) tuInfo.fModel : null;
 		tuInfo.fCopy = CDTUITools.getWorkingCopyManager().getSharedWorkingCopy(original, requestor, getProgressMonitor());
 
-		if (tuInfo.fModel == null) {
-			IPath location = original.getLocation();
-			if (location != null) {
-				IResource markerResource= original.getCProject().getProject();
-				tuInfo.fModel= new ExternalSearchAnnotationModel(markerResource, location);
-				IAnnotationModel fileBufferAnnotationModel= tuInfo.fTextFileBuffer.getAnnotationModel();
-				if (fileBufferAnnotationModel != null) {
-					((AnnotationModel)tuInfo.fModel).addAnnotationModel("fileBufferModel", fileBufferAnnotationModel); //$NON-NLS-1$
-				}
-				tuInfo.fCachedReadOnlyState= true;
-			}
-		}
 		if (tuInfo.fModel instanceof TranslationUnitAnnotationModel) {
 			TranslationUnitAnnotationModel model= (TranslationUnitAnnotationModel) tuInfo.fModel;
 			model.setTranslationUnit(tuInfo.fCopy);
+		} else {
+			IPath location = original.getLocation();
+			if (location != null) {
+				IResource markerResource = CUIPlugin.getWorkspace().getRoot();
+				IAnnotationModel originalModel = tuInfo.fModel;
+				ExternalSearchAnnotationModel externalSearchModel = new ExternalSearchAnnotationModel(markerResource, location, IResource.DEPTH_ONE);
+				tuInfo.fModel= externalSearchModel;
+				IAnnotationModel fileBufferModel= tuInfo.fTextFileBuffer.getAnnotationModel();
+				if (fileBufferModel != null) {
+					externalSearchModel.addAnnotationModel("fileBufferModel", fileBufferModel); //$NON-NLS-1$
+				}
+				if (originalModel != null && originalModel != fileBufferModel) {
+					externalSearchModel.addAnnotationModel("originalModel", originalModel); //$NON-NLS-1$
+				}
+			}
 		}
 		if (tuInfo.fModel != null)
 			tuInfo.fModel.addAnnotationModelListener(fGlobalAnnotationModelListener);

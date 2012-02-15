@@ -19,7 +19,6 @@
 				<artifactId>tycho-surefire-plugin</artifactId>
 				<version>${tycho-version}</version>
 				<configuration>
-					<argLine>-Xms256m -Xmx512m -XX:MaxPermSize=256M</argLine>
 <!--                    <testClass>org.eclipse.rse.tests.RSECombinedTestSuite</testClass>
 -->
                     <useUIHarness>true</useUIHarness>

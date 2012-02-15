@@ -28,7 +28,7 @@
             category="org.eclipse.cdt.ui.newCWizards"
             class="org.eclipse.cdt.managedbuilder.ui.wizards.NewMakeProjFromExisting"
             finalPerspective="org.eclipse.cdt.ui.CPerspective"
-            icon="icons/obj16/convert-normal.gif"
+            icon="icons/elcl16/newmngcc_app.gif"
             id="org.eclipse.cdt.ui.wizards.NewMakeFromExisting"
             name="%NewMakeFromExisting.name"
             project="true">

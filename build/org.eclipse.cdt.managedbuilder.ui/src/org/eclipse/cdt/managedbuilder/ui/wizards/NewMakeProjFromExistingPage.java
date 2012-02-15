@@ -20,10 +20,14 @@ import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
@@ -51,6 +55,14 @@ public class NewMakeProjFromExistingPage extends WizardPage {
 	IWorkspaceRoot root;
 	List tcList;
 	Map<String, IToolChain> tcMap = new HashMap<String, IToolChain>();
+	
+	
+	/**
+	 * True if the user entered a non-empty string in the project name field. In that state, we avoid
+	 * automatically filling the project name field with the directory name (last segment of the location) he
+	 * has entered.
+	 */
+	boolean projectNameSetByUser;
 
 	protected NewMakeProjFromExistingPage() {
 		super(Messages.NewMakeProjFromExistingPage_0);
@@ -88,18 +100,77 @@ public class NewMakeProjFromExistingPage extends WizardPage {
 		projectName.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
-				validateProjectName();
+				validatePage();
+				if (getProjectName().isEmpty()) {
+					projectNameSetByUser = false;
+				}
+			}
+		});
+		
+		// Note that the modify listener gets called not only when the user enters text but also when we
+		// programatically set the field. This listener only gets called when the user modifies the field
+		projectName.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				projectNameSetByUser = true;
 			}
 		});
 	}
+	
+	/**
+	 * Validates the contents of the page, setting the page error message and Finish button state accordingly
+	 * 
+	 * @since 8.1
+	 */
+	protected void validatePage() {
+		// Don't generate an error if project name or location is empty, but do disable Finish button.  
+		String msg = null;
+		boolean complete = true; // ultimately treated as false if msg != null
+		
+		String name = getProjectName();
+		if (name.isEmpty()) {
+			complete = false;
+		}
+		else {
+			IStatus status = ResourcesPlugin.getWorkspace().validateName(name, IResource.PROJECT);
+			if (!status.isOK()) {
+			    msg = status.getMessage();
+			}
+			else {
+				IProject project = root.getProject(name);
+				if (project.exists()) {
+					msg = Messages.NewMakeProjFromExistingPage_4;
 
+				}
+	        }
+		}
+		if (msg == null) {
+			String loc = getLocation();
+			if (loc.isEmpty()) {
+				complete = false;
+			}
+			else {
+				final File file= new File(loc);
+				if (file.isDirectory()) {
+					// Set the project name to the directory name but not if the user has supplied a name
+					// (bugzilla 368987)
+					if (!projectNameSetByUser && !name.equals(file.getName())) {
+						projectName.setText(file.getName());
+					}
+				} else {
+					msg = Messages.NewMakeProjFromExistingPage_8;
+				}
+			}
+		}
+
+		setErrorMessage(msg);
+		setPageComplete((msg == null) && complete);
+	}
+
+	/** @deprecated Replaced by {@link #validatePage()} */
+	@Deprecated
 	public void validateProjectName() {
-		String name = projectName.getText();
-		IProject project = root.getProject(name);
-		if (project.exists())
-			setErrorMessage(Messages.NewMakeProjFromExistingPage_4);
-		else
-			setErrorMessage(null);
+		validatePage();
 	}
 
 	public void addSourceSelector(Composite parent) {
@@ -115,10 +186,10 @@ public class NewMakeProjFromExistingPage extends WizardPage {
 		location.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
-				validateSource();
+				validatePage();
 			}
 		});
-		validateSource();
+		validatePage();
 
 		Button browse = new Button(group, SWT.NONE);
 		browse.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true));
@@ -139,17 +210,10 @@ public class NewMakeProjFromExistingPage extends WizardPage {
 		});
 	}
 
+	/** @deprecated Replaced by {@link #validatePage()} */
+	@Deprecated
 	void validateSource() {
-		File file= new File(location.getText());
-		if (file.isDirectory()) {
-			setErrorMessage(null);
-			// Set the project name to the directory name but not if a 
-			// name has already been specified (bugzilla 368987)
-			if (projectName.getText().isEmpty()) {
-				projectName.setText(file.getName());
-			}
-		} else
-			setErrorMessage(Messages.NewMakeProjFromExistingPage_8);
+		validatePage();
 	}
 
 	public void addLanguageSelector(Composite parent) {
@@ -177,7 +241,7 @@ public class NewMakeProjFromExistingPage extends WizardPage {
 		group.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		group.setText(Messages.NewMakeProjFromExistingPage_10);
 
-		tcList = new List(group, SWT.SINGLE);
+		tcList = new List(group, SWT.SINGLE | SWT.BORDER);
 		group.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		tcList.add(Messages.NewMakeProjFromExistingPage_11);
 
@@ -197,11 +261,11 @@ public class NewMakeProjFromExistingPage extends WizardPage {
 	}
 
 	public String getProjectName() {
-		return projectName.getText();
+		return projectName.getText().trim();
 	}
 
 	public String getLocation() {
-		return location.getText();
+		return location.getText().trim();
 	}
 
 	public boolean isC() {

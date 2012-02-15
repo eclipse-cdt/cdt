@@ -161,7 +161,7 @@ public class Messages extends NLS {
 	public static String NewConfiguration_label_group;
 	public static String NewConfiguration_label_name;
 	public static String NewConfiguration_label_warning;
-	public static String NewMakeProjFromExisting_0;
+	public static String NewMakeProjFromExisting_wizard_title;
 	public static String NewMakeProjFromExisting_1;
 	public static String NewMakeProjFromExistingPage_0;
 	public static String NewMakeProjFromExistingPage_1;

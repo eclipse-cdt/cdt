@@ -54,7 +54,7 @@ public class NewMakeProjFromExisting extends Wizard implements IImportWizard, IN
 
 	@Override
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
-		setWindowTitle(Messages.NewMakeProjFromExisting_0);
+		setWindowTitle(Messages.NewMakeProjFromExisting_wizard_title);
 	}
 
 	@Override

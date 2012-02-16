@@ -341,6 +341,7 @@
           <configuration>
             <useUIHarness>true</useUIHarness>
             <useUIThread>true</useUIThread>
+            <failIfNoTests>false</failIfNoTests>
             <product>org.eclipse.sdk.ide</product>
           </configuration>
         </plugin>

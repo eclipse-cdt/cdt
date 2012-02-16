@@ -95,7 +95,7 @@ public class ToggleRefactoring extends CRefactoring {
 
 	@Override
 	protected RefactoringDescriptor getRefactoringDescriptor() {
-		return new EmptyRefactoringDescription();
+		return null;  // Refactoring history is not supported.
 	}
 
 	public ToggleRefactoringContext getContext() {

@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  * 
  * Contributors: 
- *    Markus Schorn - initial API and implementation 
+ *     Markus Schorn - initial API and implementation 
  ******************************************************************************/ 
 package org.eclipse.cdt.ui.tests.refactoring.rename;
 
@@ -30,7 +30,6 @@ import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.tests.BaseTestFramework;
 
 import org.eclipse.cdt.internal.core.dom.SavedCodeReaderFactory;
-
 
 /**
  * @author markus.schorn@windriver.com
@@ -67,21 +66,21 @@ public class RefactoringTests extends BaseTestFramework {
     protected void assertTotalChanges(int numChanges, int potChanges, int commentCh, 
             Change changes) throws Exception {
         int count[]= {0,0,0};
-        if( changes != null ) {
-            countChanges( changes, count);
+        if (changes != null) {
+            countChanges(changes, count);
         }
-        assertEquals( numChanges, count[0] );
+        assertEquals(numChanges, count[0]);
         assertEquals("potential changes: ", potChanges, count[1]); //$NON-NLS-1$
         assertEquals("comment changes: ", commentCh, count[2]); //$NON-NLS-1$
     }
 
     private void countChanges(Change change, int[] count) {
-        if( change instanceof CompositeChange ){
-            Change [] children = ((CompositeChange) change).getChildren();
-            for( int i = 0; i < children.length; i++ ){
-                countChanges( children[i], count);
+        if (change instanceof CompositeChange) {
+            Change[] children = ((CompositeChange) change).getChildren();
+            for (int i = 0; i < children.length; i++) {
+                countChanges(children[i], count);
             }
-        } else if( change instanceof TextFileChange ){
+        } else if (change instanceof TextFileChange) {
             TextFileChange tfc= (TextFileChange) change;
             TextEditChangeGroup[] tecgs= tfc.getTextEditChangeGroups();
             for (int i = 0; i < tecgs.length; i++) {
@@ -95,11 +94,9 @@ public class RefactoringTests extends BaseTestFramework {
         String name= edit.getName();
         if (name.indexOf("potential") != -1) { //$NON-NLS-1$
             count[1]++;
-        }
-        else if (name.indexOf("comment") != -1) { //$NON-NLS-1$
+        } else if (name.indexOf("comment") != -1) { //$NON-NLS-1$
             count[2]++;
-        }
-        else {
+        } else {
             count[0]++;
         }
     }
@@ -110,29 +107,29 @@ public class RefactoringTests extends BaseTestFramework {
 
     protected void assertChange(Change changes, IFile file, int startOffset, int numChars, String newText, boolean potential) throws Exception {
         boolean found = false;
-        if( changes != null && changes instanceof CompositeChange ){
-            found = checkCompositeChange( (CompositeChange) changes, file, startOffset, numChars, newText, potential);
+        if (changes != null && changes instanceof CompositeChange) {
+            found = checkCompositeChange((CompositeChange) changes, file, startOffset, numChars, newText, potential);
         }
         
-        if( !found ) {
+        if (!found) {
             fail ("Rename at offset " + startOffset + " in \"" + file.getLocation() + "\" not found.");  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
-            assertFalse( true );
+            assertFalse(true);
         }
     }
 
     private boolean checkCompositeChange(CompositeChange composite, IFile file, int startOffset, int numChars, String newText, boolean potential) {
         boolean found = false;
-        Change [] children = composite.getChildren();
-        for( int i = 0; i < children.length; i++ ){
-            if( children[i] instanceof CompositeChange )
-                found = checkCompositeChange( (CompositeChange) children[i], file, startOffset, numChars, newText, potential);
-            else if( children[i] instanceof TextFileChange ){
+        Change[] children = composite.getChildren();
+        for (int i = 0; i < children.length; i++) {
+            if (children[i] instanceof CompositeChange) {
+                found = checkCompositeChange((CompositeChange) children[i], file, startOffset, numChars, newText, potential);
+            } else if (children[i] instanceof TextFileChange) {
                 TextFileChange tuChange = (TextFileChange) children[i];
-                if( tuChange.getFile().toString().equals( file.toString() ) ){
-                    found = checkTranslationUnitChange( tuChange, startOffset, numChars, newText, potential );
+                if (tuChange.getFile().toString().equals(file.toString())) {
+                    found = checkTranslationUnitChange(tuChange, startOffset, numChars, newText, potential);
                 }
             }
-            if( found )
+            if (found)
                 return found;
         }
         return found;
@@ -158,9 +155,8 @@ public class RefactoringTests extends BaseTestFramework {
                     startOffset, numChars, newText)) {
                 return true;
             }
-        }
-        else if (edit instanceof ReplaceEdit) {
-            if (checkReplaceEdit((ReplaceEdit) edit, startOffset, numChars, newText ) ) {
+        } else if (edit instanceof ReplaceEdit) {
+            if (checkReplaceEdit((ReplaceEdit) edit, startOffset, numChars, newText)) {
                 return true;
             }
         }
@@ -178,77 +174,77 @@ public class RefactoringTests extends BaseTestFramework {
     }
 
     private boolean checkReplaceEdit(ReplaceEdit edit, int startOffset, int numChars, String newText) {
-        return ( edit.getOffset() == startOffset && edit.getLength() == numChars && edit.getText().equals( newText ) );
+        return (edit.getOffset() == startOffset && edit.getLength() == numChars && edit.getText().equals(newText ) );
     }
     
     protected IFile createCppFwdDecls(String fileName) throws Exception {
         StringWriter writer = new StringWriter();
-        writer.write( "class class_fwd;         \n"); //$NON-NLS-1$
-        writer.write( "struct struct_fwd;       \n"); //$NON-NLS-1$
-        writer.write( "union union_fwd;         \n"); //$NON-NLS-1$
-        writer.write( "int func_proto();        \n"); //$NON-NLS-1$
-        writer.write( "int func_proto_ov();     \n"); //$NON-NLS-1$
-        writer.write( "int func_proto_ov(int);  \n"); //$NON-NLS-1$
-        writer.write( "int func_proto_ov(int*); \n"); //$NON-NLS-1$
-        writer.write( "extern int extern_var;   \n"); //$NON-NLS-1$
+        writer.write("class class_fwd;         \n"); //$NON-NLS-1$
+        writer.write("struct struct_fwd;       \n"); //$NON-NLS-1$
+        writer.write("union union_fwd;         \n"); //$NON-NLS-1$
+        writer.write("int func_proto();        \n"); //$NON-NLS-1$
+        writer.write("int func_proto_ov();     \n"); //$NON-NLS-1$
+        writer.write("int func_proto_ov(int);  \n"); //$NON-NLS-1$
+        writer.write("int func_proto_ov(int*); \n"); //$NON-NLS-1$
+        writer.write("extern int extern_var;   \n"); //$NON-NLS-1$
         String contents = writer.toString();
         return importFile(fileName, contents ); 
     }
 
     protected IFile createCFwdDecls(String fileName) throws Exception {
         StringWriter writer = new StringWriter();
-        writer.write( "struct struct_fwd;       \n"); //$NON-NLS-1$
-        writer.write( "union union_fwd;         \n"); //$NON-NLS-1$
-        writer.write( "int func_proto();        \n"); //$NON-NLS-1$
-        writer.write( "extern int extern_var;   \n"); //$NON-NLS-1$
+        writer.write("struct struct_fwd;       \n"); //$NON-NLS-1$
+        writer.write("union union_fwd;         \n"); //$NON-NLS-1$
+        writer.write("int func_proto();        \n"); //$NON-NLS-1$
+        writer.write("extern int extern_var;   \n"); //$NON-NLS-1$
         String contents = writer.toString();
         return importFile(fileName, contents ); 
     }
 
     protected IFile createCppDefs(String fileName) throws Exception {
         StringWriter writer = new StringWriter();
-        writer.write( "class class_def {               \n"); //$NON-NLS-1$
-        writer.write( "public:                         \n"); //$NON-NLS-1$
-        writer.write( "   int member;                  \n"); //$NON-NLS-1$
-        writer.write( "   static int static_member;    \n"); //$NON-NLS-1$
-        writer.write( "   void method(int par);        \n"); //$NON-NLS-1$
-        writer.write( "   void static_method(int par); \n"); //$NON-NLS-1$
-        writer.write( "   int method_ov();             \n"); //$NON-NLS-1$
-        writer.write( "   int method_ov(int);          \n"); //$NON-NLS-1$
-        writer.write( "   int method_ov(int*);         \n"); //$NON-NLS-1$
-        writer.write( "};                              \n"); //$NON-NLS-1$
-        writer.write( "struct struct_def {        \n"); //$NON-NLS-1$
-        writer.write( "   int st_member;          \n"); //$NON-NLS-1$
-        writer.write( "};                         \n"); //$NON-NLS-1$
-        writer.write( "union union_def {          \n"); //$NON-NLS-1$
-        writer.write( "   int un_member;          \n"); //$NON-NLS-1$
-        writer.write( "};                         \n"); //$NON-NLS-1$
-        writer.write( "typedef int typedef_def;   \n"); //$NON-NLS-1$
-        writer.write( "namespace namespace_def{}; \n"); //$NON-NLS-1$
-        writer.write( "enum enum_def {            \n"); //$NON-NLS-1$
-        writer.write( "   enum_item };            \n"); //$NON-NLS-1$
-        writer.write( "int func_def() {}          \n"); //$NON-NLS-1$
-        writer.write( "int func_def_ov() {}       \n"); //$NON-NLS-1$
-        writer.write( "int func_def_ov(int){}     \n"); //$NON-NLS-1$
-        writer.write( "int func_def_ov(int*){}    \n"); //$NON-NLS-1$
-        writer.write( "int var_def;               \n"); //$NON-NLS-1$
+        writer.write("class class_def {               \n"); //$NON-NLS-1$
+        writer.write("public:                         \n"); //$NON-NLS-1$
+        writer.write("   int member;                  \n"); //$NON-NLS-1$
+        writer.write("   static int static_member;    \n"); //$NON-NLS-1$
+        writer.write("   void method(int par);        \n"); //$NON-NLS-1$
+        writer.write("   void static_method(int par); \n"); //$NON-NLS-1$
+        writer.write("   int method_ov();             \n"); //$NON-NLS-1$
+        writer.write("   int method_ov(int);          \n"); //$NON-NLS-1$
+        writer.write("   int method_ov(int*);         \n"); //$NON-NLS-1$
+        writer.write("};                              \n"); //$NON-NLS-1$
+        writer.write("struct struct_def {        \n"); //$NON-NLS-1$
+        writer.write("   int st_member;          \n"); //$NON-NLS-1$
+        writer.write("};                         \n"); //$NON-NLS-1$
+        writer.write("union union_def {          \n"); //$NON-NLS-1$
+        writer.write("   int un_member;          \n"); //$NON-NLS-1$
+        writer.write("};                         \n"); //$NON-NLS-1$
+        writer.write("typedef int typedef_def;   \n"); //$NON-NLS-1$
+        writer.write("namespace namespace_def{}; \n"); //$NON-NLS-1$
+        writer.write("enum enum_def {            \n"); //$NON-NLS-1$
+        writer.write("   enum_item };            \n"); //$NON-NLS-1$
+        writer.write("int func_def() {}          \n"); //$NON-NLS-1$
+        writer.write("int func_def_ov() {}       \n"); //$NON-NLS-1$
+        writer.write("int func_def_ov(int){}     \n"); //$NON-NLS-1$
+        writer.write("int func_def_ov(int*){}    \n"); //$NON-NLS-1$
+        writer.write("int var_def;               \n"); //$NON-NLS-1$
         String contents = writer.toString();
         return importFile(fileName, contents ); 
     }
 
     protected IFile createCDefs(String fileName) throws Exception {
         StringWriter writer = new StringWriter();
-        writer.write( "struct struct_def {        \n"); //$NON-NLS-1$
-        writer.write( "   int st_member;          \n"); //$NON-NLS-1$
-        writer.write( "};                         \n"); //$NON-NLS-1$
-        writer.write( "union union_def {          \n"); //$NON-NLS-1$
-        writer.write( "   int un_member;          \n"); //$NON-NLS-1$
-        writer.write( "};                         \n"); //$NON-NLS-1$
-        writer.write( "typedef int typedef_def;   \n"); //$NON-NLS-1$
-        writer.write( "enum enum_def {            \n"); //$NON-NLS-1$
-        writer.write( "   enum_item };            \n"); //$NON-NLS-1$
-        writer.write( "int func_def() {}          \n"); //$NON-NLS-1$
-        writer.write( "int var_def;               \n"); //$NON-NLS-1$
+        writer.write("struct struct_def {        \n"); //$NON-NLS-1$
+        writer.write("   int st_member;          \n"); //$NON-NLS-1$
+        writer.write("};                         \n"); //$NON-NLS-1$
+        writer.write("union union_def {          \n"); //$NON-NLS-1$
+        writer.write("   int un_member;          \n"); //$NON-NLS-1$
+        writer.write("};                         \n"); //$NON-NLS-1$
+        writer.write("typedef int typedef_def;   \n"); //$NON-NLS-1$
+        writer.write("enum enum_def {            \n"); //$NON-NLS-1$
+        writer.write("   enum_item };            \n"); //$NON-NLS-1$
+        writer.write("int func_def() {}          \n"); //$NON-NLS-1$
+        writer.write("int var_def;               \n"); //$NON-NLS-1$
         String contents = writer.toString();
         return importFile(fileName, contents ); 
     }
@@ -270,5 +266,4 @@ public class RefactoringTests extends BaseTestFramework {
                 status.getMessageMatchingSeverity(status.getSeverity()), 
                 status.getSeverity()==RefactoringStatus.OK); 
     }
-
 }

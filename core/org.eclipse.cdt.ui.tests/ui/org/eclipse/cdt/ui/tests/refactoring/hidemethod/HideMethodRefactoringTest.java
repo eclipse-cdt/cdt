@@ -39,7 +39,7 @@ public class HideMethodRefactoringTest extends RefactoringTestBase {
 
 	@Override
 	protected Refactoring createRefactoring() {
-		return new HideMethodRefactoring(getSelectedFile(), getSelection(),	null, getCProject());
+		return new HideMethodRefactoring(getSelectedFile(), getSelection(), null, getCProject());
 	}
 
 	//A.h

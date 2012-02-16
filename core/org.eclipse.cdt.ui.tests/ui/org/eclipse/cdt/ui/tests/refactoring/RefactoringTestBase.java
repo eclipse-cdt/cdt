@@ -59,8 +59,16 @@ public abstract class RefactoringTestBase extends BaseTestCase {
 	private static final int INDEXER_TIMEOUT_SEC = 360;
 	protected static final NullProgressMonitor NULL_PROGRESS_MONITOR = new NullProgressMonitor();
 
+	/** Allows empty files to be created during test setup. */
 	protected boolean createEmptyFiles = true;
+	/** See {@link PreferenceConstants.CLASS_MEMBER_ASCENDING_VISIBILITY_ORDER} */
 	protected boolean ascendingVisibilityOrder;
+	/** Expected counts of errors, warnings and info messages */
+	protected int expectedInitialErrors;
+	protected int expectedInitialWarnings;
+	protected int expectedFinalWarnings;
+	protected int expectedFinalInfos;
+
 	private boolean cpp = true;
 	private ICProject cproject;
 	private final Set<TestSourceFile> testFiles = new LinkedHashSet<TestSourceFile>();
@@ -170,12 +178,24 @@ public abstract class RefactoringTestBase extends BaseTestCase {
 				assertStatusFatalError(initialStatus);
 				return;
 			}
+			if (expectedInitialErrors != 0) {
+				assertStatusError(initialStatus, expectedInitialErrors);
+			} else if (expectedInitialWarnings != 0) {
+				assertStatusWarning(initialStatus, expectedInitialWarnings);
+			} else {
+				assertStatusOk(initialStatus);
+			}
 
-			assertStatusOk(initialStatus);
 			if (withUserInput)
 				simulateUserInput();
 			RefactoringStatus finalStatus = refactoring.checkFinalConditions(NULL_PROGRESS_MONITOR);
-			assertStatusOk(finalStatus);
+			if (expectedFinalWarnings != 0) {
+				assertStatusWarning(finalStatus, expectedFinalWarnings);
+			} else if (expectedFinalInfos != 0) {
+				assertStatusInfo(finalStatus, expectedFinalInfos);
+			} else {
+				assertStatusOk(finalStatus);
+			}
 			Change change = refactoring.createChange(NULL_PROGRESS_MONITOR);
 			change.perform(NULL_PROGRESS_MONITOR);
 		} finally {

@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.changegenerator;
 
@@ -28,9 +28,9 @@ public class ModifiedASTStatementWriter extends StatementWriter {
 	}
 
 	@Override
-	protected void writeBodyStatement(IASTStatement statement, boolean isDoStatement) {
+	protected void writeBodyStatement(IASTStatement statement, boolean newLineForCompound) {
 		IASTStatement replacementNode = modificationHelper.getNodeAfterReplacement(statement);
-		super.writeBodyStatement(replacementNode, isDoStatement);
+		super.writeBodyStatement(replacementNode, newLineForCompound);
 	}
 
 	@Override

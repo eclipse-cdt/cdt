@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others.
+ * Copyright (c) 2002, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,13 +44,20 @@ public class ExternalSearchDocumentProvider extends TextFileDocumentProvider {
 	@Override
 	protected FileInfo createFileInfo(Object element) throws CoreException {
 		final FileInfo info= super.createFileInfo(element);
-		if (info != null && info.fModel == null) {
-			info.fModel= createAnnotationModel(element);
-			if (info.fModel != null) {
-				IAnnotationModel fileBufferAnnotationModel= info.fTextFileBuffer.getAnnotationModel();
-				if (fileBufferAnnotationModel != null) {
-					((AnnotationModel)info.fModel).addAnnotationModel("fileBufferModel", fileBufferAnnotationModel); //$NON-NLS-1$
+		if (info != null) {
+			IAnnotationModel originalModel = info.fModel;
+			IAnnotationModel externalSearchModel = createAnnotationModel(element);
+			if (externalSearchModel != null) {
+				info.fModel= externalSearchModel;
+				IAnnotationModel fileBufferModel= info.fTextFileBuffer.getAnnotationModel();
+				if (fileBufferModel != null) {
+					((AnnotationModel) externalSearchModel).addAnnotationModel("fileBufferModel", fileBufferModel); //$NON-NLS-1$
 				}
+				if (originalModel != null && originalModel != fileBufferModel) {
+					((AnnotationModel) externalSearchModel).addAnnotationModel("originalModel", originalModel); //$NON-NLS-1$
+				}
+			}
+			if (info.fModel != null) {
 				setUpSynchronization(info);
 			}
 		}
@@ -104,8 +111,7 @@ public class ExternalSearchDocumentProvider extends TextFileDocumentProvider {
 	private IAnnotationModel createExternalSearchAnnotationModel(ExternalEditorInput externalInput) {
 		IPath location = externalInput.getPath();
 		if (location != null) {
-			IResource markerResource = externalInput.getMarkerResource();
-			return createExternalSearchAnnotationModel(location, markerResource);
+			return createExternalSearchAnnotationModel(location, null);
 		}
 		return null;
 	}

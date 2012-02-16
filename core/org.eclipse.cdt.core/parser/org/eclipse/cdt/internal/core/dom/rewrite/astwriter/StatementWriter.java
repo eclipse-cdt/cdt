@@ -417,15 +417,15 @@ public class StatementWriter extends NodeWriter {
 	}
 
 	/**
-	 * Write no new Line after the next Compound-Statement 
+	 * Write no new Line after the next compound statement 
 	 */
 	protected void nextCompoundNoNewLine() {
 		compoundNoNewLine = true;
 	}
 	
 	/**
-	 * Indent one time more at the end (before the closing Brackets) 
-	 * of a Compound-Statement 
+	 * Indent one time more at the end (before the closing brackets) 
+	 * of a compound statement 
 	 */
 	protected void nextCompoundIndentationLevelOneMore() {
 		decrementIndentationLevelOneMore = true;

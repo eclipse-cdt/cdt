@@ -126,6 +126,9 @@ public abstract class RefactoringTestBase extends BaseTestCase {
 					selectedFile = testFile;
 			}
 		}
+		if (selectedFile == null && !testFiles.isEmpty()) {
+			selectedFile = testFiles.iterator().next();
+		}
 		CCorePlugin.getIndexManager().setIndexerId(cproject, IPDOMManager.ID_FAST_INDEXER);
 		assertTrue(CCorePlugin.getIndexManager().joinIndexer(INDEXER_TIMEOUT_SEC * 1000,
 				NULL_PROGRESS_MONITOR));

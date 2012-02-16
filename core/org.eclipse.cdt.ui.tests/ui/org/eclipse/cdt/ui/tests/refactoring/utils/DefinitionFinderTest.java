@@ -11,65 +11,80 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring.utils;
 
-import java.util.Collection;
-import java.util.Properties;
-
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.ui.tests.refactoring.RefactoringTest;
-import org.eclipse.cdt.ui.tests.refactoring.TestSourceFile;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.ui.tests.refactoring.RefactoringTestBase;
 
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoring2;
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoringContext;
 import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
 import org.eclipse.cdt.internal.ui.refactoring.utils.DefinitionFinder;
 
-public class DefinitionFinderTest extends RefactoringTest {
+public class DefinitionFinderTest extends RefactoringTestBase {
+	private static class DummyRefactoring extends CRefactoring2 {
+		public DummyRefactoring(ICElement element, ISelection selection, ICProject project) {
+			super(element, selection, project);
+		}
 
-	public DefinitionFinderTest(String name, Collection<TestSourceFile> files) {
-		super(name, files);
+		@Override
+		protected RefactoringStatus checkFinalConditions(IProgressMonitor progressMonitor,
+				CheckConditionsContext checkContext) throws CoreException, OperationCanceledException {
+			return null;
+		}
+
+		@Override
+		protected RefactoringDescriptor getRefactoringDescriptor() {
+			return null;
+		}
+
+		@Override
+		protected void collectModifications(IProgressMonitor pm, ModificationCollector collector)
+				throws CoreException, OperationCanceledException {
+		}
+	}
+
+	public DefinitionFinderTest() {
+		super();
+	}
+
+	public DefinitionFinderTest(String name) {
+		super(name);
 	}
 
 	@Override
-	protected void configureRefactoring(Properties refactoringProperties) {
+	protected Refactoring createRefactoring() {
+		return new DummyRefactoring(getSelectedTranslationUnit(), getSelection(), getCProject());
 	}
 
-	@Override
-	protected void runTest() throws Throwable {
-		IFile file = project.getFile(fileName);
-		ITranslationUnit tu = (ITranslationUnit) CCorePlugin.getDefault().getCoreModel().create(file);
-		CRefactoring2 refactoring = new CRefactoring2(tu, null, tu.getCProject()) {
-			@Override
-			protected RefactoringStatus checkFinalConditions(IProgressMonitor progressMonitor,
-					CheckConditionsContext checkContext) throws CoreException, OperationCanceledException {
-				return null;
-			}
+	//A.h
+	//#ifndef A_H_
+	//#define A_H_
+	//
+	//void foo();
+	//
+	//#endif /*A_H_*/
 
-			@Override
-			protected RefactoringDescriptor getRefactoringDescriptor() {
-				return null;
-			}
-
-			@Override
-			protected void collectModifications(IProgressMonitor pm, ModificationCollector collector)
-					throws CoreException, OperationCanceledException {
-			}
-		};
-
-		CRefactoringContext refactoringContext = new CRefactoringContext(refactoring);
+	//A.cpp
+	//#include "A.h"
+	//
+	//void foo() {
+	//}
+	public void testFindFunctionDefinition() throws Exception {
+		CRefactoringContext refactoringContext = new CRefactoringContext((CRefactoring2) createRefactoring());
 		try {
-			IASTTranslationUnit ast = refactoringContext.getAST(tu, null);
+			IASTTranslationUnit ast = refactoringContext.getAST(getSelectedTranslationUnit(), null);
 			for (IASTDeclaration declaration : ast.getDeclarations()) {
 				if (declaration instanceof IASTSimpleDeclaration) {
 					assertNotNull(DefinitionFinder.getDefinition((IASTSimpleDeclaration) declaration,

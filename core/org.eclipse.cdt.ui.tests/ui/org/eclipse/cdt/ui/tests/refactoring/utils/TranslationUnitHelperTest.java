@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -8,41 +8,94 @@
  *  
  * Contributors: 
  * 	   Institute for Software - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring.utils;
 
-import java.util.Collection;
-import java.util.Properties;
-
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.ltk.core.refactoring.Refactoring;
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
+import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.ui.tests.refactoring.RefactoringTest;
-import org.eclipse.cdt.ui.tests.refactoring.TestSourceFile;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.ui.tests.refactoring.RefactoringTestBase;
 
+import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
+import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
 import org.eclipse.cdt.internal.ui.refactoring.utils.TranslationUnitHelper;
 
-/**
- * @author Mirko Stocker
- */
-public class TranslationUnitHelperTest extends RefactoringTest {
-	private int offset;
+public class TranslationUnitHelperTest extends RefactoringTestBase {
+	private static class DummyRefactoring extends CRefactoring {
 
-	public TranslationUnitHelperTest(String name, Collection<TestSourceFile> files) {
-		super(name, files);
+		public DummyRefactoring(IFile file, ISelection selection, ICElement element, ICProject proj) {
+			super(file, selection, element, proj);
+		}
+
+		@Override
+		public RefactoringStatus checkFinalConditions(IProgressMonitor progressMonitor) throws CoreException, OperationCanceledException {
+			return null;
+		}
+
+		@Override
+		protected RefactoringDescriptor getRefactoringDescriptor() {
+			return null;
+		}
+
+		@Override
+		protected void collectModifications(IProgressMonitor pm, ModificationCollector collector)
+				throws CoreException, OperationCanceledException {
+		}
+	}
+
+	public TranslationUnitHelperTest() {
+		super();
+	}
+
+	public TranslationUnitHelperTest(String name) {
+		super(name);
 	}
 
 	@Override
-	protected void runTest() throws Throwable {
-		IFile file = project.getFile(fileName);
-		IASTTranslationUnit unit = TranslationUnitHelper.loadTranslationUnit(file, false);
-		IASTNode firstNode = TranslationUnitHelper.getFirstNode(unit);
+	protected Refactoring createRefactoring() {
+		return new DummyRefactoring(getSelectedFile(), getSelection(), null, getCProject());
+	}
+
+	private void assertFirstNodeIsAtOffset(int offset) throws Exception {
+		IASTTranslationUnit ast = TranslationUnitHelper.loadTranslationUnit(getSelectedFile(), false);
+		IASTNode firstNode = TranslationUnitHelper.getFirstNode(ast);
 		assertEquals(offset, firstNode.getNodeLocations()[0].getNodeOffset());
 	}
 
-	@Override
-	protected void configureRefactoring(Properties refactoringProperties) {
-		offset = new Integer(refactoringProperties.getProperty("offset", "0")).intValue();  //$NON-NLS-1$
+	//A.h
+	//#ifndef A_H_
+	//#define A_H_
+	//
+	//class A {
+	//public:
+	//	A();
+	//	void foo();
+	//};
+	//
+	//#endif /*A_H_*/
+	public void testBeforeClass() throws Exception {
+		assertFirstNodeIsAtOffset(27);
+	}
+
+	//A.h
+	//typedef int nummere;
+	//
+	//class A {
+	//public:
+	//	A();
+	//};
+	public void testBeforeTypedef() throws Exception {
+		assertFirstNodeIsAtOffset(0);
 	}
 }

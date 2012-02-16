@@ -8,7 +8,6 @@
  *  
  * Contributors: 
  *     Institute for Software - initial API and implementation
- *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.astwriter;
 
@@ -91,24 +90,30 @@ public class StatementWriter extends NodeWriter {
 			newLine = false;
 		} else if (statement instanceof IASTExpressionStatement) {
 			writeExpressionStatement((IASTExpressionStatement) statement);
+			//usually newLine
 		} else if (statement instanceof IASTDeclarationStatement) {
 			writeDeclarationStatement((IASTDeclarationStatement) statement);
 			newLine = false;
 		} else if (statement instanceof IASTNullStatement) {
 			writeNullStatement((IASTNullStatement)statement);
+//			usually newLine
 		} else if (statement instanceof IASTReturnStatement) {
 			writeReturnStatement((IASTReturnStatement)statement);
+//			usually newLine
 		} else if (statement instanceof IASTGotoStatement) {
 			writeGotoStatement((IASTGotoStatement) statement);
+//			usually newLine
 		} else if (statement instanceof IASTLabelStatement) {
 			writeLabelStatement((IASTLabelStatement) statement);
 			newLine = false;
 		} else if (statement instanceof IASTCaseStatement) {
 			writeCaseStatement((IASTCaseStatement) statement);
+//			usually newLine			
 		} else if (statement instanceof IASTDefaultStatement) {
 			writeDefaultStatement((IASTDefaultStatement)statement);
 		} else if (statement instanceof IASTContinueStatement) {
 			writeContinueStatement((IASTContinueStatement)statement);
+//			usually newLine
 		} else if (statement instanceof IASTCompoundStatement) {
 			writeCompoundStatement((IASTCompoundStatement) statement);
 			if (compoundNoNewLine) {
@@ -117,6 +122,7 @@ public class StatementWriter extends NodeWriter {
 			}
 		} else if (statement instanceof IASTBreakStatement) {
 			writeBreakStatement((IASTBreakStatement) statement);
+//			usually newLine
 		} else if (statement instanceof IASTSwitchStatement) {
 			writeSwitchStatement((IASTSwitchStatement) statement);
 			newLine = false;
@@ -154,7 +160,7 @@ public class StatementWriter extends NodeWriter {
 		nextCompoundNoNewLine();
 		
 		scribe.print(DO);
-		writeBodyStatement(doStatement.getBody(), false);
+		writeBodyStatement(doStatement.getBody(), true);
 		scribe.print(DO_WHILE);
 		doStatement.getCondition().accept(visitor);
 		scribe.print(')');
@@ -185,7 +191,7 @@ public class StatementWriter extends NodeWriter {
 		scribe.print(')');
 		scribe.newLines();
 		nextCompoundNoNewLine();
-		writeBodyStatement(forStatement.getBody(), true);
+		writeBodyStatement(forStatement.getBody(), false);
 	}
 
 	private void writeForStatement(ICPPASTRangeBasedForStatement forStatment) {
@@ -197,7 +203,7 @@ public class StatementWriter extends NodeWriter {
 		scribe.print(')');
 		scribe.newLines();
 		nextCompoundNoNewLine();
-		writeBodyStatement(forStatment.getBody(), true);
+		writeBodyStatement(forStatment.getBody(), false);
 	}
 
 	private void writeIfStatement(IASTIfStatement ifStatement) {
@@ -219,7 +225,7 @@ public class StatementWriter extends NodeWriter {
 		scribe.newLines();
 		nextCompoundNoNewLine();
 		IASTStatement elseClause = ifStatement.getElseClause();
-		writeBodyStatement(ifStatement.getThenClause(), elseClause == null);
+		writeBodyStatement(ifStatement.getThenClause(), elseClause != null);
 		
 		if (elseClause != null) {
 			scribe.print(ELSE);
@@ -291,7 +297,7 @@ public class StatementWriter extends NodeWriter {
 			scribe.newLines();
 		}
 		scribe.print(')');
-		writeBodyStatement(catchStatement.getCatchBody(), false);
+		writeBodyStatement(catchStatement.getCatchBody(), true);
 	}
 
 	private void writeTryBlockStatement(ICPPASTTryBlockStatement tryStatement) {
@@ -318,7 +324,7 @@ public class StatementWriter extends NodeWriter {
 		scribe.print(')');
 		scribe.newLines();
 		nextCompoundNoNewLine();
-		writeBodyStatement(whileStatment.getBody(), true);
+		writeBodyStatement(whileStatment.getBody(), false);
 	}
 
 	private void writeCaseStatement(IASTCaseStatement caseStatement) {
@@ -352,7 +358,7 @@ public class StatementWriter extends NodeWriter {
 		scribe.print(')');
 		scribe.newLines();
 		nextCompoundNoNewLine();
-		writeBodyStatement(switchStatement.getBody(), true);
+		writeBodyStatement(switchStatement.getBody(), false);
 		
 		switchIsNew = false;
 	}
@@ -390,10 +396,12 @@ public class StatementWriter extends NodeWriter {
 		return compoundStatement.getStatements();
 	}	
 
-	protected void writeBodyStatement(IASTStatement statement, boolean newLineForCompound) {
+	// TODO(sprigogin): Rename second parameter
+	protected void writeBodyStatement(IASTStatement statement, boolean isDoStatement) {
 		if (statement instanceof IASTCompoundStatement) {
-			writeCompoundStatement((IASTCompoundStatement) statement);
-			if (newLineForCompound) {
+			//TODO hsr existiert noch eine methode
+			statement.accept(visitor);
+			if (!isDoStatement) {
 				scribe.newLine();
 			}
 			compoundNoNewLine = false;
@@ -409,7 +417,7 @@ public class StatementWriter extends NodeWriter {
 	}
 
 	/**
-	 * Write no new Line after the next compound statement 
+	 * Write no new Line after the next Compound-Statement 
 	 */
 	protected void nextCompoundNoNewLine() {
 		compoundNoNewLine = true;

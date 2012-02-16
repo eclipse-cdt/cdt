@@ -2446,7 +2446,8 @@ public class ToogleRefactoringTest extends RefactoringTestBase {
 	//	return;
 	//}
 	//catch (int e) {
-	//} // Trailing comment
+	//}
+	//// Trailing comment
 	public void testClassToHeaderTrailingCommentWithTryBlock() throws Exception {
 		assertRefactoringSuccess();
 	}
@@ -2473,10 +2474,11 @@ public class ToogleRefactoringTest extends RefactoringTestBase {
 	//} /* one */
 	//catch (int i) {
 	//	// zwaa
-	//} /* two */
-	//catch (int j) {
+	//}
+	///* two */catch (int j) {
 	//	// draa
-	//} /* three */
+	//}
+	///* three */
 	public void testClassToHeaderTrailingMultipleCommentsInTryBlock() throws Exception {
 		assertRefactoringSuccess();
 	}
@@ -2808,8 +2810,8 @@ public class ToogleRefactoringTest extends RefactoringTestBase {
 	//	} /*1*/
 	//	catch (int e) {
 	//		/*2*/
-	//	} /*3*/
-	//	catch (int e) {
+	//	}
+	//	/*3*/catch (int e) {
 	//		/*4*/
 	//	}
 	//};

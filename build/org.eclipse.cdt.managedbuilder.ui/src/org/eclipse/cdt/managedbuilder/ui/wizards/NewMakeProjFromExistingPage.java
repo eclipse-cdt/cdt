@@ -23,13 +23,16 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
@@ -40,6 +43,7 @@ import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
  * Page to select existing code location and toolchain.
@@ -83,7 +87,6 @@ public class NewMakeProjFromExistingPage extends WizardPage {
 		addSourceSelector(comp);
 		addLanguageSelector(comp);
 		addToolchainSelector(comp);
-
 		setControl(comp);
 	}
 
@@ -153,9 +156,20 @@ public class NewMakeProjFromExistingPage extends WizardPage {
 				final File file= new File(loc);
 				if (file.isDirectory()) {
 					// Set the project name to the directory name but not if the user has supplied a name
-					// (bugzilla 368987)
+					// (bugzilla 368987). Use a job to ensure proper sequence of activity, as setting the Text
+					// will invoke the listener, which will invoke this method.
 					if (!projectNameSetByUser && !name.equals(file.getName())) {
-						projectName.setText(file.getName());
+						WorkbenchJob wjob = new WorkbenchJob("update project name") { //$NON-NLS-1$
+							@Override
+							public IStatus runInUIThread(IProgressMonitor monitor) {
+								if (!projectName.isDisposed()) {
+									projectName.setText(file.getName());
+								}
+								return Status.OK_STATUS;
+							}
+						};
+						wjob.setSystem(true);
+						wjob.schedule();
 					}
 				} else {
 					msg = Messages.NewMakeProjFromExistingPage_8;
@@ -238,26 +252,73 @@ public class NewMakeProjFromExistingPage extends WizardPage {
 		Group group = new Group(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		group.setLayout(layout);
-		group.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		group.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		group.setText(Messages.NewMakeProjFromExistingPage_10);
 
-		tcList = new List(group, SWT.SINGLE | SWT.BORDER);
-		group.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		tcList = new List(group, SWT.SINGLE | SWT.BORDER | SWT.V_SCROLL);
+		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+		
+		// Base the List control size on the number of total toolchains, up to 15 entries, but allocate for no
+		// less than five (small list boxes look strange). A vertical scrollbar will appear as needed
+		updateTcMap(false);
+		gd.heightHint = tcList.getItemHeight() * (1 + Math.max(Math.min(tcMap.size(), 15), 5)); // +1 for <none> 
+		tcList.setLayoutData(gd);
 		tcList.add(Messages.NewMakeProjFromExistingPage_11);
 
-		IToolChain[] toolChains = ManagedBuildManager.getRealToolChains();
-		for (IToolChain toolChain : toolChains) {
-			if (toolChain.isAbstract() || toolChain.isSystemObject())
-				continue;
-			tcMap.put(toolChain.getUniqueRealName(), toolChain);
-		}
+		final Button supportedOnly = new Button(group, SWT.CHECK);
+		supportedOnly.setSelection(false);
+		supportedOnly.setText(Messages.NewMakeProjFromExistingPage_show_only_supported);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
+		supportedOnly.setLayoutData(gd);
+		supportedOnly.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				updateTcWidget(supportedOnly.getSelection());
+			}});
 
+		supportedOnly.setSelection(true);
+		updateTcWidget(true);
+	}		
+
+	/**
+	 * Load our map and with the suitable toolchains and then populate the List control
+	 * 
+	 * @param supportedOnly
+	 *            if true, consider only supported toolchains
+	 */
+	private void updateTcWidget(boolean supportedOnly) {
+		updateTcMap(supportedOnly);
 		ArrayList<String> names = new ArrayList<String>(tcMap.keySet());
 		Collections.sort(names);
+
+		tcList.removeAll();
+		tcList.add(Messages.NewMakeProjFromExistingPage_11); // <none>
 		for (String name : names)
 			tcList.add(name);
 
 		tcList.setSelection(0); // select <none>
+	}
+
+	/**
+	 * Load our map with the suitable toolchains.
+	 * 
+	 * @param supportedOnly
+	 *            if true, add only toolchains that are available and which support the host platform
+	 */
+	private void updateTcMap(boolean supportedOnly) {
+		tcMap.clear();
+		IToolChain[] toolChains = ManagedBuildManager.getRealToolChains();
+		for (IToolChain toolChain : toolChains) {
+			if (toolChain.isAbstract() || toolChain.isSystemObject())
+				continue;
+			if (supportedOnly) {
+				if (!toolChain.isSupported() || !ManagedBuildManager.isPlatformOk(toolChain)) {
+					continue;
+				}
+			}
+			tcMap.put(toolChain.getUniqueRealName(), toolChain);
+		}
 	}
 
 	public String getProjectName() {

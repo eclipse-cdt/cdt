@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
-import org.eclipse.cdt.internal.ui.refactoring.NameNVisibilityInformation;
+import org.eclipse.cdt.internal.ui.refactoring.NameAndVisibilityInformation;
 import org.eclipse.cdt.internal.ui.refactoring.utils.IdentifierHelper;
 import org.eclipse.cdt.internal.ui.refactoring.utils.IdentifierResult;
 import org.eclipse.cdt.internal.ui.refactoring.utils.VisibilityEnum;
@@ -37,11 +37,11 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.VisibilityEnum;
 public abstract class ExtractInputPage extends UserInputWizardPage {
 
 	protected NameAndVisibilityComposite control;
-	protected NameNVisibilityInformation info;
+	protected NameAndVisibilityInformation info;
 	protected String label = Messages.ExtractInputPage_ReplaceInSubclass; 
 	protected String errorLabel = Messages.ExtractInputPage_EnterName; 
 
-	public ExtractInputPage(String name, NameNVisibilityInformation info) {
+	public ExtractInputPage(String name, NameAndVisibilityInformation info) {
 		super(name);
 		this.info = info;
 	}

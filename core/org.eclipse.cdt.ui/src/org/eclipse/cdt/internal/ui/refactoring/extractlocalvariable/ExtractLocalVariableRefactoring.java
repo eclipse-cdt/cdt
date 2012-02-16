@@ -68,9 +68,9 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
 
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoring2;
-import org.eclipse.cdt.internal.ui.refactoring.CRefactoringDescription;
+import org.eclipse.cdt.internal.ui.refactoring.CRefactoringDescriptor;
 import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
-import org.eclipse.cdt.internal.ui.refactoring.NameNVisibilityInformation;
+import org.eclipse.cdt.internal.ui.refactoring.NameAndVisibilityInformation;
 import org.eclipse.cdt.internal.ui.refactoring.NodeContainer;
 import org.eclipse.cdt.internal.ui.refactoring.utils.NodeHelper;
 import org.eclipse.cdt.internal.ui.refactoring.utils.SelectionHelper;
@@ -88,12 +88,12 @@ public class ExtractLocalVariableRefactoring extends CRefactoring2 {
 			"org.eclipse.cdt.internal.ui.refactoring.extractlocalvariable.ExtractLocalVariableRefactoring"; //$NON-NLS-1$
 	
 	private IASTExpression target;
-	private final NameNVisibilityInformation info;
+	private final NameAndVisibilityInformation info;
 	private NodeContainer container;
 
 	public ExtractLocalVariableRefactoring(ICElement element, ISelection selection, ICProject project) {
 		super(element, selection, project);
-		info = new NameNVisibilityInformation();
+		info = new NameAndVisibilityInformation();
 		name = Messages.ExtractLocalVariable;
 	}
 
@@ -343,7 +343,7 @@ public class ExtractLocalVariableRefactoring extends CRefactoring2 {
 		IASTFunctionDefinition funcDef = NodeHelper.findFunctionDefinitionInAncestors(target);
 		final IScope scope;
 		if (funcDef != null && funcDef.getBody() instanceof IASTCompoundStatement) {
-			IASTCompoundStatement body = (IASTCompoundStatement)funcDef.getBody();
+			IASTCompoundStatement body = (IASTCompoundStatement) funcDef.getBody();
 			scope = body.getScope();
 		} else {
 			scope = null;
@@ -383,10 +383,9 @@ public class ExtractLocalVariableRefactoring extends CRefactoring2 {
 					if (expression instanceof CPPASTLiteralExpression) {
 						CPPASTLiteralExpression literal = (CPPASTLiteralExpression) expression;
 						String name = null;
-						char[] value = literal.getValue();
 						switch (literal.getKind()) {
 				          case IASTLiteralExpression.lk_char_constant:
-				              name = Character.toString(value[0]);
+				              name = "c"; //$NON-NLS-1$
 				              break;
 				          case IASTLiteralExpression.lk_float_constant:
 				              name = "f"; //$NON-NLS-1$
@@ -511,13 +510,13 @@ public class ExtractLocalVariableRefactoring extends CRefactoring2 {
 
 	private Map<String, String> getArgumentMap() {
 		Map<String, String> arguments = new HashMap<String, String>();
-		arguments.put(CRefactoringDescription.FILE_NAME, tu.getLocationURI().toString());
-		arguments.put(CRefactoringDescription.SELECTION, selectedRegion.getOffset() + "," + selectedRegion.getLength()); //$NON-NLS-1$
+		arguments.put(CRefactoringDescriptor.FILE_NAME, tu.getLocationURI().toString());
+		arguments.put(CRefactoringDescriptor.SELECTION, selectedRegion.getOffset() + "," + selectedRegion.getLength()); //$NON-NLS-1$
 		arguments.put(ExtractLocalVariableRefactoringDescriptor.NAME, info.getName());
 		return arguments;
 	}
 
-	public NameNVisibilityInformation getRefactoringInfo() {
+	public NameAndVisibilityInformation getRefactoringInfo() {
 		return info;
 	}
 }

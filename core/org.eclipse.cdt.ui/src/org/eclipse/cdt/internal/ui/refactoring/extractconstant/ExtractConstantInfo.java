@@ -12,13 +12,13 @@
 package org.eclipse.cdt.internal.ui.refactoring.extractconstant;
 
 import org.eclipse.cdt.internal.ui.refactoring.MethodContext;
-import org.eclipse.cdt.internal.ui.refactoring.NameNVisibilityInformation;
+import org.eclipse.cdt.internal.ui.refactoring.NameAndVisibilityInformation;
 
 /**
  * @author Emanuel Graf IFS
  *
  */
-public class ExtractConstantInfo extends NameNVisibilityInformation{
+public class ExtractConstantInfo extends NameAndVisibilityInformation{
 	
 	private MethodContext mContext;
 

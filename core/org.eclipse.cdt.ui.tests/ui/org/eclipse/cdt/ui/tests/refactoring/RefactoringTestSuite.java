@@ -18,7 +18,7 @@ import junit.framework.TestSuite;
 
 import org.eclipse.cdt.ui.tests.refactoring.extractconstant.ExtractConstantRefactoringTest;
 import org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest;
-import org.eclipse.cdt.ui.tests.refactoring.extractlocalvariable.ExtractLocalVariableTestSuite;
+import org.eclipse.cdt.ui.tests.refactoring.extractlocalvariable.ExtractLocalVariableRefactoringTest;
 import org.eclipse.cdt.ui.tests.refactoring.gettersandsetters.GenerateGettersAndSettersTest;
 import org.eclipse.cdt.ui.tests.refactoring.hidemethod.HideMethodTestSuite;
 import org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodTestSuite;
@@ -40,7 +40,7 @@ public class RefactoringTestSuite extends TestSuite {
 		suite.addTest(HideMethodTestSuite.suite());
 		suite.addTest(GenerateGettersAndSettersTest.suite());
 		suite.addTest(ImplementMethodTestSuite.suite());
-		suite.addTest(ExtractLocalVariableTestSuite.suite());
+		suite.addTest(ExtractLocalVariableRefactoringTest.suite());
 		suite.addTest(ToogleRefactoringTest.suite());
 		return suite;
 	}

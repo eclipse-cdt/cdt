@@ -22,7 +22,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 
-import org.eclipse.cdt.internal.ui.refactoring.NameNVisibilityInformation;
+import org.eclipse.cdt.internal.ui.refactoring.NameAndVisibilityInformation;
 import org.eclipse.cdt.internal.ui.refactoring.dialogs.LabeledTextField;
 import org.eclipse.cdt.internal.ui.refactoring.utils.IdentifierHelper;
 import org.eclipse.cdt.internal.ui.refactoring.utils.IdentifierResult;
@@ -35,10 +35,10 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.IdentifierResult;
  */
 public class InputPage extends UserInputWizardPage {
 	private String label = Messages.VariableName;
-	private final NameNVisibilityInformation info;
+	private final NameAndVisibilityInformation info;
 	private InputForm control;
 
-	public InputPage(String name, NameNVisibilityInformation info) {
+	public InputPage(String name, NameAndVisibilityInformation info) {
 		super(name);
 		this.info = info;
 	}

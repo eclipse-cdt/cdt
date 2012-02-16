@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -8,17 +8,19 @@
  *  
  * Contributors: 
  *     Institute for Software - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.cdt.internal.ui.refactoring.utils.VisibilityEnum;
 
 /**
  * Associate a name with a visibility and holds a list of used names.
  */
-public class NameNVisibilityInformation {
+public class NameAndVisibilityInformation {
 	private String name = "";	 //$NON-NLS-1$
 	private VisibilityEnum visibility = VisibilityEnum.v_public;
 	private final ArrayList<String> usedNames = new ArrayList<String>();
@@ -39,7 +41,7 @@ public class NameNVisibilityInformation {
 		this.visibility = visibility;
 	}
 	
-	public ArrayList<String> getUsedNames(){
+	public List<String> getUsedNames(){
 		return usedNames;
 	}
 	

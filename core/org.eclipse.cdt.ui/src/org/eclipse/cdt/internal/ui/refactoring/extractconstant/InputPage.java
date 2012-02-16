@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -7,36 +7,34 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.extractconstant;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Composite;
 
-import org.eclipse.cdt.internal.ui.refactoring.NameNVisibilityInformation;
+import org.eclipse.cdt.internal.ui.refactoring.NameAndVisibilityInformation;
 import org.eclipse.cdt.internal.ui.refactoring.dialogs.ExtractInputPage;
 
 public class InputPage extends ExtractInputPage {
-
-	private final ArrayList<String> usedNames;
+	private final List<String> usedNames;
 	private boolean showVisibilityPane;
 
-	public InputPage(String name, NameNVisibilityInformation info) {
+	public InputPage(String name, NameAndVisibilityInformation info) {
 		this(name, info, true);
 	}
 
-	public InputPage(String name, NameNVisibilityInformation info, boolean showVisibilityPane) {
+	public InputPage(String name, NameAndVisibilityInformation info, boolean showVisibilityPane) {
 		super(name, info);
 		label = Messages.InputPage_ConstName;
 		errorLabel = Messages.InputPage_EnterContName;
 		usedNames = info.getUsedNames();
 		this.showVisibilityPane = showVisibilityPane;
 	}
-	
-	
 
 	@Override
 	public void createControl(Composite parent) {

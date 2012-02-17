@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Ericsson and others.
+ * Copyright (c) 2009, 2012 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Ericsson - initial API and implementation
+ *     Marc Khouzam (Ericsson) - Set path in which the dialog should start (Bug 362039)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.launching;
 
@@ -46,6 +47,12 @@ public class CoreFilePrompter implements IStatusHandler {
 		
 		FileDialog dialog = new FileDialog(shell);
 		dialog.setText(LaunchMessages.getString("CoreFileLaunchDelegate.Select_Corefile")); //$NON-NLS-1$
+
+		String initialPath = (String)params;
+		if (initialPath != null && initialPath.length() != 0) {
+			dialog.setFilterPath(initialPath);
+		}
+		
 		String res = dialog.open();
 		if (res != null) {
 			File file = new File(res);

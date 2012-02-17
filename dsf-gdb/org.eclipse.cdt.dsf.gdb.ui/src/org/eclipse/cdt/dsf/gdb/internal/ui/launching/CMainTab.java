@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010  QNX Software Systems and others.
+ * Copyright (c) 2008, 2012  QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,12 @@
  *     Ken Ryall (Nokia) - bug 178731
  *     Ericsson - Support for tracepoint post-mortem debugging
  *     IBM Corporation
+ *     Marc Khouzam (Ericsson) - Support setting the path in which the core file 
+ *                               dialog should start (Bug 362039)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.launching;
+
+import java.io.File;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.IBinary;
@@ -30,6 +34,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.DebugUITools;
@@ -485,15 +490,25 @@ public class CMainTab extends CAbstractMainTab {
 			String coreName = fCoreText.getText().trim();
 			// We accept an empty string.  This should trigger a prompt to the user
 			// This allows to re-use the launch, with a different core file.
+			// We also accept an absolute or workspace-relative path, including variables.
+			// This allows the user to indicate in which directory the prompt will start (Bug 362039)
 			if (!coreName.equals(EMPTY_STRING)) {
-				if (coreName.equals(".") || coreName.equals("..")) { //$NON-NLS-1$ //$NON-NLS-2$
-					setErrorMessage(LaunchMessages.getString("CMainTab.File_does_not_exist")); //$NON-NLS-1$
+				try {
+					// Replace the variables
+					coreName = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(coreName, false);
+				} catch (CoreException e) {
+					setErrorMessage(e.getMessage());
 					return false;
 				}
-				IPath corePath = new Path(coreName);
-				if (!corePath.toFile().exists()) {
-					setErrorMessage(LaunchMessages.getString("CMainTab.File_does_not_exist")); //$NON-NLS-1$
-					return false;
+				
+				coreName = coreName.trim();
+				File filePath = new File(coreName);
+				if (!filePath.isDirectory()) {
+					IPath corePath = new Path(coreName);
+					if (!corePath.toFile().exists()) {
+						setErrorMessage(LaunchMessages.getString("CMainTab.File_does_not_exist")); //$NON-NLS-1$
+						return false;
+					}
 				}
 			}
 		}

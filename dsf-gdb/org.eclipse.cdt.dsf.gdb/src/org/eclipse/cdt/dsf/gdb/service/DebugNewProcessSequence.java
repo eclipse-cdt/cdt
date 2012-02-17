@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Ericsson and others.
+ * Copyright (c) 2011, 2012 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,9 +7,12 @@
  * 
  * Contributors:
  *     Ericsson - initial API and implementation
+ *     Marc Khouzam (Ericsson) - Support setting the path in which the core file 
+ *                               dialog should start (Bug 362039)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
+import java.io.File;
 import java.util.Map;
 import java.util.Properties;
 
@@ -40,8 +43,10 @@ import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IStatusHandler;
 
@@ -256,10 +261,21 @@ public class DebugNewProcessSequence extends ReflectionSequence {
 
 	/** @since 4.0 */
 	protected static class PromptForCoreJob extends Job {
+		/**
+		 * The initial path that should be used in the prompt for the core file
+		 * @since 4.1 
+		 */
+		protected String fInitialPath;
 		protected DataRequestMonitor<String> fRequestMonitor;
 
 		public PromptForCoreJob(String name, DataRequestMonitor<String> rm) {
+			this(name, null, null, rm);
+		}
+
+		/** @since 4.1 */
+		public PromptForCoreJob(String name, String coreType, String initialPath, DataRequestMonitor<String> rm) {
 			super(name);
+			fInitialPath = initialPath;
 			fRequestMonitor = rm;
 		}
 
@@ -281,7 +297,7 @@ public class DebugNewProcessSequence extends ReflectionSequence {
 			} 				
 
 			try {
-				Object result = prompter.handleStatus(filePrompt, null);
+				Object result = prompter.handleStatus(filePrompt, fInitialPath);
 				 if (result == null) {
 						fRequestMonitor.cancel();
 				} else if (result instanceof String) {
@@ -314,14 +330,46 @@ public class DebugNewProcessSequence extends ReflectionSequence {
 			String coreFile = CDebugUtils.getAttribute(
 					fAttributes,
 					ICDTLaunchConfigurationConstants.ATTR_COREFILE_PATH, ""); //$NON-NLS-1$
+			
+			try {
+				// Support variable substitution for the core file path
+				// Bug 362039
+				coreFile = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(coreFile, false);
+			} catch (CoreException e) {
+				// Ignore and use core file string as is.
+				// This should not happen because the dialog will
+				// prevent the user from making such mistakes
+			}
+
 			final String coreType = CDebugUtils.getAttribute(
 					fAttributes,
 					IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_POST_MORTEM_TYPE,
 					IGDBLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_TYPE_DEFAULT);
 			
-				if (coreFile.length() == 0) {
+			// We handle three cases:
+			// 1- Core file specified, in which case we use it
+			// 2- Nothing specified, in which case we prompt for a core file path
+			// 3- Path to a directory, in which case we prompt for a core file starting at the specified path
+			boolean shouldPrompt = false;
+			coreFile = coreFile.trim();
+			if (coreFile.length() == 0) {
+				shouldPrompt = true;
+			} else {
+				File filePath = new File(coreFile);
+				if (filePath.isDirectory()) {
+					// The user provided a directory.  We need to prompt for an actual
+					// core file, but we'll start off in the specified directory
+					// Bug 362039
+					shouldPrompt = true;
+				}
+				// else not a directory but an actual core file: use it.
+			}
+			
+			if (shouldPrompt) {
 					new PromptForCoreJob(
 							"Prompt for post mortem file",  //$NON-NLS-1$
+							coreType,
+							coreFile,
 							new DataRequestMonitor<String>(getExecutor(), rm) {
 								@Override
 								protected void handleCancel() {
@@ -332,49 +380,44 @@ public class DebugNewProcessSequence extends ReflectionSequence {
 								protected void handleSuccess() {
 									String newCoreFile = getData();
 									if (newCoreFile == null || newCoreFile.length()== 0) {
-										rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot get post mortem file path", null)); //$NON-NLS-1$
+										rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, Messages.Cannot_get_post_mortem_file_path_error, null)); 
 										rm.done();
 									} else {
-										if (coreType.equals(IGDBLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_CORE_FILE)) {
-											fCommandControl.queueCommand(
-													fCommandFactory.createMITargetSelectCore(fCommandControl.getContext(), newCoreFile), 
-													new DataRequestMonitor<MIInfo>(getExecutor(), rm));
-										} else if (coreType.equals(IGDBLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_TRACE_FILE)) {
-											IGDBTraceControl traceControl = fTracker.getService(IGDBTraceControl.class);
-											if (traceControl != null) {
-												ITraceTargetDMContext targetDmc = DMContexts.getAncestorOfType(fCommandControl.getContext(), ITraceTargetDMContext.class);
-												traceControl.loadTraceData(targetDmc, newCoreFile, rm);
-											} else {
-												rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Tracing not supported", null));
-												rm.done();                                  
-											}
-										} else {
-											rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Invalid post-mortem type", null));
-											rm.done();
-										}
+										targetSelectFile(coreType, newCoreFile, rm);
 									}
 								}
 							}).schedule();
 				} else {
-					if (coreType.equals(IGDBLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_CORE_FILE)) {
-						fCommandControl.queueCommand(
-								fCommandFactory.createMITargetSelectCore(fCommandControl.getContext(), coreFile),
-								new DataRequestMonitor<MIInfo>(getExecutor(), rm));
-					} else if (coreType.equals(IGDBLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_TRACE_FILE)) {
-						IGDBTraceControl traceControl = fTracker.getService(IGDBTraceControl.class);
-						if (traceControl != null) {
-							ITraceTargetDMContext targetDmc = DMContexts.getAncestorOfType(fCommandControl.getContext(), ITraceTargetDMContext.class);
-							traceControl.loadTraceData(targetDmc, coreFile, rm);
-						} else {
-							rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Tracing not supported", null));
-							rm.done();
-						}
-					} else {
-						rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Invalid post-mortem type", null));
-						rm.done();
-					}
+					// The user specified something that was not a directory,
+					// it therefore should be the core file itself.  Let's use it.
+					
+					// First convert to absolute path so that things work even if the user
+					// specifies a relative path.  The reason we do this is that GDB
+					// may not be using the same root path as Eclipse.
+					String absoluteCoreFile = new Path(coreFile).toFile().getAbsolutePath();
+					targetSelectFile(coreType, absoluteCoreFile, rm);
 				}
 		} else {
+			rm.done();
+		}
+	}
+	
+	private void targetSelectFile(String coreType, String file, RequestMonitor rm) {
+		if (coreType.equals(IGDBLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_CORE_FILE)) {
+			fCommandControl.queueCommand(
+					fCommandFactory.createMITargetSelectCore(fCommandControl.getContext(), file),
+					new DataRequestMonitor<MIInfo>(getExecutor(), rm));
+		} else if (coreType.equals(IGDBLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_TRACE_FILE)) {
+			IGDBTraceControl traceControl = fTracker.getService(IGDBTraceControl.class);
+			if (traceControl != null) {
+				ITraceTargetDMContext targetDmc = DMContexts.getAncestorOfType(fCommandControl.getContext(), ITraceTargetDMContext.class);
+				traceControl.loadTraceData(targetDmc, file, rm);
+			} else {
+				rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, Messages.Tracing_not_supported_error, null));
+				rm.done();
+			}
+		} else {
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, Messages.Invalid_post_mortem_type_error, null));
 			rm.done();
 		}
 	}

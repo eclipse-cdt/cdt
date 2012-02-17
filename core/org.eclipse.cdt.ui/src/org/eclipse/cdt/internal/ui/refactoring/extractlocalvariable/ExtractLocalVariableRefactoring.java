@@ -70,7 +70,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoring2;
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoringDescriptor;
 import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
-import org.eclipse.cdt.internal.ui.refactoring.NameAndVisibilityInformation;
+import org.eclipse.cdt.internal.ui.refactoring.VariableNameInformation;
 import org.eclipse.cdt.internal.ui.refactoring.NodeContainer;
 import org.eclipse.cdt.internal.ui.refactoring.utils.NodeHelper;
 import org.eclipse.cdt.internal.ui.refactoring.utils.SelectionHelper;
@@ -86,14 +86,14 @@ import org.eclipse.cdt.internal.ui.util.NameComposer;
 public class ExtractLocalVariableRefactoring extends CRefactoring2 {
 	public static final String ID =
 			"org.eclipse.cdt.internal.ui.refactoring.extractlocalvariable.ExtractLocalVariableRefactoring"; //$NON-NLS-1$
-	
+
 	private IASTExpression target;
-	private final NameAndVisibilityInformation info;
+	private final VariableNameInformation info;
 	private NodeContainer container;
 
 	public ExtractLocalVariableRefactoring(ICElement element, ISelection selection, ICProject project) {
 		super(element, selection, project);
-		info = new NameAndVisibilityInformation();
+		info = new VariableNameInformation();
 		name = Messages.ExtractLocalVariable;
 	}
 
@@ -132,7 +132,7 @@ public class ExtractLocalVariableRefactoring extends CRefactoring2 {
 
 		container.getNames(); //XXX Is this needed?
 		sm.worked(1);
-		
+
 		info.addNamesToUsedNames(findAllDeclaredNames());
 		sm.worked(1);
 
@@ -204,7 +204,7 @@ public class ExtractLocalVariableRefactoring extends CRefactoring2 {
 		return oneMarked;
 	}
 
-	private boolean isExpressionInSelection(IASTExpression expression, Region selection) {
+	private static boolean isExpressionInSelection(IASTExpression expression, Region selection) {
 		IASTFileLocation location = expression.getFileLocation();
 		int expressionStart = location.getNodeOffset();
 		int expressionEnd = expressionStart + location.getNodeLength();
@@ -236,7 +236,7 @@ public class ExtractLocalVariableRefactoring extends CRefactoring2 {
 				{
 					shouldVisitExpressions = true;
 				}
-	
+
 				@Override
 				public int visit(IASTExpression expression) {
 					if (expression.isPartOfTranslationUnitFile() &&
@@ -283,11 +283,11 @@ public class ExtractLocalVariableRefactoring extends CRefactoring2 {
 
 	private IASTDeclarationStatement getVariableNodes(IASTTranslationUnit ast, String newName) {
 		INodeFactory factory = ast.getASTNodeFactory();
-		
+
 		IASTSimpleDeclaration simple = factory.newSimpleDeclaration(null);
 
 		DeclarationGenerator generator = DeclarationGenerator.create(factory);
-		
+
 		IASTDeclSpecifier declSpec = generator.createDeclSpecFromType(target.getExpressionType());
 		declSpec.setStorageClass(IASTDeclSpecifier.sc_unspecified);
 		simple.setDeclSpecifier(declSpec);
@@ -379,7 +379,7 @@ public class ExtractLocalVariableRefactoring extends CRefactoring2 {
 							}
 						}
 					}
-					
+
 					if (expression instanceof CPPASTLiteralExpression) {
 						CPPASTLiteralExpression literal = (CPPASTLiteralExpression) expression;
 						String name = null;
@@ -423,7 +423,7 @@ public class ExtractLocalVariableRefactoring extends CRefactoring2 {
 			    			PreferenceConstants.NAME_STYLE_VARIABLE_SUFFIX, "", null); //$NON-NLS-1$
 			    	NameComposer composer = new NameComposer(capitalization, wordDelimiter, prefix, suffix);
 			    	name = composer.compose(name);
-					
+
 					if (name.length() > 0) {
 						if (nameAvailable(name, guessedTempNames, scope)) {
 							guessedTempNames.add(name);
@@ -516,7 +516,7 @@ public class ExtractLocalVariableRefactoring extends CRefactoring2 {
 		return arguments;
 	}
 
-	public NameAndVisibilityInformation getRefactoringInfo() {
+	public VariableNameInformation getRefactoringInfo() {
 		return info;
 	}
 }

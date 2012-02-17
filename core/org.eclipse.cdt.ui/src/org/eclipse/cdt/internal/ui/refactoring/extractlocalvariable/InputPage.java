@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -8,7 +8,8 @@
  *  
  * Contributors: 
  *     Institute for Software - initial API and implementation
- *     Google
+ *     Tom Ball (Google)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.extractlocalvariable;
 
@@ -22,7 +23,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 
-import org.eclipse.cdt.internal.ui.refactoring.NameAndVisibilityInformation;
+import org.eclipse.cdt.internal.ui.refactoring.VariableNameInformation;
 import org.eclipse.cdt.internal.ui.refactoring.dialogs.LabeledTextField;
 import org.eclipse.cdt.internal.ui.refactoring.utils.IdentifierHelper;
 import org.eclipse.cdt.internal.ui.refactoring.utils.IdentifierResult;
@@ -34,22 +35,19 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.IdentifierResult;
  * @author Tom Ball
  */
 public class InputPage extends UserInputWizardPage {
-	private String label = Messages.VariableName;
-	private final NameAndVisibilityInformation info;
+	private static final String PAGE_NAME = "InputPage"; //$NON-NLS-1$
+
+	private VariableNameInformation info;
 	private InputForm control;
 
-	public InputPage(String name, NameAndVisibilityInformation info) {
-		super(name);
-		this.info = info;
-	}
-
-	public String getVariableName() {
-		return info.getName();
+	public InputPage() {
+		super(PAGE_NAME);
 	}
 
 	@Override
 	public void createControl(Composite parent) {
-		control = new InputForm(parent, label);
+		this.info = ((ExtractLocalVariableRefactoring) getRefactoring()).getRefactoringInfo();
+		control = new InputForm(parent, Messages.VariableName);
 
 		setTitle(getName());
 		setMessage(Messages.EnterVariableName);
@@ -78,14 +76,13 @@ public class InputPage extends UserInputWizardPage {
 
 	private void checkName() {
 		String methodName = control.getVariableNameText().getText();
-		IdentifierResult result = IdentifierHelper
-				.checkIdentifierName(methodName);
+		IdentifierResult result = IdentifierHelper.checkIdentifierName(methodName);
 		if (result.isCorrect()) {
 			setErrorMessage(null);
 			setPageComplete(true);
 			verifyName(methodName);
 		} else {
-			setErrorMessage(NLS.bind(Messages.CheckName, result.getMessage()));
+			setErrorMessage(result.getMessage());
 			setPageComplete(false);
 		}
 	}
@@ -96,8 +93,7 @@ public class InputPage extends UserInputWizardPage {
 		InputForm(Composite parent, String label) {
 			super(parent, SWT.NONE);
 			FillLayout layout = new FillLayout(SWT.HORIZONTAL);
-			GridData gridData = new GridData(SWT.FILL, SWT.BEGINNING, true,
-					false);
+			GridData gridData = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
 			gridData.horizontalAlignment = GridData.FILL;
 			setLayoutData(gridData);
 			setLayout(layout);

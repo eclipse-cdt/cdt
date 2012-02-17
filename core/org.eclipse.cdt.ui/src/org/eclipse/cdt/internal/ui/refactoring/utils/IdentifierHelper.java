@@ -29,7 +29,6 @@ import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
  * @author Thomas Corbat
  */
 public class IdentifierHelper {
-
 	/**
 	 * @param identifier to check
 	 * @return an instance of IdentifierResult that holds the outcome of the validation

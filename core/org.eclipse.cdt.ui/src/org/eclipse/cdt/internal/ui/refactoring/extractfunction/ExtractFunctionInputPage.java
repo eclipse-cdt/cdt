@@ -54,7 +54,7 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.VisibilityEnum;
 import org.eclipse.cdt.internal.ui.util.RowLayouter;
 
 public class ExtractFunctionInputPage extends UserInputWizardPage {
-	public static final String PAGE_NAME = "ExtractFunctionInputPage";//$NON-NLS-1$
+	public static final String PAGE_NAME = "ExtractFunctionInputPage"; //$NON-NLS-1$
 	static final String DIALOG_SETTING_SECTION = "ExtractFunctionWizard"; //$NON-NLS-1$
 
 	private ExtractFunctionRefactoring refactoring;

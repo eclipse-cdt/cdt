@@ -39,6 +39,10 @@ public class MethodContext {
 	private IASTName declarationName;
 	private ICPPASTQualifiedName qname;
 
+	public MethodContext() {
+		type = ContextType.NONE;
+	}
+
 	public ContextType getType() {
 		return type;
 	}

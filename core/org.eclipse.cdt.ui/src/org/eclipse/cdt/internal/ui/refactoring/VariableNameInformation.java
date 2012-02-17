@@ -15,14 +15,11 @@ package org.eclipse.cdt.internal.ui.refactoring;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.cdt.internal.ui.refactoring.utils.VisibilityEnum;
-
 /**
- * Associate a name with a visibility and holds a list of used names.
+ * Contains the name for a new variable and holds a list of used names.
  */
-public class NameAndVisibilityInformation {
+public class VariableNameInformation {
 	private String name = "";	 //$NON-NLS-1$
-	private VisibilityEnum visibility = VisibilityEnum.v_public;
 	private final ArrayList<String> usedNames = new ArrayList<String>();
 
 	public String getName() {
@@ -33,15 +30,7 @@ public class NameAndVisibilityInformation {
 		this.name = name;
 	}
 
-	public VisibilityEnum getVisibility() {
-		return visibility;
-	}
-
-	public void setVisibility(VisibilityEnum visibility) {
-		this.visibility = visibility;
-	}
-	
-	public List<String> getUsedNames(){
+	public List<String> getUsedNames() {
 		return usedNames;
 	}
 	
@@ -49,7 +38,7 @@ public class NameAndVisibilityInformation {
 		usedNames.add(name);
 	}
 	
-	public void addNamesToUsedNames(ArrayList<String> names) {
+	public void addNamesToUsedNames(List<String> names) {
 		usedNames.addAll(names);
 	}
 }

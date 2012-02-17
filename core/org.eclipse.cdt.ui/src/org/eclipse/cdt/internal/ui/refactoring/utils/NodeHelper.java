@@ -44,8 +44,8 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNamespaceDefinition;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
-import org.eclipse.cdt.internal.ui.refactoring.MethodContext;
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoringContext;
+import org.eclipse.cdt.internal.ui.refactoring.MethodContext;
 
 /**
  * General class for common Node operations.
@@ -107,12 +107,11 @@ public class NodeHelper {
 		return null;
 	}
 
-	public static MethodContext findMethodContext(IASTNode node, CRefactoringContext astCache,
+	public static MethodContext findMethodContext(IASTNode node, CRefactoringContext refactoringContext,
 			IProgressMonitor pm) throws CoreException {
 		IASTTranslationUnit translationUnit = node.getTranslationUnit();
 		boolean found = false;
 		MethodContext context = new MethodContext();
-		context.setType(MethodContext.ContextType.NONE);
 		IASTName name = null;
 		while (node != null && !found) {
 			node = node.getParent();
@@ -124,13 +123,13 @@ public class NodeHelper {
 				name = CPPVisitor.findInnermostDeclarator(((IASTFunctionDefinition) node).getDeclarator()).getName();
 				found = true;
 				context.setType(MethodContext.ContextType.FUNCTION);
-			} 
+			}
 		}
-		getMethodContexWithIndex(astCache, translationUnit, name, context, pm);
+		getMethodContexWithIndex(refactoringContext, translationUnit, name, context, pm);
 		return context;
 	}
 
-	private static void getMethodContexWithIndex(CRefactoringContext astCache,
+	private static void getMethodContexWithIndex(CRefactoringContext refactoringContext,
 			IASTTranslationUnit ast, IASTName name, MethodContext context, IProgressMonitor pm)
 			throws CoreException {
 		if (name instanceof ICPPASTQualifiedName) {
@@ -140,7 +139,7 @@ public class NodeHelper {
 		IBinding binding = name.resolveBinding();
 		if (binding instanceof ICPPMethod) {
 			context.setType(MethodContext.ContextType.METHOD);
-			IIndex index = astCache.getIndex();
+			IIndex index = refactoringContext.getIndex();
 			IIndexName[] declarations = index.findDeclarations(binding);
 			if (declarations.length == 0) {
 				context.setMethodDeclarationName(name);
@@ -153,7 +152,7 @@ public class NodeHelper {
 						IIndexFileLocation fileLocation = decl.getFile().getLocation();
 						ITranslationUnit locTu =
 								CoreModelUtil.findTranslationUnitForLocation(fileLocation, cProject);
-						astCache.getAST(locTu, pm);
+						ast2 = refactoringContext.getAST(locTu, pm);
 					}
 					IASTName declName = DeclarationFinder.findDeclarationInTranslationUnit(ast2, decl);
 					if (declName != null) {
@@ -169,14 +168,13 @@ public class NodeHelper {
 	}
 
 	/**
-	 * @deprecated Use #findMethodContext(IASTNode, RefactoringASTCache, IProgressMonitor pm)
+	 * @deprecated Use #findMethodContext(IASTNode, CRefactoringContext, IProgressMonitor)
 	 */
 	@Deprecated
 	public static MethodContext findMethodContext(IASTNode node, IIndex index) throws CoreException {
 		IASTTranslationUnit translationUnit = node.getTranslationUnit();
 		boolean found = false;
 		MethodContext context = new MethodContext();
-		context.setType(MethodContext.ContextType.NONE);
 		IASTName name = null;
 		while (node != null && !found) {
 			node = node.getParent();
@@ -191,15 +189,15 @@ public class NodeHelper {
 			} 
 		}
 		if (index != null) {
-			getMethodContexWithIndex(index, translationUnit, context, name);
+			getMethodContextWithIndex(index, translationUnit, context, name);
 		} else {
-			getMethodContex(translationUnit, context, name);
+			getMethodContext(translationUnit, context, name);
 		}
 		return context;
 	}
 
 	@Deprecated
-	private static void getMethodContexWithIndex(IIndex index, IASTTranslationUnit translationUnit,
+	private static void getMethodContextWithIndex(IIndex index, IASTTranslationUnit translationUnit,
 			MethodContext context, IASTName name) throws CoreException {
 		IBinding bind = name.resolveBinding();
 		if (bind instanceof ICPPMethod) {
@@ -231,7 +229,7 @@ public class NodeHelper {
 		}
 	}
 
-	private static void getMethodContex(IASTTranslationUnit translationUnit, MethodContext context,
+	private static void getMethodContext(IASTTranslationUnit translationUnit, MethodContext context,
 			IASTName name) {
 		if (name instanceof ICPPASTQualifiedName) {
 			 ICPPASTQualifiedName qname = (ICPPASTQualifiedName) name;

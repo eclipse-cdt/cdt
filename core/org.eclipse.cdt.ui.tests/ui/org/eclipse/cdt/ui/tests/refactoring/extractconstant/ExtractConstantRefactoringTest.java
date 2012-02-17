@@ -26,9 +26,9 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.VisibilityEnum;
  * Tests for Extract Constant refactoring.
  */
 public class ExtractConstantRefactoringTest extends RefactoringTestBase {
-	private ExtractConstantInfo refactoringInfo;
 	private String extractedConstantName = "EXTRACTED";
 	private VisibilityEnum visibility = VisibilityEnum.v_private;
+	private ExtractConstantRefactoring refactoring;
 
 	public ExtractConstantRefactoringTest() {
 		super();
@@ -44,15 +44,16 @@ public class ExtractConstantRefactoringTest extends RefactoringTestBase {
 
 	@Override
 	protected Refactoring createRefactoring() {
-		refactoringInfo = new ExtractConstantInfo();
-		return new ExtractConstantRefactoring(getSelectedFile(), getSelection(), refactoringInfo,
+		refactoring = new ExtractConstantRefactoring(getSelectedTranslationUnit(), getSelection(),
 				getCProject());
+		return refactoring;
 	}
 
 	@Override
 	protected void simulateUserInput() {
-		refactoringInfo.setName(extractedConstantName);
-		refactoringInfo.setVisibility(visibility);
+		ExtractConstantInfo info = refactoring.getRefactoringInfo();
+		info.setName(extractedConstantName);
+		info.setVisibility(visibility);
 	}
 
 	//A.h

@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- *    Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.dialogs;
 
@@ -22,10 +22,8 @@ import org.eclipse.swt.widgets.Text;
  * A text field with an associated label, displayed side-by-side.
  *
  * @author Mirko Stocker
- *
  */
 public class LabeledTextField extends Composite {
-	
 	private final Text textField;
 
 	public LabeledTextField(Composite parent, String labelName, String textContent)	{
@@ -40,7 +38,7 @@ public class LabeledTextField extends Composite {
 		label.setText(labelName);
 		label.setLayoutData(new GridData());
 	
-		textField = new Text(this, SWT.BORDER |SWT.SINGLE);
+		textField = new Text(this, SWT.BORDER | SWT.SINGLE);
 		textField.setText(textContent);
 		textField.selectAll();
 		GridData textData = new GridData(GridData.FILL_HORIZONTAL);		

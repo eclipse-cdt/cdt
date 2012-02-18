@@ -98,47 +98,43 @@ public class ExtractConstantRefactoring extends CRefactoring2 {
 	public RefactoringStatus checkInitialConditions(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		SubMonitor sm = SubMonitor.convert(pm, 10);
 
-		RefactoringStatus status = super.checkInitialConditions(sm.newChild(7));
-		if (status.hasError()) {
-			return status;
-		}
-
-		Collection<IASTLiteralExpression> literalExpressionCollection = findAllLiterals(sm.newChild(1));
-		if (literalExpressionCollection.isEmpty()) {
-			initStatus.addFatalError(Messages.ExtractConstantRefactoring_LiteralMustBeSelected); 
-			return initStatus;
-		}
-
-		if (isProgressMonitorCanceld(sm, initStatus))
-			return initStatus;
-
-		boolean oneMarked =
-				selectedRegion != null && isOneMarked(literalExpressionCollection, selectedRegion);
-		if (!oneMarked) { 
-			// None or more than one literal selected
-			if (target == null) {
-				// No l found;
-				initStatus.addFatalError(Messages.ExtractConstantRefactoring_NoLiteralSelected); 
-			} else {
-				// To many selection found
-				initStatus.addFatalError(Messages.ExtractConstantRefactoring_TooManyLiteralSelected); 
+		try {
+			RefactoringStatus status = super.checkInitialConditions(sm.newChild(8));
+			if (status.hasError()) {
+				return status;
 			}
+	
+			Collection<IASTLiteralExpression> literalExpressionCollection = findAllLiterals(sm.newChild(1));
+			if (literalExpressionCollection.isEmpty()) {
+				initStatus.addFatalError(Messages.ExtractConstantRefactoring_LiteralMustBeSelected); 
+				return initStatus;
+			}
+	
+			boolean oneMarked =
+					selectedRegion != null && isOneMarked(literalExpressionCollection, selectedRegion);
+			if (!oneMarked) { 
+				// None or more than one literal selected
+				if (target == null) {
+					// No l found;
+					initStatus.addFatalError(Messages.ExtractConstantRefactoring_NoLiteralSelected); 
+				} else {
+					// To many selection found
+					initStatus.addFatalError(Messages.ExtractConstantRefactoring_TooManyLiteralSelected); 
+				}
+				return initStatus;
+			}
+	
+			findAllNodesForReplacement(literalExpressionCollection);
+	
+			info.addNamesToUsedNames(findAllDeclaredNames());
+			if (info.getName().isEmpty()) {
+				info.setName(getDefaultName(target));
+			}
+			info.setMethodContext(NodeHelper.findMethodContext(target, refactoringContext, sm.newChild(1)));
 			return initStatus;
+		} finally {
+			sm.done();
 		}
-		sm.worked(1);
-
-		if (isProgressMonitorCanceld(sm, initStatus))
-			return initStatus;
-
-		findAllNodesForReplacement(literalExpressionCollection);
-
-		info.addNamesToUsedNames(findAllDeclaredNames());
-		if (info.getName().isEmpty()) {
-			info.setName(getDefaultName(target));
-		}
-		info.setMethodContext(NodeHelper.findMethodContext(target, refactoringContext, sm.newChild(1)));
-		sm.done();
-		return initStatus;
 	}
 
 	private String getDefaultName(IASTLiteralExpression literal) {

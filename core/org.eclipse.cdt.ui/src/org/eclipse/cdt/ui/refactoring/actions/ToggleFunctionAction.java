@@ -38,6 +38,7 @@ public class ToggleFunctionAction extends RefactoringAction {
 
 	public ToggleFunctionAction() {
 		super(Messages.ToggleFunctionAction_label);
+        setSaveRequired(true);
 	}
 
 	@Override

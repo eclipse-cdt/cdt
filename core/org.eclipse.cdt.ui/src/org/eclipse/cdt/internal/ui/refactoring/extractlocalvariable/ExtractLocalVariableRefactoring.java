@@ -70,8 +70,8 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoring2;
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoringDescriptor;
 import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
-import org.eclipse.cdt.internal.ui.refactoring.VariableNameInformation;
 import org.eclipse.cdt.internal.ui.refactoring.NodeContainer;
+import org.eclipse.cdt.internal.ui.refactoring.VariableNameInformation;
 import org.eclipse.cdt.internal.ui.refactoring.utils.NodeHelper;
 import org.eclipse.cdt.internal.ui.refactoring.utils.SelectionHelper;
 import org.eclipse.cdt.internal.ui.util.NameComposer;
@@ -239,8 +239,7 @@ public class ExtractLocalVariableRefactoring extends CRefactoring2 {
 
 				@Override
 				public int visit(IASTExpression expression) {
-					if (expression.isPartOfTranslationUnitFile() &&
-							SelectionHelper.isExpressionWhollyInSelection(selectedRegion, expression)) {
+					if (SelectionHelper.isNodeInsideSelection(expression, selectedRegion)) {
 						container.add(expression);
 						return PROCESS_SKIP;
 					}

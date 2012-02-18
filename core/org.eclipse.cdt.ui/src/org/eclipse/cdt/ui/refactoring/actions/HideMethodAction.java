@@ -33,6 +33,7 @@ public class HideMethodAction extends RefactoringAction {
     
     public HideMethodAction() {
         super(Messages.HideMethodAction_label); 
+        setSaveRequired(true);
     }
     
 	@Override

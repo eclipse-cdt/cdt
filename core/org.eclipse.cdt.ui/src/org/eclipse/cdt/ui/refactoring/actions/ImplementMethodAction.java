@@ -36,6 +36,7 @@ public class ImplementMethodAction extends RefactoringAction {
 
 	public ImplementMethodAction() {
 		super(Messages.ImplementMethodAction_label);
+        setSaveRequired(true);
 	}
 
 	/**

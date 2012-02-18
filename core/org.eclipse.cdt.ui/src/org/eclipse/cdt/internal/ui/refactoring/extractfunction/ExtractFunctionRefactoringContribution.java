@@ -26,7 +26,7 @@ public class ExtractFunctionRefactoringContribution extends CRefactoringContribu
 	public RefactoringDescriptor createDescriptor(String id, String project, String description,
 			String comment, Map arguments, int flags) throws IllegalArgumentException {
 		if (id.equals(ExtractFunctionRefactoring.ID)) {
-			return new ExtractFunctionRefactoringDescription(project, description, comment, arguments);
+			return new ExtractFunctionRefactoringDescriptor(project, description, comment, arguments);
 		} else {
 			return null;
 		}

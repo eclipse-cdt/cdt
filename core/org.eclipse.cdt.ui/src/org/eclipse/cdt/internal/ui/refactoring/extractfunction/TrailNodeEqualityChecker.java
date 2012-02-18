@@ -61,6 +61,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexName;
+import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.refactoring.Container;
 import org.eclipse.cdt.internal.ui.refactoring.EqualityChecker;
@@ -70,7 +71,8 @@ public class TrailNodeEqualityChecker implements EqualityChecker<IASTNode> {
 	private final Container<Integer> namesCounter;
 	private final IIndex index;
 	
-	public TrailNodeEqualityChecker(Map<String, Integer> names, Container<Integer> namesCounter, IIndex index) {
+	public TrailNodeEqualityChecker(Map<String, Integer> names, Container<Integer> namesCounter,
+			IIndex index) {
 		super();
 		this.names = names;
 		this.namesCounter = namesCounter;
@@ -81,7 +83,7 @@ public class TrailNodeEqualityChecker implements EqualityChecker<IASTNode> {
 	public boolean isEquals(IASTNode trailNode, IASTNode node) {
 		if ((trailNode instanceof TrailName && node instanceof IASTName)
 				|| Arrays.equals(getInterfaces(node), getInterfaces(trailNode))) {
-			//Is same type
+			// Is same type
 			if (node instanceof IASTExpression) {
 				return isExpressionEquals(trailNode, node);
 			} else if (node instanceof IASTStatement) {
@@ -93,7 +95,7 @@ public class TrailNodeEqualityChecker implements EqualityChecker<IASTNode> {
 			} else if (node instanceof IASTDeclarator) {	
 				return isDeclaratorEquals(trailNode, node);
 			} else if (node instanceof IASTInitializer) {
-				//no speciality, is the same type return true
+				// No speciality, is the same type return true
 				return true;
 			} else if (node instanceof IASTDeclSpecifier) {
 				return isDeclSpecifierEquals(trailNode, node);
@@ -310,7 +312,7 @@ public class TrailNodeEqualityChecker implements EqualityChecker<IASTNode> {
 				return false;
 			}
 		}
-		return  trailDeclSpeci.isConst() == declSpeci.isConst()
+		return trailDeclSpeci.isConst() == declSpeci.isConst()
 				&& trailDeclSpeci.isInline() == declSpeci.isInline()
 				&& trailDeclSpeci.isVolatile() == declSpeci.isVolatile()
 				&& trailDeclSpeci.isRestrict() == declSpeci.isRestrict()
@@ -347,25 +349,25 @@ public class TrailNodeEqualityChecker implements EqualityChecker<IASTNode> {
 		if (trailName.isGloballyQualified()) {
 			IBinding realBind = trailName.getRealName().resolveBinding();
 			IBinding nameBind = name.resolveBinding();
+			IIndexName[] realDecs;
+			IIndexName[] nameDecs;
 			try {
-				index.acquireReadLock();
-				IIndexName[] realDecs = index.findDeclarations(realBind);
-				IIndexName[] nameDecs = index.findDeclarations(nameBind);
-				if (realDecs.length == nameDecs.length) {
-					for (int i = 0; i < realDecs.length; ++i) {
-						IASTFileLocation rfl = realDecs[i].getFileLocation();
-						IASTFileLocation nfl = nameDecs[i].getFileLocation();
-						if (rfl.getNodeOffset() != nfl.getNodeOffset() || !rfl.getFileName().equals(nfl.getFileName()))
-							return false;
-					}
-					return true;
-				} else {
-					return false;
-				}
-			} catch (InterruptedException e) {
+				realDecs = index.findDeclarations(realBind);
+				nameDecs = index.findDeclarations(nameBind);
 			} catch (CoreException e) {
-			} finally {
-				index.releaseReadLock();
+				CUIPlugin.log(e);
+				return false;
+			}
+			if (realDecs.length == nameDecs.length) {
+				for (int i = 0; i < realDecs.length; ++i) {
+					IASTFileLocation rfl = realDecs[i].getFileLocation();
+					IASTFileLocation nfl = nameDecs[i].getFileLocation();
+					if (rfl.getNodeOffset() != nfl.getNodeOffset() || !rfl.getFileName().equals(nfl.getFileName()))
+						return false;
+				}
+				return true;
+			} else {
+				return false;
 			}
 		} else {
 			IType oType = getType(trailName.getRealName().resolveBinding());

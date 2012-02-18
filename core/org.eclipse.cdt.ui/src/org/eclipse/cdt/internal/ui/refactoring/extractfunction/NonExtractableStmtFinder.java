@@ -39,10 +39,11 @@ class NonExtractableStmtFinder extends ASTVisitor{
 		} else if (statement instanceof IASTBreakStatement) {
 			containsBreakStmt = true;
 			return ASTVisitor.PROCESS_SKIP;
-		} else if (statement instanceof IASTForStatement ||  //Extracting hole loop statements is ok
+		} else if (statement instanceof IASTForStatement ||
 				statement instanceof IASTWhileStatement ||
 				statement instanceof IASTSwitchStatement ||
 				statement instanceof IASTDoStatement) {
+			// Extracting a whole loop statement is allowed
 			return ASTVisitor.PROCESS_SKIP;
 		}
 		return ASTVisitor.PROCESS_CONTINUE;

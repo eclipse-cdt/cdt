@@ -212,7 +212,7 @@ public abstract class CRefactoring2 extends Refactoring {
 			@Override
 			public int visit(IASTName name) {
 				if (name.isPartOfTranslationUnitFile() &&
-						SelectionHelper.isSelectionOnExpression(selectedRegion, name) &&
+						SelectionHelper.doesNodeOverlapWithRegion(name, selectedRegion) &&
 						!(name instanceof ICPPASTQualifiedName)) {
 					names.add(name);
 				}

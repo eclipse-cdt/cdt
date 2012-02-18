@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -7,7 +7,8 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.utils;
 
@@ -57,7 +58,7 @@ public class SelectionHelper {
 			@Override
 			public int visit(IASTDeclaration declaration) {
 				if (declaration instanceof IASTSimpleDeclaration &&
-						isSelectionOnExpression(textSelection, declaration)) {
+						doesNodeOverlapWithRegion(declaration, textSelection)) {
 					container.setObject((IASTSimpleDeclaration) declaration);
 				}
 				return super.visit(declaration);
@@ -67,22 +68,34 @@ public class SelectionHelper {
 		return container.getObject();
 	}
 	
-	public static boolean isSelectionOnExpression(Region textSelection, IASTNode expression) {
-		Region exprPos = createExpressionPosition(expression);
-		int exprStart = exprPos.getOffset();
-		int selStart = textSelection.getOffset();
-		int selEnd = selStart + textSelection.getLength();
-		return exprStart + exprPos.getLength() >= selStart && exprStart <= selEnd;
+	public static boolean doesNodeOverlapWithRegion(IASTNode node, Region region) {
+		return doRegionsOverlap(getNodeSpan(node), region);
 	}
 	
-	public static boolean isExpressionWhollyInSelection(Region textSelection, IASTNode expression) {
-		Region exprPos = createExpressionPosition(expression);
-		int exprStart = exprPos.getOffset();
-		int selStart = textSelection.getOffset();
-		int selEnd = selStart + textSelection.getLength();
-		return exprStart >= selStart && exprStart + exprPos.getLength() <= selEnd;
+	public static boolean isNodeInsideRegion(IASTNode node, Region region) {
+		return isRegionInside(getNodeSpan(node), region);
 	}
-	
+
+	/**
+	 * Returns true if the first region is inside the second.
+	 */
+	private static boolean isRegionInside(Region region1, Region region2) {
+		int offset1 = region1.getOffset();
+		int offset2 = region2.getOffset();
+		return offset1 >= offset2 &&
+				offset1 + region1.getLength() <= offset2 + region2.getLength();
+	}
+
+	/**
+	 * Returns true if the two regions have at least one common point.
+	 */
+	private static boolean doRegionsOverlap(Region region1, Region region2) {
+		int offset1 = region1.getOffset();
+		int offset2 = region2.getOffset();
+		return offset1 + region1.getLength() >= offset2 &&
+				offset1 <= offset2 + region2.getLength();
+	}
+
 	public static boolean isInSameFile(IASTNode node, IFile file) {
 		IPath path = new Path(node.getContainingFilename());
 		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
@@ -93,22 +106,19 @@ public class SelectionHelper {
 	
 	public static boolean isInSameFileSelection(Region textSelection, IASTNode node, IFile file) {
 		if (isInSameFile(node, file)) {
-			return SelectionHelper.isSelectionOnExpression(textSelection, node);
+			return doesNodeOverlapWithRegion(node, textSelection);
 		}
 		return false;
 	}
 	
-	public static boolean isSelectedFile(Region textSelection, IASTNode node, IFile file) {
-		if (isInSameFile(node, file)) {
-			return isExpressionWhollyInSelection(textSelection, node);
-		}
-		return false;
+	public static boolean isNodeInsideSelection(IASTNode node, Region selection) {
+		return node.isPartOfTranslationUnitFile() && isNodeInsideRegion(node, selection);
 	}
-	
-	protected static Region createExpressionPosition(IASTNode expression) {
+
+	protected static Region getNodeSpan(IASTNode region) {
 		int start = Integer.MAX_VALUE;
 		int nodeLength = 0;
-		IASTNodeLocation[] nodeLocations = expression.getNodeLocations();
+		IASTNodeLocation[] nodeLocations = region.getNodeLocations();
 		if (nodeLocations.length != 1) {
 			for (IASTNodeLocation location : nodeLocations) {
 				if (location instanceof IASTMacroExpansionLocation) {
@@ -119,7 +129,7 @@ public class SelectionHelper {
 					}
 					nodeLength += macroLoc.asFileLocation().getNodeLength();
 				} else {
-					IASTFileLocation loc = expression.getFileLocation();
+					IASTFileLocation loc = region.getFileLocation();
 					int nodeOffset = loc.getNodeOffset();
 					if (nodeOffset < start) {
 						start = nodeOffset;
@@ -133,7 +143,7 @@ public class SelectionHelper {
 				start = macroLoc.asFileLocation().getNodeOffset();
 				nodeLength = macroLoc.asFileLocation().getNodeLength();
 			} else {
-				IASTFileLocation loc = expression.getFileLocation();
+				IASTFileLocation loc = region.getFileLocation();
 				start = loc.getNodeOffset();
 				nodeLength = loc.getNodeLength();
 			}

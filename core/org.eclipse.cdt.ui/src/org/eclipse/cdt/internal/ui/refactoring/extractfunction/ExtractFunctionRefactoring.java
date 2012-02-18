@@ -20,19 +20,16 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.text.edits.TextEditGroup;
 
@@ -61,6 +58,7 @@ import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -83,6 +81,7 @@ import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.cdt.core.dom.rewrite.TypeHelper;
 import org.eclipse.cdt.core.formatter.DefaultCodeFormatterOptions;
 import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
@@ -105,8 +104,8 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTemplateDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.ASTWriterVisitor;
 
-import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
-import org.eclipse.cdt.internal.ui.refactoring.CRefactoringDescription;
+import org.eclipse.cdt.internal.ui.refactoring.CRefactoring2;
+import org.eclipse.cdt.internal.ui.refactoring.CRefactoringDescriptor;
 import org.eclipse.cdt.internal.ui.refactoring.ClassMemberInserter;
 import org.eclipse.cdt.internal.ui.refactoring.Container;
 import org.eclipse.cdt.internal.ui.refactoring.MethodContext;
@@ -122,7 +121,7 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.NodeHelper;
 import org.eclipse.cdt.internal.ui.refactoring.utils.SelectionHelper;
 import org.eclipse.cdt.internal.ui.viewsupport.BasicElementLabels;
 
-public class ExtractFunctionRefactoring extends CRefactoring {
+public class ExtractFunctionRefactoring extends CRefactoring2 {
 	public static final String ID =
 			"org.eclipse.cdt.internal.ui.refactoring.extractfunction.ExtractFunctionRefactoring"; //$NON-NLS-1$
 
@@ -143,10 +142,12 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 	private INodeFactory nodeFactory;
 	DefaultCodeFormatterOptions formattingOptions;
 
-	public ExtractFunctionRefactoring(IFile file, ISelection selection,
-			ExtractFunctionInformation info, ICProject project) {
-		super(file, selection, null, project);
-		this.info = info;
+	private IIndex index;
+	private IASTTranslationUnit ast;
+
+	public ExtractFunctionRefactoring(ICElement element, ISelection selection, ICProject project) {
+		super(element, selection, project);
+		info = new ExtractFunctionInformation();
 		name = Messages.ExtractFunctionRefactoring_ExtractFunction;
 		names = new HashMap<String, Integer>();
 		namesCounter = new Container<Integer>(NULL_INTEGER);
@@ -157,81 +158,66 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 
 	@Override
 	public RefactoringStatus checkInitialConditions(IProgressMonitor pm)
-	throws CoreException, OperationCanceledException {
+			throws CoreException, OperationCanceledException {
 		SubMonitor sm = SubMonitor.convert(pm, 10);
+
 		try {
-			lockIndex();
-
-			try {
-				RefactoringStatus status = super.checkInitialConditions(sm.newChild(6));
-				if (status.hasError()) {
-					return status;
-				}
-
-				nodeFactory = ast.getASTNodeFactory();
-				container = findExtractableNodes();
-				sm.worked(1);
-
-				if (isProgressMonitorCanceld(sm, initStatus))
-					return initStatus;
-
-				if (container.isEmpty()) {
-					initStatus.addFatalError(Messages.ExtractFunctionRefactoring_NoStmtSelected);
-					sm.done();
-					return initStatus;
-				}
-
-				checkForNonExtractableStatements(container, initStatus);
-				sm.worked(1);
-
-				if (isProgressMonitorCanceld(sm, initStatus))
-					return initStatus;
-
-				List<NameInformation> returnValueCandidates = container.getReturnValueCandidates();
-				if (returnValueCandidates.size() > 1) {
-					initStatus.addFatalError(Messages.ExtractFunctionRefactoring_TooManySelected);
-					return initStatus;
-				} else if (returnValueCandidates.size() == 1) {
-					info.setMandatoryReturnVariable(returnValueCandidates.get(0));
-				}
-				sm.worked(1);
-
-				if (isProgressMonitorCanceld(sm, initStatus))
-					return initStatus;
-
-				info.setParameters(container.getParameterCandidates());
-				initStatus.merge(checkParameterAndReturnTypes());
-				if (initStatus.hasFatalError())
-					return initStatus;
-
-				extractor =	FunctionExtractor.createFor(container.getNodesToWrite());
-
-				if (extractor.canChooseReturnValue() && info.getMandatoryReturnVariable() == null) {
-					chooseReturnVariable();
-				}
-
-				IPreferencesService preferences = Platform.getPreferencesService();
-				final boolean outFirst = preferences.getBoolean(CUIPlugin.PLUGIN_ID,
-						PreferenceConstants.FUNCTION_OUTPUT_PARAMETERS_BEFORE_INPUT, false,
-						PreferenceConstants.getPreferenceScopes(project.getProject()));
-				info.sortParameters(outFirst);
-
-				boolean isExtractExpression = container.getNodesToWrite().get(0) instanceof IASTExpression;
-				info.setExtractExpression(isExtractExpression);
-
-				info.setDeclarator(getDeclaration(container.getNodesToWrite().get(0)));
-				MethodContext context =
-						NodeHelper.findMethodContext(container.getNodesToWrite().get(0), getIndex());
-				info.setMethodContext(context);
-
-				sm.done();
-			} finally {
-				unlockIndex();
+			RefactoringStatus status = super.checkInitialConditions(sm.newChild(8));
+			if (status.hasError()) {
+				return status;
 			}
-		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
+
+			index = getIndex();
+			ast = getAST(tu, sm.newChild(1));
+			nodeFactory = ast.getASTNodeFactory();
+			container = findExtractableNodes();
+	
+			if (isProgressMonitorCanceld(sm, initStatus))
+				return initStatus;
+	
+			if (container.isEmpty()) {
+				initStatus.addFatalError(Messages.ExtractFunctionRefactoring_NoStmtSelected);
+				return initStatus;
+			}
+	
+			checkForNonExtractableStatements(container, initStatus);
+	
+			List<NameInformation> returnValueCandidates = container.getReturnValueCandidates();
+			if (returnValueCandidates.size() > 1) {
+				initStatus.addFatalError(Messages.ExtractFunctionRefactoring_TooManySelected);
+				return initStatus;
+			} else if (returnValueCandidates.size() == 1) {
+				info.setMandatoryReturnVariable(returnValueCandidates.get(0));
+			}
+	
+			info.setParameters(container.getParameterCandidates());
+			initStatus.merge(checkParameterAndReturnTypes());
+			if (initStatus.hasFatalError())
+				return initStatus;
+	
+			extractor =	FunctionExtractor.createFor(container.getNodesToWrite());
+	
+			if (extractor.canChooseReturnValue() && info.getMandatoryReturnVariable() == null) {
+				chooseReturnVariable();
+			}
+	
+			IPreferencesService preferences = Platform.getPreferencesService();
+			final boolean outFirst = preferences.getBoolean(CUIPlugin.PLUGIN_ID,
+					PreferenceConstants.FUNCTION_OUTPUT_PARAMETERS_BEFORE_INPUT, false,
+					PreferenceConstants.getPreferenceScopes(project.getProject()));
+			info.sortParameters(outFirst);
+	
+			boolean isExtractExpression = container.getNodesToWrite().get(0) instanceof IASTExpression;
+			info.setExtractExpression(isExtractExpression);
+	
+			info.setDeclarator(getDeclaration(container.getNodesToWrite().get(0)));
+			MethodContext context =	NodeHelper.findMethodContext(container.getNodesToWrite().get(0),
+					refactoringContext, sm.newChild(1));
+			info.setMethodContext(context);
+			return initStatus;
+		} finally {
+			sm.done();
 		}
-		return initStatus;
 	}
 
 	private void chooseReturnVariable() {
@@ -247,7 +233,8 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 						return;
 					}
 				}
-				if (candidate == null && !TypeHelper.shouldBePassedByReference(type, ast)) {
+				if (candidate == null &&
+						!TypeHelper.shouldBePassedByReference(type, declarator.getTranslationUnit())) {
 					candidate = param;
 				}
 			}
@@ -256,9 +243,9 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 			candidate.setReturnValue(true);
 	}
 
-	private void checkForNonExtractableStatements(NodeContainer cont, RefactoringStatus status) {
+	private void checkForNonExtractableStatements(NodeContainer container, RefactoringStatus status) {
 		NonExtractableStmtFinder finder = new NonExtractableStmtFinder();
-		for (IASTNode node : cont.getNodesToWrite()) {
+		for (IASTNode node : container.getNodesToWrite()) {
 			node.accept(finder);
 			if (finder.containsContinue()) {
 				initStatus.addFatalError(Messages.ExtractFunctionRefactoring_Error_Continue);
@@ -270,7 +257,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 		}
 
 		ReturnStatementFinder returnFinder = new ReturnStatementFinder();
-		for (IASTNode node : cont.getNodesToWrite()) {
+		for (IASTNode node : container.getNodesToWrite()) {
 			node.accept(returnFinder);
 			if (returnFinder.containsReturn()) {
 				initStatus.addFatalError(Messages.ExtractFunctionRefactoring_Error_Return);
@@ -293,33 +280,21 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 	}
 
 	@Override
-	public RefactoringStatus checkFinalConditions(IProgressMonitor pm)
-	throws CoreException, OperationCanceledException {
-		RefactoringStatus finalConditions = null;
-		try {
-			lockIndex();
-			try {
-				finalConditions = super.checkFinalConditions(pm);
+	public RefactoringStatus checkFinalConditions(IProgressMonitor pm, CheckConditionsContext checkContext)
+			throws CoreException, OperationCanceledException {
+		RefactoringStatus finalConditions = new RefactoringStatus();
 
-				final IASTName astMethodName = new CPPASTName(info.getMethodName().toCharArray());
-				MethodContext context =
-						NodeHelper.findMethodContext(container.getNodesToWrite().get(0), getIndex());
+		final IASTName methodName = new CPPASTName(info.getMethodName().toCharArray());
+		MethodContext context = info.getMethodContext();
 
-				if (context.getType() == ContextType.METHOD && !context.isInline()) {
-					ICPPASTCompositeTypeSpecifier classDeclaration =
-							(ICPPASTCompositeTypeSpecifier) context.getMethodDeclaration().getParent();
-					IASTSimpleDeclaration methodDeclaration = getDeclaration(astMethodName);
+		if (context.getType() == ContextType.METHOD && !context.isInline()) {
+			ICPPASTCompositeTypeSpecifier classDeclaration =
+					(ICPPASTCompositeTypeSpecifier) context.getMethodDeclaration().getParent();
+			IASTSimpleDeclaration methodDeclaration = getDeclaration(methodName);
 
-					if (isMethodAllreadyDefined(methodDeclaration, classDeclaration, getIndex())) {
-						finalConditions.addError(Messages.ExtractFunctionRefactoring_name_in_use);
-						return finalConditions;
-					}
-				}
-			} finally {
-				unlockIndex();
+			if (isMethodAllreadyDefined(methodDeclaration, classDeclaration, getIndex())) {
+				finalConditions.addError(Messages.ExtractFunctionRefactoring_name_in_use);
 			}
-		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
 		}
 		return finalConditions;
 	}
@@ -327,32 +302,18 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 	@Override
 	protected void collectModifications(IProgressMonitor pm, ModificationCollector collector)
 			throws CoreException, OperationCanceledException {
-		try {
-			lockIndex();
-			try {
-				final IASTName astMethodName = new CPPASTName(info.getMethodName().toCharArray());
-				MethodContext context =
-						NodeHelper.findMethodContext(container.getNodesToWrite().get(0), getIndex());
+		final IASTName methodName = new CPPASTName(info.getMethodName().toCharArray());
+		MethodContext context = info.getMethodContext();
 
-				// Create Declaration in Class
-				if (context.getType() == ContextType.METHOD && !context.isInline()) {
-					createMethodDeclaration(astMethodName, context, collector);
-				}
-				// Create Method Definition
-				IASTNode firstNode = container.getNodesToWrite().get(0);
-				IPath implPath = new Path(firstNode.getContainingFilename());
-				final IFile implementationFile =
-						ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(implPath);
-
-				createMethodDefinition(astMethodName, context, firstNode, collector);
-
-				createMethodCalls(astMethodName, context, collector);
-			} finally {
-				unlockIndex();
-			}
-		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
+		// Create declaration in class
+		if (context.getType() == ContextType.METHOD && !context.isInline()) {
+			createMethodDeclaration(methodName, context, collector);
 		}
+		// Create method definition
+		IASTNode firstNode = container.getNodesToWrite().get(0);
+		createMethodDefinition(methodName, context, firstNode, collector);
+
+		createMethodCalls(methodName, context, collector);
 	}
 
 	private void createMethodCalls(IASTName methodName, MethodContext context,
@@ -443,11 +404,12 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 				methodDeclaration, false, collector);
 	}
 
-	private void replaceSimilar(ModificationCollector collector, IASTName astMethodName) {
+	private void replaceSimilar(ModificationCollector collector, IASTName methodName) {
 		// Find similar code
 		final List<IASTNode> nodesToRewriteWithoutComments = getNodesWithoutComments(container.getNodesToWrite());
 		final List<IASTNode> initTrail = getTrail(nodesToRewriteWithoutComments);
-		ast.accept(new SimilarReplacerVisitor(this, container, collector, initTrail, astMethodName,
+		IASTTranslationUnit ast = nodesToRewriteWithoutComments.get(0).getTranslationUnit();
+		ast.accept(new SimilarReplacerVisitor(this, container, collector, initTrail, methodName,
 				nodesToRewriteWithoutComments));
 	}
 
@@ -455,6 +417,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 		final List<IASTNode> nodesToRewriteWithoutComments = getNodesWithoutComments(container.getNodesToWrite());
 		final List<IASTNode> initTrail = getTrail(nodesToRewriteWithoutComments);
 		final int[] count = new int[1];
+		IASTTranslationUnit ast = nodesToRewriteWithoutComments.get(0).getTranslationUnit();
 		ast.accept(new SimilarFinderVisitor(this, container, initTrail, nodesToRewriteWithoutComments) {
 			@Override
 			protected void foundSimilar() {
@@ -485,10 +448,10 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 				@Override
 				public int visitAll(IASTNode node) {
 					if (node instanceof IASTComment) {
-						// Visit Comment, but don't add them to the trail
+						// Visit comments, but don't add them to the trail
 						return super.visitAll(node);
 					} else if (node instanceof IASTNamedTypeSpecifier) {
-						// Skip if somewhere is a named Type Specifier
+						// Skip if somewhere is a named type specifier
 						trail.add(node);
 						return PROCESS_SKIP;
 					} else if (node instanceof IASTName) {
@@ -498,7 +461,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 							trail.add(node);
 							return super.visitAll(node);
 						} else {
-							// Save Name Sequence Number
+							// Save name sequence number
 							IASTName name = (IASTName) node;
 							TrailName trailName = new TrailName(name);
 							int actCount = trailCounter.getObject().intValue();
@@ -531,7 +494,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 		return trail;
 	}
 
-	protected boolean isStatementInTrail(IASTStatement stmt, final List<IASTNode> trail, IIndex index) {
+	boolean isStatementInTrail(IASTStatement stmt, final List<IASTNode> trail) {
 		final Container<Boolean> same = new Container<Boolean>(Boolean.TRUE);
 		final TrailNodeEqualityChecker equalityChecker =
 				new TrailNodeEqualityChecker(names, namesCounter, index);
@@ -547,7 +510,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 				}
 
 				if (node instanceof IASTComment) {
-					// Visit Comment, but they are not in the trail
+					// Visit comments, but they are not in the trail
 					return super.visitAll(node);
 				}
 
@@ -598,7 +561,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 									(IASTParameterDeclaration) origParameterName[0].getParent().getParent();
 							IASTParameterDeclaration newParameter = declarator.getParameters()[i];
 
-							// if not the same break;
+							// If not the same break;
 							if (!(equalityChecker.isEquals(origParameter.getDeclSpecifier(),
 									newParameter.getDeclSpecifier()) &&
 									ASTHelper.samePointers(origParameter.getDeclarator().getPointerOperators(),
@@ -850,7 +813,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 
 			@Override
 			public int visit(IASTStatement stmt) {
-				if (SelectionHelper.isSelectedFile(region, stmt, file)) {
+				if (SelectionHelper.isNodeInsideSelection(stmt, selectedRegion)) {
 					container.add(stmt);
 					return PROCESS_SKIP;
 				}
@@ -859,7 +822,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 
 			@Override
 			public int visit(IASTExpression expression) {
-				if (SelectionHelper.isSelectedFile(region, expression, file)) {
+				if (SelectionHelper.isNodeInsideSelection(expression, selectedRegion)) {
 					container.add(expression);
 					return PROCESS_SKIP;
 				}
@@ -896,19 +859,20 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 	protected RefactoringDescriptor getRefactoringDescriptor() {
 		Map<String, String> arguments = getArgumentMap();
 		RefactoringDescriptor desc =
-				new ExtractFunctionRefactoringDescription(project.getProject().getName(),
+				new ExtractFunctionRefactoringDescriptor(project.getProject().getName(),
 						"Extract Method Refactoring", "Create method " + info.getMethodName(), arguments);  //$NON-NLS-1$//$NON-NLS-2$
 		return desc;
 	}
 
 	private Map<String, String> getArgumentMap() {
 		Map<String, String> arguments = new HashMap<String, String>();
-		arguments.put(CRefactoringDescription.FILE_NAME, file.getLocationURI().toString());
-		arguments.put(CRefactoringDescription.SELECTION, region.getOffset() + "," + region.getLength()); //$NON-NLS-1$
-		arguments.put(ExtractFunctionRefactoringDescription.NAME, info.getMethodName());
-		arguments.put(ExtractFunctionRefactoringDescription.VISIBILITY,
+		arguments.put(CRefactoringDescriptor.FILE_NAME, tu.getLocationURI().toString());
+		arguments.put(CRefactoringDescriptor.SELECTION,
+				selectedRegion.getOffset() + "," + selectedRegion.getLength()); //$NON-NLS-1$
+		arguments.put(ExtractFunctionRefactoringDescriptor.NAME, info.getMethodName());
+		arguments.put(ExtractFunctionRefactoringDescriptor.VISIBILITY,
 				info.getVisibility().toString());
-		arguments.put(ExtractFunctionRefactoringDescription.REPLACE_DUPLICATES,
+		arguments.put(ExtractFunctionRefactoringDescriptor.REPLACE_DUPLICATES,
 				Boolean.toString(info.isReplaceDuplicates()));
 		return arguments;
 	}

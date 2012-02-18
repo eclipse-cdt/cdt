@@ -13,7 +13,6 @@
 package org.eclipse.cdt.ui.refactoring.actions;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.ui.IEditorPart;
@@ -34,7 +33,6 @@ public class GettersAndSettersAction extends RefactoringAction {
 
     public GettersAndSettersAction() {
         super(Messages.GettersAndSetters_label);
-        setSaveRequired(false);
     }
 
 	/**
@@ -52,8 +50,7 @@ public class GettersAndSettersAction extends RefactoringAction {
 
 	@Override
 	public void run(IShellProvider shellProvider, IWorkingCopy wc, ITextSelection s) {
-		IResource res= wc.getResource();
-		if (res instanceof IFile) {
+		if (wc.getResource() != null) {
 			new GenerateGettersAndSettersRefactoringRunner(wc, s, shellProvider, wc.getCProject()).run();
 		}
 	}

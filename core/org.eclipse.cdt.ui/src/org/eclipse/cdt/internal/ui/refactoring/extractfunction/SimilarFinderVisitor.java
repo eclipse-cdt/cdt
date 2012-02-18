@@ -44,8 +44,7 @@ abstract class SimilarFinderVisitor extends ASTVisitor {
 
 	@Override
 	public int visit(IASTStatement statement) {
-		if (!isInSelection(statement) &&
-				refactoring.isStatementInTrail(statement, trail, refactoring.getIndex())) {
+		if (!isInSelection(statement) && refactoring.isStatementInTrail(statement, trail)) {
 			stmtToReplace.add(statement);
 			similarContainer.add(statement);	
 			++statementCount;

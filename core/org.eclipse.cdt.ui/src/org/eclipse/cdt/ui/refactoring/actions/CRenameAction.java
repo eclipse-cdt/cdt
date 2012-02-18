@@ -36,7 +36,6 @@ public class CRenameAction extends RefactoringAction {
     
     public CRenameAction() {
         super(Messages.CRenameAction_label);
-        setSaveRequired(false);
     }
     
 	@Override

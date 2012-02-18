@@ -9,7 +9,6 @@
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
  *******************************************************************************/
-
 package org.eclipse.cdt.ui.refactoring.actions;
 
 import org.eclipse.jface.text.ITextSelection;
@@ -21,7 +20,7 @@ import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.ui.refactoring.extractlocalvariable.ExtractLocalVariableRefactoringRunner;
 
 /**
- * Launches a extract local variable refactoring.
+ * Launches an Extract Local Variable refactoring.
  * @since 5.1
  * @noextend This class is not intended to be subclassed by clients.
  */          

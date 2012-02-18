@@ -38,7 +38,7 @@ public abstract class RefactoringAction extends Action {
 
 	public RefactoringAction(String label) {
 		super(label);
-		saveRequired = true;
+		saveRequired = false;
 	}
 
 	/**

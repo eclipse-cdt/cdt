@@ -33,7 +33,6 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.VisibilityEnum;
  */
 public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	private static final String NO_RETURN_VALUE = "";
-	private ExtractFunctionInformation refactoringInfo;
 	private String extractedFunctionName = "extracted";
 	private String returnValue;
 	// Map from old names to new ones.
@@ -43,6 +42,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	private VisibilityEnum visibility = VisibilityEnum.v_private;
 	private boolean virtual;
 	private boolean replaceDuplicates = true;
+	private ExtractFunctionRefactoring refactoring;
 
 	public ExtractFunctionRefactoringTest() {
 		super();
@@ -65,13 +65,14 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 
 	@Override
 	protected Refactoring createRefactoring() {
-		refactoringInfo = new ExtractFunctionInformation();
-		return new ExtractFunctionRefactoring(getSelectedFile(), getSelection(), refactoringInfo,
+		refactoring = new ExtractFunctionRefactoring(getSelectedTranslationUnit(), getSelection(),
 				getCProject());
+		return refactoring;
 	}
 
 	@Override
 	protected void simulateUserInput() {
+		ExtractFunctionInformation refactoringInfo = refactoring.getRefactoringInfo();
 		refactoringInfo.setMethodName(extractedFunctionName);
 		refactoringInfo.setReplaceDuplicates(replaceDuplicates);
 		if (refactoringInfo.getMandatoryReturnVariable() == null) {

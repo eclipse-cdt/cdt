@@ -19,7 +19,7 @@
 				<artifactId>tycho-surefire-plugin</artifactId>
 				<version>${tycho-version}</version>
 				<configuration>
-				    <testClass>org.eclipse.rse.tests</testClass>
+				    <testSuite>org.eclipse.rse.tests</testSuite>
                     <testClass>org.eclipse.rse.tests.RSECombinedTestSuite</testClass>
                     <useUIHarness>true</useUIHarness>
                     <useUIThread>true</useUIThread>

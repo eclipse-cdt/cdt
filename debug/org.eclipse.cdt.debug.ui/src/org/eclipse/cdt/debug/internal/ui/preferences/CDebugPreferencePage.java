@@ -180,18 +180,18 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 		// Charset editors
 		PreferenceStore ps = new PreferenceStore();
 		
-		ps.setDefault(ICDebugConstants.PREF_CHARSET, CDebugCorePlugin.getDefault().getPluginPreferences().getDefaultString(ICDebugConstants.PREF_CHARSET));
-		ps.setValue(ICDebugConstants.PREF_CHARSET, CDebugCorePlugin.getDefault().getPluginPreferences().getString(ICDebugConstants.PREF_CHARSET));
+		ps.setDefault(ICDebugConstants.PREF_DEBUG_CHARSET, CDebugCorePlugin.getDefault().getPluginPreferences().getDefaultString(ICDebugConstants.PREF_DEBUG_CHARSET));
+		ps.setValue(ICDebugConstants.PREF_DEBUG_CHARSET, CDebugCorePlugin.getDefault().getPluginPreferences().getString(ICDebugConstants.PREF_DEBUG_CHARSET));
 		fCharsetEditor.setPreferenceStore(ps);
 		fCharsetEditor.load();
-		if (CDebugCorePlugin.getDefault().getPluginPreferences().isDefault(ICDebugConstants.PREF_CHARSET))
+		if (CDebugCorePlugin.getDefault().getPluginPreferences().isDefault(ICDebugConstants.PREF_DEBUG_CHARSET))
 			fCharsetEditor.loadDefault();
 		
-		ps.setDefault(ICDebugConstants.PREF_WIDE_CHARSET, CDebugCorePlugin.getDefault().getPluginPreferences().getDefaultString(ICDebugConstants.PREF_WIDE_CHARSET));
-		ps.setValue(ICDebugConstants.PREF_WIDE_CHARSET, CDebugCorePlugin.getDefault().getPluginPreferences().getString(ICDebugConstants.PREF_WIDE_CHARSET));
+		ps.setDefault(ICDebugConstants.PREF_DEBUG_WIDE_CHARSET, CDebugCorePlugin.getDefault().getPluginPreferences().getDefaultString(ICDebugConstants.PREF_DEBUG_WIDE_CHARSET));
+		ps.setValue(ICDebugConstants.PREF_DEBUG_WIDE_CHARSET, CDebugCorePlugin.getDefault().getPluginPreferences().getString(ICDebugConstants.PREF_DEBUG_WIDE_CHARSET));
 		fWideCharsetEditor.setPreferenceStore(ps);
 		fWideCharsetEditor.load();
-		if (CDebugCorePlugin.getDefault().getPluginPreferences().isDefault(ICDebugConstants.PREF_WIDE_CHARSET))
+		if (CDebugCorePlugin.getDefault().getPluginPreferences().isDefault(ICDebugConstants.PREF_DEBUG_WIDE_CHARSET))
 			fWideCharsetEditor.loadDefault();
 		
 		// Others
@@ -251,12 +251,12 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 		
 		// Create charset editor
 		Composite charsetComposite = ControlFactory.createComposite(formatComposite, 1);
-		fCharsetEditor = new EncodingFieldEditor(ICDebugConstants.PREF_CHARSET, "", PreferenceMessages.getString( "CDebugPreferencePage.18" ), charsetComposite); //$NON-NLS-1$ //$NON-NLS-2$
+		fCharsetEditor = new EncodingFieldEditor(ICDebugConstants.PREF_DEBUG_CHARSET, "", PreferenceMessages.getString( "CDebugPreferencePage.18" ), charsetComposite); //$NON-NLS-1$ //$NON-NLS-2$
 		fCharsetEditor.setPropertyChangeListener(getPropertyChangeListener());
 		
 		// Create wide charset editor
 		Composite wideCharsetComposite = ControlFactory.createComposite(formatComposite, 1);
-		fWideCharsetEditor = new EncodingFieldEditor(ICDebugConstants.PREF_WIDE_CHARSET, "", PreferenceMessages.getString( "CDebugPreferencePage.16" ), wideCharsetComposite); //$NON-NLS-1$ //$NON-NLS-2$
+		fWideCharsetEditor = new EncodingFieldEditor(ICDebugConstants.PREF_DEBUG_WIDE_CHARSET, "", PreferenceMessages.getString( "CDebugPreferencePage.16" ), wideCharsetComposite); //$NON-NLS-1$ //$NON-NLS-2$
 		fWideCharsetEditor.setPropertyChangeListener(getPropertyChangeListener());
 	}
 	
@@ -355,10 +355,10 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 		CDebugCorePlugin.getDefault().getPluginPreferences().setValue( ICDebugConstants.PREF_DEFAULT_REGISTER_FORMAT, getFormatId( fRegisterFormatCombo.getSelectionIndex() ) );
 		
 		fCharsetEditor.store();
-		CDebugCorePlugin.getDefault().getPluginPreferences().setValue(ICDebugConstants.PREF_CHARSET, fCharsetEditor.getPreferenceStore().getString(ICDebugConstants.PREF_CHARSET));
+		CDebugCorePlugin.getDefault().getPluginPreferences().setValue(ICDebugConstants.PREF_DEBUG_CHARSET, fCharsetEditor.getPreferenceStore().getString(ICDebugConstants.PREF_DEBUG_CHARSET));
 		
 		fWideCharsetEditor.store();
-		CDebugCorePlugin.getDefault().getPluginPreferences().setValue(ICDebugConstants.PREF_WIDE_CHARSET, fWideCharsetEditor.getPreferenceStore().getString(ICDebugConstants.PREF_WIDE_CHARSET));
+		CDebugCorePlugin.getDefault().getPluginPreferences().setValue(ICDebugConstants.PREF_DEBUG_WIDE_CHARSET, fWideCharsetEditor.getPreferenceStore().getString(ICDebugConstants.PREF_DEBUG_WIDE_CHARSET));
 		
 		CCorePlugin.getDefault().getPluginPreferences().setValue( CCorePreferenceConstants.SHOW_SOURCE_FILES_IN_BINARIES, fShowBinarySourceFilesButton.getSelection() );
 	}

@@ -633,7 +633,7 @@ public class CValue extends AbstractCValue {
 		else if ( CVariableFormat.DECIMAL.equals( format ) )
 			return address.toString();
 		else if ( CVariableFormat.OCTAL.equals( format ) )
-			return address.toOctalAddressString();
+			return address.toHexAddressString();
 		else if ( CVariableFormat.BINARY.equals( format ) )
 			return address.toBinaryAddressString();
 		return null;

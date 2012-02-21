@@ -164,7 +164,6 @@ public class Addr32 implements IAddress, Serializable {
 	/**
 	 * @since 5.4
 	 */
-	@Override
 	public String toOctalAddressString() {
 		String addressString = Long.toString(address, 8);
 		StringBuffer sb = new StringBuffer(OCTAL_CHARS_NUM);

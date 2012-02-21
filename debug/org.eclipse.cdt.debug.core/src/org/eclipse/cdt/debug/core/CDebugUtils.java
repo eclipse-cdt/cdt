@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 QNX Software Systems and others.
+ * Copyright (c) 2000, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,6 @@
  *     QNX Software Systems - Initial API and implementation
  *     Freescale Semiconductor - Address watchpoints, https://bugs.eclipse.org/bugs/show_bug.cgi?id=118299
  *     Patrick Chuong (Texas Instruments) -	Update CDT ToggleBreakpointTargetFactory enablement (340177)
- *     Mathias Kunter - PREF_CHARSET has been renamed to PREF_WIDE_CHARSET (bug 370462)
  *******************************************************************************/
 package org.eclipse.cdt.debug.core;
 
@@ -503,7 +502,7 @@ public class CDebugUtils {
 	private static CharsetDecoder fDecoder;
 
 	public static CharsetDecoder getCharsetDecoder() {
-		String charsetName = CDebugCorePlugin.getDefault().getPluginPreferences().getString(ICDebugConstants.PREF_WIDE_CHARSET);
+		String charsetName = CDebugCorePlugin.getDefault().getPluginPreferences().getString(ICDebugConstants.PREF_DEBUG_WIDE_CHARSET);
 		if (fDecoder == null || !fDecoder.charset().name().equals(charsetName)) {
 			Charset charset = Charset.forName(charsetName);
 			fDecoder = charset.newDecoder();

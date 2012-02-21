@@ -41,11 +41,11 @@ public class CDebugCorePreferenceInitializer extends AbstractPreferenceInitializ
 		CDebugCorePlugin.getDefault().getPluginPreferences().setDefault( ICDebugConstants.PREF_DEFAULT_VARIABLE_FORMAT, ICDIFormat.NATURAL );
 		CDebugCorePlugin.getDefault().getPluginPreferences().setDefault( ICDebugConstants.PREF_DEFAULT_EXPRESSION_FORMAT, ICDIFormat.NATURAL );
 		CDebugCorePlugin.getDefault().getPluginPreferences().setDefault( ICDebugConstants.PREF_DEFAULT_REGISTER_FORMAT, ICDIFormat.NATURAL );
-		CDebugCorePlugin.getDefault().getPluginPreferences().setDefault( ICDebugConstants.PREF_CHARSET, Charset.defaultCharset().name() );
+		CDebugCorePlugin.getDefault().getPluginPreferences().setDefault( ICDebugConstants.PREF_DEBUG_CHARSET, Charset.defaultCharset().name() );
 		if (Platform.getOS().equals(Platform.OS_WIN32))
-			CDebugCorePlugin.getDefault().getPluginPreferences().setDefault( ICDebugConstants.PREF_WIDE_CHARSET, "UTF-16"); //$NON-NLS-1$
+			CDebugCorePlugin.getDefault().getPluginPreferences().setDefault( ICDebugConstants.PREF_DEBUG_WIDE_CHARSET, "UTF-16"); //$NON-NLS-1$
 		else
-			CDebugCorePlugin.getDefault().getPluginPreferences().setDefault( ICDebugConstants.PREF_WIDE_CHARSET, "UTF-32"); //$NON-NLS-1$
+			CDebugCorePlugin.getDefault().getPluginPreferences().setDefault( ICDebugConstants.PREF_DEBUG_WIDE_CHARSET, "UTF-32"); //$NON-NLS-1$
 		CDebugCorePlugin.getDefault().getPluginPreferences().setDefault( ICDebugConstants.PREF_INSTRUCTION_STEP_MODE_ON, false );
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 Wind River Systems and others.
+ * Copyright (c) 2006, 2010 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Ericsson           - Update for GDB/MI
- *     Mathias Kunter     - Support for octal number format (bug 370462)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.service;
 
@@ -108,7 +107,6 @@ public interface IExpressions extends IFormattedValues {
             @Override public boolean isMax() { return false; }
             @Override public String toString(int radix) { return "INVALID"; }
             @Override public String toHexAddressString() { return toString(); }
-            @Override public String toOctalAddressString() { return toString(); }
             @Override public String toBinaryAddressString()  { return toString(); }
             @Override public int getCharsNum() { return 0; }
             @Override public int getSize() { return 0; }

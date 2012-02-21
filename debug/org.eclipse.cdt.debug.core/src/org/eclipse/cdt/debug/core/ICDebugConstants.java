@@ -40,16 +40,26 @@ public interface ICDebugConstants {
 	
 	/**
 	 * The charset to use for decoding char type strings. We however can't use the ID
-	 *  "character_set" here because that would break backwards compatibility.
+	 * "character_set" here because that would break backwards compatibility as it was
+	 * already used for wide charsets.
+	 * @since 7.2
 	 */
-	public static final String PREF_CHARSET = PLUGIN_ID + "cDebug.non_wide_character_set"; //$NON-NLS-1$
-	
+	public static final String PREF_DEBUG_CHARSET = PLUGIN_ID + "cDebug.non_wide_character_set"; //$NON-NLS-1$
+
 	/**
 	 * The charset to use for decoding wchar_t type strings. We have to use the ID
 	 * "character_set" here so that we don't break backwards compatibility.
 	 * @since 7.2
 	 */
-	public static final String PREF_WIDE_CHARSET = PLUGIN_ID + "cDebug.character_set"; //$NON-NLS-1$
+	public static final String PREF_DEBUG_WIDE_CHARSET = PLUGIN_ID + "cDebug.character_set"; //$NON-NLS-1$
+
+	/**
+	 * Deprecated id for the charset used for decoding wchar_t type strings.
+	 * Replaced by ICDebugConstants.PREF_WIDE_CHARSET.
+	 * @deprecated
+	 */
+	@Deprecated
+	public static final String PREF_CHARSET = PLUGIN_ID + "cDebug.character_set"; //$NON-NLS-1$
 
 	/**
 	 * The identifier of the default expression format to use in the expressions
@@ -117,6 +127,7 @@ public interface ICDebugConstants {
 	 * @deprecated Provided for compatibility reasons only. Use the default value
 	 * from the Preferences object instead.
 	 */
+	@Deprecated
 	public static final String DEF_CHARSET = "UTF-16"; //$NON-NLS-1$
 	
     /**

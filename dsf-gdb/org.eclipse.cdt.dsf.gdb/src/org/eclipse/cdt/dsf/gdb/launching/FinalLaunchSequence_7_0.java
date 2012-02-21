@@ -122,7 +122,7 @@ public class FinalLaunchSequence_7_0 extends FinalLaunchSequence {
 								// the inferior program. Note that GDB only accepts upper case charset names.
 								String charset = 
 										Platform.getPreferencesService().getString(CDebugCorePlugin.PLUGIN_ID, 
-												                                   ICDebugConstants.PREF_CHARSET, 
+												                                   ICDebugConstants.PREF_DEBUG_CHARSET, 
 												                                   Charset.defaultCharset().name(),
 												                                   null);
 								fCommandControl.queueCommand(
@@ -139,7 +139,7 @@ public class FinalLaunchSequence_7_0 extends FinalLaunchSequence {
 
 											String wideCharset = 
 													Platform.getPreferencesService().getString(CDebugCorePlugin.PLUGIN_ID, 
-															ICDebugConstants.PREF_WIDE_CHARSET,
+															ICDebugConstants.PREF_DEBUG_WIDE_CHARSET,
 															defaultWideCharset,
 															null);
 											

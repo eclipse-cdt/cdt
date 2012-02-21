@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 QNX Software Systems and others.
+ * Copyright (c) 2009, 2012 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
+ * Marc Khouzam (Ericsson) - Support for octal number format (bug 370462)
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions;
 
@@ -40,10 +41,10 @@ public class NumberFormatsContribution extends CompoundContributionItem implemen
 
 	private static final Map<CVariableFormat, String> FORMATS = new LinkedHashMap<CVariableFormat, String>();
 	static {
-		FORMATS.put(CVariableFormat.NATURAL, "Natural");
+		FORMATS.put(CVariableFormat.NATURAL, "Default");
 		FORMATS.put(CVariableFormat.DECIMAL, "Decimal");
 		FORMATS.put(CVariableFormat.HEXADECIMAL, "Hexadecimal");
-		//FORMATS.put(CVariableFormat.OCTAL, "Octal");
+		FORMATS.put(CVariableFormat.OCTAL, "Octal");
 		FORMATS.put(CVariableFormat.BINARY, "Binary");
 	}
 

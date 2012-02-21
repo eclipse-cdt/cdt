@@ -94,14 +94,12 @@
 												<include name="**" />
 											</fileset>
 										</delete>
-										<zip
-											dest="${cdt-install}/org.eclipse.cdt.repo.${unqualifiedVersion}.${buildQualifier}.zip">
+										<zip destfile="${cdt-install}/org.eclipse.cdt.repo.zip">
 											<fileset dir="target/checksumFix">
 												<include name="**" />
 											</fileset>
 										</zip>
-										<copy includeemptydirs="false"
-											todir="${cdt-install}">
+										<copy includeemptydirs="false" todir="${cdt-install}">
 											<fileset dir="target/checksumFix">
 												<include name="**" />
 											</fileset>

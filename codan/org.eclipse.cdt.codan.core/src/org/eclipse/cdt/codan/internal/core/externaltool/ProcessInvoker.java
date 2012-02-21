@@ -19,12 +19,22 @@ import org.eclipse.core.runtime.IPath;
  * Executes a command in a separate process.
  *
  * @author alruiz@google.com (Alex Ruiz)
+ *
+ * @since 2.1
  */
-class ProcessInvoker {
+public class ProcessInvoker {
 	private static final String[] ENVIRONMENT_VARIABLE_SETTINGS = {};
 	private static final String ERROR_FORMAT = "Unable to invoke command '%s'"; //$NON-NLS-1$
 
-	Process invoke(String command, IPath workingDirectory) throws InvocationFailure {
+	/**
+	 * Invokes the given command in a separate process.
+	 * @param command the command to execute.
+	 * @param workingDirectory the working directory of the process, or {@code null} should inherit
+	 *        the working directory of the current process.
+	 * @return the process where the given command is being executed.
+	 * @throws InvocationFailure if the command fails to be executed.
+	 */
+	public Process invoke(String command, IPath workingDirectory) throws InvocationFailure {
 		try {
 			Runtime runtime = Runtime.getRuntime();
 			if (workingDirectory == null) {

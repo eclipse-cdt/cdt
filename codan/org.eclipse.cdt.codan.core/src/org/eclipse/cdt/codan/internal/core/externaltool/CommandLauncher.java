@@ -31,8 +31,8 @@ import org.eclipse.core.runtime.IPath;
  * @since 2.1
  */
 public class CommandLauncher {
-	private ProcessInvoker processInvoker = new ProcessInvoker();
 	private final IConsolePrinterProvider consolePrinterProvider;
+	private final ProcessInvoker processInvoker;
 
 	/**
 	 * Constructor.
@@ -40,7 +40,19 @@ public class CommandLauncher {
 	 *        tool as its own.
 	 */
 	public CommandLauncher(IConsolePrinterProvider consolePrinterProvider) {
+		this(consolePrinterProvider, new ProcessInvoker());
+	}
+
+	/**
+	 * Constructor.
+	 * @param consolePrinterProvider creates an Eclipse console that uses the name of an external
+	 *        tool as its own.
+	 * @param processInvoker executes a command in a separate process.
+	 */
+	public CommandLauncher(IConsolePrinterProvider consolePrinterProvider,
+			ProcessInvoker processInvoker) {
 		this.consolePrinterProvider = consolePrinterProvider;
+		this.processInvoker = processInvoker;
 	}
 
 	/**
@@ -108,10 +120,5 @@ public class CommandLauncher {
 				} catch (IOException ignored) {}
 			}
 		}
-	}
-
-	// Visible for testing.
-	void setProcessInvoker(ProcessInvoker newVal) {
-		processInvoker = newVal;
 	}
 }

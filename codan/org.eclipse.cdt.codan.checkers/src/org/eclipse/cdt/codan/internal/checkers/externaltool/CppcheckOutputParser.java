@@ -29,7 +29,7 @@ import org.eclipse.core.resources.IFile;
  * @since 1.1
  */
 public class CppcheckOutputParser extends AbstractOutputParser {
-	// the pattern for parsing the message is:
+	// sample line to parse:
 	//
 	// [/src/HelloWorld.cpp:19]: (style) The scope of the variable 'i' can be reduced
 	// ----------1--------- -2    --3--  ------------------4-------------------------
@@ -39,7 +39,6 @@ public class CppcheckOutputParser extends AbstractOutputParser {
 	// 2: line where problem was found
 	// 3: problem severity
 	// 4: problem description
-
 	private static Pattern pattern = Pattern.compile("\\[(.*):(\\d+)\\]:\\s*\\((.*)\\)\\s*(.*)"); //$NON-NLS-1$
 
 	private final InvocationParameters parameters;

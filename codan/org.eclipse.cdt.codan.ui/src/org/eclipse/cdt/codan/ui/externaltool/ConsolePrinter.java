@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Google, Inc. 
+ * Copyright (c) 2012 Google, Inc.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,45 +10,43 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.ui.externaltool;
 
+import java.io.IOException;
+
+import org.eclipse.cdt.codan.core.externaltool.IConsolePrinter;
+import org.eclipse.ui.console.MessageConsole;
+import org.eclipse.ui.console.MessageConsoleStream;
+
 /**
- * Prints the output of an external tool to an Eclipse console. It uses the name of the external
- * tool as the console ID.
- * 
+ * Default implementation of <code>{@link IConsolePrinter}</code>.
+ *
  * @author alruiz@google.com (Alex Ruiz)
+ * 
+ * @since 2.1
  */
-interface ConsolePrinter {
-	ConsolePrinter NullImpl = new ConsolePrinter() {
-		@Override
-		public void clear() {}
+class ConsolePrinter implements IConsolePrinter {
+	private final MessageConsole console;
+	private final MessageConsoleStream out;
 
-		@Override
-		public void println(String message) {}
-		
-		@Override
-		public void println() {}
+	ConsolePrinter(MessageConsole console) {
+		this.console = console;
+		out = console.newMessageStream();
+	}
 
-		@Override
-		public void close() {}
-	};
+	public void clear() {
+		console.clearConsole();
+	}
 	
-	/**
-	 * Clears the contents of the console.
-	 */
-	void clear();
+	public void println(String s) {
+		out.println(s);
+	}
 	
-	/**
-	 * Prints the specified message to the console, followed by a line separator string.
-	 * @param message the message to print.
-	 */
-	void println(String message);
-	
-	/**
-	 * Prints a line separator to the console.
-	 */
-	void println();
-	
-	/**
-	 * Closes the output stream of the console.
-	 */
-	void close();
+	public void println() {
+		out.println();
+	}
+
+	public void close() {
+		try {
+			out.close();
+		} catch (IOException ignored) {}
+	}
 }

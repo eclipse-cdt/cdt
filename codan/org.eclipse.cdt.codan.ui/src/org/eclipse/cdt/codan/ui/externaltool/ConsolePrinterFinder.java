@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Google, Inc.
+ * Copyright (c) 2012 Google, Inc. 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,9 @@ package org.eclipse.cdt.codan.ui.externaltool;
 
 import static org.eclipse.ui.console.IConsoleConstants.ID_CONSOLE_VIEW;
 
-import java.io.IOException;
-
+import org.eclipse.cdt.codan.core.externaltool.IConsolePrinter;
+import org.eclipse.cdt.codan.core.externaltool.IConsolePrinterFinder;
+import org.eclipse.cdt.codan.internal.ui.CodanUIActivator;
 import org.eclipse.cdt.codan.ui.CodanEditorUtility;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
@@ -22,26 +23,38 @@ import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleManager;
 import org.eclipse.ui.console.IConsoleView;
 import org.eclipse.ui.console.MessageConsole;
-import org.eclipse.ui.console.MessageConsoleStream;
 
 /**
- * Default implementation of <code>{@link ConsolePrinter}</code>.
- *
+ * Default implementation of <code>{@link IConsolePrinterFinder}</code>.
+ * 
  * @author alruiz@google.com (Alex Ruiz)
+ * 
+ * @since 2.1
  */
-class ConsolePrinterImpl implements ConsolePrinter {
-	private final MessageConsole console;
-	private final MessageConsoleStream out;
+public class ConsolePrinterFinder implements IConsolePrinterFinder {
+	private static final NullConsolePrinter NULL_CONSOLE = new NullConsolePrinter();
+	
+	/** {@inheritDoc} */
+	@Override
+	public IConsolePrinter findConsole(String externalToolName, boolean shouldDisplayOutput) {
+		if (shouldDisplayOutput) {
+			try {
+				return createOrFindConsole(externalToolName);
+			} catch (Throwable e) {
+				CodanUIActivator.log("Unable to create/find console", e); //$NON-NLS-1$
+			}
+		}
+		return NULL_CONSOLE;
+	}
 
-	static ConsolePrinter createOrFindConsole(String externalToolName) 
-			throws PartInitException {
+	private IConsolePrinter createOrFindConsole(String externalToolName) throws PartInitException {
 		MessageConsole console = findConsole(externalToolName);
 		IWorkbenchPage page = CodanEditorUtility.getActivePage();
 		if (page != null) {
 			IConsoleView view = (IConsoleView) page.showView(ID_CONSOLE_VIEW);
 			view.display(console);
 		}
-		return new ConsolePrinterImpl(console);
+		return new ConsolePrinter(console);
 	}
 
 	private static MessageConsole findConsole(String externalToolName) {
@@ -54,28 +67,5 @@ class ConsolePrinterImpl implements ConsolePrinter {
 		MessageConsole console = new MessageConsole(externalToolName, null);
 		consoleManager.addConsoles(new IConsole[] { console });
 		return console;
-	}
-
-	private ConsolePrinterImpl(MessageConsole console) {
-		this.console = console;
-		out = console.newMessageStream();
-	}
-
-	public void clear() {
-		console.clearConsole();
-	}
-	
-	public void println(String s) {
-		out.println(s);
-	}
-	
-	public void println() {
-		out.println();
-	}
-
-	public void close() {
-		try {
-			out.close();
-		} catch (IOException ignored) {}
 	}
 }

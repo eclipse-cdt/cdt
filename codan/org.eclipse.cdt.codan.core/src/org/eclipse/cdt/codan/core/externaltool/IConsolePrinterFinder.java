@@ -10,28 +10,21 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.externaltool;
 
-import java.util.regex.Pattern;
-
 /**
- * Default implementation of <code>{@link IArgsSeparator}</code> that uses an empty space as
- * the delimiter to separate the arguments to pass to an external tool.
+ * Finds an Eclipse console that uses the name of an external tool as its own.
  *
  * @author alruiz@google.com (Alex Ruiz)
  *
  * @since 2.1
  */
-public final class SpaceDelimitedArgsSeparator implements IArgsSeparator {
-	private static final String[] NO_ARGS = new String[0];
-	private static final Pattern EMPTY_SPACE_PATTERN = Pattern.compile("\\s+"); //$NON-NLS-1$
-
+public interface IConsolePrinterFinder {
 	/**
-	 * {@inheritDoc}
+	 * Finds an Eclipse console that uses the name of an external tool as its own.
+	 * @param externalToolName the name of the external tool that will be used as the name of the
+	 *        console.
+	 * @param shouldDisplayOutput indicates whether the user wants to see the output of the external
+	 *        tool in the console.
+	 * @return the created or found console.
 	 */
-	@Override
-	public String[] separateArgs(String args) {
-		if (args == null || args.isEmpty()) {
-			return NO_ARGS;
-		}
-		return EMPTY_SPACE_PATTERN.split(args);
-	}
+	IConsolePrinter findConsole(String externalToolName, boolean shouldDisplayOutput);
 }

@@ -10,21 +10,23 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.ui.externaltool;
 
-import org.eclipse.cdt.codan.internal.ui.CodanUIActivator;
-import org.eclipse.ui.PartInitException;
+import org.eclipse.cdt.codan.core.externaltool.IConsolePrinter;
 
 /**
+ * No-op implementation of <code>{@link IConsolePrinter}</code>.
+ * 
  * @author alruiz@google.com (Alex Ruiz)
  */
-class ConsolePrinterFactory {
-	ConsolePrinter createConsolePrinter(String externalToolName, boolean shouldDisplayOutput) {
-		if (shouldDisplayOutput) {
-			try {
-				return ConsolePrinterImpl.createOrFindConsole(externalToolName);
-			} catch (PartInitException e) {
-				CodanUIActivator.log("Unable to create/find console", e); //$NON-NLS-1$
-			}
-		}
-		return ConsolePrinter.NullImpl;
-	}
+class NullConsolePrinter implements IConsolePrinter {
+	@Override
+	public void clear() {}
+
+	@Override
+	public void println(String message) {}
+
+	@Override
+	public void println() {}
+
+	@Override
+	public void close() {}
 }

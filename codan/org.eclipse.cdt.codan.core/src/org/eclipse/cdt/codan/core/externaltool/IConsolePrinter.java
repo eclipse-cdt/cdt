@@ -10,28 +10,33 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.externaltool;
 
-import java.util.regex.Pattern;
-
 /**
- * Default implementation of <code>{@link IArgsSeparator}</code> that uses an empty space as
- * the delimiter to separate the arguments to pass to an external tool.
+ * Prints the output of an external tool to an Eclipse console. It uses the name of the external
+ * tool as the console ID.
  *
  * @author alruiz@google.com (Alex Ruiz)
  *
  * @since 2.1
  */
-public final class SpaceDelimitedArgsSeparator implements IArgsSeparator {
-	private static final String[] NO_ARGS = new String[0];
-	private static final Pattern EMPTY_SPACE_PATTERN = Pattern.compile("\\s+"); //$NON-NLS-1$
+public interface IConsolePrinter {
+	/**
+	 * Clears the contents of the console.
+	 */
+	void clear();
 
 	/**
-	 * {@inheritDoc}
+	 * Prints the specified message to the console, followed by a line separator string.
+	 * @param message the message to print.
 	 */
-	@Override
-	public String[] separateArgs(String args) {
-		if (args == null || args.isEmpty()) {
-			return NO_ARGS;
-		}
-		return EMPTY_SPACE_PATTERN.split(args);
-	}
+	void println(String message);
+
+	/**
+	 * Prints a line separator to the console.
+	 */
+	void println();
+
+	/**
+	 * Closes the output stream of the console.
+	 */
+	void close();
 }

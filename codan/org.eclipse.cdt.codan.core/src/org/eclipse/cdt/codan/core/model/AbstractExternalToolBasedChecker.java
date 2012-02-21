@@ -8,7 +8,7 @@ import org.eclipse.cdt.codan.core.CodanCorePlugin;
 import org.eclipse.cdt.codan.core.externaltool.AbstractOutputParser;
 import org.eclipse.cdt.codan.core.externaltool.ConfigurationSettings;
 import org.eclipse.cdt.codan.core.externaltool.IArgsSeparator;
-import org.eclipse.cdt.codan.core.externaltool.ICommandLauncher;
+import org.eclipse.cdt.codan.core.externaltool.IConsolePrinterFinder;
 import org.eclipse.cdt.codan.core.externaltool.IInvocationParametersProvider;
 import org.eclipse.cdt.codan.core.externaltool.IProblemDisplay;
 import org.eclipse.cdt.codan.core.externaltool.ISupportedResourceVerifier;
@@ -56,17 +56,18 @@ public abstract class AbstractExternalToolBasedChecker extends AbstractCheckerWi
 	 *        external tool.
 	 * @param argsSeparator separates the arguments to pass to the external tool executable. These
 	 *        arguments are stored in a single {@code String}.
-	 * @param commandLauncher builds and launches the command necessary to invoke the external tool.
+	 * @param consolePrinterFinder finds an Eclipse console that uses the name of an external tool
+	 *        as its own.
 	 * @param configurationSettings user-configurable external tool configuration settings.
 	 */
 	public AbstractExternalToolBasedChecker(IInvocationParametersProvider parametersProvider,
 			ISupportedResourceVerifier supportedResourceVerifier, IArgsSeparator argsSeparator,
-			ICommandLauncher commandLauncher, ConfigurationSettings configurationSettings) {
+			IConsolePrinterFinder consolePrinterFinder, ConfigurationSettings configurationSettings) {
 		this.parametersProvider = parametersProvider;
 		this.supportedResourceVerifier = supportedResourceVerifier;
 		this.argsSeparator = argsSeparator;
 		this.configurationSettings = configurationSettings;
-		externalToolInvoker = new ExternalToolInvoker(commandLauncher);
+		externalToolInvoker = new ExternalToolInvoker(consolePrinterFinder);
 		preferences = new SharedRootProblemPreference();
 	}
 

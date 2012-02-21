@@ -16,10 +16,9 @@ import java.util.List;
 import org.eclipse.cdt.codan.core.externaltool.AbstractOutputParser;
 import org.eclipse.cdt.codan.core.externaltool.ConfigurationSettings;
 import org.eclipse.cdt.codan.core.externaltool.IArgsSeparator;
-import org.eclipse.cdt.codan.core.externaltool.ICommandLauncher;
+import org.eclipse.cdt.codan.core.externaltool.IConsolePrinterFinder;
 import org.eclipse.cdt.codan.core.externaltool.InvocationFailure;
 import org.eclipse.cdt.codan.core.externaltool.InvocationParameters;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
@@ -31,15 +30,19 @@ import org.eclipse.core.runtime.Path;
  * @since 2.1
  */
 public class ExternalToolInvoker {
-	private final ICommandLauncher commandLauncher;
+	private final CommandLauncher commandLauncher;
 
 	/**
 	 * Constructor.
-	 *
-	 * @param commandLauncher builds and launches the command necessary to
-	 *        invoke the external tool.
+	 * @param consolePrinterFinder finds an Eclipse console that uses the name of an external tool
+	 *        as its own.
 	 */
-	public ExternalToolInvoker(ICommandLauncher commandLauncher) {
+	public ExternalToolInvoker(IConsolePrinterFinder consolePrinterFinder) {
+		this(new CommandLauncher(consolePrinterFinder));
+	}
+
+	// Visible for testing.
+	ExternalToolInvoker(CommandLauncher commandLauncher) {
 		this.commandLauncher = commandLauncher;
 	}
 
@@ -48,23 +51,22 @@ public class ExternalToolInvoker {
 	 *
 	 * @param parameters the parameters to pass to the external tool executable.
 	 * @param configurationSettings user-configurable settings.
-	 * @param argsSeparator separates the arguments to pass to the external tool
-	 *        executable. These
+	 * @param argsSeparator separates the arguments to pass to the external tool executable. These
 	 *        arguments are stored in a single {@code String}.
 	 * @param parsers parse the output of the external tool.
-	 * @throws InvocationFailure if the external tool reports that it cannot be
-	 *         executed.
+	 * @throws InvocationFailure if the external tool reports that it cannot be executed.
 	 * @throws Throwable if the external tool cannot be launched.
 	 */
-	public void invoke(InvocationParameters parameters, ConfigurationSettings configurationSettings, IArgsSeparator argsSeparator,
+	public void invoke(InvocationParameters parameters, ConfigurationSettings configurationSettings,
+			IArgsSeparator argsSeparator,
 			List<AbstractOutputParser> parsers) throws InvocationFailure, Throwable {
 		IPath executablePath = executablePath(configurationSettings);
 		String[] args = argsToPass(parameters, configurationSettings, argsSeparator);
 		boolean shouldDisplayOutput = configurationSettings.getShouldDisplayOutput().getValue();
-		IProject project = parameters.getActualFile().getProject();
 		try {
-			commandLauncher.buildAndLaunchCommand(project, configurationSettings.getExternalToolName(), executablePath, args,
-					parameters.getWorkingDirectory(), shouldDisplayOutput, parsers);
+			commandLauncher.buildAndLaunchCommand(configurationSettings.getExternalToolName(),
+					executablePath, args, parameters.getWorkingDirectory(), shouldDisplayOutput,
+					parsers);
 		} finally {
 			reset(parsers);
 		}
@@ -75,13 +77,15 @@ public class ExternalToolInvoker {
 		return new Path(executablePath.toString());
 	}
 
-	private String[] argsToPass(InvocationParameters parameters, ConfigurationSettings configurationSettings, IArgsSeparator argsSeparator) {
+	private String[] argsToPass(InvocationParameters parameters,
+			ConfigurationSettings configurationSettings, IArgsSeparator argsSeparator) {
 		String[] configuredArgs = configuredArgs(configurationSettings, argsSeparator);
 		String actualFilePath = parameters.getActualFilePath();
 		return addFilePathToArgs(actualFilePath, configuredArgs);
 	}
 
-	private String[] configuredArgs(ConfigurationSettings configurationSettings, IArgsSeparator argsSeparator) {
+	private String[] configuredArgs(ConfigurationSettings configurationSettings,
+			IArgsSeparator argsSeparator) {
 		String args = configurationSettings.getArgs().getValue();
 		return argsSeparator.separateArgs(args);
 	}

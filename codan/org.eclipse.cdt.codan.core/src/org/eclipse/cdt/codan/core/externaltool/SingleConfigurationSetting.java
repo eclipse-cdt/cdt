@@ -20,6 +20,7 @@ import org.eclipse.cdt.codan.core.param.MapProblemPreference;
  *
  * @author alruiz@google.com (Alex Ruiz)
  *
+ * @noextend This class is not intended to be extended by clients.
  * @since 2.1
  */
 public class SingleConfigurationSetting<T> {

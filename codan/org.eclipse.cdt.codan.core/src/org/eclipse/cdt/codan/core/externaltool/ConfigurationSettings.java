@@ -24,7 +24,7 @@ import org.eclipse.cdt.codan.internal.core.externaltool.ShouldDisplayOutputSetti
  *
  * @since 2.1
  */
-public class ConfigurationSettings {
+public final class ConfigurationSettings {
 	private final PathSetting path;
 	private final ArgsSetting args;
 	private final ShouldDisplayOutputSetting shouldDisplayOutput;

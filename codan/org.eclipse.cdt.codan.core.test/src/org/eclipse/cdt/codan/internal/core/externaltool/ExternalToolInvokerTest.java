@@ -20,7 +20,6 @@ import java.util.List;
 import org.eclipse.cdt.codan.core.externaltool.AbstractOutputParser;
 import org.eclipse.cdt.codan.core.externaltool.ConfigurationSettings;
 import org.eclipse.cdt.codan.core.externaltool.IArgsSeparator;
-import org.eclipse.cdt.codan.core.externaltool.ICommandLauncher;
 import org.eclipse.cdt.codan.core.externaltool.InvocationFailure;
 import org.eclipse.cdt.codan.core.externaltool.InvocationParameters;
 import org.eclipse.cdt.codan.core.externaltool.SingleConfigurationSetting;
@@ -29,7 +28,6 @@ import org.eclipse.cdt.codan.core.param.BasicProblemPreference;
 import org.eclipse.cdt.codan.core.param.IProblemPreference;
 import org.eclipse.cdt.codan.core.param.MapProblemPreference;
 import org.eclipse.cdt.codan.core.test.CodanTestCase;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 
 /**
@@ -92,7 +90,6 @@ public class ExternalToolInvokerTest extends CodanTestCase {
 		InvocationParameters parameters = new InvocationParameters(currentIFile, currentIFile,
 				currentIFile.getLocation().toOSString(), cproject.getProject().getLocation());
 		externalToolInvoker.invoke(parameters, settings, argsSeparator, parsers);
-		launcher.assertThatReceivedProject(cproject.getProject());
 		launcher.assertThatReceivedExternalToolName(settings.getExternalToolName());
 		launcher.assertThatReceivedExecutablePath(settings.getPath());
 		launcher.assertThatReceivedArgs(expectedArgs(parameters));
@@ -109,8 +106,7 @@ public class ExternalToolInvokerTest extends CodanTestCase {
 		return expectedArgs;
 	}
 
-	private static class CommandLauncherStub implements ICommandLauncher {
-		private IProject project;
+	private static class CommandLauncherStub extends CommandLauncher {
 		private String externalToolName;
 		private IPath executablePath;
 		private String[] args;
@@ -118,22 +114,20 @@ public class ExternalToolInvokerTest extends CodanTestCase {
 		private boolean shouldDisplayOutput;
 		private List<AbstractOutputParser> parsers;
 
+		public CommandLauncherStub() {
+			super(null);
+		}
+
 		@Override
-		public void buildAndLaunchCommand(IProject project, String externalToolName,
-				IPath executablePath, String[] args, IPath workingDirectory,
-				boolean shouldDisplayOutput, List<AbstractOutputParser> parsers) throws InvocationFailure,
-				Throwable {
-			this.project = project;
+		public void buildAndLaunchCommand(String externalToolName, IPath executablePath,
+				String[] args, IPath workingDirectory, boolean shouldDisplayOutput,
+				List<AbstractOutputParser> parsers) throws InvocationFailure, Throwable {
 			this.externalToolName = externalToolName;
 			this.executablePath = executablePath;
 			this.args = args;
 			this.workingDirectory = workingDirectory;
 			this.shouldDisplayOutput = shouldDisplayOutput;
 			this.parsers = parsers;
-		}
-
-		void assertThatReceivedProject(IProject expected) {
-			assertEquals(expected, project);
 		}
 
 		void assertThatReceivedExternalToolName(String expected) {

@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.IPath;
  *
  * @since 2.1
  */
-public class InvocationParameters {
+public final class InvocationParameters {
 	private final IResource originalFile;
 	private final IResource actualFile;
 	private final String actualFilePath;

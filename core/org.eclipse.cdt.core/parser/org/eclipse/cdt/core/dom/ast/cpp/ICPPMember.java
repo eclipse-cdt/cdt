@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Doug Schaefer (IBM) - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     Doug Schaefer (IBM) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
@@ -21,7 +21,6 @@ import org.eclipse.cdt.core.dom.ast.IType;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPMember extends ICPPBinding {
-
 	public static final int v_private = ICPPASTVisibilityLabel.v_private;
 	public static final int v_protected = ICPPASTVisibilityLabel.v_protected;
 	public static final int v_public = ICPPASTVisibilityLabel.v_public;
@@ -30,7 +29,6 @@ public interface ICPPMember extends ICPPBinding {
 	 * Returns the accessibility of the member.
 	 */ 
 	public int getVisibility();
-
 
 	/**
 	 * Same as {@link #getOwner()}.

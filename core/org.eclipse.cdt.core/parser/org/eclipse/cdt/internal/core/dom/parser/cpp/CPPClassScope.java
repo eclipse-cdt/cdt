@@ -501,7 +501,7 @@ class ImplicitsAnalysis {
 			} else if (member instanceof IASTFunctionDefinition) {
 			    dcltor = ((IASTFunctionDefinition)member).getDeclarator();
 			}
-			if (dcltor instanceof ICPPASTFunctionDeclarator == false)
+			if (!(dcltor instanceof ICPPASTFunctionDeclarator))
 				continue;
 			
 			final char[] nchars= ASTQueries.findInnermostDeclarator(dcltor).getName().getLookupKey();

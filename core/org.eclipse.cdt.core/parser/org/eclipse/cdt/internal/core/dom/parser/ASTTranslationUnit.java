@@ -57,14 +57,14 @@ import org.eclipse.core.runtime.CoreException;
  * Even 'get' methods may cause changes to the underlying object.
  */
 public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslationUnit, ISkippedIndexedFilesListener {
-	private static final IASTPreprocessorStatement[] EMPTY_PREPROCESSOR_STATEMENT_ARRAY = new IASTPreprocessorStatement[0];
-	private static final IASTPreprocessorMacroDefinition[] EMPTY_PREPROCESSOR_MACRODEF_ARRAY = new IASTPreprocessorMacroDefinition[0];
-	private static final IASTPreprocessorIncludeStatement[] EMPTY_PREPROCESSOR_INCLUSION_ARRAY = new IASTPreprocessorIncludeStatement[0];
-	private static final IASTProblem[] EMPTY_PROBLEM_ARRAY = new IASTProblem[0];
+	private static final IASTPreprocessorStatement[] EMPTY_PREPROCESSOR_STATEMENT_ARRAY = {};
+	private static final IASTPreprocessorMacroDefinition[] EMPTY_PREPROCESSOR_MACRODEF_ARRAY = {};
+	private static final IASTPreprocessorIncludeStatement[] EMPTY_PREPROCESSOR_INCLUSION_ARRAY = {};
+	private static final IASTProblem[] EMPTY_PROBLEM_ARRAY = {};
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
-    private IASTDeclaration[] fAllDeclarations = null;
-    private IASTDeclaration[] fActiveDeclarations= null;
+    private IASTDeclaration[] fAllDeclarations;
+    private IASTDeclaration[] fActiveDeclarations;
 	private int fLastDeclaration= -1;
 
 	protected ILocationResolver fLocationResolver;
@@ -130,11 +130,6 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 		}
 	}
     
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getDeclarations(org.eclipse.cdt.core.dom.ast.IBinding)
-	 */
 	@Override
 	public final IName[] getDeclarations(IBinding binding) {
     	IName[] names= getDeclarationsInAST(binding);
@@ -162,11 +157,6 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
         return fLocationResolver.getReferences(binding);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getDefinitions(org.eclipse.cdt.core.dom.ast.IBinding)
-     */
     @Override
 	public final IName[] getDefinitions(IBinding binding) {
     	IName[] names= getDefinitionsInAST(binding);
@@ -181,11 +171,6 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
         return names;
     }
     
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getMacroDefinitions()
-	 */
 	@Override
 	public final IASTPreprocessorMacroDefinition[] getMacroDefinitions() {
 		if (fLocationResolver == null)
@@ -193,9 +178,6 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 		return fLocationResolver.getMacroDefinitions();
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getMacroExpansions()
-	 */
 	@Override
 	public IASTPreprocessorMacroExpansion[] getMacroExpansions() {
 		if (fLocationResolver == null)
@@ -203,11 +185,6 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 		return fLocationResolver.getMacroExpansions(getFileLocation());
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getBuiltinMacroDefinitions()
-	 */
 	@Override
 	public final IASTPreprocessorMacroDefinition[] getBuiltinMacroDefinitions() {
 		if (fLocationResolver == null)
@@ -215,11 +192,6 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 		return fLocationResolver.getBuiltinMacroDefinitions();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getIncludeDirectives()
-	 */
 	@Override
 	public final IASTPreprocessorIncludeStatement[] getIncludeDirectives() {
 		if (fLocationResolver == null)
@@ -227,11 +199,6 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 		return fLocationResolver.getIncludeDirectives();
 	}
 
-    /*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getAllPreprocessorStatements()
-	 */
 	@Override
 	public final IASTPreprocessorStatement[] getAllPreprocessorStatements() {
 		if (fLocationResolver == null)
@@ -239,21 +206,11 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 		return fLocationResolver.getAllPreprocessorStatements();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.internal.core.parser2.IRequiresLocationInformation#setLocationResolver(org.eclipse.cdt.internal.core.parser.scanner2.ILocationResolver)
-	 */
 	public final void setLocationResolver(ILocationResolver resolver) {
 		fLocationResolver= resolver;
         resolver.setRootNode(this);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getPreprocesorProblems()
-	 */
 	@Override
 	public final IASTProblem[] getPreprocessorProblems() {
 		if (fLocationResolver == null)
@@ -267,25 +224,19 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 		return result;
 	}
 
-	
 	@Override
 	public final int getPreprocessorProblemsCount() {
 		return fLocationResolver == null ? 0 : fLocationResolver.getScannerProblemsCount();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getFilePath()
-	 */
 	@Override
 	public final String getFilePath() {
 		if (fLocationResolver == null)
 			return EMPTY_STRING;
 		return new String(fLocationResolver.getTranslationUnitPath());
 	}
-	
-	 @Override
+
+	@Override
 	public final boolean accept(ASTVisitor action) {
 		if (action.shouldVisitTranslationUnit) {
 			switch (action.visit(this)) {
@@ -390,9 +341,6 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 		fForContentAssist= forContentAssist;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.parser.scanner.ISkippedIndexedFilesListener#skippedFile(org.eclipse.cdt.internal.core.parser.scanner.IncludeFileContent)
-	 */
 	@Override
 	public void skippedFile(int offset, InternalFileContent fileContent) {
 		if (fIndexFileSet != null) {
@@ -431,11 +379,6 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 		return fASTFileSet;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getNodeForLocation(org.eclipse.cdt.core.dom.ast.IASTNodeLocation)
-	 */
 	@Override
 	public final IASTNode selectNodeForLocation(String path, int realOffset, int realLength) {
 		return getNodeSelector(path).findNode(realOffset, realLength);
@@ -481,11 +424,6 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 		});
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getOriginatingTranslationUnit()
-	 */
 	@Override
 	public ITranslationUnit getOriginatingTranslationUnit() {
 		return fOriginatingTranslationUnit;

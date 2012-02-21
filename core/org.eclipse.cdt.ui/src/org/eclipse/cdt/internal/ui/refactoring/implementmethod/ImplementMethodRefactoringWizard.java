@@ -27,7 +27,7 @@ import org.eclipse.cdt.ui.CUIPlugin;
  */
 public class ImplementMethodRefactoringWizard extends RefactoringWizard {
    private final ImplementMethodRefactoring refactoring;
-   private Map<MethodToImplementConfig, ParameterNamesInputPage>pagesMap =
+   private Map<MethodToImplementConfig, ParameterNamesInputPage> pagesMap =
 		   new HashMap<MethodToImplementConfig, ParameterNamesInputPage>();
 
 	public ImplementMethodRefactoringWizard(ImplementMethodRefactoring refactoring) {
@@ -53,7 +53,7 @@ public class ImplementMethodRefactoringWizard extends RefactoringWizard {
 	}
 
 	/**
-	 * When canceling the wizard, RefactoringASTCache gets disposed and releases the lock on
+	 * When canceling the wizard, CRefactoringContext gets disposed and releases the lock on
 	 * the index but the preview jobs might still be running and access the index or an index-based
 	 * AST so we need to make sure they are done before disposing the cache
 	 * <p> 

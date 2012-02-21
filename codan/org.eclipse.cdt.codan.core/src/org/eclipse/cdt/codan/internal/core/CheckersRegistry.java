@@ -252,7 +252,7 @@ public class CheckersRegistry implements Iterable<IChecker>, ICheckersRegistry {
 	public static synchronized CheckersRegistry getInstance() {
 		if (instance == null)
 			return new CheckersRegistry();
-		if (initialized == false)
+		if (!initialized)
 			throw new IllegalStateException("Registry is not initialized"); //$NON-NLS-1$
 		return instance;
 	}

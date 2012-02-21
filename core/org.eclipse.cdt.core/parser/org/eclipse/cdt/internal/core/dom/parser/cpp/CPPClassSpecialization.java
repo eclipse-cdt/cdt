@@ -249,8 +249,9 @@ public class CPPClassSpecialization extends CPPSpecialization
 	public static boolean isSameClassSpecialization(ICPPClassSpecialization t1, ICPPClassSpecialization t2) {
 		// exclude class template specialization or class instance
 		if (t2 instanceof ICPPTemplateInstance || t2 instanceof ICPPTemplateDefinition || 
-				t2 instanceof IProblemBinding)
+				t2 instanceof IProblemBinding) {
 			return false;
+		}
 		
 		if (t1.getKey() != t2.getKey()) 
 			return false;
@@ -265,7 +266,7 @@ public class CPPClassSpecialization extends CPPSpecialization
 		final IBinding owner2= t2.getOwner();
 		
 		// for a specialization that is not an instance the owner has to be a class-type
-		if (owner1 instanceof ICPPClassType == false || owner2 instanceof ICPPClassType == false)
+		if (!(owner1 instanceof ICPPClassType) || !(owner2 instanceof ICPPClassType))
 			return false;
 
 		return ((ICPPClassType) owner1).isSameType((ICPPClassType) owner2);

@@ -19,7 +19,17 @@ import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.typeOrFunctionSet;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.valueCat;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.*;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.ALLCVQ;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.ARRAY;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.CVTYPE;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.MPTR;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.PTR;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.REF;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.calculateInheritanceDepth;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getNestedType;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getUltimateTypeUptoPointers;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.isConversionOperator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -1890,12 +1900,12 @@ public class CPPSemantics {
 		try {
 			if (cpp instanceof ICPPNamespace || cpp instanceof ICPPFunction || cpp instanceof ICPPVariable) {
 				IScope scope= cpp.getScope();
-				if (scope instanceof ICPPBlockScope == false && scope instanceof ICPPNamespaceScope) {
+				if (!(scope instanceof ICPPBlockScope) && scope instanceof ICPPNamespaceScope) {
 					return true;
 				}
 			} else if (cpp instanceof ICompositeType || cpp instanceof IEnumeration) {
 				IScope scope= cpp.getScope();
-				if (scope instanceof ICPPBlockScope == false && scope instanceof ICPPNamespaceScope) {
+				if (!(scope instanceof ICPPBlockScope) && scope instanceof ICPPNamespaceScope) {
 					// if this is not the definition, it may be found in a header. (bug 229571)
 					if (cpp.getDefinition() == null) {
 						return true;

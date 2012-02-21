@@ -86,16 +86,17 @@ public class ImplementMethodRefactoring extends CRefactoring2 {
 	}
 	
 	@Override
-	public RefactoringStatus checkInitialConditions(IProgressMonitor pm) throws CoreException, OperationCanceledException {
+	public RefactoringStatus checkInitialConditions(IProgressMonitor pm)
+			throws CoreException, OperationCanceledException {
 		SubMonitor sm = SubMonitor.convert(pm, 10);
 		super.checkInitialConditions(sm.newChild(6));
 
 		if (!initStatus.hasFatalError()) {
-			List<IASTSimpleDeclaration> unimplementedMethodDeclarations = findUnimplementedMethodDeclarations(pm);
+			List<IASTSimpleDeclaration> unimplementedMethodDeclarations =
+					findUnimplementedMethodDeclarations(pm);
 			if (unimplementedMethodDeclarations.isEmpty()) {
 				initStatus.addFatalError(Messages.ImplementMethodRefactoring_NoMethodToImplement);
-			}
-			else {
+			} else {
 				data.setMethodDeclarations(unimplementedMethodDeclarations);
 
 				if (selectedRegion.getLength() > 0) {

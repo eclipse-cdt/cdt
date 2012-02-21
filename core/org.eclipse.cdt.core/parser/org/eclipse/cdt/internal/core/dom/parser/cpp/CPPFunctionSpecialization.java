@@ -277,10 +277,10 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 	private ICPPASTFunctionDeclarator extractFunctionDtor(IASTNode node) {
 		if (node instanceof IASTName)
 			node = node.getParent();
-		if (node instanceof IASTDeclarator == false)
+		if (!(node instanceof IASTDeclarator))
 			return null;
 		node= ASTQueries.findTypeRelevantDeclarator((IASTDeclarator) node);
-		if (node instanceof ICPPASTFunctionDeclarator == false)
+		if (!(node instanceof ICPPASTFunctionDeclarator))
 			return null;
 		
 		return (ICPPASTFunctionDeclarator) node;

@@ -44,21 +44,21 @@ import org.eclipse.cdt.internal.ui.util.EditorUtility;
 public class DefinitionFinder {
 
 	public static IASTName getDefinition(IASTSimpleDeclaration simpleDeclaration,
-			CRefactoringContext astCache, IProgressMonitor pm) throws CoreException {
-		IIndex index = astCache.getIndex();
-		IASTDeclarator declarator = simpleDeclaration.getDeclarators()[0];
+			CRefactoringContext refactoringContext, IProgressMonitor pm) throws CoreException {
+		IIndex index = refactoringContext.getIndex();
 		if (index == null) {
 			return null;
 		}
+		IASTDeclarator declarator = simpleDeclaration.getDeclarators()[0];
 		IIndexBinding binding = index.adaptBinding(declarator.getName().resolveBinding());
 		if (binding == null) {
 			return null;
 		}
-		return getDefinition(binding, astCache, index, pm);
+		return getDefinition(binding, refactoringContext, index, pm);
 	}
 
 	private static IASTName getDefinition(IIndexBinding binding,
-			CRefactoringContext astCache, IIndex index, IProgressMonitor pm) throws CoreException {
+			CRefactoringContext refactoringContext, IIndex index, IProgressMonitor pm) throws CoreException {
 		Set<String> searchedFiles = new HashSet<String>();
 		List<IASTName> definitions = new ArrayList<IASTName>();
 		IEditorPart[] dirtyEditors = EditorUtility.getDirtyEditors(true);
@@ -70,7 +70,7 @@ public class DefinitionFinder {
 			if (editorInput instanceof ITranslationUnitEditorInput) {
 				ITranslationUnit tu =
 						CModelUtil.toWorkingCopy(((ITranslationUnitEditorInput) editorInput).getTranslationUnit());
-				findDefinitionsInTranslationUnit(binding, tu, astCache, definitions, null);
+				findDefinitionsInTranslationUnit(binding, tu, refactoringContext, definitions, null);
 				searchedFiles.add(tu.getLocation().toOSString());
 			}
 		}
@@ -83,7 +83,7 @@ public class DefinitionFinder {
 			ITranslationUnit tu = CoreModelUtil.findTranslationUnitForLocation(
 					name.getFile().getLocation(), null);
 			if (searchedFiles.add(tu.getLocation().toOSString())) {
-				findDefinitionsInTranslationUnit(binding, tu, astCache, definitions, pm);
+				findDefinitionsInTranslationUnit(binding, tu, refactoringContext, definitions, pm);
 			}
 		}
 
@@ -91,9 +91,9 @@ public class DefinitionFinder {
 	}
 
 	private static void findDefinitionsInTranslationUnit(IIndexBinding binding, ITranslationUnit tu,
-			CRefactoringContext astCache, List<IASTName> definitions, IProgressMonitor pm)
+			CRefactoringContext refactoringContext, List<IASTName> definitions, IProgressMonitor pm)
 			throws OperationCanceledException, CoreException {
-		IASTTranslationUnit ast = astCache.getAST(tu, pm);
+		IASTTranslationUnit ast = refactoringContext.getAST(tu, pm);
 		findDefinitionsInAST(binding, ast, tu, definitions);
 	}
 

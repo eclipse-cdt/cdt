@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM) - Initial API and implementation
- *    Mike Kucera
+ *     John Camelon (IBM) - Initial API and implementation
+ *     Mike Kucera
+ *     Sergey Prigogin (Google) 
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
@@ -19,7 +20,6 @@ import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPASTUnaryExpression extends IASTUnaryExpression, IASTImplicitNameOwner {
-
 	/**
 	 * <code>op_throw</code> throw exp
 	 */
@@ -47,4 +47,11 @@ public interface ICPPASTUnaryExpression extends IASTUnaryExpression, IASTImplici
 	 */
 	@Override
 	public ICPPASTUnaryExpression copy(CopyStyle style);
+
+	/**
+	 * Returns the function binding for the overloaded operator, or <code>null</code> if
+	 * the operator is not overloaded.
+	 * @since 5.4
+	 */
+	public ICPPFunction getOverload();
 }

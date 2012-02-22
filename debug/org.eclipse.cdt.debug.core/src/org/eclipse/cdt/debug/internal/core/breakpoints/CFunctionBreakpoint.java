@@ -24,8 +24,6 @@ import com.ibm.icu.text.MessageFormat;
  */
 public class CFunctionBreakpoint extends AbstractLineBreakpoint implements ICFunctionBreakpoint {
 
-	private static final String C_FUNCTION_BREAKPOINT = "org.eclipse.cdt.debug.core.cFunctionBreakpointMarker"; //$NON-NLS-1$
-
 	/**
 	 * Constructor for CFunctionBreakpoint.
 	 */
@@ -36,14 +34,14 @@ public class CFunctionBreakpoint extends AbstractLineBreakpoint implements ICFun
 	 * Constructor for CFunctionBreakpoint.
 	 */
 	public CFunctionBreakpoint( IResource resource, Map<String, Object> attributes, boolean add ) throws CoreException {
-		super( resource, getMarkerType(), attributes, add );
+		super( resource, attributes, add );
 	}
 
 	/**
 	 * Returns the type of marker associated with this type of breakpoints
 	 */
-	public static String getMarkerType() {
-		return C_FUNCTION_BREAKPOINT;
+	public String getMarkerType() {
+		return C_FUNCTION_BREAKPOINT_MARKER;
 	}
 
 	/*(non-Javadoc)

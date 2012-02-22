@@ -8,7 +8,7 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.debug.internal.ui;
+package org.eclipse.cdt.debug.internal.ui.breakpoints;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.debug.core.DebugPlugin;

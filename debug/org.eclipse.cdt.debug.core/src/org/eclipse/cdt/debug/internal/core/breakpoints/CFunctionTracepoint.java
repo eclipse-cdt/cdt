@@ -27,8 +27,6 @@ import com.ibm.icu.text.MessageFormat;
  */
 public class CFunctionTracepoint extends AbstractTracepoint implements ICFunctionBreakpoint, ICTracepoint {
 
-	private static final String C_FUNCTION_TRACEPOINT_MARKER = "org.eclipse.cdt.debug.core.cFunctionTracepointMarker"; //$NON-NLS-1$
-
 	/**
 	 * Constructor for CFunctionTracepoint.
 	 */
@@ -39,15 +37,15 @@ public class CFunctionTracepoint extends AbstractTracepoint implements ICFunctio
 	 * Constructor for CFunctionTracepoint.
 	 */
 	public CFunctionTracepoint( IResource resource, Map<String, Object> attributes, boolean add ) throws CoreException {
-		super( resource, getMarkerType(), attributes, add );
+		super( resource, attributes, add );
 	}
 
 	/**
-	 * Returns the type of marker associated with this type of breakpoints
-	 */
-	public static String getMarkerType() {
-		return C_FUNCTION_TRACEPOINT_MARKER;
-	}
+     * Returns the type of marker associated with this type of breakpoints
+     */
+    public String getMarkerType() {
+        return C_FUNCTION_TRACEPOINT_MARKER;
+    }
 
 	/*(non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpoint#getMarkerMessage()

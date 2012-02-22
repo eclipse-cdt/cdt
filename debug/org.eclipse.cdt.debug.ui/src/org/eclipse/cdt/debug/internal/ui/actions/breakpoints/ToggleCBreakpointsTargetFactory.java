@@ -8,13 +8,14 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.debug.internal.ui.actions;
+package org.eclipse.cdt.debug.internal.ui.actions.breakpoints;
 
 import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
+import org.eclipse.cdt.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.model.IDebugElement;
@@ -86,8 +87,7 @@ public class ToggleCBreakpointsTargetFactory implements IToggleBreakpointsTarget
     }
     
     @Override
-	@SuppressWarnings("unchecked")
-    public Set getToggleTargets(IWorkbenchPart part, ISelection selection) {
+    public Set<?> getToggleTargets(IWorkbenchPart part, ISelection selection) {
         return TOGGLE_TARGET_IDS;
     }
     

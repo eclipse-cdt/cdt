@@ -26,6 +26,12 @@ import org.eclipse.debug.core.model.IBreakpoint;
  */
 public interface ICBreakpoint extends IBreakpoint {
 
+    /** 
+     * Breakpoint marker type for this breakpoint type.
+     * @since 7.2
+     */
+    public static final String C_BREAKPOINT_MARKER = "org.eclipse.cdt.debug.core.cBreakpointMarker"; //$NON-NLS-1$
+    
     /**
      * This debug model identifier can be returned by a debug implementation 
      * to indicate that a given debugger integration is using C Breakpoints.

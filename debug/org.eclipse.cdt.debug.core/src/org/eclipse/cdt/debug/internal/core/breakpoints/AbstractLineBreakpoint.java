@@ -42,8 +42,8 @@ public abstract class AbstractLineBreakpoint extends CBreakpoint implements ICLi
 	 * @param add
 	 * @throws CoreException
 	 */
-	public AbstractLineBreakpoint( IResource resource, String markerType, Map<String, Object> attributes, boolean add ) throws CoreException {
-		super( resource, markerType, attributes, add );
+	public AbstractLineBreakpoint( IResource resource, Map<String, Object> attributes, boolean add ) throws CoreException {
+		super( resource, attributes, add );
 	}
 
 	/*(non-Javadoc)

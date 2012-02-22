@@ -8,11 +8,12 @@
  * Contributors:
  *     Nokia - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.debug.internal.ui.actions;
+package org.eclipse.cdt.debug.internal.ui.actions.breakpoints;
 
 
 import org.eclipse.cdt.debug.internal.core.CRequest;
 import org.eclipse.cdt.debug.internal.core.ICWatchpointTarget;
+import org.eclipse.cdt.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;

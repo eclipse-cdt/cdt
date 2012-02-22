@@ -9,7 +9,7 @@
  * QNX Software Systems - Initial API and implementation
  * Freescale Semiconductor - Address watchpoints, https://bugs.eclipse.org/bugs/show_bug.cgi?id=118299
 *******************************************************************************/
-package org.eclipse.cdt.debug.internal.ui.actions; 
+package org.eclipse.cdt.debug.internal.ui.actions.breakpoints; 
 
 import java.math.BigInteger;
 
@@ -17,6 +17,7 @@ import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIMemorySpaceManagement;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.model.ICDebugTarget;
+import org.eclipse.cdt.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -82,7 +83,7 @@ public class AddWatchpointActionDelegate extends ActionDelegate implements IView
 		return ""; //$NON-NLS-1$
 	}
 	
-	static ICDIMemorySpaceManagement getMemorySpaceManagement(){
+	public static ICDIMemorySpaceManagement getMemorySpaceManagement(){
 		IAdaptable debugViewElement = DebugUITools.getDebugContext();
 		ICDIMemorySpaceManagement memMgr = null;
 		

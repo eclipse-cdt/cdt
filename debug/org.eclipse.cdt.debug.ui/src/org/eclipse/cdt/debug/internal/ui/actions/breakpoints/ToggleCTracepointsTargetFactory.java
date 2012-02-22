@@ -8,11 +8,12 @@
  * Contributors:
  *     Ericsson - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.debug.internal.ui.actions;
+package org.eclipse.cdt.debug.internal.ui.actions.breakpoints;
 
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.cdt.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.debug.ui.actions.IToggleBreakpointsTarget;
 import org.eclipse.debug.ui.actions.IToggleBreakpointsTargetFactory;
@@ -66,8 +67,7 @@ public class ToggleCTracepointsTargetFactory implements IToggleBreakpointsTarget
     }
     
     @Override
-	@SuppressWarnings("unchecked")
-    public Set getToggleTargets(IWorkbenchPart part, ISelection selection) {
+    public Set<?> getToggleTargets(IWorkbenchPart part, ISelection selection) {
         return TOGGLE_TARGET_IDS;
     }
 }

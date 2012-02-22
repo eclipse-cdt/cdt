@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core.breakpoints;
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.Map;
 
 import org.eclipse.cdt.debug.core.CDebugUtils;
@@ -20,13 +19,13 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 
+import com.ibm.icu.text.MessageFormat;
+
 /**
  * A breakpoint that suspends the execution when a particular line of code is
  * reached.
  */
 public class CLineBreakpoint extends AbstractLineBreakpoint {
-
-	private static final String C_LINE_BREAKPOINT = "org.eclipse.cdt.debug.core.cLineBreakpointMarker"; //$NON-NLS-1$
 
 	/**
 	 * Constructor for CLineBreakpoint.
@@ -38,14 +37,12 @@ public class CLineBreakpoint extends AbstractLineBreakpoint {
 	 * Constructor for CLineBreakpoint.
 	 */
 	public CLineBreakpoint( IResource resource, Map<String, Object> attributes, boolean add ) throws CoreException {
-		super( resource, getMarkerType(), attributes, add );
+		super( resource, attributes, add );
 	}
-
-	/**
-	 * Returns the type of marker associated with this type of breakpoints
-	 */
-	public static String getMarkerType() {
-		return C_LINE_BREAKPOINT;
+	
+	@Override
+	public String getMarkerType() {
+	    return C_LINE_BREAKPOINT_MARKER;
 	}
 
 	/*(non-Javadoc)

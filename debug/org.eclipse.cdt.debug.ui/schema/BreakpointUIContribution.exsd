@@ -107,7 +107,7 @@ If not specified this attribute will not be visible in Common page.
          <attribute name="type" type="string" use="default" value="string">
             <annotation>
                <documentation>
-                  Type of the attribute: boolean, string, integer
+                  Type of the attribute.  Value should be one of "boolean", "string", "integer", "float".
                </documentation>
             </annotation>
          </attribute>

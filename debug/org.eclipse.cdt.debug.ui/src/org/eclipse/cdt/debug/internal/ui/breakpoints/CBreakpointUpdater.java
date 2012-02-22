@@ -8,7 +8,7 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.debug.internal.ui;
+package org.eclipse.cdt.debug.internal.ui.breakpoints;
 
 import java.util.Map;
 import org.eclipse.cdt.debug.core.ICBreakpointListener;
@@ -79,7 +79,7 @@ public class CBreakpointUpdater implements ICBreakpointListener {
 	 *      org.eclipse.debug.core.model.IBreakpoint, java.util.Map)
 	 */
 	@Override
-	public void breakpointChanged( IDebugTarget target, final IBreakpoint breakpoint, final Map attributes ) {
+	public void breakpointChanged( IDebugTarget target, final IBreakpoint breakpoint, @SuppressWarnings("rawtypes") final Map attributes ) {
 		asyncExec( new Runnable() {
 
 			@Override

@@ -1,19 +1,21 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Wind River Systems, Inc. and others.
+ * Copyright (c) 2004, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Wind River Systems - initial API and implementation
+ * QNX Software Systems - Initial API and implementation
+ * Anton Leherbauer (Wind River Systems) - bug 183397
  *******************************************************************************/
-package org.eclipse.cdt.dsf.debug.internal.ui.disassembly.actions;
+package org.eclipse.cdt.debug.internal.ui.actions.breakpoints;
 
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
+import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
+import org.eclipse.cdt.debug.internal.ui.IInternalCDebugUIConstants;
+import org.eclipse.cdt.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.cdt.debug.ui.breakpoints.CBreakpointPropertyDialogAction;
-import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.DisassemblyMessages;
-import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional.IDisassemblyPart;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.contexts.IDebugContextListener;
@@ -26,28 +28,32 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
- * Ruler action to display breakpoint properties.
+ * Opens a custom properties dialog to configure the attibutes of a C/C++ breakpoint 
+ * from the ruler popup menu.
  */
-public class BreakpointPropertiesRulerAction extends AbstractDisassemblyBreakpointRulerAction {
-    
-    
-	private ICBreakpoint fBreakpoint;
+public class CBreakpointPropertiesRulerAction extends AbstractBreakpointRulerAction {
 
-	protected BreakpointPropertiesRulerAction(IDisassemblyPart disassemblyPart, IVerticalRulerInfo rulerInfo) {
-		super(disassemblyPart, rulerInfo);
-		setText(DisassemblyMessages.Disassembly_action_BreakpointProperties_label);
+    private ICBreakpoint fBreakpoint;
+
+	/**
+	 * Creates the action to modify the breakpoint properties.
+	 */
+	public CBreakpointPropertiesRulerAction( IWorkbenchPart part, IVerticalRulerInfo info ) {
+		super( part, info );
+		setText( ActionMessages.getString( "CBreakpointPropertiesRulerAction.Breakpoint_Properties" ) ); //$NON-NLS-1$
+		part.getSite().getWorkbenchWindow().getWorkbench().getHelpSystem().setHelp( this, ICDebugHelpContextIds.BREAKPOINT_PROPERTIES_ACTION );
+		setId( IInternalCDebugUIConstants.ACTION_BREAKPOINT_PROPERTIES );
 	}
-	
-	/*
-	 * @see org.eclipse.cdt.dsf.debug.internal.ui.disassembly.actions.AbstractDisassemblyAction#run()
+
+	/* (non-Javadoc)
+	 * @see Action#run()
 	 */
 	@Override
 	public void run() {
-		if ( fBreakpoint != null ) {
-		    final ISelection debugContext = getDebugContext();
-		    
+        if ( fBreakpoint != null ) {
+            final ISelection debugContext = DebugUITools.getDebugContextForPart(getTargetPart());
             CBreakpointPropertyDialogAction propertiesAction = new CBreakpointPropertyDialogAction(
-                getDisassemblyPart().getSite(), 
+                getTargetPart().getSite(), 
                 new ISelectionProvider() {
                     @Override
                     public ISelection getSelection() {
@@ -70,26 +76,21 @@ public class BreakpointPropertiesRulerAction extends AbstractDisassemblyBreakpoi
                 );
             propertiesAction.run();
             propertiesAction.dispose();
-		}
+        }
 	}
 
-	/*
+	/* (non-Javadoc)
 	 * @see IUpdate#update()
 	 */
 	@Override
 	public void update() {
-	    IBreakpoint breakpoint= getBreakpoint();
-	    
-	    if (breakpoint instanceof ICBreakpoint) {
-	        fBreakpoint = (ICBreakpoint)breakpoint;
-	    } else {
-	        fBreakpoint = null;
-	    }
-		setEnabled( fBreakpoint != null );
+        IBreakpoint breakpoint= getBreakpoint();
+        
+        if (breakpoint instanceof ICBreakpoint) {
+            fBreakpoint = (ICBreakpoint)breakpoint;
+        } else {
+            fBreakpoint = null;
+        }
+        setEnabled( fBreakpoint != null );
 	}
-	
-	private ISelection getDebugContext() {
-	    return DebugUITools.getDebugContextManager().getContextService(getDisassemblyPart().getSite().getWorkbenchWindow()).getActiveContext();
-	}
-
 }

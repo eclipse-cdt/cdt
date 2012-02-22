@@ -29,8 +29,6 @@ import com.ibm.icu.text.MessageFormat;
  */
 public class CLineTracepoint extends AbstractTracepoint implements ICTracepoint, ICLineBreakpoint2 {
 
-	private static final String C_LINE_TRACEPOINT_MARKER = "org.eclipse.cdt.debug.core.cLineTracepointMarker"; //$NON-NLS-1$
-
 	/**
 	 * Constructor for CLineTracepoint.
 	 */
@@ -41,16 +39,14 @@ public class CLineTracepoint extends AbstractTracepoint implements ICTracepoint,
 	 * Constructor for CLineTracepoint.
 	 */
 	public CLineTracepoint( IResource resource, Map<String, Object> attributes, boolean add ) throws CoreException {
-		super( resource, getMarkerType(), attributes, add );
+		super( resource, attributes, add );
 	}
 
-	/**
-	 * Returns the type of marker associated with this type of breakpoints
-	 */
-	public static String getMarkerType() {
-		return C_LINE_TRACEPOINT_MARKER;
+	@Override
+	public String getMarkerType() {
+	    return C_LINE_TRACEPOINT_MARKER;
 	}
-
+	
     @Override
     public synchronized int decrementInstallCount() throws CoreException {
         int count = super.decrementInstallCount();

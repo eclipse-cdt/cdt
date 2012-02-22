@@ -8,7 +8,7 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.debug.internal.ui.propertypages; 
+package org.eclipse.cdt.debug.internal.ui.breakpoints; 
 
 import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
@@ -48,7 +48,7 @@ public class CBreakpointFilteringPage extends PropertyPage {
 	    ICBreakpoint bp = getBreakpoint();
 	    if (bp != null) {
 	        try {
-    	        return (ICBreakpointFilterExtension)bp.getExtension(
+    	        return bp.getExtension(
     	            CDIDebugModel.getPluginIdentifier(), ICBreakpointFilterExtension.class);
 	        } catch (CoreException e) {}
 	    }

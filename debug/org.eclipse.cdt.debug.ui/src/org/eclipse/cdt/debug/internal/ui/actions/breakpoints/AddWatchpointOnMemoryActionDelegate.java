@@ -8,7 +8,7 @@
  * Contributors:
  *     Nokia - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.debug.internal.ui.actions;
+package org.eclipse.cdt.debug.internal.ui.actions.breakpoints;
 
 
 import java.math.BigInteger;

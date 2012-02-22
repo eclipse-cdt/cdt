@@ -9,10 +9,11 @@
  * QNX Software Systems - Initial API and implementation
  * Anton Leherbauer (Wind River Systems) - bug 183397
  *******************************************************************************/
-package org.eclipse.cdt.debug.internal.ui.actions;
+package org.eclipse.cdt.debug.internal.ui.actions.breakpoints;
 
 import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
 import org.eclipse.cdt.debug.internal.ui.IInternalCDebugUIConstants;
+import org.eclipse.cdt.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;

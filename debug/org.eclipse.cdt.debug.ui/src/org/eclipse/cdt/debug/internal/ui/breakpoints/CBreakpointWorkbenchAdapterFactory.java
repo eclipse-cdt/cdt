@@ -8,11 +8,12 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.debug.internal.ui; 
+package org.eclipse.cdt.debug.internal.ui.breakpoints; 
 
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint;
+import org.eclipse.cdt.debug.internal.ui.CDebugUIMessages;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.model.WorkbenchAdapter;
@@ -26,7 +27,7 @@ public class CBreakpointWorkbenchAdapterFactory implements IAdapterFactory {
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
 	 */
 	@Override
-	public Object getAdapter( Object adaptableObject, Class adapterType ) {
+	public Object getAdapter( Object adaptableObject, @SuppressWarnings("rawtypes") Class adapterType ) {
 		if ( adapterType != IWorkbenchAdapter.class || !(adaptableObject instanceof ICBreakpoint) ) {
 			return null;
 		}
@@ -48,7 +49,8 @@ public class CBreakpointWorkbenchAdapterFactory implements IAdapterFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
 	 */
-	@Override
+	@SuppressWarnings("rawtypes")
+    @Override
 	public Class[] getAdapterList() {
 		return new Class[] { IWorkbenchAdapter.class };
 	}

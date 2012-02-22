@@ -10,9 +10,10 @@
  * QNX Software Systems - Initial API and implementation
  * QNX Software Systems - catchpoints - bug 226689
  *******************************************************************************/
-package org.eclipse.cdt.debug.internal.ui.actions;
+package org.eclipse.cdt.debug.internal.ui.actions.breakpoints;
 
 import org.eclipse.cdt.debug.core.CDIDebugModel;
+import org.eclipse.cdt.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.cdt.debug.internal.ui.dialogs.AddEventBreakpointDialog;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.debug.ui.UIMessages;

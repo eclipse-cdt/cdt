@@ -9,7 +9,7 @@
  *     Patrick Chuong (Texas Instruments) - 
  *     	Update CDT ToggleBreakpointTargetFactory enablement (340177)
  *****************************************************************/
-package org.eclipse.cdt.debug.internal.ui;
+package org.eclipse.cdt.debug.internal.ui.breakpoints;
 
 import java.util.List;
 

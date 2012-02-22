@@ -14,24 +14,15 @@ package org.eclipse.cdt.debug.internal.core.breakpoints;
 
 import java.util.Map;
 
+import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.model.ICEventBreakpoint;
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugException;
 
 public class CEventBreakpoint extends CBreakpoint implements ICEventBreakpoint {
 
-	private static final String C_EVENTBREAKPOINT_MARKER_TYPE = "org.eclipse.cdt.debug.core.cEventBreakpointMarker"; //$NON-NLS-1$;
-
 	public CEventBreakpoint() {
-
-	}
-
-	public static String getMarkerType() {
-		return C_EVENTBREAKPOINT_MARKER_TYPE;
 	}
 
 	public CEventBreakpoint(IResource resource, Map<String, Object> attributes, boolean add) throws CoreException {
@@ -39,29 +30,14 @@ public class CEventBreakpoint extends CBreakpoint implements ICEventBreakpoint {
 		// event breakpoint must set non null EVENT_TYPE_ID property to be valid
 		if (attributes.get(EVENT_TYPE_ID) == null)
 			throw new IllegalArgumentException();
-		setBreakpointMarker(resource, getMarkerType(), attributes, add);
-
+		CDIDebugModel.createBreakpointMarker(this, resource, attributes, add);
 	}
 
-	private void setBreakpointMarker(final IResource resource, final String markerType,
-			final Map<String, Object> attributes, final boolean add) throws DebugException {
-		IWorkspaceRunnable wr = new IWorkspaceRunnable() {
-
-			@Override
-			public void run(IProgressMonitor monitor) throws CoreException {
-				// create the marker
-				setMarker(resource.createMarker(markerType));
-				// set attributes
-				ensureMarker().setAttributes(attributes);
-				// set the marker message
-				setAttribute(IMarker.MESSAGE, getMarkerMessage());
-				// add to breakpoint manager if requested
-				register(add);
-			}
-		};
-		run(wr);
+	@Override
+	public String getMarkerType() {
+	    return C_EVENT_BREAKPOINT_MARKER;
 	}
-
+	
 	@Override
 	protected String getMarkerMessage() throws CoreException {
 		// default message, overridden by label provider, which would take care of translation

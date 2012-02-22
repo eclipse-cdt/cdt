@@ -24,8 +24,6 @@ import com.ibm.icu.text.MessageFormat;
  */
 public class CAddressBreakpoint extends AbstractLineBreakpoint implements ICAddressBreakpoint {
 
-	private static final String C_ADDRESS_BREAKPOINT = "org.eclipse.cdt.debug.core.cAddressBreakpointMarker"; //$NON-NLS-1$
-
 	/**
 	 * Constructor for CAddressBreakpoint.
 	 */
@@ -36,14 +34,14 @@ public class CAddressBreakpoint extends AbstractLineBreakpoint implements ICAddr
 	 * Constructor for CAddressBreakpoint.
 	 */
 	public CAddressBreakpoint( IResource resource, Map<String, Object> attributes, boolean add ) throws CoreException {
-		super( resource, getMarkerType(), attributes, add );
+		super( resource, attributes, add );
 	}
 
 	/**
 	 * Returns the type of marker associated with this type of breakpoints
 	 */
-	public static String getMarkerType() {
-		return C_ADDRESS_BREAKPOINT;
+	public String getMarkerType() {
+		return C_ADDRESS_BREAKPOINT_MARKER;
 	}
 
 	/*

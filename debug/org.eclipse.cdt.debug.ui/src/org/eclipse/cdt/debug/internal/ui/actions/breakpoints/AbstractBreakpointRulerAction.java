@@ -9,27 +9,17 @@
  * QNX Software Systems - Initial API and implementation
  * Anton Leherbauer (Wind River Systems) - bug 183397
  *******************************************************************************/
-package org.eclipse.cdt.debug.internal.ui.actions;
+package org.eclipse.cdt.debug.internal.ui.actions.breakpoints;
 
-import java.util.Iterator;
-
-import org.eclipse.core.resources.IMarker;
+import org.eclipse.cdt.debug.internal.ui.CDebugUIUtils;
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.ui.actions.RulerBreakpointAction;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.Position;
-import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.IUpdate;
-import org.eclipse.ui.texteditor.SimpleMarkerAnnotation;
 
 /**
  * Abstract base implementation of the breakpoint ruler actions.
@@ -61,33 +51,11 @@ public abstract class AbstractBreakpointRulerAction extends Action implements IU
 	 * @return breakpoint associated with activity in the ruler or <code>null</code>
 	 */
 	protected IBreakpoint getBreakpoint() {
-		IAnnotationModel annotationModel = getAnnotationModel();
-		IDocument document = getDocument();
-		if (annotationModel != null) {
-			Iterator<?> iterator = annotationModel.getAnnotationIterator();
-			while (iterator.hasNext()) {
-				Object object = iterator.next();
-				if (object instanceof SimpleMarkerAnnotation) {
-					SimpleMarkerAnnotation markerAnnotation = (SimpleMarkerAnnotation) object;
-					IMarker marker = markerAnnotation.getMarker();
-					try {
-						if (marker.isSubtypeOf(IBreakpoint.BREAKPOINT_MARKER)) {
-							Position position = annotationModel.getPosition(markerAnnotation);
-							int line = document.getLineOfOffset(position.getOffset());
-							if (line == fRulerInfo.getLineOfLastMouseButtonActivity()) {
-								IBreakpoint breakpoint = DebugPlugin.getDefault().getBreakpointManager().getBreakpoint(marker);
-								if (breakpoint != null) {
-									return breakpoint;
-								}
-							}
-						}
-					} catch (CoreException e) {
-					} catch (BadLocationException e) {
-					}
-				}
-			}
-		}
-		return null;
+	    IWorkbenchPart targetPart = getTargetPart();
+	    if (targetPart instanceof ITextEditor) {
+	        return CDebugUIUtils.getBreakpointFromEditor((ITextEditor)targetPart, getVerticalRulerInfo());
+	    }
+	    return null;
 	}
 	
 	/**
@@ -108,25 +76,4 @@ public abstract class AbstractBreakpointRulerAction extends Action implements IU
 		return fRulerInfo;
 	}
 
-	private IDocument getDocument() {
-		IWorkbenchPart targetPart = getTargetPart();
-		if ( targetPart instanceof ITextEditor ) {
-			ITextEditor textEditor = (ITextEditor)targetPart; 
-			IDocumentProvider provider = textEditor.getDocumentProvider();
-			if ( provider != null )
-				return provider.getDocument( textEditor.getEditorInput() );
-		}
-		return null;
-	}
-
-	private IAnnotationModel getAnnotationModel() {
-		IWorkbenchPart targetPart = getTargetPart();
-		if ( targetPart instanceof ITextEditor ) {
-			ITextEditor textEditor = (ITextEditor)targetPart; 
-			IDocumentProvider provider = textEditor.getDocumentProvider();
-			if ( provider != null )
-				return provider.getAnnotationModel( textEditor.getEditorInput() );
-		}
-		return null;
-	}
 }

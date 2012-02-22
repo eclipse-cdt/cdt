@@ -425,17 +425,24 @@
          <action
                label="%BreakpointProperties.label"
                helpContextId="breakpoint_properties_action_context"
-               class="org.eclipse.cdt.debug.internal.ui.actions.CBreakpointPropertiesRulerActionDelegate"
+               class="org.eclipse.cdt.debug.internal.ui.actions.breakpoints.CBreakpointPropertiesRulerActionDelegate"
                menubarPath="debug"
                id="org.eclipse.cdt.debug.internal.ui.actions.CBreakpointPropertiesRulerActionDelegate">
          </action>
          <action
                label="%EnableBreakpoint.label"
                helpContextId="enable_disable_breakpoint_action_context"
-               class="org.eclipse.cdt.debug.internal.ui.actions.EnableDisableBreakpointRulerActionDelegate"
+               class="org.eclipse.debug.ui.actions.RulerEnableDisableBreakpointActionDelegate"
                menubarPath="debug"
                id="org.eclipse.cdt.debug.internal.ui.actions.EnableDisableBreakpointRulerActionDelegate">
          </action>
+         <action
+               label="%AddBreakpointInteractive.label"
+               helpContextId="add_breakpoint_interactive_action_context"
+               class="org.eclipse.cdt.debug.internal.ui.actions.breakpoints.CAddBreakpointInteractiveRulerActionDelegate"
+               menubarPath="debug"
+               id="org.eclipse.debug.ui.actions.RulerCreateBreakpointInteractiveAction">
+         </action>         
          <action
                label="%AddBreakpoint.label"
                helpContextId="manage_breakpoint_action_context"
@@ -496,17 +503,24 @@
          <action
                label="%BreakpointProperties.label"
                helpContextId="breakpoint_properties_action_context"
-               class="org.eclipse.cdt.debug.internal.ui.actions.CBreakpointPropertiesRulerActionDelegate"
+               class="org.eclipse.cdt.debug.internal.ui.actions.breakpoints.CBreakpointPropertiesRulerActionDelegate"
                menubarPath="debug"
                id="org.eclipse.cdt.debug.internal.ui.actions.CBreakpointPropertiesRulerActionDelegate">
          </action>
          <action
                label="%EnableBreakpoint.label"
                helpContextId="enable_disable_breakpoint_action_context"
-               class="org.eclipse.cdt.debug.internal.ui.actions.EnableDisableBreakpointRulerActionDelegate"
+               class="org.eclipse.debug.ui.actions.RulerEnableDisableBreakpointActionDelegate"
                menubarPath="debug"
                id="org.eclipse.cdt.debug.internal.ui.actions.EnableDisableBreakpointRulerActionDelegate">
          </action>
+         <action
+               label="%AddBreakpointInteractive.label"
+               helpContextId="create_breakpoint_interactive_action_context"
+               class="org.eclipse.cdt.debug.internal.ui.actions.breakpoints.CAddBreakpointInteractiveRulerActionDelegate"
+               menubarPath="debug"
+               id="org.eclipse.debug.ui.actions.RulerCreateBreakpointInteractiveAction">
+         </action>         
          <action
                label="%AddBreakpoint.label"
                helpContextId="manage_breakpoint_action_context"
@@ -605,7 +619,7 @@
                icon="icons/elcl16/function_brkpt_co.gif"
                helpContextId="manage_function_breakpoint_action_context"
                tooltip="%ManageFunctionBreakpointAction.tooltip"
-               class="org.eclipse.debug.ui.actions.ToggleMethodBreakpointActionDelegate"
+               class="org.eclipse.cdt.debug.internal.ui.actions.breakpoints.CToggleMethodBreakpointActionDelegate"
                menubarPath="additions"
                enablesFor="1"
                id="org.eclipse.cdt.debug.ui.actions.function.ToggleMethodBreakpointAction">
@@ -619,7 +633,7 @@
                icon="icons/elcl16/function_brkpt_co.gif"
                helpContextId="manage_function_breakpoint_action_context"
                tooltip="%ManageFunctionBreakpointAction.tooltip"
-               class="org.eclipse.debug.ui.actions.ToggleMethodBreakpointActionDelegate"
+               class="org.eclipse.cdt.debug.internal.ui.actions.breakpoints.CToggleMethodBreakpointActionDelegate"
                menubarPath="additions"
                enablesFor="1"
                id="org.eclipse.cdt.debug.ui.actions.method.ToggleMethodBreakpointAction">
@@ -629,7 +643,7 @@
             objectClass="org.eclipse.cdt.debug.internal.core.ICWatchpointTarget"
             id="org.eclipse.cdt.debug.ui.WatchpointActions">
          <action
-               class="org.eclipse.cdt.debug.internal.ui.actions.AddWatchpointOnVariableActionDelegate"
+               class="org.eclipse.cdt.debug.internal.ui.actions.breakpoints.AddWatchpointOnVariableActionDelegate"
                enablesFor="1"
                icon="icons/elcl16/watchpoint_co.gif"
                id="org.eclipse.cdt.debug.internal.ui.actions.AddWatchpointOnVariableActionDelegate"
@@ -854,7 +868,7 @@
             id="org.eclipse.debug.ui.MemoryView.RenderingViewPane.popupMenu.1"
             targetID="org.eclipse.debug.ui.MemoryView.RenderingViewPane.1">
          <action
-               class="org.eclipse.cdt.debug.internal.ui.actions.AddWatchpointOnMemoryActionDelegate"
+               class="org.eclipse.cdt.debug.internal.ui.actions.breakpoints.AddWatchpointOnMemoryActionDelegate"
                enablesFor="1"
                icon="icons/elcl16/watchpoint_co.gif"
                id="org.eclipse.cdt.debug.internal.ui.actions.AddWatchpointOnMemoryActionDelegate.1"
@@ -867,7 +881,7 @@
             id="org.eclipse.debug.ui.MemoryView.RenderingViewPane.popupMenu.2"
             targetID="org.eclipse.debug.ui.MemoryView.RenderingViewPane.2">
          <action
-               class="org.eclipse.cdt.debug.internal.ui.actions.AddWatchpointOnMemoryActionDelegate"
+               class="org.eclipse.cdt.debug.internal.ui.actions.breakpoints.AddWatchpointOnMemoryActionDelegate"
                enablesFor="1"
                icon="icons/elcl16/watchpoint_co.gif"
                id="org.eclipse.cdt.debug.internal.ui.actions.AddWatchpointOnMemoryActionDelegate.2"
@@ -946,7 +960,7 @@
             </enablement>
          </action>
          <action
-               class="org.eclipse.cdt.debug.internal.ui.actions.AddWatchpointActionDelegate"
+               class="org.eclipse.cdt.debug.internal.ui.actions.breakpoints.AddWatchpointActionDelegate"
                icon="icons/elcl16/watchpoint_co.gif"
                id="org.eclipse.cdt.debug.ui.addWatchpoint"
                label="%AddWatchpoint.label"
@@ -955,7 +969,7 @@
                helpContextId="add_watchpoint_action_context"
                tooltip="%AddWatchpoint.tooltip"/>
          <action
-               class="org.eclipse.cdt.debug.internal.ui.actions.AddEventBreakpointActionDelegate"
+               class="org.eclipse.cdt.debug.internal.ui.actions.breakpoints.AddEventBreakpointActionDelegate"
                icon="icons/obj16/eventbreakpoint_obj.gif"
                id="org.eclipse.cdt.debug.internal.ui.actions.AddEventBreakpointActionDelegate"
                label="%AddEventBreakpoint.label"
@@ -1172,18 +1186,27 @@
    <extension
          point="org.eclipse.ui.propertyPages">
       <page
-            class="org.eclipse.cdt.debug.internal.ui.propertypages.CBreakpointPropertyPage"
+            class="org.eclipse.cdt.debug.internal.ui.breakpoints.CBreakpointPropertyPage"
             id="org.eclipse.cdt.debug.ui.propertypages.breakpoint.common"
             name="%CommonBreakpointPage.label">
          <enabledWhen>
-            <and>   
-               <adapt type="org.eclipse.cdt.debug.core.model.ICBreakpoint">
-               </adapt>
-               <not>   
-                  <adapt type="org.eclipse.cdt.debug.core.model.ICTracepoint">
+            <or>
+               <and>   
+                  <adapt type="org.eclipse.cdt.debug.core.model.ICBreakpoint">
                   </adapt>
-               </not>  
-            </and>
+                  <not>   
+                     <adapt type="org.eclipse.cdt.debug.core.model.ICTracepoint">
+                     </adapt>
+                  </not>
+                 
+               </and>
+               <and>
+                  <test property="org.eclipse.cdt.debug.ui.createBreakpointAdapt" value="org.eclipse.cdt.debug.core.model.ICBreakpoint" />
+                  <not>   
+                     <test property="org.eclipse.cdt.debug.ui.createBreakpointAdapt" value="org.eclipse.cdt.debug.core.model.ICTracepoint"/>
+                  </not>
+               </and>
+            </or>
          </enabledWhen>
       </page>
       <page
@@ -1201,7 +1224,7 @@
             </and>
          </enabledWhen>
       </page>
-      <page class="org.eclipse.cdt.debug.internal.ui.propertypages.CBreakpointFilteringPage"
+      <page class="org.eclipse.cdt.debug.internal.ui.breakpoints.CBreakpointFilteringPage"
             id="org.eclipse.cdt.debug.ui.propertypages.breakpoint.filtering"
             name="%FilteringBreakpointPage.label">
          <filter name="debugModelId" value="org.eclipse.cdt.debug.core"/>
@@ -1296,7 +1319,7 @@
    <extension
          point="org.eclipse.ui.editors.markerAnnotationSpecification">
       <specification
-            annotationImageProvider="org.eclipse.cdt.debug.internal.ui.BreakpointImageProvider"
+            annotationImageProvider="org.eclipse.cdt.debug.internal.ui.breakpoints.BreakpointImageProvider"
             annotationType="org.eclipse.cdt.debug.core.breakpoint"
             colorPreferenceKey="breakpointIndicationColor"
             colorPreferenceValue="0,0,255"
@@ -1340,7 +1363,7 @@
          <adapter type="org.eclipse.cdt.debug.internal.ui.actions.IMoveToLineTarget"/>
       </factory>
       <factory
-            class="org.eclipse.cdt.debug.internal.ui.CBreakpointWorkbenchAdapterFactory"
+            class="org.eclipse.cdt.debug.internal.ui.breakpoints.CBreakpointWorkbenchAdapterFactory"
             adaptableType="org.eclipse.cdt.debug.core.model.ICBreakpoint">
          <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
       </factory>
@@ -1766,14 +1789,14 @@
      <extension
            point="org.eclipse.core.expressions.propertyTesters">
         <propertyTester
-              class="org.eclipse.cdt.debug.internal.ui.ToggleCBreakpointTester"
+              class="org.eclipse.cdt.debug.internal.ui.breakpoints.ToggleCBreakpointTester"
               id="org.eclipse.cdt.debug.ui.editorToggleBreakpointTester"
               namespace="org.eclipse.cdt.debug.ui"
               properties="isCEditorSupportsCBreakpoint,isAsmEditorSupportsCBreakpoint,isDisassemblyEditorSupportsCBreakpoint"
               type="org.eclipse.ui.IWorkbenchPart">
         </propertyTester>
         <propertyTester
-              class="org.eclipse.cdt.debug.internal.ui.ToggleCBreakpointTester"
+              class="org.eclipse.cdt.debug.internal.ui.breakpoints.ToggleCBreakpointTester"
               id="org.eclipse.cdt.debug.ui.declarationToggleBreakpointTester"
               namespace="org.eclipse.cdt.debug.ui"
               properties="isCDeclarationSupportsCBreakpoint"
@@ -1784,7 +1807,7 @@
    <extension point="org.eclipse.debug.ui.toggleBreakpointsTargetFactories">
       <toggleTargetFactory
             id="org.eclipse.cdt.debug.ui.ToggleCBreakpointsTargetFactory"
-            class="org.eclipse.cdt.debug.internal.ui.actions.ToggleCBreakpointsTargetFactory">
+            class="org.eclipse.cdt.debug.internal.ui.actions.breakpoints.ToggleCBreakpointsTargetFactory">
             <enablement>
             <!-- Enable the breakpoint toggle for CDT's editors and model elements -->
             <or>
@@ -1802,7 +1825,7 @@
       </toggleTargetFactory>
       <toggleTargetFactory
             id="org.eclipse.cdt.debug.ui.ToggleCTracepointsTargetFactory"
-            class="org.eclipse.cdt.debug.internal.ui.actions.ToggleCTracepointsTargetFactory">
+            class="org.eclipse.cdt.debug.internal.ui.actions.breakpoints.ToggleCTracepointsTargetFactory">
             <enablement>
             <!-- Enable the breakpoint toggle for CDT's editors and model elements -->
             <and>
@@ -2093,7 +2116,7 @@
        point="org.eclipse.ui.commands">
     <command
           categoryId="org.eclipse.debug.ui.category.run"
-          defaultHandler="org.eclipse.cdt.debug.internal.ui.actions.CBreakpointPropertiesHandler"
+          defaultHandler="org.eclipse.cdt.debug.internal.ui.actions.breakpoints.CBreakpointPropertiesHandler"
           description="%BreakpointPropertiesCommand.description"
           helpContextId="breakpoint_properties_action_context"
           id="org.eclipse.cdt.debug.command.breakpointProperties"
@@ -2534,5 +2557,15 @@
         </activeWhen>
     </handler>
     </extension>
+  <extension
+        point="org.eclipse.core.expressions.propertyTesters">
+     <propertyTester
+           class="org.eclipse.cdt.debug.internal.ui.breakpoints.CreateBreakpointTester"
+           id="org.eclipse.cdt.debug.ui.CreateBreakpointTester"
+           namespace="org.eclipse.cdt.debug.ui"
+           properties="createBreakpointAdapt"
+           type="org.eclipse.cdt.debug.internal.ui.breakpoints.CBreakpointContext">
+     </propertyTester>
+  </extension>
     
 </plugin>

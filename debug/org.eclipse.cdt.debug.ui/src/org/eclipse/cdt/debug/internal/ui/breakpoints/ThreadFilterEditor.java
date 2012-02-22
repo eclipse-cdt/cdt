@@ -8,7 +8,7 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.debug.internal.ui.propertypages; 
+package org.eclipse.cdt.debug.internal.ui.breakpoints; 
 
 import java.util.ArrayList;
 import java.util.List;
@@ -149,7 +149,7 @@ public class ThreadFilterEditor {
 				}
 			}
 			if ( parent instanceof ILaunchManager ) {
-				List children = new ArrayList();
+				List<Object> children = new ArrayList<Object>();
 				ILaunch[] launches = ((ILaunchManager)parent).getLaunches();
 				IDebugTarget[] targets;
 				ICDebugTarget target;
@@ -251,7 +251,7 @@ public class ThreadFilterEditor {
 
 	private void createThreadViewer( Composite parent ) {
 		Label label = new Label( parent, SWT.NONE );
-		label.setText( PropertyPageMessages.getString( "ThreadFilterEditor.0" ) ); //$NON-NLS-1$
+		label.setText( BreakpointsMessages.getString( "ThreadFilterEditor.0" ) ); //$NON-NLS-1$
 		label.setFont( parent.getFont() );
 		label.setLayoutData( new GridData() );
 		GridData data = new GridData( GridData.FILL_BOTH );
@@ -338,11 +338,11 @@ public class ThreadFilterEditor {
 
 	private ICThread[] getTargetThreadFilters( ICDebugTarget target ) {
 		Object[] threads = ((ITreeContentProvider)getThreadViewer().getContentProvider()).getChildren( target );
-		ArrayList list = new ArrayList( threads.length );
+		ArrayList<ICThread> list = new ArrayList<ICThread>( threads.length );
 		for ( int i = 0; i < threads.length; ++i ) {
 			if ( getThreadViewer().getChecked( threads[i] ) )
-				list.add( threads[i] );
+				list.add( (ICThread)threads[i] );
 		}
-		return (ICThread[])list.toArray( new ICThread[list.size()] );
+		return list.toArray( new ICThread[list.size()] );
 	}
 }

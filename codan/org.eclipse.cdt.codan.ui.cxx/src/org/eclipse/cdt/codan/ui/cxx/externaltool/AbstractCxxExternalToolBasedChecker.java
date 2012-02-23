@@ -17,6 +17,7 @@ import org.eclipse.cdt.codan.core.externaltool.ISupportedResourceVerifier;
 import org.eclipse.cdt.codan.core.externaltool.InvocationParametersProvider;
 import org.eclipse.cdt.codan.core.externaltool.SpaceDelimitedArgsSeparator;
 import org.eclipse.cdt.codan.core.model.AbstractExternalToolBasedChecker;
+import org.eclipse.cdt.codan.internal.ui.cxx.externaltool.CxxSupportedResourceVerifier;
 import org.eclipse.cdt.codan.ui.externaltool.CommandLauncher;
 
 /**

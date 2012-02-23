@@ -8,12 +8,12 @@
  * Contributors:
  *    Alex Ruiz  - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.codan.ui.cxx.externaltool;
+package org.eclipse.cdt.codan.internal.ui.cxx.externaltool;
 
 import static org.eclipse.cdt.codan.core.cxx.util.FileTypes.isCppFile;
 import static org.eclipse.cdt.codan.core.cxx.util.FileTypes.isHeaderFile;
 import static org.eclipse.cdt.codan.ui.CodanEditorUtility.isResourceOpenInEditor;
-import static org.eclipse.cdt.codan.ui.cxx.externaltool.CEditors.activeCEditor;
+import static org.eclipse.cdt.codan.ui.cxx.util.CEditors.activeCEditor;
 
 import org.eclipse.cdt.codan.core.externaltool.ISupportedResourceVerifier;
 import org.eclipse.core.resources.IResource;
@@ -24,7 +24,7 @@ import org.eclipse.ui.editors.text.TextEditor;
  *
  * @author alruiz@google.com (Alex Ruiz)
  */
-class CxxSupportedResourceVerifier implements ISupportedResourceVerifier {
+public class CxxSupportedResourceVerifier implements ISupportedResourceVerifier {
 	/**
 	 * Indicates whether the external tool is capable of processing the given
 	 * <code>{@link IResource}</code>.

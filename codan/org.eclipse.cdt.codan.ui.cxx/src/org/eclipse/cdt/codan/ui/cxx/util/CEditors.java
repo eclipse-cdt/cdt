@@ -8,7 +8,7 @@
  * Contributors:
  *    Alex Ruiz  - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.codan.ui.cxx.externaltool;
+package org.eclipse.cdt.codan.ui.cxx.util;
 
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.ui.IEditorPart;

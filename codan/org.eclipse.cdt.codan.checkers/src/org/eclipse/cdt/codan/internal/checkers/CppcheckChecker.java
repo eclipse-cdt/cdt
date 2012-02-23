@@ -24,7 +24,7 @@ import org.eclipse.cdt.codan.core.model.IProblemLocation;
 import org.eclipse.cdt.codan.ui.cxx.externaltool.AbstractCxxExternalToolBasedChecker;
 
 /**
- * Checker that invokes <a href="http://cppcheck.sourceforge.net/">Cppcheck</a> when a C/C++ is
+ * Checker that invokes <a href="http://cppcheck.sourceforge.net/">Cppcheck</a> when a C/C++ file is
  * saved.
  *
  * @author alruiz@google.com (Alex Ruiz)

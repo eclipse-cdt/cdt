@@ -90,13 +90,13 @@ abstract public class AbstractToggleBreakpointAdapter
     
     @Override
     public void toggleBreakpointsWithEvent(IWorkbenchPart part, ISelection selection, Event event) throws CoreException {
-        if((event.stateMask & SWT.MOD2) > 0) {
+        if(event != null && (event.stateMask & SWT.MOD2) > 0) {
             if (toggleBreakpointEnable(part)) {
                 return;
             }
         }
         else {
-            boolean interactive = (event.stateMask & SWT.MOD1) > 0;
+            boolean interactive = event != null && (event.stateMask & SWT.MOD1) > 0;
             updateBreakpoints(true, interactive, part, selection);
         }
     }

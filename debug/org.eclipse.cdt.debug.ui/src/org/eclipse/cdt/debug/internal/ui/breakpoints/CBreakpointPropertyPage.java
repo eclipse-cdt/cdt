@@ -368,12 +368,7 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 		fIgnoreCount = new BreakpointIntegerFieldEditor( ICBreakpoint.IGNORE_COUNT, BreakpointsMessages.getString( "CBreakpointPropertyPage.17" ), parent ); //$NON-NLS-1$
 		fIgnoreCount.setValidRange( 0, Integer.MAX_VALUE );
 		fIgnoreCountTextControl = fIgnoreCount.getTextControl( parent );
-		try {
-			fIgnoreCountTextControl.setEnabled( getBreakpoint().getIgnoreCount() >= 0 );
-		}
-		catch( CoreException ce ) {
-			CDebugUIPlugin.log( ce );
-		}
+		fIgnoreCountTextControl.setEnabled( getPreferenceStore().getInt(ICBreakpoint.IGNORE_COUNT) >= 0 );
 		addField( fIgnoreCount );
 	}
 
@@ -421,7 +416,7 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
         if (store instanceof CBreakpointPreferenceStore) {
             ((CBreakpointPreferenceStore)store).setCanceled(false);
         }
-        return super.performCancel();
+        return super.performOk();
     }
 
 	/* (non-Javadoc)

@@ -8,7 +8,7 @@
  * Contributors:
  *    Alex Ruiz  - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.codan.internal.checkers;
+package org.eclipse.cdt.codan.internal.checkers.externaltool;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -25,8 +25,10 @@ import org.eclipse.core.resources.IFile;
  * Parses the output of Cppcheck.
  *
  * @author alruiz@google.com (Alex Ruiz)
+ *
+ * @since 1.1
  */
-class CppcheckOutputParser extends AbstractOutputParser {
+public class CppcheckOutputParser extends AbstractOutputParser {
 	// the pattern for parsing the message is:
 	//
 	// [/src/HelloWorld.cpp:19]: (style) The scope of the variable 'i' can be reduced
@@ -43,7 +45,12 @@ class CppcheckOutputParser extends AbstractOutputParser {
 	private final InvocationParameters parameters;
 	private final IProblemDisplay problemDisplay;
 
-	CppcheckOutputParser(InvocationParameters parameters, IProblemDisplay problemDisplay) {
+	/**
+	 * Constructor.
+	 * @param parameters the parameters to pass to Cppcheck.
+	 * @param problemDisplay displays any problems reported by Cppcheck as markers.
+	 */
+	public CppcheckOutputParser(InvocationParameters parameters, IProblemDisplay problemDisplay) {
 		this.parameters = parameters;
 		this.problemDisplay = problemDisplay;
 	}

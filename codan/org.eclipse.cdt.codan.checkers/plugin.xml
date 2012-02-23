@@ -398,41 +398,5 @@
             name="%problem.name.ClassMembersInitialization">
          </problem>
       </checker>
-      <category
-            id="org.eclipse.cdt.codan.checkers.cppcheck"
-            name="%checker.name.Cppcheck">
-      </category>
-      <checker
-            class="org.eclipse.cdt.codan.internal.checkers.CppcheckChecker"
-            id="org.eclipse.cdt.codan.checkers.CppcheckChecker"
-            name="Cppcheck">
-         <problem
-               category="org.eclipse.cdt.codan.checkers.cppcheck"
-               defaultEnabled="false"
-               defaultSeverity="Error"
-               description="%problem.description.Cppcheck.Error"
-               id="org.eclipse.cdt.codan.checkers.cppcheck.error"
-               messagePattern="%problem.messagePattern.Cppcheck.all"
-               name="%problem.name.Cppcheck.Error">
-         </problem>
-         <problem
-               category="org.eclipse.cdt.codan.checkers.cppcheck"
-               defaultEnabled="false"
-               defaultSeverity="Warning"
-               description="%problem.description.Cppcheck.Warning"
-               id="org.eclipse.cdt.codan.checkers.cppcheck.warning"
-               messagePattern="%problem.messagePattern.Cppcheck.all"
-               name="%problem.name.Cppcheck.Warning">
-         </problem>
-         <problem
-               category="org.eclipse.cdt.codan.checkers.cppcheck"
-               defaultEnabled="false"
-               defaultSeverity="Warning"
-               description="%problem.description.Cppcheck.Syntax"
-               id="org.eclipse.cdt.codan.checkers.cppcheck.style"
-               messagePattern="%problem.messagePattern.Cppcheck.all"
-               name="%problem.name.Cppcheck.Syntax">
-         </problem>
-      </checker>
    </extension>
 </plugin>

@@ -8,7 +8,7 @@
  * Contributors:
  *    Alex Ruiz  - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.codan.internal.checkers;
+package org.eclipse.cdt.codan.internal.checkers.ui;
 
 import static java.util.Collections.singletonList;
 
@@ -21,6 +21,7 @@ import org.eclipse.cdt.codan.core.externaltool.AbstractOutputParser;
 import org.eclipse.cdt.codan.core.externaltool.ConfigurationSettings;
 import org.eclipse.cdt.codan.core.externaltool.InvocationParameters;
 import org.eclipse.cdt.codan.core.model.IProblemLocation;
+import org.eclipse.cdt.codan.internal.checkers.externaltool.CppcheckOutputParser;
 import org.eclipse.cdt.codan.ui.cxx.externaltool.AbstractCxxExternalToolBasedChecker;
 
 /**

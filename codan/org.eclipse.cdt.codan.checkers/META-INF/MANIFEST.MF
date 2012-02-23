@@ -8,11 +8,10 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.resources;bundle-version="3.5.0",
  org.eclipse.cdt.codan.core;bundle-version="1.0.0",
  org.eclipse.cdt.core;bundle-version="5.1.0",
- org.eclipse.cdt.codan.core.cxx;bundle-version="1.0.0",
- org.eclipse.cdt.codan.ui.cxx;bundle-version="3.0.0",
- org.eclipse.cdt.codan.ui;bundle-version="2.0.1"
+ org.eclipse.cdt.codan.core.cxx;bundle-version="1.0.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Vendor: %Bundle-Vendor
 Export-Package: org.eclipse.cdt.codan.checkers,
- org.eclipse.cdt.codan.internal.checkers;x-friends:="org.eclipse.cdt.codan.checkers.ui,org.eclipse.cdt.codan.core.test"
+ org.eclipse.cdt.codan.internal.checkers;x-friends:="org.eclipse.cdt.codan.checkers.ui,org.eclipse.cdt.codan.core.test",
+ org.eclipse.cdt.codan.internal.checkers.externaltool

@@ -13,10 +13,10 @@ package org.eclipse.cdt.codan.internal.core.externaltool;
 import java.io.File;
 import java.util.List;
 
+import org.eclipse.cdt.codan.core.externaltool.AbstractOutputParser;
 import org.eclipse.cdt.codan.core.externaltool.ConfigurationSettings;
 import org.eclipse.cdt.codan.core.externaltool.IArgsSeparator;
 import org.eclipse.cdt.codan.core.externaltool.ICommandLauncher;
-import org.eclipse.cdt.codan.core.externaltool.AbstractOutputParser;
 import org.eclipse.cdt.codan.core.externaltool.InvocationFailure;
 import org.eclipse.cdt.codan.core.externaltool.InvocationParameters;
 import org.eclipse.core.resources.IProject;
@@ -88,13 +88,12 @@ public class ExternalToolInvoker {
 
 	private String[] addFilePathToArgs(String actualFilePath, String[] configuredArgs) {
 		int argCount = configuredArgs.length;
-		// TODO (alruiz) use array copy.
 		String[] allArgs = new String[argCount + 1];
+		// alruiz: Arrays.copyOf leaves empty cells at the end. We need an empty cell at the
+		// beginning of the array.
+		System.arraycopy(configuredArgs, 0, allArgs, 1, argCount);
 		// add file to process as the first argument
 		allArgs[0] = actualFilePath;
-		for (int i = 0; i < argCount; i++) {
-			allArgs[i + 1] = configuredArgs[i];
-		}
 		return allArgs;
 	}
 

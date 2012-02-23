@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.core.externaltool;
 
+import static java.util.Arrays.asList;
 import static org.junit.Assert.assertArrayEquals;
 
 import java.io.File;
@@ -38,12 +39,10 @@ import org.eclipse.core.runtime.IPath;
  */
 @SuppressWarnings("nls")
 public class ExternalToolInvokerTest extends CodanTestCase {
-	private static final String EXTERNAL_TOOL_NAME = "TestTool";
-
-	private ConfigurationSettings configurationSettings;
+	private ConfigurationSettings settings;
 	private IArgsSeparator argsSeparator;
 	private List<AbstractOutputParser> parsers;
-	private CommandLauncherStub commandLauncher;
+	private CommandLauncherStub launcher;
 
 	private ExternalToolInvoker externalToolInvoker;
 
@@ -53,17 +52,16 @@ public class ExternalToolInvokerTest extends CodanTestCase {
 		createConfigurationSettings();
 		argsSeparator = new SpaceDelimitedArgsSeparator();
 		parsers = new ArrayList<AbstractOutputParser>();
-		commandLauncher = new CommandLauncherStub();
-		externalToolInvoker = new ExternalToolInvoker(commandLauncher);
+		launcher = new CommandLauncherStub();
+		externalToolInvoker = new ExternalToolInvoker(launcher);
 	}
 
 	private void createConfigurationSettings() {
-		configurationSettings = new ConfigurationSettings(EXTERNAL_TOOL_NAME, new File("testtool"),
-				"", false);
+		settings = new ConfigurationSettings("TestTool", new File("testtool"), "", false);
 		// Update current value of ConfigurationSettings from preferences.
 		MapProblemPreference preferences = createPreferences(new File("usr/local/testtool"),
 				"--debug=true --include=all", true);
-		configurationSettings.updateValuesFrom(preferences);
+		settings.updateValuesFrom(preferences);
 	}
 
 	private MapProblemPreference createPreferences(File path, String args,
@@ -71,8 +69,8 @@ public class ExternalToolInvokerTest extends CodanTestCase {
 		MapProblemPreference preferences = new MapProblemPreference();
 		preferences.addChildDescriptor(createPreference(PathSetting.KEY, path));
 		preferences.addChildDescriptor(createPreference(ArgsSetting.KEY, args));
-		preferences.addChildDescriptor(createPreference(ShouldDisplayOutputSetting.KEY,
-				shouldDisplayOutput));
+		preferences.addChildDescriptor(
+				createPreference(ShouldDisplayOutputSetting.KEY, shouldDisplayOutput));
 		return preferences;
 	}
 
@@ -93,15 +91,22 @@ public class ExternalToolInvokerTest extends CodanTestCase {
 		loadcode(getAboveComment());
 		InvocationParameters parameters = new InvocationParameters(currentIFile, currentIFile,
 				currentIFile.getLocation().toOSString(), cproject.getProject().getLocation());
-		externalToolInvoker.invoke(parameters, configurationSettings, argsSeparator, parsers);
-		commandLauncher.assertThatReceivedProject(cproject.getProject());
-		commandLauncher.assertThatReceivedExternalToolName(EXTERNAL_TOOL_NAME);
-		commandLauncher.assertThatReceivedExecutablePath(configurationSettings.getPath());
-		commandLauncher.assertThatReceivedArgs(configurationSettings.getArgs());
-		commandLauncher.assertThatReceivedWorkingDirectory(parameters.getWorkingDirectory());
-		commandLauncher.assertThatReceivedShouldDisplayOutput(
-				configurationSettings.getShouldDisplayOutput());
-		commandLauncher.assetThatReceivedOutputParsers(parsers);
+		externalToolInvoker.invoke(parameters, settings, argsSeparator, parsers);
+		launcher.assertThatReceivedProject(cproject.getProject());
+		launcher.assertThatReceivedExternalToolName(settings.getExternalToolName());
+		launcher.assertThatReceivedExecutablePath(settings.getPath());
+		launcher.assertThatReceivedArgs(expectedArgs(parameters));
+		launcher.assertThatReceivedWorkingDirectory(parameters.getWorkingDirectory());
+		launcher.assertThatReceivedShouldDisplayOutput(
+				settings.getShouldDisplayOutput());
+		launcher.assertThatReceivedOutputParsers(parsers);
+	}
+
+	private List<String> expectedArgs(InvocationParameters parameters) {
+		String[] originalArgs = settings.getArgs().getValue().split("\\s+");
+		List<String> expectedArgs = new ArrayList<String>(asList(originalArgs));
+		expectedArgs.add(0, parameters.getActualFilePath());
+		return expectedArgs;
 	}
 
 	private static class CommandLauncherStub implements ICommandLauncher {
@@ -140,9 +145,8 @@ public class ExternalToolInvokerTest extends CodanTestCase {
 			assertEquals(expectedPath, executablePath.toOSString());
 		}
 
-		void assertThatReceivedArgs(SingleConfigurationSetting<String> expected) {
-			String[] expectedArgs = expected.getValue().split("\\s+");
-			assertArrayEquals(expectedArgs, args);
+		void assertThatReceivedArgs(List<String> expected) {
+			assertArrayEquals(expected.toArray(), args);
 		}
 
 		void assertThatReceivedWorkingDirectory(IPath expected) {
@@ -153,7 +157,7 @@ public class ExternalToolInvokerTest extends CodanTestCase {
 			assertEquals(expected.getValue().booleanValue(), shouldDisplayOutput);
 		}
 
-		void assetThatReceivedOutputParsers(List<AbstractOutputParser> expected) {
+		void assertThatReceivedOutputParsers(List<AbstractOutputParser> expected) {
 			assertSame(expected, parsers);
 		}
 	}

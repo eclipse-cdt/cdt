@@ -7,12 +7,14 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  * 
  * Contributors: 
- * 		Martin Schwab & Thomas Kallenberg - initial API and implementation 
+ * 	   Martin Schwab & Thomas Kallenberg - initial API and implementation 
  ******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.togglefunction;
 
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
+
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 public class ToggleStrategyFactory {
 	
@@ -43,12 +45,10 @@ public class ToggleStrategyFactory {
 
 	private boolean isInClassSituation() {
 		return (context.getDeclaration() == null) && 
-			(ToggleNodeHelper.getAncestorOfType(context.getDefinition(), 
-					IASTCompositeTypeSpecifier.class) != null);
+			(CPPVisitor.findAncestorWithType(context.getDefinition(), IASTCompositeTypeSpecifier.class) != null);
 	}
 
 	private boolean isTemplateSituation() {
-		return (ToggleNodeHelper.getAncestorOfType(context.getDefinition(), 
-				ICPPASTTemplateDeclaration.class) != null);
+		return (CPPVisitor.findAncestorWithType(context.getDefinition(), ICPPASTTemplateDeclaration.class) != null);
 	}
 }

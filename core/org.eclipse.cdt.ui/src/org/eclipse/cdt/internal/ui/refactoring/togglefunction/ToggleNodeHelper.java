@@ -64,6 +64,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTQualifiedName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTemplateId;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTypeId;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.model.TranslationUnit;
 
 import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
@@ -460,16 +461,5 @@ public class ToggleNodeHelper extends NodeHelper {
 			comments += c.getRawSignature() + System.getProperty("line.separator"); //$NON-NLS-1$
 		}
 		return comments;
-	}
-
-	@SuppressWarnings("unchecked")
-	public static <T> T getAncestorOfType(IASTNode node, Class<?> T) {
-		while (node != null) {
-			if (T.isInstance(node)) {
-				return (T) node;
-			}
-			node = node.getParent();
-		}
-		return null;
 	}
 }

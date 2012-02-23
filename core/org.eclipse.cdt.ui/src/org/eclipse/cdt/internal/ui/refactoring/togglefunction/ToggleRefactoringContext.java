@@ -29,6 +29,8 @@ import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.ui.CUIPlugin;
 
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+
 import org.eclipse.cdt.internal.ui.refactoring.IndexToASTNameHelper;
 import org.eclipse.cdt.internal.ui.refactoring.utils.TranslationUnitHelper;
 
@@ -173,11 +175,11 @@ public class ToggleRefactoringContext {
 		if (node instanceof IASTSimpleDeclaration) {
 			return (IASTFunctionDeclarator) ((IASTSimpleDeclaration) node).getDeclarators()[0];
 		}
-		return ToggleNodeHelper.getAncestorOfType(node, IASTFunctionDeclarator.class);
+		return CPPVisitor.findAncestorWithType(node, IASTFunctionDeclarator.class);
 	}
 
 	private IASTFunctionDefinition findFunctionDefinition(IASTNode node) {
-		return ToggleNodeHelper.getAncestorOfType(node, IASTFunctionDefinition.class);
+		return CPPVisitor.findAncestorWithType(node, IASTFunctionDefinition.class);
 	}
 
 	public void setDefaultAnswer(boolean defaultAnswer) {

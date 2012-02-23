@@ -7,8 +7,8 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  * 
  * Contributors: 
- * 		Martin Schwab & Thomas Kallenberg - initial API and implementation
- *      Sergey Prigogin (Google)
+ * 	   Martin Schwab & Thomas Kallenberg - initial API and implementation
+ *     Sergey Prigogin (Google)
  ******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.togglefunction;
 
@@ -25,6 +25,8 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
+
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
  * Given a selection and a translation unit, this class finds a
@@ -104,6 +106,6 @@ public class DeclaratorFinder {
 	}
 
 	private boolean isPartOfAStatement(IASTNode node) {
-		return ToggleNodeHelper.getAncestorOfType(node, IASTStatement.class) != null;
+		return CPPVisitor.findAncestorWithType(node, IASTStatement.class) != null;
 	}
 }

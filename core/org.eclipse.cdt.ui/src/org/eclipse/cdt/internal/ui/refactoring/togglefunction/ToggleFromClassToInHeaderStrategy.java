@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  * 
  * Contributors: 
- * 		Martin Schwab & Thomas Kallenberg - initial API and implementation 
+ * 	   Martin Schwab & Thomas Kallenberg - initial API and implementation 
  ******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.togglefunction;
 
@@ -28,6 +28,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
 
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+
 import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
 
 public class ToggleFromClassToInHeaderStrategy implements IToggleRefactoringStrategy {
@@ -42,8 +44,7 @@ public class ToggleFromClassToInHeaderStrategy implements IToggleRefactoringStra
 	}
 
 	private boolean isInClass(IASTNode node) {
-		return ToggleNodeHelper.getAncestorOfType(node, 
-				ICPPASTCompositeTypeSpecifier.class) != null;
+		return CPPVisitor.findAncestorWithType(node, ICPPASTCompositeTypeSpecifier.class) != null;
 	}
 
 	@Override
@@ -79,8 +80,7 @@ public class ToggleFromClassToInHeaderStrategy implements IToggleRefactoringStra
 	}
 
 	private IASTNode getParentNamespace() {
-		IASTNode parentNamespace = ToggleNodeHelper.getAncestorOfType(
-				context.getDefinition(), ICPPASTNamespaceDefinition.class);
+		IASTNode parentNamespace = CPPVisitor.findAncestorWithType(context.getDefinition(), ICPPASTNamespaceDefinition.class);
 		if (parentNamespace == null)
 			parentNamespace = context.getDefinitionUnit();
 		return parentNamespace;

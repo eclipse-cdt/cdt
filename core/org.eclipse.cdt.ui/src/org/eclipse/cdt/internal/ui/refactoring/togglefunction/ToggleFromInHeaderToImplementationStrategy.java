@@ -51,6 +51,7 @@ import org.eclipse.cdt.core.dom.rewrite.ASTRewrite.CommentPosition;
 
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNamespaceDefinition;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTQualifiedName;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTLiteralNode;
 
 import org.eclipse.cdt.internal.ui.refactoring.Container;
@@ -261,7 +262,7 @@ public class ToggleFromInHeaderToImplementationStrategy implements IToggleRefact
 		if (toquery == null) {
 			toquery = context.getDefinition();
 		}
-		return ToggleNodeHelper.getAncestorOfType(toquery, ICPPASTNamespaceDefinition.class);
+		return CPPVisitor.findAncestorWithType(toquery, ICPPASTNamespaceDefinition.class);
 	}
 
 	private IASTNode findInsertionPoint(IASTNode insertionParent, IASTTranslationUnit unit) {

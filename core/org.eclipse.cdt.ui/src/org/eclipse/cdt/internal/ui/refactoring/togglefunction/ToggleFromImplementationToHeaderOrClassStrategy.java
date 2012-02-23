@@ -28,20 +28,19 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite.CommentPosition;
 
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTLiteralNode;
 
 import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
 import org.eclipse.cdt.internal.ui.refactoring.utils.CPPASTAllVisitor;
 
 public class ToggleFromImplementationToHeaderOrClassStrategy implements IToggleRefactoringStrategy {
-
 	private ToggleRefactoringContext context;
 	private TextEditGroup infoText;
 	private IASTTranslationUnit other_tu;
 	private ASTLiteralNode includenode;
 
-	public ToggleFromImplementationToHeaderOrClassStrategy(
-			ToggleRefactoringContext context) {
+	public ToggleFromImplementationToHeaderOrClassStrategy(ToggleRefactoringContext context) {
 		this.context = context;
 		this.infoText = new TextEditGroup(Messages.EditGroupName);
 	}
@@ -89,9 +88,8 @@ public class ToggleFromImplementationToHeaderOrClassStrategy implements IToggleR
 	private void addDefinitionToHeader(ModificationCollector modifications, List<IASTComment> leadingComments) {
 		ASTRewrite headerRewrite = modifications.rewriterForTranslationUnit(other_tu);
 		IASTFunctionDefinition newDefinition = ToggleNodeHelper.createFunctionSignatureWithEmptyBody(
-context
-				.getDefinition().getDeclSpecifier().copy(CopyStyle.withLocations), context.getDefinition()
-				.getDeclarator().copy(CopyStyle.withLocations),
+				context.getDefinition().getDeclSpecifier().copy(CopyStyle.withLocations),
+				context.getDefinition().getDeclarator().copy(CopyStyle.withLocations),
 				context.getDefinition().copy(CopyStyle.withLocations));
 		newDefinition.setParent(other_tu);
 		headerRewrite.insertBefore(other_tu.getTranslationUnit(), null, newDefinition, infoText);
@@ -105,8 +103,7 @@ context
 		ASTRewrite headerRewrite = modifications.rewriterForTranslationUnit(
 				context.getDeclarationUnit());
 		IASTFunctionDefinition newDefinition = ToggleNodeHelper.createInClassDefinition(
-				context.getDeclaration(), context.getDefinition(), 
-				context.getDeclarationUnit());
+				context.getDeclaration(), context.getDefinition(), context.getDeclarationUnit());
 		newDefinition.setParent(getParent());
 		restoreBody(headerRewrite, newDefinition, modifications);
 		headerRewrite.replace(context.getDeclaration().getParent(), newDefinition, infoText);
@@ -116,13 +113,12 @@ context
 	}
 
 	private IASTNode getParent() {
-		IASTNode parent = ToggleNodeHelper.getAncestorOfType(context.getDefinition(), 
+		IASTNode parent = CPPVisitor.findAncestorWithType(context.getDefinition(),
 				ICPPASTCompositeTypeSpecifier.class);
 		IASTNode parentnode = null;
 		if (parent != null) {
 			parentnode  = parent;
-		}
-		else {
+		} else {
 			parentnode =context.getDeclarationUnit();
 		}
 		return parentnode;
@@ -133,7 +129,8 @@ context
 		IASTFunctionDefinition oldDefinition = context.getDefinition();
 		newDefinition.setBody(oldDefinition.getBody().copy(CopyStyle.withLocations));
 		
-		if (newDefinition instanceof ICPPASTFunctionWithTryBlock && oldDefinition instanceof ICPPASTFunctionWithTryBlock) {
+		if (newDefinition instanceof ICPPASTFunctionWithTryBlock &&
+				oldDefinition instanceof ICPPASTFunctionWithTryBlock) {
 			ICPPASTFunctionWithTryBlock newTryDef = (ICPPASTFunctionWithTryBlock) newDefinition;
 			ICPPASTFunctionWithTryBlock oldTryDef = (ICPPASTFunctionWithTryBlock) oldDefinition;
 			for (ICPPASTCatchHandler handler : oldTryDef.getCatchHandlers()) {
@@ -161,12 +158,11 @@ context
 				}
 			}
 		});
-		
 	}
 
 	private void removeDefinitionFromImplementation(ASTRewrite implast) {
-		ICPPASTNamespaceDefinition ns = ToggleNodeHelper.getAncestorOfType(
-				context.getDefinition(), ICPPASTNamespaceDefinition.class);
+		ICPPASTNamespaceDefinition ns =
+				CPPVisitor.findAncestorWithType(context.getDefinition(), ICPPASTNamespaceDefinition.class);
 		if (ns != null && isSingleElementInNamespace(ns, context.getDefinition())) {
 			implast.remove(ns, infoText);
 		} else {

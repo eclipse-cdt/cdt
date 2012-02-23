@@ -400,7 +400,7 @@
       </checker>
       <category
             id="org.eclipse.cdt.codan.checkers.cppcheck"
-            name="Cppcheck Errors">
+            name="%checker.name.Cppcheck">
       </category>
       <checker
             class="org.eclipse.cdt.codan.internal.checkers.CppcheckChecker"
@@ -410,28 +410,28 @@
                category="org.eclipse.cdt.codan.checkers.cppcheck"
                defaultEnabled="false"
                defaultSeverity="Error"
-               description="Errors reported by Cppcheck (http://cppcheck.sourceforge.net/)"
+               description="%problem.description.Cppcheck.Error"
                id="org.eclipse.cdt.codan.checkers.cppcheck.error"
-               messagePattern="{0}"
-               name="Errors">
+               messagePattern="%problem.messagePattern.Cppcheck.all"
+               name="%problem.name.Cppcheck.Error">
          </problem>
          <problem
                category="org.eclipse.cdt.codan.checkers.cppcheck"
                defaultEnabled="false"
                defaultSeverity="Warning"
-               description="Warnings reported by Cppcheck (http://cppcheck.sourceforge.net/)"
+               description="%problem.description.Cppcheck.Warning"
                id="org.eclipse.cdt.codan.checkers.cppcheck.warning"
-               messagePattern="{0}"
-               name="Warnings">
+               messagePattern="%problem.messagePattern.Cppcheck.all"
+               name="%problem.name.Cppcheck.Warning">
          </problem>
          <problem
                category="org.eclipse.cdt.codan.checkers.cppcheck"
                defaultEnabled="false"
                defaultSeverity="Warning"
-               description="Style issues reported by Cppcheck (http://cppcheck.sourceforge.net/)"
+               description="%problem.description.Cppcheck.Syntax"
                id="org.eclipse.cdt.codan.checkers.cppcheck.style"
-               messagePattern="{0}"
-               name="Style Issues">
+               messagePattern="%problem.messagePattern.Cppcheck.all"
+               name="%problem.name.Cppcheck.Syntax">
          </problem>
       </checker>
    </extension>

@@ -19,13 +19,10 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTVisibilityLabel;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 
 /**
@@ -51,8 +48,8 @@ public class MethodContext {
 		this.type = type;
 	}
 
-	public void setMethodDeclarationName(IASTName tmpname) {
-		this.declarationName = tmpname;
+	public void setMethodDeclarationName(IASTName name) {
+		this.declarationName = name;
 	}
 
 	public IASTName getMethodDeclarationName() {
@@ -65,13 +62,6 @@ public class MethodContext {
 			return (IASTDeclaration) parent;
 		}
 		return null;
-	}
-	
-	public ICPPASTVisibilityLabel getMethodDeclarationASTVisibility() {
-		ICPPASTVisibilityLabel label = new CPPASTVisibilityLabel();
-		ICPPMember member = (ICPPMember) qname.resolveBinding();			
-		label.setVisibility(member.getVisibility());
-		return label;
 	}
 	
 	public Visibility getMethodDeclarationVisibility() {

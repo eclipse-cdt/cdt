@@ -15,12 +15,12 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
 
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.model.ICElement;
@@ -64,7 +64,7 @@ public class DefinitionFinderTest extends RefactoringTestBase {
 	}
 
 	@Override
-	protected Refactoring createRefactoring() {
+	protected CRefactoring2 createRefactoring() {
 		return new DummyRefactoring(getSelectedTranslationUnit(), getSelection(), getCProject());
 	}
 
@@ -82,13 +82,13 @@ public class DefinitionFinderTest extends RefactoringTestBase {
 	//void foo() {
 	//}
 	public void testFindFunctionDefinition() throws Exception {
-		CRefactoringContext refactoringContext = new CRefactoringContext((CRefactoring2) createRefactoring());
+		CRefactoringContext refactoringContext = new CRefactoringContext(createRefactoring());
 		try {
 			IASTTranslationUnit ast = refactoringContext.getAST(getSelectedTranslationUnit(), null);
 			for (IASTDeclaration declaration : ast.getDeclarations()) {
 				if (declaration instanceof IASTSimpleDeclaration) {
-					assertNotNull(DefinitionFinder.getDefinition((IASTSimpleDeclaration) declaration,
-							refactoringContext, NULL_PROGRESS_MONITOR));	
+					IASTName name = ((IASTSimpleDeclaration) declaration).getDeclarators()[0].getName();
+					assertNotNull(DefinitionFinder.getDefinition(name, refactoringContext, NULL_PROGRESS_MONITOR));	
 				}
 			}
 		} finally {

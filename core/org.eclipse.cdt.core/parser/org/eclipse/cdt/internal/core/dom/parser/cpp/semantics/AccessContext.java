@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Google, Inc and others.
+ * Copyright (c) 2009, 2012 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,6 +46,18 @@ public class AccessContext {
 		return new AccessContext(from).isAccessible(binding);
 	}
 
+	/**
+	 * Checks if a binding is accessible from a given name.
+	 * @param binding  A binding to check access for.
+	 * @param bindingVisibility visibility of the binding in the containing composite type.
+	 *     Used instead of calling {@link ICPPMember#getVisibility()}.
+	 * @param from A name corresponding to the binding.
+	 * @return <code>true</code> if the binding is accessible.
+	 */
+	public static boolean isAccessible(IBinding binding, int bindingVisibility, IASTName from) {
+		return new AccessContext(from).isAccessible(binding, bindingVisibility);
+	}
+
 	private final IASTName name;
 	/**
 	 * A chain of nested classes or/and a function that determine accessibility of private/protected members
@@ -72,6 +84,24 @@ public class AccessContext {
 	 * @return <code>true</code> if the binding is accessible.
 	 */
 	public boolean isAccessible(IBinding binding) {
+		int bindingVisibility;
+		if (binding instanceof ICPPMember) {
+			bindingVisibility = ((ICPPMember) binding).getVisibility();
+		} else {
+			// TODO(sprigogin): Handle visibility of nested types
+			bindingVisibility = v_public;
+		}
+		return isAccessible(binding, bindingVisibility);
+	}
+
+	/**
+	 * Checks if a binding is accessible in a given context.
+	 * @param binding A binding to check access for.
+	 * @param bindingVisibility visibility of the binding in the containing composite type.
+	 *     Used instead of calling {@link ICPPMember#getVisibility()}.
+	 * @return <code>true</code> if the binding is accessible.
+	 */
+	public boolean isAccessible(IBinding binding, int bindingVisibility) {
 		IBinding owner;
 		while ((owner = binding.getOwner()) instanceof ICompositeType &&
 				((ICompositeType) owner).isAnonymous()) {
@@ -87,7 +117,8 @@ public class AccessContext {
 		if (namingClass == null) {
 			return true;
 		}
-		return isAccessible(binding, (ICPPClassType) owner, namingClass, v_public, 0);
+		return isAccessible(binding, bindingVisibility, (ICPPClassType) owner, namingClass,
+				v_public, 0);
 	}
 
 	/**
@@ -111,42 +142,37 @@ public class AccessContext {
 		return true;
 	}
 
-	private boolean isAccessible(IBinding binding, ICPPClassType owner, ICPPClassType derivedClass,
-			int accessLevel, int depth) {
+	private boolean isAccessible(IBinding binding, int bindingVisibility, ICPPClassType owner,
+			ICPPClassType derivedClass, int accessLevel, int depth) {
 		if (depth > CPPSemantics.MAX_INHERITANCE_DEPTH)
 			return false;
 
 		accessLevel = getMemberAccessLevel(derivedClass, accessLevel);
 		if (owner.isSameType(derivedClass)) {
-			if (binding instanceof ICPPMember) {
-				return isAccessible(((ICPPMember) binding).getVisibility(), accessLevel);
-			} else {
-				// TODO(sprigogin): Handle visibility of nested types
-				return true;
-			}
-		} else {
-			ICPPBase[] bases = derivedClass.getBases();
-			if (bases != null) {
-				for (ICPPBase base : bases) {
-					IBinding baseBinding = base.getBaseClass();
-					if (baseBinding instanceof ICPPDeferredClassInstance) {
-						// Support content assist for members of deferred instances.
-						baseBinding= ((ICPPDeferredClassInstance) baseBinding).getTemplateDefinition();
-					}
-					if (!(baseBinding instanceof ICPPClassType)) {
-						continue;
-					}
-					if (!isAccessible(base.getVisibility(), accessLevel)) {
-						continue;
-					}
-					if (isAccessible(binding, owner, (ICPPClassType) baseBinding,
-							accessLevel == v_private ? v_protected : accessLevel, depth + 1)) {
-						return true;
-					}
+			return isAccessible(bindingVisibility, accessLevel);
+		}
+
+		ICPPBase[] bases = derivedClass.getBases();
+		if (bases != null) {
+			for (ICPPBase base : bases) {
+				IBinding baseBinding = base.getBaseClass();
+				if (baseBinding instanceof ICPPDeferredClassInstance) {
+					// Support content assist for members of deferred instances.
+					baseBinding= ((ICPPDeferredClassInstance) baseBinding).getTemplateDefinition();
+				}
+				if (!(baseBinding instanceof ICPPClassType)) {
+					continue;
+				}
+				if (!isAccessible(base.getVisibility(), accessLevel)) {
+					continue;
+				}
+				if (isAccessible(binding, bindingVisibility, owner,
+						(ICPPClassType) baseBinding, accessLevel == v_private ? v_protected : accessLevel, depth + 1)) {
+					return true;
 				}
 			}
-			return false;
 		}
+		return false;
 	}
 
 	/**

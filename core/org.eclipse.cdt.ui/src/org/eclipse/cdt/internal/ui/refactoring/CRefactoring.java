@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring;
 
-import java.util.ArrayList;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -32,7 +30,6 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
-import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTProblemDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTProblemExpression;
@@ -41,7 +38,6 @@ import org.eclipse.cdt.core.dom.ast.IASTProblemTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -306,26 +302,5 @@ public abstract class CRefactoring extends Refactoring {
 
 	public IASTTranslationUnit getUnit() {
 		return ast;
-	}
-
-	protected ArrayList<IASTName> findAllMarkedNames() {
-		final ArrayList<IASTName> namesVector = new ArrayList<IASTName>();
-
-		ast.accept(new ASTVisitor() {
-			{
-				shouldVisitNames = true;
-			}
-
-			@Override
-			public int visit(IASTName name) {
-				if (SelectionHelper.isInSameFileSelection(region, name, file)) {
-					if (!(name instanceof ICPPASTQualifiedName)) {
-						namesVector.add(name);
-					}
-				}
-				return super.visit(name);
-			}
-		});
-		return namesVector;
 	}
 }

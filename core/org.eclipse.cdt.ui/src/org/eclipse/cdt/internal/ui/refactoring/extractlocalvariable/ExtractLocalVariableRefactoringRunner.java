@@ -37,8 +37,7 @@ public class ExtractLocalVariableRefactoringRunner extends RefactoringRunner2 {
 	public void run() {
 		ExtractLocalVariableRefactoring refactoring =
 				new ExtractLocalVariableRefactoring(element, selection, project);
-		ExtractLocalVariableWizard wizard =
-				new ExtractLocalVariableWizard(refactoring);
+		ExtractLocalVariableWizard wizard = new ExtractLocalVariableWizard(refactoring);
 		run(wizard, refactoring, RefactoringSaveHelper.SAVE_NOTHING);
 	}
 }

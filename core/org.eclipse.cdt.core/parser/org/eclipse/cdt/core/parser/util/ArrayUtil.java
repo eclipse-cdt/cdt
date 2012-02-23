@@ -15,7 +15,9 @@
 package org.eclipse.cdt.core.parser.util;
 
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 
 import org.eclipse.core.runtime.Assert;
 
@@ -301,7 +303,20 @@ public abstract class ArrayUtil {
         return dest;
     }
 
-    /**
+	/**
+	 * Adds all elements of an array to a collection.
+	 * @since 5.4
+	 */
+	public static <T> void addAll(Collection<T> collection, T[] array) {
+		if (collection instanceof ArrayList) {
+			((ArrayList<T>) collection).ensureCapacity(collection.size() + array.length);
+		}
+		for (T element : array) {
+			collection.add(element);
+		}
+	}
+
+	/**
      * Returns whether the specified array contains the specified object. Comparison is by
      * object identity.
      * @param array the array to search

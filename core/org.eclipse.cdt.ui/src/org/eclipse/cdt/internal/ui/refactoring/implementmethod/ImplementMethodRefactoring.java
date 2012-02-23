@@ -58,6 +58,8 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.ui.CUIPlugin;
 
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoring2;
 import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
 import org.eclipse.cdt.internal.ui.refactoring.utils.Checks;
@@ -272,7 +274,7 @@ public class ImplementMethodRefactoring extends CRefactoring2 {
 		IASTFunctionDefinition functionDefinition = nodeFactory.newFunctionDefinition(declSpecifier, createdMethodDeclarator, nodeFactory.newCompoundStatement());
 		functionDefinition.setParent(unit);
 		
-		ICPPASTTemplateDeclaration templateDeclaration = NodeHelper.findContainedTemplateDecalaration(declarationParent);
+		ICPPASTTemplateDeclaration templateDeclaration = CPPVisitor.findAncestorWithType(declarationParent, ICPPASTTemplateDeclaration.class);
 		if (templateDeclaration != null) {
 			ICPPASTTemplateDeclaration newTemplateDeclaration = nodeFactory.newTemplateDeclaration(functionDefinition);
 			newTemplateDeclaration.setParent(unit);

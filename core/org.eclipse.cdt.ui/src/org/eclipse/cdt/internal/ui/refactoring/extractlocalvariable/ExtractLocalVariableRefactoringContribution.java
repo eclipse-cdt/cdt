@@ -27,8 +27,7 @@ public class ExtractLocalVariableRefactoringContribution extends CRefactoringCon
 			String comment, Map arguments, int flags) throws IllegalArgumentException {
 		if (id.equals(ExtractLocalVariableRefactoring.ID)) {
 			return new ExtractLocalVariableRefactoringDescriptor(project, description, comment, arguments);
-		} else {
-			return null;
 		}
+		return null;
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -7,41 +7,34 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.hidemethod;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.window.IShellProvider;
-import org.eclipse.ltk.ui.refactoring.RefactoringWizardOpenOperation;
 
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 
-import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
-import org.eclipse.cdt.internal.ui.refactoring.RefactoringRunner;
+import org.eclipse.cdt.internal.ui.refactoring.RefactoringRunner2;
+import org.eclipse.cdt.internal.ui.refactoring.RefactoringSaveHelper;
 
 /**
  * @author Guido Zgraggen IFS
  */
-public class HideMethodRefactoringRunner extends RefactoringRunner {
+public class HideMethodRefactoringRunner extends RefactoringRunner2 {
 
-	public HideMethodRefactoringRunner(IFile file, ISelection selection, ICElement element,
+	public HideMethodRefactoringRunner(ICElement element, ISelection selection,
 			IShellProvider shellProvider, ICProject cProject) {
-		super(file, selection, element, shellProvider, cProject);
+		super(element, selection, shellProvider, cProject);
 	}
-
 
 	@Override
 	public void run() {
-		CRefactoring refactoring= new HideMethodRefactoring(file, selection, celement, project);
-		HideMethodRefactoringWizard wizard = new HideMethodRefactoringWizard(refactoring);
-		RefactoringWizardOpenOperation operator = new RefactoringWizardOpenOperation(wizard);
-		try {
-			operator.run(shellProvider.getShell(), refactoring.getName());
-		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
-		} 
+		HideMethodRefactoring refactoring = new HideMethodRefactoring(element, selection, project);
+		HideMethodWizard wizard = new HideMethodWizard(refactoring);
+		run(wizard, refactoring, RefactoringSaveHelper.SAVE_NOTHING);
 	}
 }

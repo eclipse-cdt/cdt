@@ -27,8 +27,7 @@ public class ExtractConstantRefactoringContribution extends CRefactoringContribu
 			String comment, Map arguments, int flags) throws IllegalArgumentException {
 		if (id.equals(ExtractConstantRefactoring.ID)) {
 			return new ExtractConstantRefactoringDescriptor(project, description, comment, arguments);
-		} else {
-			return null;
 		}
+		return null;
 	}
 }

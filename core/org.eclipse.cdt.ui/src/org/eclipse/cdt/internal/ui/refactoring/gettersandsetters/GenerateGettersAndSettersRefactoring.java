@@ -119,16 +119,16 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring2 {
 	@Override
 	public RefactoringStatus checkFinalConditions(IProgressMonitor pm,
 			CheckConditionsContext checkContext) throws CoreException, OperationCanceledException {
-		RefactoringStatus result = new RefactoringStatus();
+		RefactoringStatus status = new RefactoringStatus();
 		if (context.isDefinitionSeparate()) {
 			findDefinitionInsertLocation(pm);
 			if (definitionInsertLocation == null ||
 					definitionInsertLocation.getTranslationUnit() == null) {
-				result.addInfo(Messages.GenerateGettersAndSettersRefactoring_NoImplFile);
+				status.addInfo(Messages.GenerateGettersAndSettersRefactoring_NoImplFile);
 			}
 		}
 		Checks.addModifiedFilesToChecker(getAllFilesToModify(), checkContext);
-		return result;
+		return status;
 	}
 
 	private IFile[] getAllFilesToModify() {
@@ -289,7 +289,7 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring2 {
 
 	@Override
 	protected RefactoringDescriptor getRefactoringDescriptor() {
-		// TODO egraf add Descriptor
+		// TODO egraf Add descriptor
 		return null;
 	}	
 }

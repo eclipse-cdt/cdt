@@ -39,7 +39,7 @@ public class HideMethodRefactoringTest extends RefactoringTestBase {
 
 	@Override
 	protected Refactoring createRefactoring() {
-		return new HideMethodRefactoring(getSelectedFile(), getSelection(), null, getCProject());
+		return new HideMethodRefactoring(getSelectedTranslationUnit(), getSelection(), getCProject());
 	}
 
 	//A.h
@@ -979,13 +979,11 @@ public class HideMethodRefactoringTest extends RefactoringTestBase {
 	//
 	//class HideMethod {
 	//public:
-	//	HideMethod();
-	//	virtual ~HideMethod();
 	//	void /*$*/method2/*$$*/();
 	//	void method3();
 	//};
 	//
-	//class test{
+	//class test {
 	//public:
 	//	void call() {
 	//		HideMethod hm;
@@ -1000,15 +998,13 @@ public class HideMethodRefactoringTest extends RefactoringTestBase {
 	//
 	//class HideMethod {
 	//public:
-	//	HideMethod();
-	//	virtual ~HideMethod();
 	//	void method3();
 	//
 	//private:
 	//	void method2();
 	//};
 	//
-	//class test{
+	//class test {
 	//public:
 	//	void call() {
 	//		HideMethod hm;

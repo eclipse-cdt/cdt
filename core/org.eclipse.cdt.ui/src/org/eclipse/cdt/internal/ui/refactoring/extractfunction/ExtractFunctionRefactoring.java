@@ -101,6 +101,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTQualifiedName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTReturnStatement;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTemplateDeclaration;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.ASTWriterVisitor;
 
@@ -282,7 +283,7 @@ public class ExtractFunctionRefactoring extends CRefactoring2 {
 	@Override
 	public RefactoringStatus checkFinalConditions(IProgressMonitor pm, CheckConditionsContext checkContext)
 			throws CoreException, OperationCanceledException {
-		RefactoringStatus finalConditions = new RefactoringStatus();
+		RefactoringStatus status = new RefactoringStatus();
 
 		final IASTName methodName = new CPPASTName(info.getMethodName().toCharArray());
 		MethodContext context = info.getMethodContext();
@@ -293,10 +294,10 @@ public class ExtractFunctionRefactoring extends CRefactoring2 {
 			IASTSimpleDeclaration methodDeclaration = getDeclaration(methodName);
 
 			if (isMethodAllreadyDefined(methodDeclaration, classDeclaration, getIndex())) {
-				finalConditions.addError(Messages.ExtractFunctionRefactoring_name_in_use);
+				status.addError(Messages.ExtractFunctionRefactoring_name_in_use);
 			}
 		}
-		return finalConditions;
+		return status;
 	}
 
 	@Override
@@ -379,7 +380,7 @@ public class ExtractFunctionRefactoring extends CRefactoring2 {
 
 	private void createMethodDefinition(final IASTName methodName, MethodContext context,
 			IASTNode firstNode,	ModificationCollector collector) {
-		IASTFunctionDefinition node = NodeHelper.findFunctionDefinitionInAncestors(firstNode); 
+		IASTFunctionDefinition node = CPPVisitor.findAncestorWithType(firstNode, IASTFunctionDefinition.class); 
 		if (node != null) { 
 			String title;
 			if (context.getType() == MethodContext.ContextType.METHOD) {
@@ -740,8 +741,7 @@ public class ExtractFunctionRefactoring extends CRefactoring2 {
 	private IASTNode getReturnAssignment(IASTExpressionStatement stmt,
 			IASTFunctionCallExpression callExpression, IASTName retname) {
 		if (info.getReturnVariable().equals(info.getMandatoryReturnVariable())) {
-			IASTSimpleDeclaration orgDecl = NodeHelper.findSimpleDeclarationInParents(
-					info.getReturnVariable().getDeclarationName());
+			IASTSimpleDeclaration orgDecl = CPPVisitor.findAncestorWithType(info.getReturnVariable().getDeclarationName(), IASTSimpleDeclaration.class);
 			IASTSimpleDeclaration decl = new CPPASTSimpleDeclaration();
 
 			decl.setDeclSpecifier(orgDecl.getDeclSpecifier().copy(CopyStyle.withLocations));
@@ -813,7 +813,7 @@ public class ExtractFunctionRefactoring extends CRefactoring2 {
 
 			@Override
 			public int visit(IASTStatement stmt) {
-				if (SelectionHelper.isNodeInsideSelection(stmt, selectedRegion)) {
+				if (isNodeInsideSelection(stmt)) {
 					container.add(stmt);
 					return PROCESS_SKIP;
 				}
@@ -822,7 +822,7 @@ public class ExtractFunctionRefactoring extends CRefactoring2 {
 
 			@Override
 			public int visit(IASTExpression expression) {
-				if (SelectionHelper.isNodeInsideSelection(expression, selectedRegion)) {
+				if (isNodeInsideSelection(expression)) {
 					container.add(expression);
 					return PROCESS_SKIP;
 				}
@@ -830,6 +830,10 @@ public class ExtractFunctionRefactoring extends CRefactoring2 {
 			}
 		});
 		return container;
+	}
+
+	private boolean isNodeInsideSelection(IASTNode node) {
+		return node.isPartOfTranslationUnitFile() && SelectionHelper.isNodeInsideRegion(node, selectedRegion);
 	}
 
 	public List<IASTInitializerClause> getCallParameters() {

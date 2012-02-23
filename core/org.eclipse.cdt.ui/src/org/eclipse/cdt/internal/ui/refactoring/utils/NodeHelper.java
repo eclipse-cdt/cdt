@@ -16,10 +16,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
-import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
-import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
-import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -32,14 +29,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
-import org.eclipse.cdt.core.index.IIndex;
-import org.eclipse.cdt.core.index.IIndexFileLocation;
-import org.eclipse.cdt.core.index.IIndexName;
-import org.eclipse.cdt.core.model.CoreModelUtil;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ITranslationUnit;
 
-import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNamespaceDefinition;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
@@ -97,16 +87,6 @@ public class NodeHelper {
 			&& new Path(node1.getFileLocation().getFileName()).equals(new Path(node2.getFileLocation().getFileName()));
 	}
 
-	public static IASTSimpleDeclaration findSimpleDeclarationInParents(IASTNode node) {
-		while (node != null) {
-			if (node instanceof IASTSimpleDeclaration) {
-				return (IASTSimpleDeclaration) node;
-			}
-			node = node.getParent();
-		}
-		return null;
-	}
-
 	public static MethodContext findMethodContext(IASTNode node, CRefactoringContext refactoringContext,
 			IProgressMonitor pm) throws CoreException {
 		IASTTranslationUnit translationUnit = node.getTranslationUnit();
@@ -139,141 +119,9 @@ public class NodeHelper {
 		IBinding binding = name.resolveBinding();
 		if (binding instanceof ICPPMethod) {
 			context.setType(MethodContext.ContextType.METHOD);
-			IIndex index = refactoringContext.getIndex();
-			IIndexName[] declarations = index.findDeclarations(binding);
-			if (declarations.length == 0) {
-				context.setMethodDeclarationName(name);
-			} else {
-				IASTFileLocation tuFileLocation = ast.getFileLocation();
-				ICProject cProject = ast.getOriginatingTranslationUnit().getCProject();
-				for (IIndexName decl : declarations) {
-					IASTTranslationUnit ast2 = ast;
-					if (!tuFileLocation.equals(decl.getFileLocation())) {
-						IIndexFileLocation fileLocation = decl.getFile().getLocation();
-						ITranslationUnit locTu =
-								CoreModelUtil.findTranslationUnitForLocation(fileLocation, cProject);
-						ast2 = refactoringContext.getAST(locTu, pm);
-					}
-					IASTName declName = DeclarationFinder.findDeclarationInTranslationUnit(ast2, decl);
-					if (declName != null) {
-						IASTNode methodDeclaration = declName.getParent().getParent();
-						if (methodDeclaration instanceof IASTSimpleDeclaration ||
-								methodDeclaration instanceof IASTFunctionDefinition) {
-							context.setMethodDeclarationName(declName);
-						}
-					}
-				}
-			}
+			IASTName declName = DefinitionFinder.getMemberDeclaration(name, refactoringContext, pm);
+			context.setMethodDeclarationName(declName);
 		}
-	}
-
-	/**
-	 * @deprecated Use #findMethodContext(IASTNode, CRefactoringContext, IProgressMonitor)
-	 */
-	@Deprecated
-	public static MethodContext findMethodContext(IASTNode node, IIndex index) throws CoreException {
-		IASTTranslationUnit translationUnit = node.getTranslationUnit();
-		boolean found = false;
-		MethodContext context = new MethodContext();
-		IASTName name = null;
-		while (node != null && !found) {
-			node = node.getParent();
-			if (node instanceof IASTFunctionDeclarator) {
-				name = ((IASTFunctionDeclarator) node).getName();
-				found = true;
-				context.setType(MethodContext.ContextType.FUNCTION);
-			} else if (node instanceof IASTFunctionDefinition) {
-				name = ASTQueries.findInnermostDeclarator(((IASTFunctionDefinition) node).getDeclarator()).getName();
-				found = true;
-				context.setType(MethodContext.ContextType.FUNCTION);
-			} 
-		}
-		if (index != null) {
-			getMethodContextWithIndex(index, translationUnit, context, name);
-		} else {
-			getMethodContext(translationUnit, context, name);
-		}
-		return context;
-	}
-
-	@Deprecated
-	private static void getMethodContextWithIndex(IIndex index, IASTTranslationUnit translationUnit,
-			MethodContext context, IASTName name) throws CoreException {
-		IBinding bind = name.resolveBinding();
-		if (bind instanceof ICPPMethod) {
-			context.setType(MethodContext.ContextType.METHOD);
-			IIndexName[] decl;
-			decl = index.findDeclarations(bind);
-			String tuFileLoc = translationUnit.getFileLocation().getFileName(); 
-			if (decl.length == 0) {
-				context.setMethodDeclarationName(name);
-			}
-			for (IIndexName tmpname : decl) {
-				IASTTranslationUnit locTu = translationUnit;
-				if (!tuFileLoc.equals(tmpname.getFileLocation().getFileName())) {
-					locTu = TranslationUnitHelper.loadTranslationUnit(tmpname.getFileLocation().getFileName(), false);
-				}
-				IASTName declName = DeclarationFinder.findDeclarationInTranslationUnit(locTu, tmpname);
-				if (declName != null) {
-					IASTNode methoddefinition = declName.getParent().getParent();
-					if (methoddefinition instanceof IASTSimpleDeclaration ||
-							methoddefinition instanceof IASTFunctionDefinition) {
-						context.setMethodDeclarationName(declName);
-					}
-				}
-			}
-		}
-		if (name instanceof ICPPASTQualifiedName) {
-			ICPPASTQualifiedName qname = (ICPPASTQualifiedName) name;
-			context.setMethodQName(qname);
-		}
-	}
-
-	private static void getMethodContext(IASTTranslationUnit translationUnit, MethodContext context,
-			IASTName name) {
-		if (name instanceof ICPPASTQualifiedName) {
-			 ICPPASTQualifiedName qname = (ICPPASTQualifiedName) name;
-			 context.setMethodQName(qname);
-			 IBinding bind = qname.resolveBinding();
-			 IASTName[] decl = translationUnit.getDeclarationsInAST(bind);
-			 for (IASTName tmpname : decl) {
-				 IASTNode methodDefinition = tmpname.getParent().getParent();
-				 if (methodDefinition instanceof IASTSimpleDeclaration) {
-					 context.setMethodDeclarationName(tmpname);
-					 context.setType(MethodContext.ContextType.METHOD);
-				 }
-			 }
-		 }
-	}
-
-	public static IASTCompoundStatement findCompoundStatementInAncestors(IASTNode node) {
-		while (node != null) {
-			if (node instanceof IASTCompoundStatement) {
-				return (IASTCompoundStatement) node;
-			}
-			node = node.getParent();
-		}
-		return null;
-	}
-
-	public static IASTCompositeTypeSpecifier findClassInAncestors(IASTNode node) {
-		while (!(node instanceof IASTCompositeTypeSpecifier)) {
-			if (node instanceof IASTTranslationUnit) {
-				return null;
-			}
-			node = node.getParent();
-		}
-		return (IASTCompositeTypeSpecifier) node;
-	}
-
-	public static IASTFunctionDefinition findFunctionDefinitionInAncestors(IASTNode node) {
-		while (node != null) {
-			if (node instanceof IASTFunctionDefinition) {
-				return (IASTFunctionDefinition) node;
-			}
-			node = node.getParent();
-		}
-		return null;
 	}
 
 	public static boolean isMethodDeclaration(IASTSimpleDeclaration simpleDeclaration) {
@@ -285,16 +133,6 @@ public class NodeHelper {
 	}
 
 	public static boolean isContainedInTemplateDeclaration(IASTNode node) {
-		return findContainedTemplateDecalaration(node) != null;
-	}
-	
-	public static ICPPASTTemplateDeclaration findContainedTemplateDecalaration(IASTNode node) {
-		while (node != null) {
-			if (node instanceof ICPPASTTemplateDeclaration) {
-				return (ICPPASTTemplateDeclaration) node;
-			}
-			node = node.getParent();
-		}
-		return null;
+		return CPPVisitor.findAncestorWithType(node, ICPPASTTemplateDeclaration.class) != null;
 	}
 }

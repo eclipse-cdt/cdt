@@ -105,7 +105,7 @@ public abstract class CRefactoring2 extends Refactoring {
 	}
 
 	@Override
-	public RefactoringStatus checkFinalConditions(IProgressMonitor pm)
+	public final RefactoringStatus checkFinalConditions(IProgressMonitor pm)
 			throws CoreException, OperationCanceledException {
 		if (pm == null)
 			pm = new NullProgressMonitor();
@@ -125,8 +125,10 @@ public abstract class CRefactoring2 extends Refactoring {
 		return result;
 	}
 
-	protected abstract RefactoringStatus checkFinalConditions(IProgressMonitor subProgressMonitor,
-			CheckConditionsContext checkContext) throws CoreException, OperationCanceledException;
+	protected RefactoringStatus checkFinalConditions(IProgressMonitor subProgressMonitor,
+			CheckConditionsContext checkContext) throws CoreException, OperationCanceledException {
+		return new RefactoringStatus();
+	}
 
 	@Override
 	public RefactoringStatus checkInitialConditions(IProgressMonitor pm)

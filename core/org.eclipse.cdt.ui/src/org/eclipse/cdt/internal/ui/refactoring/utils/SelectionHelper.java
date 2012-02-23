@@ -12,11 +12,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.utils;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.viewers.ISelection;
@@ -96,21 +91,6 @@ public class SelectionHelper {
 				offset1 <= offset2 + region2.getLength();
 	}
 
-	public static boolean isInSameFile(IASTNode node, IFile file) {
-		IPath path = new Path(node.getContainingFilename());
-		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
-		IFile locFile = workspaceRoot.getFile(file.getLocation());
-		IFile tmpFile = workspaceRoot.getFile(path);
-		return locFile.equals(tmpFile);
-	}
-	
-	public static boolean isInSameFileSelection(Region textSelection, IASTNode node, IFile file) {
-		if (isInSameFile(node, file)) {
-			return doesNodeOverlapWithRegion(node, textSelection);
-		}
-		return false;
-	}
-	
 	public static boolean isNodeInsideSelection(IASTNode node, Region selection) {
 		return node.isPartOfTranslationUnitFile() && isNodeInsideRegion(node, selection);
 	}

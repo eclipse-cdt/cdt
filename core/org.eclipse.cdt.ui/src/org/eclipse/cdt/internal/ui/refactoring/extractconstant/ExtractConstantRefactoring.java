@@ -27,7 +27,6 @@ import org.eclipse.jface.text.Region;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
 import org.eclipse.text.edits.TextEditGroup;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeFactoryFactory;
@@ -65,6 +64,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTLiteralExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPMethod;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoring2;
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoringDescriptor;
@@ -172,7 +172,7 @@ public class ExtractConstantRefactoring extends CRefactoring2 {
 
 	private ArrayList<String> findAllDeclaredNames() {
 		ArrayList<String>names = new ArrayList<String>();
-		IASTFunctionDefinition funcDef = NodeHelper.findFunctionDefinitionInAncestors(target);
+		IASTFunctionDefinition funcDef = CPPVisitor.findAncestorWithType(target, IASTFunctionDefinition.class);
 		ICPPASTCompositeTypeSpecifier comTypeSpec = getCompositeTypeSpecifier(funcDef);
 		if (comTypeSpec != null) {
 			for(IASTDeclaration dec : comTypeSpec.getMembers()) {
@@ -295,12 +295,6 @@ public class ExtractConstantRefactoring extends CRefactoring2 {
 		});
 
 		return result;
-	}
-
-	@Override
-	protected RefactoringStatus checkFinalConditions(IProgressMonitor subProgressMonitor,
-			CheckConditionsContext checkContext) throws CoreException, OperationCanceledException {
-		return new RefactoringStatus();
 	}
 
 	@Override

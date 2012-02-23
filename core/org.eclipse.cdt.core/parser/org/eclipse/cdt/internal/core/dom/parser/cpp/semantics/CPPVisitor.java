@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getUltimateTypeUptoPointers;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -1500,11 +1501,9 @@ public class CPPVisitor extends ASTQueries {
 			}
 			
 			if (bindings != null) {
-				if (isDeclarationsBinding(name.resolveBinding())) {
+				if (isDeclarationBinding(name.resolveBinding())) {
 					if (decls.length == idx) {
-						IASTName[] temp = new IASTName[decls.length * 2];
-						System.arraycopy(decls, 0, temp, 0, decls.length);
-						decls = temp;
+						decls = Arrays.copyOf(decls, decls.length * 2);
 					}
 					decls[idx++] = name;
 			    }   
@@ -1512,10 +1511,10 @@ public class CPPVisitor extends ASTQueries {
 			return PROCESS_CONTINUE;
 		}
 
-		private boolean isDeclarationsBinding(IBinding nameBinding) {
+		private boolean isDeclarationBinding(IBinding nameBinding) {
 			if (nameBinding != null) {
 				for (IBinding binding : bindings) {
-					if (areEquivalentBindings(nameBinding, binding)) {
+					if (areEquivalentBindings(nameBinding, binding, index)) {
 						return true;
 					}
 					// A using declaration is a declaration for the references of its delegates
@@ -1529,36 +1528,32 @@ public class CPPVisitor extends ASTQueries {
 			return false;
 		}
 
-		private boolean areEquivalentBindings(IBinding binding1, IBinding binding2) {
-			if (binding1.equals(binding2)) {
-				return true;
-			}
-			if ((binding1 instanceof IIndexBinding) != (binding2 instanceof IIndexBinding) &&
-					index != null) {
-				if (binding1 instanceof IIndexBinding) {
-					binding2 = index.adaptBinding(binding2);
-				} else {
-					binding1 = index.adaptBinding(binding1);
-				}
-				if (binding1 == null || binding2 == null) {
-					return false;
-				}
-				if (binding1.equals(binding2)) {
-					return true;
-				}
-			}
-			return false;
-		}
-
 		public IASTName[] getDeclarations() {
 			if (idx < decls.length) {
-				IASTName[] temp = new IASTName[idx];
-				System.arraycopy(decls, 0, temp, 0, idx);
-				decls = temp;
+				decls = Arrays.copyOf(decls, idx);
 			}
 			return decls;
 		}
+	}
 
+	private static boolean areEquivalentBindings(IBinding binding1, IBinding binding2, IIndex index) {
+		if (binding1.equals(binding2)) {
+			return true;
+		}
+		if ((binding1 instanceof IIndexBinding) != (binding2 instanceof IIndexBinding) && index != null) {
+			if (binding1 instanceof IIndexBinding) {
+				binding2 = index.adaptBinding(binding2);
+			} else {
+				binding1 = index.adaptBinding(binding1);
+			}
+			if (binding1 == null || binding2 == null) {
+				return false;
+			}
+			if (binding1.equals(binding2)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	protected static IBinding unwindBinding(IBinding binding) {
@@ -1578,6 +1573,7 @@ public class CPPVisitor extends ASTQueries {
 		private IBinding[] bindings;
 		private int idx = 0;
 		private int kind;
+		private IIndex index;
 		
 		private static final int KIND_LABEL  = 1;
 		private static final int KIND_OBJ_FN = 2;
@@ -1586,11 +1582,12 @@ public class CPPVisitor extends ASTQueries {
 		private static final int KIND_COMPOSITE = 5;
 
 		public CollectReferencesAction(IBinding binding) {
+			shouldVisitTranslationUnit = true;
 			shouldVisitNames = true;
 			this.refs = new IASTName[DEFAULT_LIST_SIZE];
 
 			binding = unwindBinding(binding);
-			this.bindings = new IBinding[] {binding};
+			this.bindings = new IBinding[] { binding };
 			
 			if (binding instanceof ICPPUsingDeclaration) {
 				this.bindings= ((ICPPUsingDeclaration) binding).getDelegates();
@@ -1609,8 +1606,13 @@ public class CPPVisitor extends ASTQueries {
 				kind = KIND_OBJ_FN;
 			}
 		}
-		
-		@SuppressWarnings("fallthrough")
+
+		@Override
+		public int visit(IASTTranslationUnit tu) {
+			index = tu.getIndex();
+			return PROCESS_CONTINUE;
+		}
+
 		@Override
 		public int visit(IASTName name) {
 			if (name instanceof ICPPASTQualifiedName || name instanceof ICPPASTTemplateId)
@@ -1624,61 +1626,59 @@ public class CPPVisitor extends ASTQueries {
 			}
 			
 			switch (kind) {
-				case KIND_LABEL:
-					if (prop == IASTGotoStatement.NAME)
-						break;
-					return PROCESS_CONTINUE;
-				case KIND_TYPE:
-				case KIND_COMPOSITE:
-					if (prop == IASTNamedTypeSpecifier.NAME || 
-							prop == ICPPASTPointerToMember.NAME ||
-							prop == ICPPASTUsingDeclaration.NAME ||
-							prop == ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier.NAME ||
-							prop == ICPPASTTemplateId.TEMPLATE_NAME ||
-							p2 == ICPPASTQualifiedName.SEGMENT_NAME) {
-						break;
-					} else if (prop == IASTElaboratedTypeSpecifier.TYPE_NAME)	{
-						IASTNode p = name.getParent().getParent();
-						if (!(p instanceof IASTSimpleDeclaration) ||
-							((IASTSimpleDeclaration) p).getDeclarators().length > 0)
-						{
-							break;
-						}
-					}
-					if (kind == KIND_TYPE)
-					    return PROCESS_CONTINUE;
-					// fall through
+			case KIND_LABEL:
+				if (prop == IASTGotoStatement.NAME)
+					break;
+				return PROCESS_CONTINUE;
 
-				case KIND_OBJ_FN:
-					if (prop == IASTIdExpression.ID_NAME || 
-							prop == IASTFieldReference.FIELD_NAME || 
-							prop == ICPPASTUsingDirective.QUALIFIED_NAME ||
-							prop == ICPPASTUsingDeclaration.NAME ||
-							prop == IASTFunctionCallExpression.FUNCTION_NAME ||
-							prop == ICPPASTUsingDeclaration.NAME ||
-							prop == IASTNamedTypeSpecifier.NAME ||
-							prop == ICPPASTConstructorChainInitializer.MEMBER_ID ||
-							prop == ICPPASTTemplateId.TEMPLATE_ID_ARGUMENT ||
-							prop == IASTImplicitNameOwner.IMPLICIT_NAME) {
+			case KIND_TYPE:
+			case KIND_COMPOSITE:
+				if (prop == IASTNamedTypeSpecifier.NAME || 
+						prop == ICPPASTPointerToMember.NAME ||
+						prop == ICPPASTUsingDeclaration.NAME ||
+						prop == ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier.NAME ||
+						prop == ICPPASTTemplateId.TEMPLATE_NAME ||
+						p2 == ICPPASTQualifiedName.SEGMENT_NAME) {
+					break;
+				} else if (prop == IASTElaboratedTypeSpecifier.TYPE_NAME)	{
+					IASTNode p = name.getParent().getParent();
+					if (!(p instanceof IASTSimpleDeclaration) ||
+							((IASTSimpleDeclaration) p).getDeclarators().length > 0) {
 						break;
 					}
-					return PROCESS_CONTINUE;
-				case KIND_NAMESPACE:
-					if (prop == ICPPASTUsingDirective.QUALIFIED_NAME ||
-							prop == ICPPASTNamespaceAlias.MAPPING_NAME ||
-							prop == ICPPASTUsingDeclaration.NAME ||
-							p2 == ICPPASTQualifiedName.SEGMENT_NAME) {
-						break;
-					}
-					return PROCESS_CONTINUE;
+				}
+				if (kind == KIND_TYPE)
+				    return PROCESS_CONTINUE;
+				//$FALL-THROUGH$
+			case KIND_OBJ_FN:
+				if (prop == IASTIdExpression.ID_NAME || 
+						prop == IASTFieldReference.FIELD_NAME || 
+						prop == ICPPASTUsingDirective.QUALIFIED_NAME ||
+						prop == ICPPASTUsingDeclaration.NAME ||
+						prop == IASTFunctionCallExpression.FUNCTION_NAME ||
+						prop == ICPPASTUsingDeclaration.NAME ||
+						prop == IASTNamedTypeSpecifier.NAME ||
+						prop == ICPPASTConstructorChainInitializer.MEMBER_ID ||
+						prop == ICPPASTTemplateId.TEMPLATE_ID_ARGUMENT ||
+						prop == IASTImplicitNameOwner.IMPLICIT_NAME) {
+					break;
+				}
+				return PROCESS_CONTINUE;
+
+			case KIND_NAMESPACE:
+				if (prop == ICPPASTUsingDirective.QUALIFIED_NAME ||
+						prop == ICPPASTNamespaceAlias.MAPPING_NAME ||
+						prop == ICPPASTUsingDeclaration.NAME ||
+						p2 == ICPPASTQualifiedName.SEGMENT_NAME) {
+					break;
+				}
+				return PROCESS_CONTINUE;
 			}
 			
 			if (bindings != null) {
 			    if (isReferenceBinding(name.resolveBinding())) {
 			    	if (refs.length == idx) {
-			    		IASTName[] temp = new IASTName[refs.length * 2];
-			    		System.arraycopy(refs, 0, temp, 0, refs.length);
-			    		refs = temp;
+						refs = Arrays.copyOf(refs, refs.length * 2);
 			    	}
 			    	refs[idx++] = name;
 			    }
@@ -1690,7 +1690,7 @@ public class CPPVisitor extends ASTQueries {
 			nameBinding= unwindBinding(nameBinding);
 			if (nameBinding != null) {
 				for (IBinding binding : bindings) {
-					if (nameBinding.equals(binding)) {
+					if (areEquivalentBindings(nameBinding, binding, index)) {
 						return true;
 					}
 				}
@@ -1701,9 +1701,6 @@ public class CPPVisitor extends ASTQueries {
 							return true;
 						}
 					}
-					return false;
-				} else {
-					return false;
 				}
 			}
 			return false;
@@ -1711,9 +1708,7 @@ public class CPPVisitor extends ASTQueries {
 		
 		public IASTName[] getReferences() {
 			if (idx < refs.length) {
-				IASTName[] temp = new IASTName[idx];
-				System.arraycopy(refs, 0, temp, 0, idx);
-				refs = temp;
+				refs = Arrays.copyOf(refs, idx);
 			}
 			return refs;
 		}
@@ -2448,8 +2443,8 @@ public class CPPVisitor extends ASTQueries {
 				isNonSimpleElabDecl= true;
 				final IASTNode parent= node.getParent();
 				if (parent instanceof IASTSimpleDeclaration) {
-					final IASTSimpleDeclaration sdecl = (IASTSimpleDeclaration) parent;
-					if (sdecl.getDeclarators().length == 0) {
+					final IASTSimpleDeclaration decl = (IASTSimpleDeclaration) parent;
+					if (decl.getDeclarators().length == 0) {
 						isNonSimpleElabDecl= false;
 					}
 				}

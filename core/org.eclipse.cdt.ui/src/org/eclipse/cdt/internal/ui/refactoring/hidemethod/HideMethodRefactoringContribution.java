@@ -21,15 +21,13 @@ import org.eclipse.cdt.internal.ui.refactoring.CRefactoringContribution;
  * @author Emanuel Graf IFS
  */
 public class HideMethodRefactoringContribution extends CRefactoringContribution {
-
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public RefactoringDescriptor createDescriptor(String id, String project, String description,
 			String comment, Map arguments, int flags) throws IllegalArgumentException {
 		if (id.equals(HideMethodRefactoring.ID)) {
-			return new HideMethodRefactoringDescription(project, description, comment, arguments);
-		} else {
-			return null;
+			return new HideMethodRefactoringDescriptor(project, description, comment, arguments);
 		}
+		return null;
 	}
 }

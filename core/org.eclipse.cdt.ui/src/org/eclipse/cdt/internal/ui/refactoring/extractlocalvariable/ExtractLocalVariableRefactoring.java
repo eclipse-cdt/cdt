@@ -25,7 +25,6 @@ import org.eclipse.jface.text.Region;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
 import org.eclipse.text.edits.TextEditGroup;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
@@ -66,6 +65,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTLiteralExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoring2;
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoringDescriptor;
@@ -147,7 +147,7 @@ public class ExtractLocalVariableRefactoring extends CRefactoring2 {
 
 	private ArrayList<String> findAllDeclaredNames() {
 		ArrayList<String> names = new ArrayList<String>();
-		IASTFunctionDefinition funcDef = NodeHelper.findFunctionDefinitionInAncestors(target);
+		IASTFunctionDefinition funcDef = CPPVisitor.findAncestorWithType(target, IASTFunctionDefinition.class);
 		ICPPASTCompositeTypeSpecifier comTypeSpec = getCompositeTypeSpecifier(funcDef);
 		if (comTypeSpec != null) {
 			for (IASTDeclaration decl : comTypeSpec.getMembers()) {
@@ -160,12 +160,6 @@ public class ExtractLocalVariableRefactoring extends CRefactoring2 {
 			}
 		}
 		return names;
-	}
-
-	@Override
-	protected RefactoringStatus checkFinalConditions(IProgressMonitor subProgressMonitor,
-			CheckConditionsContext checkContext) throws CoreException, OperationCanceledException {
-		return new RefactoringStatus();
 	}
 
 	private ICPPASTCompositeTypeSpecifier getCompositeTypeSpecifier(IASTFunctionDefinition funcDef) {
@@ -239,7 +233,7 @@ public class ExtractLocalVariableRefactoring extends CRefactoring2 {
 
 				@Override
 				public int visit(IASTExpression expression) {
-					if (SelectionHelper.isNodeInsideSelection(expression, selectedRegion)) {
+					if (isNodeInsideSelection(expression)) {
 						container.add(expression);
 						return PROCESS_SKIP;
 					}
@@ -249,6 +243,10 @@ public class ExtractLocalVariableRefactoring extends CRefactoring2 {
 		}
 
 		return container;
+	}
+
+	private boolean isNodeInsideSelection(IASTNode node) {
+		return node.isPartOfTranslationUnitFile() && SelectionHelper.isNodeInsideRegion(node, selectedRegion);
 	}
 
 	@Override
@@ -339,7 +337,7 @@ public class ExtractLocalVariableRefactoring extends CRefactoring2 {
 	public String[] guessTempNames() {
 		final List<String> guessedTempNames = new ArrayList<String>();
 		final List<String> usedNames = new ArrayList<String>();
-		IASTFunctionDefinition funcDef = NodeHelper.findFunctionDefinitionInAncestors(target);
+		IASTFunctionDefinition funcDef = CPPVisitor.findAncestorWithType(target, IASTFunctionDefinition.class);
 		final IScope scope;
 		if (funcDef != null && funcDef.getBody() instanceof IASTCompoundStatement) {
 			IASTCompoundStatement body = (IASTCompoundStatement) funcDef.getBody();

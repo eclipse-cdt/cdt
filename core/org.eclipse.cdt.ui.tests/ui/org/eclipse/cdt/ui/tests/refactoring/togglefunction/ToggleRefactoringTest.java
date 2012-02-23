@@ -24,19 +24,19 @@ import org.eclipse.cdt.internal.ui.refactoring.togglefunction.ToggleRefactoring;
 /**
  * Tests for Generate Getters and Setters refactoring.
  */
-public class ToogleRefactoringTest extends RefactoringTestBase {
+public class ToggleRefactoringTest extends RefactoringTestBase {
 	private ToggleRefactoring refactoring;
 
-	public ToogleRefactoringTest() {
+	public ToggleRefactoringTest() {
 		super();
 	}
 
-	public ToogleRefactoringTest(String name) {
+	public ToggleRefactoringTest(String name) {
 		super(name);
 	}
 
 	public static Test suite() {
-		TestSuite suite = suite(ToogleRefactoringTest.class);
+		TestSuite suite = suite(ToggleRefactoringTest.class);
 		suite.addTestSuite(ToggleNodeHelperTest.class);
 		return suite;
 	}

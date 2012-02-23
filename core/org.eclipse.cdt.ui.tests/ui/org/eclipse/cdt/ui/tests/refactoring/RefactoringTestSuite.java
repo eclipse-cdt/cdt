@@ -23,7 +23,7 @@ import org.eclipse.cdt.ui.tests.refactoring.gettersandsetters.GenerateGettersAnd
 import org.eclipse.cdt.ui.tests.refactoring.hidemethod.HideMethodRefactoringTest;
 import org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest;
 import org.eclipse.cdt.ui.tests.refactoring.rename.RenameRegressionTests;
-import org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToogleRefactoringTest;
+import org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest;
 import org.eclipse.cdt.ui.tests.refactoring.utils.UtilTestSuite;
 
 /**
@@ -41,7 +41,7 @@ public class RefactoringTestSuite extends TestSuite {
 		suite.addTest(GenerateGettersAndSettersTest.suite());
 		suite.addTest(ImplementMethodRefactoringTest.suite());
 		suite.addTest(ExtractLocalVariableRefactoringTest.suite());
-		suite.addTest(ToogleRefactoringTest.suite());
+		suite.addTest(ToggleRefactoringTest.suite());
 		return suite;
 	}
 }

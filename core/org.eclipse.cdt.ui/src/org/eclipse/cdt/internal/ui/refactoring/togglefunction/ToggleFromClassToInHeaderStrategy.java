@@ -44,7 +44,8 @@ public class ToggleFromClassToInHeaderStrategy implements IToggleRefactoringStra
 	}
 
 	private boolean isInClass(IASTNode node) {
-		return CPPVisitor.findAncestorWithType(node, ICPPASTCompositeTypeSpecifier.class) != null;
+		return node != null &&
+				CPPVisitor.findAncestorWithType(node, ICPPASTCompositeTypeSpecifier.class) != null;
 	}
 
 	@Override
@@ -61,8 +62,8 @@ public class ToggleFromClassToInHeaderStrategy implements IToggleRefactoringStra
 	private IASTNode getNewDefinition(IASTNode parentNamespace) {
 		IASTNode newDefinition = ToggleNodeHelper.getQualifiedNameDefinition(
 				context.getDefinition(), context.getDefinitionUnit(), parentNamespace);
-		((IASTFunctionDefinition) newDefinition).setBody(context.getDefinition().getBody()
-				.copy(CopyStyle.withLocations));
+		((IASTFunctionDefinition) newDefinition).setBody(
+				context.getDefinition().getBody().copy(CopyStyle.withLocations));
 		if (newDefinition instanceof ICPPASTFunctionWithTryBlock) {
 			ICPPASTFunctionWithTryBlock newTryFun = (ICPPASTFunctionWithTryBlock) newDefinition;
 			ICPPASTFunctionWithTryBlock oldTryFun = (ICPPASTFunctionWithTryBlock) context.getDefinition();
@@ -80,7 +81,8 @@ public class ToggleFromClassToInHeaderStrategy implements IToggleRefactoringStra
 	}
 
 	private IASTNode getParentNamespace() {
-		IASTNode parentNamespace = CPPVisitor.findAncestorWithType(context.getDefinition(), ICPPASTNamespaceDefinition.class);
+		IASTNode parentNamespace =
+				CPPVisitor.findAncestorWithType(context.getDefinition(), ICPPASTNamespaceDefinition.class);
 		if (parentNamespace == null)
 			parentNamespace = context.getDefinitionUnit();
 		return parentNamespace;
@@ -104,12 +106,12 @@ public class ToggleFromClassToInHeaderStrategy implements IToggleRefactoringStra
 
 	private IASTSimpleDeclaration getNewDeclaration() {
 		INodeFactory factory = context.getDefinitionUnit().getASTNodeFactory();
-		IASTDeclSpecifier newDeclSpecifier = context.getDefinition().getDeclSpecifier()
-				.copy(CopyStyle.withLocations);
+		IASTDeclSpecifier newDeclSpecifier =
+				context.getDefinition().getDeclSpecifier().copy(CopyStyle.withLocations);
 		newDeclSpecifier.setInline(false);
 		IASTSimpleDeclaration newDeclaration = factory.newSimpleDeclaration(newDeclSpecifier);
-		IASTFunctionDeclarator newDeclarator = context.getDefinition().getDeclarator()
-				.copy(CopyStyle.withLocations);
+		IASTFunctionDeclarator newDeclarator =
+				context.getDefinition().getDeclarator().copy(CopyStyle.withLocations);
 		newDeclaration.addDeclarator(newDeclarator);
 		newDeclaration.setParent(context.getDefinition().getParent());
 		return newDeclaration;

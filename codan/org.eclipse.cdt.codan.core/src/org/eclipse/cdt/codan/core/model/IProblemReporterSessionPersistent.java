@@ -14,7 +14,7 @@ import org.eclipse.core.resources.IResource;
 
 /**
  * IProblemReporterPersistent - interface to report problems, which are
- * persistent, ex. markers. Also this object has context of checker and
+ * persistent, e.g. markers. Also this object has context of checker and
  * current resource, which allows to manage markers better - i.e. instead of
  * deleting replace them when needed, and queue markers for insertion instead
  * of add right away.
@@ -30,9 +30,9 @@ import org.eclipse.core.resources.IResource;
 public interface IProblemReporterSessionPersistent extends IProblemReporter {
 	/**
 	 * Deletes all problems associated with session resource and session checker.
-	 * If "all" is true also delete all problems associated with workspace (and
-	 * session checker).
 	 *
+	 * @param all If <code>true</code> the method also deletes all problems associated with
+	 * workspace (and session checker).
 	 */
 	public void deleteProblems(boolean all);
 
@@ -51,12 +51,11 @@ public interface IProblemReporterSessionPersistent extends IProblemReporter {
 	IResource getResource();
 
 	/**
-	 * Create an instance of the object. This is a bit ugly since implemented has
-	 * to combine the object itself and factory to this object.
+	 * Creates a problem reporter.
 	 *
 	 * @param resource
 	 * @param checker
-	 * @return
+	 * @return the created reporter
 	 * @since 2.0
 	 */
 	public IProblemReporterSessionPersistent createReporter(IResource resource, IChecker checker);

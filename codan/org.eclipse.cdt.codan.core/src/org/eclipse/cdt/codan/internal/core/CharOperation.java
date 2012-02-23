@@ -12,7 +12,7 @@ package org.eclipse.cdt.codan.internal.core;
 
 /**
  * This class is a collection of helper methods to manipulate char arrays.
- * 
+ *
  * @since 2.1
  */
 public final class CharOperation {
@@ -44,7 +44,7 @@ public final class CharOperation {
 	 * => result = { 'c' }
 	 * </pre></li>
 	 * </ol>
-	 * 
+	 *
 	 * @param array
 	 *        the array that is concanated with the suffix character
 	 * @param suffix
@@ -95,7 +95,7 @@ public final class CharOperation {
 	 * => result = { 'a', 'd' , 'e', 'f', '0', '0', '0', '0' } (new array)
 	 * </pre></li>
 	 * </ol>
-	 * 
+	 *
 	 * @param target
 	 *        the given target
 	 * @param index
@@ -106,7 +106,7 @@ public final class CharOperation {
 	 *        the given start index
 	 * @param end
 	 *        the given end index
-	 * 
+	 *
 	 * @return the new array
 	 * @throws NullPointerException
 	 *         if the target array is null
@@ -156,7 +156,7 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param first
 	 *        the first array to concatenate
 	 * @param second
@@ -205,7 +205,7 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param first
 	 *        the first array to concatenate
 	 * @param second
@@ -276,7 +276,7 @@ public final class CharOperation {
 	 * </li>
 	 * </ol>
 	 * </p>
-	 * 
+	 *
 	 * @param array
 	 *        the given array
 	 * @param prefix
@@ -329,7 +329,7 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param first
 	 *        the first array to concatenate
 	 * @param second
@@ -396,14 +396,14 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param first
 	 *        the first array to concatenate
 	 * @param second
 	 *        the second array to concatenate
 	 * @param third
 	 *        the third array to concatenate
-	 * 
+	 *
 	 * @return the concatenation of the three arrays, or null if the three
 	 *         arrays are null.
 	 */
@@ -456,7 +456,7 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param first
 	 *        the first array to concatenate
 	 * @param second
@@ -540,7 +540,7 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param first
 	 *        the first array to concatenate
 	 * @param sep1
@@ -598,7 +598,7 @@ public final class CharOperation {
 	 * => result = { 'a', 'c' }
 	 * </pre></li>
 	 * </ol>
-	 * 
+	 *
 	 * @param prefix
 	 *        the prefix character
 	 * @param array
@@ -647,7 +647,7 @@ public final class CharOperation {
 	 * => result = { 'c' }
 	 * </pre></li>
 	 * </ol>
-	 * 
+	 *
 	 * @param name
 	 *        the given name
 	 * @param array
@@ -714,7 +714,7 @@ public final class CharOperation {
 	 * => result = { 'c' }
 	 * </pre></li>
 	 * </ol>
-	 * 
+	 *
 	 * @param array
 	 *        the given array
 	 * @param name
@@ -772,7 +772,7 @@ public final class CharOperation {
 	 * => result = { }
 	 * </pre></li>
 	 * </ol>
-	 * 
+	 *
 	 * @param array
 	 *        the given array
 	 * @param separator
@@ -812,7 +812,7 @@ public final class CharOperation {
 	/**
 	 * Answers true if the array contains an occurrence of character, false
 	 * otherwise.
-	 * 
+	 *
 	 * <br>
 	 * <br>
 	 * For example:
@@ -830,7 +830,7 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param character
 	 *        the character to search
 	 * @param array
@@ -853,7 +853,7 @@ public final class CharOperation {
 	/**
 	 * Answers true if the array contains an occurrence of character, false
 	 * otherwise.
-	 * 
+	 *
 	 * <br>
 	 * <br>
 	 * For example:
@@ -871,7 +871,7 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param character
 	 *        the character to search
 	 * @param array
@@ -890,7 +890,7 @@ public final class CharOperation {
 
 	/**
 	 * Answers a deep copy of the toCopy array.
-	 * 
+	 *
 	 * @param toCopy
 	 *        the array to copy
 	 * @return a deep copy of the toCopy array.
@@ -929,7 +929,7 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param array
 	 *        the array to check
 	 * @param toBeFound
@@ -984,7 +984,7 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param first
 	 *        the first array
 	 * @param second
@@ -1044,7 +1044,7 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param first
 	 *        the first array
 	 * @param second
@@ -1104,7 +1104,7 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param first
 	 *        the first array
 	 * @param second
@@ -1164,7 +1164,7 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param first
 	 *        the first array
 	 * @param second
@@ -1194,7 +1194,7 @@ public final class CharOperation {
 	/**
 	 * If isCaseSensite is true, the equality is case sensitive, otherwise it is
 	 * case insensitive.
-	 * 
+	 *
 	 * Answers true if the name contains the fragment at the starting index
 	 * startIndex, otherwise false.
 	 * <br>
@@ -1234,7 +1234,7 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param fragment
 	 *        the fragment to check
 	 * @param name
@@ -1269,7 +1269,7 @@ public final class CharOperation {
 
 	/**
 	 * Answers a hashcode for the array
-	 * 
+	 *
 	 * @param array
 	 *        the array for which a hashcode is required
 	 * @return the hashcode
@@ -1310,7 +1310,7 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param c
 	 *        the character to check
 	 * @return true if c is a whitespace according to the JLS, otherwise false.
@@ -1350,7 +1350,7 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param toBeFound
 	 *        the character to search
 	 * @param array
@@ -1399,7 +1399,7 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param toBeFound
 	 *        the character to search
 	 * @param array
@@ -1443,7 +1443,7 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param toBeFound
 	 *        the character to search
 	 * @param array
@@ -1493,7 +1493,7 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param toBeFound
 	 *        the character to search
 	 * @param array
@@ -1549,7 +1549,7 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param toBeFound
 	 *        the character to search
 	 * @param array
@@ -1583,7 +1583,7 @@ public final class CharOperation {
 	 * <pre>
 	 * lastSegment("java.lang.Object".toCharArray(),'.') --> Object
 	 * </pre>
-	 * 
+	 *
 	 * @param array
 	 *        the array
 	 * @param separator
@@ -1603,7 +1603,7 @@ public final class CharOperation {
 	 * Answers true if the pattern matches the given name, false otherwise. This
 	 * char[] pattern matching
 	 * accepts wild-cards '*' and '?'.
-	 * 
+	 *
 	 * When not case sensitive, the pattern is assumed to already be lowercased,
 	 * the
 	 * name will be lowercased character per character as comparing.
@@ -1635,7 +1635,7 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param pattern
 	 *        the given pattern
 	 * @param name
@@ -1690,7 +1690,7 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param pattern
 	 *        the given pattern
 	 * @param patternStart
@@ -1783,7 +1783,7 @@ public final class CharOperation {
 	/**
 	 * Answers true if the pattern matches the filepath using the pathSepatator,
 	 * false otherwise.
-	 * 
+	 *
 	 * Path char[] pattern matching, accepting wild-cards '**', '*' and '?'
 	 * (using Ant directory tasks
 	 * conventions, also see
@@ -1797,7 +1797,7 @@ public final class CharOperation {
 	 * When not case sensitive, the pattern is assumed to already be lowercased,
 	 * the
 	 * name will be lowercased character per character as comparing.
-	 * 
+	 *
 	 * @param pattern
 	 *        the given pattern
 	 * @param filepath
@@ -1852,7 +1852,7 @@ public final class CharOperation {
 			if (!CharOperation.match(pattern, pSegmentStart, pSegmentEnd, filepath, fSegmentStart, fSegmentEnd, isCaseSensitive)) {
 				return false;
 			}
-			// jump to next segment		
+			// jump to next segment
 			pSegmentEnd = CharOperation.indexOf(pathSeparator, pattern, pSegmentStart = pSegmentEnd + 1);
 			// skip separator
 			if (pSegmentEnd < 0)
@@ -1927,7 +1927,7 @@ public final class CharOperation {
 					fSegmentEnd = fLength;
 				continue checkSegment;
 			}
-			// jump to next segment		
+			// jump to next segment
 			pSegmentEnd = CharOperation.indexOf(pathSeparator, pattern, pSegmentStart = pSegmentEnd + 1);
 			// skip separator
 			if (pSegmentEnd < 0)
@@ -1945,7 +1945,7 @@ public final class CharOperation {
 	/**
 	 * Answers the number of occurrences of the given character in the given
 	 * array, 0 if any.
-	 * 
+	 *
 	 * <br>
 	 * <br>
 	 * For example:
@@ -1963,7 +1963,7 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param toBeFound
 	 *        the given character
 	 * @param array
@@ -1975,17 +1975,17 @@ public final class CharOperation {
 	 */
 	public static final int occurencesOf(char toBeFound, char[] array) {
 		int count = 0;
-		for (char element : array)
+		for (char element : array) {
 			if (toBeFound == element)
 				count++;
+		}
 		return count;
 	}
 
 	/**
-	 * Answers the number of occurrences of the given character in the given
-	 * array starting
+	 * Answers the number of occurrences of the given character in the given array starting
 	 * at the given index, 0 if any.
-	 * 
+	 *
 	 * <br>
 	 * <br>
 	 * For example:
@@ -2005,17 +2005,13 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 * 
-	 * @param toBeFound
-	 *        the given character
-	 * @param array
-	 *        the given array
-	 * @return the number of occurrences of the given character in the given
-	 *         array, 0 if any
-	 * @exception NullPointerException
-	 *            if array is null
-	 * @exception ArrayIndexOutOfBoundsException
-	 *            if start is lower than 0
+	 *
+	 * @param toBeFound the given character
+	 * @param array the given array
+	 * @param start the start position for the search
+	 * @return the number of occurrences of the given character in the given array, or 0 if any
+	 * @exception NullPointerException if array is null
+	 * @exception ArrayIndexOutOfBoundsException if start is lower than 0
 	 */
 	public static final int occurencesOf(char toBeFound, char[] array, int start) {
 		int count = 0;
@@ -2046,7 +2042,7 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param prefix
 	 *        the given prefix
 	 * @param name
@@ -2091,7 +2087,7 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param prefix
 	 *        the given prefix
 	 * @param name
@@ -2147,7 +2143,7 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param array
 	 *        the given array
 	 * @param toBeReplaced
@@ -2191,7 +2187,7 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param array
 	 *        the given array
 	 * @param toBeReplaced
@@ -2274,7 +2270,7 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param divider
 	 *        the given divider
 	 * @param array
@@ -2343,7 +2339,7 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param divider
 	 *        the given divider
 	 * @param array
@@ -2392,7 +2388,7 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param divider
 	 *        the given divider
 	 * @param array
@@ -2459,7 +2455,7 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param array
 	 *        the given array
 	 * @param start
@@ -2514,7 +2510,7 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param array
 	 *        the given array
 	 * @param start
@@ -2561,7 +2557,7 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param chars
 	 *        the chars to convert
 	 * @return the result of a char[] conversion to lowercase
@@ -2603,7 +2599,7 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param chars
 	 *        the given array
 	 * @return a new array removing leading and trailing spaces (' ')
@@ -2642,7 +2638,7 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param array
 	 *        the given array
 	 * @return a string which is the concatenation of the given array using the

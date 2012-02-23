@@ -38,6 +38,8 @@ import org.eclipse.ui.editors.text.TextEditor;
  * external tools cannot see unsaved changes.
  *
  * @author alruiz@google.com (Alex Ruiz)
+ * 
+ * @since 3.0
  */
 public abstract class AbstractCxxExternalToolBasedChecker extends AbstractExternalToolBasedChecker {
 	/**

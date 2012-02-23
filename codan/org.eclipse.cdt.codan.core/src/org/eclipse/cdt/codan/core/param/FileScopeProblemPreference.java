@@ -10,12 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.param;
 
-import java.io.IOException;
-import java.io.StreamTokenizer;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import org.eclipse.cdt.codan.core.Messages;
 import org.eclipse.cdt.codan.internal.core.CharOperation;
 import org.eclipse.core.resources.IProject;
@@ -25,6 +19,12 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+
+import java.io.IOException;
+import java.io.StreamTokenizer;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Custom preference for resource scope
@@ -174,14 +174,14 @@ public class FileScopeProblemPreference extends AbstractProblemPreference {
 		checkChar(tokenizer, '>');
 		ArrayList<IPath> list = new ArrayList<IPath>();
 		int token;
-		int index = 0;
 		try {
 			checkChar(tokenizer, '(');
 			token = tokenizer.nextToken();
-			if (token != ')')
+			if (token != ')') {
 				tokenizer.pushBack();
-			else
+			} else {
 				return Collections.emptyList();
+			}
 			while (true) {
 				token = tokenizer.nextToken();
 				if (tokenizer.sval == null)
@@ -192,7 +192,6 @@ public class FileScopeProblemPreference extends AbstractProblemPreference {
 					break;
 				tokenizer.pushBack();
 				checkChar(tokenizer, ',');
-				index++;
 			}
 		} catch (IOException e) {
 			throw new IllegalArgumentException(e);

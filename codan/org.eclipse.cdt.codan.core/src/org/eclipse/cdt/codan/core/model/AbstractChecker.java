@@ -161,7 +161,7 @@ public abstract class AbstractChecker implements IChecker {
 	 * @return instance of IProblemLocation
 	 */
 	protected IProblemLocation createProblemLocation(IFile file, int startChar, int endChar) {
-		return getRuntime().getProblemLocationFactory().createProblemLocation(file, startChar, endChar);
+		return getRuntime().getProblemLocationFactory().createProblemLocation(file, startChar, endChar, -1);
 	}
 
 	/**

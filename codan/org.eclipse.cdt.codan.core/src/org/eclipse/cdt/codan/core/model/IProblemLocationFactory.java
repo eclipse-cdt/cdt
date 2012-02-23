@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Alena Laskavaia 
+ * Copyright (c) 2009, 2010 Alena Laskavaia
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,7 @@ import org.eclipse.core.resources.IFile;
 
 /**
  * Factory interface that allows to create problem locations.
- * 
+ *
  * Clients may implement and extend this interface.
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part
@@ -25,7 +25,7 @@ import org.eclipse.core.resources.IFile;
 public interface IProblemLocationFactory {
 	/**
 	 * Create and return instance of IProblemLocation
-	 * 
+	 *
 	 * @param file
 	 *        - file where problem is found
 	 * @param line
@@ -36,7 +36,7 @@ public interface IProblemLocationFactory {
 
 	/**
 	 * Create and return instance of IProblemLocation
-	 * 
+	 *
 	 * @param file
 	 *        - file where problem is found
 	 * @param startChar
@@ -45,21 +45,23 @@ public interface IProblemLocationFactory {
 	 *        - end char of the problem in the file, is zero-relative and
 	 *        exclusive.
 	 * @return instance of IProblemLocation
+	 *
+	 * @deprecated Use {@link #createProblemLocation(IFile, int, int, int)} instead.
 	 */
+	@Deprecated
 	public IProblemLocation createProblemLocation(IFile file, int startChar, int endChar);
 
 	/**
 	 * Create and return instance of IProblemLocation
-	 * 
+	 *
 	 * @param astFile - file where problem is found
 	 * @param startChar - start char of the problem in the file, is
 	 *        zero-relative
 	 * @param endChar - end char of the problem in the file, is zero-relative
-	 *        and
-	 *        exclusive.
-	 * 
+	 *        and exclusive.
+	 *
 	 * @param line
-	 *        - start line number (for visualisation purposes)
+	 *        - start line number (for visualization purposes)
 	 * @return instance of IProblemLocation
 	 */
 	public IProblemLocation createProblemLocation(IFile astFile, int startChar, int endChar, int line);

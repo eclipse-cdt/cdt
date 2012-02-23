@@ -19,7 +19,7 @@ import java.util.List;
 
 import org.eclipse.cdt.codan.core.externaltool.AbstractOutputParser;
 import org.eclipse.cdt.codan.core.externaltool.IConsolePrinter;
-import org.eclipse.cdt.codan.core.externaltool.IConsolePrinterFinder;
+import org.eclipse.cdt.codan.core.externaltool.IConsolePrinterProvider;
 import org.eclipse.cdt.codan.core.externaltool.InvocationFailure;
 import org.eclipse.core.runtime.IPath;
 
@@ -32,14 +32,15 @@ import org.eclipse.core.runtime.IPath;
  */
 public class CommandLauncher {
 	private ProcessInvoker processInvoker = new ProcessInvoker();
-	private final IConsolePrinterFinder consolePrinterFinder;
+	private final IConsolePrinterProvider consolePrinterProvider;
 
 	/**
 	 * Constructor.
-	 * @param consolePrinter prints the output of an external tool to an Eclipse Console.
+	 * @param consolePrinterProvider creates an Eclipse console that uses the name of an external
+	 *        tool as its own.
 	 */
-	public CommandLauncher(IConsolePrinterFinder consolePrinter) {
-		this.consolePrinterFinder = consolePrinter;
+	public CommandLauncher(IConsolePrinterProvider consolePrinterProvider) {
+		this.consolePrinterProvider = consolePrinterProvider;
 	}
 
 	/**
@@ -60,7 +61,7 @@ public class CommandLauncher {
 		String command = buildCommand(executablePath, args);
 		Process process = null;
 		IConsolePrinter console =
-				consolePrinterFinder.findConsole(externalToolName, shouldDisplayOutput);
+				consolePrinterProvider.createConsole(externalToolName, shouldDisplayOutput);
 		try {
 			console.clear();
 			console.println(command);

@@ -11,20 +11,20 @@
 package org.eclipse.cdt.codan.core.externaltool;
 
 /**
- * Finds an Eclipse console that uses the name of an external tool as its own.
+ * Creates or finds an Eclipse console that uses the name of an external tool as its own.
  *
  * @author alruiz@google.com (Alex Ruiz)
  *
  * @since 2.1
  */
-public interface IConsolePrinterFinder {
+public interface IConsolePrinterProvider {
 	/**
-	 * Finds an Eclipse console that uses the name of an external tool as its own.
+	 * Creates an Eclipse console that uses the name of an external tool as its own.
 	 * @param externalToolName the name of the external tool that will be used as the name of the
 	 *        console.
 	 * @param shouldDisplayOutput indicates whether the user wants to see the output of the external
 	 *        tool in the console.
 	 * @return the created or found console.
 	 */
-	IConsolePrinter findConsole(String externalToolName, boolean shouldDisplayOutput);
+	IConsolePrinter createConsole(String externalToolName, boolean shouldDisplayOutput);
 }

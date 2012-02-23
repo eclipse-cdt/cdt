@@ -16,7 +16,7 @@ import java.util.List;
 import org.eclipse.cdt.codan.core.externaltool.AbstractOutputParser;
 import org.eclipse.cdt.codan.core.externaltool.ConfigurationSettings;
 import org.eclipse.cdt.codan.core.externaltool.IArgsSeparator;
-import org.eclipse.cdt.codan.core.externaltool.IConsolePrinterFinder;
+import org.eclipse.cdt.codan.core.externaltool.IConsolePrinterProvider;
 import org.eclipse.cdt.codan.core.externaltool.InvocationFailure;
 import org.eclipse.cdt.codan.core.externaltool.InvocationParameters;
 import org.eclipse.core.runtime.IPath;
@@ -34,15 +34,18 @@ public class ExternalToolInvoker {
 
 	/**
 	 * Constructor.
-	 * @param consolePrinterFinder finds an Eclipse console that uses the name of an external tool
-	 *        as its own.
+	 * @param consolePrinterProvider creates an Eclipse console that uses the name of an external
+	 *        tool as its own.
 	 */
-	public ExternalToolInvoker(IConsolePrinterFinder consolePrinterFinder) {
-		this(new CommandLauncher(consolePrinterFinder));
+	public ExternalToolInvoker(IConsolePrinterProvider consolePrinterProvider) {
+		this(new CommandLauncher(consolePrinterProvider));
 	}
 
-	// Visible for testing.
-	ExternalToolInvoker(CommandLauncher commandLauncher) {
+	/**
+	 * Constructor.
+	 * @param commandLauncher invokes an external tool command.
+	 */
+	public ExternalToolInvoker(CommandLauncher commandLauncher) {
 		this.commandLauncher = commandLauncher;
 	}
 

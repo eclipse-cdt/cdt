@@ -13,7 +13,7 @@ package org.eclipse.cdt.codan.ui.externaltool;
 import static org.eclipse.ui.console.IConsoleConstants.ID_CONSOLE_VIEW;
 
 import org.eclipse.cdt.codan.core.externaltool.IConsolePrinter;
-import org.eclipse.cdt.codan.core.externaltool.IConsolePrinterFinder;
+import org.eclipse.cdt.codan.core.externaltool.IConsolePrinterProvider;
 import org.eclipse.cdt.codan.internal.ui.CodanUIActivator;
 import org.eclipse.cdt.codan.ui.CodanEditorUtility;
 import org.eclipse.ui.IWorkbenchPage;
@@ -25,18 +25,18 @@ import org.eclipse.ui.console.IConsoleView;
 import org.eclipse.ui.console.MessageConsole;
 
 /**
- * Default implementation of <code>{@link IConsolePrinterFinder}</code>.
+ * Default implementation of <code>{@link IConsolePrinterProvider}</code>.
  * 
  * @author alruiz@google.com (Alex Ruiz)
  * 
  * @since 2.1
  */
-public class ConsolePrinterFinder implements IConsolePrinterFinder {
+public class ConsolePrinterProvider implements IConsolePrinterProvider {
 	private static final NullConsolePrinter NULL_CONSOLE = new NullConsolePrinter();
 	
 	/** {@inheritDoc} */
 	@Override
-	public IConsolePrinter findConsole(String externalToolName, boolean shouldDisplayOutput) {
+	public IConsolePrinter createConsole(String externalToolName, boolean shouldDisplayOutput) {
 		if (shouldDisplayOutput) {
 			try {
 				return createOrFindConsole(externalToolName);

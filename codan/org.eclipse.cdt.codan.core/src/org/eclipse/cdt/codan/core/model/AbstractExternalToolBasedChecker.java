@@ -8,7 +8,7 @@ import org.eclipse.cdt.codan.core.CodanCorePlugin;
 import org.eclipse.cdt.codan.core.externaltool.AbstractOutputParser;
 import org.eclipse.cdt.codan.core.externaltool.ConfigurationSettings;
 import org.eclipse.cdt.codan.core.externaltool.IArgsSeparator;
-import org.eclipse.cdt.codan.core.externaltool.IConsolePrinterFinder;
+import org.eclipse.cdt.codan.core.externaltool.IConsolePrinterProvider;
 import org.eclipse.cdt.codan.core.externaltool.IInvocationParametersProvider;
 import org.eclipse.cdt.codan.core.externaltool.IProblemDisplay;
 import org.eclipse.cdt.codan.core.externaltool.ISupportedResourceVerifier;
@@ -45,7 +45,7 @@ public abstract class AbstractExternalToolBasedChecker extends AbstractCheckerWi
 	private final IInvocationParametersProvider parametersProvider;
 	private final ISupportedResourceVerifier supportedResourceVerifier;
 	private final IArgsSeparator argsSeparator;
-	private final ConfigurationSettings configurationSettings;
+	private final ConfigurationSettings settings;
 	private final ExternalToolInvoker externalToolInvoker;
 	private final RootProblemPreference preferences;
 
@@ -56,18 +56,18 @@ public abstract class AbstractExternalToolBasedChecker extends AbstractCheckerWi
 	 *        external tool.
 	 * @param argsSeparator separates the arguments to pass to the external tool executable. These
 	 *        arguments are stored in a single {@code String}.
-	 * @param consolePrinterFinder finds an Eclipse console that uses the name of an external tool
-	 *        as its own.
-	 * @param configurationSettings user-configurable external tool configuration settings.
+	 * @param consolePrinterProvider creates an Eclipse console that uses the name of an external
+	 *        tool as its own.
+	 * @param settings user-configurable external tool configuration settings.
 	 */
 	public AbstractExternalToolBasedChecker(IInvocationParametersProvider parametersProvider,
 			ISupportedResourceVerifier supportedResourceVerifier, IArgsSeparator argsSeparator,
-			IConsolePrinterFinder consolePrinterFinder, ConfigurationSettings configurationSettings) {
+			IConsolePrinterProvider consolePrinterProvider, ConfigurationSettings settings) {
 		this.parametersProvider = parametersProvider;
 		this.supportedResourceVerifier = supportedResourceVerifier;
 		this.argsSeparator = argsSeparator;
-		this.configurationSettings = configurationSettings;
-		externalToolInvoker = new ExternalToolInvoker(consolePrinterFinder);
+		this.settings = settings;
+		externalToolInvoker = new ExternalToolInvoker(consolePrinterProvider);
 		preferences = new SharedRootProblemPreference();
 	}
 
@@ -118,7 +118,7 @@ public abstract class AbstractExternalToolBasedChecker extends AbstractCheckerWi
 		updateConfigurationSettingsFromPreferences(parameters.getActualFile());
 		List<AbstractOutputParser> parsers = createParsers(parameters);
 		try {
-			externalToolInvoker.invoke(parameters, configurationSettings, argsSeparator, parsers);
+			externalToolInvoker.invoke(parameters, settings, argsSeparator, parsers);
 		} catch (InvocationFailure error) {
 			handleInvocationFailure(error, parameters);
 		}
@@ -127,7 +127,7 @@ public abstract class AbstractExternalToolBasedChecker extends AbstractCheckerWi
 	private void updateConfigurationSettingsFromPreferences(IResource fileToProcess) {
 		IProblem problem = getProblemById(getReferenceProblemId(), fileToProcess);
 		MapProblemPreference preferences = (MapProblemPreference) problem.getPreference();
-		configurationSettings.updateValuesFrom(preferences);
+		settings.updateValuesFrom(preferences);
 	}
 
 	/**
@@ -180,9 +180,9 @@ public abstract class AbstractExternalToolBasedChecker extends AbstractCheckerWi
 	@Override
 	public void initPreferences(IProblemWorkingCopy problem) {
 		super.initPreferences(problem);
-		addPreference(problem, configurationSettings.getPath());
-		addPreference(problem, configurationSettings.getArgs());
-		addPreference(problem, configurationSettings.getShouldDisplayOutput());
+		addPreference(problem, settings.getPath());
+		addPreference(problem, settings.getArgs());
+		addPreference(problem, settings.getShouldDisplayOutput());
 	}
 
 	private void addPreference(IProblemWorkingCopy problem, SingleConfigurationSetting<?> setting) {

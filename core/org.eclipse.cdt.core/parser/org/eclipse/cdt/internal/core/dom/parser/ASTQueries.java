@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser;
 
@@ -31,22 +31,27 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 public class ASTQueries {
 	private static class NameSearch extends ASTVisitor {
 		private boolean fFound;
+
 		NameSearch() {
 			super(false);
 			shouldVisitAmbiguousNodes= true;
 			shouldVisitNames= true;
 		}
+
 		public void reset() {
 			fFound= false;
 		}
+
 		public boolean foundName() {
 			return fFound;
 		}
+
 		@Override
 		public int visit(IASTName name) {
 			fFound= true;
 			return PROCESS_ABORT;
 		}
+
 		@Override
 		public int visit(ASTAmbiguousNode node) {
 			IASTNode[] alternatives= node.getNodes();

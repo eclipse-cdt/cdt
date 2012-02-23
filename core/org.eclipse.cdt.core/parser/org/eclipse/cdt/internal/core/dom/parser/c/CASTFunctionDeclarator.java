@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM Rational Software) - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     John Camelon (IBM Rational Software) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -24,15 +24,14 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 
 /**
- * Models function declarators for plain c.
+ * A function declarator for plain C.
  */
 public class CASTFunctionDeclarator extends CASTDeclarator implements IASTStandardFunctionDeclarator {
-
-    private IASTParameterDeclaration [] parameters = null;
-    private int parametersPos=-1;
+    private IASTParameterDeclaration[] parameters;
+    private int parametersPos= -1;
     private boolean varArgs;
     private IScope scope;
-    
+
     public CASTFunctionDeclarator() {
 	}
 
@@ -50,20 +49,22 @@ public class CASTFunctionDeclarator extends CASTDeclarator implements IASTStanda
 		CASTFunctionDeclarator copy = new CASTFunctionDeclarator();
 		copyBaseDeclarator(copy, style);
 		copy.varArgs = varArgs;
-		
-		for(IASTParameterDeclaration param : getParameters())
+
+		for (IASTParameterDeclaration param : getParameters()) {
 			copy.addParameterDeclaration(param == null ? null : param.copy(style));
-		
+		}
+
 		if (style == CopyStyle.withLocations) {
 			copy.setCopyLocation(this);
 		}
 		return copy;
 	}
-	
+
 	@Override
 	public IASTParameterDeclaration[] getParameters() {
-        if( parameters == null ) return IASTParameterDeclaration.EMPTY_PARAMETERDECLARATION_ARRAY;
-        parameters = ArrayUtil.trimAt( IASTParameterDeclaration.class, parameters, parametersPos );
+        if (parameters == null)
+        	return IASTParameterDeclaration.EMPTY_PARAMETERDECLARATION_ARRAY;
+        parameters = ArrayUtil.trimAt(IASTParameterDeclaration.class, parameters, parametersPos);
         return parameters;
     }
 
@@ -73,8 +74,8 @@ public class CASTFunctionDeclarator extends CASTDeclarator implements IASTStanda
     	if (parameter != null) {
     		parameter.setParent(this);
 			parameter.setPropertyInParent(FUNCTION_PARAMETER);
-    		parameters = ArrayUtil.appendAt( IASTParameterDeclaration.class, parameters, ++parametersPos, parameter );
-    	}        
+    		parameters = ArrayUtil.appendAt(IASTParameterDeclaration.class, parameters, ++parametersPos, parameter);
+    	}
     }
 
     @Override
@@ -100,7 +101,7 @@ public class CASTFunctionDeclarator extends CASTDeclarator implements IASTStanda
 
 	@Override
 	public void replace(IASTNode child, IASTNode other) {
-        if( parameters != null ) {
+        if (parameters != null) {
         	for (int i = 0; i < parameters.length; ++i) {
         		if (child == parameters[i]) {
         			other.setPropertyInParent(child.getPropertyInParent());
@@ -112,22 +113,22 @@ public class CASTFunctionDeclarator extends CASTDeclarator implements IASTStanda
         }
         super.replace(child, other);
 	}
-	
+
 	@Override
 	public IScope getFunctionScope() {
         if (scope != null)
             return scope;
-        
+
         // introduce a scope for function declarations and definitions, only.
         IASTNode node= getParent();
-        while(!(node instanceof IASTDeclaration)) {
+        while (!(node instanceof IASTDeclaration)) {
         	if (node==null)
         		return null;
         	node= node.getParent();
         }
         if (node instanceof IASTParameterDeclaration)
         	return null;
-        
+
         if (node instanceof IASTFunctionDefinition) {
         	scope= ((IASTFunctionDefinition) node).getScope();
         } else if (ASTQueries.findTypeRelevantDeclarator(this) == this) {

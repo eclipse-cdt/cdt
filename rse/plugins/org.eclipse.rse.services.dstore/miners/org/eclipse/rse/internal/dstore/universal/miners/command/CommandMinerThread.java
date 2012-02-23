@@ -191,12 +191,12 @@ public class CommandMinerThread extends MinerThread
 			String userHome = null;			
 			Client client = _dataStore.getClient();
 			
-			if (client != null && theOS.equals("z/OS")){ //$NON-NLS-1$
+			if (client != null){ //$NON-NLS-1$
 				String clientActualUserId = client.getProperty("client.username");//$NON-NLS-1$
 				String clientUserId = client.getUserid();
 				
 				userHome = client.getProperty("user.home");//$NON-NLS-1$							
-				if (clientUserId != null && !clientActualUserId.equals(clientUserId)){
+				if (!theOS.equals("z/OS") && clientUserId != null && !clientActualUserId.equals(clientUserId)){
 					suCommand = "su " + clientUserId + " -c "; //$NON-NLS-1$ //$NON-NLS-2$					
 				}					
 			}

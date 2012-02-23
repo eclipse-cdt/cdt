@@ -1,26 +1,24 @@
 /*******************************************************************************
- * Copyright (c) 2012 Google, Inc.
+ * Copyright (c) 2012 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Alex Ruiz  - initial API and implementation
+ *     Alex Ruiz (Google) - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.core.externaltool;
 
-import java.io.IOException;
-
 import org.eclipse.cdt.codan.core.externaltool.InvocationFailure;
 import org.eclipse.core.runtime.IPath;
+
+import java.io.IOException;
 
 /**
  * Executes a command in a separate process.
  *
  * @author alruiz@google.com (Alex Ruiz)
- *
- * @since 2.1
  */
 public class ProcessInvoker {
 	private static final String[] ENVIRONMENT_VARIABLE_SETTINGS = {};

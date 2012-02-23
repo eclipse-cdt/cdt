@@ -1,24 +1,17 @@
 /*******************************************************************************
- * Copyright (c) 2012 Google, Inc.
+ * Copyright (c) 2012 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Alex Ruiz  - initial API and implementation
+ *     Alex Ruiz (Google) - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.core.externaltool;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertArrayEquals;
-
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.cdt.codan.core.externaltool.AbstractOutputParser;
 import org.eclipse.cdt.codan.core.externaltool.ConfigurationSettings;
@@ -27,13 +20,20 @@ import org.eclipse.cdt.codan.core.externaltool.IConsolePrinter;
 import org.eclipse.cdt.codan.core.externaltool.IConsolePrinterProvider;
 import org.eclipse.cdt.codan.core.externaltool.InvocationFailure;
 import org.eclipse.cdt.codan.core.externaltool.InvocationParameters;
-import org.eclipse.cdt.codan.core.externaltool.SpaceDelimitedArgsSeparator;
+import org.eclipse.cdt.codan.core.externaltool.SpaceArgsSeparator;
 import org.eclipse.cdt.codan.core.param.BasicProblemPreference;
 import org.eclipse.cdt.codan.core.param.IProblemPreference;
 import org.eclipse.cdt.codan.core.param.MapProblemPreference;
 import org.eclipse.cdt.codan.core.test.CodanTestCase;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Tests for <code>{@link ExternalToolInvoker}</code>.
@@ -73,7 +73,7 @@ public class ExternalToolInvokerTest extends CodanTestCase {
 		MapProblemPreference preferences = createPreferences(new File(externalToolPath),
 				"--include=all --debug=true", shouldDisplayOutput);
 		settings.updateValuesFrom(preferences);
-		argsSeparator = new SpaceDelimitedArgsSeparator();
+		argsSeparator = new SpaceArgsSeparator();
 		externalToolInvoker = new ExternalToolInvoker(consolePrinterProvider, processInvoker);
 	}
 
@@ -83,7 +83,7 @@ public class ExternalToolInvokerTest extends CodanTestCase {
 		preferences.addChildDescriptor(createPreference(PathSetting.KEY, executablePath));
 		preferences.addChildDescriptor(createPreference(ArgsSetting.KEY, args));
 		preferences.addChildDescriptor(
-				createPreference(ShouldDisplayOutputSetting.KEY, shouldDisplayOutput));
+				createPreference(ConsoleOutputSetting.KEY, shouldDisplayOutput));
 		return preferences;
 	}
 

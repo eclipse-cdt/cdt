@@ -1,21 +1,21 @@
 /*******************************************************************************
- * Copyright (c) 2012 Google, Inc.
+ * Copyright (c) 2012 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Alex Ruiz  - initial API and implementation
+ *     Alex Ruiz (Google) - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.externaltool;
-
-import java.io.File;
 
 import org.eclipse.cdt.codan.core.param.MapProblemPreference;
 import org.eclipse.cdt.codan.internal.core.externaltool.ArgsSetting;
 import org.eclipse.cdt.codan.internal.core.externaltool.PathSetting;
-import org.eclipse.cdt.codan.internal.core.externaltool.ShouldDisplayOutputSetting;
+import org.eclipse.cdt.codan.internal.core.externaltool.ConsoleOutputSetting;
+
+import java.io.File;
 
 /**
  * User-configurable external tool settings.
@@ -27,7 +27,7 @@ import org.eclipse.cdt.codan.internal.core.externaltool.ShouldDisplayOutputSetti
 public final class ConfigurationSettings {
 	private final PathSetting path;
 	private final ArgsSetting args;
-	private final ShouldDisplayOutputSetting shouldDisplayOutput;
+	private final ConsoleOutputSetting shouldDisplayOutput;
 	private final String externalToolName;
 
 	/**
@@ -43,7 +43,7 @@ public final class ConfigurationSettings {
 		this.externalToolName = externalToolName;
 		this.path = new PathSetting(externalToolName, defaultPath);
 		this.args = new ArgsSetting(externalToolName, defaultArgs);
-		this.shouldDisplayOutput = new ShouldDisplayOutputSetting(defaultShouldDisplayOutput);
+		this.shouldDisplayOutput = new ConsoleOutputSetting(defaultShouldDisplayOutput);
 	}
 
 	/**

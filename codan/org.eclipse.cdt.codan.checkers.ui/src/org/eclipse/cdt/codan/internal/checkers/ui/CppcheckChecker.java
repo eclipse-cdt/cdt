@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2012 Google, Inc.
+ * Copyright (c) 2012 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Alex Ruiz  - initial API and implementation
+ *     Alex Ruiz (Google) - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.checkers.ui;
 
@@ -41,11 +41,13 @@ public class CppcheckChecker extends AbstractCxxExternalToolBasedChecker {
 
 	// key: severity (error, warning, etc.) - value : problem ID associated to severity
 	private static final Map<String, String> PROBLEM_IDS = new HashMap<String, String>();
+
 	static {
 		ERROR_PROBLEM_ID = addProblemId("error"); //$NON-NLS-1$
 		addProblemId("warning"); //$NON-NLS-1$
 		addProblemId("style"); //$NON-NLS-1$
 	}
+
 	private static String addProblemId(String severity) {
 		String problemId = "org.eclipse.cdt.codan.checkers.cppcheck." + severity; //$NON-NLS-1$
 		PROBLEM_IDS.put(severity, problemId);

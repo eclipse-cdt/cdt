@@ -1,26 +1,28 @@
-// Copyright 2012 Google Inc. All Rights Reserved.
-
-package org.eclipse.cdt.codan.core.model;
-
-import java.util.List;
+/*******************************************************************************
+ * Copyright (c) 2012 Google, Inc and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Alex Ruiz (Google) - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.cdt.codan.core.externaltool;
 
 import org.eclipse.cdt.codan.core.CodanCorePlugin;
-import org.eclipse.cdt.codan.core.externaltool.AbstractOutputParser;
-import org.eclipse.cdt.codan.core.externaltool.ConfigurationSettings;
-import org.eclipse.cdt.codan.core.externaltool.IArgsSeparator;
-import org.eclipse.cdt.codan.core.externaltool.IConsolePrinterProvider;
-import org.eclipse.cdt.codan.core.externaltool.IInvocationParametersProvider;
-import org.eclipse.cdt.codan.core.externaltool.IProblemDisplay;
-import org.eclipse.cdt.codan.core.externaltool.ISupportedResourceVerifier;
-import org.eclipse.cdt.codan.core.externaltool.InvocationFailure;
-import org.eclipse.cdt.codan.core.externaltool.InvocationParameters;
-import org.eclipse.cdt.codan.core.externaltool.SingleConfigurationSetting;
+import org.eclipse.cdt.codan.core.model.AbstractCheckerWithProblemPreferences;
+import org.eclipse.cdt.codan.core.model.IProblem;
+import org.eclipse.cdt.codan.core.model.IProblemLocation;
+import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
 import org.eclipse.cdt.codan.core.param.IProblemPreference;
 import org.eclipse.cdt.codan.core.param.MapProblemPreference;
 import org.eclipse.cdt.codan.core.param.RootProblemPreference;
 import org.eclipse.cdt.codan.core.param.SharedRootProblemPreference;
 import org.eclipse.cdt.codan.internal.core.externaltool.ExternalToolInvoker;
 import org.eclipse.core.resources.IResource;
+
+import java.util.List;
 
 /**
  * Base class for checkers that invoke external command-line tools to perform code checking.
@@ -43,7 +45,6 @@ public abstract class AbstractExternalToolBasedChecker extends AbstractCheckerWi
 	private static final boolean DO_NOT_TRAVERSE_CHILDREN = false;
 
 	private final IInvocationParametersProvider parametersProvider;
-	private final ISupportedResourceVerifier supportedResourceVerifier;
 	private final IArgsSeparator argsSeparator;
 	private final ConfigurationSettings settings;
 	private final ExternalToolInvoker externalToolInvoker;
@@ -52,8 +53,6 @@ public abstract class AbstractExternalToolBasedChecker extends AbstractCheckerWi
 	/**
 	 * Constructor.
 	 * @param parametersProvider provides the parameters to pass when invoking the external tool.
-	 * @param supportedResourceVerifier indicates whether a resource can be processed by the
-	 *        external tool.
 	 * @param argsSeparator separates the arguments to pass to the external tool executable. These
 	 *        arguments are stored in a single {@code String}.
 	 * @param consolePrinterProvider creates an Eclipse console that uses the name of an external
@@ -61,25 +60,13 @@ public abstract class AbstractExternalToolBasedChecker extends AbstractCheckerWi
 	 * @param settings user-configurable external tool configuration settings.
 	 */
 	public AbstractExternalToolBasedChecker(IInvocationParametersProvider parametersProvider,
-			ISupportedResourceVerifier supportedResourceVerifier, IArgsSeparator argsSeparator,
-			IConsolePrinterProvider consolePrinterProvider, ConfigurationSettings settings) {
+			IArgsSeparator argsSeparator, IConsolePrinterProvider consolePrinterProvider,
+			ConfigurationSettings settings) {
 		this.parametersProvider = parametersProvider;
-		this.supportedResourceVerifier = supportedResourceVerifier;
 		this.argsSeparator = argsSeparator;
 		this.settings = settings;
 		externalToolInvoker = new ExternalToolInvoker(consolePrinterProvider);
 		preferences = new SharedRootProblemPreference();
-	}
-
-	/**
-	 * Indicates whether this checker can process the given resource. For more details, please
-	 * see <code>{@link ISupportedResourceVerifier#isSupported(IResource)}</code>.
-	 * @param resource the given resource.
-	 * @return {@code true} if this checker can process the given resource, {@code false} otherwise.
-	 */
-	@Override
-	public boolean enabledInContext(IResource resource) {
-		return supportedResourceVerifier.isSupported(resource);
 	}
 
 	/**

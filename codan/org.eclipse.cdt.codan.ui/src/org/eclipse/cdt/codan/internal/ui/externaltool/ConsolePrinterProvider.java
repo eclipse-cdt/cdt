@@ -1,14 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2012 Google, Inc. 
+ * Copyright (c) 2012 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Alex Ruiz  - initial API and implementation
+ *     Alex Ruiz (Google) - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.codan.ui.externaltool;
+package org.eclipse.cdt.codan.internal.ui.externaltool;
 
 import static org.eclipse.ui.console.IConsoleConstants.ID_CONSOLE_VIEW;
 
@@ -28,13 +28,10 @@ import org.eclipse.ui.console.MessageConsole;
  * Default implementation of <code>{@link IConsolePrinterProvider}</code>.
  * 
  * @author alruiz@google.com (Alex Ruiz)
- * 
- * @since 2.1
  */
 public class ConsolePrinterProvider implements IConsolePrinterProvider {
 	private static final NullConsolePrinter NULL_CONSOLE = new NullConsolePrinter();
 	
-	/** {@inheritDoc} */
 	@Override
 	public IConsolePrinter createConsole(String externalToolName, boolean shouldDisplayOutput) {
 		if (shouldDisplayOutput) {

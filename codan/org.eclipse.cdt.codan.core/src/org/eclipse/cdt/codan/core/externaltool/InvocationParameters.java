@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2012 Google, Inc.
+ * Copyright (c) 2012 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Alex Ruiz  - initial API and implementation
+ *     Alex Ruiz (Google) - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.externaltool;
 
@@ -45,8 +45,8 @@ public final class InvocationParameters {
 	}
 
 	/**
-	 * Returns the original file to process. This is the file that triggered execution of a
-	 * command-line tool when saved.
+	 * Returns the original file to process. This is the file that triggered execution of
+	 * a command-line tool when saved.
 	 * @return the original file to process.
 	 */
 	public IResource getOriginalFile() {
@@ -55,11 +55,11 @@ public final class InvocationParameters {
 
 	/**
 	 * Returns the actual file to process. It may not be the same as
-	 * <code>{@link #getActualFile()}</code>, depending on how the external tool works.
+	 * <code>{@link #getOriginalFile()}</code>, depending on how the external tool works.
 	 * <p>
-	 * A good example is an external tool that can only process C++ files but header files. If the
-	 * <em>original</em> file is a header file, the checker could potentially find a C++ file that
-	 * includes such header and use it as the <em>actual</em> file to process.
+	 * A good example is an external tool that can only process C++ source files but not header
+	 * files. If the <em>original</em> file is a header file, the checker could potentially find
+	 * a C++ file that includes such header and use it as the <em>actual</em> file to process.
 	 * </p>
 	 * <p>
 	 * We still need to keep a reference to the <em>actual</em> file, in order to add markers to

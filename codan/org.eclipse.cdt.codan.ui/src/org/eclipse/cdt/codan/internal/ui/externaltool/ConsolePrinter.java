@@ -1,27 +1,25 @@
 /*******************************************************************************
- * Copyright (c) 2012 Google, Inc.
+ * Copyright (c) 2012 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Alex Ruiz  - initial API and implementation
+ *     Alex Ruiz (Google) - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.codan.ui.externaltool;
-
-import java.io.IOException;
+package org.eclipse.cdt.codan.internal.ui.externaltool;
 
 import org.eclipse.cdt.codan.core.externaltool.IConsolePrinter;
 import org.eclipse.ui.console.MessageConsole;
 import org.eclipse.ui.console.MessageConsoleStream;
 
+import java.io.IOException;
+
 /**
  * Default implementation of <code>{@link IConsolePrinter}</code>.
  *
  * @author alruiz@google.com (Alex Ruiz)
- * 
- * @since 2.1
  */
 class ConsolePrinter implements IConsolePrinter {
 	private final MessageConsole console;
@@ -32,18 +30,22 @@ class ConsolePrinter implements IConsolePrinter {
 		out = console.newMessageStream();
 	}
 
+	@Override
 	public void clear() {
 		console.clearConsole();
 	}
 	
+	@Override
 	public void println(String s) {
 		out.println(s);
 	}
 	
+	@Override
 	public void println() {
 		out.println();
 	}
 
+	@Override
 	public void close() {
 		try {
 			out.close();

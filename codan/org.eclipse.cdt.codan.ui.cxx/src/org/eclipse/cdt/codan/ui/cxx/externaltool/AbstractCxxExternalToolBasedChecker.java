@@ -1,24 +1,27 @@
 /*******************************************************************************
- * Copyright (c) 2012 Google, Inc.
+ * Copyright (c) 2012 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Alex Ruiz  - initial API and implementation
+ *     Alex Ruiz (Google) - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.codan.ui.cxx.externaltool;
 
+import org.eclipse.cdt.codan.core.cxx.util.FileTypes;
+import org.eclipse.cdt.codan.core.externaltool.AbstractExternalToolBasedChecker;
 import org.eclipse.cdt.codan.core.externaltool.ConfigurationSettings;
 import org.eclipse.cdt.codan.core.externaltool.IArgsSeparator;
 import org.eclipse.cdt.codan.core.externaltool.IInvocationParametersProvider;
-import org.eclipse.cdt.codan.core.externaltool.ISupportedResourceVerifier;
 import org.eclipse.cdt.codan.core.externaltool.InvocationParametersProvider;
-import org.eclipse.cdt.codan.core.externaltool.SpaceDelimitedArgsSeparator;
-import org.eclipse.cdt.codan.core.model.AbstractExternalToolBasedChecker;
-import org.eclipse.cdt.codan.internal.ui.cxx.externaltool.CxxSupportedResourceVerifier;
-import org.eclipse.cdt.codan.ui.externaltool.ConsolePrinterProvider;
+import org.eclipse.cdt.codan.core.externaltool.SpaceArgsSeparator;
+import org.eclipse.cdt.codan.internal.ui.externaltool.ConsolePrinterProvider;
+import org.eclipse.cdt.codan.ui.CodanEditorUtility;
+import org.eclipse.cdt.codan.ui.cxx.util.CEditors;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.ui.editors.text.TextEditor;
 
 /**
  * Base class for checkers that invoke external command-line tools to perform code checking
@@ -42,23 +45,51 @@ public abstract class AbstractCxxExternalToolBasedChecker extends AbstractExtern
 	 * @param configurationSettings user-configurable external tool configuration settings.
 	 */
 	public AbstractCxxExternalToolBasedChecker(ConfigurationSettings configurationSettings) {
-		this(new InvocationParametersProvider(), new CxxSupportedResourceVerifier(),
-				new SpaceDelimitedArgsSeparator(), configurationSettings);
+		this(new InvocationParametersProvider(), new SpaceArgsSeparator(), configurationSettings);
 	}
 
 	/**
 	 * Constructor.
 	 * @param parametersProvider provides the parameters to pass when invoking the external tool.
-	 * @param supportedResourceVerifier indicates whether a resource can be processed by the
-	 *        external tool.
 	 * @param argsSeparator separates the arguments to pass to the external tool executable. These
 	 *        arguments are stored in a single {@code String}.
 	 * @param configurationSettings user-configurable external tool configuration settings.
 	 */
 	public AbstractCxxExternalToolBasedChecker(IInvocationParametersProvider parametersProvider,
-			ISupportedResourceVerifier supportedResourceVerifier, IArgsSeparator argsSeparator,
-			ConfigurationSettings configurationSettings) {
-		super(parametersProvider, supportedResourceVerifier, argsSeparator,
-				new ConsolePrinterProvider(), configurationSettings);
+			IArgsSeparator argsSeparator, ConfigurationSettings configurationSettings) {
+		super(parametersProvider, argsSeparator, new ConsolePrinterProvider(),
+				configurationSettings);
+	}
+
+	/**
+	 * Indicates whether the external tool is capable of processing the given
+	 * <code>{@link IResource}</code>.
+	 * <p>
+	 * The minimum requirements that the given {@code IResource} should satisfy are:
+	 * <ul>
+	 * <li>should be C/C++ file</li>
+	 * <li>should be displayed in the current active {@code CEditor}</li>
+	 * <li>should not have any unsaved changes</li>
+	 * </ul>
+	 * </p>
+	 * @param resource the given {@code IResource}.
+	 * @return {@code true} if the external tool is capable of processing the given file,
+	 *         {@code false} otherwise.
+	 */
+	@Override
+	public boolean enabledInContext(IResource resource) {
+		return isFileOfSupportedType(resource) && isOpenInActiveCleanEditor(resource);
+	}
+
+	private boolean isFileOfSupportedType(IResource resource) {
+		return FileTypes.isCppFile(resource) || FileTypes.isHeaderFile(resource);
+	}
+
+	private boolean isOpenInActiveCleanEditor(IResource resource) {
+		TextEditor editor = CEditors.activeCEditor();
+		if (editor == null) {
+			return false;
+		}
+		return !editor.isDirty() &&	CodanEditorUtility.isResourceOpenInEditor(resource, editor);
 	}
 }

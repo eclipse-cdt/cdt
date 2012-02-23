@@ -1,14 +1,24 @@
 /*******************************************************************************
- * Copyright (c) 2012 Google, Inc.
+ * Copyright (c) 2012 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Alex Ruiz  - initial API and implementation
+ *     Alex Ruiz (Google) - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.core.externaltool;
+
+import org.eclipse.cdt.codan.core.externaltool.IConsolePrinter;
+import org.eclipse.cdt.codan.core.externaltool.IConsolePrinterProvider;
+import org.eclipse.cdt.codan.core.externaltool.AbstractOutputParser;
+import org.eclipse.cdt.codan.core.externaltool.ConfigurationSettings;
+import org.eclipse.cdt.codan.core.externaltool.IArgsSeparator;
+import org.eclipse.cdt.codan.core.externaltool.InvocationFailure;
+import org.eclipse.cdt.codan.core.externaltool.InvocationParameters;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -18,22 +28,10 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.List;
 
-import org.eclipse.cdt.codan.core.externaltool.AbstractOutputParser;
-import org.eclipse.cdt.codan.core.externaltool.ConfigurationSettings;
-import org.eclipse.cdt.codan.core.externaltool.IArgsSeparator;
-import org.eclipse.cdt.codan.core.externaltool.IConsolePrinter;
-import org.eclipse.cdt.codan.core.externaltool.IConsolePrinterProvider;
-import org.eclipse.cdt.codan.core.externaltool.InvocationFailure;
-import org.eclipse.cdt.codan.core.externaltool.InvocationParameters;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
-
 /**
  * Invokes an external tool to perform checks on a single file.
  *
  * @author alruiz@google.com (Alex Ruiz)
- *
- * @since 2.1
  */
 public class ExternalToolInvoker {
 	private final IConsolePrinterProvider consolePrinterProvider;
@@ -164,7 +162,8 @@ public class ExternalToolInvoker {
 			if (reader != null) {
 				try {
 					reader.close();
-				} catch (IOException ignored) {}
+				} catch (IOException ignored) {
+				}
 			}
 		}
 	}

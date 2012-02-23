@@ -11,14 +11,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.cdt.codan.core.CodanRuntime;
 import org.eclipse.cdt.codan.internal.core.CheckersRegistry;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.OperationCanceledException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Convenience implementation of IChecker interface. Has a default
@@ -43,7 +43,7 @@ public abstract class AbstractChecker implements IChecker {
 	 */
 	@Override
 	public boolean enabledInContext(IResource res) {
-		return res instanceof IFile;
+		return res.getType() == IResource.FILE;
 	}
 
 	/**

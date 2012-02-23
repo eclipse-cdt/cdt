@@ -398,5 +398,41 @@
             name="%problem.name.ClassMembersInitialization">
          </problem>
       </checker>
+      <category
+            id="org.eclipse.cdt.codan.checkers.cppcheck"
+            name="Cppcheck Errors">
+      </category>
+      <checker
+            class="org.eclipse.cdt.codan.internal.checkers.CppcheckChecker"
+            id="org.eclipse.cdt.codan.checkers.CppcheckChecker"
+            name="Cppcheck">
+         <problem
+               category="org.eclipse.cdt.codan.checkers.cppcheck"
+               defaultEnabled="false"
+               defaultSeverity="Error"
+               description="Errors reported by Cppcheck (http://cppcheck.sourceforge.net/)"
+               id="org.eclipse.cdt.codan.checkers.cppcheck.error"
+               messagePattern="{0}"
+               name="Errors">
+         </problem>
+         <problem
+               category="org.eclipse.cdt.codan.checkers.cppcheck"
+               defaultEnabled="false"
+               defaultSeverity="Warning"
+               description="Warnings reported by Cppcheck (http://cppcheck.sourceforge.net/)"
+               id="org.eclipse.cdt.codan.checkers.cppcheck.warning"
+               messagePattern="{0}"
+               name="Warnings">
+         </problem>
+         <problem
+               category="org.eclipse.cdt.codan.checkers.cppcheck"
+               defaultEnabled="false"
+               defaultSeverity="Warning"
+               description="Style issues reported by Cppcheck (http://cppcheck.sourceforge.net/)"
+               id="org.eclipse.cdt.codan.checkers.cppcheck.style"
+               messagePattern="{0}"
+               name="Style Issues">
+         </problem>
+      </checker>
    </extension>
 </plugin>

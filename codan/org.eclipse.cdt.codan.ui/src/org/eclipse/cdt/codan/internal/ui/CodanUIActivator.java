@@ -83,7 +83,7 @@ public class CodanUIActivator extends AbstractUIPlugin {
 	}
 
 	/**
-	 * Logs an internal error with the specified throwable
+	 * Logs an internal error with the specified {@code Throwable}.
 	 * 
 	 * @param e
 	 *        the exception to be logged
@@ -100,6 +100,18 @@ public class CodanUIActivator extends AbstractUIPlugin {
 	 */
 	public static void log(String message) {
 		log(new Status(IStatus.ERROR, PLUGIN_ID, 1, message, null));
+	}
+
+	/**
+	 * Logs an internal error with the specified message and {@code Throwable}.
+	 * 
+	 * @param message
+	 *        the error message to log
+	 * @param e
+	 *        the exception to be logged
+	 */
+	public static void log(String message, Throwable e) {
+		log(new Status(IStatus.ERROR, PLUGIN_ID, 1, message, e));
 	}
 
 	/**

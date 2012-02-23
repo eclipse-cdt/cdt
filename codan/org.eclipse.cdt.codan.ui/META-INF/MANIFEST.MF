@@ -13,7 +13,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.jface.text,
  org.eclipse.ui.ide,
  org.eclipse.cdt.ui,
- org.eclipse.core.filesystem
+ org.eclipse.core.filesystem,
+ org.eclipse.ui.console;bundle-version="3.5.100"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.cdt.codan.internal.ui;x-friends:="org.eclipse.cdt.codan.ui.cxx",
@@ -23,5 +24,6 @@ Export-Package: org.eclipse.cdt.codan.internal.ui;x-friends:="org.eclipse.cdt.co
  org.eclipse.cdt.codan.internal.ui.views;x-internal:=true,
  org.eclipse.cdt.codan.internal.ui.widgets;x-internal:=true,
  org.eclipse.cdt.codan.ui,
+ org.eclipse.cdt.codan.ui.externaltool,
  org.eclipse.cdt.codan.ui.handlers
 

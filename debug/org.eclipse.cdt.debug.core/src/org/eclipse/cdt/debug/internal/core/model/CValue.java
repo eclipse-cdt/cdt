@@ -46,6 +46,8 @@ import org.eclipse.cdt.debug.core.model.CVariableFormat;
 import org.eclipse.cdt.debug.core.model.ICDebugElementStatus;
 import org.eclipse.cdt.debug.core.model.ICStackFrame;
 import org.eclipse.cdt.debug.core.model.ICType;
+import org.eclipse.cdt.utils.Addr32;
+import org.eclipse.cdt.utils.Addr64;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IVariable;
 
@@ -632,9 +634,18 @@ public class CValue extends AbstractCValue {
 			return address.toHexAddressString();
 		else if ( CVariableFormat.DECIMAL.equals( format ) )
 			return address.toString();
-		else if ( CVariableFormat.OCTAL.equals( format ) )
-			return address.toHexAddressString();
-		else if ( CVariableFormat.BINARY.equals( format ) )
+		else if ( CVariableFormat.OCTAL.equals( format ) ) {
+		    // Using the instanceof operator here to avoid API change
+		    // Add IAddress.toOctalAddressString() in a future CDT release
+		    if (address instanceof Addr32) {
+		        return ((Addr32)address).toOctalAddressString();
+		    } else if (address instanceof Addr64) {
+		        return ((Addr64)address).toOctalAddressString();
+		    } else {
+		        // Fall back to hexadecimal address format
+		        return address.toHexAddressString();
+		    }
+		} else if ( CVariableFormat.BINARY.equals( format ) )
 			return address.toBinaryAddressString();
 		return null;
 	}

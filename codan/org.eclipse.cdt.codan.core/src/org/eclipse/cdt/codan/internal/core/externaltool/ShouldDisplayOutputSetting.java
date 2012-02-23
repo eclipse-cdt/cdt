@@ -26,7 +26,7 @@ import org.eclipse.cdt.codan.core.param.IProblemPreferenceDescriptor;
  * @since 2.1
  */
 public class ShouldDisplayOutputSetting extends SingleConfigurationSetting<Boolean> {
-	private static final String KEY = "externalToolShouldDisplayOutput"; //$NON-NLS-1$
+	static final String KEY = "externalToolShouldDisplayOutput"; //$NON-NLS-1$
 
 	/**
 	 * Constructor.

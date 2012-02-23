@@ -27,7 +27,7 @@ import org.eclipse.cdt.codan.core.param.IProblemPreferenceDescriptor;
  * @since 2.1
  */
 public class PathSetting extends SingleConfigurationSetting<File> {
-	private static final String KEY = "externalToolPath"; //$NON-NLS-1$
+	static final String KEY = "externalToolPath"; //$NON-NLS-1$
 
 	/**
 	 * Constructor.

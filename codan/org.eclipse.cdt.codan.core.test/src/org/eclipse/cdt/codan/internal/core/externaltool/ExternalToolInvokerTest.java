@@ -101,7 +101,9 @@ public class ExternalToolInvokerTest extends CodanTestCase {
 	// class C {
 	// };
 	public void testInvokesProcessCorrectly() throws Throwable {
-		loadcode(getAboveComment());
+		String aboveComment = getAboveComment();
+		System.out.println(aboveComment);
+		loadcode(aboveComment);
 		String expectedCommand = expectedCommand();
 		InvocationParameters parameters = new InvocationParameters(currentIFile, currentIFile,
 				actualFilePath(), workingDirectory);

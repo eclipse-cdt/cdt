@@ -49,7 +49,7 @@ public class ExternalToolInvoker {
 	}
 
 	/**
-	 * Constructor.
+	 * Constructor, for testing purposes only.
 	 * @param consolePrinterProvider creates an Eclipse console that uses the name of an external
 	 *        tool as its own.
 	 * @param processInvoker executes a command in a separate process.
@@ -72,8 +72,8 @@ public class ExternalToolInvoker {
 	 * @throws Throwable if the external tool cannot be launched.
 	 */
 	public void invoke(InvocationParameters parameters, ConfigurationSettings configurationSettings,
-			IArgsSeparator argsSeparator,
-			List<AbstractOutputParser> parsers) throws InvocationFailure, Throwable {
+			IArgsSeparator argsSeparator, List<AbstractOutputParser> parsers)
+					throws InvocationFailure, Throwable {
 		IPath executablePath = executablePath(configurationSettings);
 		String[] args = argsToPass(parameters, configurationSettings, argsSeparator);
 		boolean shouldDisplayOutput = configurationSettings.getShouldDisplayOutput().getValue();
@@ -92,9 +92,9 @@ public class ExternalToolInvoker {
 
 	private String[] argsToPass(InvocationParameters parameters,
 			ConfigurationSettings configurationSettings, IArgsSeparator argsSeparator) {
-		String[] configuredArgs = configuredArgs(configurationSettings, argsSeparator);
 		String actualFilePath = parameters.getActualFilePath();
-		return addFilePathToArgs(actualFilePath, configuredArgs);
+		String[] args = configuredArgs(configurationSettings, argsSeparator);
+		return addFilePathToArgs(actualFilePath, args);
 	}
 
 	private String[] configuredArgs(ConfigurationSettings configurationSettings,
@@ -168,6 +168,7 @@ public class ExternalToolInvoker {
 			}
 		}
 	}
+
 	private void reset(List<AbstractOutputParser> parsers) {
 		for (AbstractOutputParser parser : parsers) {
 			parser.reset();

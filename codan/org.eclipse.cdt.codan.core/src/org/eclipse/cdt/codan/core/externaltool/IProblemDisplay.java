@@ -16,6 +16,8 @@ import org.eclipse.cdt.codan.core.model.IProblemLocation;
  * Reports problems found in code, reported by an external tool.
  *
  * @author alruiz@google.com (Alex Ruiz)
+ *
+ * @since 2.1
  */
 public interface IProblemDisplay {
 	/**

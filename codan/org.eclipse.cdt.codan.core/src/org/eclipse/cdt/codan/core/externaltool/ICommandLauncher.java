@@ -16,10 +16,13 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 
 /**
+ * Builds and launches the command necessary to invoke an external tool.
+ *
  * @author alruiz@google.com (Alex Ruiz)
  *
+ * @since 2.1
  */
-public interface ICommandInvoker {
+public interface ICommandLauncher {
 	/**
 	 * Builds and launches the command necessary to invoke an external tool.
 	 * @param project the current project.
@@ -35,5 +38,5 @@ public interface ICommandInvoker {
 	 */
 	void buildAndLaunchCommand(IProject project, String externalToolName, IPath executablePath,
 			String[] args, IPath workingDirectory, boolean shouldDisplayOutput,
-			List<IOutputParser> parsers) throws InvocationFailure, Throwable;
+			List<AbstractOutputParser> parsers) throws InvocationFailure, Throwable;
 }

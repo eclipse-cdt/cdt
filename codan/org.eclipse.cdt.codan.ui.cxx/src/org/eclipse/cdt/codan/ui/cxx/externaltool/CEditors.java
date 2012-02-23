@@ -24,9 +24,12 @@ import org.eclipse.ui.editors.text.TextEditor;
  * @author alruiz@google.com (Alex Ruiz)
  */
 @SuppressWarnings("restriction") // CEditor is internal API
-final class CEditors {
-
-	static TextEditor activeCEditor() {
+public final class CEditors {
+	/**
+	 * Finds the current {@code CEditor}.
+	 * @return the current {@code CEditor}, or {@code null} if one cannot be found.
+	 */
+	public static TextEditor activeCEditor() {
 		IWorkbench workbench = PlatformUI.getWorkbench();
 		for (IWorkbenchWindow w : workbench.getWorkbenchWindows()) {
 			IWorkbenchPage activePage = w.getActivePage();

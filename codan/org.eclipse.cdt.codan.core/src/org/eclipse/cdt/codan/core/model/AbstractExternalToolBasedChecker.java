@@ -5,12 +5,11 @@ package org.eclipse.cdt.codan.core.model;
 import java.util.List;
 
 import org.eclipse.cdt.codan.core.CodanCorePlugin;
+import org.eclipse.cdt.codan.core.externaltool.AbstractOutputParser;
 import org.eclipse.cdt.codan.core.externaltool.ConfigurationSettings;
 import org.eclipse.cdt.codan.core.externaltool.IArgsSeparator;
-import org.eclipse.cdt.codan.core.externaltool.ICommandInvoker;
+import org.eclipse.cdt.codan.core.externaltool.ICommandLauncher;
 import org.eclipse.cdt.codan.core.externaltool.IInvocationParametersProvider;
-import org.eclipse.cdt.codan.core.externaltool.IOutputParser;
-import org.eclipse.cdt.codan.core.externaltool.IOutputParserFactory;
 import org.eclipse.cdt.codan.core.externaltool.IProblemDisplay;
 import org.eclipse.cdt.codan.core.externaltool.ISupportedResourceVerifier;
 import org.eclipse.cdt.codan.core.externaltool.InvocationFailure;
@@ -32,10 +31,12 @@ import org.eclipse.core.resources.IResource;
  * <li>not have any unsaved changes</li>
  * </ol>
  * </p>
- * By default, implementations of this checker are not enable to run while the user types, since
+ * By default, implementations of this checker are not allowed to run while the user types, since
  * external tools cannot see unsaved changes.
  *
  * @author alruiz@google.com (Alex Ruiz)
+ *
+ * @since 2.1
  */
 public abstract class AbstractExternalToolBasedChecker extends AbstractCheckerWithProblemPreferences
 		implements IProblemDisplay {
@@ -44,7 +45,6 @@ public abstract class AbstractExternalToolBasedChecker extends AbstractCheckerWi
 	private final IInvocationParametersProvider parametersProvider;
 	private final ISupportedResourceVerifier supportedResourceVerifier;
 	private final IArgsSeparator argsSeparator;
-	private final IOutputParserFactory outputParserFactory;
 	private final ConfigurationSettings configurationSettings;
 	private final ExternalToolInvoker externalToolInvoker;
 	private final RootProblemPreference preferences;
@@ -56,20 +56,17 @@ public abstract class AbstractExternalToolBasedChecker extends AbstractCheckerWi
 	 *        external tool.
 	 * @param argsSeparator separates the arguments to pass to the external tool executable. These
 	 *        arguments are stored in a single {@code String}.
-	 * @param commandInvoker builds and launches the command necessary to invoke the external tool.
-	 * @param outputParserFactory creates parsers for the output of the external tool.
+	 * @param commandLauncher builds and launches the command necessary to invoke the external tool.
 	 * @param configurationSettings user-configurable external tool configuration settings.
 	 */
 	public AbstractExternalToolBasedChecker(IInvocationParametersProvider parametersProvider,
 			ISupportedResourceVerifier supportedResourceVerifier, IArgsSeparator argsSeparator,
-			ICommandInvoker commandInvoker, IOutputParserFactory outputParserFactory,
-			ConfigurationSettings configurationSettings) {
+			ICommandLauncher commandLauncher, ConfigurationSettings configurationSettings) {
 		this.parametersProvider = parametersProvider;
 		this.supportedResourceVerifier = supportedResourceVerifier;
 		this.argsSeparator = argsSeparator;
-		this.outputParserFactory = outputParserFactory;
 		this.configurationSettings = configurationSettings;
-		externalToolInvoker = new ExternalToolInvoker(commandInvoker);
+		externalToolInvoker = new ExternalToolInvoker(commandLauncher);
 		preferences = new SharedRootProblemPreference();
 	}
 
@@ -118,7 +115,7 @@ public abstract class AbstractExternalToolBasedChecker extends AbstractCheckerWi
 
 	private void invokeExternalTool(InvocationParameters parameters) throws Throwable {
 		updateConfigurationSettingsFromPreferences(parameters.getActualFile());
-		List<IOutputParser> parsers = outputParserFactory.createParsers(parameters, this);
+		List<AbstractOutputParser> parsers = createParsers(parameters);
 		try {
 			externalToolInvoker.invoke(parameters, configurationSettings, argsSeparator, parsers);
 		} catch (InvocationFailure error) {
@@ -131,6 +128,12 @@ public abstract class AbstractExternalToolBasedChecker extends AbstractCheckerWi
 		MapProblemPreference preferences = (MapProblemPreference) problem.getPreference();
 		configurationSettings.updateValuesFrom(preferences);
 	}
+
+	/**
+	 * Creates instances of <code>{@link AbstractOutputParser}</code>.
+	 * @param parameters the parameters to pass when invoking an external tool.
+	 */
+	protected abstract List<AbstractOutputParser> createParsers(InvocationParameters parameters);
 
 	/**
 	 * Handles a failure reported when invoking the external tool. This implementation simply

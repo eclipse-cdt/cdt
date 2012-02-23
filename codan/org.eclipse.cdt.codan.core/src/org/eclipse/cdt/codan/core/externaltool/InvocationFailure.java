@@ -14,6 +14,8 @@ package org.eclipse.cdt.codan.core.externaltool;
  * Indicates that invocation of an external tool failed.
  *
  * @author alruiz@google.com (Alex Ruiz)
+ *
+ * @since 2.1
  */
 public class InvocationFailure extends Exception {
 	private static final long serialVersionUID = 1L;

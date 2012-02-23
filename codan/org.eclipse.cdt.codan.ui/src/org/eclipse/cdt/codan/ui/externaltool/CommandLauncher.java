@@ -17,26 +17,28 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.List;
 
-import org.eclipse.cdt.codan.core.externaltool.ICommandInvoker;
-import org.eclipse.cdt.codan.core.externaltool.IOutputParser;
+import org.eclipse.cdt.codan.core.externaltool.ICommandLauncher;
+import org.eclipse.cdt.codan.core.externaltool.AbstractOutputParser;
 import org.eclipse.cdt.codan.core.externaltool.InvocationFailure;
-import org.eclipse.cdt.codan.internal.ui.CodanUIActivator;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.ui.PartInitException;
 
 /**
  * Invokes an external tool command.
  *
  * @author alruiz@google.com (Alex Ruiz)
+ * 
+ * @since 2.1
  */
-public class CommandInvoker implements ICommandInvoker {
+public class CommandLauncher implements ICommandLauncher {
 	private static final String[] ENVIRONMENT_VARIABLE_SETTINGS = {};
+	
+	private ConsolePrinterFactory consolePrinterFactory = new ConsolePrinterFactory();
 	
 	@Override
 	public void buildAndLaunchCommand(IProject project, String externalToolName,
 			IPath executablePath, String[] args, IPath workingDirectory, boolean shouldDisplayOutput,
-			List<IOutputParser> parsers) throws InvocationFailure, Throwable {
+			List<AbstractOutputParser> parsers) throws InvocationFailure, Throwable {
 		ConsolePrinter consolePrinter = consolePrinter(externalToolName, shouldDisplayOutput);
 		String command = buildCommand(executablePath, args);
 		Process process = null;
@@ -60,14 +62,7 @@ public class CommandInvoker implements ICommandInvoker {
 	}
 
 	private ConsolePrinter consolePrinter(String externalToolName, boolean shouldDisplayOutput) {
-		if (shouldDisplayOutput) {
-			try {
-				return ConsolePrinterImpl.createOrFindConsole(externalToolName);
-			} catch (PartInitException e) {
-				CodanUIActivator.log("Unable to create/find console", e); //$NON-NLS-1$
-			}
-		}
-		return ConsolePrinter.NullImpl;
+		return consolePrinterFactory.createConsolePrinter(externalToolName, shouldDisplayOutput);
 	}
 	
 	private String buildCommand(IPath executablePath, String[] args) {
@@ -87,7 +82,7 @@ public class CommandInvoker implements ICommandInvoker {
 		return runtime.exec(command, ENVIRONMENT_VARIABLE_SETTINGS,	workingDirectory.toFile());
 	}
 	
-	private void processStream(InputStream inputStream, List<IOutputParser> parsers, 
+	private void processStream(InputStream inputStream, List<AbstractOutputParser> parsers, 
 			ConsolePrinter consolePrinter) throws IOException, InvocationFailure {
 		Reader reader = null;
 		try {
@@ -96,7 +91,7 @@ public class CommandInvoker implements ICommandInvoker {
 			String line = null;
 			while ((line = bufferedReader.readLine()) != null) {
 				consolePrinter.println(line);
-				for (IOutputParser parser : parsers) {
+				for (AbstractOutputParser parser : parsers) {
 					if (parser.parse(line)) {
 						break;
 					}
@@ -109,5 +104,10 @@ public class CommandInvoker implements ICommandInvoker {
 				} catch (IOException ignored) {}
 			}
 		}
+	}
+	
+	// Visible for testing.
+	void setConsolePrinterFactory(ConsolePrinterFactory newVal) {
+		this.consolePrinterFactory = newVal;
 	}
 }

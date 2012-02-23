@@ -10,11 +10,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.param;
 
-
 /**
  * Preferences that can be shared among several problems.
  *
  * @author alruiz@google.com (Alex Ruiz)
+ *
+ * @since 2.1
  */
 public class SharedRootProblemPreference extends RootProblemPreference {
 	@Override

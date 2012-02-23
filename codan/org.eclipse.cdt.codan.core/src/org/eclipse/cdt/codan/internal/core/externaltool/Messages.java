@@ -8,22 +8,25 @@
  * Contributors:
  *    Alex Ruiz  - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.codan.core.externaltool;
+package org.eclipse.cdt.codan.internal.core.externaltool;
 
-import java.util.List;
+import org.eclipse.osgi.util.NLS;
 
 /**
- * Factory of instances of <code>{@link IOutputParser}</code>.
- *
  * @author alruiz@google.com (Alex Ruiz)
+ *
+ * @since 2.1
  */
-public interface IOutputParserFactory {
-	/**
-	 * Creates instances of <code>{@link IOutputParser}</code>.
-	 * @param parameters the parameters to pass when invoking an external tool.
-	 * @param problemDisplay displays problems found by the external tool.
-	 * @return the created parsers.
-	 */
-	List<IOutputParser> createParsers(InvocationParameters parameters,
-			IProblemDisplay problemDisplay);
+@SuppressWarnings("javadoc")
+public class Messages extends NLS {
+	public static String ConfigurationSettings_args_format;
+	public static String ConfigurationSettings_path_format;
+	public static String ConfigurationSettings_should_display_output;
+
+	static {
+		Class<Messages> clazz = Messages.class;
+		NLS.initializeMessages(clazz.getName(), clazz);
+	}
+
+	private Messages() {}
 }

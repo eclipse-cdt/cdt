@@ -20,11 +20,11 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.ui.editors.text.TextEditor;
 
 /**
- * Implemenation of <code>{@link ISupportedResourceVerifier}</code> for C/C++ files.
+ * Implementation of <code>{@link ISupportedResourceVerifier}</code> for C/C++ files.
  *
  * @author alruiz@google.com (Alex Ruiz)
  */
-public class CxxSupportedResourceVerifier implements ISupportedResourceVerifier {
+class CxxSupportedResourceVerifier implements ISupportedResourceVerifier {
 	/**
 	 * Indicates whether the external tool is capable of processing the given
 	 * <code>{@link IResource}</code>.

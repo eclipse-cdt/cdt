@@ -16,6 +16,8 @@ import org.eclipse.core.resources.IResource;
  * Provides the parameters to pass when invoking an external tool.
  *
  * @author alruiz@google.com (Alex Ruiz)
+ *
+ * @since 2.1
  */
 public interface IInvocationParametersProvider {
 	/**

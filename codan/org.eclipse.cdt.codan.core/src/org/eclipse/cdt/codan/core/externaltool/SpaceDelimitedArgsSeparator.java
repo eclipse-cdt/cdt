@@ -13,11 +13,15 @@ package org.eclipse.cdt.codan.core.externaltool;
 import java.util.regex.Pattern;
 
 /**
- * Separates the value of an <code>{@link ArgsSetting}</code> using an empty space as delimiter.
+ * Default implementation of <code>{@link IArgsSeparator}</code> that uses an empty space as
+ * the delimiter to separate the arguments to pass to an external tool.
  *
  * @author alruiz@google.com (Alex Ruiz)
+ *
+ * @since 2.1
  */
 public class SpaceDelimitedArgsSeparator implements IArgsSeparator {
+	private static final String[] NO_ARGS = new String[0];
 	private static final Pattern EMPTY_SPACE_PATTERN = Pattern.compile("\\s+"); //$NON-NLS-1$
 
 	/**

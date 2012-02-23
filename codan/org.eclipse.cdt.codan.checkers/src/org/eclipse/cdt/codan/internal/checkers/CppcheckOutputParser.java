@@ -14,7 +14,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.codan.core.CodanRuntime;
-import org.eclipse.cdt.codan.core.externaltool.IOutputParser;
+import org.eclipse.cdt.codan.core.externaltool.AbstractOutputParser;
 import org.eclipse.cdt.codan.core.externaltool.IProblemDisplay;
 import org.eclipse.cdt.codan.core.externaltool.InvocationParameters;
 import org.eclipse.cdt.codan.core.model.IProblemLocation;
@@ -26,7 +26,7 @@ import org.eclipse.core.resources.IFile;
  *
  * @author alruiz@google.com (Alex Ruiz)
  */
-class CppcheckOutputParser implements IOutputParser {
+class CppcheckOutputParser extends AbstractOutputParser {
 	// the pattern for parsing the message is:
 	//
 	// [/src/HelloWorld.cpp:19]: (style) The scope of the variable 'i' can be reduced

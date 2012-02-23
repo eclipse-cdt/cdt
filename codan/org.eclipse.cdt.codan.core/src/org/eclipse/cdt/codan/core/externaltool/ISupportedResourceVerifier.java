@@ -17,22 +17,26 @@ import org.eclipse.core.resources.IResource;
  * Verifies that a <code>{@link IResource}</code> can be processed by an external tool.
  *
  * @author alruiz@google.com (Alex Ruiz)
+ *
+ * @since 2.1
  */
 public interface ISupportedResourceVerifier {
 	/**
 	 * Indicates whether the external tool is capable of processing the given
 	 * <code>{@link IResource}</code>.
 	 * <p>
-	 * The minimum requirements that the given {@code IResource} should satisfy are:
+	 * The minimum requirements that the given {@code IResource} should satisfy
+	 * are:
 	 * <ul>
 	 * <li>should be an <code>{@link IFile}</code></li>
 	 * <li>should be displayed in the current active editor</li>
 	 * <li>should not have any unsaved changes</li>
 	 * </ul>
 	 * </p>
+	 *
 	 * @param resource the given {@code IResource}.
-	 * @return {@code true} if the external tool is capable of processing the given file,
-	 *         {@code false} otherwise.
+	 * @return {@code true} if the external tool is capable of processing the
+	 *         given file, {@code false} otherwise.
 	 */
 	boolean isSupported(IResource resource);
 }

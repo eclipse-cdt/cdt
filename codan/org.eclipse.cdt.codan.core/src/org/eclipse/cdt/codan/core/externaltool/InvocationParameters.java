@@ -17,6 +17,8 @@ import org.eclipse.core.runtime.IPath;
  * Parameters to pass when invoking an external tool.
  *
  * @author alruiz@google.com (Alex Ruiz)
+ *
+ * @since 2.1
  */
 public class InvocationParameters {
 	private final IResource originalFile;

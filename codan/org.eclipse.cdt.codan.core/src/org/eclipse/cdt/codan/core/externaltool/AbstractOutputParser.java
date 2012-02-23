@@ -14,8 +14,10 @@ package org.eclipse.cdt.codan.core.externaltool;
  * Parses the output of an external tool.
  *
  * @author alruiz@google.com (Alex Ruiz)
+ *
+ * @since 2.1
  */
-public interface IOutputParser {
+public abstract class AbstractOutputParser {
 	/**
 	 * Parses one line of output. Implementations are free to create markers from the information
 	 * retrieved from the parsed output.
@@ -24,11 +26,11 @@ public interface IOutputParser {
 	 * @throws InvocationFailure if the output indicates that the invocation of the external tool
 	 *         failed.
 	 */
-	boolean parse(String line) throws InvocationFailure;
+	public abstract boolean parse(String line) throws InvocationFailure;
 
 	/**
 	 * Resets the value of this parser, usually after the execution of the external tool is
 	 * finished.
 	 */
-	void reset();
+	public abstract void reset();
 }

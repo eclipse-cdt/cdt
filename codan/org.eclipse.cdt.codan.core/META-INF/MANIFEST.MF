@@ -20,4 +20,5 @@ Export-Package: org.eclipse.cdt.codan.core,
    org.eclipse.cdt.codan.core.test,
    org.eclipse.cdt.codan.ui",
  org.eclipse.cdt.codan.internal.core.cfg;x-friends:="org.eclipse.cdt.codan.core.cxx",
+ org.eclipse.cdt.codan.internal.core.externaltool,
  org.eclipse.cdt.codan.internal.core.model;x-friends:="org.eclipse.cdt.codan.core.cxx,org.eclipse.cdt.codan.core.test,org.eclipse.cdt.codan.ui"

@@ -8,27 +8,36 @@
  * Contributors:
  *    Alex Ruiz  - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.codan.core.externaltool;
+package org.eclipse.cdt.codan.internal.core.externaltool;
 
 import static org.eclipse.cdt.codan.core.param.IProblemPreferenceDescriptor.PreferenceType.TYPE_BOOLEAN;
+import static org.eclipse.cdt.codan.internal.core.externaltool.Messages.ConfigurationSettings_should_display_output;
 
+import org.eclipse.cdt.codan.core.externaltool.SingleConfigurationSetting;
 import org.eclipse.cdt.codan.core.param.BasicProblemPreference;
+import org.eclipse.cdt.codan.core.param.IProblemPreferenceDescriptor;
 
 /**
  * User-configurable setting that specifies whether the output of an external tool should be
  * displayed in an Eclipse console.
  *
  * @author alruiz@google.com (Alex Ruiz)
+ *
+ * @since 2.1
  */
 public class ShouldDisplayOutputSetting extends SingleConfigurationSetting<Boolean> {
 	private static final String KEY = "externalToolShouldDisplayOutput"; //$NON-NLS-1$
 
 	/**
 	 * Constructor.
-	 * @param label the label to be displayed in the UI.
 	 * @param defaultValue the default value of the setting.
 	 */
-	public ShouldDisplayOutputSetting(String label, boolean defaultValue) {
-		super(new BasicProblemPreference(KEY, label, TYPE_BOOLEAN), defaultValue, Boolean.class);
+	public ShouldDisplayOutputSetting(boolean defaultValue) {
+		super(newPreferenceDescriptor(), defaultValue, Boolean.class);
+	}
+
+	private static IProblemPreferenceDescriptor newPreferenceDescriptor() {
+		String label = ConfigurationSettings_should_display_output;
+		return new BasicProblemPreference(KEY, label, TYPE_BOOLEAN);
 	}
 }

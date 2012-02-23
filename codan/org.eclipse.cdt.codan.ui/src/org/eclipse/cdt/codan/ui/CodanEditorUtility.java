@@ -160,6 +160,7 @@ public class CodanEditorUtility {
 	/**
 	 * Returns the active workbench page.
 	 * @return the active workbench page, or {@code null} if none can be found.
+	 * @since 2.1
 	 */
 	public static IWorkbenchPage getActivePage() {
 		IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();

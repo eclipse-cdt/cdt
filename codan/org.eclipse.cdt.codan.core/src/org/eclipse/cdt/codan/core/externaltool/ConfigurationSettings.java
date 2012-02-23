@@ -10,18 +10,19 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.externaltool;
 
-import static org.eclipse.cdt.codan.core.externaltool.Messages.ConfigurationSettings_args_format;
-import static org.eclipse.cdt.codan.core.externaltool.Messages.ConfigurationSettings_path_format;
-import static org.eclipse.cdt.codan.core.externaltool.Messages.ConfigurationSettings_should_display_output;
-
 import java.io.File;
 
 import org.eclipse.cdt.codan.core.param.MapProblemPreference;
+import org.eclipse.cdt.codan.internal.core.externaltool.ArgsSetting;
+import org.eclipse.cdt.codan.internal.core.externaltool.PathSetting;
+import org.eclipse.cdt.codan.internal.core.externaltool.ShouldDisplayOutputSetting;
 
 /**
  * User-configurable external tool settings.
  *
  * @author alruiz@google.com (Alex Ruiz)
+ *
+ * @since 2.1
  */
 public class ConfigurationSettings {
 	private final PathSetting path;
@@ -31,38 +32,18 @@ public class ConfigurationSettings {
 
 	/**
 	 * Constructor.
-	 * <p>
-	 * <strong>Note:</strong> this constructor uses {@code false} as the default value of the
-	 * <code>{@link ShouldDisplayOutputSetting}</code> to create.
-	 * </p>
 	 * @param externalToolName the name of the external tool, to be displayed to the user.
 	 * @param defaultPath the default path of the external tool.
 	 * @param defaultArgs the default arguments to pass when invoking the external tool.
-	 */
-	public ConfigurationSettings(String externalToolName, File defaultPath, String defaultArgs) {
-		this.externalToolName = externalToolName;
-		String pathLabel = String.format(ConfigurationSettings_path_format, externalToolName);
-		this.path = new PathSetting(pathLabel, defaultPath);
-		String argsLabel = String.format(ConfigurationSettings_args_format, externalToolName);
-		this.args = new ArgsSetting(argsLabel, defaultArgs);
-		String shouldDisplayOutputLabel = ConfigurationSettings_should_display_output;
-		this.shouldDisplayOutput = new ShouldDisplayOutputSetting(shouldDisplayOutputLabel, false);
-	}
-
-	/**
-	 * Constructor.
-	 * @param externalToolName the name of the external tool, to be displayed to the user.
-	 * @param path specifies the path and name of the external tool to invoke.
-	 * @param args specifies the arguments to pass when invoking the external tool.
-	 * @param shouldDisplayOutput specifies whether the output of the external tools should be
+	 * @param defaultShouldDisplayOutput indicates whether output of an external tool should be
 	 *        displayed in an Eclipse console.
 	 */
-	public ConfigurationSettings(String externalToolName, PathSetting path, ArgsSetting args,
-			ShouldDisplayOutputSetting shouldDisplayOutput) {
+	public ConfigurationSettings(String externalToolName, File defaultPath, String defaultArgs,
+			boolean defaultShouldDisplayOutput) {
 		this.externalToolName = externalToolName;
-		this.path = path;
-		this.args = args;
-		this.shouldDisplayOutput = shouldDisplayOutput;
+		this.path = new PathSetting(externalToolName, defaultPath);
+		this.args = new ArgsSetting(externalToolName, defaultArgs);
+		this.shouldDisplayOutput = new ShouldDisplayOutputSetting(defaultShouldDisplayOutput);
 	}
 
 	/**
@@ -77,7 +58,7 @@ public class ConfigurationSettings {
 	 * Returns the setting that specifies the path and name of the external tool to invoke.
 	 * @return the setting that specifies the path and name of the external tool to invoke.
 	 */
-	public PathSetting getPath() {
+	public SingleConfigurationSetting<File> getPath() {
 		return path;
 	}
 
@@ -85,7 +66,7 @@ public class ConfigurationSettings {
 	 * Returns the setting that specifies the arguments to pass when invoking the external tool.
 	 * @return the setting that specifies the arguments to pass when invoking the external tool.
 	 */
-	public ArgsSetting getArgs() {
+	public SingleConfigurationSetting<String> getArgs() {
 		return args;
 	}
 
@@ -95,7 +76,7 @@ public class ConfigurationSettings {
 	 * @return the shouldDisplayOutput the setting that specifies whether the output of the external
 	 *         tools should be displayed in an Eclipse console.
 	 */
-	public ShouldDisplayOutputSetting getShouldDisplayOutput() {
+	public SingleConfigurationSetting<Boolean> getShouldDisplayOutput() {
 		return shouldDisplayOutput;
 	}
 

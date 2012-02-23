@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.externaltool;
 
+import org.eclipse.cdt.codan.core.param.IProblemPreference;
 import org.eclipse.cdt.codan.core.param.IProblemPreferenceDescriptor;
 import org.eclipse.cdt.codan.core.param.MapProblemPreference;
 
@@ -18,6 +19,8 @@ import org.eclipse.cdt.codan.core.param.MapProblemPreference;
  * @param <T> the type of the value this setting stores.
  *
  * @author alruiz@google.com (Alex Ruiz)
+ *
+ * @since 2.1
  */
 public class SingleConfigurationSetting<T> {
 	private final IProblemPreferenceDescriptor descriptor;
@@ -70,7 +73,9 @@ public class SingleConfigurationSetting<T> {
 	 * by this setting.
 	 */
 	public void updateValue(MapProblemPreference preferences) {
-		Object o = preferences.getChildValue(descriptor.getKey());
-		value = valueType.cast(o);
+		IProblemPreference childDescriptor = preferences.getChildDescriptor(descriptor.getKey());
+		if (childDescriptor != null) {
+			value = valueType.cast(childDescriptor.getValue());
+		}
 	}
 }

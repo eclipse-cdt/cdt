@@ -10,17 +10,18 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.checkers;
 
+import static java.util.Collections.singletonList;
+
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.codan.core.externaltool.AbstractOutputParser;
 import org.eclipse.cdt.codan.core.externaltool.ConfigurationSettings;
-import org.eclipse.cdt.codan.core.externaltool.InvocationParametersProvider;
-import org.eclipse.cdt.codan.core.externaltool.SpaceDelimitedArgsSeparator;
-import org.eclipse.cdt.codan.core.model.AbstractExternalToolBasedChecker;
+import org.eclipse.cdt.codan.core.externaltool.InvocationParameters;
 import org.eclipse.cdt.codan.core.model.IProblemLocation;
-import org.eclipse.cdt.codan.ui.cxx.externaltool.CxxSupportedResourceVerifier;
-import org.eclipse.cdt.codan.ui.externaltool.CommandInvoker;
+import org.eclipse.cdt.codan.ui.cxx.externaltool.AbstractCxxExternalToolBasedChecker;
 
 /**
  * Checker that invokes <a href="http://cppcheck.sourceforge.net/">Cppcheck</a> when a C/C++ is
@@ -28,7 +29,7 @@ import org.eclipse.cdt.codan.ui.externaltool.CommandInvoker;
  *
  * @author alruiz@google.com (Alex Ruiz)
  */
-public class CppcheckChecker extends AbstractExternalToolBasedChecker {
+public class CppcheckChecker extends AbstractCxxExternalToolBasedChecker {
 	private static final String TOOL_NAME = "Cppcheck"; //$NON-NLS-1$
 	private static final String EXECUTABLE_NAME = "cppcheck"; //$NON-NLS-1$
 	private static final String DEFAULT_ARGS = ""; //$NON-NLS-1$
@@ -51,10 +52,7 @@ public class CppcheckChecker extends AbstractExternalToolBasedChecker {
 	}
 
 	public CppcheckChecker() {
-		super(new InvocationParametersProvider(), new CxxSupportedResourceVerifier(),
-				new SpaceDelimitedArgsSeparator(), new CommandInvoker(),
-				new CppcheckOutputParserFactory(),
-				new ConfigurationSettings(TOOL_NAME, new File(EXECUTABLE_NAME), DEFAULT_ARGS));
+		super(new ConfigurationSettings(TOOL_NAME, new File(EXECUTABLE_NAME), DEFAULT_ARGS, false));
 	}
 
 	@Override
@@ -69,5 +67,11 @@ public class CppcheckChecker extends AbstractExternalToolBasedChecker {
 	@Override
 	protected String getReferenceProblemId() {
 		return ERROR_PROBLEM_ID;
+	}
+
+	@Override
+	protected List<AbstractOutputParser> createParsers(InvocationParameters parameters) {
+		AbstractOutputParser parser = new CppcheckOutputParser(parameters, this);
+		return singletonList(parser);
 	}
 }

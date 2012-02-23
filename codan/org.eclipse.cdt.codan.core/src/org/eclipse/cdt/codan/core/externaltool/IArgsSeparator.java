@@ -11,20 +11,19 @@
 package org.eclipse.cdt.codan.core.externaltool;
 
 /**
- * Parses and separates the value of an <code>{@link ArgsSetting}</code> into an array of
- * {@code String}s.
+ * Parses a given {@code String} containing the arguments to pass to an external tool and separates
+ * them into individual values.
  *
  * @author alruiz@google.com (Alex Ruiz)
+ *
+ * @since 2.1
  */
 public interface IArgsSeparator {
 	/**
-	 * Indicates that there are no arguments to pass to the external tool executable.
-	 */
-	String[] NO_ARGS = new String[0];
-
-	/**
-	 * Parses and separates the given value.
-	 * @param args contains the arguments to pass to the external tool executable.
+	 * Parses a given {@code String} containing the arguments to pass to an external tool and
+	 * separates them into individual values.
+	 * @param args contains the arguments to pass to the external tool
+	 *        executable.
 	 * @return the separated argument values.
 	 */
 	String[] separateArgs(String args);

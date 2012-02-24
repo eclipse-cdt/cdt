@@ -18,7 +18,7 @@ import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 
-import org.eclipse.cdt.internal.ui.refactoring.RefactoringRunner2;
+import org.eclipse.cdt.internal.ui.refactoring.RefactoringRunner;
 import org.eclipse.cdt.internal.ui.refactoring.RefactoringSaveHelper;
 
 /**
@@ -26,7 +26,7 @@ import org.eclipse.cdt.internal.ui.refactoring.RefactoringSaveHelper;
  * 
  * @author Tom Ball
  */
-public class ExtractLocalVariableRefactoringRunner extends RefactoringRunner2 {
+public class ExtractLocalVariableRefactoringRunner extends RefactoringRunner {
 
 	public ExtractLocalVariableRefactoringRunner(ICElement element, ISelection selection,
 			IShellProvider shellProvider, ICProject cProject) {

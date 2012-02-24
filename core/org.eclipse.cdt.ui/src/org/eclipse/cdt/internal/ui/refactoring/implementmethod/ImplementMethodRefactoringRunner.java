@@ -19,13 +19,13 @@ import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 
-import org.eclipse.cdt.internal.ui.refactoring.RefactoringRunner2;
+import org.eclipse.cdt.internal.ui.refactoring.RefactoringRunner;
 import org.eclipse.cdt.internal.ui.refactoring.RefactoringSaveHelper;
 
 /**
  * @author Lukas Felber
  */
-public class ImplementMethodRefactoringRunner extends RefactoringRunner2 {
+public class ImplementMethodRefactoringRunner extends RefactoringRunner {
 
 	public ImplementMethodRefactoringRunner(ICElement element, ISelection selection,
 			IShellProvider shellProvider, ICProject cProject) {

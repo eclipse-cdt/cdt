@@ -60,7 +60,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.corext.util.CModelUtil;
 
 import org.eclipse.cdt.internal.ui.editor.ITranslationUnitEditorInput;
-import org.eclipse.cdt.internal.ui.refactoring.CRefactoring2;
+import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoringDescriptor;
 import org.eclipse.cdt.internal.ui.refactoring.ClassMemberInserter;
 import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
@@ -72,7 +72,7 @@ import org.eclipse.cdt.internal.ui.util.EditorUtility;
 /**
  * @author Guido Zgraggen IFS
  */
-public class HideMethodRefactoring extends CRefactoring2 {
+public class HideMethodRefactoring extends CRefactoring {
 	public static final String ID = "org.eclipse.cdt.internal.ui.refactoring.hidemethod.HideMethodRefactoring"; //$NON-NLS-1$
 
 	private IASTName methodName;

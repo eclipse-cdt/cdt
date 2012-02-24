@@ -49,7 +49,7 @@ public class ToggleRefactoringTest extends RefactoringTestBase {
 
 	@Override
 	protected Refactoring createRefactoring() {
-		refactoring = new ToggleRefactoring(getSelectedFile(), getSelection(), getCProject());
+		refactoring = new ToggleRefactoring(getSelectedTranslationUnit(), getSelection(), getCProject());
 		return refactoring;
 	}
 

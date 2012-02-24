@@ -14,6 +14,8 @@ package org.eclipse.cdt.internal.ui.refactoring.togglefunction;
 
 import java.util.List;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.text.edits.TextEditGroup;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
@@ -58,7 +60,7 @@ import org.eclipse.cdt.internal.ui.refactoring.Container;
 import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
 
 public class ToggleFromInHeaderToImplementationStrategy implements IToggleRefactoringStrategy {
-	private IASTTranslationUnit implUnit;
+	private IASTTranslationUnit implAst;
 	private ToggleRefactoringContext context;
 	private TextEditGroup infoText;
 	private ASTLiteralNode includeNode;
@@ -69,11 +71,10 @@ public class ToggleFromInHeaderToImplementationStrategy implements IToggleRefact
 	}
 
 	@Override
-	public void run(ModificationCollector collector) {
+	public void run(ModificationCollector collector) throws CoreException {
 		if (!newFileCheck()) {
 			return;
 		}
-//		newFileCheck();
 		ICPPASTFunctionDefinition newDefinition = getNewDefinition();
 		if (context.getDeclaration() != null) {
 			removeDefinitionFromHeader(collector);
@@ -81,9 +82,9 @@ public class ToggleFromInHeaderToImplementationStrategy implements IToggleRefact
 			replaceDefinitionWithDeclaration(collector);
 		}
 
-		ASTRewrite implRewrite = collector.rewriterForTranslationUnit(implUnit);
+		ASTRewrite implRewrite = collector.rewriterForTranslationUnit(implAst);
 		if (includeNode != null) {
-			implRewrite.insertBefore(implUnit, null, includeNode, infoText);
+			implRewrite.insertBefore(implAst, null, includeNode, infoText);
 		}
 		
 		IASTNode insertionParent = null;
@@ -94,20 +95,20 @@ public class ToggleFromInHeaderToImplementationStrategy implements IToggleRefact
 			insertionParent = searchNamespaceInImplementation(parent.getName());
 			if (insertionParent == null) {
 				insertionParent = createNamespace(parent);
-				implRewrite = implRewrite.insertBefore(implUnit.getTranslationUnit(), 
+				implRewrite = implRewrite.insertBefore(implAst.getTranslationUnit(), 
 						null, insertionParent, infoText);
 			}
 		} else {
-			insertionParent = implUnit.getTranslationUnit();
+			insertionParent = implAst.getTranslationUnit();
 		}
 		
 		newDefinition.setParent(insertionParent);
 		
 		IASTNode insertionPoint = findInsertionPoint(insertionParent, 
-				context.getDeclarationUnit());
+				context.getDeclarationAST());
 		ASTRewrite newRewriter = implRewrite.insertBefore(insertionParent, 
 				insertionPoint, newDefinition, infoText);
-		copyCommentsToNewFile(newDefinition, newRewriter, collector.rewriterForTranslationUnit(context.getDefinitionUnit()));
+		copyCommentsToNewFile(newDefinition, newRewriter, collector.rewriterForTranslationUnit(context.getDefinitionAST()));
 		restoreLeadingComments(newDefinition, newRewriter, collector);
 	}
 
@@ -241,14 +242,14 @@ public class ToggleFromInHeaderToImplementationStrategy implements IToggleRefact
 		});
 	}
 
-	private boolean newFileCheck() {
-		implUnit = context.getTUForSiblingFile();
-		if (implUnit == null) {
-			ToggleFileCreator filecreator = new ToggleFileCreator(context, ".cpp"); //$NON-NLS-1$
-			if (filecreator.askUserForFileCreation(context)) {
-				filecreator.createNewFile();
-				implUnit = filecreator.loadTranslationUnit();
-				includeNode = new ASTLiteralNode(filecreator.getIncludeStatement());
+	private boolean newFileCheck() throws CoreException {
+		implAst = context.getASTForPartnerFile();
+		if (implAst == null) {
+			ToggleFileCreator fileCreator = new ToggleFileCreator(context, ".cpp"); //$NON-NLS-1$
+			if (fileCreator.askUserForFileCreation(context)) {
+				IFile file = fileCreator.createNewFile();
+				implAst = context.getAST(file, null);
+				includeNode = new ASTLiteralNode(fileCreator.getIncludeStatement());
 				return true;
 			} else {
 				return false;
@@ -268,7 +269,7 @@ public class ToggleFromInHeaderToImplementationStrategy implements IToggleRefact
 	private IASTNode findInsertionPoint(IASTNode insertionParent, IASTTranslationUnit unit) {
 		IASTFunctionDeclarator declarator = context.getDeclaration();
 		if (unit == null) {
-			unit = context.getDefinitionUnit();
+			unit = context.getDefinitionAST();
 		}
 		if (declarator == null) {
 			declarator = context.getDefinition().getDeclarator();
@@ -280,7 +281,7 @@ public class ToggleFromInHeaderToImplementationStrategy implements IToggleRefact
 
 	private void restoreLeadingComments(ICPPASTFunctionDefinition newDefinition,
 			ASTRewrite newRewriter, ModificationCollector collector) {
-		ASTRewrite rw = collector.rewriterForTranslationUnit(context.getDefinitionUnit());
+		ASTRewrite rw = collector.rewriterForTranslationUnit(context.getDefinitionAST());
 		List<IASTComment>comments = rw.getComments(context.getDefinition(), CommentPosition.leading);
 		if (comments != null) {
 			for (IASTComment comment : comments) {
@@ -295,7 +296,7 @@ public class ToggleFromInHeaderToImplementationStrategy implements IToggleRefact
 	private void replaceDefinitionWithDeclaration(ModificationCollector collector) {
 		IASTSimpleDeclaration newdeclarator =
 				ToggleNodeHelper.createDeclarationFromDefinition(context.getDefinition());
-		ASTRewrite rewrite = collector.rewriterForTranslationUnit(context.getDefinitionUnit());
+		ASTRewrite rewrite = collector.rewriterForTranslationUnit(context.getDefinitionAST());
 		rewrite.replace(context.getDefinition(), newdeclarator, infoText);
 	}
 
@@ -343,19 +344,19 @@ public class ToggleFromInHeaderToImplementationStrategy implements IToggleRefact
 	private CPPASTNamespaceDefinition createNamespace(ICPPASTNamespaceDefinition parent_namespace) {
 		CPPASTNamespaceDefinition insertionParent = new CPPASTNamespaceDefinition(
 				parent_namespace.getName().copy(CopyStyle.withLocations));
-		insertionParent.setParent(implUnit);
+		insertionParent.setParent(implAst);
 		return insertionParent;
 	}
 
 	private void removeDefinitionFromHeader(ModificationCollector collector) {
 		ASTRewrite header_rewrite = collector.rewriterForTranslationUnit(
-				context.getDefinitionUnit());
+				context.getDefinitionAST());
 		header_rewrite.remove(ToggleNodeHelper.getParentRemovePoint(context.getDefinition()), infoText);
 	}
 
 	private IASTNode searchNamespaceInImplementation(final IASTName name) {
 		final Container<IASTNode> result = new Container<IASTNode>();
-		this.implUnit.accept(new ASTVisitor() {
+		this.implAst.accept(new ASTVisitor() {
 			{
 				shouldVisitNamespaces = true;
 			}

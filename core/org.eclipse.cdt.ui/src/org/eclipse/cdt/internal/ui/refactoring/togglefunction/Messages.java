@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2011, 2012 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -7,7 +7,8 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  * 
  * Contributors: 
- * 	   Emanuel Graf IFS - initial API and implementation 
+ * 	   Emanuel Graf IFS - initial API and implementation
+ *     Sergey Prigogin (Google)
  ******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.togglefunction;
 
@@ -18,12 +19,10 @@ public class Messages extends NLS {
 	public static String DeclaratorFinder_NoDeclarator;
 	public static String DeclaratorFinder_MultipleDeclarators;
 	public static String RefactoringJob_UndoName;
-	public static String ToggleFileCreator_andMove;
 	public static String ToggleFileCreator_CanNotCreateNewFile;
-	public static String ToggleFileCreator_CreateNewFile;
+	public static String ToggleFileCreator_CreateNewFilePrompt;
 	public static String ToggleFileCreator_NewImplFile;
 	public static String ToggleFileCreator_NoTuForSibling;
-	public static String ToggleFileCreator_QMark;
 	public static String ToggleFromClassToInHeaderStrategy_DefAndDecInsideClass;
 	public static String EditGroupName;
 	public static String ToggleFromImplementationToHeaderOrClassStrategy_CanNotCreateNewFile;

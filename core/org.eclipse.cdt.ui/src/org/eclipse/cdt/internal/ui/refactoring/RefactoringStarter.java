@@ -25,7 +25,7 @@ public class RefactoringStarter {
 
 	public boolean activate(RefactoringWizard wizard, Shell parent, String dialogTitle, int saveMode) {
 		RefactoringSaveHelper saveHelper= new RefactoringSaveHelper(saveMode);
-		if (!canActivate(saveHelper, parent))
+		if (!saveHelper.saveEditors(parent))
 			return false;
 
 		try {
@@ -45,9 +45,5 @@ public class RefactoringStarter {
 
 	public RefactoringStatus getInitialConditionCheckingStatus() {
 		return fStatus;
-	}
-
-	private boolean canActivate(RefactoringSaveHelper saveHelper, Shell shell) {
-		return saveHelper.saveEditors(shell);
 	}
 }

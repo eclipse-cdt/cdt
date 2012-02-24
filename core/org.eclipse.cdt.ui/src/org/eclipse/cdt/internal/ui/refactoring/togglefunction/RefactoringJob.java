@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2011, 2012 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -7,7 +7,8 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.togglefunction;
 
@@ -20,18 +21,19 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.IUndoManager;
 import org.eclipse.ltk.core.refactoring.NullChange;
-import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
 import org.eclipse.cdt.ui.CUIPlugin;
 
+import org.eclipse.cdt.internal.ui.refactoring.CRefactoringContext;
+
 class RefactoringJob extends Job {
 	public final static Object FAMILY_TOGGLE_DEFINITION = new Object();
-	private final Refactoring refactoring;
+	private final ToggleRefactoring refactoring;
 	
-	RefactoringJob(Refactoring refactoring) {
-		super("'toggle function definition' code automation"); //$NON-NLS-1$
+	RefactoringJob(ToggleRefactoring refactoring) {
+		super("Toggle Function Definition code automation"); //$NON-NLS-1$
 		this.refactoring = refactoring;
 		setPriority(Job.SHORT);
 	}
@@ -43,6 +45,7 @@ class RefactoringJob extends Job {
 	
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
+		CRefactoringContext context = new CRefactoringContext(refactoring);
 		IUndoManager undoManager = RefactoringCore.getUndoManager();
 		Change change = new NullChange();
 		Change undoChange = new NullChange();
@@ -64,6 +67,7 @@ class RefactoringJob extends Job {
 		} catch (CoreException e) {
 			CUIPlugin.log("Failure during generation of changes.", e); //$NON-NLS-1$
 		} finally {
+			context.dispose();
 			undoChange.initializeValidationData(monitor);
 			undoManager.changePerformed(change, success);
 			try {

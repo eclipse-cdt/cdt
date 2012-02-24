@@ -40,12 +40,11 @@ import org.eclipse.core.runtime.IPath;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class CoreModelUtil {
-
-	/*
-	 *  Returns whether the given path matches one of the exclusion patterns.
+	/**
+	 * Returns whether the given path matches one of the exclusion patterns.
 	 * @param resourcePath
 	 * @param exclusionPatterns
-	 * @return
+	 * @return <code>true</code> if the given path matches one of the exclusion patterns.
 	 */
 	public static boolean isExcludedPath(IPath resourcePath, IPath[] exclusionPatterns) {
 		int length = exclusionPatterns.length;
@@ -56,24 +55,19 @@ public class CoreModelUtil {
 		return isExcluded(resourcePath, fullCharExclusionPatterns);
 	}
 
-	/*
+	/**
 	 * Returns whether the given resource matches one of the exclusion patterns.
-	 * 
-	 * @see IClasspathEntry#getExclusionPatterns
 	 */
 	public final static boolean isExcluded(IResource resource, char[][] exclusionPatterns) {
 		IPath path = resource.getFullPath();
-		// ensure that folders are only excluded if all of their children are
-		// excluded
+		// Ensure that folders are only excluded if all of their children are excluded.
 		if (resource.getType() == IResource.FOLDER)
 			path = path.append("*"); //$NON-NLS-1$
 		return isExcluded(path, exclusionPatterns);
 	}
 
-	/*
+	/**
 	 * Returns whether the given resource path matches one of the exclusion patterns.
-	 * 
-	 * @see IClasspathEntry#getExclusionPatterns
 	 */
 	public final static boolean isExcluded(IPath resourcePath, char[][] exclusionPatterns) {
 		if (exclusionPatterns == null)
@@ -93,7 +87,7 @@ public class CoreModelUtil {
 	/*
 	 * if b is a prefix of a return true.
 	 */
-	static boolean prefixOfCharArray (char[] a, char[] b) {
+	static boolean prefixOfCharArray(char[] a, char[] b) {
 		if (a == b)
 			return true;
 		if (a == null || b == null)
@@ -110,7 +104,6 @@ public class CoreModelUtil {
 			return false;
 		}
 		return true;
-
 	}
 
 	/**

@@ -1,46 +1,48 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Institute for Software, HSR Hochschule fuer Technik  
- * Rapperswil, University of applied sciences and others
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html  
- *  
- * Contributors: 
- * Institute for Software - initial API and implementation
+ * Copyright (c) 2011, 2012 Google, Inc and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ * 	   Sergey Prigogin (Google) - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.window.IShellProvider;
+import org.eclipse.ltk.ui.refactoring.RefactoringWizard;
 
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 
 /**
  * Base class for all refactoring runners.
- * 
- * @deprecated Use RefactoringRunner2.
- * 
- * @author Emanuel Graf
  */
-@Deprecated
 public abstract class RefactoringRunner {
-	protected IFile file;
-	protected ISelection selection;
-	protected ICElement celement;
-	protected IShellProvider shellProvider;
-	protected ICProject project;
+	protected final ISelection selection;
+	protected final ICElement element;
+	protected final ICProject project;
+	protected final IShellProvider shellProvider;
 
-	public RefactoringRunner(IFile file, ISelection selection, ICElement element,
-			IShellProvider shellProvider, ICProject cProject) {
-		this.file = file;
+	public RefactoringRunner(ICElement element, ISelection selection, IShellProvider shellProvider,
+			ICProject cProject) {
 		this.selection = selection;
-		this.celement= element;
-		this.shellProvider= shellProvider;
+		this.element= element;
 		this.project = cProject;
+		this.shellProvider= shellProvider;
 	}
 
 	public abstract void run();
+
+	protected final void run(RefactoringWizard wizard, CRefactoring refactoring, int saveMode) {
+		CRefactoringContext context = new CRefactoringContext(refactoring);
+		try {
+			RefactoringStarter starter = new RefactoringStarter();
+			starter.activate(wizard, shellProvider.getShell(), refactoring.getName(), saveMode);
+		} finally {
+			context.dispose();
+		}
+	}
 }

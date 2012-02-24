@@ -18,13 +18,13 @@ import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 
-import org.eclipse.cdt.internal.ui.refactoring.RefactoringRunner2;
+import org.eclipse.cdt.internal.ui.refactoring.RefactoringRunner;
 import org.eclipse.cdt.internal.ui.refactoring.RefactoringSaveHelper;
 
 /**
  * @author Guido Zgraggen IFS
  */
-public class HideMethodRefactoringRunner extends RefactoringRunner2 {
+public class HideMethodRefactoringRunner extends RefactoringRunner {
 
 	public HideMethodRefactoringRunner(ICElement element, ISelection selection,
 			IShellProvider shellProvider, ICProject cProject) {

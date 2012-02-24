@@ -22,13 +22,13 @@ import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 
-import org.eclipse.cdt.internal.ui.refactoring.RefactoringRunner2;
+import org.eclipse.cdt.internal.ui.refactoring.RefactoringRunner;
 import org.eclipse.cdt.internal.ui.refactoring.RefactoringSaveHelper;
 
 /**
  * @author Thomas Corbat
  */
-public class GenerateGettersAndSettersRefactoringRunner extends RefactoringRunner2 {
+public class GenerateGettersAndSettersRefactoringRunner extends RefactoringRunner {
 
 	public GenerateGettersAndSettersRefactoringRunner(ICElement element, ISelection selection,
 			IShellProvider shellProvider, ICProject cProject) {

@@ -55,11 +55,11 @@ public abstract class CRefactoringDescriptor extends RefactoringDescriptor {
 	}
 
 	@Override
-	public abstract CRefactoring2 createRefactoring(RefactoringStatus status) throws CoreException;
+	public abstract CRefactoring createRefactoring(RefactoringStatus status) throws CoreException;
 
 	@Override
 	public CRefactoringContext createRefactoringContext(RefactoringStatus status) throws CoreException {
-		CRefactoring2 refactoring= createRefactoring(status);
+		CRefactoring refactoring= createRefactoring(status);
 		if (refactoring == null)
 			return null;
 		return new CRefactoringContext(refactoring);

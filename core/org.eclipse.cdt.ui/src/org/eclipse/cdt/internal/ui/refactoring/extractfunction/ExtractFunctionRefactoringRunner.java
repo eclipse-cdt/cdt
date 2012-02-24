@@ -18,13 +18,13 @@ import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 
-import org.eclipse.cdt.internal.ui.refactoring.RefactoringRunner2;
+import org.eclipse.cdt.internal.ui.refactoring.RefactoringRunner;
 import org.eclipse.cdt.internal.ui.refactoring.RefactoringSaveHelper;
 
 /**
  * @author Emanuel Graf
  */
-public class ExtractFunctionRefactoringRunner extends RefactoringRunner2  {
+public class ExtractFunctionRefactoringRunner extends RefactoringRunner  {
 
 	public ExtractFunctionRefactoringRunner(ICElement element, ISelection selection,
 			IShellProvider shellProvider, ICProject cProject) {

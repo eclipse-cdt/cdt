@@ -67,7 +67,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
-import org.eclipse.cdt.internal.ui.refactoring.CRefactoring2;
+import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoringDescriptor;
 import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
 import org.eclipse.cdt.internal.ui.refactoring.NodeContainer;
@@ -83,7 +83,7 @@ import org.eclipse.cdt.internal.ui.util.NameComposer;
  *
  * @author Tom Ball
  */
-public class ExtractLocalVariableRefactoring extends CRefactoring2 {
+public class ExtractLocalVariableRefactoring extends CRefactoring {
 	public static final String ID =
 			"org.eclipse.cdt.internal.ui.refactoring.extractlocalvariable.ExtractLocalVariableRefactoring"; //$NON-NLS-1$
 

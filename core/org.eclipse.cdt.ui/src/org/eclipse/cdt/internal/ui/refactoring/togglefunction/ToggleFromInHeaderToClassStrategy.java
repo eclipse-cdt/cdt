@@ -36,7 +36,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
 
 public class ToggleFromInHeaderToClassStrategy implements IToggleRefactoringStrategy {
-
 	private TextEditGroup infoText;
 	private ToggleRefactoringContext context;
 
@@ -67,8 +66,7 @@ public class ToggleFromInHeaderToClassStrategy implements IToggleRefactoringStra
 		
 		IASTNode parentTemplateDeclaration = 
 			ToggleNodeHelper.getParentTemplateDeclaration(context.getDeclaration());
-		if (parentTemplateDeclaration instanceof ICPPASTTemplateDeclaration) {
-		} else {
+		if (!(parentTemplateDeclaration instanceof ICPPASTTemplateDeclaration)) {
 			restoreLeadingComments(rewriter, newDefinition);
 		}
 	}
@@ -84,7 +82,7 @@ public class ToggleFromInHeaderToClassStrategy implements IToggleRefactoringStra
 	}
 
 	private ASTRewrite removeDefinition(ModificationCollector modifications) {
-		ASTRewrite rewriter = modifications.rewriterForTranslationUnit(context.getDefinitionUnit());
+		ASTRewrite rewriter = modifications.rewriterForTranslationUnit(context.getDefinitionAST());
 		IASTNode parentRemovePoint = ToggleNodeHelper.getParentRemovePoint(context.getDefinition());
 		rewriter.remove(parentRemovePoint, infoText);
 		return rewriter;
@@ -92,7 +90,7 @@ public class ToggleFromInHeaderToClassStrategy implements IToggleRefactoringStra
 
 	private IASTFunctionDefinition getNewDefinition() {
 		IASTFunctionDefinition newDefinition = ToggleNodeHelper.createInClassDefinition(
-				context.getDeclaration(), context.getDefinition(), context.getDefinitionUnit());
+				context.getDeclaration(), context.getDefinition(), context.getDefinitionAST());
 		newDefinition.setBody(context.getDefinition().getBody().copy(CopyStyle.withLocations));
 		if (newDefinition instanceof ICPPASTFunctionWithTryBlock) {
 			ICPPASTFunctionWithTryBlock newTryFun = (ICPPASTFunctionWithTryBlock) newDefinition;
@@ -105,9 +103,8 @@ public class ToggleFromInHeaderToClassStrategy implements IToggleRefactoringStra
 		IASTNode parent = CPPVisitor.findAncestorWithType(context.getDefinition(), ICPPASTCompositeTypeSpecifier.class);
 		if (parent != null) {
 			newDefinition.setParent(parent);
-		}
-		else {
-			newDefinition.setParent(context.getDefinitionUnit());
+		} else {
+			newDefinition.setParent(context.getDefinitionAST());
 		}
 		return newDefinition;
 	}

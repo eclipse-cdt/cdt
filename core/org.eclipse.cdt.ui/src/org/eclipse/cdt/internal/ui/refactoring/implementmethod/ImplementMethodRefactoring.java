@@ -60,7 +60,7 @@ import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
-import org.eclipse.cdt.internal.ui.refactoring.CRefactoring2;
+import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
 import org.eclipse.cdt.internal.ui.refactoring.utils.Checks;
 import org.eclipse.cdt.internal.ui.refactoring.utils.NameHelper;
@@ -73,7 +73,7 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.SelectionHelper;
  * 
  * @author Mirko Stocker, Lukas Felber, Emanuel Graf
  */
-public class ImplementMethodRefactoring extends CRefactoring2 {
+public class ImplementMethodRefactoring extends CRefactoring {
 	private ICPPASTFunctionDeclarator createdMethodDeclarator;
 	private ImplementMethodData data;
 	private MethodDefinitionInsertLocationFinder methodDefinitionInsertLocationFinder;

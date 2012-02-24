@@ -23,7 +23,6 @@ public class UtilTestSuite extends TestSuite {
 	public static Test suite() throws Exception {
 		UtilTestSuite suite = new UtilTestSuite(); 
 		suite.addTest(IdentifierHelperTest.suite());
-		suite.addTestSuite(TranslationUnitHelperTest.class);
 		suite.addTestSuite(DefinitionFinderTest.class);
 		suite.addTestSuite(PseudoNameGeneratorTest.class);
 		suite.addTestSuite(NameComposerTest.class);

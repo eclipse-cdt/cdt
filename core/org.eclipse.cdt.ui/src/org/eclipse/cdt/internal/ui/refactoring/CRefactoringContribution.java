@@ -32,11 +32,7 @@ public abstract class CRefactoringContribution extends RefactoringContribution {
 		if (descriptor instanceof CRefactoringDescriptor) {
 			CRefactoringDescriptor refDesc = (CRefactoringDescriptor) descriptor;
 			return refDesc.getParameterMap();
-		} if (descriptor instanceof CRefactoringDescription) {
-			CRefactoringDescription refDesc = (CRefactoringDescription) descriptor;
-			return refDesc.getParameterMap();
-		} else {
-			return super.retrieveArgumentMap(descriptor);
 		}
+		return super.retrieveArgumentMap(descriptor);
 	}
 }

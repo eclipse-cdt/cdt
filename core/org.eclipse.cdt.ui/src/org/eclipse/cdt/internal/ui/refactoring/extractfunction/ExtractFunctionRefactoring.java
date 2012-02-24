@@ -105,7 +105,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.ASTWriterVisitor;
 
-import org.eclipse.cdt.internal.ui.refactoring.CRefactoring2;
+import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoringDescriptor;
 import org.eclipse.cdt.internal.ui.refactoring.ClassMemberInserter;
 import org.eclipse.cdt.internal.ui.refactoring.Container;
@@ -122,7 +122,7 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.NodeHelper;
 import org.eclipse.cdt.internal.ui.refactoring.utils.SelectionHelper;
 import org.eclipse.cdt.internal.ui.viewsupport.BasicElementLabels;
 
-public class ExtractFunctionRefactoring extends CRefactoring2 {
+public class ExtractFunctionRefactoring extends CRefactoring {
 	public static final String ID =
 			"org.eclipse.cdt.internal.ui.refactoring.extractfunction.ExtractFunctionRefactoring"; //$NON-NLS-1$
 

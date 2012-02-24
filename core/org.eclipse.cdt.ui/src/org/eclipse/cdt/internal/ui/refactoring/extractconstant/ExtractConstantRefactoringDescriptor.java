@@ -21,7 +21,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
 import org.eclipse.cdt.core.model.ICProject;
 
-import org.eclipse.cdt.internal.ui.refactoring.CRefactoring2;
+import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoringDescriptor;
 import org.eclipse.cdt.internal.ui.refactoring.utils.VisibilityEnum;
 
@@ -39,7 +39,7 @@ public class ExtractConstantRefactoringDescriptor extends CRefactoringDescriptor
 	}
 	
 	@Override
-	public CRefactoring2 createRefactoring(RefactoringStatus status)
+	public CRefactoring createRefactoring(RefactoringStatus status)
 			throws CoreException {
 		ISelection selection = getSelection();
 		ICProject project = getCProject();

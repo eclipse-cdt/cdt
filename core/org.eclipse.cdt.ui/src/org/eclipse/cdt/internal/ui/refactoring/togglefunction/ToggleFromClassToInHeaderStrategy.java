@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  * 
  * Contributors: 
- * 	   Martin Schwab & Thomas Kallenberg - initial API and implementation 
+ * 	   Martin Schwab & Thomas Kallenberg - initial API and implementation
  ******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.togglefunction;
 
@@ -33,7 +33,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
 
 public class ToggleFromClassToInHeaderStrategy implements IToggleRefactoringStrategy {
-
 	protected TextEditGroup infoText = new TextEditGroup(Messages.EditGroupName);
 	private ToggleRefactoringContext context;
 
@@ -61,7 +60,7 @@ public class ToggleFromClassToInHeaderStrategy implements IToggleRefactoringStra
 
 	private IASTNode getNewDefinition(IASTNode parentNamespace) {
 		IASTNode newDefinition = ToggleNodeHelper.getQualifiedNameDefinition(
-				context.getDefinition(), context.getDefinitionUnit(), parentNamespace);
+				context.getDefinition(), context.getDefinitionAST(), parentNamespace);
 		((IASTFunctionDefinition) newDefinition).setBody(
 				context.getDefinition().getBody().copy(CopyStyle.withLocations));
 		if (newDefinition instanceof ICPPASTFunctionWithTryBlock) {
@@ -76,7 +75,7 @@ public class ToggleFromClassToInHeaderStrategy implements IToggleRefactoringStra
 		if (templdecl != null) {
 			newDefinition = templdecl;
 		}
-		newDefinition.setParent(context.getDefinitionUnit());
+		newDefinition.setParent(context.getDefinitionAST());
 		return newDefinition;
 	}
 
@@ -84,7 +83,7 @@ public class ToggleFromClassToInHeaderStrategy implements IToggleRefactoringStra
 		IASTNode parentNamespace =
 				CPPVisitor.findAncestorWithType(context.getDefinition(), ICPPASTNamespaceDefinition.class);
 		if (parentNamespace == null)
-			parentNamespace = context.getDefinitionUnit();
+			parentNamespace = context.getDefinitionAST();
 		return parentNamespace;
 	}
 
@@ -99,13 +98,13 @@ public class ToggleFromClassToInHeaderStrategy implements IToggleRefactoringStra
 			ModificationCollector modifications,
 			IASTSimpleDeclaration newDeclaration) {
 		ASTRewrite rewriter = modifications.rewriterForTranslationUnit(
-				context.getDefinitionUnit());
+				context.getDefinitionAST());
 		rewriter.replace(context.getDefinition(), newDeclaration, infoText);
 		return rewriter;
 	}
 
 	private IASTSimpleDeclaration getNewDeclaration() {
-		INodeFactory factory = context.getDefinitionUnit().getASTNodeFactory();
+		INodeFactory factory = context.getDefinitionAST().getASTNodeFactory();
 		IASTDeclSpecifier newDeclSpecifier =
 				context.getDefinition().getDeclSpecifier().copy(CopyStyle.withLocations);
 		newDeclSpecifier.setInline(false);

@@ -46,7 +46,7 @@ import org.eclipse.cdt.core.model.ICProject;
 
 import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.ContainerNode;
 
-import org.eclipse.cdt.internal.ui.refactoring.CRefactoring2;
+import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.ClassMemberInserter;
 import org.eclipse.cdt.internal.ui.refactoring.Container;
 import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
@@ -59,7 +59,7 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.VisibilityEnum;
 /**
  * @author Thomas Corbat
  */
-public class GenerateGettersAndSettersRefactoring extends CRefactoring2 {
+public class GenerateGettersAndSettersRefactoring extends CRefactoring {
 
 	private final class CompositeTypeSpecFinder extends ASTVisitor {
 		private final int start;

@@ -17,7 +17,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 public class ToggleStrategyFactory {
-	
 	private ToggleRefactoringContext context;
 
 	public ToggleStrategyFactory(ToggleRefactoringContext context) {
@@ -27,7 +26,7 @@ public class ToggleStrategyFactory {
 	public IToggleRefactoringStrategy getAppropriateStategy() {
 		if (context.getDefinition() == null)
 			throw new NotSupportedException(Messages.ToggleStrategyFactory_NoDefinitionFound);
-		if (!context.getDefinitionUnit().isHeaderUnit())
+		if (!context.getDefinitionAST().isHeaderUnit())
 			return new ToggleFromImplementationToHeaderOrClassStrategy(context);
 		if (isInClassSituation())
 			return new ToggleFromClassToInHeaderStrategy(context);
@@ -40,7 +39,7 @@ public class ToggleStrategyFactory {
 	
 	private boolean isinHeaderSituation() {
 		return (context.getDefinition() != null) 
-			&& (context.getDefinitionUnit().isHeaderUnit());
+			&& (context.getDefinitionAST().isHeaderUnit());
 	}
 
 	private boolean isInClassSituation() {

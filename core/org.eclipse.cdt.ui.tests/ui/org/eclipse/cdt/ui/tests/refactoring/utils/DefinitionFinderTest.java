@@ -27,13 +27,13 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.ui.tests.refactoring.RefactoringTestBase;
 
-import org.eclipse.cdt.internal.ui.refactoring.CRefactoring2;
+import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoringContext;
 import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
 import org.eclipse.cdt.internal.ui.refactoring.utils.DefinitionFinder;
 
 public class DefinitionFinderTest extends RefactoringTestBase {
-	private static class DummyRefactoring extends CRefactoring2 {
+	private static class DummyRefactoring extends CRefactoring {
 		public DummyRefactoring(ICElement element, ISelection selection, ICProject project) {
 			super(element, selection, project);
 		}
@@ -64,7 +64,7 @@ public class DefinitionFinderTest extends RefactoringTestBase {
 	}
 
 	@Override
-	protected CRefactoring2 createRefactoring() {
+	protected CRefactoring createRefactoring() {
 		return new DummyRefactoring(getSelectedTranslationUnit(), getSelection(), getCProject());
 	}
 

@@ -330,13 +330,13 @@ public final class SourceHeaderPartnerFinder {
 	}
 	
 	public static ITranslationUnit getPartnerTranslationUnit(ITranslationUnit tu,
-			CRefactoringContext astCache) throws CoreException {
+			CRefactoringContext refactoringContext) throws CoreException {
 		ITranslationUnit partnerUnit= getPartnerFileFromFilename(tu);
 
 		if (partnerUnit == null) {
 			// Search partner file based on definition/declaration association
 			IProgressMonitor monitor= new NullProgressMonitor();
-			IASTTranslationUnit ast = astCache.getAST(tu, monitor);
+			IASTTranslationUnit ast = refactoringContext.getAST(tu, monitor);
 			PartnerFileVisitor visitor = new PartnerFileVisitor();
 			ast.accept(visitor);
 			partnerUnit = createTranslationUnit(visitor.getPartnerFileLocation(), tu.getCProject());
@@ -344,12 +344,12 @@ public final class SourceHeaderPartnerFinder {
 		return partnerUnit;
 	}
 	
-	private static ITranslationUnit createTranslationUnit(IPath partnerFileLoation, ICProject cProject) {
+	private static ITranslationUnit createTranslationUnit(IPath partnerFileLoation, ICProject project) {
 		ITranslationUnit partnerUnit = null;
 		if (partnerFileLoation != null) {
 			partnerUnit= (ITranslationUnit) CoreModel.getDefault().create(partnerFileLoation);
 			if (partnerUnit == null) {
-				partnerUnit= CoreModel.getDefault().createTranslationUnitFrom(cProject.getCProject(),
+				partnerUnit= CoreModel.getDefault().createTranslationUnitFrom(project,
 						partnerFileLoation);
 			}
 		}

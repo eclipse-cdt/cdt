@@ -66,13 +66,12 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPMethod;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
-import org.eclipse.cdt.internal.ui.refactoring.CRefactoring2;
+import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoringDescriptor;
 import org.eclipse.cdt.internal.ui.refactoring.ClassMemberInserter;
 import org.eclipse.cdt.internal.ui.refactoring.MethodContext;
 import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
 import org.eclipse.cdt.internal.ui.refactoring.utils.NodeHelper;
-import org.eclipse.cdt.internal.ui.refactoring.utils.TranslationUnitHelper;
 import org.eclipse.cdt.internal.ui.util.NameComposer;
 
 /**
@@ -80,7 +79,7 @@ import org.eclipse.cdt.internal.ui.util.NameComposer;
  * 
  * @author Mirko Stocker
  */
-public class ExtractConstantRefactoring extends CRefactoring2 {
+public class ExtractConstantRefactoring extends CRefactoring {
 	public static final String ID =
 			"org.eclipse.cdt.ui.refactoring.extractconstant.ExtractConstantRefactoring"; //$NON-NLS-1$
 
@@ -344,9 +343,25 @@ public class ExtractConstantRefactoring extends CRefactoring2 {
 		} else {
 			IASTDeclaration nodes = getConstNodesGlobal(constName, ast.getASTNodeFactory());
 			ASTRewrite rewriter = collector.rewriterForTranslationUnit(ast);
-			rewriter.insertBefore(ast, TranslationUnitHelper.getFirstNode(ast), nodes,
+			rewriter.insertBefore(ast, getFirstNode(ast), nodes,
 					new TextEditGroup(Messages.ExtractConstantRefactoring_CreateConstant));
 		}
+	}
+
+	/**
+	 * @return the first node in the translation unit or null
+	 */
+	private static IASTNode getFirstNode(IASTTranslationUnit ast) {
+		IASTDeclaration firstNode = null;
+		for (IASTDeclaration each : ast.getDeclarations()) {
+			if (firstNode == null) {
+				firstNode = each;
+			} else if (each.getNodeLocations() != null && 
+					each.getNodeLocations()[0].getNodeOffset() < firstNode.getNodeLocations()[0].getNodeOffset()) {
+				firstNode = each;
+			}
+		}
+		return firstNode;
 	}
 
 	@Override

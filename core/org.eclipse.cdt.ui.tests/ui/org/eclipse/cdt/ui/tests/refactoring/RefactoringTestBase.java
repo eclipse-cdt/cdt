@@ -49,7 +49,7 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.testplugin.CTestPlugin;
 
-import org.eclipse.cdt.internal.ui.refactoring.CRefactoring2;
+import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoringContext;
 
 /**
@@ -165,8 +165,8 @@ public abstract class RefactoringTestBase extends BaseTestCase {
 
 		Refactoring refactoring = createRefactoring();
 		RefactoringContext context;
-		if (refactoring instanceof CRefactoring2) {
-			context = new CRefactoringContext((CRefactoring2) refactoring);
+		if (refactoring instanceof CRefactoring) {
+			context = new CRefactoringContext((CRefactoring) refactoring);
 		} else {
 			context = new RefactoringContext(refactoring);
 		}

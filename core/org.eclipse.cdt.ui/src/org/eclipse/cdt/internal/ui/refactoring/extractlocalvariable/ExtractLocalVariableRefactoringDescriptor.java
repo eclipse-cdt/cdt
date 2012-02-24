@@ -21,7 +21,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
 import org.eclipse.cdt.core.model.ICProject;
 
-import org.eclipse.cdt.internal.ui.refactoring.CRefactoring2;
+import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoringDescriptor;
 
 /**
@@ -37,7 +37,7 @@ public class ExtractLocalVariableRefactoringDescriptor extends CRefactoringDescr
 	}
 
 	@Override
-	public CRefactoring2 createRefactoring(RefactoringStatus status) throws CoreException {
+	public CRefactoring createRefactoring(RefactoringStatus status) throws CoreException {
 		ISelection selection = getSelection();
 		ICProject proj = getCProject();
 		ExtractLocalVariableRefactoring refactoring =

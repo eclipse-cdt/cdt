@@ -140,13 +140,8 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
 	 * @param styles
 	 * @param store
 	 */
-    public CSourceViewer(
-    		Composite parent,
-    		IVerticalRuler ruler,
-    		IOverviewRuler overviewRuler,
-    		boolean isOverviewRulerShowing,
-    		int styles,
-    		IPreferenceStore store) {
+    public CSourceViewer(Composite parent, IVerticalRuler ruler, IOverviewRuler overviewRuler,
+    		boolean isOverviewRulerShowing, int styles, IPreferenceStore store) {
 		super(parent, ruler, overviewRuler, isOverviewRulerShowing, styles);
         setPreferenceStore(store);
 	}
@@ -209,7 +204,6 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
 
 	protected void initializeViewerColors() {
 		if (fPreferenceStore != null) {
-
 			StyledText styledText= getTextWidget();
 
 			// ----------- foreground color --------------------
@@ -268,15 +262,14 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
      * @return the created color according to the specification in the preference store
      */
     private Color createColor(IPreferenceStore store, String key, Display display) {
-
         RGB rgb= null;
 
         if (store.contains(key)) {
-
-            if (store.isDefault(key))
+            if (store.isDefault(key)) {
                 rgb= PreferenceConverter.getDefaultColor(store, key);
-            else
+            } else {
                 rgb= PreferenceConverter.getColor(store, key);
+            }
 
             if (rgb != null)
                 return new Color(display, rgb);
@@ -332,8 +325,7 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
 				|| AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_COLOR.equals(property)
 				|| AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_DEFAULT_COLOR.equals(property)
 				|| AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_COLOR.equals(property)
-				|| AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_DEFAULT_COLOR.equals(property))
-		{
+				|| AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_DEFAULT_COLOR.equals(property)) {
 			initializeViewerColors();
 		}
 	}
@@ -362,7 +354,6 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
 	 */
 	@Override
 	protected void createControl(Composite parent, int styles) {
-
 		// Use LEFT_TO_RIGHT unless otherwise specified.
 		if ((styles & SWT.RIGHT_TO_LEFT) == 0 && (styles & SWT.LEFT_TO_RIGHT) == 0)
 			styles |= SWT.LEFT_TO_RIGHT;
@@ -375,7 +366,6 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
 	 */
     @Override
 	public void doOperation(int operation) {
-
 		if (getTextWidget() == null) {
 			return;
 		}
@@ -513,7 +503,6 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
 		}
 	}
 
-
 	/**
 	 * Configure the indentation mode for this viewer.
 	 * 
@@ -584,8 +573,7 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
 					}
 				}
 			}
-			
-		} catch (BadLocationException x) {
+		} catch (BadLocationException e) {
 			// ignored
 		} finally {
 			if (rewriteSession != null) {
@@ -642,9 +630,9 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
 		Color cDefaultColor= manager.getColor(ICColorConstants.C_DEFAULT);
 		RGB cDefaultRGB= cDefaultColor != null ?
 				cDefaultColor.getRGB() : new RGB(255, 255, 255);
-		float[] javaDefaultHSB= cDefaultRGB.getHSB();
+		float[] cDefaultHSB= cDefaultRGB.getHSB();
 		
-		if (Math.abs(defaultBgHSB[2] - javaDefaultHSB[2]) >= 0.5f) {
+		if (Math.abs(defaultBgHSB[2] - cDefaultHSB[2]) >= 0.5f) {
 			getTextWidget().setBackground(defaultColor);
 			if (fBackgroundColor != null) {
 				fBackgroundColor.dispose();

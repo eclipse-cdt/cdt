@@ -12,6 +12,11 @@
 package org.eclipse.cdt.utils.elf;
 
 import java.io.EOFException;
+
+import static org.eclipse.cdt.internal.core.ByteUtils.makeShort;
+import static org.eclipse.cdt.internal.core.ByteUtils.makeInt;
+import static org.eclipse.cdt.internal.core.ByteUtils.makeLong;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel.MapMode;
@@ -136,6 +141,13 @@ public class Elf {
 		public final static int EM_RS08 = 132;	 /* Freescale RS08 embedded processor */
 		
 		public final static int EM_MMDSP = 160;
+		
+		/** @since 5.4 */
+		public final static int EM_RX = 173; /* Renesas RX Microcontroller */
+		
+		/** @since 5.4 */
+		public final static int EM_RL78 = 197; /* Renesas RL78 Microcontroller */
+		
 		public final static int EM_NIOS = 0xFEBB;
 		public final static int EM_CYGNUS_POWERPC = 0x9025;
 		public final static int EM_CYGNUS_M32R = 0x9041;
@@ -263,51 +275,6 @@ public class Elf {
 			e_shstrndx = makeShort(bytes, offset, isle);
 			offset += 2;
 		}
-
-		private final short makeShort(byte[] val, int offset, boolean isle) throws IOException {
-			if (val.length < offset + 2)
-				throw new IOException();
-			if (isle) {
-				return (short) ( (val[offset + 1] << 8) + val[offset + 0]);
-			}
-			return (short) ( (val[offset + 0] << 8) + val[offset + 1]);
-		}
-
-		private final long makeInt(byte[] val, int offset, boolean isle) throws IOException {
-			if (val.length < offset + 4)
-				throw new IOException();
-			if (isle) {
-				return ( (val[offset + 3] << 24) + (val[offset + 2] << 16) + (val[offset + 1] << 8) + val[offset + 0]);
-			}
-			return ( (val[offset + 0] << 24) + (val[offset + 1] << 16) + (val[offset + 2] << 8) + val[offset + 3]);
-		}
-
-		private final long makeLong(byte[] val, int offset, boolean isle) throws IOException {
-			long result = 0;
-			int shift = 0;
-			if (isle)
-				for (int i = 7; i >= 0; i--) {
-					shift = i * 8;
-					result += ( ((long)val[offset + i]) << shift) & (0xffL << shift);
-				}
-			else
-				for (int i = 0; i <= 7; i++) {
-					shift = (7 - i) * 8;
-					result += ( ((long)val[offset + i]) << shift) & (0xffL << shift);
-				}
-			return result;
-		}
-
-		private final long makeUnsignedLong(byte[] val, int offset, boolean isle) throws IOException {
-			long result = makeLong(val, offset, isle);
-			if (result < 0) {
-				throw new IOException("Maximal file offset is " + Long.toHexString(Long.MAX_VALUE) + //$NON-NLS-1$
-						" given offset is " + Long.toHexString(result)); //$NON-NLS-1$
-			}
-			return result;
-
-		}
-
 	}
 
 	public class Section {
@@ -893,6 +860,12 @@ public class Elf {
 			case Elf.ELFhdr.EM_MMDSP:
 				attrib.cpu = "mmdsp"; //$NON-NLS-1$
 				break;
+			case Elf.ELFhdr.EM_RX:
+				attrib.cpu = "rx"; //$NON-NLS-1$
+				break;
+			case Elf.ELFhdr.EM_RL78:
+				attrib.cpu = "rl78"; //$NON-NLS-1$
+				break;
 			case Elf.ELFhdr.EM_68HC08:
 				attrib.cpu = "hc08"; //$NON-NLS-1$
 				break;
@@ -1226,4 +1199,13 @@ public class Elf {
 		return reader;
 	}
 
+	/** @since 5.4 */
+	public static long makeUnsignedLong(byte[] val, int offset, boolean isle) throws IOException {
+		long result = makeLong(val, offset, isle);
+		if (result < 0) {
+			throw new IOException("Maximal file offset is " + Long.toHexString(Long.MAX_VALUE) + //$NON-NLS-1$
+					" given offset is " + Long.toHexString(result)); //$NON-NLS-1$
+		}
+		return result;
+	}
 }

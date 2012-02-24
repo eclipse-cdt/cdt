@@ -13,7 +13,6 @@
 package org.eclipse.cdt.internal.ui.refactoring.togglefunction;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -23,48 +22,18 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModelUtil;
-import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.refactoring.CreateFileChange;
 
 public class ToggleFileCreator {
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
-	private static final String H = ".h"; //$NON-NLS-1$
-	private ToggleRefactoringContext context;
-	private String ending;
+	private final ToggleRefactoringContext context;
+	private final String ending;
 
 	public ToggleFileCreator(ToggleRefactoringContext context, String ending) {
 		this.context = context;
 		this.ending = ending;
-	}
-
-	public ITranslationUnit getTranslationUnit() {
-		String filename;
-		if (context.getDeclaration() != null) {
-			filename = context.getDeclaration().getContainingFilename();
-		} else {
-			filename = context.getDefinition().getContainingFilename();
-		}
-		String other;
-		if (ending.equals(H)) {
-			other = ".cpp"; //$NON-NLS-1$
-		} else {
-			other = H;
-		}
-		filename = filename.replaceAll("\\w*" + other + "$", EMPTY_STRING) + getNewFileName();  //$NON-NLS-1$//$NON-NLS-2$
-		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(filename));
-		ITranslationUnit result = null;
-		try {
-			result = CoreModelUtil.findTranslationUnitForLocation(file.getFullPath(), null);
-		} catch (CModelException e) {
-		}
-		if (result == null) {
-			throw new NotSupportedException(Messages.ToggleFileCreator_NoTuForSibling);
-		}
-		return result;
 	}
 
 	public IFile createNewFile() {

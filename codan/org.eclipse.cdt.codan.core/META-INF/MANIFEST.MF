@@ -12,7 +12,9 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.eclipse.cdt.codan.core,
  org.eclipse.cdt.codan.core.externaltool,
  org.eclipse.cdt.codan.core.model,
- org.eclipse.cdt.codan.core.model.cfg;x-friends:="org.eclipse.cdt.codan.core.cxx,org.eclipse.cdt.codan.checkers",
+ org.eclipse.cdt.codan.core.model.cfg;
+  x-friends:="org.eclipse.cdt.codan.core.cxx,
+   org.eclipse.cdt.codan.checkers",
  org.eclipse.cdt.codan.core.param,
  org.eclipse.cdt.codan.internal.core;
   x-friends:="org.eclipse.cdt.codan.core,

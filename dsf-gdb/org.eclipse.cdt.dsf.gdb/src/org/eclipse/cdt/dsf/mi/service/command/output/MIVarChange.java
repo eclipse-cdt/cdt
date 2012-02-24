@@ -21,6 +21,7 @@ public class MIVarChange {
 	String value;
 	boolean inScope;
 	boolean changed;
+	String newType;
 	private boolean isDynamic = false;
 	private int newNumChildren = -1;
 	private boolean hasMore = false;
@@ -45,6 +46,10 @@ public class MIVarChange {
 
 	public boolean isChanged() {
 		return changed;
+	}
+
+	public String getNewType() {
+		return newType;
 	}
 
 	/**
@@ -115,6 +120,11 @@ public class MIVarChange {
 
 	public void setChanged(boolean c) {
 		changed = c;
+	}
+	
+	public void setNewType(String newType) {
+		// TODO: Rename changed => typeChanged (and all the get/setting routines!)
+		this.newType = newType;
 	}
 	
 	/**

@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.parser.tests.rewrite.RewriteTests;
 import org.eclipse.cdt.core.resources.tests.RefreshScopeTests;
 import org.eclipse.cdt.internal.index.tests.IndexTests;
 import org.eclipse.cdt.internal.pdom.tests.PDOMTests;
+import org.eclipse.cdt.utils.ByteUtilsTest;
 import org.eclipse.cdt.utils.CdtVariableResolverTest;
 import org.eclipse.cdt.utils.CommandLineUtilTest;
 import org.eclipse.cdt.utils.FindProgramLocationTest;
@@ -79,6 +80,7 @@ public class AutomatedIntegrationSuite extends TestSuite {
 		suite.addTest(WeakHashSetTest.suite());
 		suite.addTest(FindProgramLocationTest.suite());
 		suite.addTest(EFSExtensionTests.suite());
+		suite.addTest(ByteUtilsTest.suite());
 
 		// Add in PDOM tests
 		suite.addTest(PDOMTests.suite());

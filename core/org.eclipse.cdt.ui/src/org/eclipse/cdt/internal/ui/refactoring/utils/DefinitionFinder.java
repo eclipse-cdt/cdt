@@ -130,7 +130,7 @@ public class DefinitionFinder {
 	}
 
 	/**
-	 * Checks if the given binding has a definition The search is done in the index and in the ASTs
+	 * Checks if the given binding has a definition. The search is done in the index and in the ASTs
 	 * of dirty editors.
 	 * 
 	 * @param binding the binding to find the definition for

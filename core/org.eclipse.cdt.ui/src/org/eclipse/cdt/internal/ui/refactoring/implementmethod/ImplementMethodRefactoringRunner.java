@@ -36,7 +36,7 @@ public class ImplementMethodRefactoringRunner extends RefactoringRunner {
 	public void run() {
 		ImplementMethodRefactoring refactoring =
 				new ImplementMethodRefactoring(element, selection, project);
-		ImplementMethodRefactoringWizard wizard = new ImplementMethodRefactoringWizard(refactoring);
+		ImplementMethodWizard wizard = new ImplementMethodWizard(refactoring);
 		run(wizard, refactoring, RefactoringSaveHelper.SAVE_REFACTORING);
 	}
 }

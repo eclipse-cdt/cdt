@@ -19,7 +19,7 @@ import org.eclipse.cdt.ui.CUIPlugin;
 public class ExtractFunctionWizard extends RefactoringWizard {
 	public ExtractFunctionWizard(ExtractFunctionRefactoring refactoring) {
 		super(refactoring, DIALOG_BASED_USER_INTERFACE | PREVIEW_EXPAND_FIRST_NODE);
-		setDefaultPageTitle(Messages.ExtractFunctionWizard_extract_function);
+		setDefaultPageTitle(Messages.ExtractFunctionRefactoring_ExtractFunction);
 		setDialogSettings(CUIPlugin.getDefault().getDialogSettings());
 	}
 

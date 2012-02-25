@@ -15,7 +15,6 @@ package org.eclipse.cdt.internal.ui.refactoring.extractfunction;
 import org.eclipse.osgi.util.NLS;
 
 public final class Messages extends NLS {
-	public static String ExtractFunctionWizard_extract_function;
 	public static String ExtractFunctionRefactoring_ExtractFunction;
 	public static String ExtractFunctionRefactoring_NoStmtSelected;
 	public static String ExtractFunctionRefactoring_TooManySelected;

@@ -41,7 +41,7 @@ public class GenerateGettersAndSettersRefactoringRunner extends RefactoringRunne
 			GenerateGettersAndSettersRefactoring refactoring =
 					new GenerateGettersAndSettersRefactoring(element, selection, project);
 			RefactoringWizard wizard =
-					new GenerateGettersAndSettersRefactoringWizard(refactoring);
+					new GenerateGettersAndSettersWizard(refactoring);
 			run(wizard, refactoring, RefactoringSaveHelper.SAVE_REFACTORING);
 		}
 	}

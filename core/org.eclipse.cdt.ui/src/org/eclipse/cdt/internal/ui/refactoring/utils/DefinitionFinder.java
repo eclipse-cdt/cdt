@@ -37,7 +37,6 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
-import org.eclipse.cdt.internal.corext.util.CModelUtil;
 
 import org.eclipse.cdt.internal.ui.editor.ITranslationUnitEditorInput;
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoringContext;
@@ -47,47 +46,53 @@ import org.eclipse.cdt.internal.ui.util.EditorUtility;
  * Helper class for finding definitions and class member declarations
  */
 public class DefinitionFinder {
-
+	/**
+	 * Finds the definition for the given name. The definition and the original name may belong
+	 * to a different ASTs. The search is done in the index and in the ASTs of dirty editors.
+	 * 
+	 * @param name the name to find the definition for
+	 * @param context the refactoring context
+	 * @param pm the progress monitor
+	 * @return the definition name, or {@code null} if there is no definition or if it is
+	 *     not unique.
+	 * @throws CoreException thrown in case of errors
+	 */
 	public static IASTName getDefinition(IASTName name,	CRefactoringContext context,
-			IProgressMonitor pm) throws CoreException {
-		IIndex index = context.getIndex();
-		if (index == null) {
-			return null;
-		}
+			IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		IBinding binding = name.resolveBinding();
 		if (binding == null) {
 			return null;
 		}
-		return getDefinition(binding, context, index, pm);
+		return getDefinition(binding, context, pm);
 	}
 
-	private static IASTName getDefinition(IBinding binding, CRefactoringContext context,
-			IIndex index, IProgressMonitor pm) throws CoreException {
+	/**
+	 * Finds the definition for the given binding. The search is done in the index and in the ASTs
+	 * of dirty editors.
+	 * 
+	 * @param binding the binding to find the definition for
+	 * @param context the refactoring context
+	 * @param pm the progress monitor
+	 * @return the definition name, or {@code null} if there is no definition or if it is
+	 *     not unique.
+	 * @throws CoreException thrown in case of errors
+	 */
+	public static IASTName getDefinition(IBinding binding, CRefactoringContext context,
+			IProgressMonitor pm) throws CoreException {
 		SubMonitor sm = SubMonitor.convert(pm, 10);
+		IIndex index = context.getIndex();
+		if (index == null) {
+			return null;
+		}
 		IIndexBinding indexBinding = index.adaptBinding(binding);
 		if (binding == null)
 			return null;
 		Set<String> searchedFiles = new HashSet<String>();
 		List<IASTName> definitions = new ArrayList<IASTName>();
-		// TODO(sprigogin): Check index before dirty editors.
-		IEditorPart[] dirtyEditors = EditorUtility.getDirtyEditors(true);
-		SubMonitor loopProgress = sm.newChild(3).setWorkRemaining(dirtyEditors.length);
-		for (IEditorPart editor : dirtyEditors) {
-			if (sm.isCanceled()) {
-				throw new OperationCanceledException();
-			}
-			IEditorInput editorInput = editor.getEditorInput();
-			if (editorInput instanceof ITranslationUnitEditorInput) {
-				ITranslationUnit tu =
-						CModelUtil.toWorkingCopy(((ITranslationUnitEditorInput) editorInput).getTranslationUnit());
-				findDefinitionsInTranslationUnit(indexBinding, tu, context, definitions, loopProgress.newChild(1));
-				searchedFiles.add(tu.getLocation().toOSString());
-			}
-		}
-		
-		IIndexName[] definitionsFromIndex = index.findDefinitions(indexBinding);
+		IIndexName[] definitionsFromIndex =
+				index.findNames(indexBinding, IIndex.FIND_DEFINITIONS | IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES);
 		int remainingCount = definitionsFromIndex.length;
-		loopProgress = sm.newChild(6).setWorkRemaining(remainingCount);
+		SubMonitor loopProgress = sm.newChild(6).setWorkRemaining(remainingCount);
 		for (IIndexName name : definitionsFromIndex) {
 			if (sm.isCanceled()) {
 				throw new OperationCanceledException();
@@ -96,39 +101,162 @@ public class DefinitionFinder {
 					name.getFile().getLocation(), null);
 			if (searchedFiles.add(tu.getLocation().toOSString())) {
 				findDefinitionsInTranslationUnit(indexBinding, tu, context, definitions, pm);
+				if (definitions.size() > 1)
+					return null;
 			}
 			loopProgress.setWorkRemaining(--remainingCount);
+		}
+		if (definitions.isEmpty()) {
+			// Check dirty editors in case definition has just been introduced but not saved yet.
+			IEditorPart[] dirtyEditors = EditorUtility.getDirtyEditors(true);
+			loopProgress = sm.newChild(3).setWorkRemaining(dirtyEditors.length);
+			for (IEditorPart editor : dirtyEditors) {
+				if (sm.isCanceled()) {
+					throw new OperationCanceledException();
+				}
+				IEditorInput editorInput = editor.getEditorInput();
+				if (editorInput instanceof ITranslationUnitEditorInput) {
+					ITranslationUnit tu = ((ITranslationUnitEditorInput) editorInput).getTranslationUnit();
+					if (searchedFiles.add(tu.getLocation().toOSString())) {
+						findDefinitionsInTranslationUnit(indexBinding, tu, context, definitions, loopProgress.newChild(1));
+						if (definitions.size() > 1)
+							return null;
+					}
+				}
+			}
 		}
 
 		return definitions.size() == 1 ? definitions.get(0) : null;
 	}
 
+	/**
+	 * Checks if the given binding has a definition The search is done in the index and in the ASTs
+	 * of dirty editors.
+	 * 
+	 * @param binding the binding to find the definition for
+	 * @param context the refactoring context
+	 * @param pm the progress monitor
+	 * @return <code>true</code> if the binding has a definition.
+	 * @throws CoreException thrown in case of errors
+	 */
+	public static boolean hasDefinition(IBinding binding, CRefactoringContext context,
+			IProgressMonitor pm) throws CoreException, OperationCanceledException {
+		SubMonitor sm = SubMonitor.convert(pm, 10);
+		IIndex index = context.getIndex();
+		if (index == null) {
+			return false;
+		}
+		IIndexBinding indexBinding = index.adaptBinding(binding);
+		if (binding == null)
+			return false;
+		Set<String> dirtyFiles = new HashSet<String>();
+		IEditorPart[] dirtyEditors = EditorUtility.getDirtyEditors(true);
+		for (IEditorPart editor : dirtyEditors) {
+			IEditorInput editorInput = editor.getEditorInput();
+			if (editorInput instanceof ITranslationUnitEditorInput) {
+				ITranslationUnit tu = ((ITranslationUnitEditorInput) editorInput).getTranslationUnit();
+				dirtyFiles.add(tu.getLocation().toOSString());
+			}
+		}
+
+		Set<String> searchedFiles = new HashSet<String>();
+		IIndexName[] definitionsFromIndex =
+				index.findNames(indexBinding, IIndex.FIND_DEFINITIONS | IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES);
+		int remainingCount = definitionsFromIndex.length;
+		SubMonitor loopProgress = sm.newChild(6).setWorkRemaining(remainingCount);
+		for (IIndexName name : definitionsFromIndex) {
+			if (sm.isCanceled()) {
+				throw new OperationCanceledException();
+			}
+			ITranslationUnit tu = CoreModelUtil.findTranslationUnitForLocation(
+					name.getFile().getLocation(), null);
+			String filename = tu.getLocation().toOSString();
+			if (searchedFiles.add(filename) &&
+					(!dirtyFiles.contains(filename) ||
+					hasDefinitionsInTranslationUnit(indexBinding, tu, context, loopProgress.newChild(1)))) {
+				return true;
+			}
+			loopProgress.setWorkRemaining(--remainingCount);
+		}
+
+		// Check dirty editors in case definition has just been introduced but not saved yet.
+		loopProgress = sm.newChild(3).setWorkRemaining(dirtyEditors.length);
+		for (IEditorPart editor : dirtyEditors) {
+			if (sm.isCanceled()) {
+				throw new OperationCanceledException();
+			}
+			IEditorInput editorInput = editor.getEditorInput();
+			if (editorInput instanceof ITranslationUnitEditorInput) {
+				ITranslationUnit tu = ((ITranslationUnitEditorInput) editorInput).getTranslationUnit();
+				String filename = tu.getLocation().toOSString();
+				if (searchedFiles.add(filename) &&
+						hasDefinitionsInTranslationUnit(indexBinding, tu, context, loopProgress.newChild(1))) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
 	private static void findDefinitionsInTranslationUnit(IIndexBinding binding, ITranslationUnit tu,
 			CRefactoringContext context, List<IASTName> definitions, IProgressMonitor pm)
-			throws OperationCanceledException, CoreException {
+			throws CoreException, OperationCanceledException {
 		IASTTranslationUnit ast = context.getAST(tu, pm);
 		ArrayUtil.addAll(definitions, ast.getDefinitionsInAST(binding));
 	}
 
+	private static boolean hasDefinitionsInTranslationUnit(IIndexBinding binding, ITranslationUnit tu,
+			CRefactoringContext context, IProgressMonitor pm)
+			throws CoreException, OperationCanceledException {
+		IASTTranslationUnit ast = context.getAST(tu, pm);
+		return ast.getDefinitionsInAST(binding).length != 0;
+	}
+
+	/**
+	 * Finds the declaration for the given class member. The declaration and the original member
+	 * name may belong to a different ASTs. The search is done in the index and in the ASTs of dirty
+	 * editors.
+	 * 
+	 * @param memberName the name of the class member to find the declaration for
+	 * @param context the refactoring context
+	 * @param pm the progress monitor
+	 * @return the declaration name, or {@code null} if there is no declaration or if it is
+	 *     not unique.
+	 * @throws CoreException thrown in case of errors
+	 */
 	public static IASTName getMemberDeclaration(IASTName memberName, CRefactoringContext context,
-			IProgressMonitor pm) throws CoreException {
-		IIndex index = context.getIndex();
-		if (index == null)
-			return null;
+			IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		IBinding binding = memberName.resolveBinding();
 		if (!(binding instanceof ICPPMember))
 			return null;
-		return getMemberDeclaration((ICPPMember) binding, context, index, pm);
+		return getMemberDeclaration((ICPPMember) binding, context, pm);
 	}
 
-	private static IASTName getMemberDeclaration(ICPPMember member, CRefactoringContext context,
-			IIndex index, IProgressMonitor pm) throws CoreException {
-		IASTName classDefintionName = getDefinition(member.getClassOwner(), context, index, pm);
+	/**
+	 * Finds the declaration for the given class member. The declaration and the original member
+	 * name may belong to a different ASTs. The search is done in the index and in the ASTs of dirty
+	 * editors.
+	 * 
+	 * @param member the class member binding to find the declaration for
+	 * @param context the refactoring context
+	 * @param pm the progress monitor
+	 * @return the declaration name, or {@code null} if there is no declaration or if it is
+	 *     not unique.
+	 * @throws CoreException thrown in case of errors
+	 */
+	public static IASTName getMemberDeclaration(ICPPMember member, CRefactoringContext context,
+			IProgressMonitor pm) throws CoreException, OperationCanceledException {
+		IASTName classDefintionName = getDefinition(member.getClassOwner(), context, pm);
 		if (classDefintionName == null)
 			return null;
 		IASTCompositeTypeSpecifier compositeTypeSpecifier =
 				CPPVisitor.findAncestorWithType(classDefintionName, IASTCompositeTypeSpecifier.class);
 		IASTTranslationUnit ast = classDefintionName.getTranslationUnit();
+		IIndex index = context.getIndex();
+		if (index == null) {
+			return null;
+		}
 		IASTName[] memberDeclarationNames = ast.getDeclarationsInAST(index.adaptBinding(member));
 		for (IASTName name : memberDeclarationNames) {
 			if (name.getPropertyInParent() == IASTDeclarator.DECLARATOR_NAME) {

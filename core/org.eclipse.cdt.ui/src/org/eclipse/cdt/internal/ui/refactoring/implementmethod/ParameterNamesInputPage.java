@@ -52,9 +52,9 @@ public class ParameterNamesInputPage extends UserInputWizardPage {
 	private MethodToImplementConfig config;
 	private TranslationUnitPreview translationUnitPreview;
 	private Job delayedPreviewUpdater;
-	private ImplementMethodRefactoringWizard wizard;
+	private ImplementMethodWizard wizard;
 
-	public ParameterNamesInputPage(MethodToImplementConfig config, ImplementMethodRefactoringWizard wizard) {
+	public ParameterNamesInputPage(MethodToImplementConfig config, ImplementMethodWizard wizard) {
 		super(Messages.ParameterNamesInputPage_Title);
 		this.config = config;
 		this.wizard = wizard;

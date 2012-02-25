@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  * 
  * Contributors: 
- * Institute for Software (IFS)- initial API and implementation 
+ *     Institute for Software (IFS)- initial API and implementation 
  ******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.implementmethod;
 
@@ -27,36 +27,27 @@ import org.eclipse.ui.dialogs.ContainerCheckedTreeViewer;
 
 /**
  * @author Emanuel Graf IFS
- *
  */
-public class ImplementMethodInputPage extends UserInputWizardPage{
-	
+public class ImplementMethodInputPage extends UserInputWizardPage {
 	private ImplementMethodData data;
-	private ImplementMethodRefactoringWizard wizard;
 	private ContainerCheckedTreeViewer tree;
 
-	public ImplementMethodInputPage(ImplementMethodData data, ImplementMethodRefactoringWizard implementMethodRefactoringWizard) {
+	public ImplementMethodInputPage(ImplementMethodData data, ImplementMethodWizard implementMethodRefactoringWizard) {
 		super(Messages.ImplementMethodInputPage_PageTitle);
 		this.setData(data);
-		wizard = implementMethodRefactoringWizard;
 	}
-
-	
 
 	@Override
 	public boolean canFlipToNextPage() {
-		if(data.needParameterInput()) {
+		if (data.needParameterInput()) {
 			return super.canFlipToNextPage();
-		}else {//getNextPage call is too expensive in this case.
+		} else { // getNextPage call is too expensive in this case.
 			return isPageComplete();
 		}
 	}
 
-
-
 	@Override
 	public void createControl(Composite parent) {
-		
 		setTitle(Messages.ImplementMethodInputPage_PageTitle);
 		setMessage(Messages.ImplementMethodInputPage_Header);
 		
@@ -120,7 +111,6 @@ public class ImplementMethodInputPage extends UserInputWizardPage{
 		tree.getTree().setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		tree.addCheckStateListener(new ICheckStateListener() {
-
 			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				MethodToImplementConfig config = ((MethodToImplementConfig)event.getElement());
@@ -131,17 +121,21 @@ public class ImplementMethodInputPage extends UserInputWizardPage{
 		for (MethodToImplementConfig config : data.getMethodsToImplement()) {
 			tree.setChecked(config, config.isChecked());
 		}
-		
 	}
 
 	@Override
 	public IWizardPage getNextPage() {
-		if(data.needParameterInput()) {
-			return wizard.getPageForConfig(data.getFirstConfigNeedingParameterNames());
-		}else {
+		if (data.needParameterInput()) {
+			return getWizard().getPageForConfig(data.getFirstConfigNeedingParameterNames());
+		} else {
 			return computeSuccessorPage();
 		}
 	}
+
+    @Override
+	public ImplementMethodWizard getWizard() {
+        return (ImplementMethodWizard) super.getWizard();
+    }
 
 	public void setData(ImplementMethodData data) {
 		this.data = data;
@@ -152,11 +146,10 @@ public class ImplementMethodInputPage extends UserInputWizardPage{
 	}
 
 	private void checkPage() {
-		if(data.getMethodsToImplement().size() > 0) {
+		if (data.getMethodsToImplement().size() > 0) {
 			setPageComplete(true);
-		}else {
+		} else {
 			setPageComplete(false);
 		}
 	}
-
 }

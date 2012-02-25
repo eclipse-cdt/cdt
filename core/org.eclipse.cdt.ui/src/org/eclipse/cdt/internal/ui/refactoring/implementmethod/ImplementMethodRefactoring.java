@@ -52,8 +52,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNodeFactory;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
-import org.eclipse.cdt.core.index.IIndex;
-import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -63,6 +61,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
 import org.eclipse.cdt.internal.ui.refactoring.utils.Checks;
+import org.eclipse.cdt.internal.ui.refactoring.utils.DefinitionFinder;
 import org.eclipse.cdt.internal.ui.refactoring.utils.NameHelper;
 import org.eclipse.cdt.internal.ui.refactoring.utils.NodeHelper;
 import org.eclipse.cdt.internal.ui.refactoring.utils.SelectionHelper;
@@ -120,7 +119,8 @@ public class ImplementMethodRefactoring extends CRefactoring {
 
 	private List<IASTSimpleDeclaration> findUnimplementedMethodDeclarations(IProgressMonitor pm)
 			throws OperationCanceledException, CoreException {
-		IASTTranslationUnit ast = getAST(tu, pm);
+		final SubMonitor sm = SubMonitor.convert(pm, 2);
+		IASTTranslationUnit ast = getAST(tu, sm.newChild(1));
 		final List<IASTSimpleDeclaration> list = new ArrayList<IASTSimpleDeclaration>();
 		ast.accept(new ASTVisitor() {
 			{
@@ -134,7 +134,7 @@ public class ImplementMethodRefactoring extends CRefactoring {
 					if (NodeHelper.isMethodDeclaration(simpleDeclaration)) {
 						IASTDeclarator[] declarators = simpleDeclaration.getDeclarators();
 						IBinding binding = declarators[0].getName().resolveBinding();
-						if (isUnimplementedMethodBinding(binding)) {
+						if (isUnimplementedMethodBinding(binding, sm.newChild(0))) {
 							list.add(simpleDeclaration);
 							return ASTVisitor.PROCESS_SKIP;	
 						}
@@ -145,8 +145,8 @@ public class ImplementMethodRefactoring extends CRefactoring {
 		});
 		return list;
 	}
-	
-	private boolean isUnimplementedMethodBinding(IBinding binding) {
+
+	private boolean isUnimplementedMethodBinding(IBinding binding, IProgressMonitor pm) {
 		if (binding instanceof ICPPFunction) {
 			if (binding instanceof ICPPMethod) {
 				ICPPMethod methodBinding = (ICPPMethod) binding;
@@ -156,11 +156,7 @@ public class ImplementMethodRefactoring extends CRefactoring {
 			}
 			
 			try {
-				IIndexName[] indexNames = getIndex().findNames(binding,
-						IIndex.FIND_DEFINITIONS | IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES);
-				if (indexNames.length == 0) {
-					return true;
-				}
+				return !DefinitionFinder.hasDefinition(binding, refactoringContext, pm);
 			} catch (CoreException e) {
 				CUIPlugin.log(e);
 			}

@@ -17,10 +17,11 @@ import org.eclipse.ltk.ui.refactoring.UserInputWizardPage;
 /**
  * @author Thomas Corbat
  */
-public class GenerateGettersAndSettersRefactoringWizard extends	RefactoringWizard {
-	public GenerateGettersAndSettersRefactoringWizard(
+public class GenerateGettersAndSettersWizard extends	RefactoringWizard {
+	public GenerateGettersAndSettersWizard(
 			GenerateGettersAndSettersRefactoring refactoring) {
-		super(refactoring, WIZARD_BASED_USER_INTERFACE);
+		super(refactoring, DIALOG_BASED_USER_INTERFACE | PREVIEW_EXPAND_FIRST_NODE);
+		setDefaultPageTitle(Messages.GenerateGettersAndSettersInputPage_Name);
 	}
 
 	@Override

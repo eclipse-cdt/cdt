@@ -26,7 +26,7 @@ import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.refactoring.utils.EclipseObjects;
 
 /**
- * Common base class for refactoring actions
+ * Common base class for refactoring actions.
  * @since 5.0
  * @noextend This class is not intended to be subclassed by clients.
  */
@@ -38,14 +38,16 @@ public abstract class RefactoringAction extends Action {
 
 	public RefactoringAction(String label) {
 		super(label);
-		saveRequired = false;
 	}
 
 	/**
 	 * Sets behavior with respect to saving dirty editors.
 	 * @param saveRequired if <code>true</code>, dirty editors will be saved before refactoring.
+	 * 
+	 * @deprecated saving of editors should be controlled by refactoring runner, not by the action.
 	 * @since 5.3
 	 */
+	@Deprecated
 	public void setSaveRequired(boolean saveRequired) {
 		this.saveRequired = saveRequired;
 	}

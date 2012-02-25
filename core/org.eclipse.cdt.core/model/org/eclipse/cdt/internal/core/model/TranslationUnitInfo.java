@@ -29,7 +29,7 @@ class TranslationUnitInfo extends OpenableInfo {
 
 	/* Overide the SourceManipulation for the range.  */
 	protected ISourceRange getSourceRange() {
-		IPath location = ((TranslationUnit)getElement()).getLocation(); 		
+		IPath location = ((TranslationUnit) getElement()).getLocation(); 		
 		return new SourceRange(0, (int)location.toFile().length());
 	}
 }

@@ -17,8 +17,7 @@ package org.eclipse.cdt.internal.core.model;
 @Deprecated
 public class WorkingCopyInfo extends TranslationUnitInfo {
 
-	public WorkingCopyInfo (CElement element) {
+	public WorkingCopyInfo(CElement element) {
 		super(element);
 	}
-
 }

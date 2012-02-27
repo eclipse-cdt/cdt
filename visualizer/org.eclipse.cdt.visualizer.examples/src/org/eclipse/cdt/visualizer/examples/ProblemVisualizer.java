@@ -14,6 +14,7 @@ import org.eclipse.cdt.visualizer.ui.canvas.GraphicCanvas;
 import org.eclipse.cdt.visualizer.ui.canvas.GraphicCanvasVisualizer;
 import org.eclipse.cdt.visualizer.ui.canvas.GraphicObject;
 import org.eclipse.cdt.visualizer.ui.util.Colors;
+import org.eclipse.cdt.visualizer.ui.util.GUIUtils;
 import org.eclipse.cdt.visualizer.ui.util.SelectionManager;
 import org.eclipse.cdt.visualizer.ui.util.SelectionUtils;
 import org.eclipse.core.resources.IMarker;
@@ -52,16 +53,22 @@ public class ProblemVisualizer extends GraphicCanvasVisualizer {
 	 */
 	private class BarGraphicObject extends GraphicObject {
 		private boolean m_outline;
+		private String m_label;
 		
-		public BarGraphicObject(Color color, int x, int y, int w, int h, boolean outline) {
+		public BarGraphicObject(int severity, int x, int y, int w, int h, boolean outline) {
 			super(x, y, w, h);
 			m_outline = outline;
 			
+			Color color = getColor(severity);
 			if (m_outline) {
 				setForeground(color);
 			} else {
 				setBackground(color);
 			}
+		}
+		
+		public void setLabel(String label) {
+			m_label = label;
 		}
 		
 		@Override
@@ -71,6 +78,42 @@ public class ProblemVisualizer extends GraphicCanvasVisualizer {
 			} else {
 				gc.fillRectangle(m_bounds);
 			}
+		}
+		
+		@Override
+		public boolean hasDecorations() {
+			// Only the outline bar has a label decoration.
+			// We muse the the outline bar and not the inside one because
+			// the inside bar may be too small
+			return m_outline;
+		}
+		
+		/** Invoked to allow element to paint decorations on top of anything drawn on it */
+		@Override
+		public void paintDecorations(GC gc) {
+			if (m_bounds.height > 20) {
+				gc.setForeground(Colors.BLACK);
+				
+				int text_indent = 6;
+				int tx = m_bounds.x + m_bounds.width  - text_indent;
+				int ty = m_bounds.y + m_bounds.height - text_indent;
+				GUIUtils.drawTextAligned(gc, m_label, tx, ty, false, false);
+			}
+		}
+
+		private Color getColor(int severity) {
+			switch (severity) {
+			case IMarker.SEVERITY_ERROR:
+				if (m_outline) return ERROR_OUTLINE_COLOR;
+				return ERROR_INSIDE_COLOR;
+			case IMarker.SEVERITY_WARNING:
+				if (m_outline) return WARNING_OUTLINE_COLOR;
+				return WARNING_INSIDE_COLOR;
+			case IMarker.SEVERITY_INFO:
+				if (m_outline) return INFO_OUTLINE_COLOR;
+				return INFO_INSIDE_COLOR;
+			}
+			return Colors.ORANGE;
 		}
 	}
 	
@@ -178,13 +221,16 @@ public class ProblemVisualizer extends GraphicCanvasVisualizer {
 		
 		if (outline) {
 			// The bar outlines take the entire width of the view
-			bars[0] = new BarGraphicObject(ERROR_OUTLINE_COLOR, x, y, maxWidth, height, outline);
+			bars[0] = new BarGraphicObject(IMarker.SEVERITY_ERROR, x, y, maxWidth, height, outline);
+			bars[0].setLabel(Messages.ProblemCountVisualizer_Errors + m_markerCount[IMarker.SEVERITY_ERROR]);
 			
 			y = y + height + spacing;
-			bars[1] = new BarGraphicObject(WARNING_OUTLINE_COLOR, x, y, maxWidth, height, outline);
+			bars[1] = new BarGraphicObject(IMarker.SEVERITY_WARNING, x, y, maxWidth, height, outline);
+			bars[1].setLabel(Messages.ProblemCountVisualizer_Warnings + m_markerCount[IMarker.SEVERITY_WARNING]);
 
 			y = y + height + spacing;
-			bars[2] = new BarGraphicObject(INFO_OUTLINE_COLOR, x, y, maxWidth, height, outline);
+			bars[2] = new BarGraphicObject(IMarker.SEVERITY_INFO, x, y, maxWidth, height, outline);
+			bars[2].setLabel(Messages.ProblemCountVisualizer_Infos + m_markerCount[IMarker.SEVERITY_INFO]);
 
 		} else {
 			// The inside of the bars use a proportional width with the maximum width and
@@ -196,15 +242,15 @@ public class ProblemVisualizer extends GraphicCanvasVisualizer {
 			if (maxCount == 0) maxCount = 1; // Set to anything but 0.  It will be multiplied by 0 and not matter.
 
 			int width = maxWidth * m_markerCount[IMarker.SEVERITY_ERROR] / maxCount;
-			bars[0] = new BarGraphicObject(ERROR_INSIDE_COLOR, x, y, width, height, outline);
+			bars[0] = new BarGraphicObject(IMarker.SEVERITY_ERROR, x, y, width, height, outline);
 
 			y = y + height + spacing;
 			width = maxWidth * m_markerCount[IMarker.SEVERITY_WARNING] / maxCount;
-			bars[1] = new BarGraphicObject(WARNING_INSIDE_COLOR, x, y, width, height, outline);
+			bars[1] = new BarGraphicObject(IMarker.SEVERITY_WARNING, x, y, width, height, outline);
 
 			y = y + height + spacing;
 			width = maxWidth * m_markerCount[IMarker.SEVERITY_INFO] / maxCount;
-			bars[2] = new BarGraphicObject(INFO_INSIDE_COLOR, x, y, width, height, outline);
+			bars[2] = new BarGraphicObject(IMarker.SEVERITY_INFO, x, y, width, height, outline);
 		}
 		
 		return bars;

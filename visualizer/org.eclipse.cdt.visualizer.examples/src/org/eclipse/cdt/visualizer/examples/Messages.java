@@ -19,7 +19,9 @@ class Messages extends NLS {
 	public static String ProblemCountVisualizer_Name;
 	public static String ProblemCountVisualizer_DisplayName;
 	public static String ProblemCountVisualizer_Description;
-
+	public static String ProblemCountVisualizer_Errors;
+	public static String ProblemCountVisualizer_Warnings;
+	public static String ProblemCountVisualizer_Infos;
 
 	static {
 		// initialize resource bundle

@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM) - Initial API and implementation
+ *     John Camelon (IBM) - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
@@ -14,15 +14,13 @@ import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 
 /**
- * This interface represents the try block statement. try { //body } catch( Exc
- * e ) { // handler } catch( ... ) {
- *  }
+ * This interface represents the try block statement. try { //body } catch (Exc e )
+ * { // handler } catch ( ... ) { }
  * 
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPASTTryBlockStatement extends IASTStatement {
-
 	/**
 	 * <code>BODY</code> is the body of the try block.
 	 */
@@ -75,5 +73,4 @@ public interface ICPPASTTryBlockStatement extends IASTStatement {
 	 */
 	@Override
 	public ICPPASTTryBlockStatement copy(CopyStyle style);
-
 }

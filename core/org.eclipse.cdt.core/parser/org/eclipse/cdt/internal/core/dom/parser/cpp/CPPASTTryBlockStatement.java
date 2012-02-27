@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
- * Markus Schorn (Wind River Systems)
+ *     IBM - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -24,7 +24,9 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
  * @author jcamelon
  */
 public class CPPASTTryBlockStatement extends ASTNode implements ICPPASTTryBlockStatement, IASTAmbiguityParent {
-
+    private ICPPASTCatchHandler[] catchHandlers;
+    private int catchHandlersPos= -1;
+    private IASTStatement tryBody;
 
     public CPPASTTryBlockStatement() {
 	}
@@ -37,11 +39,11 @@ public class CPPASTTryBlockStatement extends ASTNode implements ICPPASTTryBlockS
 	public CPPASTTryBlockStatement copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-	
+
 	@Override
 	public CPPASTTryBlockStatement copy(CopyStyle style) {
-		CPPASTTryBlockStatement copy = new CPPASTTryBlockStatement(tryBody == null ? null
-				: tryBody.copy(style));
+		CPPASTTryBlockStatement copy =
+				new CPPASTTryBlockStatement(tryBody == null ? null : tryBody.copy(style));
 		for (ICPPASTCatchHandler handler : getCatchHandlers())
 			copy.addCatchHandler(handler == null ? null : handler.copy(style));
 		copy.setOffsetAndLength(this);
@@ -55,24 +57,19 @@ public class CPPASTTryBlockStatement extends ASTNode implements ICPPASTTryBlockS
 	public void addCatchHandler(ICPPASTCatchHandler statement) {
         assertNotFrozen();
     	if (statement != null) {
-    		catchHandlers = ArrayUtil.appendAt( ICPPASTCatchHandler.class, catchHandlers, ++catchHandlersPos, statement );
+    		catchHandlers = ArrayUtil.appendAt(ICPPASTCatchHandler.class, catchHandlers, ++catchHandlersPos, statement);
     		statement.setParent(this);
 			statement.setPropertyInParent(CATCH_HANDLER);
     	}
     }
 
-
     @Override
 	public ICPPASTCatchHandler[] getCatchHandlers() {
-        if( catchHandlers == null ) return ICPPASTCatchHandler.EMPTY_CATCHHANDLER_ARRAY;
-        catchHandlers = ArrayUtil.trimAt( ICPPASTCatchHandler.class, catchHandlers, catchHandlersPos );
+        if (catchHandlers == null)
+        	return ICPPASTCatchHandler.EMPTY_CATCHHANDLER_ARRAY;
+        catchHandlers = ArrayUtil.trimAt(ICPPASTCatchHandler.class, catchHandlers, catchHandlersPos);
         return catchHandlers;
     }
-
-
-    private ICPPASTCatchHandler [] catchHandlers = null;
-    private int catchHandlersPos=-1;
-    private IASTStatement tryBody;
 
     @Override
 	public void setTryBody(IASTStatement tryBlock) {
@@ -84,33 +81,34 @@ public class CPPASTTryBlockStatement extends ASTNode implements ICPPASTTryBlockS
 		}
     }
 
- 
     @Override
 	public IASTStatement getTryBody() {
         return tryBody;
     }
 
     @Override
-	public boolean accept( ASTVisitor action ){
-        if( action.shouldVisitStatements ){
-		    switch( action.visit( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+	public boolean accept(ASTVisitor action) {
+        if (action.shouldVisitStatements) {
+		    switch (action.visit(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
-        if( tryBody != null ) if( !tryBody.accept( action ) ) return false;
-        
-        ICPPASTCatchHandler [] handlers = getCatchHandlers();
-        for ( int i = 0; i < handlers.length; i++ ) {
-            if( !handlers[i].accept( action ) ) return false;
+        if (tryBody != null && !tryBody.accept(action))
+        	return false;
+
+        ICPPASTCatchHandler[] handlers = getCatchHandlers();
+        for (int i = 0; i < handlers.length; i++) {
+            if (!handlers[i].accept(action))
+            	return false;
         }
-        
-        if( action.shouldVisitStatements ){
-		    switch( action.leave( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+
+        if (action.shouldVisitStatements) {
+		    switch (action.leave(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
         return true;
@@ -118,10 +116,9 @@ public class CPPASTTryBlockStatement extends ASTNode implements ICPPASTTryBlockS
 
     @Override
 	public void replace(IASTNode child, IASTNode other) {
-        if( tryBody == child )
-        {
-            other.setPropertyInParent( child.getPropertyInParent() );
-            other.setParent( child.getParent() );
+        if (tryBody == child) {
+            other.setPropertyInParent(child.getPropertyInParent());
+            other.setParent(child.getParent());
             tryBody = (IASTStatement) other;
         }
     }

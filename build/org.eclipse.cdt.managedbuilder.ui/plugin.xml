@@ -649,6 +649,15 @@
         </wizard>
      </extension>
      <extension
+           point="org.eclipse.cdt.ui.LanguageSettingsProviderAssociation">
+        <id-association
+              id="org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider"
+              icon="icons/obj16/mbs.gif"
+              ui-clear-entries="false"
+              ui-edit-entries="false">
+        </id-association>
+     </extension>
+     <extension
            point="org.eclipse.cdt.ui.projectTypePages">
         <projectTypePage
               class="org.eclipse.cdt.managedbuilder.ui.wizards.ToolChainSelectionPage"

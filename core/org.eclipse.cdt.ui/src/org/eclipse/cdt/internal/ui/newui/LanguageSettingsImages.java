@@ -32,6 +32,35 @@ import org.eclipse.cdt.ui.CUIPlugin;
  * Helper class to provide unified images for {@link ICLanguageSettingEntry}.
  */
 public class LanguageSettingsImages {
+	// AG FIXME - replace usage with version taking cfgDescription
+	@Deprecated
+	public static Image getImage(int kind, int flags, boolean isProjectRelative) {
+		String imageKey = getImageKey(kind, flags, isProjectRelative);
+		if (imageKey!=null) {
+//			String overlayKey = getErrorOverlayKey(kind, flags, isProjectRelative);
+//			if (overlayKey!=null) {
+//				return getOverlaidImage(imageKey, overlayKey, IDecoration.BOTTOM_LEFT);
+//			}
+			return CDTSharedImages.getImage(imageKey);
+		}
+		return null;
+	}
+
+	/**
+	 * Returns image for the given entry from internally managed repository including
+	 * necessary overlays. This method is shortcut for {@link #getImage(ICLanguageSettingEntry, String, ICConfigurationDescription)}
+	 * when no project is available.
+	 *
+	 * @param entry - language settings entry to get an image for.
+	 * @return the image for the entry with appropriate overlays.
+	 * 
+	 * AG FIXME - replace usage with version taking cfgDescription
+	 */
+	@Deprecated
+	public static Image getImage(ICLanguageSettingEntry entry) {
+		return getImage(entry, null, null);
+	}
+
 	/**
 	 * @return the base key for the image.
 	 */

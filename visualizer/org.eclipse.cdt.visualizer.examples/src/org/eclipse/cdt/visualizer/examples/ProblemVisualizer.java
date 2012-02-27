@@ -74,6 +74,16 @@ public class ProblemVisualizer extends GraphicCanvasVisualizer {
 		}
 	}
 	
+	private class ResizableGraphicCanvas extends GraphicCanvas {
+		public ResizableGraphicCanvas(Composite parent) {
+			super(parent);
+		}
+		
+		@Override
+		public void resized(Rectangle bounds) {
+			ProblemVisualizer.this.refresh();
+		}
+	}
 	/** The canvas on which we'll draw our bars */
 	private GraphicCanvas m_canvas;
 	
@@ -105,7 +115,7 @@ public class ProblemVisualizer extends GraphicCanvasVisualizer {
 	
 	@Override
 	public GraphicCanvas createCanvas(Composite parent) {
-		m_canvas = new GraphicCanvas(parent);
+		m_canvas = new ResizableGraphicCanvas(parent);
 		return m_canvas;
 	}
 	
@@ -115,6 +125,15 @@ public class ProblemVisualizer extends GraphicCanvasVisualizer {
 		m_canvas.setForeground(MAIN_FOREGROUND_COLOR);
 	}
 	
+	@Override
+	public void disposeCanvas()
+	{
+		if (m_canvas != null) {
+			m_canvas.dispose();
+			m_canvas = null;
+		}
+	}
+
 	@Override
 	public int handlesSelection(ISelection selection) {
 		Object sel = SelectionUtils.getSelectedObject(selection);
@@ -133,7 +152,7 @@ public class ProblemVisualizer extends GraphicCanvasVisualizer {
 	@Override
 	public void visualizerSelected() {
 	}
-
+	
 	/**
 	 * Actually create the graphics bars for the different severities.
 	 * @param outline Should the bars be created, or the bar outline
@@ -219,8 +238,10 @@ public class ProblemVisualizer extends GraphicCanvasVisualizer {
 		}
 	}
 
-	@Override
-	public void workbenchSelectionChanged(ISelection selection) {
+	/**
+	 * Refresh the visualizer display based on the existing data.
+	 */
+	public void refresh() {
 		m_canvas.clear();
 		
 		// First create the outline bars
@@ -229,19 +250,24 @@ public class ProblemVisualizer extends GraphicCanvasVisualizer {
 			m_canvas.add(bar);
 		}
 		
-		Object sel = SelectionUtils.getSelectedObject(selection);
-		if (sel instanceof IResource) {
-			// Now, create the inside bars
-
-			setMarkerCount((IResource)sel);
-
-			bars = getBars(false);
-			for (BarGraphicObject bar : bars) {
-				m_canvas.add(bar);
-			}
+		// Now, create the inside bars
+		bars = getBars(false);
+		for (BarGraphicObject bar : bars) {
+			m_canvas.add(bar);
 		}
 		
 		m_canvas.redraw();
+	}
+
+	@Override
+	public void workbenchSelectionChanged(ISelection selection) {
+		Object sel = SelectionUtils.getSelectedObject(selection);
+		if (sel instanceof IResource) {
+			// Update the data
+			setMarkerCount((IResource)sel);
+		}
+		
+		refresh();
 	}
 	
 	public SelectionManager getSelectionManager() {

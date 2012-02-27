@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Tilera Corporation and others.
+ * Copyright (c) 2012 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,33 +27,41 @@ import org.eclipse.swt.widgets.Composite;
 
 public class ProblemVisualizer extends GraphicCanvasVisualizer {
 
+	/** The width of the side margins */
 	private static final int MARGIN_WIDTH = 10;
+	/** The height of the top and bottom margins */
 	private static final int MARGIN_HEIGHT = 10;
+	/** The default space between bars in the chart */
 	private static final int SPACING_HEIGHT = 40;
+	/** The predefined number of severities */
 	private static final int NUM_SEVERITY = 3;
 
+	/* The different colors to use for the different severities */
+	private static final Color ERROR_OUTLINE_COLOR = Colors.DARK_RED;
+	private static final Color ERROR_INSIDE_COLOR = Colors.DARK_RED;
+	private static final Color WARNING_OUTLINE_COLOR = Colors.DARK_YELLOW;
+	private static final Color WARNING_INSIDE_COLOR = Colors.DARK_YELLOW;
+	private static final Color INFO_OUTLINE_COLOR = Colors.DARK_BLUE;
+	private static final Color INFO_INSIDE_COLOR = Colors.DARK_BLUE;
+	
+	private static final Color MAIN_BACKGROUND_COLOR = Colors.WHITE;
+	private static final Color MAIN_FOREGROUND_COLOR = Colors.BLACK;
+
+	/**
+	 * A class that draws a bar or a bar outline in the specified color.
+	 */
 	private class BarGraphicObject extends GraphicObject {
 		private boolean m_outline;
 		
-		public BarGraphicObject(int severity, int x, int y, int w, int h, boolean outline) {
+		public BarGraphicObject(Color color, int x, int y, int w, int h, boolean outline) {
 			super(x, y, w, h);
 			m_outline = outline;
 			
-			Color color = Colors.BLACK;
-			
-			switch (severity) {
-			case IMarker.SEVERITY_ERROR:
-				color = Colors.DARK_RED;
-				break;
-			case IMarker.SEVERITY_WARNING:
-				color = Colors.DARK_YELLOW;
-				break;
-			case IMarker.SEVERITY_INFO:
-				color = Colors.DARK_BLUE;
-				break;
+			if (m_outline) {
+				setForeground(color);
+			} else {
+				setBackground(color);
 			}
-			if (!m_outline) setBackground(color);
-			setForeground(color);
 		}
 		
 		@Override
@@ -66,9 +74,14 @@ public class ProblemVisualizer extends GraphicCanvasVisualizer {
 		}
 	}
 	
-	
+	/** The canvas on which we'll draw our bars */
 	private GraphicCanvas m_canvas;
 	
+	/**
+	 * The model containing the data to be displayed.
+	 * In this case, it is the number of the three
+	 * different types of problem markers.
+	 */
 	private int[] m_markerCount = new int[NUM_SEVERITY];
 	
 	public ProblemVisualizer() {
@@ -77,17 +90,17 @@ public class ProblemVisualizer extends GraphicCanvasVisualizer {
 
 	@Override
 	public String getName() {
-		return Messages.CounterVisualizer_Name;
+		return Messages.ProblemCountVisualizer_Name;
 	}
 	
 	@Override
 	public String getDisplayName() {
-		return Messages.CounterVisualizer_DisplayName;
+		return Messages.ProblemCountVisualizer_DisplayName;
 	}
 	
 	@Override
 	public String getDescription() {
-		return Messages.CounterVisualizer_Description;
+		return Messages.ProblemCountVisualizer_Description;
 	}
 	
 	@Override
@@ -97,9 +110,9 @@ public class ProblemVisualizer extends GraphicCanvasVisualizer {
 	}
 	
 	@Override
-	protected void initializeCanvas(GraphicCanvas canvas) {
-		// TODO Auto-generated method stub
-		super.initializeCanvas(canvas);
+	protected void initializeCanvas(GraphicCanvas canvas) {		
+		m_canvas.setBackground(MAIN_BACKGROUND_COLOR);
+		m_canvas.setForeground(MAIN_FOREGROUND_COLOR);
 	}
 	
 	@Override
@@ -115,16 +128,17 @@ public class ProblemVisualizer extends GraphicCanvasVisualizer {
 	
 	@Override
 	public void visualizerDeselected() {
-		// TODO Auto-generated method stub
-		super.visualizerDeselected();
 	}
 	
 	@Override
 	public void visualizerSelected() {
-		// TODO Auto-generated method stub
-		super.visualizerSelected();
 	}
 
+	/**
+	 * Actually create the graphics bars for the different severities.
+	 * @param outline Should the bars be created, or the bar outline
+	 * @return The bars to be drawn.
+	 */
 	private BarGraphicObject[] getBars(boolean outline) {
 		BarGraphicObject[] bars = new BarGraphicObject[3];
 		
@@ -142,37 +156,45 @@ public class ProblemVisualizer extends GraphicCanvasVisualizer {
 		}
 
 		int maxWidth = bounds.width - 2 * MARGIN_WIDTH;
-
+		
 		if (outline) {
-			bars[0] = new BarGraphicObject(IMarker.SEVERITY_ERROR, x, y, maxWidth, height, outline);
+			// The bar outlines take the entire width of the view
+			bars[0] = new BarGraphicObject(ERROR_OUTLINE_COLOR, x, y, maxWidth, height, outline);
 			
 			y = y + height + spacing;
-			bars[1] = new BarGraphicObject(IMarker.SEVERITY_WARNING, x, y, maxWidth, height, outline);
+			bars[1] = new BarGraphicObject(WARNING_OUTLINE_COLOR, x, y, maxWidth, height, outline);
 
 			y = y + height + spacing;
-			bars[2] = new BarGraphicObject(IMarker.SEVERITY_INFO, x, y, maxWidth, height, outline);
+			bars[2] = new BarGraphicObject(INFO_OUTLINE_COLOR, x, y, maxWidth, height, outline);
 
 		} else {
+			// The inside of the bars use a proportional width with the maximum width and
+			// the largest amount of markers for one severity.
+			
 			// Find the maximum marker count to dictate the width
 			int maxCount = Math.max(m_markerCount[0], m_markerCount[1]);
 			maxCount = Math.max(maxCount, m_markerCount[2]);
 			if (maxCount == 0) maxCount = 1; // Set to anything but 0.  It will be multiplied by 0 and not matter.
 
 			int width = maxWidth * m_markerCount[IMarker.SEVERITY_ERROR] / maxCount;
-			bars[0] = new BarGraphicObject(IMarker.SEVERITY_ERROR, x, y, width, height, outline);
+			bars[0] = new BarGraphicObject(ERROR_INSIDE_COLOR, x, y, width, height, outline);
 
 			y = y + height + spacing;
 			width = maxWidth * m_markerCount[IMarker.SEVERITY_WARNING] / maxCount;
-			bars[1] = new BarGraphicObject(IMarker.SEVERITY_WARNING, x, y, width, height, outline);
+			bars[1] = new BarGraphicObject(WARNING_INSIDE_COLOR, x, y, width, height, outline);
 
 			y = y + height + spacing;
 			width = maxWidth * m_markerCount[IMarker.SEVERITY_INFO] / maxCount;
-			bars[2] = new BarGraphicObject(IMarker.SEVERITY_INFO, x, y, width, height, outline);
+			bars[2] = new BarGraphicObject(INFO_INSIDE_COLOR, x, y, width, height, outline);
 		}
 		
 		return bars;
 	}
 	
+	/**
+	 * Get the count of problem markers for each severity for the
+	 * specified resource.
+	 */
 	private void setMarkerCount(IResource resource) {
 		m_markerCount[IMarker.SEVERITY_ERROR] = 0;
 		m_markerCount[IMarker.SEVERITY_WARNING] = 0;
@@ -224,6 +246,5 @@ public class ProblemVisualizer extends GraphicCanvasVisualizer {
 	
 	public SelectionManager getSelectionManager() {
 		return m_selectionManager;
-	}
-	
+	}	
 }

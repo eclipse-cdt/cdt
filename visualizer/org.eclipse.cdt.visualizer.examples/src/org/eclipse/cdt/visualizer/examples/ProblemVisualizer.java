@@ -33,8 +33,11 @@ public class ProblemVisualizer extends GraphicCanvasVisualizer {
 	private static final int NUM_SEVERITY = 3;
 
 	private class BarGraphicObject extends GraphicObject {
-		public BarGraphicObject(int severity, int x, int y, int w, int h) {
+		private boolean m_outline;
+		
+		public BarGraphicObject(int severity, int x, int y, int w, int h, boolean outline) {
 			super(x, y, w, h);
+			m_outline = outline;
 			
 			Color color = Colors.BLACK;
 			
@@ -49,13 +52,17 @@ public class ProblemVisualizer extends GraphicCanvasVisualizer {
 				color = Colors.DARK_BLUE;
 				break;
 			}
-			setBackground(color);
+			if (!m_outline) setBackground(color);
 			setForeground(color);
 		}
 		
 		@Override
 		public void paintContent(GC gc) {
-			gc.fillRectangle(m_bounds);
+			if (m_outline) {
+				gc.drawRectangle(m_bounds);
+			} else {
+				gc.fillRectangle(m_bounds);
+			}
 		}
 	}
 	
@@ -118,7 +125,7 @@ public class ProblemVisualizer extends GraphicCanvasVisualizer {
 		super.visualizerSelected();
 	}
 
-	private BarGraphicObject[] getBars() {
+	private BarGraphicObject[] getBars(boolean outline) {
 		BarGraphicObject[] bars = new BarGraphicObject[3];
 		
 		Rectangle bounds = m_canvas.getBounds();
@@ -134,28 +141,34 @@ public class ProblemVisualizer extends GraphicCanvasVisualizer {
 			height = bounds.height / 3;
 		}
 
-		// Find the maximum marker count to dictate the width
-		int maxCount = Math.max(m_markerCount[0], m_markerCount[1]);
-		maxCount = Math.max(maxCount, m_markerCount[2]);
 		int maxWidth = bounds.width - 2 * MARGIN_WIDTH;
-		if (maxCount == 0) maxCount = maxWidth;
 
-		int count = m_markerCount[IMarker.SEVERITY_ERROR];
-		if (count == 0) count = 1;
-		int width = maxWidth * count / maxCount;
-		bars[0] = new BarGraphicObject(IMarker.SEVERITY_ERROR, x, y, width, height);
+		if (outline) {
+			bars[0] = new BarGraphicObject(IMarker.SEVERITY_ERROR, x, y, maxWidth, height, outline);
+			
+			y = y + height + spacing;
+			bars[1] = new BarGraphicObject(IMarker.SEVERITY_WARNING, x, y, maxWidth, height, outline);
 
-		y = y + height + spacing;
-		count = m_markerCount[IMarker.SEVERITY_WARNING];
-		if (count == 0) count = 1;
-		width = maxWidth * count / maxCount;
-		bars[1] = new BarGraphicObject(IMarker.SEVERITY_WARNING, x, y, width, height);
-		
-		y = y + height + spacing;
-		count = m_markerCount[IMarker.SEVERITY_INFO];
-		if (count == 0) count = 1;
-		width = maxWidth * count / maxCount;
-		bars[2] = new BarGraphicObject(IMarker.SEVERITY_INFO, x, y, width, height);
+			y = y + height + spacing;
+			bars[2] = new BarGraphicObject(IMarker.SEVERITY_INFO, x, y, maxWidth, height, outline);
+
+		} else {
+			// Find the maximum marker count to dictate the width
+			int maxCount = Math.max(m_markerCount[0], m_markerCount[1]);
+			maxCount = Math.max(maxCount, m_markerCount[2]);
+			if (maxCount == 0) maxCount = 1; // Set to anything but 0.  It will be multiplied by 0 and not matter.
+
+			int width = maxWidth * m_markerCount[IMarker.SEVERITY_ERROR] / maxCount;
+			bars[0] = new BarGraphicObject(IMarker.SEVERITY_ERROR, x, y, width, height, outline);
+
+			y = y + height + spacing;
+			width = maxWidth * m_markerCount[IMarker.SEVERITY_WARNING] / maxCount;
+			bars[1] = new BarGraphicObject(IMarker.SEVERITY_WARNING, x, y, width, height, outline);
+
+			y = y + height + spacing;
+			width = maxWidth * m_markerCount[IMarker.SEVERITY_INFO] / maxCount;
+			bars[2] = new BarGraphicObject(IMarker.SEVERITY_INFO, x, y, width, height, outline);
+		}
 		
 		return bars;
 	}
@@ -188,15 +201,19 @@ public class ProblemVisualizer extends GraphicCanvasVisualizer {
 	public void workbenchSelectionChanged(ISelection selection) {
 		m_canvas.clear();
 		
+		// First create the outline bars
+		BarGraphicObject[] bars = getBars(true);
+		for (BarGraphicObject bar : bars) {
+			m_canvas.add(bar);
+		}
+		
 		Object sel = SelectionUtils.getSelectedObject(selection);
-
 		if (sel instanceof IResource) {
-			m_canvas.setBackground(Colors.WHITE);
+			// Now, create the inside bars
 
 			setMarkerCount((IResource)sel);
 
-			BarGraphicObject[] bars = getBars();
-
+			bars = getBars(false);
 			for (BarGraphicObject bar : bars) {
 				m_canvas.add(bar);
 			}

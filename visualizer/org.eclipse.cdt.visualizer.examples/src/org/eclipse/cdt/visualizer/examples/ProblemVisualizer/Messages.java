@@ -8,7 +8,7 @@
  * Contributors:
  *     Marc Khouzam (Ericsson) - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.visualizer.examples;
+package org.eclipse.cdt.visualizer.examples.ProblemVisualizer;
 
 import org.eclipse.osgi.util.NLS;
 

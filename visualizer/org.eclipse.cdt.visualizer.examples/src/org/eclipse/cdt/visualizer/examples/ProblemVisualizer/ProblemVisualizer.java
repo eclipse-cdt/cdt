@@ -8,7 +8,9 @@
  * Contributors:
  *     Marc Khouzam (Ericsson) - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.visualizer.examples;
+package org.eclipse.cdt.visualizer.examples.ProblemVisualizer;
+
+import java.util.List;
 
 import org.eclipse.cdt.visualizer.ui.canvas.GraphicCanvas;
 import org.eclipse.cdt.visualizer.ui.canvas.GraphicCanvasVisualizer;
@@ -176,17 +178,6 @@ public class ProblemVisualizer extends GraphicCanvasVisualizer {
 			m_canvas = null;
 		}
 	}
-
-	@Override
-	public int handlesSelection(ISelection selection) {
-		Object sel = SelectionUtils.getSelectedObject(selection);
-
-		if (sel instanceof IResource) {
-			return 2;
-		}
-		
-		return 0;
-	}
 	
 	@Override
 	public void visualizerDeselected() {
@@ -257,14 +248,19 @@ public class ProblemVisualizer extends GraphicCanvasVisualizer {
 	}
 	
 	/**
-	 * Get the count of problem markers for each severity for the
-	 * specified resource.
+	 * Clear the marker count array.
 	 */
-	private void setMarkerCount(IResource resource) {
+	private void clearMarkerCount() {
 		m_markerCount[IMarker.SEVERITY_ERROR] = 0;
 		m_markerCount[IMarker.SEVERITY_WARNING] = 0;
 		m_markerCount[IMarker.SEVERITY_INFO] = 0;
-
+	}
+	
+	/**
+	 * Add the count of problem markers for each severity for the
+	 * specified resource.
+	 */
+	private void addToMarkerCount(IResource resource) {
 		IMarker[] problems = null;
 		try {
 			problems = resource.findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
@@ -306,11 +302,31 @@ public class ProblemVisualizer extends GraphicCanvasVisualizer {
 	}
 
 	@Override
+	public int handlesSelection(ISelection selection) {
+		List<Object> selections = SelectionUtils.getSelectedObjects(selection);
+
+		// As long as we support at least one element of the selection
+		// that is good enough
+		for (Object sel : selections) {
+			if (sel instanceof IResource) {
+				return 2;
+			}
+		}
+		
+		return 0;
+	}
+
+	@Override
 	public void workbenchSelectionChanged(ISelection selection) {
-		Object sel = SelectionUtils.getSelectedObject(selection);
-		if (sel instanceof IResource) {
-			// Update the data
-			setMarkerCount((IResource)sel);
+		clearMarkerCount();
+		
+		List<Object> selections = SelectionUtils.getSelectedObjects(selection);
+		
+		for (Object sel : selections) {
+			if (sel instanceof IResource) {
+				// Update the data
+				addToMarkerCount((IResource)sel);
+			}
 		}
 		
 		refresh();

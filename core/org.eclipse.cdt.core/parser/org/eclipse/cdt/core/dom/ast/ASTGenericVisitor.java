@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *     Markus Schorn - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
@@ -20,11 +20,12 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisitor;
 
 /**
- * Generic visitor for ast-nodes. 
- * <p> Clients may subclass. </p> 
+ * Generic visitor for AST nodes.
+ * <p> Clients may subclass. </p>
  * @since 5.1
  */
 public abstract class ASTGenericVisitor extends ASTVisitor implements ICPPASTVisitor, ICASTVisitor {
+
 	public ASTGenericVisitor(boolean visitNodes) {
 		super(visitNodes);
 	}
@@ -32,7 +33,7 @@ public abstract class ASTGenericVisitor extends ASTVisitor implements ICPPASTVis
 	protected int genericVisit(IASTNode node) {
 		return PROCESS_CONTINUE;
 	}
-	
+
 	protected int genericLeave(IASTNode node) {
 		return PROCESS_CONTINUE;
 	}
@@ -51,7 +52,7 @@ public abstract class ASTGenericVisitor extends ASTVisitor implements ICPPASTVis
 	public int visit(ICPPASTTemplateParameter templateParameter) {
 		return genericVisit(templateParameter);
 	}
-	
+
 	@Override
 	public int visit(ICPPASTCapture capture) {
 		return genericVisit(capture);
@@ -61,7 +62,7 @@ public abstract class ASTGenericVisitor extends ASTVisitor implements ICPPASTVis
 	public int visit(IASTArrayModifier arrayModifier) {
 		return genericVisit(arrayModifier);
 	}
-	
+
 	@Override
 	public int visit(IASTPointerOperator ptrOperator) {
 		return genericVisit(ptrOperator);
@@ -161,7 +162,7 @@ public abstract class ASTGenericVisitor extends ASTVisitor implements ICPPASTVis
 	public int leave(IASTArrayModifier arrayModifier) {
 		return genericLeave(arrayModifier);
 	}
-	
+
 	@Override
 	public int leave(IASTPointerOperator ptrOperator) {
 		return genericLeave(ptrOperator);

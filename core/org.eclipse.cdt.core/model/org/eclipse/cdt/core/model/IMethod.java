@@ -12,10 +12,9 @@ package org.eclipse.cdt.core.model;
 
 /**
  * Represents the definition method of a class.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IMethod extends IMethodDeclaration {
-
 }

@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
 
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
@@ -17,13 +17,13 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroExpansion;
 
 /**
- * For searching ast-nodes by offset and length, instances of this class can be used to 
+ * For searching ast-nodes by offset and length, instances of this class can be used to
  * determine whether a node matches or not.
  *
  * @since 5.0
  */
 public class ASTNodeSpecification<T extends IASTNode> {
-	public enum Relation {FIRST_CONTAINED, EXACT_MATCH, ENCLOSING, STRICTLY_ENCLOSING}
+	public enum Relation { FIRST_CONTAINED, EXACT_MATCH, ENCLOSING, STRICTLY_ENCLOSING }
 
 	private final Class<T> fClass;
 	private final Relation fRelation;
@@ -36,7 +36,7 @@ public class ASTNodeSpecification<T extends IASTNode> {
 	private T fBestNode;
 	private boolean fSearchInExpansion;
 	private boolean fZeroToLeft= false;
-	
+
 	public ASTNodeSpecification(Relation relation, Class<T> clazz, int fileOffset, int fileLength) {
 		fRelation= relation;
 		fClass= clazz;
@@ -53,7 +53,7 @@ public class ASTNodeSpecification<T extends IASTNode> {
 		setRangeInSequence(offsetInSeq, lengthInSeq);
 		fZeroToLeft= zeroRangeToLeft;
 	}
-	
+
 	public void setSearchInExpansion(boolean searchInExpansion) {
 		fSearchInExpansion= searchInExpansion;
 	}
@@ -77,7 +77,7 @@ public class ASTNodeSpecification<T extends IASTNode> {
 	public boolean requiresClass(Class<? extends IASTNode> clazz) {
 		return clazz.isAssignableFrom(fClass);
 	}
-		
+
 	@SuppressWarnings("unchecked")
 	public void visit(ASTNode astNode) {
 		if (isAcceptableNode(astNode) && isMatchingRange(astNode.getOffset(), astNode.getLength(), fSeqNumber, fSeqEndNumber)) {
@@ -87,6 +87,7 @@ public class ASTNodeSpecification<T extends IASTNode> {
 			}
 		}
 	}
+
 	@SuppressWarnings("unchecked")
 	public void visit(ASTNode astNode, IASTImageLocation imageLocation) {
 		if (isAcceptableNode(astNode) && imageLocation != null) {
@@ -109,16 +110,16 @@ public class ASTNodeSpecification<T extends IASTNode> {
 			if (offset <= selOffset && selEndOffset <= endOffset) {
 				return offset != selOffset || selEndOffset != endOffset;
 			}
-			return false; 
+			return false;
 		}
 		assert false;
 		return false;
 	}
 
 	public boolean isAcceptableNode(IASTNode astNode) {
-		if (astNode == null || !fClass.isAssignableFrom(astNode.getClass())) 
+		if (astNode == null || !fClass.isAssignableFrom(astNode.getClass()))
 			return false;
-		
+
 		if (fSearchInExpansion) {
 			IASTNode check= astNode instanceof IASTName ? astNode.getParent() : astNode;
 			if (check instanceof IASTPreprocessorMacroExpansion) {
@@ -129,7 +130,7 @@ public class ASTNodeSpecification<T extends IASTNode> {
 	}
 
 	/**
-	 * Returns whether the node can contain matches in its range. 
+	 * Returns whether the node can contain matches in its range.
 	 */
 	public boolean canContainMatches(ASTNode node) {
 		final int offset= node.getOffset();
@@ -142,7 +143,7 @@ public class ASTNodeSpecification<T extends IASTNode> {
 			if (offset <= fSeqNumber && fSeqEndNumber <= endOffset) {
 				return offset != fSeqNumber || fSeqEndNumber != endOffset;
 			}
-			return false; 
+			return false;
 		case FIRST_CONTAINED:
 			return offset <= fSeqEndNumber && fSeqNumber <= endOffset;
 		}
@@ -163,14 +164,14 @@ public class ASTNodeSpecification<T extends IASTNode> {
 	}
 
 	/**
-	 * Assuming that the given range matches, this method returns whether the match is better 
+	 * Assuming that the given range matches, this method returns whether the match is better
 	 * than the best match stored.
 	 */
 	private boolean isBetterMatch(int offset, int length, IASTNode cand) {
 		if (fBestNode == null) {
 			return true;
 		}
-		
+
 		final int endOffset= offset+length;
 		switch(fRelation) {
 		case EXACT_MATCH:
@@ -186,8 +187,8 @@ public class ASTNodeSpecification<T extends IASTNode> {
 				return endOffset == fBestEndOffset && isParent(fBestNode, cand);
 			}
 			return false;
-		case ENCLOSING: 
-		case STRICTLY_ENCLOSING: 
+		case ENCLOSING:
+		case STRICTLY_ENCLOSING:
 			final int bestLength= fBestEndOffset-fBestOffset;
 			if (length < bestLength) {
 				return true;
@@ -213,7 +214,7 @@ public class ASTNodeSpecification<T extends IASTNode> {
 		IASTPreprocessorMacroExpansion exp= nodeSelector.findEnclosingMacroExpansion(fZeroToLeft ? fFileOffset-1 : fFileOffset, 1);
 		if (fRelation == Relation.ENCLOSING || fRelation == Relation.STRICTLY_ENCLOSING)
 			return exp;
-		
+
 		if (exp != null) {
 			IASTFileLocation loc= exp.getFileLocation();
 			if (loc != null) {
@@ -230,7 +231,7 @@ public class ASTNodeSpecification<T extends IASTNode> {
 		IASTPreprocessorMacroExpansion exp= nodeSelector.findEnclosingMacroExpansion(fFileEndOffset==fFileOffset && !fZeroToLeft ? fFileEndOffset : fFileEndOffset-1, 1);
 		if (fRelation == Relation.ENCLOSING || fRelation == Relation.STRICTLY_ENCLOSING)
 			return exp;
-		
+
 		if (exp != null) {
 			IASTFileLocation loc= exp.getFileLocation();
 			if (loc != null) {

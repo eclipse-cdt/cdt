@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM) - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     John Camelon (IBM) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -20,9 +20,8 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 public class CPPASTReturnStatement extends ASTNode implements IASTReturnStatement, IASTAmbiguityParent {
-    
 	private IASTInitializerClause retValue;
-    
+
     public CPPASTReturnStatement() {
 	}
 
@@ -34,11 +33,11 @@ public class CPPASTReturnStatement extends ASTNode implements IASTReturnStatemen
 	public CPPASTReturnStatement copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-	
+
 	@Override
 	public CPPASTReturnStatement copy(CopyStyle style) {
-		CPPASTReturnStatement copy = new CPPASTReturnStatement(retValue == null ? null
-				: retValue.copy(style));
+		CPPASTReturnStatement copy =
+				new CPPASTReturnStatement(retValue == null ? null : retValue.copy(style));
 		copy.setOffsetAndLength(this);
 		if (style == CopyStyle.withLocations) {
 			copy.setCopyLocation(this);
@@ -50,7 +49,7 @@ public class CPPASTReturnStatement extends ASTNode implements IASTReturnStatemen
 	public IASTInitializerClause getReturnArgument() {
 		return retValue;
 	}
-	
+
 	@Override
 	public IASTExpression getReturnValue() {
         if (retValue instanceof IASTExpression) {
@@ -59,12 +58,11 @@ public class CPPASTReturnStatement extends ASTNode implements IASTReturnStatemen
         return null;
     }
 
-	
     @Override
 	public void setReturnValue(IASTExpression returnValue) {
     	setReturnArgument(returnValue);
     }
-    
+
     @Override
 	public void setReturnArgument(IASTInitializerClause arg) {
         assertNotFrozen();
@@ -89,12 +87,12 @@ public class CPPASTReturnStatement extends ASTNode implements IASTReturnStatemen
         }
 		if (retValue != null && !retValue.accept(action))
 			return false;
-        
-        if( action.shouldVisitStatements ){
-		    switch( action.leave( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+
+        if (action.shouldVisitStatements) {
+		    switch (action.leave(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
         return true;

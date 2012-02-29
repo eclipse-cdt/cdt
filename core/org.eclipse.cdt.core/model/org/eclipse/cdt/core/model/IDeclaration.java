@@ -11,35 +11,33 @@
 package org.eclipse.cdt.core.model;
 
 /**
- * IDeclaration is a base interface for any C Model element that could be
- * considered a declaration. 
- * 
+ * Base interface for any C Model element that could be considered a declaration.
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IDeclaration extends ICElement, ISourceManipulation, ISourceReference {
-
 	/**
-	 * Checks if the declaration is static 
+	 * Checks if the declaration is static
 	 * Returns true if the declaration is static, false otherwise.
 	 * @return boolean
 	 * @throws CModelException
 	 */
 	boolean isStatic() throws CModelException;
-	
+
 	/**
 	 * Checks if the declaration is constant.
-	 * Returns true if the decalration is constant, false otherwise.
+	 * Returns true if the declaration is constant, false otherwise.
 	 * @return boolean
 	 * @throws CModelException
 	 */
 	boolean isConst() throws CModelException;
-	
+
 	/**
 	 * Checks if the declaration is volatile.
 	 * Returns true if the declaration is volatile, false otherwise.
 	 * @return boolean
 	 * @throws CModelException
 	 */
-	boolean isVolatile() throws CModelException;	
+	boolean isVolatile() throws CModelException;
 }

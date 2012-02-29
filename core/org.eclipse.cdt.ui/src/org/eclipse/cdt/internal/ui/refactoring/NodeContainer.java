@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html  
- *  
- * Contributors: 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
  *     Institute for Software - initial API and implementation
  *     Sergey Prigogin (Google)
  *******************************************************************************/
@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -92,7 +91,7 @@ public class NodeContainer {
 				public int visit(IASTName name) {
 					if (name.getPropertyInParent() != IASTFieldReference.FIELD_NAME) {
 						IBinding binding = name.resolveBinding();
-	
+
 						if (binding instanceof ICPPBinding && !(binding instanceof ICPPTemplateTypeParameter)) {
 							ICPPBinding cppBinding = (ICPPBinding) binding;
 							try {
@@ -106,14 +105,13 @@ public class NodeContainer {
 									names.add(nameInfo);
 								}
 							} catch (DOMException e) {
-								ILog logger = CUIPlugin.getDefault().getLog();
 								IStatus status = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID,
 										e.getMessage(), e);
-								logger.log(status);
+								CUIPlugin.log(status);
 							}
 						} else if (binding instanceof IVariable) {
 							NameInformation nameInformation = new NameInformation(name);
-	
+
 							IASTName[] refs = name.getTranslationUnit().getReferences(binding);
 							for (IASTName ref : refs) {
 								nameInformation.addReference(ref, startOffset, endOffset);
@@ -129,8 +127,8 @@ public class NodeContainer {
 		for (NameInformation nameInfo : names) {
 			IASTName name = nameInfo.getName();
 
-			IASTTranslationUnit unit = name.getTranslationUnit();
-			IASTName[] nameDeclarations = unit.getDeclarationsInAST(name.resolveBinding());
+			IASTTranslationUnit ast = name.getTranslationUnit();
+			IASTName[] nameDeclarations = ast.getDeclarationsInAST(name.resolveBinding());
 			if (nameDeclarations.length != 0) {
 				nameInfo.setDeclarationName(nameDeclarations[nameDeclarations.length - 1]);
 			}
@@ -153,10 +151,10 @@ public class NodeContainer {
 	private List<NameInformation> getInterfaceNames() {
 		if (interfaceNames == null) {
 			findAllNames();
-	
+
 			Set<IASTName> declarations = new HashSet<IASTName>();
 			interfaceNames = new ArrayList<NameInformation>();
-	
+
 			for (NameInformation nameInfo : names) {
 				IASTName declarationName = nameInfo.getDeclarationName();
 				if (declarations.add(declarationName)) {
@@ -227,7 +225,7 @@ public class NodeContainer {
 	public List<NameInformation> getParameterCandidates() {
 		return getInterfaceNames(false);
 	}
-	
+
 	/**
 	 * Returns names that are candidates for being used as the function return value. Multiple
 	 * return value candidates mean that the function cannot be extracted.
@@ -235,7 +233,7 @@ public class NodeContainer {
 	public List<NameInformation> getReturnValueCandidates() {
 		return getInterfaceNames(true);
 	}
-	
+
 	public List<IASTNode> getNodesToWrite() {
 		return nodes;
 	}
@@ -282,7 +280,7 @@ public class NodeContainer {
 	public int getEndOffset() {
 		return getEndOffset(false);
 	}
-	
+
 	public int getEndOffsetIncludingComments() {
 		return getEndOffset(true);
 	}

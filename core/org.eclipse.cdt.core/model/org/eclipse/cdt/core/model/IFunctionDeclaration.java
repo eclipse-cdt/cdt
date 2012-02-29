@@ -10,15 +10,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.model;
 
-
 /**
  * Represents a function
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IFunctionDeclaration extends IDeclaration {
-
 	/**
 	 * Returns the type signatures of the exceptions this method throws,
 	 * in the order declared in the source. Returns an empty array
@@ -54,12 +52,12 @@ public interface IFunctionDeclaration extends IDeclaration {
 	String[] getParameterTypes();
 
 	/**
-	 * Returns the return value of this method. 
+	 * Returns the return value of this method.
 	 */
 	String getReturnType();
-	
+
 	/**
-	 * Returns the signature of the method. 
-	 */	
+	 * Returns the signature of the method.
+	 */
 	String getSignature() throws CModelException;
 }

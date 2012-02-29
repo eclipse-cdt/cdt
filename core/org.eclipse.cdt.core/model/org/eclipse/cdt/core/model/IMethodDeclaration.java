@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.model;
 
-
 /**
  * Represents the declaration method of a class
  *
@@ -18,7 +17,6 @@ package org.eclipse.cdt.core.model;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IMethodDeclaration extends IMember, IFunctionDeclaration {
-
 	/**
 	 * Returns whether this method is a constructor.
 	 *
@@ -78,5 +76,4 @@ public interface IMethodDeclaration extends IMember, IFunctionDeclaration {
 	 * return true if the member is a friend.
 	 */
 	public boolean isFriend() throws CModelException;
-
 }

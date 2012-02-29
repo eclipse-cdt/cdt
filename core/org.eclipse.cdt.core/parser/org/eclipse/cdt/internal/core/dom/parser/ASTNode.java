@@ -8,7 +8,7 @@
  * Contributors:
  *     John Camelon - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
- *     Sergey Prigoin (Google)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
 
@@ -51,60 +51,60 @@ public abstract class ASTNode implements IASTNode {
 
     private boolean frozen = false;
     private boolean active = true;
-    
+
     @Override
 	public IASTNode getParent() {
     	return parent;
     }
-    
+
 	@Override
 	public IASTNode[] getChildren() {
 		ChildCollector collector= new ChildCollector(this);
 		return collector.getChildren();
 	}
-	
+
 	@Override
 	public boolean isFrozen() {
 		return frozen;
 	}
-	
+
 	@Override
 	public boolean isActive() {
 		return active;
 	}
-	
+
 	void setIsFrozen() {
 		frozen = true;
 	}
-	
+
 	public void setInactive() {
 		if (frozen)
 			throw new IllegalStateException("attempt to modify frozen AST node"); //$NON-NLS-1$
 		active= false;
 	}
-    
+
 	protected void assertNotFrozen() throws IllegalStateException {
 		if (frozen)
 			throw new IllegalStateException("attempt to modify frozen AST node"); //$NON-NLS-1$
 	}
-	
+
     @Override
 	public void setParent(IASTNode node) {
     	assertNotFrozen();
     	this.parent = node;
     }
-    
+
     @Override
 	public ASTNodeProperty getPropertyInParent() {
     	return property;
     }
-    
+
     @Override
 	public void setPropertyInParent(ASTNodeProperty property) {
     	assertNotFrozen();
     	this.property = property;
     }
-    
+
     public int getOffset() {
         return offset;
     }
@@ -219,7 +219,7 @@ public abstract class ASTNode implements IASTNode {
         }
         return fileLocation;
     }
-    
+
     @Override
 	public boolean isPartOfTranslationUnitFile() {
         IASTTranslationUnit ast = getTranslationUnit();
@@ -231,7 +231,7 @@ public abstract class ASTNode implements IASTNode {
         }
         return false;
     }
-    
+
     public boolean isPartOfSourceFile() {
         IASTTranslationUnit ast = getTranslationUnit();
         if (ast != null) {
@@ -242,7 +242,7 @@ public abstract class ASTNode implements IASTNode {
         }
         return false;
     }
-    
+
     @Override
 	public IASTTranslationUnit getTranslationUnit() {
        	return parent != null ? parent.getTranslationUnit() : null;
@@ -252,7 +252,7 @@ public abstract class ASTNode implements IASTNode {
 	public boolean accept(ASTVisitor visitor) {
     	return true;
     }
-    
+
     @Override
 	public boolean contains(IASTNode node) {
     	if (node instanceof ASTNode) {
@@ -281,7 +281,7 @@ public abstract class ASTNode implements IASTNode {
     	int right= getBoundary(1);
 		return getSyntax(getOffset() + length, right, 1);
 	}
-    
+
 	/**
 	 * Compute the sequence number of the boundary of the leading/trailing syntax.
 	 */
@@ -306,45 +306,45 @@ public abstract class ASTNode implements IASTNode {
 
 	private IToken getSyntax(int fromSequenceNumber, int nextSequenceNumber, int direction) throws ExpansionOverlapsBoundaryException {
     	final IASTTranslationUnit tu= getTranslationUnit();
-    	if (!(tu instanceof ASTNode)) 
-    		throw new UnsupportedOperationException();
-    	
-    	ILocationResolver lr= (ILocationResolver) tu.getAdapter(ILocationResolver.class);
-    	if (lr == null) 
+    	if (!(tu instanceof ASTNode))
     		throw new UnsupportedOperationException();
 
-    	int endSequenceNumber= lr.convertToSequenceEndNumber(nextSequenceNumber); 
+    	ILocationResolver lr= (ILocationResolver) tu.getAdapter(ILocationResolver.class);
+    	if (lr == null)
+    		throw new UnsupportedOperationException();
+
+    	int endSequenceNumber= lr.convertToSequenceEndNumber(nextSequenceNumber);
 		IASTFileLocation total= lr.getMappedFileLocation(fromSequenceNumber, endSequenceNumber - fromSequenceNumber);
     	IASTFileLocation myfloc= getFileLocation();
     	if (total == null || myfloc == null)
     		throw new UnsupportedOperationException();
-    	
+
     	if (!total.getFileName().equals(myfloc.getFileName()))
     		throw new ExpansionOverlapsBoundaryException();
 
     	if (fromSequenceNumber > 0) {
     		IASTFileLocation fl= lr.getMappedFileLocation(fromSequenceNumber-1, endSequenceNumber - fromSequenceNumber + 1);
-    		if (fl.getFileName().equals(total.getFileName()) && fl.getNodeOffset() == total.getNodeOffset()) 
+    		if (fl.getFileName().equals(total.getFileName()) && fl.getNodeOffset() == total.getNodeOffset())
     			throw new ExpansionOverlapsBoundaryException();
     	}
-    	
+
     	if (endSequenceNumber < ((ASTNode) tu).getOffset() + ((ASTNode) tu).getLength()) {
     		IASTFileLocation fl= lr.getMappedFileLocation(fromSequenceNumber, nextSequenceNumber - fromSequenceNumber + 1);
-    		if (fl.getFileName().equals(total.getFileName()) && fl.getNodeLength() == total.getNodeLength()) 
+    		if (fl.getFileName().equals(total.getFileName()) && fl.getNodeLength() == total.getNodeLength())
     			throw new ExpansionOverlapsBoundaryException();
     	}
-    	    	
+
     	int adjustment= total.getNodeOffset() - myfloc.getNodeOffset();
     	if (direction > 0) {
     		adjustment-= myfloc.getNodeLength();
-    	} 
+    	}
 
     	char[] txt= lr.getUnpreprocessedSignature(total);
     	Lexer lex= new Lexer(txt, (LexerOptions) tu.getAdapter(LexerOptions.class), ILexerLog.NULL, null);
     	try {
-			Token result= null;	
+			Token result= null;
 			Token last= null;
-			while (true) {				
+			while (true) {
 				Token t= lex.nextToken();
 				switch (t.getType()) {
 				case IToken.tEND_OF_INPUT:

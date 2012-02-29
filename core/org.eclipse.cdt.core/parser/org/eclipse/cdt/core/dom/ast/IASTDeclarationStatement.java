@@ -6,18 +6,17 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Doug Schaefer (IBM) - Initial API and implementation
+ *     Doug Schaefer (IBM) - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
 /**
  * A declaration statement that introduces a declaration.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTDeclarationStatement extends IASTStatement {
-
 	/**
 	 * <code>DECLARATION</code> represents the relationship between a
 	 * declaration statement and the declaration it wraps.
@@ -27,18 +26,18 @@ public interface IASTDeclarationStatement extends IASTStatement {
 
 	/**
 	 * Gets the declaration introduced by this statement.
-	 * 
+	 *
 	 * @return the declaration
 	 */
 	public IASTDeclaration getDeclaration();
 
 	/**
 	 * Set the declaration for this statement.
-	 * 
+	 *
 	 * @param declaration
 	 */
 	public void setDeclaration(IASTDeclaration declaration);
-	
+
 	/**
 	 * @since 5.1
 	 */
@@ -50,5 +49,4 @@ public interface IASTDeclarationStatement extends IASTStatement {
 	 */
 	@Override
 	public IASTDeclarationStatement copy(CopyStyle style);
-
 }

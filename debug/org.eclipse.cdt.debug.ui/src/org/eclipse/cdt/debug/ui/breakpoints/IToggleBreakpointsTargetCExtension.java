@@ -59,4 +59,9 @@ public interface IToggleBreakpointsTargetCExtension extends IToggleBreakpointsTa
      * @throws CoreException if unable to perform the action 
      */
     public void createBreakpointsInteractive(IWorkbenchPart part, ISelection selection) throws CoreException;
+    
+    public boolean canCreateWatchpoingsInteractive(IWorkbenchPart part, ISelection selection);
+
+    public void createWatchpoingsInteractive(IWorkbenchPart part, ISelection selection) throws CoreException;
+
 }

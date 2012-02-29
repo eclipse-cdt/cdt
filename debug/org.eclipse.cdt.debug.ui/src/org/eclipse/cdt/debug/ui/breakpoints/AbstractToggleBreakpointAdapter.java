@@ -159,6 +159,16 @@ abstract public class AbstractToggleBreakpointAdapter
 	public void createBreakpointsInteractive(IWorkbenchPart part, ISelection selection) throws CoreException {
 	    updateBreakpoints(false, true, part, selection);
 	}
+	
+	@Override
+	public boolean canCreateWatchpoingsInteractive(IWorkbenchPart part, ISelection selection) {
+	    return true;
+	}
+	
+	@Override
+	public void createWatchpoingsInteractive(IWorkbenchPart part, ISelection selection) throws CoreException {
+	    createWatchpoint(true, part, null, ResourcesPlugin.getWorkspace().getRoot(), -1, -1, -1, "");
+	}
 
     /**
      * Updates the breakpoint for given part and selection.  

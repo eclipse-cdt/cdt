@@ -13,18 +13,23 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions.breakpoints;
 
+import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.cdt.debug.core.CDIDebugModel;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIMemorySpaceManagement;
+import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.model.ICBreakpointType;
+import org.eclipse.cdt.debug.core.model.ICDebugTarget;
 import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint;
 import org.eclipse.cdt.debug.ui.breakpoints.AbstractToggleBreakpointAdapter;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.window.Window;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
@@ -86,24 +91,42 @@ public class ToggleBreakpointAdapter extends AbstractToggleBreakpointAdapter {
     protected void createWatchpoint( boolean interactive, IWorkbenchPart part, String sourceHandle, IResource resource, 
         int charStart, int charEnd, int lineNumber, String expression) throws CoreException 
     {
-        AddWatchpointDialog dlg = new AddWatchpointDialog( 
-            part.getSite().getShell(), AddWatchpointActionDelegate.getMemorySpaceManagement() );
-        dlg.setExpression( expression );
-        if ( dlg.open() != Window.OK )
-            return;
-        expression = dlg.getExpression();
-        CDIDebugModel.createWatchpoint(sourceHandle, resource, charStart, charEnd, lineNumber, dlg.getWriteAccess(), 
-            dlg.getReadAccess(), expression, dlg.getMemorySpace(), dlg.getRange(), true, 0, "", true); //$NON-NLS-1$
-//        if (interactive) {
-//            ICWatchpoint bp = CDIDebugModel.createBlankWatchpoint();
-//            Map<String, Object> attributes = new HashMap<String, Object>();
-//            CDIDebugModel.setWatchPointAttributes(attributes, sourceHandle, resource, writeAccess, readAccess, 
-//                expression, memorySpace, range, true, 0, ""); //$NON-NLS-1$
-//            openBreakpointPropertiesDialog(bp, part, resource, attributes);
-//        }
+//        AddWatchpointDialog dlg = new AddWatchpointDialog(part.getSite().getShell(), getMemorySpaceManagement() );
+//        dlg.setExpression( expression );
+//        if ( dlg.open() != Window.OK )
+//            return;
+//        expression = dlg.getExpression();
+//        CDIDebugModel.createWatchpoint(sourceHandle, resource, charStart, charEnd, lineNumber, dlg.getWriteAccess(), 
+//            dlg.getReadAccess(), expression, dlg.getMemorySpace(), dlg.getRange(), true, 0, "", true); //$NON-NLS-1$
+        if (interactive) {
+            ICWatchpoint bp = CDIDebugModel.createBlankWatchpoint();
+            Map<String, Object> attributes = new HashMap<String, Object>();
+            CDIDebugModel.setWatchPointAttributes(attributes, sourceHandle, resource, true, false, 
+                expression, "", new BigInteger("0"), true, 0, ""); //$NON-NLS-1$
+            openBreakpointPropertiesDialog(bp, part, resource, attributes);
+        }
 	}
 
 	protected int getBreakpointType() {
 		return ICBreakpointType.REGULAR;
 	}
+	
+	public static ICDIMemorySpaceManagement getMemorySpaceManagement(){
+        IAdaptable debugViewElement = DebugUITools.getDebugContext();
+        ICDIMemorySpaceManagement memMgr = null;
+        
+        if ( debugViewElement != null ) {
+            ICDebugTarget debugTarget = (ICDebugTarget)debugViewElement.getAdapter(ICDebugTarget.class);
+            
+            if ( debugTarget != null ){
+                ICDITarget target = (ICDITarget)debugTarget.getAdapter(ICDITarget.class);
+            
+                if (target instanceof ICDIMemorySpaceManagement)
+                    memMgr = (ICDIMemorySpaceManagement)target;
+            }
+        }
+        
+        return memMgr;
+    }
+
 }

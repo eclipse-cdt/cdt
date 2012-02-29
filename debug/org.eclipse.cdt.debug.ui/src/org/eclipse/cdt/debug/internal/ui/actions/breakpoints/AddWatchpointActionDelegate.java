@@ -19,13 +19,15 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.model.ICDebugTarget;
 import org.eclipse.cdt.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
+import org.eclipse.cdt.debug.ui.breakpoints.IToggleBreakpointsTargetCExtension;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.actions.IToggleBreakpointsTarget;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.window.Window;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.actions.ActionDelegate;
@@ -36,7 +38,9 @@ import org.eclipse.ui.actions.ActionDelegate;
 public class AddWatchpointActionDelegate extends ActionDelegate implements IViewActionDelegate {
 
 	private IViewPart fView;
-
+	private ISelection fSelection;
+	
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
 	 */
@@ -53,15 +57,30 @@ public class AddWatchpointActionDelegate extends ActionDelegate implements IView
 		return fView;
 	}
 	
+	@Override
+	public void selectionChanged(IAction action, ISelection selection) {
+	    fSelection = selection;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	@Override
 	public void run( IAction action ) {
-		AddWatchpointDialog dlg = new AddWatchpointDialog( CDebugUIPlugin.getActiveWorkbenchShell(), getMemorySpaceManagement() );
-		if ( dlg.open() == Window.OK ) {
-			addWatchpoint( dlg.getWriteAccess(), dlg.getReadAccess(), dlg.getExpression(), dlg.getMemorySpace(), dlg.getRange() );
-		}
+	    IToggleBreakpointsTarget toggleTarget = DebugUITools.getToggleBreakpointsTargetManager().getToggleBreakpointsTarget(fView, fSelection);
+	    if (toggleTarget instanceof IToggleBreakpointsTargetCExtension) {
+	        try {
+                ((IToggleBreakpointsTargetCExtension)toggleTarget).createWatchpoingsInteractive(fView, fSelection);
+            } catch (CoreException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+	    }
+	    
+//		AddWatchpointDialog dlg = new AddWatchpointDialog( CDebugUIPlugin.getActiveWorkbenchShell(), getMemorySpaceManagement() );
+//		if ( dlg.open() == Window.OK ) {
+//			addWatchpoint( dlg.getWriteAccess(), dlg.getReadAccess(), dlg.getExpression(), dlg.getMemorySpace(), dlg.getRange() );
+//		}
 	}
 
 	protected void addWatchpoint(boolean write, boolean read, String expression, String memorySpace, BigInteger range) {

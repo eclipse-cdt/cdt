@@ -9,6 +9,7 @@
  *     QNX Software Systems - Initial API and implementation
  *     Wind River Systems   - Modified for new DSF Reference Implementation
  *     Ericsson AB          - Additional handling of events   
+ *     Mikhail Khodjaiants (Mentor Graphics) - Refactor common code in GDBControl* classes (bug 372795)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command;
@@ -25,10 +26,8 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.IStartedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.ISignals.ISignalsDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
-import org.eclipse.cdt.dsf.debug.service.command.ICommandListener;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandResult;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandToken;
-import org.eclipse.cdt.dsf.debug.service.command.IEventListener;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
 import org.eclipse.cdt.dsf.mi.service.MIProcesses;
@@ -51,7 +50,7 @@ import org.eclipse.cdt.dsf.service.DsfServicesTracker;
  */
 @ConfinedToDsfExecutor("fConnection#getExecutor")
 public class CLIEventProcessor
-    implements ICommandListener, IEventListener
+    implements IEventProcessor
 {
     private final ICommandControlService fCommandControl;
     private final ICommandControlDMContext fControlDmc;
@@ -74,7 +73,8 @@ public class CLIEventProcessor
         fCommandControl.getSession().addServiceEventListener(this, null);
     }
 
-    public void dispose() {
+	@Override
+	public void dispose() {
         fCommandControl.getSession().removeServiceEventListener(this);
         fCommandControl.removeCommandListener(this);
         fCommandControl.removeEventListener(this);

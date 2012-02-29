@@ -8,6 +8,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Ericsson			  - Version 7.0	
+ *     Mikhail Khodjaiants (Mentor Graphics) - Refactor common code in GDBControl* classes (bug 372795)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service.command;
 
@@ -22,10 +23,8 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommand;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
-import org.eclipse.cdt.dsf.debug.service.command.ICommandListener;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandResult;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandToken;
-import org.eclipse.cdt.dsf.debug.service.command.IEventListener;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
 import org.eclipse.cdt.dsf.mi.service.MIProcesses;
@@ -71,7 +70,7 @@ import org.eclipse.cdt.dsf.service.DsfServicesTracker;
  * @since 1.1
  */
 public class MIRunControlEventProcessor_7_0
-    implements IEventListener, ICommandListener
+    implements IEventProcessor
 {
 	private static final String STOPPED_REASON = "stopped"; //$NON-NLS-1$
 	private static final String RUNNING_REASON = "running"; //$NON-NLS-1$
@@ -107,6 +106,7 @@ public class MIRunControlEventProcessor_7_0
     /**
      * This processor must be disposed before the control service is un-registered. 
      */
+    @Override
     public void dispose() {
         fCommandControl.removeEventListener(this);        
         fCommandControl.removeCommandListener(this);

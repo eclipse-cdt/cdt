@@ -11,6 +11,7 @@
  *     Nokia - create and use backend service.
  *     Vladimir Prus (CodeSourcery) - Support for -data-read-memory-bytes (bug 322658)      
  *     Jens Elmenthaler (Verigy) - Added Full GDB pretty-printing support (bug 302121)
+ *     Mikhail Khodjaiants (Mentor Graphics) - Refactor common code in GDBControl* classes (bug 372795)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service.command;
 
@@ -52,6 +53,7 @@ import org.eclipse.cdt.dsf.mi.service.command.AbstractCLIProcess;
 import org.eclipse.cdt.dsf.mi.service.command.AbstractMIControl;
 import org.eclipse.cdt.dsf.mi.service.command.CLIEventProcessor;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
+import org.eclipse.cdt.dsf.mi.service.command.IEventProcessor;
 import org.eclipse.cdt.dsf.mi.service.command.MIControlDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.MIRunControlEventProcessor;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
@@ -100,9 +102,16 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 
     private IGDBBackend fMIBackend;
         
-    private MIRunControlEventProcessor fMIEventProcessor;
-    private CLIEventProcessor fCLICommandProcessor;
+    private IEventProcessor fMIEventProcessor;
+    private IEventProcessor fCLICommandProcessor;
     private AbstractCLIProcess fCLIProcess;
+
+    /**
+     * GDBControl is only used for GDB earlier that 7.0. Although -list-features
+     * is available in 6.8, it does not report anything we care about, so
+     * return empty list.
+     */
+	private final List<String> fFeatures = new ArrayList<String>();
 
     private boolean fTerminated;
 
@@ -110,7 +119,14 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
      * @since 3.0
      */
     public GDBControl(DsfSession session, ILaunchConfiguration config, CommandFactory factory) {
-    	super(session, false, factory);
+    	this(session, false, config, factory);
+    }
+
+    /**
+	 * @since 4.1
+	 */
+    protected GDBControl(DsfSession session, boolean useThreadAndFrameOptions, ILaunchConfiguration config, CommandFactory factory) {
+    	super(session, useThreadAndFrameOptions, factory);
     }
 
     @Override
@@ -136,37 +152,18 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
         // have it, before we can create this context.
         fControlDmc = new GDBControlDMContext(getSession().getId(), getId()); 
 
-        final Sequence.Step[] initializeSteps = new Sequence.Step[] {
-                new CommandMonitoringStep(InitializationShutdownStep.Direction.INITIALIZING),
-                new CommandProcessorsStep(InitializationShutdownStep.Direction.INITIALIZING),
-                new RegisterStep(InitializationShutdownStep.Direction.INITIALIZING),
-            };
-
-        Sequence startupSequence = new Sequence(getExecutor(), requestMonitor) {
-            @Override public Step[] getSteps() { return initializeSteps; }
-        };
-        getExecutor().execute(startupSequence);
+        getExecutor().execute(getStartupSequence(requestMonitor));
     }
 
     @Override
     public void shutdown(final RequestMonitor requestMonitor) {
-        final Sequence.Step[] shutdownSteps = new Sequence.Step[] {
-                new RegisterStep(InitializationShutdownStep.Direction.SHUTTING_DOWN),
-                new CommandProcessorsStep(InitializationShutdownStep.Direction.SHUTTING_DOWN),
-                new CommandMonitoringStep(InitializationShutdownStep.Direction.SHUTTING_DOWN),
-            };
-        Sequence shutdownSequence = 
-        	new Sequence(getExecutor(), 
-        				 new RequestMonitor(getExecutor(), requestMonitor) {
-        					@Override
-        					protected void handleCompleted() {
-        						GDBControl.super.shutdown(requestMonitor);
-        					}
-        				}) {
-            @Override public Step[] getSteps() { return shutdownSteps; }
-        };
-        getExecutor().execute(shutdownSequence);
-        
+        getExecutor().execute(getShutdownSequence(new RequestMonitor(getExecutor(), requestMonitor) {
+
+        	@Override
+        	protected void handleCompleted() {
+				GDBControl.super.shutdown(requestMonitor);
+        	}
+        }));
     }        
 
 	@Override
@@ -403,8 +400,8 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
                 return;
             }
             
-        	fCLICommandProcessor = new CLIEventProcessor(GDBControl.this, fControlDmc);
-            fMIEventProcessor = new MIRunControlEventProcessor(GDBControl.this, fControlDmc);
+            fCLICommandProcessor = createCLIEventProcessor(GDBControl.this, fControlDmc);
+            fMIEventProcessor = createMIRunControlEventProcessor(GDBControl.this, fControlDmc);
 
             requestMonitor.done();
         }
@@ -443,13 +440,6 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
         }
     }
 
-    /**
-     * GDBControl is only used for GDB earlier that 7.0. Although -list-features
-     * is available in 6.8, it does not report anything we care about, so
-     * return empty list.
-     */
-	private final List<String> fFeatures = new ArrayList<String>();
-
 	/** @since 4.0 */
 	@Override
 	public List<String> getFeatures() {
@@ -470,5 +460,56 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 	@Override
 	public void setPrintPythonErrors(boolean enabled, RequestMonitor rm) {
 		rm.done();
+	}
+
+	/**
+	 * @since 4.1
+	 */
+	protected Sequence getStartupSequence(final RequestMonitor requestMonitor) {
+        final Sequence.Step[] initializeSteps = new Sequence.Step[] {
+                new CommandMonitoringStep(InitializationShutdownStep.Direction.INITIALIZING),
+                new CommandProcessorsStep(InitializationShutdownStep.Direction.INITIALIZING),
+                new RegisterStep(InitializationShutdownStep.Direction.INITIALIZING),
+            };
+
+        return new Sequence(getExecutor(), requestMonitor) {
+            @Override public Step[] getSteps() { return initializeSteps; }
+        };
+	}
+
+	/**
+	 * @since 4.1
+	 */
+	protected Sequence getShutdownSequence(RequestMonitor requestMonitor) {
+        final Sequence.Step[] shutdownSteps = new Sequence.Step[] {
+                new RegisterStep(InitializationShutdownStep.Direction.SHUTTING_DOWN),
+                new CommandProcessorsStep(InitializationShutdownStep.Direction.SHUTTING_DOWN),
+                new CommandMonitoringStep(InitializationShutdownStep.Direction.SHUTTING_DOWN),
+            };
+        return new Sequence(getExecutor(), requestMonitor) {
+            @Override public Step[] getSteps() { return shutdownSteps; }
+        };
+	}
+
+	/**
+	 * @since 4.1
+	 */
+	protected IEventProcessor createCLIEventProcessor(ICommandControlService connection, ICommandControlDMContext controlDmc) {
+		return new CLIEventProcessor(connection, controlDmc);
+	}
+
+	/**
+	 * @since 4.1
+	 */
+	protected IEventProcessor createMIRunControlEventProcessor(AbstractMIControl connection, ICommandControlDMContext controlDmc) {
+		return new MIRunControlEventProcessor(connection, controlDmc);
+	}
+
+	/**
+	 * @since 4.1
+	 */
+	protected void setFeatures(List<String> features) {
+		fFeatures.clear();
+		fFeatures.addAll(features);
 	}
 }

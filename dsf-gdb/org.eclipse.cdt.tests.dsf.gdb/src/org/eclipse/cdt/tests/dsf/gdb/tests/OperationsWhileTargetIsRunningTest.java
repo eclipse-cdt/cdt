@@ -109,6 +109,13 @@ public class OperationsWhileTargetIsRunningTest extends BaseTestCase {
      */
     @Test
     public void restartWhileTargetRunningKillGDB() throws Throwable {
+    	// Restart is not supported for a remote session
+    	if (BaseTestCase.isRemoteSession()) {
+    		Assert.assertFalse("Restart operation should not be allowed for a remote session",
+    				           SyncUtil.canRestart());
+    	    return;
+    	}
+
     	// First set the preference to kill GDB (although it should not happen in this test)
     	Preferences node = DefaultScope.INSTANCE.getNode(GdbPlugin.PLUGIN_ID);
     	node.putBoolean(IGdbDebugPreferenceConstants.PREF_AUTO_TERMINATE_GDB, true);
@@ -132,6 +139,13 @@ public class OperationsWhileTargetIsRunningTest extends BaseTestCase {
      */
     @Test
     public void restartWhileTargetRunningGDBAlive() throws Throwable {
+    	// Restart is not supported for a remote session
+    	if (BaseTestCase.isRemoteSession()) {
+    		Assert.assertFalse("Restart operation should not be allowed for a remote session",
+    				           SyncUtil.canRestart());
+    	    return;
+    	}
+    	
     	// First set the preference not to kill gdb
     	Preferences node = DefaultScope.INSTANCE.getNode(GdbPlugin.PLUGIN_ID);
     	node.putBoolean(IGdbDebugPreferenceConstants.PREF_AUTO_TERMINATE_GDB, false);

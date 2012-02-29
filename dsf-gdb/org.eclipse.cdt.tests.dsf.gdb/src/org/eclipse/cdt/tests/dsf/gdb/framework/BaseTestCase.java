@@ -101,7 +101,12 @@ public class BaseTestCase {
     
     public synchronized MIStoppedEvent getInitialStoppedEvent() { return fInitialStoppedEvent; }
 
-	/**
+    public static boolean isRemoteSession() {
+		return launchAttributes.get(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE)
+	              .equals(IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE);
+    }
+
+    /**
 	 * We listen for the target to stop at the main breakpoint. This listener is
 	 * installed when the session is created and we uninstall ourselves when we
 	 * get to the breakpoint state, as we have no further need to monitor events

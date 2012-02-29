@@ -634,10 +634,10 @@ public class SyncUtil {
 		return null;
 	}
 
-    /**
-     * Restart the program.
-     */
-	public static MIStoppedEvent restart(final GdbLaunch launch) throws Throwable {	
+	/** 
+	 * Check if the restart operation is supported 
+	 */
+	public static boolean canRestart() throws Throwable {	
 		final IContainerDMContext containerDmc = getContainerContext();
 
 		// Check if restart is allowed
@@ -659,7 +659,17 @@ public class SyncUtil {
 
         fGdbControl.getExecutor().execute(query);
         boolean canRestart = query.get(500, TimeUnit.MILLISECONDS);
-        if (!canRestart) {
+        return canRestart;
+	}
+
+    /**
+     * Restart the program.
+     */
+	public static MIStoppedEvent restart(final GdbLaunch launch) throws Throwable {	
+		final IContainerDMContext containerDmc = getContainerContext();
+
+		// If we are calling this method, the restart operation should be allowed
+		if (!canRestart()) {
         	throw new CoreException(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID, "Unable to restart"));
         }
 

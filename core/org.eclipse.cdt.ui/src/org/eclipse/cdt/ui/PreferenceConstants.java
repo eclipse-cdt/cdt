@@ -2029,15 +2029,15 @@ public class PreferenceConstants {
 		store.setDefault(EDITOR_ASM_DIRECTIVE_ITALIC, false);
 
 		// Folding
-		store.setDefault(PreferenceConstants.EDITOR_FOLDING_ENABLED, false);
+		store.setDefault(PreferenceConstants.EDITOR_FOLDING_ENABLED, true);
 		store.setDefault(PreferenceConstants.EDITOR_FOLDING_PROVIDER, "org.eclipse.cdt.ui.text.defaultFoldingProvider"); //$NON-NLS-1$
 		store.setDefault(PreferenceConstants.EDITOR_FOLDING_FUNCTIONS, false);
-		store.setDefault(PreferenceConstants.EDITOR_FOLDING_STRUCTURES, true);
+		store.setDefault(PreferenceConstants.EDITOR_FOLDING_STRUCTURES, false);
 		store.setDefault(PreferenceConstants.EDITOR_FOLDING_METHODS, false);
-		store.setDefault(PreferenceConstants.EDITOR_FOLDING_MACROS, true);
+		store.setDefault(PreferenceConstants.EDITOR_FOLDING_MACROS, false);
 		store.setDefault(PreferenceConstants.EDITOR_FOLDING_COMMENTS, false);
 		store.setDefault(PreferenceConstants.EDITOR_FOLDING_HEADERS, true);
-		store.setDefault(PreferenceConstants.EDITOR_FOLDING_INACTIVE_CODE, true);
+		store.setDefault(PreferenceConstants.EDITOR_FOLDING_INACTIVE_CODE, false);
 		store.setDefault(PreferenceConstants.EDITOR_FOLDING_PREPROCESSOR_BRANCHES_ENABLED, false);
 
 		// Smart edit

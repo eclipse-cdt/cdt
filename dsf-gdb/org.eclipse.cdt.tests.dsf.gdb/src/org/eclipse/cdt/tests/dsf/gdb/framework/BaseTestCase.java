@@ -148,9 +148,13 @@ public class BaseTestCase {
     					// Store the corresponding MI *stopped event
     					fInitialStoppedEvent = (MIStoppedEvent)miEvent;
 
-    					// Check the content of the frame for "main"
+    					// Check the content of the frame for the method we should stop at
+    					String stopAt = (String)launchAttributes.get(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL);
+    					if (stopAt == null) stopAt = "main";
+    					
     					MIFrame frame = fInitialStoppedEvent.getFrame();
-    					if (frame != null && "main".equals(frame.getFunction())) {
+    					if (frame != null && 
+    							frame.getFunction() != null && frame.getFunction().indexOf(stopAt) != -1) {
     						// Set the event semaphore that will allow the test to proceed
     						synchronized (fTargetSuspendedSem) {
     							fTargetSuspended = true;

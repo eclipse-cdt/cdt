@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -2202,6 +2202,13 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		return CCorePlugin.SPACE.equals(option);
 	}
 
+	protected void uninstallProjectionModelUpdater() {
+		if (fProjectionModelUpdater != null) {
+			fProjectionModelUpdater.uninstall();
+			fProjectionModelUpdater = null;
+		}
+	}
+	
     /**
      * @see org.eclipse.ui.IWorkbenchPart#dispose()
      */
@@ -2214,10 +2221,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		if (sourceViewer instanceof ITextViewerExtension)
 			((ITextViewerExtension) sourceViewer).removeVerifyKeyListener(fBracketInserter);
 
-		if (fProjectionModelUpdater != null) {
-			fProjectionModelUpdater.uninstall();
-			fProjectionModelUpdater = null;
-		}
+		uninstallProjectionModelUpdater();
 
 		if (fProjectionSupport != null) {
 			fProjectionSupport.dispose();
@@ -2564,7 +2568,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
      * Determines if folding is enabled.
 	 * @return <code>true</code> if folding is enabled, <code>false</code> otherwise.
 	 */
-	boolean isFoldingEnabled() {
+	protected boolean isFoldingEnabled() {
 		return CUIPlugin.getDefault().getPreferenceStore().getBoolean(PreferenceConstants.EDITOR_FOLDING_ENABLED);
 	}
 

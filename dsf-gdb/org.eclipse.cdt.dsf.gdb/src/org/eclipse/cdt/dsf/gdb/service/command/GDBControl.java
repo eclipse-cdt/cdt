@@ -365,6 +365,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
         protected void initialize(RequestMonitor requestMonitor) {
             requestMonitor.done();
         }
+        
         protected void shutdown(RequestMonitor requestMonitor) {
             requestMonitor.done();
         }

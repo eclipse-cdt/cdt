@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2011 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2012 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -80,6 +80,7 @@
  * David McKnight   (IBM)        - [341281] amendment to fix for bug 308983
  * David McKnight   (IBM)        - [342208] potential NPE in SystemView$ExpandRemoteObjects.execute()
  * David McKnight   (IBM)        - [342095] Properties in Properties view remain "Pending..." in some cases
+ * David McKnight   (IBM)        - [372976] ClassCastException when SystemView assumes widget a TreeItem when it's a Tree
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -4355,10 +4356,10 @@ public class SystemView extends SafeTreeViewer
 				}
 			} else // add operation
 			{
-				if (!(((TreeItem) parentRefItem).getExpanded())) {
+				if (parentRefItem instanceof TreeItem && (!((TreeItem) parentRefItem).getExpanded())){
 					refresh(parentRefItem.getData()); // delete cached GUIs
-					//setExpandedState(parentRefItem,true); // not our job to expand here.
-				} else if (afilterstring) {
+				}			
+				else if (afilterstring) {
 					ISystemFilterReference fr = (ISystemFilterReference) parentRefItem.getData();
 					ISystemFilterStringReference fsr = fr.getSystemFilterStringReference(filterstring);
 					createTreeItem(parentRefItem, fsr, event.getPosition());

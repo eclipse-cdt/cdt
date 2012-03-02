@@ -272,9 +272,15 @@ public class MIRunControlTest extends BaseTestCase {
 		// before it (which is common), then do step operations over the
 		// non-common code (but same number of lines)
         SyncUtil.runToLine(fContainerDmc, SOURCE_NAME, Integer.toString(LINE_MAIN_PRINTF), true);
-        SyncUtil.step(StepType.STEP_OVER);	// over the printf
-        SyncUtil.step(StepType.STEP_OVER);	// over the create-thread call
-        SyncUtil.step(StepType.STEP_OVER, TestsPlugin.massageTimeout(2000));	// over the one second sleep
+        
+        // Because the program is about to go multi-threaded, we have to select the thread
+        // we want to keep stepping.  If we don't, we will ask GDB to step the entire process
+        // which is not what we want.  We can fetch the thread from the stopped event
+        // but we should do that before the second thread is created, to be sure the stopped
+        // event is for the main thread.
+        MIStoppedEvent stoppedEvent = SyncUtil.step(StepType.STEP_OVER);	// over the printf
+        SyncUtil.step(stoppedEvent.getDMContext(), StepType.STEP_OVER);	// over the create-thread call
+        SyncUtil.step(stoppedEvent.getDMContext(), StepType.STEP_OVER, TestsPlugin.massageTimeout(2000));	// over the one second sleep
         
 		// Make sure thread started event was received 
         IStartedDMEvent startedEvent = startedEventWaitor.waitForEvent(TestsPlugin.massageTimeout(1000));

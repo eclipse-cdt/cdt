@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2010 Berthold Daum.
+ * Copyright (c) 2003, 2010 Berthold Daum and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,10 +9,6 @@
  *     Berthold Daum
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.ui.preferences;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 import org.eclipse.cdt.codan.core.CodanCorePlugin;
 import org.eclipse.cdt.codan.core.PreferenceConstants;
@@ -44,12 +40,15 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author Berthold Daum
  */
 public abstract class FieldEditorOverlayPage extends FieldEditorPreferencePage implements IWorkbenchPropertyPage {
 	// Stores all created field editors
-	private List editors = new ArrayList();
+	private List<FieldEditor> editors = new ArrayList<FieldEditor>();
 	// Stores owning element of properties
 	private IAdaptable element;
 	// Additional buttons for property pages
@@ -156,7 +155,7 @@ public abstract class FieldEditorOverlayPage extends FieldEditorPreferencePage i
 	 * a new PropertyStore as local preference store. After all control have
 	 * been create, we enable/disable these controls.
 	 * 
-	 * @see org.eclipse.jface.preference.PreferencePage#createControl()
+	 * @see org.eclipse.jface.preference.PreferencePage#createControl(Composite)
 	 */
 	@Override
 	public void createControl(Composite parent) {
@@ -169,7 +168,7 @@ public abstract class FieldEditorOverlayPage extends FieldEditorPreferencePage i
 			if (e != null) {
 				ProjectScope ps = new ProjectScope((IProject) e);
 				ScopedPreferenceStore scoped = new ScopedPreferenceStore(ps, CodanCorePlugin.PLUGIN_ID);
-				scoped.setSearchContexts(new IScopeContext[] { ps, new InstanceScope() });
+				scoped.setSearchContexts(new IScopeContext[] { ps, InstanceScope.INSTANCE });
 				overlayStore = scoped;
 			}
 			// Set overlay store as current preference store
@@ -288,9 +287,7 @@ public abstract class FieldEditorOverlayPage extends FieldEditorPreferencePage i
 	 */
 	protected void updateFieldEditors(boolean enabled) {
 		Composite parent = getFieldEditorParent();
-		Iterator it = editors.iterator();
-		while (it.hasNext()) {
-			FieldEditor editor = (FieldEditor) it.next();
+		for (FieldEditor editor : editors) {
 			editor.setEnabled(enabled, parent);
 		}
 	}

@@ -123,10 +123,6 @@ public abstract class CheckedTreeEditor extends FieldEditor implements ICheckSta
 		}
 	}
 
-	/**
-	 * @param s
-	 * @return
-	 */
 	protected abstract Object modelFromString(String s);
 
 	Control getTreeControl() {
@@ -160,10 +156,6 @@ public abstract class CheckedTreeEditor extends FieldEditor implements ICheckSta
 		return ((ITreeContentProvider) treeViewer.getContentProvider());
 	}
 
-	/**
-	 * @param parent
-	 * @param event
-	 */
 	private void updateCheckedState(Object parent) {
 		Object[] children = getContentProvider().getChildren(parent);
 		int i, count = 0;
@@ -281,7 +273,7 @@ public abstract class CheckedTreeEditor extends FieldEditor implements ICheckSta
 	 * </p>
 	 * 
 	 * @return the combined string
-	 * @see #stringToModel
+	 * @see #modelFromString(String)
 	 */
 	protected abstract String modelToString(Object model);
 

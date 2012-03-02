@@ -8,15 +8,13 @@
  * Contributors:
  *     Marc Khouzam (Ericsson) - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.visualizer.examples.ProblemVisualizer;
+package org.eclipse.cdt.visualizer.examples.problemvisualizer;
 
 import java.util.List;
 
 import org.eclipse.cdt.visualizer.ui.canvas.GraphicCanvas;
 import org.eclipse.cdt.visualizer.ui.canvas.GraphicCanvasVisualizer;
-import org.eclipse.cdt.visualizer.ui.canvas.GraphicObject;
 import org.eclipse.cdt.visualizer.ui.util.Colors;
-import org.eclipse.cdt.visualizer.ui.util.GUIUtils;
 import org.eclipse.cdt.visualizer.ui.util.SelectionManager;
 import org.eclipse.cdt.visualizer.ui.util.SelectionUtils;
 import org.eclipse.core.resources.IMarker;
@@ -24,7 +22,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 
@@ -38,97 +35,10 @@ public class ProblemVisualizer extends GraphicCanvasVisualizer {
 	private static final int SPACING_HEIGHT = 40;
 	/** The predefined number of severities */
 	private static final int NUM_SEVERITY = 3;
-
-	/* The different colors to use for the different severities */
-	private static final Color ERROR_OUTLINE_COLOR = Colors.DARK_RED;
-	private static final Color ERROR_INSIDE_COLOR = Colors.DARK_RED;
-	private static final Color WARNING_OUTLINE_COLOR = Colors.DARK_YELLOW;
-	private static final Color WARNING_INSIDE_COLOR = Colors.DARK_YELLOW;
-	private static final Color INFO_OUTLINE_COLOR = Colors.DARK_BLUE;
-	private static final Color INFO_INSIDE_COLOR = Colors.DARK_BLUE;
 	
 	private static final Color MAIN_BACKGROUND_COLOR = Colors.WHITE;
 	private static final Color MAIN_FOREGROUND_COLOR = Colors.BLACK;
 
-	/**
-	 * A class that draws a bar or a bar outline in the specified color.
-	 */
-	private class BarGraphicObject extends GraphicObject {
-		private boolean m_outline;
-		private String m_label;
-		
-		public BarGraphicObject(int severity, int x, int y, int w, int h, boolean outline) {
-			super(x, y, w, h);
-			m_outline = outline;
-			
-			Color color = getColor(severity);
-			if (m_outline) {
-				setForeground(color);
-			} else {
-				setBackground(color);
-			}
-		}
-		
-		public void setLabel(String label) {
-			m_label = label;
-		}
-		
-		@Override
-		public void paintContent(GC gc) {
-			if (m_outline) {
-				gc.drawRectangle(m_bounds);
-			} else {
-				gc.fillRectangle(m_bounds);
-			}
-		}
-		
-		@Override
-		public boolean hasDecorations() {
-			// Only the outline bar has a label decoration.
-			// We muse the the outline bar and not the inside one because
-			// the inside bar may be too small
-			return m_outline;
-		}
-		
-		/** Invoked to allow element to paint decorations on top of anything drawn on it */
-		@Override
-		public void paintDecorations(GC gc) {
-			if (m_bounds.height > 20) {
-				gc.setForeground(Colors.BLACK);
-				
-				int text_indent = 6;
-				int tx = m_bounds.x + m_bounds.width  - text_indent;
-				int ty = m_bounds.y + m_bounds.height - text_indent;
-				GUIUtils.drawTextAligned(gc, m_label, tx, ty, false, false);
-			}
-		}
-
-		private Color getColor(int severity) {
-			switch (severity) {
-			case IMarker.SEVERITY_ERROR:
-				if (m_outline) return ERROR_OUTLINE_COLOR;
-				return ERROR_INSIDE_COLOR;
-			case IMarker.SEVERITY_WARNING:
-				if (m_outline) return WARNING_OUTLINE_COLOR;
-				return WARNING_INSIDE_COLOR;
-			case IMarker.SEVERITY_INFO:
-				if (m_outline) return INFO_OUTLINE_COLOR;
-				return INFO_INSIDE_COLOR;
-			}
-			return Colors.ORANGE;
-		}
-	}
-	
-	private class ResizableGraphicCanvas extends GraphicCanvas {
-		public ResizableGraphicCanvas(Composite parent) {
-			super(parent);
-		}
-		
-		@Override
-		public void resized(Rectangle bounds) {
-			ProblemVisualizer.this.refresh();
-		}
-	}
 	/** The canvas on which we'll draw our bars */
 	private GraphicCanvas m_canvas;
 	
@@ -140,27 +50,14 @@ public class ProblemVisualizer extends GraphicCanvasVisualizer {
 	private int[] m_markerCount = new int[NUM_SEVERITY];
 	
 	public ProblemVisualizer() {
-		super();
+		super(Messages.ProblemCountVisualizer_Name, 
+			  Messages.ProblemCountVisualizer_DisplayName, 
+			  Messages.ProblemCountVisualizer_Description);
 	}
 
 	@Override
-	public String getName() {
-		return Messages.ProblemCountVisualizer_Name;
-	}
-	
-	@Override
-	public String getDisplayName() {
-		return Messages.ProblemCountVisualizer_DisplayName;
-	}
-	
-	@Override
-	public String getDescription() {
-		return Messages.ProblemCountVisualizer_Description;
-	}
-	
-	@Override
 	public GraphicCanvas createCanvas(Composite parent) {
-		m_canvas = new ResizableGraphicCanvas(parent);
+		m_canvas = new ResizableGraphicCanvas(this, parent);
 		return m_canvas;
 	}
 	

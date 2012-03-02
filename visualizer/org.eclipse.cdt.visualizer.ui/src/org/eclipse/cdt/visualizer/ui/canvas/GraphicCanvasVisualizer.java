@@ -44,6 +44,11 @@ public class GraphicCanvasVisualizer extends Visualizer
 		super("canvas", "Canvas Visualizer", "Displays graphic representation of selection.");
 	}
 	
+	/** Constructor specifying name and such information. */
+	public GraphicCanvasVisualizer(String name, String displayName, String description) {
+		super(name, displayName, description);
+	}
+
 	/** Dispose method. */
 	public void dispose() {
 		super.dispose();

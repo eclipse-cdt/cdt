@@ -4,7 +4,7 @@
    <extension
          point="org.eclipse.cdt.visualizer.ui.visualizer">
       <visualizer
-            class="org.eclipse.cdt.visualizer.examples.ProblemVisualizer.ProblemVisualizer"
+            class="org.eclipse.cdt.visualizer.examples.problemvisualizer.ProblemVisualizer"
             id="org.eclipse.cdt.visualizer.examples.ProblemVisualizer">
       </visualizer>
    </extension>

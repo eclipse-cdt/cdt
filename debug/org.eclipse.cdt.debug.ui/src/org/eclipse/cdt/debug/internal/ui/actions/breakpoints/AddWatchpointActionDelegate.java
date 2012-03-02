@@ -39,7 +39,7 @@ public class AddWatchpointActionDelegate extends ActionDelegate implements IView
 
 	private IViewPart fView;
 	private ISelection fSelection;
-	
+	private ToggleBreakpointAdapter fDefaultToggleTarget = new ToggleBreakpointAdapter();
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
@@ -68,14 +68,19 @@ public class AddWatchpointActionDelegate extends ActionDelegate implements IView
 	@Override
 	public void run( IAction action ) {
 	    IToggleBreakpointsTarget toggleTarget = DebugUITools.getToggleBreakpointsTargetManager().getToggleBreakpointsTarget(fView, fSelection);
+	    IToggleBreakpointsTargetCExtension cToggleTarget = null;
 	    if (toggleTarget instanceof IToggleBreakpointsTargetCExtension) {
-	        try {
-                ((IToggleBreakpointsTargetCExtension)toggleTarget).createWatchpoingsInteractive(fView, fSelection);
-            } catch (CoreException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
+	        cToggleTarget = (IToggleBreakpointsTargetCExtension)toggleTarget;
+	    } else { 
+	        cToggleTarget = fDefaultToggleTarget;
 	    }
+	        
+        try {
+            cToggleTarget.createWatchpoingsInteractive(fView, fSelection);
+        } catch (CoreException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 	    
 //		AddWatchpointDialog dlg = new AddWatchpointDialog( CDebugUIPlugin.getActiveWorkbenchShell(), getMemorySpaceManagement() );
 //		if ( dlg.open() == Window.OK ) {

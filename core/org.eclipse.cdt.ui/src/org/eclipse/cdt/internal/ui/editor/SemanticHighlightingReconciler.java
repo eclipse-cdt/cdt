@@ -425,7 +425,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 	 * @param addedPositions the added positions
 	 * @param removedPositions the removed positions
 	 */
-	private void updatePresentation(TextPresentation textPresentation, List<HighlightedPosition> addedPositions, List<HighlightedPosition> removedPositions) {
+	protected void updatePresentation(TextPresentation textPresentation, List<HighlightedPosition> addedPositions, List<HighlightedPosition> removedPositions) {
 		Runnable runnable= fJobPresenter.createUpdateRunnable(textPresentation, addedPositions, removedPositions);
 		if (runnable == null)
 			return;

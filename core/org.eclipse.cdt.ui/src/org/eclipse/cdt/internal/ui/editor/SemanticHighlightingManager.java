@@ -560,7 +560,7 @@ public class SemanticHighlightingManager implements IPropertyChangeListener {
 		return refreshNeeded;
 	}
 
-	private void adaptToEnablementChange(HighlightingStyle highlighting, PropertyChangeEvent event) {
+	protected void adaptToEnablementChange(HighlightingStyle highlighting, PropertyChangeEvent event) {
 		Object value= event.getNewValue();
 		boolean eventValue;
 		if (value instanceof Boolean)
@@ -572,7 +572,7 @@ public class SemanticHighlightingManager implements IPropertyChangeListener {
 		highlighting.setEnabled(eventValue);
 	}
 
-	private void adaptToTextForegroundChange(HighlightingStyle highlighting, PropertyChangeEvent event) {
+	protected void adaptToTextForegroundChange(HighlightingStyle highlighting, PropertyChangeEvent event) {
 		RGB rgb= null;
 
 		Object value= event.getNewValue();
@@ -597,7 +597,7 @@ public class SemanticHighlightingManager implements IPropertyChangeListener {
 		}
 	}
 
-	private void adaptToTextStyleChange(HighlightingStyle highlighting, PropertyChangeEvent event, int styleAttribute) {
+	protected void adaptToTextStyleChange(HighlightingStyle highlighting, PropertyChangeEvent event, int styleAttribute) {
 		boolean eventValue= false;
 		Object value= event.getNewValue();
 		if (value instanceof Boolean)

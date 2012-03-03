@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Symbian Software Systems and others.
+ * Copyright (c) 2008, 2012 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Andrew Ferguson (Symbian) - Initial implementation
+ *     Andrew Ferguson (Symbian) - Initial implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text.doctools;
 
@@ -18,6 +19,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -46,9 +48,6 @@ import org.eclipse.cdt.ui.tests.BaseUITestCase;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.text.doctools.DocCommentOwnerManager;
 
-/**
- * 
- */
 public class DocCommentHighlightingTest extends BaseUITestCase {
 	private static final DocCommentOwnerManager DCMAN= DocCommentOwnerManager.getInstance();
 	private static final String LINKED_FOLDER= "resources/docComments";
@@ -77,7 +76,6 @@ public class DocCommentHighlightingTest extends BaseUITestCase {
 	private static final int[] comment12= {449, 19};
 	private static final int[] scomment7= {469, 17};
 	
-	
 	private ICProject fCProject;
 	private final String fTestFilename= "/"+PROJECT+"/src/this.cpp";
 
@@ -95,10 +93,13 @@ public class DocCommentHighlightingTest extends BaseUITestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		fCProject= EditorTestHelper.createCProject(PROJECT, LINKED_FOLDER);
-		CUIPlugin.getDefault().getPreferenceStore().setValue(PreferenceConstants.REMOVE_TRAILING_WHITESPACE, false);
-		AbstractTextEditor fEditor= (CEditor) EditorTestHelper.openInEditor(ResourceTestHelper.findFile(fTestFilename), true);
+		IPreferenceStore preferenceStore = CUIPlugin.getDefault().getPreferenceStore();
+		preferenceStore.setValue(PreferenceConstants.REMOVE_TRAILING_WHITESPACE, false);
+		preferenceStore.setValue(PreferenceConstants.EDITOR_FOLDING_ENABLED, false);
+		AbstractTextEditor fEditor=
+				(CEditor) EditorTestHelper.openInEditor(ResourceTestHelper.findFile(fTestFilename), true);
 		fSourceViewer= EditorTestHelper.getSourceViewer(fEditor);
-		// source positions depend on Windows line separator
+		// Source positions depend on Windows line separator
 		adjustLineSeparator(fSourceViewer.getDocument(), "\r\n");
 		fEditor.doSave(new NullProgressMonitor());
 		assertTrue(EditorTestHelper.joinReconciler(fSourceViewer, 0, 10000, 100));
@@ -111,7 +112,9 @@ public class DocCommentHighlightingTest extends BaseUITestCase {
 		if (fCProject != null)
 			CProjectHelper.delete(fCProject);
 
-		CUIPlugin.getDefault().getPreferenceStore().setToDefault(PreferenceConstants.REMOVE_TRAILING_WHITESPACE);
+		IPreferenceStore preferenceStore = CUIPlugin.getDefault().getPreferenceStore();
+		preferenceStore.setToDefault(PreferenceConstants.REMOVE_TRAILING_WHITESPACE);
+		preferenceStore.setToDefault(PreferenceConstants.EDITOR_FOLDING_ENABLED);
 		super.tearDown();
 	}
 

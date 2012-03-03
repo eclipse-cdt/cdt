@@ -55,21 +55,21 @@ public class Scanner extends SimpleScanner {
 	/**
 	 * Reset scanner to given inclusive start and end offsets
 	 * @param start  inclusive start offset
-	 * @param end  inclusive end offset
+	 * @param end  exclusive end offset
 	 */
 	public void resetTo(int start, int end) {
 		Reader reader;
-		if (end >= source.length - 1) {
+		if (end >= source.length) {
 			reader= new CharArrayReader(source);
 		} else {
-			reader= new CharArrayReader(source, 0, Math.min(source.length, end + 1));
+			reader= new CharArrayReader(source, 0, Math.min(source.length, end));
 		}
 		fContext= new ScannerContext().initialize(reader, start);
 		startPosition= start;
 		if (source != null && source.length < end) {
 			eofPosition = source.length;
 		} else {
-			eofPosition = end < Integer.MAX_VALUE ? end + 1 : end;
+			eofPosition = end;
 		}
 	}
 
@@ -152,7 +152,7 @@ public class Scanner extends SimpleScanner {
 		} else if (diff == 0) {
 			// no-op
 		} else if (diff > fTokenBuffer.length()) {
-			resetTo(nextCharacterStart, source.length - 1);
+			resetTo(nextCharacterStart, source.length);
 		} else /* if (diff <= fTokenBuffer.length()) */ {
 			while (diff > 0) {
 				if (fTokenBuffer.length() > 0) {

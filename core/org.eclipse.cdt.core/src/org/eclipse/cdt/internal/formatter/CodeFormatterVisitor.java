@@ -3867,7 +3867,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	}
 
 	private int getNextTokenOffset() {
-		localScanner.resetTo(scribe.scanner.getCurrentPosition(), scribe.scannerEndPosition - 1);
+		localScanner.resetTo(scribe.scanner.getCurrentPosition(), scribe.scannerEndPosition);
 		localScanner.getNextToken();
 		return localScanner.getCurrentTokenStartPosition();
 	}
@@ -4030,12 +4030,12 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		if (fileLocation == null)
 			return false;
 		int pos = fileLocation.getNodeOffset() + fileLocation.getNodeLength();
-		localScanner.resetTo(pos, scribe.scannerEndPosition - 1);
+		localScanner.resetTo(pos, scribe.scannerEndPosition);
 		Token token= localScanner.nextToken();
 		if (token == null || token.getType() != Token.tSEMI)
 			return false;
 		// Check if the semicolon is on the same line.
-		localScanner.resetTo(pos, token.getOffset() - 1);
+		localScanner.resetTo(pos, token.getOffset());
 		int c;
 		while ((c = localScanner.getNextChar()) != -1) {
 			if (c == '\n')
@@ -4238,7 +4238,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	}
 
 	private int peekTokenAtPosition(int pos) {
-		localScanner.resetTo(pos, scribe.scannerEndPosition - 1);
+		localScanner.resetTo(pos, scribe.scannerEndPosition);
 		int token = localScanner.getNextToken();
 		while (token == Token.tBLOCKCOMMENT || token == Token.tLINECOMMENT) {
 			token = localScanner.getNextToken();
@@ -4254,7 +4254,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		if (!ignoreSkip && scribe.shouldSkip(scribe.scanner.getCurrentPosition())) {
 			return Token.tBADCHAR;
 		}
-		localScanner.resetTo(scribe.scanner.getCurrentPosition(), scribe.scannerEndPosition - 1);
+		localScanner.resetTo(scribe.scanner.getCurrentPosition(), scribe.scannerEndPosition);
 		int token = localScanner.getNextToken();
 		while (token == Token.tBLOCKCOMMENT || token == Token.tLINECOMMENT) {
 			token = localScanner.getNextToken();

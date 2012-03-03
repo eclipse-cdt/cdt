@@ -77,7 +77,7 @@ public class DocCommentHighlightingTest extends BaseUITestCase {
 	private static final int[] scomment7= {469, 17};
 	
 	private ICProject fCProject;
-	private final String fTestFilename= "/"+PROJECT+"/src/this.cpp";
+	private final String fTestFilename= "/" + PROJECT + "/src/this.cpp";
 
 	private static SourceViewer fSourceViewer;
 
@@ -119,13 +119,13 @@ public class DocCommentHighlightingTest extends BaseUITestCase {
 	}
 
 	/**
-	 * Make the document use the given line separator.
+	 * Makes the document use the given line separator.
 	 * 
 	 * @param document
 	 * @param lineSeparator
 	 */
 	private void adjustLineSeparator(IDocument document, String lineSeparator) throws BadLocationException {
-		for (int i= 0; i < document.getNumberOfLines(); i++) {
+		for (int i = 0; i < document.getNumberOfLines(); i++) {
 			String delimiter= document.getLineDelimiter(i);
 			if (delimiter != null && !delimiter.equals(lineSeparator)) {
 				IRegion lineRegion= document.getLineInformation(i);
@@ -137,12 +137,12 @@ public class DocCommentHighlightingTest extends BaseUITestCase {
 	protected List<Position> findRangesColored(RGB rgb) {
 		List<Position> result= new ArrayList<Position>();
 		IEditorPart p= get();
-		ISourceViewer vw= ((CEditor)p).getViewer();
+		ISourceViewer vw= ((CEditor) p).getViewer();
 		Accessor a= new Accessor(vw, TextViewer.class);
 		StyledText st= (StyledText) a.get("fTextWidget");
 		StyleRange[] rgs= st.getStyleRanges();
-		for(int i=0; i<rgs.length; i++) {
-			if(rgs[i].foreground != null && rgs[i].foreground.getRGB().equals(rgb)) {
+		for (int i = 0; i < rgs.length; i++) {
+			if (rgs[i].foreground != null && rgs[i].foreground.getRGB().equals(rgb)) {
 				result.add(new Position(rgs[i].start, rgs[i].length));
 			}
 		}
@@ -151,12 +151,12 @@ public class DocCommentHighlightingTest extends BaseUITestCase {
 
 	protected IEditorPart get(){
 		IWorkbenchWindow window= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		if(window!=null) {
-			if(window.getActivePage()!=null) {
+		if (window!=null) {
+			if (window.getActivePage()!=null) {
 				IEditorReference[] es= window.getActivePage().getEditorReferences();
-				for(int i=0; i<es.length; i++) {
+				for (int i = 0; i < es.length; i++) {
 					IEditorPart part= es[i].getEditor(false);
-					if(part != null)
+					if (part != null)
 						return part;
 				}
 			}
@@ -166,7 +166,7 @@ public class DocCommentHighlightingTest extends BaseUITestCase {
 
 	private List<Position> mkPositions(int[][] raw) {
 		List<Position> result= new ArrayList<Position>();
-		for(int i=0; i<raw.length; i++) {
+		for (int i = 0; i < raw.length; i++) {
 			Assert.assertEquals(2, raw[i].length);
 			result.add(new Position(raw[i][0], raw[i][1]));
 		}

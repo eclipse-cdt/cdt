@@ -1599,7 +1599,7 @@ public class Scribe {
 		}
 		if (lastNumberOfNewLines >= 1) {
 			// Ensure that the scribe is at the beginning of a new line
-			// only if no specific indentation has been previously set
+			// only if no specific indentation has been previously set.
 			if (!preserveLineBreakIndentation) {
 				column = 1; 
 			}
@@ -2053,7 +2053,7 @@ public class Scribe {
 	}
 
 	boolean shouldSkip(int offset) {
-		return offset >= fSkipStartOffset;
+		return offset >= fSkipStartOffset && offset < fSkipEndOffset;
 	}
 
 	void skipRange(int offset, int endOffset) {

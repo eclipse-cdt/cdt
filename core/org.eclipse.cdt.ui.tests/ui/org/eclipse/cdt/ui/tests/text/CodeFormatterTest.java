@@ -457,19 +457,54 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//
 	//void break_indenter(int a, int b) {
 	//	break_start(); // This semicolon moves to its own line.
-	//		if (a > b) {
-	//			indentation_remains();
-	//		}
+	//	if (a > b) {
+	//		indentation_remains();
+	//	}
 	//
-	//		if (b > a)
-	//			indentation_vanishes();
+	//	if (b > a)
+	//		indentation_vanishes();
 	//
-	//		break_end();
+	//	break_end();
 	//
 	//	if (b == a)
 	//		indentation_remains();
 	//}
 	public void testBracesInMacros_Bug217435() throws Exception {
+		assertFormatterResult();
+	}
+
+	//struct SimpleStruct {
+	//int num;
+	//char name[];
+	//float floatNum;
+	//};
+	//
+	//#define SIZEOF(A, B) sizeof(A.B)
+	//
+	//const SimpleStruct array[] = { { SIZEOF(simpleStruct, num),
+	//#if FOO
+	//"foo"
+	//#else
+	//"bar"
+	//#endif
+	//, 0.5 }, { SIZEOF(simpleStruct, floatNum), "name", 1.1 } };
+
+	//struct SimpleStruct {
+	//	int num;
+	//	char name[];
+	//	float floatNum;
+	//};
+	//
+	//#define SIZEOF(A, B) sizeof(A.B)
+	//
+	//const SimpleStruct array[] = { { SIZEOF(simpleStruct, num),
+	//#if FOO
+	//		"foo"
+	//#else
+	//		"bar"
+	//#endif
+	//		, 0.5 }, { SIZEOF(simpleStruct, floatNum), "name", 1.1 } };
+	public void testArrayInitializer() throws Exception {
 		assertFormatterResult();
 	}
 
@@ -2493,6 +2528,44 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//             << " another literal.";
 	//}
 	public void testOverloadedLeftShiftChain_6() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_OVERLOADED_LEFT_SHIFT_CHAIN,
+				Integer.toString(Alignment.M_COMPACT_SPLIT | Alignment.M_INDENT_ON_COLUMN));
+		assertFormatterResult();
+	}
+
+	//struct Stream {
+	//Stream& operator <<(const char*);
+	//};
+	//Stream GetStream();
+	//
+	//struct Voidifier {
+	//void operator&(Stream&);
+	//};
+	//
+	//#define MY_MACRO(a) (a) ? (void) 0 : Voidifier() & GetStream() << " "
+	//
+	//void test() {
+	//MY_MACRO(false)
+	//<< "Loooooooooooooooooooooooooooooooooooooooong string literal";
+	//}
+
+	//struct Stream {
+	//    Stream& operator <<(const char*);
+	//};
+	//Stream GetStream();
+	//
+	//struct Voidifier {
+	//    void operator&(Stream&);
+	//};
+	//
+	//#define MY_MACRO(a) (a) ? (void) 0 : Voidifier() & GetStream() << " "
+	//
+	//void test() {
+	//    MY_MACRO(false)
+	//            << "Loooooooooooooooooooooooooooooooooooooooong string literal";
+	//}
+	public void testOverloadedLeftShiftChain_Bug373034() throws Exception {
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_OVERLOADED_LEFT_SHIFT_CHAIN,
 				Integer.toString(Alignment.M_COMPACT_SPLIT | Alignment.M_INDENT_ON_COLUMN));

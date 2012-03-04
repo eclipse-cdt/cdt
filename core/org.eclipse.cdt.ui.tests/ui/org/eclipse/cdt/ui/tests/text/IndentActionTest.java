@@ -45,7 +45,6 @@ public class IndentActionTest extends TestCase {
 	}
 
 	protected static class IndentTestSetup extends TestSetup {
-
 		private ICProject fCProject;
 		
 		public IndentTestSetup(Test test) {
@@ -77,9 +76,6 @@ public class IndentActionTest extends TestCase {
 	private SourceViewer fSourceViewer;
 	private IDocument fDocument;
 
-	/*
-	 * @see junit.framework.TestCase#setUp()
-	 */
 	@Override
 	protected void setUp() throws Exception {
 		String filename= createFileName("Before");
@@ -88,9 +84,6 @@ public class IndentActionTest extends TestCase {
 		fDocument= fSourceViewer.getDocument();
 	}
 	
-	/*
-	 * @see junit.framework.TestCase#tearDown()
-	 */
 	@Override
 	protected void tearDown() throws Exception {
 		EditorTestHelper.closeEditor(fEditor);

@@ -62,7 +62,6 @@ import org.eclipse.cdt.internal.ui.util.EditorUtility;
  * @see org.eclipse.cdt.internal.ui.text.CIndenter
  */
 public class IndentAction extends TextEditorAction {
-
 	/** The caret offset after an indent operation. */
 	private int fCaretOffset;
 
@@ -85,12 +84,9 @@ public class IndentAction extends TextEditorAction {
 		fIsTabAction= isTabAction;
 	}
 
-	/*
-	 * @see org.eclipse.jface.action.Action#run()
-	 */
 	@Override
 	public void run() {
-		// update has been called by the framework
+		// Update has been called by the framework
 		if (!isEnabled() || !validateEditorInputState())
 			return;
 
@@ -119,7 +115,7 @@ public class IndentAction extends TextEditorAction {
 			Runnable runnable= new Runnable() {
 				@Override
 				public void run() {
-					IRewriteTarget target= (IRewriteTarget)getTextEditor().getAdapter(IRewriteTarget.class);
+					IRewriteTarget target= (IRewriteTarget) getTextEditor().getAdapter(IRewriteTarget.class);
 					if (target != null)
 						target.beginCompoundChange();
 

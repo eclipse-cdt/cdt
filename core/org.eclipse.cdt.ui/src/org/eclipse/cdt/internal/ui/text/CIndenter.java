@@ -888,6 +888,7 @@ public final class CIndenter {
 	public int findReferencePosition(int offset, boolean danglingElse, boolean matchBrace, boolean matchParen,
 			boolean matchCase, boolean matchAccessSpecifier) {
 		fIndent= 0; // The indentation modification
+		fExtraSpaces= 0;
 		fAlign= CHeuristicScanner.NOT_FOUND;
 		fPosition= offset;
 

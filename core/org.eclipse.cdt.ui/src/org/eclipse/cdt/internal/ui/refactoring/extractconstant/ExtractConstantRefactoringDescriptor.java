@@ -39,8 +39,7 @@ public class ExtractConstantRefactoringDescriptor extends CRefactoringDescriptor
 	}
 	
 	@Override
-	public CRefactoring createRefactoring(RefactoringStatus status)
-			throws CoreException {
+	public CRefactoring createRefactoring(RefactoringStatus status) throws CoreException {
 		ISelection selection = getSelection();
 		ICProject project = getCProject();
 		ExtractConstantRefactoring refactoring =

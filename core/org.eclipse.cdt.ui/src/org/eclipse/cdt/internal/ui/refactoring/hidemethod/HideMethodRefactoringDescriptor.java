@@ -31,7 +31,8 @@ public class HideMethodRefactoringDescriptor extends CRefactoringDescriptor {
 
 	public HideMethodRefactoringDescriptor(String project, String description, String comment,
 			Map<String, String> arguments) {
-		super(HideMethodRefactoring.ID, project, description, comment, RefactoringDescriptor.STRUCTURAL_CHANGE, arguments);
+		super(HideMethodRefactoring.ID, project, description, comment,
+				RefactoringDescriptor.STRUCTURAL_CHANGE, arguments);
 	}
 
 	@Override

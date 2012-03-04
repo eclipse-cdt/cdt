@@ -14,11 +14,10 @@ package org.eclipse.cdt.ui.tests.refactoring.gettersandsetters;
 
 import junit.framework.Test;
 
-import org.eclipse.ltk.core.refactoring.Refactoring;
-
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.tests.refactoring.RefactoringTestBase;
 
+import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.gettersandsetters.AccessorDescriptor.AccessorKind;
 import org.eclipse.cdt.internal.ui.refactoring.gettersandsetters.GenerateGettersAndSettersRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.gettersandsetters.GetterSetterContext;
@@ -57,7 +56,7 @@ public class GenerateGettersAndSettersTest extends RefactoringTestBase {
 	}
 	
 	@Override
-	protected Refactoring createRefactoring() {
+	protected CRefactoring createRefactoring() {
 		if (ascendingVisibilityOrder) {
 			getPreferenceStore().setValue(PreferenceConstants.CLASS_MEMBER_ASCENDING_VISIBILITY_ORDER,
 					ascendingVisibilityOrder);

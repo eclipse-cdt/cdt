@@ -14,10 +14,9 @@ package org.eclipse.cdt.ui.tests.refactoring.extractlocalvariable;
 
 import junit.framework.Test;
 
-import org.eclipse.ltk.core.refactoring.Refactoring;
-
 import org.eclipse.cdt.ui.tests.refactoring.RefactoringTestBase;
 
+import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.extractlocalvariable.ExtractLocalVariableRefactoring;
 
 /**
@@ -40,7 +39,7 @@ public class ExtractLocalVariableRefactoringTest extends RefactoringTestBase {
 	}
 
 	@Override
-	protected Refactoring createRefactoring() {
+	protected CRefactoring createRefactoring() {
 		refactoring = new ExtractLocalVariableRefactoring(getSelectedTranslationUnit(),
 				getSelection(),	getCProject());
 		return refactoring;

@@ -15,10 +15,9 @@ package org.eclipse.cdt.ui.tests.refactoring.togglefunction;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipse.ltk.core.refactoring.Refactoring;
-
 import org.eclipse.cdt.ui.tests.refactoring.RefactoringTestBase;
 
+import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.togglefunction.ToggleRefactoring;
 
 /**
@@ -48,7 +47,7 @@ public class ToggleRefactoringTest extends RefactoringTestBase {
 	}
 
 	@Override
-	protected Refactoring createRefactoring() {
+	protected CRefactoring createRefactoring() {
 		refactoring = new ToggleRefactoring(getSelectedTranslationUnit(), getSelection(), getCProject());
 		return refactoring;
 	}

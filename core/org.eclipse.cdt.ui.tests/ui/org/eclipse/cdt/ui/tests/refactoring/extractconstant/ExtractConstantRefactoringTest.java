@@ -14,10 +14,9 @@ package org.eclipse.cdt.ui.tests.refactoring.extractconstant;
 
 import junit.framework.Test;
 
-import org.eclipse.ltk.core.refactoring.Refactoring;
-
 import org.eclipse.cdt.ui.tests.refactoring.RefactoringTestBase;
 
+import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.extractconstant.ExtractConstantInfo;
 import org.eclipse.cdt.internal.ui.refactoring.extractconstant.ExtractConstantRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.utils.VisibilityEnum;
@@ -43,7 +42,7 @@ public class ExtractConstantRefactoringTest extends RefactoringTestBase {
 	}
 
 	@Override
-	protected Refactoring createRefactoring() {
+	protected CRefactoring createRefactoring() {
 		refactoring = new ExtractConstantRefactoring(getSelectedTranslationUnit(), getSelection(),
 				getCProject());
 		return refactoring;

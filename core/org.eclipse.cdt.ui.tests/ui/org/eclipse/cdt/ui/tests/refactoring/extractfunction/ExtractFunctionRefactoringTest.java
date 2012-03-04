@@ -18,11 +18,10 @@ import java.util.Map;
 
 import junit.framework.Test;
 
-import org.eclipse.ltk.core.refactoring.Refactoring;
-
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.tests.refactoring.RefactoringTestBase;
 
+import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.NameInformation;
 import org.eclipse.cdt.internal.ui.refactoring.extractfunction.ExtractFunctionInformation;
 import org.eclipse.cdt.internal.ui.refactoring.extractfunction.ExtractFunctionRefactoring;
@@ -64,7 +63,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	}
 
 	@Override
-	protected Refactoring createRefactoring() {
+	protected CRefactoring createRefactoring() {
 		refactoring = new ExtractFunctionRefactoring(getSelectedTranslationUnit(), getSelection(),
 				getCProject());
 		return refactoring;

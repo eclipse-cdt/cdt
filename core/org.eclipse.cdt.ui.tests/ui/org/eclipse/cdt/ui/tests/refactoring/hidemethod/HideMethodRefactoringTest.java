@@ -14,10 +14,9 @@ package org.eclipse.cdt.ui.tests.refactoring.hidemethod;
 
 import junit.framework.Test;
 
-import org.eclipse.ltk.core.refactoring.Refactoring;
-
 import org.eclipse.cdt.ui.tests.refactoring.RefactoringTestBase;
 
+import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.hidemethod.HideMethodRefactoring;
 
 /**
@@ -38,7 +37,7 @@ public class HideMethodRefactoringTest extends RefactoringTestBase {
 	}
 
 	@Override
-	protected Refactoring createRefactoring() {
+	protected CRefactoring createRefactoring() {
 		return new HideMethodRefactoring(getSelectedTranslationUnit(), getSelection(), getCProject());
 	}
 

@@ -41,14 +41,15 @@ public class ExtractFunctionRefactoringDescriptor extends CRefactoringDescriptor
 
 	@Override
 	public CRefactoring createRefactoring(RefactoringStatus status) throws CoreException {
-		ISelection selection = getSelection();
-		ICProject project = getCProject();
-		ExtractFunctionRefactoring refactoring =
-				new ExtractFunctionRefactoring(getTranslationUnit(), selection, project);
-		ExtractFunctionInformation info = refactoring.getRefactoringInfo();
-		info.setMethodName(arguments.get(NAME));
-		info.setVisibility(VisibilityEnum.getEnumForStringRepresentation(arguments.get(VISIBILITY)));
-		info.setReplaceDuplicates(Boolean.parseBoolean(arguments.get(REPLACE_DUPLICATES)));
-		return refactoring;
+		return null;
+//		ISelection selection = getSelection();
+//		ICProject project = getCProject();
+//		ExtractFunctionRefactoring refactoring =
+//				new ExtractFunctionRefactoring(getTranslationUnit(), selection, project);
+//		ExtractFunctionInformation info = refactoring.getRefactoringInfo();
+//		info.setMethodName(arguments.get(NAME));
+//		info.setVisibility(VisibilityEnum.getEnumForStringRepresentation(arguments.get(VISIBILITY)));
+//		info.setReplaceDuplicates(Boolean.parseBoolean(arguments.get(REPLACE_DUPLICATES)));
+//		return refactoring;
 	}
 }

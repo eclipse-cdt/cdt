@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Wind River Systems, Nokia and others.
+ * Copyright (c) 2006, 2012 Wind River Systems, Nokia and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     Nokia              - initial API and implementation with some code moved from GDBControl.
  *     Wind River System
  *     Ericsson
+ *     Marc Khouzam (Ericsson) - Use the new IMIBackend2 interface (Bug 350837)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
@@ -39,6 +40,7 @@ import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.launching.LaunchUtils;
 import org.eclipse.cdt.dsf.gdb.service.command.GDBControl.InitializationShutdownStep;
 import org.eclipse.cdt.dsf.mi.service.IMIBackend;
+import org.eclipse.cdt.dsf.mi.service.IMIBackend2;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.cdt.dsf.service.AbstractDsfService;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
@@ -74,7 +76,7 @@ import org.osgi.framework.BundleContext;
  * 
  * @since 1.1
  */
-public class GDBBackend extends AbstractDsfService implements IGDBBackend {
+public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBackend2 {
 	
 	private final ILaunchConfiguration fLaunchConfiguration;
 	
@@ -389,7 +391,13 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend {
     public InputStream getMIInputStream() {
         return fProcess.getInputStream();
     };
-    
+
+	/** @since 4.1 */
+	@Override
+    public InputStream getMIErrorStream() {
+        return fProcess.getErrorStream();
+    };
+
 	@Override
     public String getId() {
         return fBackendId;
@@ -689,6 +697,7 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend {
         public void initialize(final RequestMonitor requestMonitor) {
             register(
                 new String[]{ IMIBackend.class.getName(), 
+                		      IMIBackend2.class.getName(),
                               IGDBBackend.class.getName() }, 
                 new Hashtable<String,String>());
             

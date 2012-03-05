@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 Wind River Systems and others.
+ * Copyright (c) 2006, 2012 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,10 +12,12 @@
  *     Vladimir Prus (CodeSourcery) - Support for -data-read-memory-bytes (bug 322658)      
  *     Jens Elmenthaler (Verigy) - Added Full GDB pretty-printing support (bug 302121)
  *     Mikhail Khodjaiants (Mentor Graphics) - Refactor common code in GDBControl* classes (bug 372795)
+ *     Marc Khouzam (Ericsson) - Pass errorStream to startCommandProcessing() (Bug 350837)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service.command;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -45,6 +47,7 @@ import org.eclipse.cdt.dsf.gdb.service.IGDBBackend;
 import org.eclipse.cdt.dsf.gdb.service.IGDBProcesses;
 import org.eclipse.cdt.dsf.mi.service.IMIBackend;
 import org.eclipse.cdt.dsf.mi.service.IMIBackend.BackendStateChangedEvent;
+import org.eclipse.cdt.dsf.mi.service.IMIBackend2;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIRunControl;
 import org.eclipse.cdt.dsf.mi.service.MIProcesses;
@@ -376,7 +379,11 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 
         @Override
         protected void initialize(final RequestMonitor requestMonitor) {
-            startCommandProcessing(fMIBackend.getMIInputStream(), fMIBackend.getMIOutputStream());
+        	InputStream errorStream = null;
+        	if (fMIBackend instanceof IMIBackend2) {
+        		errorStream = ((IMIBackend2)fMIBackend).getMIErrorStream();
+        	}
+            startCommandProcessing(fMIBackend.getMIInputStream(), fMIBackend.getMIOutputStream(), errorStream);
             requestMonitor.done();
         }
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Wind River Systems and others.
+ * Copyright (c) 2006, 2012 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Ericsson 		  - Modified for handling of multiple stacks and threads
  *     Nokia - create and use backend service.
  *     Onur Akdemir (TUBITAK BILGEM-ITI) - Multi-process debugging (Bug 237306)
+ *     Marc Khouzam (Ericsson) - New method to properly created ErrorThread (Bug 350837)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service.command;
 
@@ -40,7 +41,6 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandResult;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandToken;
 import org.eclipse.cdt.dsf.debug.service.command.IEventListener;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
-import org.eclipse.cdt.dsf.gdb.service.GDBBackend;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
@@ -208,21 +208,39 @@ public abstract class AbstractMIControl extends AbstractDsfService
      * Starts the threads that process the debugger input/output channels.
      * To be invoked by the initialization routine of the extending class.
      * 
+     * This version of the method will not start a thread for the error stream.
+     * 
      * @param inStream
      * @param outStream
      */
-    
     protected void startCommandProcessing(InputStream inStream, OutputStream outStream) {
+    	startCommandProcessing(inStream, outStream, null);
+    }
+    
+    /**
+     * Starts the threads that process the debugger input/output/error channels.
+     * To be invoked by the initialization routine of the extending class.
+     * 
+     * 
+     * @param inStream
+     * @param outStream
+     * @param errorStream
+     * @since 4.1
+     */
+    protected void startCommandProcessing(InputStream inStream, OutputStream outStream, InputStream errorStream) {
     	
         fTxThread = new TxThread(outStream);
         fRxThread = new RxThread(inStream);
         
-        GDBBackend backend = getServicesTracker().getService(GDBBackend.class);
-        fErrorThread = new ErrorThread(backend.getProcess().getErrorStream());
+        if (errorStream != null) {
+        	fErrorThread = new ErrorThread(errorStream);
+        }
         
         fTxThread.start();
         fRxThread.start();
-        fErrorThread.start();
+        if (fErrorThread != null) {
+        	fErrorThread.start();
+        }
     }
     
     /**

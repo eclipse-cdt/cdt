@@ -9,6 +9,7 @@
  *     Alena Laskavaia  - initial API and implementation
  *     Patrick Hofer [bug 315528]
  *     Sergey Prigogin (Google)
+ *     Marc-Andre Laperle
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.checkers;
 
@@ -117,7 +118,7 @@ public class NonVirtualDestructor extends AbstractIndexAstChecker {
 						node = decls[0];
 					}
 				}
-				reportProblem(PROBLEM_ID, node, className.getSimpleID().toString(),
+				reportProblem(PROBLEM_ID, node, new String(className.getSimpleID()),
 						virtualMethod.getName());
 				return PROCESS_SKIP;
 			}

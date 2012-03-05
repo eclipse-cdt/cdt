@@ -195,4 +195,12 @@ public class NonVirtualDestructorCheckerTest extends CheckerTestCase {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
+
+	// class Foo {
+	//   virtual void bar();
+	// };
+	public void testBug372009_wrongClassNameInMessage() throws Exception {
+		loadCodeAndRun(getAboveComment());
+		assertMessageContains("Foo", markers[0]);
+	}
 }

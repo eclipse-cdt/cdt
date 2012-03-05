@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 Alena Laskavaia
+ * Copyright (c) 2009, 2012 Alena Laskavaia
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Alena Laskavaia  - initial API and implementation
+ *    Marc-Andre Laperle
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.test;
 
@@ -186,9 +187,21 @@ public class CheckerTestCase extends CodanTestCase {
 	 */
 	public void assertMessageMatch(String pattern, IMarker m) {
 		try {
-			String attribute = (String) m.getAttribute(IMarker.MESSAGE);
-			if (attribute.matches(pattern)) {
-				fail("Expected " + attribute + " to match with /" + pattern //$NON-NLS-1$ //$NON-NLS-2$
+			String message = (String) m.getAttribute(IMarker.MESSAGE);
+			if (message.matches(pattern)) {
+				fail("Expected " + message + " to match with /" + pattern //$NON-NLS-1$ //$NON-NLS-2$
+						+ "/"); //$NON-NLS-1$
+			}
+		} catch (CoreException e) {
+			fail(e.getMessage());
+		}
+	}
+
+	public void assertMessageContains(CharSequence charSequence, IMarker m) {
+		try {
+			String message = (String) m.getAttribute(IMarker.MESSAGE);
+			if (!message.contains(charSequence)) {
+				fail("Expected " + message + " to contain /" + charSequence //$NON-NLS-1$ //$NON-NLS-2$
 						+ "/"); //$NON-NLS-1$
 			}
 		} catch (CoreException e) {

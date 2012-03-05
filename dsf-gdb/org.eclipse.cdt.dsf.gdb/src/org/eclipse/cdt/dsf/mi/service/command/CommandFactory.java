@@ -16,6 +16,7 @@
  *     Abeer Bagul - Support for -exec-arguments (bug 337687)
  *     Marc Khouzam (Ericsson) - New methods for new MIDataDisassemble (Bug 357073)
  *     Marc Khouzam (Ericsson) - New method for new MIGDBSetPythonPrintStack (Bug 367788)
+ *     Mathias Kunter - New methods for handling different charsets (Bug 370462)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command;
@@ -98,15 +99,20 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSet;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetArgs;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetAutoSolib;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetBreakpointPending;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetCharset;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetDetachOnFork;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetEnv;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetHostCharset;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetNonStop;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetPagination;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetPrintSevenbitStrings;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetPythonPrintStack;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetSchedulerLocking;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetSolibAbsolutePrefix;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetSolibSearchPath;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetTargetAsync;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetTargetCharset;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetTargetWideCharset;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBShowExitCode;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIInferiorTTYSet;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIInterpreterExec;
@@ -644,6 +650,26 @@ public class CommandFactory {
 	}	
 
 	/** @since 4.0 */
+	public ICommand<MIInfo> createMIGDBSetPrintSevenbitStrings(ICommandControlDMContext ctx, boolean enable) {
+		return new MIGDBSetPrintSevenbitStrings(ctx, enable);
+	}
+	
+	public ICommand<MIInfo> createMIGDBSetCharset(ICommandControlDMContext ctx, String charset) {
+		return new MIGDBSetCharset(ctx, charset);
+	}
+	
+	public ICommand<MIInfo> createMIGDBSetHostCharset(ICommandControlDMContext ctx, String hostCharset) {
+		return new MIGDBSetHostCharset(ctx, hostCharset);
+	}
+	
+	public ICommand<MIInfo> createMIGDBSetTargetCharset(ICommandControlDMContext ctx, String targetCharset) {
+		return new MIGDBSetTargetCharset(ctx, targetCharset);
+	}
+	
+	public ICommand<MIInfo> createMIGDBSetTargetWideCharset(ICommandControlDMContext ctx, String targetWideCharset) {
+		return new MIGDBSetTargetWideCharset(ctx, targetWideCharset);
+	}
+	
 	public ICommand<MIInfo> createMIGDBSetSolibAbsolutePrefix(ICommandControlDMContext ctx, String prefix) {
 		return new MIGDBSetSolibAbsolutePrefix(ctx, prefix);
 	}

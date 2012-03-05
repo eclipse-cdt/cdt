@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Ericsson and others.
+ * Copyright (c) 2008, 2012 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,14 +12,17 @@
  *     Jens Elmenthaler (Verigy) - Added Full GDB pretty-printing support (bug 302121)
  *     Sergey Prigogin (Google)
  *     Marc Khouzam (Ericsson) - No longer call method to check non-stop for GDB < 7.0 (Bug 365471)
+ *     Mathias Kunter - Support for different charsets (bug 370462)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.launching;
 
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
+import org.eclipse.cdt.debug.core.ICDebugConstants;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLookupDirector;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
@@ -79,6 +82,7 @@ public class FinalLaunchSequence extends ReflectionSequence {
 					"stepSetEnvironmentDirectory",   //$NON-NLS-1$
 					"stepSetBreakpointPending",    //$NON-NLS-1$
 					"stepEnablePrettyPrinting",    //$NON-NLS-1$
+					"stepSetCharset",    //$NON-NLS-1$
 					"stepSourceGDBInitFile",   //$NON-NLS-1$
 					"stepSetAutoLoadSharedLibrarySymbols",   //$NON-NLS-1$
 					"stepSetSharedLibraryPaths",   //$NON-NLS-1$
@@ -211,6 +215,17 @@ public class FinalLaunchSequence extends ReflectionSequence {
 		} else {
 			fCommandControl.setPrintPythonErrors(false, requestMonitor);
 		}
+	}
+	
+	/**
+	 * Set the charsets.
+	 * @since 4.0
+	 */
+	@Execute
+	public void stepSetCharset(final RequestMonitor requestMonitor) {
+		String charset = CDebugCorePlugin.getDefault().getPluginPreferences().getString(ICDebugConstants.PREF_CHARSET);
+		String wideCharset = CDebugCorePlugin.getDefault().getPluginPreferences().getString(ICDebugConstants.PREF_WIDE_CHARSET);
+		fCommandControl.setCharsets(charset, wideCharset, requestMonitor);
 	}
 
 	/**

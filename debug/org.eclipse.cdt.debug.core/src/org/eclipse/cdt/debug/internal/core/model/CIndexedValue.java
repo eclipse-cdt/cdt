@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 QNX Software Systems and others.
+ * Copyright (c) 2004, 2012 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
+ * Mathias Kunter - Support for octal number format (bug 370462)
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core.model; 
 
@@ -162,9 +163,11 @@ public class CIndexedValue extends AbstractCValue implements IIndexedValue {
 				CVariableFormat format = getParentVariable().getFormat();
 				if ( CVariableFormat.NATURAL.equals( format ) || CVariableFormat.HEXADECIMAL.equals( format ) )
 					return address.toHexAddressString();
-				if ( CVariableFormat.DECIMAL.equals( format ) )
+				else if ( CVariableFormat.DECIMAL.equals( format ) )
 					return address.toString();
-				if ( CVariableFormat.BINARY.equals( format ) )
+				else if ( CVariableFormat.OCTAL.equals( format ) )
+					return address.toOctalAddressString();
+				else if ( CVariableFormat.BINARY.equals( format ) )
 					return address.toBinaryAddressString();
 				return null;
 			} catch (CDIException e) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 QNX Software Systems and others.
+ * Copyright (c) 2000, 2012 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     QNX Software Systems - Initial API and implementation
  *     Ken Ryall (Nokia) - 207675
  *     Patrick Chuong (Texas Instruments) -	Update CDT ToggleBreakpointTargetFactory enablement (340177)
+ *     Mathias Kunter - Support for different charsets (bug 370462)
  *******************************************************************************/
 package org.eclipse.cdt.debug.core;
 
@@ -38,10 +39,17 @@ public interface ICDebugConstants {
 	public static final String PREF_DEFAULT_REGISTER_FORMAT = PLUGIN_ID + "cDebug.default_register_format"; //$NON-NLS-1$
 	
 	/**
-	 * The identifier of the character set to use with unicode types
-	 * view
+	 * The charset to use for decoding char type strings. We however can't use the ID
+	 *  "character_set" here because that would break backwards compatibility.
 	 */
-	public static final String PREF_CHARSET = PLUGIN_ID + "cDebug.character_set"; //$NON-NLS-1$
+	public static final String PREF_CHARSET = PLUGIN_ID + "cDebug.non_wide_character_set"; //$NON-NLS-1$
+	
+	/**
+	 * The charset to use for decoding wchar_t type strings. We have to use the ID
+	 * "character_set" here so that we don't break backwards compatibility.
+	 * @since 7.2
+	 */
+	public static final String PREF_WIDE_CHARSET = PLUGIN_ID + "cDebug.character_set"; //$NON-NLS-1$
 
 	/**
 	 * The identifier of the default expression format to use in the expressions
@@ -105,10 +113,12 @@ public interface ICDebugConstants {
 	public static final String PREF_INSTRUCTION_STEP_MODE_ON = PLUGIN_ID + "cDebug.Disassembly.instructionStepOn"; //$NON-NLS-1$
 
 	/**
-	 * The default character set to use with unicode strings.
+	 * The default character set to use.
+	 * @deprecated Provided for compatibility reasons only. Use the default value
+	 * from the Preferences object instead.
 	 */
 	public static final String DEF_CHARSET = "UTF-16"; //$NON-NLS-1$
-
+	
     /**
      * Specifies the stepping mode (context/source/instruction)
      */

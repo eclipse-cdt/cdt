@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 Intel Corporation and others.
+ * Copyright (c) 2004, 2012 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Intel Corporation - Initial API and implementation
  *     Mark Mitchell, CodeSourcery - Bug 136896: View variables in binary format
+ *     Mathias Kunter - Bug 370462: View variables in octal format
  *******************************************************************************/
 package org.eclipse.cdt.core;
 
@@ -103,6 +104,14 @@ public interface IAddress extends Comparable<Object> {
 	 */
 	String toHexAddressString();
 
+	/**
+	 * Converts address to the octal representation with '0' prefix and
+	 * with all leading zeros. The length of returned string should be
+	 * the same for all addresses of given class. I.e. 12 for 32-bit
+	 * addresses and 23 for 64-bit addresses
+	 * @since 5.4
+	 */
+	String toOctalAddressString();
 
 	/**
 	 * Converts address to the binary representation with '0b' prefix and

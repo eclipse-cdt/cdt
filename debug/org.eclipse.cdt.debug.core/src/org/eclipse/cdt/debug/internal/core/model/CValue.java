@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 QNX Software Systems and others.
+ * Copyright (c) 2000, 2012 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Mark Mitchell, CodeSourcery - Bug 136896: View variables in binary format
  *     Warren Paul (Nokia) - 150860, 150864, 150862, 150863, 217493
  *     Ken Ryall (Nokia) - 207675
+ *     Mathias Kunter - Support for octal number format (bug 370462)
 *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core.model;
 
@@ -277,6 +278,19 @@ public class CValue extends AbstractCValue {
 			sb.append( (stringValue.length() > 2) ? stringValue.substring( stringValue.length() - 2 ) : stringValue );
 			return sb.toString();
 		}
+		else if ( CVariableFormat.OCTAL.equals( format ) ) {
+			StringBuffer sb = new StringBuffer( "0" ); //$NON-NLS-1$
+			String stringValue = (isUnsigned()) ? Integer.toOctalString( value.shortValue() ) : Integer.toOctalString( (byte)value.byteValue() );
+			stringValue = (stringValue.length() > 3) ? stringValue.substring( stringValue.length() - 3 ) : stringValue;
+			sb.append( (stringValue.length() == 3 && stringValue.charAt( 0 ) >= '4') ? (char)(stringValue.charAt( 0 ) - 4) + stringValue.substring( 1 ) : stringValue );
+			return sb.toString();
+		}
+		else if ( CVariableFormat.BINARY.equals( format ) ) {
+			StringBuffer sb = new StringBuffer( "0b" ); //$NON-NLS-1$
+			String stringValue = (isUnsigned()) ? Integer.toBinaryString( value.shortValue() ) : Integer.toBinaryString( (byte)value.byteValue() );
+			sb.append( (stringValue.length() > 8) ? stringValue.substring( stringValue.length() - 8 ) : stringValue );
+			return sb.toString();
+		}
 		return null;
 	}
 
@@ -313,6 +327,13 @@ public class CValue extends AbstractCValue {
 			sb.append( (stringValue.length() > 2) ? stringValue.substring( stringValue.length() - 2 ) : stringValue );
 			return sb.toString();
 		}
+		else if ( CVariableFormat.OCTAL.equals( format ) ) {
+			StringBuffer sb = new StringBuffer( "0" ); //$NON-NLS-1$
+			String stringValue = (isUnsigned()) ? Integer.toOctalString( value.shortValue() ) : Integer.toOctalString( (byte)value.byteValue() );
+			stringValue = (stringValue.length() > 3) ? stringValue.substring( stringValue.length() - 3 ) : stringValue;
+			sb.append( (stringValue.length() == 3 && stringValue.charAt( 0 ) >= '4') ? (char)(stringValue.charAt( 0 ) - 4) + stringValue.substring( 1 ) : stringValue );
+			return sb.toString();
+		}
 		else if ( CVariableFormat.BINARY.equals( format ) ) {
 			StringBuffer sb = new StringBuffer( "0b" ); //$NON-NLS-1$
 			String stringValue = (isUnsigned()) ? Integer.toBinaryString( value.shortValue() ) : Integer.toBinaryString( (byte)value.byteValue() );
@@ -336,6 +357,13 @@ public class CValue extends AbstractCValue {
 			StringBuffer sb = new StringBuffer( "0x" ); //$NON-NLS-1$
 			String stringValue = Integer.toHexString( (isUnsigned()) ? value.intValue() : value.shortValue() );
 			sb.append( (stringValue.length() > 4) ? stringValue.substring( stringValue.length() - 4 ) : stringValue );
+			return sb.toString();
+		}
+		else if ( CVariableFormat.OCTAL.equals( format ) ) {
+			StringBuffer sb = new StringBuffer( "0" ); //$NON-NLS-1$
+			String stringValue = Integer.toOctalString( (isUnsigned()) ? value.intValue() : value.shortValue() );
+			stringValue = (stringValue.length() > 6) ? stringValue.substring( stringValue.length() - 6 ) : stringValue;
+			sb.append( (stringValue.length() == 6 && stringValue.charAt( 0 ) >= '2') ? (char)((stringValue.charAt( 0 ) - '0') % 2 + '0') + stringValue.substring( 1 ) : stringValue );
 			return sb.toString();
 		}
 		else if ( CVariableFormat.BINARY.equals( format ) ) {
@@ -363,6 +391,13 @@ public class CValue extends AbstractCValue {
 			sb.append( (stringValue.length() > 8) ? stringValue.substring( stringValue.length() - 8 ) : stringValue );
 			return sb.toString();
 		}
+		else if ( CVariableFormat.OCTAL.equals( format ) ) {
+			StringBuffer sb = new StringBuffer( "0" ); //$NON-NLS-1$
+			String stringValue = (isUnsigned()) ? Long.toOctalString( value.longValue() ) : Integer.toOctalString( value.intValue() );
+			stringValue = (stringValue.length() > 11) ? stringValue.substring( stringValue.length() - 11 ) : stringValue;
+			sb.append( (stringValue.length() == 11 && stringValue.charAt( 0 ) >= '4') ? (char)(stringValue.charAt( 0 ) - 4) + stringValue.substring( 1 ) : stringValue );
+			return sb.toString();
+		}
 		else if ( CVariableFormat.BINARY.equals( format ) ) {
 			StringBuffer sb = new StringBuffer( "0b" ); //$NON-NLS-1$
 			String stringValue = (isUnsigned()) ? Long.toBinaryString( value.longValue() ) : Integer.toBinaryString( value.intValue() );
@@ -385,7 +420,7 @@ public class CValue extends AbstractCValue {
 					BigInteger bigValue = new BigInteger( value.getValueString() );
 					return bigValue.toString();
 				}
-				return Long.toString( value.longValue() );
+				return Integer.toString( value.intValue() );
 			}
 			else if ( CVariableFormat.HEXADECIMAL.equals( format ) ) {
 				StringBuffer sb = new StringBuffer( "0x" ); //$NON-NLS-1$
@@ -394,7 +429,17 @@ public class CValue extends AbstractCValue {
 					sb.append( bigValue.toString( 16 ) );
 				}
 				else
-					sb.append( Long.toHexString( value.longValue() ) );
+					sb.append( Integer.toHexString( value.intValue() ) );
+				return sb.toString();
+			}
+			else if ( CVariableFormat.OCTAL.equals( format ) ) {
+				StringBuffer sb = new StringBuffer( "0" ); //$NON-NLS-1$
+				if ( isUnsigned() ) {
+					BigInteger bigValue = new BigInteger( value.getValueString() );
+					sb.append( bigValue.toString( 8 ) );
+				}
+				else
+					sb.append( Integer.toOctalString( value.intValue() ) );
 				return sb.toString();
 			}
 			else if ( CVariableFormat.BINARY.equals( format ) ) {
@@ -404,7 +449,7 @@ public class CValue extends AbstractCValue {
 					sb.append( bigValue.toString( 2 ) );
 				}
 				else
-					sb.append( Long.toBinaryString( value.longValue() ) );
+					sb.append( Integer.toBinaryString( value.intValue() ) );
 				return sb.toString();
 			}
 		}
@@ -438,6 +483,16 @@ public class CValue extends AbstractCValue {
 					sb.append( Long.toHexString( value.longValue() ) );
 				return sb.toString();
 			}
+			else if ( CVariableFormat.OCTAL.equals( format ) ) {
+				StringBuffer sb = new StringBuffer( "0" ); //$NON-NLS-1$
+				if ( isUnsigned() ) {
+					BigInteger bigValue = new BigInteger( value.getValueString() );
+					sb.append( bigValue.toString( 8 ) );
+				}
+				else
+					sb.append( Long.toOctalString( value.longValue() ) );
+				return sb.toString();
+			}
 			else if ( CVariableFormat.BINARY.equals( format ) ) {
 				StringBuffer sb = new StringBuffer( "0b" ); //$NON-NLS-1$
 				if ( isUnsigned() ) {
@@ -469,6 +524,13 @@ public class CValue extends AbstractCValue {
 					sb.append(bigValue.toString(16));
 				} else
 					sb.append(Long.toHexString(bigValue.longValue()));
+				return sb.toString();
+			} else if (CVariableFormat.OCTAL.equals(format)) {
+				StringBuffer sb = new StringBuffer("0"); //$NON-NLS-1$
+				if (isUnsigned()) {
+					sb.append(bigValue.toString(8));
+				} else
+					sb.append(Long.toOctalString(bigValue.longValue()));
 				return sb.toString();
 			} else if (CVariableFormat.BINARY.equals(format)) {
 				StringBuffer sb = new StringBuffer("0b"); //$NON-NLS-1$
@@ -504,6 +566,13 @@ public class CValue extends AbstractCValue {
 			sb.append( (stringValue.length() > 8) ? stringValue.substring( stringValue.length() - 8 ) : stringValue );
 			return sb.toString();
 		}
+		else if ( CVariableFormat.OCTAL.equals( format ) ) {
+			StringBuffer sb = new StringBuffer( "0" ); //$NON-NLS-1$
+			String stringValue = Long.toOctalString( Float.floatToIntBits(floatValue) );
+			stringValue = (stringValue.length() > 11) ? stringValue.substring( stringValue.length() - 11 ) : stringValue;
+			sb.append( (stringValue.length() == 11 && stringValue.charAt( 0 ) >= '4') ? (char)(stringValue.charAt( 0 ) - 4) + stringValue.substring( 1 ) : stringValue );
+			return sb.toString();
+		}
 		else if ( CVariableFormat.BINARY.equals( format ) ) {
 			StringBuffer sb = new StringBuffer( "0b" ); //$NON-NLS-1$
 			String stringValue = Long.toBinaryString( Float.floatToIntBits(floatValue) );
@@ -533,6 +602,13 @@ public class CValue extends AbstractCValue {
 			sb.append( (stringValue.length() > 16) ? stringValue.substring( stringValue.length() - 16 ) : stringValue );
 			return sb.toString();
 		}
+		else if ( CVariableFormat.OCTAL.equals( format ) ) {
+			StringBuffer sb = new StringBuffer( "0" ); //$NON-NLS-1$
+			String stringValue = Long.toOctalString( Double.doubleToLongBits(doubleValue) );
+			stringValue = (stringValue.length() > 22) ? stringValue.substring( stringValue.length() - 22 ) : stringValue;
+			sb.append( (stringValue.length() == 22 && stringValue.charAt( 0 ) >= '2') ? (char)((stringValue.charAt( 0 ) - '0') % 2 + '0') + stringValue.substring( 1 ) : stringValue );
+			return sb.toString();
+		}
 		else if ( CVariableFormat.BINARY.equals( format ) ) {
 			StringBuffer sb = new StringBuffer( "0b" ); //$NON-NLS-1$
 			String stringValue = Long.toBinaryString( Double.doubleToLongBits(doubleValue) );
@@ -554,9 +630,11 @@ public class CValue extends AbstractCValue {
 		CVariableFormat format = getParentVariable().getFormat();
 		if ( CVariableFormat.NATURAL.equals( format ) || CVariableFormat.HEXADECIMAL.equals( format ) )
 			return address.toHexAddressString();
-		if ( CVariableFormat.DECIMAL.equals( format ) )
+		else if ( CVariableFormat.DECIMAL.equals( format ) )
 			return address.toString();
-		if ( CVariableFormat.BINARY.equals( format ) )
+		else if ( CVariableFormat.OCTAL.equals( format ) )
+			return address.toOctalAddressString();
+		else if ( CVariableFormat.BINARY.equals( format ) )
 			return address.toBinaryAddressString();
 		return null;
 	}
@@ -588,6 +666,13 @@ public class CValue extends AbstractCValue {
 					StringBuffer sb = new StringBuffer( "0x" ); //$NON-NLS-1$
 					String stringValue = Integer.toHexString( (isUnsigned()) ? value.intValue() : value.shortValue() );
 					sb.append( (stringValue.length() > 4) ? stringValue.substring( stringValue.length() - 4 ) : stringValue );
+					return sb.toString();
+				}
+				else if ( CVariableFormat.OCTAL.equals( format ) ) {
+					StringBuffer sb = new StringBuffer( "0" ); //$NON-NLS-1$
+					String stringValue = Integer.toOctalString( (isUnsigned()) ? value.intValue() : value.shortValue() );
+					stringValue = (stringValue.length() > 6) ? stringValue.substring( stringValue.length() - 6 ) : stringValue;
+					sb.append( (stringValue.length() == 6 && stringValue.charAt( 0 ) >= '2') ? (char)((stringValue.charAt( 0 ) - '0') % 2 + '0') + stringValue.substring( 1 ) : stringValue );
 					return sb.toString();
 				}
 				else if ( CVariableFormat.BINARY.equals( format ) ) {
@@ -623,9 +708,16 @@ public class CValue extends AbstractCValue {
 					sb.append( (stringValue.length() > 8) ? stringValue.substring( stringValue.length() - 8 ) : stringValue );
 					return sb.toString();
 				}
+				else if ( CVariableFormat.OCTAL.equals( format ) ) {
+					StringBuffer sb = new StringBuffer( "0" ); //$NON-NLS-1$
+					String stringValue = (isUnsigned()) ? Long.toOctalString( value.longValue() ) : Integer.toOctalString( value.intValue() );
+					stringValue = (stringValue.length() > 11) ? stringValue.substring( stringValue.length() - 11 ) : stringValue;
+					sb.append( (stringValue.length() == 11 && stringValue.charAt( 0 ) >= '4') ? (char)(stringValue.charAt( 0 ) - 4) + stringValue.substring( 1 ) : stringValue );
+					return sb.toString();
+				}
 				else if ( CVariableFormat.BINARY.equals( format ) ) {
 					StringBuffer sb = new StringBuffer( "0b" ); //$NON-NLS-1$
-					String stringValue = (isUnsigned()) ? Long.toBinaryString( value.longValue() ) : Integer.toHexString( value.intValue() );
+					String stringValue = (isUnsigned()) ? Long.toBinaryString( value.longValue() ) : Integer.toBinaryString( value.intValue() );
 					sb.append( (stringValue.length() > 32) ? stringValue.substring( stringValue.length() - 32 ) : stringValue );
 					return sb.toString();
 				}
@@ -648,14 +740,17 @@ public class CValue extends AbstractCValue {
 			}
 			else if ( CVariableFormat.HEXADECIMAL.equals( format ) ) {
 				StringBuffer sb = new StringBuffer("0x"); //$NON-NLS-1$
-				BigInteger bigValue = value.bigIntegerValue();
-				sb.append(bigValue.toString(16));
+				sb.append(value.bigIntegerValue().toString(16));
+				return sb.toString();
+			}
+			else if ( CVariableFormat.OCTAL.equals( format ) ) {
+				StringBuffer sb = new StringBuffer("0"); //$NON-NLS-1$
+				sb.append(value.bigIntegerValue().toString(8));
 				return sb.toString();
 			}
 			else if ( CVariableFormat.BINARY.equals( format ) ) {
 				StringBuffer sb = new StringBuffer("0b"); //$NON-NLS-1$
-				BigInteger bigValue = value.bigIntegerValue();
-				sb.append(bigValue.toString(2));
+				sb.append(value.bigIntegerValue().toString(2));
 				return sb.toString();
 			}
 		}

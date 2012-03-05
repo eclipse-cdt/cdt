@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Ericsson and others.
+ * Copyright (c) 2008, 2012 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse  License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     Ericsson - initial API and implementation
  *     Vladimir Prus (CodeSourcery) - Support for -data-read-memory-bytes (bug 322658)     
  *     Jens Elmenthaler (Verigy) - Added Full GDB pretty-printing support (bug 302121)
+ *     Mathias Kunter - Support for different charsets (bug 370462)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service.command;
 
@@ -92,4 +93,12 @@ public interface IGDBControl extends IMICommandControl {
 	 * @since 4.0
 	 */
 	void setPrintPythonErrors(boolean enabled, RequestMonitor rm);
+	
+	/**
+	 * Sets the charsets.
+	 * @param charset The charset used by the char type of the inferior program.
+	 * @param wideCharset The charset used by the wchar_t type of the inferior program.
+	 * @param rm
+	 */
+	void setCharsets(String charset, String wideCharset, RequestMonitor rm);
 }

@@ -6,10 +6,16 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Marc Khouzam (Ericsson) - initial API and implementation
+ *     Marc Khouzam (Ericsson)     - initial API and implementation
+ *     William R. Swanson (Tilera) - added resource manager
  *******************************************************************************/
 package org.eclipse.cdt.visualizer.examples;
 
+import org.eclipse.cdt.visualizer.ui.plugin.CDTVisualizerUIPlugin;
+import org.eclipse.cdt.visualizer.ui.util.UIResourceManager;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -23,6 +29,9 @@ public class VisualizerExamplesPlugin extends AbstractUIPlugin {
 
 	// The shared instance
 	private static VisualizerExamplesPlugin plugin;
+	
+	/** Resource manager */
+	protected static UIResourceManager s_resources = null;
 	
 	/**
 	 * The constructor
@@ -38,6 +47,9 @@ public class VisualizerExamplesPlugin extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
+		
+		// initialize resource management (strings, images, fonts, colors, etc.)
+		getPluginResources();
 	}
 
 	/*
@@ -46,6 +58,9 @@ public class VisualizerExamplesPlugin extends AbstractUIPlugin {
 	 */
 	@Override
 	public void stop(BundleContext context) throws Exception {
+		// clean up resource management
+		cleanupPluginResources();
+		
 		plugin = null;
 		super.stop(context);
 	}
@@ -59,4 +74,52 @@ public class VisualizerExamplesPlugin extends AbstractUIPlugin {
 		return plugin;
 	}
 
+	// --- resource management ---
+	
+	/** Returns resource manager for this plugin */
+	public UIResourceManager getPluginResources() {
+		if (s_resources == null) {
+			s_resources = new UIResourceManager(this);
+			s_resources.setParentManager(CDTVisualizerUIPlugin.getResources());
+		}
+		
+		return s_resources;
+	}
+	
+	/** Releases resource manager for this plugin. */
+	public void cleanupPluginResources() {
+		s_resources.dispose();
+	}
+	
+	/** Convenience method for getting plugin resource manager */
+	public static UIResourceManager getResources() {
+		return getDefault().getPluginResources();
+	}
+	
+	/** Convenience method for looking up string resources */
+	public static String getString(String key) {
+		return getDefault().getPluginResources().getString(key);
+	}
+	/** Convenience method for looking up string resources */
+	public static String getString(String key, Object... arguments) {
+		return getDefault().getPluginResources().getString(key, arguments);
+	}
+	
+	/** Convenience method for looking up image resources */
+	public static Image getImage(String key) {
+		return getDefault().getPluginResources().getImage(key);
+	}
+	/** Convenience method for looking up image resources */
+	public static ImageDescriptor getImageDescriptor(String key) {
+		return getDefault().getPluginResources().getImageDescriptor(key);
+	}
+	
+	/** Convenience method for looking up font resources */
+	public static Font getFont(String fontName, int height) {
+		return getDefault().getPluginResources().getFont(fontName, height);
+	}
+	/** Convenience method for looking up font resources */
+	public static Font getFont(String fontName, int height, int style) {
+		return getDefault().getPluginResources().getFont(fontName, height, style);
+	}
 }

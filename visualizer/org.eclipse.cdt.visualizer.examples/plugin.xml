@@ -7,6 +7,10 @@
             class="org.eclipse.cdt.visualizer.examples.problemvisualizer.ProblemVisualizer"
             id="org.eclipse.cdt.visualizer.examples.ProblemVisualizer">
       </visualizer>
+      <visualizer
+            class="org.eclipse.cdt.visualizer.examples.sourcegraph.SourceGraphVisualizer"
+            id="org.eclipse.cdt.visualizer.examples.sourcegraph">
+      </visualizer>
    </extension>
 
 </plugin>

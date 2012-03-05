@@ -22,7 +22,7 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommand
  * 
  * Available with gdb 7.0
  * 
- * @since 4.0
+ * @since 4.1
  */
 public class MIGDBSetTargetWideCharset extends MIGDBSet {
 	public MIGDBSetTargetWideCharset(ICommandControlDMContext ctx, String targetWideCharset) {

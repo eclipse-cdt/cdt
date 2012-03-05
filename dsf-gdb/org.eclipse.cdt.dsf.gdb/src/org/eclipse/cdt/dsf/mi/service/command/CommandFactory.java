@@ -618,6 +618,11 @@ public class CommandFactory {
 		return new MIGDBSetBreakpointPending(ctx, enable);
 	}
 
+	/** @since 4.1 */
+	public ICommand<MIInfo> createMIGDBSetCharset(ICommandControlDMContext ctx, String charset) {
+		return new MIGDBSetCharset(ctx, charset);
+	}
+
 	/** @since 4.0 */
 	public ICommand<MIInfo> createMIGDBSetDetachOnFork(ICommandControlDMContext ctx, boolean detach) {
 		return new MIGDBSetDetachOnFork(ctx, detach);
@@ -631,12 +636,22 @@ public class CommandFactory {
 		return new MIGDBSetEnv(dmc, name, value);
 	}
 
+	/** @since 4.1 */
+	public ICommand<MIInfo> createMIGDBSetHostCharset(ICommandControlDMContext ctx, String hostCharset) {
+		return new MIGDBSetHostCharset(ctx, hostCharset);
+	}
+
 	public ICommand<MIInfo> createMIGDBSetNonStop(ICommandControlDMContext ctx, boolean isSet) {
 		return new MIGDBSetNonStop(ctx, isSet);
 	}
 
 	public ICommand<MIInfo> createMIGDBSetPagination(ICommandControlDMContext ctx, boolean isSet) {
 		return new MIGDBSetPagination(ctx, isSet);
+	}
+
+	/** @since 4.1 */
+	public ICommand<MIInfo> createMIGDBSetPrintSevenbitStrings(ICommandControlDMContext ctx, boolean enable) {
+		return new MIGDBSetPrintSevenbitStrings(ctx, enable);
 	}
 
 	/** @since 4.1 */
@@ -647,25 +662,14 @@ public class CommandFactory {
 	/** @since 4.1 */
 	public ICommand<MIInfo> createMIGDBSetSchedulerLocking(ICommandControlDMContext ctx, String mode) {
 		return new MIGDBSetSchedulerLocking(ctx, mode);
-	}	
+	}
 
-	/** @since 4.0 */
-	public ICommand<MIInfo> createMIGDBSetPrintSevenbitStrings(ICommandControlDMContext ctx, boolean enable) {
-		return new MIGDBSetPrintSevenbitStrings(ctx, enable);
-	}
-	
-	public ICommand<MIInfo> createMIGDBSetCharset(ICommandControlDMContext ctx, String charset) {
-		return new MIGDBSetCharset(ctx, charset);
-	}
-	
-	public ICommand<MIInfo> createMIGDBSetHostCharset(ICommandControlDMContext ctx, String hostCharset) {
-		return new MIGDBSetHostCharset(ctx, hostCharset);
-	}
-	
+	/** @since 4.1 */
 	public ICommand<MIInfo> createMIGDBSetTargetCharset(ICommandControlDMContext ctx, String targetCharset) {
 		return new MIGDBSetTargetCharset(ctx, targetCharset);
 	}
 	
+	/** @since 4.1 */
 	public ICommand<MIInfo> createMIGDBSetTargetWideCharset(ICommandControlDMContext ctx, String targetWideCharset) {
 		return new MIGDBSetTargetWideCharset(ctx, targetWideCharset);
 	}

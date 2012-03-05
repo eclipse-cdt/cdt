@@ -21,7 +21,7 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommand
  * charset used by gdb. The target charset is the charset used by the char type of the
  * inferior program.
  * 
- * @since 4.0
+ * @since 4.1
  */
 public class MIGDBSetCharset extends MIGDBSet {
 	public MIGDBSetCharset(ICommandControlDMContext ctx, String charset) {

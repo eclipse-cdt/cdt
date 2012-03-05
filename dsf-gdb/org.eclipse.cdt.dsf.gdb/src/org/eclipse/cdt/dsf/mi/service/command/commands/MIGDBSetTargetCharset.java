@@ -20,7 +20,7 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommand
  * Sets the current target charset to CHARSET. The target charset is the charset used
  * by the char type of the inferior program.
  * 
- * @since 4.0
+ * @since 4.1
  */
 public class MIGDBSetTargetCharset extends MIGDBSet {
 	public MIGDBSetTargetCharset(ICommandControlDMContext ctx, String targetCharset) {

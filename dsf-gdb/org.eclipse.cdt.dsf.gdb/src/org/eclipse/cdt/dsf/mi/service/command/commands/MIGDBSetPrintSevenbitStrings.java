@@ -20,7 +20,7 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommand
  * When on, gdb displays any eight-bit characters (in strings or character values) using
  * the octal escape notation \nnn. When off, prints full eight-bit characters.
  * 
- * @since 4.0
+ * @since 4.1
  */
 public class MIGDBSetPrintSevenbitStrings extends MIGDBSet {
 	public MIGDBSetPrintSevenbitStrings(ICommandControlDMContext ctx, boolean enable) {

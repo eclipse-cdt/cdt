@@ -17,6 +17,7 @@ import java.nio.charset.Charset;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDebugConstants;
 import org.eclipse.cdt.debug.core.cdi.ICDIFormat;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
  
 /**
@@ -41,7 +42,7 @@ public class CDebugCorePreferenceInitializer extends AbstractPreferenceInitializ
 		CDebugCorePlugin.getDefault().getPluginPreferences().setDefault( ICDebugConstants.PREF_DEFAULT_EXPRESSION_FORMAT, ICDIFormat.NATURAL );
 		CDebugCorePlugin.getDefault().getPluginPreferences().setDefault( ICDebugConstants.PREF_DEFAULT_REGISTER_FORMAT, ICDIFormat.NATURAL );
 		CDebugCorePlugin.getDefault().getPluginPreferences().setDefault( ICDebugConstants.PREF_CHARSET, Charset.defaultCharset().name() );
-		if (System.getProperty("os.name").toLowerCase().startsWith("windows")) //$NON-NLS-1$ //$NON-NLS-2$
+		if (Platform.getOS().equals(Platform.OS_WIN32))
 			CDebugCorePlugin.getDefault().getPluginPreferences().setDefault( ICDebugConstants.PREF_WIDE_CHARSET, "UTF-16"); //$NON-NLS-1$
 		else
 			CDebugCorePlugin.getDefault().getPluginPreferences().setDefault( ICDebugConstants.PREF_WIDE_CHARSET, "UTF-32"); //$NON-NLS-1$

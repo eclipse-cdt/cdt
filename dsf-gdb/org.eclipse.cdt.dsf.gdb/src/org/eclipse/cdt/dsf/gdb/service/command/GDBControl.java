@@ -13,7 +13,6 @@
  *     Jens Elmenthaler (Verigy) - Added Full GDB pretty-printing support (bug 302121)
  *     Mikhail Khodjaiants (Mentor Graphics) - Refactor common code in GDBControl* classes (bug 372795)
  *     Marc Khouzam (Ericsson) - Pass errorStream to startCommandProcessing() (Bug 350837)
- *     Mathias Kunter - Support for different charsets (bug 370462)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service.command;
 
@@ -463,30 +462,6 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 		rm.done();
 	}
 	
-	/**
-	 * Sets the charsets.
-	 * @param charset This parameter is ignored. GDB 7.0 or later required.
-	 * @param wideCharset This parameter is ignored. GDB 7.0 or later required.
-	 * @param rm
-	 */
-	@Override
-	public void setCharsets(String charset, String wideCharset, RequestMonitor rm) {
-		// Enable printing of sevenbit-strings. This is required to avoid charset issues.
-		// See bug 307311 for details.
-		queueCommand(
-				getCommandFactory().createMIGDBSetPrintSevenbitStrings(fControlDmc, true),
-				new DataRequestMonitor<MIInfo>(getExecutor(), rm));
-		
-		// Set the charset to ISO-8859-1. We have to do this here because GDB earlier than
-		// 7.0 has no proper Unicode support. Note that we can still handle UTF-8 though, as
-		// we can determine and decode UTF-8 encoded strings on our own. This makes ISO-8859-1
-		// the most suitable option here. See the MIStringHandler class and bug 307311 for
-		// details.
-		queueCommand(
-				getCommandFactory().createMIGDBSetCharset(fControlDmc, "ISO-8859-1"), //$NON-NLS-1$
-				new DataRequestMonitor<MIInfo>(getExecutor(), rm));
-	}
-
 	/**
 	 * @since 4.0
 	 */

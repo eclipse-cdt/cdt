@@ -19,10 +19,8 @@ package org.eclipse.cdt.dsf.gdb.launching;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
-import org.eclipse.cdt.debug.core.ICDebugConstants;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLookupDirector;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
@@ -219,13 +217,33 @@ public class FinalLaunchSequence extends ReflectionSequence {
 	
 	/**
 	 * Set the charsets.
-	 * @since 4.0
+	 * @since 4.1
 	 */
 	@Execute
 	public void stepSetCharset(final RequestMonitor requestMonitor) {
-		String charset = CDebugCorePlugin.getDefault().getPluginPreferences().getString(ICDebugConstants.PREF_CHARSET);
-		String wideCharset = CDebugCorePlugin.getDefault().getPluginPreferences().getString(ICDebugConstants.PREF_WIDE_CHARSET);
-		fCommandControl.setCharsets(charset, wideCharset, requestMonitor);
+		// Enable printing of sevenbit-strings. This is required to avoid charset issues.
+		// See bug 307311 for details.
+		fCommandControl.queueCommand(
+			fCommandFactory.createMIGDBSetPrintSevenbitStrings(fCommandControl.getContext(), true),
+			new ImmediateDataRequestMonitor<MIInfo>(requestMonitor) {
+				@Override
+				protected void handleCompleted() {
+					// Set the charset to ISO-8859-1. We have to do this here because GDB earlier than
+					// 7.0 has no proper Unicode support. Note that we can still handle UTF-8 though, as
+					// we can determine and decode UTF-8 encoded strings on our own. This makes ISO-8859-1
+					// the most suitable option here. See the MIStringHandler class and bug 307311 for
+					// details.
+					fCommandControl.queueCommand(
+							fCommandFactory.createMIGDBSetCharset(fCommandControl.getContext(), "ISO-8859-1"), //$NON-NLS-1$
+							new ImmediateDataRequestMonitor<MIInfo>(requestMonitor) {
+								@Override
+								protected void handleCompleted() {
+									// Not an essential command, so accept errors
+									requestMonitor.done();
+								}
+							});
+				}
+			});
 	}
 
 	/**

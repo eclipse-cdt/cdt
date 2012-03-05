@@ -13,7 +13,6 @@
  *     Jens Elmenthaler (Verigy) - Added Full GDB pretty-printing support (bug 302121)
  *     Marc Khouzam (Ericsson) - Call new FinalLaunchSequence_7_0 (Bug 365471)
  *     Mikhail Khodjaiants (Mentor Graphics) - Refactor common code in GDBControl* classes (bug 372795)
- *     Mathias Kunter - Support for different charsets (bug 370462)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service.command;
 
@@ -238,33 +237,6 @@ public class GDBControl_7_0 extends GDBControl {
 				new DataRequestMonitor<MIInfo>(getExecutor(), rm));
 	}
 	
-	@Override
-	public void setCharsets(String charset, String wideCharset, RequestMonitor rm) {
-		// Enable printing of sevenbit-strings. This is required to avoid charset issues.
-		// See bug 307311 for details.
-		queueCommand(
-				getCommandFactory().createMIGDBSetPrintSevenbitStrings(getControlDMContext(), true),
-				new DataRequestMonitor<MIInfo>(getExecutor(), rm));
-		
-		// Set the host charset to UTF-8. This ensures that we can correctly handle different
-		// charsets used by the inferior program.
-		queueCommand(
-				getCommandFactory().createMIGDBSetHostCharset(getControlDMContext(), "UTF-8"), //$NON-NLS-1$
-				new DataRequestMonitor<MIInfo>(getExecutor(), rm));
-		
-		// Set the target charset. The target charset is the charset used by the char type of
-		// the inferior program. Note that GDB only accepts upper case charset names.
-		queueCommand(
-				getCommandFactory().createMIGDBSetTargetCharset(getControlDMContext(), charset.toUpperCase()),
-				new DataRequestMonitor<MIInfo>(getExecutor(), rm));
-		
-		// Set the target wide charset. The target wide charset is the charset used by the wchar_t
-		// type of the inferior program. Note that GDB only accepts upper case charset names.
-		queueCommand(
-				getCommandFactory().createMIGDBSetTargetWideCharset(getControlDMContext(), wideCharset.toUpperCase()),
-				new DataRequestMonitor<MIInfo>(getExecutor(), rm));
-	}
-
 	/**
 	 * @since 4.0
 	 */

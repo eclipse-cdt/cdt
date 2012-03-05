@@ -19,7 +19,7 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommand
  * 
  * Sets the current host charset to CHARSET. The host charset is the charset used by gdb.
  * 
- * @since 4.0
+ * @since 4.1
  */
 public class MIGDBSetHostCharset extends MIGDBSet {
 	public MIGDBSetHostCharset(ICommandControlDMContext ctx, String hostCharset) {

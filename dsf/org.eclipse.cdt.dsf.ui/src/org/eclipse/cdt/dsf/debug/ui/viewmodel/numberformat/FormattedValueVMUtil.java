@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Wind River Systems and others.
+ * Copyright (c) 2009, 2010 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,6 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
- *     Mathias Kunter     - Use CDI number format defaults (bug 370462)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat;
 
@@ -17,9 +16,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.eclipse.cdt.debug.core.CDebugCorePlugin;
-import org.eclipse.cdt.debug.core.ICDebugConstants;
-import org.eclipse.cdt.debug.core.cdi.ICDIFormat;
 import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
@@ -36,7 +32,6 @@ import org.eclipse.cdt.dsf.ui.concurrent.ViewerDataRequestMonitor;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.IPropertiesUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
-import org.eclipse.debug.ui.IDebugUIConstants;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -209,33 +204,7 @@ public class FormattedValueVMUtil {
         if ( prop != null ) {
             return (String) prop;
         }
-        
-        // Get the CDI number format from the preferences.
-        int formatID;
-        if (context.getId() == IDebugUIConstants.ID_VARIABLE_VIEW) {
-            formatID = CDebugCorePlugin.getDefault().getPluginPreferences().getInt( ICDebugConstants.PREF_DEFAULT_VARIABLE_FORMAT );
-        } else if (context.getId() == IDebugUIConstants.ID_EXPRESSION_VIEW) {
-            formatID = CDebugCorePlugin.getDefault().getPluginPreferences().getInt( ICDebugConstants.PREF_DEFAULT_EXPRESSION_FORMAT );
-        } else if (context.getId() == IDebugUIConstants.ID_REGISTER_VIEW) {
-            formatID = CDebugCorePlugin.getDefault().getPluginPreferences().getInt( ICDebugConstants.PREF_DEFAULT_REGISTER_FORMAT );
-        } else {
-            // Use the default natural format.
-        	formatID = ICDIFormat.NATURAL;
-        }
-        
-        // Map the CDI number format to the DSF number format.
-        if (formatID == ICDIFormat.HEXADECIMAL) {
-        	return IFormattedValues.HEX_FORMAT;
-        } else if (formatID == ICDIFormat.DECIMAL) {
-        	return IFormattedValues.DECIMAL_FORMAT;
-        } else if (formatID == ICDIFormat.OCTAL) {
-        	return IFormattedValues.OCTAL_FORMAT;
-        } else if (formatID == ICDIFormat.BINARY) {
-        	return IFormattedValues.BINARY_FORMAT;
-        } else {
-        	// Everything else is mapped to the default natural format.
-        	return IFormattedValues.NATURAL_FORMAT;
-        }
+        return IFormattedValues.NATURAL_FORMAT;        
     }
 
     

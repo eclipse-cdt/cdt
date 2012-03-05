@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others.
+ * Copyright (c) 2002, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,7 @@
  * Xuan Chen        (IBM)        - [228707] get NPE when click ok on the properties page of an I5/OS IFS file
  * David McKnight   (IBM)        - [230001] Property page contains invalid values
  * David McKnight   (IBM)        - [199596] [refresh][ftp] Changing a file/folder's Read-Only attribute doesn't always update IRemoteFile
+ * David McKnight   (IBM)        - [373085] Changing the remote code page for a file transferred as text causes problems
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.propertypages;
@@ -56,6 +57,7 @@ import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.files.RemoteFileIOException;
 import org.eclipse.rse.services.files.RemoteFileSecurityException;
+import org.eclipse.rse.subsystems.files.core.SystemIFileProperties;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.IVirtualRemoteFile;
@@ -604,15 +606,35 @@ public class SystemFilePropertyPage extends SystemBasePropertyPage
 				mgr.setEncoding(hostName, rfile.getAbsolutePath(), getSelectedEncoding());
 			}
 
-
+			boolean isBinary = remoteFile.isBinary();
 			SystemEditableRemoteFile editable = new SystemEditableRemoteFile(remoteFile);
-			if (editable.checkOpenInEditor() != ISystemEditableRemoteObject.NOT_OPEN) {
+			if (editable.checkOpenInEditor() != ISystemEditableRemoteObject.NOT_OPEN) { // if the file is open												
 				IFile file = editable.getLocalResource();
-				try {
-					file.setCharset(selectedEncoding, null);
-				} catch (CoreException e) {
+				if (isBinary){ // if binary, then we just need to change the encoding of the IFile so the editor can load properly					
+					try {
+						file.setCharset(selectedEncoding, null);
+					} catch (CoreException e) {
+					}
+				}
+				else {
+					// we need to re-download and convert the file
+					SystemIFileProperties properties = new SystemIFileProperties(file);
+					properties.setRemoteFileTimeStamp(0); // clear the timestamp - so we can re-download
+					
+					try { 
+						editable.download(getShell());
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 			}
+			 else if (!isBinary){
+				// we need to re-download and convert the file
+				SystemIFileProperties properties = new SystemIFileProperties(editable.getLocalResource());
+				properties.setRemoteFileTimeStamp(0); // clear the timestamp - so we can re-download				
+			}
+
 
 		}
 

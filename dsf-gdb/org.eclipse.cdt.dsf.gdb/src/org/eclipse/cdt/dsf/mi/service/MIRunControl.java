@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 Wind River Systems and others.
+ * Copyright (c) 2006, 2012 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     Wind River Systems - initial API and implementation
  *     Ericsson	AB		  - Modified for handling of multiple threads
  *     Vladimir Prus (Mentor Graphics) - Add proper stop reason for step return (Bug 362274) 
+ *     Indel AG           - [369622] fixed moveToLine using MinGW
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service;
 
@@ -1492,7 +1493,10 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
             rm.done();                        	
 		}
 		else
-		{	    	
+		{
+			// Hack around a MinGW bug; see 369622 (and also 196154 and 232415) 
+			sourceFile = MIBreakpointsManager.adjustDebuggerPath(sourceFile);
+			
 			String location = sourceFile + ":" + lineNumber; //$NON-NLS-1$
 			if (resume)
 				resumeAtLocation(context, location, rm);

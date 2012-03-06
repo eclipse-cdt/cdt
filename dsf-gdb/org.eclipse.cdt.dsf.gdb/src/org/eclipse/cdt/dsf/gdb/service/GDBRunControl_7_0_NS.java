@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 Wind River Systems and others.
+ * Copyright (c) 2006, 2012 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Ericsson	AB		  - Modified for handling of multiple threads
+ *     Indel AG           - [369622] fixed moveToLine using MinGW
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.service;
@@ -1786,6 +1787,9 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 		}
 		else
 		{
+			// Hack around a MinGW bug; see 369622 (and also 196154 and 232415)
+			sourceFile = adjustDebuggerPath(sourceFile);
+			
 			String location = sourceFile + ":" + lineNumber; //$NON-NLS-1$
 			if (resume)
 				resumeAtLocation(context, location, rm);

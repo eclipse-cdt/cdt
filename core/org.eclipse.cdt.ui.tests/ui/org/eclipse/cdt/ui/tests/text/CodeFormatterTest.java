@@ -2535,6 +2535,57 @@ public class CodeFormatterTest extends BaseUITestCase {
 		assertFormatterResult();
 	}
 
+	//bool loooooooooooong_name(int, int);
+	//int loooong_name;
+	//int very_loooooooooooooooooooooooong_name;
+	//
+	//struct Stream {
+	//Stream& operator <<(const char*);
+	//};
+	//Stream GetStream();
+	//
+	//struct Voidifier {
+	//void operator&(Stream&);
+	//};
+	//
+	//#define MY_MACRO(a) (a) ? (void) 0 : Voidifier() & GetStream() << " "
+	//
+	//void test(const char* variable_with_a_loooong_name) {
+	//  MY_MACRO(loooooooooooong_name(loooong_name,
+	//                                very_loooooooooooooooooooooooong_name))
+	//      << variable_with_a_loooong_name;
+	//}
+
+	//bool loooooooooooong_name(int, int);
+	//int loooong_name;
+	//int very_loooooooooooooooooooooooong_name;
+	//
+	//struct Stream {
+	//  Stream& operator <<(const char*);
+	//};
+	//Stream GetStream();
+	//
+	//struct Voidifier {
+	//  void operator&(Stream&);
+	//};
+	//
+	//#define MY_MACRO(a) (a) ? (void) 0 : Voidifier() & GetStream() << " "
+	//
+	//void test(const char* variable_with_a_loooong_name) {
+	//  MY_MACRO(loooooooooooong_name(loooong_name,
+	//          very_loooooooooooooooooooooooong_name))
+	//      << variable_with_a_loooong_name;
+	//}
+	public void testOverloadedLeftShiftChain_7() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_SIZE, "2");
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_OVERLOADED_LEFT_SHIFT_CHAIN,
+				Integer.toString(Alignment.M_COMPACT_SPLIT | Alignment.M_INDENT_ON_COLUMN));
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ARGUMENTS_IN_METHOD_INVOCATION,
+				Integer.toString(Alignment.M_COMPACT_SPLIT | Alignment.M_INDENT_ON_COLUMN));
+		assertFormatterResult();
+	}
+
 	//struct Stream {
 	//Stream& operator <<(const char*);
 	//};
@@ -2572,7 +2623,6 @@ public class CodeFormatterTest extends BaseUITestCase {
 				Integer.toString(Alignment.M_COMPACT_SPLIT | Alignment.M_INDENT_ON_COLUMN));
 		assertFormatterResult();
 	}
-
 	//int main() {
 	//	std::vector<std::vector<int>> test;
 	//	// some comment

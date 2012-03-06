@@ -298,7 +298,7 @@ public class Alignment {
 				i = this.fragmentIndex;
 				do {
 					if (this.fragmentBreaks[i] == NONE) {
-						if ((this.mode & M_INDENT_ON_COLUMN) != 0 && i == 0) {
+						if ((this.mode & M_INDENT_ON_COLUMN) != 0 && isFirstBreakableFragment(i)) {
 							if (this.breakIndentationLevel <= this.alternativeBreakIndentationLevel) {
 								// Does not make sense to break here unless indentation is reduced.
 								break;
@@ -369,6 +369,14 @@ public class Alignment {
 				break;
 		}
 		return false; // Cannot split better
+	}
+
+	private boolean isFirstBreakableFragment(int i) {
+		while (--i >= 0) {
+			if (this.fragmentBreaks[i] != BREAK_NOT_ALLOWED)
+				return false;
+		}
+		return true;
 	}
 
 	private void eraseExistingBreaks(int startFragmentIndex) {

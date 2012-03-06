@@ -2275,7 +2275,11 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
     	boolean ok = false;
     	do {
     		try {
-    			scribe.alignFragment(alignment, 0);
+    			// In case of macros we may have already passed the expression position.
+    			if (positiveExpression != null &&
+    					scribe.scanner.getCurrentPosition() <= positiveExpression.getFileLocation().getNodeOffset()) {
+    				scribe.alignFragment(alignment, 0);
+    			}
     			scribe.setTailFormatter(new TrailingTokenFormatter(Token.tCOLON, node,
     					preferences.insert_space_before_colon_in_conditional,
     					preferences.insert_space_after_colon_in_conditional));
@@ -2286,7 +2290,10 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
     			scribe.runTailFormatter();
 
     			if (!(negativeExpression instanceof IASTConditionalExpression)) {
-	    			scribe.alignFragment(alignment, 1);
+        			// In case of macros we may have already passed the expression position.
+        			if (scribe.scanner.getCurrentPosition() <= negativeExpression.getFileLocation().getNodeOffset()) {
+        				scribe.alignFragment(alignment, 1);
+        			}
 	    			scribe.setTailFormatter(tailFormatter);
 	    			negativeExpression.accept(this);
 	    			scribe.runTailFormatter();
@@ -2817,16 +2824,19 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		do {
 			try {
 				for (int i = 0; i < elements.size(); i++) {
-					scribe.alignFragment(alignment, i);
-					int token= peekNextToken();
-					if (token == Token.tSHIFTL) {
-						scribe.printNextToken(token, preferences.insert_space_before_binary_operator);
-						scribe.printTrailingComment();
-						if (preferences.insert_space_after_binary_operator) {
-							scribe.space();
+					node= elements.get(i);
+        			// In case of macros we may have already passed the operator position.
+        			if (scribe.scanner.getCurrentPosition() < node.getFileLocation().getNodeOffset()) {
+						scribe.alignFragment(alignment, i);
+						int token= peekNextToken();
+						if (token == Token.tSHIFTL) {
+							scribe.printNextToken(token, preferences.insert_space_before_binary_operator);
+							scribe.printTrailingComment();
+							if (preferences.insert_space_after_binary_operator) {
+								scribe.space();
+							}
 						}
 					}
-					node= elements.get(i);
 					if (i == alignment.fragmentCount - 1) {
 						scribe.setTailFormatter(tailFormatter);
 					}

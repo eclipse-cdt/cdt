@@ -348,9 +348,9 @@ public class Scribe {
 	}
 
 	public Alignment createMemberAlignment(String name, int mode, int count, int sourceRestart) {
-		Alignment mAlignment= createAlignment(name, mode, Alignment.R_INNERMOST, count, sourceRestart);
-		mAlignment.breakIndentationLevel= indentationLevel;
-		return mAlignment;
+		Alignment alignment= createAlignment(name, mode, Alignment.R_INNERMOST, count, sourceRestart);
+		alignment.breakIndentationLevel= indentationLevel;
+		return alignment;
 	}
 
 	public void enterAlignment(Alignment alignment) {

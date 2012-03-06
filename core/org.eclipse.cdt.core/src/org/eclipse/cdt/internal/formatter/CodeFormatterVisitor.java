@@ -1170,13 +1170,16 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	 * </pre>
 	 */
 	private int visit(ICPPASTUsingDeclaration node) {
-		scribe.printNextToken(Token.t_using);
-		if (node.isTypename()) {
-			scribe.printNextToken(Token.t_typename, true);
+		int token = peekNextToken();
+		if (token == Token.t_using)
+			scribe.printNextToken(token);
+		token = peekNextToken();
+		if (token == Token.t_typename) {
+			scribe.printNextToken(token, true);
 		}
 		scribe.space();
 		node.getName().accept(this);
-		int token = peekNextToken();
+		token = peekNextToken();
 		if (token == Token.tSEMI) {
 			scribe.printNextToken(token, preferences.insert_space_before_semicolon);
 		}

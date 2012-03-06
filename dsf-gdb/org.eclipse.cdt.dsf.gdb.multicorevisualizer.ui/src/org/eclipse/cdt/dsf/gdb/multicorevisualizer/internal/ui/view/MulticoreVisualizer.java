@@ -53,6 +53,10 @@ import org.eclipse.debug.internal.ui.commands.actions.StepOverCommandAction;
 import org.eclipse.debug.internal.ui.commands.actions.StepReturnCommandAction;
 import org.eclipse.debug.internal.ui.commands.actions.SuspendCommandAction;
 import org.eclipse.debug.internal.ui.commands.actions.TerminateCommandAction;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelChangedListener;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
 import org.eclipse.debug.internal.ui.views.launch.LaunchView;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.action.IMenuManager;
@@ -94,6 +98,9 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 	
 	/** Event listener class for DSF events */
 	protected MulticoreVisualizerEventListener fEventListener;
+	
+	/** Cached reference to Debug View viewer. */
+	protected TreeModelViewer m_debugViewer = null;
 	
 
 	// --- UI members ---
@@ -460,7 +467,38 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 			result = 0;
 		}
 		
+		// While we're here, see if we need to attach debug view listener
+		updateDebugViewListener();
+		
 		return result;
+	}
+	
+	/**
+	 * Adds listener to debug view's viewer, so we can detect
+	 * Debug View updates (which it doesn't bother to properly
+	 * communicate to the rest of the world, sigh).
+	 */
+	public void updateDebugViewListener()
+	{
+		// NOTE: debug viewer might not exist yet, so we
+		// attach the listener at the first opportunity to do so.
+		if (m_debugViewer == null) {
+			m_debugViewer = DebugViewUtils.getDebugViewer();
+			if (m_debugViewer != null) {
+				m_debugViewer.addModelChangedListener(
+					new IModelChangedListener() {
+						@Override
+						public void modelChanged(IModelDelta delta, IModelProxy proxy)
+						{
+							// Execute a refresh after any pending UI updates.
+							GUIUtils.exec( new Runnable() { @Override public void run() {
+								MulticoreVisualizer.this.refresh();
+							}});
+						}
+					}
+				);
+			}
+		}
 	}
 	
     /**
@@ -470,6 +508,9 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 	public void workbenchSelectionChanged(ISelection selection)
 	{
 		refresh();
+		
+		// Also check whether we need to attach debug view listener.
+		updateDebugViewListener();
 	}
 	
 	/** Refreshes visualizer content from model. */

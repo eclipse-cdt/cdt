@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 IBM Corporation and others.
+ * Copyright (c) 2006, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@
  * David McKnight   (IBM)     [312415] [dstore] shell service interprets &lt; and &gt; sequences - handle old client/new server case
  * David McKnight   (IBM)     [341366] [dstore][shells] codepage IBM-1141 has faulty display of \ character
  * David McKnight   (IBM)     [343421] [dstore] Man page was not displayed properly in the shell
+ * David McKnight   (IBM)     [372968] [dstore][shell] provide support for csh and tcsh shells
  *******************************************************************************/
 
 package org.eclipse.rse.internal.dstore.universal.miners.command;
@@ -295,8 +296,9 @@ public class OutputHandler extends Handler {
 
 						String lastLine = output[index - 1];
 
-						boolean endLine = fullOutput.endsWith("\n") || fullOutput.endsWith("\r") || fullOutput.endsWith(">");
-						
+						boolean endLine = fullOutput.endsWith("\n") || fullOutput.endsWith("\r") ||   //$NON-NLS-1$//$NON-NLS-2$
+										fullOutput.endsWith(">") || //$NON-NLS-1$
+										fullOutput.endsWith("% "); // csh/tcsh //$NON-NLS-1$
 						if (!_endOfStream && !endLine)
 						{
 							// our last line may be cut off		

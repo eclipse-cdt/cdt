@@ -40,13 +40,14 @@ public class ExtractConstantRefactoringDescriptor extends CRefactoringDescriptor
 	
 	@Override
 	public CRefactoring createRefactoring(RefactoringStatus status) throws CoreException {
-		ISelection selection = getSelection();
-		ICProject project = getCProject();
-		ExtractConstantRefactoring refactoring =
-				new ExtractConstantRefactoring(getTranslationUnit(), selection, project);
-		ExtractConstantInfo info = refactoring.getRefactoringInfo();
-		info.setName(arguments.get(NAME));
-		info.setVisibility(VisibilityEnum.getEnumForStringRepresentation(arguments.get(VISIBILITY)));
-		return refactoring;
+		return null;
+//		ISelection selection = getSelection();
+//		ICProject project = getCProject();
+//		ExtractConstantRefactoring refactoring =
+//				new ExtractConstantRefactoring(getTranslationUnit(), selection, project);
+//		ExtractConstantInfo info = refactoring.getRefactoringInfo();
+//		info.setName(arguments.get(NAME));
+//		info.setVisibility(VisibilityEnum.getEnumForStringRepresentation(arguments.get(VISIBILITY)));
+//		return refactoring;
 	}
 }

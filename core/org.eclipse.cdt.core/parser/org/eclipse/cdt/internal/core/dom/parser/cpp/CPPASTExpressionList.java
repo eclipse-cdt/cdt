@@ -41,7 +41,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 
 public class CPPASTExpressionList extends ASTNode implements ICPPASTExpressionList, IASTAmbiguityParent {
-	private static final ICPPFunction[] NO_FUNCTIONS = new ICPPFunction[0];
+	private static final ICPPFunction[] NO_FUNCTIONS = {};
 
     private IASTExpression[] expressions = new IASTExpression[2];
     
@@ -50,7 +50,7 @@ public class CPPASTExpressionList extends ASTNode implements ICPPASTExpressionLi
 	 * @see CPPASTExpressionList#computeImplicitNames
 	 */
 	private IASTImplicitName[] implicitNames;
-	private ICPPFunction[] overloads = null;
+	private ICPPFunction[] overloads;
 	
 	@Override
 	public CPPASTExpressionList copy() {
@@ -131,7 +131,7 @@ public class CPPASTExpressionList extends ASTNode implements ICPPASTExpressionLi
 			if (exprs.length < 2)
 				return implicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
 			
-			implicitNames = new IASTImplicitName[exprs.length-1];
+			implicitNames = new IASTImplicitName[exprs.length - 1];
 			
 			ICPPFunction[] overloads = getOverloads();
 			for(int i = 0; i < overloads.length; i++) {
@@ -166,7 +166,7 @@ public class CPPASTExpressionList extends ASTNode implements ICPPASTExpressionLi
 	    			prop == ICPPASTNewExpression.NEW_INITIALIZER)
 	    		return overloads = NO_FUNCTIONS;
 	    	
-	    	overloads = new ICPPFunction[exprs.length-1];
+	    	overloads = new ICPPFunction[exprs.length - 1];
 	    	IType lookupType = typeOrFunctionSet(exprs[0]);
 	    	ValueCategory vcat= valueCat(exprs[0]);
 	    	

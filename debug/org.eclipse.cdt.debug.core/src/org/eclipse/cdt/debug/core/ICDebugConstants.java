@@ -55,7 +55,7 @@ public interface ICDebugConstants {
 
 	/**
 	 * Deprecated id for the charset used for decoding wchar_t type strings.
-	 * Replaced by ICDebugConstants.PREF_WIDE_CHARSET.
+	 * Replaced by ICDebugConstants.PREF_DEBUG_WIDE_CHARSET.
 	 * @deprecated
 	 */
 	@Deprecated

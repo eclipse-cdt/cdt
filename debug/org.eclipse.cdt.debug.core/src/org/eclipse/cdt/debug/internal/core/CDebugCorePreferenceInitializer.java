@@ -19,6 +19,8 @@ import org.eclipse.cdt.debug.core.ICDebugConstants;
 import org.eclipse.cdt.debug.core.cdi.ICDIFormat;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
+import org.eclipse.core.runtime.preferences.DefaultScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
  
 /**
  * Default preference value initializer for <code>CDebugCorePlugin</code>.
@@ -37,15 +39,18 @@ public class CDebugCorePreferenceInitializer extends AbstractPreferenceInitializ
 	 */
 	@Override
 	public void initializeDefaultPreferences() {
-		CDebugCorePlugin.getDefault().getPluginPreferences().setDefault( ICDebugConstants.PREF_MAX_NUMBER_OF_INSTRUCTIONS, ICDebugConstants.DEF_NUMBER_OF_INSTRUCTIONS );
-		CDebugCorePlugin.getDefault().getPluginPreferences().setDefault( ICDebugConstants.PREF_DEFAULT_VARIABLE_FORMAT, ICDIFormat.NATURAL );
-		CDebugCorePlugin.getDefault().getPluginPreferences().setDefault( ICDebugConstants.PREF_DEFAULT_EXPRESSION_FORMAT, ICDIFormat.NATURAL );
-		CDebugCorePlugin.getDefault().getPluginPreferences().setDefault( ICDebugConstants.PREF_DEFAULT_REGISTER_FORMAT, ICDIFormat.NATURAL );
-		CDebugCorePlugin.getDefault().getPluginPreferences().setDefault( ICDebugConstants.PREF_DEBUG_CHARSET, Charset.defaultCharset().name() );
-		if (Platform.getOS().equals(Platform.OS_WIN32))
-			CDebugCorePlugin.getDefault().getPluginPreferences().setDefault( ICDebugConstants.PREF_DEBUG_WIDE_CHARSET, "UTF-16"); //$NON-NLS-1$
-		else
-			CDebugCorePlugin.getDefault().getPluginPreferences().setDefault( ICDebugConstants.PREF_DEBUG_WIDE_CHARSET, "UTF-32"); //$NON-NLS-1$
-		CDebugCorePlugin.getDefault().getPluginPreferences().setDefault( ICDebugConstants.PREF_INSTRUCTION_STEP_MODE_ON, false );
+		IEclipsePreferences defaultPreferences = DefaultScope.INSTANCE.getNode(CDebugCorePlugin.PLUGIN_ID);
+		
+		defaultPreferences.putInt(ICDebugConstants.PREF_MAX_NUMBER_OF_INSTRUCTIONS, ICDebugConstants.DEF_NUMBER_OF_INSTRUCTIONS);
+		defaultPreferences.putInt(ICDebugConstants.PREF_DEFAULT_VARIABLE_FORMAT, ICDIFormat.NATURAL);
+		defaultPreferences.putInt(ICDebugConstants.PREF_DEFAULT_EXPRESSION_FORMAT, ICDIFormat.NATURAL);
+		defaultPreferences.putInt(ICDebugConstants.PREF_DEFAULT_REGISTER_FORMAT, ICDIFormat.NATURAL);
+		defaultPreferences.put(ICDebugConstants.PREF_DEBUG_CHARSET, Charset.defaultCharset().name());
+		if (Platform.getOS().equals(Platform.OS_WIN32)) {
+			defaultPreferences.put(ICDebugConstants.PREF_DEBUG_WIDE_CHARSET, "UTF-16"); //$NON-NLS-1$
+		} else {
+			defaultPreferences.put(ICDebugConstants.PREF_DEBUG_WIDE_CHARSET, "UTF-32"); //$NON-NLS-1$
+		}
+		defaultPreferences.putBoolean(ICDebugConstants.PREF_INSTRUCTION_STEP_MODE_ON, false);
 	}
 }

@@ -495,18 +495,18 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 		if (m_debugViewer == null) {
 			m_debugViewer = DebugViewUtils.getDebugViewer();
 			if (m_debugViewer != null) {
-				m_debugViewer.addModelChangedListener(
-					new IModelChangedListener() {
-						@Override
-						public void modelChanged(IModelDelta delta, IModelProxy proxy)
-						{
-							// Execute a refresh after any pending UI updates.
-							GUIUtils.exec( new Runnable() { @Override public void run() {
-								MulticoreVisualizer.this.refresh();
-							}});
-						}
+				m_modelChangedListener =
+				new IModelChangedListener() {
+					@Override
+					public void modelChanged(IModelDelta delta, IModelProxy proxy)
+					{
+						// Execute a refresh after any pending UI updates.
+						GUIUtils.exec( new Runnable() { @Override public void run() {
+							MulticoreVisualizer.this.refresh();
+						}});
 					}
-				);
+				};
+				m_debugViewer.addModelChangedListener(m_modelChangedListener);
 			}
 		}
 	}

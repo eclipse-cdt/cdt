@@ -18,6 +18,7 @@
  *  David McKnight   (IBM) - [294933] [dstore] RSE goes into loop
  *  David McKnight   (IBM) - [331922] [dstore] enable DataElement recycling
  *  David McKnight   (IBM) - [371401] [dstore][multithread] avoid use of static variables - causes memory leak after disconnect
+ *  David McKnight   (IBM)  - [373507] [dstore][multithread] reduce heap memory on disconnect for server
  *******************************************************************************/
 
 package org.eclipse.dstore.internal.core.util;
@@ -37,7 +38,7 @@ public class DataElementRemover extends Handler
 	private static int numRemoved = 0;
 	private static int numDisconnected = 0;
 	private static int numCreated = 0;
-	private static int numGCed = 0;
+	//private static int numGCed = 0;
 	
 	// The following determine how DataElements are chosen to be removed once they
 	// are in the queue for removal. 	
@@ -100,7 +101,7 @@ public class DataElementRemover extends Handler
 	
 	public static void addToGCedCount()
 	{
-		numGCed++;
+		//numGCed++;
 	}
 
 	
@@ -152,7 +153,9 @@ public class DataElementRemover extends Handler
 				_dataStore.memLog("Elements created so far: " + numCreated); //$NON-NLS-1$
 				_dataStore.memLog("Elements disconnected so far: " + numDisconnected); //$NON-NLS-1$
 				_dataStore.memLog("Spirit elements cleaned so far: " + numRemoved); //$NON-NLS-1$
-				_dataStore.memLog("DataElements GCed so far: " + numGCed); //$NON-NLS-1$
+			
+				// no longer a helpful stat since we no longer use finalize
+				// _dataStore.memLog("DataElements GCed so far: " + numGCed); //$NON-NLS-1$
 				return;
 			}
 			_dataStore.memLog("Total heap size before disconnection: " + Runtime.getRuntime().totalMemory()); //$NON-NLS-1$
@@ -190,7 +193,9 @@ public class DataElementRemover extends Handler
 			_dataStore.memLog("Elements created so far: " + numCreated); //$NON-NLS-1$
 			_dataStore.memLog("Elements disconnected so far: " + numDisconnected); //$NON-NLS-1$
 			_dataStore.memLog("Spirit elements cleaned so far: " + numRemoved); //$NON-NLS-1$
-			_dataStore.memLog("DataElements GCed so far: " + numGCed); //$NON-NLS-1$
+			
+			// no longer a helpful stat since we no longer use finalize
+			// _dataStore.memLog("DataElements GCed so far: " + numGCed); //$NON-NLS-1$
 			System.gc();
 		}
 	}

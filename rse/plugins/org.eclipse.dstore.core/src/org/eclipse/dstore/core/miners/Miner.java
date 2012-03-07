@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2011 IBM Corporation and others.
+ * Copyright (c) 2002, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@
  * David McKnight    (IBM)  - [232004] [dstore][multithread] some miner finish() is not terminated sometimes
  * David McKnight    (IBM)  - [328060] [dstore] command queue in Miner should be synchronized
  * David McKnight    (IBM)  - [358301] [DSTORE] Hang during debug source look up
+ * David McKnight    (IBM)  - [373507] [dstore][multithread] reduce heap memory on disconnect for server
  *******************************************************************************/
 
 package org.eclipse.dstore.core.miners;
@@ -129,24 +130,24 @@ implements ISchemaExtender
 	 */
 	public void finish()
 	{
+		synchronized (_commandQueue){
+			_commandQueue.clear();
+		}
 		DataElement root = _dataStore.getMinerRoot();
-
 		_minerData.removeNestedData();
 		_minerElement.removeNestedData();
 		_dataStore.update(_minerElement);
 
-		if (root.getNestedData() != null)
-		{
+		if (root != null && root.getNestedData() != null){
 			root.getNestedData().remove(_minerElement);
+			root.setExpanded(false);
+			root.setUpdated(false);
+			_dataStore.update(root);
 		}
-		root.setExpanded(false);
-		root.setUpdated(false);
-
-		_dataStore.update(root);
-
 		super.finish();
 	}
 
+	
 	/**
 	 * Interface to retrieve an NL enabled resource bundle.
 	 * Override this function to get access to a real resource bundle.

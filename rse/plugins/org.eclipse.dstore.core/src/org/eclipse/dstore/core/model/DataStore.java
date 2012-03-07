@@ -41,6 +41,7 @@
  * David McKnight   (IBM) - [366070] [dstore] fix for bug 351993 won't allow tracing if .dstoreTrace doesn't exist
  * David McKnight   (IBM) - [367096] [dstore] DataElement.isSpirit() may return true for newly created DStore objects
  * David McKnight   (IBM) - [370260] [dstore] log the RSE version in server traces
+ * David McKnight   (IBM) - [373507] [dstore][multithread] reduce heap memory on disconnect for server
  *******************************************************************************/
 
 package org.eclipse.dstore.core.model;
@@ -2643,8 +2644,34 @@ public final class DataStore
 		flush(_descriptorRoot);
 		flush(_dummy);
 		flush(_root);
+		flush(_externalRoot);
+		
+		// make sure these aren't null set since
+		// Miners need them on shutdown
+		// _logRoot = null;
+		// _minerRoot = null;
+		
+		_hostRoot = null;
+		_tempRoot = null;
+		_descriptorRoot = null;
+		_dummy = null;
+		_root = null;
+		_externalRoot = null;
+		_status = null;
+		_ticket = null;
 
+		// clear the maps
+		_classReqRepository.clear();
+		_cmdDescriptorMap.clear();
+		_hashMap.clear();
+		_lastCreatedElements.clear();
+		_localClassLoaders.clear();
+		_objDescriptorMap.clear();
+		_relDescriptorMap.clear();
+		
+		_remoteLoader = null;
 	}
+
 
 	/**
 	 * Delete information from the <code>DataStore</code> contained by an element.
@@ -4204,6 +4231,14 @@ public final class DataStore
 		// which causes havoc for iSeries caching when switching between offline / online
 		//if (isVirtual())
 		//	flush();
+		
+		if (!isVirtual()){ // only on server
+			if (getClient() != null){
+				getClient().getLogger().logInfo(this.getName(), "DataStore.finish() - flush()"); //$NON-NLS-1$
+			}
+			flush();
+		}
+		
 		if (_deRemover != null){
 			_deRemover.finish();
 		}

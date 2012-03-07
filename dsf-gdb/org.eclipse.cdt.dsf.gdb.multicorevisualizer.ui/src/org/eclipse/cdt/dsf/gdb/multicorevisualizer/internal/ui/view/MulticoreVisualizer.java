@@ -102,6 +102,9 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 	/** Cached reference to Debug View viewer. */
 	protected TreeModelViewer m_debugViewer = null;
 	
+	/** Model changed listener, attached to Debug View. */
+	protected IModelChangedListener m_modelChangedListener = null;
+	
 
 	// --- UI members ---
 
@@ -151,6 +154,7 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 	public void dispose()
 	{
 		super.dispose();
+		removeDebugViewerListener();
 		disposeActions();
 	}
 	
@@ -478,7 +482,13 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 	 * Debug View updates (which it doesn't bother to properly
 	 * communicate to the rest of the world, sigh).
 	 */
-	public void updateDebugViewListener()
+	protected void updateDebugViewListener()
+	{
+		attachDebugViewerListener();
+	}
+	
+	/** Attaches debug viewer listener. */
+	protected void attachDebugViewerListener()
 	{
 		// NOTE: debug viewer might not exist yet, so we
 		// attach the listener at the first opportunity to do so.
@@ -497,6 +507,18 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 						}
 					}
 				);
+			}
+		}
+	}
+
+	/** Removes debug viewer listener. */
+	protected void removeDebugViewerListener()
+	{
+		if (m_modelChangedListener != null) {
+			if (m_debugViewer != null) {
+				m_debugViewer.removeModelChangedListener(m_modelChangedListener);
+				m_debugViewer = null;
+				m_modelChangedListener = null;
 			}
 		}
 	}

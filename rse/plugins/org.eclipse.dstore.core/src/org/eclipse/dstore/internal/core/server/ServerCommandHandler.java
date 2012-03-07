@@ -19,6 +19,7 @@
  *  David McKnight   (IBM) - [294933] [dstore] RSE goes into loop
  *  David McKnight   (IBM) - [282364] [dstore][multithread] timer-threads stay active after disconnect
  *  David McKnight   (IBM) - [371401] [dstore][multithread] avoid use of static variables - causes memory leak after disconnect
+ *  David McKnight   (IBM) - [373459] [dstore][multithread] duplicate finish() calls during idle timeout
  *******************************************************************************/
 
 package org.eclipse.dstore.internal.core.server;
@@ -41,7 +42,7 @@ import org.eclipse.dstore.core.model.IDataStoreConstants;
 import org.eclipse.dstore.core.server.SystemServiceManager;
 
 /**
- * The ServerCommandHandler is reponsible for maintaining
+ * The ServerCommandHandler is responsible for maintaining
  * a queue of commands and periodically routing commands
  * from the queue to the appropriate miners.
  */
@@ -61,24 +62,28 @@ public class ServerCommandHandler extends CommandHandler
 		{	
 			while (!_serverTimedOut)
 			{
+				if (_dataStore.getClient() != null) {
+					_dataStore.getClient().getLogger().logInfo(this.getClass().toString(), "ServerIdleThread.waitForTimeout()..."); //$NON-NLS-1$
+				}
 				waitForTimeout();
 			}
 			if (_serverTimedOut)
 			{
-				_dataStore.getCommandHandler().finish();
-				_dataStore.getUpdateHandler().finish();
-				_dataStore.finish();
-				System.out.println(ServerReturnCodes.RC_FINISHED);
 				if (_dataStore.getClient() != null) {
-					_dataStore.getClient().getLogger().logInfo(this.getClass().toString(), "Server timeout");
+					_dataStore.getClient().getLogger().logInfo(this.getClass().toString(), "Server timeout"); //$NON-NLS-1$
 				}
-				
+
+				System.out.println(ServerReturnCodes.RC_FINISHED);
+
 				// only exit if there's no service manager
-				if (SystemServiceManager.getInstance().getSystemService() == null){
+				if (SystemServiceManager.getInstance().getSystemService() == null){					
+					_dataStore.getCommandHandler().finish();
+					_dataStore.getUpdateHandler().finish();
+					_dataStore.finish();
 					System.exit(0);
 				}
 				else {
-					_dataStore.getClient().disconnectServerReceiver();
+					_dataStore.getClient().disconnectServerReceiver();					
 				}
 			}
 		}
@@ -202,13 +207,32 @@ public class ServerCommandHandler extends CommandHandler
 	 */
 	public void finish()
 	{
-		if (_serverIdleThread != null && _serverIdleThread.isAlive()){
-			_serverIdleThread._serverTimedOut=true; // ensures that the wait loop won't continue after the interrupt
-			_serverIdleThread.interrupt();
+		if (_dataStore.getClient() != null) {
+			_dataStore.getClient().getLogger().logInfo(this.getClass().toString(), "ServerCommandHandler.finish()"); //$NON-NLS-1$
 		}
-		_serverIdleThread = null;
-		if (_minerLoader != null)
+		
+		if (_serverIdleThread != null){
+			if (_dataStore.getClient() != null) {
+				_dataStore.getClient().getLogger().logInfo(this.getClass().toString(), "ServerCommandHandler clearing server idle thread"); //$NON-NLS-1$
+			}
+			
+			if (_serverIdleThread.isAlive()){
+				_serverIdleThread._serverTimedOut = true;
+				_serverIdleThread.interrupt();
+			}
+			_serverIdleThread = null;
+		}
+		
+
+		if (_minerLoader != null){
+			if (_dataStore.getClient() != null) {
+				_dataStore.getClient().getLogger().logInfo(this.getClass().toString(), "ServerCommandHandler.finish() - calling finishMiners..."); //$NON-NLS-1$
+			}
 			_minerLoader.finishMiners();
+			if (_dataStore.getClient() != null) {
+				_dataStore.getClient().getLogger().logInfo(this.getClass().toString(), "ServerCommandHandler.finish() - ...completed calling finishMiners"); //$NON-NLS-1$
+			}		
+		}
 		super.finish();
 	}
 

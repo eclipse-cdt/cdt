@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Anton Gorenkov
+ * Copyright (c) 2011, 2012 Anton Gorenkov and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Anton Gorenkov  - initial implementation
+ *     Marc-Andre Laperle
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.checkers;
 
@@ -113,7 +114,7 @@ public class ClassMembersInitializationChecker extends AbstractIndexAstChecker {
 						if (fBinding instanceof ICPPMethod) {
 							ICPPMethod method = (ICPPMethod)fBinding;
 							ICompositeType constructorOwner = actualConstructorFields.iterator().next().getCompositeTypeOwner();
-							if (constructorOwner == method.getClassOwner() && !method.getType().isConst()) {
+							if (constructorOwner.equals(method.getClassOwner()) && !method.getType().isConst()) {
 								skipCurrentConstructor = true;
 							}
 						} else if (fBinding instanceof ICPPFunction) {

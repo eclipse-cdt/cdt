@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Anton Gorenkov
+ * Copyright (c) 2011, 2012 Anton Gorenkov and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Anton Gorenkov   - initial implementation
+ *     Marc-Andre Laperle
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.internal.checkers;
 
@@ -475,5 +476,25 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 		disableSkipConstructorsWithFCalls();
 		loadCodeAndRun(getAboveComment());
 		checkErrorLines(8,9,10,11);
+	}
+
+	// @file:test.h
+	// class C {
+	//	 int field;
+	// C();
+	// void initObject();
+	//};
+
+	// @file:test.cpp
+	// #include "test.h"
+	// C::C() {
+	//    initObject();
+	// }
+	public void testBug368419_methodDeclarationInOtherFile() throws Exception {
+		CharSequence[] code = getContents(2);
+		loadcode(code[0].toString());
+		loadcode(code[1].toString());
+		runOnProject();
+		checkNoErrors();
 	}
 }

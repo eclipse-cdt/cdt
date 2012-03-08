@@ -36,7 +36,7 @@ public class AST2UtilTests extends AST2BaseTest {
 	}
 
 	public void testSimpleSignature() throws Exception {
-	    StringBuffer buff = new StringBuffer();
+	    StringBuilder buff = new StringBuilder();
 	    buff.append("int l, m, n=0;\n"); //$NON-NLS-1$
 		buff.append("int j = l ? m : n;\n"); //$NON-NLS-1$
 		buff.append("int i = l^m;\n"); //$NON-NLS-1$
@@ -64,7 +64,7 @@ public class AST2UtilTests extends AST2BaseTest {
 	}
 	
 	public void testSimpleParameter() throws Exception {
-	    StringBuffer buff = new StringBuffer();
+	    StringBuilder buff = new StringBuilder();
 	    buff.append("int a(int x);\n"); //$NON-NLS-1$
 		buff.append("int * b(char y, int x);\n"); //$NON-NLS-1$
 		buff.append("void c(int * z, float **b);\n"); //$NON-NLS-1$
@@ -112,7 +112,7 @@ public class AST2UtilTests extends AST2BaseTest {
 	}
 	
 	public void testSimpleCParameterSignature() throws Exception {
-	    StringBuffer buff = new StringBuffer();
+	    StringBuilder buff = new StringBuilder();
 	    buff.append("int a(int x);\n"); //$NON-NLS-1$
 		buff.append("int * b(char y, int x);\n"); //$NON-NLS-1$
 		buff.append("void c(int * z, float **b);\n"); //$NON-NLS-1$
@@ -128,7 +128,7 @@ public class AST2UtilTests extends AST2BaseTest {
 	}
 	
 	public void testSimpleTypeId() throws Exception {
-		StringBuffer buff = new StringBuffer();
+		StringBuilder buff = new StringBuilder();
 	    buff.append("int x = sizeof( int );\n"); //$NON-NLS-1$
 		buff.append("union Squaw { int x; double u; };\n"); //$NON-NLS-1$
 		buff.append("int main(int argc, char **argv) {\n"); //$NON-NLS-1$
@@ -152,7 +152,7 @@ public class AST2UtilTests extends AST2BaseTest {
 	}
 	
 	public void testKnRC() throws Exception {
-		StringBuffer buff = new StringBuffer();
+		StringBuilder buff = new StringBuilder();
 	    buff.append("int foo(x, y) char x; int y; {}\n"); //$NON-NLS-1$
 		buff.append("int foo2(char x, int y) {}\n"); //$NON-NLS-1$
 		

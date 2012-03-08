@@ -42,6 +42,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDefaultStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
@@ -90,20 +91,20 @@ import org.eclipse.cdt.core.dom.ast.IASTSwitchStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
+import org.eclipse.cdt.core.dom.ast.IASTTypeIdInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
-import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.ast.c.ICASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignatedInitializer;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
-import org.eclipse.cdt.core.dom.ast.c.ICASTTypeIdInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.c.ICASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression;
@@ -138,11 +139,11 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTWhileStatement;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
 import org.eclipse.cdt.core.formatter.DefaultCodeFormatterOptions;
 import org.eclipse.cdt.core.parser.IToken;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.formatter.align.Alignment;
 import org.eclipse.cdt.internal.formatter.align.AlignmentException;
 import org.eclipse.cdt.internal.formatter.scanner.Scanner;
@@ -903,8 +904,8 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 				visit((IASTUnaryExpression) node);
 			} else if (node instanceof IASTFieldReference) {
 				visit((IASTFieldReference) node);
-			} else if (node instanceof ICASTTypeIdInitializerExpression) {
-				visit((ICASTTypeIdInitializerExpression) node);
+			} else if (node instanceof IASTTypeIdInitializerExpression) {
+				visit((IASTTypeIdInitializerExpression) node);
 			} else if (node instanceof ICPPASTNewExpression) {
 				visit((ICPPASTNewExpression) node);
 			} else if (node instanceof ICPPASTDeleteExpression) {
@@ -2644,7 +2645,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 
 		// To improve speed of the algorithm we flatten homogeneous nested binary expressions
 		// to reduce overall depth of the expression tree.
-		List<IASTExpression> operands = getOperandsOfMultiExpression(node);
+		IASTExpression[] operands = CPPVisitor.getOperandsOfMultiExpression(node);
 		
 		Runnable tailFormatter = endsWithMacroExpansion(node) ? null : scribe.takeTailFormatter();
 
@@ -2652,15 +2653,15 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 				Alignment.BINARY_EXPRESSION,
 				preferences.alignment_for_binary_expression,
 				Alignment.R_OUTERMOST,
-				operands.size(),
+				operands.length,
 				scribe.scanner.getCurrentPosition());
 
 		scribe.enterAlignment(alignment);
     	boolean ok = false;
     	do {
     		try {
-    			for (int i = 0; i < operands.size(); i++) {
-    				final IASTExpression operand = operands.get(i);
+    			for (int i = 0; i < operands.length; i++) {
+    				final IASTExpression operand = operands[i];
         			// In case of macros we may have already passed the operator position.
         			if (i > 0 && scribe.scanner.getCurrentPosition() < operand.getFileLocation().getNodeOffset()) {
         				scribe.alignFragment(alignment, i);
@@ -2700,31 +2701,6 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
     	} while (!ok);
     	scribe.exitAlignment(alignment, true);
     	return PROCESS_SKIP;
-	}
-
-	/**
-	 * Traverses a chain of nested homogeneous left-to-right-associative binary expressions and
-	 * returns a list of their operands in left-to-right order. For example, for the expression
-	 * a + b * c + d, it will return a list containing expressions: a, b * c, and d.
-	 *  
-	 * @param binaryExpression the top-level binary expression
-	 * @return a list of expression operands from left to right
-	 */
-	private List<IASTExpression> getOperandsOfMultiExpression(IASTBinaryExpression binaryExpression) {
-		int operator = binaryExpression.getOperator();
-		List<IASTExpression> operands = new ArrayList<IASTExpression>(2);
-		IASTExpression node;
-		do {
-			operands.add(binaryExpression.getOperand2());
-			node = binaryExpression.getOperand1();
-			if (!(node instanceof IASTBinaryExpression)) {
-				break;
-			}
-			binaryExpression = (IASTBinaryExpression) node;
-		} while (binaryExpression.getOperator() == operator);
-		operands.add(node);
-		Collections.reverse(operands);
-		return operands;
 	}
 
 	private int formatAssignment(IASTBinaryExpression node) {
@@ -2968,7 +2944,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
     	return PROCESS_SKIP;
 	}
 
-	private int visit(ICASTTypeIdInitializerExpression node) {
+	private int visit(IASTTypeIdInitializerExpression node) {
 		scribe.printComment();
 		final int line= scribe.line;
 

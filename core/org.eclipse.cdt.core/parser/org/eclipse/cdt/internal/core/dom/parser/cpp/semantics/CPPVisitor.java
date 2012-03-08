@@ -19,6 +19,13 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getNestedType;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getUltimateTypeUptoPointers;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.eclipse.cdt.core.dom.ast.ASTGenericVisitor;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
@@ -191,13 +198,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVariable;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Collection of methods to extract information from a C++ translation unit.
@@ -2523,5 +2523,32 @@ public class CPPVisitor extends ASTQueries {
 			}
 		} while ((node = node.getParent()) != null);
 		return null;
+	}
+
+	/**
+	 * Traverses a chain of nested homogeneous left-to-right-associative binary expressions and
+	 * returns a list of their operands in left-to-right order. For example, for the expression
+	 * a + b * c + d, it will return a list containing expressions: a, b * c, and d.
+	 *  
+	 * @param binaryExpression the top-level binary expression
+	 * @return a list of expression operands from left to right
+	 */
+	public static IASTExpression[] getOperandsOfMultiExpression(IASTBinaryExpression binaryExpression) {
+		int operator = binaryExpression.getOperator();
+		IASTExpression[] operands = new IASTExpression[2];
+		IASTExpression node;
+		int len = 0;
+		do {
+			operands = ArrayUtil.appendAt(operands, len++, binaryExpression.getOperand2());
+			node = binaryExpression.getOperand1();
+			if (!(node instanceof IASTBinaryExpression)) {
+				break;
+			}
+			binaryExpression = (IASTBinaryExpression) node;
+		} while (binaryExpression.getOperator() == operator);
+		operands = ArrayUtil.appendAt(operands, len++, node);
+		operands = ArrayUtil.trim(operands, len);
+		ArrayUtil.reverse(operands);
+		return operands;
 	}
 }

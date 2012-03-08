@@ -22,14 +22,15 @@ import org.eclipse.cdt.dsf.ui.viewmodel.IVMContext;
 import org.eclipse.cdt.dsf.ui.viewmodel.IVMNode;
 import org.eclipse.cdt.dsf.ui.viewmodel.IVMProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
+import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IContributionItem;
-import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.TreePath;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
@@ -43,7 +44,7 @@ import org.eclipse.swt.widgets.MenuItem;
  */
 public class ElementNumberFormatsContribution extends NumberFormatsContribution {
 
-	private class SelectFormatAction extends Action {
+	static class SelectFormatAction extends Action {
 		private final IElementFormatProvider fProvider;
 		private final IPresentationContext fContext;
 		private final IVMNode[] fNodes;
@@ -98,8 +99,6 @@ public class ElementNumberFormatsContribution extends NumberFormatsContribution 
 			return NO_ITEMS;
 		}
 		IVMProvider provider = VMHandlerUtils.getVMProviderForSelection(selection);
-		if (provider instanceof IElementFormatProvider == false) {
-		}
 		if (FORMATS.size() == 0) {
 			return NO_ITEMS;
 		}
@@ -108,6 +107,17 @@ public class ElementNumberFormatsContribution extends NumberFormatsContribution 
 		IVMNode[] nodes = new IVMNode[elementPaths.length];
 		final String[] formats = new String[elementPaths.length];
 		Object viewerInput = null;
+		if (context.getPart() instanceof AbstractDebugView) {
+			Viewer viewer = ((AbstractDebugView)context.getPart()).getViewer();
+			if (viewer != null) {
+				viewerInput = viewer.getInput();
+			}
+		}
+		// Here we keep using hard-coded formats, which are common formats.
+		// We expect clients may add extra formats before and after these formats.
+		// For details, please refer to 371012.
+		// For now, we do not use vm provider's cache entry to get available formats
+		// because it shows something extra than what we have been expecting. See 371012 comment #2.
 		final List<SelectFormatAction> actions = new ArrayList<SelectFormatAction>(FORMATS.size());
 		for (String formatId : FORMATS) {
 			actions.add(new SelectFormatAction((IElementFormatProvider) provider,
@@ -123,12 +133,14 @@ public class ElementNumberFormatsContribution extends NumberFormatsContribution 
 					} else if (activeFormat != null
 							&& activeFormat.equals(formats[i]) == false) {
 						activeFormat = null;
+						break;
 					}
 				}
 				if (activeFormat != null) {
 					for (int i = 0; i < actions.size(); i++) {
 						if (activeFormat.equals(actions.get(i).fFormatId)) {
 							actions.get(i).setChecked(true);
+							break;
 						}
 					}
 				}
@@ -153,13 +165,10 @@ public class ElementNumberFormatsContribution extends NumberFormatsContribution 
 		}
 		crm.setDoneCount(elementPaths.length);
 		int count = actions.size();
-		IContributionItem[] items = new IContributionItem[count + 2];
+		IContributionItem[] items = new IContributionItem[count];
 		for (int i = 0; i < actions.size(); i++) {
 			items[i] = new ActionContributionItem(actions.get(i));
 		}
-		items[count] = new Separator();
-		items[count + 1] = new ActionContributionItem(new SelectFormatAction(
-				(IElementFormatProvider) provider, context, nodes, viewerInput, elementPaths, null));
 		return items;
 	}
 }

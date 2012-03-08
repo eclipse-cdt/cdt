@@ -48,6 +48,7 @@
  * David McKnight   (IBM)        - [341244] folder selection input to unlocked Remote Systems Details view sometimes fails
  * David McKnight   (IBM)        - [363829] Closing Eclipse with a populated Remote System Details view forces a remote system connection
  * David McKnight   (IBM)        - [372674] Enhancement - Preserve state of Remote Monitor view
+ * David McKnight   (IBM)        - [373673] Remote Systems Details view calling wrong method for setting action tooltips
 *******************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -199,7 +200,7 @@ public class SystemTableViewPart extends ViewPart
 		{
 			super(SystemResources.ACTION_HISTORY_MOVEFORWARD_LABEL, getEclipseImageDescriptor("elcl16/forward_nav.gif")); //$NON-NLS-1$
 
-			setTitleToolTip(SystemResources.ACTION_HISTORY_MOVEFORWARD_TOOLTIP);
+			setToolTipText(SystemResources.ACTION_HISTORY_MOVEFORWARD_TOOLTIP);
 			setDisabledImageDescriptor(getEclipseImageDescriptor("dlcl16/forward_nav.gif")); //$NON-NLS-1$
 		}
 
@@ -231,7 +232,7 @@ public class SystemTableViewPart extends ViewPart
 		public BackwardAction()
 		{
 			super(SystemResources.ACTION_HISTORY_MOVEBACKWARD_LABEL, getEclipseImageDescriptor("elcl16/backward_nav.gif")); //$NON-NLS-1$
-			setTitleToolTip(SystemResources.ACTION_HISTORY_MOVEBACKWARD_TOOLTIP);
+			setToolTipText(SystemResources.ACTION_HISTORY_MOVEBACKWARD_TOOLTIP);
 			setDisabledImageDescriptor(getEclipseImageDescriptor("dlcl16/backward_nav.gif")); //$NON-NLS-1$
 		}
 

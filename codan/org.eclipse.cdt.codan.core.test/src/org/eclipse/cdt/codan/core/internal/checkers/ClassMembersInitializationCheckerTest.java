@@ -497,4 +497,50 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 		runOnProject();
 		checkNoErrors();
 	}
+
+	//class D {
+	//  int field;
+	//  D(const D& toBeCopied) {
+	//    *this = toBeCopied;
+	//  };
+	//};
+	public void testBug368420_assignThis() throws Exception {
+		loadCodeAndRun(getAboveComment());
+		checkNoErrors();
+	}
+
+	//class D {
+	//  int field;
+	//  D(const D& toBeCopied) {
+	//    *(&(*this)) = toBeCopied;
+	//  };
+	//};
+	public void testBug368420_assignThisUnaryExpressions() throws Exception {
+		loadCodeAndRun(getAboveComment());
+		checkNoErrors();
+	}
+
+	//class D {
+	//  int field;
+	//  D(const D& toBeCopied) {
+	//    this = toBeCopied;
+	//  };
+	//};
+	public void testBug368420_assignThisNonLValue() throws Exception {
+		loadCodeAndRun(getAboveComment());
+		checkErrorLines(3);
+	}
+
+	//class D {
+	//  int field;
+	//  D();
+	//  D(const D& toBeCopied) {
+	//    D temp;
+	//    temp = *(&(*this)) = toBeCopied;
+	//  };
+	//};
+	public void testBug368420_assignThisMultiBinaryExpressions() throws Exception {
+		loadCodeAndRun(getAboveComment());
+		checkNoErrors();
+	}
 }

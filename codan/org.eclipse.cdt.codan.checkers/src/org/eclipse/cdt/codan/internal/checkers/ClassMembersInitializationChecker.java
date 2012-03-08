@@ -18,6 +18,7 @@ import java.util.Stack;
 import org.eclipse.cdt.codan.core.cxx.model.AbstractIndexAstChecker;
 import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
@@ -67,11 +68,12 @@ public class ClassMembersInitializationChecker extends AbstractIndexAstChecker {
 		
 		// NOTE: Classes can be nested and even can be declared in constructors of the other classes
 		private final Stack< Set<IField> > constructorsStack = new Stack< Set<IField> >();
+		private boolean skipConstructorsWithFCalls = skipConstructorsWithFCalls();
 
 		OnEachClass() {
 			shouldVisitDeclarations = true;
 			shouldVisitNames = true;
-			shouldVisitExpressions = skipConstructorsWithFCalls();
+			shouldVisitExpressions = true;
 		}
 
 		@Override
@@ -102,10 +104,11 @@ public class ClassMembersInitializationChecker extends AbstractIndexAstChecker {
 		
 		@Override
 		public int visit(IASTExpression expression) {
-			if (!constructorsStack.empty() && expression instanceof IASTFunctionCallExpression) {
+			boolean skipCurrentConstructor = false;
+			
+			if (skipConstructorsWithFCalls && !constructorsStack.empty() && expression instanceof IASTFunctionCallExpression) {
 				Set<IField> actualConstructorFields = constructorsStack.peek();
 				if (!actualConstructorFields.isEmpty()) {
-					boolean skipCurrentConstructor = false;
 					IASTFunctionCallExpression fCall = (IASTFunctionCallExpression)expression;
 					IASTExpression fNameExp = fCall.getFunctionNameExpression();
 					if (fNameExp instanceof IASTIdExpression) {
@@ -126,10 +129,19 @@ public class ClassMembersInitializationChecker extends AbstractIndexAstChecker {
 							}
 						}
 					}
-					if (skipCurrentConstructor) {
-						constructorsStack.peek().clear();
-					}
 				}
+			}
+			
+			// Bug 368420 - Skip constructor if pattern is *this = toBeCopied;
+			if(expression instanceof IASTBinaryExpression) {
+				IASTBinaryExpression binaryExpression = (IASTBinaryExpression) expression;
+				if(referencesThis(binaryExpression.getOperand1()) && binaryExpression.getOperand1().isLValue()) {
+					skipCurrentConstructor = true;
+				}
+			}
+			
+			if (skipCurrentConstructor) {
+				constructorsStack.peek().clear();
 			}
 			return PROCESS_CONTINUE;
 		}

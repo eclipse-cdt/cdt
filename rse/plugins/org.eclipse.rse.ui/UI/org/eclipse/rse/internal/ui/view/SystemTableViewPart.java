@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2011 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2012 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -47,6 +47,7 @@
  * David McKnight   (IBM)        - [341240] Remote Systems Details view not remembering locked/unlocked state between sessions
  * David McKnight   (IBM)        - [341244] folder selection input to unlocked Remote Systems Details view sometimes fails
  * David McKnight   (IBM)        - [363829] Closing Eclipse with a populated Remote System Details view forces a remote system connection
+ * David McKnight   (IBM)        - [372674] Enhancement - Preserve state of Remote Monitor view
 *******************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -681,7 +682,7 @@ public class SystemTableViewPart extends ViewPart
 		private IMemento _rmemento;
 		public RestoreStateRunnable(IMemento memento)
 		{
-			super("Restore RSE Table"); //$NON-NLS-1$
+			super(SystemResources.RESID_RESTORE_RSE_TABLE_JOB); 
 			_rmemento = memento;
 		}
 
@@ -1839,9 +1840,7 @@ public class SystemTableViewPart extends ViewPart
 	{
 		RestoreStateRunnable rsr = new RestoreStateRunnable(memento);
 		rsr.setRule(RSECorePlugin.getTheSystemRegistry());
-		rsr.setSystem(true);
-		rsr.schedule();
-		
+		rsr.schedule();		
 	}
 
 	/**

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2011 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2012 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -23,14 +23,23 @@
  * Zhou Renjian     (Kortide)    - [282239] Monitor view does not update icon according to connection status
  * David McKnight   (IBM)        - [294663] bad cast in monitor view part refresh action
  * David McKnight   (IBM)        - [340912] inconsistencies with columns in RSE table viewers
+ * David McKnight   (IBM)        - [372674] Enhancement - Preserve state of Remote Monitor view
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.monitor;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -48,13 +57,19 @@ import org.eclipse.rse.core.events.ISystemRemoteChangeListener;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvent;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
 import org.eclipse.rse.core.events.ISystemResourceChangeListener;
+import org.eclipse.rse.core.filters.ISystemFilterReference;
+import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.model.IRSECallback;
 import org.eclipse.rse.core.model.ISystemContainer;
+import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemRegistry;
+import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.ui.SystemPropertyResources;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
+import org.eclipse.rse.ui.SystemPreferencesManager;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.dialogs.SystemPromptDialog;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
@@ -65,6 +80,8 @@ import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.rse.ui.view.SystemTableView;
 import org.eclipse.rse.ui.view.SystemTableViewProvider;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
@@ -81,9 +98,12 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.ISelectionService;
+import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.CellEditorActionHandler;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
@@ -104,14 +124,290 @@ public class SystemMonitorViewPart
 		IRSEViewPart,
 		ISelectionProvider
 {
-
-
-	class RestoreStateRunnable implements Runnable
+	class RestoreStateRunnable extends Job
 	{
-	    public void run()
-	    {
-	    }
+		private IMemento _rmemento;
+		public RestoreStateRunnable(IMemento memento)
+		{
+			super(SystemResources.RESID_RESTORE_RSE_MONITOR_JOB); 
+			_rmemento = memento;
+		}
+
+		public IStatus run(IProgressMonitor monitor)
+		{
+			try {
+				IStatus wstatus = RSECorePlugin.waitForInitCompletion();
+				if (!wstatus.isOK() && wstatus.getSeverity() == IStatus.ERROR){
+					return wstatus;
+				}
+			}
+			catch (InterruptedException e){				
+				return Status.CANCEL_STATUS;
+			}
+			
+			Integer tabCountInt = _memento.getInteger(TAG_MONITOR_TAB_COUNT_ID);
+			if (tabCountInt != null){
+				int tabCount = tabCountInt.intValue();
+				for (int i = 0; i < tabCount && !monitor.isCanceled(); i++){
+					restoreTab(i, monitor);
+				}
+			}
+			return Status.OK_STATUS;
+		}
+		
+		protected void restoreTab(int index, IProgressMonitor monitor){			
+			final IMemento memento = _rmemento;
+			
+			// matches new format for column width memento
+			// new code - as of RSE 3.1
+			final HashMap cachedColumnWidths = new HashMap();
+			
+			// set the cached column widths (for later use)
+			String columnWidths = memento.getString(TAG_MONITOR_TAB_COLUMN_WIDTHS_ID+index);			
+			if (columnWidths != null){			
+				if (columnWidths.indexOf(";") > 0){	//$NON-NLS-1$
+
+	
+					// parse out set of columns
+					String[] columnSets = columnWidths.split(";"); //$NON-NLS-1$
+					for (int i = 0; i < columnSets.length; i++){
+						String columnSet = columnSets[i];
+						
+						// parse out columns for set
+						String[] pair = columnSet.split("="); //$NON-NLS-1$
+						String key = pair[0];
+	
+						// parse out widths
+						String widthArray = pair[1];
+						String[] widthStrs = widthArray.split(","); //$NON-NLS-1$
+						
+						int[] widths = new int[widthStrs.length];
+						for (int w = 0; w < widths.length; w++){
+							widths[w] = Integer.parseInt(widthStrs[w]);
+						}	
+						cachedColumnWidths.put(key, widths);
+					}										
+				}
+			}
+			
+			Boolean pollingOnBool = memento.getBoolean(TAG_MONITOR_TAB_POLLING_ON_ID+index);
+			Integer pollingIntervalInteger = memento.getInteger(TAG_MONITOR_TAB_POLLING_INTERVAL_ID+index);
+			boolean pollingOn = false;
+			int pollingInterval = 100;
+			if (pollingOnBool != null){
+				pollingOn = pollingOnBool.booleanValue();
+			}
+			if (pollingIntervalInteger != null){
+				pollingInterval = pollingIntervalInteger.intValue();
+			}
+			
+						
+			String profileId = memento.getString(TAG_MONITOR_TAB_PROFILE_ID+index);
+			String connectionId = memento.getString(TAG_MONITOR_TAB_CONNECTION_ID+index);
+			String subsystemId = memento.getString(TAG_MONITOR_TAB_SUBSYSTEM_ID+index);
+			final String filterID = memento.getString(TAG_MONITOR_TAB_FILTER_ID+index);
+			final String objectID = memento.getString(TAG_MONITOR_TAB_OBJECT_ID+index);
+
+			ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
+
+			Object input = null;
+			if (subsystemId == null){
+				if (connectionId != null){
+					ISystemProfile profile = registry.getSystemProfile(profileId);
+					input = registry.getHost(profile, connectionId);
+				}
+				else{
+				    // 191288 we now use registry instead of registry ui as input
+					input = registry;
+				}
+			}
+			else {
+				// from the subsystem ID determine the profile, system and subsystem
+				final ISubSystem subsystem = registry.getSubSystem(subsystemId);
+
+				if (subsystem != null) {
+					if (filterID == null && objectID == null) {
+						input = subsystem;
+					}
+					else {
+						if (!subsystem.isConnected()) {
+							try {
+								final Object finInput = input;
+								final boolean fpollingOn = pollingOn;
+								final int fpollingInterval = pollingInterval;
+								subsystem.connect(false, new IRSECallback() {
+									public void done(IStatus status, Object result) {										
+										// this needs to be done on the main thread
+										// so doing an asynchExec()
+										runOnceConnected(new NullProgressMonitor(), finInput, subsystem, filterID, objectID, cachedColumnWidths, fpollingOn, fpollingInterval);
+									}
+								});
+							}
+							catch (Exception e) {
+							}
+						}
+						else {
+							runOnceConnected(monitor, input, subsystem, filterID, objectID, cachedColumnWidths, pollingOn, pollingInterval);
+						}
+						return;
+					} // end else
+				} // end if (subsystem != null)
+			} // end else
+			if (input != null){
+				runWithInput(monitor, input, cachedColumnWidths, pollingOn, pollingInterval);
+			}
+		}
+
+
+		public IStatus runOnceConnected(IProgressMonitor monitor, Object input, ISubSystem subsystem, String filterID, String objectID, 
+				HashMap cachedColumnWidths, boolean pollingOn, int pollingInterval)
+		{
+			if (monitor.isCanceled()){
+				return Status.CANCEL_STATUS;
+			}
+			if (subsystem.isConnected()) {
+				if (filterID != null) {
+					try {
+						input = subsystem.getObjectWithAbsoluteName(filterID, monitor);
+					}
+					catch (Exception e) {
+						//ignore
+					}
+				}
+				else {
+					if (objectID != null) {
+						try {
+							input = subsystem.getObjectWithAbsoluteName(objectID, monitor);
+						}
+						catch (Exception e)	{
+							return Status.CANCEL_STATUS;
+						}
+					}
+				} // end else
+			} // end if (subsystem.isConnected)
+			
+			if (input != null){
+				runWithInput(monitor, input, cachedColumnWidths, pollingOn, pollingInterval);
+				return Status.OK_STATUS;
+			}
+			else {
+				return Status.CANCEL_STATUS;
+			}
+		}
+		
+		private class WaitForAdapterJob extends Job {
+			private IAdaptable _input;
+			private HashMap _cachedColumnWidths;
+			private boolean _pollingOn;
+			private int _pollingInterval;
+			public WaitForAdapterJob(IAdaptable input, HashMap cachedColumnWidths, boolean pollingOn, int pollingInterval){
+				super(SystemResources.RESID_RESTORE_RSE_MONITOR_JOB);
+				_input = input;
+				_cachedColumnWidths = cachedColumnWidths;				
+				_pollingOn = pollingOn;
+				_pollingInterval = pollingInterval;
+			}
+			
+			protected IStatus run(IProgressMonitor monitor) {
+				ISystemViewElementAdapter adapter = (ISystemViewElementAdapter)_input.getAdapter(ISystemViewElementAdapter.class);
+				while (adapter == null || monitor.isCanceled()){ 
+					try {
+						synchronized (_input){
+							_input.wait(1000);
+						}
+					} catch (InterruptedException e) {
+					}
+					adapter = (ISystemViewElementAdapter)_input.getAdapter(ISystemViewElementAdapter.class);
+				}
+				if (monitor.isCanceled()){
+					return Status.CANCEL_STATUS;
+				}
+				
+				// got an adapter now
+				// set input needs to be run on the main thread
+				Display.getDefault().asyncExec(new Runnable()
+				{
+					public void run(){
+						addItemToMonitor(_input);
+						MonitorViewPage page = _folder.getCurrentTabItem(); // get the viewer
+						
+						// restore column widths
+						page.getViewer().setCachedColumnWidths(_cachedColumnWidths);
+						
+						// restoring polling
+						page.setPollingEnabled(_pollingOn);
+						page.setPollingInterval(_pollingInterval);
+					}
+				});
+				
+				return Status.OK_STATUS;
+			}			
+		}
+
+		public IStatus runWithInput(IProgressMonitor monitor, Object input, HashMap cachedColumnWidths, boolean pollingOn, int pollingInterval)
+		{
+			if (input != null && input instanceof IAdaptable){
+				final IAdaptable mementoInput = (IAdaptable) input;
+				final HashMap fcachedColumnWidths = cachedColumnWidths;
+				final boolean fpollingOn = pollingOn;
+				final int fpollingInterval = pollingInterval;
+				if (mementoInput != null)
+				{
+					// first make sure the adapter factories are ready
+					ISystemViewElementAdapter adapter = (ISystemViewElementAdapter)mementoInput.getAdapter(ISystemViewElementAdapter.class);
+					if (adapter == null){
+						WaitForAdapterJob job = new WaitForAdapterJob(mementoInput, cachedColumnWidths, pollingOn, pollingInterval);
+						job.schedule();
+					}
+					else {						
+						// set input needs to be run on the main thread
+						Display.getDefault().asyncExec(new Runnable(){
+							public void run(){
+								addItemToMonitor(mementoInput);
+								MonitorViewPage page = _folder.getCurrentTabItem(); // get the viewer
+								
+								// restore column widths
+								page.getViewer().setCachedColumnWidths(fcachedColumnWidths);
+								
+								// restoring polling
+								page.setPollingEnabled(fpollingOn);
+								page.setPollingInterval(fpollingInterval);
+							}
+						});
+					}
+				}
+			}
+			return Status.OK_STATUS;
+		}
+
 	}
+
+
+	
+	
+	// Restore memento tags
+	public static final String TAG_MONITOR_TAB_COUNT_ID = "monitorTabCountID"; //$NON-NLS-1$
+	
+	public static final String TAG_MONITOR_TAB_PROFILE_ID = "monitorTabProfileID_"; //$NON-NLS-1$
+	public static final String TAG_MONITOR_TAB_CONNECTION_ID = "monitorTabConnectionID_"; //$NON-NLS-1$
+	public static final String TAG_MONITOR_TAB_SUBSYSTEM_ID = "monitorTabSubsystemID_"; //$NON-NLS-1$
+	public static final String TAG_MONITOR_TAB_OBJECT_ID = "monitorTabObjectID_"; //$NON-NLS-1$
+	public static final String TAG_MONITOR_TAB_FILTER_ID = "monitorTabFilterID_"; //$NON-NLS-1$
+
+	// Subset memento tags
+	public static final String TAG_MONITOR_TAB_SUBSET_ID = "monitorTabSubsetID_"; //$NON-NLS-1$
+
+	// polling
+	public static final String TAG_MONITOR_TAB_POLLING_ON_ID = "monitorTabPollingOnID_"; //$NON-NLS-1$
+	public static final String TAG_MONITOR_TAB_POLLING_INTERVAL_ID= "monitorTabPollingIntervalID_"; // $NON-NLS-1$
+	
+	// layout memento tags
+	public static final String TAG_MONITOR_TAB_COLUMN_WIDTHS_ID = "monitorTabColumnWidths_"; //$NON-NLS-1$
+	
+
+
+	
+	
 	class PositionToAction extends BrowseAction
 	{
 		class PositionToDialog extends SystemPromptDialog
@@ -669,8 +965,15 @@ class SubSetAction extends BrowseAction
 	public static final String ID = "org.eclipse.rse.ui.view.monitorView"; //$NON-NLS-1$
 	// matches id in plugin.xml, view tag	
 
+	private IMemento _memento = null;
+	
 	public void setFocus()
 	{
+		if (_folder.getInput() == null){
+			if (_memento != null){
+				restoreState(_memento);
+			}
+		}
 		_folder.showCurrentPage();
 	}
 
@@ -712,10 +1015,6 @@ class SubSetAction extends BrowseAction
 		ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 		registry.addSystemResourceChangeListener(this);
 		registry.addSystemRemoteChangeListener(this);
-
-
-		RestoreStateRunnable restore = new RestoreStateRunnable();
-		Display.getCurrent().asyncExec(restore);
 
 		getSite().setSelectionProvider(this);
 		selectionListener = new ISelectionChangedListener() {
@@ -1164,6 +1463,139 @@ class SubSetAction extends BrowseAction
 		menuManager.add(new Separator("Filter")); //$NON-NLS-1$
 		menuManager.add(_positionToAction);
 		menuManager.add(_subsetAction);		
+	}
+
+	private void restoreState(IMemento memento)
+	{
+		RestoreStateRunnable rsr = new RestoreStateRunnable(memento);
+		rsr.setRule(RSECorePlugin.getTheSystemRegistry());
+		rsr.schedule();		
+	}
+	
+	/**
+	* Initializes this view with the given view site.  A memento is passed to
+	* the view which contains a snapshot of the views state from a previous
+	* session.  Where possible, the view should try to recreate that state
+	* within the part controls.
+	* <p>
+	* The parent's default implementation will ignore the memento and initialize
+	* the view in a fresh state.  Subclasses may override the implementation to
+	* perform any state restoration as needed.
+	*/
+	public void init(IViewSite site, IMemento memento) throws PartInitException
+	{
+		super.init(site, memento);
+
+		if (memento != null && SystemPreferencesManager.getRememberState()){
+			_memento = memento;
+		}
+	}
+
+	protected void saveTabState(IMemento memento, CTabItem item, int index){
+		MonitorViewPage page = (MonitorViewPage) item.getData();
+		Object input = page.getInput();
+
+		if (input != null){
+			if (input instanceof ISystemRegistry){
+			}
+			else if (input instanceof IHost){
+				IHost connection = (IHost) input;
+				String connectionID = connection.getAliasName();
+				String profileID = connection.getSystemProfileName();
+				memento.putString(TAG_MONITOR_TAB_CONNECTION_ID+index, connectionID);
+				memento.putString(TAG_MONITOR_TAB_PROFILE_ID+index, profileID);
+			}
+			else{
+				ISystemViewElementAdapter va = (ISystemViewElementAdapter) ((IAdaptable) input).getAdapter(ISystemViewElementAdapter.class);
+
+				ISubSystem subsystem = va.getSubSystem(input);
+				if (subsystem != null){
+					ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
+					String subsystemID = registry.getAbsoluteNameForSubSystem(subsystem);
+					String profileID = subsystem.getHost().getSystemProfileName();
+					String connectionID = subsystem.getHost().getAliasName();
+					String objectID = va.getAbsoluteName(input);
+
+					memento.putString(TAG_MONITOR_TAB_PROFILE_ID+index, profileID);
+					memento.putString(TAG_MONITOR_TAB_CONNECTION_ID+index, connectionID);
+					memento.putString(TAG_MONITOR_TAB_SUBSYSTEM_ID+index, subsystemID);
+
+					if (input instanceof ISystemFilterReference){
+						memento.putString(TAG_MONITOR_TAB_FILTER_ID+index, objectID);
+						memento.putString(TAG_MONITOR_TAB_OBJECT_ID+index, null);
+					}
+					else if (input instanceof ISubSystem){
+						memento.putString(TAG_MONITOR_TAB_OBJECT_ID+index, null);
+						memento.putString(TAG_MONITOR_TAB_FILTER_ID+index, null);
+					}
+					else {
+						memento.putString(TAG_MONITOR_TAB_OBJECT_ID+index, objectID);
+						memento.putString(TAG_MONITOR_TAB_FILTER_ID+index, null);
+					}
+				}
+			}
+
+
+			boolean isConnected = false;
+			// don't reconnect
+			ISystemViewElementAdapter adapter = (ISystemViewElementAdapter)((IAdaptable)input).getAdapter(ISystemViewElementAdapter.class);
+			if (adapter != null){
+				ISubSystem ss = adapter.getSubSystem(input);
+				if (ss != null){
+					isConnected = ss.isConnected();
+				}
+			}				
+
+			SystemTableView viewer = page.getViewer();
+			if (isConnected){ // calling this requires a connect so only do it if already connected
+				viewer.inputChanged(input, input);
+			}
+			Map cachedColumnWidths = viewer.getCachedColumnWidths();
+			StringBuffer columnWidths = new StringBuffer();
+			Iterator keyIter = cachedColumnWidths.keySet().iterator();
+			while (keyIter.hasNext()){
+				String key = (String)keyIter.next();
+				int[] widths = (int[])cachedColumnWidths.get(key);
+				columnWidths.append(key);
+				columnWidths.append('=');
+				
+				for (int w = 0; w < widths.length; w++){						
+					columnWidths.append(widths[w]);
+					if (w != widths.length - 1){
+						columnWidths.append(',');
+					}
+				}
+				
+				// always append this, even with last item
+				columnWidths.append(';');
+			}
+			
+			memento.putString(TAG_MONITOR_TAB_COLUMN_WIDTHS_ID+index, columnWidths.toString());
+			memento.putBoolean(TAG_MONITOR_TAB_POLLING_ON_ID+index, page.isPollingEnabled());
+			memento.putInteger(TAG_MONITOR_TAB_POLLING_INTERVAL_ID+index, page.getPollingInterval());
+		}
+	}
+	
+	/**
+	 * Method declared on IViewPart.
+	 */
+	public void saveState(IMemento memento)
+	{
+		super.saveState(memento);
+
+		if (!SystemPreferencesManager.getRememberState())
+			return;
+				
+		if (_folder != null){
+			CTabFolder flder = _folder.getFolder();
+			int itemCount = flder.getItemCount();
+			memento.putInteger(TAG_MONITOR_TAB_COUNT_ID, itemCount);
+			
+			for (int i = 0; i < itemCount; i++){
+				CTabItem item = flder.getItem(i);
+				saveTabState(memento, item, i);			
+			}
+		}			
 	}
 
 	

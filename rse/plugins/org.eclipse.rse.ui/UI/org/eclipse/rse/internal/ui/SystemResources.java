@@ -25,8 +25,8 @@
  * David Dykstal (IBM) - [188150] adding "go up one level" tooltip
  * David Dykstal (IBM) - [233678] title string is constructed by concatenation, should be substituted
  * David McKnight (IBM) - [248922]  [dnd] Remote to local overwrite copy does not work
- * Anna Dushistova  (MontaVista) - [352072] RSE attempts to use proxy where it should not
-*******************************************************************************/
+ * David McKnight (IBM) - [372674] Enhancement - Preserve state of Remote Monitor view
+ *******************************************************************************/
 
 package org.eclipse.rse.internal.ui;
 
@@ -1052,6 +1052,9 @@ public class SystemResources extends NLS
 	// collision dialog when copying from RSE resources to Eclipse resources
 	public static String RESID_COLLISION_DUPLICATE_RESOURCE_TITLE;
 	public static String RESID_COLLISION_OVERWRITE_RESOURCE_MESSAGE;
+	
+	public static String RESID_RESTORE_RSE_TABLE_JOB;
+	public static String RESID_RESTORE_RSE_MONITOR_JOB;
 
 	static {
 		// load message values from bundle file

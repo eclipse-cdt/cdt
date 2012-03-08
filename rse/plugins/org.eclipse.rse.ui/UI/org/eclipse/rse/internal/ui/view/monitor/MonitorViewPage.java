@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2011 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2012 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -19,6 +19,7 @@
  * Kevin Doyle		(IBM)		 - [212940] Duplicate Help Context Identifiers
  * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  * David McKnight   (IBM)        - [330398] RSE leaks SWT resources
+ * David McKnight   (IBM)        - [372674] Enhancement - Preserve state of Remote Monitor view
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.monitor;
@@ -109,12 +110,10 @@ FocusListener
 				try
 				{
 					Thread.sleep(interval);
-					doQuery();
-				//	while (_querying)
-				//	{
-				//		Thread.sleep(100);
-				//	}
-					doRedraw();
+					if (isPollingEnabled()){
+						doQuery();
+						doRedraw();
+					}
 				}
 				catch (InterruptedException e)
 				{
@@ -299,6 +298,14 @@ FocusListener
 		//setActionHandlers();
 	}
 	
+	public void setPollingInterval(int interval){
+		_pollingInterval = interval;
+		if (_scale != null){
+			_scaleValue.setText(_pollingInterval + "s"); //$NON-NLS-1$
+			_scale.setSelection(_pollingInterval);
+		}
+	}
+	
 	public int getPollingInterval()
 	{
 		return _pollingInterval;
@@ -316,6 +323,16 @@ FocusListener
 	public void setPollingEnabled(boolean flag)
 	{
 		_isPolling = flag;
+		if (_pollCheckbox != null){
+			_pollCheckbox.setSelection(_isPolling);
+			_scale.setEnabled(_isPolling);
+			_scaleValue.setEnabled(_isPolling);
+			
+			if (_pollingThread == null){
+				_pollingThread = new PollingThread();
+				_pollingThread.start();
+			}
+		}
 	}
 
 	public void setEnabled(boolean flag)
@@ -490,10 +507,11 @@ FocusListener
 
 	public void updateTitle(IAdaptable object)
 	{
-			ISystemViewElementAdapter adapter = (ISystemViewElementAdapter)object.getAdapter(ISystemViewElementAdapter.class);
-			
+		ISystemViewElementAdapter adapter = (ISystemViewElementAdapter)object.getAdapter(ISystemViewElementAdapter.class);
+		if (adapter != null){
 			String title = adapter.getText(object);
 			_tabFolderPage.setText(title);
+		}
 	}
 
 	public String getTitle()

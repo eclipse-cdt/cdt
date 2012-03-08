@@ -28,6 +28,8 @@ import org.eclipse.rse.ui.view.SystemTableView;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -48,7 +50,7 @@ public class MonitorViewWorkbook extends Composite
 	{
 		super(parent, SWT.NONE);
 
-		_folder = new CTabFolder(this, SWT.NONE);
+		_folder = new CTabFolder(this, SWT.NULL);
 		_folder.setLayout(new TabFolderLayout());
 		_folder.setLayoutData(new GridData(GridData.FILL_BOTH));
 		setLayout(new FillLayout());
@@ -157,8 +159,10 @@ public class MonitorViewWorkbook extends Composite
 		if (_folder.getItemCount() > 0)
 		{
 			int index = _folder.getSelectionIndex();
-			CTabItem item = _folder.getItem(index);
-			return (MonitorViewPage) item.getData();
+			if (index >= 0){
+				CTabItem item = _folder.getItem(index);
+				return (MonitorViewPage) item.getData();
+			}
 		}
 		return null;
 	}
@@ -223,7 +227,7 @@ public class MonitorViewWorkbook extends Composite
 	{
 		MonitorViewPage monitorViewPage = new MonitorViewPage(_viewPart);
 
-		CTabItem titem = new CTabItem(_folder, SWT.NULL);
+		CTabItem titem = new CTabItem(_folder, SWT.CLOSE);
 		setTabTitle(root, titem);
  
 		titem.setData(monitorViewPage);
@@ -240,6 +244,23 @@ public class MonitorViewWorkbook extends Composite
 			_viewPart.getSite().registerContextMenu(ISystemContextMenuConstants.RSE_CONTEXT_MENU, viewer.getContextMenuManager(), viewer);
 		}
 		monitorViewPage.setFocus();
+		
+		titem.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				Object source = e.getSource();
+				if (source instanceof CTabItem) {
+					CTabItem currentItem = (CTabItem) source;
+					Object data = currentItem.getData();
+					if (data instanceof MonitorViewPage) {
+						MonitorViewPage page = (MonitorViewPage)data;						
+						page.setPollingEnabled(false); // stop polling
+						page.dispose();
+					}
+					updateActionStates();
+				}				
+			}
+
+		});
 	}
 
 	private void setTabTitle(IAdaptable root, CTabItem titem)

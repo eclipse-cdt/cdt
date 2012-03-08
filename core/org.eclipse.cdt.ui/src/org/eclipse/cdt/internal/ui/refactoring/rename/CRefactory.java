@@ -105,7 +105,8 @@ public class CRefactory {
     public String[] getCCppPatterns() {
         IContentType[] cts= Platform.getContentTypeManager().getAllContentTypes();
         HashSet<String> all= new HashSet<String>();
-        for (IContentType type : cts) {
+        for (IContentType candidate : cts) {
+            IContentType type = candidate;
             boolean useIt= false;
             while (!useIt && type != null) {
                 String id= type.getId();
@@ -119,7 +120,7 @@ public class CRefactory {
                 }
             }
             if (useIt) {
-                String exts[] = type.getFileSpecs(IContentType.FILE_EXTENSION_SPEC);
+                String exts[] = candidate.getFileSpecs(IContentType.FILE_EXTENSION_SPEC);
                 all.addAll(Arrays.asList(exts));
             }
         }

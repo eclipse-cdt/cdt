@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * 	  Doug Schaefer (IBM) - Initial API and implementation
- * 	  Mike Kucera - cleanup
+ * 	   Doug Schaefer (IBM) - Initial API and implementation
+ * 	   Mike Kucera - cleanup
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
@@ -21,7 +21,6 @@ package org.eclipse.cdt.core.dom.ast;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class ASTNodeProperty {
-
 	private final String name;
 
 	public ASTNodeProperty(String n) {

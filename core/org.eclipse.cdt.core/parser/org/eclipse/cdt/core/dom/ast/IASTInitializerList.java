@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Doug Schaefer (IBM) - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     Doug Schaefer (IBM) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
@@ -19,7 +19,6 @@ package org.eclipse.cdt.core.dom.ast;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTInitializerList extends IASTInitializer, IASTInitializerClause {
-
 	public static final ASTNodeProperty NESTED_INITIALIZER = new ASTNodeProperty(
 			"IASTInitializerList.NESTED_INITIALIZER [IASTInitializerClause]"); //$NON-NLS-1$
 
@@ -69,5 +68,4 @@ public interface IASTInitializerList extends IASTInitializer, IASTInitializerCla
 	 */
 	@Deprecated
 	public void addInitializer(IASTInitializer initializer);
-
 }

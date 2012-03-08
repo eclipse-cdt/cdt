@@ -17,7 +17,6 @@ package org.eclipse.cdt.core.dom.ast;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTFunctionDefinition extends IASTDeclaration {
-
 	/**
 	 * <code>DECL_SPECIFIER</code> represents the relationship between a
 	 * <code>IASTFunctionDefinition</code> and its

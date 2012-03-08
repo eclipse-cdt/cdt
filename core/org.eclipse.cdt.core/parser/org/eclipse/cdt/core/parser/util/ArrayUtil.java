@@ -145,6 +145,27 @@ public abstract class ArrayUtil {
     }
 
     /**
+     * Assumes that array contains nulls at the end, only. 
+     * Appends object using the current length of the array.
+     * @param array The array to append to. Not {@code null}
+     * @param currentLength The number of non-{@code null} elements in the array
+     * @param obj The object to append. Not {@code null}
+     * @return The modified array, which may be the same as the first parameter. 
+     * @since 5.4
+     */
+	static public <T> T[] appendAt(T[] array, int currentLength, T obj) {
+    	if (obj == null)
+    		return array;
+    	if (currentLength >= array.length) {
+        	array = Arrays.copyOf(array, Math.max(Math.max(currentLength + 1, array.length * 2), DEFAULT_LENGTH));
+    	}
+   		Assert.isTrue(array[currentLength] == null);
+   		Assert.isTrue(currentLength == 0 || array[currentLength - 1] != null);
+   		array[currentLength]= obj;
+   		return array;
+    }
+
+    /**
      * Trims the given array and returns a new array with no null entries.
      * Assumes that nulls can be found at the end, only.
      * if array == null, a new array of length 0 is returned
@@ -214,6 +235,25 @@ public abstract class ArrayUtil {
      */
 	static public <T> T[] trim(T[] array) {
 		return trim(array, false);
+	}
+
+    /**
+     * Trims the given array and returns a new array with no {@code null} entries.
+     * Assumes that {@code null}s can be found at the end, only.
+     * Similar to {@link #trimAt(Class, Object[], int)}, but uses the new length instead of index.
+     *  
+     * @param array the array to be trimmed
+     * @param newLength the new length of the array, has to be less or equal than
+     *     the current length.
+     * @return the modified array, which may be the same as the first parameter. 
+     * @since 5.4
+     */
+	static public <T> T[] trim(T[] array, int newLength) {
+		if (newLength == array.length)
+			return array;
+   		Assert.isTrue(array[newLength] == null);
+   		Assert.isTrue(newLength == 0 || array[newLength - 1] != null);
+		return Arrays.copyOf(array, newLength);
 	}
 
     /**
@@ -446,7 +486,7 @@ public abstract class ArrayUtil {
 	}
 
 	/**
-	 * @deprecated Use {@link #trimAt(Class, Object[], int)} instead
+	 * @deprecated Use {@link #trim(Object[], int)} or {@link #trimAt(Class, Object[], int)} instead
 	 */
 	@SuppressWarnings("unchecked")
 	@Deprecated
@@ -456,10 +496,13 @@ public abstract class ArrayUtil {
 
 	/**
 	 * To improve performance, this method should be used instead of
-	 * {@link #removeNulls(Class, Object[])} when all of the non-<code>null</code> elements in
+	 * {@link #removeNulls(Class, Object[])} when all of the non-{@code null} elements in
 	 * the array are grouped together at the beginning of the array and all of the nulls are at
-	 * the end of the array. The position of the last non-null element in the array must also
-	 * be known. 
+	 * the end of the array. The position of the last non-{@code null} element in the array must also
+	 * be known.
+	 * <p>
+	 * If you don't indend to pass {@code null} array, consider using {@link #trim(Object[], int)}
+	 * instead.
 	 *
 	 * @since 5.1
 	 */
@@ -525,7 +568,7 @@ public abstract class ArrayUtil {
 			System.arraycopy(array, 0, array, 1, i);
 			array[0] = obj;
         } else {
-			T[] temp = newArray(array, array.length*2);
+			T[] temp = newArray(array, array.length * 2);
 	        System.arraycopy(array, 0, temp, 1, array.length);
 	        temp[0] = obj;
 	        array = temp;

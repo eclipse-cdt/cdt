@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM) - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     John Camelon (IBM) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.c;
 
@@ -16,15 +16,14 @@ import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 
 /**
- * This interface represents a designated initializer. e.g. struct x y = { .z=4,
- * .t[1] = 3 };
+ * This interface represents a designated initializer,
+ * e.g. struct x y = { .z = 4, .t[1] = 3 };
  * 
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICASTDesignatedInitializer extends IASTInitializer, IASTInitializerClause {
-
-	public static final ICASTDesignator[] EMPTY_DESIGNATOR_ARRAY = new ICASTDesignator[0];
+	public static final ICASTDesignator[] EMPTY_DESIGNATOR_ARRAY = {};
 
 	public static final ASTNodeProperty DESIGNATOR = new ASTNodeProperty(
 			"ICASTDesignatedInitializer.DESIGNATOR [ICASTDesignator]"); //$NON-NLS-1$
@@ -77,5 +76,4 @@ public interface ICASTDesignatedInitializer extends IASTInitializer, IASTInitial
 	 */
 	@Deprecated
 	public void setOperandInitializer(IASTInitializer rhs);
-	
 }

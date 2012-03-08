@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM) - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
- *    Mike Kucera (IBM)
+ *     John Camelon (IBM) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *     Mike Kucera (IBM)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
@@ -26,7 +26,6 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPASTNewExpression extends IASTExpression, IASTImplicitNameOwner {
-
 	public static final ASTNodeProperty NEW_PLACEMENT = new ASTNodeProperty(
 			"ICPPASTNewExpression.NEW_PLACEMENT [IASTExpression]"); //$NON-NLS-1$
 
@@ -82,7 +81,6 @@ public interface ICPPASTNewExpression extends IASTExpression, IASTImplicitNameOw
 	 */
 	@Override
 	public ICPPASTNewExpression copy(CopyStyle style);
-
 	
 	/**
 	 * Not allowed on frozen ast.

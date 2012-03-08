@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * 	  Sergey Prigogin (Google) - initial API and implementation
+ * 	   Sergey Prigogin (Google) - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
@@ -16,7 +16,6 @@ import org.eclipse.cdt.core.parser.util.IObjectMatcher;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class ASTTypeMatcher implements IObjectMatcher {
-
 	/**
 	 * Returns <code>true</code> if the two objects are equal or represent the same type.
 	 */

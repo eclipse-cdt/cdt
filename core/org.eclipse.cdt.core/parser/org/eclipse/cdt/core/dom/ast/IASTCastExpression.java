@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM Rational Software) - Initial API and implementation
+ *     John Camelon (IBM Rational Software) - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
@@ -17,6 +17,17 @@ package org.eclipse.cdt.core.dom.ast;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTCastExpression extends IASTExpression {
+	/**
+	 * <code>TYPE_ID</code> represents the relationship between a cast
+	 * expression and the type cast to.
+	 */
+	public static final ASTNodeProperty TYPE_ID = new ASTNodeProperty("IASTCastExpression.TYPE_ID - Type Id expression is cast to"); //$NON-NLS-1$
+
+	/**
+	 * <code>OPERAND</code> represents the relationship between a cast
+	 * expression and the expression it is casting (operand).
+	 */
+	public static final ASTNodeProperty OPERAND = new ASTNodeProperty("IASTCastExpression.OPERAND - expression being cast"); //$NON-NLS-1$
 
 	/**
 	 * <code>op_cast</code> represents a traditional cast.
@@ -43,12 +54,6 @@ public interface IASTCastExpression extends IASTExpression {
 	public void setOperator(int value);
 
 	/**
-	 * <code>OPERAND</code> represents the relationship between a cast
-	 * expression and the expression it is casting (operand).
-	 */
-	public static final ASTNodeProperty OPERAND = new ASTNodeProperty("IASTCastExpression.OPERAND - expression being cast"); //$NON-NLS-1$
-
-	/**
 	 * Get expression being cast.
 	 * 
 	 * @return <code>IASTExpression</code> the expression being cast
@@ -62,12 +67,6 @@ public interface IASTCastExpression extends IASTExpression {
 	 *            <code>IASTExpression</code> the expression to be cast
 	 */
 	public void setOperand(IASTExpression expression);
-
-	/**
-	 * <code>TYPE_ID</code> represents the relationship between a cast
-	 * expression and the type cast to.
-	 */
-	public static final ASTNodeProperty TYPE_ID = new ASTNodeProperty("IASTCastExpression.TYPE_ID - Type Id expression is cast to"); //$NON-NLS-1$
 
 	/**
 	 * Set the typeId.

@@ -6,19 +6,18 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM) - Initial API and implementation
+ *     John Camelon (IBM) - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
 /**
- * This interface represents a parse problem where we tried to match against a
- * expression.
+ * This interface represents a parse problem where we tried to match against
+ * an expression.
  * 
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTProblemExpression extends IASTExpression, IASTProblemHolder {
-
 	/**
 	 * @since 5.1
 	 */

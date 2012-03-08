@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM) - Initial API and implementation
- *    Mike Kucera (IBM)
+ *     John Camelon (IBM) - Initial API and implementation
+ *     Mike Kucera (IBM)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
@@ -22,7 +22,6 @@ import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPASTDeleteExpression extends IASTExpression, IASTImplicitNameOwner {
-
 	/**
 	 * <code>OPERAND</code> is the expression representing the pointer being
 	 * deleted.
@@ -66,12 +65,11 @@ public interface ICPPASTDeleteExpression extends IASTExpression, IASTImplicitNam
 	public void setIsVectored(boolean vectored);
 
 	/**
-	 * Is this a delete [] ?
+	 * Is this a delete[] ?
 	 * 
 	 * @return boolean
 	 */
 	public boolean isVectored();
-
 	
 	/**
 	 * @since 5.1

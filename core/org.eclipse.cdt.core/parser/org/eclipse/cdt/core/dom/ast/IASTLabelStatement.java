@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Doug Schaefer (IBM) - Initial API and implementation
+ *     Doug Schaefer (IBM) - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
@@ -37,13 +37,15 @@ public interface IASTLabelStatement extends IASTStatement, IASTNameOwner {
 	 */
 	public void setName(IASTName name);
 
-
+	/**
+	 * Returns the statement following the label.
+	 */
     public IASTStatement getNestedStatement();
     
     /**
      * @param s
      */
-    public void setNestedStatement( IASTStatement s );
+    public void setNestedStatement(IASTStatement s);
     
     /**
 	 * @since 5.1
@@ -56,5 +58,4 @@ public interface IASTLabelStatement extends IASTStatement, IASTNameOwner {
 	 */
 	@Override
 	public IASTLabelStatement copy(CopyStyle style);
-
 }

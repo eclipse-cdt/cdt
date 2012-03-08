@@ -30,9 +30,9 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
  */
 public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPASTFunctionDeclarator,
 		IASTAmbiguityParent {
-    private ICPPASTParameterDeclaration[] parameters = null;
+    private ICPPASTParameterDeclaration[] parameters;
     private IASTTypeId[] typeIds = NO_EXCEPTION_SPECIFICATION;
-    private IASTTypeId trailingReturnType= null;
+    private IASTTypeId trailingReturnType;
     
     private boolean varArgs;
     private boolean pureVirtual;
@@ -40,7 +40,7 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
     private boolean isConst;
     private boolean isMutable;
     
-    private ICPPFunctionScope scope = null;
+    private ICPPFunctionScope scope;
     
     public CPPASTFunctionDeclarator() {
 	}

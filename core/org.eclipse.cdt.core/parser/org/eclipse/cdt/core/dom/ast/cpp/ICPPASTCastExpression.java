@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM) - Initial API and implementation
+ *     John Camelon (IBM) - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
@@ -19,7 +19,6 @@ import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPASTCastExpression extends IASTCastExpression {
-
 	/**
 	 * <code>op_dynamic_cast</code> is used for dynamic_cast<>'s.
 	 */
@@ -45,10 +44,15 @@ public interface ICPPASTCastExpression extends IASTCastExpression {
 	 */
 	public static final int op_last = op_const_cast;
 	
-	
 	/**
 	 * @since 5.1
 	 */
 	@Override
 	public ICPPASTCastExpression copy();
+
+	/**
+	 * @since 5.4
+	 */
+	@Override
+	public ICPPASTCastExpression copy(CopyStyle style);
 }

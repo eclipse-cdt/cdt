@@ -1,0 +1,99 @@
+2012-01-03  Jeff Johnston  <jjohnstn@redhat.com>
+
+	Refactor to org.eclipse.cdt.autotools.ui.tests.
+
+2011-10-18  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* build.properties: Remove src.includes references to remove warnings.
+
+2010-06-22  Jeff Johnston  <jjohnstn@redhat.com>
+
+	Tests: #317345
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/tests/TestToolActions.java (canSeeTools): New test. 
+	(canAccessAclocal2): Ditto.
+	(canAccessAutoconf2): Ditto.
+	(canAccessAutomake2): Ditto.
+	(canAccessLibtoolize2): Ditto.
+	(canAccessAutoheader2): Ditto. 
+	(canAccessAutoreconf2): Ditto.
+	(canReconfigureProject2): Ditto.
+	(canSetTools): Ditto.
+	(canResetTools): Ditto.
+
+2010-06-04  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/tests/SetConfigurationParameter.java (canBuildWithConfigParm): Add a check
+	for the Configure console showing a warning about the unknown option.
+
+2010-05-21  Jeff Johnston  <jjohnstn@redhat.com>
+
+	Tests: #313754
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/tests/TestMakeTargets.java: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/tests/AllTests.java: Add TestMakeTargets.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/tests/TestEnvironmentVars.java (setEnvVarOnCommandLine): Add extra
+	environment variables that follow the command. 
+
+2010-05-13  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/tests/AllTests.java: 
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/tests/TestToolActions.java (sleep): Don't exit Eclipse since this
+	is no longer the last test in the list. 
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/tests/TestEnvironmentVars.java: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/tests/SetConfigurationParameter.java (canBuildWithConfigParm): Add
+	test for bug #308261.
+
+2010-05-05  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/tests/SetConfigurationParameter.java (canBuildWithConfigParm): Wait until
+	a.out is created before looking at config.status as we could end up looking at config.status while it is being created. 
+	(newConfigCopiesParms): Don't assume that active configuration will be set in configuration list.
+
+2010-04-29  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/tests/SetConfigurationParameter.java (canBuildWithConfigParm): Add
+	waiting period before testing existence of created file to ensure action has run on a slower system. 
+	(newConfigCopiesParms): Ditto.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/tests/TestToolActions.java (canAccessAutoconf): Ditto. 
+	(canAccessAutomake): Ditto.
+	(canReconfigureProject): Ditto.
+	(canAccessAutoreconf): Ditto.
+	(canAccessAclocal): Ditto.
+	* plugin.properties: Change provider to Eclipse instead of Eclipse.org.
+	* META-INF/MANIFEST.MF: Add BundleLocalization statement so plugin.properties gets
+    used.
+
+2010-04-22  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* plugin.properties: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/tests/AllTests.java: New file.
+	* build.properties: Make plugin.properties part of binary build.
+	* META-INF/MANIFEST.MF: Change Java requirement to 1.5.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/tests/Activator.java: Add copyright notice. 
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/tests/SetConfigurationParameter.java (beforeClass): Close
+	Welcome view optionally if it exists.  Also hard-wire keyboard to EN_US. 
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/tests/TestToolActions.java (beforeClass): Ditto.
+	(sleep): Close Eclipse.
+
+2010-04-19  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/tests/TestToolActions.java (canAccessAutoheader): New test. 
+	(canAccessAutomake): Ditto.
+	(canReconfigureProject): Ditto.
+	(canAccessLibtoolize): Ditto.
+	(canAccessAutoreconf): Ditto.
+
+2010-04-15  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/tests/TestToolActions.java: New file.
+	(canAccessAutomake): New test.
+
+2010-04-12  Jeff Johnston  <jjohnstn@redhat.com>
+
+	Initial check-in.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/tests/Activator.java: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/tests/SetConfigurationParameter.java: New file.
+	* build.properties: New file.
+	* .project: New file.
+	* .classpath: New file.
+	* .settings: New file.
+	* META-INF/MANIFEST.MF: New file.

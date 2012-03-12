@@ -1,0 +1,984 @@
+2012-01-03  Jeff Johnston  <jjohnstn@redhat.com>
+
+	Refactor entire plug-in to org.eclipse.cdt.autotools.ui.
+
+2011-12-16  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/preferences/AutoconfEditorPreferencePage.java (fACVersions): Add
+	2.68.
+	(fAMVersions): Add 1.11.1.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/text/hover/AutoconfTextHover.java (getIndexedInfoFromDocument): Fix
+	code to not compare StringBuffer directly with empty string.
+	(getAMDoc): Fix code to use UI plugin for getting local data files.
+	(getACDoc): Ditto.
+	* macros/ammacros-1.11.1.xml: New file.
+	* macros/acmacros-2.68.xml: New file.
+	* macros/GFDL-1.3.html: New file.
+
+2011-09-23  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/properties/AutotoolsCategoryPropertyOptionPage.java (createFieldEditors): Add
+	flag value support.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/properties/AutotoolsConfigurePrefStore.java (getBoolean): Modify for
+	flag value support.
+
+2011-09-19  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/properties/ToolListContentProvider.java (getElements): Add check for
+	null.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/StaticTargetRule.java (setPrerequisitePatterns): Fix
+	typo in name.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/TargetRule.java (setDependencies): Removed.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/Else.java (setRules): Add
+	check for rules being null.
+	(getRules): Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/If.java (getRules): Ditto.
+	(setRules): Ditto.
+
+2011-08-24  Jeff Johnston  <jjohnstn@redhat.com>
+
+	Fix for #355134
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/actions/AbstractAutotoolsHandler.java (execute): New
+	method that uses HandlerUtil to get selection for action to use.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/actions/ReconfigureHandler.java (execute): Fix
+	to use AbstractAutotoolsHandler execute method.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/actions/LibtoolizeHandler.java (execute): Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/actions/AutoreconfHandler.java (execute): Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/actions/AutomakeHandler.java (execute): Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/actions/AclocalHandler.java (execute): Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/actions/AutoconfHandler.java (execute): Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/actions/AutoheaderHandler.java (execute): Ditto.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/IAutotoolsEditor.java: Remove extraneous
+	getAdapter prototype.
+
+2011-06-16  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/parser/IAutoconfMacroValidator.java (validateMacroCall): Add
+	InvalidMacroException as possible throws.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/parser/AutoconfParser.java (parse): Remove
+	version number parameter.
+	(parseMacro): Add check for InvalidMacroException.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/AutoconfReconcilingStrategy.java (reconcile): Call
+	parser without a version number.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/AutoconfEditorMacroValidator.java (validateMacroCall): Add
+	macro validate() call here and calculate autoconf version from feditor project.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/AutoconfEditor.java (reparseDocument): Change
+	to use parse with no version number.
+
+2011-06-16  Sami Wagiaalla  <swagiaal@redhat.com>
+    
+    Resolves: #348260
+   	* plugin.xml: Insert template for an autotools shared library project.
+   	* templates/projecttemplates/AutotoolsSharedLibraryProject/exampleProgram/exampleProgram.c: New file.
+   	* templates/projecttemplates/AutotoolsSharedLibraryProject/exampleProgram/Makefile.am: Ditto.
+   	* templates/projecttemplates/AutotoolsSharedLibraryProject/include/libExample.h: Ditto.
+   	* templates/projecttemplates/AutotoolsSharedLibraryProject/include/Makefile.am: Ditto.
+   	* templates/projecttemplates/AutotoolsSharedLibraryProject/libExample/libExample.c: Ditto.
+   	* templates/projecttemplates/AutotoolsSharedLibraryProject/libExample/Makefile.am: Ditto.
+   	* templates/projecttemplates/AutotoolsSharedLibraryProject/AUTHORS: Ditto.
+   	* templates/projecttemplates/AutotoolsSharedLibraryProject/ChangeLog: Ditto.
+   	* templates/projecttemplates/AutotoolsSharedLibraryProject/configure.ac: Ditto.
+   	* templates/projecttemplates/AutotoolsSharedLibraryProject/COPYING: Ditto.
+   	* templates/projecttemplates/AutotoolsSharedLibraryProject/Makefile.am: Ditto.
+   	* templates/projecttemplates/AutotoolsSharedLibraryProject/NEWS: Ditto.
+   	* templates/projecttemplates/AutotoolsSharedLibraryProject/README: Ditto.
+   	* templates/projecttemplates/AutotoolsSharedLibraryProject/template.properties: Ditto.
+   	* templates/projecttemplates/AutotoolsSharedLibraryProject/template.xml: Ditto.
+   	
+2011-06-16  Sami Wagiaalla  <swagiaal@redhat.com>
+
+	Resolves: #348432
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/AutoconfReconcilingStrategy.java
+	(reconcile): Pass Autoconf version number to parser.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/AutoconfEditor.java
+	(reparseDocument): Ditto.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/parser/InvalidMacroArgumentException.java:
+	New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/parser/InvalidMacroException.java:
+	Ditto.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/parser/AutoconfParser.java
+	(createMacroElement): New function.
+	(handleError): Ditto.
+	(checkMacro): Use createMacroElement.
+	(parse): Set curentVersion.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/parser/AutoconfMacroElement.java
+	(validate): New function.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/parser/AutoconfElement.java
+	(getLength): New function.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/AutoconfMacro.java:
+	Corrected formatting.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/AutoconfEditorMessages.properties:
+	Added messages for invalid for bad first, and second arguments of AC_INIT.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/AcInitElement.java: New
+	file.
+	    	
+2011-05-18  Jeff Johnston  <jjohnstn@redhat.com>
+
+	Resolves: #312298
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/wizards/AutotoolsBuildWizardHandler.java (createProject): 
+	New override method to add logic post project creation that causes Scanner info to be written to the .cproject
+	file.
+
+2011-04-27  Jeff Johnston  <jjohnstn@redhat.com>
+
+	Resolves: #343905
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/actions/InvokeAction.java (..run): 
+	Add support for running autotools commands under Windows and Mac.
+
+2011-04-26  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/actions/InvokeAction.java (..run): 
+	Start the global console to clear it before running the action.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/actions/ReconfigureAction.java (..run): Ditto.
+
+2010-12-03  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* META-INF/MANIFEST.MF: Bump up version to 1.0.1 for release 0.7.
+
+2010-11-19  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/wizards/ConvertToAutotoolsProjectWizardPage.java (convertProject): 
+	Specify no override when calling to mapCProjectOwner method.
+
+2010-09-14  Jeff Johnston  <jjohnstn@redhat.com>
+
+	Resolves: #325194
+	* plugin.xml: Add enable restrictions for Autotools General and Configure Settings
+	property pages.
+
+2010-08-25  Jeff Johnston  <jjohnstn@redhat.com>
+
+	Patch from Marc-Andre Laperle  <malaperle@omnialabs.net>
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/wizards/AutotoolsBuildWizard.java (EMPTY_PROJECT): Switch
+	to use local messages. 
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/wizards/AutotoolsWizardMessages.properties: Add some
+	messages that were formerly fetched from the CDT. 
+
+2010-08-05  Andrew Overholt  <overholt@redhat.com>
+
+	* plugin.properties: Change provider to Eclipse Linux Tools.
+
+2010-07-19  Jeff Johnston  <jjohnstn@redhat.com>
+
+	Bug #314334
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/AddBuildTargetAction.java: Removed.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/MakefileContentOutlinePage.java (MakefileContentOutlinePage):
+	Remove reference to AddBuildTargetAction which isn't used. 
+	(contextMenuAboutToShow): Ditto.
+
+2010-07-12  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/AutomakeErrorHandler.java: 
+	(AutomakeAnnotation.setQuickFixable): Remove unnecessary override statement.
+	(AutomakeAnnotation.isQuickFixableStateSet): Ditto.
+	(AutomakeAnnotation.isQuickFixable): Ditto.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/AutoconfErrorHandler.java: 
+	(AutoconfAnnotation.setQuickFixable): Remove unnecessary override statement.
+	(AutoconfAnnotation.isQuickFixableStateSet): Ditto.
+	(AutoconfAnnotation.isQuickFixable): Ditto.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/AutoconfDocumentProvider.java (shutdown): Remove references to
+	Java rawtypes annotation which doesn't exist in J2SE-1.5. 
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/outline/AutoconfContentOutlinePage.java (updateSelection): Ditto. 
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/autoconf/ProjectionFileUpdater.java (createAnnotationMap): Ditto. 
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/AddBuildTargetAction.java (getTargetRules): Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/AutomakeDocumentProvider.java (shutdown): Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/AutomakeEditor.java (getAdapter): Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/ExternalEditorInput.java (getAdapter): Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/MakefileEditor.java (getAdapter): Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/OpenIncludeAction.java (getIncludeStatement): Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/ProjectionMakefileUpdater.java (initialize): Ditto.
+	(createAnnotationMap): Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/ResourceMarkerAnnotationModel.java (batchedUpdate): Ditto. 
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/SelectionStatusDialog.java (getPrimaryInitialSelection): Ditto.
+	(setInitialSelection): Ditto. 
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/HTMLTextPresenter.java (adaptTextPresentation): Ditto.
+
+2010-07-12  Jeff Johnston  <jjohnstn@redhat.com>
+
+	Fix for bug #314348
+	* plugin.xml: Make AutomakeEditor default for .am and Makefile.in files.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/AutoconfAnnotationHover.java (select): Use
+	Annotations rather than IMarkers. 
+	(getAnnotationsForLine): New method.
+	(getHoverInfo): Change logic to get annotations and get messages as opposed to using
+	markers.
+	(getAnnotationsForLine): 
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/AutoconfEditor.java (getAdapter): Fix warning.
+	(getAdapter): 
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/AutoconfErrorHandler.java (AutoconfAnnotation): New class. 
+	(AutoconfAnnotation.AutoconfAnnotation): New method.
+	(AutoconfAnnotation.setQuickFixable): Ditto.
+	(AutoconfAnnotation.isQuickFixableStateSet): Ditto. 
+	(AutoconfAnnotation.isQuickFixable): Ditto.
+	(handleError): Instead of adding a hacked up IMarker and creating a MarkerAnnotation, create
+	a normal annotation and add it to the annotation model.
+	(removeExistingMarkers): Fix warning.
+	(removeExistingMarkers): 
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/AutomakeErrorHandler.java (AutomakeAnnotation):
+	New class.
+	(checkChildren): Add an AutomakeAnnotation to the annotation model rather than a MarkerAnnotation which requires us to
+	make up our own IMarker implementation. 
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/MakefileAnnotationHover.java: Add
+	implements IAnnotationHoverExtension. 
+	(fEditor): Mark	unused for now.
+	(compareRulerLine): New method.
+	(select): Ditto.
+	(getAnnotationsForLine): Ditto.  
+	(getHoverInfo): Change to get annotations and fetch the annotation text.
+	(formatSingleMessage): New method.
+	(formatMultipleMessages): Ditto.
+	(getHoverControlCreator): Ditto.
+	(.createInformationControl): New internal class.
+	(canHandleMouseCursor): New method. 
+	(getHoverLineRange): Ditto.
+	(getAnnotationsForLine): 
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/MakefileDocumentProvider.java (MakefileAnnotationModel): 
+	(MakefileAnnotationModel.MakefileAnnotationModel): 
+	(shutdown): 
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/MakefileMessages.java (getResourceBundle): New static
+	method.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/MakeFileMessages.properties: Add message for bad directive.
+	Currently unused because of problem loading resource bundle. 
+
+2010-07-06  Andrew Overholt  <overholt@redhat.com>
+
+	* about.html: Add missing file.
+	* build.properties: Likewise.
+
+2010-06-25  Jeff Johnston  <jjohnstn@redhat.com>
+
+	Bug #314358
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/AutoconfEditor.java: Remove AdaptedSourceViewer class. 
+	(createSourceViewer): Return ProjectionViewer.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/MakefileEditor.java (createSourceViewer): Ditto.
+	 
+2010-06-25  Jeff Johnston  <jjohnstn@redhat.com>
+
+	Bug #314359
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/MessageLine.java (MessageLine): Rewritten to not extend CLabel but
+	instead to have an internal CLabel field because CLabel is nonextend.
+	(setErrorMessage): New method.
+	(setMessage): Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/MessageLine.java (MessageLine): Rewritten to
+	not extend CLabel which is nonextend.
+	(setErrorMessage): New method.
+	(setMessage): Ditto.
+	(isDisposed): Ditto.
+	(setAlignment): Ditto.
+	(setLayoutData): Ditto.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/AutoconfAnnotationHover.java (getMarkersForLine): Fix warnings. 
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/AutoconfDocumentProvider.java (shutdown): Ditto. 
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/AutoconfEditor.java (getAdapter): Ditto. 
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/AutoconfErrorHandler.java (AutoconfMarker): Ditto. 
+	(AutoconfMarker.getAdapter): Ditto.
+	(AutoconfMarker.setAttributes): Ditto.
+	(removeExistingMarkers): Ditto.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/outline/AutoconfContentOutlinePage.java (updateSelection):  
+	Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/autoconf/ProjectionFileUpdater.java (createAnnotationMap): Ditto. 
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/AddBuildTargetAction.java (getTargetRules): Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/AutomakeDocumentProvider.java (shutdown): Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/AutomakeEditor.java (getAdapter): Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/AutomakeErrorHandler.java (AutomakeMarker): Ditto. 
+	(AutomakeMarker.getAdapter): Ditto.
+	(AutomakeMarker.getAttributes): Ditto.
+	(AutomakeMarker.setAttributes): Ditto.
+	(createMarker): Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/ExternalEditorInput.java (getAdapter): Ditto. 
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/MakefileDocumentProvider.java (shutdown): Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/MakefileEditor.java (getAdapter): Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/OpenIncludeAction.java (getIncludeStatement): 
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/ProjectionMakefileUpdater.java (initialize): 
+	(createAnnotationMap): 
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/ResourceMarkerAnnotationModel.java (batchedUpdate): 
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/SelectionStatusDialog.java (getPrimaryInitialSelection): 
+	(setInitialSelection): 
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/HTMLTextPresenter.java (adaptTextPresentation): 
+
+2010-06-22  Jeff Johnston  <jjohnstn@redhat.com>
+
+	Resolves: #317345
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/actions/InvokeLibtoolizeAction.java (run): Fix typo for property
+	to load.
+
+2010-05-25  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/AutomakefileContentOutlinePage.java: Remove
+	unused import warning.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/ResourceLookupTree.java: Ditto.
+
+2010-05-17  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/IMakefileEditorActionDefinitionIds.java: Do not
+	extend ITextEditorDefinitionIds as it is not extensible and it is not required.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/AutomakefileContentOutlinePage.java: Remove
+	extraneous implements of IContentOutlinePage since this is implemented by the 
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/ResourceMarkerAnnotationModel.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/MakefileDocumentProvider.java: Refer to
+	local ResourceMarkerAnnotationModel class. 
+	
+2010-05-17  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* META-INF/MANIFEST.MF: Add org.eclipse.linuxtools.cdt.autotools as a friend that can access
+	internal classes.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/wizards/ReferenceBlock.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/wizards/AutotoolsWizardMessages.properties: Add new message
+	for Referenced projects.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/wizards/ConvertToAutotoolsProjectWizard.java (applyOptions): Suppress
+	warnings.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/wizards/ManagedProjectOptionBlock.java: Extend the new
+	ReferenceBlock rather than the API-restricted one in CDT.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/wizards/NewAutotoolsProjectOptionPage.java: Suppress warnings.
+	
+2010-05-17  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/IArchiveTarget.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/IBadDirective.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/ICommand.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/IComment.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/IConditional.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/IDefaultRule.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/IDeleteOnErrorRule.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/IDirective.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/IEmptyLine.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/IExportAllVariablesRule.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/IGNUMakefile.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/IIgnoreRule.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/IInclude.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/IInferenceRule.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/IIntermediateRule.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/ILowResolutionTimeRule.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/IMacroDefinition.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/IMakefile.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/IMakefileReaderProvider.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/IMakefileValidator.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/INotParallelRule.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/IParent.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/IPhonyRule.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/IPosixRule.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/IPreciousRule.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/IRule.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/ISccsGetRule.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/ISecondaryRule.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/ISilentRule.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/ISpecialRule.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/ISuffixesRule.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/ITarget.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/ITargetRule.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/ITerminal.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/IUnExport.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/IVariableDefinition.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/IVPath.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/IWorkingCopyManager.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/IWorkingCopyManagerExtension.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/AbstractMakefile.java: Modify to use new
+	interfaces so we don't violate new API restrictions from Makefile plugin.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/AddBuildTargetAction.java: Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/AutomakeCompletionProcessor.java: Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/AutomakeDocumentProvider.java: Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/AutomakeEditor.java: Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/AutomakeEditorFactory.java: Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/AutomakeErrorHandler.java: Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/Automakefile.java: Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/AutomakefileContentOutlinePage.java: Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/AutomakefileReconcilingStrategy.java: Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/AutomakeTextHover.java: Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/BadDirective.java: Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/Command.java: Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/Comment.java: Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/Conditional.java: Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/DefaultRule.java: Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/DeleteOnErrorRule.java: Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/Directive.java: Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/Else.java: Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/EmptyLine.java: Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/ExportAllVariablesRule.java: Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/GNUAutomakefile.java (createMakefile): Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/GNUTargetRule.java: Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/GNUVariableDef.java: Ditto. 
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/If.java: Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/IgnoreRule.java: Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/IMakefileDocumentProvider.java: Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/Include.java: Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/InferenceRule.java: Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/IntermediateRule.java: Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/LowResolutionTimeRule.java: Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/MacroDefinition.java: Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/MakefileAnnotationHover.java: Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/MakefileCompletionProcessor.java: Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/MakefileContentOutlinePage.java: Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/MakefileDocumentProvider.java (createMakefile): Ditto. 
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/MakefileEditor.java: Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/MakefileReconcilingStrategy.java: Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/MakefileTextHover.java: Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/NotParallelRule.java: Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/NullMakefile.java: Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/OpenDeclarationAction.java: Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/Parent.java: Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/PhonyRule.java: Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/PosixRule.java: Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/PreciousRule.java: Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/ProjectionMakefileUpdater.java: Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/Rule.java: Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/SccsGetRule.java: Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/SecondaryRule.java: Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/SilentRule.java: Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/SpecialRule.java: Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/StaticTargetRule.java: Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/SuffixesRule.java: Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/Target.java: Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/TargetRule.java: Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/Terminal.java: Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/UnExport.java: Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/VariableDefinition.java: Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/VPath.java: Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/WorkingCopyManager.java: Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/ResourceLookupTree.java (resourceChanged): Use AutotoolsUIPlugin
+	log method.
+	(add): Ditto.
+	(initializeProjects): Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/text/hover/AutoconfTextHover.java (getStyleSheet): Ditto. 
+
+2010-04-29  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* META-INF/MANIFEST.MF: Change required Java env to J2SE-1.5 instead of 1.6.
+
+2010-04-09  Jeff Johnston  <jjohnstn@redhat.com>
+
+	Resolves #307258
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/MakefileEditor.java (isTabsToSpacesConversionEnabled): 
+	Add override method so tabs are not converted within the Automake editor.
+
+2010-03-15  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/wizards/ConvertToAutotoolsProjectWizardPage.java (convertProject): Move
+	creation of Autotools configuration to bottom as we must ensure that an ICConfigurationDescription
+	has been set up for the default configuration and we can't do this manually ourselves.
+
+2010-03-12  Jeff Johnston  <jjohnstn@redhat.com>
+
+	Resolves #304005
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/properties/AutotoolsCategoryPropertyOptionPage.java (createFieldEditors): 
+	Specify minimum length of 20 for text entry windows. 
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/properties/AutotoolsConfigurePropertyPage.java (cfgChanged): Store configuration
+	descriptor for possible later usage.
+	(getConfiguration): Changed to use id rather than name.
+	(getAllConfigurationData): New method. 
+	(getCfgd): New method.
+	(AutotoolsConfigurePropertyPage): No longer implement ICloneCfgListener interface.  No longer keep track of temporary configuration
+	list.  This is now done by AutotoolsConfigurationManager.
+	(cloneCfg): Removed.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/properties/AutotoolsConfigurePropertyTab.java (createEditArea): Comment out
+	minimum size setting.
+	(setValues): Remove resizing.
+	(syncClones): New method.
+	(createControls): Sync all clones and clear the temporary configuration list.
+	(updateData): Get configuration description.
+	(performApply): Call AutotoolsConfigurationManager to do apply passing the Configuration Description list for
+	the page instead of calling performOk.
+	(getAutotoolsCfg): Change to use id rather than name. 
+	(performCancel): Call AutotoolsConfigurationManager to clear temporary configuration list.
+	(performOK): Changed to use new calls to AutotoolsConfigurationManager.
+	(specificResize): Removed.
+	(calcExtra): Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/wizards/AutotoolsBuildWizardHandler.java (convertProject): Create
+	configuration by id not name. 
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/wizards/ConvertToAutotoolsProjectWizardPage.java (convertProject): Ditto. 
+
+2010-02-25  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/properties/AutotoolsConfigurePropertyPage.java (cloneCfg): If
+	clonee is null, assign new configuration to clonee variable to avoid NPE.
+
+2010-02-24  Jeff Johnston  <jjohnstn@redhat.com>
+
+	Resolves #303613
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/Resources.properties: Fix message
+	issued for autoreconf.
+
+2009-12-01  Jeff Johnston  <jjohnstn@redhat.com>
+
+	Resolves #296616
+	* META-INF/MANIFEST.MF: Revert dependency on org.eclipse.linuxtools.cdt.autotools plugin which
+	causes a dependency loop.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/wizards/ConvertToAutotoolsProjectWizardPage.java (convertProject): 
+	Change code to use new removeOldAutotoolsNature method in AutotoolsNewProjectNature class.
+
+2009-12-01  Jeff Johnston  <jjohnstn@redhat.com>
+
+	Resolves #296616
+	* META-INF/MANIFEST.MF: Add dependency on org.eclipse.linuxtools.cdt.autotools plugin.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/wizards/ConvertToAutotoolsProjectWizardPage.java (convertProject): 
+	Remove old Autotools nature from existing project.
+
+2009-11-17  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* templates/projecttemplates/HelloWorldCAutotoolsProject/template.xml: Make sure COPYING file
+	is copied over as part of template.
+	* templates/projecttemplates/HelloWorldCPPAutotoolsProject/template.xml: Ditto. 
+
+2009-11-11  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/Resources.properties: Fix conversion wizard messages
+	to not mention CVS or repository.
+
+2009-11-04  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* META-INF/MANIFEST.MF: Fix dependencies to support CDT 6.0.0 and up.
+
+2009-11-02  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/text/hover/AutoconfTextHover.java: Clean up warning.
+	* plugin.xml: Add back conversion wizard which is needed to convert from old Autotools project
+	to new as well as convert a Std Makefile project over.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/properties/AutotoolsConfigurePropertyPage.java: Remove
+	the override logic and use the base AbstractPage plus some additions.
+	(cfgChanged):  Change this to be a place-holder for future usage. 
+	(getConfiguration): Add any configuration we create to the cfgs list.
+	(isSingle): Return true.
+	(AutotoolsConfigurePropertyPage): Changed to only set cfgs.
+	(cloneCfg): Changed to only access cfgs local variable.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/properties/AutotoolsConfigurePropertyTab.java (performOK): 
+	Change to get IConfiguration list and then for each IConfiguration, get the IAConfiguration from
+	the parent page.  This allows the parent page to only have to track cloned and special Autotools
+	configurations as opposed to knowing the entire list.
+
+2009-10-29  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/EditorUtility.java (getWorkingCopy): Clean up.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/properties/AutotoolsPropertyMessages.java: Change to reference
+	bundle using class name rather than by string.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/text/hover/AutoconfTextHover.java (getHoverDoc): Add compatibility
+	support for old projects which use compatiblity plugin. 
+	(getDefaultAutomakeMacrosVer): New method.
+	(getDefaultAutoconfMacrosVer): Ditto.
+	(getLocalAutoconfMacrosDocName): Ditto.
+	(getLocalAutomakeMacrosDocName): Ditto.
+	(getHoverDoc): Change to use new interfaces.
+	(getAMDoc): Change to try local files.
+	(getACDoc): Ditto.
+
+2009-10-27  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/wizards/AutotoolsBuildWizardHandler.java: New file.
+	* META-INF/MANIFEST.MF: Change dependencies to match CDT 6.0.1.
+	* plugin.properties: Add new strings as needed.
+	* plugin.xml: Fix Autotools sub-pages which had been removed.  Also comment out GNU Autotools-specific
+	project wizards and conversion wizards.  These are all done under the C/C++ Wizards now.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/AutotoolsUIPluginImages.java: Clean up AutotoolsPlugin reference.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/MakeUIImages.java: Ditto.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/EditorUtility.java (getWorkingCopy): Change to
+	use new findSharedWorkingCopy API since old public one has been removed from the CDT.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/properties/AutotoolsConfigurePropertyPage.java (handleConfigSelection): 
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/wizards/AutotoolsBuildWizard.java (createItems): Use the new
+	AutotoolsBuildWizardHandler so we get proper project conversion in the CDT C and C++ Conversion Wizards. 
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/wizards/AutotoolsWizardMessages.properties: Add new message.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/wizards/ConvertToAutotoolsProjectWizard.java: Clean up unused
+	imports.
+
+2009-10-20  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/wizards/ConvertToAutotoolsProjectWizard.java (doRun): Remove
+	commented section. 
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/wizards/ConvertToAutotoolsProjectWizardPage.java (convertProject): Add
+	creation of default Autotools configuration.
+	 
+2009-10-20  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/properties/AutotoolsBuildPropertyPage.java (createControls): Remove
+	scanner discovery option which is no longer pertinent. 
+	(initialize): Ditto. 
+	(performOK): Ditto.
+
+2009-10-15  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/AutotoolsUIPluginImages.java (static initializer): Make sure
+	we are referencing icons folder for this plug-in, not AutotoolsPlugin. 
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/HTMLTextPresenter.java (updatePresentation): Fix references to
+	AutotoolsPlugin that should be AutotoolsUIPlugin. 
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/MakeUIImages.java (static initializer): Ditto. 
+	(makeIconFileURL): Ditto.
+
+2009-10-15  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* plugin.xml: Fix Automake editor content-type typo.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/wizards/ConvertToAutotoolsProjectWizard.java (doRun): Put
+	back code to do conversion.
+
+2009-10-13  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* META-INF/MANIFEST.MF: Add export of packages and allow org.eclipse.linuxtools.cdt.autotools.tests
+	plug-in to see them.
+
+2009-10-09  Jeff Johnston  <jjohnstn@redhat.com>
+
+	Refactoring of org.eclipse.linuxtools.cdt.autotools into org.eclipse.linuxtools.cdt.autotools.core
+	and org.eclipse.linuxtools.cdt.autotools.ui.
+	
+	* .classpath: New file.
+	* .project: New file.
+	* .settings/org.eclipse.jdt.core.prefs: New file.
+	* build.properties: New file.
+	* icons/ac16/acmacro_arg_obj.gif: New file.
+	* icons/ac16/acmacro_obj.gif: New file.
+	* icons/ac16/ammacro_obj.gif: New file.
+	* icons/ac16/case_obj.gif: New file.
+	* icons/ac16/condition_obj.gif: New file.
+	* icons/ac16/convert_normal.gif: New file.
+	* icons/ac16/elif_obj.gif: New file.
+	* icons/ac16/else_obj.gif: New file.
+	* icons/ac16/for_obj.gif: New file.
+	* icons/ac16/if_obj.gif: New file.
+	* icons/ac16/while_obj.gif: New file.
+	* icons/autoconf.gif: New file.
+	* icons/automake.gif: New file.
+	* icons/dlcl16/build_configs.gif: New file.
+	* icons/dlcl16/config_category.gif: New file.
+	* icons/dlcl16/config_tool.gif: New file.
+	* icons/dlcl16/newc_app.gif: New file.
+	* icons/dlcl16/newcc_app.gif: New file.
+	* icons/dlcl16/open_include.gif: New file.
+	* icons/dtool16/alphab_sort_co.gif: New file.
+	* icons/dtool16/build_menu.gif: New file.
+	* icons/dtool16/convert-normal.gif: New file.
+	* icons/dtool16/make.gif: New file.
+	* icons/dtool16/makefile.gif: New file.
+	* icons/dtool16/newc_app.gif: New file.
+	* icons/dtool16/newcc_app.gif: New file.
+	* icons/dtool16/segment_edit.gif: New file.
+	* icons/dtool16/target_add.gif: New file.
+	* icons/dtool16/target_build.gif: New file.
+	* icons/dtool16/target_delete.gif: New file.
+	* icons/dtool16/target_edit.gif: New file.
+	* icons/dtool16/update_old.gif: New file.
+	* icons/elcl16/build_configs.gif: New file.
+	* icons/elcl16/config_category.gif: New file.
+	* icons/elcl16/config_tool.gif: New file.
+	* icons/elcl16/newc_app.gif: New file.
+	* icons/elcl16/newcc_app.gif: New file.
+	* icons/elcl16/open_include.gif: New file.
+	* icons/etool16/alphab_sort_co.gif: New file.
+	* icons/etool16/build_menu.gif: New file.
+	* icons/etool16/convert_normal.gif: New file.
+	* icons/etool16/make.gif: New file.
+	* icons/etool16/makefile.gif: New file.
+	* icons/etool16/newc_app.gif: New file.
+	* icons/etool16/newcc_app.gif: New file.
+	* icons/etool16/segment_edit.gif: New file.
+	* icons/etool16/target_add.gif: New file.
+	* icons/etool16/target_build.gif: New file.
+	* icons/etool16/target_delete.gif: New file.
+	* icons/etool16/target_edit.gif: New file.
+	* icons/etool16/target_filter.gif: New file.
+	* icons/etool16/update_old.gif: New file.
+	* icons/obj16/acmacro_obj.gif: New file.
+	* icons/obj16/command_obj.gif: New file.
+	* icons/obj16/define_obj.gif: New file.
+	* icons/obj16/environment_obj.gif: New file.
+	* icons/obj16/envvar_obj.gif: New file.
+	* icons/obj16/error_obj.gif: New file.
+	* icons/obj16/fatalerror_obj.gif: New file.
+	* icons/obj16/hfolder_obj.gif: New file.
+	* icons/obj16/include_obj.gif: New file.
+	* icons/obj16/info_obj.gif: New file.
+	* icons/obj16/irule_obj.gif: New file.
+	* icons/obj16/lib_obj.gif: New file.
+	* icons/obj16/macro_obj.gif: New file.
+	* icons/obj16/relation_obj.gif: New file.
+	* icons/obj16/target_obj.gif: New file.
+	* icons/obj16/trule_obj.gif: New file.
+	* icons/obj16/warning_obj.gif: New file.
+	* icons/sample.gif: New file.
+	* META-INF/MANIFEST.MF: New file.
+	* plugin.properties: New file.
+	* plugin.xml: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/AutotoolsUIPlugin.java: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/AutoconfAnnotationHover.java: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/AutoconfCodeScanner.java: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/AutoconfDocumentProvider.java: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/AutoconfDocumentSetupParticipant.java: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/AutoconfEditor.java: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/AutoconfEditorMacroValidator.java: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/AutoconfEditorMessages.java: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/AutoconfEditorMessages.properties: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/AutoconfErrorHandler.java: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/AutoconfIdentifierRule.java: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/AutoconfKeywordDetector.java: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/AutoconfM4WordDetector.java: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/AutoconfMacro.java: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/AutoconfMacroCodeScanner.java: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/AutoconfMacroContentAssistProcessor.java: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/AutoconfMacroDamagerRepairer.java: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/AutoconfMacroParameterListValidator.java: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/AutoconfMacroPartitionRule.java: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/AutoconfMacroProposalContextInformation.java: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/AutoconfMacroRule.java: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/AutoconfMacroWordDetector.java: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/AutoconfPartitioner.java: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/AutoconfPartitionScanner.java: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/AutoconfPKGWordDetector.java: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/AutoconfReconcilingStrategy.java: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/AutoconfSourceViewerConfiguration.java: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/AutoconfWhitespaceDetector.java: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/AutoconfWordDetector.java: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/IAutotoolEditorActionDefinitionIds.java: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/IAutotoolHelpContextIds.java: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/IAutotoolsEditor.java: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/InlineDataRule.java: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/MultilineRuleDamagerRepairer.java: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/outline/AutoconfContentOutlinePage.java: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/outline/AutoconfContentProvider.java: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/outline/AutoconfLabelProvider.java: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/ParseException.java: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/parser/AutoconfCaseConditionElement.java: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/parser/AutoconfCaseElement.java: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/parser/AutoconfElement.java: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/parser/AutoconfElifElement.java: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/parser/AutoconfElseElement.java: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/parser/AutoconfForElement.java: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/parser/AutoconfIfElement.java: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/parser/AutoconfMacroArgumentElement.java: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/parser/AutoconfMacroDetector.java: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/parser/AutoconfMacroElement.java: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/parser/AutoconfOutlineErrorHandler.java: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/parser/AutoconfParser.java: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/parser/AutoconfRootElement.java: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/parser/AutoconfSelectElement.java: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/parser/AutoconfTokenizer.java: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/parser/AutoconfUntilElement.java: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/parser/AutoconfWhileElement.java: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/parser/IAutoconfErrorHandler.java: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/parser/IAutoconfMacroDetector.java: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/parser/IAutoconfMacroValidator.java: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/parser/IMacroDetector.java: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/parser/ITokenConstants.java: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/parser/ParseException.java: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/parser/Token.java: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/RecursiveSingleLineRule.java: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/editors/RestrictedEndOfLineRule.java: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/ui/Resources.properties: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/AbstractAutotoolsCPropertyTab.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/actions/AbstractAutotoolsHandler.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/actions/AbstractTargetAction.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/actions/AclocalHandler.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/actions/AutoconfHandler.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/actions/AutoheaderHandler.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/actions/AutomakeHandler.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/actions/AutoreconfHandler.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/actions/InvokeAclocalAction.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/actions/InvokeAction.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/actions/InvokeAutoconfAction.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/actions/InvokeAutoheaderAction.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/actions/InvokeAutomakeAction.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/actions/InvokeAutoreconfAction.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/actions/InvokeLibtoolizeAction.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/actions/InvokeMessages.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/actions/InvokeMessages.properties: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/actions/LibtoolizeHandler.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/actions/ReconfigureAction.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/actions/ReconfigureHandler.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/actions/SingleInputDialog.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/actions/TwoInputDialog.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/AutotoolsConsole.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/AutotoolsUIPluginImages.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/CBuildStepsConsole.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/CConfigureConsole.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/Console.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/ConsoleMessages.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/ConsoleMessages.properties: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/CWordFinder.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/autoconf/ProjectionFileUpdater.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/AbstractElementListSelectionDialog.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/AbstractMakefile.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/AbstractMakefileCodeScanner.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/AddBuildTargetAction.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/ArchiveTarget.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/AutoconfSubstRule.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/AutomakeCompletionProcessor.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/AutomakeConfigMacro.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/AutomakeDocumentProvider.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/AutomakeEditor.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/AutomakeEditorFactory.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/AutomakeErrorHandler.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/Automakefile.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/AutomakefileCodeScanner.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/AutomakefileContentOutlinePage.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/AutomakefileReconcilingStrategy.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/AutomakefileSourceConfiguration.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/AutomakefileUtil.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/AutomakeIfElse.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/AutomakeMacroDefinitionRule.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/AutomakeMacroReferenceRule.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/AutomakeTextHover.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/AutomakeWordDetector.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/BadDirective.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/Command.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/Comment.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/CompletionProposalComparator.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/Conditional.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/DefaultRule.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/DefineVariable.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/DeleteOnErrorRule.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/Directive.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/EditorUtility.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/ElementListSelectionDialog.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/Else.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/EmptyLine.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/Endef.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/Endif.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/ExportAllVariablesRule.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/ExportVariable.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/ExternalEditorInput.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/ExternalEditorInputFactory.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/GNUAutomakefile.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/GNUMakefileConstants.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/GNUMakefileUtil.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/GNUTargetRule.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/GNUVariableDef.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/IAutomakeConditional.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/If.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/Ifdef.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/Ifeq.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/Ifndef.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/Ifneq.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/IgnoreRule.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/IMakefileDocumentProvider.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/IMakefileEditorActionDefinitionIds.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/Include.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/InferenceRule.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/IntermediateRule.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/IReconcilingParticipant.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/ISelectionValidator.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/ITranslationUnitEditorInput.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/LexicalSortingAction.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/LowResolutionTimeRule.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/MacroDefinition.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/MacroDefinitionRule.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/MacroReferenceRule.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/MakefileAnnotationHover.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/MakefileCodeScanner.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/MakefileCompletionProcessor.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/MakeFileConstants.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/MakefileContentOutlinePage.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/MakefileDocumentProvider.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/MakefileDocumentSetupParticipant.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/MakefileEditor.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/MakefileEditorActionContributor.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/MakefileEditorPreferenceConstants.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/MakefileEditorTogglePresentationAction.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/MakefileMessages.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/MakeFileMessages.properties: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/MakefilePartitionScanner.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/MakefileReader.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/MakefileReconcilingStrategy.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/MakefileSourceConfiguration.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/MakefileStorageDocumentProvider.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/MakefileTextHover.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/MakefileWordDetector.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/MessageLine.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/NotParallelRule.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/NullMakefile.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/OpenDeclarationAction.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/OpenIncludeAction.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/OverrideDefine.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/OverrideVariable.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/Parent.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/PhonyRule.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/PosixMakefileUtil.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/PosixRule.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/PreciousRule.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/ProjectionMakefileUpdater.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/Rule.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/SccsGetRule.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/SecondaryRule.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/SelectionList.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/SelectionStatusDialog.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/SilentRule.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/SpecialRule.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/StaticTargetRule.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/StatusInfo.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/StatusTool.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/StringMatcher.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/SuffixesRule.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/Target.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/TargetRule.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/TargetVariable.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/Terminal.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/TwoArrayQuickSort.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/UnExport.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/Util.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/VariableDefinition.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/VPath.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/WordPartDetector.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/editors/automake/WorkingCopyManager.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/ErrorParserBlock.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/FileRelevance.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/HTML2TextReader.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/HTMLPrinter.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/HTMLTextPresenter.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/LineBreakingReader.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/LocationAdapter.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/MakeUIImages.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/MakeUIMessages.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/MakeUIMessages.properties: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/MessageLine.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/OptionalMessageDialog.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/preferences/AbstractEditorPreferencePage.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/preferences/AutoconfEditorPreferencePage.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/preferences/AutomakeEditorPreferencePage.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/preferences/AutotoolsEditorPreferenceConstants.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/preferences/AutotoolsPreferencePage.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/preferences/AutotoolsPreferencesMessages.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/preferences/AutotoolsPreferencesMessages.properties: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/preferences/ColorEditor.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/preferences/ColorManager.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/preferences/OverlayPreferenceStore.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/preferences/StatusInfo.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/preferences/TabFolderLayout.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/properties/AbstractConfigurePropertyOptionsPage.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/properties/AutotoolsBuildPropertyPage.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/properties/AutotoolsCategoryPropertyOptionPage.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/properties/AutotoolsConfigurePrefStore.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/properties/AutotoolsConfigurePropertyPage.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/properties/AutotoolsConfigurePropertyTab.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/properties/AutotoolsEditorPropertyTab.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/properties/AutotoolsGeneralPropertyPage.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/properties/AutotoolsHeadPropertyPage.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/properties/AutotoolsPropertyManager.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/properties/AutotoolsPropertyMessages.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/properties/AutotoolsPropertyMessages.properties: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/properties/AutotoolsToolPropertyOptionPage.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/properties/AutotoolsToolsPropertyTab.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/properties/IProjectPropertyListener.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/properties/IPropertyChangeManager.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/properties/ToolListContentProvider.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/properties/ToolListElement.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/properties/ToolListLabelProvider.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/ResourceLookup.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/ResourceLookupTree.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/SingleCharReader.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/SubstitutionTextReader.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/text/hover/AutoconfPrototype.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/text/hover/AutoconfTextHover.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/text/hover/HoverMessages.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/text/hover/HoverMessages.properties: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/wizards/AutotoolsBuildWizard.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/wizards/AutotoolsNewCCProjectWizardV2.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/wizards/AutotoolsNewCProjectWizardV2.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/wizards/AutotoolsWizardMessages.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/wizards/AutotoolsWizardMessages.properties: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/wizards/ConfigurationContentProvider.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/wizards/ConfigurationLabelProvider.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/wizards/ConvertToAutotoolsProjectWizard.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/wizards/ConvertToAutotoolsProjectWizardPage.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/wizards/CProjectPlatformPage.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/wizards/ManagedProjectOptionBlock.java: New file.
+	* src/org/eclipse/linuxtools/internal/cdt/autotools/ui/wizards/NewAutotoolsProjectOptionPage.java: New file.
+	* templates/projecttemplates/EmptyProject/template.properties: New file.
+	* templates/projecttemplates/EmptyProject/template.xml: New file.
+	* templates/projecttemplates/HelloWorldCAutotoolsProject/src: New file.
+	* templates/projecttemplates/HelloWorldCAutotoolsProject/template.properties: New file.
+	* templates/projecttemplates/HelloWorldCAutotoolsProject/template.xml: New file.
+	* templates/projecttemplates/HelloWorldCPPAutotoolsProject/src: New file.
+	* templates/projecttemplates/HelloWorldCPPAutotoolsProject/template.properties: New file.
+	* templates/projecttemplates/HelloWorldCPPAutotoolsProject/template.xml: 

@@ -1,0 +1,138 @@
+2012-02-17  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* p2.inf: Add additional info so update path
+	from old autotools feature to new works smoothly.
+
+2012-01-03  Jeff Johnston  <jjohnstn@redhat.com>
+
+	Refactor to org.eclipse.cdt.autotools-feature.
+
+2011-08-16  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* pom.xml: Bump up feature to 3.0.1.
+	* feature.xml: Ditto.
+
+2011-05-10  Jeff Johnston  <jjohnstn@redhat.com>
+
+	Resolves: #342895
+	* feature.xml: Remove autotools compatibility plug-in.  Bump up to
+	version 3.0.0.
+	* pom.xml: Update version number.
+
+2010-12-03  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* feature.xml: Bump up version to 2.0.1 for 0.7 release.
+
+2010-05-18  Andrew Overholt  <overholt@redhat.com>
+
+	* feature.properties: Fix provider name.
+
+2010-04-26  Andrew Overholt  <overholt@redhat.com>
+
+	* feature.properties: Match consistent license text (bug #306627).  Update
+	copyright year.
+	* license.html: New file.  HTML version of SUA (bug #306627).
+	* build.properties: Include license.html.
+	* about.html: Remove.
+	* feature.xml: Use licenseURL property instead of explicit URL.
+
+2010-04-12  Andrew Overholt  <overholt@redhat.com>
+
+	* feature.properties: Match consistent license text (bug #306627).
+
+2009-11-10  Andrew Overholt  <overholt@redhat.com>
+
+	* feature.properties: Make featureName a bit more user-friendly.
+
+2009-11-04  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* feature.xml: Fix dependencies to support CDT 6.0.0 and up.
+
+2009-11-03  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* feature.xml: Fix feature id.
+
+2009-10-21  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* feature.xml: Add revised org.eclipse.linuxtools.cdt.autotools plug-in that has been
+	set up for compatbility mode to build older projects.
+
+2009-10-13  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* feature.xml: Bump to 2.0.0.  Refer to new org.eclipse.linuxtools.cdt.autotools.core and
+	org.eclipse.linuxtools.cdt.autotools.ui plug-ins.
+
+2009-04-24  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* feature.xml: Fix dependencies to not require 6.0.0 CDT plugins as they
+	aren't in the CDT Master zip yet for Galileo builds.
+
+2009-04-23  Andrew Overholt  <overholt@redhat.com>
+
+	* feature.xml: Use 6.0.0 CDT requirements on Galileo branch.
+
+2009-01-15  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* feature.xml: Bump up version to 1.0.2.
+
+2009-01-08  Jeff Johnston  <jjohnstn@redhat.com>
+
+	Fixes #260436
+	
+	* feature.xml: Add .qualifier to version id.
+
+2009-01-06  Andrew Overholt  <overholt@redhat.com>
+
+	* feature.xml: Add update site information.
+	* build.properties: Add feature.properties and epl-v10.html.
+
+2008-10-31  Andrew Overholt  <overholt@redhat.com>
+
+	* feature.xml: Use %featureName, %provider, %copyright, and %description from
+	feature.properties.  Add "(Incubation)".
+	* feature.properties: Initial import.
+	* epl-v10.html: Likewise.
+
+2008-10-14  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* feature.xml: Update release to 1.0.1.
+
+2008-08-08  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* feature.xml: Update release to 1.0.0.
+
+2008-01-28  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* feature.xml: Update release to 0.9.6.
+
+2007-12-05  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* feature.xml: Update release to 0.9.5.3.
+
+2007-11-19  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* feature.xml: Update release to 0.9.5.2.
+
+2007-10-23  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* feature.xml: Update release to 0.9.5.1.
+
+2007-10-04  jjohnstn  <jjohnstn@vermillion>
+
+	* feature.xml: Update release to 0.9.5.
+
+2007-09-24  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* feature.xml: Update release to 0.9.4.
+
+2007-09-05  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* feature.xml: Update release to 0.9.3.
+
+2007-08-17  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* feature.xml: Fix up release number.
+
+2007-07-19  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* feature.xml: Fix up description to not reference sample url.

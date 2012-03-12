@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<toc topic="Linux_Tools_Project/Autotools/User_Guide/User-Guide.html" label="Autotools Plug-in User Guide">
+	<topic href="Linux_Tools_Project/Autotools/User_Guide/User-Guide.html" label="Autotools Plug-in User Guide">
+		<topic href="Linux_Tools_Project/Autotools/User_Guide/User-Guide.html" label="Introduction"></topic>
+		<topic href="Linux_Tools_Project/Autotools/User_Guide/Supported-Environments.html" label="Supported Environments"></topic>
+		<topic href="Linux_Tools_Project/Autotools/User_Guide/Creating-an-Autotools-Project.html" label="Creating an Autotools Project"></topic>
+		<topic href="Linux_Tools_Project/Autotools/User_Guide/Configuration.html" label="Configuration"></topic>
+		<topic href="Linux_Tools_Project/Autotools/User_Guide/Invoking-Autotools.html" label="Invoking Autotools"></topic>
+		<topic href="Linux_Tools_Project/Autotools/User_Guide/Special-Editors.html" label="Special Editors"></topic>
+		<topic href="Linux_Tools_Project/Autotools/User_Guide/Building.html" label="Building"></topic>
+		<topic href="Linux_Tools_Project/Autotools/User_Guide/Make-Targets.html" label="Make Targets"></topic>
+		<topic href="Linux_Tools_Project/Autotools/User_Guide/Updating-This-Document.html" label="Updating This Document"></topic>
+	</topic>
+</toc>

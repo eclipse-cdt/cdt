@@ -252,7 +252,7 @@ public class PasswordPersistenceManager {
 		}
 	}
 
-	private boolean removePassword(Map passwords, String hostname, String userid) {
+	private boolean removeFromPasswordMap(Map passwords, String hostname, String userid) {
 		boolean removed = false;
 		String password = null;
 	
@@ -295,7 +295,7 @@ public class PasswordPersistenceManager {
 	
 	}
 
-	private String getPassword(Map passwords, String hostname, String userid) {
+	private String getFromPasswordMap(Map passwords, String hostname, String userid) {
 		String password = null;
 	
 		String passwordKey = getPasswordKey(hostname, userid);
@@ -375,10 +375,10 @@ public class PasswordPersistenceManager {
 			if (passwords == null) {
 				passwords = new HashMap(5);
 			}
-			String oldPassword = getPassword(passwords, hostName, userId);
+			String oldPassword = getFromPasswordMap(passwords, hostName, userId);
 			if (oldPassword != null) {
 				if (overwrite) {
-					removePassword(passwords, hostName, userId);
+					removeFromPasswordMap(passwords, hostName, userId);
 				} else {
 					result = RC_ALREADY_EXISTS;
 				}
@@ -445,7 +445,7 @@ public class PasswordPersistenceManager {
 		Map passwords = getPasswordMap(systemtype);
 	
 		if (passwords != null) {
-			String password = getPassword(passwords, hostname, userid);
+			String password = getFromPasswordMap(passwords, hostname, userid);
 	
 			if (password != null) {
 				return new SystemSignonInformation(hostname, userid, password, systemtype);
@@ -512,7 +512,7 @@ public class PasswordPersistenceManager {
 		}
 		Map passwords = getPasswordMap(systemType);
 		if (passwords != null) {
-			if (removePassword(passwords, hostname, userid)) {
+			if (removeFromPasswordMap(passwords, hostname, userid)) {
 				savePasswordMap(systemType.getId(), passwords);
 			}
 		}

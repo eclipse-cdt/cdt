@@ -38,7 +38,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.rse.core.model.SystemSignonInformation;
 import org.eclipse.rse.internal.core.RSECoreMessages;
 
-
 /**
  * PasswordPersistenceManager manages the saving and retrieving of user ID /
  * passwords to the Eclipse keyring for registered system types.
@@ -55,7 +54,7 @@ public class PasswordPersistenceManager {
 	// to display to the user in the password information preference page
 	private static final String SERVER_URL = "file://rse"; //$NON-NLS-1$
 
-	private static final String AUTH_SCHEME = "";	// no authorization scheme specified for apis  //$NON-NLS-1$
+	private static final String AUTH_SCHEME = ""; // no authorization scheme specified for apis  //$NON-NLS-1$
 
 	// Add return codes
 	public static final int RC_OK = 0;
@@ -87,22 +86,26 @@ public class PasswordPersistenceManager {
 	/**
 	 * Default System Type
 	 */
-	private static class DefaultSystemType extends AbstractRSESystemType implements IRSESystemType
-	{
+	private static class DefaultSystemType extends AbstractRSESystemType implements IRSESystemType {
 		private static final String DEFAULT_ID = "DEFAULT"; //$NON-NLS-1$
+
 		private DefaultSystemType() {
 			super(DEFAULT_ID, DEFAULT_ID, RSECoreMessages.DefaultSystemType_Label, null, null);
 		}
+
 		public String getId() {
 			//TODO consider a space character at the beginning to ensure uniqueness
 			return DEFAULT_ID;
 		}
+
 		public String[] getSubsystemConfigurationIds() {
 			return null;
 		}
+
 		public Object getAdapter(Class adapter) {
 			return null;
 		}
+
 		public boolean isEnabled() {
 			return true;
 		}
@@ -111,13 +114,11 @@ public class PasswordPersistenceManager {
 	/**
 	 * Inner class used for storing registered system types
 	 */
-	private class RegisteredSystemType
-	{
+	private class RegisteredSystemType {
 		private IRSESystemType _systemType;
 		private boolean _userIDCaseSensitive;
 
-		protected RegisteredSystemType(IRSESystemType systemType, boolean caseSensitive)
-		{
+		protected RegisteredSystemType(IRSESystemType systemType, boolean caseSensitive) {
 			_systemType = systemType;
 			_userIDCaseSensitive = caseSensitive;
 		}
@@ -142,7 +143,7 @@ public class PasswordPersistenceManager {
 	/**
 	 * Singleton so private constructor
 	 */
-	private PasswordPersistenceManager(){
+	private PasswordPersistenceManager() {
 		String userName = System.getProperty("user.name"); //$NON-NLS-1$
 
 		if (userName == null) {
@@ -155,10 +156,8 @@ public class PasswordPersistenceManager {
 	/**
 	 * Retrieve the singleton instance of the PasswordPersistenceManger
 	 */
-	public static final synchronized PasswordPersistenceManager getInstance()
-	{
-		if (_instance == null)
-		{
+	public static final synchronized PasswordPersistenceManager getInstance() {
+		if (_instance == null) {
 			_instance = new PasswordPersistenceManager();
 			_instance.initExtensions();
 		}
@@ -168,8 +167,7 @@ public class PasswordPersistenceManager {
 	/*
 	 * initialization - register system types
 	 */
-	private void initExtensions()
-	{
+	private void initExtensions() {
 		IRSESystemType[] sysTypes = RSECorePlugin.getTheCoreRegistry().getSystemTypes();
 		systemTypes = new RegisteredSystemType[sysTypes.length];
 
@@ -182,8 +180,7 @@ public class PasswordPersistenceManager {
 	 * Remove the entry from the keyring that matches the systemtype, hostname and
 	 * user ID from the SystemSignonInfo parameter.
 	 */
-	public void remove(SystemSignonInformation info)
-	{
+	public void remove(SystemSignonInformation info) {
 		remove(info.getSystemType(), info.getHostname(), info.getUserId());
 	}
 
@@ -241,8 +238,7 @@ public class PasswordPersistenceManager {
 	 * Check if a password entry exists for the specified system type, hostname
 	 * and userid.
 	 */
-	public boolean passwordExists(IRSESystemType systemtype, String hostname, String userid)
-	{
+	public boolean passwordExists(IRSESystemType systemtype, String hostname, String userid) {
 
 		return passwordExists(systemtype, hostname, userid, true);
 	}
@@ -256,8 +252,7 @@ public class PasswordPersistenceManager {
 	 * @param userid The user ID to check for.
 	 * @param checkDefault Whether or not to check for a default system type if the specified system type is not found.
 	 */
-	public boolean passwordExists(IRSESystemType systemtype, String hname, String userid, boolean checkDefault)
-	{
+	public boolean passwordExists(IRSESystemType systemtype, String hname, String userid, boolean checkDefault) {
 		String hostname = hname;//RSEUIPlugin.getQualifiedHostName(hname);
 		return (find(systemtype, hostname, userid) != null);
 	}
@@ -329,13 +324,11 @@ public class PasswordPersistenceManager {
 	/*
 	 * Retrieve the password map from the keyring for the specified system type
 	 */
-	private Map getPasswordMap(IRSESystemType systemType)
-	{
+	private Map getPasswordMap(IRSESystemType systemType) {
 		Map passwords = null;
 		String systemTypeId = systemType.getId();
 
-		try
-		{
+		try {
 			URL serverURL = new URL(newURL);
 			passwords = Platform.getAuthorizationInfo(serverURL, systemTypeId, AUTH_SCHEME);
 
@@ -360,8 +353,7 @@ public class PasswordPersistenceManager {
 					}
 				}
 			}
-		}
-		catch (MalformedURLException e) {
+		} catch (MalformedURLException e) {
 			RSECorePlugin.getDefault().getLogger().logError("PasswordPersistenceManager.getPasswordMap", e); //$NON-NLS-1$
 		}
 
@@ -371,18 +363,14 @@ public class PasswordPersistenceManager {
 	/*
 	 * Retrieve the password map from the keyring for the specified system type
 	 */
-	private void savePasswordMap(String systemTypeId, Map passwords)
-	{
-		try
-		{
+	private void savePasswordMap(String systemTypeId, Map passwords) {
+		try {
 			URL serverURL = new URL(newURL);
 			Platform.flushAuthorizationInfo(serverURL, systemTypeId, AUTH_SCHEME);
 			Platform.addAuthorizationInfo(serverURL, systemTypeId, AUTH_SCHEME, passwords);
-		}
-		catch (MalformedURLException e) {
+		} catch (MalformedURLException e) {
 			RSECorePlugin.getDefault().getLogger().logError("PasswordPersistenceManager.savePasswordMap", e); //$NON-NLS-1$
-		}
-		catch (CoreException e) {
+		} catch (CoreException e) {
 			RSECorePlugin.getDefault().getLogger().logError("PasswordPersistenceManager.savePasswordMap", e); //$NON-NLS-1$
 		}
 	}
@@ -393,57 +381,43 @@ public class PasswordPersistenceManager {
 	 * The system type in the signon information returned may not be the same as the system type
 	 * specfied in the argument.
 	 */
-	public SystemSignonInformation find(IRSESystemType systemtype, String hostname, String userid)
-	{
+	public SystemSignonInformation find(IRSESystemType systemtype, String hostname, String userid) {
 		return find(systemtype, hostname, userid, true);
 	}
 
-
-	private boolean removePassword(Map passwords, String hostname, String userid)
-	{
+	private boolean removePassword(Map passwords, String hostname, String userid) {
 		boolean removed = false;
 		String password = null;
 
 		String passwordKey = getPasswordKey(hostname, userid);
-		password =(String) passwords.get(passwordKey);
-		if (password != null)
-		{
+		password = (String) passwords.get(passwordKey);
+		if (password != null) {
 			passwords.remove(passwordKey);
 			removed = true;
-		}
-		else
-		{
+		} else {
 			String phostname = hostname.toUpperCase();
 
 			// DKM - fallback for different case uids, hostnames or qualified/unqualified hostnames
 			Iterator keys = passwords.keySet().iterator();
-			while (keys.hasNext() && password == null)
-			{
-				String key = (String)keys.next();
-				if (key.equalsIgnoreCase(passwordKey))
-				{
+			while (keys.hasNext() && password == null) {
+				String key = (String) keys.next();
+				if (key.equalsIgnoreCase(passwordKey)) {
 					password = (String) passwords.get(key);
-				}
-				else
-				{
+				} else {
 					String khostname = getHostnameFromPasswordKey(key).toUpperCase();
 					String kuid = getUserIdFromPasswordKey(key);
-					if (kuid.equalsIgnoreCase(userid))
-					{
+					if (kuid.equalsIgnoreCase(userid)) {
 						// uid matches, check if hosts are the same
-						if (khostname.startsWith(phostname) || phostname.startsWith(khostname))
-						{
+						if (khostname.startsWith(phostname) || phostname.startsWith(khostname)) {
 							String qkhost = RSECorePlugin.getQualifiedHostName(khostname);
 							String qphost = RSECorePlugin.getQualifiedHostName(phostname);
-							if (qkhost.equals(qphost))
-							{
-								password = (String)passwords.get(key);
+							if (qkhost.equals(qphost)) {
+								password = (String) passwords.get(key);
 							}
 						}
 					}
 				}
-				if (password != null)
-				{
+				if (password != null) {
 					passwords.remove(key);
 					removed = true;
 
@@ -454,40 +428,31 @@ public class PasswordPersistenceManager {
 
 	}
 
-	private String getPassword(Map passwords, String hostname, String userid)
-	{
+	private String getPassword(Map passwords, String hostname, String userid) {
 		String password = null;
 
 		String passwordKey = getPasswordKey(hostname, userid);
-		password =(String) passwords.get(passwordKey);
-		if (password != null)
-			return password;
+		password = (String) passwords.get(passwordKey);
+		if (password != null) return password;
 
 		String phostname = hostname.toUpperCase();
 
 		// DKM - fallback for different case uids, hostnames or qualified/unqualified hostnames
 		Iterator keys = passwords.keySet().iterator();
-		while (keys.hasNext() && password == null)
-		{
-			String key = (String)keys.next();
-			if (key.equalsIgnoreCase(passwordKey))
-			{
+		while (keys.hasNext() && password == null) {
+			String key = (String) keys.next();
+			if (key.equalsIgnoreCase(passwordKey)) {
 				password = (String) passwords.get(key);
-			}
-			else
-			{
+			} else {
 				String khostname = getHostnameFromPasswordKey(key).toUpperCase();
 				String kuid = getUserIdFromPasswordKey(key);
-				if (kuid.equalsIgnoreCase(userid))
-				{
+				if (kuid.equalsIgnoreCase(userid)) {
 					// uid matches, check if hosts are the same
-					if (khostname.startsWith(phostname) || phostname.startsWith(khostname))
-					{
+					if (khostname.startsWith(phostname) || phostname.startsWith(khostname)) {
 						String qkhost = RSECorePlugin.getQualifiedHostName(khostname);
 						String qphost = RSECorePlugin.getQualifiedHostName(phostname);
-						if (qkhost.equals(qphost))
-						{
-							password = (String)passwords.get(key);
+						if (qkhost.equals(qphost)) {
+							password = (String) passwords.get(key);
 						}
 					}
 				}
@@ -506,30 +471,25 @@ public class PasswordPersistenceManager {
 	 * @param userid The user ID to check for.
 	 * @param checkDefault Whether or not to check for a default system type if the specified system type is not found.
 	 */
-	public SystemSignonInformation find(IRSESystemType systemtype, String hname, String userid, boolean checkDefault)
-	{
+	public SystemSignonInformation find(IRSESystemType systemtype, String hname, String userid, boolean checkDefault) {
 		String hostname = hname;//RSEUIPlugin.getQualifiedHostName(hname);
 		// Convert userid to upper case if required
-		if (!isUserIDCaseSensitive(systemtype) && userid != null)
-		{
+		if (!isUserIDCaseSensitive(systemtype) && userid != null) {
 			userid = userid.toUpperCase();
 		}
 
 		Map passwords = getPasswordMap(systemtype);
 
-		if (passwords != null)
-		{
+		if (passwords != null) {
 			String password = getPassword(passwords, hostname, userid);
 
-			if (password != null)
-			{
+			if (password != null) {
 				return new SystemSignonInformation(hostname, userid, password, systemtype);
 			}
 		}
 
 		// yantzi: RSE6.2 check for default system type entry with this hostname and user ID
-		if (checkDefault && !DEFAULT_SYSTEM_TYPE.equals(systemtype))
-		{
+		if (checkDefault && !DEFAULT_SYSTEM_TYPE.equals(systemtype)) {
 			return find(DEFAULT_SYSTEM_TYPE, hostname, userid, false);
 		}
 
@@ -540,8 +500,7 @@ public class PasswordPersistenceManager {
 	 * Helper class for building the key to lookup the password for a specific
 	 * userid and hostname in the Map
 	 */
-	private String getPasswordKey(String hname, String userid)
-	{
+	private String getPasswordKey(String hname, String userid) {
 		String hostname = hname;//RSEUIPlugin.getQualifiedHostName(hname);
 		StringBuffer buffer = new StringBuffer(hostname);
 		buffer.append("//"); //$NON-NLS-1$
@@ -549,14 +508,12 @@ public class PasswordPersistenceManager {
 		return buffer.toString();
 	}
 
-	private String getHostnameFromPasswordKey(String passwordKey)
-	{
+	private String getHostnameFromPasswordKey(String passwordKey) {
 		int sepIndex = passwordKey.indexOf("//"); //$NON-NLS-1$
-		return passwordKey.substring(0,sepIndex);
+		return passwordKey.substring(0, sepIndex);
 	}
 
-	private String getUserIdFromPasswordKey(String passwordKey)
-	{
+	private String getUserIdFromPasswordKey(String passwordKey) {
 		int sepIndex = passwordKey.indexOf("//"); //$NON-NLS-1$
 		return passwordKey.substring(sepIndex + 2, passwordKey.length());
 	}
@@ -564,14 +521,11 @@ public class PasswordPersistenceManager {
 	/**
 	 * Helper method for determining if system type uses case sensitive user IDs
 	 */
-	public boolean isUserIDCaseSensitive(IRSESystemType systemType)
-	{
+	public boolean isUserIDCaseSensitive(IRSESystemType systemType) {
 		// First find the correct provider
-		for (int i = 0; i < systemTypes.length; i++)
-		{
+		for (int i = 0; i < systemTypes.length; i++) {
 
-			if (systemTypes[i].getSystemType().equals(systemType))
-			{
+			if (systemTypes[i].getSystemType().equals(systemType)) {
 				return systemTypes[i].isUserIDCaseSensitive();
 			}
 		}
@@ -583,15 +537,13 @@ public class PasswordPersistenceManager {
 	/**
 	 * Retrieve the list of registered system types
 	 */
-	public IRSESystemType[] getRegisteredSystemTypes()
-	{
+	public IRSESystemType[] getRegisteredSystemTypes() {
 		// yantzi: artemis 6.2, added default system type to list
 		IRSESystemType[] types = new IRSESystemType[systemTypes.length + 1];
 
 		types[0] = DEFAULT_SYSTEM_TYPE;
 
-		for (int i = 0; i < systemTypes.length; i++)
-		{
+		for (int i = 0; i < systemTypes.length; i++) {
 			types[i + 1] = systemTypes[i].getSystemType();
 		}
 
@@ -604,42 +556,36 @@ public class PasswordPersistenceManager {
 	 * @return List A list of the stored user IDs as SystemSignonInformation instances
 	 * without the saved passwords.
 	 */
-	public List getSavedUserIDs()
-	{
+	public List getSavedUserIDs() {
 		List savedUserIDs = new ArrayList();
 		Map passwords;
 		String key;
 		int separator;
 
-		for (int i = 0; i < systemTypes.length; i++)
-		{
+		for (int i = 0; i < systemTypes.length; i++) {
 			passwords = getPasswordMap(systemTypes[i].getSystemType());
-			if (passwords != null)
-			{
+			if (passwords != null) {
 				Iterator keys = passwords.keySet().iterator();
-				while (keys.hasNext())
-				{
+				while (keys.hasNext()) {
 					key = (String) keys.next();
 					separator = key.indexOf("//"); //$NON-NLS-1$
-					savedUserIDs.add(new SystemSignonInformation(key.substring(0, separator),		// hostname
-							key.substring(separator + 2),		// userid
-							systemTypes[i].getSystemType())); 	// system type
+					savedUserIDs.add(new SystemSignonInformation(key.substring(0, separator), // hostname
+							key.substring(separator + 2), // userid
+							systemTypes[i].getSystemType())); // system type
 				}
 			}
 		}
 
 		// yantzi:  RSE 6.2 Get DEFAULT system types too
 		passwords = getPasswordMap(DEFAULT_SYSTEM_TYPE);
-		if (passwords != null)
-		{
+		if (passwords != null) {
 			Iterator keys = passwords.keySet().iterator();
-			while (keys.hasNext())
-			{
+			while (keys.hasNext()) {
 				key = (String) keys.next();
 				separator = key.indexOf("//"); //$NON-NLS-1$
-				savedUserIDs.add(new SystemSignonInformation(key.substring(0, separator),		// hostname
-						key.substring(separator + 2),		// userid
-						DEFAULT_SYSTEM_TYPE)); 	// system type
+				savedUserIDs.add(new SystemSignonInformation(key.substring(0, separator), // hostname
+						key.substring(separator + 2), // userid
+						DEFAULT_SYSTEM_TYPE)); // system type
 			}
 		}
 

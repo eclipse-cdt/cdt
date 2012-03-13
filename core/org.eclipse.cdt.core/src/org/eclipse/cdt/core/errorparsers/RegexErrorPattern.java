@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.core.IMarkerGenerator;
-import org.eclipse.cdt.utils.CygPath;
+import org.eclipse.cdt.internal.core.Cygwin;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -330,10 +330,8 @@ public class RegexErrorPattern implements Cloneable {
 		IPath path = new Path(filename);
 		File file = path.toFile() ;
 		if (!file.exists() && isCygwin && path.isAbsolute())  {
-			CygPath cygpath = null ;
 			try {
-				cygpath = new CygPath("cygpath"); //$NON-NLS-1$
-				String cygfilename = cygpath.getFileName(filename);
+				String cygfilename = Cygwin.cygwinToWindowsPath(filename);
 				IPath convertedPath = new Path(cygfilename);
 				file = convertedPath.toFile() ;
 				if (file.exists()) {
@@ -342,10 +340,6 @@ public class RegexErrorPattern implements Cloneable {
 			} catch (UnsupportedOperationException e) {
 				isCygwin = false;
 			} catch (IOException e) {
-			} finally {
-				if (null!=cygpath)  {
-					cygpath.dispose();
-				}
 			}
 		}
 		return path ;

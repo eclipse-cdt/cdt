@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
+import org.eclipse.cdt.internal.core.Cygwin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
@@ -41,7 +42,7 @@ public class CygPath {
 		stdin = new BufferedWriter(new OutputStreamWriter(cygpath.getOutputStream()));
 		stdout = new BufferedReader(new InputStreamReader(cygpath.getInputStream()));
 		try {
-			String test= getFileName("a b"); //$NON-NLS-1$ 
+			String test= getFileName("a b"); //$NON-NLS-1$
 			if ("a".equals(test)) { //$NON-NLS-1$
 				// Bug 298615: This version seems to treat space as a separator
 				fSpaceIsSeparator= true;
@@ -59,11 +60,15 @@ public class CygPath {
 		this("cygpath"); //$NON-NLS-1$
 	}
 
+	/**
+	 * Use this method for series of translations of paths.
+	 * If a single path needs to be translated consider {@link Cygwin#cygwinToWindowsPath(String)}.
+	 */
 	public String getFileName(String name) throws IOException {
 		// bug 214603, empty names don't create a response
-		if (name == null || name.length() == 0) 
+		if (name == null || name.length() == 0)
 			return name;
-		
+
 		if (useOldCygPath) {
 			return internalgetFileName(name);
 		}

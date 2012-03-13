@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.errorparsers.AbstractErrorParser;
 import org.eclipse.cdt.core.errorparsers.ErrorPattern;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
+import org.eclipse.cdt.internal.core.Cygwin;
 import org.eclipse.core.internal.registry.ExtensionRegistry;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -903,7 +904,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		String windowsFileName = fProject.getLocation().append(fileName).toOSString();
 		String cygwinFileName;
 		try {
-			cygwinFileName = ResourceHelper.windowsToCygwinPath(windowsFileName);
+			cygwinFileName = Cygwin.windowsToCygwinPath(windowsFileName);
 		} catch (UnsupportedOperationException e) {
 			// Skip the test if Cygwin is not available.
 			return;
@@ -931,7 +932,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 
 		String usrIncludeWindowsPath;
 		try {
-			usrIncludeWindowsPath = ResourceHelper.cygwinToWindowsPath(cygwinFolder);
+			usrIncludeWindowsPath = Cygwin.cygwinToWindowsPath(cygwinFolder);
 		} catch (UnsupportedOperationException e) {
 			// Skip the test if Cygwin is not available.
 			return;
@@ -961,7 +962,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		String windowsFileName = anotherProject.getLocation().append(fileName).toOSString();
 		String cygwinFileName;
 		try {
-			cygwinFileName = ResourceHelper.windowsToCygwinPath(windowsFileName);
+			cygwinFileName = Cygwin.windowsToCygwinPath(windowsFileName);
 		} catch (UnsupportedOperationException e) {
 			// Skip the test if Cygwin is not available.
 			return;
@@ -1010,7 +1011,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		String windowsFileName = fProject.getLocation().append(fileName).toOSString();
 		String cygwinFileName;
 		try {
-			cygwinFileName = ResourceHelper.windowsToCygwinPath(windowsFileName);
+			cygwinFileName = Cygwin.windowsToCygwinPath(windowsFileName);
 		} catch (UnsupportedOperationException e) {
 			// Skip the test if Cygwin is not available.
 			return;
@@ -1021,7 +1022,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 
 		String lines = "make[0]: Entering directory `dir'\n"
 			+ cygwinFileName+":1:error\n";
-		
+
 		String[] errorParsers = {CWD_LOCATOR_ID, mockErrorParserId };
 		parseOutput(fProject, fProject.getLocation(), errorParsers, lines);
 		assertEquals(1, errorList.size());
@@ -1273,21 +1274,21 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		ResourceHelper.createFolder(fProject, "Folder");
 		ResourceHelper.createFile(fProject, fileName);
 		ResourceHelper.createFile(fProject, "Folder/"+fileName);
-		
+
 		String lines = "make -j2\n"
 				+ "make[0]: Entering directory `Folder'\n"
 				+ fileName+":1:error\n";
-		
+
 		String[] errorParsers = {CWD_LOCATOR_ID, mockErrorParserId };
 		parseOutput(fProject, fProject.getLocation(), errorParsers, lines);
 		assertEquals(1, errorList.size());
-		
+
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
 		assertEquals("L/FindMatchingFilesTest/"+fileName,problemMarkerInfo.file.toString());
 		assertEquals(1,problemMarkerInfo.lineNumber);
 		assertEquals("error",problemMarkerInfo.description);
 	}
-	
+
 	/**
 	 * Checks if a file from error output can be found.
 	 *
@@ -1298,21 +1299,21 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		ResourceHelper.createFolder(fProject, "Folder");
 		ResourceHelper.createFile(fProject, fileName);
 		ResourceHelper.createFile(fProject, "Folder/"+fileName);
-		
+
 		String lines = "make -j  2\n"
 				+ "make[0]: Entering directory `Folder'\n"
 				+ fileName+":1:error\n";
-		
+
 		String[] errorParsers = {CWD_LOCATOR_ID, mockErrorParserId };
 		parseOutput(fProject, fProject.getLocation(), errorParsers, lines);
 		assertEquals(1, errorList.size());
-		
+
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
 		assertEquals("L/FindMatchingFilesTest/"+fileName,problemMarkerInfo.file.toString());
 		assertEquals(1,problemMarkerInfo.lineNumber);
 		assertEquals("error",problemMarkerInfo.description);
 	}
-	
+
 	/**
 	 * Checks if a file from error output can be found.
 	 *
@@ -1323,21 +1324,21 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		ResourceHelper.createFolder(fProject, "Folder");
 		ResourceHelper.createFile(fProject, fileName);
 		ResourceHelper.createFile(fProject, "Folder/"+fileName);
-		
+
 		String lines = "make -j1\n"
 				+ "make[0]: Entering directory `Folder'\n"
 				+ fileName+":1:error\n";
-		
+
 		String[] errorParsers = {CWD_LOCATOR_ID, mockErrorParserId };
 		parseOutput(fProject, fProject.getLocation(), errorParsers, lines);
 		assertEquals(1, errorList.size());
-		
+
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
 		assertEquals("L/FindMatchingFilesTest/Folder/"+fileName,problemMarkerInfo.file.toString());
 		assertEquals(1,problemMarkerInfo.lineNumber);
 		assertEquals("error",problemMarkerInfo.description);
 	}
-	
+
 	/**
 	 * Checks if a file from error output can be found.
 	 *
@@ -1348,21 +1349,21 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		ResourceHelper.createFolder(fProject, "Folder");
 		ResourceHelper.createFile(fProject, fileName);
 		ResourceHelper.createFile(fProject, "Folder/"+fileName);
-		
+
 		String lines = "make -j  1\n"
 				+ "make[0]: Entering directory `Folder'\n"
 				+ fileName+":1:error\n";
-		
+
 		String[] errorParsers = {CWD_LOCATOR_ID, mockErrorParserId };
 		parseOutput(fProject, fProject.getLocation(), errorParsers, lines);
 		assertEquals(1, errorList.size());
-		
+
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
 		assertEquals("L/FindMatchingFilesTest/Folder/"+fileName,problemMarkerInfo.file.toString());
 		assertEquals(1,problemMarkerInfo.lineNumber);
 		assertEquals("error",problemMarkerInfo.description);
 	}
-	
+
 	/**
 	 * Checks if a file from error output can be found.
 	 *
@@ -1373,21 +1374,21 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		ResourceHelper.createFolder(fProject, "Folder");
 		ResourceHelper.createFile(fProject, fileName);
 		ResourceHelper.createFile(fProject, "Folder/"+fileName);
-		
+
 		String lines = "make --jobs=2\n"
 				+ "make[0]: Entering directory `Folder'\n"
 				+ fileName+":1:error\n";
-		
+
 		String[] errorParsers = {CWD_LOCATOR_ID, mockErrorParserId };
 		parseOutput(fProject, fProject.getLocation(), errorParsers, lines);
 		assertEquals(1, errorList.size());
-		
+
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
 		assertEquals("L/FindMatchingFilesTest/"+fileName,problemMarkerInfo.file.toString());
 		assertEquals(1,problemMarkerInfo.lineNumber);
 		assertEquals("error",problemMarkerInfo.description);
 	}
-	
+
 	/**
 	 * Checks if a file from error output can be found.
 	 *
@@ -1398,21 +1399,21 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		ResourceHelper.createFolder(fProject, "Folder");
 		ResourceHelper.createFile(fProject, fileName);
 		ResourceHelper.createFile(fProject, "Folder/"+fileName);
-		
+
 		String lines = "make --jobs=1\n"
 				+ "make[0]: Entering directory `Folder'\n"
 				+ fileName+":1:error\n";
-		
+
 		String[] errorParsers = {CWD_LOCATOR_ID, mockErrorParserId };
 		parseOutput(fProject, fProject.getLocation(), errorParsers, lines);
 		assertEquals(1, errorList.size());
-		
+
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
 		assertEquals("L/FindMatchingFilesTest/Folder/"+fileName,problemMarkerInfo.file.toString());
 		assertEquals(1,problemMarkerInfo.lineNumber);
 		assertEquals("error",problemMarkerInfo.description);
 	}
-	
+
 	/**
 	 * Checks if a file from error output can be found.
 	 *
@@ -1423,21 +1424,21 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		ResourceHelper.createFolder(fProject, "Folder");
 		ResourceHelper.createFile(fProject, fileName);
 		ResourceHelper.createFile(fProject, "Folder/"+fileName);
-		
+
 		String lines = "gmake384 -k -j all\n"
 				+ "make[0]: Entering directory `Folder'\n"
 				+ fileName+":1:error\n";
-		
+
 		String[] errorParsers = {CWD_LOCATOR_ID, mockErrorParserId };
 		parseOutput(fProject, fProject.getLocation(), errorParsers, lines);
 		assertEquals(1, errorList.size());
-		
+
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
 		assertEquals("L/FindMatchingFilesTest/"+fileName,problemMarkerInfo.file.toString());
 		assertEquals(1,problemMarkerInfo.lineNumber);
 		assertEquals("error",problemMarkerInfo.description);
 	}
-	
+
 	/**
 	 * Checks if a file from error output can be found.
 	 *
@@ -1447,10 +1448,10 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		ResourceHelper.createFolder(fProject, "Folder");
 		ResourceHelper.createFolder(fProject, "Folder/AbsoluteRemoteFolder");
 		IFile file = ResourceHelper.createFile(fProject, "Folder/AbsoluteRemoteFolder/testMappedRemoteAbsolutePath.h");
-		
+
 		parseOutput("/AbsoluteRemoteFolder/testMappedRemoteAbsolutePath.h:1:error");
 		assertEquals(1, errorList.size());
-		
+
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
 		assertEquals("L/FindMatchingFilesTest/Folder/AbsoluteRemoteFolder/testMappedRemoteAbsolutePath.h",problemMarkerInfo.file.toString());
 		assertEquals(1,problemMarkerInfo.lineNumber);
@@ -1469,16 +1470,16 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		ResourceHelper.createFolder(anotherProject, "Folder");
 		ResourceHelper.createFolder(anotherProject, "Folder/AbsoluteRemoteFolder");
 		IFile file = ResourceHelper.createFile(anotherProject, "Folder/AbsoluteRemoteFolder/testMappedRemoteAbsolutePathAnotherProject.h");
-		
+
 		parseOutput("/AbsoluteRemoteFolder/testMappedRemoteAbsolutePathAnotherProject.h:1:error");
 		assertEquals(1, errorList.size());
-		
+
 		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
 		assertEquals("L/ProjectMappedRemoteAbsolutePathAnotherProject/Folder/AbsoluteRemoteFolder/testMappedRemoteAbsolutePathAnotherProject.h",problemMarkerInfo.file.toString());
 		assertEquals(1,problemMarkerInfo.lineNumber);
 		assertEquals("error",problemMarkerInfo.description);
 	}
-	
+
 	/**
 	 * Checks if a file from error output can be found.
 	 *

@@ -58,7 +58,7 @@ public class PathUtil {
 	public static IPath getCanonicalPath(IPath fullPath) {
 		if (!fullPath.isAbsolute())
 			return fullPath;
-		
+
 	    File file = fullPath.toFile();
 		try {
 			String canonPath = file.getCanonicalPath();
@@ -97,7 +97,7 @@ public class PathUtil {
 		}
 		return fullPath;
 	}
-	
+
 	public static IPath getProjectRelativePath(IPath fullPath, IProject project) {
 		IPath projectPath = project.getFullPath();
 		if (isPrefix(projectPath, fullPath)) {
@@ -149,7 +149,7 @@ public class PathUtil {
         }
         return null;
     }
-    
+
     public static IPath makeRelativePathToIncludes(IPath fullPath, String[] includePaths) {
         IPath relativePath = null;
         int mostSegments = 0;
@@ -180,7 +180,7 @@ public class PathUtil {
 		}
 		return null;
     }
-    
+
     public static IPath getValidEnclosingFolder(IPath fullPath) {
 		IWorkspaceRoot root = getWorkspaceRoot();
 		if (root != null) {
@@ -199,7 +199,7 @@ public class PathUtil {
     /**
 	 * Checks whether path1 is the same as path2.
 	 * @return <code>true</code> if path1 is the same as path2, and <code>false</code> otherwise
-     * 
+     *
      * Similar to IPath.equals(Object obj), but takes case sensitivity of the file system
      * into account.
      * @since 5.1
@@ -231,7 +231,7 @@ public class PathUtil {
     /**
 	 * Checks whether path1 is the same as path2.
 	 * @return <code>true</code> if path1 is the same as path2, and <code>false</code> otherwise
-     * 
+     *
      * Similar to IPath.equals(Object obj), but takes case sensitivity of the file system
      * into account.
      * @since 5.3
@@ -266,13 +266,13 @@ public class PathUtil {
 	 * Checks whether path1 is a prefix of path2. To be a prefix, path1's segments
 	 * must appear in path1 in the same order, and their device ids must match.
 	 * <p>
-	 * An empty path is a prefix of all paths with the same device; a root path is a prefix of 
+	 * An empty path is a prefix of all paths with the same device; a root path is a prefix of
 	 * all absolute paths with the same device.
 	 * </p>
 	 * @return <code>true</code> if path1 is a prefix of path2, and <code>false</code> otherwise
-     * 
+     *
      * Similar to IPath.isPrefixOf(IPath anotherPath), but takes case sensitivity of the file system
-     * into account. 
+     * into account.
      * @since 5.1
      */
 	public static boolean isPrefix(IPath path1, IPath path2) {
@@ -334,22 +334,23 @@ public class PathUtil {
 
 	/**
 	 * Find location of the program inspecting each path in the path list.
-	 * 
+	 *
 	 * @param prog - program to find. For Windows, extensions "com" and "exe"
 	 *     can be omitted.
 	 * @param pathsStr - the list of paths to inspect separated by path separator
 	 *     defined in the platform (i.e. ":" in Unix and ";" in Windows).
 	 *     In case pathStr is {@code null} environment variable ${PATH} is inspected.
-	 * @return - absolute location of the file on the file system.
+	 * @return - absolute location of the file on the file system
+	 *     or {@code null} if not found.
 	 * @since 5.3
 	 */
 	public static IPath findProgramLocation(String prog, String pathsStr) {
 		if (prog==null || prog.trim().length()==0)
 			return null;
-		
+
 		if (pathsStr==null)
 			pathsStr = System.getenv("PATH"); //$NON-NLS-1$
-		
+
 		if (pathsStr.trim().length()==0)
 			return null;
 
@@ -381,7 +382,7 @@ public class PathUtil {
 			for (String dir : dirs) {
 				IPath dirLocation = new Path(dir);
 				File file = null;
-				
+
 				file = dirLocation.append(prog).toFile();
 				if (file.isFile() && file.canRead()) {
 					locationStr = file.getAbsolutePath();
@@ -399,10 +400,11 @@ public class PathUtil {
 	/**
 	 * Find location of the program inspecting each path in the path list
 	 * defined by environment variable ${PATH}.
-	 * 
+	 *
 	 * @param prog - program to find. For Windows, extensions "com" and "exe"
 	 *     can be omitted.
-	 * @return - absolute location of the file on the file system.
+	 * @return - absolute location of the file on the file system
+	 *     or {@code null} if not found.
 	 * @since 5.3
 	 */
 	public static IPath findProgramLocation(String prog) {

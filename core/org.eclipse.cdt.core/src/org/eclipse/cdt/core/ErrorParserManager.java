@@ -25,10 +25,10 @@ import java.util.Vector;
 
 import org.eclipse.cdt.core.errorparsers.ErrorParserNamedWrapper;
 import org.eclipse.cdt.core.resources.ACBuilder;
+import org.eclipse.cdt.internal.core.Cygwin;
 import org.eclipse.cdt.internal.core.IErrorMarkeredOutputStream;
 import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 import org.eclipse.cdt.internal.errorparsers.ErrorParserExtensionManager;
-import org.eclipse.cdt.utils.CygPath;
 import org.eclipse.cdt.utils.EFSExtensionManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -524,19 +524,12 @@ outer:
 
 	private IFile findCygwinFile(String filePath) {
 		IFile file=null;
-		IPath path;
-		CygPath cygpath = null;
 		try {
-			cygpath = new CygPath();
-			path = new Path(cygpath.getFileName(filePath));
+			IPath path = new Path(Cygwin.cygwinToWindowsPath(filePath));
 			file = findFileInWorkspace(path);
 		} catch (UnsupportedOperationException e) {
 			isCygwin = false;
 		} catch (Exception e) {
-		}
-		finally {
-			if (cygpath != null)
-				cygpath.dispose();
 		}
 		return file;
 	}

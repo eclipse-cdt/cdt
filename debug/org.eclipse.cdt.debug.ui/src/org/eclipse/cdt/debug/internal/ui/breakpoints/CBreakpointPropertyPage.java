@@ -20,6 +20,7 @@ import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.debug.ui.breakpoints.CBreakpointUIContributionFactory;
+import org.eclipse.cdt.debug.ui.breakpoints.ICBreakpointContext;
 import org.eclipse.cdt.debug.ui.breakpoints.ICBreakpointsUIContribution;
 import org.eclipse.cdt.debug.ui.preferences.ReadOnlyFieldEditor;
 import org.eclipse.core.resources.IFile;
@@ -389,16 +390,16 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 
 	public IPreferenceStore getPreferenceStore() {
 	    IAdaptable element = getElement();
-		IPreferenceStore store = (IPreferenceStore) element.getAdapter(IPreferenceStore.class);
-		if (store == null) {
-		    if (fCBreakpointPreferenceStore == null) {
-		        CBreakpointContext bpContext = element instanceof CBreakpointContext ? 
-		            (CBreakpointContext)element : null;
-		        fCBreakpointPreferenceStore = new CBreakpointPreferenceStore(bpContext, null);
-		    }
-		    store = fCBreakpointPreferenceStore;
-		}
-		return store;
+	    if (element instanceof ICBreakpointContext) {
+	        return ((ICBreakpointContext)element).getPreferenceStore();
+	    }
+
+	    if (fCBreakpointPreferenceStore == null) {
+	        CBreakpointContext bpContext = element instanceof CBreakpointContext ? 
+	            (CBreakpointContext)element : null;
+	        fCBreakpointPreferenceStore = new CBreakpointPreferenceStore(bpContext, null);
+	    }
+	    return fCBreakpointPreferenceStore;
 	}
 
 	@Override

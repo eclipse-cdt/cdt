@@ -10,6 +10,7 @@ Export-Package:
  org.eclipse.cdt.debug.internal.ui;x-internal:=true,
  org.eclipse.cdt.debug.internal.ui.actions;x-friends:="org.eclipse.cdt.dsf.ui,org.eclipse.cdt.debug.ui.memory.memorybrowser",
  org.eclipse.cdt.debug.internal.ui.actions.breakpoints;x-internal:=true,
+ org.eclipse.cdt.debug.internal.ui.breakpoints;x-internal:=true,
  org.eclipse.cdt.debug.internal.ui.commands;x-internal:=true,
  org.eclipse.cdt.debug.internal.ui.dialogfields;x-internal:=true,
  org.eclipse.cdt.debug.internal.ui.dialogs;x-internal:=true,

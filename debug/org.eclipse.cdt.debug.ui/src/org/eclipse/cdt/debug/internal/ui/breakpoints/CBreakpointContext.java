@@ -15,6 +15,7 @@ import java.util.Map;
 
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICTracepoint;
+import org.eclipse.cdt.debug.ui.breakpoints.ICBreakpointContext;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IAdapterFactory;
@@ -24,7 +25,6 @@ import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugModelProvider;
 import org.eclipse.debug.ui.contexts.IDebugContextListener;
-import org.eclipse.debug.ui.contexts.IDebugContextProvider;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -37,7 +37,7 @@ import org.eclipse.ui.IWorkbenchPart;
  * This combined context can then be used by breakpoint property
  * pages to access model and target specific breakpoint settings.  
  */
-public class CBreakpointContext extends PlatformObject implements IDebugContextProvider {
+public class CBreakpointContext extends PlatformObject implements ICBreakpointContext {
 
     // Register an adapter factory for the class when it is first loaded.
     static {
@@ -62,7 +62,7 @@ public class CBreakpointContext extends PlatformObject implements IDebugContextP
     /**
      * Associated preference store.
      */
-    final CBreakpointPreferenceStore fPreferenceStore;
+    private final CBreakpointPreferenceStore fPreferenceStore;
     
     /**
      * Creates a new breakpoint context with given breakpoint and debug 
@@ -79,12 +79,14 @@ public class CBreakpointContext extends PlatformObject implements IDebugContextP
         fPreferenceStore = new CBreakpointPreferenceStore(this, attributes);
     }
 
-    /**
-     * Returns the breakpoint.
-     */
+    @Override
     public ICBreakpoint getBreakpoint() { return fBreakpoint; }
 
+    @Override
     public IResource getResource() { return fResource; }
+    
+    @Override
+    public IPreferenceStore getPreferenceStore() { return fPreferenceStore; }
     
     /**
      * Returns the debug context.
@@ -170,7 +172,7 @@ class CBreakpointContextAdapterFactory implements IAdapterFactory {
         }
         
         if ( IPreferenceStore.class.equals(adapterType) ) {
-        	return ((CBreakpointContext)obj).fPreferenceStore;
+        	return ((CBreakpointContext)obj).getPreferenceStore();
         }
         
         if (IActionFilter.class.equals(adapterType)) {

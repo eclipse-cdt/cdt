@@ -1194,8 +1194,7 @@
                  
                </and>
                <and>
-               <instanceof value="org.eclipse.cdt.debug.internal.ui.breakpoints.CBreakpointContext">
-               </instanceof>
+                  <instanceof value="org.eclipse.cdt.debug.ui.breakpoints.ICBreakpointContext"/>
                   <test property="org.eclipse.cdt.debug.ui.createBreakpointAdapt" value="org.eclipse.cdt.debug.core.model.ICBreakpoint" />
                   <not>   
                      <test property="org.eclipse.cdt.debug.ui.createBreakpointAdapt" value="org.eclipse.cdt.debug.core.model.ICTracepoint"/>
@@ -2571,7 +2570,7 @@
            id="org.eclipse.cdt.debug.ui.CreateBreakpointTester"
            namespace="org.eclipse.cdt.debug.ui"
            properties="createBreakpointAdapt"
-           type="org.eclipse.cdt.debug.internal.ui.breakpoints.CBreakpointContext">
+           type="org.eclipse.cdt.debug.ui.breakpoints.ICBreakpointContext">
      </propertyTester>
   </extension>
     

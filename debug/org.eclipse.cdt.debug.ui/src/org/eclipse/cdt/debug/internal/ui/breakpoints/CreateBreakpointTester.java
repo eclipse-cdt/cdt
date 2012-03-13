@@ -11,6 +11,7 @@
 package org.eclipse.cdt.debug.internal.ui.breakpoints;
 
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
+import org.eclipse.cdt.debug.ui.breakpoints.ICBreakpointContext;
 import org.eclipse.core.expressions.PropertyTester;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -25,13 +26,13 @@ public class CreateBreakpointTester extends PropertyTester {
     @Override
     public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
         if (PROP_CREATE_BREAKPOINT_ADAPT.equals(property) && 
-            receiver instanceof CBreakpointContext && 
+            receiver instanceof ICBreakpointContext && 
             expectedValue instanceof String) 
         {
             try {
                 Class<?> expectedClass = Class.forName((String)expectedValue);
                 return expectedClass.isAssignableFrom(
-                    ((CBreakpointContext)receiver).getBreakpoint().getClass());
+                    ((ICBreakpointContext)receiver).getBreakpoint().getClass());
             } catch (ClassNotFoundException e) {
                 CDebugUIPlugin.log(new Status(IStatus.ERROR, CDebugUIPlugin.PLUGIN_ID, "Unable to create class: " + expectedValue, e)); //$NON-NLS-1$
             }

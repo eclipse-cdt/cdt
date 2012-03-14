@@ -21,6 +21,7 @@ import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.Immutable;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.AbstractDMContext;
+import org.eclipse.cdt.dsf.datamodel.DataModelInitializedEvent;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.datamodel.IDMData;
 import org.eclipse.cdt.dsf.debug.service.ICachingService;
@@ -32,6 +33,7 @@ import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIListThreadGroupsInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIListThreadGroupsInfo.IThreadGroupInfo;
 import org.eclipse.cdt.dsf.service.AbstractDsfService;
+import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.internal.core.ICoreInfo;
 import org.eclipse.core.runtime.IStatus;
@@ -64,6 +66,7 @@ public class GDBHardware extends AbstractDsfService implements IGDBHardware, ICa
             fId = id;
         }
 
+		@Override
 		public String getId(){
 			return fId;
 		}
@@ -91,6 +94,7 @@ public class GDBHardware extends AbstractDsfService implements IGDBHardware, ICa
 			fId = id;
 		}
 
+		@Override
 		public String getId(){ return fId; }
 
 		@Override
@@ -114,6 +118,7 @@ public class GDBHardware extends AbstractDsfService implements IGDBHardware, ICa
     		fNumCores = num;
     	}
     	
+		@Override
 		public int getNumCores() { return fNumCores; }
     }
     
@@ -125,6 +130,7 @@ public class GDBHardware extends AbstractDsfService implements IGDBHardware, ICa
     		fPhysicalId = id;
     	}
     	
+		@Override
 		public String getPhysicalId() { return fPhysicalId; }
     }
 
@@ -138,6 +144,11 @@ public class GDBHardware extends AbstractDsfService implements IGDBHardware, ICa
 	private ICPUDMContext[] fCPUs;
     private ICoreDMContext[] fCores;
 
+	// Track if the debug session has been fully initialized.
+	// Until then, we may not be connected to the remote target
+	// yet, and not be able to properly fetch the information we need.
+    // Bug 374293
+	private boolean fSessionInitializationComplete;
 
     public GDBHardware(DsfSession session) {
     	super(session);
@@ -169,12 +180,16 @@ public class GDBHardware extends AbstractDsfService implements IGDBHardware, ICa
 	 */
 	private void doInitialize(RequestMonitor requestMonitor) {
         
+		fSessionInitializationComplete = false;
+		
 		fCommandControl = getServicesTracker().getService(IGDBControl.class);
     	fBackend = getServicesTracker().getService(IGDBBackend.class);
 
         fCommandFactory = getServicesTracker().getService(IMICommandControl.class).getCommandFactory();
 
-		// Register this service.
+        getSession().addServiceEventListener(this, null);
+
+        // Register this service.
 		register(new String[] { IGDBHardware.class.getName(),
 				                GDBHardware.class.getName() },
 				 new Hashtable<String, String>());
@@ -192,6 +207,8 @@ public class GDBHardware extends AbstractDsfService implements IGDBHardware, ICa
 	 */
 	@Override
 	public void shutdown(RequestMonitor requestMonitor) {
+        getSession().removeServiceEventListener(this);
+
 		unregister();
 		super.shutdown(requestMonitor);
 	}
@@ -204,7 +221,18 @@ public class GDBHardware extends AbstractDsfService implements IGDBHardware, ICa
 		return GdbPlugin.getBundleContext();
 	}
 
+	protected boolean getSessionInitializationComplete() {
+		return fSessionInitializationComplete;
+	}
+
+	@Override
 	public void getCPUs(IHardwareTargetDMContext dmc, DataRequestMonitor<ICPUDMContext[]> rm) {
+		if (!fSessionInitializationComplete) {
+			// We are not ready to answer yet
+			rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Debug session not initialized yet", null)); //$NON-NLS-1$
+			return;
+		}
+
 		if (fCPUs != null) {
 			rm.done(fCPUs);
 			return;
@@ -237,7 +265,14 @@ public class GDBHardware extends AbstractDsfService implements IGDBHardware, ICa
 		}
 	}
 
+	@Override
 	public void getCores(IDMContext dmc, final DataRequestMonitor<ICoreDMContext[]> rm) {
+		if (!fSessionInitializationComplete) {
+			// We are not ready to answer yet
+			rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Debug session not initialized yet", null)); //$NON-NLS-1$
+			return;
+		}
+
 		if (dmc instanceof ICPUDMContext) {
 			// Get the cores under this particular CPU
 			ICPUDMContext cpuDmc = (ICPUDMContext)dmc;
@@ -329,6 +364,7 @@ public class GDBHardware extends AbstractDsfService implements IGDBHardware, ICa
 		}
 	}
 
+	@Override
 	public void getExecutionData(IDMContext dmc, DataRequestMonitor<IDMData> rm) {
 		if (dmc instanceof ICoreDMContext) {
 			rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "Not done yet", null)); //$NON-NLS-1$
@@ -350,6 +386,16 @@ public class GDBHardware extends AbstractDsfService implements IGDBHardware, ICa
 		return new GDBCoreDMC(getSession().getId(), cpuDmc, coreId);
 	}
 	
+    @DsfServiceEventHandler 
+    public void eventDispatched(DataModelInitializedEvent e) {
+    	// The launch sequence is complete, so we can start providing information.
+    	// If we don't wait for this event, we may provide results before we are
+    	// connected to the remote target which would be wrong.
+    	// Bug 374293
+    	fSessionInitializationComplete = true;
+    }
+    
+	@Override
 	public void flushCache(IDMContext context) {
 		fCPUs = null;
 		fCores = null;

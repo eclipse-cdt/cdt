@@ -36,7 +36,6 @@ public interface IASTInitializerList extends IASTInitializer, IASTInitializerCla
 	 */
 	public IASTInitializerClause[] getClauses();
 	
-	
 	/**
 	 * Add an initializer clause to the initializer list. Depending on how the AST is created the
 	 * initializer may be <code>null</code>. A <code>null</code> initializer will not be returned

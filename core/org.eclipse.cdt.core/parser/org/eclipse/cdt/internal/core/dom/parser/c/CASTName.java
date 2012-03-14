@@ -105,7 +105,6 @@ public class CASTName extends ASTNode implements IASTName, IASTCompletionContext
         this.binding = binding;
     }
 
-
     @Override
 	public String toString() {
         if (name == EMPTY_CHAR_ARRAY)
@@ -153,7 +152,6 @@ public class CASTName extends ASTNode implements IASTName, IASTCompletionContext
         }
         return true;
     }
-
 
 	@Override
 	public int getRoleOfName(boolean allowResolution) {
@@ -248,6 +246,7 @@ public class CASTName extends ASTNode implements IASTName, IASTCompletionContext
 						bindings[i] = null;
 					}
 					break;
+
 				case ICompositeType.k_union:
 					if (kind != IASTElaboratedTypeSpecifier.k_union) {
 						bindings[i] = null;
@@ -258,13 +257,14 @@ public class CASTName extends ASTNode implements IASTName, IASTCompletionContext
 				bindings[i]= null;
 			}
 		}
-		return ArrayUtil.removeNulls(IBinding.class, bindings);
+		return ArrayUtil.removeNulls(bindings);
 	}
 
 	@Override
 	public IASTName getLastName() {
 		return this;
 	}
+
 	@Override
 	public boolean isQualified() {
 		return false;

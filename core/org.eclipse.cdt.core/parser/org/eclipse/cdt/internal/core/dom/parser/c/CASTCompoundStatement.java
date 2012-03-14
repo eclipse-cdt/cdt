@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Rational Software - Initial API and implementation
- * Yuan Zhang / Beth Tibbitts (IBM Research)
+ *     IBM Rational Software - Initial API and implementation
+ *     Yuan Zhang / Beth Tibbitts (IBM Research)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -25,8 +25,8 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
  * @author jcamelon
  */
 public class CASTCompoundStatement extends ASTNode implements IASTCompoundStatement, IASTAmbiguityParent {
-    private IASTStatement [] statements = null;
-    private IScope scope = null;
+    private IASTStatement[] statements;
+    private IScope scope;
 
     @Override
 	public CASTCompoundStatement copy() {
@@ -69,20 +69,20 @@ public class CASTCompoundStatement extends ASTNode implements IASTCompoundStatem
     }
 
     @Override
-	public boolean accept(ASTVisitor action){
-        if (action.shouldVisitStatements){
-		    switch (action.visit(this)){
+	public boolean accept(ASTVisitor action) {
+        if (action.shouldVisitStatements) {
+		    switch (action.visit(this)) {
 	            case ASTVisitor.PROCESS_ABORT: return false;
 	            case ASTVisitor.PROCESS_SKIP: return true;
 	            default: break;
 	        }
 		}
-        IASTStatement [] s = getStatements();
+        IASTStatement[] s = getStatements();
         for (int i = 0; i < s.length; i++) {
             if (!s[i].accept(action)) return false;
         }
-        if (action.shouldVisitStatements){
-        	switch (action.leave(this)){
+        if (action.shouldVisitStatements) {
+        	switch (action.leave(this)) {
         		case ASTVisitor.PROCESS_ABORT: return false;
         		case ASTVisitor.PROCESS_SKIP: return true;
         		default: break;

@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM Rational Software - Initial API and implementation 
- *    Markus Schorn (Wind River Systems)
+ *     IBM Rational Software - Initial API and implementation 
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -49,12 +49,6 @@ public class CParameter extends PlatformObject implements IParameter {
 	public CParameter(IASTName parameterName) {
 		this.declarations = new IASTName[] { parameterName };
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.core.dom.ast.IVariable#getType()
-	 */
 
 	@Override
 	public IType getType() {
@@ -102,11 +96,6 @@ public class CParameter extends PlatformObject implements IParameter {
 		return CVisitor.EMPTY_CHAR_ARRAY;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
-	 */
 	@Override
 	public IScope getScope() {
 		// IASTParameterDeclaration or IASTSimpleDeclaration
@@ -138,41 +127,21 @@ public class CParameter extends PlatformObject implements IParameter {
 			declarations = ArrayUtil.append(IASTName.class, declarations, name);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.core.dom.ast.IVariable#isStatic()
-	 */
 	@Override
 	public boolean isStatic() {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.core.dom.ast.IVariable#isExtern()
-	 */
 	@Override
 	public boolean isExtern() {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.core.dom.ast.IVariable#isAuto()
-	 */
 	@Override
 	public boolean isAuto() {
 		return hasStorageClass(IASTDeclSpecifier.sc_auto);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.core.dom.ast.IVariable#isRegister()
-	 */
 	@Override
 	public boolean isRegister() {
 		return hasStorageClass(IASTDeclSpecifier.sc_register);
@@ -215,5 +184,10 @@ public class CParameter extends PlatformObject implements IParameter {
 	@Override
 	public IValue getInitialValue() {
 		return null;
+	}
+
+	@Override
+	public String toString() {
+		return getName();
 	}
 }

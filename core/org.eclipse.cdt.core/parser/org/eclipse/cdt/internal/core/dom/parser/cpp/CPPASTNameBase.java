@@ -167,7 +167,6 @@ public abstract class CPPASTNameBase extends ASTNode implements IASTName {
 		}
 		return false;
 	}
-
 	
 	@Override
 	public final String toString() {

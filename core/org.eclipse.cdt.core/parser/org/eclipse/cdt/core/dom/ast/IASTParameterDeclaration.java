@@ -39,21 +39,21 @@ public interface IASTParameterDeclaration extends IASTNode {
 			"IASTParameterDeclaration.DECLARATOR - IASTDeclarator for IASTParameterDeclaration"); //$NON-NLS-1$
 
 	/**
-	 * Get the decl specifier.
+	 * Returns the decl specifier.
 	 * 
 	 * @return <code>IASTDeclSpecifier</code>
 	 */
 	public IASTDeclSpecifier getDeclSpecifier();
 
 	/**
-	 * Get the declarator.
+	 * Returns the declarator.
 	 * 
 	 * @return <code>IASTDeclarator</code>
 	 */
 	public IASTDeclarator getDeclarator();
 
 	/**
-	 * Set the decl specifier.
+	 * Sets the decl specifier.
 	 * 
 	 * @param declSpec
 	 *            <code>IASTDeclSpecifier</code>.
@@ -61,7 +61,7 @@ public interface IASTParameterDeclaration extends IASTNode {
 	public void setDeclSpecifier(IASTDeclSpecifier declSpec);
 
 	/**
-	 * Set the declarator.
+	 * Sets the declarator.
 	 * 
 	 * @param declarator
 	 *            <code>IASTDeclarator</code>

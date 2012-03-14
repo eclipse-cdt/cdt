@@ -73,7 +73,7 @@ public class NewClassWizardUtil {
         ICElement curr = element;
         while (curr != null && !foundSourceRoot) {
             if (curr instanceof ICContainer && folder == null) {
-                folder = (ICContainer)curr;
+                folder = (ICContainer) curr;
             }
             foundSourceRoot = (curr instanceof ISourceRoot);
             curr = curr.getParent();
@@ -118,31 +118,6 @@ public class NewClassWizardUtil {
         return null;
     }
 
-    //XXX Remove
-//    /**
-//     * Returns the parent source folder for the given resource. If the given
-//     * resource is already a source folder, the corresponding C element is returned.
-//     * 
-//     * @param resource the resource
-//     * @return the source folder
-//     */
-//    public static ICContainer getSourceFolder(IResource resource) {
-//        if (resource != null && resource.exists()) {
-//            int resType = resource.getType();
-//            if (resType == IResource.PROJECT || resType == IResource.FOLDER) {
-//                ICElement elem = CoreModel.getDefault().create(resource.getFullPath());
-//                if (elem != null) {
-//                    ICContainer sourceFolder = getSourceFolder(elem);
-//                    if (sourceFolder != null)
-//                        return sourceFolder;
-//                }
-//            } else {
-//                return getSourceFolder(resource.getParent());
-//            }
-//        }
-//        return null;
-//    }
-    
     /**
      * Checks if a given resource is under a source root.
      * 

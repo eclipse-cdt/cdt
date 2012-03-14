@@ -23,8 +23,6 @@ import org.eclipse.core.runtime.PlatformObject;
 
 @SuppressWarnings("restriction")
 public class C99Variable extends PlatformObject implements IC99Binding, IVariable, ITypeable {
-
-	
 	private boolean isAuto;
 	private boolean isExtern;
 	private boolean isRegister;
@@ -36,13 +34,11 @@ public class C99Variable extends PlatformObject implements IC99Binding, IVariabl
 	private IScope scope;
 	
 	public C99Variable() {
-		
 	}
 	
 	public C99Variable(String name) {
 		this.name = name;
 	}
-	
 	
 	public void setType(IType type) {
 		this.type = type;
@@ -51,7 +47,6 @@ public class C99Variable extends PlatformObject implements IC99Binding, IVariabl
 	public IType getType() {
 		return type;
 	}
-
 	
 	public void setAuto(boolean auto) {
 		this.isAuto = auto;
@@ -60,7 +55,6 @@ public class C99Variable extends PlatformObject implements IC99Binding, IVariabl
 	public boolean isAuto() {
 		return isAuto;
 	}
-
 	
 	public void setExtern(boolean extern) {
 		this.isExtern = extern;
@@ -69,7 +63,6 @@ public class C99Variable extends PlatformObject implements IC99Binding, IVariabl
 	public boolean isExtern() {
 		return isExtern;
 	}
-
 	
 	public void setRegister(boolean isRegister) {
 		this.isRegister = isRegister;
@@ -78,7 +71,6 @@ public class C99Variable extends PlatformObject implements IC99Binding, IVariabl
 	public boolean isRegister() {
 		return isRegister;
 	}
-
 	
 	public void setStatic(boolean isStatic) {
 		this.isStatic = isStatic;
@@ -87,7 +79,6 @@ public class C99Variable extends PlatformObject implements IC99Binding, IVariabl
 	public boolean isStatic()  {
 		return isStatic;
 	}
-
 
 	public void setName(String name) {
 		this.name = name;
@@ -122,5 +113,10 @@ public class C99Variable extends PlatformObject implements IC99Binding, IVariabl
 
 	public IValue getInitialValue() {
 		return null;
+	}
+
+	@Override
+	public String toString() {
+		return getName();
 	}
 }

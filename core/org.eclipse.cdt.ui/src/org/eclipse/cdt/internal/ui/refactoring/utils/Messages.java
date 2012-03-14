@@ -23,16 +23,6 @@ public final class Messages extends NLS {
 	public static String IdentifierHelper_unidentifiedMistake;
 	public static String Checks_validate_edit;
 	public static String Checks_choose_name;
-	public static String CodeAnalyzer_initializer_list;
-	public static String StatementAnalyzer_doesNotCover;
-	public static String StatementAnalyzer_do_body_expression;
-	public static String StatementAnalyzer_for_initializer_expression;
-	public static String StatementAnalyzer_for_expression_updater;
-	public static String StatementAnalyzer_for_updater_body;
-	public static String StatementAnalyzer_catch_argument;
-	public static String StatementAnalyzer_while_expression_body;
-	public static String StatementAnalyzer_try_statement;
-	public static String StatementAnalyzer_switch_statement;
 
 	static {
 		NLS.initializeMessages(Messages.class.getName(), Messages.class);

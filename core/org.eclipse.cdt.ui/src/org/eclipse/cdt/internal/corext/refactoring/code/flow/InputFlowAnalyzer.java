@@ -89,7 +89,7 @@ public class InputFlowAnalyzer extends FlowAnalyzer {
 			FlowInfo paramInfo= getFlowInfo(node.getDeclaration());
 			FlowInfo expressionInfo= getFlowInfo(node.getInitializerClause());
 			FlowInfo actionInfo= getFlowInfo(node.getBody());
-			RangeBasedForFlowInfo forInfo= createEnhancedFor();
+			RangeBasedForFlowInfo forInfo= createRangeBasedFor();
 			setFlowInfo(node, forInfo);
 			// If the for statement is the outermost loop then we only have to consider
 			// the action. The parameter and expression are only evaluated once.

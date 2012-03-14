@@ -169,7 +169,7 @@ abstract class FlowAnalyzer extends ASTGenericVisitor {
 		return new ConditionalFlowInfo();
 	}
 
-	protected RangeBasedForFlowInfo createEnhancedFor() {
+	protected RangeBasedForFlowInfo createRangeBasedFor() {
 		return new RangeBasedForFlowInfo();
 	}
 
@@ -614,7 +614,7 @@ abstract class FlowAnalyzer extends ASTGenericVisitor {
 	}
 
 	public int leave(ICPPASTRangeBasedForStatement node) {
-		RangeBasedForFlowInfo forInfo= createEnhancedFor();
+		RangeBasedForFlowInfo forInfo= createRangeBasedFor();
 		setFlowInfo(node, forInfo);
 		forInfo.mergeDeclaration(getFlowInfo(node.getDeclaration()), fFlowContext);
 		forInfo.mergeInitializerClause(getFlowInfo(node.getInitializerClause()), fFlowContext);

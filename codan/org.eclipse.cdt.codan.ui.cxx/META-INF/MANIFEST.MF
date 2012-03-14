@@ -19,5 +19,4 @@ Require-Bundle: org.eclipse.ui,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.cdt.codan.internal.ui.cxx;x-internal:=true,
- org.eclipse.cdt.codan.ui,
- org.eclipse.cdt.codan.ui.cxx.externaltool
+ org.eclipse.cdt.codan.ui

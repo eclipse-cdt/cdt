@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-
-
     <extension
           point="org.eclipse.cdt.codan.ui.codanMarkerResolution">
        <resolution
@@ -45,46 +43,5 @@
              class="org.eclipse.cdt.codan.internal.checkers.ui.quickfix.CaseBreakQuickFixComment"
              problemId="org.eclipse.cdt.codan.internal.checkers.CaseBreakProblem">
        </resolution>       
-
-    </extension>
-    <extension
-         point="org.eclipse.cdt.codan.core.checkers"
-         id="org.eclipse.cdt.codan.core.internal.checkers">
-      <category
-            id="org.eclipse.cdt.codan.checkers.cppcheck"
-            name="%checker.name.Cppcheck">
-      </category>
-      <checker
-            class="org.eclipse.cdt.codan.internal.checkers.ui.CppcheckChecker"
-            id="org.eclipse.cdt.codan.checkers.CppcheckChecker"
-            name="Cppcheck">
-         <problem
-               category="org.eclipse.cdt.codan.checkers.cppcheck"
-               defaultEnabled="false"
-               defaultSeverity="Error"
-               description="%problem.description.Cppcheck.Error"
-               id="org.eclipse.cdt.codan.checkers.cppcheck.error"
-               messagePattern="%problem.messagePattern.Cppcheck.all"
-               name="%problem.name.Cppcheck.Error">
-         </problem>
-         <problem
-               category="org.eclipse.cdt.codan.checkers.cppcheck"
-               defaultEnabled="false"
-               defaultSeverity="Warning"
-               description="%problem.description.Cppcheck.Warning"
-               id="org.eclipse.cdt.codan.checkers.cppcheck.warning"
-               messagePattern="%problem.messagePattern.Cppcheck.all"
-               name="%problem.name.Cppcheck.Warning">
-         </problem>
-         <problem
-               category="org.eclipse.cdt.codan.checkers.cppcheck"
-               defaultEnabled="false"
-               defaultSeverity="Warning"
-               description="%problem.description.Cppcheck.Syntax"
-               id="org.eclipse.cdt.codan.checkers.cppcheck.style"
-               messagePattern="%problem.messagePattern.Cppcheck.all"
-               name="%problem.name.Cppcheck.Syntax">
-         </problem>
-      </checker>
     </extension>
 </plugin>

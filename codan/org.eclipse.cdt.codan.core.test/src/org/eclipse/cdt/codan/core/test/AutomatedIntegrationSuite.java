@@ -30,12 +30,10 @@ import org.eclipse.cdt.codan.core.internal.checkers.StatementHasNoEffectCheckerT
 import org.eclipse.cdt.codan.core.internal.checkers.SuggestedParenthesisCheckerTest;
 import org.eclipse.cdt.codan.core.internal.checkers.SuspiciousSemicolonCheckerTest;
 import org.eclipse.cdt.codan.core.internal.checkers.UnusedSymbolInFileScopeCheckerTest;
-import org.eclipse.cdt.codan.internal.checkers.externaltool.CppcheckOutputParserTest;
 import org.eclipse.cdt.codan.internal.checkers.ui.quickfix.CaseBreakQuickFixTest;
 import org.eclipse.cdt.codan.internal.checkers.ui.quickfix.CatchByReferenceQuickFixTest;
 import org.eclipse.cdt.codan.internal.checkers.ui.quickfix.CreateLocalVariableQuickFixTest;
 import org.eclipse.cdt.codan.internal.checkers.ui.quickfix.SuggestedParenthesisQuickFixTest;
-import org.eclipse.cdt.codan.internal.core.externaltool.ExternalToolInvokerTest;
 
 public class AutomatedIntegrationSuite extends TestSuite {
 	public AutomatedIntegrationSuite() {
@@ -71,8 +69,6 @@ public class AutomatedIntegrationSuite extends TestSuite {
 		suite.addTestSuite(SuggestedParenthesisCheckerTest.class);
 		suite.addTestSuite(SuspiciousSemicolonCheckerTest.class);
 		suite.addTestSuite(UnusedSymbolInFileScopeCheckerTest.class);
-		suite.addTestSuite(ExternalToolInvokerTest.class);
-		suite.addTestSuite(CppcheckOutputParserTest.class);
 		// framework
 		suite.addTest(CodanFastTestSuite.suite());
 		// quick fixes

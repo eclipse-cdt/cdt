@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTMacroExpansionLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -44,7 +45,13 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVariableReadWriteFlags;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
+import org.eclipse.cdt.internal.corext.refactoring.code.flow.FlowContext;
+import org.eclipse.cdt.internal.corext.refactoring.code.flow.FlowInfo;
+import org.eclipse.cdt.internal.corext.refactoring.code.flow.InputFlowAnalyzer;
+import org.eclipse.cdt.internal.corext.refactoring.code.flow.Selection;
+import org.eclipse.cdt.internal.corext.util.ASTNodes;
 
 public class NodeContainer {
 	private final List<IASTNode> nodes;
@@ -152,6 +159,8 @@ public class NodeContainer {
 		if (interfaceNames == null) {
 			findAllNames();
 
+			Set<IVariable> externalReads = getVariablesReadOutside();
+
 			Set<IASTName> declarations = new HashSet<IASTName>();
 			interfaceNames = new ArrayList<NameInformation>();
 
@@ -159,7 +168,7 @@ public class NodeContainer {
 				IASTName declarationName = nameInfo.getDeclarationName();
 				if (declarations.add(declarationName)) {
 					if (isDeclaredInSelection(nameInfo)) {
-						if (nameInfo.isReferencedAfterSelection()) {
+						if (externalReads.contains(nameInfo.getName().resolveBinding())) {
 							nameInfo.setMustBeReturnValue(true);
 							interfaceNames.add(nameInfo);
 						}
@@ -175,7 +184,8 @@ public class NodeContainer {
 									}
 								}
 							}
-							if (nameInfo.isWriteAccess() && nameInfo.isReferencedAfterSelection()) {
+							if (nameInfo.isWriteAccess() &&
+									externalReads.contains(nameInfo.getName().resolveBinding())) {
 								nameInfo.setOutput(true);
 							}
 						}
@@ -186,6 +196,25 @@ public class NodeContainer {
 		}
 
 		return interfaceNames;
+	}
+
+	private Set<IVariable> getVariablesReadOutside() {
+		if (nodes.isEmpty())
+			return Collections.emptySet();
+
+		IASTNode firstNode = nodes.get(0);
+		IASTFunctionDefinition enclosingFunction =
+				CPPVisitor.findAncestorWithType(firstNode, IASTFunctionDefinition.class);
+		FlowContext flowContext= new FlowContext(enclosingFunction);
+		flowContext.setConsiderAccessMode(true);
+		flowContext.setComputeMode(FlowContext.ARGUMENTS);
+		// Compute a selection that exactly covers the selected nodes
+		Selection selection= Selection.createFromStartEnd(ASTNodes.offset(firstNode),
+				ASTNodes.endOffset(nodes.get(nodes.size() - 1)));
+
+		InputFlowAnalyzer analyzer = new InputFlowAnalyzer(flowContext, selection, true);
+		FlowInfo argInfo= analyzer.perform(enclosingFunction);
+		return argInfo.get(flowContext, FlowInfo.READ | FlowInfo.READ_POTENTIAL | FlowInfo.UNKNOWN);
 	}
 
 	public static boolean hasReferenceOperator(IASTDeclarator declarator) {

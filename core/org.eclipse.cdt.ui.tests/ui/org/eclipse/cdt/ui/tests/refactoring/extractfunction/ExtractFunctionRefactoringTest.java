@@ -1,5 +1,4 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -178,8 +177,143 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//int A::help() {
 	//	return 42;
 	//}
-	public void testExtractedVariableDefinition() throws Exception {
+	public void testLocalVariableDeclaration_1() throws Exception {
 		assertRefactoringSuccess();
+	}
+
+
+	//A.h
+	//#ifndef A_H_
+	//#define A_H_
+	//
+	//#include "B.h"
+	//
+	//class A {
+	//public:
+	//	A();
+	//	virtual ~A();
+	//	void foo();
+	//	B b;
+	//
+	//private:
+	//	int help();
+	//};
+	//
+	//#endif /*A_H_*/
+	//====================
+	//#ifndef A_H_
+	//#define A_H_
+	//
+	//#include "B.h"
+	//
+	//class A {
+	//public:
+	//	A();
+	//	virtual ~A();
+	//	void foo();
+	//	B b;
+	//
+	//private:
+	//	int help();
+	//	void extracted();
+	//};
+	//
+	//#endif /*A_H_*/
+
+	//A.cpp
+	//#include "A.h"
+	//
+	//A::A() {
+	//}
+	//
+	//A::~A() {
+	//}
+	//
+	//void A::foo() {
+	//	/*$*/b = new B();
+	//	help();/*$$*/
+	//}
+	//
+	//int A::help() {
+	//	return 42;
+	//}
+	//====================
+	//#include "A.h"
+	//
+	//A::A() {
+	//}
+	//
+	//A::~A() {
+	//}
+	//
+	//void A::extracted() {
+	//	b = new B();
+	//	help();
+	//}
+	//
+	//void A::foo() {
+	//	extracted();
+	//}
+	//
+	//int A::help() {
+	//	return 42;
+	//}
+
+	//B.h
+	//#ifndef B_H_
+	//#define B_H_
+	//
+	//class B {
+	//public:
+	//	B();
+	//	virtual ~B();
+	//};
+	//
+	//#endif /*B_H_*/
+	public void testLocalVariableDeclaration_2() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//A.h
+	//#ifndef A_H_
+	//#define A_H_
+	//
+	//class A {
+	//public:
+	//	A();
+	//	virtual ~A();
+	//	int foo();
+	//
+	//private:
+	//	int help();
+	//};
+	//
+	//#endif /*A_H_*/
+
+	//A.cpp
+	//#include "A.h"
+	//
+	//A::A() {
+	//}
+	//
+	//A::~A() {
+	//}
+	//
+	//int A::foo() {
+	//	/*$*/int o = 1;
+	//	int i = 2;
+	//	++i;
+	//	o++;
+	//	help();/*$$*/
+	//	o++;
+	//	return i;
+	//}
+	//
+	//int A::help() {
+	//	return 42;
+	//}
+	public void testTwoLocalVariables() throws Exception {
+		assertRefactoringFailure();
 	}
 
 	//A.h
@@ -313,48 +447,6 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//#ifndef A_H_
 	//#define A_H_
 	//
-	//class A {
-	//public:
-	//	A();
-	//	virtual ~A();
-	//	int foo();
-	//
-	//private:
-	//	int help();
-	//};
-	//
-	//#endif /*A_H_*/
-
-	//A.cpp
-	//#include "A.h"
-	//
-	//A::A() {
-	//}
-	//
-	//A::~A() {
-	//}
-	//
-	//int A::foo() {
-	//	/*$*/int o = 1;
-	//	int i = 2;
-	//	++i;
-	//	o++;
-	//	help();/*$$*/
-	//	o++;
-	//	return i;
-	//}
-	//
-	//int A::help() {
-	//	return 42;
-	//}
-	public void testTwoVariableDefinedInScope() throws Exception {
-		assertRefactoringFailure();
-	}
-
-	//A.h
-	//#ifndef A_H_
-	//#define A_H_
-	//
 	//#include "B.h"
 	//
 	//class A {
@@ -442,99 +534,6 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	public void testNamedTypedField() throws Exception {
 		assertRefactoringSuccess();
 	}
-
-	//A.h
-	//#ifndef A_H_
-	//#define A_H_
-	//
-	//#include "B.h"
-	//
-	//class A {
-	//public:
-	//	A();
-	//	virtual ~A();
-	//	void foo();
-	//	B b;
-	//
-	//private:
-	//	int help();
-	//};
-	//
-	//#endif /*A_H_*/
-	//====================
-	//#ifndef A_H_
-	//#define A_H_
-	//
-	//#include "B.h"
-	//
-	//class A {
-	//public:
-	//	A();
-	//	virtual ~A();
-	//	void foo();
-	//	B b;
-	//
-	//private:
-	//	int help();
-	//	void extracted();
-	//};
-	//
-	//#endif /*A_H_*/
-
-	//A.cpp
-	//#include "A.h"
-	//
-	//A::A() {
-	//}
-	//
-	//A::~A() {
-	//}
-	//
-	//void A::foo() {
-	//	/*$*/b = new B();
-	//	help();/*$$*/
-	//}
-	//
-	//int A::help() {
-	//	return 42;
-	//}
-	//====================
-	//#include "A.h"
-	//
-	//A::A() {
-	//}
-	//
-	//A::~A() {
-	//}
-	//
-	//void A::extracted() {
-	//	b = new B();
-	//	help();
-	//}
-	//
-	//void A::foo() {
-	//	extracted();
-	//}
-	//
-	//int A::help() {
-	//	return 42;
-	//}
-
-	//B.h
-	//#ifndef B_H_
-	//#define B_H_
-	//
-	//class B {
-	//public:
-	//	B();
-	//	virtual ~B();
-	//};
-	//
-	//#endif /*B_H_*/
-	public void testNamedTypedVariableDefinedInScope() throws Exception {
-		assertRefactoringSuccess();
-	}
-
 	//A.h
 	//#ifndef A_H_
 	//#define A_H_
@@ -617,91 +616,6 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//	return 42;
 	//}
 	public void testObjectStyleMacro() throws Exception {
-		assertRefactoringSuccess();
-	}
-
-	//A.h
-	//#ifndef A_H_
-	//#define A_H_
-	//
-	//class A {
-	//public:
-	//	A();
-	//	virtual ~A();
-	//	int foo();
-	//
-	//private:
-	//	int help();
-	//};
-	//
-	//#endif /*A_H_*/
-	//====================
-	//#ifndef A_H_
-	//#define A_H_
-	//
-	//class A {
-	//public:
-	//	A();
-	//	virtual ~A();
-	//	int foo();
-	//
-	//private:
-	//	int help();
-	//	int extracted(int i);
-	//};
-	//
-	//#endif /*A_H_*/
-
-	//A.cpp
-	//#include "A.h"
-	//
-	//#define ADD(a,b) a + b + 2
-	//
-	//A::A() {
-	//}
-	//
-	//A::~A() {
-	//}
-	//
-	//int A::foo() {
-	//	int i = 2;
-	//	/*$*/++i;
-	//	i = ADD(i, 42);
-	//	help();/*$$*/
-	//	return i;
-	//}
-	//
-	//int A::help() {
-	//	return 42;
-	//}
-	//====================
-	//#include "A.h"
-	//
-	//#define ADD(a,b) a + b + 2
-	//
-	//A::A() {
-	//}
-	//
-	//A::~A() {
-	//}
-	//
-	//int A::extracted(int i) {
-	//	++i;
-	//	i = ADD(i, 42);
-	//	help();
-	//	return i;
-	//}
-	//
-	//int A::foo() {
-	//	int i = 2;
-	//	i = extracted(i);
-	//	return i;
-	//}
-	//
-	//int A::help() {
-	//	return 42;
-	//}
-	public void testFunctionStyleMacro() throws Exception {
 		assertRefactoringSuccess();
 	}
 
@@ -1030,7 +944,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//int A::help() {
 	//	return 42;
 	//}
-	public void testRefParameter() throws Exception {
+	public void testReturnValueSelection_1() throws Exception {
 		assertRefactoringSuccess();
 	}
 
@@ -1121,116 +1035,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//int A::help() {
 	//	return 42;
 	//}
-	public void testRefParameterAndSomeMoreNotUsedAfterwards() throws Exception {
-		assertRefactoringSuccess();
-	}
-
-	//A.h
-	//#ifndef A_H_
-	//#define A_H_
-	//
-	//#include "B.h"
-	//
-	//class A {
-	//public:
-	//	A();
-	//	virtual ~A();
-	//	int foo();
-	//
-	//private:
-	//	int help();
-	//};
-	//
-	//#endif /*A_H_*/
-	//====================
-	//#ifndef A_H_
-	//#define A_H_
-	//
-	//#include "B.h"
-	//
-	//class A {
-	//public:
-	//	A();
-	//	virtual ~A();
-	//	int foo();
-	//
-	//private:
-	//	int help();
-	//	float extracted(int& i, int y, float x, B* b);
-	//};
-	//
-	//#endif /*A_H_*/
-
-	//A.cpp
-	//#include "A.h"
-	//
-	//A::A() {
-	//}
-	//
-	//A::~A() {
-	//}
-	//
-	//int A::foo() {
-	//	int i = 2;
-	//	float x = i;
-	//	B* b = new B();
-	//	int y = x + i;
-	//	/*$*/++i;
-	//	b->hello(y);
-	//	i = i + x;
-	//	help();/*$$*/
-	//	++x;
-	//	return i;
-	//}
-	//
-	//int A::help() {
-	//	return 42;
-	//}
-	//====================
-	//#include "A.h"
-	//
-	//A::A() {
-	//}
-	//
-	//A::~A() {
-	//}
-	//
-	//float A::extracted(int& i, int y, float x, B* b) {
-	//	++i;
-	//	b->hello(y);
-	//	i = i + x;
-	//	help();
-	//	return x;
-	//}
-	//
-	//int A::foo() {
-	//	int i = 2;
-	//	float x = i;
-	//	B* b = new B();
-	//	int y = x + i;
-	//	x = extracted(i, y, x, b);
-	//	++x;
-	//	return i;
-	//}
-	//
-	//int A::help() {
-	//	return 42;
-	//}
-
-	//B.h
-	//#ifndef B_H_
-	//#define B_H_
-	//
-	//class B {
-	//public:
-	//	B();
-	//	virtual ~B();
-	//	void hello(float y);
-	//};
-	//
-	//#endif /*B_H_*/
-	public void testExplicitlyAssignedReturnValue() throws Exception {
-		returnValue = "x";
+	public void testReturnValueSelection_2() throws Exception {
 		assertRefactoringSuccess();
 	}
 
@@ -1342,7 +1147,116 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//};
 	//
 	//#endif /*B_H_*/
-	public void testReturnValueSelection() throws Exception {
+	public void testReturnValueSelection_3() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//A.h
+	//#ifndef A_H_
+	//#define A_H_
+	//
+	//#include "B.h"
+	//
+	//class A {
+	//public:
+	//	A();
+	//	virtual ~A();
+	//	int foo();
+	//
+	//private:
+	//	int help();
+	//};
+	//
+	//#endif /*A_H_*/
+	//====================
+	//#ifndef A_H_
+	//#define A_H_
+	//
+	//#include "B.h"
+	//
+	//class A {
+	//public:
+	//	A();
+	//	virtual ~A();
+	//	int foo();
+	//
+	//private:
+	//	int help();
+	//	float extracted(int& i, int y, float x, B* b);
+	//};
+	//
+	//#endif /*A_H_*/
+
+	//A.cpp
+	//#include "A.h"
+	//
+	//A::A() {
+	//}
+	//
+	//A::~A() {
+	//}
+	//
+	//int A::foo() {
+	//	int i = 2;
+	//	float x = i;
+	//	B* b = new B();
+	//	int y = x + i;
+	//	/*$*/++i;
+	//	b->hello(y);
+	//	i = i + x;
+	//	help();/*$$*/
+	//	++x;
+	//	return i;
+	//}
+	//
+	//int A::help() {
+	//	return 42;
+	//}
+	//====================
+	//#include "A.h"
+	//
+	//A::A() {
+	//}
+	//
+	//A::~A() {
+	//}
+	//
+	//float A::extracted(int& i, int y, float x, B* b) {
+	//	++i;
+	//	b->hello(y);
+	//	i = i + x;
+	//	help();
+	//	return x;
+	//}
+	//
+	//int A::foo() {
+	//	int i = 2;
+	//	float x = i;
+	//	B* b = new B();
+	//	int y = x + i;
+	//	x = extracted(i, y, x, b);
+	//	++x;
+	//	return i;
+	//}
+	//
+	//int A::help() {
+	//	return 42;
+	//}
+
+	//B.h
+	//#ifndef B_H_
+	//#define B_H_
+	//
+	//class B {
+	//public:
+	//	B();
+	//	virtual ~B();
+	//	void hello(float y);
+	//};
+	//
+	//#endif /*B_H_*/
+	public void testExplicitlyAssignedReturnValue() throws Exception {
+		returnValue = "x";
 		assertRefactoringSuccess();
 	}
 
@@ -1698,7 +1612,132 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 		assertRefactoringSuccess();
 	}
 
-	//main.h
+	//test.cpp
+	//int test(bool param) {
+	//	int a = 42;
+	//	char b = '0';
+	//
+	//	if (param) {
+	//		/*$*/b += a;
+	//		a += b;/*$$*/
+	//	} else {
+	//		b -= a;
+	//		a -= b;
+	//	}
+	//  return a;
+	//}
+	//====================
+	//int extracted(char b, int a) {
+	//	b += a;
+	//	a += b;
+	//	return a;
+	//}
+	//
+	//int test(bool param) {
+	//	int a = 42;
+	//	char b = '0';
+	//
+	//	if (param) {
+	//		a = extracted(b, a);
+	//	} else {
+	//		b -= a;
+	//		a -= b;
+	//	}
+	//  return a;
+	//}
+	public void testOutputParametersDetectionInIfStatement() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.c
+	//int main() {
+	//	int a = 42;
+	//	char b = '0';
+	//
+	//	switch (a) {
+	//	case 0:
+	//		/*$*/b += a;
+	//		a += b;/*$$*/
+	//		break;
+	//	case 42:
+	//		b -= a;
+	//		a -= b;
+	//		break;
+	//	default:
+	//		b ++;
+	//		a += b;
+	//		break;
+	//	}
+	//	return b;
+	//}
+	//====================
+	//char extracted(char b, int a) {
+	//	b += a;
+	//	a += b;
+	//	return b;
+	//}
+	//
+	//int main() {
+	//	int a = 42;
+	//	char b = '0';
+	//
+	//	switch (a) {
+	//	case 0:
+	//		b = extracted(b, a);
+	//		break;
+	//	case 42:
+	//		b -= a;
+	//		a -= b;
+	//		break;
+	//	default:
+	//		b ++;
+	//		a += b;
+	//		break;
+	//	}
+	//	return b;
+	//}
+	public void testOutputParametersDetectionInSwitchStatement_Bug302406() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//test.c
+	//void print(int i, double a, double b);
+	//
+	//void test(double x) {
+	//	double s = 0;
+	//	double y = 1;
+	//	int i;
+	//	for (i = 0; i < 10; i++) {
+	//      print(x, s);
+	//      /*$*/x *= x;
+	//      y *= i;
+	//		s += x / y;/*$$*/
+	//	}
+	//}
+	//====================
+	//void print(int i, double a, double b);
+	//
+	//extracted(double x, int i, double* y, double* s) {
+	//	x *= x;
+	//	*y *= i;
+	//	*s += x / *y;
+	//	return x;
+	//}
+	//
+	//void test(double x) {
+	//	double s = 0;
+	//	double y = 1;
+	//	int i;
+	//	for (i = 0; i < 10; i++) {
+	//      print(x, s);
+	//		x = extracted(x, i, &y, &s);
+	//	}
+	//}
+	public void testOutputParametersDetectionInForLoop() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//main.cpp
 	//void method() {
 	//	/*$*/for (int var = 0; var < 100; ++var) {
 	//		if (var < 50)
@@ -1740,39 +1779,6 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//}
 	public void testDontExtractCodeContainingContinue() throws Exception {
 		assertRefactoringFailure();
-	}
-
-	//Test.cpp
-	//#define ASSERTM(msg,cond) if (!(cond)) throw cute::test_failure((msg),__FILE__,__LINE__)
-	//#define ASSERT(cond) ASSERTM(#cond, cond)
-	//
-	//void testFuerRainer() {
-	//	int i = int();
-	//	/*$*/++i;
-	//	//Leading Comment
-	//	ASSERT(i);
-	//	//Trailling Comment
-	//	--i;/*$$*/
-	//}
-	//====================
-	//#define ASSERTM(msg,cond) if (!(cond)) throw cute::test_failure((msg),__FILE__,__LINE__)
-	//#define ASSERT(cond) ASSERTM(#cond, cond)
-	//
-	//void runTest(int i) {
-	//	++i;
-	//	//Leading Comment
-	//	ASSERT(i);
-	//	//Trailling Comment
-	//	--i;
-	//}
-	//
-	//void testFuerRainer() {
-	//	int i = int();
-	//	runTest(i);
-	//}
-	public void testMacroCallInSelectedCodeForgetsTheMacro() throws Exception {
-		extractedFunctionName = "runTest";
-		assertRefactoringSuccess();
 	}
 
 	//Test.cpp
@@ -1835,7 +1841,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//	string* newElements = runTest(m_capacity);
 	//	newElements[0] = "s";
 	//}
-	public void testStringArrayProblemInExtractFunction() throws Exception {
+	public void testStringArray() throws Exception {
 		extractedFunctionName = "runTest";
 		assertRefactoringSuccess();
 	}
@@ -1902,7 +1908,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//	extracted(b, c, a);
 	//	return a;
 	//}
-	public void testBug239059DoubleAmpersandInSignatureOfExtractedFunctions() throws Exception {
+	public void testReferenceVariable_Bug239059() throws Exception {
 		assertRefactoringSuccess();
 	}
 
@@ -1972,7 +1978,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//void Test::test() {
 	//	RetType v = extracted();
 	//}
-	public void testBug241717TypedefCausesVoidAsReturnType() throws Exception {
+	public void testTypedef_Bug241717() throws Exception {
 		assertRefactoringSuccess();
 	}
 
@@ -2020,7 +2026,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//int main() {
 	//	return 0;
 	//}
-	public void testBug248238ExtractMethodProducesWrongReturnTypeOrJustFailsClasstype() throws Exception {
+	public void testQualifiedReturnTypeName_Bug248238_1() throws Exception {
 		extractedFunctionName = "startTag";
 		assertRefactoringSuccess();
 	}
@@ -2072,7 +2078,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//int main() {
 	//	return 0;
 	//}
-	public void testBug248238ExtractMethodProducesWrongReturnTypeOrJustFailsTypedef() throws Exception {
+	public void testQualifiedReturnTypeName_Bug248238_2() throws Exception {
 		extractedFunctionName = "startTag";
 		assertRefactoringSuccess();
 	}
@@ -2122,7 +2128,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//int main() {
 	//	return 0;
 	//}
-	public void testBug248622ExtractFunctionFailsToExtractSeveralExpressionsSelectionAtTheEnd() throws Exception {
+	public void testReturnStatementExpression_Bug248622_1() throws Exception {
 		extractedFunctionName = "endTag";
 		assertRefactoringSuccess();
 	}
@@ -2172,7 +2178,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//int main() {
 	//	return 0;
 	//}
-	public void testBug248622ExtractFunctionFailsToExtractSeveralExpressionsSelectionInTheMiddle() throws Exception {
+	public void testReturnStatementExpression_Bug248622_2() throws Exception {
 		assertRefactoringSuccess();
 	}
 
@@ -2194,7 +2200,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//int main(int argc, char** argv) {
 	//	extracted();
 	//}
-	public void testBug262000ExtractFunctionMisinterpretsArtificialBlocks() throws Exception {
+	public void testBlock_Bug262000() throws Exception {
 		assertRefactoringSuccess();
 	}
 
@@ -2299,7 +2305,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//	int result = extracted();
 	//	return result;
 	//}
-	public void testBug264712ExtractFunctionDeletesCommentsInHeader() throws Exception {
+	public void testCommentsInHeader_Bug264712() throws Exception {
 		assertRefactoringSuccess();
 	}
 
@@ -2338,7 +2344,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//	a = extracted(a);
 	//	return a;
 	//}
-	public void testBug281564ExtractFunctionFailsWhenCatchingAnUnnamedException() throws Exception {
+	public void testCatchUnnamedException_Bug281564() throws Exception {
 		assertRefactoringSuccess();
 	}
 
@@ -2358,7 +2364,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//	extracted(b, a);
 	//	return a;
 	//}
-	public void testBug282004ExtractFunctionInCProjectNotCPPWontExtractParameters() throws Exception {
+	public void testCFunction_Bug282004() throws Exception {
 		assertRefactoringSuccess();
 	}
 
@@ -2379,7 +2385,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//	a = extracted(a, b);
 	//	return a;
 	//}
-	public void testBug288268CRefactoringCreatesCPPParameters() throws Exception {
+	public void testCFunction_Bug288268() throws Exception {
 		assertRefactoringSuccess();
 	}
 
@@ -3359,7 +3365,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//};
 	//
 	//#endif /*B_H_*/
-	public void testALotRefParameterAndAMethodCall() throws Exception {
+	public void testMethodCall() throws Exception {
 		assertRefactoringSuccess();
 	}
 
@@ -3486,7 +3492,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//};
 	//
 	//#endif /*B_H_*/
-	public void testALotRefParameterAndAMethodCallDuplicateIsSimilar() throws Exception {
+	public void testMethodCallWithDuplicate() throws Exception {
 		assertRefactoringSuccess();
 	}
 
@@ -3601,6 +3607,91 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//
 	//private:
 	//	int help();
+	//	int extracted(int i);
+	//};
+	//
+	//#endif /*A_H_*/
+
+	//A.cpp
+	//#include "A.h"
+	//
+	//#define ADD(a,b) a + b + 2
+	//
+	//A::A() {
+	//}
+	//
+	//A::~A() {
+	//}
+	//
+	//int A::foo() {
+	//	int i = 2;
+	//	/*$*/++i;
+	//	i = ADD(i, 42);
+	//	help();/*$$*/
+	//	return i;
+	//}
+	//
+	//int A::help() {
+	//	return 42;
+	//}
+	//====================
+	//#include "A.h"
+	//
+	//#define ADD(a,b) a + b + 2
+	//
+	//A::A() {
+	//}
+	//
+	//A::~A() {
+	//}
+	//
+	//int A::extracted(int i) {
+	//	++i;
+	//	i = ADD(i, 42);
+	//	help();
+	//	return i;
+	//}
+	//
+	//int A::foo() {
+	//	int i = 2;
+	//	i = extracted(i);
+	//	return i;
+	//}
+	//
+	//int A::help() {
+	//	return 42;
+	//}
+	public void testFunctionStyleMacro_1() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//A.h
+	//#ifndef A_H_
+	//#define A_H_
+	//
+	//class A {
+	//public:
+	//	A();
+	//	virtual ~A();
+	//	int foo();
+	//
+	//private:
+	//	int help();
+	//};
+	//
+	//#endif /*A_H_*/
+	//====================
+	//#ifndef A_H_
+	//#define A_H_
+	//
+	//class A {
+	//public:
+	//	A();
+	//	virtual ~A();
+	//	int foo();
+	//
+	//private:
+	//	int help();
 	//	int extracted(int ii);
 	//};
 	//
@@ -3655,7 +3746,40 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//int A::help() {
 	//	return 42;
 	//}
-	public void testFunctionStyleMacro2() throws Exception {
+	public void testFunctionStyleMacro_2() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//Test.cpp
+	//#define ASSERTM(msg,cond) if (!(cond)) throw cute::test_failure((msg),__FILE__,__LINE__)
+	//#define ASSERT(cond) ASSERTM(#cond, cond)
+	//
+	//void testFuerRainer() {
+	//	int i = int();
+	//	/*$*/++i;
+	//	//Leading Comment
+	//	ASSERT(i);
+	//	//Trailling Comment
+	//	--i;/*$$*/
+	//}
+	//====================
+	//#define ASSERTM(msg,cond) if (!(cond)) throw cute::test_failure((msg),__FILE__,__LINE__)
+	//#define ASSERT(cond) ASSERTM(#cond, cond)
+	//
+	//void runTest(int i) {
+	//	++i;
+	//	//Leading Comment
+	//	ASSERT(i);
+	//	//Trailling Comment
+	//	--i;
+	//}
+	//
+	//void testFuerRainer() {
+	//	int i = int();
+	//	runTest(i);
+	//}
+	public void testFunctionStyleMacro_3() throws Exception {
+		extractedFunctionName = "runTest";
 		assertRefactoringSuccess();
 	}
 
@@ -3744,7 +3868,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//int A::help() {
 	//	return 42;
 	//}
-	public void testReturnValueAssignedToMacroCall() throws Exception {
+	public void testReturnValueAssignedInMacro() throws Exception {
 		returnValue = "b";
 		assertRefactoringSuccess();
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 Intel Corporation and others.
+ * Copyright (c) 2006, 2012 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,14 +20,11 @@ import java.util.Set;
 
 import org.eclipse.cdt.core.CommandLauncher;
 import org.eclipse.cdt.core.ICommandLauncher;
-import org.eclipse.cdt.internal.core.Cygwin;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildCommand;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedMakeMessages;
 import org.eclipse.cdt.utils.PathUtil;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
 /**
@@ -47,44 +44,6 @@ public class CommandBuilder implements IBuildModelBuilder {
 	private IBuildCommand fCmd;
 	private Process fProcess;
 	private String fErrMsg;
-
-	private class CommandSearchLauncher extends CommandLauncher {
-		@Override
-		protected String[] constructCommandArray(String command, String[] commandArgs) {
-			String[] args = new String[1 + commandArgs.length];
-			if (Platform.getOS().equals(Platform.OS_WIN32)) {
-				// find a location of the executable
-				String envPathValue = fCmd.getEnvironment().get(PATH_ENV);
-				IPath location = PathUtil.findProgramLocation(command, envPathValue);
-				if(location != null) {
-					try {
-						// Handle cygwin link
-						command = Cygwin.cygwinToWindowsPath(location.toString(), envPathValue);
-					} catch (Exception e) {
-						command = location.toString();
-					}
-				}
-				//if not found, continue with the command passed as an argument
-			}
-
-			args[0] = command;
-			System.arraycopy(commandArgs, 0, args, 1, commandArgs.length);
-			return args;
-		}
-
-		@Override
-		protected void printCommandLine(OutputStream os) {
-			if (os != null) {
-				String cmd = CommandBuilder.this.getCommandLine();
-				try {
-					os.write(cmd.getBytes());
-					os.flush();
-				} catch (IOException e) {
-					// ignore;
-				}
-			}
-		}
-	}
 
 	protected class OutputStreamWrapper extends OutputStream {
 		private OutputStream fOut;
@@ -205,12 +164,10 @@ public class CommandBuilder implements IBuildModelBuilder {
 	}
 
 	protected ICommandLauncher createLauncher() {
-//		if(isWindows())
-//			return new CommandLauncher();
-		return new CommandSearchLauncher();
+		return new CommandLauncher();
 	}
 
-	public String getErrMsg(){
+	public String getErrMsg() {
 		return fErrMsg;
 	}
 

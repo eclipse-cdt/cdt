@@ -13,8 +13,14 @@ package org.eclipse.cdt.debug.internal.ui.breakpoints;
 
 import java.util.Map;
 
+import org.eclipse.cdt.debug.core.CDIDebugModel;
+import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
+import org.eclipse.cdt.debug.core.model.ICEventBreakpoint;
+import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
+import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICTracepoint;
+import org.eclipse.cdt.debug.core.model.ICWatchpoint;
 import org.eclipse.cdt.debug.ui.breakpoints.ICBreakpointContext;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
@@ -26,10 +32,12 @@ import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugModelProvider;
 import org.eclipse.debug.ui.contexts.IDebugContextListener;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IActionFilter;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
  * Input for breakpoint properties dialog.  It captures both the 
@@ -148,6 +156,43 @@ class CBreakpointContextActionFilter implements IActionFilter {
     }
 }
 
+class CBreakpointContextWorkbenchAdapter implements IWorkbenchAdapter {
+    @Override
+    public String getLabel(Object o) {
+        if (o instanceof ICBreakpointContext) {
+            ICBreakpoint bp = ((ICBreakpointContext)o).getBreakpoint();
+            return getBreakpointMainLabel(bp);
+        }
+        return ""; //$NON-NLS-1$
+    }
+    
+    @Override
+    public Object[] getChildren(Object o) { return null; }
+    
+    @Override
+    public ImageDescriptor getImageDescriptor(Object object) { return null; }
+    
+    @Override
+    public Object getParent(Object o) { return null; }
+    
+    private String getBreakpointMainLabel(ICBreakpoint breakpoint) {
+        if (breakpoint instanceof ICFunctionBreakpoint) {
+            return BreakpointsMessages.getString("CBreakpointPropertyPage.breakpointType_function_label"); //$NON-NLS-1$
+        } else if (breakpoint instanceof ICAddressBreakpoint) {
+            return BreakpointsMessages.getString("CBreakpointPropertyPage.breakpointType_address_label"); //$NON-NLS-1$
+        } else if (breakpoint instanceof ICLineBreakpoint) {
+            return BreakpointsMessages.getString("CBreakpointPropertyPage.breakpointType_line_label"); //$NON-NLS-1$
+        } else if (breakpoint instanceof ICEventBreakpoint) {
+            return BreakpointsMessages.getString("CBreakpointPropertyPage.breakpointType_event_label"); //$NON-NLS-1$
+        } else if (breakpoint instanceof ICWatchpoint) {
+            return BreakpointsMessages.getString("CBreakpointPropertyPage.breakpointType_watchpoint_label"); //$NON-NLS-1$
+        }
+        // default main label is the label of marker type for the breakpoint
+        return CDIDebugModel.calculateMarkerType(breakpoint);
+    }
+
+}
+
 /**
  * Adapter factory which returns the breakpoint object and the action
  * filter for the CBreakpointContext type.
@@ -155,10 +200,12 @@ class CBreakpointContextActionFilter implements IActionFilter {
 class CBreakpointContextAdapterFactory implements IAdapterFactory {
     
     private static final Class<?>[] fgAdapterList = new Class[] {
-        IBreakpoint.class, ICBreakpoint.class, ICTracepoint.class, IActionFilter.class, IPreferenceStore.class
+        IBreakpoint.class, ICBreakpoint.class, ICTracepoint.class, IActionFilter.class, IPreferenceStore.class,
+        IWorkbenchAdapter.class,
     };
 
     private static final IActionFilter fgActionFilter = new CBreakpointContextActionFilter();
+    private static final IWorkbenchAdapter fgWorkbenchAdapter = new CBreakpointContextWorkbenchAdapter();
     
     @Override
 	public Object getAdapter(Object obj, @SuppressWarnings("rawtypes") Class adapterType) {
@@ -178,6 +225,11 @@ class CBreakpointContextAdapterFactory implements IAdapterFactory {
         if (IActionFilter.class.equals(adapterType)) {
             return fgActionFilter;
         }
+        
+        if (IWorkbenchAdapter.class.equals(adapterType)) {
+            return fgWorkbenchAdapter;
+        }
+
         return null;
     }
     

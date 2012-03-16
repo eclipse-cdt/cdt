@@ -97,8 +97,8 @@ public class CAddBreakpointInteractiveRulerAction extends Action implements IUpd
 			    DebugUITools.getToggleBreakpointsTargetManager().getToggleBreakpointsTarget(fPart, selection);
 			if (toggleTarget instanceof IToggleBreakpointsTargetCExtension) {
                 IToggleBreakpointsTargetCExtension extension = (IToggleBreakpointsTargetCExtension) toggleTarget;
-                if (extension.canCreateBreakpointsInteractive(fPart, selection)) {
-                    extension.createBreakpointsInteractive(fPart, selection);
+                if (extension.canCreateLineBreakpointsInteractive(fPart, selection)) {
+                    extension.createLineBreakpointsInteractive(fPart, selection);
                 }                    
             } 
 		} catch (BadLocationException e) {
@@ -177,7 +177,7 @@ public class CAddBreakpointInteractiveRulerAction extends Action implements IUpd
                     }
                     if (adapter instanceof IToggleBreakpointsTargetCExtension) {
                         IToggleBreakpointsTargetCExtension extension = (IToggleBreakpointsTargetCExtension) adapter;
-                        if (extension.canCreateBreakpointsInteractive(fPart, selection)) {
+                        if (extension.canCreateLineBreakpointsInteractive(fPart, selection)) {
                             setEnabled(true);
                             return;
                         }

@@ -581,6 +581,12 @@
                menubarPath="debug">
          </action>
          <action
+               class="org.eclipse.cdt.dsf.debug.internal.ui.disassembly.actions.AddBreakpointRulerActionDelegate"
+               id="org.eclipse.debug.ui.actions.RulerAddBreakpointAction"
+               label="%action.addBreakpoint.label"
+               menubarPath="debug">
+         </action>
+         <action
                class="org.eclipse.cdt.dsf.debug.internal.ui.disassembly.actions.RulerToggleBreakpointActionDelegate"
                definitionId="org.eclipse.cdt.dsf.debug.ui.disassembly.commands.rulerToggleBreakpoint"
                id="org.eclipse.debug.ui.actions.RulerToggleBreakpointAction"

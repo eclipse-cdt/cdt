@@ -45,6 +45,7 @@ import org.eclipse.swt.widgets.Text;
 
 /**
  * The "Add Watchpoint" dialog of the "Toggle watchpoint" action.
+ * @deprecated Replaced by opening a properties dialog on a new breakpoint.
  */
 public class AddWatchpointDialog extends Dialog implements ModifyListener, SelectionListener {
 

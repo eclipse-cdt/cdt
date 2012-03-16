@@ -970,6 +970,15 @@
                style="push"
                tooltip="%AddEventBreakpoint.tooltip">
          </action>
+         <action
+               class="org.eclipse.cdt.debug.internal.ui.actions.breakpoints.AddFunctionBreakpointActionDelegate"
+               icon="icons/elcl16/function_brkpt_co.gif"
+               id="org.eclipse.cdt.debug.ui.addFunctionBreakpoint"
+               label="%AddFunctionBreakpoint.label"
+               menubarPath="cDebugActions"
+               style="push"
+               helpContextId="add_function_breakpoint_action_context"
+               tooltip="%AddFunctionBreakpoint.tooltip"/>
       </viewContribution>
       <viewContribution
             targetID="org.eclipse.debug.ui.VariableView"

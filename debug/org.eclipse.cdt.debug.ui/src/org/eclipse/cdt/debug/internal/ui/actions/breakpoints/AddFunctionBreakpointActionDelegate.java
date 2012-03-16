@@ -11,19 +11,10 @@
 *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions.breakpoints; 
 
-import java.math.BigInteger;
-
-import org.eclipse.cdt.debug.core.CDIDebugModel;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIMemorySpaceManagement;
-import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
-import org.eclipse.cdt.debug.core.model.ICDebugTarget;
 import org.eclipse.cdt.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.debug.ui.breakpoints.IToggleBreakpointsTargetCExtension;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.actions.IToggleBreakpointsTarget;
 import org.eclipse.jface.action.IAction;
@@ -33,9 +24,9 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.actions.ActionDelegate;
  
 /**
- * A delegate for the "Add Watchpoint" action.
+ * A delegate for the "Add Function Breakpoint" action.
  */
-public class AddWatchpointActionDelegate extends ActionDelegate implements IViewActionDelegate {
+public class AddFunctionBreakpointActionDelegate extends ActionDelegate implements IViewActionDelegate {
 
 	private IViewPart fView;
 	private ISelection fSelection;
@@ -76,46 +67,9 @@ public class AddWatchpointActionDelegate extends ActionDelegate implements IView
 	    }
 	        
         try {
-            cToggleTarget.createWatchpointsInteractive(fView, fSelection);
+            cToggleTarget.createFunctionBreakpointInteractive(fView, fSelection);
         } catch (CoreException e) {
             CDebugUIPlugin.errorDialog( ActionMessages.getString( "AddWatchpointActionDelegate1.0" ), e ); //$NON-NLS-1$
         }
-	}
-
-	protected void addWatchpoint(boolean write, boolean read, String expression, String memorySpace, BigInteger range) {
-		if ( getResource() == null )
-			return;
-		try {
-			CDIDebugModel.createWatchpoint( getSourceHandle(), getResource(), write, read, expression, memorySpace, range, true, 0, "", true ); //$NON-NLS-1$
-		}
-		catch( CoreException ce ) {
-			CDebugUIPlugin.errorDialog( ActionMessages.getString( "AddWatchpointActionDelegate1.0" ), ce ); //$NON-NLS-1$
-		}
-	}
-
-	private IResource getResource() {
-		return ResourcesPlugin.getWorkspace().getRoot();
-	}
-
-	private String getSourceHandle() {
-		return ""; //$NON-NLS-1$
-	}
-	
-	public static ICDIMemorySpaceManagement getMemorySpaceManagement(){
-		IAdaptable debugViewElement = DebugUITools.getDebugContext();
-		ICDIMemorySpaceManagement memMgr = null;
-		
-		if ( debugViewElement != null ) {
-			ICDebugTarget debugTarget = (ICDebugTarget)debugViewElement.getAdapter(ICDebugTarget.class);
-			
-			if ( debugTarget != null ){
-				ICDITarget target = (ICDITarget)debugTarget.getAdapter(ICDITarget.class);
-			
-				if (target instanceof ICDIMemorySpaceManagement)
-					memMgr = (ICDIMemorySpaceManagement)target;
-			}
-		}
-		
-		return memMgr;
 	}
 }

@@ -37,9 +37,9 @@ public class CToggleMethodBreakpointActionDelegate extends CToggleBreakpointObje
 	{
 	    if ((event.stateMask & SWT.MOD1) != 0 && 
 	        target instanceof IToggleBreakpointsTargetCExtension &&
-	        ((IToggleBreakpointsTargetCExtension)target).canCreateBreakpointsInteractive(part, selection)) 
+	        ((IToggleBreakpointsTargetCExtension)target).canCreateLineBreakpointsInteractive(part, selection)) 
 	    {
-	        ((IToggleBreakpointsTargetCExtension)target).createBreakpointsInteractive(part, selection);
+	        ((IToggleBreakpointsTargetCExtension)target).createLineBreakpointsInteractive(part, selection);
 	    } 
 	    else {
 	        target.toggleMethodBreakpoints(part, selection);

@@ -91,20 +91,11 @@ public class ToggleBreakpointAdapter extends AbstractToggleBreakpointAdapter {
     protected void createWatchpoint( boolean interactive, IWorkbenchPart part, String sourceHandle, IResource resource, 
         int charStart, int charEnd, int lineNumber, String expression) throws CoreException 
     {
-//        AddWatchpointDialog dlg = new AddWatchpointDialog(part.getSite().getShell(), getMemorySpaceManagement() );
-//        dlg.setExpression( expression );
-//        if ( dlg.open() != Window.OK )
-//            return;
-//        expression = dlg.getExpression();
-//        CDIDebugModel.createWatchpoint(sourceHandle, resource, charStart, charEnd, lineNumber, dlg.getWriteAccess(), 
-//            dlg.getReadAccess(), expression, dlg.getMemorySpace(), dlg.getRange(), true, 0, "", true); //$NON-NLS-1$
-        if (interactive) {
-            ICWatchpoint bp = CDIDebugModel.createBlankWatchpoint();
-            Map<String, Object> attributes = new HashMap<String, Object>();
-            CDIDebugModel.setWatchPointAttributes(attributes, sourceHandle, resource, true, false, 
-                expression, "", new BigInteger("0"), true, 0, ""); //$NON-NLS-1$
-            openBreakpointPropertiesDialog(bp, part, resource, attributes);
-        }
+        ICWatchpoint bp = CDIDebugModel.createBlankWatchpoint();
+        Map<String, Object> attributes = new HashMap<String, Object>();
+        CDIDebugModel.setWatchPointAttributes(attributes, sourceHandle, resource, true, false, 
+            expression, "", new BigInteger("0"), true, 0, ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        openBreakpointPropertiesDialog(bp, part, resource, attributes);
 	}
 
 	protected int getBreakpointType() {

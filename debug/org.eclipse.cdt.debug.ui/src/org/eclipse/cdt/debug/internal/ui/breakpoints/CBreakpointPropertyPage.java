@@ -15,7 +15,6 @@ package org.eclipse.cdt.debug.internal.ui.breakpoints;
 import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
-import org.eclipse.cdt.debug.core.model.ICEventBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint;
@@ -26,6 +25,7 @@ import org.eclipse.cdt.debug.ui.breakpoints.ICBreakpointsUIContribution;
 import org.eclipse.cdt.debug.ui.preferences.ReadOnlyFieldEditor;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.model.ILineBreakpoint;
@@ -38,6 +38,7 @@ import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchPropertyPage;
+import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
  * The preference page used to present the properties of a breakpoint as preferences. A CBreakpointPreferenceStore is used to interface between this page and
@@ -232,8 +233,11 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 	}
 
 	private void createMainLabel(ICBreakpoint breakpoint) {
-		addField( createLabelEditor( getFieldEditorParent(), BreakpointsMessages.getString( "CBreakpointPropertyPage.18" ),  //$NON-NLS-1$
-				getBreakpointMainLabel(breakpoint) ) );
+	    String label = getBreakpointMainLabel(breakpoint); 
+		addField( createLabelEditor( 
+		    getFieldEditorParent(), 
+		    BreakpointsMessages.getString( "CBreakpointPropertyPage.breakpointType_label" ),  //$NON-NLS-1$
+		    label) );
 	}
 
 	/**
@@ -244,52 +248,37 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 	private void createTypeSpecificLabelFieldEditors( ICBreakpoint breakpoint ) {
 
 		if ( breakpoint instanceof ICFunctionBreakpoint ) {
-			ICFunctionBreakpoint fbrkpt = (ICFunctionBreakpoint)breakpoint;
-			String function = BreakpointsMessages.getString( "CBreakpointPropertyPage.1" ); //$NON-NLS-1$
-			try {
-				function = fbrkpt.getFunction();
-			}
-			catch( CoreException e ) {
-			}
-			catch( NumberFormatException e ) {
-			}
-			if ( function != null ) {
-				addField( createLabelEditor( getFieldEditorParent(), BreakpointsMessages.getString( "CBreakpointPropertyPage.function_label" ), function ) ); //$NON-NLS-1$
-			}
+		    createFunctionEditor(getFieldEditorParent());
 		}
 		else if ( breakpoint instanceof ICAddressBreakpoint ) {
-			ICAddressBreakpoint abrkpt = (ICAddressBreakpoint)breakpoint;
-			String address = BreakpointsMessages.getString( "CBreakpointPropertyPage.4" ); //$NON-NLS-1$
-			try {
-				address = abrkpt.getAddress();
-			}
-			catch( CoreException e ) {
-			}
-			if ( address != null ) {
-				addField( createLabelEditor( getFieldEditorParent(), BreakpointsMessages.getString( "CBreakpointPropertyPage.address_label" ), address ) ); //$NON-NLS-1$
-			}
+	        String title = BreakpointsMessages.getString( "CBreakpointPropertyPage.address_label" ); //$NON-NLS-1$
+	        
+            String address = getPreferenceStore().getString(ICLineBreakpoint.ADDRESS);
+            if (address == null || address.trim().length() == 0) {
+                address = BreakpointsMessages.getString( "CBreakpointPropertyPage.address_valueNotAvailable_label" ); //$NON-NLS-1$
+            }
+            addField( createLabelEditor( getFieldEditorParent(), title, address ) ); 
 		}
 		else if ( breakpoint instanceof ICWatchpoint ) {
-			ICWatchpoint watchpoint = (ICWatchpoint)breakpoint;
-			String expression = getPreferenceStore().getString(ICWatchpoint.EXPRESSION); 
-			
-			IMarker marker = breakpoint.getMarker(); 
-			if (marker != null) {
-    			IProject project = marker.getResource().getProject();
+			IResource resource = getResource();
+			if (resource != null) {
+    			IProject project = resource.getProject();
     			if ( project != null ) {
-    				addField( createLabelEditor( getFieldEditorParent(), BreakpointsMessages.getString( "CBreakpointPropertyPage.10" ), project.getName() ) ); //$NON-NLS-1$
+    				addField( createLabelEditor( getFieldEditorParent(), BreakpointsMessages.getString( "CBreakpointPropertyPage.project_label" ), project.getName() ) ); //$NON-NLS-1$
     			}
 			} 
 			String filename = getPreferenceStore().getString(ICBreakpoint.SOURCE_HANDLE);
-			if (!"".equals(filename)) { //$NON-NLS-1$
-				addField( createLabelEditor( getFieldEditorParent(), BreakpointsMessages.getString( "CBreakpointPropertyPage.20" ), filename ) ); //$NON-NLS-1$
+			if (filename != null && !"".equals(filename)) { //$NON-NLS-1$
+				addField( createLabelEditor( getFieldEditorParent(), BreakpointsMessages.getString( "CBreakpointPropertyPage.sourceHandle_label" ), filename ) ); //$NON-NLS-1$
 			}
-			addField( createLabelEditor( getFieldEditorParent(), BreakpointsMessages.getString( "CBreakpointPropertyPage.14" ), expression ) ); //$NON-NLS-1$
+			createWatchExpressionEditor(getFieldEditorParent());
+			createWatchTypeEditors(getFieldEditorParent());
+			
 		}
 		else if ( breakpoint instanceof ILineBreakpoint ) {
 		    String fileName = getPreferenceStore().getString(ICBreakpoint.SOURCE_HANDLE);
 			if ( fileName != null ) {
-				addField( createLabelEditor( getFieldEditorParent(), BreakpointsMessages.getString( "CBreakpointPropertyPage.7" ), fileName ) ); //$NON-NLS-1$
+				addField( createLabelEditor( getFieldEditorParent(), BreakpointsMessages.getString( "CBreakpointPropertyPage.sourceHandle_label" ), fileName ) ); //$NON-NLS-1$
 			}
 			int lNumber = getPreferenceStore().getInt(IMarker.LINE_NUMBER);
 			if (lNumber > 0) {
@@ -300,58 +289,101 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 	}
 
 	private String getBreakpointMainLabel(ICBreakpoint breakpoint) {
-		if (breakpoint instanceof ICFunctionBreakpoint)
-			return BreakpointsMessages.getString("CBreakpointPropertyPage.3"); //$NON-NLS-1$
-		if (breakpoint instanceof ICAddressBreakpoint)
-			return BreakpointsMessages.getString("CBreakpointPropertyPage.4"); //$NON-NLS-1$
-		if (breakpoint instanceof ICLineBreakpoint)
-			return BreakpointsMessages.getString("CBreakpointPropertyPage.8"); //$NON-NLS-1$
-		if (breakpoint instanceof ICEventBreakpoint)
-			return BreakpointsMessages.getString("CBreakpointPropertyPage.21"); //$NON-NLS-1$
-		if (breakpoint instanceof ICWatchpoint) {
-			String type = ""; //$NON-NLS-1$
-		    boolean isReadType = getPreferenceStore().getBoolean(ICWatchpoint.READ);
-		    boolean isWriteType = getPreferenceStore().getBoolean(ICWatchpoint.WRITE);
-			if (isReadType && !isWriteType)
-				type = BreakpointsMessages.getString("CBreakpointPropertyPage.11"); //$NON-NLS-1$
-			else if (!isReadType && isWriteType)
-				type = BreakpointsMessages.getString("CBreakpointPropertyPage.12"); //$NON-NLS-1$
-			else
-				type = BreakpointsMessages.getString("CBreakpointPropertyPage.13"); //$NON-NLS-1$
-
-			return type;
-		}
-	    // default main label is the label of marker type for the breakpoint
-	    return CDIDebugModel.calculateMarkerType(breakpoint);
+	    if (breakpoint instanceof ICWatchpoint  && breakpoint.getMarker() != null) {
+	        // For an existing breakpoint, calculate watchpoint label based 
+	        // on read/write type.
+            boolean isReadType = getPreferenceStore().getBoolean(ICWatchpoint.READ);
+            boolean isWriteType = getPreferenceStore().getBoolean(ICWatchpoint.WRITE);
+            if (isReadType && !isWriteType) {
+                return BreakpointsMessages.getString("CBreakpointPropertyPage.breakpointType_watchpoint_read_label"); //$NON-NLS-1$
+            } else if (!isReadType && isWriteType) {
+                return BreakpointsMessages.getString("CBreakpointPropertyPage.breakpointType_watchpoint_label"); //$NON-NLS-1$
+            } else {
+                return BreakpointsMessages.getString("CBreakpointPropertyPage.watchpointType_breakpointType_watchpoint_access_label"); //$NON-NLS-1$
+            }
+	    }
+	    
+	    IWorkbenchAdapter labelProvider = (IWorkbenchAdapter)getElement().getAdapter(IWorkbenchAdapter.class);
+	    if (labelProvider != null) {
+	        return labelProvider.getLabel(getElement());
+	    }
+        // default main label is the label of marker type for the breakpoint
+        return CDIDebugModel.calculateMarkerType(breakpoint);
 	}
+	
+    protected void createFunctionEditor( Composite parent ) {
+            
+        ICBreakpoint breakpoint = getBreakpoint();
+        String title = BreakpointsMessages.getString("CBreakpointPropertyPage.function_label"); //$NON-NLS-1$
+        if (breakpoint == null || breakpoint.getMarker() == null) {
+            BreakpointStringFieldEditor expressionEditor = new BreakpointStringFieldEditor(
+                ICLineBreakpoint.FUNCTION, title, parent);
+            expressionEditor.setErrorMessage(BreakpointsMessages.getString("CBreakpointPropertyPage.function_value_errorMessage")); //$NON-NLS-1$
+            expressionEditor.setEmptyStringAllowed(false);
+            addField(expressionEditor);
+        } else {
+            String function = getPreferenceStore().getString(ICLineBreakpoint.FUNCTION); 
+            if ( function == null ) { 
+                function = BreakpointsMessages.getString( "CBreakpointPropertyPage.function_valueNotAvailable_label" ); //$NON-NLS-1$
+            }
+            addField( createLabelEditor( getFieldEditorParent(), BreakpointsMessages.getString( "CBreakpointPropertyPage.function_label" ), function ) ); //$NON-NLS-1$
+        }
+    }
+	
 	protected void createLineNumberEditor( Composite parent ) {
-		 String title = BreakpointsMessages.getString( "CBreakpointPropertyPage.9" ); //$NON-NLS-1$
+		 String title = BreakpointsMessages.getString( "CBreakpointPropertyPage.lineNumber_label" ); //$NON-NLS-1$
 		 BreakpointIntegerFieldEditor labelFieldEditor =new BreakpointIntegerFieldEditor( IMarker.LINE_NUMBER ,title, parent);
 		 labelFieldEditor.setValidRange( 1, Integer.MAX_VALUE );
 		 addField( labelFieldEditor );
 	}
-	
-    protected void createAddressEditor( Composite parent ) {
-        String title = BreakpointsMessages.getString( "CBreakpointPropertyPage.addressLabel" ); //$NON-NLS-1$
-        StringFieldEditor fe =new StringFieldEditor( ICLineBreakpoint.ADDRESS ,title, parent);
-        fe.setEmptyStringAllowed(false);
-        addField( fe );
-   }
+
+    protected void createWatchExpressionEditor( Composite parent ) {
+        ICBreakpoint breakpoint = getBreakpoint();
+        if (breakpoint == null || breakpoint.getMarker() == null) {
+            BreakpointStringFieldEditor expressionEditor =new BreakpointStringFieldEditor(
+                 ICWatchpoint.EXPRESSION,
+                 BreakpointsMessages.getString("CBreakpointPropertyPage.watchpoint_expression_label"), //$NON-NLS-1$
+                 parent);
+            expressionEditor.setErrorMessage(BreakpointsMessages.getString("CBreakpointPropertyPage.watchpoint_expression_errorMessage")); //$NON-NLS-1$
+            expressionEditor.setEmptyStringAllowed(false);
+            addField(expressionEditor);
+        } else {
+            addField(createLabelEditor(
+                parent, 
+                BreakpointsMessages.getString("CBreakpointPropertyPage.watchpoint_expression_label"), //$NON-NLS-1$
+                getPreferenceStore().getString(ICWatchpoint.EXPRESSION) ));
+        }
+    }
+
+    protected void createWatchTypeEditors( Composite parent ) {
+        // Edit read/write options only when creating the breakpoint.
+        ICBreakpoint breakpoint = getBreakpoint();
+        if (breakpoint != null && breakpoint.getMarker() == null) {
+            addField( new BooleanFieldEditor(
+                 ICWatchpoint.READ,
+                 BreakpointsMessages.getString("CBreakpointPropertyPage.watchpointType_read_label"), //$NON-NLS-1$
+                 parent) );
+            addField( new BooleanFieldEditor(
+                ICWatchpoint.WRITE,
+                BreakpointsMessages.getString("CBreakpointPropertyPage.watchpointType_write_label"), //$NON-NLS-1$
+                parent) );
+        }
+    }
 
 	protected void createEnabledField( Composite parent ) {
-		fEnabled = new BooleanFieldEditor( ICBreakpoint.ENABLED, BreakpointsMessages.getString( "CBreakpointPropertyPage.19" ), parent ); //$NON-NLS-1$
+		fEnabled = new BooleanFieldEditor( ICBreakpoint.ENABLED, BreakpointsMessages.getString( "CBreakpointPropertyPage.enabled_label" ), parent ); //$NON-NLS-1$
 		addField( fEnabled );
 	}
 
 	protected void createConditionEditor( Composite parent ) {
-		fCondition = new BreakpointStringFieldEditor( ICBreakpoint.CONDITION, BreakpointsMessages.getString( "CBreakpointPropertyPage.15" ), parent ); //$NON-NLS-1$
+		fCondition = new BreakpointStringFieldEditor( ICBreakpoint.CONDITION, BreakpointsMessages.getString( "CBreakpointPropertyPage.condition_label" ), parent ); //$NON-NLS-1$
 		fCondition.setEmptyStringAllowed( true );
-		fCondition.setErrorMessage( BreakpointsMessages.getString( "CBreakpointPropertyPage.16" ) ); //$NON-NLS-1$
+		fCondition.setErrorMessage( BreakpointsMessages.getString( "CBreakpointPropertyPage.condition_invalidValue_message" ) ); //$NON-NLS-1$
 		addField( fCondition );
 	}
 
 	protected void createIgnoreCountEditor( Composite parent ) {
-		fIgnoreCount = new BreakpointIntegerFieldEditor( ICBreakpoint.IGNORE_COUNT, BreakpointsMessages.getString( "CBreakpointPropertyPage.17" ), parent ); //$NON-NLS-1$
+		fIgnoreCount = new BreakpointIntegerFieldEditor( ICBreakpoint.IGNORE_COUNT, BreakpointsMessages.getString( "CBreakpointPropertyPage.ignoreCount_label" ), parent ); //$NON-NLS-1$
 		fIgnoreCount.setValidRange( 0, Integer.MAX_VALUE );
 		fIgnoreCountTextControl = fIgnoreCount.getTextControl( parent );
 		fIgnoreCountTextControl.setEnabled( getPreferenceStore().getInt(ICBreakpoint.IGNORE_COUNT) >= 0 );
@@ -366,11 +398,24 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 		IAdaptable element = getElement();
 		if (element instanceof ICBreakpoint) {
 		    return (ICBreakpoint)element;
-		} else if (element instanceof CBreakpointContext) {
-		    return ((CBreakpointContext)element).getBreakpoint();
+		} else if (element instanceof ICBreakpointContext) {
+		    return ((ICBreakpointContext)element).getBreakpoint();
 		} else {
 		    return (ICBreakpoint)element.getAdapter(ICBreakpoint.class);
 		}
+	}
+	
+	protected IResource getResource() {
+        IAdaptable element = getElement();
+        if (element instanceof ICBreakpoint) {
+            IMarker marker = ((ICBreakpoint)element).getMarker();
+            if (marker != null) {
+                return marker.getResource();
+            }
+        } else if (element instanceof ICBreakpointContext) {
+            return ((ICBreakpointContext)element).getResource();
+        } 
+        return null;
 	}
 
 	public IPreferenceStore getPreferenceStore() {

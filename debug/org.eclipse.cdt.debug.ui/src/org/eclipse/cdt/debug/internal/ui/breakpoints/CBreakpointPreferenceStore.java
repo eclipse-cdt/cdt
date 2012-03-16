@@ -40,14 +40,6 @@ import org.eclipse.jface.util.PropertyChangeEvent;
  */
 public class CBreakpointPreferenceStore implements IPersistentPreferenceStore {
 
-//	protected final static String ENABLED = "ENABLED"; //$NON-NLS-1$
-//
-//	protected final static String CONDITION = "CONDITION"; //$NON-NLS-1$
-//
-//	protected final static String IGNORE_COUNT = "IGNORE_COUNT"; //$NON-NLS-1$
-//
-//	protected final static String LINE = "LINE"; //$NON-NLS-1$
-
 	// This map is the current properties/values being maintained/manipulated
     private HashMap<String, Object> fProperties = new HashMap<String, Object>();
     
@@ -149,7 +141,7 @@ public class CBreakpointPreferenceStore implements IPersistentPreferenceStore {
 							breakpoint.getMarker().setAttribute(ICLineBreakpoint2.REQUESTED_LINE, getInt(IMarker.LINE_NUMBER));
 						} else {
 						    // this allow set attributes contributed by other plugins
-							String value = getPropertyAsString(property);
+							Object value = fProperties.get(property);
 							if ( value != null ) {
 								marker.setAttribute(property, value);
 							}
@@ -174,14 +166,6 @@ public class CBreakpointPreferenceStore implements IPersistentPreferenceStore {
             throw new IOException("Cannot save properties to new breakpoint.", ce); //$NON-NLS-1$
         }
     }
-    
-    private String getPropertyAsString(String property) {
-		if (fProperties.containsKey(property)) {
-			return getString(property);
-		} else {
-			return null;
-		}
-	}
     
     ///////////////////////////////////////////////////////////////////////
     // IPreferenceStore

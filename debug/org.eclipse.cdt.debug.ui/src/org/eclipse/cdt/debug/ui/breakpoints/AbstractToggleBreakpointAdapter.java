@@ -151,25 +151,54 @@ abstract public class AbstractToggleBreakpointAdapter
 	}
 
 	@Override
-	public boolean canCreateBreakpointsInteractive(IWorkbenchPart part, ISelection selection) {
-	    return canToggleBreakpoints( part, selection );
+	public boolean canCreateLineBreakpointsInteractive(IWorkbenchPart part, ISelection selection) {
+	    return canToggleLineBreakpoints( part, selection );
 	}
         
 	@Override
-	public void createBreakpointsInteractive(IWorkbenchPart part, ISelection selection) throws CoreException {
-	    updateBreakpoints(false, true, part, selection);
+	public void createLineBreakpointsInteractive(IWorkbenchPart part, ISelection selection) throws CoreException {
+	    updateLineBreakpoints(false, true, part, selection);
 	}
 	
 	@Override
-	public boolean canCreateWatchpoingsInteractive(IWorkbenchPart part, ISelection selection) {
+	public boolean canCreateWatchpointsInteractive(IWorkbenchPart part, ISelection selection) {
+	    // Gather all input from user if needed.
 	    return true;
 	}
 	
 	@Override
-	public void createWatchpoingsInteractive(IWorkbenchPart part, ISelection selection) throws CoreException {
-	    createWatchpoint(true, part, null, ResourcesPlugin.getWorkspace().getRoot(), -1, -1, -1, "");
+	public void createWatchpointsInteractive(IWorkbenchPart part, ISelection selection) throws CoreException {
+        ICElement element = getCElementFromSelection( part, selection );
+        if (element instanceof IVariable) {
+            updateVariableWatchpoint(false, true, part, (IVariable)element);
+        } else {
+            String text = ""; //$NON-NLS-1$
+            if (selection instanceof ITextSelection) {
+                text = ((ITextSelection)selection).getText();
+            }
+            createWatchpoint(true, part, null, ResourcesPlugin.getWorkspace().getRoot(), -1, -1, -1, text);
+        }
 	}
 
+	@Override
+	public boolean canCreateFunctionBreakpointInteractive(IWorkbenchPart part, ISelection selection) {
+	    return true;
+	}
+	
+	@Override
+	public void createFunctionBreakpointInteractive(IWorkbenchPart part, ISelection selection) throws CoreException {
+        ICElement element = getCElementFromSelection( part, selection );
+        if ( element instanceof IFunction || element instanceof IMethod ) {
+            updateMethodBreakpoints(false, true, part, (IDeclaration)element);
+        } else {
+            String text = ""; //$NON-NLS-1$
+            if (selection instanceof ITextSelection) {
+                text = ((ITextSelection)selection).getText();
+            }
+            createFunctionBreakpoint(true, part, null, ResourcesPlugin.getWorkspace().getRoot(), text, -1, -1, -1);
+        }
+	}
+	
     /**
      * Updates the breakpoint for given part and selection.  
      * Depending on the flags and on whether a breakpoint exists, this method 

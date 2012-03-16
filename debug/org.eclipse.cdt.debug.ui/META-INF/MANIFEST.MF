@@ -7,7 +7,7 @@ Bundle-Activator: org.eclipse.cdt.debug.ui.CDebugUIPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: 
- org.eclipse.cdt.debug.internal.ui;x-internal:=true,
+ org.eclipse.cdt.debug.internal.ui;x-internal:x-friends:="org.eclipse.cdt.dsf.ui";x-friends:="org.eclipse.cdt.dsf.ui",
  org.eclipse.cdt.debug.internal.ui.actions;x-friends:="org.eclipse.cdt.dsf.ui,org.eclipse.cdt.debug.ui.memory.memorybrowser",
  org.eclipse.cdt.debug.internal.ui.actions.breakpoints;x-internal:=true,
  org.eclipse.cdt.debug.internal.ui.breakpoints;x-internal:=true,

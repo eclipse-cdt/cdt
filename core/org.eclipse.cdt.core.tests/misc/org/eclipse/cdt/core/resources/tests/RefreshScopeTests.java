@@ -136,56 +136,68 @@ public class RefreshScopeTests extends TestCase {
 		// add resource "folder1" under config1.
 		manager.addResourceToRefresh(fProject, config1, fFolder1);
 		// now, check that it was added.
-		IResource[] config1_resources = manager.getResourcesToRefresh(fProject, config1).toArray(new IResource[0]);
-		assertEquals(config1_resources.length, 2);
-		assertEquals(fFolder1, config1_resources[1]);
+		List<IResource> config1_resources = manager.getResourcesToRefresh(fProject, config1);
+		assertEquals(config1_resources.size(), 2);
+		assertEquals(config1_resources.contains(fProject), true);
+		assertEquals(config1_resources.contains(fFolder1), true);
 		
 		// TEST 2:
 		// add resource "folder2" under config1
 		manager.addResourceToRefresh(fProject, config1, fFolder2);
 		// now check to see that it and "folder1" are still there.
-		config1_resources = manager.getResourcesToRefresh(fProject, config1).toArray(new IResource[0]);
-		assertEquals(config1_resources.length, 3); // 3 because by default the project is always there.
-		assertEquals(fFolder2, config1_resources[0]);
-		assertEquals(fFolder1, config1_resources[2]);
-		// make sure it wasn't added under "Release", which should be empty now.
-		IResource[] config2_resources = manager.getResourcesToRefresh(fProject, config2).toArray(new IResource[0]);
-		assertEquals(config2_resources.length,1); // 1 because project is there by default.
-		assertEquals(fProject,config2_resources[0]);
+		config1_resources = manager.getResourcesToRefresh(fProject, config1);
+		assertEquals(config1_resources.size(), 3); // 3 because by default the project is always there.
+		assertEquals(config1_resources.contains(fProject), true);
+		assertEquals(config1_resources.contains(fFolder1), true);
+		assertEquals(config1_resources.contains(fFolder2), true);
+		
+		// make sure it wasn't added under "Release", which should be empty now, excpet for the default project resource.
+		List<IResource> config2_resources = manager.getResourcesToRefresh(fProject, config2);
+		assertEquals(config2_resources.size(),1);
+		assertEquals(config2_resources.contains(fProject), true);
+		
 		// and add one under config 2.
 		manager.addResourceToRefresh(fProject, config2, fFolder1);
-		config2_resources = manager.getResourcesToRefresh(fProject, config2).toArray(new IResource[0]);
-		assertEquals(config2_resources.length,2);
-		assertEquals(fFolder1, config2_resources[1]);
+		config2_resources = manager.getResourcesToRefresh(fProject, config2);
+		assertEquals(config2_resources.size(),2);
+		assertEquals(config2_resources.contains(fProject), true);
+		assertEquals(config2_resources.contains(fFolder1), true);
 		
 		// TEST 3:
 		// first try deleting a resource that was never added... folder5
 		manager.deleteResourceToRefresh(fProject, config1, fFolder5);
-		IResource[] config1_resourcesAfterDelete = manager.getResourcesToRefresh(fProject, config1).toArray(new IResource[0]);
-		assertEquals(config1_resourcesAfterDelete.length, 3);
-		assertEquals(fFolder2, config1_resources[0]);
-		assertEquals(fFolder1, config1_resources[2]);
+		List<IResource> config1_resourcesAfterDelete = manager.getResourcesToRefresh(fProject, config1);
+		assertEquals(config1_resourcesAfterDelete.size(), 3);
+		assertEquals(config1_resources.contains(fProject), true);
+		assertEquals(config1_resources.contains(fFolder1), true);
+		assertEquals( config1_resources.contains(fFolder2), true);
+		
 		// ditto for config2, but this time we did add the resource, to make sure fFolder1 wasn't added.
 		manager.deleteResourceToRefresh(fProject, config2, fFolder5);
-		IResource[] config2_resourcesAfterDelete = manager.getResourcesToRefresh(fProject, config2).toArray(new IResource[0]);
-		assertEquals(config2_resourcesAfterDelete.length, 2);
+		List<IResource> config2_resourcesAfterDelete = manager.getResourcesToRefresh(fProject, config2);
+		assertEquals(config2_resourcesAfterDelete.size(), 2);
+		assertEquals(config2_resources.contains(fProject), true);
+		assertEquals(config2_resources.contains(fFolder1), true);
 		
 	
 		// TEST 4:
 		// now delete the resources from the manager one by one
-		manager.deleteResourceToRefresh(fProject, config1, config1_resources[2]);
-		config1_resourcesAfterDelete = manager.getResourcesToRefresh(fProject, config1).toArray(new IResource[0]);
-		assertEquals(config1_resourcesAfterDelete.length, 2);
-		assertEquals(config1_resourcesAfterDelete[1], config1_resources[1]);
+		manager.deleteResourceToRefresh(fProject, config1, config1_resources.get(config1_resources.indexOf(fFolder2)));
+		config1_resourcesAfterDelete = manager.getResourcesToRefresh(fProject, config1);
+		assertEquals(config1_resourcesAfterDelete.size(), 2);
+		assertEquals(config1_resourcesAfterDelete.contains(fProject), true);
+		assertEquals(config1_resourcesAfterDelete.contains(fFolder1), true);
 		
-		manager.deleteResourceToRefresh(fProject, config1, config1_resources[0]);
-		config1_resourcesAfterDelete = manager.getResourcesToRefresh(fProject, config1).toArray(new IResource[0]);
-		assertEquals(config1_resourcesAfterDelete.length, 1);
+		manager.deleteResourceToRefresh(fProject, config1,  config1_resources.get(config1_resources.indexOf(fFolder1)));
+		config1_resourcesAfterDelete = manager.getResourcesToRefresh(fProject, config1);
+		assertEquals(config1_resourcesAfterDelete.size(), 1);
+		assertEquals(config1_resourcesAfterDelete.contains(fProject), true);
 		
 		// and ditto for config2
-		manager.deleteResourceToRefresh(fProject, config2, config2_resources[0]);
-		config2_resourcesAfterDelete = manager.getResourcesToRefresh(fProject, config2).toArray(new IResource[0]);
-		assertEquals(config2_resourcesAfterDelete.length, 1);		
+		manager.deleteResourceToRefresh(fProject, config2, config2_resources.get(config2_resources.indexOf(fFolder1)));
+		config2_resourcesAfterDelete = manager.getResourcesToRefresh(fProject, config2);
+		assertEquals(config2_resourcesAfterDelete.size(), 1);	
+		assertEquals(config2_resourcesAfterDelete.contains(fProject), true);
 	}
 	
 
@@ -198,10 +210,10 @@ public class RefreshScopeTests extends TestCase {
 		config1_resourceMap.put(fFolder2,new LinkedList<RefreshExclusion>());
 		manager.setResourcesToExclusionsMap(fProject, config1, config1_resourceMap);
 		
-		IResource[] config1_resourcesAfterSet = manager.getResourcesToRefresh(fProject, config1).toArray(new IResource[0]);
-		assertEquals(config1_resourcesAfterSet.length, 2);
-		assertEquals(fFolder2, config1_resourcesAfterSet[0]);
-		assertEquals(fFolder1, config1_resourcesAfterSet[1]);
+		List<IResource> config1_resourcesAfterSet = manager.getResourcesToRefresh(fProject, config1);
+		assertEquals(config1_resourcesAfterSet.size(), 2);
+		assertEquals(config1_resourcesAfterSet.contains(fFolder1), true);
+		assertEquals(config1_resourcesAfterSet.contains(fFolder2), true);
 		
 		manager.clearResourcesToRefresh(fProject);
 		
@@ -350,7 +362,7 @@ public class RefreshScopeTests extends TestCase {
 		// the project should be set to refresh its root
 		List<IResource> config2_resources = manager.getResourcesToRefresh(fProject,config2);
 		assertEquals(config2_resources.size(), 2);
-		assertEquals(config2_resources.toArray(new IResource[0])[1], config2_resource);
+		assertEquals(config2_resources.contains(config2_resource), true);
 		
 		// there should be 2 top-level exclusions
 		List<RefreshExclusion> config2_exclusions = manager.getExclusions(fProject,config2,config2_resource);
@@ -511,8 +523,7 @@ public class RefreshScopeTests extends TestCase {
 		// by default, a project should refresh its root
 		List<IResource> resourcesToRefresh = manager.getResourcesToRefresh(fProject, config1);
 		assertEquals(1, resourcesToRefresh.size());
-		IResource[] resourceArray = resourcesToRefresh.toArray(new IResource[0]);
-		assertEquals(fProject, resourceArray[0]);
+		assertEquals(resourcesToRefresh.contains(fProject), true);
 		
 		// there should be no exclusions
 		List<RefreshExclusion> exclusions = manager.getExclusions(fProject, config1, fProject);
@@ -539,8 +550,8 @@ public class RefreshScopeTests extends TestCase {
 		// by default, a project should refresh its root
 		resourcesToRefresh = manager.getResourcesToRefresh(fProject, config1);
 		assertEquals(1, resourcesToRefresh.size());
-		resourceArray = resourcesToRefresh.toArray(new IResource[0]);
-		assertEquals(fProject, resourceArray[0]);
+		assertEquals(resourcesToRefresh.contains(fProject), true);
+		
 		// there should be no exclusions
 		exclusions = manager.getExclusions(fProject, config1, fProject);
 		assertEquals(0, exclusions.size());

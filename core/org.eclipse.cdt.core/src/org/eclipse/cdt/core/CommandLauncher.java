@@ -35,6 +35,7 @@ public class CommandLauncher implements ICommandLauncher {
 	public final static int OK = ICommandLauncher.OK;
 
 	private static final String PATH_ENV = "PATH"; //$NON-NLS-1$
+	private static final String NEWLINE = System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 
 	protected Process fProcess;
 	protected boolean fShowCommand;
@@ -42,8 +43,6 @@ public class CommandLauncher implements ICommandLauncher {
 	private Properties fEnvironment = null;
 
 	protected String fErrorMessage = ""; //$NON-NLS-1$
-
-	private String lineSeparator;
 	private IProject fProject;
 
 	/**
@@ -59,7 +58,6 @@ public class CommandLauncher implements ICommandLauncher {
 	public CommandLauncher() {
 		fProcess = null;
 		fShowCommand = false;
-		lineSeparator = System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/* (non-Javadoc)
@@ -161,22 +159,17 @@ public class CommandLauncher implements ICommandLauncher {
 	 * @see org.eclipse.cdt.core.ICommandLauncher#execute(IPath, String[], String[], IPath, IProgressMonitor)
 	 */
 	@Override
-	public Process execute(IPath commandPath, String[] args, String[] env, IPath changeToDirectory, IProgressMonitor monitor) throws CoreException {
+	public Process execute(IPath commandPath, String[] args, String[] env, IPath workingDirectory, IProgressMonitor monitor) throws CoreException {
+		Boolean isFound = null;
+		String command = commandPath.toOSString();
+		String envPathValue = (String) getEnvironment().get(PATH_ENV);
 		try {
-			String command = commandPath.toOSString();
 			fCommandArgs = constructCommandArray(command, args);
-			fEnvironment = parseEnv(env);
-
-			File file = null;
-
-			if(changeToDirectory != null)
-				file = changeToDirectory.toFile();
-
 			if (Platform.getOS().equals(Platform.OS_WIN32)) {
 				// Handle cygwin link
-				String envPathValue = (String) getEnvironment().get(PATH_ENV);
 				IPath location = PathUtil.findProgramLocation(command, envPathValue);
-				if(location != null) {
+				isFound = location != null;
+				if (location != null) {
 					try {
 						fCommandArgs[0] = Cygwin.cygwinToWindowsPath(location.toString(), envPathValue);
 					} catch (Exception e) {
@@ -185,11 +178,33 @@ public class CommandLauncher implements ICommandLauncher {
 				}
 			}
 
-			fProcess = ProcessFactory.getFactory().exec(fCommandArgs, env, file);
+			fEnvironment = parseEnv(env);
+			File dir = workingDirectory != null ? workingDirectory.toFile() : null;
+
+			fProcess = ProcessFactory.getFactory().exec(fCommandArgs, env, dir);
 			fCommandArgs[0] = command; // to print original command on the console
 			fErrorMessage = ""; //$NON-NLS-1$
 		} catch (IOException e) {
-			setErrorMessage(e.getMessage());
+			if (isFound == null) {
+				IPath location = PathUtil.findProgramLocation(command, envPathValue);
+				isFound = location != null;
+			}
+
+			String errorMessage = getCommandLineQuoted(fCommandArgs, true);
+			String exMsg = e.getMessage();
+			if (exMsg != null && !exMsg.isEmpty()) {
+				errorMessage = errorMessage + exMsg + NEWLINE;
+			}
+
+			if (!isFound) {
+				if (envPathValue == null) {
+					envPathValue = System.getenv(PATH_ENV);
+				}
+				errorMessage = errorMessage + NEWLINE
+						+ "Error: Program \"" + command + "\" not found in PATH" + NEWLINE
+						+ "PATH=[" + envPathValue + "]" + NEWLINE;
+			}
+			setErrorMessage(errorMessage);
 			fProcess = null;
 		}
 		return fProcess;
@@ -254,23 +269,10 @@ public class CommandLauncher implements ICommandLauncher {
 		return state;
 	}
 
-	@SuppressWarnings("nls")
 	protected void printCommandLine(OutputStream os) {
 		if (os != null) {
-			StringBuffer buf = new StringBuffer();
-			if (fCommandArgs != null) {
-				for (String commandArg : getCommandArgs()) {
-					if (commandArg.contains(" ") || commandArg.contains("\"") || commandArg.contains("\\")) {
-						commandArg = '"' + commandArg.replaceAll("\\\\", "\\\\\\\\").replaceAll("\"", "\\\\\"") + '"';
-					}
-					buf.append(commandArg);
-					buf.append(' ');
-				}
-				buf.append(lineSeparator);
-			}
-
 			try {
-				os.write(buf.toString().getBytes());
+				os.write(getCommandLineQuoted(getCommandArgs(), true).getBytes());
 				os.flush();
 			} catch (IOException e) {
 				// ignore;
@@ -278,16 +280,24 @@ public class CommandLauncher implements ICommandLauncher {
 		}
 	}
 
-	protected String getCommandLine(String[] commandArgs) {
+	@SuppressWarnings("nls")
+	private String getCommandLineQuoted(String[] commandArgs, boolean quote) {
 		StringBuffer buf = new StringBuffer();
-		if (fCommandArgs != null) {
+		if (commandArgs != null) {
 			for (String commandArg : commandArgs) {
+				if (quote && (commandArg.contains(" ") || commandArg.contains("\"") || commandArg.contains("\\"))) {
+					commandArg = '"' + commandArg.replaceAll("\\\\", "\\\\\\\\").replaceAll("\"", "\\\\\"") + '"';
+				}
 				buf.append(commandArg);
 				buf.append(' ');
 			}
-			buf.append(lineSeparator);
+			buf.append(NEWLINE);
 		}
 		return buf.toString();
+	}
+
+	protected String getCommandLine(String[] commandArgs) {
+		return getCommandLineQuoted(commandArgs, false);
 	}
 
 

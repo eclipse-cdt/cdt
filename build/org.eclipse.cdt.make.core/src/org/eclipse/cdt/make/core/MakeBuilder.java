@@ -256,24 +256,12 @@ public class MakeBuilder extends ACBuilder {
 				getProject().setSessionProperty(qName, !monitor.isCanceled() && !isClean ? new Integer(streamMon.getWorkDone()) : null);
 
 				if (errMsg != null) {
-					StringBuffer buf = new StringBuffer(buildCommand.toString() + " "); //$NON-NLS-1$
-					for (String buildArgument : buildArguments) {
-						buf.append(buildArgument);
-						buf.append(' ');
-					}
-
-					String errorDesc = MakeMessages.getFormattedString("MakeBuilder.buildError", buf.toString()); //$NON-NLS-1$
-					buf = new StringBuffer(errorDesc);
-					buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$ //$NON-NLS-2$
-					buf.append("(").append(errMsg).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
-					cos.write(buf.toString().getBytes());
-					cos.flush();
+					consoleErr.write((errMsg + '\n').getBytes());
 				}
 
 				stdout.close();
 				stderr.close();
 
-				monitor.subTask(MakeMessages.getString("MakeBuilder.Creating_Markers")); //$NON-NLS-1$
 				consoleOut.close();
 				consoleErr.close();
 				cos.close();

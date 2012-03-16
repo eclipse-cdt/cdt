@@ -55,6 +55,7 @@ public interface ICommandLauncher {
 	 * execution.
 	 *
 	 * @return A String corresponding to the error, or <code>null</code> if there has been no error.
+	 *   The message could be multi-line, however it is NOT guaranteed that it ends with end of line.
 	 */
 	public  String getErrorMessage();
 
@@ -95,7 +96,7 @@ public interface ICommandLauncher {
 	 * @param env The list of environment variables in variable=value format.
 	 * @throws CoreException if there is an error executing the command.
 	 */
-	public Process execute(IPath commandPath, String[] args, String[] env, IPath changeToDirectory, IProgressMonitor monitor) throws CoreException;
+	public Process execute(IPath commandPath, String[] args, String[] env, IPath workingDirectory, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Reads output form the process to the streams.

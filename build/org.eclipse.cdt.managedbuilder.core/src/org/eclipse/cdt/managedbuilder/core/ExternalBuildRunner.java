@@ -47,7 +47,6 @@ import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
 import org.eclipse.cdt.newmake.internal.core.StreamMonitor;
 import org.eclipse.cdt.utils.CommandLineUtil;
 import org.eclipse.cdt.utils.EFSExtensionManager;
-import org.eclipse.cdt.utils.PathUtil;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -140,7 +139,7 @@ public class ExternalBuildRunner extends AbstractBuildRunner {
 				if(pathFromURI == null) {
 					throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID, ManagedMakeMessages.getString("ManagedMakeBuilder.message.error"), null)); //$NON-NLS-1$
 				}
-				
+
 				IPath workingDirectory = new Path(pathFromURI);
 
 				String[] targets = getTargets(kind, builder);
@@ -197,10 +196,10 @@ public class ExternalBuildRunner extends AbstractBuildRunner {
 						// Do not allow the cancel of the refresh, since the builder is external
 						// to Eclipse, files may have been created/modified and we will be out-of-sync.
 						// The caveat is for huge projects, it may take sometimes at every build.
-						
+
 						// TODO should only refresh output folders
 						//project.refreshLocal(IResource.DEPTH_INFINITE, null);
-						
+
 						// use the refresh scope manager to refresh
 						RefreshScopeManager refreshManager = RefreshScopeManager.getInstance();
 						IWorkspaceRunnable runnable = refreshManager.getRefreshRunnable(project);
@@ -208,32 +207,15 @@ public class ExternalBuildRunner extends AbstractBuildRunner {
 					} catch (CoreException e) {
 					}
 				} else {
-					buf = new StringBuffer(launcher.getCommandLine()).append(NEWLINE);
 					errMsg = launcher.getErrorMessage();
 				}
 				project.setSessionProperty(qName, !monitor.isCanceled() && !isClean ? new Integer(streamMon.getWorkDone()) : null);
 
 				if (errMsg != null) {
-					// Launching failed, trying to figure out possible cause
-					String errorPrefix = ManagedMakeMessages.getResourceString("ManagedMakeBuilder.error.prefix"); //$NON-NLS-1$
-					String buildCommandStr = buildCommand.toString();
-					String envPath = envMap.get(PATH_ENV);
-					if (envPath==null) {
-						envPath = System.getenv(PATH_ENV);
-					}
-					if (PathUtil.findProgramLocation(buildCommandStr, envPath)==null) {
-						buf.append(errMsg).append(NEWLINE);
-						errMsg = ManagedMakeMessages.getFormattedString("ManagedMakeBuilder.message.program.not.in.path", buildCommandStr); //$NON-NLS-1$
-						buf.append(errorPrefix).append(errMsg).append(NEWLINE);
-						buf.append(NEWLINE);
-						buf.append(PATH_ENV+"=["+envPath+"]").append(NEWLINE); //$NON-NLS-1$//$NON-NLS-2$
-					} else {
-						buf.append(errorPrefix).append(errMsg).append(NEWLINE);
-					}
-					consoleErr.write(buf.toString().getBytes());
+					consoleErr.write(errMsg.getBytes());
 					consoleErr.flush();
 				}
-				
+
 				buf = new StringBuffer(NEWLINE);
 				buf.append(ManagedMakeMessages.getResourceString("ManagedMakeBuilder.message.build.finished")).append(NEWLINE); //$NON-NLS-1$
 				consoleOut.write(buf.toString().getBytes());
@@ -310,15 +292,15 @@ public class ExternalBuildRunner extends AbstractBuildRunner {
 				envMap.put(var.getName(), var.getValue());
 			}
 		}
-		
+
 		// Add variables from build info
 		Map<String, String> builderEnv = builder.getExpandedEnvironment();
 		if (builderEnv != null)
 			envMap.putAll(builderEnv);
-		
+
 		return envMap;
 	}
-	
+
 	protected static String[] getEnvStrings(Map<String, String> env) {
 		// Convert into env strings
 		List<String> strings= new ArrayList<String>(env.size());
@@ -327,10 +309,10 @@ public class ExternalBuildRunner extends AbstractBuildRunner {
 			buffer.append('=').append(entry.getValue());
 			strings.add(buffer.toString());
 		}
-		
+
 		return strings.toArray(new String[strings.size()]);
 	}
-	
+
 	private ConsoleOutputSniffer createBuildOutputSniffer(OutputStream outputStream,
 			OutputStream errorStream,
 			IProject project,

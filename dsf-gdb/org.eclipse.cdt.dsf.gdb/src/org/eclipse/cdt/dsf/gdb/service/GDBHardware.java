@@ -12,8 +12,11 @@
 package org.eclipse.cdt.dsf.gdb.service;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
@@ -36,6 +39,7 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandListener;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandResult;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandToken;
 import org.eclipse.cdt.dsf.debug.service.command.IEventListener;
+import org.eclipse.cdt.dsf.gdb.internal.CoreInfo;
 import org.eclipse.cdt.dsf.gdb.internal.CoreList;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.internal.service.command.commands.MIMetaGetCPUInfo;
@@ -44,6 +48,8 @@ import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIListThreadGroupsInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIListThreadGroupsInfo.IThreadGroupInfo;
 import org.eclipse.cdt.dsf.service.AbstractDsfService;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfSession;
@@ -378,6 +384,7 @@ public class GDBHardware extends AbstractDsfService implements IGDBHardware, ICa
 	 * information we need.
 	 */
 	private class CPUInfoManager implements ICommandControl {
+	    private final List<ICommandListener> fCommandProcessors = new ArrayList<ICommandListener>();
 
 		@Override
 	    public <V extends ICommandResult> ICommandToken queueCommand(final ICommand<V> command, DataRequestMonitor<V> rm) {
@@ -389,6 +396,11 @@ public class GDBHardware extends AbstractDsfService implements IGDBHardware, ICa
 	            }
 	        };
 	        	    	
+	    	// The class does not buffer commands itself, but sends them directly to the real
+	    	// MICommandControl service.  Therefore, we must immediately tell our calling cache that the command
+	    	// has been sent, since we can never cancel it.
+	    	processCommandSent(token);
+
 	    	if (command instanceof MIMetaGetCPUInfo) {
 	            @SuppressWarnings("unchecked")            
 	    		final DataRequestMonitor<MIMetaGetCPUInfoInfo> drm = (DataRequestMonitor<MIMetaGetCPUInfoInfo>)rm;
@@ -407,12 +419,54 @@ public class GDBHardware extends AbstractDsfService implements IGDBHardware, ICa
 	    							// Now that we processed the file, remove it to avoid polluting the file system
 	    							new File(localFile).delete();
 	    							drm.done(new MIMetaGetCPUInfoInfo(info));
+		                            processCommandDone(token, drm.getData());
+	    						}
+	    						@Override
+	    						protected void handleError() {
+	    							// On some older linux versions, gdbserver is not able to read from /proc
+	    							// because it is a pseudo filesystem.
+	    							// We need to find some other method of getting the info we need.
+	    							
+	    							// For a remote session, we can use GDB's -list-thread-groups --available
+	    							// command, which shows on which cores a process is running.  This does
+	    							// not necessarily give the exhaustive list of cores, but that is the best
+	    							// we have in this case.
+	    							//
+	    							// In this case, we don't have knowledge about CPUs, so we lump all cores
+	    							// into a single CPU.
+	    							
+	    							fCommandControl.queueCommand(
+	    									fCommandFactory.createMIListThreadGroups(dmc, true),
+	    									new ImmediateDataRequestMonitor<MIListThreadGroupsInfo>(drm) {
+	    										@Override
+	    										protected void handleSuccess() {
+	    											// First extract the string id for every core GDB reports
+	    											Set<String> coreIds = new HashSet<String>();
+	    											IThreadGroupInfo[] groups = getData().getGroupList();
+	    											for (IThreadGroupInfo group : groups) {
+	    												coreIds.addAll(Arrays.asList(group.getCores()));
+	    											}
+	    											
+	    											// Now create the context for each distinct core
+	    											//
+	    											// We don't have CPU info in this case so let's put them all under a single CPU
+	    											final String defaultCPUId = "0";  //$NON-NLS-1$
+	    											ICoreInfo[] info = new ICoreInfo[coreIds.size()];
+	    											int i = 0;
+	    											for (String id : coreIds) {
+	    												info[i++] = new CoreInfo(id, defaultCPUId);
+	    											}
+	    			    							drm.done(new MIMetaGetCPUInfoInfo(info));
+	    				                            processCommandDone(token, drm.getData());
+	    										}
+	    									});
 	    						}
 	    					});
 	    		} else {
 	    			// For a local session, parse /proc/cpuinfo directly.
 	    			ICoreInfo[] info = new CoreList("/proc/cpuinfo").getCoreList(); //$NON-NLS-1$
 					drm.done(new MIMetaGetCPUInfoInfo(info));
+                    processCommandDone(token, drm.getData());
 	    		}
 	    	} else {
 				rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR, 
@@ -422,11 +476,26 @@ public class GDBHardware extends AbstractDsfService implements IGDBHardware, ICa
 	    	return token;
 	    }
 		
+		// Need to support these as they are used by the commandCache
 	    @Override
-	    public void addCommandListener(ICommandListener processor) { assert false : "Not supported"; } //$NON-NLS-1$
+	    public void addCommandListener(ICommandListener processor) { fCommandProcessors.add(processor); }
 	    @Override
-	    public void removeCommandListener(ICommandListener processor) { assert false : "Not supported"; } //$NON-NLS-1$
-		@Override
+	    public void removeCommandListener(ICommandListener processor) { fCommandProcessors.remove(processor); }    
+
+	    
+	    private void processCommandSent(ICommandToken token) {
+	        for (ICommandListener processor : fCommandProcessors) {
+	            processor.commandSent(token);
+	        }
+	    }
+
+	    private void processCommandDone(ICommandToken token, ICommandResult result) {
+	        for (ICommandListener processor : fCommandProcessors) {
+	            processor.commandDone(token, result);
+	        }
+	    }
+
+	    @Override
 	    public void addEventListener(IEventListener processor) { assert false : "Not supported"; } //$NON-NLS-1$
 		@Override
 	    public void removeEventListener(IEventListener processor) { assert false : "Not supported"; } //$NON-NLS-1$

@@ -24,26 +24,6 @@ import org.eclipse.cdt.internal.core.ICoreInfo;
  */
 public class CoreList {
 
-	private class CoreInfo implements ICoreInfo {
-		private String fId;
-		private String fPhysicalId;
-		
-		public CoreInfo(String id, String pId) {
-			fId = id;
-			fPhysicalId = pId;
-		}
-
-		@Override
-		public String getId() {
-			return fId;
-		}
-
-		@Override
-		public String getPhysicalId() {
-			return fPhysicalId;
-		}		
-	}
-
 	private ICoreInfo[] fCoreList;
 	private String fCoreFileName;
 	

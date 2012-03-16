@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2011 IBM Corporation and others.
+ *  Copyright (c) 2011, 2012 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.cdt.core.resources;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -34,7 +35,7 @@ import com.ibm.icu.text.MessageFormat;
  * @since 5.3
  * 
  */
-public abstract class RefreshExclusion {
+public abstract class RefreshExclusion implements Cloneable{
 
 	public static final String CLASS_ATTRIBUTE_NAME = "class"; //$NON-NLS-1$
 	public static final String CONTRIBUTOR_ID_ATTRIBUTE_NAME = "contributorId"; //$NON-NLS-1$
@@ -356,5 +357,42 @@ public abstract class RefreshExclusion {
 		return currentValue;
 
 	}
+	
+	/**
+	 * Duplicate this refresh exclusion to the given one.
+	 * @param destination - the refresh exclusion to be modified
+	 * @since 5.4
+	 */
+	protected void copyTo (RefreshExclusion destination) {
+		destination.setContributorId(getContributorId());
+		destination.setExclusionType(getExclusionType());
+		destination.setParentResource(getParentResource());
+		
+		Iterator<RefreshExclusion> iterator = getNestedExclusions().iterator();
+		while (iterator.hasNext()) {
+			RefreshExclusion nestedExclusion = iterator.next();
+			RefreshExclusion clone;
+			clone = (RefreshExclusion) nestedExclusion.clone();
+			clone.setParentExclusion(destination);
+			destination.addNestedExclusion(clone);
+		}
+		
+		Iterator<ExclusionInstance> exclusionInstances = getExclusionInstances().iterator();
+		
+		while(exclusionInstances.hasNext()) {
+			ExclusionInstance next = exclusionInstances.next();
+			ExclusionInstance newInstance = new ExclusionInstance();
+			newInstance.setDisplayString(next.getDisplayString());
+			newInstance.setExclusionType(next.getExclusionType());
+			newInstance.setParentExclusion(destination);
+			newInstance.setResource(next.getResource());
+			destination.addExclusionInstance(newInstance);
+		}
+	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#clone()
+	 */
+	@Override
+	public abstract Object clone();
 }

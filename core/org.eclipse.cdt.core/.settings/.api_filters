@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<component id="org.eclipse.cdt.core" version="2">
+<?xml version="1.0" encoding="UTF-8"?><component id="org.eclipse.cdt.core" version="2">
     <resource path="model/org/eclipse/cdt/core/settings/model/ICDescriptionDelta.java" type="org.eclipse.cdt.core.settings.model.ICDescriptionDelta">
         <filter comment="Temporary filter to ignore added API restictions for interfaces that should be internal to begin with" id="403853384">
             <message_arguments>
@@ -62,6 +61,92 @@
             <message_arguments>
                 <message_argument value="org.eclipse.cdt.core.parser.util.ArrayUtil.trim(Class&lt;?&gt;, Object[], boolean)"/>
                 <message_argument value="T"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/core/resources/RefreshScopeManager.java" type="org.eclipse.cdt.core.resources.RefreshScopeManager">
+        <filter id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.core.resources.RefreshScopeManager"/>
+                <message_argument value="addExclusion(IResource, RefreshExclusion)"/>
+            </message_arguments>
+        </filter>
+        <filter id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.core.resources.RefreshScopeManager"/>
+                <message_argument value="addResourceToRefresh(IProject, IResource)"/>
+            </message_arguments>
+        </filter>
+        <filter id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.core.resources.RefreshScopeManager"/>
+                <message_argument value="clearAllExclusions()"/>
+            </message_arguments>
+        </filter>
+        <filter id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.core.resources.RefreshScopeManager"/>
+                <message_argument value="clearAllResourcesToRefresh()"/>
+            </message_arguments>
+        </filter>
+        <filter id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.core.resources.RefreshScopeManager"/>
+                <message_argument value="clearExclusions(IResource)"/>
+            </message_arguments>
+        </filter>
+        <filter id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.core.resources.RefreshScopeManager"/>
+                <message_argument value="clearExclusionsForProject(IProject)"/>
+            </message_arguments>
+        </filter>
+        <filter id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.core.resources.RefreshScopeManager"/>
+                <message_argument value="deleteResourceToRefresh(IProject, IResource)"/>
+            </message_arguments>
+        </filter>
+        <filter id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.core.resources.RefreshScopeManager"/>
+                <message_argument value="getExclusions(IResource)"/>
+            </message_arguments>
+        </filter>
+        <filter id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.core.resources.RefreshScopeManager"/>
+                <message_argument value="getRefreshSchedulingRule(IProject)"/>
+            </message_arguments>
+        </filter>
+        <filter id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.core.resources.RefreshScopeManager"/>
+                <message_argument value="getResourcesToRefresh(IProject)"/>
+            </message_arguments>
+        </filter>
+        <filter id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.core.resources.RefreshScopeManager"/>
+                <message_argument value="removeExclusion(IResource, RefreshExclusion)"/>
+            </message_arguments>
+        </filter>
+        <filter id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.core.resources.RefreshScopeManager"/>
+                <message_argument value="setExclusions(IResource, List&lt;RefreshExclusion&gt;)"/>
+            </message_arguments>
+        </filter>
+        <filter id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.core.resources.RefreshScopeManager"/>
+                <message_argument value="setResourcesToRefresh(IProject, List&lt;IResource&gt;)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="routines no longer needed for RefreshScopeManager" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.core.resources.RefreshScopeManager"/>
+                <message_argument value="shouldResourceBeRefreshed(IResource)"/>
             </message_arguments>
         </filter>
     </resource>

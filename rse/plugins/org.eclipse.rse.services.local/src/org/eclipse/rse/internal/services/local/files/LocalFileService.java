@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 IBM Corporation and others.
+ * Copyright (c) 2006, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,6 +51,7 @@
  * Xuan Chen        (IBM)        - [222544] [testing] FileServiceArchiveTest leaves temporary files and folders behind in TEMP dir
  * David McKnight   (IBM)        - [337612] Failed to copy the content of a tar file
  * David McKnight   (IBM)        - [232084] [local] local file service should not throw operation cancelled exception due to file sizes
+ * David McKnight   (IBM)        - [374538] [local] localFile service tries to set modified time on virtual files
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.local.files;
@@ -1614,6 +1615,9 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 	public void setLastModified(String parent, String name, long timestamp, IProgressMonitor monitor) throws SystemMessageException
 	{
 		File file = new File(parent, name);
+		if (ArchiveHandlerManager.isVirtual(file.getAbsolutePath())){
+			return; // don't support setting modified date on virtuals
+		}
 		if (!file.setLastModified(timestamp)) {
 			if (!file.exists()) {
 				// TODO externalize message

@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *     IBM - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.gnu.c;
 
@@ -23,28 +23,12 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICASTKnRFunctionDeclarator extends IASTFunctionDeclarator {
-
 	/**
 	 * <code>PARAMETER_NAME</code> refers to the names qualified in a K&R C
 	 * function definition.
 	 */
 	public static final ASTNodeProperty PARAMETER_NAME = new ASTNodeProperty(
 			"ICASTKnRFunctionDeclarator.PARAMETER_NAME - K&R Parameter Name"); //$NON-NLS-1$
-
-	/**
-	 * Overwrite the parameter names. TODO - this should change to add
-	 * 
-	 * @param names
-	 *            <code>IASTName []</code>
-	 */
-	public void setParameterNames(IASTName[] names);
-
-	/**
-	 * Get parameter names.
-	 * 
-	 * @return <code>IASTName []</code>
-	 */
-	public IASTName[] getParameterNames();
 
 	/**
 	 * <code>FUNCTION_PARAMETER</code> represents the relationship between an
@@ -54,7 +38,22 @@ public interface ICASTKnRFunctionDeclarator extends IASTFunctionDeclarator {
 			"ICASTKnRFunctionDeclarator.FUNCTION_PARAMETER - Full K&R Parameter Declaration"); //$NON-NLS-1$
 
 	/**
-	 * Overrwrite the parameter lists.
+	 * Sets the parameter names. TODO - this should change to add
+	 * 
+	 * @param names
+	 *            <code>IASTName []</code>
+	 */
+	public void setParameterNames(IASTName[] names);
+
+	/**
+	 * Returns parameter names.
+	 * 
+	 * @return <code>IASTName []</code>
+	 */
+	public IASTName[] getParameterNames();
+
+	/**
+	 * Sets the parameter lists.
 	 * 
 	 * @param decls
 	 *            TODO - replace w/zadd

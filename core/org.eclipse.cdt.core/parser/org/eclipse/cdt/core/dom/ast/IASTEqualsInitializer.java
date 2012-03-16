@@ -6,10 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.core.dom.ast;
-
 
 /**
  * Initializer with equals sign (copy initialization) as in <code>int x= 0;</code>.
@@ -21,7 +20,6 @@ package org.eclipse.cdt.core.dom.ast;
 public interface IASTEqualsInitializer extends IASTInitializer {
 	ASTNodeProperty INITIALIZER = new ASTNodeProperty(
 		"IASTEqualsInitializer - INITIALIZER [IASTInitializerClause]"); //$NON-NLS-1$
-
 	
 	/**
 	 * Returns the expression or braced initializer list of this initializer.

@@ -1,0 +1,168 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2006, 2007 QNX Software Systems and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     QNX Software Systems - Initial API and implementation
+ *     Red Hat Inc. - modified for Automake editor usage
+ *******************************************************************************/
+package org.eclipse.cdt.internal.autotools.ui.editors.automake;
+
+
+public abstract class Conditional extends Parent implements IConditional {
+
+    private static final String EMPTY = ""; //$NON-NLS-1$
+	String cond;
+	String arg1;
+	String arg2;
+
+	public Conditional(Directive parent, String conditional) {
+		super(parent);
+		cond = conditional;
+		parse();
+	}
+
+	public Conditional(Directive parent) {
+		this(parent, EMPTY, EMPTY, EMPTY);
+	}
+
+	public Conditional(Directive parent, String conditional, String argument1, String argument2) {
+		super(parent);
+		arg1 = argument1;
+		arg2 = argument2;
+		cond = conditional;
+	}
+
+
+	public String getConditional() {
+		return cond;
+	}
+
+	public String getArg1() {
+		return arg1;
+	}
+
+	public String getArg2() {
+		return arg2;
+	}
+	
+	public boolean isIf() {
+		return false;
+	}
+
+	public boolean isIfdef() {
+		return false;
+	}
+
+	public boolean isIfndef() {
+		return false;
+	}
+
+	public boolean isIfeq() {
+		return false;
+	}
+
+	public boolean isIfneq() {
+		return false;
+	}
+
+	public boolean isElse() {
+		return false;
+	}
+
+	public boolean isEndif() {
+		return false;
+	}
+
+	/**
+	 * Formats of the conditional string.
+	 * ifeq (ARG1, ARG2)
+	 * ifeq 'ARG1' 'ARG2'
+	 * ifeq "ARG1" "ARG2"
+	 * ifeq "ARG1" 'ARG2'
+	 * ifeq 'ARG1' "ARG2"
+	 */
+	protected void parse() {
+		String line = getConditional().trim();
+
+		char terminal = line.charAt(0) == '(' ? ',' : line.charAt(0);
+ 
+		if (line.length() < 5 && terminal != ',' && terminal != '"' && terminal != '\'') {
+			arg1 = arg2 = EMPTY;
+			return;
+		}
+ 
+		// Find the end of the first string.
+		int count = 0;
+		// For the (ARG1, ARG2) format.
+
+		// get the first ARG1
+		if (terminal == ',') {
+			int paren = 0;
+			for (count = 1; count < line.length(); count++) {
+				char ch = line.charAt(count);
+				if (ch == '(') {
+					paren++;
+				} else if (ch == ')') {
+					paren--;
+				}
+				if (ch == terminal && paren <= 0) {
+					break;
+				}
+			}
+		} else {
+			for (count = 1; count < line.length(); count++) {
+				if (line.charAt(count) == terminal) {
+					break;
+				}
+			}
+		}
+
+		if (count >= line.length()) {
+			arg1 = arg2 = EMPTY;
+			return;			
+		}
+
+		arg1 = line.substring(1, count);
+ 
+		/* Find the start of the second string.  */
+		line = line.substring(count + 1).trim();
+ 
+		terminal = terminal == ',' ? ')' : line.charAt(0);
+		if (terminal != ')' && terminal != '"' && terminal != '\'') {
+			arg2 = EMPTY;
+			return;
+		}
+ 
+		count = 0;
+		/* Find the end of the second string.  */
+		if (terminal == ')') {
+			int paren = 0;
+			for (count = 0; count < line.length(); count++) {
+				char ch = line.charAt(count);
+				if (ch == '(') {
+					paren++;
+				} else if (ch == ')') {
+					paren--;
+				}
+				if (ch == terminal && paren <= 0) {
+					break;
+				}
+			}
+		} else {
+			for (count = 1; count < line.length(); count++) {
+				if (line.charAt(count) == terminal) {
+					break;
+				}
+			}
+		}
+		if (count > line.length()) {
+			arg2 = EMPTY;
+		} else {
+			arg2 = line.substring(0, count);
+		}
+	}
+}

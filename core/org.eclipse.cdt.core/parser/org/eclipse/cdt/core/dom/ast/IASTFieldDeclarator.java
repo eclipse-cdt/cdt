@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Doug Schaefer (IBM) - Initial API and implementation
+ *     Doug Schaefer (IBM) - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
@@ -18,7 +18,6 @@ package org.eclipse.cdt.core.dom.ast;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTFieldDeclarator extends IASTDeclarator {
-
 	/**
 	 * <code>FIELD_SIZE</code> represents the relationship between a
 	 * <code>IASTFieldDeclarator</code> and its <code>IASTExpression</code>.
@@ -27,15 +26,14 @@ public interface IASTFieldDeclarator extends IASTDeclarator {
 			"IASTFieldDeclarator.FIELD_SIZE - BitField Size of IASTFieldDeclarator"); //$NON-NLS-1$
 
 	/**
-	 * This returns the number of bits if this is a bit field. If it is not a
-	 * bit field, it returns null.
+	 * Returns the number of bits if this is a bit field, otherwise {@code null}.
 	 * 
 	 * @return size of bit field or null.
 	 */
 	public IASTExpression getBitFieldSize();
 
 	/**
-	 * Set the bitfield size.
+	 * Sets the bitfield size.
 	 * 
 	 * @param size
 	 *            <code>IASTExpression</code>

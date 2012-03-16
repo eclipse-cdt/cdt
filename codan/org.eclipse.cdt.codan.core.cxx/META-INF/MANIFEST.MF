@@ -10,9 +10,12 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.resources
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.cdt.codan.core.cxx,
- org.eclipse.cdt.codan.core.cxx.internal.model;x-friends:="org.eclipse.cdt.codan.checkers.ui,org.eclipse.cdt.codan.ui,org.eclipse.cdt.codan.ui.cxx",
- org.eclipse.cdt.codan.core.cxx.internal.model.cfg;x-friends:="org.eclipse.cdt.codan.core.test",
- org.eclipse.cdt.codan.core.cxx.model,
- org.eclipse.cdt.codan.core.cxx.util
+ org.eclipse.cdt.codan.core.cxx.internal.model;
+  x-friends:="org.eclipse.cdt.codan.checkers.ui,
+   org.eclipse.cdt.codan.ui,
+   org.eclipse.cdt.codan.ui.cxx",
+ org.eclipse.cdt.codan.core.cxx.internal.model.cfg;
+  x-friends:="org.eclipse.cdt.codan.core.test",
+ org.eclipse.cdt.codan.core.cxx.model
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Vendor: %Bundle-Vendor

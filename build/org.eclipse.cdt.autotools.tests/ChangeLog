@@ -1,0 +1,282 @@
+2012-01-03  Jeff Johnston  <jjohnstn@redhat.com>
+
+	Refactor to org.eclipse.cdt.autotools.tests.
+
+2011-06-16  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* src/org/eclipse/linuxtools/cdt/autotools/tests/autoconf/BaseParserTest.java (parseNoHandlers):
+	Revert previous fix as it is no longer needed.
+
+2011-06-16  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* src/org/eclipse/linuxtools/cdt/autotools/tests/autoconf/BaseParserTest.java (parseNoHandlers): 
+	Fix to new parser API.
+
+2011-05-19  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* src/org/eclipse/linuxtools/cdt/autotools/tests/editors/AutomakeColourizationTests.java (setUp): Perform
+	any editor or active page manipulation within Display thread.
+	* src/org/eclipse/linuxtools/cdt/autotools/tests/editors/AutomakeTextHoverTest.java (setUp): Ditto.
+	(testGetHoverForMacro2): Ditto.
+	(testGetHoverForMacro1): Ditto.
+	(testGetHoverInfoForTargetDependencies): Ditto.
+	(testGetHoverInfoForTargetDependency): Ditto.
+	(testGetHoverInfoTargetName2): Ditto.
+	(testGetHoverInfoTargetName1): Ditto.
+	* src/org/eclipse/linuxtools/cdt/autotools/tests/editors/AutomakeEditorTests.java (testAutomakeEditorAssociation): Ditto.
+
+2010-11-18  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* src/org/eclipse/linuxtools/cdt/autotools/tests/ProjectTools.java (createProject): Try creating a project
+	description and then creating a CDT project from the initial handle.  Use that handle to
+	convert to an Autotools Project.  This is being done to try and remove the current random
+	bug under Hudson builds.
+
+2010-05-10  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* src/org/eclipse/linuxtools/cdt/autotools/tests/AutotoolsTestsPlugin.java: Fix plugin id.
+	(AutotoolsTestsPlugin): Remove setting of plugin. 
+	(start): Add setting of plugin here.
+
+2010-03-12  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* src/org/eclipse/linuxtools/cdt/autotools/tests/ProjectTools.java (setConfigDir): Fix up how
+	configuration is allocated.  Use id instead of name.
+
+2009-11-13  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* META-INF/MANIFEST.MF: Make singleton.
+
+2009-11-03  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* src/org/eclipse/linuxtools/cdt/autotools/tests/ProjectTools.java: Remove warnings.
+
+2009-10-15  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* src/org/eclipse/linuxtools/cdt/autotools/tests/AutotoolsProjectTest0.java (testAutotoolsProject0): Fix to
+	handle fact that default build directory is now project directory.
+	* src/org/eclipse/linuxtools/cdt/autotools/tests/AutotoolsProjectTest1.java (testAutotoolsProject1): Ditto. 
+	* src/org/eclipse/linuxtools/cdt/autotools/tests/AutotoolsProjectTest2.java (testAutotoolsProject2): Ditto.
+	* src/org/eclipse/linuxtools/cdt/autotools/tests/ProjectTools.java (setConfigDir): Fix to use new
+	AutotoolsConfigurationManager logic.
+
+2009-10-13  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* META-INF/MANIFEST.MF: Bump up release to 2.0.0.
+	
+	* src/org/eclipse/linuxtools/cdt/autotools/tests/AllAutotoolsTests.java (suite): Modified to use
+	new core and ui plug-ins. 
+	(suite): Ditto.
+	* src/org/eclipse/linuxtools/cdt/autotools/tests/autoconf/AutoconfTests.java (suite): Ditto. 
+	(suite): Ditto.
+	* src/org/eclipse/linuxtools/cdt/autotools/tests/AutotoolsTestsPlugin.java (AutotoolsTestsPlugin): Ditto. 
+	(AutotoolsTestsPlugin): Ditto. 
+	* src/org/eclipse/linuxtools/cdt/autotools/tests/editors/AutomakeColourizationTests.java: Ditto. 
+	
+	* src/org/eclipse/linuxtools/cdt/autotools/tests/editors/AutomakeEditorTests.java: Ditto.
+	
+	* src/org/eclipse/linuxtools/cdt/autotools/tests/editors/AutomakeTextHoverTest.java: Ditto.
+	
+	* src/org/eclipse/linuxtools/cdt/autotools/tests/editors/EditorTests.java (suite): Ditto.
+	(suite): Ditto.
+	* src/org/eclipse/linuxtools/cdt/autotools/tests/ProjectTools.java (ConvertToAutotoolsProjectWizardTest.getSelectedConfigurations): Ditto. 
+	(generateFiles): Ditto.
+	(markExecutable): Ditto.
+	(ConvertToAutotoolsProjectWizardTest.getSelectedConfigurations): Ditto. 
+	(generateFiles): Ditto.
+	(markExecutable): Ditto.
+
+2009-04-21  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* src/org/eclipse/linuxtools/cdt/autotools/tests/CoreUtility.java: New file.
+	* src/org/eclipse/linuxtools/cdt/autotools/tests/ProjectTools.java: Use local CoreUtility
+	class to avoid internal class access warnings.
+
+2009-03-05  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* src/org/eclipse/linuxtools/cdt/autotools/tests/ProjectTools.java (generateFiles): Call
+	genfiles.sh instead of issuing aclocal, autoconf, and automake which might not exist on
+	test system.
+	* zip/project1.zip: Add generated files into special genfiles directory and add EPL. 
+	* zip/project2.zip: Ditto.
+	
+2009-03-05  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* build.properties: Add zip directory to binary build.
+
+2009-01-15  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* META-INF/MANIFEST.MF: Add .qualifier to id.
+
+2008-12-09  Andrew Overholt  <overholt@redhat.com>
+
+	* test.xml: Debugging statement.
+
+2008-12-08  Andrew Overholt  <overholt@redhat.com>
+
+	* test.xml: Clean up some typos.
+
+2008-12-04  Andrew Overholt  <overholt@redhat.com>
+
+	* build.properties: Add test.xml to bin.includes.
+
+2008-11-05  Andrew Overholt  <overholt@redhat.com>
+
+	* META-INF/MANIFEST.MF: Update BREE to 1.5.
+
+2008-11-05  Andrew Overholt  <overholt@redhat.com>
+
+	* src/org/eclipse/linuxtools/cdt/autotools/tests/AllAutotoolsTests.java: New test suite.
+	* src/org/eclipse/linuxtools/cdt/autotools/tests/autoconf/AutoconfTests.java: New test suite.
+	* src/org/eclipse/linuxtools/cdt/autotools/tests/editors/EditorTests.java: New test suite.
+	* test.xml: New file to drive tests on build.eclipse.org.
+
+2008-11-03  Andrew Overholt  <overholt@redhat.com>
+
+	* build.properties: Remove plugin.xml, add plugin.properties.
+
+2008-10-31  Andrew Overholt  <overholt@redhat.com>
+
+	* META-INF/MANIFEST.MF: Use plugin.properties for %bundleName and %provider.
+	Add "(Incubation)".
+	* plugin.properties: Initial import.
+
+2008-10-14  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* META-INF/MANIFEST.MF: Bump release to 1.0.3.
+
+2008-09-19  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* META-INF/MANIFEST.MF: Change Eclipse-AutoStart to Bundle-ActivationPolicy.
+
+2008-09-18  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* src/org/eclipse/linuxtools/cdt/autotools/tests/editors/AutomakeColourizationTests.java (setUp): Make sure
+	test project has unique name since JUNIT tests are run multithread.
+	* src/org/eclipse/linuxtools/cdt/autotools/tests/editors/AutomakeEditorTests.java (testAutomakeEditorAssociation):
+	Ditto.
+	* src/org/eclipse/linuxtools/cdt/autotools/tests/editors/AutomakeTextHoverTest.java (setUp): Ditto.
+
+2008-09-17  Jeff Johnston  <jjohnstn@redhat.com>
+
+    Refactored com.redhat.eclipse.cdt.autotools.tests to org.eclipse.linuxtools.cdt.autotools.tests.
+
+	* src/org/eclipse/linuxtools/cdt/autotools/tests/AllTests.java: Removed since must run as Junit
+	plugin and default is to run all tests in plugin which causes duplicate test runs.
+	* src/org/eclipse/linuxtools/cdt/autotools/tests/autoconf/AllTests.java: Removed. Ditto.
+	* src/org/eclipse/linuxtools/cdt/autotools/tests/AutotoolsProjectTest0.java (testAutotoolsProject0):
+	Add new generate configuration files parameter and set to true.
+	* src/org/eclipse/linuxtools/cdt/autotools/tests/AutotoolsProjectTest1.java (testAutotoolsProject1):
+	Ditto.
+	* src/org/eclipse/linuxtools/cdt/autotools/tests/AutotoolsProjectTest2.java (testAutotoolsProject2):
+	Add new generate configuration files parameter and set to false.
+	* src/org/eclipse/linuxtools/cdt/autotools/tests/ProjectTools.java (addSourceContainerWithImport):
+	Add new parameter which states whether configuration files require generation after
+	import.
+	(importFilesFromZipAndGenerate): New method which imports project files and performs
+	generation of configuration files.
+	(generateFiles): New method.
+
+2008-07-04  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* META-INF/MANIFEST.MF: Bump to 1.0.2.
+
+2008-04-17 10:43  Ed Swartz <ed.swartz@nokia.com>
+
+	* src/com/redhat/eclipse/cdt/autotools/tests/autoconf/:
+	  TestMacroParser.java, TestShellParser.java: More autoconf parser
+	  work.  Remove old parser and standardize AST node constructors.
+	  Add more tests and fix some bugs.
+
+2008-04-10 15:40  Ed Swartz <ed.swartz@nokia.com>
+
+	* src/com/redhat/eclipse/cdt/autotools/tests/autoconf/:
+	  BaseParserTest.java, TestMacroParser.java, TestShellParser.java,
+	  TestTokenizer.java: More autoconf parser work.
+
+2008-04-09 14:38  Ed Swartz <ed.swartz@nokia.com>
+
+	* src/com/redhat/eclipse/cdt/autotools/tests/: AllTests.java,
+	  autoconf/AllTests.java, autoconf/BaseParserTest.java,
+	  autoconf/TestMacroParser.java, autoconf/TestParser.java,
+	  autoconf/TestShellParser.java, autoconf/TestSourceInfo.java,
+	  autoconf/TestTokenizer.java: New autoconf parser work in progress
+
+2008-04-07 14:06  Ed Swartz <ed.swartz@nokia.com>
+
+	* src/com/redhat/eclipse/cdt/autotools/tests/: AllTests.java,
+	  autoconf/AllTests.java, autoconf/TestParser.java,
+	  autoconf/TestSourceInfo.java: Initial checkpoint for autotools
+	  parser changes
+
+
+2007-08-15  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* META-INF/MANIFEST.MF: Change release to 1.0.1 and specify minimum java runtime as
+	1.4.
+
+2007-04-16  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* src/com/redhat/eclipse/cdt/autotools/tests/AutotoolsProjectTest0.java: New
+	test to test simple project with configure in top-level directory.
+	* src/com/redhat/eclipse/cdt/autotools/tests/AllTests.java: Add
+	new AutotoolsProjectTest0 test.
+
+2007-04-13  Jeff Johnston  <jjohnstn@redhat.com>
+
+	Verifies fix for #236304
+	* src/com/redhat/eclipse/cdt/autotools/tests/AutotoolsProjectTest1.java (tearDown):
+	Add try catch around project delete.
+	* src/com/redhat/eclipse/cdt/autotools/tests/AutotoolsProjectTest2.java: New test
+	for autogen.sh.
+	* src/com/redhat/eclipse/cdt/autotools/tests/AllTests.java (suite): Add
+	new AutotoolsProjectTest2 test.
+	* zip/project2.zip: New autogen.sh test project.
+
+2007-04-04  Jeff Johnston  <jjohnstn@redhat.com>
+
+	Verifies fix for #235076
+	* src/com/redhat/eclipse/cdt/autotools/tests/ProjectTools.java (createFile): Add comments.
+	(setup): Ditto.
+	(getMonitor): Ditto.
+	(createEmptyFile): Ditto.
+	(addSourceContainer): Ditto.
+	(createProject): Ditto.
+	(addSourceContainerWithImport): Ditto.
+	(ConvertToAutotoolsProjectWizardTest): Ditto.
+	(ConvertToAutotoolsProjectWizardTest.getSelectedConfigurations): Ditto.
+	(build): New method.
+	(setConfigDir): Ditto.
+	(markExecutable): Ditto.
+	* src/com/redhat/eclipse/cdt/autotools/tests/AutotoolsProjectTest1.java: New test.
+	* src/com/redhat/eclipse/cdt/autotools/tests/AllTests.java (suite): Add
+	AutotoolsProjectTest1 test.
+	* zip/project1.zip: New sample project file for testing.
+
+2007-01-22  Andrew Overholt  <overholt@redhat.com>
+
+	* src/com/redhat/eclipse/cdt/autotools/tests/editors/AutomakeEditorTests.java:
+	Add copyright.
+	* src/com/redhat/eclipse/cdt/autotools/tests/editors/AutomakeColourizationTests.java:
+	Add copyright.
+	* src/com/redhat/eclipse/cdt/autotools/tests/editors/AutomakeTextHoverTest.java:
+	New file.
+
+
+2006-12-15  Andrew Overholt  <overholt@redhat.com>
+
+	* src/com/redhat/eclipse/cdt/autotools/tests/editors/AutomakeColourizationTests.java:
+	New file.
+	* src/com/redhat/eclipse/cdt/autotools/tests/ProjectTools.java
+	(createFile): New method.
+	* src/com/redhat/eclipse/cdt/autotools/tests/AllTests.java
+	(suite): Add AutomakeColourizationTests.
+
+2006-12-12  Andrew Overholt  <overholt@redhat.com>
+
+	* src/com/redhat/eclipse/cdt/autotools/tests/editors/AutomakeEditorTests.java:
+	New file.
+	* src/com/redhat/eclipse/cdt/autotools/tests/ProjectTools.java
+	(createEmptyFile): New method.
+	* src/com/redhat/eclipse/cdt/autotools/tests/AutotoolsProjectNatureTest.java:
+	Clean up imports.

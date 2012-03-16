@@ -17,7 +17,6 @@ package org.eclipse.cdt.core.dom.ast;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTCompoundStatement extends IASTStatement {
-
 	/**
 	 * <code>NESTED_STATEMENT</code> represents the relationship between an
 	 * <code>IASTCompoundStatement</code> and its nested

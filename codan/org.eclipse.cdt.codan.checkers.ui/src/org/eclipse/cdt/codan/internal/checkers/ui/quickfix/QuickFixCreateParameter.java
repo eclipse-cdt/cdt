@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Tomasz Wesolowski
+ * Copyright (c) 2010, 2012 Tomasz Wesolowski
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Tomasz Wesolowski - initial API and implementation
+ *     Marc-Andre Laperle
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.checkers.ui.quickfix;
 
@@ -74,6 +75,9 @@ public class QuickFixCreateParameter extends AbstractAstRewriteQuickFix {
 			HashMap<ITranslationUnit, ASTRewrite> cachedRewrites = new HashMap<ITranslationUnit, ASTRewrite>();
 			for (IIndexName iname : declarations) {
 				ITranslationUnit declTU = CxxAstUtils.getTranslationUnitFromIndexName(iname);
+				if (declTU == null) {
+					continue;
+				}
 				ASTRewrite rewrite;
 				IASTTranslationUnit declAST;
 				if (!cachedASTs.containsKey(declTU)) {

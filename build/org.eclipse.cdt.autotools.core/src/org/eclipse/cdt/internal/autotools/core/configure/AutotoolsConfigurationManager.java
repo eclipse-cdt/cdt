@@ -1,0 +1,530 @@
+/*******************************************************************************
+ * Copyright (c) 2009, 2010, 2011 Red Hat Inc.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Red Hat Inc. - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.cdt.internal.autotools.core.configure;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.eclipse.cdt.autotools.core.AutotoolsPlugin;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
+import org.eclipse.cdt.internal.autotools.core.configure.AutotoolsConfiguration.Option;
+import org.eclipse.cdt.managedbuilder.core.BuildException;
+import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
+import org.eclipse.cdt.managedbuilder.core.IOption;
+import org.eclipse.cdt.managedbuilder.core.ITool;
+import org.eclipse.cdt.managedbuilder.core.IToolChain;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IPath;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
+public class AutotoolsConfigurationManager implements IResourceChangeListener {
+	
+	public final static String CFG_FILE_NAME = ".autotools"; //$NON-NLS-1$
+	private final static String CFG_CANT_SAVE = "Configure.Error.NoProjectToSave"; //$NON-NLS-1$
+	
+	
+	private static AutotoolsConfigurationManager instance;
+	
+	private boolean isSyncing;
+	
+	private static Map<String, Map<String, IAConfiguration>> configs;
+	private static Map<String, Map<String, IAConfiguration>> tmpConfigs;
+	
+	private AutotoolsConfigurationManager() {
+		configs = new HashMap<String, Map<String, IAConfiguration>>();
+		tmpConfigs = new HashMap<String, Map<String, IAConfiguration>>();
+		AutotoolsPlugin.getWorkspace().addResourceChangeListener(this);
+	}
+	
+	public static AutotoolsConfigurationManager getInstance() {
+		if (instance == null) {
+			instance = new AutotoolsConfigurationManager();
+		}
+		return instance;
+	}
+
+	public IAConfiguration createDefaultConfiguration(IProject project, String id) {
+		IAConfiguration cfg = new AutotoolsConfiguration(id);
+		return cfg;
+	}
+	
+	public IAConfiguration findCfg(IProject p, String id) {
+		Map<String, IAConfiguration> cfgs = getConfigurations(p);
+		return cfgs.get(id);
+	}
+
+	public IAConfiguration getConfiguration(IProject p, String cfgId) {
+		return getConfiguration(p, cfgId, true);
+	}
+
+	public IAConfiguration getConfiguration(IProject p, String cfgId, boolean persist) {
+		IAConfiguration cfg = findCfg(p, cfgId);
+		if (cfg == null) {
+			cfg = createDefaultConfiguration(p, cfgId);
+			if (persist) {
+				addConfiguration(p, cfg);
+			}
+		} else {
+			if (!persist) {
+				cfg = cfg.copy();
+			}
+		}
+		return cfg;
+	}
+	
+	
+	public boolean isConfigurationAlreadySaved(IProject project, ICConfigurationDescription cfgd) {
+		Map<String, IAConfiguration> cfgs = getSavedConfigs(project);
+		if (cfgs != null)
+			return cfgs.get(cfgd.getId()) != null;
+		return false;
+	}
+	
+	public void addConfiguration(IProject project, IAConfiguration cfg) {
+		String projectName = project.getName();
+		Map<String, IAConfiguration> cfgs = getSavedConfigs(project);
+		if (cfgs == null) {
+			cfgs = new HashMap<String, IAConfiguration>();
+			configs.put(projectName, cfgs);
+		}
+		cfgs.put(cfg.getId(), cfg);
+		saveConfigs(project);
+	}
+	
+	public boolean isSyncing() {
+		return isSyncing;
+	}
+
+	private void setSyncing(boolean value) {
+		isSyncing = value;
+	}
+	
+	/** 
+	 * Synchronize the current set of configurations for the project with the
+	 * Autotools saved configuration data.  This is required when configuration
+	 * management occurs outside of the Autotools Configure Settings page in the
+	 * Property menu.
+	 * 
+	 * @param project to synchronize configurations for
+	 * 
+	 */
+	public void syncConfigurations(IProject project) {
+		setSyncing(true);
+		clearTmpConfigurations(project);
+		ICProjectDescription pd = CoreModel.getDefault().getProjectDescription(project);
+		ICConfigurationDescription[] cfgs = pd.getConfigurations();
+		Map <String, IAConfiguration> newCfgList = new HashMap<String, IAConfiguration>();
+		for (int i = 0; i < cfgs.length; ++i) {
+			cfgs[i].getConfigurationData();
+			IAConfiguration acfg = getTmpConfiguration(project, cfgs[i]);
+			newCfgList.put(cfgs[i].getId(), acfg);
+		}
+		setSyncing(false);
+		clearTmpConfigurations(project);
+		replaceProjectConfigurations(project, newCfgList);
+	}
+	
+	public void replaceProjectConfigurations(IProject project, Map<String, IAConfiguration> cfgs) {
+		String projectName = project.getName();
+		configs.put(projectName, cfgs);
+		saveConfigs(project);
+	}
+
+	public void replaceProjectConfigurations(IProject project, Map<String, IAConfiguration> cfgs, ICConfigurationDescription[] cfgds) {
+		String projectName = project.getName();
+		configs.put(projectName, cfgs);
+		saveConfigs(project, cfgds);
+	}
+
+	private Map<String, IAConfiguration> getSavedConfigs(IProject project) {
+		String projectName = project.getName();
+		Map<String, IAConfiguration> list = configs.get(projectName);
+		if (list == null) {
+			try {
+				IPath fileLocation = project.getLocation().append(CFG_FILE_NAME);
+				File dirFile = fileLocation.toFile();
+				Map<String, IAConfiguration> cfgList = new HashMap<String, IAConfiguration>();
+				DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+				DocumentBuilder db = dbf.newDocumentBuilder();
+				if (dirFile.exists()) {
+					Document d = db.parse(dirFile);
+					Element e = d.getDocumentElement();
+					// Get the stored configuration data
+					NodeList cfgs = e.getElementsByTagName("configuration"); // $NON-NLS-1$
+					for (int x = 0; x < cfgs.getLength(); ++x) {
+						Node n = cfgs.item(x);
+						NamedNodeMap attrs = n.getAttributes();
+						// Originally we used the configuration name, but now we use
+						// the ConfigurationDescription id which is unique.  Check for
+						// id first, but fall back to name for older .autotools files.
+						Node nameNode = attrs.getNamedItem("name"); // $NON-NLS-1$
+						Node cfgIdNode = attrs.getNamedItem("id"); // $NON-NLS-1$
+						String cfgId = null;
+						if (cfgIdNode != null)
+							cfgId = cfgIdNode.getNodeValue();
+						else if (nameNode != null) {
+							String cfgName = nameNode.getNodeValue();
+							ICConfigurationDescription cfgd = 
+								CoreModel.getDefault().getProjectDescription(project).getConfigurationByName(cfgName);
+							if (cfgd != null)
+								cfgId = cfgd.getId();
+							else
+								continue; // have to punt, this doesn't map to real cfg
+						}
+						IAConfiguration cfg = new AutotoolsConfiguration(cfgId);
+						NodeList l = n.getChildNodes();
+						for (int y = 0; y < l.getLength(); ++y) {
+							Node child = l.item(y);
+							if (child.getNodeName().equals("option")) { // $NON-NLS-1$
+								NamedNodeMap optionAttrs = child.getAttributes();
+								Node id = optionAttrs.getNamedItem("id"); // $NON-NLS-1$
+								Node value = optionAttrs.getNamedItem("value"); // $NON-NLS-1$
+								if (id != null && value != null)
+									cfg.setOption(id.getNodeValue(), value.getNodeValue());
+							} else if (child.getNodeName().equals("flag")) { //$NON-NLS-1$
+								// read in flag values
+								NamedNodeMap optionAttrs = child.getAttributes();
+								Node id = optionAttrs.getNamedItem("id"); // $NON-NLS-1$
+								IConfigureOption opt = cfg.getOption(id.getNodeValue());
+								if (opt instanceof FlagConfigureOption) {
+									NodeList l2 = child.getChildNodes();
+									for (int z = 0; z < l2.getLength(); ++z) {
+										Node flagChild = l2.item(z);
+										if (flagChild.getNodeName().equals("flagvalue")) { //$NON-NLS-1$
+											NamedNodeMap optionAttrs2 = flagChild.getAttributes();
+											Node id2 = optionAttrs2.getNamedItem("id"); // $NON-NLS-1$
+											Node value = optionAttrs2.getNamedItem("value"); // $NON-NLS-1$
+											cfg.setOption(id2.getNodeValue(), value.getNodeValue());		
+										}
+									}
+								}
+							}
+						}
+						cfg.setDirty(false);
+						cfgList.put(cfg.getId(), cfg);
+					}
+					if (cfgList.size() > 0) {
+						configs.put(projectName, cfgList);
+						list = cfgList;
+					}
+				}
+			} catch (ParserConfigurationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (SAXException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return list;
+	}
+
+	public IAConfiguration getTmpConfiguration(IProject p, ICConfigurationDescription cfgd) {
+		Map <String, IAConfiguration> list = getTmpConfigs(p);
+		IAConfiguration acfg = list.get(cfgd.getId());
+		if (acfg != null) {
+			return acfg;
+		}
+		IAConfiguration oldCfg = getConfiguration(p, cfgd.getId(), false);
+		list.put(cfgd.getId(), oldCfg);
+		return oldCfg;
+	}
+
+	/**
+	 * Clone a configuration and put it on the tmp list if it is not already a saved configuration
+	 * and not already on the tmp list.
+	 * 
+	 * @param p project
+	 * @param oldId the id of the old configuration to clone
+	 * @param cfgd the configuration descriptor for the clone
+	 * @return true if the configuration is already saved, false otherwise
+	 */
+	public boolean cloneCfg(IProject p, String oldId, ICConfigurationDescription cfgd) {
+		if (isConfigurationAlreadySaved(p, cfgd))
+			return true;
+		Map <String, IAConfiguration> tmpList = getTmpConfigs(p);
+		String newId = cfgd.getId();
+		// Don't bother if the new configuration is already on the tmp list
+		IAConfiguration cfg = tmpList.get(newId);
+		if (cfg != null)
+			return false;
+		// Otherwise, try and find the old id to copy the configuration from
+		// or punt if not found
+		IAConfiguration oldCfg = null;
+		Map <String, IAConfiguration> savedList = getSavedConfigs(p);
+		if (savedList != null)
+			oldCfg = savedList.get(oldId);
+		if (oldCfg != null) {
+			IAConfiguration newCfg = oldCfg.copy(cfgd.getId());
+			tmpList.put(cfgd.getId(), newCfg);
+			// Check to see if the new configuration is already stored as part of the project description.
+			// If yes, it should already be saved.  This can occur if the configuration was added as part of
+			// another CDT Property page and the Autotools Property page was never opened.
+			if (CoreModel.getDefault().getProjectDescription(p).getConfigurationById(newId) != null) {
+				addConfiguration(p, newCfg);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private Map<String, IAConfiguration> getTmpConfigs(IProject p) {
+		Map <String, IAConfiguration> tmpList = tmpConfigs.get(p.getName());
+		if (tmpList == null) {
+			tmpList = new HashMap<String, IAConfiguration>();
+			tmpConfigs.put(p.getName(), tmpList);
+		}
+		return tmpList;
+	}
+	
+	public void clearTmpConfigurations(IProject p) {
+		tmpConfigs.remove(p.getName());
+	}
+
+	public void saveConfigs(IProject project) {
+		ICConfigurationDescription[] cfgds = CoreModel.getDefault().getProjectDescription(project).getConfigurations();
+		saveConfigs(project, cfgds);
+	}
+	
+	private void syncNameField(ICConfigurationDescription cfgd) {
+		IConfiguration icfg = ManagedBuildManager.getConfigurationForDescription(cfgd);
+		String id = cfgd.getId();
+		if (icfg != null) {
+			IToolChain toolchain = icfg.getToolChain();
+			ITool[] tools = toolchain.getTools();
+			for (int j = 0; j < tools.length; ++j) {
+				ITool tool = tools[j];
+				if (tool.getName().equals("configure")) { //$NON-NLS-1$
+					IOption option = 
+						tool.getOptionBySuperClassId("org.eclipse.linuxtools.cdt.autotools.core.option.configure.name"); // $NON-NLS-1$
+					IHoldsOptions h = (IHoldsOptions)tool;
+					try {
+						IOption optionToSet = h.getOptionToSet(option, false);
+						optionToSet.setValue(id);
+					} catch (BuildException e) {
+					}
+				}
+			}
+		}
+	}
+	
+	private String xmlEscape(String value) {
+		value = value.replaceAll("\\&", "&amp;"); //$NON-NLS-1$ //$NON-NLS-2$ 
+		value = value.replaceAll("\\\"", "&quot;"); //$NON-NLS-1$ //$NON-NLS-2$ 
+		value = value.replaceAll("\\\'", "&apos;"); //$NON-NLS-1$ //$NON-NLS-2$ 
+		value = value.replaceAll("\\<", "&lt;"); //$NON-NLS-1$ //$NON-NLS-2$ 
+		value = value.replaceAll("\\>", "&gt;"); //$NON-NLS-1$ //$NON-NLS-2$ 
+		return value;
+	}
+	
+	private void saveConfigs(IProject project, ICConfigurationDescription[] cfgds) {
+		try {
+			String projectName = project.getName();
+			IPath output = project.getLocation().append(CFG_FILE_NAME);
+			File f = output.toFile();
+			if (!f.exists())
+				f.createNewFile();
+			if (f.exists()) {
+				PrintWriter p = new PrintWriter(new BufferedWriter(new FileWriter(f)));
+				Map<String, IAConfiguration> cfgs = configs.get(projectName);
+				p.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); //$NON-NLS-1$
+				p.println("<configurations>"); // $NON-NLS-1$
+				Option[] optionList = AutotoolsConfiguration.getOptionList();
+				// Before saving, force any cloning to occur via the option value handler.
+				setSyncing(true);
+				for (int i = 0; i < cfgds.length; ++i) {
+					@SuppressWarnings("unused")
+					CConfigurationData data = cfgds[i].getConfigurationData();
+				}
+				setSyncing(false);
+				for (int i = 0; i < cfgds.length; ++i) {
+					ICConfigurationDescription cfgd = cfgds[i];
+					String id = cfgd.getId();
+					IAConfiguration cfg = cfgs.get(id);
+					if (cfg == null) {
+						cfg = createDefaultConfiguration(project, id);
+					}
+					p.println("<configuration id=\"" + cfg.getId() + "\">"); //$NON-NLS-1$ //$NON-NLS-2$ 
+					for (int j = 0; j < optionList.length; ++j) {
+						Option option = optionList[j];
+						IConfigureOption opt = cfg.getOption(option.getName());
+						if (opt.isFlag()) {
+							p.println("<flag id=\"" + option.getName() + "\">"); //$NON-NLS-1$ //$NON-NLS-2$
+							FlagConfigureOption fco = (FlagConfigureOption)opt;
+							ArrayList<String> children = fco.getChildren();
+							for (int k = 0; k < children.size(); ++k) {
+								String childName = children.get(k);
+								IConfigureOption childopt = cfg.getOption(childName);
+								p.println("<flagvalue id=\"" + childopt.getName() + "\" value=\"" + xmlEscape(childopt.getValue()) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ // $NON-NLS-3$
+							}
+							p.println("</flag>"); //$NON-NLS-1$
+						}
+						else if (!opt.isCategory() && !opt.isFlagValue())
+							p.println("<option id=\"" + option.getName() + "\" value=\"" + xmlEscape(opt.getValue()) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ // $NON-NLS-3$
+					}
+					p.println("</configuration>"); //$NON-NLS-1$
+					// Sync name field as this configuration is now officially saved
+					syncNameField(cfgd);
+				}
+				p.println("</configurations>");
+				p.close();
+			}
+		} catch (IOException e) {
+			AutotoolsPlugin.log(e);
+		}
+	}
+	
+	// Perform apply of configuration changes.  This rewrites out the current known list of configurations
+	// with any changes currently that have been made to them.  If a configuration has been renamed, but this
+	// has not yet been confirmed by the end-user, then only the changes to the configuration are made.  The
+	// name currently remains the same in the output file.
+	public void applyConfigs(String projectName, ICConfigurationDescription[] cfgds) {
+		try {
+			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+			IResource res = (IProject)root.findMember(projectName, false);
+			if (res == null || res.getType() != IResource.PROJECT) {
+				AutotoolsPlugin.logErrorMessage(ConfigureMessages.getFormattedString(CFG_CANT_SAVE,
+						new String[]{projectName}));
+				return;
+			}
+			IProject project = (IProject)res;
+			IPath output = project.getLocation().append(CFG_FILE_NAME);
+			File f = output.toFile();
+			if (!f.exists())
+				f.createNewFile();
+			if (f.exists()) {
+				PrintWriter p = new PrintWriter(new BufferedWriter(new FileWriter(f)));
+				try {
+					Map<String, IAConfiguration> cfgs = getSavedConfigs(project);
+					if (cfgs == null)
+						return;
+					p.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); //$NON-NLS-1$
+					p.println("<configurations>"); // $NON-NLS-1$
+					Option[] optionList = AutotoolsConfiguration.getOptionList();
+					HashSet<String> savedIds = new HashSet<String>();
+					setSyncing(true);
+					for (int x = 0; x < cfgds.length; ++x) {
+						ICConfigurationDescription cfgd = cfgds[x];
+						@SuppressWarnings("unused")
+						CConfigurationData data = cfgd.getConfigurationData();
+						String id = cfgd.getId();
+						savedIds.add(id);
+						IAConfiguration cfg = getTmpConfiguration(project, cfgd);
+						cfgs.put(id, cfg); // add to list in case we have a new configuration not yet added to Project Description
+						p.println("<configuration id=\"" + id + "\">"); //$NON-NLS-1$ //$NON-NLS-2$ 
+						for (int j = 0; j < optionList.length; ++j) {
+							Option option = optionList[j];
+							IConfigureOption opt = cfg.getOption(option.getName());
+							if (!opt.isCategory())
+								p.println("<option id=\"" + option.getName() + "\" value=\"" + opt.getValue() + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ // $NON-NLS-3$
+						}
+						p.println("</configuration>"); //$NON-NLS-1$
+						syncNameField(cfgd);
+					}
+					setSyncing(false);
+
+					// Put all the remaining configurations already saved back into the file.
+					// These represent deleted configurations, but confirmation has not occurred.
+					for (Iterator<String> i = cfgs.keySet().iterator(); i.hasNext(); ) {
+						String id = i.next();
+						// A remaining id won't appear in our savedIds list.
+						if (!savedIds.contains(id)) {
+							IAConfiguration cfg = cfgs.get(id);
+							p.println("<configuration id=\"" + id + "\">"); //$NON-NLS-1$ //$NON-NLS-2$ 
+							for (int j = 0; j < optionList.length; ++j) {
+								Option option = optionList[j];
+								IConfigureOption opt = cfg.getOption(option.getName());
+								if (!opt.isCategory())
+									p.println("<option id=\"" + option.getName() + "\" value=\"" + opt.getValue() + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ // $NON-NLS-3$
+							}
+							p.println("</configuration>"); //$NON-NLS-1$
+						}
+					}
+					p.println("</configurations>");
+				} finally {
+					p.close();
+				}
+			}
+		} catch (IOException e) {
+			AutotoolsPlugin.log(e);
+		}
+	}
+	
+	public Map<String, IAConfiguration> getConfigurations(IProject project) {
+		Map<String, IAConfiguration> list = getSavedConfigs(project);
+		if (list == null) {
+			list = new HashMap<String, IAConfiguration>();
+			configs.put(project.getName(), list);
+		}
+		return list;
+	}
+	
+	public void resourceChanged(IResourceChangeEvent event) {
+		IResource res = event.getResource();
+		if (!(res instanceof IProject))
+			return;
+		String name = res.getName();
+		IResourceDelta delta = event.getDelta();
+		if (delta == null)
+			return;
+		int kind = delta.getKind();
+		if (configs.containsKey(name)) {
+			if (kind == IResourceDelta.REMOVED) {
+				configs.remove(name);
+				tmpConfigs.remove(name);
+			} else if (kind == IResourceDelta.CHANGED) {
+				int flags = delta.getFlags();
+				if ((flags & IResourceDelta.MOVED_TO) != 0) {
+					IPath path = delta.getMovedToPath();
+					Map<String, IAConfiguration> cfgs = configs.get(name);
+					String newName = path.lastSegment();
+					configs.remove(name);
+					configs.put(newName, cfgs);
+					Map<String, IAConfiguration> tmpcfgs = tmpConfigs.get(name);
+					tmpConfigs.remove(name);
+					tmpConfigs.put(newName, tmpcfgs);
+				}
+			}
+		}
+	}
+	
+}

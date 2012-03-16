@@ -1,0 +1,8 @@
+update.id=org.eclipse.linuxtools.cdt.autotools.feature.group
+update.range=(0,$version$)
+provides.99.namespace=org.eclipse.equinox.p2.iu
+provides.99.name=org.eclipse.linuxtools.cdt.autotools.feature.group
+provides.99.version=$version$
+instructions.configure=\
+org.eclipse.equinox.p2.touchpoint.eclipse.addRepository(location:http${#58}//download.eclipse.org/tools/cdt/releases/indigo,type:0,name:CDT,enabled:false); \
+org.eclipse.equinox.p2.touchpoint.eclipse.addRepository(location:http${#58}//download.eclipse.org/tools/cdt/releases/indigo,type:1,name:CDT,enabled:false); 

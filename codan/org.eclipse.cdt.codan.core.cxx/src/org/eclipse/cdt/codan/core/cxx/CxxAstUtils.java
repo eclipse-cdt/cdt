@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 Alena Laskavaia, Tomasz Wesolowski
+ * Copyright (c) 2009, 2012 Alena Laskavaia, Tomasz Wesolowski
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *    Alena Laskavaia  - initial API and implementation
  *    Tomasz Wesolowski - extension
+ *    Marc-Andre Laperle
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.cxx;
 
@@ -51,13 +52,11 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.rewrite.DeclarationGenerator;
 import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexName;
-import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Path;
 
 /**
  * Useful functions for doing code analysis on c/c++ AST
@@ -254,6 +253,10 @@ public final class CxxAstUtils {
 				for (IIndexName decl : declSet) {
 					// for now, just use the first overload found
 					ITranslationUnit tu = getTranslationUnitFromIndexName(decl);
+					if (tu == null) {
+						continue;
+					}
+					
 					IASTTranslationUnit ast = null;
 					if(astCache.containsKey(tu)) {
 						ast = astCache.get(tu);
@@ -305,10 +308,11 @@ public final class CxxAstUtils {
 	}
 
 	public static ITranslationUnit getTranslationUnitFromIndexName(IIndexName decl) throws CoreException {
-		Path path = new Path(decl.getFile().getLocation().getFullPath());
-		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
-		ITranslationUnit tu = (ITranslationUnit) CoreModel.getDefault().create(file);
-		return tu;
+		IIndexFile file = decl.getFile();
+		if (file != null) {
+			return CoreModelUtil.findTranslationUnitForLocation(file.getLocation().getURI(), null);	
+		}
+		return null;
 	}
 
 	/**
@@ -350,6 +354,10 @@ public final class CxxAstUtils {
 					// Check the declarations and use first suitable
 					for (IIndexName decl : declarations) {
 						ITranslationUnit tu = getTranslationUnitFromIndexName(decl);
+						if (tu == null) {
+							continue;
+						}
+						
 						IASTTranslationUnit ast = null;
 						if(astCache.containsKey(tu)) {
 							ast = astCache.get(tu);

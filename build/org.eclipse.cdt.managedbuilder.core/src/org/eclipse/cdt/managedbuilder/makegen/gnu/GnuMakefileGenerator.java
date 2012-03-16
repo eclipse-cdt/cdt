@@ -1,16 +1,17 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2011 IBM Corporation and others.
- *  All rights reserved. This program and the accompanying materials
- *  are made available under the terms of the Eclipse Public License v1.0
- *  which accompanies this distribution, and is available at
- *  http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2003, 2012 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  *
- *  Contributors:
- *  IBM Rational Software - Initial API and implementation
- *  ARM Ltd. - Minor changes to echo commands
- *  IBM Corporation
- *  Anna Dushistova  (Mentor Graphics) - [307244] extend visibility of fields in GnuMakefileGenerator
- *  James Blackburn (Broadcom Corp.)
+ * Contributors:
+ *     IBM Rational Software - Initial API and implementation
+ *     ARM Ltd. - Minor changes to echo commands
+ *     IBM Corporation
+ *     Anna Dushistova  (Mentor Graphics) - [307244] extend visibility of fields in GnuMakefileGenerator
+ *     James Blackburn (Broadcom Corp.)
+ *     Marc-Andre Laperle
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.makegen.gnu;
 
@@ -41,7 +42,6 @@ import org.eclipse.cdt.core.settings.model.ICSourceEntry;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.core.settings.model.util.IPathSettingsContainerVisitor;
 import org.eclipse.cdt.core.settings.model.util.PathSettingsContainer;
-import org.eclipse.cdt.internal.core.model.Util;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
@@ -812,6 +812,30 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 
 		return false;
 	}
+	
+	private static void save(StringBuffer buffer, IFile file) throws CoreException {
+		String encoding = null;
+		try {
+			encoding = file.getCharset();
+		} catch (CoreException ce) {
+			// use no encoding
+		}
+
+		byte[] bytes = null;
+		if (encoding != null) {
+			try {
+				bytes = buffer.toString().getBytes(encoding);
+			} catch (Exception e) {
+			}
+		} else {
+			bytes = buffer.toString().getBytes();
+		}
+
+		ByteArrayInputStream stream = new ByteArrayInputStream(bytes);
+		// use a platform operation to update the resource contents
+		boolean force = true;
+		file.setContents(stream, force, false, null); // Don't record history
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator#regenerateDependencies()
@@ -993,7 +1017,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		makeBuf.append(addSources(module));
 
 		// Save the files
-		Util.save(makeBuf, modMakefile);
+		save(makeBuf, modMakefile);
 	}
 
 	/**
@@ -1053,7 +1077,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		}
 
  		// For now, just save the buffer that was populated when the rules were created
-		Util.save(macroBuffer, fileHandle);
+		save(macroBuffer, fileHandle);
 
 	}
 
@@ -1139,7 +1163,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		buffer.append(NEWLINE + addSubdirectories());
 
 		// Save the file
-		Util.save(buffer, fileHandle);
+		save(buffer, fileHandle);
 	}
 
 	/**
@@ -1170,7 +1194,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		buffer.append(targetRules);
 
 		// Save the file
-		Util.save(buffer, fileHandle);
+		save(buffer, fileHandle);
 	}
 
 
@@ -2379,7 +2403,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 
 		// Figure out the output paths
 		String optDotExt = EMPTY_STRING;
-		if (outputExtension != null && outputExtension.length() > 0)
+		if (outputExtension.length() > 0)
 			optDotExt = DOT + outputExtension;
 
 		Vector<IPath> ruleOutputs = new Vector<IPath>();
@@ -3570,7 +3594,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 			if (bufferLine.endsWith(":")) { //$NON-NLS-1$
 				StringBuffer outBuffer = addDefaultHeader();
 				outBuffer.append(inBuffer);
-				Util.save(outBuffer, makefile);
+				save(outBuffer, makefile);
 				return true;
 			}
 		}
@@ -3709,7 +3733,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 
 		// Write them out to the makefile
 		if (save) {
-			Util.save(outBuffer, makefile);
+			save(outBuffer, makefile);
 			return true;
 		}
 		return false;
@@ -4280,7 +4304,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 
 			// Make sure the folder is marked as derived so it is not added to CM
 			if (!folder.isDerived()) {
-				folder.setDerived(true);
+				folder.setDerived(true, null);
 			}
 		}
 
@@ -4306,7 +4330,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 			newFile.create(contents, false, new SubProgressMonitor(monitor, 1));
 			// Make sure the new file is marked as derived
 			if (!newFile.isDerived()) {
-				newFile.setDerived(true);
+				newFile.setDerived(true, null);
 			}
 
 		}

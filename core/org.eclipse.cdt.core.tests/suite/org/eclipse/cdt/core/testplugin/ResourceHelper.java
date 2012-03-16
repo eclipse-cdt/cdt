@@ -35,6 +35,7 @@ import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.core.settings.model.TestCfgDataProvider;
+import org.eclipse.cdt.internal.core.Cygwin;
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -629,24 +630,7 @@ public class ResourceHelper {
 	 * @throws IOException on IO problem.
 	 */
 	public static String windowsToCygwinPath(String windowsPath) throws IOException, UnsupportedOperationException {
-		if (!Platform.getOS().equals(Platform.OS_WIN32)) {
-			// Don't run this on non-windows platforms
-			throw new UnsupportedOperationException("Not a Windows system, Cygwin is unavailable.");
-		}
-		String[] args = {"cygpath", "-u", windowsPath};
-		Process cygpath;
-		try {
-			cygpath = Runtime.getRuntime().exec(args);
-		} catch (IOException ioe) {
-			throw new UnsupportedOperationException("Cygwin utility cygpath is not in the system search path.");
-		}
-		BufferedReader stdout = new BufferedReader(new InputStreamReader(cygpath.getInputStream()));
-
-		String cygwinPath = stdout.readLine();
-		if (cygwinPath == null) {
-			throw new UnsupportedOperationException("Cygwin utility cygpath is not available.");
-		}
-		return cygwinPath.trim();
+		return Cygwin.windowsToCygwinPath(windowsPath);
 	}
 
 	/**
@@ -658,24 +642,7 @@ public class ResourceHelper {
 	 * @throws IOException on IO problem.
 	 */
 	public static String cygwinToWindowsPath(String cygwinPath) throws IOException, UnsupportedOperationException {
-		if (!Platform.getOS().equals(Platform.OS_WIN32)) {
-			// Don't run this on non-windows platforms
-			throw new UnsupportedOperationException("Not a Windows system, Cygwin is unavailable.");
-		}
-		String[] args = {"cygpath", "-w", cygwinPath};
-		Process cygpath;
-		try {
-			cygpath = Runtime.getRuntime().exec(args);
-		} catch (IOException ioe) {
-			throw new UnsupportedOperationException("Cygwin utility cygpath is not in the system search path.");
-		}
-		BufferedReader stdout = new BufferedReader(new InputStreamReader(cygpath.getInputStream()));
-
-		String windowsPath = stdout.readLine();
-		if (windowsPath == null) {
-			throw new UnsupportedOperationException("Cygwin utility cygpath is not available.");
-		}
-		return windowsPath.trim();
+		return Cygwin.cygwinToWindowsPath(cygwinPath);
 	}
 
 	/**

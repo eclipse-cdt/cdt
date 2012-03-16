@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM Rational Software) - Initial API and implementation
- *    Yuan Zhang / Beth Tibbitts (IBM Research)
- *    Markus Schorn (Wind River Systems)
+ *     John Camelon (IBM Rational Software) - Initial API and implementation
+ *     Yuan Zhang / Beth Tibbitts (IBM Research)
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -28,9 +28,8 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 /**
  * Binary expression for c
  */
-public class CASTBinaryExpression extends ASTNode implements
-        IASTBinaryExpression, IASTAmbiguityParent {
-
+public class CASTBinaryExpression extends ASTNode
+		implements IASTBinaryExpression, IASTAmbiguityParent {
     private int op;
     private IASTExpression operand1;
     private IASTExpression operand2;
@@ -112,13 +111,13 @@ public class CASTBinaryExpression extends ASTNode implements
     }
 
     @Override
-	public boolean accept( ASTVisitor action ){
+	public boolean accept(ASTVisitor action) {
     	if (operand1 instanceof IASTBinaryExpression || operand2 instanceof IASTBinaryExpression) {
     		return acceptWithoutRecursion(this, action);
     	}
     	
-        if( action.shouldVisitExpressions ){
-		    switch( action.visit( this ) ){
+        if (action.shouldVisitExpressions) {
+		    switch (action.visit(this)) {
 	            case ASTVisitor.PROCESS_ABORT : return false;
 	            case ASTVisitor.PROCESS_SKIP  : return true;
 	            default : break;
@@ -153,7 +152,7 @@ public class CASTBinaryExpression extends ASTNode implements
 			if (stack.fState == 0) {
 				if (action.shouldVisitExpressions) {
 					switch (action.visit(expr)) {
-					case ASTVisitor.PROCESS_ABORT : 
+					case ASTVisitor.PROCESS_ABORT: 
 						return false;
 					case ASTVisitor.PROCESS_SKIP: 
 						stack= stack.fNext;
@@ -197,16 +196,14 @@ public class CASTBinaryExpression extends ASTNode implements
     
     @Override
 	public void replace(IASTNode child, IASTNode other) {
-        if( child == operand1 )
-        {
-            other.setPropertyInParent( child.getPropertyInParent() );
-            other.setParent( child.getParent() );
+        if (child == operand1) {
+            other.setPropertyInParent(child.getPropertyInParent());
+            other.setParent(child.getParent());
             operand1 = (IASTExpression) other;
         }
-        if( child == operand2)
-        {
-            other.setPropertyInParent( child.getPropertyInParent() );
-            other.setParent( child.getParent() );
+        if (child == operand2) {
+            other.setPropertyInParent(child.getPropertyInParent());
+            other.setParent(child.getParent());
             operand2 = (IASTExpression) other;
         }
     }
@@ -220,34 +217,36 @@ public class CASTBinaryExpression extends ASTNode implements
     	if (type != null) {
     		return type;
     	}
-		switch (op) {
-			case op_lessEqual:
-			case op_lessThan:
-			case op_greaterEqual:
-			case op_greaterThan:
-			case op_logicalAnd:
-			case op_logicalOr:
-			case op_equals:
-			case op_notequals:
-				return new CBasicType(Kind.eInt, 0, this);
-	        case IASTBinaryExpression.op_plus:
-	        	if (t1 instanceof IArrayType) {
-	        		return arrayTypeToPointerType((ICArrayType) t1);
-	        	} else if (t2 instanceof IPointerType) {
-	        		return t2;
-	        	} else if (t2 instanceof IArrayType) {
-	        		return arrayTypeToPointerType((ICArrayType) t2);
-	        	}
-	        	break;
 
-			case IASTBinaryExpression.op_minus:
-				if (t2 instanceof IPointerType || t2 instanceof IArrayType) {
-					if (t1 instanceof IPointerType || t1 instanceof IArrayType) {
-		    			return CVisitor.getPtrDiffType(this);
-					}
-					return t1;
+		switch (op) {
+		case op_lessEqual:
+		case op_lessThan:
+		case op_greaterEqual:
+		case op_greaterThan:
+		case op_logicalAnd:
+		case op_logicalOr:
+		case op_equals:
+		case op_notequals:
+			return new CBasicType(Kind.eInt, 0, this);
+
+        case IASTBinaryExpression.op_plus:
+        	if (t1 instanceof IArrayType) {
+        		return arrayTypeToPointerType((ICArrayType) t1);
+        	} else if (t2 instanceof IPointerType) {
+        		return t2;
+        	} else if (t2 instanceof IArrayType) {
+        		return arrayTypeToPointerType((ICArrayType) t2);
+        	}
+        	break;
+
+		case IASTBinaryExpression.op_minus:
+			if (t2 instanceof IPointerType || t2 instanceof IArrayType) {
+				if (t1 instanceof IPointerType || t1 instanceof IArrayType) {
+	    			return CVisitor.getPtrDiffType(this);
 				}
-				break;
+				return t1;
+			}
+			break;
 		}
 		return t1;
     }

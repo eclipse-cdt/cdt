@@ -46,10 +46,7 @@ public class NameInformation {
 
 	private final IASTName name;
 	private IASTName declarationName;
-	private final List<IASTName> references;
-	private final List<IASTName> referencesBeforeSelection;
 	private final List<IASTName> referencesInSelection;
-	private final List<IASTName> referencesAfterSelection;
 	private boolean isOutput;
 	private boolean mustBeReturnValue;
 	private boolean isWriteAccess;
@@ -65,10 +62,7 @@ public class NameInformation {
 	public NameInformation(IASTName name) {
 		this.name = name;
 		this.newName = String.valueOf(name.getSimpleID());
-		references = new ArrayList<IASTName>();
-		referencesBeforeSelection = new ArrayList<IASTName>();
 		referencesInSelection = new ArrayList<IASTName>();
-		referencesAfterSelection = new ArrayList<IASTName>();
 	}
 
 	public static NameInformation createInfoForAddedParameter(String type, String name,
@@ -205,14 +199,9 @@ public class NameInformation {
 	}
 
 	void addReference(IASTName name, int startOffset, int endOffset) {
-		references.add(name);
 		int nodeOffset = name.getFileLocation().getNodeOffset();
-		if (nodeOffset >= endOffset) {
-			referencesAfterSelection.add(name);
-		} else if (nodeOffset >= startOffset) {
+		if (nodeOffset >= startOffset && nodeOffset < endOffset) {
 			referencesInSelection.add(name);
-		} else {
-			referencesBeforeSelection.add(name);
 		}
 	}
 
@@ -244,20 +233,8 @@ public class NameInformation {
 		return writer.toString();
 	}
 
-	public List<IASTName> getReferencesBeforeSelection() {
-		return referencesBeforeSelection;
-	}
-
 	public List<IASTName> getReferencesInSelection() {
 		return referencesInSelection;
-	}
-
-	public List<IASTName> getReferencesAfterSelection() {
-		return referencesAfterSelection;
-	}
-
-	public boolean isReferencedAfterSelection() {
-		return !referencesAfterSelection.isEmpty();
 	}
 
 	public IASTParameterDeclaration getParameterDeclaration(INodeFactory nodeFactory) {

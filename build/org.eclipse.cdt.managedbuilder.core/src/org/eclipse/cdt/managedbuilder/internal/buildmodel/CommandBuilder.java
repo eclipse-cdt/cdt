@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 Intel Corporation and others.
+ * Copyright (c) 2006, 2012 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.buildmodel;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -26,7 +25,6 @@ import org.eclipse.cdt.managedbuilder.internal.core.ManagedMakeMessages;
 import org.eclipse.cdt.utils.PathUtil;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
 /**
@@ -41,78 +39,11 @@ import org.eclipse.core.runtime.SubProgressMonitor;
  */
 public class CommandBuilder implements IBuildModelBuilder {
 	private static final String PATH_ENV = "PATH"; //$NON-NLS-1$
-	private static final String PROPERTY_DELIMITER = "path.separator"; //$NON-NLS-1$
-	private static final String PROPERTY_OS_NAME    = "os.name"; //$NON-NLS-1$
-	private static final String PROPERTY_OS_VALUE = "windows";//$NON-NLS-1$
-	static final String DELIMITER_UNIX = ":";    //$NON-NLS-1$
-	static final String DELIMITER_WINDOWS = ";";    //$NON-NLS-1$
+	private static final String NEWLINE = System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 
 	private IBuildCommand fCmd;
 	private Process fProcess;
 	private String fErrMsg;
-
-	private static final String BUILDER_MSG_HEADER = "InternalBuilder.msg.header"; //$NON-NLS-1$
-	private static final String NEWLINE = System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
-
-/*
- * no need in this for now, Spawner is always used
- *
-	protected class SpawnerfreeLauncher extends CommandLauncher{
-
-		public Process execute(IPath commandPath, String[] args, String[] env, IPath changeToDirectory) {
-			try {
-				// add platform specific arguments (shell invocation)
-				fCommandArgs = constructCommandArray(commandPath.toOSString(), args);
-				fProcess = Runtime.getRuntime().exec(fCommandArgs, env, changeToDirectory.toFile());
-//					ProcessFactory.getFactory().exec(fCommandArgs, env, changeToDirectory.toFile());
-				fErrorMessage = ""; //$NON-NLS-1$
-			} catch (IOException e) {
-				setErrorMessage(e.getMessage());
-				fProcess = null;
-			}
-			return fProcess;
-		}
-	}
-*/
-	/*
-	 * a temporary work-around to resolve the bug#145099
-	 * (https://bugs.eclipse.org/bugs/show_bug.cgi?id=145099)
-	 *
-	 * this will be removed after fixing the bug#145737
-	 * (https://bugs.eclipse.org/bugs/show_bug.cgi?id=145737)
-	 */
-	private class CommandSearchLauncher extends CommandLauncher{
-
-		@Override
-		protected String[] constructCommandArray(String command, String[] commandArgs) {
-			String[] args = new String[1 + commandArgs.length];
-			if(!isWindows()){
-				//find a full path to an executable
-				String cmd = getExecutable(command, fCmd.getEnvironment());
-				if(cmd != null)
-					command = cmd;
-				//if not found, continue with the command passed as an argument
-			}
-
-			args[0] = command;
-			System.arraycopy(commandArgs, 0, args, 1, commandArgs.length);
-			return args;
-		}
-
-
-		@Override
-		protected void printCommandLine(OutputStream os) {
-			if (os != null) {
-				String cmd = CommandBuilder.this.getCommandLine();
-				try {
-					os.write(cmd.getBytes());
-					os.flush();
-				} catch (IOException e) {
-					// ignore;
-				}
-			}
-		}
-	}
 
 	protected class OutputStreamWrapper extends OutputStream {
 		private OutputStream fOut;
@@ -233,12 +164,10 @@ public class CommandBuilder implements IBuildModelBuilder {
 	}
 
 	protected ICommandLauncher createLauncher() {
-//		if(isWindows())
-//			return new CommandLauncher();
-		return new CommandSearchLauncher();
+		return new CommandLauncher();
 	}
 
-	public String getErrMsg(){
+	public String getErrMsg() {
 		return fErrMsg;
 	}
 
@@ -274,7 +203,7 @@ public class CommandBuilder implements IBuildModelBuilder {
 
 	protected void printMessage(String msg, OutputStream os){
 		if (os != null) {
-			msg = ManagedMakeMessages.getFormattedString(BUILDER_MSG_HEADER, msg);
+			msg = ManagedMakeMessages.getFormattedString("InternalBuilder.msg.header", msg); //$NON-NLS-1$
 			printMessage(null, msg, os);
 		}
 
@@ -304,54 +233,5 @@ public class CommandBuilder implements IBuildModelBuilder {
 			buf.append(NEWLINE);
 		}
 		return buf.toString();
-	}
-
-	private String getExecutable(String command, Map<String, String> environment){
-		if(new Path(command).isAbsolute())
-			return command;
-		return searchExecutable(command, getPaths(environment));
-	}
-
-	private String[] getPaths(Map<String, String> env){
-		String pathsStr = env.get(PATH_ENV);
-		if(pathsStr == null){
-			Set<Entry<String, String>> entrySet = env.entrySet();
-			for (Entry<String, String> entry : entrySet) {
-				if(PATH_ENV.equalsIgnoreCase(entry.getKey())){
-					pathsStr = entry.getValue();
-					break;
-				}
-			}
-		}
-		if(pathsStr != null){
-			String delimiter = getDelimiter();
-
-			return pathsStr.split(delimiter);
-		}
-		return null;
-	}
-
-	private String getDelimiter(){
-		String delimiter = System.getProperty(PROPERTY_DELIMITER);
-		if(delimiter == null)
-			delimiter = isWindows() ? DELIMITER_WINDOWS : DELIMITER_UNIX;
-		return delimiter;
-	}
-
-	private String searchExecutable(String command, String paths[]){
-		if(paths == null)
-			return null;
-
-		for(int i = 0; i < paths.length; i++){
-			File file = new File(paths[i], command.toString());
-			if(file.isFile())
-				return file.toString();
-		}
-		return null;
-	}
-
-	private boolean isWindows() {
-		String prop = System.getProperty(PROPERTY_OS_NAME);
-		return prop != null ? prop.toLowerCase().startsWith(PROPERTY_OS_VALUE) : false;
 	}
 }

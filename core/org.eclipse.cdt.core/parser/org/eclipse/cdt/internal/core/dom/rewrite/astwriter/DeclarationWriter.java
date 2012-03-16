@@ -259,7 +259,8 @@ public class DeclarationWriter extends NodeWriter {
 
 	private void writeFunctionDefinition(IASTFunctionDefinition funcDef) {
 		IASTDeclSpecifier declSpecifier = funcDef.getDeclSpecifier();
-		declSpecifier.accept(visitor);
+		if (declSpecifier != null)
+			declSpecifier.accept(visitor);
 		if (declSpecifier instanceof IASTSimpleDeclSpecifier) {
 			IASTSimpleDeclSpecifier simDeclSpec = (IASTSimpleDeclSpecifier) declSpecifier;
 			if (simDeclSpec.getType() != IASTSimpleDeclSpecifier.t_unspecified) {

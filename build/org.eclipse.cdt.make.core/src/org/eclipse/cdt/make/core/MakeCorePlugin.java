@@ -128,7 +128,10 @@ public class MakeCorePlugin extends Plugin {
 	public static void log(Throwable e) {
 		if (e instanceof InvocationTargetException)
 			e = ((InvocationTargetException) e).getTargetException();
-		log(new Status(IStatus.ERROR, getUniqueIdentifier(), IStatus.OK, e.getMessage(), new Exception()));
+		String msg = e.getMessage();
+		if (msg == null || msg.length() == 0)
+			msg = e.getClass().getSimpleName();
+		log(new Status(IStatus.ERROR, getUniqueIdentifier(), IStatus.OK, msg, e));
 	}
 
 	public static void log(IStatus status) {

@@ -30,5 +30,4 @@ public class C99Parameter extends C99Variable implements IParameter, ITypeable {
 		param.setStatic(var.isStatic());
 		return param;
 	}
-	
 }

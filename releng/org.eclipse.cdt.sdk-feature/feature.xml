@@ -45,6 +45,10 @@
          id="org.eclipse.cdt"
          version="0.0.0"/>
 
+   <includes
+         id="org.eclipse.cdt.autotools.source"
+         version="0.0.0"/>
+
    <plugin
          id="org.eclipse.cdt.sdk"
          download-size="0"

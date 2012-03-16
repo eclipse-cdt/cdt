@@ -58,7 +58,8 @@ public class StatementExtractor extends FunctionExtractor {
 			NameInformation returnVariable) {
 		if (returnVariable != null) {
 			IASTNode decl = ASTHelper.getDeclarationForNode(returnVariable.getDeclarationName());
-			return ASTHelper.getDeclarationSpecifier(decl).copy(CopyStyle.withLocations);
+			IASTDeclSpecifier declSpec = ASTHelper.getDeclarationSpecifier(decl);
+			return declSpec != null ? declSpec.copy(CopyStyle.withLocations) : null;
 		}
 		IASTSimpleDeclSpecifier declSpec = new CPPASTSimpleDeclSpecifier();
 		declSpec.setType(IASTSimpleDeclSpecifier.t_void);

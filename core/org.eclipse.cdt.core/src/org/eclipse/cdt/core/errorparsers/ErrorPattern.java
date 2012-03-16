@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.core.IMarkerGenerator;
-import org.eclipse.cdt.utils.CygPath;
+import org.eclipse.cdt.internal.core.Cygwin;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.Path;
 /**
  * Error Pattern - used by Error Parser to convert build output to problem markers
  * @since 5.1
- * 
+ *
  * Clients may extend this class.
  */
 public class ErrorPattern {
@@ -67,7 +67,7 @@ public class ErrorPattern {
 		this.groupVarName = groupVarName;
 		this.severity = severity;
 	}
-	
+
 	/**
 	 * Pattern for errors not associated file a file
 	 * (e.g. make and linker errors).
@@ -86,7 +86,7 @@ public class ErrorPattern {
 
 	/**
 	 * Pattern for errors that should be skipped.
-	 * 
+	 *
 	 * @param pattern - error pattern.
 	 */
 	public ErrorPattern(String pattern) {
@@ -100,7 +100,7 @@ public class ErrorPattern {
 	public Matcher getMatcher(CharSequence input) {
 		return pattern.matcher(input);
 	}
-	
+
 	/**
 	 * @param matcher - matcher to parse the input line.
 	 * @return parsed file name or {@code null}.
@@ -108,7 +108,7 @@ public class ErrorPattern {
 	public String getFileName(Matcher matcher) {
 		return groupFileName != 0 ? matcher.group(groupFileName) : null;
 	}
-	
+
 	/**
 	 * @param matcher - matcher to parse the input line.
 	 * @return parsed line number or {@code 0}.
@@ -122,7 +122,7 @@ public class ErrorPattern {
 			return 0;
 		}
 	}
-	
+
 	/**
 	 * @param matcher - matcher to parse the input line.
 	 * @return parsed description or {@code null}.
@@ -130,7 +130,7 @@ public class ErrorPattern {
 	public String getDesc(Matcher matcher) {
 		return groupDesc != 0 ? matcher.group(groupDesc) : null;
 	}
-	
+
 	/**
 	 * @param matcher - matcher to parse the input line.
 	 * @return parsed variable name or {@code null}.
@@ -138,7 +138,7 @@ public class ErrorPattern {
 	public String getVarName(Matcher matcher) {
 		return groupVarName != 0 ? matcher.group(groupVarName) : null;
 	}
-	
+
 	/**
 	 * @param matcher - matcher to parse the input line.
 	 * @return severity of the problem.
@@ -146,11 +146,11 @@ public class ErrorPattern {
 	public int getSeverity(Matcher matcher) {
 		return severity;
 	}
-	
+
 	/**
 	 * Parse a line of build output and register error/warning for
 	 * Problems view.
-	 * 
+	 *
 	 * @param line - one line of output.
 	 * @param eoParser - {@link ErrorParserManager}.
 	 * @return {@code true} if error/warning/info problem was found.
@@ -162,10 +162,10 @@ public class ErrorPattern {
 
 		return recordError(matcher, eoParser);
 	}
-	
+
 	/**
 	 * Register the error in {@link ErrorParserManager}.
-	 * 
+	 *
 	 * @param matcher - matcher to parse the input line.
 	 * @param eoParser - {@link ErrorParserManager}.
 	 * @return {@code true} indicating that error was found.
@@ -181,7 +181,7 @@ public class ErrorPattern {
 		String desc = getDesc(matcher);
 		String varName = getVarName(matcher);
 		IPath externalPath = null ;
-		
+
 		IResource file = null;
 		if (fileName != null) {
 			file = eoParser.findFileName(fileName);
@@ -193,15 +193,15 @@ public class ErrorPattern {
 				externalPath = getLocation(fileName);
 			}
 		}
-		
+
 		eoParser.generateExternalMarker(file, lineNum, desc, severity, varName, externalPath);
 		return true;
 	}
-	
+
 	/**
 	 * If the file designated by filename exists, return the IPath representation of the filename
 	 * If it does not exist, try cygpath translation
-	 * 
+	 *
 	 * @param filename - file name
 	 * @return location (outside of the workspace).
 	 */
@@ -209,10 +209,8 @@ public class ErrorPattern {
 		IPath path = new Path(filename);
 		File file = path.toFile() ;
 		if (!file.exists() && isCygwin && path.isAbsolute())  {
-			CygPath cygpath = null ;
 			try {
-				cygpath = new CygPath("cygpath"); //$NON-NLS-1$
-				String cygfilename = cygpath.getFileName(filename);
+				String cygfilename = Cygwin.cygwinToWindowsPath(filename);
 				IPath convertedPath = new Path(cygfilename);
 				file = convertedPath.toFile() ;
 				if (file.exists()) {
@@ -221,11 +219,6 @@ public class ErrorPattern {
 			} catch (UnsupportedOperationException e) {
 				isCygwin = false;
 			} catch (IOException e) {
-			}
-			finally  {
-				if (null!=cygpath)  {
-					cygpath.dispose();
-				}
 			}
 		}
 		return path ;

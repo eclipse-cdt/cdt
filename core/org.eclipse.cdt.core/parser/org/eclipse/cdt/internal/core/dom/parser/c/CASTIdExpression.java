@@ -35,10 +35,8 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
  * ID Expression in C.
  */
 public class CASTIdExpression extends ASTNode implements IASTIdExpression, IASTCompletionContext {
-
     private IASTName name;
 
-    
     public CASTIdExpression() {
 	}
 
@@ -77,22 +75,22 @@ public class CASTIdExpression extends ASTNode implements IASTIdExpression, IASTC
     }
 
     @Override
-	public boolean accept( ASTVisitor action ){
-        if( action.shouldVisitExpressions ){
-		    switch( action.visit( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+	public boolean accept(ASTVisitor action) {
+        if (action.shouldVisitExpressions) {
+		    switch (action.visit(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
       
-        if( name != null ) if( !name.accept( action ) ) return false;
+        if (name != null && !name.accept(action)) return false;
 
-        if( action.shouldVisitExpressions ){
-		    switch( action.leave( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+        if (action.shouldVisitExpressions) {
+		    switch (action.leave(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
         return true;
@@ -100,7 +98,7 @@ public class CASTIdExpression extends ASTNode implements IASTIdExpression, IASTC
 
 	@Override
 	public int getRoleForName(IASTName n) {
-		if( n == name )	return r_reference;
+		if (n == name) return r_reference;
 		return r_unclear;
 	}
 	
@@ -135,7 +133,6 @@ public class CASTIdExpression extends ASTNode implements IASTIdExpression, IASTC
 	public final ValueCategory getValueCategory() {
 		return ValueCategory.LVALUE;
 	}
-
 
 	@Override
 	public IBinding[] findBindings(IASTName n, boolean isPrefix) {

@@ -42,4 +42,8 @@
          id="org.eclipse.cdt.gnu.dsf"
          version="0.0.0"/>
 
+   <includes
+         id="org.eclipse.cdt.autotools"
+         version="0.0.0"/>
+
 </feature>

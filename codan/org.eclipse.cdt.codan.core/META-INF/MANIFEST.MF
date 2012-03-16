@@ -10,7 +10,6 @@ Require-Bundle: org.eclipse.core.runtime,
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.eclipse.cdt.codan.core,
- org.eclipse.cdt.codan.core.externaltool,
  org.eclipse.cdt.codan.core.model,
  org.eclipse.cdt.codan.core.model.cfg;
   x-friends:="org.eclipse.cdt.codan.core.cxx,
@@ -22,7 +21,6 @@ Export-Package: org.eclipse.cdt.codan.core,
    org.eclipse.cdt.codan.core.test,
    org.eclipse.cdt.codan.ui",
  org.eclipse.cdt.codan.internal.core.cfg;x-friends:="org.eclipse.cdt.codan.core.cxx",
- org.eclipse.cdt.codan.internal.core.externaltool;x-friends:="org.eclipse.cdt.codan.core.test",
  org.eclipse.cdt.codan.internal.core.model;
   x-friends:="org.eclipse.cdt.codan.core.cxx,
    org.eclipse.cdt.codan.core.test,

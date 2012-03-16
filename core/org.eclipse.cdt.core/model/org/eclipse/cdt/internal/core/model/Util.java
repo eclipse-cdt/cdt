@@ -1,21 +1,20 @@
 /*******************************************************************************
- *  Copyright (c) 2002, 2009 IBM Corporation and others.
- *  All rights reserved. This program and the accompanying materials
- *  are made available under the terms of the Eclipse Public License v1.0
- *  which accompanies this distribution, and is available at
- *  http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2002, 2012 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  * 
- *  Contributors:
- *  Rational Software - Initial API and implementation
- *  Markus Schorn (Wind River Systems)
- *  Anton Leherbauer (Wind River Systems)
- *  IBM Corporation - EFS support
+ * Contributors:
+ *     Rational Software - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *     Anton Leherbauer (Wind River Systems)
+ *     IBM Corporation - EFS support
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.model;
 
 import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -127,31 +126,6 @@ public class Util implements ICLogConstants {
 						len);
 		}
 		return contents;
-	}
-
-	public static void save(StringBuffer buffer, IFile file)
-			throws CoreException {
-        String encoding = null;
-        try {
-        	encoding = file.getCharset();
-        } catch (CoreException ce) {
-        	// use no encoding
-        }
-        
-        byte[] bytes = null;		
-        if (encoding != null) {
-        	try {
-        		bytes = buffer.toString().getBytes(encoding);
-        	} catch (Exception e) {
-        	}
-        } else {
-        	bytes = buffer.toString().getBytes();
-        }		
-        
-        ByteArrayInputStream stream = new ByteArrayInputStream(bytes);
-        // use a platform operation to update the resource contents
-        boolean force = true;
-        file.setContents(stream, force, true, null); // record history
 	}
 
 	/**

@@ -2020,16 +2020,6 @@
            label="%BuildConfigActionSet.label"
            visible="false">
         <action
-              class="org.eclipse.cdt.ui.actions.ChangeBuildConfigMenuAction"
-              disabledIcon="icons/dlcl16/config-tool.gif"
-              enablesFor="+"
-              icon="icons/elcl16/config-tool.gif"
-              id="org.eclipse.cdt.ui.buildConfigToolbarAction"
-              label="%BuildConfigToolbarAction.label"
-              style="pulldown"
-              toolbarPath="buildConfig"
-              tooltip="%BuildConfigAction.tooltip2"/>
-        <action
               class="org.eclipse.cdt.ui.actions.BuildActiveConfigMenuAction"
               disabledIcon="icons/dlcl16/build_exec.png"
               enablesFor="+"
@@ -2037,8 +2027,18 @@
               id="org.eclipse.cdt.ui.buildActiveConfigToolbarAction"
               label="%BuildActiveConfiguration.label"
               style="pulldown"
-              toolbarPath="buildConfig"
+              toolbarPath="org.eclipse.ui.workbench.file/build.group"
               tooltip="%BuildActiveConfiguration.tooltip"/>
+        <action
+              class="org.eclipse.cdt.ui.actions.ChangeBuildConfigMenuAction"
+              disabledIcon="icons/dlcl16/config-tool.gif"
+              enablesFor="+"
+              icon="icons/elcl16/config-tool.gif"
+              id="org.eclipse.cdt.ui.buildConfigToolbarAction"
+              label="%BuildConfigToolbarAction.label"
+              style="pulldown"
+              toolbarPath="org.eclipse.ui.workbench.file/build.group"
+              tooltip="%BuildConfigAction.tooltip2"/>
         <action
               class="org.eclipse.cdt.ui.actions.ManageConfigsAction"
               enablesFor="+"

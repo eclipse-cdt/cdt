@@ -20,7 +20,6 @@ Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.cdt.codan.internal.ui;x-friends:="org.eclipse.cdt.codan.ui.cxx",
  org.eclipse.cdt.codan.internal.ui.actions;x-friends:="org.eclipse.cdt.codan.ui.cxx",
  org.eclipse.cdt.codan.internal.ui.dialogs;x-friends:="org.eclipse.cdt.codan.ui.cxx",
- org.eclipse.cdt.codan.internal.ui.externaltool;x-friends:="org.eclipse.cdt.codan.ui.cxx",
  org.eclipse.cdt.codan.internal.ui.preferences;x-friends:="org.eclipse.cdt.codan.ui.cxx",
  org.eclipse.cdt.codan.internal.ui.views;x-internal:=true,
  org.eclipse.cdt.codan.internal.ui.widgets;x-internal:=true,

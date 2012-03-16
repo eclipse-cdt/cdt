@@ -45,8 +45,14 @@ public class CoreList {
 	}
 
 	private ICoreInfo[] fCoreList;
+	private String fCoreFileName;
 	
 	public CoreList() {
+		fCoreFileName = "/proc/cpuinfo"; //$NON-NLS-1$
+	}
+	
+	public CoreList(String fileName) {
+		fCoreFileName = fileName;
 	}
 	
 	/**
@@ -60,7 +66,7 @@ public class CoreList {
 			return fCoreList;
 		}
 		
-		File cpuInfo = new File("/proc/cpuinfo"); //$NON-NLS-1$
+		File cpuInfo = new File(fCoreFileName);
 
 		Vector<ICoreInfo> coreInfo = new Vector<ICoreInfo>();
         BufferedReader reader = null;

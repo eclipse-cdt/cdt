@@ -47,6 +47,7 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.CLIJump;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLIMaintenance;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLIPasscount;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLIRecord;
+import org.eclipse.cdt.dsf.mi.service.command.commands.CLIRemoteGet;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLISource;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLIThread;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLITrace;
@@ -264,6 +265,11 @@ public class CommandFactory {
 
 	public ICommand<MIInfo> createCLIRecord(ICommandControlDMContext ctx, boolean enable) {
 		return new CLIRecord(ctx, enable);
+	}
+
+	/** @since 4.1 */
+	public ICommand<MIInfo> createCLIRemoteGet(ICommandControlDMContext ctx, String remoteFile, String localFile) {
+		return new CLIRemoteGet(ctx, remoteFile, localFile);
 	}
 
 	public ICommand<MIInfo> createCLISource(ICommandControlDMContext ctx, String file) {

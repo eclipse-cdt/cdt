@@ -254,11 +254,23 @@ public class CommandLauncher implements ICommandLauncher {
 		return state;
 	}
 
+	@SuppressWarnings("nls")
 	protected void printCommandLine(OutputStream os) {
 		if (os != null) {
-			String cmd = getCommandLine(getCommandArgs());
+			StringBuffer buf = new StringBuffer();
+			if (fCommandArgs != null) {
+				for (String commandArg : getCommandArgs()) {
+					if (commandArg.contains(" ") || commandArg.contains("\"") || commandArg.contains("\\")) {
+						commandArg = '"' + commandArg.replaceAll("\\\\", "\\\\\\\\").replaceAll("\"", "\\\\\"") + '"';
+					}
+					buf.append(commandArg);
+					buf.append(' ');
+				}
+				buf.append(lineSeparator);
+			}
+
 			try {
-				os.write(cmd.getBytes());
+				os.write(buf.toString().getBytes());
 				os.flush();
 			} catch (IOException e) {
 				// ignore;

@@ -16,6 +16,7 @@ import java.io.OutputStream;
 import java.util.Properties;
 
 import org.eclipse.cdt.internal.core.Cygwin;
+import org.eclipse.cdt.internal.core.Messages;
 import org.eclipse.cdt.internal.core.ProcessClosure;
 import org.eclipse.cdt.utils.PathUtil;
 import org.eclipse.cdt.utils.spawner.EnvironmentReader;
@@ -25,6 +26,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * @noextend This class is not intended to be subclassed by clients.
@@ -201,8 +203,8 @@ public class CommandLauncher implements ICommandLauncher {
 					envPathValue = System.getenv(PATH_ENV);
 				}
 				errorMessage = errorMessage + NEWLINE
-						+ "Error: Program \"" + command + "\" not found in PATH" + NEWLINE
-						+ "PATH=[" + envPathValue + "]" + NEWLINE;
+						+ NLS.bind(Messages.CommandLauncher_ProgramNotFoundInPath, command) + NEWLINE
+						+ "PATH=[" + envPathValue + "]" + NEWLINE; //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			setErrorMessage(errorMessage);
 			fProcess = null;
@@ -258,7 +260,7 @@ public class CommandLauncher implements ICommandLauncher {
 		if (monitor.isCanceled()) {
 			closure.terminate();
 			state = COMMAND_CANCELED;
-			setErrorMessage(CCorePlugin.getResourceString("CommandLauncher.error.commandCanceled")); //$NON-NLS-1$
+			setErrorMessage(Messages.CommandLauncher_CommandCancelled);
 		}
 
 		try {

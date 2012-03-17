@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 Intel Corporation and others.
+ * Copyright (c) 2006, 2012 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,14 +20,9 @@ import java.util.Set;
 
 import org.eclipse.cdt.core.CommandLauncher;
 import org.eclipse.cdt.core.ICommandLauncher;
-import org.eclipse.cdt.internal.core.Cygwin;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildCommand;
-import org.eclipse.cdt.managedbuilder.internal.core.ManagedMakeMessages;
-import org.eclipse.cdt.utils.PathUtil;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
 /**
@@ -47,44 +42,6 @@ public class CommandBuilder implements IBuildModelBuilder {
 	private IBuildCommand fCmd;
 	private Process fProcess;
 	private String fErrMsg;
-
-	private class CommandSearchLauncher extends CommandLauncher {
-		@Override
-		protected String[] constructCommandArray(String command, String[] commandArgs) {
-			String[] args = new String[1 + commandArgs.length];
-			if (Platform.getOS().equals(Platform.OS_WIN32)) {
-				// find a location of the executable
-				String envPathValue = fCmd.getEnvironment().get(PATH_ENV);
-				IPath location = PathUtil.findProgramLocation(command, envPathValue);
-				if(location != null) {
-					try {
-						// Handle cygwin link
-						command = Cygwin.cygwinToWindowsPath(location.toString(), envPathValue);
-					} catch (Exception e) {
-						command = location.toString();
-					}
-				}
-				//if not found, continue with the command passed as an argument
-			}
-
-			args[0] = command;
-			System.arraycopy(commandArgs, 0, args, 1, commandArgs.length);
-			return args;
-		}
-
-		@Override
-		protected void printCommandLine(OutputStream os) {
-			if (os != null) {
-				String cmd = CommandBuilder.this.getCommandLine();
-				try {
-					os.write(cmd.getBytes());
-					os.flush();
-				} catch (IOException e) {
-					// ignore;
-				}
-			}
-		}
-	}
 
 	protected class OutputStreamWrapper extends OutputStream {
 		private OutputStream fOut;
@@ -131,9 +88,7 @@ public class CommandBuilder implements IBuildModelBuilder {
 	 * @see org.eclipse.cdt.managedbuilder.internal.builddescription.IBuildDescriptionBuilder#build(java.io.OutputStream, java.io.OutputStream, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
-	public int build(OutputStream out, OutputStream err,
-			IProgressMonitor monitor){
-
+	public int build(OutputStream out, OutputStream err, IProgressMonitor monitor){
 		//TODO: should we display the command line here?
 		monitor.beginTask("", getNumCommands());	//$NON-NLS-1$
 		monitor.subTask(""/*getCommandLine()*/);	//$NON-NLS-1$
@@ -153,17 +108,18 @@ public class CommandBuilder implements IBuildModelBuilder {
 			return STATUS_ERROR_LAUNCH;
 		}
 
+		int st = ICommandLauncher.ILLEGAL_COMMAND;
 		if (fProcess != null) {
 			try {
 				// Close the input of the process since we will never write to it
 				fProcess.getOutputStream().close();
 			} catch (IOException e) {
 			}
+			//wrapping out and err streams to avoid their closure
+			st = launcher.waitAndRead(wrap(out), wrap(err),
+					new SubProgressMonitor(monitor,	getNumCommands()));
 		}
 
-		//wrapping out and err streams to avoid their closure
-		int st = launcher.waitAndRead(wrap(out), wrap(err),
-				new SubProgressMonitor(monitor,	getNumCommands()));
 		switch(st){
 		case ICommandLauncher.OK:
 			if(fProcess.exitValue() != 0)
@@ -184,19 +140,7 @@ public class CommandBuilder implements IBuildModelBuilder {
 			if(DbgUtil.DEBUG)
 				DbgUtil.trace("error launching the command: " + fErrMsg);	//$NON-NLS-1$
 
-			String program = fCmd.getCommand().toOSString();
-			String envPath = fCmd.getEnvironment().get(PATH_ENV);
-			if (envPath==null) {
-				envPath = System.getenv(PATH_ENV);
-			}
-			if (PathUtil.findProgramLocation(program, envPath)==null) {
-				printMessage(fErrMsg, out);
-				String errMsg = ManagedMakeMessages.getFormattedString("ManagedMakeBuilder.message.program.not.in.path", program); //$NON-NLS-1$
-				printErrorMessage(errMsg + NEWLINE, out);
-				printMessage(null, PATH_ENV+"=["+envPath+"]", out); //$NON-NLS-1$//$NON-NLS-2$
-			} else {
-				printErrorMessage(fErrMsg, out);
-			}
+			printMessage(fErrMsg, out);
 			break;
 		}
 
@@ -205,12 +149,10 @@ public class CommandBuilder implements IBuildModelBuilder {
 	}
 
 	protected ICommandLauncher createLauncher() {
-//		if(isWindows())
-//			return new CommandLauncher();
-		return new CommandSearchLauncher();
+		return new CommandLauncher();
 	}
 
-	public String getErrMsg(){
+	public String getErrMsg() {
 		return fErrMsg;
 	}
 
@@ -228,34 +170,14 @@ public class CommandBuilder implements IBuildModelBuilder {
 		return list.toArray(new String[list.size()]);
 	}
 
-	private void printMessage(String prefix, String msg, OutputStream os){
+	protected void printMessage(String msg, OutputStream os){
 		if (os != null) {
-			if (prefix==null) {
-				prefix=""; //$NON-NLS-1$
-			}
-			msg = prefix + msg + NEWLINE;
 			try {
-				os.write(msg.getBytes());
+				os.write((msg + NEWLINE).getBytes());
 				os.flush();
 			} catch (IOException e) {
 				// ignore;
 			}
-		}
-
-	}
-
-	protected void printMessage(String msg, OutputStream os){
-		if (os != null) {
-			msg = ManagedMakeMessages.getFormattedString("InternalBuilder.msg.header", msg); //$NON-NLS-1$
-			printMessage(null, msg, os);
-		}
-
-	}
-
-	private void printErrorMessage(String msg, OutputStream os){
-		if (os != null) {
-			String errorPrefix = ManagedMakeMessages.getResourceString("ManagedMakeBuilder.error.prefix"); //$NON-NLS-1$
-			printMessage(errorPrefix, msg, os);
 		}
 
 	}

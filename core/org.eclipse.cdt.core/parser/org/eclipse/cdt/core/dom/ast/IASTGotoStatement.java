@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Doug Schaefer (IBM) - Initial API and implementation
+ *     Doug Schaefer (IBM) - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
@@ -17,8 +17,8 @@ package org.eclipse.cdt.core.dom.ast;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTGotoStatement extends IASTStatement, IASTNameOwner {
-
-	public static final ASTNodeProperty NAME = new ASTNodeProperty("IASTGotoStatement.NAME - Name for IASTGotoStatement"); //$NON-NLS-1$
+	public static final ASTNodeProperty NAME =
+			new ASTNodeProperty("IASTGotoStatement.NAME - Name for IASTGotoStatement"); //$NON-NLS-1$
 
 	/**
 	 * Returns the name of the label. The name resolves to a ILabel binding.
@@ -46,5 +46,4 @@ public interface IASTGotoStatement extends IASTStatement, IASTNameOwner {
 	 */
 	@Override
 	public IASTGotoStatement copy(CopyStyle style);
-
 }

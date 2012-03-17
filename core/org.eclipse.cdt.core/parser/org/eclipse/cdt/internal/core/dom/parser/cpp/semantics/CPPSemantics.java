@@ -1812,7 +1812,7 @@ public class CPPSemantics {
         return new CPPCompositeBinding(result);
 	}
 	
-	static public boolean declaredBefore(Object obj, IASTNode node, boolean indexBased) {
+	public static boolean declaredBefore(Object obj, IASTNode node, boolean indexBased) {
 	    if (node == null) 
 	    	return true;
 	    

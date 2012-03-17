@@ -13,6 +13,8 @@
  *     Jens Elmenthaler (Verigy) - Added Full GDB pretty-printing support (bug 302121)
  *     Mikhail Khodjaiants (Mentor Graphics) - Refactor common code in GDBControl* classes (bug 372795)
  *     Marc Khouzam (Ericsson) - Pass errorStream to startCommandProcessing() (Bug 350837)
+ *     Mikhail Khodjaiants (Mentor Graphics) - Terminate should cancel the initialization sequence 
+ *                                             if it is still running (bug 373845)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service.command;
 
@@ -63,6 +65,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
@@ -115,6 +118,8 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
      * return empty list.
      */
 	private final List<String> fFeatures = new ArrayList<String>();
+
+	private Sequence fInitializationSequence;
 
     private boolean fTerminated;
 
@@ -191,7 +196,13 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
             return;
         }
         fTerminated = true;
- 
+
+        // If the initialization sequence is still running mark it as cancelled,
+        // to avoid reporting errors to the user, since we are terminating anyway.
+        if (fInitializationSequence != null) {
+        	fInitializationSequence.getRequestMonitor().cancel();
+        }
+        
        // To fix bug 234467:
        // Interrupt GDB in case the inferior is running.
        // That way, the inferior will also be killed when we exit GDB.
@@ -290,20 +301,23 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 		} catch (CoreException e) {}
 
 		// We need a RequestMonitorWithProgress, if we don't have one, we create one.
-		RequestMonitorWithProgress progressRm;
-		if (rm instanceof RequestMonitorWithProgress) {
-			progressRm = (RequestMonitorWithProgress)rm;
-		} else {
-			progressRm = new RequestMonitorWithProgress(getExecutor(), new NullProgressMonitor()) {
-				@Override
-				protected void handleCompleted() {
-       				rm.setStatus(getStatus());
-        			rm.done();
-				}
-			};
-		}
+		IProgressMonitor monitor = (rm instanceof RequestMonitorWithProgress) ?				
+				((RequestMonitorWithProgress)rm).getProgressMonitor() : new NullProgressMonitor();
+		RequestMonitorWithProgress progressRm = new RequestMonitorWithProgress(getExecutor(), monitor) {
 
-		ImmediateExecutor.getInstance().execute(getCompleteInitializationSequence(attributes, progressRm));
+			@Override
+			protected void handleCompleted() {
+				fInitializationSequence = null;
+				if (!isCanceled()) {
+					// Only set the status if the user has not cancelled the operation already.
+					rm.setStatus(getStatus());
+				}
+    			rm.done();
+			}
+		};
+
+		fInitializationSequence = getCompleteInitializationSequence(attributes, progressRm);
+		ImmediateExecutor.getInstance().execute(fInitializationSequence);
 	}
 	
 	/**

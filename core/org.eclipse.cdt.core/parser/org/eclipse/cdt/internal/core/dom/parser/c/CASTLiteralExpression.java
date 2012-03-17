@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM Rational Software) - Initial API and implementation
- *    Yuan Zhang / Beth Tibbitts (IBM Research)
- *    Markus Schorn (Wind River Systems)
+ *     John Camelon (IBM Rational Software) - Initial API and implementation
+ *     Yuan Zhang / Beth Tibbitts (IBM Research)
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -26,7 +26,6 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
  * Represents a literal
  */
 public class CASTLiteralExpression extends ASTNode implements IASTLiteralExpression {
-
     private int kind;
     private char[] value = CharArrayUtils.EMPTY;
 
@@ -81,24 +80,24 @@ public class CASTLiteralExpression extends ASTNode implements IASTLiteralExpress
     }
 
     @Override
-	public boolean accept( ASTVisitor action ){
-        if( action.shouldVisitExpressions ){
-		    switch( action.visit( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+	public boolean accept(ASTVisitor action) {
+        if (action.shouldVisitExpressions) {
+		    switch (action.visit(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
-        if( action.shouldVisitExpressions ){
-		    switch( action.leave( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+        if (action.shouldVisitExpressions) {
+		    switch (action.leave(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}      
         return true;
     }
-    
+
 	@Override
 	public IType getExpressionType() {
 		switch (getKind()) {
@@ -141,7 +140,7 @@ public class CASTLiteralExpression extends ASTNode implements IASTLiteralExpress
 				break;
 			}
 		}
-		
+
 		return new CBasicType(kind, flags, this);
 	}
 

@@ -53,7 +53,6 @@ import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
 import org.eclipse.cdt.newmake.internal.core.StreamMonitor;
 import org.eclipse.cdt.utils.CommandLineUtil;
 import org.eclipse.cdt.utils.EFSExtensionManager;
-import org.eclipse.cdt.utils.PathUtil;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -221,29 +220,12 @@ public class ExternalBuildRunner extends AbstractBuildRunner {
 					} catch (CoreException e) {
 					}
 				} else {
-					buf = new StringBuffer(launcher.getCommandLine()).append(NEWLINE);
 					errMsg = launcher.getErrorMessage();
 				}
 				project.setSessionProperty(qName, !monitor.isCanceled() && !isClean ? new Integer(streamMon.getWorkDone()) : null);
 
 				if (errMsg != null) {
-					// Launching failed, trying to figure out possible cause
-					String errorPrefix = ManagedMakeMessages.getResourceString("ManagedMakeBuilder.error.prefix"); //$NON-NLS-1$
-					String buildCommandStr = buildCommand.toString();
-					String envPath = envMap.get(PATH_ENV);
-					if (envPath==null) {
-						envPath = System.getenv(PATH_ENV);
-					}
-					if (PathUtil.findProgramLocation(buildCommandStr, envPath)==null) {
-						buf.append(errMsg).append(NEWLINE);
-						errMsg = ManagedMakeMessages.getFormattedString("ManagedMakeBuilder.message.program.not.in.path", buildCommandStr); //$NON-NLS-1$
-						buf.append(errorPrefix).append(errMsg).append(NEWLINE);
-						buf.append(NEWLINE);
-						buf.append(PATH_ENV+"=["+envPath+"]").append(NEWLINE); //$NON-NLS-1$//$NON-NLS-2$
-					} else {
-						buf.append(errorPrefix).append(errMsg).append(NEWLINE);
-					}
-					consoleErr.write(buf.toString().getBytes());
+					consoleErr.write(errMsg.getBytes());
 					consoleErr.flush();
 				}
 

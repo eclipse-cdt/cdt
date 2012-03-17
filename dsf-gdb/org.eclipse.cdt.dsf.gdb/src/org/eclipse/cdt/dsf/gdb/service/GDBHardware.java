@@ -7,16 +7,22 @@
  * 
  * Contributors:
  *     Marc Khouzam (Ericsson) - initial API and implementation
+ *     Marc Khouzam (Ericsson) - Updated to use /proc/cpuinfo for remote targets (Bug 374024)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
+import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.Immutable;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
@@ -25,11 +31,23 @@ import org.eclipse.cdt.dsf.datamodel.DataModelInitializedEvent;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.datamodel.IDMData;
 import org.eclipse.cdt.dsf.debug.service.ICachingService;
+import org.eclipse.cdt.dsf.debug.service.command.CommandCache;
+import org.eclipse.cdt.dsf.debug.service.command.ICommand;
+import org.eclipse.cdt.dsf.debug.service.command.ICommandControl;
+import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
+import org.eclipse.cdt.dsf.debug.service.command.ICommandListener;
+import org.eclipse.cdt.dsf.debug.service.command.ICommandResult;
+import org.eclipse.cdt.dsf.debug.service.command.ICommandToken;
+import org.eclipse.cdt.dsf.debug.service.command.IEventListener;
+import org.eclipse.cdt.dsf.gdb.internal.CoreInfo;
 import org.eclipse.cdt.dsf.gdb.internal.CoreList;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.gdb.internal.service.command.commands.MIMetaGetCPUInfo;
+import org.eclipse.cdt.dsf.gdb.internal.service.command.output.MIMetaGetCPUInfoInfo;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIListThreadGroupsInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIListThreadGroupsInfo.IThreadGroupInfo;
 import org.eclipse.cdt.dsf.service.AbstractDsfService;
@@ -138,11 +156,14 @@ public class GDBHardware extends AbstractDsfService implements IGDBHardware, ICa
     private IGDBControl fCommandControl;
     private IGDBBackend fBackend;
     private CommandFactory fCommandFactory;
-	
-	// The list of cores should not change, so we can store
-	// it once we figured it out.
-	private ICPUDMContext[] fCPUs;
-    private ICoreDMContext[] fCores;
+
+    // A command cache to cache the data gotten from /proc/cpuinfo
+    // Because we obtain the data differently for a local target
+    // than a remote target, we can't buffer an actual MI command,
+    // so instead, we use a MetaMICommand to "fetch the cpu info"
+    // Since the CPU info does not change, this cache does not need
+    // to be cleared.
+	private CommandCache fFetchCPUInfoCache;
 
 	// Track if the debug session has been fully initialized.
 	// Until then, we may not be connected to the remote target
@@ -179,13 +200,18 @@ public class GDBHardware extends AbstractDsfService implements IGDBHardware, ICa
 	 *            initialization is done.
 	 */
 	private void doInitialize(RequestMonitor requestMonitor) {
-        
 		fSessionInitializationComplete = false;
-		
-		fCommandControl = getServicesTracker().getService(IGDBControl.class);
-    	fBackend = getServicesTracker().getService(IGDBBackend.class);
 
-        fCommandFactory = getServicesTracker().getService(IMICommandControl.class).getCommandFactory();
+		fCommandControl = getServicesTracker().getService(IGDBControl.class);
+		fCommandFactory = getServicesTracker().getService(IMICommandControl.class).getCommandFactory();
+		
+		fBackend = getServicesTracker().getService(IGDBBackend.class);		
+
+		// The cache does not go directly to the commandControl service.
+		// Instead is goes through a CPUInfoManager which will decide how to
+		// handle getting the required cpu info
+		fFetchCPUInfoCache = new CommandCache(getSession(), new CPUInfoManager());
+        fFetchCPUInfoCache.setContextAvailable(fCommandControl.getContext(), true);
 
         getSession().addServiceEventListener(this, null);
 
@@ -208,7 +234,7 @@ public class GDBHardware extends AbstractDsfService implements IGDBHardware, ICa
 	@Override
 	public void shutdown(RequestMonitor requestMonitor) {
         getSession().removeServiceEventListener(this);
-
+        fFetchCPUInfoCache.reset();
 		unregister();
 		super.shutdown(requestMonitor);
 	}
@@ -226,42 +252,25 @@ public class GDBHardware extends AbstractDsfService implements IGDBHardware, ICa
 	}
 
 	@Override
-	public void getCPUs(IHardwareTargetDMContext dmc, DataRequestMonitor<ICPUDMContext[]> rm) {
+	public void getCPUs(final IHardwareTargetDMContext dmc, final DataRequestMonitor<ICPUDMContext[]> rm) {
 		if (!fSessionInitializationComplete) {
 			// We are not ready to answer yet
 			rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Debug session not initialized yet", null)); //$NON-NLS-1$
 			return;
 		}
 
-		if (fCPUs != null) {
-			rm.done(fCPUs);
-			return;
-		}
-		
-		if (fBackend.getSessionType() == SessionType.REMOTE) {
-			// Until we can get /proc/cpuinfo from the remote, we can't do anything
-			fCPUs = new ICPUDMContext[0];
-			rm.done(fCPUs);
+		if (Platform.getOS().equals(Platform.OS_LINUX)) {
+			fFetchCPUInfoCache.execute(
+				new MIMetaGetCPUInfo(fCommandControl.getContext()),
+				new ImmediateDataRequestMonitor<MIMetaGetCPUInfoInfo>() {
+					@Override
+					protected void handleSuccess() {
+						rm.done(parseCoresInfoForCPUs(dmc, getData().getInfo()));
+					}
+				});
 		} else {
-			// For a local session, let's use /proc/cpuinfo on linux
-			if (Platform.getOS().equals(Platform.OS_LINUX)) {
-				Set<String> cpuIds = new HashSet<String>();
-
-				ICoreInfo[] cores = new CoreList().getCoreList();
-				for (ICoreInfo core : cores) {
-					cpuIds.add(core.getPhysicalId());
-				}
-
-				String[] cpuIdsArray = cpuIds.toArray(new String[cpuIds.size()]);
-				fCPUs = new ICPUDMContext[cpuIdsArray.length];
-				for (int i = 0; i < cpuIdsArray.length; i++) {
-					fCPUs[i] = createCPUContext(dmc, cpuIdsArray[i]);
-				}
-			} else {
-				// No way to know the CPUs on a local Windows session.
-				fCPUs = new ICPUDMContext[0];
-			}
-			rm.done(fCPUs);
+			// No way to know the CPUs for Windows session.
+			rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Operation not supported", null)); //$NON-NLS-1$
 		}
 	}
 
@@ -275,93 +284,59 @@ public class GDBHardware extends AbstractDsfService implements IGDBHardware, ICa
 
 		if (dmc instanceof ICPUDMContext) {
 			// Get the cores under this particular CPU
-			ICPUDMContext cpuDmc = (ICPUDMContext)dmc;
+			final ICPUDMContext cpuDmc = (ICPUDMContext)dmc;
 			
-			if (fBackend.getSessionType() == SessionType.REMOTE) {
-				rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Operation not supported", null)); //$NON-NLS-1$
-			} else {
-				if (Platform.getOS().equals(Platform.OS_LINUX)) {
-					// Use /proc/cpuinfo to find the cores and match them to the specified CPU
-					ICoreInfo[] cores = new CoreList().getCoreList();
-					
-					Vector<ICoreDMContext> coreDmcs = new Vector<ICoreDMContext>();
-					for (ICoreInfo core : cores) {
-						if (core.getPhysicalId().equals(cpuDmc.getId())){
-							// This core belongs to the right CPU
-						    coreDmcs.add(new GDBCoreDMC(getSession().getId(), cpuDmc, core.getId()));
-						}
-					}
-					
-					rm.done(coreDmcs.toArray(new ICoreDMContext[coreDmcs.size()]));
-				} else {
-					// No way to know the cores for a specific CPU on a remote Windows session.
-					rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Operation not supported", null)); //$NON-NLS-1$
-				}
-			}
-		} else if (dmc instanceof IHardwareTargetDMContext) {
-			// Get all the cores for this target
-
-			final IHardwareTargetDMContext targetDmc = (IHardwareTargetDMContext)dmc;
-			
-			// We already know the list of cores.  Just return it.
-			if (fCores != null) {
-				rm.done(fCores);
-				return;
-			}
-			
-			if (fBackend.getSessionType() == SessionType.REMOTE) {
-				// For a remote session, we can use GDB's -list-thread-groups --available
-				// command, which shows on which cores a process is running.  This does
-				// not necessarily give the exhaustive list of cores, but that is the best
-				// we have right now.
-				//
-				// In this case, we don't have knowledge about CPUs, so we lump all cores
-				// into a single CPU.
-				fCommandControl.queueCommand(
-						fCommandFactory.createMIListThreadGroups(fCommandControl.getContext(), true),
-						new DataRequestMonitor<MIListThreadGroupsInfo>(ImmediateExecutor.getInstance(), rm) {
+			if (Platform.getOS().equals(Platform.OS_LINUX)) {
+				fFetchCPUInfoCache.execute(
+						new MIMetaGetCPUInfo(fCommandControl.getContext()),
+						new ImmediateDataRequestMonitor<MIMetaGetCPUInfoInfo>() {
 							@Override
 							protected void handleSuccess() {
-								// First extract the string id for every core GDB reports
-								Set<String> coreIds = new HashSet<String>();
-								IThreadGroupInfo[] groups = getData().getGroupList();
-								for (IThreadGroupInfo group : groups) {
-									coreIds.addAll(Arrays.asList(group.getCores()));
-								}
-								
-								// Now create the context for each distinct core
-								//
-								// We don't have CPU info in this case so let's put them all under
-								// a single CPU
-								ICPUDMContext cpuDmc = createCPUContext(targetDmc, "0"); //$NON-NLS-1$
-								Set<ICoreDMContext> coreDmcs = new HashSet<ICoreDMContext>();
-								for (String id : coreIds) {
-									coreDmcs.add(new GDBCoreDMC(getSession().getId(), cpuDmc, id));
-								}
-								fCores = coreDmcs.toArray(new ICoreDMContext[coreDmcs.size()]);
-								
-								rm.done(fCores);
+								rm.done(parseCoresInfoForCores(cpuDmc, getData().getInfo()));
 							}
 						});
 			} else {
-				// For a local session, -list-thread-groups --available does not return
-				// the cores field.  Let's use /proc/cpuinfo on linux instead
-				if (Platform.getOS().equals(Platform.OS_LINUX)) {
-					ICoreInfo[] cores = new CoreList().getCoreList();
-					fCores = new ICoreDMContext[cores.length];
-					for (int i = 0; i < cores.length; i++) {
-						ICPUDMContext cpuDmc = createCPUContext(targetDmc, cores[i].getPhysicalId());
-						fCores[i] = createCoreContext(cpuDmc, cores[i].getId());
-					}
-				} else {
-					// No way to know the cores on a local Windows session.
-					fCores = new ICoreDMContext[0];
-				}
-				rm.done(fCores);
+				// No way to know the cores for Windows session.
+				rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Operation not supported", null)); //$NON-NLS-1$
 			}
 		} else {
 			rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid DMC type", null)); //$NON-NLS-1$
 		}
+	}
+
+	/**
+	 * Parse the CoreInfo and create the CPU Contexts for the hardwareTarget context.
+	 */
+	private ICPUDMContext[] parseCoresInfoForCPUs(IHardwareTargetDMContext dmc, ICoreInfo[] coresInfo) {
+		Set<String> cpuIds = new HashSet<String>();
+		ICPUDMContext[] CPUs;
+
+		for (ICoreInfo core : coresInfo) {
+			cpuIds.add(core.getPhysicalId());
+		}
+
+		String[] cpuIdsArray = cpuIds.toArray(new String[cpuIds.size()]);
+		CPUs = new ICPUDMContext[cpuIdsArray.length];
+		for (int i = 0; i < cpuIdsArray.length; i++) {
+			CPUs[i] = createCPUContext(dmc, cpuIdsArray[i]);
+		}
+		return CPUs;		
+	}
+
+	/**
+	 * Parse the CoreInfo and create the Core Contexts for the specified CPU context.
+	 */
+	private ICoreDMContext[] parseCoresInfoForCores(ICPUDMContext cpuDmc, ICoreInfo[] coresInfo) {
+
+		Vector<ICoreDMContext> coreDmcs = new Vector<ICoreDMContext>();
+		for (ICoreInfo core : coresInfo) {
+			if (core.getPhysicalId().equals(cpuDmc.getId())){
+				// This core belongs to the right CPU
+				coreDmcs.add(createCoreContext(cpuDmc, core.getId()));
+			}
+		}
+
+		return coreDmcs.toArray(new ICoreDMContext[coreDmcs.size()]);
 	}
 
 	@Override
@@ -397,7 +372,135 @@ public class GDBHardware extends AbstractDsfService implements IGDBHardware, ICa
     
 	@Override
 	public void flushCache(IDMContext context) {
-		fCPUs = null;
-		fCores = null;
+		// Although the CPUInfo does not change,
+		// this allows us to have a way to forcibly clear the cache.
+		// We would need to call this method from the UI somehow.
+		fFetchCPUInfoCache.reset(context);
+	}
+	
+	/**
+	 * A commandControl that will decide what to do when needing to find the CPUInfo.
+	 * The class is used together with a CommandCache an MIMetaCommands to fetch
+	 * information we need.
+	 */
+	private class CPUInfoManager implements ICommandControl {
+	    private final List<ICommandListener> fCommandProcessors = new ArrayList<ICommandListener>();
+
+		@Override
+	    public <V extends ICommandResult> ICommandToken queueCommand(final ICommand<V> command, DataRequestMonitor<V> rm) {
+	    	
+	        final ICommandToken token = new ICommandToken() {
+	        	@Override
+	            public ICommand<? extends ICommandResult> getCommand() {
+	                return command;
+	            }
+	        };
+	        	    	
+	    	// The class does not buffer commands itself, but sends them directly to the real
+	    	// MICommandControl service.  Therefore, we must immediately tell our calling cache that the command
+	    	// has been sent, since we can never cancel it.
+	    	processCommandSent(token);
+
+	    	if (command instanceof MIMetaGetCPUInfo) {
+	            @SuppressWarnings("unchecked")            
+	    		final DataRequestMonitor<MIMetaGetCPUInfoInfo> drm = (DataRequestMonitor<MIMetaGetCPUInfoInfo>)rm;
+	            final ICommandControlDMContext dmc = (ICommandControlDMContext)command.getContext();
+	            
+	    		if (fBackend.getSessionType() == SessionType.REMOTE) {
+	    			// Ask GDB to fetch /proc/cpuinfo from the remote target, and then we parse it.
+	    			String remoteFile = "/proc/cpuinfo"; //$NON-NLS-1$
+	    			final String localFile = "/tmp/" + GdbPlugin.PLUGIN_ID + ".cpuinfo." + getSession().getId(); //$NON-NLS-1$ //$NON-NLS-2$
+	    			fCommandControl.queueCommand(
+	    					fCommandFactory.createCLIRemoteGet(dmc, remoteFile, localFile),
+	    					new ImmediateDataRequestMonitor<MIInfo>(rm) {
+	    						@Override
+	    						protected void handleSuccess() {
+	    							ICoreInfo[] info = new CoreList(localFile).getCoreList();
+	    							// Now that we processed the file, remove it to avoid polluting the file system
+	    							new File(localFile).delete();
+	    							drm.done(new MIMetaGetCPUInfoInfo(info));
+		                            processCommandDone(token, drm.getData());
+	    						}
+	    						@Override
+	    						protected void handleError() {
+	    							// On some older linux versions, gdbserver is not able to read from /proc
+	    							// because it is a pseudo filesystem.
+	    							// We need to find some other method of getting the info we need.
+	    							
+	    							// For a remote session, we can use GDB's -list-thread-groups --available
+	    							// command, which shows on which cores a process is running.  This does
+	    							// not necessarily give the exhaustive list of cores, but that is the best
+	    							// we have in this case.
+	    							//
+	    							// In this case, we don't have knowledge about CPUs, so we lump all cores
+	    							// into a single CPU.
+	    							
+	    							fCommandControl.queueCommand(
+	    									fCommandFactory.createMIListThreadGroups(dmc, true),
+	    									new ImmediateDataRequestMonitor<MIListThreadGroupsInfo>(drm) {
+	    										@Override
+	    										protected void handleSuccess() {
+	    											// First extract the string id for every core GDB reports
+	    											Set<String> coreIds = new HashSet<String>();
+	    											IThreadGroupInfo[] groups = getData().getGroupList();
+	    											for (IThreadGroupInfo group : groups) {
+	    												coreIds.addAll(Arrays.asList(group.getCores()));
+	    											}
+	    											
+	    											// Now create the context for each distinct core
+	    											//
+	    											// We don't have CPU info in this case so let's put them all under a single CPU
+	    											final String defaultCPUId = "0";  //$NON-NLS-1$
+	    											ICoreInfo[] info = new ICoreInfo[coreIds.size()];
+	    											int i = 0;
+	    											for (String id : coreIds) {
+	    												info[i++] = new CoreInfo(id, defaultCPUId);
+	    											}
+	    			    							drm.done(new MIMetaGetCPUInfoInfo(info));
+	    				                            processCommandDone(token, drm.getData());
+	    										}
+	    									});
+	    						}
+	    					});
+	    		} else {
+	    			// For a local session, parse /proc/cpuinfo directly.
+	    			ICoreInfo[] info = new CoreList("/proc/cpuinfo").getCoreList(); //$NON-NLS-1$
+					drm.done(new MIMetaGetCPUInfoInfo(info));
+                    processCommandDone(token, drm.getData());
+	    		}
+	    	} else {
+				rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR, 
+						"Unexpected Meta command", null)); //$NON-NLS-1$
+				rm.done();
+	    	}
+	    	return token;
+	    }
+		
+		// Need to support these as they are used by the commandCache
+	    @Override
+	    public void addCommandListener(ICommandListener processor) { fCommandProcessors.add(processor); }
+	    @Override
+	    public void removeCommandListener(ICommandListener processor) { fCommandProcessors.remove(processor); }    
+
+	    
+	    private void processCommandSent(ICommandToken token) {
+	        for (ICommandListener processor : fCommandProcessors) {
+	            processor.commandSent(token);
+	        }
+	    }
+
+	    private void processCommandDone(ICommandToken token, ICommandResult result) {
+	        for (ICommandListener processor : fCommandProcessors) {
+	            processor.commandDone(token, result);
+	        }
+	    }
+
+	    @Override
+	    public void addEventListener(IEventListener processor) { assert false : "Not supported"; } //$NON-NLS-1$
+		@Override
+	    public void removeEventListener(IEventListener processor) { assert false : "Not supported"; } //$NON-NLS-1$
+		@Override
+		public void removeCommand(ICommandToken token) { assert false : "Not supported"; } //$NON-NLS-1$
+
 	}
 }

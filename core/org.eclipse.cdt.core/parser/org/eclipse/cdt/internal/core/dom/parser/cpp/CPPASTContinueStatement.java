@@ -18,7 +18,6 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
  * @author jcamelon
  */
 public class CPPASTContinueStatement extends ASTNode implements IASTContinueStatement {
-
     @Override
 	public boolean accept(ASTVisitor action) {
         if (action.shouldVisitStatements) {

@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Doug Schaefer - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     Doug Schaefer - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
@@ -24,9 +24,7 @@ import org.eclipse.cdt.core.parser.IToken;
  * @noextend This interface is not intended to be extended by clients.
  */
 public interface IASTNode {
-	/**
-	 * @since 5.3
-	 */
+	/** @since 5.3 */
 	public enum CopyStyle {
 		/**
 		 * Copy without location, this copy is independent of the index and can be shared.

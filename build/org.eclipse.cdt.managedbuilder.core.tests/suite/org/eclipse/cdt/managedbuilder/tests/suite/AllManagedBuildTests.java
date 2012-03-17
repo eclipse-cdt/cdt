@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *  IBM - Initial API and implementation
  *  Markus Schorn (Wind River Systems)
@@ -39,6 +39,7 @@ import org.eclipse.cdt.managedbuilder.core.tests.OptionCategoryEnablementTests;
 import org.eclipse.cdt.managedbuilder.core.tests.OptionEnablementTests;
 import org.eclipse.cdt.managedbuilder.core.tests.PathConverterTest;
 import org.eclipse.cdt.managedbuilder.core.tests.ResourceBuildCoreTests;
+import org.eclipse.cdt.managedbuilder.language.settings.providers.tests.AllLanguageSettingsProvidersMBSTests;
 import org.eclipse.cdt.managedbuilder.templateengine.tests.AllTemplateEngineTests;
 import org.eclipse.cdt.projectmodel.tests.BackwardCompatiblityTests;
 import org.eclipse.cdt.projectmodel.tests.CProjectDescriptionSerializationTests;
@@ -60,6 +61,9 @@ public class AllManagedBuildTests {
 		// build.core.scannerconfig.tests
 		suite.addTest(CfgScannerConfigProfileManagerTests.suite());
 		suite.addTestSuite(GCCSpecsConsoleParserTest.class);
+
+		// language settings providers tests
+		suite.addTest(AllLanguageSettingsProvidersMBSTests.suite());
 
 		// managedbuilder.core.tests
 		suite.addTest(ManagedBuildDependencyLibsTests.suite());

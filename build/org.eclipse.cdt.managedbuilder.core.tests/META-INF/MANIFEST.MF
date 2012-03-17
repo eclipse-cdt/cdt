@@ -7,6 +7,7 @@ Bundle-Activator: org.eclipse.cdt.managedbuilder.testplugin.CTestPlugin
 Bundle-Vendor: Eclipse CDT
 Bundle-Localization: plugin
 Export-Package: org.eclipse.cdt.managedbuilder.core.tests,
+ org.eclipse.cdt.managedbuilder.language.settings.providers.tests,
  org.eclipse.cdt.managedbuilder.templateengine.tests,
  org.eclipse.cdt.managedbuilder.testplugin,
  org.eclipse.cdt.managedbuilder.tests.suite,

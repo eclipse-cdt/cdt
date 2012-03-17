@@ -19,31 +19,38 @@ package org.eclipse.cdt.internal.corext.refactoring.code.flow;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.text.IRegion;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
 import org.eclipse.cdt.core.dom.ast.IASTDoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTGotoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
+import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSwitchStatement;
 import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTRangeBasedForStatement;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
 
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.corext.util.ASTNodes;
 
 public class InputFlowAnalyzer extends FlowAnalyzer {
 
 	private static class LoopReentranceVisitor extends FlowAnalyzer {
-		private Selection fSelection;
-		private IASTNode fLoopNode;
+		private final Selection selection;
+		private final IASTNode loopNode;
 
 		public LoopReentranceVisitor(FlowContext context, Selection selection, IASTNode loopNode) {
 			super(context);
-			fSelection= selection;
-			fLoopNode= loopNode;
+			this.selection= selection;
+			this.loopNode= loopNode;
 		}
 
 		@Override
@@ -52,13 +59,13 @@ public class InputFlowAnalyzer extends FlowAnalyzer {
 		}
 
 		@Override
-		protected boolean createReturnFlowInfo(IASTReturnStatement node) {
+		protected boolean shouldCreateReturnFlowInfo(IASTReturnStatement node) {
 			// Make sure that the whole return statement is selected or located before the selection.
-			return ASTNodes.endOffset(node) <= fSelection.getEnd();
+			return ASTNodes.endOffset(node) <= selection.getEnd();
 		}
 
 		protected IASTNode getLoopNode() {
-			return fLoopNode;
+			return loopNode;
 		}
 
 		public void process(IASTNode node) {
@@ -93,7 +100,7 @@ public class InputFlowAnalyzer extends FlowAnalyzer {
 			setFlowInfo(node, forInfo);
 			// If the for statement is the outermost loop then we only have to consider
 			// the action. The parameter and expression are only evaluated once.
-			if (node == fLoopNode) {
+			if (node == loopNode) {
 				forInfo.mergeAction(actionInfo, fFlowContext);
 			} else {
 				// Inner for loops are evaluated in the sequence expression, parameter,
@@ -118,7 +125,7 @@ public class InputFlowAnalyzer extends FlowAnalyzer {
 			setFlowInfo(node, forInfo);
 			// The for statement is the outermost loop. In this case we only have
 			// to consider the increment, condition and action.
-			if (node == fLoopNode) {
+			if (node == loopNode) {
 				forInfo.mergeIncrement(incrementInfo, fFlowContext);
 				forInfo.mergeCondition(conditionInfo, fFlowContext);
 				forInfo.mergeAction(actionInfo, fFlowContext);
@@ -141,9 +148,126 @@ public class InputFlowAnalyzer extends FlowAnalyzer {
 		}
 	}
 
+	private static class GotoLoopRegion implements IRegion {
+		final IASTLabelStatement firstLabelStatement;
+		IASTGotoStatement lastGotoStatement;
+
+		GotoLoopRegion(IASTLabelStatement firstLabelStatement, IASTGotoStatement lastGotoStatement) {
+			this.firstLabelStatement = firstLabelStatement;
+			this.lastGotoStatement = lastGotoStatement;
+		}
+
+		@Override
+		public int getOffset() {
+			return ASTNodes.offset(firstLabelStatement);
+		}
+
+		@Override
+		public int getLength() {
+			return ASTNodes.endOffset(lastGotoStatement) - getOffset();
+		}
+	}
+
+	private static class GotoAnalyzer extends ASTVisitor {
+		private GotoLoopRegion[] gotoRegions = {};
+
+		public GotoAnalyzer() {
+			shouldVisitStatements = true;
+		}
+
+		@Override
+		public int visit(IASTStatement node) {
+			if (!(node instanceof IASTLabelStatement))
+				return PROCESS_CONTINUE;
+
+			IASTLabelStatement labelStatement = (IASTLabelStatement) node;
+			IASTName labelName = ((IASTLabelStatement) node).getName();
+			IBinding binding = labelName.resolveBinding();
+			IASTName[] references = labelStatement.getTranslationUnit().getReferences(binding);
+			IASTGotoStatement lastGotoStatement = null;
+			for (IASTName name : references) {
+				if (name.getPropertyInParent() == IASTGotoStatement.NAME) {
+					IASTGotoStatement gotoStatement = (IASTGotoStatement) name.getParent();
+					IASTStatement lastStatement = lastGotoStatement != null ? lastGotoStatement : labelStatement;
+					if (isBefore(lastStatement, gotoStatement)) {
+						lastGotoStatement = gotoStatement;
+					}
+				}
+			}
+			if (lastGotoStatement == null)
+				return PROCESS_CONTINUE;
+				
+			GotoLoopRegion newRegion = new GotoLoopRegion(labelStatement, lastGotoStatement);
+			boolean gaps = false;
+			for (int i = 0; i < gotoRegions.length; i++) {
+				GotoLoopRegion existing = gotoRegions[i];
+				if (existing == null)
+					break;
+				if (isBefore(newRegion.firstLabelStatement, existing.lastGotoStatement)) {
+					if (isBefore(existing.lastGotoStatement, newRegion.lastGotoStatement)) {
+						existing.lastGotoStatement = newRegion.lastGotoStatement;
+						for (int j = i + 1; j < gotoRegions.length; j++) {
+							newRegion = gotoRegions[j];
+							if (newRegion == null)
+								break;
+							if (isBefore(newRegion.firstLabelStatement, existing.lastGotoStatement)) {
+								if (isBefore(existing.lastGotoStatement, newRegion.lastGotoStatement)) {
+									existing.lastGotoStatement = newRegion.lastGotoStatement;
+								}
+							}
+							gotoRegions[j] = null;
+							gaps = true;
+						}
+					}
+					newRegion = null;
+					break;
+				}
+			}
+			if (gaps) {
+				ArrayUtil.compact(gotoRegions);
+			} else if (newRegion != null) {
+				gotoRegions = ArrayUtil.append(gotoRegions, newRegion);
+			}
+			return PROCESS_SKIP;
+		}
+
+		public GotoLoopRegion[] getGotoRegions() {
+			return ArrayUtil.trim(gotoRegions);
+		}
+	}
+
+	private static class GotoReentranceVisitor extends FlowAnalyzer {
+		private final Selection selection;
+		private final GotoLoopRegion loopRegion;
+
+		public GotoReentranceVisitor(FlowContext context, Selection selection, GotoLoopRegion loopRegion) {
+			super(context);
+			this.selection= selection;
+			this.loopRegion = loopRegion;
+		}
+
+		@Override
+		protected boolean traverseNode(IASTNode node) {
+			return !isBefore(node, loopRegion.firstLabelStatement) &&
+					!isBefore(loopRegion.lastGotoStatement, node);
+		}
+
+		@Override
+		protected boolean shouldCreateReturnFlowInfo(IASTReturnStatement node) {
+			// Make sure that the whole return statement is selected or located before the selection.
+			return ASTNodes.endOffset(node) <= selection.getEnd();
+		}
+
+		public FlowInfo process(IASTFunctionDefinition node) {
+			node.accept(this);
+			return getFlowInfo(node);
+		}
+	}
+
 	private Selection fSelection;
 	private boolean fDoLoopReentrance;
 	private LoopReentranceVisitor fLoopReentranceVisitor;
+	private GotoReentranceVisitor fGotoReentranceVisitor;
 
 	public InputFlowAnalyzer(FlowContext context, Selection selection, boolean doLoopReentrance) {
 		super(context);
@@ -154,16 +278,34 @@ public class InputFlowAnalyzer extends FlowAnalyzer {
 
 	public FlowInfo perform(IASTFunctionDefinition node) {
 		node.accept(this);
+		if (fDoLoopReentrance) {
+			GotoAnalyzer gotoAnalyzer = new GotoAnalyzer();
+			node.accept(gotoAnalyzer);
+			GotoLoopRegion[] gotoRegions = gotoAnalyzer.getGotoRegions();
+			for (GotoLoopRegion loopRegion : gotoRegions) {
+				if (fSelection.coveredBy(loopRegion)) {
+					GenericSequentialFlowInfo info= createSequential();
+					info.merge(getFlowInfo(node), fFlowContext);
+					fGotoReentranceVisitor = new GotoReentranceVisitor(fFlowContext, fSelection, loopRegion);
+					FlowInfo gotoInfo = fGotoReentranceVisitor.process(node);
+					info.merge(gotoInfo, fFlowContext);
+					setFlowInfo(node, info);
+					break;
+				}
+			}
+		}
 		return getFlowInfo(node);
 	}
 
 	@Override
 	protected boolean traverseNode(IASTNode node) {
+		if (node instanceof IASTLabelStatement)
+			return true;
 		return ASTNodes.endOffset(node) > fSelection.getEnd();
 	}
 
 	@Override
-	protected boolean createReturnFlowInfo(IASTReturnStatement node) {
+	protected boolean shouldCreateReturnFlowInfo(IASTReturnStatement node) {
 		// Make sure that the whole return statement is located after the selection.
 		// There can be cases like return i + [x + 10] * 10; In this case we must not create
 		// a return info node.
@@ -210,7 +352,7 @@ public class InputFlowAnalyzer extends FlowAnalyzer {
 				(elsePart != null && fSelection.coveredBy(elsePart))) {
 			GenericSequentialFlowInfo info= createSequential();
 			setFlowInfo(node, info);
-			endVisitConditional(info, node.getLogicalConditionExpression(), new IASTNode[] { thenPart, elsePart });
+			leaveConditional(info, node.getLogicalConditionExpression(), new IASTNode[] { thenPart, elsePart });
 			return PROCESS_SKIP;
 		}
 		return super.leave(node);
@@ -233,7 +375,7 @@ public class InputFlowAnalyzer extends FlowAnalyzer {
 				(elsePart != null && fSelection.coveredBy(elsePart))) {
 			GenericSequentialFlowInfo info= createSequential();
 			setFlowInfo(node, info);
-			endVisitConditional(info, node.getConditionExpression(), new IASTNode[] { thenPart, elsePart });
+			leaveConditional(info, node.getConditionExpression(), new IASTNode[] { thenPart, elsePart });
 			return PROCESS_SKIP;
 		}
 		return super.leave(node);
@@ -280,10 +422,9 @@ public class InputFlowAnalyzer extends FlowAnalyzer {
 		return PROCESS_SKIP;
 	}
 
-	private void endVisitConditional(GenericSequentialFlowInfo info, IASTNode condition, IASTNode[] branches) {
+	private void leaveConditional(GenericSequentialFlowInfo info, IASTNode condition, IASTNode[] branches) {
 		info.merge(getFlowInfo(condition), fFlowContext);
-		for (int i= 0; i < branches.length; i++) {
-			IASTNode branch= branches[i];
+		for (IASTNode branch : branches) {
 			if (branch != null && fSelection.coveredBy(branch)) {
 				info.merge(getFlowInfo(branch), fFlowContext);
 				break;
@@ -300,5 +441,9 @@ public class InputFlowAnalyzer extends FlowAnalyzer {
 		info.merge(getFlowInfo(node), fFlowContext);
 		info.merge(fLoopReentranceVisitor.getFlowInfo(node), fFlowContext);
 		setFlowInfo(node, info);
+	}
+
+	private static boolean isBefore(IASTNode node1, IASTNode node2) {
+		return CPPSemantics.declaredBefore(node1, node2, false);
 	}
 }

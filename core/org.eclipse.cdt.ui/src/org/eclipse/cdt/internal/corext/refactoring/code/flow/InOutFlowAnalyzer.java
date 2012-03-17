@@ -58,7 +58,7 @@ public class InOutFlowAnalyzer extends FlowAnalyzer {
 	}
 
 	@Override
-	protected boolean createReturnFlowInfo(IASTReturnStatement node) {
+	protected boolean shouldCreateReturnFlowInfo(IASTReturnStatement node) {
 		// We are only traversing selected nodes.
 		return true;
 	}

@@ -1737,6 +1737,103 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 		assertRefactoringSuccess();
 	}
 
+	//test.c
+	//void test() {
+	//	int i = 0;
+	//	while (i <= 10) {
+	//		/*$*/i++;/*$$*/
+	//	}
+	//}
+	//====================
+	//int extracted(int i) {
+	//	i++;
+	//	return i;
+	//}
+	//
+	//void test() {
+	//	int i = 0;
+	//	while (i <= 10) {
+	//		i = extracted(i);
+	//	}
+	//}
+	public void testOutputParametersDetectionInWhileLoop() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//test.c
+	//void test() {
+	//	int i = 0;
+	//loop:
+	//	if (i > 10) return;
+	//	/*$*/i++;/*$$*/
+	//	goto loop;
+	//}
+	//====================
+	//int extracted(int i) {
+	//	i++;
+	//	return i;
+	//}
+	//
+	//void test() {
+	//	int i = 0;
+	//loop:
+	//	if (i > 10) return;
+	//	i = extracted(i);
+	//	goto loop;
+	//}
+	public void testOutputParametersDetectionWithGotoLoopSimple() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//test.c
+	//void test() {
+	//	int a = 0, b = 0, c = 0, d = 0;
+	//loop1:
+	//	if (a > 1) return;
+	//	goto loop1;
+	//loop2:
+	//	if (b > 2) return;
+	//loop3:
+	//	if (c > 3) return;
+	//	goto loop2;
+	//loop4:
+	//	if (d > 4) return;
+	//	goto loop3;
+	//	/*$*/a++;
+	//	b++;
+	//	c++;
+	//	d++;/*$$*/
+	//	goto loop4;
+	//}
+	//====================
+	//int extracted(int a, int b, int* c, int* d) {
+	//	a++;
+	//	b++;
+	//	*c++;
+	//	*d++;
+	//	return b;
+	//}
+	//
+	//void test() {
+	//	int a = 0, b = 0, c = 0, d = 0;
+	//loop1:
+	//	if (a > 1) return;
+	//	goto loop1;
+	//loop2:
+	//	if (b > 2) return;
+	//loop3:
+	//	if (c > 3) return;
+	//	goto loop2;
+	//loop4:
+	//	if (d > 4) return;
+	//	goto loop3;
+	//	b = extracted(a, b, &c, &d);
+	//	goto loop4;
+	//}
+	public void testOutputParametersDetectionWithGotoLoopComplex() throws Exception {
+		assertRefactoringSuccess();
+	}
+
 	//main.cpp
 	//void method() {
 	//	/*$*/for (int var = 0; var < 100; ++var) {

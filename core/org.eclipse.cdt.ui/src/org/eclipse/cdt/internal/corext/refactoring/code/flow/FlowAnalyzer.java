@@ -134,7 +134,7 @@ abstract class FlowAnalyzer extends ASTGenericVisitor {
 		fFlowContext= context;
 	}
 
-	protected abstract boolean createReturnFlowInfo(IASTReturnStatement node);
+	protected abstract boolean shouldCreateReturnFlowInfo(IASTReturnStatement node);
 
 	protected abstract boolean traverseNode(IASTNode node);
 
@@ -589,7 +589,7 @@ abstract class FlowAnalyzer extends ASTGenericVisitor {
 	}
 
 	public int leave(IASTGotoStatement node) {
-		// TODO(sprigogin): Implement goto support
+		setFlowInfo(node, createBranch(node.getName()));
 		return PROCESS_SKIP;
 	}
 
@@ -602,9 +602,7 @@ abstract class FlowAnalyzer extends ASTGenericVisitor {
 	}
 
 	public int leave(IASTLabelStatement node) {
-		FlowInfo info= assignFlowInfo(node, node.getNestedStatement());
-		if (info != null)
-			info.removeLabel(node.getName());
+		assignFlowInfo(node, node.getNestedStatement());
 		return PROCESS_SKIP;
 	}
 
@@ -639,7 +637,7 @@ abstract class FlowAnalyzer extends ASTGenericVisitor {
 	}
 
 	public int leave(IASTReturnStatement node) {
-		if (createReturnFlowInfo(node)) {
+		if (shouldCreateReturnFlowInfo(node)) {
 			ReturnFlowInfo info= createReturn(node);
 			setFlowInfo(node, info);
 			info.merge(getFlowInfo(node.getReturnArgument()), fFlowContext);

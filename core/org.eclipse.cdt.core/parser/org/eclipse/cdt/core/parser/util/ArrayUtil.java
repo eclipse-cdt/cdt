@@ -421,13 +421,30 @@ public abstract class ArrayUtil {
     }
 
 	/**
-	 * Note that this should only be used when the placement of nulls within the array
-	 * is unknown (due to performance efficiency).  
-	 * 
+	 * Moves all null elements to the end of the array. The order of non-null elements is preserved.
+	 * @since 5.4
+	 */
+	public static void compact(Object[] array) {
+		int j = 0;
+        for (int i = 0; i < array.length; i++) {
+            if (array[i] != null) {
+            	if (j != i) {
+            		array[j] = array[i];
+            		array[i] = null;
+            	}
+            	j++;
+            }
+        }
+	}
+	
+	/**
 	 * Removes all of the nulls from the array and returns a new array that contains all
 	 * of the non-null elements.
      *
      * If there are no nulls in the original array then the original array is returned.
+
+	 * Note that this method should only be used when the placement of nulls within the array
+	 * is unknown (due to performance efficiency).  
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T> T[] removeNulls(Class<T> c, T[] array) {
@@ -455,13 +472,13 @@ public abstract class ArrayUtil {
 	}
 
 	/**
-	 * Note that this should only be used when the placement of nulls within the array
-	 * is unknown (due to performance efficiency).  
-	 * 
 	 * Removes all of the nulls from the array and returns a new array that contains all
 	 * of the non-null elements.
      *
      * If there are no nulls in the original array then the original array is returned.
+     * 
+	 * Note that this method should only be used when the placement of nulls within the array
+	 * is unknown (due to performance efficiency).  
 	 * @since 5.2
 	 */
 	@SuppressWarnings("unchecked")
@@ -598,29 +615,9 @@ public abstract class ArrayUtil {
 		}
 	}
 
-    static public int[] setInt(int[] array, int idx, int val) {
-        if (array == null) {
-            array = new int[DEFAULT_LENGTH > idx + 1 ? DEFAULT_LENGTH : idx + 1];
-            array[idx] = val;
-            return array;
-        }
-
-        if (array.length <= idx) {
-            int newLen = array.length * 2;
-            while (newLen <= idx)
-            	newLen *= 2;
-            int[] temp = new int[newLen];
-            System.arraycopy(array, 0, temp, 0, array.length);
-            
-            array = temp;
-        }
-        array[idx] = val;
-        return array;
-    }
-
     /**
-     * Stores the specified array contents in a new array of specified
-     * runtime type.
+     * Stores the specified array contents in a new array of specified runtime type.
+     * 
      * @param target the runtime type of the new array
      * @param source the source array
      * @return the current array stored in a new array with the specified runtime type,
@@ -681,5 +678,25 @@ public abstract class ArrayUtil {
     		newArgs[i - 1] = args[i];
     	}
     	return newArgs;
+    }
+
+    public static int[] setInt(int[] array, int idx, int val) {
+        if (array == null) {
+            array = new int[DEFAULT_LENGTH > idx + 1 ? DEFAULT_LENGTH : idx + 1];
+            array[idx] = val;
+            return array;
+        }
+
+        if (array.length <= idx) {
+            int newLen = array.length * 2;
+            while (newLen <= idx)
+            	newLen *= 2;
+            int[] temp = new int[newLen];
+            System.arraycopy(array, 0, temp, 0, array.length);
+            
+            array = temp;
+        }
+        array[idx] = val;
+        return array;
     }
 }

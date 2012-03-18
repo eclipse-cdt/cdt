@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Symbian - Initial implementation
+ *     Symbian - Initial implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
@@ -33,7 +33,6 @@ import org.eclipse.core.runtime.NullProgressMonitor;
  * See bugzilla
  */
 public class FilesOnReindexTests extends PDOMTestBase {
-
 	protected ICProject project;
 	protected IIndex pdom;
 

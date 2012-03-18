@@ -127,18 +127,20 @@ public class CommandLauncher implements ICommandLauncher {
 	/**
 	 * Parse array of "ENV=value" pairs to Properties.
 	 */
-	private Properties parseEnv(String[] env) {
-		Properties envProperties = new Properties();
-		for (String envStr : env) {
-			// Split "ENV=value" and put in Properties
-			int pos = envStr.indexOf('=');
-			if (pos < 0)
-				pos = envStr.length();
-			String key = envStr.substring(0, pos);
-			String value = envStr.substring(pos + 1);
-			envProperties.put(key, value);
+	private void parseEnvironment(String[] env) {
+		fEnvironment = null;
+		if (env != null) {
+			fEnvironment = new Properties();
+			for (String envStr : env) {
+				// Split "ENV=value" and put in Properties
+				int pos = envStr.indexOf('=');
+				if (pos < 0)
+					pos = envStr.length();
+				String key = envStr.substring(0, pos);
+				String value = envStr.substring(pos + 1);
+				fEnvironment.put(key, value);
+			}
 		}
-		return envProperties;
 	}
 
 	/**
@@ -162,27 +164,28 @@ public class CommandLauncher implements ICommandLauncher {
 	 */
 	@Override
 	public Process execute(IPath commandPath, String[] args, String[] env, IPath workingDirectory, IProgressMonitor monitor) throws CoreException {
+		parseEnvironment(env);
+		String envPathValue = (String) getEnvironment().get(PATH_ENV);
+
 		Boolean isFound = null;
 		String command = commandPath.toOSString();
-		String envPathValue = (String) getEnvironment().get(PATH_ENV);
-		try {
-			fCommandArgs = constructCommandArray(command, args);
-			if (Platform.getOS().equals(Platform.OS_WIN32)) {
-				// Handle cygwin link
-				IPath location = PathUtil.findProgramLocation(command, envPathValue);
-				isFound = location != null;
-				if (location != null) {
-					try {
-						fCommandArgs[0] = Cygwin.cygwinToWindowsPath(location.toString(), envPathValue);
-					} catch (Exception e) {
-						// if no cygwin nothing to worry about
-					}
+		fCommandArgs = constructCommandArray(command, args);
+		if (Platform.getOS().equals(Platform.OS_WIN32)) {
+			// Handle cygwin link
+			IPath location = PathUtil.findProgramLocation(command, envPathValue);
+			isFound = location != null;
+			if (location != null) {
+				try {
+					fCommandArgs[0] = Cygwin.cygwinToWindowsPath(location.toString(), envPathValue);
+				} catch (Exception e) {
+					// if no cygwin nothing to worry about
 				}
 			}
+		}
 
-			fEnvironment = parseEnv(env);
-			File dir = workingDirectory != null ? workingDirectory.toFile() : null;
+		File dir = workingDirectory != null ? workingDirectory.toFile() : null;
 
+		try {
 			fProcess = ProcessFactory.getFactory().exec(fCommandArgs, env, dir);
 			fCommandArgs[0] = command; // to print original command on the console
 			fErrorMessage = ""; //$NON-NLS-1$

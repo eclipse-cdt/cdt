@@ -2529,7 +2529,7 @@ public class CPPVisitor extends ASTQueries {
 	 * Traverses a chain of nested homogeneous left-to-right-associative binary expressions and
 	 * returns a list of their operands in left-to-right order. For example, for the expression
 	 * a + b * c + d, it will return a list containing expressions: a, b * c, and d.
-	 *  
+	 *
 	 * @param binaryExpression the top-level binary expression
 	 * @return a list of expression operands from left to right
 	 */

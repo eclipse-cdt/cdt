@@ -208,7 +208,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  #114.0# - Partial specializations for class template specializations, bug 332884.
 	 *          - Corrected signatures for function templates, bug 335062.  <<CDT 8.0>>
 	 *  
-	 *  CDT 8.1 development (versions not supported on teh 8.0.x branch)
+	 *  CDT 8.1 development (versions not supported on the 8.0.x branch)
 	 *  120.0 - Enumerators in global index, bug 356235
 	 *  120.1 - Specializations of using declarations, bug 357293.
 	 *  121.0 - Multiple variants of included header file, bug 197989.
@@ -469,6 +469,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 			public int compare(long record) throws CoreException {
 				return 0;
 			}
+
 			@Override
 			public boolean visit(long record) throws CoreException {
 				PDOMFile file = PDOMFile.recreateFile(PDOM.this, record);

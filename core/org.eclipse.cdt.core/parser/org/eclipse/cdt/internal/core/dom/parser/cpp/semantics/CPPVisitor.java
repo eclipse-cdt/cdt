@@ -2125,7 +2125,7 @@ public class CPPVisitor extends ASTQueries {
 		}
 		IType type = expr.getExpressionType();
 		if (spec.getType() == IASTSimpleDeclSpecifier.t_decltype) {
-			switch((expr).getValueCategory()) {
+			switch (expr.getValueCategory()) {
 			case XVALUE:
 				type= new CPPReferenceType(type, true);
 				break;

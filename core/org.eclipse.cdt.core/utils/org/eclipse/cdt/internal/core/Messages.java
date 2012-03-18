@@ -16,6 +16,8 @@ public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.cdt.internal.core.messages"; //$NON-NLS-1$
 	public static String Util_unexpectedError;
 	public static String Addr_valueOutOfRange;
+	public static String CommandLauncher_CommandCancelled;
+	public static String CommandLauncher_ProgramNotFoundInPath;
 	public static String convention_illegalIdentifier;
 	public static String convention_invalid;
 	public static String convention_reservedKeyword;

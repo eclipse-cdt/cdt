@@ -447,14 +447,14 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 			Map<ICElement, CElementInfo> newElements, IResource underlyingResource) throws CModelException {
 		TranslationUnitInfo unitInfo = (TranslationUnitInfo) info;
 
-		// generate structure
+		// Generate structure
 		this.parse(newElements, pm);
 
 		// /////////////////////////////////////////////////////////////
 
 		if (isWorkingCopy()) {
 			ITranslationUnit original =  ((IWorkingCopy)this).getOriginalElement();
-			// might be IResource.NULL_STAMP if original does not exist
+			// Might be IResource.NULL_STAMP if original does not exist
 			IResource r = original.getResource();
 			if (r != null && r instanceof IFile) {
 				unitInfo.fTimestamp = ((IFile) r).getModificationStamp();
@@ -499,7 +499,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		} else {
 			workingCopy= new WorkingCopy(getParent(), getLocationURI(), getContentTypeId(), factory);
 		}
-		// open the working copy now to ensure contents are that of the current state of this element
+		// Open the working copy now to ensure contents are that of the current state of this element
 		workingCopy.open(monitor);
 		return workingCopy;
 	}
@@ -541,7 +541,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 			return null;
 		}
 
-		// create a new info and make it the current info
+		// Create a new info and make it the current info
 		// (this will remove the info and its children just before storing the new infos)
 		CModelManager manager = CModelManager.getDefault();
 		boolean hadTemporaryCache = manager.hasTemporaryCache();
@@ -555,7 +555,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 			Map<ICElement, CElementInfo> newElements = manager.getTemporaryCache();
 			openWhenClosed(info, monitor);
 			if (newElements.get(this) == null) {
-				// close any buffer that was opened for the new elements
+				// Close any buffer that was opened for the new elements
 				Iterator<ICElement> iterator = newElements.keySet().iterator();
 				while (iterator.hasNext()) {
 					ICElement element = iterator.next();
@@ -593,13 +593,13 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 
 	@Override
 	protected IBuffer openBuffer(IProgressMonitor pm) throws CModelException {
-		// create buffer - translation units only use default buffer factory
+		// Create buffer - translation units only use default buffer factory
 		BufferManager bufManager = getBufferManager();
 		IBuffer buffer = getBufferFactory().createBuffer(this);
 		if (buffer == null)
 			return null;
 
-		// set the buffer source
+		// Set the buffer source
 		if (buffer.getCharacters() == null) {
 			IResource resource = this.getResource();
 			if (resource != null && resource.getType() == IResource.FILE) {
@@ -620,10 +620,10 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 			}
 		}
 
-		// add buffer to buffer cache
+		// Add buffer to buffer cache
 		bufManager.addBuffer(buffer);
 
-		// listen to buffer changes
+		// Listen to buffer changes
 		buffer.addBufferChangedListener(this);
 
 		return buffer;
@@ -889,6 +889,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	}
 
 	private static final int[] CTX_LINKAGES= { ILinkage.CPP_LINKAGE_ID, ILinkage.C_LINKAGE_ID };
+
 	public IIndexFile[] getContextToHeader(IIndex index, int style) {
 		if (index != null && (style & AST_CONFIGURE_USING_SOURCE_CONTEXT) != 0) {
 			try {

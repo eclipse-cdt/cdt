@@ -1671,9 +1671,8 @@ public class CPPSemantics {
 						dtor.accept(visitor);
 					}
 					break;
-				case eEnumeration:
-				case eClassType:
-				case eTemplateDeclaration:
+
+				default:
 					break;
 				}
 			}
@@ -1696,7 +1695,7 @@ public class CPPSemantics {
 			IASTFunctionDeclarator declarator = functionDef.getDeclarator();
 
 			if (!((ICPPASTDeclSpecifier) declSpec).isFriend()) {
-				// check the function itself
+				// Check the function itself
 				IASTName declName = ASTQueries.findInnermostDeclarator(declarator).getName();
 				ASTInternal.addName(scope, declName);
 			}
@@ -1710,21 +1709,22 @@ public class CPPSemantics {
 				declSpec.accept(visitor);
 				declarator.accept(visitor);
 				break;
-			case eClassType:
-			case eTemplateDeclaration:
-			case eEnumeration:
+
+			default:
 				break;
 			}
 		}
 	}
 
 	/**
-	 * Perform lookup in nominated namespaces that appear in the given scope. For unqualified lookups the method assumes
-	 * that transitive directives have been stored in the lookup-data. For qualified lookups the transitive directives
-	 * are considered if the lookup of the original directive returns empty.
+	 * Perform lookup in nominated namespaces that appear in the given scope. For unqualified
+	 * lookups the method assumes that transitive directives have been stored in the lookup-data.
+	 * For qualified lookups the transitive directives are considered if the lookup of the original
+	 * directive returns empty.
 	 * @param fileSet 
 	 */
-	private static void lookupInNominated(LookupData data, IIndexFileSet fileSet, ICPPNamespaceScope scope) throws DOMException {
+	private static void lookupInNominated(LookupData data, IIndexFileSet fileSet,
+			ICPPNamespaceScope scope) throws DOMException {
 		List<ICPPNamespaceScope> allNominated= data.usingDirectives.remove(scope);
 		while (allNominated != null) {
 			for (ICPPNamespaceScope nominated : allNominated) {
@@ -1740,9 +1740,9 @@ public class CPPSemantics {
 					found = true;
 				}
 
-				// in the qualified lookup we have to nominate the transitive directives only when
-				// the lookup did not succeed. In the qualified case this is done earlier, when the directive
-				// is encountered.
+				// In the qualified lookup we have to nominate the transitive directives only when
+				// the lookup did not succeed. In the qualified case this is done earlier, when
+				// the directive is encountered.
 				if (!found && data.qualified() && !data.contentAssist) {
 					if (data.tu != null) {
 						data.tu.handleAdditionalDirectives(nominated);
@@ -1753,7 +1753,7 @@ public class CPPSemantics {
 					}
 				}
 			}
-			// retry with transitive directives that may have been nominated in a qualified lookup
+			// Retry with transitive directives that may have been nominated in a qualified lookup
 			allNominated= data.usingDirectives.remove(scope);
 		}
 	}
@@ -1778,11 +1778,11 @@ public class CPPSemantics {
 	        		return null;
 	        	}
 
-	        	// bug 238180
+	        	// Bug 238180
 	        	if (candidate instanceof ICPPClassTemplatePartialSpecialization) 
 	        		return null;
 	        	
-		        // specialization is selected during instantiation
+		        // Specialization is selected during instantiation
 		        if (candidate instanceof ICPPTemplateInstance)
 		        	candidate= ((ICPPTemplateInstance) candidate).getSpecializedBinding();
 	        	
@@ -1829,7 +1829,7 @@ public class CPPSemantics {
 	    int pointOfDecl= -1;
 	    if (obj instanceof ICPPInternalBinding) {
 	        ICPPInternalBinding cpp = (ICPPInternalBinding) obj;
-	        // for bindings in global or namespace scope we don't know whether there is a 
+	        // For bindings in global or namespace scope we don't know whether there is a 
 	        // previous declaration in one of the skipped header files. For bindings that
 	        // are likely to be redeclared we need to assume that there is a declaration
 	        // in one of the headers.
@@ -1865,7 +1865,8 @@ public class CPPSemantics {
 	    if (pointOfDecl < 0 && nd != null) {
             ASTNodeProperty prop = nd.getPropertyInParent();
             if (prop == IASTDeclarator.DECLARATOR_NAME || nd instanceof IASTDeclarator) {
-                // point of declaration for a name is immediately after its complete declarator and before its initializer
+                // Point of declaration for a name is immediately after its complete declarator
+            	// and before its initializer.
                 IASTDeclarator dtor = (IASTDeclarator)((nd instanceof IASTDeclarator) ? nd : nd.getParent());
                 while (dtor.getParent() instanceof IASTDeclarator)
                     dtor = (IASTDeclarator) dtor.getParent();
@@ -1875,7 +1876,8 @@ public class CPPSemantics {
                 else
                     pointOfDecl = ((ASTNode) dtor).getOffset() + ((ASTNode) dtor).getLength();
             } else if (prop == IASTEnumerator.ENUMERATOR_NAME) {
-                // point of declaration for an enumerator is immediately after it enumerator-definition
+                // Point of declaration for an enumerator is immediately after it
+            	// enumerator-definition
                 IASTEnumerator enumtor = (IASTEnumerator) nd.getParent();
                 if (enumtor.getValue() != null) {
                     ASTNode exp = (ASTNode) enumtor.getValue();
@@ -1906,7 +1908,7 @@ public class CPPSemantics {
 			} else if (cpp instanceof ICompositeType || cpp instanceof IEnumeration) {
 				IScope scope= cpp.getScope();
 				if (!(scope instanceof ICPPBlockScope) && scope instanceof ICPPNamespaceScope) {
-					// if this is not the definition, it may be found in a header. (bug 229571)
+					// If this is not the definition, it may be found in a header. (bug 229571)
 					if (cpp.getDefinition() == null) {
 						return true;
 					}
@@ -1956,7 +1958,7 @@ public class CPPSemantics {
 	            continue;
 	        }
 
-	        // select among those bindings that have been created without problems.
+	        // Select among those bindings that have been created without problems.
         	if (temp instanceof IProblemBinding)
 	        	continue;
 
@@ -1984,7 +1986,7 @@ public class CPPSemantics {
 	        		fns = new ObjectSet<ICPPFunction>(2);
 	        	fns.put((ICPPFunction) temp);
 	        } else if (temp instanceof IType) {
-		        // specializations are selected during instantiation
+		        // Specializations are selected during instantiation
 	        	if (temp instanceof ICPPClassTemplatePartialSpecialization) 
 		        	continue;
 	        	if (temp instanceof ICPPTemplateInstance) {
@@ -2213,7 +2215,7 @@ public class CPPSemantics {
     				return -1;	// function from ast
     			}
     		}
-    		// everything is from the index
+    		// Everything is from the index
     		if (!isReachableFromAst(data.tu, obj)) {
     			return -1; // obj not reachable
     		} 

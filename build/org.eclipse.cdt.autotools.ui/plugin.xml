@@ -248,7 +248,7 @@
             category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
             class="org.eclipse.cdt.internal.autotools.ui.preferences.AutotoolsPreferencePage"
             id="org.eclipse.cdt.autotools.ui.preferences1"
-            name="%PreferencAutotools.name">
+            name="%PreferenceAutotools.name">
       </page>
       <page
             category="org.eclipse.cdt.autotools.ui.preferences1"

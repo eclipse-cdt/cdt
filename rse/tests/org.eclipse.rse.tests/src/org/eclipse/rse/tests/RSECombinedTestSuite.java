@@ -48,6 +48,7 @@ public class RSECombinedTestSuite extends DelegatingTestSuiteHolder {
 
 		// add the single test suites to the overall one here.
 		suite.addTest(org.eclipse.rse.tests.core.AllTests.suite());
+		suite.addTest(org.eclipse.rse.tests.core.passwords.PasswordsTestSuite.suite());
 		suite.addTest(org.eclipse.rse.tests.core.connection.RSEConnectionTestSuite.suite());
 		suite.addTest(org.eclipse.rse.tests.core.registries.RSERegistriesTestSuite.suite());
 		suite.addTest(org.eclipse.rse.tests.internal.RSEInternalFrameworkTestSuite.suite());

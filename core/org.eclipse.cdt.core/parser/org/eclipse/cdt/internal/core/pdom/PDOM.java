@@ -469,6 +469,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 			public int compare(long record) throws CoreException {
 				return 0;
 			}
+
 			@Override
 			public boolean visit(long record) throws CoreException {
 				PDOMFile file = PDOMFile.recreateFile(PDOM.this, record);

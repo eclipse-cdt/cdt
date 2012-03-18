@@ -102,7 +102,7 @@ public class CIndex implements IIndex {
 	public IIndexBinding[] findBindings(Pattern[] patterns, boolean isFullyQualified, IndexFilter filter,
 			IProgressMonitor monitor) throws CoreException {
 		if (SPECIALCASE_SINGLES && fFragments.length == 1) {
-			 return fFragments[0].findBindings(patterns, isFullyQualified, filter, monitor);
+			return fFragments[0].findBindings(patterns, isFullyQualified, filter, monitor);
 		} else {
 			List<IIndexBinding[]> result = new ArrayList<IIndexBinding[]>();
 			ILinkage[] linkages = Linkage.getIndexerLinkages();

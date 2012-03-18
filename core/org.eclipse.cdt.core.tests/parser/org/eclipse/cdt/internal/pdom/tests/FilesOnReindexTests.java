@@ -72,7 +72,7 @@ public class FilesOnReindexTests extends PDOMTestBase {
 	
 	void performAssertions(IFile file) throws CoreException {
 		IIndex index = CCorePlugin.getIndexManager().getIndex(project);
-		assertNotNull(index.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(file)));
+		assertTrue(index.getFiles(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(file)).length != 0);
 		
 		IBinding[] bs = index.findBindings(Pattern.compile("C"), true, IndexFilter.ALL, new NullProgressMonitor());
 		assertEquals(1, bs.length);

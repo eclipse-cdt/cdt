@@ -38,12 +38,11 @@ public class ExtractLocalVariableRefactoringDescriptor extends CRefactoringDescr
 
 	@Override
 	public CRefactoring createRefactoring(RefactoringStatus status) throws CoreException {
-		return null;
-//		ISelection selection = getSelection();
-//		ICProject proj = getCProject();
-//		ExtractLocalVariableRefactoring refactoring =
-//				new ExtractLocalVariableRefactoring(getTranslationUnit(), selection, proj);
-//		refactoring.getRefactoringInfo().setName(arguments.get(NAME));
-//		return refactoring;
+		ISelection selection = getSelection();
+		ICProject proj = getCProject();
+		ExtractLocalVariableRefactoring refactoring =
+				new ExtractLocalVariableRefactoring(getTranslationUnit(), selection, proj);
+		refactoring.getRefactoringInfo().setName(arguments.get(NAME));
+		return refactoring;
 	}
 }

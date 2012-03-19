@@ -37,9 +37,8 @@ public class HideMethodRefactoringDescriptor extends CRefactoringDescriptor {
 
 	@Override
 	public CRefactoring createRefactoring(RefactoringStatus status) throws CoreException {
-		return null;
-//		ISelection selection = getSelection();
-//		ICProject proj = getCProject();
-//		return new HideMethodRefactoring(getTranslationUnit(), selection, proj);
+		ISelection selection = getSelection();
+		ICProject proj = getCProject();
+		return new HideMethodRefactoring(getTranslationUnit(), selection, proj);
 	}
 }

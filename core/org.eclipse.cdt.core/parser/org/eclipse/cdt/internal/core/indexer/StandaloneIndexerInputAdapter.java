@@ -8,6 +8,7 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     IBM Corporation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.indexer;
 
@@ -53,6 +54,11 @@ public class StandaloneIndexerInputAdapter extends IndexerInputAdapter {
 	@Override
 	public long getLastModified(IIndexFileLocation location) {
 		return new File(URIUtil.toPath(location.getURI()).toOSString()).lastModified();
+	}
+
+	@Override
+	public long getFileSize(IIndexFileLocation location) {
+		return new File(URIUtil.toPath(location.getURI()).toOSString()).length();
 	}
 
 	@Override

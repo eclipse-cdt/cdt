@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.pdom;
 
@@ -22,7 +23,6 @@ import org.eclipse.cdt.core.parser.IScannerInfo;
  * @since 5.0
  */
 public abstract class IndexerInputAdapter extends ASTFilePathResolver {
-
 	/**
 	 * Returns an object representing an input file for the given index location,
 	 * or <code>null</code>, if it does not exist.
@@ -33,6 +33,16 @@ public abstract class IndexerInputAdapter extends ASTFilePathResolver {
 	 * Return the last modification date for the file denoted by the index location.
 	 */
 	public abstract long getLastModified(IIndexFileLocation location);
+
+	/**
+	 * Returns the size of the file in bytes, or 0 if the file does not exist.
+	 */
+	public abstract long getFileSize(IIndexFileLocation ifl);
+
+	/**
+	 * Returns the encoding for the file.
+	 */
+	public abstract String getEncoding(IIndexFileLocation ifl);
 
 	/**
 	 * Create an index location for the given input file.
@@ -82,9 +92,4 @@ public abstract class IndexerInputAdapter extends ASTFilePathResolver {
 	 * Returns a code reader for the given input file.
 	 */
 	public abstract FileContent getCodeReader(Object tu);
-
-	/**
-	 * Returns the encoding for the file.
-	 */
-	public abstract String getEncoding(IIndexFileLocation ifl);
 }

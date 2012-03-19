@@ -560,13 +560,17 @@ abstract public class PDOMWriter {
 				index.setFileContent(file, linkageID, includeInfoArray, macros, names, fResolver, lock);
 			}
 			file.setTimestamp(fResolver.getLastModified(location));
-			file.setEncodingHashcode(fResolver.getEncoding(location).hashCode());
+			file.setSizeAndEncodingHashcode(computeFileSizeAndEncodingHashcode(location));
 			file.setContentsHash(astFile.fContentsHash);
 			file = index.commitUncommittedFile();
 		} finally {
 			index.clearUncommittedFile();
 		}
 		return file;
+	}
+
+	protected int computeFileSizeAndEncodingHashcode(IIndexFileLocation location) {
+		return ((int) fResolver.getFileSize(location)) + 31 * fResolver.getEncoding(location).hashCode();
 	}
 
 	private boolean isContextFor(IIndexFragmentFile oldFile, IASTPreprocessorIncludeStatement stmt)

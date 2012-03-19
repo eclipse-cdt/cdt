@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *	  IBM Corporation
+ *     Markus Schorn - initial API and implementation
+ *	   IBM Corporation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.indexer;
 
@@ -39,7 +39,6 @@ import com.ibm.icu.text.MessageFormat;
  * @since 4.0
  */
 public abstract class StandaloneIndexerTask extends AbstractIndexerTask {
-	
 	protected StandaloneIndexer fIndexer;
 	protected IParserLogService fLogger;
 
@@ -47,7 +46,8 @@ public abstract class StandaloneIndexerTask extends AbstractIndexerTask {
 		ILinkage.CPP_LINKAGE_ID, ILinkage.C_LINKAGE_ID, ILinkage.FORTRAN_LINKAGE_ID
 	};
 	
-	protected StandaloneIndexerTask(StandaloneIndexer indexer, Collection<String> added, Collection<String> changed, Collection<String> removed, boolean isFast) {
+	protected StandaloneIndexerTask(StandaloneIndexer indexer, Collection<String> added,
+			Collection<String> changed, Collection<String> removed, boolean isFast) {
 		super(concat(added, changed), removed.toArray(), new StandaloneIndexerInputAdapter(indexer), isFast);
 		fIndexer= indexer;
 		setShowActivity(fIndexer.getShowActivity());
@@ -57,8 +57,7 @@ public abstract class StandaloneIndexerTask extends AbstractIndexerTask {
 		if (getIndexAllFiles()) {
 			setIndexFilesWithoutBuildConfiguration(true);
 			setIndexHeadersWithoutContext(UnusedHeaderStrategy.useDefaultLanguage);
-		}
-		else {
+		} else {
 			setIndexFilesWithoutBuildConfiguration(false);
 			setIndexHeadersWithoutContext(UnusedHeaderStrategy.skip);
 		}
@@ -104,7 +103,6 @@ public abstract class StandaloneIndexerTask extends AbstractIndexerTask {
 	protected final IWritableIndex createIndex() {
 		return fIndexer.getIndex();
 	}
-
 	
 	public final void run(IProgressMonitor monitor) throws InterruptedException {
 		long start = System.currentTimeMillis();
@@ -160,33 +158,22 @@ public abstract class StandaloneIndexerTask extends AbstractIndexerTask {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.pdom.AbstractIndexerTask#createStatus(java.lang.String)
-	 */
 	@Override
 	protected IStatus createStatus(String msg) {
 		return new Status(IStatus.ERROR, "org.eclipse.cdt.core", msg, null); //$NON-NLS-1$
 	}
-	
-	
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.pdom.PDOMWriter#createStatus(java.lang.String, java.lang.Throwable)
-	 */
 	@Override
 	protected IStatus createStatus(String msg, Throwable e) {
 		return new Status(IStatus.ERROR, "org.eclipse.cdt.core", msg, e); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.pdom.AbstractIndexerTask#getMessage(org.eclipse.cdt.internal.core.pdom.AbstractIndexerTask.MessageKind, java.lang.Object[])
-	 */
 	@Override
 	protected String getMessage(MessageKind kind, Object... arguments) {
-		// unfortunately we don't have OSGi on the remote system so for now we'll just settle for
+		// Unfortunately we don't have OSGi on the remote system so for now we'll just settle for
 		// English strings
 		// TODO: find a way to do non-OSGi NLS
-		switch(kind) {
+		switch (kind) {
 		case parsingFileTask:
 			return MessageFormat.format("parsing {0} ({1})", arguments); //$NON-NLS-1$
 			
@@ -200,9 +187,6 @@ public abstract class StandaloneIndexerTask extends AbstractIndexerTask {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.pdom.AbstractIndexerTask#getLogService()
-	 */
 	@Override
 	protected IParserLogService getLogService() {
 		if (fLogger != null)
@@ -214,36 +198,23 @@ public abstract class StandaloneIndexerTask extends AbstractIndexerTask {
 		fLogger = logService;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.pdom.AbstractIndexerTask#logError(org.eclipse.core.runtime.IStatus)
-	 */
 	@Override
 	protected void logError(IStatus s) {
 		trace(s.getMessage());
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.pdom.AbstractIndexerTask#logException(java.lang.Throwable)
-	 */
 	@Override
 	protected void logException(Throwable e) {
 		trace(e.getMessage());
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.pdom.AbstractIndexerTask#getLinkagesToParse()
-	 */
 	@Override
 	protected int[] getLinkagesToParse() {
 		return IDS_FOR_LINKAGES_TO_INDEX;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.pdom.PDOMWriter#trace(java.lang.String)
-	 */
 	@Override
 	protected void trace(String message) {		
 		getLogService().traceLog(message);
 	}
-
 }

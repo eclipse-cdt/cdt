@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *    Andrew Ferguson (Symbian)
- *    Sergey Prigogin (Google)
+ *     Markus Schorn - initial API and implementation
+ *     Andrew Ferguson (Symbian)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.core.index;
 
@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.CoreException;
  * @since 4.0
  */
 public interface IIndexInclude {
-	IIndexInclude[] EMPTY_INCLUDES_ARRAY = new IIndexInclude[0];
+	IIndexInclude[] EMPTY_INCLUDES_ARRAY = {};
 
 	/**
 	 * Returns the file that contains this directive.

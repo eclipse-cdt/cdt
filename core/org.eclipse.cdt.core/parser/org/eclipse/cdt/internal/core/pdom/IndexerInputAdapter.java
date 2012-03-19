@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.pdom;
 
@@ -82,6 +82,7 @@ public abstract class IndexerInputAdapter extends ASTFilePathResolver {
 	 * Returns a code reader for the given input file.
 	 */
 	public abstract FileContent getCodeReader(Object tu);
+
 	/**
 	 * Returns the encoding for the file.
 	 */

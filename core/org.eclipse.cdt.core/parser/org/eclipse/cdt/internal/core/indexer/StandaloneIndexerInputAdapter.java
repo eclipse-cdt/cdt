@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *    IBM Corporation
+ *     Markus Schorn - initial API and implementation
+ *     IBM Corporation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.indexer;
 
@@ -55,7 +55,6 @@ public class StandaloneIndexerInputAdapter extends IndexerInputAdapter {
 		return new File(URIUtil.toPath(location.getURI()).toOSString()).lastModified();
 	}
 
-	
 	@Override
 	public String getEncoding(IIndexFileLocation ifl) {
 		String encoding= getFileEncoding(getASTPath(ifl));
@@ -116,7 +115,6 @@ public class StandaloneIndexerInputAdapter extends IndexerInputAdapter {
 		return result;
 	}
 
-	
 	@Override
 	public boolean doesIncludeFileExist(String includePath) {
 		return fExistsCache.isFile(includePath);
@@ -182,7 +180,7 @@ public class StandaloneIndexerInputAdapter extends IndexerInputAdapter {
 	public AbstractLanguage[] getLanguages(Object tu, UnusedHeaderStrategy strat) {
 		ILanguage language = fIndexer.getLanguageMapper().getLanguage(tu.toString());
 		if (language instanceof AbstractLanguage) {
-			return new AbstractLanguage[] {(AbstractLanguage) language};
+			return new AbstractLanguage[] { (AbstractLanguage) language };
 		}
 		return new AbstractLanguage[0];
 	}
@@ -199,5 +197,4 @@ public class StandaloneIndexerInputAdapter extends IndexerInputAdapter {
 	public boolean isCaseInsensitiveFileSystem() {
 		return new File("a").equals(new File("A")); 
 	}
-
 }

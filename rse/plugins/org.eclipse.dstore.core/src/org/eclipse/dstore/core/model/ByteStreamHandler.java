@@ -96,7 +96,10 @@ public class ByteStreamHandler implements IByteStreamHandler
 						String n = file.getName();			
 						File backupFile = new File(parent, '.' + n + '~');
 						_dataStore.trace("Backing up as "+backupFile.getAbsolutePath()); //$NON-NLS-1$
-						file.renameTo(backupFile);
+						if(!file.renameTo(backupFile) && backupFile.exists()) {
+							backupFile.delete();
+							file.renameTo(backupFile);
+						}
 					}
 				}
 

@@ -960,7 +960,7 @@ abstract class FlowAnalyzer extends ASTGenericVisitor {
 			return leave((ICASTDesignatedInitializer) node);
 		} else if (node instanceof IASTInitializerList) {
 			return leave((ICPPASTConstructorChainInitializer) node);
-		} else if (node instanceof IASTInitializerList) {
+		} else if (node instanceof ICPPASTConstructorInitializer) {
 			return leave((ICPPASTConstructorInitializer) node);
 		}
 		return PROCESS_SKIP;

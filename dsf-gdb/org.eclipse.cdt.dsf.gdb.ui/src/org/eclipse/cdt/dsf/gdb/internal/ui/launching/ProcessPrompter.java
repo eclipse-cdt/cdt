@@ -97,6 +97,12 @@ public class ProcessPrompter implements IStatusHandler {
 					// we will get confused when using path.lastSegment(), so,
 					// let's only keep the name to be sure
 					String name = info.getName();
+					if (name == null || name.isEmpty()) {
+						// Skip elements that have no name
+						// Bug 374823
+						return null;
+					}
+					
 					name = name.split("\\s", 2)[0]; //$NON-NLS-1$
 					
 					IPath path = new Path(name);

@@ -60,13 +60,13 @@ import org.eclipse.core.runtime.Status;
 import org.osgi.framework.BundleContext;
 
 /**
- * This class implements the IGDBHardware interface which gives access
+ * This class implements the {@link IGDBHardwareAndOS} interface which gives access
  * to hardware information about the target.
  * 
  * @since 4.1
  */
 @SuppressWarnings("restriction")
-public class GDBHardware extends AbstractDsfService implements IGDBHardware, ICachingService {
+public class GDBHardwareAndOS extends AbstractDsfService implements IGDBHardwareAndOS, ICachingService {
 
 	@Immutable
 	protected static class GDBCPUDMC extends AbstractDMContext 
@@ -171,7 +171,7 @@ public class GDBHardware extends AbstractDsfService implements IGDBHardware, ICa
     // Bug 374293
 	private boolean fSessionInitializationComplete;
 
-    public GDBHardware(DsfSession session) {
+    public GDBHardwareAndOS(DsfSession session) {
     	super(session);
     }
 
@@ -216,8 +216,8 @@ public class GDBHardware extends AbstractDsfService implements IGDBHardware, ICa
         getSession().addServiceEventListener(this, null);
 
         // Register this service.
-		register(new String[] { IGDBHardware.class.getName(),
-				                GDBHardware.class.getName() },
+		register(new String[] { IGDBHardwareAndOS.class.getName(),
+				                GDBHardwareAndOS.class.getName() },
 				 new Hashtable<String, String>());
         
 		requestMonitor.done();

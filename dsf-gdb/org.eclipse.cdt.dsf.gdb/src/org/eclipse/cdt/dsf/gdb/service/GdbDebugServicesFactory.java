@@ -96,10 +96,10 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 					return (V)createTraceControlService(session, (ILaunchConfiguration)arg);
 				}
 			}
-		} else if (IGDBHardware.class.isAssignableFrom(clazz)) {
+		} else if (IGDBHardwareAndOS.class.isAssignableFrom(clazz)) {
 			for (Object arg : optionalArguments) {
 				if (arg instanceof ILaunchConfiguration) {
-					return (V)createHardwareService(session, (ILaunchConfiguration)arg);
+					return (V)createHardwareAndOSService(session, (ILaunchConfiguration)arg);
 				}
 			}
 	}
@@ -223,7 +223,7 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 	}
 	
 	/** @since 4.1 */
-	protected IGDBHardware createHardwareService(DsfSession session, ILaunchConfiguration config) {
-		return new GDBHardware(session);
+	protected IGDBHardwareAndOS createHardwareAndOSService(DsfSession session, ILaunchConfiguration config) {
+		return new GDBHardwareAndOS(session);
 	}
 }

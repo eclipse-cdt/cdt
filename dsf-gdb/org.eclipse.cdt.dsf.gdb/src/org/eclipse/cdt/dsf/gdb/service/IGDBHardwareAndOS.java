@@ -25,7 +25,7 @@ import org.eclipse.cdt.dsf.service.IDsfService;
  * 
  * @since 4.1
  */
-public interface IGDBHardware extends IDsfService {
+public interface IGDBHardwareAndOS extends IDsfService {
 
     /**
      * The physical target that has CPUs and Cores.

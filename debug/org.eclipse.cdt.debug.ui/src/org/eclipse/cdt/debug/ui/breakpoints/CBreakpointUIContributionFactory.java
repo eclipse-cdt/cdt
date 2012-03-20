@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 QNX Software Systems and others.
+ * Copyright (c) 2008 QNX Software Systems and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -13,10 +13,8 @@
 package org.eclipse.cdt.debug.ui.breakpoints;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Map;
 
-import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.IMarker;
@@ -42,60 +40,23 @@ public class CBreakpointUIContributionFactory {
 	}
 
 	/**
-	 * Calculates the breakpoint contributions for the given breakpoint.
 	 * 
-	 * @param breakpoint Breakpoint to find UI contributions for.
+	 * @param breakpoint
 	 * @return non-null array of ICBreakpointsUIContribution 
-	 * @throws CoreException if cannot get marker attributes from bearkpoint
+	 * @throws CoreException 
+	 * @throws CoreException if cannot get marker attributes from berakpoint
 	 */
+
 	public ICBreakpointsUIContribution[] getBreakpointUIContributions(IBreakpoint breakpoint) throws CoreException {
 		String debugModelId = breakpoint.getModelIdentifier();
 		IMarker bmarker = breakpoint.getMarker();
-		Map<String, Object> attributes = Collections.emptyMap();
-		String markerType = CDIDebugModel.calculateMarkerType(breakpoint);
-		if (bmarker != null) {
-		    Map<String, Object> _attributes = bmarker.getAttributes();
-		    attributes = _attributes;
-	        markerType = bmarker.getType();
-		}
+		Map attributes = bmarker.getAttributes();
+		String markerType = bmarker.getType();
 		return getBreakpointUIContributions(debugModelId, markerType, attributes);
 	}
 
-    /**
-     * Calculates the breakpoint contributions for the given breakpoint.
-     * 
-     * @param breakpoint Breakpoint to find UI contributions for.
-     * @param attributes Attributes of the breakpoint
-     * @return non-null array of ICBreakpointsUIContribution 
-     * @throws CoreException if cannot get marker attributes from bearkpoint
-     * @since 7.2
-     */
-	public ICBreakpointsUIContribution[] getBreakpointUIContributions(IBreakpoint breakpoint, 
-	    Map<String, Object> attributes) 
-	    throws CoreException 
-	{
-	    String debugModelId = breakpoint.getModelIdentifier();
-        IMarker bmarker = breakpoint.getMarker();
-        String markerType = CDIDebugModel.calculateMarkerType(breakpoint);
-        if (bmarker != null) {
-            markerType = bmarker.getType();
-        }
-        return getBreakpointUIContributions(debugModelId, markerType, attributes);
-    }
-	
-    /**
-     * Calculates the breakpoint UI contributions for the given breakpoint.
-     * 
-     * @param breakpoint Breakpoint to find UI contributions for.
-     * @param markerType Marker type of the breakpoint.
-     * @param attributes Attributes of the breakpoint
-     * @return non-null array of ICBreakpointsUIContribution 
-     * @throws CoreException 
-     * @throws CoreException if cannot get marker attributes from berakpoint
-     */
 	public ICBreakpointsUIContribution[] getBreakpointUIContributions(String debugModelId, String markerType,
-			Map<String, Object> attributes) 
-	{
+			Map attributes) {
 		ArrayList<ICBreakpointsUIContribution> list = new ArrayList<ICBreakpointsUIContribution>();
 		for (ICBreakpointsUIContribution con : contributions) {
 			try {
@@ -224,9 +185,9 @@ public class CBreakpointUIContributionFactory {
 		String elementValue = configurationElement.getAttribute(name);
 		if (elementValue == null)
 			CDebugUIPlugin.log(new Status(IStatus.ERROR, CDebugUIPlugin.getUniqueIdentifier(),
-					DebugPlugin.INTERNAL_ERROR, "Extension " //$NON-NLS-1$
+					DebugPlugin.INTERNAL_ERROR, "Extension "
 							+ configurationElement.getDeclaringExtension().getUniqueIdentifier()
-							+ " missing required attribute: " + name, null)); //$NON-NLS-1$
+							+ " missing required attribute: " + name, null));
 		return elementValue;
 	}
 

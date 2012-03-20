@@ -57,13 +57,13 @@ public abstract class CRefactoringDescriptor extends RefactoringDescriptor {
 	@Override
 	public abstract CRefactoring createRefactoring(RefactoringStatus status) throws CoreException;
 
-	@Override
-	public CRefactoringContext createRefactoringContext(RefactoringStatus status) throws CoreException {
-		CRefactoring refactoring= createRefactoring(status);
-		if (refactoring == null)
-			return null;
-		return new CRefactoringContext(refactoring);
-	}
+//	@Override
+//	public CRefactoringContext createRefactoringContext(RefactoringStatus status) throws CoreException {
+//		CRefactoring refactoring= createRefactoring(status);
+//		if (refactoring == null)
+//			return null;
+//		return new CRefactoringContext(refactoring);
+//	}
 
 	protected ISelection getSelection() throws CoreException {
 		ISelection selection;

@@ -25,6 +25,8 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class CWatchpoint extends CBreakpoint implements ICWatchpoint2 {
 
+	private static final String C_WATCHPOINT = "org.eclipse.cdt.debug.core.cWatchpointMarker"; //$NON-NLS-1$
+
 	/**
 	 * Constructor for CWatchpoint.
 	 */
@@ -35,14 +37,13 @@ public class CWatchpoint extends CBreakpoint implements ICWatchpoint2 {
 	 * Constructor for CWatchpoint.
 	 */
 	public CWatchpoint( IResource resource, Map<String, Object> attributes, boolean add ) throws CoreException {
-		super( resource, attributes, add );
+		super( resource, getMarkerType(), attributes, add );
 	}
 
-	@Override
-	public String getMarkerType() {
-	    return C_WATCHPOINT_MARKER;
+	protected CWatchpoint( IResource resource, String marker, Map<String, Object> attributes, boolean add ) throws CoreException {
+		super( resource, marker, attributes, add );
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICWatchpoint#isWriteType()
 	 */
@@ -65,6 +66,13 @@ public class CWatchpoint extends CBreakpoint implements ICWatchpoint2 {
 	@Override
 	public String getExpression() throws CoreException {
 		return ensureMarker().getAttribute( EXPRESSION, "" ); //$NON-NLS-1$
+	}
+
+	/**
+	 * Returns the type of marker associated with this type of breakpoints
+	 */
+	public static String getMarkerType() {
+		return C_WATCHPOINT;
 	}
 
 	/* (non-Javadoc)

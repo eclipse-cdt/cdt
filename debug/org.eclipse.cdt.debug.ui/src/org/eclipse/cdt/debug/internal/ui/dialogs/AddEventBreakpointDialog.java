@@ -18,7 +18,8 @@ import java.util.Map;
 import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.model.ICBreakpointType;
 import org.eclipse.cdt.debug.core.model.ICEventBreakpoint;
-import org.eclipse.cdt.debug.internal.ui.breakpoints.CBreakpointPreferenceStore;
+import org.eclipse.cdt.debug.internal.core.breakpoints.CEventBreakpoint;
+import org.eclipse.cdt.debug.internal.ui.propertypages.CBreakpointPreferenceStore;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.debug.ui.breakpoints.CBreakpointUIContributionFactory;
 import org.eclipse.cdt.debug.ui.breakpoints.ICBreakpointsUIContribution;
@@ -74,10 +75,10 @@ public class AddEventBreakpointDialog extends Dialog implements ModifyListener, 
 		protected void createFieldEditors() {
 			Composite parent = getFieldEditorParent();
 			try {
-				Map<String, Object> map = new HashMap<String, Object>();
+				Map map = new HashMap();
 				map.put(ICEventBreakpoint.EVENT_TYPE_ID, eventType);
 				ICBreakpointsUIContribution cons[] = CBreakpointUIContributionFactory.getInstance()
-						.getBreakpointUIContributions(modelId, ICEventBreakpoint.C_EVENT_BREAKPOINT_MARKER, map);
+						.getBreakpointUIContributions(modelId, CEventBreakpoint.getMarkerType(), map);
 				for (ICBreakpointsUIContribution con : cons) {
 
 					if (con.getId().equals(ICEventBreakpoint.EVENT_TYPE_ID)) continue;
@@ -115,7 +116,7 @@ public class AddEventBreakpointDialog extends Dialog implements ModifyListener, 
 
 	private void loadEventTypes() {
 		ICBreakpointsUIContribution[] cons = factory.getBreakpointUIContributions(debugModelId,
-		    ICEventBreakpoint.C_EVENT_BREAKPOINT_MARKER, null);
+				CEventBreakpoint.getMarkerType(), null);
 		for (int i = 0; i < cons.length; i++) {
 			ICBreakpointsUIContribution con = cons[i];
 			if (con.getId().equals(ICEventBreakpoint.EVENT_TYPE_ID)) {

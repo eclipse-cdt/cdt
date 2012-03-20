@@ -27,6 +27,8 @@ import com.ibm.icu.text.MessageFormat;
  */
 public class CAddressTracepoint extends AbstractTracepoint implements ICAddressBreakpoint, ICTracepoint {
 
+	private static final String C_ADDRESS_TRACEPOINT_MARKER = "org.eclipse.cdt.debug.core.cAddressTracepointMarker"; //$NON-NLS-1$
+
 	/**
 	 * Constructor for CAddressTracepoint.
 	 */
@@ -37,13 +39,13 @@ public class CAddressTracepoint extends AbstractTracepoint implements ICAddressB
 	 * Constructor for CAddressTracepoint.
 	 */
 	public CAddressTracepoint( IResource resource, Map<String, Object> attributes, boolean add ) throws CoreException {
-		super( resource, attributes, add );
+		super( resource, getMarkerType(), attributes, add );
 	}
 
 	/**
 	 * Returns the type of marker associated with this type of breakpoints
 	 */
-	public String getMarkerType() {
+	public static String getMarkerType() {
 		return C_ADDRESS_TRACEPOINT_MARKER;
 	}
 

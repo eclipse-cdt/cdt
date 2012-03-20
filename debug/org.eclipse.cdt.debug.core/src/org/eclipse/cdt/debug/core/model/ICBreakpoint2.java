@@ -36,9 +36,4 @@ public interface ICBreakpoint2 extends ICBreakpoint {
      */
     public void refreshMessage() throws CoreException;    
 
-    /**
-     * Returns the marker type of the given CDT Breakpoint.
-     * @return marker type ID
-     */
-    public String getMarkerType();
 }

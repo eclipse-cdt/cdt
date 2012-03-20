@@ -462,7 +462,7 @@
             id="org.eclipse.cdt.dsf.debug.ui.disassemblyViewToggleBreakpointTester"
             namespace="org.eclipse.cdt.dsf.debug.ui"
             properties="isDisassemblyViewSupportsCBreakpoint"
-            type="org.eclipse.cdt.dsf.debug.internal.ui.disassembly.DisassemblyView">
+            type="org.eclipse.cdt.dsf.debug.internal.ui.disassembly.DisassemblyPart">
       </propertyTester>
    </extension>
 	<extension 

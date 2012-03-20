@@ -336,11 +336,6 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 		return types.toArray(new ITypeInfo[types.size()]);
 	}
 
-	@Override
-	protected final void setListElements(Object[] elements) {
-		super.setListElements(elements);
-	}
-
 	/**
 	 * @deprecated Unsupported
 	 */
@@ -350,6 +345,14 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 		throw new UnsupportedOperationException();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.dialogs.AbstractElementListSelectionDialog#handleElementsChanged()
+	 */
+	@Override
+	protected void handleElementsChanged() {
+		updateOkState();
+	}
+	
 	@Override
 	protected void handleEmptyList() {
 		updateOkState();

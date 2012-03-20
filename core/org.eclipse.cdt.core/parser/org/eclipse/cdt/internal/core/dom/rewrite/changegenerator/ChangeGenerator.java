@@ -345,8 +345,12 @@ public class ChangeGenerator extends ASTVisitor {
 				int offset = edit.getOffset();
 				int end = offset + edit.getLength();
 				int newOffset = document.getLineInformationOfOffset(offset).getOffset();
-				int newEnd =  endOffset(document.getLineInformationOfOffset(end));
 				edit = originalEdits[i];
+				int originalEnd = edit.getExclusiveEnd();
+				// Expand to the end of the line unless the end of the edit region is at
+				// the beginning of line both, before and after the change.
+				int newEnd = (originalEnd == 0 || code.charAt(originalEnd - 1) == '\n') && end == newOffset ?
+						end : endOffset(document.getLineInformationOfOffset(end));
 				int offsetBefore = edit.getOffset();
 				int newOffsetBefore = newOffset + offsetBefore - offset;
 				int newEndBefore = newEnd + offsetBefore + edit.getLength() - end;

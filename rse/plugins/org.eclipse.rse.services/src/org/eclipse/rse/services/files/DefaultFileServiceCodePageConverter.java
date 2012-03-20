@@ -99,7 +99,6 @@ public class DefaultFileServiceCodePageConverter implements
 						file.delete();
 						altFile.renameTo(file);
 					}
-					altFile.renameTo(file);
 				}
 
 			}

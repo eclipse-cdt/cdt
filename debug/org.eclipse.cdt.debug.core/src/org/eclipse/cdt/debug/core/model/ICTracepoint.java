@@ -18,6 +18,31 @@ import org.eclipse.core.runtime.CoreException;
  * @since 7.0
  */
 public interface ICTracepoint extends ICLineBreakpoint {
+
+    /** 
+     * Breakpoint marker type for this breakpoint type.
+     * @since 7.2
+     */
+    public static final String C_TRACEPOINT_MARKER = "org.eclipse.cdt.debug.core.cTracepointMarker"; //$NON-NLS-1$
+
+    /** 
+     * Breakpoint marker type for this breakpoint type.
+     * @since 7.2
+     */
+    public static final String C_LINE_TRACEPOINT_MARKER = "org.eclipse.cdt.debug.core.cLineTracepointMarker"; //$NON-NLS-1$
+    
+    /** 
+     * Breakpoint marker type for this breakpoint type.
+     * @since 7.2
+     */
+    public static final String C_ADDRESS_TRACEPOINT_MARKER = "org.eclipse.cdt.debug.core.cAddressTracepointMarker"; //$NON-NLS-1$
+
+    /** 
+     * Breakpoint marker type for this breakpoint type.
+     * @since 7.2
+     */
+    public static final String C_FUNCTION_TRACEPOINT_MARKER = "org.eclipse.cdt.debug.core.cFunctionTracepointMarker"; //$NON-NLS-1$
+    
 	/**
 	 * Tracepoint attribute storing a tracepoint's pass count value (value
 	 * <code>"org.eclipse.cdt.debug.core.passCount"</code>). This attribute

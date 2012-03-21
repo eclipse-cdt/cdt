@@ -22,6 +22,13 @@ import org.eclipse.core.runtime.CoreException;
  * @since 7.0
  */
 public interface ICEventBreakpoint extends ICBreakpoint {
+
+    /** 
+     * Breakpoint marker type for this breakpoint type.
+     * @since 7.2
+     */    
+    public static final String C_EVENT_BREAKPOINT_MARKER = "org.eclipse.cdt.debug.core.cEventBreakpointMarker"; //$NON-NLS-1$;
+    
 	/**
 	 * Breakpoint attribute storing the event breakpoint event id. Basically,
 	 * this indicates what type of event the breakpoint catches--e.g., a C++

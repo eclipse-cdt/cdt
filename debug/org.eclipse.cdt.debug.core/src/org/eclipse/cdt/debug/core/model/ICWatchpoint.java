@@ -18,6 +18,12 @@ import org.eclipse.debug.core.model.ILineBreakpoint;
  */
 public interface ICWatchpoint extends ICBreakpoint, ILineBreakpoint {
 
+    /** 
+     * Breakpoint marker type for this breakpoint type.
+     * @since 7.2
+     */
+    public static final String C_WATCHPOINT_MARKER = "org.eclipse.cdt.debug.core.cWatchpointMarker"; //$NON-NLS-1$
+    
 	/**
 	 * Watchpoint attribute storing the expression associated with this 
 	 * watchpoint (value <code>"org.eclipse.cdt.debug.core.expression"</code>).

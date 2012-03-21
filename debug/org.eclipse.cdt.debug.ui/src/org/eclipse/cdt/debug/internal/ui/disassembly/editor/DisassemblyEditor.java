@@ -13,8 +13,8 @@ package org.eclipse.cdt.debug.internal.ui.disassembly.editor;
 
 import org.eclipse.cdt.debug.core.disassembly.IDisassemblyContextProvider;
 import org.eclipse.cdt.debug.internal.ui.IInternalCDebugUIConstants;
-import org.eclipse.cdt.debug.internal.ui.actions.CBreakpointPropertiesRulerAction;
-import org.eclipse.cdt.debug.internal.ui.actions.EnableDisableBreakpointRulerAction;
+import org.eclipse.cdt.debug.internal.ui.actions.breakpoints.CBreakpointPropertiesRulerAction;
+import org.eclipse.cdt.debug.internal.ui.actions.breakpoints.EnableDisableBreakpointRulerAction;
 import org.eclipse.cdt.debug.internal.ui.disassembly.viewer.DisassemblyDocumentProvider;
 import org.eclipse.cdt.debug.internal.ui.disassembly.viewer.DisassemblyPane;
 import org.eclipse.cdt.debug.internal.ui.disassembly.viewer.DocumentContentProvider;

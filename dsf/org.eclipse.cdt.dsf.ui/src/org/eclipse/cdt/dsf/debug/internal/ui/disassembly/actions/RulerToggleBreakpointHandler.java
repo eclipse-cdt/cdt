@@ -17,6 +17,7 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.debug.ui.actions.ToggleBreakpointAction;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.handlers.HandlerUtil;
 
@@ -39,7 +40,14 @@ public class RulerToggleBreakpointHandler extends AbstractHandler {
 				final ToggleBreakpointAction toggleBpAction= new ToggleBreakpointAction(part, document, rulerInfo);
 				toggleBpAction.update();
 				if (toggleBpAction.isEnabled()) {
-					toggleBpAction.run();
+				    if (event.getTrigger() instanceof Event) {
+				        // Pass through the event that triggered the action.  
+				        // This will give toggle action access to key modifiers 
+				        // (shift, ctrl, etc.)
+				        toggleBpAction.runWithEvent((Event)event.getTrigger());
+				    } else {
+				        toggleBpAction.run();
+				    }
 				}
 			}
 		}

@@ -173,7 +173,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 			nodeFactory = ast.getASTNodeFactory();
 			container = findExtractableNodes();
 	
-			if (isProgressMonitorCanceld(sm, initStatus))
+			if (isProgressMonitorCanceled(sm, initStatus))
 				return initStatus;
 	
 			if (container.isEmpty()) {

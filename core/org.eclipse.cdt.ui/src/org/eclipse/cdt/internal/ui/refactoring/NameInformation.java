@@ -278,6 +278,7 @@ public class NameInformation {
 						if (!isWriteAccess) {
 							indirection = Indirection.REFERENCE;
 						}
+						// TODO(sprigogin): Verify availability of the copy ctor before passing by value
 					} else {
 						indirection = Indirection.POINTER;
 					}

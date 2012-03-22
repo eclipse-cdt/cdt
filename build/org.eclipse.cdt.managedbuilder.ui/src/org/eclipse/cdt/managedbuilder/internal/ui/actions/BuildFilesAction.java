@@ -31,7 +31,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Preferences;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
@@ -192,10 +191,7 @@ public class BuildFilesAction extends ActionDelegate implements
 		private final List<IFile> files;
 
 		BuildFilesJob(List<IFile> filesToBuild) {
-			super(
-					ManagedMakeMessages
-							.getResourceString("BuildFilesAction.buildingSelectedFiles")); //$NON-NLS-1$
-
+			super(ManagedMakeMessages.getResourceString("BuildFilesAction.buildingSelectedFiles")); //$NON-NLS-1$
 			files = filesToBuild;
 		}
 
@@ -204,43 +200,8 @@ public class BuildFilesAction extends ActionDelegate implements
 		 */
 		@Override
 		protected IStatus run(IProgressMonitor monitor) {
-
-			Iterator<IFile> iterator = files.iterator();
-
 			GeneratedMakefileBuilder builder = new GeneratedMakefileBuilder();
-
-			monitor
-					.beginTask(
-							ManagedMakeMessages
-									.getResourceString("BuildFilesAction.building"), files.size()); //$NON-NLS-1$
-
-			boolean isFirstFile = true;
-
-			while (iterator.hasNext()) {
-				IFile file = iterator.next();
-
-				IManagedBuildInfo buildInfo = ManagedBuildManager
-						.getBuildInfo(file.getProject());
-
-				IResource[] resources = { file };
-
-				// invoke the internal builder to do the build
-				builder.invokeInternalBuilder(resources, buildInfo
-						.getDefaultConfiguration(), false, false, isFirstFile,
-						!iterator.hasNext(), monitor);
-
-				if (isFirstFile) {
-					isFirstFile = false;
-				}
-
-				if (monitor.isCanceled()) {
-					return Status.CANCEL_STATUS;
-				}
-
-			}
-
-			monitor.done();
-			return Status.OK_STATUS;
+			return builder.invokeInternalBuilder(files, monitor);
 		}
 
 		/* (non-Javadoc)
@@ -260,9 +221,7 @@ public class BuildFilesAction extends ActionDelegate implements
 	 */
 	@Override
 	public void run(IAction action) {
-
 		List<IFile> selectedFiles = getSelectedBuildableFiles();
-
 		Job buildFilesJob = new BuildFilesJob(selectedFiles);
 
 		List<IProject> projects = getProjectsToBuild(selectedFiles);
@@ -277,7 +236,7 @@ public class BuildFilesAction extends ActionDelegate implements
 
 	private boolean shouldBeEnabled() {
 
-		// fix for Bugzilla 139663
+		// fix for bug 139663
 		// if build automatically is turned on, then this menu should be turned off as
 		// it will trigger the auto build
 		Preferences preferences = ResourcesPlugin.getPlugin().getPluginPreferences();

@@ -15,7 +15,7 @@ package org.eclipse.cdt.dsf.gdb.service.command;
 import org.eclipse.cdt.dsf.debug.service.IModules.ISymbolDMContext;
 import org.eclipse.cdt.dsf.debug.service.ISignals.ISignalsDMContext;
 import org.eclipse.cdt.dsf.debug.service.ISourceLookup.ISourceLookupDMContext;
-import org.eclipse.cdt.dsf.gdb.service.IGDBHardware.IHardwareTargetDMContext;
+import org.eclipse.cdt.dsf.gdb.service.IGDBHardwareAndOS.IHardwareTargetDMContext;
 import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceTargetDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.MIControlDMContext;
 

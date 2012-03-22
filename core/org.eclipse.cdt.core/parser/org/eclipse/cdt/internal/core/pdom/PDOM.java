@@ -956,7 +956,8 @@ public class PDOM extends PlatformObject implements IPDOM {
 			CCorePlugin.log(e);
 		}
 		assert lockCount == -1;
-		lastWriteAccess= System.currentTimeMillis();
+		if (!fEvent.isTrivial())
+			lastWriteAccess= System.currentTimeMillis();
 		final ChangeEvent event= fEvent;
 		fEvent= new ChangeEvent();
 		synchronized (mutex) {

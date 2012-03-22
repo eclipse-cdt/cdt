@@ -114,7 +114,7 @@ public class ExtractLocalVariableRefactoring extends CRefactoring {
 		}
 
 		sm.worked(1);
-		if (isProgressMonitorCanceld(sm, initStatus))
+		if (isProgressMonitorCanceled(sm, initStatus))
 			return initStatus;
 
 		boolean oneMarked = selectedRegion != null && isOneMarked(container.getNodesToWrite(), selectedRegion);
@@ -125,7 +125,7 @@ public class ExtractLocalVariableRefactoring extends CRefactoring {
 		}
 		sm.worked(1);
 
-		if (isProgressMonitorCanceld(sm, initStatus))
+		if (isProgressMonitorCanceled(sm, initStatus))
 			return initStatus;
 
 		sm.worked(1);

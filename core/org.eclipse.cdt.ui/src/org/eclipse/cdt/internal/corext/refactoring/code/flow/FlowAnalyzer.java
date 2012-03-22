@@ -911,8 +911,11 @@ abstract class FlowAnalyzer extends ASTGenericVisitor {
 		if (binding instanceof IVariable) {
 			IVariable variable= (IVariable) binding;
 			if (!(variable instanceof IField)) {
-				int accessMode = CPPVariableReadWriteFlags.getReadWriteFlags(node);
-				setFlowInfo(node, new LocalFlowInfo(variable, accessMode, fFlowContext));
+				int index = fFlowContext.getIndexFromLocal(variable);
+				if (index >= 0) {
+					int accessMode = CPPVariableReadWriteFlags.getReadWriteFlags(node);
+					setFlowInfo(node, new LocalFlowInfo(variable, index, accessMode, fFlowContext));
+				}
 			}
 		}
 		return PROCESS_SKIP;
@@ -957,7 +960,7 @@ abstract class FlowAnalyzer extends ASTGenericVisitor {
 			return leave((ICASTDesignatedInitializer) node);
 		} else if (node instanceof IASTInitializerList) {
 			return leave((ICPPASTConstructorChainInitializer) node);
-		} else if (node instanceof IASTInitializerList) {
+		} else if (node instanceof ICPPASTConstructorInitializer) {
 			return leave((ICPPASTConstructorInitializer) node);
 		}
 		return PROCESS_SKIP;

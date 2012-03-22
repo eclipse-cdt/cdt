@@ -15,30 +15,24 @@
 package org.eclipse.cdt.make.core;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CommandLauncher;
 import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.core.ICommandLauncher;
-import org.eclipse.cdt.core.model.ICModelMarker;
+import org.eclipse.cdt.core.IConsoleParser;
 import org.eclipse.cdt.core.resources.ACBuilder;
 import org.eclipse.cdt.core.resources.IConsole;
-import org.eclipse.cdt.core.resources.RefreshScopeManager;
-import org.eclipse.cdt.internal.core.ConsoleOutputSniffer;
+import org.eclipse.cdt.internal.core.BuildRunnerHelper;
+import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser;
 import org.eclipse.cdt.make.internal.core.MakeMessages;
-import org.eclipse.cdt.make.internal.core.StreamMonitor;
 import org.eclipse.cdt.make.internal.core.scannerconfig.ScannerInfoConsoleParserFactory;
 import org.eclipse.cdt.utils.CommandLineUtil;
-import org.eclipse.cdt.utils.EFSExtensionManager;
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
@@ -53,8 +47,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
@@ -65,8 +57,10 @@ import org.eclipse.core.runtime.jobs.Job;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class MakeBuilder extends ACBuilder {
-
 	public final static String BUILDER_ID = MakeCorePlugin.getUniqueIdentifier() + ".makeBuilder"; //$NON-NLS-1$
+	private static final int MONITOR_SCALE = 100;
+
+	private BuildRunnerHelper buildRunnerHelper = null;
 
 	public MakeBuilder() {
 	}
@@ -146,132 +140,112 @@ public class MakeBuilder extends ACBuilder {
 		}
 	}
 
+	/**
+	 * Run build command.
+	 *
+	 * @param kind - kind of build, constant defined by {@link IncrementalProjectBuilder}
+	 * @param info - builder info
+	 * @param monitor - progress monitor in the initial state where {@link IProgressMonitor#beginTask(String, int)}
+	 *    has not been called yet.
+	 * @return {@code true} if the build purpose is to clean, {@code false} otherwise.
+	 */
 	protected boolean invokeMake(int kind, IMakeBuilderInfo info, IProgressMonitor monitor) {
 		boolean isClean = false;
-		IProject currProject = getProject();
-
-		if (monitor == null) {
-			monitor = new NullProgressMonitor();
-		}
-		monitor.beginTask(MakeMessages.getString("MakeBuilder.Invoking_Make_Builder") + currProject.getName(), 100); //$NON-NLS-1$
+		IProject project = getProject();
+		buildRunnerHelper = new BuildRunnerHelper(project);
 
 		try {
+			if (monitor == null) {
+				monitor = new NullProgressMonitor();
+			}
+			monitor.beginTask(MakeMessages.getString("MakeBuilder.Invoking_Make_Builder") + project.getName(), 3 * MONITOR_SCALE); //$NON-NLS-1$
+
 			IPath buildCommand = info.getBuildCommand();
 			if (buildCommand != null) {
 				IConsole console = CCorePlugin.getDefault().getConsole();
-				console.start(currProject);
+				console.start(project);
 
-				OutputStream cos = console.getOutputStream();
-
-				// remove all markers for this project
-				removeAllMarkers(currProject);
-
-				URI workingDirectoryURI = MakeBuilderUtil.getBuildDirectoryURI(currProject, info);
-				final String pathFromURI = EFSExtensionManager.getDefault().getPathFromURI(workingDirectoryURI);
-				if(pathFromURI == null) {
-					throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.PLUGIN_ID, MakeMessages.getString("MakeBuilder.ErrorWorkingDirectory"), null)); //$NON-NLS-1$
-				}
-
-				IPath workingDirectory = new Path(pathFromURI);
+				// Prepare launch parameters for BuildRunnerHelper
+				ICommandLauncher launcher = new CommandLauncher();
 
 				String[] targets = getTargets(kind, info);
 				if (targets.length != 0 && targets[targets.length - 1].equals(info.getCleanBuildTarget()))
 					isClean = true;
 
-				String errMsg = null;
-				ICommandLauncher launcher = new CommandLauncher();
-				launcher.setProject(currProject);
-				// Print the command for visual interaction.
-				launcher.showCommand(true);
+				String[] args = getCommandArguments(info, targets);
 
-				// Set the environment
-				HashMap<String, String> envMap = new HashMap<String, String>();
-				if (info.appendEnvironment()) {
-					@SuppressWarnings({"unchecked", "rawtypes"})
-					Map<String, String> env = (Map)launcher.getEnvironment();
-					envMap.putAll(env);
-				}
-				// Add variables from build info
-				envMap.putAll(info.getExpandedEnvironment());
-				List<String> strings= new ArrayList<String>(envMap.size());
-				Set<Entry<String, String>> entrySet = envMap.entrySet();
-				for (Entry<String, String> entry : entrySet) {
-					StringBuffer buffer= new StringBuffer(entry.getKey());
-					buffer.append('=').append(entry.getValue());
-					strings.add(buffer.toString());
-				}
-				String[] env = strings.toArray(new String[strings.size()]);
-				String[] buildArguments = targets;
-				if (info.isDefaultBuildCmd()) {
-					if (!info.isStopOnError()) {
-						buildArguments = new String[targets.length + 1];
-						buildArguments[0] = "-k"; //$NON-NLS-1$
-						System.arraycopy(targets, 0, buildArguments, 1, targets.length);
-					}
-				} else {
-					String args = info.getBuildArguments();
-					if (args != null && !args.equals("")) { //$NON-NLS-1$
-						String[] newArgs = makeArray(args);
-						buildArguments = new String[targets.length + newArgs.length];
-						System.arraycopy(newArgs, 0, buildArguments, 0, newArgs.length);
-						System.arraycopy(targets, 0, buildArguments, newArgs.length, targets.length);
-					}
-				}
-//					MakeRecon recon = new MakeRecon(buildCommand, buildArguments, env, workingDirectory, makeMonitor, cos);
-//					recon.invokeMakeRecon();
-//					cos = recon;
-				QualifiedName qName = new QualifiedName(MakeCorePlugin.getUniqueIdentifier(), "progressMonitor"); //$NON-NLS-1$
-				Integer last = (Integer)getProject().getSessionProperty(qName);
-				if (last == null) {
-					last = new Integer(100);
-				}
-				ErrorParserManager epm = new ErrorParserManager(getProject(), workingDirectoryURI, this, info.getErrorParsers());
-				epm.setOutputStream(cos);
-				StreamMonitor streamMon = new StreamMonitor(new SubProgressMonitor(monitor, 100), epm, last.intValue());
-				OutputStream stdout = streamMon;
-				OutputStream stderr = streamMon;
-				// Sniff console output for scanner info
-				ConsoleOutputSniffer sniffer = ScannerInfoConsoleParserFactory.getMakeBuilderOutputSniffer(
-						stdout, stderr, getProject(), workingDirectory, null, this, null);
-				OutputStream consoleOut = (sniffer == null ? stdout : sniffer.getOutputStream());
-				OutputStream consoleErr = (sniffer == null ? stderr : sniffer.getErrorStream());
-				Process p = launcher.execute(buildCommand, buildArguments, env, workingDirectory, monitor);
-				if (p != null) {
-					try {
-						// Close the input of the Process explicitly.
-						// We will never write to it.
-						p.getOutputStream().close();
-					} catch (IOException e) {
-					}
-					// Before launching give visual cues via the monitor
-					monitor.subTask(MakeMessages.getString("MakeBuilder.Invoking_Command") + launcher.getCommandLine()); //$NON-NLS-1$
-					if (launcher.waitAndRead(consoleOut, consoleErr, new SubProgressMonitor(monitor, 0))
-						!= ICommandLauncher.OK)
-						errMsg = launcher.getErrorMessage();
-					monitor.subTask(MakeMessages.getString("MakeBuilder.Updating_project")); //$NON-NLS-1$
-					refreshProject(currProject);
-				} else {
-					errMsg = launcher.getErrorMessage();
-				}
-				getProject().setSessionProperty(qName, !monitor.isCanceled() && !isClean ? new Integer(streamMon.getWorkDone()) : null);
+				URI workingDirectoryURI = MakeBuilderUtil.getBuildDirectoryURI(project, info);
 
-				if (errMsg != null) {
-					consoleErr.write((errMsg + '\n').getBytes());
+				HashMap<String, String> envMap = getEnvironment(launcher, info);
+				String[] envp = BuildRunnerHelper.envMapToEnvp(envMap);
+
+				String[] errorParsers = info.getErrorParsers();
+				ErrorParserManager epm = new ErrorParserManager(getProject(), workingDirectoryURI, this, errorParsers);
+
+				List<IConsoleParser> parsers = new ArrayList<IConsoleParser>();
+				IScannerInfoConsoleParser parserSD = ScannerInfoConsoleParserFactory.getScannerInfoConsoleParser(project, workingDirectoryURI, this);
+				parsers.add(parserSD);
+
+				buildRunnerHelper.setLaunchParameters(launcher, buildCommand, args, workingDirectoryURI, envp);
+				buildRunnerHelper.prepareStreams(epm, parsers, console, new SubProgressMonitor(monitor, 1 * MONITOR_SCALE, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+
+				buildRunnerHelper.removeOldMarkers(project, new SubProgressMonitor(monitor, 1 * MONITOR_SCALE, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+
+				buildRunnerHelper.greeting(kind);
+				int state = buildRunnerHelper.build(new SubProgressMonitor(monitor, 1 * MONITOR_SCALE, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+				buildRunnerHelper.close();
+				buildRunnerHelper.goodbye();
+
+				if (state != ICommandLauncher.ILLEGAL_COMMAND) {
+					refreshProject(project);
 				}
-
-				stdout.close();
-				stderr.close();
-
-				consoleOut.close();
-				consoleErr.close();
-				cos.close();
+			} else {
+				String msg = MakeMessages.getFormattedString("MakeBuilder.message.undefined.build.command", project.getName()); //$NON-NLS-1$
+				throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.PLUGIN_ID, msg, new Exception()));
 			}
 		} catch (Exception e) {
 			MakeCorePlugin.log(e);
 		} finally {
+			try {
+				buildRunnerHelper.close();
+			} catch (IOException e) {
+				MakeCorePlugin.log(e);
+			}
 			monitor.done();
 		}
-		return (isClean);
+		return isClean;
+	}
+
+	private HashMap<String, String> getEnvironment(ICommandLauncher launcher, IMakeBuilderInfo info)
+			throws CoreException {
+		HashMap<String, String> envMap = new HashMap<String, String>();
+		if (info.appendEnvironment()) {
+			@SuppressWarnings({"unchecked", "rawtypes"})
+			Map<String, String> env = (Map)launcher.getEnvironment();
+			envMap.putAll(env);
+		}
+		envMap.putAll(info.getExpandedEnvironment());
+		return envMap;
+	}
+
+	private String[] getCommandArguments(IMakeBuilderInfo info, String[] targets) {
+		String[] args = targets;
+		if (info.isDefaultBuildCmd()) {
+			if (!info.isStopOnError()) {
+				args = new String[targets.length + 1];
+				args[0] = "-k"; //$NON-NLS-1$
+				System.arraycopy(targets, 0, args, 1, targets.length);
+			}
+		} else {
+			String argsStr = info.getBuildArguments();
+			if (argsStr != null && !argsStr.equals("")) { //$NON-NLS-1$
+				String[] newArgs = makeArray(argsStr);
+				args = new String[targets.length + newArgs.length];
+				System.arraycopy(newArgs, 0, args, 0, newArgs.length);
+				System.arraycopy(targets, 0, args, newArgs.length, targets.length);
+			}
+		}
+		return args;
 	}
 
 	/**
@@ -281,18 +255,8 @@ public class MakeBuilder extends ACBuilder {
 	 * @since 6.0
 	 */
 	protected void refreshProject(IProject project) {
-		try {
-			// Do not allow the cancel of the refresh, since the builder is external
-			// to Eclipse, files may have been created/modified and we will be out-of-sync.
-			// The caveat is for huge projects, it may take sometimes at every build.
-			// project.refreshLocal(IResource.DEPTH_INFINITE, null);
-
-			// use the refresh scope manager to refresh
-			RefreshScopeManager refreshManager = RefreshScopeManager.getInstance();
-			IWorkspaceRunnable runnable = refreshManager.getRefreshRunnable(project);
-			ResourcesPlugin.getWorkspace().run(runnable, null, IWorkspace.AVOID_UPDATE, null);
-		} catch (CoreException e) {
-			MakeCorePlugin.log(e);
+		if (buildRunnerHelper != null) {
+			buildRunnerHelper.refreshProject(null);
 		}
 	}
 
@@ -338,15 +302,5 @@ public class MakeBuilder extends ACBuilder {
 	// Turn the string into an array.
 	private String[] makeArray(String string) {
 		return CommandLineUtil.argumentsToArray(string);
-	}
-
-	private void removeAllMarkers(IProject currProject) throws CoreException {
-		IWorkspace workspace = currProject.getWorkspace();
-
-		// remove all markers
-		IMarker[] markers = currProject.findMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
-		if (markers != null) {
-			workspace.deleteMarkers(markers);
-		}
 	}
 }

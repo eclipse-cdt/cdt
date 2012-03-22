@@ -101,9 +101,11 @@ public abstract class RefactoringTestBase extends BaseTestCase {
 			BufferedReader reader = new BufferedReader(new StringReader(contents.toString()));
 			String line;
 			while ((line = reader.readLine()) != null) {
+				String trimmedLine = line.trim();
 				if (testFile == null) {
-					testFile = new TestSourceFile(line.trim());
-				} else if (isResultDelimiter(line.trim())) {
+					assertTrue("Invalid file name \"" + trimmedLine + "\"", trimmedLine.matches("^(\\w+/)*\\w+\\.\\w+$"));
+					testFile = new TestSourceFile(trimmedLine);
+				} else if (isResultDelimiter(trimmedLine)) {
 					expectedResult = true;
 				} else if (expectedResult) {
 					testFile.addLineToExpectedSource(line);

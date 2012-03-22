@@ -132,16 +132,16 @@ public abstract class CRefactoring extends Refactoring {
 	public RefactoringStatus checkInitialConditions(IProgressMonitor pm)
 			throws CoreException, OperationCanceledException {
 		SubMonitor sm = SubMonitor.convert(pm, 10);
-		sm.subTask(Messages.Refactoring_PM_LoadTU); 
-		if (isProgressMonitorCanceld(sm, initStatus)) {
+		if (isProgressMonitorCanceled(sm, initStatus)) {
 			return initStatus;
 		}
+		sm.subTask(Messages.Refactoring_PM_LoadTU); 
 		IASTTranslationUnit ast = getAST(tu, sm);
 		if (ast == null) {
 			initStatus.addError(NLS.bind(Messages.Refactoring_ParsingError, tu.getPath()));
 			return initStatus;
 		}
-		if (isProgressMonitorCanceld(sm, initStatus)) {
+		if (isProgressMonitorCanceled(sm, initStatus)) {
 			return initStatus;
 		}
 		sm.subTask(Messages.Refactoring_PM_CheckTU); 
@@ -152,7 +152,7 @@ public abstract class CRefactoring extends Refactoring {
 		return initStatus;
 	}
 
-	protected static boolean isProgressMonitorCanceld(IProgressMonitor sm, RefactoringStatus status) {
+	protected static boolean isProgressMonitorCanceled(IProgressMonitor sm, RefactoringStatus status) {
 		if (sm.isCanceled()) {
 			status.addFatalError(Messages.Refactoring_CanceledByUser); 
 			return true;

@@ -1,18 +1,18 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 Wind River Systems and others.
+ * Copyright (c) 2010, 2012 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Wind River Systems - Initial API and implementation
- * James Blackburn (Broadcom Corp.)
+ *   Wind River Systems - Initial API and implementation
+ *   James Blackburn (Broadcom Corp.)
+ *   Andrew Gvozdev
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.core;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,41 +26,29 @@ import org.eclipse.cdt.build.internal.core.scannerconfig2.CfgScannerConfigProfil
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.core.ICommandLauncher;
+import org.eclipse.cdt.core.IConsoleParser;
 import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariableManager;
-import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.resources.IConsole;
-import org.eclipse.cdt.core.resources.RefreshScopeManager;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.internal.core.ConsoleOutputSniffer;
+import org.eclipse.cdt.internal.core.BuildRunnerHelper;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2;
-import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser;
-import org.eclipse.cdt.make.core.scannerconfig.InfoContext;
-import org.eclipse.cdt.make.internal.core.scannerconfig2.SCProfileInstance;
-import org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigProfile;
-import org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigProfileManager;
+import org.eclipse.cdt.make.internal.core.scannerconfig.ScannerInfoConsoleParserFactory;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedMakeMessages;
 import org.eclipse.cdt.managedbuilder.macros.BuildMacroException;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
-import org.eclipse.cdt.newmake.internal.core.StreamMonitor;
 import org.eclipse.cdt.utils.CommandLineUtil;
 import org.eclipse.cdt.utils.EFSExtensionManager;
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
@@ -69,13 +57,7 @@ import org.eclipse.core.runtime.SubProgressMonitor;
  * @since 8.0
  */
 public class ExternalBuildRunner extends AbstractBuildRunner {
-
-	private static final String TYPE_CLEAN = "ManagedMakeBuilder.type.clean";	//$NON-NLS-1$
-	private static final String TYPE_INC = "ManagedMakeBuider.type.incremental";	//$NON-NLS-1$
-	private static final String CONSOLE_HEADER = "ManagedMakeBuilder.message.console.header";	//$NON-NLS-1$
-	private static final String WARNING_UNSUPPORTED_CONFIGURATION = "ManagedMakeBuilder.warning.unsupported.configuration";	//$NON-NLS-1$
-	private static final String NEWLINE = System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
-	private static final String PATH_ENV = "PATH"; //$NON-NLS-1$
+	private static final int MONITOR_SCALE = 100;
 
 	@Override
 	public boolean invokeBuild(int kind, IProject project, IConfiguration configuration,
@@ -88,156 +70,79 @@ public class ExternalBuildRunner extends AbstractBuildRunner {
 	protected boolean invokeExternalBuild(int kind, IProject project, IConfiguration configuration,
 			IBuilder builder, IConsole console, IMarkerGenerator markerGenerator,
 			IncrementalProjectBuilder projectBuilder, IProgressMonitor monitor) throws CoreException {
+
 		boolean isClean = false;
 
-		if (monitor == null) {
-			monitor = new NullProgressMonitor();
-		}
-		monitor.beginTask(ManagedMakeMessages.getResourceString("MakeBuilder.Invoking_Make_Builder") + project.getName(), 100); //$NON-NLS-1$
-
+		BuildRunnerHelper buildRunnerHelper = new BuildRunnerHelper(project);
 		try {
+			if (monitor == null) {
+				monitor = new NullProgressMonitor();
+			}
+			monitor.beginTask(ManagedMakeMessages.getResourceString("MakeBuilder.Invoking_Make_Builder") + project.getName(), 4 * MONITOR_SCALE); //$NON-NLS-1$
+
 			IPath buildCommand = builder.getBuildCommand();
 			if (buildCommand != null) {
-				OutputStream cos = console.getOutputStream();
-				StringBuffer buf = new StringBuffer();
+				String cfgName = configuration.getName();
+				String toolchainName = configuration.getToolChain().getName();
+				boolean isSupported = configuration.isSupported();
 
-				String[] consoleHeader = new String[3];
-				switch (kind) {
-					case IncrementalProjectBuilder.FULL_BUILD:
-					case IncrementalProjectBuilder.INCREMENTAL_BUILD:
-					case IncrementalProjectBuilder.AUTO_BUILD:
-						consoleHeader[0] = ManagedMakeMessages.getResourceString(TYPE_INC);
-						break;
-					case IncrementalProjectBuilder.CLEAN_BUILD:
-						consoleHeader[0] = ManagedMakeMessages.getResourceString(TYPE_CLEAN);
-						break;
-				}
-
-				consoleHeader[1] = configuration.getName();
-				consoleHeader[2] = project.getName();
-				buf.append(NEWLINE);
-				buf.append(ManagedMakeMessages.getFormattedString(CONSOLE_HEADER, consoleHeader)).append(NEWLINE);
-				buf.append(NEWLINE);
-
-				if(!configuration.isSupported()){
-					String unsupportedToolchainMsg = ManagedMakeMessages.getFormattedString(WARNING_UNSUPPORTED_CONFIGURATION,
-							new String[] { configuration.getName(), configuration.getToolChain().getName() });
-					buf.append(unsupportedToolchainMsg).append(NEWLINE);
-					buf.append(NEWLINE);
-				}
-				cos.write(buf.toString().getBytes());
-				cos.flush();
-
-				// remove all markers for this project
-				IWorkspace workspace = project.getWorkspace();
-				IMarker[] markers = project.findMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
-				if (markers != null)
-					workspace.deleteMarkers(markers);
-
-				URI workingDirectoryURI = ManagedBuildManager.getBuildLocationURI(configuration, builder);
-				final String pathFromURI = EFSExtensionManager.getDefault().getPathFromURI(workingDirectoryURI);
-				if(pathFromURI == null) {
-					throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID, ManagedMakeMessages.getString("ManagedMakeBuilder.message.error"), null)); //$NON-NLS-1$
-				}
-
-				IPath workingDirectory = new Path(pathFromURI);
+				ICommandLauncher launcher = builder.getCommandLauncher();
 
 				String[] targets = getTargets(kind, builder);
 				if (targets.length != 0 && targets[targets.length - 1].equals(builder.getCleanBuildTarget()))
 					isClean = true;
 
-				String errMsg = null;
-				ICommandLauncher launcher = builder.getCommandLauncher();
-				launcher.setProject(project);
-				// Print the command for visual interaction.
-				launcher.showCommand(true);
+				String[] args = getCommandArguments(builder, targets);
 
-				// Set the environment
+				URI workingDirectoryURI = ManagedBuildManager.getBuildLocationURI(configuration, builder);
+
 				Map<String, String> envMap = getEnvironment(builder);
-				String[] env = getEnvStrings(envMap);
-				String[] buildArguments = targets;
+				String[] envp = BuildRunnerHelper.envMapToEnvp(envMap);
 
-				String[] newArgs = CommandLineUtil.argumentsToArray(builder.getBuildArguments());
-				buildArguments = new String[targets.length + newArgs.length];
-				System.arraycopy(newArgs, 0, buildArguments, 0, newArgs.length);
-				System.arraycopy(targets, 0, buildArguments, newArgs.length, targets.length);
+				String[] errorParsers = builder.getErrorParsers();
+				ErrorParserManager epm = new ErrorParserManager(project, workingDirectoryURI, markerGenerator, errorParsers);
 
-				QualifiedName qName = new QualifiedName(ManagedBuilderCorePlugin.getUniqueIdentifier(), "progressMonitor"); //$NON-NLS-1$
-				Integer last = (Integer)project.getSessionProperty(qName);
-				if (last == null) {
-					last = new Integer(100);
+				List<IConsoleParser> parsers = new ArrayList<IConsoleParser>();
+				collectScannerInfoConsoleParsers(project, configuration, workingDirectoryURI, markerGenerator, parsers);
+
+				buildRunnerHelper.setLaunchParameters(launcher, buildCommand, args, workingDirectoryURI, envp);
+				buildRunnerHelper.prepareStreams(epm, parsers, console, new SubProgressMonitor(monitor, 1 * MONITOR_SCALE));
+
+				buildRunnerHelper.removeOldMarkers(project, new SubProgressMonitor(monitor, 1 * MONITOR_SCALE, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+
+				buildRunnerHelper.greeting(kind, cfgName, toolchainName, isSupported);
+				int state = buildRunnerHelper.build(new SubProgressMonitor(monitor, 1 * MONITOR_SCALE, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+				buildRunnerHelper.close();
+				buildRunnerHelper.goodbye();
+
+				if (state != ICommandLauncher.ILLEGAL_COMMAND) {
+					buildRunnerHelper.refreshProject(new SubProgressMonitor(monitor, 1 * MONITOR_SCALE, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 				}
-				ErrorParserManager epm = new ErrorParserManager(project, workingDirectoryURI, markerGenerator, builder.getErrorParsers());
-				epm.setOutputStream(cos);
-				StreamMonitor streamMon = new StreamMonitor(new SubProgressMonitor(monitor, 100), epm, last.intValue());
-				OutputStream stdout = streamMon;
-				OutputStream stderr = streamMon;
-
-				// Sniff console output for scanner info
-				ConsoleOutputSniffer sniffer = createBuildOutputSniffer(stdout, stderr, project, configuration, workingDirectory, markerGenerator, null);
-				OutputStream consoleOut = (sniffer == null ? stdout : sniffer.getOutputStream());
-				OutputStream consoleErr = (sniffer == null ? stderr : sniffer.getErrorStream());
-				Process p = launcher.execute(buildCommand, buildArguments, env, workingDirectory, monitor);
-				if (p != null) {
-					try {
-						// Close the input of the Process explicitly.
-						// We will never write to it.
-						p.getOutputStream().close();
-					} catch (IOException e) {
-					}
-					// Before launching give visual cues via the monitor
-					monitor.subTask(ManagedMakeMessages.getResourceString("MakeBuilder.Invoking_Command") + launcher.getCommandLine()); //$NON-NLS-1$
-					if (launcher.waitAndRead(consoleOut, consoleErr, new SubProgressMonitor(monitor, 0))
-						!= ICommandLauncher.OK)
-						errMsg = launcher.getErrorMessage();
-					monitor.subTask(ManagedMakeMessages.getResourceString("MakeBuilder.Updating_project")); //$NON-NLS-1$
-
-					try {
-						// Do not allow the cancel of the refresh, since the builder is external
-						// to Eclipse, files may have been created/modified and we will be out-of-sync.
-						// The caveat is for huge projects, it may take sometimes at every build.
-
-						// TODO should only refresh output folders
-						//project.refreshLocal(IResource.DEPTH_INFINITE, null);
-
-						// use the refresh scope manager to refresh
-						RefreshScopeManager refreshManager = RefreshScopeManager.getInstance();
-						IWorkspaceRunnable runnable = refreshManager.getRefreshRunnable(project);
-						ResourcesPlugin.getWorkspace().run(runnable, null, IWorkspace.AVOID_UPDATE, null);
-					} catch (CoreException e) {
-					}
-				} else {
-					errMsg = launcher.getErrorMessage();
-				}
-				project.setSessionProperty(qName, !monitor.isCanceled() && !isClean ? new Integer(streamMon.getWorkDone()) : null);
-
-				if (errMsg != null) {
-					consoleErr.write(errMsg.getBytes());
-					consoleErr.flush();
-				}
-
-				buf = new StringBuffer(NEWLINE);
-				buf.append(ManagedMakeMessages.getResourceString("ManagedMakeBuilder.message.build.finished")).append(NEWLINE); //$NON-NLS-1$
-				consoleOut.write(buf.toString().getBytes());
-
-				stdout.close();
-				stderr.close();
-
-				monitor.subTask(ManagedMakeMessages.getResourceString("MakeBuilder.Creating_Markers")); //$NON-NLS-1$
-				consoleOut.close();
-				consoleErr.close();
-				cos.close();
+			} else {
+				String msg = ManagedMakeMessages.getFormattedString("ManagedMakeBuilder.message.undefined.build.command", builder.getId()); //$NON-NLS-1$
+				throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID, msg, new Exception()));
 			}
 		} catch (Exception e) {
-			ManagedBuilderCorePlugin.log(e);
-			throw new CoreException(new Status(IStatus.ERROR,
-					ManagedBuilderCorePlugin.getUniqueIdentifier(),
-					e.getLocalizedMessage(),
-					e));
+			String msg = ManagedMakeMessages.getFormattedString("ManagedMakeBuilder.message.error.build", //$NON-NLS-1$
+					new String[] { project.getName(), configuration.getName() });
+			throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID, msg, e));
 		} finally {
+			try {
+				buildRunnerHelper.close();
+			} catch (IOException e) {
+				ManagedBuilderCorePlugin.log(e);
+			}
 			monitor.done();
 		}
-		return (isClean);
+		return isClean;
+	}
+
+	private String[] getCommandArguments(IBuilder builder, String[] targets) {
+		String[] builderArgs = CommandLineUtil.argumentsToArray(builder.getBuildArguments());
+		String[] args = new String[targets.length + builderArgs.length];
+		System.arraycopy(builderArgs, 0, args, 0, builderArgs.length);
+		System.arraycopy(targets, 0, args, builderArgs.length, targets.length);
+		return args;
 	}
 
 	protected String[] getTargets(int kind, IBuilder builder) {
@@ -301,6 +206,7 @@ public class ExternalBuildRunner extends AbstractBuildRunner {
 		return envMap;
 	}
 
+	@Deprecated
 	protected static String[] getEnvStrings(Map<String, String> env) {
 		// Convert into env strings
 		List<String> strings= new ArrayList<String>(env.size());
@@ -313,16 +219,19 @@ public class ExternalBuildRunner extends AbstractBuildRunner {
 		return strings.toArray(new String[strings.size()]);
 	}
 
-	private ConsoleOutputSniffer createBuildOutputSniffer(OutputStream outputStream,
-			OutputStream errorStream,
-			IProject project,
-			IConfiguration cfg,
-			IPath workingDirectory,
-			IMarkerGenerator markerGenerator,
-			IScannerInfoCollector collector){
+	private static void collectScannerInfoConsoleParsers(IProject project, IConfiguration cfg, URI workingDirectoryURI,
+			IMarkerGenerator markerGenerator, List<IConsoleParser> parsers) {
 		ICfgScannerConfigBuilderInfo2Set container = CfgScannerConfigProfileManager.getCfgScannerConfigBuildInfo(cfg);
 		Map<CfgInfoContext, IScannerConfigBuilderInfo2> map = container.getInfoMap();
-		List<IScannerInfoConsoleParser> clParserList = new ArrayList<IScannerInfoConsoleParser>();
+
+		String pathFromURI = EFSExtensionManager.getDefault().getPathFromURI(workingDirectoryURI);
+		if(pathFromURI == null) {
+			// fallback to CWD
+			pathFromURI = System.getProperty("user.dir"); //$NON-NLS-1$
+		}
+		IPath workingDirectory = new Path(pathFromURI);
+
+		int oldSize = parsers.size();
 
 		if(container.isPerRcTypeDiscovery()){
 			for (IResourceInfo rcInfo : cfg.getResourceInfos()) {
@@ -337,66 +246,34 @@ public class ExternalBuildRunner extends AbstractBuildRunner {
 
 					if(types.length != 0){
 						for (IInputType type : types) {
-							CfgInfoContext c = new CfgInfoContext(rcInfo, tool, type);
-							contributeToConsoleParserList(project, map, c, workingDirectory, markerGenerator, collector, clParserList);
+							CfgInfoContext context = new CfgInfoContext(rcInfo, tool, type);
+							IScannerInfoConsoleParser parser = getScannerInfoConsoleParser(project, map, context, workingDirectory, markerGenerator);
+							if (parser != null) {
+								parsers.add(parser);
+							}
 						}
 					} else {
-						CfgInfoContext c = new CfgInfoContext(rcInfo, tool, null);
-						contributeToConsoleParserList(project, map, c, workingDirectory, markerGenerator, collector, clParserList);
+						CfgInfoContext context = new CfgInfoContext(rcInfo, tool, null);
+						IScannerInfoConsoleParser parser = getScannerInfoConsoleParser(project, map, context, workingDirectory, markerGenerator);
+						if (parser != null) {
+							parsers.add(parser);
+						}
 					}
 				}
 			}
 		}
 
-		if(clParserList.size() == 0){
-			contributeToConsoleParserList(project, map, new CfgInfoContext(cfg), workingDirectory, markerGenerator, collector, clParserList);
-		}
-
-		if(clParserList.size() != 0){
-			return new ConsoleOutputSniffer(outputStream, errorStream,
-					clParserList.toArray(new IScannerInfoConsoleParser[clParserList.size()]));
-		}
-
-		return null;
-	}
-
-	private boolean contributeToConsoleParserList(
-			IProject project,
-			Map<CfgInfoContext, IScannerConfigBuilderInfo2> map,
-			CfgInfoContext context,
-			IPath workingDirectory,
-			IMarkerGenerator markerGenerator,
-			IScannerInfoCollector collector,
-			List<IScannerInfoConsoleParser> parserList){
-		IScannerConfigBuilderInfo2 info = map.get(context);
-		InfoContext ic = context.toInfoContext();
-		boolean added = false;
-		if (info != null &&
-				info.isAutoDiscoveryEnabled() &&
-				info.isBuildOutputParserEnabled()) {
-
-			String id = info.getSelectedProfileId();
-			ScannerConfigProfile profile = ScannerConfigProfileManager.getInstance().getSCProfileConfiguration(id);
-			if(profile.getBuildOutputProviderElement() != null){
-				// get the make builder console parser
-				SCProfileInstance profileInstance = ScannerConfigProfileManager.getInstance().
-						getSCProfileInstance(project, ic, id);
-
-				IScannerInfoConsoleParser clParser = profileInstance.createBuildOutputParser();
-                if (collector == null) {
-                    collector = profileInstance.getScannerInfoCollector();
-                }
-                if(clParser != null){
-					clParser.startup(project, workingDirectory, collector,
-                            info.isProblemReportingEnabled() ? markerGenerator : null);
-					parserList.add(clParser);
-					added = true;
-                }
-
+		if(parsers.size() == oldSize){
+			CfgInfoContext context = new CfgInfoContext(cfg);
+			IScannerInfoConsoleParser parser = getScannerInfoConsoleParser(project, map, context, workingDirectory, markerGenerator);
+			if (parser != null) {
+				parsers.add(parser);
 			}
 		}
-
-		return added;
 	}
 
+	private static IScannerInfoConsoleParser getScannerInfoConsoleParser(IProject project, Map<CfgInfoContext, IScannerConfigBuilderInfo2> map,
+			CfgInfoContext context, IPath workingDirectory, IMarkerGenerator markerGenerator) {
+		return ScannerInfoConsoleParserFactory.getScannerInfoConsoleParser(project, context.toInfoContext(), workingDirectory, map.get(context), markerGenerator, null);
+	}
 }

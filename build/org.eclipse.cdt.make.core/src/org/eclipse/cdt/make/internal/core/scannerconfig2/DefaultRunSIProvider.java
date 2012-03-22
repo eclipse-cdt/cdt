@@ -15,12 +15,14 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Properties;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CommandLauncher;
 import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.core.ICommandLauncher;
+import org.eclipse.cdt.core.IConsoleParser;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.internal.core.BuildRunnerHelper;
@@ -33,6 +35,7 @@ import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;
 import org.eclipse.cdt.make.core.scannerconfig.InfoContext;
 import org.eclipse.cdt.make.internal.core.MakeMessages;
 import org.eclipse.cdt.make.internal.core.scannerconfig.ScannerConfigUtil;
+import org.eclipse.cdt.make.internal.core.scannerconfig.ScannerInfoConsoleParserFactory;
 import org.eclipse.cdt.utils.EFSExtensionManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -123,8 +126,14 @@ public class DefaultRunSIProvider implements IExternalScannerInfoProvider {
 
 			ErrorParserManager epm = new ErrorParserManager(project, markerGenerator, new String[] {GMAKE_ERROR_PARSER_ID});
 
+			List<IConsoleParser> parsers = new ArrayList<IConsoleParser>();
+			IConsoleParser parser = ScannerInfoConsoleParserFactory.getESIConsoleParser(project, context, providerId, buildInfo, collector, markerGenerator);
+			if (parser != null) {
+				parsers.add(parser);
+			}
+			
 			buildRunnerHelper.setLaunchParameters(launcher, program, comandLineOptions, workingDirectoryURI, envp );
-			buildRunnerHelper.prepareStreams(epm, null, console, new SubProgressMonitor(monitor, 1 * MONITOR_SCALE, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+			buildRunnerHelper.prepareStreams(epm, parsers, console, new SubProgressMonitor(monitor, 1 * MONITOR_SCALE, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 
 			buildRunnerHelper.greeting(MakeMessages.getFormattedString("ExternalScannerInfoProvider.Greeting", project.getName())); //$NON-NLS-1$
 			buildRunnerHelper.build(new SubProgressMonitor(monitor, 1 * MONITOR_SCALE, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));

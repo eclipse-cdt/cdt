@@ -40,60 +40,62 @@ import org.eclipse.core.runtime.Path;
  */
 public class ScannerInfoConsoleParserFactory {
 
-    /**
-     * Creates a ConsoleOutputStreamSniffer, make builder scanner info console parser
-     * and a utility.
-     */
-    public static ConsoleOutputSniffer getESIProviderOutputSniffer(
-                                            OutputStream outputStream,
-                                            OutputStream errorStream,
-                                            IProject currentProject,
-                                            String providerId,
-                                            IScannerConfigBuilderInfo2 scBuildInfo,
-                                            IScannerInfoCollector collector,
-                                            IMarkerGenerator markerGenerator) {
-    	return getESIProviderOutputSniffer(outputStream, errorStream, currentProject, new InfoContext(currentProject), providerId, scBuildInfo, collector, markerGenerator);
-    }
-    /**
-     * Creates a ConsoleOutputStreamSniffer, make builder scanner info console parser
-     * and a utility.
-     */
-    public static ConsoleOutputSniffer getESIProviderOutputSniffer(
-                                            OutputStream outputStream,
-                                            OutputStream errorStream,
-                                            IProject currentProject,
-                                            InfoContext context,
-                                            String providerId,
-                                            IScannerConfigBuilderInfo2 scBuildInfo,
-                                            IScannerInfoCollector collector,
-                                            IMarkerGenerator markerGenerator) {
-        if (scBuildInfo.isProviderOutputParserEnabled(providerId)) {
-            // get the ESIProvider console parser
-            SCProfileInstance profileInstance = ScannerConfigProfileManager.getInstance().
-                    getSCProfileInstance(currentProject, context, scBuildInfo.getSelectedProfileId());
-            IScannerInfoConsoleParser clParser = profileInstance.createExternalScannerInfoParser(providerId);
-            IPath buildDirectory = MakeBuilderUtil.getBuildDirectory(currentProject, MakeBuilder.BUILDER_ID);
-            clParser.startup(currentProject, buildDirectory, collector, markerGenerator);
-            // create an output stream sniffer
-            return new ConsoleOutputSniffer(outputStream, errorStream, new
-                IScannerInfoConsoleParser[] {clParser});
-        }
-        return null;
-    }
-
 	/**
-	 * Creates a ConsoleOutputStreamSniffer, ESI provider scanner info console parser
+	 * Creates a ConsoleOutputStreamSniffer, make builder scanner info console parser
 	 * and a utility.
 	 */
-	public static ConsoleOutputSniffer getMakeBuilderOutputSniffer(
-											OutputStream outputStream,
-											OutputStream errorStream,
-											IProject currentProject,
-											IPath workingDirectory,
-											IScannerConfigBuilderInfo2 scBuildInfo,
-											IMarkerGenerator markerGenerator,
-											IScannerInfoCollector collector) {
-		return getMakeBuilderOutputSniffer(outputStream, errorStream, currentProject, new InfoContext(currentProject), workingDirectory, scBuildInfo, markerGenerator, collector);
+	public static ConsoleOutputSniffer getESIProviderOutputSniffer(OutputStream outputStream,
+			OutputStream errorStream,
+			IProject project,
+			String id,
+			IScannerConfigBuilderInfo2 info2,
+			IScannerInfoCollector collector,
+			IMarkerGenerator markerGenerator) {
+
+		return getESIProviderOutputSniffer(outputStream, errorStream, project, new InfoContext(project), id, info2, collector, markerGenerator);
+	}
+
+	/**
+	 * Creates a ConsoleOutputStreamSniffer, make builder scanner info console parser
+	 * and a utility.
+	 */
+	public static ConsoleOutputSniffer getESIProviderOutputSniffer(OutputStream outputStream,
+			OutputStream errorStream,
+			IProject project,
+			InfoContext infoContext,
+			String id,
+			IScannerConfigBuilderInfo2 info2,
+			IScannerInfoCollector collector,
+			IMarkerGenerator markerGenerator) {
+
+		IScannerInfoConsoleParser parser = getESIConsoleParser(project, infoContext, id, info2, collector, markerGenerator);
+		if (parser != null) {
+			return new ConsoleOutputSniffer(outputStream, errorStream, new IScannerInfoConsoleParser[] { parser });
+		}
+		return null;
+	}
+
+	/**
+	/* Get the ESIProvider console parser.
+	 */
+	public static IScannerInfoConsoleParser getESIConsoleParser(IProject project,
+			InfoContext infoContext,
+			String id,
+			IScannerConfigBuilderInfo2 info2,
+			IScannerInfoCollector collector,
+			IMarkerGenerator markerGenerator) {
+
+		if (info2.isProviderOutputParserEnabled(id)) {
+			SCProfileInstance profileInstance = ScannerConfigProfileManager.getInstance().
+					getSCProfileInstance(project, infoContext, info2.getSelectedProfileId());
+
+			IScannerInfoConsoleParser parser = profileInstance.createExternalScannerInfoParser(id);
+			IPath buildDirectory = MakeBuilderUtil.getBuildDirectory(project, MakeBuilder.BUILDER_ID);
+
+			parser.startup(project, buildDirectory, collector, markerGenerator);
+			return parser;
+		}
+		return null;
 	}
 
 	/**
@@ -101,14 +103,30 @@ public class ScannerInfoConsoleParserFactory {
 	 * and a utility.
 	 */
 	public static ConsoleOutputSniffer getMakeBuilderOutputSniffer(
-											OutputStream outputStream,
-											OutputStream errorStream,
-											IProject project,
-											InfoContext infoContext,
-											IPath workingDirectory,
-											IScannerConfigBuilderInfo2 info2,
-											IMarkerGenerator markerGenerator,
-											IScannerInfoCollector collector) {
+			OutputStream outputStream,
+			OutputStream errorStream,
+			IProject project,
+			IPath workingDirectory,
+			IScannerConfigBuilderInfo2 info2,
+			IMarkerGenerator markerGenerator,
+			IScannerInfoCollector collector) {
+		
+		return getMakeBuilderOutputSniffer(outputStream, errorStream, project, new InfoContext(project), workingDirectory, info2, markerGenerator, collector);
+	}
+
+	/**
+	 * Creates a ConsoleOutputStreamSniffer, ESI provider scanner info console parser
+	 * and a utility.
+	 */
+	public static ConsoleOutputSniffer getMakeBuilderOutputSniffer(
+			OutputStream outputStream,
+			OutputStream errorStream,
+			IProject project,
+			InfoContext infoContext,
+			IPath workingDirectory,
+			IScannerConfigBuilderInfo2 info2,
+			IMarkerGenerator markerGenerator,
+			IScannerInfoCollector collector) {
 
 		IScannerInfoConsoleParser parser = getScannerInfoConsoleParserInternal(project, infoContext, workingDirectory, info2, markerGenerator, collector);
 		if (parser != null) {
@@ -119,8 +137,12 @@ public class ScannerInfoConsoleParserFactory {
 		return null;
 	}
 
-	private static IScannerInfoConsoleParser getScannerInfoConsoleParserInternal(IProject project, InfoContext infoContext, IPath workingDirectory,
-			IScannerConfigBuilderInfo2 info2, IMarkerGenerator markerGenerator, IScannerInfoCollector collector) {
+	private static IScannerInfoConsoleParser getScannerInfoConsoleParserInternal(IProject project,
+			InfoContext infoContext,
+			IPath workingDirectory,
+			IScannerConfigBuilderInfo2 info2,
+			IMarkerGenerator markerGenerator,
+			IScannerInfoCollector collector) {
 
 		IScannerInfoConsoleParser parser = null;
 //		try {
@@ -166,8 +188,12 @@ public class ScannerInfoConsoleParserFactory {
 	}
 
 	// TODO - perhaps this be unified with the other one?
-	public static IScannerInfoConsoleParser getScannerInfoConsoleParser(IProject project, InfoContext infoContext, IPath workingDirectory,
-			IScannerConfigBuilderInfo2 info2, IMarkerGenerator markerGenerator, IScannerInfoCollector collector) {
+	public static IScannerInfoConsoleParser getScannerInfoConsoleParser(IProject project,
+			InfoContext infoContext,
+			IPath workingDirectory,
+			IScannerConfigBuilderInfo2 info2,
+			IMarkerGenerator markerGenerator,
+			IScannerInfoCollector collector) {
 
 		IScannerInfoConsoleParser parser = null;
 		if (info2 != null && info2.isAutoDiscoveryEnabled() && info2.isBuildOutputParserEnabled()) {

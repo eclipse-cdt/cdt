@@ -97,6 +97,11 @@ public class XlCSpecsConsoleParser implements IScannerInfoConsoleParser {
 		TraceUtil.outputTrace(
 				"XLCSpecsConsoleParser parsing line: [", line, "]"); //$NON-NLS-1$ //$NON-NLS-2$
 
+		line= line.trim();
+		if (line.length() == 0) {
+			return false;
+		}
+
 		// testing the output line against the pattern of interest
 		Matcher lineMatcher = linePattern.matcher(line);
 		if (lineMatcher.matches()) {

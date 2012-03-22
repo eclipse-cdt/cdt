@@ -110,6 +110,11 @@ public abstract class AbstractXLCBuildOutputParser implements IScannerInfoConsol
 	 */
 	@Override
 	public boolean processLine(String line) {
+		line= line.trim();
+		if (line.length() == 0) {
+			return false;
+		}
+
 		boolean rc = false;
 		int lineBreakPos = line.length() - 1;
 		char[] lineChars = line.toCharArray();

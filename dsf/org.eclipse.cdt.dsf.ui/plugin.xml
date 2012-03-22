@@ -468,7 +468,7 @@
             id="org.eclipse.cdt.dsf.debug.ui.disassemblyViewToggleBreakpointTester"
             namespace="org.eclipse.cdt.dsf.debug.ui"
             properties="isDisassemblyViewSupportsCBreakpoint"
-            type="org.eclipse.cdt.dsf.debug.internal.ui.disassembly.DisassemblyView">
+            type="org.eclipse.cdt.dsf.debug.internal.ui.disassembly.DisassemblyPart">
       </propertyTester>
    </extension>
 	<extension 
@@ -578,6 +578,12 @@
                class="org.eclipse.cdt.dsf.debug.internal.ui.disassembly.actions.BreakpointPropertiesRulerActionDelegate"
                id="org.eclipse.cdt.dsf.debug.ui.disassembly.breakpointProperties"
                label="%action.breakpointProperties.label"
+               menubarPath="debug">
+         </action>
+         <action
+               class="org.eclipse.cdt.dsf.debug.internal.ui.disassembly.actions.AddBreakpointRulerActionDelegate"
+               id="org.eclipse.debug.ui.actions.RulerAddBreakpointAction"
+               label="%action.addBreakpoint.label"
                menubarPath="debug">
          </action>
          <action

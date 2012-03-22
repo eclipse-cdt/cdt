@@ -213,10 +213,11 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  120.1 - Specializations of using declarations, bug 357293.
 	 *  121.0 - Multiple variants of included header file, bug 197989.
 	 *  122.0 - Compacting strings
+	 *  123.0 - Combined file size and encoding hash code.
 	 */
-	private static final int MIN_SUPPORTED_VERSION= version(122, 0);
-	private static final int MAX_SUPPORTED_VERSION= version(122, Short.MAX_VALUE);
-	private static final int DEFAULT_VERSION = version(122, 0);
+	private static final int MIN_SUPPORTED_VERSION= version(123, 0);
+	private static final int MAX_SUPPORTED_VERSION= version(123, Short.MAX_VALUE);
+	private static final int DEFAULT_VERSION = version(123, 0);
 
 	private static int version(int major, int minor) {
 		return (major << 16) + minor;
@@ -232,12 +233,15 @@ public class PDOM extends PlatformObject implements IPDOM {
 	public static boolean isSupportedVersion(int vers) {
 		return vers >= MIN_SUPPORTED_VERSION && vers <= MAX_SUPPORTED_VERSION;
 	}
+
 	public static int getMinSupportedVersion() {
 		return MIN_SUPPORTED_VERSION;
 	}
+
 	public static int getMaxSupportedVersion() {
 		return MAX_SUPPORTED_VERSION;
 	}
+
 	public static String versionString(int version) {
 		final int major= version >> 16;
 		final int minor= version & 0xffff;
@@ -952,7 +956,8 @@ public class PDOM extends PlatformObject implements IPDOM {
 			CCorePlugin.log(e);
 		}
 		assert lockCount == -1;
-		lastWriteAccess= System.currentTimeMillis();
+		if (!fEvent.isTrivial())
+			lastWriteAccess= System.currentTimeMillis();
 		final ChangeEvent event= fEvent;
 		fEvent= new ChangeEvent();
 		synchronized (mutex) {

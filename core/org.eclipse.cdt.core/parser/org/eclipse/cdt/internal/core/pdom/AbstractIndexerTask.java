@@ -71,12 +71,11 @@ import org.eclipse.osgi.util.NLS;
  * @since 5.0
  */
 public abstract class AbstractIndexerTask extends PDOMWriter {
-	public static enum UnusedHeaderStrategy {
-		skip, useC, useCPP, useDefaultLanguage, useBoth
-	}
+	public static enum UnusedHeaderStrategy { skip, useC, useCPP, useDefaultLanguage, useBoth }
 	private static final int MAX_ERRORS = 500;
 
-	private static enum UpdateKind {REQUIRED_SOURCE, REQUIRED_HEADER, ONE_LINKAGE_HEADER, OTHER_HEADER}
+	private static enum UpdateKind { REQUIRED_SOURCE, REQUIRED_HEADER, ONE_LINKAGE_HEADER, OTHER_HEADER }
+
 	private static class LinkageTask {
 		final int fLinkageID;
 		private final Map<IIndexFileLocation, LocationTask> fLocationTasks;
@@ -687,7 +686,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			Object tu, IIndexFragmentFile file)	throws CoreException {
 		if (checkTimestamps) {
 			if (fResolver.getLastModified(ifl) != file.getTimestamp() || 
-					fResolver.getEncoding(ifl).hashCode() != file.getEncodingHashcode()) {
+					computeFileSizeAndEncodingHashcode(ifl) != file.getSizeAndEncodingHashcode()) {
 				if (checkFileContentsHash && computeFileContentsHash(tu) == file.getContentsHash()) {
 					return false;
 				}

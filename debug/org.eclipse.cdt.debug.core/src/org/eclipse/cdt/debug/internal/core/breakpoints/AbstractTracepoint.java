@@ -42,8 +42,8 @@ public abstract class AbstractTracepoint extends CBreakpoint implements ICTracep
 	 * @param add
 	 * @throws CoreException
 	 */
-	public AbstractTracepoint( IResource resource, String markerType, Map<String, Object> attributes, boolean add ) throws CoreException {
-		super( resource, markerType, attributes, add );
+	public AbstractTracepoint( IResource resource, Map<String, Object> attributes, boolean add ) throws CoreException {
+		super( resource, attributes, add );
 	}
 
 	/*(non-Javadoc)

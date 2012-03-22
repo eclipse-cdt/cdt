@@ -49,6 +49,11 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.cdt.core.AbstractCExtension;
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.ICConsoleParser;
+import org.eclipse.cdt.core.IConsoleParser;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvidersKeeper;
+import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.parser.IScannerInfo;
@@ -4718,6 +4723,26 @@ public class ManagedBuildManager extends AbstractCExtension {
 			return false; // OS or ARCH does not fit
 		}
 		return true; // no target platform - nothing to check.
+	}
+
+	/*package*/ static void collectLanguageSettingsConsoleParsers(ICConfigurationDescription cfgDescription, List<IConsoleParser> parsers) {
+		if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
+			List<ILanguageSettingsProvider> lsProviders = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
+			for (ILanguageSettingsProvider lsProvider : lsProviders) {
+				ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(lsProvider);
+				if (rawProvider instanceof ICConsoleParser) {
+					ICConsoleParser consoleParser = (ICConsoleParser) rawProvider;
+					try {
+						consoleParser.startup(cfgDescription);
+						parsers.add(consoleParser);
+					} catch (CoreException e) {
+						ManagedBuilderCorePlugin.log(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID,
+								"Language Settings Provider failed to start up", e)); //$NON-NLS-1$
+					}
+				}
+			}
+		}
+
 	}
 
 }

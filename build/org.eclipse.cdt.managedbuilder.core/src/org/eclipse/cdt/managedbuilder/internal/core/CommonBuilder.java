@@ -15,6 +15,8 @@
 package org.eclipse.cdt.managedbuilder.internal.core;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -25,12 +27,15 @@ import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ConsoleOutputStream;
+import org.eclipse.cdt.core.ErrorParserManager;
+import org.eclipse.cdt.core.ICommandLauncher;
 import org.eclipse.cdt.core.ProblemMarkerInfo;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.resources.ACBuilder;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.util.ListComparator;
+import org.eclipse.cdt.internal.core.BuildRunnerHelper;
 import org.eclipse.cdt.managedbuilder.buildmodel.BuildDescriptionManager;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildDescription;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildStep;
@@ -76,14 +81,11 @@ import org.eclipse.core.runtime.jobs.Job;
 public class CommonBuilder extends ACBuilder {
 
 	public final static String BUILDER_ID = ManagedBuilderCorePlugin.getUniqueIdentifier() + ".genmakebuilder"; //$NON-NLS-1$
-	private static final String BUILD_FINISHED = "ManagedMakeBuilder.message.finished";	//$NON-NLS-1$
-	private static final String CONSOLE_HEADER = "ManagedMakeBuilder.message.console.header";	//$NON-NLS-1$
 	private static final String ERROR_HEADER = "GeneratedmakefileBuilder error [";	//$NON-NLS-1$
 	private static final String NEWLINE = System.getProperty("line.separator");	//$NON-NLS-1$
 	private static final String TRACE_FOOTER = "]: ";	//$NON-NLS-1$
 	private static final String TRACE_HEADER = "GeneratedmakefileBuilder trace [";	//$NON-NLS-1$
-	private static final String TYPE_CLEAN = "ManagedMakeBuilder.type.clean";	//$NON-NLS-1$
-	private static final String TYPE_INC = "ManagedMakeBuider.type.incremental";	//$NON-NLS-1$
+	private static final int MONITOR_SCALE = 100;
 	public static boolean VERBOSE = false;
 
 	private static CfgBuildSet fBuildSet = new CfgBuildSet();
@@ -806,7 +808,7 @@ public class CommonBuilder extends ACBuilder {
 		String configName = bInfo.getConfiguration().getName();
 		String projName = bInfo.getProject().getName();
 		if (buildType == FULL_BUILD || buildType == INCREMENTAL_BUILD) {
-			consoleHeader[0] = ManagedMakeMessages.getResourceString(TYPE_INC);
+			consoleHeader[0] = ManagedMakeMessages.getResourceString("ManagedMakeBuider.type.incremental"); //$NON-NLS-1$
 		} else {
 			consoleHeader[0] = new String();
 			outputError(projName, "The given build type is not supported in this context");	//$NON-NLS-1$
@@ -814,7 +816,7 @@ public class CommonBuilder extends ACBuilder {
 		consoleHeader[1] = configName;
 		consoleHeader[2] = projName;
 		buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
-		buf.append(ManagedMakeMessages.getFormattedString(CONSOLE_HEADER, consoleHeader));
+		buf.append(ManagedMakeMessages.getFormattedString("ManagedMakeBuilder.message.console.header", consoleHeader)); //$NON-NLS-1$
 		buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
 		buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
 		buf.append(status.getMessage());
@@ -1167,73 +1169,82 @@ public class CommonBuilder extends ACBuilder {
 
 	protected void cleanWithInternalBuilder(CfgBuildInfo bInfo, IProgressMonitor monitor) throws CoreException {
 //		referencedProjects = getProject().getReferencedProjects();
-		IProject curProject = bInfo.getProject();
-		outputTrace(curProject.getName(), "Clean build with Internal Builder requested");	//$NON-NLS-1$
-		IConfiguration cfg = bInfo.getConfiguration();
+		IProject project = bInfo.getProject();
+		outputTrace(project.getName(), "Clean build with Internal Builder requested");	//$NON-NLS-1$
+		IConfiguration configuration = bInfo.getConfiguration();
 		int flags = BuildDescriptionManager.DEPFILES;
-		BuildDescription des = (BuildDescription)BuildDescriptionManager.createBuildDescription(cfg, null, null, flags);
+		BuildDescription des = (BuildDescription)BuildDescriptionManager.createBuildDescription(configuration, null, null, flags);
 
 		IBuildStep cleanStep = des.getCleanStep();
 
 		StepBuilder sBuilder = new StepBuilder(cleanStep, null, null);
 
+		BuildRunnerHelper buildRunnerHelper = new BuildRunnerHelper(project);
 		try {
-			// try the brute force approach first
-			StringBuffer buf = new StringBuffer();
-			// write to the console
-//
-//			IConsole console = CCorePlugin.getDefault().getConsole();
-//			console.start(getProject());
-			IConsole console = bInfo.getConsole();
-			ConsoleOutputStream consoleOutStream = console.getOutputStream();
-			String[] consoleHeader = new String[3];
-			consoleHeader[0] = ManagedMakeMessages.getResourceString(TYPE_CLEAN);
-			consoleHeader[1] = cfg.getName();
-			consoleHeader[2] = curProject.getName();
-			buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
-			buf.append(ManagedMakeMessages.getFormattedString(CONSOLE_HEADER, consoleHeader));
-			buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
-			consoleOutStream.write(buf.toString().getBytes());
-			consoleOutStream.flush();
-			buf = new StringBuffer();
-			int result = sBuilder.build(consoleOutStream, consoleOutStream, monitor);
-			//Throw a core exception indicating that the clean command failed
-			if(result == IBuildModelBuilder.STATUS_ERROR_LAUNCH)
-			{
-				try {
-					consoleOutStream.close();
-				} catch (IOException e) {
-				}
-				Status status = new Status(IStatus.INFO, ManagedBuilderCorePlugin.getUniqueIdentifier(),
-						"Failed to exec delete command"); //$NON-NLS-1$
-				throw new CoreException(status);
+			if (monitor == null) {
+				monitor = new NullProgressMonitor();
 			}
-			// Report a successful clean
-			String successMsg = ManagedMakeMessages.getFormattedString(BUILD_FINISHED, curProject.getName());
-			buf.append(successMsg);
-			buf.append(System.getProperty("line.separator", "\n"));  //$NON-NLS-1$//$NON-NLS-2$
-			consoleOutStream.write(buf.toString().getBytes());
-			consoleOutStream.flush();
-			consoleOutStream.close();
-			curProject.refreshLocal(IResource.DEPTH_INFINITE, null);
-		}  catch (IOException io) {}	//  Ignore console failures...
+			monitor.beginTask("", 2 * MONITOR_SCALE); //$NON-NLS-1$
+
+			IConsole console = bInfo.getConsole();
+
+			IBuilder builder = bInfo.getBuilder();
+			String[] errorParsers = builder.getErrorParsers();
+			URI workingDirectoryURI = ManagedBuildManager.getBuildLocationURI(configuration, builder);
+			ErrorParserManager epm = new ErrorParserManager(project, workingDirectoryURI, this, errorParsers);
+
+			buildRunnerHelper.prepareStreams(epm, null, console, new SubProgressMonitor(monitor, 1 * MONITOR_SCALE));
+			OutputStream stdout = buildRunnerHelper.getOutputStream();
+			OutputStream stderr = buildRunnerHelper.getErrorStream();
+
+			String cfgName = configuration.getName();
+			String toolchainName = configuration.getToolChain().getName();
+			boolean isConfigurationSupported = configuration.isSupported();
+
+			buildRunnerHelper.greeting(CLEAN_BUILD, cfgName, toolchainName, isConfigurationSupported);
+			int status = sBuilder.build(stdout, stderr,  new SubProgressMonitor(monitor, 1 * MONITOR_SCALE));
+			buildRunnerHelper.close();
+			buildRunnerHelper.goodbye();
+
+			if (status != ICommandLauncher.ILLEGAL_COMMAND) {
+				buildRunnerHelper.refreshProject(monitor);
+			}
+
+			//Throw a core exception indicating that the clean command failed
+			if(status == IBuildModelBuilder.STATUS_ERROR_LAUNCH)
+			{
+				Status st = new Status(IStatus.INFO, ManagedBuilderCorePlugin.PLUGIN_ID, "Failed to execute delete command"); //$NON-NLS-1$
+				throw new CoreException(st);
+			}
+		} catch (Exception e) {
+			String msg = ManagedMakeMessages.getFormattedString("ManagedMakeBuilder.message.error.build", //$NON-NLS-1$
+					new String[] { project.getName(), configuration.getName() });
+			throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID, msg, e));
+		} finally {
+			try {
+				buildRunnerHelper.close();
+			} catch (IOException e) {
+				ManagedBuilderCorePlugin.log(e);
+			}
+			monitor.done();
+		}
 
 	}
 
 	protected void cleanProgrammatically(CfgBuildInfo bInfo, IProgressMonitor monitor) throws CoreException {
 //		referencedProjects = getProject().getReferencedProjects();
-		IProject curProject = bInfo.getProject();
-		outputTrace(curProject.getName(), "Clean build requested");	//$NON-NLS-1$
+		IProject project = bInfo.getProject();
+		outputTrace(project.getName(), "Clean build requested");	//$NON-NLS-1$
 		IBuilder builder = bInfo.getBuilder();
-		IConfiguration cfg = bInfo.getConfiguration();
-		IPath buildPath = ManagedBuildManager.getBuildFullPath(cfg, builder);
+		IConfiguration configuration = bInfo.getConfiguration();
+		IPath buildPath = ManagedBuildManager.getBuildFullPath(configuration, builder);
 		if(buildPath == null){
 			throw new CoreException(new Status(IStatus.ERROR,
 					ManagedBuilderCorePlugin.getUniqueIdentifier(),
 					ManagedMakeMessages.getResourceString("CommonBuilder.0"))); //$NON-NLS-1$
 		}
 
-		IPath projectFullPath = curProject.getFullPath();
+		IPath projectFullPath = project.getFullPath();
 		if(!projectFullPath.isPrefixOf(buildPath)){
 			throw new CoreException(new Status(IStatus.ERROR,
 					ManagedBuilderCorePlugin.getUniqueIdentifier(),
@@ -1256,37 +1267,47 @@ public class CommonBuilder extends ACBuilder {
 						ManagedBuilderCorePlugin.getUniqueIdentifier(),
 						ManagedMakeMessages.getResourceString("CommonBuilder.13"))); //$NON-NLS-1$
 			}
-		String status;
-		try {
-			// try the brute force approach first
-			status = ManagedMakeMessages.getFormattedString("ManagedMakeBuilder.message.clean.deleting.output", buildDir.getName());	//$NON-NLS-1$
-			monitor.subTask(status);
-			workspace.delete(new IResource[]{buildDir}, true, monitor);
-			StringBuffer buf = new StringBuffer();
-			// write to the console
-//
-//			IConsole console = CCorePlugin.getDefault().getConsole();
-//			console.start(getProject());
-			IConsole console = bInfo.getConsole();
-			ConsoleOutputStream consoleOutStream = console.getOutputStream();
-			String[] consoleHeader = new String[3];
-			consoleHeader[0] = ManagedMakeMessages.getResourceString(TYPE_CLEAN);
-			consoleHeader[1] = cfg.getName();
-			consoleHeader[2] = curProject.getName();
-			buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
-			buf.append(ManagedMakeMessages.getFormattedString(CONSOLE_HEADER, consoleHeader));
-			buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
-			consoleOutStream.write(buf.toString().getBytes());
-			consoleOutStream.flush();
-			buf = new StringBuffer();
-			// Report a successful clean
-			String successMsg = ManagedMakeMessages.getFormattedString(BUILD_FINISHED, curProject.getName());
-			buf.append(successMsg);
-			buf.append(System.getProperty("line.separator", "\n"));  //$NON-NLS-1$//$NON-NLS-2$
-			consoleOutStream.write(buf.toString().getBytes());
-			consoleOutStream.flush();
-			consoleOutStream.close();
-		}  catch (IOException io) {}	//  Ignore console failures...
+
+			BuildRunnerHelper buildRunnerHelper = new BuildRunnerHelper(project);
+			try {
+				if (monitor == null) {
+					monitor = new NullProgressMonitor();
+				}
+				monitor.beginTask("", 2 * MONITOR_SCALE); //$NON-NLS-1$
+
+				// try the brute force approach first
+				String status = ManagedMakeMessages.getFormattedString("ManagedMakeBuilder.message.clean.deleting.output", buildDir.getName()); //$NON-NLS-1$
+				monitor.subTask(status);
+
+				IConsole console = bInfo.getConsole();
+
+				String[] errorParsers = builder.getErrorParsers();
+				URI workingDirectoryURI = ManagedBuildManager.getBuildLocationURI(configuration, builder);
+				ErrorParserManager epm = new ErrorParserManager(project, workingDirectoryURI, this, errorParsers);
+
+				buildRunnerHelper.prepareStreams(epm, null, console, new SubProgressMonitor(monitor, 1 * MONITOR_SCALE));
+
+				String cfgName = configuration.getName();
+				String toolchainName = configuration.getToolChain().getName();
+				boolean isConfigurationSupported = configuration.isSupported();
+
+				buildRunnerHelper.greeting(CLEAN_BUILD, cfgName, toolchainName, isConfigurationSupported);
+				workspace.delete(new IResource[]{buildDir}, true, new SubProgressMonitor(monitor, 1 * MONITOR_SCALE));
+				buildRunnerHelper.close();
+				buildRunnerHelper.goodbye();
+
+			} catch (Exception e) {
+				String msg = ManagedMakeMessages.getFormattedString("ManagedMakeBuilder.message.error.build", //$NON-NLS-1$
+						new String[] { project.getName(), configuration.getName() });
+				throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID, msg, e));
+			} finally {
+				try {
+					buildRunnerHelper.close();
+				} catch (IOException e) {
+					ManagedBuilderCorePlugin.log(e);
+				}
+				monitor.done();
+			}
 		}
 	}
 

@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * Interface implemented by toolchain integrators to perform the actual build.
- * 
+ *
  * @author Doug Schaefer
  * @since 8.0
  */
@@ -29,12 +29,13 @@ public abstract class AbstractBuildRunner {
 	/**
 	 * Perform the build.
 	 *
-	 * @param kind kind from the IncrementalProjectBuilder
-	 * @param project project being built
-	 * @param configuration configuration being built
-	 * @param console console to use for build output
-	 * @param markerGenerator generator to add markers for build problems 
-	 * @param monitor progress monitor
+	 * @param kind - kind from the IncrementalProjectBuilder
+	 * @param project - project being built
+	 * @param configuration - configuration being built
+	 * @param console - console to use for build output
+	 * @param markerGenerator - generator to add markers for build problems
+	 * @param monitor - progress monitor in the initial state where {@link IProgressMonitor#beginTask(String, int)}
+	 *    has not been called yet.
 	 * @throws CoreException standard core exception if something goes wrong
 	 */
 	public abstract boolean invokeBuild(int kind, IProject project, IConfiguration configuration,

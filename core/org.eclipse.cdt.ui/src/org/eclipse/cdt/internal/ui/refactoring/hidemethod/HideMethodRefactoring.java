@@ -93,7 +93,7 @@ public class HideMethodRefactoring extends CRefactoring {
 				return initStatus;
 			}
 	
-			if (isProgressMonitorCanceld(sm, initStatus))
+			if (isProgressMonitorCanceled(sm, initStatus))
 				return initStatus;
 	
 			List<IASTName> names = findAllMarkedNames();
@@ -118,7 +118,7 @@ public class HideMethodRefactoring extends CRefactoring {
 				return initStatus;
 			}
 	
-			if (isProgressMonitorCanceld(sm, initStatus))
+			if (isProgressMonitorCanceled(sm, initStatus))
 				return initStatus;
 			if (methodDeclaration instanceof IASTFunctionDefinition) {
 				IASTDeclarator declarator = ((IASTFunctionDefinition) methodDeclaration).getDeclarator();

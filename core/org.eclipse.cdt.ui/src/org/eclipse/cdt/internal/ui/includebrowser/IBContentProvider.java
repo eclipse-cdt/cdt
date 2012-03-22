@@ -172,7 +172,7 @@ public class IBContentProvider extends AsyncTreeContentProvider {
 		} catch (CoreException e) {
 			CUIPlugin.log(e);
 		} 
-		return new IIndexInclude[0];
+		return IIndexInclude.EMPTY_INCLUDES_ARRAY;
 	}
 
 	public IIndexInclude[] findIncludesTo(IIndex index, IIndexFileLocation ifl, IProgressMonitor pm) {
@@ -199,6 +199,6 @@ public class IBContentProvider extends AsyncTreeContentProvider {
 		} catch (CoreException e) {
 			CUIPlugin.log(e);
 		} 
-		return new IIndexInclude[0];
+		return IIndexInclude.EMPTY_INCLUDES_ARRAY;
 	}
 }

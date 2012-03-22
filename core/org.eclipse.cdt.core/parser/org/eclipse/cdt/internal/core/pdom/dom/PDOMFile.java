@@ -74,8 +74,8 @@ public class PDOMFile implements IIndexFragmentFile {
 	private static final int FLAGS= LINKAGE_ID + 3;  // size 1
 	private static final int TIME_STAMP = FLAGS + 1; // long
 	private static final int CONTENT_HASH= TIME_STAMP + 8;  // long
-	private static final int ENCODING_HASH= CONTENT_HASH + 8;
-	private static final int LAST_USING_DIRECTIVE= ENCODING_HASH + 4;
+	private static final int SIZE_AND_ENCODING_HASH= CONTENT_HASH + 8;
+	private static final int LAST_USING_DIRECTIVE= SIZE_AND_ENCODING_HASH + 4;
 	private static final int FIRST_MACRO_REFERENCE= LAST_USING_DIRECTIVE + Database.PTR_SIZE;
 	private static final int SIGNIFICANT_MACROS= FIRST_MACRO_REFERENCE + Database.PTR_SIZE;
 	private static final int RECORD_SIZE= SIGNIFICANT_MACROS + Database.PTR_SIZE;   // 8*PTR_SIZE + 3+1+8+8+4 = 56
@@ -205,7 +205,7 @@ public class PDOMFile implements IIndexFragmentFile {
 		}
 
 		setTimestamp(sourceFile.getTimestamp());
-		setEncodingHashcode(sourceFile.getEncodingHashcode());
+		setSizeAndEncodingHashcode(sourceFile.getSizeAndEncodingHashcode());
 		setContentsHash(sourceFile.getContentsHash());
 
 		// Transfer the flags. 
@@ -327,15 +327,21 @@ public class PDOMFile implements IIndexFragmentFile {
 	}
 
 	@Override
-	public int getEncodingHashcode() throws CoreException {
+	public int getSizeAndEncodingHashcode() throws CoreException {
 		Database db = fLinkage.getDB();
-		return db.getInt(record + ENCODING_HASH);
+		return db.getInt(record + SIZE_AND_ENCODING_HASH);
 	}
 
 	@Override
-	public void setEncodingHashcode(int hashcode) throws CoreException {
+	@Deprecated
+	public int getEncodingHashcode() throws CoreException {
+		return 0;
+	}
+
+	@Override
+	public void setSizeAndEncodingHashcode(int hashcode) throws CoreException {
 		Database db= fLinkage.getDB();
-		db.putInt(record + ENCODING_HASH, hashcode);
+		db.putInt(record + SIZE_AND_ENCODING_HASH, hashcode);
 	}
 
 	@Override

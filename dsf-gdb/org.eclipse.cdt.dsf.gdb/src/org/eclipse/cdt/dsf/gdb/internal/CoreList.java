@@ -51,40 +51,43 @@ public class CoreList {
 		Vector<ICoreInfo> coreInfo = new Vector<ICoreInfo>();
         BufferedReader reader = null;
         try {
+        	String processorId = null;
         	String physicalId = null;
-        	String coreId = null;
-        	String cpuCores = null;
         	
             Reader r = new InputStreamReader(new FileInputStream(cpuInfo));
             reader = new BufferedReader(r);
             String line;
             while ((line = reader.readLine()) != null) {
                 line = line.trim();
-                if (line.startsWith("physical id")) { //$NON-NLS-1$
+                if (line.startsWith("processor")) { //$NON-NLS-1$
+                	if (processorId != null) {
+                		// We are already at the next 'processor' entry, without
+                		// having found the 'physical id' entry.  This means
+                		// there is a single physical CPU.
+                		physicalId = "0";  //$NON-NLS-1$
+
+                		coreInfo.add(new CoreInfo(processorId, physicalId));
+                		processorId = null;
+                	}
+                	// Found the processor id of this core, so store it temporarily
+                	processorId = line.split(":")[1].trim();  //$NON-NLS-1$
+                } else if (line.startsWith("physical id")) { //$NON-NLS-1$
                 	// Found the physical id of this core, so store it temporarily
+                	
+                	assert physicalId == null;
                 	physicalId = line.split(":")[1].trim();  //$NON-NLS-1$
-                } else if (line.startsWith("core id")) { //$NON-NLS-1$
-                	// Found core id of this core which come after the entry
-                	// for physical id, so we have both now.
-                	coreId = line.split(":")[1].trim(); //$NON-NLS-1$
-	            } else if (line.startsWith("cpu cores")) { //$NON-NLS-1$
-	            	// Found CPU core count which comes after the entry
-	            	// for core id, so we have all three by now.
-	            	cpuCores = line.split(":")[1].trim(); //$NON-NLS-1$
-	            	
-	            	int cid = Integer.parseInt(coreId);
-	            	int pid = Integer.parseInt(physicalId);
-	            	int cores_per_pid = Integer.parseInt(cpuCores);
-	            	String absoluteCoreID = Integer.toString(cid + pid * cores_per_pid);
-	            	
-	            	coreInfo.add(new CoreInfo(absoluteCoreID, physicalId));
+                	
+	            	coreInfo.add(new CoreInfo(processorId, physicalId));
 	            	
 	            	// Get ready to look for the next core.
+	            	processorId = null;
 	            	physicalId = null;
-	            	coreId = null;
-	            	cpuCores = null;
 	            }
-            }            
+            }
+            if (processorId != null) {
+            	// This will happen when there is no 'physical id' field
+        		coreInfo.add(new CoreInfo(processorId, "0"));  //$NON-NLS-1$
+            }
 		} catch (IOException e) {
 		} finally {
 			try {

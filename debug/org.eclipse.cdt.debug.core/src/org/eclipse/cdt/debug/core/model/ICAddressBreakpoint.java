@@ -14,5 +14,11 @@ package org.eclipse.cdt.debug.core.model;
  * A breakpoint that suspend the execution when a particular address is reached.
  */
 public interface ICAddressBreakpoint extends ICLineBreakpoint {
+    
+    /** 
+     * Breakpoint marker type for this breakpoint type.
+     * @since 7.2
+     */    
+    public static final String C_ADDRESS_BREAKPOINT_MARKER = "org.eclipse.cdt.debug.core.cAddressBreakpointMarker"; //$NON-NLS-1$
 
 }

@@ -12,7 +12,6 @@
 package org.eclipse.cdt.make.internal.core.scannerconfig2;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -24,7 +23,7 @@ import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.core.ICommandLauncher;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.resources.IConsole;
-import org.eclipse.cdt.internal.core.ConsoleOutputSniffer;
+import org.eclipse.cdt.internal.core.BuildRunnerHelper;
 import org.eclipse.cdt.make.core.MakeBuilder;
 import org.eclipse.cdt.make.core.MakeBuilderUtil;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
@@ -33,9 +32,7 @@ import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;
 import org.eclipse.cdt.make.core.scannerconfig.InfoContext;
 import org.eclipse.cdt.make.internal.core.MakeMessages;
-import org.eclipse.cdt.make.internal.core.StreamMonitor;
 import org.eclipse.cdt.make.internal.core.scannerconfig.ScannerConfigUtil;
-import org.eclipse.cdt.make.internal.core.scannerconfig.ScannerInfoConsoleParserFactory;
 import org.eclipse.cdt.utils.EFSExtensionManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -56,7 +53,7 @@ import org.osgi.service.prefs.BackingStoreException;
 public class DefaultRunSIProvider implements IExternalScannerInfoProvider {
 	private static final String GMAKE_ERROR_PARSER_ID = "org.eclipse.cdt.core.GmakeErrorParser"; //$NON-NLS-1$
 	private static final String PREF_CONSOLE_ENABLED = "org.eclipse.cdt.make.core.scanner.discovery.console.enabled"; //$NON-NLS-1$
-	private static final String NEWLINE = System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
+	private static final int MONITOR_SCALE = 100;
 
 	protected IResource resource;
 	protected String providerId;
@@ -90,17 +87,20 @@ public class DefaultRunSIProvider implements IExternalScannerInfoProvider {
 		this.buildInfo = buildInfo;
 		this.collector = collector;
 
-		IProject currentProject = resource.getProject();
-		// call a subclass to initialize protected fields
-		if (!initialize()) {
-			return false;
-		}
-		if (monitor == null) {
-			monitor = new NullProgressMonitor();
-		}
-		monitor.beginTask(MakeMessages.getString("ExternalScannerInfoProvider.Reading_Specs"), 100); //$NON-NLS-1$
+		IProject project = resource.getProject();
+		BuildRunnerHelper buildRunnerHelper = new BuildRunnerHelper(project);
 
 		try {
+			if (monitor == null) {
+				monitor = new NullProgressMonitor();
+			}
+			monitor.beginTask(MakeMessages.getString("ExternalScannerInfoProvider.Reading_Specs"), 2 * MONITOR_SCALE); //$NON-NLS-1$
+
+			// call a subclass to initialize protected fields
+			if (!initialize()) {
+				return false;
+			}
+
 			ILanguage language = context.getLanguage();
 			IConsole console;
 			if (language!=null && isConsoleEnabled()) {
@@ -111,64 +111,34 @@ public class DefaultRunSIProvider implements IExternalScannerInfoProvider {
 				// that looks in extension points registry and won't find the id
 				console = CCorePlugin.getDefault().getConsole(MakeCorePlugin.PLUGIN_ID + ".console.hidden"); //$NON-NLS-1$
 			}
-			console.start(currentProject);
-			OutputStream cos = console.getOutputStream();
+			console.start(project);
 
-			// Before launching give visual cues via the monitor
-			monitor.subTask(MakeMessages.getString("ExternalScannerInfoProvider.Reading_Specs")); //$NON-NLS-1$
-
-			String errMsg = null;
 			ICommandLauncher launcher = new CommandLauncher();
-			launcher.setProject(currentProject);
-			// Print the command for visual interaction.
-			launcher.showCommand(true);
+			launcher.setProject(project);
 
 			String[] comandLineOptions = getCommandLineOptions();
 			IPath program = getCommandToLaunch();
-			String params = coligate(comandLineOptions);
+			URI workingDirectoryURI = MakeBuilderUtil.getBuildDirectoryURI(project, MakeBuilder.BUILDER_ID);
+			String[] envp = setEnvironment(launcher, env);
 
-			monitor.subTask(MakeMessages.getString("ExternalScannerInfoProvider.Invoking_Command")  //$NON-NLS-1$
-					+ program + params);
+			ErrorParserManager epm = new ErrorParserManager(project, markerGenerator, new String[] {GMAKE_ERROR_PARSER_ID});
 
-			ErrorParserManager epm = new ErrorParserManager(currentProject, markerGenerator, new String[] {GMAKE_ERROR_PARSER_ID});
-			epm.setOutputStream(cos);
-			StreamMonitor streamMon = new StreamMonitor(new SubProgressMonitor(monitor, 70), epm, 100);
-			OutputStream stdout = streamMon;
-			OutputStream stderr = streamMon;
+			buildRunnerHelper.setLaunchParameters(launcher, program, comandLineOptions, workingDirectoryURI, envp );
+			buildRunnerHelper.prepareStreams(epm, null, console, new SubProgressMonitor(monitor, 1 * MONITOR_SCALE, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 
-			ConsoleOutputSniffer sniffer = ScannerInfoConsoleParserFactory.getESIProviderOutputSniffer(
-					stdout, stderr, currentProject, context, providerId, buildInfo, collector, markerGenerator);
-			OutputStream consoleOut = (sniffer == null ? cos : sniffer.getOutputStream());
-			OutputStream consoleErr = (sniffer == null ? cos : sniffer.getErrorStream());
-			Process p = launcher.execute(program, comandLineOptions, setEnvironment(launcher, env), fWorkingDirectory, monitor);
-			if (p != null) {
-				try {
-					// Close the input of the Process explicitly.
-					// We will never write to it.
-					p.getOutputStream().close();
-				} catch (IOException e) {
-				}
-				if (launcher.waitAndRead(consoleOut, consoleErr, new SubProgressMonitor(monitor, 0)) != ICommandLauncher.OK) {
-					errMsg = launcher.getErrorMessage();
-				}
-				monitor.subTask(MakeMessages.getString("ExternalScannerInfoProvider.Parsing_Output")); //$NON-NLS-1$
-			} else {
-				errMsg = launcher.getErrorMessage();
-			}
+			buildRunnerHelper.greeting(MakeMessages.getFormattedString("ExternalScannerInfoProvider.Greeting", project.getName())); //$NON-NLS-1$
+			buildRunnerHelper.build(new SubProgressMonitor(monitor, 1 * MONITOR_SCALE, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+			buildRunnerHelper.close();
+			buildRunnerHelper.goodbye();
 
-			if (errMsg != null) {
-				printLine(consoleErr, errMsg);
-				printLine(consoleErr, MakeMessages.getFormattedString("ExternalScannerInfoProvider.Provider_Error", program + params) + NEWLINE); //$NON-NLS-1$
-			}
-
-			consoleOut.close();
-			consoleErr.close();
-			cos.close();
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			MakeCorePlugin.log(e);
-		}
-		finally {
+		} finally {
+			try {
+				buildRunnerHelper.close();
+			} catch (IOException e) {
+				MakeCorePlugin.log(e);
+			}
 			monitor.done();
 		}
 		return true;
@@ -183,11 +153,6 @@ public class DefaultRunSIProvider implements IExternalScannerInfoProvider {
 		// subclass can change default behavior
 		return prepareArguments(
 				buildInfo.isUseDefaultProviderCommand(providerId));
-	}
-
-	private void printLine(OutputStream stream, String msg) throws IOException {
-		stream.write((msg + NEWLINE).getBytes());
-		stream.flush();
 	}
 
 	/**
@@ -221,16 +186,6 @@ public class DefaultRunSIProvider implements IExternalScannerInfoProvider {
 	 */
 	protected String[] prepareArguments(boolean isDefaultCommand) {
 		return fCompileArguments;
-	}
-
-	private String coligate(String[] array) {
-		StringBuffer sb = new StringBuffer(128);
-		for (int i = 0; i < array.length; ++i) {
-			sb.append(' ');
-			sb.append(array[i]);
-		}
-		String ca = sb.toString();
-		return ca;
 	}
 
 	private Properties getEnvMap(ICommandLauncher launcher, Properties initialEnv) {

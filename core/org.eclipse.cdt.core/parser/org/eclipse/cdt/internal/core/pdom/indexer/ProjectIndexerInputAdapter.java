@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *    Sergey Prigogin (Google)
+ *     Markus Schorn - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.pdom.indexer;
 
@@ -174,6 +174,24 @@ public class ProjectIndexerInputAdapter extends IndexerInputAdapter {
 		IPath location= IndexLocationFactory.getAbsolutePath(ifl);
 		if (location != null) {
 			return location.toFile().lastModified();
+		}
+		return 0;
+	}
+
+	@Override
+	public long getFileSize(IIndexFileLocation ifl) {
+		String fullPath= ifl.getFullPath();
+		IPath location= null;
+		if (fullPath != null) {
+			IResource res= ResourcesPlugin.getWorkspace().getRoot().findMember(new Path(fullPath));
+			if (res != null) {
+				location = res.getLocation();
+			}
+		} else {
+			location= IndexLocationFactory.getAbsolutePath(ifl);
+		}
+		if (location != null) {
+			return location.toFile().length();
 		}
 		return 0;
 	}

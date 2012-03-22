@@ -156,6 +156,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.IActionBars;
@@ -1309,12 +1310,23 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		fActionToggleSource.setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin(DsfUIPlugin.PLUGIN_ID, "icons/source.gif"));  //$NON-NLS-1$
 		fVerticalRuler.getControl().addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseDoubleClick(MouseEvent e) {
+			public void mouseDoubleClick(final MouseEvent e) {
 				// invoke toggle breakpoint
 				IHandlerService handlerService = (IHandlerService) getSite().getService(IHandlerService.class);
 				if (handlerService != null) {
 					try {
-						handlerService.executeCommand(COMMAND_ID_TOGGLE_BREAKPOINT, null);
+					    Event event= new Event();
+					    event.display = e.display;
+					    event.widget = e.widget;
+					    event.time = e.time;
+					    event.data = e.data;
+					    event.x = e.x;
+					    event.y = e.y;
+					    event.button = e.button;
+					    event.stateMask = e.stateMask;
+					    event.count = e.count;
+					    
+						handlerService.executeCommand(COMMAND_ID_TOGGLE_BREAKPOINT, event);
 					} catch (org.eclipse.core.commands.ExecutionException exc) {
 						DsfUIPlugin.log(exc);
 					} catch (NotDefinedException exc) {

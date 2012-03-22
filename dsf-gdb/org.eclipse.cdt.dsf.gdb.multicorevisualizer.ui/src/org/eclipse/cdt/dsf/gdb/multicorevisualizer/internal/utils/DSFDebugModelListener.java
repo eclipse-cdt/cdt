@@ -15,8 +15,8 @@ package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.utils;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMData;
 import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.model.VisualizerExecutionState;
-import org.eclipse.cdt.dsf.gdb.service.IGDBHardware.ICPUDMContext;
-import org.eclipse.cdt.dsf.gdb.service.IGDBHardware.ICoreDMContext;
+import org.eclipse.cdt.dsf.gdb.service.IGDBHardwareAndOS.ICPUDMContext;
+import org.eclipse.cdt.dsf.gdb.service.IGDBHardwareAndOS.ICoreDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 
 /** Interface for classes that interact with DSFDebugModel.

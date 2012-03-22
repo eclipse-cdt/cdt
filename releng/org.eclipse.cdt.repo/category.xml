@@ -56,4 +56,10 @@
    <feature url="features/org.eclipse.cdt.gnu.multicorevisualizer_0.0.0.qualifier.jar" id="org.eclipse.cdt.gnu.multicorevisualizer" version="0.0.0">
       <category name="extra"/>
    </feature>
+   <feature url="features/org.eclipse.cdt.autotools_0.0.0.qualifier.jar" id="org.eclipse.cdt.autotools" version="0.0.0">
+      <category name="extra"/>
+   </feature>
+   <feature url="features/org.eclipse.cdt.autotools.source_0.0.0.qualifier.jar" id="org.eclipse.cdt.autotools.source" version="0.0.0">
+      <category name="extra"/>
+   </feature>
 </site>

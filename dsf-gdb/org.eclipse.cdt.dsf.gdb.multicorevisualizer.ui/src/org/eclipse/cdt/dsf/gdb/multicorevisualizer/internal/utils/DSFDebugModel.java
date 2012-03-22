@@ -30,10 +30,10 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.StateChangeReason;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.model.VisualizerExecutionState;
-import org.eclipse.cdt.dsf.gdb.service.IGDBHardware;
-import org.eclipse.cdt.dsf.gdb.service.IGDBHardware.ICPUDMContext;
-import org.eclipse.cdt.dsf.gdb.service.IGDBHardware.ICoreDMContext;
-import org.eclipse.cdt.dsf.gdb.service.IGDBHardware.IHardwareTargetDMContext;
+import org.eclipse.cdt.dsf.gdb.service.IGDBHardwareAndOS;
+import org.eclipse.cdt.dsf.gdb.service.IGDBHardwareAndOS.ICPUDMContext;
+import org.eclipse.cdt.dsf.gdb.service.IGDBHardwareAndOS.ICoreDMContext;
+import org.eclipse.cdt.dsf.gdb.service.IGDBHardwareAndOS.IHardwareTargetDMContext;
 import org.eclipse.cdt.dsf.gdb.service.IGDBProcesses.IGdbThreadDMData;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 
@@ -61,7 +61,7 @@ public class DSFDebugModel {
 							   final Object arg)
 	{
 		ICommandControlService controlService = sessionState.getService(ICommandControlService.class);
-		IGDBHardware hwService = sessionState.getService(IGDBHardware.class);
+		IGDBHardwareAndOS hwService = sessionState.getService(IGDBHardwareAndOS.class);
 		if (controlService == null || hwService == null) {
 			listener.getCPUsDone(null, arg);
 			return;
@@ -99,7 +99,7 @@ public class DSFDebugModel {
 							    final DSFDebugModelListener listener,
 							    final Object arg)
 	{
-		IGDBHardware hwService = sessionState.getService(IGDBHardware.class);
+		IGDBHardwareAndOS hwService = sessionState.getService(IGDBHardwareAndOS.class);
 		if (hwService == null) {
 			listener.getCoresDone(cpuContext, null, arg);
 			return;

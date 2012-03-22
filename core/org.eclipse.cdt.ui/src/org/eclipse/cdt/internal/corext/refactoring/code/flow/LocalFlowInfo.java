@@ -16,11 +16,11 @@ import org.eclipse.cdt.core.dom.ast.IVariable;
 class LocalFlowInfo extends FlowInfo {
 	private final int fVariableIndex;
 
-	public LocalFlowInfo(IVariable binding, int localAccessMode, FlowContext context) {
+	public LocalFlowInfo(IVariable binding, int variableIndex, int localAccessMode, FlowContext context) {
 		super(NO_RETURN);
-		fVariableIndex= context.getIndexFromLocal(binding);
-		if (fVariableIndex < 0)
-			throw new IllegalStateException("Invalid local variable \"" + binding.getName() + "\" for the context."); //$NON-NLS-1$ //$NON-NLS-2$
+		if (variableIndex < 0)
+			throw new IllegalArgumentException("Invalid index for local variable \"" + binding.getName()); //$NON-NLS-1$
+		fVariableIndex= variableIndex;
 		if (context.considerAccessMode()) {
 			createAccessModeArray(context);
 			context.manageLocal(binding);

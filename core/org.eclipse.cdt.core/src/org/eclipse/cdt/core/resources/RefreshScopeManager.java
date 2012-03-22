@@ -485,10 +485,33 @@ public class RefreshScopeManager {
 							String configName = child.getAttribute(CONFIGURATION_ELEMENT_NAME);
 							loadResourceData(workspaceRoot, project, configName, child.getChildren());							
 						} 						
-					} 					
+					} 
+					// else there are no children, and this is a "new" project.
+					//  so initialize it.
+					if (children.length == 0) {
+						initializeConfigMap(project);
+					}
 				} 
 			} 
 		} 
+	}
+
+	private void initializeConfigMap(IProject project) {			
+		getProjectToConfigurationToResourcesMap();
+		HashMap<String,HashMap<IResource, List<RefreshExclusion>>> configMap = fProjToConfToResToExcluMap.get(project);
+		if (configMap == null) {
+			configMap = new HashMap<String,HashMap<IResource, List<RefreshExclusion>>>();
+			CProjectDescriptionManager descriptionManager = CProjectDescriptionManager.getInstance();
+			ICProjectDescription projectDescription = descriptionManager.getProjectDescription(project, false);
+			ICConfigurationDescription cfgDescs[] = projectDescription.getConfigurations();	
+			for (ICConfigurationDescription cfgDesc : cfgDescs) { 
+				String configName = cfgDesc.getName();
+				HashMap<IResource, List<RefreshExclusion>> resourceMap = new HashMap<IResource, List<RefreshExclusion>>();
+				resourceMap.put(project, new LinkedList<RefreshExclusion>());
+				configMap.put(configName, resourceMap);
+			}
+			fProjToConfToResToExcluMap.put(project,configMap);
+		}
 	}
 
 	/**

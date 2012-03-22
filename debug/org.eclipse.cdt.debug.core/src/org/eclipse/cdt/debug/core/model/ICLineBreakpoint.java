@@ -19,6 +19,12 @@ import org.eclipse.debug.core.model.ILineBreakpoint;
  */
 public interface ICLineBreakpoint extends ICBreakpoint, ILineBreakpoint {
 
+    /** 
+     * Breakpoint marker type for this breakpoint type.
+     * @since 7.2
+     */
+    public static final String C_LINE_BREAKPOINT_MARKER = "org.eclipse.cdt.debug.core.cLineBreakpointMarker"; //$NON-NLS-1$
+    
 	/**
 	 * Breakpoint attribute storing the function this breakpoint suspends
 	 * execution at (value <code>"org.eclipse.cdt.debug.core.function"</code>).
@@ -77,4 +83,5 @@ public interface ICLineBreakpoint extends ICBreakpoint, ILineBreakpoint {
 	 *  underlying marker
 	 */
 	public String getFileName() throws CoreException;
+
 }

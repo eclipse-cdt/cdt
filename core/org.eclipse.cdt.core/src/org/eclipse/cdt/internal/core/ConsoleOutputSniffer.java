@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,127 +21,116 @@ import org.eclipse.cdt.core.IErrorParser;
 
 /**
  * Intercepts an output to console and forwards it to console parsers for processing
- * 
- * @author vhirsl
  */
 public class ConsoleOutputSniffer {
 
-    /*
-     * Private class to sniffer the output stream for this snifffer.
-     */
-    private class ConsoleOutputStream extends OutputStream {
-        // Stream's private buffer for the stream's read contents.
-    	private StringBuffer currentLine = new StringBuffer();
-    	private OutputStream outputStream = null;
-        
+	/**
+	 * Private class to sniff the output stream for this sniffer.
+	 */
+	private class ConsoleOutputStream extends OutputStream {
+		// Stream's private buffer for the stream's read contents.
+		private StringBuffer currentLine = new StringBuffer();
+		private OutputStream outputStream = null;
+
 		public ConsoleOutputStream(OutputStream outputStream) {
 			this.outputStream = outputStream;
 		}
 
-		/* (non-Javadoc)
-    	 * @see java.io.OutputStream#write(int)
-    	 */
-    	@Override
+		@Override
 		public void write(int b) throws IOException {
-    		currentLine.append((char) b);
-    		checkLine(false);
+			currentLine.append((char) b);
+			checkLine(false);
 
-    		// Continue writing the bytes to the console's output.
-    		if (outputStream != null) {
-    			outputStream.write(b);
-    		}
-    	}
-    	
-    	/* (non-Javadoc)
-    	 * @see java.io.OutputStream#write(byte[], int, int)
-    	 */
-    	@Override
+			// Continue writing the bytes to the console's output.
+			if (outputStream != null) {
+				outputStream.write(b);
+			}
+		}
+
+		@Override
 		public void write(byte[] b, int off, int len) throws IOException {
-    		if (b == null) {
-    			throw new NullPointerException();
-    		} else if (off != 0 || (len < 0) || (len > b.length)) {
-    			throw new IndexOutOfBoundsException();
-    		} else if (len == 0) {
-    			return;
-    		}
-    		currentLine.append(new String(b, 0, len));
-    		checkLine(false);
-    		
-    		// Continue writing the bytes to the console's output.
-    		if (outputStream != null)
-    			outputStream.write(b, off, len);
-    	}
-    	
-    	/* (non-Javadoc)
-    	 * @see java.io.OutputStream#close()
-    	 */
-    	@Override
+			if (b == null) {
+				throw new NullPointerException();
+			} else if (off != 0 || (len < 0) || (len > b.length)) {
+				throw new IndexOutOfBoundsException();
+			} else if (len == 0) {
+				return;
+			}
+			currentLine.append(new String(b, 0, len));
+			checkLine(false);
+
+			// Continue writing the bytes to the console's output.
+			if (outputStream != null)
+				outputStream.write(b, off, len);
+		}
+
+		@Override
 		public void close() throws IOException {
-    		checkLine(true);
-    		closeConsoleOutputStream();
-    	}
-    	
-    	/* (non-Javadoc)
-    	 * @see java.io.OutputStream#flush()
-    	 */
-    	@Override
+			checkLine(true);
+			closeConsoleOutputStream();
+		}
+
+		@Override
 		public void flush() throws IOException {
-    		if (outputStream != null) {
-    			outputStream.flush();
-    		}
-    	}
+			if (outputStream != null) {
+				outputStream.flush();
+			}
+		}
 
-    	/*
-    	 * Checks to see if the already read input constitutes
-    	 * a complete line (e.g. does the sniffing).  If so, then
-    	 * send it to processLine.
-    	 * 
-    	 * @param flush
-    	 */
-    	private void checkLine(boolean flush) {
-    		String buffer = currentLine.toString();
-    		int i = 0;
-    		while ((i = buffer.indexOf('\n')) != -1) {
-    			// get rid of any trailing whitespace but keep leading whitespaces (bug 199245)
-    			int end= i;
-    			while(end > 0 && buffer.charAt(end-1) <= ' ') { // see String.trim()
-    				end--;
-    			}
-    			if (end > 0) {
-    				String line = buffer.substring(0, end); 
-    			    processLine(line);
-    			}
-    			buffer = buffer.substring(i + 1); // skip the \n and advance
-    		}
-    		currentLine.setLength(0);
-    		if (flush) {
-    			if (buffer.length() > 0) {
-    				processLine(buffer);
-    			}
-    		} else {
-    			currentLine.append(buffer);
-    		}
-    	}
+		/**
+		 * Checks to see if the already read input constitutes
+		 * a complete line (e.g. does the sniffing).  If so, then
+		 * send it to processLine.
+		 *
+		 * @param flush
+		 */
+		private void checkLine(boolean flush) {
+			if (currentLine.length() == 0) {
+				return;
+			}
 
-    } // end ConsoleOutputStream class
-    
+			String buffer = currentLine.toString();
+			int i = 0;
+			while ((i = buffer.indexOf('\n')) != -1) {
+				int eol = i;
+				if (i > 0 && buffer.charAt(i-1) == '\r') {
+					// also get rid of trailing \r in case of Windows line delimiter "\r\n"
+					eol = i - 1;
+				}
+				String line = buffer.substring(0, eol);
+				processLine(line);
+
+				buffer = buffer.substring(i + 1); // skip the \n and advance
+			}
+			currentLine.setLength(0);
+			if (flush) {
+				if (buffer.length() > 0) {
+					processLine(buffer);
+				}
+			} else {
+				currentLine.append(buffer);
+			}
+		}
+
+	} // end ConsoleOutputStream class
+
 	private int nOpens = 0;
 	private OutputStream consoleOutputStream;
 	private OutputStream consoleErrorStream;
 	private IConsoleParser[] parsers;
-	
+
 	private ErrorParserManager errorParserManager = null;
 
 	public ConsoleOutputSniffer(IConsoleParser[] parsers) {
 		this.parsers = parsers;
 	}
-	
+
 	public ConsoleOutputSniffer(OutputStream outputStream, OutputStream errorStream, IConsoleParser[] parsers) {
 		this(parsers);
 		this.consoleOutputStream = outputStream;
 		this.consoleErrorStream = errorStream;
 	}
-	
+
 	public ConsoleOutputSniffer(OutputStream outputStream, OutputStream errorStream, IConsoleParser[] parsers, ErrorParserManager epm) {
 		this(outputStream, errorStream, parsers);
 		this.errorParserManager = epm;
@@ -153,24 +142,24 @@ public class ConsoleOutputSniffer {
 	 * output stream goes into here.
 	 */
 	public OutputStream getOutputStream() {
-	    incNOpens();
-	    return new ConsoleOutputStream(consoleOutputStream);
+		incNOpens();
+		return new ConsoleOutputStream(consoleOutputStream);
 	}
-	
+
 	/**
 	 * Returns an error stream that will be sniffed.
 	 * This stream should be hooked up so the command
 	 * error stream goes into here.
 	 */
 	public OutputStream getErrorStream() {
-	    incNOpens();
-	    return new ConsoleOutputStream(consoleErrorStream);
+		incNOpens();
+		return new ConsoleOutputStream(consoleErrorStream);
 	}
-	
+
 	private synchronized void incNOpens() {
-		nOpens++; 
+		nOpens++;
 	}
-	
+
 	/*
 	 */
 	public synchronized void closeConsoleOutputStream() throws IOException {
@@ -186,10 +175,10 @@ public class ConsoleOutputSniffer {
 			}
 		}
 	}
-	
+
 	/*
 	 * Processes the line by passing the line to the parsers.
-	 * 
+	 *
 	 * @param line
 	 */
 	private synchronized void processLine(String line) {
@@ -207,5 +196,5 @@ public class ConsoleOutputSniffer {
 			}
 		}
 	}
-	
+
 }

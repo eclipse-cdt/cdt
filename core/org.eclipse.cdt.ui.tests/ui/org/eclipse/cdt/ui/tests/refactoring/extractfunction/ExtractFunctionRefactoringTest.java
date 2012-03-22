@@ -274,6 +274,41 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 		assertRefactoringSuccess();
 	}
 
+	//main.cpp
+	//class A {
+	//public:
+	//	explicit A(const char*);
+	//	void m1() const;
+	//	void m2() const;
+	//};
+	//
+	//void main() {
+	//  /*$*/A a("");
+	//  a.m1();/*$$*/
+    //		A b(a); // nonstandard indent to check that it is preserved
+	//}
+	//====================
+	//class A {
+	//public:
+	//	explicit A(const char*);
+	//	void m1() const;
+	//	void m2() const;
+	//};
+	//
+	//A extracted() {
+	//	A a("");
+	//	a.m1();
+	//	return a;
+	//}
+	//
+	//void main() {
+	//	A a = extracted();
+    //		A b(a); // nonstandard indent to check that it is preserved
+	//}
+	public void testLocalVariableDeclaration_3() throws Exception {
+		assertRefactoringSuccess();
+	}
+	
 	//A.h
 	//#ifndef A_H_
 	//#define A_H_

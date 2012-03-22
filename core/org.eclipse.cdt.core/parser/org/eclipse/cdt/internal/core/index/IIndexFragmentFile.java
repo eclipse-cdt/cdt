@@ -34,10 +34,16 @@ public interface IIndexFragmentFile extends IIndexFile {
 	void setContentsHash(long hash) throws CoreException;
 
 	/**
-	 * Sets the hash-code of the file encoding.
+	 * Returns the hash-code computed by combining the file size and the file encoding.
+	 * @return hashcode a hash-code or <code>0</code> if it is unknown.
+	 */
+	int getSizeAndEncodingHashcode() throws CoreException;
+
+	/**
+	 * Sets the hash-code computed by combining the file size and the file encoding.
 	 * @param hashcode a hash-code or <code>0</code> if it is unknown.
 	 */
-	void setEncodingHashcode(int hashcode) throws CoreException;
+	void setSizeAndEncodingHashcode(int hashcode) throws CoreException;
 
 	/**
 	 * Sets the flag that determines whether the file is a header with #pragma once statement

@@ -77,11 +77,10 @@ public interface IIndexFile extends IFileNomination {
 	int getScannerConfigurationHashcode() throws CoreException;
 
 	/**
-	 * Returns the hash-code of the file encoding that was used to parse the file.
-	 * <code>0</code> will be returned in case the hash-code is unknown.
-	 * @return the hash-code of the file encoding or <code>0</code>.
 	 * @since 5.3
+	 * @deprecated Returns 0. 
 	 */
+	@Deprecated
 	int getEncodingHashcode() throws CoreException;
 
 	/**

@@ -13,7 +13,6 @@ package org.eclipse.cdt.managedbuilder.internal.ui.actions;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Vector;
 
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
@@ -26,7 +25,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
@@ -184,10 +182,8 @@ public class CleanFilesAction extends ActionDelegate implements
 	private static final class CleanFilesJob extends Job {
 		private final List<IFile> files;
 
-		protected Vector<?> generationProblems;
-
-		private CleanFilesJob(String name, List<IFile> filesToBuild) {
-			super(name);
+		private CleanFilesJob(List<IFile> filesToBuild) {
+			super(ManagedMakeMessages.getResourceString("CleanFilesAction.cleaningFiles")); //$NON-NLS-1$
 			files = filesToBuild;
 		}
 
@@ -213,36 +209,9 @@ public class CleanFilesAction extends ActionDelegate implements
 					}
 				}
 			}
-			try {
-				if (files != null) {
-					monitor
-							.beginTask(
-									ManagedMakeMessages
-											.getResourceString("CleanFilesAction.cleaningFiles"), files.size()); //$NON-NLS-1$
 
-					Iterator<IFile> iterator = files.iterator();
-
-					// clean each file
-					while (iterator.hasNext() && !monitor.isCanceled()) {
-						IFile file = iterator.next();
-
-						GeneratedMakefileBuilder builder = new GeneratedMakefileBuilder();
-						builder.cleanFile(file, monitor);
-
-						if (monitor.isCanceled()) {
-							return Status.CANCEL_STATUS;
-						}
-					}
-
-					monitor.done();
-
-				}
-			} catch (OperationCanceledException e) {
-				return Status.CANCEL_STATUS;
-			} finally {
-				monitor.done();
-			}
-			return Status.OK_STATUS;
+			GeneratedMakefileBuilder builder = new GeneratedMakefileBuilder();
+			return builder.cleanFiles(files, monitor);
 		}
 
 		@Override
@@ -258,13 +227,8 @@ public class CleanFilesAction extends ActionDelegate implements
 	 */
 	@Override
 	public void run(IAction action) {
-
 		List<IFile> selectedFiles = getSelectedBuildableFiles();
-
-		CleanFilesJob job = new CleanFilesJob(
-				ManagedMakeMessages
-						.getResourceString("CleanFilesAction.cleaningFiles"), selectedFiles); //$NON-NLS-1$
-
+		CleanFilesJob job = new CleanFilesJob(selectedFiles);
 		job.schedule();
 	}
 

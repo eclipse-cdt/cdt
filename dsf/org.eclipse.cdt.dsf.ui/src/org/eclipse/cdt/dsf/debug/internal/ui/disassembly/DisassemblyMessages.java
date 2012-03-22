@@ -83,7 +83,10 @@ public final class DisassemblyMessages extends NLS {
 	public static String Disassembly_Error_Dialog_title;
 	public static String Disassembly_Error_Dialog_ok_button;
 	public static String DisassemblyBackendDsf_error_UnableToRetrieveData;
-
+	public static String Disassembly_action_AddBreakpoint_label;
+    public static String Disassembly_action_AddBreakpoint_errorTitle;
+    public static String Disassembly_action_AddBreakpoint_errorMessage;
+	
 	static {
 		NLS.initializeMessages(DisassemblyMessages.class.getName(), DisassemblyMessages.class);
 	}

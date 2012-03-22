@@ -21,8 +21,13 @@ import java.util.Set;
 import org.eclipse.cdt.core.CommandLauncher;
 import org.eclipse.cdt.core.ICommandLauncher;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildCommand;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
+import org.eclipse.cdt.managedbuilder.internal.core.ManagedMakeMessages;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
 /**
@@ -36,7 +41,6 @@ import org.eclipse.core.runtime.SubProgressMonitor;
  *
  */
 public class CommandBuilder implements IBuildModelBuilder {
-	private static final String PATH_ENV = "PATH"; //$NON-NLS-1$
 	private static final String NEWLINE = System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 
 	private IBuildCommand fCmd;
@@ -84,67 +88,57 @@ public class CommandBuilder implements IBuildModelBuilder {
 		return new OutputStreamWrapper(out);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.internal.builddescription.IBuildDescriptionBuilder#build(java.io.OutputStream, java.io.OutputStream, org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
-	public int build(OutputStream out, OutputStream err, IProgressMonitor monitor){
-		//TODO: should we display the command line here?
-		monitor.beginTask("", getNumCommands());	//$NON-NLS-1$
-		monitor.subTask(""/*getCommandLine()*/);	//$NON-NLS-1$
-
-		ICommandLauncher launcher = createLauncher();
-		int status = STATUS_OK;
-
-		launcher.showCommand(true);
+	public int build(OutputStream out, OutputStream err, IProgressMonitor monitor) {
+		int status = STATUS_ERROR_LAUNCH;
 
 		try {
-			fProcess = launcher.execute(fCmd.getCommand(), fCmd.getArgs(), mapToStringArray(fCmd.getEnvironment()), fCmd.getCWD(), monitor);
-		} catch (CoreException e1) {
-			// TODO Auto-generated catch block
-			if(DbgUtil.DEBUG)
-				DbgUtil.trace("Error launching command: " + e1.getMessage());	//$NON-NLS-1$
-			monitor.done();
-			return STATUS_ERROR_LAUNCH;
-		}
-
-		int st = ICommandLauncher.ILLEGAL_COMMAND;
-		if (fProcess != null) {
-			try {
-				// Close the input of the process since we will never write to it
-				fProcess.getOutputStream().close();
-			} catch (IOException e) {
+			if (monitor == null) {
+				monitor = new NullProgressMonitor();
 			}
-			//wrapping out and err streams to avoid their closure
-			st = launcher.waitAndRead(wrap(out), wrap(err),
-					new SubProgressMonitor(monitor,	getNumCommands()));
-		}
+			monitor.beginTask("", getNumCommands()); //$NON-NLS-1$
+			monitor.subTask(ManagedMakeMessages.getResourceString("MakeBuilder.Invoking_Command") + getCommandLine()); //$NON-NLS-1$
 
-		switch(st){
-		case ICommandLauncher.OK:
-			if(fProcess.exitValue() != 0)
-				status = STATUS_ERROR_BUILD;
-			break;
-		case ICommandLauncher.COMMAND_CANCELED:
-			status = STATUS_CANCELLED;
+			ICommandLauncher launcher = createLauncher();
+			launcher.showCommand(true);
+
+			fProcess = launcher.execute(fCmd.getCommand(), fCmd.getArgs(), mapToStringArray(fCmd.getEnvironment()), fCmd.getCWD(), monitor);
+			if (fProcess != null) {
+				try {
+					// Close the input of the process since we will never write to it
+					fProcess.getOutputStream().close();
+				} catch (IOException e) {
+				}
+
+				// Wrapping out and err streams to avoid their closure
+				int st = launcher.waitAndRead(wrap(out), wrap(err), new SubProgressMonitor(monitor,	getNumCommands()));
+				switch (st) {
+				case ICommandLauncher.OK:
+					// assuming that compiler returns error code after compilation errors
+					status = fProcess.exitValue() == 0 ? STATUS_OK : STATUS_ERROR_BUILD;
+					break;
+				case ICommandLauncher.COMMAND_CANCELED:
+					status = STATUS_CANCELLED;
+					break;
+				case ICommandLauncher.ILLEGAL_COMMAND:
+				default:
+					status = STATUS_ERROR_LAUNCH;
+					break;
+				}
+			}
+
 			fErrMsg = launcher.getErrorMessage();
-			if(DbgUtil.DEBUG)
-				DbgUtil.trace("command cancelled: " + fErrMsg);	//$NON-NLS-1$
-
-			printMessage(fErrMsg, out);
-			break;
-		case ICommandLauncher.ILLEGAL_COMMAND:
-		default:
+			if (fErrMsg != null && !fErrMsg.isEmpty()) {
+				printMessage(fErrMsg, err);
+			}
+		} catch (CoreException e) {
+			ManagedBuilderCorePlugin.log(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID,
+					"Error launching command [" + fCmd.getCommand() + "]", e)); //$NON-NLS-1$ //$NON-NLS-2$
 			status = STATUS_ERROR_LAUNCH;
-			fErrMsg = launcher.getErrorMessage();
-			if(DbgUtil.DEBUG)
-				DbgUtil.trace("error launching the command: " + fErrMsg);	//$NON-NLS-1$
-
-			printMessage(fErrMsg, out);
-			break;
+		} finally {
+			monitor.done();
 		}
 
-		monitor.done();
 		return status;
 	}
 

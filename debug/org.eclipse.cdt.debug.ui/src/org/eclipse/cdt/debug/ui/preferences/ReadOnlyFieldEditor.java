@@ -75,11 +75,22 @@ public class ReadOnlyFieldEditor extends FieldEditor implements ICBreakpointsUIC
 		if (textField != null) {
 			String value = getPreferenceStore().getString(getPreferenceName());
 			if (contribution!=null) {
+			    if ("integer".equals (contribution.getType())) { //$NON-NLS-1$
+			        value = Integer.toString( getPreferenceStore().getInt(getPreferenceName()) );
+			    } else if ("boolean".equals (contribution.getType()) ) {//$NON-NLS-1$
+                    value = Boolean.toString( getPreferenceStore().getBoolean(getPreferenceName()) );
+			    } else if ("float".equals (contribution.getType()) ) {//$NON-NLS-1$
+                    value = Float.toString( getPreferenceStore().getFloat(getPreferenceName()) );
+                } else if ("double".equals (contribution.getType()) ) {//$NON-NLS-1$
+                    value = Double.toString( getPreferenceStore().getDouble(getPreferenceName()) );
+                }
 				String tryValue = contribution.getLabelForValue(value);
 				if (tryValue!=null)
 					value = tryValue;
 			}
-			textField.setText(value);
+			if (value != null) {
+			    textField.setText(value);
+			}
 		}
 	}
 

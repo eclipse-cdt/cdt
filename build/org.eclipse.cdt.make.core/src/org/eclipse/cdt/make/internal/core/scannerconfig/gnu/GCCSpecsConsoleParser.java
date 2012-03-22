@@ -44,10 +44,7 @@ public class GCCSpecsConsoleParser implements IScannerInfoConsoleParser {
 	protected List<String> symbols = new ArrayList<String>();
 	protected List<String> includes = new ArrayList<String>();
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser#startup(org.eclipse.core.resources.IProject, org.eclipse.core.runtime.IPath, org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector, org.eclipse.cdt.core.IMarkerGenerator)
-     */
-    @Override
+	@Override
 	public void startup(IProject project, IPath workingDirectory, IScannerInfoCollector collector, IMarkerGenerator markerGenerator) {
 		this.fProject = project;
 		this.fCollector = collector;
@@ -58,21 +55,24 @@ public class GCCSpecsConsoleParser implements IScannerInfoConsoleParser {
 	 */
 	@Override
 	public boolean processLine(String line) {
-		boolean rc = false;
-		line= line.trim();
 		TraceUtil.outputTrace("GCCSpecsConsoleParser parsing line: [", line, "]");	//$NON-NLS-1$ //$NON-NLS-2$
+
+		line= line.trim();
+		if (line.length() == 0) {
+			return false;
+		}
 
 		// contribution of -dD option
 		if (line.startsWith(DEFINE)) {
 			String[] defineParts = line.split("\\s+", 3); //$NON-NLS-1$
 			if (defineParts[0].equals(DEFINE)) {
-                if (defineParts[1].indexOf('(') >= 0) {
-                	// #define __X__(P1, P2) __Y__(P1, P2)
-                    // Enclose matching parentheses pairs
-                    // in the macro name if they are present
-                	int i = line.indexOf(')'); // macro definition itself can have only one pair of brackets
+				if (defineParts[1].indexOf('(') >= 0) {
+					// #define __X__(P1, P2) __Y__(P1, P2)
+					// Enclose matching parentheses pairs
+					// in the macro name if they are present
+					int i = line.indexOf(')'); // macro definition itself can have only one pair of brackets
 
-                    // i now marks the space between the name and definition
+					// i now marks the space between the name and definition
 					if (i > 0) {
 						int start = line.indexOf(defineParts[1]); // start of definition
 						defineParts[1] = line.substring(start, i + 1);
@@ -82,18 +82,18 @@ public class GCCSpecsConsoleParser implements IScannerInfoConsoleParser {
 					} else {
 						MakeCorePlugin.log(new Exception("GCCSpecsConsoleParser ERROR: Unmatched brackets: ["+ line+ "]")); //$NON-NLS-1$ //$NON-NLS-2$
 					}
-                }
+				}
 
-                // Now defineParts[1] is the symbol name, and [2] is the definition
-                String symbol = null;
-                if (defineParts.length > 1) {
-                	symbol = defineParts[1] + "="; //$NON-NLS-1$
-                	if (defineParts.length > 2) {
-                		symbol += defineParts[2];
-                	}
-                	if (!symbols.contains(symbol)) {
-                		symbols.add(symbol);
-                	}
+				// Now defineParts[1] is the symbol name, and [2] is the definition
+				String symbol = null;
+				if (defineParts.length > 1) {
+					symbol = defineParts[1] + "="; //$NON-NLS-1$
+					if (defineParts.length > 2) {
+						symbol += defineParts[2];
+					}
+					if (!symbols.contains(symbol)) {
+						symbols.add(symbol);
+					}
 				}
 			}
 		}
@@ -109,7 +109,7 @@ public class GCCSpecsConsoleParser implements IScannerInfoConsoleParser {
 				includes.add(line);
 		}
 
-		return rc;
+		return false;
 	}
 
 	/* (non-Javadoc)

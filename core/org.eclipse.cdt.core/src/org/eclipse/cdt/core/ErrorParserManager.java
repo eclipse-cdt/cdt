@@ -50,7 +50,7 @@ import org.osgi.service.prefs.BackingStoreException;
  *
  * @noextend This class is not intended to be subclassed by clients.
  */
-public class ErrorParserManager extends OutputStream {
+public class ErrorParserManager extends OutputStream implements IConsoleParser {
 	/**
 	 * The list of error parsers stored in .project for 3.X projects
 	 * as key/value pair with key="org.eclipse.cdt.core.errorOutputParser"
@@ -306,9 +306,11 @@ public class ErrorParserManager extends OutputStream {
 	}
 
 	/**
-	 * Parses the input and tries to generate error or warning markers
+	 * Parses one line of output and generates error or warning markers.
+	 * @since 5.4
 	 */
-	private void processLine(String line) {
+	@Override
+	public boolean processLine(String line) {
 		String lineTrimmed = line.trim();
 		lineCounter++;
 
@@ -363,6 +365,8 @@ outer:
 			}
 		}
 		outputLine(line, marker);
+
+		return false;
 	}
 
 	/**
@@ -847,5 +851,12 @@ outer:
 			}
 		}
 		return result;
+	}
+
+	/**
+	 * @since 5.4
+	 */
+	@Override
+	public void shutdown() {
 	}
 }

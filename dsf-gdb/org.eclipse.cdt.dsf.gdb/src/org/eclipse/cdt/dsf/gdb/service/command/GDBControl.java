@@ -311,6 +311,8 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 				if (!isCanceled()) {
 					// Only set the status if the user has not cancelled the operation already.
 					rm.setStatus(getStatus());
+				} else {
+					rm.cancel();
 				}
     			rm.done();
 			}

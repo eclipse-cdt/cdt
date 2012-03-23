@@ -636,7 +636,7 @@
             objectClass="org.eclipse.cdt.debug.internal.core.ICWatchpointTarget"
             id="org.eclipse.cdt.debug.ui.WatchpointActions">
          <action
-               class="org.eclipse.cdt.debug.internal.ui.actions.breakpoints.AddWatchpointOnVariableActionDelegate"
+               class="org.eclipse.cdt.debug.ui.breakpoints.AddWatchpointOnVariableActionDelegate"
                enablesFor="1"
                icon="icons/elcl16/watchpoint_co.gif"
                id="org.eclipse.cdt.debug.internal.ui.actions.AddWatchpointOnVariableActionDelegate"
@@ -861,7 +861,7 @@
             id="org.eclipse.debug.ui.MemoryView.RenderingViewPane.popupMenu.1"
             targetID="org.eclipse.debug.ui.MemoryView.RenderingViewPane.1">
          <action
-               class="org.eclipse.cdt.debug.internal.ui.actions.breakpoints.AddWatchpointOnMemoryActionDelegate"
+               class="org.eclipse.cdt.debug.ui.breakpoints.AddWatchpointActionDelegate"
                enablesFor="1"
                icon="icons/elcl16/watchpoint_co.gif"
                id="org.eclipse.cdt.debug.internal.ui.actions.AddWatchpointOnMemoryActionDelegate.1"
@@ -874,7 +874,7 @@
             id="org.eclipse.debug.ui.MemoryView.RenderingViewPane.popupMenu.2"
             targetID="org.eclipse.debug.ui.MemoryView.RenderingViewPane.2">
          <action
-               class="org.eclipse.cdt.debug.internal.ui.actions.breakpoints.AddWatchpointOnMemoryActionDelegate"
+               class="org.eclipse.cdt.debug.ui.breakpoints.AddWatchpointActionDelegate"
                enablesFor="1"
                icon="icons/elcl16/watchpoint_co.gif"
                id="org.eclipse.cdt.debug.internal.ui.actions.AddWatchpointOnMemoryActionDelegate.2"
@@ -953,7 +953,7 @@
             </enablement>
          </action>
          <action
-               class="org.eclipse.cdt.debug.internal.ui.actions.breakpoints.AddWatchpointActionDelegate"
+               class="org.eclipse.cdt.debug.ui.breakpoints.AddWatchpointActionDelegate"
                icon="icons/elcl16/watchpoint_co.gif"
                id="org.eclipse.cdt.debug.ui.addWatchpoint"
                label="%AddWatchpoint.label"

@@ -8,12 +8,15 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.debug.internal.core;
+package org.eclipse.cdt.debug.internal.ui.actions;
 
 /**
- * @deprecated This interface has been moved to a public package.  Use
- * {@link org.eclipse.cdt.debug.core.ICWatchpointTarget} instead. 
+ * This class was moved to a public package and this implementation is left here 
+ * for backward compatibility for clients that used this internal class.
+ * 
+ * @deprecated Use the {@link org.eclipse.cdt.debug.ui.breakpoints.AddWatchpointOnVariableActionDelegate}
+ * class instead.
  */
-public interface ICWatchpointTarget extends org.eclipse.cdt.debug.core.ICWatchpointTarget {
-
+public class AddWatchpointOnVariableActionDelegate extends org.eclipse.cdt.debug.ui.breakpoints.AddWatchpointOnVariableActionDelegate{
+ 
 }

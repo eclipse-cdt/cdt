@@ -11,6 +11,7 @@
 
 package org.eclipse.cdt.debug.ui.breakpoints;
 
+import java.math.BigInteger;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -24,10 +25,13 @@ import org.eclipse.cdt.core.model.IMethod;
 import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IVariable;
+import org.eclipse.cdt.debug.core.ICWatchpointTarget;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint;
+import org.eclipse.cdt.debug.internal.core.CRequest;
+import org.eclipse.cdt.debug.internal.core.model.CMemoryBlockExtension;
 import org.eclipse.cdt.debug.internal.ui.CDebugUIUtils;
 import org.eclipse.cdt.debug.internal.ui.IInternalCDebugUIConstants;
 import org.eclipse.cdt.debug.internal.ui.actions.ActionMessages;
@@ -43,13 +47,20 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.debug.core.model.IMemoryBlock;
+import org.eclipse.debug.core.model.IMemoryBlockExtension;
+import org.eclipse.debug.core.model.MemoryByte;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.actions.IToggleBreakpointsTargetExtension2;
+import org.eclipse.debug.ui.memory.IRepositionableMemoryRendering;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -68,6 +79,7 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.editors.text.ILocationProvider;
+import org.eclipse.ui.progress.WorkbenchJob;
 import org.eclipse.ui.texteditor.IEditorStatusLine;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.SimpleMarkerAnnotation;
@@ -131,11 +143,19 @@ abstract public class AbstractToggleBreakpointAdapter
         if ( variable != null ) {
             updateVariableWatchpoint(true, false, part, variable);
         }
+        IRepositionableMemoryRendering rendering = getMemoryRendering(part, selection);
+        if (rendering != null) {
+            updateMemoryWatchpoint(true, false, part, rendering);
+        }
+        
+        
     }
 
 	@Override
 	public boolean canToggleWatchpoints( IWorkbenchPart part, ISelection selection ) {
-		return getVariableFromSelection( part, selection ) != null;
+		return getVariableFromSelection( part, selection ) != null ||
+		    getMemoryRendering(part, selection) != null ||
+		    getWatchpointTarget(part, selection) != null;
 	}
 
 	@Override
@@ -171,13 +191,26 @@ abstract public class AbstractToggleBreakpointAdapter
         ICElement element = getCElementFromSelection( part, selection );
         if (element instanceof IVariable) {
             updateVariableWatchpoint(false, true, part, (IVariable)element);
-        } else {
-            String text = ""; //$NON-NLS-1$
-            if (selection instanceof ITextSelection) {
-                text = ((ITextSelection)selection).getText();
-            }
-            createWatchpoint(true, part, null, ResourcesPlugin.getWorkspace().getRoot(), -1, -1, -1, text);
+            return;
+        } 
+
+        IRepositionableMemoryRendering rendering = getMemoryRendering(part, selection);
+        if (rendering != null) {
+            updateMemoryWatchpoint(false, true, part, rendering);
+            return;
+        } 
+
+        ICWatchpointTarget watchpointTarget = getWatchpointTarget(part, selection);
+        if (watchpointTarget != null) {
+            updateTargetWatchpoint(false, true, part, watchpointTarget);
+            return;
         }
+            
+        String text = ""; //$NON-NLS-1$
+        if (selection instanceof ITextSelection) {
+            text = ((ITextSelection)selection).getText();
+        }
+        createWatchpoint(true, part, null, ResourcesPlugin.getWorkspace().getRoot(), -1, -1, -1, text, null, "0"); //$NON-NLS-1$
 	}
 
 	@Override
@@ -366,10 +399,107 @@ abstract public class AbstractToggleBreakpointAdapter
             } catch (CModelException e) {
                 CDebugUIPlugin.log(e);
             }
-            createWatchpoint(interactive, part, sourceHandle, resource, charStart, charEnd, lineNumber, expression);
+            createWatchpoint(interactive, part, sourceHandle, resource, charStart, charEnd, lineNumber, expression, null, "0"); //$NON-NLS-1$
         }
     }
 
+    private void updateMemoryWatchpoint(boolean toggle, boolean interactive, IWorkbenchPart part, 
+        IRepositionableMemoryRendering rendering) throws CoreException 
+    {
+        int addressableSize = 1;
+        IMemoryBlock memblock = rendering.getMemoryBlock();
+        if (memblock instanceof IMemoryBlockExtension) {
+            try {
+                addressableSize = ((IMemoryBlockExtension)memblock).getAddressableSize();
+            } catch (DebugException e) {
+                CDebugUIPlugin.log(e);
+            }
+        }
+        
+        String memorySpace = getMemorySpace(rendering.getMemoryBlock(), null);
+        String address = getSelectedAddress(rendering.getSelectedAddress(), ""); //$NON-NLS-1$
+        String range = getRange(rendering.getSelectedAsBytes(), addressableSize, "1"); //$NON-NLS-1$
+        
+        createWatchpoint(interactive, part, "", ResourcesPlugin.getWorkspace().getRoot(), -1, -1, -1, address,  //$NON-NLS-1$
+            memorySpace, range);
+    }
+
+    private String getMemorySpace(IMemoryBlock memBlock, String def) {
+        if (memBlock != null && memBlock instanceof CMemoryBlockExtension) {
+            return ((CMemoryBlockExtension)memBlock).getMemorySpaceID();
+        }
+        return def;
+    }
+
+    private String getSelectedAddress(BigInteger selectedAddress, String def) {
+        if (selectedAddress != null) {
+            return "0x" + selectedAddress.toString(16); //$NON-NLS-1$
+        }
+        return def;
+    }
+
+    private String getRange(MemoryByte[] selectedBytes, int addressableSize, String def) {
+        if (selectedBytes != null && selectedBytes.length > 0) {
+            return Integer.toString(selectedBytes.length / addressableSize);
+        }
+        return def;
+    }
+    
+    private void updateTargetWatchpoint(boolean toggle, final boolean interactive, final IWorkbenchPart part, 
+        ICWatchpointTarget watchpointTarget) throws CoreException 
+    {
+        String _expr = watchpointTarget.getExpression();
+        if (_expr == null) {
+            _expr = ""; //$NON-NLS-1$
+        }
+        final String expr = _expr;
+        
+        // Getting the size of the variable/expression is an asynchronous
+        // operation...or at least the API is (the CDI implementation reacts
+        // synchronously)
+        
+        class GetSizeRequest extends CRequest implements ICWatchpointTarget.GetSizeRequest {
+            int fSize = -1;
+            @Override
+            public int getSize() {
+                return fSize;
+            }
+            @Override
+            public void setSize(int size) {
+                fSize = size;
+            }
+
+            @Override
+            public void done() {
+                int _size = 0;
+                if (isSuccess()) {
+                    // Now that we have the size, put up a dialog to create the watchpoint
+                    _size = getSize();
+                    assert _size > 0 : "unexpected variale/expression size"; //$NON-NLS-1$
+                }
+                final int size = _size;
+                    
+                WorkbenchJob job = new WorkbenchJob("open watchpoint dialog") { //$NON-NLS-1$
+                    @Override
+                    public IStatus runInUIThread(IProgressMonitor monitor) {
+                        try {
+                            createWatchpoint(interactive, part, "", ResourcesPlugin.getWorkspace().getRoot(),  //$NON-NLS-1$
+                                -1, -1, -1, expr, null, Integer.toString(size));
+                        } catch (CoreException e) {
+                            return e.getStatus();
+                        }
+                        return Status.OK_STATUS;
+                    }
+                };
+                job.setSystem(true);
+                job.schedule();
+            }
+        };
+        
+        watchpointTarget.getSize(new GetSizeRequest());
+        
+    }    
+    
 	/**
      * Returns the C model element at the given selection. 
      * @param part Workbench part where the selection is.
@@ -440,7 +570,37 @@ abstract public class AbstractToggleBreakpointAdapter
 		}
 		return null;
 	}
+	
+	protected IRepositionableMemoryRendering getMemoryRendering( IWorkbenchPart part, ISelection selection ) {
+        if (selection != null && selection instanceof IStructuredSelection && !selection.isEmpty()) {
+            Object obj = ((IStructuredSelection)selection).getFirstElement();
+            if (obj != null) {
+                if (obj instanceof IAdaptable) {
+                    return (IRepositionableMemoryRendering) ((IAdaptable)obj).getAdapter(IRepositionableMemoryRendering.class);
+                }
+            }
+        }
+        return null;
+	}
 
+    protected ICWatchpointTarget getWatchpointTarget( IWorkbenchPart part, ISelection selection ) {
+        if (selection != null && selection instanceof IStructuredSelection && !selection.isEmpty()) {
+            Object obj = ((IStructuredSelection)selection).getFirstElement();
+            if (obj != null) {
+                if (obj instanceof IAdaptable) {
+                    ICWatchpointTarget target = (ICWatchpointTarget) ((IAdaptable)obj).getAdapter(ICWatchpointTarget.class);
+                    if (target == null) {
+                        target = (ICWatchpointTarget) ((IAdaptable)obj).getAdapter(
+                            org.eclipse.cdt.debug.internal.core.ICWatchpointTarget.class);
+                    }
+                    return target;
+                }
+            }
+        }
+        return null;
+    }
+	
+	
 	/**
 	 * Reports the given error message to the user.
 	 * @param message Message to report.
@@ -747,6 +907,7 @@ abstract public class AbstractToggleBreakpointAdapter
      * @throws CoreException Exception while creating breakpoint.
      */
     protected abstract void createWatchpoint(boolean interactive, IWorkbenchPart part, String sourceHandle,
-        IResource resource, int charStart, int charEnd, int lineNumber, String expression) throws CoreException;
+        IResource resource, int charStart, int charEnd, int lineNumber, String expression, String memorySpace, 
+        String range) throws CoreException;
     
 }

@@ -33,6 +33,7 @@
     <!-- <platform-version>3.7</platform-version> -->              
     <platform-version-name>indigo</platform-version-name>          
     <platform-site>http://download.eclipse.org/releases/${platform-version-name}</platform-site>
+    <sdk-version>3.7</sdk-version>
     <orbit-version>R20110523182458</orbit-version>                                                     
     <orbit-site>http://download.eclipse.org/tools/orbit/downloads/drops/${orbit-version}/repository</orbit-site>
     <rxtx-version>1.0.0.7837QcJa5vE7MnhE77YA7AU3SWUlbntVZAnlDoIGojcQd</rxtx-version>                                                                                               
@@ -342,6 +343,13 @@
             <useUIHarness>true</useUIHarness>
             <useUIThread>true</useUIThread>
             <failIfNoTests>false</failIfNoTests>
+            <dependencies>
+               <dependency>
+                 <type>p2-installable-unit</type>
+                 <artifactId>org.eclipse.sdk.feature.group</artifactId>
+                 <version>${sdk-version}</version>
+               </dependency>
+            </dependencies>
             <product>org.eclipse.sdk.ide</product>
           </configuration>
         </plugin>

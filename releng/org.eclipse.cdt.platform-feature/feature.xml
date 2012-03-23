@@ -53,7 +53,7 @@
          fragment="true"
          unpack="false"/>
 
-   <plugin
+   <!--plugin
          id="org.eclipse.cdt.core.linux.ia64"
          os="linux"
          arch="ia64"
@@ -61,9 +61,9 @@
          install-size="0"
          version="0.0.0"
          fragment="true"
-         unpack="false"/>
+         unpack="false"/-->
 
-   <plugin
+   <!--plugin
          id="org.eclipse.cdt.core.linux.ppc"
          os="linux"
          arch="ppc"
@@ -71,7 +71,7 @@
          install-size="0"
          version="0.0.0"
          fragment="true"
-         unpack="false"/>
+         unpack="false"/-->
 
    <plugin
          id="org.eclipse.cdt.core.linux.ppc64"
@@ -112,14 +112,14 @@
          fragment="true"
          unpack="false"/>
 
-   <plugin
+   <!--plugin
          id="org.eclipse.cdt.core.qnx"
          os="qnx"
          download-size="0"
          install-size="0"
          version="0.0.0"
          fragment="true"
-         unpack="false"/>
+         unpack="false"/-->
 
    <plugin
          id="org.eclipse.cdt.core.solaris"

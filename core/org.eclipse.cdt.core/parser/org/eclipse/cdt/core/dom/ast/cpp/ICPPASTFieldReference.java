@@ -25,7 +25,6 @@ import org.eclipse.cdt.core.dom.ast.IType;
 public interface ICPPASTFieldReference extends IASTFieldReference, IASTImplicitNameOwner {
 	/**
 	 * Was template keyword used?
-	 * 
 	 */
 	public boolean isTemplate();
 

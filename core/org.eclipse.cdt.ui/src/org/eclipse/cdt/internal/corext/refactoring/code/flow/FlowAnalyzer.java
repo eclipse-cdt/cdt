@@ -79,6 +79,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTRangeBasedForStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTryBlockStatement;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVariableReadWriteFlags;
@@ -668,6 +669,10 @@ abstract class FlowAnalyzer extends ASTGenericVisitor {
 		WhileFlowInfo info= createWhile();
 		setFlowInfo(node, info);
 		info.mergeCondition(getFlowInfo(node.getCondition()), fFlowContext);
+		if (node instanceof ICPPASTWhileStatement) {
+			info.mergeCondition(getFlowInfo(((ICPPASTWhileStatement) node).getConditionDeclaration()),
+					fFlowContext);
+		}
 		info.mergeAction(getFlowInfo(node.getBody()), fFlowContext);
 		info.removeLabel(null);
 		return PROCESS_SKIP;

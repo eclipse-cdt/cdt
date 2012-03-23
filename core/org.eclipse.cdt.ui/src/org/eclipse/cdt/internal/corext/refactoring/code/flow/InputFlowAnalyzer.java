@@ -248,7 +248,7 @@ public class InputFlowAnalyzer extends FlowAnalyzer {
 
 		@Override
 		protected boolean traverseNode(IASTNode node) {
-			return !isBefore(node, loopRegion.firstLabelStatement) &&
+			return !selection.covers(node) && !isBefore(node, loopRegion.firstLabelStatement) &&
 					!isBefore(loopRegion.lastGotoStatement, node);
 		}
 

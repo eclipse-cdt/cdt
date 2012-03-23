@@ -84,6 +84,7 @@ import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVariableReadWriteFlags;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 
 /**
  * Special flow analyzer to determine the return value of the extracted method
@@ -919,7 +920,21 @@ abstract class FlowAnalyzer extends ASTGenericVisitor {
 				int index = fFlowContext.getIndexFromLocal(variable);
 				if (index >= 0) {
 					int accessMode = CPPVariableReadWriteFlags.getReadWriteFlags(node);
-					setFlowInfo(node, new LocalFlowInfo(variable, index, accessMode, fFlowContext));
+					if (accessMode != 0) {
+						int flowInfoMode = FlowInfo.UNUSED;
+						switch (accessMode) {
+						case PDOMName.READ_ACCESS:
+							flowInfoMode = FlowInfo.READ;
+							break;
+						case PDOMName.WRITE_ACCESS:
+							flowInfoMode = FlowInfo.WRITE;
+							break;
+						case PDOMName.READ_ACCESS | PDOMName.WRITE_ACCESS:
+							flowInfoMode = FlowInfo.UNKNOWN;
+							break;
+						}
+						setFlowInfo(node, new LocalFlowInfo(variable, index, flowInfoMode, fFlowContext));
+					}
 				}
 			}
 		}
@@ -1010,9 +1025,9 @@ abstract class FlowAnalyzer extends ASTGenericVisitor {
 			return;
 		FunctionCallFlowInfo info= createFunctionCallFlowInfo();
 		setFlowInfo(node, info);
+		info.mergeReceiver(getFlowInfo(functionNameExpression), fFlowContext);
 		for (IASTInitializerClause arg : arguments) {
 			info.mergeArgument(getFlowInfo(arg), fFlowContext);
 		}
-		info.mergeReceiver(getFlowInfo(functionNameExpression), fFlowContext);
 	}
 }

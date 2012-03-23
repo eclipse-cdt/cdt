@@ -820,6 +820,38 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	}
 
 	//A.h
+	//class A {
+	//public:
+	//	A(int i, const char* s);
+	//	int method();
+	//};
+
+	//A.cpp
+	//#include "A.h"
+	//
+	//void test(int i, const char* s) {
+	//	/*$*/A a(i, s);/*$$*/
+	//	if (i != 0)
+	//		a.method();
+	//}
+	//====================
+	//#include "A.h"
+	//
+	//A extracted(int i, const char* s) {
+	//	A a(i, s);
+	//	return a;
+	//}
+	//
+	//void test(int i, const char* s) {
+	//	A a = extracted(i, s);
+	//	if (i != 0)
+	//		a.method();
+	//}
+	public void testReturnValueWithCtorInitializer() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//A.h
 	//#ifndef A_H_
 	//#define A_H_
 	//

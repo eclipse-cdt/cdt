@@ -185,10 +185,10 @@ public class IGDBLaunchConfigurationConstants {
 	
 	/**  
 	 * Possible attribute value for the key is ATTR_DEBUGGER_TRACEPOINT_MODE.
-	 * Indicates that only slow tracepoints should be used.
+	 * Indicates that only normal tracepoints should be used.
 	 * @since 4.1
 	 */                                                 
-	public static final String DEBUGGER_TRACEPOINT_SLOW_ONLY = "TP_SLOW_ONLY"; //$NON-NLS-1$
+	public static final String DEBUGGER_TRACEPOINT_NORMAL_ONLY = "TP_NORMAL_ONLY"; //$NON-NLS-1$
 
 	/**  
 	 * Possible attribute value for the key is ATTR_DEBUGGER_TRACEPOINT_MODE.
@@ -199,17 +199,17 @@ public class IGDBLaunchConfigurationConstants {
 
 	/**  
 	 * Possible attribute value for the key is ATTR_DEBUGGER_TRACEPOINT_MODE.
-	 * Indicates that slow tracepoints should be used whenever a fast tracepoint
+	 * Indicates that normal tracepoints should be used whenever a fast tracepoint
 	 * cannot be inserted.
 	 * @since 4.1
 	 */                                                 
-	public static final String DEBUGGER_TRACEPOINT_FAST_THEN_SLOW = "TP_FAST_THEN_SLOW"; //$NON-NLS-1$
+	public static final String DEBUGGER_TRACEPOINT_FAST_THEN_NORMAL = "TP_FAST_THEN_NORMAL"; //$NON-NLS-1$
 
 	/**  
 	 * Default attribute value for the key is ATTR_DEBUGGER_TRACEPOINT_MODE.
 	 * @since 4.1
 	 */
-	public static final String DEBUGGER_TRACEPOINT_MODE_DEFAULT = DEBUGGER_TRACEPOINT_SLOW_ONLY;
+	public static final String DEBUGGER_TRACEPOINT_MODE_DEFAULT = DEBUGGER_TRACEPOINT_NORMAL_ONLY;
 
 	/**  
 	 * The default value of DebugPlugin.ATTR_PROCESS_FACTORY_ID.

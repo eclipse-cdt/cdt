@@ -88,7 +88,7 @@ public class MIBreakpoint  {
     boolean isHdw  = false;
 
     // Indicate if we are dealing with a tracepoint. 
-    // (if its a fast or slow tracepoint can be known through the 'type' field)
+    // (if its a fast or normal tracepoint can be known through the 'type' field)
     boolean isTpt = false;
 
     /** See {@link #isCatchpoint()} */
@@ -343,8 +343,8 @@ public class MIBreakpoint  {
 
     /**
      * Return whether this breakpoint is actually a tracepoint.
-     * This method will return true for both fast and slow tracepoints.
-     * To know of fast vs slow tracepoint use {@link getType()} and look
+     * This method will return true for both fast and normal tracepoints.
+     * To know of fast vs normal tracepoint use {@link getType()} and look
      * for "tracepoint" or "fast tracepoint"
      * 
 	 * @since 3.0

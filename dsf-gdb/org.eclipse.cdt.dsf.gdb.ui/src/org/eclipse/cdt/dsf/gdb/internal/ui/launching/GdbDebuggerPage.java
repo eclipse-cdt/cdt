@@ -62,7 +62,7 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 	 */
 	protected Combo fTracepointModeCombo;
 	protected static final String TP_FAST_ONLY = LaunchUIMessages.getString("GDBDebuggerPage.tracepoint_mode_fast"); //$NON-NLS-1$
-	protected static final String TP_SLOW_ONLY = LaunchUIMessages.getString("GDBDebuggerPage.tracepoint_mode_slow"); //$NON-NLS-1$
+	protected static final String TP_NORMAL_ONLY = LaunchUIMessages.getString("GDBDebuggerPage.tracepoint_mode_normal"); //$NON-NLS-1$
 	protected static final String TP_AUTOMATIC = LaunchUIMessages.getString("GDBDebuggerPage.tracepoint_mode_auto"); //$NON-NLS-1$
 
 	private IMILaunchConfigurationComponent fSolibBlock;
@@ -168,15 +168,15 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 			String tracepointMode = getStringAttr(config, IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_TRACEPOINT_MODE,
 					                              IGDBLaunchConfigurationConstants.DEBUGGER_TRACEPOINT_MODE_DEFAULT);
 
-			if (tracepointMode.equals(IGDBLaunchConfigurationConstants.DEBUGGER_TRACEPOINT_SLOW_ONLY)) {
-				fTracepointModeCombo.setText(TP_SLOW_ONLY);
+			if (tracepointMode.equals(IGDBLaunchConfigurationConstants.DEBUGGER_TRACEPOINT_NORMAL_ONLY)) {
+				fTracepointModeCombo.setText(TP_NORMAL_ONLY);
 			} else if (tracepointMode.equals(IGDBLaunchConfigurationConstants.DEBUGGER_TRACEPOINT_FAST_ONLY)) {
 				fTracepointModeCombo.setText(TP_FAST_ONLY);
-			} else if (tracepointMode.equals(IGDBLaunchConfigurationConstants.DEBUGGER_TRACEPOINT_FAST_THEN_SLOW)) {
+			} else if (tracepointMode.equals(IGDBLaunchConfigurationConstants.DEBUGGER_TRACEPOINT_FAST_THEN_NORMAL)) {
 				fTracepointModeCombo.setText(TP_AUTOMATIC);
 			} else {
 				assert false : "Unknown Tracepoint Mode: " + tracepointMode; //$NON-NLS-1$
-			    fTracepointModeCombo.setText(TP_SLOW_ONLY);
+			    fTracepointModeCombo.setText(TP_NORMAL_ONLY);
 			}
 		}
 	}
@@ -184,12 +184,12 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 	protected String getSelectedTracepointMode() {
 		if (fTracepointModeCombo != null) {
 			int selectedIndex = fTracepointModeCombo.getSelectionIndex();
-			if (fTracepointModeCombo.getItem(selectedIndex).equals(TP_SLOW_ONLY)) {
-				return IGDBLaunchConfigurationConstants.DEBUGGER_TRACEPOINT_SLOW_ONLY;
+			if (fTracepointModeCombo.getItem(selectedIndex).equals(TP_NORMAL_ONLY)) {
+				return IGDBLaunchConfigurationConstants.DEBUGGER_TRACEPOINT_NORMAL_ONLY;
 			} else if (fTracepointModeCombo.getItem(selectedIndex).equals(TP_FAST_ONLY)) {
 				return IGDBLaunchConfigurationConstants.DEBUGGER_TRACEPOINT_FAST_ONLY;
 			} else if (fTracepointModeCombo.getItem(selectedIndex).equals(TP_AUTOMATIC)) {
-				return IGDBLaunchConfigurationConstants.DEBUGGER_TRACEPOINT_FAST_THEN_SLOW;
+				return IGDBLaunchConfigurationConstants.DEBUGGER_TRACEPOINT_FAST_THEN_NORMAL;
 			} else {
 				assert false : "Unknown Tracepoint mode: " + fTracepointModeCombo.getItem(selectedIndex); //$NON-NLS-1$
 			}
@@ -379,7 +379,7 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 
 		fTracepointModeCombo = new Combo(parent, SWT.READ_ONLY | SWT.DROP_DOWN);
 		fTracepointModeCombo.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 2, 1));
-		fTracepointModeCombo.add(TP_SLOW_ONLY);
+		fTracepointModeCombo.add(TP_NORMAL_ONLY);
 		fTracepointModeCombo.add(TP_FAST_ONLY);
 		fTracepointModeCombo.add(TP_AUTOMATIC);
 

@@ -469,7 +469,7 @@
                      definitionId="org.eclipse.cdt.debug.ui.testIsTracepointActionSetActive">
                </reference>      
                <test
-                     property="org.eclipse.cdt.dsf.debug.ui.isCLaunchTypeDisassembly">
+                     property="org.eclipse.cdt.dsf.debug.ui.isDisassemblyViewSupportsCBreakpoint">
                </test>
             </and>  
          </enablement>

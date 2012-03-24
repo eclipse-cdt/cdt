@@ -175,7 +175,12 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 			} else if (tracepointMode.equals(IGDBLaunchConfigurationConstants.DEBUGGER_TRACEPOINT_FAST_THEN_NORMAL)) {
 				fTracepointModeCombo.setText(TP_AUTOMATIC);
 			} else {
-				assert false : "Unknown Tracepoint Mode: " + tracepointMode; //$NON-NLS-1$
+				// Comment out assertion in the short term to allow for existing launches
+				// that used the old names to migrate to the new names.
+				// It can be uncommented after we have released Juno.
+				// Bug 375256
+				//
+				// assert false : "Unknown Tracepoint Mode: " + tracepointMode; //$NON-NLS-1$
 			    fTracepointModeCombo.setText(TP_NORMAL_ONLY);
 			}
 		}

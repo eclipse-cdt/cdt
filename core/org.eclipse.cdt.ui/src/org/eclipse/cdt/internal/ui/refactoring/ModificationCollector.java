@@ -8,6 +8,7 @@
  *
  * Contributors:
  *     Institute for Software - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring;
 
@@ -16,6 +17,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.mapping.IResourceChangeDescriptionFactory;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
 
@@ -29,15 +32,27 @@ import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
  * @author Mirko Stocker
  */
 public class ModificationCollector {
+	private final IResourceChangeDescriptionFactory deltaFactory;
+
 	// Each translation unit can have only one ASTRewrite
 	private final Map<IASTTranslationUnit, ASTRewrite> rewriters =
 			new HashMap<IASTTranslationUnit, ASTRewrite>();
 
 	private Collection<CreateFileChange> changes;
 
+	public ModificationCollector() {
+		this(null);
+	}
+
+	public ModificationCollector(IResourceChangeDescriptionFactory deltaFactory) {
+		this.deltaFactory = deltaFactory;
+	}
+
 	public ASTRewrite rewriterForTranslationUnit(IASTTranslationUnit ast) {
 		if (!rewriters.containsKey(ast)) {
 			rewriters.put(ast, ASTRewrite.create(ast));
+			if (deltaFactory != null)
+				deltaFactory.change((IFile) ast.getOriginatingTranslationUnit().getResource());
 		}
 		return rewriters.get(ast);
 	}
@@ -48,6 +63,8 @@ public class ModificationCollector {
 			changes = new ArrayList<CreateFileChange>();
 		}
 		changes.add(change);
+		if (deltaFactory != null)
+			deltaFactory.create(change.getModifiedResource());
 	}
 
 	public CCompositeChange createFinalChange() {

@@ -8,6 +8,7 @@
  *
  * Contributors:
  *     Institute for Software - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring;
 
@@ -16,6 +17,7 @@ import java.io.InputStream;
 import java.net.URI;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -24,6 +26,7 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+import org.eclipse.ltk.core.refactoring.resource.ResourceChange;
 import org.eclipse.osgi.util.NLS;
 
 /**
@@ -31,7 +34,7 @@ import org.eclipse.osgi.util.NLS;
  *
  * @author Emanuel Graf
  */
-public class CreateFileChange extends Change {
+public class CreateFileChange extends ResourceChange {
 	private String name;
 	private final IPath path;
 	private final String source;
@@ -50,7 +53,7 @@ public class CreateFileChange extends Change {
 	}
 
 	@Override
-	public Object getModifiedElement() {
+	public IResource getModifiedResource() {
 		return ResourcesPlugin.getWorkspace().getRoot().getFile(path);
 	}
 

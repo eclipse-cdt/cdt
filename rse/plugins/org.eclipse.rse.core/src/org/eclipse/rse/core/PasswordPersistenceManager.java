@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2012 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -19,6 +19,7 @@
  * Martin Oberhuber (Wind River) - [218655][api] Provide SystemType enablement info in non-UI
  * Martin Oberhuber (Wind River) - [cleanup] Add API "since" Javadoc tags
  * David Dykstal (IBM) - [210474] Deny save password function missing
+ * David Dykstal (IBM) - [225320] Use equinox secure storage for passwords
  ********************************************************************************/
 
 package org.eclipse.rse.core;
@@ -29,6 +30,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -44,13 +46,61 @@ import org.eclipse.rse.internal.core.RSECoreMessages;
 import org.osgi.framework.Bundle;
 
 /**
- * PasswordPersistenceManager manages the saving and retrieving of user ID /
- * passwords to the Eclipse keyring for registered system types.
+ * PasswordPersistenceManager manages the saving and retrieving of user IDs /
+ * passwords to Equinox secure storage for registered system types.
  * 
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients. Use
  *                the {@link #getInstance()} method to get the singleton
  *                instance.
+ */
+
+/*
+ * Passwords are stored in a node that is selected by system type id.
+ * Each password has a key that consists of a host name and a user id pair.
+ * The key is a string and looks like <hostName>//<userId>.
+ * Host names may be symbolic or they be IPv4 or IPv6 addresses.
+ * The current design treats these the same.
+ * 
+ * In addition to the registered system types, there is a "default" system type
+ * that can be searched if a password is not found for a registered system type.
+ * The API allows for setting this default along with a particular system type.
+ * 
+ * The current implementation uses Equinox secure storage. The
+ * API for this looks like that for a preferences store. This is arranged as a tree
+ * of nodes, each node holding a set of keyed values.
+ * In the case of this password store value reside only at the lowest
+ * nodes in the tree. There is one node for each system type, which is then used to
+ * store passwords for a particular host name, user ID pair.
+ * 
+ * This is similar to the previous implementation which used the Eclipse platform key ring.
+ * A particular key ring node was selected using the system type id and a Map object
+ * was retrieved or stored at this node. The map was keyed by the same host name, user ID
+ * pair that is used in the current implementation.
+ * 
+ * Migration from the old implementation to the new one is done when accessing a node for
+ * the first time. At that point the map entries present in the old implementation are copied
+ * to the preferences node in the new implementation.
+ * 
+ * The old key ring values can be migrated only if they can be accessed using the 
+ * compatibility API found in the bundle org.eclipse.core.runtime.compatability.auth.
+ * This can be installed by the user, but is not included in the standard
+ * packaging for Eclipse 4.2 and subsequent releases.
+ * 
+ * The nodes in the old implementation were rooted in the URL file://rse<username> where <username>
+ * was the name of the java user.name system property. Note that this user.name property may be,
+ * and probably is, different that the user ID used on a target system. The new secure preferences are rooted
+ * in the default secure preferences node which is kept in a location associated with
+ * the current user. Thus, there is no need to additionally qualify the secure
+ * storage location with the user.name system property.
+ * 
+ * Lookup is based on an exact match followed by a fuzzy match on host names. An exact match 
+ * uses the host name argument as is and is case sensitive when matching the host name of the 
+ * stored keys. If not found, then a fuzzy match is employed that allows for case insensitivity.
+ * If one host name is a prefix of the other and they both resolve to the name network entity they
+ * are considered to be matching. Network name resolution is very expensive and is employed only if their 
+ * is enough extra similar information to justify a match. Thus, for example, hobbiton could 
+ * match HOBBITON.EXAMPLE.COM, but could never match an IP address.
  */
 public class PasswordPersistenceManager {
 
@@ -123,11 +173,11 @@ public class PasswordPersistenceManager {
 	 * the API.
 	 * @return true if the API is installed.
 	 */
-	private static boolean isAuthorizationCompatabilityInstalled() {
+	private static boolean isAuthorizationCompatibilityInstalled() {
 		boolean result = false;
-		Bundle authorizationBundle = Platform.getBundle("org.eclipse.core.runtime.compatability.auth"); //$NON-NLS-1$
+		Bundle authorizationBundle = Platform.getBundle("org.eclipse.core.runtime.compatibility.auth"); //$NON-NLS-1$
 		if (authorizationBundle == null) {
-			IStatus status = new Status(IStatus.INFO, RSECorePlugin.PLUGIN_ID, "Saved passwords are not available for migration to secure storage. Deprecated authorization classes (org.eclipse.core.runtime.compatability.auth) are not installed."); //$NON-NLS-1$
+			IStatus status = new Status(IStatus.INFO, RSECorePlugin.PLUGIN_ID, "Saved passwords are not available for migration to secure storage. Deprecated authorization classes (org.eclipse.core.runtime.compatibility.auth) are not installed."); //$NON-NLS-1$
 			RSECorePlugin.getDefault().getLog().log(status);
 		} else {
 			result = true;
@@ -198,16 +248,16 @@ public class PasswordPersistenceManager {
 			String keyUserId = getUserIdFromKey(key);
 			boolean match = (userId == null || (respectCase ? userId.equals(keyUserId) : userId.equalsIgnoreCase(keyUserId)));
 			if (match) {
-				if (fuzzy) {
-					if (hostName.startsWith(keyHostName) || keyHostName.startsWith(hostName)) {
-						String khn = RSECorePlugin.getQualifiedHostName(keyHostName);
-						String phn = RSECorePlugin.getQualifiedHostName(hostName);
+				match = hostName.equals(keyHostName);
+				if (!match && fuzzy) {
+					String phn = hostName.toUpperCase(Locale.US);
+					String khn = keyHostName.toUpperCase(Locale.US);
+					match = phn.equals(khn);
+					if (!match && (phn.startsWith(khn) || khn.startsWith(phn))) {
+						khn = RSECorePlugin.getQualifiedHostName(khn);
+						phn = RSECorePlugin.getQualifiedHostName(phn);
 						match = khn.equalsIgnoreCase(phn);
-					} else {
-						match = false;
 					}
-				} else {
-					match = hostName.equals(keyHostName);
 				}
 			}
 			if (match) {
@@ -261,7 +311,7 @@ public class PasswordPersistenceManager {
 		if (userName == null) {
 			userName = DEFAULT_USER_NAME;
 		}
-		if (isAuthorizationCompatabilityInstalled()) {
+		if (isAuthorizationCompatibilityInstalled()) {
 			mapLocation = SERVER_URL + userName;
 		}
 	}
@@ -300,7 +350,7 @@ public class PasswordPersistenceManager {
 					}
 				}
 			} catch (MalformedURLException e) {
-				RSECorePlugin.getDefault().getLogger().logError("PasswordPersistenceManager.getPasswordMap", e); //$NON-NLS-1$
+				RSECorePlugin.getDefault().getLogger().logError("PasswordPersistenceManager.getMap", e); //$NON-NLS-1$
 			}
 		}
 		return passwordMap;
@@ -481,6 +531,21 @@ public class PasswordPersistenceManager {
 	}
 	
 	/**
+	 * Resets a given system type. This clears the storage for this system
+	 * type and allows it to be re-migrated.
+	 * This is not API.
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @param systemType the system type to reset
+	 * @since org.eclipse.rse.core 3.4
+	 */
+	public void reset(IRSESystemType systemType) {
+		ISecurePreferences systemTypeNode = getNode(systemType);
+		if (systemTypeNode != null) {
+			systemTypeNode.removeNode();
+		}
+	}
+	
+	/**
 	 * Add a password to the password database.
 	 * This will not update the entry for the default system type
 	 * @param info The signon information to store
@@ -583,19 +648,19 @@ public class PasswordPersistenceManager {
 	 */
 	public SystemSignonInformation find(IRSESystemType systemType, String hostName, String userId, boolean checkDefault) {
 		SystemSignonInformation result = null;
-		if (userId != null && !isUserIDCaseSensitive(systemType)) {
-			userId = userId.toUpperCase();
-		}
-		if (result == null) {
+		if (!(systemType == null || hostName == null || userId == null)) {
+			if (!isUserIDCaseSensitive(systemType)) {
+				userId = userId.toUpperCase();
+			}
 			String password = findPassword(systemType, hostName, userId);
 			if (password != null) {
 				result = new SystemSignonInformation(hostName, userId, password, systemType);
 			}
-		}
-		if (result == null && checkDefault && !systemType.equals(DEFAULT_SYSTEM_TYPE)) {
-			String password = findPassword(DEFAULT_SYSTEM_TYPE, hostName, userId);
-			if (password != null) {
-				result = new SystemSignonInformation(hostName, userId, password, DEFAULT_SYSTEM_TYPE);
+			if (result == null && checkDefault && !systemType.equals(DEFAULT_SYSTEM_TYPE)) {
+				password = findPassword(DEFAULT_SYSTEM_TYPE, hostName, userId);
+				if (password != null) {
+					result = new SystemSignonInformation(hostName, userId, password, DEFAULT_SYSTEM_TYPE);
+				}
 			}
 		}
 		return result;
@@ -608,7 +673,7 @@ public class PasswordPersistenceManager {
 	public void remove(SystemSignonInformation info) {
 		remove(info.getSystemType(), info.getHostname(), info.getUserId());
 	}
-
+	
 	/**
 	 * Removes all passwords for a host name for a given system type.
 	 * This does not remove entries for the default system type.

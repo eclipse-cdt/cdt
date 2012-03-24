@@ -134,4 +134,66 @@ public class PasswordsTest extends RSECoreTestCase {
 		assertNull("signon info was found but should not be", returnedInfo);
 	}
 
+	public void testMigration() {
+		//-test-author-:DavidDykstal
+		if (isTestDisabled())
+			return;
+
+		// Setup
+		IRSESystemType systemType = RSECoreRegistry.getInstance().getSystemType(IRSESystemType.SYSTEMTYPE_LOCAL_ID);
+		PasswordPersistenceManager newPPM = PasswordPersistenceManager.getInstance();
+		if (OriginalPasswordPersistenceManager.isActive()) {
+			OriginalPasswordPersistenceManager oldPPM = OriginalPasswordPersistenceManager.getInstance();
+
+			// Clear the new manager entries for those system types.
+			newPPM.reset(systemType);
+		
+			// Populate the old manager with some entries.
+			oldPPM.add(new SystemSignonInformation("myhost.mycompany.com", "me", "password", systemType), true, false);
+			oldPPM.add(new SystemSignonInformation("yourhost.yourcompany.com", "you", "xxyyzz", systemType), true, false);
+			oldPPM.add(new SystemSignonInformation("LOUDHOST.mycompany.com", "thatguy", "abc", systemType), true, false);
+
+			// Reference the new manager for the entries, these should migrate automatically.
+			SystemSignonInformation foundInfo = null;
+			foundInfo = newPPM.find(systemType, "myhost.mycompany.com", "me");
+			assertNotNull(foundInfo);
+			assertEquals(foundInfo.getPassword(), "password");
+			foundInfo = newPPM.find(systemType, "yourhost.yourcompany.com", "you");
+			assertNotNull(foundInfo);
+			assertEquals(foundInfo.getPassword(), "xxyyzz");
+			foundInfo = newPPM.find(systemType, "LOUDHOST.mycompany.com", "thatguy");
+			assertNotNull(foundInfo);
+			assertEquals(foundInfo.getPassword(), "abc");
+		}
+
+	}
+
+	public void testAliasing() {
+		//-test-author-:DavidDykstal
+		if (isTestDisabled())
+			return;
+		IRSESystemType systemType = RSECoreRegistry.getInstance().getSystemType(IRSESystemType.SYSTEMTYPE_LOCAL_ID);
+		PasswordPersistenceManager ppm = PasswordPersistenceManager.getInstance();
+		ppm.add(new SystemSignonInformation("LOUDHOST.mycompany.com", "thatguy", "abc", systemType), true, false);
+		SystemSignonInformation foundInfo = ppm.find(systemType, "LOUDHOST.mycompany.com", "thatguy");
+		assertNotNull(foundInfo);
+		assertEquals(foundInfo.getPassword(), "abc");
+		foundInfo = ppm.find(systemType, "loudhost.mycompany.com", "thatguy");
+		assertNotNull(foundInfo);
+		assertEquals(foundInfo.getPassword(), "abc");
+		foundInfo = ppm.find(systemType, "loudhost.MyCompany.com", "thatguy");
+		assertNotNull(foundInfo);
+		assertEquals(foundInfo.getPassword(), "abc");
+	}
+	
+	public void testBadArgs() {
+		if (isTestDisabled())
+			return;
+		IRSESystemType systemType = RSECoreRegistry.getInstance().getSystemType(IRSESystemType.SYSTEMTYPE_LOCAL_ID);
+		PasswordPersistenceManager ppm = PasswordPersistenceManager.getInstance();
+		ppm.add(new SystemSignonInformation("myhost.mycompany.com", "me", "password", systemType), true, false);
+		SystemSignonInformation info = ppm.find(systemType, "myhost.mycompany.com", null);
+		assertNull(info);
+	}
+	
 }

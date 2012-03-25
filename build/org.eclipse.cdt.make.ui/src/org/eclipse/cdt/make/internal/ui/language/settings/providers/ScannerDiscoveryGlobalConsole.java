@@ -33,8 +33,11 @@ public class ScannerDiscoveryGlobalConsole implements ICConsole {
 
 	private class ConsoleOutputStreamAdapter extends ConsoleOutputStream {
 		private MessageConsoleStream fConsoleStream;
+		private boolean isOpen;
+
 		public ConsoleOutputStreamAdapter(MessageConsoleStream stream) {
 			fConsoleStream = stream;
+			isOpen = true;
 		}
 		@Override
 		public void write(int arg0) throws IOException {
@@ -52,7 +55,15 @@ public class ScannerDiscoveryGlobalConsole implements ICConsole {
 
 		@Override
 		public void close() throws IOException {
+			// FIXME - clean way of closing the streams. Currently the stream could get being used after closing
 			fConsoleStream.close();
+//			if (!isOpen) {
+//				fConsoleStream.close();
+//				IStatus s = new Status(IStatus.ERROR, MakeCorePlugin.PLUGIN_ID, IStatus.ERROR, "Attempt to close stream second time", new Exception());
+//				MakeCorePlugin.log(s);
+//				flush();
+//			}
+			isOpen = false;
 		}
 	}
 
@@ -63,17 +74,17 @@ public class ScannerDiscoveryGlobalConsole implements ICConsole {
 
 	@Override
 	public ConsoleOutputStream getOutputStream() throws CoreException {
-		return stream;
+		return new ConsoleOutputStreamAdapter(console.newMessageStream());
 	}
 
 	@Override
 	public ConsoleOutputStream getInfoStream() throws CoreException {
-		return stream;
+		return new ConsoleOutputStreamAdapter(console.newMessageStream());
 	}
 
 	@Override
 	public ConsoleOutputStream getErrorStream() throws CoreException {
-		return stream;
+		return new ConsoleOutputStreamAdapter(console.newMessageStream());
 	}
 
 	@Override
@@ -101,7 +112,7 @@ public class ScannerDiscoveryGlobalConsole implements ICConsole {
 			consoleManager.addConsoles(new IConsole[]{ console });
 		}
 
-		stream = new ConsoleOutputStreamAdapter(console.newMessageStream());
+//		stream = new ConsoleOutputStreamAdapter(console.newMessageStream());
 	}
 
 }

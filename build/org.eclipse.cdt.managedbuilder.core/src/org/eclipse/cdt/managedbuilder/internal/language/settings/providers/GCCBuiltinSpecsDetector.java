@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsEditableProvider;
+import org.eclipse.cdt.core.language.settings.providers.IWorkingDirectoryTracker;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.managedbuilder.language.settings.providers.ToolchainBuiltinSpecsDetector;
@@ -98,8 +99,8 @@ public class GCCBuiltinSpecsDetector extends ToolchainBuiltinSpecsDetector imple
 	}
 
 	@Override
-	public void startup(ICConfigurationDescription cfgDescription) throws CoreException {
-		super.startup(cfgDescription);
+	public void startup(ICConfigurationDescription cfgDescription, IWorkingDirectoryTracker cwdTracker) throws CoreException {
+		super.startup(cfgDescription, cwdTracker);
 
 		state = State.NONE;
 	}

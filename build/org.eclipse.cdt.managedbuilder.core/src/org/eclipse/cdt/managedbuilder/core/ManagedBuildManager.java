@@ -49,10 +49,11 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.cdt.core.AbstractCExtension;
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.ICConsoleParser;
 import org.eclipse.cdt.core.IConsoleParser;
+import org.eclipse.cdt.core.language.settings.providers.ICBuildOutputParser;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvidersKeeper;
+import org.eclipse.cdt.core.language.settings.providers.IWorkingDirectoryTracker;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.CoreModelUtil;
@@ -4725,15 +4726,15 @@ public class ManagedBuildManager extends AbstractCExtension {
 		return true; // no target platform - nothing to check.
 	}
 
-	/*package*/ static void collectLanguageSettingsConsoleParsers(ICConfigurationDescription cfgDescription, List<IConsoleParser> parsers) {
+	/*package*/ static void collectLanguageSettingsConsoleParsers(ICConfigurationDescription cfgDescription, IWorkingDirectoryTracker cwdTracker, List<IConsoleParser> parsers) {
 		if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
 			List<ILanguageSettingsProvider> lsProviders = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
 			for (ILanguageSettingsProvider lsProvider : lsProviders) {
 				ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(lsProvider);
-				if (rawProvider instanceof ICConsoleParser) {
-					ICConsoleParser consoleParser = (ICConsoleParser) rawProvider;
+				if (rawProvider instanceof ICBuildOutputParser) {
+					ICBuildOutputParser consoleParser = (ICBuildOutputParser) rawProvider;
 					try {
-						consoleParser.startup(cfgDescription);
+						consoleParser.startup(cfgDescription, cwdTracker);
 						parsers.add(consoleParser);
 					} catch (CoreException e) {
 						ManagedBuilderCorePlugin.log(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID,

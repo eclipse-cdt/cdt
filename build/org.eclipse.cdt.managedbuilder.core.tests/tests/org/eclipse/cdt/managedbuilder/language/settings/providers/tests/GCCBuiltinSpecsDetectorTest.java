@@ -33,7 +33,7 @@ import org.eclipse.core.runtime.Path;
 
 public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 	private static final String LANGUAGE_ID_C = GCCLanguage.ID;
-	
+
 	class MockGCCBuiltinSpecsDetector extends GCCBuiltinSpecsDetector {
 		@Override
 		public void startupForLanguage(String languageId) throws CoreException {
@@ -55,7 +55,7 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 			super.shutdownForLanguage();
 		}
 	}
-	
+
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -104,13 +104,13 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 			assertTrue(resolvedCommand.endsWith("file.c"));
 		}
 	}
-	
+
 	public void testGCCBuiltinSpecsDetector_Macro_NoValue() throws Exception {
 		MockGCCBuiltinSpecsDetector detector = new MockGCCBuiltinSpecsDetector();
-		
-		detector.startup(null);
+
+		detector.startup(null, null);
 		detector.startupForLanguage(null);
-		detector.processLine("#define MACRO", null);
+		detector.processLine("#define MACRO");
 		detector.shutdownForLanguage();
 		detector.shutdown();
 
@@ -121,10 +121,10 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 
 	public void testGCCBuiltinSpecsDetector_Macro_Simple() throws Exception {
 		MockGCCBuiltinSpecsDetector detector = new MockGCCBuiltinSpecsDetector();
-		
-		detector.startup(null);
+
+		detector.startup(null, null);
 		detector.startupForLanguage(null);
-		detector.processLine("#define MACRO VALUE", null);
+		detector.processLine("#define MACRO VALUE");
 		detector.shutdownForLanguage();
 		detector.shutdown();
 
@@ -135,10 +135,10 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 
 	public void testGCCBuiltinSpecsDetector_Macro_Const() throws Exception {
 		MockGCCBuiltinSpecsDetector detector = new MockGCCBuiltinSpecsDetector();
-		
-		detector.startup(null);
+
+		detector.startup(null, null);
 		detector.startupForLanguage(null);
-		detector.processLine("#define MACRO (3)", null);
+		detector.processLine("#define MACRO (3)");
 		detector.shutdownForLanguage();
 		detector.shutdown();
 
@@ -149,15 +149,15 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 
 	public void testGCCBuiltinSpecsDetector_Macro_WhiteSpaces() throws Exception {
 		MockGCCBuiltinSpecsDetector detector = new MockGCCBuiltinSpecsDetector();
-		
-		detector.startup(null);
+
+		detector.startup(null, null);
 		detector.startupForLanguage(null);
-		detector.processLine("#define \t MACRO_1 VALUE", null);
-		detector.processLine("#define MACRO_2 \t VALUE", null);
-		detector.processLine("#define MACRO_3 VALUE \t", null);
+		detector.processLine("#define \t MACRO_1 VALUE");
+		detector.processLine("#define MACRO_2 \t VALUE");
+		detector.processLine("#define MACRO_3 VALUE \t");
 		detector.shutdownForLanguage();
 		detector.shutdown();
-		
+
 		List<ICLanguageSettingEntry> entries = detector.getSettingEntries(null, null, null);
 		int index = 0;
 		assertEquals(new CMacroEntry("MACRO_1", "VALUE", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY), entries.get(index++));
@@ -168,10 +168,10 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 
 	public void testGCCBuiltinSpecsDetector_Macro_EmptyArgList() throws Exception {
 		MockGCCBuiltinSpecsDetector detector = new MockGCCBuiltinSpecsDetector();
-		
-		detector.startup(null);
+
+		detector.startup(null, null);
 		detector.startupForLanguage(null);
-		detector.processLine("#define MACRO() VALUE", null);
+		detector.processLine("#define MACRO() VALUE");
 		detector.shutdownForLanguage();
 		detector.shutdown();
 
@@ -182,10 +182,10 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 
 	public void testGCCBuiltinSpecsDetector_Macro_ParamUnused() throws Exception {
 		MockGCCBuiltinSpecsDetector detector = new MockGCCBuiltinSpecsDetector();
-		
-		detector.startup(null);
+
+		detector.startup(null, null);
 		detector.startupForLanguage(null);
-		detector.processLine("#define MACRO(X) VALUE", null);
+		detector.processLine("#define MACRO(X) VALUE");
 		detector.shutdownForLanguage();
 		detector.shutdown();
 
@@ -196,10 +196,10 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 
 	public void testGCCBuiltinSpecsDetector_Macro_ParamSpace() throws Exception {
 		MockGCCBuiltinSpecsDetector detector = new MockGCCBuiltinSpecsDetector();
-		
-		detector.startup(null);
+
+		detector.startup(null, null);
 		detector.startupForLanguage(null);
-		detector.processLine("#define MACRO(P1, P2) VALUE(P1, P2)", null);
+		detector.processLine("#define MACRO(P1, P2) VALUE(P1, P2)");
 		detector.shutdownForLanguage();
 		detector.shutdown();
 
@@ -210,10 +210,10 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 
 	public void testGCCBuiltinSpecsDetector_Macro_ArgsNoValue() throws Exception {
 		MockGCCBuiltinSpecsDetector detector = new MockGCCBuiltinSpecsDetector();
-		
-		detector.startup(null);
+
+		detector.startup(null, null);
 		detector.startupForLanguage(null);
-		detector.processLine("#define MACRO(P1, P2) ", null);
+		detector.processLine("#define MACRO(P1, P2) ");
 		detector.shutdownForLanguage();
 		detector.shutdown();
 
@@ -224,12 +224,12 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 
 	public void testGCCBuiltinSpecsDetector_Macro_Args_WhiteSpaces() throws Exception {
 		MockGCCBuiltinSpecsDetector detector = new MockGCCBuiltinSpecsDetector();
-		
-		detector.startup(null);
+
+		detector.startup(null, null);
 		detector.startupForLanguage(null);
-		detector.processLine("#define \t MACRO_1(P1, P2) VALUE(P1, P2)", null);
-		detector.processLine("#define MACRO_2(P1, P2) \t VALUE(P1, P2)", null);
-		detector.processLine("#define MACRO_3(P1, P2) VALUE(P1, P2) \t", null);
+		detector.processLine("#define \t MACRO_1(P1, P2) VALUE(P1, P2)");
+		detector.processLine("#define MACRO_2(P1, P2) \t VALUE(P1, P2)");
+		detector.processLine("#define MACRO_3(P1, P2) VALUE(P1, P2) \t");
 		detector.shutdownForLanguage();
 		detector.shutdown();
 
@@ -257,23 +257,23 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		String loc = tmpPath.toString();
 
 		MockGCCBuiltinSpecsDetector detector = new MockGCCBuiltinSpecsDetector();
-		detector.startup(null);
+		detector.startup(null, null);
 		detector.startupForLanguage(null);
 
-		detector.processLine(" "+loc+"/misplaced/include1", null);
-		detector.processLine("#include \"...\" search starts here:", null);
-		detector.processLine(" "+loc+"/local/include", null);
-		detector.processLine("#include <...> search starts here:", null);
-		detector.processLine(" "+loc+"/usr/include", null);
-		detector.processLine(" "+loc+"/usr/include/../include2", null);
-		detector.processLine(" "+loc+"/missing/folder", null);
-		detector.processLine(" "+loc+"/Library/Frameworks (framework directory)", null);
-		detector.processLine("End of search list.", null);
-		detector.processLine(" "+loc+"/misplaced/include2", null);
-		detector.processLine("Framework search starts here:", null);
-		detector.processLine(" "+loc+"/System/Library/Frameworks", null);
-		detector.processLine("End of framework search list.", null);
-		detector.processLine(" "+loc+"/misplaced/include3", null);
+		detector.processLine(" "+loc+"/misplaced/include1");
+		detector.processLine("#include \"...\" search starts here:");
+		detector.processLine(" "+loc+"/local/include");
+		detector.processLine("#include <...> search starts here:");
+		detector.processLine(" "+loc+"/usr/include");
+		detector.processLine(" "+loc+"/usr/include/../include2");
+		detector.processLine(" "+loc+"/missing/folder");
+		detector.processLine(" "+loc+"/Library/Frameworks (framework directory)");
+		detector.processLine("End of search list.");
+		detector.processLine(" "+loc+"/misplaced/include2");
+		detector.processLine("Framework search starts here:");
+		detector.processLine(" "+loc+"/System/Library/Frameworks");
+		detector.processLine("End of framework search list.");
+		detector.processLine(" "+loc+"/misplaced/include3");
 		detector.shutdownForLanguage();
 		detector.shutdown();
 
@@ -287,26 +287,26 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		assertEquals(new CIncludePathEntry(loc+"/System/Library/Frameworks", ICSettingEntry.FRAMEWORKS_MAC | ICSettingEntry.BUILTIN | ICSettingEntry.READONLY), entries.get(index++));
 		assertEquals(index, entries.size());
 	}
-	
+
 	public void testGCCBuiltinSpecsDetector_Includes_WhiteSpaces() throws Exception {
 		String loc = ResourceHelper.createTemporaryFolder().toString();
-		
+
 		MockGCCBuiltinSpecsDetector detector = new MockGCCBuiltinSpecsDetector();
-		detector.startup(null);
+		detector.startup(null, null);
 		detector.startupForLanguage(null);
-		
-		detector.processLine("#include \"...\" search starts here:", null);
-		detector.processLine(" \t "+loc+"/local/include", null);
-		detector.processLine("#include <...> search starts here:", null);
-		detector.processLine(loc+"/usr/include", null);
-		detector.processLine(" "+loc+"/Library/Frameworks \t (framework directory)", null);
-		detector.processLine("End of search list.", null);
-		detector.processLine("Framework search starts here:", null);
-		detector.processLine(" "+loc+"/System/Library/Frameworks \t ", null);
-		detector.processLine("End of framework search list.", null);
+
+		detector.processLine("#include \"...\" search starts here:");
+		detector.processLine(" \t "+loc+"/local/include");
+		detector.processLine("#include <...> search starts here:");
+		detector.processLine(loc+"/usr/include");
+		detector.processLine(" "+loc+"/Library/Frameworks \t (framework directory)");
+		detector.processLine("End of search list.");
+		detector.processLine("Framework search starts here:");
+		detector.processLine(" "+loc+"/System/Library/Frameworks \t ");
+		detector.processLine("End of framework search list.");
 		detector.shutdownForLanguage();
 		detector.shutdown();
-		
+
 		List<ICLanguageSettingEntry> entries = detector.getSettingEntries(null, null, null);
 		int index = 0;
 		assertEquals(new CIncludePathEntry(loc+"/local/include", ICSettingEntry.LOCAL | ICSettingEntry.BUILTIN | ICSettingEntry.READONLY), entries.get(index++));
@@ -315,7 +315,7 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		assertEquals(new CIncludePathEntry(loc+"/System/Library/Frameworks", ICSettingEntry.FRAMEWORKS_MAC | ICSettingEntry.BUILTIN | ICSettingEntry.READONLY), entries.get(index++));
 		assertEquals(index, entries.size());
 	}
-	
+
 	public void testGCCBuiltinSpecsDetector_Includes_SymbolicLinkUp() throws Exception {
 		// do not test on systems where symbolic links are not supported
 		if (!ResourceHelper.isSymbolicLinkSupported())
@@ -330,23 +330,23 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		IPath dir2 = dir1.removeLastSegments(1);
 		IPath linkPath = dir1.append("linked");
 		ResourceHelper.createSymbolicLink(linkPath, dir2);
-		
+
 		MockGCCBuiltinSpecsDetector detector = new MockGCCBuiltinSpecsDetector();
-		
-		detector.startup(null);
+
+		detector.startup(null, null);
 		detector.startupForLanguage(null);
-		detector.processLine("#include <...> search starts here:", null);
-		detector.processLine(" "+linkPath.toString()+"/..", null);
-		detector.processLine("End of search list.", null);
+		detector.processLine("#include <...> search starts here:");
+		detector.processLine(" "+linkPath.toString()+"/..");
+		detector.processLine("End of search list.");
 		detector.shutdownForLanguage();
 		detector.shutdown();
-		
+
 		// check populated entries
 		List<ICLanguageSettingEntry> entries = detector.getSettingEntries(null, null, null);
 		assertEquals(new CIncludePathEntry(dir2.removeLastSegments(1), ICSettingEntry.BUILTIN | ICSettingEntry.READONLY), entries.get(0));
 		assertEquals(1, entries.size());
 	}
-	
+
 	public void testGCCBuiltinSpecsDetector_Cygwin_NoProject() throws Exception {
 		String windowsLocation;
 		String cygwinLocation = "/usr/include";
@@ -359,15 +359,15 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		assertTrue("windowsLocation=["+windowsLocation+"]", new Path(windowsLocation).getDevice()!=null);
 
 		MockGCCBuiltinSpecsDetectorCygwin detector = new MockGCCBuiltinSpecsDetectorCygwin();
-		
-		detector.startup(null);
+
+		detector.startup(null, null);
 		detector.startupForLanguage(null);
-		detector.processLine("#include <...> search starts here:", null);
-		detector.processLine(" /usr/include", null);
-		detector.processLine("End of search list.", null);
+		detector.processLine("#include <...> search starts here:");
+		detector.processLine(" /usr/include");
+		detector.processLine("End of search list.");
 		detector.shutdownForLanguage();
 		detector.shutdown();
-		
+
 		// check populated entries
 		List<ICLanguageSettingEntry> entries = detector.getSettingEntries(null, null, null);
 		assertEquals(new CIncludePathEntry(new Path(windowsLocation), ICSettingEntry.BUILTIN | ICSettingEntry.READONLY), entries.get(0));
@@ -384,23 +384,23 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 			return;
 		}
 		assertTrue("windowsLocation=["+windowsLocation+"]", new Path(windowsLocation).getDevice()!=null);
-		
+
 		// Create model project and folders to test
 		String projectName = getName();
 		IProject project = ResourceHelper.createCDTProjectWithConfig(projectName);
 		ICConfigurationDescription[] cfgDescriptions = getConfigurationDescriptions(project);
 		ICConfigurationDescription cfgDescription = cfgDescriptions[0];
-		
+
 		MockGCCBuiltinSpecsDetectorCygwin detector = new MockGCCBuiltinSpecsDetectorCygwin();
-		
-		detector.startup(cfgDescription);
+
+		detector.startup(cfgDescription, null);
 		detector.startupForLanguage(null);
-		detector.processLine("#include <...> search starts here:", null);
-		detector.processLine(" /usr/include", null);
-		detector.processLine("End of search list.", null);
+		detector.processLine("#include <...> search starts here:");
+		detector.processLine(" /usr/include");
+		detector.processLine("End of search list.");
 		detector.shutdownForLanguage();
 		detector.shutdown();
-		
+
 		// check populated entries
 		List<ICLanguageSettingEntry> entries = detector.getSettingEntries(null, null, null);
 		assertEquals(new CIncludePathEntry(new Path(windowsLocation), ICSettingEntry.BUILTIN | ICSettingEntry.READONLY), entries.get(0));

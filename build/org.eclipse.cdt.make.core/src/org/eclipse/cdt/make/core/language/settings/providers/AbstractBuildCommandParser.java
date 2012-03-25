@@ -17,9 +17,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.ErrorParserManager;
-import org.eclipse.cdt.core.ICConsoleParser;
-import org.eclipse.cdt.core.IErrorParser;
 import org.eclipse.cdt.core.IErrorParser2;
 import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.core.errorparsers.RegexErrorParser;
@@ -44,8 +41,7 @@ import org.eclipse.core.runtime.jobs.Job;
  *
  * @since 7.2
  */
-public abstract class AbstractBuildCommandParser extends AbstractLanguageSettingsOutputScanner
-		implements ICConsoleParser, IErrorParser {
+public abstract class AbstractBuildCommandParser extends AbstractLanguageSettingsOutputScanner {
 	public static final Object JOB_FAMILY_BUILD_COMMAND_PARSER = "org.eclipse.cdt.make.core.scannerconfig.AbstractBuildCommandParser";
 	private static final String ATTR_PARAMETER = "parameter"; //$NON-NLS-1$
 
@@ -139,15 +135,10 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 		return options;
 	}
 
-	@Override
-	public boolean processLine(String line) {
-		return processLine(line, null);
-	}
-
 	// This is redundant but let us keep it here to navigate in java code easier
 	@Override
-	public boolean processLine(String line, ErrorParserManager epm) {
-		return super.processLine(line, epm);
+	public boolean processLine(String line) {
+		return super.processLine(line);
 	}
 
 	@Override

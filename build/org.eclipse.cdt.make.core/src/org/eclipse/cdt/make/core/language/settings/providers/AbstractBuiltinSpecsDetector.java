@@ -21,13 +21,14 @@ import java.util.List;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CommandLauncher;
 import org.eclipse.cdt.core.ErrorParserManager;
-import org.eclipse.cdt.core.ICConsoleParser;
 import org.eclipse.cdt.core.ICommandLauncher;
 import org.eclipse.cdt.core.IConsoleParser;
 import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.core.ProblemMarkerInfo;
 import org.eclipse.cdt.core.index.IIndexManager;
+import org.eclipse.cdt.core.language.settings.providers.ICBuildOutputParser;
 import org.eclipse.cdt.core.language.settings.providers.ICListenerAgent;
+import org.eclipse.cdt.core.language.settings.providers.IWorkingDirectoryTracker;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
@@ -38,14 +39,11 @@ import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
-import org.eclipse.cdt.internal.core.ConsoleOutputSniffer;
+import org.eclipse.cdt.internal.core.BuildRunnerHelper;
 import org.eclipse.cdt.internal.core.XmlUtil;
 import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsLogger;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
-import org.eclipse.cdt.make.internal.core.MakeMessages;
-import org.eclipse.cdt.make.internal.core.StreamMonitor;
 import org.eclipse.cdt.utils.CommandLineUtil;
-import org.eclipse.cdt.utils.PathUtil;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -74,17 +72,15 @@ import org.w3c.dom.Element;
  * @since 7.2
  */
 public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSettingsOutputScanner implements ICListenerAgent {
-	public static final Object JOB_FAMILY_BUILTIN_SPECS_DETECTOR = "org.eclipse.cdt.make.core.scannerconfig.AbstractBuiltinSpecsDetector";
+	public static final String JOB_FAMILY_BUILTIN_SPECS_DETECTOR = "org.eclipse.cdt.make.core.scannerconfig.AbstractBuiltinSpecsDetector";
 
-	private static final int TICKS_STREAM_MONITOR = 100;
+	private static final int MONITOR_SCALE = 100;
 	private static final int TICKS_CLEAN_MARKERS = 1;
 	private static final int TICKS_RUN_FOR_ONE_LANGUAGE = 10;
 	private static final int TICKS_SERIALIZATION = 1;
-	private static final int TICKS_SCALE = 100;
 	private static final String NEWLINE = System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 	private static final String PLUGIN_CDT_MAKE_UI_ID = "org.eclipse.cdt.make.ui"; //$NON-NLS-1$
 	private static final String GMAKE_ERROR_PARSER_ID = "org.eclipse.cdt.core.GmakeErrorParser"; //$NON-NLS-1$
-	private static final String PATH_ENV = "PATH"; //$NON-NLS-1$
 	private static final String ATTR_PARAMETER = "parameter"; //$NON-NLS-1$
 	private static final String ATTR_CONSOLE = "console"; //$NON-NLS-1$
 
@@ -105,6 +101,8 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 
 	protected URI mappedRootURI = null;
 	protected URI buildDirURI = null;
+
+	private BuildRunnerHelper buildRunnerHelper;
 
 	private class SDMarkerGenerator implements IMarkerGenerator {
 		protected static final String SCANNER_DISCOVERY_PROBLEM_MARKER = MakeCorePlugin.PLUGIN_ID + ".scanner.discovery.problem"; //$NON-NLS-1$
@@ -170,17 +168,18 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 
 	/**
 	 * This ICConsoleParser handles each individual run for one language from
-	 * {@link AbstractBuiltinSpecsDetector#runForEachLanguage(ICConfigurationDescription, IPath, String[], IProgressMonitor)}
+	 * {@link AbstractBuiltinSpecsDetector#runForEachLanguage(ICConfigurationDescription, URI, String[], IProgressMonitor)}
 	 *
 	 */
-	private class ConsoleParser implements ICConsoleParser {
+	private class ConsoleParserAdapter implements ICBuildOutputParser {
 		@Override
-		public void startup(ICConfigurationDescription cfgDescription) throws CoreException {
-			// not used here, see instead startupForLanguage() in AbstractBuiltinSpecsDetector.runForEachLanguage(...)
+		public void startup(ICConfigurationDescription cfgDescription, IWorkingDirectoryTracker cwdTracker) throws CoreException {
+			// Also see startupForLanguage() in AbstractBuiltinSpecsDetector.runForEachLanguage(...)
+			AbstractBuiltinSpecsDetector.this.startup(cfgDescription, cwdTracker);
 		}
 		@Override
 		public boolean processLine(String line) {
-			return AbstractBuiltinSpecsDetector.this.processLine(line, errorParserManager);
+			return AbstractBuiltinSpecsDetector.this.processLine(line);
 		}
 		@Override
 		public void shutdown() {
@@ -290,9 +289,8 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 
 	protected void execute() {
 		if (isExecuted) {
-//			// TODO - remove me
-//			CCorePlugin.log(new Status(IStatus.INFO,CCorePlugin.PLUGIN_ID,
-//					getPrefixForLog() + "Already executed [" + System.identityHashCode(this) + "] " + this));
+			// AG FIXME - temporary log to remove before CDT Juno release
+//			LanguageSettingsLogger.logInfo(getPrefixForLog() + "Already executed [" + System.identityHashCode(this) + "] " + this);
 			return;
 		}
 		isExecuted = true;
@@ -332,53 +330,37 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 	/**
 	 * TODO
 	 */
-	protected IStatus runForEachLanguage(ICConfigurationDescription cfgDescription, IPath workingDirectory,
-			String[] env, IProgressMonitor monitor) {
-
-		try {
-			startup(cfgDescription);
-		} catch (CoreException e) {
-			IStatus status = new Status(IStatus.ERROR, MakeCorePlugin.PLUGIN_ID, IStatus.ERROR, "Error preparing to run Builtin Specs Detector", e);
-			MakeCorePlugin.log(status);
-			return status;
-		}
-
+	protected IStatus runForEachLanguage(ICConfigurationDescription cfgDescription, URI workingDirectoryURI, String[] env, IProgressMonitor monitor) {
 		MultiStatus status = new MultiStatus(MakeCorePlugin.PLUGIN_ID, IStatus.OK, "Problem running CDT Scanner Discovery provider " + getId(), null);
-
-		boolean isChanged = false;
-		mappedRootURI = null;
-		buildDirURI = null;
 
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
 
 		try {
+			boolean isChanged = false;
+			mappedRootURI = null;
+			buildDirURI = null;
+
 
 			List<String> languageIds = getLanguageScope();
 			if (languageIds != null) {
 				int totalWork = TICKS_CLEAN_MARKERS + languageIds.size()*TICKS_RUN_FOR_ONE_LANGUAGE + TICKS_SERIALIZATION;
-				monitor.beginTask("CDT Scanner Discovery", totalWork * TICKS_SCALE);
+				monitor.beginTask("CDT Scanner Discovery", totalWork * MONITOR_SCALE);
 
-				IResource markersResource = currentProject!= null ? currentProject : ResourcesPlugin.getWorkspace().getRoot();
+				IResource markersResource = currentProject != null ? currentProject : ResourcesPlugin.getWorkspace().getRoot();
 
 				// clear old markers
-				monitor.subTask("Clearing stale markers");
+				monitor.subTask("Clearing markers for " + markersResource.getFullPath());
 				try {
-					IMarker[] cur = markersResource.findMarkers(SDMarkerGenerator.SCANNER_DISCOVERY_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
-					for (IMarker marker : cur) {
-						if (getId().equals(marker.getAttribute(SDMarkerGenerator.ATTR_PROVIDER))) {
-							marker.delete();
-						}
-					}
+					markersResource.deleteMarkers(SDMarkerGenerator.SCANNER_DISCOVERY_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
 				} catch (CoreException e) {
 					MakeCorePlugin.log(e);
 				}
-
 				if (monitor.isCanceled())
 					throw new OperationCanceledException();
 
-				monitor.worked(TICKS_CLEAN_MARKERS * TICKS_SCALE);
+				monitor.worked(TICKS_CLEAN_MARKERS * MONITOR_SCALE);
 
 				for (String languageId : languageIds) {
 					List<ICLanguageSettingEntry> oldEntries = getSettingEntries(cfgDescription, null, languageId);
@@ -387,7 +369,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 						if (monitor.isCanceled())
 							throw new OperationCanceledException();
 
-						runForLanguage(workingDirectory, env, new SubProgressMonitor(monitor, TICKS_RUN_FOR_ONE_LANGUAGE * TICKS_SCALE));
+						runForLanguage(languageId, currentCommandResolved, env, workingDirectoryURI, new SubProgressMonitor(monitor, TICKS_RUN_FOR_ONE_LANGUAGE * MONITOR_SCALE));
 						if (monitor.isCanceled())
 							throw new OperationCanceledException();
 					} catch (CoreException e) {
@@ -399,7 +381,6 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 					}
 					List<ICLanguageSettingEntry> newEntries = getSettingEntries(cfgDescription, null, languageId);
 					isChanged = isChanged || newEntries != oldEntries;
-
 				}
 			}
 
@@ -426,7 +407,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 			if (monitor.isCanceled())
 				throw new OperationCanceledException();
 
-			monitor.worked(TICKS_SERIALIZATION * TICKS_SCALE);
+			monitor.worked(TICKS_SERIALIZATION * MONITOR_SCALE);
 		} catch (OperationCanceledException e) {
 			if (!status.isOK()) {
 				MakeCorePlugin.log(status);
@@ -479,129 +460,77 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 	/**
 	 * TODO: test case for this function
 	 */
-	private void runForLanguage(IPath workingDirectory, String[] env, IProgressMonitor monitor) throws CoreException {
-		IConsole console;
-		if (isConsoleEnabled) {
-			console = startProviderConsole();
-		} else {
-			// that looks in extension points registry and won't find the id, this console is not shown
-			console = CCorePlugin.getDefault().getConsole(MakeCorePlugin.PLUGIN_ID + ".console.hidden"); //$NON-NLS-1$
-		}
-		console.start(currentProject);
-		OutputStream cos = console.getOutputStream();
-
-		// Using GMAKE_ERROR_PARSER_ID as it can handle shell error messages
-		errorParserManager = new ErrorParserManager(currentProject, new SDMarkerGenerator(), new String[] {GMAKE_ERROR_PARSER_ID});
-		errorParserManager.setOutputStream(cos);
+	private void runForLanguage(String languageId, String command, String[] envp, URI workingDirectoryURI, IProgressMonitor monitor) throws CoreException {
+		buildRunnerHelper = new BuildRunnerHelper(currentProject);
 
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
-
 		try {
-			// StreamMonitor will do monitor.beginTask(...)
-			StreamMonitor streamMon = new StreamMonitor(monitor, errorParserManager, TICKS_STREAM_MONITOR);
-			OutputStream stdout = streamMon;
-			OutputStream stderr = streamMon;
+			monitor.beginTask("Running scanner discovery: " + getName(), 3 * MONITOR_SCALE); //$NON-NLS-1$
 
-			String msg = "Running scanner discovery: " + getName();
-			printLine(stdout, "**** " + msg + " ****" + NEWLINE);
+			IConsole console;
+			if (isConsoleEnabled) {
+				console = startProviderConsole();
+			} else {
+				// that looks in extension points registry and won't find the id, this console is not shown
+				console = CCorePlugin.getDefault().getConsole(MakeCorePlugin.PLUGIN_ID + ".console.hidden"); //$NON-NLS-1$
+			}
+			console.start(currentProject);
 
-			ConsoleParser consoleParser = new ConsoleParser();
-			ConsoleOutputSniffer sniffer = new ConsoleOutputSniffer(stdout, stderr, new IConsoleParser[] { consoleParser }, errorParserManager);
-			OutputStream consoleOut = sniffer.getOutputStream();
-			OutputStream consoleErr = sniffer.getErrorStream();
+			/////////////////////////////////////////////////
+			int state = ICommandLauncher.ILLEGAL_COMMAND;
 
-			boolean isSuccess = false;
+			IPath program = new Path("");
+			String[] args = new String[0];
+			String[] cmdArray = CommandLineUtil.argumentsToArray(command);
+			if (cmdArray != null && cmdArray.length > 0) {
+				program = new Path(cmdArray[0]);
+				if (cmdArray.length>1) {
+					args = new String[cmdArray.length-1];
+					System.arraycopy(cmdArray, 1, args, 0, args.length);
+				}
+			}
+
+			ICommandLauncher launcher = new CommandLauncher();
+			launcher.setProject(currentProject);
+
+			// Using GMAKE_ERROR_PARSER_ID as it can handle shell error messages
+			ErrorParserManager epm = new ErrorParserManager(currentProject, new SDMarkerGenerator(), new String[] {GMAKE_ERROR_PARSER_ID});
+			ConsoleParserAdapter consoleParser = new ConsoleParserAdapter();
+			consoleParser.startup(currentCfgDescription, epm);
+			List<IConsoleParser> parsers = new ArrayList<IConsoleParser>();
+			parsers.add(consoleParser);
+
+			buildRunnerHelper.setLaunchParameters(launcher, program, args, workingDirectoryURI, envp);
+			buildRunnerHelper.prepareStreams(epm, parsers, console, new SubProgressMonitor(monitor, 1 * MONITOR_SCALE));
+
+			buildRunnerHelper.removeOldMarkers(currentProject, new SubProgressMonitor(monitor, 1 * MONITOR_SCALE, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+
+			buildRunnerHelper.greeting("Running scanner discovery: " + getName());
+
+			OutputStream outStream = buildRunnerHelper.getOutputStream();
+			OutputStream errStream = buildRunnerHelper.getErrorStream();
+			state = runProgramForLanguage(languageId, command, envp, workingDirectoryURI, outStream, errStream, new SubProgressMonitor(monitor, 1 * MONITOR_SCALE, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+			buildRunnerHelper.close();
+			buildRunnerHelper.goodbye();
+
+		} catch (Exception e) {
+			// AG TODO - better message
+			String msg = "Internal error running scanner discovery";
+			MakeCorePlugin.log(new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.PLUGIN_ID, msg, e)));
+		} finally {
 			try {
-				isSuccess = runProgram(currentCommandResolved, env, workingDirectory, monitor, consoleOut, consoleErr);
-			} catch (Exception e) {
+				buildRunnerHelper.close();
+			} catch (IOException e) {
 				MakeCorePlugin.log(e);
 			}
-			if (!isSuccess) {
-				try {
-					consoleOut.close();
-				} catch (IOException e) {
-					MakeCorePlugin.log(e);
-				}
-				try {
-					consoleErr.close();
-				} catch (IOException e) {
-					MakeCorePlugin.log(e);
-				}
-			}
-		} finally {
-			// ensure monitor.done() is called in cases when StreamMonitor fails to do that
 			monitor.done();
 		}
 	}
 
-	/**
-	 * TODO
-	 * Note that progress monitor life cycle is handled elsewhere. This method assumes that
-	 * monitor.beginTask(...) has already been called.
-	 */
-	protected boolean runProgram(String command, String[] env, IPath workingDirectory, IProgressMonitor monitor,
-			OutputStream consoleOut, OutputStream consoleErr) throws CoreException, IOException {
-
-		if (command==null || command.trim().length()==0) {
-			return false;
-		}
-
-		String errMsg = null;
-		ICommandLauncher launcher = new CommandLauncher();
-
-		launcher.setProject(currentProject);
-
-		// Print the command for visual interaction.
-		launcher.showCommand(true);
-
-		String[] cmdArray = CommandLineUtil.argumentsToArray(command);
-		IPath program = new Path(cmdArray[0]);
-		String[] args = new String[0];
-		if (cmdArray.length>1) {
-			args = new String[cmdArray.length-1];
-			System.arraycopy(cmdArray, 1, args, 0, args.length);
-		}
-
-		if (monitor==null) {
-			monitor = new NullProgressMonitor();
-		}
-		Process p = launcher.execute(program, args, env, workingDirectory, monitor);
-
-		if (p != null) {
-			// Before launching give visual cues via the monitor
-			monitor.subTask("Invoking command " + command);
-			if (launcher.waitAndRead(consoleOut, consoleErr, monitor) != ICommandLauncher.OK) {
-				errMsg = launcher.getErrorMessage();
-			}
-		} else {
-			errMsg = launcher.getErrorMessage();
-		}
-		if (errMsg!=null) {
-			String errorPrefix = MakeMessages.getString("ExternalScannerInfoProvider.Error_Prefix"); //$NON-NLS-1$
-
-			String msg = MakeMessages.getFormattedString("ExternalScannerInfoProvider.Provider_Error", command);
-			printLine(consoleErr, errorPrefix + msg + NEWLINE);
-
-			// Launching failed, trying to figure out possible cause
-			String envPath = getEnvVar(env, PATH_ENV);
-			if (!program.isAbsolute() && PathUtil.findProgramLocation(program.toString(), envPath) == null) {
-				printLine(consoleErr, errMsg);
-				msg = MakeMessages.getFormattedString("ExternalScannerInfoProvider.Working_Directory", workingDirectory); //$NON-NLS-1$
-				msg = MakeMessages.getFormattedString("ExternalScannerInfoProvider.Program_Not_In_Path", program); //$NON-NLS-1$
-				printLine(consoleErr, errorPrefix + msg + NEWLINE);
-				printLine(consoleErr, PATH_ENV + "=[" + envPath + "]" + NEWLINE); //$NON-NLS-1$ //$NON-NLS-2$
-			} else {
-				printLine(consoleErr, errorPrefix + errMsg);
-				msg = MakeMessages.getFormattedString("ExternalScannerInfoProvider.Working_Directory", workingDirectory); //$NON-NLS-1$
-				printLine(consoleErr, PATH_ENV + "=[" + envPath + "]" + NEWLINE); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-			return false;
-		}
-
-		printLine(consoleOut, NEWLINE + "**** Collected " + detectedSettingEntries.size() + " entries. ****");
-		return true;
+	protected int runProgramForLanguage(String languageId, String command, String[] envp, URI workingDirectoryURI, OutputStream consoleOut, OutputStream consoleErr, IProgressMonitor monitor) throws CoreException, IOException {
+		return buildRunnerHelper.build(monitor);
 	}
 
 	/**
@@ -619,6 +548,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 		if (currentProject != null) {
 			extConsoleId = "org.eclipse.cdt.make.internal.ui.scannerconfig.ScannerDiscoveryConsole";
 		} else {
+			// FIXME This console is not colored!
 			extConsoleId = "org.eclipse.cdt.make.internal.ui.scannerconfig.ScannerDiscoveryGlobalConsole";
 		}
 		ILanguage ld = LanguageManager.getInstance().getLanguage(currentLanguageId);
@@ -628,29 +558,6 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 
 		IConsole console = CCorePlugin.getDefault().getConsole(extConsoleId, consoleId, consoleName, defaultIcon);
 		return console;
-	}
-
-	private String getEnvVar(String[] envStrings, String envVar) {
-		String envPath = null;
-		if (envStrings!=null) {
-			String varPrefix = envVar+'=';
-			for (String envStr : envStrings) {
-				boolean found = false;
-				// need to convert "Path" to "PATH" on Windows
-				if (Platform.getOS().equals(Platform.OS_WIN32)) {
-					found = envStr.substring(0,varPrefix.length()).toUpperCase().startsWith(varPrefix);
-				} else {
-					found = envStr.startsWith(varPrefix);
-				}
-				if (found) {
-					envPath = envStr.substring(varPrefix.length());
-					break;
-				}
-			}
-		} else {
-			envPath = System.getenv(envVar);
-		}
-		return envPath;
 	}
 
 	protected String getCompilerCommand(String languageId) {

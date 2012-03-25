@@ -281,7 +281,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 
 	public void testAbstractBuildCommandParser_Nulls() throws Exception {
 		MockBuildCommandParser parser = new MockBuildCommandParser();
-		parser.startup(null);
+		parser.startup(null, null);
 		parser.processLine(null);
 		parser.shutdown();
 
@@ -301,7 +301,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		// create test class
 		AbstractBuildCommandParser parser = new MockBuildCommandParser() {
 			@Override
-			public boolean processLine(String line, ErrorParserManager epm) {
+			public boolean processLine(String line) {
 				// pretending that we parsed the line
 				currentResource = file;
 				List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
@@ -312,7 +312,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 			}
 		};
 		// parse line
-		parser.startup(cfgDescription);
+		parser.startup(cfgDescription, null);
 		parser.processLine("gcc -DMACRO=VALUE file.cpp");
 		parser.shutdown();
 
@@ -356,7 +356,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
 
 		// parse line
-		parser.startup(cfgDescription);
+		parser.startup(cfgDescription, null);
 		parser.processLine("gcc -I/path0 file.cpp");
 		parser.shutdown();
 
@@ -398,7 +398,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
 
 		// parse line
-		parser.startup(cfgDescription);
+		parser.startup(cfgDescription, null);
 		parser.processLine("gcc -I/path0 file1.cpp");
 		parser.processLine("gcc-4.2 -I/path0 file2.cpp");
 		parser.processLine("g++ -I/path0 file3.cpp");
@@ -462,7 +462,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
 
 		// parse line
-		parser.startup(cfgDescription);
+		parser.startup(cfgDescription, null);
 		parser.processLine("gcc"
 				// regular
 				+ " -I/path0 "
@@ -534,7 +534,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
 
 		// parse line
-		parser.startup(cfgDescription);
+		parser.startup(cfgDescription, null);
 		parser.processLine("gcc "
 				+ " -DMACRO0"
 				+ " -DMACRO1=value"
@@ -612,7 +612,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
 
 		// parse line
-		parser.startup(cfgDescription);
+		parser.startup(cfgDescription, null);
 		parser.processLine("gcc "
 				+ " -UMACRO"
 				+ " file.cpp");
@@ -642,7 +642,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
 
 		// parse line
-		parser.startup(cfgDescription);
+		parser.startup(cfgDescription, null);
 		parser.processLine("gcc "
 				+ " -include /include.file1"
 				+ " -include '/include.file with spaces'"
@@ -693,7 +693,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
 
 		// parse line
-		parser.startup(cfgDescription);
+		parser.startup(cfgDescription, null);
 		parser.processLine("gcc -macros macro.file file.cpp");
 		parser.processLine("gcc "
 				+ " -macros /macro.file"
@@ -738,7 +738,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
 
 		// parse line
-		parser.startup(cfgDescription);
+		parser.startup(cfgDescription, null);
 		parser.processLine("gcc "
 				+ " -L/path0"
 				+ " -L'/path with spaces'"
@@ -782,7 +782,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
 
 		// parse line
-		parser.startup(cfgDescription);
+		parser.startup(cfgDescription, null);
 		parser.processLine("gcc -ldomain file.cpp");
 		parser.shutdown();
 
@@ -814,7 +814,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
 
 		// parse line
-		parser.startup(cfgDescription);
+		parser.startup(cfgDescription, null);
 		parser.processLine("gcc"
 				+ " -I/path0 "
 				+ " -DMACRO1=value"
@@ -864,7 +864,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
 
 		// parse line
-		parser.startup(cfgDescription);
+		parser.startup(cfgDescription, null);
 		parser.processLine("gcc -I/path0 missing.cpp");
 		parser.shutdown();
 
@@ -889,7 +889,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
 
 		// parse line
-		parser.startup(cfgDescription);
+		parser.startup(cfgDescription, null);
 		parser.processLine("gcc "
 				+ "-I/path0 "
 				+ "-I. "
@@ -922,7 +922,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
 
 		// parse line
-		parser.startup(null);
+		parser.startup(null, null);
 		parser.processLine("gcc "
 				+ "-I/path0 "
 				+ "-I. "
@@ -958,7 +958,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
 
 		// parse line
-		parser.startup(cfgDescription);
+		parser.startup(cfgDescription, null);
 		parser.processLine("gcc -I/path0 'file with spaces 1.cpp'");
 		parser.processLine("gcc -I/path0 \"file with spaces 2.cpp\"");
 		parser.processLine("gcc -I/path0 'file with spaces 3.cpp'\n");
@@ -1015,12 +1015,11 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		epm.pushDirectoryURI(buildDir.getLocationURI());
 
 		// parse line
-		parser.startup(cfgDescription);
+		parser.startup(cfgDescription, epm);
 		parser.processLine("gcc "
 				+ "-I/path0 "
 				+ "-I. "
-				+ "Folder1/Folder2/file.cpp",
-				epm);
+				+ "Folder1/Folder2/file.cpp");
 		parser.shutdown();
 
 		// check entries
@@ -1052,7 +1051,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
 
 		// parse line
-		parser.startup(cfgDescription);
+		parser.startup(cfgDescription, null);
 		parser.processLine("gcc -I/path0 file0.cpp");
 		parser.processLine("gcc -I/path0 file1.cpp\n");
 		parser.processLine("gcc -I/path0 file2.cpp\r\n");
@@ -1102,7 +1101,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		parser.setResolvingPaths(true);
 
 		// parse line
-		parser.startup(cfgDescription);
+		parser.startup(cfgDescription, null);
 		parser.processLine("gcc "
 				+ " -IX:\\path"
 				+ " file.cpp");
@@ -1133,7 +1132,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		parser.setResolvingPaths(true);
 
 		// parse line
-		parser.startup(cfgDescription);
+		parser.startup(cfgDescription, null);
 		parser.processLine("gcc "
 				+ " -I."
 				+ " -I.."
@@ -1173,7 +1172,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		parser.setResolvingPaths(false);
 
 		// parse line
-		parser.startup(cfgDescription);
+		parser.startup(cfgDescription, null);
 		parser.processLine("gcc "
 				+ " -I."
 				+ " -I.."
@@ -1209,7 +1208,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		parser.setResolvingPaths(true);
 
 		// parse line
-		parser.startup(cfgDescription);
+		parser.startup(cfgDescription, null);
 		parser.processLine("gcc "
 				+ " -IFolder"
 				+ " -IFolder"
@@ -1247,15 +1246,14 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		epm.pushDirectoryURI(buildDir.getLocationURI());
 
 		// parse line
-		parser.startup(cfgDescription);
+		parser.startup(cfgDescription, epm);
 		parser.processLine("gcc "
 				+ " -I."
 				+ " -I.."
 				+ " -I../../.."
 				+ " -IFolder"
 				+ " -IMissingFolder"
-				+ " file.cpp",
-				epm);
+				+ " file.cpp");
 		parser.shutdown();
 
 		// check populated entries
@@ -1289,11 +1287,10 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		ErrorParserManager epm = new ErrorParserManager(project, null);
 
 		// parse line
-		parser.startup(cfgDescription);
+		parser.startup(cfgDescription, epm);
 		parser.processLine("gcc "
 				+ " -IFolder"
-				+ " file.cpp",
-			epm);
+				+ " file.cpp");
 		parser.shutdown();
 
 		// check populated entries
@@ -1322,13 +1319,12 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		epm.pushDirectoryURI(buildDir.getLocationURI());
 
 		// parse line
-		parser.startup(cfgDescription);
+		parser.startup(cfgDescription, epm);
 		parser.processLine("gcc "
 				+ " -I."
 				+ " -I.."
 				+ " -IFolder"
-				+ " ../file.cpp",
-				epm);
+				+ " ../file.cpp");
 		parser.shutdown();
 
 		// check populated entries
@@ -1361,13 +1357,12 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		epm.pushDirectoryURI(uriBuildDir);
 
 		// parse line
-		parser.startup(cfgDescription);
+		parser.startup(cfgDescription, epm);
 		parser.processLine("gcc "
 				+ " -I."
 				+ " -I.."
 				+ " -IFolder"
-				+ " ../file.cpp",
-				epm);
+				+ " ../file.cpp");
 		parser.shutdown();
 
 		// check populated entries
@@ -1404,15 +1399,14 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		epm.pushDirectoryURI(uriBuildDir);
 
 		// parse line
-		parser.startup(cfgDescription);
+		parser.startup(cfgDescription, epm);
 		parser.processLine("gcc "
 				+ " -I."
 				+ " -I/BuildDir/Folder"
 				+ " -I../BuildDir/Folder2"
 				+ " -I/BuildDir/MissingFolder"
 				+ " -I../BuildDir/MissingFolder2"
-				+ " /BuildDir/file.cpp",
-				epm);
+				+ " /BuildDir/file.cpp");
 		parser.shutdown();
 
 		// check populated entries
@@ -1451,14 +1445,13 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		ErrorParserManager epm = new ErrorParserManager(project, null);
 
 		// parse line
-		parser.startup(cfgDescription);
+		parser.startup(cfgDescription, epm);
 		parser.processLine("gcc "
 				+ " -I/Folder/Subfolder"
 				+ " -I/Mapped/Folder"
 				+ " -I/Ambiguous/Folder"
 				+ " -I/Missing/Folder"
-				+ " file.cpp",
-				epm);
+				+ " file.cpp");
 		parser.shutdown();
 
 		// check populated entries
@@ -1505,13 +1498,12 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		ErrorParserManager epm = new ErrorParserManager(project, null);
 
 		// parse line
-		parser.startup(cfgDescription);
+		parser.startup(cfgDescription, epm);
 		parser.processLine("gcc "
 				+ " -I/Folder/Subfolder"
 				+ " -I/Ambiguous/Folder"
 				+ " -I/Missing/Folder"
-				+ " file.cpp",
-				epm);
+				+ " file.cpp");
 		parser.shutdown();
 
 		// check populated entries
@@ -1565,12 +1557,11 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		ErrorParserManager epm = new ErrorParserManager(project, null);
 
 		// parse line
-		parser.startup(cfgDescription);
+		parser.startup(cfgDescription, epm);
 		parser.processLine("gcc "
 				+ " -I/Folder/Subfolder"
 				+ " -I/Ambiguous/Folder"
-				+ " file.cpp",
-				epm);
+				+ " file.cpp");
 		parser.shutdown();
 
 		// check populated entries
@@ -1610,9 +1601,9 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		ErrorParserManager epm = new ErrorParserManager(project, null);
 
 		// parse line
-		parser.startup(cfgDescription);
+		parser.startup(cfgDescription, epm);
 		// "../" should navigate along filesystem path, not along the link itself
-		parser.processLine("gcc -I"+linkPath.toString()+"/.."+" file.cpp", epm);
+		parser.processLine("gcc -I"+linkPath.toString()+"/.."+" file.cpp");
 		parser.shutdown();
 
 		// check populated entries
@@ -1650,9 +1641,9 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		ErrorParserManager epm = new ErrorParserManager(project, null);
 
 		// parse line
-		parser.startup(cfgDescription);
+		parser.startup(cfgDescription, epm);
 		// "../" should navigate along filesystem path, not along the link itself
-		parser.processLine("gcc -Ilinked/.."+" file.cpp", epm);
+		parser.processLine("gcc -Ilinked/.."+" file.cpp");
 		parser.shutdown();
 
 		// check populated entries
@@ -1691,7 +1682,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
 
 		// parse line
-		parser.startup(cfgDescription);
+		parser.startup(cfgDescription, null);
 		parser.processLine("gcc "
 				+ " -I."
 				+ " -Iinclude"
@@ -1734,7 +1725,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
 
 		// parse line
-		parser.startup(cfgDescription);
+		parser.startup(cfgDescription, null);
 		parser.processLine("gcc "
 				+ " -I."
 				+ " -Iinclude"
@@ -1758,7 +1749,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 				return "file.wrong-content-type";
 			}
 		};
-		parser.startup(null);
+		parser.startup(null, null);
 		parser.processLine("gcc file.wrong-content-type");
 		parser.shutdown();
 
@@ -1782,7 +1773,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		parser.setLanguageScope(new ArrayList<String>() {{add(LANG_CPP);}});
 
 		// parse line
-		parser.startup(cfgDescription);
+		parser.startup(cfgDescription, null);
 		parser.processLine("gcc -I/path0 file.c");
 		parser.shutdown();
 
@@ -1812,7 +1803,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
 
 		// parse line
-		parser.startup(cfgDescription);
+		parser.startup(cfgDescription, null);
 		parser.processLine("gcc -I/path0 file.x++");
 		parser.shutdown();
 
@@ -1843,8 +1834,8 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		ErrorParserManager epm = new ErrorParserManager(project, null);
 
 		// parse line
-		parser.startup(cfgDescription);
-		parser.processLine("gcc -I/path0 FILE.CPP", epm);
+		parser.startup(cfgDescription, epm);
+		parser.processLine("gcc -I/path0 FILE.CPP");
 		parser.shutdown();
 
 		// check populated entries
@@ -1873,7 +1864,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
 
 		// parse line
-		parser.startup(cfgDescription);
+		parser.startup(cfgDescription, null);
 		//    "g++"  -ftemplate-depth-128 -O0 -fno-inline -Wall -g -mthreads  -DBOOST_ALL_NO_LIB=1 -DBOOST_PYTHON_SOURCE -DBOOST_PYTHON_STATIC_LIB  -I"." -I"/Python25/Include" -c -o "bin.v2/libs/python/build/gcc-mingw-3.4.5/debug/link-static/threading-multi/numeric.o" "libs/python/src/numeric.cpp"
 		parser.processLine("   \"g++\"" +
 				" -ftemplate-depth-128 -O0 -fno-inline -Wall -g -mthreads" +
@@ -1920,12 +1911,11 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		ErrorParserManager epm = new ErrorParserManager(project, null);
 
 		// parse line
-		parser.startup(cfgDescription);
+		parser.startup(cfgDescription, epm);
 		parser.processLine("gcc "
 				+ " -IFolder"
 				+ " -I/Absolute/Folder"
-				+ " file.cpp",
-			epm);
+				+ " file.cpp");
 		parser.shutdown();
 
 		// check populated entries
@@ -1960,11 +1950,10 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		ErrorParserManager epm = new ErrorParserManager(project, null);
 
 		// parse line
-		parser.startup(cfgDescription);
+		parser.startup(cfgDescription, epm);
 		parser.processLine("gcc "
 				+ " -I/BeingMappedFrom/Folder" // mapped to local folder in EFSExtensionProvider extension point
-				+ " file.cpp",
-				epm);
+				+ " file.cpp");
 		parser.shutdown();
 
 		// check populated entries

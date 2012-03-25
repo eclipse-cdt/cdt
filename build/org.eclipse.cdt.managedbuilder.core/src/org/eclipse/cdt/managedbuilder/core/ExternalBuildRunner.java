@@ -107,7 +107,7 @@ public class ExternalBuildRunner extends AbstractBuildRunner {
 
 				List<IConsoleParser> parsers = new ArrayList<IConsoleParser>();
 				if (!isClean) {
-					ManagedBuildManager.collectLanguageSettingsConsoleParsers(cfgDescription, parsers);
+					ManagedBuildManager.collectLanguageSettingsConsoleParsers(cfgDescription, epm, parsers);
 					if (ScannerDiscoveryLegacySupport.isLegacyScannerDiscoveryOn(cfgDescription)) {
 						collectScannerInfoConsoleParsers(project, configuration, workingDirectoryURI, markerGenerator, parsers);
 					}

@@ -61,7 +61,7 @@ public class BuildRunnerHelper implements Closeable {
 
 	private IConsole console = null;
 	private ErrorParserManager errorParserManager = null;
-	private StreamMonitor streamMon = null;
+	private StreamProgressMonitor streamProgressMonitor = null;
 	private OutputStream stdout = null;
 	private OutputStream stderr = null;
 	private OutputStream consoleOut = null;
@@ -145,7 +145,7 @@ public class BuildRunnerHelper implements Closeable {
 		}
 
 		Integer lastWork = null;
-		if (buildCommand != null) {
+		if (buildCommand != null && project != null) {
 			progressPropertyName = getProgressPropertyName(buildCommand, args);
 			lastWork = (Integer)project.getSessionProperty(progressPropertyName);
 		}
@@ -153,8 +153,8 @@ public class BuildRunnerHelper implements Closeable {
 			lastWork = MONITOR_SCALE;
 		}
 
-		streamMon = new StreamMonitor(monitor, null, lastWork.intValue());
-		ConsoleOutputSniffer sniffer = new ConsoleOutputSniffer(streamMon, streamMon, parsers.toArray(new IConsoleParser[parsers.size()]));
+		streamProgressMonitor = new StreamProgressMonitor(monitor, null, lastWork.intValue());
+		ConsoleOutputSniffer sniffer = new ConsoleOutputSniffer(streamProgressMonitor, streamProgressMonitor, parsers.toArray(new IConsoleParser[parsers.size()]));
 		stdout = sniffer.getOutputStream();
 		stderr = sniffer.getErrorStream();
 	}
@@ -187,8 +187,10 @@ public class BuildRunnerHelper implements Closeable {
 		}
 		try {
 			monitor.beginTask("", IProgressMonitor.UNKNOWN); //$NON-NLS-1$
-			monitor.subTask(CCorePlugin.getFormattedString("BuildRunnerHelper.removingMarkers", rc.getFullPath().toString())); //$NON-NLS-1$
-			rc.deleteMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, false,  IResource.DEPTH_INFINITE);
+			if (rc != null) {
+				monitor.subTask(CCorePlugin.getFormattedString("BuildRunnerHelper.removingMarkers", rc.getFullPath().toString())); //$NON-NLS-1$
+				rc.deleteMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, false,  IResource.DEPTH_INFINITE);
+			}
 		} finally {
 			monitor.done();
 		}
@@ -212,10 +214,13 @@ public class BuildRunnerHelper implements Closeable {
 			monitor = new NullProgressMonitor();
 		}
 		try {
-			monitor.beginTask("", 2 * MONITOR_SCALE); //$NON-NLS-1$
+			monitor.beginTask("", 1 * MONITOR_SCALE); //$NON-NLS-1$
 
 			isCancelled = false;
-			String pathFromURI = EFSExtensionManager.getDefault().getPathFromURI(workingDirectoryURI);
+			String pathFromURI = null;
+			if (workingDirectoryURI != null) {
+				pathFromURI = EFSExtensionManager.getDefault().getPathFromURI(workingDirectoryURI);
+			}
 			if(pathFromURI == null) {
 				// fallback to CWD
 				pathFromURI = System.getProperty("user.dir"); //$NON-NLS-1$
@@ -247,8 +252,8 @@ public class BuildRunnerHelper implements Closeable {
 			}
 
 			isCancelled = monitor.isCanceled();
-			if (!isCancelled) {
-				project.setSessionProperty(progressPropertyName, new Integer(streamMon.getWorkDone()));
+			if (!isCancelled && project != null) {
+				project.setSessionProperty(progressPropertyName, new Integer(streamProgressMonitor.getWorkDone()));
 			}
 		} finally {
 			monitor.done();
@@ -267,26 +272,38 @@ public class BuildRunnerHelper implements Closeable {
 		try {
 			if (stdout != null)
 				stdout.close();
+			stdout = null;
 		} catch (Exception e) {
 			CCorePlugin.log(e);
 		} finally {
 			try {
 				if (stderr != null)
 					stderr.close();
+				stderr = null;
 			} catch (Exception e) {
 				CCorePlugin.log(e);
 			} finally {
 				try {
-					if (streamMon != null)
-						streamMon.close();
+					if (streamProgressMonitor != null)
+						streamProgressMonitor.close();
+					streamProgressMonitor = null;
 				} catch (Exception e) {
 					CCorePlugin.log(e);
 				} finally {
 					try {
 						if (consoleOut != null)
 							consoleOut.close();
+						consoleOut = null;
 					} catch (Exception e) {
 						CCorePlugin.log(e);
+					} finally {
+						try {
+							if (consoleInfo != null)
+								consoleInfo.close();
+						} catch (Exception e) {
+							CCorePlugin.log(e);
+						}
+						consoleInfo = null;
 					}
 				}
 			}
@@ -375,6 +392,13 @@ public class BuildRunnerHelper implements Closeable {
 	 */
 	public void greeting(String msg) {
 		startTime = System.currentTimeMillis();
+		if (consoleInfo == null) {
+			try {
+				consoleInfo = console.getInfoStream();
+			} catch (CoreException e) {
+				CCorePlugin.log(e);
+			}
+		}
 		toConsole(BuildRunnerHelper.timestamp(startTime) + "**** " + msg + " ****"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
@@ -393,7 +417,20 @@ public class BuildRunnerHelper implements Closeable {
 		String msg = isCancelled ? CCorePlugin.getFormattedString("BuildRunnerHelper.buildCancelled", duration) //$NON-NLS-1$
 				: CCorePlugin.getFormattedString("BuildRunnerHelper.buildFinished", duration); //$NON-NLS-1$
 		String goodbye = '\n' + timestamp(endTime) + msg + '\n';
-		toConsole(goodbye);
+
+		if (consoleInfo != null) {
+			toConsole(goodbye);
+		} else {
+			// FIXME in current flow goodbye() can be called after close(), that is a problem with design of BuildRunnerHelper
+			try {
+				consoleInfo = console.getInfoStream();
+				toConsole(goodbye);
+				consoleInfo.close();
+				consoleInfo = null;
+			} catch (Exception e) {
+				CCorePlugin.log(e);
+			}
+		}
 	}
 
 	/**
@@ -413,9 +450,6 @@ public class BuildRunnerHelper implements Closeable {
 	private void toConsole(String msg) {
 		Assert.isNotNull(console, "Streams must be created and connected before calling this method"); //$NON-NLS-1$
 		try {
-			if (consoleInfo == null) {
-				consoleInfo = console.getInfoStream();
-			}
 			consoleInfo.write((msg+"\n").getBytes()); //$NON-NLS-1$
 		} catch (Exception e) {
 			CCorePlugin.log(e);
@@ -426,7 +460,7 @@ public class BuildRunnerHelper implements Closeable {
 	 * Qualified name to keep previous value of build duration in project session properties.
 	 */
 	private static QualifiedName getProgressPropertyName(IPath buildCommand, String[] args) {
-		String name = buildCommand.toString();
+		String name = "buildCommand." + buildCommand.toString();
 		if (args != null) {
 			for (String arg : args) {
 				name = name + ' ' + arg;

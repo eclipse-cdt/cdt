@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 /**
  * Helper class to report progress of the build via {@link IProgressMonitor}
  */
-public class StreamMonitor extends OutputStream {
+public class StreamProgressMonitor extends OutputStream {
 
 	private IProgressMonitor monitor;
 	private OutputStream console;
@@ -28,7 +28,7 @@ public class StreamMonitor extends OutputStream {
 	private int nextProgress = currentIncrement;
 	private int worked = 0;
 
-	public StreamMonitor(IProgressMonitor mon, OutputStream cos, int totalWork) {
+	public StreamProgressMonitor(IProgressMonitor mon, OutputStream cos, int totalWork) {
 		monitor = mon;
 		console = cos;
 		fTotalWork = totalWork;

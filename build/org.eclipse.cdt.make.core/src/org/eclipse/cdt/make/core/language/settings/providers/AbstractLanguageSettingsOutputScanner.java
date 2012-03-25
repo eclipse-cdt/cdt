@@ -26,9 +26,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariableManager;
+import org.eclipse.cdt.core.language.settings.providers.ICBuildOutputParser;
+import org.eclipse.cdt.core.language.settings.providers.IWorkingDirectoryTracker;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsSerializableProvider;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
@@ -59,16 +60,16 @@ import org.w3c.dom.Element;
  *
  * @since 7.2
  */
-public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSettingsSerializableProvider {
+public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSettingsSerializableProvider implements ICBuildOutputParser {
 
 	protected static final String ATTR_KEEP_RELATIVE_PATHS = "keep-relative-paths"; //$NON-NLS-1$
 
 	protected ICConfigurationDescription currentCfgDescription = null;
+	protected IWorkingDirectoryTracker cwdTracker = null;
 	protected IProject currentProject = null;
 	protected IResource currentResource = null;
 	protected String currentLanguageId = null;
 
-	protected ErrorParserManager errorParserManager = null;
 	protected String parsedResourceName = null;
 	protected boolean isResolvingPaths = true;
 
@@ -225,11 +226,14 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	}
 
 
-	public void startup(ICConfigurationDescription cfgDescription) throws CoreException {
-		currentCfgDescription = cfgDescription;
-		currentProject = cfgDescription != null ? cfgDescription.getProjectDescription().getProject() : null;
+	@Override
+	public void startup(ICConfigurationDescription cfgDescription, IWorkingDirectoryTracker cwdTracker) throws CoreException {
+		this.cwdTracker = cwdTracker;
+		this.currentCfgDescription = cfgDescription;
+		this.currentProject = cfgDescription != null ? cfgDescription.getProjectDescription().getProject() : null;
 	}
 
+	@Override
 	public void shutdown() {
 		// release resources for garbage collector
 		currentCfgDescription = null;
@@ -237,12 +241,12 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 		currentResource = null;
 		currentLanguageId = null;
 
-		errorParserManager = null;
+		cwdTracker = null;
 		parsedResourceName = null;
 	}
 
-	public boolean processLine(String line, ErrorParserManager epm) {
-		errorParserManager = epm;
+	@Override
+	public boolean processLine(String line) {
 		parsedResourceName = parseForResourceName(line);
 		currentResource = findResource(parsedResourceName);
 
@@ -358,10 +362,10 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 
 		Set<String> fileExts = new HashSet<String>();
 
-		IContentType contentTypeCpp = manager.getContentType("org.eclipse.cdt.core.cxxSource"); //$NON-NLS-1$
+		IContentType contentTypeCpp = manager.getContentType("org.eclipse.cdt.core.cxxSource");
 		fileExts.addAll(Arrays.asList(contentTypeCpp.getFileSpecs(IContentType.FILE_EXTENSION_SPEC)));
 
-		IContentType contentTypeC = manager.getContentType("org.eclipse.cdt.core.cSource"); //$NON-NLS-1$
+		IContentType contentTypeC = manager.getContentType("org.eclipse.cdt.core.cSource");
 		fileExts.addAll(Arrays.asList(contentTypeC.getFileSpecs(IContentType.FILE_EXTENSION_SPEC)));
 
 		String pattern = expressionLogicalOr(fileExts);
@@ -422,8 +426,8 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 		IResource sourceFile = null;
 
 		// try ErrorParserManager
-		if (errorParserManager != null) {
-			sourceFile = errorParserManager.findFileName(parsedResourceName);
+		if (cwdTracker != null) {
+			sourceFile = cwdTracker.findFileName(parsedResourceName);
 		}
 		// try to find absolute path in the workspace
 		if (sourceFile == null && new Path(parsedResourceName).isAbsolute()) {
@@ -453,8 +457,8 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 		if (currentResource!=null && parsedResourceName!=null && !new Path(parsedResourceName).isAbsolute()) {
 			cwdURI = findBaseLocationURI(currentResource.getLocationURI(), parsedResourceName);
 		}
-		if (cwdURI == null && errorParserManager != null) {
-			cwdURI = errorParserManager.getWorkingDirectoryURI();
+		if (cwdURI == null && cwdTracker != null) {
+			cwdURI = cwdTracker.getWorkingDirectoryURI();
 		}
 
 		String cwdPath = cwdURI != null ? EFSExtensionManager.getDefault().getPathFromURI(cwdURI) : null;

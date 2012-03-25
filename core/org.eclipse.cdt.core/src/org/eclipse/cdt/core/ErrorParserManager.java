@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Vector;
 
 import org.eclipse.cdt.core.errorparsers.ErrorParserNamedWrapper;
+import org.eclipse.cdt.core.language.settings.providers.IWorkingDirectoryTracker;
 import org.eclipse.cdt.core.resources.ACBuilder;
 import org.eclipse.cdt.internal.core.Cygwin;
 import org.eclipse.cdt.internal.core.IErrorMarkeredOutputStream;
@@ -50,7 +51,7 @@ import org.osgi.service.prefs.BackingStoreException;
  *
  * @noextend This class is not intended to be subclassed by clients.
  */
-public class ErrorParserManager extends OutputStream implements IConsoleParser {
+public class ErrorParserManager extends OutputStream implements IConsoleParser, IWorkingDirectoryTracker {
 	/**
 	 * The list of error parsers stored in .project for 3.X projects
 	 * as key/value pair with key="org.eclipse.cdt.core.errorOutputParser"

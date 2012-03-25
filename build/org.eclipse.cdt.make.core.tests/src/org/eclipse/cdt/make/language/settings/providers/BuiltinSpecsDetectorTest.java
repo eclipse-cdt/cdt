@@ -12,12 +12,13 @@
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.cdt.core.ErrorParserManager;
+import org.eclipse.cdt.core.ICommandLauncher;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.CIncludeFileEntry;
 import org.eclipse.cdt.core.settings.model.CIncludePathEntry;
@@ -36,7 +37,6 @@ import org.eclipse.cdt.internal.core.XmlUtil;
 import org.eclipse.cdt.make.core.language.settings.providers.AbstractBuiltinSpecsDetector;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
@@ -99,17 +99,14 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 			new MacroOptionParser("#define (\\S*) *(\\S*)", "$1", "$2", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY),
 		};
 		@Override
-		protected boolean runProgram(String command, String[] env, IPath workingDirectory, IProgressMonitor monitor,
-				OutputStream consoleOut, OutputStream consoleErr) throws CoreException, IOException {
+		protected int runProgramForLanguage(String languageId, String command, String[] envp, URI workingDirectoryURI, OutputStream consoleOut, OutputStream consoleErr, IProgressMonitor monitor) throws CoreException, IOException {
 			printLine(consoleOut, "#define MACRO VALUE");
-			consoleOut.close();
-			consoleErr.close();
-			return true;
+			return ICommandLauncher.OK;
 		}
 		@Override
-		protected IStatus runForEachLanguage(ICConfigurationDescription cfgDescription, IPath workingDirectory,
+		protected IStatus runForEachLanguage(ICConfigurationDescription cfgDescription, URI workingDirectoryURI,
 				String[] env, IProgressMonitor monitor) {
-			return super.runForEachLanguage(cfgDescription, workingDirectory, env, monitor);
+			return super.runForEachLanguage(cfgDescription, workingDirectoryURI, env, monitor);
 		}
 		@Override
 		protected List<String> parseForOptions(final String line) {
@@ -332,9 +329,9 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 		{
 			// test AbstractBuiltinSpecsDetector.processLine(...) flow
 			MockBuiltinSpecsDetector provider = new MockBuiltinSpecsDetector();
-			provider.startup(null);
+			provider.startup(null, null);
 			provider.startupForLanguage(null);
-			provider.processLine(null, null);
+			provider.processLine(null);
 			provider.shutdownForLanguage();
 			provider.shutdown();
 		}
@@ -396,7 +393,7 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 		// Define mock detector adding unorganized entries
 		MockBuiltinSpecsDetector provider = new MockBuiltinSpecsDetector() {
 			@Override
-			public boolean processLine(String line, ErrorParserManager epm) {
+			public boolean processLine(String line) {
 				detectedSettingEntries.add(libraryFile_1);
 				detectedSettingEntries.add(libraryPath_1);
 				detectedSettingEntries.add(macroFile_1);
@@ -415,9 +412,9 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 		};
 
 		// run specs detector
-		provider.startup(null);
+		provider.startup(null, null);
 		provider.startupForLanguage(null);
-		provider.processLine("", null);
+		provider.processLine("");
 		provider.shutdownForLanguage();
 		provider.shutdown();
 

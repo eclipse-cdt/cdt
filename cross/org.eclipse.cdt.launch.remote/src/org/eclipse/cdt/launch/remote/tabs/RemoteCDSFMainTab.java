@@ -19,6 +19,7 @@
  * Anna Dushistova  (Mentor Graphics) - adapted from RemoteCMainTab 
  * Anna Dushistova  (Mentor Graphics) - moved to org.eclipse.cdt.launch.remote.tabs
  * Anna Dushistova  (Mentor Graphics) - [318052] [remote launch] Properties are not saved/used
+ * Anna Dushistova       (MontaVista) - [375067] [remote] Automated remote launch does not support project-less debug
  *******************************************************************************/
 package org.eclipse.cdt.launch.remote.tabs;
 
@@ -31,6 +32,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jface.dialogs.Dialog;
@@ -540,8 +542,7 @@ public class RemoteCDSFMainTab extends CMainTab {
 				remoteProgText.setText(remoteWsRoot);
 			} else {
 				// try to use remote path
-				IPath wsRoot = getCProject().getProject().getWorkspace()
-						.getRoot().getLocation();
+				IPath wsRoot = Platform.getLocation();
 				IPath remotePath = makeRelativeToWSRootLocation(new Path(
 						remoteName), remoteWsRoot, wsRoot);
 				remoteProgText.setText(remotePath.toString());

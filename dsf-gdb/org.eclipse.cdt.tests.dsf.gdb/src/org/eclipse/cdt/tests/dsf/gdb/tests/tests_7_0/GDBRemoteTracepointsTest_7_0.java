@@ -63,9 +63,9 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
 				IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE);
 
-		// To test both fast and slow tracepoint we just the FAST_THEN_SLOW setting
+		// To test both fast and normal tracepoints, we use the FAST_THEN_NORMAL setting
 		setLaunchAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_TRACEPOINT_MODE,
-				IGDBLaunchConfigurationConstants.DEBUGGER_TRACEPOINT_FAST_THEN_SLOW);
+				IGDBLaunchConfigurationConstants.DEBUGGER_TRACEPOINT_FAST_THEN_NORMAL);
 	}
 
 	private DsfSession fSession;
@@ -631,7 +631,7 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 			MIBreakpointDMData tp = (MIBreakpointDMData) getBreakpoint(fTracepoints[i]);
 			assertTrue("tracepoint "+i+" is not a tracepoint but a " + tp.getBreakpointType(),
 					tp.getBreakpointType().equals(MIBreakpoints.TRACEPOINT));			
-			assertTrue("tracepoint "+i+" should be a " + (data.isFastTp?"fast":"slow")+" tracepoint but is not",
+			assertTrue("tracepoint "+i+" should be a " + (data.isFastTp?"fast":"normal")+" tracepoint but is not",
 					tp.getType().equals("fast tracepoint") == data.isFastTp);			
 			assertTrue("tracepoint "+i+" mismatch (wrong file name) got " + tp.getFileName(),
 					tp.getFileName().equals(data.sourceFile));
@@ -677,7 +677,7 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 		Map<String, Object> attributes = null;
 		int index = 0;
 
-		// First tracepoint (will be a slow tracepoint)
+		// First tracepoint (will be a normal tracepoint)
 		attributes = new HashMap<String, Object>();
 		attributes.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.TRACEPOINT);
 		attributes.put(MIBreakpoints.FUNCTION, "*"+METHOD_NAME);
@@ -690,7 +690,7 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
 
-		// Second tracepoint (will be a slow tracepoint)
+		// Second tracepoint (will be a normal tracepoint)
 		attributes = new HashMap<String, Object>();
 		attributes.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.TRACEPOINT);
 		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_FILE);
@@ -732,7 +732,7 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();		
 
-		// Fifth tracepoint (will be a slow tracepoint)
+		// Fifth tracepoint (will be a normal tracepoint)
 		attributes = new HashMap<String, Object>();
 		attributes.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.TRACEPOINT);
 		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_FILE);
@@ -912,7 +912,7 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 		Map<String, Object> attributes = null;
 		int index = 0;
 
-		// First tracepoint will be a slow tracepoint
+		// First tracepoint will be a normal tracepoint
 		attributes = new HashMap<String, Object>();
 		attributes.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.TRACEPOINT);
 		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_FILE);
@@ -942,7 +942,7 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
 
-		// Third tracepoint (will be a slow tracepoint)
+		// Third tracepoint (will be a normal tracepoint)
 		attributes = new HashMap<String, Object>();
 		attributes.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.TRACEPOINT);
 		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_FILE);
@@ -973,7 +973,7 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 		Map<String, Object> attributes = null;
 		int index = 0;
 
-		// First tracepoint will be a slow tracepoint
+		// First tracepoint will be a normal tracepoint
 		attributes = new HashMap<String, Object>();
 		attributes.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.TRACEPOINT);
 		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_FILE);
@@ -1003,7 +1003,7 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
 
-		// Third tracepoint (will be a slow tracepoint)
+		// Third tracepoint (will be a normal tracepoint)
 		attributes = new HashMap<String, Object>();
 		attributes.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.TRACEPOINT);
 		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_FILE);
@@ -1034,7 +1034,7 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 		Map<String, Object> attributes = null;
 		int index = 0;
 
-		// First tracepoint will be a slow tracepoint
+		// First tracepoint will be a normal tracepoint
 		attributes = new HashMap<String, Object>();
 		attributes.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.TRACEPOINT);
 		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_FILE);
@@ -1064,7 +1064,7 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
 
-		// Third tracepoint (will be a slow tracepoint)
+		// Third tracepoint (will be a normal tracepoint)
 		attributes = new HashMap<String, Object>();
 		attributes.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.TRACEPOINT);
 		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_FILE);
@@ -1095,7 +1095,7 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 		Map<String, Object> attributes = null;
 		int index = 0;
 
-		// First tracepoint will be a slow tracepoint
+		// First tracepoint will be a normal tracepoint
 		attributes = new HashMap<String, Object>();
 		attributes.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.TRACEPOINT);
 		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_FILE);
@@ -1125,7 +1125,7 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
 
-		// Third tracepoint (will be a slow tracepoint)
+		// Third tracepoint (will be a normal tracepoint)
 		attributes = new HashMap<String, Object>();
 		attributes.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.TRACEPOINT);
 		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_FILE);
@@ -1156,7 +1156,7 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 		Map<String, Object> attributes = null;
 		int index = 0;
 
-		// First tracepoint will be a slow tracepoint
+		// First tracepoint will be a normal tracepoint
 		attributes = new HashMap<String, Object>();
 		attributes.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.TRACEPOINT);
 		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_FILE);
@@ -1198,7 +1198,7 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
 
-		// Third tracepoint (will be a slow tracepoint)
+		// Third tracepoint (will be a normal tracepoint)
 		attributes = new HashMap<String, Object>();
 		attributes.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.TRACEPOINT);
 		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_FILE);
@@ -1235,7 +1235,7 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 		Map<String, Object> attributes = null;
 		int index = 0;
 
-		// First tracepoint will be a slow tracepoint
+		// First tracepoint will be a normal tracepoint
 		attributes = new HashMap<String, Object>();
 		attributes.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.TRACEPOINT);
 		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_FILE);
@@ -1271,7 +1271,7 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
 
-		// Third tracepoint (will be a slow tracepoint)
+		// Third tracepoint (will be a normal tracepoint)
 		attributes = new HashMap<String, Object>();
 		attributes.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.TRACEPOINT);
 		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_FILE);
@@ -1305,7 +1305,7 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 		Map<String, Object> attributes = null;
 		int index = 0;
 
-		// First tracepoint will be a slow tracepoint
+		// First tracepoint will be a normal tracepoint
 		attributes = new HashMap<String, Object>();
 		attributes.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.TRACEPOINT);
 		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_FILE);
@@ -1341,7 +1341,7 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
 
-		// Third tracepoint (will be a slow tracepoint)
+		// Third tracepoint (will be a normal tracepoint)
 		attributes = new HashMap<String, Object>();
 		attributes.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.TRACEPOINT);
 		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_FILE);

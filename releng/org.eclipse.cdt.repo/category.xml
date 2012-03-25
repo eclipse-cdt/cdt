@@ -8,6 +8,9 @@
    <feature url="features/org.eclipse.cdt.sdk_0.0.0.qualifier.jar" id="org.eclipse.cdt.sdk" version="0.0.0">
       <category name="main"/>
    </feature>
+   <feature url="features/org.eclipse.cdt.core.lrparser.feature_0.0.0.qualifier.jar" id="org.eclipse.cdt.core.lrparser.feature" version="0.0.0">
+      <category name="extra"/>
+   </feature>
    <feature url="features/org.eclipse.cdt.core.lrparser.sdk_0.0.0.qualifier.jar" id="org.eclipse.cdt.core.lrparser.sdk" version="0.0.0">
       <category name="extra"/>
    </feature>

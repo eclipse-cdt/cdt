@@ -15,6 +15,7 @@ package org.eclipse.cdt.internal.ui.refactoring;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.resources.mapping.IResourceChangeDescriptionFactory;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -72,6 +73,7 @@ public abstract class CRefactoring extends Refactoring {
 	protected Region selectedRegion;
 	protected final RefactoringStatus initStatus;
 	protected CRefactoringContext refactoringContext;
+	private ModificationCollector modificationCollector;
 
 	public CRefactoring(ICElement element, ISelection selection, ICProject project) {
 		this.project = project;
@@ -107,10 +109,15 @@ public abstract class CRefactoring extends Refactoring {
 			throws CoreException, OperationCanceledException {
 		if (pm == null)
 			pm = new NullProgressMonitor();
-		pm.beginTask(Messages.CRefactoring_checking_final_conditions, 6);
+		pm.beginTask(Messages.CRefactoring_checking_final_conditions, 10);
 
-		CheckConditionsContext context = createCheckConditionsContext();
-		RefactoringStatus result = checkFinalConditions(new SubProgressMonitor(pm, 5), context);
+		CheckConditionsContext context= new CheckConditionsContext();
+		context.add(new ValidateEditChecker(getValidationContext()));
+		ResourceChangeChecker resourceChecker = new ResourceChangeChecker();
+		IResourceChangeDescriptionFactory deltaFactory = resourceChecker.getDeltaFactory();
+		context.add(resourceChecker);
+
+		RefactoringStatus result = checkFinalConditions(new SubProgressMonitor(pm, 8), context);
 		if (result.hasFatalError()) {
 			pm.done();
 			return result;
@@ -118,7 +125,11 @@ public abstract class CRefactoring extends Refactoring {
 		if (pm.isCanceled())
 			throw new OperationCanceledException();
 
-		result.merge(context.check(new SubProgressMonitor(pm, 1)));
+		modificationCollector = new ModificationCollector(deltaFactory);
+		collectModifications(pm, modificationCollector);
+
+		result.merge(context.check(new SubProgressMonitor(pm, 2)));
+
 		pm.done();
 		return result;
 	}
@@ -162,9 +173,7 @@ public abstract class CRefactoring extends Refactoring {
 
 	@Override
 	public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
-		ModificationCollector collector = new ModificationCollector();
-		collectModifications(pm, collector);
-		CCompositeChange finalChange = collector.createFinalChange();
+		CCompositeChange finalChange = modificationCollector.createFinalChange();
 		finalChange.setDescription(new RefactoringChangeDescriptor(getRefactoringDescriptor()));
 		return finalChange;
 	}
@@ -220,13 +229,6 @@ public abstract class CRefactoring extends Refactoring {
 			}
 		});
 		return names;
-	}
-
-	private CheckConditionsContext createCheckConditionsContext() throws CoreException {
-		CheckConditionsContext result= new CheckConditionsContext();
-		result.add(new ValidateEditChecker(getValidationContext()));
-		result.add(new ResourceChangeChecker());
-		return result;
 	}
 
 	private class ProblemFinder extends ASTVisitor {

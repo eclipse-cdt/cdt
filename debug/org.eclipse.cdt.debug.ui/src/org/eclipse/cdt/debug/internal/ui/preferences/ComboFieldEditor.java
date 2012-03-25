@@ -139,7 +139,7 @@ public class ComboFieldEditor extends FieldEditor {
 	/**
 	 * Lazily create and return the Combo control.
 	 */
-	public Combo getComboBoxControl(Composite parent) {
+	protected Combo getComboBoxControl(Composite parent) {
 		if (fCombo == null) {
 			fCombo = new Combo(parent, SWT.READ_ONLY);
 			for (int i = 0; i < fEntryNamesAndValues.length; i++) {
@@ -158,6 +158,10 @@ public class ComboFieldEditor extends FieldEditor {
 			});
 		}
 		return fCombo;
+	}
+	
+	protected Combo getComboBoxControl() {
+	    return fCombo;
 	}
 	
 	/**

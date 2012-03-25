@@ -248,7 +248,7 @@ public class InputFlowAnalyzer extends FlowAnalyzer {
 
 		@Override
 		protected boolean traverseNode(IASTNode node) {
-			return !isBefore(node, loopRegion.firstLabelStatement) &&
+			return !selection.covers(node) && !isBefore(node, loopRegion.firstLabelStatement) &&
 					!isBefore(loopRegion.lastGotoStatement, node);
 		}
 
@@ -299,15 +299,17 @@ public class InputFlowAnalyzer extends FlowAnalyzer {
 
 	@Override
 	protected boolean traverseNode(IASTNode node) {
+		if (fSelection.covers(node))
+			return false;
 		if (node instanceof IASTLabelStatement)
 			return true;
-		return ASTNodes.endOffset(node) > fSelection.getEnd();
+		return ASTNodes.endOffset(node) >= fSelection.getEnd();
 	}
 
 	@Override
 	protected boolean shouldCreateReturnFlowInfo(IASTReturnStatement node) {
 		// Make sure that the whole return statement is located after the selection.
-		// There can be cases like return i + [x + 10] * 10; In this case we must not create
+		// There can be cases like return i + (x + 10) * 10; In this case we must not create
 		// a return info node.
 		return ASTNodes.offset(node) >= fSelection.getEnd();
 	}

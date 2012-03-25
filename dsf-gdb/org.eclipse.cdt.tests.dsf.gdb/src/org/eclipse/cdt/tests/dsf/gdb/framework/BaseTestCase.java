@@ -58,7 +58,7 @@ public class BaseTestCase {
 	@Rule public TestName testName = new TestName();
 	
 	public static final String ATTR_DEBUG_SERVER_NAME = TestsPlugin.PLUGIN_ID + ".DEBUG_SERVER_NAME";
-	private static final String DEFAULT_TEST_APP = "data/launch/bin/GDBMIGenericTestApp";
+	private static final String DEFAULT_TEST_APP = "data/launch/bin/GDBMIGenericTestApp.exe";
 	
     private static GdbLaunch fLaunch;
 

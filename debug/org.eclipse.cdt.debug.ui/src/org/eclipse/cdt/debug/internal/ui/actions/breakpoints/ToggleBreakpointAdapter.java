@@ -89,12 +89,12 @@ public class ToggleBreakpointAdapter extends AbstractToggleBreakpointAdapter {
 
 	@Override
     protected void createWatchpoint( boolean interactive, IWorkbenchPart part, String sourceHandle, IResource resource, 
-        int charStart, int charEnd, int lineNumber, String expression) throws CoreException 
+        int charStart, int charEnd, int lineNumber, String expression, String memorySpace, String range) throws CoreException 
     {
         ICWatchpoint bp = CDIDebugModel.createBlankWatchpoint();
         Map<String, Object> attributes = new HashMap<String, Object>();
         CDIDebugModel.setWatchPointAttributes(attributes, sourceHandle, resource, true, false, 
-            expression, "", new BigInteger("0"), true, 0, ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            expression, memorySpace, new BigInteger(range), true, 0, ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         openBreakpointPropertiesDialog(bp, part, resource, attributes);
 	}
 

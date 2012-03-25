@@ -1738,17 +1738,17 @@
                retarget="true">
          </action>
          <action
-               definitionId="org.eclipse.cdt.ui.refactor.extract.function"
-               label="%Refactoring.extractFunction.label"
-               menubarPath="org.eclipse.jdt.ui.refactoring.menu/codingGroup"
-               id="org.eclipse.cdt.ui.actions.ExtractMethod"
-               retarget="true">
-         </action>
-         <action
                definitionId="org.eclipse.cdt.ui.refactor.toggle.function"
                label="%Refactoring.toggleFunction.label"
                menubarPath="org.eclipse.jdt.ui.refactoring.menu/codingGroup"
                id="org.eclipse.cdt.ui.actions.ToggleFunction"
+               retarget="true">
+         </action>
+         <action
+               definitionId="org.eclipse.cdt.ui.refactor.extract.function"
+               label="%Refactoring.extractFunction.label"
+               menubarPath="org.eclipse.jdt.ui.refactoring.menu/codingGroup"
+               id="org.eclipse.cdt.ui.actions.ExtractMethod"
                retarget="true">
          </action>
          <action

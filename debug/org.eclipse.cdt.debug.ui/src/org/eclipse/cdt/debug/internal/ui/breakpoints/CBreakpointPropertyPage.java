@@ -13,11 +13,16 @@
 package org.eclipse.cdt.debug.internal.ui.breakpoints;
 
 import org.eclipse.cdt.debug.core.CDIDebugModel;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIMemorySpaceManagement;
+import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
+import org.eclipse.cdt.debug.core.model.ICDebugTarget;
 import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint;
+import org.eclipse.cdt.debug.core.model.ICWatchpoint2;
+import org.eclipse.cdt.debug.internal.ui.preferences.ComboFieldEditor;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.debug.ui.breakpoints.CBreakpointUIContributionFactory;
 import org.eclipse.cdt.debug.ui.breakpoints.ICBreakpointContext;
@@ -28,14 +33,25 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.ILineBreakpoint;
+import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.contexts.IDebugContextProvider;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.preference.StringFieldEditor;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.model.IWorkbenchAdapter;
@@ -164,6 +180,227 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 		}
 	}
 
+    class WatchpointRangeFieldEditor extends IntegerFieldEditor {
+
+        private static final String DISABLED_VALUE = "0"; //$NON-NLS-1$
+        private Button fCheckbox;
+        private boolean fWasSelected;
+        
+        public WatchpointRangeFieldEditor( String name, String labelText, Composite parent ) {
+            super( name, labelText, parent );
+        }
+        
+        @Override
+        protected void doFillIntoGrid(Composite parent, int numColumns) {
+            getCheckboxControl(parent);
+            super.doFillIntoGrid(parent, numColumns);
+        }
+
+        private Button getCheckboxControl(Composite parent) {
+            if (fCheckbox == null) {
+                Composite inner= new Composite(parent, SWT.NULL);
+                final GridLayout layout= new GridLayout(2, false);
+                layout.marginWidth = 0;
+                inner.setLayout(layout);
+                fCheckbox= new Button(inner, SWT.CHECK);
+                fCheckbox.setFont(parent.getFont());
+                fCheckbox.setText(getLabelText());
+                // create and hide label from base class
+                Label label = getLabelControl(inner);
+                label.setText(""); //$NON-NLS-1$
+                label.setVisible(false);
+                fCheckbox.addSelectionListener(new SelectionAdapter() {
+                    @Override
+                    public void widgetSelected(SelectionEvent e) {
+                        boolean isSelected = fCheckbox.getSelection();
+                        valueChanged(fWasSelected, isSelected);
+                        fWasSelected = isSelected;
+                    }
+                });
+            } else {
+                checkParent(fCheckbox.getParent(), parent);
+            }
+            return fCheckbox;
+        }
+
+        @Override
+        protected boolean checkState() {
+            if (fCheckbox != null && !fCheckbox.getSelection()) {
+                clearErrorMessage();
+                return true;
+            }
+            return super.checkState();
+        }
+        
+        @Override
+        public Label getLabelControl(Composite parent) {
+            final Label label= getLabelControl();
+            if (label == null) {
+                return super.getLabelControl(parent);
+            } else {
+                checkParent(label.getParent(), parent);
+            }
+            return label;
+        }
+
+        @Override
+        protected void doLoad() {
+            if (getTextControl() != null && fCheckbox != null && getLabelControl() != null) {
+                oldValue = getPreferenceStore().getString(getPreferenceName());
+                boolean enabled = !DISABLED_VALUE.equals(oldValue);
+                getTextControl().setText(enabled ? oldValue : ""); //$NON-NLS-1$
+                fCheckbox.setSelection(enabled);
+                fWasSelected = enabled;
+                getTextControl().setEnabled(enabled);
+                getLabelControl().setEnabled(enabled);
+            }
+        }
+
+        @Override
+        protected void doStore() {
+            if (fCheckbox != null && !fCheckbox.getSelection()) {
+                getPreferenceStore().setValue(getPreferenceName(), DISABLED_VALUE);
+            } else {
+                Text text = getTextControl();
+                if (text != null) {
+                    getPreferenceStore().setValue(getPreferenceName(), text.getText().trim());
+                }
+            }
+        }
+
+        @Override
+        public int getIntValue() throws NumberFormatException {
+            if (fCheckbox != null && !fCheckbox.getSelection()) {
+                return 0;
+            } else {
+                return super.getIntValue();
+            }
+        }
+        
+        protected void valueChanged(boolean oldValue, boolean newValue) {
+            if (oldValue != newValue) {
+                valueChanged();
+                fireStateChanged(VALUE, oldValue, newValue);
+                getTextControl().setEnabled(newValue);
+                getLabelControl().setEnabled(newValue);
+            }
+        }
+        
+    }
+
+    class WatchpointMemorySpaceFieldEditor extends ComboFieldEditor {
+
+        private static final String DISABLED_VALUE = ""; //$NON-NLS-1$
+        private Button fCheckbox;
+        private boolean fWasSelected;
+        
+        public WatchpointMemorySpaceFieldEditor( String name, String labelText, String[] memorySpaces, Composite parent ) {
+            super( name, labelText, makeArray2D(memorySpaces), parent );
+        }        
+        
+        @Override
+        protected void doFillIntoGrid(Composite parent, int numColumns) {
+            getCheckboxControl(parent);
+            super.doFillIntoGrid(parent, numColumns);
+        }
+
+        private Button getCheckboxControl(Composite parent) {
+            if (fCheckbox == null) {
+                Composite inner= new Composite(parent, SWT.NULL);
+                final GridLayout layout= new GridLayout(2, false);
+                layout.marginWidth = 0;
+                inner.setLayout(layout);
+                fCheckbox= new Button(inner, SWT.CHECK);
+                fCheckbox.setFont(parent.getFont());
+                fCheckbox.setText(getLabelText());
+                // create and hide label from base class
+                Label label = getLabelControl(inner);
+                label.setText(""); //$NON-NLS-1$
+                label.setVisible(false);
+                fCheckbox.addSelectionListener(new SelectionAdapter() {
+                    @Override
+                    public void widgetSelected(SelectionEvent e) {
+                        boolean isSelected = fCheckbox.getSelection();
+                        valueChanged(fWasSelected, isSelected);
+                        fWasSelected = isSelected;
+                    }
+                });
+            } else {
+                checkParent(fCheckbox.getParent(), parent);
+            }
+            return fCheckbox;
+        }
+
+        @Override
+        public Label getLabelControl(Composite parent) {
+            final Label label= getLabelControl();
+            if (label == null) {
+                return super.getLabelControl(parent);
+            } else {
+                checkParent(label.getParent(), parent);
+            }
+            return label;
+        }
+
+        @Override
+        protected void doLoad() {
+            super.doLoad();
+            if (fCheckbox != null && getLabelControl() != null) {
+                String value = getPreferenceStore().getString(getPreferenceName());
+                boolean enabled = !DISABLED_VALUE.equals(value);
+                fCheckbox.setSelection(enabled);
+                fWasSelected = enabled;
+                getComboBoxControl().setEnabled(enabled);
+                getLabelControl().setEnabled(enabled);
+            }
+        }
+
+        @Override
+        protected void doStore() {
+            if (fCheckbox != null && !fCheckbox.getSelection()) {
+                getPreferenceStore().setValue(getPreferenceName(), DISABLED_VALUE);
+            } else {
+                super.doStore();
+            }
+        }
+
+        protected void valueChanged(boolean oldValue, boolean newValue) {
+            if (oldValue != newValue) {
+                fireStateChanged(VALUE, oldValue, newValue);
+                getComboBoxControl().setEnabled(newValue);
+                getLabelControl().setEnabled(newValue);
+            }
+        }
+        
+    }
+
+    private String[][] makeArray2D(String[] array) {
+        String[][] array2d = new String[array.length][];
+        for (int i = 0; i < array.length; i++) {
+            array2d[i] = new String[2];
+            array2d[i][0] = array2d[i][1] =  array[i];
+        }
+        return array2d;
+    }
+
+    private ICDIMemorySpaceManagement getMemorySpaceManagement(){
+        Object debugViewElement = getDebugContext();
+        ICDIMemorySpaceManagement memMgr = null;
+        
+        if ( debugViewElement != null ) {
+            ICDebugTarget debugTarget = (ICDebugTarget)DebugPlugin.getAdapter(debugViewElement, ICDebugTarget.class);
+            
+            if ( debugTarget != null ){
+                ICDITarget target = (ICDITarget)debugTarget.getAdapter(ICDITarget.class);
+            
+                if (target instanceof ICDIMemorySpaceManagement)
+                    memMgr = (ICDIMemorySpaceManagement)target;
+            }
+        }
+        
+        return memMgr;
+    }
+    
 	class LabelFieldEditor extends ReadOnlyFieldEditor {
 		private String fValue;
 
@@ -272,6 +509,8 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 				addField( createLabelEditor( getFieldEditorParent(), BreakpointsMessages.getString( "CBreakpointPropertyPage.sourceHandle_label" ), filename ) ); //$NON-NLS-1$
 			}
 			createWatchExpressionEditor(getFieldEditorParent());
+            createWatchMemorySpaceEditor(getFieldEditorParent());
+			createWatchRangeEditor(getFieldEditorParent());
 			createWatchTypeEditors(getFieldEditorParent());
 			
 		}
@@ -355,6 +594,46 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
         }
     }
 
+    protected void createWatchMemorySpaceEditor( Composite parent ) {
+        ICBreakpoint breakpoint = getBreakpoint();
+        if (breakpoint == null || breakpoint.getMarker() == null) {
+            ICDIMemorySpaceManagement memSpaceMgmt = getMemorySpaceManagement();
+            if (memSpaceMgmt != null) {
+                String[] memorySpaces = memSpaceMgmt.getMemorySpaces();
+                if (memorySpaces != null && memorySpaces.length != 0) {
+                    addField( new WatchpointMemorySpaceFieldEditor(
+                         ICWatchpoint2.MEMORYSPACE,
+                         BreakpointsMessages.getString("CBreakpointPropertyPage.watchpoint_memorySpace_label"), //$NON-NLS-1$
+                         memorySpaces,
+                         parent) ); 
+                }
+            }
+        } else {
+            String memorySpace = getPreferenceStore().getString(ICWatchpoint2.MEMORYSPACE);
+            if (memorySpace != null && memorySpace.length() != 0) {
+                addField(createLabelEditor(
+                    parent, 
+                    BreakpointsMessages.getString("CBreakpointPropertyPage.watchpoint_memorySpace_label"), //$NON-NLS-1$
+                    getPreferenceStore().getString(ICWatchpoint2.MEMORYSPACE) ));
+            }
+        }
+    }
+    
+    protected void createWatchRangeEditor( Composite parent ) {
+        ICBreakpoint breakpoint = getBreakpoint();
+        if (breakpoint == null || breakpoint.getMarker() == null) {
+            addField( new WatchpointRangeFieldEditor(
+                 ICWatchpoint2.RANGE,
+                 BreakpointsMessages.getString("CBreakpointPropertyPage.watchpoint_range_label"), //$NON-NLS-1$
+                 parent) ); 
+        } else {
+            addField(createLabelEditor(
+                parent, 
+                BreakpointsMessages.getString("CBreakpointPropertyPage.watchpoint_range_label"), //$NON-NLS-1$
+                getPreferenceStore().getString(ICWatchpoint2.RANGE) ));
+        }
+    }
+
     protected void createWatchTypeEditors( Composite parent ) {
         // Edit read/write options only when creating the breakpoint.
         ICBreakpoint breakpoint = getBreakpoint();
@@ -404,6 +683,19 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 		    return (ICBreakpoint)element.getAdapter(ICBreakpoint.class);
 		}
 	}
+
+	protected Object getDebugContext() {
+        IDebugContextProvider provider = (IDebugContextProvider)getElement().getAdapter(IDebugContextProvider.class);
+        if (provider != null) {
+            ISelection selection = provider.getActiveContext();
+            if (selection instanceof IStructuredSelection) {
+                return ((IStructuredSelection) selection).getFirstElement();
+            }
+            return null;
+        }
+        return DebugUITools.getDebugContext();        
+	}
+
 	
 	protected IResource getResource() {
         IAdaptable element = getElement();

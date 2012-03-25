@@ -108,7 +108,7 @@ public class Selection {
 		return INTERSECTS;
 	}
 
-	public int getEndVisitSelectionMode(IASTNode node) {
+	public int getLeaveSelectionMode(IASTNode node) {
 		IASTFileLocation location = node.getFileLocation();
 		int nodeStart= location.getNodeOffset();
 		int nodeEnd= nodeStart + location.getNodeLength();
@@ -116,7 +116,7 @@ public class Selection {
 			return BEFORE;
 		} else if (covers(node)) {
 			return SELECTED;
-		} else if (nodeEnd >= fEnd) {
+		} else if (fEnd <= nodeEnd) {
 			return AFTER;
 		}
 		return INTERSECTS;

@@ -37,7 +37,7 @@ import org.eclipse.debug.core.ILaunch;
 /**
  * Breakpoint service for GDB 7.2.
  * It support MI for tracepoints.
- * It also support for fast vs slow tracepoints.
+ * It also support for fast vs normal tracepoints.
  *
  * @since 4.1
  */
@@ -45,9 +45,9 @@ public class GDBBreakpoints_7_2 extends GDBBreakpoints_7_0
 {
 	private IMICommandControl fConnection;
 	
-	private enum TracepointMode { FAST_THEN_SLOW, FAST_ONLY, SLOW_ONLY };
+	private enum TracepointMode { FAST_THEN_NORMAL, FAST_ONLY, NORMAL_ONLY };
 	   
-	private TracepointMode fTracepointMode = TracepointMode.SLOW_ONLY;
+	private TracepointMode fTracepointMode = TracepointMode.NORMAL_ONLY;
 
 	public GDBBreakpoints_7_2(DsfSession session) {
 		super(session);
@@ -100,13 +100,13 @@ public class GDBBreakpoints_7_2 extends GDBBreakpoints_7_0
 
 		if (tpMode.equals(IGDBLaunchConfigurationConstants.DEBUGGER_TRACEPOINT_FAST_ONLY)) {
 			fTracepointMode = TracepointMode.FAST_ONLY;
-		} else if (tpMode.equals(IGDBLaunchConfigurationConstants.DEBUGGER_TRACEPOINT_SLOW_ONLY)) {
-			fTracepointMode = TracepointMode.SLOW_ONLY;
-		} else if (tpMode.equals(IGDBLaunchConfigurationConstants.DEBUGGER_TRACEPOINT_FAST_THEN_SLOW)) {
-			fTracepointMode = TracepointMode.FAST_THEN_SLOW;
+		} else if (tpMode.equals(IGDBLaunchConfigurationConstants.DEBUGGER_TRACEPOINT_NORMAL_ONLY)) {
+			fTracepointMode = TracepointMode.NORMAL_ONLY;
+		} else if (tpMode.equals(IGDBLaunchConfigurationConstants.DEBUGGER_TRACEPOINT_FAST_THEN_NORMAL)) {
+			fTracepointMode = TracepointMode.FAST_THEN_NORMAL;
 		} else {
 			assert false : "Invalid tracepoint mode: " + tpMode; //$NON-NLS-1$
-			fTracepointMode = TracepointMode.SLOW_ONLY;         
+			fTracepointMode = TracepointMode.NORMAL_ONLY;         
 		}
 	}
 
@@ -178,14 +178,14 @@ public class GDBBreakpoints_7_2 extends GDBBreakpoints_7_0
 	}
 	/**
 	 * Add a tracepoint using MI.  We have three settings:
-	 *   1- set only a fast tracepoint but if it fails, set a slow tracepoint
+	 *   1- set only a fast tracepoint but if it fails, set a normal tracepoint
 	 *   2- only set a fast tracepoint even if it fails
-	 *   3- only set a slow tracepoint even if a fast tracepoint could have been used
+	 *   3- only set a normal tracepoint even if a fast tracepoint could have been used
 	 */
 	@Override
 	protected void addTracepoint(final IBreakpointsTargetDMContext context, final Map<String, Object> attributes, final DataRequestMonitor<IBreakpointDMContext> drm) {
-		// Unless we should only set slow tracepoints, we try to set a fast tracepoint.
-		boolean isFastTracepoint = fTracepointMode != TracepointMode.SLOW_ONLY;
+		// Unless we should only set normal tracepoints, we try to set a fast tracepoint.
+		boolean isFastTracepoint = fTracepointMode != TracepointMode.NORMAL_ONLY;
 
 		sendTracepointCommand(context, attributes, isFastTracepoint, new ImmediateDataRequestMonitor<IBreakpointDMContext>(drm) {
 			@Override
@@ -197,12 +197,12 @@ public class GDBBreakpoints_7_2 extends GDBBreakpoints_7_0
 			@Override
 			protected void handleError() {
 				// Tracepoint failed to be set.
-				if (fTracepointMode == TracepointMode.FAST_THEN_SLOW) {
-					// In this case, we failed to set a fast tracepoint, but we should try to set a slow one.
+				if (fTracepointMode == TracepointMode.FAST_THEN_NORMAL) {
+					// In this case, we failed to set a fast tracepoint, but we should try to set a normal one.
 					sendTracepointCommand(context, attributes, false, drm);
 				} else {
-					// We either failed to set a fast tracepoint and we should not try to set a slow one,
-					// or we failed to set a slow one.  Either way, we are done.
+					// We either failed to set a fast tracepoint and we should not try to set a normal one,
+					// or we failed to set a normal one.  Either way, we are done.
 					drm.setStatus(getStatus());
 					drm.done();
 				}

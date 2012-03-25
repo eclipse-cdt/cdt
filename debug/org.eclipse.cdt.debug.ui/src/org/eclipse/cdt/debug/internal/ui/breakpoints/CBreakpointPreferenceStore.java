@@ -52,7 +52,6 @@ public class CBreakpointPreferenceStore implements IPersistentPreferenceStore {
     private ListenerList fListeners;
     private final CBreakpointContext fContext;
     
-    // TODO: remove after fixing add event breapoint dialog.
     public CBreakpointPreferenceStore() {
         this (null, null);
     }
@@ -220,7 +219,7 @@ public class CBreakpointPreferenceStore implements IPersistentPreferenceStore {
     }
 
     public String getString(String name) {
-        String retVal = null;
+        String retVal = ""; //$NON-NLS-1$
         Object o = fProperties.get(name);
         if (o instanceof String) {
             retVal = (String)o;

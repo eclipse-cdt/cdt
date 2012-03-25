@@ -129,7 +129,7 @@ public class ParameterNamesInputPage extends UserInputWizardPage {
 	public String createFunctionDefinitionSignature(IProgressMonitor monitor) {
 		try {
 			ModificationCollector collector = new ModificationCollector();
-			ImplementMethodRefactoring implementMethodRefactoring = (ImplementMethodRefactoring)wizard.getRefactoring();
+			ImplementMethodRefactoring implementMethodRefactoring = (ImplementMethodRefactoring) wizard.getRefactoring();
 			CCompositeChange finalChange = null;
 			// We can have multiple preview jobs. We don't
 			// want multiple jobs concurrently using the same ASTs

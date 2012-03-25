@@ -820,6 +820,38 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	}
 
 	//A.h
+	//class A {
+	//public:
+	//	A(int i, const char* s);
+	//	int method();
+	//};
+
+	//A.cpp
+	//#include "A.h"
+	//
+	//void test(int i, const char* s) {
+	//	/*$*/A a(i, s);/*$$*/
+	//	if (i != 0)
+	//		a.method();
+	//}
+	//====================
+	//#include "A.h"
+	//
+	//A extracted(int i, const char* s) {
+	//	A a(i, s);
+	//	return a;
+	//}
+	//
+	//void test(int i, const char* s) {
+	//	A a = extracted(i, s);
+	//	if (i != 0)
+	//		a.method();
+	//}
+	public void testReturnValueWithCtorInitializer() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//A.h
 	//#ifndef A_H_
 	//#define A_H_
 	//
@@ -1775,9 +1807,8 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//test.c
 	//void test() {
 	//	int i = 0;
-	//	while (i <= 10) {
+	//	while (i <= 10)
 	//		/*$*/i++;/*$$*/
-	//	}
 	//}
 	//====================
 	//int extracted(int i) {
@@ -1787,9 +1818,8 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//
 	//void test() {
 	//	int i = 0;
-	//	while (i <= 10) {
+	//	while (i <= 10)
 	//		i = extracted(i);
-	//	}
 	//}
 	public void testOutputParametersDetectionInWhileLoop() throws Exception {
 		assertRefactoringSuccess();
@@ -1887,7 +1917,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//void method() {
 	//	loop();
 	//}
-	public void testDontReturnVariablesThatArentUsed() throws Exception {
+	public void testDoNotReturnVariablesThatAreNotUsed() throws Exception {
 		extractedFunctionName = "loop";
 		assertRefactoringSuccess();
 	}
@@ -1898,7 +1928,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//		return;/*$$*/
 	//	//unreachable
 	//}
-	public void testDontExtractCodeContainingReturn() throws Exception {
+	public void testDoNotExtractCodeContainingReturn() throws Exception {
 		assertRefactoringFailure();
 	}
 
@@ -1909,7 +1939,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 	//			continue;/*$$*/
 	//	}
 	//}
-	public void testDontExtractCodeContainingContinue() throws Exception {
+	public void testDoNotExtractCodeContainingContinue() throws Exception {
 		assertRefactoringFailure();
 	}
 

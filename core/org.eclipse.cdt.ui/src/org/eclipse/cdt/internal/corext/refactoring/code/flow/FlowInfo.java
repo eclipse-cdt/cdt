@@ -19,8 +19,6 @@ import java.util.Set;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
-
 public abstract class FlowInfo {
 	// Return statement handling.
 	protected static final int NOT_POSSIBLE=	0;
@@ -32,12 +30,12 @@ public abstract class FlowInfo {
 	protected static final int THROW=			6;
 
 	// Local access handling.
-	public static final int READ= 				PDOMName.READ_ACCESS; // 1 << 9
-	public static final int WRITE= 				PDOMName.WRITE_ACCESS; // 1 << 10
 	public static final int UNUSED=				1 << 0;
-	public static final int READ_POTENTIAL=		1 << 1;
-	public static final int WRITE_POTENTIAL=    1 << 2;
-	public static final int UNKNOWN= 			1 << 3;
+	public static final int READ= 				1 << 1;
+	public static final int READ_POTENTIAL=		1 << 2;
+	public static final int WRITE= 				1 << 3;
+	public static final int WRITE_POTENTIAL=    1 << 4;
+	public static final int UNKNOWN= 			1 << 5;
 
 	// Table to merge access modes for condition statements (e.g branch[x] || branch[y]).
 	private static final int[][] ACCESS_MODE_CONDITIONAL_TABLE= {
@@ -236,8 +234,7 @@ public abstract class FlowInfo {
 	}
 
 	/**
-	 * Checks whether the given local variable binding has the given access
-	 * mode.
+	 * Checks whether the given local variable binding has the given access mode.
 	 *
 	 * @param context the flow context used during flow analysis
 	 * @param local local variable of interest
@@ -374,9 +371,9 @@ public abstract class FlowInfo {
 			return;
 		} else {
 			if (others == null) {
+				int index_unused= getIndex(UNUSED);
 				for (int i= 0; i < fAccessModes.length; i++) {
-					int unused_index= getIndex(UNUSED);
-					fAccessModes[i]= ACCESS_MODE_CONDITIONAL_TABLE[getIndex(fAccessModes[i])][unused_index];
+					fAccessModes[i]= ACCESS_MODE_CONDITIONAL_TABLE[getIndex(fAccessModes[i])][index_unused];
 				}
 			} else {
 				for (int i= 0; i < fAccessModes.length; i++) {
@@ -398,14 +395,13 @@ public abstract class FlowInfo {
 			return;
 		}
 
-		int unused_index= getIndex(UNUSED);
+		int index_unused= getIndex(UNUSED);
 		for (int i= 0; i < fAccessModes.length; i++) {
-			fAccessModes[i]= ACCESS_MODE_CONDITIONAL_TABLE[getIndex(fAccessModes[i])][unused_index];
+			fAccessModes[i]= ACCESS_MODE_CONDITIONAL_TABLE[getIndex(fAccessModes[i])][index_unused];
 		}
 	}
 
 	private static int getIndex(int accessMode) {
-		 // Fast log function
 		 switch (accessMode) {
 		 	case UNUSED:
 		 		return 0;
@@ -414,7 +410,6 @@ public abstract class FlowInfo {
 		 	case READ_POTENTIAL:
 		 		return 2;
 		 	case WRITE:
-		 	case READ | WRITE:
 		 		return 3;
 		 	case WRITE_POTENTIAL:
 		 		return 4;

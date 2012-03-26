@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@
  * David Dykstal (IBM) - generalized Vector argumnents to Collections
  * Kevin Doyle (IBM) - 174776: perform required sorting of Collection arguments
  * David Dykstal (IBM) - 174776: disallowed sorting of input arguments, used copies
+ * David McKnight (IBM)  [373326] When one of Duplicate Filter Names is deleted, both filters are deleted.
  *******************************************************************************/
 
 package org.eclipse.rse.ui.validators;
@@ -297,8 +298,27 @@ public class ValidatorUniqueString
 	  	  else if (caseSensitive && (existingList!=null) && (Arrays.binarySearch(existingList,newText) >= 0))
 		    return msg_NonUnique.getLevelOneText();		  
 		  */
-	  	  if ((existingList!=null) && (Arrays.binarySearch(existingList,newText) >= 0))
-		    currentMessage = msg_NonUnique;
+		  if (existingList != null){		  
+			  if (!caseSensitive){
+				  if (Arrays.binarySearch(existingList,newText) >= 0){	
+					  currentMessage = msg_NonUnique;
+				  }
+			  }
+			  else { // caseSensitive
+				  boolean match = false;
+				  for (int i = 0; i < existingList.length && !match; i++){
+					  String existing = existingList[i];
+					  if (existing != null){
+						  match = newText.toLowerCase().equals(existing.toLowerCase());
+					  }
+				  }
+				  if (match){
+					  currentMessage = msg_NonUnique;
+				  }
+			  }
+	  	  }
+	  	 
+	  	  
 		  else if (syntaxValidator!=null) 
 		  {
 		    String msg = syntaxValidator.isValid(newText);

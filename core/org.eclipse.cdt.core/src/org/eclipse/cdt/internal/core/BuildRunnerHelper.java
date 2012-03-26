@@ -272,38 +272,39 @@ public class BuildRunnerHelper implements Closeable {
 		try {
 			if (stdout != null)
 				stdout.close();
-			stdout = null;
 		} catch (Exception e) {
 			CCorePlugin.log(e);
 		} finally {
+			stdout = null;
 			try {
 				if (stderr != null)
 					stderr.close();
-				stderr = null;
 			} catch (Exception e) {
 				CCorePlugin.log(e);
 			} finally {
+				stderr = null;
 				try {
 					if (streamProgressMonitor != null)
 						streamProgressMonitor.close();
-					streamProgressMonitor = null;
 				} catch (Exception e) {
 					CCorePlugin.log(e);
 				} finally {
+					streamProgressMonitor = null;
 					try {
 						if (consoleOut != null)
 							consoleOut.close();
-						consoleOut = null;
 					} catch (Exception e) {
 						CCorePlugin.log(e);
 					} finally {
+						consoleOut = null;
 						try {
 							if (consoleInfo != null)
 								consoleInfo.close();
 						} catch (Exception e) {
 							CCorePlugin.log(e);
+						} finally {
+							consoleInfo = null;
 						}
-						consoleInfo = null;
 					}
 				}
 			}

@@ -25,13 +25,9 @@ import org.eclipse.cdt.core.ICommandLauncher;
 import org.eclipse.cdt.core.IConsoleParser;
 import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.core.ProblemMarkerInfo;
-import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.language.settings.providers.ICBuildOutputParser;
 import org.eclipse.cdt.core.language.settings.providers.ICListenerAgent;
 import org.eclipse.cdt.core.language.settings.providers.IWorkingDirectoryTracker;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ILanguageDescriptor;
 import org.eclipse.cdt.core.model.LanguageManager;
@@ -75,9 +71,13 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 	public static final String JOB_FAMILY_BUILTIN_SPECS_DETECTOR = "org.eclipse.cdt.make.core.scannerconfig.AbstractBuiltinSpecsDetector";
 
 	private static final int MONITOR_SCALE = 100;
-	private static final int TICKS_CLEAN_MARKERS = 1;
-	private static final int TICKS_RUN_FOR_ONE_LANGUAGE = 10;
-	private static final int TICKS_SERIALIZATION = 1;
+	private static final int TICKS_CLEAN_MARKERS = 1 * MONITOR_SCALE;
+	private static final int TICKS_RUN_FOR_ONE_LANGUAGE = 10 * MONITOR_SCALE;
+	private static final int TICKS_SERIALIZATION = 1 * MONITOR_SCALE;
+	private static final int TICKS_OUTPUT_PARSING = 1 * MONITOR_SCALE;
+	private static final int TICKS_REMOVE_MARKERS = 1 * MONITOR_SCALE;
+	private static final int TICKS_EXECUTE_COMMAND = 1 * MONITOR_SCALE;
+
 	private static final String NEWLINE = System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 	private static final String PLUGIN_CDT_MAKE_UI_ID = "org.eclipse.cdt.make.ui"; //$NON-NLS-1$
 	private static final String GMAKE_ERROR_PARSER_ID = "org.eclipse.cdt.core.GmakeErrorParser"; //$NON-NLS-1$
@@ -88,6 +88,8 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 	protected static final String SPEC_FILE_MACRO = "${INPUTS}"; //$NON-NLS-1$
 	protected static final String SPEC_EXT_MACRO = "${EXT}"; //$NON-NLS-1$
 	protected static final String SPEC_FILE_BASE = "spec"; //$NON-NLS-1$
+
+	private SDMarkerGenerator markerGenerator = new SDMarkerGenerator();
 
 	private String currentCommandResolved = null;
 	protected List<ICLanguageSettingEntry> detectedSettingEntries = null;
@@ -105,12 +107,13 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 	private BuildRunnerHelper buildRunnerHelper;
 
 	private class SDMarkerGenerator implements IMarkerGenerator {
-		protected static final String SCANNER_DISCOVERY_PROBLEM_MARKER = MakeCorePlugin.PLUGIN_ID + ".scanner.discovery.problem"; //$NON-NLS-1$
+		// Scanner discovery markers are defined in org.eclipse.cdt.managedbuilder.core plugin.xml
+		protected static final String SCANNER_DISCOVERY_PROBLEM_MARKER = "org.eclipse.cdt.managedbuilder.core.scanner.discovery.problem";
 		protected static final String ATTR_PROVIDER = "provider"; //$NON-NLS-1$
 
 		@Override
-		public void addMarker(IResource file, int lineNumber, String errorDesc, int severity, String errorVar) {
-			ProblemMarkerInfo info = new ProblemMarkerInfo(file, lineNumber, errorDesc, severity, errorVar);
+		public void addMarker(IResource rc, int lineNumber, String errorDesc, int severity, String errorVar) {
+			ProblemMarkerInfo info = new ProblemMarkerInfo(rc, lineNumber, errorDesc, severity, errorVar);
 			addMarker(info);
 		}
 
@@ -140,7 +143,6 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 						return new Status(Status.ERROR, MakeCorePlugin.getUniqueIdentifier(), "Error removing markers.", e);
 					}
 
-					// add new marker
 					try {
 						IMarker marker = problemMarkerInfo.file.createMarker(SDMarkerGenerator.SCANNER_DISCOVERY_PROBLEM_MARKER);
 						marker.setAttribute(IMarker.MESSAGE, problemMarkerInfo.description);
@@ -148,9 +150,9 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 						marker.setAttribute(SDMarkerGenerator.ATTR_PROVIDER, providerId);
 
 						if (problemMarkerInfo.file instanceof IWorkspaceRoot) {
-							marker.setAttribute(IMarker.LOCATION, "SD90 Providers, [" + providerName + "] options in Preferences");
+							marker.setAttribute(IMarker.LOCATION, "Preferences, C++/Build/Settings/Discovery, [" + providerName + "] options");
 						} else {
-							marker.setAttribute(IMarker.LOCATION, "SD90 Providers, [" + providerName + "] options in project properties");
+							marker.setAttribute(IMarker.LOCATION, "Project Properties, C++ Preprocessor Include.../Providers, [" + providerName + "] options");
 						}
 					} catch (CoreException e) {
 						return new Status(Status.ERROR, MakeCorePlugin.getUniqueIdentifier(), "Error adding markers.", e);
@@ -162,6 +164,20 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 
 			markerJob.setRule(problemMarkerInfo.file);
 			markerJob.schedule();
+		}
+
+		public void deleteMarkers(IResource rc) {
+			String providerId = getId();
+			try {
+				IMarker[] markers = rc.findMarkers(SCANNER_DISCOVERY_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
+				for (IMarker marker : markers) {
+					if (providerId.equals(marker.getAttribute(ATTR_PROVIDER))) {
+						marker.delete();
+					}
+				}
+			} catch (CoreException e) {
+				MakeCorePlugin.log(e);
+			}
 		}
 
 	}
@@ -277,8 +293,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 		// AG FIXME - temporary log to remove before CDT Juno release
 		LanguageSettingsLogger.logInfo(getPrefixForLog() + "registerListener [" + System.identityHashCode(this) + "] " + this);
 
-		currentCfgDescription = cfgDescription;
-		execute();
+		execute(cfgDescription);
 	}
 
 	@Override
@@ -287,7 +302,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 		LanguageSettingsLogger.logInfo(getPrefixForLog() + "unregisterListener [" + System.identityHashCode(this) + "] " + this);
 	}
 
-	protected void execute() {
+	protected void execute(final ICConfigurationDescription cfgDescription) {
 		if (isExecuted) {
 			// AG FIXME - temporary log to remove before CDT Juno release
 //			LanguageSettingsLogger.logInfo(getPrefixForLog() + "Already executed [" + System.identityHashCode(this) + "] " + this);
@@ -298,7 +313,18 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 		Job job = new Job("Discover compiler's built-in language settings") {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-				return runForEachLanguage(currentCfgDescription, null, null, monitor);
+				IStatus status;
+				try {
+					startup(cfgDescription, null);
+					status = runForEachLanguage(cfgDescription, null, null, monitor);
+				} catch (CoreException e) {
+					MakeCorePlugin.log(e);
+					status = new Status(IStatus.ERROR, MakeCorePlugin.PLUGIN_ID, IStatus.ERROR, "Error running Builtin Specs Detector", e);
+				} finally {
+					shutdown();
+				}
+
+				return status;
 			}
 			@Override
 			public boolean belongsTo(Object family) {
@@ -342,45 +368,38 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 			mappedRootURI = null;
 			buildDirURI = null;
 
-
 			List<String> languageIds = getLanguageScope();
 			if (languageIds != null) {
-				int totalWork = TICKS_CLEAN_MARKERS + languageIds.size()*TICKS_RUN_FOR_ONE_LANGUAGE + TICKS_SERIALIZATION;
-				monitor.beginTask("CDT Scanner Discovery", totalWork * MONITOR_SCALE);
+				monitor.beginTask("CDT Scanner Discovery", TICKS_CLEAN_MARKERS + languageIds.size()*TICKS_RUN_FOR_ONE_LANGUAGE + TICKS_SERIALIZATION);
 
 				IResource markersResource = currentProject != null ? currentProject : ResourcesPlugin.getWorkspace().getRoot();
 
-				// clear old markers
 				monitor.subTask("Clearing markers for " + markersResource.getFullPath());
-				try {
-					markersResource.deleteMarkers(SDMarkerGenerator.SCANNER_DISCOVERY_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
-				} catch (CoreException e) {
-					MakeCorePlugin.log(e);
-				}
+				markerGenerator.deleteMarkers(markersResource);
 				if (monitor.isCanceled())
 					throw new OperationCanceledException();
 
-				monitor.worked(TICKS_CLEAN_MARKERS * MONITOR_SCALE);
+				monitor.worked(TICKS_CLEAN_MARKERS);
 
 				for (String languageId : languageIds) {
 					List<ICLanguageSettingEntry> oldEntries = getSettingEntries(cfgDescription, null, languageId);
 					try {
 						startupForLanguage(languageId);
-						if (monitor.isCanceled())
-							throw new OperationCanceledException();
+						runForLanguage(languageId, currentCommandResolved, env, workingDirectoryURI, new SubProgressMonitor(monitor, TICKS_RUN_FOR_ONE_LANGUAGE));
 
-						runForLanguage(languageId, currentCommandResolved, env, workingDirectoryURI, new SubProgressMonitor(monitor, TICKS_RUN_FOR_ONE_LANGUAGE * MONITOR_SCALE));
 						if (monitor.isCanceled())
 							throw new OperationCanceledException();
-					} catch (CoreException e) {
+					} catch (Exception e) {
 						IStatus s = new Status(IStatus.ERROR, MakeCorePlugin.PLUGIN_ID, IStatus.ERROR, "Error running Builtin Specs Detector", e);
 						MakeCorePlugin.log(s);
 						status.merge(s);
 					} finally {
 						shutdownForLanguage();
 					}
-					List<ICLanguageSettingEntry> newEntries = getSettingEntries(cfgDescription, null, languageId);
-					isChanged = isChanged || newEntries != oldEntries;
+					if (!isChanged) {
+						List<ICLanguageSettingEntry> newEntries = getSettingEntries(cfgDescription, null, languageId);
+						isChanged = newEntries != oldEntries;
+					}
 				}
 			}
 
@@ -388,26 +407,11 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 			if (isChanged) { // avoids resource and settings change notifications
 				IStatus s = serializeLanguageSettings(currentCfgDescription);
 				status.merge(s);
-
-				// AG: FIXME - rather send event that ls settings changed
-				if (currentCfgDescription != null) {
-					ICProject icProject = CoreModel.getDefault().create(currentProject);
-					ICElement[] tuSelection = new ICElement[] {icProject};
-					try {
-						CCorePlugin.getIndexManager().update(tuSelection, IIndexManager.UPDATE_ALL | IIndexManager.UPDATE_EXTERNAL_FILES_FOR_PROJECT);
-					} catch (CoreException e) {
-						IStatus s2 = new Status(IStatus.ERROR, MakeCorePlugin.PLUGIN_ID, IStatus.ERROR, "Error updating CDT index", e);
-						MakeCorePlugin.log(s2);
-						status.merge(s2);
-					}
-				} else {
-					// TODO
-				}
 			}
 			if (monitor.isCanceled())
 				throw new OperationCanceledException();
 
-			monitor.worked(TICKS_SERIALIZATION * MONITOR_SCALE);
+			monitor.worked(TICKS_SERIALIZATION);
 		} catch (OperationCanceledException e) {
 			if (!status.isOK()) {
 				MakeCorePlugin.log(status);
@@ -457,9 +461,6 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 		currentLanguageId = null;
 	}
 
-	/**
-	 * TODO: test case for this function
-	 */
 	private void runForLanguage(String languageId, String command, String[] envp, URI workingDirectoryURI, IProgressMonitor monitor) throws CoreException {
 		buildRunnerHelper = new BuildRunnerHelper(currentProject);
 
@@ -467,7 +468,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 			monitor = new NullProgressMonitor();
 		}
 		try {
-			monitor.beginTask("Running scanner discovery: " + getName(), 3 * MONITOR_SCALE); //$NON-NLS-1$
+			monitor.beginTask("Running scanner discovery: " + getName(), TICKS_REMOVE_MARKERS + TICKS_EXECUTE_COMMAND + TICKS_OUTPUT_PARSING);
 
 			IConsole console;
 			if (isConsoleEnabled) {
@@ -477,9 +478,6 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 				console = CCorePlugin.getDefault().getConsole(MakeCorePlugin.PLUGIN_ID + ".console.hidden"); //$NON-NLS-1$
 			}
 			console.start(currentProject);
-
-			/////////////////////////////////////////////////
-			int state = ICommandLauncher.ILLEGAL_COMMAND;
 
 			IPath program = new Path("");
 			String[] args = new String[0];
@@ -495,23 +493,23 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 			ICommandLauncher launcher = new CommandLauncher();
 			launcher.setProject(currentProject);
 
-			// Using GMAKE_ERROR_PARSER_ID as it can handle shell error messages
-			ErrorParserManager epm = new ErrorParserManager(currentProject, new SDMarkerGenerator(), new String[] {GMAKE_ERROR_PARSER_ID});
+			// Using GMAKE_ERROR_PARSER_ID as it can handle generated error messages
+			ErrorParserManager epm = new ErrorParserManager(currentProject, markerGenerator, new String[] {GMAKE_ERROR_PARSER_ID});
 			ConsoleParserAdapter consoleParser = new ConsoleParserAdapter();
 			consoleParser.startup(currentCfgDescription, epm);
 			List<IConsoleParser> parsers = new ArrayList<IConsoleParser>();
 			parsers.add(consoleParser);
 
 			buildRunnerHelper.setLaunchParameters(launcher, program, args, workingDirectoryURI, envp);
-			buildRunnerHelper.prepareStreams(epm, parsers, console, new SubProgressMonitor(monitor, 1 * MONITOR_SCALE));
+			buildRunnerHelper.prepareStreams(epm, parsers, console, new SubProgressMonitor(monitor, TICKS_OUTPUT_PARSING));
 
-			buildRunnerHelper.removeOldMarkers(currentProject, new SubProgressMonitor(monitor, 1 * MONITOR_SCALE, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+			buildRunnerHelper.removeOldMarkers(currentProject, new SubProgressMonitor(monitor, TICKS_REMOVE_MARKERS, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 
 			buildRunnerHelper.greeting("Running scanner discovery: " + getName());
 
 			OutputStream outStream = buildRunnerHelper.getOutputStream();
 			OutputStream errStream = buildRunnerHelper.getErrorStream();
-			state = runProgramForLanguage(languageId, command, envp, workingDirectoryURI, outStream, errStream, new SubProgressMonitor(monitor, 1 * MONITOR_SCALE, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+			runProgramForLanguage(languageId, command, envp, workingDirectoryURI, outStream, errStream, new SubProgressMonitor(monitor, TICKS_EXECUTE_COMMAND, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 			buildRunnerHelper.close();
 			buildRunnerHelper.goodbye();
 

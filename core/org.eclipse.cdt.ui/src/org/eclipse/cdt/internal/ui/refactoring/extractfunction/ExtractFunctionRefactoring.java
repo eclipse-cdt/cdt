@@ -518,7 +518,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 				IASTNode trailNode = trail.get(pos);
 				trailPos.setObject(Integer.valueOf(pos + 1));
 
-				if (equalityChecker.isEquals(trailNode, node)) {
+				if (equalityChecker.isEqual(trailNode, node)) {
 					if (node instanceof ICPPASTQualifiedName || node instanceof IASTNamedTypeSpecifier) {
 						return PROCESS_SKIP;
 					} else {
@@ -563,7 +563,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 							IASTParameterDeclaration newParameter = declarator.getParameters()[i];
 
 							// If not the same break;
-							if (!(equalityChecker.isEquals(origParameter.getDeclSpecifier(),
+							if (!(equalityChecker.isEqual(origParameter.getDeclSpecifier(),
 									newParameter.getDeclSpecifier()) &&
 									ASTHelper.samePointers(origParameter.getDeclarator().getPointerOperators(),
 											newParameter.getDeclarator().getPointerOperators(),

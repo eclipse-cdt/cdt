@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html  
- *  
- * Contributors: 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
  *     Institute for Software - initial API and implementation
  *     Sergey Prigogin (Google)
  *******************************************************************************/
@@ -108,6 +108,7 @@ import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.ASTWriterVisitor;
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoringDescriptor;
 import org.eclipse.cdt.internal.ui.refactoring.ClassMemberInserter;
+import org.eclipse.cdt.internal.ui.refactoring.ClassMemberInserter.InsertionInfo;
 import org.eclipse.cdt.internal.ui.refactoring.Container;
 import org.eclipse.cdt.internal.ui.refactoring.MethodContext;
 import org.eclipse.cdt.internal.ui.refactoring.MethodContext.ContextType;
@@ -172,17 +173,17 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 			ast = getAST(tu, sm.newChild(1));
 			nodeFactory = ast.getASTNodeFactory();
 			container = findExtractableNodes();
-	
+
 			if (isProgressMonitorCanceled(sm, initStatus))
 				return initStatus;
-	
+
 			if (container.isEmpty()) {
 				initStatus.addFatalError(Messages.ExtractFunctionRefactoring_NoStmtSelected);
 				return initStatus;
 			}
-	
+
 			checkForNonExtractableStatements(container, initStatus);
-	
+
 			List<NameInformation> returnValueCandidates = container.getReturnValueCandidates();
 			if (returnValueCandidates.size() > 1) {
 				initStatus.addFatalError(Messages.ExtractFunctionRefactoring_TooManySelected);
@@ -190,27 +191,27 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 			} else if (returnValueCandidates.size() == 1) {
 				info.setMandatoryReturnVariable(returnValueCandidates.get(0));
 			}
-	
+
 			info.setParameters(container.getParameterCandidates());
 			initStatus.merge(checkParameterAndReturnTypes());
 			if (initStatus.hasFatalError())
 				return initStatus;
-	
+
 			extractor =	FunctionExtractor.createFor(container.getNodesToWrite());
-	
+
 			if (extractor.canChooseReturnValue() && info.getMandatoryReturnVariable() == null) {
 				chooseReturnVariable();
 			}
-	
+
 			IPreferencesService preferences = Platform.getPreferencesService();
 			final boolean outFirst = preferences.getBoolean(CUIPlugin.PLUGIN_ID,
 					PreferenceConstants.FUNCTION_OUTPUT_PARAMETERS_BEFORE_INPUT, false,
 					PreferenceConstants.getPreferenceScopes(project.getProject()));
 			info.sortParameters(outFirst);
-	
+
 			boolean isExtractExpression = container.getNodesToWrite().get(0) instanceof IASTExpression;
 			info.setExtractExpression(isExtractExpression);
-	
+
 			info.setDeclarator(getDeclaration(container.getNodesToWrite().get(0)));
 			MethodContext context =	NodeHelper.findMethodContext(container.getNodesToWrite().get(0),
 					refactoringContext, sm.newChild(1));
@@ -347,7 +348,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 			if (node != firstNodeToWrite) {
 				rewriter.remove(node, editGroup);
 			}
-		}		
+		}
 	}
 
 	private void insertCallIntoTree(IASTNode methodCall, List<IASTNode> list, ASTRewrite rewriter,
@@ -379,9 +380,10 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 	}
 
 	private void createMethodDefinition(final IASTName methodName, MethodContext context,
-			IASTNode firstNode,	ModificationCollector collector) {
-		IASTFunctionDefinition node = CPPVisitor.findAncestorWithType(firstNode, IASTFunctionDefinition.class); 
-		if (node != null) { 
+			IASTNode firstExtractedNode, ModificationCollector collector) {
+		IASTFunctionDefinition functionToExtractFrom =
+				CPPVisitor.findAncestorWithType(firstExtractedNode, IASTFunctionDefinition.class);
+		if (functionToExtractFrom != null) {
 			String title;
 			if (context.getType() == MethodContext.ContextType.METHOD) {
 				title = Messages.ExtractFunctionRefactoring_CreateMethodDef;
@@ -389,8 +391,8 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 				title = Messages.ExtractFunctionRefactoring_CreateFunctionDef;
 			}
 
-			ASTRewrite rewriter = collector.rewriterForTranslationUnit(node.getTranslationUnit());
-			addMethod(methodName, context, rewriter, node, new TextEditGroup(title));
+			ASTRewrite rewriter = collector.rewriterForTranslationUnit(functionToExtractFrom.getTranslationUnit());
+			addMethod(methodName, context, rewriter, functionToExtractFrom, new TextEditGroup(title));
 		}
 	}
 
@@ -584,7 +586,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 	}
 
 	private void addMethod(IASTName methodName, MethodContext context, ASTRewrite rewrite,
-			IASTNode insertPoint, TextEditGroup group) {
+			IASTNode functionToExtractFrom, TextEditGroup group) {
 		ICPPASTQualifiedName qname = new CPPASTQualifiedName();
 		if (context.getType() == ContextType.METHOD) {
 			if (context.getMethodQName() != null) {
@@ -600,7 +602,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 
 		IASTDeclSpecifier returnType = getReturnType();
 		func.setDeclSpecifier(returnType);
-		
+
 		IASTStandardFunctionDeclarator createdFunctionDeclarator =
 				extractor.createFunctionDeclarator(qname,
 						info.getDeclarator(), info.getReturnVariable(), container.getNodesToWrite(),
@@ -609,22 +611,46 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 
 		IASTCompoundStatement compound = new CPPASTCompoundStatement();
 		func.setBody(compound);
-		
+
 		ASTRewrite subRewrite;
-		IASTNode parent = insertPoint.getParent();
+		IASTNode parent = functionToExtractFrom.getParent();
+		IASTNode nodeToInsert = func;
 		if (parent instanceof ICPPASTTemplateDeclaration) {
 			ICPPASTTemplateDeclaration parentTemplate = (ICPPASTTemplateDeclaration) parent;
 			CPPASTTemplateDeclaration templateDeclaration = new CPPASTTemplateDeclaration();
 			templateDeclaration.setParent(ast);
-			
+
 			for (ICPPASTTemplateParameter param : parentTemplate.getTemplateParameters()) {
 				templateDeclaration.addTemplateParameter(param.copy(CopyStyle.withLocations));
 			}
-			
+
+			functionToExtractFrom = parentTemplate;
 			templateDeclaration.setDeclaration(func);
-			subRewrite = rewrite.insertBefore(parent.getParent(), parent, templateDeclaration, group);
+			nodeToInsert = templateDeclaration;
+			parent = parent.getParent();
+		}
+
+		InsertionInfo insertion;
+		if (parent instanceof ICPPASTCompositeTypeSpecifier) {
+			// Inserting into a class declaration
+			insertion = ClassMemberInserter.findInsertionPoint((ICPPASTCompositeTypeSpecifier) parent,
+					info.getVisibility(), false);
 		} else {
-			subRewrite = rewrite.insertBefore(parent, insertPoint, func, group);
+			// Inserting into a translation unit or a namespace.
+			// TODO(sprigogin): Use insertBeforeNode instead of functionToExtractFrom when creating InsertionInfo
+//			IASTNode insertBeforeNode = info.getMethodContext().getType() == ContextType.METHOD ?
+//					null : functionToExtractFrom;
+			insertion = new InsertionInfo(parent, functionToExtractFrom);
+		}
+		if (insertion.getPrologue() != null) {
+			rewrite.insertBefore(insertion.getParentNode(),
+					insertion.getInsertBeforeNode(), insertion.getPrologue(), group);
+		}
+		subRewrite = rewrite.insertBefore(insertion.getParentNode(),
+				insertion.getInsertBeforeNode(), nodeToInsert, group);
+		if (insertion.getEpilogue() != null) {
+			rewrite.insertBefore(insertion.getParentNode(),
+					insertion.getInsertBeforeNode(), insertion.getEpilogue(), group);
 		}
 
 		extractor.constructMethodBody(compound, container.getNodesToWrite(),
@@ -777,7 +803,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 		IASTNode node = container.getNodesToWrite().get(0);
 		return extractor.createReturnAssignment(node, stmt, callExpression);
 	}
-	
+
 	private IASTSimpleDeclaration getDeclaration(IASTName name) {
 		IASTSimpleDeclaration simpleDecl = new CPPASTSimpleDeclaration();
 		IASTStandardFunctionDeclarator declarator =

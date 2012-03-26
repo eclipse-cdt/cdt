@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html  
- *  
- * Contributors: 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
  *     Institute for Software - initial API and implementation
  *     Sergey Prigogin (Google)
  *******************************************************************************/
@@ -31,15 +31,15 @@ public class ExtractFunctionInformation {
 	private String methodName;
 	private boolean replaceDuplicates;
 	private List<NameInformation> parameters;
-	private NameInformation mandatoryReturnVariable; 
+	private NameInformation mandatoryReturnVariable;
 	private ICPPASTFunctionDeclarator declarator;
 	private MethodContext context;
 	private boolean isExtractExpression;
 	private boolean virtual;
 
 	/**
-	 * Returns the function declarator of the method / function from were the statements
-	 * are extacted from.
+	 * Returns the function declarator of the method or function from were the statements
+	 * are extracted from.
 	 * @return the function declarator or null
 	 */
 	public ICPPASTFunctionDeclarator getDeclarator() {

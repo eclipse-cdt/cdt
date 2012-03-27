@@ -62,7 +62,7 @@ public class ExtractFunctionInputPage extends UserInputWizardPage {
 	private Text textField;
 	private boolean firstTime;
 	private CSourceViewer signaturePreview;
-	private Document signaturePreviewDocument;
+	private final Document signaturePreviewDocument;
 	private IDialogSettings settings;
 
 	private static final String DESCRIPTION = Messages.ExtractFunctionInputPage_description;
@@ -252,7 +252,7 @@ public class ExtractFunctionInputPage extends UserInputWizardPage {
 
 		if (methodName.isEmpty()) {
 			methodName = StubUtility.suggestMethodName("someMethodName", null, //$NON-NLS-1$
-					refactoring.getTranslationUnit());	
+					refactoring.getTranslationUnit());
 		}
 
 		int top = signaturePreview.getTextWidget().getTopPixel();

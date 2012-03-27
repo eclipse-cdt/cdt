@@ -84,7 +84,7 @@ public class ASTHelper {
 			for (int i = 0; i < pointerOperators2.length; i++) {
 				IASTPointerOperator operator1 = pointerOperators1[i];
 				IASTPointerOperator operator2 = pointerOperators2[i];
-				if (!checker.isEquals(operator1, operator2)) {
+				if (!checker.isEqual(operator1, operator2)) {
 					return false;
 				}
 			}

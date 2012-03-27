@@ -47,7 +47,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.QualifiedName;
-import org.eclipse.core.runtime.SubProgressMonitor;
 
 /**
  * Helper class attempting to unify interactions with build console,
@@ -58,7 +57,10 @@ import org.eclipse.core.runtime.SubProgressMonitor;
  */
 public class BuildRunnerHelper implements Closeable {
 	private static final String PROGRESS_MONITOR_QUALIFIER = CCorePlugin.PLUGIN_ID + ".progressMonitor"; //$NON-NLS-1$
-	private static final int MONITOR_SCALE = 100;
+	private static final int PROGRESS_MONITOR_SCALE = 100;
+	private static final int TICKS_STREAM_PROGRESS_MONITOR = 1 * PROGRESS_MONITOR_SCALE;
+	private static final int TICKS_EXECUTE_PROGRAM = 1 * PROGRESS_MONITOR_SCALE;
+	private static final int TICKS_PARSE_OUTPUT = 1 * PROGRESS_MONITOR_SCALE;
 
 	private IProject project;
 
@@ -153,7 +155,7 @@ public class BuildRunnerHelper implements Closeable {
 			lastWork = (Integer)project.getSessionProperty(progressPropertyName);
 		}
 		if (lastWork == null) {
-			lastWork = MONITOR_SCALE;
+			lastWork = TICKS_STREAM_PROGRESS_MONITOR;
 		}
 
 		streamProgressMonitor = new StreamProgressMonitor(monitor, null, lastWork.intValue());
@@ -217,7 +219,7 @@ public class BuildRunnerHelper implements Closeable {
 			monitor = new NullProgressMonitor();
 		}
 		try {
-			monitor.beginTask("", 1 * MONITOR_SCALE); //$NON-NLS-1$
+			monitor.beginTask("", TICKS_EXECUTE_PROGRAM + TICKS_PARSE_OUTPUT); //$NON-NLS-1$
 
 			isCancelled = false;
 			String pathFromURI = null;
@@ -231,7 +233,9 @@ public class BuildRunnerHelper implements Closeable {
 			IPath workingDirectory = new Path(pathFromURI);
 
 			String errMsg = null;
+			monitor.subTask(CCorePlugin.getFormattedString("BuildRunnerHelper.invokingCommand", launcher.getCommandLine())); //$NON-NLS-1$
 			Process p = launcher.execute(buildCommand, args, envp, workingDirectory, monitor);
+			monitor.worked(TICKS_EXECUTE_PROGRAM);
 			if (p != null) {
 				try {
 					// Close the input of the Process explicitly.
@@ -239,10 +243,9 @@ public class BuildRunnerHelper implements Closeable {
 					p.getOutputStream().close();
 				} catch (IOException e) {
 				}
-				// Before launching give visual cues via the monitor
-				monitor.subTask(CCorePlugin.getFormattedString("BuildRunnerHelper.invokingCommand", launcher.getCommandLine())); //$NON-NLS-1$
 
-				status = launcher.waitAndRead(stdout, stderr, new SubProgressMonitor(monitor, 1 * MONITOR_SCALE));
+				status = launcher.waitAndRead(stdout, stderr, monitor);
+				monitor.worked(TICKS_PARSE_OUTPUT);
 				if (status != ICommandLauncher.OK) {
 					errMsg = launcher.getErrorMessage();
 				}
@@ -464,7 +467,7 @@ public class BuildRunnerHelper implements Closeable {
 	 * Qualified name to keep previous value of build duration in project session properties.
 	 */
 	private static QualifiedName getProgressPropertyName(IPath buildCommand, String[] args) {
-		String name = "buildCommand." + buildCommand.toString();
+		String name = "buildCommand." + buildCommand.toString(); //$NON-NLS-1$
 		if (args != null) {
 			for (String arg : args) {
 				name = name + ' ' + arg;

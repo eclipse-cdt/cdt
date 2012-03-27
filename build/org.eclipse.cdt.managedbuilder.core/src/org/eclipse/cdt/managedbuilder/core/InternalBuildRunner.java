@@ -49,7 +49,11 @@ import org.eclipse.core.runtime.SubProgressMonitor;
  * @since 8.0
  */
 public class InternalBuildRunner extends AbstractBuildRunner {
-	private static final int MONITOR_SCALE = 100;
+	private static final int PROGRESS_MONITOR_SCALE = 100;
+	private static final int TICKS_STREAM_PROGRESS_MONITOR = 1 * PROGRESS_MONITOR_SCALE;
+	private static final int TICKS_DELETE_MARKERS = 1 * PROGRESS_MONITOR_SCALE;
+	private static final int TICKS_EXECUTE_COMMAND = 1 * PROGRESS_MONITOR_SCALE;
+	private static final int TICKS_REFRESH_PROJECT = 1 * PROGRESS_MONITOR_SCALE;
 
 	@Override
 	public boolean invokeBuild(int kind, IProject project, IConfiguration configuration,
@@ -62,7 +66,7 @@ public class InternalBuildRunner extends AbstractBuildRunner {
 			if (monitor == null) {
 				monitor = new NullProgressMonitor();
 			}
-			monitor.beginTask("", 3 * MONITOR_SCALE); //$NON-NLS-1$
+			monitor.beginTask("", TICKS_STREAM_PROGRESS_MONITOR + TICKS_DELETE_MARKERS + TICKS_EXECUTE_COMMAND + TICKS_REFRESH_PROJECT); //$NON-NLS-1$
 
 			boolean isParallel = builder.getParallelizationNum() > 1;
 			boolean resumeOnErr = !builder.isStopOnError();
@@ -94,7 +98,7 @@ public class InternalBuildRunner extends AbstractBuildRunner {
 			List<IConsoleParser> parsers = new ArrayList<IConsoleParser>();
 			ManagedBuildManager.collectLanguageSettingsConsoleParsers(cfgDescription, epm, parsers);
 
-			buildRunnerHelper.prepareStreams(epm, parsers, console, new SubProgressMonitor(monitor, 1 * MONITOR_SCALE));
+			buildRunnerHelper.prepareStreams(epm, parsers, console, new SubProgressMonitor(monitor, TICKS_STREAM_PROGRESS_MONITOR));
 
 			IBuildDescription des = BuildDescriptionManager.createBuildDescription(configuration, cBS, delta, flags);
 			DescriptionBuilder dBuilder = null;
@@ -106,7 +110,7 @@ public class InternalBuildRunner extends AbstractBuildRunner {
 				}
 			}
 
-			buildRunnerHelper.removeOldMarkers(project, new SubProgressMonitor(monitor, 1 * MONITOR_SCALE, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+			buildRunnerHelper.removeOldMarkers(project, new SubProgressMonitor(monitor, TICKS_DELETE_MARKERS, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 
 			if (buildIncrementaly) {
 				buildRunnerHelper.greeting(IncrementalProjectBuilder.INCREMENTAL_BUILD, cfgName, toolchainName, isConfigurationSupported);
@@ -120,9 +124,9 @@ public class InternalBuildRunner extends AbstractBuildRunner {
 
 			int status;
 			if (dBuilder != null) {
-				status = dBuilder.build(stdout, stderr, new SubProgressMonitor(monitor, 1 * MONITOR_SCALE, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+				status = dBuilder.build(stdout, stderr, new SubProgressMonitor(monitor, TICKS_EXECUTE_COMMAND, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 			} else {
-				status = ParallelBuilder.build(des, null, null, stdout, stderr, new SubProgressMonitor(monitor, 1 * MONITOR_SCALE, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK), resumeOnErr, buildIncrementaly);
+				status = ParallelBuilder.build(des, null, null, stdout, stderr, new SubProgressMonitor(monitor, TICKS_EXECUTE_COMMAND, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK), resumeOnErr, buildIncrementaly);
 				buildRunnerHelper.printLine(ManagedMakeMessages.getFormattedString("CommonBuilder.7", Integer.toString(ParallelBuilder.lastThreadsUsed))); //$NON-NLS-1$
 			}
 
@@ -132,7 +136,7 @@ public class InternalBuildRunner extends AbstractBuildRunner {
 			buildRunnerHelper.goodbye();
 
 			if (status != ICommandLauncher.ILLEGAL_COMMAND) {
-				buildRunnerHelper.refreshProject(monitor);
+				buildRunnerHelper.refreshProject(new SubProgressMonitor(monitor, TICKS_REFRESH_PROJECT, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 			}
 
 		} catch (Exception e) {

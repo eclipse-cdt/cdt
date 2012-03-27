@@ -58,7 +58,11 @@ import org.eclipse.core.runtime.SubProgressMonitor;
  * @since 8.0
  */
 public class ExternalBuildRunner extends AbstractBuildRunner {
-	private static final int MONITOR_SCALE = 100;
+	private static final int PROGRESS_MONITOR_SCALE = 100;
+	private static final int TICKS_STREAM_PROGRESS_MONITOR = 1 * PROGRESS_MONITOR_SCALE;
+	private static final int TICKS_DELETE_MARKERS = 1 * PROGRESS_MONITOR_SCALE;
+	private static final int TICKS_EXECUTE_COMMAND = 1 * PROGRESS_MONITOR_SCALE;
+	private static final int TICKS_REFRESH_PROJECT = 1 * PROGRESS_MONITOR_SCALE;
 
 	@Override
 	public boolean invokeBuild(int kind, IProject project, IConfiguration configuration,
@@ -79,7 +83,8 @@ public class ExternalBuildRunner extends AbstractBuildRunner {
 			if (monitor == null) {
 				monitor = new NullProgressMonitor();
 			}
-			monitor.beginTask(ManagedMakeMessages.getResourceString("MakeBuilder.Invoking_Make_Builder") + project.getName(), 4 * MONITOR_SCALE); //$NON-NLS-1$
+			monitor.beginTask(ManagedMakeMessages.getResourceString("MakeBuilder.Invoking_Make_Builder") + project.getName(), //$NON-NLS-1$
+					TICKS_STREAM_PROGRESS_MONITOR + TICKS_DELETE_MARKERS + TICKS_EXECUTE_COMMAND + TICKS_REFRESH_PROJECT);
 
 			IPath buildCommand = builder.getBuildCommand();
 			if (buildCommand != null) {
@@ -114,17 +119,17 @@ public class ExternalBuildRunner extends AbstractBuildRunner {
 				}
 
 				buildRunnerHelper.setLaunchParameters(launcher, buildCommand, args, workingDirectoryURI, envp);
-				buildRunnerHelper.prepareStreams(epm, parsers, console, new SubProgressMonitor(monitor, 1 * MONITOR_SCALE));
+				buildRunnerHelper.prepareStreams(epm, parsers, console, new SubProgressMonitor(monitor, TICKS_STREAM_PROGRESS_MONITOR));
 
-				buildRunnerHelper.removeOldMarkers(project, new SubProgressMonitor(monitor, 1 * MONITOR_SCALE, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+				buildRunnerHelper.removeOldMarkers(project, new SubProgressMonitor(monitor, TICKS_DELETE_MARKERS, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 
 				buildRunnerHelper.greeting(kind, cfgName, toolchainName, isSupported);
-				int state = buildRunnerHelper.build(new SubProgressMonitor(monitor, 1 * MONITOR_SCALE, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+				int state = buildRunnerHelper.build(new SubProgressMonitor(monitor, TICKS_EXECUTE_COMMAND, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 				buildRunnerHelper.close();
 				buildRunnerHelper.goodbye();
 
 				if (state != ICommandLauncher.ILLEGAL_COMMAND) {
-					buildRunnerHelper.refreshProject(new SubProgressMonitor(monitor, 1 * MONITOR_SCALE, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+					buildRunnerHelper.refreshProject(new SubProgressMonitor(monitor, TICKS_REFRESH_PROJECT, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 				}
 			} else {
 				String msg = ManagedMakeMessages.getFormattedString("ManagedMakeBuilder.message.undefined.build.command", builder.getId()); //$NON-NLS-1$

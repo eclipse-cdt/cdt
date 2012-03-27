@@ -56,7 +56,10 @@ import org.osgi.service.prefs.BackingStoreException;
 public class DefaultRunSIProvider implements IExternalScannerInfoProvider {
 	private static final String GMAKE_ERROR_PARSER_ID = "org.eclipse.cdt.core.GmakeErrorParser"; //$NON-NLS-1$
 	private static final String PREF_CONSOLE_ENABLED = "org.eclipse.cdt.make.core.scanner.discovery.console.enabled"; //$NON-NLS-1$
-	private static final int MONITOR_SCALE = 100;
+
+	private static final int PROGRESS_MONITOR_SCALE = 100;
+	private static final int TICKS_STREAM_PROGRESS_MONITOR = 1 * PROGRESS_MONITOR_SCALE;
+	private static final int TICKS_EXECUTE_PROGRAM = 1 * PROGRESS_MONITOR_SCALE;
 
 	protected IResource resource;
 	protected String providerId;
@@ -97,7 +100,8 @@ public class DefaultRunSIProvider implements IExternalScannerInfoProvider {
 			if (monitor == null) {
 				monitor = new NullProgressMonitor();
 			}
-			monitor.beginTask(MakeMessages.getString("ExternalScannerInfoProvider.Reading_Specs"), 2 * MONITOR_SCALE); //$NON-NLS-1$
+			monitor.beginTask(MakeMessages.getString("ExternalScannerInfoProvider.Reading_Specs"), //$NON-NLS-1$
+					TICKS_STREAM_PROGRESS_MONITOR + TICKS_EXECUTE_PROGRAM);
 
 			// call a subclass to initialize protected fields
 			if (!initialize()) {
@@ -131,12 +135,12 @@ public class DefaultRunSIProvider implements IExternalScannerInfoProvider {
 			if (parser != null) {
 				parsers.add(parser);
 			}
-			
+
 			buildRunnerHelper.setLaunchParameters(launcher, program, comandLineOptions, workingDirectoryURI, envp );
-			buildRunnerHelper.prepareStreams(epm, parsers, console, new SubProgressMonitor(monitor, 1 * MONITOR_SCALE, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+			buildRunnerHelper.prepareStreams(epm, parsers, console, new SubProgressMonitor(monitor, TICKS_STREAM_PROGRESS_MONITOR, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 
 			buildRunnerHelper.greeting(MakeMessages.getFormattedString("ExternalScannerInfoProvider.Greeting", project.getName())); //$NON-NLS-1$
-			buildRunnerHelper.build(new SubProgressMonitor(monitor, 1 * MONITOR_SCALE, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+			buildRunnerHelper.build(new SubProgressMonitor(monitor, TICKS_EXECUTE_PROGRAM, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 			buildRunnerHelper.close();
 			buildRunnerHelper.goodbye();
 

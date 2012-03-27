@@ -425,7 +425,7 @@ public class BuildRunnerHelper implements Closeable {
 		if (consoleInfo != null) {
 			toConsole(goodbye);
 		} else {
-			// FIXME in current flow goodbye() can be called after close(), that is a problem with design of BuildRunnerHelper
+			// in current flow goodbye() can be called after close()
 			try {
 				consoleInfo = console.getInfoStream();
 				toConsole(goodbye);

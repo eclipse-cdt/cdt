@@ -183,15 +183,12 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 	}
 
 	/**
-	 * This ICConsoleParser handles each individual run for one language from
-	 * {@link AbstractBuiltinSpecsDetector#runForEachLanguage(ICConfigurationDescription, URI, String[], IProgressMonitor)}
-	 *
+	 * This ICConsoleParser handles each individual run for one language TODO
 	 */
 	private class ConsoleParserAdapter implements ICBuildOutputParser {
 		@Override
 		public void startup(ICConfigurationDescription cfgDescription, IWorkingDirectoryTracker cwdTracker) throws CoreException {
-			// Also see startupForLanguage() in AbstractBuiltinSpecsDetector.runForEachLanguage(...)
-			AbstractBuiltinSpecsDetector.this.startup(cfgDescription, cwdTracker);
+			AbstractBuiltinSpecsDetector.this.cwdTracker = cwdTracker;
 		}
 		@Override
 		public boolean processLine(String line) {
@@ -199,7 +196,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 		}
 		@Override
 		public void shutdown() {
-			// not used here, see instead shutdownForLanguage() in AbstractBuiltinSpecsDetector.runForEachLanguage(...)
+			AbstractBuiltinSpecsDetector.this.cwdTracker = null;
 		}
 	}
 
@@ -237,20 +234,20 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 
 	protected String resolveCommand(String languageId) throws CoreException {
 		String cmd = getCommand();
-		if (cmd!=null && (cmd.contains(COMPILER_MACRO) || cmd.contains(SPEC_FILE_MACRO) || cmd.contains(SPEC_EXT_MACRO))) {
+		if (cmd != null && (cmd.contains(COMPILER_MACRO) || cmd.contains(SPEC_FILE_MACRO) || cmd.contains(SPEC_EXT_MACRO))) {
 			if (cmd.contains(COMPILER_MACRO)) {
 				String compiler = getCompilerCommand(languageId);
-				if (compiler!=null)
+				if (compiler != null)
 					cmd = cmd.replace(COMPILER_MACRO, compiler);
 			}
 			if (cmd.contains(SPEC_FILE_MACRO)) {
 				String specFileName = getSpecFile(languageId);
-				if (specFileName!=null)
+				if (specFileName != null)
 					cmd = cmd.replace(SPEC_FILE_MACRO, specFileName);
 			}
 			if (cmd.contains(SPEC_EXT_MACRO)) {
 				String specFileExt = getSpecFileExtension(languageId);
-				if (specFileExt!=null)
+				if (specFileExt != null)
 					cmd = cmd.replace(SPEC_EXT_MACRO, specFileExt);
 			}
 		}
@@ -293,7 +290,8 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 		// AG FIXME - temporary log to remove before CDT Juno release
 		LanguageSettingsLogger.logInfo(getPrefixForLog() + "registerListener [" + System.identityHashCode(this) + "] " + this);
 
-		execute(cfgDescription);
+		currentCfgDescription = cfgDescription;
+		execute();
 	}
 
 	@Override
@@ -302,7 +300,26 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 		LanguageSettingsLogger.logInfo(getPrefixForLog() + "unregisterListener [" + System.identityHashCode(this) + "] " + this);
 	}
 
-	protected void execute(final ICConfigurationDescription cfgDescription) {
+	@Override
+	public void startup(ICConfigurationDescription cfgDescription, IWorkingDirectoryTracker cwdTracker) throws CoreException {
+		super.startup(cfgDescription, cwdTracker);
+
+		mappedRootURI = null;
+		buildDirURI = null;
+	}
+
+	@Override
+	public void shutdown() {
+		mappedRootURI = null;
+		buildDirURI = null;
+
+		ICConfigurationDescription cfgDescription = currentCfgDescription;
+		super.shutdown();
+		// keep currentCfgDescription, do not let super.shutdown() to clear it
+		currentCfgDescription = cfgDescription;
+	}
+
+	protected void execute() {
 		if (isExecuted) {
 			// AG FIXME - temporary log to remove before CDT Juno release
 //			LanguageSettingsLogger.logInfo(getPrefixForLog() + "Already executed [" + System.identityHashCode(this) + "] " + this);
@@ -315,8 +332,8 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 			protected IStatus run(IProgressMonitor monitor) {
 				IStatus status;
 				try {
-					startup(cfgDescription, null);
-					status = runForEachLanguage(cfgDescription, null, null, monitor);
+					startup(currentCfgDescription, null);
+					status = runForEachLanguage(currentCfgDescription, null, null, monitor);
 				} catch (CoreException e) {
 					MakeCorePlugin.log(e);
 					status = new Status(IStatus.ERROR, MakeCorePlugin.PLUGIN_ID, IStatus.ERROR, "Error running Builtin Specs Detector", e);
@@ -365,8 +382,6 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 
 		try {
 			boolean isChanged = false;
-			mappedRootURI = null;
-			buildDirURI = null;
 
 			List<String> languageIds = getLanguageScope();
 			if (languageIds != null) {
@@ -386,9 +401,6 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 					try {
 						startupForLanguage(languageId);
 						runForLanguage(languageId, currentCommandResolved, env, workingDirectoryURI, new SubProgressMonitor(monitor, TICKS_RUN_FOR_ONE_LANGUAGE));
-
-						if (monitor.isCanceled())
-							throw new OperationCanceledException();
 					} catch (Exception e) {
 						IStatus s = new Status(IStatus.ERROR, MakeCorePlugin.PLUGIN_ID, IStatus.ERROR, "Error running Builtin Specs Detector", e);
 						MakeCorePlugin.log(s);
@@ -400,6 +412,9 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 						List<ICLanguageSettingEntry> newEntries = getSettingEntries(cfgDescription, null, languageId);
 						isChanged = newEntries != oldEntries;
 					}
+
+					if (monitor.isCanceled())
+						throw new OperationCanceledException();
 				}
 			}
 
@@ -408,21 +423,17 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 				IStatus s = serializeLanguageSettings(currentCfgDescription);
 				status.merge(s);
 			}
-			if (monitor.isCanceled())
-				throw new OperationCanceledException();
-
 			monitor.worked(TICKS_SERIALIZATION);
+
 		} catch (OperationCanceledException e) {
-			if (!status.isOK()) {
-				MakeCorePlugin.log(status);
-			}
-			status.merge(new Status(IStatus.CANCEL, MakeCorePlugin.PLUGIN_ID, IStatus.OK, "Operation cancelled by user", e));
+			// user chose to cancel operation, do not threaten them with error reporting
+		} catch (Exception e) {
+			status.merge(new Status(IStatus.ERROR, MakeCorePlugin.PLUGIN_ID, IStatus.ERROR, "Error running Builtin Specs Detector", e));
+			MakeCorePlugin.log(status);
 		} finally {
 			monitor.done();
 
 			// release resources
-			buildDirURI = null;
-			mappedRootURI = null;
 			shutdown();
 			currentCfgDescription = cfgDescription; // current description gets cleared in super.shutdown(), keep it
 		}
@@ -433,7 +444,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 	protected void startupForLanguage(String languageId) throws CoreException {
 		currentLanguageId = languageId;
 
-		specFile = null; // can get set in resolveCommand()
+		specFile = null; // init before calling resolveCommand(), can be set there
 		currentCommandResolved = resolveCommand(currentLanguageId);
 
 		detectedSettingEntries = new ArrayList<ICLanguageSettingEntry>();
@@ -515,8 +526,8 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 
 		} catch (Exception e) {
 			// AG TODO - better message
-			String msg = "Internal error running scanner discovery";
-			MakeCorePlugin.log(new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.PLUGIN_ID, msg, e)));
+			Status status = new Status(IStatus.ERROR, MakeCorePlugin.PLUGIN_ID, "Internal error running scanner discovery", e);
+			MakeCorePlugin.log(new CoreException(status));
 		} finally {
 			try {
 				buildRunnerHelper.close();
@@ -546,7 +557,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 		if (currentProject != null) {
 			extConsoleId = "org.eclipse.cdt.make.internal.ui.scannerconfig.ScannerDiscoveryConsole";
 		} else {
-			// FIXME This console is not colored!
+			// TODO This console is not colored!
 			extConsoleId = "org.eclipse.cdt.make.internal.ui.scannerconfig.ScannerDiscoveryGlobalConsole";
 		}
 		ILanguage ld = LanguageManager.getInstance().getLanguage(currentLanguageId);

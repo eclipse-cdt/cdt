@@ -85,8 +85,8 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 			return null;
 		}
 		@Override
-		protected void execute(ICConfigurationDescription cfgDescription) {
-			super.execute(cfgDescription);
+		protected void execute() {
+			super.execute();
 		}
 		protected boolean isExecuted() {
 			return isExecuted;
@@ -182,7 +182,7 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 			provider.setConsoleEnabled(true);
 			assertEquals(true, provider.isConsoleEnabled());
 
-			provider.execute(null);
+			provider.execute();
 			assertEquals(true, provider.isExecuted());
 		}
 	}
@@ -219,7 +219,7 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 		provider.configureProvider(PROVIDER_ID, PROVIDER_NAME, languages, entries, properties);
 		assertEquals(false, provider.isConsoleEnabled());
 		provider.setConsoleEnabled(true);
-		provider.execute(null);
+		provider.execute();
 		assertEquals(true, provider.isExecuted());
 		assertFalse(provider.equals(clone0));
 
@@ -277,7 +277,7 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 			provider2.setSettingEntries(null, null, null, null);
 			assertFalse(provider2.equals(clone));
 
-			clone.execute(null);
+			clone.execute();
 			assertTrue(provider2.equals(clone));
 		}
 	}

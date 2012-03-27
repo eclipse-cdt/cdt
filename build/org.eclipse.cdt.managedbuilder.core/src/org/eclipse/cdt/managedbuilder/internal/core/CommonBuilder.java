@@ -85,8 +85,13 @@ public class CommonBuilder extends ACBuilder {
 	private static final String NEWLINE = System.getProperty("line.separator");	//$NON-NLS-1$
 	private static final String TRACE_FOOTER = "]: ";	//$NON-NLS-1$
 	private static final String TRACE_HEADER = "GeneratedmakefileBuilder trace [";	//$NON-NLS-1$
-	private static final int MONITOR_SCALE = 100;
 	public static boolean VERBOSE = false;
+
+	private static final int PROGRESS_MONITOR_SCALE = 100;
+	private static final int TICKS_STREAM_PROGRESS_MONITOR = 1 * PROGRESS_MONITOR_SCALE;
+	private static final int TICKS_EXECUTE_COMMAND = 1 * PROGRESS_MONITOR_SCALE;
+	private static final int TICKS_REFRESH_PROJECT = 1 * PROGRESS_MONITOR_SCALE;
+	private static final int TICKS_DELETE_OUTPUTS = 1 * PROGRESS_MONITOR_SCALE;
 
 	private static CfgBuildSet fBuildSet = new CfgBuildSet();
 
@@ -1183,7 +1188,7 @@ public class CommonBuilder extends ACBuilder {
 			if (monitor == null) {
 				monitor = new NullProgressMonitor();
 			}
-			monitor.beginTask("", 2 * MONITOR_SCALE); //$NON-NLS-1$
+			monitor.beginTask("", TICKS_STREAM_PROGRESS_MONITOR + TICKS_EXECUTE_COMMAND + TICKS_REFRESH_PROJECT); //$NON-NLS-1$
 
 			IConsole console = bInfo.getConsole();
 
@@ -1192,7 +1197,7 @@ public class CommonBuilder extends ACBuilder {
 			URI workingDirectoryURI = ManagedBuildManager.getBuildLocationURI(configuration, builder);
 			ErrorParserManager epm = new ErrorParserManager(project, workingDirectoryURI, this, errorParsers);
 
-			buildRunnerHelper.prepareStreams(epm, null, console, new SubProgressMonitor(monitor, 1 * MONITOR_SCALE));
+			buildRunnerHelper.prepareStreams(epm, null, console, new SubProgressMonitor(monitor, TICKS_STREAM_PROGRESS_MONITOR));
 			OutputStream stdout = buildRunnerHelper.getOutputStream();
 			OutputStream stderr = buildRunnerHelper.getErrorStream();
 
@@ -1201,12 +1206,12 @@ public class CommonBuilder extends ACBuilder {
 			boolean isConfigurationSupported = configuration.isSupported();
 
 			buildRunnerHelper.greeting(CLEAN_BUILD, cfgName, toolchainName, isConfigurationSupported);
-			int status = sBuilder.build(stdout, stderr,  new SubProgressMonitor(monitor, 1 * MONITOR_SCALE));
+			int status = sBuilder.build(stdout, stderr,  new SubProgressMonitor(monitor, TICKS_EXECUTE_COMMAND));
 			buildRunnerHelper.close();
 			buildRunnerHelper.goodbye();
 
 			if (status != ICommandLauncher.ILLEGAL_COMMAND) {
-				buildRunnerHelper.refreshProject(monitor);
+				buildRunnerHelper.refreshProject(new SubProgressMonitor(monitor, TICKS_REFRESH_PROJECT));
 			}
 
 			//Throw a core exception indicating that the clean command failed
@@ -1272,7 +1277,7 @@ public class CommonBuilder extends ACBuilder {
 				if (monitor == null) {
 					monitor = new NullProgressMonitor();
 				}
-				monitor.beginTask("", 2 * MONITOR_SCALE); //$NON-NLS-1$
+				monitor.beginTask("", TICKS_STREAM_PROGRESS_MONITOR + TICKS_DELETE_OUTPUTS); //$NON-NLS-1$
 
 				// try the brute force approach first
 				String status = ManagedMakeMessages.getFormattedString("ManagedMakeBuilder.message.clean.deleting.output", buildDir.getName()); //$NON-NLS-1$
@@ -1284,14 +1289,14 @@ public class CommonBuilder extends ACBuilder {
 				URI workingDirectoryURI = ManagedBuildManager.getBuildLocationURI(configuration, builder);
 				ErrorParserManager epm = new ErrorParserManager(project, workingDirectoryURI, this, errorParsers);
 
-				buildRunnerHelper.prepareStreams(epm, null, console, new SubProgressMonitor(monitor, 1 * MONITOR_SCALE));
+				buildRunnerHelper.prepareStreams(epm, null, console, new SubProgressMonitor(monitor, TICKS_STREAM_PROGRESS_MONITOR));
 
 				String cfgName = configuration.getName();
 				String toolchainName = configuration.getToolChain().getName();
 				boolean isConfigurationSupported = configuration.isSupported();
 
 				buildRunnerHelper.greeting(CLEAN_BUILD, cfgName, toolchainName, isConfigurationSupported);
-				workspace.delete(new IResource[]{buildDir}, true, new SubProgressMonitor(monitor, 1 * MONITOR_SCALE));
+				workspace.delete(new IResource[]{buildDir}, true, new SubProgressMonitor(monitor, TICKS_DELETE_OUTPUTS));
 				buildRunnerHelper.close();
 				buildRunnerHelper.goodbye();
 

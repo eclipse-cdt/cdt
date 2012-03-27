@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IConsoleParser;
 
 
@@ -155,7 +156,12 @@ public class ConsoleOutputSniffer {
 	public synchronized void closeConsoleOutputStream() throws IOException {
 		if (nOpens > 0 && --nOpens == 0) {
 			for (int i = 0; i < parsers.length; ++i) {
-				parsers[i].shutdown();
+				try {
+					parsers[i].shutdown();
+				} catch (Throwable e) {
+					// Report exception if any but let all the parsers a chance to shutdown.
+					CCorePlugin.log(e);
+				}
 			}
 		}
 	}
@@ -166,8 +172,13 @@ public class ConsoleOutputSniffer {
 	 * @param line
 	 */
 	private synchronized void processLine(String line) {
-		for (int i = 0; i < parsers.length; ++i) {
-			parsers[i].processLine(line);
+		for (IConsoleParser parser : parsers) {
+			try {
+				// Report exception if any but let all the parsers a chance to process the line.
+				parser.processLine(line);
+			} catch (Throwable e) {
+				CCorePlugin.log(e);
+			}
 		}
 	}
 

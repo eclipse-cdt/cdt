@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 *
 */
 @Deprecated
-public class StreamMonitor extends org.eclipse.cdt.internal.core.StreamMonitor {
+public class StreamMonitor extends org.eclipse.cdt.internal.core.StreamProgressMonitor {
 	public StreamMonitor(IProgressMonitor mon, OutputStream cos, int totalWork) {
 		super(mon, cos, totalWork);
 	}

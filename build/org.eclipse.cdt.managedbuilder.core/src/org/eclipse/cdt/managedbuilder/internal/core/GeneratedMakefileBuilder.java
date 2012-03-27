@@ -309,7 +309,11 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	private static final String INTERNAL_BUILDER_HEADER_NOTE = "ManagedMakeBuilder.message.internal.builder.header.note";	//$NON-NLS-1$
 	private static final String TYPE_REBUILD = "ManagedMakeBuider.type.rebuild";	//$NON-NLS-1$
 	private static final String INTERNAL_BUILDER = "ManagedMakeBuilder.message.internal.builder";	//$NON-NLS-1$
-	private static final int MONITOR_SCALE = 100;
+
+	private static final int PROGRESS_MONITOR_SCALE = 100;
+	private static final int TICKS_STREAM_PROGRESS_MONITOR = 1 * PROGRESS_MONITOR_SCALE;
+	private static final int TICKS_DELETE_MARKERS = 1 * PROGRESS_MONITOR_SCALE;
+
 	public static boolean VERBOSE = false;
 
 	// Local variables
@@ -1399,12 +1403,12 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 
 		try {
 			Map<IProject, List<IFile>> projectMap = arrangeFilesByProject(files);
-			monitor.beginTask("", projectMap.size() * MONITOR_SCALE); //$NON-NLS-1$
+			monitor.beginTask("", projectMap.size() * PROGRESS_MONITOR_SCALE); //$NON-NLS-1$
 
 			for (List<IFile> filesInProject : projectMap.values()) {
 				IProject project = filesInProject.get(0).getProject();
 				monitor.subTask(ManagedMakeMessages.getFormattedString("GeneratedMakefileBuilder.buildingProject", project.getName())); //$NON-NLS-1$
-				invokeInternalBuilderForOneProject(filesInProject, new SubProgressMonitor(monitor, 1 * MONITOR_SCALE, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+				invokeInternalBuilderForOneProject(filesInProject, new SubProgressMonitor(monitor, 1 * PROGRESS_MONITOR_SCALE, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 			}
 		} finally {
 			if (monitor.isCanceled()) {
@@ -1420,7 +1424,8 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		BuildRunnerHelper buildRunnerHelper = new BuildRunnerHelper(project);
 
 		try {
-			monitor.beginTask(ManagedMakeMessages.getFormattedString("GeneratedMakefileBuilder.buildingProject", project.getName()) + ':', files.size() * MONITOR_SCALE); //$NON-NLS-1$
+			monitor.beginTask(ManagedMakeMessages.getFormattedString("GeneratedMakefileBuilder.buildingProject", project.getName()) + ':', //$NON-NLS-1$
+					TICKS_STREAM_PROGRESS_MONITOR + files.size() * PROGRESS_MONITOR_SCALE);
 
 			// Get a build console for the project
 			console = CCorePlugin.getDefault().getConsole();
@@ -1438,7 +1443,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			String[] errorParsers = configuration.getErrorParserList();
 			ErrorParserManager epm = new ErrorParserManager(project, des.getDefaultBuildDirLocationURI(), this, errorParsers);
 
-			buildRunnerHelper.prepareStreams(epm, null, console, new SubProgressMonitor(monitor, 1 * MONITOR_SCALE));
+			buildRunnerHelper.prepareStreams(epm, null, console, new SubProgressMonitor(monitor, TICKS_STREAM_PROGRESS_MONITOR));
 			OutputStream stdout = buildRunnerHelper.getOutputStream();
 			OutputStream stderr = buildRunnerHelper.getErrorStream();
 
@@ -1462,13 +1467,13 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 							dependentSteps.add(btype.getStep());
 					}
 
-					SubProgressMonitor monitor2 = new SubProgressMonitor(monitor, 1 * MONITOR_SCALE, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK);
+					SubProgressMonitor monitor2 = new SubProgressMonitor(monitor, 1 * PROGRESS_MONITOR_SCALE, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK);
 					try {
-						monitor2.beginTask("", (1 + dependentSteps.size()) * MONITOR_SCALE); //$NON-NLS-1$
+						monitor2.beginTask("", TICKS_DELETE_MARKERS + dependentSteps.size()*PROGRESS_MONITOR_SCALE); //$NON-NLS-1$
 
 						// Remove problem markers for the file
 						monitor2.subTask(ManagedMakeMessages.getFormattedString("GeneratedMakefileBuilder.removingResourceMarkers", filePath)); //$NON-NLS-1$
-						buildRunnerHelper.removeOldMarkers(file,  new SubProgressMonitor(monitor2, 1 * MONITOR_SCALE, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+						buildRunnerHelper.removeOldMarkers(file,  new SubProgressMonitor(monitor2, TICKS_DELETE_MARKERS, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 
 						// Build dependent steps
 						for (IBuildStep step : dependentSteps) {
@@ -1478,7 +1483,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 
 							monitor2.subTask(filePath);
 							StepBuilder stepBuilder = new StepBuilder(step, null);
-							stepBuilder.build(stdout, stderr, new SubProgressMonitor(monitor2, 1 * MONITOR_SCALE, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+							stepBuilder.build(stdout, stderr, new SubProgressMonitor(monitor2, 1 * PROGRESS_MONITOR_SCALE, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 
 							monitor2.subTask(ManagedMakeMessages.getFormattedString("GeneratedMakefileBuilder.refreshingArtifacts", filePath)); //$NON-NLS-1$
 							IBuildIOType[] outputIOTypes = step.getOutputIOTypes();
@@ -1524,12 +1529,12 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 
 		try {
 			Map<IProject, List<IFile>> projectMap = arrangeFilesByProject(files);
-			monitor.beginTask("", projectMap.size() * MONITOR_SCALE); //$NON-NLS-1$
+			monitor.beginTask("", projectMap.size() * PROGRESS_MONITOR_SCALE); //$NON-NLS-1$
 
 			for (List<IFile> filesInProject : projectMap.values()) {
 				IProject project = filesInProject.get(0).getProject();
 				monitor.subTask(ManagedMakeMessages.getFormattedString("GeneratedMakefileBuilder.cleaningProject", project.getName())); //$NON-NLS-1$
-				cleanFilesForOneProject(filesInProject, new SubProgressMonitor(monitor, 1 * MONITOR_SCALE, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+				cleanFilesForOneProject(filesInProject, new SubProgressMonitor(monitor, 1 * PROGRESS_MONITOR_SCALE, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 			}
 		} finally {
 			if (monitor.isCanceled()) {
@@ -1546,7 +1551,8 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		int countDeleted = 0;
 
 		try {
-			monitor.beginTask(ManagedMakeMessages.getFormattedString("GeneratedMakefileBuilder.cleaningProject", project.getName()) + ':', files.size() * MONITOR_SCALE); //$NON-NLS-1$
+			monitor.beginTask(ManagedMakeMessages.getFormattedString("GeneratedMakefileBuilder.cleaningProject", project.getName()) + ':', //$NON-NLS-1$
+					TICKS_STREAM_PROGRESS_MONITOR + files.size() * PROGRESS_MONITOR_SCALE);
 
 			// Get a build console for the project
 			console = CCorePlugin.getDefault().getConsole();
@@ -1566,7 +1572,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 
 			String[] errorParsers = configuration.getErrorParserList();
 			ErrorParserManager epm = new ErrorParserManager(project, des.getDefaultBuildDirLocationURI(), this, errorParsers);
-			buildRunnerHelper.prepareStreams(epm, null , console, new SubProgressMonitor(monitor, 1 * MONITOR_SCALE));
+			buildRunnerHelper.prepareStreams(epm, null , console, new SubProgressMonitor(monitor, TICKS_STREAM_PROGRESS_MONITOR));
 
 			buildRunnerHelper.greeting(ManagedMakeMessages.getResourceString("CleanFilesAction.cleanSelectedFiles"), cfgName, toolchainName, isSupported); //$NON-NLS-1$
 			buildRunnerHelper.printLine(ManagedMakeMessages.getResourceString("ManagedMakeBuilder.message.internal.builder.header.note")); //$NON-NLS-1$
@@ -1587,13 +1593,13 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 								dependentSteps.add(btype.getStep());
 						}
 
-						SubProgressMonitor monitor2 = new SubProgressMonitor(monitor, 1 * MONITOR_SCALE, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK);
+						SubProgressMonitor monitor2 = new SubProgressMonitor(monitor, 1 * PROGRESS_MONITOR_SCALE, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK);
 						try {
-							monitor2.beginTask("", (1 + dependentSteps.size()) * MONITOR_SCALE); //$NON-NLS-1$
+							monitor2.beginTask("", TICKS_DELETE_MARKERS + dependentSteps.size()*PROGRESS_MONITOR_SCALE); //$NON-NLS-1$
 
 							// Remove problem markers for the file
 							monitor2.subTask(ManagedMakeMessages.getFormattedString("GeneratedMakefileBuilder.removingResourceMarkers", filePath)); //$NON-NLS-1$
-							buildRunnerHelper.removeOldMarkers(file,  new SubProgressMonitor(monitor2, 1 * MONITOR_SCALE, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+							buildRunnerHelper.removeOldMarkers(file,  new SubProgressMonitor(monitor2, TICKS_DELETE_MARKERS, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 
 							// iterate through all build steps
 							for (IBuildStep step : dependentSteps) {
@@ -1617,7 +1623,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 									}
 								}
 
-								monitor2.worked(1 * MONITOR_SCALE);
+								monitor2.worked(1 * PROGRESS_MONITOR_SCALE);
 							}
 						} finally {
 							monitor2.done();

@@ -58,7 +58,10 @@ import org.eclipse.core.runtime.jobs.Job;
  */
 public class MakeBuilder extends ACBuilder {
 	public final static String BUILDER_ID = MakeCorePlugin.getUniqueIdentifier() + ".makeBuilder"; //$NON-NLS-1$
-	private static final int MONITOR_SCALE = 100;
+	private static final int PROGRESS_MONITOR_SCALE = 100;
+	private static final int TICKS_STREAM_PROGRESS_MONITOR = 1 * PROGRESS_MONITOR_SCALE;
+	private static final int TICKS_DELETE_MARKERS = 1 * PROGRESS_MONITOR_SCALE;
+	private static final int TICKS_EXECUTE_COMMAND = 1 * PROGRESS_MONITOR_SCALE;
 
 	private BuildRunnerHelper buildRunnerHelper = null;
 
@@ -158,7 +161,8 @@ public class MakeBuilder extends ACBuilder {
 			if (monitor == null) {
 				monitor = new NullProgressMonitor();
 			}
-			monitor.beginTask(MakeMessages.getString("MakeBuilder.Invoking_Make_Builder") + project.getName(), 3 * MONITOR_SCALE); //$NON-NLS-1$
+			monitor.beginTask(MakeMessages.getString("MakeBuilder.Invoking_Make_Builder") + project.getName(), //$NON-NLS-1$
+					TICKS_STREAM_PROGRESS_MONITOR + TICKS_DELETE_MARKERS + TICKS_EXECUTE_COMMAND);
 
 			IPath buildCommand = info.getBuildCommand();
 			if (buildCommand != null) {
@@ -187,12 +191,12 @@ public class MakeBuilder extends ACBuilder {
 				parsers.add(parserSD);
 
 				buildRunnerHelper.setLaunchParameters(launcher, buildCommand, args, workingDirectoryURI, envp);
-				buildRunnerHelper.prepareStreams(epm, parsers, console, new SubProgressMonitor(monitor, 1 * MONITOR_SCALE, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+				buildRunnerHelper.prepareStreams(epm, parsers, console, new SubProgressMonitor(monitor, TICKS_STREAM_PROGRESS_MONITOR, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 
-				buildRunnerHelper.removeOldMarkers(project, new SubProgressMonitor(monitor, 1 * MONITOR_SCALE, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+				buildRunnerHelper.removeOldMarkers(project, new SubProgressMonitor(monitor, TICKS_DELETE_MARKERS, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 
 				buildRunnerHelper.greeting(kind);
-				int state = buildRunnerHelper.build(new SubProgressMonitor(monitor, 1 * MONITOR_SCALE, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+				int state = buildRunnerHelper.build(new SubProgressMonitor(monitor, TICKS_EXECUTE_COMMAND, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 				buildRunnerHelper.close();
 				buildRunnerHelper.goodbye();
 

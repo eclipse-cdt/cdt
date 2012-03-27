@@ -68,45 +68,44 @@ import org.w3c.dom.Element;
  * @since 7.2
  */
 public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSettingsOutputScanner implements ICListenerAgent {
+	// TODO - refine id after settling with the plugin
 	public static final String JOB_FAMILY_BUILTIN_SPECS_DETECTOR = "org.eclipse.cdt.make.core.scannerconfig.AbstractBuiltinSpecsDetector";
-
-	private static final int MONITOR_SCALE = 100;
-	private static final int TICKS_CLEAN_MARKERS = 1 * MONITOR_SCALE;
-	private static final int TICKS_RUN_FOR_ONE_LANGUAGE = 10 * MONITOR_SCALE;
-	private static final int TICKS_SERIALIZATION = 1 * MONITOR_SCALE;
-	private static final int TICKS_OUTPUT_PARSING = 1 * MONITOR_SCALE;
-	private static final int TICKS_REMOVE_MARKERS = 1 * MONITOR_SCALE;
-	private static final int TICKS_EXECUTE_COMMAND = 1 * MONITOR_SCALE;
-
-	private static final String NEWLINE = System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
-	private static final String PLUGIN_CDT_MAKE_UI_ID = "org.eclipse.cdt.make.ui"; //$NON-NLS-1$
-	private static final String GMAKE_ERROR_PARSER_ID = "org.eclipse.cdt.core.GmakeErrorParser"; //$NON-NLS-1$
-	private static final String ATTR_PARAMETER = "parameter"; //$NON-NLS-1$
-	private static final String ATTR_CONSOLE = "console"; //$NON-NLS-1$
 
 	protected static final String COMPILER_MACRO = "${COMMAND}"; //$NON-NLS-1$
 	protected static final String SPEC_FILE_MACRO = "${INPUTS}"; //$NON-NLS-1$
 	protected static final String SPEC_EXT_MACRO = "${EXT}"; //$NON-NLS-1$
 	protected static final String SPEC_FILE_BASE = "spec"; //$NON-NLS-1$
 
-	private SDMarkerGenerator markerGenerator = new SDMarkerGenerator();
+	private static final int MONITOR_SCALE = 100;
+	private static final int TICKS_REMOVE_MARKERS = 1 * MONITOR_SCALE;
+	private static final int TICKS_RUN_FOR_ONE_LANGUAGE = 10 * MONITOR_SCALE;
+	private static final int TICKS_SERIALIZATION = 1 * MONITOR_SCALE;
+	private static final int TICKS_OUTPUT_PARSING = 1 * MONITOR_SCALE;
+	private static final int TICKS_EXECUTE_COMMAND = 1 * MONITOR_SCALE;
 
-	private String currentCommandResolved = null;
-	protected List<ICLanguageSettingEntry> detectedSettingEntries = null;
+	private static final String CDT_MAKE_UI_PLUGIN_ID = "org.eclipse.cdt.make.ui"; //$NON-NLS-1$
+	private static final String DEFAULT_CONSOLE_ICON = "icons/obj16/inspect_system.gif"; //$NON-NLS-1$
 
-	protected boolean isExecuted = false;
-	protected int collected = 0;
-
-	private boolean isConsoleEnabled = false;
-	protected java.io.File specFile = null;
-	protected boolean preserveSpecFile = false;
+	private static final String GMAKE_ERROR_PARSER_ID = "org.eclipse.cdt.core.GmakeErrorParser"; //$NON-NLS-1$
+	private static final String ATTR_PARAMETER = "parameter"; //$NON-NLS-1$
+	private static final String ATTR_CONSOLE = "console"; //$NON-NLS-1$
+	private static final String NEWLINE = System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 
 	protected URI mappedRootURI = null;
 	protected URI buildDirURI = null;
+	protected java.io.File specFile = null;
+	protected boolean preserveSpecFile = false;
+	protected List<ICLanguageSettingEntry> detectedSettingEntries = null;
+	protected int collected = 0;
+	protected boolean isExecuted = false;
 
 	private BuildRunnerHelper buildRunnerHelper;
+	private SDMarkerGenerator markerGenerator = new SDMarkerGenerator();
+	private boolean isConsoleEnabled = false;
+	private String currentCommandResolved = null;
 
 	private class SDMarkerGenerator implements IMarkerGenerator {
+		// TODO - define own markers types after settling with the plugin
 		// Scanner discovery markers are defined in org.eclipse.cdt.managedbuilder.core plugin.xml
 		protected static final String SCANNER_DISCOVERY_PROBLEM_MARKER = "org.eclipse.cdt.managedbuilder.core.scanner.discovery.problem";
 		protected static final String ATTR_PROVIDER = "provider"; //$NON-NLS-1$
@@ -127,20 +126,20 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 			Job markerJob = new Job("Adding Scanner Discovery markers") {
 				@Override
 				protected IStatus run(IProgressMonitor monitor) {
-					// Try to find matching markers and don't put in duplicates
+					// Avoid duplicates as different languages can generate identical errors
 					try {
-						IMarker[] cur = problemMarkerInfo.file.findMarkers(SDMarkerGenerator.SCANNER_DISCOVERY_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
-						if ((cur != null) && (cur.length > 0)) {
-							for (int i = 0; i < cur.length; i++) {
-								int sev = ((Integer) cur[i].getAttribute(IMarker.SEVERITY)).intValue();
-								String mesg = (String) cur[i].getAttribute(IMarker.MESSAGE);
-								if (sev == problemMarkerInfo.severity && mesg.equals(problemMarkerInfo.description)) {
+						IMarker[] markers = problemMarkerInfo.file.findMarkers(SDMarkerGenerator.SCANNER_DISCOVERY_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
+						for (IMarker marker : markers) {
+							int sev = ((Integer) marker.getAttribute(IMarker.SEVERITY)).intValue();
+							if (sev == problemMarkerInfo.severity) {
+								String msg = (String) marker.getAttribute(IMarker.MESSAGE);
+								if (msg != null && msg.equals(problemMarkerInfo.description)) {
 									return Status.OK_STATUS;
 								}
 							}
 						}
 					} catch (CoreException e) {
-						return new Status(Status.ERROR, MakeCorePlugin.getUniqueIdentifier(), "Error removing markers.", e);
+						return new Status(Status.ERROR, MakeCorePlugin.getUniqueIdentifier(), "Error checking markers.", e); //$NON-NLS-1$
 					}
 
 					try {
@@ -155,7 +154,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 							marker.setAttribute(IMarker.LOCATION, "Project Properties, C++ Preprocessor Include.../Providers, [" + providerName + "] options");
 						}
 					} catch (CoreException e) {
-						return new Status(Status.ERROR, MakeCorePlugin.getUniqueIdentifier(), "Error adding markers.", e);
+						return new Status(Status.ERROR, MakeCorePlugin.getUniqueIdentifier(), "Error adding markers.", e); //$NON-NLS-1$
 					}
 
 					return Status.OK_STATUS;
@@ -176,7 +175,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 					}
 				}
 			} catch (CoreException e) {
-				MakeCorePlugin.log(e);
+				MakeCorePlugin.log(new Status(Status.ERROR, MakeCorePlugin.getUniqueIdentifier(), "Error deleting markers.", e)); //$NON-NLS-1$
 			}
 		}
 
@@ -201,6 +200,13 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 	}
 
 	/**
+	 * TODO
+	 * @param languageId
+	 * @return
+	 */
+	protected abstract String getCompilerCommand(String languageId);
+
+	/**
 	 * The command to run. Some macros could be specified in there:
 	 * <ul>
 	 * <b>${COMMAND}</b> - compiler command taken from the toolchain.<br>
@@ -210,7 +216,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 	 * The parameter could be taken from the extension
 	 * in {@code plugin.xml} or from property file.
 	 *
-	 * @return the command to run.
+	 * @return the command to run or empty string if command is not defined.
 	 */
 	public String getCommand() {
 		return getProperty(ATTR_PARAMETER);
@@ -234,7 +240,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 
 	protected String resolveCommand(String languageId) throws CoreException {
 		String cmd = getCommand();
-		if (cmd != null && (cmd.contains(COMPILER_MACRO) || cmd.contains(SPEC_FILE_MACRO) || cmd.contains(SPEC_EXT_MACRO))) {
+		if (cmd != null) {
 			if (cmd.contains(COMPILER_MACRO)) {
 				String compiler = getCompilerCommand(languageId);
 				if (compiler != null)
@@ -259,7 +265,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 	 */
 	@Override
 	protected String parseForResourceName(String line) {
-		// This works as if workspace-wide
+		// Returning null works as if workspace-wide
 		return null;
 	}
 
@@ -271,7 +277,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 
 	@Override
 	protected URI getMappedRootURI(IResource sourceFile, String parsedResourceName) {
-		if (mappedRootURI==null) {
+		if (mappedRootURI == null) {
 			mappedRootURI = super.getMappedRootURI(sourceFile, parsedResourceName);
 		}
 		return mappedRootURI;
@@ -305,7 +311,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 		super.startup(cfgDescription, cwdTracker);
 
 		mappedRootURI = null;
-		buildDirURI = null;
+		buildDirURI = super.getBuildDirURI(mappedRootURI);
 	}
 
 	@Override
@@ -333,7 +339,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 				IStatus status;
 				try {
 					startup(currentCfgDescription, null);
-					status = runForEachLanguage(currentCfgDescription, null, null, monitor);
+					status = runForEachLanguage(monitor);
 				} catch (CoreException e) {
 					MakeCorePlugin.log(e);
 					status = new Status(IStatus.ERROR, MakeCorePlugin.PLUGIN_ID, IStatus.ERROR, "Error running Builtin Specs Detector", e);
@@ -373,7 +379,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 	/**
 	 * TODO
 	 */
-	protected IStatus runForEachLanguage(ICConfigurationDescription cfgDescription, URI workingDirectoryURI, String[] env, IProgressMonitor monitor) {
+	protected IStatus runForEachLanguage(IProgressMonitor monitor) {
 		MultiStatus status = new MultiStatus(MakeCorePlugin.PLUGIN_ID, IStatus.OK, "Problem running CDT Scanner Discovery provider " + getId(), null);
 
 		if (monitor == null) {
@@ -385,7 +391,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 
 			List<String> languageIds = getLanguageScope();
 			if (languageIds != null) {
-				monitor.beginTask("CDT Scanner Discovery", TICKS_CLEAN_MARKERS + languageIds.size()*TICKS_RUN_FOR_ONE_LANGUAGE + TICKS_SERIALIZATION);
+				monitor.beginTask("CDT Scanner Discovery", TICKS_REMOVE_MARKERS + languageIds.size()*TICKS_RUN_FOR_ONE_LANGUAGE + TICKS_SERIALIZATION);
 
 				IResource markersResource = currentProject != null ? currentProject : ResourcesPlugin.getWorkspace().getRoot();
 
@@ -394,22 +400,22 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 				if (monitor.isCanceled())
 					throw new OperationCanceledException();
 
-				monitor.worked(TICKS_CLEAN_MARKERS);
+				monitor.worked(TICKS_REMOVE_MARKERS);
 
 				for (String languageId : languageIds) {
-					List<ICLanguageSettingEntry> oldEntries = getSettingEntries(cfgDescription, null, languageId);
+					List<ICLanguageSettingEntry> oldEntries = getSettingEntries(currentCfgDescription, null, languageId);
 					try {
 						startupForLanguage(languageId);
-						runForLanguage(languageId, currentCommandResolved, env, workingDirectoryURI, new SubProgressMonitor(monitor, TICKS_RUN_FOR_ONE_LANGUAGE));
+						runForLanguage(new SubProgressMonitor(monitor, TICKS_RUN_FOR_ONE_LANGUAGE));
 					} catch (Exception e) {
-						IStatus s = new Status(IStatus.ERROR, MakeCorePlugin.PLUGIN_ID, IStatus.ERROR, "Error running Builtin Specs Detector", e);
+						IStatus s = new Status(IStatus.ERROR, MakeCorePlugin.PLUGIN_ID, IStatus.ERROR, "Error running Builtin Specs Detector", e); //$NON-NLS-1$
 						MakeCorePlugin.log(s);
 						status.merge(s);
 					} finally {
 						shutdownForLanguage();
 					}
 					if (!isChanged) {
-						List<ICLanguageSettingEntry> newEntries = getSettingEntries(cfgDescription, null, languageId);
+						List<ICLanguageSettingEntry> newEntries = getSettingEntries(currentCfgDescription, null, languageId);
 						isChanged = newEntries != oldEntries;
 					}
 
@@ -426,16 +432,12 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 			monitor.worked(TICKS_SERIALIZATION);
 
 		} catch (OperationCanceledException e) {
-			// user chose to cancel operation, do not threaten them with error reporting
+			// user chose to cancel operation, do not threaten them with red error signs
 		} catch (Exception e) {
 			status.merge(new Status(IStatus.ERROR, MakeCorePlugin.PLUGIN_ID, IStatus.ERROR, "Error running Builtin Specs Detector", e));
 			MakeCorePlugin.log(status);
 		} finally {
 			monitor.done();
-
-			// release resources
-			shutdown();
-			currentCfgDescription = cfgDescription; // current description gets cleared in super.shutdown(), keep it
 		}
 
 		return status;
@@ -444,7 +446,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 	protected void startupForLanguage(String languageId) throws CoreException {
 		currentLanguageId = languageId;
 
-		specFile = null; // init before calling resolveCommand(), can be set there
+		specFile = null; // init *before* calling resolveCommand(), can be set there
 		currentCommandResolved = resolveCommand(currentLanguageId);
 
 		detectedSettingEntries = new ArrayList<ICLanguageSettingEntry>();
@@ -472,14 +474,14 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 		currentLanguageId = null;
 	}
 
-	private void runForLanguage(String languageId, String command, String[] envp, URI workingDirectoryURI, IProgressMonitor monitor) throws CoreException {
+	private void runForLanguage(IProgressMonitor monitor) throws CoreException {
 		buildRunnerHelper = new BuildRunnerHelper(currentProject);
 
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
 		try {
-			monitor.beginTask("Running scanner discovery: " + getName(), TICKS_REMOVE_MARKERS + TICKS_EXECUTE_COMMAND + TICKS_OUTPUT_PARSING);
+			monitor.beginTask("Running scanner discovery: " + getName(), TICKS_EXECUTE_COMMAND + TICKS_OUTPUT_PARSING);
 
 			IConsole console;
 			if (isConsoleEnabled) {
@@ -490,42 +492,43 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 			}
 			console.start(currentProject);
 
-			IPath program = new Path("");
+			ICommandLauncher launcher = new CommandLauncher();
+			launcher.setProject(currentProject);
+
+			IPath program = new Path(""); //$NON-NLS-1$
 			String[] args = new String[0];
-			String[] cmdArray = CommandLineUtil.argumentsToArray(command);
+			String[] cmdArray = CommandLineUtil.argumentsToArray(currentCommandResolved);
 			if (cmdArray != null && cmdArray.length > 0) {
 				program = new Path(cmdArray[0]);
-				if (cmdArray.length>1) {
+				if (cmdArray.length > 1) {
 					args = new String[cmdArray.length-1];
 					System.arraycopy(cmdArray, 1, args, 0, args.length);
 				}
 			}
 
-			ICommandLauncher launcher = new CommandLauncher();
-			launcher.setProject(currentProject);
+			String[] envp = BuildRunnerHelper.getEnvp(currentCfgDescription);
 
 			// Using GMAKE_ERROR_PARSER_ID as it can handle generated error messages
-			ErrorParserManager epm = new ErrorParserManager(currentProject, markerGenerator, new String[] {GMAKE_ERROR_PARSER_ID});
+			ErrorParserManager epm = new ErrorParserManager(currentProject, buildDirURI, markerGenerator, new String[] {GMAKE_ERROR_PARSER_ID});
 			ConsoleParserAdapter consoleParser = new ConsoleParserAdapter();
 			consoleParser.startup(currentCfgDescription, epm);
 			List<IConsoleParser> parsers = new ArrayList<IConsoleParser>();
 			parsers.add(consoleParser);
 
-			buildRunnerHelper.setLaunchParameters(launcher, program, args, workingDirectoryURI, envp);
+			buildRunnerHelper.setLaunchParameters(launcher, program, args, buildDirURI, envp);
 			buildRunnerHelper.prepareStreams(epm, parsers, console, new SubProgressMonitor(monitor, TICKS_OUTPUT_PARSING));
-
-			buildRunnerHelper.removeOldMarkers(currentProject, new SubProgressMonitor(monitor, TICKS_REMOVE_MARKERS, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 
 			buildRunnerHelper.greeting("Running scanner discovery: " + getName());
 
 			OutputStream outStream = buildRunnerHelper.getOutputStream();
 			OutputStream errStream = buildRunnerHelper.getErrorStream();
-			runProgramForLanguage(languageId, command, envp, workingDirectoryURI, outStream, errStream, new SubProgressMonitor(monitor, TICKS_EXECUTE_COMMAND, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+			runProgramForLanguage(currentLanguageId, currentCommandResolved, envp, buildDirURI, outStream, errStream,
+					new SubProgressMonitor(monitor, TICKS_EXECUTE_COMMAND, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+
 			buildRunnerHelper.close();
 			buildRunnerHelper.goodbye();
 
 		} catch (Exception e) {
-			// AG TODO - better message
 			Status status = new Status(IStatus.ERROR, MakeCorePlugin.PLUGIN_ID, "Internal error running scanner discovery", e);
 			MakeCorePlugin.log(new CoreException(status));
 		} finally {
@@ -548,7 +551,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 	@Override
 	protected void setSettingEntries(List<ICLanguageSettingEntry> entries) {
 		// Builtin specs detectors collect entries not per line but for the whole output
-		if (entries!=null)
+		if (entries != null)
 			detectedSettingEntries.addAll(entries);
 	}
 
@@ -563,17 +566,10 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 		ILanguage ld = LanguageManager.getInstance().getLanguage(currentLanguageId);
 		String consoleId = MakeCorePlugin.PLUGIN_ID + '.' + getId() + '.' + currentLanguageId;
 		String consoleName = getName() + ", " + ld.getName();
-		URL defaultIcon = Platform.getBundle(PLUGIN_CDT_MAKE_UI_ID).getEntry("icons/obj16/inspect_system.gif");
+		URL defaultIcon = Platform.getBundle(CDT_MAKE_UI_PLUGIN_ID).getEntry(DEFAULT_CONSOLE_ICON);
 
 		IConsole console = CCorePlugin.getDefault().getConsole(extConsoleId, consoleId, consoleName, defaultIcon);
 		return console;
-	}
-
-	protected String getCompilerCommand(String languageId) {
-		IStatus status = new Status(IStatus.ERROR, MakeCorePlugin.PLUGIN_ID, "Provider "+getId()
-				+" unable to find the compiler tool for language " + languageId);
-		MakeCorePlugin.log(new CoreException(status));
-		return null;
 	}
 
 	protected String getSpecFile(String languageId) {
@@ -622,18 +618,9 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 		}
 
 		if (ext == null) {
-			MakeCorePlugin.log(new Status(IStatus.ERROR, MakeCorePlugin.PLUGIN_ID, "Unable to find file extension for language "+languageId));
+			MakeCorePlugin.log(new Status(IStatus.ERROR, MakeCorePlugin.PLUGIN_ID, "Unable to find file extension for language " + languageId)); //$NON-NLS-1$
 		}
 		return ext;
-	}
-
-	protected void printLine(OutputStream stream, String msg) {
-		try {
-			stream.write((msg + NEWLINE).getBytes());
-			stream.flush();
-		} catch (IOException e) {
-			MakeCorePlugin.log(e);
-		}
 	}
 
 	@Override

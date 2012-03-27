@@ -27,9 +27,12 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.core.ICommandLauncher;
 import org.eclipse.cdt.core.IConsoleParser;
+import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
+import org.eclipse.cdt.core.envvar.IEnvironmentVariableManager;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.core.resources.RefreshScopeManager;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.utils.EFSExtensionManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -471,19 +474,36 @@ public class BuildRunnerHelper implements Closeable {
 	}
 
 	/**
-	 * Convert map of environment variables to array of "var=value"
+	 * Get environment variables from configuration as array of "var=value" suitable
+	 * for using as "envp" with Runtime.exec(String[] cmdarray, String[] envp, File dir)
 	 *
 	 * @param envMap - map of environment variables
-	 * @return String array of environment variables in format "var=value" suitable for using
-	 *    as "envp" with Runtime.exec(String[] cmdarray, String[] envp, File dir)
+	 * @return String array of environment variables in format "var=value"
 	 */
 	public static String[] envMapToEnvp(Map<String, String> envMap) {
-		// Convert into env strings
-		List<String> strings= new ArrayList<String>(envMap.size());
+		// Convert into envp strings
+		List<String> strings = new ArrayList<String>(envMap.size());
 		for (Entry<String, String> entry : envMap.entrySet()) {
-			StringBuffer buffer= new StringBuffer(entry.getKey());
-			buffer.append('=').append(entry.getValue());
-			strings.add(buffer.toString());
+			strings.add(entry.getKey() + '=' + entry.getValue());
+		}
+
+		return strings.toArray(new String[strings.size()]);
+	}
+
+	/**
+	 * Get environment variables from configuration as array of "var=value" suitable
+	 * for using as "envp" with Runtime.exec(String[] cmdarray, String[] envp, File dir)
+	 *
+	 * @param cfgDescription - configuration description
+	 * @return String array of environment variables in format "var=value"
+	 */
+	public static String[] getEnvp(ICConfigurationDescription cfgDescription) {
+		IEnvironmentVariableManager mngr = CCorePlugin.getDefault().getBuildEnvironmentManager();
+		IEnvironmentVariable[] vars = mngr.getVariables(cfgDescription, true);
+		// Convert into envp strings
+		List<String> strings = new ArrayList<String>(vars.length);
+		for (IEnvironmentVariable var : vars) {
+			strings.add(var.getName() + '=' + var.getValue());
 		}
 
 		return strings.toArray(new String[strings.size()]);

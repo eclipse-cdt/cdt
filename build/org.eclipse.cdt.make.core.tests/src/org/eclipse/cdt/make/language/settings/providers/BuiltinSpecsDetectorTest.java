@@ -58,20 +58,25 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 
 	private class MockBuiltinSpecsDetector extends AbstractBuiltinSpecsDetector {
 		@Override
-		protected void startupForLanguage(String languageId) throws CoreException {
-			super.startupForLanguage(languageId);
-		}
-		@Override
-		protected void shutdownForLanguage() {
-			super.shutdownForLanguage();
-		}
-		@Override
 		protected List<String> parseForOptions(String line) {
 			return null;
 		}
 		@Override
 		protected AbstractOptionParser[] getOptionParsers() {
 			return null;
+		}
+		@Override
+		protected String getCompilerCommand(String languageId) {
+			return null;
+		}
+
+		@Override
+		protected void startupForLanguage(String languageId) throws CoreException {
+			super.startupForLanguage(languageId);
+		}
+		@Override
+		protected void shutdownForLanguage() {
+			super.shutdownForLanguage();
 		}
 	}
 
@@ -84,6 +89,11 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 		protected AbstractOptionParser[] getOptionParsers() {
 			return null;
 		}
+		@Override
+		protected String getCompilerCommand(String languageId) {
+			return null;
+		}
+
 		@Override
 		protected void execute() {
 			super.execute();
@@ -100,13 +110,14 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 		};
 		@Override
 		protected int runProgramForLanguage(String languageId, String command, String[] envp, URI workingDirectoryURI, OutputStream consoleOut, OutputStream consoleErr, IProgressMonitor monitor) throws CoreException, IOException {
-			printLine(consoleOut, "#define MACRO VALUE");
+			String line = "#define MACRO VALUE";
+			consoleOut.write((line + '\n').getBytes());
+			consoleOut.flush();
 			return ICommandLauncher.OK;
 		}
 		@Override
-		protected IStatus runForEachLanguage(ICConfigurationDescription cfgDescription, URI workingDirectoryURI,
-				String[] env, IProgressMonitor monitor) {
-			return super.runForEachLanguage(cfgDescription, workingDirectoryURI, env, monitor);
+		protected IStatus runForEachLanguage(IProgressMonitor monitor) {
+			return super.runForEachLanguage(monitor);
 		}
 		@Override
 		protected List<String> parseForOptions(final String line) {
@@ -115,6 +126,10 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 		@Override
 		protected AbstractOptionParser[] getOptionParsers() {
 			return optionParsers;
+		}
+		@Override
+		protected String getCompilerCommand(String languageId) {
+			return null;
 		}
 	}
 
@@ -338,7 +353,9 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 		{
 			// test AbstractBuiltinSpecsDetector.processLine(...) flow
 			MockConsoleBuiltinSpecsDetector provider = new MockConsoleBuiltinSpecsDetector();
-			provider.runForEachLanguage(null, null, null, null);
+			provider.startup(null, null);
+			provider.runForEachLanguage(null);
+			provider.shutdown();
 		}
 	}
 
@@ -352,7 +369,10 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 		MockConsoleBuiltinSpecsDetector provider = new MockConsoleBuiltinSpecsDetector();
 		provider.setLanguageScope(new ArrayList<String>() {{add(LANGUAGE_ID);}});
 
-		provider.runForEachLanguage(cfgDescription, null, null, null);
+		provider.startup(cfgDescription, null);
+		provider.runForEachLanguage(null);
+		provider.shutdown();
+
 		assertFalse(provider.isEmpty());
 
 		List<ICLanguageSettingEntry> noentries = provider.getSettingEntries(null, null, null);
@@ -367,7 +387,10 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 		MockConsoleBuiltinSpecsDetector provider = new MockConsoleBuiltinSpecsDetector();
 		provider.setLanguageScope(new ArrayList<String>() {{add(LANGUAGE_ID);}});
 
-		provider.runForEachLanguage(null, null, null, null);
+		provider.startup(null, null);
+		provider.runForEachLanguage(null);
+		provider.shutdown();
+
 		assertFalse(provider.isEmpty());
 
 		List<ICLanguageSettingEntry> entries = provider.getSettingEntries(null, null, LANGUAGE_ID);

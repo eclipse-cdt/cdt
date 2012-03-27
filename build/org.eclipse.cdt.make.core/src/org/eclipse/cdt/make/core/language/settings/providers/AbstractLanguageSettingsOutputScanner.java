@@ -420,7 +420,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	}
 
 	private IResource findResource(String parsedResourceName) {
-		if (parsedResourceName==null)
+		if (parsedResourceName == null)
 			return null;
 
 		IResource sourceFile = null;

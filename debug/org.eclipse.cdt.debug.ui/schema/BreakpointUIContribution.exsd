@@ -2,18 +2,26 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.cdt.debug.ui" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appinfo>
+      <appInfo>
          <meta.schema plugin="org.eclipse.cdt.debug.ui" id="breakpointContribution" name="Breakpoint UI Contribution"/>
-      </appinfo>
+      </appInfo>
       <documentation>
-         This extension point provides a mechanism for contributing UI to view and edit breakpoint attributes.
+         This extension point provides a mechanism for contributing controls for viewing and editing breakpoint attributes.
+The UI controls are added to the &quot;Common&quot; page of the breakpoint properties dialog.  If a debug model ID is specified, the
+contribution is shown only when a debugger with corresponding model ID is currently active.
       </documentation>
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
       <complexType>
          <sequence minOccurs="1" maxOccurs="unbounded">
-            <element ref="breakpointLabels"/>
+            <element ref="breakpointLabels" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="breakpointEditors" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -34,15 +42,20 @@
                <documentation>
                   
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute translatable="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
    <element name="breakpointLabels">
+      <annotation>
+         <documentation>
+            A breakpoint label is appended to the top section the breakpoint properties common page.
+         </documentation>
+      </annotation>
       <complexType>
          <sequence minOccurs="0" maxOccurs="unbounded">
             <element ref="attribute"/>
@@ -50,28 +63,65 @@
          <attribute name="markerType" type="string">
             <annotation>
                <documentation>
-                  marker type for which attribute labels are applied
+                  Breakpoint&apos;s marker type for which the given attribute labels are applied.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="identifier"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="debugModelId" type="string">
             <annotation>
                <documentation>
-                  debug model Id for this extension is valid
-(debugModelId is a property of cbreakpoint)
+                  Debug model Id of the active debug context for which this extension is valid.  If not specified or if the model ID equals the CDT breakpoint&apos;s model (org.eclipse.cdt.debug.core), the option is always shown.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="identifier"/>
-               </appinfo>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="breakpointEditors">
+      <annotation>
+         <documentation>
+            A breakpoint editor is appended to the bottom section the breakpoint properties common page.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence minOccurs="0" maxOccurs="unbounded">
+            <element ref="attribute"/>
+         </sequence>
+         <attribute name="markerType" type="string">
+            <annotation>
+               <documentation>
+                  Breakpoint&apos;s marker type for which the given attribute labels are applied.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="debugModelId" type="string">
+            <annotation>
+               <documentation>
+                  Debug model Id of the active debug context for which this extension is valid.  If not specified or if the model ID equals the CDT breakpoint&apos;s model (org.eclipse.cdt.debug.core), the option is always shown.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
    <element name="attribute">
+      <annotation>
+         <documentation>
+            Each attribute entry displays or modifies a breakpoint attribute with the given ID.
+         </documentation>
+      </annotation>
       <complexType>
          <sequence minOccurs="0" maxOccurs="unbounded">
             <element ref="value"/>
@@ -88,27 +138,46 @@
                <documentation>
                   user visible label for the breakpoint attribute value
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute translatable="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="fieldEditor" type="string">
             <annotation>
                <documentation>
-                  field editor that will be shown to for given attribute.
-If not specified this attribute will not be visible in Common page.
+                  Field editor that will be shown to for given attribute.  This field editor must be on the classpath of the org.eclipse.cdt.debug.ui plugin.  For a custom field editor use the newer fieldEditorFactory attribute.  If this parameter is not specified, the org.eclipse.cdt.debug.ui.preferences.ReadOnlyFieldEditor field editor will be used by default.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.jface.preference.FieldEditor:"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
-         <attribute name="type" type="string" use="default" value="string">
+         <attribute name="type" use="default" value="string">
             <annotation>
                <documentation>
-                  Type of the attribute.  Value should be one of "boolean", "string", "integer", "float".
+                  Type of the attribute.  Value should be one of &quot;boolean&quot;, &quot;string&quot;, &quot;integer&quot;, &quot;float&quot;.
                </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="string">
+                  </enumeration>
+                  <enumeration value="integer">
+                  </enumeration>
+                  <enumeration value="float">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+         <attribute name="fieldEditorFactory" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.cdt.debug.ui.breakpoints.IFieldEditorFactory"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -117,8 +186,7 @@ If not specified this attribute will not be visible in Common page.
    <element name="value">
       <annotation>
          <documentation>
-            Properties of value for parent attribute.
-If Value contains child attributes it means that these property only enabled when value of parent attribute equal to current element value
+            Properties of value for parent attribute.  If a value elemnt contains child attribute elements it means that these property only enabled when value of parent attribute equal to current element value.
          </documentation>
       </annotation>
       <complexType>
@@ -137,27 +205,27 @@ If Value contains child attributes it means that these property only enabled whe
                <documentation>
                   User visible label for the breakpoint attribute value
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute translatable="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="since"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          CDT 5.0
       </documentation>
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="examples"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          &lt;pre&gt;
 &lt;extension id=&quot;com.xyz.coolMarkerLabels&quot; point=&quot;org.eclipse.cdt.debug.ui.breakpointContribution&quot;&gt;

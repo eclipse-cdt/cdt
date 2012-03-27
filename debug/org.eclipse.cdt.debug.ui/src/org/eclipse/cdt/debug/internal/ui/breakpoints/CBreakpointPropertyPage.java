@@ -34,6 +34,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.model.IDebugModelProvider;
 import org.eclipse.debug.core.model.ILineBreakpoint;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.contexts.IDebugContextProvider;
@@ -462,11 +463,12 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 	protected void createFieldEditors() {
 		ICBreakpoint breakpoint = getBreakpoint();
 		createMainLabel(breakpoint);
-		createContributedFieldEditors(breakpoint);
+		createContributedFieldEditors(breakpoint, ICBreakpointsUIContribution.BREAKPOINT_LABELS);
 		createTypeSpecificLabelFieldEditors( breakpoint );
 		createEnabledField( getFieldEditorParent() );
 		createConditionEditor( getFieldEditorParent() );
 		createIgnoreCountEditor( getFieldEditorParent() );
+        createContributedFieldEditors(breakpoint, ICBreakpointsUIContribution.BREAKPOINT_EDITORS);
 	}
 
 	private void createMainLabel(ICBreakpoint breakpoint) {
@@ -760,26 +762,34 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 
 	/**
 	 * Creates field editors contributed using breakpointUIContribution extension point
-	 * @param breakpoint
 	 */
-	private void createContributedFieldEditors(ICBreakpoint breakpoint) {
+	private void createContributedFieldEditors(ICBreakpoint breakpoint, String conMainElement) {
 		Composite parent = getFieldEditorParent();
+		String[] debugModelIds = CBreakpointUIContributionFactory.DEBUG_MODEL_IDS_DEFAULT;
+		IDebugModelProvider debugModelProvider = (IDebugModelProvider)DebugPlugin.getAdapter(
+		    getDebugContext(), IDebugModelProvider.class);
+		if (debugModelProvider != null) {
+		    debugModelIds = debugModelProvider.getModelIdentifiers();
+		}
+		
 		try {
 		    ICBreakpointsUIContribution[] cons;
 		    CBreakpointUIContributionFactory factory = CBreakpointUIContributionFactory.getInstance();
 		    IPreferenceStore prefStore = getPreferenceStore();
 		    if (prefStore instanceof CBreakpointPreferenceStore) {
 		        cons = factory.getBreakpointUIContributions(
-		            breakpoint, ((CBreakpointPreferenceStore) prefStore).getAttributes());
+		            debugModelIds, breakpoint, ((CBreakpointPreferenceStore) prefStore).getAttributes());
 		    } else {
                 cons = factory.getBreakpointUIContributions(breakpoint);
 		    }
 		    
 			for (ICBreakpointsUIContribution con : cons) {
-				FieldEditor fieldEditor = con.getFieldEditor(con.getId(), con.getLabel()+":", parent); //$NON-NLS-1$
-				if (fieldEditor != null) {
-					addField(fieldEditor);
-				}
+			    if ( conMainElement.equals(con.getMainElement()) ) {
+    				FieldEditor fieldEditor = con.getFieldEditor(con.getId(), con.getLabel() + ":", parent); //$NON-NLS-1$
+    				if (fieldEditor != null) {
+    					addField(fieldEditor);
+    				}
+			    }
 			}
 		} catch (CoreException ce) {
 			CDebugUIPlugin.log(ce);

@@ -16,7 +16,8 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui.ide,
  org.eclipse.cdt.examples.dsf.pda,
  org.eclipse.cdt.dsf,
- org.eclipse.cdt.dsf.ui
+ org.eclipse.cdt.dsf.ui,
+ org.eclipse.cdt.debug.ui;bundle-version="7.2.0"
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.cdt.examples.dsf.pda.ui,
  org.eclipse.cdt.examples.dsf.pda.ui.breakpoints,

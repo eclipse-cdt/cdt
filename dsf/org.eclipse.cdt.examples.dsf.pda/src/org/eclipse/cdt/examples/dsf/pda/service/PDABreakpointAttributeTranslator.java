@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
+import org.eclipse.cdt.debug.core.model.ICWatchpoint;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.debug.service.BreakpointsMediator;
 import org.eclipse.cdt.dsf.debug.service.BreakpointsMediator2;
@@ -59,6 +60,11 @@ public class PDABreakpointAttributeTranslator implements IBreakpointAttributeTra
         PDAWatchpoint.MODIFICATION
     };
 
+    private static final String[] fgCDTWatchpointAttributes = {
+        IBreakpoint.ENABLED,
+        PDAWatchpoint.FUNCTION_NAME,
+    };
+
     // PDA breakpoints translator doesn't keep any state and it doesn't 
     // need to initialize or clean up.
     public void initialize(BreakpointsMediator2 mediator) {
@@ -71,8 +77,10 @@ public class PDABreakpointAttributeTranslator implements IBreakpointAttributeTra
     private List<Map<String, Object>> getBreakpointAttributes(IBreakpoint bp, boolean bpManagerEnabled) 
         throws CoreException 
     {
-        if (bp instanceof ICLineBreakpoint) {
+        if (bp instanceof ICLineBreakpoint) { 
             return getCBreakpointAttributes((ICLineBreakpoint)bp, bpManagerEnabled);
+        } else if (bp instanceof ICWatchpoint) {
+            return getCWatchpointAttributes((ICWatchpoint)bp, bpManagerEnabled);
         } else {
             return getPDABreakpointAttributes(bp, bpManagerEnabled);
         }
@@ -112,7 +120,45 @@ public class PDABreakpointAttributeTranslator implements IBreakpointAttributeTra
         retVal.add(attrs);
         return retVal;        
     }
-    
+
+    private List<Map<String, Object>> getCWatchpointAttributes(ICWatchpoint bp, boolean bpManagerEnabled) 
+        throws CoreException 
+    {
+        Map<String, Object> attrs = new HashMap<String, Object>(); 
+
+        // Check that the marker exists and retrieve its attributes.  
+        // Due to accepted race conditions, the breakpiont marker may become null 
+        // while this method is being invoked.  In this case throw an exception
+        // and let the caller handle it.
+        IMarker marker = bp.getMarker();
+        if (marker == null || !marker.exists()) {
+            throw new DebugException(new Status(IStatus.ERROR, PDAPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, "Breakpoint marker does not exist", null)); 
+        }
+        // Suppress cast warning: platform is still on Java 1.3
+        Map<String, Object> platformBpAttrs = marker.getAttributes();
+
+        // Copy breakpoint attributes.
+        attrs.put(PDABreakpoints.ATTR_BREAKPOINT_TYPE, PDABreakpoints.PDA_WATCHPOINT);
+        attrs.put(PDABreakpoints.ATTR_BREAKPOINT_TYPE, PDABreakpoints.PDA_WATCHPOINT);
+        attrs.put(PDAWatchpoint.VAR_NAME, platformBpAttrs.get(ICWatchpoint.EXPRESSION));
+        attrs.put(PDAWatchpoint.ACCESS, platformBpAttrs.get(ICWatchpoint.READ));
+        attrs.put(PDAWatchpoint.MODIFICATION, platformBpAttrs.get(ICWatchpoint.WRITE));
+
+        copyAttributes(platformBpAttrs, attrs, fgCDTWatchpointAttributes);
+
+        // If the breakpoint manager is disabled, override the enabled attribute.
+        if (!bpManagerEnabled) {
+            attrs.put(IBreakpoint.ENABLED, false);
+        }
+
+        // The breakpoint mediator allows for multiple target-side breakpoints 
+        // to be created for each IDE breakpoint.  Although in case of PDA this 
+        // feature is never used, we still have to return a list of attributes.
+        List<Map<String, Object>> retVal = new ArrayList<Map<String, Object>>(1);
+        retVal.add(attrs);
+        return retVal;        
+    }
+
     private List<Map<String, Object>> getPDABreakpointAttributes(IBreakpoint bp, boolean bpManagerEnabled) 
         throws CoreException 
     {
@@ -178,7 +224,7 @@ public class PDABreakpointAttributeTranslator implements IBreakpointAttributeTra
 
     public boolean supportsBreakpoint(IBreakpoint bp) {
         return bp.getModelIdentifier().equals(PDAPlugin.ID_PDA_DEBUG_MODEL) ||
-            bp instanceof ICLineBreakpoint;
+            bp instanceof ICLineBreakpoint || bp instanceof ICWatchpoint;
     }
 
     public void updateBreakpointsStatus(

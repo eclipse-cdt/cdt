@@ -19,13 +19,33 @@ import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.swt.widgets.Composite;
 
 
+/**
+ * Interface representing a contributed UI element for breakpoint properties 
+ * dialogs.
+ * 
+ * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
+ */
 public interface ICBreakpointsUIContribution {
+
+    /**
+     * Main element name of breakpoint labels extension element.
+     * @since 7.2
+     */
+    public static final String BREAKPOINT_LABELS = "breakpointLabels"; //$NON-NLS-1$
+    
+    /**
+     * Main element name of breakpoint editors extension element.
+     * @since 7.2
+     */
+    public static final String BREAKPOINT_EDITORS = "breakpointEditors"; //$NON-NLS-1$
 
 	/**
 	 * Attribute id
 	 * @return
 	 */
 	public String getId();
+	
 	/**
 	 * Extenralizable label for this attribute id
 	 * @return
@@ -40,6 +60,14 @@ public interface ICBreakpointsUIContribution {
 	 * @return ready to use FieldEditor
 	 */
 	public FieldEditor getFieldEditor(String name, String labelText, Composite parent);
+	
+	/**
+	 * Returns the element name under which this attribute was added.  The value should either be
+	 * "breakpointLabels" or "breakpointEditors".
+	 * @return Main element name.
+	 * @since 7.2
+	 */
+	public String getMainElement();
 	
 	/**
 	 * Get raw field editor class name

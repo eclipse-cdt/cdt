@@ -35,8 +35,8 @@ public interface ICBreakpoint extends IBreakpoint {
     /**
      * This debug model identifier can be returned by a debug implementation 
      * to indicate that a given debugger integration is using C Breakpoints.
-     * This model ID will allow breakpoint actions to configure their default
-     * selection. 
+     * This model ID will allow toggle breakpoint actions to configure their 
+     * default selection. 
      * 
      * @since 7.0
      */

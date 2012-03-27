@@ -110,5 +110,18 @@
             class="org.eclipse.cdt.examples.dsf.pda.ui.viewmodel.VariablePersistableFactory"
             id="org.eclipse.cdt.examples.dsf.pda.ui.variablePersitableFactory">
       </factory>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.debug.ui.breakpointContribution">
+      <breakpointEditors
+            debugModelId="org.eclipse.cdt.examples.dsf.pda.debugModel"
+            markerType="org.eclipse.cdt.debug.core.cWatchpointMarker">
+         <attribute
+               fieldEditorFactory="org.eclipse.cdt.examples.dsf.pda.ui.breakpoints.PDAWatchpointFunctionFieldEditorFactory"
+               label="Function"
+               name="FUNCTION_NAME"
+               type="string">
+         </attribute>
+      </breakpointEditors>
    </extension> -->
 </plugin>

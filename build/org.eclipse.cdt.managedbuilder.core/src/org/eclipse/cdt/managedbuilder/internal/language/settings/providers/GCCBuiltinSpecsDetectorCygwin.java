@@ -14,12 +14,11 @@ package org.eclipse.cdt.managedbuilder.internal.language.settings.providers;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.core.resources.IResource;
 
 /**
  * Class to detect built-in compiler settings.
- * The paths are converted to cygwin "filesystem" representation. Then 
+ * The paths are converted to cygwin "filesystem" representation. Then
  *
  */
 public class GCCBuiltinSpecsDetectorCygwin extends GCCBuiltinSpecsDetector {
@@ -32,19 +31,6 @@ public class GCCBuiltinSpecsDetectorCygwin extends GCCBuiltinSpecsDetector {
 			throw new IllegalStateException(e);
 		}
 	}
-	
-	@SuppressWarnings("nls")
-	private static final AbstractOptionParser[] optionParsers = {
-			new IncludePathOptionParser("#include \"(\\S.*)\"", "$1", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY | ICSettingEntry.LOCAL),
-			new IncludePathOptionParser("#include <(\\S.*)>", "$1", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY),
-			new MacroOptionParser("#define (\\S*\\(.*?\\)) *(.*)", "$1", "$2", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY),
-			new MacroOptionParser("#define (\\S*) *(.*)", "$1", "$2", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY),
-	};
-
-	@Override
-	protected AbstractOptionParser[] getOptionParsers() {
-		return optionParsers;
-	}
 
 	@Override
 	protected URI getMappedRootURI(IResource sourceFile, String parsedResourceName) {
@@ -56,7 +42,7 @@ public class GCCBuiltinSpecsDetectorCygwin extends GCCBuiltinSpecsDetector {
 		}
 		return mappedRootURI;
 	}
-	
+
 	@Override
 	protected URI getBuildDirURI(URI mappedRootURI) {
 		if (buildDirURI==null) {

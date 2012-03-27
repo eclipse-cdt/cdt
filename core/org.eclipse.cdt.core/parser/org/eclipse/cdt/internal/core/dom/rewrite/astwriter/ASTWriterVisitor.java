@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.astwriter;
 
-import java.util.List;
-
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTComment;
@@ -35,6 +33,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTLiteralNode;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
+
+import java.util.List;
 
 /**
  * Visits all nodes, prints leading comments and handles macro expansions. The

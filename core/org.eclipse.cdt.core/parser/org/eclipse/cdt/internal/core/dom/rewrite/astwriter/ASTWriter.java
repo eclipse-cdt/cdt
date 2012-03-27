@@ -12,8 +12,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.astwriter;
 
-import java.util.List;
-
 import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -31,6 +29,8 @@ import org.eclipse.cdt.internal.core.dom.rewrite.ASTModificationStore;
 import org.eclipse.cdt.internal.core.dom.rewrite.changegenerator.ChangeGeneratorWriterVisitor;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.ASTCommenter;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
+
+import java.util.List;
 
 /**
  * ASTWriter main class. Generates source code from <code>IASTNode</code>.
@@ -82,7 +82,7 @@ public class ASTWriter {
 	/**
 	 * Returns <code>true</code> if the node should be separated by a blank line from the node
 	 * before it.
-	 * 
+	 *
 	 * @param node The node.
 	 * @return <code>true</code> if the node should be separated by a blank line from the node
 	 * 	   before it.
@@ -99,7 +99,7 @@ public class ASTWriter {
 	/**
 	 * Returns <code>true</code> if the node should be separated by a blank line from the node
 	 * after it.
-	 * 
+	 *
 	 * @param node The node.
 	 * @return <code>true</code> if the node should be separated by a blank line from the node
 	 *     after it.
@@ -126,7 +126,7 @@ public class ASTWriter {
 	/**
 	 * Returns <code>true</code> if there should be no blank line after this node even if a blank
 	 * line is normally required before the subsequent node.
-	 * 
+	 *
 	 * @param node The node.
 	 * @return <code>true</code> if there should be no blank line after this node.
 	 */
@@ -136,7 +136,7 @@ public class ASTWriter {
 
 	/**
 	 * Returns <code>true</code> if the two given nodes should be separated by a blank line.
-	 * 
+	 *
 	 * @param node1 The first node.
 	 * @param node2 The second node.
 	 * @return <code>true</code> if the blank line between the nodes is needed.
@@ -173,7 +173,7 @@ public class ASTWriter {
 		if (isFunctionDeclaration(node1) != isFunctionDeclaration(node2)) {
 			return true;
 		}
-		if (requiresTrailingBlankLine(node1)) {
+		if (node2 != null && requiresTrailingBlankLine(node1)) {
 			return true;
 		}
 

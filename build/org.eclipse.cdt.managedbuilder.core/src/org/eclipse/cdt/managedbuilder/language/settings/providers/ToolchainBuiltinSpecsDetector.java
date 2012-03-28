@@ -30,11 +30,19 @@ import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
  */
 public abstract class ToolchainBuiltinSpecsDetector extends AbstractBuiltinSpecsDetector {
 	private Map<String, ITool> toolMap = new HashMap<String, ITool>();
+
 	/**
-	 * TODO
+	 * Concrete compiler specs detectors need to supply Toolchain ID.
+	 *
+	 * Tool-chain id must be supplied for global providers where we don't
+	 * have configuration description to figure that out programmatically.
 	 */
 	protected abstract String getToolchainId();
 
+	/**
+	 * Finds a tool handling given language in the tool-chain.
+	 * This returns the first tool found.
+	 */
 	private ITool getTool(String languageId) {
 		ITool langTool = toolMap.get(languageId);
 		if (langTool != null) {
@@ -42,33 +50,40 @@ public abstract class ToolchainBuiltinSpecsDetector extends AbstractBuiltinSpecs
 		}
 
 		String toolchainId = getToolchainId();
-		IToolChain toolchain = ManagedBuildManager.getExtensionToolChain(toolchainId);
-		if (toolchain != null) {
-			ITool[] tools = toolchain.getTools();
-			for (ITool tool : tools) {
-				IInputType[] inputTypes = tool.getInputTypes();
-				for (IInputType inType : inputTypes) {
-					String lang = inType.getLanguageId(tool);
-					if (languageId.equals(lang)) {
-						toolMap.put(languageId, tool);
-						return tool;
-					}
-				}
+		for (IToolChain toolchain = ManagedBuildManager.getExtensionToolChain(toolchainId);toolchain != null;toolchain = toolchain.getSuperClass()) {
+			ITool tool = getTool(languageId, toolchain);
+			if (tool != null) {
+				return tool;
 			}
 		}
 		ManagedBuilderCorePlugin.error("Unable to find tool in toolchain="+toolchainId+" for language="+languageId);
 		return null;
 	}
 
+	private ITool getTool(String languageId, IToolChain toolchain) {
+		ITool[] tools = toolchain.getTools();
+		for (ITool tool : tools) {
+			IInputType[] inputTypes = tool.getInputTypes();
+			for (IInputType inType : inputTypes) {
+				String lang = inType.getLanguageId(tool);
+				if (languageId.equals(lang)) {
+					toolMap.put(languageId, tool);
+					return tool;
+				}
+			}
+		}
+		return null;
+	}
+
 	@Override
 	protected String getCompilerCommand(String languageId) {
 		ITool tool = getTool(languageId);
-		String compiler = tool.getToolCommand();
-		if (compiler.length() == 0) {
+		String compilerCommand = tool.getToolCommand();
+		if (compilerCommand.isEmpty()) {
 			String msg = "Unable to find compiler command in toolchain="+getToolchainId();
 			ManagedBuilderCorePlugin.error(msg);
 		}
-		return compiler;
+		return compilerCommand;
 	}
 
 	@Override
@@ -79,7 +94,7 @@ public abstract class ToolchainBuiltinSpecsDetector extends AbstractBuiltinSpecs
 		if (srcFileExtensions != null && srcFileExtensions.length > 0) {
 			ext = srcFileExtensions[0];
 		}
-		if (ext == null || ext.length() == 0) {
+		if (ext == null || ext.isEmpty()) {
 			ManagedBuilderCorePlugin.error("Unable to find file extension for language "+languageId);
 		}
 		return ext;

@@ -50,8 +50,10 @@ public class GCCBuiltinSpecsDetector extends ToolchainBuiltinSpecsDetector imple
 		return optionParsers;
 	}
 
-	private List<String> makeList(final String line) {
-		return new ArrayList<String>() {{ add(line); }};
+	private List<String> makeList(String line) {
+		List<String> list = new ArrayList<String>();
+		list.add(line);
+		return list;
 	}
 
 	@Override

@@ -24,14 +24,11 @@ import org.eclipse.cdt.managedbuilder.language.settings.providers.ToolchainBuilt
 
 /**
  * Language settings provider to detect built-in compiler settings for IBM XLC compiler.
- * Note that currently this class is hardwired to GCC toolchain
- * {@code cdt.managedbuild.toolchain.gnu.base}.
+ * Note that currently this class is hardwired to GCC toolchain {@code cdt.managedbuild.toolchain.gnu.base}.
  */
 public class XlcBuiltinSpecsDetector extends ToolchainBuiltinSpecsDetector implements ILanguageSettingsEditableProvider {
 	// must match the toolchain definition in org.eclipse.cdt.managedbuilder.core.buildDefinitions extension point
-	// FIXME - ill defined XLC toolchain
-//	private static final String XLC_TOOLCHAIN_ID = "cdt.managedbuild.toolchain.xlc.exe.debug";  //$NON-NLS-1$
-	private static final String GCC_TOOLCHAIN_ID = "cdt.managedbuild.toolchain.gnu.base";  //$NON-NLS-1$
+	private static final String XLC_TOOLCHAIN_ID = "cdt.managedbuild.toolchain.xlc.exe.debug";  //$NON-NLS-1$
 
 	private static final Pattern OPTIONS_PATTERN = Pattern.compile("-[^\\s\"']*(\\s*((\".*?\")|('.*?')|([^-\\s][^\\s]+)))?"); //$NON-NLS-1$
 	private static final int OPTION_GROUP = 0;
@@ -58,8 +55,7 @@ public class XlcBuiltinSpecsDetector extends ToolchainBuiltinSpecsDetector imple
 
 	@Override
 	protected String getToolchainId() {
-//		return XLC_TOOLCHAIN_ID;
-		return GCC_TOOLCHAIN_ID;
+		return XLC_TOOLCHAIN_ID;
 	}
 
 	@Override
@@ -80,7 +76,6 @@ public class XlcBuiltinSpecsDetector extends ToolchainBuiltinSpecsDetector imple
 		return options;
 	}
 
-
 	@Override
 	public XlcBuiltinSpecsDetector cloneShallow() throws CloneNotSupportedException {
 		return (XlcBuiltinSpecsDetector) super.cloneShallow();
@@ -90,6 +85,5 @@ public class XlcBuiltinSpecsDetector extends ToolchainBuiltinSpecsDetector imple
 	public XlcBuiltinSpecsDetector clone() throws CloneNotSupportedException {
 		return (XlcBuiltinSpecsDetector) super.clone();
 	}
-
 
 }

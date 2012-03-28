@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 Andrew Gvozdev and others.
+ * Copyright (c) 2009, 2012 Andrew Gvozdev and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,7 @@ import org.eclipse.core.resources.IResource;
 
 /**
  * Class to detect built-in compiler settings.
- * The paths are converted to cygwin "filesystem" representation. Then
+ * The paths are converted to cygwin "filesystem" representation.
  *
  */
 public class GCCBuiltinSpecsDetectorCygwin extends GCCBuiltinSpecsDetector {
@@ -34,9 +34,9 @@ public class GCCBuiltinSpecsDetectorCygwin extends GCCBuiltinSpecsDetector {
 
 	@Override
 	protected URI getMappedRootURI(IResource sourceFile, String parsedResourceName) {
-		if (mappedRootURI==null) {
+		if (mappedRootURI == null) {
 			mappedRootURI = super.getMappedRootURI(sourceFile, parsedResourceName);
-			if (mappedRootURI==null) {
+			if (mappedRootURI == null) {
 				mappedRootURI = CYGWIN_ROOT;
 			}
 		}
@@ -45,9 +45,9 @@ public class GCCBuiltinSpecsDetectorCygwin extends GCCBuiltinSpecsDetector {
 
 	@Override
 	protected URI getBuildDirURI(URI mappedRootURI) {
-		if (buildDirURI==null) {
+		if (buildDirURI == null) {
 			buildDirURI = super.getBuildDirURI(mappedRootURI);
-			if (buildDirURI==null) {
+			if (buildDirURI == null) {
 				buildDirURI = CYGWIN_ROOT;
 			}
 		}

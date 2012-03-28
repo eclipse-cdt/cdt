@@ -16,14 +16,13 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IErrorParser2;
 import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.core.errorparsers.RegexErrorParser;
 import org.eclipse.cdt.core.errorparsers.RegexErrorPattern;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.internal.core.ConsoleOutputSniffer;
+import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -35,9 +34,6 @@ import org.eclipse.core.runtime.jobs.Job;
 /**
  * Abstract class for providers parsing compiler option from build command when it
  * is present in build output.
- *
- * Note: IErrorParser interface is used here to work around {@link ConsoleOutputSniffer} having
- * no access from CDT core to build packages. TODO - elaborate?
  *
  * @since 7.2
  */
@@ -169,7 +165,7 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 					if (settingsFolder.isAccessible())
 						rule = currentProject.getFile(".settings/language.settings.xml");
 				} catch (CoreException e) {
-					CCorePlugin.log(e);
+					MakeCorePlugin.log(e);
 				}
 			}
 		}

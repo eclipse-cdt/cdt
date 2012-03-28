@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Rational Software - Initial API and implementation 
+ *     IBM Rational Software - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
@@ -75,11 +75,6 @@ public class CParameter extends PlatformObject implements IParameter {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
-	 */
 	@Override
 	public String getName() {
 		IASTName name = getPrimaryDeclaration();
@@ -100,6 +95,9 @@ public class CParameter extends PlatformObject implements IParameter {
 	public IScope getScope() {
 		// IASTParameterDeclaration or IASTSimpleDeclaration
 		for (IASTName declaration : declarations) {
+			if (declaration == null)
+				break; // Skip nulls at the end of the declarations array
+
 			IASTNode parent = declaration.getParent();
 			if (parent instanceof ICASTKnRFunctionDeclarator) {
 				parent = parent.getParent();
@@ -120,7 +118,7 @@ public class CParameter extends PlatformObject implements IParameter {
 	}
 
 	/**
-	 * @param name
+	 * @param name the name from a parameter declaration
 	 */
 	public void addDeclaration(IASTName name) {
 		if (name != null && name.isActive())

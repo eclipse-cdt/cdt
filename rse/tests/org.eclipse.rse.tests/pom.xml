@@ -26,7 +26,8 @@
                     <product>org.eclipse.sdk.ide</product>
 					<testFailureIgnore>true</testFailureIgnore>
 					<failIfNoTests>false</failIfNoTests>
-					<testClassesDirectory>${project.build.directory}/rsetests.jar-classes</testClassesDirectory>
+<!--					<testClassesDirectory>${project.build.directory}/rsetests.jar-classes</testClassesDirectory>
+-->
 				</configuration>
 			</plugin>
 		</plugins>

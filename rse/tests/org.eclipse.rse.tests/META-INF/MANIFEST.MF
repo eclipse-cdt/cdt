@@ -53,4 +53,4 @@ Export-Package: org.eclipse.rse.tests,
  org.eclipse.rse.tests.ui.connectionwizard,
  org.eclipse.rse.tests.ui.mnemonics,
  org.eclipse.rse.tests.ui.preferences
-Bundle-ClassPath: rsetests.jar
+Bundle-ClassPath: . 

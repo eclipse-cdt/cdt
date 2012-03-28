@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 QNX Software Systems and others.
+ * Copyright (c) 2004, 2012 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -70,6 +70,7 @@ import org.eclipse.cdt.internal.ui.preferences.CodeTemplatePreferencePage;
 import org.eclipse.cdt.internal.ui.viewsupport.IViewPartInputProvider;
 import org.eclipse.cdt.internal.ui.wizards.NewElementWizardPage;
 import org.eclipse.cdt.internal.ui.wizards.SourceFolderSelectionDialog;
+import org.eclipse.cdt.internal.ui.wizards.classwizard.NewClassWizardUtil;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.ComboDialogField;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
@@ -82,22 +83,22 @@ public abstract class AbstractFileCreationWizardPage extends NewElementWizardPag
 
 	private static final int MAX_FIELD_CHARS = 50;
 	private static final String NO_TEMPLATE = ""; //$NON-NLS-1$
-	
-	private IWorkspaceRoot fWorkspaceRoot;
+
+	private final IWorkspaceRoot fWorkspaceRoot;
 
 	// field IDs
 	private static final int SOURCE_FOLDER_ID = 1;
 	protected static final int NEW_FILE_ID = 2;
 	private static final int ALL_FIELDS = SOURCE_FOLDER_ID | NEW_FILE_ID;
 	int fLastFocusedField = 0;
-	private StringButtonDialogField fSourceFolderDialogField;
+	private final StringButtonDialogField fSourceFolderDialogField;
 	private IStatus fSourceFolderStatus;
 	private IStatus fNewFileStatus;
 	private final IStatus STATUS_OK = new StatusInfo();
-	
+
 	/**
      * This flag isFirstTime is used to keep a note
-     * that the file creation wizard has just been 
+     * that the file creation wizard has just been
      * created.
      */
     private boolean isFirstTime = true;
@@ -105,19 +106,19 @@ public abstract class AbstractFileCreationWizardPage extends NewElementWizardPag
 	private Template[] fTemplates;
 
 	private ComboDialogField fTemplateDialogField;
-	
+
 	public AbstractFileCreationWizardPage(String name) {
 		super(name);
 
-		setDescription(NewFileWizardMessages.AbstractFileCreationWizardPage_description); 
-		
+		setDescription(NewFileWizardMessages.AbstractFileCreationWizardPage_description);
+
 		fWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
-		
+
 		SourceFolderFieldAdapter sourceFolderAdapter = new SourceFolderFieldAdapter();
 		fSourceFolderDialogField = new StringButtonDialogField(sourceFolderAdapter);
 		fSourceFolderDialogField.setDialogFieldListener(sourceFolderAdapter);
-		fSourceFolderDialogField.setLabelText(NewFileWizardMessages.AbstractFileCreationWizardPage_sourceFolder_label); 
-		fSourceFolderDialogField.setButtonLabel(NewFileWizardMessages.AbstractFileCreationWizardPage_sourceFolder_button); 
+		fSourceFolderDialogField.setLabelText(NewFileWizardMessages.AbstractFileCreationWizardPage_sourceFolder_label);
+		fSourceFolderDialogField.setButtonLabel(NewFileWizardMessages.AbstractFileCreationWizardPage_sourceFolder_button);
 
 		fTemplates= getApplicableTemplates();
 		if (fTemplates != null && fTemplates.length > 0) {
@@ -129,24 +130,24 @@ public abstract class AbstractFileCreationWizardPage extends NewElementWizardPag
 		fNewFileStatus = STATUS_OK;
 		fLastFocusedField = 0;
 	}
-	
+
 	// -------- UI Creation ---------
 
 	@Override
 	public void createControl(Composite parent) {
         initializeDialogUnits(parent);
-        
+
         Composite composite = new Composite(parent, SWT.NONE);
         int nColumns = 3;
-        
+
         GridLayout layout = new GridLayout();
         layout.numColumns = nColumns;
         composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		composite.setFont(parent.getFont());
-        
+
         createSourceFolderControls(composite, nColumns);
-        
+
         createFileControls(composite, nColumns - 1);
         // Placeholder for the right column.
         (new Composite(composite, SWT.NO_FOCUS)).setLayoutData(new GridData(1, 1));
@@ -159,15 +160,15 @@ public abstract class AbstractFileCreationWizardPage extends NewElementWizardPag
 		setMessage(null);
 		setControl(composite);
     }
-	
+
 	/**
 	 * Creates a separator line. Expects a <code>GridLayout</code> with at least 1 column.
-	 * 
+	 *
 	 * @param composite the parent composite
 	 * @param nColumns number of columns to span
 	 */
 	protected void createSeparator(Composite composite, int nColumns) {
-		(new Separator(SWT.SEPARATOR | SWT.HORIZONTAL)).doFillIntoGrid(composite, nColumns, convertHeightInCharsToPixels(1));		
+		(new Separator(SWT.SEPARATOR | SWT.HORIZONTAL)).doFillIntoGrid(composite, nColumns, convertHeightInCharsToPixels(1));
 	}
 
 	/**
@@ -175,7 +176,7 @@ public abstract class AbstractFileCreationWizardPage extends NewElementWizardPag
 	 * the source folder location. The method expects that the parent composite
 	 * uses a <code>GridLayout</code> as its layout manager and that the
 	 * grid layout has at least 3 columns.
-	 * 
+	 *
 	 * @param parent the parent composite
 	 * @param nColumns the number of columns to span. This number must be
 	 *  greater or equal three
@@ -186,23 +187,23 @@ public abstract class AbstractFileCreationWizardPage extends NewElementWizardPag
 		LayoutUtil.setWidthHint(textControl, getMaxFieldWidth());
 		textControl.addFocusListener(new StatusFocusListener(SOURCE_FOLDER_ID));
 	}
-	
+
 	/**
-	 * Creates the controls for the file name field. Expects a <code>GridLayout</code> with at 
+	 * Creates the controls for the file name field. Expects a <code>GridLayout</code> with at
 	 * least 2 columns.
-	 * 
+	 *
 	 * @param parent the parent composite
 	 * @param nColumns number of columns to span
-	 */		
+	 */
 	protected abstract void createFileControls(Composite parent, int nColumns);
 
 	/**
-	 * Creates the controls for the file template field. Expects a <code>GridLayout</code> with at 
+	 * Creates the controls for the file template field. Expects a <code>GridLayout</code> with at
 	 * least 3 columns.
-	 * 
+	 *
 	 * @param parent the parent composite
 	 * @param columns number of columns to span
-	 */		
+	 */
 	protected void createTemplateControls(Composite parent, int columns) {
 		if (fTemplateDialogField != null) {
 			fTemplateDialogField.doFillIntoGrid(parent, columns - 1);
@@ -267,7 +268,7 @@ public abstract class AbstractFileCreationWizardPage extends NewElementWizardPag
 
 	/**
 	 * Returns the selected template and saves its name for future use.
-	 *  
+	 *
 	 * @return the selected template or <code>null</code> if none.
 	 */
 	protected Template getTemplate() {
@@ -285,12 +286,12 @@ public abstract class AbstractFileCreationWizardPage extends NewElementWizardPag
 		}
 		return null;
 	}
-	
+
     /**
      * The wizard owning this page is responsible for calling this method with the
-     * current selection. The selection is used to initialize the fields of the wizard 
+     * current selection. The selection is used to initialize the fields of the wizard
      * page.
-     * 
+     *
      * @param selection used to initialize the fields
      */
     public void init(IStructuredSelection selection) {
@@ -298,10 +299,10 @@ public abstract class AbstractFileCreationWizardPage extends NewElementWizardPag
     	initFields(celem);
     	doStatusUpdate();
     }
-	
+
     /**
-     * Utility method to inspect a selection to find a C element. 
-     * 
+     * Utility method to inspect a selection to find a C element.
+     *
      * @param selection the selection to be inspected
      * @return a C element to be used as the initial selection, or <code>null</code>,
      * if no C element exists in the given selection
@@ -311,8 +312,8 @@ public abstract class AbstractFileCreationWizardPage extends NewElementWizardPag
     	if (selection != null && !selection.isEmpty()) {
     		Object selectedElement = selection.getFirstElement();
     		if (selectedElement instanceof IAdaptable) {
-    			IAdaptable adaptable = (IAdaptable) selectedElement;			
-    			
+    			IAdaptable adaptable = (IAdaptable) selectedElement;
+
     			celem = (ICElement) adaptable.getAdapter(ICElement.class);
     			if (celem == null) {
     				IResource resource = (IResource) adaptable.getAdapter(IResource.class);
@@ -333,7 +334,7 @@ public abstract class AbstractFileCreationWizardPage extends NewElementWizardPag
     		if (part instanceof ContentOutline) {
     			part = CUIPlugin.getActivePage().getActiveEditor();
     		}
-    		
+
     		if (part instanceof IViewPartInputProvider) {
     			Object elem = ((IViewPartInputProvider)part).getViewPartInput();
     			if (elem instanceof ICElement) {
@@ -351,7 +352,7 @@ public abstract class AbstractFileCreationWizardPage extends NewElementWizardPag
 		    	}
     		}
     	}
-    
+
     	if (celem == null || celem.getElementType() == ICElement.C_MODEL) {
     		try {
     			ICProject[] projects = CoreModel.create(getWorkspaceRoot()).getCProjects();
@@ -367,7 +368,7 @@ public abstract class AbstractFileCreationWizardPage extends NewElementWizardPag
 
 	/**
      * Initializes all fields provided by the page with a given selection.
-     * 
+     *
      * @param elem the selection used to initialize this page or <code>
      * null</code> if no selection was available
      */
@@ -379,40 +380,32 @@ public abstract class AbstractFileCreationWizardPage extends NewElementWizardPag
 
     /**
      * Initializes the source folder field.
-     * 
+     *
      * @param elem the C element used to compute the initial folder
      */
     protected void initSourceFolder(ICElement elem) {
-    	ICContainer folder = null;
-    	if (elem != null) {
-    	    folder = CModelUtil.getSourceFolder(elem);
-    		if (folder == null) {
-    			ICProject cproject = elem.getCProject();
-    			if (cproject != null) {
-    				try {
-    					if (cproject.exists()) {
-    					    ISourceRoot[] roots = cproject.getSourceRoots();
-    					    if (roots != null && roots.length > 0)
-    					        folder = roots[0];
-    					}
-    				} catch (CModelException e) {
-    					CUIPlugin.log(e);
-    				}
-    				if (folder == null) {
-    				    folder = cproject.findSourceRoot(cproject.getResource());
-    				}
-    			}
-    		}
-    	}
-	    setSourceFolderFullPath(folder != null ? folder.getResource().getFullPath() : null, false);
+        IPath folderPath = null;
+        if (elem != null) {
+            ICContainer folder = NewClassWizardUtil.getSourceFolder(elem);
+            if (folder == null) {
+                ICProject cproject = elem.getCProject();
+                if (cproject != null) {
+                    folder = NewClassWizardUtil.getFirstSourceRoot(cproject);
+                }
+            }
+            if (folder != null) {
+                folderPath = folder.getResource().getFullPath();
+            }
+        }
+	    setSourceFolderFullPath(folderPath, false);
     }
-	
+
      /**
 	 * Returns the recommended maximum width for text fields (in pixels). This
 	 * method requires that createContent has been called before this method is
-	 * call. Subclasses may override to change the maximum width for text 
+	 * call. Subclasses may override to change the maximum width for text
 	 * fields.
-	 * 
+	 *
 	 * @return the recommended maximum width for text fields.
 	 */
 	protected int getMaxFieldWidth() {
@@ -424,7 +417,7 @@ public abstract class AbstractFileCreationWizardPage extends NewElementWizardPag
      * when the current editor does not have focus or does not return a text selection.
      * @return Returns the test selection of the current editor or <code>null</code>.
      *
-     * @since 3.0 
+     * @since 3.0
      */
     protected ITextSelection getCurrentTextSelection() {
     	IWorkbenchPart part = CUIPlugin.getActivePage().getActivePart();
@@ -439,21 +432,21 @@ public abstract class AbstractFileCreationWizardPage extends NewElementWizardPag
     	}
     	return null;
     }
-	
+
 	/**
 	 * Sets the focus to the source folder's text field.
-	 */	
+	 */
 	protected void setFocusOnSourceFolder() {
 		fSourceFolderDialogField.setFocus();
 	}
 
     protected final class StatusFocusListener implements FocusListener {
-        private int fieldID;
+        private final int fieldID;
 
         public StatusFocusListener(int fieldID) {
             this.fieldID = fieldID;
         }
-        
+
         @Override
 		public void focusGained(FocusEvent e) {
             fLastFocusedField = this.fieldID;
@@ -463,7 +456,7 @@ public abstract class AbstractFileCreationWizardPage extends NewElementWizardPag
             }
         	doStatusUpdate();
         }
-        
+
         @Override
 		public void focusLost(FocusEvent e) {
             fLastFocusedField = 0;
@@ -481,29 +474,29 @@ public abstract class AbstractFileCreationWizardPage extends NewElementWizardPag
 				handleFieldChanged(ALL_FIELDS);
 			}
 		}
-		
+
 		@Override
 		public void dialogFieldChanged(DialogField field) {
 			handleFieldChanged(ALL_FIELDS);
 		}
 	}
-	
+
     // ----------- validation ----------
-			
+
 	/**
 	 * This method is a hook which gets called after the source folder's
 	 * text input field has changed. This default implementation updates
 	 * the model and returns an error status. The underlying model
 	 * is only valid if the returned status is OK.
-	 * 
+	 *
 	 * @return the model's error status
 	 */
 	protected IStatus sourceFolderChanged() {
 		StatusInfo status = new StatusInfo();
-		
+
 		IPath folderPath = getSourceFolderFullPath();
 		if (folderPath == null) {
-			status.setError(NewFileWizardMessages.AbstractFileCreationWizardPage_error_EnterSourceFolderName); 
+			status.setError(NewFileWizardMessages.AbstractFileCreationWizardPage_error_EnterSourceFolderName);
 			return status;
 		}
 
@@ -513,36 +506,36 @@ public abstract class AbstractFileCreationWizardPage extends NewElementWizardPag
 			if (resType == IResource.PROJECT || resType == IResource.FOLDER) {
 				IProject proj = res.getProject();
 				if (!proj.isOpen()) {
-					status.setError(NLS.bind(NewFileWizardMessages.AbstractFileCreationWizardPage_error_NotAFolder, folderPath)); 
+					status.setError(NLS.bind(NewFileWizardMessages.AbstractFileCreationWizardPage_error_NotAFolder, folderPath));
 					return status;
 				}
 			    if (!CoreModel.hasCCNature(proj) && !CoreModel.hasCNature(proj)) {
 					if (resType == IResource.PROJECT) {
-						status.setError(NewFileWizardMessages.AbstractFileCreationWizardPage_warning_NotACProject); 
+						status.setError(NewFileWizardMessages.AbstractFileCreationWizardPage_warning_NotACProject);
 						return status;
 					}
-					status.setWarning(NewFileWizardMessages.AbstractFileCreationWizardPage_warning_NotInACProject); 
+					status.setWarning(NewFileWizardMessages.AbstractFileCreationWizardPage_warning_NotInACProject);
 				}
 			    ICElement e = CoreModel.getDefault().create(res.getFullPath());
 			    if (CModelUtil.getSourceFolder(e) == null) {
-					status.setError(NLS.bind(NewFileWizardMessages.AbstractFileCreationWizardPage_error_NotASourceFolder, folderPath)); 
+					status.setError(NLS.bind(NewFileWizardMessages.AbstractFileCreationWizardPage_error_NotASourceFolder, folderPath));
 					return status;
 				}
 			} else {
-				status.setError(NLS.bind(NewFileWizardMessages.AbstractFileCreationWizardPage_error_NotAFolder, folderPath)); 
+				status.setError(NLS.bind(NewFileWizardMessages.AbstractFileCreationWizardPage_error_NotAFolder, folderPath));
 				return status;
 			}
 		} else {
-			status.setError(NLS.bind(NewFileWizardMessages.AbstractFileCreationWizardPage_error_FolderDoesNotExist, folderPath)); 
+			status.setError(NLS.bind(NewFileWizardMessages.AbstractFileCreationWizardPage_error_FolderDoesNotExist, folderPath));
 			return status;
 		}
 
 		return status;
 	}
-		
+
 	/**
 	 * Hook method that gets called when a field on this page has changed.
-	 * 
+	 *
 	 * @param fields Bitwise-OR'd ids of the fields that changed.
 	 */
 	protected void handleFieldChanged(int fields) {
@@ -572,7 +565,7 @@ public abstract class AbstractFileCreationWizardPage extends NewElementWizardPag
 			(fSourceFolderStatus != lastStatus) ? fSourceFolderStatus : STATUS_OK,
 			(fNewFileStatus != lastStatus) ? fNewFileStatus : STATUS_OK,
 		};
-		
+
 		// the mode severe status will be displayed and the ok button enabled/disabled.
 		updateStatus(status);
 	}
@@ -602,7 +595,7 @@ public abstract class AbstractFileCreationWizardPage extends NewElementWizardPag
 		    fSourceFolderDialogField.dialogFieldChanged();
 		}
 	}
-	
+
 	protected IProject getCurrentProject() {
 	    IPath folderPath = getSourceFolderFullPath();
 	    if (folderPath != null) {
@@ -613,13 +606,13 @@ public abstract class AbstractFileCreationWizardPage extends NewElementWizardPag
 
     /**
 	 * Returns the workspace root.
-	 * 
+	 *
 	 * @return the workspace root
-	 */ 
+	 */
 	protected IWorkspaceRoot getWorkspaceRoot() {
 		return fWorkspaceRoot;
-	}	
-	
+	}
+
 	/*
 	 * @see WizardPage#becomesVisible
 	 */
@@ -633,9 +626,9 @@ public abstract class AbstractFileCreationWizardPage extends NewElementWizardPag
 
 	/**
 	 * Sets the focus on the starting input field.
-	 */		
+	 */
 	protected abstract void setFocus();
-				
+
 	IPath chooseSourceFolder(IPath initialPath) {
 	    ICElement initElement = getSourceFolderFromPath(initialPath);
 	    if (initElement instanceof ISourceRoot) {
@@ -644,11 +637,11 @@ public abstract class AbstractFileCreationWizardPage extends NewElementWizardPag
 	        if (projRoot != null && projRoot.equals(initElement))
 	            initElement = cProject;
 	    }
-		
+
 		SourceFolderSelectionDialog dialog = new SourceFolderSelectionDialog(getShell());
 		dialog.setInput(CoreModel.create(fWorkspaceRoot));
 		dialog.setInitialSelection(initElement);
-		
+
 		if (dialog.open() == Window.OK) {
 			Object result = dialog.getFirstResult();
 			if (result instanceof ICElement) {
@@ -690,45 +683,45 @@ public abstract class AbstractFileCreationWizardPage extends NewElementWizardPag
 	/**
 	 * Returns the full path computed from the file name field
 	 * and the source folder.
-	 * 
+	 *
 	 * @return the file path
 	 */
 	public abstract IPath getFileFullPath();
-	
+
 	/**
-	 * Hook method that gets called when the file name has changed. The method validates the 
+	 * Hook method that gets called when the file name has changed. The method validates the
 	 * file name and returns the status of the validation.
-	 * 
+	 *
 	 * @return the status of the validation
 	 */
 	protected abstract IStatus fileNameChanged();
 
 	/**
 	 * Creates the new file using the entered field values.
-	 * 
+	 *
 	 * @param monitor a progress monitor to report progress.
 	 * @throws CoreException Thrown when the creation failed.
 	 */
 	public abstract void createFile(IProgressMonitor monitor) throws CoreException;
-	
+
 	/**
-	 * Returns the created file. The method only returns a valid translation unit 
+	 * Returns the created file. The method only returns a valid translation unit
 	 * after <code>createFile</code> has been called.
-	 * 
+	 *
 	 * @return the created translation unit
 	 * @see #createFile(IProgressMonitor)
-	 */			
+	 */
 	public abstract ITranslationUnit getCreatedFileTU();
-	
+
 	/**
 	 * @return the name of the template used in the previous dialog invocation, or
 	 * the name of the default template.
 	 */
 	public abstract String getDefaultTemplateName();
-	
+
 	/**
 	 * Saves the name of the last used template.
-	 * 
+	 *
 	 * @param name the name of a template, or an empty string for no template.
 	 */
 	public abstract void saveLastUsedTemplateName(String name);

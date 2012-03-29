@@ -27,17 +27,6 @@
       </comments>
     </license>
   </licenses>
-  <!-- <properties>                                                     
-    <tycho-version>0.14.0</tycho-version>                          
-    <platform-version-name>indigo</platform-version-name>          
-    <platform-site>http://download.eclipse.org/releases/${platform-version-name}</platform-site>
-    <sdk-version>3.7</sdk-version>
-    <orbit-version>R20110523182458</orbit-version>                                                     
-    <orbit-site>http://download.eclipse.org/tools/orbit/downloads/drops/${orbit-version}/repository</orbit-site>
-    <rxtx-version>1.0.0.7837QcJa5vE7MnhE77YA7AU3SWUlbntVZAnlDoIGojcQd</rxtx-version>                                                                                               
-    <rxtx-site>http://rxtx.qbang.org/eclipse</rxtx-site>                                                                                                                           
-  </properties>
-  -->
   <properties>
     <tycho-version>0.14.1</tycho-version>
     <tycho-extras-version>0.14.0</tycho-extras-version>
@@ -52,41 +41,27 @@
       <id>maven.eclipse.org</id>
       <url>http://maven.eclipse.org/nexus/content/groups/public/</url>
     </pluginRepository>
-    <!--	<pluginRepository>
-		<id>tycho-0.14.0-staged</id>
-		<url>https://oss.sonatype.org/content/repositories/orgeclipsetycho-004/</url>
-	</pluginRepository>
-	-->
   </pluginRepositories>
   <repositories>
-    <!--<repository>                                                                                                                                                                   
-      <id>platform-${platform-version}</id>                                                                                                                                        
-      <url>${platform-site}</url>                                                                                                                                                  
-      <layout>p2</layout>                                                                                                                                                          
-    </repository>
-    -->
     <repository>
       <id>orbit</id>
       <layout>p2</layout>
       <url>${orbit-site}</url>
     </repository>
-    <!-- <repository>                                                                                                                                                                   
-      <id>orbit-${orbit-version}</id>                                                                                                                                              
-      <url>${orbit-site}</url>                                                                                                                                                     
-      <layout>p2</layout>                                                                                                                                                          
-    </repository>
-    -->
     <repository>
       <id>rxtx-${rxtx-version}</id>
       <url>${rxtx-site}</url>
       <layout>p2</layout>
+    </repository>
+    <repository>
+      <id>maven.eclipse.org</id>
+      <url>http://maven.eclipse.org/nexus/content/groups/public/</url>
     </repository>
   </repositories>
   <profiles>
     <profile>
       <id>platform-indigo</id>
       <activation>
-        <activeByDefault>true</activeByDefault>
         <property>
           <name>platform-version-name</name>
           <value>indigo</value>
@@ -97,7 +72,6 @@
         <platform-version>[3.7,3.8)</platform-version>
         <sdk-version>3.7</sdk-version>
         <cdt-site>http://download.eclipse.org/tools/cdt/updates/indigo/</cdt-site>
-        <cdt-test-site>http://download.eclipse.org/tools/cdt/updates/indigo/</cdt-test-site>
       </properties>
       <repositories>
         <repository>
@@ -119,10 +93,6 @@
           <id>cdt</id>
           <layout>p2</layout>
           <url>${cdt-site}</url>
-        </repository>
-        <repository>
-          <id>maven.eclipse.org</id>
-          <url>http://maven.eclipse.org/nexus/content/groups/public/</url>
         </repository>
       </repositories>
     </profile>

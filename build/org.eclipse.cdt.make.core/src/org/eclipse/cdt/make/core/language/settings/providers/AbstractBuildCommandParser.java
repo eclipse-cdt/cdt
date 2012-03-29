@@ -12,10 +12,14 @@
 package org.eclipse.cdt.make.core.language.settings.providers;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IErrorParser2;
 import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.core.errorparsers.RegexErrorParser;
@@ -28,6 +32,9 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.content.IContentType;
+import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 
@@ -96,9 +103,42 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 		return pattern;
 	}
 
+	@SuppressWarnings("nls")
+	private static String expressionLogicalOr(Set<String> fileExts) {
+		String pattern = "(";
+		for (String ext : fileExts) {
+			if (pattern.length() != 1)
+				pattern += "|";
+			pattern += "(" + Pattern.quote(ext) + ")";
+			ext = ext.toUpperCase();
+			if (!fileExts.contains(ext)) {
+				pattern += "|(" + Pattern.quote(ext) + ")";
+			}
+		}
+		pattern += ")";
+		return pattern;
+	}
+
+	protected String getPatternFileExtensions() {
+		IContentTypeManager manager = Platform.getContentTypeManager();
+
+		Set<String> fileExts = new HashSet<String>();
+
+		IContentType contentTypeCpp = manager.getContentType(CCorePlugin.CONTENT_TYPE_CXXSOURCE);
+		fileExts.addAll(Arrays.asList(contentTypeCpp.getFileSpecs(IContentType.FILE_EXTENSION_SPEC)));
+
+		IContentType contentTypeC = manager.getContentType(CCorePlugin.CONTENT_TYPE_CSOURCE);
+		fileExts.addAll(Arrays.asList(contentTypeC.getFileSpecs(IContentType.FILE_EXTENSION_SPEC)));
+
+		String pattern = expressionLogicalOr(fileExts);
+
+		return pattern;
+	}
+
+
 	@Override
-	protected String parseForResourceName(String line) {
-		if (line==null) {
+	protected String parseResourceName(String line) {
+		if (line == null) {
 			return null;
 		}
 
@@ -115,8 +155,8 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 	}
 
 	@Override
-	protected List<String> parseForOptions(String line) {
-		if (line==null || currentResource==null) {
+	protected List<String> parseOptions(String line) {
+		if (line == null || currentResource == null) {
 			return null;
 		}
 

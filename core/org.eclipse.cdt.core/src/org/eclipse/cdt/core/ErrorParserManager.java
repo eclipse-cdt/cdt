@@ -194,6 +194,7 @@ public class ErrorParserManager extends OutputStream implements IConsoleParser, 
 	 * @return the current URI location where the build is being performed
 	 * @since 5.1
 	 */
+	@Override
 	public URI getWorkingDirectoryURI() {
 		if (!fDirectoryStack.isEmpty())
 			return fDirectoryStack.lastElement();

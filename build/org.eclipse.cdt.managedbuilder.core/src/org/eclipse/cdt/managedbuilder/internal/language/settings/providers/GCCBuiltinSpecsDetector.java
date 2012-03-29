@@ -57,7 +57,7 @@ public class GCCBuiltinSpecsDetector extends ToolchainBuiltinSpecsDetector imple
 	}
 
 	@Override
-	protected List<String> parseForOptions(String line) {
+	protected List<String> parseOptions(String line) {
 		line = line.trim();
 
 		// contribution of -dD option

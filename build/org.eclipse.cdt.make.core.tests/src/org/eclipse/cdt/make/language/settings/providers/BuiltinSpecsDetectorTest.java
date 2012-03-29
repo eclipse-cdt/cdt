@@ -58,7 +58,7 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 
 	private class MockBuiltinSpecsDetector extends AbstractBuiltinSpecsDetector {
 		@Override
-		protected List<String> parseForOptions(String line) {
+		protected List<String> parseOptions(String line) {
 			return null;
 		}
 		@Override
@@ -82,7 +82,7 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 
 	private class MockBuiltinSpecsDetectorExecutedFlag extends AbstractBuiltinSpecsDetector {
 		@Override
-		protected List<String> parseForOptions(String line) {
+		protected List<String> parseOptions(String line) {
 			return null;
 		}
 		@Override
@@ -120,7 +120,7 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 			return super.runForEachLanguage(monitor);
 		}
 		@Override
-		protected List<String> parseForOptions(final String line) {
+		protected List<String> parseOptions(final String line) {
 			return new ArrayList<String>() {{ add(line); }};
 		}
 		@Override
@@ -140,7 +140,11 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 
 	@Override
 	protected void tearDown() throws Exception {
-		Job.getJobManager().join(AbstractBuiltinSpecsDetector.JOB_FAMILY_BUILTIN_SPECS_DETECTOR, null);
+		try {
+			Job.getJobManager().join(AbstractBuiltinSpecsDetector.JOB_FAMILY_BUILTIN_SPECS_DETECTOR, null);
+		} catch (Exception e) {
+			// ignore
+		}
 		super.tearDown();
 	}
 

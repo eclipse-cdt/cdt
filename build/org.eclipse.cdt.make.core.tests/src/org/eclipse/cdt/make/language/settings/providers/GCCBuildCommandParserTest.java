@@ -92,7 +92,11 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 
 	@Override
 	protected void tearDown() throws Exception {
-		Job.getJobManager().join(AbstractBuildCommandParser.JOB_FAMILY_BUILD_COMMAND_PARSER, null);
+		try {
+			Job.getJobManager().join(AbstractBuildCommandParser.JOB_FAMILY_BUILD_COMMAND_PARSER, null);
+		} catch (Exception e) {
+			// ignore
+		}
 		super.tearDown();
 	}
 
@@ -1745,7 +1749,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 	public void testContentType_None() throws Exception {
 		MockBuildCommandParser parser = new MockBuildCommandParser() {
 			@Override
-			protected String parseForResourceName(String line) {
+			protected String parseResourceName(String line) {
 				return "file.wrong-content-type";
 			}
 		};

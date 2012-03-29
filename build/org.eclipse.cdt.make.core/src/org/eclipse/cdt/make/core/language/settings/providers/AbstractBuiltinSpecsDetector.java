@@ -264,7 +264,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 	 * TODO
 	 */
 	@Override
-	protected String parseForResourceName(String line) {
+	protected String parseResourceName(String line) {
 		// Returning null works as if workspace-wide
 		return null;
 	}
@@ -319,10 +319,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 		mappedRootURI = null;
 		buildDirURI = null;
 
-		ICConfigurationDescription cfgDescription = currentCfgDescription;
 		super.shutdown();
-		// keep currentCfgDescription, do not let super.shutdown() to clear it
-		currentCfgDescription = cfgDescription;
 	}
 
 	protected void execute() {

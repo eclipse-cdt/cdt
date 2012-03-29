@@ -12,29 +12,17 @@ package org.eclipse.cdt.core.language.settings.providers;
 
 import java.net.URI;
 
-import org.eclipse.core.resources.IFile;
-
 /**
- * TODO
+ * Interface for console parsers able to track current working directory for build.
+ *
  * @since 5.4
  */
 public interface IWorkingDirectoryTracker {
-	// TODO - define the API
-
-	public URI getWorkingDirectoryURI();
-	public IFile findFileName(String partialLoc);
-
-	/*
-	public URI findFileURI(String partialLoc);
-	public URI findFolderURI(String partialLoc);
-
-	or
-	public File findFile(String partialLoc); // best choice
-	public Folder findFolder(String partialLoc); // best choice
-
-	or
-	public List<URI> findFileURI(String partialLoc); // all candidates
-	public List<URI> findFolderURI(String partialLoc); // all candidates
-
+	/**
+	 * Returns current working directory for the current build command as determined from
+	 * build output.
+	 *
+	 * @return URI of current working directory or {@code null}.
 	 */
+	public URI getWorkingDirectoryURI();
 }

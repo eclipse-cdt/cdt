@@ -10,7 +10,7 @@ Require-Bundle: org.junit,
  org.eclipse.core.runtime,
  org.eclipse.ui
 Bundle-RequiredExecutionEnvironment: CDC-1.1/Foundation-1.1,
- J2SE-1.5
+ J2SE-1.4
 Export-Package: org.eclipse.tm.internal.terminal.connector;x-internal:=true,
  org.eclipse.tm.internal.terminal.emulator;x-internal:=true,
  org.eclipse.tm.internal.terminal.model;x-internal:=true,
@@ -20,3 +20,4 @@ Export-Package: org.eclipse.tm.internal.terminal.connector;x-internal:=true,
  org.eclipse.tm.internal.terminal.textcanvas;x-internal:=true,
  org.eclipse.tm.terminal.model,
  org.eclipse.tm.terminal.test
+Import-Package: javax.crypto

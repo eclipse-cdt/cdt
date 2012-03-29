@@ -1,3 +1,7 @@
+2012-03-29  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* src/org/eclipse/cdt/autotools/core/AutotoolsNewProjectNature.java: Fix old nature id to contain the .core specifier.
+
 2012-01-03  Jeff Johnston  <jjohnstn@redhat.com>
 
 	Refactor all packages to be org.eclipse.cdt.autotools.core.

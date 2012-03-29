@@ -274,7 +274,7 @@ public class CommandMinerThread extends MinerThread
 						{
 							isSHonZ = true;
 						}
-						else if (theShell.endsWith("/csh") || theShell.endsWith("/tcsh") || theShell.endsWith("/bsh")){  //$NON-NLS-1$//$NON-NLS-2$
+						else if (theShell.endsWith("/csh") || theShell.endsWith("/tcsh")){  //$NON-NLS-1$//$NON-NLS-2$
 							_isCsh = true;			
 						}
 

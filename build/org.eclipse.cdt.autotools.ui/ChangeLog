@@ -1,3 +1,9 @@
+2012-03-29  Jeff Johnston  <jjohnstn@redhat.com>
+
+	Resolves: bug#374026
+	* src/org/eclipse/cdt/internal/autotools/ui/wizards/AutotoolsBuildWizard.java (createItems): Change to accept any
+	type of project that has at least one toolchain that is based upon the GNU Autotools toolchain.
+	 
 2012-01-03  Jeff Johnston  <jjohnstn@redhat.com>
 
 	Refactor entire plug-in to org.eclipse.cdt.autotools.ui.

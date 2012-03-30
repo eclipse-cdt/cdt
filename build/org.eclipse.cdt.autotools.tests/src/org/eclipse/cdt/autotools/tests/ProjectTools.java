@@ -59,19 +59,19 @@ public class ProjectTools {
      */
 	public static boolean setup() throws Exception {
 		if (!setupComplete) {
-        IWorkspaceDescription desc;
-        workspace = ResourcesPlugin.getWorkspace();
-        root = workspace.getRoot();
-        monitor = new NullProgressMonitor();
-        if(workspace == null) {
-        	return false;
-        }
-        if(root == null) {
-        	return false;
-        }
-        desc = workspace.getDescription();
-        desc.setAutoBuilding(false);
-        workspace.setDescription(desc);
+			IWorkspaceDescription desc;
+			workspace = ResourcesPlugin.getWorkspace();
+			if (workspace == null) {
+				return false;
+			}
+			root = workspace.getRoot();
+			monitor = new NullProgressMonitor();
+			if (root == null) {
+				return false;
+			}
+			desc = workspace.getDescription();
+			desc.setAutoBuilding(false);
+			workspace.setDescription(desc);
 		}
 		setupComplete = true;
 		return true;

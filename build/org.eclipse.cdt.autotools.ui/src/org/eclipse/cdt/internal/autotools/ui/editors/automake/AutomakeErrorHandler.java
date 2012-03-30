@@ -52,9 +52,8 @@ public class AutomakeErrorHandler {
 
 	}
 	
-	public AutomakeErrorHandler(IDocument document) {
-		this.document = document;
-		IEditorInput input = AutomakeEditor.getDefault().getEditorInput();
+	public AutomakeErrorHandler(IEditorInput input) {
+		this.document = AutomakeEditorFactory.getDefault().getAutomakefileDocumentProvider().getDocument(input);
 		this.fAnnotationModel = (AnnotationModel)AutomakeEditorFactory.getDefault().getAutomakefileDocumentProvider().getAnnotationModel(input);
 	}
 

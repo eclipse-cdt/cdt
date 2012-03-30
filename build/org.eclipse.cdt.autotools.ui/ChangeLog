@@ -1,3 +1,31 @@
+2012-03-30  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* src/org/eclipse/cdt/internal/autotools/ui/editors/automake/AutomakeEditor.java
+	(AutomakeEditor): Make constructor public so openEditor will work.
+	* src/org/eclipse/cdt/internal/autotools/ui/editors/automake/AutomakeErrorHandler.java
+	(AutomakeErrorHandler): Change constructor to accept an IEditorInput rather than
+	an IDocument.
+	* src/org/eclipse/cdt/internal/autotools/ui/editors/automake/AutomakefileReconcilingStrategy.java
+	(AutomakefileReconcilingStrategy): Pass an IEditorInput to create the
+	AutomakeErrorHandler.
+	* src/org/eclipse/cdt/internal/autotools/ui/editors/automake/AutomakeDocumentProvider.java
+	(connect): Ditto.
+
+2012-03-30  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* src/org/eclipse/cdt/autotools/ui/editors/AutoconfMacro.java
+	(equals): Fix FindBugs error with missing null case.
+	(hashCode): New method to fix FindBugs error.
+	* src/org/eclipse/cdt/internal/autotools/ui/editors/automake/AutomakeEditor.java
+	(AutomakeEditor): Fix constructor to remove static variable.
+	(static initializer): Fix FindBugs error with static variable usage.
+
+2012-03-30  Jeff Johnston  <jjohnstn@redhat.com>
+
+	Bug #371277
+	* src/org/eclipse/cdt/internal/autotools/ui/actions/InvokeAction.java
+	(..run): Use sh -c to execute the autotool scripts.
+	
 2012-03-29  Jeff Johnston  <jjohnstn@redhat.com>
 
 	Resolves: bug#374026

@@ -42,7 +42,14 @@ public class AutoconfMacro implements Comparable<Object> {
 	}
 	
 	public boolean equals(Object x) {
+		if (x == null)
+			return false;
 		AutoconfMacro y = (AutoconfMacro)x;
 		return getName().equals(y.getName());
 	}
+	
+	public int hashCode() {
+		return getName().hashCode();
+	}
+	
 }

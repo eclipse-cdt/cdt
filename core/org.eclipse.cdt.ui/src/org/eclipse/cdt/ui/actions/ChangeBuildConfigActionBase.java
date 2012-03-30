@@ -18,6 +18,7 @@ import java.util.TreeSet;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
@@ -27,6 +28,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -149,6 +152,27 @@ public class ChangeBuildConfigActionBase {
 	}
 
 	/**
+	 * Class used to efficiently special case the scenario where there's only a single project in the
+	 * workspace. See bug 375760
+	 */
+	private static class ImaginarySelection implements ISelection {
+		private IProject fProject;
+		
+		ImaginarySelection(IProject project) {
+			fProject = project;
+		}
+		
+		@Override
+		public boolean isEmpty() {
+			return fProject == null;
+		}
+		
+		IProject getProject() {
+			return fProject;
+		}
+	}
+
+	/**
 	 * selectionChanged() event handler. Fills the list of managed-built projects 
 	 * based on the selection. If some non-managed-built projects are selected,
 	 * disables the action. 
@@ -247,6 +271,9 @@ public class ChangeBuildConfigActionBase {
 				}
 
 			}
+			else if (selection instanceof ImaginarySelection) {
+				fProjects.add(((ImaginarySelection)selection).getProject());
+			}
 		}
 		
 		
@@ -278,6 +305,52 @@ public class ChangeBuildConfigActionBase {
 			}
 		}
 		action.setEnabled(enable);
+		
+		// Bug 375760
+		//
+		// We shouldn't require that the projects view have focus. If the selection switched
+		// to something that doesn't provide us a project context, query any of the three projects/resources
+		// view to see if they have a selection. If so, try again using that selection. We give precedence to
+		// the CDT projects view, then to the project explorer, and finally to the resource navigator
+		//
+		// Also, if the view has no selection, see if the workspace has only one project. If so, we don't need
+		// to rely on the selection mechanism to tell us which project to operate on!
+		//
+		if (badObject || fProjects.isEmpty()) {
+			IWorkbenchPage page = CUIPlugin.getActivePage();
+			if (page != null) {
+				IViewReference viewRef = page.findViewReference("org.eclipse.cdt.ui.CView"); //$NON-NLS-1$
+				if (viewRef == null) {
+					viewRef = page.findViewReference("org.eclipse.ui.navigator.ProjectExplorer"); //$NON-NLS-1$
+					if (viewRef == null) {
+						viewRef = page.findViewReference("org.eclipse.ui.views.ResourceNavigator"); //$NON-NLS-1$
+					}
+				}
+				if (viewRef != null) {
+					IViewPart view = viewRef.getView(false);
+					if (view != null) {
+						ISelection cdtSelection = view.getSite().getSelectionProvider().getSelection();
+						if (cdtSelection != null) {
+							if (cdtSelection.isEmpty()) {
+								IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+								if (projects != null && projects.length == 1) {
+									IProject project = projects[0];
+									if (CoreModel.getDefault().isNewStyleProject(project) && (getCfgs(project).length > 0)) { 
+										onSelectionChanged(action, new ImaginarySelection(project));
+									}
+								}
+							}
+							else {
+								if (!cdtSelection.equals(selection)) {
+									onSelectionChanged(action, cdtSelection);
+								}
+							}
+						}
+						
+					}
+				}
+			}
+		}
 	}
 	
 	private ICConfigurationDescription[] getCfgs(IProject prj) {

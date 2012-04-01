@@ -63,22 +63,22 @@ public class CContext extends TranslationUnitContext {
 	public int getStart() {
 		if (fIsManaged && getCompletionLength() > 0)
 			return super.getStart();
-		
+
 		try {
 			IDocument document= getDocument();
 
 			int start= getCompletionOffset();
 			int end= getCompletionOffset() + getCompletionLength();
-			
+
 			while (start != 0 && isUnicodeIdentifierPartOrPoundSign(document.getChar(start - 1)))
 				start--;
-			
+
 			while (start != end && Character.isWhitespace(document.getChar(start)))
 				start++;
-			
+
 			if (start == end)
 				start= getCompletionOffset();	
-			
+
 			return start;	
 		} catch (BadLocationException e) {
 			return super.getStart();	
@@ -95,10 +95,10 @@ public class CContext extends TranslationUnitContext {
 
 			int start= getCompletionOffset();
 			int end= getCompletionOffset() + getCompletionLength();
-			
+
 			while (start != end && Character.isWhitespace(document.getChar(end - 1)))
 				end--;
-			
+
 			return end;	
 		} catch (BadLocationException e) {
 			return super.getEnd();
@@ -109,7 +109,7 @@ public class CContext extends TranslationUnitContext {
 	public TemplateBuffer evaluate(Template template) throws BadLocationException, TemplateException {
 		if (!canEvaluate(template))
 			return null;
-			
+
 		TemplateTranslator translator= new TemplateTranslator();
 		TemplateBuffer buffer= translator.translate(template.getPattern());
 
@@ -123,7 +123,7 @@ public class CContext extends TranslationUnitContext {
 		CFormatter formatter= new CFormatter(TextUtilities.getDefaultLineDelimiter(getDocument()),
 				indentationLevel, useCodeFormatter, project);
 		formatter.format(buffer, this);
-		
+
 		return buffer;
 	}
 

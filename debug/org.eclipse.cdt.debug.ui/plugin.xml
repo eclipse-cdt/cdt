@@ -1828,9 +1828,7 @@
             <or>
                <test property="org.eclipse.cdt.debug.ui.isCEditorSupportsCBreakpoint"/>
                <test property="org.eclipse.cdt.debug.ui.isAsmEditorSupportsCBreakpoint"/>
-               <test
-                     property="org.eclipse.cdt.debug.ui.isDisassemblyEditorSupportsCBreakpoint">
-               </test>                             
+               <test property="org.eclipse.cdt.debug.ui.isDisassemblyEditorSupportsCBreakpoint" />
                <with variable="selection">
                   <count value="1"/>
                    <test property="org.eclipse.cdt.debug.ui.isCDeclarationSupportsCBreakpoint"/>
@@ -1849,7 +1847,8 @@
                </reference>
                <or>
                <test property="org.eclipse.cdt.debug.ui.isCEditorSupportsCBreakpoint"/>
-               <test property="org.eclipse.cdt.debug.ui.isAsmEditorSupportsCBreakpoint"/>                             
+               <test property="org.eclipse.cdt.debug.ui.isAsmEditorSupportsCBreakpoint"/>
+               <test property="org.eclipse.cdt.debug.ui.isDisassemblyEditorSupportsCBreakpoint" />                                            
                <with variable="selection">
                   <count value="1"/>
                    <test property="org.eclipse.cdt.debug.ui.isCDeclarationSupportsCBreakpoint"/>

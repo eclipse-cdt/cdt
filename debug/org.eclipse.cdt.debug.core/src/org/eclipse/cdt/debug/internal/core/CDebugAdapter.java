@@ -40,8 +40,8 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IProcess;
 
 public class CDebugAdapter implements ICDIDebugger {
-
 	final ICDebugger fDebugger;
+
 	/**
 	 * @param debugger
 	 */
@@ -49,8 +49,7 @@ public class CDebugAdapter implements ICDIDebugger {
 		fDebugger = debugger;
 	}
 
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * 
 	 * @see org.eclipse.cdt.debug.core.ICDIDebugger#createDebuggerSession(org.eclipse.debug.core.ILaunch,
 	 *      org.eclipse.cdt.core.IBinaryParser.IBinaryExecutable,
@@ -94,12 +93,13 @@ public class CDebugAdapter implements ICDIDebugger {
 		String format = "{0} ({1})"; //$NON-NLS-1$
 		String timestamp = DateFormat.getInstance().format(new Date(System.currentTimeMillis()));
 		String message = InternalDebugCoreMessages.getString("CDebugAdapter.1"); //$NON-NLS-1$
-		return MessageFormat.format(format, new String[]{message, timestamp});
+		return MessageFormat.format(format, message, timestamp);
 	}
 
 	protected void abort(String message, Throwable exception, int code) throws CoreException {
 		MultiStatus status = new MultiStatus(CDebugCorePlugin.getUniqueIdentifier(), code, message, exception);
-		status.add(new Status(IStatus.ERROR, CDebugCorePlugin.getUniqueIdentifier(), code, exception == null ? "" : exception.getLocalizedMessage(), //$NON-NLS-1$
+		status.add(new Status(IStatus.ERROR, CDebugCorePlugin.getUniqueIdentifier(), code,
+				exception == null ? "" : exception.getLocalizedMessage(), //$NON-NLS-1$
 				exception));
 		throw new CoreException(status);
 	}
@@ -138,5 +138,4 @@ public class CDebugAdapter implements ICDIDebugger {
 		}
 		return new Path(path);
 	}
-
 }

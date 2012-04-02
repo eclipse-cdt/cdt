@@ -128,7 +128,7 @@ public class Scribe {
 		indentationLevel= preferences.initial_indentation_level * indentationSize;
 		preserveNewLines = false;
 		textRegionStart= offset;
-		textRegionEnd= offset + length - 1;
+		textRegionEnd= offset + length;
 		reset();
 	}
 
@@ -574,12 +574,12 @@ public class Scribe {
 
 	public TextEdit getRootEdit() {
 		MultiTextEdit edit= null;
-		int length= textRegionEnd - textRegionStart + 1;
+		int length= textRegionEnd - textRegionStart;
 		if (textRegionStart <= 0) {
 			if (length <= 0) {
 				edit= new MultiTextEdit(0, 0);
 			} else {
-				edit= new MultiTextEdit(0, textRegionEnd + 1);
+				edit= new MultiTextEdit(0, textRegionEnd);
 			}
 		} else {
 			edit= new MultiTextEdit(textRegionStart, length);
@@ -595,7 +595,7 @@ public class Scribe {
 	}
 
 	public void handleLineTooLong() {
-		// Search for closest breakable alignment, using tie break rules.
+		// Search for closest breakable alignment, using tie-breaking rules.
 		// Look for innermost breakable one.
 		int relativeDepth= 0;
 		Alignment targetAlignment= currentAlignment;
@@ -621,6 +621,7 @@ public class Scribe {
 		if (outerMostDepth >= 0) {
 			throwAlignmentException(AlignmentException.LINE_TOO_LONG, outerMostDepth);
 		}
+
 		// Look for innermost breakable one but don't stop if we encounter a R_OUTERMOST
 		// tie-breaking rule.
 		relativeDepth= 0;
@@ -710,7 +711,7 @@ public class Scribe {
 		final int editReplacementLength= edit.replacement.length();
 		final int editOffset= edit.offset;
 		if (editLength != 0) {
-			if (textRegionStart <= editOffset && (editOffset + editLength - 1) <= textRegionEnd) {
+			if (textRegionStart <= editOffset && editOffset + editLength <= textRegionEnd) {
 				if (editReplacementLength != 0 && editLength == editReplacementLength) {
 					for (int i= editOffset, max= editOffset + editLength; i < max; i++) {
 						if (scanner.source[i] != edit.replacement.charAt(i - editOffset)) {
@@ -737,9 +738,9 @@ public class Scribe {
 					return true;
 				}
 			}
-		} else if (textRegionStart <= editOffset && editOffset <= textRegionEnd) {
+		} else if (textRegionStart <= editOffset && editOffset < textRegionEnd) {
 			return true;
-		} else if (editOffset == scannerEndPosition && editOffset == textRegionEnd + 1) {
+		} else if (editOffset == scannerEndPosition && editOffset == textRegionEnd) {
 			return true;
 		}
 		return false;

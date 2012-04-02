@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2011 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2012 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -18,6 +18,7 @@
  * David Dykstal (IBM) - [210242] Credentials dialog should look different if password is not supported or optional
  * Richie Yu (IBM) - [241716] Handle change expired password
  * David McKnight (IBM) - [342615] when user checks "Save password" box, "Save User ID" box should automatically get checked
+ * David McKnight (IBM) - [309371] Include connection name in the password prompt dialog
  ********************************************************************************/
 
 package org.eclipse.rse.ui.dialogs;
@@ -198,6 +199,16 @@ public final class SystemPasswordPromptDialog extends SystemPromptDialog impleme
 		label = SystemWidgetHelpers.createLabel(composite_prompts, connectorService.getHostName());
 		gd = new GridData();
 		label.setLayoutData(gd);
+		
+		// Connection name
+		text = SystemWidgetHelpers.appendColon(SystemResources.RESID_CONNECTION_CONNECTIONNAME_LABEL);
+		label = SystemWidgetHelpers.createLabel(composite_prompts, text);
+		gd = new GridData();
+		label.setLayoutData(gd);
+		label = SystemWidgetHelpers.createLabel(composite_prompts, connectorService.getHost().getAliasName());
+		gd = new GridData();
+		label.setLayoutData(gd);
+		
 
 		// UserId
 		if (connectorService.supportsUserId()) {

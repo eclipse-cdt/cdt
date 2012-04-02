@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 QNX Software Systems and others.
+ * Copyright (c) 2005, 2012 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Ken Ryall (Nokia) - bug 178731
  *	   IBM Corporation
  *	   Sergey Prigogin (Google)
+ *     Anton Gorenkov
  *******************************************************************************/
 package org.eclipse.cdt.launch.ui;
 
@@ -31,6 +32,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.DebugUITools;
@@ -343,7 +345,6 @@ public class CMainTab extends CAbstractMainTab {
 	protected void createExeFileGroup(Composite parent, int colSpan) {
 		Composite mainComp = new Composite(parent, SWT.NONE);
 		GridLayout mainLayout = new GridLayout();
-		mainLayout.numColumns = 3;
 		mainLayout.marginHeight = 0;
 		mainLayout.marginWidth = 0;
 		mainComp.setLayout(mainLayout);
@@ -353,7 +354,6 @@ public class CMainTab extends CAbstractMainTab {
 		fProgLabel = new Label(mainComp, SWT.NONE);
 		fProgLabel.setText(LaunchMessages.CMainTab_C_Application); 
 		gd = new GridData();
-		gd.horizontalSpan = 3;
 		fProgLabel.setLayoutData(gd);
 		fProgText = new Text(mainComp, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -365,7 +365,17 @@ public class CMainTab extends CAbstractMainTab {
 			}
 		});
 
-		fSearchButton = createPushButton(mainComp, LaunchMessages.CMainTab_Search, null); 
+		Composite buttonComp = new Composite(mainComp, SWT.NONE);
+		GridLayout layout = new GridLayout(3, false);
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		buttonComp.setLayout(layout);
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
+		buttonComp.setLayoutData(gd);
+		buttonComp.setFont(parent.getFont());
+
+		createVariablesButton(buttonComp, LaunchMessages.CMainTab_Variables, fProgText);
+		fSearchButton = createPushButton(buttonComp, LaunchMessages.CMainTab_Search, null); 
 		fSearchButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent evt) {
@@ -375,7 +385,7 @@ public class CMainTab extends CAbstractMainTab {
 		});
 
 		Button fBrowseForBinaryButton;
-		fBrowseForBinaryButton = createPushButton(mainComp, LaunchMessages.Launch_common_Browse_2, null); 
+		fBrowseForBinaryButton = createPushButton(buttonComp, LaunchMessages.Launch_common_Browse_2, null); 
 		fBrowseForBinaryButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent evt) {
@@ -432,6 +442,11 @@ public class CMainTab extends CAbstractMainTab {
 			}
 	
 			name = fProgText.getText().trim();
+       		try {
+       			name = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(name);
+			} catch (CoreException e) {
+				// Silently ignore substitution failure (for consistency with "Arguments" and "Work directory" fields)
+			}
 			if (name.length() == 0) {
 				setErrorMessage(LaunchMessages.CMainTab_Program_not_specified); 
 				return false;

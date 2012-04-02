@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 Ericsson and others.
+ * Copyright (c) 2010, 2012 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -105,7 +105,8 @@ public class LaunchUtils {
 			abort(LaunchMessages.getString("AbstractCLaunchDelegate.Program_file_not_specified"), null, //$NON-NLS-1$
 				  ICDTLaunchConfigurationConstants.ERR_NOT_A_C_PROJECT);
 		}
-		
+        programName = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(programName);
+
 		IPath programPath = new Path(programName);    			 
 		if (programPath.isEmpty()) {
 			abort(LaunchMessages.getString("AbstractCLaunchDelegate.Program_file_does_not_exist"), null, //$NON-NLS-1$

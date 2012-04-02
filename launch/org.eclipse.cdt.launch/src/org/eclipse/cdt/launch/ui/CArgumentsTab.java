@@ -1,13 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 QNX Software Systems and others.
+ * Copyright (c) 2005, 2012 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX Software Systems - Initial API and implementation
- * IBM Corporation
+ *     QNX Software Systems - Initial API and implementation
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.launch.ui;
 
@@ -20,15 +20,12 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
-import org.eclipse.debug.ui.StringVariableSelectionDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -120,41 +117,10 @@ public class CArgumentsTab extends CLaunchConfigurationTab {
 				updateLaunchConfigurationDialog();
 			}
 		});
-		fArgumentVariablesButton= createPushButton(group, LaunchMessages.CArgumentsTab_Variables, null); 
+		fArgumentVariablesButton= createVariablesButton(group, LaunchMessages.CArgumentsTab_Variables, fPrgmArgumentsText); 
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
 		fArgumentVariablesButton.setLayoutData(gd);
-		fArgumentVariablesButton.addSelectionListener(new SelectionAdapter() {
-			/* (non-Javadoc)
-			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
-			@Override
-			public void widgetSelected(SelectionEvent arg0) {
-				handleVariablesButtonSelected(fPrgmArgumentsText);
-			}
-		});
 		addControlAccessibleListener(fArgumentVariablesButton, fArgumentVariablesButton.getText()); // need to strip the mnemonic from buttons
-	}
-
-	/**
-	 * A variable entry button has been pressed for the given text
-	 * field. Prompt the user for a variable and enter the result
-	 * in the given field.
-	 */
-	protected void handleVariablesButtonSelected(Text textField) {
-		String variable = getVariable();
-		if (variable != null) {
-			textField.append(variable);
-		}
-	}
-
-	/**
-	 * Prompts the user to choose and configure a variable and returns
-	 * the resulting string, suitable to be used as an attribute.
-	 */
-	private String getVariable() {
-		StringVariableSelectionDialog dialog = new StringVariableSelectionDialog(getShell());
-		dialog.open();
-		return dialog.getVariableExpression();
 	}
 
 	public void addControlAccessibleListener(Control control, String controlName) {

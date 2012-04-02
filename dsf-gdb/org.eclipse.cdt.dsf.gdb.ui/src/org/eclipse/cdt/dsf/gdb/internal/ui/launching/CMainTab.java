@@ -12,6 +12,7 @@
  *     IBM Corporation
  *     Marc Khouzam (Ericsson) - Support setting the path in which the core file 
  *                               dialog should start (Bug 362039)
+ *     Anton Gorenkov
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.launching;
 
@@ -139,7 +140,6 @@ public class CMainTab extends CAbstractMainTab {
 	protected void createExeFileGroup(Composite parent, int colSpan) {
 		Composite mainComp = new Composite(parent, SWT.NONE);
 		GridLayout mainLayout = new GridLayout();
-		mainLayout.numColumns = 3;
 		mainLayout.marginHeight = 0;
 		mainLayout.marginWidth = 0;
 		mainComp.setLayout(mainLayout);
@@ -149,7 +149,6 @@ public class CMainTab extends CAbstractMainTab {
 		fProgLabel = new Label(mainComp, SWT.NONE);
 		fProgLabel.setText(LaunchMessages.getString("CMainTab.C/C++_Application")); //$NON-NLS-1$
 		gd = new GridData();
-		gd.horizontalSpan = 3;
 		fProgLabel.setLayoutData(gd);
 		fProgText = new Text(mainComp, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -161,7 +160,17 @@ public class CMainTab extends CAbstractMainTab {
 			}
 		});
 
-		fSearchButton = createPushButton(mainComp, LaunchMessages.getString("CMainTab.Search..."), null); //$NON-NLS-1$
+		Composite buttonComp = new Composite(mainComp, SWT.NONE);
+		GridLayout layout = new GridLayout(3, false);
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		buttonComp.setLayout(layout);
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
+		buttonComp.setLayoutData(gd);
+		buttonComp.setFont(parent.getFont());
+
+		createVariablesButton(buttonComp, LaunchMessages.getString("CMainTab.Variables"), fProgText); //$NON-NLS-1$
+		fSearchButton = createPushButton(buttonComp, LaunchMessages.getString("CMainTab.Search..."), null); //$NON-NLS-1$
 		fSearchButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent evt) {
@@ -171,7 +180,7 @@ public class CMainTab extends CAbstractMainTab {
 		});
 
 		Button browseForBinaryButton;
-		browseForBinaryButton = createPushButton(mainComp, LaunchMessages.getString("Launch.common.Browse_2"), null); //$NON-NLS-1$
+		browseForBinaryButton = createPushButton(buttonComp, LaunchMessages.getString("Launch.common.Browse_2"), null); //$NON-NLS-1$
 		browseForBinaryButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent evt) {
@@ -444,6 +453,11 @@ public class CMainTab extends CAbstractMainTab {
 
 		if (!fDontCheckProgram) {
 			String programName = fProgText.getText().trim();
+       		try {
+				programName = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(programName);
+			} catch (CoreException e) {
+				// Silently ignore substitution failure (for consistency with "Arguments" and "Work directory" fields)
+			}
 			if (programName.length() == 0) {
 				setErrorMessage(LaunchMessages.getString("CMainTab.Program_not_specified")); //$NON-NLS-1$
 				return false;

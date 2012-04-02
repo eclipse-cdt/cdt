@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 QNX Software Systems and others.
+ * Copyright (c) 2005, 2012 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX Software Systems - Initial API and implementation
- * Ken Ryall (Nokia) - bug 178731
+ *     QNX Software Systems - Initial API and implementation
+ *     Ken Ryall (Nokia) - bug 178731
+ *     Anton Gorenkov
  *******************************************************************************/
 package org.eclipse.cdt.launch.ui;
 
@@ -26,11 +27,18 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
+import org.eclipse.debug.ui.StringVariableSelectionDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
@@ -54,6 +62,9 @@ public abstract class CLaunchConfigurationTab extends AbstractLaunchConfiguratio
 		try {
 			projectName = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String)null);
 			programName = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, (String)null);
+			if (programName != null) {
+				programName = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(programName);
+			}
 		} catch (CoreException e) {
 		}
 		if (projectName != null && !projectName.equals("")) { //$NON-NLS-1$
@@ -160,4 +171,44 @@ public abstract class CLaunchConfigurationTab extends AbstractLaunchConfiguratio
 			return platform;
 		}
 	}
+	
+	/**
+	 * Creates a button that allows user to insert build variables.
+	 * 
+	 * @since 7.0
+	 */
+	protected Button createVariablesButton(Composite parent, String label, final Text textField) {
+		Button variablesButton = createPushButton(parent, label, null); 
+		variablesButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				handleVariablesButtonSelected(textField);
+			}
+		});
+		return variablesButton;
+	}
+
+	/**
+	 * A variable entry button has been pressed for the given text
+	 * field. Prompt the user for a variable and enter the result
+	 * in the given field.
+	 */
+	private void handleVariablesButtonSelected(Text textField) {
+		String variable = getVariable();
+		if (variable != null) {
+			// We should use insert() but not append() to be consistent with the Platform behavior (e.g. Common tab)
+			textField.insert(variable);
+		}
+	}
+
+	/**
+	 * Prompts the user to choose and configure a variable and returns
+	 * the resulting string, suitable to be used as an attribute.
+	 */
+	private String getVariable() {
+		StringVariableSelectionDialog dialog = new StringVariableSelectionDialog(getShell());
+		dialog.open();
+		return dialog.getVariableExpression();
+	}
+	
 }

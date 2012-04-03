@@ -272,6 +272,17 @@
                helpContextId="move_to_line_action_context"
                label="%GlobalMoveToLineAction.label"
                menubarPath="org.eclipse.ui.run/stepGroup"/>
+         <action
+               class="org.eclipse.cdt.debug.internal.ui.actions.ToggleInstructionStepModeActionDelegate"
+               helpContextId="toggle_instruction_step_mode_action_context"
+               icon="icons/elcl16/instr_step.gif"
+               id="org.eclipse.cdt.debug.ui.actions.ToggleInstructionStepMode"
+               label="%ToggleInstructionStepModeAction.label"
+               menubarPath="org.eclipse.ui.run/stepGroup"
+               state="false"
+               style="toggle"
+               toolbarPath="org.eclipse.debug.ui.main.toolbar/renderGroup">
+		 </action>                              
       </actionSet>
    </extension>
    <extension
@@ -398,7 +409,6 @@
                style="toggle"
                id="org.eclipse.cdt.debug.internal.ui.actions.ToggleInstructionStepModeActionDelegate"
                class="org.eclipse.cdt.debug.internal.ui.actions.ToggleInstructionStepModeActionDelegate"
-               enablesFor="1"
                icon="icons/elcl16/instr_step.gif"
                helpContextId="toggle_instruction_step_mode_action_context"
                label="%ToggleInstructionStepModeAction.label"
@@ -897,7 +907,6 @@
                class="org.eclipse.cdt.debug.internal.ui.actions.ToggleInstructionStepModeActionDelegate"
                disabledIcon="icons/dlcl16/instr_step.gif"
                icon="icons/elcl16/instr_step.gif"
-               enablesFor="1"
                label="%ToggleInstructionStepModeAction.label"
                helpContextId="toggle_instruction_step_mode_action_context"
                tooltip="%ToggleInstructionStepModeAction.tooltip">

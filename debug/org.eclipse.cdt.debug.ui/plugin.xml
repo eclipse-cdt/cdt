@@ -426,7 +426,7 @@
             targetID="#CEditorRulerContext"
             id="org.eclipse.cdt.debug.ui.CEditorRulerActions">
          <action
-               label="%BreakpointProperties.label"
+               label="%RulerBreakpointProperties.label"
                helpContextId="breakpoint_properties_action_context"
                class="org.eclipse.cdt.debug.internal.ui.actions.breakpoints.CBreakpointPropertiesRulerActionDelegate"
                menubarPath="debug"
@@ -504,7 +504,7 @@
             targetID="#ASMEditorRulerContext"
             id="org.eclipse.cdt.debug.ui.AsmEditorRulerActions">
          <action
-               label="%BreakpointProperties.label"
+               label="%RulerBreakpointProperties.label"
                helpContextId="breakpoint_properties_action_context"
                class="org.eclipse.cdt.debug.internal.ui.actions.breakpoints.CBreakpointPropertiesRulerActionDelegate"
                menubarPath="debug"
@@ -1767,7 +1767,15 @@
              id="org.eclipse.cdt.debug.menu.command.breakpointProperties"
              label="%BreakpointProperties.label"
              tooltip="%BreakpointProperties.label">
-          <visibleWhen checkEnabled="true">
+          <visibleWhen>
+             <with variable="selection">
+               <count value="1"/>
+               <iterate>
+                   <or>
+	                  <adapt type="org.eclipse.cdt.debug.core.model.ICBreakpoint"/>
+	               </or>
+               </iterate>
+             </with>
           </visibleWhen>
        </command>
     </menuContribution>    

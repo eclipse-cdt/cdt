@@ -9,7 +9,7 @@
  *     Andrew Gvozdev - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.cdt.make.core.language.settings.providers;
+package org.eclipse.cdt.managedbuilder.language.settings.providers;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -25,7 +25,6 @@ import org.eclipse.cdt.core.ICommandLauncher;
 import org.eclipse.cdt.core.IConsoleParser;
 import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.core.ProblemMarkerInfo;
-import org.eclipse.cdt.core.language.settings.providers.ICBuildOutputParser;
 import org.eclipse.cdt.core.language.settings.providers.ICListenerAgent;
 import org.eclipse.cdt.core.language.settings.providers.IWorkingDirectoryTracker;
 import org.eclipse.cdt.core.model.ILanguage;
@@ -38,7 +37,7 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.internal.core.BuildRunnerHelper;
 import org.eclipse.cdt.internal.core.XmlUtil;
 import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsLogger;
-import org.eclipse.cdt.make.core.MakeCorePlugin;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.utils.CommandLineUtil;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -65,11 +64,11 @@ import org.w3c.dom.Element;
  * Abstract parser capable to execute compiler command printing built-in compiler
  * specs and parse built-in language settings out of it.
  *
- * @since 7.2
+ * @since 8.1
  */
 public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSettingsOutputScanner implements ICListenerAgent {
 	// TODO - refine id after settling with the plugin
-	public static final String JOB_FAMILY_BUILTIN_SPECS_DETECTOR = "org.eclipse.cdt.make.core.scannerconfig.AbstractBuiltinSpecsDetector";
+	public static final String JOB_FAMILY_BUILTIN_SPECS_DETECTOR = "org.eclipse.cdt.managedbuilder.AbstractBuiltinSpecsDetector"; //$NON-NLS-1$
 
 	protected static final String COMPILER_MACRO = "${COMMAND}"; //$NON-NLS-1$
 	protected static final String SPEC_FILE_MACRO = "${INPUTS}"; //$NON-NLS-1$
@@ -83,13 +82,12 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 	private static final int TICKS_OUTPUT_PARSING = 1 * MONITOR_SCALE;
 	private static final int TICKS_EXECUTE_COMMAND = 1 * MONITOR_SCALE;
 
-	private static final String CDT_MAKE_UI_PLUGIN_ID = "org.eclipse.cdt.make.ui"; //$NON-NLS-1$
+	private static final String CDT_MANAGEDBUILDER_UI_PLUGIN_ID = "org.eclipse.cdt.managedbuilder.ui"; //$NON-NLS-1$
 	private static final String DEFAULT_CONSOLE_ICON = "icons/obj16/inspect_system.gif"; //$NON-NLS-1$
 
 	private static final String GMAKE_ERROR_PARSER_ID = "org.eclipse.cdt.core.GmakeErrorParser"; //$NON-NLS-1$
 	private static final String ATTR_PARAMETER = "parameter"; //$NON-NLS-1$
 	private static final String ATTR_CONSOLE = "console"; //$NON-NLS-1$
-	private static final String NEWLINE = System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 
 	protected URI mappedRootURI = null;
 	protected URI buildDirURI = null;
@@ -139,7 +137,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 							}
 						}
 					} catch (CoreException e) {
-						return new Status(Status.ERROR, MakeCorePlugin.getUniqueIdentifier(), "Error checking markers.", e); //$NON-NLS-1$
+						return new Status(Status.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID, "Error checking markers.", e); //$NON-NLS-1$
 					}
 
 					try {
@@ -154,7 +152,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 							marker.setAttribute(IMarker.LOCATION, "Project Properties, C++ Preprocessor Include.../Providers, [" + providerName + "] options");
 						}
 					} catch (CoreException e) {
-						return new Status(Status.ERROR, MakeCorePlugin.getUniqueIdentifier(), "Error adding markers.", e); //$NON-NLS-1$
+						return new Status(Status.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID, "Error adding markers.", e); //$NON-NLS-1$
 					}
 
 					return Status.OK_STATUS;
@@ -175,7 +173,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 					}
 				}
 			} catch (CoreException e) {
-				MakeCorePlugin.log(new Status(Status.ERROR, MakeCorePlugin.getUniqueIdentifier(), "Error deleting markers.", e)); //$NON-NLS-1$
+				ManagedBuilderCorePlugin.log(new Status(Status.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID, "Error deleting markers.", e)); //$NON-NLS-1$
 			}
 		}
 
@@ -338,8 +336,8 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 					startup(currentCfgDescription, null);
 					status = runForEachLanguage(monitor);
 				} catch (CoreException e) {
-					MakeCorePlugin.log(e);
-					status = new Status(IStatus.ERROR, MakeCorePlugin.PLUGIN_ID, IStatus.ERROR, "Error running Builtin Specs Detector", e);
+					ManagedBuilderCorePlugin.log(e);
+					status = new Status(IStatus.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID, IStatus.ERROR, "Error running Builtin Specs Detector", e);
 				} finally {
 					shutdown();
 				}
@@ -377,7 +375,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 	 * TODO
 	 */
 	protected IStatus runForEachLanguage(IProgressMonitor monitor) {
-		MultiStatus status = new MultiStatus(MakeCorePlugin.PLUGIN_ID, IStatus.OK, "Problem running CDT Scanner Discovery provider " + getId(), null);
+		MultiStatus status = new MultiStatus(ManagedBuilderCorePlugin.PLUGIN_ID, IStatus.OK, "Problem running CDT Scanner Discovery provider " + getId(), null);
 
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
@@ -405,8 +403,8 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 						startupForLanguage(languageId);
 						runForLanguage(new SubProgressMonitor(monitor, TICKS_RUN_FOR_ONE_LANGUAGE));
 					} catch (Exception e) {
-						IStatus s = new Status(IStatus.ERROR, MakeCorePlugin.PLUGIN_ID, IStatus.ERROR, "Error running Builtin Specs Detector", e); //$NON-NLS-1$
-						MakeCorePlugin.log(s);
+						IStatus s = new Status(IStatus.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID, IStatus.ERROR, "Error running Builtin Specs Detector", e); //$NON-NLS-1$
+						ManagedBuilderCorePlugin.log(s);
 						status.merge(s);
 					} finally {
 						shutdownForLanguage();
@@ -431,8 +429,8 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 		} catch (OperationCanceledException e) {
 			// user chose to cancel operation, do not threaten them with red error signs
 		} catch (Exception e) {
-			status.merge(new Status(IStatus.ERROR, MakeCorePlugin.PLUGIN_ID, IStatus.ERROR, "Error running Builtin Specs Detector", e));
-			MakeCorePlugin.log(status);
+			status.merge(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID, IStatus.ERROR, "Error running Builtin Specs Detector", e));
+			ManagedBuilderCorePlugin.log(status);
 		} finally {
 			monitor.done();
 		}
@@ -485,7 +483,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 				console = startProviderConsole();
 			} else {
 				// that looks in extension points registry and won't find the id, this console is not shown
-				console = CCorePlugin.getDefault().getConsole(MakeCorePlugin.PLUGIN_ID + ".console.hidden"); //$NON-NLS-1$
+				console = CCorePlugin.getDefault().getConsole(ManagedBuilderCorePlugin.PLUGIN_ID + ".console.hidden"); //$NON-NLS-1$
 			}
 			console.start(currentProject);
 
@@ -526,13 +524,13 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 			buildRunnerHelper.goodbye();
 
 		} catch (Exception e) {
-			Status status = new Status(IStatus.ERROR, MakeCorePlugin.PLUGIN_ID, "Internal error running scanner discovery", e);
-			MakeCorePlugin.log(new CoreException(status));
+			Status status = new Status(IStatus.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID, "Internal error running scanner discovery", e);
+			ManagedBuilderCorePlugin.log(new CoreException(status));
 		} finally {
 			try {
 				buildRunnerHelper.close();
 			} catch (IOException e) {
-				MakeCorePlugin.log(e);
+				ManagedBuilderCorePlugin.log(e);
 			}
 			monitor.done();
 		}
@@ -553,19 +551,38 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 	}
 
 	private IConsole startProviderConsole() {
-		String extConsoleId;
-		if (currentProject != null) {
-			extConsoleId = "org.eclipse.cdt.make.internal.ui.scannerconfig.ScannerDiscoveryConsole";
-		} else {
-			// TODO This console is not colored!
-			extConsoleId = "org.eclipse.cdt.make.internal.ui.scannerconfig.ScannerDiscoveryGlobalConsole";
-		}
-		ILanguage ld = LanguageManager.getInstance().getLanguage(currentLanguageId);
-		String consoleId = MakeCorePlugin.PLUGIN_ID + '.' + getId() + '.' + currentLanguageId;
-		String consoleName = getName() + ", " + ld.getName();
-		URL defaultIcon = Platform.getBundle(CDT_MAKE_UI_PLUGIN_ID).getEntry(DEFAULT_CONSOLE_ICON);
+		IConsole console = null;
 
-		IConsole console = CCorePlugin.getDefault().getConsole(extConsoleId, consoleId, consoleName, defaultIcon);
+		if (isConsoleEnabled && currentLanguageId != null) {
+			String extConsoleId;
+			if (currentProject != null) {
+				extConsoleId = "org.eclipse.cdt.managedbuilder.ScannerDiscoveryConsole";
+			} else {
+				// TODO This console is not colored!
+				extConsoleId = "org.eclipse.cdt.managedbuilder.ScannerDiscoveryGlobalConsole";
+			}
+			ILanguage ld = LanguageManager.getInstance().getLanguage(currentLanguageId);
+			if (ld != null) {
+				String consoleId = ManagedBuilderCorePlugin.PLUGIN_ID + '.' + getId() + '.' + currentLanguageId;
+				String consoleName = getName() + ", " + ld.getName();
+				URL defaultIcon = Platform.getBundle(CDT_MANAGEDBUILDER_UI_PLUGIN_ID).getEntry(DEFAULT_CONSOLE_ICON);
+				if (defaultIcon == null) {
+					@SuppressWarnings("nls")
+					String msg = "Unable to find icon " + DEFAULT_CONSOLE_ICON + " in plugin " + CDT_MANAGEDBUILDER_UI_PLUGIN_ID;
+					ManagedBuilderCorePlugin.log(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID, msg));
+				}
+
+				console = CCorePlugin.getDefault().getConsole(extConsoleId, consoleId, consoleName, defaultIcon);
+			}
+		}
+
+		if (console == null) {
+			// that looks in extension points registry and won't find the id, this console is not shown
+			console = CCorePlugin.getDefault().getConsole(ManagedBuilderCorePlugin.PLUGIN_ID + ".console.hidden"); //$NON-NLS-1$
+		}
+
+
+
 		return console;
 	}
 
@@ -577,7 +594,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 		}
 
 		String specFileName = SPEC_FILE_BASE + ext;
-		IPath workingLocation = MakeCorePlugin.getWorkingDirectory();
+		IPath workingLocation = ManagedBuilderCorePlugin.getWorkingDirectory();
 		IPath fileLocation = workingLocation.append(specFileName);
 
 		specFile = new java.io.File(fileLocation.toOSString());
@@ -587,7 +604,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 			try {
 				specFile.createNewFile();
 			} catch (IOException e) {
-				MakeCorePlugin.log(e);
+				ManagedBuilderCorePlugin.log(e);
 			}
 		}
 
@@ -615,7 +632,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 		}
 
 		if (ext == null) {
-			MakeCorePlugin.log(new Status(IStatus.ERROR, MakeCorePlugin.PLUGIN_ID, "Unable to find file extension for language " + languageId)); //$NON-NLS-1$
+			ManagedBuilderCorePlugin.log(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID, "Unable to find file extension for language " + languageId)); //$NON-NLS-1$
 		}
 		return ext;
 	}

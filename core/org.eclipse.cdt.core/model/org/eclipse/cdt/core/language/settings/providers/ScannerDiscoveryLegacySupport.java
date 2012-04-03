@@ -18,6 +18,7 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.internal.core.LocalProjectScope;
 import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsExtensionManager;
 import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsProvidersSerializer;
@@ -108,7 +109,13 @@ public class ScannerDiscoveryLegacySupport {
 	 * which is not intended to be referenced by clients.
 	 */
 	public static boolean isLegacyScannerDiscoveryOn(ICConfigurationDescription cfgDescription) {
-		IProject project = cfgDescription != null ? cfgDescription.getProjectDescription().getProject() : null;
+		IProject project = null;
+		if (cfgDescription != null) {
+			ICProjectDescription prjDescription = cfgDescription.getProjectDescription();
+			if (prjDescription != null) {
+				project = prjDescription.getProject();
+			}
+		}
 		return isLanguageSettingsProvidersFunctionalityEnabled(project) || isMbsLanguageSettingsProviderOn(cfgDescription);
 	}
 

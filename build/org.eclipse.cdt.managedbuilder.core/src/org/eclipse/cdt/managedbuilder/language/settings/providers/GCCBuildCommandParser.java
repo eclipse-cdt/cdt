@@ -8,7 +8,7 @@
  * Contributors:
  *     Andrew Gvozdev - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.make.core.language.settings.providers;
+package org.eclipse.cdt.managedbuilder.language.settings.providers;
 
 
 import org.eclipse.cdt.core.errorparsers.RegexErrorPattern;
@@ -16,7 +16,7 @@ import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsEditabl
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 
 /**
- * @since 7.2
+ * @since 8.1
  */
 public class GCCBuildCommandParser extends AbstractBuildCommandParser implements ILanguageSettingsEditableProvider {
 	@SuppressWarnings("nls")
@@ -53,7 +53,7 @@ public class GCCBuildCommandParser extends AbstractBuildCommandParser implements
 
 	public static class GCCBuildCommandPatternHighlighter extends AbstractBuildCommandParser.AbstractBuildCommandPatternHighlighter {
 		// ID of the parser taken from the existing extension point
-		private static final String GCC_BUILD_COMMAND_PARSER_EXT = "org.eclipse.cdt.make.core.GCCBuildCommandParser"; //$NON-NLS-1$
+		private static final String GCC_BUILD_COMMAND_PARSER_EXT = "org.eclipse.cdt.managedbuilder.core.GCCBuildCommandParser"; //$NON-NLS-1$
 
 		public GCCBuildCommandPatternHighlighter() {
 			super(GCC_BUILD_COMMAND_PARSER_EXT);

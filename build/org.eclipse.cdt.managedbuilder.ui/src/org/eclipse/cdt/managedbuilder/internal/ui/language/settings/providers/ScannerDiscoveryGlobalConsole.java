@@ -9,7 +9,7 @@
  *     Andrew Gvozdev - Initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.cdt.make.internal.ui.language.settings.providers;
+package org.eclipse.cdt.managedbuilder.internal.ui.language.settings.providers;
 
 import java.io.IOException;
 import java.net.URL;
@@ -21,6 +21,7 @@ import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleManager;
@@ -103,11 +104,18 @@ public class ScannerDiscoveryGlobalConsole implements ICConsole {
 
 		if (console==null) {
 			URL iconUrl = LanguageSettingsProviderAssociationManager.getImageUrl(consoleId);
-			if (iconUrl==null) {
+			if (iconUrl == null) {
 				iconUrl = defaultIconUrl;
 			}
 
-			console = new MessageConsole(name, CDTSharedImages.getImageDescriptor(iconUrl.toString()));
+			ImageDescriptor imageDescriptor;
+			if (iconUrl != null) {
+				imageDescriptor = CDTSharedImages.getImageDescriptor(iconUrl.toString());
+			} else {
+				imageDescriptor = ImageDescriptor.getMissingImageDescriptor();
+			}
+
+			console = new MessageConsole(name, imageDescriptor);
 			console.activate();
 			consoleManager.addConsoles(new IConsole[]{ console });
 		}

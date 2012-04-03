@@ -9,7 +9,7 @@
  *     Andrew Gvozdev - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.cdt.managedbuilder.internal.language.settings.providers;
+package org.eclipse.cdt.managedbuilder.language.settings.providers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,11 +18,12 @@ import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsEditabl
 import org.eclipse.cdt.core.language.settings.providers.IWorkingDirectoryTracker;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
-import org.eclipse.cdt.managedbuilder.language.settings.providers.ToolchainBuiltinSpecsDetector;
 import org.eclipse.core.runtime.CoreException;
 
 /**
  * Language settings provider to detect built-in compiler settings for GCC compiler.
+ *
+ * @since 8.1
  */
 public class GCCBuiltinSpecsDetector extends ToolchainBuiltinSpecsDetector implements ILanguageSettingsEditableProvider {
 	// ID must match the toolchain definition in org.eclipse.cdt.managedbuilder.core.buildDefinitions extension point

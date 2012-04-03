@@ -8,7 +8,7 @@
  * Contributors:
  *     Andrew Gvozdev - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.make.language.settings.providers;
+package org.eclipse.cdt.managedbuilder.language.settings.providers.tests;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -38,8 +38,8 @@ import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.internal.core.XmlUtil;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
-import org.eclipse.cdt.make.core.language.settings.providers.AbstractBuildCommandParser;
-import org.eclipse.cdt.make.core.language.settings.providers.GCCBuildCommandParser;
+import org.eclipse.cdt.managedbuilder.language.settings.providers.AbstractBuildCommandParser;
+import org.eclipse.cdt.managedbuilder.language.settings.providers.GCCBuildCommandParser;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -56,7 +56,7 @@ import org.w3c.dom.Element;
 
 public class GCCBuildCommandParserTest extends BaseTestCase {
 	// ID of the parser taken from the extension point
-	private static final String GCC_BUILD_COMMAND_PARSER_EXT = "org.eclipse.cdt.make.core.GCCBuildCommandParser"; //$NON-NLS-1$
+	private static final String GCC_BUILD_COMMAND_PARSER_EXT = "org.eclipse.cdt.managedbuilder.core.GCCBuildCommandParser"; //$NON-NLS-1$
 
 	private static final String PROVIDER_ID = "provider.id";
 	private static final String PROVIDER_NAME = "provider name";

@@ -9,7 +9,7 @@
  *     Andrew Gvozdev - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.cdt.make.core.language.settings.providers;
+package org.eclipse.cdt.managedbuilder.language.settings.providers;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,7 +26,7 @@ import org.eclipse.cdt.core.errorparsers.RegexErrorParser;
 import org.eclipse.cdt.core.errorparsers.RegexErrorPattern;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.make.core.MakeCorePlugin;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -42,10 +42,10 @@ import org.eclipse.core.runtime.jobs.Job;
  * Abstract class for providers parsing compiler option from build command when it
  * is present in build output.
  *
- * @since 7.2
+ * @since 8.1
  */
 public abstract class AbstractBuildCommandParser extends AbstractLanguageSettingsOutputScanner {
-	public static final Object JOB_FAMILY_BUILD_COMMAND_PARSER = "org.eclipse.cdt.make.core.scannerconfig.AbstractBuildCommandParser";
+	public static final Object JOB_FAMILY_BUILD_COMMAND_PARSER = "org.eclipse.cdt.managedbuilder.AbstractBuildCommandParser"; //$NON-NLS-1$
 	private static final String ATTR_PARAMETER = "parameter"; //$NON-NLS-1$
 
 	private static final String LEADING_PATH_PATTERN = "\\S+[/\\\\]"; //$NON-NLS-1$
@@ -205,7 +205,7 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 					if (settingsFolder.isAccessible())
 						rule = currentProject.getFile(".settings/language.settings.xml");
 				} catch (CoreException e) {
-					MakeCorePlugin.log(e);
+					ManagedBuilderCorePlugin.log(e);
 				}
 			}
 		}

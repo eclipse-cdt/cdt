@@ -9,13 +9,13 @@
  *     Andrew Gvozdev - Initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.cdt.make.internal.ui.language.settings.providers;
+package org.eclipse.cdt.managedbuilder.internal.ui.language.settings.providers;
 
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
 import org.eclipse.cdt.internal.ui.language.settings.providers.AbstractLanguageSettingProviderOptionPage;
 import org.eclipse.cdt.internal.ui.newui.StatusMessageLine;
-import org.eclipse.cdt.make.core.language.settings.providers.AbstractBuildCommandParser;
+import org.eclipse.cdt.managedbuilder.language.settings.providers.AbstractBuildCommandParser;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;

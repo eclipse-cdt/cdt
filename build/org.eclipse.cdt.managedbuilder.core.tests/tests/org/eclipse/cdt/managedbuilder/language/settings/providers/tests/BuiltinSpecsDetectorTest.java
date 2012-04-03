@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 Andrew Gvozdev and others.
+ * Copyright (c) 2010, 2012 Andrew Gvozdev and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *     Andrew Gvozdev - Initial API and implementation
  *******************************************************************************/
- package org.eclipse.cdt.make.language.settings.providers;
+ package org.eclipse.cdt.managedbuilder.language.settings.providers.tests;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -34,7 +34,7 @@ import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.internal.core.XmlUtil;
-import org.eclipse.cdt.make.core.language.settings.providers.AbstractBuiltinSpecsDetector;
+import org.eclipse.cdt.managedbuilder.language.settings.providers.AbstractBuiltinSpecsDetector;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;

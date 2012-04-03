@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 Andrew Gvozdev and others.
+ * Copyright (c) 2009, 2012 Andrew Gvozdev and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@ package org.eclipse.cdt.managedbuilder.language.settings.providers;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.cdt.make.core.language.settings.providers.AbstractBuiltinSpecsDetector;
 import org.eclipse.cdt.managedbuilder.core.IInputType;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;

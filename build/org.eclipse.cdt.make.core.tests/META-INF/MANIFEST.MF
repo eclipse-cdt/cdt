@@ -5,8 +5,7 @@ Bundle-SymbolicName: org.eclipse.cdt.make.core.tests;singleton:=true
 Bundle-Version: 7.0.0.qualifier
 Bundle-Activator: org.eclipse.cdt.make.core.tests.MakeTestsPlugin
 Export-Package: org.eclipse.cdt.make.builder.tests,
- org.eclipse.cdt.make.core.tests,
- org.eclipse.cdt.make.language.settings.providers
+ org.eclipse.cdt.make.core.tests
 Require-Bundle: org.eclipse.core.runtime,
  org.junit,
  org.eclipse.cdt.make.core,

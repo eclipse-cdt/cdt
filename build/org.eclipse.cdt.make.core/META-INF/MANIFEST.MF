@@ -7,7 +7,6 @@ Bundle-Activator: org.eclipse.cdt.make.core.MakeCorePlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.cdt.make.core,
- org.eclipse.cdt.make.core.language.settings.providers,
  org.eclipse.cdt.make.core.makefile,
  org.eclipse.cdt.make.core.makefile.gnu,
  org.eclipse.cdt.make.core.scannerconfig,

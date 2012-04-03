@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 Andrew Gvozdev and others.
+ * Copyright (c) 2009, 2012 Andrew Gvozdev and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,7 @@
  *     Andrew Gvozdev - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.cdt.make.core.language.settings.providers;
+package org.eclipse.cdt.managedbuilder.language.settings.providers;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,7 +27,6 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariableManager;
-import org.eclipse.cdt.core.language.settings.providers.ICBuildOutputParser;
 import org.eclipse.cdt.core.language.settings.providers.IWorkingDirectoryTracker;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsSerializableProvider;
@@ -37,7 +36,7 @@ import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.internal.core.XmlUtil;
 import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsLogger;
-import org.eclipse.cdt.make.core.MakeCorePlugin;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.utils.EFSExtensionManager;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.resources.IContainer;
@@ -54,7 +53,7 @@ import org.w3c.dom.Element;
 /**
  * Abstract class for providers capable to parse build output.
  *
- * @since 7.2
+ * @since 8.1
  */
 public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSettingsSerializableProvider implements ICBuildOutputParser {
 	protected static final String ATTR_KEEP_RELATIVE_PATHS = "keep-relative-paths"; //$NON-NLS-1$
@@ -295,7 +294,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 						}
 					} catch (Throwable e) {
 						// protect from rogue parsers extending this class
-						MakeCorePlugin.log(e);
+						ManagedBuilderCorePlugin.log(e);
 					}
 				}
 			}
@@ -496,9 +495,11 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 					ICdtVariableManager vmanager = CCorePlugin.getDefault().getCdtVariableManager();
 					builderCWD = vmanager.resolveValue(builderCWD, "", null, currentCfgDescription); //$NON-NLS-1$
 				} catch (CdtVariableException e) {
-					MakeCorePlugin.log(e);
+					ManagedBuilderCorePlugin.log(e);
 				}
-				buildDirURI = org.eclipse.core.filesystem.URIUtil.toURI(builderCWD);
+				if (builderCWD != null && !builderCWD.isEmpty()) {
+					buildDirURI = org.eclipse.core.filesystem.URIUtil.toURI(builderCWD);
+				}
 			}
 		}
 
@@ -709,7 +710,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 					fileURI.getPort(), path + '/', fileURI.getQuery(), fileURI.getFragment());
 		} catch (URISyntaxException e) {
 			// It should be valid URI here or something is wrong
-			MakeCorePlugin.log(e);
+			ManagedBuilderCorePlugin.log(e);
 		}
 
 		return cwdURI;
@@ -851,7 +852,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 			String canonicalPathStr = file.getCanonicalPath();
 			return new Path(canonicalPathStr);
 		} catch (Exception e) {
-			MakeCorePlugin.log(e);
+			ManagedBuilderCorePlugin.log(e);
 		}
 		return null;
 	}

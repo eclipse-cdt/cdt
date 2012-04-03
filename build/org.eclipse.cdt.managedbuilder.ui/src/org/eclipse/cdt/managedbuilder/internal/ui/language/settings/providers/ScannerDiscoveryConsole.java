@@ -9,7 +9,7 @@
  *     Andrew Gvozdev - Initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.cdt.make.internal.ui.language.settings.providers;
+package org.eclipse.cdt.managedbuilder.internal.ui.language.settings.providers;
 
 import java.net.URL;
 

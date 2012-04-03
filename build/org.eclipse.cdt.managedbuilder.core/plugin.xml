@@ -606,7 +606,7 @@
             name="CDT Managed Build Setting Entries">
       </provider>
       <provider
-            class="org.eclipse.cdt.managedbuilder.internal.language.settings.providers.GCCBuiltinSpecsDetector"
+            class="org.eclipse.cdt.managedbuilder.language.settings.providers.GCCBuiltinSpecsDetector"
             id="org.eclipse.cdt.managedbuilder.core.GCCBuiltinSpecsDetector"
             name="CDT GCC Builtin Compiler Settings"
             parameter="${COMMAND} -E -P -v -dD ${INPUTS}">
@@ -620,6 +620,13 @@
             parameter="${COMMAND} -E -P -v -dD ${INPUTS}">
          <language-scope id="org.eclipse.cdt.core.gcc"/>
          <language-scope id="org.eclipse.cdt.core.g++"/>
+      </provider>
+      <provider
+            class="org.eclipse.cdt.managedbuilder.language.settings.providers.GCCBuildCommandParser"
+            id="org.eclipse.cdt.managedbuilder.core.GCCBuildCommandParser"
+            name="CDT GCC Build Output Parser"
+            parameter="(gcc)|([gc]\+\+)"
+            prefer-non-shared="true">
       </provider>
    </extension>
    <extension

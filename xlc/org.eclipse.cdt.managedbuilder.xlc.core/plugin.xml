@@ -87,7 +87,7 @@
          <language-scope id="org.eclipse.cdt.core.g++"/>
       </provider>
       <provider
-            class="org.eclipse.cdt.make.core.language.settings.providers.GCCBuildCommandParser"
+            class="org.eclipse.cdt.managedbuilder.language.settings.providers.GCCBuildCommandParser"
             id="org.eclipse.cdt.managedbuilder.xlc.core.XlcBuildCommandParser"
             name="%XlcBuildCommandParserName"
             parameter="xl[cC]"

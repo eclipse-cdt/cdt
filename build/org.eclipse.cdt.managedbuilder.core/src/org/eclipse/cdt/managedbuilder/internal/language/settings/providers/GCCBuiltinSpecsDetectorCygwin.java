@@ -14,11 +14,12 @@ package org.eclipse.cdt.managedbuilder.internal.language.settings.providers;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import org.eclipse.cdt.managedbuilder.language.settings.providers.GCCBuiltinSpecsDetector;
 import org.eclipse.core.resources.IResource;
 
 /**
  * Class to detect built-in compiler settings.
- * The paths are converted to cygwin "filesystem" representation.
+ * The paths are converted to cygwin "file-system" representation.
  *
  */
 public class GCCBuiltinSpecsDetectorCygwin extends GCCBuiltinSpecsDetector {

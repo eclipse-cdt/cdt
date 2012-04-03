@@ -1,3 +1,21 @@
+2012-03-30  Jeff Johnston  <jjohnstn@redhat.com>
+
+	Bug #371277
+	* src/org/eclipse/cdt/internal/autotools/core/AutotoolsNewMakeGenerator.java
+	(regenerateMakefiles): Fix setting of status on error.
+	(runScript): Switch to use sh -c for all script execution.
+
+2012-03-30  Jeff Johnston  <jjohnstn@redhat.com>
+
+	Bug #372557
+	* src/org/eclipse/cdt/internal/autotools/core/AutotoolsNewMakeGenerator.java
+	(runScript): Fix index out of range exception when environment variable is
+	unknown.
+	
+2012-03-29  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* src/org/eclipse/cdt/autotools/core/AutotoolsNewProjectNature.java: Fix old nature id to contain the .core specifier.
+
 2012-01-03  Jeff Johnston  <jjohnstn@redhat.com>
 
 	Refactor all packages to be org.eclipse.cdt.autotools.core.

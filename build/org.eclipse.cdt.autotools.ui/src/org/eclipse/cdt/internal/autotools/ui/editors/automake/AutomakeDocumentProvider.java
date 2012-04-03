@@ -17,6 +17,7 @@ import java.util.Iterator;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IURIEditorInput;
 import org.eclipse.ui.editors.text.TextFileDocumentProvider;
@@ -105,8 +106,7 @@ public class AutomakeDocumentProvider extends TextFileDocumentProvider implement
 	public void connect(Object element) throws CoreException {
 		super.connect(element);
 		IMakefile makefile = getWorkingCopy(element);
-		IDocument document = getDocument(element);
-		AutomakeErrorHandler errorHandler = new AutomakeErrorHandler(document);
+		AutomakeErrorHandler errorHandler = new AutomakeErrorHandler((IEditorInput)element);
 		errorHandler.update(makefile);
 	}
 	

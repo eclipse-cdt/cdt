@@ -1,14 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 QNX Software Systems and others.
+ * Copyright (c) 2005, 2012 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX Software Systems - Initial API and implementation
- * IBM Corporation
- * Ericsson             - Updated for DSF
+ *     QNX Software Systems - Initial API and implementation
+ *     IBM Corporation
+ *     Ericsson             - Updated for DSF
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.launching;
 
@@ -142,7 +142,8 @@ public class CArgumentsTab extends CLaunchConfigurationTab {
 	protected void handleVariablesButtonSelected(Text textField) {
 		String variable = getVariable();
 		if (variable != null) {
-			textField.append(variable);
+			// We should use insert() but not append() to be consistent with the Platform behavior (e.g. Common tab)
+			textField.insert(variable);
 		}
 	}
 

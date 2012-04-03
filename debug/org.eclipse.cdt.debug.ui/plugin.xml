@@ -272,6 +272,17 @@
                helpContextId="move_to_line_action_context"
                label="%GlobalMoveToLineAction.label"
                menubarPath="org.eclipse.ui.run/stepGroup"/>
+         <action
+               class="org.eclipse.cdt.debug.internal.ui.actions.ToggleInstructionStepModeActionDelegate"
+               helpContextId="toggle_instruction_step_mode_action_context"
+               icon="icons/elcl16/instr_step.gif"
+               id="org.eclipse.cdt.debug.ui.actions.ToggleInstructionStepMode"
+               label="%ToggleInstructionStepModeAction.label"
+               menubarPath="org.eclipse.ui.run/stepGroup"
+               state="false"
+               style="toggle"
+               toolbarPath="org.eclipse.debug.ui.main.toolbar/renderGroup">
+		 </action>                              
       </actionSet>
    </extension>
    <extension
@@ -398,7 +409,6 @@
                style="toggle"
                id="org.eclipse.cdt.debug.internal.ui.actions.ToggleInstructionStepModeActionDelegate"
                class="org.eclipse.cdt.debug.internal.ui.actions.ToggleInstructionStepModeActionDelegate"
-               enablesFor="1"
                icon="icons/elcl16/instr_step.gif"
                helpContextId="toggle_instruction_step_mode_action_context"
                label="%ToggleInstructionStepModeAction.label"
@@ -416,7 +426,7 @@
             targetID="#CEditorRulerContext"
             id="org.eclipse.cdt.debug.ui.CEditorRulerActions">
          <action
-               label="%BreakpointProperties.label"
+               label="%RulerBreakpointProperties.label"
                helpContextId="breakpoint_properties_action_context"
                class="org.eclipse.cdt.debug.internal.ui.actions.breakpoints.CBreakpointPropertiesRulerActionDelegate"
                menubarPath="debug"
@@ -494,7 +504,7 @@
             targetID="#ASMEditorRulerContext"
             id="org.eclipse.cdt.debug.ui.AsmEditorRulerActions">
          <action
-               label="%BreakpointProperties.label"
+               label="%RulerBreakpointProperties.label"
                helpContextId="breakpoint_properties_action_context"
                class="org.eclipse.cdt.debug.internal.ui.actions.breakpoints.CBreakpointPropertiesRulerActionDelegate"
                menubarPath="debug"
@@ -897,7 +907,6 @@
                class="org.eclipse.cdt.debug.internal.ui.actions.ToggleInstructionStepModeActionDelegate"
                disabledIcon="icons/dlcl16/instr_step.gif"
                icon="icons/elcl16/instr_step.gif"
-               enablesFor="1"
                label="%ToggleInstructionStepModeAction.label"
                helpContextId="toggle_instruction_step_mode_action_context"
                tooltip="%ToggleInstructionStepModeAction.tooltip">
@@ -1758,7 +1767,15 @@
              id="org.eclipse.cdt.debug.menu.command.breakpointProperties"
              label="%BreakpointProperties.label"
              tooltip="%BreakpointProperties.label">
-          <visibleWhen checkEnabled="true">
+          <visibleWhen>
+             <with variable="selection">
+               <count value="1"/>
+               <iterate>
+                   <or>
+	                  <adapt type="org.eclipse.cdt.debug.core.model.ICBreakpoint"/>
+	               </or>
+               </iterate>
+             </with>
           </visibleWhen>
        </command>
     </menuContribution>    
@@ -1828,9 +1845,7 @@
             <or>
                <test property="org.eclipse.cdt.debug.ui.isCEditorSupportsCBreakpoint"/>
                <test property="org.eclipse.cdt.debug.ui.isAsmEditorSupportsCBreakpoint"/>
-               <test
-                     property="org.eclipse.cdt.debug.ui.isDisassemblyEditorSupportsCBreakpoint">
-               </test>                             
+               <test property="org.eclipse.cdt.debug.ui.isDisassemblyEditorSupportsCBreakpoint" />
                <with variable="selection">
                   <count value="1"/>
                    <test property="org.eclipse.cdt.debug.ui.isCDeclarationSupportsCBreakpoint"/>
@@ -1849,7 +1864,8 @@
                </reference>
                <or>
                <test property="org.eclipse.cdt.debug.ui.isCEditorSupportsCBreakpoint"/>
-               <test property="org.eclipse.cdt.debug.ui.isAsmEditorSupportsCBreakpoint"/>                             
+               <test property="org.eclipse.cdt.debug.ui.isAsmEditorSupportsCBreakpoint"/>
+               <test property="org.eclipse.cdt.debug.ui.isDisassemblyEditorSupportsCBreakpoint" />                                            
                <with variable="selection">
                   <count value="1"/>
                    <test property="org.eclipse.cdt.debug.ui.isCDeclarationSupportsCBreakpoint"/>

@@ -1,3 +1,17 @@
+2012-03-30  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* src/org/eclipse/cdt/autotools/tests/ProjectTools.java
+	(setup): Fix to return false when Workbench is null.
+
+2012-03-30  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* zip/project2.zip: Fix autogen.sh to make the configure script executable.
+	
+2012-03-29  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* src/org/eclipse/cdt/autotools/tests/ProjectTools.java (build): Refresh the workspace root so resource tests
+	will work consistently.
+
 2012-01-03  Jeff Johnston  <jjohnstn@redhat.com>
 
 	Refactor to org.eclipse.cdt.autotools.tests.

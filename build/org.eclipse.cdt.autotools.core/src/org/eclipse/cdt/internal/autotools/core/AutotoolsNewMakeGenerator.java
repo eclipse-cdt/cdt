@@ -301,7 +301,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 	}
 	
 	private Status regenerateMakefiles(IConfiguration icfg, boolean reconfigure) throws CoreException {
-		Status status;
+		MultiStatus status;
 		int rc = IStatus.OK;
 		String errMsg = new String();
 		boolean needFullConfigure = false;
@@ -614,7 +614,14 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 		} finally {
 			// getGenerationProblems().clear();
 			status = new MultiStatus(AutotoolsPlugin
-						.getUniqueIdentifier(), rc, errMsg, null);
+					.getUniqueIdentifier(), rc, errMsg, null);
+			if (rc != IStatus.OK)
+				status.add(new Status (
+						rc,
+						AutotoolsPlugin.getUniqueIdentifier(),
+						0,
+						errMsg,
+						null));
 		}
 		return status;
 	}
@@ -1032,21 +1039,24 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 		}
         configTargets[0] = getPathString(commandPath);
 
-        // Fix for bug #343731
+        // Fix for bug #343879
         if (Platform.getOS().equals(Platform.OS_WIN32)
-                || Platform.getOS().equals(Platform.OS_MACOSX)) {
+                || Platform.getOS().equals(Platform.OS_MACOSX))
         	removePWD = true;
-            // Neither Mac or Windows support calling scripts directly.
-            String command = null;
-            for (String arg : configTargets) {
-                // TODO check for spaces in args
-                if (command == null)
-                    command = arg;
-                else
-                    command += " " + arg;
-            }
-            configTargets = new String[] { "-c", command };
+        
+        // Fix for bug #343731 and bug #371277
+        // Always use sh -c for executing autotool scripts which should
+        // work on all Linux POSIX compliant shells including bash, dash, as
+        // well as Windows and Mac OSX.
+        String command = null;
+        for (String arg : configTargets) {
+        	// TODO check for spaces in args
+        	if (command == null)
+        		command = arg;
+        	else
+        		command += " " + arg;
         }
+        configTargets = new String[] { "-c", command };
         
         for (int i = 0; i < configTargets.length; ++i) {
 			// try to resolve the build macros in any argument
@@ -1060,7 +1070,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 							cfg);
 				// strip any env-var settings from options
 				// fix for bug #356278
-				if (resolved.charAt(0) != '-')
+				if (resolved.length() > 0 && resolved.charAt(0) != '-')
 					resolved = stripEnvVarsFromOption(resolved, additionalEnvs);
 				configTargets[i] = resolved;
 			} catch (BuildMacroException e) {

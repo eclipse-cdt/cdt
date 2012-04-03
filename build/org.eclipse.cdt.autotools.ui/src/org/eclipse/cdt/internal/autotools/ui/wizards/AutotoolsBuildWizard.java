@@ -40,6 +40,8 @@ public class AutotoolsBuildWizard extends AbstractCWizard {
 	 * @since 5.1
 	 */
 	public static final String EMPTY_PROJECT = AutotoolsWizardMessages.getResourceString("AutotoolsBuildWizard.2"); //$NON-NLS-1$
+	public static final String AUTOTOOLS_TOOLCHAIN_ID = "org.eclipse.linuxtools.cdt.autotools.core.toolChain"; //$NON-NLS-1$
+	
 	/**
 	 * Creates and returns an array of items to be displayed 
 	 */
@@ -49,38 +51,50 @@ public class AutotoolsBuildWizard extends AbstractCWizard {
 		IBuildPropertyValue[] vs = bpt.getSupportedValues();
 		Arrays.sort(vs, BuildListComparator.getInstance());
 		ArrayList<EntryDescriptor> items = new ArrayList<EntryDescriptor>();
-		
-		// look for Autotools project type
+
+		// look for project types that have a toolchain based on the Autotools toolchain
+		// and if so, add an entry for the project type.
+		// Fix for bug#374026
 		EntryDescriptor oldsRoot = null;
 		SortedMap<String, IProjectType> sm = ManagedBuildManager.getExtensionProjectTypeMap();
 		for (Map.Entry<String, IProjectType> e : sm.entrySet()) {
 			IProjectType pt = e.getValue();
-			if (pt.getId().equals(AUTOTOOLS_PROJECTTYPE_ID)) {
-				AutotoolsBuildWizardHandler h = new AutotoolsBuildWizardHandler(pt, parent, wizard);
-				IToolChain[] tcs = ManagedBuildManager.getExtensionToolChains(pt);
-				for(int i = 0; i < tcs.length; i++){
-					IToolChain t = tcs[i];
-					if(t.isSystemObject()) 
-						continue;
-					if (!isValid(t, supportedOnly, wizard))
-						continue;
+			AutotoolsBuildWizardHandler h = new AutotoolsBuildWizardHandler(pt, parent, wizard);
+			IToolChain[] tcs = ManagedBuildManager.getExtensionToolChains(pt);
+			for(int i = 0; i < tcs.length; i++){
+				IToolChain t = tcs[i];
 
-					h.addTc(t);
+				IToolChain parent = t;
+				while (parent.getSuperClass() != null) {
+					parent = parent.getSuperClass();
 				}
 
-				String pId = null;
-				if (CDTPrefUtil.getBool(CDTPrefUtil.KEY_OTHERS)) {
-					if (oldsRoot == null) {
-						oldsRoot = new EntryDescriptor(OTHERS_LABEL, null, OTHERS_LABEL, true, null, null);
-						items.add(oldsRoot);
-					}
-					pId = oldsRoot.getId();
-				} else { // do not group to <Others>
-					pId = null;
-				}
-				items.add(new EntryDescriptor(pt.getId(), pId, pt.getName(), true, h, null));
+				if (!parent.getId().equals(AUTOTOOLS_TOOLCHAIN_ID))
+					continue;
+
+				if(t.isSystemObject()) 
+					continue;
+				if (!isValid(t, supportedOnly, wizard))
+					continue;
+
+				h.addTc(t);
 			}
+
+			String pId = null;
+			if (CDTPrefUtil.getBool(CDTPrefUtil.KEY_OTHERS)) {
+				if (oldsRoot == null) {
+					oldsRoot = new EntryDescriptor(OTHERS_LABEL, null, OTHERS_LABEL, true, null, null);
+					items.add(oldsRoot);
+				}
+				pId = oldsRoot.getId();
+			} else { // do not group to <Others>
+			pId = null;
+			}
+
+			if (h.getToolChainsCount() > 0)
+				items.add(new EntryDescriptor(pt.getId(), pId, pt.getName(), true, h, null));
 		}
+
 		return (EntryDescriptor[])items.toArray(new EntryDescriptor[items.size()]);
 	}
 }

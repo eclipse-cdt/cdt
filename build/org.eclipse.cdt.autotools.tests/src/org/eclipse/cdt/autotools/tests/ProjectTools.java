@@ -13,6 +13,8 @@ import org.eclipse.cdt.core.CommandLauncher;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.internal.autotools.core.configure.AutotoolsConfigurationManager;
 import org.eclipse.cdt.internal.autotools.core.configure.IAConfiguration;
+import org.eclipse.cdt.internal.autotools.ui.wizards.ConvertToAutotoolsProjectWizard;
+import org.eclipse.cdt.internal.autotools.ui.wizards.ConvertToAutotoolsProjectWizardPage;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
@@ -23,6 +25,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -35,8 +38,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.cdt.internal.autotools.ui.wizards.ConvertToAutotoolsProjectWizard;
-import org.eclipse.cdt.internal.autotools.ui.wizards.ConvertToAutotoolsProjectWizardPage;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
@@ -58,19 +59,19 @@ public class ProjectTools {
      */
 	public static boolean setup() throws Exception {
 		if (!setupComplete) {
-        IWorkspaceDescription desc;
-        workspace = ResourcesPlugin.getWorkspace();
-        root = workspace.getRoot();
-        monitor = new NullProgressMonitor();
-        if(workspace == null) {
-        	return false;
-        }
-        if(root == null) {
-        	return false;
-        }
-        desc = workspace.getDescription();
-        desc.setAutoBuilding(false);
-        workspace.setDescription(desc);
+			IWorkspaceDescription desc;
+			workspace = ResourcesPlugin.getWorkspace();
+			if (workspace == null) {
+				return false;
+			}
+			root = workspace.getRoot();
+			monitor = new NullProgressMonitor();
+			if (root == null) {
+				return false;
+			}
+			desc = workspace.getDescription();
+			desc.setAutoBuilding(false);
+			workspace.setDescription(desc);
 		}
 		setupComplete = true;
 		return true;
@@ -83,6 +84,7 @@ public class ProjectTools {
 	public static boolean build() {
 		try {
 			workspace.build(IncrementalProjectBuilder.FULL_BUILD, getMonitor());
+			workspace.getRoot().refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
 		} catch (CoreException e) {
 		    return false;	
 		}

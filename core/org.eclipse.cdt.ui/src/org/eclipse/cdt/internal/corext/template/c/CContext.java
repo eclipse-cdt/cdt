@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     QnX Software System
+ *     QNX Software Systems
  *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.corext.template.c;
@@ -28,12 +28,10 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 
-
 /**
  * A context for C/C++.
  */
-public class CContext extends TranslationUnitContext {	
-
+public class CContext extends TranslationUnitContext {
 	/**
 	 * Creates a C/C++ code template context.
 	 * 
@@ -43,8 +41,8 @@ public class CContext extends TranslationUnitContext {
 	 * @param completionLength the length of the context
 	 * @param translationUnit the translation unit represented by the document
 	 */
-	public CContext(TemplateContextType type, IDocument document, int completionOffset, int completionLength,
-		ITranslationUnit translationUnit) {
+	public CContext(TemplateContextType type, IDocument document, int completionOffset,
+			int completionLength, ITranslationUnit translationUnit) {
 		super(type, document, completionOffset, completionLength, translationUnit);
 	}
 
@@ -61,31 +59,27 @@ public class CContext extends TranslationUnitContext {
 		super(type, document, completionPosition, translationUnit);
 	}
 
-	/*
-	 * @see DocumentTemplateContext#getStart()
-	 */ 
 	@Override
 	public int getStart() {
 		if (fIsManaged && getCompletionLength() > 0)
 			return super.getStart();
-		
+
 		try {
 			IDocument document= getDocument();
 
 			int start= getCompletionOffset();
 			int end= getCompletionOffset() + getCompletionLength();
-			
-			while (start != 0 && Character.isUnicodeIdentifierPart(document.getChar(start - 1)))
+
+			while (start != 0 && isUnicodeIdentifierPartOrPoundSign(document.getChar(start - 1)))
 				start--;
-			
+
 			while (start != end && Character.isWhitespace(document.getChar(start)))
 				start++;
-			
+
 			if (start == end)
 				start= getCompletionOffset();	
-			
-				return start;	
 
+			return start;	
 		} catch (BadLocationException e) {
 			return super.getStart();	
 		}
@@ -101,25 +95,21 @@ public class CContext extends TranslationUnitContext {
 
 			int start= getCompletionOffset();
 			int end= getCompletionOffset() + getCompletionLength();
-			
+
 			while (start != end && Character.isWhitespace(document.getChar(end - 1)))
 				end--;
-			
-			return end;	
 
+			return end;	
 		} catch (BadLocationException e) {
 			return super.getEnd();
 		}		
 	}
 	
-	/*
-	 * @see TemplateContext#evaluate(Template)
-	 */
 	@Override
 	public TemplateBuffer evaluate(Template template) throws BadLocationException, TemplateException {
 		if (!canEvaluate(template))
 			return null;
-			
+
 		TemplateTranslator translator= new TemplateTranslator();
 		TemplateBuffer buffer= translator.translate(template.getPattern());
 
@@ -130,10 +120,14 @@ public class CContext extends TranslationUnitContext {
 
 		ICProject project= getCProject();
 		int indentationLevel = isReadOnly() ? 0 : getIndentationLevel();
-		CFormatter formatter= new CFormatter(TextUtilities.getDefaultLineDelimiter(getDocument()), indentationLevel, useCodeFormatter, project);
+		CFormatter formatter= new CFormatter(TextUtilities.getDefaultLineDelimiter(getDocument()),
+				indentationLevel, useCodeFormatter, project);
 		formatter.format(buffer, this);
-		
+
 		return buffer;
 	}
 
+	private boolean isUnicodeIdentifierPartOrPoundSign(char c) {
+		return Character.isUnicodeIdentifierPart(c) || c == '#';
+	}
 }

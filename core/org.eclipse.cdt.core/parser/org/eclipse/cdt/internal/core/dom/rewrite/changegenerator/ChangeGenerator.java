@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -51,7 +50,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.formatter.CodeFormatter;
 import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
-import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification;
@@ -63,7 +61,6 @@ import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.ASTWriter;
 import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.ContainerNode;
 import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.ProblemRuntimeException;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
-import org.eclipse.cdt.internal.core.dom.rewrite.util.FileHelper;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.text.BadLocationException;
@@ -82,10 +79,10 @@ import org.eclipse.text.edits.TextEdit;
 import org.eclipse.text.edits.TextEditGroup;
 
 public class ChangeGenerator extends ASTVisitor {
-	private final Map<String, Integer> sourceOffsets = new LinkedHashMap<String, Integer>();
 	private final Map<IASTNode, Map<ModificationKind, List<ASTModification>>> classifiedModifications =
 			new HashMap<IASTNode, Map<ModificationKind, List<ASTModification>>>();
-	private final Map<IFile, MultiTextEdit> changes = new LinkedHashMap<IFile, MultiTextEdit>();
+	private int processedOffset;
+	private MultiTextEdit rootEdit;
 	private CompositeChange change;
 
 	private final ASTModificationStore modificationStore;
@@ -118,20 +115,20 @@ public class ChangeGenerator extends ASTVisitor {
 		generateChange(rootNode, this);
 	}
 
-	public void generateChange(IASTNode rootNode, ASTVisitor pathProvider)
+	private void generateChange(IASTNode rootNode, ASTVisitor pathProvider)
 			throws ProblemRuntimeException {
 		change = new CompositeChange(ChangeGeneratorMessages.ChangeGenerator_compositeChange);
 		classifyModifications();
 		rootNode.accept(pathProvider);
-		for (IFile file : changes.keySet()) {
-			MultiTextEdit edit = changes.get(file);
-			IASTTranslationUnit ast = rootNode.getTranslationUnit();
-			ITranslationUnit tu = (ITranslationUnit) CoreModel.getDefault().create(file);
-			edit = formatChangedCode(edit, ast.getRawSignature(), tu);
-			TextFileChange subchange= ASTRewriteAnalyzer.createCTextFileChange(file);
-			subchange.setEdit(edit);
-			change.add(subchange);
-		}
+		if (rootEdit == null)
+			return;
+		IASTTranslationUnit ast = rootNode.getTranslationUnit();
+		String source = ast.getRawSignature();
+		ITranslationUnit tu = ast.getOriginatingTranslationUnit();
+		formatChangedCode(source, tu);
+		TextFileChange subchange= ASTRewriteAnalyzer.createCTextFileChange((IFile) tu.getResource());
+		subchange.setEdit(rootEdit);
+		change.add(subchange);
 	}
 
 	private void classifyModifications() {
@@ -161,7 +158,7 @@ public class ChangeGenerator extends ASTVisitor {
 	@Override
 	public int visit(IASTTranslationUnit tu) {
 		IASTFileLocation location = tu.getFileLocation();
-		sourceOffsets.put(location.getFileName(), Integer.valueOf(location.getNodeOffset()));
+		processedOffset = location.getNodeOffset();
 		return super.visit(tu);
 	}
 
@@ -317,25 +314,22 @@ public class ChangeGenerator extends ASTVisitor {
 
 	/**
 	 * Applies the C++ code formatter to the code affected by refactoring.
-	 * 
-	 * @param multiEdit The text edit produced by refactoring.
+	 *
 	 * @param code The code being modified.
 	 * @param tu The translation unit containing the code.
-	 * @return The text edit containing formatted refactoring changes, or the original text edit
-	 *     in case of errors.
 	 */
-	private MultiTextEdit formatChangedCode(MultiTextEdit multiEdit, String code, ITranslationUnit tu) {
+	private void formatChangedCode(String code, ITranslationUnit tu) {
 		IDocument document = new Document(code);
 		try {
 			// Apply refactoring changes to a temporary document.
-			TextEdit edit = multiEdit.copy();
+			TextEdit edit = rootEdit.copy();
 			edit.apply(document, TextEdit.UPDATE_REGIONS);
 
 			// Expand regions affected by the changes to cover complete lines. We calculate two
 			// sets of regions, reflecting the state of the document before and after
 			// the refactoring changes.
 			TextEdit[] edits = edit.getChildren();
-			TextEdit[] originalEdits = multiEdit.getChildren();
+			TextEdit[] originalEdits = rootEdit.getChildren();
 			IRegion[] regionsAfter = new IRegion[edits.length];
 			IRegion[] regionsBefore = new IRegion[edits.length];
 			int numRegions = 0;
@@ -396,13 +390,11 @@ public class ChangeGenerator extends ASTVisitor {
 				edit = new ReplaceEdit(region.getOffset(), region.getLength(), document.get());
 				resultEdit.addChild(edit);
 			}
-			return resultEdit;
+			rootEdit = resultEdit;
 		} catch (MalformedTreeException e) {
 			CCorePlugin.log(e);
-			return multiEdit;
 		} catch (BadLocationException e) {
 			CCorePlugin.log(e);
-			return multiEdit;
 		}
 	}
 
@@ -461,10 +453,9 @@ public class ChangeGenerator extends ASTVisitor {
 		}
 		String code = writer.toString();
 		ReplaceEdit edit = new ReplaceEdit(insertPos, length, code);
-		IFile file = FileHelper.getFileFromNode(anchorNode);
-		MultiTextEdit parentEdit = getEdit(anchorNode, file);
-		parentEdit.addChild(edit);
-		sourceOffsets.put(file.getName(), edit.getOffset());
+		addToRootEdit(anchorNode);
+		rootEdit.addChild(edit);
+		processedOffset = edit.getOffset();
 	}
 
 	private void handleReplace(IASTNode node) {
@@ -474,8 +465,6 @@ public class ChangeGenerator extends ASTVisitor {
 		ChangeGeneratorWriterVisitor writer =
 				new ChangeGeneratorWriterVisitor(modificationStore, commentMap);
 		IASTFileLocation fileLocation = node.getFileLocation();
-		Integer val = sourceOffsets.get(fileLocation.getFileName());
-		int processedOffset = val != null ? val.intValue() : 0;
 		if (modifications.size() == 1 && modifications.get(0).getNewNode() == null) {
 			int offset = getOffsetIncludingComments(node);
 			int endOffset = getEndOffsetIncludingComments(node);
@@ -519,11 +508,9 @@ public class ChangeGenerator extends ASTVisitor {
 			}
 			edit = new ReplaceEdit(offset, endOffset - offset, code);
 		}
-		IFile file = FileHelper.getFileFromNode(node);
-		MultiTextEdit parentEdit = getEdit(node, file);
-		parentEdit.addChild(edit);
-		
-		sourceOffsets.put(fileLocation.getFileName(), edit.getExclusiveEnd());
+		addToRootEdit(node);
+		rootEdit.addChild(edit);
+		processedOffset = edit.getExclusiveEnd();
 	}
 
 	private void handleAppends(IASTNode node) {
@@ -551,32 +538,31 @@ public class ChangeGenerator extends ASTVisitor {
 			writer.newLine();
 		}
 		String code = writer.toString();
-		IFile file = FileHelper.getFileFromNode(node);
-		MultiTextEdit parentEdit = getEdit(node, file);
+		addToRootEdit(node);
 		ReplaceEdit edit = new ReplaceEdit(anchor.getOffset(), anchor.getLength(),
 				code + anchor.getText());
-		parentEdit.addChild(edit);
+		rootEdit.addChild(edit);
 		IASTFileLocation fileLocation = node.getFileLocation();
-		sourceOffsets.put(fileLocation.getFileName(), endOffset(fileLocation));
+		processedOffset = endOffset(fileLocation);
 	}
 
-	private void handleAppends(IASTTranslationUnit tu) {
-		List<ASTModification> modifications = getModifications(tu, ModificationKind.APPEND_CHILD);
+	private void handleAppends(IASTTranslationUnit node) {
+		List<ASTModification> modifications = getModifications(node, ModificationKind.APPEND_CHILD);
 		if (modifications.isEmpty())
 			return;
 
 		IASTNode prevNode = null;
-		IASTDeclaration[] declarations = tu.getDeclarations();
+		IASTDeclaration[] declarations = node.getDeclarations();
 		if (declarations.length != 0) {
 			prevNode = declarations[declarations.length - 1];
 		} else {
-			IASTPreprocessorStatement[] preprocessorStatements = tu.getAllPreprocessorStatements();
+			IASTPreprocessorStatement[] preprocessorStatements = node.getAllPreprocessorStatements();
 			if (preprocessorStatements.length != 0) {
 				prevNode = preprocessorStatements[preprocessorStatements.length - 1];
 			}
 		}
 		int offset = prevNode != null ? getEndOffsetIncludingComments(prevNode) : 0;
-		String source = tu.getRawSignature();
+		String source = node.getRawSignature();
 		int endOffset = skipTrailingBlankLines(source, offset);
 
 		ChangeGeneratorWriterVisitor writer =
@@ -597,7 +583,7 @@ public class ChangeGenerator extends ASTVisitor {
 			// TODO(sprigogin): Temporary workaround for invalid handling of line breaks in StatementWriter
 			if (!writer.toString().endsWith("\n")) //$NON-NLS-1$
 				writer.newLine();
-			
+
 		}
 		if (prevNode != null) {
 			IASTNode nextNode = getNextSiblingOrPreprocessorNode(prevNode);
@@ -607,16 +593,15 @@ public class ChangeGenerator extends ASTVisitor {
 		}
 
 		String code = writer.toString();
-		IFile file = FileHelper.getFileFromNode(tu);
-		MultiTextEdit parentEdit = getEdit(tu, file);
-		parentEdit.addChild(new ReplaceEdit(offset, endOffset - offset, code));
+		addToRootEdit(node);
+		rootEdit.addChild(new ReplaceEdit(offset, endOffset - offset, code));
 	}
 
 	/**
 	 * Returns the list of nodes the given node is part of, for example function parameters if
 	 * the node is a parameter.
-	 * 
-	 * @param node the node possibly belonging to a list. 
+	 *
+	 * @param node the node possibly belonging to a list.
 	 * @return the list of nodes containing the given node, or <code>null</code> if the node
 	 *     does not belong to a list
 	 */
@@ -630,7 +615,7 @@ public class ChangeGenerator extends ASTVisitor {
 		} else if (node.getPropertyInParent() == ICPPASTFunctionDeclarator.EXCEPTION_TYPEID) {
 			return ((ICPPASTFunctionDeclarator) node.getParent()).getExceptionSpecification();
 		}
-		
+
 		return null;
 	}
 
@@ -822,7 +807,7 @@ public class ChangeGenerator extends ASTVisitor {
 	 * Skips whitespace between the beginning of the line and the given position.
 	 *
 	 * @param text The text to scan.
-	 * @param startPos The start position. 
+	 * @param startPos The start position.
 	 * @return The beginning of the line containing the start position, if there are no
 	 *     non-whitespace characters between the beginning of the line and the start position.
 	 *     Otherwise returns the start position.
@@ -842,9 +827,9 @@ public class ChangeGenerator extends ASTVisitor {
 	/**
 	 * Skips whitespace between the beginning of the line and the given position and blank lines
 	 * above that.
-	 * 
+	 *
 	 * @param text The text to scan.
-	 * @param startPos The start position. 
+	 * @param startPos The start position.
 	 * @return The beginning of the first blank line preceding the start position,
 	 *     or beginning of the current line, if there are no non-whitespace characters between
 	 *     the beginning of the line and the start position.
@@ -867,7 +852,7 @@ public class ChangeGenerator extends ASTVisitor {
 	 * below that.
 	 *
 	 * @param text The text to scan.
-	 * @param startPos The start position. 
+	 * @param startPos The start position.
 	 * @return The beginning of the first non-blank line following the start position, if there are
 	 *     no non-whitespace characters between the start position and the end of the line.
 	 *     Otherwise returns the start position.
@@ -890,7 +875,7 @@ public class ChangeGenerator extends ASTVisitor {
 	 *
 	 * @param text The text to scan.
 	 * @param delimiter the delimiter to find
-	 * @param startPos The start position. 
+	 * @param startPos The start position.
 	 * @return The position of the given delimiter, or the start position if a non-whitespace
 	 *     character is encountered before the given delimiter.
 	 */
@@ -912,7 +897,7 @@ public class ChangeGenerator extends ASTVisitor {
 	 *
 	 * @param text The text to scan.
 	 * @param delimiter the delimiter to find
-	 * @param startPos The start position. 
+	 * @param startPos The start position.
 	 * @return The position after the given delimiter, or the start position if a non-whitespace
 	 *     character is encountered before the given delimiter.
 	 */
@@ -928,23 +913,20 @@ public class ChangeGenerator extends ASTVisitor {
 		return startPos;
 	}
 
-	private MultiTextEdit getEdit(IASTNode modifiedNode, IFile file) {
-		MultiTextEdit edit = changes.get(file);
-		if (edit == null) {
-			edit = new MultiTextEdit();
-			changes.put(file, edit);
+	private void addToRootEdit(IASTNode modifiedNode) {
+		if (rootEdit == null) {
+			rootEdit = new MultiTextEdit();
 		}
 		TextEditGroup editGroup = new TextEditGroup(ChangeGeneratorMessages.ChangeGenerator_group);
 		for (List<ASTModification> modifications : getModifications(modifiedNode).values()) {
 			for (ASTModification modification : modifications) {
 				if (modification.getAssociatedEditGroup() != null) {
 					editGroup = modification.getAssociatedEditGroup();
-					edit.addChildren(editGroup.getTextEdits());
-					return edit;
+					rootEdit.addChildren(editGroup.getTextEdits());
+					return;
 				}
 			}
 		}
-		return edit;
 	}
 
 	private int getOffsetIncludingComments(IASTNode node) {

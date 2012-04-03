@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 QNX Software Systems and others.
+ * Copyright (c) 2004, 2012 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -75,6 +75,7 @@ public class LaunchMessages extends NLS {
 	public static String CMainTab_ProjectColon;
 	public static String CMainTab_C_Application;
 	public static String CMainTab_CoreFile_path;
+	public static String CMainTab_Variables;
 	public static String CMainTab_Search;
 	public static String CMainTab_Choose_program_to_run;
 	public static String CMainTab_Choose_program_to_run_from_NAME;

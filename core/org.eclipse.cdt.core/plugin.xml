@@ -589,6 +589,22 @@
       </variable>
    </extension>
    <extension
+         point="org.eclipse.core.variables.dynamicVariables">
+      <variable
+            name="config_name"
+            resolver="org.eclipse.cdt.internal.core.ConfigurationNameVariableResolver"
+            description="%config_name_var.description">
+      </variable>
+   </extension>
+   <extension
+         point="org.eclipse.core.variables.dynamicVariables">
+      <variable
+            name="config_description"
+            resolver="org.eclipse.cdt.internal.core.ConfigurationDescriptionVariableResolver"
+            description="%config_description_var.description">
+      </variable>
+   </extension>
+   <extension
          point="org.eclipse.cdt.core.CBuildConsole">
       <CBuildConsole
             class="org.eclipse.cdt.internal.core.SystemBuildConsole"

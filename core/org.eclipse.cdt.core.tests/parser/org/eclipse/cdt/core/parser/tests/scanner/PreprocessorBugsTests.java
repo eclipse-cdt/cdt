@@ -263,6 +263,22 @@ public class PreprocessorBugsTests extends PreprocessorTestsBase {
 		validateProblemCount(2);  // the inclusions
 	}
 	
+	//	#define UNFOLD(v,x) v:x
+	//	UNFOLD("A",
+	//		#ifdef X
+	//			"B")
+	//        #else
+	//            "C") /* parse error in this line */
+	//        #endif
+	public void testDirectiveInExpansion_Bug375739() throws Exception {
+		initializeScanner();
+		validateString("A");
+		validateToken(IToken.tCOLON);
+		validateString("C");
+		validateEOF();
+		validateProblemCount(0);  
+	}
+
 	// #if 0xe000
 	// ok
 	// #endif

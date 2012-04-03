@@ -224,7 +224,7 @@ final class ScannerContext {
 			cond.fTakeElse= false;
 			newState= cond.fInitialState;
 		} else if (withinExpansion) {
-			newState= CodeState.eParseInactive;
+			newState= CodeState.eSkipInactive;
 		} else {
 			newState= fInactiveState;
 		}

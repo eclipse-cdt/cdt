@@ -1,12 +1,12 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  Copyright (c) 2000, 2012 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
  * 
  *  Contributors:
- *     IBM Corporation - initial API and implementation
+ *      IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.launch.internal.ui;
 
@@ -26,7 +26,6 @@ import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.ui.StringVariableSelectionDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
@@ -83,8 +82,6 @@ public class WorkingDirectoryBlock extends CLaunchConfigurationTab {
 				handleWorkingDirBrowseButtonSelected();
 			} else if (source == fUseDefaultWorkingDirButton) {
 				handleUseDefaultWorkingDirButtonSelected();
-			} else if (source == fVariablesButton) {
-				handleWorkingDirVariablesButtonSelected();
 			}
 		}
 	}
@@ -148,8 +145,7 @@ public class WorkingDirectoryBlock extends CLaunchConfigurationTab {
 		fFileSystemButton = createPushButton(buttonComp, LaunchMessages.WorkingDirectoryBlock_1, null); 
 		fFileSystemButton.addSelectionListener(fListener);
 
-		fVariablesButton = createPushButton(buttonComp, LaunchMessages.WorkingDirectoryBlock_17, null); 
-		fVariablesButton.addSelectionListener(fListener);
+		fVariablesButton = createVariablesButton(buttonComp, LaunchMessages.WorkingDirectoryBlock_17, null); 
 	}
 
 	/*
@@ -232,19 +228,6 @@ public class WorkingDirectoryBlock extends CLaunchConfigurationTab {
 		fWorkspaceButton.setEnabled(!def);
 		fVariablesButton.setEnabled(!def);
 		fFileSystemButton.setEnabled(!def);
-	}
-
-	protected void handleWorkingDirVariablesButtonSelected() {
-		String variableText = getVariable();
-		if (variableText != null) {
-			fWorkingDirText.append(variableText);
-		}
-	}
-
-	private String getVariable() {
-		StringVariableSelectionDialog dialog = new StringVariableSelectionDialog(getShell());
-		dialog.open();
-		return dialog.getVariableExpression();
 	}
 
 	/**

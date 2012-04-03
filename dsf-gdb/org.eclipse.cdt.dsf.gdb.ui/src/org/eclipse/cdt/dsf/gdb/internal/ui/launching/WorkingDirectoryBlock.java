@@ -6,8 +6,8 @@
  *  http://www.eclipse.org/legal/epl-v10.html
  * 
  *  Contributors:
- *     IBM Corporation - initial API and implementation
- *     Ericsson        - Updated for DSF
+ *      IBM Corporation - initial API and implementation
+ *      Ericsson        - Updated for DSF
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.launching;
 
@@ -239,7 +239,7 @@ public class WorkingDirectoryBlock extends CLaunchConfigurationTab {
 	protected void handleWorkingDirVariablesButtonSelected() {
 		String variableText = getVariable();
 		if (variableText != null) {
-			fWorkingDirText.append(variableText);
+			fWorkingDirText.insert(variableText);
 		}
 	}
 

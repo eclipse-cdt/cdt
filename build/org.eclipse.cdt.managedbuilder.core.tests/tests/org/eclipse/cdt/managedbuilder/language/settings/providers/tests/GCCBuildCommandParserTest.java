@@ -1818,6 +1818,9 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 			CIncludePathEntry expected = new CIncludePathEntry(path0, 0);
 			assertEquals(expected, entries.get(0));
 		}
+
+		// cleanup
+		contentType.removeFileSpec("x++", IContentTypeSettings.FILE_EXTENSION_SPEC);
 	}
 
 	/**

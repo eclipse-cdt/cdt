@@ -20,7 +20,7 @@ import org.junit.runners.Suite;
  * want to run.  When creating a new test class, it should be
  * added to the list below.
  * 
- * This suite is for tests to be run with GDB 7.4
+ * This suite is for tests to be run with GDB 7.4.
  */
 
 @RunWith(Suite.class)

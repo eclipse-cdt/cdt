@@ -118,17 +118,16 @@ public class CPPASTWhileStatement extends ASTNode
 	            default: break;
 	        }
 		}
-        if (condition != null && !condition.accept(action)) return false;
-        if (condition2 != null && !condition2.accept(action)) return false;
-        if (body != null && !body.accept(action)) return false;
+        if (condition != null && !condition.accept(action)) 
+        	return false;
+        if (condition2 != null && !condition2.accept(action)) 
+        	return false;
+        if (body != null && !body.accept(action)) 
+        	return false;
         
-        if (action.shouldVisitExpressions) {
-		    switch (action.leave(this)) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
-		}
+        if (action.shouldVisitStatements && action.leave(this) == ASTVisitor.PROCESS_ABORT)
+        	return false;
+
         return true;
     }
     

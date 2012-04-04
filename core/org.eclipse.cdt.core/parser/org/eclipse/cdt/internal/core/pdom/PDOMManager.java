@@ -624,20 +624,22 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 				registerIndexer(project, indexer);
 				final IndexUpdatePolicy policy= createPolicy(project);
 				policy.clearTUs();
-				policy.clearInitialFlags();
 
 				IPDOMIndexerTask task= null;
-				if (operation.wasSuccessful()) {
-					if (fTraceIndexerSetup) 
-						System.out.println("Indexer: Imported shared index for project " + name); //$NON-NLS-1$ 
-					task= new PDOMUpdateTask(indexer,
-							IIndexManager.UPDATE_CHECK_TIMESTAMPS | IIndexManager.UPDATE_CHECK_CONTENTS_HASH);
-				} else {
-					if (fTraceIndexerSetup) 
-						System.out.println("Indexer: Rebuiding for project " + name); //$NON-NLS-1$ 
-					task= new PDOMRebuildTask(indexer);
+				if (policy.isAutomatic() || policy.isInitialRebuildRequested()) {
+					policy.clearInitialFlags();
+					if (operation.wasSuccessful()) {
+						if (fTraceIndexerSetup) 
+							System.out.println("Indexer: Imported shared index for project " + name); //$NON-NLS-1$ 
+						task= new PDOMUpdateTask(indexer,
+								IIndexManager.UPDATE_CHECK_TIMESTAMPS | IIndexManager.UPDATE_CHECK_CONTENTS_HASH);
+					} else {
+						if (fTraceIndexerSetup) 
+							System.out.println("Indexer: Rebuiding for project " + name); //$NON-NLS-1$ 
+						task= new PDOMRebuildTask(indexer);
+					}
+					enqueue(task);
 				}
-				enqueue(task);
 			}}
 		} catch (CoreException e) {
 			// Ignore if project is no longer open
@@ -653,8 +655,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
     	IExtension indexerExt = Platform.getExtensionRegistry().getExtension(CCorePlugin.INDEXER_UNIQ_ID, indexerId);
     	if (indexerExt != null) {
     		IConfigurationElement[] elements = indexerExt.getConfigurationElements();
-    		for (int i = 0; i < elements.length; ++i) {
-    			IConfigurationElement element = elements[i];
+    		for (IConfigurationElement element : elements) {
     			if ("run".equals(element.getName())) { //$NON-NLS-1$
     				try {
 						indexer = (IPDOMIndexer) element.createExecutableExtension("class"); //$NON-NLS-1$

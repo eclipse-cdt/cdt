@@ -81,6 +81,7 @@
  * David McKnight   (IBM)        - [342208] potential NPE in SystemView$ExpandRemoteObjects.execute()
  * David McKnight   (IBM)        - [342095] Properties in Properties view remain "Pending..." in some cases
  * David McKnight   (IBM)        - [372976] ClassCastException when SystemView assumes widget a TreeItem when it's a Tree
+ * David Dykstal    (IBM)        - [257110] Prompting filter called twice on double click rather than just once
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -671,7 +672,8 @@ public class SystemView extends SafeTreeViewer
 
 		if (!alreadyHandled && isExpandable(element)) {
 			boolean expandedState = getExpandedState(elementPath);
-			setExpandedState(elementPath, !expandedState);
+			// TL: need postpone this ExpandState change to avoid an extra createfilter
+			//setExpandedState(elementPath, !expandedState);
 			// DWD:  fire collapse / expand event
 			Event baseEvent = new Event();
 			baseEvent.item = findItem(element);
@@ -682,6 +684,8 @@ public class SystemView extends SafeTreeViewer
 			} else {
 				handleTreeExpand(treeEvent);
 			}
+			// TL: post-change ExpandState
+			setExpandedState(elementPath, !expandedState);
 			return;
 		}
 	}

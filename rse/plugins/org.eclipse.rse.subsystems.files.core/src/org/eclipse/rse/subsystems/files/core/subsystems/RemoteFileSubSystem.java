@@ -30,6 +30,7 @@
  * David McKnight (IBM) 		 - [225747] [dstore] Trying to connect to an "Offline" system throws an NPE
  * David McKnight   (IBM)        - [272882] [api] Handle exceptions in IService.initService()
  * David McKnight   (IBM)        - [368454] provide thread safety for cachedRemoteFiles hashmap
+ * David McKnight   (IBM)        - [362440] File opened using remote system connection (SSH - Sftp) at some point save action was not saving it to the file system.
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.subsystems;
@@ -149,6 +150,9 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 	{
 		super(host, connectorService);
 		_searchHistory = new ArrayList();
+		
+		// load UI plugin for adapters so that temp file listener is ready for any edits before connect
+		Platform.getAdapterManager().loadAdapter(new RemoteFileEmpty(), "org.eclipse.rse.ui.view.ISystemViewElementAdapter"); //$NON-NLS-1$
 	}
 	/**
 	 * @return true if this subsystem's properties should take precedence
@@ -1270,8 +1274,6 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 	public void initializeSubSystem(IProgressMonitor monitor) throws SystemMessageException
 	{
 		super.initializeSubSystem(monitor);
-		// load UI plugin for adapters right after successful connect
-		Platform.getAdapterManager().loadAdapter(new RemoteFileEmpty(), "org.eclipse.rse.ui.view.ISystemViewElementAdapter"); //$NON-NLS-1$
 		getConnectorService().addCommunicationsListener(this);
 	}
 
@@ -1355,7 +1357,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 		     }
 			  if (_cachedRemoteFiles.containsKey(path))
 			  {
-			      {return (IRemoteFile)_cachedRemoteFiles.get(path);}
+				  {return (IRemoteFile)_cachedRemoteFiles.get(path);}
 			  }
 			}
 		}

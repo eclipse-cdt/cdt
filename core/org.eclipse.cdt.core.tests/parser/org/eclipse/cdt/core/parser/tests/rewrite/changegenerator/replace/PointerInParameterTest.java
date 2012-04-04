@@ -13,21 +13,21 @@ package org.eclipse.cdt.core.parser.tests.rewrite.changegenerator.replace;
 
 import junit.framework.Test;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
-import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.parser.tests.rewrite.changegenerator.ChangeGeneratorTest;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFunctionDeclarator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTPointer;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification;
-import org.eclipse.cdt.internal.core.dom.rewrite.ASTModificationStore;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification.ModificationKind;
+import org.eclipse.cdt.internal.core.dom.rewrite.ASTModificationStore;
 
 public class PointerInParameterTest extends ChangeGeneratorTest {
 
 	public PointerInParameterTest() {
-		super("Replace Pointer for Parameter"); //$NON-NLS-1$
+		super("PointerInParameterTest"); //$NON-NLS-1$
 	}
 
 	@Override

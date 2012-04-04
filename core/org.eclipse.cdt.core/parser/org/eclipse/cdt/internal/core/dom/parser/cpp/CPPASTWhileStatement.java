@@ -27,8 +27,8 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 public class CPPASTWhileStatement extends ASTNode
 		implements ICPPASTWhileStatement, IASTAmbiguityParent {
     private IASTExpression condition;
-    private IASTStatement body;
     private IASTDeclaration condition2;
+    private IASTStatement body;
     private IScope scope;
 
     public CPPASTWhileStatement() {

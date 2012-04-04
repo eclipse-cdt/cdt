@@ -9,6 +9,9 @@ org.eclipse.cdt.core/debug/parser=false
 # Prints parser stack traces
 org.eclipse.cdt.core/debug/parser/exceptions=false
 
+# Reports statistics for building the structure to do resource lookups.
+org.eclipse.cdt.core/debug/resourceLookup=false
+
 # Reports scanner activity
 org.eclipse.cdt.core/debug/scanner=false
 

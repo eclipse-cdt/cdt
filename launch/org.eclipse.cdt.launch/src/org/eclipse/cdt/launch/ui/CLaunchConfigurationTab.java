@@ -8,7 +8,6 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Ken Ryall (Nokia) - bug 178731
- *     Anton Gorenkov
  *******************************************************************************/
 package org.eclipse.cdt.launch.ui;
 
@@ -45,7 +44,6 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkbenchPage;
 
 public abstract class CLaunchConfigurationTab extends AbstractLaunchConfigurationTab {
-
 	/**
 	 * Returns the current C element context from which to initialize default
 	 * settings, or <code>null</code> if none. Note, if possible we will
@@ -85,9 +83,9 @@ public abstract class CLaunchConfigurationTab extends AbstractLaunchConfiguratio
 			}
 		}
 		if (obj instanceof IResource) {
-			ICElement ce = CoreModel.getDefault().create((IResource)obj);
+			ICElement ce = CoreModel.getDefault().create((IResource) obj);
 			if (ce == null) {
-				IProject pro = ((IResource)obj).getProject();
+				IProject pro = ((IResource) obj).getProject();
 				ce = CoreModel.getDefault().create(pro);
 			}
 			obj = ce;
@@ -96,7 +94,7 @@ public abstract class CLaunchConfigurationTab extends AbstractLaunchConfiguratio
 			if (platform != null && !platform.equals("*")) { //$NON-NLS-1$
 				ICDescriptor descriptor;
 				try {
-					descriptor = CCorePlugin.getDefault().getCProjectDescription( ((ICElement)obj).getCProject().getProject(),
+					descriptor = CCorePlugin.getDefault().getCProjectDescription(((ICElement) obj).getCProject().getProject(),
 							false);
 					if (descriptor != null) {
 						String projectPlatform = descriptor.getPlatform();
@@ -109,9 +107,9 @@ public abstract class CLaunchConfigurationTab extends AbstractLaunchConfiguratio
 			}
 			if (obj != null) {
 				if (programName == null || programName.equals("")) { //$NON-NLS-1$
-					return (ICElement)obj;
+					return (ICElement) obj;
 				}
-				ICElement ce = (ICElement)obj;
+				ICElement ce = (ICElement) obj;
 				IProject project;
 				project = (IProject)ce.getCProject().getResource();
 				IPath programFile = project.getFile(programName).getLocation();
@@ -119,11 +117,10 @@ public abstract class CLaunchConfigurationTab extends AbstractLaunchConfiguratio
 				if (ce != null && ce.exists()) {
 					return ce;
 				}
-				return (ICElement)obj;
+				return (ICElement) obj;
 			}
 		}
-		if (page != null)
-		{
+		if (page != null) {
 			IEditorPart part = page.getActiveEditor();
 			if (part != null) {
 				IEditorInput input = part.getEditorInput();
@@ -160,7 +157,6 @@ public abstract class CLaunchConfigurationTab extends AbstractLaunchConfiguratio
 			
 		}
 		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, name);
-
 	}
 
 	protected String getPlatform(ILaunchConfiguration config) {
@@ -210,5 +206,4 @@ public abstract class CLaunchConfigurationTab extends AbstractLaunchConfiguratio
 		dialog.open();
 		return dialog.getVariableExpression();
 	}
-	
 }

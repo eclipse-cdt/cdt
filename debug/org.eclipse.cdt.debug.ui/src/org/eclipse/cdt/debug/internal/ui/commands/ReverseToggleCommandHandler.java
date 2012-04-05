@@ -33,7 +33,6 @@ import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.commands.IElementUpdater;
 import org.eclipse.ui.menus.UIElement;
 import org.eclipse.ui.progress.WorkbenchJob;
-import org.eclipse.ui.services.IEvaluationService;
 
 /**
  * Command handler to toggle reverse debugging mode
@@ -131,9 +130,9 @@ public class ReverseToggleCommandHandler extends DebugCommandHandler implements 
     	new WorkbenchJob("") { //$NON-NLS-1$
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
-		        IEvaluationService exprService = (IEvaluationService) PlatformUI.getWorkbench().getService(IEvaluationService.class);
-		        if (exprService != null) { 
-		        	exprService.requestEvaluation("org.eclipse.cdt.debug.ui.isReverseDebuggingEnabled"); //$NON-NLS-1$
+		        ICommandService commandService = (ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class);
+		        if (commandService != null) {
+		           commandService.refreshElements(REVERSE_TOGGLE_COMMAND_ID, null);
 		        }
 				return Status.OK_STATUS;
 			}

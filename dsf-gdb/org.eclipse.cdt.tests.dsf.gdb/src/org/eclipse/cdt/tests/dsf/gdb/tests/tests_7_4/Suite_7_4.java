@@ -40,7 +40,8 @@ import org.junit.runners.Suite;
 	OperationsWhileTargetIsRunningTest_7_4.class,
 	OperationsWhileTargetIsRunningNonStopTest_7_4.class,
 	PostMortemCoreTest_7_4.class,
-	Suite_Sessionless_Tests.class	
+	CommandTimeoutTest_7_4.class,
+	Suite_Sessionless_Tests.class,	
 	/* Add your test class here */
 })
 

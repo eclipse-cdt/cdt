@@ -91,6 +91,10 @@ public class BaseTestCase {
     	launchAttributes.put(key, value);
     }
 
+    public static void removeLaunchAttribute(String key) { 
+    	launchAttributes.remove(key);
+    }
+
     public static void setGlobalLaunchAttribute(String key, Object value) {
     	globalLaunchAttributes.put(key, value);
     }
@@ -206,7 +210,8 @@ public class BaseTestCase {
 	                                               .equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_CORE);
  		
  		// First check if we should launch gdbserver in the case of a remote session
-		launchGdbServer();
+ 		if (reallyLaunchGDBServer())
+ 			launchGdbServer();
 		
  		ILaunchManager launchMgr = DebugPlugin.getDefault().getLaunchManager();
  		ILaunchConfigurationType lcType = launchMgr.getLaunchConfigurationType("org.eclipse.cdt.tests.dsf.gdb.TestLaunch");
@@ -331,5 +336,15 @@ public class BaseTestCase {
  		boolean isWindows = Platform.getOS().equals(Platform.OS_WIN32);
  		BaseTestCase.setLaunchAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb." + version + (isWindows ? ".exe" : ""));
  		BaseTestCase.setLaunchAttribute(ATTR_DEBUG_SERVER_NAME, "gdbserver." + version + (isWindows ? ".exe" : ""));
+ 	}
+
+ 	/**
+ 	 * In some tests we need to start a gdbserver session without starting gdbserver. 
+ 	 * This method allows super classes of this class control the launch of gdbserver.
+ 	 * 
+ 	 * @return whether gdbserver should be started
+ 	 */
+ 	protected boolean reallyLaunchGDBServer() {
+ 		return true;
  	}
 }

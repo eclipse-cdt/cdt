@@ -38,7 +38,6 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkbenchPage;
 
 public abstract class CLaunchConfigurationTab extends AbstractLaunchConfigurationTab {
-
 	/**
 	 * Returns the current C element context from which to initialize default
 	 * settings, or <code>null</code> if none. Note, if possible we will
@@ -60,6 +59,7 @@ public abstract class CLaunchConfigurationTab extends AbstractLaunchConfiguratio
 	        }
 		} catch (CoreException e) {
 		}
+
 		if (projectName != null && !projectName.equals("")) { //$NON-NLS-1$
 			IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
 			ICProject cProject = CCorePlugin.getDefault().getCoreModel().create(project);
@@ -144,11 +144,10 @@ public abstract class CLaunchConfigurationTab extends AbstractLaunchConfiguratio
 		if (cProject != null && cProject.exists()) {
 			name = cProject.getElementName();
 			config.setMappedResources(new IResource[] {cProject.getProject()});
-			
+
 			ICProjectDescription projDes = CCorePlugin.getDefault().getProjectDescription(cProject.getProject());
 			String buildConfigID = projDes.getActiveConfiguration().getId();
 			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_BUILD_CONFIG_ID, buildConfigID);
-			
 		}
 		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, name);
 	}

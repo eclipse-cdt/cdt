@@ -171,7 +171,7 @@ public abstract class CLaunchConfigurationTab extends AbstractLaunchConfiguratio
 	/**
 	 * Creates a button that allows user to insert build variables.
 	 * 
-	 * @since 7.0
+	 * @since 7.1
 	 */
 	protected Button createVariablesButton(Composite parent, String label, final Text textField) {
 		Button variablesButton = createPushButton(parent, label, null); 
@@ -192,7 +192,6 @@ public abstract class CLaunchConfigurationTab extends AbstractLaunchConfiguratio
 	private void handleVariablesButtonSelected(Text textField) {
 		String variable = getVariable();
 		if (variable != null) {
-			// We should use insert() but not append() to be consistent with the Platform behavior (e.g. Common tab)
 			textField.insert(variable);
 		}
 	}

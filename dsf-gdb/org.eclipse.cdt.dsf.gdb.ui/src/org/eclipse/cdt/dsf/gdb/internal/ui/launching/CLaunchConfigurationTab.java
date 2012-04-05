@@ -53,8 +53,8 @@ public abstract class CLaunchConfigurationTab extends AbstractLaunchConfiguratio
 		IWorkbenchPage page = GdbUIPlugin.getActivePage();
 		Object obj = null;
 		try {
-			projectName = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String)null);
-			programName = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, (String)null);
+			projectName = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String) null);
+			programName = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, (String) null);
 	        if (programName != null) {
 	        	programName = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(programName);
 	        }
@@ -115,15 +115,13 @@ public abstract class CLaunchConfigurationTab extends AbstractLaunchConfiguratio
 				return (ICElement)obj;
 			}
 		}
-		if (page != null)
-		{
+		if (page != null) {
 			IEditorPart part = page.getActiveEditor();
 			if (part != null) {
 				IEditorInput input = part.getEditorInput();
 				if (input instanceof IFileEditorInput) {
 					IFile file = ((IFileEditorInput)input).getFile();
-					if (file != null)
-					{
+					if (file != null) {
 						ICElement ce = CoreModel.getDefault().create(file);
 						if (ce == null) {
 							IProject pro = file.getProject();
@@ -153,7 +151,6 @@ public abstract class CLaunchConfigurationTab extends AbstractLaunchConfiguratio
 			
 		}
 		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, name);
-
 	}
 
 	protected String getPlatform(ILaunchConfiguration config) {

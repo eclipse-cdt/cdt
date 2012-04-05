@@ -72,6 +72,8 @@ import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
 import org.eclipse.ltk.core.refactoring.TextFileChange;
+import org.eclipse.text.edits.DeleteEdit;
+import org.eclipse.text.edits.InsertEdit;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.ReplaceEdit;
@@ -312,6 +314,37 @@ public class ChangeGenerator extends ASTVisitor {
 		return super.leave(statement);
 	}
 
+	private void addChildEdit(TextEdit edit) {
+		rootEdit.addChild(edit);
+		processedOffset = edit.getExclusiveEnd();
+	}
+
+	private TextEdit clippedEdit(TextEdit edit, IRegion region) {
+		if ((edit.getOffset() < region.getOffset() && edit.getExclusiveEnd() <= region.getOffset()) ||
+				edit.getOffset() >= endOffset(region)) {
+			return null;
+		}
+		int offset = Math.max(edit.getOffset(), region.getOffset());
+		int length = Math.min(endOffset(edit), endOffset(region)) - offset;
+		if (offset == edit.getOffset() && length == edit.getLength()) {
+			// InsertEdit always satisfies the above condition.
+			return edit;
+		}
+		if (edit instanceof DeleteEdit) {
+			return new DeleteEdit(offset, length);
+		} if (edit instanceof ReplaceEdit) {
+			String replacement = ((ReplaceEdit) edit).getText();
+			int start = Math.max(offset - edit.getOffset(), 0);
+			int end = Math.min(endOffset(region) - offset, replacement.length());
+			if (end <= start) {
+				return new DeleteEdit(offset, length);
+			}
+			return new ReplaceEdit(offset, length, replacement.substring(start, end));
+		} else {
+			throw new IllegalArgumentException("Unexpected edit type: " + edit.getClass().getSimpleName()); //$NON-NLS-1$
+		}
+	}
+
 	/**
 	 * Applies the C++ code formatter to the code affected by refactoring.
 	 *
@@ -321,47 +354,40 @@ public class ChangeGenerator extends ASTVisitor {
 	private void formatChangedCode(String code, ITranslationUnit tu) {
 		IDocument document = new Document(code);
 		try {
-			// Apply refactoring changes to a temporary document.
 			TextEdit edit = rootEdit.copy();
+			// Apply refactoring changes to a temporary document.
 			edit.apply(document, TextEdit.UPDATE_REGIONS);
 
 			// Expand regions affected by the changes to cover complete lines. We calculate two
 			// sets of regions, reflecting the state of the document before and after
 			// the refactoring changes.
-			TextEdit[] edits = edit.getChildren();
-			TextEdit[] originalEdits = rootEdit.getChildren();
-			IRegion[] regionsAfter = new IRegion[edits.length];
-			IRegion[] regionsBefore = new IRegion[edits.length];
+			TextEdit[] appliedEdits = edit.getChildren();
+			TextEdit[] edits = rootEdit.removeChildren();
+			IRegion[] regions = new IRegion[appliedEdits.length];
 			int numRegions = 0;
 			int prevEnd = -1;
-			for (int i = 0; i < edits.length; i++) {
-				edit = edits[i];
+			for (int i = 0; i < appliedEdits.length; i++) {
+				edit = appliedEdits[i];
 				int offset = edit.getOffset();
 				int end = offset + edit.getLength();
 				int newOffset = document.getLineInformationOfOffset(offset).getOffset();
-				edit = originalEdits[i];
+				edit = edits[i];
 				int originalEnd = edit.getExclusiveEnd();
 				// Expand to the end of the line unless the end of the edit region is at
 				// the beginning of line both, before and after the change.
 				int newEnd = (originalEnd == 0 || code.charAt(originalEnd - 1) == '\n') && end == newOffset ?
 						end : endOffset(document.getLineInformationOfOffset(end));
-				int offsetBefore = edit.getOffset();
-				int newOffsetBefore = newOffset + offsetBefore - offset;
-				int newEndBefore = newEnd + offsetBefore + edit.getLength() - end;
 				if (newOffset <= prevEnd) {
 					numRegions--;
-					newOffset = regionsAfter[numRegions].getOffset();
-					newOffsetBefore = regionsBefore[numRegions].getOffset();
+					newOffset = regions[numRegions].getOffset();
 				}
 				prevEnd = newEnd;
-				regionsAfter[numRegions] = new Region(newOffset, newEnd - newOffset);
-				regionsBefore[numRegions] = new Region(newOffsetBefore,	newEndBefore - newOffsetBefore);
+				regions[numRegions] = new Region(newOffset, newEnd - newOffset);
 				numRegions++;
 			}
 
-			if (numRegions < regionsAfter.length) {
-				regionsAfter = Arrays.copyOf(regionsAfter, numRegions);
-				regionsBefore = Arrays.copyOf(regionsBefore, numRegions);
+			if (numRegions < regions.length) {
+				regions = Arrays.copyOf(regions, numRegions);
 			}
 
 			// Calculate formatting changes for the regions after the refactoring changes.
@@ -374,23 +400,72 @@ public class ChangeGenerator extends ASTVisitor {
 			CodeFormatter formatter = ToolFactory.createCodeFormatter(options);
 			code = document.get();
 			TextEdit[] formatEdits = formatter.format(CodeFormatter.K_TRANSLATION_UNIT, code,
-					regionsAfter, TextUtilities.getDefaultLineDelimiter(document));
+					regions, TextUtilities.getDefaultLineDelimiter(document));
 
-			// For each of the regions we apply formatting changes and create a ReplaceEdit using
-			// the region before the refactoring changes and the text after the formatting changes.
-			MultiTextEdit resultEdit = new MultiTextEdit();
-			for (int i = 0; i < regionsAfter.length; i++) {
-				IRegion region = regionsAfter[i];
-				int offset = region.getOffset();
-				edit = formatEdits[i];
-				edit.moveTree(-offset);
-				document = new Document(code.substring(offset, offset + region.getLength()));
-				edit.apply(document, TextEdit.NONE);
-				region = regionsBefore[i];
-				edit = new ReplaceEdit(region.getOffset(), region.getLength(), document.get());
-				resultEdit.addChild(edit);
+			TextEdit combinedFormatEdit = new MultiTextEdit();
+			for (TextEdit formatEdit : formatEdits) {
+				combinedFormatEdit = TextEditUtil.merge(combinedFormatEdit, formatEdit);
 			}
-			rootEdit = resultEdit;
+			formatEdits = TextEditUtil.flatten(combinedFormatEdit).removeChildren();
+
+			MultiTextEdit result = new MultiTextEdit();
+			int delta = 0;
+			TextEdit edit1 = null;
+			TextEdit edit2 = null;
+			int i = 0;
+			int j = 0;
+			while (true) {
+				if (edit1 == null && i < edits.length)
+					edit1 = edits[i++];
+				if (edit2 == null && j < formatEdits.length)
+					edit2 = formatEdits[j++];
+				if (edit1 == null) {
+					if (edit2 == null)
+						break;
+					edit2.moveTree(-delta);
+					result.addChild(edit2);
+					edit2 = null;
+				} else {
+					int d = TextEditUtil.delta(edit1);
+					if (edit2 == null) {
+						delta += d;
+						result.addChild(edit1);
+						edit1 = null;
+					} else {
+						if (edit2.getExclusiveEnd() - delta <= edit1.getOffset()) {
+							edit2.moveTree(-delta);
+							result.addChild(edit2);
+							edit2 = null;
+						} else {
+							TextEdit piece = clippedEdit(edit2, new Region(-1, edit1.getOffset() + delta));
+							if (piece != null) {
+								piece.moveTree(-delta);
+								result.addChild(piece);
+							}
+							Region region = new Region(edit1.getOffset() + delta, edit1.getLength() + d);
+							int end = endOffset(region);
+							MultiTextEdit format = new MultiTextEdit();
+							while ((piece = clippedEdit(edit2, region)) != null) {
+								format.addChild(piece);
+								if (edit2.getExclusiveEnd() >= end || j >= formatEdits.length) {
+									break;
+								}
+								edit2 = formatEdits[j++];
+							}
+							if (format.hasChildren()) {
+								format.moveTree(-delta);
+								edit1 = applyEdit(format, edit1);
+							}
+							delta += d;
+							result.addChild(edit1);
+							edit1 = null;
+
+							edit2 = clippedEdit(edit2, new Region(end, Integer.MAX_VALUE - end));
+						}
+					}
+				}
+			}
+			rootEdit = result;
 		} catch (MalformedTreeException e) {
 			CCorePlugin.log(e);
 		} catch (BadLocationException e) {
@@ -398,8 +473,37 @@ public class ChangeGenerator extends ASTVisitor {
 		}
 	}
 
+	/**
+	 * Applies source edit to the target one and returns the combined edit.
+	 */
+	private TextEdit applyEdit(TextEdit source, TextEdit target)
+			throws MalformedTreeException, BadLocationException {
+		source.moveTree(-target.getOffset());
+		String text;
+		if (target instanceof InsertEdit) {
+			text = ((InsertEdit) target).getText();
+		} else if (target instanceof ReplaceEdit) {
+			text = ((ReplaceEdit) target).getText();
+		} else {
+			text = ""; //$NON-NLS-1$
+		}
+
+		IDocument document = new Document(text);
+		source.apply(document, TextEdit.NONE);
+		text = document.get();
+		if (target.getLength() == 0) {
+			return new InsertEdit(target.getOffset(), text);
+		} else {
+			return new ReplaceEdit(target.getOffset(), target.getLength(), text);
+		}
+	}
+
 	private int endOffset(IRegion region) {
 		return region.getOffset() + region.getLength();
+	}
+
+	private int endOffset(TextEdit edit) {
+		return edit.getOffset() + edit.getLength();
 	}
 
 	private int endOffset(IASTFileLocation nodeLocation) {
@@ -451,21 +555,23 @@ public class ChangeGenerator extends ASTVisitor {
 			insertPos = skipPrecedingBlankLines(tuCode, insertPos);
 			length -= insertPos;
 		}
-		String code = writer.toString();
-		ReplaceEdit edit = new ReplaceEdit(insertPos, length, code);
 		addToRootEdit(anchorNode);
-		rootEdit.addChild(edit);
-		processedOffset = edit.getOffset();
+		String code = writer.toString();
+		if (!code.isEmpty())
+			addChildEdit(new InsertEdit(insertPos, code));
+		if (length != 0)
+			addChildEdit(new DeleteEdit(insertPos, length));
 	}
 
 	private void handleReplace(IASTNode node) {
 		List<ASTModification> modifications = getModifications(node, ModificationKind.REPLACE);
 		String source = node.getTranslationUnit().getRawSignature();
-		TextEdit edit;
 		ChangeGeneratorWriterVisitor writer =
 				new ChangeGeneratorWriterVisitor(modificationStore, commentMap);
 		IASTFileLocation fileLocation = node.getFileLocation();
+		addToRootEdit(node);
 		if (modifications.size() == 1 && modifications.get(0).getNewNode() == null) {
+			// There is no replacement. We are deleting a piece of existing code.
 			int offset = getOffsetIncludingComments(node);
 			int endOffset = getEndOffsetIncludingComments(node);
 			offset = Math.max(skipPrecedingBlankLines(source, offset), processedOffset);
@@ -492,25 +598,27 @@ public class ChangeGenerator extends ASTVisitor {
 				writer.newLine();
 			}
 			String code = writer.toString();
-			edit = new ReplaceEdit(offset, endOffset - offset, code);
+			if (endOffset > offset)
+				addChildEdit(new DeleteEdit(offset, endOffset - offset));
+			if (!code.isEmpty())
+				addChildEdit(new InsertEdit(endOffset, code));
 		} else {
 			node.accept(writer);
 			String code = writer.toString();
 			int offset = fileLocation.getNodeOffset();
 			int endOffset = offset + fileLocation.getNodeLength();
-			if (node instanceof IASTStatement || node instanceof IASTDeclaration) {
-				// Include trailing comments in the area to be replaced.
-				endOffset = Math.max(endOffset, getEndOffsetIncludingTrailingComments(node));
-			}
 			String lineSeparator = writer.getScribe().getLineSeparator();
 			if (code.endsWith(lineSeparator)) {
 				code = code.substring(0, code.length() - lineSeparator.length());
 			}
-			edit = new ReplaceEdit(offset, endOffset - offset, code);
+			addChildEdit(new ReplaceEdit(offset, endOffset - offset, code));
+			if (node instanceof IASTStatement || node instanceof IASTDeclaration) {
+				// Include trailing comments in the area to be replaced.
+				int commentEnd = getEndOffsetIncludingTrailingComments(node);
+				if (commentEnd > endOffset)
+					addChildEdit(new DeleteEdit(endOffset, commentEnd - endOffset));
+			}
 		}
-		addToRootEdit(node);
-		rootEdit.addChild(edit);
-		processedOffset = edit.getExclusiveEnd();
 	}
 
 	private void handleAppends(IASTNode node) {
@@ -537,13 +645,12 @@ public class ChangeGenerator extends ASTVisitor {
 		if (node instanceof ICPPASTNamespaceDefinition) {
 			writer.newLine();
 		}
-		String code = writer.toString();
 		addToRootEdit(node);
-		ReplaceEdit edit = new ReplaceEdit(anchor.getOffset(), anchor.getLength(),
-				code + anchor.getText());
-		rootEdit.addChild(edit);
-		IASTFileLocation fileLocation = node.getFileLocation();
-		processedOffset = endOffset(fileLocation);
+		String code = writer.toString();
+		if (!code.isEmpty())
+			addChildEdit(new InsertEdit(anchor.getOffset(), code));
+		addChildEdit(new ReplaceEdit(anchor.getOffset(), anchor.getLength(), anchor.getText()));
+		processedOffset = endOffset(node);
 	}
 
 	private void handleAppends(IASTTranslationUnit node) {
@@ -565,6 +672,7 @@ public class ChangeGenerator extends ASTVisitor {
 		String source = node.getRawSignature();
 		int endOffset = skipTrailingBlankLines(source, offset);
 
+		addToRootEdit(node);
 		ChangeGeneratorWriterVisitor writer =
 				new ChangeGeneratorWriterVisitor(modificationStore, commentMap);
 		IASTNode newNode = null;
@@ -593,8 +701,10 @@ public class ChangeGenerator extends ASTVisitor {
 		}
 
 		String code = writer.toString();
-		addToRootEdit(node);
-		rootEdit.addChild(new ReplaceEdit(offset, endOffset - offset, code));
+		if (!code.isEmpty())
+			addChildEdit(new InsertEdit(offset, code));
+		if (endOffset > offset)
+			addChildEdit(new DeleteEdit(offset, endOffset - offset));
 	}
 
 	/**

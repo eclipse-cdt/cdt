@@ -425,43 +425,42 @@ public class ChangeGenerator extends ASTVisitor {
 					edit2.moveTree(-delta);
 					result.addChild(edit2);
 					edit2 = null;
+				} else if (edit2 == null) {
+					delta += TextEditUtil.delta(edit1);
+					result.addChild(edit1);
+					edit1 = null;
 				} else {
-					int d = TextEditUtil.delta(edit1);
-					if (edit2 == null) {
+					if (edit2.getExclusiveEnd() - delta <= edit1.getOffset()) {
+						edit2.moveTree(-delta);
+						result.addChild(edit2);
+						edit2 = null;
+					} else {
+						TextEdit piece = clippedEdit(edit2, new Region(-1, edit1.getOffset() + delta));
+						if (piece != null) {
+							piece.moveTree(-delta);
+							result.addChild(piece);
+						}
+						int d = TextEditUtil.delta(edit1);
+						Region region = new Region(edit1.getOffset() + delta, edit1.getLength() + d);
+						int end = endOffset(region);
+						MultiTextEdit format = new MultiTextEdit();
+						while ((piece = clippedEdit(edit2, region)) != null) {
+							format.addChild(piece);
+							// The warning "The variable edit2 may be null at this location" is bogus.
+							if (edit2.getExclusiveEnd() >= end || j >= formatEdits.length) {
+								break;
+							}
+							edit2 = formatEdits[j++];
+						}
+						if (format.hasChildren()) {
+							format.moveTree(-delta);
+							edit1 = applyEdit(format, edit1);
+						}
 						delta += d;
 						result.addChild(edit1);
 						edit1 = null;
-					} else {
-						if (edit2.getExclusiveEnd() - delta <= edit1.getOffset()) {
-							edit2.moveTree(-delta);
-							result.addChild(edit2);
-							edit2 = null;
-						} else {
-							TextEdit piece = clippedEdit(edit2, new Region(-1, edit1.getOffset() + delta));
-							if (piece != null) {
-								piece.moveTree(-delta);
-								result.addChild(piece);
-							}
-							Region region = new Region(edit1.getOffset() + delta, edit1.getLength() + d);
-							int end = endOffset(region);
-							MultiTextEdit format = new MultiTextEdit();
-							while ((piece = clippedEdit(edit2, region)) != null) {
-								format.addChild(piece);
-								if (edit2.getExclusiveEnd() >= end || j >= formatEdits.length) {
-									break;
-								}
-								edit2 = formatEdits[j++];
-							}
-							if (format.hasChildren()) {
-								format.moveTree(-delta);
-								edit1 = applyEdit(format, edit1);
-							}
-							delta += d;
-							result.addChild(edit1);
-							edit1 = null;
 
-							edit2 = clippedEdit(edit2, new Region(end, Integer.MAX_VALUE - end));
-						}
+						edit2 = clippedEdit(edit2, new Region(end, Integer.MAX_VALUE - end));
 					}
 				}
 			}

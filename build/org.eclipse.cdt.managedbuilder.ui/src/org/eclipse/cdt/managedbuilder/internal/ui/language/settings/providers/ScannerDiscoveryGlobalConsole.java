@@ -28,6 +28,12 @@ import org.eclipse.ui.console.IConsoleManager;
 import org.eclipse.ui.console.MessageConsole;
 import org.eclipse.ui.console.MessageConsoleStream;
 
+/**
+ * TODO
+ *
+ * Note that this console is not colored.
+ *
+ */
 public class ScannerDiscoveryGlobalConsole implements ICConsole {
 	private MessageConsole console;
 	private ConsoleOutputStreamAdapter stream;
@@ -56,14 +62,7 @@ public class ScannerDiscoveryGlobalConsole implements ICConsole {
 
 		@Override
 		public void close() throws IOException {
-			// FIXME - clean way of closing the streams. Currently the stream could get being used after closing
 			fConsoleStream.close();
-//			if (!isOpen) {
-//				fConsoleStream.close();
-//				IStatus s = new Status(IStatus.ERROR, MakeCorePlugin.PLUGIN_ID, IStatus.ERROR, "Attempt to close stream second time", new Exception());
-//				MakeCorePlugin.log(s);
-//				flush();
-//			}
 			isOpen = false;
 		}
 	}

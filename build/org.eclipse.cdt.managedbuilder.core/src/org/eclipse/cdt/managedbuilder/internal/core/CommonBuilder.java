@@ -152,7 +152,6 @@ public class CommonBuilder extends ACBuilder {
 		private final IConfiguration fCfg;
 		private final IBuilder fBuilder;
 		private IConsole fConsole;
-
 		CfgBuildInfo(IBuilder builder, boolean isForegound){
 			this.fBuilder = builder;
 			this.fCfg = builder.getParent().getParent();

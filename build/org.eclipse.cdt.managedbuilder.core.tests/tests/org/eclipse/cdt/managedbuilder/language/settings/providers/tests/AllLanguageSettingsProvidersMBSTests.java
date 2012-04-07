@@ -13,6 +13,9 @@ package org.eclipse.cdt.managedbuilder.language.settings.providers.tests;
 
 import junit.framework.TestSuite;
 
+/**
+ * Test suite to test language settings providers defined in cdt.managedbuilder.core.
+ */
 public class AllLanguageSettingsProvidersMBSTests extends TestSuite {
 
 	public static TestSuite suite() {

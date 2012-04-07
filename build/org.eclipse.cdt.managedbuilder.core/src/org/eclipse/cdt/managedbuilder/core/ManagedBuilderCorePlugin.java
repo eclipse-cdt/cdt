@@ -15,7 +15,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
 import org.eclipse.cdt.build.internal.core.scannerconfig.CfgDiscoveredPathManager;
-import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.managedbuilder.internal.buildmodel.BuildStateManager;
 import org.eclipse.cdt.managedbuilder.internal.buildmodel.DbgUtil;
 import org.eclipse.cdt.managedbuilder.internal.core.BuilderFactory;
@@ -27,7 +26,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
@@ -285,10 +283,4 @@ public class ManagedBuilderCorePlugin extends Plugin {
 		ProjectConverter.convertOldStdMakeToNewStyle(project, monitor);
 	}
 
-	/**
-	 * @since 8.1
-	 */
-	public static IPath getWorkingDirectory() {
-		return MakeCorePlugin.getDefault().getStateLocation();
-	}
 }

@@ -12,14 +12,10 @@
 package org.eclipse.cdt.managedbuilder.language.settings.providers;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IErrorParser2;
 import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.core.errorparsers.RegexErrorParser;
@@ -27,20 +23,17 @@ import org.eclipse.cdt.core.errorparsers.RegexErrorPattern;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
+import org.eclipse.cdt.managedbuilder.internal.core.ManagedMakeMessages;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.content.IContentType;
-import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 
 /**
- * Abstract class for providers parsing compiler option from build command when it
- * is present in build output.
+ * Abstract class for providers parsing compiler option from build command when present in build output.
  *
  * @since 8.1
  */
@@ -56,7 +49,7 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 	 * Note: design patterns to keep file group the same and matching {@link #FILE_GROUP}
 	 */
 	@SuppressWarnings("nls")
-	private static final String[] PATTERN_TEMPLATES = {
+	private static final String[] COMPILER_COMMAND_PATTERN_TEMPLATES = {
 		"${COMPILER_PATTERN}.*\\s" + "()([^'\"\\s]*\\.${EXTENSIONS_PATTERN})(\\s.*)?[\r\n]*", // compiling unquoted file
 		"${COMPILER_PATTERN}.*\\s" + "(['\"])(.*\\.${EXTENSIONS_PATTERN})\\${COMPILER_GROUPS+1}(\\s.*)?[\r\n]*" // compiling quoted file
 	};
@@ -84,16 +77,25 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 		setProperty(ATTR_PARAMETER, commandPattern);
 	}
 
+	/**
+	 * Sub-expression for compiler command pattern accounting for spaces, quotes etc.
+	 */
 	@SuppressWarnings("nls")
 	private String getCompilerPatternExtended() {
 		String compilerPattern = getCompilerPattern();
 		return "\\s*\"?("+LEADING_PATH_PATTERN+")?(" + compilerPattern + ")\"?";
 	}
 
+	/**
+	 * Adjust count for file group taking into consideration extra groups added by {@link #getCompilerPatternExtended()}.
+	 */
 	private int adjustFileGroup() {
 		return countGroups(getCompilerPatternExtended()) + FILE_GROUP;
 	}
 
+	/**
+	 * Make search pattern for compiler command based on template.
+	 */
 	private String makePattern(String template) {
 		@SuppressWarnings("nls")
 		String pattern = template
@@ -103,46 +105,13 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 		return pattern;
 	}
 
-	@SuppressWarnings("nls")
-	private static String expressionLogicalOr(Set<String> fileExts) {
-		String pattern = "(";
-		for (String ext : fileExts) {
-			if (pattern.length() != 1)
-				pattern += "|";
-			pattern += "(" + Pattern.quote(ext) + ")";
-			ext = ext.toUpperCase();
-			if (!fileExts.contains(ext)) {
-				pattern += "|(" + Pattern.quote(ext) + ")";
-			}
-		}
-		pattern += ")";
-		return pattern;
-	}
-
-	protected String getPatternFileExtensions() {
-		IContentTypeManager manager = Platform.getContentTypeManager();
-
-		Set<String> fileExts = new HashSet<String>();
-
-		IContentType contentTypeCpp = manager.getContentType(CCorePlugin.CONTENT_TYPE_CXXSOURCE);
-		fileExts.addAll(Arrays.asList(contentTypeCpp.getFileSpecs(IContentType.FILE_EXTENSION_SPEC)));
-
-		IContentType contentTypeC = manager.getContentType(CCorePlugin.CONTENT_TYPE_CSOURCE);
-		fileExts.addAll(Arrays.asList(contentTypeC.getFileSpecs(IContentType.FILE_EXTENSION_SPEC)));
-
-		String pattern = expressionLogicalOr(fileExts);
-
-		return pattern;
-	}
-
-
 	@Override
 	protected String parseResourceName(String line) {
 		if (line == null) {
 			return null;
 		}
 
-		for (String template : PATTERN_TEMPLATES) {
+		for (String template : COMPILER_COMMAND_PATTERN_TEMPLATES) {
 			String pattern = makePattern(template);
 			Matcher fileMatcher = Pattern.compile(pattern).matcher(line);
 			if (fileMatcher.matches()) {
@@ -171,12 +140,6 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 		return options;
 	}
 
-	// This is redundant but let us keep it here to navigate in java code easier
-	@Override
-	public boolean processLine(String line) {
-		return super.processLine(line);
-	}
-
 	@Override
 	public void shutdown() {
 		scheduleSerializingJob(currentCfgDescription);
@@ -185,7 +148,7 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 
 
 	private void scheduleSerializingJob(final ICConfigurationDescription cfgDescription) {
-		Job job = new Job("Serialize CDT language settings entries") {
+		Job job = new Job(ManagedMakeMessages.getResourceString("AbstractBuildCommandParser.SerializeJobName")) { //$NON-NLS-1$
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				return serializeLanguageSettings(cfgDescription);
@@ -219,18 +182,25 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 	/**
 	 * Trivial Error Parser which allows highlighting of output lines matching the patterns
 	 * of this parser. Intended for better troubleshooting experience.
-	 * Implementers are supposed to add the error parser as an extension. Initialize with
-	 * build command parser extension ID.
+	 * Implementers are supposed to add the error parser via extension point {@code org.eclipse.cdt.core.ErrorParser}.
 	 */
 	protected static abstract class AbstractBuildCommandPatternHighlighter extends RegexErrorParser implements IErrorParser2 {
-		public AbstractBuildCommandPatternHighlighter(String buildCommandParserPluginExtension) {
-			init(buildCommandParserPluginExtension);
+		/**
+		 * Constructor.
+		 * @param parserId - build command parser ID specified in the extension {@code org.eclipse.cdt.core.LanguageSettingsProvider}.
+		 */
+		public AbstractBuildCommandPatternHighlighter(String parserId) {
+			init(parserId);
 		}
 
-		protected void init(String buildCommandParserId) {
-			AbstractBuildCommandParser buildCommandParser = (AbstractBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(buildCommandParserId, false);
+		/**
+		 * Initialize the error parser.
+		 * @param parserId - language settings provider (the build command parser) ID.
+		 */
+		protected void init(String parserId) {
+			AbstractBuildCommandParser buildCommandParser = (AbstractBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(parserId, false);
 			if (buildCommandParser != null) {
-				for (String template : PATTERN_TEMPLATES) {
+				for (String template : COMPILER_COMMAND_PATTERN_TEMPLATES) {
 					String pattern = buildCommandParser.makePattern(template);
 					String fileExpr = "$"+buildCommandParser.adjustFileGroup(); //$NON-NLS-1$
 					String descExpr = "$0"; //$NON-NLS-1$

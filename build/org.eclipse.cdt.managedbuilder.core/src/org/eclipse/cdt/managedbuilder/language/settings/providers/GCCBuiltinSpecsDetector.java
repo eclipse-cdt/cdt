@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 Andrew Gvozdev and others.
+ * Copyright (c) 2009, 2012 Andrew Gvozdev and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.CoreException;
  * @since 8.1
  */
 public class GCCBuiltinSpecsDetector extends ToolchainBuiltinSpecsDetector implements ILanguageSettingsEditableProvider {
-	// ID must match the toolchain definition in org.eclipse.cdt.managedbuilder.core.buildDefinitions extension point
+	// ID must match the tool-chain definition in org.eclipse.cdt.managedbuilder.core.buildDefinitions extension point
 	private static final String GCC_TOOLCHAIN_ID = "cdt.managedbuild.toolchain.gnu.base";  //$NON-NLS-1$
 
 	private enum State {NONE, EXPECTING_LOCAL_INCLUDE, EXPECTING_SYSTEM_INCLUDE, EXPECTING_FRAMEWORKS}
@@ -51,12 +51,16 @@ public class GCCBuiltinSpecsDetector extends ToolchainBuiltinSpecsDetector imple
 		return optionParsers;
 	}
 
+	/**
+	 * Create a list from one item.
+	 */
 	private List<String> makeList(String line) {
 		List<String> list = new ArrayList<String>();
 		list.add(line);
 		return list;
 	}
 
+	@SuppressWarnings("nls")
 	@Override
 	protected List<String> parseOptions(String line) {
 		line = line.trim();

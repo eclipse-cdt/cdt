@@ -289,5 +289,4 @@ public class ExternalBuildRunner extends AbstractBuildRunner {
 			CfgInfoContext context, IPath workingDirectory, IMarkerGenerator markerGenerator) {
 		return ScannerInfoConsoleParserFactory.getScannerInfoConsoleParser(project, context.toInfoContext(), workingDirectory, map.get(context), markerGenerator, null);
 	}
-
 }

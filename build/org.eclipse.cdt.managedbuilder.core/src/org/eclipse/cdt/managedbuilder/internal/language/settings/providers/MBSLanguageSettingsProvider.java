@@ -41,7 +41,7 @@ public class MBSLanguageSettingsProvider extends AbstractExecutableExtensionBase
 		if (rc instanceof IFile) {
 			ICLanguageSetting ls = cfgDescription.getLanguageSettingForFile(projectPath, true);
 			if (ls != null) {
-				languageSettings = new ICLanguageSetting[] {ls};
+				languageSettings = new ICLanguageSetting[] { ls };
 			} else {
 				return getSettingEntries(cfgDescription, rc.getParent(), languageId);
 			}
@@ -54,26 +54,25 @@ public class MBSLanguageSettingsProvider extends AbstractExecutableExtensionBase
 
 		if (languageSettings != null) {
 			for (ICLanguageSetting langSetting : languageSettings) {
-				if (langSetting!=null) {
+				if (langSetting != null) {
 					String id = langSetting.getLanguageId();
-					if (id!=null && id.equals(languageId)) {
+					if (id != null && id.equals(languageId)) {
 						int kindsBits = langSetting.getSupportedEntryKinds();
-						for (int kind=1;kind<=kindsBits;kind<<=1) {
+						for (int kind=1; kind <= kindsBits; kind <<= 1) {
 							if ((kindsBits & kind) != 0) {
 								list.addAll(langSetting.getSettingEntriesList(kind));
 							}
 						}
-					} else {
-	//					System.err.println("languageSetting id=null: name=" + languageSetting.getName());
 					}
-				} else {
-					System.err.println("languageSetting=null: rc=" + rc);
 				}
 			}
 		}
 		return LanguageSettingsStorage.getPooledList(list);
 	}
 
+	/**
+	 * Get language settings for resource description.
+	 */
 	private ICLanguageSetting[] getLanguageSettings(ICResourceDescription rcDescription) {
 		ICLanguageSetting[] array = null;
 		switch (rcDescription.getType()) {
@@ -86,46 +85,14 @@ public class MBSLanguageSettingsProvider extends AbstractExecutableExtensionBase
 		case ICSettingBase.SETTING_FILE:
 			ICFileDescription fiDes = (ICFileDescription)rcDescription;
 			ICLanguageSetting ls = fiDes.getLanguageSetting();
-			if (ls!=null) {
+			if (ls != null) {
 				array = new ICLanguageSetting[] { ls };
 			}
 		}
-		if (array==null) {
+		if (array == null) {
 			array = new ICLanguageSetting[0];
 		}
 		return array;
-	}
-
-	public void setSettingEntries(ICConfigurationDescription cfgDescription, IResource rc, String languageId,
-			List<ICLanguageSettingEntry> entries) {
-
-//		lang.setSettingEntries(kind, entries);
-		IPath projectPath = rc.getProjectRelativePath();
-		ICResourceDescription rcDescription = cfgDescription.getResourceDescription(projectPath, false);
-
-		for (ICLanguageSetting languageSetting : getLanguageSettings(rcDescription)) {
-			if (languageSetting!=null) {
-				String id = languageSetting.getLanguageId();
-				if (id!=null && id.equals(languageId)) {
-					int kindsBits = languageSetting.getSupportedEntryKinds();
-					for (int kind=1;kind<=kindsBits;kind<<=1) {
-						if ((kindsBits & kind) != 0) {
-							List<ICLanguageSettingEntry> list = new ArrayList<ICLanguageSettingEntry>(entries.size());
-							for (ICLanguageSettingEntry entry : entries) {
-								if (entry.getKind()==kind) {
-									list.add(entry);
-								}
-							}
-							languageSetting.setSettingEntries(kind, list);
-						}
-					}
-				} else {
-//					System.err.println("languageSetting id=null: name=" + languageSetting.getName());
-				}
-			} else {
-				System.err.println("languageSetting=null: rcDescription=" + rcDescription.getName());
-			}
-		}
 	}
 
 	@Override

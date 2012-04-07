@@ -44,6 +44,9 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+/**
+ * Test cases to test built-in specs detectors.
+ */
 public class BuiltinSpecsDetectorTest extends BaseTestCase {
 	private static final String PROVIDER_ID = "provider.id";
 	private static final String PROVIDER_NAME = "provider name";
@@ -56,6 +59,9 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 	private static final String ATTR_PARAMETER = "parameter"; //$NON-NLS-1$
 	private static final String ATTR_CONSOLE = "console"; //$NON-NLS-1$
 
+	/**
+	 * Mock built-in specs detector to test basic functionality of {@link AbstractBuiltinSpecsDetector}.
+	 */
 	private class MockBuiltinSpecsDetector extends AbstractBuiltinSpecsDetector {
 		@Override
 		protected List<String> parseOptions(String line) {
@@ -80,6 +86,9 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 		}
 	}
 
+	/**
+	 * Mock built-in specs detector to test execute() functionality.
+	 */
 	private class MockBuiltinSpecsDetectorExecutedFlag extends AbstractBuiltinSpecsDetector {
 		@Override
 		protected List<String> parseOptions(String line) {
@@ -103,6 +112,9 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 		}
 	}
 
+	/**
+	 * Mock built-in specs detector to test parsing functionality.
+	 */
 	private class MockConsoleBuiltinSpecsDetector extends AbstractBuiltinSpecsDetector {
 		@SuppressWarnings("nls")
 		private final AbstractOptionParser[] optionParsers = {
@@ -148,6 +160,9 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 		super.tearDown();
 	}
 
+	/**
+	 * Helper method to fetch configuration descriptions.
+	 */
 	private ICConfigurationDescription[] getConfigurationDescriptions(IProject project) {
 		CoreModel coreModel = CoreModel.getDefault();
 		ICProjectDescriptionManager mngr = coreModel.getProjectDescriptionManager();
@@ -160,6 +175,9 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 		return cfgDescriptions;
 	}
 
+	/**
+	 * Test configure, getters and setters.
+	 */
 	public void testAbstractBuiltinSpecsDetector_GettersSetters() throws Exception {
 		{
 			// provider configured with null parameters
@@ -206,6 +224,9 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 		}
 	}
 
+	/**
+	 * Test clone() and equals().
+	 */
 	public void testAbstractBuiltinSpecsDetector_CloneAndEquals() throws Exception {
 		// define mock detector
 		class MockDetectorCloneable extends MockBuiltinSpecsDetectorExecutedFlag implements Cloneable {
@@ -302,8 +323,9 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 	}
 
 	/**
+	 * Test basic serialization functionality.
 	 */
-	public void testAbstractBuiltinSpecsDetector_Serialize() throws Exception {
+	public void testAbstractBuiltinSpecsDetector_SerializeDOM() throws Exception {
 		{
 			// create empty XML
 			Document doc = XmlUtil.newDocument();
@@ -344,6 +366,9 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 		}
 	}
 
+	/**
+	 * Smoke test exercising passing {@code null} to the functions.
+	 */
 	public void testAbstractBuiltinSpecsDetector_Nulls() throws Exception {
 		{
 			// test AbstractBuiltinSpecsDetector.processLine(...) flow
@@ -363,6 +388,9 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 		}
 	}
 
+	/**
+	 * Test basic parsing functionality.
+	 */
 	public void testAbstractBuiltinSpecsDetector_RunConfiguration() throws Exception {
 		// Create model project and accompanied descriptions
 		String projectName = getName();
@@ -373,6 +401,7 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 		MockConsoleBuiltinSpecsDetector provider = new MockConsoleBuiltinSpecsDetector();
 		provider.setLanguageScope(new ArrayList<String>() {{add(LANGUAGE_ID);}});
 
+		// Run provider
 		provider.startup(cfgDescription, null);
 		provider.runForEachLanguage(null);
 		provider.shutdown();
@@ -382,26 +411,36 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 		List<ICLanguageSettingEntry> noentries = provider.getSettingEntries(null, null, null);
 		assertNull(noentries);
 
+		// Check parsed entries
 		List<ICLanguageSettingEntry> entries = provider.getSettingEntries(cfgDescription, null, LANGUAGE_ID);
 		ICLanguageSettingEntry expected = new CMacroEntry("MACRO", "VALUE", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY);
 		assertEquals(expected, entries.get(0));
 	}
 
+	/**
+	 * Smoke test running as global provider on workspace level.
+	 */
 	public void testAbstractBuiltinSpecsDetector_RunGlobal() throws Exception {
+		// Create provider
 		MockConsoleBuiltinSpecsDetector provider = new MockConsoleBuiltinSpecsDetector();
 		provider.setLanguageScope(new ArrayList<String>() {{add(LANGUAGE_ID);}});
 
+		// Run provider
 		provider.startup(null, null);
 		provider.runForEachLanguage(null);
 		provider.shutdown();
 
 		assertFalse(provider.isEmpty());
 
+		// Check parsed entries
 		List<ICLanguageSettingEntry> entries = provider.getSettingEntries(null, null, LANGUAGE_ID);
 		ICLanguageSettingEntry expected = new CMacroEntry("MACRO", "VALUE", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY);
 		assertEquals(expected, entries.get(0));
 	}
 
+	/**
+	 * Check that entries get grouped by kinds by stock built-in specs detector.
+	 */
 	public void testAbstractBuiltinSpecsDetector_GroupSettings() throws Exception {
 		// define benchmarks
 		final CIncludePathEntry includePath_1 = new CIncludePathEntry("/include/path_1", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY);
@@ -448,7 +487,7 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 		// compare benchmarks, expected well-sorted
 		List<ICLanguageSettingEntry> entries = provider.getSettingEntries(null, null, null);
 
-		int i=0;
+		int i = 0;
 		assertEquals(includePath_1, entries.get(i++));
 		assertEquals(includePath_2, entries.get(i++));
 		assertEquals(includeFile_1, entries.get(i++));

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 Andrew Gvozdev and others.
+ * Copyright (c) 2009, 2012 Andrew Gvozdev and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,9 @@ import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsEditabl
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 
 /**
+ * Build command parser capable to parse gcc command in build output and generate
+ * language settings per file being compiled.
+ *
  * @since 8.1
  */
 public class GCCBuildCommandParser extends AbstractBuildCommandParser implements ILanguageSettingsEditableProvider {
@@ -51,10 +54,17 @@ public class GCCBuildCommandParser extends AbstractBuildCommandParser implements
 		return (GCCBuildCommandParser) super.clone();
 	}
 
+	/**
+	 * Error Parser which allows highlighting of output lines matching the patterns of this parser.
+	 * Intended for better troubleshooting experience.
+	 */
 	public static class GCCBuildCommandPatternHighlighter extends AbstractBuildCommandParser.AbstractBuildCommandPatternHighlighter {
 		// ID of the parser taken from the existing extension point
 		private static final String GCC_BUILD_COMMAND_PARSER_EXT = "org.eclipse.cdt.managedbuilder.core.GCCBuildCommandParser"; //$NON-NLS-1$
 
+		/**
+		 * Default constructor.
+		 */
 		public GCCBuildCommandPatternHighlighter() {
 			super(GCC_BUILD_COMMAND_PARSER_EXT);
 		}

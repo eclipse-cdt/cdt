@@ -24,7 +24,6 @@ import org.eclipse.cdt.managedbuilder.language.settings.providers.ToolchainBuilt
 
 /**
  * Language settings provider to detect built-in compiler settings for IBM XLC compiler.
- * Note that currently this class is hardwired to GCC toolchain {@code cdt.managedbuild.toolchain.gnu.base}.
  */
 public class XlcBuiltinSpecsDetector extends ToolchainBuiltinSpecsDetector implements ILanguageSettingsEditableProvider {
 	// must match the toolchain definition in org.eclipse.cdt.managedbuilder.core.buildDefinitions extension point

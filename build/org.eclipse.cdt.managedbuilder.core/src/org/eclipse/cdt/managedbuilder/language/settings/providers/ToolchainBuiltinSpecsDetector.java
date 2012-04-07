@@ -31,7 +31,7 @@ public abstract class ToolchainBuiltinSpecsDetector extends AbstractBuiltinSpecs
 	private Map<String, ITool> toolMap = new HashMap<String, ITool>();
 
 	/**
-	 * Concrete compiler specs detectors need to supply Toolchain ID.
+	 * Concrete compiler specs detectors need to supply tool-chain ID.
 	 *
 	 * Tool-chain id must be supplied for global providers where we don't
 	 * have configuration description to figure that out programmatically.
@@ -39,7 +39,7 @@ public abstract class ToolchainBuiltinSpecsDetector extends AbstractBuiltinSpecs
 	protected abstract String getToolchainId();
 
 	/**
-	 * Finds a tool handling given language in the tool-chain.
+	 * Finds a tool handling given language in the tool-chain of the provider.
 	 * This returns the first tool found.
 	 */
 	private ITool getTool(String languageId) {
@@ -55,10 +55,14 @@ public abstract class ToolchainBuiltinSpecsDetector extends AbstractBuiltinSpecs
 				return tool;
 			}
 		}
-		ManagedBuilderCorePlugin.error("Unable to find tool in toolchain="+toolchainId+" for language="+languageId);
+		ManagedBuilderCorePlugin.error("Unable to find tool in toolchain=" + toolchainId + " for language=" + languageId); //$NON-NLS-1$ //$NON-NLS-2$
 		return null;
 	}
 
+	/**
+	 * Finds a tool handling given language in the tool-chain.
+	 * This returns the first tool found.
+	 */
 	private ITool getTool(String languageId, IToolChain toolchain) {
 		ITool[] tools = toolchain.getTools();
 		for (ITool tool : tools) {
@@ -79,8 +83,7 @@ public abstract class ToolchainBuiltinSpecsDetector extends AbstractBuiltinSpecs
 		ITool tool = getTool(languageId);
 		String compilerCommand = tool.getToolCommand();
 		if (compilerCommand.isEmpty()) {
-			String msg = "Unable to find compiler command in toolchain="+getToolchainId();
-			ManagedBuilderCorePlugin.error(msg);
+			ManagedBuilderCorePlugin.error("Unable to find compiler command in toolchain=" + getToolchainId()); //$NON-NLS-1$
 		}
 		return compilerCommand;
 	}
@@ -94,7 +97,7 @@ public abstract class ToolchainBuiltinSpecsDetector extends AbstractBuiltinSpecs
 			ext = srcFileExtensions[0];
 		}
 		if (ext == null || ext.isEmpty()) {
-			ManagedBuilderCorePlugin.error("Unable to find file extension for language "+languageId);
+			ManagedBuilderCorePlugin.error("Unable to find file extension for language " + languageId); //$NON-NLS-1$
 		}
 		return ext;
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 Andrew Gvozdev and others.
+ * Copyright (c) 2009, 2012 Andrew Gvozdev and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,6 +54,9 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+/**
+ * Test cases to test build command parsers.
+ */
 public class GCCBuildCommandParserTest extends BaseTestCase {
 	// ID of the parser taken from the extension point
 	private static final String GCC_BUILD_COMMAND_PARSER_EXT = "org.eclipse.cdt.managedbuilder.core.GCCBuildCommandParser"; //$NON-NLS-1$
@@ -70,6 +73,9 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 	private static final String ATTR_PARAMETER = "parameter"; //$NON-NLS-1$
 	private static final String ATTR_KEEP_RELATIVE_PATHS = "keep-relative-paths"; //$NON-NLS-1$
 
+	/**
+	 * Mock build command parser.
+	 */
 	private class MockBuildCommandParser extends AbstractBuildCommandParser  implements Cloneable {
 		@Override
 		protected AbstractOptionParser[] getOptionParsers() {
@@ -100,6 +106,9 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		super.tearDown();
 	}
 
+	/**
+	 * Helper method to fetch configuration descriptions.
+	 */
 	private ICConfigurationDescription[] getConfigurationDescriptions(IProject project) {
 		CoreModel coreModel = CoreModel.getDefault();
 		ICProjectDescriptionManager mngr = coreModel.getProjectDescriptionManager();
@@ -139,6 +148,9 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		}
 	}
 
+	/**
+	 * Helper method to set reference project.
+	 */
 	private void setReference(IProject project, final IProject projectReferenced) throws CoreException {
 		{
 			CoreModel coreModel = CoreModel.getDefault();
@@ -169,6 +181,9 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 	}
 
 
+	/**
+	 * Test getters and setters.
+	 */
 	public void testAbstractBuildCommandParser_GettersSetters() throws Exception {
 		{
 			// provider configured with null parameters
@@ -206,6 +221,9 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		}
 	}
 
+	/**
+	 * Test clone() and equals().
+	 */
 	public void testAbstractBuildCommandParser_CloneAndEquals() throws Exception {
 		// create instance to compare to
 		MockBuildCommandParser parser = new MockBuildCommandParser();
@@ -242,7 +260,10 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 
 	}
 
-	public void testAbstractBuildCommandParser_Serialize() throws Exception {
+	/**
+	 * Test basic serialization functionality.
+	 */
+	public void testAbstractBuildCommandParser_SerializeDOM() throws Exception {
 		{
 			// create empty XML
 			Document doc = XmlUtil.newDocument();
@@ -283,6 +304,9 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		}
 	}
 
+	/**
+	 * Smoke test exercising passing {@code null} to the functions.
+	 */
 	public void testAbstractBuildCommandParser_Nulls() throws Exception {
 		MockBuildCommandParser parser = new MockBuildCommandParser();
 		parser.startup(null, null);
@@ -293,6 +317,9 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		assertNull(entries);
 	}
 
+	/**
+	 * Test basic parsing functionality.
+	 */
 	public void testAbstractBuildCommandParser_Basic() throws Exception {
 		// Create model project and accompanied descriptions
 		String projectName = getName();
@@ -333,17 +360,8 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		assertEquals(expected, entries.get(0));
 	}
 
-//	public void testGCCBuildCommandParser_Nulls() throws Exception {
-//		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT);
-//		parser.startup(null);
-//		parser.processLine(null);
-//		parser.shutdown();
-//
-//		List<ICLanguageSettingEntry> entries = parser.getSettingEntries(null, null, null);
-//		assertNull(entries);
-//	}
-
 	/**
+	 * Test parsing of one typical entry.
 	 */
 	public void testOneEntry() throws Exception {
 		// Create model project and accompanied descriptions
@@ -379,6 +397,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 	}
 
 	/**
+	 * Test possible variations of compiler command.
 	 */
 	public void testGccFlavors() throws Exception {
 		// Create model project and accompanied descriptions
@@ -450,6 +469,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 	}
 
 	/**
+	 * Parse variations of -I options.
 	 */
 	public void testCIncludePathEntry() throws Exception {
 		// Create model project and accompanied descriptions
@@ -522,6 +542,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 	}
 
 	/**
+	 * Parse variations of -D options.
 	 */
 	public void testCMacroEntry() throws Exception {
 		// Create model project and accompanied descriptions
@@ -600,6 +621,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 	}
 
 	/**
+	 * Parse -U option.
 	 */
 	public void testCMacroEntry_undef() throws Exception {
 		// Create model project and accompanied descriptions
@@ -630,6 +652,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 	}
 
 	/**
+	 * Parse variations of -include options.
 	 */
 	public void testCIncludeFileEntry() throws Exception {
 		// Create model project and accompanied descriptions
@@ -681,6 +704,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 	}
 
 	/**
+	 * Parse variations of -macros options.
 	 */
 	public void testCMacroFileEntry() throws Exception {
 		// Create model project and accompanied descriptions
@@ -726,6 +750,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 	}
 
 	/**
+	 * Parse variations of -L options.
 	 */
 	public void testCLibraryPathEntry() throws Exception {
 		// Create model project and accompanied descriptions
@@ -770,6 +795,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 	}
 
 	/**
+	 * Parse variations of -l options.
 	 */
 	public void testCLibraryFileEntry() throws Exception {
 		// Create model project and accompanied descriptions
@@ -802,6 +828,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 	}
 
 	/**
+	 * Parse mixed options in the same command.
 	 */
 	public void testMixedSettingEntries() throws Exception {
 		// Create model project and accompanied descriptions
@@ -856,6 +883,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 	}
 
 	/**
+	 * Parse command where resource is missing.
 	 */
 	public void testFileMissing() throws Exception {
 		// Create model project and accompanied descriptions
@@ -877,6 +905,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 	}
 
 	/**
+	 * Parsing of absolute path to the file being compiled.
 	 */
 	public void testFileAbsolutePath() throws Exception {
 		// Create model project and accompanied descriptions
@@ -910,6 +939,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 	}
 
 	/**
+	 * Parsing of absolute path to the file being compiled where provider is global.
 	 */
 	public void testFileAbsolutePath_NoProject() throws Exception {
 		// Create model project and accompanied descriptions
@@ -943,6 +973,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 	}
 
 	/**
+	 * Parsing where the name of the file being compiled contains spaces.
 	 */
 	public void testFileWithSpaces() throws Exception {
 		// Create model project and accompanied descriptions
@@ -998,6 +1029,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 	}
 
 	/**
+	 * Resolve disagreement between working directory and path to the file being compiled.
 	 */
 	public void testFileIgnoreWrongBuildDir() throws Exception {
 		// Create model project and accompanied descriptions
@@ -1015,6 +1047,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
 		ErrorParserManager epm = new ErrorParserManager(project, null);
 		// Shift build directory, that could happen if Make Target from folder1 was run
+		// Build directory points to /project/Folder1/
 		IFolder buildDir = folder1;
 		epm.pushDirectoryURI(buildDir.getLocationURI());
 
@@ -1023,6 +1056,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		parser.processLine("gcc "
 				+ "-I/path0 "
 				+ "-I. "
+				// This implies the build working directory is /project/
 				+ "Folder1/Folder2/file.cpp");
 		parser.shutdown();
 
@@ -1037,6 +1071,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 	}
 
 	/**
+	 * Test various ends of lines for the lines being parsed.
 	 */
 	public void testEndOfLine() throws Exception {
 		// Create model project and accompanied descriptions
@@ -1084,6 +1119,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 	}
 
 	/**
+	 * Test parsing of paths located on a different drive on Windows.
 	 */
 	public void testPathEntry_DriveLetter() throws Exception {
 		// do not test on non-windows systems where drive letters are not supported
@@ -1117,6 +1153,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 	}
 
 	/**
+	 * Test various relative paths provided in options with resolving.
 	 */
 	public void testPathEntry_ExpandRelativePath() throws Exception {
 		// Create model project and accompanied descriptions
@@ -1157,6 +1194,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 	}
 
 	/**
+	 * Test various relative paths provided in options without resolving.
 	 */
 	public void testPathEntry_DoNotExpandRelativePath() throws Exception {
 		// Create model project and accompanied descriptions
@@ -1194,6 +1232,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 	}
 
 	/**
+	 * Ensure that duplicate paths are ignored.
 	 */
 	public void testPathEntry_DuplicatePath() throws Exception {
 		// Create model project and accompanied descriptions
@@ -1228,6 +1267,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 	}
 
 	/**
+	 * Test that working directory supplied by ErrorParserManager is considered.
 	 */
 	public void testPathEntry_FollowCWD() throws Exception {
 		// Create model project and accompanied descriptions
@@ -1247,6 +1287,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		// create GCCBuildCommandParser
 		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
 		ErrorParserManager epm = new ErrorParserManager(project, null);
+		// Set different working directory
 		epm.pushDirectoryURI(buildDir.getLocationURI());
 
 		// parse line
@@ -1272,6 +1313,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 	}
 
 	/**
+	 * Determine working directory basing on file being compiled.
 	 */
 	public void testPathEntry_GuessCWD() throws Exception {
 		// Create model project and accompanied descriptions
@@ -1303,6 +1345,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 	}
 
 	/**
+	 * Test case when build command indicates impossible working directory.
 	 */
 	public void testPathEntry_NonExistentCWD_Workspace() throws Exception {
 		// Create model project and accompanied descriptions
@@ -1320,6 +1363,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
 
 		ErrorParserManager epm = new ErrorParserManager(project, null);
+		// define working directory
 		epm.pushDirectoryURI(buildDir.getLocationURI());
 
 		// parse line
@@ -1328,6 +1372,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 				+ " -I."
 				+ " -I.."
 				+ " -IFolder"
+				// indicates non-existing working directory
 				+ " ../file.cpp");
 		parser.shutdown();
 
@@ -1341,6 +1386,8 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 	}
 
 	/**
+	 * Test case when build command indicates impossible working directory and
+	 * ErrorParserManager indicates non-existing working directory.
 	 */
 	public void testPathEntry_NonExistentCWD_Filesystem() throws Exception {
 		// Create model project and accompanied descriptions
@@ -1358,6 +1405,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 
 		ErrorParserManager epm = new ErrorParserManager(project, null);
 		URI uriBuildDir = new URI("file:/non-existing/path");
+		// define non-existing working directory
 		epm.pushDirectoryURI(uriBuildDir);
 
 		// parse line
@@ -1366,6 +1414,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 				+ " -I."
 				+ " -I.."
 				+ " -IFolder"
+				// indicates non-existing working directory
 				+ " ../file.cpp");
 		parser.shutdown();
 
@@ -1380,6 +1429,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 	}
 
 	/**
+	 * Simulate mapping of a sub-folder in the project to remote URI.
 	 */
 	public void testPathEntry_MappedRemoteFolder() throws Exception {
 		// Create model project and accompanied descriptions
@@ -1399,6 +1449,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
 
 		ErrorParserManager epm = new ErrorParserManager(project, null);
+		// define working directory as URI pointing outside workspace
 		URI uriBuildDir = new URI("file:/BuildDir");
 		epm.pushDirectoryURI(uriBuildDir);
 
@@ -1425,6 +1476,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 	}
 
 	/**
+	 * Test mapping folders heuristics - inside a project.
 	 */
 	public void testPathEntry_MappedFolderInProject() throws Exception {
 		// Create model project and accompanied descriptions
@@ -1475,6 +1527,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 	}
 
 	/**
+	 * Test mapping folders heuristics - mapping to another project.
 	 */
 	public void testPathEntry_MappedFolderInAnotherProject() throws Exception {
 		// Create model project and accompanied descriptions
@@ -1526,6 +1579,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 	}
 
 	/**
+	 * Test mapping folders heuristics - mapping to a referenced project.
 	 */
 	public void testPathEntry_MappedFolderInReferencedProject() throws Exception {
 		// Create model project and accompanied descriptions
@@ -1579,6 +1633,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 	}
 
 	/**
+	 * Test ".." in symbolic links where the symbolic link is present as absolute path.
 	 */
 	public void testPathEntry_NavigateSymbolicLinkUpAbsolute() throws Exception {
 		// do not test on systems where symbolic links are not supported
@@ -1619,6 +1674,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 	}
 
 	/**
+	 * Test ".." in symbolic links where the symbolic link is present as relative path.
 	 */
 	public void testPathEntry_NavigateSymbolicLinkUpRelative() throws Exception {
 		// do not test on systems where symbolic links are not supported
@@ -1659,6 +1715,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 	}
 
 	/**
+	 * Determine working directory from configuration builder settings.
 	 */
 	public void testPathEntry_BuildDirDefinedByConfiguration_RelativePath() throws Exception {
 		// Create model project and accompanied descriptions
@@ -1702,6 +1759,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 	}
 
 	/**
+	 * Test where working directory from command line disagrees with configuration builder settings.
 	 */
 	public void testPathEntry_BuildDirDefinedByConfiguration_AbsolutePath() throws Exception {
 		// Create model project and accompanied descriptions
@@ -1746,6 +1804,9 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 
 	}
 
+	/**
+	 * Smoke test when non-C files appear in output, should not choke.
+	 */
 	public void testContentType_None() throws Exception {
 		MockBuildCommandParser parser = new MockBuildCommandParser() {
 			@Override
@@ -1762,6 +1823,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 	}
 
 	/**
+	 * Test that unsupported language is ignored.
 	 */
 	public void testContentType_Mismatch() throws Exception {
 		// Create model project and accompanied descriptions
@@ -1785,6 +1847,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 	}
 
 	/**
+	 * Test custom file extensions defined in content type.
 	 */
 	public void testContentType_FileExtensions() throws Exception {
 		// Create model project and accompanied descriptions
@@ -1824,6 +1887,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 	}
 
 	/**
+	 * Test filenames appearing in upper-case.
 	 */
 	public void testUpperCase() throws Exception {
 		// Create model project and accompanied descriptions
@@ -1855,6 +1919,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 	}
 
 	/**
+	 * Test sample output of boost builder utility bjam.
 	 */
 	public void testBoostBjam() throws Exception {
 		// Create model project and accompanied descriptions
@@ -1897,6 +1962,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 	}
 
 	/**
+	 * Test resource file residing on EFS file-system.
 	 */
 	public void testPathEntry_Efs() throws Exception {
 		// Create model project and accompanied descriptions
@@ -1935,6 +2001,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 	}
 
 	/**
+	 * Test mapping entries to EFS.
 	 */
 	public void testPathEntry_EfsMappedFolder() throws Exception {
 		// Create model project and accompanied descriptions

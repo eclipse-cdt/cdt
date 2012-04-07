@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 Andrew Gvozdev and others.
+ * Copyright (c) 2010, 2012 Andrew Gvozdev and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.internal.core.Cygwin;
 import org.eclipse.cdt.managedbuilder.internal.language.settings.providers.GCCBuiltinSpecsDetectorCygwin;
 import org.eclipse.cdt.managedbuilder.language.settings.providers.GCCBuiltinSpecsDetector;
 import org.eclipse.core.resources.IProject;
@@ -31,9 +32,15 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
+/**
+ * Test cases to test GCC built-in specs detector.
+ */
 public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 	private static final String LANGUAGE_ID_C = GCCLanguage.ID;
 
+	/**
+	 * Mock GCCBuiltinSpecsDetector to gain access to protected methods.
+	 */
 	class MockGCCBuiltinSpecsDetector extends GCCBuiltinSpecsDetector {
 		@Override
 		public void startupForLanguage(String languageId) throws CoreException {
@@ -45,6 +52,9 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		}
 	}
 
+	/**
+	 * Mock GCCBuiltinSpecsDetectorCygwin to gain access to protected methods.
+	 */
 	class MockGCCBuiltinSpecsDetectorCygwin extends GCCBuiltinSpecsDetectorCygwin {
 		@Override
 		public void startupForLanguage(String languageId) throws CoreException {
@@ -66,6 +76,9 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		super.tearDown();
 	}
 
+	/**
+	 * Helper method to fetch configuration descriptions.
+	 */
 	private ICConfigurationDescription[] getConfigurationDescriptions(IProject project) {
 		CoreModel coreModel = CoreModel.getDefault();
 		ICProjectDescriptionManager mngr = coreModel.getProjectDescriptionManager();
@@ -78,6 +91,9 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		return cfgDescriptions;
 	}
 
+	/**
+	 * Test expansion of variables in build command.
+	 */
 	public void testGCCBuiltinSpecsDetector_ResolvedCommand() throws Exception {
 		class MockGCCBuiltinSpecsDetectorLocal extends GCCBuiltinSpecsDetector {
 			@Override
@@ -105,6 +121,9 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		}
 	}
 
+	/**
+	 * Test parsing of macro without value.
+	 */
 	public void testGCCBuiltinSpecsDetector_Macro_NoValue() throws Exception {
 		MockGCCBuiltinSpecsDetector detector = new MockGCCBuiltinSpecsDetector();
 
@@ -119,6 +138,9 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		assertEquals(1, entries.size());
 	}
 
+	/**
+	 * Test parsing of macro with ordinary value.
+	 */
 	public void testGCCBuiltinSpecsDetector_Macro_Simple() throws Exception {
 		MockGCCBuiltinSpecsDetector detector = new MockGCCBuiltinSpecsDetector();
 
@@ -133,6 +155,9 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		assertEquals(1, entries.size());
 	}
 
+	/**
+	 * Test parsing of macro with value in round brackets.
+	 */
 	public void testGCCBuiltinSpecsDetector_Macro_Const() throws Exception {
 		MockGCCBuiltinSpecsDetector detector = new MockGCCBuiltinSpecsDetector();
 
@@ -147,6 +172,9 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		assertEquals(1, entries.size());
 	}
 
+	/**
+	 * Test parsing of macro definition with tabs.
+	 */
 	public void testGCCBuiltinSpecsDetector_Macro_WhiteSpaces() throws Exception {
 		MockGCCBuiltinSpecsDetector detector = new MockGCCBuiltinSpecsDetector();
 
@@ -166,6 +194,9 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		assertEquals(index, entries.size());
 	}
 
+	/**
+	 * Test parsing of macro definition with empty argument list.
+	 */
 	public void testGCCBuiltinSpecsDetector_Macro_EmptyArgList() throws Exception {
 		MockGCCBuiltinSpecsDetector detector = new MockGCCBuiltinSpecsDetector();
 
@@ -180,6 +211,9 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		assertEquals(1, entries.size());
 	}
 
+	/**
+	 * Test parsing of macro definition with unused parameter.
+	 */
 	public void testGCCBuiltinSpecsDetector_Macro_ParamUnused() throws Exception {
 		MockGCCBuiltinSpecsDetector detector = new MockGCCBuiltinSpecsDetector();
 
@@ -194,6 +228,9 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		assertEquals(1, entries.size());
 	}
 
+	/**
+	 * Test parsing of macro definition with multiple parameters.
+	 */
 	public void testGCCBuiltinSpecsDetector_Macro_ParamSpace() throws Exception {
 		MockGCCBuiltinSpecsDetector detector = new MockGCCBuiltinSpecsDetector();
 
@@ -208,6 +245,9 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		assertEquals(1, entries.size());
 	}
 
+	/**
+	 * Test parsing of macro definition with multiple parameters and no value.
+	 */
 	public void testGCCBuiltinSpecsDetector_Macro_ArgsNoValue() throws Exception {
 		MockGCCBuiltinSpecsDetector detector = new MockGCCBuiltinSpecsDetector();
 
@@ -222,6 +262,9 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		assertEquals(1, entries.size());
 	}
 
+	/**
+	 * Test parsing of macro definition having white spaces in various places.
+	 */
 	public void testGCCBuiltinSpecsDetector_Macro_Args_WhiteSpaces() throws Exception {
 		MockGCCBuiltinSpecsDetector detector = new MockGCCBuiltinSpecsDetector();
 
@@ -241,6 +284,9 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		assertEquals(index, entries.size());
 	}
 
+	/**
+	 * Test parsing of include directives.
+	 */
 	public void testGCCBuiltinSpecsDetector_Includes() throws Exception {
 		// Create model project and folders to test
 		String projectName = getName();
@@ -288,6 +334,9 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		assertEquals(index, entries.size());
 	}
 
+	/**
+	 * Test parsing of macro definition of include directives having white spaces.
+	 */
 	public void testGCCBuiltinSpecsDetector_Includes_WhiteSpaces() throws Exception {
 		String loc = ResourceHelper.createTemporaryFolder().toString();
 
@@ -316,6 +365,9 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		assertEquals(index, entries.size());
 	}
 
+	/**
+	 * Test parsing of include directives incorporating symbolic links.
+	 */
 	public void testGCCBuiltinSpecsDetector_Includes_SymbolicLinkUp() throws Exception {
 		// do not test on systems where symbolic links are not supported
 		if (!ResourceHelper.isSymbolicLinkSupported())
@@ -347,15 +399,17 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		assertEquals(1, entries.size());
 	}
 
+	/**
+	 * Test parsing of include directives for Cygwin for global provider.
+	 */
 	public void testGCCBuiltinSpecsDetector_Cygwin_NoProject() throws Exception {
-		String windowsLocation;
-		String cygwinLocation = "/usr/include";
-		try {
-			windowsLocation = ResourceHelper.cygwinToWindowsPath(cygwinLocation);
-		} catch (UnsupportedOperationException e) {
+		if (!Cygwin.isAvailable()) {
 			// Skip the test if Cygwin is not available.
 			return;
 		}
+
+		String cygwinLocation = "/usr/include";
+		String windowsLocation = ResourceHelper.cygwinToWindowsPath(cygwinLocation);
 		assertTrue("windowsLocation=["+windowsLocation+"]", new Path(windowsLocation).getDevice()!=null);
 
 		MockGCCBuiltinSpecsDetectorCygwin detector = new MockGCCBuiltinSpecsDetectorCygwin();
@@ -374,15 +428,17 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		assertEquals(1, entries.size());
 	}
 
+	/**
+	 * Test parsing of include directives for Cygwin for provider running for a configuration.
+	 */
 	public void testGCCBuiltinSpecsDetector_Cygwin_Configuration() throws Exception {
-		String windowsLocation;
-		String cygwinLocation = "/usr/include";
-		try {
-			windowsLocation = ResourceHelper.cygwinToWindowsPath(cygwinLocation);
-		} catch (UnsupportedOperationException e) {
+		if (!Cygwin.isAvailable()) {
 			// Skip the test if Cygwin is not available.
 			return;
 		}
+
+		String cygwinLocation = "/usr/include";
+		String windowsLocation = ResourceHelper.cygwinToWindowsPath(cygwinLocation);
 		assertTrue("windowsLocation=["+windowsLocation+"]", new Path(windowsLocation).getDevice()!=null);
 
 		// Create model project and folders to test

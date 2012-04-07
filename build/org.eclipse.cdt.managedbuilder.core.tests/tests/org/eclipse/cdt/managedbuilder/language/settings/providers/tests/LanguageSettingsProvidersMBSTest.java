@@ -30,6 +30,9 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 
+/**
+ * Test creation of a new project in respect with language settings providers.
+ */
 public class LanguageSettingsProvidersMBSTest extends BaseTestCase {
 	private static final String MBS_LANGUAGE_SETTINGS_PROVIDER_ID = ScannerDiscoveryLegacySupport.MBS_LANGUAGE_SETTINGS_PROVIDER_ID;
 	private static final String USER_LANGUAGE_SETTINGS_PROVIDER_ID = ScannerDiscoveryLegacySupport.USER_LANGUAGE_SETTINGS_PROVIDER_ID;
@@ -50,7 +53,7 @@ public class LanguageSettingsProvidersMBSTest extends BaseTestCase {
 	}
 
 	/**
-	 * New Project Wizards do all these things
+	 * Imitate a new Project Wizard. New Project Wizards really do these things in CDT.
 	 */
 	private static IProject imitateNewProjectWizard(String name, String projectTypeId) throws CoreException {
 		IProject project = ManagedBuildTestHelper.createProject(name, projectTypeId);
@@ -76,10 +79,13 @@ public class LanguageSettingsProvidersMBSTest extends BaseTestCase {
 	}
 
 	/**
+	 * Test new GNU Executable project.
 	 */
 	public void testGnuToolchainProviders() throws Exception {
+		// create a new project imitating wizard
 		IProject project = imitateNewProjectWizard(this.getName(), PROJECT_TYPE_EXECUTABLE_GNU);
 
+		// check that the language settings providers are in place.
 		ICProjectDescription prjDescription = CoreModel.getDefault().getProjectDescription(project, false);
 		assertNotNull(prjDescription);
 		ICConfigurationDescription[] cfgDescriptions = prjDescription.getConfigurations();
@@ -114,37 +120,14 @@ public class LanguageSettingsProvidersMBSTest extends BaseTestCase {
 	}
 
 	/**
-	 */
-	public void testProjectPersistence_NoProviders() throws Exception {
-		IProject project = imitateNewProjectWizard(this.getName(), PROJECT_TYPE_EXECUTABLE_GNU);
-
-		ICProjectDescription prjDescription = CoreModel.getDefault().getProjectDescription(project, true);
-		assertNotNull(prjDescription);
-		ICConfigurationDescription[] cfgDescriptions = prjDescription.getConfigurations();
-		for (ICConfigurationDescription cfgDescription : cfgDescriptions) {
-			assertNotNull(cfgDescription);
-			assertTrue(cfgDescription instanceof ILanguageSettingsProvidersKeeper);
-
-			((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(new ArrayList<ILanguageSettingsProvider>());
-			assertTrue(((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders().size() == 0);
-		}
-
-		CoreModel.getDefault().setProjectDescription(project, prjDescription);
-
-		IFile xmlStorageFile = project.getFile(LANGUAGE_SETTINGS_PROJECT_XML);
-		assertEquals(true, xmlStorageFile.exists());
-
-		String xmlPrjWspStorageFileLocation = LanguageSettingsPersistenceProjectTests.getStoreLocationInWorkspaceArea(project.getName()+'.'+LANGUAGE_SETTINGS_WORKSPACE_XML);
-		java.io.File xmlStorageFilePrjWsp = new java.io.File(xmlPrjWspStorageFileLocation);
-		assertEquals(false, xmlStorageFilePrjWsp.exists());
-
-	}
-
-	/**
+	 * Test that no unnecessary storage file is created for language settings for default set
+	 * of language settings providers.
 	 */
 	public void testProjectPersistence_Defaults() throws Exception {
+		// create a new project imitating wizard
 		IProject project = imitateNewProjectWizard(this.getName(), PROJECT_TYPE_EXECUTABLE_GNU);
 
+		// double-check that the project contains language settings providers
 		ICProjectDescription prjDescription = CoreModel.getDefault().getProjectDescription(project, false);
 		assertNotNull(prjDescription);
 		ICConfigurationDescription[] cfgDescriptions = prjDescription.getConfigurations();
@@ -161,13 +144,47 @@ public class LanguageSettingsProvidersMBSTest extends BaseTestCase {
 			assertTrue(defaultIds.length > 0);
 		}
 
+		// no settings file in project area
 		IFile xmlStorageFile = project.getFile(LANGUAGE_SETTINGS_PROJECT_XML);
 		assertEquals(false, xmlStorageFile.exists());
 		assertEquals(false, xmlStorageFile.getParent().exists()); // .settings folder
 
+		// no settings file in workspace area
 		String xmlPrjWspStorageFileLocation = LanguageSettingsPersistenceProjectTests.getStoreLocationInWorkspaceArea(project.getName()+'.'+LANGUAGE_SETTINGS_WORKSPACE_XML);
 		java.io.File xmlStorageFilePrjWsp = new java.io.File(xmlPrjWspStorageFileLocation);
 		assertEquals(false, xmlStorageFilePrjWsp.exists());
+	}
+
+	/**
+	 * Test that storage file is created for language settings for empty set of language settings providers.
+	 */
+	public void testProjectPersistence_NoProviders() throws Exception {
+		// create a new project imitating wizard
+		IProject project = imitateNewProjectWizard(this.getName(), PROJECT_TYPE_EXECUTABLE_GNU);
+
+		// remove language settings providers from the project
+		ICProjectDescription prjDescription = CoreModel.getDefault().getProjectDescription(project, true);
+		assertNotNull(prjDescription);
+		ICConfigurationDescription[] cfgDescriptions = prjDescription.getConfigurations();
+		for (ICConfigurationDescription cfgDescription : cfgDescriptions) {
+			assertNotNull(cfgDescription);
+			assertTrue(cfgDescription instanceof ILanguageSettingsProvidersKeeper);
+
+			((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(new ArrayList<ILanguageSettingsProvider>());
+			assertTrue(((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders().size() == 0);
+		}
+
+		CoreModel.getDefault().setProjectDescription(project, prjDescription);
+
+		// settings file appears in project area
+		IFile xmlStorageFile = project.getFile(LANGUAGE_SETTINGS_PROJECT_XML);
+		assertEquals(true, xmlStorageFile.exists());
+
+		// no settings file in workspace area
+		String xmlPrjWspStorageFileLocation = LanguageSettingsPersistenceProjectTests.getStoreLocationInWorkspaceArea(project.getName()+'.'+LANGUAGE_SETTINGS_WORKSPACE_XML);
+		java.io.File xmlStorageFilePrjWsp = new java.io.File(xmlPrjWspStorageFileLocation);
+		assertEquals(false, xmlStorageFilePrjWsp.exists());
+
 	}
 
 }

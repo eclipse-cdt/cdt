@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOG3//9mY\u003d",
+        "filename": "debug/org.eclipse.cdt.debug.ui/plugin.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 2368,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-04-07T19:38:59Z",
+      "side": 1,
+      "message": "This should be: \"org.eclipse.cdt.debug.ui.testIsTracepointActionSetActive\"",
+      "revId": "509928798950ee216d1be340d94aca4a34604af6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9mU\u003d",
+        "filename": "debug/org.eclipse.cdt.debug.ui/plugin.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 2377,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-04-07T19:38:59Z",
+      "side": 1,
+      "message": "This should be: \"org.eclipse.cdt.debug.ui.testIsTracepointActionSetActive\"",
+      "revId": "509928798950ee216d1be340d94aca4a34604af6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9mM\u003d",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/commands/ReverseToggleCommandHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-04-07T19:38:59Z",
+      "side": 1,
+      "message": "This change does not work.\nThe idea is that as soon as the user presses the \u0027toggle reverse\u0027 button, all other reverse button should appear.  When the change above is made, this no longer works.  Note that with 4.2, this is broken altogether, but in 3.8 it still works before this proposed change.  See Bug 290572.",
+      "revId": "509928798950ee216d1be340d94aca4a34604af6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -28,7 +28,7 @@
     </license>
   </licenses>
   <properties>
-    <tycho-version>0.14.1</tycho-version>
+    <tycho-version>0.14.0</tycho-version>
     <tycho-extras-version>0.14.0</tycho-extras-version>
     <platform-version-name>juno</platform-version-name>
     <eclipse-site>http://download.eclipse.org/releases/${platform-version-name}</eclipse-site>

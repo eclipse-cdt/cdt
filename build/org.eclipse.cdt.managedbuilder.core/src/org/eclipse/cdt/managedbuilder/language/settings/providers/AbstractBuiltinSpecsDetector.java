@@ -708,16 +708,24 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 		super.loadAttributes(providerNode);
 
 		String consoleValue = XmlUtil.determineAttributeValue(providerNode, ATTR_CONSOLE);
-		if (consoleValue!=null)
+		if (consoleValue != null) {
 			isConsoleEnabled = Boolean.parseBoolean(consoleValue);
+		}
 	}
 
 	@Override
 	public void loadEntries(Element providerNode) {
 		super.loadEntries(providerNode);
-		// TODO - test case for that or maybe introduce "isExecuted" attribute in XML?
-		if (!isEmpty())
+		if (!isEmpty()) {
 			isExecuted = true;
+		}
+	}
+
+	@Override
+	public boolean isEmpty() {
+		// treat provider that has been executed as not empty
+		// to let "Clear" button to restart the provider
+		return !isExecuted && super.isEmpty();
 	}
 
 	@Override

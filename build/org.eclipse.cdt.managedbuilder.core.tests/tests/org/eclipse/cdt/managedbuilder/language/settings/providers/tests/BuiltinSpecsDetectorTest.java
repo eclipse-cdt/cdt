@@ -331,10 +331,13 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 			Document doc = XmlUtil.newDocument();
 			Element rootElement = XmlUtil.appendElement(doc, ELEM_TEST);
 
-			// load it to new provider
+			// initialize provider
 			MockBuiltinSpecsDetectorExecutedFlag provider = new MockBuiltinSpecsDetectorExecutedFlag();
+			assertEquals(false, provider.isExecuted());
+			// load the XML to new provider
 			provider.load(rootElement);
 			assertEquals(false, provider.isConsoleEnabled());
+			assertEquals(false, provider.isExecuted());
 		}
 
 		Element elementProvider;
@@ -342,6 +345,7 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 			// define mock detector
 			MockBuiltinSpecsDetectorExecutedFlag provider = new MockBuiltinSpecsDetectorExecutedFlag();
 			assertEquals(false, provider.isConsoleEnabled());
+			assertEquals(false, provider.isExecuted());
 
 			// redefine the settings
 			provider.setConsoleEnabled(true);
@@ -359,10 +363,69 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 			// create another instance of the provider
 			MockBuiltinSpecsDetectorExecutedFlag provider = new MockBuiltinSpecsDetectorExecutedFlag();
 			assertEquals(false, provider.isConsoleEnabled());
+			assertEquals(false, provider.isExecuted());
 
 			// load element
 			provider.load(elementProvider);
 			assertEquals(true, provider.isConsoleEnabled());
+			assertEquals(false, provider.isExecuted());
+		}
+	}
+
+	/**
+	 * Test serialization of entries and "isExecuted" flag handling.
+	 */
+	public void testAbstractBuiltinSpecsDetector_SerializeEntriesDOM() throws Exception {
+		Element rootElement;
+		{
+			// create provider
+			MockBuiltinSpecsDetectorExecutedFlag provider = new MockBuiltinSpecsDetectorExecutedFlag();
+			List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+			entries.add(new CIncludePathEntry("path0", 1));
+			provider.setSettingEntries(null, null, null, entries);
+			// serialize entries
+			Document doc = XmlUtil.newDocument();
+			rootElement = XmlUtil.appendElement(doc, ELEM_TEST);
+			provider.serializeEntries(rootElement);
+			// check XML
+			String xmlString = XmlUtil.toString(doc);
+			assertTrue(xmlString.contains("path0"));
+		}
+
+		{
+			// create new provider
+			MockBuiltinSpecsDetectorExecutedFlag provider = new MockBuiltinSpecsDetectorExecutedFlag();
+			assertEquals(true, provider.isEmpty());
+			assertEquals(false, provider.isExecuted());
+
+			// load the XML to the new provider
+			provider.load(rootElement);
+			List<ICLanguageSettingEntry> entries = provider.getSettingEntries(null, null, null);
+			assertNotNull(entries);
+			assertTrue(entries.size() > 0);
+			assertEquals(new CIncludePathEntry("path0", 1), entries.get(0));
+			assertEquals(false, provider.isEmpty());
+			assertEquals(true, provider.isExecuted());
+
+			// clear the new provider
+			provider.clear();
+			assertEquals(true, provider.isEmpty());
+			assertEquals(false, provider.isExecuted());
+		}
+
+		{
+			// create new provider
+			MockBuiltinSpecsDetectorExecutedFlag provider = new MockBuiltinSpecsDetectorExecutedFlag();
+			assertEquals(true, provider.isEmpty());
+			assertEquals(false, provider.isExecuted());
+
+			// execute provider
+			provider.execute();
+			List<ICLanguageSettingEntry> entries = provider.getSettingEntries(null, null, null);
+			assertEquals(null, entries);
+			// executed provider should NOT appear as empty even with no entries set
+			assertEquals(false, provider.isEmpty());
+			assertEquals(true, provider.isExecuted());
 		}
 	}
 

@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.core.dom.ast;
 
@@ -24,8 +24,8 @@ public interface IValue {
 	Long numericalValue();
 	
 	/**
-	 * Returns an internal representation of the expression that builds up the
-	 * value. It is suitable for instantiating dependent values but may not be
+	 * Returns an internal representation of the expression that builds up
+	 * the value. It is suitable for instantiating dependent values but may not be
 	 * used for the purpose of displaying values.
 	 */
 	char[] getInternalExpression(); 
@@ -37,8 +37,8 @@ public interface IValue {
 	IBinding[] getUnknownBindings();
 	
 	/**
-	 * Returns a signature containing both the internal representation and the 
-	 * unknown bindings. The representation is sufficient to distinguish values
+	 * Returns a signature containing both the internal representation and 
+	 * the unknown bindings. The representation is sufficient to distinguish values
 	 * for the purpose of instantiation, it may not be used to display the value.
 	 */
 	char[] getSignature();

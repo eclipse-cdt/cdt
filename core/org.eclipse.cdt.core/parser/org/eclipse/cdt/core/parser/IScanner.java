@@ -30,7 +30,6 @@ import org.eclipse.cdt.internal.core.parser.scanner.Lexer;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IScanner {
-	
 	/**
 	 * Returns a map from {@link String} to {@link IMacroBinding} containing
 	 * all the definitions that are defined at the current point in the 

@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - Initial API and implementation
+ *     Markus Schorn - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -29,13 +29,11 @@ import org.eclipse.core.runtime.Assert;
  * @since 5.0.1
  */
 public class CASTAmbiguousDeclarator extends ASTAmbiguousNode implements IASTAmbiguousDeclarator {
-
     private IASTDeclarator[] dtors = new IASTDeclarator[2];
-    private int dtorPos=-1;
-
+    private int dtorPos= -1;
     
     public CASTAmbiguousDeclarator(IASTDeclarator... decls) {
-		for(IASTDeclarator d : decls) {
+		for (IASTDeclarator d : decls) {
 			if (d != null) {
 				addDeclarator(d);
 			}
@@ -63,7 +61,7 @@ public class CASTAmbiguousDeclarator extends ASTAmbiguousNode implements IASTAmb
 
     @Override
 	public IASTDeclarator[] getDeclarators() {
-    	dtors = ArrayUtil.trimAt(IASTDeclarator.class, dtors, dtorPos ); 
+    	dtors = ArrayUtil.trimAt(IASTDeclarator.class, dtors, dtorPos); 
         return dtors;
     }
 

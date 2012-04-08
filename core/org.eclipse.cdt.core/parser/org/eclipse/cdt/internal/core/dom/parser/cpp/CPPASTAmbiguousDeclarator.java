@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - Initial API and implementation
+ *     Markus Schorn - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -29,15 +29,14 @@ import org.eclipse.core.runtime.Assert;
  * <br>
  * Example: void f(int (D));  // is D a type?
  */
-public class CPPASTAmbiguousDeclarator extends ASTAmbiguousNode implements IASTAmbiguousDeclarator, ICPPASTDeclarator {
-
+public class CPPASTAmbiguousDeclarator extends ASTAmbiguousNode
+		implements IASTAmbiguousDeclarator, ICPPASTDeclarator {
     private IASTDeclarator[] dtors = new IASTDeclarator[2];
-    private int dtorPos=-1;
+    private int dtorPos= -1;
 	private IASTInitializer fInitializer;
-
     
     public CPPASTAmbiguousDeclarator(IASTDeclarator... decls) {
-		for(IASTDeclarator d : decls) {
+		for (IASTDeclarator d : decls) {
 			if (d != null) {
 				addDeclarator(d);
 			}

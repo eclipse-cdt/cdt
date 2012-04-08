@@ -181,7 +181,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     
     protected boolean functionCallCanBeLValue= false;
 	protected boolean skipTrivialExpressionsInAggregateInitializers= false; 
-
     
     /**
      *  Marks the beginning of the current declaration. It is important to clear the mark whenever we
@@ -2122,7 +2121,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         }
     }
 
-
     protected IASTStatement parseCompoundStatement() throws EndOfFileException, BacktrackException {
         IASTCompoundStatement compound = compoundStatement();
         return compound;
@@ -2501,7 +2499,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 	}
 	
 	protected boolean canBeTypeSpecifier() throws EndOfFileException {
-
 		final int lt1 = LT(1);
 		switch (lt1) {
 		// simple type specifiers:

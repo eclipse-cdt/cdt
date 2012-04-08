@@ -20,9 +20,8 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 /**
  * Initializer with equals sign (copy initialization)
  */
-public abstract class ASTEqualsInitializer extends ASTNode implements IASTEqualsInitializer,
-		IASTAmbiguityParent {
-
+public abstract class ASTEqualsInitializer extends ASTNode
+		implements IASTEqualsInitializer, IASTAmbiguityParent {
     private IASTInitializerClause fArgument;
     
     public ASTEqualsInitializer() {

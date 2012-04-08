@@ -38,6 +38,7 @@ import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.internal.core.XmlUtil;
 import org.eclipse.cdt.internal.core.settings.model.CConfigurationSpecSettings;
 import org.eclipse.cdt.internal.core.settings.model.IInternalCCfgInfo;
+import org.eclipse.cdt.internal.core.settings.model.SettingsModelMessages;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -49,13 +50,16 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ILock;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.osgi.util.NLS;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -72,10 +76,15 @@ public class LanguageSettingsProvidersSerializer {
 	public static final String ELEM_PROVIDER = LanguageSettingsExtensionManager.ELEM_PROVIDER;
 	public static final String ELEM_LANGUAGE_SCOPE = LanguageSettingsExtensionManager.ELEM_LANGUAGE_SCOPE;
 
+	private static final String JOB_FAMILY_SERIALIZE_LANGUAGE_SETTINGS_PROJECT = "CDT_JOB_FAMILY_SERIALIZE_LANGUAGE_SETTINGS_PROJECT"; //$NON-NLS-1$
+	private static final String JOB_FAMILY_SERIALIZE_LANGUAGE_SETTINGS_WORKSPACE = "CDT_JOB_FAMILY_SERIALIZE_LANGUAGE_SETTINGS_WORKSPACE"; //$NON-NLS-1$
 	private static final String PREFERENCE_WORSPACE_PROVIDERS_SET = "language.settings.providers.workspace.prefs.toggle"; //$NON-NLS-1$
 	private static final String CPROJECT_STORAGE_MODULE = "org.eclipse.cdt.core.LanguageSettingsProviders"; //$NON-NLS-1$
 	private static final String STORAGE_WORKSPACE_LANGUAGE_SETTINGS = "language.settings.xml"; //$NON-NLS-1$
 	private static final String STORAGE_PROJECT_PATH = ".settings/language.settings.xml"; //$NON-NLS-1$
+
+	private static final int PROGRESS_MONITOR_SCALE = 100;
+	private static final int TICKS_SERIALIZING = 1 * PROGRESS_MONITOR_SCALE;
 
 	private static final String ELEM_PLUGIN = "plugin"; //$NON-NLS-1$
 	private static final String ELEM_EXTENSION = "extension"; //$NON-NLS-1$
@@ -543,6 +552,46 @@ public class LanguageSettingsProvidersSerializer {
 	}
 
 	/**
+	 * Save language settings providers of the workspace (global providers) to persistent storage
+	 * in background.
+	 */
+	public static void serializeLanguageSettingsWorkspaceInBackground() {
+		Job[] jobs = Job.getJobManager().find(JOB_FAMILY_SERIALIZE_LANGUAGE_SETTINGS_WORKSPACE);
+		for (Job job : jobs) {
+			if (job.getState() == Job.WAITING) {
+				// do not schedule if there is serializing job in queue already
+				return;
+			}
+		}
+
+		Job job = new Job(SettingsModelMessages.getString("LanguageSettingsProvidersSerializer.SerializeJobName")) { //$NON-NLS-1$
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				try {
+					monitor.beginTask(SettingsModelMessages.getString("LanguageSettingsProvidersSerializer.SerializingForWorkspace"), //$NON-NLS-1$
+							TICKS_SERIALIZING);
+					serializeLanguageSettingsWorkspace();
+					monitor.worked(TICKS_SERIALIZING);
+					return Status.OK_STATUS;
+				} catch (Throwable e) {
+					String msg = "Internal error running job of serializing language settings in workspace"; //$NON-NLS-1$
+					return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, msg, e);
+				} finally {
+					monitor.done();
+				}
+			}
+			@Override
+			public boolean belongsTo(Object family) {
+				return family == JOB_FAMILY_SERIALIZE_LANGUAGE_SETTINGS_WORKSPACE;
+			}
+		};
+
+		job.setRule(null);
+		job.schedule();
+	}
+
+
+	/**
 	 * Load language settings for workspace.
 	 */
 	public static void loadLanguageSettingsWorkspace() {
@@ -817,6 +866,57 @@ public class LanguageSettingsProvidersSerializer {
 			CCorePlugin.log(msg, e);
 			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, msg, e));
 		}
+	}
+
+	/**
+	 * Save language settings providers of a project to persistent storage in background.
+	 *
+	 * @param prjDescription - project description of the project.
+	 */
+	public static void serializeLanguageSettingsInBackground(final ICProjectDescription prjDescription) {
+		Job job = new Job(SettingsModelMessages.getString("LanguageSettingsProvidersSerializer.SerializeJobName")) { //$NON-NLS-1$
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				try {
+					monitor.beginTask(NLS.bind(SettingsModelMessages.getString("LanguageSettingsProvidersSerializer.SerializingForProject"), //$NON-NLS-1$
+							prjDescription.getName()), TICKS_SERIALIZING);
+					serializeLanguageSettings(prjDescription);
+					monitor.worked(TICKS_SERIALIZING);
+					return Status.OK_STATUS;
+				} catch (Throwable e) {
+					String msg = "Internal error running job of serializing language settings for project " + prjDescription.getName(); //$NON-NLS-1$
+					return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, msg, e);
+				} finally {
+					monitor.done();
+				}
+			}
+			@Override
+			public boolean belongsTo(Object family) {
+				return family == JOB_FAMILY_SERIALIZE_LANGUAGE_SETTINGS_PROJECT;
+			}
+		};
+
+		ISchedulingRule rule = null;
+		IProject project = prjDescription.getProject();
+		if (project != null) {
+			IFile fileStorePrj = getStoreInProjectArea(project);
+			IContainer folder = fileStorePrj.getParent();
+			if (folder instanceof IFolder && !folder.exists()) {
+				try {
+					((IFolder) folder).create(true, true, null);
+				} catch (CoreException e) {
+					CCorePlugin.log(e);
+				}
+			}
+			if (folder.isAccessible()) {
+				rule = fileStorePrj;
+			}
+		}
+		if (rule == null) {
+			rule = ResourcesPlugin.getWorkspace().getRoot();
+		}
+		job.setRule(rule);
+		job.schedule();
 	}
 
 	/**

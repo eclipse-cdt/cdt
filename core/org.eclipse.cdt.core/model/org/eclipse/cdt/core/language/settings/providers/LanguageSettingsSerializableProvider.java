@@ -259,6 +259,24 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 	}
 
 	/**
+	 * Convenience method to persist language settings entries in background for the project or
+	 * workspace as often-used operation.
+	 * Note that configuration description is passed as an argument but the
+	 * current implementation saves all configurations.
+	 *
+	 * @param cfgDescription - configuration description.
+	 *    If not {@code null}, all providers of the project are serialized.
+	 *    If {@code null}, global workspace providers are serialized.
+	 */
+	public void serializeLanguageSettingsInBackground(ICConfigurationDescription cfgDescription) {
+		if (cfgDescription != null) {
+			LanguageSettingsManager.serializeLanguageSettingsInBackground(cfgDescription.getProjectDescription());
+		} else {
+			LanguageSettingsManager.serializeLanguageSettingsWorkspaceInBackground();
+		}
+	}
+
+	/**
 	 * Load provider from XML provider element.
 	 * This is convenience method not intended to be overridden on purpose.
 	 * Override {@link #loadAttributes(Element)} or

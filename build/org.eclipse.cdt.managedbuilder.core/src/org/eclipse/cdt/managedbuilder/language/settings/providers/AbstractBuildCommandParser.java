@@ -21,16 +21,6 @@ import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.core.errorparsers.RegexErrorParser;
 import org.eclipse.cdt.core.errorparsers.RegexErrorPattern;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
-import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
-import org.eclipse.cdt.managedbuilder.internal.core.ManagedMakeMessages;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.core.runtime.jobs.Job;
 
 /**
  * Abstract class for providers parsing compiler option from build command when present in build output.
@@ -142,41 +132,8 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 
 	@Override
 	public void shutdown() {
-		scheduleSerializingJob(currentCfgDescription);
+		serializeLanguageSettingsInBackground(currentCfgDescription);
 		super.shutdown();
-	}
-
-
-	private void scheduleSerializingJob(final ICConfigurationDescription cfgDescription) {
-		Job job = new Job(ManagedMakeMessages.getResourceString("AbstractBuildCommandParser.SerializeJobName")) { //$NON-NLS-1$
-			@Override
-			protected IStatus run(IProgressMonitor monitor) {
-				return serializeLanguageSettings(cfgDescription);
-			}
-			@Override
-			public boolean belongsTo(Object family) {
-				return family == JOB_FAMILY_BUILD_COMMAND_PARSER;
-			}
-		};
-
-		ISchedulingRule rule = null;
-		if (currentProject != null) {
-			IFolder settingsFolder = currentProject.getFolder(".settings");
-			if (!settingsFolder.exists()) {
-				try {
-					settingsFolder.create(true, true, null);
-					if (settingsFolder.isAccessible())
-						rule = currentProject.getFile(".settings/language.settings.xml");
-				} catch (CoreException e) {
-					ManagedBuilderCorePlugin.log(e);
-				}
-			}
-		}
-		if (rule == null) {
-			rule = ResourcesPlugin.getWorkspace().getRoot();
-		}
-		job.setRule(rule);
-		job.schedule();
 	}
 
 	/**

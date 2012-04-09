@@ -1,14 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM Rational Software - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
- *    Yuan Zhang / Beth Tibbitts (IBM Research)
+ *     IBM Rational Software - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *     Yuan Zhang / Beth Tibbitts (IBM Research)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -18,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTGCCAttribute;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -36,8 +38,9 @@ public class CASTDeclarator extends ASTNode implements IASTDeclarator, IASTAmbig
     private IASTInitializer initializer;
     private IASTName name;
     private IASTDeclarator nestedDeclarator;
-    private IASTPointerOperator[] pointerOps = null;
+    private IASTPointerOperator[] pointerOps;
     private int pointerOpsPos= -1;
+    private IASTGCCAttribute[] attributes;
 
     public CASTDeclarator() {
 	}
@@ -70,17 +73,37 @@ public class CASTDeclarator extends ASTNode implements IASTDeclarator, IASTAmbig
 		copy.setName(name == null ? null : name.copy(style));
 		copy.setInitializer(initializer == null ? null : initializer.copy(style));
 		copy.setNestedDeclarator(nestedDeclarator == null ? null : nestedDeclarator.copy(style));
-		for(IASTPointerOperator pointer : getPointerOperators())
+		for (IASTPointerOperator pointer : getPointerOperators()) {
 			copy.addPointerOperator(pointer == null ? null : pointer.copy(style));
+		}
+		for (IASTGCCAttribute attribute : getGCCAttributes()) {
+			copy.addGCCAttribute(attribute.copy(style));
+		}
 		copy.setOffsetAndLength(this);
 	}
-	
 	
 	@Override
 	public IASTPointerOperator[] getPointerOperators() {
         if (pointerOps == null) return IASTPointerOperator.EMPTY_ARRAY;
         pointerOps = ArrayUtil.trimAt(IASTPointerOperator.class, pointerOps, pointerOpsPos);
         return pointerOps;
+    }
+
+	@Override
+	public IASTGCCAttribute[] getGCCAttributes() {
+        if (attributes == null) return IASTGCCAttribute.EMPTY_ATTRIBUTE_ARRAY;
+        attributes = ArrayUtil.trim(IASTGCCAttribute.class, attributes);
+        return attributes;
+    }
+
+    @Override
+	public void addGCCAttribute(IASTGCCAttribute attribute) {
+        assertNotFrozen();
+    	if (attribute != null) {
+    		attribute.setParent(this);
+			attribute.setPropertyInParent(GCC_ATTRIBUTE);
+    		attributes = ArrayUtil.append(IASTGCCAttribute.class, attributes, attribute);
+    	}
     }
 
     @Override
@@ -141,16 +164,25 @@ public class CASTDeclarator extends ASTNode implements IASTDeclarator, IASTAmbig
     @Override
 	public boolean accept(ASTVisitor action) {
         if (action.shouldVisitDeclarators) {
-		    switch(action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+		    switch (action.visit(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
         
         for (int i = 0; i <= pointerOpsPos; i++) {
             if (!pointerOps[i].accept(action))
             	return false;
+        }
+
+        if (attributes != null) {
+        	for (IASTGCCAttribute attribute : attributes) {
+        		if (attribute == null)
+        			break;
+                if (!attribute.accept(action))
+                	return false;
+        	}
         }
 
         if (getPropertyInParent() != IASTTypeId.ABSTRACT_DECLARATOR && nestedDeclarator == null) {

@@ -51,6 +51,7 @@ import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTGCCAttribute;
 import org.eclipse.cdt.core.dom.ast.IASTGotoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
@@ -214,6 +215,18 @@ public class CPPVisitor extends ASTQueries {
 	private static final char[] PTRDIFF_T = "ptrdiff_t".toCharArray(); //$NON-NLS-1$
 	private static final char[] TYPE_INFO= "type_info".toCharArray(); //$NON-NLS-1$
 	private static final char[] INITIALIZER_LIST = "initializer_list".toCharArray(); //$NON-NLS-1$
+	private static final char[] ATTR___MODE__ = "__mode__".toCharArray(); //$NON-NLS-1$
+	private static final char[] ATTR_MODE = "mode".toCharArray(); //$NON-NLS-1$
+	private static final char[] MODE___QI__ = "__QI__".toCharArray(); //$NON-NLS-1$
+	private static final char[] MODE_QI = "QI".toCharArray(); //$NON-NLS-1$
+	private static final char[] MODE___HI__ = "__HI__".toCharArray(); //$NON-NLS-1$
+	private static final char[] MODE_HI = "HI".toCharArray(); //$NON-NLS-1$
+	private static final char[] MODE___SI__ = "__SI__".toCharArray(); //$NON-NLS-1$
+	private static final char[] MODE_SI = "SI".toCharArray(); //$NON-NLS-1$
+	private static final char[] MODE___DI__ = "__DI__".toCharArray(); //$NON-NLS-1$
+	private static final char[] MODE_DI = "DI".toCharArray(); //$NON-NLS-1$
+	private static final char[] MODE___WORD__ = "__word__".toCharArray(); //$NON-NLS-1$
+	private static final char[] MODE_WORD = "word".toCharArray(); //$NON-NLS-1$
 	private static final char[][] EMPTY_CHAR_ARRAY_ARRAY = {};
 	public static final IASTInitializerClause[] NO_ARGS = {};
 
@@ -1779,6 +1792,7 @@ public class CPPVisitor extends ASTQueries {
 	    if (name instanceof ICPPASTConversionName) {
 	    	returnType = createType(((ICPPASTConversionName) name).getTypeId());
 	    } else {
+	    	returnType = applyAttributes(returnType, fnDtor);
 	    	returnType = getPointerTypes(returnType, fnDtor);
 	    }
 
@@ -1841,6 +1855,51 @@ public class CPPVisitor extends ASTQueries {
 		    }
 		}
 		return type;
+	}
+
+	private static IType applyAttributes(IType type, IASTDeclarator declarator) {
+		if (type instanceof IBasicType) {
+			IBasicType basicType = (IBasicType) type;
+			if (basicType.getKind() == IBasicType.Kind.eInt) {
+			    IASTGCCAttribute[] attributes = declarator.getGCCAttributes();
+				for (IASTGCCAttribute attribute : attributes) {
+					char[] name = attribute.getName().getSimpleID();
+					if (Arrays.equals(name, ATTR___MODE__) || Arrays.equals(name, ATTR_MODE)) {
+						char[] mode = getIdArgument(attribute);
+						if (Arrays.equals(mode, MODE___QI__) || Arrays.equals(mode, MODE_QI)) {
+							type = new CPPBasicType(IBasicType.Kind.eChar,
+									basicType.isUnsigned() ? IBasicType.IS_UNSIGNED : IBasicType.IS_SIGNED);
+						} else if (Arrays.equals(mode, MODE___HI__) || Arrays.equals(mode, MODE_HI)) {
+							type = new CPPBasicType(IBasicType.Kind.eInt,
+									IBasicType.IS_SHORT | getSignModifiers(basicType));
+						} else if (Arrays.equals(mode, MODE___SI__) || Arrays.equals(mode, MODE_SI)) {
+							type = new CPPBasicType(IBasicType.Kind.eInt, getSignModifiers(basicType));
+						} else if (Arrays.equals(mode, MODE___DI__) || Arrays.equals(mode, MODE_DI)) {
+							type = new CPPBasicType(IBasicType.Kind.eInt,
+									IBasicType.IS_LONG_LONG | getSignModifiers(basicType));
+						} else if (Arrays.equals(mode, MODE___WORD__) || Arrays.equals(mode, MODE_WORD)) {
+							type = new CPPBasicType(IBasicType.Kind.eInt,
+									IBasicType.IS_LONG | getSignModifiers(basicType));
+						}
+					}
+				}
+			}
+		}
+		return type;
+	}
+
+	private static char[] getIdArgument(IASTGCCAttribute attribute) {
+		IASTExpression[] arguments = attribute.getArguments();
+		if (arguments.length != 1)
+			return null;
+		IASTExpression argument = arguments[0];
+		if (!(argument instanceof IASTIdExpression))
+			return null;
+		return ((IASTIdExpression) argument).getName().getSimpleID();
+	}
+
+	private static int getSignModifiers(IBasicType type) {
+		return type.getModifiers() & (IBasicType.IS_SIGNED | IBasicType.IS_UNSIGNED);
 	}
 
 	private static IType getArrayTypes(IType type, IASTArrayDeclarator declarator) {
@@ -2084,6 +2143,7 @@ public class CPPVisitor extends ASTQueries {
 	        return createType(baseType, (ICPPASTFunctionDeclarator) declarator);
 
 		IType type = baseType;
+		type = applyAttributes(type, declarator);
 		type = getPointerTypes(type, declarator);
 		if (declarator instanceof IASTArrayDeclarator)
 		    type = getArrayTypes(type, (IASTArrayDeclarator) declarator);

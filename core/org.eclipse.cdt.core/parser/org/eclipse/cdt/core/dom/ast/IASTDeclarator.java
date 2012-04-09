@@ -30,6 +30,14 @@ public interface IASTDeclarator extends IASTNode, IASTNameOwner {
 			"IASTDeclarator.POINTER_OPERATOR - IASTPointerOperator for IASTDeclarator"); //$NON-NLS-1$
 
 	/**
+	 * <code>GCC_ATTRIBUTE</code> represents the relationship between an
+	 * <code>IASTDeclarator</code> and an <code>IASTGCCAttribute</code>.
+	 * @since 5.4
+	 */
+	public static final ASTNodeProperty GCC_ATTRIBUTE = new ASTNodeProperty(
+			"IASTDeclarator.GCC_ATTRIBUTE - IASTGCCAttribute for IASTDeclarator"); //$NON-NLS-1$
+
+	/**
 	 * <code>INITIALIZER</code> represents the relationship between an
 	 * <code>IASTDeclarator</code> and an <code>IASTInitializer</code>.
 	 */
@@ -51,8 +59,7 @@ public interface IASTDeclarator extends IASTNode, IASTNameOwner {
 			"IASTDeclarator.DECLARATOR_NAME - IASTName for IASTDeclarator"); //$NON-NLS-1$
 
 	/**
-	 * This is the list of pointer operators applied to the type for the
-	 * declarator.
+	 * This is the list of pointer operators applied to the type for the declarator.
 	 * 
 	 * @return array of IASTPointerOperator
 	 */
@@ -61,8 +68,7 @@ public interface IASTDeclarator extends IASTNode, IASTNameOwner {
 	/**
 	 * Adds a pointer operator to the declarator.
 	 * 
-	 * @param operator
-	 *            <code>IASTPointerOperator</code> to be added.
+	 * @param operator a <code>IASTPointerOperator</code> to be added.
 	 */
 	public void addPointerOperator(IASTPointerOperator operator);
 
@@ -106,7 +112,23 @@ public interface IASTDeclarator extends IASTNode, IASTNameOwner {
 	 *            <code>IASTInitializer</code>
 	 */
 	public void setInitializer(IASTInitializer initializer);
-	
+
+	/**
+	 * Returns the list of attributes applied to the type for the declarator.
+	 * 
+	 * @return an array of attributes
+	 * @since 5.4
+	 */
+	public IASTGCCAttribute[] getGCCAttributes();
+
+	/**
+	 * Adds an attribute to the declarator.
+	 * 
+	 * @param attribute an attribute to be added.
+	 * @since 5.4
+	 */
+	public void addGCCAttribute(IASTGCCAttribute attribute);
+
 	/**
 	 * @since 5.1
 	 */

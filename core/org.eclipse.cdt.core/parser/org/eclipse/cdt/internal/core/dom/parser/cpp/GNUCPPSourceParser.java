@@ -12,6 +12,7 @@
  *     Ed Swartz (Nokia)
  *     Mike Kucera (IBM)
  *     Andrew Ferguson (Symbian)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -39,6 +40,7 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTGCCAttribute;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
@@ -131,6 +133,7 @@ import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.core.parser.util.CollectionUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
@@ -3736,6 +3739,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     		DtorStrategy strategy, DeclarationOptions option) 
     		throws EndOfFileException, BacktrackException {
         ICPPASTDeclarator result= null;
+        List<IASTGCCAttribute> attributes = null;
         loop: while(true) {
         	final int lt1= LTcatchEOF(1);
         	switch (lt1) {
@@ -3762,18 +3766,21 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         	case IGCCToken.t__attribute__: // if __attribute__ is after a declarator
         		if (!supportAttributeSpecifiers)
         			throwBacktrack(LA(1));
-        		__attribute_decl_seq(true, supportDeclspecSpecifiers);
+        		attributes = CollectionUtils.merge(attributes,
+        				__attribute_decl_seq(true, supportDeclspecSpecifiers));
         		break;
         	case IGCCToken.t__declspec:
         		if (!supportDeclspecSpecifiers)
         			throwBacktrack(LA(1));
-        		__attribute_decl_seq(supportAttributeSpecifiers, true);
+        		attributes = CollectionUtils.merge(attributes,
+        				__attribute_decl_seq(supportAttributeSpecifiers, true));
         		break;
         	default:
         		break loop;
         	}
         }
-		__attribute_decl_seq(supportAttributeSpecifiers, supportDeclspecSpecifiers);
+        attributes = CollectionUtils.merge(attributes,
+        		__attribute_decl_seq(supportAttributeSpecifiers, supportDeclspecSpecifiers));
 
         if (result == null) {
         	result= nodeFactory.newDeclarator(null);
@@ -3786,12 +3793,19 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     		consume();
     		endOffset= asmExpression(null).getEndOffset();
 
-    		__attribute_decl_seq(supportAttributeSpecifiers, supportDeclspecSpecifiers);
+    		attributes = CollectionUtils.merge(attributes,
+            		__attribute_decl_seq(supportAttributeSpecifiers, supportDeclspecSpecifiers));
     	}
 
         if (pointerOps != null) {
         	for (IASTPointerOperator po : pointerOps) {
         		result.addPointerOperator(po);
+        	}
+        }
+
+        if (attributes != null) {
+        	for (IASTGCCAttribute attribute : attributes) {
+        		result.addGCCAttribute(attribute);
         	}
         }
 
@@ -3858,7 +3872,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		}
 
 		// Consume any number of __attribute__ tokens after the parameters
-		__attribute_decl_seq(supportAttributeSpecifiers, false);
+		List<IASTGCCAttribute> attributes = __attribute_decl_seq(supportAttributeSpecifiers, false);
 
 		// cv-qualifiers
 		if (isLambdaDeclarator) {
@@ -3922,7 +3936,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 			}
 
 			// more __attribute__ after throws
-			__attribute_decl_seq(supportAttributeSpecifiers, false);
+			attributes = CollectionUtils.merge(attributes,
+					__attribute_decl_seq(supportAttributeSpecifiers, false));
 		}
 		
 		if (LT(1) == IToken.tARROW) {
@@ -3931,6 +3946,12 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 			fc.setTrailingReturnType(typeId);
 			endOffset= calculateEndOffset(typeId);
 		} 
+
+		if (attributes != null) {
+			for (IASTGCCAttribute attribute : attributes) {
+				fc.addGCCAttribute(attribute);
+			}
+		}
 
         return setRange(fc, startOffset, endOffset);
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Markus Schorn (Wind River Systems)
  *     Ed Swartz (Nokia)
  *     Mike Kucera (IBM) - bug #206952
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -38,6 +39,7 @@ import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTGCCAttribute;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
@@ -85,6 +87,7 @@ import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.core.parser.util.CollectionUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
@@ -1337,7 +1340,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         }
             
         // Accept __attribute__ or __declspec between pointer operators and declarator.
-        __attribute_decl_seq(supportAttributeSpecifiers, supportDeclspecSpecifiers);
+        List<IASTGCCAttribute> attributes =
+        		__attribute_decl_seq(supportAttributeSpecifiers, supportDeclspecSpecifiers);
         
         // Look for identifier or nested declarator
         final int lt1= LT(1);
@@ -1347,7 +1351,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 
         	final IASTName declaratorName = identifier();
         	endOffset= calculateEndOffset(declaratorName);
-        	return declarator(pointerOps, declaratorName, null, startingOffset, endOffset, option);
+        	return declarator(pointerOps, attributes, declaratorName, null, startingOffset,
+        			endOffset, option);
         } 
         
         if (lt1 == IToken.tLPAREN) {
@@ -1357,7 +1362,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         	if (option.fAllowAbstract) {
         		final IToken mark= mark();
         		try {
-        			cand1= declarator(pointerOps, nodeFactory.newName(), null, startingOffset, endOffset, option);
+        			cand1= declarator(pointerOps, attributes, nodeFactory.newName(), null,
+        					startingOffset, endOffset, option);
             		if (option.fRequireAbstract) 
             			return cand1;
 
@@ -1374,7 +1380,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         		
         		final IASTDeclarator nested= declarator(declSpec, option);
         		endOffset= consume(IToken.tRPAREN).getEndOffset();
-        		final IASTDeclarator cand2= declarator(pointerOps, null, nested, startingOffset, endOffset, option);
+        		final IASTDeclarator cand2= declarator(pointerOps, attributes, null, nested,
+        				startingOffset, endOffset, option);
         		if (cand1 == null || cand1End == null)
         			return cand2;
         		final IToken cand2End= LA(1);
@@ -1399,12 +1406,13 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         if (!option.fAllowAbstract) {
         	throwBacktrack(LA(1));
         }
-        return declarator(pointerOps, nodeFactory.newName(), null, startingOffset, endOffset, option);
+        return declarator(pointerOps, attributes, nodeFactory.newName(), null, startingOffset,
+        		endOffset, option);
     }
         
-	private IASTDeclarator declarator(final List<IASTPointerOperator> pointerOps,	
-			final IASTName declaratorName,	final IASTDeclarator nestedDeclarator, 
-			final int startingOffset, int endOffset, 
+	private IASTDeclarator declarator(final List<IASTPointerOperator> pointerOps,
+			List<IASTGCCAttribute> attributes, final IASTName declaratorName,
+			final IASTDeclarator nestedDeclarator, final int startingOffset, int endOffset, 
 			final DeclarationOptions option) throws EndOfFileException, BacktrackException {
         IASTDeclarator result= null;
         int lt1;
@@ -1433,19 +1441,23 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         	case IGCCToken.t__attribute__: // if __attribute__ is after a declarator
         		if (!supportAttributeSpecifiers)
         			throwBacktrack(LA(1));
-        		__attribute_decl_seq(true, supportDeclspecSpecifiers);
+        		attributes = CollectionUtils.merge(attributes,
+        				__attribute_decl_seq(true, supportDeclspecSpecifiers));
         		break;
         	case IGCCToken.t__declspec:
         		if (!supportDeclspecSpecifiers)
         			throwBacktrack(LA(1));
-        		__attribute_decl_seq(supportAttributeSpecifiers, true);
+        		attributes = CollectionUtils.merge(attributes,
+        				__attribute_decl_seq(supportAttributeSpecifiers, true));
         		break;
         	default:
         		break loop;
         	}
         }
-        if (lt1 != 0)
-        	__attribute_decl_seq(supportAttributeSpecifiers, supportDeclspecSpecifiers);
+        if (lt1 != 0) {
+    		attributes = CollectionUtils.merge(attributes,
+    				__attribute_decl_seq(supportAttributeSpecifiers, supportDeclspecSpecifiers));
+        }
 
         if (result == null) {
         	result= nodeFactory.newDeclarator(null);
@@ -1464,6 +1476,12 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         for (IASTPointerOperator po : pointerOps) {
 			result.addPointerOperator(po);
 		}
+
+        if (attributes != null) {
+        	for (IASTGCCAttribute attribute : attributes) {
+        		result.addGCCAttribute(attribute);
+        	}
+        }
 
         ((ASTNode) result).setOffsetAndLength(startingOffset, endOffset - startingOffset);
         return result;

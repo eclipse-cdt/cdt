@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,12 @@
  *     Markus Schorn (Wind River Systems)
  *     Ed Swartz (Nokia)
  *     Mike Kucera (IBM) - bug #206952
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.ASTGenericVisitor;
@@ -43,6 +47,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTGCCAttribute;
 import org.eclipse.cdt.core.dom.ast.IASTGotoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
@@ -83,6 +88,7 @@ import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
 import org.eclipse.cdt.core.parser.ParseError;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.core.parser.util.CollectionUtils;
 import org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver;
 
 /**
@@ -2314,26 +2320,38 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
      * 
      * @param allowAttrib if true accept any number of __attribute__ 
      * @param allowDeclspec if true accept any number of __declspec
+     * @return the list of attributes, or {@code null} if there are none
      * @throws BacktrackException
      * @throws EndOfFileException
      */
-    protected void __attribute_decl_seq(boolean allowAttrib, boolean allowDeclspec) throws BacktrackException, EndOfFileException {
+    protected List<IASTGCCAttribute> __attribute_decl_seq(boolean allowAttrib, boolean allowDeclspec)
+    		throws BacktrackException, EndOfFileException {
+    	List<IASTGCCAttribute> result = null;
         while (true) {
         	final int lt = LTcatchEOF(1);
         	if (allowAttrib && (lt == IGCCToken.t__attribute__)) {
-        		__attribute__();
+        		result = CollectionUtils.merge(result, __attribute__());
         	} else if (allowDeclspec && (lt == IGCCToken.t__declspec)) {
         		__declspec();
         	} else {
         		break;
         	}
         }
+        return result;
     }
 
-    protected void __attribute__() throws BacktrackException, EndOfFileException {    	
+    /**
+     * Consumes __attribute__ clause.
+     * @return the list of attributes, or {@code null} if the __attribute__ clause contained
+     *     no attributes
+     * @throws BacktrackException
+     * @throws EndOfFileException
+     */
+    protected List<IASTGCCAttribute> __attribute__() throws BacktrackException, EndOfFileException {    	
     	if (LT(1) != IGCCToken.t__attribute__) 
-    		return;
-    	
+    		return null;
+
+    	List<IASTGCCAttribute> result = null;
     	consume();
     	if (LT(1) == IToken.tLPAREN) {
     		consume(); 
@@ -2346,7 +2364,10 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     			
     			// Allow empty attribute
     			if (lt1 != IToken.tCOMMA) {
-    				singleAttribute();
+    				IASTGCCAttribute attribute = singleAttribute();
+    				if (result == null)
+    					result = new ArrayList<IASTGCCAttribute>();
+    				result.add(attribute);
     			}
 
 				// Require comma
@@ -2358,25 +2379,26 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     		consumeOrEOC(IToken.tRPAREN);
     		consumeOrEOC(IToken.tRPAREN);
     	}
+    	return result;
     }
 
-	private void singleAttribute() throws EndOfFileException, BacktrackException {
-		// Check if we have an identifier including keywords
-		if (!isIdentifier(LA(1)))
-			throw backtrack;					
-		consume();
+	private IASTGCCAttribute singleAttribute() throws EndOfFileException, BacktrackException {
+		// Get an identifier including keywords
+		IASTName id = identifier_or_keyword();
+		IASTGCCAttribute result = nodeFactory.newGCCAttribute(id);
 
 		// Check for parameters
 		if (LT(1) == IToken.tLPAREN) {
 			consume();
-			for(;;) {
+			for (;;) {
 				final int lt2= LT(1);				
 				if (lt2 == IToken.tRPAREN || lt2 == IToken.tEOC) 
 					break;
 
 				// Allow empty parameter
 				if (lt2 != IToken.tCOMMA) {
-					expression();
+					IASTExpression argument = expression();
+					result.addArgument(argument);
 				}
 				// Require comma
 				if (LT(1) != IToken.tCOMMA) 
@@ -2385,14 +2407,22 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 			}
 			consumeOrEOC(IToken.tRPAREN);
 		}
+		setRange(result, id, getEndOffset());
+		return result;
 	}
     
-	private boolean isIdentifier(IToken t) {
+	private IASTName identifier_or_keyword() throws EndOfFileException, BacktrackException {
+		IToken t = LA(1);
 		char[] image= t.getCharImage();
 		if (image.length == 0)
-			return false;
+			throw backtrack; 
 		char firstChar= image[0];
-		return Character.isLetter(firstChar) || firstChar == '_'; 
+		if (!Character.isLetter(firstChar) && firstChar != '_')
+			throw backtrack;
+		consume();
+		IASTName name= nodeFactory.newName(t.getCharImage());
+		setRange(name, t.getOffset(), t.getEndOffset());
+		return name;
 	}
 
 	protected void __declspec() throws BacktrackException, EndOfFileException {

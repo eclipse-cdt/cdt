@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2010 IBM Corporation and others.
+ *  Copyright (c) 2006, 2012 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -38,6 +38,7 @@ import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTGCCAttribute;
 import org.eclipse.cdt.core.dom.ast.IASTGotoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
@@ -88,7 +89,6 @@ import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
  * implementations of the nodes.
  */
 public class CNodeFactory extends NodeFactory implements ICNodeFactory {
-
 	private static final CNodeFactory DEFAULT_INSTANCE = new CNodeFactory();
 	
 	public static CNodeFactory getDefault() {
@@ -125,6 +125,11 @@ public class CNodeFactory extends NodeFactory implements ICNodeFactory {
 		return new CASTASMDeclaration(assembly);
 	}
 	
+	@Override
+	public IASTGCCAttribute newGCCAttribute(IASTName name) {
+		return new CASTGCCAttribute(name);
+	}
+
 	@Override
 	public IASTBinaryExpression newBinaryExpression(int op, IASTExpression expr1, IASTExpression expr2) {
 		return new CASTBinaryExpression(op, expr1, expr2);

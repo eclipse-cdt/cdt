@@ -370,6 +370,14 @@ public abstract class ASTNode implements IASTNode {
 		return null;
 	}
 
+	protected <T extends ASTNode> T copy(T copy, CopyStyle style) {
+		copy.setOffsetAndLength(this);
+		if (style == CopyStyle.withLocations) {
+			copy.setCopyLocation(this);
+		}
+		return copy;
+	}
+
 	protected void setCopyLocation(IASTNode originalNode) {
 		locations = new IASTNodeLocation[] { new ASTCopyLocation(originalNode) };
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others.
+ * Copyright (c) 2006, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,6 +47,11 @@ public interface INodeFactory {
 
 	public IASTASMDeclaration newASMDeclaration(String assembly);
 	
+	/**
+	 * @since 5.4
+	 */
+	public IASTGCCAttribute newGCCAttribute(IASTName name);
+
 	public IASTBinaryExpression newBinaryExpression(int op, IASTExpression expr1, IASTExpression expr2);
 	
 	public IASTBreakStatement newBreakStatement();

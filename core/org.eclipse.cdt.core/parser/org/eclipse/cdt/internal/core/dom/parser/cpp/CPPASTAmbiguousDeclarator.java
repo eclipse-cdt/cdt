@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 IBM Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2012 IBM Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,11 +7,13 @@
  *
  * Contributors:
  *     Markus Schorn - Initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTGCCAttribute;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -84,7 +86,7 @@ public class CPPASTAmbiguousDeclarator extends ASTAmbiguousNode
 
     @Override
 	public IASTDeclarator[] getDeclarators() {
-    	dtors = ArrayUtil.trimAt(IASTDeclarator.class, dtors, dtorPos ); 
+    	dtors = ArrayUtil.trimAt(IASTDeclarator.class, dtors, dtorPos); 
         return dtors;
     }
 
@@ -113,6 +115,17 @@ public class CPPASTAmbiguousDeclarator extends ASTAmbiguousNode
 		return dtors[0].getPointerOperators();
 	}
 	
+	@Override
+	public IASTGCCAttribute[] getGCCAttributes() {
+		return dtors[0].getGCCAttributes();
+	}
+
+	@Override
+	public void addGCCAttribute(IASTGCCAttribute attribute) {
+        assertNotFrozen();
+		Assert.isLegal(false);
+	}
+
 	@Override
 	public int getRoleForName(IASTName name) {
 		return dtors[0].getRoleForName(name);

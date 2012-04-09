@@ -563,10 +563,9 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     }
 
     /**
-     * Parse an identifier.
+     * Parses an identifier.
      * 
-     * @throws BacktrackException
-     *             request a backtrack
+     * @throws BacktrackException request a backtrack
      */
     protected abstract IASTName identifier() throws EndOfFileException, BacktrackException;
 
@@ -1242,7 +1241,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 					}
 					IASTCastExpression result = buildCastExpression(IASTCastExpression.op_cast,
 							typeId, rhs, startingOffset, calculateEndOffset(rhs));
-					if (!unaryFailed && couldBeFunctionCall && rhs instanceof IASTCastExpression == false) {
+					if (!unaryFailed && couldBeFunctionCall && !(rhs instanceof IASTCastExpression)) {
 						IToken markEnd= mark();
 						backup(mark);
 						try {
@@ -2164,13 +2163,11 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         return cs;
     }
 
- 
     protected int figureEndOffset(IASTDeclSpecifier declSpec, IASTDeclarator[] declarators) {
         if (declarators.length == 0)
             return calculateEndOffset(declSpec);
         return calculateEndOffset(declarators[declarators.length - 1]);
     }
-
 
     protected int figureEndOffset(IASTDeclSpecifier declSpecifier, IASTDeclarator declarator) {
         if (declarator == null || ((ASTNode) declarator).getLength() == 0)
@@ -2178,13 +2175,13 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         return calculateEndOffset(declarator);
     }
 
-
     protected void throwBacktrack(IToken token) throws BacktrackException {
         throwBacktrack(token.getOffset(), token.getLength());
     }
 
     protected IASTExpression parseTypeidInParenthesisOrUnaryExpression(boolean exprIsLimitedToParenthesis, 
-    		int offset, int typeExprKind, int unaryExprKind, CastExprCtx ctx, ITemplateIdStrategy strat) throws BacktrackException, EndOfFileException {
+    		int offset, int typeExprKind, int unaryExprKind, CastExprCtx ctx, ITemplateIdStrategy strat)
+    		throws BacktrackException, EndOfFileException {
     	IASTTypeId typeid;
     	IASTExpression expr= null;
         IToken typeidLA= null;
@@ -2315,7 +2312,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     }
 
     /**
-     * Accept a sequence of __attribute__ or __declspec
+     * Accepts a sequence of __attribute__ or __declspec.
      * 
      * @param allowAttrib if true accept any number of __attribute__ 
      * @param allowDeclspec if true accept any number of __declspec
@@ -2416,7 +2413,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
      * @throws EndOfFileException 
 	 */
 	protected void handleOtherDeclSpecModifier() throws BacktrackException, EndOfFileException {
-		// default action: consume keyword plus optional parenthesised "something"
+		// default action: consume keyword plus optional parenthesized "something"
 		consume();
 
 		IToken token = LA(1);

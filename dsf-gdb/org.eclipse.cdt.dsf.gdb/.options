@@ -1,1 +1,2 @@
 org.eclipse.cdt.dsf.gdb/debug = false
+org.eclipse.cdt.dsf.gdb/debug/timeouts = false

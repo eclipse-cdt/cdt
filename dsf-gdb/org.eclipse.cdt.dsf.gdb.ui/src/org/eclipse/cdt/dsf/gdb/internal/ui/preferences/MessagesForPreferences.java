@@ -17,6 +17,11 @@ import org.eclipse.osgi.util.NLS;
  * Preference strings.
  */
 class MessagesForPreferences extends NLS {
+	public static String GdbDebugPreferencePage_Add_button;
+	public static String GdbDebugPreferencePage_Advanced_button;
+	public static String GdbDebugPreferencePage_Advanced_timeout_dialog_message;
+	public static String GdbDebugPreferencePage_Advanced_timeout_dialog_title;
+	public static String GdbDebugPreferencePage_Advanced_Timeout_Settings;
 	public static String GdbDebugPreferencePage_description;
 	public static String GdbDebugPreferencePage_traces_label;
 	public static String GdbDebugPreferencePage_enableTraces_label;
@@ -24,6 +29,9 @@ class MessagesForPreferences extends NLS {
 	public static String GdbDebugPreferencePage_maxGdbTraces_label;
 	public static String GdbDebugPreferencePage_termination_label;
 	public static String GdbDebugPreferencePage_autoTerminateGdb_label;
+	public static String GdbDebugPreferencePage_Command_column_name;
+	public static String GdbDebugPreferencePage_Command_field_can_not_be_empty;
+	public static String GdbDebugPreferencePage_Command_timeout;
 	public static String GdbDebugPreferencePage_hover_label;
 	public static String GdbDebugPreferencePage_useInspectorHover_label;
 	/** @since 2.2 */
@@ -36,6 +44,10 @@ class MessagesForPreferences extends NLS {
 	public static String GdbDebugPreferencePage_initialChildCountLimitForCollections_label;
 	/** @since 2.2 */
 	public static String GdbDebugPreferencePage_defaults_label;
+	public static String GdbDebugPreferencePage_Delete_button;
+	public static String GdbDebugPreferencePage_Invalid_timeout_value;
+	public static String GdbDebugPreferencePage_Timeout_column_name;
+	public static String GdbDebugPreferencePage_Timeout_value_can_not_be_negative;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(MessagesForPreferences.class.getName(), MessagesForPreferences.class);

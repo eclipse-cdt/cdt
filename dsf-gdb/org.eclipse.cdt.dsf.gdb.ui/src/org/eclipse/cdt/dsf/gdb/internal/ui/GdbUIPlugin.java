@@ -22,6 +22,9 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -227,4 +230,32 @@ public class GdbUIPlugin extends AbstractUIPlugin {
 		}
 	}
 
+    /* (non-Javadoc)
+	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#initializeImageRegistry(org.eclipse.jface.resource.ImageRegistry)
+	 */
+	@Override
+	protected void initializeImageRegistry( ImageRegistry reg ) {
+		super.initializeImageRegistry( reg );
+		declareImages( reg );
+	}
+
+	/**
+     * Returns an image descriptor for the image file at the given
+     * plug-in relative path
+     *
+     * @param path the path
+     * @return the image descriptor
+     */
+    public static ImageDescriptor getImageDescriptor(String path) {
+        return imageDescriptorFromPlugin(PLUGIN_ID, path);
+    }
+
+    public static Image getImage( String key ) {
+    	return getDefault().getImageRegistry().get( key );
+    }
+
+    private void declareImages( ImageRegistry reg ) {
+    	reg.put( IGdbUIConstants.IMG_WIZBAN_ADVANCED_TIMEOUT_SETTINGS, 
+    			getImageDescriptor( "icons/full/wizban/advtosettings_wiz.png" ) ); //$NON-NLS-1$
+    }
 }

@@ -17,7 +17,6 @@ import org.eclipse.cdt.core.dom.ast.INodeFactory;
  * Abstract base class for node factories.
  */
 public abstract class NodeFactory implements INodeFactory {
-
 	@Override
 	public final void setOffsets(IASTNode node, int offset, int endOffset) {
 		((ASTNode) node).setOffsetAndLength(offset, endOffset-offset);

@@ -9,7 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *     Anton Leherbauer (Wind River Systems) - Adapted for CDT
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.editor;
 
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -24,7 +23,6 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
  * @since 4.0
  */
 public final class SemanticToken {
-
 	/** AST node */
 	private IASTNode fNode;
 
@@ -35,7 +33,7 @@ public final class SemanticToken {
 
 	/** AST root */
 	private IASTTranslationUnit fRoot;
-	private boolean fIsRootResolved= false;
+	private boolean fIsRootResolved;
 
 	/**
 	 * @return Returns the binding, can be <code>null</code>.
@@ -44,7 +42,7 @@ public final class SemanticToken {
 		if (!fIsBindingResolved) {
 			fIsBindingResolved= true;
 			if (fNode instanceof IASTName)
-				fBinding= ((IASTName)fNode).resolveBinding();
+				fBinding= ((IASTName) fNode).resolveBinding();
 		}
 		
 		return fBinding;

@@ -643,8 +643,8 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 			insertion = new InsertionInfo(parent, functionToExtractFrom);
 		}
 		if (insertion.getPrologue() != null) {
-			rewrite.insertBefore(insertion.getParentNode(),
-					insertion.getInsertBeforeNode(), insertion.getPrologue(), group);
+			rewrite.insertBefore(insertion.getParentNode(),	insertion.getInsertBeforeNode(),
+					insertion.getPrologue(), group);
 		}
 		subRewrite = rewrite.insertBefore(insertion.getParentNode(),
 				insertion.getInsertBeforeNode(), nodeToInsert, group);

@@ -17,7 +17,6 @@ package org.eclipse.cdt.core.dom.ast;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTExpressionList extends IASTExpression {
-
 	/**
 	 * <code>NESTED_EXPRESSION</code> describes the relationship between
 	 * <code>IASTExpressionList</code> and the nested
@@ -29,7 +28,7 @@ public interface IASTExpressionList extends IASTExpression {
 	/**
 	 * Get nested expressions.
 	 * 
-	 * @return <code>IASTExpression [] </code> nested expressions
+	 * @return <code>IASTExpression[] </code> nested expressions
 	 */
 	public IASTExpression[] getExpressions();
 

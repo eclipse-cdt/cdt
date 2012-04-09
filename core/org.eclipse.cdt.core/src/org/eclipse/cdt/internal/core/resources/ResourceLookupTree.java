@@ -122,6 +122,8 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 	private boolean fNeedCleanup;
 	private Node fLastFolderNode;
 
+	private boolean fTrace;
+
 	public ResourceLookupTree() {
 		fRootNode= new Node(null, CharArrayUtils.EMPTY, false, false) {};
 		fFileExtensions= new HashMap<String, Extensions>();
@@ -133,6 +135,7 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 			}
 		};
 		fUnrefJob.setSystem(true);
+		fTrace= "true".equals(Platform.getDebugOption(CCorePlugin.PLUGIN_ID + "/debug/resourceLookup"));  //$NON-NLS-1$//$NON-NLS-2$
 	}
 
 	public void startup() {
@@ -265,12 +268,34 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 				createFileNode(res.getFullPath(), null);
 			}
 		} else {
+			long time=0, count=0;
+			final boolean trace = fTrace && res instanceof IProject;
+			if (trace) {
+				time= System.currentTimeMillis();
+				count= countNodes();
+			}
 			try {
 				res.accept(this, 0);
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
 			}
+			if (trace) {
+				System.out.println("Built file lookup tree for " + res.getName() + ", took " +   //$NON-NLS-1$//$NON-NLS-2$
+						(System.currentTimeMillis() - time) + "ms to add " + (countNodes()-count) + " nodes."); //$NON-NLS-1$ //$NON-NLS-2$
+			}
 		}
+	}
+
+	private long countNodes() {
+		long result= 0;
+		for (Object node : fNodeMap.values()) {
+			if (node instanceof Node[]) {
+				result += ((Node[]) node).length;
+			} else { 
+				result++;
+			}
+		}
+		return result;
 	}
 
 	/**

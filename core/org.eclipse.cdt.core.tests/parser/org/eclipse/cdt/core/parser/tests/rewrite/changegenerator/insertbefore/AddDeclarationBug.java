@@ -1,13 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2011 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html  
- * 
- * Contributors: 
- *     Institute for Software (IFS)- initial API and implementation 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Institute for Software (IFS)- initial API and implementation
  ******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.rewrite.changegenerator.insertbefore;
 
@@ -41,7 +41,7 @@ public class AddDeclarationBug extends ChangeGeneratorTest {
 		super("AddDeclarationBug");
 	}
 
-	public static Test suite() {		
+	public static Test suite() {
 		return new AddDeclarationBug();
 	}
 
@@ -64,11 +64,11 @@ public class AddDeclarationBug extends ChangeGeneratorTest {
 				if (declSpec instanceof ICPPASTCompositeTypeSpecifier) {
 					ICPPASTCompositeTypeSpecifier classNode = (ICPPASTCompositeTypeSpecifier) declSpec;
 					IASTSimpleDeclaration newDecl = new CPPASTSimpleDeclaration();
-					
+
 					IASTSimpleDeclSpecifier returnTyp = new CPPASTSimpleDeclSpecifier();
 					returnTyp.setType(IASTSimpleDeclSpecifier.t_int);
 					newDecl.setDeclSpecifier(returnTyp);
-					
+
 					IASTStandardFunctionDeclarator declarator = new CPPASTFunctionDeclarator(
 							new CPPASTName("exp".toCharArray())); //$NON-NLS-1$
 					IASTSimpleDeclSpecifier paramTyp = new CPPASTSimpleDeclSpecifier();
@@ -77,7 +77,7 @@ public class AddDeclarationBug extends ChangeGeneratorTest {
 					ICPPASTParameterDeclaration param = new CPPASTParameterDeclaration(paramTyp, decl);
 					declarator.addParameterDeclaration(param);
 					newDecl.addDeclarator(declarator);
-					
+
 					ASTModification mod = new ASTModification(ModificationKind.APPEND_CHILD, classNode,
 							newDecl, null);
 					modStore.storeModification(null, mod);

@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *     Markus Schorn - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite;
 
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -20,7 +20,8 @@ import org.eclipse.ltk.core.refactoring.TextFileChange;
 public class ASTRewriteAnalyzer {
 	private static ICTextFileChangeFactory sFileChangeFactory;
 
-	public static Change rewriteAST(IASTTranslationUnit root, ASTModificationStore modificationStore, NodeCommentMap commentMap) {
+	public static Change rewriteAST(IASTTranslationUnit root, ASTModificationStore modificationStore,
+			NodeCommentMap commentMap) {
 		ChangeGenerator rewriter = new ChangeGenerator(modificationStore, commentMap);
 		rewriter.generateChange(root);
 		return rewriter.getChange();
@@ -29,7 +30,7 @@ public class ASTRewriteAnalyzer {
 	public static void setCTextFileChangeFactory(ICTextFileChangeFactory factory) {
 		sFileChangeFactory= factory;
 	}
-	
+
 	public static TextFileChange createCTextFileChange(IFile file) {
 		if (sFileChangeFactory == null) {
 			return new TextFileChange(file.getName(), file);

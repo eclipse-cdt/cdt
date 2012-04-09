@@ -20,7 +20,7 @@ import junit.framework.TestSuite;
 public class InsertBeforeTestSuite {
 
 	public static Test suite() throws Exception {
-		TestSuite suite = new TestSuite("ChangeGenerator InsertBefore Tests");
+		TestSuite suite = new TestSuite("InsertBeforeTestSuite");
 
 		suite.addTest(FirstParameterTest.suite());
 		suite.addTest(PointerParameterTest.suite());

@@ -17,7 +17,7 @@ package org.eclipse.cdt.core.dom.ast;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTDeclaration extends IASTNode {
-	public static final IASTDeclaration[] EMPTY_DECLARATION_ARRAY = new IASTDeclaration[0];
+	public static final IASTDeclaration[] EMPTY_DECLARATION_ARRAY = {};
 
 	/**
 	 * @since 5.1

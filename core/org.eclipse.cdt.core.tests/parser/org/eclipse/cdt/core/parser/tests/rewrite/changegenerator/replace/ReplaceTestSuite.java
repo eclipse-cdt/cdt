@@ -20,7 +20,7 @@ import junit.framework.TestSuite;
 public class ReplaceTestSuite {
 
 	public static Test suite() throws Exception {
-		TestSuite suite = new TestSuite("ChangeGeneratorReplaceTests");
+		TestSuite suite = new TestSuite("ReplaceTestSuite");
 	
 		suite.addTest(NameTest.suite());
 		suite.addTest(MoveTest.suite());

@@ -251,7 +251,7 @@ public class ExtractFunctionInputPage extends UserInputWizardPage {
 			return;
 
 		if (methodName.isEmpty()) {
-			methodName = StubUtility.suggestMethodName("someMethodName", null, //$NON-NLS-1$
+			methodName = StubUtility.suggestMethodName("extracted", null, //$NON-NLS-1$
 					refactoring.getTranslationUnit());
 		}
 

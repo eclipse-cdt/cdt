@@ -2454,7 +2454,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 			IASTDeclarator outerDtor) throws EndOfFileException, BacktrackException {
 		
 		final IASTDeclarator dtor= ASTQueries.findTypeRelevantDeclarator(outerDtor);
-		if (dtor instanceof ICPPASTFunctionDeclarator == false)
+		if (!(dtor instanceof ICPPASTFunctionDeclarator))
 			throwBacktrack(firstOffset, LA(1).getEndOffset() - firstOffset);
 
 		

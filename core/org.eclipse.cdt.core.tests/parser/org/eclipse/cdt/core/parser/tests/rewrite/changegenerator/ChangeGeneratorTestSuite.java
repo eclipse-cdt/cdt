@@ -22,10 +22,10 @@ import org.eclipse.cdt.core.parser.tests.rewrite.changegenerator.replace.Replace
 /**
  * @author Thomas Corbat
  */
-public class ChangeGeneratorTestSuite{
+public class ChangeGeneratorTestSuite {
 
 	public static Test suite() throws Exception {
-		TestSuite suite = new TestSuite("ChangeGeneratorTests");
+		TestSuite suite = new TestSuite("ChangeGeneratorTestSuite");
 
 		suite.addTest(ReplaceTestSuite.suite());
 		suite.addTest(RemoveTestSuite.suite());

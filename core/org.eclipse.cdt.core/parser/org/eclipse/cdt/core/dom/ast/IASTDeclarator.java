@@ -67,7 +67,7 @@ public interface IASTDeclarator extends IASTNode, IASTNameOwner {
 	public void addPointerOperator(IASTPointerOperator operator);
 
 	/**
-	 * If the declarator is nested in parentheses, this returns the declarator
+	 * If the declarator is nested in parentheses, returns the declarator
 	 * as found in those parentheses.
 	 * 
 	 * @return the nested declarator or null
@@ -77,7 +77,7 @@ public interface IASTDeclarator extends IASTNode, IASTNameOwner {
 	public void setNestedDeclarator(IASTDeclarator nested);
 
 	/**
-	 * This returns the name of the declarator. If this is an abstract
+	 * Returns the name of the declarator. If this is an abstract
 	 * declarator, this will return an empty name.
 	 * 
 	 * @return the name of the declarator
@@ -85,7 +85,7 @@ public interface IASTDeclarator extends IASTNode, IASTNameOwner {
 	public IASTName getName();
 
 	/**
-	 * Set the name of he declarator.
+	 * Sets the name of he declarator.
 	 * 
 	 * @param name
 	 *            <code>IASTName</code>
@@ -93,7 +93,7 @@ public interface IASTDeclarator extends IASTNode, IASTNameOwner {
 	public void setName(IASTName name);
 
 	/**
-	 * This is the optional initializer for this declarator.
+	 * Returns the optional initializer for this declarator.
 	 * 
 	 * @return the initializer expression or null
 	 */

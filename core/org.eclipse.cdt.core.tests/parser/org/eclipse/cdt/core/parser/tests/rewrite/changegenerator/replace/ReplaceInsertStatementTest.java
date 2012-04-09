@@ -65,8 +65,7 @@ public class ReplaceInsertStatementTest extends ChangeGeneratorTest {
 					IASTLiteralExpression value = new CPPASTLiteralExpression(
 							IASTLiteralExpression.lk_integer_constant, "42".toCharArray());
 					IASTExpressionStatement insertStmt = new CPPASTExpressionStatement(
-							new CPPASTBinaryExpression(
-									IASTBinaryExpression.op_assign, id, value));
+							new CPPASTBinaryExpression(IASTBinaryExpression.op_assign, id, value));
 
 					IASTIdExpression incId = new CPPASTIdExpression(
 							new CPPASTName("i".toCharArray()));
@@ -88,5 +87,4 @@ public class ReplaceInsertStatementTest extends ChangeGeneratorTest {
 			}
 		};
 	}
-
 }

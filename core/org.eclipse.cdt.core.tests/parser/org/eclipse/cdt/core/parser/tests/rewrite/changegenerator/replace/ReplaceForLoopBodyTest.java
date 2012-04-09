@@ -7,30 +7,25 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.rewrite.changegenerator.replace;
 
 import junit.framework.Test;
 
-import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTForStatement;
 import org.eclipse.cdt.core.parser.tests.rewrite.changegenerator.ChangeGeneratorTest;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNodeFactory;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModificationStore;
 
-
-
-
-
 public class ReplaceForLoopBodyTest extends ChangeGeneratorTest {
-
-	private boolean forReplaced = false;
+	private boolean forReplaced;
 	
 	public ReplaceForLoopBodyTest(){
-		super("Replace For-Loop"); //$NON-NLS-1$
+		super("ReplaceForLoopBodyTest"); //$NON-NLS-1$
 	}
 
 	@Override
@@ -44,7 +39,6 @@ public class ReplaceForLoopBodyTest extends ChangeGeneratorTest {
 	public static Test suite() {		
 		return new ReplaceForLoopBodyTest();
 	}
-
 
 	@Override
 	protected ASTVisitor createModificator(

@@ -435,7 +435,7 @@
          <action
                label="%EnableBreakpoint.label"
                helpContextId="enable_disable_breakpoint_action_context"
-               class="org.eclipse.debug.ui.actions.RulerEnableDisableBreakpointActionDelegate"
+               class="org.eclipse.cdt.debug.internal.ui.actions.breakpoints.CRulerEnableDisableBreakpointActionDelegate"
                menubarPath="debug"
                id="org.eclipse.cdt.debug.internal.ui.actions.EnableDisableBreakpointRulerActionDelegate">
          </action>
@@ -444,14 +444,14 @@
                helpContextId="add_breakpoint_interactive_action_context"
                class="org.eclipse.cdt.debug.internal.ui.actions.breakpoints.CAddBreakpointInteractiveRulerActionDelegate"
                menubarPath="debug"
-               id="org.eclipse.debug.ui.actions.RulerCreateBreakpointInteractiveAction">
+               id="org.eclipse.cdt.debug.ui.actions.RulerCreateBreakpointInteractiveAction">
          </action>         
          <action
                label="%AddBreakpoint.label"
                helpContextId="manage_breakpoint_action_context"
-               class="org.eclipse.debug.ui.actions.RulerToggleBreakpointActionDelegate"
+               class="org.eclipse.cdt.debug.internal.ui.actions.breakpoints.CRulerToggleBreakpointActionDelegate"
                menubarPath="debug"
-               id="org.eclipse.debug.ui.actions.RulerToggleBreakpointAction">
+               id="org.eclipse.cdt.debug.ui.actions.RulerToggleBreakpointAction">
          </action>
       </viewerContribution>
       <viewerContribution
@@ -508,28 +508,28 @@
                helpContextId="breakpoint_properties_action_context"
                class="org.eclipse.cdt.debug.internal.ui.actions.breakpoints.CBreakpointPropertiesRulerActionDelegate"
                menubarPath="debug"
-               id="org.eclipse.cdt.debug.internal.ui.actions.CBreakpointPropertiesRulerActionDelegate">
+               id="org.eclipse.cdt.debug.internal.ui.actions.asm.CBreakpointPropertiesRulerActionDelegate">
          </action>
          <action
                label="%EnableBreakpoint.label"
                helpContextId="enable_disable_breakpoint_action_context"
-               class="org.eclipse.debug.ui.actions.RulerEnableDisableBreakpointActionDelegate"
+               class="org.eclipse.cdt.debug.internal.ui.actions.breakpoints.CRulerEnableDisableBreakpointActionDelegate"
                menubarPath="debug"
-               id="org.eclipse.cdt.debug.internal.ui.actions.EnableDisableBreakpointRulerActionDelegate">
+               id="org.eclipse.cdt.debug.internal.ui.actions.asm.EnableDisableBreakpointRulerActionDelegate">
          </action>
          <action
                label="%AddBreakpointInteractive.label"
-               helpContextId="create_breakpoint_interactive_action_context"
+               helpContextId="add_breakpoint_interactive_action_context"
                class="org.eclipse.cdt.debug.internal.ui.actions.breakpoints.CAddBreakpointInteractiveRulerActionDelegate"
                menubarPath="debug"
-               id="org.eclipse.debug.ui.actions.RulerCreateBreakpointInteractiveAction">
+               id="org.eclipse.cdt.debug.ui.actions.asm.RulerCreateBreakpointInteractiveAction">
          </action>         
          <action
                label="%AddBreakpoint.label"
                helpContextId="manage_breakpoint_action_context"
-               class="org.eclipse.debug.ui.actions.RulerToggleBreakpointActionDelegate"
+               class="org.eclipse.cdt.debug.internal.ui.actions.breakpoints.CRulerToggleBreakpointActionDelegate"
                menubarPath="debug"
-               id="org.eclipse.debug.ui.actions.RulerToggleBreakpointAction">
+               id="org.eclipse.cdt.debug.ui.actions.asm.RulerToggleBreakpointAction">
          </action>
       </viewerContribution>
       <viewerContribution

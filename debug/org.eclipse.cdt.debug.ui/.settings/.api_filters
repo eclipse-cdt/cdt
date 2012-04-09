@@ -9,4 +9,11 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/cdt/debug/ui/breakpoints/ICBreakpointsUIContribution.java" type="org.eclipse.cdt.debug.ui.breakpoints.ICBreakpointsUIContribution">
+        <filter comment="@noimplement and @noextend attributes were previously implied in interface declaration." id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.debug.ui.breakpoints.ICBreakpointsUIContribution"/>
+            </message_arguments>
+        </filter>
+    </resource>
 </component>

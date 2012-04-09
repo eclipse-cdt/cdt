@@ -120,9 +120,9 @@ public class ToggleFromImplementationToHeaderOrClassStrategy implements IToggleR
 				ICPPASTCompositeTypeSpecifier.class);
 		IASTNode parentnode = null;
 		if (parent != null) {
-			parentnode  = parent;
+			parentnode = parent;
 		} else {
-			parentnode =context.getDeclarationAST();
+			parentnode = context.getDeclarationAST();
 		}
 		return parentnode;
 	}

@@ -32,7 +32,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test4s6() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("#ifdef __STDC_IEC_559__ /* FE_UPWARD defined */\n"); //$NON-NLS-1$
 		buffer.append("fesetround(FE_UPWARD);\n"); //$NON-NLS-1$
 		buffer.append("#endif\n"); //$NON-NLS-1$
@@ -46,7 +46,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test5_1_1_3s2() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("char i;\n"); //$NON-NLS-1$
 		buffer.append("int i;\n"); //$NON-NLS-1$
 		parseCandCPP(buffer.toString(), false, 0);
@@ -61,7 +61,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test5_1_2_3s10() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("int f() {\n"); //$NON-NLS-1$
 		buffer.append("char c1, c2;\n"); //$NON-NLS-1$
 		buffer.append("c1 = c1 + c2;\n"); //$NON-NLS-1$
@@ -79,7 +79,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test5_1_2_3s11() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("int f() {\n"); //$NON-NLS-1$
 		buffer.append("float f1, f2;\n"); //$NON-NLS-1$
 		buffer.append("double d;\n"); //$NON-NLS-1$
@@ -99,7 +99,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test5_1_2_3s12() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("int f() {\n"); //$NON-NLS-1$
 		buffer.append("double d1, d2;\n"); //$NON-NLS-1$
 		buffer.append("float f;\n"); //$NON-NLS-1$
@@ -121,7 +121,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test5_1_2_3s13() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("int f() {\n"); //$NON-NLS-1$
 		buffer.append("double x, y, z;\n"); //$NON-NLS-1$
 		buffer.append("x = (x * y) * z; // not equivalent tox *= y * z;\n"); //$NON-NLS-1$
@@ -145,7 +145,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test5_1_2_3s14() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("int f() {\n"); //$NON-NLS-1$
 		buffer.append("int a, b;\n"); //$NON-NLS-1$
 		buffer.append("a = a + 32760 + b + 5;\n"); //$NON-NLS-1$
@@ -169,7 +169,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test5_1_2_3s15() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("//#include <stdio.h>\n"); //$NON-NLS-1$
 		buffer.append("int f() {");
 		buffer.append("int sum;\n"); //$NON-NLS-1$
@@ -186,7 +186,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_2_5s28() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("struct tag (* a[5])(float);\n"); //$NON-NLS-1$
 		parseCandCPP(buffer.toString(), false, 0);
 	}
@@ -199,7 +199,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_2_7s5() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("int f(int (*)(), double (*)[3]);\n"); //$NON-NLS-1$
 		buffer.append("int f(int (*)(char *), double (*)[]);\n"); //$NON-NLS-1$
 		buffer.append("int f(int (*)(char *), double (*)[3]);\n"); //$NON-NLS-1$
@@ -214,7 +214,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_4_4_4s12() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("char x='\\023';\n"); //$NON-NLS-1$
 		buffer.append("char y='\\0';\n"); //$NON-NLS-1$
 		buffer.append("char z='\\x13';\n"); //$NON-NLS-1$
@@ -234,7 +234,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_5_2_2s12() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("int f1() {}\n"); //$NON-NLS-1$
 		buffer.append("int f2() {}\n"); //$NON-NLS-1$
 		buffer.append("int f3() {}\n"); //$NON-NLS-1$
@@ -263,7 +263,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_5_2_3s7() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("struct s { int i; const int ci; };\n"); //$NON-NLS-1$
 		buffer.append("struct s s;\n"); //$NON-NLS-1$
 		buffer.append("const struct s cs;\n"); //$NON-NLS-1$
@@ -305,7 +305,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_5_2_3s8a() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("union {\n"); //$NON-NLS-1$
 		buffer.append("struct {\n"); //$NON-NLS-1$
 		buffer.append("int alltypes;\n"); //$NON-NLS-1$
@@ -351,7 +351,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_5_2_3s8b() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("struct t1 { int m; };\n"); //$NON-NLS-1$
 		buffer.append("struct t2 { int m; };\n"); //$NON-NLS-1$
 		buffer.append("int f(struct t1 * p1, struct t2 * p2)\n"); //$NON-NLS-1$
@@ -377,7 +377,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_5_2_5s9() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("int *p = (int []){2, 4};\n"); //$NON-NLS-1$
 		parse(buffer.toString(), ParserLanguage.C, true, 0);
 	}
@@ -392,7 +392,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_5_2_5s10() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("void f(void)\n"); //$NON-NLS-1$
 		buffer.append("{\n"); //$NON-NLS-1$
 		buffer.append("int *p;\n"); //$NON-NLS-1$
@@ -412,7 +412,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_5_2_5s11() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("int f(){\n"); //$NON-NLS-1$
 		buffer.append("drawline((struct point){.x=1, .y=1},\n"); //$NON-NLS-1$
 		buffer.append("(struct point){.x=3, .y=4});\n"); //$NON-NLS-1$
@@ -430,7 +430,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_5_2_5s12() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("int f() {\n"); //$NON-NLS-1$
 		buffer.append("(const float []){1e0, 1e1, 1e2, 1e3, 1e4, 1e5, 1e6};\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
@@ -447,7 +447,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_5_2_5s13() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("int f() {\n"); //$NON-NLS-1$
 		buffer.append("\"/tmp/fileXXXXXX\";\n"); //$NON-NLS-1$
 		buffer.append("(char []){\"/tmp/fileXXXXXX\"};\n"); //$NON-NLS-1$
@@ -464,7 +464,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_5_2_5s14() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("int f() {\n"); //$NON-NLS-1$
 		buffer.append("(const char []){\"abc\"} == \"abc\";\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
@@ -481,7 +481,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_5_2_5s15() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("int f() {\n"); //$NON-NLS-1$
 		buffer.append("struct int_list { int car; struct int_list *cdr; };\n"); //$NON-NLS-1$
 		buffer.append("struct int_list endless_zeros = {0, &endless_zeros};\n"); //$NON-NLS-1$
@@ -505,7 +505,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_5_2_5s16() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("struct s { int i; };\n"); //$NON-NLS-1$
 		buffer.append("int f (void)\n"); //$NON-NLS-1$
 		buffer.append("{\n"); //$NON-NLS-1$
@@ -526,7 +526,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_5_3_4s5() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("extern void *alloc(size_t);\n"); //$NON-NLS-1$
 		buffer.append("double *dp = alloc(sizeof *dp);\n"); //$NON-NLS-1$
 		parseCandCPP(buffer.toString(), false, 0);
@@ -541,7 +541,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_5_3_4s6() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("int f() {\n"); //$NON-NLS-1$
 		buffer.append("int array[5];\n"); //$NON-NLS-1$
 		buffer.append("int x = sizeof array / sizeof array[0];\n"); //$NON-NLS-1$
@@ -562,7 +562,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_5_6s10() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("int f() {\n"); //$NON-NLS-1$
 		buffer.append("int n = 4, m = 3;\n"); //$NON-NLS-1$
 		buffer.append("int a[n][m];\n"); //$NON-NLS-1$
@@ -587,7 +587,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_5_15s8() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("int f() {\n"); //$NON-NLS-1$
 		buffer.append("const void *c_vp;\n"); //$NON-NLS-1$
 		buffer.append("void *vp;\n"); //$NON-NLS-1$
@@ -610,7 +610,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_5_16_1s5() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("int f() {\n"); //$NON-NLS-1$
 		buffer.append("char c;\n"); //$NON-NLS-1$
 		buffer.append("int i;\n"); //$NON-NLS-1$
@@ -633,7 +633,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_5_16_1s6() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("int f() {\n"); //$NON-NLS-1$
 		buffer.append("const char **cpp;\n"); //$NON-NLS-1$
 		buffer.append("char *p;\n"); //$NON-NLS-1$
@@ -657,7 +657,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_7_2_1s17() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		// offsetoff is a macro defined in stddef.h, using GNU definition
 		buffer.append("#define offsetof(TYPE, MEMBER) ((size_t) (&((TYPE *)0)->MEMBER))\n");
 
@@ -682,7 +682,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_7_2_1s18a() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("int f() {\n"); //$NON-NLS-1$
 		buffer.append("struct s *s1;\n"); //$NON-NLS-1$
 		buffer.append("struct s *s2;\n"); //$NON-NLS-1$
@@ -699,7 +699,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_7_2_1s18b() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("struct { int n; double d[8]; } *s1;\n"); //$NON-NLS-1$
 		buffer.append("struct { int n; double d[5]; } *s2;\n"); //$NON-NLS-1$
 		parseCandCPP(buffer.toString(), true, 0);
@@ -718,7 +718,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_7_2_2s5() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("int f() {\n"); //$NON-NLS-1$
 		buffer.append("enum hue { chartreuse, burgundy, claret=20, winedark };\n"); //$NON-NLS-1$
 		buffer.append("enum hue col, *cp;\n"); //$NON-NLS-1$
@@ -740,7 +740,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_7_2_3s9() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("struct tnode {\n"); //$NON-NLS-1$
 		buffer.append("int count;\n"); //$NON-NLS-1$
 		buffer.append("struct tnode *left, *right;\n"); //$NON-NLS-1$
@@ -760,7 +760,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_7_2_3s10() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("typedef struct tnode TNODE;\n"); //$NON-NLS-1$
 		buffer.append("struct tnode {\n"); //$NON-NLS-1$
 		buffer.append("int count;\n"); //$NON-NLS-1$
@@ -778,7 +778,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_7_2_3s11() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("struct s2;\n"); //$NON-NLS-1$
 		buffer.append("struct s1 { struct s2 *s2p; }; // D1\n"); //$NON-NLS-1$
 		buffer.append("struct s2 { struct s1 *s1p; }; // D2\n"); //$NON-NLS-1$
@@ -791,7 +791,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_7_3s10() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("extern const volatile int real_time_clock;\n"); //$NON-NLS-1$
 		parseCandCPP(buffer.toString(), true, 0);
 	}
@@ -815,7 +815,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_7_3s11() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("int f() {\n"); //$NON-NLS-1$
 		buffer.append("const struct s { int mem; } cs = { 1 };\n"); //$NON-NLS-1$
 		buffer.append("struct s ncs; // the object ncs is modifiable\n"); //$NON-NLS-1$
@@ -841,7 +841,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_7_3_1s7() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("int * restrict a;\n"); //$NON-NLS-1$
 		buffer.append("int * restrict b;\n"); //$NON-NLS-1$
 		buffer.append("extern int c[];\n"); //$NON-NLS-1$
@@ -858,7 +858,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_7_3_1s8() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("void f(int n, int * restrict p, int * restrict q)\n"); //$NON-NLS-1$
 		buffer.append("{\n"); //$NON-NLS-1$
 		buffer.append("while (n-- > 0)\n"); //$NON-NLS-1$
@@ -883,7 +883,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_7_3_1s9() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("void f(int n, int * restrict p, int * restrict q)\n"); //$NON-NLS-1$
 		buffer.append("{\n"); //$NON-NLS-1$
 		buffer.append("while (n-- > 0)\n"); //$NON-NLS-1$
@@ -909,7 +909,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_7_3_1s10() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("void h(int n, int * restrict p, int * restrict q, int * restrict r)\n"); //$NON-NLS-1$
 		buffer.append("{\n"); //$NON-NLS-1$
 		buffer.append("int i;\n"); //$NON-NLS-1$
@@ -936,7 +936,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_7_3_1s11() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("int f()\n"); //$NON-NLS-1$
 		buffer.append("{\n"); //$NON-NLS-1$
 		buffer.append("int * restrict p1;\n"); //$NON-NLS-1$
@@ -965,7 +965,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_7_3_1s12() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("typedef struct { int n; float * restrict v; } vector;\n"); //$NON-NLS-1$
 		buffer.append("vector new_vector(int n)\n"); //$NON-NLS-1$
 		buffer.append("{\n"); //$NON-NLS-1$
@@ -995,7 +995,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_7_4s7() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("inline double fahr(double t)\n"); //$NON-NLS-1$
 		buffer.append("{\n"); //$NON-NLS-1$
 		buffer.append("return (9.0 * t) / 5.0 + 32.0;\n"); //$NON-NLS-1$
@@ -1021,7 +1021,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_7_5_1s4() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("const int *ptr_to_constant;\n"); //$NON-NLS-1$
 		buffer.append("int *const constant_ptr1;\n"); //$NON-NLS-1$
 		buffer.append("typedef int *int_ptr;\n"); //$NON-NLS-1$
@@ -1035,7 +1035,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_7_5_2s7() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("float fa[11], *afp[17];\n"); //$NON-NLS-1$
 		parseCandCPP(buffer.toString(), true, 0);
 	}
@@ -1047,7 +1047,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_7_5_2s8() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("extern int *x;\n"); //$NON-NLS-1$
 		buffer.append("extern int y[];\n"); //$NON-NLS-1$
 		parseCandCPP(buffer.toString(), true, 0);
@@ -1070,7 +1070,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_7_5_2s9() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("extern int n;\n"); //$NON-NLS-1$
 		buffer.append("extern int m;\n"); //$NON-NLS-1$
 		buffer.append("void fcompat(void)\n"); //$NON-NLS-1$
@@ -1110,7 +1110,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_7_5_2s10() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("extern int n;\n"); //$NON-NLS-1$
 		buffer.append("int A[n]; // invalid: file scope VLA\n"); //$NON-NLS-1$
 		buffer.append("extern int (*p2)[n]; // invalid: file scope VM\n"); //$NON-NLS-1$
@@ -1139,7 +1139,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_7_5_3s16() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("int f(void), *fip(), (*pfi)();\n"); //$NON-NLS-1$
 		parseCandCPP(buffer.toString(), true, 0);
 	}
@@ -1150,7 +1150,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_7_5_3s18() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("int (*apfi[3])(int *x, int *y);\n"); //$NON-NLS-1$
 		parseCandCPP(buffer.toString(), true, 0);
 	}
@@ -1161,7 +1161,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_7_5_3s19() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("int (*fpfi(int (*)(long), int))(int, ...);\n"); //$NON-NLS-1$
 		parseCandCPP(buffer.toString(), true, 0);
 	}
@@ -1187,7 +1187,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_7_5_3s20() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("void addscalar(int n, int m,\n"); //$NON-NLS-1$
 		buffer.append("double a[n][n*m+300], double x);\n"); //$NON-NLS-1$
 		buffer.append("int main()\n"); //$NON-NLS-1$
@@ -1222,7 +1222,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_7_5_3s21() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("double maximum1(int n, int m, double a[n][m]);\n"); //$NON-NLS-1$
 		buffer.append("double maximum2(int n, int m, double a[*][*]);\n"); //$NON-NLS-1$
 		buffer.append("double maximum3(int n, int m, double a[ ][*]);\n"); //$NON-NLS-1$
@@ -1245,7 +1245,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_7_7s4() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("typedef int MILES, KLICKSP();\n"); //$NON-NLS-1$
 		buffer.append("typedef struct { double hi, lo; } range;\n"); //$NON-NLS-1$
 		buffer.append("MILES distance;\n"); //$NON-NLS-1$
@@ -1262,7 +1262,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_7_7s5() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("typedef struct s1 { int x; } t1, *tp1;\n"); //$NON-NLS-1$
 		buffer.append("typedef struct s2 { int x; } t2, *tp2;\n"); //$NON-NLS-1$
 		parseCandCPP(buffer.toString(), true, 0);
@@ -1277,7 +1277,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_7_7s7() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("typedef void fv(int), (*pfv)(int);\n"); //$NON-NLS-1$
 		buffer.append("void (*signal(int, void (*)(int)))(int);\n"); //$NON-NLS-1$
 		buffer.append("fv *signal(int, fv *);\n"); //$NON-NLS-1$
@@ -1299,7 +1299,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_7_7s8() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("void copyt(int n)\n"); //$NON-NLS-1$
 		buffer.append("{\n"); //$NON-NLS-1$
 		buffer.append("typedef int B[n]; // B is n ints, n evaluated now\n"); //$NON-NLS-1$
@@ -1319,7 +1319,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_7_8s24() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("int i = 3.5;\n"); //$NON-NLS-1$
 		buffer.append("complex c = 5 + 3 * I;\n"); //$NON-NLS-1$
 		parseCandCPP(buffer.toString(), false, 0);
@@ -1331,7 +1331,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_7_8s25() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("int x[] = { 1, 3, 5 };\n"); //$NON-NLS-1$
 		parseCandCPP(buffer.toString(), true, 0);
 	}
@@ -1346,7 +1346,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_7_8s26a() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("int y[4][3] = {\n"); //$NON-NLS-1$
 		buffer.append("{ 1, 3, 5 },\n"); //$NON-NLS-1$
 		buffer.append("{ 2, 4, 6 },\n"); //$NON-NLS-1$
@@ -1363,7 +1363,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_7_8s26b() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("int y[4][3] = {\n"); //$NON-NLS-1$
 		buffer.append("1, 3, 5, 2, 4, 6, 3, 5, 7\n"); //$NON-NLS-1$
 		buffer.append("};\n"); //$NON-NLS-1$
@@ -1378,7 +1378,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_7_8s27() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("int z[4][3] = {\n"); //$NON-NLS-1$
 		buffer.append("{ 1 }, { 2 }, { 3 }, { 4 }\n"); //$NON-NLS-1$
 		buffer.append("};\n"); //$NON-NLS-1$
@@ -1391,7 +1391,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_7_8s28() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("struct { int a[3], b; } w[] = { { 1 }, 2 };\n"); //$NON-NLS-1$
 		parseCandCPP(buffer.toString(), true, 0);
 	}
@@ -1423,7 +1423,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_7_8s29() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("short q1[4][3][2] = {\n"); //$NON-NLS-1$
 		buffer.append("{ 1 },\n"); //$NON-NLS-1$
 		buffer.append("{ 2, 3 },\n"); //$NON-NLS-1$
@@ -1457,7 +1457,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_7_8s31() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("typedef int A[]; // OK - declared with block scope\n"); //$NON-NLS-1$
 		buffer.append("A a1 = { 1, 2 }, b1 = { 3, 4, 5 };\n"); //$NON-NLS-1$
 		buffer.append("int a2[] = { 1, 2 }, b2[] = { 3, 4, 5 };\n"); //$NON-NLS-1$
@@ -1475,7 +1475,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_7_8s32() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("int foo() {\n"); //$NON-NLS-1$
 		buffer.append("char s1[] = \"abc\", t1[3] = \"abc\";\n"); //$NON-NLS-1$
 		buffer.append("char s2[] = { 'a', 'b', 'c', '\0' },\n"); //$NON-NLS-1$
@@ -1495,7 +1495,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_7_8s33() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("enum { member_one, member_two };\n"); //$NON-NLS-1$
 		buffer.append("const char *nm[] = {\n"); //$NON-NLS-1$
 		buffer.append("[member_two] = \"member two\",\n"); //$NON-NLS-1$
@@ -1510,7 +1510,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_7_8s34() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("div_t answer = { .quot = 2, .rem = -1 };\n"); //$NON-NLS-1$
 		parse(buffer.toString(), ParserLanguage.C, true, 1); // div_t (correctly) cannot be resolved
 	}
@@ -1522,7 +1522,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_7_8s35() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("struct { int a[3], b; } w[] =\n"); //$NON-NLS-1$
 		buffer.append("{ [0].a = {1}, [1].a[0] = 2 };\n"); //$NON-NLS-1$
 		parse(buffer.toString(), ParserLanguage.C, true, 0);
@@ -1537,7 +1537,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_7_8s36() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("int MAX=15;\n"); //$NON-NLS-1$
 		buffer.append("int a[MAX] = {\n"); //$NON-NLS-1$
 		buffer.append("1, 3, 5, 7, 9, [MAX-5] = 8, 6, 4, 2, 0\n"); //$NON-NLS-1$
@@ -1551,7 +1551,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_7_8s38() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("union { int any_member; } u = { .any_member = 42 };\n"); //$NON-NLS-1$
 		parse(buffer.toString(), ParserLanguage.C, true, 0);
 	}
@@ -1565,7 +1565,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_8_3s4() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("int p(int);\n"); //$NON-NLS-1$
 		buffer.append("int f() {\n"); //$NON-NLS-1$
 		buffer.append("(void)p(0);\n"); //$NON-NLS-1$
@@ -1583,7 +1583,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_8_3s5() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("int f() {\n"); //$NON-NLS-1$
 		buffer.append("char *s;\n"); //$NON-NLS-1$
 		buffer.append("while (*s++ != '\0')\n"); //$NON-NLS-1$
@@ -1608,7 +1608,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_8_3s6() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("int f() {\n"); //$NON-NLS-1$
 		buffer.append("int i=1;\n"); //$NON-NLS-1$
 		buffer.append("while (i) {\n"); //$NON-NLS-1$
@@ -1640,7 +1640,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_8_4s7() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("int f(int a) {}\n"); //$NON-NLS-1$
 		buffer.append("int g(int expr) {\n"); //$NON-NLS-1$
 		buffer.append("switch (expr)\n"); //$NON-NLS-1$
@@ -1674,7 +1674,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_8_6_1s3() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("int f() {\n"); //$NON-NLS-1$
 		buffer.append("goto first_time;\n"); //$NON-NLS-1$
 		buffer.append("for (;;) {\n"); //$NON-NLS-1$
@@ -1710,7 +1710,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_8_6_1s4() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("int f() {\n"); //$NON-NLS-1$
 		buffer.append("goto lab3; // invalid: going INTO scope of VLA.\n"); //$NON-NLS-1$
 		buffer.append("{\n"); //$NON-NLS-1$
@@ -1751,7 +1751,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_8_6_4s4() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("struct s { double i; } f(void);\n"); //$NON-NLS-1$
 		buffer.append("union {\n"); //$NON-NLS-1$
 		buffer.append("struct {\n"); //$NON-NLS-1$
@@ -1782,7 +1782,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_9_1s13() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("extern int max(int a, int b)\n"); //$NON-NLS-1$
 		buffer.append("{\n"); //$NON-NLS-1$
 		buffer.append("return a > b ? a : b;\n"); //$NON-NLS-1$
@@ -1800,7 +1800,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_9_1s14() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("void g(int (*funcp)(void))\n"); //$NON-NLS-1$
 		buffer.append("{\n"); //$NON-NLS-1$
 		buffer.append("(*funcp)();\n"); //$NON-NLS-1$
@@ -1829,7 +1829,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_9_2s4() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("int i1 = 1; // definition, external linkage\n"); //$NON-NLS-1$
 		buffer.append("static int i2 = 2; // definition, internal linkage\n"); //$NON-NLS-1$
 		buffer.append("extern int i3 = 3; // definition, external linkage\n"); //$NON-NLS-1$
@@ -1861,7 +1861,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_10_1s4() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("int g() {}\n"); //$NON-NLS-1$
 		buffer.append("int f() {\n"); //$NON-NLS-1$
 		buffer.append("#if 'z' - 'a' == 25\n"); //$NON-NLS-1$
@@ -1884,7 +1884,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_10_3_3s4() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("#define hash_hash # ## #\n"); //$NON-NLS-1$
 		buffer.append("#define mkstr(a) # a\n"); //$NON-NLS-1$
 		buffer.append("#define in_between(a) mkstr(a)\n"); //$NON-NLS-1$
@@ -1901,7 +1901,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_10_3_5s3() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("#define TABSIZE 100\n"); //$NON-NLS-1$
 		buffer.append("int table[TABSIZE];\n"); //$NON-NLS-1$
 		parseCandCPP(buffer.toString(), true, 0);
@@ -1913,7 +1913,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_10_3_5s4() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("#define max(a, b) ((a) > (b) ? (a) : (b))\n"); //$NON-NLS-1$
 		parseCandCPP(buffer.toString(), true, 0);
 	}
@@ -1941,7 +1941,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_10_3_5s5() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("#define x 3\n"); //$NON-NLS-1$
 		buffer.append("#define f(a) f(x * (a))\n"); //$NON-NLS-1$
 		buffer.append("#undef x\n"); //$NON-NLS-1$
@@ -1985,7 +1985,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_10_3_5s6() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("#define str(s) # s                    \n"); //$NON-NLS-1$
 		buffer.append("#define xstr(s) str(s)                \n"); //$NON-NLS-1$
 		buffer.append("#define debug(s, t) printf(\"x\" # s \"= %d, x\" # t \"= %s\", \\\n"); //$NON-NLS-1$
@@ -2017,7 +2017,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_10_3_5s7() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("#define t(x,y,z) x ## y ## z\n"); //$NON-NLS-1$
 		buffer.append("int j[] = { t(1,2,3), t(,4,5), t(6,,7), t(8,9,),\n"); //$NON-NLS-1$
 		buffer.append("t(10,,), t(,11,), t(,,12), t(,,) };\n"); //$NON-NLS-1$
@@ -2036,7 +2036,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_10_3_5s8() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("#define OBJ_LIKE1 (1-1)\n"); //$NON-NLS-1$
 		buffer.append("#define OBJ_LIKE2    \\n"); //$NON-NLS-1$
 	    buffer.append("         (1-1)       \\n"); //$NON-NLS-1$
@@ -2062,7 +2062,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_10_3_5s9() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("#define debug(...) fprintf(stderr, __VA_ARGS__)\n"); //$NON-NLS-1$
 		buffer.append("#define showlist(...) puts(#__VA_ARGS__)\n"); //$NON-NLS-1$
 		buffer.append("#define report(test, ...) ((test)?puts(#test):\\\n"); //$NON-NLS-1$
@@ -2095,7 +2095,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	 --End Example]
 	 */
 	public void test6_7_7s6() throws Exception {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("typedef signed int t;\n"); //$NON-NLS-1$
 		buffer.append("typedef int plain;\n"); //$NON-NLS-1$
 		buffer.append("struct tag {\n"); //$NON-NLS-1$

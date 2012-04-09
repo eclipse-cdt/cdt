@@ -172,6 +172,23 @@
     },
     {
       "key": {
+        "uuid": "AABOG3//9lw\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/CustomTimeoutsMap.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-04-09T19:48:16Z",
+      "side": 1,
+      "message": "The third part of the condition should be tokenParts[1]",
+      "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOG3//9wg\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GDBControl.java",
         "patchSetId": 1
@@ -302,6 +319,346 @@
       "writtenOn": "2012-04-05T03:30:09Z",
       "side": 1,
       "message": "I believe this call will block while the dialog is being shown to the user, no?  If so, we should not run it in the DSF executor, as we would block the executor.  I suggest using a job for this call.  This is what is done in GdbConnectCommand.PromptForPidJob for example.",
+      "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9g0\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-04-09T19:48:16Z",
+      "side": 1,
+      "message": "I think we have some concurrency issues in this class.  First, for simplicity, we may want to require that all calls be on the DSF executor.  Second, the TimerThread introduces concurrency that we cannot avoid, but have to code for.  For example, TimeThread.getWaitTimeout() is being called from the timerThread and from outside it, although it is not synchronized.",
+      "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9ls\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-04-09T19:48:16Z",
+      "side": 1,
+      "message": "private?",
+      "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9lo\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-04-09T19:48:16Z",
+      "side": 1,
+      "message": "private?",
+      "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9lk\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-04-09T19:48:16Z",
+      "side": 1,
+      "message": "private?",
+      "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9gw\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-04-09T19:48:16Z",
+      "side": 1,
+      "message": "There should be some kind of while loop here to allow doRun() to switch between HALTED and RUNNING.  The current scheme has a potentially memory exhausting trace of doRun()-\u003ehalted()-\u003edoRun()-\u003erunning()-\u003edoRun()-\u003eetc...",
+      "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9gs\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-04-09T19:48:16Z",
+      "side": 1,
+      "message": "As mentioned above, don\u0027t call doRun() but return instead and let doRun() loop.",
+      "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9gc\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-04-09T19:48:16Z",
+      "side": 1,
+      "message": "I didn\u0027t get the algo at first, but now that I do, I find it quite elegant.  Could you add a description of what it is in a comment?  Something to explain that we need to sleep the minimum timeout of all commands to make sure that when we wake up, we know that no command could have timed-out during our sleep, etc.",
+      "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9gg\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-04-09T19:48:16Z",
+      "side": 1,
+      "message": "Sentence seems un-finished",
+      "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9gk\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 175,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-04-09T19:48:16Z",
+      "side": 1,
+      "message": "As mentioned above, don\u0027t call doRun() but return instead and let doRun() loop.",
+      "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9go\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 180,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-04-09T19:48:16Z",
+      "side": 1,
+      "message": "As mentioned above, don\u0027t call doRun() but return instead and let doRun() loop.",
+      "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9kc\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 210,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-04-09T19:48:16Z",
+      "side": 1,
+      "message": "Why not put interrupt() after setting the state instead of calling interrupt() everywhere setState() is called?\n\nAlso, should we be using Thread.interrupt() or Object.notify() to get out of the wait() calls?  Usually, notify() is used, I think.",
+      "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9k0\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 216,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-04-09T19:48:16Z",
+      "side": 1,
+      "message": "ICommandControl instead of IGDBControl?",
+      "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9kw\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 225,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-04-09T19:48:16Z",
+      "side": 1,
+      "message": "I think for API, the parameter should be ICommandControl instead of IGDBControl",
+      "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9ks\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 328,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-04-09T19:48:16Z",
+      "side": 1,
+      "message": "Here, event.getNewValue() could be null, as per the check in the if statement.\n\nAlso, should we call fCommandQueue.clear() if the new fvalue of fTimeoutEnabled \u003d\u003d false?  Or else the queue content will grow stale, no?",
+      "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9kY\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 336,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-04-09T19:48:16Z",
+      "side": 1,
+      "message": "Can event.getNewValue() be null?",
+      "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9kI\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 428,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-04-09T19:48:16Z",
+      "side": 1,
+      "message": "Comment seems incomplete",
+      "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9kE\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 431,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-04-09T19:48:16Z",
+      "side": 1,
+      "message": "I wonder if this is right when removeCommand() is called from commandRemoved().  commandRemoved() removed a command that was not sent yet, so it may very well be later in the queue than the first command of the queue.  In that case, is it safe to reset the timestamp of the first element of the queue?",
+      "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9l0\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/CommandTimeoutTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-04-09T19:48:16Z",
+      "side": 1,
+      "message": "Nice tests!",
+      "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9l4\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/CommandTimeoutTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-04-09T19:48:16Z",
+      "side": 1,
+      "message": "Before the class declaration, please add:\n  @RunWith(BackgroundRunner.class)\nI\u0027m not sure if there is a better way to keep the UI thread free,  but all the other tests use it...",
+      "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9k4\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/CommandTimeoutTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-04-09T19:48:16Z",
+      "side": 1,
+      "message": "How about adding a test to check the case where a command times out after the final launch sequence is finished?  Now that I see how you wrote the tests, I think it wouldn\u0027t be hard.  Something like:\n\n@Test\npublic void afterLaunchCommandTimedOut() {\n        super.baseBeforeMethod();\n\n        // Now that the launch is finished, set a really short command timeout\n        // to make sure it triggers, and then send some MI command.\n        IEclipsePreferences node \u003d InstanceScope.INSTANCE.getNode( GdbPlugin.PLUGIN_ID );\n        node.putBoolean( IGdbDebugPreferenceConstants.PREF_COMMAND_TIMEOUT, true );\n        node.putInt( IGdbDebugPreferenceConstants.PREF_COMMAND_TIMEOUT_VALUE, 1 );\n\n        send any MI command to GDB, which will timeout and trigger a terminate;\n        check for the terminate (I haven\u0027t looked into how)\n\n        // Clean up in case the test fails and the launch is not aborted.\n        super.baseAfterMethod();\n}",
       "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

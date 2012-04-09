@@ -29,6 +29,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
 
+import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
@@ -874,6 +875,7 @@ public abstract class AbstractMIControl extends AbstractDsfService
         }
 
         void processMIOutput(String line) {
+
             MIParser.RecordType recordType = fMiParser.getRecordType(line);
             
             if (recordType == MIParser.RecordType.ResultRecord) {
@@ -885,7 +887,12 @@ public abstract class AbstractMIControl extends AbstractDsfService
             	 *  some form of asynchronous notification. Or perhaps general IO.
             	 */
                 int id = rr.getToken();
-                final CommandHandle commandHandle = fRxCommands.remove(id);
+                
+                final CommandHandle commandHandle; 
+                synchronized(fRxCommands) {
+					commandHandle = fRxCommands.remove(id);
+				}
+                
 
                 if (commandHandle != null) {
                     final MIOutput response = new MIOutput(
@@ -1098,4 +1105,54 @@ public abstract class AbstractMIControl extends AbstractDsfService
     	fCurrentStackLevel = -1; 
     }
 
+    /**
+	 * @since 4.1
+	 */
+    @ConfinedToDsfExecutor("this.getExecutor()")
+    protected void commandFailed(ICommandToken token, int statusCode, String errorMessage) {
+    	if ( !(token instanceof CommandHandle && token.getCommand() instanceof MICommand<?>) )
+    		return;
+		final CommandHandle commandHandle = (CommandHandle)token;
+		Integer tokenId = commandHandle.getTokenId();
+
+		// If the timeout value is too small a command can be timed out but still processed by RxThread.
+		// To avoid processing it twice we need to remove it from the command list.
+		synchronized(fRxCommands) {
+			CommandHandle h = fRxCommands.remove(tokenId);
+			if (h == null)
+				// Command has already been processed by RxThread.
+				return;
+		}
+		
+		MIConst value = new MIConst();
+		value.setCString(errorMessage);
+		MIResult result = new MIResult();
+		result.setVariable("msg"); //$NON-NLS-1$
+		result.setMIValue(value);
+		MIResultRecord resultRecord = new MIResultRecord();
+		resultRecord.setToken(tokenId.intValue());
+		resultRecord.setResultClass(MIResultRecord.ERROR);
+		resultRecord.setMIResults(new MIResult[] { result });
+		MIOutput miOutput = new MIOutput(resultRecord, new MIOOBRecord[0]);
+
+		final MIInfo info = commandHandle.getCommand().getResult(miOutput);
+		DataRequestMonitor<MIInfo> rm = commandHandle.getRequestMonitor();
+		
+		if ( rm != null ) {
+			rm.setData(info);			
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, statusCode, errorMessage, null)); 
+			
+        	/*
+        	 *  Complete the specific command.
+        	 */
+            if (commandHandle.getRequestMonitor() != null) {
+                commandHandle.getRequestMonitor().done();
+            }
+            
+            /*
+             *  Now tell the generic listeners about it.
+             */
+            processCommandDone(commandHandle, info);
+		}
+    }
 }

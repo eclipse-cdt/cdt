@@ -195,6 +195,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 			assertEquals(null, provider.getLanguageScope());
 			assertEquals(null, provider.getSettingEntries(null, null, null));
 			assertEquals("", provider.getCompilerPattern());
+			assertEquals(AbstractBuildCommandParser.ResourceScope.FILE, provider.getResourceScope());
 		}
 
 		{
@@ -218,6 +219,8 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 			// setters
 			provider.setCompilerPattern(CUSTOM_PARAMETER_2);
 			assertEquals(CUSTOM_PARAMETER_2, provider.getCompilerPattern());
+			provider.setResourceScope(AbstractBuildCommandParser.ResourceScope.PROJECT);
+			assertEquals(AbstractBuildCommandParser.ResourceScope.PROJECT, provider.getResourceScope());
 		}
 	}
 
@@ -236,11 +239,23 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		// configure provider
 		parser.setResolvingPaths(false);
 		assertFalse(parser.equals(clone0));
+		parser.setResourceScope(AbstractBuildCommandParser.ResourceScope.PROJECT);
+		assertEquals(AbstractBuildCommandParser.ResourceScope.PROJECT, parser.getResourceScope());
+		parser.setResourceScope(AbstractBuildCommandParser.ResourceScope.FOLDER);
+		assertEquals(AbstractBuildCommandParser.ResourceScope.FOLDER, parser.getResourceScope());
+		parser.setResourceScope(AbstractBuildCommandParser.ResourceScope.FILE);
+		assertEquals(AbstractBuildCommandParser.ResourceScope.FILE, parser.getResourceScope());
 
-		// check another clone after configuring
+		// check another clone after changing settings
 		{
+			parser.setResolvingPaths(false);
+			assertFalse(parser.equals(clone0));
+			parser.setResourceScope(AbstractBuildCommandParser.ResourceScope.PROJECT);
+			assertEquals(AbstractBuildCommandParser.ResourceScope.PROJECT, parser.getResourceScope());
 			MockBuildCommandParser clone = parser.clone();
 			assertTrue(parser.equals(clone));
+			assertEquals(parser.isResolvingPaths(), clone.isResolvingPaths());
+			assertEquals(parser.getResourceScope(), clone.getResourceScope());
 		}
 
 		// check 'expand relative paths' flag
@@ -248,6 +263,16 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 			MockBuildCommandParser clone = parser.clone();
 			boolean expandRelativePaths = clone.isResolvingPaths();
 			clone.setResolvingPaths( ! expandRelativePaths );
+			assertFalse(parser.equals(clone));
+		}
+
+		// check resource scope
+		{
+			parser.setResourceScope(AbstractBuildCommandParser.ResourceScope.PROJECT);
+			assertEquals(AbstractBuildCommandParser.ResourceScope.PROJECT, parser.getResourceScope());
+			MockBuildCommandParser clone = parser.clone();
+			assertEquals(AbstractBuildCommandParser.ResourceScope.PROJECT, clone.getResourceScope());
+			clone.setResourceScope(AbstractBuildCommandParser.ResourceScope.FOLDER);
 			assertFalse(parser.equals(clone));
 		}
 

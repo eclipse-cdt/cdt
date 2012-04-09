@@ -30,6 +30,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
@@ -46,7 +47,10 @@ public final class GCCBuildCommandParserOptionPage extends AbstractLanguageSetti
 	private Button runOnceRadioButton;
 	private Button runEveryBuildRadioButton;
 	private Button expandRelativePathCheckBox;
-	private Button applyToProjectCheckBox;
+
+	private Button scopeProjectRadioButton;
+	private Button scopeFolderRadioButton;
+	private Button scopeFileRadioButton;
 
 
 	/*
@@ -157,25 +161,97 @@ public final class GCCBuildCommandParserOptionPage extends AbstractLanguageSetti
 
 		}
 
+		Group resourceScopeGroup = new Group(composite, SWT.NONE);
 		{
-			applyToProjectCheckBox = new Button(composite, SWT.CHECK);
-			applyToProjectCheckBox.setText("Apply discovered settings on project level");
+//			resourceScopeGroup.setText("Define scope of discovered entries");
+//			resourceScopeGroup.setText("Apply discovered entries to");
+			resourceScopeGroup.setText("Scope to keep discovered entries");
+			resourceScopeGroup.setLayout(new GridLayout(2, false));
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.horizontalSpan = 2;
-			applyToProjectCheckBox.setLayoutData(gd);
+			resourceScopeGroup.setLayoutData(gd);
+		}
 
-//			applyToProjectCheckBox.setSelection(provider.isExpandRelativePaths());
-//			applyToProjectCheckBox.setEnabled(fEditable);
-			applyToProjectCheckBox.setSelection(false);
-			applyToProjectCheckBox.setEnabled(false);
-			applyToProjectCheckBox.addSelectionListener(new SelectionAdapter() {
+		{
+			scopeFileRadioButton = new Button(resourceScopeGroup, SWT.RADIO);
+			scopeFileRadioButton.setText("Per file, use when settings vary for different files");
+//			applyToResourceRadioButton.setText("File level, use when settings vary for different files");
+			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.horizontalSpan = 2;
+			scopeFileRadioButton.setLayoutData(gd);
+
+			scopeFileRadioButton.setSelection(provider.getResourceScope() == AbstractBuildCommandParser.ResourceScope.FILE);
+			scopeFileRadioButton.setEnabled(fEditable);
+			scopeFileRadioButton.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					boolean enabled = applyToProjectCheckBox.getSelection();
+					boolean enabled = scopeFileRadioButton.getSelection();
 					AbstractBuildCommandParser provider = getRawProvider();
-					if (enabled != provider.isResolvingPaths()) {
+					if (enabled != (provider.getResourceScope() == AbstractBuildCommandParser.ResourceScope.FILE)) {
 						AbstractBuildCommandParser selectedProvider = getWorkingCopy(providerId);
-						selectedProvider.setResolvingPaths(enabled);
+						selectedProvider.setResourceScope(AbstractBuildCommandParser.ResourceScope.FILE);
+						providerTab.refreshItem(selectedProvider);
+					}
+				}
+
+				@Override
+				public void widgetDefaultSelected(SelectionEvent e) {
+					widgetSelected(e);
+				}
+
+			});
+
+		}
+
+		{
+			scopeFolderRadioButton = new Button(resourceScopeGroup, SWT.RADIO);
+			scopeFolderRadioButton.setText("Per folder, use when settings are the same for all files in a folder");
+//			applyToEnclosingFolderRadioButton.setText("Enclosing folder, use when settings are the same for all files in a folder");
+			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.horizontalSpan = 2;
+			scopeFolderRadioButton.setLayoutData(gd);
+
+			scopeFolderRadioButton.setSelection(provider.getResourceScope() == AbstractBuildCommandParser.ResourceScope.FOLDER);
+			scopeFolderRadioButton.setEnabled(fEditable);
+			scopeFolderRadioButton.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					boolean enabled = scopeFolderRadioButton.getSelection();
+					AbstractBuildCommandParser provider = getRawProvider();
+					if (enabled != (provider.getResourceScope() == AbstractBuildCommandParser.ResourceScope.FOLDER)) {
+						AbstractBuildCommandParser selectedProvider = getWorkingCopy(providerId);
+						selectedProvider.setResourceScope(AbstractBuildCommandParser.ResourceScope.FOLDER);
+						providerTab.refreshItem(selectedProvider);
+					}
+				}
+
+				@Override
+				public void widgetDefaultSelected(SelectionEvent e) {
+					widgetSelected(e);
+				}
+
+			});
+
+		}
+
+		{
+			scopeProjectRadioButton = new Button(resourceScopeGroup, SWT.RADIO);
+			scopeProjectRadioButton.setText("Per project, use when settings are the same for all files in the project");
+//			applyToProjectRadioButton.setText("Project level, use when settings are the same for all files in the project");
+			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.horizontalSpan = 2;
+			scopeProjectRadioButton.setLayoutData(gd);
+
+			scopeProjectRadioButton.setSelection(provider.getResourceScope() == AbstractBuildCommandParser.ResourceScope.PROJECT);
+			scopeProjectRadioButton.setEnabled(fEditable);
+			scopeProjectRadioButton.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					boolean enabled = scopeProjectRadioButton.getSelection();
+					AbstractBuildCommandParser provider = getRawProvider();
+					if (enabled != (provider.getResourceScope() == AbstractBuildCommandParser.ResourceScope.PROJECT)) {
+						AbstractBuildCommandParser selectedProvider = getWorkingCopy(providerId);
+						selectedProvider.setResourceScope(AbstractBuildCommandParser.ResourceScope.PROJECT);
 						providerTab.refreshItem(selectedProvider);
 					}
 				}

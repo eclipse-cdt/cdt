@@ -58,10 +58,10 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 	public static final String GDB_7_2_VERSION = "7.2"; //$NON-NLS-1$
 	/** @since 4.1 */
 	public static final String GDB_7_2_1_VERSION = "7.2.1"; //$NON-NLS-1$
-
-	// Keep private until GDB 7.4 is released and we can change the constant
-	// to its proper value of 7.4
-	private static final String GDB_7_4_VERSION = "7.3.50"; //$NON-NLS-1$
+	/** @since 4.1 */
+	public static final String GDB_7_3_VERSION = "7.3"; //$NON-NLS-1$
+	/** @since 4.1 */
+	public static final String GDB_7_4_VERSION = "7.4"; //$NON-NLS-1$
 
 	private final String fVersion;
 	

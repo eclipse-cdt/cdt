@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "AABOG3//9uo\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/Messages.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-04-10T03:07:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//9xg\u003d",
+      "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOG3//9xc\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/Messages.java",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2012-04-05T03:30:09Z",
       "side": 1,
       "message": "Change BUNDLE_NAME for Messages.class.getName()",
+      "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9uk\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/Messages.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-04-10T03:07:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//9xc\u003d",
       "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "AABOG3//9uY\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/Messages.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-04-10T03:07:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//9xY\u003d",
+      "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOG3//9xU\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/preferences/MessagesForPreferences.java",
         "patchSetId": 1
@@ -64,6 +118,24 @@
       "writtenOn": "2012-04-05T03:30:09Z",
       "side": 1,
       "message": "Typo here: Anvanced instead of Advanced.",
+      "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9jo\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/preferences/MessagesForPreferences.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-04-10T03:07:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//9xU\u003d",
       "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "AABOG3//9jk\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/preferences/MessagesForPreferences.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-04-10T03:07:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//9xQ\u003d",
+      "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOG3//9xM\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/IGdbDebugPreferenceConstants.java",
         "patchSetId": 1
@@ -98,6 +188,24 @@
       "writtenOn": "2012-04-05T03:30:09Z",
       "side": 1,
       "message": "Can you add \"PREFIX +\" to the string value?   I forgot to do that in 4.0 and I cannot fix it to avoid breaking API, however, new constants can use it.",
+      "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9jg\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/IGdbDebugPreferenceConstants.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-04-10T03:07:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//9xM\u003d",
       "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "AABOG3//9jc\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/IGdbDebugPreferenceConstants.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-04-10T03:07:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//9xI\u003d",
+      "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOG3//9xE\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/IGdbDebugPreferenceConstants.java",
         "patchSetId": 1
@@ -132,6 +258,24 @@
       "writtenOn": "2012-04-05T03:30:09Z",
       "side": 1,
       "message": "Can you add \"PREFIX +\" to the string value?",
+      "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9jY\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/IGdbDebugPreferenceConstants.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-04-10T03:07:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//9xE\u003d",
       "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -155,6 +299,24 @@
     },
     {
       "key": {
+        "uuid": "AABOG3//9jU\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/Messages.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-04-10T03:07:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//9xA\u003d",
+      "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOG3//9w8\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/Messages.java",
         "patchSetId": 1
@@ -166,6 +328,24 @@
       "writtenOn": "2012-04-05T03:30:09Z",
       "side": 1,
       "message": "Please use Messages.class.getName() instead of BUNDLE_NAME",
+      "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9jQ\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/Messages.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-04-10T03:07:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//9w8\u003d",
       "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -206,6 +386,24 @@
     },
     {
       "key": {
+        "uuid": "AABOG3//9i0\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GDBControl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-04-10T03:07:14Z",
+      "side": 1,
+      "message": "I can confine GDBControl.commandTimedOut() and AbstractMIControl.commandFailed() to DSF executor but we still need to synchronize fRxCommands - it is modified/accessed by RxThread and TxThread.\nDone.",
+      "parentUuid": "AABOG3//9wg\u003d",
+      "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOG3//9w0\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GDBControl.java",
         "patchSetId": 1
@@ -217,6 +415,24 @@
       "writtenOn": "2012-04-05T03:30:09Z",
       "side": 1,
       "message": "Can you put a comment to explain why we need both fInitializationSequence and this new fInitialized.\n\nAlso, I think we should have a\n  protected isInitialized()\nmethod for people extending this class",
+      "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9jI\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GDBControl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-04-10T03:07:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//9w0\u003d",
       "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -240,6 +456,24 @@
     },
     {
       "key": {
+        "uuid": "AABOG3//9jE\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GDBControl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 595,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-04-10T03:07:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//9wY\u003d",
+      "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOG3//9ww\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GDBControl.java",
         "patchSetId": 1
@@ -251,6 +485,24 @@
       "writtenOn": "2012-04-05T03:30:09Z",
       "side": 1,
       "message": "Can you make protected?",
+      "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9jA\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GDBControl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 601,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-04-10T03:07:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//9ww\u003d",
       "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -274,6 +526,24 @@
     },
     {
       "key": {
+        "uuid": "AABOG3//9iY\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GDBControl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 611,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-04-10T03:07:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//9ws\u003d",
+      "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOG3//9wc\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GDBControl.java",
         "patchSetId": 1
@@ -285,6 +555,24 @@
       "writtenOn": "2012-04-05T03:30:09Z",
       "side": 1,
       "message": "Can be removed if we restrict calling commandTimedOut to the DSF executor",
+      "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9iU\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GDBControl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 612,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-04-10T03:07:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//9wc\u003d",
       "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -308,6 +596,24 @@
     },
     {
       "key": {
+        "uuid": "AABOG3//9i8\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GDBControl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 615,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-04-10T03:07:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//9wo\u003d",
+      "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOG3//9wk\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GDBControl.java",
         "patchSetId": 1
@@ -319,6 +625,24 @@
       "writtenOn": "2012-04-05T03:30:09Z",
       "side": 1,
       "message": "I believe this call will block while the dialog is being shown to the user, no?  If so, we should not run it in the DSF executor, as we would block the executor.  I suggest using a job for this call.  This is what is done in GdbConnectCommand.PromptForPidJob for example.",
+      "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9i4\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GDBControl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 634,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-04-10T03:07:14Z",
+      "side": 1,
+      "message": "The status handler is called using \"asyncExec\", so the executor is not blocked.",
+      "parentUuid": "AABOG3//9wk\u003d",
       "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

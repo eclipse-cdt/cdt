@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others.
+ * Copyright (c) 2006, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -62,6 +62,7 @@
  * David McKnight     (IBM)      - [298440] jar files in a directory can't be pasted to another system properly
  * David McKnight     (IBM)      - [311218] Content conflict dialog pops up when it should not
  * David McKnight     (IBM)      - [228743] [usability][dnd] Paste into read-only folder fails silently
+ * David McKnight     (IBM)      - [376410] cross-system copy/paste operation doesn't transfer remote encodings for binary files
  *******************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -128,6 +129,7 @@ import org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSyst
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.IVirtualRemoteFile;
+import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileSubSystem;
 import org.eclipse.rse.subsystems.files.core.util.ValidatorFileUniqueName;
 import org.eclipse.rse.ui.RSEUIPlugin;
@@ -1751,12 +1753,16 @@ public class UniversalFileTransferUtility {
 						targetFS.upload(srcFileLocation, srcCharSet, newPath, remoteEncoding,monitor);
 						newFilePathList.add(newPath);
 
+						
+						IRemoteFile newFile = targetFS.getRemoteFileObject(newPath, monitor);
+						if (newFile.isBinary() && newFile instanceof RemoteFile){ // after a binary upload, we need to mark the encoding of the remote file
+							((RemoteFile)newFile).setEncoding(srcCharSet);
+						}		
 						// should check preference first
 						if (RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemFilePreferencesConstants.PRESERVETIMESTAMPS))
 						{
 							SystemIFileProperties properties = new SystemIFileProperties(srcFileOrFolder);
 							try {
-								IRemoteFile newFile = targetFS.getRemoteFileObject(newPath, monitor);
 								targetFS.setLastModified(newFile, properties.getRemoteFileTimeStamp(), monitor);
 							}
 							catch (SystemUnsupportedOperationException e){
@@ -1946,13 +1952,9 @@ public class UniversalFileTransferUtility {
 			try
 			{
 
-				String srcCharSet = null;
+				String srcCharSet = RemoteFileUtility.getSourceEncoding((IFile)srcFileOrFolder);
 
 				boolean isText = RemoteFileUtility.getSystemFileTransferModeRegistry().isText(newPath);
-				if (isText)
-				{
-					srcCharSet = RemoteFileUtility.getSourceEncoding((IFile)srcFileOrFolder);
-				}
 				IPath location = srcFileOrFolder.getLocation();
 				IRemoteFile copiedFile = null;
 				if (location == null) // remote EFS file?
@@ -2002,8 +2004,11 @@ public class UniversalFileTransferUtility {
 
 				copiedFile = targetFS.getRemoteFileObject(targetFolder, name, monitor);
 
+				if (copiedFile.isBinary() && copiedFile instanceof RemoteFile){ // after a binary upload, we need to mark the encoding of the remote file
+					((RemoteFile)copiedFile).setEncoding(srcCharSet);
+				}	
+				
 				// should check preference first
-
 				if (RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemFilePreferencesConstants.PRESERVETIMESTAMPS))
 				{
 					SystemIFileProperties properties = new SystemIFileProperties(srcFileOrFolder);

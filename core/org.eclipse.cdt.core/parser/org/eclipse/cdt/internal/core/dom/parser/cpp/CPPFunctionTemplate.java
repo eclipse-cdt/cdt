@@ -8,6 +8,7 @@
  * Contributors:
  *     Andrew Niefer (IBM) - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -35,6 +36,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
+import org.eclipse.cdt.internal.core.dom.parser.ASTAttribute;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemFunctionType;
@@ -334,6 +336,15 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
     	ICPPASTFunctionDeclarator fdecl= getFirstFunctionDtor();
     	if (fdecl != null) {
     		return fdecl.takesVarArgs();
+    	}
+        return false;
+    }
+
+    @Override
+	public boolean isNoReturn() {
+    	ICPPASTFunctionDeclarator fdecl= getFirstFunctionDtor();
+    	if (fdecl != null) {
+    		return ASTAttribute.hasNoreturnAttribute(fdecl);
     	}
         return false;
     }

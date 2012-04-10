@@ -84,7 +84,6 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 	private static final int ORIGIN_PREPROCESSOR_DIRECTIVE = OffsetLimitReachedException.ORIGIN_PREPROCESSOR_DIRECTIVE;
 	private static final int ORIGIN_INACTIVE_CODE = OffsetLimitReachedException.ORIGIN_INACTIVE_CODE;
 	
-    private static final char[] EMPTY_CHAR_ARRAY = new char[0];
     private static final char[] ONE = "1".toCharArray(); //$NON-NLS-1$
 
 
@@ -392,7 +391,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 	}
 
 	private char[] nonNull(char[] array) {
-		return array == null ? EMPTY_CHAR_ARRAY : array;
+		return array == null ? CharArrayUtils.EMPTY_CHAR_ARRAY : array;
 	}
 
     private void configureIncludeSearchPath(File directory, IScannerInfo info) {

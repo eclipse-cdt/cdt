@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Doug Schaefer (IBM) - Initial API and implementation
+ *     Sergey Prigogin (Google) 
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
@@ -51,4 +52,11 @@ public interface IFunction extends IBinding {
 	 * Returns {@code true} if this function takes variable arguments.
 	 */
 	public boolean takesVarArgs();
+
+	/**
+	 * Returns {@code true} if this function never returns. Based on 'noreturn' attribute in
+	 * the function declaration.
+	 * @since 5.4
+	 */
+	public boolean isNoReturn();
 }

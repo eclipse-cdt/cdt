@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     Andrew Niefer (IBM) - Initial API and implementation
  *     Bryan Wilkinson (QNX)
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -207,6 +208,14 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
         if (ds != null && ds.length > 0) {
             return ds[0].takesVarArgs();
         }
+        return false;
+	}
+
+	@Override
+	public boolean isNoReturn() {
+		ICPPFunction f = (ICPPFunction) getSpecializedBinding();
+		if (f != null)
+			return f.isNoReturn();
         return false;
 	}
 

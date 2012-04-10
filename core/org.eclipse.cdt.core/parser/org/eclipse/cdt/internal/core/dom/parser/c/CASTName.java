@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTInternalNameOwner;
@@ -33,8 +34,7 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTInternalNameOwner;
 public class CASTName extends ASTNode implements IASTName, IASTCompletionContext {
     private final char[] name;
 
-    private static final char[] EMPTY_CHAR_ARRAY = {};
-	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
+    private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
     private IBinding binding;
     
@@ -43,7 +43,7 @@ public class CASTName extends ASTNode implements IASTName, IASTCompletionContext
     }
 
     public CASTName() {
-        name = EMPTY_CHAR_ARRAY;
+        name = CharArrayUtils.EMPTY_CHAR_ARRAY;
     }
 
     @Override
@@ -107,7 +107,7 @@ public class CASTName extends ASTNode implements IASTName, IASTCompletionContext
 
     @Override
 	public String toString() {
-        if (name == EMPTY_CHAR_ARRAY)
+        if (name == CharArrayUtils.EMPTY_CHAR_ARRAY)
             return EMPTY_STRING;
         return new String(name);
     }

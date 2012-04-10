@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOG3//9gQ\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GDBControl.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 648,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-04-10T01:47:31Z",
+      "side": 1,
+      "message": "What do you think about the comment I had put here:\n\nI believe this call will block while the dialog is being shown to the user, no? If so, we should not run it in the DSF executor, as we would block the executor. I suggest using a job for this call. This is what is done in GdbConnectCommand.PromptForPidJob for example.",
+      "revId": "6d47395867e8143775d1720e152a19664bb41b30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9fw\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 892,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-04-10T01:47:31Z",
+      "side": 1,
+      "message": "Since fRxCommands is a synchronizedMap, do we really need to add synchronization around its access?",
+      "revId": "6d47395867e8143775d1720e152a19664bb41b30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9fs\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 1120,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-04-10T01:47:31Z",
+      "side": 1,
+      "message": "Since fRxCommands is a synchronizedMap, do we really need to add synchronization around its access?",
+      "revId": "6d47395867e8143775d1720e152a19664bb41b30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9f0\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 1150,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-04-10T01:47:31Z",
+      "side": 1,
+      "message": "Above three lines can be replaced with rm.done() I believe.",
+      "revId": "6d47395867e8143775d1720e152a19664bb41b30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -913,6 +913,8 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 							break;
 						case IOption.ENUMERATED:
 							break;
+						case IOption.TREE:
+							break;
 						case IOption.STRING_LIST:
 							fType = IBuildMacro.VALUE_TEXT_LIST;
 							fStringListValue = option.getStringListValue();
@@ -1137,6 +1139,8 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 				can = true;
 				break;
 			case IOption.ENUMERATED:
+				break;
+			case IOption.TREE:
 				break;
 			case IOption.STRING_LIST:
 				can = true;

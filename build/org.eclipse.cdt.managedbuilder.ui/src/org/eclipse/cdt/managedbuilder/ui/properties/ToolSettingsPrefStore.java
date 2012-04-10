@@ -205,8 +205,8 @@ public class ToolSettingsPrefStore implements IPreferenceStore {
 			try {
 				IOption opt = (IOption)option[1];
 				Object val = opt.getValue();
-				if(opt.getValueType() == IOption.ENUMERATED && val instanceof String)
-					val = opt.getEnumName((String)val);
+				if((opt.getValueType() == IOption.ENUMERATED || opt.getValueType() == IOption.TREE) && val instanceof String)
+					val = opt.getName((String)val);
 				return val;
 			} catch (BuildException e) {
 			}
@@ -313,9 +313,10 @@ public class ToolSettingsPrefStore implements IPreferenceStore {
 						}
 						break;
 					case IOption.ENUMERATED:
+					case IOption.TREE:
 						if(value instanceof String){
 							String val = (String)value;
-							String enumId = option.getEnumeratedId(val);
+							String enumId = option.getId(val);
 							newOption = rcInfo.setOption(holder, option,
 									(enumId != null && enumId.length() > 0) ? enumId : val);
 						}

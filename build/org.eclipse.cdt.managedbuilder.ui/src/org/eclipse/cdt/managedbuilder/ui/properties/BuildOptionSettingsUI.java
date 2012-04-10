@@ -14,8 +14,12 @@
 package org.eclipse.cdt.managedbuilder.ui.properties;
 
 import java.io.File;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +32,8 @@ import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
 import org.eclipse.cdt.managedbuilder.core.IManagedOptionValueHandler;
 import org.eclipse.cdt.managedbuilder.core.IOption;
+import org.eclipse.cdt.managedbuilder.core.IOption.ITreeOption;
+import org.eclipse.cdt.managedbuilder.core.IOption.ITreeRoot;
 import org.eclipse.cdt.managedbuilder.core.IOptionApplicability;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
@@ -42,18 +48,35 @@ import org.eclipse.cdt.ui.newui.AbstractPage;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.DirectoryFieldEditor;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.FileFieldEditor;
+import org.eclipse.jface.preference.StringButtonFieldEditor;
 import org.eclipse.jface.preference.StringFieldEditor;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
@@ -61,10 +84,13 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.osgi.framework.Bundle;
 
+import org.eclipse.ui.dialogs.FilteredTree;
+import org.eclipse.ui.dialogs.PatternFilter;
 
 /**
  * Option settings page in project properties Build Settings under Tool Settings tab.
@@ -86,6 +112,35 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 	/** type of mouse action the displayFixedTip responds to.
 	 ** currently set to Enter rather than Hover since the former seems more responsive **/
 	private final static int selectAction = SWT.MouseEnter;
+
+	private final class TreeBrowseFieldEditor extends StringButtonFieldEditor {
+		private final String nameStr;
+		private final IOption option;
+		private String contextId;
+
+		private TreeBrowseFieldEditor(String name, String labelText, Composite parent, String nameStr,
+				IOption option, String contextId) {
+			super(name, labelText, parent);
+			this.nameStr = nameStr;
+			this.option = option;
+			this.contextId = contextId;
+		}
+
+		@Override
+		protected String changePressed() {
+			ITreeRoot treeRoot;
+			try {
+				treeRoot = option.getTreeRoot();
+				TreeSelectionDialog dlg = new TreeSelectionDialog(getShell(), treeRoot, nameStr, contextId);
+				if (dlg.open() == Window.OK) {
+					ITreeOption selected = dlg.getSelection();
+					return selected.getName();
+				}
+			} catch (BuildException e) {
+			}
+			return null;
+		}
+	}
 
 	private class TipInfo {
 		private String name;
@@ -212,7 +267,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 			if (applicabilityCalculator == null || applicabilityCalculator.isOptionVisible(config, holder, opt)) {
 
 				String optId = getToolSettingsPrefStore().getOptionId(opt);
-				String nameStr = TextProcessor.process(opt.getName());
+				final String nameStr = TextProcessor.process(opt.getName());
 				String tipStr = TextProcessor.process(opt.getToolTip());
 				String contextId = opt.getContextId();
 
@@ -373,6 +428,20 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 								label.addListener(selectAction, tipSetListener);
 							}
 						} break;
+
+						case IOption.TREE:
+							fieldEditor = new TreeBrowseFieldEditor(optId, nameStr, fieldEditorParent, nameStr, opt, contextId);
+							((StringButtonFieldEditor)fieldEditor).setChangeButtonText("..."); //$NON-NLS-1$
+
+							if (pageHasToolTipBox) {
+								Text text = ((StringButtonFieldEditor)fieldEditor).getTextControl(fieldEditorParent);
+								Label label = fieldEditor.getLabelControl(fieldEditorParent);
+								text.setData(new TipInfo(nameStr,tipStr));
+								text.addListener(selectAction, tipSetListener);
+								label.setData(new TipInfo(nameStr,tipStr));
+								label.addListener(selectAction, tipSetListener);
+							}
+							break;
 
 						case IOption.INCLUDE_PATH:
 						case IOption.STRING_LIST:
@@ -563,8 +632,9 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 //						}
 						break;
 					case IOption.ENUMERATED :
+					case IOption.TREE :
 						String enumVal = clonedOption.getStringValue();
-						String enumId = clonedOption.getEnumeratedId(enumVal);
+						String enumId = clonedOption.getId(enumVal);
 						setOption = ManagedBuildManager.setOption(realCfg, realHolder, realOption,
 								(enumId != null && enumId.length() > 0) ? enumId : enumVal);
 						// Reset the preference store since the Id may have changed
@@ -754,6 +824,15 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 							String enumId = changedOption.getEnumeratedId(name);
 							ManagedBuildManager.setOption(fInfo,changedHolder,changedOption,
 									(enumId != null && enumId.length() > 0) ? enumId : name);
+
+						}
+						break;
+					case IOption.TREE:
+						if(fe instanceof TreeBrowseFieldEditor){
+							String name = ((TreeBrowseFieldEditor)fe).getStringValue();
+							String treeId = changedOption.getId(name);
+							ManagedBuildManager.setOption(fInfo,changedHolder,changedOption,
+									(treeId != null && treeId.length() > 0) ? treeId : name);
 
 						}
 						break;
@@ -1004,5 +1083,213 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 		}
 	}
 
+	/**
+	 * @since 8.1
+	 */
+	public static class TreeSelectionDialog extends TitleAreaDialog {
+		private final ITreeRoot treeRoot;
+		private ITreeOption selected;
+		private final String name;
+		private String contextId;
+		private String baseMessage = ""; //$NON-NLS-1$
 
+		public TreeSelectionDialog(Shell parentShell, ITreeRoot root, String name, String contextId) {
+			super(parentShell);
+			treeRoot = root;
+			setShellStyle(getShellStyle() | SWT.RESIZE);
+			if (root.getIcon() != null) {
+				Image img = createImage(root.getIcon());
+				if (img != null) {
+					setTitleImage(img);
+				}
+			}
+			this.name = name;
+			this.contextId = contextId;
+			if (contextId != null && contextId.length() > 0) {
+				setHelpAvailable(true);
+			}
+		}
+
+		@Override
+		protected Control createDialogArea(Composite parent) {
+			if (contextId != null && contextId.length() > 0) {
+				PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, contextId);
+			}
+
+			Composite control = new Composite(parent, SWT.NULL);
+			GridData gd= new GridData(GridData.FILL_BOTH);
+			GridLayout topLayout = new GridLayout();
+			topLayout.numColumns = 1;
+			control.setLayout(topLayout);
+			control.setLayoutData(gd);
+
+			PatternFilter filter = new PatternFilter();
+			filter.setIncludeLeadingWildcard(true);
+			FilteredTree tree = new FilteredTree(control,
+					SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER,
+					filter, true);
+			TreeViewer viewer = tree.getViewer();
+			viewer.setContentProvider(new ITreeContentProvider() {
+
+				@Override
+				public void dispose() {
+				}
+
+				@Override
+				public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+				}
+
+				@Override
+				public Object[] getElements(Object inputElement) {
+					return getChildren(inputElement);
+				}
+
+				@Override
+				public Object[] getChildren(Object parentElement) {
+					if (parentElement instanceof ITreeOption) {
+						ITreeOption[] children = ((ITreeOption)parentElement).getChildren();
+
+						// Not entirely sure whether this method is allowed to return null,
+						// but let's play safe.
+						if (children == null)
+							return null;
+
+						List<ITreeOption> childrenList = new ArrayList<ITreeOption>(Arrays.asList(children));
+
+						// Check if any of the children has empty name
+						List<ITreeOption> toRemove = null;
+						for (ITreeOption child : children) {
+							if (child.getName() == null || child.getName().trim().length() == 0) {
+								if (toRemove == null) {
+									toRemove = new ArrayList<ITreeOption>();
+								}
+								toRemove.add(child);
+							}
+						}
+						if (toRemove != null) {
+							childrenList.removeAll(toRemove);
+						}
+
+						// Sort the children.
+						Collections.sort(childrenList, new Comparator<ITreeOption>() {
+							@Override
+							public int compare(ITreeOption arg0, ITreeOption arg1) {
+								if (arg0.getOrder() == arg1.getOrder()) {
+									return arg0.getName().compareToIgnoreCase(arg1.getName());
+								} else {
+									return arg0.getOrder() - arg1.getOrder();
+								}
+							}
+						});
+
+						return childrenList.toArray(new ITreeOption[0]);
+					}
+					return null;
+				}
+
+				@Override
+				public Object getParent(Object element) {
+					if (element instanceof ITreeOption) {
+						return ((ITreeOption)element).getParent();
+					}
+					return null;
+				}
+
+				@Override
+				public boolean hasChildren(Object element) {
+					Object[] children = getChildren(element);
+					return children != null && children.length > 0;
+				}
+
+			});
+
+			viewer.setLabelProvider(new LabelProvider() {
+
+				@Override
+				public String getText(Object element) {
+					if (element instanceof ITreeOption) {
+						return ((ITreeOption)element).getName();
+					}
+					return super.getText(element);
+				}
+
+				@Override
+				public Image getImage(Object element) {
+					if (element instanceof ITreeOption) {
+						String icon = ((ITreeOption)element).getIcon();
+						return createImage(icon);
+					}
+					return super.getImage(element);
+				}
+			});
+
+			viewer.addSelectionChangedListener(new ISelectionChangedListener() {
+
+				@Override
+				public void selectionChanged(SelectionChangedEvent event) {
+					ISelection selection = event.getSelection();
+					if (selection instanceof IStructuredSelection) {
+						Object selectedObj = ((IStructuredSelection)selection).getFirstElement();
+						if (selectedObj instanceof ITreeOption) {
+							selected = (ITreeOption) selectedObj;
+
+							// Check if Valid selection (only allow selecting leaf nodes)
+							if (treeRoot.isSelectLeafsOnly()) {
+								boolean enableOK = !selected.isContainer();
+								getButton(IDialogConstants.OK_ID).setEnabled(enableOK);
+							}
+
+							// Adjust Message
+							String description = selected.getDescription();
+							if (description == null) {
+								ITreeOption node = selected;
+								description = ""; //$NON-NLS-1$
+								String sep = ": "; //$NON-NLS-1$
+								while (node != null && node.getParent() != null) { // ignore root
+									description = sep + node.getName() + description;
+									node = node.getParent();
+								}
+								description = description.substring(sep.length()); // remove the first separator.
+							}
+							setMessage(baseMessage + description);
+						}
+					}
+				}
+			});
+
+			viewer.setInput(treeRoot);
+
+			String msg = "Select " + name; //$NON-NLS-1$
+			getShell().setText(msg);
+			setTitle(msg);
+			if (treeRoot.getDescription() != null) {
+				baseMessage = treeRoot.getDescription();
+				setMessage(baseMessage);
+				baseMessage += "\nCurrent Selection: "; //$NON-NLS-1$
+			} else {
+				setMessage(msg);
+			}
+
+			return control;
+		}
+
+		public ITreeOption getSelection() {
+			return selected;
+		}
+
+		private Image createImage(String icon) {
+			if (icon != null) {
+				URL url = null;
+				try {
+					url = FileLocator.find(new URL(icon));
+				} catch (Exception e) {
+				}
+				if (url != null) {
+					ImageDescriptor desc = ImageDescriptor.createFromURL(url);
+					return desc.createImage();
+				}
+			}
+			return null;
+		}
+	}
 }

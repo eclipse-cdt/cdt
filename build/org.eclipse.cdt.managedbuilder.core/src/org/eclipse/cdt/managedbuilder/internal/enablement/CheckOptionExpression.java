@@ -112,6 +112,7 @@ public class CheckOptionExpression implements IBooleanExpression {
 
 			switch(option.getValueType()){
 				case IOption.STRING:
+				case IOption.TREE:
 				case IOption.ENUMERATED:{
 					String stringValue = option.getStringValue();
 					stringValue = provider.resolveValue(stringValue, inexVal, delimiter,
@@ -177,6 +178,7 @@ public class CheckOptionExpression implements IBooleanExpression {
 
 			switch(option.getValueType()){
 				case IOption.STRING:
+				case IOption.TREE:
 				case IOption.ENUMERATED:{
 					String stringValue = option.getStringValue();
 					stringValue = provider.resolveValue(stringValue, inexVal, delimiter,

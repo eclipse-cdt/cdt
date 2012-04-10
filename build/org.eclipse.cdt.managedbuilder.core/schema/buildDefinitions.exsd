@@ -1178,6 +1178,7 @@ Options can also be associated with a toolchain. However in such a case the opti
             <choice>
                <element ref="listOptionValue" minOccurs="0" maxOccurs="unbounded"/>
                <element ref="enumeratedOptionValue" minOccurs="0" maxOccurs="unbounded"/>
+               <element ref="treeOptionRoot" minOccurs="0" maxOccurs="1"/>
             </choice>
             <element ref="enablement" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
@@ -1288,6 +1289,8 @@ Additional special types exist to flag options of special relevance to the build
                   <enumeration value="undefIncludeFiles">
                   </enumeration>
                   <enumeration value="undefSymbolFiles">
+                  </enumeration>
+                  <enumeration value="tree">
                   </enumeration>
                </restriction>
             </simpleType>
@@ -1506,6 +1509,118 @@ A custom field-editor needs to be registered, under the same ID, through the &lt
             <annotation>
                <documentation>
                   This attribute flags the list value as a built-in value as opposed to something the user has entered. Built-ins will not be passed to clients that generate command lines (like the makefile generator). However, clients that need to take these settings into account (like the indexing service), will receive these settings. These values will appear grey in the UI.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="treeOption">
+      <complexType>
+         <sequence minOccurs="0" maxOccurs="unbounded">
+            <element ref="treeOption"/>
+         </sequence>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The id should be the value used for determining which treeOption is selected, it has to be unique within the tree.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Display name for the option
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="description" type="string">
+            <annotation>
+               <documentation>
+                  Description of the option to be presented to the user
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="command" type="string">
+            <annotation>
+               <documentation>
+                  The command that the tree value translates to on the command line.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="isDefault" type="boolean">
+            <annotation>
+               <documentation>
+                  Flags this tree value as the default to apply to the option if the user has not changed the setting.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="icon" type="string">
+            <annotation>
+               <documentation>
+                  An icon to be used for this node in the tree representation. Should use full path for the icon: e.g., platform:/plugin/org.eclipse.cdt/icons/wizard.png
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="order" type="string">
+            <annotation>
+               <documentation>
+                  An integer representing the order of this option within its peers in the tree. The order is a relative number, were smaller numbers appear on top of larger numbers.
+If no order is defined a default order is assumed, see &quot;org.eclipse.cdt.managedbuilder.core.IOption.ITreeOption.DEFAULT_ORDER&quot; for more details.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="treeOptionRoot">
+      <annotation>
+         <documentation>
+            Represents the root of a tree of options. Note that the root is never shown to the user and can&apos;t be selected. It is a place holder for settings affecting the options tree behavior
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence minOccurs="1" maxOccurs="unbounded">
+            <element ref="treeOption"/>
+         </sequence>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="icon" type="string">
+            <annotation>
+               <documentation>
+                  The tree root icon can be used in branding the UI representation of the tree. Should use full path for the icon: e.g., platform:/plugin/org.eclipse.cdt/icons/wizard.png
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="selectLeafOnly" type="boolean">
+            <annotation>
+               <documentation>
+                  Determines whether this tree allows selecting categories as well as leaf nodes, or leaf nodes only.
+Default is true (leaf nodes only).
                </documentation>
             </annotation>
          </attribute>

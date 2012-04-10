@@ -55,6 +55,12 @@ public interface IOption extends IBuildObject {
 	public static final int LIBRARY_FILES = 10;
 	public static final int MACRO_FILES = 11;
 
+	/**
+	 * Tree of items to select one from.
+	 * @since 8.1
+	 */
+	public static final int TREE = 12;
+
 	public static final int UNDEF_INCLUDE_PATH = -INCLUDE_PATH;
 	public static final int UNDEF_PREPROCESSOR_SYMBOLS = -PREPROCESSOR_SYMBOLS;
 	public static final int UNDEF_INCLUDE_FILES = -INCLUDE_FILES;
@@ -84,6 +90,14 @@ public interface IOption extends IBuildObject {
 	/** @since 7.0 */
 	public static final String BROWSE_FILTER_EXTENSIONS = "browseFilterExtensions"; //$NON-NLS-1$
 	public static final String CATEGORY = "category"; //$NON-NLS-1$
+	/**
+	 * @since 8.1
+	 */
+	public static final String ICON = "icon"; //$NON-NLS-1$
+	/**
+	 * @since 8.1
+	 */
+	public static final String ORDER = "order"; //$NON-NLS-1$
 	public static final String COMMAND = "command"; //$NON-NLS-1$
 	public static final String COMMAND_FALSE = "commandFalse"; //$NON-NLS-1$
 	/** @since 8.0 */
@@ -92,6 +106,22 @@ public interface IOption extends IBuildObject {
 	public static final String CONTEXT_ID = "contextId"; //$NON-NLS-1$
 	public static final String DEFAULT_VALUE = "defaultValue"; //$NON-NLS-1$
 	public static final String ENUM_VALUE = "enumeratedOptionValue"; //$NON-NLS-1$
+	/**
+	 * @since 8.1
+	 */
+	public static final String TREE_ROOT = "treeOptionRoot"; //$NON-NLS-1$
+	/**
+	 * @since 8.1
+	 */
+	public static final String SELECT_LEAF_ONLY = "selectLeafOnly"; //$NON-NLS-1$
+	/**
+	 * @since 8.1
+	 */
+	public static final String TREE_VALUE = "treeOption"; //$NON-NLS-1$
+	/**
+	 * @since 8.1
+	 */
+	public static final String DESCRIPTION = "description"; //$NON-NLS-1$
 	public static final String IS_DEFAULT = "isDefault"; //$NON-NLS-1$
 	public static final String LIST_VALUE = "listOptionValue"; //$NON-NLS-1$
 	public static final String RESOURCE_FILTER = "resourceFilter"; //$NON-NLS-1$
@@ -114,6 +144,10 @@ public interface IOption extends IBuildObject {
 	public static final String TYPE_UNDEF_LIB_FILES = "undefLibFiles"; //$NON-NLS-1$
 	public static final String TYPE_UNDEF_INC_FILES = "undefIncludeFiles"; //$NON-NLS-1$
 	public static final String TYPE_UNDEF_SYMBOL_FILES = "undefSymbolFiles"; //$NON-NLS-1$
+	/**
+	 * @since 8.1
+	 */
+	public static final String TYPE_TREE = "tree"; //$NON-NLS-1$
 	
 	public static final String VALUE = "value"; //$NON-NLS-1$
 	public static final String VALUE_TYPE = "valueType"; //$NON-NLS-1$
@@ -326,16 +360,57 @@ public interface IOption extends IBuildObject {
 	public String getEnumCommand (String id) throws BuildException;
 
 	/**
+	 * Returns the command associated with the child of this option
+	 * with the given id. Applies to options of types that has children
+	 * for example {@link #TREE} or {@link #ENUMERATED}
+	 *
+	 * @param id - child id
+	 * @return the command associated with the child id. For
+	 * example, if the child id was <code>gnu.debug.level.default</code>
+	 * for the debug level option of the Gnu compiler, and the plugin
+	 * manifest defined that as -g, then the return value would be the
+	 * String "-g"
+	 *
+	 * @throws BuildException
+	 * @since 8.1
+	 */
+	public String getCommand (String id) throws BuildException;
+
+	/**
 	 * @param id - enumeration id
 	 * @return the "name" associated with the enumeration id.
 	 */
 	public String getEnumName (String id) throws BuildException;
 
 	/**
+	 * Returns the name associated with the child of this option
+	 * with the given id. Applies to options of types that has children
+	 * for example {@link #TREE} or {@link #ENUMERATED}
+	 *
+	 * @param id The id to look for
+	 * @return Name of the child with the passed id or <code>null</code> if not found.
+	 * @throws BuildException if any issue happened while searching.
+	 * @since 8.1
+	 */
+	public abstract String getName(String id) throws BuildException;
+
+	/**
 	 * @param name - a "name" associated with enumeration id
 	 * @return enumeration id
 	 */
 	public String getEnumeratedId(String name) throws BuildException;
+
+	/**
+	 * Returns the id associated with the child of this option
+	 * with the given name. Applies to options of types that has children
+	 * for example {@link #TREE} or {@link #ENUMERATED}
+	 *
+	 * @param name the name of the child to look for.
+	 * @return The id of the found child or <code>null</code> if not found.
+	 * @throws BuildException if any error happened while searching
+	 * @since 8.1
+	 */
+	public abstract String getId(String name) throws BuildException;
 
 	/**
 	 * @return an array of <code>String</code> containing the includes paths
@@ -514,6 +589,7 @@ public interface IOption extends IBuildObject {
 	 *  <li/>{@link IOption#BOOLEAN}
 	 *  <li/>{@link IOption#STRING}
 	 *  <li/>{@link IOption#ENUMERATED}
+	 *  <li/>{@link IOption#TREE}
 	 *  <li/>{@link IOption#STRING_LIST} - corresponds to
 	 *    {@link IOption#INCLUDE_PATH}, {@link IOption#PREPROCESSOR_SYMBOLS}, {@link IOption#LIBRARIES},
 	 *    {@link IOption#OBJECTS}, {@link IOption#INCLUDE_FILES}, {@link IOption#LIBRARY_PATHS},
@@ -528,4 +604,101 @@ public interface IOption extends IBuildObject {
 	String[] getBasicStringListValue() throws BuildException;
 	
 	public OptionStringValue[] getBasicStringListValueElements() throws BuildException;
+
+	/**
+	 * Returns the tree root of this option if it is of type {@link #TREE}
+	 * @return tree root of this option or <code>null</code> if not found.
+	 * @throws BuildException if this option is not of type {@link #TREE}
+	 * @since 8.1
+	 */
+	public ITreeRoot getTreeRoot() throws BuildException;
+
+	/**
+	 * Represents the root of the tree of values in options of
+	 * type {@link IOption#TREE}
+	 * @author mhussein
+	 * @since 8.1
+	 *
+	 */
+	public interface ITreeRoot extends ITreeOption {
+		/**
+		 * Determines whether this tree allows selecting leaf nodes
+		 * only or any nodes.
+		 * @return <code>true</code> if only leaf nodes are allowed.
+		 *         <code>false</code> if all child nodes could be selected.
+		 * @see ITreeOption#isContainer()
+		 */
+		boolean isSelectLeafsOnly();
+
+		/**
+		 * Locates the node with the given id anywhere in the tree.
+		 * @param id the id to search for
+		 * @return the found child or <code>null</code> if not found.
+		 */
+		ITreeOption findNode(String id);
+
+		/**
+		 * Adds a new node to the tree.
+		 * @param id The id of the new child.
+		 * @param name The name of the new child.
+		 * @param category The category of the new child.category is a '.'
+		 * 				   separated string representing hierarchical path
+		 * 				   of the child from the root of the tree.
+		 * 				   can cause other nodes to be created to construct the
+		 * 				   full path to the new child.
+		 * @param order    The order of the newly created node among its peers.
+		 *                 see {@link ITreeOption#getOrder()} for more information.
+		 *                 Note: this order will apply to any parents auto-created
+		 *                 according to the passed category.
+		 *                 if <code>null</code> the {@link ITreeOption#DEFAULT_ORDER}
+		 *                 will be used.
+		 * @return the newly added node.
+		 */
+		ITreeOption addNode(String id, String name, String category, Integer order);
+	}
+
+	/**
+	 * Represents a one of the possible values for options of type
+	 * {@link IOption#TREE}
+	 * @author mhussein
+	 * @since 8.1
+	 *
+	 */
+	public interface ITreeOption {
+		/**
+		 * The default order for tree nodes without order specified.
+		 * Tree options with Orders smaller than this should appear above
+		 * tree options with no order specified and vice versa.
+		 */
+		public static final int DEFAULT_ORDER = 1000;
+
+		String getName();
+		String getID();
+		String getDescription();
+		/**
+		 * The order that determines UI appearance of the tree node,
+		 * not necessarily its position in {@link #getChildren()}
+		 * @return The order of this tree option relative to its peers.
+		 * Smaller number means it should appear above peers.
+		 * @see #DEFAULT_ORDER
+		 */
+		int getOrder();
+		void setOrder(int order);
+
+		ITreeOption[] getChildren();
+		ITreeOption getParent();
+		boolean isContainer();
+		String getCommand();
+		ITreeOption getChild(String name);
+
+		/**
+		 * Adds a new child directly under this node.
+		 * @param id
+		 * @param name
+		 * @return
+		 */
+		ITreeOption addChild(String id, String name);
+		void remove();
+		String getIcon();
+	}
 }

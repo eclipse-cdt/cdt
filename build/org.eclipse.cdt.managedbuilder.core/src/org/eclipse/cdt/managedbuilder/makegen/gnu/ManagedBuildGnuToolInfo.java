@@ -422,7 +422,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 							} else {
 								ManagedBuildManager.setOption(config, tool, assignToOption, false);
 							}
-						} else if (optType == IOption.ENUMERATED) {
+						} else if (optType == IOption.ENUMERATED || optType == IOption.TREE) {
 							if (itCommandInputs.size() > 0) {
 								ManagedBuildManager.setOption(config, tool, assignToOption, itCommandInputs.firstElement());
 							}

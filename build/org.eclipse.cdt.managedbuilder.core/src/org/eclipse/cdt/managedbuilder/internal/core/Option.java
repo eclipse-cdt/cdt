@@ -39,6 +39,7 @@ import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.core.ManagedOptionValueHandler;
 import org.eclipse.cdt.managedbuilder.core.OptionStringValue;
+import org.eclipse.cdt.managedbuilder.core.IOption.ITreeOption;
 import org.eclipse.cdt.managedbuilder.internal.enablement.OptionEnablementExpression;
 import org.eclipse.cdt.managedbuilder.internal.macros.OptionContextData;
 import org.eclipse.cdt.managedbuilder.macros.IOptionContextData;
@@ -71,9 +72,9 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	private String commandFalse;
 	private String tip;
 	private String contextId;
-	private List<String> enumList;
-	private Map<String, String> enumCommands;
-	private Map<String, String> enumNames;
+	private List<String> applicableValuesList;
+	private Map<String, String> commandsMap;
+	private Map<String, String> namesMap;
 	private Object value;
 	private Object defaultValue;
 	private Integer valueType;
@@ -87,6 +88,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	private IConfigurationElement applicabilityCalculatorElement = null;
 	private IOptionApplicability applicabilityCalculator = null;
 	private BooleanExpressionApplicabilityCalculator booleanExpressionCalculator = null;
+	private ITreeRoot treeRoot;
 	//  Miscellaneous
 	private boolean isExtensionOption = false;
 	private boolean isDirty = false;
@@ -222,10 +224,13 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		if (option.resourceFilter != null) {
 			resourceFilter = new Integer(option.resourceFilter.intValue());
 		}
-		if (option.enumList != null) {
-			enumList = new ArrayList<String>(option.enumList);
-			enumCommands = new HashMap<String, String>(option.enumCommands);
-			enumNames = new HashMap<String, String>(option.enumNames);
+		if (option.applicableValuesList != null) {
+			applicableValuesList = new ArrayList<String>(option.applicableValuesList);
+			commandsMap = new HashMap<String, String>(option.commandsMap);
+			namesMap = new HashMap<String, String>(option.namesMap);
+		}
+		if (option.treeRoot != null) {
+			treeRoot = new TreeRoot((TreeRoot) option.treeRoot);
 		}
 
 		if (option.valueType != null) {
@@ -245,6 +250,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 					break;
 				case STRING:
 				case ENUMERATED:
+				case TREE:
 					if (option.value != null) {
 						value = new String((String)option.value);
 					}
@@ -549,18 +555,18 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 							ICStorageElement configElement = configNode;
 							String optId = SafeStringInterner.safeIntern(configElement.getAttribute(ID));
 							if (i == 0) {
-								enumList = new ArrayList<String>();
+								applicableValuesList = new ArrayList<String>();
 								if (defaultValue == null) {
 									defaultValue = optId;		//  Default value to be overridden is default is specified
 								}
 							}
-							enumList.add(optId);
+							applicableValuesList.add(optId);
 							if (configElement.getAttribute(COMMAND) != null) {
-								getEnumCommandMap().put(optId, SafeStringInterner.safeIntern(configElement.getAttribute(COMMAND)));
+								getCommandMap().put(optId, SafeStringInterner.safeIntern(configElement.getAttribute(COMMAND)));
 							} else {
-								getEnumCommandMap().put(optId, EMPTY_STRING);
+								getCommandMap().put(optId, EMPTY_STRING);
 							}
-							getEnumNameMap().put(optId, SafeStringInterner.safeIntern(configElement.getAttribute(NAME)));
+							getNameMap().put(optId, SafeStringInterner.safeIntern(configElement.getAttribute(NAME)));
 							if (configElement.getAttribute(IS_DEFAULT) != null) {
 								Boolean isDefault = new Boolean(configElement.getAttribute(IS_DEFAULT));
 								if (isDefault.booleanValue()) {
@@ -568,6 +574,14 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 								}
 							}
 						}
+					}
+					break;
+				case TREE:
+					if (element.getAttribute(VALUE) != null) {
+						value = element.getAttribute(VALUE);
+					}
+					if (element.getAttribute(DEFAULT_VALUE) != null) {
+						defaultValue = element.getAttribute(DEFAULT_VALUE);
 					}
 					break;
 				case STRING_LIST:
@@ -727,6 +741,8 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			return UNDEF_INCLUDE_FILES;
 		else if (valueTypeStr.equals(TYPE_UNDEF_SYMBOL_FILES))
 			return UNDEF_MACRO_FILES;
+		else if (valueTypeStr.equals(TYPE_TREE))
+			return TREE;
 		else {
 			// TODO:  This was the CDT 2.0 default - should we keep it?
 			return PREPROCESSOR_SYMBOLS;
@@ -789,6 +805,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 					break;
 				case STRING:
 				case ENUMERATED:
+				case TREE:
 					element.setAttribute(VALUE, (String)value);
 					break;
 				case STRING_LIST:
@@ -834,6 +851,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 					break;
 				case STRING:
 				case ENUMERATED:
+				case TREE:
 					element.setAttribute(DEFAULT_VALUE, (String)defaultValue);
 					break;
 				default:
@@ -897,6 +915,9 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 					break;
 				case UNDEF_MACRO_FILES:
 					str = TYPE_UNDEF_SYMBOL_FILES;
+					break;
+				case TREE:
+					str = TYPE_TREE;
 					break;
 				default:
 					//  TODO; is this a problem...
@@ -1039,7 +1060,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	@Override
 	public String[] getApplicableValues() {
 		// Does this option instance have the list of values?
-		if (enumList == null) {
+		if (applicableValuesList == null) {
 			if (superClass != null) {
 				return superClass.getApplicableValues();
 			} else {
@@ -1047,13 +1068,13 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			}
 		}
 		// Get all of the enumerated names from the option
-		if (enumList.size() == 0) {
+		if (applicableValuesList.size() == 0) {
 			return EMPTY_STRING_ARRAY;
 		} else {
 			// Return the elements in the order they are specified in the manifest
-			String[] enumNames = new String[enumList.size()];
-			for (int index = 0; index < enumList.size(); ++ index) {
-				enumNames[index] = getEnumNameMap().get(enumList.get(index));
+			String[] enumNames = new String[applicableValuesList.size()];
+			for (int index = 0; index < applicableValuesList.size(); ++ index) {
+				enumNames[index] = getNameMap().get(applicableValuesList.get(index));
 			}
 			return enumNames;
 		}
@@ -1311,35 +1332,35 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getEnumCommand(java.lang.String)
+	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getCommand(java.lang.String)
 	 */
 	@Override
-	public String getEnumCommand(String id) throws BuildException {
+	public String getCommand(String id) throws BuildException {
 		// Sanity
 		if (id == null) return EMPTY_STRING;
 
 		// Does this option instance have the list of values?
-		if (enumList == null) {
+		if (applicableValuesList == null) {
 			if (superClass != null) {
-				return superClass.getEnumCommand(id);
+				return superClass.getCommand(id);
 			} else {
 				return EMPTY_STRING;
 			}
 		}
-		if (getValueType() != ENUMERATED) {
+		if (getValueType() != ENUMERATED && getValueType() !=  TREE) {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
 
 		// First check for the command in ID->command map
-		String cmd = getEnumCommandMap().get(id);
+		String cmd = getCommandMap().get(id);
 		if (cmd == null) {
 			// This may be a 1.2 project or plugin manifest. If so, the argument is the human readable
 			// name of the enumeration. Search for the ID that maps to the name and use that to find the
 			// command.
-			for (String realID : enumList) {
-				String name = getEnumNameMap().get(realID);
+			for (String realID : applicableValuesList) {
+				String name = getNameMap().get(realID);
 				if (id.equals(name)) {
-					cmd = getEnumCommandMap().get(realID);
+					cmd = getCommandMap().get(realID);
 					break;
 				}
 			}
@@ -1348,17 +1369,30 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getEnumCommand(java.lang.String)
+	 */
+	@Override
+	public String getEnumCommand(String id) throws BuildException {
+		return getCommand(id);
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getEnumName(java.lang.String)
 	 */
 	@Override
 	public String getEnumName(String id) throws BuildException {
+		return getName(id);
+	}
+
+	@Override
+	public String getName(String id) throws BuildException {
 		// Sanity
 		if (id == null) return EMPTY_STRING;
 
 		// Does this option instance have the list of values?
-		if (enumList == null) {
+		if (applicableValuesList == null) {
 			if (superClass != null) {
-				return superClass.getEnumName(id);
+				return superClass.getName(id);
 			} else {
 				return EMPTY_STRING;
 			}
@@ -1368,7 +1402,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		}
 
 		// First check for the command in ID->name map
-		String name = getEnumNameMap().get(id);
+		String name = getNameMap().get(id);
 		if (name == null) {
 			// This may be a 1.2 project or plugin manifest. If so, the argument is the human readable
 			// name of the enumeration.
@@ -1384,11 +1418,11 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	 * @return a Map of enumerated option value IDs to actual commands that are passed
 	 * to a tool on the command line.
 	 */
-	private Map<String, String> getEnumCommandMap() {
-		if (enumCommands == null) {
-			enumCommands = new HashMap<String, String>();
+	private Map<String, String> getCommandMap() {
+		if (commandsMap == null) {
+			commandsMap = new HashMap<String, String>();
 		}
-		return enumCommands;
+		return commandsMap;
 	}
 
 	/* (non-Javadoc)
@@ -1396,23 +1430,28 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	 */
 	@Override
 	public String getEnumeratedId(String name) throws BuildException {
+		return getId(name);
+	}
+
+	@Override
+	public String getId(String name) throws BuildException {
 		if (name == null) return null;
 
 		// Does this option instance have the list of values?
-		if (enumList == null) {
+		if (applicableValuesList == null) {
 			if (superClass != null) {
-				return superClass.getEnumeratedId(name);
+				return superClass.getId(name);
 			} else {
 				return EMPTY_STRING;
 			}
 		}
-		if (getValueType() != ENUMERATED) {
+		if (getValueType() != ENUMERATED && getValueType() != TREE) {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
 
-		Set<String> idSet = getEnumNameMap().keySet();
+		Set<String> idSet = getNameMap().keySet();
 		for (String id : idSet) {
-			String enumName = getEnumNameMap().get(id);
+			String enumName = getNameMap().get(id);
 			if (name.equals(enumName)) {
 				return id;
 			}
@@ -1424,11 +1463,11 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	 *
 	 * @return a Map of enumerated option value IDs to the selection displayed to the user.
 	 */
-	private Map<String, String> getEnumNameMap() {
-		if (enumNames == null) {
-			enumNames = new HashMap<String, String>();
+	private Map<String, String> getNameMap() {
+		if (namesMap == null) {
+			namesMap = new HashMap<String, String>();
 		}
-		return enumNames;
+		return namesMap;
 	}
 
 	/* (non-Javadoc)
@@ -1537,7 +1576,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	 */
 	@Override
 	public String getStringValue() throws BuildException {
-		if (getValueType() != STRING && getValueType() != ENUMERATED) {
+		if (getValueType() != STRING && getValueType() != ENUMERATED && getValueType() != TREE) {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
 		return getValue() == null ? EMPTY_STRING : (String)getValue();
@@ -1609,6 +1648,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 						val = new Boolean(false);
 						break;
 					case STRING:
+					case TREE:
 						val = EMPTY_STRING;
 						break;
 					case ENUMERATED:
@@ -1669,6 +1709,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 						val = new Boolean(false);
 						break;
 					case STRING:
+					case TREE:
 						val = EMPTY_STRING;
 						break;
 					case ENUMERATED:
@@ -1949,7 +1990,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	@Override
 	public void setValue(String value) throws BuildException {
 		// Note that we can still set the human-readable value here
-		if (/*!isExtensionElement() && */(getValueType() == STRING || getValueType() == ENUMERATED)) {
+		if (/*!isExtensionElement() && */(getValueType() == STRING || getValueType() == ENUMERATED || getValueType() == TREE)) {
 			this.value = value;
 		} else {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
@@ -2281,19 +2322,43 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 						for (int i = 0; i < enumElements.length; ++i) {
 							String optId = SafeStringInterner.safeIntern(enumElements[i].getAttribute(ID));
 							if (i == 0) {
-								enumList = new ArrayList<String>();
+								applicableValuesList = new ArrayList<String>();
 								if (defaultValue == null) {
 									defaultValue = optId;		//  Default value to be overridden if default is specified
 								}
 							}
-							enumList.add(optId);
-							getEnumCommandMap().put(optId, SafeStringInterner.safeIntern(enumElements[i].getAttribute(COMMAND)));
-							getEnumNameMap().put(optId, SafeStringInterner.safeIntern(enumElements[i].getAttribute(NAME)));
+							applicableValuesList.add(optId);
+							getCommandMap().put(optId, SafeStringInterner.safeIntern(enumElements[i].getAttribute(COMMAND)));
+							getNameMap().put(optId, SafeStringInterner.safeIntern(enumElements[i].getAttribute(NAME)));
 							Boolean isDefault = new Boolean(enumElements[i].getAttribute(IS_DEFAULT));
 							if (isDefault.booleanValue()) {
 								defaultValue = optId;
 							}
 						}
+						break;
+					case TREE:
+						value = element.getAttribute(VALUE);
+						defaultValue = element.getAttribute(DEFAULT_VALUE);
+						
+						IManagedConfigElement[] treeRootConfigs = element.getChildren(TREE_ROOT);
+						if (treeRootConfigs != null && treeRootConfigs.length == 1) {
+							IManagedConfigElement treeRootConfig = treeRootConfigs[0];
+							treeRoot = new TreeRoot(treeRootConfig, element, getParent() instanceof IToolChain);
+							applicableValuesList = new ArrayList<String>();
+							iterateOnTree(treeRoot, new ITreeNodeIterator() {
+								
+								@Override
+								public void iterateOnNode(ITreeOption node) {}
+								
+								@Override
+								public void iterateOnLeaf(ITreeOption leafNode) {
+									applicableValuesList.add(leafNode.getID());
+									getCommandMap().put(leafNode.getID(), leafNode.getCommand());
+									getNameMap().put(leafNode.getID(), leafNode.getName());
+								}
+							});
+						}
+					
 						break;
 					case STRING_LIST:
 					case INCLUDE_PATH:
@@ -2613,6 +2678,8 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			return IOption.STRING;
 		case IOption.ENUMERATED:
 			return IOption.ENUMERATED;
+		case IOption.TREE:
+			return IOption.TREE;
 		default:
 			return IOption.STRING_LIST;
 		}
@@ -2657,5 +2724,268 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			return MACRO_FILES;
 		}
 		return 0;
+	}
+
+	public static class TreeRoot extends TreeOption implements ITreeRoot {
+		private boolean selectLeafOnly = true;
+		TreeRoot(IManagedConfigElement element, IManagedConfigElement buildOption, boolean readTool) {
+			super(element, null, readTool);
+			String leaf = element.getAttribute(SELECT_LEAF_ONLY);
+			if (leaf != null) {
+				selectLeafOnly = Boolean.valueOf(leaf);
+			}
+			String toolTip = buildOption.getAttribute(TOOL_TIP);
+			if (description == null && toolTip != null) {
+				description = toolTip;
+			}
+		}
+		
+		public TreeRoot() {
+			super("", "", null); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+
+		public TreeRoot(TreeRoot clone) {
+			super(clone, null);
+			selectLeafOnly = clone.selectLeafOnly;
+		}
+
+		@Override
+		public boolean isSelectLeafsOnly() {
+			return selectLeafOnly;
+		}
+
+		@Override
+		public ITreeOption findNode(String id) {
+			if(id == null) return null;
+			return find(id, children);
+		}
+
+		private ITreeOption find(String id, List<ITreeOption> children) {
+			ITreeOption found = null;
+			if (children != null) {
+				for (ITreeOption child : children) {
+					if (id.equals(child.getID())) {
+						found = child;
+						break;
+					}
+					found = find(id, ((TreeOption)child).children);
+					if (found != null) break;
+				}
+			}
+			return found;
+		}
+
+		@Override
+		public ITreeOption addNode(String id, String name, String category, Integer order) {
+			ITreeOption parent = this;
+			if (category != null && category.length() > 0) {
+				ITreeOption tempParent;
+				String tempCategory = "";
+				String[] categories = category.split("\\."); //$NON-NLS-1$
+				for (String cat : categories) {
+					tempCategory += cat;
+					tempParent = parent.getChild(cat);
+					if (tempParent == null) {
+						tempParent = parent.addChild(cat, cat);
+						if (order != null) {
+							tempParent.setOrder(order);
+						}
+					}
+					parent = tempParent;
+					tempCategory += '.';
+				}
+			}
+			
+			ITreeOption child = parent.addChild(id, name);
+			if (order != null) {
+				child.setOrder(order);
+			}
+			return child;
+		}
+		
+	}
+	
+	private static class TreeOption implements ITreeOption {
+		private String treeNodeId;
+		private String treeNodeName;
+		protected String description;
+		protected String icon;
+		protected String command;
+		protected List<ITreeOption> children = null;
+		private int order = DEFAULT_ORDER;
+		private ITreeOption parent;
+
+		TreeOption(IManagedConfigElement element, ITreeOption parent, boolean readTool) {
+			treeNodeId = element.getAttribute(ID);
+			treeNodeName = element.getAttribute(NAME);
+			description = element.getAttribute(DESCRIPTION);
+			command = element.getAttribute(COMMAND);
+			icon = element.getAttribute(ICON);
+			
+			String orderStr = element.getAttribute(ORDER);
+			if (orderStr != null && orderStr.trim().length() > 0) {
+				try {
+					order = Integer.parseInt(orderStr);
+				} catch (NumberFormatException e) {
+					// Do nothing, default value is used.
+				}
+			}
+			this.parent = parent;
+			
+			IManagedConfigElement[] treeChildren = element.getChildren(TREE_VALUE);
+			if (treeChildren != null && treeChildren.length > 0) {
+				children = new ArrayList<IOption.ITreeOption>();
+				for (IManagedConfigElement configElement : treeChildren) {
+					children.add(new TreeOption(configElement, this, readTool));
+				}
+			}
+		}
+		
+		TreeOption(TreeOption clone, ITreeOption parent) {
+			treeNodeId = clone.treeNodeId;
+			treeNodeName = clone.treeNodeName;
+			description = clone.description;
+			command = clone.command;
+			icon = clone.icon;
+			order = clone.order;
+			this.parent = parent;
+			
+			if (clone.children != null) {
+				children = new ArrayList<IOption.ITreeOption>();
+				for (ITreeOption cloneChild : clone.children) {
+					children.add(new TreeOption((TreeOption) cloneChild, this));
+				}
+			}
+		}
+		
+		private TreeOption(String id, String name, ITreeOption parent) {
+			this.treeNodeId = id;
+			this.treeNodeName = name;
+			this.parent = parent;
+		}
+
+		@Override
+		public ITreeOption addChild(String id, String name) {
+			ITreeOption option = new TreeOption(id, name, this);
+			if (children == null) {
+				children = new ArrayList<IOption.ITreeOption>();
+			}
+			children.add(0, option);
+			return option;
+		}
+		
+		@Override
+		public boolean isContainer() {
+			return children != null && !children.isEmpty(); // TODO do we need explicit marking as container for empty ones
+		}
+
+		@Override
+		public String getName() {
+			return treeNodeName;
+		}
+
+		@Override
+		public String getID() {
+			return treeNodeId;
+		}
+
+		@Override
+		public String getDescription() {
+			return description;
+		}
+		
+		@Override
+		public String getCommand() {
+			return command;
+		}
+		
+		@Override
+		public String getIcon() {
+			return icon;
+		}
+
+		@Override
+		public ITreeOption[] getChildren() {
+			if (children == null) return null;
+			return children.toArray(new ITreeOption[children.size()]);
+		}
+		
+		@Override
+		public ITreeOption getChild(String name) {
+			if (children == null || name == null) return null;
+			for (ITreeOption child : children) {
+				if (name.equals(child.getName())) {
+					return child;
+				}
+			}
+			return null;
+		}
+
+		@Override
+		public ITreeOption getParent() {
+			return parent;
+		}
+
+		@Override
+		public int getOrder() {
+			return order;
+		}
+
+		@Override
+		public void setOrder(int order) {
+			this.order = order;
+		}
+
+		@Override
+		public void remove() {
+			((TreeOption)parent).children.remove(this);
+			
+		}
+
+		@Override
+		public String toString() {
+			return getName();
+		}
+	}
+			
+	/**
+	 * Calls the iterator (visitor) on the passed parent as well as all nodes in its subtree.
+	 * @param it
+	 * @param parent
+	 */
+	public static void iterateOnTree(ITreeOption parent, ITreeNodeIterator it) {
+		
+		it.iterateOnNode(parent);
+		if (!parent.isContainer()) {
+			it.iterateOnLeaf(parent);
+		}
+		
+		ITreeOption[] children = parent.getChildren();
+		if (children != null) {
+			for (ITreeOption option : children) {
+				iterateOnTree(option, it);
+			}
+		}
+	}
+	
+	public interface ITreeNodeIterator {
+		void iterateOnNode(ITreeOption node);
+		void iterateOnLeaf(ITreeOption leafNode);
+	}
+
+	@Override
+	public ITreeRoot getTreeRoot() throws BuildException {
+		if (treeRoot == null) {
+			if (superClass != null) {
+				return superClass.getTreeRoot();
+			} else {
+				return null;
+			}			
+		}
+		if (getValueType() != TREE) {
+			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
+		}
+		
+		return treeRoot;
 	}
 }

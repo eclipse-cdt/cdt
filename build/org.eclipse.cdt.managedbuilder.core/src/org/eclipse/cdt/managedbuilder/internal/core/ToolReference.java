@@ -201,7 +201,9 @@ public class ToolReference implements IToolReference {
 							clone.setValue(parent.getBooleanValue());
 							break;
 						case IOption.STRING:
+						case IOption.TREE:
 							clone.setValue(parent.getStringValue());
+							break;
 						case IOption.ENUMERATED:
 							clone.setValue(parent.getSelectedEnum());
 							break;
@@ -518,6 +520,13 @@ public class ToolReference implements IToolReference {
 						}
 						break;
 
+					case IOption.TREE :
+						String treeVal = option.getCommand(option.getStringValue());
+						if (treeVal.length() > 0) {
+							buf.append(treeVal + WHITE_SPACE);
+						}
+						break;
+					
 					case IOption.STRING :
 						String strCmd = option.getCommand();
 						String val = option.getStringValue();

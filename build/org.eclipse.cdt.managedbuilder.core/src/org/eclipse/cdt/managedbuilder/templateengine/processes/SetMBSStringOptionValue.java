@@ -118,7 +118,7 @@ public class SetMBSStringOptionValue extends ProcessRunner {
 		for (IOption option : options) {
 			if (option.getBaseId().toLowerCase().matches(lowerId)) {
 				int optionType = option.getValueType();
-				if ((optionType == IOption.STRING) || (optionType == IOption.ENUMERATED)) {
+				if ((optionType == IOption.STRING) || (optionType == IOption.ENUMERATED) || (optionType == IOption.TREE)) {
 					ManagedBuildManager.setOption(resourceConfig, optionHolder, option, value);
 					modified = true;
 				}
@@ -133,7 +133,7 @@ public class SetMBSStringOptionValue extends ProcessRunner {
 		for (IOption option : options) {
 			if (option.getBaseId().toLowerCase().matches(lowerId)) {
 				int optionType = option.getValueType();
-				if ((optionType == IOption.STRING) || (optionType == IOption.ENUMERATED)) {
+				if ((optionType == IOption.STRING) || (optionType == IOption.ENUMERATED) || (optionType == IOption.TREE)) {
 					ManagedBuildManager.setOption(config, optionHolder, option, value);
 					modified = true;
 				}

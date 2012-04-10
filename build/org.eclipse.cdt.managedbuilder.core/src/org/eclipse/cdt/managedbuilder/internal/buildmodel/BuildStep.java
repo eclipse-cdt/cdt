@@ -657,7 +657,7 @@ public class BuildStep implements IBuildStep {
 						} else {
 							ManagedBuildManager.setOption(cfg, fTool, assignToOption, false);
 						}
-					} else if (optType == IOption.ENUMERATED) {
+					} else if (optType == IOption.ENUMERATED || optType == IOption.TREE) {
 						if (bRcs.length > 0) {
 							ManagedBuildManager.setOption(cfg, fTool, assignToOption, BuildDescriptionManager.getRelPath(cwd, bRcs[0].getLocation()).toOSString());
 						}

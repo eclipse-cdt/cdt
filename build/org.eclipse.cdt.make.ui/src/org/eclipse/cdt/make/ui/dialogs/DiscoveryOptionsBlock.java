@@ -183,12 +183,8 @@ public class DiscoveryOptionsBlock extends AbstractDiscoveryOptionsBlock {
         ((GridData)scEnabledButton.getLayoutData()).horizontalSpan = numColumns;
         ((GridData)scEnabledButton.getLayoutData()).grabExcessHorizontalSpace = true;
         // VMIR* old projects will have discovery disabled by default
-        boolean autodiscoveryEnabled2 = getBuildInfo().isAutoDiscoveryEnabled();
-		if (autodiscoveryEnabled2) {
-			ICProjectDescription projDesc = CoreModel.getDefault().getProjectDescription(getProject());
-			ICConfigurationDescription cfgDescription = projDesc.getActiveConfiguration();
-			autodiscoveryEnabled2 = ScannerDiscoveryLegacySupport.isLegacyScannerDiscoveryOn(cfgDescription);
-		}
+        boolean autodiscoveryEnabled2 = getBuildInfo().isAutoDiscoveryEnabled() &&
+        		ScannerDiscoveryLegacySupport.isLegacyScannerDiscoveryOn(getProject());
 		scEnabledButton.setSelection(needsSCNature ? false
                 : (autodiscoveryEnabled2
                     && !getBuildInfo().getSelectedProfileId().equals(ScannerConfigProfileManager.NULL_PROFILE_ID)));

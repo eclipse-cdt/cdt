@@ -20,8 +20,6 @@ import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsEditabl
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.managedbuilder.language.settings.providers.ToolchainBuiltinSpecsDetector;
 
-
-
 /**
  * Language settings provider to detect built-in compiler settings for IBM XLC compiler.
  */

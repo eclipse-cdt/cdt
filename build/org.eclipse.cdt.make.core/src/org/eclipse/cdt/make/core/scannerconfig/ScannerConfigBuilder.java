@@ -62,6 +62,11 @@ public class ScannerConfigBuilder extends ACBuilder {
 //		boolean autodiscoveryEnabled;
 		if(buildNewStyle(getProject(), monitor))
 			return getProject().getReferencedProjects();
+		
+		if (!ScannerDiscoveryLegacySupport.isLegacyScannerDiscoveryOn(getProject())) {
+			return getProject().getReferencedProjects();
+		}
+		
 		boolean autodiscoveryEnabled2;
 		IScannerConfigBuilderInfo2 buildInfo2 = null;
 		try {
@@ -77,11 +82,6 @@ public class ScannerConfigBuilder extends ACBuilder {
 
             buildInfo2 = ScannerConfigProfileManager.createScannerConfigBuildInfo2(getProject());
             autodiscoveryEnabled2 = buildInfo2.isAutoDiscoveryEnabled();
-			if (autodiscoveryEnabled2) {
-				ICProjectDescription prjDescription = CoreModel.getDefault().getProjectDescription(getProject());
-				ICConfigurationDescription cfgDescription = prjDescription.getActiveConfiguration();
-				autodiscoveryEnabled2 = ScannerDiscoveryLegacySupport.isLegacyScannerDiscoveryOn(cfgDescription);
-			}
 
             if (autodiscoveryEnabled2) {
                 monitor.beginTask(MakeMessages.getString("ScannerConfigBuilder.Invoking_Builder"), 100); //$NON-NLS-1$
@@ -135,26 +135,22 @@ public class ScannerConfigBuilder extends ACBuilder {
 	}
 
 	protected boolean build(IProject project, InfoContext context, IScannerConfigBuilderInfo2 buildInfo2, IProgressMonitor monitor){
-            boolean autodiscoveryEnabled2 = buildInfo2.isAutoDiscoveryEnabled();
+		if (ScannerDiscoveryLegacySupport.isLegacyScannerDiscoveryOn(getProject())) {
+			boolean autodiscoveryEnabled2 = buildInfo2.isAutoDiscoveryEnabled();
 			if (autodiscoveryEnabled2) {
-				ICProjectDescription prjDescription = CoreModel.getDefault().getProjectDescription(getProject());
-				ICConfigurationDescription cfgDescription = prjDescription.getActiveConfiguration();
-				autodiscoveryEnabled2 = ScannerDiscoveryLegacySupport.isLegacyScannerDiscoveryOn(cfgDescription);
+				monitor.beginTask(MakeMessages.getString("ScannerConfigBuilder.Invoking_Builder"), 100); //$NON-NLS-1$
+				monitor.subTask(MakeMessages.getString("ScannerConfigBuilder.Invoking_Builder") +   //$NON-NLS-1$
+						getProject().getName());
+
+				// get scanner info from all external providers
+				SCJobsUtil.getProviderScannerInfo(getProject(), context, buildInfo2, new SubProgressMonitor(monitor, 70));
+
+				// update and persist scanner configuration
+				SCJobsUtil.updateScannerConfiguration(getProject(), context, buildInfo2, new SubProgressMonitor(monitor, 30));
+				return true;
 			}
-
-            if (autodiscoveryEnabled2) {
-                monitor.beginTask(MakeMessages.getString("ScannerConfigBuilder.Invoking_Builder"), 100); //$NON-NLS-1$
-                monitor.subTask(MakeMessages.getString("ScannerConfigBuilder.Invoking_Builder") +   //$NON-NLS-1$
-                        getProject().getName());
-
-                // get scanner info from all external providers
-                SCJobsUtil.getProviderScannerInfo(getProject(), context, buildInfo2, new SubProgressMonitor(monitor, 70));
-
-                // update and persist scanner configuration
-                SCJobsUtil.updateScannerConfiguration(getProject(), context, buildInfo2, new SubProgressMonitor(monitor, 30));
-                return true;
-            }
-            return false;
+		}
+		return false;
 	}
 
 

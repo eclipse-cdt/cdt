@@ -381,21 +381,14 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 			}
 		};
 
-		IProject ownerProject = null;
+		IProject project = null;
 		if (currentCfgDescription != null) {
 			ICProjectDescription prjDescription = currentCfgDescription.getProjectDescription();
 			if (prjDescription != null) {
-				ownerProject = prjDescription.getProject();
+				project = prjDescription.getProject();
 			}
 		}
-		ISchedulingRule rule = null;
-		if (ownerProject != null) {
-			rule = ownerProject.getFile(".settings/language.settings.xml");
-		}
-		if (rule == null) {
-			rule = ResourcesPlugin.getWorkspace().getRoot();
-		}
-		job.setRule(rule);
+		job.setRule(project);
 		job.schedule();
 
 		// AG FIXME - temporary log to remove before CDT Juno release

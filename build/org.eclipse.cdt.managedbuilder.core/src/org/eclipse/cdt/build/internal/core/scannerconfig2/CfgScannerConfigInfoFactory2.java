@@ -217,8 +217,8 @@ public class CfgScannerConfigInfoFactory2 {
 											if (id == null) {
 												// Language Settings Providers are meant to replace legacy scanner discovery
 												// so do not try to find default profile
-												IProject project = cfg.getOwner().getProject();
-												if (!ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityEnabled(project)) {
+												ICConfigurationDescription cfgDescription = ManagedBuildManager.getDescriptionForConfiguration(cfg);
+												if (ScannerDiscoveryLegacySupport.isLegacyScannerDiscoveryOn(cfgDescription)) {
 													id = CfgScannerConfigUtil.getDefaultProfileId(context, true);
 												}
 											}

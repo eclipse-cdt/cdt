@@ -165,6 +165,7 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 			break;
 
 		}
+
 		setSettingEntries(currentCfgDescription, rc, currentLanguageId, entries);
 
 		// AG FIXME - temporary log to remove before CDT Juno release

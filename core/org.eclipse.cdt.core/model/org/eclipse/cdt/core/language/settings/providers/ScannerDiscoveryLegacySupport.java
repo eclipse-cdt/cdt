@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.internal.core.LocalProjectScope;
@@ -119,6 +120,19 @@ public class ScannerDiscoveryLegacySupport {
 		return isLanguageSettingsProvidersFunctionalityEnabled(project) || isMbsLanguageSettingsProviderOn(cfgDescription);
 	}
 
+	/**
+	 * @noreference This is internal helper method to support compatibility with previous versions
+	 * which is not intended to be referenced by clients.
+	 */
+	public static boolean isLegacyScannerDiscoveryOn(IProject project) {
+		ICConfigurationDescription cfgDescription = null;
+		ICProjectDescription prjDescription = CoreModel.getDefault().getProjectDescription(project);
+		if (prjDescription != null) {
+			cfgDescription = prjDescription.getActiveConfiguration();
+		}
+		return isLanguageSettingsProvidersFunctionalityEnabled(project) || isMbsLanguageSettingsProviderOn(cfgDescription);
+	}
+	
 	/**
 	 * Return list containing MBS and User provider. Used to initialize for unaware tool-chains (backward compatibility).
 	 */

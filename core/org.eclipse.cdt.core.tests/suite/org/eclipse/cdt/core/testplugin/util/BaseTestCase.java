@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *    Andrew Ferguson (Symbian)
+ *     Markus Schorn - initial API and implementation
+ *     Andrew Ferguson (Symbian)
  *******************************************************************************/ 
 package org.eclipse.cdt.core.testplugin.util;
 
@@ -45,9 +45,9 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
 public class BaseTestCase extends TestCase {
-	private boolean fExpectFailure= false;
-	private int fBugnumber= 0;
-	private int fExpectedLoggedNonOK= 0;
+	private boolean fExpectFailure;
+	private int fBugNumber;
+	private int fExpectedLoggedNonOK;
 	
 	public BaseTestCase() {
 		super();
@@ -213,8 +213,8 @@ public class BaseTestCase extends TestCase {
         	}
         } else if (r.errorCount() == 0 && r.failureCount() == 0) {
             String err = "Unexpected success of " + getName();
-            if (fBugnumber > 0) {
-                err += ", bug #" + fBugnumber; 
+            if (fBugNumber > 0) {
+                err += ", bug #" + fBugNumber; 
             }
             result.addFailure(this, new AssertionFailedError(err));
         }
@@ -222,9 +222,9 @@ public class BaseTestCase extends TestCase {
         result.endTest(this);
     }
     
-    public void setExpectFailure(int bugnumber) {
+    public void setExpectFailure(int bugNumber) {
     	fExpectFailure= true;
-    	fBugnumber= bugnumber;
+    	fBugNumber= bugNumber;
     }
     
     /**

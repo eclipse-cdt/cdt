@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Andrew Ferguson (Symbian) - Initial implementation
- *    Markus Schorn (Wind River Systems)
+ *     Andrew Ferguson (Symbian) - Initial implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
@@ -28,17 +28,17 @@ class CompositeCPPFunction extends CompositeCPPBinding implements ICPPFunction {
 
 	@Override
 	public boolean isExternC() {
-		return ((ICPPFunction)rbinding).isExternC();
+		return ((ICPPFunction) rbinding).isExternC();
 	}
 
 	@Override
 	public boolean isInline() {
-		return ((ICPPFunction)rbinding).isInline();
+		return ((ICPPFunction) rbinding).isInline();
 	}
 
 	@Override
 	public boolean isMutable() {
-		return ((ICPPFunction)rbinding).isMutable();
+		return ((ICPPFunction) rbinding).isMutable();
 	}
 
 	@Override
@@ -48,8 +48,8 @@ class CompositeCPPFunction extends CompositeCPPBinding implements ICPPFunction {
 
 	@Override
 	public ICPPParameter[] getParameters() {
-		ICPPParameter[] result = ((ICPPFunction)rbinding).getParameters();
-		for(int i=0; i<result.length; i++) {
+		ICPPParameter[] result = ((ICPPFunction) rbinding).getParameters();
+		for (int i= 0; i < result.length; i++) {
 			result[i] = (ICPPParameter) cf.getCompositeBinding((IIndexFragmentBinding) result[i]);
 		}
 		return result;
@@ -57,48 +57,48 @@ class CompositeCPPFunction extends CompositeCPPBinding implements ICPPFunction {
 
 	@Override
 	public ICPPFunctionType getType() {
-		IType rtype = ((ICPPFunction)rbinding).getType();
+		IType rtype = ((ICPPFunction) rbinding).getType();
 		return (ICPPFunctionType) cf.getCompositeType(rtype);
 	}
 
 	@Override
 	public boolean isDeleted() {
-		return ((ICPPFunction)rbinding).isDeleted();
+		return ((ICPPFunction) rbinding).isDeleted();
 	}
 
 	@Override
 	public boolean isAuto() {
-		return ((ICPPFunction)rbinding).isAuto();
+		return ((ICPPFunction) rbinding).isAuto();
 	}
 
 	@Override
 	public boolean isExtern() {
-		return ((ICPPFunction)rbinding).isExtern();
+		return ((ICPPFunction) rbinding).isExtern();
 	}
 
 	@Override
 	public boolean isRegister() {
-		return ((ICPPFunction)rbinding).isRegister();
+		return ((ICPPFunction) rbinding).isRegister();
 	}
 
 	@Override
 	public boolean isStatic() {
-		return ((ICPPFunction)rbinding).isStatic();
+		return ((ICPPFunction) rbinding).isStatic();
 	}
 
 	@Override
 	public boolean takesVarArgs() {
-		return ((ICPPFunction)rbinding).takesVarArgs();
+		return ((ICPPFunction) rbinding).takesVarArgs();
 	}
 	
 	@Override
 	public int getRequiredArgumentCount() {
-		return ((ICPPFunction)rbinding).getRequiredArgumentCount();
+		return ((ICPPFunction) rbinding).getRequiredArgumentCount();
 	}
 
 	@Override
 	public boolean hasParameterPack() {
-		return ((ICPPFunction)rbinding).hasParameterPack();
+		return ((ICPPFunction) rbinding).hasParameterPack();
 	}
 
 	@Override
@@ -108,14 +108,12 @@ class CompositeCPPFunction extends CompositeCPPBinding implements ICPPFunction {
 
 	@Override
 	public String toString() {
-		StringBuffer result = new StringBuffer();
-		result.append(getName()+" "+ASTTypeUtil.getParameterTypeString(getType())); //$NON-NLS-1$
-		return result.toString();
+		return getName() + " " + ASTTypeUtil.getParameterTypeString(getType()); //$NON-NLS-1$
 	}
 
 	@Override
 	public IType[] getExceptionSpecification() {
-		IType[] es= ((ICPPFunction)rbinding).getExceptionSpecification();
+		IType[] es= ((ICPPFunction) rbinding).getExceptionSpecification();
 		if (es == null || es.length == 0)
 			return es;
 		

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
-
 /**
  * This represents a function in the program. A function is also a scope
  * for other bindings.
@@ -19,19 +18,18 @@ package org.eclipse.cdt.core.dom.ast;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IFunction extends IBinding {
-
 	/**
 	 * Returns the formal parameters of the function.
 	 */
 	public IParameter[] getParameters();
 	
 	/**
-	 * Get the function scope
+	 * Returns the function scope
 	 */
 	public IScope getFunctionScope();
 	
 	/**
-	 * Get the IFunctionType for this function
+	 * Returns the IFunctionType for this function
 	 */
 	public IFunctionType getType();
 	

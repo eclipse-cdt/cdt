@@ -24,7 +24,6 @@ import org.eclipse.core.runtime.PlatformObject;
 
 @SuppressWarnings("restriction")
 public class C99Function extends PlatformObject implements IC99Binding, IFunction, ITypeable {
-
 	private String name;
 	private IFunctionType type;
 	private List<IParameter> parameters = new ArrayList<IParameter>();
@@ -41,7 +40,6 @@ public class C99Function extends PlatformObject implements IC99Binding, IFunctio
 	
 	// the scope that represents the body of the function
 	private IScope bodyScope;
-	
 
 	public C99Function() {
 	}
@@ -54,8 +52,7 @@ public class C99Function extends PlatformObject implements IC99Binding, IFunctio
 		this(name);
 		this.type = type;
 	}
-	
-	
+
 	public IParameter[] getParameters() {
 		return parameters.toArray(new IParameter[parameters.size()]);
 	}

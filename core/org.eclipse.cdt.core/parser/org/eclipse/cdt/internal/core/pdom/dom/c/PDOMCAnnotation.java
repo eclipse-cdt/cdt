@@ -9,7 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.core.pdom.dom.c;
 
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -24,7 +23,6 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
  * (const, volatile).
  */
 public class PDOMCAnnotation {
-
 	// Storage class specifiers and function annotations
 	public static final int AUTO_OFFSET = 0;
 	public static final int EXTERN_OFFSET = 1;

@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Bryan Wilkinson (QNX) - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     Bryan Wilkinson (QNX) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -35,20 +35,18 @@ import org.eclipse.core.runtime.CoreException;
  */
 class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICPPFunction {
 	/**
-	 * Offset of total number of function parameters (relative to the
-	 * beginning of the record).
+	 * Offset of total number of function parameters (relative to the beginning of the record).
 	 */
 	private static final int NUM_PARAMS = PDOMCPPSpecialization.RECORD_SIZE;
 
 	/**
-	 * Offset of pointer to the first parameter of this function (relative to
-	 * the beginning of the record).
+	 * Offset of pointer to the first parameter of this function (relative to the beginning
+	 * of the record).
 	 */
 	private static final int FIRST_PARAM = NUM_PARAMS + 4;
 
 	/**
-	 * Offset for type of this function (relative to
-	 * the beginning of the record).
+	 * Offset for type of this function (relative to the beginning of the record).
 	 */
 	private static final int FUNCTION_TYPE = FIRST_PARAM + Database.PTR_SIZE;	
 
@@ -58,19 +56,18 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICP
 	protected static final int EXCEPTION_SPEC = FUNCTION_TYPE + Database.TYPE_SIZE; // int
 
 	/**
-	 * Offset of annotation information (relative to the beginning of the
-	 * record).
+	 * Offset of annotation information (relative to the beginning of the record).
 	 */
 	protected static final int ANNOTATION_OFFSET = EXCEPTION_SPEC + Database.PTR_SIZE; // short
 	
 	private static final int REQUIRED_ARG_COUNT_OFFSET= ANNOTATION_OFFSET + 2;
+
 	/**
 	 * The size in bytes of a PDOMCPPFunction record in the database.
 	 */
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = REQUIRED_ARG_COUNT_OFFSET + 4;
 
-	
 	private static final short ANNOT_PARAMETER_PACK = 8;
 	private static final short ANNOT_IS_DELETED = 9;
 
@@ -102,7 +99,7 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICP
 			PDOMCPPParameterSpecialization next= null;
 			for (int i= length-1; i >= 0; --i) {
 				// There may be fewer or less original parameters, because of parameter packs.
-				if (i < origAstParams.length-1) {
+				if (i < origAstParams.length - 1) {
 					// Normal case
 					origPar= new PDOMCPPParameter(linkage, specialized, origAstParams[i], null);
 				} else if (origPar == null) {
@@ -118,12 +115,11 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICP
 		db.putInt(record + REQUIRED_ARG_COUNT_OFFSET, astFunction.getRequiredArgumentCount());
 		long typelist= 0;
 		if (astFunction instanceof ICPPMethod && ((ICPPMethod) astFunction).isImplicit()) {
-			// don't store the exception specification, computed it on demand.
+			// Don't store the exception specification, it is computed on demand.
 		} else {
 			typelist = PDOMCPPTypeList.putTypes(this, astFunction.getExceptionSpecification());
 		}
 		db.putRecPtr(record + EXCEPTION_SPEC, typelist);
-
 	}
 
 	private short getAnnotation(ICPPFunction astFunction) {
@@ -132,7 +128,7 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICP
 			annot |= (1 << ANNOT_PARAMETER_PACK);
 		}
 		if (astFunction.isDeleted()) {
-			annot |= (1<<ANNOT_IS_DELETED);
+			annot |= (1 << ANNOT_IS_DELETED);
 		}
 		return (short) annot;
 	}
@@ -190,8 +186,9 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICP
 			
 			long next = db.getRecPtr(record + FIRST_PARAM);
  			for (int i = 0; i < n && next != 0; i++) {
- 				IType type= i<ptypes.length ? ptypes[i] : null;
-				final PDOMCPPParameterSpecialization par = new PDOMCPPParameterSpecialization(linkage, next, type);
+ 				IType type= i < ptypes.length ? ptypes[i] : null;
+				final PDOMCPPParameterSpecialization par =
+						new PDOMCPPParameterSpecialization(linkage, next, type);
 				next= par.getNextPtr();
 				result[i]= par;
 			}
@@ -247,7 +244,6 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICP
 		return getBit(readAnnotation(), PDOMCAnnotation.VARARGS_OFFSET);
 	}
 
-	
 	@Override
 	public int getRequiredArgumentCount() {
 		if (fRequiredArgCount == -1) {
@@ -291,7 +287,7 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICP
 	@Override
 	public IType[] getExceptionSpecification() {
 		try {
-			final long rec = getPDOM().getDB().getRecPtr(record+EXCEPTION_SPEC);
+			final long rec = getPDOM().getDB().getRecPtr(record + EXCEPTION_SPEC);
 			return PDOMCPPTypeList.getTypes(this, rec);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

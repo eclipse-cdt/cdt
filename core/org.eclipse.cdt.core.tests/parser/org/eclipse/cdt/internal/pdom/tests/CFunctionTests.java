@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM Corporation - initial API and implementation
+ *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
@@ -27,7 +27,6 @@ import org.eclipse.core.runtime.NullProgressMonitor;
  * C functions.
  */
 public class CFunctionTests extends PDOMTestBase {
-
 	protected ICProject project;
 	protected PDOM pdom;
 
@@ -81,7 +80,7 @@ public class CFunctionTests extends PDOMTestBase {
 		IFunction f= (IFunction) bindings[0];
 		IParameter[] params= f.getParameters();
 		assertEquals(3, params.length);
-		assertNull(params[0].getType()); // its a problem binding in the DOM 
+		assertNull(params[0].getType()); // It's a problem binding in the DOM 
 		assertTrue(params[1].getType() instanceof ICBasicType);
 		assertTrue(params[2].getType() instanceof ICBasicType); 
 	}

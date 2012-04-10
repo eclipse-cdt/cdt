@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Rational Software - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -34,6 +35,7 @@ import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.Linkage;
+import org.eclipse.cdt.internal.core.dom.parser.ASTAttribute;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.core.runtime.PlatformObject;
 
@@ -48,7 +50,7 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
 	private static final int RESOLUTION_IN_PROGRESS = 1 << 1;
 	private int bits = 0;
 
-	protected IFunctionType type = null;
+	protected IFunctionType type;
 
 	public CFunction(IASTDeclarator declarator) {
 		storeDeclarator(declarator);
@@ -469,17 +471,38 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
 	}
 
 	@Override
-	public IASTNode[] getDeclarations() {
+	public IASTDeclarator[] getDeclarations() {
 		return declarators;
 	}
 
 	@Override
-	public IASTNode getDefinition() {
+	public IASTFunctionDeclarator getDefinition() {
 		return definition;
 	}
 
 	@Override
 	public IBinding getOwner() {
 		return null;
+	}
+
+	@Override
+	public boolean isNoReturn() {
+		IASTFunctionDeclarator dtor = getPreferredDtor();
+		return dtor != null && ASTAttribute.hasNoreturnAttribute(dtor);
+	}
+
+	protected IASTFunctionDeclarator getPreferredDtor() {
+		IASTFunctionDeclarator dtor = getDefinition();
+        if (dtor != null)
+        	return dtor;
+
+        IASTDeclarator[] dtors = getDeclarations();
+        if (dtors != null) {
+        	for (IASTDeclarator declarator : dtors) {
+        		if (declarator instanceof IASTFunctionDeclarator)
+        			return (IASTFunctionDeclarator) declarator;
+        	}
+        }
+        return null;
 	}
 }

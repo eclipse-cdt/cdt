@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
 import org.eclipse.cdt.core.formatter.DefaultCodeFormatterOptions;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.formatter.align.Alignment;
 import org.eclipse.cdt.internal.formatter.align.AlignmentException;
 import org.eclipse.cdt.internal.formatter.scanner.Scanner;
@@ -35,7 +36,6 @@ import org.eclipse.text.edits.TextEdit;
  */
 public class Scribe {
 	private static final String EMPTY_STRING= ""; //$NON-NLS-1$
-	private static final char[] EMPTY_CHAR_ARRAY= {};
 	private static final String SPACE= " "; //$NON-NLS-1$
 
 	private static final int INITIAL_SIZE= 100;
@@ -105,7 +105,7 @@ public class Scribe {
 		int currentIndentation;
 		int indentation;
 		int lines;
-		char[] leadingSpaces = EMPTY_CHAR_ARRAY;
+		char[] leadingSpaces = CharArrayUtils.EMPTY_CHAR_ARRAY;
 	}
 	final LineComment lastLineComment = new LineComment();
 
@@ -1082,7 +1082,7 @@ public class Scribe {
 		boolean hasComment= false;
 		boolean hasLineComment= false;
 		boolean hasWhitespace= false;
-		char[] whiteSpaces= EMPTY_CHAR_ARRAY;
+		char[] whiteSpaces= CharArrayUtils.EMPTY_CHAR_ARRAY;
 		int lines= 0;
 		while ((currentToken= scanner.nextToken()) != null) {
 			if (skipOverInactive) {
@@ -1243,7 +1243,7 @@ public class Scribe {
 					lastLineComment.leadingSpaces = whiteSpaces;
 					lastLineComment.lines = lines;
 				}
-				whiteSpaces= EMPTY_CHAR_ARRAY;
+				whiteSpaces= CharArrayUtils.EMPTY_CHAR_ARRAY;
 				hasWhitespace= false;
 				printLineComment();
 				currentTokenStartPosition= scanner.getCurrentPosition();
@@ -1260,7 +1260,7 @@ public class Scribe {
 				} else if (hasWhitespace) {
 					space();
 				}
-				whiteSpaces= EMPTY_CHAR_ARRAY;
+				whiteSpaces= CharArrayUtils.EMPTY_CHAR_ARRAY;
 				hasWhitespace= false;
 				printBlockComment(false);
 				currentTokenStartPosition= scanner.getCurrentPosition();
@@ -1280,7 +1280,7 @@ public class Scribe {
 						// printNewLine(scanner.getCurrentTokenStartPosition());
 					}
 				}
-				whiteSpaces= EMPTY_CHAR_ARRAY;
+				whiteSpaces= CharArrayUtils.EMPTY_CHAR_ARRAY;
 				hasWhitespace= false;
 				printPreprocessorDirective();
 				printNewLine();

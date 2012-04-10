@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation.
+ * Copyright (c) 2006, 2012 IBM Corporation.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
@@ -38,7 +39,6 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class CPPFunctionTests extends PDOMTestBase {
 	protected ICProject project;
-
 	protected PDOM pdom;
 
 	public static Test suite() {
@@ -137,13 +137,19 @@ public class CPPFunctionTests extends PDOMTestBase {
 		assertEquals(1, bindings.length);
 		assertTrue(((ICPPFunction) bindings[0]).isInline());
 	}
-	
+
 	public void testVarArgsCPPFunction() throws Exception {
 		IBinding[] bindings = findQualifiedName(pdom, "varArgsCPPFunction");
 		assertEquals(1, bindings.length);
 		assertTrue(((ICPPFunction) bindings[0]).takesVarArgs());
 	}
-	
+
+	public void testNoReturnCPPFunction() throws Exception {
+		IBinding[] bindings = findQualifiedName(pdom, "noReturnCPPFunction");
+		assertEquals(1, bindings.length);
+		assertTrue(((ICPPFunction) bindings[0]).isNoReturn());
+	}
+
 	public void testForwardDeclarationType() throws Exception {
 		assertType(pdom, "forwardDeclaration", ICPPFunction.class);		
 	}

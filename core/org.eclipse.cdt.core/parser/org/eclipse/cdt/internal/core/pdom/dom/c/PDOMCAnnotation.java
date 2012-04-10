@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation.
+ * Copyright (c) 2006, 2012 IBM Corporation.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.c;
 
@@ -30,6 +31,7 @@ public class PDOMCAnnotation {
 	public static final int REGISTER_OFFSET = 3;
 	public static final int STATIC_OFFSET = 4;
 	public static final int VARARGS_OFFSET = 5;
+	public static final int NO_RETURN = 6;
 
 	// CV qualifiers
 	public static final int CONST_OFFSET = 0;
@@ -46,19 +48,20 @@ public class PDOMCAnnotation {
 		byte modifiers = 0;
 		if (binding instanceof IVariable) {
 			IVariable variable = (IVariable) binding;
-			modifiers |= (variable.isAuto() ? 1 : 0) << PDOMCAnnotation.AUTO_OFFSET;
-			modifiers |= (variable.isExtern() ? 1 : 0) << PDOMCAnnotation.EXTERN_OFFSET;
-			modifiers |= (variable.isRegister() ? 1 : 0) << PDOMCAnnotation.REGISTER_OFFSET;
-			modifiers |= (variable.isStatic() ? 1 : 0) << PDOMCAnnotation.STATIC_OFFSET;
+			modifiers |= (variable.isAuto() ? 1 : 0) << AUTO_OFFSET;
+			modifiers |= (variable.isExtern() ? 1 : 0) << EXTERN_OFFSET;
+			modifiers |= (variable.isRegister() ? 1 : 0) << REGISTER_OFFSET;
+			modifiers |= (variable.isStatic() ? 1 : 0) << STATIC_OFFSET;
 		}
 		if (binding instanceof IFunction) {
 			IFunction function = (IFunction) binding;
-			modifiers |= (function.isAuto() ? 1 : 0) << PDOMCAnnotation.AUTO_OFFSET;
-			modifiers |= (function.isExtern() ? 1 : 0) << PDOMCAnnotation.EXTERN_OFFSET;
-			modifiers |= (function.isRegister() ? 1 : 0) << PDOMCAnnotation.REGISTER_OFFSET;
-			modifiers |= (ASTInternal.isStatic(function, false) ? 1 : 0) << PDOMCAnnotation.STATIC_OFFSET;
-			modifiers |= (function.isInline() ? 1 : 0) << PDOMCAnnotation.INLINE_OFFSET;
-			modifiers |= (function.takesVarArgs() ? 1 : 0) << PDOMCAnnotation.VARARGS_OFFSET;
+			modifiers |= (function.isAuto() ? 1 : 0) << AUTO_OFFSET;
+			modifiers |= (function.isExtern() ? 1 : 0) << EXTERN_OFFSET;
+			modifiers |= (function.isRegister() ? 1 : 0) << REGISTER_OFFSET;
+			modifiers |= (ASTInternal.isStatic(function, false) ? 1 : 0) << STATIC_OFFSET;
+			modifiers |= (function.isInline() ? 1 : 0) << INLINE_OFFSET;
+			modifiers |= (function.takesVarArgs() ? 1 : 0) << VARARGS_OFFSET;
+			modifiers |= (function.isNoReturn() ? 1 : 0) << NO_RETURN;
 		}
 		return modifiers;
 	}

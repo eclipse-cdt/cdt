@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 QNX Software Systems and others.
+ * Copyright (c) 2007, 2012 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Bryan Wilkinson (QNX) - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -242,6 +243,11 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICP
 	@Override
 	public boolean takesVarArgs() {
 		return getBit(readAnnotation(), PDOMCAnnotation.VARARGS_OFFSET);
+	}
+
+	@Override
+	public boolean isNoReturn() {
+		return getBit(readAnnotation(), PDOMCAnnotation.NO_RETURN);
 	}
 
 	@Override

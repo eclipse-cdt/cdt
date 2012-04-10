@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 QNX Software Systems and others.
+ * Copyright (c) 2006, 2012 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     IBM Corporation
  *     Andrew Ferguson (Symbian)
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.c;
 
@@ -58,7 +59,7 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 	 */
 	@SuppressWarnings("hiding")
 	public static final int RECORD_SIZE = ANNOTATIONS + 1;
-	
+
 	public PDOMCFunction(PDOMLinkage linkage, long record) {
 		super(linkage, record);
 	}
@@ -195,7 +196,12 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 	public boolean takesVarArgs() {
 		return getBit(getByte(record + ANNOTATIONS), PDOMCAnnotation.VARARGS_OFFSET);
 	}
-	
+
+	@Override
+	public boolean isNoReturn() {
+		return getBit(getByte(record + ANNOTATIONS), PDOMCAnnotation.NO_RETURN);
+	}
+
 	@Override
 	public IScope getFunctionScope() {
 		return null;

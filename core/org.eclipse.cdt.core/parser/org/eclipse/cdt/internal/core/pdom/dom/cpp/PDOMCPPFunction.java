@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 QNX Software Systems and others.
+ * Copyright (c) 2005, 2012 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     Doug Schaefer (QNX) - Initial API and implementation
  *     IBM Corporation
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -345,6 +346,11 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 	@Override
 	public boolean takesVarArgs() {
 		return getBit(getAnnotation(), PDOMCAnnotation.VARARGS_OFFSET);
+	}
+
+	@Override
+	public boolean isNoReturn() {
+		return getBit(getAnnotation(), PDOMCAnnotation.NO_RETURN);
 	}
 
 	@Override

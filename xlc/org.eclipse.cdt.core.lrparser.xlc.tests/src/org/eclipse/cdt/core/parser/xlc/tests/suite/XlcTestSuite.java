@@ -14,13 +14,15 @@ package org.eclipse.cdt.core.parser.xlc.tests.suite;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.core.parser.xlc.tests.XlcExtensionsTestSuite;
+import org.eclipse.cdt.core.parser.xlc.tests.base.XlcLRParserTestSuite;
+
 public class XlcTestSuite extends TestSuite {
 
 	public static Test suite() {
 		return new TestSuite() {{
-			// AG FIXME - temporarily commented out on sd90 branch
-//			addTest(XlcExtensionsTestSuite.suite());
-//			addTest(XlcLRParserTestSuite.suite());
+			addTest(XlcExtensionsTestSuite.suite());
+			addTest(XlcLRParserTestSuite.suite());
 		}};
 	}
 }

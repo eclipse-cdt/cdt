@@ -157,8 +157,13 @@ public class ExpressionVMProviderModelProxyStrategy extends DefaultVMModelProxyS
         case ADDED:
             // New expressions are always added one element before last.  
             // Last element is the "Add new expression" element.
+            // Note: Index should be calculated when the IExpressionListener.expressionsAdded 
+            // is called.  If it's not, try to calculate it here based on parent count. 
             int parentCount = parentDelta.getChildCount();
-            parentDelta.addNode(element, parentCount > 1 ? parentCount - 2 : -1, IModelDelta.ADDED);            
+            if (elementIdx == -1 && parentCount > 1) {
+                elementIdx = parentCount - 2;
+            }
+            parentDelta.addNode(element, elementIdx, IModelDelta.ADDED);            
             break;
         case CHANGED:
             parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);

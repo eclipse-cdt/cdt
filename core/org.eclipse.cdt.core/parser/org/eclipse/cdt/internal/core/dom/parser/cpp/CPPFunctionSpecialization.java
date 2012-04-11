@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Andrew Niefer (IBM) - Initial API and implementation
- *    Bryan Wilkinson (QNX)
- *    Markus Schorn (Wind River Systems)
+ *     Andrew Niefer (IBM) - Initial API and implementation
+ *     Bryan Wilkinson (QNX)
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -40,9 +40,9 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
  * also used as base class for function instances.
  */
 public class CPPFunctionSpecialization extends CPPSpecialization implements ICPPFunction, ICPPInternalFunction {
-	private ICPPFunctionType type = null;
-	private ICPPParameter[] fParams = null;
-	private IType[] specializedExceptionSpec = null;
+	private ICPPFunctionType type;
+	private ICPPParameter[] fParams;
+	private IType[] specializedExceptionSpec;
 	private final ICPPClassSpecialization fContext;
 
 	public CPPFunctionSpecialization(ICPPFunction orig, IBinding owner, ICPPTemplateParameterMap argMap) {
@@ -139,7 +139,7 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 			IASTNode def = getDefinition();
 			while (!(def instanceof IASTFunctionDefinition))
 				def = def.getParent();
-			return ((IASTFunctionDefinition)def).getDeclSpecifier().isInline();
+			return ((IASTFunctionDefinition) def).getDeclSpecifier().isInline();
 		}
 		return getFunction().isInline();
 	}
@@ -156,12 +156,13 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 	public boolean isStatic() {
 		return isStatic(true);
 	}
+
 	@Override
 	public boolean isStatic(boolean resolveAll) {
 		//TODO resolveAll
 		IBinding f = getSpecializedBinding();
 		if (f instanceof ICPPInternalFunction)
-			return ((ICPPInternalFunction)f).isStatic(resolveAll);
+			return ((ICPPInternalFunction) f).isStatic(resolveAll);
 		if (f instanceof IIndexBinding && f instanceof ICPPFunction) {
 			return ((ICPPFunction) f).isStatic();
 		}
@@ -325,8 +326,8 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 			IType[] types = function.getExceptionSpecification();
 			if (types != null) {
 				IType[] specializedTypeList = new IType[types.length];
-				int j=0;
-				for (int i=0; i<types.length; ++i) {
+				int j= 0;
+				for (int i= 0; i < types.length; ++i) {
 					final IType origType = types[i];
 					if (origType instanceof ICPPParameterPackType) {
 						IType[] specialized= specializeTypePack((ICPPParameterPackType) origType);

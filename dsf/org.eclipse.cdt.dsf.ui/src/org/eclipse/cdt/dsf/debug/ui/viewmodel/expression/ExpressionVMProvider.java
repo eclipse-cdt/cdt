@@ -360,7 +360,7 @@ public class ExpressionVMProvider extends AbstractDMVMProvider
 
     @Override
 	public void expressionsAdded(IExpression[] expressions) {
-        expressionsListChanged(ExpressionsChangedEvent.Type.ADDED, expressions, -1);
+        expressionsListChanged(ExpressionsChangedEvent.Type.ADDED, expressions, DebugPlugin.getDefault().getExpressionManager().getExpressions().length - expressions.length);
     }
     
     @Override

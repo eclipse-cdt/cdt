@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Andrew Ferguson (Symbian) - Initial implementation
+ *     Andrew Ferguson (Symbian) - Initial implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.c;
 
@@ -31,9 +31,9 @@ class CompositeCFunction extends CompositeCBinding implements IFunction {
 	
 	@Override
 	public IParameter[] getParameters() {
-		IParameter[] preResult = ((IFunction)rbinding).getParameters();
+		IParameter[] preResult = ((IFunction) rbinding).getParameters();
 		IParameter[] result = new IParameter[preResult.length];
-		for(int i=0; i<preResult.length; i++) {
+		for (int i= 0; i < preResult.length; i++) {
 			result[i] = (IParameter) cf.getCompositeBinding((IIndexFragmentBinding) preResult[i]);
 		}
 		return result;
@@ -41,37 +41,37 @@ class CompositeCFunction extends CompositeCBinding implements IFunction {
 	
 	@Override
 	public IFunctionType getType() {
-		IType rtype = ((IFunction)rbinding).getType();
+		IType rtype = ((IFunction) rbinding).getType();
 		return (IFunctionType) cf.getCompositeType(rtype);
 	}
 
 	@Override
 	public boolean isAuto() {
-		return ((IFunction)rbinding).isAuto();
+		return ((IFunction) rbinding).isAuto();
 	}
 
 	@Override
 	public boolean isExtern() {
-		return ((IFunction)rbinding).isExtern();
+		return ((IFunction) rbinding).isExtern();
 	}
 
 	@Override
 	public boolean isInline() {
-		return ((IFunction)rbinding).isInline();
+		return ((IFunction) rbinding).isInline();
 	}
 
 	@Override
 	public boolean isRegister() {
-		return ((IFunction)rbinding).isRegister();
+		return ((IFunction) rbinding).isRegister();
 	}
 
 	@Override
 	public boolean isStatic() {
-		return ((IFunction)rbinding).isStatic();
+		return ((IFunction) rbinding).isStatic();
 	}
 
 	@Override
 	public boolean takesVarArgs() {
-		return ((IFunction)rbinding).takesVarArgs();
+		return ((IFunction) rbinding).takesVarArgs();
 	}
 }

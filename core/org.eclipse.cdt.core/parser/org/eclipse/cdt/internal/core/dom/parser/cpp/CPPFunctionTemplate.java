@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Andrew Niefer (IBM) - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     Andrew Niefer (IBM) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -45,8 +45,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
  */
 public class CPPFunctionTemplate extends CPPTemplateDefinition
 		implements ICPPFunctionTemplate, ICPPInternalFunction {
-	
-	protected ICPPFunctionType type = null;
+	protected ICPPFunctionType type;
 
 	public CPPFunctionTemplate(IASTName name) {
 		super(name);
@@ -143,7 +142,7 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
 			while (parent.getParent() instanceof IASTDeclarator)
 				parent = parent.getParent();
 
-			IType t = getNestedType(CPPVisitor.createType((IASTDeclarator)parent), TDEF);
+			IType t = getNestedType(CPPVisitor.createType((IASTDeclarator) parent), TDEF);
 			if (t instanceof ICPPFunctionType) {
 				type = (ICPPFunctionType) t;
 			} else if (t instanceof ISemanticProblem){
@@ -171,10 +170,11 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
 	            	return true;
 	            }
             }
-            if (ns != null && ++i < ns.length)
+            if (ns != null && ++i < ns.length) {
                 name = (IASTName) ns[i];
-            else
+            } else {
                 break;
+            }
         } while (name != null);
         return false;
 	}
@@ -284,11 +284,12 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
 	            if (declSpec != null && declSpec.isInline())
                     return true;
             }
-            if (ns != null && ++i < ns.length)
+            if (ns != null && ++i < ns.length) {
                 name = (IASTName) ns[i];
-            else
+            } else {
                 break;
-        } while(name != null);
+            }
+        } while (name != null);
         return false;
     }
 
@@ -338,7 +339,7 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
     }
 
 	private IASTDeclarator getDeclaratorByName(IASTNode node) {
-		// skip qualified names and nested declarators.
+		// Skip qualified names and nested declarators.
     	while (node != null) {
     		node= node.getParent();	
     		if (node instanceof IASTDeclarator) {
@@ -375,7 +376,7 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
 			}
 			
 			IType[] typeIds = new IType[astTypeIds.length];
-			for (int i=0; i<astTypeIds.length; ++i) {
+			for (int i = 0; i < astTypeIds.length; ++i) {
 				typeIds[i] = CPPVisitor.createType(astTypeIds[i]);
 			}
 			return typeIds;

@@ -27,15 +27,14 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionType;
 public class CExternalFunction extends CFunction implements ICExternalBinding {
     private static final IType VOID_TYPE = 	new CBasicType(Kind.eVoid, 0);
 
-	private IASTName name = null;
-    private IASTTranslationUnit tu = null;
+	private IASTName name;
+    private IASTTranslationUnit tu;
     
-    public CExternalFunction( IASTTranslationUnit tu, IASTName name ) {
-    	super( null );
+    public CExternalFunction(IASTTranslationUnit tu, IASTName name) {
+    	super(null);
         this.name = name;
         this.tu = tu;
     }
-
 
     @Override
 	public IFunctionType getType() {

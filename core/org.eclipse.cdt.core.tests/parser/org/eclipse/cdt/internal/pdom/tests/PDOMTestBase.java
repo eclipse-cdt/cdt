@@ -6,10 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    QNX - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
- *    IBM Corporation
- *    Symbian - Fix a race condition (157992)
+ *     QNX - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *     IBM Corporation
+ *     Symbian - Fix a race condition (157992)
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
@@ -55,7 +55,6 @@ import org.eclipse.ui.wizards.datatransfer.ImportOperation;
  * @author Doug Schaefer
  */
 public class PDOMTestBase extends BaseTestCase {
-
 	protected static final IProgressMonitor PROGRESS = new NullProgressMonitor();
 	static IPath rootPath = new Path("resources/pdomtests");
 	private String projectName= null;
@@ -100,7 +99,7 @@ public class PDOMTestBase extends BaseTestCase {
 			mj.join();
 			// Index the project
 			CCorePlugin.getIndexManager().setIndexerId(cprojects[0], IPDOMManager.ID_FAST_INDEXER);
-			// wait until the indexer is done
+			// Wait until the indexer is done
 			try {
 				waitForIndexer(cprojects[0]);
 			} catch (InterruptedException e) {
@@ -210,8 +209,6 @@ public class PDOMTestBase extends BaseTestCase {
 		assertEquals(visibility, member.getVisibility());
 	}
 
-
-
 	public static final void assertFunctionRefCount(PDOM pdom, Class[] args, IBinding[] bindingPool, int refCount) throws CoreException {
 		IBinding[] bindings = findIFunctions(args, bindingPool);
 		assertEquals(1, bindings.length);
@@ -223,16 +220,16 @@ public class PDOMTestBase extends BaseTestCase {
 	public static IBinding[] findIFunctions(Class[] paramTypes, IBinding[] bindings) throws CoreException {
 		List preresult = new ArrayList();
 		for (IBinding binding : bindings) {
-			if(binding instanceof IFunction) {
+			if (binding instanceof IFunction) {
 				IFunction function = (IFunction) binding;
 				IType[] candidate = function.getType().getParameterTypes();
 				boolean areEqual = candidate.length == paramTypes.length;
-				for(int j=0; areEqual && j<paramTypes.length; j++) {
-					if(!paramTypes[j].isAssignableFrom(candidate[j].getClass())) {
+				for (int j= 0; areEqual && j < paramTypes.length; j++) {
+					if (!paramTypes[j].isAssignableFrom(candidate[j].getClass())) {
 						areEqual = false;
 					}
 				}
-				if(areEqual) {
+				if (areEqual) {
 					preresult.add(binding);
 				}
 			}
@@ -242,7 +239,7 @@ public class PDOMTestBase extends BaseTestCase {
 
 	protected void assertInstance(Object o, Class c) {
 		assertNotNull(o);
-		assertTrue("Expected "+c.getName()+" but got "+o.getClass().getName(), c.isInstance(o));
+		assertTrue("Expected " + c.getName() + " but got " + o.getClass().getName(), c.isInstance(o));
 	}
 	
 	public static Pattern[] makePatternArray(String[] args) {

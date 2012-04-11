@@ -6,12 +6,11 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    QNX - Initial API and implementation
- *    IBM Corporation
- *    Andrew Ferguson (Symbian)
- *    Markus Schorn (Wind River Systems)
+ *     QNX - Initial API and implementation
+ *     IBM Corporation
+ *     Andrew Ferguson (Symbian)
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.core.pdom.dom.c;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -32,30 +31,25 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author Doug Schaefer
- *
  */
 class PDOMCFunction extends PDOMBinding implements IFunction {
 	/**
-	 * Offset of total number of function parameters (relative to the
-	 * beginning of the record).
+	 * Offset of total number of function parameters (relative to the beginning of the record).
 	 */
 	public static final int NUM_PARAMS = PDOMBinding.RECORD_SIZE;
 	
 	/**
-	 * Offset of total number of function parameters (relative to the
-	 * beginning of the record).
+	 * Offset of total number of function parameters (relative to the beginning of the record).
 	 */
 	public static final int FIRST_PARAM = NUM_PARAMS + 4;
 	
 	/**
-	 * Offset for the type of this function (relative to
-	 * the beginning of the record).
+	 * Offset for the type of this function (relative to the beginning of the record).
 	 */
 	private static final int FUNCTION_TYPE = FIRST_PARAM + Database.PTR_SIZE;
 	
 	/**
-	 * Offset of annotation information (relative to the beginning of the
-	 * record).
+	 * Offset of annotation information (relative to the beginning of the record).
 	 */
 	private static final int ANNOTATIONS = FUNCTION_TYPE + Database.TYPE_SIZE; // byte
 	

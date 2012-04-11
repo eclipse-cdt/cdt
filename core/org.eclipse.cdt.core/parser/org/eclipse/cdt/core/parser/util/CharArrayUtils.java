@@ -12,22 +12,24 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.util;
 
+import java.util.Arrays;
+
 /**
  * A static utility class for char arrays
  * @author dschaefe
- *
  */
 public class CharArrayUtils {
-	public static final char[] EMPTY = new char[0];
+	public static final char[] EMPTY = {};
 
 	private CharArrayUtils() {}
-	
+
 	public static final int hash(char[] str, int start, int length) {
 		int h = 0;
 		int end = start + length;
-		
-		for (int curr = start; curr < end; ++curr)
+
+		for (int curr = start; curr < end; ++curr) {
 			h += (h << 3) + str[curr];
+		}
 
 		return h;
 	}
@@ -35,19 +37,9 @@ public class CharArrayUtils {
 	public static final int hash(char[] str) {
 		return hash(str, 0, str.length);
 	}
-	
+
 	public static final boolean equals(char[] str1, char[] str2) {
-		if (str1 == str2)
-			return true;
-		
-		if (str1.length != str2.length)
-			return false;
-		
-		for (int i = 0; i < str1.length; ++i)
-			if (str1[i] != str2[i])
-				return false;
-		
-		return true;
+		return Arrays.equals(str1, str2);
 	}
 
 	public static final boolean equals(char[][] strarr1, char[][] strarr2) {
@@ -55,7 +47,7 @@ public class CharArrayUtils {
 			return false;
 		}
 		for (int i = 0; i < strarr2.length; i++) {
-			if (!equals(strarr1[i], strarr2[i])) {
+			if (!Arrays.equals(strarr1[i], strarr2[i])) {
 				return false;
 			}
 		}
@@ -65,64 +57,65 @@ public class CharArrayUtils {
 	/**
 	 * Implements a lexicographical comparator for char arrays. Comparison is done
 	 * on a per char basis, not a code-point basis.
-	 * 
+	 *
 	 * @param str1 the first of the two char arrays to compare
 	 * @param str2 the second of the two char arrays to compare
 	 * @return  0 if str1==str2, -1 if str1 &lt; str2 and 1 if str1 &gt; str2
 	 */
-	/* 
+	/*
 	 * aftodo - we should think about using the Character codepoint static methods
 	 * if we move to Java 5
 	 */
 	public static final int compare(char[] str1, char[] str2) {
 		if (str1 == str2)
 			return 0;
-		
+
 		int end= Math.min(str1.length, str2.length);
 		for (int i = 0; i < end; ++i) {
 			int diff= str1[i] - str2[i];
 			if (diff != 0)
 				return diff;
 		}
-		
+
 		return str1.length - str2.length;
 	}
-	
+
 	public static final boolean equals(char[] str1, int start1, int length1, char[] str2) {
-		if (length1 != str2.length || str1.length < length1+start1 )
+		if (length1 != str2.length || str1.length < length1 + start1)
 			return false;
-		if( str1 == str2 && start1 == 0 )
+		if (str1 == str2 && start1 == 0)
 		    return true;
-		for (int i = 0; i < length1; ++i)
+		for (int i = 0; i < length1; ++i) {
 			if (str1[start1++] != str2[i])
 				return false;
-		
+		}
+
 		return true;
 	}
-	
-	public static final boolean equals(char[] str1, int start1, int length1, char[] str2, boolean ignoreCase ) {
-	    if( !ignoreCase )
-	        return equals( str1, start1, length1, str2 );
-	    
-		if (length1 != str2.length || str1.length < start1 + length1 )
+
+	public static final boolean equals(char[] str1, int start1, int length1, char[] str2, boolean ignoreCase) {
+	    if (!ignoreCase)
+	        return equals(str1, start1, length1, str2);
+
+		if (length1 != str2.length || str1.length < start1 + length1)
 			return false;
-		
-		for (int i = 0; i < length1; ++i)
-			if( Character.toLowerCase(str1[start1++]) != Character.toLowerCase( str2[i] ) )
+
+		for (int i = 0; i < length1; ++i) {
+			if (Character.toLowerCase(str1[start1++]) != Character.toLowerCase(str2[i]))
 				return false;
-		
+		}
 		return true;
 	}
-	
+
 	public static final char[] extract(char[] str, int start, int length) {
 		if (start == 0 && length == str.length)
 			return str;
-		
+
 		char[] copy = new char[length];
 		System.arraycopy(str, start, copy, 0, length);
 		return copy;
 	}
-	
+
 	public static final char[] concat(char[] first, char[] second) {
 		if (first == null)
 			return second;
@@ -136,12 +129,8 @@ public class CharArrayUtils {
 		System.arraycopy(second, 0, result, length1, length2);
 		return result;
 	}
-	
-	public static final char[] replace(
-		char[] array,
-		char[] toBeReplaced,
-		char[] replacementChars) {
 
+	public static final char[] replace(char[] array, char[] toBeReplaced, char[] replacementChars) {
 		int max = array.length;
 		int replacedLength = toBeReplaced.length;
 		int replacementLength = replacementChars.length;
@@ -150,8 +139,7 @@ public class CharArrayUtils {
 		int occurrenceCount = 0;
 
 		if (!equals(toBeReplaced, replacementChars)) {
-
-			next : for (int i = 0; i < max; i++) {
+			next: for (int i = 0; i < max; i++) {
 				int j = 0;
 				while (j < replacedLength) {
 					if (i + j == max)
@@ -160,21 +148,15 @@ public class CharArrayUtils {
 						continue next;
 				}
 				if (occurrenceCount == starts.length) {
-					System.arraycopy(
-						starts,
-						0,
-						starts = new int[occurrenceCount * 2],
-						0,
-						occurrenceCount);
+					System.arraycopy(starts, 0, starts = new int[occurrenceCount * 2], 0,
+							occurrenceCount);
 				}
 				starts[occurrenceCount++] = i;
 			}
 		}
 		if (occurrenceCount == 0)
 			return array;
-		char[] result =
-			new char[max
-				+ occurrenceCount * (replacementLength - replacedLength)];
+		char[] result = new char[max + occurrenceCount * (replacementLength - replacedLength)];
 		int inStart = 0, outStart = 0;
 		for (int i = 0; i < occurrenceCount; i++) {
 			int offset = starts[i] - inStart;
@@ -223,50 +205,55 @@ public class CharArrayUtils {
 		System.arraycopy(array, start, result, 0, end - start);
 		return result;
 	}
-	
+
 	public static final int indexOf(char toBeFound, char[] array) {
-		for (int i = 0; i < array.length; i++)
+		for (int i = 0; i < array.length; i++) {
 			if (toBeFound == array[i])
 				return i;
-		return -1;
-	}
-	
-    public static int indexOf( char toBeFound, char[] buffer, int start, int end ) {
-        if( start < 0 || start > buffer.length || end > buffer.length )
-            return -1;
-        
-        for (int i = start; i < end; i++)
-			if (toBeFound == buffer[i])
-				return i;
-		return -1;
-    }
-    
-	public static final int indexOf( char[] toBeFound, char[] array ){
-	    if( toBeFound.length > array.length )
-	        return -1;
-	    
-	    int j = 0;
-	    for( int i = 0; i < array.length; i++ ){
-	        if( toBeFound[j] == array[i] ){
-	            if( ++j == toBeFound.length )
-	                return i - j + 1;
-	        }
-	        else j = 0; 
-	    }
-	    return -1;
-	}
-	
-	public static final int lastIndexOf(char[] toBeFound, char[] array) {
-	    int j = toBeFound.length - 1;
-		for (int i = array.length; --i >= 0;){
-			if (toBeFound[j] == array[i]){
-			    if( --j == -1 )
-			        return i;
-			} else j = toBeFound.length - 1;
 		}
 		return -1;
 	}
-	
+
+    public static int indexOf(char toBeFound, char[] buffer, int start, int end) {
+        if (start < 0 || start > buffer.length || end > buffer.length)
+            return -1;
+
+        for (int i = start; i < end; i++) {
+			if (toBeFound == buffer[i])
+				return i;
+        }
+		return -1;
+    }
+
+	public static final int indexOf(char[] toBeFound, char[] array) {
+	    if (toBeFound.length > array.length)
+	        return -1;
+
+	    int j = 0;
+	    for (int i = 0; i < array.length; i++) {
+	        if (toBeFound[j] == array[i]) {
+	            if (++j == toBeFound.length)
+	                return i - j + 1;
+	        } else {
+	        	j = 0;
+	        }
+	    }
+	    return -1;
+	}
+
+	public static final int lastIndexOf(char[] toBeFound, char[] array) {
+	    int j = toBeFound.length - 1;
+		for (int i = array.length; --i >= 0;) {
+			if (toBeFound[j] == array[i]) {
+			    if (--j == -1)
+			        return i;
+			} else {
+				j = toBeFound.length - 1;
+			}
+		}
+		return -1;
+	}
+
 	final static public char[] trim(char[] chars) {
 		if (chars == null)
 			return null;
@@ -296,20 +283,20 @@ public class CharArrayUtils {
      * @param i
      * @param charImage
      */
-    public static void overWrite( char[] buff, int i, char[] charImage ) {
-        if( buff.length < i + charImage.length )
+    public static void overWrite(char[] buff, int i, char[] charImage) {
+        if (buff.length < i + charImage.length)
             return;
-        for( int j = 0; j < charImage.length; j++ ){
-            buff[ i + j ] = charImage[j];
+        for (int j = 0; j < charImage.length; j++) {
+            buff[i + j] = charImage[j];
         }
     }
-    
+
     /**
      * Find an array of chars in an array of arrays of chars.
      * @return offset where the array was found or <code>-1</code>
      */
     public static int indexOf(final char[] searchFor, final char[][] searchIn) {
-		for (int i=0; i < searchIn.length; i++) {
+		for (int i = 0; i < searchIn.length; i++) {
 			if (equals(searchIn[i], searchFor)) {
 				return i;
 			}

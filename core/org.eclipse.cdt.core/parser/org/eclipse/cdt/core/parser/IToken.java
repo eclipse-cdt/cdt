@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM Rational Software) - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     John Camelon (IBM Rational Software) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser;
 
@@ -16,7 +16,6 @@ package org.eclipse.cdt.core.parser;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IToken {
-	
 	// getters
 	public int getType();
 	public String getImage();
@@ -27,19 +26,17 @@ public interface IToken {
 	public IToken getNext();
 	
 	public void setNext(IToken t);
-	public void setType(int i);	
-
+	public void setType(int i);
 	
 	// Token types
 	int FIRST_RESERVED_PREPROCESSOR= -200;
 	int LAST_RESERVED_PREPROCESSOR= -101;
 	int FIRST_RESERVED_SCANNER= -100;
 	int LAST_RESERVED_SCANNER= -1;
-	
+
 	/** @since 5.2 */ 
 	int t_PRAGMA = 5200;
 
-	
 	int tIDENTIFIER = 1;
 	int tINTEGER = 2;
 	int tCOLONCOLON = 3;

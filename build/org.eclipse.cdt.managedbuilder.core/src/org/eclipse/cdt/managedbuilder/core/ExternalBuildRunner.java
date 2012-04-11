@@ -99,6 +99,7 @@ public class ExternalBuildRunner extends AbstractBuildRunner {
 				String[] targets = getTargets(kind, builder);
 				if (targets.length != 0 && targets[targets.length - 1].equals(builder.getCleanBuildTarget()))
 					isClean = true;
+				boolean isOnlyClean = isClean && (targets.length == 1);
 
 				String[] args = getCommandArguments(builder, targets);
 
@@ -111,7 +112,7 @@ public class ExternalBuildRunner extends AbstractBuildRunner {
 				ErrorParserManager epm = new ErrorParserManager(project, workingDirectoryURI, markerGenerator, errorParsers);
 
 				List<IConsoleParser> parsers = new ArrayList<IConsoleParser>();
-				if (!isClean) {
+				if (!isOnlyClean) {
 					ManagedBuildManager.collectLanguageSettingsConsoleParsers(cfgDescription, epm, parsers);
 					if (ScannerDiscoveryLegacySupport.isLegacyScannerDiscoveryOn(cfgDescription)) {
 						collectScannerInfoConsoleParsers(project, configuration, workingDirectoryURI, markerGenerator, parsers);

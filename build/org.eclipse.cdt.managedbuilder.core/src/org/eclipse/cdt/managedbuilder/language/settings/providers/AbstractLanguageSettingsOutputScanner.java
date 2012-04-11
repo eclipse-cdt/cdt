@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariableManager;
+import org.eclipse.cdt.core.language.settings.providers.ICBuildOutputParser;
 import org.eclipse.cdt.core.language.settings.providers.IWorkingDirectoryTracker;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsSerializableProvider;

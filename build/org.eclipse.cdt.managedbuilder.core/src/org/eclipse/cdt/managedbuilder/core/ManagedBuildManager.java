@@ -50,6 +50,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.eclipse.cdt.core.AbstractCExtension;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IConsoleParser;
+import org.eclipse.cdt.core.language.settings.providers.ICBuildOutputParser;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvidersKeeper;
 import org.eclipse.cdt.core.language.settings.providers.IWorkingDirectoryTracker;
@@ -104,7 +105,6 @@ import org.eclipse.cdt.managedbuilder.internal.dataprovider.ConfigurationDataPro
 import org.eclipse.cdt.managedbuilder.internal.envvar.EnvironmentVariableProvider;
 import org.eclipse.cdt.managedbuilder.internal.macros.BuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.internal.tcmodification.ToolChainModificationManager;
-import org.eclipse.cdt.managedbuilder.language.settings.providers.ICBuildOutputParser;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
 import org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator;

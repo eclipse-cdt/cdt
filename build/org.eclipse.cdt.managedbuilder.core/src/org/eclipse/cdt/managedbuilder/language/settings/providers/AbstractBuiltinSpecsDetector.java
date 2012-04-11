@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.ICommandLauncher;
 import org.eclipse.cdt.core.IConsoleParser;
 import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.core.ProblemMarkerInfo;
+import org.eclipse.cdt.core.language.settings.providers.ICBuildOutputParser;
 import org.eclipse.cdt.core.language.settings.providers.ICListenerAgent;
 import org.eclipse.cdt.core.language.settings.providers.IWorkingDirectoryTracker;
 import org.eclipse.cdt.core.model.ILanguage;

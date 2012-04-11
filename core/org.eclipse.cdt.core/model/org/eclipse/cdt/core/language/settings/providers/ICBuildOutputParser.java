@@ -9,17 +9,16 @@
  *     Andrew Gvozdev - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.cdt.managedbuilder.language.settings.providers;
+package org.eclipse.cdt.core.language.settings.providers;
 
 import org.eclipse.cdt.core.IConsoleParser;
-import org.eclipse.cdt.core.language.settings.providers.IWorkingDirectoryTracker;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.core.runtime.CoreException;
 
 /**
  * Console parser interface extended to support language settings providers.
  *
- * @since 8.1
+ * @since 5.4
  */
 public interface ICBuildOutputParser extends IConsoleParser {
 	/**

@@ -1,0 +1,9 @@
+Change-Id: Ib4ca67ad3f7adc5af868c06c21445fa311931225
+Code-Review+2: Jeff Johnston <jjohnstn@redhat.com>
+IP-Clean+1: Jeff Johnston <jjohnstn@redhat.com>
+Verified+1: Jeff Johnston <jjohnstn@redhat.com>
+Submitted-by: Jeff Johnston <jjohnstn@redhat.com>
+Submitted-at: Wed, 11 Apr 2012 16:19:42 -0400
+Reviewed-on: https://git.eclipse.org/r/5565
+Project: cdt/org.eclipse.cdt
+Branch: refs/heads/master

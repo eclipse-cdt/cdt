@@ -88,8 +88,6 @@ public class ExternalBuildRunner extends AbstractBuildRunner {
 
 			IPath buildCommand = builder.getBuildCommand();
 			if (buildCommand != null) {
-				ICConfigurationDescription cfgDescription = ManagedBuildManager.getDescriptionForConfiguration(configuration);
-
 				String cfgName = configuration.getName();
 				String toolchainName = configuration.getToolChain().getName();
 				boolean isSupported = configuration.isSupported();
@@ -113,6 +111,7 @@ public class ExternalBuildRunner extends AbstractBuildRunner {
 
 				List<IConsoleParser> parsers = new ArrayList<IConsoleParser>();
 				if (!isOnlyClean) {
+					ICConfigurationDescription cfgDescription = ManagedBuildManager.getDescriptionForConfiguration(configuration);
 					ManagedBuildManager.collectLanguageSettingsConsoleParsers(cfgDescription, epm, parsers);
 					if (ScannerDiscoveryLegacySupport.isLegacyScannerDiscoveryOn(cfgDescription)) {
 						collectScannerInfoConsoleParsers(project, configuration, workingDirectoryURI, markerGenerator, parsers);

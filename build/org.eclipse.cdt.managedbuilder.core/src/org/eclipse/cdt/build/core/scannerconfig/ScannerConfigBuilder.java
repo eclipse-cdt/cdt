@@ -215,6 +215,6 @@ public class ScannerConfigBuilder extends ACBuilder {
 			}
 		}
 
-        return null;
+		return null;
 	}
 }

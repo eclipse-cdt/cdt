@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2009 Red Hat Inc..
+ * Copyright (c) 2009, 2012 Red Hat Inc.and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Red Hat Incorporated - initial API and implementation
+ *     Red Hat Incorporated        - initial API and implementation
+ *     Anna Dushistova (MontaVista)- [375007] [autotools] allow absolute paths for configure scripts
  *******************************************************************************/
 package org.eclipse.cdt.internal.autotools.core;
 
@@ -753,10 +754,15 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 			for (int i = 1; i < tokens.length; ++i)
 				cmdParms.add(tokens[i]);
 		}
-		if (srcDir.equals(""))
-			configPath = project.getLocation().append(command);
-		else
-			configPath = project.getLocation().append(srcDir).append(command);
+		if (Path.fromOSString(command).isAbsolute()) {
+			configPath = new Path(command);
+		} else {
+			if (srcDir.equals(""))
+				configPath = project.getLocation().append(command);
+			else
+				configPath = project.getLocation().append(srcDir)
+						.append(command);
+		}
 		return configPath;
 	}
 

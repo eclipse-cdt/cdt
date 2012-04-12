@@ -1,3 +1,10 @@
+2012-04-11  Jeff Johnston  <jjohnstn@redhat.com>
+
+	Bug #375007 fix from Anna Dushistova
+	* src/org/eclipse.cdt/internal/autotools/core/AutotoolsNewMakeGenerator.java
+	(getConfigurePath): If configure command is specified as absolute
+	path, just use it.
+
 2012-03-30  Jeff Johnston  <jjohnstn@redhat.com>
 
 	Bug #371277

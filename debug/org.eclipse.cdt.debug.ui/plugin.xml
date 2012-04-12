@@ -450,6 +450,7 @@
                label="%AddBreakpoint.label"
                helpContextId="manage_breakpoint_action_context"
                class="org.eclipse.cdt.debug.internal.ui.actions.breakpoints.CRulerToggleBreakpointActionDelegate"
+               definitionId="org.eclipse.debug.ui.commands.ToggleBreakpoint"
                menubarPath="debug"
                id="org.eclipse.cdt.debug.ui.actions.RulerToggleBreakpointAction">
          </action>
@@ -528,6 +529,7 @@
                label="%AddBreakpoint.label"
                helpContextId="manage_breakpoint_action_context"
                class="org.eclipse.cdt.debug.internal.ui.actions.breakpoints.CRulerToggleBreakpointActionDelegate"
+               definitionId="org.eclipse.debug.ui.commands.ToggleBreakpoint"
                menubarPath="debug"
                id="org.eclipse.cdt.debug.ui.actions.asm.RulerToggleBreakpointAction">
          </action>

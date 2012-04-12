@@ -20,6 +20,7 @@ import org.eclipse.cdt.build.internal.core.scannerconfig2.CfgScannerConfigProfil
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariableManager;
+import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.resources.ACBuilder;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
@@ -41,9 +42,9 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 /**
  * Runs after standard make builder.
  * Consolidates discovered scanner configuration and updates project's scanner configuration.
- * 
+ *
  * @see IncrementalProjectBuilder
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
@@ -55,7 +56,7 @@ public class ScannerConfigBuilder extends ACBuilder {
 	 * tells the discovery mechanism to perform core settings update
 	 */
 	public static final int PERFORM_CORE_UPDATE = 1;
-	
+
 	/**
 	 * force the discovery, i.e. run the discovery even if it is disabled
 	 */
@@ -67,7 +68,7 @@ public class ScannerConfigBuilder extends ACBuilder {
 	public static final int SKIP_SI_DISCOVERY = 1 << 2;
 
 	public final static String BUILDER_ID = ManagedBuilderCorePlugin.getUniqueIdentifier() + ".ScannerConfigBuilder"; //$NON-NLS-1$
-	
+
 	public ScannerConfigBuilder() {
 		super();
 	}
@@ -120,22 +121,22 @@ public class ScannerConfigBuilder extends ACBuilder {
 					}
 				}
 			}
-			
+
 			CfgDiscoveredPathManager.getInstance().updateCoreSettings(getProject(), cfgs);
 		}
-		
-		
+
+
 		return getProject().getReferencedProjects();
 	}
-	
+
 	public static void build(IConfiguration cfg, int flags, IProgressMonitor monitor){
 		if(cfg != null){
 			//			IScannerConfigBuilderInfo buildInfo = MakeCorePlugin.createScannerConfigBuildInfo(getProject(), BUILDER_ID);
 			//			autodiscoveryEnabled = buildInfo.isAutoDiscoveryEnabled();
-			//			
+			//
 			//            if (autodiscoveryEnabled) {
 			//                monitor.beginTask("ScannerConfigBuilder.Invoking_Builder", 100); //$NON-NLS-1$
-			//                monitor.subTask(MakeMessages.getString("ScannerConfigBuilder.Invoking_Builder") +   //$NON-NLS-1$ 
+			//                monitor.subTask(MakeMessages.getString("ScannerConfigBuilder.Invoking_Builder") +   //$NON-NLS-1$
 			//                        getProject().getName());
 			//                ScannerInfoCollector.getInstance().updateScannerConfiguration(getProject(), new SubProgressMonitor(monitor, 100));
 			//            }
@@ -164,7 +165,7 @@ public class ScannerConfigBuilder extends ACBuilder {
 				}
 
 	}
-	
+
 	private static Properties calcEnvironment(IConfiguration cfg){
 		Properties envProps = new Properties();
 		ICConfigurationDescription cfgDes = ManagedBuildManager.getDescriptionForConfiguration(cfg);
@@ -173,45 +174,47 @@ public class ScannerConfigBuilder extends ACBuilder {
 		for(int i = 0; i < vars.length; i++){
 			envProps.setProperty(vars[i].getName(), vars[i].getValue());
 		}
-		
+
 		return envProps;
 	}
-	
+
 	public static SCProfileInstance build(CfgInfoContext context, IScannerConfigBuilderInfo2 buildInfo2, int flags, Properties env, IProgressMonitor monitor) throws CoreException{
 		IConfiguration cfg = context.getConfiguration();
-		IProject project = cfg.getOwner().getProject();
-        boolean autodiscoveryEnabled2 = buildInfo2.isAutoDiscoveryEnabled();
+		if (ScannerDiscoveryLegacySupport.isLegacyScannerDiscoveryOn(ManagedBuildManager.getDescriptionForConfiguration(cfg))) {
+			IProject project = cfg.getOwner().getProject();
+			boolean autodiscoveryEnabled2 = buildInfo2.isAutoDiscoveryEnabled();
 
-        if (autodiscoveryEnabled2 || ((flags & FORCE_DISCOVERY) != 0)) {
-            monitor.beginTask(MakeMessages.getString("ScannerConfigBuilder.Invoking_Builder"), 100); //$NON-NLS-1$
-            monitor.subTask(MakeMessages.getString("ScannerConfigBuilder.Invoking_Builder") + //$NON-NLS-1$
-                    project.getName());
-            
-            if(env == null)
-            	env = calcEnvironment(cfg);
-            
-            // get scanner info from all external providers
-            SCProfileInstance instance = ScannerConfigProfileManager.getInstance().
-        		getSCProfileInstance(project, context.toInfoContext(), buildInfo2.getSelectedProfileId());
-            // if there are any providers call job to pull scanner info
-            if ((flags & SKIP_SI_DISCOVERY) == 0) {
-                if ((instance == null) || !buildInfo2.getProviderIdList().isEmpty())
-                    instance = CfgSCJobsUtil.getProviderScannerInfo(project, context, instance, buildInfo2, env, new SubProgressMonitor(monitor, 70));
-            }
+			if (autodiscoveryEnabled2 || ((flags & FORCE_DISCOVERY) != 0)) {
+				monitor.beginTask(MakeMessages.getString("ScannerConfigBuilder.Invoking_Builder"), 100); //$NON-NLS-1$
+				monitor.subTask(MakeMessages.getString("ScannerConfigBuilder.Invoking_Builder") + //$NON-NLS-1$
+						project.getName());
 
-            // update and persist scanner configuration
-            CfgSCJobsUtil.updateScannerConfiguration(project, context, instance, buildInfo2, new SubProgressMonitor(monitor, 30));
-            
-            // Remove the previous discovered path info to ensure it get's regenerated.
-            // TODO we should really only do this if the information has changed
-            CfgDiscoveredPathManager.getInstance().removeDiscoveredInfo(project, context, false);
-            
-			if((flags & PERFORM_CORE_UPDATE) != 0)
-				CfgDiscoveredPathManager.getInstance().updateCoreSettings(project, new IConfiguration[]{cfg});
+				if(env == null)
+					env = calcEnvironment(cfg);
 
-			return instance;
-        }
-        
-        return null;
+				// get scanner info from all external providers
+				SCProfileInstance instance = ScannerConfigProfileManager.getInstance().
+						getSCProfileInstance(project, context.toInfoContext(), buildInfo2.getSelectedProfileId());
+				// if there are any providers call job to pull scanner info
+				if ((flags & SKIP_SI_DISCOVERY) == 0) {
+					if ((instance == null) || !buildInfo2.getProviderIdList().isEmpty())
+						instance = CfgSCJobsUtil.getProviderScannerInfo(project, context, instance, buildInfo2, env, new SubProgressMonitor(monitor, 70));
+				}
+
+				// update and persist scanner configuration
+				CfgSCJobsUtil.updateScannerConfiguration(project, context, instance, buildInfo2, new SubProgressMonitor(monitor, 30));
+
+				// Remove the previous discovered path info to ensure it get's regenerated.
+				// TODO we should really only do this if the information has changed
+				CfgDiscoveredPathManager.getInstance().removeDiscoveredInfo(project, context, false);
+
+				if((flags & PERFORM_CORE_UPDATE) != 0)
+					CfgDiscoveredPathManager.getInstance().updateCoreSettings(project, new IConfiguration[]{cfg});
+
+				return instance;
+			}
+		}
+
+		return null;
 	}
 }

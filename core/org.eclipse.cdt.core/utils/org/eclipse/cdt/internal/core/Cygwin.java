@@ -31,11 +31,21 @@ public class Cygwin {
 	 * Check if cygwin path conversion utilities are available in the path.
 	 *
 	 * @param envPath - list of directories to search for cygwin utilities separated
-	 *    by path separator (format of environment variable $PATH).
+	 *    by path separator (format of environment variable $PATH)
+	 *    or {@code null} to use current $PATH.
 	 * @return {@code true} if cygwin is available, {@code false} otherwise.
 	 */
 	public static boolean isAvailable(String envPath) {
 		return Platform.getOS().equals(Platform.OS_WIN32) && findCygpathLocation(envPath) != null;
+	}
+
+	/**
+	 * Check if cygwin path conversion utilities are available in $PATH.
+	 *
+	 * @return {@code true} if cygwin is available, {@code false} otherwise.
+	 */
+	public static boolean isAvailable() {
+		return Platform.getOS().equals(Platform.OS_WIN32) && findCygpathLocation(null) != null;
 	}
 
 	/**

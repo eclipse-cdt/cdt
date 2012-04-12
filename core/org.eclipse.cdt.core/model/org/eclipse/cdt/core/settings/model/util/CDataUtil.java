@@ -334,10 +334,8 @@ public class CDataUtil {
 	}
 
 	/**
-	 * Convenience method to create {@link ICLanguageSettingEntry} depending on kind.
+	 * Convenience method to create {@link ICSettingEntry} depending on kind.
 	 * Note that this method keeps the entries in the pool to avoid proliferation of duplicates.
-	 *
-	 * Note that the method always returns {@link ICLanguageSettingEntry}.
 	 */
 	public static ICSettingEntry createEntry(int kind, String name, String value, IPath[] exclusionPatterns, int flags) {
 		return createEntry(kind, name, value, exclusionPatterns, flags, null, null, null);

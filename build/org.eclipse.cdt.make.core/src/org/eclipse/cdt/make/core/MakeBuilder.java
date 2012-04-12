@@ -26,8 +26,17 @@ import org.eclipse.cdt.core.CommandLauncher;
 import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.core.ICommandLauncher;
 import org.eclipse.cdt.core.IConsoleParser;
+import org.eclipse.cdt.core.language.settings.providers.ICBuildOutputParser;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvidersKeeper;
+import org.eclipse.cdt.core.language.settings.providers.IWorkingDirectoryTracker;
+import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
+import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.resources.ACBuilder;
 import org.eclipse.cdt.core.resources.IConsole;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.internal.core.BuildRunnerHelper;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser;
 import org.eclipse.cdt.make.internal.core.MakeMessages;
@@ -175,6 +184,7 @@ public class MakeBuilder extends ACBuilder {
 				String[] targets = getTargets(kind, info);
 				if (targets.length != 0 && targets[targets.length - 1].equals(info.getCleanBuildTarget()))
 					isClean = true;
+				boolean isOnlyClean = isClean && (targets.length == 1);
 
 				String[] args = getCommandArguments(info, targets);
 
@@ -187,8 +197,17 @@ public class MakeBuilder extends ACBuilder {
 				ErrorParserManager epm = new ErrorParserManager(getProject(), workingDirectoryURI, this, errorParsers);
 
 				List<IConsoleParser> parsers = new ArrayList<IConsoleParser>();
-				IScannerInfoConsoleParser parserSD = ScannerInfoConsoleParserFactory.getScannerInfoConsoleParser(project, workingDirectoryURI, this);
-				parsers.add(parserSD);
+				if (!isOnlyClean) {
+					ICProjectDescription prjDescription = CoreModel.getDefault().getProjectDescription(project);
+					if (prjDescription != null) {
+						ICConfigurationDescription cfgDescription = prjDescription.getActiveConfiguration();
+						collectLanguageSettingsConsoleParsers(cfgDescription, epm, parsers);
+					}
+					if (ScannerDiscoveryLegacySupport.isLegacyScannerDiscoveryOn(project)) {
+						IScannerInfoConsoleParser parserSD = ScannerInfoConsoleParserFactory.getScannerInfoConsoleParser(project, workingDirectoryURI, this);
+						parsers.add(parserSD);
+					}
+				}
 
 				buildRunnerHelper.setLaunchParameters(launcher, buildCommand, args, workingDirectoryURI, envp);
 				buildRunnerHelper.prepareStreams(epm, parsers, console, new SubProgressMonitor(monitor, TICKS_STREAM_PROGRESS_MONITOR, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
@@ -307,4 +326,26 @@ public class MakeBuilder extends ACBuilder {
 	private String[] makeArray(String string) {
 		return CommandLineUtil.argumentsToArray(string);
 	}
+	
+	private static void collectLanguageSettingsConsoleParsers(ICConfigurationDescription cfgDescription, IWorkingDirectoryTracker cwdTracker, List<IConsoleParser> parsers) {
+		if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
+			List<ILanguageSettingsProvider> lsProviders = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
+			for (ILanguageSettingsProvider lsProvider : lsProviders) {
+				ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(lsProvider);
+				if (rawProvider instanceof ICBuildOutputParser) {
+					ICBuildOutputParser consoleParser = (ICBuildOutputParser) rawProvider;
+					try {
+						consoleParser.startup(cfgDescription, cwdTracker);
+						parsers.add(consoleParser);
+					} catch (CoreException e) {
+						MakeCorePlugin.log(new Status(IStatus.ERROR, MakeCorePlugin.PLUGIN_ID,
+								"Language Settings Provider failed to start up", e)); //$NON-NLS-1$
+					}
+				}
+			}
+		}
+
+	}
+
+
 }

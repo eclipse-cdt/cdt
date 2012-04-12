@@ -49,6 +49,12 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.cdt.core.AbstractCExtension;
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.IConsoleParser;
+import org.eclipse.cdt.core.language.settings.providers.ICBuildOutputParser;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvidersKeeper;
+import org.eclipse.cdt.core.language.settings.providers.IWorkingDirectoryTracker;
+import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.parser.IScannerInfo;
@@ -148,7 +154,6 @@ import org.w3c.dom.ProcessingInstruction;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class ManagedBuildManager extends AbstractCExtension {
-
 //	private static final QualifiedName buildInfoProperty = new QualifiedName(ManagedBuilderCorePlugin.PLUGIN_ID, "managedBuildInfo");	//$NON-NLS-1$
 	private static final String ROOT_NODE_NAME = "ManagedProjectBuildInfo";	//$NON-NLS-1$
 	public  static final String SETTINGS_FILE_NAME = ".cdtbuild";	//$NON-NLS-1$
@@ -4719,6 +4724,26 @@ public class ManagedBuildManager extends AbstractCExtension {
 			return false; // OS or ARCH does not fit
 		}
 		return true; // no target platform - nothing to check.
+	}
+
+	/*package*/ static void collectLanguageSettingsConsoleParsers(ICConfigurationDescription cfgDescription, IWorkingDirectoryTracker cwdTracker, List<IConsoleParser> parsers) {
+		if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
+			List<ILanguageSettingsProvider> lsProviders = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
+			for (ILanguageSettingsProvider lsProvider : lsProviders) {
+				ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(lsProvider);
+				if (rawProvider instanceof ICBuildOutputParser) {
+					ICBuildOutputParser consoleParser = (ICBuildOutputParser) rawProvider;
+					try {
+						consoleParser.startup(cfgDescription, cwdTracker);
+						parsers.add(consoleParser);
+					} catch (CoreException e) {
+						ManagedBuilderCorePlugin.log(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID,
+								"Language Settings Provider failed to start up", e)); //$NON-NLS-1$
+					}
+				}
+			}
+		}
+
 	}
 
 }

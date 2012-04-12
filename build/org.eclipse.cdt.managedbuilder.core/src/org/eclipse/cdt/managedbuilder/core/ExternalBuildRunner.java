@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.IConsoleParser;
 import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariableManager;
+import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.internal.core.BuildRunnerHelper;
@@ -96,6 +97,7 @@ public class ExternalBuildRunner extends AbstractBuildRunner {
 				String[] targets = getTargets(kind, builder);
 				if (targets.length != 0 && targets[targets.length - 1].equals(builder.getCleanBuildTarget()))
 					isClean = true;
+				boolean isOnlyClean = isClean && (targets.length == 1);
 
 				String[] args = getCommandArguments(builder, targets);
 
@@ -108,7 +110,13 @@ public class ExternalBuildRunner extends AbstractBuildRunner {
 				ErrorParserManager epm = new ErrorParserManager(project, workingDirectoryURI, markerGenerator, errorParsers);
 
 				List<IConsoleParser> parsers = new ArrayList<IConsoleParser>();
-				collectScannerInfoConsoleParsers(project, configuration, workingDirectoryURI, markerGenerator, parsers);
+				if (!isOnlyClean) {
+					ICConfigurationDescription cfgDescription = ManagedBuildManager.getDescriptionForConfiguration(configuration);
+					ManagedBuildManager.collectLanguageSettingsConsoleParsers(cfgDescription, epm, parsers);
+					if (ScannerDiscoveryLegacySupport.isLegacyScannerDiscoveryOn(cfgDescription)) {
+						collectScannerInfoConsoleParsers(project, configuration, workingDirectoryURI, markerGenerator, parsers);
+					}
+				}
 
 				buildRunnerHelper.setLaunchParameters(launcher, buildCommand, args, workingDirectoryURI, envp);
 				buildRunnerHelper.prepareStreams(epm, parsers, console, new SubProgressMonitor(monitor, TICKS_STREAM_PROGRESS_MONITOR));

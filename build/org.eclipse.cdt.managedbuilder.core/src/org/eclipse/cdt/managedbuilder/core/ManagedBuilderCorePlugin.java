@@ -36,7 +36,7 @@ import org.osgi.framework.BundleContext;
 
 /**
  * ManagedBuilderCorePlugin is the life-cycle owner of the managedbuilder core plug-in.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
@@ -48,12 +48,12 @@ public class ManagedBuilderCorePlugin extends Plugin {
 	// The attribute name for the makefile generator
 	public static final String MAKEGEN_ID ="makefileGenerator"; //$NON-NLS-1$
 	public static final String COMMANDLINEGEN_ID = "commandlineGenerator"; //$NON-NLS-1$
-	// The unique id for all managed make projects 
+	// The unique id for all managed make projects
 	public static final String MANAGED_MAKE_PROJECT_ID = ManagedBuilderCorePlugin.getUniqueIdentifier() + ".managedMake"; //$NON-NLS-1$
 	//  NOTE: The code below is for tracking resource renaming and deleting.  This is needed to keep
 	//  ResourceConfiguration elements up to date.  It may also be needed by AdditionalInput
 	//  elements
-	
+
 	private static ResourceChangeHandler2 listener;
 
 //	private DiscoveredPathManager fDiscoveryPathManager;
@@ -72,7 +72,7 @@ public class ManagedBuilderCorePlugin extends Plugin {
 		}
 		return getDefault().getBundle().getSymbolicName();
 	}
-	
+
 	/**
 	 * @return the shared instance.
 	 */
@@ -88,23 +88,23 @@ public class ManagedBuilderCorePlugin extends Plugin {
 		// Turn on logging for plugin when debugging
 		super.start(context);
 		configurePluginDebugOptions();
-		
- 		
+
+
 		//	  NOTE: The code below is for tracking resource renaming and deleting.  This is needed to keep
 		//      ResourceConfiguration elements up to date.  It may also be needed by AdditionalInput
 		//      elements
-		
+
 //		IJobManager jobManager = Platform.getJobManager();
 //		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		listener = new ResourceChangeHandler2();
 
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(
-				listener, 
-				IResourceChangeEvent.POST_CHANGE 
+				listener,
+				IResourceChangeEvent.POST_CHANGE
 				| IResourceChangeEvent.PRE_DELETE
 				| IResourceChangeEvent.PRE_CLOSE
 				/*| IResourceChangeEvent.POST_BUILD*/);
-		
+
 		BuildStateManager.getInstance().startup();
 /*		try {
 			jobManager.beginRule(root, null);
@@ -115,7 +115,7 @@ public class ManagedBuilderCorePlugin extends Plugin {
 			//or core exception is thrown by the startResourceChangeHandling()
 			//in any case, schedule a job with the root rule
 			//that will perform the resource change handling initialization
-*/			
+*/
 		//The startResourceChangeHandling() might result in throwing an error
 		//see bug# 132001
 		//Always schedule a job
@@ -135,7 +135,7 @@ public class ManagedBuilderCorePlugin extends Plugin {
 //							null);
 //				}
 //			};
-//			
+//
 //			rcJob.setRule(root);
 //			rcJob.setPriority(Job.INTERACTIVE);
 //			rcJob.setSystem(true);
@@ -146,7 +146,7 @@ public class ManagedBuilderCorePlugin extends Plugin {
 		}
 */
 	}
-	
+
 	/*
 	 * This method adds a save participant and resource change listener
 	 * Throws CoreException if the methods fails to add a save participant.
@@ -159,8 +159,8 @@ public class ManagedBuilderCorePlugin extends Plugin {
 //			ResourcesPlugin.getWorkspace().addSaveParticipant(ManagedBuilderCorePlugin.this, listener);
 //
 //		ResourcesPlugin.getWorkspace().addResourceChangeListener(
-//				listener, 
-//				IResourceChangeEvent.POST_CHANGE 
+//				listener,
+//				IResourceChangeEvent.POST_CHANGE
 //				| IResourceChangeEvent.PRE_DELETE
 //				| IResourceChangeEvent.PRE_CLOSE
 //				/*| IResourceChangeEvent.POST_BUILD*/);
@@ -184,7 +184,7 @@ public class ManagedBuilderCorePlugin extends Plugin {
 //		}
 
 
-		
+
 		//	  NOTE: The code below is for tracking resource renaming and deleting.  This is needed to keep
 		//      ResourceConfiguration elements up to date.  It may also be needed by AdditionalInput
 		//      elements
@@ -196,7 +196,7 @@ public class ManagedBuilderCorePlugin extends Plugin {
 		listener = null;
 		super.stop(context);
 	}
-	
+
 	private static final String PATH_ENTRY = ManagedBuilderCorePlugin.getUniqueIdentifier() + "/debug/pathEntry"; //$NON-NLS-1$
 	private static final String PATH_ENTRY_INIT = ManagedBuilderCorePlugin.getUniqueIdentifier() + "/debug/pathEntryInit"; //$NON-NLS-1$
 	private static final String BUILDER = ManagedBuilderCorePlugin.getUniqueIdentifier() + "/debug/builder"; //$NON-NLS-1$
@@ -236,7 +236,7 @@ public class ManagedBuilderCorePlugin extends Plugin {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void configurePluginDebugOptions() {
 		if (isDebugging()) {
@@ -258,23 +258,23 @@ public class ManagedBuilderCorePlugin extends Plugin {
 			}
 		}
 	}
-	
+
 	public static IBuilder[] createBuilders(IProject project, Map<String, String> args){
 		return BuilderFactory.createBuilders(project, args);
 	}
-	
+
 	public static IBuilder createCustomBuilder(IConfiguration cfg, String builderId) throws CoreException{
 		return BuilderFactory.createCustomBuilder(cfg, builderId);
 	}
-	
+
 	public static IBuilder createCustomBuilder(IConfiguration cfg, IBuilder base){
 		return BuilderFactory.createCustomBuilder(cfg, base);
 	}
-	
+
 	public static IBuilder createBuilderForEclipseBuilder(IConfiguration cfg, String eclipseBuilderID) throws CoreException {
 		return BuilderFactory.createBuilderForEclipseBuilder(cfg, eclipseBuilderID);
 	}
-	
+
 	public boolean isOldStyleMakeProject(IProject project){
 		return ProjectConverter.isOldStyleMakeProject(project);
 	}
@@ -283,12 +283,4 @@ public class ManagedBuilderCorePlugin extends Plugin {
 		ProjectConverter.convertOldStdMakeToNewStyle(project, monitor);
 	}
 
-	
-//	public IDiscoveredPathManager getDiscoveryManager() {
-//		if ( fDiscoveryPathManager == null) {
-//			fDiscoveryPathManager = new DiscoveredPathManager();
-//			fDiscoveryPathManager.startup();
-//		}
-//		return fDiscoveryPathManager;
-//	}
 }

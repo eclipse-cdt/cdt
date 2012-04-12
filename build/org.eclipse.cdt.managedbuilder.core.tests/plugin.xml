@@ -9301,4 +9301,14 @@
              </matchObject>
          </conflictDefinition>
    </extension>
+   <extension
+         id="org.eclipse.cdt.managedbuilder.core.tests.ErrorParsers"
+         name="org.eclipse.cdt.managedbuilder.core.tests ErrorParsers"
+         point="org.eclipse.cdt.core.ErrorParser">
+      <errorparser
+            class="org.eclipse.cdt.managedbuilder.language.settings.providers.GCCBuildCommandParser$GCCBuildCommandPatternHighlighter"
+            id="org.eclipse.cdt.core.tests.managedbuilder.core.GCCBuildCommandPatternHighlighter"
+            name="Test Plugin GCC BOP Patterns Highlighter">
+      </errorparser>
+   </extension>
 </plugin>

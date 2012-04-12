@@ -15,6 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.internal.core.LocalProjectScope;
 import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsExtensionManager;
 import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsProvidersSerializer;
@@ -82,6 +85,49 @@ public class ScannerDiscoveryLegacySupport {
 		}
 	}
 
+	/**
+	 * Check if legacy Scanner Discovery in MBS should be active.
+	 */
+	private static boolean isMbsLanguageSettingsProviderOn(ICConfigurationDescription cfgDescription) {
+		if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
+			List<ILanguageSettingsProvider> lsProviders = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
+			for (ILanguageSettingsProvider lsp : lsProviders) {
+				if (MBS_LANGUAGE_SETTINGS_PROVIDER_ID.equals(lsp.getId())) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * @noreference This is internal helper method to support compatibility with previous versions
+	 * which is not intended to be referenced by clients.
+	 */
+	public static boolean isLegacyScannerDiscoveryOn(ICConfigurationDescription cfgDescription) {
+		IProject project = null;
+		if (cfgDescription != null) {
+			ICProjectDescription prjDescription = cfgDescription.getProjectDescription();
+			if (prjDescription != null) {
+				project = prjDescription.getProject();
+			}
+		}
+		return isLanguageSettingsProvidersFunctionalityEnabled(project) || isMbsLanguageSettingsProviderOn(cfgDescription);
+	}
+
+	/**
+	 * @noreference This is internal helper method to support compatibility with previous versions
+	 * which is not intended to be referenced by clients.
+	 */
+	public static boolean isLegacyScannerDiscoveryOn(IProject project) {
+		ICConfigurationDescription cfgDescription = null;
+		ICProjectDescription prjDescription = CoreModel.getDefault().getProjectDescription(project);
+		if (prjDescription != null) {
+			cfgDescription = prjDescription.getActiveConfiguration();
+		}
+		return isLanguageSettingsProvidersFunctionalityEnabled(project) || isMbsLanguageSettingsProviderOn(cfgDescription);
+	}
+	
 	/**
 	 * Return list containing MBS and User provider. Used to initialize for unaware tool-chains (backward compatibility).
 	 */

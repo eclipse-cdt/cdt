@@ -330,9 +330,26 @@ public class LanguageSettingsManager {
 	/**
 	 * Save language settings providers of the workspace (global providers) to persistent storage.
 	 *
-	 * @throws CoreException
+	 * @throws CoreException if something goes wrong.
 	 */
 	public static void serializeLanguageSettingsWorkspace() throws CoreException {
 		LanguageSettingsProvidersSerializer.serializeLanguageSettingsWorkspace();
+	}
+
+	/**
+	 * Save language settings providers of a project to persistent storage in a background job.
+	 *
+	 * @param prjDescription - project description of the project.
+	 */
+	public static void serializeLanguageSettingsInBackground(ICProjectDescription prjDescription) {
+		LanguageSettingsProvidersSerializer.serializeLanguageSettingsInBackground(prjDescription);
+	}
+
+	/**
+	 * Save language settings providers of the workspace (global providers) to persistent storage
+	 * in a background job.
+	 */
+	public static void serializeLanguageSettingsWorkspaceInBackground() {
+		LanguageSettingsProvidersSerializer.serializeLanguageSettingsWorkspaceInBackground();
 	}
 }

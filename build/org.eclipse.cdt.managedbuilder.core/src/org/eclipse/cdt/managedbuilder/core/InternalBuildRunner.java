@@ -14,11 +14,15 @@ package org.eclipse.cdt.managedbuilder.core;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.core.ICommandLauncher;
+import org.eclipse.cdt.core.IConsoleParser;
 import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.core.resources.IConsole;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.internal.core.BuildRunnerHelper;
 import org.eclipse.cdt.managedbuilder.buildmodel.BuildDescriptionManager;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildDescription;
@@ -77,8 +81,9 @@ public class InternalBuildRunner extends AbstractBuildRunner {
 			flags = BuildDescriptionManager.REBUILD | BuildDescriptionManager.REMOVED | BuildDescriptionManager.DEPS;
 //				delta = getDelta(currentProject);
 //			}
-
 			boolean buildIncrementaly = delta != null;
+
+			ICConfigurationDescription cfgDescription = ManagedBuildManager.getDescriptionForConfiguration(configuration);
 
 			// Prepare launch parameters for BuildRunnerHelper
 			String cfgName = configuration.getName();
@@ -90,7 +95,10 @@ public class InternalBuildRunner extends AbstractBuildRunner {
 			String[] errorParsers = builder.getErrorParsers();
 			ErrorParserManager epm = new ErrorParserManager(project, workingDirectoryURI, markerGenerator, errorParsers);
 
-			buildRunnerHelper.prepareStreams(epm, null, console, new SubProgressMonitor(monitor, TICKS_STREAM_PROGRESS_MONITOR));
+			List<IConsoleParser> parsers = new ArrayList<IConsoleParser>();
+			ManagedBuildManager.collectLanguageSettingsConsoleParsers(cfgDescription, epm, parsers);
+
+			buildRunnerHelper.prepareStreams(epm, parsers, console, new SubProgressMonitor(monitor, TICKS_STREAM_PROGRESS_MONITOR));
 
 			IBuildDescription des = BuildDescriptionManager.createBuildDescription(configuration, cBS, delta, flags);
 			DescriptionBuilder dBuilder = null;

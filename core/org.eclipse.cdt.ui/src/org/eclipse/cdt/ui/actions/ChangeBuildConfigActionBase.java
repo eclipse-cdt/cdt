@@ -307,46 +307,53 @@ public class ChangeBuildConfigActionBase {
 		action.setEnabled(enable);
 		
 		// Bug 375760
+		// If focus is on a view that doesn't provide a resource/project context. Use the selection in a
+		// project/resource view. We support three views. If more than one is open, nevermind. If there's only
+		// one project in the workspace and it's a CDT one, use it unconditionally.
 		//
-		// We shouldn't require that the projects view have focus. If the selection switched
-		// to something that doesn't provide us a project context, query any of the three projects/resources
-		// view to see if they have a selection. If so, try again using that selection. We give precedence to
-		// the CDT projects view, then to the project explorer, and finally to the resource navigator
-		//
-		// Also, if the view has no selection, see if the workspace has only one project. If so, we don't need
-		// to rely on the selection mechanism to tell us which project to operate on!
+		// Note that whatever project we get here is just a candidate; it's tested for suitability when we
+		// call ourselves recursively
 		//
 		if (badObject || fProjects.isEmpty()) {
-			IWorkbenchPage page = CUIPlugin.getActivePage();
-			if (page != null) {
-				IViewReference viewRef = page.findViewReference("org.eclipse.cdt.ui.CView"); //$NON-NLS-1$
-				if (viewRef == null) {
-					viewRef = page.findViewReference("org.eclipse.ui.navigator.ProjectExplorer"); //$NON-NLS-1$
-					if (viewRef == null) {
-						viewRef = page.findViewReference("org.eclipse.ui.views.ResourceNavigator"); //$NON-NLS-1$
-					}
+			// Check for lone CDT project in workspace 
+			IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+			if (projects != null && projects.length == 1) {
+				IProject project = projects[0];
+				if (CoreModel.getDefault().isNewStyleProject(project) && (getCfgs(project).length > 0)) { 
+					onSelectionChanged(action, new ImaginarySelection(project));
+					return;
 				}
-				if (viewRef != null) {
-					IViewPart view = viewRef.getView(false);
+			}
+
+			// Check the three supported views
+			IWorkbenchPage page = CUIPlugin.getActivePage();
+			int viewCount = 0;
+			if (page != null) {
+				IViewReference theViewRef = null;
+				IViewReference viewRef = null;
+				
+				theViewRef = page.findViewReference("org.eclipse.cdt.ui.CView"); //$NON-NLS-1$
+				viewCount += (theViewRef != null) ? 1 : 0;
+					
+				viewRef = page.findViewReference("org.eclipse.ui.navigator.ProjectExplorer"); //$NON-NLS-1$
+				viewCount += (viewRef != null) ? 1 : 0;				
+				theViewRef = (theViewRef == null) ? viewRef : theViewRef; 
+
+				viewRef = page.findViewReference("org.eclipse.ui.views.ResourceNavigator"); //$NON-NLS-1$
+				viewCount += (viewRef != null) ? 1 : 0;
+				theViewRef = (theViewRef == null) ? viewRef : theViewRef;				
+				
+				if (theViewRef != null && viewCount == 1) {
+					IViewPart view = theViewRef.getView(false);
 					if (view != null) {
 						ISelection cdtSelection = view.getSite().getSelectionProvider().getSelection();
 						if (cdtSelection != null) {
-							if (cdtSelection.isEmpty()) {
-								IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
-								if (projects != null && projects.length == 1) {
-									IProject project = projects[0];
-									if (CoreModel.getDefault().isNewStyleProject(project) && (getCfgs(project).length > 0)) { 
-										onSelectionChanged(action, new ImaginarySelection(project));
-									}
-								}
-							}
-							else {
-								if (!cdtSelection.equals(selection)) {
+							if (!cdtSelection.isEmpty()) {
+								if (!cdtSelection.equals(selection)) { // avoids infinite recursion
 									onSelectionChanged(action, cdtSelection);
 								}
 							}
 						}
-						
 					}
 				}
 			}

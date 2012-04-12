@@ -6,7 +6,7 @@
  *  http://www.eclipse.org/legal/epl-v10.html
  *
  *  Contributors:
- *     IBM Corporation - initial API and implementation
+ *      IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.upc.ast;
 
@@ -18,10 +18,8 @@ import org.eclipse.cdt.internal.core.dom.parser.c.CASTForStatement;
 
 @SuppressWarnings("restriction")
 public class UPCASTForallStatement extends CASTForStatement implements IUPCASTForallStatement {
-
 	private IASTExpression affinity;
 	private boolean affinityContinue;
-
 
 	public UPCASTForallStatement() {
 	}
@@ -40,14 +38,13 @@ public class UPCASTForallStatement extends CASTForStatement implements IUPCASTFo
 	@Override
 	public UPCASTForallStatement copy(CopyStyle style) {
 		UPCASTForallStatement copy = new UPCASTForallStatement();
-		copyForStatement(copy, style);
 		copy.setAffinityExpression(affinity == null ? null : affinity.copy(style));
+		copyForStatement(copy, style);
 		if (style == CopyStyle.withLocations) {
 			copy.setCopyLocation(this);
 		}
 		return copy;
 	}
-
 
 	@Override
 	public boolean isAffinityContinue() {
@@ -61,10 +58,10 @@ public class UPCASTForallStatement extends CASTForStatement implements IUPCASTFo
 
 	@Override
 	public void setAffinityExpression(IASTExpression affinity) {
-		if(affinity != null)
+		if (affinity != null)
 			this.affinityContinue = false;
 		this.affinity = affinity;
-		if(affinity != null) {
+		if (affinity != null) {
 			affinity.setParent(this);
 			affinity.setPropertyInParent(AFFINITY);
 		}
@@ -72,43 +69,40 @@ public class UPCASTForallStatement extends CASTForStatement implements IUPCASTFo
 
 	@Override
 	public void setAffinityContinue(boolean affinityContinue) {
-		if(affinityContinue)
+		if (affinityContinue)
 			this.affinity = null;
 		this.affinityContinue = affinityContinue;
 	}
 
-
 	@Override
 	public boolean accept(ASTVisitor visitor) {
-		if(visitor.shouldVisitStatements) {
-			switch(visitor.visit(this)){
-            	case ASTVisitor.PROCESS_ABORT : return false;
-            	case ASTVisitor.PROCESS_SKIP  : return true;
+		if (visitor.shouldVisitStatements) {
+			switch (visitor.visit(this)) {
+            	case ASTVisitor.PROCESS_ABORT: return false;
+            	case ASTVisitor.PROCESS_SKIP: return true;
 			}
 		}
 
 		IASTStatement initializer = super.getInitializerStatement();
-		if(initializer != null) if(!initializer.accept(visitor)) return false;
+		if (initializer != null && !initializer.accept(visitor)) return false;
 
 		IASTExpression condition = super.getConditionExpression();
-		if(condition != null) if(!condition.accept(visitor)) return false;
+		if (condition != null && !condition.accept(visitor)) return false;
 
 		IASTExpression iteration = super.getIterationExpression();
-		if(iteration != null) if(!iteration.accept(visitor)) return false;
+		if (iteration != null && !iteration.accept(visitor)) return false;
 
-		if(affinity != null) if(!affinity.accept(visitor)) return false;
+		if (affinity != null && !affinity.accept(visitor)) return false;
 
 		IASTStatement body = super.getBody();
-		if(body != null) if(!body.accept(visitor)) return false;
+		if (body != null && !body.accept(visitor)) return false;
 
-		if(visitor.shouldVisitStatements) {
-			switch(visitor.leave(this)){
-            	case ASTVisitor.PROCESS_ABORT : return false;
-            	case ASTVisitor.PROCESS_SKIP  : return true;
+		if (visitor.shouldVisitStatements) {
+			switch (visitor.leave(this)) {
+            	case ASTVisitor.PROCESS_ABORT: return false;
+            	case ASTVisitor.PROCESS_SKIP: return true;
 			}
 		}
-
 		return true;
 	}
-
 }

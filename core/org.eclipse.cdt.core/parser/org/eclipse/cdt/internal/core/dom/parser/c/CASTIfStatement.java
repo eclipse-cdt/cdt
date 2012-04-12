@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *   John Camelon (IBM Rational Software) - Initial API and implementation
- *   Yuan Zhang / Beth Tibbitts (IBM Research)
- *   Markus Schorn (Wind River Systems)
+ *     John Camelon (IBM Rational Software) - Initial API and implementation
+ *     Yuan Zhang / Beth Tibbitts (IBM Research)
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -24,12 +24,9 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
  * If statements for C.
  */
 public class CASTIfStatement extends ASTNode implements IASTIfStatement, IASTAmbiguityParent {
-
     private IASTExpression condition;
     private IASTStatement thenClause;
     private IASTStatement elseClause;
-
-    
     
     public CASTIfStatement() {
 	}
@@ -38,7 +35,6 @@ public class CASTIfStatement extends ASTNode implements IASTIfStatement, IASTAmb
 		setConditionExpression(condition);
 		setThenClause(thenClause);
 	}
-
 
 	public CASTIfStatement(IASTExpression condition, IASTStatement thenClause, IASTStatement elseClause) {
 		this(condition, thenClause);
@@ -165,22 +161,19 @@ public class CASTIfStatement extends ASTNode implements IASTIfStatement, IASTAmb
 
     @Override
 	public void replace(IASTNode child, IASTNode other) {
-        if( thenClause == child )
-        {
-            other.setParent( child.getParent() );
-            other.setPropertyInParent( child.getPropertyInParent() );
+        if (thenClause == child) {
+            other.setParent(child.getParent());
+            other.setPropertyInParent(child.getPropertyInParent());
             thenClause = (IASTStatement) other;
         }
-        if( elseClause == child )
-        {
-            other.setParent( child.getParent() );
-            other.setPropertyInParent( child.getPropertyInParent() );
+        if (elseClause == child) {
+            other.setParent(child.getParent());
+            other.setPropertyInParent(child.getPropertyInParent());
             elseClause = (IASTStatement) other;            
         }
-        if( child == condition )
-        {
-            other.setPropertyInParent( child.getPropertyInParent() );
-            other.setParent( child.getParent() );
+        if (child == condition) {
+            other.setPropertyInParent(child.getPropertyInParent());
+            other.setParent(child.getParent());
             condition  = (IASTExpression) other;
         }
     }

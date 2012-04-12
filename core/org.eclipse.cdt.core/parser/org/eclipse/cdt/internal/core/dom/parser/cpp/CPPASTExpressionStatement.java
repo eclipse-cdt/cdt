@@ -22,7 +22,6 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
  */
 public class CPPASTExpressionStatement extends ASTNode implements
         IASTExpressionStatement, IASTAmbiguityParent {
-	
     private IASTExpression expression;
     
     public CPPASTExpressionStatement() {

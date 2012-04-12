@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - Initial API and implementation
+ *     Markus Schorn - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -33,7 +33,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
  * };
  */
 public class CPPASTAmbiguousSimpleDeclaration extends ASTAmbiguousNode implements IASTAmbiguousSimpleDeclaration {
-
     private IASTSimpleDeclaration fSimpleDecl;
     private IASTDeclSpecifier fAltDeclSpec;
     private IASTDeclarator fAltDtor;
@@ -55,7 +54,7 @@ public class CPPASTAmbiguousSimpleDeclaration extends ASTAmbiguousNode implement
 
     @Override
 	public IASTNode[] getNodes() {
-        return new IASTNode[] {fSimpleDecl, fAltDeclSpec, fAltDtor};
+        return new IASTNode[] { fSimpleDecl, fAltDeclSpec, fAltDtor };
     }
 
 	@Override
@@ -97,7 +96,6 @@ public class CPPASTAmbiguousSimpleDeclaration extends ASTAmbiguousNode implement
 		owner.replace(nodeToReplace, fSimpleDecl);
 		IASTDeclarator dtor= fSimpleDecl.getDeclarators()[0];
 		dtor.accept(resolver);
-		
 
 		// find nested names
 		final NameCollector nameCollector= new NameCollector();

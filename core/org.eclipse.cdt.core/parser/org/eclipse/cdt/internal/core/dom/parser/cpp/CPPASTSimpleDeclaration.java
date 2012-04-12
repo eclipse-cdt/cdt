@@ -41,8 +41,9 @@ public class CPPASTSimpleDeclaration extends ASTNode implements IASTSimpleDeclar
 	public CPPASTSimpleDeclaration copy(CopyStyle style) {
 		CPPASTSimpleDeclaration copy = new CPPASTSimpleDeclaration();
 		copy.setDeclSpecifier(declSpecifier == null ? null : declSpecifier.copy(style));
-		for (IASTDeclarator declarator : getDeclarators())
+		for (IASTDeclarator declarator : getDeclarators()) {
 			copy.addDeclarator(declarator == null ? null : declarator.copy(style));
+		}
 		copy.setOffsetAndLength(this);
 		if (style == CopyStyle.withLocations) {
 			copy.setCopyLocation(this);
@@ -129,5 +130,4 @@ public class CPPASTSimpleDeclaration extends ASTNode implements IASTSimpleDeclar
 			}
 		}
 	}
-
 }

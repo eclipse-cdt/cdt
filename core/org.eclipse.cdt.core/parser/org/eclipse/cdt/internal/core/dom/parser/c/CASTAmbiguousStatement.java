@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     IBM - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -24,9 +24,8 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPASTInternalScope;
 
 public class CASTAmbiguousStatement extends ASTAmbiguousNode implements IASTAmbiguousStatement {
-
-    private IASTStatement [] stmts = new IASTStatement[2];
-    private int stmtsPos=-1;
+    private IASTStatement[] stmts = new IASTStatement[2];
+    private int stmtsPos= -1;
 	private IScope fScope;
 	private IASTDeclaration fDeclaration;
     
@@ -73,7 +72,7 @@ public class CASTAmbiguousStatement extends ASTAmbiguousNode implements IASTAmbi
 	public void addStatement(IASTStatement s) {
         assertNotFrozen();
     	if (s != null) {
-    		stmts = ArrayUtil.appendAt( IASTStatement.class, stmts, ++stmtsPos, s );
+    		stmts = ArrayUtil.appendAt(IASTStatement.class, stmts, ++stmtsPos, s);
     		s.setParent(this);
 			s.setPropertyInParent(STATEMENT);
     	}
@@ -81,7 +80,7 @@ public class CASTAmbiguousStatement extends ASTAmbiguousNode implements IASTAmbi
 
     @Override
 	public IASTStatement[] getStatements() {
-        stmts = ArrayUtil.trimAt( IASTStatement.class, stmts, stmtsPos );
+        stmts = ArrayUtil.trimAt(IASTStatement.class, stmts, stmtsPos);
     	return stmts;
     }
 
@@ -89,7 +88,6 @@ public class CASTAmbiguousStatement extends ASTAmbiguousNode implements IASTAmbi
 	public IASTNode[] getNodes() {
         return getStatements();
     }
-
 
 	@Override
 	public IASTStatement copy() {
@@ -100,5 +98,4 @@ public class CASTAmbiguousStatement extends ASTAmbiguousNode implements IASTAmbi
 	public IASTStatement copy(CopyStyle style) {
 		throw new UnsupportedOperationException();
 	}
-
 }

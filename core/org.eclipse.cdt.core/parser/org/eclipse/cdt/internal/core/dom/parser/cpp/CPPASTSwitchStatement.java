@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM) - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     John Camelon (IBM) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -104,6 +104,7 @@ public class CPPASTSwitchStatement extends ASTNode
 	            default: break;
 	        }
 		}
+
         if (controllerExpression != null && !controllerExpression.accept(action)) return false;
         if (controllerDeclaration != null && !controllerDeclaration.accept(action)) return false;
         if (body != null && !body.accept(action)) return false;

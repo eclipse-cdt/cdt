@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     IBM - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -20,17 +20,15 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
  * @author jcamelon
  */
 abstract class CPPASTProblemOwner extends ASTNode implements IASTProblemHolder {
-
     private IASTProblem problem;
 
-    
     public CPPASTProblemOwner() {
 	}
 
 	public CPPASTProblemOwner(IASTProblem problem) {
 		setProblem(problem);
 	}
-	
+
 	protected void copyBaseProblem(CPPASTProblemOwner copy, CopyStyle style) {
 		copy.setProblem(problem == null ? null : problem.copy(style));
 		copy.setOffsetAndLength(this);
@@ -52,17 +50,17 @@ abstract class CPPASTProblemOwner extends ASTNode implements IASTProblemHolder {
     }
     
     	@Override
-	public boolean accept( ASTVisitor action ){
-        if( action.shouldVisitProblems ){
-		    switch( action.visit( getProblem() ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+	public boolean accept(ASTVisitor action) {
+        if (action.shouldVisitProblems) {
+		    switch (action.visit(getProblem())) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
-		    switch( action.leave( getProblem() ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+		    switch (action.leave(getProblem())) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
         return true;

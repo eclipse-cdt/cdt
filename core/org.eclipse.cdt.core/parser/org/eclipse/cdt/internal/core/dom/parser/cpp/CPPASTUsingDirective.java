@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM) - Initial API and implementation
- *    Bryan Wilkinson (QNX)
+ *     John Camelon (IBM) - Initial API and implementation
+ *     Bryan Wilkinson (QNX)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -23,10 +23,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 
-
-public class CPPASTUsingDirective extends ASTNode implements
-        ICPPASTUsingDirective, ICPPASTCompletionContext {
-
+public class CPPASTUsingDirective extends ASTNode
+		implements ICPPASTUsingDirective, ICPPASTCompletionContext {
     private IASTName name;
 
     public CPPASTUsingDirective() {
@@ -64,35 +62,33 @@ public class CPPASTUsingDirective extends ASTNode implements
 			qualifiedName.setParent(this);
 			qualifiedName.setPropertyInParent(QUALIFIED_NAME);
 		}
-
     }
 
     @Override
-	public boolean accept( ASTVisitor action ){
-        if( action.shouldVisitDeclarations ){
-		    switch( action.visit( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+	public boolean accept(ASTVisitor action) {
+        if (action.shouldVisitDeclarations) {
+		    switch (action.visit(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
 
-        if( name != null ) if( !name.accept( action ) ) return false;
+        if (name != null && !name.accept(action)) return false;
 
-        if( action.shouldVisitDeclarations ){
-		    switch( action.leave( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+        if (action.shouldVisitDeclarations) {
+		    switch (action.leave(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
         return true;
     }
 
-
-	@Override
+    @Override
 	public int getRoleForName(IASTName n) {
-		if( n == name )
+		if (n == name)
 			return r_reference;
 		return r_unclear;
 	}

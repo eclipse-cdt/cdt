@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     IBM - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -23,16 +23,14 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousStatement;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
-public class CPPASTAmbiguousStatement extends ASTAmbiguousNode implements
-        IASTAmbiguousStatement {
-
-    private IASTStatement [] stmts = new IASTStatement[2];
-    private int stmtsPos=-1;
+public class CPPASTAmbiguousStatement extends ASTAmbiguousNode implements IASTAmbiguousStatement {
+    private IASTStatement[] stmts = new IASTStatement[2];
+    private int stmtsPos= -1;
 	private IScope fScope;
 	private IASTDeclaration fDeclaration;
     
     public CPPASTAmbiguousStatement(IASTStatement... statements) {
-		for(IASTStatement s : statements)
+		for (IASTStatement s : statements)
 			addStatement(s);
 	}
 
@@ -84,7 +82,7 @@ public class CPPASTAmbiguousStatement extends ASTAmbiguousNode implements
 	public void addStatement(IASTStatement s) {
         assertNotFrozen();
     	if (s != null) {
-    		stmts = ArrayUtil.appendAt( IASTStatement.class, stmts, ++stmtsPos, s );
+    		stmts = ArrayUtil.appendAt(IASTStatement.class, stmts, ++stmtsPos, s);
     		s.setParent(this);
 			s.setPropertyInParent(STATEMENT);
     	}
@@ -92,7 +90,7 @@ public class CPPASTAmbiguousStatement extends ASTAmbiguousNode implements
 
     @Override
 	public IASTStatement[] getStatements() {
-        stmts = ArrayUtil.trimAt( IASTStatement.class, stmts, stmtsPos );
+        stmts = ArrayUtil.trimAt(IASTStatement.class, stmts, stmtsPos);
     	return stmts;
     }
     

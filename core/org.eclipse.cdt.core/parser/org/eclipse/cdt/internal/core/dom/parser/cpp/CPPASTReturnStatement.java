@@ -77,16 +77,13 @@ public class CPPASTReturnStatement extends ASTNode implements IASTReturnStatemen
 	public boolean accept(ASTVisitor action) {
         if (action.shouldVisitStatements) {
             switch (action.visit(this)) {
-            case ASTVisitor.PROCESS_ABORT:
-                return false;
-            case ASTVisitor.PROCESS_SKIP:
-                return true;
-            default:
-                break;
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
             }
         }
-		if (retValue != null && !retValue.accept(action))
-			return false;
+
+		if (retValue != null && !retValue.accept(action)) return false;
 
         if (action.shouldVisitStatements) {
 		    switch (action.leave(this)) {

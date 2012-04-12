@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Rational Software - Initial API and implementation
- * Yuan Zhang / Beth Tibbitts (IBM Research)
+ *     IBM Rational Software - Initial API and implementation
+ *     Yuan Zhang / Beth Tibbitts (IBM Research)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -23,10 +23,8 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
  * @author jcamelon
  */
 public class CASTDoStatement extends ASTNode implements IASTDoStatement, IASTAmbiguityParent {
-
     private IASTStatement body;
     private IASTExpression condition;
-
 
     public CASTDoStatement() {
 	}
@@ -68,12 +66,10 @@ public class CASTDoStatement extends ASTNode implements IASTDoStatement, IASTAmb
 		}
     }
 
-
     @Override
 	public IASTExpression getCondition() {
         return condition;
     }
-
 
     @Override
 	public void setCondition(IASTExpression condition) {
@@ -86,21 +82,23 @@ public class CASTDoStatement extends ASTNode implements IASTDoStatement, IASTAmb
     }
 
     @Override
-	public boolean accept( ASTVisitor action ){
-        if( action.shouldVisitStatements ){
-		    switch( action.visit( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+	public boolean accept(ASTVisitor action) {
+        if (action.shouldVisitStatements) {
+		    switch (action.visit(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
-        if( body != null ) if( !body.accept( action ) ) return false;
-        if( condition != null ) if( !condition.accept( action ) ) return false;
-        if( action.shouldVisitStatements ){
-		    switch( action.leave( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+
+        if (body != null && !body.accept(action)) return false;
+        if (condition != null && !condition.accept(action)) return false;
+
+        if (action.shouldVisitStatements) {
+		    switch (action.leave(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
         return true;
@@ -108,16 +106,14 @@ public class CASTDoStatement extends ASTNode implements IASTDoStatement, IASTAmb
 
     @Override
 	public void replace(IASTNode child, IASTNode other) {
-        if( body == child )
-        {
-            other.setPropertyInParent( body.getPropertyInParent() );
-            other.setParent( body.getParent() );
+        if (body == child) {
+            other.setPropertyInParent(body.getPropertyInParent());
+            other.setParent(body.getParent());
             body = (IASTStatement) other;
         }
-        if( child == condition )
-        {
-            other.setPropertyInParent( child.getPropertyInParent() );
-            other.setParent( child.getParent() );
+        if (child == condition) {
+            other.setPropertyInParent(child.getPropertyInParent());
+            other.setParent(child.getParent());
             condition = (IASTExpression) other;
         }
     }

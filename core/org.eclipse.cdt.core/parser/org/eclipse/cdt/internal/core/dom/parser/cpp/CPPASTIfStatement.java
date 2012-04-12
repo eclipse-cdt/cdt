@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM) - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     John Camelon (IBM) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -158,6 +158,7 @@ public class CPPASTIfStatement extends ASTNode implements ICPPASTIfStatement, IA
     			break loop;
     		}
     	}
+
     	if (action.shouldVisitStatements) {
     		if (stmt != null && action.leave(stmt) == ASTVisitor.PROCESS_ABORT)
     			return false;
@@ -207,8 +208,8 @@ public class CPPASTIfStatement extends ASTNode implements ICPPASTIfStatement, IA
     
 	@Override
 	public IScope getScope() {
-		if( scope == null )
-            scope = new CPPBlockScope( this );
+		if (scope == null)
+            scope = new CPPBlockScope(this);
         return scope;	
     }
 }

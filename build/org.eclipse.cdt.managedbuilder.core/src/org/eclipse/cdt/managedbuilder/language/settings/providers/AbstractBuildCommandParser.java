@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.IErrorParser2;
 import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.core.errorparsers.RegexErrorParser;
 import org.eclipse.cdt.core.errorparsers.RegexErrorPattern;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsLogger;
@@ -228,9 +229,20 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 		return options;
 	}
 
+	private void serializeLanguageSettingsInBackground() {
+		ILanguageSettingsProvider wspProvider = LanguageSettingsManager.getWorkspaceProvider(getId());
+		ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(wspProvider);
+		if (rawProvider == this) {
+			// this is workspace provider
+			serializeLanguageSettingsInBackground(null);
+		} else {
+			serializeLanguageSettingsInBackground(currentCfgDescription);
+		}
+	}
+
 	@Override
 	public void shutdown() {
-		serializeLanguageSettingsInBackground(currentCfgDescription);
+		serializeLanguageSettingsInBackground();
 		super.shutdown();
 	}
 

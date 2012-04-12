@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.ui.viewmodel.expression;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -25,7 +26,6 @@ import org.eclipse.cdt.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IExpressionManager;
 import org.eclipse.debug.core.model.IExpression;
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementEditor;
@@ -37,6 +37,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.TextCellEditor;
@@ -124,7 +125,12 @@ public class ExpressionManagerVMNode extends AbstractVMNode
         // local state data, so we don't bother using a job to perform this 
         // operation.
         for (int i = 0; i < updates.length; i++) {
-            updates[i].setHasChilren(fManager.getExpressions().length != 0);
+            boolean hasChildren = fManager.getExpressions().length != 0;
+            if (!hasChildren && updates[i].getPresentationContext().getColumns() != null) {
+                hasChildren = true;
+            }
+            
+            updates[i].setHasChilren(hasChildren);
             updates[i].done();
         }
     }
@@ -136,7 +142,14 @@ public class ExpressionManagerVMNode extends AbstractVMNode
 
             // We assume that the getExpressions() will just read local state data,
             // so we don't bother using a job to perform this operation.
-            update.setChildCount(fManager.getExpressions().length + 1);
+            int count = fManager.getExpressions().length;
+            
+            // Account for "Add New Expression" element
+            if (update.getPresentationContext().getColumns() != null) {
+                count += 1;  
+            }
+            
+            update.setChildCount(count);
             update.done();
         }
     }
@@ -168,7 +181,12 @@ public class ExpressionManagerVMNode extends AbstractVMNode
 			length = expressions.length;
 		}
 		final int highOffset= lowOffset + length;
-		for (int i = lowOffset; i < highOffset && i < expressions.length + 1; i++) {
+        // If columns are present, add the "Add New Expression" element.
+		int expressionsLength = expressions.length;
+		if (update.getPresentationContext().getColumns() != null) {
+		    expressionsLength += 1;
+		}
+		for (int i = lowOffset; i < highOffset && i < expressionsLength; i++) {
             if (i < expressions.length) {
                 multiRmCount++;
                 final int childIndex = i;
@@ -225,21 +243,25 @@ public class ExpressionManagerVMNode extends AbstractVMNode
      */
     private void updateNewExpressionVMCLabel(ILabelUpdate update, NewExpressionVMC vmc) {
         String[] columnIds = update.getColumnIds() != null ? 
-            update.getColumnIds() : new String[] { IDebugVMConstants.COLUMN_ID__NAME };
+            update.getColumnIds() : new String[0];
             
         for (int i = 0; i < columnIds.length; i++) {
-            if (IDebugVMConstants.COLUMN_ID__EXPRESSION.equals(columnIds[i])) {
+            // Bug 373468: show "Add New Expression" label in name column if 
+            // expression column is not shown.
+            if ( IDebugVMConstants.COLUMN_ID__EXPRESSION.equals(columnIds[i]) ||
+                 (IDebugVMConstants.COLUMN_ID__NAME.equals(columnIds[i]) && 
+                  !Arrays.asList(columnIds).contains(IDebugVMConstants.COLUMN_ID__EXPRESSION)) ) 
+            {
                 update.setLabel(MessagesForExpressionVM.ExpressionManagerLayoutNode__newExpression_label, i);
-                // TODO: replace with an API image consant after bug 313828 is addressed.
-                update.setImageDescriptor(DebugUITools.getImageDescriptor(IInternalDebugUIConstants.IMG_LCL_MONITOR_EXPRESSION), i);
+                update.setImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_LCL_ADD), i);
                 FontData fontData = JFaceResources.getFontDescriptor(IDebugUIConstants.PREF_VARIABLE_TEXT_FONT).getFontData()[0];
-                fontData.setStyle(SWT.ITALIC);  // Bugzilla 287598: Distinguish 'Add new expression' entry from actual expressions                
+                // Bugzilla 287598: Distinguish 'Add new expression' entry from actual expressions
+                fontData.setStyle(SWT.ITALIC);                  
                 update.setFontData(fontData, i);
             } else {
                 update.setLabel("", i); //$NON-NLS-1$
             }
         }
-        
         
         update.done();
     }
@@ -253,6 +275,12 @@ public class ExpressionManagerVMNode extends AbstractVMNode
             retVal |= IModelDelta.ADDED | IModelDelta.REMOVED | IModelDelta.INSERTED | IModelDelta.CONTENT ;
         }
 
+        if ( event instanceof PropertyChangeEvent &&
+             IPresentationContext.PROPERTY_COLUMNS.equals(((PropertyChangeEvent)event).getProperty()) ) 
+        {
+            retVal |= IModelDelta.CONTENT;
+        }
+        
         for (IExpression expression : fManager.getExpressions()) {
             retVal |= getExpressionVMProvider().getDeltaFlagsForExpression(expression, event);
         }
@@ -264,7 +292,14 @@ public class ExpressionManagerVMNode extends AbstractVMNode
 	public void buildDelta(final Object event, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor requestMonitor) {
         if (event instanceof ExpressionsChangedEvent) {
             buildDeltaForExpressionsChangedEvent((ExpressionsChangedEvent)event, parentDelta, nodeOffset, requestMonitor);
-        } else {
+        } 
+        else if ( event instanceof PropertyChangeEvent &&
+            IPresentationContext.PROPERTY_COLUMNS.equals(((PropertyChangeEvent)event).getProperty()) ) 
+        {
+           parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
+           requestMonitor.done();
+        }
+        else {
         
             // For each expression, find its corresponding node and ask that
             // layout node for its delta flags for given event.  If there are delta flags to be 
@@ -322,7 +357,10 @@ public class ExpressionManagerVMNode extends AbstractVMNode
      */
     @Override
 	public CellEditor getCellEditor(IPresentationContext context, String columnId, Object element, Composite parent) {
-        if (IDebugVMConstants.COLUMN_ID__EXPRESSION.equals(columnId)) {
+        if (IDebugVMConstants.COLUMN_ID__EXPRESSION.equals(columnId) ||
+            (IDebugVMConstants.COLUMN_ID__NAME.equals(columnId) && 
+             !Arrays.asList(context.getColumns()).contains(IDebugVMConstants.COLUMN_ID__EXPRESSION)) ) 
+        {
             return new TextCellEditor(parent);
         } 
         return null;

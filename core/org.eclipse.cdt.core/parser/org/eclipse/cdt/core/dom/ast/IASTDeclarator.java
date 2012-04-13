@@ -16,7 +16,7 @@ package org.eclipse.cdt.core.dom.ast;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface IASTDeclarator extends IASTNode, IASTNameOwner {
+public interface IASTDeclarator extends IASTNameOwner, IASTAttributeOwner {
 	/**
 	 * Constant - empty declarator array
 	 */
@@ -51,8 +51,7 @@ public interface IASTDeclarator extends IASTNode, IASTNameOwner {
 			"IASTDeclarator.DECLARATOR_NAME - IASTName for IASTDeclarator"); //$NON-NLS-1$
 
 	/**
-	 * This is the list of pointer operators applied to the type for the
-	 * declarator.
+	 * This is the list of pointer operators applied to the type for the declarator.
 	 * 
 	 * @return array of IASTPointerOperator
 	 */
@@ -61,8 +60,7 @@ public interface IASTDeclarator extends IASTNode, IASTNameOwner {
 	/**
 	 * Adds a pointer operator to the declarator.
 	 * 
-	 * @param operator
-	 *            <code>IASTPointerOperator</code> to be added.
+	 * @param operator a <code>IASTPointerOperator</code> to be added.
 	 */
 	public void addPointerOperator(IASTPointerOperator operator);
 
@@ -106,7 +104,7 @@ public interface IASTDeclarator extends IASTNode, IASTNameOwner {
 	 *            <code>IASTInitializer</code>
 	 */
 	public void setInitializer(IASTInitializer initializer);
-	
+
 	/**
 	 * @since 5.1
 	 */

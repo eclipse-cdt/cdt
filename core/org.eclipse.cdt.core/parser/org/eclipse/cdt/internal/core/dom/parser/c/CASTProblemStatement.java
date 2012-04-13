@@ -9,10 +9,12 @@
  *     IBM - Initial API and implementation
  *     Yuan Zhang / Beth Tibbitts (IBM Research)
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTAttribute;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTProblemStatement;
 
@@ -36,11 +38,7 @@ public class CASTProblemStatement extends CASTProblemOwner implements IASTProble
 	@Override
 	public CASTProblemStatement copy(CopyStyle style) {
 		CASTProblemStatement copy = new CASTProblemStatement();
-		copyBaseProblem(copy, style);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 	
 	@Override
@@ -64,4 +62,15 @@ public class CASTProblemStatement extends CASTProblemOwner implements IASTProble
 		}
         return true;
     }
+
+	@Override
+	public IASTAttribute[] getAttributes() {
+		return IASTAttribute.EMPTY_ATTRIBUTE_ARRAY;
+	}
+
+	@Override
+	public void addAttribute(IASTAttribute attribute) {
+		assertNotFrozen();
+		// Ignore.
+	}
 }

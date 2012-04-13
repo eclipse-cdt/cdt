@@ -6,8 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM Rational Software - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     IBM Rational Software - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -39,19 +40,14 @@ public class CASTFieldDeclarator extends CASTDeclarator implements IASTFieldDecl
 	@Override
 	public CASTFieldDeclarator copy(CopyStyle style) {
 		CASTFieldDeclarator copy = new CASTFieldDeclarator();
-		copyBaseDeclarator(copy, style);
 		copy.setBitFieldSize(bitFieldSize == null ? null : bitFieldSize.copy(style));
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 
 	@Override
 	public IASTExpression getBitFieldSize() {
         return bitFieldSize;
     }
-
 
     @Override
 	public void setBitFieldSize(IASTExpression size) {
@@ -81,6 +77,4 @@ public class CASTFieldDeclarator extends CASTDeclarator implements IASTFieldDecl
         	super.replace(child, other);
         }
     }
-    
-    
 }

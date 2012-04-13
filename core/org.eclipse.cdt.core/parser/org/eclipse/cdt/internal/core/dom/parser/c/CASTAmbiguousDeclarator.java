@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 IBM Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2012 IBM Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,12 @@
  *
  * Contributors:
  *     Markus Schorn - Initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTAttribute;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -89,7 +91,18 @@ public class CASTAmbiguousDeclarator extends ASTAmbiguousNode implements IASTAmb
 	public IASTPointerOperator[] getPointerOperators() {
 		return dtors[0].getPointerOperators();
 	}
-	
+
+	@Override
+	public IASTAttribute[] getAttributes() {
+		return dtors[0].getAttributes();
+	}
+
+	@Override
+	public void addAttribute(IASTAttribute attribute) {
+        assertNotFrozen();
+		Assert.isLegal(false);
+	}
+
 	@Override
 	public int getRoleForName(IASTName name) {
 		return dtors[0].getRoleForName(name);

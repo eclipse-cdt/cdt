@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Rational Software - Initial API and implementation
  *     Yuan Zhang / Beth Tibbitts (IBM Research)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -16,13 +17,13 @@ import org.eclipse.cdt.core.dom.ast.IASTDoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
-import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.ASTAttributeOwner;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * @author jcamelon
  */
-public class CASTDoStatement extends ASTNode implements IASTDoStatement, IASTAmbiguityParent {
+public class CASTDoStatement extends ASTAttributeOwner implements IASTDoStatement, IASTAmbiguityParent {
     private IASTStatement body;
     private IASTExpression condition;
 
@@ -44,11 +45,7 @@ public class CASTDoStatement extends ASTNode implements IASTDoStatement, IASTAmb
 		CASTDoStatement copy = new CASTDoStatement();
 		copy.setBody(body == null ? null : body.copy(style));
 		copy.setCondition(condition == null ? null : condition.copy(style));
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 
 	@Override
@@ -91,6 +88,7 @@ public class CASTDoStatement extends ASTNode implements IASTDoStatement, IASTAmb
 	        }
 		}
 
+        if (!acceptByAttributes(action)) return false;
         if (body != null && !body.accept(action)) return false;
         if (condition != null && !condition.accept(action)) return false;
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,10 +8,12 @@
  * Contributors:
  *     IBM - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTAttribute;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -98,4 +100,14 @@ public class CPPASTAmbiguousStatement extends ASTAmbiguousNode implements IASTAm
 	public IASTNode[] getNodes() {
         return getStatements();
     }
+
+	@Override
+	public IASTAttribute[] getAttributes() {
+		return IASTAttribute.EMPTY_ATTRIBUTE_ARRAY;
+	}
+
+	@Override
+	public void addAttribute(IASTAttribute attribute) {
+    	throw new UnsupportedOperationException();
+	}
 }

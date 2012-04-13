@@ -1,14 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM Rational Software - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
- *    Yuan Zhang / Beth Tibbitts (IBM Research)
+ *     IBM Rational Software - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *     Yuan Zhang / Beth Tibbitts (IBM Research)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -26,17 +27,17 @@ import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
-import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.ASTAttributeOwner;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * @author jcamelon
  */
-public class CASTDeclarator extends ASTNode implements IASTDeclarator, IASTAmbiguityParent {
+public class CASTDeclarator extends ASTAttributeOwner implements IASTDeclarator, IASTAmbiguityParent {
     private IASTInitializer initializer;
     private IASTName name;
     private IASTDeclarator nestedDeclarator;
-    private IASTPointerOperator[] pointerOps = null;
+    private IASTPointerOperator[] pointerOps;
     private int pointerOpsPos= -1;
 
     public CASTDeclarator() {
@@ -58,24 +59,19 @@ public class CASTDeclarator extends ASTNode implements IASTDeclarator, IASTAmbig
 
 	@Override
 	public CASTDeclarator copy(CopyStyle style) {
-		CASTDeclarator copy = new CASTDeclarator();
-		copyBaseDeclarator(copy, style);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(new CASTDeclarator(), style);
 	}
 	
-	protected void copyBaseDeclarator(CASTDeclarator copy, CopyStyle style) {
+	protected <T extends CASTDeclarator> T copy(T copy, CopyStyle style) {
 		copy.setName(name == null ? null : name.copy(style));
 		copy.setInitializer(initializer == null ? null : initializer.copy(style));
 		copy.setNestedDeclarator(nestedDeclarator == null ? null : nestedDeclarator.copy(style));
-		for(IASTPointerOperator pointer : getPointerOperators())
+		for (IASTPointerOperator pointer : getPointerOperators()) {
 			copy.addPointerOperator(pointer == null ? null : pointer.copy(style));
-		copy.setOffsetAndLength(this);
+		}
+		return super.copy(copy, style);
 	}
-	
-	
+
 	@Override
 	public IASTPointerOperator[] getPointerOperators() {
         if (pointerOps == null) return IASTPointerOperator.EMPTY_ARRAY;
@@ -141,10 +137,10 @@ public class CASTDeclarator extends ASTNode implements IASTDeclarator, IASTAmbig
     @Override
 	public boolean accept(ASTVisitor action) {
         if (action.shouldVisitDeclarators) {
-		    switch(action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+		    switch (action.visit(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
         
@@ -152,6 +148,8 @@ public class CASTDeclarator extends ASTNode implements IASTDeclarator, IASTAmbig
             if (!pointerOps[i].accept(action))
             	return false;
         }
+
+        if (!acceptByAttributes(action)) return false;
 
         if (getPropertyInParent() != IASTTypeId.ABSTRACT_DECLARATOR && nestedDeclarator == null) {
             if (getParent() instanceof IASTDeclarator) {

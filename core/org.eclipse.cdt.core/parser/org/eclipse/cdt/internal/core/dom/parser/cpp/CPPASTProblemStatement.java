@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,10 +8,12 @@
  * Contributors:
  *     IBM - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTAttribute;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTProblemStatement;
 
@@ -36,11 +38,7 @@ public class CPPASTProblemStatement extends CPPASTProblemOwner implements IASTPr
 	@Override
 	public CPPASTProblemStatement copy(CopyStyle style) {
 		CPPASTProblemStatement copy = new CPPASTProblemStatement();
-		copyBaseProblem(copy, style);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 
 	@Override
@@ -62,4 +60,15 @@ public class CPPASTProblemStatement extends CPPASTProblemOwner implements IASTPr
 		}
         return true;
     }
+
+	@Override
+	public IASTAttribute[] getAttributes() {
+		return IASTAttribute.EMPTY_ATTRIBUTE_ARRAY;
+	}
+
+	@Override
+	public void addAttribute(IASTAttribute attribute) {
+		assertNotFrozen();
+		// Ignore.
+	}
 }

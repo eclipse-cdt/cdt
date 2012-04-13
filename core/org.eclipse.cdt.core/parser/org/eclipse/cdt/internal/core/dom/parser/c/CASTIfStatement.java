@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     John Camelon (IBM Rational Software) - Initial API and implementation
  *     Yuan Zhang / Beth Tibbitts (IBM Research)
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -17,13 +18,13 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
-import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.ASTAttributeOwner;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * If statements for C.
  */
-public class CASTIfStatement extends ASTNode implements IASTIfStatement, IASTAmbiguityParent {
+public class CASTIfStatement extends ASTAttributeOwner implements IASTIfStatement, IASTAmbiguityParent {
     private IASTExpression condition;
     private IASTStatement thenClause;
     private IASTStatement elseClause;
@@ -52,11 +53,7 @@ public class CASTIfStatement extends ASTNode implements IASTIfStatement, IASTAmb
 		copy.setConditionExpression(condition == null ? null : condition.copy(style));
 		copy.setThenClause(thenClause == null ? null : thenClause.copy(style));
 		copy.setElseClause(elseClause == null ? null : elseClause.copy(style));
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 	
 	@Override
@@ -117,16 +114,19 @@ public class CASTIfStatement extends ASTNode implements IASTIfStatement, IASTAmb
 	public boolean accept(ASTVisitor action) {
     	N stack= null;
     	IASTIfStatement stmt= this;
-    	loop: for(;;) {
+    	loop: for (;;) {
     		if (action.shouldVisitStatements) {
     			switch (action.visit(stmt)) {
-    			case ASTVisitor.PROCESS_ABORT: 	return false;
+    			case ASTVisitor.PROCESS_ABORT: return false;
     			case ASTVisitor.PROCESS_SKIP: 	
     				stmt= null;
     				break loop;
     			default: break;
     			}
     		}
+
+    		if (!((CASTIfStatement) stmt).acceptByAttributes(action)) return false;
+
     		IASTNode child = stmt.getConditionExpression();
     		if (child != null && !child.accept(action))
     			return false;

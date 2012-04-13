@@ -37,7 +37,6 @@ import org.eclipse.cdt.core.parser.IScanner;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPNodeFactory extends INodeFactory {
-	
 	/**
 	 * @since 5.2
 	 */
@@ -51,7 +50,7 @@ public interface ICPPNodeFactory extends INodeFactory {
 	 * @since 5.2
 	 */
 	public ICPPASTArraySubscriptExpression newArraySubscriptExpression(IASTExpression arrayExpr, IASTInitializerClause subscript);
-	
+
 	public ICPPASTBaseSpecifier newBaseSpecifier(IASTName name, int visibility, boolean isVirtual);
 	
 	@Override

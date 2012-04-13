@@ -37,11 +37,7 @@ public class CASTProblemExpression extends CASTProblemOwner implements IASTProbl
 	@Override
 	public CASTProblemExpression copy(CopyStyle style) {
 		CASTProblemExpression copy = new CASTProblemExpression();
-		copyBaseProblem(copy, style);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 	
 	@Override

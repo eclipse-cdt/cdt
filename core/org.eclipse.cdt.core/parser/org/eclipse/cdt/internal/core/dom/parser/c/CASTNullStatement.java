@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,17 +8,18 @@
  * Contributors:
  *     IBM Rational Software - Initial API and implementation
  *     Yuan Zhang / Beth Tibbitts (IBM Research)
- *******************************************************************************/
+ *     Sergey Prigogin (Google)
+ ******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTNullStatement;
-import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.ASTAttributeOwner;
 
 /**
  * @author jcamelon
  */
-public class CASTNullStatement extends ASTNode implements IASTNullStatement {
+public class CASTNullStatement extends ASTAttributeOwner implements IASTNullStatement {
     @Override
 	public boolean accept(ASTVisitor action) {
         if (action.shouldVisitStatements) {
@@ -28,6 +29,8 @@ public class CASTNullStatement extends ASTNode implements IASTNullStatement {
 	            default: break;
 	        }
 		}
+
+        if (!acceptByAttributes(action)) return false;
 
         if (action.shouldVisitStatements) {
 		    switch (action.leave(this)) {
@@ -47,10 +50,6 @@ public class CASTNullStatement extends ASTNode implements IASTNullStatement {
 	@Override
 	public CASTNullStatement copy(CopyStyle style) {
 		CASTNullStatement copy = new CASTNullStatement();
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 }

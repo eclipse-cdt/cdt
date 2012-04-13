@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Yuan Zhang / Beth Tibbitts (IBM Research)
  *     Markus Schorn (Wind River Systems)
  *     Mike Kucera (IBM) - implicit names
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
@@ -76,6 +77,16 @@ public abstract class ASTVisitor {
 	 * @since 5.1
 	 */
 	public boolean shouldVisitPointerOperators = false;
+	/**
+	 * Set this flag to visit attributes.
+	 * @since 5.4
+	 */
+	public boolean shouldVisitAttributes = false;
+	/**
+	 * Set this flag to visit token nodes.
+	 * @since 5.4
+	 */
+	public boolean shouldVisitTokens = false;
 	/**
 	 * Set this flag to visit expressions.
 	 */
@@ -168,7 +179,8 @@ public abstract class ASTVisitor {
 	 * @param visitNodes whether visitor is setup to visit all nodes per default, except
 	 * ambiguous nodes ({@link #shouldVisitAmbiguousNodes}),
 	 * inactive nodes ({@link #includeInactiveNodes}),
-	 * and implicit names (@link {@link #shouldVisitImplicitNames}).
+	 * implicit names ({@link #shouldVisitImplicitNames}),
+	 * and tokens ({@link #shouldVisitTokens}).
 	 * @since 5.1
 	 */
 	public ASTVisitor(boolean visitNodes) {
@@ -186,6 +198,7 @@ public abstract class ASTVisitor {
 		shouldVisitNamespaces= visitNodes;
 		shouldVisitParameterDeclarations= visitNodes;
 		shouldVisitPointerOperators= visitNodes;
+		shouldVisitAttributes= visitNodes;
 		shouldVisitProblems= visitNodes;
 		shouldVisitStatements= visitNodes;
 		shouldVisitTemplateParameters= visitNodes;
@@ -222,17 +235,23 @@ public abstract class ASTVisitor {
 		return PROCESS_CONTINUE;
 	}
 
-	/**
-	 * @since 5.1
-	 */
+	/** @since 5.1 */
 	public int visit(IASTArrayModifier arrayModifier) {
 		return PROCESS_CONTINUE;
 	}
 
-	/**
-	 * @since 5.1
-	 */
+	/** @since 5.1 */
 	public int visit(IASTPointerOperator ptrOperator) {
+		return PROCESS_CONTINUE;
+	}
+
+	/** @since 5.4 */
+	public int visit(IASTAttribute attribute) {
+		return PROCESS_CONTINUE;
+	}
+
+	/** @since 5.4 */
+	public int visit(IASTToken token) {
 		return PROCESS_CONTINUE;
 	}
 
@@ -320,17 +339,23 @@ public abstract class ASTVisitor {
 		return PROCESS_CONTINUE;
 	}
 
-	/**
-	 * @since 5.1
-	 */
+	/** @since 5.1 */
 	public int leave(IASTArrayModifier arrayModifier) {
 		return PROCESS_CONTINUE;
 	}
 
-	/**
-	 * @since 5.1
-	 */
+	/** @since 5.1 */
 	public int leave(IASTPointerOperator ptrOperator) {
+		return PROCESS_CONTINUE;
+	}
+
+	/** @since 5.4 */
+	public int leave(IASTAttribute attribute) {
+		return PROCESS_CONTINUE;
+	}
+
+	/** @since 5.4 */
+	public int leave(IASTToken token) {
 		return PROCESS_CONTINUE;
 	}
 

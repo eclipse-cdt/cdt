@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -17,13 +18,13 @@ import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTryBlockStatement;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
-import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.ASTAttributeOwner;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * @author jcamelon
  */
-public class CPPASTTryBlockStatement extends ASTNode implements ICPPASTTryBlockStatement, IASTAmbiguityParent {
+public class CPPASTTryBlockStatement extends ASTAttributeOwner implements ICPPASTTryBlockStatement, IASTAmbiguityParent {
     private ICPPASTCatchHandler[] catchHandlers;
     private int catchHandlersPos= -1;
     private IASTStatement tryBody;
@@ -46,11 +47,7 @@ public class CPPASTTryBlockStatement extends ASTNode implements ICPPASTTryBlockS
 				new CPPASTTryBlockStatement(tryBody == null ? null : tryBody.copy(style));
 		for (ICPPASTCatchHandler handler : getCatchHandlers())
 			copy.addCatchHandler(handler == null ? null : handler.copy(style));
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 
 	@Override
@@ -95,6 +92,8 @@ public class CPPASTTryBlockStatement extends ASTNode implements ICPPASTTryBlockS
 	            default: break;
 	        }
 		}
+
+        if (!acceptByAttributes(action)) return false;
         if (tryBody != null && !tryBody.accept(action))
         	return false;
 

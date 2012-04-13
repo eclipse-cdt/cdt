@@ -156,6 +156,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.core.parser.util.AttributeUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTAttribute;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
@@ -1854,7 +1855,7 @@ public class CPPVisitor extends ASTQueries {
 				for (IASTAttribute attribute : attributes) {
 					char[] name = attribute.getName();
 					if (CharArrayUtils.equals(name, "__mode__") || CharArrayUtils.equals(name, "mode")) { //$NON-NLS-1$ //$NON-NLS-2$
-						char[] mode = ASTAttribute.getSimpleArgument(attribute);
+						char[] mode = AttributeUtil.getSimpleArgument(attribute);
 						if (CharArrayUtils.equals(mode, "__QI__") || CharArrayUtils.equals(mode, "QI")) { //$NON-NLS-1$ //$NON-NLS-2$
 							type = new CPPBasicType(IBasicType.Kind.eChar,
 									basicType.isUnsigned() ? IBasicType.IS_UNSIGNED : IBasicType.IS_SIGNED);

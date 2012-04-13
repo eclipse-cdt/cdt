@@ -12,16 +12,12 @@ package org.eclipse.cdt.internal.core.dom.parser;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTAttribute;
-import org.eclipse.cdt.core.dom.ast.IASTAttributeOwner;
 import org.eclipse.cdt.core.dom.ast.IASTToken;
-import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 
 /**
  * Base class for C and C++ attributes.
  */
 public abstract class ASTAttribute extends ASTNode implements IASTAttribute {
-	private static final String[] NORETURN_ATTRIBUTES = new String[] { "__noreturn__", "noreturn" };  //$NON-NLS-1$//$NON-NLS-2$
-
     private final char[] name;
     private final IASTToken argumentClause;
 
@@ -66,38 +62,4 @@ public abstract class ASTAttribute extends ASTNode implements IASTAttribute {
 
         return true;
     }
-
-	/**
-	 * Returns {@code true} if a declarator has an attribute with one of the given names.
-	 * The {@code names} array is assumed to be small. 
-	 */
-	public static boolean hasAttribute(IASTAttributeOwner node, String[] names) {
-	    IASTAttribute[] attributes = node.getAttributes();
-		for (IASTAttribute attribute : attributes) {
-			char[] name = attribute.getName();
-			for (int i = 0; i < names.length; i++) {
-				if (CharArrayUtils.equals(name, names[i]))
-					return true;
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * Returns {@code true} if the node has a "noreturn" or "__noreturn__" attribute.
-	 */
-	public static boolean hasNoreturnAttribute(IASTAttributeOwner node) {
-		return hasAttribute(node, NORETURN_ATTRIBUTES);
-	}
-
-	/**
-	 * Returns character representation of the attribute argument, or {@code null} if the attribute
-	 * has zero or more than one argument.
-	 */
-	public static char[] getSimpleArgument(IASTAttribute attribute) {
-		IASTToken argumentClause = attribute.getArgumentClause();
-		if (argumentClause == null)
-			return null;
-		return argumentClause.getTokenCharImage();
-	}
 }

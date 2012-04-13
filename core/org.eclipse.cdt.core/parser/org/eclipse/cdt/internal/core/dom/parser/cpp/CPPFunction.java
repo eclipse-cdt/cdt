@@ -45,6 +45,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.core.parser.util.AttributeUtil;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTAttribute;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
@@ -599,6 +600,6 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 	@Override
 	public boolean isNoReturn() {
 		ICPPASTFunctionDeclarator dtor = getPreferredDtor();
-		return dtor != null && ASTAttribute.hasNoreturnAttribute(dtor);
+		return dtor != null && AttributeUtil.hasNoreturnAttribute(dtor);
 	}
 }

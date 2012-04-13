@@ -33,6 +33,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.core.parser.util.AttributeUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTAttribute;
@@ -488,7 +489,7 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
 	@Override
 	public boolean isNoReturn() {
 		IASTFunctionDeclarator dtor = getPreferredDtor();
-		return dtor != null && ASTAttribute.hasNoreturnAttribute(dtor);
+		return dtor != null && AttributeUtil.hasNoreturnAttribute(dtor);
 	}
 
 	protected IASTFunctionDeclarator getPreferredDtor() {

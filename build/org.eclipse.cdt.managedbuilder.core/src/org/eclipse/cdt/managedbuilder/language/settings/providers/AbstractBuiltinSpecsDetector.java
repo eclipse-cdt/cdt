@@ -350,7 +350,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 		}
 		isExecuted = true;
 
-		Job job = new Job(ManagedMakeMessages.getResourceString("AbstractBuiltinSpecsDetector.DiscoverBuiltInSettingsJobNam")) { //$NON-NLS-1$
+		Job job = new Job(ManagedMakeMessages.getResourceString("AbstractBuiltinSpecsDetector.DiscoverBuiltInSettingsJobName")) { //$NON-NLS-1$
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				IStatus status;

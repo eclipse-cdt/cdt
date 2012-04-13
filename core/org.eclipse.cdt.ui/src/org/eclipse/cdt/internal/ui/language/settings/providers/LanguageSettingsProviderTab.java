@@ -650,24 +650,7 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 		}
 
 		List<ILanguageSettingsProvider> allAvailableProvidersSet = LanguageSettingsManager.getWorkspaceProviders();
-
-		// ensure sorting by name all unchecked providers
-		Collections.sort(allAvailableProvidersSet, new Comparator<ILanguageSettingsProvider>() {
-			@Override
-			public int compare(ILanguageSettingsProvider prov1, ILanguageSettingsProvider prov2) {
-				Boolean isTest1 = prov1.getId().matches(TEST_PLUGIN_ID_PATTERN);
-				Boolean isTest2 = prov2.getId().matches(TEST_PLUGIN_ID_PATTERN);
-				int result = isTest1.compareTo(isTest2);
-				if (result == 0) {
-					String name1 = prov1.getName();
-					String name2 = prov2.getName();
-					if (name1 != null && name2 != null) {
-						result = name1.compareTo(name2);
-					}
-				}
-				return result;
-			}
-		});
+		sortByName(allAvailableProvidersSet);
 
 		for (ILanguageSettingsProvider provider : allAvailableProvidersSet) {
 			String id = provider.getId();
@@ -683,6 +666,26 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 		int pos = tableProviders.getSelectionIndex();
 		tableProvidersViewer.setInput(presentedProviders);
 		tableProviders.setSelection(pos);
+	}
+
+	private void sortByName(List<ILanguageSettingsProvider> providers) {
+		// ensure sorting by name all unchecked providers
+		Collections.sort(providers, new Comparator<ILanguageSettingsProvider>() {
+			@Override
+			public int compare(ILanguageSettingsProvider prov1, ILanguageSettingsProvider prov2) {
+				Boolean isTest1 = prov1.getId().matches(TEST_PLUGIN_ID_PATTERN);
+				Boolean isTest2 = prov2.getId().matches(TEST_PLUGIN_ID_PATTERN);
+				int result = isTest1.compareTo(isTest2);
+				if (result == 0) {
+					String name1 = prov1.getName();
+					String name2 = prov2.getName();
+					if (name1 != null && name2 != null) {
+						result = name1.compareTo(name2);
+					}
+				}
+				return result;
+			}
+		});
 	}
 
 	private ICOptionPage createOptionsPage(ILanguageSettingsProvider provider, ICConfigurationDescription cfgDescription) {
@@ -1074,18 +1077,21 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 					}
 
 				} else if (page.isForPrefs()) {
-					try {
-						LanguageSettingsManager.setWorkspaceProviders(null);
-					} catch (CoreException e) {
-						CUIPlugin.log("Error serializing workspace language settings providers", e);
+					presentedProviders = new ArrayList<ILanguageSettingsProvider>();
+					for (ILanguageSettingsProvider provider : LanguageSettingsManager.getWorkspaceProviders()) {
+						if (!LanguageSettingsManager.isEqualExtensionProvider(provider, true)) {
+							ILanguageSettingsProvider extProvider = LanguageSettingsManager.getExtensionProviderCopy(provider.getId(), true);
+							if (extProvider != null) {
+								provider = extProvider;
+							}
+						}
+						presentedProviders.add(provider);
 					}
-
-					presentedProviders = null;
+					sortByName(presentedProviders);
 				}
 			}
 
 			updateData(getResDesc());
-
 		}
 	}
 
@@ -1093,26 +1099,15 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 	protected void performApply(ICResourceDescription srcRcDescription, ICResourceDescription destRcDescription) {
 //		informOptionPages(true);
 
-		if (!page.isForPrefs()) {
+		if (page.isForPrefs()) {
+			try {
+				LanguageSettingsManager.setWorkspaceProviders(presentedProviders);
+			} catch (CoreException e) {
+				CUIPlugin.log("Error serializing workspace language settings providers", e);
+			}
+		} else {
 			IResource rc = getResource();
 
-			ICConfigurationDescription srcCfgDescription = srcRcDescription.getConfiguration();
-			ICConfigurationDescription destCfgDescription = destRcDescription.getConfiguration();
-
-			if (srcCfgDescription instanceof ILanguageSettingsProvidersKeeper
-					&& destCfgDescription instanceof ILanguageSettingsProvidersKeeper) {
-
-				List<ILanguageSettingsProvider> destProviders = new ArrayList<ILanguageSettingsProvider>();
-				List<ILanguageSettingsProvider> srcProviders = ((ILanguageSettingsProvidersKeeper) srcCfgDescription).getLanguageSettingProviders();
-				for (ILanguageSettingsProvider pro : srcProviders) {
-					// TODO: clone
-					destProviders.add(pro);
-				}
-				((ILanguageSettingsProvidersKeeper) destCfgDescription).setLanguageSettingProviders(destProviders);
-			}
-		}
-
-		if (!page.isForPrefs()) {
 			ICConfigurationDescription sd = srcRcDescription.getConfiguration();
 			ICConfigurationDescription dd = destRcDescription.getConfiguration();
 			if (sd instanceof ILanguageSettingsProvidersKeeper && dd instanceof ILanguageSettingsProvidersKeeper) {

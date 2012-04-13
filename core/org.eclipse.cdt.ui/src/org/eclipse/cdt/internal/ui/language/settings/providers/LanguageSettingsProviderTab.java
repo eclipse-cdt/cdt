@@ -731,25 +731,25 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 		ILanguageSettingsProvider provider = getSelectedProvider();
 		String id = (provider!=null) ? provider.getId() : null;
 
-		boolean isGlobal = LanguageSettingsManager.isWorkspaceProvider(provider);
 		ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(provider);
 
 		currentOptionsPage = optionsPageMap.get(id);
 
 		boolean isChecked = tableProvidersViewer.getChecked(provider);
 		if (!page.isForPrefs()) {
+			boolean isShared = isPresentedAsShared(provider);
 			boolean isRawProviderEditable = rawProvider instanceof ILanguageSettingsEditableProvider;
 
-			sharedProviderCheckBox.setSelection(isPresentedAsShared(provider));
+			sharedProviderCheckBox.setSelection(isShared);
 			sharedProviderCheckBox.setEnabled(isChecked && isRawProviderEditable);
-			sharedProviderCheckBox.setVisible(provider!=null);
+			sharedProviderCheckBox.setVisible(provider != null);
 
-			projectStorageCheckBox.setEnabled(!isGlobal);
+			projectStorageCheckBox.setEnabled(!isShared && isChecked);
 			projectStorageCheckBox.setVisible(rawProvider instanceof LanguageSettingsSerializableProvider);
 			projectStorageCheckBox.setSelection(provider instanceof LanguageSettingsSerializableProvider
 					&& LanguageSettingsManager.isStoringEntriesInProjectArea((LanguageSettingsSerializableProvider) provider));
 
-			boolean needPreferencesLink=isGlobal && currentOptionsPage!=null;
+			boolean needPreferencesLink = isShared && currentOptionsPage != null;
 			// TODO: message
 			final String linkMsg = needPreferencesLink ? "Options of global providers below can be changed in <a href=\"workspace\">Workspace Settings</a>, Discovery Tab." : "";
 			linkWorkspacePreferences.setText(linkMsg);

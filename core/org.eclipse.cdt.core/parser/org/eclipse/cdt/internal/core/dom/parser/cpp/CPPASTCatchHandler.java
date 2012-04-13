@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -17,13 +18,14 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
-import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.ASTAttributeOwner;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * @author jcamelon
  */
-public class CPPASTCatchHandler extends ASTNode implements ICPPASTCatchHandler, IASTAmbiguityParent {
+public class CPPASTCatchHandler extends ASTAttributeOwner
+		implements ICPPASTCatchHandler, IASTAmbiguityParent {
     private boolean isCatchAll;
     private IASTStatement body;
     private IASTDeclaration declaration;
@@ -48,11 +50,7 @@ public class CPPASTCatchHandler extends ASTNode implements ICPPASTCatchHandler, 
 		copy.setDeclaration(declaration == null ? null : declaration.copy(style));
 		copy.setCatchBody(body == null ? null : body.copy(style));
 		copy.setIsCatchAll(isCatchAll);
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 
 	@Override
@@ -105,6 +103,8 @@ public class CPPASTCatchHandler extends ASTNode implements ICPPASTCatchHandler, 
 	            default: break;
 	        }
 		}
+
+        if (!acceptByAttributes(action)) return false;
         if (declaration != null && !declaration.accept(action)) return false;
         if (body != null && !body.accept(action)) return false;
         

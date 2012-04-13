@@ -1,16 +1,18 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM) - Initial API and implementation
+ *     John Camelon (IBM) - Initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
+import org.eclipse.cdt.core.dom.ast.IASTAttributeOwner;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
@@ -21,10 +23,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface ICPPASTUsingDirective extends IASTDeclaration, IASTNameOwner {
-	/**
-	 * Constant.
-	 */
+public interface ICPPASTUsingDirective extends IASTDeclaration, IASTNameOwner, IASTAttributeOwner {
 	public static final ICPPASTUsingDirective[] EMPTY_USINGDIRECTIVE_ARRAY = new ICPPASTUsingDirective[0];
 
 	/**
@@ -60,5 +59,4 @@ public interface ICPPASTUsingDirective extends IASTDeclaration, IASTNameOwner {
 	 */
 	@Override
 	public ICPPASTUsingDirective copy(CopyStyle style);
-
 }

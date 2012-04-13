@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     John Camelon (IBM Rational Software) - Initial API and implementation
  *     Yuan Zhang / Beth Tibbitts (IBM Research)
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -17,10 +18,10 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
-import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.ASTAttributeOwner;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
-public class CASTReturnStatement extends ASTNode implements IASTReturnStatement, IASTAmbiguityParent {
+public class CASTReturnStatement extends ASTAttributeOwner implements IASTReturnStatement, IASTAmbiguityParent {
     private IASTExpression retValue;
 
     public CASTReturnStatement() {
@@ -39,11 +40,7 @@ public class CASTReturnStatement extends ASTNode implements IASTReturnStatement,
 	public CASTReturnStatement copy(CopyStyle style) {
 		CASTReturnStatement copy =
 				new CASTReturnStatement(retValue == null ? null : retValue.copy(style));
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 
 	@Override
@@ -84,7 +81,10 @@ public class CASTReturnStatement extends ASTNode implements IASTReturnStatement,
 	            default: break;
 	        }
 		}
+
+        if (!acceptByAttributes(action)) return false;
         if (retValue != null && !retValue.accept(action)) return false;
+
         if (action.shouldVisitStatements) {
 		    switch (action.leave(this)) {
 	            case ASTVisitor.PROCESS_ABORT: return false;

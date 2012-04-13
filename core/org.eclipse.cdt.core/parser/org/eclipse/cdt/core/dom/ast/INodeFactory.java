@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others.
+ * Copyright (c) 2006, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Mike Kucera (IBM Corporation) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google) 
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
@@ -47,6 +48,9 @@ public interface INodeFactory {
 
 	public IASTASMDeclaration newASMDeclaration(String assembly);
 	
+	/** @since 5.4 */
+	public IASTAttribute newAttribute(char[] name, IASTToken argumentClause);
+
 	public IASTBinaryExpression newBinaryExpression(int op, IASTExpression expr1, IASTExpression expr2);
 	
 	public IASTBreakStatement newBreakStatement();
@@ -157,6 +161,12 @@ public interface INodeFactory {
 	public IASTSimpleDeclSpecifier newSimpleDeclSpecifier();
 	
 	public IASTSwitchStatement newSwitchStatement(IASTExpression controller, IASTStatement body);
+
+	/** @since 5.4 */
+	public IASTToken newToken(int tokenType, char[] tokenImage);
+
+	/** @since 5.4 */
+	public IASTTokenList newTokenList();
 
 	/**
 	 * @deprecated Replaced by {@link #newTranslationUnit(IScanner)}.

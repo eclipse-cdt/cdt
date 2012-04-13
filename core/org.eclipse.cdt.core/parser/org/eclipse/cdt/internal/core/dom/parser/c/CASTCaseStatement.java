@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Rational Software - Initial API and implementation
  *     Yuan Zhang / Beth Tibbitts (IBM Research)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -15,13 +16,13 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTCaseStatement;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.ASTAttributeOwner;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * @author jcamelon
  */
-public class CASTCaseStatement extends ASTNode implements IASTCaseStatement, IASTAmbiguityParent {
+public class CASTCaseStatement extends ASTAttributeOwner implements IASTCaseStatement, IASTAmbiguityParent {
     private IASTExpression expression;
 
     public CASTCaseStatement() {
@@ -39,11 +40,7 @@ public class CASTCaseStatement extends ASTNode implements IASTCaseStatement, IAS
 	@Override
 	public CASTCaseStatement copy(CopyStyle style) {
 		CASTCaseStatement copy = new CASTCaseStatement(expression == null ? null : expression.copy(style));
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 
 	@Override

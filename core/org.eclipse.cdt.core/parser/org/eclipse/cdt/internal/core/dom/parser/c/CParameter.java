@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.core.runtime.PlatformObject;
@@ -88,7 +89,7 @@ public class CParameter extends PlatformObject implements IParameter {
 		IASTName name = getPrimaryDeclaration();
 		if (name != null)
 			return name.toCharArray();
-		return CVisitor.EMPTY_CHAR_ARRAY;
+		return CharArrayUtils.EMPTY_CHAR_ARRAY;
 	}
 
 	@Override

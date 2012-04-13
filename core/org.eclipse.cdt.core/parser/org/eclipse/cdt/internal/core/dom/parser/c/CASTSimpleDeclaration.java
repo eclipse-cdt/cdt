@@ -9,6 +9,7 @@
  *     John Camelon (IBM Rational Software) - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     Yuan Zhang / Beth Tibbitts (IBM Research)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -18,13 +19,13 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
-import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.ASTAttributeOwner;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * Models a simple declaration.
  */
-public class CASTSimpleDeclaration extends ASTNode implements IASTSimpleDeclaration, IASTAmbiguityParent {
+public class CASTSimpleDeclaration extends ASTAttributeOwner implements IASTSimpleDeclaration, IASTAmbiguityParent {
     private IASTDeclarator[] declarators;
     private int declaratorsPos = -1;
     private IASTDeclSpecifier declSpecifier;
@@ -45,15 +46,10 @@ public class CASTSimpleDeclaration extends ASTNode implements IASTSimpleDeclarat
 	public CASTSimpleDeclaration copy(CopyStyle style) {
 		CASTSimpleDeclaration copy = new CASTSimpleDeclaration();
 		copy.setDeclSpecifier(declSpecifier == null ? null : declSpecifier.copy(style));
-		
-		for (IASTDeclarator declarator : getDeclarators())
+		for (IASTDeclarator declarator : getDeclarators()) {
 			copy.addDeclarator(declarator == null ? null : declarator.copy(style));
-		
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
 		}
-		return copy;
+		return copy(copy, style);
 	}
 	
 	@Override
@@ -98,9 +94,10 @@ public class CASTSimpleDeclaration extends ASTNode implements IASTSimpleDeclarat
 	            default: break;
 	        }
 		}
-        
-        if (declSpecifier != null && !declSpecifier.accept(action))
-        	return false;
+
+        if (!acceptByAttributes(action)) return false;
+        if (declSpecifier != null && !declSpecifier.accept(action))	return false;
+
         IASTDeclarator[] dtors = getDeclarators();
         for (int i = 0; i < dtors.length; i++) {
             if (!dtors[i].accept(action))

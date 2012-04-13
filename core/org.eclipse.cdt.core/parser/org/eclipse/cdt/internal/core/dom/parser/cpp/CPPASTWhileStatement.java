@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     John Camelon (IBM) - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -18,13 +19,13 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTWhileStatement;
-import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.ASTAttributeOwner;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * While statement in C++.
  */
-public class CPPASTWhileStatement extends ASTNode
+public class CPPASTWhileStatement extends ASTAttributeOwner
 		implements ICPPASTWhileStatement, IASTAmbiguityParent {
     private IASTExpression condition;
     private IASTDeclaration condition2;
@@ -55,11 +56,7 @@ public class CPPASTWhileStatement extends ASTNode
 		copy.setConditionDeclaration(condition2 == null ? null : condition2.copy(style));
 		copy.setCondition(condition == null ? null : condition.copy(style));
 		copy.setBody(body == null ? null : body.copy(style));
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 
 	@Override
@@ -118,6 +115,8 @@ public class CPPASTWhileStatement extends ASTNode
 	            default: break;
 	        }
 		}
+
+        if (!acceptByAttributes(action)) return false;
         if (condition != null && !condition.accept(action)) 
         	return false;
         if (condition2 != null && !condition2.accept(action)) 

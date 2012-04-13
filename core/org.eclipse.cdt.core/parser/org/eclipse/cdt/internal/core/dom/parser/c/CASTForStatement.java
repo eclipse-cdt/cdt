@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Rational Software - Initial API and implementation
  *     Yuan Zhang / Beth Tibbitts (IBM Research)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -18,13 +19,13 @@ import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IScope;
-import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.ASTAttributeOwner;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * @author jcamelon
  */
-public class CASTForStatement extends ASTNode implements IASTForStatement, IASTAmbiguityParent {
+public class CASTForStatement extends ASTAttributeOwner implements IASTForStatement, IASTAmbiguityParent {
     private IScope scope;
     private IASTExpression condition;
     private IASTExpression iterationExpression;
@@ -50,20 +51,16 @@ public class CASTForStatement extends ASTNode implements IASTForStatement, IASTA
 	@Override
 	public CASTForStatement copy(CopyStyle style) {
 		CASTForStatement copy = new CASTForStatement();
-		copyForStatement(copy, style);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 	
-	protected void copyForStatement(CASTForStatement copy, CopyStyle style) {
+	protected <T extends CASTForStatement> T copy(T copy, CopyStyle style) {
 		copy.setInitializerStatement(init == null ? null : init.copy(style));
 		copy.setConditionExpression(condition == null ? null : condition.copy(style));
 		copy.setIterationExpression(iterationExpression == null ?
 				null : iterationExpression.copy(style));
 		copy.setBody(body == null ? null : body.copy(style));
-		copy.setOffsetAndLength(this);
+		return super.copy(copy, style);
 	}
 	
 	@Override
@@ -141,6 +138,8 @@ public class CASTForStatement extends ASTNode implements IASTForStatement, IASTA
 	            default: break;
 	        }
 		}
+
+        if (!acceptByAttributes(action)) return false;
         if (init != null && !init.accept(action)) return false;
         if (condition != null && !condition.accept(action)) return false;
         if (iterationExpression != null && !iterationExpression.accept(action)) return false;

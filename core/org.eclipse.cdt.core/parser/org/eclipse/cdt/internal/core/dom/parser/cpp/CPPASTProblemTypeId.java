@@ -37,11 +37,7 @@ public class CPPASTProblemTypeId extends CPPASTProblemOwner implements IASTProbl
 	@Override
 	public CPPASTProblemTypeId copy(CopyStyle style) {
 		CPPASTProblemTypeId copy = new CPPASTProblemTypeId();
-		copyBaseProblem(copy, style);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 
     @Override

@@ -73,6 +73,23 @@
                </appInfo>
             </annotation>
          </attribute>
+         <attribute name="usage">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="build">
+                  </enumeration>
+                  <enumeration value="codan">
+                  </enumeration>
+                  <enumeration value="build,codan">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
       </complexType>
    </element>
 

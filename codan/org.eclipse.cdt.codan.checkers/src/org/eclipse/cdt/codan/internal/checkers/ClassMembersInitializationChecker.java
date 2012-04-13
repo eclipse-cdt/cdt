@@ -138,7 +138,7 @@ public class ClassMembersInitializationChecker extends AbstractIndexAstChecker {
 				}
 			}
 			
-			if (skipCurrentConstructor) {
+			if (skipCurrentConstructor && !constructorsStack.empty()) {
 				constructorsStack.peek().clear();
 			}
 			return PROCESS_CONTINUE;

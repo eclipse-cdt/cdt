@@ -53,7 +53,6 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
  * of methods that are working with their value.
  * 
  * @author Anton Gorenkov
- * 
  */
 public class ClassMembersInitializationChecker extends AbstractIndexAstChecker {
 	public static final String ER_ID = "org.eclipse.cdt.codan.internal.checkers.ClassMembersInitialization"; //$NON-NLS-1$
@@ -65,7 +64,6 @@ public class ClassMembersInitializationChecker extends AbstractIndexAstChecker {
 	}
 
 	class OnEachClass extends ASTVisitor {
-		
 		// NOTE: Classes can be nested and even can be declared in constructors of the other classes
 		private final Stack< Set<IField> > constructorsStack = new Stack< Set<IField> >();
 		private boolean skipConstructorsWithFCalls = skipConstructorsWithFCalls();
@@ -133,9 +131,9 @@ public class ClassMembersInitializationChecker extends AbstractIndexAstChecker {
 			}
 			
 			// Bug 368420 - Skip constructor if pattern is *this = toBeCopied;
-			if(expression instanceof IASTBinaryExpression) {
+			if (expression instanceof IASTBinaryExpression) {
 				IASTBinaryExpression binaryExpression = (IASTBinaryExpression) expression;
-				if(referencesThis(binaryExpression.getOperand1()) && binaryExpression.getOperand1().isLValue()) {
+				if (referencesThis(binaryExpression.getOperand1()) && binaryExpression.getOperand1().isLValue()) {
 					skipCurrentConstructor = true;
 				}
 			}
@@ -146,8 +144,8 @@ public class ClassMembersInitializationChecker extends AbstractIndexAstChecker {
 			return PROCESS_CONTINUE;
 		}
 		
-		/** Checks whether expression references this (directly, by pointer or by reference)
-		 * 
+		/**
+		 * Checks whether expression references this (directly, by pointer or by reference)
 		 */
 		public boolean referencesThis(IASTNode expr) {
 			if (expr instanceof IASTLiteralExpression) {
@@ -224,7 +222,6 @@ public class ClassMembersInitializationChecker extends AbstractIndexAstChecker {
 			
 			return null;
 		}
-
 	}
 	
 	@Override
@@ -236,5 +233,4 @@ public class ClassMembersInitializationChecker extends AbstractIndexAstChecker {
 	public boolean skipConstructorsWithFCalls() {
 		return (Boolean) getPreference(getProblemById(ER_ID, getFile()), PARAM_SKIP);
 	}
-	
 }

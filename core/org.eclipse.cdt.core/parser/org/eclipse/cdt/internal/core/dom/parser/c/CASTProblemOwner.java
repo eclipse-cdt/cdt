@@ -29,9 +29,9 @@ abstract class CASTProblemOwner extends ASTNode implements IASTProblemHolder {
 		setProblem(problem);
 	}
 
-	protected void copyBaseProblem(CASTProblemOwner copy, CopyStyle style) {
+	protected <T extends CASTProblemOwner> T  copy(T copy, CopyStyle style) {
 		copy.setProblem(problem == null ? null : problem.copy(style));
-		copy.setOffsetAndLength(this);
+		return super.copy(copy, style);
 	}
 	
 	@Override

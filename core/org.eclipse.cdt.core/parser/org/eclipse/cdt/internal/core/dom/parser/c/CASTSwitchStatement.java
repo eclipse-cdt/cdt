@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Rational Software - Initial API and implementation
  *     Yuan Zhang / Beth Tibbitts (IBM Research)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -16,13 +17,13 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSwitchStatement;
-import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.ASTAttributeOwner;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * @author jcamelon
  */
-public class CASTSwitchStatement extends ASTNode
+public class CASTSwitchStatement extends ASTAttributeOwner
 		implements IASTSwitchStatement, IASTAmbiguityParent {
     private IASTExpression controller;
     private IASTStatement body;
@@ -45,11 +46,7 @@ public class CASTSwitchStatement extends ASTNode
 		CASTSwitchStatement copy = new CASTSwitchStatement();
 		copy.setControllerExpression(controller == null ? null : controller.copy(style));
 		copy.setBody(body == null ? null : body.copy(style));
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 
 	@Override
@@ -92,6 +89,7 @@ public class CASTSwitchStatement extends ASTNode
 	        }
 		}
 
+        if (!acceptByAttributes(action)) return false;
         if (controller != null && !controller.accept(action)) return false;
         if (body != null && !body.accept(action)) return false;
 

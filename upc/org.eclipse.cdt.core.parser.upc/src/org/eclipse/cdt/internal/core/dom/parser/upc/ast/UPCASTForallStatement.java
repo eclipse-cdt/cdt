@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2011 IBM Corporation and others.
+ *  Copyright (c) 2006, 2012 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  *  Contributors:
  *      IBM Corporation - initial API and implementation
+ *      Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.upc.ast;
 
@@ -39,11 +40,7 @@ public class UPCASTForallStatement extends CASTForStatement implements IUPCASTFo
 	public UPCASTForallStatement copy(CopyStyle style) {
 		UPCASTForallStatement copy = new UPCASTForallStatement();
 		copy.setAffinityExpression(affinity == null ? null : affinity.copy(style));
-		copyForStatement(copy, style);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 
 	@Override
@@ -82,6 +79,8 @@ public class UPCASTForallStatement extends CASTForStatement implements IUPCASTFo
             	case ASTVisitor.PROCESS_SKIP: return true;
 			}
 		}
+
+        if (!acceptByAttributes(visitor)) return false;
 
 		IASTStatement initializer = super.getInitializerStatement();
 		if (initializer != null && !initializer.accept(visitor)) return false;

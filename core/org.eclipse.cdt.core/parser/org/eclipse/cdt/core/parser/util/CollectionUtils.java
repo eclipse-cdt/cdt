@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others.
+ * Copyright (c) 2006, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,9 +7,11 @@
  *
  * Contributors:
  *     Mike Kucera (IBM Corporation) - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.util;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -109,5 +111,26 @@ public final class CollectionUtils {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Combines two collections into one.
+	 * @param c1 The first collection. May be modified as a result of the call. May be {@code null}.
+	 * @param c2 The second collection. May be {@code null}.
+	 * @return A collection containing elements from both input collections,
+	 *     or {@code null} if both, {@code c1} and {@code c2} are {@code null}.
+	 * @since 5.4
+	 */
+	public static <T, U extends Collection<T>> U merge(U c1, U c2) {
+		if (c1 == null)
+			return c2;
+		if (c2 == null)
+			return c1;
+		if (c1.isEmpty())
+			return c2;
+		if (c2.isEmpty())
+			return c1;
+		c1.addAll(c2);
+		return c1;
 	}
 }

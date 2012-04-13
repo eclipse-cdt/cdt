@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,13 +10,18 @@
  *     Markus Schorn (Wind River Systems)
  *     Ed Swartz (Nokia)
  *     Mike Kucera (IBM) - bug #206952
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.ASTGenericVisitor;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTAttribute;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTBreakStatement;
 import org.eclipse.cdt.core.dom.ast.IASTCaseStatement;
@@ -60,6 +65,8 @@ import org.eclipse.cdt.core.dom.ast.IASTProblemStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
+import org.eclipse.cdt.core.dom.ast.IASTToken;
+import org.eclipse.cdt.core.dom.ast.IASTTokenList;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
@@ -83,6 +90,7 @@ import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
 import org.eclipse.cdt.core.parser.ParseError;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.core.parser.util.CollectionUtils;
 import org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver;
 
 /**
@@ -484,8 +492,8 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     }
 
 	/**
-	 * Consume the next token available only if the type is as specified. In case we reached the end of
-	 * completion, no token is consumed and the eoc-token returned.
+	 * Consume the next token available only if the type is as specified. In case we reached
+	 * the end of completion, no token is consumed and the eoc-token returned.
 	 * 
 	 * @param type
 	 *            The type of token that you are expecting.
@@ -2314,26 +2322,38 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
      * 
      * @param allowAttrib if true accept any number of __attribute__ 
      * @param allowDeclspec if true accept any number of __declspec
+     * @return the list of attributes, or {@code null} if there are none
      * @throws BacktrackException
      * @throws EndOfFileException
      */
-    protected void __attribute_decl_seq(boolean allowAttrib, boolean allowDeclspec) throws BacktrackException, EndOfFileException {
+    protected List<IASTAttribute> __attribute_decl_seq(boolean allowAttrib, boolean allowDeclspec)
+    		throws BacktrackException, EndOfFileException {
+    	List<IASTAttribute> result = null;
         while (true) {
         	final int lt = LTcatchEOF(1);
         	if (allowAttrib && (lt == IGCCToken.t__attribute__)) {
-        		__attribute__();
+        		result = CollectionUtils.merge(result, __attribute__());
         	} else if (allowDeclspec && (lt == IGCCToken.t__declspec)) {
         		__declspec();
         	} else {
         		break;
         	}
         }
+        return result;
     }
 
-    protected void __attribute__() throws BacktrackException, EndOfFileException {    	
+    /**
+     * Parses an __attribute__ clause.
+     * @return the list of attributes, or {@code null} if the __attribute__ clause contained
+     *     no attributes
+     * @throws BacktrackException
+     * @throws EndOfFileException
+     */
+    protected List<IASTAttribute> __attribute__() throws BacktrackException, EndOfFileException {    	
     	if (LT(1) != IGCCToken.t__attribute__) 
-    		return;
-    	
+    		return null;
+
+    	List<IASTAttribute> result = null;
     	consume();
     	if (LT(1) == IToken.tLPAREN) {
     		consume(); 
@@ -2346,7 +2366,10 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     			
     			// Allow empty attribute
     			if (lt1 != IToken.tCOMMA) {
-    				singleAttribute();
+    				IASTAttribute attribute = singleAttribute();
+    				if (result == null)
+    					result = new ArrayList<IASTAttribute>();
+    				result.add(attribute);
     			}
 
 				// Require comma
@@ -2358,41 +2381,100 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     		consumeOrEOC(IToken.tRPAREN);
     		consumeOrEOC(IToken.tRPAREN);
     	}
+    	return result;
     }
 
-	private void singleAttribute() throws EndOfFileException, BacktrackException {
-		// Check if we have an identifier including keywords
-		if (!isIdentifier(LA(1)))
-			throw backtrack;					
-		consume();
-
-		// Check for parameters
+	private IASTAttribute singleAttribute() throws EndOfFileException, BacktrackException {
+		// Get an identifier including keywords
+		IToken attributeName = identifierOrKeyword();
+		IASTToken argumentClause = null;
+		// Check for arguments
 		if (LT(1) == IToken.tLPAREN) {
 			consume();
-			for(;;) {
-				final int lt2= LT(1);				
-				if (lt2 == IToken.tRPAREN || lt2 == IToken.tEOC) 
-					break;
-
-				// Allow empty parameter
-				if (lt2 != IToken.tCOMMA) {
-					expression();
-				}
-				// Require comma
-				if (LT(1) != IToken.tCOMMA) 
-					break;
-				consume();
-			}
+			argumentClause = balancedTokenSeq(IToken.tRPAREN);
 			consumeOrEOC(IToken.tRPAREN);
 		}
+		IASTAttribute result = nodeFactory.newAttribute(attributeName.getCharImage(), argumentClause);
+		setRange(result, attributeName.getOffset(), getEndOffset());
+		return result;
 	}
     
-	private boolean isIdentifier(IToken t) {
+	private IToken identifierOrKeyword() throws EndOfFileException, BacktrackException {
+		IToken t = LA(1);
 		char[] image= t.getCharImage();
 		if (image.length == 0)
-			return false;
+			throw backtrack; 
 		char firstChar= image[0];
-		return Character.isLetter(firstChar) || firstChar == '_'; 
+		if (!Character.isLetter(firstChar) && firstChar != '_')
+			throw backtrack;
+		consume();
+		return t;
+	}
+
+	private IASTToken balancedTokenSeq(int endType) throws EndOfFileException, BacktrackException {
+		IASTToken result = null;
+		IToken t;
+		while ((t = LA(1)).getType() != endType) {
+			consume();
+			IASTToken token;
+			switch (LT(1)) {
+			case IToken.tLPAREN:
+				token = balancedTokenSeq(t.getOffset(), IToken.tRPAREN);
+				break;
+
+			case IToken.tLBRACKET:
+				token = balancedTokenSeq(t.getOffset(), IToken.tRBRACKET);
+				break;
+				
+			case IToken.tLBRACE:
+				token = balancedTokenSeq(t.getOffset(), IToken.tRBRACE);
+				break;
+				
+			default:
+				token = nodeFactory.newToken(t);
+				setRange(token, t.getOffset(), t.getEndOffset());
+				break;
+			}
+			result = addTokenToSequence(result, token);
+		}
+		return result;
+	}
+
+	/**
+	 * Parses sequence of tokens until encountering a token of a given type
+	 * @param offset the offset for the returned token node.
+	 * @param endType the type of the token to stop before
+	 * @return a token sequence, possibly empty but never {@code null} 
+	 */
+	private IASTToken balancedTokenSeq(int offset, int endType) throws EndOfFileException, BacktrackException {
+		IASTToken token = balancedTokenSeq(endType);
+		if (token == null)
+			token = nodeFactory.newTokenList();
+		int endOffset = consumeOrEOC(endType).getEndOffset();
+		setRange(token, offset, endOffset);
+		return token;
+	}
+
+	/**
+	 * Adds a token to a token sequence.
+	 * 
+	 * @param sequence the token sequence, may be {@code null}
+	 * @param token the token to add
+	 * @return the modified token sequence that is never {@code null}
+	 */
+	private IASTToken addTokenToSequence(IASTToken sequence, IASTToken token) {
+		if (sequence == null) {
+			sequence = token;
+		} else if (sequence instanceof IASTTokenList) {
+			((IASTTokenList) sequence).addToken(token);
+			adjustLength(sequence, token);
+		} else {
+			IASTTokenList list = nodeFactory.newTokenList();
+			list.addToken(token);
+			setRange(list, token);
+			sequence = list;
+		}
+		return sequence;
 	}
 
 	protected void __declspec() throws BacktrackException, EndOfFileException {

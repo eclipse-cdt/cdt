@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     John Camelon (IBM) - Initial API and implementation
  *     Emanuel Graf IFS - Bug 198269
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -19,14 +20,15 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTForStatement;
-import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.ASTAttributeOwner;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * For statement in C++
  */
-public class CPPASTForStatement extends ASTNode implements ICPPASTForStatement, IASTAmbiguityParent {
-    private IScope scope = null;
+public class CPPASTForStatement extends ASTAttributeOwner
+		implements ICPPASTForStatement, IASTAmbiguityParent {
+    private IScope scope;
     
     private IASTStatement  init;
     private IASTExpression condition;
@@ -67,11 +69,7 @@ public class CPPASTForStatement extends ASTNode implements ICPPASTForStatement, 
 		copy.setIterationExpression(iterationExpression == null ?
 				null : iterationExpression.copy(style));
 		copy.setBody(body == null ? null : body.copy(style));
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 
 	@Override
@@ -136,6 +134,8 @@ public class CPPASTForStatement extends ASTNode implements ICPPASTForStatement, 
 	            default: break;
 	        }
 		}
+
+        if (!acceptByAttributes(action)) return false;
         if (init != null && !init.accept(action)) return false;
         if (condition != null && !condition.accept(action)) return false;
         if (condDeclaration != null && !condDeclaration.accept(action)) return false;

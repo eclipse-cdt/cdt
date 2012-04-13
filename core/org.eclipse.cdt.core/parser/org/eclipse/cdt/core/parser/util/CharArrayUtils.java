@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Andrew Ferguson (Symbian)
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.util;
 
@@ -19,7 +20,9 @@ import java.util.Arrays;
  * @author dschaefe
  */
 public class CharArrayUtils {
-	public static final char[] EMPTY = {};
+	/** @since 5.4 */
+	public static final char[] EMPTY_CHAR_ARRAY = {};
+	public static final char[] EMPTY = EMPTY_CHAR_ARRAY;
 
 	private CharArrayUtils() {}
 
@@ -52,6 +55,40 @@ public class CharArrayUtils {
 			}
 		}
 		return true;
+	}
+
+	/**
+	 * Returns {@code true} if the contents of a character array are the same as contents
+	 * of a string.
+	 * @since 5.4
+	 */
+	public static final boolean equals(char[] str1, String str2) {
+        int length = str1.length;
+        if (str2.length() != length)
+            return false;
+
+        for (int i = 0; i < length; i++) {
+            if (str1[i] != str2.charAt(i))
+                return false;
+        }
+        return true;
+	}
+
+	/**
+	 * Returns {@code true} if a prefix of the character array is the same as contents
+	 * of a string.
+	 * @since 5.4
+	 */
+	public static final boolean startsWith(char[] str1, String str2) {
+		int len = str2.length();
+		if (str1.length < len)
+			return false;
+		for (int i = 0; i < len; i++) {
+            if (str1[i] != str2.charAt(i)) {
+                return false;
+            }
+        }
+        return true;
 	}
 
 	/**

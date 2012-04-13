@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     John Camelon (IBM) - Initial API and implementation
  *     Bryan Wilkinson (QNX)
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -21,10 +22,10 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICPPASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
-import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.ASTAttributeOwner;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 
-public class CPPASTUsingDeclaration extends ASTNode
+public class CPPASTUsingDeclaration extends ASTAttributeOwner
 		implements ICPPASTUsingDeclaration, ICPPASTCompletionContext {
     private boolean typeName;
     private IASTName name;
@@ -46,11 +47,7 @@ public class CPPASTUsingDeclaration extends ASTNode
 		CPPASTUsingDeclaration copy =
 				new CPPASTUsingDeclaration(name == null ? null : name.copy(style));
 		copy.typeName = typeName;
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 
 	@Override
@@ -89,6 +86,7 @@ public class CPPASTUsingDeclaration extends ASTNode
 	        }
 		}
         
+        if (!acceptByAttributes(action)) return false;
         if (name != null && !name.accept(action)) return false;
         
         if (action.shouldVisitDeclarations) {

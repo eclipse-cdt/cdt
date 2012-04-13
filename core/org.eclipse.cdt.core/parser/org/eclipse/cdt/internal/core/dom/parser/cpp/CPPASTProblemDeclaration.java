@@ -36,11 +36,7 @@ public class CPPASTProblemDeclaration extends CPPASTProblemOwner implements IAST
 	@Override
 	public CPPASTProblemDeclaration copy(CopyStyle style) {
 		CPPASTProblemDeclaration copy = new CPPASTProblemDeclaration();
-		copyBaseProblem(copy, style);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 
 	@Override

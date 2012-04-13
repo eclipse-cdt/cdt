@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Doug Schaefer (IBM) - Initial API and implementation
+ *     Doug Schaefer (IBM) - Initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
@@ -17,8 +18,7 @@ package org.eclipse.cdt.core.dom.ast;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface IASTSimpleDeclaration extends IASTDeclaration {
-
+public interface IASTSimpleDeclaration extends IASTDeclaration, IASTAttributeOwner {
 	/**
 	 * <code>DECL_SPECIFIER</code> represents the relationship between an
 	 * <code>IASTSimpleDeclaration</code> and it's nested

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -29,16 +30,16 @@ abstract class CPPASTProblemOwner extends ASTNode implements IASTProblemHolder {
 		setProblem(problem);
 	}
 
-	protected void copyBaseProblem(CPPASTProblemOwner copy, CopyStyle style) {
+	protected <T extends CPPASTProblemOwner> T copy(T copy, CopyStyle style) {
 		copy.setProblem(problem == null ? null : problem.copy(style));
-		copy.setOffsetAndLength(this);
+		return super.copy(copy, style);
 	}
 
 	@Override
 	public IASTProblem getProblem() {
         return problem;
     }
-    
+
     @Override
 	public void setProblem(IASTProblem p) {
         assertNotFrozen();
@@ -48,8 +49,8 @@ abstract class CPPASTProblemOwner extends ASTNode implements IASTProblemHolder {
 			p.setPropertyInParent(PROBLEM);
 		}
     }
-    
-    	@Override
+
+    @Override
 	public boolean accept(ASTVisitor action) {
         if (action.shouldVisitProblems) {
 		    switch (action.visit(getProblem())) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 IBM Wind River Systems, Inc. and others.
+ * Copyright (c) 2009, 2012 IBM Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,12 @@
  *
  * Contributors:
  *     Markus Schorn - Initial API and implementation
+ *     Sergey Prigogin (Google) 
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTAttribute;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -126,5 +128,15 @@ public class CPPASTAmbiguousSimpleDeclaration extends ASTAmbiguousNode implement
 		// resolve further nested ambiguities
 		fSimpleDecl.accept(resolver);
 		return fSimpleDecl;
+	}
+
+	@Override
+	public IASTAttribute[] getAttributes() {
+		return fSimpleDecl.getAttributes();
+	}
+
+	@Override
+	public void addAttribute(IASTAttribute attribute) {
+		fSimpleDecl.addAttribute(attribute);
 	}
 }

@@ -69,8 +69,8 @@ import org.eclipse.cdt.internal.ui.newui.StatusMessageLine;
  * This tab presents language settings entries categorized by language
  * settings providers.
  *
- *@noinstantiate This class is not intended to be instantiated by clients.
- *@noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 	private static final int[] DEFAULT_ENTRIES_SASH_WEIGHTS = new int[] { 10, 30 };
@@ -79,7 +79,8 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 	private Tree treeLanguages;
 	private Tree treeEntries;
 	private TreeViewer treeEntriesViewer;
-	private static String currentLanguageId = null;
+	private static String currentLanguageIdGlobal = null;
+	private String currentLanguageId = null;
 
 	private Button builtInCheckBox;
 	private Button enableProvidersCheckBox;
@@ -322,6 +323,7 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 				TreeItem[] items = treeLanguages.getSelection();
 				if (items.length > 0) {
 					currentLanguageId = (String) items[0].getData();
+					currentLanguageIdGlobal = currentLanguageId;
 					updateTreeEntries();
 					updateButtons();
 				}
@@ -375,6 +377,9 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 		treeEntries.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				if (treeLanguages.getSelectionCount() == 0) {
+					selectLanguage(currentLanguageId);
+				}
 				updateStatusLine();
 				updateButtons();
 			}
@@ -405,6 +410,8 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 	@Override
 	public void createControls(Composite parent) {
 		super.createControls(parent);
+		currentLanguageId = null;
+
 		usercomp.setLayout(new GridLayout());
 		GridData gd = (GridData) usercomp.getLayoutData();
 		// Discourage settings entry table from trying to show all its items at once, see bug 264330
@@ -904,7 +911,7 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 
 	private void updateTreeLanguages(ICResourceDescription rcDes) {
 		treeLanguages.removeAll();
-		TreeItem selectedLanguageItem = null;
+		currentLanguageId = null;
 
 		List<String> languageIds = LanguageSettingsManager.getLanguages(rcDes);
 		Collections.sort(languageIds);
@@ -920,20 +927,27 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 			TreeItem t = new TreeItem(treeLanguages, SWT.NONE);
 			t.setText(0, langName);
 			t.setData(langId);
-			if (selectedLanguageItem == null) {
-				if (currentLanguageId!=null) {
-					if (currentLanguageId.equals(langId)) {
-						selectedLanguageItem = t;
-					}
-				} else {
-					selectedLanguageItem = t;
-					currentLanguageId = langId;
-				}
+			if (currentLanguageIdGlobal != null && currentLanguageIdGlobal.equals(langId)) {
+				currentLanguageId = currentLanguageIdGlobal;
+				treeLanguages.setSelection(t);
+			} else if (currentLanguageId == null) {
+				// this selects first language on first round
+				// do not select the tree item and global language selection here, only on actual click
+				currentLanguageId = langId;
 			}
 		}
 
-		if (selectedLanguageItem != null) {
-			treeLanguages.setSelection(selectedLanguageItem);
+	}
+
+	private void selectLanguage(String langId) {
+		currentLanguageId = langId;
+		currentLanguageIdGlobal = currentLanguageId;
+
+		for (TreeItem t : treeLanguages.getItems()) {
+			if (t.getData().equals(langId)) {
+				treeLanguages.setSelection(t);
+				break;
+			}
 		}
 	}
 

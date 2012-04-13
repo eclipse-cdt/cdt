@@ -1091,7 +1091,11 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 				}
 			}
 
-			updateData(getResDesc());
+			ICResourceDescription rcDescription = getResDesc();
+
+			updateData(rcDescription);
+			// update other tabs
+			masterPropertyPage.informAll(UPDATE, rcDescription);
 		}
 	}
 

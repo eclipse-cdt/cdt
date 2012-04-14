@@ -1,0 +1,633 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOG3//9Vo\u003d",
+        "filename": "codan/org.eclipse.cdt.codan.core.cxx/src/org/eclipse/cdt/codan/core/cxx/externaltool/AbstractExternalToolBasedChecker.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-04-14T03:22:13Z",
+      "side": 1,
+      "message": "Add \"and others.\" You can use ConfigurationSettings.java as an example.",
+      "revId": "a5cfd24d54ec6e67e08f24a367a6bc689ae407d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9Vs\u003d",
+        "filename": "codan/org.eclipse.cdt.codan.core.cxx/src/org/eclipse/cdt/codan/core/cxx/externaltool/AbstractExternalToolBasedChecker.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-04-14T03:22:13Z",
+      "side": 1,
+      "message": "Align Alex under \u0027r\u0027 in \"Contributors\".",
+      "revId": "a5cfd24d54ec6e67e08f24a367a6bc689ae407d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9Vw\u003d",
+        "filename": "codan/org.eclipse.cdt.codan.core.cxx/src/org/eclipse/cdt/codan/core/cxx/externaltool/AbstractExternalToolBasedChecker.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-04-14T03:22:13Z",
+      "side": 1,
+      "message": "Move @since above @author or remove author altogether since it\u0027s already in line 9.",
+      "revId": "a5cfd24d54ec6e67e08f24a367a6bc689ae407d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9V4\u003d",
+        "filename": "codan/org.eclipse.cdt.codan.core.cxx/src/org/eclipse/cdt/codan/core/cxx/externaltool/AbstractExternalToolBasedChecker.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-04-14T03:22:13Z",
+      "side": 1,
+      "message": "It sounds like double negative. It\u0027s probably more readable without the constant.",
+      "revId": "a5cfd24d54ec6e67e08f24a367a6bc689ae407d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9Vk\u003d",
+        "filename": "codan/org.eclipse.cdt.codan.core.cxx/src/org/eclipse/cdt/codan/core/cxx/externaltool/AbstractExternalToolBasedChecker.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-04-14T03:22:13Z",
+      "side": 1,
+      "message": "Don\u0027t repeat the comment from the interface. Just explain why this implementation returns false.",
+      "revId": "a5cfd24d54ec6e67e08f24a367a6bc689ae407d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9Vc\u003d",
+        "filename": "codan/org.eclipse.cdt.codan.core.cxx/src/org/eclipse/cdt/codan/core/cxx/externaltool/AbstractExternalToolBasedChecker.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-04-14T03:22:13Z",
+      "side": 1,
+      "message": "Remove this line since it does add any value.",
+      "revId": "a5cfd24d54ec6e67e08f24a367a6bc689ae407d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9VY\u003d",
+        "filename": "codan/org.eclipse.cdt.codan.core.cxx/src/org/eclipse/cdt/codan/core/cxx/externaltool/AbstractExternalToolBasedChecker.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 189,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-04-14T03:22:13Z",
+      "side": 1,
+      "message": "Do not use @inheritDoc. This is the default Eclipse behavior.",
+      "revId": "a5cfd24d54ec6e67e08f24a367a6bc689ae407d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9VU\u003d",
+        "filename": "codan/org.eclipse.cdt.codan.core.cxx/src/org/eclipse/cdt/codan/core/cxx/externaltool/AbstractExternalToolBasedChecker.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 211,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-04-14T03:22:13Z",
+      "side": 1,
+      "message": "Do not repeat comments from the implemented interface.",
+      "revId": "a5cfd24d54ec6e67e08f24a367a6bc689ae407d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9VQ\u003d",
+        "filename": "codan/org.eclipse.cdt.codan.core.cxx/src/org/eclipse/cdt/codan/core/cxx/externaltool/AbstractExternalToolBasedChecker.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 227,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-04-14T03:22:13Z",
+      "side": 1,
+      "message": "Redundant variable - inline.",
+      "revId": "a5cfd24d54ec6e67e08f24a367a6bc689ae407d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9VI\u003d",
+        "filename": "codan/org.eclipse.cdt.codan.core.cxx/src/org/eclipse/cdt/codan/core/cxx/externaltool/IArgsSeparator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-04-14T03:22:13Z",
+      "side": 1,
+      "message": "Why do we need an interface for that. Isn\u0027t it always going to be done according to command shell rules?",
+      "revId": "a5cfd24d54ec6e67e08f24a367a6bc689ae407d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9VM\u003d",
+        "filename": "codan/org.eclipse.cdt.codan.core.cxx/src/org/eclipse/cdt/codan/core/cxx/externaltool/IArgsSeparator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-04-14T03:22:13Z",
+      "side": 1,
+      "message": "Rename to splitArguments.",
+      "revId": "a5cfd24d54ec6e67e08f24a367a6bc689ae407d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9VE\u003d",
+        "filename": "codan/org.eclipse.cdt.codan.core.cxx/src/org/eclipse/cdt/codan/core/cxx/externaltool/SpaceArgsSeparator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-04-14T03:22:13Z",
+      "side": 1,
+      "message": "This is not going to work for quoted arguments containing spaces.",
+      "revId": "a5cfd24d54ec6e67e08f24a367a6bc689ae407d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9U4\u003d",
+        "filename": "codan/org.eclipse.cdt.codan.core.cxx/src/org/eclipse/cdt/codan/core/cxx/internal/externaltool/Command.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-04-14T03:22:13Z",
+      "side": 1,
+      "message": "Does using IPath here mean that were are converting from String to Path and back to String?",
+      "revId": "a5cfd24d54ec6e67e08f24a367a6bc689ae407d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9U0\u003d",
+        "filename": "codan/org.eclipse.cdt.codan.core.cxx/src/org/eclipse/cdt/codan/core/cxx/internal/externaltool/CommandBuilder.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-04-14T03:22:13Z",
+      "side": 1,
+      "message": "Remove alruiz:",
+      "revId": "a5cfd24d54ec6e67e08f24a367a6bc689ae407d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9Uw\u003d",
+        "filename": "codan/org.eclipse.cdt.codan.core.cxx/src/org/eclipse/cdt/codan/core/cxx/internal/externaltool/CommandBuilder.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-04-14T03:22:13Z",
+      "side": 1,
+      "message": "Please use proper capitalization and punctuation in comments.",
+      "revId": "a5cfd24d54ec6e67e08f24a367a6bc689ae407d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9Us\u003d",
+        "filename": "codan/org.eclipse.cdt.codan.core.cxx/src/org/eclipse/cdt/codan/core/cxx/internal/externaltool/ExternalToolInvoker.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-04-14T03:22:13Z",
+      "side": 1,
+      "message": "Shorter \u003d {}",
+      "revId": "a5cfd24d54ec6e67e08f24a367a6bc689ae407d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9Uo\u003d",
+        "filename": "codan/org.eclipse.cdt.codan.core.cxx/src/org/eclipse/cdt/codan/core/cxx/internal/externaltool/ExternalToolInvoker.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-04-14T03:22:13Z",
+      "side": 1,
+      "message": "Rename to NULL_PROGRESS_MONITOR",
+      "revId": "a5cfd24d54ec6e67e08f24a367a6bc689ae407d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9UE\u003d",
+        "filename": "codan/org.eclipse.cdt.codan.core/schema/checkerEnablement.exsd",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-04-14T03:22:13Z",
+      "side": 1,
+      "message": "The description doesn\u0027t make it clear what role this additional enablement mechanism plays.",
+      "revId": "a5cfd24d54ec6e67e08f24a367a6bc689ae407d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9UU\u003d",
+        "filename": "codan/org.eclipse.cdt.codan.core/schema/checkerEnablement.exsd",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-04-14T03:22:13Z",
+      "side": 1,
+      "message": "Add description.",
+      "revId": "a5cfd24d54ec6e67e08f24a367a6bc689ae407d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9UQ\u003d",
+        "filename": "codan/org.eclipse.cdt.codan.core/schema/checkerEnablement.exsd",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-04-14T03:22:13Z",
+      "side": 1,
+      "message": "Add description.",
+      "revId": "a5cfd24d54ec6e67e08f24a367a6bc689ae407d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9UM\u003d",
+        "filename": "codan/org.eclipse.cdt.codan.core/schema/checkerEnablement.exsd",
+        "patchSetId": 1
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-04-14T03:22:13Z",
+      "side": 1,
+      "message": "Add description.",
+      "revId": "a5cfd24d54ec6e67e08f24a367a6bc689ae407d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9UI\u003d",
+        "filename": "codan/org.eclipse.cdt.codan.core/schema/checkerEnablement.exsd",
+        "patchSetId": 1
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-04-14T03:22:13Z",
+      "side": 1,
+      "message": "Add description.",
+      "revId": "a5cfd24d54ec6e67e08f24a367a6bc689ae407d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9Uk\u003d",
+        "filename": "codan/org.eclipse.cdt.codan.core/schema/checkerEnablement.exsd",
+        "patchSetId": 1
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-04-14T03:22:13Z",
+      "side": 1,
+      "message": "Please.",
+      "revId": "a5cfd24d54ec6e67e08f24a367a6bc689ae407d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9Ug\u003d",
+        "filename": "codan/org.eclipse.cdt.codan.core/schema/checkerEnablement.exsd",
+        "patchSetId": 1
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-04-14T03:22:13Z",
+      "side": 1,
+      "message": "Please.",
+      "revId": "a5cfd24d54ec6e67e08f24a367a6bc689ae407d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9Uc\u003d",
+        "filename": "codan/org.eclipse.cdt.codan.core/schema/checkerEnablement.exsd",
+        "patchSetId": 1
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-04-14T03:22:13Z",
+      "side": 1,
+      "message": "Please.",
+      "revId": "a5cfd24d54ec6e67e08f24a367a6bc689ae407d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9UY\u003d",
+        "filename": "codan/org.eclipse.cdt.codan.core/schema/checkerEnablement.exsd",
+        "patchSetId": 1
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-04-14T03:22:13Z",
+      "side": 1,
+      "message": "Unnecessary blank lines.",
+      "revId": "a5cfd24d54ec6e67e08f24a367a6bc689ae407d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9UA\u003d",
+        "filename": "codan/org.eclipse.cdt.codan.core/src/org/eclipse/cdt/codan/internal/core/ICheckerEnablementVerifier.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-04-14T03:22:13Z",
+      "side": 1,
+      "message": "Would it make sense to move this method to IChecker, its default implementation to AbstractChecker and rename the method to enabledInContext?",
+      "revId": "a5cfd24d54ec6e67e08f24a367a6bc689ae407d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9WI\u003d",
+        "filename": "core/org.eclipse.cdt.core/schema/ErrorParser.exsd",
+        "patchSetId": 1
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-04-14T03:22:13Z",
+      "side": 1,
+      "message": "Please add description.",
+      "revId": "a5cfd24d54ec6e67e08f24a367a6bc689ae407d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9WE\u003d",
+        "filename": "core/org.eclipse.cdt.core/schema/ErrorParser.exsd",
+        "patchSetId": 1
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-04-14T03:22:13Z",
+      "side": 1,
+      "message": "\"codan,build\" should also be allowed.\nIt\u0027s probably better to use subelement instead of attribute. This way you can say \u003ccontext type\u003d\"build\"/\u003e\u003ccontext type\u003d\"codan\"/\u003e.",
+      "revId": "a5cfd24d54ec6e67e08f24a367a6bc689ae407d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9T8\u003d",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/ErrorParserUsage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-04-14T03:22:13Z",
+      "side": 1,
+      "message": "Shorter \u003d {}",
+      "revId": "a5cfd24d54ec6e67e08f24a367a6bc689ae407d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9T4\u003d",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/ErrorParserUsage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-04-14T03:22:13Z",
+      "side": 1,
+      "message": "Add a space before usages",
+      "revId": "a5cfd24d54ec6e67e08f24a367a6bc689ae407d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9T0\u003d",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/ErrorParserUsage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-04-14T03:22:13Z",
+      "side": 1,
+      "message": "It would be simpler to return an integer bit mask reflecting the contexts in with the parser can be used.",
+      "revId": "a5cfd24d54ec6e67e08f24a367a6bc689ae407d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9WM\u003d",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/IErrorParser3.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-04-14T03:22:13Z",
+      "side": 1,
+      "message": "IErrorParser3 has to extend IErrorParser2",
+      "revId": "a5cfd24d54ec6e67e08f24a367a6bc689ae407d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9Tw\u003d",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/ProblemMarkerInfo.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-04-14T03:22:13Z",
+      "side": 1,
+      "message": "@since tag is missing. Is the baseline set up correctly in your environment?\n\nSplit the line after endChar.",
+      "revId": "a5cfd24d54ec6e67e08f24a367a6bc689ae407d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9To\u003d",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/errorparsers/ErrorParserExtensionManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-04-14T03:22:13Z",
+      "side": 1,
+      "message": "Extend ErrorParserComparator instead of creating a new class.",
+      "revId": "a5cfd24d54ec6e67e08f24a367a6bc689ae407d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9Ts\u003d",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/errorparsers/ErrorParserExtensionManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-04-14T03:22:13Z",
+      "side": 1,
+      "message": "\u003d\u003dtrue is redundant\n\u003d\u003dfalse is better expressed as ! operator.",
+      "revId": "a5cfd24d54ec6e67e08f24a367a6bc689ae407d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9WQ\u003d",
+        "filename": "core/org.eclipse.cdt.core/utils/org/eclipse/cdt/utils/Pair.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-04-14T03:22:13Z",
+      "side": 1,
+      "message": "Please don\u0027t make this class a public API. It looks like the baseline is not set up properly in your workspace since @since tag is missing.",
+      "revId": "a5cfd24d54ec6e67e08f24a367a6bc689ae407d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

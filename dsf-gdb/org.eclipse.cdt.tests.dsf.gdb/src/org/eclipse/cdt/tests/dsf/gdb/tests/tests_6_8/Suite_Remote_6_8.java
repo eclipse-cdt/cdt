@@ -37,7 +37,8 @@ import org.junit.runners.Suite;
 	MIDisassemblyTest_6_8.class,
 	GDBProcessesTest_6_8.class,
 	OperationsWhileTargetIsRunningTest_6_8.class,
-	Suite_Sessionless_Tests.class	
+	CommandTimeoutTest_6_8.class,
+	Suite_Sessionless_Tests.class,	
 	/* Add your test class here */
 })
 

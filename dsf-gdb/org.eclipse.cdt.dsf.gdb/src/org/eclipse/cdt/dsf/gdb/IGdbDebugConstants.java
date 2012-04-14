@@ -16,7 +16,6 @@ import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
 
 
-
 /**
  * @noimplement This interface is not intended to be implemented by clients.
  * @since 4.0
@@ -24,6 +23,12 @@ import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
 public interface IGdbDebugConstants {
 	
     public static final String PREFIX = GdbPlugin.PLUGIN_ID + "."; //$NON-NLS-1$
+
+	/**
+	 * Status code for which a UI handler is registered.
+	 * @since 4.1
+	 */
+	public static final int STATUS_HANDLER_CODE = 20001;
 
     /**
      * Attribute key to be added to the IProcess associated with an IMIContainerDMContext.
@@ -54,6 +59,5 @@ public interface IGdbDebugConstants {
      */
     public static final String GDB_PROCESS_CREATION_VALUE = PREFIX + "gdbProcess"; //$NON-NLS-1$
     
-
 }
 

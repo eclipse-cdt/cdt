@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "AABOG3//9Tg\u003d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-04-14T03:30:07Z",
+      "side": 1,
+      "message": "Please add \"Bug 372551\" to the beginning of the commit message.",
+      "revId": "a5cfd24d54ec6e67e08f24a367a6bc689ae407d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOG3//9Vo\u003d",
         "filename": "codan/org.eclipse.cdt.codan.core.cxx/src/org/eclipse/cdt/codan/core/cxx/externaltool/AbstractExternalToolBasedChecker.java",
         "patchSetId": 1

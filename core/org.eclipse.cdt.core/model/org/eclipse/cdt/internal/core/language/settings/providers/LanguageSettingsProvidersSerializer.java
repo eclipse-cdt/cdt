@@ -105,6 +105,7 @@ public class LanguageSettingsProvidersSerializer {
 
 	private static ListenerList fLanguageSettingsChangeListeners = new ListenerList(ListenerList.IDENTITY);
 	private static ILock serializingLock = Job.getJobManager().newLock();
+	private static ILock serializingLockWsp = Job.getJobManager().newLock();
 
 	/**
 	 * Dummy class to represent ill-defined provider.
@@ -468,20 +469,20 @@ public class LanguageSettingsProvidersSerializer {
 		IProject[] projects = root.getProjects();
 
 		for (IProject project : projects) {
-			if (project.isAccessible()) {
-				ICProjectDescription prjDescription = CCorePlugin.getDefault().getProjectDescription(project, false);
-				if (prjDescription != null) {
-					try {
+			try {
+				if (project.isAccessible()) {
+					ICProjectDescription prjDescription = CCorePlugin.getDefault().getProjectDescription(project, false);
+					if (prjDescription != null) {
 						LanguageSettingsChangeEvent event = createEvent(prjDescription, providerIds);
 						if (event != null) {
 							events.add(event);
 						}
-					} catch (Throwable e) {
-						// log and swallow any exception
-						CCorePlugin.log("Error creating event about changes in workspace language settings providers, " //$NON-NLS-1$
-								+ "project=" + project.getName(), e); //$NON-NLS-1$
 					}
 				}
+			} catch (Throwable e) {
+				// log and swallow any exception
+				CCorePlugin.log("Error creating event about changes in workspace language settings providers, " //$NON-NLS-1$
+						+ "project=" + project.getName(), e); //$NON-NLS-1$
 			}
 
 		}
@@ -508,12 +509,12 @@ public class LanguageSettingsProvidersSerializer {
 			if (serializableWorkspaceProviders.isEmpty()) {
 				java.io.File fileStoreWsp = new java.io.File(uriStoreWsp);
 				try {
-					serializingLock.acquire();
+					serializingLockWsp.acquire();
 					fileStoreWsp.delete();
 					// manufacture events while inside the lock
 					events = createLanguageSettingsChangeEvents(serializableWorkspaceProviders);
 				} finally {
-					serializingLock.release();
+					serializingLockWsp.release();
 				}
 			} else {
 				Document doc = XmlUtil.newDocument();
@@ -526,12 +527,12 @@ public class LanguageSettingsProvidersSerializer {
 				}
 
 				try {
-					serializingLock.acquire();
+					serializingLockWsp.acquire();
 					XmlUtil.serializeXml(doc, uriStoreWsp);
 					// manufacture events while inside the lock
 					events = createLanguageSettingsChangeEvents(serializableWorkspaceProviders);
 				} finally {
-					serializingLock.release();
+					serializingLockWsp.release();
 				}
 			}
 			// notify the listeners outside the lock
@@ -596,12 +597,12 @@ public class LanguageSettingsProvidersSerializer {
 
 		Document doc = null;
 		try {
-			serializingLock.acquire();
+			serializingLockWsp.acquire();
 			doc = XmlUtil.loadXml(uriStoreWsp);
 		} catch (Exception e) {
 			CCorePlugin.log("Can't load preferences from file " + uriStoreWsp, e); //$NON-NLS-1$
 		} finally {
-			serializingLock.release();
+			serializingLockWsp.release();
 		}
 
 		if (doc != null) {

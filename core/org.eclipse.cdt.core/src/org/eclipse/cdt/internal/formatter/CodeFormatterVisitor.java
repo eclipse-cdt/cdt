@@ -928,8 +928,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	 */
 	@Override
 	public int visit(IASTStatement node) {
-		if (getCurrentPosition() <= nodeOffset(node) &&
-				startsWithMacroExpansion(node)) {
+		if (getCurrentPosition() <= nodeOffset(node) && startsWithMacroExpansion(node)) {
 			scribe.printCommentPreservingNewLines();
 		}
 		if (!startNode(node)) { return PROCESS_SKIP; }
@@ -1916,7 +1915,8 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			} else {
 				if (startNode(declaration)) {
 					try {
-						scribe.startNewLine();
+						if (getCurrentPosition() <= nodeOffset(declaration))
+							scribe.startNewLine();
 						formatDeclaration(declaration);
 					} finally {
 						finishNode(declaration);

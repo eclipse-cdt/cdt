@@ -9569,8 +9569,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	//	void f(int16_t*) {}
 	//	void f(int32_t*) {}
 	//	void f(int64_t*) {}
-	//	void f(word_t*) {}
-	//	void test(signed char* i8, short* i16, int* i32, long long* i64, word_t* word) {
+	//	void test(signed char* i8, short* i16, int* i32, long* i64, word_t* word) {
 	//		f(i8);
 	//		f(i16);
 	//		f(i32);
@@ -9584,11 +9583,13 @@ public class AST2CPPTests extends AST2BaseTest {
 		for (int i = 0; i < calls.length; i++) {
 			functions[i] = bh.assertNonProblem(calls[i], 1, ICPPFunction.class);
 		}
-		for (int i = 0; i < functions.length; i++) {
-			for (int j = i + 1; j < functions.length; j++) {
+		for (int i = 0; i < functions.length - 1; i++) {
+			for (int j = 0; j < i ; j++) {
 				assertNotSame(calls[i] + " and " + calls[j] + " resolve to the same function",
 						functions[i], functions[j]);
 			}
 		}
+		assertSame(calls[calls.length - 1] + " and " + calls[calls.length - 2] + " resolve to different functions",
+				functions[calls.length - 1], functions[calls.length - 2]);
 	}
 }

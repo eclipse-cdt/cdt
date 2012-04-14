@@ -94,7 +94,6 @@ import org.eclipse.cdt.core.parser.util.AttributeUtil;
 import org.eclipse.cdt.core.parser.util.CharArraySet;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.IContentAssistMatcher;
-import org.eclipse.cdt.internal.core.dom.parser.ASTAttribute;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
@@ -102,6 +101,7 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
+import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator;
 import org.eclipse.cdt.internal.core.parser.util.ContentAssistMatcherFactory;
 
 /**
@@ -1283,8 +1283,16 @@ public class CVisitor extends ASTQueries {
 						} else if (CharArrayUtils.equals(mode, "__SI__") || CharArrayUtils.equals(mode, "SI")) { //$NON-NLS-1$ //$NON-NLS-2$
 							type = new CBasicType(IBasicType.Kind.eInt, getSignModifiers(basicType));
 						} else if (CharArrayUtils.equals(mode, "__DI__") || CharArrayUtils.equals(mode, "DI")) { //$NON-NLS-1$ //$NON-NLS-2$
+							SizeofCalculator sizeofs = new SizeofCalculator(declarator.getTranslationUnit());
+							int modifier;
+							if (sizeofs.sizeof_long != null && sizeofs.sizeof_int != null &&
+									sizeofs.sizeof_long.size == 2 * sizeofs.sizeof_int.size) {
+								modifier = IBasicType.IS_LONG;
+							} else {
+								modifier = IBasicType.IS_LONG_LONG;
+							}
 							type = new CBasicType(IBasicType.Kind.eInt,
-									IBasicType.IS_LONG_LONG | getSignModifiers(basicType));
+									modifier | getSignModifiers(basicType));
 						} else if (CharArrayUtils.equals(mode, "__word__") || CharArrayUtils.equals(mode, "word")) { //$NON-NLS-1$ //$NON-NLS-2$
 							type = new CBasicType(IBasicType.Kind.eInt,
 									IBasicType.IS_LONG | getSignModifiers(basicType));

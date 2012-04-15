@@ -69,8 +69,6 @@ public class CPPNamespace extends PlatformObject implements ICPPNamespace, ICPPI
 		}
     }
 
-	private static final char[] EMPTY_CHAR_ARRAY = {};
-
 	IASTName[] namespaceDefinitions;
 	ICPPNamespaceScope scope;
 	ICPPASTTranslationUnit tu;
@@ -251,7 +249,7 @@ public class CPPNamespace extends PlatformObject implements ICPPNamespace, ICPPI
 	 */
 	@Override
 	public char[] getNameCharArray() {
-		return tu != null ? EMPTY_CHAR_ARRAY : namespaceDefinitions[0].getSimpleID();
+		return tu != null ? CharArrayUtils.EMPTY_CHAR_ARRAY : namespaceDefinitions[0].getSimpleID();
 	}
 
 	/* (non-Javadoc)

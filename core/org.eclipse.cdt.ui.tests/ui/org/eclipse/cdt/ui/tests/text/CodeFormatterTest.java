@@ -1865,6 +1865,20 @@ public class CodeFormatterTest extends BaseUITestCase {
 		assertFormatterResult();
 	}
 
+	//#define MACRO(a) a(const a&); void operator=(const a&)
+	//
+	//class Test{MACRO(Test);};
+
+	//#define MACRO(a) a(const a&); void operator=(const a&)
+	//
+	//class Test {
+	//    MACRO(Test);
+	//};
+	public void testMacroDeclaration() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
+		assertFormatterResult();
+	}
+
 	//bool member __attribute__ ((__unused__)) = false;
 
 	//bool member __attribute__ ((__unused__)) = false;

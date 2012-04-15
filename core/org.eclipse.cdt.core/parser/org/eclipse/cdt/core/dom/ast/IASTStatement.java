@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Doug Schaefer (IBM) - Initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
@@ -16,10 +17,7 @@ package org.eclipse.cdt.core.dom.ast;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface IASTStatement extends IASTNode {
-	/**
-	 * Constant.
-	 */
+public interface IASTStatement extends IASTAttributeOwner {
 	public static final IASTStatement[] EMPTY_STATEMENT_ARRAY = {};
 	
 	/**

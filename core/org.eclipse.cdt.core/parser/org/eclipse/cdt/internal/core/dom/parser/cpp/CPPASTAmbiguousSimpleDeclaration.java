@@ -1,16 +1,18 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 IBM Wind River Systems, Inc. and others.
+ * Copyright (c) 2009, 2012 IBM Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - Initial API and implementation
+ *     Markus Schorn - Initial API and implementation
+ *     Sergey Prigogin (Google) 
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTAttribute;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -33,7 +35,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
  * };
  */
 public class CPPASTAmbiguousSimpleDeclaration extends ASTAmbiguousNode implements IASTAmbiguousSimpleDeclaration {
-
     private IASTSimpleDeclaration fSimpleDecl;
     private IASTDeclSpecifier fAltDeclSpec;
     private IASTDeclarator fAltDtor;
@@ -55,7 +56,7 @@ public class CPPASTAmbiguousSimpleDeclaration extends ASTAmbiguousNode implement
 
     @Override
 	public IASTNode[] getNodes() {
-        return new IASTNode[] {fSimpleDecl, fAltDeclSpec, fAltDtor};
+        return new IASTNode[] { fSimpleDecl, fAltDeclSpec, fAltDtor };
     }
 
 	@Override
@@ -97,7 +98,6 @@ public class CPPASTAmbiguousSimpleDeclaration extends ASTAmbiguousNode implement
 		owner.replace(nodeToReplace, fSimpleDecl);
 		IASTDeclarator dtor= fSimpleDecl.getDeclarators()[0];
 		dtor.accept(resolver);
-		
 
 		// find nested names
 		final NameCollector nameCollector= new NameCollector();
@@ -128,5 +128,15 @@ public class CPPASTAmbiguousSimpleDeclaration extends ASTAmbiguousNode implement
 		// resolve further nested ambiguities
 		fSimpleDecl.accept(resolver);
 		return fSimpleDecl;
+	}
+
+	@Override
+	public IASTAttribute[] getAttributes() {
+		return fSimpleDecl.getAttributes();
+	}
+
+	@Override
+	public void addAttribute(IASTAttribute attribute) {
+		fSimpleDecl.addAttribute(attribute);
 	}
 }

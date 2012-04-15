@@ -6,6 +6,7 @@ void varArgsCFunction(int p1, ...);
 const void constCFunction();
 volatile void volatileCFunction();
 void storageClassCFunction(register int p1, int p2);
+void noReturnCFunction() __attribute__((noreturn));
 
 void voidCFunction();
 int intCFunction();

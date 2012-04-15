@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Andrew Gvozdev and others.
+ * Copyright (c) 2011, 2012 Andrew Gvozdev and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -307,4 +307,14 @@ public class UnusedSymbolInFileScopeCheckerTest extends CheckerTestCase {
 		checkNoErrors();
 	}
 
+	// static int v1 __attribute__((unused));
+	// int f1() __attribute__((__unused__));
+	// extern int f2() __attribute__((unused));
+	// static void f3() __attribute__((unused));
+	// static void f4() __attribute__((unused));
+	// static void f4() __attribute__((unused)) {}
+	public void testAttributeUnused() throws IOException {
+		loadCodeAndRun(getAboveComment());
+		checkNoErrors();
+	}
 }

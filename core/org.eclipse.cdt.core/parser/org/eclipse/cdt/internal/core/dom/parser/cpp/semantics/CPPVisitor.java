@@ -33,6 +33,7 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
+import org.eclipse.cdt.core.dom.ast.IASTAttribute;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
@@ -155,11 +156,13 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.core.parser.util.AttributeUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
+import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFieldReference;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFunctionCallExpression;
@@ -1779,6 +1782,7 @@ public class CPPVisitor extends ASTQueries {
 	    if (name instanceof ICPPASTConversionName) {
 	    	returnType = createType(((ICPPASTConversionName) name).getTypeId());
 	    } else {
+	    	returnType = applyAttributes(returnType, fnDtor);
 	    	returnType = getPointerTypes(returnType, fnDtor);
 	    }
 
@@ -1843,9 +1847,52 @@ public class CPPVisitor extends ASTQueries {
 		return type;
 	}
 
+	private static IType applyAttributes(IType type, IASTDeclarator declarator) {
+		if (type instanceof IBasicType) {
+			IBasicType basicType = (IBasicType) type;
+			if (basicType.getKind() == IBasicType.Kind.eInt) {
+			    IASTAttribute[] attributes = declarator.getAttributes();
+				for (IASTAttribute attribute : attributes) {
+					char[] name = attribute.getName();
+					if (CharArrayUtils.equals(name, "__mode__") || CharArrayUtils.equals(name, "mode")) { //$NON-NLS-1$ //$NON-NLS-2$
+						char[] mode = AttributeUtil.getSimpleArgument(attribute);
+						if (CharArrayUtils.equals(mode, "__QI__") || CharArrayUtils.equals(mode, "QI")) { //$NON-NLS-1$ //$NON-NLS-2$
+							type = new CPPBasicType(IBasicType.Kind.eChar,
+									basicType.isUnsigned() ? IBasicType.IS_UNSIGNED : IBasicType.IS_SIGNED);
+						} else if (CharArrayUtils.equals(mode, "__HI__") || CharArrayUtils.equals(mode, "HI")) { //$NON-NLS-1$ //$NON-NLS-2$
+							type = new CPPBasicType(IBasicType.Kind.eInt,
+									IBasicType.IS_SHORT | getSignModifiers(basicType));
+						} else if (CharArrayUtils.equals(mode, "__SI__") || CharArrayUtils.equals(mode, "SI")) { //$NON-NLS-1$ //$NON-NLS-2$
+							type = new CPPBasicType(IBasicType.Kind.eInt, getSignModifiers(basicType));
+						} else if (CharArrayUtils.equals(mode, "__DI__") || CharArrayUtils.equals(mode, "DI")) { //$NON-NLS-1$ //$NON-NLS-2$
+							SizeofCalculator sizeofs = new SizeofCalculator(declarator.getTranslationUnit());
+							int modifier;
+							if (sizeofs.sizeof_long != null && sizeofs.sizeof_int != null &&
+									sizeofs.sizeof_long.size == 2 * sizeofs.sizeof_int.size) {
+								modifier = IBasicType.IS_LONG;
+							} else {
+								modifier = IBasicType.IS_LONG_LONG;
+							}
+							type = new CPPBasicType(IBasicType.Kind.eInt,
+									modifier | getSignModifiers(basicType));
+						} else if (CharArrayUtils.equals(mode, "__word__") || CharArrayUtils.equals(mode, "word")) { //$NON-NLS-1$ //$NON-NLS-2$
+							type = new CPPBasicType(IBasicType.Kind.eInt,
+									IBasicType.IS_LONG | getSignModifiers(basicType));
+						}
+					}
+				}
+			}
+		}
+		return type;
+	}
+
+	private static int getSignModifiers(IBasicType type) {
+		return type.getModifiers() & (IBasicType.IS_SIGNED | IBasicType.IS_UNSIGNED);
+	}
+
 	private static IType getArrayTypes(IType type, IASTArrayDeclarator declarator) {
 	    IASTArrayModifier[] mods = declarator.getArrayModifiers();
-	    for (int i = mods.length -1; i >= 0; i--) {
+	    for (int i = mods.length - 1; i >= 0; i--) {
 	    	IASTArrayModifier mod = mods[i];
 	        type = new CPPArrayType(type, mod.getConstantExpression());
 	    }
@@ -2084,6 +2131,7 @@ public class CPPVisitor extends ASTQueries {
 	        return createType(baseType, (ICPPASTFunctionDeclarator) declarator);
 
 		IType type = baseType;
+		type = applyAttributes(type, declarator);
 		type = getPointerTypes(type, declarator);
 		if (declarator instanceof IASTArrayDeclarator)
 		    type = getArrayTypes(type, (IASTArrayDeclarator) declarator);

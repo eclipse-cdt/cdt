@@ -6,11 +6,13 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - Initial API and implementation
+ *     Markus Schorn - Initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTAttribute;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -31,7 +33,6 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
  * @since 5.0.1
  */
 public class CASTAmbiguousSimpleDeclaration extends ASTAmbiguousNode implements IASTAmbiguousSimpleDeclaration {
-
     private IASTSimpleDeclaration fSimpleDecl;
     private IASTDeclSpecifier fAltDeclSpec;
     private IASTDeclarator fAltDtor;
@@ -85,7 +86,17 @@ public class CASTAmbiguousSimpleDeclaration extends ASTAmbiguousNode implements 
 	public void setDeclSpecifier(IASTDeclSpecifier declSpec) {
 		fSimpleDecl.setDeclSpecifier(declSpec);
 	}
-	
+
+	@Override
+	public IASTAttribute[] getAttributes() {
+		return fSimpleDecl.getAttributes();
+	}
+
+	@Override
+	public void addAttribute(IASTAttribute attribute) {
+		fSimpleDecl.addAttribute(attribute);
+	}
+
 	@Override
 	protected final IASTNode doResolveAmbiguity(ASTVisitor resolver) {
 		final IASTAmbiguityParent owner= (IASTAmbiguityParent) getParent();

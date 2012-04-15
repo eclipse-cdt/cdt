@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Rational Software - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -22,7 +23,7 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
  * @author jcamelon
  */
 public class CASTArrayDeclarator extends CASTDeclarator implements IASTArrayDeclarator {
-    private IASTArrayModifier[] arrayMods = null;
+    private IASTArrayModifier[] arrayMods;
     private int arrayModsPos = -1;
 
     public CASTArrayDeclarator() {
@@ -44,23 +45,18 @@ public class CASTArrayDeclarator extends CASTDeclarator implements IASTArrayDecl
 	@Override
 	public CASTArrayDeclarator copy(CopyStyle style) {
 		CASTArrayDeclarator copy = new CASTArrayDeclarator();
-		copyBaseDeclarator(copy, style);
-		for (IASTArrayModifier modifier : getArrayModifiers())
+		for (IASTArrayModifier modifier : getArrayModifiers()) {
 			copy.addArrayModifier(modifier == null ? null : modifier.copy(style));
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
 		}
-		return copy;
+		return copy(copy, style);
 	}
 
 	@Override
 	public IASTArrayModifier[] getArrayModifiers() {
         if (arrayMods == null)
         	return IASTArrayModifier.EMPTY_ARRAY;
-        arrayMods = ArrayUtil.trimAt(IASTArrayModifier.class,
-        		arrayMods, arrayModsPos);
+        arrayMods = ArrayUtil.trimAt(IASTArrayModifier.class, arrayMods, arrayModsPos);
         return arrayMods;
- 
     }
 
     @Override

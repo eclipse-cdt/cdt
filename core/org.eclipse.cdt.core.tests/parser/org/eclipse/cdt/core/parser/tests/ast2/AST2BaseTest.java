@@ -107,12 +107,14 @@ public class AST2BaseTest extends BaseTestCase {
 		map.put("__GNUC__", "4");
 		map.put("__GNUC_MINOR__", "5");
 		map.put("__SIZEOF_INT__", "4");
+		map.put("__SIZEOF_LONG__", "8");
 		return map;
 	}
 
 	private static Map<String, String> getStdMap() {
 		Map<String, String> map= new HashMap<String, String>();
 		map.put("__SIZEOF_INT__", "4");
+		map.put("__SIZEOF_LONG__", "8");
 		return map;
 	}
 

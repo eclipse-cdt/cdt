@@ -48,6 +48,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.parser.util.AttributeUtil;
 
 /**
  * Checker looking for unused function or variable declarations.
@@ -58,6 +59,7 @@ public class UnusedSymbolInFileScopeChecker extends AbstractIndexAstChecker {
 	public static final String ER_UNUSED_STATIC_FUNCTION_ID = "org.eclipse.cdt.codan.internal.checkers.UnusedStaticFunctionProblem"; //$NON-NLS-1$
 	public static final String PARAM_MACRO_ID = "macro"; //$NON-NLS-1$
 	public static final String PARAM_EXCEPT_ARG_LIST = "exceptions"; //$NON-NLS-1$
+	private static final String[] ATTRIBUTE_UNUSED = new String[] { "__unused__", "unused" };  //$NON-NLS-1$//$NON-NLS-2$
 
 	private Map<IBinding, IASTDeclarator> externFunctionDeclarations = new HashMap<IBinding, IASTDeclarator>();
 	private Map<IBinding, IASTDeclarator> staticFunctionDeclarations = new HashMap<IBinding, IASTDeclarator>();
@@ -130,6 +132,8 @@ public class UnusedSymbolInFileScopeChecker extends AbstractIndexAstChecker {
 
 						IASTDeclarator[] declarators = simpleDeclaration.getDeclarators();
 						for (IASTDeclarator decl : declarators) {
+							if (AttributeUtil.hasAttribute(decl, ATTRIBUTE_UNUSED))
+								continue;
 							IASTName astName = decl.getName();
 							if (astName != null) {
 								IBinding binding = astName.resolveBinding();
@@ -191,14 +195,15 @@ public class UnusedSymbolInFileScopeChecker extends AbstractIndexAstChecker {
 						// definitions
 						IASTFunctionDefinition definition = (IASTFunctionDefinition) element;
 
-						IASTName astName = definition.getDeclarator().getName();
+						IASTFunctionDeclarator declarator = definition.getDeclarator();
+						IASTName astName = declarator.getName();
 						if (astName != null) {
 							IBinding binding = astName.resolveBinding();
 
-							if (definition.getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_static) {
-								if (!(astName instanceof ICPPASTQualifiedName)) {
-									staticFunctionDefinitions.put(binding, definition.getDeclarator());
-								}
+							if (definition.getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_static &&
+									!(astName instanceof ICPPASTQualifiedName) &&
+									!AttributeUtil.hasAttribute(declarator, ATTRIBUTE_UNUSED)) {
+								staticFunctionDefinitions.put(binding, declarator);
 							}
 
 							// externFunctionDeclarators filter out

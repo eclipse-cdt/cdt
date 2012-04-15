@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2012 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Andrew Ferguson (Symbian) - Initial implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.c;
 
@@ -73,5 +74,10 @@ class CompositeCFunction extends CompositeCBinding implements IFunction {
 	@Override
 	public boolean takesVarArgs() {
 		return ((IFunction) rbinding).takesVarArgs();
+	}
+
+	@Override
+	public boolean isNoReturn() {
+		return ((IFunction) rbinding).isNoReturn();
 	}
 }

@@ -50,22 +50,22 @@ public class SizeofCalculator {
 
 	private static final SizeAndAlignment SIZE_1 = new SizeAndAlignment(1, 1);
 
-	private final SizeAndAlignment size_2;
-	private final SizeAndAlignment size_4;
-	private final SizeAndAlignment size_8;
-	private final SizeAndAlignment sizeof_pointer;
-	private final SizeAndAlignment sizeof_int;
-	private final SizeAndAlignment sizeof_long;
-	private final SizeAndAlignment sizeof_long_long;
-	private final SizeAndAlignment sizeof_short;
-	private final SizeAndAlignment sizeof_bool;
-	private final SizeAndAlignment sizeof_wchar_t;
-	private final SizeAndAlignment sizeof_float;
-	private final SizeAndAlignment sizeof_complex_float;
-	private final SizeAndAlignment sizeof_double;
-	private final SizeAndAlignment sizeof_complex_double;
-	private final SizeAndAlignment sizeof_long_double;
-	private final SizeAndAlignment sizeof_complex_long_double;
+	public final SizeAndAlignment size_2;
+	public final SizeAndAlignment size_4;
+	public final SizeAndAlignment size_8;
+	public final SizeAndAlignment sizeof_pointer;
+	public final SizeAndAlignment sizeof_int;
+	public final SizeAndAlignment sizeof_long;
+	public final SizeAndAlignment sizeof_long_long;
+	public final SizeAndAlignment sizeof_short;
+	public final SizeAndAlignment sizeof_bool;
+	public final SizeAndAlignment sizeof_wchar_t;
+	public final SizeAndAlignment sizeof_float;
+	public final SizeAndAlignment sizeof_complex_float;
+	public final SizeAndAlignment sizeof_double;
+	public final SizeAndAlignment sizeof_complex_double;
+	public final SizeAndAlignment sizeof_long_double;
+	public final SizeAndAlignment sizeof_complex_long_double;
 
 	public SizeofCalculator(IASTTranslationUnit ast) {
 		int maxAlignment = 32;

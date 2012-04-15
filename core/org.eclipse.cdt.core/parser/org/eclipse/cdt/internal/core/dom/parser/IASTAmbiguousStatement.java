@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *     IBM - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
 
@@ -14,9 +14,9 @@ import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 
 public interface IASTAmbiguousStatement extends IASTStatement {
+    public static final ASTNodeProperty STATEMENT = new ASTNodeProperty("IASTAmbiguousStatement.STATEMENT - Ambiguous statement."); //$NON-NLS-1$
 
-    public static final ASTNodeProperty STATEMENT = new ASTNodeProperty( "IASTAmbiguousStatement.STATEMENT - Ambiguous statement." ); //$NON-NLS-1$
-    public void addStatement( IASTStatement s );
-    public IASTStatement [] getStatements();
-    
+    public void addStatement(IASTStatement s);
+
+    public IASTStatement[] getStatements();
 }

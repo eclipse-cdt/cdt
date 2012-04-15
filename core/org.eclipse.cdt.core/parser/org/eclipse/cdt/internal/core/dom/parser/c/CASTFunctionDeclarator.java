@@ -8,6 +8,7 @@
  * Contributors:
  *     John Camelon (IBM Rational Software) - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -47,17 +48,11 @@ public class CASTFunctionDeclarator extends CASTDeclarator implements IASTStanda
 	@Override
 	public CASTFunctionDeclarator copy(CopyStyle style) {
 		CASTFunctionDeclarator copy = new CASTFunctionDeclarator();
-		copyBaseDeclarator(copy, style);
 		copy.varArgs = varArgs;
-
 		for (IASTParameterDeclaration param : getParameters()) {
 			copy.addParameterDeclaration(param == null ? null : param.copy(style));
 		}
-
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 
 	@Override

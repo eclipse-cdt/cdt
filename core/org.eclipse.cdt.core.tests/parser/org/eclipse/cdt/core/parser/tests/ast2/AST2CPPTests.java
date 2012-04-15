@@ -191,11 +191,11 @@ public class AST2CPPTests extends AST2BaseTest {
 	}
 
 	private void assertDefinition(ICPPBinding b) {
-		assertTrue(((IASTName)((ICPPInternalBinding) b).getDefinition()).isDefinition());
+		assertTrue(((IASTName) ((ICPPInternalBinding) b).getDefinition()).isDefinition());
 	}
 
 	private void assertDeclaration(ICPPBinding b) {
-		assertTrue(((IASTName)((ICPPInternalBinding) b).getDeclarations()[0]).isDeclaration());
+		assertTrue(((IASTName) ((ICPPInternalBinding) b).getDeclarations()[0]).isDeclaration());
 	}
 
 	private ICPPMethod extractSingleMethod(IBinding[] bindings) {
@@ -4682,10 +4682,10 @@ public class AST2CPPTests extends AST2BaseTest {
 		IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.CPP, true, true);
 		IASTDeclaration[] decls = tu.getDeclarations();
 
-		assertTrue(((IASTSimpleDeclSpecifier)((IASTSimpleDeclaration)decls[0]).getDeclSpecifier()).isComplex());
-		assertEquals(((IASTSimpleDeclSpecifier)((IASTSimpleDeclaration)decls[0]).getDeclSpecifier()).getType(), IASTSimpleDeclSpecifier.t_float);
-		assertTrue(((IASTSimpleDeclSpecifier)((IASTSimpleDeclaration)decls[1]).getDeclSpecifier()).isComplex());
-		assertEquals(((IASTSimpleDeclSpecifier)((IASTSimpleDeclaration)decls[1]).getDeclSpecifier()).getType(), IASTSimpleDeclSpecifier.t_double);
+		assertTrue(((IASTSimpleDeclSpecifier) ((IASTSimpleDeclaration)decls[0]).getDeclSpecifier()).isComplex());
+		assertEquals(((IASTSimpleDeclSpecifier) ((IASTSimpleDeclaration)decls[0]).getDeclSpecifier()).getType(), IASTSimpleDeclSpecifier.t_float);
+		assertTrue(((IASTSimpleDeclSpecifier) ((IASTSimpleDeclaration)decls[1]).getDeclSpecifier()).isComplex());
+		assertEquals(((IASTSimpleDeclSpecifier) ((IASTSimpleDeclaration)decls[1]).getDeclSpecifier()).getType(), IASTSimpleDeclSpecifier.t_double);
 	}
 
 	// class _A {                         
@@ -5396,7 +5396,7 @@ public class AST2CPPTests extends AST2BaseTest {
 		ICPPASTFunctionDeclarator fdecl2= (ICPPASTFunctionDeclarator) ((IASTSimpleDeclaration) nsdecls[2]).getDeclarators()[0];
 
 		IASTStatement[] stmts= ((IASTCompoundStatement) fdef.getBody()).getStatements();
-		IASTName clname= ((IASTNamedTypeSpecifier) ((IASTSimpleDeclaration)((IASTDeclarationStatement) stmts[0]).getDeclaration()).getDeclSpecifier()).getName();
+		IASTName clname= ((IASTNamedTypeSpecifier) ((IASTSimpleDeclaration) ((IASTDeclarationStatement) stmts[0]).getDeclaration()).getDeclSpecifier()).getName();
 		IASTName fnname1= ((IASTIdExpression) ((IASTFunctionCallExpression) ((IASTExpressionStatement) stmts[1]).getExpression()).getFunctionNameExpression()).getName();
 		IASTName fnname2= ((IASTIdExpression) ((IASTFunctionCallExpression) ((IASTExpressionStatement) stmts[2]).getExpression()).getFunctionNameExpression()).getName();
 
@@ -5906,8 +5906,8 @@ public class AST2CPPTests extends AST2BaseTest {
 
 		IType t1= ((IPointerType)pt1.getType().getParameterTypes()[0]).getType();
 		IQualifierType t2= (IQualifierType) ((IPointerType) pt2.getType().getParameterTypes()[0]).getType();
-		IQualifierType t3= (IQualifierType)((IPointerType) pt3.getType().getParameterTypes()[0]).getType();
-		IQualifierType t4= (IQualifierType)((IPointerType) pt4.getType().getParameterTypes()[0]).getType();
+		IQualifierType t3= (IQualifierType) ((IPointerType) pt3.getType().getParameterTypes()[0]).getType();
+		IQualifierType t4= (IQualifierType) ((IPointerType) pt4.getType().getParameterTypes()[0]).getType();
 
 		assertTrue(!(t1 instanceof IQualifierType));
 		assertTrue(t2.isConst()); assertTrue(!t2.isVolatile());
@@ -9558,5 +9558,38 @@ public class AST2CPPTests extends AST2BaseTest {
 		s= getDeclaration(S, 1);
 		p= getDeclaration(S, 2);
 		p= getDeclaration(S, 3);
+	}
+
+	//	typedef int int8_t __attribute__ ((__mode__ (__QI__)));
+	//	typedef int int16_t __attribute__ ((__mode__ (__HI__)));
+	//	typedef int int32_t __attribute__ ((__mode__ (__SI__)));
+	//	typedef int int64_t __attribute__ ((__mode__ (__DI__)));
+	//	typedef int word_t __attribute__ ((__mode__ (__word__)));
+	//	void f(int8_t*) {}
+	//	void f(int16_t*) {}
+	//	void f(int32_t*) {}
+	//	void f(int64_t*) {}
+	//	void test(signed char* i8, short* i16, int* i32, long* i64, word_t* word) {
+	//		f(i8);
+	//		f(i16);
+	//		f(i32);
+	//		f(i64);
+	//		f(word);
+	//	}
+	public void testModeAttribute_330635() throws Exception {
+		BindingAssertionHelper bh= getAssertionHelper();
+		String[] calls = { "f(i8)", "f(i16)", "f(i32)", "f(i64)", "f(word)" }; 
+		ICPPFunction[] functions = new ICPPFunction[calls.length];
+		for (int i = 0; i < calls.length; i++) {
+			functions[i] = bh.assertNonProblem(calls[i], 1, ICPPFunction.class);
+		}
+		for (int i = 0; i < functions.length - 1; i++) {
+			for (int j = 0; j < i ; j++) {
+				assertNotSame(calls[i] + " and " + calls[j] + " resolve to the same function",
+						functions[i], functions[j]);
+			}
+		}
+		assertSame(calls[calls.length - 1] + " and " + calls[calls.length - 2] + " resolve to different functions",
+				functions[calls.length - 1], functions[calls.length - 2]);
 	}
 }

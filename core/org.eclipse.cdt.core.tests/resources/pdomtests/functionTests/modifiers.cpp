@@ -4,6 +4,7 @@ static int staticCPPFunction(double p1);
 extern float externCPPFunction(int p1);
 inline void inlineCPPFunction(long p1);
 void varArgsCPPFunction(int p1, ...);
+void noReturnCPPFunction() __attribute__((noreturn));
 
 void voidCPPFunction();
 int intCPPFunction();

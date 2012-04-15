@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2010 IBM Corporation and others.
+ *  Copyright (c) 2006, 2012 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
+import org.eclipse.cdt.core.dom.ast.IASTAttribute;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTBreakStatement;
 import org.eclipse.cdt.core.dom.ast.IASTCaseStatement;
@@ -58,6 +59,8 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSwitchStatement;
+import org.eclipse.cdt.core.dom.ast.IASTToken;
+import org.eclipse.cdt.core.dom.ast.IASTTokenList;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
@@ -79,6 +82,8 @@ import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTArrayRangeDesignator;
 import org.eclipse.cdt.core.parser.IScanner;
+import org.eclipse.cdt.internal.core.dom.parser.ASTToken;
+import org.eclipse.cdt.internal.core.dom.parser.ASTTokenList;
 import org.eclipse.cdt.internal.core.dom.parser.NodeFactory;
 import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
 
@@ -88,7 +93,6 @@ import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
  * implementations of the nodes.
  */
 public class CNodeFactory extends NodeFactory implements ICNodeFactory {
-
 	private static final CNodeFactory DEFAULT_INSTANCE = new CNodeFactory();
 	
 	public static CNodeFactory getDefault() {
@@ -125,6 +129,10 @@ public class CNodeFactory extends NodeFactory implements ICNodeFactory {
 		return new CASTASMDeclaration(assembly);
 	}
 	
+	@Override
+	public IASTAttribute newAttribute(char[] name, IASTToken argumentClause) {
+		return new CASTAttribute(name, argumentClause);
+	}
 	@Override
 	public IASTBinaryExpression newBinaryExpression(int op, IASTExpression expr1, IASTExpression expr2) {
 		return new CASTBinaryExpression(op, expr1, expr2);
@@ -392,7 +400,17 @@ public class CNodeFactory extends NodeFactory implements ICNodeFactory {
 	public IASTSwitchStatement newSwitchStatement(IASTExpression controller, IASTStatement body) {
 		return new CASTSwitchStatement(controller, body);
 	}
-	
+
+	@Override
+	public IASTToken newToken(int tokenType, char[] tokenImage) {
+		return new ASTToken(tokenType, tokenImage);
+	}
+
+	@Override
+	public IASTTokenList newTokenList() {
+		return new ASTTokenList();
+	}
+
 	@Override
 	public IASTTranslationUnit newTranslationUnit() {
 		return newTranslationUnit(null);

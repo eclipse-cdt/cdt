@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM) - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     John Camelon (IBM) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -26,9 +26,8 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
  * e.g.: int a[]= {1,2,3};
  */
 public class CPPASTInitializerList extends ASTNode implements ICPPASTInitializerList, IASTAmbiguityParent {
-    
-	private IASTInitializerClause [] initializers = null;
-    private int initializersPos=-1;
+	private IASTInitializerClause [] initializers;
+    private int initializersPos= -1;
     private int actualSize;
 	private boolean fIsPackExpansion;
     
@@ -40,8 +39,9 @@ public class CPPASTInitializerList extends ASTNode implements ICPPASTInitializer
 	@Override
 	public CPPASTInitializerList copy(CopyStyle style) {
 		CPPASTInitializerList copy = new CPPASTInitializerList();
-		for (IASTInitializerClause initializer : getClauses())
+		for (IASTInitializerClause initializer : getClauses()) {
 			copy.addClause(initializer == null ? null : initializer.copy(style));
+		}
 		copy.setOffsetAndLength(this);
 		copy.actualSize = getSize();
 		copy.fIsPackExpansion = fIsPackExpansion;
@@ -114,9 +114,9 @@ public class CPPASTInitializerList extends ASTNode implements ICPPASTInitializer
 	public boolean accept( ASTVisitor action ){
 		if (action.shouldVisitInitializers) {
 			switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
 		IASTInitializerClause[] list = getClauses();

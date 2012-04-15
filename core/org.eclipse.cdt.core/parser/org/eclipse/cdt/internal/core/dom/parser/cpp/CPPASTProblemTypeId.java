@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     IBM - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IASTProblemTypeId;
  * @author jcamelon
  */
 public class CPPASTProblemTypeId extends CPPASTProblemOwner implements IASTProblemTypeId {
+	
     public CPPASTProblemTypeId() {
 	}
 
@@ -36,11 +37,7 @@ public class CPPASTProblemTypeId extends CPPASTProblemOwner implements IASTProbl
 	@Override
 	public CPPASTProblemTypeId copy(CopyStyle style) {
 		CPPASTProblemTypeId copy = new CPPASTProblemTypeId();
-		copyBaseProblem(copy, style);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 
     @Override
@@ -52,7 +49,7 @@ public class CPPASTProblemTypeId extends CPPASTProblemOwner implements IASTProbl
             default: break;
         }
 		    
-		// Visits the problem
+		// Visit the problem
 		if (!super.accept(action))
 			return false;
     	

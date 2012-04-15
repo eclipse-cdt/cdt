@@ -1,14 +1,15 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2011 IBM Corporation and others.
- *  All rights reserved. This program and the accompanying materials
- *  are made available under the terms of the Eclipse Public License v1.0
- *  which accompanies this distribution, and is available at
- *  http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2004, 2012 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  * 
- *  Contributors:
- *    John Camelon (IBM) - Initial API and implementation
- *    Bryan Wilkinson (QNX)
- *    Markus Schorn (Wind River Systems)
+ * Contributors:
+ *     John Camelon (IBM) - Initial API and implementation
+ *     Bryan Wilkinson (QNX)
+ *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -21,13 +22,11 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICPPASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
-import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.ASTAttributeOwner;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 
-
-public class CPPASTUsingDeclaration extends ASTNode
+public class CPPASTUsingDeclaration extends ASTAttributeOwner
 		implements ICPPASTUsingDeclaration, ICPPASTCompletionContext {
-
     private boolean typeName;
     private IASTName name;
 
@@ -45,14 +44,10 @@ public class CPPASTUsingDeclaration extends ASTNode
 	
 	@Override
 	public CPPASTUsingDeclaration copy(CopyStyle style) {
-		CPPASTUsingDeclaration copy = new CPPASTUsingDeclaration(name == null ? null
-				: name.copy(style));
+		CPPASTUsingDeclaration copy =
+				new CPPASTUsingDeclaration(name == null ? null : name.copy(style));
 		copy.typeName = typeName;
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 
 	@Override
@@ -85,19 +80,20 @@ public class CPPASTUsingDeclaration extends ASTNode
 	public boolean accept(ASTVisitor action) {
         if (action.shouldVisitDeclarations) {
 		    switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
         
-        if (name != null) if (!name.accept(action)) return false;
+        if (!acceptByAttributes(action)) return false;
+        if (name != null && !name.accept(action)) return false;
         
         if (action.shouldVisitDeclarations) {
 		    switch(action.leave(this)) {
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
         return true;

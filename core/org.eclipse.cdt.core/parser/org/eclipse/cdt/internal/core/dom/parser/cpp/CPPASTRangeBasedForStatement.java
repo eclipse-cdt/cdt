@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 Wind River Systems, Inc. and others.
+ * Copyright (c) 2010, 2012 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - Initial API and implementation
+ *     Markus Schorn - Initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -25,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTRangeBasedForStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.internal.core.dom.parser.ASTAttributeOwner;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
@@ -34,7 +36,8 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 /**
  * Range based for loop in c++.
  */
-public class CPPASTRangeBasedForStatement extends ASTNode implements ICPPASTRangeBasedForStatement, IASTAmbiguityParent {
+public class CPPASTRangeBasedForStatement extends ASTAttributeOwner
+		implements ICPPASTRangeBasedForStatement, IASTAmbiguityParent {
     private IScope fScope;
     private IASTDeclaration  fDeclaration;
     private IASTInitializerClause fInitClause;
@@ -55,11 +58,7 @@ public class CPPASTRangeBasedForStatement extends ASTNode implements ICPPASTRang
 		copy.setDeclaration(fDeclaration == null ? null : fDeclaration.copy(style));
 		copy.setInitializerClause(fInitClause == null ? null : fInitClause.copy(style));
 		copy.setBody(fBody == null ? null : fBody.copy(style));
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 
 	@Override
@@ -178,11 +177,13 @@ public class CPPASTRangeBasedForStatement extends ASTNode implements ICPPASTRang
 	public boolean accept( ASTVisitor action ){
 		if (action.shouldVisitStatements) {
 			switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
+
+		if (!acceptByAttributes(action)) return false;
 		if (fDeclaration != null && !fDeclaration.accept(action))
 			return false;
 		if (fInitClause != null && !fInitClause.accept(action))

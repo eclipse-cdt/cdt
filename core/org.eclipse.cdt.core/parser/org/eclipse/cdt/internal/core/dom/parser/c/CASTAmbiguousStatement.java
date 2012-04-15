@@ -1,17 +1,19 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     IBM - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTAttribute;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -24,14 +26,13 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPASTInternalScope;
 
 public class CASTAmbiguousStatement extends ASTAmbiguousNode implements IASTAmbiguousStatement {
-
-    private IASTStatement [] stmts = new IASTStatement[2];
-    private int stmtsPos=-1;
+    private IASTStatement[] stmts = new IASTStatement[2];
+    private int stmtsPos= -1;
 	private IScope fScope;
 	private IASTDeclaration fDeclaration;
     
     public CASTAmbiguousStatement(IASTStatement... statements) {
-		for(IASTStatement s : statements)
+		for (IASTStatement s : statements)
 			addStatement(s);
 	}
     
@@ -44,7 +45,7 @@ public class CASTAmbiguousStatement extends ASTAmbiguousNode implements IASTAmbi
 			((ICPPASTInternalScope) fScope).populateCache();
 		}
 	}
-	
+
 	@Override
 	protected void beforeAlternative(IASTNode alternative) {
 		cleanupScope();
@@ -73,7 +74,7 @@ public class CASTAmbiguousStatement extends ASTAmbiguousNode implements IASTAmbi
 	public void addStatement(IASTStatement s) {
         assertNotFrozen();
     	if (s != null) {
-    		stmts = ArrayUtil.appendAt( IASTStatement.class, stmts, ++stmtsPos, s );
+    		stmts = ArrayUtil.appendAt(IASTStatement.class, stmts, ++stmtsPos, s);
     		s.setParent(this);
 			s.setPropertyInParent(STATEMENT);
     	}
@@ -81,15 +82,24 @@ public class CASTAmbiguousStatement extends ASTAmbiguousNode implements IASTAmbi
 
     @Override
 	public IASTStatement[] getStatements() {
-        stmts = ArrayUtil.trimAt( IASTStatement.class, stmts, stmtsPos );
+        stmts = ArrayUtil.trimAt(IASTStatement.class, stmts, stmtsPos);
     	return stmts;
+    }
+
+	@Override
+	public IASTAttribute[] getAttributes() {
+		return IASTAttribute.EMPTY_ATTRIBUTE_ARRAY;
+    }
+
+    @Override
+	public void addAttribute(IASTAttribute attribute) {
+		throw new UnsupportedOperationException();
     }
 
     @Override
 	public IASTNode[] getNodes() {
         return getStatements();
     }
-
 
 	@Override
 	public IASTStatement copy() {
@@ -100,5 +110,4 @@ public class CASTAmbiguousStatement extends ASTAmbiguousNode implements IASTAmbi
 	public IASTStatement copy(CopyStyle style) {
 		throw new UnsupportedOperationException();
 	}
-
 }

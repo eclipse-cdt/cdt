@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -17,13 +18,17 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
-import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.ASTAttributeOwner;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * @author jcamelon
  */
-public class CPPASTSimpleDeclaration extends ASTNode implements IASTSimpleDeclaration, IASTAmbiguityParent {
+public class CPPASTSimpleDeclaration extends ASTAttributeOwner
+		implements IASTSimpleDeclaration, IASTAmbiguityParent {
+    private IASTDeclarator[] declarators;
+    private int declaratorsPos = -1;
+    private IASTDeclSpecifier declSpecifier;
 
     public CPPASTSimpleDeclaration() {
 	}
@@ -41,13 +46,10 @@ public class CPPASTSimpleDeclaration extends ASTNode implements IASTSimpleDeclar
 	public CPPASTSimpleDeclaration copy(CopyStyle style) {
 		CPPASTSimpleDeclaration copy = new CPPASTSimpleDeclaration();
 		copy.setDeclSpecifier(declSpecifier == null ? null : declSpecifier.copy(style));
-		for (IASTDeclarator declarator : getDeclarators())
+		for (IASTDeclarator declarator : getDeclarators()) {
 			copy.addDeclarator(declarator == null ? null : declarator.copy(style));
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
 		}
-		return copy;
+		return copy(copy, style);
 	}
 
 	@Override
@@ -72,10 +74,6 @@ public class CPPASTSimpleDeclaration extends ASTNode implements IASTSimpleDeclar
 			d.setPropertyInParent(DECLARATOR);
     	}
     }
-    
-    private IASTDeclarator[] declarators;
-    private int declaratorsPos = -1;
-    private IASTDeclSpecifier declSpecifier;
 
     /**
      * @param declSpecifier The declSpecifier to set.
@@ -100,6 +98,7 @@ public class CPPASTSimpleDeclaration extends ASTNode implements IASTSimpleDeclar
 	        }
 		}
         
+        if (!acceptByAttributes(action)) return false;
         if (declSpecifier != null && !declSpecifier.accept(action)) return false;
         IASTDeclarator[] dtors = getDeclarators();
         for (int i = 0; i < dtors.length; i++) {
@@ -122,12 +121,11 @@ public class CPPASTSimpleDeclaration extends ASTNode implements IASTSimpleDeclar
 		IASTDeclarator[] declarators = getDeclarators();
 		for (int i = 0; i < declarators.length; i++) {
 			if (declarators[i] == child) {
-				declarators[i] = (IASTDeclarator)other;
+				declarators[i] = (IASTDeclarator) other;
 				other.setParent(child.getParent());
 	            other.setPropertyInParent(child.getPropertyInParent());
 				break;
 			}
 		}
 	}
-
 }

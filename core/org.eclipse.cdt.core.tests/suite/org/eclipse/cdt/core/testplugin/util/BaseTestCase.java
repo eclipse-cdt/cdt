@@ -8,7 +8,7 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Andrew Ferguson (Symbian)
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.core.testplugin.util;
 
 import java.lang.reflect.Method;
@@ -48,11 +48,11 @@ public class BaseTestCase extends TestCase {
 	private boolean fExpectFailure;
 	private int fBugNumber;
 	private int fExpectedLoggedNonOK;
-	
+
 	public BaseTestCase() {
 		super();
 	}
-	
+
 	public BaseTestCase(String name) {
 		super(name);
 	}
@@ -67,7 +67,7 @@ public class BaseTestCase extends TestCase {
 		CPPASTNameBase.sAllowNameComputation= false;
 		CModelListener.sSuppressUpdateOfLastRecentlyUsed= true;
 	}
-	
+
 	@Override
 	protected void tearDown() throws Exception {
 		ResourceHelper.cleanUp();
@@ -77,7 +77,7 @@ public class BaseTestCase extends TestCase {
 	protected static TestSuite suite(Class clazz) {
 		return suite(clazz, null);
 	}
-	
+
 	protected static TestSuite suite(Class clazz, String failingTestPrefix) {
 		TestSuite suite= new TestSuite(clazz);
 		Test failing= getFailingTests(clazz, failingTestPrefix);
@@ -149,7 +149,7 @@ public class BaseTestCase extends TestCase {
 		if (corePlugin != null) { // if we don't run a JUnit Plugin Test
 			corePlugin.getLog().addLogListener(logListener);
 		}
-		
+
 		Throwable testThrowable= null;
 		try {
 			try {
@@ -157,25 +157,27 @@ public class BaseTestCase extends TestCase {
 			} catch (Throwable e) {
 				testThrowable=e;
 			}
-			
+
 			if (statusLog.size() != fExpectedLoggedNonOK) {
 				StringBuffer msg= new StringBuffer("Expected number (" + fExpectedLoggedNonOK + ") of ");
 				msg.append("non-OK status objects in log differs from actual (" + statusLog.size() + ").\n");
 				Throwable cause= null;
 				if (!statusLog.isEmpty()) {
-					for (IStatus status : statusLog) {
-						IStatus[] ss= {status};
-						ss= status instanceof MultiStatus ? ((MultiStatus) status).getChildren() : ss; 
-						for (IStatus s : ss) {
-							msg.append("\t" + s.getMessage() + " ");
-							
-							Throwable t= s.getException();
-							cause= cause != null ? cause : t;
-							if (t != null) {
-								msg.append(t.getMessage() != null ? t.getMessage() : t.getClass().getCanonicalName());
+					synchronized(statusLog) {
+						for (IStatus status : statusLog) {
+							IStatus[] ss= {status};
+							ss= status instanceof MultiStatus ? ((MultiStatus) status).getChildren() : ss;
+							for (IStatus s : ss) {
+								msg.append("\t" + s.getMessage() + " ");
+
+								Throwable t= s.getException();
+								cause= cause != null ? cause : t;
+								if (t != null) {
+									msg.append(t.getMessage() != null ? t.getMessage() : t.getClass().getCanonicalName());
+								}
+
+								msg.append("\n");
 							}
-							
-							msg.append("\n");
 						}
 					}
 				}
@@ -189,7 +191,7 @@ public class BaseTestCase extends TestCase {
 				corePlugin.getLog().removeLogListener(logListener);
 			}
 		}
-		
+
 		if (testThrowable != null)
 			throw testThrowable;
 	}
@@ -200,9 +202,9 @@ public class BaseTestCase extends TestCase {
     		super.run(result);
     		return;
     	}
-    	
+
         result.startTest(this);
-        
+
         TestResult r = new TestResult();
         super.run(r);
         if (r.failureCount() == 1) {
@@ -214,19 +216,19 @@ public class BaseTestCase extends TestCase {
         } else if (r.errorCount() == 0 && r.failureCount() == 0) {
             String err = "Unexpected success of " + getName();
             if (fBugNumber > 0) {
-                err += ", bug #" + fBugNumber; 
+                err += ", bug #" + fBugNumber;
             }
             result.addFailure(this, new AssertionFailedError(err));
         }
-        
+
         result.endTest(this);
     }
-    
+
     public void setExpectFailure(int bugNumber) {
     	fExpectFailure= true;
     	fBugNumber= bugNumber;
     }
-    
+
     /**
      * The last value passed to this method in the body of a testXXX method
      * will be used to determine whether or not the presence of non-OK status objects
@@ -238,25 +240,25 @@ public class BaseTestCase extends TestCase {
     public void setExpectedNumberOfLoggedNonOKStatusObjects(int count) {
     	fExpectedLoggedNonOK= count;
     }
-    
+
     /**
      * Some test steps need synchronizing against a CModel event. This class
      * is a very basic means of doing that.
      */
     static protected class ModelJoiner implements IElementChangedListener {
 		private boolean[] changed= new boolean[1];
-		
+
 		public ModelJoiner() {
 			CoreModel.getDefault().addElementChangedListener(this);
 		}
-		
+
 		public void clear() {
 			synchronized (changed) {
 				changed[0]= false;
 				changed.notifyAll();
 			}
 		}
-		
+
 		public void join() throws CoreException {
 			try {
 				synchronized(changed) {
@@ -268,24 +270,24 @@ public class BaseTestCase extends TestCase {
 				throw new CoreException(CCorePlugin.createStatus("Interrupted", e));
 			}
 		}
-		
+
 		public void dispose() {
 			CoreModel.getDefault().removeElementChangedListener(this);
 		}
-		
+
 		@Override
 		public void elementChanged(ElementChangedEvent event) {
 			// Only respond to post change events
 			if (event.getType() != ElementChangedEvent.POST_CHANGE)
 				return;
-			
+
 			synchronized (changed) {
 				changed[0]= true;
 				changed.notifyAll();
 			}
 		}
 	}
-    
+
     public static void waitForIndexer(ICProject project) throws InterruptedException {
 		final PDOMManager indexManager = CCoreInternals.getPDOMManager();
 		assertTrue(indexManager.joinIndexer(10000, npm()));

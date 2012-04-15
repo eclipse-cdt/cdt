@@ -47,7 +47,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -566,9 +565,9 @@ public class LanguageSettingsProvidersSerializer {
 			}
 		}
 
-		Job job = new WorkspaceJob(SettingsModelMessages.getString("LanguageSettingsProvidersSerializer.SerializeJobName")) { //$NON-NLS-1$
+		Job job = new Job(SettingsModelMessages.getString("LanguageSettingsProvidersSerializer.SerializeJobName")) { //$NON-NLS-1$
 			@Override
-			public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
+			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					monitor.beginTask(SettingsModelMessages.getString("LanguageSettingsProvidersSerializer.SerializingForWorkspace"), //$NON-NLS-1$
 							TICKS_SERIALIZING);
@@ -588,6 +587,7 @@ public class LanguageSettingsProvidersSerializer {
 			}
 		};
 
+		job.setRule(null);
 		job.schedule();
 	}
 

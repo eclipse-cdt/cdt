@@ -42,7 +42,6 @@ import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedMakeMessages;
 import org.eclipse.cdt.utils.CommandLineUtil;
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -381,14 +380,17 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 			}
 		};
 
-		IProject project = null;
+		ISchedulingRule rule = null;
 		if (currentCfgDescription != null) {
 			ICProjectDescription prjDescription = currentCfgDescription.getProjectDescription();
 			if (prjDescription != null) {
-				project = prjDescription.getProject();
+				rule = prjDescription.getProject();
 			}
 		}
-		job.setRule(project);
+		if (rule == null) {
+			rule = ResourcesPlugin.getWorkspace().getRoot();
+		}
+		job.setRule(rule);
 		job.schedule();
 
 		// AG FIXME - temporary log to remove before CDT Juno release

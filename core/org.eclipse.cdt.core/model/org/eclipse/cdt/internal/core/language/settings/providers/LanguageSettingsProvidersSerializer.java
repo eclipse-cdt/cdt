@@ -369,7 +369,7 @@ public class LanguageSettingsProvidersSerializer {
 	 */
 	public static void setWorkspaceProviders(List<ILanguageSettingsProvider> providers) throws CoreException {
 		setWorkspaceProvidersInternal(providers);
-		serializeLanguageSettingsWorkspaceInBackground();
+		serializeLanguageSettingsWorkspace();
 		// generate preference change event for preference change listeners (value is not intended to be used)
 		IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID);
 		prefs.putBoolean(PREFERENCE_WORSPACE_PROVIDERS_SET, ! prefs.getBoolean(PREFERENCE_WORSPACE_PROVIDERS_SET, false));

@@ -666,6 +666,24 @@
     },
     {
       "key": {
+        "uuid": "AABOG3//9NA\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-04-16T21:58:33Z",
+      "side": 1,
+      "message": "I made \"getWaitTimeout()\" and \"setWaitTimeout()\" synchronized.",
+      "parentUuid": "AABOG3//9g0\u003d",
+      "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOG3//9ls\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
         "patchSetId": 1
@@ -677,6 +695,24 @@
       "writtenOn": "2012-04-09T19:48:16Z",
       "side": 1,
       "message": "private?",
+      "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9N0\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-04-16T21:58:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//9ls\u003d",
       "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -700,6 +736,24 @@
     },
     {
       "key": {
+        "uuid": "AABOG3//9Nw\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-04-16T21:58:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//9lo\u003d",
+      "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOG3//9lk\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
         "patchSetId": 1
@@ -711,6 +765,24 @@
       "writtenOn": "2012-04-09T19:48:16Z",
       "side": 1,
       "message": "private?",
+      "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9Ns\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-04-16T21:58:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//9lk\u003d",
       "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -734,6 +806,24 @@
     },
     {
       "key": {
+        "uuid": "AABOG3//9No\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-04-16T21:58:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//9gw\u003d",
+      "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOG3//9gs\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
         "patchSetId": 1
@@ -745,6 +835,24 @@
       "writtenOn": "2012-04-09T19:48:16Z",
       "side": 1,
       "message": "As mentioned above, don\u0027t call doRun() but return instead and let doRun() loop.",
+      "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9Nk\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-04-16T21:58:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//9gs\u003d",
       "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -768,6 +876,24 @@
     },
     {
       "key": {
+        "uuid": "AABOG3//9Ng\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-04-16T21:58:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//9gc\u003d",
+      "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOG3//9gg\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
         "patchSetId": 1
@@ -779,6 +905,24 @@
       "writtenOn": "2012-04-09T19:48:16Z",
       "side": 1,
       "message": "Sentence seems un-finished",
+      "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9Nc\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-04-16T21:58:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//9gg\u003d",
       "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -802,6 +946,24 @@
     },
     {
       "key": {
+        "uuid": "AABOG3//9NY\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 175,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-04-16T21:58:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//9gk\u003d",
+      "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOG3//9go\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
         "patchSetId": 1
@@ -813,6 +975,24 @@
       "writtenOn": "2012-04-09T19:48:16Z",
       "side": 1,
       "message": "As mentioned above, don\u0027t call doRun() but return instead and let doRun() loop.",
+      "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9Mk\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 180,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-04-16T21:58:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//9go\u003d",
       "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -836,6 +1016,24 @@
     },
     {
       "key": {
+        "uuid": "AABOG3//9NU\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 210,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-04-16T21:58:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//9kc\u003d",
+      "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOG3//9k0\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
         "patchSetId": 1
@@ -847,6 +1045,24 @@
       "writtenOn": "2012-04-09T19:48:16Z",
       "side": 1,
       "message": "ICommandControl instead of IGDBControl?",
+      "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9NQ\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 216,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-04-16T21:58:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//9k0\u003d",
       "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -870,6 +1086,24 @@
     },
     {
       "key": {
+        "uuid": "AABOG3//9NM\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 225,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-04-16T21:58:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//9kw\u003d",
+      "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOG3//9ks\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
         "patchSetId": 1
@@ -881,6 +1115,24 @@
       "writtenOn": "2012-04-09T19:48:16Z",
       "side": 1,
       "message": "Here, event.getNewValue() could be null, as per the check in the if statement.\n\nAlso, should we call fCommandQueue.clear() if the new fvalue of fTimeoutEnabled \u003d\u003d false?  Or else the queue content will grow stale, no?",
+      "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9L0\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 328,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-04-16T21:58:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//9ks\u003d",
       "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -904,6 +1156,24 @@
     },
     {
       "key": {
+        "uuid": "AABOG3//9Lw\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 336,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-04-16T21:58:33Z",
+      "side": 1,
+      "message": "I don\u0027t think it can be null, but I added a check for it, just in case.",
+      "parentUuid": "AABOG3//9kY\u003d",
+      "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOG3//9kI\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
         "patchSetId": 1
@@ -921,6 +1191,24 @@
     },
     {
       "key": {
+        "uuid": "AABOG3//9NI\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 428,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-04-16T21:58:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//9kI\u003d",
+      "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOG3//9kE\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
         "patchSetId": 1
@@ -932,6 +1220,24 @@
       "writtenOn": "2012-04-09T19:48:16Z",
       "side": 1,
       "message": "I wonder if this is right when removeCommand() is called from commandRemoved().  commandRemoved() removed a command that was not sent yet, so it may very well be later in the queue than the first command of the queue.  In that case, is it safe to reset the timestamp of the first element of the queue?",
+      "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9NE\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 431,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-04-16T21:58:33Z",
+      "side": 1,
+      "message": "I changed the code to ignore \"removeCommand()\".",
+      "parentUuid": "AABOG3//9kE\u003d",
       "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

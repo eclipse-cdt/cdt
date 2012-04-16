@@ -74,8 +74,9 @@ public class LanguageSettingsProvidersSerializer {
 	public static final String ELEM_PROVIDER = LanguageSettingsExtensionManager.ELEM_PROVIDER;
 	public static final String ELEM_LANGUAGE_SCOPE = LanguageSettingsExtensionManager.ELEM_LANGUAGE_SCOPE;
 
-	private static final String JOB_FAMILY_SERIALIZE_LANGUAGE_SETTINGS_PROJECT = "CDT_JOB_FAMILY_SERIALIZE_LANGUAGE_SETTINGS_PROJECT"; //$NON-NLS-1$
-	private static final String JOB_FAMILY_SERIALIZE_LANGUAGE_SETTINGS_WORKSPACE = "CDT_JOB_FAMILY_SERIALIZE_LANGUAGE_SETTINGS_WORKSPACE"; //$NON-NLS-1$
+	public static final String JOB_FAMILY_SERIALIZE_LANGUAGE_SETTINGS_PROJECT = "CDT_JOB_FAMILY_SERIALIZE_LANGUAGE_SETTINGS_PROJECT"; //$NON-NLS-1$
+	public static final String JOB_FAMILY_SERIALIZE_LANGUAGE_SETTINGS_WORKSPACE = "CDT_JOB_FAMILY_SERIALIZE_LANGUAGE_SETTINGS_WORKSPACE"; //$NON-NLS-1$
+
 	private static final String PREFERENCE_WORSPACE_PROVIDERS_SET = "language.settings.providers.workspace.prefs.toggle"; //$NON-NLS-1$
 	private static final String CPROJECT_STORAGE_MODULE = "org.eclipse.cdt.core.LanguageSettingsProviders"; //$NON-NLS-1$
 	private static final String STORAGE_WORKSPACE_LANGUAGE_SETTINGS = "language.settings.xml"; //$NON-NLS-1$

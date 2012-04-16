@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "AABOG3//9Ls\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-04-16T21:59:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//9MY\u003d",
+      "revId": "6c03000ab95555d47612b21fd2ca12f3ae7195e5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOG3//9M8\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
         "patchSetId": 7
@@ -30,6 +48,24 @@
       "writtenOn": "2012-04-16T18:20:58Z",
       "side": 1,
       "message": "Remove empty if statement",
+      "revId": "6c03000ab95555d47612b21fd2ca12f3ae7195e5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9Lo\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 180,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-04-16T21:59:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//9M8\u003d",
       "revId": "6c03000ab95555d47612b21fd2ca12f3ae7195e5",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "AABOG3//9Lk\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 202,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-04-16T21:59:33Z",
+      "side": 1,
+      "message": "I added synchronized \"getTimerThreadState()\" (there is already \"Thread.getState()\"), renamed and made synchronized \"setTimeThreadState().\nThis probably is not very efficient: \"getTimerThreadState()\" is called very often, but I don\u0027t have other solution.",
+      "parentUuid": "AABOG3//9M4\u003d",
+      "revId": "6c03000ab95555d47612b21fd2ca12f3ae7195e5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOG3//9M0\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
         "patchSetId": 7
@@ -64,6 +118,24 @@
       "writtenOn": "2012-04-16T18:20:58Z",
       "side": 1,
       "message": "Unfinished comment",
+      "revId": "6c03000ab95555d47612b21fd2ca12f3ae7195e5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9Lg\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 316,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-04-16T21:59:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//9M0\u003d",
       "revId": "6c03000ab95555d47612b21fd2ca12f3ae7195e5",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "AABOG3//9LY\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 331,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-04-16T21:59:33Z",
+      "side": 1,
+      "message": "Done. See my comments for the previous patch set.",
+      "parentUuid": "AABOG3//9Mw\u003d",
+      "revId": "6c03000ab95555d47612b21fd2ca12f3ae7195e5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOG3//9Ms\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
         "patchSetId": 7
@@ -104,6 +194,24 @@
     },
     {
       "key": {
+        "uuid": "AABOG3//9Lc\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 332,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-04-16T21:59:33Z",
+      "side": 1,
+      "message": "Done. See my comments for the previous patch set.",
+      "parentUuid": "AABOG3//9Ms\u003d",
+      "revId": "6c03000ab95555d47612b21fd2ca12f3ae7195e5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOG3//9Mo\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
         "patchSetId": 7
@@ -115,6 +223,24 @@
       "writtenOn": "2012-04-16T18:20:58Z",
       "side": 1,
       "message": "Can event.getNewValue() be null?",
+      "revId": "6c03000ab95555d47612b21fd2ca12f3ae7195e5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9LU\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 338,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-04-16T21:59:33Z",
+      "side": 1,
+      "message": "Done. See my comments for the previous patch set.",
+      "parentUuid": "AABOG3//9Mo\u003d",
       "revId": "6c03000ab95555d47612b21fd2ca12f3ae7195e5",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

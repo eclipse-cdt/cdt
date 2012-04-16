@@ -61,13 +61,10 @@ public class ProblemBindingChecker extends AbstractIndexAstChecker {
 		return true;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.codan.core.model.AbstractCheckerWithProblemPreferences#initPreferences(org.eclipse.cdt.codan.core.model.IProblemWorkingCopy)
-	 */
 	@Override
 	public void initPreferences(IProblemWorkingCopy problem) {
 		super.initPreferences(problem);
-		// these checkers should not run on full or incremental build
+		// This checker should not run on full or incremental build
 		getLaunchModePreference(problem).enableInLaunchModes(CheckerLaunchMode.RUN_AS_YOU_TYPE, CheckerLaunchMode.RUN_ON_DEMAND);
 	}
 
@@ -150,9 +147,8 @@ public class ProblemBindingChecker extends AbstractIndexAstChecker {
 								handleMemberProblem(name, parentNode, problemBinding, contextFlagsString);
 							} else if (parentNode instanceof IASTNamedTypeSpecifier) {
 								reportProblem(ERR_ID_TypeResolutionProblem, name, name.getRawSignature(), contextFlagsString);
-							}
-							// Probably a variable
-							else {
+							} else {
+								// Probably a variable
 								handleVariableProblem(name, contextFlagsString);
 							}
 						}

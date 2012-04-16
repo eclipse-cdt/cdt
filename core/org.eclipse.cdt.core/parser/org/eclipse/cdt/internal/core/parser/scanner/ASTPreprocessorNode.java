@@ -555,10 +555,10 @@ class ASTFunctionStyleMacroDefinition extends ASTMacroDefinition implements IAST
 		int endIdx= Math.min(fExpansionNumber - defOffset, image.length);
     	char start= '(';
     	for (int i = 0; i < result.length; i++) {
-        	while(idx < endIdx && image[idx] != start) 
+        	while (idx < endIdx && image[idx] != start) 
         		idx++;
         	idx++;
-        	while(idx < endIdx && Character.isWhitespace(image[idx]))
+        	while (idx < endIdx && Character.isWhitespace(image[idx]))
         		idx++;
         	start= ',';
         	
@@ -800,7 +800,8 @@ class ASTMacroExpansionLocation implements IASTMacroExpansionLocation, org.eclip
 
 	@Override
 	public IASTFileLocation asFileLocation() {
-		return ((LocationCtxContainer) fContext.getParent()).createFileLocation(fContext.fOffsetInParent, fContext.fEndOffsetInParent-fContext.fOffsetInParent);
+		return ((LocationCtxContainer) fContext.getParent()).createFileLocation(fContext.fOffsetInParent,
+				fContext.fEndOffsetInParent - fContext.fOffsetInParent);
 	}
 
 	@Override

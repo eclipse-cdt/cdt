@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "AABOG3//9WA\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/preferences/GdbDebugPreferencePage.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 250,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-04-16T15:19:02Z",
+      "side": 1,
+      "message": "Added info control decorator to the table viewer that provides the tooltip with the detailed information on how to set custom timeouts.\nSee Marc\u0027s comment in bugzilla.",
+      "revId": "6d47395867e8143775d1720e152a19664bb41b30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOG3//9gQ\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GDBControl.java",
         "patchSetId": 6
@@ -13,6 +30,41 @@
       "writtenOn": "2012-04-10T01:47:31Z",
       "side": 1,
       "message": "What do you think about the comment I had put here:\n\nI believe this call will block while the dialog is being shown to the user, no? If so, we should not run it in the DSF executor, as we would block the executor. I suggest using a job for this call. This is what is done in GdbConnectCommand.PromptForPidJob for example.",
+      "revId": "6d47395867e8143775d1720e152a19664bb41b30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9aY\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GDBControl.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 648,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-04-16T15:19:02Z",
+      "side": 1,
+      "message": "The status handler implementation opens the dialog using \"Display.asyncExec()\" so it\u0027s not a problem.",
+      "parentUuid": "AABOG3//9gQ\u003d",
+      "revId": "6d47395867e8143775d1720e152a19664bb41b30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9aI\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 404,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-04-16T15:19:02Z",
+      "side": 1,
+      "message": "From Marc Khouzam\u0027s comment in Bugzilla: this doesn\u0027t work when the default timeout value is set to 0 but there are commands with non-zero timeout values.\n\nMikhail: Fixed.\n\nMarc also suggested to add a JUnit test for this case.",
       "revId": "6d47395867e8143775d1720e152a19664bb41b30",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -36,6 +88,24 @@
     },
     {
       "key": {
+        "uuid": "AABOG3//9ac\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 892,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-04-16T15:19:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//9fw\u003d",
+      "revId": "6d47395867e8143775d1720e152a19664bb41b30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOG3//9fs\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
         "patchSetId": 6
@@ -53,6 +123,24 @@
     },
     {
       "key": {
+        "uuid": "AABOG3//9ak\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 1120,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-04-16T15:19:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//9fs\u003d",
+      "revId": "6d47395867e8143775d1720e152a19664bb41b30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOG3//9f0\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
         "patchSetId": 6
@@ -64,6 +152,24 @@
       "writtenOn": "2012-04-10T01:47:31Z",
       "side": 1,
       "message": "Above three lines can be replaced with rm.done() I believe.",
+      "revId": "6d47395867e8143775d1720e152a19664bb41b30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9ag\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 1150,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-04-16T15:19:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//9f0\u003d",
       "revId": "6d47395867e8143775d1720e152a19664bb41b30",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

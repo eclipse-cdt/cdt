@@ -955,6 +955,24 @@
     },
     {
       "key": {
+        "uuid": "AABOG3//9V0\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/CommandTimeoutTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-04-16T15:19:46Z",
+      "side": 1,
+      "message": "Thanks",
+      "parentUuid": "AABOG3//9l0\u003d",
+      "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOG3//9l4\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/CommandTimeoutTest.java",
         "patchSetId": 1
@@ -972,6 +990,24 @@
     },
     {
       "key": {
+        "uuid": "AABOG3//9aU\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/CommandTimeoutTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-04-16T15:19:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//9l4\u003d",
+      "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOG3//9k4\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/CommandTimeoutTest.java",
         "patchSetId": 1
@@ -983,6 +1019,24 @@
       "writtenOn": "2012-04-09T19:48:16Z",
       "side": 1,
       "message": "How about adding a test to check the case where a command times out after the final launch sequence is finished?  Now that I see how you wrote the tests, I think it wouldn\u0027t be hard.  Something like:\n\n@Test\npublic void afterLaunchCommandTimedOut() {\n        super.baseBeforeMethod();\n\n        // Now that the launch is finished, set a really short command timeout\n        // to make sure it triggers, and then send some MI command.\n        IEclipsePreferences node \u003d InstanceScope.INSTANCE.getNode( GdbPlugin.PLUGIN_ID );\n        node.putBoolean( IGdbDebugPreferenceConstants.PREF_COMMAND_TIMEOUT, true );\n        node.putInt( IGdbDebugPreferenceConstants.PREF_COMMAND_TIMEOUT_VALUE, 1 );\n\n        send any MI command to GDB, which will timeout and trigger a terminate;\n        check for the terminate (I haven\u0027t looked into how)\n\n        // Clean up in case the test fails and the launch is not aborted.\n        super.baseAfterMethod();\n}",
+      "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9Vg\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/CommandTimeoutTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-04-16T15:19:46Z",
+      "side": 1,
+      "message": "I have tried to implement something like this but it is not working well. I\u0027ll try to fix it or implement it differently.",
+      "parentUuid": "AABOG3//9k4\u003d",
       "revId": "d51a138411e49f7157858379f8aa09a59a8e4f78",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

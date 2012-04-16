@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOG3//9M8\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 180,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-04-16T18:20:58Z",
+      "side": 1,
+      "message": "Remove empty if statement",
+      "revId": "6c03000ab95555d47612b21fd2ca12f3ae7195e5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9M4\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 202,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-04-16T18:20:58Z",
+      "side": 1,
+      "message": "I think setState() must also be synchronized",
+      "revId": "6c03000ab95555d47612b21fd2ca12f3ae7195e5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9M0\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 316,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-04-16T18:20:58Z",
+      "side": 1,
+      "message": "Unfinished comment",
+      "revId": "6c03000ab95555d47612b21fd2ca12f3ae7195e5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9Mw\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 331,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-04-16T18:20:58Z",
+      "side": 1,
+      "message": "The if statement checks for event.getNewValue() \u003d\u003d null but then we do a event.getNewValue().toString().  Seems like a risk for an NPE...",
+      "revId": "6c03000ab95555d47612b21fd2ca12f3ae7195e5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9Ms\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 332,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-04-16T18:20:58Z",
+      "side": 1,
+      "message": "Also, should we call fCommandQueue.clear() if the new fvalue of fTimeoutEnabled \u003d\u003d false? Or else the queue content will grow stale, no?",
+      "revId": "6c03000ab95555d47612b21fd2ca12f3ae7195e5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9Mo\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 338,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-04-16T18:20:58Z",
+      "side": 1,
+      "message": "Can event.getNewValue() be null?",
+      "revId": "6c03000ab95555d47612b21fd2ca12f3ae7195e5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "AABOG3//9MY\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-04-16T19:10:08Z",
+      "side": 1,
+      "message": "How about putting a name for the thread?  It may help in the future if we need to debug.",
+      "revId": "6c03000ab95555d47612b21fd2ca12f3ae7195e5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOG3//9M8\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
         "patchSetId": 7

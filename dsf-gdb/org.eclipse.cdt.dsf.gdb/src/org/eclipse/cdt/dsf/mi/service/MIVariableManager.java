@@ -508,7 +508,10 @@ public class MIVariableManager implements ICommandControl {
 		public boolean isPointer() { return (getGDBType() == null) ? false : getGDBType().getType() == GDBType.POINTER; }
 		public boolean isMethod() { return (getGDBType() == null) ? false : getGDBType().getType() == GDBType.FUNCTION; }
 		// A complex variable is one with children.  However, it must not be a pointer since a pointer 
-		// does have children, but is still a 'simple' variable, as it can be modifed.  
+		// does have children, but is still a 'simple' variable, as it can be modified.  
+		// A reference can be modified too, because it can be a reference to the base class before initialization
+		// and after initialization it can become a reference to the derived class (if gdb shows the value type and
+		// children taking into account RTTI ("set print object on")).
 		// Note that the numChildrenHint can be trusted when asking if the number of children is 0 or not
 		public boolean isComplex() {
 			return (getGDBType() == null) ? false

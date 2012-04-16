@@ -17,6 +17,7 @@
 package org.eclipse.cdt.dsf.mi.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -367,7 +368,9 @@ public class MIVariableManager implements ICommandControl {
 		// The children of this variable, if any.  
 		// Null means we didn't fetch them yet, while an empty array means no children
         private ExpressionInfo[] children = null; 
-        public List<ExpressionInfo> fakeChildren = new ArrayList<ExpressionInfo>(); // TODO: It could be a simple array
+        // NOTE: Usually it should not be more than 3 fake children ('public', 'private', 'protected').
+        //       However if it happens the array will be reallocated during the new child addition.
+        private ExpressionInfo[] fakeChildren = new ExpressionInfo[3];
 		private boolean hasMore = false;
 		private MIDisplayHint displayHint = MIDisplayHint.NONE;
 		
@@ -697,6 +700,28 @@ public class MIVariableManager implements ICommandControl {
 			}        	
         }
         
+        private void clearFakeChildren() {
+        	Arrays.fill(fakeChildren, null);
+        }
+        
+        private void addFakeChild(ExpressionInfo child) {
+        	int insertIndex = fakeChildren.length;
+        	for (int i = 0; i < fakeChildren.length; i++) {
+				if (fakeChildren[i] == null) {
+					insertIndex = i;
+					break;
+				}
+			}
+        	if (insertIndex == fakeChildren.length) {
+        		// It is a strange case. Usually fakeChildren should not be reallocated and
+        		// should contain only 'public', 'protected' and 'private' children (or just some of them).
+        		ExpressionInfo[] oldFakeChildren = fakeChildren;
+        		fakeChildren = new ExpressionInfo[fakeChildren.length + 1];
+        		System.arraycopy(oldFakeChildren, 0, fakeChildren, 0, oldFakeChildren.length);
+        	}
+        	fakeChildren[insertIndex] = child;
+        }
+        
         public void removeChildrenFromLRU() {
         	if (children != null) {
         		for (ExpressionInfo child : children) {
@@ -704,11 +729,15 @@ public class MIVariableManager implements ICommandControl {
         		}
         		children = null;
             	numChildrenHint = 0;
-            	
-            	for (ExpressionInfo child : fakeChildren) {
-        			removeChildFromLRU(child);
-            	}
-            	fakeChildren.clear();
+        	}
+        	if (fakeChildren != null) {
+	        	for (ExpressionInfo fakeChild : fakeChildren) {
+	        		if (fakeChild == null) {
+	        			break;
+	        		}
+	    			removeChildFromLRU(fakeChild);
+	        	}
+	        	clearFakeChildren();
         	}
         }
         
@@ -1509,7 +1538,7 @@ public class MIVariableManager implements ICommandControl {
 											childVar.hasCastToBaseClassWorkaround = childHasCastToBaseClassWorkaround;
 
 											if (fakeChild) {
-												fakeChildren.add(childVar.exprInfo);
+												addFakeChild(childVar.exprInfo);
 												addRealChildrenOfFake(childVar,	exprDmc, realChildren,
 														arrayPosition, countingRm);
 											} else {

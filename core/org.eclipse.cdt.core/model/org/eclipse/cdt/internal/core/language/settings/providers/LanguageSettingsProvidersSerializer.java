@@ -51,6 +51,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ILock;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
@@ -367,7 +368,7 @@ public class LanguageSettingsProvidersSerializer {
 	 */
 	public static void setWorkspaceProviders(List<ILanguageSettingsProvider> providers) throws CoreException {
 		setWorkspaceProvidersInternal(providers);
-		serializeLanguageSettingsWorkspace();
+		serializeLanguageSettingsWorkspaceInBackground();
 		// generate preference change event for preference change listeners (value is not intended to be used)
 		IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID);
 		prefs.putBoolean(PREFERENCE_WORSPACE_PROVIDERS_SET, ! prefs.getBoolean(PREFERENCE_WORSPACE_PROVIDERS_SET, false));
@@ -592,6 +593,17 @@ public class LanguageSettingsProvidersSerializer {
 	 * Load language settings for workspace.
 	 */
 	public static void loadLanguageSettingsWorkspace() {
+		// ensure completion of any scheduled background serialization
+		try {
+			Job.getJobManager().join(JOB_FAMILY_SERIALIZE_LANGUAGE_SETTINGS_WORKSPACE, null);
+		} catch (OperationCanceledException e) {
+			return;
+		} catch (InterruptedException e) {
+			CCorePlugin.log(e);
+			// restore interrupted status
+			Thread.currentThread().interrupt();
+		}
+
 		List <ILanguageSettingsProvider> providers = null;
 
 		URI uriStoreWsp = getStoreInWorkspaceArea(STORAGE_WORKSPACE_LANGUAGE_SETTINGS);

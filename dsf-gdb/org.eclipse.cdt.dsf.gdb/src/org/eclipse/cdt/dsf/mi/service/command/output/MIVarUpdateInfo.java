@@ -99,6 +99,10 @@ public class MIVarUpdateInfo extends MIInfo {
 					if (change != null) {
 						change.setChanged("true".equals(str)); //$NON-NLS-1$
 					}
+				} else if (var.equals("new_type")) { //$NON-NLS-1$
+					if (change != null) {
+						change.setNewType(str); //$NON-NLS-1$
+					}
 				} else if (var.equals("new_num_children")) { //$NON-NLS-1$
 					if (change != null) {
 						try {

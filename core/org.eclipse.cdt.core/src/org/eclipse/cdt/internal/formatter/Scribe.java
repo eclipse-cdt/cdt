@@ -1581,7 +1581,7 @@ public class Scribe {
 		}
 	}
 
-	public void startNode() {
+	public void enterNode() {
 		lastLineComment.contiguous = false;
 	}
 

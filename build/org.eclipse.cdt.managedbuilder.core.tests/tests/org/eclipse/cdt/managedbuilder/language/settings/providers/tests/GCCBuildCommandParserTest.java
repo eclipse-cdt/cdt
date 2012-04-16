@@ -38,6 +38,7 @@ import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.internal.core.XmlUtil;
+import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsProvidersSerializer;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
 import org.eclipse.cdt.managedbuilder.language.settings.providers.AbstractBuildCommandParser;
 import org.eclipse.cdt.managedbuilder.language.settings.providers.GCCBuildCommandParser;
@@ -104,6 +105,8 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 	protected void tearDown() throws Exception {
 		try {
 			Job.getJobManager().join(AbstractBuildCommandParser.JOB_FAMILY_BUILD_COMMAND_PARSER, null);
+			Job.getJobManager().join(LanguageSettingsProvidersSerializer.JOB_FAMILY_SERIALIZE_LANGUAGE_SETTINGS_PROJECT, null);
+			Job.getJobManager().join(LanguageSettingsProvidersSerializer.JOB_FAMILY_SERIALIZE_LANGUAGE_SETTINGS_WORKSPACE, null);
 		} catch (Exception e) {
 			// ignore
 		}

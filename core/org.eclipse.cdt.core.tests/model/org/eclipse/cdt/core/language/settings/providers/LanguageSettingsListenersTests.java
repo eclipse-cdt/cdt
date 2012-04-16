@@ -23,8 +23,10 @@ import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsProvidersSerializer;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.jobs.Job;
 
 /**
  * Test cases to cover {@link ILanguageSettingsChangeListener} capabilities.
@@ -83,6 +85,12 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 	protected void tearDown() throws Exception {
 		LanguageSettingsManager.unregisterLanguageSettingsChangeListener(mockLseListener);
 		LanguageSettingsManager.setWorkspaceProviders(null);
+		try {
+			Job.getJobManager().join(LanguageSettingsProvidersSerializer.JOB_FAMILY_SERIALIZE_LANGUAGE_SETTINGS_PROJECT, null);
+			Job.getJobManager().join(LanguageSettingsProvidersSerializer.JOB_FAMILY_SERIALIZE_LANGUAGE_SETTINGS_WORKSPACE, null);
+		} catch (Exception e) {
+			// ignore
+		}
 		super.tearDown(); // includes ResourceHelper cleanup
 	}
 
@@ -557,6 +565,8 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 		}
 
 		{
+			// wait until serializing has finished
+			Job.getJobManager().join(LanguageSettingsProvidersSerializer.JOB_FAMILY_SERIALIZE_LANGUAGE_SETTINGS_WORKSPACE, null);
 			// close project
 			project.close(null);
 			assertEquals(0, MockListenerRegisterer.getCount(PROVIDER_CUSTOM_GLOBAL));

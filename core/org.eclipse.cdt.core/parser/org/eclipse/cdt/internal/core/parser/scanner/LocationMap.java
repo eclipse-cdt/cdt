@@ -12,7 +12,6 @@ package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.util.ArrayList;
 import java.util.IdentityHashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -657,11 +656,10 @@ public class LocationMap implements ILocationResolver {
 
 	@Override
 	public IASTPreprocessorMacroDefinition[] getMacroDefinitions() {
-    	ArrayList<Object> result= new ArrayList<Object>();
-    	for (Iterator<ASTPreprocessorNode> iterator = fDirectives.iterator(); iterator.hasNext();) {
-			Object directive= iterator.next();
+    	ArrayList<IASTPreprocessorMacroDefinition> result= new ArrayList<IASTPreprocessorMacroDefinition>();
+    	for (ASTPreprocessorNode directive : fDirectives) {
 			if (directive instanceof IASTPreprocessorMacroDefinition) {
-				result.add(directive);
+				result.add((IASTPreprocessorMacroDefinition) directive);
 			}
 		}
     	return result.toArray(new IASTPreprocessorMacroDefinition[result.size()]);
@@ -669,11 +667,10 @@ public class LocationMap implements ILocationResolver {
 
     @Override
 	public IASTPreprocessorIncludeStatement[] getIncludeDirectives() {
-    	ArrayList<Object> result= new ArrayList<Object>();
-    	for (Iterator<ASTPreprocessorNode> iterator = fDirectives.iterator(); iterator.hasNext();) {
-			Object directive= iterator.next();
+    	ArrayList<IASTPreprocessorIncludeStatement> result= new ArrayList<IASTPreprocessorIncludeStatement>();
+    	for (ASTPreprocessorNode directive : fDirectives) {
 			if (directive instanceof IASTPreprocessorIncludeStatement) {
-				result.add(directive);
+				result.add((IASTPreprocessorIncludeStatement) directive);
 			}
 		}
     	return result.toArray(new IASTPreprocessorIncludeStatement[result.size()]);

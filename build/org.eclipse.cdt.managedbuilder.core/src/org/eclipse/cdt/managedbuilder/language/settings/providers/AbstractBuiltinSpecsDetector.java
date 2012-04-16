@@ -42,7 +42,6 @@ import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedMakeMessages;
 import org.eclipse.cdt.utils.CommandLineUtil;
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -58,6 +57,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.content.IContentType;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.w3c.dom.Element;
 
@@ -380,14 +380,17 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 			}
 		};
 
-		IProject project = null;
+		ISchedulingRule rule = null;
 		if (currentCfgDescription != null) {
 			ICProjectDescription prjDescription = currentCfgDescription.getProjectDescription();
 			if (prjDescription != null) {
-				project = prjDescription.getProject();
+				rule = prjDescription.getProject();
 			}
 		}
-		job.setRule(project);
+		if (rule == null) {
+			rule = ResourcesPlugin.getWorkspace().getRoot();
+		}
+		job.setRule(rule);
 		job.schedule();
 
 		// AG FIXME - temporary log to remove before CDT Juno release

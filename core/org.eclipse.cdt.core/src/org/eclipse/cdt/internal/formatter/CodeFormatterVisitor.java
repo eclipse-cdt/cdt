@@ -635,13 +635,13 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 
 	@Override
 	public int visit(IASTDeclaration node) {
-		if (!startNode(node)) {
+		if (!enterNode(node)) {
 			return PROCESS_SKIP;
 		}
 		try {
 			return formatDeclaration(node);
 		} finally {
-			finishNode(node);
+			exitNode(node);
 		}
 	}
 
@@ -695,7 +695,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	 */
 	@Override
 	public int visit(IASTName node) {
-		if (!startNode(node)) { return PROCESS_SKIP; }
+		if (!enterNode(node)) { return PROCESS_SKIP; }
 		try {
 			if (node instanceof ICPPASTQualifiedName) {
 				visit((ICPPASTQualifiedName) node);
@@ -705,7 +705,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 				formatRaw(node);
 			}
 		} finally {
-			finishNode(node);
+			exitNode(node);
 		}
 		return PROCESS_SKIP;
 	}
@@ -726,7 +726,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			}
 		}
 
-		if (!startNode(node)) { return PROCESS_SKIP; }
+		if (!enterNode(node)) { return PROCESS_SKIP; }
 		try {
 			if (node instanceof IASTEqualsInitializer) {
 				visit((IASTEqualsInitializer) node);
@@ -738,7 +738,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 				formatRaw(node);
 			}
 		} finally {
-			finishNode(node);
+			exitNode(node);
 		}
 		return PROCESS_SKIP;
 	}
@@ -748,7 +748,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	 */
 	@Override
 	public int visit(IASTParameterDeclaration node) {
-		if (!startNode(node)) { return PROCESS_SKIP; }
+		if (!enterNode(node)) { return PROCESS_SKIP; }
 		try {
 			// decl-specifier
 			final IASTDeclSpecifier declSpec= node.getDeclSpecifier();
@@ -765,7 +765,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 				declarator.accept(this);
 			}
 		} finally {
-			finishNode(node);
+			exitNode(node);
 		}
 		return PROCESS_SKIP;
 	}
@@ -775,7 +775,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	 */
 	@Override
 	public int visit(IASTDeclarator node) {
-		if (!startNode(node)) { return PROCESS_SKIP; }
+		if (!enterNode(node)) { return PROCESS_SKIP; }
 
 		try {
 			// Common to all declarators
@@ -827,7 +827,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 				initializer.accept(this);
 			}
 		} finally {
-			finishNode(node);
+			exitNode(node);
 		}
 		return PROCESS_SKIP;
 	}
@@ -852,7 +852,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	 */
 	@Override
 	public int visit(IASTDeclSpecifier node) {
-		if (!startNode(node)) { return PROCESS_SKIP; }
+		if (!enterNode(node)) { return PROCESS_SKIP; }
 		try {
 			if (node instanceof ICPPASTCompositeTypeSpecifier) {
 				visit((ICPPASTCompositeTypeSpecifier) node);
@@ -870,7 +870,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 				formatRaw(node);
 			}
 		} finally {
-			finishNode(node);
+			exitNode(node);
 		}
 		return PROCESS_SKIP;
 	}
@@ -880,7 +880,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	 */
 	@Override
 	public int visit(IASTExpression node) {
-		if (!startNode(node)) { return PROCESS_SKIP; }
+		if (!enterNode(node)) { return PROCESS_SKIP; }
 		try {
 			if (node instanceof IASTArraySubscriptExpression) {
 				visit((IASTArraySubscriptExpression) node);
@@ -918,7 +918,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 				formatRaw(node);
 			}
 		} finally {
-			finishNode(node);
+			exitNode(node);
 		}
 		return PROCESS_SKIP;
 	}
@@ -931,7 +931,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		if (getCurrentPosition() <= nodeOffset(node) && startsWithMacroExpansion(node)) {
 			scribe.printCommentPreservingNewLines();
 		}
-		if (!startNode(node)) { return PROCESS_SKIP; }
+		if (!enterNode(node)) { return PROCESS_SKIP; }
 		int indentLevel= scribe.indentationLevel;
 		try {
      		if (node instanceof IASTCompoundStatement) {
@@ -985,7 +985,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 				}
 			}
 		} finally {
-			finishNode(node);
+			exitNode(node);
 		}
 		return PROCESS_SKIP;
 	}
@@ -995,7 +995,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	 */
 	@Override
 	public int visit(IASTTypeId node) {
-		if (!startNode(node)) { return PROCESS_SKIP; }
+		if (!enterNode(node)) { return PROCESS_SKIP; }
 		try {
 			if (node instanceof IASTProblemHolder) {
 				throw new ASTProblemException(((IASTProblemHolder) node).getProblem());
@@ -1015,7 +1015,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 				declarator.accept(this);
 			}
 		} finally {
-			finishNode(node);
+			exitNode(node);
 		}
 		return PROCESS_SKIP;
 	}
@@ -1025,7 +1025,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	 */
 	@Override
 	public int visit(IASTEnumerator enumerator) {
-		if (!startNode(enumerator)) { return PROCESS_SKIP; }
+		if (!enterNode(enumerator)) { return PROCESS_SKIP; }
 		try {
 			// name
 			enumerator.getName().accept(this);
@@ -1040,7 +1040,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 				value.accept(this);
 			}
 		} finally {
-			finishNode(enumerator);
+			exitNode(enumerator);
 		}
 		return PROCESS_SKIP;
 	}
@@ -1050,7 +1050,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	 */
 	@Override
 	public int visit(ICPPASTBaseSpecifier specifier) {
-		if (!startNode(specifier)) { return PROCESS_SKIP; }
+		if (!enterNode(specifier)) { return PROCESS_SKIP; }
 		try {
 			boolean needSpace= false;
 			loop: while (true) {
@@ -1072,7 +1072,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			}
 			specifier.getName().accept(this);
 		} finally {
-			finishNode(specifier);
+			exitNode(specifier);
 		}
 		return PROCESS_SKIP;
 	}
@@ -1082,7 +1082,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	 */
 	@Override
 	public int visit(ICPPASTNamespaceDefinition node) {
-		if (!startNode(node)) { return PROCESS_SKIP; }
+		if (!enterNode(node)) { return PROCESS_SKIP; }
 		try {
 			final int line= scribe.line;
 			// namespace <name>
@@ -1104,7 +1104,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			}
 			formatClosingBrace(preferences.brace_position_for_namespace_declaration);
 		} finally {
-			finishNode(node);
+			exitNode(node);
 		}
 		return PROCESS_SKIP;
 	}
@@ -1206,7 +1206,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	 */
 	@Override
 	public int visit(ICPPASTTemplateParameter node) {
-		if (!startNode(node)) { return PROCESS_SKIP; }
+		if (!enterNode(node)) { return PROCESS_SKIP; }
 		try {
     		if (node instanceof ICPPASTSimpleTypeTemplateParameter) {
     			visit((ICPPASTSimpleTypeTemplateParameter) node);
@@ -1218,7 +1218,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		} catch (ASTProblemException e) {
 			skipNode(node);
 		} finally {
-			finishNode(node);
+			exitNode(node);
 		}
 		return PROCESS_SKIP;
 	}
@@ -1284,12 +1284,12 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	}
 
 	private int visit(ICPPASTConstructorInitializer node) {
-		if (!startNode(node)) { return PROCESS_SKIP; }
+		if (!enterNode(node)) { return PROCESS_SKIP; }
 		try {
 			// Format like a function call
 			formatFunctionCallArguments(node.getArguments());
 		} finally {
-			finishNode(node);
+			exitNode(node);
 		}
 		return PROCESS_SKIP;
 	}
@@ -1372,7 +1372,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 
 		// Body
 		if (bodyStmt instanceof IASTCompoundStatement) {
-			if (startNode(bodyStmt)) {
+			if (enterNode(bodyStmt)) {
 				try {
 					if (getCurrentPosition() <= nodeOffset(bodyStmt)) {
 						formatLeftCurlyBrace(line, preferences.brace_position_for_method_declaration);
@@ -1382,7 +1382,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 							preferences.insert_space_before_opening_brace_in_method_declaration,
 							preferences.indent_statements_compare_to_body);
 				} finally {
-					finishNode(bodyStmt);
+					exitNode(bodyStmt);
 				}
 			}
 		} else {
@@ -1903,23 +1903,23 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 				if (preferences.indent_body_declarations_compare_to_access_specifier) {
 					scribe.unIndent();
 				}
-				if (startNode(declaration)) {
+				if (enterNode(declaration)) {
 					try {
 						scribe.startNewLine();
 						visit((ICPPASTVisibilityLabel) declaration);
 						scribe.startNewLine();
 					} finally {
-						finishNode(declaration);
+						exitNode(declaration);
 					}
 				}
 			} else {
-				if (startNode(declaration)) {
+				if (enterNode(declaration)) {
 					try {
 						if (getCurrentPosition() <= nodeOffset(declaration))
 							scribe.startNewLine();
 						formatDeclaration(declaration);
 					} finally {
-						finishNode(declaration);
+						exitNode(declaration);
 					}
 				} else {
 					skipNode(declaration);
@@ -3211,7 +3211,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
     	scribe.exitAlignment(alignment, true);
 
 		if (body instanceof IASTCompoundStatement && !startsWithMacroExpansion(body)) {
-			if (startNode(body)) {
+			if (enterNode(body)) {
 				try {
 					if (getCurrentPosition() <= nodeOffset(body)) {
 						formatLeftCurlyBrace(line, preferences.brace_position_for_block);
@@ -3221,7 +3221,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 							preferences.insert_space_before_opening_brace_in_block,
 							preferences.indent_statements_compare_to_block);
 				} finally {
-					finishNode(body);
+					exitNode(body);
 				}
 			}
 		} else {
@@ -3330,7 +3330,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 				}
 			} else {
 				if (doNodesHaveSameOffset(node, thenStatement)) {
-					startNode(thenStatement);
+					enterNode(thenStatement);
 				}
  				if (elseStatement == null && preferences.keep_simple_if_on_one_line) {
 					Alignment compactIfAlignment = scribe.createAlignment(
@@ -3567,7 +3567,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		} else {
 			statements= Collections.singletonList(bodyStmt);
 		}
-		if (!startNode(bodyStmt)) { return PROCESS_SKIP; }
+		if (!enterNode(bodyStmt)) { return PROCESS_SKIP; }
 		try {
 			final int statementsLength = statements.size();
 			if (statementsLength != 0) {
@@ -3624,7 +3624,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 							}
 							bracePosition =	preferences.brace_position_for_block_in_case;
 							try {
-								startNode(statement);
+								enterNode(statement);
 								formatBlock((IASTCompoundStatement) statement, bracePosition,
 										preferences.insert_space_after_colon_in_case,
 										preferences.indent_statements_compare_to_block);
@@ -3634,7 +3634,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 									skipToNode(nextStatement);
 								}
 							} finally {
-								finishNode(statement);
+								exitNode(statement);
 							}
 							if (preferences.indent_switchstatements_compare_to_cases) {
 								scribe.indent();
@@ -3642,7 +3642,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 						} else {
 							bracePosition =	preferences.brace_position_for_block;
 							try {
-								startNode(statement);
+								enterNode(statement);
 								formatBlock((IASTCompoundStatement) statement, bracePosition,
 										preferences.insert_space_before_opening_brace_in_block,
 										preferences.indent_statements_compare_to_block);
@@ -3652,7 +3652,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 									skipToNode(nextStatement);
 								}
 							} finally {
-								finishNode(statement);
+								exitNode(statement);
 							}
 						}
 						wasAStatement = true;
@@ -3692,7 +3692,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 				formatClosingBrace(brace_position);
 			}
 		} finally {
-			finishNode(bodyStmt);
+			exitNode(bodyStmt);
 		}
 		return PROCESS_SKIP;
 	}
@@ -3752,8 +3752,8 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	 * @param node the AST node to be tested
 	 * @return <code>false</code> if the node should be skipped
 	 */
-	private boolean startNode(IASTNode node) {
-		scribe.startNode();
+	private boolean enterNode(IASTNode node) {
+		scribe.enterNode();
 		if (node instanceof IASTProblemHolder) {
 			return false;
 		}
@@ -3796,7 +3796,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	 *
 	 * @param node
 	 */
-	private void finishNode(IASTNode node) {
+	private void exitNode(IASTNode node) {
 		if (node instanceof IASTProblemHolder) {
 			return;
 		}
@@ -3929,13 +3929,13 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		if (stmt != null) {
 			if (stmt instanceof IASTCompoundStatement && !startsWithMacroExpansion(stmt)) {
 				formatLeftCurlyBrace(line, brace_position);
-				if (startNode(stmt)) {
+				if (enterNode(stmt)) {
 					try {
 						formatBlock((IASTCompoundStatement) stmt, brace_position,
 								preferences.insert_space_before_opening_brace_in_block,
 								preferences.indent_statements_compare_to_block);
 					} finally {
-						finishNode(stmt);
+						exitNode(stmt);
 					}
 				}
 			} else if (stmt instanceof IASTNullStatement) {
@@ -4172,7 +4172,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 						!doNodeLocationsOverlap(statement, statements.get(i - 1))) {
 					scribe.startNewLine();
 				}
-				if (!startNode(statement)) {
+				if (!enterNode(statement)) {
 					continue;
 				}
 				try {

@@ -590,6 +590,7 @@ public class LanguageSettingsProvidersSerializer {
 			}
 		};
 
+		job.setRule(ResourcesPlugin.getWorkspace().getRoot());
 		job.schedule();
 	}
 

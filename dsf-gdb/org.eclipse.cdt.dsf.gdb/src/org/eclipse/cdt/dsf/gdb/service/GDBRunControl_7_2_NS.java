@@ -148,12 +148,12 @@ public class GDBRunControl_7_2_NS extends GDBRunControl_7_0_NS
 			protected void handleSuccess() {
 				if (getData()) {
 					if (thread != null) {
-						doResumeThread(thread, rm);
+						doResume(thread, rm);
 						return;
 					}
 
 					if (container != null) {
-						doResumeContainer(container, rm);
+						doResume(container, rm);
 						return;
 					}
 				} else {
@@ -165,7 +165,7 @@ public class GDBRunControl_7_2_NS extends GDBRunControl_7_0_NS
 		});
 	}
 
-	private void doResumeThread(IMIExecutionDMContext context, final RequestMonitor rm) {
+	private void doResume(IMIExecutionDMContext context, final RequestMonitor rm) {
 		final MIThreadRunState threadState = fThreadRunStates.get(context);
 		if (threadState == null) {
             rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE,
@@ -184,7 +184,7 @@ public class GDBRunControl_7_2_NS extends GDBRunControl_7_0_NS
 		});
 	}
 
-	private void doResumeContainer(IMIContainerDMContext context, final RequestMonitor rm) {
+	private void doResume(IMIContainerDMContext context, final RequestMonitor rm) {
 		fConnection.queueCommand(fCommandFactory.createMIExecContinue(context), new DataRequestMonitor<MIInfo>(getExecutor(), rm));
 	}
 	

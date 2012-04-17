@@ -205,7 +205,7 @@ public final class GCCBuildCommandParserOptionPage extends AbstractLanguageSetti
 
 		{
 			scopeFolderRadioButton = new Button(resourceScopeGroup, SWT.RADIO);
-			scopeFolderRadioButton.setText("Per folder, use when settings are the same for all files in a folder");
+			scopeFolderRadioButton.setText("Per folder, use when settings are the same for all files in each folder");
 //			applyToEnclosingFolderRadioButton.setText("Enclosing folder, use when settings are the same for all files in a folder");
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.horizontalSpan = 2;

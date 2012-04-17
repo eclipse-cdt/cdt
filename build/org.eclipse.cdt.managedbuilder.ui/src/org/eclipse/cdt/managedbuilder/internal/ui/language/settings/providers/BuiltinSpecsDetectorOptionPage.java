@@ -19,7 +19,9 @@ import org.eclipse.cdt.managedbuilder.language.settings.providers.AbstractBuilti
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -30,6 +32,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
@@ -105,13 +108,23 @@ public final class BuiltinSpecsDetectorOptionPage extends AbstractLanguageSettin
 			Button button = ControlFactory.createPushButton(composite, "Browse...");
 			button.setEnabled(fEditable);
 			button.addSelectionListener(new SelectionAdapter() {
-
 				@Override
 				public void widgetSelected(SelectionEvent evt) {
-//					handleAddr2LineButtonSelected();
-					//updateLaunchConfigurationDialog();
+					FileDialog dialog = new FileDialog(getShell(), SWT.NONE);
+					dialog.setText(/*PreferencesMessages.BuildLogPreferencePage_ChooseLogFile*/"Choose file");
+					String fileName = inputCommand.getText();
+					// taking chance that the first word is a compiler path
+					int space = fileName.indexOf(' ');
+					if (space > 0) {
+						fileName = fileName.substring(0, space);
+					}
+					IPath folder = new Path(fileName).removeLastSegments(1);
+					dialog.setFilterPath(folder.toOSString());
+					String chosenFile = dialog.open();
+					if (chosenFile != null) {
+						inputCommand.insert(chosenFile);
+					}
 				}
-
 			});
 
 		}

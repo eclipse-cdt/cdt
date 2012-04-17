@@ -575,7 +575,7 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 			boolean isAllowedEditing = provider instanceof ILanguageSettingsEditableProvider
 					&& LanguageSettingsProviderAssociationManager.isAllowedToEditEntries(provider);
 			if (!isAllowedEditing) {
-				String msg = "Setting entries for this provider are supplied by system and are not editable.";
+				String msg = "Setting entries for this provider are supplied by the system and are not editable.";
 				status = new Status(IStatus.INFO, CUIPlugin.PLUGIN_ID, msg);
 			}
 		}

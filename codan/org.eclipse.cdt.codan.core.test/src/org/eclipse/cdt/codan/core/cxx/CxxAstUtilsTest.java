@@ -100,4 +100,37 @@ public class CxxAstUtilsTest extends CodanFastCxxAstTestCase {
 		assertTrue((Boolean) result[0]);
 		assertFalse((Boolean) result[1]);
 	}
+
+	//void f() __attribute__((noreturn));
+	//
+	//int test() {
+	//  a();
+	//  f();
+	//  exit(0);
+	//}
+	public void testExitStatement() throws IOException {
+		String code = getAboveComment();
+		IASTTranslationUnit tu = parse(code);
+		final Object result[] = new Object[4];
+		ASTVisitor astVisitor = new ASTVisitor() {
+			int i;
+			{
+				shouldVisitStatements = true;
+			}
+
+			@Override
+			public int visit(IASTStatement stmt) {
+				boolean check = CxxAstUtils.isExitStatement(stmt);
+				result[i] = check;
+				i++;
+				return PROCESS_CONTINUE;
+			}
+		};
+		tu.accept(astVisitor);
+		assertNotNull("Stmt not found", result[0]); //$NON-NLS-1$
+		assertFalse((Boolean) result[0]); // compound body
+		assertFalse((Boolean) result[1]);
+		assertTrue((Boolean) result[2]);
+		assertTrue((Boolean) result[3]);
+	}
 }

@@ -72,7 +72,9 @@ public interface IChecker {
 	 *
 	 * @param resource the resource to run on.
 	 * @return true if checker should be run on this resource.
+	 * @deprecated the Codan framework now delegates this validation to {@code CheckersRegistry}.
 	 */
+	@Deprecated
 	boolean enabledInContext(IResource resource);
 
 	/**

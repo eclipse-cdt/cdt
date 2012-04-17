@@ -140,7 +140,6 @@ public class CodanBuilder extends IncrementalProjectBuilder implements ICodanBui
 						if (monitor.isCanceled())
 							return;
 						if (doesCheckerSupportLaunchMode(checker, checkerLaunchMode)
-								&& checker.enabledInContext(resource)
 								&& chegistry.isCheckerEnabledForLaunchMode(checker, resource, checkerLaunchMode)) {
 							synchronized (checker) {
 								try {

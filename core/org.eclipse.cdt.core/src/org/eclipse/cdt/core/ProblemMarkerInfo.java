@@ -35,7 +35,13 @@ public  class ProblemMarkerInfo {
 		
 		public IResource file;
 		public int lineNumber;
+		/**
+		 * @since 5.4
+		 */
 		public int startChar;
+		/**
+		 * @since 5.4
+		 */
 		public int endChar;
 		public String description;
 		public int severity;
@@ -69,8 +75,10 @@ public  class ProblemMarkerInfo {
 		 * @param severity - the severity of the problem, see {@link IMarkerGenerator}
 		 *        for acceptable severity values.
 		 * @param variableName - the name of the variable involved in the error if any.
+		 * @since 5.4
 		 */
-		public ProblemMarkerInfo(IResource file, int lineNumber, int startChar, int endChar, String description, int severity, String variableName) {
+		public ProblemMarkerInfo(IResource file, int lineNumber, int startChar, int endChar, 
+				String description, int severity, String variableName) {
 			this.file = (file != null) ? file : ResourcesPlugin.getWorkspace().getRoot();
 			this.lineNumber = lineNumber;
 			this.description = description;

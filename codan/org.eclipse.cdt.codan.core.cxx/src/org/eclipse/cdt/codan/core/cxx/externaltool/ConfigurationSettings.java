@@ -19,8 +19,6 @@ import org.eclipse.cdt.codan.core.param.MapProblemPreference;
 /**
  * User-configurable external tool settings.
  *
- * @author alruiz@google.com (Alex Ruiz)
- *
  * @since 2.1
  */
 public final class ConfigurationSettings {
@@ -30,7 +28,10 @@ public final class ConfigurationSettings {
 
 	/**
 	 * Constructor.
-	 * @param externalToolName the name of the external tool, to be displayed to the user.
+	 * @param externalToolName the name of the external tool. The name of the external tool is
+	 * used in the labels of the settings' input fields. For example, assuming that the external 
+	 * tool's name is "Cppcheck", the input field for entering the path of the executable
+	 * will have the label "Cppcheck Path". 
 	 * @param defaultPath the default path of the external tool.
 	 * @param defaultArgs the default arguments to pass when invoking the external tool.
 	 */

@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2012 Google, Inc.
+ * Copyright (c) 2012 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Alex Ruiz  - initial API and implementation
+ *     Alex Ruiz (Google) - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.codan.examples.checkers.cppcheck;
 
@@ -14,16 +14,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.ErrorParserManager;
-import org.eclipse.cdt.core.IErrorParser3;
+import org.eclipse.cdt.core.IErrorParser;
 import org.eclipse.cdt.core.ProblemMarkerInfo;
 import org.eclipse.core.resources.IFile;
 
 /**
  * Parses the output of Cppcheck.
- *
- * @author alruiz@google.com (Alex Ruiz)
  */
-public class CppcheckOutputParser implements IErrorParser3 {
+public class CppcheckOutputParser implements IErrorParser {
 	// sample line to parse:
 	//
 	// [/src/HelloWorld.cpp:19]: (style) The scope of the variable 'i' can be reduced
@@ -53,9 +51,5 @@ public class CppcheckOutputParser implements IErrorParser3 {
 			return true;
 		}
 		return false;
-	}
-
-	@Override
-	public void streamFinished() {
 	}
 }

@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2012 Google, Inc.
+ * Copyright (c) 2012 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Alex Ruiz  - initial API and implementation
+ *     Alex Ruiz (Google) - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.codan.examples.checkers.cppcheck;
 
@@ -21,11 +21,9 @@ import org.eclipse.cdt.core.ProblemMarkerInfo;
 /**
  * Checker that invokes <a href="http://cppcheck.sourceforge.net/">Cppcheck</a> when a C/C++ file is
  * saved.
- *
- * @author alruiz@google.com (Alex Ruiz)
  */
 public class CppcheckChecker extends AbstractExternalToolBasedChecker {
-	private static final String TOOL_NAME = "Cppcheck"; //$NON-NLS-1$
+	private static final String TOOL_NAME = Messages.CppcheckChecker_toolName; 
 	private static final String EXECUTABLE_NAME = "cppcheck"; //$NON-NLS-1$
 	private static final String DEFAULT_ARGS = "--enable=all"; //$NON-NLS-1$
 

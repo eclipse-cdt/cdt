@@ -11,7 +11,7 @@
 
 package org.eclipse.cdt.internal.errorparsers;
 
-import static org.eclipse.cdt.core.ErrorParserUsage.BUILD;
+import static org.eclipse.cdt.core.ErrorParserContext.BUILD;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -26,15 +26,15 @@ import java.util.TreeSet;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ErrorParserManager;
-import org.eclipse.cdt.core.ErrorParserUsage;
+import org.eclipse.cdt.core.ErrorParserContext;
 import org.eclipse.cdt.core.IErrorParser;
 import org.eclipse.cdt.core.IErrorParserNamed;
 import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.core.errorparsers.ErrorParserNamedWrapper;
 import org.eclipse.cdt.core.errorparsers.RegexErrorParser;
 import org.eclipse.cdt.core.errorparsers.RegexErrorPattern;
+import org.eclipse.cdt.internal.core.Pair;
 import org.eclipse.cdt.internal.core.XmlUtil;
-import org.eclipse.cdt.utils.Pair;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -61,6 +61,7 @@ public class ErrorParserExtensionManager {
 	private static final String NONE = ""; //$NON-NLS-1$
 
 	private static final String EXTENSION_POINT_ERROR_PARSER = "org.eclipse.cdt.core.ErrorParser"; //$NON-NLS-1$
+	private static final String ELEM_CONTEXT = "context"; //$NON-NLS-1$
 	private static final String ELEM_PLUGIN = "plugin"; //$NON-NLS-1$
 	private static final String ELEM_EXTENSION = "extension"; //$NON-NLS-1$
 	private static final String ELEM_ERRORPARSER = "errorparser"; //$NON-NLS-1$
@@ -68,9 +69,10 @@ public class ErrorParserExtensionManager {
 	private static final String ATTR_CLASS = "class"; //$NON-NLS-1$
 	private static final String ATTR_ID = "id"; //$NON-NLS-1$
 	private static final String ATTR_NAME = "name"; //$NON-NLS-1$
-	private static final String ATTR_USAGE = "usage"; //$NON-NLS-1$
 	private static final String ATTR_POINT = "point"; //$NON-NLS-1$
+	private static final String ATTR_TYPE = "type"; //$NON-NLS-1$
 
+	
 	private static final String ATTR_REGEX = "regex"; //$NON-NLS-1$
 	private static final String ATTR_SEVERITY = "severity"; //$NON-NLS-1$
 	private static final String ATTR_FILE = "file-expr"; //$NON-NLS-1$
@@ -84,8 +86,10 @@ public class ErrorParserExtensionManager {
 	private static final String ATTR_VALUE_INFO = "Info"; //$NON-NLS-1$
 	private static final String ATTR_VALUE_IGNORE = "Ignore"; //$NON-NLS-1$
 
-	private static final LinkedHashMap<String, Pair<IErrorParserNamed, ErrorParserUsage[]>> fExtensionErrorParsers = new LinkedHashMap<String, Pair<IErrorParserNamed, ErrorParserUsage[]>>();
-	private static final LinkedHashMap<String, Pair<IErrorParserNamed, ErrorParserUsage[]>> fAvailableErrorParsers = new LinkedHashMap<String, Pair<IErrorParserNamed, ErrorParserUsage[]>>();
+	// Key: error parser id. Value: pair of error parser and context value
+	private static final LinkedHashMap<String, Pair<IErrorParserNamed, Integer>> fExtensionErrorParsers = new LinkedHashMap<String, Pair<IErrorParserNamed, Integer>>();
+	// Key: error parser id. Value: pair of error parser and context value
+	private static final LinkedHashMap<String, Pair<IErrorParserNamed, Integer>> fAvailableErrorParsers = new LinkedHashMap<String, Pair<IErrorParserNamed, Integer>>();
 	private static LinkedHashMap<String, IErrorParserNamed> fUserDefinedErrorParsers = null;
 	private static List<String> fDefaultErrorParserIds = null;
 
@@ -118,33 +122,15 @@ public class ErrorParserExtensionManager {
 		}
 	}
 
-	private static class ErrorParserComparator2 implements Comparator<Pair<IErrorParserNamed, ErrorParserUsage[]>> {
-		// For the error parsers taken from platform extensions following sorting order applies:
-		// - first regular error parsers
-		// - then deprecated ones
-		// - then contributed by test plugin
-		// inside the same category sort by parser name
+	private static class ErrorParserAndContextComparator implements Comparator<Pair<IErrorParserNamed, Integer>> {
+		private static final ErrorParserComparator DELEGATE = new ErrorParserComparator();
+
 		@Override
-		public int compare(Pair<IErrorParserNamed, ErrorParserUsage[]> pair1, Pair<IErrorParserNamed, ErrorParserUsage[]> pair2) {
-			final String TEST_PLUGIN_ID="org.eclipse.cdt.core.tests"; //$NON-NLS-1$
-			final String DEPRECATED=CCorePlugin.getResourceString("CCorePlugin.Deprecated"); //$NON-NLS-1$
+		public int compare(Pair<IErrorParserNamed, Integer> pair1, 
+				Pair<IErrorParserNamed, Integer> pair2) {
 			IErrorParserNamed parser1 = pair1.first;
 			IErrorParserNamed parser2 = pair2.first;
-			boolean isTestPlugin1 = parser1.getId().startsWith(TEST_PLUGIN_ID);
-			boolean isTestPlugin2 = parser2.getId().startsWith(TEST_PLUGIN_ID);
-			if (isTestPlugin1==true && isTestPlugin2==false)
-				return 1;
-			if (isTestPlugin1==false && isTestPlugin2==true)
-				return -1;
-
-			boolean isDeprecated1 = parser1.getName().contains(DEPRECATED);
-			boolean isDeprecated2 = parser2.getName().contains(DEPRECATED);
-			if (isDeprecated1==true && isDeprecated2==false)
-				return 1;
-			if (isDeprecated1==false && isDeprecated2==true)
-				return -1;
-
-			return parser1.getName().compareTo(parser2.getName());
+			return DELEGATE.compare(parser1, parser2);
 		}
 	}
 
@@ -238,12 +224,12 @@ public class ErrorParserExtensionManager {
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	synchronized public static void loadErrorParserExtensions() {
-		Set<Pair<IErrorParserNamed, ErrorParserUsage[]>> sortedErrorParsers = 
-				new TreeSet<Pair<IErrorParserNamed, ErrorParserUsage[]>>(new ErrorParserComparator2());
+		Set<Pair<IErrorParserNamed, Integer>> sortedErrorParsers = 
+				new TreeSet<Pair<IErrorParserNamed, Integer>>(new ErrorParserAndContextComparator());
 		loadErrorParserExtensions(Platform.getExtensionRegistry(), sortedErrorParsers);
 
 		fExtensionErrorParsers.clear();
-		for (Pair<IErrorParserNamed, ErrorParserUsage[]> pair : sortedErrorParsers) {
+		for (Pair<IErrorParserNamed, Integer> pair : sortedErrorParsers) {
 			fExtensionErrorParsers.put(pair.first.getId(), pair);
 		}
 		recalculateAvailableErrorParsers();
@@ -255,7 +241,8 @@ public class ErrorParserExtensionManager {
 	 * @param registry - extension registry
 	 * @param errorParsers - resulting set of error parsers
 	 */
-	private static void loadErrorParserExtensions(IExtensionRegistry registry, Set<Pair<IErrorParserNamed, ErrorParserUsage[]>> errorParsers) {
+	private static void loadErrorParserExtensions(IExtensionRegistry registry, 
+			Set<Pair<IErrorParserNamed, Integer>> errorParsers) {
 		errorParsers.clear();
 		IExtensionPoint extension = registry.getExtensionPoint(CCorePlugin.PLUGIN_ID, CCorePlugin.ERROR_PARSER_SIMPLE_ID);
 		if (extension != null) {
@@ -269,7 +256,7 @@ public class ErrorParserExtensionManager {
 						if (cfgEl.getName().equals(ELEM_ERRORPARSER)) {
 							IErrorParserNamed errorParser = createErrorParserCarcass(oldStyleId, oldStyleName, cfgEl);
 							if (errorParser!=null) {
-								Pair<IErrorParserNamed, ErrorParserUsage[]> configured = 
+								Pair<IErrorParserNamed, Integer> configured = 
 										configureErrorParser(errorParser, cfgEl);
 								errorParsers.add(configured);
 							}
@@ -292,7 +279,7 @@ public class ErrorParserExtensionManager {
 		List<String> ids = new ArrayList<String>();
 		if (fDefaultErrorParserIds!=null) {
 			for (String id : fDefaultErrorParserIds) {
-				Pair<IErrorParserNamed, ErrorParserUsage[]> pair = null;
+				Pair<IErrorParserNamed, Integer> pair = null;
 				IErrorParserNamed errorParser = null;
 				if (fUserDefinedErrorParsers!=null) {
 					errorParser = fUserDefinedErrorParsers.get(id);
@@ -309,8 +296,8 @@ public class ErrorParserExtensionManager {
 			}
 		}
 		// then the rest in the order defined by comparator
-		Set<Pair<IErrorParserNamed, ErrorParserUsage[]>> sortedErrorParsers = 
-				new TreeSet<Pair<IErrorParserNamed, ErrorParserUsage[]>>(new ErrorParserComparator2());
+		Set<Pair<IErrorParserNamed, Integer>> sortedErrorParsers = 
+				new TreeSet<Pair<IErrorParserNamed, Integer>>(new ErrorParserAndContextComparator());
 
 		if (fUserDefinedErrorParsers!=null) {
 			for (String id : fUserDefinedErrorParsers.keySet()) {
@@ -322,19 +309,18 @@ public class ErrorParserExtensionManager {
 		}
 		for (String id : fExtensionErrorParsers.keySet()) {
 			if (!ids.contains(id)) {
-				Pair<IErrorParserNamed, ErrorParserUsage[]> pair = fExtensionErrorParsers.get(id);
+				Pair<IErrorParserNamed, Integer> pair = fExtensionErrorParsers.get(id);
 				sortedErrorParsers.add(pair);
 			}
 		}
 
-		for (Pair<IErrorParserNamed, ErrorParserUsage[]> pairs : sortedErrorParsers) {
+		for (Pair<IErrorParserNamed, Integer> pairs : sortedErrorParsers) {
 			fAvailableErrorParsers.put(pairs.first.getId(), pairs);
 		}
 	}
 
-	private static Pair<IErrorParserNamed, ErrorParserUsage[]> errorParserForBuild(IErrorParserNamed errorParser) {
-		ErrorParserUsage[] usages = new ErrorParserUsage[] { BUILD };
-		return new Pair<IErrorParserNamed, ErrorParserUsage[]>(errorParser, usages);
+	private static Pair<IErrorParserNamed, Integer> errorParserForBuild(IErrorParserNamed errorParser) {
+		return new Pair<IErrorParserNamed, Integer>(errorParser, ErrorParserContext.BUILD);
 	}
 	
 	/**
@@ -591,7 +577,7 @@ public class ErrorParserExtensionManager {
 	 * @param cfgEl - extension configuration element
 	 * @throws CoreException
 	 */
-	private static Pair<IErrorParserNamed, ErrorParserUsage[]> configureErrorParser(
+	private static Pair<IErrorParserNamed, Integer> configureErrorParser(
 			IErrorParserNamed errorParser, IConfigurationElement cfgEl) throws CoreException {
 		String id = cfgEl.getAttribute(ATTR_ID);
 		if (id!=null && id.length()>0)
@@ -617,9 +603,21 @@ public class ErrorParserExtensionManager {
 				}
 			}
 		}
-		String usageValue = cfgEl.getAttribute(ATTR_USAGE);
-		ErrorParserUsage[] usages = ErrorParserUsage.findMatching(usageValue);
-		return new Pair<IErrorParserNamed, ErrorParserUsage[]>(errorParser, usages);
+		int context = contextType(cfgEl);
+		return new Pair<IErrorParserNamed, Integer>(errorParser, context);
+	}
+
+	private static int contextType(IConfigurationElement cfgEl) {
+		IConfigurationElement[] contextElements = cfgEl.getChildren(ELEM_CONTEXT);
+		if (contextElements.length == 0) {
+			return BUILD;
+		}
+		int context = 0;
+		for (IConfigurationElement contextElement : contextElements) {
+			String contextType = contextElement.getAttribute(ATTR_TYPE);
+			context = context | ErrorParserContext.getValue(contextType);
+		}
+		return context;
 	}
 
 	/**
@@ -632,7 +630,7 @@ public class ErrorParserExtensionManager {
 	 * @return internal instance of error parser
 	 */
 	public static IErrorParser getErrorParserInternal(String id) {
-		Pair<IErrorParserNamed, ErrorParserUsage[]> pair = fAvailableErrorParsers.get(id);
+		Pair<IErrorParserNamed, Integer> pair = fAvailableErrorParsers.get(id);
 		IErrorParserNamed errorParser = pair.first;
 		if (errorParser instanceof ErrorParserNamedWrapper)
 			return ((ErrorParserNamedWrapper)errorParser).getErrorParser();
@@ -689,10 +687,10 @@ public class ErrorParserExtensionManager {
 	}
 	
 	private static String[] getErrorParserIds(
-			Map<String, Pair<IErrorParserNamed, ErrorParserUsage[]>> parsers, ErrorParserUsage usage) {
+			Map<String, Pair<IErrorParserNamed, Integer>> parsers, int context) {
 		List<String> ids = new ArrayList<String>();
-		for (Map.Entry<String, Pair<IErrorParserNamed, ErrorParserUsage[]>> entry : parsers.entrySet()) {
-			if (constainsUsage(entry.getValue().second, usage)) {
+		for (Map.Entry<String, Pair<IErrorParserNamed, Integer>> entry : parsers.entrySet()) {
+			if (isInContext(entry.getValue(), context)) {
 				ids.add(entry.getKey());
 			}
 		}
@@ -759,15 +757,17 @@ public class ErrorParserExtensionManager {
 	/**
 	 * @param id - ID of error parser
 	 * @param isExtension - if {@code true} get unmodified copy of error parser defined as extension
-	 * @param usage - intended usage of the error parser.
+	 * @param context - context where the error parser will be used. Valid values are defined by
+	 * <code>{@link ErrorParserContext}</code>.
 	 * @return cloned copy of error parser. Note that {@link ErrorParserNamedWrapper} returns
 	 * shallow copy with the same instance of underlying error parser.
+	 * @see ErrorParserContext
 	 */
 	public static IErrorParserNamed getErrorParserCopy(String id, boolean isExtension, 
-			ErrorParserUsage usage) {
-		Pair<IErrorParserNamed, ErrorParserUsage[]> pair =
+			int context) {
+		Pair<IErrorParserNamed, Integer> pair =
 				isExtension ? fExtensionErrorParsers.get(id) : fAvailableErrorParsers.get(id);
-		if (!constainsUsage(pair.second, usage)) {
+		if (!isInContext(pair, context)) {
 			return null;
 		}
 		IErrorParserNamed errorParser = pair.first;
@@ -782,13 +782,8 @@ public class ErrorParserExtensionManager {
 		}
 		return errorParser;
 	}
-
-	private static boolean constainsUsage(ErrorParserUsage[] usages, ErrorParserUsage toCheck) {
-		for (ErrorParserUsage usage : usages) {
-			if (usage.equals(toCheck)) {
-				return true;
-			}
-		}
-		return false;
+	
+	private static boolean isInContext(Pair<IErrorParserNamed, Integer> pair, int context) {
+		return (pair.second & context) == context;
 	}
 }

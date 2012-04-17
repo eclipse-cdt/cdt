@@ -1,17 +1,17 @@
 /*******************************************************************************
- * Copyright (c) 2012 Google, Inc.
+ * Copyright (c) 2012 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Alex Ruiz  - initial API and implementation
+ *     Alex Ruiz (Google) - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.cxx.internal.externaltool;
 
+import org.eclipse.cdt.codan.core.cxx.externaltool.ArgsSeparator;
 import org.eclipse.cdt.codan.core.cxx.externaltool.ConfigurationSettings;
-import org.eclipse.cdt.codan.core.cxx.externaltool.IArgsSeparator;
 import org.eclipse.cdt.codan.core.cxx.externaltool.InvocationFailure;
 import org.eclipse.cdt.codan.core.cxx.externaltool.InvocationParameters;
 import org.eclipse.cdt.core.CCorePlugin;
@@ -26,12 +26,10 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 
 /**
  * Invokes an external tool to perform checks on a single file.
- *
- * @author alruiz@google.com (Alex Ruiz)
  */
 public class ExternalToolInvoker {
-	private static final String[] ENV = new String[0];
-	private static final NullProgressMonitor MONITOR = new NullProgressMonitor();
+	private static final String[] ENV = {};
+	private static final NullProgressMonitor NULL_PROGRESS_MONITOR = new NullProgressMonitor();
 
 	private final CommandBuilder commandBuilder = new CommandBuilder();
 
@@ -47,7 +45,7 @@ public class ExternalToolInvoker {
 	 * @throws Throwable if something else goes wrong.
 	 */
 	public void invoke(InvocationParameters parameters, ConfigurationSettings settings,
-			IArgsSeparator argsSeparator, IConsoleParser[] parsers)
+			ArgsSeparator argsSeparator, IConsoleParser[] parsers)
 			throws InvocationFailure, Throwable {
 		Command command = commandBuilder.buildCommand(parameters, settings, argsSeparator);
 		try {
@@ -65,7 +63,7 @@ public class ExternalToolInvoker {
 				new ConsoleOutputSniffer(c.getOutputStream(), c.getErrorStream(), parsers);
 		ICommandLauncher launcher = commandLauncher(project);
 		Process p = launcher.execute(command.getPath(), command.getArgs(), ENV,
-				parameters.getWorkingDirectory(), MONITOR);
+				parameters.getWorkingDirectory(), NULL_PROGRESS_MONITOR);
 		if (p == null) {
 			throw new InvocationFailure("Unable to launch external tool. Cause unknown."); //$NON-NLS-1$
 		}
@@ -73,7 +71,7 @@ public class ExternalToolInvoker {
 			p.getOutputStream().close();
 		} catch (Throwable ignored) {}
 		try {
-			launcher.waitAndRead(sniffer.getOutputStream(), sniffer.getErrorStream(), MONITOR);
+			launcher.waitAndRead(sniffer.getOutputStream(), sniffer.getErrorStream(), NULL_PROGRESS_MONITOR);
 		} finally {
 			p.destroy();
 		}

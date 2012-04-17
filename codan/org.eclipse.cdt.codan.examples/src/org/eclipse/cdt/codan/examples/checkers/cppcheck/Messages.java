@@ -8,19 +8,19 @@
  * Contributors:
  *     Alex Ruiz (Google) - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.codan.core.param;
+package org.eclipse.cdt.codan.examples.checkers.cppcheck;
 
-/**
- * Preferences that can be shared among several problems.
- *
- * @since 2.1
- */
-public class SharedRootProblemPreference extends RootProblemPreference {
-	@Override
-	public Object clone() {
-		SharedRootProblemPreference map = (SharedRootProblemPreference) super.clone();
-		// alruiz: sharing the internal hash is the only way I could make this work.
-		map.hash = hash;
-		return map;
+import org.eclipse.osgi.util.NLS;
+
+public class Messages extends NLS {
+	public static String CppcheckChecker_toolName;
+
+	static {
+		// initialize resource bundle
+		Class<Messages> clazz = Messages.class;
+		NLS.initializeMessages(clazz.getName(), clazz);
+	}
+
+	private Messages() {
 	}
 }

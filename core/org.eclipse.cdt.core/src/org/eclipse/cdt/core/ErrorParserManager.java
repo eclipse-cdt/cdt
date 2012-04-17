@@ -14,7 +14,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.core;
 
-import static org.eclipse.cdt.core.ErrorParserUsage.BUILD;
+import static org.eclipse.cdt.core.ErrorParserContext.BUILD;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -159,15 +159,18 @@ public class ErrorParserManager extends OutputStream implements IConsoleParser, 
 	 * @param baseDirectoryURI - absolute location URI of working directory of where the build is performed.
 	 * @param markerGenerator - marker generator able to create markers.
 	 * @param parsersIDs - array of error parsers' IDs.
-	 * @param usage - intended usage of the error parser.
+	 * @param context - context where the error parser will be used. Valid values are defined by
+	 * <code>{@link ErrorParserContext}</code>.
+	 * @see ErrorParserContext
 	 * @since 5.4
 	 */
-	public ErrorParserManager(IProject project, URI baseDirectoryURI, IMarkerGenerator markerGenerator, String[] parsersIDs, ErrorParserUsage usage) {
+	public ErrorParserManager(IProject project, URI baseDirectoryURI, 
+			IMarkerGenerator markerGenerator, String[] parsersIDs, int context) {
 		fProject = project;
 		fMarkerGenerator = markerGenerator;
 		fDirectoryStack = new Vector<URI>();
 		fErrors = new ArrayList<ProblemMarkerInfo>();
-		enableErrorParsers(parsersIDs, usage);
+		enableErrorParsers(parsersIDs, context);
 
 		if (baseDirectoryURI != null) {
 			fBaseDirectoryURI = baseDirectoryURI;
@@ -179,13 +182,13 @@ public class ErrorParserManager extends OutputStream implements IConsoleParser, 
 		}
 	}
 
-	private void enableErrorParsers(String[] parsersIDs, ErrorParserUsage usage) {
+	private void enableErrorParsers(String[] parsersIDs, int context) {
 		if (parsersIDs == null) {
 			parsersIDs = ErrorParserExtensionManager.getDefaultErrorParserIds();
 		}
 		fErrorParsers = new LinkedHashMap<String, IErrorParser[]>(parsersIDs.length);
 		for (String parsersID : parsersIDs) {
-			IErrorParser errorParser = getErrorParserCopy(parsersID, usage);
+			IErrorParser errorParser = getErrorParserCopy(parsersID, context);
 			if (errorParser!=null) {
 				fErrorParsers.put(parsersID, new IErrorParser[] {errorParser} );
 			}
@@ -869,14 +872,16 @@ outer:
 
 	/**
 	 * @param id - ID of error parser
-	 * @param usage - intended usage of the error parser.
+	 * @param context - context where the error parser will be used. Valid values are defined by
+	 * <code>{@link ErrorParserContext}</code>.
 	 * @return cloned copy of error parser or {@code null}.
 	 * Note that {@link ErrorParserNamedWrapper} returns shallow copy with the same instance
 	 * of underlying error parser.
+	 * @see ErrorParserContext
 	 * @since 5.4
 	 */
-	public static IErrorParserNamed getErrorParserCopy(String id, ErrorParserUsage usage) {
-		return ErrorParserExtensionManager.getErrorParserCopy(id, false, usage);
+	public static IErrorParserNamed getErrorParserCopy(String id, int context) {
+		return ErrorParserExtensionManager.getErrorParserCopy(id, false, context);
 	}
 
 	/**

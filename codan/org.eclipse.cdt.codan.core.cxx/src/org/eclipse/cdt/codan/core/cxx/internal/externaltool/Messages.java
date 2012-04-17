@@ -12,9 +12,6 @@ package org.eclipse.cdt.codan.core.cxx.internal.externaltool;
 
 import org.eclipse.osgi.util.NLS;
 
-/**
- * @author alruiz@google.com (Alex Ruiz)
- */
 public class Messages extends NLS {
 	public static String ConfigurationSettings_args_format;
 	public static String ConfigurationSettings_path_format;

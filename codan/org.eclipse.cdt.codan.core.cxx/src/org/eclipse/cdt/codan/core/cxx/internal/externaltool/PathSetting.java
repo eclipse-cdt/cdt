@@ -21,15 +21,14 @@ import org.eclipse.cdt.codan.core.param.IProblemPreferenceDescriptor;
 
 /**
  * User-configurable setting that specifies the path and name of an external tool's executable.
- *
- * @author alruiz@google.com (Alex Ruiz)
  */
 public class PathSetting extends SingleConfigurationSetting<File> {
 	static final String KEY = "externalToolPath"; //$NON-NLS-1$
 
 	/**
 	 * Constructor.
-	 * @param externalToolName the name of the external tool, to be displayed to the user.
+	 * @param externalToolName the name of the external tool. The name of the external tool is
+	 * used in the label of this setting's input field.
 	 * @param defaultValue the default value of the setting.
 	 */
 	public PathSetting(String externalToolName, File defaultValue) {

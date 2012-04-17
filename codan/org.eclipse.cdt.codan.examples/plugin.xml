@@ -97,8 +97,10 @@
       <errorparser
             class="org.eclipse.cdt.codan.examples.checkers.cppcheck.CppcheckOutputParser"
             id="org.eclipse.cdt.codan.checkers.externaltool.CppcheckChecker"
-            name="%errorparser.name.cppcheck"
-            usage="codan">
+            name="%errorparser.name.cppcheck">
+         <context
+               type="codan">
+         </context>
       </errorparser>
    </extension>
 </plugin>

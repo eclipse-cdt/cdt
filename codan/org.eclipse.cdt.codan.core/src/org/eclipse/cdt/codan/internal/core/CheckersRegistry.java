@@ -244,8 +244,7 @@ public class CheckersRegistry implements Iterable<IChecker>, ICheckersRegistry {
 		IExtensionPoint ep = getExtensionPoint(CHECKER_ENABLEMENT_EXTENSION_POINT_NAME);
 		for (IConfigurationElement ce : ep.getConfigurationElements()) {
 			try {
-				Object o = ce.createExecutableExtension(CLASS_ATTR);
-				checkerEnablementVerifier = (ICheckerEnablementVerifier) o;
+				checkerEnablementVerifier = (ICheckerEnablementVerifier) ce.createExecutableExtension(CLASS_ATTR);
 			} catch (CoreException e) {
 				CodanCorePlugin.log(e);
 			}
@@ -480,6 +479,13 @@ public class CheckersRegistry implements Iterable<IChecker>, ICheckersRegistry {
 	 * @return <code>true</code> if the checker should run.
 	 */
 	public boolean isCheckerEnabledForLaunchMode(IChecker checker, IResource resource, CheckerLaunchMode mode) {
+		if (resource.getType() != IResource.FILE) {
+			return false;
+		}
+		if (checkerEnablementVerifier != null &&
+				!checkerEnablementVerifier.isCheckerEnabled(checker, resource, mode)) {
+			return false;
+		}
 		IProblemProfile resourceProfile = getResourceProfile(resource);
 		Collection<IProblem> refProblems = getRefProblems(checker);
 		boolean enabled = false;
@@ -496,9 +502,6 @@ public class CheckersRegistry implements Iterable<IChecker>, ICheckersRegistry {
 					break;
 				}
 			}
-		}
-		if (enabled && checkerEnablementVerifier != null) {
-			return checkerEnablementVerifier.isCheckerEnabled(checker, resource, mode);
 		}
 		return enabled;
 	}

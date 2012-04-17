@@ -1,16 +1,16 @@
 /*******************************************************************************
- * Copyright (c) 2012 Google, Inc.
+ * Copyright (c) 2012 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Alex Ruiz  - initial API and implementation
+ *     Alex Ruiz (Google) - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.cxx.externaltool;
 
-import static org.eclipse.cdt.core.ErrorParserUsage.CODAN;
+import static org.eclipse.cdt.core.ErrorParserContext.CODAN;
 
 import java.net.URI;
 
@@ -48,16 +48,12 @@ import org.eclipse.core.resources.IResource;
  * By default, implementations of this checker are not allowed to run while the user types, since
  * external tools cannot see unsaved changes.
  *
- * @author alruiz@google.com (Alex Ruiz)
- *
  * @since 2.1
  */
 public abstract class AbstractExternalToolBasedChecker extends AbstractCheckerWithProblemPreferences
 		implements IMarkerGenerator {
-	private static final boolean DO_NOT_TRAVERSE_CHILDREN = false;
-
 	private final IInvocationParametersProvider parametersProvider;
-	private final IArgsSeparator argsSeparator;
+	private final ArgsSeparator argsSeparator;
 	private final ConfigurationSettings settings;
 	private final ExternalToolInvoker externalToolInvoker;
 	private final RootProblemPreference preferences;
@@ -67,7 +63,7 @@ public abstract class AbstractExternalToolBasedChecker extends AbstractCheckerWi
 	 * @param settings user-configurable external tool configuration settings.
 	 */
 	public AbstractExternalToolBasedChecker(ConfigurationSettings settings) {
-		this(new InvocationParametersProvider(), new SpaceArgsSeparator(), settings);
+		this(new InvocationParametersProvider(), new ArgsSeparator(), settings);
 	}
 
 	/**
@@ -78,7 +74,7 @@ public abstract class AbstractExternalToolBasedChecker extends AbstractCheckerWi
 	 * @param settings user-configurable external tool configuration settings.
 	 */
 	public AbstractExternalToolBasedChecker(IInvocationParametersProvider parametersProvider,
-			IArgsSeparator argsSeparator, ConfigurationSettings settings) {
+			ArgsSeparator argsSeparator, ConfigurationSettings settings) {
 		this.parametersProvider = parametersProvider;
 		this.argsSeparator = argsSeparator;
 		this.settings = settings;
@@ -87,13 +83,7 @@ public abstract class AbstractExternalToolBasedChecker extends AbstractCheckerWi
 	}
 
 	/**
-	 * Indicates whether this checker is enabled to run while the user types. By default, this
-	 * method returns {@code false}.
-	 * <p>
-	 * Running command-line based checkers while the user types is unnecessary and wasteful, since
-	 * command-line tools are expensive to call (they run in a separate process) and they cannot
-	 * see unsaved changes.
-	 * </p>
+	 * Returns {@code false} because this checker cannot run "as you type" by default.
 	 * @return {@code false}.
 	 */
 	@Override
@@ -104,7 +94,7 @@ public abstract class AbstractExternalToolBasedChecker extends AbstractCheckerWi
 	@Override
 	public boolean processResource(IResource resource) {
 		process(resource);
-		return DO_NOT_TRAVERSE_CHILDREN;
+		return false;
 	}
 
 	private void process(IResource resource) {
@@ -141,7 +131,6 @@ public abstract class AbstractExternalToolBasedChecker extends AbstractCheckerWi
 	}
 
 	/**
-	 * Returns the IDs of the parsers to use to parse the output of the external tool.
 	 * @return the IDs of the parsers to use to parse the output of the external tool.
 	 */
 	protected abstract String[] getParserIDs();
@@ -186,7 +175,6 @@ public abstract class AbstractExternalToolBasedChecker extends AbstractCheckerWi
 		addPreference(problem, descriptor, setting.getDefaultValue());
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	protected void setDefaultPreferenceValue(IProblemWorkingCopy problem, String key,
 			Object defaultValue) {
@@ -194,7 +182,6 @@ public abstract class AbstractExternalToolBasedChecker extends AbstractCheckerWi
 		map.setChildValue(key, defaultValue);
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public RootProblemPreference getTopLevelPreference(IProblem problem) {
 		RootProblemPreference map = (RootProblemPreference) problem.getPreference();
@@ -207,9 +194,6 @@ public abstract class AbstractExternalToolBasedChecker extends AbstractCheckerWi
 		return map;
 	}
 
-	/**
-	 * @deprecated Use {@link #addMarker(ProblemMarkerInfo)} instead.
-	 */
 	@Deprecated
 	@Override
 	public void addMarker(IResource file, int lineNumber, String description, int severity,
@@ -224,7 +208,7 @@ public abstract class AbstractExternalToolBasedChecker extends AbstractCheckerWi
 
 	protected IProblemLocation createProblemLocation(ProblemMarkerInfo info) {
 		IProblemLocationFactory factory = CodanRuntime.getInstance().getProblemLocationFactory();
-		IFile file = (IFile) info.file;
-		return factory.createProblemLocation(file, info.startChar, info.endChar, info.lineNumber);
+		return factory.createProblemLocation(
+				(IFile) info.file, info.startChar, info.endChar, info.lineNumber);
 	}
 }

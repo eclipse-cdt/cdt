@@ -15,8 +15,6 @@ import org.eclipse.core.resources.IResource;
 /**
  * Default implementation of <code>{@link InvocationParameters}</code>
  *
- * @author alruiz@google.com (Alex Ruiz)
- *
  * @since 2.1
  */
 public class InvocationParametersProvider implements IInvocationParametersProvider {

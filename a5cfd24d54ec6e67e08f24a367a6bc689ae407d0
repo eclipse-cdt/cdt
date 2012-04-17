@@ -308,6 +308,23 @@
     },
     {
       "key": {
+        "uuid": "AABOG3//9I8\u003d",
+        "filename": "codan/org.eclipse.cdt.codan.core.cxx/src/org/eclipse/cdt/codan/core/cxx/internal/externaltool/PathSetting.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2012-04-17T01:19:42Z",
+      "side": 1,
+      "message": "Is this localize-able? Should it be some sort of id instead?",
+      "revId": "a5cfd24d54ec6e67e08f24a367a6bc689ae407d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOG3//9UE\u003d",
         "filename": "codan/org.eclipse.cdt.codan.core/schema/checkerEnablement.exsd",
         "patchSetId": 1
@@ -461,6 +478,57 @@
     },
     {
       "key": {
+        "uuid": "AABOG3//9I4\u003d",
+        "filename": "codan/org.eclipse.cdt.codan.core/src/org/eclipse/cdt/codan/core/model/CheckerLaunchMode.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2012-04-17T01:19:42Z",
+      "side": 1,
+      "message": "...saved or opened. Checker will not...\n{missing \"ed\" in open, and checker in singular if first one was sigular}",
+      "revId": "a5cfd24d54ec6e67e08f24a367a6bc689ae407d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9I0\u003d",
+        "filename": "codan/org.eclipse.cdt.codan.core/src/org/eclipse/cdt/codan/core/param/SharedRootProblemPreference.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2012-04-17T01:19:42Z",
+      "side": 1,
+      "message": "What is the point of this statement? All fields are copied when clone created",
+      "revId": "a5cfd24d54ec6e67e08f24a367a6bc689ae407d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9Iw\u003d",
+        "filename": "codan/org.eclipse.cdt.codan.core/src/org/eclipse/cdt/codan/internal/core/CheckersRegistry.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 248,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2012-04-17T01:19:42Z",
+      "side": 1,
+      "message": "inline o",
+      "revId": "a5cfd24d54ec6e67e08f24a367a6bc689ae407d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOG3//9UA\u003d",
         "filename": "codan/org.eclipse.cdt.codan.core/src/org/eclipse/cdt/codan/internal/core/ICheckerEnablementVerifier.java",
         "patchSetId": 1
@@ -472,6 +540,23 @@
       "writtenOn": "2012-04-14T03:22:13Z",
       "side": 1,
       "message": "Would it make sense to move this method to IChecker, its default implementation to AbstractChecker and rename the method to enabledInContext?",
+      "revId": "a5cfd24d54ec6e67e08f24a367a6bc689ae407d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9Is\u003d",
+        "filename": "codan/org.eclipse.cdt.codan.examples/.classpath",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2012-04-17T01:19:42Z",
+      "side": 1,
+      "message": "Did we switch to java 1.6?",
       "revId": "a5cfd24d54ec6e67e08f24a367a6bc689ae407d0",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -574,6 +659,23 @@
       "writtenOn": "2012-04-14T03:22:13Z",
       "side": 1,
       "message": "IErrorParser3 has to extend IErrorParser2",
+      "revId": "a5cfd24d54ec6e67e08f24a367a6bc689ae407d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//9Io\u003d",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/IErrorParser3.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2012-04-17T01:19:42Z",
+      "side": 1,
+      "message": "Can you elaborate? What \"Notification\" means when it is a void method? Did you mean something like \"This method is called when stream has ended, override to process it\"",
       "revId": "a5cfd24d54ec6e67e08f24a367a6bc689ae407d0",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

@@ -30,6 +30,7 @@ import java.util.Properties;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
+import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
@@ -43,10 +44,14 @@ import org.eclipse.cdt.dsf.datamodel.AbstractDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControl;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
+import org.eclipse.cdt.dsf.debug.service.command.ICommandToken;
+import org.eclipse.cdt.dsf.gdb.IGdbDebugConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.gdb.internal.Messages;
 import org.eclipse.cdt.dsf.gdb.launching.FinalLaunchSequence;
 import org.eclipse.cdt.dsf.gdb.service.IGDBBackend;
 import org.eclipse.cdt.dsf.gdb.service.IGDBProcesses;
+import org.eclipse.cdt.dsf.gdb.service.command.GdbCommandTimeoutManager.ICommandTimeoutListener;
 import org.eclipse.cdt.dsf.mi.service.IMIBackend;
 import org.eclipse.cdt.dsf.mi.service.IMIBackend.BackendStateChangedEvent;
 import org.eclipse.cdt.dsf.mi.service.IMIBackend2;
@@ -69,8 +74,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.IStatusHandler;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -81,6 +88,8 @@ import org.osgi.framework.BundleContext;
  * - inferior process status tracking.<br>
  */
 public class GDBControl extends AbstractMIControl implements IGDBControl {
+
+	private static final int STATUS_CODE_COMMAND_TIMED_OUT = 20100;
 
     /**
      * Event indicating that the back end process has started.
@@ -104,6 +113,20 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
         }
     }
 
+	private class TimeoutListener implements ICommandTimeoutListener {
+
+		@Override
+		public void commandTimedOut(final ICommandToken token) {
+			getExecutor().execute(new DsfRunnable() {
+				
+				@Override
+				public void run() {
+					GDBControl.this.commandTimedOut(token);
+				}
+			});
+		}		
+	}
+
     private GDBControlDMContext fControlDmc;
 
     private IGDBBackend fMIBackend;
@@ -111,6 +134,10 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
     private IEventProcessor fMIEventProcessor;
     private IEventProcessor fCLICommandProcessor;
     private AbstractCLIProcess fCLIProcess;
+
+    private GdbCommandTimeoutManager fCommandTimeoutManager;
+
+    private ICommandTimeoutListener fTimeoutListener = new TimeoutListener();
 
     /**
      * GDBControl is only used for GDB earlier that 7.0. Although -list-features
@@ -120,6 +147,14 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 	private final List<String> fFeatures = new ArrayList<String>();
 
 	private Sequence fInitializationSequence;
+	
+	/**
+	 * Indicator to distinguish whether this service is initialized.
+	 * <code>fInitializationSequence</code> can not be used for this 
+	 * purpose because there is a period of time when the service is already
+	 * initializing but the initialization sequence has not created yet.   
+	 */
+	private boolean fInitialized = false;
 
     private boolean fTerminated;
 
@@ -308,6 +343,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 			@Override
 			protected void handleCompleted() {
 				fInitializationSequence = null;
+				fInitialized = true;
 				if (!isCanceled()) {
 					// Only set the status if the user has not cancelled the operation already.
 					rm.setStatus(getStatus());
@@ -440,6 +476,33 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
         }
     }
     
+    /**
+	 * @since 4.1
+	 */
+    protected class CommandTimeoutStep extends InitializationShutdownStep {
+		CommandTimeoutStep( Direction direction ) {
+			super( direction );
+		}
+
+		@Override
+		public void initialize( final RequestMonitor requestMonitor ) {
+			fCommandTimeoutManager = createCommandTimeoutManager( GDBControl.this );
+			if (fCommandTimeoutManager != null) {
+				fCommandTimeoutManager.addCommandTimeoutListener(fTimeoutListener);
+			}
+			requestMonitor.done();
+		}
+
+		@Override
+		protected void shutdown( RequestMonitor requestMonitor ) {
+			if ( fCommandTimeoutManager != null ) {
+				fCommandTimeoutManager.removeCommandTimeoutListener(fTimeoutListener);
+				fCommandTimeoutManager.dispose();
+			}
+			requestMonitor.done();
+		}
+	}
+
     protected class RegisterStep extends InitializationShutdownStep {
         RegisterStep(Direction direction) { super(direction); }
         @Override
@@ -493,6 +556,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
         final Sequence.Step[] initializeSteps = new Sequence.Step[] {
                 new CommandMonitoringStep(InitializationShutdownStep.Direction.INITIALIZING),
                 new CommandProcessorsStep(InitializationShutdownStep.Direction.INITIALIZING),
+                new CommandTimeoutStep(InitializationShutdownStep.Direction.INITIALIZING),
                 new RegisterStep(InitializationShutdownStep.Direction.INITIALIZING),
             };
 
@@ -507,6 +571,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 	protected Sequence getShutdownSequence(RequestMonitor requestMonitor) {
         final Sequence.Step[] shutdownSteps = new Sequence.Step[] {
                 new RegisterStep(InitializationShutdownStep.Direction.SHUTTING_DOWN),
+                new CommandTimeoutStep(InitializationShutdownStep.Direction.SHUTTING_DOWN),
                 new CommandProcessorsStep(InitializationShutdownStep.Direction.SHUTTING_DOWN),
                 new CommandMonitoringStep(InitializationShutdownStep.Direction.SHUTTING_DOWN),
             };
@@ -535,5 +600,64 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 	protected void setFeatures(List<String> features) {
 		fFeatures.clear();
 		fFeatures.addAll(features);
+	}
+	
+	/**
+	 * @since 4.1
+	 */
+	protected GdbCommandTimeoutManager createCommandTimeoutManager(ICommandControl commandControl) {
+		GdbCommandTimeoutManager manager = new GdbCommandTimeoutManager(commandControl);
+		manager.initialize();
+		return manager;
+	}
+
+	/**
+	 * @since 4.1
+	 */
+	@ConfinedToDsfExecutor("this.getExecutor()")
+	protected void commandTimedOut(ICommandToken token) {
+		String commandText = token.getCommand().toString();
+		if (commandText.endsWith("\n")) //$NON-NLS-1$
+			commandText = commandText.substring(0, commandText.length() - 1);
+		final String errorMessage = String.format("Command '%s' is timed out", commandText); //$NON-NLS-1$
+		commandFailed(token, STATUS_CODE_COMMAND_TIMED_OUT, errorMessage);
+		
+		// If the timeout occurs while the launch sequence is running 
+		// the error will be reported by the launcher's error reporting mechanism.
+		// We need to show the error message only when the session is initialized.
+		if (isInitialized()) {
+			// The session is terminated if a command is timed out.
+			terminate(new RequestMonitor(getExecutor(), null) {
+				
+				@Override
+				protected void handleErrorOrWarning() {
+					GdbPlugin.getDefault().getLog().log(getStatus());
+					super.handleErrorOrWarning();
+				};
+			} );
+
+			IStatus status = new Status( 
+					IStatus.ERROR, 
+					GdbPlugin.PLUGIN_ID, 
+					IGdbDebugConstants.STATUS_HANDLER_CODE, 
+					String.format( Messages.GDBControl_Session_is_terminated, errorMessage ), 
+					null);
+			IStatusHandler statusHandler = DebugPlugin.getDefault().getStatusHandler(status);
+			if (statusHandler != null) {
+				try {
+					statusHandler.handleStatus(status, null);
+				}
+				catch(CoreException e) {
+					GdbPlugin.getDefault().getLog().log(e.getStatus());
+				}
+			}
+		}
+	}
+
+	/**
+	 * @since 4.1
+	 */
+	protected boolean isInitialized() {
+		return fInitialized;
 	}
 }

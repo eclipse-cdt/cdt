@@ -456,7 +456,7 @@
              %Cproject.desc
          </description>
       </wizard>
-       <wizard
+       <!-- (defered) wizard
              canFinishEarly="false"
              category="org.eclipse.cdt.ui.newCWizards"
              class="org.eclipse.cdt.ui.wizards.NewCDTProjectWizard"
@@ -466,7 +466,7 @@
              id="org.eclipse.cdt.ui.wizards.newProject"
              name="%newProjectWizard.name"
              project="true">
-       </wizard>
+       </wizard-->
    </extension>
 
 <!-- Define the document setup participant for the C/C++ and Assembly Editors -->

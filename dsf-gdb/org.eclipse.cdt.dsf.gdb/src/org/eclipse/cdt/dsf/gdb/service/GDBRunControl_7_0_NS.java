@@ -449,9 +449,9 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 			return (threadState == null) ? false : !fTerminated && threadState.fSuspended;
 		}
 
-		// Container case.  The container is considered suspended as long
+		// Process case.  The process is considered suspended as long
 		// as one of its thread is suspended
-		if (context instanceof IContainerDMContext) {
+		if (context instanceof IMIContainerDMContext) {
 			boolean hasThread = false;
 			for (IMIExecutionDMContext threadContext : fThreadRunStates.keySet()) {
 				if (DMContexts.isAncestorOf(threadContext, context)) {
@@ -471,39 +471,34 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 	@Override
 	public void canSuspend(IExecutionDMContext context, DataRequestMonitor<Boolean> rm) {
 		if (fRunControlOperationsEnabled == false) {
-			rm.setData(false);
-			rm.done();
+			rm.done(false);
 			return;
 		}
 		
+		rm.done(doCanSuspend(context));
+	}
+		
+	private boolean doCanSuspend(IExecutionDMContext context) {
 		// Thread case
 		if (context instanceof IMIExecutionDMContext) {
-			rm.setData(doCanSuspend(context));
-			rm.done();
-			return;
+			MIThreadRunState threadState = fThreadRunStates.get(context);
+			return (threadState == null) ? false : !fTerminated && !threadState.fSuspended;
 		}
 
-		// Container case
-		if (context instanceof IContainerDMContext) {
-			boolean canSuspend = false;
+		// Process case
+		if (context instanceof IMIContainerDMContext) {
 			for (IMIExecutionDMContext threadContext : fThreadRunStates.keySet()) {
 				if (DMContexts.isAncestorOf(threadContext, context)) {
-					canSuspend |= doCanSuspend(threadContext);
+					if (doCanSuspend(threadContext)) {
+						return true;
+					}
 				}
 			}
-			rm.setData(canSuspend);
-			rm.done();
-			return;
+			return false;
 		}
 
 		// Default case
-		rm.setData(false);
-		rm.done();
-	}
-
-	private boolean doCanSuspend(IExecutionDMContext context) {
-		MIThreadRunState threadState = fThreadRunStates.get(context);
-		return (threadState == null) ? false : !fTerminated && !threadState.fSuspended;
+		return false;
 	}
 
 	@Override
@@ -514,14 +509,14 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 		// Thread case
 		IMIExecutionDMContext thread = DMContexts.getAncestorOfType(context, IMIExecutionDMContext.class);
 		if (thread != null) {
-			doSuspendThread(thread, rm);
+			doSuspend(thread, rm);
 			return;
 		}
 
-		// Container case
+		// Process case
 		IMIContainerDMContext container = DMContexts.getAncestorOfType(context, IMIContainerDMContext.class);
 		if (container != null) {
-			doSuspendContainer(container, rm);
+			doSuspend(container, rm);
 			return;
 		}
 
@@ -530,8 +525,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 		rm.done();
 	}
 
-	private void doSuspendThread(IMIExecutionDMContext context, final RequestMonitor rm) {
-
+	private void doSuspend(IMIExecutionDMContext context, final RequestMonitor rm) {
 		if (!doCanSuspend(context)) {
 			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED,
 				"Given context: " + context + ", is already suspended.", null)); //$NON-NLS-1$ //$NON-NLS-2$
@@ -542,7 +536,14 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 		fConnection.queueCommand(fCommandFactory.createMIExecInterrupt(context), new DataRequestMonitor<MIInfo>(getExecutor(), rm));
 	}
 
-	private void doSuspendContainer(IMIContainerDMContext context, final RequestMonitor rm) {
+	private void doSuspend(IMIContainerDMContext context, final RequestMonitor rm) {
+		if (!doCanSuspend(context)) {
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED,
+				"Given context: " + context + ", is already suspended.", null)); //$NON-NLS-1$ //$NON-NLS-2$
+			rm.done();
+			return;
+		}
+		
 		String groupId = context.getGroupId();
 		fConnection.queueCommand(fCommandFactory.createMIExecInterrupt(context, groupId), new DataRequestMonitor<MIInfo>(getExecutor(), rm));
 	}
@@ -554,39 +555,34 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 	@Override
 	public void canResume(IExecutionDMContext context, DataRequestMonitor<Boolean> rm) {
 		if (fRunControlOperationsEnabled == false) {
-			rm.setData(false);
-			rm.done();
+			rm.done(false);
 			return;
 		}
 		
-		// Thread case
-		if (context instanceof IMIExecutionDMContext) {
-			rm.setData(doCanResume(context));
-			rm.done();
-			return;
-		}
-
-		// Container case
-		if (context instanceof IContainerDMContext) {
-			boolean canSuspend = false;
-			for (IMIExecutionDMContext threadContext : fThreadRunStates.keySet()) {
-				if (DMContexts.isAncestorOf(threadContext, context)) {
-					canSuspend |= doCanResume(threadContext);
-				}
-			}
-			rm.setData(canSuspend);
-			rm.done();
-			return;
-		}
-
-		// Default case
-		rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Invalid context type.", null)); //$NON-NLS-1$
-		rm.done();
+		rm.done(doCanResume(context));
 	}
 
 	private boolean doCanResume(IExecutionDMContext context) {
-		MIThreadRunState threadState = fThreadRunStates.get(context);
-		return (threadState == null) ? false : !fTerminated && threadState.fSuspended && !threadState.fResumePending;
+		// Thread case
+		if (context instanceof IMIExecutionDMContext) {
+			MIThreadRunState threadState = fThreadRunStates.get(context);
+			return (threadState == null) ? false : !fTerminated && threadState.fSuspended && !threadState.fResumePending;
+		}
+
+		// Process case
+		if (context instanceof IMIContainerDMContext) {
+			for (IMIExecutionDMContext threadContext : fThreadRunStates.keySet()) {
+				if (DMContexts.isAncestorOf(threadContext, context)) {
+					if (doCanResume(threadContext)) {
+						return true;
+					}
+				}
+			}
+			return false;
+		}
+
+		// Default case
+		return false;
 	}
 
 	@Override
@@ -597,14 +593,14 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 		// Thread case
 		IMIExecutionDMContext thread = DMContexts.getAncestorOfType(context, IMIExecutionDMContext.class);
 		if (thread != null) {
-			doResumeThread(thread, rm);
+			doResume(thread, rm);
 			return;
 		}
 
 		// Container case
 		IMIContainerDMContext container = DMContexts.getAncestorOfType(context, IMIContainerDMContext.class);
 		if (container != null) {
-			doResumeContainer(container, rm);
+			doResume(container, rm);
 			return;
 		}
 
@@ -613,8 +609,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 		rm.done();
 	}
 
-	private void doResumeThread(IMIExecutionDMContext context, final RequestMonitor rm) {
-
+	private void doResume(IMIExecutionDMContext context, final RequestMonitor rm) {
 		if (!doCanResume(context)) {
 			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE,
 				"Given context: " + context + ", is already running.", null)); //$NON-NLS-1$ //$NON-NLS-2$
@@ -640,7 +635,14 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 		});
 	}
 
-	private void doResumeContainer(IMIContainerDMContext context, final RequestMonitor rm) {
+	private void doResume(IMIContainerDMContext context, final RequestMonitor rm) {
+		if (!doCanResume(context)) {
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE,
+				"Given context: " + context + ", is already running.", null)); //$NON-NLS-1$ //$NON-NLS-2$
+			rm.done();
+			return;
+		}
+
 		String groupId = context.getGroupId();
 		fConnection.queueCommand(fCommandFactory.createMIExecContinue(context, groupId), new DataRequestMonitor<MIInfo>(getExecutor(), rm));
 	}
@@ -665,8 +667,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 	@Override
 	public void canStep(final IExecutionDMContext context, StepType stepType, final DataRequestMonitor<Boolean> rm) {
 		if (fRunControlOperationsEnabled == false) {
-			rm.setData(false);
-			rm.done();
+			rm.done(false);
 			return;
 		}
 		
@@ -683,8 +684,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 	            		@Override
 	            		public void handleCompleted() {
 	            			if (isSuccess() && getData() == 1) {
-	            				rm.setData(false);
-	            				rm.done();
+	            				rm.done(false);
 	            			} else {
 	            	    		canResume(context, rm);
 	            			}
@@ -699,8 +699,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 		}
 
 		// If it's a container, then we don't want to step it
-		rm.setData(false);
-		rm.done();
+		rm.done(false);
 	}
 
 	@Override
@@ -710,24 +709,21 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 
 		IMIExecutionDMContext dmc = DMContexts.getAncestorOfType(context, IMIExecutionDMContext.class);
 		if (dmc == null) {
-			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR,
+			rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR,
 				"Given context: " + context + " is not an MI execution context.", null)); //$NON-NLS-1$ //$NON-NLS-2$
-			rm.done();
 			return;
 		}
 
-		if (!doCanResume(context)) {
-			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE,
+		if (!doCanResume(dmc)) {
+			rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE,
 				"Cannot resume context", null)); //$NON-NLS-1$
-			rm.done();
 			return;
 		}
 
 		final MIThreadRunState threadState = fThreadRunStates.get(context);
 		if (threadState == null) {
-			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE,
+			rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE,
 				"Given context: " + context + " can't be found.", null)); //$NON-NLS-1$ //$NON-NLS-2$
-			rm.done();
 			return;
 		}
 
@@ -751,9 +747,8 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 				IFrameDMContext topFrameDmc = stackService.createFrameDMContext(dmc, 0);
 				cmd = fCommandFactory.createMIExecFinish(topFrameDmc);
 			} else {
-				rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED,
+				rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED,
 						"Cannot create context for command, stack service not available.", null)); //$NON-NLS-1$
-				rm.done();
 				return;
 			}
 			break;
@@ -764,9 +759,8 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 			cmd = fCommandFactory.createMIExecNextInstruction(dmc);
 			break;
 		default:
-			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID,
+			rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID,
 					INTERNAL_ERROR, "Given step type not supported", null)); //$NON-NLS-1$
-			rm.done();
 			return;
 		}
 		

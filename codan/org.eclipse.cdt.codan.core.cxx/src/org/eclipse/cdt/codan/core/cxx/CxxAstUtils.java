@@ -406,6 +406,14 @@ public final class CxxAstUtils {
 		if (!(expression instanceof IASTFunctionCallExpression))
 			return false;
 		IASTExpression functionNameExpression = ((IASTFunctionCallExpression) expression).getFunctionNameExpression();
+		if (functionNameExpression instanceof IASTIdExpression) {
+			IASTName name = ((IASTIdExpression)functionNameExpression).getName();
+			
+			IBinding binding = name.resolveBinding();
+			if (binding!=null && binding instanceof IFunction && ((IFunction)binding).isNoReturn()) {
+				return true;
+			}
+		}
 		return functionNameExpression.getRawSignature().equals("exit"); //$NON-NLS-1$
 	}
 }

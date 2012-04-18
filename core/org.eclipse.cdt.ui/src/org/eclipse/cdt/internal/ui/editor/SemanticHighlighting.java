@@ -10,7 +10,6 @@
  *     Anton Leherbauer (Wind River Systems) - Adapted for CDT
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.editor;
 
 import org.eclipse.jface.resource.ColorRegistry;
@@ -26,7 +25,6 @@ import org.eclipse.cdt.ui.CUIPlugin;
  * @since 4.0
  */
 public abstract class SemanticHighlighting {
-
 	/**
 	 * @return the preference key, will be augmented by a prefix and a suffix for each preference
 	 */
@@ -126,5 +124,4 @@ public abstract class SemanticHighlighting {
 			return rgb;
 		return defaultRGB;
 	}
-
 }

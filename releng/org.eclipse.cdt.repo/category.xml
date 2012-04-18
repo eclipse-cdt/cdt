@@ -65,4 +65,10 @@
    <feature url="features/org.eclipse.cdt.autotools.source_0.0.0.qualifier.jar" id="org.eclipse.cdt.autotools.source" version="0.0.0">
       <category name="extra"/>
    </feature>
+   <feature url="features/org.eclipse.cdt.testsrunner.feature_0.0.0.qualifier.jar" id="org.eclipse.cdt.testsrunner.feature" version="0.0.0">
+      <category name="extra"/>
+   </feature>
+   <feature url="features/org.eclipse.cdt.testsrunner.source.feature_0.0.0.qualifier.jar" id="org.eclipse.cdt.testsrunner.source.feature" version="0.0.0">
+      <category name="extra"/>
+   </feature>
 </site>

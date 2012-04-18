@@ -20,7 +20,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -985,7 +984,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
     	Job notify= new Job(Messages.PDOMManager_notifyJob_label) {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-				while(true) {
+				while (true) {
 					final Runnable r;
 					synchronized (fChangeEvents) {
 						if (fChangeEvents.isEmpty()) {
@@ -1028,11 +1027,12 @@ public class PDOMManager implements IWritableIndexManager, IListener {
     				Object[] listeners= fStateListeners.getListeners();
     				for (Object listener2 : listeners) {
     					final IIndexerStateListener listener = (IIndexerStateListener) listener2;
-    					SafeRunner.run(new ISafeRunnable(){
+    					SafeRunner.run(new ISafeRunnable() {
     						@Override
 							public void handleException(Throwable exception) {
     							CCorePlugin.log(exception);
     						}
+
     						@Override
 							public void run() throws Exception {
     							listener.indexChanged(fIndexerStateEvent);
@@ -1065,11 +1065,12 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 					Object[] listeners= fChangeListeners.getListeners();
 					for (Object listener2 : listeners) {
 						final IIndexChangeListener listener = (IIndexChangeListener) listener2;
-						SafeRunner.run(new ISafeRunnable(){
+						SafeRunner.run(new ISafeRunnable() {
 							@Override
 							public void handleException(Throwable exception) {
 								CCorePlugin.log(exception);
 							}
+
 							@Override
 							public void run() throws Exception {
 								listener.indexChanged(fIndexChangeEvent);
@@ -1206,42 +1207,41 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 			if (!deleted) {
 				throw new IllegalArgumentException(
 						MessageFormat.format(Messages.PDOMManager_ExistingFileCollides,
-								new Object[] {targetLocation})
-				);
+								targetLocation ));
 			}
 		}
 		try {
-			// copy it
+			// Copy it.
 			PDOM pdom= getOrCreatePDOM(cproject);
 			pdom.acquireReadLock();
 			String oldID= null;
 			try {
 				oldID= pdom.getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID);
 				pdom.flush();
-				FileChannel to = new FileOutputStream(targetLocation).getChannel();
-				pdom.getDB().transferTo(to);
-				to.close();
+				FileOutputStream stream = new FileOutputStream(targetLocation);
+				pdom.getDB().transferTo(stream.getChannel());
+				stream.close();
 			} finally {
 				pdom.releaseReadLock();
 			}
 
-			// overwrite internal location representations
+			// Overwrite internal location representations.
 			final WritablePDOM newPDOM = new WritablePDOM(targetLocation, pdom.getLocationConverter(), getLinkageFactories());			
 			newPDOM.acquireWriteLock();
 			try {
 				newPDOM.rewriteLocations(newConverter);
 
-				// ensure fragment id has a sensible value, in case callee's do not
-				// overwrite their own values
-				newPDOM.setProperty(IIndexFragment.PROPERTY_FRAGMENT_ID, "exported."+oldID); //$NON-NLS-1$
+				// Ensure that fragment id has a sensible value, in case callee's do not
+				// overwrite with their own values.
+				newPDOM.setProperty(IIndexFragment.PROPERTY_FRAGMENT_ID, "exported." + oldID); //$NON-NLS-1$
 				newPDOM.close();
 			} finally {
 				newPDOM.releaseWriteLock();
 			}
-		} catch (IOException ioe) {
-			throw new CoreException(CCorePlugin.createStatus(ioe.getMessage()));
-		} catch (InterruptedException ie) {
-			throw new CoreException(CCorePlugin.createStatus(ie.getMessage()));
+		} catch (IOException e) {
+			throw new CoreException(CCorePlugin.createStatus(e.getMessage()));
+		} catch (InterruptedException e) {
+			throw new CoreException(CCorePlugin.createStatus(e.getMessage()));
 		}
 	}
 
@@ -1435,11 +1435,12 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 				@Override
 				public void run() {
 					for (final IndexerSetupParticipant p : participants) {
-						SafeRunner.run(new ISafeRunnable(){
+						SafeRunner.run(new ISafeRunnable() {
 							@Override
 							public void handleException(Throwable exception) {
 								CCorePlugin.log(exception);
 							}
+
 							@Override
 							public void run() throws Exception {
 								p.onIndexerSetup(cproject);

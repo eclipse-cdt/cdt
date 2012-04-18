@@ -38,7 +38,8 @@ import org.junit.runners.Suite;
 	LaunchConfigurationAndRestartTest_6_8.class,
 	OperationsWhileTargetIsRunningTest_6_8.class,
 	PostMortemCoreTest_6_8.class,
-	Suite_Sessionless_Tests.class
+	CommandTimeoutTest_6_8.class,
+	Suite_Sessionless_Tests.class,
 	/* Add your test class here */
 })
 

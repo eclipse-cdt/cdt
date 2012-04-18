@@ -147,6 +147,7 @@ public class GDBControl_7_0 extends GDBControl {
         final Sequence.Step[] initializeSteps = new Sequence.Step[] {
                 new GDBControl.CommandMonitoringStep(GDBControl.InitializationShutdownStep.Direction.INITIALIZING),
                 new GDBControl.CommandProcessorsStep(GDBControl.InitializationShutdownStep.Direction.INITIALIZING),
+                new CommandTimeoutStep(GDBControl.InitializationShutdownStep.Direction.INITIALIZING),
                 new ListFeaturesStep(GDBControl.InitializationShutdownStep.Direction.INITIALIZING),
                 new GDBControl.RegisterStep(GDBControl.InitializationShutdownStep.Direction.INITIALIZING),
             };
@@ -161,6 +162,7 @@ public class GDBControl_7_0 extends GDBControl {
         final Sequence.Step[] shutdownSteps = new Sequence.Step[] {
                 new GDBControl.RegisterStep(GDBControl.InitializationShutdownStep.Direction.SHUTTING_DOWN),
                 new ListFeaturesStep(GDBControl.InitializationShutdownStep.Direction.SHUTTING_DOWN),
+                new CommandTimeoutStep(GDBControl.InitializationShutdownStep.Direction.SHUTTING_DOWN),
                 new GDBControl.CommandProcessorsStep(GDBControl.InitializationShutdownStep.Direction.SHUTTING_DOWN),
                 new GDBControl.CommandMonitoringStep(GDBControl.InitializationShutdownStep.Direction.SHUTTING_DOWN),
             };

@@ -298,4 +298,16 @@ public class ReturnCheckerTest extends CheckerTestCase {
 		loadCodeAndRunCpp(getAboveComment());
 		checkNoErrors();
 	}
+
+
+//void f() __attribute__((noreturn));
+//
+//int test() {
+//  f();
+//}
+
+	public void testNoReturn() {
+		loadCodeAndRun(getAboveComment());
+		checkNoErrors();
+	}
 }

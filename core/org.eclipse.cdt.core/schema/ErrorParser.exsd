@@ -48,6 +48,7 @@
       <complexType>
          <sequence>
             <element ref="pattern" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="context" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="id" type="string">
             <annotation>
@@ -143,6 +144,33 @@
                   The attribute defines if a line matched by the pattern is prevented or allowed to be processed by the rest of patterns. &quot;No&quot; allows several patterns to evaluate one line.
                </documentation>
             </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="context">
+      <annotation>
+         <documentation>
+            Use this element to specify the context where an error parser can be used. If none is specified, a default context type will be &quot;build&quot;.
+
+An error parser can be assigned to more than one context type. For example, an error parser can have two &quot;context&quot; elements, one for &quot;build&quot; and one for &quot;codan&quot;.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="type" use="required">
+            <annotation>
+               <documentation>
+                  The type of context where an error parser can be used. Valid values are &quot;build&quot; and &quot;codan&quot;.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="build">
+                  </enumeration>
+                  <enumeration value="codan">
+                  </enumeration>
+               </restriction>
+            </simpleType>
          </attribute>
       </complexType>
    </element>

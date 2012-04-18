@@ -117,7 +117,7 @@ public class ScannerDiscoveryLegacySupport {
 				project = prjDescription.getProject();
 			}
 		}
-		return isLanguageSettingsProvidersFunctionalityEnabled(project) || isMbsLanguageSettingsProviderOn(cfgDescription);
+		return !isLanguageSettingsProvidersFunctionalityEnabled(project) || isMbsLanguageSettingsProviderOn(cfgDescription);
 	}
 
 	/**
@@ -130,9 +130,9 @@ public class ScannerDiscoveryLegacySupport {
 		if (prjDescription != null) {
 			cfgDescription = prjDescription.getActiveConfiguration();
 		}
-		return isLanguageSettingsProvidersFunctionalityEnabled(project) || isMbsLanguageSettingsProviderOn(cfgDescription);
+		return !isLanguageSettingsProvidersFunctionalityEnabled(project) || isMbsLanguageSettingsProviderOn(cfgDescription);
 	}
-	
+
 	/**
 	 * Return list containing MBS and User provider. Used to initialize for unaware tool-chains (backward compatibility).
 	 */

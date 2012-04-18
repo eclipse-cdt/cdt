@@ -89,7 +89,7 @@ public class CxxModelsCache implements ICodanDisposable {
 			return cfg;
 		cfg = CxxControlFlowGraph.build(func);
 		// TODO(Alena Laskavaia): Change to LRU.
-		if (cfgmap.size() > 20) { // if too many function better drop the cash
+		if (cfgmap.size() > 20) { // if too many function better drop the cache
 			cfgmap.clear();
 		}
 		cfgmap.put(func, cfg);

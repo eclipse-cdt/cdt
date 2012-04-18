@@ -32,7 +32,7 @@ public class Activator extends Plugin {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.core.runtime.Plugins#start(org.osgi.framework.BundleContext)
 	 */
@@ -44,7 +44,7 @@ public class Activator extends Plugin {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.core.runtime.Plugin#stop(org.osgi.framework.BundleContext)
 	 */
@@ -56,7 +56,7 @@ public class Activator extends Plugin {
 
 	/**
 	 * Returns the shared instance
-	 * 
+	 *
 	 * @return the shared instance
 	 */
 	public static Activator getDefault() {
@@ -65,7 +65,7 @@ public class Activator extends Plugin {
 
 	/**
 	 * Logs the specified status with this plug-in's log.
-	 * 
+	 *
 	 * @param status
 	 *        status to log
 	 */
@@ -74,22 +74,36 @@ public class Activator extends Plugin {
 	}
 
 	/**
-	 * Logs an internal error with the specified throwable
-	 * 
-	 * @param e
-	 *        the exception to be logged
+	 * Logs an internal error with the specified {@code Throwable}.
+	 *
+	 * @param t
+	 *        the {@code Throwable} to be logged
 	 */
-	public static void log(Throwable e) {
-		log(new Status(IStatus.ERROR, PLUGIN_ID, 1, "Internal Error", e)); //$NON-NLS-1$
+	public static void log(Throwable t) {
+		log(new Status(IStatus.ERROR, PLUGIN_ID, 1, "Internal Error", t)); //$NON-NLS-1$
 	}
 
 	/**
 	 * Logs an internal error with the specified message.
-	 * 
+	 *
 	 * @param message
 	 *        the error message to log
 	 */
 	public static void log(String message) {
 		log(new Status(IStatus.ERROR, PLUGIN_ID, 1, message, null));
+	}
+
+	/**
+	 * Logs an internal error with the specified message and {@code Throwable}.
+	 *
+	 * @param message
+	 *        the error message to log
+	 * @param t
+	 *        the {@code Throwable} to be logged
+	 *
+	 * @since 2.1
+	 */
+	public static void log(String message, Throwable t) {
+		log(new Status(IStatus.ERROR, PLUGIN_ID, 1, message, t));
 	}
 }

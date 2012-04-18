@@ -189,6 +189,24 @@
     },
     {
       "key": {
+        "uuid": "AABOG3//9AU\u003d",
+        "filename": "codan/org.eclipse.cdt.codan.core/src/org/eclipse/cdt/codan/core/param/SharedRootProblemPreference.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-04-18T01:10:41Z",
+      "side": 1,
+      "message": "There is no way to use super.clone() since it would call MapProblemPreference.clone, which does deep copying.",
+      "parentUuid": "AABOG3//9Ac\u003d",
+      "revId": "1c4341586b91ce6e0054b49fdd3f0399edda3eb5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOG3//9B0\u003d",
         "filename": "codan/org.eclipse.cdt.codan.core/src/org/eclipse/cdt/codan/internal/core/CheckersRegistry.java",
         "patchSetId": 2

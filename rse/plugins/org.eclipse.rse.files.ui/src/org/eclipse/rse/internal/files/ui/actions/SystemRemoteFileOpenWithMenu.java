@@ -20,8 +20,10 @@
  * David McKnight   (IBM)        - [284596] [regression] Open with-> problem when descriptor doesn't match previous
  * David McKnight   (IBM)        - [309755] SystemRemoteFileOpenWithMenu.getPreferredEditor(), the listed default editor is not always correct
  * David McKnight   (IBM)        - [312362] Editing Unix file after it changes on host edits old data
+ * Rick Sawyer      (IBM)        - [376535] RSE does not respect editor overrides
  *******************************************************************************/
 package org.eclipse.rse.internal.files.ui.actions;
+import java.lang.reflect.Method;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,6 +34,7 @@ import java.util.Hashtable;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -56,6 +59,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.IEditorDescriptor;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IWorkbench;
@@ -408,7 +412,22 @@ protected IEditorDescriptor getPreferredEditor(IRemoteFile remoteFile) {
 	IFile localFile = getLocalResource(remoteFile);
 	
 	if (localFile == null || !localFile.exists()){
-		return registry.getDefaultEditor(remoteFile.getName());
+		// bug #376535 - need to respect editor overrides
+		IEditorDescriptor desc = registry.getDefaultEditor(remoteFile.getName(), IDE.guessContentType(localFile));
+		// Using reflection in case IDE is older version, without this method
+		//desc = IDE.overrideDefaultEditorAssociation(new FileEditorInput(localFile), IDE.guessContentType(localFile), desc);
+		Class clazz = IDE.class;
+		try {
+			Class parmtypes[] = {IEditorInput.class, IContentType.class, IEditorDescriptor.class};
+			Method method = clazz.getMethod("overrideDefaultEditorAssociation", parmtypes); //$NON-NLS-1$
+			if (method != null) {
+				Object args[] = {new FileEditorInput(localFile), IDE.guessContentType(localFile), desc};
+				desc = (IEditorDescriptor) method.invoke(null, args);
+			}
+		} catch (Exception e) {
+		}
+		
+		return desc;
 	}
 	else {
 		return IDE.getDefaultEditor(localFile);
@@ -470,7 +489,23 @@ public void fill(Menu menu, int index)
 	IEditorDescriptor defaultEditor = registry.findEditor("org.eclipse.ui.DefaultTextEditor"); // may be null //$NON-NLS-1$
 	IEditorDescriptor preferredEditor = getPreferredEditor(_remoteFile); // may be null
 	
-	Object[] editors = registry.getEditors(getFileName());
+	IFile localFile = getLocalResource(_remoteFile);
+	IEditorDescriptor[] editors = registry.getEditors(getFileName());
+	if (localFile != null) {
+		// bug #376535 - need to respect editor overrides
+		// Using reflection in case IDE is older version, without this method
+		//editors = IDE.overrideEditorAssociations(new FileEditorInput(localFile), IDE.guessContentType(localFile), editors);
+		Class clazz = IDE.class;
+		try {
+			Class parmtypes[] = {IEditorInput.class, IContentType.class, IEditorDescriptor[].class};
+			Method method = clazz.getMethod("overrideEditorAssociations", parmtypes); //$NON-NLS-1$
+			if (method != null) {
+				Object args[] = {new FileEditorInput(localFile), IDE.guessContentType(localFile), editors};
+				editors = (IEditorDescriptor[]) method.invoke(null, args);
+			}
+		} catch (Exception e) {
+		}
+	}
 	Collections.sort(Arrays.asList(editors), comparer);
 
 	boolean defaultFound = false;

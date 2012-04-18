@@ -76,10 +76,12 @@
  * David McKnight   (IBM)        - [249031] Last used editor should be set to SystemEditableRemoteFile
  * David McKnight   (IBM)        - [341244] folder selection input to unlocked Remote Systems Details view sometimes fails
  * David McKnight   (IBM)        - [363490] PHP files opening in system editor (Dreamweaver)
+ * Rick Sawyer      (IBM)        - [376535] RSE does not respect editor overrides
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
 import java.io.File;
+import java.lang.reflect.Method;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -100,6 +102,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
@@ -204,13 +207,14 @@ import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorDescriptor;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.progress.IElementCollector;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
@@ -564,6 +568,31 @@ public class SystemViewRemoteFileAdapter
 		IRemoteFile file = (IRemoteFile) element;
 		if (file.isFile() || file.isArchive()) // hack to show zips without folder icons
 		{
+			// bug #376535 - need to respect editor overrides
+			IFile localFile = getLocalResource(file);
+			if (localFile != null) {
+				IEditorDescriptor editorDesc = getEditorRegistry().getDefaultEditor(file.getName(), IDE.guessContentType(localFile));
+				// Using reflection in case IDE is older version, without this method
+				//editorDesc = IDE.overrideDefaultEditorAssociation(new FileEditorInput(localFile), IDE.guessContentType(localFile), editorDesc);
+				Class clazz = IDE.class;
+				try {
+					Class parmtypes[] = {IEditorInput.class, IContentType.class, IEditorDescriptor.class};
+					Method method = clazz.getMethod("overrideDefaultEditorAssociation", parmtypes); //$NON-NLS-1$
+					if (method != null) {
+						Object args[] = {new FileEditorInput(localFile), IDE.guessContentType(localFile), editorDesc};
+						editorDesc = (IEditorDescriptor) method.invoke(null, args);
+					}
+				} catch (Exception e) {
+				}
+				
+				if (editorDesc != null) {
+					ImageDescriptor image = editorDesc.getImageDescriptor();
+					if (image != null) {
+						return image;
+					}
+				}
+			}
+			
 			return getEditorRegistry().getImageDescriptor(file.getName());
 		}
 		else
@@ -591,6 +620,16 @@ public class SystemViewRemoteFileAdapter
 		}
 	}
 
+	/**
+	 * Get the local cache of the remote file, or <code>null</code> if none.
+	 * @param remoteFile the remote file.
+	 * @return the local cached resource, or <code>null</code> if none.
+	 */
+	private IFile getLocalResource(IRemoteFile remoteFile) 
+	{
+	    return (IFile)UniversalFileTransferUtility.getTempFileFor(remoteFile);
+	}
+	
 	/**
 	 * Return the label for this object. Uses getName() on the remote file object.
 	 */
@@ -3421,8 +3460,9 @@ public class SystemViewRemoteFileAdapter
 					
 					// open new editor for correct replica
 					editable = getEditableRemoteObject(remoteFile);
-				}											
+				}
 				
+				/* Commenting out - no longer needed with fix to bug #376535
 				if (editable instanceof SystemEditableRemoteFile){
 					SystemEditableRemoteFile edit = (SystemEditableRemoteFile)editable;
 					IEditorDescriptor oldDescriptor = edit.getEditorDescriptor();
@@ -3443,6 +3483,7 @@ public class SystemViewRemoteFileAdapter
 						edit.setEditorDescriptor(curDescriptor);
 					}								
 				}
+				*/
 				
 				try
 				{

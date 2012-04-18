@@ -44,6 +44,7 @@
  * David McKnight   (IBM)        - [334839] File Content Conflict is not handled properly
  * David McKnight   (IBM)        - [249031] Last used editor should be set to SystemEditableRemoteFile
  * David McKnight   (IBM)        - [359704] SystemEditableRemoteFile does not release reference to editor
+ * Rick Sawyer      (IBM)        - [376535] RSE does not respect editor overrides
  *******************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -132,6 +133,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 	private IEditorPart editor;
 	private IFile localFile;
 	private IWorkbenchPage page;
+	private boolean _usingDefaultDescriptor = false;
 
 	/**
 	 * Internal class for downloading file
@@ -276,6 +278,10 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 		IEditorDescriptor descriptor = null;
 		try {
 			descriptor = IDE.getEditorDescriptor(localResource);
+			
+			if (!localResource.exists()){
+				_usingDefaultDescriptor = true;
+			}
 		} catch (PartInitException e) {	
 		}	
 		
@@ -1646,8 +1652,15 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 
 		// set editor as preferred editor for this file
 		String editorId = null;
-		if (_editorDescriptor != null)
-			editorId = _editorDescriptor.getId();
+		if (_editorDescriptor != null){
+			if (_usingDefaultDescriptor){
+				_editorDescriptor = IDE.getEditorDescriptor(file);
+				editorId = _editorDescriptor.getId();
+			}	
+			else {
+				editorId = _editorDescriptor.getId();
+			}
+		}
 
 		IDE.setDefaultEditor(file, editorId);
 

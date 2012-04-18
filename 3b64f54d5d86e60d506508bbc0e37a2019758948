@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOG3//88s\u003d",
+        "filename": "codan/org.eclipse.cdt.codan.core/src/org/eclipse/cdt/codan/internal/core/CheckersRegistry.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 247,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-04-18T18:20:17Z",
+      "side": 1,
+      "message": "Instead of letting the last verifier win, we should allow all of them to have their say. If any of the verifiers returns false, the checker should not run.",
+      "revId": "3b64f54d5d86e60d506508bbc0e37a2019758948",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//88c\u003d",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/ErrorParserContext.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-04-18T18:20:17Z",
+      "side": 1,
+      "message": "Please make it more symmetrical.\nOption 1:\nBUILD \u003d 1 \u003c\u003c 0;\nCODAN \u003d 1 \u003c\u003c 1;\nOption 2:\nBUILD \u003d 0x01;\nCODAN \u003d 0x02;\n\nOption 2 makes debugging easier in my opinion.",
+      "revId": "3b64f54d5d86e60d506508bbc0e37a2019758948",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//88k\u003d",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/ErrorParserContext.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-04-18T18:20:17Z",
+      "side": 1,
+      "message": "Please remove isEmpty() check. Null check should be removed too, but the comparisons should be made null-proof.",
+      "revId": "3b64f54d5d86e60d506508bbc0e37a2019758948",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//88g\u003d",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/errorparsers/ErrorParserExtensionManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 610,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-04-18T18:20:17Z",
+      "side": 1,
+      "message": "Add javadoc explaining return value of the method.",
+      "revId": "3b64f54d5d86e60d506508bbc0e37a2019758948",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -566,11 +566,11 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 	 */
 	private void updateStatusLine() {
 		IStatus status=null;
-		if (enableProvidersCheckBox.getSelection()==true) {
+		if (enableProvidersCheckBox.getSelection() == true) {
 			ICConfigurationDescription cfgDescription = getConfigurationDescription();
 			status = LanguageSettingsImages.getStatus(getSelectedEntry(), cfgDescription);
 		}
-		if (status==null || status==Status.OK_STATUS) {
+		if (status == null || status == Status.OK_STATUS) {
 			ILanguageSettingsProvider provider = getSelectedProvider();
 			boolean isAllowedEditing = provider instanceof ILanguageSettingsEditableProvider
 					&& LanguageSettingsProviderAssociationManager.isAllowedToEditEntries(provider);
@@ -579,8 +579,8 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 				status = new Status(IStatus.INFO, CUIPlugin.PLUGIN_ID, msg);
 			}
 		}
-		if (status==null || status==Status.OK_STATUS) {
-			if (treeLanguages.getItemCount()<=0) {
+		if (status == null || status == Status.OK_STATUS) {
+			if (treeLanguages.getItemCount() <= 0) {
 				String msg = "Cannot determine toolchain languages.";
 				status = new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, msg);
 			}
@@ -878,7 +878,7 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 	 */
 	private List<ILanguageSettingsProvider> getProviders(String languageSettingId) {
 		List<ILanguageSettingsProvider> itemsList = new LinkedList<ILanguageSettingsProvider>();
-		if (currentLanguageId!=null) {
+		if (currentLanguageId != null) {
 			IResource rc = getResource();
 			ICConfigurationDescription cfgDescription = getConfigurationDescription();
 			if (rc != null && cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
@@ -888,7 +888,7 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 					if (rawProvider instanceof LanguageSettingsBaseProvider) {
 						// filter out providers incapable of providing entries for this language
 						List<String> languageIds = ((LanguageSettingsBaseProvider)rawProvider).getLanguageScope();
-						if (languageIds!=null && !languageIds.contains(currentLanguageId)) {
+						if (languageIds != null && !languageIds.contains(currentLanguageId)) {
 							continue;
 						}
 					}
@@ -921,7 +921,7 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 				continue;
 
 			String langName = language.getName();
-			if (langName == null || langName.length()==0)
+			if (langName == null || langName.length() == 0)
 				continue;
 
 			TreeItem t = new TreeItem(treeLanguages, SWT.NONE);

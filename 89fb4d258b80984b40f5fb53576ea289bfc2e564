@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOG3//87U\u003d",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/errorparsers/ErrorParserExtensionManager.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 614,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-04-18T19:16:16Z",
+      "side": 1,
+      "message": "Please indent for readability",
+      "revId": "89fb4d258b80984b40f5fb53576ea289bfc2e564",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//87Q\u003d",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/errorparsers/ErrorParserExtensionManager.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 616,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-04-18T19:16:16Z",
+      "side": 1,
+      "message": "Please indent for readability.",
+      "revId": "89fb4d258b80984b40f5fb53576ea289bfc2e564",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//87Y\u003d",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/errorparsers/ErrorParserExtensionManager.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 624,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-04-18T19:16:16Z",
+      "side": 1,
+      "message": "Please make this plural too: context -\u003e contexts",
+      "revId": "89fb4d258b80984b40f5fb53576ea289bfc2e564",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

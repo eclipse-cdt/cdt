@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Ericsson and others.
+ * Copyright (c) 2008, 2012 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     Ericsson - initial API and implementation
  *     Onur Akdemir (TUBITAK BILGEM-ITI) - Multi-process debugging (Bug 237306)
  *     John Dallaway - GDB 7.x MI thread details field ignored (Bug 325556)
+ *     Marc Khouzam (Ericsson) - Make each thread an IDisassemblyDMContext (bug 352748) 
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
@@ -118,7 +119,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 	 */
 	@Immutable
 	private static class MIExecutionDMC extends AbstractDMContext 
-	implements IMIExecutionDMContext
+	implements IMIExecutionDMContext, IDisassemblyDMContext
 	{
 		/**
 		 * String ID that is used to identify the thread in the GDB/MI protocol.

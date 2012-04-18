@@ -10,6 +10,7 @@
  *     Ericsson	AB		  - Modified for handling of multiple threads
  *     Vladimir Prus (Mentor Graphics) - Add proper stop reason for step return (Bug 362274) 
  *     Indel AG           - [369622] fixed moveToLine using MinGW
+ *     Marc Khouzam (Ericsson) - Make each thread an IDisassemblyDMContext (bug 352748)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service;
 
@@ -37,6 +38,7 @@ import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointDMContext;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
 import org.eclipse.cdt.dsf.debug.service.IBreakpointsExtension.IBreakpointHitDMEvent;
 import org.eclipse.cdt.dsf.debug.service.ICachingService;
+import org.eclipse.cdt.dsf.debug.service.IDisassembly.IDisassemblyDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.BufferedCommandControl;
@@ -93,7 +95,7 @@ import org.osgi.framework.BundleContext;
  */
 public class MIRunControl extends AbstractDsfService implements IMIRunControl, ICachingService
 {
-	private static class MIExecutionDMC extends AbstractDMContext implements IMIExecutionDMContext
+	private static class MIExecutionDMC extends AbstractDMContext implements IMIExecutionDMContext, IDisassemblyDMContext
 	{
 		/**
 		 * Integer ID that is used to identify the thread in the GDB/MI protocol.

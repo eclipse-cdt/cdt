@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.codan.core.CodanCorePlugin;
@@ -51,7 +52,9 @@ import org.osgi.service.prefs.Preferences;
 public class CheckersRegistry implements Iterable<IChecker>, ICheckersRegistry {
 	private static final String NAME_ATTR = "name"; //$NON-NLS-1$
 	private static final String ID_ATTR = "id"; //$NON-NLS-1$
-	private static final String EXTENSION_POINT_NAME = "checkers"; //$NON-NLS-1$
+	private static final String CLASS_ATTR = "class"; //$NON-NLS-1$
+	private static final String CHECKERS_EXTENSION_POINT_NAME = "checkers"; //$NON-NLS-1$
+	private static final String CHECKER_ENABLEMENT_EXTENSION_POINT_NAME = "checkerEnablement"; //$NON-NLS-1$
 	private static final String CHECKER_ELEMENT = "checker"; //$NON-NLS-1$
 	private static final String PROBLEM_ELEMENT = "problem"; //$NON-NLS-1$
 	private static final String CATEGORY_ELEMENT = "category"; //$NON-NLS-1$
@@ -60,19 +63,21 @@ public class CheckersRegistry implements Iterable<IChecker>, ICheckersRegistry {
 	private Collection<IChecker> checkers = new ArrayList<IChecker>();
 	private static CheckersRegistry instance;
 	private static boolean initialized = false;
-	private HashMap<Object, IProblemProfile> profiles = new HashMap<Object, IProblemProfile>();
-	private HashMap<IChecker, Collection<IProblem>> problemList = new HashMap<IChecker, Collection<IProblem>>();
-	private Map<String, IChecker> problemCheckerMapping = new HashMap<String, IChecker>();
+	private final Map<Object, IProblemProfile> profiles = new HashMap<Object, IProblemProfile>();
+	private final Map<IChecker, Collection<IProblem>> problemList = new HashMap<IChecker, Collection<IProblem>>();
+	private final Map<String, IChecker> problemCheckerMapping = new HashMap<String, IChecker>();
+	private final List<ICheckerEnablementVerifier> checkerEnablementVerifiers = new ArrayList<ICheckerEnablementVerifier>();
 
 	private CheckersRegistry() {
 		instance = this;
 		profiles.put(DEFAULT, new ProblemProfile(DEFAULT));
 		readCheckersRegistry();
+		readCheckerEnablementVerifier();
 		initialized = true;
 	}
 
 	private void readCheckersRegistry() {
-		IExtensionPoint ep = Platform.getExtensionRegistry().getExtensionPoint(CodanCorePlugin.PLUGIN_ID, EXTENSION_POINT_NAME);
+		IExtensionPoint ep = getExtensionPoint(CHECKERS_EXTENSION_POINT_NAME);
 		if (ep == null)
 			return;
 		IConfigurationElement[] elements = ep.getConfigurationElements();
@@ -141,7 +146,7 @@ public class CheckersRegistry implements Iterable<IChecker>, ICheckersRegistry {
 					name = id;
 				IChecker checkerObj = null;
 				try {
-					Object checker = configurationElement.createExecutableExtension("class"); //$NON-NLS-1$
+					Object checker = configurationElement.createExecutableExtension(CLASS_ATTR);
 					checkerObj = (IChecker) checker;
 					addChecker(checkerObj);
 				} catch (CoreException e) {
@@ -234,6 +239,21 @@ public class CheckersRegistry implements Iterable<IChecker>, ICheckersRegistry {
 					+ " missing required attribute: " + configurationElement.getName() //$NON-NLS-1$
 					+ "." + name); //$NON-NLS-1$
 		return elementValue;
+	}
+
+	private void readCheckerEnablementVerifier() {
+		IExtensionPoint ep = getExtensionPoint(CHECKER_ENABLEMENT_EXTENSION_POINT_NAME);
+		for (IConfigurationElement ce : ep.getConfigurationElements()) {
+			try {
+				checkerEnablementVerifiers.add((ICheckerEnablementVerifier) ce.createExecutableExtension(CLASS_ATTR));
+			} catch (CoreException e) {
+				CodanCorePlugin.log(e);
+			}
+		}
+	}
+
+	private IExtensionPoint getExtensionPoint(String extensionPointName) {
+		return Platform.getExtensionRegistry().getExtensionPoint(CodanCorePlugin.PLUGIN_ID, extensionPointName);
 	}
 
 	/*
@@ -459,7 +479,15 @@ public class CheckersRegistry implements Iterable<IChecker>, ICheckersRegistry {
 	 * @param mode
 	 * @return <code>true</code> if the checker should run.
 	 */
-	public boolean isCheckerEnabledForLaunchMode(IChecker checker, IResource resource, CheckerLaunchMode mode) {
+	public boolean isCheckerEnabled(IChecker checker, IResource resource, CheckerLaunchMode mode) {
+		if (resource.getType() != IResource.FILE) {
+			return false;
+		}
+		for (ICheckerEnablementVerifier verifier : checkerEnablementVerifiers) {
+			if (!verifier.isCheckerEnabled(checker, resource, mode)) {
+				return false;
+			}
+		}
 		IProblemProfile resourceProfile = getResourceProfile(resource);
 		Collection<IProblem> refProblems = getRefProblems(checker);
 		boolean enabled = false;

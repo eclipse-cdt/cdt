@@ -171,6 +171,14 @@
 		<module>build/org.eclipse.cdt.autotools.source-feature</module>
 		<module>build/org.eclipse.linuxtools.cdt.autotools.core</module>
 
+		<module>testsrunner/org.eclipse.cdt.testsrunner</module>
+		<module>testsrunner/org.eclipse.cdt.testsrunner.boost</module>
+		<module>testsrunner/org.eclipse.cdt.testsrunner.gtest</module>
+		<module>testsrunner/org.eclipse.cdt.testsrunner.qttest</module>
+		<module>testsrunner/org.eclipse.cdt.testsrunner.test</module>
+		<module>testsrunner/org.eclipse.cdt.testsrunner.feature</module>
+		<module>testsrunner/org.eclipse.cdt.testsrunner.source.feature</module>
+		
 <!-- 
 		<module>lrparser/org.eclipse.cdt.core.lrparser.tests</module>
 		<module>upc/org.eclipse.cdt.core.parser.upc.tests</module>

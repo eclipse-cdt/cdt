@@ -984,7 +984,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
     	Job notify= new Job(Messages.PDOMManager_notifyJob_label) {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-				while(true) {
+				while (true) {
 					final Runnable r;
 					synchronized (fChangeEvents) {
 						if (fChangeEvents.isEmpty()) {
@@ -1027,11 +1027,12 @@ public class PDOMManager implements IWritableIndexManager, IListener {
     				Object[] listeners= fStateListeners.getListeners();
     				for (Object listener2 : listeners) {
     					final IIndexerStateListener listener = (IIndexerStateListener) listener2;
-    					SafeRunner.run(new ISafeRunnable(){
+    					SafeRunner.run(new ISafeRunnable() {
     						@Override
 							public void handleException(Throwable exception) {
     							CCorePlugin.log(exception);
     						}
+
     						@Override
 							public void run() throws Exception {
     							listener.indexChanged(fIndexerStateEvent);
@@ -1064,11 +1065,12 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 					Object[] listeners= fChangeListeners.getListeners();
 					for (Object listener2 : listeners) {
 						final IIndexChangeListener listener = (IIndexChangeListener) listener2;
-						SafeRunner.run(new ISafeRunnable(){
+						SafeRunner.run(new ISafeRunnable() {
 							@Override
 							public void handleException(Throwable exception) {
 								CCorePlugin.log(exception);
 							}
+
 							@Override
 							public void run() throws Exception {
 								listener.indexChanged(fIndexChangeEvent);
@@ -1433,11 +1435,12 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 				@Override
 				public void run() {
 					for (final IndexerSetupParticipant p : participants) {
-						SafeRunner.run(new ISafeRunnable(){
+						SafeRunner.run(new ISafeRunnable() {
 							@Override
 							public void handleException(Throwable exception) {
 								CCorePlugin.log(exception);
 							}
+
 							@Override
 							public void run() throws Exception {
 								p.onIndexerSetup(cproject);

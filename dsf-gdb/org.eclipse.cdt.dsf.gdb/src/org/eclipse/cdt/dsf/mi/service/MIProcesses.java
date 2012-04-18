@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Ericsson and others.
+ * Copyright (c) 2008, 2012 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Ericsson - initial API and implementation
+ *     Marc Khouzam (Ericsson) - Make each thread an IDisassemblyDMContext (bug 352748) 
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service;
 
@@ -76,7 +77,7 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
 	 */
 	@Immutable
 	private static class MIExecutionDMC extends AbstractDMContext 
-	implements IMIExecutionDMContext
+	implements IMIExecutionDMContext, IDisassemblyDMContext
 	{
 		/**
 		 * String ID that is used to identify the thread in the GDB/MI protocol.

@@ -214,10 +214,11 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  121.0 - Multiple variants of included header file, bug 197989.
 	 *  122.0 - Compacting strings
 	 *  123.0 - Combined file size and encoding hash code.
+	 *  124.0 - GCC attributes and NO_RETURN flag for functions.
 	 */
-	private static final int MIN_SUPPORTED_VERSION= version(123, 0);
-	private static final int MAX_SUPPORTED_VERSION= version(123, Short.MAX_VALUE);
-	private static final int DEFAULT_VERSION = version(123, 0);
+	private static final int MIN_SUPPORTED_VERSION= version(124, 0);
+	private static final int MAX_SUPPORTED_VERSION= version(124, Short.MAX_VALUE);
+	private static final int DEFAULT_VERSION = version(124, 0);
 
 	private static int version(int major, int minor) {
 		return (major << 16) + minor;

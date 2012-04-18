@@ -172,6 +172,23 @@
     },
     {
       "key": {
+        "uuid": "AABOG3//9Ac\u003d",
+        "filename": "codan/org.eclipse.cdt.codan.core/src/org/eclipse/cdt/codan/core/param/SharedRootProblemPreference.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2012-04-18T00:58:43Z",
+      "side": 1,
+      "message": "clone method already assigned map.hash \u003d this.hash - this is how clone works. It does shallow clone - all object assigned by reference.",
+      "revId": "1c4341586b91ce6e0054b49fdd3f0399edda3eb5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOG3//9B0\u003d",
         "filename": "codan/org.eclipse.cdt.codan.core/src/org/eclipse/cdt/codan/internal/core/CheckersRegistry.java",
         "patchSetId": 2

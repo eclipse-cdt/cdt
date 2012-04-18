@@ -72,7 +72,10 @@ public interface IChecker {
 	 *
 	 * @param resource the resource to run on.
 	 * @return true if checker should be run on this resource.
+	 * @deprecated  Replaced by {@code CheckersRegistry.isCheckerEnabled((IChecker IResource, CheckerLaunchMode)}
+	 * and {@code ICheckerEnablementVerifier.isCheckerEnabled(IChecker IResource, CheckerLaunchMode)}.
 	 */
+	@Deprecated
 	boolean enabledInContext(IResource resource);
 
 	/**

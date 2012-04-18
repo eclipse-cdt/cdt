@@ -87,6 +87,7 @@ public class CodanUIMessages extends NLS {
 	public static String LaunchModesPropertyPage_RunOnDemand;
 	public static String LaunchModesPropertyPage_RunOnFullBuild;
 	public static String LaunchModesPropertyPage_RunOnIncrementalBuild;
+	public static String LaunchModesPropertyPage_RunOnFileSave;
 
 	static {
 		NLS.initializeMessages(CodanUIMessages.class.getName(), CodanUIMessages.class);

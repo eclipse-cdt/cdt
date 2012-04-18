@@ -105,9 +105,9 @@ public class ASTProblem extends ASTNode implements IASTProblem {
 		setOffset(startNumber);
 		setLength(endNumber-startNumber);
 
-		this.isError= isError;
         this.id = id;
         this.arg = arg;
+		this.isError= isError;
     }
 
 	public ASTProblem(int id, char[] arg, boolean isError) {

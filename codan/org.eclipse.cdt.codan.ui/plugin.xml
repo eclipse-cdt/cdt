@@ -238,4 +238,8 @@
 
       </objectContribution>
     </extension>
+   <extension
+         point="org.eclipse.cdt.codan.core.checkerEnablement">
+         <verifier class="org.eclipse.cdt.codan.internal.ui.CheckerEnablementVerifier" />
+   </extension>
 </plugin>

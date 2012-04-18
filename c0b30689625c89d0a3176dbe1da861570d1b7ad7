@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOG3//88Q\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/tracepointactions/CollectActionPage.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-04-18T21:56:13Z",
+      "side": 1,
+      "message": "I don\u0027t know why \"CollectAction\" is not an API, but it\u0027s probably better to add \"Suppress discouraged access\" restriction.",
+      "revId": "c0b30689625c89d0a3176dbe1da861570d1b7ad7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//85g\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/tracepointactions/CollectActionPage.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-04-18T21:56:13Z",
+      "side": 1,
+      "message": "I think it would be good to restrict \u0027fTreatCharPtrAsStringLimit\u0027 to accept only non-negative integers. Of course, it is obvious that negative values are meaningless. But the question is what to do if a value is not an integer or negative, should we keep the old value? Currently the old value is erased.\nUnfortunately, we can\u0027t disable the \u0027OK\u0027 button - \u0027IBreakpointActionPage\u0027 doesn\u0027t provide access to the parent dialog.\nbut at least we can use control decorations to indicate an error and provide necessary help.",
+      "revId": "c0b30689625c89d0a3176dbe1da861570d1b7ad7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//85c\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/tracepointactions/CollectActionPage.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-04-18T21:56:13Z",
+      "side": 1,
+      "message": "Throwing an exception from \u0027getCharPtrAsStringLimit\u0027 instead of processing \u0027NumbeFormatException\u0027 inside it would allow us to keep the old limit value.",
+      "revId": "c0b30689625c89d0a3176dbe1da861570d1b7ad7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//88o\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/tracepointactions/CollectAction.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-04-18T21:56:13Z",
+      "side": 1,
+      "message": "This is not a part of this patch but isn\u0027t it better to log the error?",
+      "revId": "c0b30689625c89d0a3176dbe1da861570d1b7ad7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//88w\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/tracepointactions/CollectAction.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-04-18T21:56:13Z",
+      "side": 1,
+      "message": "I would use \"String.format()\" instead \"MessageFormat.format()\".",
+      "revId": "c0b30689625c89d0a3176dbe1da861570d1b7ad7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//89g\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/tests_7_4/GDBRemoteTracepointsTest_7_4.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-04-18T21:56:13Z",
+      "side": 1,
+      "message": "Is this empty block just an oversight or a trick that I\u0027m not aware of?",
+      "revId": "c0b30689625c89d0a3176dbe1da861570d1b7ad7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

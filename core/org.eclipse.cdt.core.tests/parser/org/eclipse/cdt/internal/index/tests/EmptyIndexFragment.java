@@ -201,4 +201,9 @@ public class EmptyIndexFragment implements IIndexFragment {
 	public IIndexScope[] getInlineNamespaces() {
 		return IIndexScope.EMPTY_INDEX_SCOPE_ARRAY;
 	}
+
+	@Override
+	public boolean isFullyInitialized() {
+		return true;
+	}
 }

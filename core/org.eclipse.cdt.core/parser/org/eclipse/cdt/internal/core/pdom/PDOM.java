@@ -1650,4 +1650,9 @@ public class PDOM extends PlatformObject implements IPDOM {
 		}
 		return linkage.getInlineNamespaces();
 	}
+
+	@Override
+	public boolean isFullyInitialized() {
+		return true;
+	}
 }

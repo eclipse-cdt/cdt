@@ -350,4 +350,10 @@ public class PDOMProxy implements IPDOM {
 
 		return IIndexScope.EMPTY_INDEX_SCOPE_ARRAY;
 	}
+
+
+	@Override
+	public synchronized boolean isFullyInitialized() {
+		return fDelegate != null;
+	}
 }

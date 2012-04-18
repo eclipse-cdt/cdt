@@ -80,6 +80,7 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 	private SizeofCalculator fSizeofCalculator;
 	/** The semaphore controlling exclusive access to the AST. */
 	private final Semaphore fSemaphore= new Semaphore(1);
+	private boolean fBasedOnIncompleteIndex;
 
 	@Override
 	public final IASTTranslationUnit getTranslationUnit() {
@@ -339,6 +340,15 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 
 	public final void setIsForContentAssist(boolean forContentAssist) {
 		fForContentAssist= forContentAssist;
+	}
+
+	@Override
+	public boolean isBasedOnIncompleteIndex() {
+		return fBasedOnIncompleteIndex;
+	}
+
+	public void setBasedOnIncompleteIndex(boolean basedOnIncompleteIndex) {
+		fBasedOnIncompleteIndex = basedOnIncompleteIndex;
 	}
 
 	@Override

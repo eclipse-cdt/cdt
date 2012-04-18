@@ -349,4 +349,10 @@ public interface IIndexFragment {
 	 * @throws CoreException
 	 */
 	IIndexScope[] getInlineNamespaces() throws CoreException;
+
+	/**
+	 * Returns {@code true} if the index fragment is fully initialized. An fragment may not be fully
+	 * initialized during Eclipse startup, or soon after adding a new project to the workspace.
+	 */
+	boolean isFullyInitialized();
 }

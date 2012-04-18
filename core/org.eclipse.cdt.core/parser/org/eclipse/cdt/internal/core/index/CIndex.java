@@ -781,6 +781,15 @@ public class CIndex implements IIndex {
 		return result;
 	}
 
+	@Override
+	public boolean isFullyInitialized() {
+		for (IIndexFragment fragment : fFragments) {
+			if (!fragment.isFullyInitialized())
+				return false;
+		}
+		return true;
+	}
+
 	/**
 	 * A key used to uniquely identify an IIndexFragmentName object. Uniqueness is guaranteed only
 	 * for names corresponding to the same binding.

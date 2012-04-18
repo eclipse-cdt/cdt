@@ -445,4 +445,11 @@ public interface IIndex {
 	 * @since 5.3
 	 */
 	public IScope[] getInlineNamespaces() throws CoreException;
+
+	/**
+	 * Returns {@code true} if the index is fully initialized. An index may not be fully initialized
+	 * during Eclipse startup, or soon after adding a new project to the workspace.
+	 * @since 5.4
+	 */
+	public boolean isFullyInitialized();
 }

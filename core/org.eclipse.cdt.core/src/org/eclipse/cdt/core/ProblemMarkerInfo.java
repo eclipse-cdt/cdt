@@ -35,6 +35,14 @@ public  class ProblemMarkerInfo {
 		
 		public IResource file;
 		public int lineNumber;
+		/**
+		 * @since 5.4
+		 */
+		public int startChar;
+		/**
+		 * @since 5.4
+		 */
+		public int endChar;
 		public String description;
 		public int severity;
 		public String variableName;
@@ -53,6 +61,24 @@ public  class ProblemMarkerInfo {
 		 * @param variableName - the name of the variable involved in the error if any.
 		 */
 		public ProblemMarkerInfo(IResource file, int lineNumber, String description, int severity, String variableName) {
+			this(file, lineNumber, -1,-1, description, severity, variableName);
+		}
+
+		/**
+		 * Create a new {@link ProblemMarkerInfo} object.
+		 * 
+		 * @param file - the file where the problem has occurred.
+		 * @param lineNumber - the line number of the problem.
+		 * @param startChar - start char of the problem.
+		 * @param endChar - end char of the problem.
+		 * @param description - a description of the problem.
+		 * @param severity - the severity of the problem, see {@link IMarkerGenerator}
+		 *        for acceptable severity values.
+		 * @param variableName - the name of the variable involved in the error if any.
+		 * @since 5.4
+		 */
+		public ProblemMarkerInfo(IResource file, int lineNumber, int startChar, int endChar, 
+				String description, int severity, String variableName) {
 			this.file = (file != null) ? file : ResourcesPlugin.getWorkspace().getRoot();
 			this.lineNumber = lineNumber;
 			this.description = description;
@@ -61,6 +87,8 @@ public  class ProblemMarkerInfo {
 			this.externalPath = null ;
 			this.type = null;
 			this.attributes = new HashMap<String, String>();
+			this.startChar = -1;
+			this.endChar = -1;
 		}
 
 		/**

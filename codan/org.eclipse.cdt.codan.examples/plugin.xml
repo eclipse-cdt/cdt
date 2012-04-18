@@ -42,6 +42,42 @@
                 name="Search string error">
           </problem>
        </checker>
+      <category
+            id="org.eclipse.cdt.codan.checkers.cppcheck"
+            name="%checker.name.Cppcheck">
+      </category>
+      <checker
+            class="org.eclipse.cdt.codan.examples.checkers.cppcheck.CppcheckChecker"
+            id="org.eclipse.cdt.codan.checkers.CppcheckChecker"
+            name="Cppcheck">
+         <problem
+               category="org.eclipse.cdt.codan.checkers.cppcheck"
+               defaultEnabled="false"
+               defaultSeverity="Error"
+               description="%problem.description.Cppcheck.Error"
+               id="org.eclipse.cdt.codan.checkers.cppcheck.error"
+               messagePattern="%problem.messagePattern.Cppcheck.all"
+               name="%problem.name.Cppcheck.Error">
+         </problem>
+         <problem
+               category="org.eclipse.cdt.codan.checkers.cppcheck"
+               defaultEnabled="false"
+               defaultSeverity="Warning"
+               description="%problem.description.Cppcheck.Warning"
+               id="org.eclipse.cdt.codan.checkers.cppcheck.warning"
+               messagePattern="%problem.messagePattern.Cppcheck.all"
+               name="%problem.name.Cppcheck.Warning">
+         </problem>
+         <problem
+               category="org.eclipse.cdt.codan.checkers.cppcheck"
+               defaultEnabled="false"
+               defaultSeverity="Warning"
+               description="%problem.description.Cppcheck.Syntax"
+               id="org.eclipse.cdt.codan.checkers.cppcheck.style"
+               messagePattern="%problem.messagePattern.Cppcheck.all"
+               name="%problem.name.Cppcheck.Syntax">
+         </problem>
+      </checker>
    </extension>
        <extension
           point="org.eclipse.cdt.codan.ui.codanProblemDetails">
@@ -54,4 +90,17 @@
              >
        </problemDetails>
     </extension>
+   <extension
+         id="CodanErrorParser"
+         name="name"
+         point="org.eclipse.cdt.core.ErrorParser">
+      <errorparser
+            class="org.eclipse.cdt.codan.examples.checkers.cppcheck.CppcheckOutputParser"
+            id="org.eclipse.cdt.codan.checkers.externaltool.CppcheckChecker"
+            name="%errorparser.name.cppcheck">
+         <context
+               type="codan">
+         </context>
+      </errorparser>
+   </extension>
 </plugin>

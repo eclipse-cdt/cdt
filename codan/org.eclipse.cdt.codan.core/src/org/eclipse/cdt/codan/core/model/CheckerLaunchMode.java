@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2011, 2012 Alena Laskavaia and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Alena Laskavaia  - initial API and implementation
+ *     Alex Ruiz (Google)
+ *******************************************************************************/
 package org.eclipse.cdt.codan.core.model;
 
 /**
@@ -12,19 +23,25 @@ package org.eclipse.cdt.codan.core.model;
  */
 public enum CheckerLaunchMode {
 	/**
-	 * checker run when full build is running
+	 * Checker runs when full build is running.
 	 */
 	RUN_ON_FULL_BUILD,
 	/**
-	 * checker run when incremental build is running
+	 * Checker runs when incremental build is running.
 	 */
 	RUN_ON_INC_BUILD,
 	/**
-	 * checker run in editor as you type
+	 * Checker runs when a file is saved or opened. Checker will not run if the file is an editor
+	 * with unsaved changes.
+	 * @since 2.1
+	 */
+	RUN_ON_FILE_SAVE,
+	/**
+	 * Checker runs in editor as you type.
 	 */
 	RUN_AS_YOU_TYPE,
 	/**
-	 * checker run when explicit command is given
+	 * Checker runs when explicit command is given.
 	 */
 	RUN_ON_DEMAND,
 }

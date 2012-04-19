@@ -96,61 +96,43 @@ public class CReconciler extends MonoReconciler {
 		public boolean isConflicting(ISchedulingRule rule) {
 			return rule == this;
 		}
-		
 	}
 
 	/**
 	 * Internal part listener for activating the reconciler.
 	 */
 	private class PartListener implements IPartListener2 {
-		/*
-		 * @see org.eclipse.ui.IPartListener2#partActivated(org.eclipse.ui.IWorkbenchPartReference)
-		 */
 		@Override
 		public void partActivated(IWorkbenchPartReference partRef) {
 		}
-		/*
-		 * @see org.eclipse.ui.IPartListener2#partBroughtToTop(org.eclipse.ui.IWorkbenchPartReference)
-		 */
+
 		@Override
 		public void partBroughtToTop(IWorkbenchPartReference partRef) {
 		}
-		/*
-		 * @see org.eclipse.ui.IPartListener2#partClosed(org.eclipse.ui.IWorkbenchPartReference)
-		 */
+
 		@Override
 		public void partClosed(IWorkbenchPartReference partRef) {
 		}
-		/*
-		 * @see org.eclipse.ui.IPartListener2#partDeactivated(org.eclipse.ui.IWorkbenchPartReference)
-		 */
+
 		@Override
 		public void partDeactivated(IWorkbenchPartReference partRef) {
 		}
-		/*
-		 * @see org.eclipse.ui.IPartListener2#partHidden(org.eclipse.ui.IWorkbenchPartReference)
-		 */
+
 		@Override
 		public void partHidden(IWorkbenchPartReference partRef) {
 			if (partRef.getPart(false) == fTextEditor) {
 				setEditorActive(false);
 			}
 		}
-		/*
-		 * @see org.eclipse.ui.IPartListener2#partInputChanged(org.eclipse.ui.IWorkbenchPartReference)
-		 */
+
 		@Override
 		public void partInputChanged(IWorkbenchPartReference partRef) {
 		}
-		/*
-		 * @see org.eclipse.ui.IPartListener2#partOpened(org.eclipse.ui.IWorkbenchPartReference)
-		 */
+
 		@Override
 		public void partOpened(IWorkbenchPartReference partRef) {
 		}
-		/*
-		 * @see org.eclipse.ui.IPartListener2#partVisible(org.eclipse.ui.IWorkbenchPartReference)
-		 */
+
 		@Override
 		public void partVisible(IWorkbenchPartReference partRef) {
 			if (partRef.getPart(false) == fTextEditor) {
@@ -164,7 +146,6 @@ public class CReconciler extends MonoReconciler {
 	 * Internal Shell activation listener for activating the reconciler.
 	 */
 	private class ActivationListener extends ShellAdapter {
-
 		private Control fControl;
 
 		public ActivationListener(Control control) {
@@ -172,9 +153,6 @@ public class CReconciler extends MonoReconciler {
 			fControl= control;
 		}
 
-		/*
-		 * @see org.eclipse.swt.events.ShellListener#shellActivated(org.eclipse.swt.events.ShellEvent)
-		 */
 		@Override
 		public void shellActivated(ShellEvent e) {
 			if (!fControl.isDisposed() && fControl.isVisible()) {
@@ -184,9 +162,6 @@ public class CReconciler extends MonoReconciler {
 			}
 		}
 
-		/*
-		 * @see org.eclipse.swt.events.ShellListener#shellDeactivated(org.eclipse.swt.events.ShellEvent)
-		 */
 		@Override
 		public void shellDeactivated(ShellEvent e) {
 			if (!fControl.isDisposed() && fControl.getShell() == e.getSource()) {
@@ -199,9 +174,6 @@ public class CReconciler extends MonoReconciler {
 	 * Internal C element changed listener
 	 */
 	private class ElementChangedListener implements IElementChangedListener {
-		/*
-		 * @see org.eclipse.cdt.core.model.IElementChangedListener#elementChanged(org.eclipse.cdt.core.model.ElementChangedEvent)
-		 */
 		@Override
 		public void elementChanged(ElementChangedEvent event) {
 			if (event.getType() == ElementChangedEvent.POST_CHANGE) {
@@ -246,9 +218,6 @@ public class CReconciler extends MonoReconciler {
 	private class IndexerListener implements IIndexerStateListener, IIndexChangeListener {
 		private boolean fIndexChanged;
 
-		/*
-		 * @see org.eclipse.cdt.core.index.IIndexerStateListener#indexChanged(org.eclipse.cdt.core.index.IIndexerStateEvent)
-		 */
 		@Override
 		public void indexChanged(IIndexerStateEvent event) {
 			if (event.indexerIsIdle()) {
@@ -263,9 +232,6 @@ public class CReconciler extends MonoReconciler {
 			}
 		}
 
-		/*
-		 * @see org.eclipse.cdt.core.index.IIndexChangeListener#indexChanged(org.eclipse.cdt.core.index.IIndexChangeEvent)
-		 */
 		@Override
 		public void indexChanged(IIndexChangeEvent event) {
 			if (!fIndexChanged && isRelevantProject(event.getAffectedProject())) {
@@ -305,9 +271,6 @@ public class CReconciler extends MonoReconciler {
 		fTextEditor= editor;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.reconciler.IReconciler#install(org.eclipse.jface.text.ITextViewer)
-	 */
 	@Override
 	public void install(ITextViewer textViewer) {
 		super.install(textViewer);
@@ -335,9 +298,6 @@ public class CReconciler extends MonoReconciler {
 			}});
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.reconciler.IReconciler#uninstall()
-	 */
 	@Override
 	public void uninstall() {
 		fTriggerReconcilerJob.cancel();
@@ -369,9 +329,6 @@ public class CReconciler extends MonoReconciler {
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.reconciler.AbstractReconciler#forceReconciling()
-	 */
 	@Override
 	protected void forceReconciling() {
 		if (!fInitialProcessDone)
@@ -379,18 +336,12 @@ public class CReconciler extends MonoReconciler {
 		super.forceReconciling();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.reconciler.AbstractReconciler#aboutToBeReconciled()
-	 */
 	@Override
 	protected void aboutToBeReconciled() {
-		CCompositeReconcilingStrategy strategy= (CCompositeReconcilingStrategy)getReconcilingStrategy(IDocument.DEFAULT_CONTENT_TYPE);
+		CCompositeReconcilingStrategy strategy= (CCompositeReconcilingStrategy) getReconcilingStrategy(IDocument.DEFAULT_CONTENT_TYPE);
 		strategy.aboutToBeReconciled();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.reconciler.MonoReconciler#initialProcess()
-	 */
 	@Override
 	protected void initialProcess() {
 		super.initialProcess();
@@ -400,9 +351,6 @@ public class CReconciler extends MonoReconciler {
 		} 
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.reconciler.MonoReconciler#process(org.eclipse.jface.text.reconciler.DirtyRegion)
-	 */
 	@Override
 	protected void process(DirtyRegion dirtyRegion) {
 		fIsReconciling= true;
@@ -469,7 +417,6 @@ public class CReconciler extends MonoReconciler {
 		return false;
 	}
 
-
 	private boolean isRelevantProject(ICProject affectedProject) {
 		if (affectedProject == null) {
 			return false;
@@ -499,5 +446,4 @@ public class CReconciler extends MonoReconciler {
 		}
 		return false;
 	}
-
 }

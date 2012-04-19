@@ -568,8 +568,9 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 						ManagedBuildManager.setOption(res, dst, op2, boolVal);
 						break;
 					case IOption.ENUMERATED :
+					case IOption.TREE :
 						String enumVal = op1.getStringValue();
-						String enumId = op1.getEnumeratedId(enumVal);
+						String enumId = op1.getId(enumVal);
 						String out = (enumId != null && enumId.length() > 0) ? enumId : enumVal;
 						ManagedBuildManager.setOption(res, dst, op2, out);
 						break;

@@ -298,6 +298,7 @@ public class OptionEnablementExpression extends AndExpression{
 					}
 					break;
 				case IOption.ENUMERATED:
+				case IOption.TREE:
 				case IOption.STRING:
 					if(extensionAdjustment)
 						setOption.setValue(value);

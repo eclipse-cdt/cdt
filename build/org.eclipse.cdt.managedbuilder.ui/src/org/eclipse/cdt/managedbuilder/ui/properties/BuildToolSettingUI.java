@@ -20,6 +20,7 @@ import java.util.Vector;
 
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IOption;
+import org.eclipse.cdt.managedbuilder.core.IOption.ITreeRoot;
 import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.internal.core.MultiResourceInfo;
@@ -315,6 +316,20 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 								}
 								if (!enumeration.equals("")) //$NON-NLS-1$
 											setOption(opt, enumeration);
+								break;
+							case IOption.TREE :
+								String selectedID = ""; //$NON-NLS-1$
+								ITreeRoot treeRoot = opt.getTreeRoot();
+								String[] treeValues = opt.getApplicableValues();
+								for (int i = 0; i < treeValues.length; i++) {
+									if (opt.getCommand(treeValues[i]).equals(
+											optionValue)) {
+										selectedID = treeValues[i];
+										optionValueExist = true;
+									}
+								}
+								if (!selectedID.equals("")) //$NON-NLS-1$
+											setOption(opt, selectedID);
 								break;
 							case IOption.STRING_LIST :
 							case IOption.INCLUDE_PATH :

@@ -7,11 +7,13 @@
  *
  * Contributors:
  *     Red Hat Inc. - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.autotools.core;
 
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
 import java.io.LineNumberReader;
 import java.lang.reflect.Method;
 import java.util.regex.Matcher;
@@ -29,11 +31,10 @@ import org.eclipse.core.runtime.Path;
 // possibly other data in the future.  The standard CDT ErrorParserManager doesn't allow
 // us to pass an extended ProblemMarkerInfo, so we are forced to have our own mechanism
 // which is similar to the CDT one.
-public class ErrorParser extends MarkerGenerator implements IErrorParser{
-
+public class ErrorParser extends MarkerGenerator implements IErrorParser {
 	public static final String ID = AutotoolsPlugin.PLUGIN_ID + ".errorParser"; //$NON-NLS-1$
 	private Pattern pkgconfigError = 
-		Pattern.compile(".*?(configure:\\s+error:\\s+Package requirements\\s+\\((.*?)\\)\\s+were not met).*"); //$NON-NLS-1$
+			Pattern.compile(".*?(configure:\\s+error:\\s+Package requirements\\s+\\((.*?)\\)\\s+were not met).*"); //$NON-NLS-1$
 	private Pattern genconfigError = 
 			Pattern.compile(".*?configure:\\s+error:\\s+(.*)"); //$NON-NLS-1$
 	private Pattern checkingFail = 
@@ -54,6 +55,7 @@ public class ErrorParser extends MarkerGenerator implements IErrorParser{
 		this.sourcePath = sourcePath;
 	}
 
+	@Override
 	public boolean processLine(String line,
 			org.eclipse.cdt.core.ErrorParserManager eoParser) {
 
@@ -149,10 +151,9 @@ public class ErrorParser extends MarkerGenerator implements IErrorParser{
 		if (!file.exists())
 			return null;
 
-		FileReader stream;
+		LineNumberReader reader = null;
 		try {
-			stream = new FileReader(file);
-			LineNumberReader reader = new LineNumberReader(stream);
+			reader = new LineNumberReader(new FileReader(file));
 
 			// look for something like:
 			// if test "${ac_cv_prog_WINDRES+set}" = set; then :
@@ -179,10 +180,16 @@ public class ErrorParser extends MarkerGenerator implements IErrorParser{
 				}
 				line = reader.readLine();
 			}
-			stream.close();
-
 		} catch (Exception e) {
 			throw new RuntimeException(e);
+		} finally {
+			if (reader != null) {
+				try {
+					reader.close();
+				} catch (IOException e) {
+					// Ignore.
+				}
+			}
 		}
 
 		return null;
@@ -196,31 +203,34 @@ public class ErrorParser extends MarkerGenerator implements IErrorParser{
 	 * @return
 	 */
 	private int getErrorConfigLineNumber(String name) {
+		LineNumberReader reader = null;
 		try {
 			File file = new File(buildDir + "/config.log");
 			// If the log file is not present there is nothing we can do.
 			if (!file.exists())
 				return -1;
 
-			FileReader stream = new FileReader(file);
-			LineNumberReader reader = new LineNumberReader(stream);
+			reader = new LineNumberReader(new FileReader(file));
 
-			Pattern errorPattern = Pattern
-					.compile("configure:(\\d+): checking for " + name); //$NON-NLS-1$
-			String line = reader.readLine();
-			while (line != null) {
+			Pattern errorPattern =
+					Pattern.compile("configure:(\\d+): checking for " + name); //$NON-NLS-1$
+			String line;
+			while ((line = reader.readLine()) != null) {
 				Matcher m = errorPattern.matcher(line);
-
 				if (m.matches()) {
 					return Integer.parseInt(m.group(1));
 				}
-
-				line = reader.readLine();
 			}
-			stream.close();
-			
 		} catch (Exception e) {
 			return -1;
+		} finally {
+			if (reader != null) {
+				try {
+					reader.close();
+				} catch (IOException e) {
+					// Ignore.
+				}
+			}
 		}
 		return -1;
 	}

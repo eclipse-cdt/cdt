@@ -5787,7 +5787,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 		parseAndCheckBindings();
 	}
 	
-	//	template <template<typename T> class TT> struct  CTT {
+	//	template <template<typename T> class TT> struct CTT {
 	//		int y;
 	//	};
 	//	template <typename T> struct CT {
@@ -5798,6 +5798,21 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//		x.someFunc().y;
 	//	}
 	public void testSpecializationOfClassType_368610c() throws Exception {
+		parseAndCheckBindings();
+	}
+
+	//struct A {
+	//	int m(int i) const;
+	//	void m() const;
+	//};
+	//
+	//template<typename T> struct B {
+	//	typedef int (T::*Method)(int) const;
+	//	B(Method p) {}
+	//};
+	//
+	//B<const A> a(&A::m);
+	public void _testConstInTypeParameter_377223() throws Exception {
 		parseAndCheckBindings();
 	}
 }

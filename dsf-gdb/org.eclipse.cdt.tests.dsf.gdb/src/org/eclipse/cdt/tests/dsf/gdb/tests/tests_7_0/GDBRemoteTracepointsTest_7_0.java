@@ -68,33 +68,33 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 				IGDBLaunchConfigurationConstants.DEBUGGER_TRACEPOINT_FAST_THEN_NORMAL);
 	}
 
-	private DsfSession fSession;
-	private DsfServicesTracker fServicesTracker;
-	private IBreakpoints fBreakpointService;
+	protected DsfSession fSession;
+	protected DsfServicesTracker fServicesTracker;
+	protected IBreakpoints fBreakpointService;
 	//	private ITraceControl fTraceService;
-	private IBreakpointsTargetDMContext fBreakpointsDmc;
+	protected IBreakpointsTargetDMContext fBreakpointsDmc;
 	//	private ITraceTargetDMContext fTraceTargetDmc;
 
 	//	private int fTotalTracingBufferSize = 0;
 
-	private static final String SOURCE_FILE     = "TracepointTestApp.cc";
-	private static final String METHOD_NAME     = "testTracepoints";
-	private static final int    LINE_NUMBER_1   = 97;
-	private static final int    LINE_NUMBER_2   = 75;
-	private static final int    LINE_NUMBER_3   = 76;
-	private static final int    LINE_NUMBER_4   = 85;
-	private static final int    LINE_LOOP_2     = 109;
-	private static final String NO_CONDITION    = "";
-	private static final String NO_COMMANDS     = "";
+	protected static final String SOURCE_FILE     = "TracepointTestApp.cc";
+	protected static final String METHOD_NAME     = "testTracepoints";
+	protected static final int    LINE_NUMBER_1   = 97;
+	protected static final int    LINE_NUMBER_2   = 75;
+	protected static final int    LINE_NUMBER_3   = 76;
+	protected static final int    LINE_NUMBER_4   = 85;
+	protected static final int    LINE_LOOP_2     = 109;
+	protected static final String NO_CONDITION    = "";
+	protected static final String NO_COMMANDS     = "";
 	//    private static final int    LAST_LINE_NUMBER   = 94;
 	//    
 	// private static final int TOTAL_FRAMES_TO_BE_COLLECTED = 1 + 1 + 10 + 1 + 10000;
 
-	private final static int[] PASS_COUNTS = {12, 2, 32, 6, 128, 0, 0, 0, 0, 0, 0, 0};
-	private final static String[] CONDITIONS = {"gIntVar == 543", "gBoolVar == false", "counter == 3", "counter > 4", "counter > 2 && lIntVar == 12345"};
+	protected final static int[] PASS_COUNTS = {12, 2, 32, 6, 128, 0, 0, 0, 0, 0, 0, 0};
+	protected final static String[] CONDITIONS = {"gIntVar == 543", "gBoolVar == false", "counter == 3", "counter > 4", "counter > 2 && lIntVar == 12345"};
 
-	private static CollectAction[] COLLECT_ACTIONS = new CollectAction[10];
-	private static EvaluateAction[] EVAL_ACTIONS = new EvaluateAction[10];
+	protected static CollectAction[] COLLECT_ACTIONS = new CollectAction[10];
+	protected static EvaluateAction[] EVAL_ACTIONS = new EvaluateAction[10];
 	// private static WhileSteppingAction[] STEPPING_ACTION_1 = new WhileSteppingAction[3];
 
 	static {
@@ -248,7 +248,7 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 	}
 
 	// Clears the counters
-	private void clearEventCounters() {
+	protected void clearEventCounters() {
 		synchronized (lock) {
 			for (int i = 0; i < fBreakpointEvents.length; i++) {
 				fBreakpointEvents[i] = 0;
@@ -259,7 +259,7 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 	}
 
 	// Get the breakpoint hit count
-	private int getBreakpointEventCount(int event) {
+	protected int getBreakpointEventCount(int event) {
 		int count = 0;
 		synchronized (lock) {
 			count = fBreakpointEvents[event];
@@ -269,7 +269,7 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 
 	// Suspends the thread until an event is flagged
 	// NOTE: too simple for real life but good enough for this test suite
-	private void waitForBreakpointEvent() {
+	protected void waitForBreakpointEvent() {
 		synchronized (lock) {
 			while (!fBreakpointEvent) {
 				try {
@@ -291,7 +291,7 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 	// Breakpoint service methods (to use with tracepoints).
 	// *********************************************************************
 
-	private IBreakpointDMContext insertBreakpoint(final IBreakpointsTargetDMContext context,
+	protected IBreakpointDMContext insertBreakpoint(final IBreakpointsTargetDMContext context,
 			final Map<String,Object> attributes) throws InterruptedException
 			{
 		final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
@@ -317,7 +317,7 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 		return (IBreakpointDMContext)wait.getReturnInfo();
 			}
 
-	private void removeBreakpoint(final IBreakpointDMContext breakpoint) throws InterruptedException
+	protected void removeBreakpoint(final IBreakpointDMContext breakpoint) throws InterruptedException
 	{
 		final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 
@@ -338,7 +338,7 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 		assertTrue(wait.getMessage(), wait.isOK());
 	}
 
-	private void updateBreakpoint(final IBreakpointDMContext breakpoint,
+	protected void updateBreakpoint(final IBreakpointDMContext breakpoint,
 			final Map<String, Object> delta) throws InterruptedException
 			{
 		final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
@@ -360,7 +360,7 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 		assertTrue(wait.getMessage(), wait.isOK());
 			}
 
-	private IBreakpointDMData getBreakpoint(final IBreakpointDMContext breakpoint) throws InterruptedException
+	protected IBreakpointDMData getBreakpoint(final IBreakpointDMContext breakpoint) throws InterruptedException
 	{
 		final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 
@@ -384,7 +384,7 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 		return (IBreakpointDMData)wait.getReturnInfo();
 	}
 
-	private IBreakpointDMContext[] getBreakpoints(final IBreakpointsTargetDMContext context) throws InterruptedException
+	protected IBreakpointDMContext[] getBreakpoints(final IBreakpointsTargetDMContext context) throws InterruptedException
 	{
 		final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 
@@ -550,7 +550,7 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 	// Below are the tests for the control of tracepoints.
 	// *********************************************************************
 
-	private IBreakpointDMContext[] fTracepoints = null;
+	protected IBreakpointDMContext[] fTracepoints = null;
 
 	//	private void checkTraceStatus(boolean supported, boolean active, int frames, 
 	//			                      STOP_REASON_ENUM reason, Integer stoppingTracepoint) throws Throwable {
@@ -592,7 +592,7 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 	// GDB 7.0 does not support fast tracepoints, but GDB 7.2 will
 	protected boolean fastTracepointsSupported() { return false; }
 
-	private class TracepointData {
+	protected class TracepointData {
 		String sourceFile;
 		int lineNumber;
 		String condition;
@@ -616,7 +616,7 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 		}
 	}
 
-	private void checkTracepoints(TracepointData[] dataArray) throws Throwable {
+	protected void checkTracepoints(TracepointData[] dataArray) throws Throwable {
 		int numTracepoints = dataArray.length;
 
 		// Fetch the tp list from the backend

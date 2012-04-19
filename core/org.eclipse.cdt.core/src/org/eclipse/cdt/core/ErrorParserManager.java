@@ -918,7 +918,7 @@ outer:
 		for (IErrorParser[] parsers : fErrorParsers.values()) {
 			for (IErrorParser parser : parsers) {
 				if (parser instanceof IErrorParser3) {
-					((IErrorParser3) parser).endOfStream();
+					((IErrorParser3) parser).shutdown();
 				}
 			}
 		}

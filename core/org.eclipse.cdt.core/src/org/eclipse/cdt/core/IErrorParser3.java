@@ -18,5 +18,5 @@ public interface IErrorParser3 extends IErrorParser2 {
 	 * Called to let the parser know that the end of the error stream has been reached.
 	 * Can be used by the parser to flush its internal buffers.
 	 */
-	void endOfStream();
+	void shutdown();
 }

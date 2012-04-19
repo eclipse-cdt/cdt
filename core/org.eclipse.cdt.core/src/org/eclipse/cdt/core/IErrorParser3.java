@@ -15,7 +15,8 @@ package org.eclipse.cdt.core;
  */
 public interface IErrorParser3 extends IErrorParser2 {
 	/**
-	 * Notification that the stream of data to parse has ended.
+	 * Called to let the parser know that the end of the error stream has been reached.
+	 * Can be used by the parser to flush its internal buffers.
 	 */
-	void streamFinished();
+	void endOfStream();
 }

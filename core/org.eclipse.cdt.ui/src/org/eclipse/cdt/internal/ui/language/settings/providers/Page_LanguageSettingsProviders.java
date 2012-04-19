@@ -14,8 +14,6 @@ import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySu
 import org.eclipse.cdt.ui.newui.AbstractPage;
 import org.eclipse.cdt.ui.newui.ICPropertyTab;
 
-
-
 /**
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
@@ -27,9 +25,9 @@ public class Page_LanguageSettingsProviders extends AbstractPage {
 	protected boolean isSingle() {
 		return false;
 	}
-	
+
 	public boolean isLanguageSettingsProvidersEnabled() {
-		if (isLanguageSettingsProvidersEnabled==null) {
+		if (isLanguageSettingsProvidersEnabled == null) {
 			isLanguageSettingsProvidersEnabled = ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityEnabled(getProject());
 		}
 		return isLanguageSettingsProvidersEnabled;

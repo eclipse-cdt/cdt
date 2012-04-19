@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "AABOG3//82g\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/tracepointactions/CollectActionPage.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-04-19T18:23:13Z",
+      "side": 1,
+      "message": "I kept most of the Tracepoint stuff internal to allow us to make changes to it.  I didn\u0027t feel the feature was complete so I didn\u0027t want to fight against API restrictions.\n\nInstead of adding a \"suppress warning\", I added org.eclipse.cdt.dsf.gdb as a friend to the internal package in the MANIFEST.MF file.\n\nIs that ok?\n\nI should have done this from the start and I will go around and fix this for other such warnings (I\u0027ll do this in another bug).",
+      "parentUuid": "AABOG3//88Q\u003d",
+      "revId": "c0b30689625c89d0a3176dbe1da861570d1b7ad7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOG3//85g\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/tracepointactions/CollectActionPage.java",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2012-04-18T21:56:13Z",
       "side": 1,
       "message": "I think it would be good to restrict \u0027fTreatCharPtrAsStringLimit\u0027 to accept only non-negative integers. Of course, it is obvious that negative values are meaningless. But the question is what to do if a value is not an integer or negative, should we keep the old value? Currently the old value is erased.\nUnfortunately, we can\u0027t disable the \u0027OK\u0027 button - \u0027IBreakpointActionPage\u0027 doesn\u0027t provide access to the parent dialog.\nbut at least we can use control decorations to indicate an error and provide necessary help.",
+      "revId": "c0b30689625c89d0a3176dbe1da861570d1b7ad7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//81M\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/tracepointactions/CollectActionPage.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-04-19T18:23:13Z",
+      "side": 1,
+      "message": "I wasn\u0027t aware of controlDecorations.  The first time I saw them was in your timeout patch, so I copied your code and added it to the CollectActionPage.  It is quite nice.  Thanks!",
+      "parentUuid": "AABOG3//85g\u003d",
       "revId": "c0b30689625c89d0a3176dbe1da861570d1b7ad7",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "AABOG3//82M\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/tracepointactions/CollectActionPage.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-04-19T18:23:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//85c\u003d",
+      "revId": "c0b30689625c89d0a3176dbe1da861570d1b7ad7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOG3//88o\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/tracepointactions/CollectAction.java",
         "patchSetId": 2
@@ -64,6 +118,24 @@
       "writtenOn": "2012-04-18T21:56:13Z",
       "side": 1,
       "message": "This is not a part of this patch but isn\u0027t it better to log the error?",
+      "revId": "c0b30689625c89d0a3176dbe1da861570d1b7ad7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//82U\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/tracepointactions/CollectAction.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-04-19T18:23:13Z",
+      "side": 1,
+      "message": "I added logging functions to the GdbPlugin class, and I used them here and in the other 2 tracepoint actions.",
+      "parentUuid": "AABOG3//88o\u003d",
       "revId": "c0b30689625c89d0a3176dbe1da861570d1b7ad7",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "AABOG3//82Y\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/tracepointactions/CollectAction.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-04-19T18:23:13Z",
+      "side": 1,
+      "message": "It was a mistake of mine from the start to make that string translatable.  \u0027collect\u0027 must not be translated since it is sent to GDB.  I have fixed this for all three tracepoint actions.",
+      "parentUuid": "AABOG3//88w\u003d",
+      "revId": "c0b30689625c89d0a3176dbe1da861570d1b7ad7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOG3//89g\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/tests_7_4/GDBRemoteTracepointsTest_7_4.java",
         "patchSetId": 2
@@ -98,6 +188,24 @@
       "writtenOn": "2012-04-18T21:56:13Z",
       "side": 1,
       "message": "Is this empty block just an oversight or a trick that I\u0027m not aware of?",
+      "revId": "c0b30689625c89d0a3176dbe1da861570d1b7ad7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//82Q\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/tests_7_4/GDBRemoteTracepointsTest_7_4.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-04-19T18:23:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//89g\u003d",
       "revId": "c0b30689625c89d0a3176dbe1da861570d1b7ad7",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

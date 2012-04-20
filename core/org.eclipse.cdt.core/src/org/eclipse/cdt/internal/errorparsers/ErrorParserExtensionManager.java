@@ -25,8 +25,8 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.core.ErrorParserContext;
+import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.core.IErrorParser;
 import org.eclipse.cdt.core.IErrorParserNamed;
 import org.eclipse.cdt.core.IMarkerGenerator;
@@ -748,10 +748,10 @@ public class ErrorParserExtensionManager {
 	 * @return default error parsers IDs to be used if error parser list is empty.
 	 */
 	public static String[] getDefaultErrorParserIds() {
-		if (fDefaultErrorParserIds==null) {
-			return fAvailableErrorParsers.keySet().toArray(new String[0]);
+		if (fDefaultErrorParserIds == null) {
+			return getErrorParserIds(fAvailableErrorParsers, BUILD);
 		}
-		return fDefaultErrorParserIds.toArray(new String[0]);
+		return fDefaultErrorParserIds.toArray(new String[fDefaultErrorParserIds.size()]);
 	}
 
 	/**
@@ -777,7 +777,7 @@ public class ErrorParserExtensionManager {
 			int context) {
 		Pair<IErrorParserNamed, Integer> pair =
 				isExtension ? fExtensionErrorParsers.get(id) : fAvailableErrorParsers.get(id);
-		if (!isInContext(pair, context)) {
+		if (pair == null || !isInContext(pair, context)) {
 			return null;
 		}
 		IErrorParserNamed errorParser = pair.first;

@@ -2352,9 +2352,9 @@ public class CPPSemantics {
 	}
 
 	public static IBinding resolveFunction(LookupData data, ICPPFunction[] fns, boolean allowUDC) throws DOMException {
-	    fns= ArrayUtil.trim(ICPPFunction.class, fns);
-	    if (fns == null || fns.length == 0)
+	    if (fns == null || fns.length == 0 || fns[0] == null)
 	        return null;
+	    fns= ArrayUtil.trim(fns);
 	
 	    sortAstBeforeIndex(fns);
 	    	

@@ -5812,7 +5812,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//};
 	//
 	//B<const A> a(&A::m);
-	public void _testConstInTypeParameter_377223() throws Exception {
+	public void testConstInTypeParameter_377223() throws Exception {
 		parseAndCheckBindings();
 	}
 }

@@ -46,6 +46,7 @@ import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -1190,6 +1191,9 @@ public class CPPTemplates {
 					ICPPPointerToMemberType ptm = (ICPPPointerToMemberType) typeContainer;
 					IType memberOfClass = ptm.getMemberOfClass();
 					IType newMemberOfClass = instantiateType(memberOfClass, tpMap, packOffset, within);
+					if (newMemberOfClass instanceof IQualifierType) {
+						newMemberOfClass = ((IQualifierType) newMemberOfClass).getType();
+					}
 					if (!(newMemberOfClass instanceof ICPPClassType || newMemberOfClass instanceof UniqueType 
 							|| newMemberOfClass instanceof ICPPUnknownBinding)) {
 						return new ProblemType(ISemanticProblem.BINDING_INVALID_TYPE);

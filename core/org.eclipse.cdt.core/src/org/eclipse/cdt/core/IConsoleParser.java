@@ -6,7 +6,7 @@
  *  http://www.eclipse.org/legal/epl-v10.html
  *
  *  Contributors:
- *  IBM - Initial API and implementation
+ *      IBM - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core;
 
@@ -24,8 +24,8 @@ public interface IConsoleParser {
 	public boolean processLine(String line);
 
 	/**
-	 * Finalization of a console parser when the stream is closed.
+	 * Called to let the parser know that the end of the error stream has been reached.
+	 * Can be used by the parser to flush its internal buffers.
 	 */
 	public void shutdown();
-
 }

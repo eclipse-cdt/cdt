@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 Andrew Gvozdev (Quoin Inc.) and others.
+ * Copyright (c) 2009, 2012 Andrew Gvozdev (Quoin Inc.) and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,8 +7,8 @@
  *
  * Contributors:
  *     Andrew Gvozdev (Quoin Inc.) - initial API and implementation
+ *     Alex Ruiz (Google)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.errorparsers;
 
 import static org.eclipse.cdt.core.ErrorParserContext.BUILD;
@@ -25,8 +25,8 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.core.ErrorParserContext;
+import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.core.IErrorParser;
 import org.eclipse.cdt.core.IErrorParserNamed;
 import org.eclipse.cdt.core.IMarkerGenerator;
@@ -52,8 +52,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- * ErrorParserExtensionManager manages error parser extensions, serialization and preferences
- *
+ * ErrorParserExtensionManager manages error parser extensions, serialization and preferences.
  */
 public class ErrorParserExtensionManager {
 	private static final String STORAGE_ERRORPARSER_EXTENSIONS = "model.extensions.xml"; //$NON-NLS-1$
@@ -396,7 +395,7 @@ public class ErrorParserExtensionManager {
 
 		IErrorParser errorParser = errorParserNamed;
 		if (errorParser instanceof ErrorParserNamedWrapper)
-			errorParser = ((ErrorParserNamedWrapper)errorParser).getErrorParser();
+			errorParser = ((ErrorParserNamedWrapper) errorParser).getErrorParser();
 
 		// <extension/>
 		Element elementExtension = XmlUtil.appendElement(elementPlugin, ELEM_EXTENSION, new String[] {
@@ -413,7 +412,7 @@ public class ErrorParserExtensionManager {
 			});
 
 		if (errorParserNamed instanceof RegexErrorParser) {
-			RegexErrorParser regexErrorParser = (RegexErrorParser)errorParserNamed;
+			RegexErrorParser regexErrorParser = (RegexErrorParser) errorParserNamed;
 			RegexErrorPattern[] patterns = regexErrorParser.getPatterns();
 
 			for (RegexErrorPattern pattern : patterns) {
@@ -521,7 +520,7 @@ public class ErrorParserExtensionManager {
 		if (ce.getAttribute(ATTR_CLASS)!=null) {
 			IErrorParser ep = (IErrorParser)ce.createExecutableExtension(ATTR_CLASS);
 			if (ep instanceof IErrorParserNamed) {
-				errorParser = (IErrorParserNamed)ep;
+				errorParser = (IErrorParserNamed) ep;
 				errorParser.setId(initialId);
 				errorParser.setName(initialName);
 			} else if (ep!=null) {
@@ -546,7 +545,7 @@ public class ErrorParserExtensionManager {
 		errorParser.setId(id);
 		errorParser.setName(name);
 		if (errorParser instanceof RegexErrorParser) {
-			RegexErrorParser regexErrorParser = (RegexErrorParser)errorParser;
+			RegexErrorParser regexErrorParser = (RegexErrorParser) errorParser;
 
 			NodeList patternNodes = errorparserNode.getChildNodes();
 			for (int ipat=0;ipat<patternNodes.getLength();ipat++) {
@@ -587,7 +586,7 @@ public class ErrorParserExtensionManager {
 			errorParser.setName(name);
 
 		if (errorParser instanceof RegexErrorParser) {
-			RegexErrorParser regexErrorParser = (RegexErrorParser)errorParser;
+			RegexErrorParser regexErrorParser = (RegexErrorParser) errorParser;
 
 			for (IConfigurationElement cepat : cfgEl.getChildren()) {
 				if (cepat.getName().equals(ELEM_PATTERN)) {
@@ -643,7 +642,7 @@ public class ErrorParserExtensionManager {
 		Pair<IErrorParserNamed, Integer> pair = fAvailableErrorParsers.get(id);
 		IErrorParserNamed errorParser = pair.first;
 		if (errorParser instanceof ErrorParserNamedWrapper)
-			return ((ErrorParserNamedWrapper)errorParser).getErrorParser();
+			return ((ErrorParserNamedWrapper) errorParser).getErrorParser();
 		return errorParser;
 	}
 
@@ -748,10 +747,10 @@ public class ErrorParserExtensionManager {
 	 * @return default error parsers IDs to be used if error parser list is empty.
 	 */
 	public static String[] getDefaultErrorParserIds() {
-		if (fDefaultErrorParserIds==null) {
-			return fAvailableErrorParsers.keySet().toArray(new String[0]);
+		if (fDefaultErrorParserIds == null) {
+			return getErrorParserIds(fAvailableErrorParsers, BUILD);
 		}
-		return fDefaultErrorParserIds.toArray(new String[0]);
+		return fDefaultErrorParserIds.toArray(new String[fDefaultErrorParserIds.size()]);
 	}
 
 	/**
@@ -777,15 +776,15 @@ public class ErrorParserExtensionManager {
 			int context) {
 		Pair<IErrorParserNamed, Integer> pair =
 				isExtension ? fExtensionErrorParsers.get(id) : fAvailableErrorParsers.get(id);
-		if (!isInContext(pair, context)) {
+		if (pair == null || !isInContext(pair, context)) {
 			return null;
 		}
 		IErrorParserNamed errorParser = pair.first;
 		try {
 			if (errorParser instanceof RegexErrorParser) {
-				return (RegexErrorParser) ((RegexErrorParser)errorParser).clone();
+				return (RegexErrorParser) ((RegexErrorParser) errorParser).clone();
 			} else if (errorParser instanceof ErrorParserNamedWrapper) {
-				return (ErrorParserNamedWrapper) ((ErrorParserNamedWrapper)errorParser).clone();
+				return (ErrorParserNamedWrapper) ((ErrorParserNamedWrapper) errorParser).clone();
 			}
 		} catch (CloneNotSupportedException e) {
 			CCorePlugin.log(e);

@@ -16,6 +16,24 @@
       "revId": "d9b8c1175da10ea4f1e62dfb36317150c40b8509",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//8vc\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/tracepointactions/CollectActionPage.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-04-20T20:13:24Z",
+      "side": 1,
+      "message": "Thanks!  That was bothering me too.\nI made the change",
+      "parentUuid": "AABOG3//8w0\u003d",
+      "revId": "d9b8c1175da10ea4f1e62dfb36317150c40b8509",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

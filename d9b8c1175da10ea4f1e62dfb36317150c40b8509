@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOG3//8w0\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/tracepointactions/CollectActionPage.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-04-20T16:11:25Z",
+      "side": 1,
+      "message": "The error image is truncated, the following code fixes the problem.\n\ngd \u003d new GridData(SWT.FILL, SWT.CENTER, false, false);\ngd.horizontalIndent \u003d FieldDecorationRegistry.getDefault().getMaximumDecorationWidth();\nfTreatCharPtrAsStringsLimit.setLayoutData(gd);",
+      "revId": "d9b8c1175da10ea4f1e62dfb36317150c40b8509",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

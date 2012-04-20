@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Ericsson and others.
+ * Copyright (c) 2010, 2012 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Ericsson - initial API and implementation
+ *     Marc Khouzam (Ericsson) - Remove strings that should not be translated
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.tracepointactions;
 
@@ -25,9 +26,6 @@ class MessagesForTracepointActions extends NLS {
 	public static String TracepointActions_Collect_Name;
 	public static String TracepointActions_Evaluate_Name;
 	public static String TracepointActions_WhileStepping_Name;
-	public static String TracepointActions_Collect_text;
-	public static String TracepointActions_Evaluate_text;
-	public static String TracepointActions_WhileStepping_text;
 	
 	static {
 		// initialize resource bundle

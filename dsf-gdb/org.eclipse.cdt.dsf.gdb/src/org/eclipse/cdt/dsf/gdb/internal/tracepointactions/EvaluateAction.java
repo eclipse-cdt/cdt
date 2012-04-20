@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Ericsson and others.
+ * Copyright (c) 2010, 2012 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     Ericsson - initial API and implementation
+ *     Marc Khouzam (Ericsson) - Don't use translatable strings for the command summary
+ *                               since it will be send directly to GDB
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.tracepointactions;
 
@@ -21,12 +23,11 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 import org.xml.sax.helpers.DefaultHandler;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * @since 3.0
@@ -83,14 +84,15 @@ public class EvaluateAction extends AbstractTracepointAction {
 			collectData = s.toString("UTF8"); //$NON-NLS-1$
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			GdbPlugin.log(e);
 		}
 		return collectData;
 	}
 
 	@Override
 	public String getSummary() {
-		return MessageFormat.format(MessagesForTracepointActions.TracepointActions_Evaluate_text, new Object[] { fEvalString });
+		// Create command to be sent to GDB
+		return String.format("teval %s", fEvalString); //$NON-NLS-1$
 	}
 
 	@Override
@@ -110,12 +112,12 @@ public class EvaluateAction extends AbstractTracepointAction {
 			if (fEvalString == null)
 				throw new Exception();
 		} catch (Exception e) {
-			e.printStackTrace();
+			GdbPlugin.log(e);
 		}
 	}
 	
 	@Override
 	public String toString() {
-		return MessageFormat.format(MessagesForTracepointActions.TracepointActions_Evaluate_text, new Object[] { fEvalString });
+		return getSummary();
 	}
 }

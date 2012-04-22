@@ -16,6 +16,23 @@
       "revId": "98cc2d0edb239333b09e3d27534fac0982e449f5",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//8rk\u003d",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/AdditionalInput.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 385,
+      "author": {
+        "id": 599
+      },
+      "writtenOn": "2012-04-22T18:11:07Z",
+      "side": 1,
+      "message": "This looks like a place where URI needs to be resolved using EFSExtensionProvider.append(...) ",
+      "revId": "98cc2d0edb239333b09e3d27534fac0982e449f5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

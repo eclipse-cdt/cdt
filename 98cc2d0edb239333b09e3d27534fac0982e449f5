@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOG3//8rs\u003d",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core.tests/tests/org/eclipse/cdt/managedbuilder/core/regressions/RegressionTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 599
+      },
+      "writtenOn": "2012-04-22T12:09:11Z",
+      "side": 1,
+      "message": "I don\u0027t think it is useful for us to organize the tests using \"regression\" category. I\u0027d rather see them in the regular test suite.",
+      "revId": "98cc2d0edb239333b09e3d27534fac0982e449f5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

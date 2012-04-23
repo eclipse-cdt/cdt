@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 Wind River Systems and others.
+ * Copyright (c) 2006, 2012 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,8 +7,12 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     Marc Khouzam (Ericsson) - Added support for multiple selection (bug 330974)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.ui.actions;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.Immutable;
@@ -29,11 +33,18 @@ import org.eclipse.debug.core.commands.IDebugCommandRequest;
  */
 @Immutable
 public abstract class DsfCommandRunnable extends DsfRunnable {
-    private final IExecutionDMContext fContext;
+    private final IExecutionDMContext[] fContexts;
     private final DsfServicesTracker fTracker;
     private final IDebugCommandRequest fRequest;
     
-    public IExecutionDMContext getContext() { return fContext; }
+    // For backwards compatibility, keep this method that returns the first selection.  This method
+    // is meaningful when we only support a single selection.
+    public IExecutionDMContext getContext() { return (fContexts != null && fContexts.length > 0) ? fContexts[0] : null; }
+    /**
+     * Return all selected contexts. 
+     * @since 2.3 
+     */
+    public IExecutionDMContext[] getContexts() { return fContexts; }
     public IRunControl getRunControl() {
         return fTracker.getService(IRunControl.class);
     }
@@ -42,8 +53,8 @@ public abstract class DsfCommandRunnable extends DsfRunnable {
 	 * @since 1.1
 	 */
     public SteppingController getSteppingController() {
-    	if (fContext != null) {
-    		return (SteppingController) fContext.getAdapter(SteppingController.class);
+    	if (fContexts != null && fContexts.length > 0) {
+    		return (SteppingController) fContexts[0].getAdapter(SteppingController.class);
     	}
     	return null;
     }
@@ -56,15 +67,33 @@ public abstract class DsfCommandRunnable extends DsfRunnable {
     }
         
     public DsfCommandRunnable(DsfServicesTracker servicesTracker, Object element, IDebugCommandRequest request) {
-        fTracker = servicesTracker;
-        if (element instanceof IDMVMContext) {
-            IDMVMContext vmc = (IDMVMContext)element;
-            fContext = DMContexts.getAncestorOfType(vmc.getDMContext(), IExecutionDMContext.class);
-        } else {
-            fContext = null;
-        }
-            
-        fRequest = request;
+    	this(servicesTracker, new Object[] { element }, request);
+    }
+    
+    /** @since 2.3 */
+    public DsfCommandRunnable(DsfServicesTracker servicesTracker, Object[] elements, IDebugCommandRequest request) {
+    	fTracker = servicesTracker;
+    	fRequest = request;
+
+		// Extract all selected execution contexts, using a set to avoid duplicates.  Duplicates will
+    	// happen if multiple stack frames of the same thread are selected.
+		Set<IExecutionDMContext> execDmcSet = new HashSet<IExecutionDMContext>(request.getElements().length);
+		for (Object element : request.getElements()) {
+			if (element instanceof IDMVMContext) {
+				IDMVMContext vmc = (IDMVMContext)element;
+				IExecutionDMContext execDmc = DMContexts.getAncestorOfType(vmc.getDMContext(), IExecutionDMContext.class);
+				if (execDmc != null) {
+					// We have a thread or a process
+					execDmcSet.add(execDmc);
+				}
+			}
+		}
+
+		if (execDmcSet.size() == 0) {
+			fContexts = null;
+		} else {
+			fContexts = execDmcSet.toArray(new IExecutionDMContext[execDmcSet.size()]);
+		}
     }
     
     @Override
@@ -73,8 +102,8 @@ public abstract class DsfCommandRunnable extends DsfRunnable {
             fRequest.done();
             return;
         }
-        if (getContext() == null) {
-            fRequest.setStatus(makeError("Selected object does not support run control.", null));             //$NON-NLS-1$
+        if (getContexts() == null || getContexts().length == 0) {
+            fRequest.setStatus(makeError("Selected objects do not support run control.", null));   //$NON-NLS-1$
         } else if (getRunControl() == null || getSteppingController() == null) {
             fRequest.setStatus(makeError("Run Control not available", null)); //$NON-NLS-1$
         } else {

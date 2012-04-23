@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Ericsson and others.
+ * Copyright (c) 2011, 2012 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
+import org.eclipse.cdt.dsf.debug.service.IMultiRunControl;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IRunControl2;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
@@ -72,6 +73,7 @@ public class GDBRunControl_7_2_NS extends GDBRunControl_7_0_NS
 		register(new String[]{ IRunControl.class.getName(), 
 				IRunControl2.class.getName(),
 				IMIRunControl.class.getName(),
+				IMultiRunControl.class.getName(),
 				GDBRunControl_7_0_NS.class.getName(),
 				GDBRunControl_7_2_NS.class.getName(),
 		}, 

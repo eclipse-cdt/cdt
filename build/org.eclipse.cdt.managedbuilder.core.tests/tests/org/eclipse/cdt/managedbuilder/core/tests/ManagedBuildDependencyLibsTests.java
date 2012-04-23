@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 QNX Software Systems and others.
+ * Copyright (c) 2011, 2012 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,11 +11,9 @@
 package org.eclipse.cdt.managedbuilder.core.tests;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.model.CoreModel;
@@ -28,6 +26,7 @@ import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.core.FolderInfo;
 import org.eclipse.cdt.managedbuilder.tcmodification.IConfigurationModification;
 import org.eclipse.cdt.managedbuilder.tcmodification.IToolChainModificationManager;
+import org.eclipse.cdt.managedbuilder.testplugin.AbstractBuilderTest;
 import org.eclipse.cdt.managedbuilder.testplugin.ManagedBuildTestHelper;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -39,11 +38,10 @@ import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 
-public class ManagedBuildDependencyLibsTests extends TestCase {
+public class ManagedBuildDependencyLibsTests extends AbstractBuilderTest {
 	private static final String PROJ_PATH = "depLibsProjects";
 	private static final String MESSAGE_TAIL = " (see .log file for more details).";
 
@@ -60,12 +58,12 @@ public class ManagedBuildDependencyLibsTests extends TestCase {
 		
 		suite.addTest(new ManagedBuildDependencyLibsTests("testDepLibs"));
 		suite.addTest(new ManagedBuildDependencyLibsTests("testDepUObjs"));
+		suite.addTest(new ManagedBuildDependencyLibsTests("testGetArtifactTimeStampEscapeURI_bug377295"));
 		return suite;
 	}
 
 	private void buildProject(IProject curProject) {	
 		
-		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(curProject);
 		try {
 			IProject[] referencedProjects = curProject.getReferencedProjects();
 			for(int i = 0; i < referencedProjects.length; ++i)
@@ -117,20 +115,6 @@ public class ManagedBuildDependencyLibsTests extends TestCase {
 		ManagedBuildTestHelper.removeProject(fTlib.getName());
 		ManagedBuildTestHelper.removeProject(fTobjs.getName());
 	}
-	
-	private void deleteFiles(IFolder dir, String pattern, IProgressMonitor monitor) {
-		List<IFile> files = new ArrayList<IFile>();
-		findFiles(dir, pattern, files);
-		for(Iterator<IFile>  i = files.iterator(); i.hasNext(); ) {
-			IFile file = i.next();
-			try {
-				file.delete(true, monitor);
-			} catch (CoreException e) {
-				e.printStackTrace();
-				fail("Error deleting file " + file.getFullPath().toString() + '.' + MESSAGE_TAIL);
-			}
-		}
-	}
 
 	private void findFiles(IResource dir, String pattern,  List<IFile> files) {
 		IResource resource = null;
@@ -146,7 +130,7 @@ public class ManagedBuildDependencyLibsTests extends TestCase {
 			for(int i = 0; i < members.length; ++i) {
 				resource = members[i];
 				if(resource.getType() == IResource.FOLDER)
-					findFiles((IFolder)resource, pattern, files);
+					findFiles(resource, pattern, files);
 				else {
 					if(resource.getName().matches(pattern)) 
 						files.add((IFile)resource);
@@ -290,5 +274,21 @@ public class ManagedBuildDependencyLibsTests extends TestCase {
 		if(timeStamp == getArtifactTimeStamp(fTapp)) {
 			fail("Error. This time it should build application.");
 		}
+	}
+	
+	// Tests that the URI used to get the time stamp of the artifact is escaped correctly
+	// See AdditionalInput.getArtifactTimeStamp(IToolChain toolChain)
+	public void testGetArtifactTimeStampEscapeURI_bug377295() throws CoreException {
+		setWorkspace("regressions");
+		final IProject project = loadProject("helloworldC");
+		IManagedBuildInfo buildInfo = ManagedBuildManager.getBuildInfo(project);
+		IConfiguration[] configs = buildInfo.getManagedProject().getConfigurations();
+		for (IConfiguration configuration : configs) {
+			configuration.setArtifactName("test [377295]");
+		}
+		
+		project.build(IncrementalProjectBuilder.FULL_BUILD, null);
+		// This will trigger AdditionalInput.getArtifactTimeStamp to get called, no IllegalArgumentException should be thrown
+		project.build(IncrementalProjectBuilder.FULL_BUILD, null);
 	}
 }

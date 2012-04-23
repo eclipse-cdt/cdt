@@ -26,15 +26,6 @@
   
   <build>
 		<plugins>
-			<!-- Not sure why but this is necessary since Tycho 0.14, perhaps this is a bug -->
-			<plugin> 
-				<groupId>org.eclipse.tycho</groupId>
-				<artifactId>tycho-compiler-plugin</artifactId>
-				<configuration> 
-					<source>1.6</source> 
-					<target>1.6</target> 
-				</configuration> 
- 			</plugin>
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-surefire-plugin</artifactId>

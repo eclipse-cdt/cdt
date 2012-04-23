@@ -18,10 +18,9 @@
   <build>
 		<plugins>
 			<plugin>
-				<!-- Change to groupId org.eclipse.tycho.extras after upgrade to Tycho 0.14 -->
-				<groupId>com.google.code.tycho-eclipserun-plugin</groupId>
+				<groupId>org.eclipse.tycho.extras</groupId>
 				<artifactId>tycho-eclipserun-plugin</artifactId>
-				<version>${tycho-version}</version>
+				<version>${tycho-extras-version}</version>
 				<configuration>
 					<appArgLine>-application org.eclipse.ant.core.antRunner -buildfile build-index.xml build.index</appArgLine>
 					<dependencies>

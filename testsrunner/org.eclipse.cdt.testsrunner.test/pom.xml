@@ -15,16 +15,26 @@
   <artifactId>org.eclipse.cdt.testsrunner.test</artifactId>
   <packaging>eclipse-test-plugin</packaging>
   
- <repositories>
+  <!-- Uncommenting this is useful when the repo is built first then you want to run tests on this plugin only -->
+ <!-- <repositories>
 	<repository>
 		<id>cdt.repo</id>
 		<url>file:/${basedir}/../../releng/org.eclipse.cdt.repo/target/repository</url>
 		<layout>p2</layout>
 	</repository>
-</repositories>
+</repositories>-->
   
   <build>
 		<plugins>
+			<!-- Not sure why but this is necessary since Tycho 0.14, perhaps this is a bug -->
+			<plugin> 
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-compiler-plugin</artifactId>
+				<configuration> 
+					<source>1.6</source> 
+					<target>1.6</target> 
+				</configuration> 
+ 			</plugin>
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-surefire-plugin</artifactId>

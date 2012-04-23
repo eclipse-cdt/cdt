@@ -3,9 +3,7 @@
       id="org.eclipse.cdt.launch.remote"
       label="%featureName"
       version="6.0.0.qualifier"
-      provider-name="%providerName"
-      license-feature="org.eclipse.cdt.license"
-      license-feature-version="1.0.0.qualifier">
+      provider-name="%providerName">
 
    <description>
       %description

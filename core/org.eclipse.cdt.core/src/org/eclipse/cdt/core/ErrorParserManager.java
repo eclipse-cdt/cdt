@@ -14,12 +14,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.core;
 
-import static org.eclipse.cdt.core.ErrorParserContext.BUILD;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -68,6 +67,11 @@ public class ErrorParserManager extends OutputStream implements IConsoleParser, 
 	 */
 	public final static char ERROR_PARSER_DELIMITER = ';';
 
+	/**
+	 * @since 5.4
+	 */
+	public static final String BUILD_CONTEXT = "build"; //$NON-NLS-1$
+	
 	private int nOpens;
 	private int lineCounter=0;
 
@@ -75,9 +79,9 @@ public class ErrorParserManager extends OutputStream implements IConsoleParser, 
 	private final IMarkerGenerator fMarkerGenerator;
 
 	private Map<String, IErrorParser[]> fErrorParsers;
-	private final ArrayList<ProblemMarkerInfo> fErrors;
+	private ArrayList<ProblemMarkerInfo> fErrors;
 
-	private final Vector<URI> fDirectoryStack;
+	private Vector<URI> fDirectoryStack;
 	private final URI fBaseDirectoryURI;
 
 	private String previousLine;
@@ -149,46 +153,27 @@ public class ErrorParserManager extends OutputStream implements IConsoleParser, 
 	 * @since 5.1
 	 */
 	public ErrorParserManager(IProject project, URI baseDirectoryURI, IMarkerGenerator markerGenerator, String[] parsersIDs) {
-		this(project, baseDirectoryURI, markerGenerator, parsersIDs, BUILD);
-	}
-
-	/**
-	 * URI based constructor.
-	 *
-	 * @param project - project being built.
-	 * @param baseDirectoryURI - absolute location URI of working directory of where the build is performed.
-	 * @param markerGenerator - marker generator able to create markers.
-	 * @param parsersIDs - array of error parsers' IDs.
-	 * @param context - context where the error parser will be used. Valid values are defined by
-	 * <code>{@link ErrorParserContext}</code>.
-	 * @see ErrorParserContext
-	 * @since 5.4
-	 */
-	public ErrorParserManager(IProject project, URI baseDirectoryURI, 
-			IMarkerGenerator markerGenerator, String[] parsersIDs, int context) {
 		fProject = project;
 		fMarkerGenerator = markerGenerator;
 		fDirectoryStack = new Vector<URI>();
 		fErrors = new ArrayList<ProblemMarkerInfo>();
-		enableErrorParsers(parsersIDs, context);
+		enableErrorParsers(parsersIDs);
 
-		if (baseDirectoryURI != null) {
+		if (baseDirectoryURI != null)
 			fBaseDirectoryURI = baseDirectoryURI;
-		} else if (project != null) {
+		else if (project != null)
 			fBaseDirectoryURI = project.getLocationURI();
-		}
-		else {
+		else
 			fBaseDirectoryURI = org.eclipse.core.filesystem.URIUtil.toURI(System.getProperty("user.dir")); // CWD  //$NON-NLS-1$
-		}
 	}
 
-	private void enableErrorParsers(String[] parsersIDs, int context) {
+	private void enableErrorParsers(String[] parsersIDs) {
 		if (parsersIDs == null) {
 			parsersIDs = ErrorParserExtensionManager.getDefaultErrorParserIds();
 		}
 		fErrorParsers = new LinkedHashMap<String, IErrorParser[]>(parsersIDs.length);
 		for (String parsersID : parsersIDs) {
-			IErrorParser errorParser = getErrorParserCopy(parsersID, context);
+			IErrorParser errorParser = getErrorParserCopy(parsersID);
 			if (errorParser!=null) {
 				fErrorParsers.put(parsersID, new IErrorParser[] {errorParser} );
 			}
@@ -217,9 +202,8 @@ public class ErrorParserManager extends OutputStream implements IConsoleParser, 
 	 */
 	@Override
 	public URI getWorkingDirectoryURI() {
-		if (!fDirectoryStack.isEmpty()) {
+		if (!fDirectoryStack.isEmpty())
 			return fDirectoryStack.lastElement();
-		}
 
 		// Fall back to the Project Location / Build directory
 		return fBaseDirectoryURI;
@@ -236,13 +220,12 @@ public class ErrorParserManager extends OutputStream implements IConsoleParser, 
 		if (dir != null) {
 			URI uri;
 			URI workingDirectoryURI = getWorkingDirectoryURI();
-			if (!dir.isAbsolute()) {
+			if (!dir.isAbsolute())
 				uri = URIUtil.append(workingDirectoryURI, dir.toString());
-			} else {
+			else {
 				uri = toURI(dir);
-				if (uri == null) {
+				if (uri == null) // Shouldn't happen; error logged
 					return;
-				}
 			}
 			pushDirectoryURI(uri);
 		}
@@ -258,11 +241,10 @@ public class ErrorParserManager extends OutputStream implements IConsoleParser, 
 	 */
 	public void pushDirectoryURI(URI dir) {
 		if (dir != null) {
-			if (dir.isAbsolute()) {
+			if (dir.isAbsolute())
 				fDirectoryStack.addElement(dir);
-			} else {
+			else
 				fDirectoryStack.addElement(URIUtil.makeAbsolute(dir, getWorkingDirectoryURI()));
-			}
 		}
 	}
 
@@ -355,9 +337,8 @@ outer:
 				}
 				if ((types & IErrorParser2.KEEP_LONGLINES) == 0) {
 					// long lines are not given to parsers, unless it wants it
-					if (lineTrimmed.length() > 1000) {
+					if (lineTrimmed.length() > 1000)
 						continue;
-					}
 				}
 				// standard behavior (pre 5.1) is to trim the line
 				String lineToParse = lineTrimmed;
@@ -374,24 +355,21 @@ outer:
 					consume = curr.processLine(lineToParse, this);
 				} catch (Exception e){
 					String id = "";  //$NON-NLS-1$
-					if (parser instanceof IErrorParserNamed) {
+					if (parser instanceof IErrorParserNamed)
 						id = ((IErrorParserNamed)parser).getId();
-					}
 					@SuppressWarnings("nls")
 					String message = "Errorparser " + id + " failed parsing line [" + lineToParse + "]";
 					CCorePlugin.log(message, e);
 				} finally {
 					if (fErrors.size() > 0) {
-						if (marker==null) {
+						if (marker==null)
 							marker = fErrors.get(0);
-						}
 						fErrors.clear();
 					}
 				}
 
-				if (consume) {
+				if (consume)
 					break outer;
-				}
 			}
 		}
 		outputLine(line, marker);
@@ -405,9 +383,7 @@ outer:
 	 */
 	private void outputLine(String line, ProblemMarkerInfo marker) {
 		String l = line + "\n";  //$NON-NLS-1$
-		if ( outputStream == null ) {
-			return;
-		}
+		if ( outputStream == null ) return;
 		try {
 			if ( marker != null && outputStream instanceof IErrorMarkeredOutputStream ) {
 				IErrorMarkeredOutputStream s = (IErrorMarkeredOutputStream) outputStream;
@@ -447,9 +423,8 @@ outer:
 	 */
 	public IFile findFileName(String partialLoc) {
 		if (partialLoc.equals(cachedFileName) && cachedWorkingDirectory != null &&
-				org.eclipse.core.filesystem.URIUtil.equals(getWorkingDirectoryURI(), cachedWorkingDirectory)) {
+				org.eclipse.core.filesystem.URIUtil.equals(getWorkingDirectoryURI(), cachedWorkingDirectory))
 			return cachedFile;
-		}
 
 		// To be able to parse Windows paths on Linux systems, see bug 263977
 		IPath path = new Path(partialLoc.replace('\\', IPath.SEPARATOR));
@@ -464,20 +439,17 @@ outer:
 			if (fProject != null) {
 				IProject[] prjs = new IProject[] { fProject };
 				files = ResourceLookup.findFilesByName(path, prjs, false);
-				if (files.length == 0) {
+				if (files.length == 0)
 					files = ResourceLookup.findFilesByName(path, prjs, /* ignoreCase */ true);
-				}
 			}
 			if (files == null || files.length == 0) {
 				IProject[] prjs = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 				files = ResourceLookup.findFilesByName(path, prjs, false);
-				if (files.length == 0) {
+				if (files.length == 0)
 					files = ResourceLookup.findFilesByName(path, prjs, /* ignoreCase */ true);
-				}
 			}
-			if (files.length == 1) {
+			if (files.length == 1)
 				file = files[0];
-			}
 		}
 
 		// Could be cygwin path
@@ -505,9 +477,8 @@ outer:
 		}
 		else {
 			uri = toURI(path);
-			if (uri == null) {
+			if (uri == null) // Shouldn't happen; error logged
 				return null;
-			}
 		}
 		return findFileInWorkspace(uri);
 	}
@@ -520,14 +491,12 @@ outer:
 	 * @since 5.1
 	 */
 	protected IFile findFileInWorkspace(URI uri) {
-		if (!uri.isAbsolute()) {
+		if (!uri.isAbsolute())
 			uri = URIUtil.makeAbsolute(uri, getWorkingDirectoryURI());
-		}
 
 		IFile f = ResourceLookup.selectFileForLocationURI(uri, fProject);
-		if (f != null && f.isAccessible()) {
+		if (f != null && f.isAccessible())
 			return f;
-		}
 		return null;
 	}
 
@@ -618,9 +587,8 @@ outer:
 	public void addProblemMarker(ProblemMarkerInfo problemMarkerInfo){
 		fErrors.add(problemMarkerInfo);
 		fMarkerGenerator.addMarker(problemMarkerInfo);
-		if (problemMarkerInfo.severity == IMarkerGenerator.SEVERITY_ERROR_RESOURCE) {
+		if (problemMarkerInfo.severity == IMarkerGenerator.SEVERITY_ERROR_RESOURCE)
 			hasErrors = true;
-		}
 	}
 
 	/**
@@ -670,9 +638,8 @@ outer:
 	 */
 	@Override
 	public void flush() throws IOException {
-		if (outputStream != null) {
+		if (outputStream != null)
 			outputStream.flush();
-		}
 	}
 
 	/**
@@ -707,9 +674,8 @@ outer:
 		while ((i = buffer.indexOf('\n')) != -1) {
 			String line = buffer.substring(0, i);
 			// get rid of any trailing '\r'
-			if (line.endsWith("\r")) { //$NON-NLS-1$
+			if (line.endsWith("\r"))  //$NON-NLS-1$
 				line=line.substring(0,line.length()-1);
-			}
 			processLine(line);
 			previousLine = line;
 			buffer = buffer.substring(i + 1); // skip the \n and advance
@@ -758,9 +724,8 @@ outer:
 			String uriString = path.toString();
 
 			// On Windows "C:/folder/" -> "/C:/folder/"
-			if (path.isAbsolute() && uriString.charAt(0) != IPath.SEPARATOR) {
-				uriString = IPath.SEPARATOR + uriString;
-			}
+			if (path.isAbsolute() && uriString.charAt(0) != IPath.SEPARATOR)
+			    uriString = IPath.SEPARATOR + uriString;
 
 			return EFSExtensionManager.getDefault().createNewURIFromPath(baseURI, uriString);
 	}
@@ -833,6 +798,16 @@ outer:
 	}
 
 	/**
+	 * @param context - indicates the context in which an error parser can be used.
+	 * @return available error parsers ID, which include contributed through extension and user-
+	 *         defined ones from workspace, that can be used in the given context.
+	 * @since 5.4
+	 */
+	public static String[] getErrorParserAvailableIdsInContext(String context) {
+		return ErrorParserExtensionManager.getErrorParserAvailableIdsInContext(context);
+	}
+	
+	/**
 	 * @return IDs of error parsers contributed through error parser extension point.
 	 * @since 5.2
 	 */
@@ -868,20 +843,6 @@ outer:
 	 */
 	public static IErrorParserNamed getErrorParserCopy(String id) {
 		return ErrorParserExtensionManager.getErrorParserCopy(id, false);
-	}
-
-	/**
-	 * @param id - ID of error parser
-	 * @param context - context where the error parser will be used. Valid values are defined by
-	 * <code>{@link ErrorParserContext}</code>.
-	 * @return cloned copy of error parser or {@code null}.
-	 * Note that {@link ErrorParserNamedWrapper} returns shallow copy with the same instance
-	 * of underlying error parser.
-	 * @see ErrorParserContext
-	 * @since 5.4
-	 */
-	public static IErrorParserNamed getErrorParserCopy(String id, int context) {
-		return ErrorParserExtensionManager.getErrorParserCopy(id, false, context);
 	}
 
 	/**

@@ -232,7 +232,7 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 		initMapParsers();
 		updateData(getResDesc());
 	}
-
+	
 	private void initMapParsers() {
 		if (fExtensionErrorParsers==null) {
 			fExtensionErrorParsers = new LinkedHashMap<String, IErrorParserNamed>();
@@ -244,7 +244,7 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 		}
 		fAvailableErrorParsers.clear();
 		fOptionsPageMap.clear();
-		for (String id : ErrorParserManager.getErrorParserAvailableIds()) {
+		for (String id : ErrorParserManager.getErrorParserAvailableIdsInContext(ErrorParserManager.BUILD_CONTEXT)) {
 			IErrorParserNamed errorParser = ErrorParserManager.getErrorParserCopy(id);
 			fAvailableErrorParsers.put(id, errorParser);
 			initializeOptionsPage(id);

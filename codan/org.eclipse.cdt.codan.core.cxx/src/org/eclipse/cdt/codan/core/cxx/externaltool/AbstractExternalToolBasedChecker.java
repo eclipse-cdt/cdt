@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.cxx.externaltool;
 
-import static org.eclipse.cdt.core.ErrorParserContext.CODAN;
-
 import java.net.URI;
 
 import org.eclipse.cdt.codan.core.CodanRuntime;
@@ -127,7 +125,7 @@ public abstract class AbstractExternalToolBasedChecker extends AbstractCheckerWi
 	private ErrorParserManager createErrorParserManager(InvocationParameters parameters) {
 		IProject project = parameters.getActualFile().getProject();
 		URI workingDirectory = URIUtil.toURI(parameters.getWorkingDirectory());
-		return new ErrorParserManager(project, workingDirectory, this, getParserIDs(), CODAN);
+		return new ErrorParserManager(project, workingDirectory, this, getParserIDs());
 	}
 
 	/**

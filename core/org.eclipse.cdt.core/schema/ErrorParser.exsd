@@ -157,20 +157,12 @@ An error parser can be assigned to more than one context type. For example, an e
          </documentation>
       </annotation>
       <complexType>
-         <attribute name="type" use="required">
+         <attribute name="type" type="string" use="required">
             <annotation>
                <documentation>
                   The type of context where an error parser can be used. Valid values are &quot;build&quot; and &quot;codan&quot;.
                </documentation>
             </annotation>
-            <simpleType>
-               <restriction base="string">
-                  <enumeration value="build">
-                  </enumeration>
-                  <enumeration value="codan">
-                  </enumeration>
-               </restriction>
-            </simpleType>
          </attribute>
       </complexType>
    </element>

@@ -15,6 +15,7 @@
  *     Marc Khouzam (Ericsson) - Pass errorStream to startCommandProcessing() (Bug 350837)
  *     Mikhail Khodjaiants (Mentor Graphics) - Terminate should cancel the initialization sequence 
  *                                             if it is still running (bug 373845)
+ *     Anton Gorenkov - A preference to use RTTI for variable types determination (Bug 377536)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service.command;
 
@@ -483,6 +484,17 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 	 */
 	@Override
 	public void setPrintPythonErrors(boolean enabled, RequestMonitor rm) {
+		rm.done();
+	}
+
+	/**
+	 * @since 4.1
+	 */
+	@Override
+	public void setRttiUsage(boolean enabled, RequestMonitor rm)	{
+		queueCommand(
+				getCommandFactory().createMIGDBSetPrintObject(getControlDMContext(), enabled),
+				new DataRequestMonitor<MIInfo>(getExecutor(), rm));
 		rm.done();
 	}
 

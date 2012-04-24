@@ -106,6 +106,7 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetEnv;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetHostCharset;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetNonStop;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetPagination;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetPrintObject;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetPrintSevenbitStrings;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetPythonPrintStack;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetSchedulerLocking;
@@ -653,6 +654,11 @@ public class CommandFactory {
 
 	public ICommand<MIInfo> createMIGDBSetPagination(ICommandControlDMContext ctx, boolean isSet) {
 		return new MIGDBSetPagination(ctx, isSet);
+	}
+
+	/** @since 4.1 */
+	public ICommand<MIInfo> createMIGDBSetPrintObject(ICommandControlDMContext ctx, boolean enable) {
+		return new MIGDBSetPrintObject(ctx, enable);
 	}
 
 	/** @since 4.1 */

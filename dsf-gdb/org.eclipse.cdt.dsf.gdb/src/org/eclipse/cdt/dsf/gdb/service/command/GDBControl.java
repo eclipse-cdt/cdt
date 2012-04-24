@@ -489,6 +489,17 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 	/**
 	 * @since 4.1
 	 */
+	@Override
+	public void setRttiUsage(boolean enabled, RequestMonitor rm)	{
+		queueCommand(
+				getCommandFactory().createMIGDBSetPrintObject(getControlDMContext(), enabled),
+				new DataRequestMonitor<MIInfo>(getExecutor(), rm));
+		rm.done();
+	}
+
+	/**
+	 * @since 4.1
+	 */
 	protected Sequence getStartupSequence(final RequestMonitor requestMonitor) {
         final Sequence.Step[] initializeSteps = new Sequence.Step[] {
                 new CommandMonitoringStep(InitializationShutdownStep.Direction.INITIALIZING),

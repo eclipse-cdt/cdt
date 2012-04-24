@@ -80,6 +80,7 @@ public class FinalLaunchSequence extends ReflectionSequence {
 					"stepSetEnvironmentDirectory",   //$NON-NLS-1$
 					"stepSetBreakpointPending",    //$NON-NLS-1$
 					"stepEnablePrettyPrinting",    //$NON-NLS-1$
+					"stepSetRttiUsage",    //$NON-NLS-1$
 					"stepSetCharset",    //$NON-NLS-1$
 					"stepSourceGDBInitFile",   //$NON-NLS-1$
 					"stepSetAutoLoadSharedLibrarySymbols",   //$NON-NLS-1$
@@ -213,6 +214,18 @@ public class FinalLaunchSequence extends ReflectionSequence {
 		} else {
 			fCommandControl.setPrintPythonErrors(false, requestMonitor);
 		}
+	}
+	
+	/**
+	 * Turn on RTTI usage, if enabled in preferences.
+	 * @since 4.1
+	 */
+	@Execute
+	public void stepSetRttiUsage(final RequestMonitor requestMonitor) {
+		boolean useRtti = Platform.getPreferencesService().getBoolean(
+				GdbPlugin.PLUGIN_ID,
+				IGdbDebugPreferenceConstants.PREF_USE_RTTI, false, null);
+		fCommandControl.setRttiUsage(useRtti, requestMonitor);
 	}
 	
 	/**

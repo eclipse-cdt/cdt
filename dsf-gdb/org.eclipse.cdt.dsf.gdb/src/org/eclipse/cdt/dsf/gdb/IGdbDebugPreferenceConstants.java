@@ -50,6 +50,14 @@ public interface IGdbDebugPreferenceConstants {
 	public static final String PREF_ENABLE_PRETTY_PRINTING = "enablePrettyPrinting"; //$NON-NLS-1$
 
 	/**
+	 * Boolean preference whether to use RTTI for MI variables type
+	 * determination. Default is <code>true</code>.
+	 * 
+	 * @since 4.1
+	 */
+	public static final String PREF_USE_RTTI = "useRtti"; //$NON-NLS-1$
+
+	/**
 	 * The maximum limit of children to be initially fetched by GDB for
 	 * collections. Default is 100.
 	 * @since 4.0

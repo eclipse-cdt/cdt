@@ -92,4 +92,16 @@ public interface IGDBControl extends IMICommandControl {
 	 * @since 4.0
 	 */
 	void setPrintPythonErrors(boolean enabled, RequestMonitor rm);
+
+	/**
+	 * Turns the RTTI usage on or off. This basically sends
+	 * "-gdb-set print object on/off".
+	 * 
+	 * @param enabled
+	 *            If <code>true</code>, RTTI usage is turned on.
+	 * @param rm
+	 * 
+	 * @since 4.1
+	 */
+	void setRttiUsage(boolean enabled, RequestMonitor rm);
 }

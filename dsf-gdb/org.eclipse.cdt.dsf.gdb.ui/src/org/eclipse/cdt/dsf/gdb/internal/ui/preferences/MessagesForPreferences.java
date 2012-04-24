@@ -36,6 +36,12 @@ class MessagesForPreferences extends NLS {
 	public static String GdbDebugPreferencePage_initialChildCountLimitForCollections_label;
 	/** @since 2.2 */
 	public static String GdbDebugPreferencePage_defaults_label;
+	/** @since 2.3 */
+	public static String GdbDebugPreferencePage_rtti_label;
+	/** @since 2.3 */
+	public static String GdbDebugPreferencePage_use_rtti_label1;
+	/** @since 2.3 */
+	public static String GdbDebugPreferencePage_use_rtti_label2;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(MessagesForPreferences.class.getName(), MessagesForPreferences.class);

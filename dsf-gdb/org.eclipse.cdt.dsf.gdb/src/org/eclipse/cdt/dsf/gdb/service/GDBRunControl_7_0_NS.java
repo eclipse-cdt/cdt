@@ -9,14 +9,18 @@
  *     Wind River Systems - initial API and implementation
  *     Ericsson	AB		  - Modified for handling of multiple threads
  *     Indel AG           - [369622] fixed moveToLine using MinGW
+ *     Marc Khouzam (Ericsson) - Support for operations on multiple execution contexts (bug 330974)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -42,6 +46,7 @@ import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointDMContext;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
 import org.eclipse.cdt.dsf.debug.service.IBreakpointsExtension.IBreakpointHitDMEvent;
 import org.eclipse.cdt.dsf.debug.service.ICachingService;
+import org.eclipse.cdt.dsf.debug.service.IMultiRunControl;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
@@ -104,7 +109,7 @@ import org.osgi.framework.BundleContext;
  * sync with the service state.
  * @since 1.1
  */
-public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunControl, ICachingService
+public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunControl, IMultiRunControl, ICachingService
 {
 	@Immutable
 	private static class ExecutionData implements IExecutionDMData2 {
@@ -396,7 +401,8 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 	private void doInitialize(final RequestMonitor rm) {
         register(new String[]{ IRunControl.class.getName(), 
         					   IRunControl2.class.getName(),
-        					   IMIRunControl.class.getName()}, 
+        					   IMIRunControl.class.getName(),
+        					   IMultiRunControl.class.getName() }, 
         	     new Hashtable<String,String>());
 		fConnection = getServicesTracker().getService(ICommandControlService.class);
 		fCommandFactory = getServicesTracker().getService(IMICommandControl.class).getCommandFactory();
@@ -1877,5 +1883,294 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
         	}
     	}
     	return result;
+    }
+    
+	///////////////////////////////////////////////////////////////////////////
+	// IMultiRunControl implementation
+	///////////////////////////////////////////////////////////////////////////
+
+	// Although multi-process in only supported for GDB >= 7.2, it is simpler
+	// to code for the multi-process case all the time, since it is a superset
+	// of the single-process case.
+
+	///////////////////////////////////////////////////////////////////////////
+	// Multi-resume implementation:
+    //
+    // If one or more more threads of one or many processes are selected, we want to 
+    // resume each thread (once).
+    //
+    // If one or more more processes are selected, we want to resume each process (once).
+    // 
+    // If a process is selected along with one or more threads of that same process,
+    // what does the user want us to do?  Selecting the process will resume all its
+    // threads, but what do we do with the selected threads?  Why are they
+    // selected?  In an attempt to be user friendly, lets assume that the user
+    // wants to resume the entire process, so we ignore the selected threads part of that 
+    // process since they will be resumed anyway.
+    //
+    // The same logic applies to multi-suspend.
+	///////////////////////////////////////////////////////////////////////////
+
+    /** @since 4.1 */
+    @Override
+    public void canResumeSome(IExecutionDMContext[] contexts, DataRequestMonitor<Boolean> rm) {
+    	assert contexts != null;
+
+    	if (fRunControlOperationsEnabled == false) {
+    		rm.done(false);
+    		return;
+    	}
+
+    	List<IExecutionDMContext> execDmcToResumeList = extractContextsForOperation(contexts);
+
+    	// If any of the threads or processes can be resumed, we allow
+    	// the user to perform the operation.
+    	for (IExecutionDMContext execDmc : execDmcToResumeList) {
+    		if (doCanResume(execDmc)) {
+    			rm.done(true);
+    			return;
+    		}
+    	}
+
+    	// Didn't find anything that could be resumed.
+    	rm.done(false);
+    }
+
+    /** @since 4.1 */
+    @Override
+    public void canResumeAll(IExecutionDMContext[] contexts, DataRequestMonitor<Boolean> rm) {
+    	assert contexts != null;
+
+    	if (fRunControlOperationsEnabled == false) {
+    		rm.done(false);
+    		return;
+    	}
+
+    	List<IExecutionDMContext> execDmcToResumeList = extractContextsForOperation(contexts);
+
+    	// If any of the threads or processes cannot be resumed, we don't allow
+    	// the user to perform the operation.
+    	for (IExecutionDMContext execDmc : execDmcToResumeList) {
+    		if (!doCanResume(execDmc)) {
+    			rm.done(false);
+    			return;
+    		}
+    	}
+
+    	// Everything can be resumed
+    	rm.done(true);
+    }
+
+    /** 
+     * {@inheritDoc}
+     * 
+     * For GDB, a separate resume command will be sent, one for each context
+     * that can be resumed.
+     * @since 4.1 
+     */
+    @Override
+    public void resume(IExecutionDMContext[] contexts, RequestMonitor rm) {
+    	assert contexts != null;
+
+    	List<IExecutionDMContext> execDmcToResumeList = extractContextsForOperation(contexts);
+
+    	CountingRequestMonitor crm = new CountingRequestMonitor(getExecutor(), rm);
+    	int count = 0;
+
+    	// Perform resume operation on each thread or process that can be resumed
+    	for (IExecutionDMContext execDmc : execDmcToResumeList) {
+    		if (doCanResume(execDmc)) {
+    			count++;
+    			resume(execDmc, crm);
+    		}
+    	}
+
+    	crm.setDoneCount(count);
+    }
+
+	///////////////////////////////////////////////////////////////////////////
+	// Multi-suspend implementation: 
+    //  see details of the multi-resume implementation above.
+	///////////////////////////////////////////////////////////////////////////
+
+    /** @since 4.1 */
+    @Override
+    public void canSuspendSome(IExecutionDMContext[] contexts, DataRequestMonitor<Boolean> rm) {
+    	assert contexts != null;
+
+    	if (fRunControlOperationsEnabled == false) {
+    		rm.done(false);
+    		return;
+    	}
+
+    	List<IExecutionDMContext> execDmcToSuspendList = extractContextsForOperation(contexts);
+
+    	// If any of the threads or processes can be suspended, we allow
+    	// the user to perform the operation.
+    	for (IExecutionDMContext execDmc : execDmcToSuspendList) {
+    		if (doCanSuspend(execDmc)) {
+    			rm.done(true);
+    			return;
+    		}
+    	}
+
+    	// Didn't find anything that could be suspended.
+    	rm.done(false);
+    }
+
+    /** @since 4.1 */
+    @Override
+    public void canSuspendAll(IExecutionDMContext[] contexts, DataRequestMonitor<Boolean> rm) {
+    	assert contexts != null;
+
+    	if (fRunControlOperationsEnabled == false) {
+    		rm.done(false);
+    		return;
+    	}
+
+    	List<IExecutionDMContext> execDmcToSuspendList = extractContextsForOperation(contexts);
+
+    	// If any of the threads or processes cannot be suspended, we don't allow
+    	// the user to perform the operation.
+    	for (IExecutionDMContext execDmc : execDmcToSuspendList) {
+    		if (!doCanSuspend(execDmc)) {
+    			rm.done(false);
+    			return;
+    		}
+    	}
+
+    	// Everything can be suspended
+    	rm.done(true);
+    }
+
+    /** @since 4.1 */
+    @Override
+    public void isSuspendedSome(IExecutionDMContext[] contexts, DataRequestMonitor<Boolean> rm) {
+    	assert contexts != null;
+
+    	List<IExecutionDMContext> execDmcSuspendedList = extractContextsForOperation(contexts);
+
+    	// Look for any thread or process that is suspended
+    	for (IExecutionDMContext execDmc : execDmcSuspendedList) {
+    		if (isSuspended(execDmc)) {
+    			rm.done(true);
+    			return;
+    		}
+    	}
+
+    	// Didn't find anything that was suspended.
+		rm.done(false);
+    }
+
+    /** @since 4.1 */
+    @Override
+    public void isSuspendedAll(IExecutionDMContext[] contexts, DataRequestMonitor<Boolean> rm) {
+    	assert contexts != null;
+
+    	List<IExecutionDMContext> execDmcSuspendedList = extractContextsForOperation(contexts);
+
+    	// Look for any thread or process that is not suspended
+    	for (IExecutionDMContext execDmc : execDmcSuspendedList) {
+    		if (!isSuspended(execDmc)) {
+    			rm.done(false);
+    			return;
+    		}
+    	}
+
+    	// Everything is suspended.
+		rm.done(true);
+    }
+
+    /** 
+     * {@inheritDoc}
+     * 
+     * For GDB, a separate suspend command will be sent, one for each context
+     * that can be suspended.
+     * @since 4.1 
+     */
+    @Override
+    public void suspend(IExecutionDMContext[] contexts, RequestMonitor rm) {
+    	assert contexts != null;
+
+    	List<IExecutionDMContext> execDmcToSuspendList = extractContextsForOperation(contexts);
+
+    	CountingRequestMonitor crm = new CountingRequestMonitor(getExecutor(), rm);
+    	int count = 0;
+
+    	// Perform resume operation on each thread or process that can be resumed
+    	for (IExecutionDMContext execDmc : execDmcToSuspendList) {
+    		if (doCanSuspend(execDmc)) {
+    			count++;
+    			suspend(execDmc, crm);
+    		}
+    	}
+
+    	crm.setDoneCount(count);
+    }
+
+	///////////////////////////////////////////////////////////////////////////
+	// Multi-step implementation.  Not implemented yet.  See bug 330974.
+	///////////////////////////////////////////////////////////////////////////
+
+    /** @since 4.1 */
+    @Override
+    public void canStepSome(IExecutionDMContext[] contexts, StepType stepType, DataRequestMonitor<Boolean> rm) {
+        rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED, "Not implemented.", null)); //$NON-NLS-1$
+   }
+
+    /** @since 4.1 */
+    @Override
+    public void canStepAll(IExecutionDMContext[] contexts, StepType stepType, DataRequestMonitor<Boolean> rm) {
+        rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED, "Not implemented.", null)); //$NON-NLS-1$
+    }
+
+    /** @since 4.1 */
+    @Override
+    public void isSteppingSome(IExecutionDMContext[] contexts, DataRequestMonitor<Boolean> rm) {
+        rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED, "Not implemented.", null)); //$NON-NLS-1$
+    }
+
+    /** @since 4.1 */
+    @Override
+    public void isSteppingAll(IExecutionDMContext[] contexts, DataRequestMonitor<Boolean> rm) {
+        rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED, "Not implemented.", null)); //$NON-NLS-1$
+    }
+
+    /** @since 4.1 */
+    @Override
+    public void step(IExecutionDMContext[] contexts, StepType stepType, RequestMonitor rm) {
+        rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED, "Not implemented.", null)); //$NON-NLS-1$
+    }
+    
+    /**
+     * Removes duplicates from the list of execution contexts, in case the same thread
+     * or process is present more than once.
+     * 
+     * Also, remove any thread that is part of a process that is also present.  This is
+     * because an operation on the process will affect all its threads anyway.
+     */
+    private List<IExecutionDMContext> extractContextsForOperation(IExecutionDMContext[] contexts) {
+    	// Remove duplicate contexts by using a set
+    	Set<IExecutionDMContext> specifiedExedDmcSet = new HashSet<IExecutionDMContext>(Arrays.asList(contexts));
+
+    	// A list that ignores threads for which the process is also present
+    	List<IExecutionDMContext> execDmcForOperationList = new ArrayList<IExecutionDMContext>(specifiedExedDmcSet.size());
+
+    	// Check for the case of a process selected along with some of its threads
+    	for (IExecutionDMContext execDmc : specifiedExedDmcSet) {
+    		if (execDmc instanceof IContainerDMContext) {
+    			// This is a process: it is automatically part of our list
+    			execDmcForOperationList.add(execDmc);
+    		} else {
+    			// Get the process for this thread
+    			IContainerDMContext containerDmc = DMContexts.getAncestorOfType(execDmc, IContainerDMContext.class);
+    			// Check if that process is also present
+    			if (specifiedExedDmcSet.contains(containerDmc) == false) {
+    				// This thread does not belong to a process that is selected, so we keep it.
+    				execDmcForOperationList.add(execDmc);
+    			}
+    		}
+    	}
+    	return execDmcForOperationList;
     }
 }

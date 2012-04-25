@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2011 IBM Corporation and others.
+ * Copyright (c) 2002, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,6 +45,7 @@
  * David McKnight   (IBM)        - [249031] Last used editor should be set to SystemEditableRemoteFile
  * David McKnight   (IBM)        - [359704] SystemEditableRemoteFile does not release reference to editor
  * Rick Sawyer      (IBM)        - [376535] RSE does not respect editor overrides
+ * David McKnight   (IBM)        - [357111] [DSTORE]File with invalid characters can't be opened in editor
  *******************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -84,6 +85,8 @@ import org.eclipse.rse.internal.files.ui.ISystemFileConstants;
 import org.eclipse.rse.internal.files.ui.actions.SystemDownloadConflictAction;
 import org.eclipse.rse.internal.files.ui.resources.SystemFileNameHelper;
 import org.eclipse.rse.internal.files.ui.resources.SystemRemoteEditManager;
+import org.eclipse.rse.internal.subsystems.files.core.model.SystemFileTransferModeMapping;
+import org.eclipse.rse.internal.subsystems.files.core.model.SystemFileTransferModeRegistry;
 import org.eclipse.rse.services.clientserver.SystemEncodingUtil;
 import org.eclipse.rse.services.clientserver.messages.CommonMessages;
 import org.eclipse.rse.services.clientserver.messages.ICommonMessageIds;
@@ -92,6 +95,7 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.files.RemoteFileIOException;
 import org.eclipse.rse.subsystems.files.core.SystemIFileProperties;
+import org.eclipse.rse.subsystems.files.core.model.ISystemFileTransferModeMapping;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileUtility;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
@@ -671,9 +675,24 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 		}
 		catch (SystemMessageException e)
 		{
-			SystemMessageDialog.displayMessage(e);
-			return false;
+			if (remoteFile.isText() && specializeFile(true)){ // turn the file into binary type to allow for binary transfer
+				// try again
+				try
+				{
+					subsystem.download(remoteFile, localPath, remoteFile.getEncoding(), monitor);
+				}
+				catch (SystemMessageException ex){
+					specializeFile(false); // turn it back to text mode
+					SystemMessageDialog.displayMessage(e); // throw original exception
+					return false;
+				}
+			}
+			else {
+				SystemMessageDialog.displayMessage(e);
+				return false;
+			}
 		}
+
 		if (monitor.isCanceled())
 		{
 			return false;
@@ -702,6 +721,68 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 		return true;
 	}
 
+	private boolean specializeFile(boolean binary){
+		String fname = remoteFile.getName();
+		int dotIndex = fname.lastIndexOf('.');				
+		String name = null;
+		String extension = null;
+		if (dotIndex > 0){
+			name = fname.substring(0, dotIndex);
+			extension = fname.substring(dotIndex+1);
+		}
+		else {
+			name = fname;
+		}
+		
+		if (name == null){
+			return false;
+		}
+		
+		// make this file binary, and try again
+		SystemFileTransferModeRegistry reg = (SystemFileTransferModeRegistry)RemoteFileUtility.getSystemFileTransferModeRegistry();
+		SystemFileTransferModeMapping[] newMappings = null;
+		ISystemFileTransferModeMapping[] mappings = reg.getModeMappings();
+		
+		SystemFileTransferModeMapping mapping = null;
+		for (int m = 0; m < mappings.length && mapping == null; m++){
+			ISystemFileTransferModeMapping map = mappings[m];
+			if (name.equals(map.getName())){
+				String ext = map.getExtension();
+				if (extension != null && extension.equals(ext)){
+					mapping = (SystemFileTransferModeMapping)map;
+				}
+				else if (extension == ext){
+					mapping = (SystemFileTransferModeMapping)map;
+				}
+			}
+		}
+		if (mapping != null){
+			newMappings = new SystemFileTransferModeMapping[mappings.length];
+			for (int i = 0; i < mappings.length; i++) {
+				newMappings[i] = (SystemFileTransferModeMapping)mappings[i];
+			}
+		}		
+		else {
+			newMappings = new SystemFileTransferModeMapping[mappings.length + 1];				
+			int i = 0;
+			for (; i < mappings.length; i++) {
+				newMappings[i] = (SystemFileTransferModeMapping)mappings[i];
+			}
+	
+			newMappings[i] = mapping = new SystemFileTransferModeMapping(name, extension);
+		}
+		if (binary){
+			mapping.setAsBinary();
+		}
+		else {
+			mapping.setAsText();
+		}
+		
+		reg.setModeMappings(newMappings);
+		reg.saveAssociations();	
+		return true;
+	}
+	
 	/**
 	 * Saves the local file and uploads it to the host immediately, rather than, in response to a resource change
 	 * event.

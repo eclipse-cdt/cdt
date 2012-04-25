@@ -153,24 +153,18 @@
          <documentation>
             Use this element to specify the context where an error parser can be used. If none is specified, a default context type will be &quot;build&quot;.
 
-An error parser can be assigned to more than one context type. For example, an error parser can have two &quot;context&quot; elements, one for &quot;build&quot; and one for &quot;codan&quot;.
+An example of context type is &quot;build&quot;. Only error parsers in this context are used to parse build output. You can see these error parsers in the &quot;C/C++&quot; &gt; &quot;Build&quot; &gt; &quot;Settings&quot; preference page.
+
+An error parser can be assigned to more than one context type. Clients contributing error parsers are free to define their own context types.
          </documentation>
       </annotation>
       <complexType>
-         <attribute name="type" use="required">
+         <attribute name="type" type="string" use="required">
             <annotation>
                <documentation>
-                  The type of context where an error parser can be used. Valid values are &quot;build&quot; and &quot;codan&quot;.
+                  The type of context where an error parser can be used.
                </documentation>
             </annotation>
-            <simpleType>
-               <restriction base="string">
-                  <enumeration value="build">
-                  </enumeration>
-                  <enumeration value="codan">
-                  </enumeration>
-               </restriction>
-            </simpleType>
          </attribute>
       </complexType>
    </element>

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Ericsson and others.
+ * Copyright (c) 2007, 2012 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,9 +7,13 @@
  * 
  * Contributors:
  *     Ericsson			  - Initial Implementation
+ *     Marc Khouzam (Ericsson) - Add support to receive multiple events
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.framework;
 
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
@@ -17,7 +21,7 @@ import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
 import org.eclipse.core.runtime.Platform;
 
-/*
+/**
  * This class provides a way to wait for an asynchronous ServerEvent
  * to occur.  The user of this class specifies which event is of
  * interest . waitForEvent() can then be called to block until the event occurs or
@@ -40,7 +44,9 @@ public class ServiceEventWaitor<V> {
 	/* The type of event to wait for */
 	private Class<V> fEventTypeClass;
 	private DsfSession fSession;
-    private V fEvent;
+    
+	// Queue of events.  This allows to receive multiple events and keep them.
+    private List<V> fEventQueue = Collections.synchronizedList(new LinkedList<V>());
     
     /**
      * Trace option for wait metrics
@@ -59,7 +65,6 @@ public class ServiceEventWaitor<V> {
 		assert eventClass != null;
 		fSession = session;
 		fEventTypeClass = eventClass;
-		fEvent = null;
         Runnable runnable = new Runnable() {
             @Override
 			public void run() {
@@ -102,10 +107,9 @@ public class ServiceEventWaitor<V> {
 		
 		long startMs = System.currentTimeMillis();
 		
-		// The event might have already been received
-		if (fEvent == null) {
+		if (fEventQueue.isEmpty()) {
 			wait(timeout);
-			if (fEvent == null) {
+			if (fEventQueue.isEmpty()) {
 				throw new Exception("Timed out waiting for ServiceEvent: " + fEventTypeClass.getName());
 			}
 		}
@@ -159,14 +163,7 @@ public class ServiceEventWaitor<V> {
 			}
 		}
 		
-		// Mark that we have consumed the event.
-		// This will allow to wait for the next similar event.
-		// For example, for a restart, there could be more than one
-		// stopped event, and we need to wait for the second one.
-		V event = fEvent;
-		fEvent = null;
-		
-		return event;
+		return fEventQueue.remove(0);
 	}
 
 	/*
@@ -177,7 +174,7 @@ public class ServiceEventWaitor<V> {
 	public void eventDispatched(V event) {
 		if (fEventTypeClass.isAssignableFrom(event.getClass())) {
 			synchronized(this) {
-				fEvent = event;
+				fEventQueue.add(event);
 				notifyAll();
 			}
 		}

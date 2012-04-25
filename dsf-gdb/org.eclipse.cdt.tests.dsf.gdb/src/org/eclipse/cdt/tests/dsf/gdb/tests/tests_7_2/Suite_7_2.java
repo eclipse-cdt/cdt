@@ -41,6 +41,7 @@ import org.junit.runners.Suite;
 	OperationsWhileTargetIsRunningNonStopTest_7_2.class,
 	PostMortemCoreTest_7_2.class,
 	CommandTimeoutTest_7_2.class,
+	GDBMultiNonStopRunControlTest_7_2.class,
 	Suite_Sessionless_Tests.class,	
 	/* Add your test class here */
 })

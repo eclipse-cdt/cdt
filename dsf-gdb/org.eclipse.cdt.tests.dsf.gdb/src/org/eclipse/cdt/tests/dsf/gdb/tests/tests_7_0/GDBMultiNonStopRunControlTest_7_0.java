@@ -37,6 +37,7 @@ import org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase;
 import org.eclipse.cdt.tests.dsf.gdb.framework.ServiceEventWaitor;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
+import org.eclipse.cdt.tests.dsf.gdb.tests.ITestConstants;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -86,7 +87,9 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 	}
 	
 	@BeforeClass
-	public static void beforeClassMethod() {
+	public static void beforeClassMethod_7_0() {
+		setGdbProgramNamesLaunchAttributes(ITestConstants.SUFFIX_GDB_7_0);
+
 		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, 
 				           EXEC_PATH + EXEC_NAME);
 

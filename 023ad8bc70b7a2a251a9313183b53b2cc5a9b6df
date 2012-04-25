@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "AABOG3//8co\u003d",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/ErrorParserManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 162,
+      "author": {
+        "id": 584
+      },
+      "writtenOn": "2012-04-25T20:31:05Z",
+      "side": 1,
+      "message": "I reverted the file to the version that did not have context. I didn\u0027t check for formatting changes. I\u0027m sorry.",
+      "parentUuid": "AABOG3//8f4\u003d",
+      "revId": "023ad8bc70b7a2a251a9313183b53b2cc5a9b6df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOG3//8fs\u003d",
         "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/ErrorParserManager.java",
         "patchSetId": 3
@@ -48,6 +66,24 @@
       "writtenOn": "2012-04-25T17:57:32Z",
       "side": 1,
       "message": "Avoid double plural form:\nparsersIDs \u003e parserIDs",
+      "revId": "023ad8bc70b7a2a251a9313183b53b2cc5a9b6df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//8ck\u003d",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/ErrorParserManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 170,
+      "author": {
+        "id": 584
+      },
+      "writtenOn": "2012-04-25T20:31:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//8fs\u003d",
       "revId": "023ad8bc70b7a2a251a9313183b53b2cc5a9b6df",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -71,6 +107,24 @@
     },
     {
       "key": {
+        "uuid": "AABOG3//8cg\u003d",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/ErrorParserManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 205,
+      "author": {
+        "id": 584
+      },
+      "writtenOn": "2012-04-25T20:31:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//8fw\u003d",
+      "revId": "023ad8bc70b7a2a251a9313183b53b2cc5a9b6df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOG3//8f0\u003d",
         "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/ErrorParserManager.java",
         "patchSetId": 3
@@ -82,6 +136,24 @@
       "writtenOn": "2012-04-25T17:57:32Z",
       "side": 1,
       "message": "Please bring the braces back.",
+      "revId": "023ad8bc70b7a2a251a9313183b53b2cc5a9b6df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//8cc\u003d",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/ErrorParserManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 223,
+      "author": {
+        "id": 584
+      },
+      "writtenOn": "2012-04-25T20:31:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//8f0\u003d",
       "revId": "023ad8bc70b7a2a251a9313183b53b2cc5a9b6df",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -105,6 +177,24 @@
     },
     {
       "key": {
+        "uuid": "AABOG3//8cU\u003d",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/ErrorParserManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 244,
+      "author": {
+        "id": 584
+      },
+      "writtenOn": "2012-04-25T20:31:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//8fo\u003d",
+      "revId": "023ad8bc70b7a2a251a9313183b53b2cc5a9b6df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOG3//8fk\u003d",
         "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/ErrorParserManager.java",
         "patchSetId": 3
@@ -116,6 +206,24 @@
       "writtenOn": "2012-04-25T17:57:32Z",
       "side": 1,
       "message": "Please bring the braces back.",
+      "revId": "023ad8bc70b7a2a251a9313183b53b2cc5a9b6df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//8cQ\u003d",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/ErrorParserManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 340,
+      "author": {
+        "id": 584
+      },
+      "writtenOn": "2012-04-25T20:31:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//8fk\u003d",
       "revId": "023ad8bc70b7a2a251a9313183b53b2cc5a9b6df",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -139,6 +247,24 @@
     },
     {
       "key": {
+        "uuid": "AABOG3//8cM\u003d",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/ErrorParserManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 358,
+      "author": {
+        "id": 584
+      },
+      "writtenOn": "2012-04-25T20:31:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//8fg\u003d",
+      "revId": "023ad8bc70b7a2a251a9313183b53b2cc5a9b6df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOG3//8fc\u003d",
         "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/ErrorParserManager.java",
         "patchSetId": 3
@@ -150,6 +276,24 @@
       "writtenOn": "2012-04-25T17:57:32Z",
       "side": 1,
       "message": "Please bring the braces back.",
+      "revId": "023ad8bc70b7a2a251a9313183b53b2cc5a9b6df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//8cI\u003d",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/ErrorParserManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 365,
+      "author": {
+        "id": 584
+      },
+      "writtenOn": "2012-04-25T20:31:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//8fc\u003d",
       "revId": "023ad8bc70b7a2a251a9313183b53b2cc5a9b6df",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -173,6 +317,24 @@
     },
     {
       "key": {
+        "uuid": "AABOG3//8cE\u003d",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/ErrorParserManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 371,
+      "author": {
+        "id": 584
+      },
+      "writtenOn": "2012-04-25T20:31:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//8fY\u003d",
+      "revId": "023ad8bc70b7a2a251a9313183b53b2cc5a9b6df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOG3//8fU\u003d",
         "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/ErrorParserManager.java",
         "patchSetId": 3
@@ -184,6 +346,24 @@
       "writtenOn": "2012-04-25T17:57:32Z",
       "side": 1,
       "message": "Restore formatting.",
+      "revId": "023ad8bc70b7a2a251a9313183b53b2cc5a9b6df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//8cA\u003d",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/ErrorParserManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 386,
+      "author": {
+        "id": 584
+      },
+      "writtenOn": "2012-04-25T20:31:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//8fU\u003d",
       "revId": "023ad8bc70b7a2a251a9313183b53b2cc5a9b6df",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -207,6 +387,24 @@
     },
     {
       "key": {
+        "uuid": "AABOG3//8b8\u003d",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/ErrorParserManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 426,
+      "author": {
+        "id": 584
+      },
+      "writtenOn": "2012-04-25T20:31:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//8fQ\u003d",
+      "revId": "023ad8bc70b7a2a251a9313183b53b2cc5a9b6df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOG3//8fM\u003d",
         "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/ErrorParserManager.java",
         "patchSetId": 3
@@ -218,6 +416,24 @@
       "writtenOn": "2012-04-25T17:57:32Z",
       "side": 1,
       "message": "Please bring the braces back.",
+      "revId": "023ad8bc70b7a2a251a9313183b53b2cc5a9b6df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//8b0\u003d",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/ErrorParserManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 442,
+      "author": {
+        "id": 584
+      },
+      "writtenOn": "2012-04-25T20:31:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//8fM\u003d",
       "revId": "023ad8bc70b7a2a251a9313183b53b2cc5a9b6df",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -241,6 +457,24 @@
     },
     {
       "key": {
+        "uuid": "AABOG3//8bw\u003d",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/ErrorParserManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 448,
+      "author": {
+        "id": 584
+      },
+      "writtenOn": "2012-04-25T20:31:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//8fI\u003d",
+      "revId": "023ad8bc70b7a2a251a9313183b53b2cc5a9b6df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOG3//8fE\u003d",
         "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/ErrorParserManager.java",
         "patchSetId": 3
@@ -252,6 +486,24 @@
       "writtenOn": "2012-04-25T17:57:32Z",
       "side": 1,
       "message": "Please bring the braces back.",
+      "revId": "023ad8bc70b7a2a251a9313183b53b2cc5a9b6df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//8bs\u003d",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/ErrorParserManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 451,
+      "author": {
+        "id": 584
+      },
+      "writtenOn": "2012-04-25T20:31:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//8fE\u003d",
       "revId": "023ad8bc70b7a2a251a9313183b53b2cc5a9b6df",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -275,6 +527,24 @@
     },
     {
       "key": {
+        "uuid": "AABOG3//8bo\u003d",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/ErrorParserManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 480,
+      "author": {
+        "id": 584
+      },
+      "writtenOn": "2012-04-25T20:31:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//8fA\u003d",
+      "revId": "023ad8bc70b7a2a251a9313183b53b2cc5a9b6df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOG3//8e8\u003d",
         "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/ErrorParserManager.java",
         "patchSetId": 3
@@ -286,6 +556,24 @@
       "writtenOn": "2012-04-25T17:57:32Z",
       "side": 1,
       "message": "Please bring the braces back.",
+      "revId": "023ad8bc70b7a2a251a9313183b53b2cc5a9b6df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//8bk\u003d",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/ErrorParserManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 494,
+      "author": {
+        "id": 584
+      },
+      "writtenOn": "2012-04-25T20:31:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//8e8\u003d",
       "revId": "023ad8bc70b7a2a251a9313183b53b2cc5a9b6df",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -309,6 +597,24 @@
     },
     {
       "key": {
+        "uuid": "AABOG3//8bg\u003d",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/ErrorParserManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 498,
+      "author": {
+        "id": 584
+      },
+      "writtenOn": "2012-04-25T20:31:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//8e4\u003d",
+      "revId": "023ad8bc70b7a2a251a9313183b53b2cc5a9b6df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOG3//8e0\u003d",
         "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/ErrorParserManager.java",
         "patchSetId": 3
@@ -320,6 +626,24 @@
       "writtenOn": "2012-04-25T17:57:32Z",
       "side": 1,
       "message": "Please bring the braces back.",
+      "revId": "023ad8bc70b7a2a251a9313183b53b2cc5a9b6df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//8bc\u003d",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/ErrorParserManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 590,
+      "author": {
+        "id": 584
+      },
+      "writtenOn": "2012-04-25T20:31:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//8e0\u003d",
       "revId": "023ad8bc70b7a2a251a9313183b53b2cc5a9b6df",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -343,6 +667,24 @@
     },
     {
       "key": {
+        "uuid": "AABOG3//8bY\u003d",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/ErrorParserManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 641,
+      "author": {
+        "id": 584
+      },
+      "writtenOn": "2012-04-25T20:31:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//8ew\u003d",
+      "revId": "023ad8bc70b7a2a251a9313183b53b2cc5a9b6df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOG3//8es\u003d",
         "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/ErrorParserManager.java",
         "patchSetId": 3
@@ -354,6 +696,24 @@
       "writtenOn": "2012-04-25T17:57:32Z",
       "side": 1,
       "message": "Please bring the braces back.",
+      "revId": "023ad8bc70b7a2a251a9313183b53b2cc5a9b6df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//8bU\u003d",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/ErrorParserManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 677,
+      "author": {
+        "id": 584
+      },
+      "writtenOn": "2012-04-25T20:31:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//8es\u003d",
       "revId": "023ad8bc70b7a2a251a9313183b53b2cc5a9b6df",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -377,6 +737,24 @@
     },
     {
       "key": {
+        "uuid": "AABOG3//8bQ\u003d",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/ErrorParserManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 727,
+      "author": {
+        "id": 584
+      },
+      "writtenOn": "2012-04-25T20:31:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//8eo\u003d",
+      "revId": "023ad8bc70b7a2a251a9313183b53b2cc5a9b6df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOG3//8ec\u003d",
         "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/errorparsers/ErrorParserExtensionManager.java",
         "patchSetId": 3
@@ -388,6 +766,24 @@
       "writtenOn": "2012-04-25T17:57:32Z",
       "side": 1,
       "message": "Restore 2012",
+      "revId": "023ad8bc70b7a2a251a9313183b53b2cc5a9b6df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//8aQ\u003d",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/errorparsers/ErrorParserExtensionManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 584
+      },
+      "writtenOn": "2012-04-25T20:31:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//8ec\u003d",
       "revId": "023ad8bc70b7a2a251a9313183b53b2cc5a9b6df",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -411,6 +807,24 @@
     },
     {
       "key": {
+        "uuid": "AABOG3//8aU\u003d",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/errorparsers/ErrorParserExtensionManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 584
+      },
+      "writtenOn": "2012-04-25T20:31:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//8eY\u003d",
+      "revId": "023ad8bc70b7a2a251a9313183b53b2cc5a9b6df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOG3//8eg\u003d",
         "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/errorparsers/ErrorParserExtensionManager.java",
         "patchSetId": 3
@@ -422,6 +836,24 @@
       "writtenOn": "2012-04-25T17:57:32Z",
       "side": 1,
       "message": "Remove the extra line you added.",
+      "revId": "023ad8bc70b7a2a251a9313183b53b2cc5a9b6df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//8bM\u003d",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/errorparsers/ErrorParserExtensionManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 584
+      },
+      "writtenOn": "2012-04-25T20:31:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//8eg\u003d",
       "revId": "023ad8bc70b7a2a251a9313183b53b2cc5a9b6df",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -445,6 +877,24 @@
     },
     {
       "key": {
+        "uuid": "AABOG3//8bI\u003d",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/errorparsers/ErrorParserExtensionManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 499,
+      "author": {
+        "id": 584
+      },
+      "writtenOn": "2012-04-25T20:31:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//8eU\u003d",
+      "revId": "023ad8bc70b7a2a251a9313183b53b2cc5a9b6df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOG3//8eQ\u003d",
         "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/errorparsers/ErrorParserExtensionManager.java",
         "patchSetId": 3
@@ -456,6 +906,24 @@
       "writtenOn": "2012-04-25T17:57:32Z",
       "side": 1,
       "message": "Restore the space after )",
+      "revId": "023ad8bc70b7a2a251a9313183b53b2cc5a9b6df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//8bA\u003d",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/errorparsers/ErrorParserExtensionManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 524,
+      "author": {
+        "id": 584
+      },
+      "writtenOn": "2012-04-25T20:31:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//8eQ\u003d",
       "revId": "023ad8bc70b7a2a251a9313183b53b2cc5a9b6df",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -479,6 +947,24 @@
     },
     {
       "key": {
+        "uuid": "AABOG3//8aM\u003d",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/errorparsers/ErrorParserExtensionManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 564,
+      "author": {
+        "id": 584
+      },
+      "writtenOn": "2012-04-25T20:31:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//8eM\u003d",
+      "revId": "023ad8bc70b7a2a251a9313183b53b2cc5a9b6df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOG3//8eE\u003d",
         "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/errorparsers/ErrorParserExtensionManager.java",
         "patchSetId": 3
@@ -490,6 +976,24 @@
       "writtenOn": "2012-04-25T17:57:32Z",
       "side": 1,
       "message": "Restore the space.",
+      "revId": "023ad8bc70b7a2a251a9313183b53b2cc5a9b6df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//8aw\u003d",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/errorparsers/ErrorParserExtensionManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 625,
+      "author": {
+        "id": 584
+      },
+      "writtenOn": "2012-04-25T20:31:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//8eE\u003d",
       "revId": "023ad8bc70b7a2a251a9313183b53b2cc5a9b6df",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -513,6 +1017,24 @@
     },
     {
       "key": {
+        "uuid": "AABOG3//8a0\u003d",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/errorparsers/ErrorParserExtensionManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 675,
+      "author": {
+        "id": 584
+      },
+      "writtenOn": "2012-04-25T20:31:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//8eI\u003d",
+      "revId": "023ad8bc70b7a2a251a9313183b53b2cc5a9b6df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOG3//8eA\u003d",
         "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/errorparsers/ErrorParserExtensionManager.java",
         "patchSetId": 3
@@ -524,6 +1046,24 @@
       "writtenOn": "2012-04-25T17:57:32Z",
       "side": 1,
       "message": "Restore the spaces.",
+      "revId": "023ad8bc70b7a2a251a9313183b53b2cc5a9b6df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//8as\u003d",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/errorparsers/ErrorParserExtensionManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 719,
+      "author": {
+        "id": 584
+      },
+      "writtenOn": "2012-04-25T20:31:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//8eA\u003d",
       "revId": "023ad8bc70b7a2a251a9313183b53b2cc5a9b6df",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -547,6 +1087,24 @@
     },
     {
       "key": {
+        "uuid": "AABOG3//8ao\u003d",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/errorparsers/ErrorParserExtensionManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 720,
+      "author": {
+        "id": 584
+      },
+      "writtenOn": "2012-04-25T20:31:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//8d8\u003d",
+      "revId": "023ad8bc70b7a2a251a9313183b53b2cc5a9b6df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOG3//8d4\u003d",
         "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/errorparsers/ErrorParserExtensionManager.java",
         "patchSetId": 3
@@ -558,6 +1116,24 @@
       "writtenOn": "2012-04-25T17:57:32Z",
       "side": 1,
       "message": "Better: new String[fDefaultErrorParserIds.size()]",
+      "revId": "023ad8bc70b7a2a251a9313183b53b2cc5a9b6df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//8ak\u003d",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/errorparsers/ErrorParserExtensionManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 722,
+      "author": {
+        "id": 584
+      },
+      "writtenOn": "2012-04-25T20:31:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//8d4\u003d",
       "revId": "023ad8bc70b7a2a251a9313183b53b2cc5a9b6df",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -581,6 +1157,24 @@
     },
     {
       "key": {
+        "uuid": "AABOG3//8ag\u003d",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/errorparsers/ErrorParserExtensionManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 736,
+      "author": {
+        "id": 584
+      },
+      "writtenOn": "2012-04-25T20:31:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//8d0\u003d",
+      "revId": "023ad8bc70b7a2a251a9313183b53b2cc5a9b6df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOG3//8dw\u003d",
         "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/errorparsers/ErrorParserExtensionManager.java",
         "patchSetId": 3
@@ -592,6 +1186,24 @@
       "writtenOn": "2012-04-25T17:57:32Z",
       "side": 1,
       "message": "Restore space.",
+      "revId": "023ad8bc70b7a2a251a9313183b53b2cc5a9b6df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//8ac\u003d",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/errorparsers/ErrorParserExtensionManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 738,
+      "author": {
+        "id": 584
+      },
+      "writtenOn": "2012-04-25T20:31:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//8dw\u003d",
       "revId": "023ad8bc70b7a2a251a9313183b53b2cc5a9b6df",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -615,6 +1227,24 @@
     },
     {
       "key": {
+        "uuid": "AABOG3//8aY\u003d",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/errorparsers/ErrorParserExtensionManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 775,
+      "author": {
+        "id": 584
+      },
+      "writtenOn": "2012-04-25T20:31:05Z",
+      "side": 1,
+      "message": "Collections does not have \u0027singletonSet\u0027. The method that returns a singleton Set is \u0027singleton\u0027. Changed to \u0027singletonList\u0027 that has a better name.",
+      "parentUuid": "AABOG3//8dk\u003d",
+      "revId": "023ad8bc70b7a2a251a9313183b53b2cc5a9b6df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOG3//8dg\u003d",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/newui/ErrorParsTab.java",
         "patchSetId": 3
@@ -626,6 +1256,24 @@
       "writtenOn": "2012-04-25T17:57:32Z",
       "side": 1,
       "message": "Extraneous whitespace change.",
+      "revId": "023ad8bc70b7a2a251a9313183b53b2cc5a9b6df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//8aE\u003d",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/newui/ErrorParsTab.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 235,
+      "author": {
+        "id": 584
+      },
+      "writtenOn": "2012-04-25T20:31:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOG3//8dg\u003d",
       "revId": "023ad8bc70b7a2a251a9313183b53b2cc5a9b6df",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "AABOG3//8cs\u003d",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/ErrorParserManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 162,
+      "author": {
+        "id": 599
+      },
+      "writtenOn": "2012-04-25T18:33:34Z",
+      "side": 1,
+      "message": "guys you should not do any formatting changes along with the changes submitted for review (and in a commit as well). That makes more difficult to figure out what was changed. If you feel you must do it do it as a separate commit. Especially if somebody else maintains the code.",
+      "parentUuid": "AABOG3//8f4\u003d",
+      "revId": "023ad8bc70b7a2a251a9313183b53b2cc5a9b6df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOG3//8fs\u003d",
         "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/ErrorParserManager.java",
         "patchSetId": 3

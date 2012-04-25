@@ -49,7 +49,7 @@ public class RefactoringTests extends BaseTestFramework {
         super.setUp();
         CCorePlugin.getIndexManager().setIndexerId(cproject, IPDOMManager.ID_FAST_INDEXER);
         fBufferSize= FileCharSequenceProvider.BUFFER_SIZE;
-        FileCharSequenceProvider.BUFFER_SIZE= 1024*4;
+        FileCharSequenceProvider.BUFFER_SIZE= 1024 * 4;
     }
 
     @Override
@@ -65,7 +65,7 @@ public class RefactoringTests extends BaseTestFramework {
 
     protected void assertTotalChanges(int numChanges, int potChanges, int commentCh, 
             Change changes) throws Exception {
-        int count[]= {0,0,0};
+        int count[]= { 0, 0, 0 };
         if (changes != null) {
             countChanges(changes, count);
         }

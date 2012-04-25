@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * 	  Sergey Prigogin (Google) - initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ * 	   Sergey Prigogin (Google) - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -33,7 +33,6 @@ import org.eclipse.core.runtime.CoreException;
  * @see ICPPUsingDeclaration
  */
 class PDOMCPPUsingDeclaration extends PDOMCPPBinding implements	ICPPUsingDeclaration {
-	
 	private static final int TARGET_BINDING = PDOMCPPBinding.RECORD_SIZE + 0;
 	// Using declarations for functions may have multiple delegates. We model such case
 	// by creating a chain of PDOMCPPUsingDeclaration objects linked by NEXT_DELEGATE field.

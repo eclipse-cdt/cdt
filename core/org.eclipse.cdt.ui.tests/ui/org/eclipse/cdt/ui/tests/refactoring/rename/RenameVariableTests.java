@@ -6,9 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Markus Schorn - initial API and implementation 
+ *     Markus Schorn - initial API and implementation 
  *******************************************************************************/
-
 package org.eclipse.cdt.ui.tests.refactoring.rename;
 
 import java.io.StringWriter;
@@ -28,9 +27,11 @@ public class RenameVariableTests extends RenameTests {
     public RenameVariableTests(String name) {
         super(name);
     }
+
     public static Test suite(){
         return suite(true);
     }
+
     public static Test suite( boolean cleanup ) {
         TestSuite suite = new TestSuite(RenameVariableTests.class); 
 

@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn (Wind River Systems)
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -67,7 +67,7 @@ class PDOMCPPUsingDeclarationSpecialization extends PDOMCPPSpecialization implem
 	@Override
 	public IBinding[] getDelegates() {
 		if (delegates == null) {
-			PDOMNodeLinkedList list= new PDOMNodeLinkedList(getLinkage(), record+TARGET_BINDINGS);
+			PDOMNodeLinkedList list= new PDOMNodeLinkedList(getLinkage(), record+  TARGET_BINDINGS);
 			final List<IBinding> result= new ArrayList<IBinding>();
 			try {
 				list.accept(new IPDOMVisitor() {
@@ -78,6 +78,7 @@ class PDOMCPPUsingDeclarationSpecialization extends PDOMCPPSpecialization implem
 						}
 						return true;
 					}
+
 					@Override
 					public void leave(IPDOMNode node) {
 					}

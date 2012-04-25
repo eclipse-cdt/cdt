@@ -6,9 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Markus Schorn - initial API and implementation 
+ *     Markus Schorn - initial API and implementation 
  *******************************************************************************/
-
 package org.eclipse.cdt.ui.tests.refactoring.rename;
 
 import java.io.StringWriter;
@@ -38,8 +37,7 @@ public class RenameTypeTests extends RenameTests {
         }
         return suite;
     }
-    
-    
+
     public void testClassNameConflicts() throws Exception {
         createCppFwdDecls("cpp_fwd.hh"); //$NON-NLS-1$
         createCppDefs("cpp_def.hh"); //$NON-NLS-1$

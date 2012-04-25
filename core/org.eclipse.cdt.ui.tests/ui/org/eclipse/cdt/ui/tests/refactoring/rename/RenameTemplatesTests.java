@@ -6,9 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Markus Schorn - initial API and implementation 
+ *     Markus Schorn - initial API and implementation 
  *******************************************************************************/
-
 package org.eclipse.cdt.ui.tests.refactoring.rename;
 
 import java.io.StringWriter;
@@ -28,9 +27,11 @@ public class RenameTemplatesTests extends RenameTests {
     public RenameTemplatesTests(String name) {
         super(name);
     }
+
     public static Test suite(){
         return suite(true);
     }
+
     public static Test suite( boolean cleanup ) {
         TestSuite suite = new TestSuite(RenameTemplatesTests.class); 
         if (cleanup) {
@@ -38,7 +39,6 @@ public class RenameTemplatesTests extends RenameTests {
         }
         return suite;
     }
-    
     
     public void testClassTemplate() throws Exception {
         StringWriter writer = new StringWriter();

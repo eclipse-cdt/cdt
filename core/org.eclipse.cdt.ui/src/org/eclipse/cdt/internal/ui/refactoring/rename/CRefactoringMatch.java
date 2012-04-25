@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  * 
  * Contributors: 
- *    Markus Schorn - initial API and implementation 
+ *     Markus Schorn - initial API and implementation 
  ******************************************************************************/ 
 package org.eclipse.cdt.internal.ui.refactoring.rename;
 
@@ -63,7 +63,7 @@ public class CRefactoringMatch {
         return fFile;
     }
     public void setASTInformation(int val) {
-    	switch(fAstInformation) {
+    	switch (fAstInformation) {
     	case AST_REFERENCE:
     	case AST_REFERENCE_OTHER:
     	case AST_REFEREENCE_CONFLICTING:

@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  * 
  * Contributors: 
- *    Markus Schorn - initial API and implementation 
+ *     Markus Schorn - initial API and implementation 
  ******************************************************************************/ 
 package org.eclipse.cdt.ui.tests.refactoring.rename;
 
@@ -31,7 +31,6 @@ import org.eclipse.cdt.internal.ui.refactoring.rename.TextSearchWrapper;
  * @author markus.schorn@windriver.com
  */
 public class RenameTests extends RefactoringTests {
-
     private static final IProgressMonitor NPM = new NullProgressMonitor();
 
 	public RenameTests(String name) {
@@ -58,7 +57,7 @@ public class RenameTests extends RefactoringTests {
         		return change;
         	} 
 
-        	fail ("Input check on "+ newName + " failed. "+rs.getEntryMatchingSeverity(RefactoringStatus.ERROR) ); //$NON-NLS-1$ //$NON-NLS-2$
+        	fail ("Input check on " + newName + " failed. "+rs.getEntryMatchingSeverity(RefactoringStatus.ERROR) ); //$NON-NLS-1$ //$NON-NLS-2$
         	//rs.getFirstMessage(RefactoringStatus.ERROR) is not the message displayed in 
         	//the UI for renaming a method to a constructor, the first message which is only
         	//a warning is shown in the UI. If you click preview, then the error and the warning
@@ -153,8 +152,7 @@ public class RenameTests extends RefactoringTests {
 	}
 
 	@Override
-	protected IFile importFile(String fileName, String contents)
-			throws Exception {
+	protected IFile importFile(String fileName, String contents) throws Exception {
 		IFile result= super.importFile(fileName, contents);
 		waitForIndexer();
 		return result;

@@ -1,0 +1,123 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOG3//8ik\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIVariableManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 585,
+      "author": {
+        "id": 605
+      },
+      "writtenOn": "2012-04-25T07:39:39Z",
+      "side": 1,
+      "message": "@since 4.1 missing",
+      "revId": "9869900530792ec102f39950c0dbf23d0c4ca160",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//8iU\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIVariableManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 699,
+      "author": {
+        "id": 605
+      },
+      "writtenOn": "2012-04-25T07:39:39Z",
+      "side": 1,
+      "message": "rename to varobjOfChild? childOfChild suggests a child of the given child.",
+      "revId": "9869900530792ec102f39950c0dbf23d0c4ca160",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//8ic\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIVariableManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 727,
+      "author": {
+        "id": 605
+      },
+      "writtenOn": "2012-04-25T07:39:39Z",
+      "side": 1,
+      "message": "@since 4.1 missing",
+      "revId": "9869900530792ec102f39950c0dbf23d0c4ca160",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//8iY\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIVariableManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1544,
+      "author": {
+        "id": 605
+      },
+      "writtenOn": "2012-04-25T07:39:39Z",
+      "side": 1,
+      "message": "add if (! isSuccess) { addFakeChild(...) } also at line 1522 ?",
+      "revId": "9869900530792ec102f39950c0dbf23d0c4ca160",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//8iw\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MIVarChange.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 605
+      },
+      "writtenOn": "2012-04-25T07:39:39Z",
+      "side": 1,
+      "message": "@since 4.1 missing",
+      "revId": "9869900530792ec102f39950c0dbf23d0c4ca160",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//8is\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MIVarChange.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 605
+      },
+      "writtenOn": "2012-04-25T07:39:39Z",
+      "side": 1,
+      "message": "@since 4.1",
+      "revId": "9869900530792ec102f39950c0dbf23d0c4ca160",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOG3//8io\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MIVarUpdateInfo.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 605
+      },
+      "writtenOn": "2012-04-25T07:39:39Z",
+      "side": 1,
+      "message": "remove trailing //@NON_NLS_1$, not a string literal",
+      "revId": "9869900530792ec102f39950c0dbf23d0c4ca160",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

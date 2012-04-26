@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "AABOHH////Q\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIVariableManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 373,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-04-26T19:35:50Z",
+      "side": 1,
+      "message": "Please use a Vector instead or some List that can grow instead of doing it ourselves.  Then you can also remove the existing comment, and put a comment to explain why we need to store the fake children; something along the lines of \"we need to keep track of fake children because they are in the LRU and need to be removed in some cases\"",
+      "revId": "9869900530792ec102f39950c0dbf23d0c4ca160",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOG3//8ik\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIVariableManager.java",
         "patchSetId": 1
@@ -36,6 +53,40 @@
     },
     {
       "key": {
+        "uuid": "AABOHH////M\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIVariableManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 709,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-04-26T19:35:50Z",
+      "side": 1,
+      "message": "The above method can be removed by using a Vector or such",
+      "revId": "9869900530792ec102f39950c0dbf23d0c4ca160",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHH////I\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIVariableManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 726,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-04-26T19:35:50Z",
+      "side": 1,
+      "message": "This method can be removed when using a Vector",
+      "revId": "9869900530792ec102f39950c0dbf23d0c4ca160",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOG3//8ic\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIVariableManager.java",
         "patchSetId": 1
@@ -47,6 +98,57 @@
       "writtenOn": "2012-04-25T07:39:39Z",
       "side": 1,
       "message": "@since 4.1 missing",
+      "revId": "9869900530792ec102f39950c0dbf23d0c4ca160",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHH////E\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIVariableManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 729,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-04-26T19:35:50Z",
+      "side": 1,
+      "message": "Please add javadoc saying what this method does.",
+      "revId": "9869900530792ec102f39950c0dbf23d0c4ca160",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHH////A\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIVariableManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 744,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-04-26T19:35:50Z",
+      "side": 1,
+      "message": "fakeChildren removal can be cleaned up when using a Vector",
+      "revId": "9869900530792ec102f39950c0dbf23d0c4ca160",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHH///+8\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIVariableManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 921,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-04-26T19:35:50Z",
+      "side": 1,
+      "message": "Is there a reason why you place this new code here instead of at the top of the method?  I realize it won\u0027t behave the exact same, but I\u0027m trying to figure out which behavior we want to have.",
       "revId": "9869900530792ec102f39950c0dbf23d0c4ca160",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

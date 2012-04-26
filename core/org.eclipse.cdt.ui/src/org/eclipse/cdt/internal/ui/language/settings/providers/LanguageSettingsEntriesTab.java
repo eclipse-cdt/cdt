@@ -95,14 +95,15 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 	private static final int BUTTON_MOVE_UP = 4;
 	private static final int BUTTON_MOVE_DOWN = 5;
 
-	private final static String[] BUTTON_LABELS = {
-		ADD_STR,
-		EDIT_STR,
-		DEL_STR,
-		null,
-		MOVEUP_STR,
-		MOVEDOWN_STR,
-	};
+	private final static String[] BUTTON_LABELS = new String[6];
+	{
+		BUTTON_LABELS[BUTTON_ADD] = ADD_STR;
+		BUTTON_LABELS[BUTTON_EDIT] = EDIT_STR;
+		BUTTON_LABELS[BUTTON_DELETE] = DEL_STR;
+		BUTTON_LABELS[BUTTON_MOVE_UP] = MOVEUP_STR;
+		BUTTON_LABELS[BUTTON_MOVE_DOWN] = MOVEDOWN_STR;
+	}
+
 	private static final String CLEAR_STR = Messages.LanguageSettingsProviderTab_Clear;
 
 	private Map<String, List<ILanguageSettingsProvider>> initialProvidersMap = new HashMap<String, List<ILanguageSettingsProvider>>();
@@ -311,8 +312,21 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 		return provider.getSettingEntries(cfgDescription, rc, currentLanguageId);
 	}
 
-	private void createTreeForLanguages(Composite comp) {
-		treeLanguages = new Tree(comp, SWT.BORDER | SWT.SINGLE | SWT.H_SCROLL);
+	private void trackInitialSettings() {
+		if (!page.isForPrefs()) {
+			ICConfigurationDescription[] cfgDescriptions = page.getCfgsEditable();
+			for (ICConfigurationDescription cfgDescription : cfgDescriptions) {
+				if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
+					String cfgId = cfgDescription.getId();
+					List<ILanguageSettingsProvider> initialProviders = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
+					initialProvidersMap.put(cfgId, initialProviders);
+				}
+			}
+		}
+	}
+
+	private void createTreeForLanguages(Composite parent) {
+		treeLanguages = new Tree(parent, SWT.BORDER | SWT.SINGLE | SWT.H_SCROLL);
 		treeLanguages.setLayoutData(new GridData(GridData.FILL_VERTICAL));
 		treeLanguages.setHeaderVisible(true);
 
@@ -347,8 +361,8 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 		});
 	}
 
-	private void createTreeForEntries(Composite comp) {
-		treeEntries = new Tree(comp, SWT.BORDER | SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL);
+	private void createTreeForEntries(Composite parent) {
+		treeEntries = new Tree(parent, SWT.BORDER | SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL);
 		treeEntries.setLayoutData(new GridData(GridData.FILL_VERTICAL));
 		treeEntries.setHeaderVisible(true);
 		treeEntries.setLinesVisible(true);
@@ -394,19 +408,67 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 
 	}
 
-	private void trackInitialSettings() {
-		if (page.isForPrefs()) {
-			// AG TODO
-		} else {
-			ICConfigurationDescription[] cfgDescriptions = page.getCfgsEditable();
-			for (ICConfigurationDescription cfgDescription : cfgDescriptions) {
-				if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
-					String cfgId = cfgDescription.getId();
-					List<ILanguageSettingsProvider> initialProviders = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
-					initialProvidersMap.put(cfgId, initialProviders);
-				}
+	private void createSashForm() {
+		sashFormEntries = new SashForm(usercomp,SWT.HORIZONTAL);
+	
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd.horizontalSpan = 2;
+		gd.grabExcessVerticalSpace = true;
+		sashFormEntries.setLayoutData(gd);
+	
+		GridLayout layout = new GridLayout();
+		sashFormEntries.setLayout(layout);
+	
+		createTreeForLanguages(sashFormEntries);
+		createTreeForEntries(sashFormEntries);
+	
+		sashFormEntries.setWeights(DEFAULT_ENTRIES_SASH_WEIGHTS);
+	}
+
+	private void createBuiltInsCheckBox() {
+		builtInCheckBox = setupCheck(usercomp, Messages.AbstractLangsListTab_ShowBuiltin, 1, GridData.FILL_HORIZONTAL);
+		builtInCheckBox.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				updateTreeForEntries();
 			}
+		});
+		builtInCheckBox.setSelection(true);
+		builtInCheckBox.setEnabled(true);
+	}
+
+	private void createEnableProvidersCheckBox() {
+		enableProvidersCheckBox = setupCheck(usercomp, Messages.CDTMainWizardPage_TrySD90, 2, GridData.FILL_HORIZONTAL);
+		enableProvidersCheckBox.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				boolean enabled = enableProvidersCheckBox.getSelection();
+				if (masterPropertyPage != null) {
+					masterPropertyPage.setLanguageSettingsProvidersEnabled(enabled);
+				}
+	
+				if (!enabled) {
+					ICConfigurationDescription cfgDescription = getConfigurationDescription();
+					if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
+						((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(ScannerDiscoveryLegacySupport.getDefaultProvidersLegacy());
+						updateData(getResDesc());
+					}
+				}
+	
+				enableTabControls(enabled);
+				updateStatusLine();
+			}
+		});
+	
+		if (masterPropertyPage != null) {
+			// take the flag from master page if available (normally for resource properties)
+			enableProvidersCheckBox.setSelection(masterPropertyPage.isLanguageSettingsProvidersEnabled());
+		} else {
+			enableProvidersCheckBox.setSelection(ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityEnabled(page.getProject()));
 		}
+		// display but disable the checkbox for file/folder resource
+		enableProvidersCheckBox.setEnabled(page.isForProject());
+		enableTabControls(enableProvidersCheckBox.getSelection());
 	}
 
 	@Override
@@ -426,73 +488,13 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 		trackInitialSettings();
 
 		createSashForm();
-
-		// Status line
 		fStatusLine = new StatusMessageLine(usercomp, SWT.LEFT, 2);
-
-		// "Show built-ins" checkbox
-		builtInCheckBox = setupCheck(usercomp, Messages.AbstractLangsListTab_ShowBuiltin, 1, GridData.FILL_HORIZONTAL);
-		builtInCheckBox.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				updateTreeForEntries();
-			}
-		});
-		builtInCheckBox.setSelection(true);
-		builtInCheckBox.setEnabled(true);
-
+		createBuiltInsCheckBox();
 		// "I want to try new scanner discovery" temporary checkbox
-		enableProvidersCheckBox = setupCheck(usercomp, Messages.CDTMainWizardPage_TrySD90, 2, GridData.FILL_HORIZONTAL);
-		enableProvidersCheckBox.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				boolean enabled = enableProvidersCheckBox.getSelection();
-				if (masterPropertyPage != null) {
-					masterPropertyPage.setLanguageSettingsProvidersEnabled(enabled);
-				}
-
-				if (!enabled) {
-					ICConfigurationDescription cfgDescription = getConfigurationDescription();
-					if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
-						((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(ScannerDiscoveryLegacySupport.getDefaultProvidersLegacy());
-						updateData(getResDesc());
-					}
-				}
-
-				enableTabControls(enabled);
-				updateStatusLine();
-			}
-		});
-
-		if (masterPropertyPage != null) {
-			// take the flag from master page if available (normally for resource properties)
-			enableProvidersCheckBox.setSelection(masterPropertyPage.isLanguageSettingsProvidersEnabled());
-		} else {
-			enableProvidersCheckBox.setSelection(ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityEnabled(page.getProject()));
-		}
-		// display but disable the checkbox for file/folder resource
-		enableProvidersCheckBox.setEnabled(page.isForProject());
-		enableTabControls(enableProvidersCheckBox.getSelection());
+		createEnableProvidersCheckBox();
 
 		initButtons(BUTTON_LABELS);
 		updateData(getResDesc());
-	}
-
-	private void createSashForm() {
-		sashFormEntries = new SashForm(usercomp,SWT.HORIZONTAL);
-
-		GridData gd = new GridData(GridData.FILL_BOTH);
-		gd.horizontalSpan = 2;
-		gd.grabExcessVerticalSpace = true;
-		sashFormEntries.setLayoutData(gd);
-
-		GridLayout layout = new GridLayout();
-		sashFormEntries.setLayout(layout);
-
-		createTreeForLanguages(sashFormEntries);
-		createTreeForEntries(sashFormEntries);
-
-		sashFormEntries.setWeights(DEFAULT_ENTRIES_SASH_WEIGHTS);
 	}
 
 	private void enableTabControls(boolean enable) {
@@ -776,16 +778,6 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 			}
 		}
 		return provider;
-	}
-
-	private ICLanguageSettingEntry doEdit(ICLanguageSettingEntry ent) {
-		ICLanguageSettingEntry selectedEntry = getSelectedEntry();
-		ICConfigurationDescription cfgDecsription = getConfigurationDescription();
-		LanguageSettingEntryDialog dlg = new LanguageSettingEntryDialog(usercomp.getShell(), cfgDecsription, selectedEntry);
-		if (dlg.open()) {
-			return dlg.getEntries()[0];
-		}
-		return null;
 	}
 
 	private void performEdit(ILanguageSettingsProvider selectedProvider, ICLanguageSettingEntry selectedEntry) {
@@ -1105,17 +1097,6 @@ providers:	for (ILanguageSettingsProvider provider : oldProviders) {
 		}
 
 		return true;
-	}
-
-	/**
-	 * Shortcut for setting setting entries for current context.
-	 *
-	 */
-	private void setSettingEntries(ILanguageSettingsEditableProvider provider, List<ICLanguageSettingEntry> entries) {
-		ICConfigurationDescription cfgDescription = getConfigurationDescription();
-		IResource rc = getResource();
-		if (currentLanguageId!=null)
-			provider.setSettingEntries(cfgDescription, rc, currentLanguageId, entries);
 	}
 
 }

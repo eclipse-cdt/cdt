@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *  Andrew Gvozdev - Initial API and implementation
  *  IBM Corporation
@@ -195,7 +195,6 @@ public class Messages extends NLS {
 	public static String LanguageSettingsProviderTab_Configure;
 	public static String LanguageSettingsProviderTab_ErrorPerformingDefaults;
 	public static String LanguageSettingsProviderTab_ProviderOptions;
-//	public static String LanguageSettingsProviderTab_Run;
 	public static String LanguageSettingsProviderTab_SettingEntries;
 	public static String LanguageSettingsProviderTab_SettingEntriesTooltip;
 	public static String LanguageSettingsProviderTab_ShowEntries;

@@ -9,6 +9,7 @@
  *     Alena Laskavaia  - initial API and implementation
  *     IBM Corporation
  *     Sergey Prigogin (Google)
+ *     Alex Ruiz (Google)
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.ui;
 
@@ -88,6 +89,7 @@ public class CodanUIMessages extends NLS {
 	public static String LaunchModesPropertyPage_RunOnFullBuild;
 	public static String LaunchModesPropertyPage_RunOnIncrementalBuild;
 	public static String LaunchModesPropertyPage_RunOnFileSave;
+	public static String LaunchModesPropertyPage_RunOnFileOpen;
 
 	static {
 		NLS.initializeMessages(CodanUIMessages.class.getName(), CodanUIMessages.class);

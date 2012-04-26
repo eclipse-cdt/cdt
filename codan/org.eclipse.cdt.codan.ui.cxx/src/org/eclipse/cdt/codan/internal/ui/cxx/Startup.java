@@ -10,6 +10,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.ui.cxx;
 
+import org.eclipse.cdt.codan.core.CodanRuntime;
+import org.eclipse.cdt.codan.core.model.CheckerLaunchMode;
+import org.eclipse.cdt.codan.internal.core.CodanBuilder;
+import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IStartup;
@@ -19,12 +26,13 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
  * @author Alena Laskavaia
  */
 public class Startup implements IStartup {
+	private static final IProgressMonitor NULL_PROGRESS_MONITOR = new NullProgressMonitor();
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -44,7 +52,7 @@ public class Startup implements IStartup {
 				IWorkbenchWindow active = workbench.getActiveWorkbenchWindow();
 				final IWorkbenchPage page = active.getActivePage();
 				IPartListener2 partListener = new IPartListener2() {
-					CodanCReconciler reconsiler = new CodanCReconciler();
+					CodanCReconciler reconciler = new CodanCReconciler();
 
 					public void partActivated(IWorkbenchPartReference partRef) {
 					}
@@ -53,10 +61,17 @@ public class Startup implements IStartup {
 					}
 
 					public void partOpened(IWorkbenchPartReference partRef) {
-						IWorkbenchPart editor = partRef.getPart(false);
-						if (editor instanceof ITextEditor) {
-							reconsiler.install((ITextEditor) editor);
+						IWorkbenchPart part = partRef.getPart(false);
+						if (part instanceof CEditor) {
+							CEditor editor = (CEditor) part;
+							reconciler.install(editor);
+							processResource((IResource) editor.getEditorInput().getAdapter(IResource.class));
 						}
+					}
+					
+					private void processResource(IResource resource) {
+						CodanBuilder builder = (CodanBuilder) CodanRuntime.getInstance().getBuilder();
+						builder.processResource(resource, NULL_PROGRESS_MONITOR, CheckerLaunchMode.RUN_ON_FILE_OPEN);
 					}
 
 					public void partHidden(IWorkbenchPartReference partRef) {
@@ -67,8 +82,8 @@ public class Startup implements IStartup {
 
 					public void partClosed(IWorkbenchPartReference partRef) {
 						IWorkbenchPart part = partRef.getPart(false);
-						if (part instanceof ITextEditor) {
-							reconsiler.uninstall((ITextEditor) part);
+						if (part instanceof CEditor) {
+							reconciler.uninstall((CEditor) part);
 						}
 					}
 

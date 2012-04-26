@@ -162,6 +162,7 @@ public abstract class AbstractExternalToolBasedChecker extends AbstractCheckerWi
 		getLaunchModePreference(problem).enableInLaunchModes(
 				CheckerLaunchMode.RUN_ON_FULL_BUILD,
 				CheckerLaunchMode.RUN_ON_INC_BUILD,
+				CheckerLaunchMode.RUN_ON_FILE_OPEN,
 				CheckerLaunchMode.RUN_ON_FILE_SAVE,
 				CheckerLaunchMode.RUN_ON_DEMAND);
 		addPreference(problem, settings.getPath());

@@ -31,8 +31,13 @@ public enum CheckerLaunchMode {
 	 */
 	RUN_ON_INC_BUILD,
 	/**
-	 * Checker runs when a file is saved or opened. Checker will not run if the file is an editor
-	 * with unsaved changes.
+	 * Checker runs when a file is opened.
+	 * @since 2.1
+	 */
+	RUN_ON_FILE_OPEN,
+	/**
+	 * Checker runs when a file is saved. Checker will not run if the file is an editor with unsaved
+	 * changes.
 	 * @since 2.1
 	 */
 	RUN_ON_FILE_SAVE,

@@ -21,7 +21,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
  * @author Alena
@@ -29,18 +28,14 @@ import org.eclipse.ui.texteditor.ITextEditor;
 public class CodanCReconciler implements ICReconcilingListener {
 	private CxxCodanReconciler reconsiler = new CxxCodanReconciler();
 
-	void install(ITextEditor editor) {
-		if (editor instanceof CEditor) {
-			initialize();
-			((CEditor) editor).addReconcileListener(this);
-		}
+	void install(CEditor editor) {
+		initialize();
+		editor.addReconcileListener(this);
 	}
 
-	void uninstall(ITextEditor editor) {
-		if (editor instanceof CEditor) {
-			initialize();
-			((CEditor) editor).removeReconcileListener(this);
-		}
+	void uninstall(CEditor editor) {
+		initialize();
+		editor.removeReconcileListener(this);
 	}
 
 	/**

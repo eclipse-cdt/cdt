@@ -1,14 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 Wind River Systems, Inc.
+ * Copyright (c) 2005, 2012 Wind River Systems, Inc.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Markus Schorn - initial API and implementation 
+ *     Markus Schorn - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
-
 package org.eclipse.cdt.ui.tests.refactoring.rename;
 
 import java.io.StringWriter;
@@ -28,18 +28,19 @@ public class RenameTypeTests extends RenameTests {
     public RenameTypeTests(String name) {
         super(name);
     }
-    public static Test suite(){
+
+    public static Test suite() {
         return suite(true);
     }
-    public static Test suite( boolean cleanup ) {
+
+    public static Test suite(boolean cleanup) {
         TestSuite suite = new TestSuite(RenameTypeTests.class); 
         if (cleanup) {
-            suite.addTest( new RefactoringTests("cleanupProject") );    //$NON-NLS-1$
+            suite.addTest(new RefactoringTests("cleanupProject"));    //$NON-NLS-1$
         }
         return suite;
     }
-    
-    
+
     public void testClassNameConflicts() throws Exception {
         createCppFwdDecls("cpp_fwd.hh"); //$NON-NLS-1$
         createCppDefs("cpp_def.hh"); //$NON-NLS-1$
@@ -75,7 +76,7 @@ public class RenameTypeTests extends RenameTests {
         writer.write("  }                        \n"); //$NON-NLS-1$
         writer.write("}                          \n"); //$NON-NLS-1$
         String contents = writer.toString();
-        IFile cpp= importFile("test.cpp", contents ); //$NON-NLS-1$
+        IFile cpp= importFile("test.cpp", contents); //$NON-NLS-1$
         
         int offset1= contents.indexOf("v1"); //$NON-NLS-1$
         int offset2= contents.indexOf("v2"); //$NON-NLS-1$
@@ -417,7 +418,7 @@ public class RenameTypeTests extends RenameTests {
         writer.write("  }                        \n"); //$NON-NLS-1$
         writer.write("}                          \n"); //$NON-NLS-1$
         String contents = writer.toString();
-        IFile cpp= importFile("test.cpp", contents ); //$NON-NLS-1$
+        IFile cpp= importFile("test.cpp", contents); //$NON-NLS-1$
         
         int offset1= contents.indexOf("v1"); //$NON-NLS-1$
         int offset2= contents.indexOf("v2"); //$NON-NLS-1$
@@ -755,7 +756,7 @@ public class RenameTypeTests extends RenameTests {
         writer.write("  }                        \n"); //$NON-NLS-1$
         writer.write("}                          \n"); //$NON-NLS-1$
         String contents = writer.toString();
-        IFile cpp= importFile("test.cpp", contents ); //$NON-NLS-1$
+        IFile cpp= importFile("test.cpp", contents); //$NON-NLS-1$
 
         int offset1= contents.indexOf("v1"); //$NON-NLS-1$
         int offset2= contents.indexOf("v2"); //$NON-NLS-1$
@@ -1079,7 +1080,7 @@ public class RenameTypeTests extends RenameTests {
         writer.write("  }                       \n"); //$NON-NLS-1$
         writer.write("}                         \n"); //$NON-NLS-1$
         String contents = writer.toString();
-        IFile cpp= importFile("test.cpp", contents ); //$NON-NLS-1$
+        IFile cpp= importFile("test.cpp", contents); //$NON-NLS-1$
 
         int offset1= contents.indexOf("v1"); //$NON-NLS-1$
         
@@ -1176,7 +1177,7 @@ public class RenameTypeTests extends RenameTests {
         writer.write("  }                        \n"); //$NON-NLS-1$
         writer.write("}                          \n"); //$NON-NLS-1$
         String contents = writer.toString();
-        IFile cpp= importFile("test.cpp", contents ); //$NON-NLS-1$
+        IFile cpp= importFile("test.cpp", contents); //$NON-NLS-1$
         
         int offset1= contents.indexOf("v1"); //$NON-NLS-1$
         int offset2= contents.indexOf("v2"); //$NON-NLS-1$
@@ -1493,7 +1494,7 @@ public class RenameTypeTests extends RenameTests {
         writer.write("     int w1; vv1.v++;    \n"); //$NON-NLS-1$
         writer.write("}                         \n"); //$NON-NLS-1$
         String contents = writer.toString();
-        IFile cpp= importFile("test.c", contents ); //$NON-NLS-1$
+        IFile cpp= importFile("test.c", contents); //$NON-NLS-1$
         
         int offset1= contents.indexOf("v1"); //$NON-NLS-1$
         
@@ -1580,7 +1581,7 @@ public class RenameTypeTests extends RenameTests {
         writer.write("     int w3; v3 v;         \n"); //$NON-NLS-1$
         writer.write("}                          \n"); //$NON-NLS-1$
         String contents = writer.toString();
-        IFile cpp= importFile("test.cpp", contents ); //$NON-NLS-1$
+        IFile cpp= importFile("test.cpp", contents); //$NON-NLS-1$
         
         int offset1= contents.indexOf("v1"); //$NON-NLS-1$
         int offset2= contents.indexOf("v2"); //$NON-NLS-1$
@@ -1837,7 +1838,7 @@ public class RenameTypeTests extends RenameTests {
         writer.write("     int w1; enum v1 v;   \n"); //$NON-NLS-1$
         writer.write("}                         \n"); //$NON-NLS-1$
         String contents = writer.toString();
-        IFile cpp= importFile("test.c", contents ); //$NON-NLS-1$
+        IFile cpp= importFile("test.c", contents); //$NON-NLS-1$
         
         int offset1= contents.indexOf("v1"); //$NON-NLS-1$
         
@@ -1925,7 +1926,7 @@ public class RenameTypeTests extends RenameTests {
         writer.write("  }                        \n"); //$NON-NLS-1$
         writer.write("}                          \n"); //$NON-NLS-1$
         String contents = writer.toString();
-        IFile cpp= importFile("test.cpp", contents ); //$NON-NLS-1$
+        IFile cpp= importFile("test.cpp", contents); //$NON-NLS-1$
         
         int offset1= contents.indexOf("v1"); //$NON-NLS-1$
         int offset2= contents.indexOf("v2"); //$NON-NLS-1$
@@ -2176,7 +2177,7 @@ public class RenameTypeTests extends RenameTests {
         writer.write("     int w1; v1 v;        \n"); //$NON-NLS-1$
         writer.write("}                         \n"); //$NON-NLS-1$
         String contents = writer.toString();
-        IFile cpp= importFile("test.c", contents ); //$NON-NLS-1$
+        IFile cpp= importFile("test.c", contents); //$NON-NLS-1$
         
         int offset1= contents.indexOf("v1"); //$NON-NLS-1$
         
@@ -2248,7 +2249,7 @@ public class RenameTypeTests extends RenameTests {
         status= checkConditions(cpp, offset1, "un_member");  //$NON-NLS-1$
         assertRefactoringOk(status);
     }
-    
+
     public void testRenameClass() throws Exception {
         StringWriter writer = new StringWriter();
         writer.write("class String              \n"); //$NON-NLS-1$
@@ -2257,42 +2258,61 @@ public class RenameTypeTests extends RenameTests {
         writer.write("  String();               \n"); //$NON-NLS-1$
         writer.write("  String(const String &other); \n"); //$NON-NLS-1$
         writer.write("  ~String();                   \n"); //$NON-NLS-1$
-        writer.write("  String &operator=( const String &other ); \n"); //$NON-NLS-1$
+        writer.write("  String &operator=(const String &other); \n"); //$NON-NLS-1$
         writer.write("};                        \n"); //$NON-NLS-1$
-        writer.write("  String::String(){}      \n"); //$NON-NLS-1$
-        writer.write("  String::String(const String &other){}; \n"); //$NON-NLS-1$
-        writer.write("  String::~String(){};                   \n"); //$NON-NLS-1$
-        writer.write("  String& String::operator=( const String &other ) \n"); //$NON-NLS-1$
-        writer.write("     {return *this;}                        \n"); //$NON-NLS-1$
+        writer.write("  String::String() {}     \n"); //$NON-NLS-1$
+        writer.write("  String::String(const String &other) {}; \n"); //$NON-NLS-1$
+        writer.write("  String::~String() {};                   \n"); //$NON-NLS-1$
+        writer.write("  String& String::operator=(const String &other) \n"); //$NON-NLS-1$
+        writer.write("     {return *this;}                      \n"); //$NON-NLS-1$
         String contents = writer.toString();
-        IFile cpp= importFile("test.cpp", contents ); //$NON-NLS-1$
+        IFile cpp= importFile("test.cpp", contents); //$NON-NLS-1$
 
-        int offset1= contents.indexOf("String"); //$NON-NLS-1$
+        int offset= contents.indexOf("String"); //$NON-NLS-1$
         
         // conflicting renamings
-        RefactoringStatus status= checkConditions(cpp, offset1, "CString");  //$NON-NLS-1$
+        RefactoringStatus status= checkConditions(cpp, offset, "CString");  //$NON-NLS-1$
         assertRefactoringOk(status);
-        Change ch= getRefactorChanges(cpp, offset1, "CString"); //$NON-NLS-1$
+        Change ch= getRefactorChanges(cpp, offset, "CString"); //$NON-NLS-1$
         assertTotalChanges(countOccurrences(contents, "String"), ch); //$NON-NLS-1$
     }
-    
+
+    public void testUsingDeclaration_332895() throws Exception {
+        StringWriter writer = new StringWriter();
+        writer.write("namespace ns {            \n"); //$NON-NLS-1$
+        writer.write("typedef int MyType;       \n"); //$NON-NLS-1$
+        writer.write("}                         \n"); //$NON-NLS-1$
+        writer.write("                          \n"); //$NON-NLS-1$
+        writer.write("using ns::MyType;         \n"); //$NON-NLS-1$
+        writer.write("MyType a;                 \n"); //$NON-NLS-1$
+        String contents = writer.toString();
+        IFile cpp= importFile("test.cpp", contents); //$NON-NLS-1$
+
+        int offset= contents.indexOf("MyType"); //$NON-NLS-1$
+        
+        RefactoringStatus status= checkConditions(cpp, offset, "YourType");  //$NON-NLS-1$
+        assertRefactoringOk(status);
+        Change ch= getRefactorChanges(cpp, offset, "YourType"); //$NON-NLS-1$
+        assertTotalChanges(countOccurrences(contents, "MyType"), ch); //$NON-NLS-1$
+    }
+
     public void testBug72888() throws Exception {
         StringWriter writer = new StringWriter();
         writer.write("class MyEx {};            \n"); //$NON-NLS-1$
         writer.write("void someFunc() {         \n"); //$NON-NLS-1$
-        writer.write("  throw MyEx();          \n"); //$NON-NLS-1$
+        writer.write("  throw MyEx();           \n"); //$NON-NLS-1$
         writer.write("};                        \n"); //$NON-NLS-1$
         writer.write("int main(){               \n"); //$NON-NLS-1$
-        writer.write("   try{                   \n"); //$NON-NLS-1$
+        writer.write("   try {                  \n"); //$NON-NLS-1$
         writer.write("      someFunc();         \n"); //$NON-NLS-1$
         writer.write("   } catch(MyEx &e) {}    \n"); //$NON-NLS-1$
         writer.write("   return 0;              \n"); //$NON-NLS-1$
         writer.write("}                         \n"); //$NON-NLS-1$
         String contents = writer.toString();
-        IFile cpp= importFile("test.cpp", contents ); //$NON-NLS-1$
+        IFile cpp= importFile("test.cpp", contents); //$NON-NLS-1$
         
         int offset =  contents.indexOf("MyEx") ; //$NON-NLS-1$
         Change changes = getRefactorChanges(cpp, offset, "xx"); //$NON-NLS-1$
-        assertTotalChanges( 3, changes );
+        assertTotalChanges(3, changes);
     }
 }

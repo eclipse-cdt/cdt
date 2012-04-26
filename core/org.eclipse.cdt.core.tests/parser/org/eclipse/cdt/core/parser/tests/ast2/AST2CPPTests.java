@@ -9592,4 +9592,21 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertSame(calls[calls.length - 1] + " and " + calls[calls.length - 2] + " resolve to different functions",
 				functions[calls.length - 1], functions[calls.length - 2]);
 	}
+	
+	//	void f(int x) try {
+	//	} catch(...) {
+	//		(void)x;
+	//	}
+	public void testParentScopeOfCatchHandler_376246() throws Exception {
+		parseAndCheckBindings();
+	}
+	
+	//	struct MyClass {
+	//	    struct MyException {};
+	//	    void doSomething() throw(MyException);
+	//	};
+	//	void MyClass::doSomething() throw (MyException) {}
+	public void testScopeOfExceptionSpecification_377457() throws Exception {
+		parseAndCheckBindings();
+	}
 }

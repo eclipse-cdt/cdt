@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 Intel Corporation and others.
+ * Copyright (c) 2005, 2012 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Intel Corporation - Initial API and implementation
- * IBM Corporation
+ *     Intel Corporation - Initial API and implementation
+ *     IBM Corporation
+ *     Marc-Andre Laperle
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
@@ -40,6 +41,7 @@ import org.eclipse.cdt.managedbuilder.internal.macros.IMacroContextInfo;
 import org.eclipse.cdt.managedbuilder.internal.macros.OptionContextData;
 import org.eclipse.cdt.managedbuilder.macros.BuildMacroException;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
+import org.eclipse.cdt.utils.EFSExtensionManager;
 import org.eclipse.cdt.utils.cdtvariables.CdtVariableResolver;
 import org.eclipse.cdt.utils.cdtvariables.SupplierBasedCdtVariableSubstitutor;
 import org.eclipse.core.filesystem.EFS;
@@ -380,7 +382,7 @@ public class AdditionalInput implements IAdditionalInput {
 				} catch (BuildMacroException e) {
 				}
 				
-				URI buildArtifactURI = buildLocationURI.resolve(artifactName);
+				URI buildArtifactURI = EFSExtensionManager.getDefault().append(buildLocationURI, artifactName);
 				
 				try {
 					IFileStore artifact = EFS.getStore(buildArtifactURI);

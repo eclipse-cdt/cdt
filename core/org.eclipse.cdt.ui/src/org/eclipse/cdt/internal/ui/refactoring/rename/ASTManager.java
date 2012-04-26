@@ -1,5 +1,5 @@
 /******************************************************************************* 
- * Copyright (c) 2005, 2011 Wind River Systems, Inc. and others.
+ * Copyright (c) 2005, 2012 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
@@ -97,6 +97,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexName;
@@ -1208,18 +1209,27 @@ public class ASTManager implements IDisposable {
         	} else {
     			final IASTTranslationUnit tu = name.getTranslationUnit();
     			final IIndex index= tu != null ? tu.getIndex() : null;
-        		for (IBinding renameBinding : fValidBindings) {
-        			try {
-        				int cmp0= isSameBinding(index, binding, renameBinding);
-        				if (cmp0 != FALSE) {
-        					cmp= cmp0;
-        				}
-        				if (cmp0 == TRUE) {
-        					break;
-        				}
-        			} catch (DOMException e) {
-        				handleDOMException(name.getTranslationUnit(), e, status);
-        				cmp= UNKNOWN;
+    			IBinding[] bindings = binding instanceof ICPPUsingDeclaration ?
+        				((ICPPUsingDeclaration) binding).getDelegates() : new IBinding[] { binding };
+   				// When a 'using' declaration has multiple delegate bindings and only some of them
+        		// are being renamed, to preserve correctness of the code we would have to split
+        		// the 'using' declaration into two separate ones. We currently don't do that and
+        		// rename the 'using' declaration if at least one of its delegate bindings is being
+        		// renamed.
+        		outer: for (IBinding b : bindings) {
+        			for (IBinding renameBinding : fValidBindings) {
+	        			try {
+	        				int cmp0= isSameBinding(index, b, renameBinding);
+	        				if (cmp0 != FALSE) {
+	        					cmp= cmp0;
+	        				}
+	        				if (cmp0 == TRUE) {
+	        					break outer;
+	        				}
+	        			} catch (DOMException e) {
+	        				handleDOMException(name.getTranslationUnit(), e, status);
+	        				cmp= UNKNOWN;
+	        			}
         			}
         		}
         	}

@@ -593,17 +593,17 @@ public class SyncUtil {
 	}
 
 	/**
-	 * Utility method to return the execution DM context.
+	 * Utility method to return all thread execution contexts.
 	 */
 	@ThreadSafeAndProhibitedFromDsfExecutor("fSession.getExecutor()")
-	public static IMIExecutionDMContext getExecutionContext(final int threadIndex) throws InterruptedException {
+	public static IMIExecutionDMContext[] getExecutionContexts() throws InterruptedException {
 		assert !fProcessesService.getExecutor().isInExecutorThread();
 
         final IContainerDMContext containerDmc = SyncUtil.getContainerContext();
 
-		Query<IMIExecutionDMContext> query = new Query<IMIExecutionDMContext>() {
+		Query<IMIExecutionDMContext[]> query = new Query<IMIExecutionDMContext[]>() {
 			@Override
-			protected void execute(final DataRequestMonitor<IMIExecutionDMContext> rm) {
+			protected void execute(final DataRequestMonitor<IMIExecutionDMContext[]> rm) {
 				fProcessesService.getProcessesBeingDebugged(
             			containerDmc, 
             			new ImmediateDataRequestMonitor<IDMContext[]>() {
@@ -612,10 +612,7 @@ public class SyncUtil {
                     	if (isSuccess()) {
                     		IDMContext[] threads = getData();
                     		Assert.assertNotNull("invalid return value from service", threads);
-                    		Assert.assertTrue("unexpected number of threads", threadIndex < threads.length);
-                    		IDMContext thread = threads[threadIndex];    
-                    		Assert.assertNotNull("unexpected thread context type ", thread);
-                    		rm.setData((IMIExecutionDMContext)thread);
+                    		rm.setData((IMIExecutionDMContext[])threads);
                     	} else {
                             rm.setStatus(getStatus());
                     	}
@@ -632,6 +629,16 @@ public class SyncUtil {
 			fail(e.getMessage());
 		}
 		return null;
+	}
+	/**
+	 * Utility method to return a specific execution DM context.
+	 */
+	@ThreadSafeAndProhibitedFromDsfExecutor("fSession.getExecutor()")
+	public static IMIExecutionDMContext getExecutionContext(int threadIndex) throws InterruptedException {
+		IMIExecutionDMContext[] threads = getExecutionContexts();
+		Assert.assertTrue("unexpected number of threads", threadIndex < threads.length);
+		Assert.assertNotNull("unexpected thread context type ", threads[threadIndex]);
+		return threads[threadIndex];
 	}
 
 	/** 

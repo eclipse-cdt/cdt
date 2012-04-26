@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 Wind River Systems and others.
+ * Copyright (c) 2006, 2012 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,14 +7,16 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     Marc Khouzam (Ericsson) - Added support for multi-selection (Bug 330974)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.ui.actions;
 
-import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
-import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Immutable;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
+import org.eclipse.cdt.dsf.debug.service.IMultiRunControl;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
@@ -42,17 +44,42 @@ public class DsfSuspendCommand implements ISuspendHandler {
 
     @Override
 	public void canExecute(final IEnabledStateRequest request) {
-        if (request.getElements().length != 1) {
-            request.setEnabled(false);
-            request.done();
+        if (request.getElements().length == 1) {
+			canExecuteSingle(request);
             return;
         }
         
+   		// Handle multi-selection
+        fExecutor.submit(new DsfCommandRunnable(fTracker, request.getElements(), request) { 
+            @Override public void doExecute() {
+    			final IMultiRunControl multiRun = fTracker.getService(IMultiRunControl.class);
+    			if (multiRun == null) {
+    				// No multi run control service: multi selection not allowed
+    				request.setEnabled(false);
+    				request.done();
+    				return;
+    			}
+    			
+    			// Check if some of the selections can be suspended
+    			multiRun.canSuspendSome(
+    					getContexts(),
+    					new ImmediateDataRequestMonitor<Boolean>() {
+    						@Override
+    						protected void handleCompleted() {
+    							request.setEnabled(isSuccess() && getData());
+    							request.done();
+    						}
+    					});
+            }
+        });
+    }
+    
+    private void canExecuteSingle(final IEnabledStateRequest request) {
         fExecutor.submit(new DsfCommandRunnable(fTracker, request.getElements()[0], request) { 
             @Override public void doExecute() {
                 getRunControl().canSuspend(
                     getContext(),
-                    new DataRequestMonitor<Boolean>(ImmediateExecutor.getInstance(), null) {
+                    new ImmediateDataRequestMonitor<Boolean>() {
                         @Override
                         protected void handleCompleted() {
                             request.setEnabled(isSuccess() && getData());
@@ -65,17 +92,32 @@ public class DsfSuspendCommand implements ISuspendHandler {
 
     @Override
 	public boolean execute(final IDebugCommandRequest request) {
-        if (request.getElements().length != 1) {
-            request.done();
-            return false;
+   		if (request.getElements().length == 1) {
+   			executeSingle(request);
+   			return false;
         }
-        
+  		
+   		// Handle multi-selection
+   		fExecutor.submit(new DsfCommandRunnable(fTracker, request.getElements(), request) { 
+            @Override public void doExecute() {
+    			final IMultiRunControl multiRun = fTracker.getService(IMultiRunControl.class);
+    			if (multiRun == null) {
+    				// No multi run control service: multi selection not allowed
+    				request.done();
+    				return;
+    			}
+
+    			multiRun.suspend(getContexts(), new ImmediateRequestMonitor());
+    		}
+    	});
+   		return false;
+    }
+    
+	private void executeSingle(IDebugCommandRequest request) {
         fExecutor.submit(new DsfCommandRunnable(fTracker, request.getElements()[0], request) { 
             @Override public void doExecute() {
                 getRunControl().suspend(getContext(), new RequestMonitor(fExecutor, null));
             }
         });
-        return false;
     }
-
 }

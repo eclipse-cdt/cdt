@@ -11,10 +11,9 @@
  *     James Blackburn (Broadcom) - Bug 247838
  *     Andrew Gvozdev (Quoin Inc)
  *     Dmitry Kozlov (CodeSourcery) - Build error highlighting and navigation
+ *     Alex Ruiz (Google)
  *******************************************************************************/
 package org.eclipse.cdt.core;
-
-import static org.eclipse.cdt.core.ErrorParserContext.BUILD;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -68,6 +67,11 @@ public class ErrorParserManager extends OutputStream implements IConsoleParser, 
 	 */
 	public final static char ERROR_PARSER_DELIMITER = ';';
 
+	/**
+	 * @since 5.4
+	 */
+	public static final String BUILD_CONTEXT = "build"; //$NON-NLS-1$
+	
 	private int nOpens;
 	private int lineCounter=0;
 
@@ -75,7 +79,7 @@ public class ErrorParserManager extends OutputStream implements IConsoleParser, 
 	private final IMarkerGenerator fMarkerGenerator;
 
 	private Map<String, IErrorParser[]> fErrorParsers;
-	private final ArrayList<ProblemMarkerInfo> fErrors;
+	private final List<ProblemMarkerInfo> fErrors;
 
 	private final Vector<URI> fDirectoryStack;
 	private final URI fBaseDirectoryURI;
@@ -149,28 +153,11 @@ public class ErrorParserManager extends OutputStream implements IConsoleParser, 
 	 * @since 5.1
 	 */
 	public ErrorParserManager(IProject project, URI baseDirectoryURI, IMarkerGenerator markerGenerator, String[] parsersIDs) {
-		this(project, baseDirectoryURI, markerGenerator, parsersIDs, BUILD);
-	}
-
-	/**
-	 * URI based constructor.
-	 *
-	 * @param project - project being built.
-	 * @param baseDirectoryURI - absolute location URI of working directory of where the build is performed.
-	 * @param markerGenerator - marker generator able to create markers.
-	 * @param parsersIDs - array of error parsers' IDs.
-	 * @param context - context where the error parser will be used. Valid values are defined by
-	 * <code>{@link ErrorParserContext}</code>.
-	 * @see ErrorParserContext
-	 * @since 5.4
-	 */
-	public ErrorParserManager(IProject project, URI baseDirectoryURI, 
-			IMarkerGenerator markerGenerator, String[] parsersIDs, int context) {
 		fProject = project;
 		fMarkerGenerator = markerGenerator;
 		fDirectoryStack = new Vector<URI>();
 		fErrors = new ArrayList<ProblemMarkerInfo>();
-		enableErrorParsers(parsersIDs, context);
+		enableErrorParsers(parsersIDs);
 
 		if (baseDirectoryURI != null) {
 			fBaseDirectoryURI = baseDirectoryURI;
@@ -182,13 +169,13 @@ public class ErrorParserManager extends OutputStream implements IConsoleParser, 
 		}
 	}
 
-	private void enableErrorParsers(String[] parsersIDs, int context) {
-		if (parsersIDs == null) {
-			parsersIDs = ErrorParserExtensionManager.getDefaultErrorParserIds();
+	private void enableErrorParsers(String[] parserIDs) {
+		if (parserIDs == null) {
+			parserIDs = ErrorParserExtensionManager.getDefaultErrorParserIds();
 		}
-		fErrorParsers = new LinkedHashMap<String, IErrorParser[]>(parsersIDs.length);
-		for (String parsersID : parsersIDs) {
-			IErrorParser errorParser = getErrorParserCopy(parsersID, context);
+		fErrorParsers = new LinkedHashMap<String, IErrorParser[]>(parserIDs.length);
+		for (String parsersID : parserIDs) {
+			IErrorParser errorParser = getErrorParserCopy(parsersID);
 			if (errorParser!=null) {
 				fErrorParsers.put(parsersID, new IErrorParser[] {errorParser} );
 			}
@@ -375,7 +362,7 @@ outer:
 				} catch (Exception e){
 					String id = "";  //$NON-NLS-1$
 					if (parser instanceof IErrorParserNamed) {
-						id = ((IErrorParserNamed)parser).getId();
+						id = ((IErrorParserNamed) parser).getId();
 					}
 					@SuppressWarnings("nls")
 					String message = "Errorparser " + id + " failed parsing line [" + lineToParse + "]";
@@ -833,6 +820,16 @@ outer:
 	}
 
 	/**
+	 * @param context - indicates the context in which an error parser can be used.
+	 * @return available error parsers ID, which include contributed through extension and user-
+	 *         defined ones from workspace, that can be used in the given context.
+	 * @since 5.4
+	 */
+	public static String[] getErrorParserAvailableIdsInContext(String context) {
+		return ErrorParserExtensionManager.getErrorParserAvailableIdsInContext(context);
+	}
+	
+	/**
 	 * @return IDs of error parsers contributed through error parser extension point.
 	 * @since 5.2
 	 */
@@ -868,20 +865,6 @@ outer:
 	 */
 	public static IErrorParserNamed getErrorParserCopy(String id) {
 		return ErrorParserExtensionManager.getErrorParserCopy(id, false);
-	}
-
-	/**
-	 * @param id - ID of error parser
-	 * @param context - context where the error parser will be used. Valid values are defined by
-	 * <code>{@link ErrorParserContext}</code>.
-	 * @return cloned copy of error parser or {@code null}.
-	 * Note that {@link ErrorParserNamedWrapper} returns shallow copy with the same instance
-	 * of underlying error parser.
-	 * @see ErrorParserContext
-	 * @since 5.4
-	 */
-	public static IErrorParserNamed getErrorParserCopy(String id, int context) {
-		return ErrorParserExtensionManager.getErrorParserCopy(id, false, context);
 	}
 
 	/**

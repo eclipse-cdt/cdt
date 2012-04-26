@@ -1,3 +1,8 @@
+2012-04-20  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* META-INF/MANIFEST.MF: Bump up version to 1.1.0.
+	* pom.xml: Ditto.
+
 2012-04-11  Jeff Johnston  <jjohnstn@redhat.com>
 
 	Bug #375007 fix from Anna Dushistova

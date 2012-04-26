@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation 
+ *     Markus Schorn - initial API and implementation 
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring.rename;
 
@@ -21,12 +21,14 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
 public class RenameFunctionTests extends RenameTests {
 
-    public RenameFunctionTests(String name) {
+	public RenameFunctionTests(String name) {
         super(name);
     }
+
     public static Test suite(){
         return suite(true);
     }
+
     public static Test suite( boolean cleanup ) {
         TestSuite suite = new TestSuite(RenameFunctionTests.class); 
 

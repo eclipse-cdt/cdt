@@ -15,13 +15,14 @@
 	<artifactId>org.eclipse.cdt.managedbuilder.core.tests</artifactId>
 	<packaging>eclipse-test-plugin</packaging>
 
-	<repositories>
+    <!-- Uncommenting this is useful when the repo is built first then you want to run tests on this plugin only -->
+	<!-- <repositories>
 		<repository>
 			<id>cdt.repo</id>
 			<url>file:/${basedir}/../../releng/org.eclipse.cdt.repo/target/repository</url>
 			<layout>p2</layout>
 		</repository>
-	</repositories>
+	</repositories>-->
 
 	<build>
 		<plugins>

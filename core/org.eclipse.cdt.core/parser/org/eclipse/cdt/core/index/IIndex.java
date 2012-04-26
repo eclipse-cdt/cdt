@@ -82,8 +82,7 @@ public interface IIndex {
 	 * index.acquireReadLock();
 	 * try {
 	 *    ....
-	 * }
-	 * finally {
+	 * } finally {
 	 *    index.releaseReadLock();
 	 * }
 	 * </pre>
@@ -113,8 +112,7 @@ public interface IIndex {
 	 * try {
 	 *    timestamp= index.getLastWriteAccess();
 	 *    binding= index.findBinding(...);
-	 * }
-	 * finally {
+	 * } finally {
 	 *    index.releaseReadLock();
 	 * }
 	 * ...
@@ -126,8 +124,7 @@ public interface IIndex {
 	 *    }
 	 *    String name= binding.getName();
 	 *    ...
-	 * }
-	 * finally {
+	 * } finally {
 	 *    index.releaseReadLock();
 	 * }
 	 */

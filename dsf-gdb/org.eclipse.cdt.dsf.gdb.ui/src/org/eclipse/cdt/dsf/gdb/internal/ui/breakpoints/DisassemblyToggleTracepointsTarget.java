@@ -16,6 +16,8 @@ import org.eclipse.cdt.debug.core.model.ICBreakpointType;
 import org.eclipse.cdt.dsf.debug.ui.actions.AbstractDisassemblyBreakpointsTarget;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * Toggle tracepoint target implementation for the disassembly part.
@@ -38,6 +40,15 @@ public class DisassemblyToggleTracepointsTarget extends AbstractDisassemblyBreak
 		CDIDebugModel.createAddressTracepoint( null, null, resource, getBreakpointType(), -1, address, true, 0, "", true ); //$NON-NLS-1$
 	}
 
+	@Override
+	public boolean canCreateEventBreakpointsInteractive(IWorkbenchPart part, ISelection selection) {
+	    return false;
+	}
+	
+	@Override
+	public void createEventBreakpointsInteractive(IWorkbenchPart part, ISelection selection) throws CoreException {
+	}
+	
 	protected int getBreakpointType() {
 		return ICBreakpointType.REGULAR;
 	}

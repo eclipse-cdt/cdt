@@ -982,7 +982,8 @@ public class CPPVisitor extends ASTQueries {
 						node= node.getParent();
 					}
 					continue;
-				} else if (prop == ICPPASTFunctionDeclarator.TRAILING_RETURN_TYPE) {
+				} else if (prop == ICPPASTFunctionDeclarator.TRAILING_RETURN_TYPE ||
+						prop == ICPPASTFunctionDeclarator.EXCEPTION_TYPEID) {
 					IScope result = scopeViaFunctionDtor((ICPPASTFunctionDeclarator) node.getParent());
 					if (result != null)
 						return result;

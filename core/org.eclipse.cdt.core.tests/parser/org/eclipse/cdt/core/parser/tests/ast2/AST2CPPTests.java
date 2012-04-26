@@ -9600,4 +9600,13 @@ public class AST2CPPTests extends AST2BaseTest {
 	public void testParentScopeOfCatchHandler_376246() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	struct MyClass {
+	//	    struct MyException {};
+	//	    void doSomething() throw(MyException);
+	//	};
+	//	void MyClass::doSomething() throw (MyException) {}
+	public void testScopeOfExceptionSpecification_377457() throws Exception {
+		parseAndCheckBindings();
+	}
 }

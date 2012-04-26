@@ -13,11 +13,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.ALLCVQ;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.CVTYPE;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getNestedType;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getUltimateTypeUptoPointers;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -1264,7 +1260,11 @@ public class CPPVisitor extends ASTQueries {
 		} else if (parent instanceof IASTStatement) {
 			scope = getContainingScope((IASTStatement) parent);
 		} else if (parent instanceof IASTFunctionDefinition) {
-		    IASTFunctionDeclarator fnDeclarator = ((IASTFunctionDefinition) parent).getDeclarator();
+			final IASTFunctionDefinition fdef = (IASTFunctionDefinition) parent;
+			if (statement instanceof ICPPASTCatchHandler) 
+				return fdef.getScope();
+			
+			IASTFunctionDeclarator fnDeclarator = fdef.getDeclarator();
 		    IASTName name = findInnermostDeclarator(fnDeclarator).getName();
 		    if (name instanceof ICPPASTQualifiedName) {
 		        IASTName[] ns = ((ICPPASTQualifiedName) name).getNames();

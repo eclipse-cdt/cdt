@@ -1,3 +1,47 @@
+2012-04-26  Jeff Johnston  <jjohnstn@redhat.com>
+
+    * Linux_Tools/*: Removed.
+	* CDT/Autotools/User_Guide/Building.html: New file.
+	* CDT/Autotools/User_Guide/Configuration.html: New file.
+	* CDT/Autotools/User_Guide/Creating-an-Autotools-Project.html: New file.
+	* CDT/Autotools/User_Guide/images/AutotoolsAclocal.png: New file.
+	* CDT/Autotools/User_Guide/images/AutotoolsAutoconfEditor.png: New file.
+	* CDT/Autotools/User_Guide/images/AutotoolsAutoheader.png: New file.
+	* CDT/Autotools/User_Guide/images/AutotoolsAutomake.png: New file.
+	* CDT/Autotools/User_Guide/images/AutotoolsAutomakeEditor.png: New file.
+	* CDT/Autotools/User_Guide/images/AutotoolsAutoreconf.png: New file.
+	* CDT/Autotools/User_Guide/images/AutotoolsBuildConsole.png: New file.
+	* CDT/Autotools/User_Guide/images/AutotoolsBuilders.png: New file.
+	* CDT/Autotools/User_Guide/images/AutotoolsBuildMakeTarget.png: New file.
+	* CDT/Autotools/User_Guide/images/AutotoolsCBuildProperties.png: New file.
+	* CDT/Autotools/User_Guide/images/AutotoolsCheckOutAs.png: New file.
+	* CDT/Autotools/User_Guide/images/AutotoolsConfigureConsole.png: New file.
+	* CDT/Autotools/User_Guide/images/AutotoolsConfigureSettings.png: New file.
+	* CDT/Autotools/User_Guide/images/AutotoolsConsole.png: New file.
+	* CDT/Autotools/User_Guide/images/AutotoolsConvertProject.png: New file.
+	* CDT/Autotools/User_Guide/images/AutotoolsConvertToCProject.png: New file.
+	* CDT/Autotools/User_Guide/images/AutotoolsConvertWizard.png: New file.
+	* CDT/Autotools/User_Guide/images/AutotoolsCreateMakeTarget.png: New file.
+	* CDT/Autotools/User_Guide/images/AutotoolsEditorPreferences.png: New file.
+	* CDT/Autotools/User_Guide/images/AutotoolsEditorsTab.png: New file.
+	* CDT/Autotools/User_Guide/images/AutotoolsLibtoolize.png: New file.
+	* CDT/Autotools/User_Guide/images/AutotoolsMakeTargetMenu.png: New file.
+	* CDT/Autotools/User_Guide/images/AutotoolsManageConfigurations.png: New file.
+	* CDT/Autotools/User_Guide/images/AutotoolsModifyMakeTarget.png: New file.
+	* CDT/Autotools/User_Guide/images/AutotoolsNewConfiguration.png: New file.
+	* CDT/Autotools/User_Guide/images/AutotoolsNewCProjectWizard.png: New file.
+	* CDT/Autotools/User_Guide/images/AutotoolsProperties.png: New file.
+	* CDT/Autotools/User_Guide/images/AutotoolsToolSettings.png: New file.
+	* CDT/Autotools/User_Guide/Invoking-Autotools.html: New file.
+	* CDT/Autotools/User_Guide/Make-Targets.html: New file.
+	* CDT/Autotools/User_Guide/Special-Editors.html: New file.
+	* CDT/Autotools/User_Guide/Supported-Environments.html: New file.
+	* CDT/Autotools/User_Guide/Updating-This-Document.html: New file.
+	* CDT/Autotools/User_Guide/User-Guide.html: New file.
+	* build-helper.xml: Rewritten to use the CDT Autotools User Guide Wiki page.
+	* build.properties: Add CDT directory and remove Linux_Tools directory.
+	* toc.xml: Update to new files. 
+	
 2012-01-03  Jeff Johnston  <jjohnstn@redhat.com>
 
 	Refactor to org.eclipse.cdt.autotools.docs.

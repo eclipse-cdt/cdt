@@ -11,34 +11,35 @@
  -->
 <project name="org.eclipse.cdt.autotools.docs" default="all">
     <description>
-            Generate Eclipse help content for the Linux Tools autotools user guide
+            Generate Eclipse help content for the CDT autotools user guide
     </description>
 
 	<property name="autotools.help.doc.url.base" value="http://wiki.eclipse.org"/>
-	<property name="autotools.wiki.url.base" value="${autotools.help.doc.url.base}/Linux_Tools_Project/Autotools"/>
+	<property name="autotools.wiki.url.base" value="${autotools.help.doc.url.base}/CDT/Autotools"/>
 	<property name="imageFolder" value="images"/>
 
 	<path id="wikitext.tasks.classpath">
 		<!-- Replace dir with the dir you have wikitext installed into.-->
-		<fileset dir="/usr/share/eclipse/dropins/mylyn-wikitext/eclipse/plugins">
+		<fileset dir="/usr/share/eclipse/dropins/mylyn-docs-wikitext/eclipse/plugins">
 			<include name="org.eclipse.mylyn.wikitext.*core*.jar" />
 		</fileset>
 	</path>
 	<taskdef classpathref="wikitext.tasks.classpath" resource="org/eclipse/mylyn/internal/wikitext/mediawiki/core/tasks/tasks.properties" />
 	<taskdef classpathref="wikitext.tasks.classpath" resource="org/eclipse/mylyn/wikitext/core/util/anttask/tasks.properties" />
 
-	<target name="all" description="Generate Eclipse help content for the Linux Tools Autotools user guide">
+	<target name="all" description="Generate Eclipse help content for the CDT Autotools user guide">
 		<mediawiki-to-eclipse-help wikiBaseUrl="${autotools.help.doc.url.base}" title="Autotools Plug-in User Guide" formatoutput="true" dest="." templateExcludes="*eclipseproject*">
 
-			<path name="Linux_Tools_Project/Autotools/User_Guide" title="Autotools Plug-in User Guide" generateToc="false"/>
+			<path name="CDT/Autotools/User_Guide" title="Autotools Plug-in User Guide" generateToc="false"/>
 			<stylesheet url="book.css" />
 			<pageAppendum>
 = Updating This Document =
 				
 This document is maintained in a collaborative wiki.  If you wish to update or modify this document please visit 
-http://wiki.eclipse.org/Linux_Tools_Project/Autotools/User_Guide
+http://wiki.eclipse.org/CDT/Autotools/User_Guide
             </pageAppendum>
 		</mediawiki-to-eclipse-help>
+		<replace file="CDT/Autotools/User_Guide/User-Guide.html" token="{{#eclipseproject:tools.cdt}}" value=""/>
 	    <antcall target="test" />
 	</target>
 
@@ -61,7 +62,7 @@ or inadvertently starting a line with a space character (in MediaWiki this start
 		-->
 		<echo file="tmp/__empty.dtd" message="" />
 		<xmlvalidate lenient="true">
-			<fileset dir="Linux_Tools_Project">
+			<fileset dir="CDT">
 				<include name="**/*.html" />
 			</fileset>
 			<dtd publicid="-//W3C//DTD XHTML 1.0 Transitional//EN" location="${basedir}/tmp/__empty.dtd" />

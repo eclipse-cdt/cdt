@@ -84,6 +84,19 @@ public class ToggleTracepointAdapter extends AbstractToggleBreakpointAdapter {
         int charStart, int charEnd, int lineNumber, String expression, String memorySpace, String range) throws CoreException 
     {
     }
+
+    @Override
+    public boolean canCreateEventBreakpointsInteractive(IWorkbenchPart part, ISelection selection) {
+        return false;
+    }
+    
+    @Override
+    protected void createEventBreakpoint(boolean interactive, IWorkbenchPart part, IResource resource, String type,
+        String arg) throws CoreException {
+        
+    }
+    
+
     
 	protected int getBreakpointType() {
 		return ICBreakpointType.REGULAR;

@@ -50,7 +50,7 @@ public class CBreakpointUIContributionFactory {
 	 * @throws CoreException if cannot get marker attributes from bearkpoint
 	 */
 	public ICBreakpointsUIContribution[] getBreakpointUIContributions(IBreakpoint breakpoint) throws CoreException {
-		String debugModelId = breakpoint.getModelIdentifier();
+		String debugModelId = null;
 		IMarker bmarker = breakpoint.getMarker();
 		Map<String, Object> attributes = Collections.emptyMap();
 		String markerType = CDIDebugModel.calculateMarkerType(breakpoint);
@@ -104,7 +104,7 @@ public class CBreakpointUIContributionFactory {
 			Map<String, Object> attributes) 
 	{
 	    return getBreakpointUIContributions(
-	        debugModelId != null ? new String[] { debugModelId } : DEBUG_MODEL_IDS_DEFAULT, 
+	        debugModelId != null ? new String[] { debugModelId } : null,
 	        markerType, 
 	        attributes);
 	    
@@ -127,13 +127,15 @@ public class CBreakpointUIContributionFactory {
     public ICBreakpointsUIContribution[] getBreakpointUIContributions(String[] debugModelIds, String markerType,
             Map<String, Object> attributes) 
     {
-        List<String> debugModelIdsList = Arrays.asList(debugModelIds);
+        List<String> debugModelIdsList = null;
+        if (debugModelIds != null ) {
+        	debugModelIdsList = Arrays.asList(debugModelIds);
+        }
         ArrayList<ICBreakpointsUIContribution> list = new ArrayList<ICBreakpointsUIContribution>();
         for (ICBreakpointsUIContribution con : contributions) {
             try {
                 if (con.getDebugModelId() == null || 
-                    con.getDebugModelId().equals(CDIDebugModel.getPluginIdentifier()) ||
-                    debugModelIdsList.contains(con.getDebugModelId())) 
+                    ((debugModelIdsList == null || debugModelIdsList.contains(con.getDebugModelId()))))
                 {
                     String contributedMarkerType = con.getMarkerType();
                     if (isMarkerSubtypeOf(markerType, contributedMarkerType)) {

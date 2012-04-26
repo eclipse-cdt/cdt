@@ -130,4 +130,39 @@ public interface IToggleBreakpointsTargetCExtension extends IToggleBreakpointsTa
      * @throws CoreException if unable to perform the action 
      */
     public void createFunctionBreakpointInteractive(IWorkbenchPart part, ISelection selection) throws CoreException;
+    
+    /**
+     * Returns whether the toggle target can create an event breakpoint at the 
+     * given location.  If the implementation does not support creating the 
+     * breakpoint interactively then it should return <code>false</code>.
+     * <p>
+     * The selection varies depending on the given part. For example,
+     * a text selection is provided for text editors, and a structured
+     * selection is provided for tree views, and may be a multi-selection.
+     * </p>
+     * @param part the part on which the action has been invoked  
+     * @param selection selection on which line breakpoints should be toggled
+     * @return Returns <code>true</code> if toggle target is able interactively
+     * create a breakpoint(s) at the given location.
+     */
+    public boolean canCreateEventBreakpointsInteractive(IWorkbenchPart part, ISelection selection);
+
+    /**
+     * Creates a new event breakpoint interactively.  The implementation should 
+     * allows the user to edit all of the breakpoint's settings prior to 
+     * creating the breakpoint.  Unlike the 
+     * {@link #toggleLineBreakpoints(IWorkbenchPart, ISelection)}
+     * method, this method does not remove the existing breakpoint at given 
+     * location.  It always creates a new breakpoint
+     * <p>
+     * The selection varies depending on the given part. For example,
+     * a text selection is provided for text editors, and a structured
+     * selection is provided for tree views, and may be a multi-selection.
+     * </p>
+     * @param part the part on which the action has been invoked  
+     * @param selection selection on which line breakpoints should be toggled
+     * @throws CoreException if unable to perform the action 
+     */
+    public void createEventBreakpointsInteractive(IWorkbenchPart part, ISelection selection) throws CoreException;
+    
 }

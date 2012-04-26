@@ -214,6 +214,18 @@ abstract public class AbstractToggleBreakpointAdapter
 	}
 
 	@Override
+	public boolean canCreateEventBreakpointsInteractive(IWorkbenchPart part, ISelection selection) {
+	    return true;
+	}
+
+	@Override
+	public void createEventBreakpointsInteractive(IWorkbenchPart part, ISelection selection) throws CoreException {
+		String type = ""; //$NON-NLS-1$
+		String arg = ""; //$NON-NLS-1$
+		createEventBreakpoint( true, part, ResourcesPlugin.getWorkspace().getRoot(), type, arg );
+	}
+
+	@Override
 	public boolean canCreateFunctionBreakpointInteractive(IWorkbenchPart part, ISelection selection) {
 	    return true;
 	}
@@ -909,5 +921,17 @@ abstract public class AbstractToggleBreakpointAdapter
     protected abstract void createWatchpoint(boolean interactive, IWorkbenchPart part, String sourceHandle,
         IResource resource, int charStart, int charEnd, int lineNumber, String expression, String memorySpace, 
         String range) throws CoreException;
-    
+
+    /**
+     * Creates an event breakpoint of the given type.
+     * @param interactive true if action should open a dialog to let user edit
+     * breakpoint properties prior to creation. 
+     * @param part Workbench part where action was invoked.
+     * @param resource Resource to create breakpoint on.
+     * @param type Type of event breakpoint.
+     * @param arg Arugment of event breakpoint.
+     * @throws CoreException Exception while creating breakpoint.
+     */
+    protected abstract void createEventBreakpoint(boolean interactive, IWorkbenchPart part, IResource resource, 
+    		String type, String arg) throws CoreException;
 }

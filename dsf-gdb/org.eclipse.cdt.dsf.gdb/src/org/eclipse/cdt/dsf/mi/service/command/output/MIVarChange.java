@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 QNX Software Systems and others.
+ * Copyright (c) 2000, 2012 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Jens Elmenthaler (Verigy) - Added Full GDB pretty-printing support (bug 302121)
+ *     Anton Gorenkov - DSF-GDB should properly handle variable type change (based on RTTI) (Bug 376901)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service.command.output;
 
@@ -21,6 +22,7 @@ public class MIVarChange {
 	String value;
 	boolean inScope;
 	boolean changed;
+	private String newType;
 	private boolean isDynamic = false;
 	private int newNumChildren = -1;
 	private boolean hasMore = false;
@@ -45,6 +47,13 @@ public class MIVarChange {
 
 	public boolean isChanged() {
 		return changed;
+	}
+
+	/**
+	 * @since 4.1
+	 */
+	public String getNewType() {
+		return newType;
 	}
 
 	/**
@@ -115,6 +124,13 @@ public class MIVarChange {
 
 	public void setChanged(boolean c) {
 		changed = c;
+	}
+	
+	/**
+	 * @since 4.1
+	 */
+	public void setNewType(String newType) {
+		this.newType = newType;
 	}
 	
 	/**

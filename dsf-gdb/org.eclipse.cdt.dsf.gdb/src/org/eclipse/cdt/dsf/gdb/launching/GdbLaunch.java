@@ -56,6 +56,7 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.commands.ITerminateHandler;
 import org.eclipse.debug.core.model.IDisconnect;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.debug.core.model.ISourceLocator;
@@ -72,7 +73,8 @@ public class GdbLaunch extends DsfLaunch
     private DsfSession fSession;
     private DsfServicesTracker fTracker;
     private boolean fInitialized = false;
-    private boolean fShutDown = false;
+    private boolean fIsShuttingDown = false;
+    private boolean fIsShutDown = false;
 
     private DsfMemoryBlockRetrieval fMemRetrieval;
     private IDsfDebugServicesFactory fServiceFactory;
@@ -246,17 +248,18 @@ public class GdbLaunch extends DsfLaunch
      */
     @ConfinedToDsfExecutor("getSession().getExecutor()")
     public void shutdownSession(final RequestMonitor rm) {
-        if (fShutDown) {
+        if (fIsShuttingDown) {
             rm.done();
             return;
         }
-        fShutDown = true;
+        fIsShuttingDown = true;
             
         Sequence shutdownSeq = new ShutdownSequence(
             getDsfExecutor(), fSession.getId(),
             new RequestMonitor(fSession.getExecutor(), rm) { 
                 @Override
                 public void handleCompleted() {
+                	fIsShutDown = true;
                     fSession.removeServiceEventListener(GdbLaunch.this);
                     if (!isSuccess()) {
                         GdbPlugin.getDefault().getLog().log(new MultiStatus(
@@ -300,6 +303,8 @@ public class GdbLaunch extends DsfLaunch
     @SuppressWarnings("rawtypes")
     @Override
     public Object getAdapter(Class adapter) {
+    	if (adapter.equals(ITerminateHandler.class))
+    		return getSession().getModelAdapter(adapter);
         // Must force adapters to be loaded.
         Platform.getAdapterManager().loadAdapter(this, adapter.getName());
         return super.getAdapter(adapter);
@@ -312,5 +317,12 @@ public class GdbLaunch extends DsfLaunch
     		fExecutor = null;
     	}
     	super.launchRemoved(launch);
+    }
+    
+    /**
+	 * @since 4.1
+	 */
+    public boolean isShutDown() {
+    	return fIsShutDown;
     }
 }

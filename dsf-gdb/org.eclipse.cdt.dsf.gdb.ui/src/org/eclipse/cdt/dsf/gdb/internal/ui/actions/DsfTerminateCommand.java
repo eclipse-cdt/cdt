@@ -12,6 +12,10 @@
 package org.eclipse.cdt.dsf.gdb.internal.ui.actions;
 
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
@@ -21,18 +25,104 @@ import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.debug.service.IProcesses;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
+import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
+import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchesListener2;
 import org.eclipse.debug.core.commands.IDebugCommandRequest;
 import org.eclipse.debug.core.commands.IEnabledStateRequest;
 import org.eclipse.debug.core.commands.ITerminateHandler;
 
 public class DsfTerminateCommand implements ITerminateHandler {
-    private final DsfExecutor fExecutor;
+
+	private class WaitForTerminationJob extends Job implements ILaunchesListener2 {
+
+		final private IDebugCommandRequest fRequest;
+		final private String fSessionId;
+		final private Lock fLock = new ReentrantLock();
+		final private Condition fTerminated = fLock.newCondition();
+
+		public WaitForTerminationJob(String sessionId, IDebugCommandRequest request) {
+			super("Wait for termination job"); //$NON-NLS-1$
+			setUser(false);
+			setSystem(true);
+			fSessionId = sessionId;
+			fRequest = request;
+			DebugPlugin.getDefault().getLaunchManager().addLaunchListener(WaitForTerminationJob.this);
+		}
+
+		@Override
+		protected IStatus run(IProgressMonitor monitor) {
+			// Wait for all processes associated with the launch 
+			// and the shutdown sequence to be completed.
+			// The wait time is restricted to stop the job in case  
+			// of termination error.
+			boolean result = false;
+			fLock.lock();
+			try {
+				result = fTerminated.await(1, TimeUnit.MINUTES);
+			}
+			catch(InterruptedException e) {
+			}
+			finally {
+				fLock.unlock();
+			}
+			// Marking the request as cancelled will prevent the removal of 
+			// the launch from the Debug view in case of "Terminate and Remove". 
+			fRequest.setStatus(result ? Status.OK_STATUS : Status.CANCEL_STATUS);
+			fRequest.done();
+			DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(WaitForTerminationJob.this);
+			return Status.OK_STATUS;
+		}
+
+		@Override
+		public void launchesRemoved(ILaunch[] launches) {
+		}
+
+		@Override
+		public void launchesAdded(ILaunch[] launches) {
+		}
+
+		@Override
+		public void launchesChanged(ILaunch[] launches) {
+		}
+
+		@Override
+		public void launchesTerminated(ILaunch[] launches) {
+			for(ILaunch launch : launches) {
+				if (launch instanceof GdbLaunch &&
+					((GdbLaunch)launch).getSession().getId().equals(fSessionId) &&
+					// Launch can be marked as terminated while the shutdown sequence 
+					// is still running. We have to wait until the shutdown sequence 
+					// is completed.
+					((GdbLaunch)launch).isShutDown()) {
+						fLock.lock();
+						try {
+							fTerminated.signal();
+						}
+						finally {
+							fLock.unlock();
+						}
+						break;
+					}
+			}
+		}
+	}
+
+	private final DsfSession fSession;
+	private final DsfExecutor fExecutor;
     private final DsfServicesTracker fTracker;
     
     public DsfTerminateCommand(DsfSession session) {
+    	fSession = session;
         fExecutor = session.getExecutor();
         fTracker = new DsfServicesTracker(GdbUIPlugin.getBundleContext(), session.getId());
     }    
@@ -41,15 +131,20 @@ public class DsfTerminateCommand implements ITerminateHandler {
         fTracker.dispose();
     }
 
-    // Run control may not be avilable after a connection is terminated and shut down.
+    // Run control may not be available after a connection is terminated and shut down.
     @Override
     public void canExecute(final IEnabledStateRequest request) {
         if (request.getElements().length != 1 || 
-            !(request.getElements()[0] instanceof IDMVMContext) ) 
-        {
+            !(request.getElements()[0] instanceof IDMVMContext || 
+              request.getElements()[0] instanceof GdbLaunch)) {
             request.setEnabled(false);
             request.done();
             return;
+        }
+
+        if (request.getElements()[0] instanceof GdbLaunch) {
+        	canExecute(((GdbLaunch)request.getElements()[0]), request);
+        	return;
         }
 
         IDMVMContext vmc = (IDMVMContext)request.getElements()[0];
@@ -61,7 +156,72 @@ public class DsfTerminateCommand implements ITerminateHandler {
             request.done();
             return;
         }
-        
+
+        canExecute(processDmc, request);
+    }
+
+    @Override
+    public boolean execute(final IDebugCommandRequest request) {
+        if (request.getElements().length != 1 || 
+        	!(request.getElements()[0] instanceof IDMVMContext || 
+              request.getElements()[0] instanceof GdbLaunch)) {
+        	request.done();
+        	return false;
+        }
+
+        if (request.getElements()[0] instanceof GdbLaunch) {
+        	return execute(((GdbLaunch)request.getElements()[0]), request);
+        }
+
+        IDMVMContext vmc = (IDMVMContext)request.getElements()[0];
+
+        // First check if there is an ancestor process to terminate.  This is the smallest entity we can terminate
+        final IProcessDMContext processDmc = DMContexts.getAncestorOfType(vmc.getDMContext(), IProcessDMContext.class);
+        if (processDmc == null) {
+        	request.done();
+        	return false;
+        }
+
+        return execute(processDmc, request);
+    }
+
+    private void canExecute(GdbLaunch launch, IEnabledStateRequest request) {
+    	request.setEnabled(launch.canTerminate());
+    	request.done();
+    }
+
+    private boolean execute(GdbLaunch launch, final IDebugCommandRequest request) {    	
+        try {
+            fExecutor.execute(new DsfRunnable() { 
+                @Override
+                public void run() {
+                	final IGDBControl commandControl = fTracker.getService(IGDBControl.class);
+                    if (commandControl != null) {
+                    	commandControl.terminate(new ImmediateRequestMonitor() {
+                            @Override
+                            protected void handleCompleted() {
+                            	if (!getStatus().isOK()) {
+                            		request.setStatus(getStatus());
+                            		request.done();
+                            	}
+                            	else {
+	                            	WaitForTerminationJob job = new WaitForTerminationJob(fSession.getId(), request);
+	                            	job.schedule();
+                            	}
+                            };
+                        });
+                    } else {
+                    	request.done();
+                    }
+                 }
+            });
+        } catch (RejectedExecutionException e) {
+            request.done();
+        }
+        return false;
+    }
+
+    private void canExecute(final IProcessDMContext processDmc, final IEnabledStateRequest request) {
         try {
             fExecutor.execute(
                 new DsfRunnable() { 
@@ -90,23 +250,7 @@ public class DsfTerminateCommand implements ITerminateHandler {
         }
     }
 
-    @Override
-    public boolean execute(final IDebugCommandRequest request) {
-        if (request.getElements().length != 1 || 
-        	!(request.getElements()[0] instanceof IDMVMContext)) {
-        	request.done();
-        	return false;
-        }
-
-        IDMVMContext vmc = (IDMVMContext)request.getElements()[0];
-
-        // First check if there is an ancestor process to terminate.  This is the smallest entity we can terminate
-        final IProcessDMContext processDmc = DMContexts.getAncestorOfType(vmc.getDMContext(), IProcessDMContext.class);
-        if (processDmc == null) {
-        	request.done();
-        	return false;
-        }
-
+    private boolean execute(final IProcessDMContext processDmc, final IDebugCommandRequest request) {
         try {
             fExecutor.execute(new DsfRunnable() { 
                 @Override
@@ -116,8 +260,14 @@ public class DsfTerminateCommand implements ITerminateHandler {
                     	procService.terminate(processDmc, new ImmediateRequestMonitor() {
                             @Override
                             protected void handleCompleted() {
-                                request.setStatus(getStatus());
-                                request.done();
+                            	if (!getStatus().isOK()) {
+                            		request.setStatus(getStatus());
+                            		request.done();
+                            	}
+                            	else {
+	                            	WaitForTerminationJob job = new WaitForTerminationJob(fSession.getId(), request);
+	                            	job.schedule();
+                            	}
                             };
                         });
                     } else {
@@ -130,5 +280,4 @@ public class DsfTerminateCommand implements ITerminateHandler {
         }
         return false;
     }
-    
 }

@@ -1427,7 +1427,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 			set.toArray(result);
 			return result;
 		}
-		return ErrorParserManager.getErrorParserAvailableIds();
+		return ErrorParserManager.getErrorParserAvailableIdsInContext(ErrorParserManager.BUILD_CONTEXT);
 	}
 
 	public Set<String> contributeErrorParsers(Set<String> set, boolean includeChildren) {

@@ -483,7 +483,7 @@ public class Target extends BuildObject implements ITarget {
 		} else {
 			// If no error parsers are specified by the target, the default is
 			// all error parsers
-			errorParsers = ErrorParserManager.getErrorParserAvailableIds();
+			errorParsers = ErrorParserManager.getErrorParserAvailableIdsInContext(ErrorParserManager.BUILD_CONTEXT);
 		}
 		return errorParsers;
 	}

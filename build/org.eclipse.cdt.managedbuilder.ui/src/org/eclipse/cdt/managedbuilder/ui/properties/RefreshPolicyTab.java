@@ -106,6 +106,10 @@ public class RefreshPolicyTab extends AbstractCBuildPropertyTab {
 	private HashMap<String, HashMap<IResource, List<RefreshExclusion>>> copyHashMap(HashMap<String, HashMap<IResource, List<RefreshExclusion>>> source) {
 		
 		HashMap<String, HashMap<IResource, List<RefreshExclusion>>> target = new HashMap<String, HashMap<IResource, List<RefreshExclusion>>>();
+		
+		if (source.size() == 0)
+			return null;
+		
 		Iterator<String> config_iterator = source.keySet().iterator();
 		// for each Configuration ...
 		while (config_iterator.hasNext()) {
@@ -137,7 +141,8 @@ public class RefreshPolicyTab extends AbstractCBuildPropertyTab {
 	
 	private void loadInfo() {
 			HashMap<String, HashMap<IResource, List<RefreshExclusion>>> configMap = fManager.getConfigurationToResourcesMap(fProject);
-			fConfigurationToResourcesToExclusionsMap = copyHashMap(configMap);
+			if ( (configMap != null) && !(configMap.isEmpty()))
+				fConfigurationToResourcesToExclusionsMap = copyHashMap(configMap);
 	}
 
 	private List<RefreshExclusion> getExclusions(String configName, IResource resource) {

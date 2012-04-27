@@ -300,8 +300,8 @@ public class RefreshScopeManager {
 		HashMap<String,HashMap<IResource, List<RefreshExclusion>>> configMap = fProjToConfToResToExcluMap.get(project);
 		
 		if (configMap == null) {
-			configMap = new HashMap<String,HashMap<IResource, List<RefreshExclusion>>>();
-			fProjToConfToResToExcluMap.put(project,configMap);			
+			initializeConfigMap(project);
+			configMap = fProjToConfToResToExcluMap.get(project);
 		} 
 			
 		return configMap;
@@ -463,18 +463,15 @@ public class RefreshScopeManager {
 					return;
 				}
 
-				ICStorageElement storageElement = projectDescription.getStorage(
-						REFRESH_SCOPE_STORAGE_NAME, true);
-
-				// walk the tree and load the settings
-			
-				String str = storageElement.getAttribute(VERSION_NUMBER_ATTRIBUTE_NAME);
-				int version = (str != null) ? Integer.valueOf(str) : 2;
+				ICStorageElement storageElement = projectDescription.getStorage(REFRESH_SCOPE_STORAGE_NAME, true);
 
 				// iterate through the child nodes
 				ICStorageElement[] children = storageElement.getChildren();
-
-				if (version == 1) {
+				
+				// walk the tree and load the settings
+				String str = storageElement.getAttribute(VERSION_NUMBER_ATTRIBUTE_NAME);
+				
+				if ((str == null) || (str.equals("1"))) {  //$NON-NLS-1$
 					ICConfigurationDescription cfgDescs[] = projectDescription.getConfigurations();	
 					for (ICConfigurationDescription cfgDesc : cfgDescs) 
 						loadResourceData(workspaceRoot, project, cfgDesc.getName(), children);
@@ -489,7 +486,7 @@ public class RefreshScopeManager {
 					// else there are no children, and this is a "new" project.
 					//  so initialize it.
 					if (children.length == 0) {
-						initializeConfigMap(project);
+						getConfigurationToResourcesMap(project);  // this will initialize the config map.
 					}
 				} 
 			} 
@@ -497,21 +494,23 @@ public class RefreshScopeManager {
 	}
 
 	private void initializeConfigMap(IProject project) {			
-		getProjectToConfigurationToResourcesMap();
-		HashMap<String,HashMap<IResource, List<RefreshExclusion>>> configMap = fProjToConfToResToExcluMap.get(project);
-		if (configMap == null) {
-			configMap = new HashMap<String,HashMap<IResource, List<RefreshExclusion>>>();
-			CProjectDescriptionManager descriptionManager = CProjectDescriptionManager.getInstance();
-			ICProjectDescription projectDescription = descriptionManager.getProjectDescription(project, false);
-			ICConfigurationDescription cfgDescs[] = projectDescription.getConfigurations();	
-			for (ICConfigurationDescription cfgDesc : cfgDescs) { 
-				String configName = cfgDesc.getName();
-				HashMap<IResource, List<RefreshExclusion>> resourceMap = new HashMap<IResource, List<RefreshExclusion>>();
-				resourceMap.put(project, new LinkedList<RefreshExclusion>());
-				configMap.put(configName, resourceMap);
-			}
-			fProjToConfToResToExcluMap.put(project,configMap);
+
+		HashMap<String,HashMap<IResource, List<RefreshExclusion>>> configMap = new HashMap<String,HashMap<IResource, List<RefreshExclusion>>>();
+		
+		// for each build configuration 
+		CProjectDescriptionManager descriptionManager = CProjectDescriptionManager.getInstance();
+		ICProjectDescription projectDescription = descriptionManager.getProjectDescription(project, false);
+		ICConfigurationDescription cfgDescs[] = projectDescription.getConfigurations();	
+		for (ICConfigurationDescription cfgDesc : cfgDescs) { 
+			String configName = cfgDesc.getName();
+			HashMap<IResource, List<RefreshExclusion>> resourceMap = new HashMap<IResource, List<RefreshExclusion>>();
+			if (!fIsLoading)
+				resourceMap.put(project, new LinkedList<RefreshExclusion>()); 
+			configMap.put(configName, resourceMap);
 		}
+		
+		// and add this configMap to the project to config map.
+		fProjToConfToResToExcluMap.put(project,configMap);
 	}
 
 	/**

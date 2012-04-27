@@ -1000,7 +1000,7 @@ public class CCorePlugin extends Plugin {
 	@Deprecated
 	public String[] getAllErrorParsersIDs() {
 		ErrorParserExtensionManager.loadErrorParserExtensions();
-		return ErrorParserExtensionManager.getErrorParserAvailableIds();
+		return ErrorParserExtensionManager.getErrorParserAvailableIdsInContext(ErrorParserManager.BUILD_CONTEXT);
 	}
 
 	/**

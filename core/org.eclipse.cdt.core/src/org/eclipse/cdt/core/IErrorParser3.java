@@ -13,7 +13,7 @@ package org.eclipse.cdt.core;
 /**
  * @since 5.4
  */
-public interface IErrorParser3 extends IErrorParser2 {
+public interface IErrorParser3 extends IErrorParser {
 	/**
 	 * Called to let the parser know that the end of the error stream has been reached.
 	 * Can be used by the parser to flush its internal buffers.

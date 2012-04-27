@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "AABOHH///6U\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIVariableManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 373,
+      "author": {
+        "id": 590
+      },
+      "writtenOn": "2012-04-27T17:17:53Z",
+      "side": 1,
+      "message": "I wanted to save some memory cause I thought that there could be a lot of variables during the debug session. However, if you think it is not advisable, I\u0027ll fix it.",
+      "parentUuid": "AABOHH////Q\u003d",
+      "revId": "9869900530792ec102f39950c0dbf23d0c4ca160",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOG3//8ik\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIVariableManager.java",
         "patchSetId": 1
@@ -155,6 +173,24 @@
     },
     {
       "key": {
+        "uuid": "AABOHH///4Y\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIVariableManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 921,
+      "author": {
+        "id": 590
+      },
+      "writtenOn": "2012-04-27T17:17:53Z",
+      "side": 1,
+      "message": "No, there is no reason. It seems it works properly in both the cases.",
+      "parentUuid": "AABOHH///+8\u003d",
+      "revId": "9869900530792ec102f39950c0dbf23d0c4ca160",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOG3//8iY\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIVariableManager.java",
         "patchSetId": 1
@@ -166,6 +202,24 @@
       "writtenOn": "2012-04-25T07:39:39Z",
       "side": 1,
       "message": "add if (! isSuccess) { addFakeChild(...) } also at line 1522 ?",
+      "revId": "9869900530792ec102f39950c0dbf23d0c4ca160",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHH///0E\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIVariableManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1544,
+      "author": {
+        "id": 590
+      },
+      "writtenOn": "2012-04-27T17:17:53Z",
+      "side": 1,
+      "message": "I cannot figure out why it should be done and cannot find a test case. Marc, what do you think?",
+      "parentUuid": "AABOG3//8iY\u003d",
       "revId": "9869900530792ec102f39950c0dbf23d0c4ca160",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

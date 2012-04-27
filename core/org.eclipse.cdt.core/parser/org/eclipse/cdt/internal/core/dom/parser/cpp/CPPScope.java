@@ -11,6 +11,7 @@
  *     Bryan Wilkinson (QNX)
  *     Andrew Ferguson (Symbian)
  *     Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -136,6 +137,8 @@ abstract public class CPPScope implements ICPPASTInternalScope {
 					return false;
 
 				IASTName segmentName = segments[i];
+				if ((scopeName instanceof ICPPASTTemplateId) != (segmentName instanceof ICPPASTTemplateId))
+					return false;
 				if (!CharArrayUtils.equals(scopeName.getSimpleID(), segmentName.getSimpleID()))
 					return false;
 				scope= scope.getParent();

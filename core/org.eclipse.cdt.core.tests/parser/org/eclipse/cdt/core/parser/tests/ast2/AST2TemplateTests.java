@@ -4954,7 +4954,24 @@ public class AST2TemplateTests extends AST2BaseTest {
 		tu = validateCopy(tu);
 		assertEquals(1, tu.getDeclarations().length);
 	}
-	
+
+	//	namespace A {
+	//
+	//	template <typename T>
+	//	struct A {
+	//	  A();
+	//	};
+	//
+	//	template <typename U>
+	//	A<U>::A() {}
+	//
+	//	A<int> a;
+	//
+	//	}
+	public void testBug377838() throws Exception {
+		parseAndCheckBindings();
+	}
+
 	//	namespace N {
 	//		inline namespace M {
 	//			template<class T> void f(T&) { }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,12 +8,14 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Marc-Andre Laperle - Bug 309112 - Remember dialog bounds
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.actions;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
@@ -25,6 +27,7 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.ui.CElementLabelProvider;
+import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
@@ -32,6 +35,8 @@ import org.eclipse.cdt.internal.ui.viewsupport.CUILabelProvider;
 
 public class OpenActionUtil {
 	
+	private static final String DIALOG_SETTINGS_SECTION_NAME = CUIPlugin.PLUGIN_ID + ".OPEN_ACTION_SELECTION_DIALOG_SECTION"; //$NON-NLS-1$
+
 	private OpenActionUtil() {
 		// no instance.
 	}
@@ -103,7 +108,17 @@ public class OpenActionUtil {
 			labelProvider= new CUILabelProvider(textFlags, imageFlags);
 		}
 						
-		ElementListSelectionDialog dialog= new ElementListSelectionDialog(shell, labelProvider);
+		ElementListSelectionDialog dialog= new ElementListSelectionDialog(shell, labelProvider) {
+			@Override
+			protected IDialogSettings getDialogBoundsSettings() {
+				IDialogSettings settings = CUIPlugin.getDefault().getDialogSettings();
+				IDialogSettings section = settings.getSection(DIALOG_SETTINGS_SECTION_NAME);
+				if (section == null) {
+					section = settings.addNewSection(DIALOG_SETTINGS_SECTION_NAME);
+				}
+				return section;
+			}
+		};
 		dialog.setTitle(title);
 		dialog.setMessage(message);
 		dialog.setElements(elements);

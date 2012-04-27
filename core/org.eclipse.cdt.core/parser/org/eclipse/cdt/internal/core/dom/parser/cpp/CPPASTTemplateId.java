@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM) - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
- *    Andrew Ferguson (Symbian)
+ *     John Camelon (IBM) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *     Andrew Ferguson (Symbian)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -39,7 +39,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
  */
 public class CPPASTTemplateId extends CPPASTNameBase implements ICPPASTTemplateId, IASTAmbiguityParent {
 	private IASTName templateName;
-    private IASTNode[] templateArguments = null;
+    private IASTNode[] templateArguments;
 
     public CPPASTTemplateId() {
 	}
@@ -57,8 +57,9 @@ public class CPPASTTemplateId extends CPPASTNameBase implements ICPPASTTemplateI
 	public CPPASTTemplateId copy(CopyStyle style) {
 		CPPASTTemplateId copy = new CPPASTTemplateId(templateName == null ?
 				null : templateName.copy(style));
-		for (IASTNode arg : getTemplateArguments())
+		for (IASTNode arg : getTemplateArguments()) {
 			copy.internalAddTemplateArgument(arg == null ? null : arg.copy(style));
+		}
 		copy.setOffsetAndLength(this);
 		if (style == CopyStyle.withLocations) {
 			copy.setCopyLocation(this);
@@ -215,7 +216,8 @@ public class CPPASTTemplateId extends CPPASTNameBase implements ICPPASTTemplateI
 
     @Override
 	public void replace(IASTNode child, IASTNode other) {
-        if (templateArguments == null) return;
+        if (templateArguments == null)
+        	return;
         for (int i = 0; i < templateArguments.length; ++i) {
             if (child == templateArguments[i]) {
                 other.setPropertyInParent(child.getPropertyInParent());

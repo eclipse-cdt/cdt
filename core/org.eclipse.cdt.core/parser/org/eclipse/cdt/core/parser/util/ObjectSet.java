@@ -57,7 +57,7 @@ public class ObjectSet<T> extends ObjectTable<T> {
 	 * @param key the item to add (may be null)
 	 */
 	public void checkPut(T key) {
-		if (key!=null)
+		if (key != null)
 			add(key);
 	}
 	

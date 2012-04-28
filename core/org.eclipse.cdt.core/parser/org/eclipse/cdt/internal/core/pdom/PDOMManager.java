@@ -117,6 +117,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 
 	private final class PCL implements IPreferenceChangeListener {
 		private ICProject fProject;
+
 		public PCL(ICProject prj) {
 			fProject= prj;
 		}

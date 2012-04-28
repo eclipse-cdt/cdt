@@ -6,12 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    QNX - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     QNX - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.core.pdom.indexer;
-
 
 import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
 import org.eclipse.cdt.core.dom.IPDOMManager;
@@ -23,7 +21,7 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 public class PDOMFastIndexer extends AbstractPDOMIndexer {
 	// Must match extension id
 	public static final String ID = IPDOMManager.ID_FAST_INDEXER;
-		
+
 	@Override
 	public String getID() {
 		return ID;

@@ -770,7 +770,7 @@ public class PDOMFile implements IIndexFragmentFile {
 			}
 			return result;
 		}
-		return new IIndexFragmentFile[0];
+		return IIndexFragmentFile.EMPTY_ARRAY;
 	}
 
 	public static PDOMFile recreateFile(PDOM pdom, final long record) throws CoreException {

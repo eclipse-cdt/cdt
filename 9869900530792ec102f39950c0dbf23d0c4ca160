@@ -226,6 +226,24 @@
     },
     {
       "key": {
+        "uuid": "AABOHH///vI\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIVariableManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1544,
+      "author": {
+        "id": 590
+      },
+      "writtenOn": "2012-04-28T18:25:56Z",
+      "side": 1,
+      "message": "Sorry, Jens, but I am not sure I have understood you properly. Did you really mean to add:\n\tif (! isSuccess()) {\n\t\tfakeChildren.add(childVar.exprInfo);\n\t}\nat line 1522 (before the \"} else if (childVar.currentState \u003d\u003d STATE_CREATION_FAILED) {\" line)?\nOr maybe the following line:\n\taddFakeChild(childVar.exprInfo);\nshould be added at line 1512 (before the \"addRealChildrenOfFake(...)\" line)?",
+      "parentUuid": "AABOG3//8iY\u003d",
+      "revId": "9869900530792ec102f39950c0dbf23d0c4ca160",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOG3//8iw\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MIVarChange.java",
         "patchSetId": 1

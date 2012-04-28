@@ -1,0 +1,123 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOHH///wI\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/DsfTerminateCommand.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-04-28T10:41:57Z",
+      "side": 1,
+      "message": "Nice!",
+      "revId": "0e3b8e59594971644bb7a3ce5b07ad9ab535aef4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHH///wA\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/DsfTerminateCommand.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-04-28T10:41:57Z",
+      "side": 1,
+      "message": "Surprisingly, I\u0027ve seen that once in a while (1 in 5 or 10 times), this method does not get called at all, and the launch is not removed as expected.  Then the 1 minute timeout hits.\n\nI don\u0027t understand why this is happening.  Maybe a bug in platform?  From what I see, the WaitForTerminationJob is properly started, but the launchesTerminated() is not called at all, in those cases.",
+      "revId": "0e3b8e59594971644bb7a3ce5b07ad9ab535aef4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHH///wE\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/DsfTerminateCommand.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-04-28T10:41:57Z",
+      "side": 1,
+      "message": "I see that this works, but I don\u0027t quite understand how come the launchesTerminated() method is being called multiple times, until isShutDown() becomes true.",
+      "revId": "0e3b8e59594971644bb7a3ce5b07ad9ab535aef4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHH///wQ\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/DsfTerminateCommand.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 203,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-04-28T10:41:57Z",
+      "side": 1,
+      "message": "Usually we use RequestMonitor.isSuccess().  Is there a reason you use the IStatus directly?",
+      "revId": "0e3b8e59594971644bb7a3ce5b07ad9ab535aef4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHH///wM\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/DsfTerminateCommand.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 263,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-04-28T10:41:57Z",
+      "side": 1,
+      "message": "Usually we use RequestMonitor.isSuccess().  Is there a reason you use the IStatus directly?",
+      "revId": "0e3b8e59594971644bb7a3ce5b07ad9ab535aef4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHH///wY\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 306,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-04-28T10:41:57Z",
+      "side": 1,
+      "message": "Please add comment on why we make a special case for the terminate handler",
+      "revId": "0e3b8e59594971644bb7a3ce5b07ad9ab535aef4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHH///wU\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 325,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-04-28T10:41:57Z",
+      "side": 1,
+      "message": "Please add java doc for this new API",
+      "revId": "0e3b8e59594971644bb7a3ce5b07ad9ab535aef4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

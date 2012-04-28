@@ -87,6 +87,23 @@
     },
     {
       "key": {
+        "uuid": "AABOHH///vk\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/DsfTerminateCommand.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 268,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-04-28T13:28:37Z",
+      "side": 1,
+      "message": "If we use the SessionEndedListener, could we replace the WaitForTerminationJob with a simpler\n\nfSession.addSessionEndedListener(new SessionEndedListener () {\npublic void sessionEnded(DsfSession session) {\nrequest.done();\n}});\n\nBut then we would also need a timeout task.  I\u0027m not sure what is simpler...  Up to you.",
+      "revId": "0e3b8e59594971644bb7a3ce5b07ad9ab535aef4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOHH///wY\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
         "patchSetId": 1

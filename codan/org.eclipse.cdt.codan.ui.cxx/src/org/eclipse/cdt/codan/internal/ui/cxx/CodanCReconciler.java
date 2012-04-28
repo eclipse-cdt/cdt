@@ -45,22 +45,12 @@ public class CodanCReconciler implements ICReconcilingListener {
 		// nothing?
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.internal.ui.text.ICReconcilingListener#aboutToBeReconciled()
-	 */
+	@Override
 	public void aboutToBeReconciled() {
 		// nothing
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.internal.ui.text.ICReconcilingListener#reconciled(
-	 * 		org.eclipse.cdt.core.dom.ast.IASTTranslationUnit, boolean,
-	 * 		org.eclipse.core.runtime.IProgressMonitor)
-	 */
+	@Override
 	public void reconciled(IASTTranslationUnit ast, boolean force, IProgressMonitor progressMonitor) {
 		if (ast == null)
 			return;

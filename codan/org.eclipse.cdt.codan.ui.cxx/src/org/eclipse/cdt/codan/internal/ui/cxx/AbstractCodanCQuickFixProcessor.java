@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Alena Laskavaia  - initial API and implementation
+ *     Alena Laskavaia  - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.ui.cxx;
 
@@ -25,9 +25,8 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 
 /**
- * Abstract class IQuickFixProcessor - not used right now because it does not
- * work
- * properly for non hardcoded errors
+ * Abstract class IQuickFixProcessor - not used right now because it does not work
+ * properly for non hardcoded errors.
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part
  * of a work in progress. There is no guarantee that this API will work or that
@@ -35,26 +34,14 @@ import org.eclipse.jface.text.IDocument;
  * </p>
  */
 public abstract class AbstractCodanCQuickFixProcessor implements IQuickFixProcessor {
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.cdt.ui.text.IQuickFixProcessor#hasCorrections(org.eclipse
-	 * .cdt.ui.text.ITranslationUnit, int)
-	 */
+	@Override
 	public boolean hasCorrections(ITranslationUnit unit, int problemId) {
 		return problemId == 42;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.cdt.ui.text.IQuickFixProcessor#getCorrections(org.eclipse
-	 * .cdt.ui.text.IInvocationContext,
-	 * org.eclipse.cdt.ui.text.IProblemLocation[])
-	 */
-	public ICCompletionProposal[] getCorrections(IInvocationContext context, IProblemLocation[] locations) throws CoreException {
+	@Override
+	public ICCompletionProposal[] getCorrections(IInvocationContext context,
+			IProblemLocation[] locations) throws CoreException {
 		if (locations == null || locations.length == 0)
 			return null;
 		IProblemLocation loc = locations[0];
@@ -88,11 +75,6 @@ public abstract class AbstractCodanCQuickFixProcessor implements IQuickFixProces
 		return position;
 	}
 
-	/**
-	 * @param context
-	 * @param loc
-	 * @param marker
-	 * @return
-	 */
-	public abstract ICCompletionProposal[] getCorrections(IInvocationContext context, String problemId, IMarker marker);
+	public abstract ICCompletionProposal[] getCorrections(IInvocationContext context,
+			String problemId, IMarker marker);
 }

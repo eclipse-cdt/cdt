@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOHH///vc\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIVariableManager.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 372,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-04-28T14:25:15Z",
+      "side": 1,
+      "message": "Please update comment along the lines of:\n\"we need to keep track of fake children because they are in the LRU and need to be removed in some cases\"",
+      "revId": "8447200ba515713b580f60323f20e5b3fdadd0a1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHH///vY\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIVariableManager.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 373,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-04-28T14:25:15Z",
+      "side": 1,
+      "message": "You can put an initial value of 3 in the constructor to avoid wasting some memory.",
+      "revId": "8447200ba515713b580f60323f20e5b3fdadd0a1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHH///vU\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIVariableManager.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1526,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-04-28T14:25:15Z",
+      "side": 1,
+      "message": "I believe Jens is right.  But it may be in theory as I\u0027m not sure it will actually be needed.  Let\u0027s be safe and add it.",
+      "revId": "8447200ba515713b580f60323f20e5b3fdadd0a1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

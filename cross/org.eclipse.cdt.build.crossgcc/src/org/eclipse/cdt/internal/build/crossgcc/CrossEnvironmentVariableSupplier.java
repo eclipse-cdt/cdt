@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2009, 2012 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,7 +39,7 @@ public class CrossEnvironmentVariableSupplier implements
 
 	private static class PathEnvironmentVariable implements IBuildEnvironmentVariable {
 
-		public static String name = "PATH";
+		public static String name = "PATH"; //$NON-NLS-1$
 		
 		private File path;
 		
@@ -49,10 +49,10 @@ public class CrossEnvironmentVariableSupplier implements
 		
 		public static PathEnvironmentVariable create(IConfiguration configuration) {
 			IToolChain toolchain = configuration.getToolChain();
-			IOption option = toolchain.getOptionBySuperClassId("cdt.managedbuild.option.gnu.cross.path");
+			IOption option = toolchain.getOptionBySuperClassId("cdt.managedbuild.option.gnu.cross.path"); //$NON-NLS-1$
 			String path = (String)option.getValue();
 			File sysroot = new File(path);
-			File bin = new File(sysroot, "bin");
+			File bin = new File(sysroot, "bin"); //$NON-NLS-1$
 			if (bin.isDirectory())
 				sysroot = bin;
 			return new PathEnvironmentVariable(sysroot);
@@ -66,7 +66,7 @@ public class CrossEnvironmentVariableSupplier implements
 		}
 		
 		public String getDelimiter() {
-			return Platform.getOS().equals(Platform.OS_WIN32) ? ";" : ":";
+			return Platform.getOS().equals(Platform.OS_WIN32) ? ";" : ":"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		public String getName() {

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <!--
-# Copyright (c) 2009, 2010 Wind River Systems, Inc. and others.
+# Copyright (c) 2009, 2011 Wind River Systems, Inc. and others.
 # All rights reserved. This program and the accompanying materials
 # are made available under the terms of the Eclipse Public License v1.0
 # which accompanies this distribution, and is available at
@@ -23,7 +23,7 @@
             configurationEnvironmentSupplier="org.eclipse.cdt.internal.build.crossgcc.CrossEnvironmentVariableSupplier"
             id="cdt.managedbuild.toolchain.gnu.cross.base"
             isAbstract="false"
-            name="Cross GCC"
+            name="%toolChain.name"
             targetTool="cdt.managedbuild.tool.gnu.cross.c.linker;cdt.managedbuild.tool.gnu.cross.cpp.linker;cdt.managedbuild.tool.gnu.archiver"
             osList="all">
          <targetPlatform
@@ -39,13 +39,13 @@
          </builder>
          <optionCategory
                id="cdt.managedbuild.optionCategory.gnu.cross.settings"
-               name="Cross Settings">
+               name="%optionCategory.name">
          </optionCategory>
          <option
                category="cdt.managedbuild.optionCategory.gnu.cross.settings"
                id="cdt.managedbuild.option.gnu.cross.prefix"
                isAbstract="false"
-               name="Prefix"
+               name="%option.prefix"
                resourceFilter="all"
                valueType="string">
          </option>
@@ -54,7 +54,7 @@
                category="cdt.managedbuild.optionCategory.gnu.cross.settings"
                id="cdt.managedbuild.option.gnu.cross.path"
                isAbstract="false"
-               name="Path"
+               name="%option.path"
                resourceFilter="all"
                valueType="string">
          </option>
@@ -62,21 +62,21 @@
                commandLineGenerator="org.eclipse.cdt.internal.build.crossgcc.CrossCommandLineGenerator"
                id="cdt.managedbuild.tool.gnu.cross.c.compiler"
                isAbstract="false"
-               name="Cross GCC Compiler"
+               name="%tool.gcc.compiler"
                superClass="cdt.managedbuild.tool.gnu.c.compiler">
          </tool>
          <tool
                commandLineGenerator="org.eclipse.cdt.internal.build.crossgcc.CrossCommandLineGenerator"
                id="cdt.managedbuild.tool.gnu.cross.cpp.compiler"
                isAbstract="false"
-               name="Cross G++ Compiler"
+               name="%tool.gpp.compiler"
                superClass="cdt.managedbuild.tool.gnu.cpp.compiler">
          </tool>
          <tool
                commandLineGenerator="org.eclipse.cdt.internal.build.crossgcc.CrossCommandLineGenerator"
                id="cdt.managedbuild.tool.gnu.cross.c.linker"
                isAbstract="false"
-               name="Cross GCC Linker"
+               name="%tool.gcc.linker"
                superClass="cdt.managedbuild.tool.gnu.c.linker">
             <enablement
                   type="ALL">
@@ -92,7 +92,7 @@
                commandLineGenerator="org.eclipse.cdt.internal.build.crossgcc.CrossCommandLineGenerator"
                id="cdt.managedbuild.tool.gnu.cross.cpp.linker"
                isAbstract="false"
-               name="Cross G++ Linker"
+               name="%tool.gpp.linker"
                superClass="cdt.managedbuild.tool.gnu.cpp.linker">
             <enablement
                   type="ALL">
@@ -108,7 +108,7 @@
                commandLineGenerator="org.eclipse.cdt.internal.build.crossgcc.CrossCommandLineGenerator"
                id="cdt.managedbuild.tool.gnu.cross.archiver"
                isAbstract="false"
-               name="Cross GCC Archiver"
+               name="%tool.gcc.archiver"
                superClass="cdt.managedbuild.tool.gnu.archiver">
             <enablement
                   type="ALL">
@@ -122,7 +122,7 @@
                commandLineGenerator="org.eclipse.cdt.internal.build.crossgcc.CrossCommandLineGenerator"
                id="cdt.managedbuild.tool.gnu.cross.assembler"
                isAbstract="false"
-               name="Cross GCC Assembler"
+               name="%tool.gcc.assembler"
                superClass="cdt.managedbuild.tool.gnu.assembler">
          </tool>
       </toolChain>
@@ -217,37 +217,44 @@
       </projectType>
    </extension>
    <extension
-         point="org.eclipse.cdt.core.templateProcessTypes">
-      <processType
-            name="setCrossCommand"
-            processRunner="org.eclipse.cdt.build.crossgcc.SetCrossCommandProcess">
-         <simple
-               name="projectName">
-         </simple>
-         <simple
-               name="prefix">
-         </simple>
-         <simple
-               name="path">
-         </simple>
-      </processType>
-   </extension>
-   <extension
-         point="org.eclipse.cdt.core.templates">
-      <template
-            id="org.eclipse.cdt.build.crossgcc.setCrossCommand"
-            location="templates/setCrossCommand/template.xml"
-            projectType="org.eclipse.cdt.build.core.buildArtefactType.exe">
-      </template>
-   </extension>
-   <extension
          point="org.eclipse.cdt.core.templateAssociations">
       <template
-            id="org.eclipse.cdt.build.crossgcc.setCrossCommand">
+            id="org.eclipse.cdt.build.core.templates.HelloWorldCAnsiProject">
+         <toolChain
+               id="cdt.managedbuild.toolchain.gnu.cross.base">
+         </toolChain>
+      </template>
+      <template
+            id="org.eclipse.cdt.build.core.templates.HelloWorldCCProject">
          <toolChain
                id="cdt.managedbuild.toolchain.gnu.cross.base">
          </toolChain>
       </template>
    </extension>
-
+   <extension
+         point="org.eclipse.cdt.managedbuilder.ui.newWizardPages">
+      <wizardPage
+            ID="org.eclipse.cdt.build.crossgcc.setcCrossCommandWizardPage"
+            operationClass="org.eclipse.cdt.internal.build.crossgcc.SetCrossCommandOperation"
+            pageClass="org.eclipse.cdt.internal.build.crossgcc.SetCrossCommandWizardPage">
+         <toolchain
+               toolchainID="cdt.managedbuild.toolchain.gnu.cross.exe.debug">
+         </toolchain>
+         <toolchain
+               toolchainID="cdt.managedbuild.toolchain.gnu.cross.exe.release">
+         </toolchain>
+         <toolchain
+               toolchainID="cdt.managedbuild.toolchain.gnu.cross.so.debug">
+         </toolchain>
+         <toolchain
+               toolchainID="cdt.managedbuild.toolchain.gnu.cross.so.release">
+         </toolchain>
+         <toolchain
+               toolchainID="cdt.managedbuild.toolchain.gnu.cross.lib.debug">
+         </toolchain>
+         <toolchain
+               toolchainID="cdt.managedbuild.toolchain.gnu.cross.lib.release">
+         </toolchain>
+      </wizardPage>
+   </extension>
 </plugin>

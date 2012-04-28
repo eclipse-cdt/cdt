@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.cdt.ui" version="2">
+    <resource path="src/org/eclipse/cdt/ui/Messages.java" type="org.eclipse.cdt.ui.Messages">
+        <filter id="305365105">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.ui.Messages"/>
+                <message_argument value="org.eclipse.cdt.ui_5.4.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/cdt/ui/wizards/NewClassCreationWizardPage.java" type="org.eclipse.cdt.ui.wizards.NewClassCreationWizardPage">
         <filter id="338755678">
             <message_arguments>

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2012 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -98,4 +98,10 @@ public interface IIndexFile extends IFileNomination {
 	 * @since 5.0
 	 */
 	int getLinkageID() throws CoreException;
+
+	/**
+	 * Returns detailed information about the file. For debugging only.
+	 * @since 5.4
+	 */
+	String toDebugString();
 }

@@ -938,4 +938,35 @@ public class PDOMFile implements IIndexFragmentFile {
 		}
 		return loc != null ? loc.toString() : super.toString();
 	}
+
+	@Override
+	public String toDebugString() {
+		StringBuilder buf = new StringBuilder();
+		try {
+			buf.append("location: "); //$NON-NLS-1$
+			buf.append(getLocation());
+			buf.append(", timestamp: "); //$NON-NLS-1$
+			buf.append(getTimestamp());
+			buf.append(", linkageID: "); //$NON-NLS-1$
+			buf.append(getLinkageID());
+			buf.append(", contentsHash: "); //$NON-NLS-1$
+			buf.append(getContentsHash());
+			IIndexInclude parsedInContext = getParsedInContext();
+			if (parsedInContext != null) {
+				buf.append(", parsedInContext: "); //$NON-NLS-1$
+				buf.append(parsedInContext.getIncludedBy());
+			}
+			buf.append(", significantMacros: "); //$NON-NLS-1$
+			buf.append(getSignificantMacros());
+			buf.append(", names: "); //$NON-NLS-1$
+			buf.append(findNames(0, Integer.MAX_VALUE).length);
+			buf.append(", macros: "); //$NON-NLS-1$
+			buf.append(getMacros().length);
+			buf.append(", includes: "); //$NON-NLS-1$
+			buf.append(getIncludes().length);
+		} catch (CoreException e) {
+			buf.append(" (incomplete due to " + e.getClass().getName() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		return buf.toString();
+	}
 }

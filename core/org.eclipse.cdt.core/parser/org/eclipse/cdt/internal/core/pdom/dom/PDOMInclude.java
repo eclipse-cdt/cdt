@@ -10,7 +10,6 @@
  *     Markus Schorn (Wind River Systems)
  *     Sergey Prigogin (Google)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.core.pdom.dom;
 
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
@@ -28,7 +27,6 @@ import org.eclipse.core.runtime.CoreException;
  * @author Doug Schaefer
  */
 public class PDOMInclude implements IIndexFragmentInclude {
-
 	private static final int INCLUDED_FILE		 	=  0;
 	private static final int INCLUDED_BY 			=  4;
 	private static final int INCLUDES_NEXT 			=  8;
@@ -60,8 +58,8 @@ public class PDOMInclude implements IIndexFragmentInclude {
 		this.record = record;
 	}
 
-	public PDOMInclude(PDOMLinkage linkage, IASTPreprocessorIncludeStatement include, PDOMFile containerFile,
-			PDOMFile targetFile) throws CoreException {
+	public PDOMInclude(PDOMLinkage linkage, IASTPreprocessorIncludeStatement include,
+			PDOMFile containerFile, PDOMFile targetFile) throws CoreException {
 		this.linkage = linkage;
 		this.record = linkage.getDB().malloc(RECORD_SIZE);
 		IASTName name = include.getName();
@@ -303,5 +301,29 @@ public class PDOMInclude implements IIndexFragmentInclude {
 			}
 			db.putRecPtr(record + INCLUDED_FILE, 0);
 		}
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder buf = new StringBuilder();
+		try {
+			boolean isSystem = isSystemInclude();
+			buf.append(isSystem ? '<' : '"');
+			buf.append(getFullName());
+			buf.append(isSystem ? '>' : '"');
+			IIndexFile includedBy = getIncludedBy();
+			if (includedBy != null)
+				buf.append(" in " + includedBy); //$NON-NLS-1$
+			IIndexFragmentFile includes = getIncludes();
+			if (includes != null) {
+				buf.append(" resolved to " + includes); //$NON-NLS-1$
+			} else {
+				buf.append(" unresolved"); //$NON-NLS-1$
+			}
+		} catch (CoreException e) {
+			buf.append(" (incomplete due to " + e.getClass().getName() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+			e.printStackTrace();
+		}
+		return buf.toString();
 	}
 }

@@ -317,8 +317,8 @@ public class IndexerPreferences {
 		Preferences prefs= defaultPreferences.node(INDEXER_NODE);
 		prefs.put(KEY_INDEXER_ID, IPDOMManager.ID_FAST_INDEXER);
 		prefs.putBoolean(KEY_INDEX_ALL_FILES, true);
-		prefs.putBoolean(KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG, false);
-		prefs.putBoolean(KEY_INDEX_UNUSED_HEADERS_WITH_ALTERNATE_LANG, false);
+		prefs.putBoolean(KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG, true);
+		prefs.putBoolean(KEY_INDEX_UNUSED_HEADERS_WITH_ALTERNATE_LANG, true);
 		prefs.putBoolean(KEY_INDEX_ON_OPEN, false);
 		prefs.putBoolean(KEY_INCLUDE_HEURISTICS, true);
 		prefs.putInt(KEY_SKIP_FILES_LARGER_THAN_MB, DEFAULT_FILE_SIZE_LIMIT);

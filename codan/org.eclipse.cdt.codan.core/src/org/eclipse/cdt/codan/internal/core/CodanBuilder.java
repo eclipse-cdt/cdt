@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 Alena Laskavaia
+ * Copyright (c) 2009, 2012 Alena Laskavaia
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,6 @@ import java.util.Map;
 import org.eclipse.cdt.codan.core.CodanCorePlugin;
 import org.eclipse.cdt.codan.core.Messages;
 import org.eclipse.cdt.codan.core.model.CheckerLaunchMode;
-import org.eclipse.cdt.codan.core.model.Checkers;
 import org.eclipse.cdt.codan.core.model.IChecker;
 import org.eclipse.cdt.codan.core.model.ICheckerInvocationContext;
 import org.eclipse.cdt.codan.core.model.ICodanBuilder;
@@ -44,9 +43,6 @@ public class CodanBuilder extends IncrementalProjectBuilder implements ICodanBui
 	private class CodanDeltaVisitor implements IResourceDeltaVisitor {
 		private IProgressMonitor monitor;
 
-		/**
-		 * @param monitor
-		 */
 		public CodanDeltaVisitor(IProgressMonitor monitor) {
 			this.monitor = monitor;
 		}
@@ -56,28 +52,22 @@ public class CodanBuilder extends IncrementalProjectBuilder implements ICodanBui
 			IResource resource = delta.getResource();
 			switch (delta.getKind()) {
 				case IResourceDelta.ADDED:
-					// handle added resource
+					// Handle added resource
 					processResourceDelta(resource, monitor);
 					break;
 				case IResourceDelta.REMOVED:
-					// handle removed resource
+					// Handle removed resource
 					break;
 				case IResourceDelta.CHANGED:
-					// handle changed resource
+					// Handle changed resource
 					processResourceDelta(resource, monitor);
 					break;
 			}
-			// return true to continue visiting children.
+			// Return true to continue visiting children.
 			return true;
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.internal.events.InternalBuilder#build(int,
-	 * java.util.Map, org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@SuppressWarnings("rawtypes")
 	@Override
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
@@ -116,7 +106,8 @@ public class CodanBuilder extends IncrementalProjectBuilder implements ICodanBui
 		processResource(resource, monitor, CheckerLaunchMode.RUN_ON_INC_BUILD);
 	}
 
-	protected void processResource(IResource resource, IProgressMonitor monitor, Object model, CheckerLaunchMode checkerLaunchMode) {
+	protected void processResource(IResource resource, IProgressMonitor monitor, Object model,
+			CheckerLaunchMode checkerLaunchMode) {
 		CheckersRegistry chegistry = CheckersRegistry.getInstance();
 		int checkers = chegistry.getCheckersSize();
 		int memsize = 0;
@@ -139,24 +130,18 @@ public class CodanBuilder extends IncrementalProjectBuilder implements ICodanBui
 					try {
 						if (monitor.isCanceled())
 							return;
-						if (doesCheckerSupportLaunchMode(checker, checkerLaunchMode)
-								&& chegistry.isCheckerEnabled(checker, resource, checkerLaunchMode)) {
+						if (chegistry.isCheckerEnabled(checker, resource, checkerLaunchMode)) {
 							synchronized (checker) {
 								try {
 									checker.before(resource);
-									if (chegistry.isCheckerEnabled(checker, resource)) {
-										try {
-											CheckersTimeStats.getInstance().checkerStart(checker.getClass().getName());
-											if (checkerLaunchMode == CheckerLaunchMode.RUN_AS_YOU_TYPE) {
-												((IRunnableInEditorChecker) checker).processModel(model, context);
-											} else {
-												checker.processResource(resource, context);
-											}
-										} finally {
-											CheckersTimeStats.getInstance().checkerStop(checker.getClass().getName());
-										}
+									CheckersTimeStats.getInstance().checkerStart(checker.getClass().getName());
+									if (checkerLaunchMode == CheckerLaunchMode.RUN_AS_YOU_TYPE) {
+										((IRunnableInEditorChecker) checker).processModel(model, context);
+									} else {
+										checker.processResource(resource, context);
 									}
 								} finally {
+									CheckersTimeStats.getInstance().checkerStop(checker.getClass().getName());
 									checker.after(resource);
 								}
 							}
@@ -192,18 +177,12 @@ public class CodanBuilder extends IncrementalProjectBuilder implements ICodanBui
 		}
 	}
 
-	private boolean doesCheckerSupportLaunchMode(IChecker checker, CheckerLaunchMode mode) {
-		if (mode == CheckerLaunchMode.RUN_AS_YOU_TYPE)
-			return Checkers.canCheckerRunAsYouType(checker);
-		return true;
-	}
-
 	protected void fullBuild(final IProgressMonitor monitor) throws CoreException {
 		processResource(getProject(), monitor);
 	}
 
 	protected void incrementalBuild(IResourceDelta delta, IProgressMonitor monitor) throws CoreException {
-		// the visitor does the work.
+		// The visitor does the work.
 		delta.accept(new CodanDeltaVisitor(monitor));
 	}
 

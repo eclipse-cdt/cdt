@@ -22,6 +22,7 @@ import org.eclipse.cdt.codan.core.CodanCorePlugin;
 import org.eclipse.cdt.codan.core.PreferenceConstants;
 import org.eclipse.cdt.codan.core.model.AbstractCheckerWithProblemPreferences;
 import org.eclipse.cdt.codan.core.model.CheckerLaunchMode;
+import org.eclipse.cdt.codan.core.model.Checkers;
 import org.eclipse.cdt.codan.core.model.CodanSeverity;
 import org.eclipse.cdt.codan.core.model.IChecker;
 import org.eclipse.cdt.codan.core.model.ICheckerWithPreferences;
@@ -447,31 +448,6 @@ public class CheckersRegistry implements Iterable<IChecker>, ICheckersRegistry {
 	}
 
 	/**
-	 * Tests if a checker is enabled (needs to be run) or not. Checker is
-	 * enabled
-	 * if at least one problem it reports is enabled.
-	 *
-	 * @param checker
-	 * @param resource
-	 * @return <code>true</code> if the checker is enabled
-	 */
-	public boolean isCheckerEnabled(IChecker checker, IResource resource) {
-		IProblemProfile resourceProfile = getResourceProfile(resource);
-		Collection<IProblem> refProblems = getRefProblems(checker);
-		for (Iterator<IProblem> iterator = refProblems.iterator(); iterator.hasNext();) {
-			IProblem p = iterator.next();
-			// we need to check problem enablement in particular profile
-			IProblem problem = resourceProfile.findProblem(p.getId());
-			if (problem == null)
-				throw new IllegalArgumentException("Id is not registered"); //$NON-NLS-1$
-			if (problem.isEnabled())
-				return true;
-		}
-		// no problem is enabled for this checker, skip the checker
-		return false;
-	}
-
-	/**
 	 * Tests if a checker needs to run in a specific launch mode.
 	 *
 	 * @param checker
@@ -483,29 +459,35 @@ public class CheckersRegistry implements Iterable<IChecker>, ICheckersRegistry {
 		if (resource.getType() != IResource.FILE) {
 			return false;
 		}
+
+		if (mode == CheckerLaunchMode.RUN_AS_YOU_TYPE && !Checkers.canCheckerRunAsYouType(checker)) {
+			return false;
+		}
 		for (ICheckerEnablementVerifier verifier : checkerEnablementVerifiers) {
 			if (!verifier.isCheckerEnabled(checker, resource, mode)) {
 				return false;
 			}
 		}
+
 		IProblemProfile resourceProfile = getResourceProfile(resource);
 		Collection<IProblem> refProblems = getRefProblems(checker);
-		boolean enabled = false;
 		for (Iterator<IProblem> iterator = refProblems.iterator(); iterator.hasNext();) {
 			IProblem p = iterator.next();
-			// we need to check problem enablement in particular profile
+			// We need to check problem enablement in a particular profile.
 			IProblem problem = resourceProfile.findProblem(p.getId());
 			if (problem == null)
-				throw new IllegalArgumentException("Id is not registered"); //$NON-NLS-1$
+				throw new IllegalArgumentException(p.getId() + "is not registered"); //$NON-NLS-1$
+			if (!problem.isEnabled())
+				return false;
 			if (checker instanceof AbstractCheckerWithProblemPreferences) {
-				LaunchModeProblemPreference pref = ((AbstractCheckerWithProblemPreferences) checker).getLaunchModePreference(problem);
+				LaunchModeProblemPreference pref =
+						((AbstractCheckerWithProblemPreferences) checker).getLaunchModePreference(problem);
 				if (pref.isRunningInMode(mode)) {
-					enabled = true;
-					break;
+					return true;
 				}
 			}
 		}
-		return enabled;
+		return false;
 	}
 
 	/**

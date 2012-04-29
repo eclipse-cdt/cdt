@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Alena Laskavaia
+ * Copyright (c) 2009, 2012 Alena Laskavaia
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,8 +39,8 @@ public abstract class AbstractChecker implements IChecker {
 
 	@Deprecated
 	@Override
-	public boolean enabledInContext(IResource res) {
-		return res.getType() == IResource.FILE;
+	public boolean enabledInContext(IResource resource) {
+		return false;
 	}
 
 	/**
@@ -204,17 +204,15 @@ public abstract class AbstractChecker implements IChecker {
 	 */
 	@Override
 	public void before(IResource resource) {
-		IProblemReporter problemReporter = CodanRuntime.getInstance().getProblemReporter();
-		this.problemReporter = problemReporter;
-		if (problemReporter instanceof IProblemReporterSessionPersistent) {
-			// create session problem reporter
-			this.problemReporter = ((IProblemReporterSessionPersistent) problemReporter).createReporter(resource, this);
-			((IProblemReporterSessionPersistent) this.problemReporter).start();
-		} else if (problemReporter instanceof IProblemReporterPersistent) {
-			// delete markers if checker can possibly run on this
-			// resource  this way if checker is not enabled markers would be
-			// deleted too
-			((IProblemReporterPersistent) problemReporter).deleteProblems(resource, this);
+		IProblemReporter reporter = CodanRuntime.getInstance().getProblemReporter();
+		problemReporter = reporter;
+		if (reporter instanceof IProblemReporterSessionPersistent) {
+			// Create session problem reporter
+			problemReporter = ((IProblemReporterSessionPersistent) reporter).createReporter(resource, this);
+			((IProblemReporterSessionPersistent) problemReporter).start();
+		} else if (reporter instanceof IProblemReporterPersistent) {
+			// Delete markers.
+			((IProblemReporterPersistent) reporter).deleteProblems(resource, this);
 		}
 	}
 
@@ -224,7 +222,7 @@ public abstract class AbstractChecker implements IChecker {
 	@Override
 	public void after(IResource resource) {
 		if (problemReporter instanceof IProblemReporterSessionPersistent) {
-			// Delete general markers
+			// Delete general markers.
 			((IProblemReporterSessionPersistent) problemReporter).done();
 		}
 		problemReporter = null;

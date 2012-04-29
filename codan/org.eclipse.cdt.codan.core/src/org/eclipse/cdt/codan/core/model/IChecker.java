@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Alena Laskavaia
+ * Copyright (c) 2009, 2012 Alena Laskavaia
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,14 @@ import org.eclipse.core.runtime.OperationCanceledException;
  */
 public interface IChecker {
 	/**
+	 * Called before processing a resource.
+	 *
+	 * @param resource the resource that is about to be processed.
+	 * @since 2.0
+	 */
+	void before(IResource resource);
+
+	/**
 	 * Main method that checker should implement that actually detects errors
 	 *
 	 * @param resource the resource to run on.
@@ -44,15 +52,7 @@ public interface IChecker {
 			throws OperationCanceledException;
 
 	/**
-	 * Called before processing a resource.
-	 *
-	 * @param resource the resource that is about to be processed.
-	 * @since 2.0
-	 */
-	void before(IResource resource);
-
-	/**
-	 * Called before processing a resource.
+	 * Called after processing a resource.
 	 *
 	 * @param resource the resource that has been processed.
 	 * @since 2.0
@@ -66,14 +66,10 @@ public interface IChecker {
 	IProblemReporter getProblemReporter();
 
 	/**
-	 * Implement this method to trim down type of resource you are interested
-	 * in, usually it will be c/c++ files only. This method should be
-	 * independent from current user preferences.
-	 *
 	 * @param resource the resource to run on.
 	 * @return true if checker should be run on this resource.
-	 * @deprecated  Replaced by {@code CheckersRegistry.isCheckerEnabled((IChecker IResource, CheckerLaunchMode)}
-	 * and {@code ICheckerEnablementVerifier.isCheckerEnabled(IChecker IResource, CheckerLaunchMode)}.
+	 * @deprecated Ignored since 2.0. Replaced by
+	 *     {@code CheckersRegistry.isCheckerEnabled((IChecker, IResource, CheckerLaunchMode)}
 	 */
 	@Deprecated
 	boolean enabledInContext(IResource resource);
@@ -86,8 +82,7 @@ public interface IChecker {
 	 * Checker should return false if check is non-trivial and takes a long
 	 * time.
 	 *
-	 * @return true if need to be run in editor as user types, and false
-	 *         otherwise
+	 * @return true if need to be run in editor as user types, and false otherwise
 	 */
 	boolean runInEditor();
 }

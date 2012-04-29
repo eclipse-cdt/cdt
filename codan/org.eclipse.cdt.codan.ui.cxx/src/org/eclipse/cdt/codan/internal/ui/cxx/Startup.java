@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Alena Laskavaia 
+ * Copyright (c) 2009, 2012 Alena Laskavaia and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import org.eclipse.cdt.codan.core.CodanRuntime;
 import org.eclipse.cdt.codan.core.model.CheckerLaunchMode;
 import org.eclipse.cdt.codan.internal.core.CodanBuilder;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.ui.ICEditor;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -55,7 +56,7 @@ public class Startup implements IStartup {
 				IWorkbenchWindow active = workbench.getActiveWorkbenchWindow();
 				final IWorkbenchPage page = active.getActivePage();
 				IPartListener2 partListener = new IPartListener2() {
-					CodanCReconciler reconciler = new CodanCReconciler();
+					CodanCReconciler reconciler;
 
 					@Override
 					public void partActivated(IWorkbenchPartReference partRef) {
@@ -68,8 +69,16 @@ public class Startup implements IStartup {
 					@Override
 					public void partOpened(IWorkbenchPartReference partRef) {
 						IWorkbenchPart part = partRef.getPart(false);
-						if (part instanceof CEditor) {
+						// We need to be very careful since this code may be executed in
+						// an invironement where CDT is installed, but is not actively used.
+						// By checking for ICEditor first we avoid loading CEditor class if
+						// the part is not a C/C++ editor. Loading of CEditor class can be very
+						// expensive since it triggers loading of many other classes.
+						if (part instanceof ICEditor && part instanceof CEditor) {
 							CEditor editor = (CEditor) part;
+							if (reconciler == null) {
+								reconciler = new CodanCReconciler();
+							}
 							reconciler.install(editor);
 							IResource resource = (IResource) editor.getEditorInput().getAdapter(IResource.class);
 							if (resource != null) {
@@ -103,7 +112,7 @@ public class Startup implements IStartup {
 					@Override
 					public void partClosed(IWorkbenchPartReference partRef) {
 						IWorkbenchPart part = partRef.getPart(false);
-						if (part instanceof CEditor) {
+						if (reconciler != null && part instanceof ICEditor && part instanceof CEditor) {
 							reconciler.uninstall((CEditor) part);
 						}
 					}
@@ -116,11 +125,11 @@ public class Startup implements IStartup {
 					public void partInputChanged(IWorkbenchPartReference partRef) {
 					}
 				};
+
 				page.addPartListener(partListener);
 				// Check current open editors.
 				IEditorReference[] editorReferences = page.getEditorReferences();
-				for (int i = 0; i < editorReferences.length; i++) {
-					IEditorReference ref = editorReferences[i];
+				for (IEditorReference ref : editorReferences) {
 					partListener.partOpened(ref);
 				}
 			}

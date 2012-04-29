@@ -66,7 +66,7 @@ public class Activator extends AbstractUIPlugin {
 	 * @param e the exception to be logged
 	 */
 	public static void log(Throwable e) {
-		log(new Status(IStatus.ERROR, PLUGIN_ID, 1, "Internal Error", e)); //$NON-NLS-1$
+		log(new Status(IStatus.ERROR, PLUGIN_ID, 1, Messages.Activatior_Error, e));
 	}
 
 	/**

@@ -13,6 +13,8 @@ package org.eclipse.cdt.codan.core.test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.cdt.codan.core.CodanRuntime;
 import org.eclipse.cdt.codan.core.model.CheckerLaunchMode;
@@ -124,6 +126,22 @@ public class CheckerTestCase extends CodanTestCase {
 			IMarker m = markers[0];
 			fail("Found " + markers.length + " errors but should not. First " +
 					CodanProblemMarker.getProblemId(m) + " at line " + getLine(m));
+		}
+	}
+
+	public void checkNoErrorsOfKind(String problemId) {
+		if (markers != null && markers.length > 0) {
+			List<IMarker> filtered = new ArrayList<IMarker>(markers.length);
+			for (IMarker m : markers) {
+				if (CodanProblemMarker.getProblemId(m).equals(problemId)) {
+					filtered.add(m);
+				}
+			}
+			if (!filtered.isEmpty()) {
+				IMarker m = filtered.get(0);
+				fail("Found " + filtered.size() + " errors but should not. First " +
+						CodanProblemMarker.getProblemId(m) + " at line " + getLine(m));
+			}
 		}
 	}
 

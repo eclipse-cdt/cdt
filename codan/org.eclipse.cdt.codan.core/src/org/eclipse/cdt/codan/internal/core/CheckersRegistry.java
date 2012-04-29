@@ -257,11 +257,6 @@ public class CheckersRegistry implements Iterable<IChecker>, ICheckersRegistry {
 		return Platform.getExtensionRegistry().getExtensionPoint(CodanCorePlugin.PLUGIN_ID, extensionPointName);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.codan.core.model.ICheckersRegistry#iterator()
-	 */
 	@Override
 	public Iterator<IChecker> iterator() {
 		return checkers.iterator();
@@ -278,25 +273,11 @@ public class CheckersRegistry implements Iterable<IChecker>, ICheckersRegistry {
 		return instance;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.cdt.codan.core.model.ICheckersRegistry#addChecker(org.eclipse
-	 * .cdt.codan.core.model.IChecker)
-	 */
 	@Override
 	public void addChecker(IChecker checker) {
 		checkers.add(checker);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.cdt.codan.core.model.ICheckersRegistry#addProblem(org.eclipse
-	 * .cdt.codan.core.model.IProblem, java.lang.String)
-	 */
 	@Override
 	public void addProblem(IProblem p, String category) {
 		IProblemCategory cat = getDefaultProfile().findCategory(category);
@@ -305,13 +286,6 @@ public class CheckersRegistry implements Iterable<IChecker>, ICheckersRegistry {
 		((ProblemProfile) getDefaultProfile()).addProblem(p, cat);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.cdt.codan.core.model.ICheckersRegistry#addCategory(org.eclipse
-	 * .cdt.codan.core.model.IProblemCategory, java.lang.String)
-	 */
 	@Override
 	public void addCategory(IProblemCategory p, String category) {
 		IProblemCategory cat = getDefaultProfile().findCategory(category);
@@ -320,14 +294,6 @@ public class CheckersRegistry implements Iterable<IChecker>, ICheckersRegistry {
 		((ProblemProfile) getDefaultProfile()).addCategory(p, cat);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.cdt.codan.core.model.ICheckersRegistry#addRefProblem(org.
-	 * eclipse.cdt.codan.core.model.IChecker,
-	 * org.eclipse.cdt.codan.core.model.IProblem)
-	 */
 	@Override
 	public void addRefProblem(IChecker c, IProblem p) {
 		Collection<IProblem> plist = problemList.get(c);
@@ -358,23 +324,11 @@ public class CheckersRegistry implements Iterable<IChecker>, ICheckersRegistry {
 		return problemList.get(checker);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.cdt.codan.core.model.ICheckersRegistry#getDefaultProfile()
-	 */
 	@Override
 	public IProblemProfile getDefaultProfile() {
 		return profiles.get(DEFAULT);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.cdt.codan.core.model.ICheckersRegistry#getWorkspaceProfile()
-	 */
 	@Override
 	public IProblemProfile getWorkspaceProfile() {
 		IProblemProfile wp = profiles.get(ResourcesPlugin.getWorkspace());
@@ -396,7 +350,7 @@ public class CheckersRegistry implements Iterable<IChecker>, ICheckersRegistry {
 
 	@Override
 	public void updateProfile(IResource element, IProblemProfile profile) {
-		// updating profile can invalidate all cached profiles
+		// Updating profile can invalidate all cached profiles
 		IProblemProfile defaultProfile = getDefaultProfile();
 		profiles.clear();
 		profiles.put(DEFAULT, defaultProfile);
@@ -404,13 +358,6 @@ public class CheckersRegistry implements Iterable<IChecker>, ICheckersRegistry {
 			profiles.put(element, profile);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.cdt.codan.core.model.ICheckersRegistry#getResourceProfile
-	 * (org.eclipse.core.resources.IResource)
-	 */
 	@Override
 	public IProblemProfile getResourceProfile(IResource element) {
 		IProblemProfile prof = profiles.get(element);
@@ -418,7 +365,7 @@ public class CheckersRegistry implements Iterable<IChecker>, ICheckersRegistry {
 			if (element instanceof IProject) {
 				prof = (IProblemProfile) getWorkspaceProfile().clone();
 				((ProblemProfile) prof).setResource(element);
-				// load default values
+				// Load default values
 				CodanPreferencesLoader loader = new CodanPreferencesLoader(prof);
 				Preferences projectNode = CodanPreferencesLoader.getProjectNode((IProject) element);
 				boolean useWorkspace = projectNode.getBoolean(PreferenceConstants.P_USE_PARENT, true);
@@ -435,12 +382,6 @@ public class CheckersRegistry implements Iterable<IChecker>, ICheckersRegistry {
 		return prof;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @seeorg.eclipse.cdt.codan.core.model.ICheckersRegistry#
-	 * getResourceProfileWorkingCopy(org.eclipse.core.resources.IResource)
-	 */
 	@Override
 	public IProblemProfile getResourceProfileWorkingCopy(IResource element) {
 		IProblemProfile prof = (IProblemProfile) getResourceProfile(element).clone();
@@ -471,8 +412,7 @@ public class CheckersRegistry implements Iterable<IChecker>, ICheckersRegistry {
 
 		IProblemProfile resourceProfile = getResourceProfile(resource);
 		Collection<IProblem> refProblems = getRefProblems(checker);
-		for (Iterator<IProblem> iterator = refProblems.iterator(); iterator.hasNext();) {
-			IProblem p = iterator.next();
+		for (IProblem p : refProblems) {
 			// We need to check problem enablement in a particular profile.
 			IProblem problem = resourceProfile.findProblem(p.getId());
 			if (problem == null)
@@ -525,7 +465,7 @@ public class CheckersRegistry implements Iterable<IChecker>, ICheckersRegistry {
 				int num = 0;
 				try {
 					num = Integer.parseInt(x.getId().substring(prefix.length()));
-				} catch (Exception e) {
+				} catch (NumberFormatException e) {
 					// well...
 				}
 				if (max < num)

@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2009,2010 QNX Software Systems
+ * Copyright (c) 2009, 2010 QNX Software Systems
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    QNX Software Systems (Alena Laskavaia)  - initial API and implementation
+ *     QNX Software Systems (Alena Laskavaia)  - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.param;
 
@@ -58,8 +58,7 @@ public class MapProblemPreference extends AbstractProblemPreference implements I
 	}
 
 	/**
-	 * Get parameter preference for element by key
-	 *
+	 * Returns parameter preference for element by key
 	 */
 	@Override
 	public IProblemPreference getChildDescriptor(String key) {

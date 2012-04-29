@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Alena Laskavaia
+ * Copyright (c) 2009, 2012 Alena Laskavaia
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Alena Laskavaia  - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.model;
 
@@ -25,8 +26,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 
 /**
- * AbstractChecker that has extra methods to simplify adding problem
- * preferences.
+ * AbstractChecker that has extra methods to simplify adding problem preferences.
  * Checker can produce several problems, but preferences are per problem.
  * Sharing preferences between problems is not supported now.
  */
@@ -38,6 +38,11 @@ public abstract class AbstractCheckerWithProblemPreferences extends AbstractChec
 	@Override
 	public void initPreferences(IProblemWorkingCopy problem) {
 		getTopLevelPreference(problem); // initialize
+		getLaunchModePreference(problem).enableInLaunchModes(
+				CheckerLaunchMode.RUN_AS_YOU_TYPE,
+				CheckerLaunchMode.RUN_ON_DEMAND,
+				CheckerLaunchMode.RUN_ON_FULL_BUILD,
+				CheckerLaunchMode.RUN_ON_INC_BUILD);
 	}
 
 	/**

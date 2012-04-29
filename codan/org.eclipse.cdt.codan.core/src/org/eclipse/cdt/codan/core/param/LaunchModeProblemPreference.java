@@ -72,7 +72,7 @@ public class LaunchModeProblemPreference extends MapProblemPreference {
 		if (getChildDescriptor(mode.name()) == null) {
 			if (mode == CheckerLaunchMode.RUN_ON_INC_BUILD)
 				return isRunningInMode(CheckerLaunchMode.RUN_ON_FULL_BUILD);
-			return true; // default is true
+			return false; // default is false
 		}
 		Object value = getChildValue(mode.name());
 		if (value instanceof Boolean) {

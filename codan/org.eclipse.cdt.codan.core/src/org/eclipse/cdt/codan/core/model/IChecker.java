@@ -69,7 +69,7 @@ public interface IChecker {
 	 * @param resource the resource to run on.
 	 * @return true if checker should be run on this resource.
 	 * @deprecated Ignored since 2.0. Replaced by
-	 *     {@code CheckersRegistry.isCheckerEnabled((IChecker, IResource, CheckerLaunchMode)}
+	 *     {@link org.eclipse.cdt.codan.internal.core.CheckersRegistry#isCheckerEnabled(IChecker, IResource, CheckerLaunchMode)}
 	 */
 	@Deprecated
 	boolean enabledInContext(IResource resource);

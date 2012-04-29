@@ -51,43 +51,22 @@ public class LaunchModesPropertyPage extends FieldEditorPreferencePage {
 		super.noDefaultAndApplyButton();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors
-	 * ()
-	 */
 	@Override
 	protected void createFieldEditors() {
-		addField(new BooleanFieldEditor(CheckerLaunchMode.RUN_ON_FULL_BUILD.name(), CodanUIMessages.LaunchModesPropertyPage_RunOnFullBuild, getFieldEditorParent()));
-		addField(new BooleanFieldEditor(CheckerLaunchMode.RUN_ON_INC_BUILD.name(), CodanUIMessages.LaunchModesPropertyPage_RunOnIncrementalBuild, getFieldEditorParent()));
-		addField(new BooleanFieldEditor(CheckerLaunchMode.RUN_ON_DEMAND.name(), CodanUIMessages.LaunchModesPropertyPage_RunOnDemand, getFieldEditorParent()));
-		addField(new BooleanFieldEditor(CheckerLaunchMode.RUN_ON_FILE_OPEN.name(), CodanUIMessages.LaunchModesPropertyPage_RunOnFileOpen, getFieldEditorParent()));
-		addField(new BooleanFieldEditor(CheckerLaunchMode.RUN_ON_FILE_SAVE.name(), CodanUIMessages.LaunchModesPropertyPage_RunOnFileSave, getFieldEditorParent()));
 		if (runInEditor) {
 			addField(new BooleanFieldEditor(CheckerLaunchMode.RUN_AS_YOU_TYPE.name(), CodanUIMessages.LaunchModesPropertyPage_RunAsYouType, getFieldEditorParent()));
 		}
+		addField(new BooleanFieldEditor(CheckerLaunchMode.RUN_ON_FILE_OPEN.name(), CodanUIMessages.LaunchModesPropertyPage_RunOnFileOpen, getFieldEditorParent()));
+		addField(new BooleanFieldEditor(CheckerLaunchMode.RUN_ON_FILE_SAVE.name(), CodanUIMessages.LaunchModesPropertyPage_RunOnFileSave, getFieldEditorParent()));
+		addField(new BooleanFieldEditor(CheckerLaunchMode.RUN_ON_INC_BUILD.name(), CodanUIMessages.LaunchModesPropertyPage_RunOnIncrementalBuild, getFieldEditorParent()));
+		addField(new BooleanFieldEditor(CheckerLaunchMode.RUN_ON_FULL_BUILD.name(), CodanUIMessages.LaunchModesPropertyPage_RunOnFullBuild, getFieldEditorParent()));
+		addField(new BooleanFieldEditor(CheckerLaunchMode.RUN_ON_DEMAND.name(), CodanUIMessages.LaunchModesPropertyPage_RunOnDemand, getFieldEditorParent()));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.jface.preference.FieldEditorPreferencePage#addField(org.eclipse
-	 * .jface.preference.FieldEditor)
-	 */
 	@Override
 	protected void addField(FieldEditor editor) {
 		editors.add(editor);
 		super.addField(editor);
-	}
-
-	/**
-	 * 
-	 */
-	protected void configureProjectSettings() {
-		// TODO Auto-generated method stub
 	}
 
 	@Override

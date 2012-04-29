@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOHH///vM\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/indexer/IndexerPreferences.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 321,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-04-29T19:33:42Z",
+      "side": 1,
+      "message": "This setting should not be enabled by default since headers may be C++-specific and not protected by #ifdef __cplusplus",
+      "revId": "e482a5f63b82f572cabc55d3a08c808e5c3d3825",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

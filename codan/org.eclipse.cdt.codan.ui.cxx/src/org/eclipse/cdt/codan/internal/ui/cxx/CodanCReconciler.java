@@ -38,9 +38,6 @@ public class CodanCReconciler implements ICReconcilingListener {
 		editor.removeReconcileListener(this);
 	}
 
-	/**
-	 * 
-	 */
 	private void initialize() {
 		// nothing?
 	}

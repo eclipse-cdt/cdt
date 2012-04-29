@@ -16,6 +16,24 @@
       "revId": "00084bbdb475c04f7ef7fb8e0597aca97db27265",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHH///so\u003d",
+        "filename": "codan/org.eclipse.cdt.codan.ui.cxx/src/org/eclipse/cdt/codan/internal/ui/cxx/Startup.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-04-29T21:51:35Z",
+      "side": 1,
+      "message": "Marc-Andre\u0027s proposal involving IPostSaveListener is better than  relying on PROP_DIRTY since the dirty state may change from dirty to clean by a action other than save, for example undo.",
+      "parentUuid": "AABOHH///t0\u003d",
+      "revId": "00084bbdb475c04f7ef7fb8e0597aca97db27265",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

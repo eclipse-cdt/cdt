@@ -29,17 +29,11 @@ public class CodanCReconciler implements ICReconcilingListener {
 	private CxxCodanReconciler reconsiler = new CxxCodanReconciler();
 
 	void install(CEditor editor) {
-		initialize();
 		editor.addReconcileListener(this);
 	}
 
 	void uninstall(CEditor editor) {
-		initialize();
 		editor.removeReconcileListener(this);
-	}
-
-	private void initialize() {
-		// nothing?
 	}
 
 	@Override

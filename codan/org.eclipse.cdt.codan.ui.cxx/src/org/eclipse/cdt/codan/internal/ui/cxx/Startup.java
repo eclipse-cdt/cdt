@@ -18,9 +18,14 @@ import org.eclipse.cdt.codan.internal.core.CodanBuilder;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.ui.ICEditor;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IResourceDeltaVisitor;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.osgi.util.NLS;
@@ -38,8 +43,6 @@ import org.eclipse.ui.PlatformUI;
  * @author Alena Laskavaia
  */
 public class Startup implements IStartup {
-	private static final IProgressMonitor NULL_PROGRESS_MONITOR = new NullProgressMonitor();
-
 	@Override
 	public void earlyStartup() {
 		registerListeners();
@@ -82,25 +85,11 @@ public class Startup implements IStartup {
 							reconciler.install(editor);
 							IResource resource = (IResource) editor.getEditorInput().getAdapter(IResource.class);
 							if (resource != null) {
-								processResource(resource);
+								processResource(resource, CheckerLaunchMode.RUN_ON_FILE_OPEN);
 							}
 						}
 					}
 					
-					private void processResource(final IResource resource) {
-						Job job = new Job(NLS.bind(Messages.Startup_AnalyzingFile, resource.getName())) {
-							@Override
-							protected IStatus run(IProgressMonitor monitor) {
-								CodanBuilder builder = (CodanBuilder) CodanRuntime.getInstance().getBuilder();
-								builder.processResource(resource, NULL_PROGRESS_MONITOR, CheckerLaunchMode.RUN_ON_FILE_OPEN);
-								return Status.OK_STATUS;
-							}
-						};
-						job.setRule(resource);
-						job.setSystem(true);
-						job.schedule();
-					}
-
 					@Override
 					public void partHidden(IWorkbenchPartReference partRef) {
 					}
@@ -132,7 +121,46 @@ public class Startup implements IStartup {
 				for (IEditorReference ref : editorReferences) {
 					partListener.partOpened(ref);
 				}
+				final IResourceDeltaVisitor resourceDeltaVisitor = new IResourceDeltaVisitor() {
+					@Override
+					public boolean visit(IResourceDelta delta) throws CoreException {
+						IResource resource = delta.getResource();
+						if (resource.getType() != IResource.FILE) {
+							return true;
+						}
+						if (delta.getKind() == IResourceDelta.CHANGED && (delta.getFlags() & IResourceDelta.CONTENT) != 0) {
+							processResource(resource, CheckerLaunchMode.RUN_ON_FILE_SAVE);
+						}
+						return false;
+					}
+				};
+				ResourcesPlugin.getWorkspace().addResourceChangeListener(new IResourceChangeListener() {
+					@Override
+					public void resourceChanged(IResourceChangeEvent event) {
+						if (event.getType() == IResourceChangeEvent.POST_CHANGE) {
+							try {
+								event.getDelta().accept(resourceDeltaVisitor);
+							} catch (CoreException e) {
+								Activator.log(e);
+							}
+						}
+					}
+				});
 			}
 		});
+	}
+
+	private void processResource(final IResource resource, final CheckerLaunchMode launchMode) {
+		Job job = new Job(NLS.bind(Messages.Startup_AnalyzingFile, resource.getName())) {
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				CodanBuilder builder = (CodanBuilder) CodanRuntime.getInstance().getBuilder();
+				builder.processResource(resource, monitor, launchMode);
+				return Status.OK_STATUS;
+			}
+		};
+		job.setRule(resource);
+		job.setSystem(true);
+		job.schedule();
 	}
 }

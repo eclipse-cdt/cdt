@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Alena Laskavaia  - initial API and implementation
- *    Marc-Andre Laperle
+ *     Alena Laskavaia  - initial API and implementation
+ *     Marc-Andre Laperle
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.test;
 
@@ -55,7 +55,7 @@ public class CheckerTestCase extends CodanTestCase {
 		for (Object i : errLines) {
 			checkErrorLine((Integer) i);
 		}
-		assertEquals("Expected number of errors "+errLines.size(),errLines.size(), markers.length);
+		assertEquals("Expected number of errors " + errLines.size(),errLines.size(), markers.length);
 	}
 
 	public IMarker checkErrorLine(int i, String problemId) {
@@ -90,7 +90,7 @@ public class CheckerTestCase extends CodanTestCase {
 					break;
 			}
 		}
-		assertEquals("Error on line "+expectedLine+" is not found",Integer.valueOf(expectedLine), line);
+		assertEquals("Error on line " + expectedLine + " is not found", Integer.valueOf(expectedLine), line);
 		if (file != null)
 			assertEquals(file.getName(), mfile);
 		assertTrue(found);
@@ -120,18 +120,13 @@ public class CheckerTestCase extends CodanTestCase {
 	}
 
 	public void checkNoErrors() {
-		if (markers == null || markers.length == 0) {
-			// all good
-		} else {
+		if (markers != null && markers.length > 0) {
 			IMarker m = markers[0];
-			fail("Found " + markers.length + " errors but should not. First " + CodanProblemMarker.getProblemId(m) + " at line "
-					+ getLine(m));
+			fail("Found " + markers.length + " errors but should not. First " +
+					CodanProblemMarker.getProblemId(m) + " at line " + getLine(m));
 		}
 	}
 
-	/**
-	 *
-	 */
 	public void runOnProject() {
 		try {
 			indexFiles();
@@ -151,9 +146,6 @@ public class CheckerTestCase extends CodanTestCase {
 		runCodan();
 	}
 
-	/**
-	 *
-	 */
 	protected void runCodan() {
 		CodanRuntime.getInstance().getBuilder().processResource(cproject.getProject(), new NullProgressMonitor());
 		try {
@@ -169,8 +161,9 @@ public class CheckerTestCase extends CodanTestCase {
 	 * @return
 	 */
 	protected IProblemPreference getPreference(String problemId, String paramId) {
-		IProblem problem = CodanRuntime.getInstance().getCheckersRegistry().getResourceProfile(cproject.getResource())
-				.findProblem(problemId);
+		IProblemProfile resourceProfile =
+				CodanRuntime.getInstance().getCheckersRegistry().getResourceProfile(cproject.getResource());
+		IProblem problem = resourceProfile.findProblem(problemId);
 		IProblemPreference pref = ((MapProblemPreference) problem.getPreference()).getChildDescriptor(paramId);
 		return pref;
 	}
@@ -219,8 +212,8 @@ public class CheckerTestCase extends CodanTestCase {
 				String pid = ids[j];
 				if (p.getId().equals(pid)) {
 					enabled = true;
-					// Force the launch mode to FULL_BUILD to make sure we can test the problem even if by default it
-					// is not set to run on FULL_BUILD
+					// Force the launch mode to FULL_BUILD to make sure we can test the problem even
+					// if by default it is not set to run on FULL_BUILD.
 					IProblemPreference preference = p.getPreference();
 					if (preference instanceof RootProblemPreference) {
 						RootProblemPreference rootProblemPreference = (RootProblemPreference) preference;
@@ -232,6 +225,5 @@ public class CheckerTestCase extends CodanTestCase {
 			((CodanProblem) p).setEnabled(enabled);
 		}
 		CodanRuntime.getInstance().getCheckersRegistry().updateProfile(cproject.getProject(), profile);
-		return;
 	}
 }

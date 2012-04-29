@@ -16,14 +16,9 @@ import org.eclipse.cdt.codan.core.test.CheckerTestCase;
 import org.eclipse.cdt.codan.internal.checkers.CaseBreakChecker;
 
 /**
- * Test for {@link#CaseBreakChecker} class
+ * Test for {@link CaseBreakChecker} class
  */
 public class CaseBreakCheckerTest extends CheckerTestCase {
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.codan.core.test.CodanTestCase#setUp()
-	 */
 	@Override
 	public void setUp() throws Exception {
 		super.setUp();
@@ -34,7 +29,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 
 	// void foo(void) {
 	//  int a;
-	//  switch( a ) {
+	//  switch (a) {
 	//  case 1:
 	//  }
 	// }
@@ -45,7 +40,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 
 	// void foo(void) {
 	//  int a;
-	//  switch( a ) {
+	//  switch (a) {
 	//  default:
 	//  }
 	// }
@@ -56,7 +51,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 
 	// void foo(void) {
 	//  int a, b;
-	//  switch( a ) {
+	//  switch (a) {
 	//  case 1:
 	//    b = 2;
 	//  }
@@ -68,7 +63,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 
 	// void foo(void) {
 	//  int a, b;
-	//  switch( a ) {
+	//  switch (a) {
 	//  case 1:
 	//  case 2:
 	//    b = 2;
@@ -83,7 +78,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 
 	// void foo(void) {
 	//  int a;
-	//  switch( a ) {
+	//  switch (a) {
 	//  case 1:
 	//    break;
 	//  }
@@ -95,7 +90,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 
 	// void foo(void) {
 	//  int a;
-	//  switch( a ) {
+	//  switch (a) {
 	//  case 1:
 	//    return;
 	//  }
@@ -107,7 +102,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 
 	// void foo(int a) {
 	//  while (a--)
-	//  switch( a ) {
+	//  switch (a) {
 	//  case 1:
 	//    continue;
 	//  }
@@ -119,7 +114,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 
 	// void foo(int a) {
 	//
-	//  switch( a ) {
+	//  switch (a) {
 	//  case 1:
 	//    throw 1;
 	//  }
@@ -131,7 +126,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 
 	// void foo(void) {
 	//  int a, b;
-	//  switch( a ) {
+	//  switch (a) {
 	//  case 1:
 	//    b = 2;
 	//    break;
@@ -144,7 +139,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 
 	// void foo(void) {
 	//  int a, b;
-	//  switch( a ) {
+	//  switch (a) {
 	//  case 1:
 	//    break;
 	//  case 2:
@@ -159,7 +154,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 
 	// void foo(void) {
 	//  int a;
-	//  switch( a ) {
+	//  switch (a) {
 	//  case 1:
 	//    /* no break */
 	//  }
@@ -170,7 +165,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	}
 
 	// void foo(int a, int b) {
-	//  switch( a ) {
+	//  switch (a) {
 	//  case 1:
 	//     switch (b) {
 	//         case 2:
@@ -187,7 +182,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 
 	// void foo(void) {
 	//  int a, b;
-	//  switch( a ) {
+	//  switch (a) {
 	//  case 1:
 	//    b = 2;
 	//    /* no break */
@@ -200,7 +195,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 
 	// void foo(void) {
 	//  int a, b;
-	//  switch( a ) {
+	//  switch (a) {
 	//  case 1:
 	//    /* no break */
 	//  case 2:
@@ -214,7 +209,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 
 	// void foo(void) {
 	//  int a, b;
-	//  switch( a ) {
+	//  switch (a) {
 	//  case 1:
 	//    b = 2;
 	//    /* no break */
@@ -228,7 +223,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 
 	// void foo(void) {
 	//  int a, b;
-	//  switch( a ) {
+	//  switch (a) {
 	//  case 1:
 	//    b = 2;
 	//    /* no break */
@@ -259,14 +254,14 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 
 	// void foo(void) {
 	//  int a, b;
-	//  switch( a ) {
+	//  switch (a) {
 	//  case 1: //err
 	//    // lolo
 	//  case 2: //err
 	//  case 3://err
 	//  }
 	//
-	//  switch( a ) {
+	//  switch (a) {
 	//  case 1:
 	//    b = 2; // err
 	//    // lolo
@@ -279,7 +274,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	//  case 6: // err
 	//  }
 	//
-	//  switch( a ) {
+	//  switch (a) {
 	//  case 1:
 	//    b = 2; // err
 	//    // lolo
@@ -301,7 +296,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	//    b = 2;//err
 	//  }
 	//
-	//  switch( a ) {
+	//  switch (a) {
 	//  case 1:
 	//    b = 2; // err
 	//    // lolo
@@ -319,7 +314,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 
 	// void foo(void) {
 	//  int a, b;
-	//  switch( a ) {
+	//  switch (a) {
 	//  case 1:
 	//    b = 2;
 	//    // lolo
@@ -349,7 +344,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 
 	// void foo(void) {
 	//  int a, b;
-	//  switch( a ) {
+	//  switch (a) {
 	//  case 0:
 	//    switch( b ) {
 	//    case 2: // err
@@ -385,7 +380,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 
 	// void foo(void) {
 	//   int a, b;
-	//   switch( a ) {
+	//   switch (a) {
 	//   case 1:
 	//     b = 2;
 	//   }
@@ -399,7 +394,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 
 	// void foo(void) {
 	//  int a, b;
-	//  switch( a ) {
+	//  switch (a) {
 	//  case 1:
 	//  case 2:
 	//    b = 2;
@@ -417,7 +412,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 
 	// void foo(void) {
 	//  int a;
-	//  switch( a ) {
+	//  switch (a) {
 	//  case 1:
 	//  }
 	// }
@@ -443,7 +438,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	}
 
 	// void foo(int a) {
-	//   switch( a ) {
+	//   switch (a) {
 	//   case 1:
 	//     while (a--)
 	//       break; // err
@@ -459,7 +454,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	}
 
 	// void foo(int a) {
-	//   switch( a ) {
+	//   switch (a) {
 	//   case 1: {
 	//     break;
 	//   }
@@ -476,7 +471,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 
 	// void foo(void) {
 	//   int a;
-	//   switch( a ) {
+	//   switch (a) {
 	//   case 2:
 	//     break;
 	//   case 1:
@@ -494,7 +489,7 @@ public class CaseBreakCheckerTest extends CheckerTestCase {
 	}
 
 	// void foo(int a) {
-	//   switch( a ) {
+	//   switch (a) {
 	//   case 2:
 	//     if (a*2<10)
 	//       return;

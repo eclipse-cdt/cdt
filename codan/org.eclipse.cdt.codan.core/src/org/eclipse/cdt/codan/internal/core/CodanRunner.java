@@ -40,23 +40,23 @@ public class CodanRunner {
 	 * @param monitor - the progress monitor
 	 */
 	public static void runInEditor(Object model, IResource resource, IProgressMonitor monitor) {
-		CodanRunner.processResource(resource, monitor, model, CheckerLaunchMode.RUN_AS_YOU_TYPE);
+		CodanRunner.processResource(resource, model, CheckerLaunchMode.RUN_AS_YOU_TYPE, monitor);
 	}
 
 	/**
 	 * Runs all checkers on a given resource.
 	 *
 	 * @param resource - the resource to run the checkers on, either IFile or IContainer
-	 * @param monitor - the progress monitor
 	 * @param checkerLaunchMode - the checker launch mode.
+	 * @param monitor - the progress monitor
 	 */
-	public static void processResource(IResource resource, IProgressMonitor monitor,
-			CheckerLaunchMode checkerLaunchMode) {
-		processResource(resource, monitor, null, checkerLaunchMode);
+	public static void processResource(IResource resource, CheckerLaunchMode checkerLaunchMode,
+			IProgressMonitor monitor) {
+		processResource(resource, null, checkerLaunchMode, monitor);
 	}
 
-	private static void processResource(IResource resource, IProgressMonitor monitor, Object model,
-			CheckerLaunchMode checkerLaunchMode) {
+	private static void processResource(IResource resource, Object model,
+			CheckerLaunchMode checkerLaunchMode, IProgressMonitor monitor) {
 		CheckersRegistry chegistry = CheckersRegistry.getInstance();
 		int checkers = chegistry.getCheckersSize();
 		int memsize = 0;
@@ -117,7 +117,7 @@ public class CodanRunner {
 						if (monitor.isCanceled())
 							return;
 						IResource member = members[i];
-						processResource(member, new SubProgressMonitor(monitor, tick), null, checkerLaunchMode);
+						processResource(member, null, checkerLaunchMode, new SubProgressMonitor(monitor, tick));
 					}
 				} catch (CoreException e) {
 					CodanCorePlugin.log(e);

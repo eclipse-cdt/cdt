@@ -87,7 +87,7 @@ public class Startup implements IStartup {
 						Job job = new Job(NLS.bind(Messages.Startup_AnalyzingFile, resource.getName())) {
 							@Override
 							protected IStatus run(IProgressMonitor monitor) {
-								CodanRunner.processResource(resource, monitor, CheckerLaunchMode.RUN_ON_FILE_OPEN);
+								CodanRunner.processResource(resource, CheckerLaunchMode.RUN_ON_FILE_OPEN, monitor);
 								return Status.OK_STATUS;
 							}
 						};

@@ -78,7 +78,7 @@ public class CodanBuilder extends IncrementalProjectBuilder implements ICodanBui
 
 	@Override
 	public void processResource(IResource resource, IProgressMonitor monitor) {
-		CodanRunner.processResource(resource, monitor, CheckerLaunchMode.RUN_ON_FULL_BUILD);
+		CodanRunner.processResource(resource, CheckerLaunchMode.RUN_ON_FULL_BUILD, monitor);
 	}
 
 	/**
@@ -91,7 +91,7 @@ public class CodanBuilder extends IncrementalProjectBuilder implements ICodanBui
 	 */
 	@Override
 	public void processResource(IResource resource, IProgressMonitor monitor, CheckerLaunchMode mode) {
-		CodanRunner.processResource(resource, monitor, mode);
+		CodanRunner.processResource(resource, mode, monitor);
 	}
 
 	private void processResourceDelta(IResource resource, IProgressMonitor monitor) {

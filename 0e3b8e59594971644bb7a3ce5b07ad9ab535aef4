@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "AABOHH///n4\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/DsfTerminateCommand.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-04-30T18:49:19Z",
+      "side": 1,
+      "message": "Thanks. Do you think one minute is enough?",
+      "parentUuid": "AABOHH///wI\u003d",
+      "revId": "0e3b8e59594971644bb7a3ce5b07ad9ab535aef4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOHH///wA\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/DsfTerminateCommand.java",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2012-04-28T10:41:57Z",
       "side": 1,
       "message": "Surprisingly, I\u0027ve seen that once in a while (1 in 5 or 10 times), this method does not get called at all, and the launch is not removed as expected.  Then the 1 minute timeout hits.\n\nI don\u0027t understand why this is happening.  Maybe a bug in platform?  From what I see, the WaitForTerminationJob is properly started, but the launchesTerminated() is not called at all, in those cases.",
+      "revId": "0e3b8e59594971644bb7a3ce5b07ad9ab535aef4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHH///oU\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/DsfTerminateCommand.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-04-30T18:49:19Z",
+      "side": 1,
+      "message": "I think there is a chance that the launch is terminated before WaitForTerminateJob is scheduled.\nI am switching to SessionEndedListener in my next version but will add a check for this case.",
+      "parentUuid": "AABOHH///wA\u003d",
       "revId": "0e3b8e59594971644bb7a3ce5b07ad9ab535aef4",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "AABOHH///oQ\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/DsfTerminateCommand.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-04-30T18:49:19Z",
+      "side": 1,
+      "message": "There are multiple places in the code that call fireTerminate(), I guess even if the launch has already been terminated we still get the terminate event.\nIt doesn\u0027t matter because I am switching to SessionEndedListener.",
+      "parentUuid": "AABOHH///wE\u003d",
+      "revId": "0e3b8e59594971644bb7a3ce5b07ad9ab535aef4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOHH///wQ\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/DsfTerminateCommand.java",
         "patchSetId": 1
@@ -64,6 +118,24 @@
       "writtenOn": "2012-04-28T10:41:57Z",
       "side": 1,
       "message": "Usually we use RequestMonitor.isSuccess().  Is there a reason you use the IStatus directly?",
+      "revId": "0e3b8e59594971644bb7a3ce5b07ad9ab535aef4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHH///oM\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/DsfTerminateCommand.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 203,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-04-30T18:49:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOHH///wQ\u003d",
       "revId": "0e3b8e59594971644bb7a3ce5b07ad9ab535aef4",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "AABOHH///oI\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/DsfTerminateCommand.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 263,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-04-30T18:49:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOHH///wM\u003d",
+      "revId": "0e3b8e59594971644bb7a3ce5b07ad9ab535aef4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOHH///vk\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/DsfTerminateCommand.java",
         "patchSetId": 1
@@ -98,6 +188,24 @@
       "writtenOn": "2012-04-28T13:28:37Z",
       "side": 1,
       "message": "If we use the SessionEndedListener, could we replace the WaitForTerminationJob with a simpler\n\nfSession.addSessionEndedListener(new SessionEndedListener () {\npublic void sessionEnded(DsfSession session) {\nrequest.done();\n}});\n\nBut then we would also need a timeout task.  I\u0027m not sure what is simpler...  Up to you.",
+      "revId": "0e3b8e59594971644bb7a3ce5b07ad9ab535aef4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHH///oE\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/DsfTerminateCommand.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 268,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-04-30T18:49:19Z",
+      "side": 1,
+      "message": "Using SessionEndedListener is a good idea but we still need a job to wait for the end of the session.",
+      "parentUuid": "AABOHH///vk\u003d",
       "revId": "0e3b8e59594971644bb7a3ce5b07ad9ab535aef4",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "AABOHH///oA\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 306,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-04-30T18:49:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOHH///wY\u003d",
+      "revId": "0e3b8e59594971644bb7a3ce5b07ad9ab535aef4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOHH///wU\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
         "patchSetId": 1
@@ -132,6 +258,24 @@
       "writtenOn": "2012-04-28T10:41:57Z",
       "side": 1,
       "message": "Please add java doc for this new API",
+      "revId": "0e3b8e59594971644bb7a3ce5b07ad9ab535aef4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHH///n8\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 325,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-04-30T18:49:19Z",
+      "side": 1,
+      "message": "This method will be removed and all related changes reverted in the next version of the patch.",
+      "parentUuid": "AABOHH///wU\u003d",
       "revId": "0e3b8e59594971644bb7a3ce5b07ad9ab535aef4",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

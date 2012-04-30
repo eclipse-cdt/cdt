@@ -89,27 +89,25 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 
 	static String CONTAINER_INITIALIZER_EXTPOINT_ID = "PathEntryContainerInitializer"; //$NON-NLS-1$
 	/**
-	 * An empty array of strings indicating that a project doesn't have any
-	 * prerequesite projects.
+	 * An empty array of strings indicating that a project doesn't have any prerequesite projects.
 	 */
-	static final String[] NO_PREREQUISITES = new String[0];
+	static final String[] NO_PREREQUISITES = {};
 	/**
-	 * pathentry containers pool accessing the Container is done synch with the
-	 * class
+	 * pathentry containers pool accessing the Container is done synch with the class
 	 */
 	private static HashMap<ICProject, Map<IPath, IPathEntryContainer>> Containers = new HashMap<ICProject, Map<IPath, IPathEntryContainer>>(5);
 
-	static final IPathEntry[] NO_PATHENTRIES = new IPathEntry[0];
+	static final IPathEntry[] NO_PATHENTRIES = {};
 
-	static final IIncludeEntry[] NO_INCLUDE_ENTRIES = new IIncludeEntry[0];
+	static final IIncludeEntry[] NO_INCLUDE_ENTRIES = {};
 
-	static final IIncludeFileEntry[] NO_INCLUDE_FILE_ENTRIES = new IIncludeFileEntry[0];
+	static final IIncludeFileEntry[] NO_INCLUDE_FILE_ENTRIES = {};
 
-	static final IMacroEntry[] NO_MACRO_ENTRIES = new IMacroEntry[0];
+	static final IMacroEntry[] NO_MACRO_ENTRIES = {};
 
-	static final IMacroFileEntry[] NO_MACRO_FILE_ENTRIES = new IMacroFileEntry[0];
+	static final IMacroFileEntry[] NO_MACRO_FILE_ENTRIES = {};
 
-	static final IPathEntryContainer[] NO_PATHENTRYCONTAINERS = new IPathEntryContainer[0];
+	static final IPathEntryContainer[] NO_PATHENTRYCONTAINERS = {};
 
 	// Synchronized the access of the cache entries.
 	protected Map<ICProject, ArrayList<IPathEntry>> resolvedMap = new Hashtable<ICProject, ArrayList<IPathEntry>>();
@@ -123,7 +121,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 
 	protected ConcurrentLinkedQueue<PathEntryProblem> markerProblems = new ConcurrentLinkedQueue<PathEntryProblem>();
 
-	//Setting up a generate markers job, it does not get scheduled
+	// Setting up a generate markers job, it does not get scheduled
 	Job markerTask = new GenerateMarkersJob("PathEntry Marker Job"); //$NON-NLS-1$
 
 	private PathEntryManager() {
@@ -140,7 +138,6 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 	}
 
 	private class PathEntryContainerLock implements IPathEntryContainer {
-
 		boolean runInitializer;
 
 		public boolean isContainerInitialize() {
@@ -151,31 +148,16 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 			runInitializer = init;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see org.eclipse.cdt.core.model.IPathEntryContainer#getPathEntries()
-		 */
 		@Override
 		public IPathEntry[] getPathEntries() {
 			return NO_PATHENTRIES;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see org.eclipse.cdt.core.model.IPathEntryContainer#getDescription()
-		 */
 		@Override
 		public String getDescription() {
 			return new String("Lock container"); //$NON-NLS-1$
 		}
 
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see org.eclipse.cdt.core.model.IPathEntryContainer#getPath()
-		 */
 		@Override
 		public IPath getPath() {
 			return Path.EMPTY;
@@ -183,7 +165,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 	}
 
 	/**
-	 * Return the singleton.
+	 * Returns the singleton.
 	 */
 	public static synchronized PathEntryManager getDefault() {
 		if (pathEntryManager == null) {
@@ -199,7 +181,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 			return getIncludeFileEntries((ITranslationUnit)celement);
 		}
 		if (celement != null) {
-			// get project include file entries
+			// Get project include file entries.
 			List<IPathEntry> entryList = new ArrayList<IPathEntry>();
 			ICProject cproject = celement.getCProject();
 			ArrayList<IPathEntry> resolvedListEntries = getResolvedPathEntries(cproject, false);
@@ -344,7 +326,6 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		}
 
 		return symbolMap.values().toArray(NO_MACRO_ENTRIES);
-
 	}
 
 	public IMacroFileEntry[] getMacroFileEntries(IPath resPath)  throws CModelException {
@@ -474,7 +455,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 			try {
 				return getCachedResolvedPathEntries(resolvedListEntries, cproject);
 			} catch (CModelException e) {
-				//
+				// Ignore
 			}
 		}
 		return null;
@@ -739,7 +720,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 				}
 			}
 			if (runInitializer) {
-				// remove the lock.
+				// Remove the lock.
 				final PathEntryContainerInitializer initializer = getPathEntryContainerInitializer(containerPath.segment(0));
 				final boolean[] ok = {false};
 				if (initializer != null) {
@@ -747,7 +728,6 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 					// initializer would be
 					// causing some grief
 					SafeRunner.run(new ISafeRunnable() {
-
 						@Override
 						public void handleException(Throwable exception) {
 							IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID,
@@ -763,11 +743,10 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 					});
 				}
 				if (!ok[0]) {
-					containerPut(project, containerPath, null); // flush and
-					// notify
+					containerPut(project, containerPath, null); // flush and notify
 				}
 			}
-			// retrieve new value
+			// Retrieve new value
 			container = containerGet(project, containerPath, false);
 		}
 		return container;
@@ -808,9 +787,8 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 								return (PathEntryContainerInitializer)execExt;
 							}
 						} catch (CoreException e) {
-							// executable extension could not be created:
-							// ignore this initializer if
-							//e.printStackTrace();
+							// Executable extension could not be created:
+							CCorePlugin.log(e);
 						}
 					}
 				}
@@ -857,9 +835,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		Containers.remove(cproject);
 	}
 
-
 	public void pathEntryContainerUpdates(IPathEntryContainerExtension container, PathEntryContainerChanged[] events, IProgressMonitor monitor) {
-
 		PathEntryContainerUpdatesOperation op = new PathEntryContainerUpdatesOperation(container, events);
 		try {
 			op.runOperation(monitor);
@@ -888,7 +864,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 	}
 
 	public void saveRawPathEntries(ICProject cproject, IPathEntry[] entries) throws CModelException {
-		// sanity
+		// Sanity
 		if (entries == null) {
 			entries = NO_PATHENTRIES;
 		}
@@ -898,7 +874,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		for (IPathEntry pathEntry : entries) {
 			int kind = pathEntry.getEntryKind();
 
-			// translate the project prefix.
+			// Translate the project prefix.
 			IPath resourcePath = pathEntry.getPath();
 			if (resourcePath == null) {
 				resourcePath = Path.EMPTY;
@@ -906,8 +882,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 
 			// Do not do this for container, the path is the ID.
 			if (kind != IPathEntry.CDT_CONTAINER) {
-				// translate to project relative from absolute (unless a device
-				// path)
+				// Translate to project relative from absolute (unless a device path)
 				if (resourcePath.isAbsolute()) {
 					if (projectPath != null && projectPath.isPrefixOf(resourcePath)) {
 						if (resourcePath.segment(0).equals(projectPath.segment(0))) {
@@ -945,7 +920,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 					ILibraryEntry library = (ILibraryEntry)pathEntry;
 					IPath sourcePath = library.getSourceAttachmentPath();
 					if (sourcePath != null) {
-						// translate to project relative from absolute
+						// Translate to project relative from absolute
 						if (projectPath != null && projectPath.isPrefixOf(sourcePath)) {
 							if (sourcePath.segment(0).equals(projectPath.segment(0))) {
 								sourcePath = sourcePath.removeFirstSegments(1);
@@ -1018,15 +993,15 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 	}
 
 	/**
-	 * Collects path entry errors for each project and generate error markers for these errors
+	 * Collects path entry errors for each project and generates error markers for these errors
 	 * @param project - Project with path entry errors
 	 * @param problems - The path entry errors associated with the project
 	 */
 	public void addProblemMarkers(final IProject project, final ICModelStatus[] problems) {
 		PathEntryProblem problem = new PathEntryProblem(project, problems);
-		//queue up the problems to be logged
+		// Queue up the problems to be logged
 		markerProblems.add(problem);
-		//generate the error markers
+		// Generate the error markers
 		markerTask.schedule();
 	}
 
@@ -1052,7 +1027,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 
 	private boolean needDelta(ICProject cproject){
 		try {
-			PathEntryStoreProxy store = (PathEntryStoreProxy)getPathEntryStore(cproject.getProject(), false);
+			PathEntryStoreProxy store = (PathEntryStoreProxy) getPathEntryStore(cproject.getProject(), false);
 			return store == null || !(store.getStore() instanceof ConfigBasedPathEntryStore);
 		} catch (CoreException e) {
 		}
@@ -1065,7 +1040,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 
 		ArrayList<ICElementDelta> list = new ArrayList<ICElementDelta>();
 
-		// if nothing was known before do not generate any deltas.
+		// If nothing was known before do not generate any deltas.
 		if (oldEntries == null) {
 			return new ICElementDelta[0];
 		}
@@ -1101,7 +1076,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 					break;
 				}
 			}
-			// is it new?
+			// Is it new?
 			if (!found) {
 				ICElementDelta delta = makePathEntryDelta(cproject, newEntry, false);
 				if (delta != null) {
@@ -1134,7 +1109,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 	}
 
 	/**
-	 * return a delta, with the specified change flag.
+	 * Returns a delta, with the specified change flag.
 	 */
 	protected ICElementDelta makePathEntryDelta(ICProject cproject, IPathEntry entry, boolean removed) {
 		ICElement celement = null;
@@ -1240,7 +1215,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 			}
 		}
 		if (oldStore != null) {
-			// remove are self before closing
+			// Remove ourselves before closing
 			oldStore.removePathEntryStoreListener(this);
 			oldStore.close();
 		}
@@ -1333,11 +1308,6 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.core.model.IElementChangedListener#elementChanged(org.eclipse.cdt.core.model.ElementChangedEvent)
-	 */
 	@Override
 	public void elementChanged(ElementChangedEvent event) {
 		try {
@@ -1364,7 +1334,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 								}
 							}
 						} catch (CoreException e) {
-							// ignore the exception.
+							// Ignore the exception.
 						}
 					}
 				}
@@ -1378,7 +1348,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		ICElement element = delta.getElement();
 		int type = element.getElementType();
 
-		// handle open, closing and removing of projects
+		// Handle open, closing and removing of projects
 		if ( type == ICElement.C_PROJECT) {
 			ICProject cproject = (ICProject)element;
 			if ((kind == ICElementDelta.REMOVED || kind == ICElementDelta.ADDED)) {
@@ -1402,7 +1372,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 				}
 				return true;
 			}
-			// project change, traverse children.
+			// Project change, traverse children.
 		}
 		if (element instanceof IWorkingCopy) {
 			return false;
@@ -1459,7 +1429,8 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 			Job updatePathEntry = new WorkspaceJob("PathEntry Update source roots") { //$NON-NLS-1$
 				@Override
 				public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
-					// If the path which triggered this change exists when we run this job then nothing to do
+					// If the path which triggered this change exists when we run this job then
+					// nothing to do.
 					if (sourceRoot.getResource() == null || !sourceRoot.getResource().exists())
 						setRawPathEntries(cproject, finalEntries, monitor);
 					return Status.OK_STATUS;

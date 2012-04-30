@@ -13,7 +13,6 @@
  *     Warren Paul (Nokia)
  *	   IBM Corporation (EFS Support)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.core.model;
 
 import java.io.File;
@@ -166,9 +165,9 @@ public class CModelManager implements IResourceChangeListener, IContentTypeChang
 	 */
 	private HashMap<ICProject, SourceMapper> sourceMappers = new HashMap<ICProject, SourceMapper>();
 
-	public static final IWorkingCopy[] NoWorkingCopy = new IWorkingCopy[0];
+	public static final IWorkingCopy[] NoWorkingCopy = {};
 
-	static volatile CModelManager factory = null;
+	static volatile CModelManager factory;
 
 	private CModelManager() {
 	}
@@ -1095,12 +1094,12 @@ public class CModelManager implements IResourceChangeListener, IContentTypeChang
 				}
 				// wrap callbacks with Safe runnable for subsequent listeners to be called when some are causing grief
 				SafeRunner.run(new ISafeRunnable() {
-
 					@Override
 					public void handleException(Throwable exception) {
 						//CCorePlugin.log(exception, "Exception occurred in listener of C element change notification"); //$NON-NLS-1$
 						CCorePlugin.log(exception);
 					}
+
 					@Override
 					public void run() throws Exception {
 						listener.elementChanged(extraEvent);
@@ -1216,8 +1215,9 @@ public class CModelManager implements IResourceChangeListener, IContentTypeChang
 			}
 		}
 
-		for (Map.Entry<ICElement, CElementInfo> element : newElements.entrySet())
+		for (Map.Entry<ICElement, CElementInfo> element : newElements.entrySet()) {
 			this.cache.putInfo(element.getKey(), element.getValue());
+		}
 	}
 
 	/**

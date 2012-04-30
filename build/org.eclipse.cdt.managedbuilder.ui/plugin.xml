@@ -543,7 +543,7 @@
 	               <test property="org.eclipse.core.resources.projectNature"
 	                  value="org.eclipse.cdt.managedbuilder.core.managedBuildNature"/>
                 </adapt>
-                <test property="org.eclipse.cdt.ui.pageEnabled" value="export" />
+                <test property="org.eclipse.cdt.ui.checkPreference" value="org.eclipse.cdt.ui:properties.export.page.enable=true"/>
 		    </and>          
          </enabledWhen>
       </page>
@@ -573,7 +573,7 @@
 	               <test property="org.eclipse.core.resources.projectNature"
 	                  value="org.eclipse.cdt.managedbuilder.core.managedBuildNature"/>
                 </adapt>
-                <test property="org.eclipse.cdt.ui.pageEnabled" value="toolEdit" />
+                <test property="org.eclipse.cdt.ui.checkPreference" value="org.eclipse.cdt.ui:properties.toolchain.modification.disable=false"/>
 		    </and>          
          </enabledWhen>
       </page>

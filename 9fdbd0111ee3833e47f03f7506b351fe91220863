@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOHH///lM\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/DsfTerminateCommand.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-04-30T20:26:25Z",
+      "side": 1,
+      "message": "It is not clear to me why we need the job and the Lock/Condition.  Can\u0027t we do this? \n\nfExecutor.schedule(new Runnable() { \n   @Override\n   public void run() {\n      if (!globalTerminated) {\n         globalTerminated \u003d true;\n         request.setStatus(Status.CANCEL_STATUS);\n         request.done();\n      }\n   }},\n   1, TimeUnit.MINUTES);\n\nDsfSession.addSessionEndedListener(new SessionEndedListener () { \n   @Override\n   public void sessionEnded(DsfSession session) {\n      DsfSession.removeSessionEndedListener(this);\n      if (!globalTerminated)  request.done(); \n      globalTerminated \u003d true;\n   }\n});",
+      "revId": "9fdbd0111ee3833e47f03f7506b351fe91220863",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHH///lg\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/DsfTerminateCommand.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-04-30T20:26:25Z",
+      "side": 1,
+      "message": "I think one minute is enough.",
+      "revId": "9fdbd0111ee3833e47f03f7506b351fe91220863",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

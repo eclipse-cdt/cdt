@@ -25,7 +25,8 @@ class Messages extends NLS {
 	public static String CodanApplication_Options;
 	public static String CodanApplication_Usage;
 	public static String CodanApplication_verbose_option;
-	public static String CodanRunner_Code_Analysis_On;
+	public static String CodanRunner_Code_analysis_on;
+	public static String CodanRunner_Update_markers;
 
 	static {
 		NLS.initializeMessages(Messages.class.getName(), Messages.class);

@@ -19,10 +19,12 @@ import org.eclipse.cdt.codan.core.CodanRuntime;
 import org.eclipse.cdt.codan.core.model.ICheckersRegistry;
 import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemProfile;
+import org.eclipse.cdt.codan.internal.core.CodanRunner;
 import org.eclipse.cdt.codan.internal.ui.CodanUIActivator;
 import org.eclipse.cdt.codan.internal.ui.CodanUIMessages;
 import org.eclipse.cdt.codan.internal.ui.dialogs.CustomizeProblemDialog;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -154,8 +156,16 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements IWork
 	@Override
 	public boolean performOk() {
 		saveWidgetValues();
-		getRegistry().updateProfile((IResource) getElement(), null);
-		return super.performOk();
+		IResource resource = (IResource) getElement();
+		getRegistry().updateProfile(resource, null);
+		boolean success = super.performOk();
+		if (success) {
+			if (resource == null) {
+				resource = ResourcesPlugin.getWorkspace().getRoot();
+			}
+			CodanRunner.asynchronouslyRemoveMarkersForDisabledProblems(resource);
+		}
+		return success;
 	}
 
 	private void saveWidgetValues() {

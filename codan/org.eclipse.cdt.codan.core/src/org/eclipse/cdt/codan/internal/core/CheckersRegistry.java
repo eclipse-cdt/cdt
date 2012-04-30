@@ -416,7 +416,7 @@ public class CheckersRegistry implements Iterable<IChecker>, ICheckersRegistry {
 			// We need to check problem enablement in a particular profile.
 			IProblem problem = resourceProfile.findProblem(p.getId());
 			if (problem == null)
-				throw new IllegalArgumentException(p.getId() + "is not registered"); //$NON-NLS-1$
+				throw new IllegalArgumentException(p.getId() + " is not registered"); //$NON-NLS-1$
 			if (!problem.isEnabled())
 				return false;
 			if (checker instanceof AbstractCheckerWithProblemPreferences) {

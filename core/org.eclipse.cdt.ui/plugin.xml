@@ -3372,7 +3372,7 @@
       <page
             name="Preprocessor Include Paths, Macros etc."
             id="org.eclipse.cdt.ui.language.settings"
-            class="org.eclipse.cdt.internal.ui.language.settings.providers.Page_LanguageSettingsProviders"
+            class="org.eclipse.cdt.internal.ui.language.settings.providers.LanguageSettingsProvidersPage"
             category="org.eclipse.cdt.ui.newui.Page_head_general">
          <enabledWhen>
            <adapt type="org.eclipse.core.resources.IResource">
@@ -4337,7 +4337,7 @@
 			name="Entries"
 			weight="010"
 			helpId="FIXME cdt_u_prop_pns_inc"
-			parent="org.eclipse.cdt.internal.ui.language.settings.providers.Page_LanguageSettingsProviders"
+			parent="org.eclipse.cdt.internal.ui.language.settings.providers.LanguageSettingsProvidersPage"
 			tooltip="%AllLanguageSettingEntries.tooltip"/>
 		<tab
 			class="org.eclipse.cdt.internal.ui.language.settings.providers.LanguageSettingsProviderTab"
@@ -4345,7 +4345,7 @@
 			name="Providers"
 			weight="020"
 			helpId="FIXME cdt_u_prop_pns_inc"
-			parent="org.eclipse.cdt.internal.ui.language.settings.providers.Page_LanguageSettingsProviders"
+			parent="org.eclipse.cdt.internal.ui.language.settings.providers.LanguageSettingsProvidersPage"
 			tooltip="%AllLanguageSettingEntries.tooltip"/>
 	</extension>
  <extension

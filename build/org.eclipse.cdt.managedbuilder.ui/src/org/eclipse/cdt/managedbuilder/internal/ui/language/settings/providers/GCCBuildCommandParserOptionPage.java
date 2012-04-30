@@ -14,7 +14,6 @@ package org.eclipse.cdt.managedbuilder.internal.ui.language.settings.providers;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
 import org.eclipse.cdt.internal.ui.language.settings.providers.AbstractLanguageSettingProviderOptionPage;
-import org.eclipse.cdt.internal.ui.newui.StatusMessageLine;
 import org.eclipse.cdt.managedbuilder.language.settings.providers.AbstractBuildCommandParser;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.runtime.Assert;
@@ -43,9 +42,6 @@ public final class GCCBuildCommandParserOptionPage extends AbstractLanguageSetti
 
 	private Text inputCommand;
 
-	private StatusMessageLine fStatusLine;
-	private Button runOnceRadioButton;
-	private Button runEveryBuildRadioButton;
 	private Button expandRelativePathCheckBox;
 
 	private Button scopeProjectRadioButton;
@@ -53,14 +49,8 @@ public final class GCCBuildCommandParserOptionPage extends AbstractLanguageSetti
 	private Button scopeFileRadioButton;
 
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
-//		Composite optionsPageComposite = new Composite(composite, SWT.NULL);
 		fEditable = parent.isEnabled();
 
 		final Composite composite = new Composite(parent, SWT.NONE);
@@ -115,21 +105,6 @@ public final class GCCBuildCommandParserOptionPage extends AbstractLanguageSetti
 				}
 			});
 		}
-
-//		{
-//			Button button = ControlFactory.createPushButton(composite, "Browse...");
-//			button.setEnabled(fEditable);
-//			button.addSelectionListener(new SelectionAdapter() {
-//
-//				@Override
-//				public void widgetSelected(SelectionEvent evt) {
-////					handleAddr2LineButtonSelected();
-//					//updateLaunchConfigurationDialog();
-//				}
-//
-//			});
-//
-//		}
 
 		{
 			expandRelativePathCheckBox = new Button(composite, SWT.CHECK);
@@ -264,13 +239,6 @@ public final class GCCBuildCommandParserOptionPage extends AbstractLanguageSetti
 			});
 
 		}
-
-//		// Status line
-//		if (fEditable) {
-//			fStatusLine = new StatusMessageLine(composite, SWT.LEFT, 2);
-//			IStatus status = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, "Note that currently not all options are persisted (FIXME)");
-//			fStatusLine.setErrorStatus(status);
-//		}
 
 		setControl(composite);
 	}

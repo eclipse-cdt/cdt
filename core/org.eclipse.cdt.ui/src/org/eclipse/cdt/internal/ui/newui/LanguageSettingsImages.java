@@ -11,6 +11,7 @@
 
 package org.eclipse.cdt.internal.ui.newui;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
@@ -23,6 +24,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.cdt.core.settings.model.ACPathEntry;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.ui.CDTSharedImages;
@@ -32,15 +34,9 @@ import org.eclipse.cdt.ui.CUIPlugin;
  * Helper class to provide unified images for {@link ICLanguageSettingEntry}.
  */
 public class LanguageSettingsImages {
-	// AG FIXME - replace usage with version taking cfgDescription
-	@Deprecated
 	public static Image getImage(int kind, int flags, boolean isProjectRelative) {
 		String imageKey = getImageKey(kind, flags, isProjectRelative);
-		if (imageKey!=null) {
-//			String overlayKey = getErrorOverlayKey(kind, flags, isProjectRelative);
-//			if (overlayKey!=null) {
-//				return getOverlaidImage(imageKey, overlayKey, IDecoration.BOTTOM_LEFT);
-//			}
+		if (imageKey != null) {
 			return CDTSharedImages.getImage(imageKey);
 		}
 		return null;
@@ -48,17 +44,26 @@ public class LanguageSettingsImages {
 
 	/**
 	 * Returns image for the given entry from internally managed repository including
-	 * necessary overlays. This method is shortcut for {@link #getImage(ICLanguageSettingEntry, String, ICConfigurationDescription)}
-	 * when no project is available.
+	 * necessary overlays for given configuration description.
 	 *
 	 * @param entry - language settings entry to get an image for.
+	 * @param cfgDescription - configuration description of the entry.
 	 * @return the image for the entry with appropriate overlays.
-	 * 
-	 * AG FIXME - replace usage with version taking cfgDescription
 	 */
-	@Deprecated
-	public static Image getImage(ICLanguageSettingEntry entry) {
-		return getImage(entry, null, null);
+	public static Image getImage(ICLanguageSettingEntry entry, ICConfigurationDescription cfgDescription) {
+		String projectName = null;
+
+		if (cfgDescription != null) {
+			ICProjectDescription prjDescription = cfgDescription.getProjectDescription();
+			if (prjDescription != null) {
+				IProject project = prjDescription.getProject();
+				if (project != null) {
+					projectName = project.getName();
+				}
+			}
+		}
+
+		return getImage(entry, projectName, cfgDescription);
 	}
 
 	/**
@@ -66,11 +71,11 @@ public class LanguageSettingsImages {
 	 */
 	public static String getImageKey(int kind, int flag, boolean isProjectRelative) {
 		String imageKey = null;
-	
+
 		boolean isWorkspacePath = (flag & ICSettingEntry.VALUE_WORKSPACE_PATH) != 0;
 		boolean isBuiltin = (flag & ICSettingEntry.BUILTIN) != 0;
 		boolean isFramework = (flag & ICSettingEntry.FRAMEWORKS_MAC) != 0;
-	
+
 		switch (kind) {
 		case ICSettingEntry.INCLUDE_PATH:
 			if (isWorkspacePath) {
@@ -118,7 +123,7 @@ public class LanguageSettingsImages {
 	 * @param cfgDescription - configuration description of the entry.
 	 * @return the image for the entry with appropriate overlays.
 	 */
-	public static Image getImage(ICLanguageSettingEntry entry, String projectName, ICConfigurationDescription cfgDescription) {
+	private static Image getImage(ICLanguageSettingEntry entry, String projectName, ICConfigurationDescription cfgDescription) {
 		int kind = entry.getKind();
 		int flags = entry.getFlags();
 		boolean isWorkspacePath = (flags & ICSettingEntry.VALUE_WORKSPACE_PATH) != 0;

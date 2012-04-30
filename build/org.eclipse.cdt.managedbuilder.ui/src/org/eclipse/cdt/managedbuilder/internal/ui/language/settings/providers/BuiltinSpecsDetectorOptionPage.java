@@ -14,7 +14,6 @@ package org.eclipse.cdt.managedbuilder.internal.ui.language.settings.providers;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
 import org.eclipse.cdt.internal.ui.language.settings.providers.AbstractLanguageSettingProviderOptionPage;
-import org.eclipse.cdt.internal.ui.newui.StatusMessageLine;
 import org.eclipse.cdt.managedbuilder.language.settings.providers.AbstractBuiltinSpecsDetector;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.runtime.Assert;
@@ -37,25 +36,17 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 /**
- * Options page for TODO
- *
+ * Options page for {@link AbstractBuiltinSpecsDetector}.
  */
 public final class BuiltinSpecsDetectorOptionPage extends AbstractLanguageSettingProviderOptionPage {
 	private boolean fEditable;
 
 	private Text inputCommand;
 
-	private StatusMessageLine fStatusLine;
 	private Button allocateConsoleCheckBox;
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
-//		Composite optionsPageComposite = new Composite(composite, SWT.NULL);
 		fEditable = parent.isEnabled();
 
 		Composite composite = new Composite(parent, SWT.NONE);
@@ -126,92 +117,7 @@ public final class BuiltinSpecsDetectorOptionPage extends AbstractLanguageSettin
 					}
 				}
 			});
-
 		}
-
-//		{
-//			final Button button = new Button(composite, SWT.PUSH);
-//			button.setFont(parent.getFont());
-//			String text = fProvider.isEmpty() ? "Run Now (TODO)" : "Clear";
-//			button.setText(text);
-////			button.addSelectionListener(this);
-//			GridData data = new GridData();
-//			data.horizontalSpan = 2;
-////			data.horizontalAlignment = GridData.BEGINNING;
-////			data.widthHint = 60;
-//			button.setLayoutData(data);
-//			// TODO
-//			button.setEnabled(fEditable && !fProvider.isEmpty());
-//
-//			button.addSelectionListener(new SelectionAdapter() {
-//
-//				@Override
-//				public void widgetSelected(SelectionEvent evt) {
-//					if (fProvider.isEmpty()) {
-//						// TODO
-//					} else {
-//						fProvider.clear();
-//					}
-//					// TODO
-//					button.setEnabled(fEditable && !fProvider.isEmpty());
-//					String text = fProvider.isEmpty() ? "Run Now (TODO)" : "Clear";
-//					button.setText(text);
-//					button.pack();
-//				}
-//
-//			});
-//
-//		}
-
-//		// Compiler specs command
-//		{
-//			Label label = ControlFactory.createLabel(composite, "Parsing rules:");
-//			GridData gd = new GridData();
-//			gd.horizontalSpan = 2;
-//			label.setLayoutData(gd);
-////		Label newLabel = new Label(composite, SWT.NONE);
-//////		((GridData) newLabel.getLayoutData()).horizontalSpan = 1;
-////		newLabel.setText("Command to get compiler specs:");
-//		}
-
-
-//		createPatternsTable(group, composite);
-
-
-
-
-
-
-
-
-//		Group group = new Group(parent, SWT.SHADOW_ETCHED_IN);
-//		group.setText(DialogsMessages.RegexErrorParserOptionPage_Title);
-//
-//		GridLayout gridLayout = new GridLayout(2, true);
-//		gridLayout.makeColumnsEqualWidth = false;
-//		gridLayout.marginRight = -10;
-//		gridLayout.marginLeft = -4;
-//		group.setLayout(gridLayout);
-//		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-//
-//		Composite composite = new Composite(group, SWT.NONE);
-//		GridLayout layout = new GridLayout();
-//		layout.numColumns = 2;
-//		layout.marginWidth = 1;
-//		layout.marginHeight = 1;
-//		layout.marginRight = 1;
-//		composite.setLayout(layout);
-//		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-//		Dialog.applyDialogFont(composite);
-//
-//		if (!fEditable)
-//			createLinkToPreferences(composite);
-//
-//		createPatternsTable(group, composite);
-//
-//		if (fEditable) {
-//			createButtons(composite);
-//		}
 
 		{
 			allocateConsoleCheckBox = new Button(composite, SWT.CHECK);
@@ -238,13 +144,6 @@ public final class BuiltinSpecsDetectorOptionPage extends AbstractLanguageSettin
 			});
 
 		}
-
-//		// Status line
-//		if (fEditable) {
-//			fStatusLine = new StatusMessageLine(composite, SWT.LEFT, 2);
-//			IStatus status = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, "Note that currently not all options are persisted (FIXME)");
-//			fStatusLine.setErrorStatus(status);
-//		}
 
 		setControl(composite);
 	}

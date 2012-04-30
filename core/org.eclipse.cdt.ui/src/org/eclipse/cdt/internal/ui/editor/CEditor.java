@@ -1609,12 +1609,12 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 	}
 
 	/**
-	 * Returns the C element wrapped by this editors input.
+	 * Returns the working copy wrapped by this editors input.
 	 *
-	 * @return the C element wrapped by this editors input.
+	 * @return the working copy wrapped by this editors input.
 	 * @since 3.0
 	 */
-	public ICElement getInputCElement () {
+	public IWorkingCopy getInputCElement () {
 		return CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(getEditorInput());
 	}
 
@@ -1950,13 +1950,13 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 	 * @return the most narrow element which includes the given offset
 	 */
 	protected ICElement getElementAt(int offset, boolean reconcile) {
-		ITranslationUnit unit= (ITranslationUnit) getInputCElement();
+		IWorkingCopy unit= getInputCElement();
 
 		if (unit != null) {
 			try {
-				if (reconcile && unit instanceof IWorkingCopy) {
+				if (reconcile) {
 					synchronized (unit) {
-						((IWorkingCopy) unit).reconcile();
+						unit.reconcile();
 					}
 					return unit.getElementAtOffset(offset);
 				} else if (unit.isStructureKnown() && unit.isConsistent() && !fIsReconciling) {
@@ -1964,7 +1964,7 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 				}
 			} catch (CModelException x) {
 				CUIPlugin.log(x.getStatus());
-				// nothing found, be tolerant and go on
+				// Nothing found, be tolerant and go on.
 			}
 		}
 

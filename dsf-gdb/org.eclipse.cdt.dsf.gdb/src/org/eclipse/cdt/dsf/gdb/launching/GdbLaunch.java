@@ -56,6 +56,7 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.commands.ITerminateHandler;
 import org.eclipse.debug.core.model.IDisconnect;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.debug.core.model.ISourceLocator;
@@ -300,6 +301,10 @@ public class GdbLaunch extends DsfLaunch
     @SuppressWarnings("rawtypes")
     @Override
     public Object getAdapter(Class adapter) {
+    	// We replace the standard terminate handler by DsfTerminateHandler
+    	// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=377447.
+    	if (adapter.equals(ITerminateHandler.class))
+    		return getSession().getModelAdapter(adapter);
         // Must force adapters to be loaded.
         Platform.getAdapterManager().loadAdapter(this, adapter.getName());
         return super.getAdapter(adapter);

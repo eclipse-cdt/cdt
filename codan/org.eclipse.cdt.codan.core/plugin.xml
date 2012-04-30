@@ -21,7 +21,7 @@
          point="org.eclipse.core.resources.natures">
       <runtime>
          <run
-               class="org.eclipse.cdt.codan.internal.core.CodeAnlysisNature">
+               class="org.eclipse.cdt.codan.internal.core.CodeAnalysisNature">
          </run>
       </runtime>
       <builder

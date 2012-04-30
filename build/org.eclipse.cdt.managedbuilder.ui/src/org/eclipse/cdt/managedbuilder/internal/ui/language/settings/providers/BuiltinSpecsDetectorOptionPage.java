@@ -11,12 +11,9 @@
 
 package org.eclipse.cdt.managedbuilder.internal.ui.language.settings.providers;
 
-import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
-import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
-import org.eclipse.cdt.internal.ui.language.settings.providers.AbstractLanguageSettingProviderOptionPage;
 import org.eclipse.cdt.managedbuilder.language.settings.providers.AbstractBuiltinSpecsDetector;
+import org.eclipse.cdt.ui.language.settings.providers.AbstractLanguageSettingProviderOptionPage;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -65,7 +62,7 @@ public final class BuiltinSpecsDetectorOptionPage extends AbstractLanguageSettin
 			composite.setLayoutData(gd);
 		}
 
-		AbstractBuiltinSpecsDetector provider = getRawProvider();
+		AbstractBuiltinSpecsDetector provider = (AbstractBuiltinSpecsDetector) getProvider();
 
 		// Compiler specs command
 		{
@@ -85,11 +82,11 @@ public final class BuiltinSpecsDetectorOptionPage extends AbstractLanguageSettin
 				@Override
 				public void modifyText(ModifyEvent e) {
 					String text = inputCommand.getText();
-					AbstractBuiltinSpecsDetector provider = getRawProvider();
+					AbstractBuiltinSpecsDetector provider = (AbstractBuiltinSpecsDetector) getProvider();
 					if (!text.equals(provider.getCommand())) {
-						AbstractBuiltinSpecsDetector selectedProvider = getWorkingCopy(providerId);
+						AbstractBuiltinSpecsDetector selectedProvider = (AbstractBuiltinSpecsDetector) getProviderWorkingCopy();
 						selectedProvider.setCommand(text);
-						providerTab.refreshItem(selectedProvider);
+						refreshItem(selectedProvider);
 					}
 				}
 			});
@@ -128,11 +125,11 @@ public final class BuiltinSpecsDetectorOptionPage extends AbstractLanguageSettin
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					boolean enabled = allocateConsoleCheckBox.getSelection();
-					AbstractBuiltinSpecsDetector provider = getRawProvider();
+					AbstractBuiltinSpecsDetector provider = (AbstractBuiltinSpecsDetector) getProvider();
 					if (enabled != provider.isConsoleEnabled()) {
-						AbstractBuiltinSpecsDetector selectedProvider = getWorkingCopy(providerId);
+						AbstractBuiltinSpecsDetector selectedProvider = (AbstractBuiltinSpecsDetector) getProviderWorkingCopy();
 						selectedProvider.setConsoleEnabled(enabled);
-						providerTab.refreshItem(selectedProvider);
+						refreshItem(selectedProvider);
 					}
 				}
 
@@ -146,18 +143,6 @@ public final class BuiltinSpecsDetectorOptionPage extends AbstractLanguageSettin
 		}
 
 		setControl(composite);
-	}
-
-	private AbstractBuiltinSpecsDetector getRawProvider() {
-		ILanguageSettingsProvider provider = LanguageSettingsManager.getRawProvider(providerTab.getProvider(providerId));
-		Assert.isTrue(provider instanceof AbstractBuiltinSpecsDetector);
-		return (AbstractBuiltinSpecsDetector) provider;
-	}
-
-	private AbstractBuiltinSpecsDetector getWorkingCopy(String providerId) {
-		ILanguageSettingsProvider provider = providerTab.getWorkingCopy(providerId);
-		Assert.isTrue(provider instanceof AbstractBuiltinSpecsDetector);
-		return (AbstractBuiltinSpecsDetector) provider;
 	}
 
 	@Override

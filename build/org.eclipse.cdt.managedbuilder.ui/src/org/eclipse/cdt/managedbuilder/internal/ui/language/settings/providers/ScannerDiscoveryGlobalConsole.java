@@ -16,8 +16,8 @@ import java.net.URL;
 
 import org.eclipse.cdt.core.ConsoleOutputStream;
 import org.eclipse.cdt.internal.core.ICConsole;
-import org.eclipse.cdt.internal.ui.language.settings.providers.LanguageSettingsProviderAssociationManager;
 import org.eclipse.cdt.ui.CDTSharedImages;
+import org.eclipse.cdt.ui.language.settings.providers.LanguageSettingsProvidersImages;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
@@ -102,7 +102,7 @@ public class ScannerDiscoveryGlobalConsole implements ICConsole {
 		}
 
 		if (console==null) {
-			URL iconUrl = LanguageSettingsProviderAssociationManager.getImageUrl(consoleId);
+			URL iconUrl = LanguageSettingsProvidersImages.getImageUrl(consoleId);
 			if (iconUrl == null) {
 				iconUrl = defaultIconUrl;
 			}

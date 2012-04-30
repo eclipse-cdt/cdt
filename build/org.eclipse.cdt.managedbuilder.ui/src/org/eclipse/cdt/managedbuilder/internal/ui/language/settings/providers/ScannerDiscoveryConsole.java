@@ -14,7 +14,7 @@ package org.eclipse.cdt.managedbuilder.internal.ui.language.settings.providers;
 import java.net.URL;
 
 import org.eclipse.cdt.internal.ui.buildconsole.CBuildConsole;
-import org.eclipse.cdt.internal.ui.language.settings.providers.LanguageSettingsProviderAssociationManager;
+import org.eclipse.cdt.ui.language.settings.providers.LanguageSettingsProvidersImages;
 
 public class ScannerDiscoveryConsole extends CBuildConsole {
 
@@ -23,15 +23,15 @@ public class ScannerDiscoveryConsole extends CBuildConsole {
 	 *  @param consoleId - a console ID is expected here which then is used as menu context ID.
 	 *  @param defaultIconUrl - if {@code LanguageSettingsProviderAssociation} extension point
 	 *     defines URL by provider id, {@code defaultIconUrl} will be ignored and the URL from the extension
-	 *     point will be used. If not, supplied {@code defaultIconUrl} will be used. 
+	 *     point will be used. If not, supplied {@code defaultIconUrl} will be used.
 	 */
 	@Override
 	public void init(String consoleId, String name, URL defaultIconUrl) {
-		URL iconUrl = LanguageSettingsProviderAssociationManager.getImageUrl(consoleId);
+		URL iconUrl = LanguageSettingsProvidersImages.getImageUrl(consoleId);
 		if (iconUrl==null) {
 			iconUrl = defaultIconUrl;
 		}
-		
+
 		super.init(consoleId, name, iconUrl);
 	}
 

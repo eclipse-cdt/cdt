@@ -11,12 +11,9 @@
 
 package org.eclipse.cdt.managedbuilder.internal.ui.language.settings.providers;
 
-import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
-import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
-import org.eclipse.cdt.internal.ui.language.settings.providers.AbstractLanguageSettingProviderOptionPage;
 import org.eclipse.cdt.managedbuilder.language.settings.providers.AbstractBuildCommandParser;
+import org.eclipse.cdt.ui.language.settings.providers.AbstractLanguageSettingProviderOptionPage;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
@@ -69,7 +66,7 @@ public final class GCCBuildCommandParserOptionPage extends AbstractLanguageSetti
 			composite.setLayoutData(gd);
 		}
 
-		AbstractBuildCommandParser provider = getRawProvider();
+		AbstractBuildCommandParser provider = (AbstractBuildCommandParser) getProvider();
 
 		// Compiler specs command
 		{
@@ -96,11 +93,11 @@ public final class GCCBuildCommandParserOptionPage extends AbstractLanguageSetti
 				@Override
 				public void modifyText(ModifyEvent e) {
 					String text = inputCommand.getText();
-					AbstractBuildCommandParser provider = getRawProvider();
+					AbstractBuildCommandParser provider = (AbstractBuildCommandParser) getProvider();
 					if (!text.equals(provider.getCompilerPattern())) {
-						AbstractBuildCommandParser selectedProvider = getWorkingCopy(providerId);
+						AbstractBuildCommandParser selectedProvider = (AbstractBuildCommandParser) getProviderWorkingCopy();
 						selectedProvider.setCompilerPattern(text);
-						providerTab.refreshItem(selectedProvider);
+						refreshItem(selectedProvider);
 					}
 				}
 			});
@@ -119,11 +116,11 @@ public final class GCCBuildCommandParserOptionPage extends AbstractLanguageSetti
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					boolean enabled = expandRelativePathCheckBox.getSelection();
-					AbstractBuildCommandParser provider = getRawProvider();
+					AbstractBuildCommandParser provider = (AbstractBuildCommandParser) getProvider();
 					if (enabled != provider.isResolvingPaths()) {
-						AbstractBuildCommandParser selectedProvider = getWorkingCopy(providerId);
+						AbstractBuildCommandParser selectedProvider = (AbstractBuildCommandParser) getProviderWorkingCopy();
 						selectedProvider.setResolvingPaths(enabled);
-						providerTab.refreshItem(selectedProvider);
+						refreshItem(selectedProvider);
 					}
 				}
 
@@ -161,11 +158,11 @@ public final class GCCBuildCommandParserOptionPage extends AbstractLanguageSetti
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					boolean enabled = scopeFileRadioButton.getSelection();
-					AbstractBuildCommandParser provider = getRawProvider();
+					AbstractBuildCommandParser provider = (AbstractBuildCommandParser) getProvider();
 					if (enabled != (provider.getResourceScope() == AbstractBuildCommandParser.ResourceScope.FILE)) {
-						AbstractBuildCommandParser selectedProvider = getWorkingCopy(providerId);
+						AbstractBuildCommandParser selectedProvider = (AbstractBuildCommandParser) getProviderWorkingCopy();
 						selectedProvider.setResourceScope(AbstractBuildCommandParser.ResourceScope.FILE);
-						providerTab.refreshItem(selectedProvider);
+						refreshItem(selectedProvider);
 					}
 				}
 
@@ -192,11 +189,11 @@ public final class GCCBuildCommandParserOptionPage extends AbstractLanguageSetti
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					boolean enabled = scopeFolderRadioButton.getSelection();
-					AbstractBuildCommandParser provider = getRawProvider();
+					AbstractBuildCommandParser provider = (AbstractBuildCommandParser) getProvider();
 					if (enabled != (provider.getResourceScope() == AbstractBuildCommandParser.ResourceScope.FOLDER)) {
-						AbstractBuildCommandParser selectedProvider = getWorkingCopy(providerId);
+						AbstractBuildCommandParser selectedProvider = (AbstractBuildCommandParser) getProviderWorkingCopy();
 						selectedProvider.setResourceScope(AbstractBuildCommandParser.ResourceScope.FOLDER);
-						providerTab.refreshItem(selectedProvider);
+						refreshItem(selectedProvider);
 					}
 				}
 
@@ -223,11 +220,11 @@ public final class GCCBuildCommandParserOptionPage extends AbstractLanguageSetti
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					boolean enabled = scopeProjectRadioButton.getSelection();
-					AbstractBuildCommandParser provider = getRawProvider();
+					AbstractBuildCommandParser provider = (AbstractBuildCommandParser) getProvider();
 					if (enabled != (provider.getResourceScope() == AbstractBuildCommandParser.ResourceScope.PROJECT)) {
-						AbstractBuildCommandParser selectedProvider = getWorkingCopy(providerId);
+						AbstractBuildCommandParser selectedProvider = (AbstractBuildCommandParser) getProviderWorkingCopy();
 						selectedProvider.setResourceScope(AbstractBuildCommandParser.ResourceScope.PROJECT);
-						providerTab.refreshItem(selectedProvider);
+						refreshItem(selectedProvider);
 					}
 				}
 
@@ -241,18 +238,6 @@ public final class GCCBuildCommandParserOptionPage extends AbstractLanguageSetti
 		}
 
 		setControl(composite);
-	}
-
-	private AbstractBuildCommandParser getRawProvider() {
-		ILanguageSettingsProvider provider = LanguageSettingsManager.getRawProvider(providerTab.getProvider(providerId));
-		Assert.isTrue(provider instanceof AbstractBuildCommandParser);
-		return (AbstractBuildCommandParser) provider;
-	}
-
-	private AbstractBuildCommandParser getWorkingCopy(String providerId) {
-		ILanguageSettingsProvider provider = providerTab.getWorkingCopy(providerId);
-		Assert.isTrue(provider instanceof AbstractBuildCommandParser);
-		return (AbstractBuildCommandParser) provider;
 	}
 
 	@Override

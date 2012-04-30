@@ -226,7 +226,21 @@ public abstract class AbstractDisassemblyBreakpointsTarget
     @Override
     public void createWatchpointsInteractive(IWorkbenchPart part, ISelection selection) throws CoreException {
     }
-    
+
+    /**
+     * @since 2.3
+     */
+    @Override
+    public boolean canCreateEventBreakpointsInteractive(IWorkbenchPart part, ISelection selection) {
+        return false;
+    }
+
+    /**
+     * @since 2.3
+     */
+    @Override
+    public void createEventBreakpointsInteractive(IWorkbenchPart part, ISelection selection) throws CoreException {
+    }
 
 	private void toggleBreakpointEnabled(IBreakpoint bp) {
 	    try {

@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.ui.breakpoints;
 
+import java.util.Arrays;
+
 import org.eclipse.cdt.debug.core.DebugCoreMessages;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICEventBreakpoint;
@@ -47,8 +49,10 @@ public class CEventBreakpointsLabelProviderFactory implements IAdapterFactory {
 
 					for (ICBreakpointsUIContribution con : bscs) {
 						Object attValue = breakpoint.getMarker().getAttribute(con.getId());
-
+						
 						if (con.getId().equals(ICEventBreakpoint.EVENT_TYPE_ID)) {
+							if (!Arrays.asList(con.getPossibleValues()).contains(attValue))
+								continue;
 							buffer.append(con.getLabelForValue((String) attValue));
 							continue;
 						}

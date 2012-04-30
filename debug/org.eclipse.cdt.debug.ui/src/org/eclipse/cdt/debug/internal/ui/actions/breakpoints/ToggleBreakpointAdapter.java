@@ -22,6 +22,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIMemorySpaceManagement;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.model.ICBreakpointType;
 import org.eclipse.cdt.debug.core.model.ICDebugTarget;
+import org.eclipse.cdt.debug.core.model.ICEventBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint;
@@ -94,10 +95,20 @@ public class ToggleBreakpointAdapter extends AbstractToggleBreakpointAdapter {
         ICWatchpoint bp = CDIDebugModel.createBlankWatchpoint();
         Map<String, Object> attributes = new HashMap<String, Object>();
         CDIDebugModel.setWatchPointAttributes(attributes, sourceHandle, resource, true, false, 
-            expression, memorySpace, new BigInteger(range), true, 0, ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            expression, memorySpace, new BigInteger(range), true, 0, ""); //$NON-NLS-1$
         openBreakpointPropertiesDialog(bp, part, resource, attributes);
 	}
 
+	@Override
+    protected void createEventBreakpoint( boolean interactive, IWorkbenchPart part, IResource resource, String type, 
+    		String arg ) throws CoreException 
+    {
+        ICEventBreakpoint bp = CDIDebugModel.createBlankEventBreakpoint();
+        Map<String, Object> attributes = new HashMap<String, Object>();
+        CDIDebugModel.setEventBreakpointAttributes(attributes,type, arg);
+        openBreakpointPropertiesDialog(bp, part, resource, attributes);
+	}
+	
 	protected int getBreakpointType() {
 		return ICBreakpointType.REGULAR;
 	}

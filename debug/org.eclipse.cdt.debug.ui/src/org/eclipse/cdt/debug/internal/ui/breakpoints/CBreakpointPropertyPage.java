@@ -12,16 +12,21 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.breakpoints;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIMemorySpaceManagement;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICDebugTarget;
+import org.eclipse.cdt.debug.core.model.ICEventBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint2;
+import org.eclipse.cdt.debug.internal.core.breakpoints.CEventBreakpoint;
 import org.eclipse.cdt.debug.internal.ui.preferences.ComboFieldEditor;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.debug.ui.breakpoints.CBreakpointUIContributionFactory;
@@ -34,10 +39,12 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugModelProvider;
 import org.eclipse.debug.core.model.ILineBreakpoint;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.contexts.IDebugContextProvider;
+import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
@@ -49,8 +56,11 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
@@ -63,6 +73,10 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  */
 public class CBreakpointPropertyPage extends FieldEditorPreferencePage implements IWorkbenchPropertyPage {
 
+	private Composite fEventBPComposite;
+	private Composite fEventArgsComposite;
+	private List<FieldEditor> fEventArgsFEs = null;
+	
 	class BreakpointIntegerFieldEditor extends IntegerFieldEditor {
 
 		public BreakpointIntegerFieldEditor( String name, String labelText, Composite parent ) {
@@ -384,6 +398,16 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
         return array2d;
     }
 
+    private String[][] joinToArray2D(String[] labels, String[] values) {
+        String[][] array2d = new String[labels.length][];
+        for (int i = 0; i < labels.length; i++) {
+            array2d[i] = new String[2];
+            array2d[i][0] = labels[i];
+            array2d[i][1] = values[i];
+        }
+        return array2d;
+    }
+    
     private ICDIMemorySpaceManagement getMemorySpaceManagement(){
         Object debugViewElement = getDebugContext();
         ICDIMemorySpaceManagement memMgr = null;
@@ -526,6 +550,9 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 				getPreferenceStore().setValue( IMarker.LINE_NUMBER, lNumber);
 				createLineNumberEditor(getFieldEditorParent());
 			}
+		}
+		else if ( breakpoint instanceof CEventBreakpoint ) {
+			createEventBreakpointEditor( breakpoint, ICBreakpointsUIContribution.BREAKPOINT_LABELS);
 		}
 	}
 
@@ -760,18 +787,77 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 		fElement = element;
 	}
 
+	protected String[] getDebugModelIds() {
+        String[] debugModelIds = null;
+        Object debugContext = getDebugContext();
+        IDebugModelProvider debugModelProvider = (IDebugModelProvider)
+            DebugPlugin.getAdapter(debugContext, IDebugModelProvider.class);
+        if (debugModelProvider != null) {
+            debugModelIds = debugModelProvider.getModelIdentifiers();
+        } else if (debugContext instanceof IDebugElement) {
+            debugModelIds = new String[] { ((IDebugElement)debugContext).getModelIdentifier() };
+        }
+        return debugModelIds;
+	}
+	
+	private void createEventBreakpointEditor( ICBreakpoint breakpoint, String conMainElement) {
+		boolean bAddEventType = true;
+		Composite parent = getFieldEditorParent();		
+		String[] debugModelIds = getDebugModelIds();
+		try {
+		    ICBreakpointsUIContribution[] cons;
+		    CBreakpointUIContributionFactory factory = CBreakpointUIContributionFactory.getInstance();
+		    IPreferenceStore prefStore = getPreferenceStore();
+		    if (prefStore instanceof CBreakpointPreferenceStore) {
+		        cons = factory.getBreakpointUIContributions(
+		            debugModelIds, breakpoint, ((CBreakpointPreferenceStore) prefStore).getAttributes());
+		    } else {
+                cons = factory.getBreakpointUIContributions(breakpoint);
+		    }
+		    
+		    setupEventTypeFieldEditor(cons, breakpoint, conMainElement, parent);
+			for (ICBreakpointsUIContribution con : cons) {
+			    if ( conMainElement.equals(con.getMainElement()) ) {
+			    	FieldEditor fieldEditor = null;
+			    	if (breakpoint.getMarker() == null && con.getId().equals(ICEventBreakpoint.EVENT_TYPE_ID)) {
+			    		continue;
+			    	}
+			    	else if (con.getMarkerType().equalsIgnoreCase(ICEventBreakpoint.C_EVENT_BREAKPOINT_MARKER)) {
+			    		if ( breakpoint.getMarker() == null ) {
+			    			setupArgsComposite(parent);
+			    			fieldEditor = con.getFieldEditor(con.getId(), con.getLabel() + ":", fEventArgsComposite); //$NON-NLS-1$			    			
+			    			if ( fieldEditor != null ) {
+			    				addEditorToComposite(fieldEditor);
+			    				fEventArgsComposite.setVisible(true);
+			    			}
+			    			else { 
+			    				fEventArgsComposite.setVisible(false);
+			    			}
+			    		}
+			    		else {
+			    			if (con.getId().equals(ICEventBreakpoint.EVENT_TYPE_ID)) {
+			    				if (bAddEventType == true) bAddEventType = false;
+			    				else continue;
+			    			}
+				    		fieldEditor = con.getFieldEditor(con.getId(), con.getLabel() + ":", parent); //$NON-NLS-1$
+			    		}
+			    	}
+
+    				if (fieldEditor != null) {
+    					addField(fieldEditor);
+    				}
+			    }
+			}
+		} catch (CoreException ce) {
+			CDebugUIPlugin.log(ce);
+		}		
+	}
 	/**
 	 * Creates field editors contributed using breakpointUIContribution extension point
 	 */
 	private void createContributedFieldEditors(ICBreakpoint breakpoint, String conMainElement) {
 		Composite parent = getFieldEditorParent();
-		String[] debugModelIds = CBreakpointUIContributionFactory.DEBUG_MODEL_IDS_DEFAULT;
-		IDebugModelProvider debugModelProvider = (IDebugModelProvider)DebugPlugin.getAdapter(
-		    getDebugContext(), IDebugModelProvider.class);
-		if (debugModelProvider != null) {
-		    debugModelIds = debugModelProvider.getModelIdentifiers();
-		}
-		
+		String[] debugModelIds = getDebugModelIds();
 		try {
 		    ICBreakpointsUIContribution[] cons;
 		    CBreakpointUIContributionFactory factory = CBreakpointUIContributionFactory.getInstance();
@@ -785,7 +871,10 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 		    
 			for (ICBreakpointsUIContribution con : cons) {
 			    if ( conMainElement.equals(con.getMainElement()) ) {
-    				FieldEditor fieldEditor = con.getFieldEditor(con.getId(), con.getLabel() + ":", parent); //$NON-NLS-1$
+			    	if (con.getMarkerType().equals(ICEventBreakpoint.C_EVENT_BREAKPOINT_MARKER)) {
+			    		continue;
+			    	}
+			    	FieldEditor fieldEditor = con.getFieldEditor(con.getId(), con.getLabel() + ":", parent); //$NON-NLS-1$
     				if (fieldEditor != null) {
     					addField(fieldEditor);
     				}
@@ -794,7 +883,159 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 		} catch (CoreException ce) {
 			CDebugUIPlugin.log(ce);
 		}
-
+	}
+	
+	private void setupEventTypeFieldEditor(ICBreakpointsUIContribution[] cons, ICBreakpoint breakpoint, String conMainElement, Composite parent) {
+		String id = null;
+		ArrayList<String> eventTypeValueList = new ArrayList<String>();
+		ArrayList<String> eventTypeLabelList = new ArrayList<String>();		
+		
+		// The filter of the debugModelIds should already be done.
+		for (ICBreakpointsUIContribution con : cons) {
+		    if ( conMainElement.equals(con.getMainElement()) ) {
+		    	if (breakpoint instanceof CEventBreakpoint && breakpoint.getMarker() == null &&
+		    			con.getId().equals(ICEventBreakpoint.EVENT_TYPE_ID)) {
+		    		id = con.getId();
+		    		for (String value : con.getPossibleValues()) {
+		    			eventTypeValueList.add(value);
+		    			eventTypeLabelList.add(con.getLabelForValue(value));
+		    		}
+		    	}
+		    }
+		}
+		if (eventTypeValueList.size() != 0) {
+			EventTypeFieldEditor fieldEditor = new EventTypeFieldEditor(
+					id, 
+					BreakpointsMessages.getString("CBreakpointPropertyPage.eventType_label"), //$NON-NLS-1$
+					eventTypeLabelList.toArray(new String[eventTypeLabelList.size()]),
+					eventTypeValueList.toArray(new String[eventTypeValueList.size()]),
+					parent, 
+					breakpoint);
+			addField(fieldEditor);
+			setupArgsComposite(parent);
+			fieldEditor.initializeComboBox(getPreferenceStore(), this);
+		}
+	}
+	
+	void addEditorToComposite(FieldEditor fieldEditor) {
+		if (fEventArgsFEs == null) {
+		    fEventArgsFEs = new ArrayList<FieldEditor>();
+		}
+		fEventArgsFEs.add(fieldEditor);
 	}
 
+	void cleanEditorsFromComposite() {
+		if (fEventArgsFEs != null) {
+			for (FieldEditor editor : fEventArgsFEs){
+				editor.setPreferenceStore(null);
+				editor.setPage(null);
+			}
+		}
+	}
+
+	void setupArgsComposite(Composite parent) {
+		if (fEventArgsComposite != null) {
+			cleanEditorsFromComposite();
+			fEventArgsComposite.dispose();
+			fEventArgsComposite = null;
+		}
+		if (fEventBPComposite == null || fEventBPComposite.isDisposed()) {
+			fEventBPComposite = new Composite(parent,SWT.NONE);
+			fEventBPComposite.setLayout(parent.getLayout());
+			fEventBPComposite.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false));
+			GridDataFactory.defaultsFor(fEventBPComposite).grab(true, false).span(2, 1).applyTo(fEventBPComposite);
+		}
+		fEventArgsComposite = new Composite(fEventBPComposite,SWT.NONE);
+		fEventArgsComposite.setLayout(fEventBPComposite.getLayout());
+		GridDataFactory.defaultsFor(fEventArgsComposite).grab(true, false).span(2, 1).applyTo(fEventArgsComposite);
+		GridData gridData = (GridData)fEventArgsComposite.getLayoutData();
+		gridData.horizontalIndent = 10;
+		fEventArgsComposite.setLayoutData(gridData);
+		fEventArgsComposite.setVisible(false);
+	}
+	
+	private void displayEventArgs(ICBreakpoint breakpoint, Composite parent) {
+		boolean result = false;
+		String[] debugModelIds = getDebugModelIds();
+
+		try {
+		    ICBreakpointsUIContribution[] cons;
+		    CBreakpointUIContributionFactory factory = CBreakpointUIContributionFactory.getInstance();
+		    IPreferenceStore prefStore = getPreferenceStore();
+		    if (prefStore instanceof CBreakpointPreferenceStore) {
+		        cons = factory.getBreakpointUIContributions(
+		            debugModelIds, breakpoint, ((CBreakpointPreferenceStore) prefStore).getAttributes());
+		    } else {
+		        cons = factory.getBreakpointUIContributions(breakpoint);
+		    }
+		    for (ICBreakpointsUIContribution con : cons) {
+		        if (con.getMarkerType().equalsIgnoreCase(ICEventBreakpoint.C_EVENT_BREAKPOINT_MARKER) &&
+		            !con.getId().equals(ICEventBreakpoint.EVENT_TYPE_ID)) {
+		            setupArgsComposite(parent);
+		            FieldEditor fieldEditor = con.getFieldEditor(con.getId(), con.getLabel() + ":", fEventArgsComposite); //$NON-NLS-1$
+		            if ( fieldEditor != null ) {
+		                fieldEditor.setPreferenceStore(getPreferenceStore());
+		                fieldEditor.setPage(this);
+		                addEditorToComposite(fieldEditor);
+		                addField(fieldEditor);			    			 
+		                result = true;
+		            }
+		        }
+		    }
+		} catch (CoreException ce) {
+		    CDebugUIPlugin.log(ce);
+		}
+
+		if (fEventArgsComposite != null && !fEventArgsComposite.isDisposed()) {
+			fEventArgsComposite.setVisible(result);
+			fEventArgsComposite.layout();
+			fEventBPComposite.layout();
+		}
+	}
+
+    class EventTypeFieldEditor extends ComboFieldEditor {
+
+    	final Combo fCombo;
+    	final Composite fParent;
+    	final ICBreakpoint fBreakpoint;
+    	
+    	class EventTypeSelectionListener implements SelectionListener {
+    		@Override
+    		public void widgetSelected(SelectionEvent e) {
+    			doStore();
+    		    displayEventArgs(fBreakpoint, fParent);
+    		    fParent.layout();
+    		}
+    		@Override
+    		public void widgetDefaultSelected(SelectionEvent e) {
+    		    widgetSelected(e);
+    		}
+    	}
+    	
+        public EventTypeFieldEditor( String name, String labelText, String[] eventTypesLabels, String[] eventTypesValues, Composite parent, ICBreakpoint breakpoint ) {
+        	super( name, labelText, joinToArray2D(eventTypesLabels,eventTypesValues), parent);
+            fBreakpoint = breakpoint;
+            fParent = parent;
+            fCombo = this.getComboBoxControl();
+        	fCombo.select(0);        	            
+            fCombo.addSelectionListener(new EventTypeSelectionListener());
+        }
+      
+        public void initializeComboBox(IPreferenceStore prefStore, CBreakpointPropertyPage page) {
+            if (getPage() == null) {
+                setPage(page);
+            }
+        	if (getPreferenceStore() == null) {
+        		setPreferenceStore(prefStore);
+        	}
+        	else
+        		prefStore = getPreferenceStore();
+        	
+        	String value = getValueForName(fCombo.getText());
+		    if (prefStore instanceof CBreakpointPreferenceStore) {
+		    	prefStore.setValue(ICEventBreakpoint.EVENT_TYPE_ID, value);
+		    }
+		    displayEventArgs(fBreakpoint, fParent);
+        }
+    }
 }

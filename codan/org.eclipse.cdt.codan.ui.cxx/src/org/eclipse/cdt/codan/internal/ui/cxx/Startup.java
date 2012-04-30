@@ -12,15 +12,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.ui.cxx;
 
-import org.eclipse.cdt.codan.core.CodanRuntime;
 import org.eclipse.cdt.codan.core.model.CheckerLaunchMode;
-import org.eclipse.cdt.codan.internal.core.CodanBuilder;
+import org.eclipse.cdt.codan.internal.core.CodanRunner;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.ui.ICEditor;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.osgi.util.NLS;
@@ -38,8 +36,6 @@ import org.eclipse.ui.PlatformUI;
  * @author Alena Laskavaia
  */
 public class Startup implements IStartup {
-	private static final IProgressMonitor NULL_PROGRESS_MONITOR = new NullProgressMonitor();
-
 	@Override
 	public void earlyStartup() {
 		registerListeners();
@@ -86,13 +82,12 @@ public class Startup implements IStartup {
 							}
 						}
 					}
-					
+
 					private void processResource(final IResource resource) {
 						Job job = new Job(NLS.bind(Messages.Startup_AnalyzingFile, resource.getName())) {
 							@Override
 							protected IStatus run(IProgressMonitor monitor) {
-								CodanBuilder builder = (CodanBuilder) CodanRuntime.getInstance().getBuilder();
-								builder.processResource(resource, NULL_PROGRESS_MONITOR, CheckerLaunchMode.RUN_ON_FILE_OPEN);
+								CodanRunner.processResource(resource, monitor, CheckerLaunchMode.RUN_ON_FILE_OPEN);
 								return Status.OK_STATUS;
 							}
 						};

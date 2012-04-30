@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 Alena Laskavaia and others.
+ * Copyright (c) 2009, 2012 Alena Laskavaia and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,15 +8,16 @@
  * Contributors:
  *     Alena Laskavaia  - initial API and implementation
  *     IBM Corporation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
-package org.eclipse.cdt.codan.core;
+package org.eclipse.cdt.codan.internal.core;
 
 import org.eclipse.osgi.util.NLS;
 
 /**
  * Core Messages
  */
-public class Messages extends NLS {
+class Messages extends NLS {
 	public static String CodanApplication_all_option;
 	public static String CodanApplication_Error_ProjectDoesNotExists;
 	public static String CodanApplication_LogRunProject;
@@ -24,20 +25,7 @@ public class Messages extends NLS {
 	public static String CodanApplication_Options;
 	public static String CodanApplication_Usage;
 	public static String CodanApplication_verbose_option;
-	public static String CodanBuilder_Code_Analysis_On;
-	/**
-	 * @since 2.0
-	 */
-	public static String CodanSeverity_Error;
-	/**
-	 * @since 2.0
-	 */
-	public static String CodanSeverity_Info;
-	/**
-	 * @since 2.0
-	 */
-	public static String CodanSeverity_Warning;
-	public static String FileScopeProblemPreference_Label;
+	public static String CodanRunner_Code_Analysis_On;
 
 	static {
 		NLS.initializeMessages(Messages.class.getName(), Messages.class);

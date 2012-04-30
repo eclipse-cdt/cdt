@@ -11,6 +11,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.ui.preferences;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
 import org.eclipse.cdt.codan.core.CodanCorePlugin;
 import org.eclipse.cdt.codan.core.CodanRuntime;
 import org.eclipse.cdt.codan.core.model.ICheckersRegistry;
@@ -41,17 +44,15 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
 /**
- * This class represents a preference page that is contributed to the Preferences dialog. By 
- * subclassing {@code FieldEditorPreferencePage}, we can use built-in field support in JFace to 
- * create a page that is both small and knows how to save, restore and apply its values.
+ * This class represents a preference page that is contributed to the Preferences dialog.
+ * By subclassing {@code FieldEditorPreferencePage}, we can use built-in field support in
+ * JFace to create a page that is both small and knows how to save, restore and apply its
+ * values.
  * <p>
- * This page is used to modify preferences only. They are stored in the preference store that 
- * belongs to the main plug-in class. That way, preferences can be accessed directly via the 
- * preference store.
+ * This page is used to modify preferences only. They are stored in the preference store that
+ * belongs to the main plug-in class. That way, preferences can be accessed directly via
+ * the preference store.
  * </p>
  */
 public class CodanPreferencePage extends FieldEditorOverlayPage implements IWorkbenchPreferencePage {
@@ -89,8 +90,10 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements IWork
 	}
 
 	/**
-	 * Creates the field editors. Field editors are abstractions of the common GUI blocks needed to 
-	 * manipulate various types of preferences. Each field editor knows how to save and restore 
+	 * Creates the field editors. Field editors are abstractions of the common
+	 * GUI blocks needed to
+	 * manipulate various types of preferences. Each field editor knows how to
+	 * save and restore
 	 * its own value.
 	 */
 	@Override
@@ -156,13 +159,13 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements IWork
 	}
 
 	private void saveWidgetValues() {
-		String id = (!hasSelectedProblems()) ? EMPTY_STRING : selectedProblems.get(0).getId();
+		String id = !hasSelectedProblems() ? EMPTY_STRING : selectedProblems.get(0).getId();
 		getDialogSettings().put(getWidgetId(), id);
 	}
 
 	private void restoreWidgetValues() {
 		String id = getDialogSettings().get(getWidgetId());
-		if (id != null && id.length() > 0 && checkedTreeEditor != null) {
+		if (id != null && !id.isEmpty() && checkedTreeEditor != null) {
 			IProblem problem = profile.findProblem(id);
 			if (problem != null) {
 				checkedTreeEditor.getTreeViewer().setSelection(new StructuredSelection(problem), true);
@@ -194,12 +197,11 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements IWork
 			return;
 		}
 		IProblem[] selected = selectedProblems.toArray(new IProblem[selectedProblems.size()]);
-		CustomizeProblemDialog dialog = 
-				new CustomizeProblemDialog(getShell(), selected, (IResource) getElement());
+		CustomizeProblemDialog dialog = new CustomizeProblemDialog(getShell(), selected, (IResource) getElement());
 		dialog.open();
 		checkedTreeEditor.getTreeViewer().refresh(true);
 	}
-	
+
 	private boolean hasSelectedProblems() {
 		return selectedProblems != null && !selectedProblems.isEmpty();
 	}

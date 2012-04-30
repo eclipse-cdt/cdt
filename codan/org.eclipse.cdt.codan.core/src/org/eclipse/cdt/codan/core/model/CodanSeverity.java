@@ -11,11 +11,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.model;
 
-import org.eclipse.cdt.codan.core.Messages;
 import org.eclipse.core.resources.IMarker;
 
 /**
- *
  * Represents Severity of the codan problem. It is directly mapped to markers
  * severity.
  *
@@ -33,6 +31,7 @@ public enum CodanSeverity {
 	 * Error severity
 	 */
 	Error(IMarker.SEVERITY_ERROR);
+
 	private int value;
 
 	private CodanSeverity(int value) {

@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.ui.preferences;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.cdt.codan.core.CodanCorePlugin;
 import org.eclipse.cdt.codan.core.PreferenceConstants;
 import org.eclipse.cdt.codan.internal.ui.CodanUIActivator;
@@ -39,9 +42,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Berthold Daum
@@ -269,7 +269,7 @@ public abstract class FieldEditorOverlayPage extends FieldEditorPreferencePage i
 		return super.getPreferenceStore();
 	}
 
-	/*
+	/**
 	 * Enables or disables the field editors and buttons of this page
 	 */
 	private void updateFieldEditors() {
@@ -293,8 +293,8 @@ public abstract class FieldEditorOverlayPage extends FieldEditorPreferencePage i
 	}
 
 	/**
-	 * We override the performOk method. In case of property pages we copy the
-	 * values in the overlay store into the property values of the selected
+	 * We override the performOk method. In case of property pages we copy
+	 * the values in the overlay store into the property values of the selected
 	 * project. We also save the state of the radio buttons.
 	 * 
 	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()

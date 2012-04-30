@@ -1,16 +1,21 @@
 /*******************************************************************************
- * Copyright (c) 2009,2010 QNX Software Systems
+ * Copyright (c) 2009, 2010 QNX Software Systems
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    QNX Software Systems (Alena Laskavaia)  - initial API and implementation
+ *     QNX Software Systems (Alena Laskavaia)  - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.param;
 
-import org.eclipse.cdt.codan.core.Messages;
+import java.io.IOException;
+import java.io.StreamTokenizer;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.eclipse.cdt.codan.internal.core.CharOperation;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -19,12 +24,6 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-
-import java.io.IOException;
-import java.io.StreamTokenizer;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Custom preference for resource scope
@@ -45,6 +44,7 @@ public class FileScopeProblemPreference extends AbstractProblemPreference {
 	 * Inclusion attribute
 	 */
 	public static final String INCLUSION = "inclusion"; //$NON-NLS-1$
+
 	private IResource resource;
 	private IPath[] inclusion = new IPath[0];
 	private IPath[] exclusion = new IPath[0];

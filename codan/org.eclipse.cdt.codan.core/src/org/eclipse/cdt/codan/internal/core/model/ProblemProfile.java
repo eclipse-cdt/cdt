@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.core.model;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemCategory;
 import org.eclipse.cdt.codan.core.model.IProblemProfile;
@@ -19,15 +22,13 @@ import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.SafeRunner;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 /**
  * @author Alena
  */
 public class ProblemProfile implements IProblemProfile, Cloneable {
 	private CodanProblemCategory rootCategory;
 	private Object resource;
+	private ListenerList preferenceChangeListeners;
 
 	/**
 	 * @param resource
@@ -106,7 +107,6 @@ public class ProblemProfile implements IProblemProfile, Cloneable {
 	public IProblemCategory getParentCategory() {
 		return getRoot();
 	}
-	private ListenerList preferenceChangeListeners;
 
 	@Override
 	public void addProfileChangeListener(IProblemProfileChangeListener listener) {
@@ -120,7 +120,7 @@ public class ProblemProfile implements IProblemProfile, Cloneable {
 		if (preferenceChangeListeners == null)
 			return;
 		preferenceChangeListeners.remove(listener);
-		if (preferenceChangeListeners.size() == 0)
+		if (preferenceChangeListeners.isEmpty())
 			preferenceChangeListeners = null;
 	}
 

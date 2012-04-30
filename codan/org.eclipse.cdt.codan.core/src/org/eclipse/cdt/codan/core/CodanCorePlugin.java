@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.core;
 
-import org.eclipse.cdt.codan.internal.core.CodeAnlysisNature;
+import org.eclipse.cdt.codan.internal.core.CodeAnalysisNature;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
@@ -28,7 +28,7 @@ public class CodanCorePlugin extends Plugin {
 	 * The nature used to run Codan builder.
 	 * @noreference This constant is not intended to be referenced by clients.
 	 */
-	public static final String NATURE_ID = CodeAnlysisNature.NATURE_ID;
+	public static final String NATURE_ID = CodeAnalysisNature.NATURE_ID;
 	// The shared instance
 	private static CodanCorePlugin plugin;
 

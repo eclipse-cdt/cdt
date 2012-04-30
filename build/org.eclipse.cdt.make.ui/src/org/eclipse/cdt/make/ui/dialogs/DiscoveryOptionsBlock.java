@@ -15,13 +15,10 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IPathEntry;
-import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.MakeProjectNature;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2;
@@ -183,10 +180,8 @@ public class DiscoveryOptionsBlock extends AbstractDiscoveryOptionsBlock {
         ((GridData)scEnabledButton.getLayoutData()).horizontalSpan = numColumns;
         ((GridData)scEnabledButton.getLayoutData()).grabExcessHorizontalSpace = true;
         // VMIR* old projects will have discovery disabled by default
-        boolean autodiscoveryEnabled2 = getBuildInfo().isAutoDiscoveryEnabled() &&
-        		ScannerDiscoveryLegacySupport.isLegacyScannerDiscoveryOn(getProject());
-		scEnabledButton.setSelection(needsSCNature ? false
-                : (autodiscoveryEnabled2
+        scEnabledButton.setSelection(needsSCNature ? false
+                : (getBuildInfo().isAutoDiscoveryEnabled()
                     && !getBuildInfo().getSelectedProfileId().equals(ScannerConfigProfileManager.NULL_PROFILE_ID)));
         scEnabledButton.addSelectionListener(new SelectionAdapter() {
             @Override

@@ -92,8 +92,10 @@ public class ScannerDiscoveryLegacySupport {
 
 	/**
 	 * Check if legacy Scanner Discovery in MBS should be active.
+	 * @noreference This is internal helper method to support compatibility with previous versions
+	 * which is not intended to be referenced by clients.
 	 */
-	private static boolean isMbsLanguageSettingsProviderOn(ICConfigurationDescription cfgDescription) {
+	public static boolean isMbsLanguageSettingsProviderOn(ICConfigurationDescription cfgDescription) {
 		if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
 			List<ILanguageSettingsProvider> lsProviders = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
 			for (ILanguageSettingsProvider lsp : lsProviders) {

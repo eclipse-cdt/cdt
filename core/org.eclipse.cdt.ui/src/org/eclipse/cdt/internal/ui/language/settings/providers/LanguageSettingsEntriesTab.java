@@ -47,7 +47,6 @@ import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvide
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvidersKeeper;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsBaseProvider;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
-import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
@@ -453,29 +452,25 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 	 * Create check-box to allow disable/enable language settings providers functionality.
 	 */
 	private void createEnableProvidersCheckBox() {
-		enableProvidersCheckBox = setupCheck(usercomp, Messages.CDTMainWizardPage_TrySD90, 2, GridData.FILL_HORIZONTAL);
-		enableProvidersCheckBox.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				boolean enabled = enableProvidersCheckBox.getSelection();
-				if (masterPropertyPage != null) {
-					masterPropertyPage.setLanguageSettingsProvidersEnabled(enabled);
-				}
-
-				enableTabControls(enabled);
-				updateStatusLine();
-			}
-		});
-
+		// take the flag from master page if available (normally for resource properties)
 		if (masterPropertyPage != null) {
-			// take the flag from master page if available (normally for resource properties)
+			enableProvidersCheckBox = setupCheck(usercomp, Messages.CDTMainWizardPage_TrySD90, 2, GridData.FILL_HORIZONTAL);
+			enableProvidersCheckBox.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					boolean enabled = enableProvidersCheckBox.getSelection();
+					masterPropertyPage.setLanguageSettingsProvidersEnabled(enabled);
+					enableTabControls(enabled);
+					updateStatusLine();
+				}
+			});
+
 			enableProvidersCheckBox.setSelection(masterPropertyPage.isLanguageSettingsProvidersEnabled());
-		} else {
-			enableProvidersCheckBox.setSelection(ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityEnabled(page.getProject()));
+
+			// display but disable the checkbox for file/folder resource
+			enableProvidersCheckBox.setEnabled(page.isForProject());
+			enableTabControls(enableProvidersCheckBox.getSelection());
 		}
-		// display but disable the checkbox for file/folder resource
-		enableProvidersCheckBox.setEnabled(page.isForProject());
-		enableTabControls(enableProvidersCheckBox.getSelection());
 	}
 
 	@Override
@@ -1105,7 +1100,7 @@ providers:	for (ILanguageSettingsProvider provider : oldProviders) {
 			}
 		}
 
-		setLanguageSettingsProvidersFunctionalityEnablement();
+		performOK();
 
 		trackInitialSettings();
 		updateData(getResDesc());
@@ -1113,20 +1108,8 @@ providers:	for (ILanguageSettingsProvider provider : oldProviders) {
 
 	@Override
 	protected void performOK() {
-		setLanguageSettingsProvidersFunctionalityEnablement();
-	}
-
-	/**
-	 * TODO
-	 */
-	private void setLanguageSettingsProvidersFunctionalityEnablement() {
-		if (page.isForProject() && enableProvidersCheckBox != null) {
-			boolean enabled = enableProvidersCheckBox.getSelection();
-			if (masterPropertyPage != null) {
-				enabled = masterPropertyPage.isLanguageSettingsProvidersEnabled();
-			}
-			ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(page.getProject(), enabled);
-			enableProvidersCheckBox.setSelection(enabled);
+		if (masterPropertyPage != null && enableProvidersCheckBox.getEnabled()) {
+			masterPropertyPage.applyLanguageSettingsProvidersEnabled();
 		}
 	}
 

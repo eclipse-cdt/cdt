@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.model.util.CDTListComparator;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
+import org.eclipse.cdt.internal.ui.language.settings.providers.LanguageSettingsProvidersPage;
 import org.eclipse.cdt.internal.ui.newui.StatusMessageLine;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2;
@@ -246,7 +247,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 		Label clearLabel = ControlFactory.createLabel(autoDiscoveryGroup, Messages.DiscoveryTab_ClearDisoveredEntries);
 
 		// "Clear" button
-		clearButton = ControlFactory.createPushButton(autoDiscoveryGroup, Messages.DiscoveryTab_Clear); 
+		clearButton = ControlFactory.createPushButton(autoDiscoveryGroup, Messages.DiscoveryTab_Clear);
 		GridData gd = (GridData) clearButton.getLayoutData();
 		gd.grabExcessHorizontalSpace = true;
 		//Bug 331783 - NLS: "Clear" button label in Makefile Project preferences truncated
@@ -344,18 +345,18 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 		} else {
 			setVisibility(Messages.DiscoveryTab_6);
 		}
-		
+
 		setEnablement();
 	}
 
 	private void setEnablement() {
 		IStatus status = null;
 		ICConfigurationDescription cfgDescription = page.getResDesc().getConfiguration();
-		boolean isEnabled = ScannerDiscoveryLegacySupport.isLegacyScannerDiscoveryOn(cfgDescription);
+		boolean isEnabled = !LanguageSettingsProvidersPage.isLanguageSettingsProvidersEnabled(getProject()) || ScannerDiscoveryLegacySupport.isMbsLanguageSettingsProviderOn(cfgDescription);
 		if (!isEnabled) {
 			status = new Status(IStatus.INFO, CUIPlugin.PLUGIN_ID, "Managed Build language settings provider is not enabled.");
 		}
-		
+
 		scopeComboBox.setEnabled(isEnabled);
 		resTable.setEnabled(isEnabled);
 		boolean isSCDEnabled = autoDiscoveryCheckBox.getSelection();
@@ -363,7 +364,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 		autoDiscoveryCheckBox.setEnabled(isEnabled);
 		autoDiscoveryGroup.setEnabled(isEnabled);
 		clearButton.setEnabled(isEnabled);
-		
+
 		fStatusLine.setErrorStatus(status);
 	}
 

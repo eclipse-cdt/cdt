@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.ui.preferences;
 
@@ -17,6 +18,7 @@ import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -39,13 +41,12 @@ import org.eclipse.swt.widgets.Tree;
  */
 public abstract class CheckedTreeEditor extends FieldEditor implements ICheckStateListener {
 	/**
-	 * The list widget; <code>null</code> if none (before creation or after
-	 * disposal).
+	 * The list widget; <code>null</code> if none (before creation or after disposal).
 	 */
 	private CheckboxTreeViewer treeViewer;
 	private Composite listParent;
 	private boolean isValid;
-	private boolean emptySelectionAllowed = false;
+	private boolean emptySelectionAllowed;
 
 	/**
 	 * Creates a new list field editor
@@ -214,6 +215,7 @@ public abstract class CheckedTreeEditor extends FieldEditor implements ICheckSta
 			treeViewer = new CheckboxTreeViewer(parent, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION);
 			table = treeViewer.getTree();
 			table.setFont(parent.getFont());
+			treeViewer.setComparator(new ViewerComparator());
 			treeViewer.addCheckStateListener(this);
 		} else {
 			checkParent(table, parent);

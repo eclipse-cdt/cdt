@@ -46,8 +46,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
 public class FileScopePreferencePage extends PreferencePage {
-	private ListDialogField fInclusionPatternList;
-	private ListDialogField fExclusionPatternList;
+	private ListDialogField<String> fInclusionPatternList;
+	private ListDialogField<String> fExclusionPatternList;
 	private FileScopeProblemPreference fCurrElement;
 	private IProject fCurrProject;
 	private IContainer fCurrSourceFolder;
@@ -69,13 +69,13 @@ public class FileScopePreferencePage extends PreferencePage {
 		if (res == null)
 			fCurrSourceFolder = root;
 		String excLabel = CodanUIMessages.ExclusionInclusionDialog_exclusion_pattern_label;
-		ImageDescriptor excDescriptor = null; //JavaPluginImages.DESC_OBJS_EXCLUSION_FILTER_ATTRIB;
+//		ImageDescriptor excDescriptor = null; //JavaPluginImages.DESC_OBJS_EXCLUSION_FILTER_ATTRIB;
 		String[] excButtonLabels = new String[] { CodanUIMessages.ExclusionInclusionDialog_exclusion_pattern_add,
 				CodanUIMessages.ExclusionInclusionDialog_exclusion_pattern_add_multiple,
 				CodanUIMessages.ExclusionInclusionDialog_exclusion_pattern_edit, null,
 				CodanUIMessages.ExclusionInclusionDialog_exclusion_pattern_remove };
 		String incLabel = CodanUIMessages.ExclusionInclusionDialog_inclusion_pattern_label;
-		ImageDescriptor incDescriptor = null; //JavaPluginImages.DESC_OBJS_INCLUSION_FILTER_ATTRIB;
+//		ImageDescriptor incDescriptor = null; //JavaPluginImages.DESC_OBJS_INCLUSION_FILTER_ATTRIB;
 		String[] incButtonLabels = new String[] { CodanUIMessages.ExclusionInclusionDialog_inclusion_pattern_add,
 				CodanUIMessages.ExclusionInclusionDialog_inclusion_pattern_add_multiple,
 				CodanUIMessages.ExclusionInclusionDialog_inclusion_pattern_edit, null,
@@ -126,15 +126,15 @@ public class FileScopePreferencePage extends PreferencePage {
 		}
 	}
 
-	private ListDialogField createListContents(FileScopeProblemPreference entryToEdit, String key, String label, String descriptor,
+	private ListDialogField<String> createListContents(FileScopeProblemPreference entryToEdit, String key, String label, String descriptor,
 			String[] buttonLabels) {
 		ExclusionPatternAdapter adapter = new ExclusionPatternAdapter();
-		ListDialogField patternList = new ListDialogField(adapter, buttonLabels, new ExclusionInclusionLabelProvider(descriptor));
+		ListDialogField<String> patternList = new ListDialogField<String>(adapter, buttonLabels, new ExclusionInclusionLabelProvider(descriptor));
 		patternList.setDialogFieldListener(adapter);
 		patternList.setLabelText(label);
 		patternList.enableButton(IDX_EDIT, false);
 		IPath[] pattern = entryToEdit.getAttribute(key);
-		ArrayList elements = new ArrayList(pattern.length);
+		ArrayList<String> elements = new ArrayList<String>(pattern.length);
 		for (int i = 0; i < pattern.length; i++) {
 			String patternName = pattern[i].toString();
 			if (patternName.length() > 0)
@@ -147,7 +147,7 @@ public class FileScopePreferencePage extends PreferencePage {
 		return patternList;
 	}
 
-	protected void doCustomButtonPressed(ListDialogField field, int index) {
+	protected void doCustomButtonPressed(ListDialogField<String> field, int index) {
 		if (index == IDX_ADD) {
 			addEntry(field);
 		} else if (index == IDX_EDIT) {
@@ -165,27 +165,27 @@ public class FileScopePreferencePage extends PreferencePage {
 		fCurrElement.setAttribute(FileScopeProblemPreference.EXCLUSION, getExclusionPattern());
 	}
 
-	protected void doDoubleClicked(ListDialogField field) {
+	protected void doDoubleClicked(ListDialogField<String> field) {
 		editEntry(field);
 		updateStatus();
 	}
 
-	protected void doSelectionChanged(ListDialogField field) {
-		List selected = field.getSelectedElements();
+	protected void doSelectionChanged(ListDialogField<String> field) {
+		List<String> selected = field.getSelectedElements();
 		field.enableButton(IDX_EDIT, canEdit(selected));
 	}
 
-	private boolean canEdit(List selected) {
+	private boolean canEdit(List<String> selected) {
 		return selected.size() == 1;
 	}
 
-	private void editEntry(ListDialogField field) {
-		List selElements = field.getSelectedElements();
+	private void editEntry(ListDialogField<String> field) {
+		List<String> selElements = field.getSelectedElements();
 		if (selElements.size() != 1) {
 			return;
 		}
-		List existing = field.getElements();
-		String entry = (String) selElements.get(0);
+		List<String> existing = field.getElements();
+		String entry = selElements.get(0);
 		ExclusionInclusionEntryDialog dialog = new ExclusionInclusionEntryDialog(getShell(), isExclusion(field), entry, existing,
 				fCurrElement);
 		if (dialog.open() == Window.OK) {
@@ -193,12 +193,12 @@ public class FileScopePreferencePage extends PreferencePage {
 		}
 	}
 
-	private boolean isExclusion(ListDialogField field) {
+	private boolean isExclusion(ListDialogField<String> field) {
 		return field == fExclusionPatternList;
 	}
 
-	private void addEntry(ListDialogField field) {
-		List existing = field.getElements();
+	private void addEntry(ListDialogField<String> field) {
+		List<String> existing = field.getElements();
 		ExclusionInclusionEntryDialog dialog = new ExclusionInclusionEntryDialog(getShell(), isExclusion(field), null, existing,
 				fCurrElement);
 		if (dialog.open() == Window.OK) {
@@ -207,13 +207,13 @@ public class FileScopePreferencePage extends PreferencePage {
 	}
 
 	// -------- ExclusionPatternAdapter --------
-	private class ExclusionPatternAdapter implements IListAdapter, IDialogFieldListener {
+	private class ExclusionPatternAdapter implements IListAdapter<String>, IDialogFieldListener {
 		/**
 		 * @see org.eclipse.jdt.internal.ui.wizards.dialogfields.IListAdapter#customButtonPressed(org.eclipse.jdt.internal.ui.wizards.dialogfields.ListDialogField,
 		 *      int)
 		 */
 		@Override
-		public void customButtonPressed(ListDialogField field, int index) {
+		public void customButtonPressed(ListDialogField<String> field, int index) {
 			doCustomButtonPressed(field, index);
 		}
 
@@ -221,7 +221,7 @@ public class FileScopePreferencePage extends PreferencePage {
 		 * @see org.eclipse.jdt.internal.ui.wizards.dialogfields.IListAdapter#selectionChanged(org.eclipse.jdt.internal.ui.wizards.dialogfields.ListDialogField)
 		 */
 		@Override
-		public void selectionChanged(ListDialogField field) {
+		public void selectionChanged(ListDialogField<String> field) {
 			doSelectionChanged(field);
 		}
 
@@ -229,7 +229,7 @@ public class FileScopePreferencePage extends PreferencePage {
 		 * @see org.eclipse.jdt.internal.ui.wizards.dialogfields.IListAdapter#doubleClicked(org.eclipse.jdt.internal.ui.wizards.dialogfields.ListDialogField)
 		 */
 		@Override
-		public void doubleClicked(ListDialogField field) {
+		public void doubleClicked(ListDialogField<String> field) {
 			doDoubleClicked(field);
 		}
 
@@ -247,7 +247,7 @@ public class FileScopePreferencePage extends PreferencePage {
 	protected void checkIfPatternValid() {
 	}
 
-	private IPath[] getPattern(ListDialogField field) {
+	private IPath[] getPattern(ListDialogField<String> field) {
 		Object[] arr = field.getElements().toArray();
 		Arrays.sort(arr);
 		IPath[] res = new IPath[arr.length];
@@ -271,7 +271,7 @@ public class FileScopePreferencePage extends PreferencePage {
 	protected void configureShell(Shell newShell) {
 	}
 
-	private void addMultipleEntries(ListDialogField field) {
+	private void addMultipleEntries(ListDialogField<String> field) {
 		String title, message;
 		if (isExclusion(field)) {
 			title = CodanUIMessages.ExclusionInclusionDialog_ChooseExclusionPattern_title;

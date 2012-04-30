@@ -50,6 +50,7 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;
 import org.eclipse.cdt.ui.newui.PageLayout;
 
+import org.eclipse.cdt.internal.ui.language.settings.providers.LanguageSettingsProvidersPage;
 import org.eclipse.cdt.internal.ui.newui.Messages;
 
 	public class CDTMainWizardPage extends WizardNewProjectCreationPage implements IWizardItemsListListener {
@@ -164,9 +165,9 @@ import org.eclipse.cdt.internal.ui.newui.Messages;
 
 			// restore settings from preferences
 			boolean isTryNewSD = true;
-			boolean contains = CUIPlugin.getDefault().getPreferenceStore().contains(CDTPrefUtil.KEY_NEWSD);
+			boolean contains = CUIPlugin.getDefault().getPreferenceStore().contains(LanguageSettingsProvidersPage.KEY_NEWSD);
 			if (contains) {
-				isTryNewSD = CDTPrefUtil.getBool(CDTPrefUtil.KEY_NEWSD);
+				isTryNewSD = CDTPrefUtil.getBool(LanguageSettingsProvidersPage.KEY_NEWSD);
 			}
 			checkBoxTryNewSD.setSelection(isTryNewSD);
 	    }

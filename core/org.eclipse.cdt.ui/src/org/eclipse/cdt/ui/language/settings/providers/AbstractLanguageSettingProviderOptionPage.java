@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.language.settings.providers;
 
-import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
@@ -35,7 +36,6 @@ public abstract class AbstractLanguageSettingProviderOptionPage extends Abstract
 	 * @param providerId - ID of the provider the options page is for.
 	 */
 	public void init(AbstractCPropertyTab providerTab, String providerId) {
-		Assert.isTrue(providerTab instanceof LanguageSettingsProviderTab);
 		this.providerTab = (LanguageSettingsProviderTab) providerTab;
 		this.providerId = providerId;
 	}
@@ -64,6 +64,16 @@ public abstract class AbstractLanguageSettingProviderOptionPage extends Abstract
 	 */
 	public void refreshItem(ILanguageSettingsProvider provider) {
 		providerTab.refreshItem(provider);
+	}
+
+	@Override
+	public void performApply(IProgressMonitor monitor) throws CoreException {
+		// normally should be handled by LanguageSettingsProviderTab
+	}
+
+	@Override
+	public void performDefaults() {
+		// normally should be handled by LanguageSettingsProviderTab
 	}
 
 }

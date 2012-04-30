@@ -346,7 +346,6 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 
 		final TreeColumn columnLanguages = new TreeColumn(treeLanguages, SWT.NONE);
 		columnLanguages.setText(Messages.AbstractLangsListTab_Languages);
-		// TODO AG - why 200?
 		columnLanguages.setWidth(200);
 		columnLanguages.setResizable(false);
 		columnLanguages.setToolTipText(Messages.AbstractLangsListTab_Languages);
@@ -354,7 +353,6 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 		treeLanguages.addPaintListener(new PaintListener() {
 			@Override
 			public void paintControl(PaintEvent e) {
-				// TODO AG - why 5?
 				int x = treeLanguages.getBounds().width - 5;
 				if (columnLanguages.getWidth() != x) {
 					columnLanguages.setWidth(x);
@@ -383,7 +381,6 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 		});
 
 		treeCol.setText(Messages.LanguageSettingsProviderTab_SettingEntries);
-		// TODO AG - why 200?
 		treeCol.setWidth(200);
 		treeCol.setResizable(false);
 		treeCol.setToolTipText(Messages.LanguageSettingsProviderTab_SettingEntriesTooltip);
@@ -579,7 +576,7 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 			ILanguageSettingsProvider provider = getSelectedProvider();
 			boolean isAllowedEditing = provider instanceof ILanguageSettingsEditableProvider
 					&& LanguageSettingsProviderAssociationManager.isAllowedToEditEntries(provider);
-			if (!isAllowedEditing) {
+			if (provider != null && !isAllowedEditing) {
 				status = new Status(IStatus.INFO, CUIPlugin.PLUGIN_ID, Messages.LanguageSettingsEntriesTab_Entries_Not_Editable);
 			}
 		}
@@ -693,6 +690,7 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 				treeEntries.showItem(entryItem);
 				treeEntries.select(entryItem);
 			}
+			updateStatusLine();
 		}
 	}
 
@@ -1115,7 +1113,7 @@ providers:	for (ILanguageSettingsProvider provider : oldProviders) {
 
 	@Override
 	public boolean canBeVisible() {
-		if (CDTPrefUtil.getBool(CDTPrefUtil.KEY_NO_SHOW_PROVIDERS)) {
+		if (CDTPrefUtil.getBool(LanguageSettingsProvidersPage.KEY_NO_SHOW_PROVIDERS)) {
 			return false;
 		}
 

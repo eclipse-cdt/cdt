@@ -65,9 +65,6 @@ public class LanguageSettingEntryDialog extends AbstractPropertyDialog {
 	private Button checkBoxBuiltIn;
 	private Button checkBoxFramework;
 
-	private Button checkBoxAllCfgs;
-	private Button checkBoxAllLangs;
-
 	private Button buttonOk;
 	private Button buttonCancel;
 
@@ -393,26 +390,6 @@ public class LanguageSettingEntryDialog extends AbstractPropertyDialog {
 			}
 		});
 
-		// Separator
-		@SuppressWarnings("unused")
-		Label separator = new Label(compCheckboxes, SWT.SEPARATOR | SWT.HORIZONTAL | SWT.SHADOW_NONE);
-
-		// Checkbox "All configurations"
-		checkBoxAllCfgs = new Button(compCheckboxes, SWT.CHECK);
-		checkBoxAllCfgs.setText(Messages.IncludeDialog_2);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		checkBoxAllCfgs.setLayoutData(gd);
-		checkBoxAllCfgs.setEnabled(false);
-		checkBoxAllCfgs.setToolTipText("Not implemented yet");
-
-		// Checkbox "All languages"
-		checkBoxAllLangs = new Button(compCheckboxes, SWT.CHECK);
-		checkBoxAllLangs.setText(Messages.IncludeDialog_3);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		checkBoxAllLangs.setLayoutData(gd);
-		checkBoxAllLangs.setEnabled(false);
-		checkBoxAllLangs.setToolTipText("Not implemented yet");
-
 		// Buttons
 		Composite compButtons = new Composite (parent, SWT.FILL);
 		gd = new GridData(SWT.RIGHT, SWT.BOTTOM, false, false);
@@ -516,8 +493,6 @@ public class LanguageSettingEntryDialog extends AbstractPropertyDialog {
 			String name = inputName.getText();
 			text1 = name;
 			String value = inputValue.getText();
-			check1 = checkBoxAllCfgs.getSelection();
-			check3 = checkBoxAllLangs.getSelection();
 			result = true;
 
 			int flagBuiltIn = checkBoxBuiltIn.getSelection() ? ICSettingEntry.BUILTIN : 0;

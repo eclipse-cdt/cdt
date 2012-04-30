@@ -19,8 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -73,7 +71,6 @@ import org.eclipse.cdt.internal.ui.newui.StatusMessageLine;
  */
 public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 	private static final String WORKSPACE_PREFERENCE_PAGE = "org.eclipse.cdt.ui.preferences.BuildSettingProperties"; //$NON-NLS-1$
-	// TODO: generalize
 	private static final String TEST_PLUGIN_ID_PATTERN = "org.eclipse.cdt.*.tests.*"; //$NON-NLS-1$
 
 	private static final String CLEAR_STR = Messages.LanguageSettingsProviderTab_Clear;
@@ -211,8 +208,6 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 		}
 
 		ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(provider);
-		Assert.isTrue(rawProvider instanceof ILanguageSettingsEditableProvider);
-
 		ILanguageSettingsEditableProvider newProvider = LanguageSettingsManager.getProviderCopy((ILanguageSettingsEditableProvider)rawProvider, true);
 		if (newProvider != null) {
 			replaceSelectedProvider(newProvider);
@@ -350,13 +345,6 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private List<ILanguageSettingsProvider> getCheckedProviders() {
 		return (List)Arrays.asList(tableProvidersViewer.getCheckedElements());
-	}
-
-	/**
-	 * Shortcut for getting the current resource for the property page.
-	 */
-	private IResource getResource() {
-		return (IResource)page.getElement();
 	}
 
 	/**
@@ -529,15 +517,12 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 			public void widgetSelected(SelectionEvent e) {
 				boolean inProjectArea = projectStorageCheckBox.getSelection();
 				ILanguageSettingsProvider newProvider = getWorkingCopy(getSelectedProvider().getId());
-				Assert.isTrue(newProvider instanceof LanguageSettingsSerializableProvider);
-
 				LanguageSettingsManager.setStoringEntriesInProjectArea((LanguageSettingsSerializableProvider) newProvider, inProjectArea);
 				replaceSelectedProvider(newProvider);
 				createOptionsPage(newProvider);
 				displaySelectedOptionPage();
 				updateButtons();
 			}
-
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				widgetSelected(e);
@@ -550,7 +535,6 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 	 */
 	private void createLinkToPreferences(final Composite parent, int span) {
 		linkToWorkspacePreferences = new Link(parent, SWT.NONE);
-//		NLS.bind(Messages.GeneralMessages_NonAccessibleID, provider.getId());
 		String href = NLS.bind("<a href=\"workspace\">{0}</a>", Messages.LanguageSettingsProviderTab_WorkspaceSettings); //$NON-NLS-1$
 		linkToWorkspacePreferences.setText(NLS.bind(Messages.LanguageSettingsProviderTab_OptionsCanBeChangedInPreferencesDiscoveryTab, href));
 		GridData gd = new GridData();
@@ -1177,7 +1161,7 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 
 	@Override
 	public boolean canBeVisible() {
-		if (CDTPrefUtil.getBool(CDTPrefUtil.KEY_NO_SHOW_PROVIDERS)) {
+		if (CDTPrefUtil.getBool(LanguageSettingsProvidersPage.KEY_NO_SHOW_PROVIDERS)) {
 			return false;
 		}
 

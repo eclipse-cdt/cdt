@@ -52,11 +52,15 @@ public class ScannerDiscoveryLegacySupport {
 	private static Map<String, String> legacyProfiles = null;
 
 
+	/**
+	 * Get preferences node for org.eclipse.cdt.core.
+	 */
 	private static Preferences getPreferences(IProject project) {
-		if (project == null)
+		if (project == null) {
 			return InstanceScope.INSTANCE.getNode(PREFERENCES_QUALIFIER).node(LANGUAGE_SETTINGS_PROVIDERS_NODE);
-		else
+		} else {
 			return new LocalProjectScope(project).getNode(PREFERENCES_QUALIFIER).node(LANGUAGE_SETTINGS_PROVIDERS_NODE);
+		}
 	}
 
 	/**

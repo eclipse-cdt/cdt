@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2011 Andrew Gvozdev and others.
+ * Copyright (c) 2011, 2012 Andrew Gvozdev and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *     Andrew Gvozdev - Initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.managedbuilder.internal.ui.language.settings.providers;
 
 import java.io.IOException;
@@ -16,6 +15,7 @@ import java.net.URL;
 
 import org.eclipse.cdt.core.ConsoleOutputStream;
 import org.eclipse.cdt.internal.core.ICConsole;
+import org.eclipse.cdt.managedbuilder.language.settings.providers.AbstractBuiltinSpecsDetector;
 import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.cdt.ui.language.settings.providers.LanguageSettingsProvidersImages;
 import org.eclipse.core.resources.IProject;
@@ -29,22 +29,17 @@ import org.eclipse.ui.console.MessageConsole;
 import org.eclipse.ui.console.MessageConsoleStream;
 
 /**
- * TODO
+ * Console adapter for global {@link AbstractBuiltinSpecsDetector}.
  *
  * Note that this console is not colored.
- *
  */
 public class ScannerDiscoveryGlobalConsole implements ICConsole {
 	private MessageConsole console;
-	private ConsoleOutputStreamAdapter stream;
 
 	private class ConsoleOutputStreamAdapter extends ConsoleOutputStream {
 		private MessageConsoleStream fConsoleStream;
-		private boolean isOpen;
-
 		public ConsoleOutputStreamAdapter(MessageConsoleStream stream) {
 			fConsoleStream = stream;
-			isOpen = true;
 		}
 		@Override
 		public void write(int arg0) throws IOException {
@@ -63,7 +58,6 @@ public class ScannerDiscoveryGlobalConsole implements ICConsole {
 		@Override
 		public void close() throws IOException {
 			fConsoleStream.close();
-			isOpen = false;
 		}
 	}
 
@@ -118,8 +112,6 @@ public class ScannerDiscoveryGlobalConsole implements ICConsole {
 			console.activate();
 			consoleManager.addConsoles(new IConsole[]{ console });
 		}
-
-//		stream = new ConsoleOutputStreamAdapter(console.newMessageStream());
 	}
 
 }

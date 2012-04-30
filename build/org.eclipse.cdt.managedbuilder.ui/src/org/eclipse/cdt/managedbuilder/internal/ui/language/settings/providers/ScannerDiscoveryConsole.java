@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 Andrew Gvozdev and others.
+ * Copyright (c) 2010, 2012 Andrew Gvozdev and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,16 +8,18 @@
  * Contributors:
  *     Andrew Gvozdev - Initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.managedbuilder.internal.ui.language.settings.providers;
 
 import java.net.URL;
 
 import org.eclipse.cdt.internal.ui.buildconsole.CBuildConsole;
+import org.eclipse.cdt.managedbuilder.language.settings.providers.AbstractBuiltinSpecsDetector;
 import org.eclipse.cdt.ui.language.settings.providers.LanguageSettingsProvidersImages;
 
+/**
+ * Console adapter for {@link AbstractBuiltinSpecsDetector}.
+ */
 public class ScannerDiscoveryConsole extends CBuildConsole {
-
 	/**
 	 * {@inheritDoc}
 	 *  @param consoleId - a console ID is expected here which then is used as menu context ID.
@@ -28,12 +30,10 @@ public class ScannerDiscoveryConsole extends CBuildConsole {
 	@Override
 	public void init(String consoleId, String name, URL defaultIconUrl) {
 		URL iconUrl = LanguageSettingsProvidersImages.getImageUrl(consoleId);
-		if (iconUrl==null) {
+		if (iconUrl == null) {
 			iconUrl = defaultIconUrl;
 		}
 
 		super.init(consoleId, name, iconUrl);
 	}
-
-
 }

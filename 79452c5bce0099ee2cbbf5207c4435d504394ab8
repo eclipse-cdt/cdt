@@ -1,0 +1,157 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOHH///eM\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/preferences/MessagesForPreferences.properties",
+        "patchSetId": 3
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-05-01T18:46:58Z",
+      "side": 1,
+      "message": "Please change to:\n\"Display run-time type of variables\"",
+      "revId": "79452c5bce0099ee2cbbf5207c4435d504394ab8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHH///eQ\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/IGdbDebugPreferenceConstants.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-05-01T18:46:58Z",
+      "side": 1,
+      "message": "Move to bottom and put PREFIX before the string.  This was forgotten for all  other prefs!  My bad.",
+      "revId": "79452c5bce0099ee2cbbf5207c4435d504394ab8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHH///eY\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/FinalLaunchSequence.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-05-01T18:46:58Z",
+      "side": 1,
+      "message": "Rename to \"stepSetPrintObject\"",
+      "revId": "79452c5bce0099ee2cbbf5207c4435d504394ab8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHH///eU\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/FinalLaunchSequence.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 229,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-05-01T18:46:58Z",
+      "side": 1,
+      "message": "Put the queueCommand() code directly here and accept errors by overriding handleCompleted() (look below at stepSetCharset())",
+      "revId": "79452c5bce0099ee2cbbf5207c4435d504394ab8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHH///eI\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GDBControl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-05-01T18:46:58Z",
+      "side": 1,
+      "message": "Remove",
+      "revId": "79452c5bce0099ee2cbbf5207c4435d504394ab8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHH///ec\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GDBControl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 500,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-05-01T18:46:58Z",
+      "side": 1,
+      "message": "Can be removed",
+      "revId": "79452c5bce0099ee2cbbf5207c4435d504394ab8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHH///eE\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/IGDBControl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-05-01T18:46:58Z",
+      "side": 1,
+      "message": "Remove",
+      "revId": "79452c5bce0099ee2cbbf5207c4435d504394ab8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHH///eg\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/IGDBControl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-05-01T18:46:58Z",
+      "side": 1,
+      "message": "You cannot add a new method to an interface because it will break the compilation of anyone that implements this interface.\n\nLuckily, we don\u0027t need to go through this API to achieve what we want.  When we did pretty printers, this was the only option, but not anymore. \n\nSo, you can just remove the changes in this file and put the code directly in FinalLaunchSequence.",
+      "revId": "79452c5bce0099ee2cbbf5207c4435d504394ab8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHH///ek\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/MIGDBSetPrintObject.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-05-01T18:46:58Z",
+      "side": 1,
+      "message": "Please replace line 19 and 20 with:\n\n * When on:\n *    for GDB \u003c\u003d 7.4, Runtime Type Information will be used in the gdb console.\n *    for GDB \u003e\u003d 7.5, Runtime Type Information will be used in the debug views.\n * When off, only static type of variable is taken into account.",
+      "revId": "79452c5bce0099ee2cbbf5207c4435d504394ab8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

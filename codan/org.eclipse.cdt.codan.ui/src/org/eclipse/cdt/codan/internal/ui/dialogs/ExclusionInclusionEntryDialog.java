@@ -56,10 +56,10 @@ public class ExclusionInclusionEntryDialog extends StatusDialog {
 	private StatusInfo fExclusionPatternStatus;
 	private IContainer fCurrSourceFolder;
 	private String fExclusionPattern;
-	private List fExistingPatterns;
+	private List<String> fExistingPatterns;
 	private boolean fIsExclusion;
 
-	public ExclusionInclusionEntryDialog(Shell parent, boolean isExclusion, String patternToEdit, List existingPatterns,
+	public ExclusionInclusionEntryDialog(Shell parent, boolean isExclusion, String patternToEdit, List<String> existingPatterns,
 			FileScopeProblemPreference entryToEdit) {
 		super(parent);
 		fIsExclusion = isExclusion;
@@ -213,7 +213,7 @@ public class ExclusionInclusionEntryDialog extends StatusDialog {
 
 	public static IPath[] chooseExclusionPattern(Shell shell, IContainer currentSourceFolder, String title, String message,
 			IPath initialPath, boolean multiSelection) {
-		Class[] acceptedClasses = new Class[] { IFolder.class, IFile.class, IProject.class };
+		Class<?>[] acceptedClasses = new Class[] { IFolder.class, IFile.class, IProject.class };
 		ISelectionStatusValidator validator = new TypedElementSelectionValidator(acceptedClasses, multiSelection);
 		ViewerFilter filter = new TypedViewerFilter(acceptedClasses);
 		ILabelProvider lp = new WorkbenchLabelProvider();

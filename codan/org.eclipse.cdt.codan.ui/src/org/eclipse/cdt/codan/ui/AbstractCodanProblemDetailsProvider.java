@@ -112,7 +112,7 @@ public abstract class AbstractCodanProblemDetailsProvider {
 		String message = escapeForLink(getProblemMessage());
 		String href = getLocationHRef();
 		String link = getLocation();
-		return "<a href=\"" + href + "\">" + link + "</a> \n" + message + "\n"; //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+		return "<a href=\"" + href + "\">" + link + "</a> \n" + message + "\n"; //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	}
 
 	protected String getLocationHRef() {

@@ -12,7 +12,9 @@
 package org.eclipse.cdt.core.language.settings.providers;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -47,11 +49,18 @@ public class ScannerDiscoveryLegacySupport {
 	private static final String PREFERENCES_QUALIFIER = CCorePlugin.PLUGIN_ID;
 	private static final String LANGUAGE_SETTINGS_PROVIDERS_NODE = "languageSettingsProviders"; //$NON-NLS-1$
 
+	private static Map<String, String> legacyProfiles = null;
+
+
+	/**
+	 * Get preferences node for org.eclipse.cdt.core.
+	 */
 	private static Preferences getPreferences(IProject project) {
-		if (project == null)
+		if (project == null) {
 			return InstanceScope.INSTANCE.getNode(PREFERENCES_QUALIFIER).node(LANGUAGE_SETTINGS_PROVIDERS_NODE);
-		else
+		} else {
 			return new LocalProjectScope(project).getNode(PREFERENCES_QUALIFIER).node(LANGUAGE_SETTINGS_PROVIDERS_NODE);
+		}
 	}
 
 	/**
@@ -87,8 +96,10 @@ public class ScannerDiscoveryLegacySupport {
 
 	/**
 	 * Check if legacy Scanner Discovery in MBS should be active.
+	 * @noreference This is internal helper method to support compatibility with previous versions
+	 * which is not intended to be referenced by clients.
 	 */
-	private static boolean isMbsLanguageSettingsProviderOn(ICConfigurationDescription cfgDescription) {
+	public static boolean isMbsLanguageSettingsProviderOn(ICConfigurationDescription cfgDescription) {
 		if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
 			List<ILanguageSettingsProvider> lsProviders = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
 			for (ILanguageSettingsProvider lsp : lsProviders) {
@@ -139,6 +150,39 @@ public class ScannerDiscoveryLegacySupport {
 		}
 		providers.add(LanguageSettingsProvidersSerializer.getWorkspaceProvider(ScannerDiscoveryLegacySupport.MBS_LANGUAGE_SETTINGS_PROVIDER_ID));
 		return providers;
+	}
+
+	/**
+	 * Returns the values of scanner discovery profiles (scannerConfigDiscoveryProfileId) which were deprecated
+	 * and replaced with language settings providers in plugin.xml.
+	 * This (temporary) function serves as fail-safe switch during the transition.
+	 *
+	 * @param id - can be id of either org.eclipse.cdt.managedbuilder.internal.core.InputType
+	 * or org.eclipse.cdt.managedbuilder.internal.core.ToolChain.
+	 * @return legacy scannerConfigDiscoveryProfileId.
+	 */
+	@SuppressWarnings("nls")
+	public static String getDeprecatedLegacyProfiles(String id) {
+		if (legacyProfiles == null) {
+			legacyProfiles = new HashMap<String, String>();
+
+			// InputTypes
+			// TODO -doublecheck
+//			legacyProfiles.put(inputTypeId, scannerConfigDiscoveryProfileId);
+			legacyProfiles.put("cdt.managedbuild.tool.gnu.c.compiler.input", "org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileC|org.eclipse.cdt.make.core.GCCStandardMakePerFileProfile");
+			legacyProfiles.put("cdt.managedbuild.tool.gnu.cpp.compiler.input", "org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileCPP|org.eclipse.cdt.make.core.GCCStandardMakePerFileProfile");
+			legacyProfiles.put("cdt.managedbuild.tool.gnu.c.compiler.input.cygwin", "org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfileC");
+			legacyProfiles.put("cdt.managedbuild.tool.gnu.cpp.compiler.input.cygwin", "org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfileCPP");
+			legacyProfiles.put("cdt.managedbuild.tool.xlc.c.compiler.input", "org.eclipse.cdt.managedbuilder.xlc.core.XLCManagedMakePerProjectProfile");
+			legacyProfiles.put("cdt.managedbuild.tool.xlc.cpp.c.compiler.input", "org.eclipse.cdt.managedbuilder.xlc.core.XLCManagedMakePerProjectProfile");
+			legacyProfiles.put("cdt.managedbuild.tool.xlc.cpp.compiler.input", "org.eclipse.cdt.managedbuilder.xlc.core.XLCManagedMakePerProjectProfileCPP");
+
+			// Toolchains
+			// TODO -doublecheck
+//			legacyProfiles.put(toolchainId, scannerConfigDiscoveryProfileId);
+		}
+
+		return legacyProfiles.get(id);
 	}
 
 }

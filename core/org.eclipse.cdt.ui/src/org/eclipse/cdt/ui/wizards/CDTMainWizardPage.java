@@ -50,6 +50,7 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;
 import org.eclipse.cdt.ui.newui.PageLayout;
 
+import org.eclipse.cdt.internal.ui.language.settings.providers.LanguageSettingsProvidersPage;
 import org.eclipse.cdt.internal.ui.newui.Messages;
 
 	public class CDTMainWizardPage extends WizardNewProjectCreationPage implements IWizardItemsListListener {
@@ -67,6 +68,7 @@ import org.eclipse.cdt.internal.ui.newui.Messages;
 	    private Tree tree;
 	    private Composite right;
 	    private Button show_sup;
+	    private Button checkBoxTryNewSD;
 	    private Label right_label;
 
 	    public CWizardHandler h_selected = null;
@@ -154,6 +156,20 @@ import org.eclipse.cdt.internal.ui.newui.Messages;
 
 	        // restore settings from preferences
 			show_sup.setSelection(!CDTPrefUtil.getBool(CDTPrefUtil.KEY_NOSUPP));
+
+			checkBoxTryNewSD = new Button(c, SWT.CHECK);
+			checkBoxTryNewSD.setText(Messages.CDTMainWizardPage_TrySD90);
+			/* GridData */gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.horizontalSpan = 2;
+			checkBoxTryNewSD.setLayoutData(gd);
+
+			// restore settings from preferences
+			boolean isTryNewSD = true;
+			boolean contains = CUIPlugin.getDefault().getPreferenceStore().contains(LanguageSettingsProvidersPage.KEY_NEWSD);
+			if (contains) {
+				isTryNewSD = CDTPrefUtil.getBool(LanguageSettingsProvidersPage.KEY_NEWSD);
+			}
+			checkBoxTryNewSD.setSelection(isTryNewSD);
 	    }
 
 	    @Override
@@ -480,6 +496,14 @@ import org.eclipse.cdt.internal.ui.newui.Messages;
 		@SuppressWarnings({ "unchecked", "rawtypes" })
 		public List filterItems(List items) {
 			return items;
+		}
+
+		/**
+		 * AG FIXME - remove before CDT Juno release.
+		 * @since 5.4
+		 */
+		public boolean isTryingNewSD() {
+			return checkBoxTryNewSD.getSelection();
 		}
 }
 

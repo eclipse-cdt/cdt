@@ -11,6 +11,7 @@
 package org.eclipse.cdt.managedbuilder.ui.preferences;
 
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
+import org.eclipse.cdt.internal.ui.language.settings.providers.LanguageSettingsProvidersPage;
 import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
 import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;
@@ -22,7 +23,7 @@ import org.eclipse.swt.widgets.Composite;
 
 /**
  * @since 5.1
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
@@ -30,6 +31,7 @@ public class WizardDefaultsTab extends AbstractCPropertyTab {
 
     private Button show_sup;
     private Button show_oth;
+    private Button checkBoxTryNewSD;
 
 	@Override
 	public void createControls(Composite parent) {
@@ -37,27 +39,34 @@ public class WizardDefaultsTab extends AbstractCPropertyTab {
 		usercomp.setLayout(new GridLayout(1, false));
 
 		show_sup = new Button(usercomp, SWT.CHECK);
-        show_sup.setText(Messages.WizardDefaultsTab_0); 
+        show_sup.setText(Messages.WizardDefaultsTab_0);
         show_sup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		show_oth = new Button(usercomp, SWT.CHECK);
-        show_oth.setText(Messages.WizardDefaultsTab_1); 
+        show_oth.setText(Messages.WizardDefaultsTab_1);
         show_oth.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+        checkBoxTryNewSD = new Button(usercomp, SWT.CHECK);
+        checkBoxTryNewSD.setText(org.eclipse.cdt.internal.ui.newui.Messages.CDTMainWizardPage_TrySD90);
+        checkBoxTryNewSD.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		show_sup.setSelection(!CDTPrefUtil.getBool(CDTPrefUtil.KEY_NOSUPP));
 		show_oth.setSelection(CDTPrefUtil.getBool(CDTPrefUtil.KEY_OTHERS));
+		checkBoxTryNewSD.setSelection(CDTPrefUtil.getBool(LanguageSettingsProvidersPage.KEY_NEWSD));
 	}
 
 	@Override
 	protected void performOK() {
 		CDTPrefUtil.setBool(CDTPrefUtil.KEY_NOSUPP, !show_sup.getSelection());
 		CDTPrefUtil.setBool(CDTPrefUtil.KEY_OTHERS, show_oth.getSelection());
+		CDTPrefUtil.setBool(LanguageSettingsProvidersPage.KEY_NEWSD, checkBoxTryNewSD.getSelection());
 	}
-	
+
 	@Override
 	protected void performDefaults() {
 		show_sup.setSelection(true);
 		show_oth.setSelection(false);
+		checkBoxTryNewSD.setSelection(true);
 	}
 
 	@Override

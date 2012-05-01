@@ -226,7 +226,7 @@ The value &quot;true&quot; of this attribute is meaningful only for providers ca
          <meta.section type="since"/>
       </appInfo>
       <documentation>
-         CDT 9.0
+         CDT 8.1
       </documentation>
    </annotation>
 

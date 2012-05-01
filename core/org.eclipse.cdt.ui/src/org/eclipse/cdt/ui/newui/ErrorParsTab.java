@@ -166,7 +166,7 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 							return name;
 						}
 					}
-					return NLS.bind(Messages.ErrorParsTab_error_NonAccessibleID, id);
+					return NLS.bind(Messages.GeneralMessages_NonAccessibleID, id);
 				}
 				return OOPS;
 			}

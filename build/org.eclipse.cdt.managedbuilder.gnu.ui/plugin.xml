@@ -1269,7 +1269,6 @@
 			  dependencyExtensions="h"
 			  dependencyCalculator="org.eclipse.cdt.managedbuilder.makegen.gnu.DefaultGCCDependencyCalculator2"
               id="cdt.managedbuild.tool.gnu.c.compiler.input"
-              scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileC|org.eclipse.cdt.make.core.GCCStandardMakePerFileProfile"
               languageId="org.eclipse.cdt.core.gcc">
           </inputType>
           <outputType
@@ -1591,7 +1590,6 @@
 			  dependencyExtensions="h,H,hpp"
 			  dependencyCalculator="org.eclipse.cdt.managedbuilder.makegen.gnu.DefaultGCCDependencyCalculator2"
               id="cdt.managedbuild.tool.gnu.cpp.compiler.input"
-              scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileCPP|org.eclipse.cdt.make.core.GCCStandardMakePerFileProfile"
               languageId="org.eclipse.cdt.core.g++">
           </inputType>
           <outputType
@@ -1658,7 +1656,7 @@
           <inputType
           	  id="cdt.managedbuild.tool.gnu.c.compiler.input.cygwin"
               superClass="cdt.managedbuild.tool.gnu.c.compiler.input"
-              scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfileC"/>
+          />
       </tool>      
       <tool
           id="cdt.managedbuild.tool.gnu.cpp.compiler.cygwin"
@@ -1672,7 +1670,7 @@
           <inputType
           	  id="cdt.managedbuild.tool.gnu.cpp.compiler.input.cygwin"
               superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"
-              scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfileCPP"/>
+          />
       </tool>      
 
 	  <builder
@@ -1705,10 +1703,11 @@
    	  
       <toolChain
           archList="all"
-          osList="linux,hpux,aix,qnx"
+            id="cdt.managedbuild.toolchain.gnu.base"
+            languageSettingsProviders="org.eclipse.cdt.managedbuilder.core.GCCBuildCommandParser;org.eclipse.cdt.managedbuilder.core.GCCBuiltinSpecsDetector"
           name="%ToolChainName.Linux"
-          targetTool="cdt.managedbuild.tool.gnu.c.linker;cdt.managedbuild.tool.gnu.cpp.linker;cdt.managedbuild.tool.gnu.archiver"
-          id="cdt.managedbuild.toolchain.gnu.base">
+            osList="linux,hpux,aix,qnx"
+            targetTool="cdt.managedbuild.tool.gnu.c.linker;cdt.managedbuild.tool.gnu.cpp.linker;cdt.managedbuild.tool.gnu.archiver">
 		          <targetPlatform
 		              id="cdt.managedbuild.target.gnu.platform.base"
 		              name="%PlatformName.Dbg"
@@ -1773,6 +1772,7 @@
                     configurationEnvironmentSupplier="org.eclipse.cdt.managedbuilder.gnu.cygwin.GnuCygwinConfigurationEnvironmentSupplier"
                     id="cdt.managedbuild.toolchain.gnu.cygwin.base"
                     isToolChainSupported="org.eclipse.cdt.managedbuilder.gnu.cygwin.IsGnuCygwinToolChainSupported"
+                    languageSettingsProviders="org.eclipse.cdt.managedbuilder.core.GCCBuildCommandParser;org.eclipse.cdt.managedbuilder.core.GCCBuiltinSpecsDetectorCygwin"
                     name="%ToolChainName.Cygwin"
                     osList="win32"
                     targetTool="cdt.managedbuild.tool.gnu.cpp.linker.cygwin.base;cdt.managedbuild.tool.gnu.c.linker.cygwin.base;cdt.managedbuild.tool.gnu.archiver">
@@ -1842,6 +1842,7 @@
                     configurationEnvironmentSupplier="org.eclipse.cdt.managedbuilder.gnu.mingw.MingwEnvironmentVariableSupplier"
                     id="cdt.managedbuild.toolchain.gnu.mingw.base"
                     isToolChainSupported="org.eclipse.cdt.managedbuilder.gnu.mingw.MingwIsToolChainSupported"
+                    languageSettingsProviders="org.eclipse.cdt.managedbuilder.core.GCCBuildCommandParser;org.eclipse.cdt.managedbuilder.core.GCCBuiltinSpecsDetector"
                     name="%ToolChainName.MinGW"
                     osList="win32"
                     targetTool="cdt.managedbuild.tool.gnu.cpp.linker.mingw.base;cdt.managedbuild.tool.gnu.c.linker.mingw.base;cdt.managedbuild.tool.gnu.archiver">
@@ -2083,9 +2084,9 @@
 			  </toolChain>
 
          <configuration
-               id="cdt.managedbuild.config.gnu.base"
                cleanCommand="rm -rf"
-			   >
+               id="cdt.managedbuild.config.gnu.base"
+               languageSettingsProviders="org.eclipse.cdt.ui.UserLanguageSettingsProvider;org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider;${Toolchain};-org.eclipse.cdt.managedbuilder.core.GCCBuildCommandParser">
 		    <enablement type="CONTAINER_ATTRIBUTE" 
               	attribute="artifactExtension"
               	value="so"
@@ -2480,10 +2481,10 @@
       </projectType>
       
       <configuration
-               id="cdt.managedbuild.config.gnu.cygwin.base"
-               cleanCommand="rm -rf"
                artifactExtension="exe"
-			   >
+            cleanCommand="rm -rf"
+            id="cdt.managedbuild.config.gnu.cygwin.base"
+            languageSettingsProviders="org.eclipse.cdt.ui.UserLanguageSettingsProvider;org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider;${Toolchain};-org.eclipse.cdt.managedbuilder.core.GCCBuildCommandParser">
 		    <enablement type="CONTAINER_ATTRIBUTE" 
               	attribute="artifactExtension" 
               	value="dll"
@@ -2878,10 +2879,10 @@
       </projectType>
       
       <configuration
-               id="cdt.managedbuild.config.gnu.mingw.base"
-               cleanCommand="rm -rf"
                artifactExtension="exe"
-			   >
+            cleanCommand="rm -rf"
+            id="cdt.managedbuild.config.gnu.mingw.base"
+            languageSettingsProviders="org.eclipse.cdt.ui.UserLanguageSettingsProvider;org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider;${Toolchain};-org.eclipse.cdt.managedbuilder.core.GCCBuildCommandParser">
 		    <enablement type="CONTAINER_ATTRIBUTE" 
               	attribute="artifactExtension" 
               	value="dll"

@@ -8,6 +8,7 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
+ *     Anton Gorenkov - Enable the "Index unused headers" preference by default (Bug 377992)     
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.indexer;
 
@@ -317,7 +318,7 @@ public class IndexerPreferences {
 		Preferences prefs= defaultPreferences.node(INDEXER_NODE);
 		prefs.put(KEY_INDEXER_ID, IPDOMManager.ID_FAST_INDEXER);
 		prefs.putBoolean(KEY_INDEX_ALL_FILES, true);
-		prefs.putBoolean(KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG, false);
+		prefs.putBoolean(KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG, true);
 		prefs.putBoolean(KEY_INDEX_UNUSED_HEADERS_WITH_ALTERNATE_LANG, false);
 		prefs.putBoolean(KEY_INDEX_ON_OPEN, false);
 		prefs.putBoolean(KEY_INCLUDE_HEURISTICS, true);

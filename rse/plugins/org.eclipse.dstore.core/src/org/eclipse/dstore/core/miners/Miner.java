@@ -21,6 +21,7 @@
  * David McKnight    (IBM)  - [328060] [dstore] command queue in Miner should be synchronized
  * David McKnight    (IBM)  - [358301] [DSTORE] Hang during debug source look up
  * David McKnight    (IBM)  - [373507] [dstore][multithread] reduce heap memory on disconnect for server
+ * David McKnight    (IBM)  - [378136] [dstore] miner.finish is stuck
  *******************************************************************************/
 
 package org.eclipse.dstore.core.miners;
@@ -130,19 +131,21 @@ implements ISchemaExtender
 	 */
 	public void finish()
 	{
+		if (_dataStore.getClient() != null) {
+			_dataStore.getClient().getLogger().logInfo(this.getClass().toString(), "Miner.finish()"); //$NON-NLS-1$
+		}
+
 		synchronized (_commandQueue){
 			_commandQueue.clear();
 		}
 		DataElement root = _dataStore.getMinerRoot();
 		_minerData.removeNestedData();
 		_minerElement.removeNestedData();
-		_dataStore.update(_minerElement);
 
 		if (root != null && root.getNestedData() != null){
 			root.getNestedData().remove(_minerElement);
 			root.setExpanded(false);
 			root.setUpdated(false);
-			_dataStore.update(root);
 		}
 		super.finish();
 	}

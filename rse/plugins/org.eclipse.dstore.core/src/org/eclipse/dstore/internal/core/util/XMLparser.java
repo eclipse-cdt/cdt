@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2011 IBM Corporation and others.
+ * Copyright (c) 2002, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,7 @@
  * David McKnight  (IBM)   [350315][dstore] regress change made for bug 305218
  * David McKnight    (IBM)  - [358301] [DSTORE] Hang during debug source look up
  * David McKnight   (IBM)  - [367449] [dstore] allow custom encoding for data transport layer
+ * David McKnight     (IBM) - [378136][dstore] miner.finish is stuck
  *******************************************************************************/
 
 package org.eclipse.dstore.internal.core.util;
@@ -563,8 +564,8 @@ public class XMLparser
 
 		boolean done = false;
 		try {
-		while (!done)
-		{
+		while (!done && (_dataStore != null && _dataStore.isConnected()))	
+		{			
 			String xmlTag = readLine(reader, socket);
 			
 			if (xmlTag != null)

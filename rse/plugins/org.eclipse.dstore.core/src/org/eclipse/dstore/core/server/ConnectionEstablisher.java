@@ -28,6 +28,7 @@
  * David McKnight   (IBM) - [283613] [dstore] Create a Constants File for all System Properties we support
  * David McKnight   (IBM) - [368072] [dstore][ssl] no exception logged upon bind error
  * David McKnight   (IBM) - [371401] [dstore][multithread] avoid use of static variables - causes memory leak after disconnect
+ * David McKnight   (IBM) - [378136] [dstore] miner.finish is stuck
  *******************************************************************************/
 
 package org.eclipse.dstore.core.server;
@@ -214,7 +215,10 @@ public class ConnectionEstablisher
 	 * Tells the connection establisher to clean up and shutdown
 	 */
 	public void finished(ServerReceiver receiver)
-	{
+	{		
+		if (_dataStore.getClient() != null) {
+			_dataStore.getClient().getLogger().logInfo(this.getClass().toString(), "ConnectionEstablisher.finished()"); //$NON-NLS-1$
+		}
 		_updateHandler.removeSenderWith(receiver.socket());
 		_receivers.remove(receiver);
 		_dataStore.removeDataStorePreferenceListener(receiver);

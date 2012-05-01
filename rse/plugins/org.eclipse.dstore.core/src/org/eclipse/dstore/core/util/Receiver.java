@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2011 IBM Corporation and others.
+ * Copyright (c) 2002, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@
  * David McKnight   (IBM) - [226561] [apidoc] Add API markup to RSE Javadocs where extend / implement is allowed
  * Noriaki Takatsu  (IBM) - [289234][multithread][api] Reset and Restart KeepAliveRequestThread
  * David McKnight   (IBM) - [282364] [dstore][multithread] timer-threads stay active after disconnect
+ * David McKnight   (IBM) - [378136] [dstore] miner.finish is stuck
  *******************************************************************************/
 
 package org.eclipse.dstore.core.util;
@@ -166,7 +167,7 @@ public abstract class Receiver extends SecuredThread implements IDataStorePrefer
 			{
 				// something really bad happened
 				_canExit = true;
-				if (_xmlParser.getPanicException() != null)
+				if (_xmlParser.getPanicException() != null && (_dataStore != null && _dataStore.isConnected()))
 					handleError(_xmlParser.getPanicException());
 			}
 		}

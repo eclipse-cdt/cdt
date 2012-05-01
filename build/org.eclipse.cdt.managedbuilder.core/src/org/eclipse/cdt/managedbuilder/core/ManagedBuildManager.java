@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2010 IBM Corporation and others.
+ *  Copyright (c) 2003, 2012 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  *  Contributors:
  *     IBM - Initial API and implementation
+ *     Anna Dushistova (MontaVista) - [366771]Converter fails to convert a CDT makefile project
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.core;
 
@@ -4746,4 +4747,21 @@ public class ManagedBuildManager extends AbstractCExtension {
 
 	}
 
+	/**
+	 * Generic routine for checking the availability of converters for the given list of Build Objects.
+	 * 
+	 * @return true if there are converters for at least one object in the given list of Build Objects.
+	 *         Returns false if there are no converters.
+	 * @since 8.1
+	 */
+	public static boolean hasAnyTargetConversionElements(List<IBuildObject> buildObjs) {
+		if (buildObjs != null && !buildObjs.isEmpty()) {
+			for (IBuildObject obj : buildObjs) {
+				if (hasTargetConversionElements(obj)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 }

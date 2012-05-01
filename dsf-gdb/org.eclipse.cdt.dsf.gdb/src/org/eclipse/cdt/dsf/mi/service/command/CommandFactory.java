@@ -17,6 +17,7 @@
  *     Marc Khouzam (Ericsson) - New methods for new MIDataDisassemble (Bug 357073)
  *     Marc Khouzam (Ericsson) - New method for new MIGDBSetPythonPrintStack (Bug 367788)
  *     Mathias Kunter - New methods for handling different charsets (Bug 370462)
+ *     Anton Gorenkov - A preference to use RTTI for variable types determination (Bug 377536)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command;
@@ -106,6 +107,7 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetEnv;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetHostCharset;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetNonStop;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetPagination;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetPrintObject;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetPrintSevenbitStrings;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetPythonPrintStack;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetSchedulerLocking;
@@ -653,6 +655,11 @@ public class CommandFactory {
 
 	public ICommand<MIInfo> createMIGDBSetPagination(ICommandControlDMContext ctx, boolean isSet) {
 		return new MIGDBSetPagination(ctx, isSet);
+	}
+
+	/** @since 4.1 */
+	public ICommand<MIInfo> createMIGDBSetPrintObject(ICommandControlDMContext ctx, boolean enable) {
+		return new MIGDBSetPrintObject(ctx, enable);
 	}
 
 	/** @since 4.1 */

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others.
+ * Copyright (c) 2006, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,10 +10,55 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.lrparser.action.cpp;
 
-import static org.eclipse.cdt.core.dom.lrparser.action.ParserUtil.*;
+import static org.eclipse.cdt.core.dom.lrparser.action.ParserUtil.endOffset;
+import static org.eclipse.cdt.core.dom.lrparser.action.ParserUtil.length;
+import static org.eclipse.cdt.core.dom.lrparser.action.ParserUtil.matchTokens;
+import static org.eclipse.cdt.core.dom.lrparser.action.ParserUtil.offset;
 import static org.eclipse.cdt.core.parser.util.CollectionUtils.findFirstAndRemove;
 import static org.eclipse.cdt.core.parser.util.CollectionUtils.reverseIterable;
-import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.*;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_ColonColon;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_SemiColon;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_Completion;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_EndOfCompletion;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_LeftBracket;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_LeftParen;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_RightBracket;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_RightParen;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_auto;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_bool;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_char;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_class;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_const;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_delete;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_double;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_enum;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_explicit;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_extern;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_float;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_for;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_friend;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_identifier;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_inline;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_int;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_long;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_mutable;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_new;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_private;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_protected;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_public;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_register;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_short;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_signed;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_static;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_struct;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_typedef;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_typename;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_union;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_unsigned;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_virtual;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_void;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_volatile;
+import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.TK_wchar_t;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,17 +72,19 @@ import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
+import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTForStatement;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
-import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
@@ -56,6 +103,7 @@ import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAmbiguousTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
@@ -92,7 +140,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNodeFactory;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.lrparser.ISecondaryParser;
 import org.eclipse.cdt.core.dom.lrparser.LPGTokenAdapter;
 import org.eclipse.cdt.core.dom.lrparser.action.BuildASTParserAction;
@@ -670,7 +717,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		IASTStatement initializer = (IASTStatement) astStack.pop();
 		
 		// bug 234463, fix for content assist to work in this case
-		int TK_EOC = TK_EndOfCompletion; // TODO: change this in the grammar file
+		int TK_EOC = TK_EndOfCompletion; // TODO: change this in the grammar file		
 		List<IToken> tokens = stream.getRuleTokens();
 		if(matchTokens(tokens, tokenMap, 
 				TK_for, TK_LeftParen, TK_Completion, TK_EOC, TK_EOC, TK_EOC, TK_EOC)) {
@@ -681,6 +728,41 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 			ParserUtil.setOffsetAndLength(initializer, offset(name), length(name));
 		}
 		
+		//initializer could be an expression or a declaration
+		int TK_SC = TK_SemiColon;
+		IASTExpressionStatement expressionStatement = null;
+		if(initializer instanceof IASTDeclarationStatement) {
+			IASTDeclarationStatement declarationStatement = (IASTDeclarationStatement) initializer;
+			List<IToken> expressionTokens = stream.getRuleTokens();
+			
+			//find the first semicolon
+			int end_pos = -1;
+			for(int i = 0, n = expressionTokens.size(); i < n; i++) {
+				if(tokenMap.mapKind(expressionTokens.get(i).getKind()) == TK_SC) {
+					end_pos = i;
+					break;
+				}
+			}
+			
+			if (end_pos != -1) {	
+				expressionTokens = expressionTokens.subList(2, end_pos);
+				
+				ISecondaryParser<IASTExpression> expressionParser = parserFactory.getExpressionParser(stream, properties);
+				IASTExpression expr1 = runSecondaryParser(expressionParser, expressionTokens);
+				
+				if(expr1 != null) { // the parse may fail
+					expressionStatement = nodeFactory.newExpressionStatement(expr1);
+					setOffsetAndLength(expressionStatement);
+				}
+			}
+			
+			if(expressionStatement == null) 
+				initializer = declarationStatement;
+			else {
+				initializer = createAmbiguousStatement(expressionStatement, declarationStatement);
+				setOffsetAndLength(initializer);
+			}
+		}		
 		
 		IASTForStatement forStat;
 		if(condition instanceof IASTExpression)

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,38 @@
 
 package org.eclipse.cdt.core.dom.lrparser.action.c99;
 
-import static org.eclipse.cdt.core.dom.lrparser.action.ParserUtil.*;
-import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.*;
+import static org.eclipse.cdt.core.dom.lrparser.action.ParserUtil.endOffset;
+import static org.eclipse.cdt.core.dom.lrparser.action.ParserUtil.length;
+import static org.eclipse.cdt.core.dom.lrparser.action.ParserUtil.matchTokens;
+import static org.eclipse.cdt.core.dom.lrparser.action.ParserUtil.offset;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_Completion;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_EndOfCompletion;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_LeftParen;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_SemiColon;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK__Bool;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK__Complex;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_auto;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_char;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_const;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_double;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_extern;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_float;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_for;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_identifier;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_inline;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_int;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_long;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_register;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_restrict;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_short;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_signed;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_static;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_struct;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_typedef;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_union;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_unsigned;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_void;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_volatile;
 
 import java.util.Collections;
 import java.util.List;
@@ -23,9 +53,11 @@ import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
@@ -58,6 +90,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTTypeIdInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypedefNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICNodeFactory;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
+import org.eclipse.cdt.core.dom.lrparser.ISecondaryParser;
 import org.eclipse.cdt.core.dom.lrparser.action.BuildASTParserAction;
 import org.eclipse.cdt.core.dom.lrparser.action.ISecondaryParserFactory;
 import org.eclipse.cdt.core.dom.lrparser.action.ITokenMap;
@@ -65,6 +98,7 @@ import org.eclipse.cdt.core.dom.lrparser.action.ITokenStream;
 import org.eclipse.cdt.core.dom.lrparser.action.ParserUtil;
 import org.eclipse.cdt.core.dom.lrparser.action.ScopedStack;
 import org.eclipse.cdt.core.dom.lrparser.action.TokenMap;
+import org.eclipse.cdt.core.dom.lrparser.action.cpp.ICPPSecondaryParserFactory;
 import org.eclipse.cdt.core.parser.util.CollectionUtils;
 import org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
@@ -86,6 +120,8 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 	/** Used to create the AST node objects */
 	protected final ICNodeFactory nodeFactory;
 	
+	private final ISecondaryParserFactory parserFactory;
+	
 	/**
 	 * @param parser
 	 * @param orderedTerminalSymbols When an instance of this class is created for a parser
@@ -95,6 +131,7 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 		super(parser, astStack, nodeFactory, parserFactory);
 		
 		this.nodeFactory = nodeFactory;
+		this.parserFactory = parserFactory;
 		this.tokenMap = new TokenMap(C99Parsersym.orderedTerminalSymbols, parser.getOrderedTerminalSymbols());
 	}
 	
@@ -583,6 +620,42 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 			ParserUtil.setOffsetAndLength(idExpression, offset(name), length(name));
 			initializer = nodeFactory.newExpressionStatement(idExpression);
 			ParserUtil.setOffsetAndLength(initializer, offset(name), length(name));
+		}
+		
+		//initializer could be an expression or a declaration
+		int TK_SC = TK_SemiColon;
+		IASTExpressionStatement expressionStatement = null;
+		if(initializer instanceof IASTDeclarationStatement) {
+			IASTDeclarationStatement declarationStatement = (IASTDeclarationStatement) initializer;
+			List<IToken> expressionTokens = stream.getRuleTokens();
+			
+			//find the first semicolon
+			int end_pos = -1;
+			for(int i = 0, n = expressionTokens.size(); i < n; i++) {
+				if(tokenMap.mapKind(expressionTokens.get(i).getKind()) == TK_SC) {
+					end_pos = i;
+					break;
+				}
+			}
+			
+			if (end_pos != -1) {	
+				expressionTokens = expressionTokens.subList(2, end_pos);
+				
+				ISecondaryParser<IASTExpression> expressionParser = parserFactory.getExpressionParser(stream, properties);
+				IASTExpression expr1 = runSecondaryParser(expressionParser, expressionTokens);
+				
+				if(expr1 != null) { // the parse may fail
+					expressionStatement = nodeFactory.newExpressionStatement(expr1);
+					setOffsetAndLength(expressionStatement);
+				}
+			}
+			
+			if(expressionStatement == null) 
+				initializer = declarationStatement;
+			else {
+				initializer = createAmbiguousStatement(expressionStatement, declarationStatement);
+				setOffsetAndLength(initializer);
+			}
 		}
 		
 		

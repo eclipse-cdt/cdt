@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
  * Invokes an external tool to perform checks on a single file.
  */
 public class ExternalToolInvoker {
+	private static final String DEFAULT_CONTEXT_MENU_ID = "org.eclipse.cdt.ui.CDTBuildConsole"; //$NON-NLS-1$
 	private static final String[] ENV = {};
 	private static final NullProgressMonitor NULL_PROGRESS_MONITOR = new NullProgressMonitor();
 
@@ -49,23 +50,25 @@ public class ExternalToolInvoker {
 			throws InvocationFailure, Throwable {
 		Command command = commandBuilder.buildCommand(parameters, settings, argsSeparator);
 		try {
-			launchCommand(command, parsers, parameters);
+			launchCommand(command, parsers, parameters, settings);
 		} finally {
 			shutDown(parsers);
 		}
 	}
 
 	private void launchCommand(Command command, IConsoleParser[] parsers,
-			InvocationParameters parameters) throws InvocationFailure, CoreException {
+			InvocationParameters parameters, ConfigurationSettings settings) 
+					throws InvocationFailure, CoreException {
 		IProject project = parameters.getActualFile().getProject();
-		IConsole c = startConsole(project);
+		IConsole c = startConsole(project, settings.getExternalToolName());
 		ConsoleOutputSniffer sniffer =
 				new ConsoleOutputSniffer(c.getOutputStream(), c.getErrorStream(), parsers);
 		ICommandLauncher launcher = commandLauncher(project);
 		Process p = launcher.execute(command.getPath(), command.getArgs(), ENV,
 				parameters.getWorkingDirectory(), NULL_PROGRESS_MONITOR);
 		if (p == null) {
-			throw new InvocationFailure("Unable to launch external tool. Cause unknown."); //$NON-NLS-1$
+			String format = "Unable to launch external tool '%s'. Cause unknown."; //$NON-NLS-1$
+			throw new InvocationFailure(String.format(format, settings.getExternalToolName()));
 		}
 		try {
 			p.getOutputStream().close();
@@ -77,8 +80,8 @@ public class ExternalToolInvoker {
 		}
 	}
 
-	private IConsole startConsole(IProject project) {
-		IConsole console = CCorePlugin.getDefault().getConsole();
+	private IConsole startConsole(IProject project, String externalToolName) {
+		IConsole console = CCorePlugin.getDefault().getConsole(null, DEFAULT_CONTEXT_MENU_ID, externalToolName, null);
 		console.start(project);
 		return console;
 	}

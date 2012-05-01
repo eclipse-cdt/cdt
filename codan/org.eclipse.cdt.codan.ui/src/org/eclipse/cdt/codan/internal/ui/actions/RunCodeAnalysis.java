@@ -39,7 +39,6 @@ public class RunCodeAnalysis implements IObjectActionDelegate {
 	@Override
 	public void run(IAction action) {
 		Job job = new Job(CodanUIMessages.Job_TitleRunningAnalysis) {
-			@SuppressWarnings("unchecked")
 			@Override
 			protected IStatus run(final IProgressMonitor monitor) {
 				IStructuredSelection ss = (IStructuredSelection) sel;
@@ -47,7 +46,7 @@ public class RunCodeAnalysis implements IObjectActionDelegate {
 				monitor.beginTask(getName(), count * 100);
 				if (monitor.isCanceled())
 					return Status.CANCEL_STATUS;
-				for (Iterator iterator = ss.iterator(); iterator.hasNext();) {
+				for (Iterator<?> iterator = ss.iterator(); iterator.hasNext();) {
 					Object o = iterator.next();
 					if (o instanceof IAdaptable) {
 						o = ((IAdaptable) o).getAdapter(IResource.class);

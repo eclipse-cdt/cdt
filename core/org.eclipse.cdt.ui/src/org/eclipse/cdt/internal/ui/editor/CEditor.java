@@ -1413,6 +1413,8 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 
 	private final IndexerPreferenceListener fIndexerPreferenceListener;
 
+	private final ListenerList fPostSaveListeners;
+
 	private static final Set<String> angularIntroducers = new HashSet<String>();
 	static {
 		angularIntroducers.add("template"); //$NON-NLS-1$
@@ -1449,6 +1451,7 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 
 		fCEditorErrorTickUpdater = new CEditorErrorTickUpdater(this);
 		fIndexerPreferenceListener = new IndexerPreferenceListener();
+		fPostSaveListeners = new ListenerList();
 	}
 
 	/**
@@ -3765,5 +3768,30 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 					return Status.OK_STATUS;
 				}});
 		}
+	}
+	
+	@Override
+	protected void editorSaved() {
+		super.editorSaved();
+		ITranslationUnit translationUnit = getInputCElement().getOriginalElement();
+		if (translationUnit != null) {
+			for (Object listener : fPostSaveListeners.getListeners()) {
+				((IPostSaveListener) listener).saved(translationUnit, getProgressMonitor());
+			}
+		}
+	}
+	
+	/**
+	 * @since 5.4
+	 */
+	public void addPostSaveListener(IPostSaveListener listener) {
+		fPostSaveListeners.add(listener);
+	}
+	
+	/**
+	 * @since 5.4
+	 */
+	public void removePostSaveListener(IPostSaveListener listener) {
+		fPostSaveListeners.remove(listener);
 	}
 }

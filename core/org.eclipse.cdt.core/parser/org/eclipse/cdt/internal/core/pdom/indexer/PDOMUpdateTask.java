@@ -49,7 +49,7 @@ public class PDOMUpdateTask implements IPDOMIndexerTask {
 	private final IndexerProgress fProgress;
 	private final int fUpdateOptions;
 	private volatile IPDOMIndexerTask fDelegate;
-	private ArrayList<ICElement> fFilesAndFolders= null;
+	private ArrayList<ICElement> fFilesAndFolders;
 
 	public PDOMUpdateTask(IPDOMIndexer indexer, int updateOptions) {
 		fIndexer= indexer;
@@ -155,8 +155,7 @@ public class PDOMUpdateTask implements IPDOMIndexerTask {
 		return fDelegate != null && fDelegate.acceptUrgentTask(task);
 	}
 
-	public void setTranslationUnitSelection(List<ICElement> filesAndFolders) {
-		fFilesAndFolders= new ArrayList<ICElement>(filesAndFolders.size());
-		fFilesAndFolders.addAll(filesAndFolders);
+	public void setTranslationUnitSelection(List<? extends ICElement> filesAndFolders) {
+		fFilesAndFolders= new ArrayList<ICElement>(filesAndFolders);
 	}
 }

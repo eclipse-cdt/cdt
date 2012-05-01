@@ -97,7 +97,7 @@ public class LanguageSettingEntryDialog extends AbstractPropertyDialog {
 	private static final int COMBO_PATH_INDEX_FILESYSTEM = 2;
 
 	final private String [] pathCategories = {
-			Messages.LanguageSettingEntryDialog_ProjectRelative,
+			Messages.LanguageSettingEntryDialog_ProjectPath,
 			Messages.LanguageSettingEntryDialog_WorkspacePath,
 			Messages.LanguageSettingEntryDialog_Filesystem,
 	};

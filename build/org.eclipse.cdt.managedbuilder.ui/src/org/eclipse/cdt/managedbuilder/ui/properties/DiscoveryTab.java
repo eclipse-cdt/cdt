@@ -215,6 +215,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 					buildInfo.setSelectedProfileId(id);
 					handleDiscoveryProfileChanged();
 				}
+				showStatusLine();
 			}
 		});
 		reportProblemsCheckBox = setupCheck(autoDiscoveryGroup,
@@ -350,12 +351,8 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 	}
 
 	private void setEnablement() {
-		IStatus status = null;
 		ICConfigurationDescription cfgDescription = page.getResDesc().getConfiguration();
 		boolean isEnabled = !LanguageSettingsProvidersPage.isLanguageSettingsProvidersEnabled(getProject()) || ScannerDiscoveryLegacySupport.isMbsLanguageSettingsProviderOn(cfgDescription);
-		if (!isEnabled) {
-			status = new Status(IStatus.INFO, CUIPlugin.PLUGIN_ID, "Managed Build language settings provider is not enabled.");
-		}
 
 		scopeComboBox.setEnabled(isEnabled);
 		resTable.setEnabled(isEnabled);
@@ -365,6 +362,20 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 		autoDiscoveryGroup.setEnabled(isEnabled);
 		clearButton.setEnabled(isEnabled);
 
+		showStatusLine();
+	}
+
+	private void showStatusLine() {
+		ICConfigurationDescription cfgDescription = page.getResDesc().getConfiguration();
+		boolean isEnabled = !LanguageSettingsProvidersPage.isLanguageSettingsProvidersEnabled(getProject()) || ScannerDiscoveryLegacySupport.isMbsLanguageSettingsProviderOn(cfgDescription);
+		IStatus status = null;
+		if (isEnabled) {
+			if (autoDiscoveryCheckBox.getSelection()) {
+				status = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, "This discovery method is deprecated, use 'Preprocessor Include Paths' instead.");
+			}
+		} else {
+			status = new Status(IStatus.INFO, CUIPlugin.PLUGIN_ID, "Managed Build language settings provider is not enabled (see 'Preprocessor Include Paths' page).");
+		}
 		fStatusLine.setErrorStatus(status);
 	}
 

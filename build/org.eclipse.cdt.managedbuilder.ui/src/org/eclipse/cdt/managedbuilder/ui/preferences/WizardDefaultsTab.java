@@ -47,7 +47,7 @@ public class WizardDefaultsTab extends AbstractCPropertyTab {
         show_oth.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
         checkBoxTryNewSD = new Button(usercomp, SWT.CHECK);
-        checkBoxTryNewSD.setText(org.eclipse.cdt.internal.ui.newui.Messages.CDTMainWizardPage_TrySD90);
+        checkBoxTryNewSD.setText(org.eclipse.cdt.internal.ui.newui.Messages.LanguageSettingsProviders_EnableForProject);
         checkBoxTryNewSD.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		show_sup.setSelection(!CDTPrefUtil.getBool(CDTPrefUtil.KEY_NOSUPP));

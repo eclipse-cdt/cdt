@@ -615,7 +615,7 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 	private void createEnableProvidersCheckBox() {
 		// take the flag from master page if available (normally for resource properties)
 		if (masterPropertyPage != null) {
-			enableProvidersCheckBox = setupCheck(usercomp, Messages.CDTMainWizardPage_TrySD90, 2, GridData.FILL_HORIZONTAL);
+			enableProvidersCheckBox = setupCheck(usercomp, Messages.LanguageSettingsProviders_EnableForProject, 2, GridData.FILL_HORIZONTAL);
 			enableProvidersCheckBox.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {

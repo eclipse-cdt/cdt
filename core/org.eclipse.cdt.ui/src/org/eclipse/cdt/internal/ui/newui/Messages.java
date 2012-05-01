@@ -84,7 +84,6 @@ public class Messages extends NLS {
 	public static String CDTCommonProjectWizard_creatingProject;
 	public static String CDTMainWizardPage_0;
 	public static String CDTMainWizardPage_1;
-	public static String CDTMainWizardPage_TrySD90;
 	public static String CLocationOutputTab_0;
 	public static String CLocationSourceTab_0;
 	public static String CLocationTab_0;
@@ -202,7 +201,7 @@ public class Messages extends NLS {
 	public static String LanguageSettingEntryDialog_Path;
 	public static String LanguageSettingEntryDialog_PreporocessorMacro;
 	public static String LanguageSettingEntryDialog_PreprocessorMacroFile;
-	public static String LanguageSettingEntryDialog_ProjectRelative;
+	public static String LanguageSettingEntryDialog_ProjectPath;
 	public static String LanguageSettingEntryDialog_SelectKind;
 	public static String LanguageSettingEntryDialog_Value;
 	public static String LanguageSettingEntryDialog_WorkspacePath;
@@ -211,6 +210,7 @@ public class Messages extends NLS {
 	public static String LanguageSettingsImages_FileDoesNotExist;
 	public static String LanguageSettingsImages_FolderDoesNotExist;
 	public static String LanguageSettingsImages_UsingRelativePathsNotRecommended;
+	public static String LanguageSettingsProviders_EnableForProject;
 	public static String LanguageSettingsProvidersLabelProvider_TextDecorator_Shared;
 	public static String LanguageSettingsProviderTab_AreYouSureToResetProviders;
 	public static String LanguageSettingsProviderTab_Clear;

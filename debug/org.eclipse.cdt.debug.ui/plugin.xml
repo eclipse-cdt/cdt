@@ -2158,6 +2158,8 @@
  </extension>
  <extension
        point="org.eclipse.ui.menus">
+       
+ <!-- Reverse debugging contributions to Debug view -->      
     <menuContribution
             locationURI="toolbar:org.eclipse.debug.ui.DebugView?after=additions">
          <command
@@ -2165,11 +2167,11 @@
                icon="icons/obj16/reverse_toggle.gif"
                label="%ReverseToggle.label"
                style="toggle">
-            <visibleWhen
-                  checkEnabled="false">
-               <reference
-                     definitionId="org.eclipse.cdt.debug.ui.testIsReverseDebuggingActionSetActive">
-               </reference>
+            <visibleWhen checkEnabled="false">
+               <and>
+                  <reference definitionId="org.eclipse.cdt.debug.ui.testIsReverseDebuggingActionSetActive"/>
+                  <systemTest property="org.eclipse.debug.ui.debugViewToolbarVisible" value="true"/>
+               </and>
             </visibleWhen>
          </command>
       </menuContribution>
@@ -2180,11 +2182,11 @@
                icon="icons/obj16/reverse_resume.gif"
                label="%ReverseResume.label"
                style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <reference
-                     definitionId="org.eclipse.cdt.debug.ui.testIsReverseDebuggingEnabled">
-               </reference>
+            <visibleWhen checkEnabled="false">
+               <and>
+                  <reference definitionId="org.eclipse.cdt.debug.ui.testIsReverseDebuggingEnabled"/>
+                  <systemTest property="org.eclipse.debug.ui.debugViewToolbarVisible" value="true"/>
+               </and>
             </visibleWhen>
          </command>
       </menuContribution>
@@ -2195,11 +2197,11 @@
                icon="icons/obj16/reverse_stepinto.gif"
                label="%ReverseStepInto.label"
                style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <reference
-                     definitionId="org.eclipse.cdt.debug.ui.testIsReverseDebuggingEnabled">
-               </reference>
+            <visibleWhen checkEnabled="false">
+               <and>
+                  <reference definitionId="org.eclipse.cdt.debug.ui.testIsReverseDebuggingEnabled"/>
+                  <systemTest property="org.eclipse.debug.ui.debugViewToolbarVisible" value="true"/>
+               </and>
             </visibleWhen>
          </command>
       </menuContribution>
@@ -2210,11 +2212,11 @@
                icon="icons/obj16/reverse_stepover.gif"
                label="%ReverseStepOver.label"
                style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <reference
-                     definitionId="org.eclipse.cdt.debug.ui.testIsReverseDebuggingEnabled">
-               </reference>
+            <visibleWhen checkEnabled="false">
+               <and>
+                  <reference definitionId="org.eclipse.cdt.debug.ui.testIsReverseDebuggingEnabled"/>
+                  <systemTest property="org.eclipse.debug.ui.debugViewToolbarVisible" value="true"/>
+               </and>
             </visibleWhen>
          </command>
       </menuContribution>
@@ -2225,14 +2227,16 @@
                icon="icons/obj16/uncall.gif"
                label="%Uncall.label"
                style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <reference
-                     definitionId="org.eclipse.cdt.debug.ui.testIsReverseDebuggingEnabled">
-               </reference>
+            <visibleWhen checkEnabled="false">
+               <and>
+                  <reference definitionId="org.eclipse.cdt.debug.ui.testIsReverseDebuggingEnabled"/>
+                  <systemTest property="org.eclipse.debug.ui.debugViewToolbarVisible" value="true"/>
+               </and>
             </visibleWhen>
          </command>
       </menuContribution>
+      
+  <!-- Reverse debugging contributions to Run menu -->           
       <menuContribution
             locationURI="menu:org.eclipse.ui.run?before=stepGroup">
          <command
@@ -2240,26 +2244,20 @@
                icon="icons/obj16/reverse_toggle.gif"
                label="%ReverseToggle.label"
                style="toggle">
-            <visibleWhen
-                  checkEnabled="false">
-               <reference
-                     definitionId="org.eclipse.cdt.debug.ui.testIsReverseDebuggingActionSetActive">
-               </reference>
+            <visibleWhen checkEnabled="false">
+               <reference definitionId="org.eclipse.cdt.debug.ui.testIsReverseDebuggingActionSetActive"/>
             </visibleWhen>
          </command>
-      </menuContribution>
+      </menuContribution>      
       <menuContribution
-            locationURI="menu:org.eclipse.ui.run?after=stepGroup">
+            locationURI="menu:org.eclipse.ui.run?before=threadGroup">
          <command
                commandId="org.eclipse.cdt.debug.ui.command.reverseResume"
                icon="icons/obj16/reverse_resume.gif"
                label="%ReverseResume.label"
                style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <reference
-                     definitionId="org.eclipse.cdt.debug.ui.testIsReverseDebuggingEnabled">
-               </reference>
+            <visibleWhen checkEnabled="false">
+               <reference definitionId="org.eclipse.cdt.debug.ui.testIsReverseDebuggingEnabled"/>
             </visibleWhen>
          </command>
       </menuContribution>
@@ -2270,11 +2268,8 @@
                icon="icons/obj16/reverse_stepinto.gif"
                label="%ReverseStepInto.label"
                style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <reference
-                     definitionId="org.eclipse.cdt.debug.ui.testIsReverseDebuggingEnabled">
-               </reference>
+            <visibleWhen checkEnabled="false">
+               <reference definitionId="org.eclipse.cdt.debug.ui.testIsReverseDebuggingEnabled"/>
             </visibleWhen>
          </command>
       </menuContribution>
@@ -2285,11 +2280,8 @@
                icon="icons/obj16/reverse_stepover.gif"
                label="%ReverseStepOver.label"
                style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <reference
-                     definitionId="org.eclipse.cdt.debug.ui.testIsReverseDebuggingEnabled">
-               </reference>
+            <visibleWhen checkEnabled="false">
+               <reference definitionId="org.eclipse.cdt.debug.ui.testIsReverseDebuggingEnabled"/>
             </visibleWhen>
          </command>
       </menuContribution>
@@ -2300,14 +2292,13 @@
                icon="icons/obj16/uncall.gif"
                label="%Uncall.label"
                style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <reference
-                     definitionId="org.eclipse.cdt.debug.ui.testIsReverseDebuggingEnabled">
-               </reference>
+            <visibleWhen checkEnabled="false">
+               <reference definitionId="org.eclipse.cdt.debug.ui.testIsReverseDebuggingEnabled"/>
             </visibleWhen>
          </command>
       </menuContribution>
+      
+  <!-- Reverse debugging contributions to Debug view popup -->           
       <menuContribution
             locationURI="popup:org.eclipse.debug.ui.DebugView?before=stepGroup">
          <command
@@ -2315,11 +2306,8 @@
                icon="icons/obj16/reverse_toggle.gif"
                label="%ReverseToggle.label"
                style="toggle">
-            <visibleWhen
-                  checkEnabled="false">
-               <reference
-                     definitionId="org.eclipse.cdt.debug.ui.testIsReverseDebuggingActionSetActive">
-               </reference>
+            <visibleWhen checkEnabled="false">
+               <reference definitionId="org.eclipse.cdt.debug.ui.testIsReverseDebuggingActionSetActive"/>
             </visibleWhen>
          </command>
       </menuContribution>
@@ -2330,11 +2318,8 @@
                icon="icons/obj16/reverse_resume.gif"
                label="%ReverseResume.label"
                style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <reference
-                     definitionId="org.eclipse.cdt.debug.ui.testIsReverseDebuggingEnabled">
-               </reference>
+            <visibleWhen checkEnabled="false">
+               <reference definitionId="org.eclipse.cdt.debug.ui.testIsReverseDebuggingEnabled"/>
             </visibleWhen>
          </command>
       </menuContribution>
@@ -2345,11 +2330,8 @@
                icon="icons/obj16/reverse_stepinto.gif"
                label="%ReverseStepInto.label"
                style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <reference
-                     definitionId="org.eclipse.cdt.debug.ui.testIsReverseDebuggingEnabled">
-               </reference>
+            <visibleWhen checkEnabled="false">
+               <reference definitionId="org.eclipse.cdt.debug.ui.testIsReverseDebuggingEnabled"/>
             </visibleWhen>
          </command>
       </menuContribution>
@@ -2360,11 +2342,8 @@
                icon="icons/obj16/reverse_stepover.gif"
                label="%ReverseStepOver.label"
                style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <reference
-                     definitionId="org.eclipse.cdt.debug.ui.testIsReverseDebuggingEnabled">
-               </reference>
+            <visibleWhen checkEnabled="false">
+               <reference definitionId="org.eclipse.cdt.debug.ui.testIsReverseDebuggingEnabled"/>
             </visibleWhen>
          </command>
       </menuContribution>
@@ -2375,11 +2354,8 @@
                icon="icons/obj16/uncall.gif"
                label="%Uncall.label"
                style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <reference
-                     definitionId="org.eclipse.cdt.debug.ui.testIsReverseDebuggingEnabled">
-               </reference>
+            <visibleWhen checkEnabled="false">
+               <reference definitionId="org.eclipse.cdt.debug.ui.testIsReverseDebuggingEnabled"/>
             </visibleWhen>
          </command>
       </menuContribution>
@@ -2390,26 +2366,84 @@
              icon="icons/obj16/start_tracing_obj.gif"
              label="%StartTracing.name"
              style="push">
-          <visibleWhen
-                checkEnabled="false">
-             <reference
-                   definitionId="org.eclipse.cdt.debug.ui.testIsTracepointActionSetActive">
-             </reference>
-          </visibleWhen>
+            <visibleWhen checkEnabled="false">
+               <reference definitionId="org.eclipse.cdt.debug.ui.testIsReverseDebuggingEnabled"/>
+            </visibleWhen>
        </command>
        <command
              commandId="org.eclipse.cdt.debug.ui.command.stopTracing"
              icon="icons/obj16/stop_tracing_obj.gif"
              label="%StopTracing.name"
              style="push">
-          <visibleWhen
-                checkEnabled="false">
-             <reference
-                   definitionId="org.eclipse.cdt.debug.ui.testIsTracepointActionSetActive">
-             </reference>
-          </visibleWhen>
+            <visibleWhen checkEnabled="false">
+               <reference definitionId="org.eclipse.cdt.debug.ui.testIsReverseDebuggingEnabled"/>
+            </visibleWhen>
        </command>
     </menuContribution>
+
+ <!-- Reverse debugging contributions to Main Debug Menu -->      
+    <menuContribution
+            locationURI="toolbar:org.eclipse.debug.ui.main.toolbar?after=additions">
+         <command
+               commandId="org.eclipse.cdt.debug.ui.command.reverseToggle"
+               icon="icons/obj16/reverse_toggle.gif"
+               label="%ReverseToggle.label"
+               style="toggle">
+            <visibleWhen checkEnabled="false">
+               <reference definitionId="org.eclipse.cdt.debug.ui.testIsReverseDebuggingActionSetActive"/>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+      <menuContribution
+            locationURI="toolbar:org.eclipse.debug.ui.main.toolbar?before=threadGroup">
+         <command
+               commandId="org.eclipse.cdt.debug.ui.command.reverseResume"
+               icon="icons/obj16/reverse_resume.gif"
+               label="%ReverseResume.label"
+               style="push">
+            <visibleWhen checkEnabled="false">
+               <reference definitionId="org.eclipse.cdt.debug.ui.testIsReverseDebuggingEnabled"/>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+      <menuContribution
+            locationURI="toolbar:org.eclipse.debug.ui.main.toolbar?before=stepIntoGroup">
+         <command
+               commandId="org.eclipse.cdt.debug.ui.command.reverseStepInto"
+               icon="icons/obj16/reverse_stepinto.gif"
+               label="%ReverseStepInto.label"
+               style="push">
+            <visibleWhen checkEnabled="false">
+               <reference definitionId="org.eclipse.cdt.debug.ui.testIsReverseDebuggingEnabled"/>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+      <menuContribution
+            locationURI="toolbar:org.eclipse.debug.ui.main.toolbar?before=stepOverGroup">
+         <command
+               commandId="org.eclipse.cdt.debug.ui.command.reverseStepOver"
+               icon="icons/obj16/reverse_stepover.gif"
+               label="%ReverseStepOver.label"
+               style="push">
+            <visibleWhen checkEnabled="false">
+               <reference definitionId="org.eclipse.cdt.debug.ui.testIsReverseDebuggingEnabled"/>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+      <menuContribution
+            locationURI="toolbar:org.eclipse.debug.ui.main.toolbar?before=stepReturnGroup">
+         <command
+               commandId="org.eclipse.cdt.debug.ui.command.uncall"
+               icon="icons/obj16/uncall.gif"
+               label="%Uncall.label"
+               style="push">
+            <visibleWhen checkEnabled="false">
+               <reference definitionId="org.eclipse.cdt.debug.ui.testIsReverseDebuggingEnabled"/>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+      
+ <!-- Group context contributions to Debug view toolbar -->      
       <menuContribution
             locationURI="popup:org.eclipse.debug.ui.DebugView?after=emptyStepGroup">
          <command
@@ -2457,6 +2491,7 @@
           	</visibleWhen>
          </command>
       </menuContribution>
+      
  </extension>
  
  <!-- Cast to Type / Display as Array -->

@@ -127,14 +127,22 @@ public class ReverseToggleCommandHandler extends DebugCommandHandler implements 
     @Override
     protected void postExecute(IRequest request, Object[] targets) {
     	super.postExecute(request, targets);
-    	// request re-evaluation of property "org.eclipse.cdt.debug.ui.isReverseDebuggingEnabled"
     	new WorkbenchJob("") { //$NON-NLS-1$
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
-		        IEvaluationService exprService = (IEvaluationService) PlatformUI.getWorkbench().getService(IEvaluationService.class);
-		        if (exprService != null) { 
-		        	exprService.requestEvaluation("org.eclipse.cdt.debug.ui.isReverseDebuggingEnabled"); //$NON-NLS-1$
+		        // Request re-evaluation of property "org.eclipse.cdt.debug.ui.isReverseDebuggingEnabled" to update 
+			    // visibility of reverse stepping commands.
+			    IEvaluationService exprService = (IEvaluationService) PlatformUI.getWorkbench().getService(IEvaluationService.class);
+			    if (exprService != null) {
+			        exprService.requestEvaluation("org.eclipse.cdt.debug.ui.isReverseDebuggingEnabled"); //$NON-NLS-1$
+			    }
+			    // Refresh reverse toggle commands with the new state of reverse enabled. 
+			    // This is in order to keep multiple toggle actions in UI in sync.
+			    ICommandService commandService = (ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class);
+		        if (commandService != null) {
+		           commandService.refreshElements(REVERSE_TOGGLE_COMMAND_ID, null);
 		        }
+		        
 				return Status.OK_STATUS;
 			}
 		}.schedule();

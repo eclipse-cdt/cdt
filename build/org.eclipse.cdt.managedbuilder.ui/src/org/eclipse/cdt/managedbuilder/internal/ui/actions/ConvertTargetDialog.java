@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 Intel Corporation and others.
+ * Copyright (c) 2005, 2012 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,16 +7,21 @@
  *
  * Contributors:
  *     Intel Corporation - initial API and implementation
+ *     Anna Dushistova (MontaVista) - [366771]Converter fails to convert a CDT makefile project
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.ui.actions;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Vector;
 
+import org.eclipse.cdt.managedbuilder.core.IBuildObject;
+import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IConvertManagedBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
+import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
 import org.eclipse.core.resources.IProject;
@@ -61,7 +66,19 @@ public class ConvertTargetDialog extends Dialog {
 		this.title = title;
 		setProject(project);
 
-		conversionElements = ManagedBuildManager.getConversionElements(getProjectType());
+		if (getProjectType() != null) {
+			conversionElements = ManagedBuildManager.getConversionElements(getProjectType());
+		}
+		for (IBuildObject tc : getProjectToolchains()) {
+			Map<String, IConfigurationElement> converters = ManagedBuildManager.getConversionElements(tc);
+			if (converters != null) {
+				if (conversionElements == null) {
+					conversionElements = converters;
+				} else {
+					conversionElements.putAll(converters);
+				}
+			}
+		}
 
 		setShellStyle(getShellStyle()|SWT.RESIZE);
 	}
@@ -222,5 +239,23 @@ public class ConvertTargetDialog extends Dialog {
 	public void setConversionSuccessful(boolean isConversionSuccessful) {
 		ConvertTargetDialog.isConversionSuccessful = isConversionSuccessful;
 	}
+	
+	private Vector<IBuildObject> getProjectToolchains() {
+		Vector<IBuildObject> projectToolchains = new Vector<IBuildObject>();
+
+		// Get the projectType from project.
+		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(getProject());
+		if (info != null) {
+			IConfiguration[] configs = info.getManagedProject().getConfigurations();
+			for (IConfiguration config : configs) {
+				IToolChain tc = config.getToolChain();
+				if (tc != null) {
+					projectToolchains.add(tc);
+				}
+			}
+		}
+		return projectToolchains;
+	}
+
 }
 

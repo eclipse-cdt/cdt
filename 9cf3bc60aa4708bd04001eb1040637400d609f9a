@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOHH///fA\u003d",
+        "filename": "debug/org.eclipse.cdt.debug.ui/plugin.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 2370,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2012-05-01T16:35:00Z",
+      "side": 1,
+      "message": "Why did this change from testIsTracepointActionSetActive to testIsReverseDebuggingEnabled?",
+      "revId": "9cf3bc60aa4708bd04001eb1040637400d609f9a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHH///e8\u003d",
+        "filename": "debug/org.eclipse.cdt.debug.ui/plugin.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 2379,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2012-05-01T16:35:00Z",
+      "side": 1,
+      "message": "Why did this change from testIsTracepointActionSetActive to testIsReverseDebuggingEnabled?",
+      "revId": "9cf3bc60aa4708bd04001eb1040637400d609f9a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 Ericsson and others.
+ * Copyright (c) 2009, 2012 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Jens Elmenthaler (Verigy) - Added Full GDB pretty-printing support (bug 302121)
  *     Sergey Prigogin (Google)
  *     Marc Khouzam (Ericsson) - Move to org.eclipse.cdt.dsf.gdb from UI plugin (bug 348159)
+ *     Anton Gorenkov - A preference to use RTTI for variable types determination (Bug 377536)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal;
 
@@ -32,6 +33,7 @@ public class GdbPreferenceInitializer extends AbstractPreferenceInitializer {
 		node.putBoolean(IGdbDebugPreferenceConstants.PREF_AUTO_TERMINATE_GDB, true);
 		node.putBoolean(IGdbDebugPreferenceConstants.PREF_USE_INSPECTOR_HOVER, true);
 		node.putBoolean(IGdbDebugPreferenceConstants.PREF_ENABLE_PRETTY_PRINTING, true);
+		node.putBoolean(IGdbDebugPreferenceConstants.PREF_USE_RTTI, true);
 		node.putInt(IGdbDebugPreferenceConstants.PREF_INITIAL_CHILD_COUNT_LIMIT_FOR_COLLECTIONS, 100);
 		node.put(IGdbDebugPreferenceConstants.PREF_DEFAULT_GDB_COMMAND, IGDBLaunchConfigurationConstants.DEBUGGER_DEBUG_NAME_DEFAULT);
 		node.put(IGdbDebugPreferenceConstants.PREF_DEFAULT_GDB_INIT, IGDBLaunchConfigurationConstants.DEBUGGER_GDB_INIT_DEFAULT);

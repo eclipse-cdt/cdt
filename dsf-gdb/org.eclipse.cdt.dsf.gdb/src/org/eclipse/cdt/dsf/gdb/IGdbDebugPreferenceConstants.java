@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 Ericsson and others.
+ * Copyright (c) 2009, 2012 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     Ericsson - initial implementation
  *     Jens Elmenthaler (Verigy) - Added Full GDB pretty-printing support (bug 302121)
  *     Sergey Prigogin (Google)
+ *     Anton Gorenkov - A preference to use RTTI for variable types determination (Bug 377536)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb;
 
@@ -90,5 +91,14 @@ public interface IGdbDebugPreferenceConstants {
      * Help prefixes.
      */
     public static final String PREFIX = GdbPlugin.PLUGIN_ID + "."; //$NON-NLS-1$
+
+	/**
+	 * Boolean preference whether to use RTTI for MI variables type
+	 * determination. Default is <code>true</code>.
+	 * 
+	 * @since 4.1
+	 */
+	public static final String PREF_USE_RTTI = PREFIX + "useRtti"; //$NON-NLS-1$
+
 }
 

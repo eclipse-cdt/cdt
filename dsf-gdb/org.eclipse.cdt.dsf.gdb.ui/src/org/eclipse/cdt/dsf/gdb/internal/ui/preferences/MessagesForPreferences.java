@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 Ericsson and others.
+ * Copyright (c) 2009, 2012 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Ericsson - initial API and implementation
  *     Jens Elmenthaler (Verigy) - Added Full GDB pretty-printing support (bug 302121)
+ *     Anton Gorenkov - A preference to use RTTI for variable types determination (Bug 377536)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.preferences;
 
@@ -36,6 +37,12 @@ class MessagesForPreferences extends NLS {
 	public static String GdbDebugPreferencePage_initialChildCountLimitForCollections_label;
 	/** @since 2.2 */
 	public static String GdbDebugPreferencePage_defaults_label;
+	/** @since 2.3 */
+	public static String GdbDebugPreferencePage_rtti_label;
+	/** @since 2.3 */
+	public static String GdbDebugPreferencePage_use_rtti_label1;
+	/** @since 2.3 */
+	public static String GdbDebugPreferencePage_use_rtti_label2;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(MessagesForPreferences.class.getName(), MessagesForPreferences.class);

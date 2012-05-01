@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOHH///iU\u003d",
+        "filename": "codan/org.eclipse.cdt.codan.core.cxx/src/org/eclipse/cdt/codan/core/cxx/internal/externaltool/ExternalToolInvoker.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-05-01T00:53:43Z",
+      "side": 1,
+      "message": "Not related to this change, but should it mention the name of the tool in the message?",
+      "revId": "13e64db29caf543b3a176c654f8988e2c5d8b2e9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHH///iI\u003d",
+        "filename": "codan/org.eclipse.cdt.codan.ui.cxx/src/org/eclipse/cdt/codan/internal/ui/cxx/CodanPartListener.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-05-01T00:53:43Z",
+      "side": 1,
+      "message": "Describe the purpose of the class.",
+      "revId": "13e64db29caf543b3a176c654f8988e2c5d8b2e9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHH///iQ\u003d",
+        "filename": "codan/org.eclipse.cdt.codan.ui.cxx/src/org/eclipse/cdt/codan/internal/ui/cxx/CodanPartListener.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-05-01T00:53:43Z",
+      "side": 1,
+      "message": "Move the comment inside the isCEditor method.",
+      "revId": "13e64db29caf543b3a176c654f8988e2c5d8b2e9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHH///iM\u003d",
+        "filename": "codan/org.eclipse.cdt.codan.ui.cxx/src/org/eclipse/cdt/codan/internal/ui/cxx/CodanPartListener.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-05-01T00:53:43Z",
+      "side": 1,
+      "message": "Move after line 55 so that code related to the reconciler stays together.",
+      "revId": "13e64db29caf543b3a176c654f8988e2c5d8b2e9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHH///iE\u003d",
+        "filename": "core/org.eclipse.cdt.core/META-INF/MANIFEST.MF",
+        "patchSetId": 3
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-05-01T00:53:43Z",
+      "side": 1,
+      "message": "The warning related to use of commenthandler should be preserved. It tells us that comment handler needs to move out of dom.rewrite.",
+      "revId": "13e64db29caf543b3a176c654f8988e2c5d8b2e9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHH///iA\u003d",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/editor/IPostSaveListener.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-05-01T00:53:43Z",
+      "side": 1,
+      "message": "Remove this and the next bullet point. The only real different is that we don\u0027t allow modification of the file.",
+      "revId": "13e64db29caf543b3a176c654f8988e2c5d8b2e9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

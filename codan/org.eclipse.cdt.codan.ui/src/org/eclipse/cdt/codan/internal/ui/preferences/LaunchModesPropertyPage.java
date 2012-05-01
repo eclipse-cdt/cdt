@@ -54,13 +54,17 @@ public class LaunchModesPropertyPage extends FieldEditorPreferencePage {
 	@Override
 	protected void createFieldEditors() {
 		if (runInEditor) {
-			addField(new BooleanFieldEditor(CheckerLaunchMode.RUN_AS_YOU_TYPE.name(), CodanUIMessages.LaunchModesPropertyPage_RunAsYouType, getFieldEditorParent()));
+			addEditor(CheckerLaunchMode.RUN_AS_YOU_TYPE, CodanUIMessages.LaunchModesPropertyPage_RunAsYouType);
 		}
-		addField(new BooleanFieldEditor(CheckerLaunchMode.RUN_ON_FILE_OPEN.name(), CodanUIMessages.LaunchModesPropertyPage_RunOnFileOpen, getFieldEditorParent()));
-		addField(new BooleanFieldEditor(CheckerLaunchMode.RUN_ON_FILE_SAVE.name(), CodanUIMessages.LaunchModesPropertyPage_RunOnFileSave, getFieldEditorParent()));
-		addField(new BooleanFieldEditor(CheckerLaunchMode.RUN_ON_INC_BUILD.name(), CodanUIMessages.LaunchModesPropertyPage_RunOnIncrementalBuild, getFieldEditorParent()));
-		addField(new BooleanFieldEditor(CheckerLaunchMode.RUN_ON_FULL_BUILD.name(), CodanUIMessages.LaunchModesPropertyPage_RunOnFullBuild, getFieldEditorParent()));
-		addField(new BooleanFieldEditor(CheckerLaunchMode.RUN_ON_DEMAND.name(), CodanUIMessages.LaunchModesPropertyPage_RunOnDemand, getFieldEditorParent()));
+		addEditor(CheckerLaunchMode.RUN_ON_FILE_OPEN, CodanUIMessages.LaunchModesPropertyPage_RunOnFileOpen);
+		addEditor(CheckerLaunchMode.RUN_ON_FILE_SAVE, CodanUIMessages.LaunchModesPropertyPage_RunOnFileSave);
+		addEditor(CheckerLaunchMode.RUN_ON_INC_BUILD, CodanUIMessages.LaunchModesPropertyPage_RunOnIncrementalBuild);
+		addEditor(CheckerLaunchMode.RUN_ON_FULL_BUILD, CodanUIMessages.LaunchModesPropertyPage_RunOnFullBuild);
+		addEditor(CheckerLaunchMode.RUN_ON_DEMAND, CodanUIMessages.LaunchModesPropertyPage_RunOnDemand);
+	}
+	
+	private void addEditor(CheckerLaunchMode launchMode, String label) {
+		addField(new BooleanFieldEditor(launchMode.name(), label, getFieldEditorParent()));
 	}
 
 	@Override

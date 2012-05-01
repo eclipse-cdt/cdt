@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 Ericsson and others.
+ * Copyright (c) 2009, 2012 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     Ericsson - initial API and implementation
  *     Jens Elmenthaler (Verigy) - Added Full GDB pretty-printing support (bug 302121)
  *     Sergey Prigogin (Google)
+ *     Anton Gorenkov - A preference to use RTTI for variable types determination (Bug 377536)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.preferences;
 
@@ -733,6 +734,23 @@ public class GdbDebugPreferencePage extends FieldEditorPreferencePage implements
 				childCountLimitField.setEnabled(enabled, indentHelper);
 			}
 		});
+
+		group= new Group(parent, SWT.NONE);
+		group.setText(MessagesForPreferences.GdbDebugPreferencePage_rtti_label);
+		groupLayout= new GridLayout(3, false);
+		group.setLayout(groupLayout);
+		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+		boolField= new BooleanFieldEditor(
+				IGdbDebugPreferenceConstants.PREF_USE_RTTI,
+				MessagesForPreferences.GdbDebugPreferencePage_use_rtti_label1 + "\n" //$NON-NLS-1$
+				+ MessagesForPreferences.GdbDebugPreferencePage_use_rtti_label2,
+				group);
+
+		boolField.fillIntoGrid(group, 3);
+		addField(boolField);
+		// need to set layout again
+		group.setLayout(groupLayout);
 
 		// need to set layouts again
 		indentHelper.setLayout(helperLayout);

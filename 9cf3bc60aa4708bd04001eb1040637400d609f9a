@@ -2,6 +2,40 @@
   "comments": [
     {
       "key": {
+        "uuid": "AABOHH///fI\u003d",
+        "filename": "debug/org.eclipse.cdt.debug.ui/plugin.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 2253,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-05-01T17:13:06Z",
+      "side": 1,
+      "message": "The \u0027reverse resume\u0027 operation is not visible in the run menu.\nI couldn\u0027t find a way to put it right above the \u0027resume\u0027 one without adding a groupMarker in the platform plugin.  I think the best we can do is to use\n\nlocationURI\u003d\"menu:org.eclipse.ui.run?after\u003dstepGroup\"\n\nWhich puts it a little lower, but I find it is better than putting it way at the top (using before\u003dstepGroup.",
+      "revId": "9cf3bc60aa4708bd04001eb1040637400d609f9a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHH///fU\u003d",
+        "filename": "debug/org.eclipse.cdt.debug.ui/plugin.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 2362,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-05-01T17:13:06Z",
+      "side": 1,
+      "message": "Let\u0027s add the following above this line to avoid confusion:\n \u003c!-- Tracepoint contributions to Main Debug Menu --\u003e",
+      "revId": "9cf3bc60aa4708bd04001eb1040637400d609f9a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOHH///fA\u003d",
         "filename": "debug/org.eclipse.cdt.debug.ui/plugin.xml",
         "patchSetId": 2

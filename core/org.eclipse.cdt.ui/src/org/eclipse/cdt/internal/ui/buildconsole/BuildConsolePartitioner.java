@@ -11,6 +11,7 @@
  *     Andrew Gvozdev (Quoin Inc.)  - Copy build log (bug 306222)
  *     Alex Collins (Broadcom Corp.) - Global console
  *     Sergey Prigogin (Google) - Performance improvements
+ *     Anton Gorenkov - Show build console only when the build was started, but not every time output changes (Bug 378302)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.buildconsole;
 
@@ -584,7 +585,6 @@ public class BuildConsolePartitioner
 		if (stream != null) {
 			ConsolePlugin.getDefault().getConsoleManager().warnOfContentChange(stream.getConsole());
 		}
-		fManager.showConsole();
 	}
 
 	public IDocument getDocument() {

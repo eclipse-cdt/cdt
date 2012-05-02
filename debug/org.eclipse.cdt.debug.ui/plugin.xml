@@ -2367,7 +2367,7 @@
              label="%StartTracing.name"
              style="push">
             <visibleWhen checkEnabled="false">
-               <reference definitionId="org.eclipse.cdt.debug.ui.testIsReverseDebuggingEnabled"/>
+               <reference definitionId="org.eclipse.cdt.debug.ui.testIsTracepointActionSetActive"/>
             </visibleWhen>
        </command>
        <command
@@ -2376,7 +2376,7 @@
              label="%StopTracing.name"
              style="push">
             <visibleWhen checkEnabled="false">
-               <reference definitionId="org.eclipse.cdt.debug.ui.testIsReverseDebuggingEnabled"/>
+               <reference definitionId="org.eclipse.cdt.debug.ui.testIsTracepointActionSetActive"/>
             </visibleWhen>
        </command>
     </menuContribution>

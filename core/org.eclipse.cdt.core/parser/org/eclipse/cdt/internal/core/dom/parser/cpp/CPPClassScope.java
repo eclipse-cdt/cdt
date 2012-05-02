@@ -120,7 +120,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 			//copy constructor: A(const A &)
 
 			ICPPMethod m = new CPPImplicitConstructor(this, className, ps);
-			implicits[i++]=m;
+			implicits[i++] = m;
 			addBinding(m);
 		}
 
@@ -150,9 +150,6 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 		return CPPVisitor.getContainingNonTemplateScope(compName);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPScope#addBinding(org.eclipse.cdt.core.dom.ast.IBinding)
-	 */
 	@Override
 	public void addBinding(IBinding binding) {
 	    if (binding instanceof ICPPConstructor) {
@@ -164,16 +161,16 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 
 	@Override
 	public void addName(IASTName name) {
-		// don't add names from inactive code branches
+		// Don't add names from inactive code branches.
 		if (!name.isActive())
 			return;
 		
 		if (name instanceof ICPPASTQualifiedName) {
-			// check whether the qualification matches
+			// Check whether the qualification matches.
 			IBinding b= getClassType();
 			final ICPPASTQualifiedName qname = (ICPPASTQualifiedName) name;
 			final IASTName[] names= qname.getNames();
-			for (int i = names.length-2; i>=0; i--) {
+			for (int i = names.length - 1; --i >= 0;) {
 				if (b == null || !CharArrayUtils.equals(names[i].getLookupKey(), b.getNameCharArray()))
 					return;
 				
@@ -211,9 +208,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
             bindings.put(CONSTRUCTOR_KEY, constructor);
         }
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPScope#getBinding(int, char[])
-	 */
+
 	@Override
 	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) {
 	    char[] c = name.getLookupKey();
@@ -231,8 +226,8 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	}
 
 	@Override
-	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet, 
-			boolean checkPointOfDecl) {
+	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup,
+			IIndexFileSet fileSet, boolean checkPointOfDecl) {
 	    char[] c = name.getLookupKey();
 
 	    ICPPASTCompositeTypeSpecifier compType = (ICPPASTCompositeTypeSpecifier) getPhysicalNode();
@@ -299,7 +294,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
         		return ArrayUtil.trim(ICPPConstructor.class, bs);
 	        } else if (o instanceof IASTName) {
 	        	if (shouldResolve(forceResolve, (IASTName) o, forName) || ((IASTName) o).getBinding() != null) {
-	        		// always store the name, rather than the binding, such that we can properly flush the scope.
+	        		// Always store the name, rather than the binding, such that we can properly flush the scope.
 	        		nameMap.put(CONSTRUCTOR_KEY, o);
 	        		binding = ((IASTName)o).resolveBinding();
 	        	}
@@ -313,9 +308,6 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 		return ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IScope#find(java.lang.String)
-	 */
 	@Override
 	public IBinding[] find(String name) {
 	    char[] n = name.toCharArray();
@@ -359,9 +351,6 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope#getClassType()
-	 */
 	@Override
 	public ICPPClassType getClassType() {
 		ICPPASTCompositeTypeSpecifier compSpec = (ICPPASTCompositeTypeSpecifier) getPhysicalNode();
@@ -373,9 +362,6 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 		return new CPPClassType.CPPClassTypeProblem(name, ISemanticProblem.BINDING_NO_CLASS, name.toCharArray());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope#getImplicitMethods()
-	 */
 	@Override
 	public ICPPMethod[] getImplicitMethods() {
 		if (implicits == null)
@@ -384,9 +370,6 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 		return implicits;
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPScope#getScopeName()
-     */
     @Override
 	public IName getScopeName() {
         IASTNode node = getPhysicalNode();
@@ -419,12 +402,12 @@ class ImplicitsAnalysis {
 		hasUserDeclaredCopyAssignmentOperator= false;
 		hasUserDeclaredDestructor= getUserDeclaredCtorOrDtor(compSpec, false).length>0;
 
-		outer: for (int i=0; i<ctors.length; i++) {
+		outer: for (int i= 0; i < ctors.length; i++) {
 			ICPPASTFunctionDeclarator dcltor= ctors[i];
 			IASTParameterDeclaration[] ps = dcltor.getParameters();
         	if (ps.length >= 1) {
         		if (hasTypeReferenceToClassType(ps[0])) {
-            		// and all remaining arguments have initializers
+            		// All remaining arguments have initializers.
         			for (int j = 1; j < ps.length; j++) {
             			if (ps[j].getDeclarator().getInitializer() == null) {
             				continue outer;
@@ -463,7 +446,6 @@ class ImplicitsAnalysis {
 			    dcltor = ((IASTFunctionDefinition)member).getDeclarator();
 			    spec = ((IASTFunctionDefinition)member).getDeclSpecifier();
 			}
-
 
 			if (!(dcltor instanceof ICPPASTFunctionDeclarator) || !(spec instanceof IASTSimpleDeclSpecifier) ||
 					((IASTSimpleDeclSpecifier)spec).getType() != IASTSimpleDeclSpecifier.t_unspecified)	{

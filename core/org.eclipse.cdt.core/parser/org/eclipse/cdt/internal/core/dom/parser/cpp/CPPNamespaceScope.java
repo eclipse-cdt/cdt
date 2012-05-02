@@ -1,11 +1,11 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2010 IBM Corporation and others.
- *  All rights reserved. This program and the accompanying materials
- *  are made available under the terms of the Eclipse Public License v1.0
- *  which accompanies this distribution, and is available at
- *  http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  * 
- *  Contributors:
+ * Contributors:
  *     Andrew Niefer (IBM Corporation) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
@@ -42,9 +42,9 @@ import org.eclipse.core.runtime.CoreException;
  * Implementation of namespace scopes, including global scope.
  */
 public class CPPNamespaceScope extends CPPScope implements ICPPInternalNamespaceScope {
-	private static final ICPPInternalNamespaceScope[] NO_NAMESPACE_SCOPES = new ICPPInternalNamespaceScope[0];
+	private static final ICPPInternalNamespaceScope[] NO_NAMESPACE_SCOPES = {};
 
-	private List<ICPPUsingDirective> fUsingDirectives = null;
+	private List<ICPPUsingDirective> fUsingDirectives;
 
 	private boolean fIsInline;
 	private boolean fIsInlineInitialized;
@@ -64,9 +64,6 @@ public class CPPNamespaceScope extends CPPScope implements ICPPInternalNamespace
 		return EScopeKind.eNamespace;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope#getUsingDirectives()
-	 */
 	@Override
 	public ICPPUsingDirective[] getUsingDirectives() {
 		initUsingDirectives();
@@ -86,18 +83,12 @@ public class CPPNamespaceScope extends CPPScope implements ICPPInternalNamespace
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope#addUsingDirective(org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective)
-	 */
 	@Override
 	public void addUsingDirective(ICPPUsingDirective directive) {
 		initUsingDirectives();
 		fUsingDirectives.add(directive);
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPScope#getScopeName()
-     */
     @Override
 	public IName getScopeName() {
         IASTNode node = getPhysicalNode();

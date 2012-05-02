@@ -99,14 +99,33 @@ public class XLCProjectMacroSupplier implements IProjectBuildMacroSupplier {
 		// our array consists of our macro, plus all the macros from our parent
 		IBuildMacro[] parentMacros = provider.getMacros(IBuildMacroProvider.CONTEXT_PROJECT, project, true);
 		
-		int numMacros = parentMacros.length + 1; // +1 for our macro
+		// look for an existing macro definition
+		int foundIndex = -1;
+		for(int k = 0; k < parentMacros.length; k++) {
+			
+			if(parentMacros[k].getName().equals(macro.getName())) {
+				foundIndex = k;
+				break;
+			}
+		}
+		
+		int numMacros = (foundIndex == -1) ? parentMacros.length + 1 : parentMacros.length;
 		
 		IBuildMacro[] macros = new IBuildMacro[numMacros];
 		
-		macros[0] = macro;
+		// if there was no existing value then add it to the front
+		if(foundIndex == -1) {
+			macros[0] = macro;
+			for(int k = 1; k < macros.length; k++) {
+				macros[k] = parentMacros[k-1];
+			}
+		}
 		
-		for(int k = 1; k < macros.length; k++) {
-			macros[k] = parentMacros[k-1];
+		else {  // replace the old value
+			for(int k = 0; k < macros.length; k++) {
+				macros[k] = parentMacros[k];
+			}
+			macros[foundIndex] = macro;
 		}
 		
 		return macros;

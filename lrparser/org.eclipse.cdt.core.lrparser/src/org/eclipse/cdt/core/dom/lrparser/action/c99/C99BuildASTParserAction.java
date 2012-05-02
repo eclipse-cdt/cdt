@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,9 +23,11 @@ import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
@@ -58,6 +60,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTTypeIdInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypedefNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICNodeFactory;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
+import org.eclipse.cdt.core.dom.lrparser.ISecondaryParser;
 import org.eclipse.cdt.core.dom.lrparser.action.BuildASTParserAction;
 import org.eclipse.cdt.core.dom.lrparser.action.ISecondaryParserFactory;
 import org.eclipse.cdt.core.dom.lrparser.action.ITokenMap;
@@ -86,6 +89,8 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 	/** Used to create the AST node objects */
 	protected final ICNodeFactory nodeFactory;
 	
+	private final ISecondaryParserFactory parserFactory;
+	
 	/**
 	 * @param parser
 	 * @param orderedTerminalSymbols When an instance of this class is created for a parser
@@ -95,6 +100,7 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 		super(parser, astStack, nodeFactory, parserFactory);
 		
 		this.nodeFactory = nodeFactory;
+		this.parserFactory = parserFactory;
 		this.tokenMap = new TokenMap(C99Parsersym.orderedTerminalSymbols, parser.getOrderedTerminalSymbols());
 	}
 	
@@ -585,6 +591,41 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 			ParserUtil.setOffsetAndLength(initializer, offset(name), length(name));
 		}
 		
+		//initializer could be an expression or a declaration
+		int TK_SC = TK_SemiColon;
+		IASTExpressionStatement expressionStatement = null;
+		if(initializer instanceof IASTDeclarationStatement) {
+			IASTDeclarationStatement declarationStatement = (IASTDeclarationStatement) initializer;
+			List<IToken> expressionTokens = stream.getRuleTokens();
+			
+			//find the first semicolon
+			int end_pos = -1;
+			for(int i = 0, n = expressionTokens.size(); i < n; i++) {
+				if(tokenMap.mapKind(expressionTokens.get(i).getKind()) == TK_SC) {
+					end_pos = i;
+					break;
+				}
+			}
+			
+			if (end_pos != -1) {	
+				expressionTokens = expressionTokens.subList(2, end_pos);
+				
+				ISecondaryParser<IASTExpression> expressionParser = parserFactory.getExpressionParser(stream, properties);
+				IASTExpression expr1 = runSecondaryParser(expressionParser, expressionTokens);
+				
+				if(expr1 != null) { // the parse may fail
+					expressionStatement = nodeFactory.newExpressionStatement(expr1);
+					setOffsetAndLength(expressionStatement);
+				}
+			}
+			
+			if(expressionStatement == null) 
+				initializer = declarationStatement;
+			else {
+				initializer = createAmbiguousStatement(expressionStatement, declarationStatement);
+				setOffsetAndLength(initializer);
+			}
+		}
 		
 		if(node != null)
 			ParserUtil.setOffsetAndLength(initializer, offset(node), length(node));

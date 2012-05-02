@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others.
+ * Copyright (c) 2006, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,17 +27,18 @@ import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
+import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
-import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
@@ -56,6 +57,7 @@ import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAmbiguousTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
@@ -92,7 +94,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNodeFactory;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.lrparser.ISecondaryParser;
 import org.eclipse.cdt.core.dom.lrparser.LPGTokenAdapter;
 import org.eclipse.cdt.core.dom.lrparser.action.BuildASTParserAction;
@@ -680,6 +681,41 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 			initializer = nodeFactory.newExpressionStatement(idExpression);
 			ParserUtil.setOffsetAndLength(initializer, offset(name), length(name));
 		}
+		
+		int TK_SC = TK_SemiColon;
+		IASTExpressionStatement expressionStatement = null;
+		if(initializer instanceof IASTDeclarationStatement) {
+			IASTDeclarationStatement declarationStatement = (IASTDeclarationStatement) initializer;
+			List<IToken> expressionTokens = stream.getRuleTokens();
+			
+			//find the first semicolon
+			int end_pos = -1;
+			for(int i = 0, n = expressionTokens.size(); i < n; i++) {
+				if(tokenMap.mapKind(expressionTokens.get(i).getKind()) == TK_SC) {
+					end_pos = i;
+					break;
+				}
+			}			
+			
+			if (end_pos != -1) {	
+				expressionTokens = expressionTokens.subList(2, end_pos);
+				
+				ISecondaryParser<IASTExpression> expressionParser = parserFactory.getExpressionParser(stream, properties);
+				IASTExpression expr1 = runSecondaryParser(expressionParser, expressionTokens);
+				
+				if(expr1 != null) { // the parse may fail
+					expressionStatement = nodeFactory.newExpressionStatement(expr1);
+					setOffsetAndLength(expressionStatement);
+				}
+			}
+			
+			if(expressionStatement == null) 
+				initializer = declarationStatement;
+			else {
+				initializer = createAmbiguousStatement(declarationStatement, expressionStatement);
+				setOffsetAndLength(initializer);
+			}
+		}	
 		
 		
 		IASTForStatement forStat;

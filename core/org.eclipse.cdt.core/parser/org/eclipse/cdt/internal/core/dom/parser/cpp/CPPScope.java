@@ -38,10 +38,8 @@ import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
-import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.IContentAssistMatcher;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
-import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
@@ -97,16 +95,12 @@ abstract public class CPPScope implements ICPPASTInternalScope {
 
 		if (bindings == null)
 			bindings = new CharArrayObjectMap<Object>(1);
-		if (name instanceof ICPPASTQualifiedName) {
-			if (!(physicalNode instanceof ICPPASTCompositeTypeSpecifier) &&
-					!(physicalNode instanceof ICPPASTNamespaceDefinition)) {
-				return;
-			}
-
-			// Name belongs to a different scope, don't add it here except if it names this scope.
-		    if (!canDenoteScopeMember((ICPPASTQualifiedName) name))
-		    	return;
+		if (name instanceof ICPPASTQualifiedName &&
+				!(physicalNode instanceof ICPPASTCompositeTypeSpecifier) &&
+				!(physicalNode instanceof ICPPASTNamespaceDefinition)) {
+			return;
 		}
+
 		final char[] c= name.getLookupKey();
 		if (c.length == 0)
 			return;
@@ -122,33 +116,6 @@ abstract public class CPPScope implements ICPPASTInternalScope {
 		    }
 		} else {
 		    bindings.put(c, name);
-		}
-	}
-
-	public boolean canDenoteScopeMember(ICPPASTQualifiedName name) {
-		IScope scope= this;
-		IASTName[] segments= name.getNames();
-		try {
-			for (int i= segments.length - 1; --i >= 0;) {
-				if (scope == null)
-					return false;
-				IName scopeName = scope.getScopeName();
-				if (scopeName == null)
-					return false;
-
-				IASTName segmentName = segments[i];
-				if ((scopeName instanceof ICPPASTTemplateId) != (segmentName instanceof ICPPASTTemplateId))
-					return false;
-				if (!CharArrayUtils.equals(scopeName.getSimpleID(), segmentName.getSimpleID()))
-					return false;
-				scope= scope.getParent();
-			}
-			if (!name.isFullyQualified() || scope == null) {
-				return true;
-			}
-			return ASTInternal.getPhysicalNodeOfScope(scope) instanceof IASTTranslationUnit;
-		} catch (DOMException e) {
-			return false;
 		}
 	}
 

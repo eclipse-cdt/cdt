@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.errorparsers.RegexErrorPattern;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
+import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsLogger;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 
@@ -167,6 +168,11 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 		}
 
 		setSettingEntries(currentCfgDescription, rc, currentLanguageId, entries);
+
+		// AG FIXME - temporary log to remove before CDT Juno release
+		LanguageSettingsLogger.logInfo(getPrefixForLog()
+				+ getClass().getSimpleName() + " collected " + (entries!=null ? ("" + entries.size()) : "null") + " entries for " + rc);
+
 	}
 
 	/**

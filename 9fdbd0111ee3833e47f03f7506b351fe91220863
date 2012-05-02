@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "AABOHH///X4\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/DsfTerminateCommand.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-05-02T16:42:19Z",
+      "side": 1,
+      "message": "Not sure I understand how to apply this code. Where the \u0027request\u0027 variable come from. There could be multiple requests for multi-process sessions. Even if we keep the list of all requests, we don\u0027t know which one we need to cancel and which one mark as successful.\nAm I missing something here?",
+      "parentUuid": "AABOHH///lM\u003d",
+      "revId": "9fdbd0111ee3833e47f03f7506b351fe91220863",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOHH///lg\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/DsfTerminateCommand.java",
         "patchSetId": 2

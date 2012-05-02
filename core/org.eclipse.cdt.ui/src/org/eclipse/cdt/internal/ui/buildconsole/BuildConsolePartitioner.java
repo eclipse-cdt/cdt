@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2010 QNX Software Systems and others.
+ * Copyright (c) 2002, 2012 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Dmitry Kozlov (CodeSourcery) - Build error highlighting and navigation
  *     Andrew Gvozdev (Quoin Inc.)  - Copy build log (bug 306222)
  *     Alex Collins (Broadcom Corp.) - Global console
+ *     Anton Gorenkov - Show build console only when the build was started, but not every time output changes (Bug 378302)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.buildconsole;
 
@@ -368,7 +369,6 @@ public class BuildConsolePartitioner
 		if (stream != null) {
 			ConsolePlugin.getDefault().getConsoleManager().warnOfContentChange(stream.getConsole());
 		}
-		fManager.showConsole();
 	}
 
 	public IDocument getDocument() {

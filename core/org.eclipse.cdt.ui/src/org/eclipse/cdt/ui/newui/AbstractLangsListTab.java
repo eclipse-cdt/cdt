@@ -19,7 +19,6 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -242,7 +241,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 		int index = table.getSelectionIndex();
 		if (index<0 || table.getSelectionIndices().length!=1)
 			return null;
-	
+
 		return (ICLanguageSettingEntry)(table.getItem(index).getData());
 	}
 
@@ -730,8 +729,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 		public Image getColumnImage(Object element, int columnIndex) {
 			if (columnIndex==0 && (element instanceof ICLanguageSettingEntry)) {
 				ICConfigurationDescription cfg = getResDesc().getConfiguration();
-				IProject project = cfg.getProjectDescription().getProject();
-				return LanguageSettingsImages.getImage((ICLanguageSettingEntry) element, project.getName(), cfg);
+				return LanguageSettingsImages.getImage((ICLanguageSettingEntry) element, cfg);
 			}
 			return null;
 		}
@@ -760,7 +758,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 			} else if (columnIndex == 0) {
 				return element.toString();
 			}
-			
+
 			return null;
 		}
 

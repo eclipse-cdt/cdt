@@ -47,11 +47,15 @@ public class ScannerDiscoveryLegacySupport {
 	private static final String PREFERENCES_QUALIFIER = CCorePlugin.PLUGIN_ID;
 	private static final String LANGUAGE_SETTINGS_PROVIDERS_NODE = "languageSettingsProviders"; //$NON-NLS-1$
 
+	/**
+	 * Get preferences node for org.eclipse.cdt.core.
+	 */
 	private static Preferences getPreferences(IProject project) {
-		if (project == null)
+		if (project == null) {
 			return InstanceScope.INSTANCE.getNode(PREFERENCES_QUALIFIER).node(LANGUAGE_SETTINGS_PROVIDERS_NODE);
-		else
+		} else {
 			return new LocalProjectScope(project).getNode(PREFERENCES_QUALIFIER).node(LANGUAGE_SETTINGS_PROVIDERS_NODE);
+		}
 	}
 
 	/**

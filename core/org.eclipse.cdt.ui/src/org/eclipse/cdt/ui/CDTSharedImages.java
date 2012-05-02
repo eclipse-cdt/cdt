@@ -172,6 +172,8 @@ public class CDTSharedImages {
 	public static final String IMG_OBJS_CORRECTION_RENAME = "icons/obj16/correction_rename.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_CORRECTION_LINKED_RENAME = "icons/obj16/correction_linked_rename.gif"; //$NON-NLS-1$
 
+	/** @since 5.4 */
+	public static final String IMG_ETOOL_PROJECT = "icons/etool16/prj_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_VIEW_BUILD_CONSOLE = "icons/view16/buildconsole.gif"; //$NON-NLS-1$
 
 	// Images for file list control
@@ -186,6 +188,12 @@ public class CDTSharedImages {
 	public static final String IMG_OVR_ERROR = "icons/ovr16/error_co.gif"; //$NON-NLS-1$
 	public static final String IMG_OVR_SETTING = "icons/ovr16/setting_nav.gif"; //$NON-NLS-1$
 	public static final String IMG_OVR_INACTIVE = "icons/ovr16/inactive_co.gif"; //$NON-NLS-1$
+	/** @since 5.4 */
+	public static final String IMG_OVR_PARENT = "icons/ovr16/path_inherit_co.gif"; //$NON-NLS-1$
+	/** @since 5.4 */
+	public static final String IMG_OVR_EDITED = "icons/ovr16/edited_ovr.gif"; //$NON-NLS-1$
+	/** @since 5.4 */
+	public static final String IMG_OVR_USER = "icons/ovr16/person_ovr.gif"; //$NON-NLS-1$
 
 	// Pin & Clone
     public static final String IMG_THREAD_SUSPENDED_R_PINNED = "icons/obj16/threads_obj_r.gif"; //$NON-NLS-1$

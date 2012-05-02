@@ -1,0 +1,200 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.cdt.ui" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.cdt.ui" id="LanguageSettingsProviderAssociation" name="Language Settings Provider UI Associations"/>
+      </appInfo>
+      <documentation>
+         This extension point defines appearance and behavior of UI controls for Language Settings Providers defined with extension point &lt;samp&gt;org.eclipse.cdt.core.LanguageSettingsProvider&lt;/samp&gt;.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+         <documentation>
+            This extension point is used to define appearance and behavior of Language Settings Providers in user interface.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="id-association" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="class-association" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  ID of the extension point, not used
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  Name of the extension point, not used
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="id-association">
+      <annotation>
+         <documentation>
+            The definition of UI elements associated with ID of language settings provider.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  ID of language settings provider for which appearance is being defined.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="icon" type="string">
+            <annotation>
+               <documentation>
+                  The path to the provider icon in the defining plugin, for example icons/obj16/picture.gif.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="page" type="string">
+            <annotation>
+               <documentation>
+                  Options page for the provider to appear in preferences in Providers tab.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.cdt.ui.dialogs.ICOptionPage"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="ui-edit-entries" type="boolean">
+            <annotation>
+               <documentation>
+                  Defines if user is allowed to edit provider&apos;s entries in UI.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="ui-clear-entries" type="boolean">
+            <annotation>
+               <documentation>
+                  Defines if user is allowed to clear provider&apos;s entries in UI. For some providers like compiler specs detectors that may trigger automatic rerun.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="class-association">
+      <annotation>
+         <documentation>
+            The definition of UI elements associated with type of language settings provider. Providers subclassed from this type will inherit characteristics from closest super-type (unless exact ID association is defined).
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Class of language settings provider for which appearance is being defined.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="icon" type="string">
+            <annotation>
+               <documentation>
+                  The path to the provider icon in the defining plugin, for example icons/obj16/picture.gif.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="page" type="string">
+            <annotation>
+               <documentation>
+                  Options page for the provider to appear in preferences in Providers tab.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.cdt.ui.dialogs.ICOptionPage"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="ui-edit-entries" type="boolean">
+            <annotation>
+               <documentation>
+                  Defines if user is allowed to edit provider&apos;s entries in UI.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="ui-clear-entries" type="boolean">
+            <annotation>
+               <documentation>
+                  Defines if user is allowed to clear provider&apos;s entries in UI. For some providers like compiler specs detectors that may trigger automatic rerun.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         CDT 8.1
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         For an example see definition for org.eclipse.cdt.ui.UserLanguageSettingsProvider.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiinfo"/>
+      </appInfo>
+      <documentation>
+         [Enter API information here.]
+      </documentation>
+   </annotation>
+
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         Copyright (c) 2010, 2012 Andrew Gvozdev and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Eclipse Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/epl-v10.html
+      </documentation>
+   </annotation>
+
+</schema>

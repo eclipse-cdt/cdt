@@ -61,6 +61,10 @@ public class Messages extends NLS {
 	public static String BuildToolSettingsPage_tool_advancedSettings;
 	public static String BuildToolSettingsPage_tool_command;
 	public static String BuildToolSettingsPage_tool_commandLinePattern;
+	public static String BuiltinSpecsDetectorOptionPage_AllocateConsole;
+	public static String BuiltinSpecsDetectorOptionPage_Browse;
+	public static String BuiltinSpecsDetectorOptionPage_ChooseFile;
+	public static String BuiltinSpecsDetectorOptionPage_CompilerSpecsCommand;
 	public static String CConfigWizardPage_0;
 	public static String CConfigWizardPage_1;
 	public static String CConfigWizardPage_10;
@@ -105,6 +109,12 @@ public class Messages extends NLS {
 	public static String DiscoveryTab_ErrorClearingEntries;
 	public static String EnvironmentTab_15;
 	public static String EnvironmentTab_23;
+	public static String GCCBuildCommandParserOptionPage_CompilerPattern;
+	public static String GCCBuildCommandParserOptionPage_ContainerForDiscoveredEntries;
+	public static String GCCBuildCommandParserOptionPage_File;
+	public static String GCCBuildCommandParserOptionPage_Folder;
+	public static String GCCBuildCommandParserOptionPage_Project;
+	public static String GCCBuildCommandParserOptionPage_ResolvePaths;
 	public static String MacrosBlock_label_delete_all_confirm_message;
 	public static String MacrosBlock_label_delete_all_confirm_title;
 	public static String MacrosBlock_label_delete_confirm_message;
@@ -212,6 +222,7 @@ public class Messages extends NLS {
 	public static String PropertyPageDefsTab_8;
 	public static String PropertyPageDefsTab_9;
 	public static String PropertyPageDefsTab_showIncludeFileTab;
+	public static String PropertyPageDefsTab_showProvidersTab;
 	public static String RefreshPolicyExceptionDialog_addDialogLabel;
 	public static String RefreshPolicyExceptionDialog_AddExceptionInfoDialog_message;
 	public static String RefreshPolicyExceptionDialog_AddExceptionInfoDialog_title;

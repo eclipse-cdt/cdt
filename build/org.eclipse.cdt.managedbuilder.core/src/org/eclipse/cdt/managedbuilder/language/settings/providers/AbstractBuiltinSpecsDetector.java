@@ -79,7 +79,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 	private static final String CDT_MANAGEDBUILDER_UI_PLUGIN_ID = "org.eclipse.cdt.managedbuilder.ui"; //$NON-NLS-1$
 	private static final String SCANNER_DISCOVERY_CONSOLE = "org.eclipse.cdt.managedbuilder.ScannerDiscoveryConsole"; //$NON-NLS-1$
 	private static final String SCANNER_DISCOVERY_GLOBAL_CONSOLE = "org.eclipse.cdt.managedbuilder.ScannerDiscoveryGlobalConsole"; //$NON-NLS-1$
-	private static final String DEFAULT_CONSOLE_ICON = "icons/obj16/inspect_system.gif"; //$NON-NLS-1$
+	private static final String DEFAULT_CONSOLE_ICON = "icons/obj16/inspect_sys.gif"; //$NON-NLS-1$
 	private static final String GMAKE_ERROR_PARSER_ID = "org.eclipse.cdt.core.GmakeErrorParser"; //$NON-NLS-1$
 
 	private static final String ATTR_PARAMETER = "parameter"; //$NON-NLS-1$

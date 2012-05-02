@@ -456,15 +456,6 @@
            helpId="cdt_u_pref_multi_cfg"
            parent="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_MultiConfig">
      </tab>
-     <!-- AG FIXME - rather use managedbuilder page ??? -->
-     <tab
-           class="org.eclipse.cdt.internal.ui.language.settings.providers.LanguageSettingsProviderTab"
-           icon="icons/obj16/search.gif"
-           name="%LanguageSettingsProvidersTab.name"
-           parent="org.eclipse.cdt.make.internal.ui.preferences.BuildSettingsPreferencePage"
-           tooltip="%LanguageSettingsProvidersTab.tooltip"
-           weight="000">
-     </tab>
   </extension>   
 
       <extension
@@ -634,7 +625,6 @@
             name="%MBSPerProjectProfile.name"
             profileId="org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfileCPP"/>
    </extension>
-
      <extension
            point="org.eclipse.cdt.ui.workingSetConfigurations">
         <projectConfigurationFactory
@@ -658,45 +648,6 @@
            </description>
         </wizard>
      </extension>
-
-   <extension
-            point="org.eclipse.cdt.ui.LanguageSettingsProviderAssociation">
-         <id-association
-              id="org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider"
-              icon="icons/obj16/mbs.gif"
-              ui-clear-entries="false"
-              ui-edit-entries="false">
-         </id-association>
-      <class-association
-            class="org.eclipse.cdt.managedbuilder.language.settings.providers.AbstractBuildCommandParser"
-            icon="icons/obj16/log_obj.gif"
-            page="org.eclipse.cdt.managedbuilder.internal.ui.language.settings.providers.GCCBuildCommandParserOptionPage"
-            ui-clear-entries="true"
-            ui-edit-entries="false">
-      </class-association>
-      <class-association
-            class="org.eclipse.cdt.managedbuilder.language.settings.providers.AbstractBuiltinSpecsDetector"
-            icon="icons/obj16/inspect_system.gif"
-            page="org.eclipse.cdt.managedbuilder.internal.ui.language.settings.providers.BuiltinSpecsDetectorOptionPage"
-            ui-clear-entries="true"
-            ui-edit-entries="false">
-      </class-association>
-   </extension>
-   <extension
-         point="org.eclipse.cdt.core.CBuildConsole">
-      <CBuildConsole
-            id="org.eclipse.cdt.managedbuilder.ScannerDiscoveryConsole"
-            class="org.eclipse.cdt.managedbuilder.internal.ui.language.settings.providers.ScannerDiscoveryConsole">
-      </CBuildConsole>
-   </extension>
-   <extension
-         point="org.eclipse.cdt.core.CBuildConsole">
-      <CBuildConsole
-            id="org.eclipse.cdt.managedbuilder.ScannerDiscoveryGlobalConsole"
-            class="org.eclipse.cdt.managedbuilder.internal.ui.language.settings.providers.ScannerDiscoveryGlobalConsole">
-      </CBuildConsole>
-   </extension>
-
      <extension
            point="org.eclipse.cdt.ui.projectTypePages">
         <projectTypePage
@@ -720,5 +671,42 @@
               projectType="org.eclipse.cdt.build.makefile.projectType">
         </projectTypePage>
      </extension>
-   
+   <extension
+            point="org.eclipse.cdt.ui.LanguageSettingsProviderAssociation">
+         <id-association
+              id="org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider"
+              icon="icons/obj16/mbs.gif"
+              ui-clear-entries="false"
+              ui-edit-entries="false">
+         </id-association>
+      <class-association
+            class="org.eclipse.cdt.managedbuilder.language.settings.providers.AbstractBuildCommandParser"
+            icon="icons/obj16/log_obj.gif"
+            page="org.eclipse.cdt.managedbuilder.internal.ui.language.settings.providers.GCCBuildCommandParserOptionPage"
+            ui-clear-entries="true"
+            ui-edit-entries="false">
+      </class-association>
+      <class-association
+            class="org.eclipse.cdt.managedbuilder.language.settings.providers.AbstractBuiltinSpecsDetector"
+            icon="icons/obj16/inspect_sys.gif"
+            page="org.eclipse.cdt.managedbuilder.internal.ui.language.settings.providers.BuiltinSpecsDetectorOptionPage"
+            ui-clear-entries="true"
+            ui-edit-entries="false">
+      </class-association>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.core.CBuildConsole">
+      <CBuildConsole
+            id="org.eclipse.cdt.managedbuilder.ScannerDiscoveryConsole"
+            class="org.eclipse.cdt.managedbuilder.internal.ui.language.settings.providers.ScannerDiscoveryConsole">
+      </CBuildConsole>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.core.CBuildConsole">
+      <CBuildConsole
+            id="org.eclipse.cdt.managedbuilder.ScannerDiscoveryGlobalConsole"
+            class="org.eclipse.cdt.managedbuilder.internal.ui.language.settings.providers.ScannerDiscoveryGlobalConsole">
+      </CBuildConsole>
+   </extension>
+
 </plugin>

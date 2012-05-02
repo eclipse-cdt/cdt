@@ -461,6 +461,7 @@
            helpId="cdt_u_prop_pns_sym"
            parent="org.eclipse.cdt.make.internal.ui.properties.PathAndSymbolPage"
            tooltip="%Symbols.tooltip"/>
+     <!-- AG FIXME - rather use managedbuilder page ??? -->
      <tab
            class="org.eclipse.cdt.ui.newui.ErrorParsTab"
            helpId="cdt_u_prop_build_setting_errparser"
@@ -469,6 +470,14 @@
            parent="org.eclipse.cdt.make.internal.ui.preferences.BuildSettingsPreferencePage"
            tooltip="%ErrorParsersTab.tooltip"
            weight="020">
+     </tab>
+     <tab
+           class="org.eclipse.cdt.internal.ui.language.settings.providers.LanguageSettingsProviderTab"
+           icon="icons/obj16/search.gif"
+           name="%LanguageSettingsProvidersTab.name"
+           parent="org.eclipse.cdt.make.internal.ui.preferences.BuildSettingsPreferencePage"
+           tooltip="%LanguageSettingsProvidersTab.tooltip"
+           weight="040">
      </tab>
    </extension>
 

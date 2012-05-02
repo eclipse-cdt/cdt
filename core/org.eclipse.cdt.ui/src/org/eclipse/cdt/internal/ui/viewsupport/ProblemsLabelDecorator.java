@@ -385,7 +385,7 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 		}
 	}
 
-	public static boolean isCustomizedResource(ICConfigurationDescription cfgDescription, IResource rc) {
+	private static boolean isCustomizedResource(ICConfigurationDescription cfgDescription, IResource rc) {
 		if (rc instanceof IProject)
 			return false;
 
@@ -398,7 +398,7 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 			for (ILanguageSettingsProvider provider: ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders()) {
 				for (String languageId : LanguageSettingsManager.getLanguages(rc, cfgDescription)) {
 					List<ICLanguageSettingEntry> list = provider.getSettingEntries(cfgDescription, rc, languageId);
-					if (list!=null) {
+					if (list != null) {
 						List<ICLanguageSettingEntry> listDefault = provider.getSettingEntries(cfgDescription, rc.getParent(), languageId);
 						// != is OK here due as the equal lists will have the same reference in WeakHashSet
 						if (list != listDefault)

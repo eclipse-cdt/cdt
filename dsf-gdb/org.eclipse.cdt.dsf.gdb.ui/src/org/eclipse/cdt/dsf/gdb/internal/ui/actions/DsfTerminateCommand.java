@@ -76,7 +76,11 @@ public class DsfTerminateCommand implements ITerminateHandler {
 				}
 			}
 			// Marking the request as cancelled will prevent the removal of 
-			// the launch from the Debug view in case of "Terminate and Remove". 
+			// the launch from the Debug view in case of "Terminate and Remove".
+			// This is important for multi-process sessions when "Terminate and Remove"
+			// is applied to one of the running processes. In this case the selected
+			// process will be terminated but the associated launch will not be removed 
+			// from the Debug view.
 			fRequest.setStatus(result ? Status.OK_STATUS : Status.CANCEL_STATUS);
 			fRequest.done();
 			DsfSession.removeSessionEndedListener(WaitForTerminationJob.this);

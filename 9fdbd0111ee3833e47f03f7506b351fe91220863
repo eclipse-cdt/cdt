@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "AABOHH///Xw\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/DsfTerminateCommand.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-05-02T17:14:53Z",
+      "side": 1,
+      "message": "Sorry, the code is meant to go in the execute() methods, at the place we create WaitForTerminationJob()",
+      "parentUuid": "AABOHH///X4\u003d",
+      "revId": "9fdbd0111ee3833e47f03f7506b351fe91220863",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOHH///lg\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/DsfTerminateCommand.java",
         "patchSetId": 2

@@ -3773,10 +3773,13 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 	@Override
 	protected void editorSaved() {
 		super.editorSaved();
-		ITranslationUnit translationUnit = getInputCElement().getOriginalElement();
-		if (translationUnit != null) {
-			for (Object listener : fPostSaveListeners.getListeners()) {
-				((IPostSaveListener) listener).saved(translationUnit, getProgressMonitor());
+		IWorkingCopy inputCElement = getInputCElement();
+		if (inputCElement != null) {
+			ITranslationUnit translationUnit = inputCElement.getOriginalElement();
+			if (translationUnit != null) {
+				for (Object listener : fPostSaveListeners.getListeners()) {
+					((IPostSaveListener) listener).saved(translationUnit, getProgressMonitor());
+				}
 			}
 		}
 	}

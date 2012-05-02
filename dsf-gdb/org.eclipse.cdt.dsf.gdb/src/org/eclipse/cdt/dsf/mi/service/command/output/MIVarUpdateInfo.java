@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 QNX Software Systems and others.
+ * Copyright (c) 2000, 2012 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Jens Elmenthaler (Verigy) - Added Full GDB pretty-printing support (bug 302121)
+ *     Anton Gorenkov - DSF-GDB should properly handle variable type change (based on RTTI) (Bug 376901)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service.command.output;
 
@@ -98,6 +99,10 @@ public class MIVarUpdateInfo extends MIInfo {
 				} else if (var.equals("type_changed")) { //$NON-NLS-1$
 					if (change != null) {
 						change.setChanged("true".equals(str)); //$NON-NLS-1$
+					}
+				} else if (var.equals("new_type")) { //$NON-NLS-1$
+					if (change != null) {
+						change.setNewType(str);
 					}
 				} else if (var.equals("new_num_children")) { //$NON-NLS-1$
 					if (change != null) {

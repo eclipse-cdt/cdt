@@ -92,7 +92,8 @@ public interface IWritableIndex extends IIndex {
 
 	/**
 	 * Makes an uncommitted file that was created earlier by calling
-	 * {@link #addUncommittedFile(int, IIndexFileLocation, ISignificantMacros)} method visible in the index.
+	 * {@link #addUncommittedFile(int, IIndexFileLocation, ISignificantMacros)} method visible
+	 * in the index.
 	 *
 	 * @return The file that was updated.
 	 * @throws CoreException

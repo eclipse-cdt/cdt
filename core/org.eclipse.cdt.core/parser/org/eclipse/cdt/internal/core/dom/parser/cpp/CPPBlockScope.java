@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Andrew Niefer (IBM Corporation) - Initial API and implementation 
- *    Markus Schorn (Wind River Systems)
+ *     Andrew Niefer (IBM Corporation) - Initial API and implementation 
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -21,8 +21,9 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 
 public class CPPBlockScope extends CPPNamespaceScope implements ICPPBlockScope {
-	public CPPBlockScope( IASTNode physicalNode ){
-		super( physicalNode );
+
+	public CPPBlockScope(IASTNode physicalNode) {
+		super(physicalNode);
 	}
 	
 	@Override

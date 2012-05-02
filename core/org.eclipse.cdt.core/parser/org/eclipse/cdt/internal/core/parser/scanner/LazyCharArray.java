@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *    Sergey Prigogin (Google)
+ *     Markus Schorn - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.parser.scanner;
 
@@ -16,8 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Implementation of char array for a file referencing content via 
- * soft references.
+ * Implementation of char array for a file referencing content via soft references.
  * Because of bug 320157 we need to deal with chunks of different length.
  */
 public abstract class LazyCharArray extends AbstractCharArray {
@@ -95,14 +94,14 @@ public abstract class LazyCharArray extends AbstractCharArray {
 	@Override
 	public final void arraycopy(int offset, char[] destination, int destinationPos, int length) {
 		final Chunk chunk= getChunkForOffset(offset);
-		final int offsetInChunk= offset-chunk.fCharOffset;
+		final int offsetInChunk= offset - chunk.fCharOffset;
 		final char[] data= getChunkData(chunk);
 		final int maxLenInChunk = data.length - offsetInChunk;
 		if (length <= maxLenInChunk) {
 			System.arraycopy(data, offsetInChunk, destination, destinationPos, length);
 		} else {
 			System.arraycopy(data, offsetInChunk, destination, destinationPos, maxLenInChunk);
-			arraycopy(offset+maxLenInChunk, destination, destinationPos+maxLenInChunk, length-maxLenInChunk);
+			arraycopy(offset + maxLenInChunk, destination, destinationPos + maxLenInChunk, length - maxLenInChunk);
 		}
 	}
 

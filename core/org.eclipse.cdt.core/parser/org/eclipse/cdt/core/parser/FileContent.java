@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *    Sergey Prigogin (Google)
+ *     Markus Schorn - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/ 
 package org.eclipse.cdt.core.parser;
 
@@ -21,7 +21,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 
-
 /**
  * Abstract class for representing the content of a file.
  * It serves as the input to the preprocessor.
@@ -30,7 +29,6 @@ import org.eclipse.core.runtime.IPath;
  * @since 5.2
  */
 public abstract class FileContent {
-
 	/** 
 	 * Returns the location of this file content as it will appear in {@link IASTFileLocation#getFileName()}
 	 */

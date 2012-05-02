@@ -164,18 +164,20 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     };
 
     private static class IncludeResolution {
-    	String fLocation;
-    	boolean fHeuristic;
+    	final String fLocation;
+    	final boolean fHeuristic;
+
+    	IncludeResolution(String location, boolean heusistic) {
+    		fLocation = location;
+    		fHeuristic = heusistic;
+    	}
     }
 
     final private IIncludeFileTester<IncludeResolution> createPathTester= new IIncludeFileTester<IncludeResolution>() {
     	@Override
 		public IncludeResolution checkFile(String path, boolean isHeuristicMatch, IncludeSearchPathElement onPath) {
     		if (fFileContentProvider.getInclusionExists(path)) {
-    			IncludeResolution res= new IncludeResolution();
-    			res.fHeuristic= isHeuristicMatch;
-    			res.fLocation= path;
-    			return res;
+    			return new IncludeResolution(path, isHeuristicMatch);
     		}
     		return null;
     	}

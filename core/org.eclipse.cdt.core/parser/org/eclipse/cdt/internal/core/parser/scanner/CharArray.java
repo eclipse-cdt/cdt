@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *    Sergey Prigogin (Google)
+ *     Markus Schorn - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.parser.scanner;
 
@@ -15,7 +15,6 @@ package org.eclipse.cdt.internal.core.parser.scanner;
  * Wrapper around char[] to implement {@link AbstractCharArray}.
  */
 public final class CharArray extends AbstractCharArray {
-
 	private final char[] fArray;
 	private long hash64;
 

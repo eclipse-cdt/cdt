@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *    Sergey Prigogin (Google)
+ *     Markus Schorn - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.parser.scanner;
 
@@ -16,7 +16,6 @@ package org.eclipse.cdt.internal.core.parser.scanner;
  * @since 5.2
  */
 public abstract class AbstractCharArray {
-
 	/**
 	 * Returns the length of this array or -1 if it is yet, unknown. This method may be called
 	 * before the array has been traversed.
@@ -25,8 +24,8 @@ public abstract class AbstractCharArray {
 	
 	/**
 	 * Returns the length of the array. This method is called only after the lexer has worked its
-	 * way through the array. Therefore for subclasses it is efficient enough to read through to the
-	 * end of the array and provide the length. 
+	 * way through the array. Therefore for subclasses it is efficient enough to read through to
+	 * the end of the array and provide the length. 
 	 */
 	public abstract int getLength();
 
@@ -37,8 +36,8 @@ public abstract class AbstractCharArray {
 	public abstract boolean isValidOffset(int offset);
 
 	/**
-	 * Computes 64-bit hash value of the character array. This method doesn't cause any I/O if called
-	 * after the array has been traversed.
+	 * Computes 64-bit hash value of the character array. This method doesn't cause any I/O if
+	 * called after the array has been traversed.
 	 * @return The hash value of the contents of the array.
 	 */
 	public abstract long getContentsHash();

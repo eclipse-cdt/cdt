@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.parser.scanner;
 
@@ -25,14 +25,13 @@ import java.nio.charset.CodingErrorAction;
 import org.eclipse.cdt.core.CCorePlugin;
 
 /**
- * Implementation of char array for a file referencing content via 
- * soft references.
+ * Implementation of char array for a file referencing content via soft references.
  */
 public class FileCharArray extends LazyCharArray {
 	private static final String UTF8_CHARSET_NAME = "UTF-8"; //$NON-NLS-1$
 
 	public static AbstractCharArray create(String fileName, String charSet, InputStream in) throws IOException {
-		// no support for non-local files
+		// No support for non-local files.
 		if (!(in instanceof FileInputStream)) {
 			return null;
 		}
@@ -84,10 +83,9 @@ public class FileCharArray extends LazyCharArray {
 	private String fFileName;
 	private String fCharSet;
 	private FileChannel fChannel;
-	private long fNextFileOffset= 0;
-	private int fNextCharOffset= 0;
-	private boolean fReachedEOF= false;
-	
+	private long fNextFileOffset;
+	private int fNextCharOffset;
+	private boolean fReachedEOF;
 
 	private FileCharArray(String fileName, String charSet) {
 		fFileName= fileName;
@@ -192,7 +190,8 @@ public class FileCharArray extends LazyCharArray {
 
 	private void decode(FileChannel channel, long fileOffset, long fileEndOffset, CharBuffer dest) throws IOException {
 		final Charset charset = Charset.forName(fCharSet);
-		final CharsetDecoder decoder = charset.newDecoder().onMalformedInput(CodingErrorAction.REPLACE)
+		final CharsetDecoder decoder = charset.newDecoder()
+				.onMalformedInput(CodingErrorAction.REPLACE)
 				.onUnmappableCharacter(CodingErrorAction.REPLACE);
 
 		final ByteBuffer in = ByteBuffer.allocate((int) (fileEndOffset - fileOffset));

@@ -318,7 +318,6 @@ public class CPPNamespaceScope extends CPPScope implements ICPPInternalNamespace
 		fInlineNamespaceDefinitions.add(nsDef);
 	}
 
-	
 	public static ICPPNamespaceScope[] computeEnclosingNamespaceSet(ICPPInternalNamespaceScope nsScope) {
 		if (nsScope.isInlineNamepace()) {
 			try {

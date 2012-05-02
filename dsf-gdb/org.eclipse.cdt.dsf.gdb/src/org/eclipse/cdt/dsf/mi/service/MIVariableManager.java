@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Monta Vista and others.
+ * Copyright (c) 2008, 2012 Monta Vista and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
  *     Axel Mueller - Bug 306555 - Add support for cast to type / view as array (IExpressions2)
  *     Jens Elmenthaler (Verigy) - Added Full GDB pretty-printing support (bug 302121)
  *     Axel Mueller - Workaround for GDB bug where -var-info-path-expression gives invalid result (Bug 320277)
+ *     Anton Gorenkov - DSF-GDB should properly handle variable type change (based on RTTI) (Bug 376901)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service;
 
@@ -367,6 +368,8 @@ public class MIVariableManager implements ICommandControl {
 		// The children of this variable, if any.  
 		// Null means we didn't fetch them yet, while an empty array means no children
         private ExpressionInfo[] children = null; 
+        // we need to keep track of fake children because they are in the LRU and need to be removed in some cases.
+        private List<ExpressionInfo> fakeChildren = new ArrayList<ExpressionInfo>(3);
 		private boolean hasMore = false;
 		private MIDisplayHint displayHint = MIDisplayHint.NONE;
 		
@@ -504,11 +507,14 @@ public class MIVariableManager implements ICommandControl {
 		public boolean isPointer() { return (getGDBType() == null) ? false : getGDBType().getType() == GDBType.POINTER; }
 		public boolean isMethod() { return (getGDBType() == null) ? false : getGDBType().getType() == GDBType.FUNCTION; }
 		// A complex variable is one with children.  However, it must not be a pointer since a pointer 
-		// does have children, but is still a 'simple' variable, as it can be modifed.  
+		// does have children, but is still a 'simple' variable, as it can be modified.  
+		// A reference can be modified too, because it can be a reference to the base class before initialization
+		// and after initialization it can become a reference to the derived class (if gdb shows the value type and
+		// children taking into account RTTI ("set print object on")).
 		// Note that the numChildrenHint can be trusted when asking if the number of children is 0 or not
 		public boolean isComplex() {
 			return (getGDBType() == null) ? false
-					: getGDBType().getType() != GDBType.POINTER
+					: getGDBType().getType() != GDBType.POINTER && getGDBType().getType() != GDBType.REFERENCE
 							&& (getNumChildrenHint() > 0
 									|| hasMore() || getDisplayHint().isCollectionHint());
 		}
@@ -559,7 +565,7 @@ public class MIVariableManager implements ICommandControl {
 
 		/**
 		 * @param info
-		 * @param t
+		 * @param typeName
 		 * @param num
 		 *            If the correspinding MI variable is dynamic, the number of
 		 *            children currently fetched by gdb.
@@ -568,12 +574,19 @@ public class MIVariableManager implements ICommandControl {
 		 *            
 		 * @since 4.0
 		 */
-		public void setExpressionData(ExpressionInfo info, String t, int num, boolean hasMore) {
+		public void setExpressionData(ExpressionInfo info, String typeName, int num, boolean hasMore) {
 			exprInfo = info;
-			type = t;
-			gdbType = fGDBTypeParser.parse(t);
+			setType(typeName);
 			numChildrenHint = num;
 			this.hasMore = hasMore;
+		}
+		
+		/**
+		 * @since 4.1
+		 */
+		public void setType(String newTypeName) {
+			type = newTypeName;
+			gdbType = fGDBTypeParser.parse(newTypeName);
 		}
 
 		public void setValue(String format, String val) { valueMap.put(format, val); }
@@ -679,6 +692,47 @@ public class MIVariableManager implements ICommandControl {
         	}
         	
         	numChildrenHint = newNumChildren;
+        }
+
+        /**
+		 * Removes the specified child from LRU and makes the cleanup on its
+		 * children (if any).
+		 * 
+		 * @since 4.1
+		 */
+        private void cleanupChild(ExpressionInfo child) {
+			String childFullExpression = child.getFullExpr();
+			VariableObjectId childId = new VariableObjectId();
+			childId.generateId(childFullExpression, getInternalId());
+			MIVariableObject varobjOfChild = lruVariableList.remove(childId);
+			if (varobjOfChild != null) {
+				// Remove it from the list of modifiable descendants
+				getRootToUpdate().removeModifiableDescendant(varobjOfChild.getGdbName());
+				// Remove children recursively
+				varobjOfChild.cleanupChildren();
+			}
+        }
+        
+        /**
+		 * Removes all the children (real and fake) of the variable object from
+		 * LRU cache and from variable object itself. It is used when the type
+		 * of variable was changed.
+		 * 
+		 * @since 4.1
+		 */
+        public void cleanupChildren() {
+        	hasMore = false;
+        	if (children != null) {
+        		for (ExpressionInfo child : children) {
+        			cleanupChild(child);
+        		}
+        		children = null;
+            	numChildrenHint = 0;
+        	}
+        	for (ExpressionInfo fakeChild : fakeChildren) {
+    			cleanupChild(fakeChild);
+        	}
+        	fakeChildren.clear();
         }
         
         public void setParent(MIVariableObject p) { 
@@ -799,6 +853,19 @@ public class MIVariableManager implements ICommandControl {
          */
 		protected void processChange(final MIVarChange update, final RequestMonitor rm) {
 
+			// Handle the variable type change properly
+			if (update.isChanged()) {
+				setType(update.getNewType());
+				cleanupChildren();
+				editable = null;
+				updateLimit(IMIExpressions.CHILD_COUNT_LIMIT_UNSPECIFIED);
+			}
+			
+			// These properties of the variable will probably not change, 
+			// but if they are - we should handle it properly.  
+			setDisplayHint(update.getDisplayHint());
+			exprInfo.setDynamic(update.isDynamic());
+			
 			MIVar[] newChildren = update.getNewChildren();
 
 			// children == null means fetchChildren will happen later, so
@@ -850,7 +917,7 @@ public class MIVariableManager implements ICommandControl {
 					rm.done();
 				}
 			};
-			
+
 			// Process all the child MIVariableObjects.
 			int pendingVariableCreationCount = 0;
 			if (newChildren != null && newChildren.length != 0) {
@@ -1441,7 +1508,9 @@ public class MIVariableManager implements ICommandControl {
 														var.hasCastToBaseClassWorkaround = childHasCastToBaseClassWorkaround;
 														
 														if (fakeChild) {
-
+															if (! isSuccess()) {
+																fakeChildren.add(var.exprInfo);
+															}
 															addRealChildrenOfFake(var,	exprDmc, realChildren,
 																	arrayPosition, countingRm);
 														} else {
@@ -1451,7 +1520,6 @@ public class MIVariableManager implements ICommandControl {
 														}														
 													}
 												});
-												
 											} else if (childVar.currentState == STATE_CREATION_FAILED) {
 												// There has been an attempt the create a MIRootVariableObject for a full
 												// expression representing a child of a dynamic varobj. Such an attempt always
@@ -1473,7 +1541,7 @@ public class MIVariableManager implements ICommandControl {
 											childVar.hasCastToBaseClassWorkaround = childHasCastToBaseClassWorkaround;
 
 											if (fakeChild) {
-												
+												fakeChildren.add(childVar.exprInfo);
 												addRealChildrenOfFake(childVar,	exprDmc, realChildren,
 														arrayPosition, countingRm);
 											} else {
@@ -2019,6 +2087,17 @@ public class MIVariableManager implements ICommandControl {
 		// Remember that we must add ourself as a modifiable descendant if our value can change
 		public void addModifiableDescendant(String gdbName, MIVariableObject descendant) {
 			modifiableDescendants.put(gdbName, descendant);
+		}
+		
+		/**
+		 * Removes the descendant with the specified name from the collection of
+		 * modifiable descendants. Does nothing if there is no child with such
+		 * name.
+		 * 
+		 * @since 4.1
+		 */
+		public void removeModifiableDescendant(String gdbName) {
+			modifiableDescendants.remove(gdbName);
 		}
 		
 		/**

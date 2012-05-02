@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2012 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  * Martin Oberhuber (Wind River)      - [227320] Fix endless loop in SshTerminalShell
  * Yufen Kuo        (MontaVista)      - [274153] Fix pipe closed with RSE
  * Anna Dushistova  (Mentor Graphics) - Returned "session lost" handling to isActive()
+ * Anna Dushistova  (MontaVista)      - [371142] [shells][terminals] Keep shell alive while there is anything in a pipe
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.ssh.terminal;
@@ -216,7 +217,13 @@ public class SshTerminalShell extends AbstractTerminalShell {
 	}
 
 	 public boolean isActive() {
-		if (fChannel != null && !fChannel.isEOF()) {
+		 boolean hasInput = false;
+		 try {
+			hasInput = getInputStream().available() > 0;
+		} catch (IOException e) {
+			// Do nothing since we are just polling
+		}
+		if (fChannel != null && (!fChannel.isEOF() || hasInput)) {
 			return true;
 		}
 		// shell is not active: check for session lost

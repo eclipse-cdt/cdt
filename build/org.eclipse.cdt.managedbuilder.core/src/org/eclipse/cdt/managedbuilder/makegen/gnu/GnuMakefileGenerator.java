@@ -3044,7 +3044,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 								boolean b = false;
 								if (allRes.size() > 0) b = true;
 								ManagedBuildManager.setOption(rcInfo, tool, assignToOption, b);
-							} else if (optType == IOption.ENUMERATED) {
+							} else if (optType == IOption.ENUMERATED || optType == IOption.TREE) {
 								if (allRes.size() > 0) {
 									String s = allRes.get(0).toString();
 									ManagedBuildManager.setOption(rcInfo, tool, assignToOption, s);

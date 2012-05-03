@@ -22,6 +22,9 @@ import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IOption;
+import org.eclipse.cdt.managedbuilder.core.IOption.ITreeOption;
+import org.eclipse.cdt.managedbuilder.core.IOption.ITreeRoot;
+import org.eclipse.cdt.managedbuilder.core.IOptionApplicability;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.ITargetPlatform;
@@ -30,6 +33,7 @@ import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.core.Builder;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.junit.Assert;
 
 
 public class ManagedBuildCoreTests extends TestCase {
@@ -44,6 +48,7 @@ public class ManagedBuildCoreTests extends TestCase {
 	public static Test suite() {
 		TestSuite suite = new TestSuite(ManagedBuildCoreTests.class.getName());		
 		suite.addTest(new ManagedBuildCoreTests("testLoadManifest"));
+		suite.addTest(new ManagedBuildCoreTests("testTreeOptions"));
 		return suite;
 	}
 
@@ -598,5 +603,64 @@ public class ManagedBuildCoreTests extends TestCase {
 		     
 		} // end for				
 	} // end routine
+
+	/**
+	 * Tests Options of type tree as implemented in bug 365718
+	 * @throws Exception
+	 */
+	public void testTreeOptions() throws Exception {
+		IOption treeOption = ManagedBuildManager.getExtensionOption("cdt.managedbuild.tool.gnu.c.linker.test.tree.option");
+		assertNotNull(treeOption);
+
+		// standard options
+		assertEquals(IOption.TREE, treeOption.getValueType());
+		assertEquals("grandChild_1_1_1", treeOption.getValue());
+		assertEquals("grandChild_1_1_1", treeOption.getDefaultValue());
+		assertEquals("cdt.managedbuild.tool.gnu.c.linker.test.tree.option", treeOption.getId());
+		assertEquals("-dummy", treeOption.getCommand());
+		assertEquals("-dummy122", treeOption.getCommand("grandChild_1_2_2"));
+
+		String[] applicableValues = treeOption.getApplicableValues();
+		String[] expected = new String[18];
+		int index = 0;
+		for (int i = 1; i < 4; i++) {
+			for (int j = 1; j < 3; j++) {
+				for (int k = 1; k < 4; k++) {
+					expected[index++] = "Grand Child " + i + ' ' + j + ' ' + k;
+				}
+			}
+		}
+		Assert.assertArrayEquals(expected, applicableValues);
+
+		ITreeRoot treeRoot = treeOption.getTreeRoot();
+		assertNotNull(treeRoot);
+
+		// test some tree option attributes
+		ITreeOption[] children = treeRoot.getChildren();
+		assertNotNull(children);
+		assertEquals(0, children[2].getOrder());
+		assertEquals("Parent 2", children[1].getName());
+		assertTrue(children[0].isContainer());
+
+		ITreeOption findNode = treeRoot.findNode("grandChild_2_1_3");
+		assertNotNull(findNode);
+
+		int size = children.length;
+		treeRoot.addChild("newID", "New Name");
+		assertEquals(size+1, treeRoot.getChildren().length);
+		assertEquals("newID", treeRoot.getChild("New Name").getID());
+
+		// check tree only methods
+		IOption nonTreeOption = ManagedBuildManager.getExtensionOption("testgnu.c.compiler.exe.debug.option.debugging.level");
+		assertFalse(IOption.TREE == nonTreeOption.getValueType());
+		boolean exception = false;
+		try {
+			nonTreeOption.getTreeRoot();
+		} catch (Exception e) {
+			exception = true;
+		}
+		assertTrue(exception);
+
+	}
 } // end class
 

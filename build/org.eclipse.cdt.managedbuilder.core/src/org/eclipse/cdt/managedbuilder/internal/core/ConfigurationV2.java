@@ -132,6 +132,7 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 							new OptionReference(newRef, opt).setValue(optRef.getBooleanValue());
 							break;
 						case IOption.STRING:
+						case IOption.TREE:
 							new OptionReference(newRef, opt).setValue(optRef.getStringValue());
 							break;
 						case IOption.ENUMERATED:

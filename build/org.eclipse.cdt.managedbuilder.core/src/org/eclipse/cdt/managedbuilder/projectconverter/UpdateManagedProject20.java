@@ -427,6 +427,7 @@ class UpdateManagedProject20 {
 						break;
 					}
 				case IOption.ENUMERATED:
+				case IOption.TREE:
 				case IOption.STRING:{
 						if(optRef.hasAttribute(IOption.DEFAULT_VALUE))
 							configuration.setOption(tool,option,optRef.getAttribute(IOption.DEFAULT_VALUE));

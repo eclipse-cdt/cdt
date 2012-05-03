@@ -29,10 +29,36 @@ import org.eclipse.core.runtime.IPath;
  * @since 5.2
  */
 public abstract class FileContent {
+	/** @since 5.4 */
+	public static final long NULL_TIMESTAMP = -1;
+	/** @since 5.4 */
+	public static final long NULL_FILE_SIZE = -1;
+
 	/** 
 	 * Returns the location of this file content as it will appear in {@link IASTFileLocation#getFileName()}
 	 */
 	public abstract String getFileLocation();
+
+	/**
+	 * Returns the modification time of the file containing the content or NULL_TIMESTAMP if
+	 * the content does not originate from a file. A zero value may be returned if there was
+	 * an I/O error.
+	 * @since 5.4
+	 */
+	public abstract long getTimestamp();
+
+	/**
+	 * Returns the size of the file, or NULL_FILE_SIZE if the content does not originate from
+	 * a file. A zero value may be returned if there was an I/O error.
+	 * @since 5.4
+	 */
+	public abstract long getFileSize();
+
+	/**
+	 * Returns {@code true} if there were I/O errors while retrieving contents of this file.
+	 * @since 5.4
+	 */
+	public abstract boolean hasError();
 
 	/**
 	 * Returns a 64-bit hash value of the file contents.
@@ -47,7 +73,7 @@ public abstract class FileContent {
 	public static FileContent create(String filePath, char[] contents) {
 		return new InternalFileContent(filePath, new CharArray(contents));
 	}
-	
+
 	/**
 	 * Creates a file content object for a translation-unit, which may be a working copy.
 	 */

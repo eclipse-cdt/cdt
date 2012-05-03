@@ -320,7 +320,7 @@ public class ProjectIndexerInputAdapter extends IndexerInputAdapter {
 		ITranslationUnit tu= (ITranslationUnit) tuo;
 		if (tu.getLocation() == null)
 			return null;
-		
+
 		final FileContent reader= FileContent.create(tu);
 		if (reader != null) {
 			IIndexFileLocation ifl= IndexLocationFactory.getIFL(tu);

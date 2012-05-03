@@ -37,12 +37,12 @@ public abstract class IndexerInputAdapter extends ASTFilePathResolver {
 	/**
 	 * Returns the size of the file in bytes, or 0 if the file does not exist.
 	 */
-	public abstract long getFileSize(IIndexFileLocation ifl);
+	public abstract long getFileSize(IIndexFileLocation location);
 
 	/**
 	 * Returns the encoding for the file.
 	 */
-	public abstract String getEncoding(IIndexFileLocation ifl);
+	public abstract String getEncoding(IIndexFileLocation location);
 
 	/**
 	 * Create an index location for the given input file.
@@ -70,7 +70,7 @@ public abstract class IndexerInputAdapter extends ASTFilePathResolver {
 	 * @param ifl The Location of the file.
 	 * @return {@code true} if the file should be indexed unconditionally.
 	 */
-	public abstract boolean isIndexedUnconditionally(IIndexFileLocation ifl);
+	public abstract boolean isIndexedUnconditionally(IIndexFileLocation location);
 
 	/**
 	 * Tests whether the file in the index is allowed to be part of an SDK. If not

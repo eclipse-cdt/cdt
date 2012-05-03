@@ -54,6 +54,11 @@ public abstract class AbstractCharArray {
 	public abstract void arraycopy(int offset, char[] destination, int destinationPos, int length);
 
 	/**
+	 * Returns {@code true} if there were I/O errors while retrieving contents of this array.
+	 */
+	public abstract boolean hasError();
+
+	/**
 	 * This method is slow. Use only for debugging.
 	 */
 	@Override

@@ -30,7 +30,8 @@ import org.eclipse.cdt.core.CCorePlugin;
 public class FileCharArray extends LazyCharArray {
 	private static final String UTF8_CHARSET_NAME = "UTF-8"; //$NON-NLS-1$
 
-	public static AbstractCharArray create(String fileName, String charSet, InputStream in) throws IOException {
+	public static AbstractCharArray create(String fileName, String charSet, InputStream in)
+			throws IOException {
 		// No support for non-local files.
 		if (!(in instanceof FileInputStream)) {
 			return null;
@@ -48,7 +49,8 @@ public class FileCharArray extends LazyCharArray {
 		return new FileCharArray(fileName, charSet);
 	}
 	
-	private static AbstractCharArray decodeSmallFile(FileChannel channel, int lsize, String charSet) throws IOException {
+	private static AbstractCharArray decodeSmallFile(FileChannel channel, int lsize, String charSet)
+			throws IOException {
 		ByteBuffer byteBuffer = ByteBuffer.allocate(lsize);
 		channel.read(byteBuffer);
 		byteBuffer.flip();
@@ -80,8 +82,9 @@ public class FileCharArray extends LazyCharArray {
 		return buf;
 	}
 
-	private String fFileName;
-	private String fCharSet;
+	private final String fFileName;
+	private final String fCharSet;
+	private boolean fHasError;
 	private FileChannel fChannel;
 	private long fNextFileOffset;
 	private int fNextCharOffset;
@@ -97,8 +100,9 @@ public class FileCharArray extends LazyCharArray {
 		FileInputStream fis;
 		try {
 			fis = new FileInputStream(fFileName);
-		} catch (FileNotFoundException e1) {
+		} catch (FileNotFoundException e) {
 			// File has been deleted in the meantime
+			fHasError = true;
 			return null;
 		}
 		fChannel= fis.getChannel();
@@ -121,8 +125,9 @@ public class FileCharArray extends LazyCharArray {
 		try {
 			assert fChannel != null;
 			final Charset charset = Charset.forName(fCharSet);
-			final CharsetDecoder decoder = charset.newDecoder().onMalformedInput(CodingErrorAction.REPLACE)
-			.onUnmappableCharacter(CodingErrorAction.REPLACE);
+			final CharsetDecoder decoder = charset.newDecoder()
+					.onMalformedInput(CodingErrorAction.REPLACE)
+					.onUnmappableCharacter(CodingErrorAction.REPLACE);
 
 			int needBytes = 3 + (int) (CHUNK_SIZE * (double) decoder.averageCharsPerByte()); // avoid rounding errors.
 			final ByteBuffer in = ByteBuffer.allocate(needBytes);
@@ -141,7 +146,7 @@ public class FileCharArray extends LazyCharArray {
 					skipUTF8ByteOrderMark(in, fCharSet);
 				}
 				result = decoder.decode(in, dest, eof);
-				fileOffset+= in.position();
+				fileOffset += in.position();
 			} while (result == CoderResult.UNDERFLOW && !eof);
 
 			dest.flip();
@@ -154,14 +159,14 @@ public class FileCharArray extends LazyCharArray {
 			}
 			final char[] chars = extractChars(dest);
 			Chunk chunk = newChunk(fNextFileOffset, fileOffset, fNextCharOffset, chars);
-			fNextFileOffset= fileOffset;
-			fNextCharOffset+= chars.length;
-
+			fNextFileOffset = fileOffset;
+			fNextCharOffset += chars.length;
 			return chunk;
 		} catch (Exception e) {
 			// The file cannot be read
 			CCorePlugin.log(e);
-			fReachedEOF= true;
+			fHasError = true;
+			fReachedEOF = true;
 			return null;
 		}
 	}
@@ -173,6 +178,7 @@ public class FileCharArray extends LazyCharArray {
 			fis = new FileInputStream(fFileName);
 		} catch (FileNotFoundException e1) {
 			// File has been deleted in the meantime
+			fHasError = true;
 			return;
 		}
 		try {
@@ -180,6 +186,7 @@ public class FileCharArray extends LazyCharArray {
 			decode(channel, chunk.fSourceOffset, chunk.fSourceEndOffset, CharBuffer.wrap(dest));
 		} catch (IOException e) {
 			// File cannot be read
+			fHasError = true;
 		} finally {
 			try {
 				fis.close();
@@ -188,7 +195,8 @@ public class FileCharArray extends LazyCharArray {
 		}
 	}
 
-	private void decode(FileChannel channel, long fileOffset, long fileEndOffset, CharBuffer dest) throws IOException {
+	private void decode(FileChannel channel, long fileOffset, long fileEndOffset, CharBuffer dest)
+			throws IOException {
 		final Charset charset = Charset.forName(fCharSet);
 		final CharsetDecoder decoder = charset.newDecoder()
 				.onMalformedInput(CodingErrorAction.REPLACE)
@@ -204,5 +212,10 @@ public class FileCharArray extends LazyCharArray {
 			skipUTF8ByteOrderMark(in, fCharSet);
 		}
 		decoder.decode(in, dest, true);
+	}
+
+	@Override
+	public boolean hasError() {
+		return fHasError;
 	}
 }

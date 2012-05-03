@@ -27,6 +27,7 @@ import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent;
 import org.eclipse.cdt.internal.core.resources.PathCanonicalizationStrategy;
 import org.eclipse.cdt.utils.UNCPathConverter;
 import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -152,28 +153,30 @@ public class InternalParserUtil extends ParserFactory {
 		String path= file.getLocationURI().getPath();
 		path= normalizePath(path, file);
 
-		InputStream in;
+		InputStream input;
 		try {
-			in= file.getContents(true);
-			if (!(in instanceof FileInputStream)) {
+			IFileStore store = EFS.getStore(file.getLocationURI());
+			IFileInfo fileInfo = store.fetchInfo();
+			input= file.getContents(true);
+			if (!(input instanceof FileInputStream)) {
 				/*
-				 * In general, non-local file-systems will not use FileInputStream. Instead make a
-				 * cached copy of the file and open an input stream to that.
+				 * In general, non-local file-systems will not use FileInputStream.
+				 * Instead make a cached copy of the file and open an input stream to that.
 				 */
-				IFileStore store = EFS.getStore(file.getLocationURI());
 				File fileCache = store.toLocalFile(EFS.CACHE, null);
 				try {
-					in = new FileInputStream(fileCache);
+					input = new FileInputStream(fileCache);
 				} catch (FileNotFoundException e) {
 					CCorePlugin.log(e);
 					return null;
 				}
 			}
 			try {
-				return createFileContent(path, file.getCharset(), in);
+				return createFileContent(path, file.getCharset(), input,
+						fileInfo.getLastModified(), fileInfo.getLength());
 			} finally {
 				try {
-					in.close();
+					input.close();
 				} catch (IOException e) {
 				}
 			}
@@ -215,6 +218,8 @@ public class InternalParserUtil extends ParserFactory {
 			}
 		}
 		if (includeFile != null && includeFile.isFile()) {
+			long timestamp = includeFile.lastModified();
+			long fileSize = includeFile.length();
 			FileInputStream in;
 			try {
 				in = new FileInputStream(includeFile);
@@ -223,7 +228,7 @@ public class InternalParserUtil extends ParserFactory {
 				return null;
 			}
 			try {
-				return createFileContent(path, encoding, in);
+				return createFileContent(path, encoding, in, timestamp, fileSize);
 			} finally {
 				try {
 					in.close();
@@ -234,13 +239,14 @@ public class InternalParserUtil extends ParserFactory {
 		return null;
 	}
 
-	private static InternalFileContent createFileContent(String path, String charset, InputStream in) {
+	private static InternalFileContent createFileContent(String path, String charset, InputStream in,
+			long fileTimestamp, long fileSize) {
 		try {
 			AbstractCharArray chars= FileCharArray.create(path, charset, in);
 			if (chars == null)
 				return null;
 			
-			return new InternalFileContent(path, chars);
+			return new InternalFileContent(path, chars, fileTimestamp, fileSize);
 		} catch (IOException e) {
 			CCorePlugin.log(e);
 		}

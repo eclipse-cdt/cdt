@@ -56,6 +56,11 @@ public final class CharArray extends AbstractCharArray {
 	}
 
 	@Override
+	public boolean hasError() {
+		return false;
+	}
+
+	@Override
 	public long getContentsHash() {
 		if (hash64 == 0 && fArray.length != 0) {
 			StreamHasher hasher = new StreamHasher();

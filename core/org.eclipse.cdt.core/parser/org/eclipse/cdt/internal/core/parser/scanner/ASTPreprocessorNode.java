@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2012 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.parser.scanner;
 
@@ -294,7 +295,10 @@ class ASTInclusionStatement extends ASTPreprocessorNode implements IASTPreproces
 	private boolean fCreatesAST;
 	private ISignificantMacros fSignificantMacros;
 	private ISignificantMacros[] fLoadedVersions = NO_VERSIONS;
-	private long fContentsHash;
+	private long fIncludedFileContentsHash;
+	private long fIncludedFileTimestamp = -1;
+	private long fIncludedFileSize;
+	private boolean fErrorInIncludedFile;
 
 	public ASTInclusionStatement(IASTTranslationUnit parent, 
 			int startNumber, int nameStartNumber, int nameEndNumber, int endNumber,
@@ -388,17 +392,56 @@ class ASTInclusionStatement extends ASTPreprocessorNode implements IASTPreproces
 	}
 	
 	@Override
-	public long getContentsHash() {
+	public long getIncludedFileTimestamp() {
 		if (fNominationDelegate != null) {
 			return 0;
 		} 	
-		return fContentsHash;
+		return fIncludedFileTimestamp;
 	}
 	
-	public void setContentsHash(long hash) {
+	public void setIncludedFileTimestamp(long timestamp) {
+		assert fNominationDelegate == null;
+		fIncludedFileTimestamp= timestamp;
+	}
+
+	@Override
+	public long getIncludedFileSize() {
+		if (fNominationDelegate != null) {
+			return 0;
+		} 	
+		return fIncludedFileSize;
+	}
+	
+	public void setIncludedFileSize(long size) {
+		assert fNominationDelegate == null;
+		fIncludedFileSize= size;
+	}
+
+	@Override
+	public long getIncludedFileContentsHash() {
+		if (fNominationDelegate != null) {
+			return 0;
+		} 	
+		return fIncludedFileContentsHash;
+	}
+	
+	public void setIncludedFileContentsHash(long hash) {
 		assert fNominationDelegate == null;
 		fCreatesAST= true;
-		fContentsHash= hash;
+		fIncludedFileContentsHash= hash;
+	}
+
+	@Override
+	public boolean isErrorInIncludedFile() {
+		if (fNominationDelegate != null) {
+			return false;
+		} 	
+		return fErrorInIncludedFile;
+	}
+	
+	public void setErrorInIncludedFile(boolean error) {
+		assert fNominationDelegate == null;
+		fErrorInIncludedFile= error;
 	}
 
 	@Override

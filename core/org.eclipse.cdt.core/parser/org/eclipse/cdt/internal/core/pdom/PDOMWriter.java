@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2012 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,6 +48,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexInclude;
+import org.eclipse.cdt.core.parser.FileContent;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.ISignificantMacros;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
@@ -67,24 +68,40 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
 
 /**
- * Abstract class to write information from AST
+ * Abstract class to write information from AST.
  * @since 4.0
  */
 abstract public class PDOMWriter {
-	public static class FileInAST {
-		final IASTPreprocessorIncludeStatement fIncludeStatement;
-		final FileContentKey fFileContentKey;
-		final long fContentsHash;
 
-		public FileInAST(IASTPreprocessorIncludeStatement includeStmt, FileContentKey key, long contentsHash) {
-			fIncludeStatement= includeStmt;
-			fFileContentKey= key;
-			fContentsHash= contentsHash;
+	public static class FileInAST {
+		final IASTPreprocessorIncludeStatement includeStatement;
+		final FileContentKey fileContentKey;
+		final long timestamp;
+		final long fileSize;
+		final long contentsHash;
+		final boolean hasError;
+
+		public FileInAST(IASTPreprocessorIncludeStatement includeStmt, FileContentKey key) {
+			includeStatement= includeStmt;
+			fileContentKey= key;
+			timestamp= includeStmt.getIncludedFileTimestamp();
+			fileSize = includeStmt.getIncludedFileSize();
+			contentsHash= includeStmt.getIncludedFileContentsHash();
+			hasError= includeStmt.isErrorInIncludedFile();
 		}
-		
+
+		public FileInAST(FileContentKey key, FileContent codeReader) {
+			includeStatement= null;
+			fileContentKey= key;
+			timestamp= codeReader.getTimestamp();
+			fileSize= codeReader.getFileSize();
+			contentsHash= codeReader.getContentsHash();
+			hasError= codeReader.hasError();
+		}
+
 		@Override
 		public String toString() {
-			return fFileContentKey.toString();
+			return fileContentKey.toString();
 		}
 	}
 	
@@ -198,7 +215,7 @@ abstract public class PDOMWriter {
 		
 		Data data= new Data(ast, selectedFiles, index);
 		for (FileInAST file : selectedFiles) {
-			data.fSymbolMap.put(file.fIncludeStatement, new Symbols());
+			data.fSymbolMap.put(file.includeStatement, new Symbols());
 		}
 		
 
@@ -215,7 +232,7 @@ abstract public class PDOMWriter {
 		if (taskUpdater != null) {
 			Set<IIndexFileLocation> locations= new HashSet<IIndexFileLocation>();
 			for (FileInAST file : selectedFiles) {
-				locations.add(file.fFileContentKey.getLocation());
+				locations.add(file.fileContentKey.getLocation());
 			}
 			taskUpdater.updateTasks(ast.getComments(), locations.toArray(new IIndexFileLocation[locations.size()]));
 		}
@@ -223,7 +240,7 @@ abstract public class PDOMWriter {
 			List<IStatus> stati = data.fStati;
 			String path= null;
 			if (selectedFiles.length > 0) {
-				path= selectedFiles[selectedFiles.length - 1].fFileContentKey.getLocation().getURI().getPath();
+				path= selectedFiles[selectedFiles.length - 1].fileContentKey.getLocation().getURI().getPath();
 			} else {
 				path= ast.getFilePath().toString();
 			}
@@ -252,13 +269,13 @@ abstract public class PDOMWriter {
 			final FileInAST fileInAST= data.fSelectedFiles[i];
 			if (fileInAST != null) {
 				if (fShowActivity) {
-					trace("Indexer: adding " + fileInAST.fFileContentKey.getLocation().getURI());  //$NON-NLS-1$
+					trace("Indexer: adding " + fileInAST.fileContentKey.getLocation().getURI());  //$NON-NLS-1$
 				}
 				Throwable th= null;
 				YieldableIndexLock lock = new YieldableIndexLock(data.fIndex, flushIndex);
 				lock.acquire();
 				try {
-					final boolean isReplacement= ctx != null && fileInAST.fIncludeStatement == null;
+					final boolean isReplacement= ctx != null && fileInAST.includeStatement == null;
 					IIndexFragmentFile ifile= null;
 					if (!isReplacement || newFile == null) {
 						ifile= storeFileInIndex(data, fileInAST, linkageID, lock);
@@ -294,7 +311,7 @@ abstract public class PDOMWriter {
 				}
 				if (th != null) {
 					data.fStati.add(createStatus(NLS.bind(Messages.PDOMWriter_errorWhileParsing,
-							fileInAST.fFileContentKey.getLocation().getURI().getPath()), th));
+							fileInAST.fileContentKey.getLocation().getURI().getPath()), th));
 				}
 				fStatistics.fAddToIndexTime += lock.getCumulativeLockTime();
 			}
@@ -307,7 +324,7 @@ abstract public class PDOMWriter {
 			if (pm.isCanceled()) {
 				return;
 			}
-			Symbols symbols= data.fSymbolMap.get(file.fIncludeStatement);
+			Symbols symbols= data.fSymbolMap.get(file.includeStatement);
 
 			final ArrayList<IASTName[]> names= symbols.fNames;
 			boolean reported= false;
@@ -351,7 +368,7 @@ abstract public class PDOMWriter {
 					if (th != null) {
 						if (!reported) {
 							data.fStati.add(CCorePlugin.createStatus(NLS.bind(Messages.PDOMWriter_errorResolvingName,
-									name.toString(), file.fFileContentKey.getLocation().getURI().getPath()), th));
+									name.toString(), file.fileContentKey.getLocation().getURI().getPath()), th));
 						}
 						reported= true;
 						j.remove();
@@ -516,8 +533,8 @@ abstract public class PDOMWriter {
 		// contents of the old file from the temporary one, then delete the temporary file.
 		// The write lock on the index can be yielded between adding names to the temporary file,
 		// if another thread is waiting for a read lock.
-		final FileContentKey fileKey = astFile.fFileContentKey;
-		final IASTPreprocessorIncludeStatement owner= astFile.fIncludeStatement;
+		final FileContentKey fileKey = astFile.fileContentKey;
+		final IASTPreprocessorIncludeStatement owner= astFile.includeStatement;
 		
 		IIndexFileLocation location = fileKey.getLocation();
 		ISignificantMacros significantMacros = fileKey.getSignificantMacros();
@@ -559,9 +576,9 @@ abstract public class PDOMWriter {
 				IncludeInformation[] includeInfoArray= includeInfos.toArray(new IncludeInformation[includeInfos.size()]);
 				index.setFileContent(file, linkageID, includeInfoArray, macros, names, fResolver, lock);
 			}
-			file.setTimestamp(fResolver.getLastModified(location));
-			file.setSizeAndEncodingHashcode(computeFileSizeAndEncodingHashcode(location));
-			file.setContentsHash(astFile.fContentsHash);
+			file.setTimestamp(astFile.hasError ? 0 : astFile.timestamp);
+			file.setSizeAndEncodingHashcode(computeFileSizeAndEncodingHashcode(astFile.fileSize, location));
+			file.setContentsHash(astFile.contentsHash);
 			file = index.commitUncommittedFile();
 		} finally {
 			index.clearUncommittedFile();
@@ -570,7 +587,11 @@ abstract public class PDOMWriter {
 	}
 
 	protected int computeFileSizeAndEncodingHashcode(IIndexFileLocation location) {
-		return ((int) fResolver.getFileSize(location)) + 31 * fResolver.getEncoding(location).hashCode();
+		return computeFileSizeAndEncodingHashcode((int) fResolver.getFileSize(location), location);
+	}
+
+	private int computeFileSizeAndEncodingHashcode(long size, IIndexFileLocation location) {
+		return (int) size + 31 * fResolver.getEncoding(location).hashCode();
 	}
 
 	private boolean isContextFor(IIndexFragmentFile oldFile, IASTPreprocessorIncludeStatement stmt)

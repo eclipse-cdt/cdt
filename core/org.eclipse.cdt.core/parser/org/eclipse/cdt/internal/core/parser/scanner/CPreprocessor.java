@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1487,7 +1487,10 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 				detectIncludeGuard(path, source, fctx);
 				fCurrentContext= fctx;
 				stmt= ctx.getInclusionStatement();
-				stmt.setContentsHash(source.getContentsHash());
+				stmt.setIncludedFileTimestamp(fi.getTimestamp());
+				stmt.setIncludedFileSize(fi.getFileSize());
+				stmt.setIncludedFileContentsHash(source.getContentsHash());
+				stmt.setErrorInIncludedFile(source.hasError());
 				if (!fCurrentContext.isPragmaOnce()) {
 					// Track the loaded version count, even in a non-pragma-once context.
 					loadedVerisons= fFileContentProvider.getLoadedVersions(path);

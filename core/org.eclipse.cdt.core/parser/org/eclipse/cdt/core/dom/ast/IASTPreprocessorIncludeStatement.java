@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,15 +8,15 @@
  * Contributors:
  *     IBM - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.parser.ISignificantMacros;
 
-
 /**
- * This interface represent a preprocessor #include statement.
+ * This interface represents a preprocessor #include statement.
  * 
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
@@ -77,11 +77,29 @@ public interface IASTPreprocessorIncludeStatement extends IASTPreprocessorStatem
 	public ISignificantMacros[] getLoadedVersions();
 
 	/**
+	 * Returns the modification time of the included file, or -1 if the file was not read.
+	 * @since 5.4
+	 */
+	public long getIncludedFileTimestamp();
+
+	/**
+	 * Returns the size of the included file, or -1 if the file was not read.
+	 * @since 5.4
+	 */
+	public long getIncludedFileSize();
+	
+	/**
 	 * Returns a hash-code for the contents of the file included, or <code>0</code>
 	 * if the content has not been parsed.
 	 * @since 5.4
 	 */
-	public long getContentsHash();
+	public long getIncludedFileContentsHash();
+
+	/**
+	 * Returns <code>true</code> if I/O errors were encountered while reading the included file.
+	 * @since 5.4
+	 */
+	public boolean isErrorInIncludedFile();
 
 	/**
 	 * Returns true, if an attempt will be or has been made to create AST for the target

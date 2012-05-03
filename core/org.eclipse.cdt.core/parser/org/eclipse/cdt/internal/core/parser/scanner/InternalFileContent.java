@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *    Sergey Prigogin (Google)
+ *     Markus Schorn - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.parser.scanner;
 
@@ -55,9 +55,11 @@ public class InternalFileContent extends FileContent {
 	private final String fFileLocation;
 	private final List<FileVersion> fNonPragmaOnceFiles;
 	private boolean fHeuristic;
-	private boolean fIsSource= false;
+	private boolean fIsSource;
 	private List<IIndexFile> fFiles;
 	private IncludeSearchPathElement fFoundOnPath;
+	private final long fTimestamp;
+	private final long fFileSize;
 	
 	/**
 	 * For skipping include files.
@@ -76,13 +78,16 @@ public class InternalFileContent extends FileContent {
 		fUsingDirectives= null;
 		fSource= null;
 		fNonPragmaOnceFiles= null;
+		fTimestamp= NULL_TIMESTAMP;
+		fFileSize = NULL_FILE_SIZE;
 	}
 
 	/**
 	 * For reading include files from disk.
 	 * @throws IllegalArgumentException in case the codeReader or its location is <code>null</code>.
 	 */
-	public InternalFileContent(String filePath, AbstractCharArray content) throws IllegalArgumentException {
+	public InternalFileContent(String filePath, AbstractCharArray content, long timestamp,
+			long fileSize) throws IllegalArgumentException {
 		if (content == null) {
 			throw new IllegalArgumentException();
 		}
@@ -95,6 +100,29 @@ public class InternalFileContent extends FileContent {
 		if (fFileLocation == null) {
 			throw new IllegalArgumentException();
 		}
+		fTimestamp= timestamp;
+		fFileSize = fileSize;
+	}
+
+	/**
+	 * For reading in-memory buffers.
+	 * @throws IllegalArgumentException in case the codeReader or its location is <code>null</code>.
+	 */
+	public InternalFileContent(String filePath, CharArray content) throws IllegalArgumentException {
+		if (content == null) {
+			throw new IllegalArgumentException();
+		}
+		fKind= InclusionKind.USE_SOURCE;
+		fFileLocation= filePath;
+		fSource= content;
+		fMacroDefinitions= null;
+		fUsingDirectives= null;
+		fNonPragmaOnceFiles= null;
+		if (fFileLocation == null) {
+			throw new IllegalArgumentException();
+		}
+		fTimestamp= NULL_TIMESTAMP;
+		fFileSize = NULL_FILE_SIZE;
 	}
 
 	/**
@@ -104,8 +132,9 @@ public class InternalFileContent extends FileContent {
 	 * @param files 
 	 * @throws IllegalArgumentException in case the fileLocation or the macroDefinitions are <code>null</code>.
 	 */
-	public InternalFileContent(String fileLocation, List<IIndexMacro> macroDefinitions, List<ICPPUsingDirective> usingDirectives,
-			List<IIndexFile> files, List<FileVersion> nonPragmaOnceVersions) {
+	public InternalFileContent(String fileLocation, List<IIndexMacro> macroDefinitions,
+			List<ICPPUsingDirective> usingDirectives, List<IIndexFile> files,
+			List<FileVersion> nonPragmaOnceVersions) {
 		fKind= InclusionKind.FOUND_IN_INDEX;
 		fFileLocation= fileLocation;
 		fSource= null;
@@ -113,6 +142,8 @@ public class InternalFileContent extends FileContent {
 		fMacroDefinitions= macroDefinitions;
 		fFiles= files;
 		fNonPragmaOnceFiles= nonPragmaOnceVersions;
+		fTimestamp= NULL_TIMESTAMP;
+		fFileSize = NULL_FILE_SIZE;
 	}
 
 	/**
@@ -130,12 +161,24 @@ public class InternalFileContent extends FileContent {
 		return fFileLocation;
 	}
 
-	/**
-	 * Returns a 64-bit hash value of the file contents.
-	 */
+	@Override
+	public long getTimestamp() {
+		return fTimestamp;
+	}
+
+	@Override
+	public long getFileSize() {
+		return fFileSize;
+	}
+
 	@Override
 	public long getContentsHash() {
 		return fSource != null ? fSource.getContentsHash() : 0;
+	}
+
+	@Override
+	public boolean hasError() {
+		return fSource != null && fSource.hasError();
 	}
 
 	/**
@@ -200,7 +243,7 @@ public class InternalFileContent extends FileContent {
 	public void setFoundOnPath(IncludeSearchPathElement isp) {
 		fFoundOnPath= isp;
 	}
-
+	
 	/**
 	 * This method is slow. Use only for debugging.
 	 */

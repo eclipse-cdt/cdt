@@ -13,25 +13,34 @@
 package org.eclipse.cdt.dsf.gdb.internal.ui.viewmodel.launch;
 
 import java.util.Map;
+import java.util.Vector;
 
 import org.eclipse.cdt.debug.internal.ui.pinclone.PinCloneUtils;
 import org.eclipse.cdt.debug.ui.IPinProvider.IPinElementColorDescriptor;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
+import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMData;
+import org.eclipse.cdt.dsf.debug.service.IRunControl;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.IResumedDMEvent;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.AbstractThreadVMNode;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.ExecutionContextLabelText;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.ILaunchVMConstants;
+import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbPinProvider;
+import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.cdt.dsf.gdb.service.IGDBProcesses.IGdbThreadDMData;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.dsf.ui.concurrent.ViewerCountingRequestMonitor;
 import org.eclipse.cdt.dsf.ui.concurrent.ViewerDataRequestMonitor;
+import org.eclipse.cdt.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.AbstractDMVMProvider;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.IPropertiesUpdate;
@@ -43,12 +52,17 @@ import org.eclipse.cdt.dsf.ui.viewmodel.properties.PropertiesBasedLabelProvider;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.VMDelegatingPropertiesUpdate;
 import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRequest;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.IMemento;
 
 
@@ -56,10 +70,34 @@ import org.eclipse.ui.IMemento;
 public class ThreadVMNode extends AbstractThreadVMNode 
     implements IElementLabelProvider, IElementMementoProvider
 {
+	/** Indicator that we should not display running threads */
+	private boolean fHideRunningThreadsProperty = false;
+	
+	/** PropertyChangeListener to keep track of the PREF_HIDE_RUNNING_THREADS preference */
+	private IPropertyChangeListener fPropertyChangeListener = new IPropertyChangeListener() {
+		@Override
+		public void propertyChange(PropertyChangeEvent event) {
+			if (event.getProperty().equals(IGdbDebugPreferenceConstants.PREF_HIDE_RUNNING_THREADS)) {
+				fHideRunningThreadsProperty = (Boolean)event.getNewValue();
+				// Refresh the debug view to take in consideration this change
+				getDMVMProvider().refresh();
+			}
+		}
+	};
+	
     public ThreadVMNode(AbstractDMVMProvider provider, DsfSession session) {
         super(provider, session);
+        
+		IPreferenceStore store = GdbUIPlugin.getDefault().getPreferenceStore();
+		store.addPropertyChangeListener(fPropertyChangeListener);
+		fHideRunningThreadsProperty = store.getBoolean(IGdbDebugPreferenceConstants.PREF_HIDE_RUNNING_THREADS);
     }
 
+    @Override
+    public void dispose() {
+		GdbUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(fPropertyChangeListener);
+    	super.dispose();
+    }
     @Override
     public String toString() {
         return "ThreadVMNode(" + getSession().getId() + ")";  //$NON-NLS-1$ //$NON-NLS-2$
@@ -197,6 +235,50 @@ public class ThreadVMNode extends AbstractThreadVMNode
         return provider;
     }
 
+	@Override
+    protected void updateElementsInSessionThread(final IChildrenUpdate update) {
+        IProcesses procService = getServicesTracker().getService(IProcesses.class);
+        final IContainerDMContext contDmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IContainerDMContext.class);
+        if (procService == null || contDmc == null) {
+        	handleFailedUpdate(update);
+        	return;
+        }
+        
+		procService.getProcessesBeingDebugged(
+				contDmc,
+				new ViewerDataRequestMonitor<IDMContext[]>(getSession().getExecutor(), update){
+					@Override
+					public void handleCompleted() {
+						if (!isSuccess() || !(getData() instanceof IExecutionDMContext[])) {
+							handleFailedUpdate(update);
+							return;
+						}
+						
+						IExecutionDMContext[] execDmcs = (IExecutionDMContext[])getData();
+						if (fHideRunningThreadsProperty) {
+							// Remove running threads from the list
+					    	IRunControl runControl = getServicesTracker().getService(IRunControl.class);
+					    	if (runControl == null) {
+					    		handleFailedUpdate(update);
+					    		return;
+					    	}
+
+							Vector<IExecutionDMContext> execDmcsNotRunning = new Vector<IExecutionDMContext>();
+							for (IExecutionDMContext execDmc : execDmcs) {
+								// Keep suspended or stepping threads
+								if (runControl.isSuspended(execDmc) || runControl.isStepping(execDmc)) {
+									execDmcsNotRunning.add(execDmc);
+								}
+							}
+							execDmcs = execDmcsNotRunning.toArray(new IExecutionDMContext[execDmcsNotRunning.size()]);
+						}
+						
+						fillUpdateWithVMCs(update, execDmcs);
+						update.done();
+					}
+				});
+    }
+	
     @Override
     protected void updatePropertiesInSessionThread(IPropertiesUpdate[] updates) {
         IPropertiesUpdate[] parentUpdates = new IPropertiesUpdate[updates.length]; 
@@ -282,6 +364,42 @@ public class ThreadVMNode extends AbstractThreadVMNode
 		return "Thread." + execCtx.getThreadId(); //$NON-NLS-1$
     }
 
+    @Override
+	public int getDeltaFlags(Object e) {
+    	if (fHideRunningThreadsProperty && e instanceof IResumedDMEvent) {
+        	// Special handling in the case of hiding the running threads to
+        	// cause a proper refresh when a thread is resumed.
+        	// We don't need to worry about the ISuspendedDMEvent in this case
+        	// because a proper refresh will be triggered anyway by the stack frame
+    		// being displayed.
+        	return IModelDelta.CONTENT;
+        }
+        return super.getDeltaFlags(e);
+    }
+    
+    @Override
+	public void buildDelta(Object e, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor rm) {
+        if (fHideRunningThreadsProperty && e instanceof IResumedDMEvent) {
+        	// Special handling in the case of hiding the running threads to
+        	// cause a proper refresh when a thread is resumed.
+        	// We don't need to worry about the ISuspendedDMEvent in this case
+        	// because a proper refresh will be triggered anyway by the stack frame
+        	// being displayed.
+        	//
+            // - If not stepping, update the content of the parent, to allow for 
+        	//   this thread to become hidden.
+            // - If stepping, do nothing to avoid too many updates.  If a 
+            //   time-out is reached before the step completes, the 
+            //   ISteppingTimedOutEvent will trigger a refresh.
+            if (((IResumedDMEvent)e).getReason() != IRunControl.StateChangeReason.STEP) {
+            	VMDelta ancestorDelta = parentDelta.getParentDelta();
+            	ancestorDelta.setFlags(ancestorDelta.getFlags() | IModelDelta.CONTENT);
+            }
+            rm.done();
+        } else {            
+            super.buildDelta(e, parentDelta, nodeOffset, rm);
+        }
+    }
     private static final String MEMENTO_NAME = "THREAD_MEMENTO_NAME"; //$NON-NLS-1$
     
     /*

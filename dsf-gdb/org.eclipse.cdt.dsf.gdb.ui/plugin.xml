@@ -339,6 +339,11 @@
           id="org.eclipse.cdt.dsf.gdb.ui.command.selectPreviousTraceRecord"
           name="%command.prevTraceRecord.name">
       </command>
+      <command
+          description="%command.hideRunningThreads.description"
+          id="org.eclipse.cdt.dsf.gdb.ui.command.hideRunningThreads"
+          name="%command.hideRunningThreads.name">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -349,6 +354,10 @@
       <handler
             class="org.eclipse.cdt.dsf.gdb.internal.ui.commands.SelectPrevTraceRecordCommandHandler"
             commandId="org.eclipse.cdt.dsf.gdb.ui.command.selectPreviousTraceRecord">
+      </handler>
+      <handler
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.commands.HideRunningThreadsCommandHandler"
+            commandId="org.eclipse.cdt.dsf.gdb.ui.command.hideRunningThreads">
       </handler>
    </extension>
    <extension
@@ -389,6 +398,15 @@
                   style="push">
             </command>
          </menuContribution>
+     <menuContribution
+          locationURI="popup:org.eclipse.debug.ui.DebugView?after=renderGroup">
+       <command
+             commandId="org.eclipse.cdt.dsf.gdb.ui.command.hideRunningThreads"
+             label="%command.hideRunningThreads.label"
+             style="toggle"
+             tooltip="%command.hideRunningThreads.description">
+       </command>
+     </menuContribution>   
    </extension>
    <extension
          point="org.eclipse.cdt.debug.ui.BreakpointActionPage">

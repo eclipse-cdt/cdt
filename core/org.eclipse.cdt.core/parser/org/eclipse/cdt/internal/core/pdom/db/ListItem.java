@@ -16,7 +16,6 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * This is a list item. It contains a next and prev pointer
  * as well as a pointer to the item.
- * block.
  * 
  * @author Doug Schaefer
  */

@@ -260,9 +260,9 @@ public class PDOM extends PlatformObject implements IPDOM {
 	public static class ChangeEvent {
 		public Set<IIndexFileLocation> fClearedFiles= new HashSet<IIndexFileLocation>();
 		public Set<IIndexFileLocation> fFilesWritten= new HashSet<IIndexFileLocation>();
-		private boolean fCleared= false;
-		private boolean fReloaded= false;
-		private boolean fNewFiles= false;
+		private boolean fCleared;
+		private boolean fReloaded;
+		private boolean fNewFiles;
 
 		private void setCleared() {
 			fCleared= true;
@@ -294,7 +294,8 @@ public class PDOM extends PlatformObject implements IPDOM {
 		}
 
 		public boolean isTrivial() {
-			return !fCleared && !fReloaded && !fNewFiles && fClearedFiles.isEmpty() && fFilesWritten.isEmpty();
+			return !fCleared && !fReloaded && !fNewFiles && fClearedFiles.isEmpty() &&
+					fFilesWritten.isEmpty();
 		}
 	}
 
@@ -313,11 +314,13 @@ public class PDOM extends PlatformObject implements IPDOM {
 	private List<IListener> listeners;
 	protected ChangeEvent fEvent= new ChangeEvent();
 
-	public PDOM(File dbPath, IIndexLocationConverter locationConverter, Map<String, IPDOMLinkageFactory> linkageFactoryMappings) throws CoreException {
+	public PDOM(File dbPath, IIndexLocationConverter locationConverter,
+			Map<String, IPDOMLinkageFactory> linkageFactoryMappings) throws CoreException {
 		this(dbPath, locationConverter, ChunkCache.getSharedInstance(), linkageFactoryMappings);
 	}
 
-	public PDOM(File dbPath, IIndexLocationConverter locationConverter, ChunkCache cache, Map<String, IPDOMLinkageFactory> linkageFactoryMappings) throws CoreException {
+	public PDOM(File dbPath, IIndexLocationConverter locationConverter, ChunkCache cache,
+			Map<String, IPDOMLinkageFactory> linkageFactoryMappings) throws CoreException {
 		fPDOMLinkageFactoryCache = linkageFactoryMappings;
 		loadDatabase(dbPath, cache);
 		this.locationConverter = locationConverter;

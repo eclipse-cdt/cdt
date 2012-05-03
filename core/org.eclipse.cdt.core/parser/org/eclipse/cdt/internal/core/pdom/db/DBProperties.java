@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Andrew Ferguson (Symbian) - Initial implementation
+ *     Andrew Ferguson (Symbian) - Initial implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.db;
 
@@ -39,7 +39,8 @@ public class DBProperties {
 	}
 	
 	/**
-	 * Creates an object for accessing an existing DBProperties record at the specified location of the specified database
+	 * Creates an object for accessing an existing DBProperties record at the specified location
+	 * of the specified database.
 	 * @param db
 	 * @param record
 	 * @throws CoreException
@@ -51,15 +52,16 @@ public class DBProperties {
 	}
 	
 	/**
-	 * Read the named property from this properties storage
+	 * Reads the named property from this properties storage.
 	 * @param key a case-sensitive identifier for a property, or null
-	 * @return the value associated with the key, or null if either no such property is set, or the specified key was null
+	 * @return the value associated with the key, or null if either no such property is set,
+	 *     or the specified key was null
 	 * @throws CoreException
 	 */
 	public String getProperty(String key) throws CoreException {
-		if(key!=null) {
+		if (key != null) {
 			DBProperty existing= DBProperty.search(db, index, key);
-			if(existing!=null) {
+			if (existing != null) {
 				return existing.getValue().getString();
 			}
 		}
@@ -67,11 +69,12 @@ public class DBProperties {
 	}
 	
 	/**
-	 * Read the named property from this properties storage, returning the default value if there is no such property
+	 * Reads the named property from this properties storage, returning the default value if there
+	 * is no such property.
 	 * @param key a case-sensitive identifier for a property, or null
 	 * @param defaultValue a value to return in case the specified key was null
-	 * @return the value associated with the key, or the specified default value if either no such property is set, or
-	 * the specified key was null
+	 * @return the value associated with the key, or the specified default value if either no such
+	 *     property is set, or the specified key was null
 	 * @throws CoreException
 	 */
 	public String getProperty(String key, String defaultValue) throws CoreException {
@@ -89,7 +92,7 @@ public class DBProperties {
 	}
 
 	/**
-	 * Write the key, value mapping to the properties. If a mapping for the
+	 * Writes the key, value mapping to the properties. If a mapping for the
 	 * same key already exists, it is overwritten.
 	 * @param key a non-null property name
 	 * @param value a value to associate with the key. may not be null.
@@ -103,15 +106,16 @@ public class DBProperties {
 	}
 
 	/**
-	 * Deletes a property from this DBProperties object
+	 * Deletes a property from this DBProperties object.
 	 * @param key
-	 * @return whether a property with matching key existed and was removed, or false if the key was null
+	 * @return whether a property with matching key existed and was removed, or false if the key
+	 *     was null
 	 * @throws CoreException
 	 */
 	public boolean removeProperty(String key) throws CoreException {
-		if(key!=null) {
+		if (key != null) {
 			DBProperty existing= DBProperty.search(db, index, key);
-			if(existing != null) {
+			if (existing != null) {
 				index.delete(existing.getRecord());
 				existing.delete();
 				return true;
@@ -121,8 +125,8 @@ public class DBProperties {
 	}
 	
 	/**
-	 * Deletes all properties, does not delete the record associated with the object itself - that is
-	 * it can be re-populated.
+	 * Deletes all properties, does not delete the record associated with the object itself
+	 * - that is it can be re-populated.
 	 * @throws CoreException
 	 */
 	public void clear() throws CoreException {
@@ -140,7 +144,8 @@ public class DBProperties {
 	}
 	
 	/**
-	 * Deletes all properties stored in this object and the record associated with this object itself.
+	 * Deletes all properties stored in this object and the record associated with this object
+	 * itself.
 	 * <br><br>
 	 * <b>The behaviour of objects of this class after calling this method is undefined</b>
 	 * @throws CoreException
@@ -175,8 +180,8 @@ public class DBProperties {
 		 * @throws CoreException
 		 */
 		DBProperty(Database db, String key, String value) throws CoreException {
-			assert key!=null;
-			assert value!=null;
+			assert key != null;
+			assert value != null;
 			IString dbkey= db.newString(key);
 			IString dbvalue= db.newString(value);
 			this.record= db.malloc(RECORD_SIZE);
@@ -186,8 +191,8 @@ public class DBProperties {
 		}
 		
 		/**
-		 * Returns an object for accessing an existing DBProperty record at the specified location in the
-		 * specified database
+		 * Returns an object for accessing an existing DBProperty record at the specified location
+		 * in the specified database.
 		 * @param db
 		 * @param record
 		 */
@@ -222,10 +227,11 @@ public class DBProperties {
 				public int compare(long record) throws CoreException {
 					return db.getString(db.getRecPtr(record + KEY)).compare(key, true);
 				}
+
 				@Override
 				public boolean visit(long record) throws CoreException {
 					result[0] = new DBProperty(db, record);
-					return false; // there should never be duplicates
+					return false; // There should never be duplicates.
 				}
 			});
 			return result[0];
@@ -238,10 +244,11 @@ public class DBProperties {
 				public int compare(long record) throws CoreException {
 					return 0;
 				}
+
 				@Override
 				public boolean visit(long record) throws CoreException {
 					result.add(new DBProperty(db, record).getKey().getString());
-					return true; // there should never be duplicates
+					return true; // There should never be duplicates.
 				}
 			});
 			return result;

@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "AABOHH///Uo\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/DsfTerminateCommand.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-05-03T15:29:43Z",
+      "side": 1,
+      "message": "Now I understand that you are using the scheduling mechanism of the executor to implement wait and because sessionEnded() is called in the executor thread you don\u0027t need to synchronize the code. Nice trick!\nBut I think there are issues with this code. In case of a multi-process session terminating one process will leave the listener registered until the entire session is ended. The request associated with the first terminate will be canceled after the timeout but request.done() will be called for the second time when the session is ended.",
+      "parentUuid": "AABOHH///Xw\u003d",
+      "revId": "9fdbd0111ee3833e47f03f7506b351fe91220863",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOHH///lg\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/DsfTerminateCommand.java",
         "patchSetId": 2

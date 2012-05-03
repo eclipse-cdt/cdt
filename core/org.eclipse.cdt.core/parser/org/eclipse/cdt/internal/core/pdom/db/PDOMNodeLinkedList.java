@@ -6,11 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    QNX - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
- *    Sergey Prigogin (Google)
+ *     QNX - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.core.pdom.db;
 
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
@@ -21,7 +20,6 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * Represents a linked list of PDOMNode records
  * @author Doug Schaefer
- *
  */
 public class PDOMNodeLinkedList {
 	private long offset;

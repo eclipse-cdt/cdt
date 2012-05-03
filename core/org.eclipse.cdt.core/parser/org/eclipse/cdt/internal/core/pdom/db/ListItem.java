@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    QNX - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     QNX - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.db;
 
@@ -48,10 +48,9 @@ public class ListItem {
 	public boolean equals(Object obj) {
 		if (obj == this)
 			return true;
-		else if (obj instanceof ListItem)
-			return record == ((ListItem)obj).record;
-		else
-			return false;
+		if (obj instanceof ListItem)
+			return record == ((ListItem) obj).record;
+		return false;
 	}
 	
 	public void setItem(long item) throws CoreException {

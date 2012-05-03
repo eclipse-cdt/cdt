@@ -73,6 +73,24 @@
     },
     {
       "key": {
+        "uuid": "AABOHH///Tk\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/DsfTerminateCommand.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-05-03T17:19:49Z",
+      "side": 1,
+      "message": "You are right.  We need to call DsfSession.removeSessionEndedListener() in the timeout as well.\n\nIf you find the code simpler (like I do), and want to have it changed, I don\u0027t mind doing it myself since you spent a lot of time on this already.",
+      "parentUuid": "AABOHH///Uo\u003d",
+      "revId": "9fdbd0111ee3833e47f03f7506b351fe91220863",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOHH///lg\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/actions/DsfTerminateCommand.java",
         "patchSetId": 2

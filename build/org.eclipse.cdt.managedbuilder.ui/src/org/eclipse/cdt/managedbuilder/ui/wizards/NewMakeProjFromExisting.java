@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
+import org.eclipse.cdt.internal.ui.language.settings.providers.LanguageSettingsProvidersPage;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
@@ -31,6 +32,7 @@ import org.eclipse.cdt.managedbuilder.internal.core.ToolChain;
 import org.eclipse.cdt.managedbuilder.internal.dataprovider.ConfigurationDataProvider;
 import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
 import org.eclipse.cdt.managedbuilder.ui.properties.ManagedBuilderUIPlugin;
+import org.eclipse.cdt.ui.newui.CDTPrefUtil;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IWorkspace;
@@ -73,7 +75,6 @@ public class NewMakeProjFromExisting extends Wizard implements IImportWizard, IN
 		final String locationStr = page.getLocation();
 		final boolean isCPP = page.isCPP();
 		final IToolChain toolChain = page.getToolChain();
-		final boolean isTryingNewSD = page.isTryingNewSD();
 
 		IRunnableWithProgress op = new WorkspaceModifyOperation() {
 			@Override
@@ -118,13 +119,12 @@ public class NewMakeProjFromExisting extends Wizard implements IImportWizard, IN
 					ICConfigurationDescription cfgDes = projDesc.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);
 
 					if (cfgDes instanceof ILanguageSettingsProvidersKeeper) {
-						ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, isTryingNewSD);
-						if (isTryingNewSD) {
+						boolean isEnableProvidersPreference = !CDTPrefUtil.getBool(LanguageSettingsProvidersPage.KEY_NO_SHOW_PROVIDERS);
+						ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, isEnableProvidersPreference);
+						if (isEnableProvidersPreference) {
 							ConfigurationDataProvider.setDefaultLanguageSettingsProviders(config, cfgDes);
 						} else {
-							if (cfgDes instanceof ILanguageSettingsProvidersKeeper) {
-								((ILanguageSettingsProvidersKeeper) cfgDes).setLanguageSettingProviders(ScannerDiscoveryLegacySupport.getDefaultProvidersLegacy());
-							}
+							((ILanguageSettingsProvidersKeeper) cfgDes).setLanguageSettingProviders(ScannerDiscoveryLegacySupport.getDefaultProvidersLegacy());
 						}
 					} else {
 						ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, false);

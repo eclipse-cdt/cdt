@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
 import org.eclipse.cdt.core.templateengine.process.ProcessFailureException;
+import org.eclipse.cdt.internal.ui.language.settings.providers.LanguageSettingsProvidersPage;
 import org.eclipse.cdt.internal.ui.wizards.ICDTCommonProjectWizard;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildProperty;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyValue;
@@ -598,20 +599,12 @@ public class MBSWizardHandler extends CWizardHandler {
 				cfgFirst = cfgDes;
 
 			if (cfgDes instanceof ILanguageSettingsProvidersKeeper) {
-				boolean isTryingNewSD = false;
-				IWizardPage page = getStartingPage();
-				if (page instanceof CDTMainWizardPage) {
-					isTryingNewSD = ((CDTMainWizardPage)page).isTryingNewSD();
-				}
-
-				ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, isTryingNewSD);
-				List<ILanguageSettingsProvider> providers;
-				if (isTryingNewSD) {
+				boolean isEnableProvidersPreference = !CDTPrefUtil.getBool(LanguageSettingsProvidersPage.KEY_NO_SHOW_PROVIDERS);
+				ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, isEnableProvidersPreference);
+				if (isEnableProvidersPreference) {
 					ConfigurationDataProvider.setDefaultLanguageSettingsProviders(config, cfgDes);
 				} else {
-					if (cfgDes instanceof ILanguageSettingsProvidersKeeper) {
-						((ILanguageSettingsProvidersKeeper) cfgDes).setLanguageSettingProviders(ScannerDiscoveryLegacySupport.getDefaultProvidersLegacy());
-					}
+					((ILanguageSettingsProvidersKeeper) cfgDes).setLanguageSettingProviders(ScannerDiscoveryLegacySupport.getDefaultProvidersLegacy());
 				}
 			} else {
 				ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, false);

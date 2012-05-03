@@ -271,7 +271,7 @@ public interface IToolChain extends IBuildObject, IHoldsOptions {
 	 *
 	 * @since 8.1
 	 */
-	public String getDefaultLanguageSettingsProvidersIds();
+	public String getDefaultLanguageSettingsProviderIds();
 
 	/**
 	 * Returns the scanner config discovery profile id or <code>null</code> if none.

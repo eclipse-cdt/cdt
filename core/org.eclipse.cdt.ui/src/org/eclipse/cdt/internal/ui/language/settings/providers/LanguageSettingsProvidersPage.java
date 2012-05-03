@@ -26,8 +26,6 @@ import org.eclipse.cdt.ui.newui.ICPropertyTab;
 public class LanguageSettingsProvidersPage extends AbstractPage {
 	/** @since 5.4 */ // temporary key, subject to removal
 	public static final String KEY_NO_SHOW_PROVIDERS   = "properties.providers.tab.disable"; //$NON-NLS-1$
-	/** @since 5.4 */ // temporary key, subject to removal
-	public static final String KEY_NEWSD  = "wizard.try.new.sd.enable";  //$NON-NLS-1$
 
 	private static boolean isLanguageSettingsProvidersEnabled = false;
 	private static IProject project = null;

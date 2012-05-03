@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
+import org.eclipse.cdt.internal.ui.language.settings.providers.LanguageSettingsProvidersPage;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
@@ -28,6 +29,7 @@ import org.eclipse.cdt.managedbuilder.internal.core.ManagedProject;
 import org.eclipse.cdt.managedbuilder.internal.core.ToolChain;
 import org.eclipse.cdt.managedbuilder.internal.dataprovider.ConfigurationDataProvider;
 import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
+import org.eclipse.cdt.ui.newui.CDTPrefUtil;
 import org.eclipse.cdt.ui.wizards.CDTMainWizardPage;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -52,7 +54,7 @@ public class STDWizardHandler extends MBSWizardHandler {
 			full_tcs.put(Messages.StdProjectTypeHandler_0, null);
 		} else {
 			if (tc.isAbstract() || tc.isSystemObject()) return;
-		// 	unlike CWizardHandler, we don't check for configs
+			// 	unlike CWizardHandler, we don't check for configs
 			full_tcs.put(tc.getUniqueRealName(), tc);
 		}
 	}
@@ -76,61 +78,54 @@ public class STDWizardHandler extends MBSWizardHandler {
 	}
 
 	private void setProjectDescription(IProject project, boolean defaults, boolean onFinish, IProgressMonitor monitor)
-            throws CoreException {
+			throws CoreException {
 
-	    ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
-	    ICProjectDescription des = mngr.createProjectDescription(project, false, !onFinish);
-	    ManagedBuildInfo info = ManagedBuildManager.createBuildInfo(project);
-	    ManagedProject mProj = new ManagedProject(des);
-	    info.setManagedProject(mProj);
-	    monitor.worked(20);
-	    cfgs = CfgHolder.unique(getCfgItems(false));
-	    cfgs = CfgHolder.reorder(cfgs);
-	    int work = 50/cfgs.length;
-	    for (int i=0; i<cfgs.length; i++) {
-	    	String s = (cfgs[i].getToolChain() == null) ? "0" : ((ToolChain)(cfgs[i].getToolChain())).getId();  //$NON-NLS-1$
-	    	Configuration cfg = new Configuration(mProj, (ToolChain)cfgs[i].getToolChain(), ManagedBuildManager.calculateChildId(s, null), cfgs[i].getName());
-	    	cfgs[i].setConfiguration(cfg);
-	    	IBuilder bld = cfg.getEditableBuilder();
-	    	if (bld != null) {
-	    		if(bld.isInternalBuilder()){
-	    			IConfiguration prefCfg = ManagedBuildManager.getPreferenceConfiguration(false);
-	    			IBuilder prefBuilder = prefCfg.getBuilder();
-	    			cfg.changeBuilder(prefBuilder, ManagedBuildManager.calculateChildId(cfg.getId(), null), prefBuilder.getName());
-	    			bld = cfg.getEditableBuilder();
-	    			bld.setBuildPath(null);
-	    		}
-	    		bld.setManagedBuildOn(false);
-	    	} else {
-	    		System.out.println(Messages.StdProjectTypeHandler_3);
-	    	}
-	    	cfg.setArtifactName(mProj.getDefaultArtifactName());
-	    	CConfigurationData data = cfg.getConfigurationData();
-	    	ICConfigurationDescription cfgDes = des.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);
+		ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
+		ICProjectDescription des = mngr.createProjectDescription(project, false, !onFinish);
+		ManagedBuildInfo info = ManagedBuildManager.createBuildInfo(project);
+		ManagedProject mProj = new ManagedProject(des);
+		info.setManagedProject(mProj);
+		monitor.worked(20);
+		cfgs = CfgHolder.unique(getCfgItems(false));
+		cfgs = CfgHolder.reorder(cfgs);
+		int work = 50/cfgs.length;
+		for (int i=0; i<cfgs.length; i++) {
+			String s = (cfgs[i].getToolChain() == null) ? "0" : ((ToolChain)(cfgs[i].getToolChain())).getId();  //$NON-NLS-1$
+			Configuration cfg = new Configuration(mProj, (ToolChain)cfgs[i].getToolChain(), ManagedBuildManager.calculateChildId(s, null), cfgs[i].getName());
+			cfgs[i].setConfiguration(cfg);
+			IBuilder bld = cfg.getEditableBuilder();
+			if (bld != null) {
+				if(bld.isInternalBuilder()){
+					IConfiguration prefCfg = ManagedBuildManager.getPreferenceConfiguration(false);
+					IBuilder prefBuilder = prefCfg.getBuilder();
+					cfg.changeBuilder(prefBuilder, ManagedBuildManager.calculateChildId(cfg.getId(), null), prefBuilder.getName());
+					bld = cfg.getEditableBuilder();
+					bld.setBuildPath(null);
+				}
+				bld.setManagedBuildOn(false);
+			} else {
+				System.out.println(Messages.StdProjectTypeHandler_3);
+			}
+			cfg.setArtifactName(mProj.getDefaultArtifactName());
+			CConfigurationData data = cfg.getConfigurationData();
+			ICConfigurationDescription cfgDes = des.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);
 
 			if (cfgDes instanceof ILanguageSettingsProvidersKeeper) {
-				boolean isTryingNewSD = false;
-				IWizardPage page = getStartingPage();
-				if (page instanceof CDTMainWizardPage) {
-					isTryingNewSD = ((CDTMainWizardPage)page).isTryingNewSD();
-				}
-
-				ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, isTryingNewSD);
-				if (isTryingNewSD) {
+				boolean isEnableProvidersPreference = !CDTPrefUtil.getBool(LanguageSettingsProvidersPage.KEY_NO_SHOW_PROVIDERS);
+				ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, isEnableProvidersPreference);
+				if (isEnableProvidersPreference) {
 					ConfigurationDataProvider.setDefaultLanguageSettingsProviders(cfg, cfgDes);
 				} else {
-					if (cfgDes instanceof ILanguageSettingsProvidersKeeper) {
-						((ILanguageSettingsProvidersKeeper) cfgDes).setLanguageSettingProviders(ScannerDiscoveryLegacySupport.getDefaultProvidersLegacy());
-					}
+					((ILanguageSettingsProvidersKeeper) cfgDes).setLanguageSettingProviders(ScannerDiscoveryLegacySupport.getDefaultProvidersLegacy());
 				}
 			} else {
 				ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, false);
 			}
 
-	    	monitor.worked(work);
-	    }
-	    mngr.setProjectDescription(project, des);
-    }
+			monitor.worked(work);
+		}
+		mngr.setProjectDescription(project, des);
+	}
 
 	public boolean canCreateWithoutToolchain() {
 		return true;
@@ -138,7 +133,7 @@ public class STDWizardHandler extends MBSWizardHandler {
 
 	@Override
 	public void convertProject(IProject proj, IProgressMonitor monitor) throws CoreException {
-	    setProjectDescription(proj, true, true, monitor);
+		setProjectDescription(proj, true, true, monitor);
 	}
 
 	/**

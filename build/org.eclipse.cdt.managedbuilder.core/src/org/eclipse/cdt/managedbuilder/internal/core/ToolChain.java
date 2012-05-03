@@ -88,7 +88,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 	private String targetToolIds;
 	private String secondaryOutputIds;
 	private Boolean isAbstract;
-	private String defaultLanguageSettingsProvidersIds;
+	private String defaultLanguageSettingsProviderIds;
     private String scannerConfigDiscoveryProfileId;
 	private String versionsSupported;
 	private String convertToId;
@@ -559,7 +559,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 		targetToolIds = SafeStringInterner.safeIntern(element.getAttribute(TARGET_TOOL));
 
 		// Get the initial/default language setttings providers IDs
-		defaultLanguageSettingsProvidersIds = element.getAttribute(LANGUAGE_SETTINGS_PROVIDERS);
+		defaultLanguageSettingsProviderIds = element.getAttribute(LANGUAGE_SETTINGS_PROVIDERS);
 
 		// Get the scanner config discovery profile id
         scannerConfigDiscoveryProfileId = SafeStringInterner.safeIntern(element.getAttribute(SCANNER_CONFIG_PROFILE_ID));
@@ -1537,13 +1537,11 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 	}
 
 	@Override
-	public String getDefaultLanguageSettingsProvidersIds() {
-		if (defaultLanguageSettingsProvidersIds == null) {
-			if (superClass instanceof IToolChain) {
-				defaultLanguageSettingsProvidersIds = ((IToolChain) superClass).getDefaultLanguageSettingsProvidersIds();
-			}
+	public String getDefaultLanguageSettingsProviderIds() {
+		if (defaultLanguageSettingsProviderIds == null && superClass instanceof IToolChain) {
+			defaultLanguageSettingsProviderIds = ((IToolChain) superClass).getDefaultLanguageSettingsProviderIds();
 		}
-		return defaultLanguageSettingsProvidersIds;
+		return defaultLanguageSettingsProviderIds;
 	}
 
 	/**
@@ -1552,9 +1550,9 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 	private boolean isLanguageSettingsProvidersFunctionalityEnabled() {
 		boolean isLanguageSettingsProvidersEnabled = false;
 		IConfiguration cfg = getParent();
-		if (cfg!=null) {
+		if (cfg != null) {
 			IResource rc = cfg.getOwner();
-			if (rc!=null) {
+			if (rc != null) {
 				IProject project = rc.getProject();
 				isLanguageSettingsProvidersEnabled = ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityEnabled(project);
 			}
@@ -1564,11 +1562,13 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 
 	/**
 	 * Temporary method to support compatibility during SD transition.
+	 * @see ScannerDiscoveryLegacySupport#getDeprecatedLegacyProfiles(String)
+	 * 
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public String getLegacyScannerConfigDiscoveryProfileId() {
 		String profileId = scannerConfigDiscoveryProfileId;
-		if (profileId==null) {
+		if (profileId == null) {
 			profileId = ScannerDiscoveryLegacySupport.getDeprecatedLegacyProfiles(id);
 			if (profileId == null) {
 				IToolChain superClass = getSuperClass();

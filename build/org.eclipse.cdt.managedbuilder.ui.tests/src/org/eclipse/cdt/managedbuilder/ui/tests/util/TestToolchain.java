@@ -365,7 +365,7 @@ public class TestToolchain extends HoldsOptions implements IToolChain {
 	}
 	
 	@Override
-	public String getDefaultLanguageSettingsProvidersIds() {
+	public String getDefaultLanguageSettingsProviderIds() {
 		// TODO Auto-generated method stub
 		return null;
 	}

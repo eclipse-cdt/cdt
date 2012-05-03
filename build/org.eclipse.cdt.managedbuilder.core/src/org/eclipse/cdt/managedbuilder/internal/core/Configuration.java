@@ -26,7 +26,6 @@ import java.util.Vector;
 
 import org.eclipse.cdt.build.core.scannerconfig.ICfgScannerConfigBuilderInfo2Set;
 import org.eclipse.cdt.build.internal.core.scannerconfig.CfgDiscoveredPathManager.PathInfoCache;
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.core.settings.model.CSourceEntry;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
@@ -84,10 +83,8 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
 import org.osgi.framework.Version;
 
@@ -96,6 +93,8 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	private static final String EMPTY_STRING = "";	//$NON-NLS-1$
 	private static final String EMPTY_CFG_ID = "org.eclipse.cdt.build.core.emptycfg";	//$NON-NLS-1$
 	private static final String LANGUAGE_SETTINGS_PROVIDER_DELIMITER = ";"; //$NON-NLS-1$
+	private static final String LANGUAGE_SETTINGS_PROVIDER_NEGATION_SIGN = "-"; //$NON-NLS-1$
+	private static final String $TOOLCHAIN = "${Toolchain}"; //$NON-NLS-1$
 
 	//  Parent and children
 	private String parentId;
@@ -107,7 +106,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	private String artifactExtension;
 	private String errorParserIds;
 	private String defaultLanguageSettingsProvidersAttribute;
-	private String[] defaultLanguageSettingsProvidersIds;
+	private String[] defaultLanguageSettingsProviderIds;
     private String prebuildStep;
     private String postbuildStep;
     private String preannouncebuildStep;
@@ -1462,6 +1461,10 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		return set;
 	}
 
+	/**
+	 * Get value of attribute {@link IConfiguration#LANGUAGE_SETTINGS_PROVIDERS}
+	 * It not defined, it will try to pull the attribute from the parent configuration.
+	 */
 	private String getDefaultLanguageSettingsProvidersAttribute() {
 		if (defaultLanguageSettingsProvidersAttribute == null && parent instanceof Configuration) {
 			defaultLanguageSettingsProvidersAttribute = ((Configuration) parent).getDefaultLanguageSettingsProvidersAttribute();
@@ -1470,29 +1473,32 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		return defaultLanguageSettingsProvidersAttribute;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * This function will try to find default provider Ids specified in this instance.
+	 * It none defined, it will try to pull Ids from the parent configuration.
+	 */
 	@Override
-	public String[] getDefaultLanguageSettingsProvidersIds() {
-		defaultLanguageSettingsProvidersIds = null;
-		if (defaultLanguageSettingsProvidersIds == null) {
-			getDefaultLanguageSettingsProvidersAttribute();
+	public String[] getDefaultLanguageSettingsProviderIds() {
+		defaultLanguageSettingsProviderIds = null;
+		if (defaultLanguageSettingsProviderIds == null) {
+			defaultLanguageSettingsProvidersAttribute = getDefaultLanguageSettingsProvidersAttribute();
 			if (defaultLanguageSettingsProvidersAttribute != null) {
 				List<String> ids = new ArrayList<String>();
 				String[] defaultIds = defaultLanguageSettingsProvidersAttribute.split(LANGUAGE_SETTINGS_PROVIDER_DELIMITER);
 				for (String id : defaultIds) {
 					if (id != null && !id.isEmpty()) {
-						if (id.startsWith("-")) {
+						if (id.startsWith(LANGUAGE_SETTINGS_PROVIDER_NEGATION_SIGN)) {
 							id = id.substring(1);
 							ids.remove(id);
-						} else if (!ids.contains(id)){
-							if (id.contains("${Toolchain}")) {
+						} else if (!ids.contains(id)) {
+							if (id.contains($TOOLCHAIN)) {
 								IToolChain toolchain = getToolChain();
 								if (toolchain != null) {
-									String toolchainProvidersIds = toolchain.getDefaultLanguageSettingsProvidersIds();
+									String toolchainProvidersIds = toolchain.getDefaultLanguageSettingsProviderIds();
 									if (toolchainProvidersIds != null) {
 										ids.addAll(Arrays.asList(toolchainProvidersIds.split(LANGUAGE_SETTINGS_PROVIDER_DELIMITER)));
-									} else {
-										String message = "Invalid use of ${Toolchain} tag, toolchain does not specify language settings providers. cfg=" + getId();
-										ManagedBuilderCorePlugin.log(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, IStatus.ERROR, message, new Exception()));
 									}
 								}
 							} else {
@@ -1502,13 +1508,13 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 					}
 
 				}
-				defaultLanguageSettingsProvidersIds = ids.toArray(new String[ids.size()]);
+				defaultLanguageSettingsProviderIds = ids.toArray(new String[ids.size()]);
 			} else if (parent != null) {
-				defaultLanguageSettingsProvidersIds = parent.getDefaultLanguageSettingsProvidersIds();
+				defaultLanguageSettingsProviderIds = parent.getDefaultLanguageSettingsProviderIds();
 			}
 		}
 
-		return defaultLanguageSettingsProvidersIds;
+		return defaultLanguageSettingsProviderIds;
 	}
 
 	/* (non-Javadoc)

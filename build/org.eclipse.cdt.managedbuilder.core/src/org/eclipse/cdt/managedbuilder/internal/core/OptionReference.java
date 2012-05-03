@@ -117,6 +117,7 @@ public class OptionReference implements IOption {
 				value = new Boolean(element.getAttribute(DEFAULT_VALUE));
 				break;
 			case STRING:
+			case TREE:
 			case ENUMERATED:
 				// Pre-2.0 the value was the string for the UI
 				// Post-2.0 it is the ID of the enumerated option
@@ -189,6 +190,7 @@ public class OptionReference implements IOption {
 				case STRING:
 					value = element.getAttribute(DEFAULT_VALUE);
 					break;
+				case TREE:
 				case ENUMERATED:
 					String temp = element.getAttribute(DEFAULT_VALUE);
 					if (temp != null) {
@@ -248,6 +250,7 @@ public class OptionReference implements IOption {
 				element.setAttribute(DEFAULT_VALUE, ((Boolean)value).toString());
 				break;
 			case STRING:
+			case TREE:
 			case ENUMERATED:
 				element.setAttribute(DEFAULT_VALUE, (String)value);
 				break;
@@ -384,6 +387,19 @@ public class OptionReference implements IOption {
 		return new String();
 	}
 
+	public String getCommand(String id) throws BuildException {
+		if (!resolved) {
+			resolveReferences();
+		}
+		if (option != null) {
+			try {
+				String command = option.getCommand(id);
+				return command;
+			} catch (BuildException e) {}
+		}
+		return new String();
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IOption#getEnumName(java.lang.String)
 	 */
@@ -401,6 +417,19 @@ public class OptionReference implements IOption {
 		return new String();
 	}
 
+	public String getName(String id) throws BuildException {
+		if (!resolved) {
+			resolveReferences();
+		}
+		if (option != null) {
+			try {
+				String name = option.getName(id);
+				return name;
+			} catch (BuildException e) {}
+		}
+		return new String();
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getEnumeratedId(java.lang.String)
 	 */
@@ -412,6 +441,19 @@ public class OptionReference implements IOption {
 		if (option != null) {
 			try {
 				String id = option.getEnumeratedId(name);
+				return id;
+			} catch (BuildException e) {}
+		}
+		return new String();
+	}
+
+	public String getId(String name) throws BuildException {
+		if (!resolved) {
+			resolveReferences();
+		}
+		if (option != null) {
+			try {
+				String id = option.getId(name);
 				return id;
 			} catch (BuildException e) {}
 		}
@@ -730,7 +772,7 @@ public class OptionReference implements IOption {
 	@Override
 	public void setValue(String value) throws BuildException {
 		// Note that we can still set the human-readable value here
-		if (getValueType() == STRING || getValueType() == ENUMERATED) {
+		if (getValueType() == STRING || getValueType() == ENUMERATED || getValueType() == TREE) {
 			this.value = value;
 		} else {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
@@ -1024,6 +1066,8 @@ public class OptionReference implements IOption {
 			return IOption.STRING;
 		case IOption.ENUMERATED:
 			return IOption.ENUMERATED;
+		case IOption.TREE:
+			return IOption.TREE;
 		default:
 			return IOption.STRING_LIST;
 		}
@@ -1039,4 +1083,17 @@ public class OptionReference implements IOption {
 		}
 		return ve;
 	}
+	public ITreeRoot getTreeRoot() {
+		if (!resolved) {
+			resolveReferences();
+		}
+		if (option != null) {
+			try {
+				return option.getTreeRoot();
+			} catch (BuildException e) {
+			}
+		}
+		return null;
+	}
+
 }

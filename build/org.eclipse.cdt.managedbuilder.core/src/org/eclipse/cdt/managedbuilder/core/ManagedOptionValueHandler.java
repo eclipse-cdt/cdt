@@ -120,6 +120,7 @@ public class ManagedOptionValueHandler implements
 					}
 					break;
 				case IOption.ENUMERATED:
+				case IOption.TREE:
 					if (option.getValue().toString().equals(defaultValue.toString())) {
 						return true;
 					}

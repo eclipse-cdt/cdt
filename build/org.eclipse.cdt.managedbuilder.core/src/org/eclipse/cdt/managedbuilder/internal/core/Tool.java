@@ -2625,6 +2625,13 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 					}
 					break;
 
+				case IOption.TREE :
+					String treeVal = option.getCommand(option.getStringValue());
+					if (treeVal.length() > 0) {
+						sb.append(treeVal);
+					}
+					break;
+
 				case IOption.STRING :{
 						String strCmd = option.getCommand();
 						String val = option.getStringValue();

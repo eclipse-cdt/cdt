@@ -24,9 +24,6 @@ import org.eclipse.cdt.ui.newui.ICPropertyTab;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class LanguageSettingsProvidersPage extends AbstractPage {
-	/** @since 5.4 */ // temporary key, subject to removal
-	public static final String KEY_NO_SHOW_PROVIDERS   = "properties.providers.tab.disable"; //$NON-NLS-1$
-
 	private static boolean isLanguageSettingsProvidersEnabled = false;
 	private static IProject project = null;
 

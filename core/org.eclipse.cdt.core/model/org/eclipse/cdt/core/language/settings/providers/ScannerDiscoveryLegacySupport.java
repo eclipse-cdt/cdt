@@ -43,23 +43,22 @@ public class ScannerDiscoveryLegacySupport {
 	/** ID of MBS language settings provider (from org.eclipse.cdt.managedbuilder.core) */
 	public static final String MBS_LANGUAGE_SETTINGS_PROVIDER_ID = "org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider"; //$NON-NLS-1$
 
-	private static String USE_LANGUAGE_SETTINGS_PROVIDERS_PREFERENCE = "enabled"; //$NON-NLS-1$
-//	the default needs to be "false" for legacy projects to be open with old SD enabled for MBS provider
-	private static boolean USE_LANGUAGE_SETTINGS_PROVIDERS_DEFAULT = false;
-	private static final String PREFERENCES_QUALIFIER = CCorePlugin.PLUGIN_ID;
-	private static final String LANGUAGE_SETTINGS_PROVIDERS_NODE = "languageSettingsProviders"; //$NON-NLS-1$
+	private static String DISABLE_LSP_PREFERENCE = "language.settings.providers.disabled"; //$NON-NLS-1$
+	//	the default for project needs to be "disabled" - for legacy projects to be open with old SD enabled for MBS provider
+	private static boolean DISABLE_LSP_DEFAULT_PROJECT = true;
+	private static boolean DISABLE_LSP_DEFAULT_WORKSPACE = false;
+	private static final String PREFERENCES_QUALIFIER_CCORE = CCorePlugin.PLUGIN_ID;
 
 	private static Map<String, String> legacyProfiles = null;
-
 
 	/**
 	 * Get preferences node for org.eclipse.cdt.core.
 	 */
 	private static Preferences getPreferences(IProject project) {
 		if (project == null) {
-			return InstanceScope.INSTANCE.getNode(PREFERENCES_QUALIFIER).node(LANGUAGE_SETTINGS_PROVIDERS_NODE);
+			return InstanceScope.INSTANCE.getNode(PREFERENCES_QUALIFIER_CCORE);
 		} else {
-			return new LocalProjectScope(project).getNode(PREFERENCES_QUALIFIER).node(LANGUAGE_SETTINGS_PROVIDERS_NODE);
+			return new LocalProjectScope(project).getNode(PREFERENCES_QUALIFIER_CCORE);
 		}
 	}
 
@@ -73,7 +72,8 @@ public class ScannerDiscoveryLegacySupport {
 	 */
 	public static boolean isLanguageSettingsProvidersFunctionalityEnabled(IProject project) {
 		Preferences pref = getPreferences(project);
-		return pref.getBoolean(USE_LANGUAGE_SETTINGS_PROVIDERS_PREFERENCE, USE_LANGUAGE_SETTINGS_PROVIDERS_DEFAULT);
+		boolean defaultValue = project != null ? DISABLE_LSP_DEFAULT_PROJECT : DISABLE_LSP_DEFAULT_WORKSPACE;
+		return !pref.getBoolean(DISABLE_LSP_PREFERENCE, defaultValue);
 	}
 
 	/**
@@ -86,7 +86,7 @@ public class ScannerDiscoveryLegacySupport {
 	 */
 	public static void setLanguageSettingsProvidersFunctionalityEnabled(IProject project, boolean value) {
 		Preferences pref = getPreferences(project);
-		pref.putBoolean(USE_LANGUAGE_SETTINGS_PROVIDERS_PREFERENCE, value);
+		pref.putBoolean(DISABLE_LSP_PREFERENCE, !value);
 		try {
 			pref.flush();
 		} catch (BackingStoreException e) {
@@ -168,7 +168,7 @@ public class ScannerDiscoveryLegacySupport {
 
 			// InputTypes
 			// TODO -doublecheck
-//			legacyProfiles.put(inputTypeId, scannerConfigDiscoveryProfileId);
+			//			legacyProfiles.put(inputTypeId, scannerConfigDiscoveryProfileId);
 			legacyProfiles.put("cdt.managedbuild.tool.gnu.c.compiler.input", "org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileC|org.eclipse.cdt.make.core.GCCStandardMakePerFileProfile");
 			legacyProfiles.put("cdt.managedbuild.tool.gnu.cpp.compiler.input", "org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileCPP|org.eclipse.cdt.make.core.GCCStandardMakePerFileProfile");
 			legacyProfiles.put("cdt.managedbuild.tool.gnu.c.compiler.input.cygwin", "org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfileC");
@@ -179,7 +179,7 @@ public class ScannerDiscoveryLegacySupport {
 
 			// Toolchains
 			// TODO -doublecheck
-//			legacyProfiles.put(toolchainId, scannerConfigDiscoveryProfileId);
+			//			legacyProfiles.put(toolchainId, scannerConfigDiscoveryProfileId);
 		}
 
 		return legacyProfiles.get(id);

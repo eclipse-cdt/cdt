@@ -3370,7 +3370,7 @@
          </enabledWhen>
       </page>
       <page
-            name="Preprocessor Include Paths, Macros etc."
+            name="%LanguageSettingsProvidersPropertyPage.name"
             id="org.eclipse.cdt.ui.language.settings"
             class="org.eclipse.cdt.internal.ui.language.settings.providers.LanguageSettingsProvidersPage"
             category="org.eclipse.cdt.ui.newui.Page_head_general">
@@ -3378,7 +3378,7 @@
             <adapt type="org.eclipse.core.resources.IResource">
                <and>
                   <test property="org.eclipse.core.resources.projectNature" value="org.eclipse.cdt.core.cnature"/>
-                  <test property="org.eclipse.cdt.ui.checkPreference" value="org.eclipse.cdt.ui:properties.providers.tab.disable=false"/>
+                  <test property="org.eclipse.cdt.ui.checkPreference" value="org.eclipse.cdt.core:language.settings.providers.disabled=false"/>
                </and>
             </adapt>
          </enabledWhen>

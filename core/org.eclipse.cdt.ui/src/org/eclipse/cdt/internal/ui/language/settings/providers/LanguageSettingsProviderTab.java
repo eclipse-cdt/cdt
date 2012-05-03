@@ -49,6 +49,7 @@ import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvide
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvidersKeeper;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsSerializableProvider;
+import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.ui.CDTSharedImages;
@@ -56,7 +57,6 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.dialogs.ICOptionPage;
 import org.eclipse.cdt.ui.language.settings.providers.AbstractLanguageSettingProviderOptionPage;
 import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
-import org.eclipse.cdt.ui.newui.CDTPrefUtil;
 import org.eclipse.cdt.utils.ui.controls.TabFolderLayout;
 
 import org.eclipse.cdt.internal.ui.newui.Messages;
@@ -1161,7 +1161,7 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 
 	@Override
 	public boolean canBeVisible() {
-		if (CDTPrefUtil.getBool(LanguageSettingsProvidersPage.KEY_NO_SHOW_PROVIDERS)) {
+		if (!ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityEnabled(null)) {
 			return false;
 		}
 

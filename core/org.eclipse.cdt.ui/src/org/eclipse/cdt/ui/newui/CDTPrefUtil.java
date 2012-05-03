@@ -40,6 +40,8 @@ public class CDTPrefUtil {
 	public static final String KEY_EXPORT   = "properties.export.page.enable"; //$NON-NLS-1$
 	/** @since 5.2 Show the "Include Files" settings entry tab */
 	public static final String KEY_SHOW_INC_FILES = "properties.includefiles.page.enable"; //$NON-NLS-1$
+	/** @since 5.4 Show the "Scanner Discovery" tab*/
+	public static final String KEY_SHOW_SD   = "properties.sd.page.enable"; //$NON-NLS-1$
 	/** @since 5.2 */
 	public static final String KEY_TIPBOX   = "properties.option.tipbox.enable"; //$NON-NLS-1$
 	// string keys
@@ -47,37 +49,37 @@ public class CDTPrefUtil {
 	public static final String KEY_CONFSET = "workingsets.selected.configs";  //$NON-NLS-1$
 	// integer keys
 	public static final String KEY_POSSAVE  = "properties.save.position"; //$NON-NLS-1$
-		public static final int POSITION_SAVE_SIZE = 0;
-	    public static final int POSITION_SAVE_NONE = 2;
-	    public static final int POSITION_SAVE_BOTH = 3;
-	
+	public static final int POSITION_SAVE_SIZE = 0;
+	public static final int POSITION_SAVE_NONE = 2;
+	public static final int POSITION_SAVE_BOTH = 3;
+
 	public static final String KEY_DISC_NAMES  = "properties.discovery.naming"; //$NON-NLS-1$
-		public static final int DISC_NAMING_UNIQUE_OR_BOTH = 0;
-		public static final int DISC_NAMING_UNIQUE_OR_IDS = 1;
-		public static final int DISC_NAMING_ALWAYS_BOTH = 2;
-		public static final int DISC_NAMING_ALWAYS_IDS = 3;
-		public static final int DISC_NAMING_DEFAULT = DISC_NAMING_UNIQUE_OR_BOTH;
-	
+	public static final int DISC_NAMING_UNIQUE_OR_BOTH = 0;
+	public static final int DISC_NAMING_UNIQUE_OR_IDS = 1;
+	public static final int DISC_NAMING_ALWAYS_BOTH = 2;
+	public static final int DISC_NAMING_ALWAYS_IDS = 3;
+	public static final int DISC_NAMING_DEFAULT = DISC_NAMING_UNIQUE_OR_BOTH;
+
 	/** Property key used for string list display mode for multi-configuration edits (conjunction/disjunction) */
 	public static final String KEY_DMODE = "properties.multi.displ.mode"; //$NON-NLS-1$
-		/** Conjunction implies showing only common elements (intersection) */
-		public static final int DMODE_CONJUNCTION = 1;
-		/** Disjunction implies showing all elements (union) */
-		public static final int DMODE_DISJUNCTION = 2;
-		
+	/** Conjunction implies showing only common elements (intersection) */
+	public static final int DMODE_CONJUNCTION = 1;
+	/** Disjunction implies showing all elements (union) */
+	public static final int DMODE_DISJUNCTION = 2;
+
 	/** Property key used for string list write mode for multi-configuration edits (modify/replace) */
 	public static final String KEY_WMODE = "properties.multi.write.mode"; //$NON-NLS-1$
-		/** Modify implies changing only given elements and not changing any others */
-		public static final int WMODE_MODIFY  = 4;
-		/** Replace implies replacing the whole list with the given one, overwriting old entries */
-		public static final int WMODE_REPLACE = 8;
-		
+	/** Modify implies changing only given elements and not changing any others */
+	public static final int WMODE_MODIFY  = 4;
+	/** Replace implies replacing the whole list with the given one, overwriting old entries */
+	public static final int WMODE_REPLACE = 8;
+
 	public static final String NULL = "NULL"; //$NON-NLS-1$
 	private static final IPreferenceStore pref = CUIPlugin.getDefault().getPreferenceStore();
 	private static final String DELIMITER = " "; //$NON-NLS-1$
 	public static final String CONFSETDEL = "\f"; //$NON-NLS-1$
 	private static LinkedList<String> preferredTCs = null;
-	
+
 	public static final Object[] EMPTY_ARRAY = new Object[0];
 
 	// low-level methods
@@ -93,34 +95,34 @@ public class CDTPrefUtil {
 		preferredTCs = new LinkedList<String>(Arrays.asList(getStr(KEY_PREFTC).split(DELIMITER)));
 	}
 	public static List<String> getPreferredTCs() {
-		if (preferredTCs == null) readPreferredTCs(); 
-		return preferredTCs; 
+		if (preferredTCs == null) readPreferredTCs();
+		return preferredTCs;
 	}
-	public static void delPreferredTC(String s) { 
-		if (preferredTCs == null) readPreferredTCs(); 
-		preferredTCs.remove(s); 
+	public static void delPreferredTC(String s) {
+		if (preferredTCs == null) readPreferredTCs();
+		preferredTCs.remove(s);
 	}
 	public static void addPreferredTC(String s) {
-		if (preferredTCs == null) readPreferredTCs(); 
-		if (!preferredTCs.contains(s)) preferredTCs.add(s); 
+		if (preferredTCs == null) readPreferredTCs();
+		if (!preferredTCs.contains(s)) preferredTCs.add(s);
 	}
 	public static void cleanPreferredTCs() {
 		setStr(KEY_PREFTC, IPreferenceStore.STRING_DEFAULT_DEFAULT);
-		readPreferredTCs(); 
+		readPreferredTCs();
 	}
 	public static void savePreferredTCs() {
-		if (preferredTCs == null) return; 
+		if (preferredTCs == null) return;
 		Iterator<String> it = preferredTCs.iterator();
-		StringBuilder b = new StringBuilder(); 
+		StringBuilder b = new StringBuilder();
 		while (it.hasNext()) {
 			String s = it.next();
-			if (s == null) continue; 
+			if (s == null) continue;
 			b.append(s);
 			b.append(DELIMITER);
 		}
 		setStr(KEY_PREFTC, b.toString().trim());
 	}
-	
+
 	/**
 	 * Returns string list display mode for multi-configuration edits (conjunction/disjunction).
 	 * 
@@ -136,7 +138,7 @@ public class CDTPrefUtil {
 		}
 		return mode;
 	}
-	
+
 	/**
 	 * Sets string list display mode for multi-configuration edits (conjunction/disjunction).
 	 * 
@@ -148,7 +150,7 @@ public class CDTPrefUtil {
 	public static void setMultiCfgStringListDisplayMode(int mode) {
 		setInt(KEY_DMODE, mode);
 	}
-	
+
 	/**
 	 * Returns string list write mode for multi-configuration edits (modify/replace).
 	 * 
@@ -164,7 +166,7 @@ public class CDTPrefUtil {
 		}
 		return mode;
 	}
-	
+
 	/**
 	 * Sets string list write mode for multi-configuration edits (modify/replace).
 	 * 
@@ -176,7 +178,7 @@ public class CDTPrefUtil {
 	public static void setMultiCfgStringListWriteMode(int mode) {
 		setInt(KEY_WMODE, mode);
 	}
-	
+
 	/**
 	 * @deprecated as of CDT 8.0. Use {@link StringListModeControl} to display string list modes.
 	 */
@@ -185,15 +187,15 @@ public class CDTPrefUtil {
 		String s = null;
 		switch(getMultiCfgStringListDisplayMode()) {
 		case DMODE_CONJUNCTION:
-			s = Messages.EnvironmentTab_17;  
+			s = Messages.EnvironmentTab_17;
 			break;
 		case DMODE_DISJUNCTION:
-			s = Messages.EnvironmentTab_18;  
+			s = Messages.EnvironmentTab_18;
 			break;
 		}
-		return Messages.EnvironmentTab_19 + s;  
+		return Messages.EnvironmentTab_19 + s;
 	}
-	
+
 	/**
 	 * @deprecated as of CDT 8.0. Use {@link StringListModeControl} to display string list modes.
 	 */
@@ -202,15 +204,15 @@ public class CDTPrefUtil {
 		String s = null;
 		switch(getMultiCfgStringListWriteMode()) {
 		case WMODE_MODIFY:
-			s = Messages.EnvironmentTab_24;  
+			s = Messages.EnvironmentTab_24;
 			break;
 		case WMODE_REPLACE:
-			s = Messages.EnvironmentTab_21;  
+			s = Messages.EnvironmentTab_21;
 			break;
 		}
-		return Messages.EnvironmentTab_22 + s;  
+		return Messages.EnvironmentTab_22 + s;
 	}
-	
+
 	/**
 	 * Toggle string list display mode: conjunction <-> disjunction.
 	 */
@@ -240,14 +242,14 @@ public class CDTPrefUtil {
 	public static final String[] getStrListForDisplay(String[][] input) {
 		return getStrListForDisplay(input, getMultiCfgStringListDisplayMode());
 	}
-	
+
 	private static final String[] getStrListForDisplay(String[][] input, int mode) {
 		Object[] ob = getListForDisplay(input, getMultiCfgStringListDisplayMode(), null);
 		String[] ss = new String[ob.length];
 		System.arraycopy(ob, 0, ss, 0, ob.length);
 		return ss;
 	}
-	
+
 	public static final Object[] getListForDisplay(Object[][] input, Comparator<Object> cmp) {
 		return getListForDisplay(input, getMultiCfgStringListDisplayMode(), cmp);
 	}
@@ -264,15 +266,15 @@ public class CDTPrefUtil {
 		if (input.length == 1) {
 			return (input[0] == null) ?
 					EMPTY_ARRAY :
-					input[0];
+						input[0];
 		}
 
 		Object[] s1 = input[0];
-		if (s1 == null || 
-			s1.length == 0)
+		if (s1 == null ||
+				s1.length == 0)
 			return EMPTY_ARRAY;
-		if (getMultiCfgStringListDisplayMode() == DMODE_CONJUNCTION) 
-		{ 
+		if (getMultiCfgStringListDisplayMode() == DMODE_CONJUNCTION)
+		{
 			ArrayList<Object> lst = new ArrayList<Object>();
 			for (int i=0; i<s1.length; i++) {
 				if (s1[i] == null)
@@ -298,7 +300,7 @@ public class CDTPrefUtil {
 		TreeSet<Object> lst = new TreeSet<Object>(cmp); // set, to avoid doubles
 		for (Object[] element : input) {
 			if (element == null ||
-				element.length == 0)
+					element.length == 0)
 				continue;
 			for (Object element2 : element)
 				lst.add(element2);
@@ -307,7 +309,7 @@ public class CDTPrefUtil {
 		Arrays.sort(s1, cmp);
 		return s1;
 	}
-	
+
 	/**
 	 * @deprecated Use the {@link WorkingSetConfigurationManager} class, instead.
 	 */
@@ -315,15 +317,15 @@ public class CDTPrefUtil {
 	public static List<String> readConfigSets() {
 		return new LinkedList<String>(Arrays.asList(getStr(KEY_CONFSET).split(CONFSETDEL)));
 	}
-	
+
 	/**
 	 * @deprecated Use the {@link WorkingSetConfigurationManager} class, instead.
 	 */
 	@Deprecated
 	public static void saveConfigSets(List<String> out) {
-		StringBuilder b = new StringBuilder(); 
+		StringBuilder b = new StringBuilder();
 		for (String s : out) {
-			if (s == null) continue; 
+			if (s == null) continue;
 			b.append(s);
 			b.append(CONFSETDEL);
 		}

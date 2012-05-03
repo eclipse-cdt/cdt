@@ -25,17 +25,18 @@ class MessagesForPreferences extends NLS {
 	public static String GdbDebugPreferencePage_Advanced_timeout_settings_dialog_tooltip;
 	public static String GdbDebugPreferencePage_Advanced_Timeout_Settings;
 	public static String GdbDebugPreferencePage_description;
-	public static String GdbDebugPreferencePage_traces_label;
+	/** @since 2.3 */
+	public static String GdbDebugPreferencePage_general_behavior_label;
 	public static String GdbDebugPreferencePage_enableTraces_label;
 	/** @since 2.2 */
 	public static String GdbDebugPreferencePage_maxGdbTraces_label;
-	public static String GdbDebugPreferencePage_termination_label;
 	public static String GdbDebugPreferencePage_autoTerminateGdb_label;
 	public static String GdbDebugPreferencePage_Command_column_name;
 	public static String GdbDebugPreferencePage_Command_field_can_not_be_empty;
 	public static String GdbDebugPreferencePage_Command_timeout;
-	public static String GdbDebugPreferencePage_hover_label;
 	public static String GdbDebugPreferencePage_useInspectorHover_label;
+	/** @since 2.3 */
+	public static String GdbDebugPreferencePage_hideRunningThreads;
 	/** @since 2.2 */
 	public static String GdbDebugPreferencePage_prettyPrinting_label;
 	/** @since 2.2 */
@@ -56,6 +57,8 @@ class MessagesForPreferences extends NLS {
 	public static String GdbDebugPreferencePage_use_rtti_label1;
 	/** @since 2.3 */
 	public static String GdbDebugPreferencePage_use_rtti_label2;
+	
+	
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(MessagesForPreferences.class.getName(), MessagesForPreferences.class);

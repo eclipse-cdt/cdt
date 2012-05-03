@@ -124,5 +124,12 @@ public interface IGdbDebugPreferenceConstants {
 	 */
 	public static final String PREF_USE_RTTI = PREFIX + "useRtti"; //$NON-NLS-1$
 
+	/**
+	 * Boolean preference whether to hide or not, the running threads in the debug view.
+	 * Default is <code>false</code>.
+	 * 
+	 * @since 4.1
+	 */
+	public static final String PREF_HIDE_RUNNING_THREADS = PREFIX + "hideRunningThreads"; //$NON-NLS-1$
 }
 

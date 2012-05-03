@@ -624,10 +624,40 @@ public class GdbDebugPreferencePage extends FieldEditorPreferencePage implements
 		group1.setLayout(groupLayout);
 
 		final Group group2= new Group(parent, SWT.NONE);
-		group2.setText(MessagesForPreferences.GdbDebugPreferencePage_traces_label);
+		group2.setText(MessagesForPreferences.GdbDebugPreferencePage_general_behavior_label);
 		groupLayout= new GridLayout(3, false);
 		group2.setLayout(groupLayout);
 		group2.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+		BooleanFieldEditor boolField= new BooleanFieldEditor(
+				IGdbDebugPreferenceConstants.PREF_AUTO_TERMINATE_GDB,
+				MessagesForPreferences.GdbDebugPreferencePage_autoTerminateGdb_label,
+				group2);
+
+		boolField.fillIntoGrid(group2, 3);
+		addField(boolField);
+		// Need to set layout again.
+		group2.setLayout(groupLayout);
+
+		boolField= new BooleanFieldEditor(
+				IGdbDebugPreferenceConstants.PREF_USE_INSPECTOR_HOVER,
+				MessagesForPreferences.GdbDebugPreferencePage_useInspectorHover_label,
+				group2);
+
+		boolField.fillIntoGrid(group2, 3);
+		addField(boolField);
+		// need to set layout again
+		group2.setLayout(groupLayout);
+
+		boolField= new BooleanFieldEditor(
+				IGdbDebugPreferenceConstants.PREF_HIDE_RUNNING_THREADS,
+				MessagesForPreferences.GdbDebugPreferencePage_hideRunningThreads,
+				group2);
+
+		boolField.fillIntoGrid(group2, 3);
+		addField(boolField);
+		// Need to set layout again.
+		group2.setLayout(groupLayout);
 
 		final ListenableBooleanFieldEditor enableGdbTracesField = new ListenableBooleanFieldEditor(
 				IGdbDebugPreferenceConstants.PREF_TRACES_ENABLE,
@@ -659,39 +689,7 @@ public class GdbDebugPreferencePage extends FieldEditorPreferencePage implements
 		// Need to set layout again.
 		group2.setLayout(groupLayout);
 
-		Group group= new Group(parent, SWT.NONE);
-		group.setText(MessagesForPreferences.GdbDebugPreferencePage_termination_label);
-		groupLayout= new GridLayout(3, false);
-		group.setLayout(groupLayout);
-		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-		BooleanFieldEditor boolField= new BooleanFieldEditor(
-				IGdbDebugPreferenceConstants.PREF_AUTO_TERMINATE_GDB,
-				MessagesForPreferences.GdbDebugPreferencePage_autoTerminateGdb_label,
-				group);
-
-		boolField.fillIntoGrid(group, 3);
-		addField(boolField);
-		// Need to set layout again.
-		group.setLayout(groupLayout);
-
-		group= new Group(parent, SWT.NONE);
-		group.setText(MessagesForPreferences.GdbDebugPreferencePage_hover_label);
-		groupLayout= new GridLayout(3, false);
-		group.setLayout(groupLayout);
-		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-		boolField= new BooleanFieldEditor(
-				IGdbDebugPreferenceConstants.PREF_USE_INSPECTOR_HOVER,
-				MessagesForPreferences.GdbDebugPreferencePage_useInspectorHover_label,
-				group);
-
-		boolField.fillIntoGrid(group, 3);
-		addField(boolField);
-		// need to set layout again
-		group.setLayout(groupLayout);
-
-		group = new Group(parent, SWT.NONE);
+		Group group = new Group(parent, SWT.NONE);
 		group.setText(MessagesForPreferences.GdbDebugPreferencePage_prettyPrinting_label);
 		groupLayout = new GridLayout(3, false);
 		group.setLayout(groupLayout);

@@ -72,6 +72,8 @@ public class Keywords {
 	public static final String LONG_LONG = "long long"; 
 	public static final String MUTABLE = "mutable"; 
 	public static final String NAMESPACE = "namespace"; 
+	/** @since 5.4 */
+	public static final String NULLPTR = "nullptr";
 	public static final String NEW = "new"; 
 	public static final String NOT = "not"; 
 	public static final String NOT_EQ = "not_eq"; 
@@ -163,6 +165,8 @@ public class Keywords {
 	public static final char[] cMUTABLE = "mutable".toCharArray(); 
 	public static final char[] cNAMESPACE = "namespace".toCharArray(); 
 	public static final char[] cNEW = "new".toCharArray(); 
+	/** @since 5.4 */
+	public static final char[] cNULLPTR = NULLPTR.toCharArray(); 
 	public static final char[] cNOT = "not".toCharArray(); 
 	public static final char[] cNOT_EQ = "not_eq".toCharArray(); 
 	public static final char[] cOPERATOR = "operator".toCharArray(); 
@@ -361,6 +365,7 @@ public class Keywords {
         cppkeywords.put(Keywords.cMUTABLE, IToken.t_mutable); 
         cppkeywords.put(Keywords.cNAMESPACE, IToken.t_namespace); 
         cppkeywords.put(Keywords.cNEW, IToken.t_new); 
+        cppkeywords.put(Keywords.cNULLPTR, IToken.t_nullptr);
         cppkeywords.put(Keywords.cOPERATOR, IToken.t_operator); 
         cppkeywords.put(Keywords.cPRIVATE, IToken.t_private); 
         cppkeywords.put(Keywords.cPROTECTED, IToken.t_protected); 

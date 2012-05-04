@@ -141,6 +141,7 @@ public interface IToken {
 	int t_mutable = 90;
 	int t_namespace = 91;
 	int t_new = 92;
+	/** @since 5.4 */ int t_nullptr = 5400;
 	/** @deprecated use {@link #tNOT} */ @Deprecated int t_not = 93;
 	/** @deprecated use {@link #tNOTEQUAL} */ @Deprecated int t_not_eq = 94;
 	int t_operator = 95;

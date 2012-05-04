@@ -448,6 +448,7 @@ public class KeywordSets {
 		ALL_CPP.add( Keywords.NEW);
 		ALL_CPP.add( Keywords.NOT);
 		ALL_CPP.add( Keywords.NOT_EQ);
+		ALL_CPP.add( Keywords.NULLPTR);
 		ALL_CPP.add( Keywords.OPERATOR);
 		ALL_CPP.add( Keywords.OR);
 		ALL_CPP.add( Keywords.OR_EQ);
@@ -532,6 +533,7 @@ public class KeywordSets {
 		KEYWORDS_CPP.add( Keywords.NEW );
 		KEYWORDS_CPP.add( Keywords.NOT );
 		KEYWORDS_CPP.add( Keywords.NOT_EQ );
+		KEYWORDS_CPP.add( Keywords.NULLPTR );
 		KEYWORDS_CPP.add( Keywords.OPERATOR );
 		KEYWORDS_CPP.add( Keywords.OR );
 		KEYWORDS_CPP.add( Keywords.OR_EQ );

@@ -130,6 +130,8 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
     			IType type = new CPPBasicType(getCharType(), 0, this);
     			type = new CPPQualifierType(type, true, false);
     			return new CPPArrayType(type, getStringLiteralSize());
+    		case lk_nullptr:
+    			return CPPBasicType.NULL_PTR;
     	}
 		return new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
     }

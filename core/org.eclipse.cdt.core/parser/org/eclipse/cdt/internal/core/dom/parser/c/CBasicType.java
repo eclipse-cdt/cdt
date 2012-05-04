@@ -217,6 +217,9 @@ public class CBasicType implements ICBasicType, ISerializableType {
 			return t_void;
 		case eUnspecified:
 			return t_unspecified;
+		case eNullPtr:
+			// Null pointer type cannot be expressed wit ha simple decl specifier.
+			break;
 		}
 		return t_unspecified;
 	}

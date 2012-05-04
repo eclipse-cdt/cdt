@@ -450,6 +450,7 @@ public class Value implements IValue {
 			IASTLiteralExpression litEx= (IASTLiteralExpression) e;
 			switch (litEx.getKind()) {
 			case IASTLiteralExpression.lk_false:
+			case IASTLiteralExpression.lk_nullptr:
 				return 0;
 			case IASTLiteralExpression.lk_true:
 				return 1;

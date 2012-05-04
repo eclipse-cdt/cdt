@@ -1409,6 +1409,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         	case IASTLiteralExpression.lk_integer_constant:
         	case IASTLiteralExpression.lk_true:
         	case IASTLiteralExpression.lk_false:
+        	case IASTLiteralExpression.lk_nullptr:
 				throwBacktrack(operatorToken);
         	}
         }

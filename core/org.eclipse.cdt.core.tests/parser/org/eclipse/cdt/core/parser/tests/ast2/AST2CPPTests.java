@@ -9609,4 +9609,79 @@ public class AST2CPPTests extends AST2BaseTest {
 	public void testScopeOfExceptionSpecification_377457() throws Exception {
 		parseAndCheckBindings();
 	}
+
+	//	namespace std {
+	//		typedef decltype(nullptr) nullptr_t;
+	//	}
+	//	template <bool b> struct eval {
+	//		int FALSE;
+	//	};
+	//	template <> struct eval<true> {
+	//		int TRUE;
+	//	};
+	//	void checkptr(int*);
+	//	void checkbool(bool b);
+	//	void checkNullPtr(std::nullptr_t np);
+	//	void test() {
+	//		int* ip;
+	//		checkptr(nullptr);
+	//		checkNullPtr(0);
+	//		checkNullPtr(nullptr);
+	//		checkbool(nullptr < 0);
+	//		checkbool(nullptr);
+	//		checkbool(ip > nullptr);
+	//		sizeof(nullptr);
+	//		typeid(nullptr);
+	//		if (false)
+	//			throw nullptr;
+	//		eval<nullptr == 0> e1; e1.TRUE;
+	//		checkptr(true ? nullptr : nullptr);
+	//	}
+	//	template<typename T> void g( T* t );
+	//	template<typename T> void h( T t );
+	//	void testtemplates() {
+	//		g( (float*) nullptr ); // deduces T = float
+	//		h( 0 ); // deduces T = int
+	//		h( nullptr ); // deduces T = nullptr_t
+	//		h( (float*) nullptr ); // deduces T = float*
+	//	}
+	public void testNullptr_327298a() throws Exception {
+		parseAndCheckBindings();
+	}
+	
+	//	namespace std {
+	//		typedef decltype(nullptr) nullptr_t;
+	//	}
+	//	void checklvalue(int*&);
+	//	void checkNullPtr(std::nullptr_t np);
+	//	void test() {
+	//		checkNullPtr(1);
+	//		checklvalue(nullptr);
+	//  }
+	//	template<typename T> void g( T* t );
+	//	template<typename T> void h( T t );
+	//	void testtemplates() {
+	//		g( nullptr ); // error
+	//	}
+	public void testNullptr_327298b() throws Exception {
+		BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), true);
+		bh.assertProblem("checkNullPtr(1)", 12);
+		bh.assertProblem("checklvalue(nullptr)", 11);
+		bh.assertProblem("g( nullptr )", 1);
+	}
+	
+	//	void f( char* );
+	//	void f( int );
+	//	void test2() {
+	//		f( nullptr ); // calls f( char* )
+	//		f( 0 ); // calls f( int )
+	//	}
+	public void testNullptr_327298c() throws Exception {
+		parseAndCheckBindings();
+		BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), true);
+		IFunction f= bh.assertNonProblem("f( nullptr )", 1);
+		assertEquals("void (char *)", ASTTypeUtil.getType(f.getType()));
+		f= bh.assertNonProblem("f( 0 )", 1);
+		assertEquals("void (int)", ASTTypeUtil.getType(f.getType()));
+	}	
 }

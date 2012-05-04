@@ -89,6 +89,7 @@ public abstract class ArithmeticConversion {
 			switch (kind) {
 			case eUnspecified:
 			case eVoid:
+			case eNullPtr:
 				return false;
 			default:
 				return true;
@@ -121,6 +122,7 @@ public abstract class ArithmeticConversion {
 			case eFloat:
 			case eUnspecified:
 			case eVoid:
+			case eNullPtr:
 				return false;
 			}
 		}
@@ -224,6 +226,7 @@ public abstract class ArithmeticConversion {
 			case eUnspecified:
 			case eDouble:
 			case eFloat:
+			case eNullPtr:
 				assert false;
 			}
 		}		

@@ -64,6 +64,12 @@ public interface IASTLiteralExpression extends IASTExpression {
 	public static final int lk_false = 6;
 
 	/**
+	 * <code>lk_nullptr</code> represents the 'nullptr' keyword.
+	 * @since 5.4
+	 */
+	public static final int lk_nullptr = 7;
+
+	/**
 	 * Get the literal expression kind.
 	 */
 	public int getKind();

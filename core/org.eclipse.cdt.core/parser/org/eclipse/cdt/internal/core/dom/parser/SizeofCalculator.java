@@ -161,6 +161,8 @@ public class SizeofCalculator {
 			return size_2;
 		case eChar32:
 			return size_4;
+		case eNullPtr:
+			return sizeAndAlignmentOfPointer();
 		default:
 			return null;
 		}

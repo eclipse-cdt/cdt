@@ -1635,13 +1635,11 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         case IToken.tINTEGER:
             t = consume();
             literalExpression = nodeFactory.newLiteralExpression(IASTLiteralExpression.lk_integer_constant, t.getImage()); 
-            ((ASTNode) literalExpression).setOffsetAndLength(t.getOffset(), t.getEndOffset()- t.getOffset());
-            return literalExpression;
+            return setRange(literalExpression, t.getOffset(), t.getEndOffset());
         case IToken.tFLOATINGPT:
             t = consume();
             literalExpression = nodeFactory.newLiteralExpression(IASTLiteralExpression.lk_float_constant, t.getImage()); 
-            ((ASTNode) literalExpression).setOffsetAndLength(t.getOffset(), t.getEndOffset() - t.getOffset());
-            return literalExpression;
+            return setRange(literalExpression, t.getOffset(), t.getEndOffset());
         case IToken.tSTRING:
         case IToken.tLSTRING:
         case IToken.tUTF16STRING:
@@ -1653,24 +1651,24 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         case IToken.tUTF32CHAR:
             t = consume();
             literalExpression = nodeFactory.newLiteralExpression(IASTLiteralExpression.lk_char_constant, t.getImage()); 
-            ((ASTNode) literalExpression).setOffsetAndLength(t.getOffset(), t.getEndOffset() - t.getOffset());
-            return literalExpression;
+            return setRange(literalExpression, t.getOffset(), t.getEndOffset());
         case IToken.t_false:
             t = consume();
             literalExpression = nodeFactory.newLiteralExpression(IASTLiteralExpression.lk_false, t.getImage()); 
-            ((ASTNode) literalExpression).setOffsetAndLength(t.getOffset(), t.getEndOffset() - t.getOffset());
-            return literalExpression;
+            return setRange(literalExpression, t.getOffset(), t.getEndOffset());
         case IToken.t_true:
             t = consume();
             literalExpression = nodeFactory.newLiteralExpression(IASTLiteralExpression.lk_true, t.getImage()); 
-            ((ASTNode) literalExpression).setOffsetAndLength(t.getOffset(), t.getEndOffset() - t.getOffset());
-            return literalExpression;
-
+            return setRange(literalExpression, t.getOffset(), t.getEndOffset());
+        case IToken.t_nullptr:
+        	t= consume();
+            literalExpression = nodeFactory.newLiteralExpression(IASTLiteralExpression.lk_nullptr, t.getImage()); 
+            return setRange(literalExpression, t.getOffset(), t.getEndOffset());
+        	
         case IToken.t_this:
             t = consume();
             literalExpression = nodeFactory.newLiteralExpression(IASTLiteralExpression.lk_this, t.getImage()); 
-            ((ASTNode) literalExpression).setOffsetAndLength(t.getOffset(), t.getEndOffset() - t.getOffset());
-            return literalExpression;
+            return setRange(literalExpression, t.getOffset(), t.getEndOffset());
         case IToken.tLPAREN:
         	if (supportStatementsInExpressions && LT(2) == IToken.tLBRACE) {
         		return compoundStatementExpression();
@@ -1694,9 +1692,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         case IToken.tBITCOMPLEMENT: {
             IASTName name = qualifiedName(ctx, strat);
             IASTIdExpression idExpression = nodeFactory.newIdExpression(name);
-            ((ASTNode) idExpression).setOffsetAndLength(((ASTNode) name).getOffset(), ((ASTNode) name).getOffset()
-                    + ((ASTNode) name).getLength() - ((ASTNode) name).getOffset());
-            return idExpression;
+            return setRange(idExpression, name);
         }
         case IToken.tLBRACKET:
         	return lambdaExpression();

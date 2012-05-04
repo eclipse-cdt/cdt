@@ -101,6 +101,9 @@ public class CPPASTSimpleDeclSpecifier extends CPPASTBaseDeclSpecifier implement
 			return t_unspecified;
 		case eVoid:
 			return t_void;
+		case eNullPtr:
+			// Null pointer type cannot be expressed wit ha simple decl specifier.
+			break;
     	}
     	return t_unspecified;
     }

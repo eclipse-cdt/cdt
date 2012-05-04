@@ -336,6 +336,10 @@ public class ASTTypeUtil {
 				if (needSpace) result.append(SPACE);
 				result.append(Keywords.CHAR32_T);
 				break;
+			case eNullPtr:
+				if (needSpace) result.append(SPACE);
+				result.append("std::nullptr_t"); //$NON-NLS-1$
+				break;
 			case eUnspecified:
 				break;
 			}

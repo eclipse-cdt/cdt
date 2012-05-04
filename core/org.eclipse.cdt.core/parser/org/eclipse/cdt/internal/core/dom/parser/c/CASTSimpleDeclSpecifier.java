@@ -116,6 +116,9 @@ public class CASTSimpleDeclSpecifier extends CASTBaseDeclSpecifier implements IC
 			return t_unspecified;
 		case eVoid:
 			return t_void;
+		case eNullPtr:
+			// Null pointer type cannot be expressed with a simple declaration specifier.
+			break;
     	}
     	return t_unspecified;
     }

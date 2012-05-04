@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class CPPBasicType implements ICPPBasicType, ISerializableType {
 	public static final CPPBasicType BOOLEAN = new CPPBasicType(Kind.eBoolean, 0, null);
+	public static final CPPBasicType NULL_PTR = new CPPBasicType(Kind.eNullPtr, 0, null);
 	
 	private final Kind fKind;
 	private final int fModifiers;
@@ -246,6 +247,9 @@ public class CPPBasicType implements ICPPBasicType, ISerializableType {
 			return t_void;
 		case eUnspecified:
 			return t_unspecified;
+		case eNullPtr:
+			// Null pointer type cannot be expressed wit ha simple decl specifier.
+			break;
 		}
 		return t_unspecified;
 	}

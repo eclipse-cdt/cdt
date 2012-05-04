@@ -188,14 +188,14 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	}
 
 	@Override
-	public ICElement getElement(String name) {
-		if (name == null || name.length() == 0) {
+	public ICElement getElement(String qname) {
+		if (qname == null || qname.length() == 0) {
 			return null;
 		}
 		try {
 			ICElement[] celements = getChildren();
 			for (ICElement celement : celements) {
-				if (name.equals(celement.getElementName())) {
+				if (qname.equals(celement.getElementName())) {
 					return celement;
 				}
 			}
@@ -203,15 +203,15 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 			//
 		}
 
-		String[] names = name.split("::"); //$NON-NLS-1$
+		String[] names = qname.split("::"); //$NON-NLS-1$
 		ICElement current = this;
-		for (int j = 0; j < names.length; ++j) {
+		for (String name : names) {
 			if (current instanceof IParent) {
 				try {
 					ICElement[] celements = ((IParent) current).getChildren();
 					current = null;
 					for (ICElement celement : celements) {
-						if (names[j].equals(celement.getElementName())) {
+						if (name.equals(celement.getElementName())) {
 							current = celement;
 							break;
 						}
@@ -608,11 +608,19 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 				IPath path = this.getLocation();
 				java.io.File file = path.toFile();
 				if (file != null && file.isFile()) {
+					InputStream stream= null;
 					try {
-						InputStream stream = new FileInputStream(file);
+						stream = new FileInputStream(file);
 						buffer.setContents(Util.getInputStreamAsCharArray(stream, (int)file.length(), null));
 					} catch (IOException e) {
 						buffer.setContents(new char[0]);
+					} finally {
+						if (stream != null) {
+							try {
+								stream.close();
+							} catch (IOException e) {
+							}
+						}
 					}
 				} else {
 					buffer.setContents(new char[0]);

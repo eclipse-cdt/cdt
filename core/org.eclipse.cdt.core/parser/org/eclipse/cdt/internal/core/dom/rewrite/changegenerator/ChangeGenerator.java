@@ -447,8 +447,11 @@ public class ChangeGenerator extends ASTVisitor {
 						while ((piece = clippedEdit(edit2, region)) != null) {
 							format.addChild(piece);
 							// The warning "The variable edit2 may be null at this location" is bogus.
-							if (edit2.getExclusiveEnd() >= end || j >= formatEdits.length) {
-								break;
+							// Make the compiler happy:
+							if (edit2 != null) {
+								if (edit2.getExclusiveEnd() >= end || j >= formatEdits.length) {
+									break;
+								}
 							}
 							edit2 = formatEdits[j++];
 						}
@@ -817,8 +820,7 @@ public class ChangeGenerator extends ASTVisitor {
 			siblings = parent.getChildren();
 		}
 		boolean beforeNode = false;
-		for (int i = 0; i < siblings.length; i++) {
-			IASTNode sibling = siblings[i];
+		for (IASTNode sibling : siblings) {
 			if (sibling == node) {
 				beforeNode = true;
 			} else if (beforeNode) {

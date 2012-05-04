@@ -39,11 +39,6 @@ public class PathEntryContainerChanged  {
 	 */
 	IPath fPath;
 
-	/**
-	 * Comment for <code>serialVersionUID</code>
-	 */
-	private static final long serialVersionUID = 3257565105200705590L;
-
 
 	/**
 	 * 

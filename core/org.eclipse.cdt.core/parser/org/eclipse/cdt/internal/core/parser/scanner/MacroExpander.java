@@ -263,7 +263,7 @@ public class MacroExpander {
 			final TokenSource[] argInputs= new TokenSource[paramCount];
 			final BitSet paramUsage= getParamUsage(macro);
 			if (tracker != null) {
-				tracker.startFunctionStyleMacro((Token) lastConsumed.clone());
+				tracker.startFunctionStyleMacro(lastConsumed.clone());
 			}
 			try {
 				lastConsumed= parseArguments(input, (FunctionStyleMacro) macro, forbidden, argInputs, tracker);
@@ -482,7 +482,7 @@ public class MacroExpander {
     			case Lexer.tNEWLINE:
     				break;
     			default:
-    				tracker.addFunctionStyleMacroExpansionToken((Token) t.clone());
+    				tracker.addFunctionStyleMacroExpansionToken(t.clone());
     				break;
     			}
     		}
@@ -841,7 +841,7 @@ public class MacroExpander {
 	private TokenList clone(TokenList tl) {
 		TokenList result= new TokenList();
 		for (Token t= tl.first(); t != null; t= (Token) t.getNext()) {
-			result.append((Token) t.clone());
+			result.append(t.clone());
 		}
 		return result;
 	}

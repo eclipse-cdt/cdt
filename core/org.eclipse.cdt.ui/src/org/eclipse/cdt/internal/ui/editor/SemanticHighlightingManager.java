@@ -31,6 +31,7 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.cdt.ui.text.CSourceViewerConfiguration;
 import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.cdt.ui.text.IColorManager;
+
 import org.eclipse.cdt.internal.ui.text.CPresentationReconciler;
 import org.eclipse.cdt.internal.ui.text.CSourceViewerScalableConfiguration;
 
@@ -481,7 +482,7 @@ public class SemanticHighlightingManager implements IPropertyChangeListener {
 	 * Handle the given property change event
 	 *
 	 * @param event The event
-	 * @return 
+	 * @return whether a refresh is needed
 	 */
 	protected boolean handlePropertyChangeEvent(PropertyChangeEvent event) {
 		if (fPreferenceStore == null)

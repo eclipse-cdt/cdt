@@ -86,7 +86,7 @@ class TokenList {
 		TokenList result= new TokenList();
 		for (Token t= fFirst; t != null; t= (Token) t.getNext()) {
 			if (t.getType() != CPreprocessor.tSCOPE_MARKER) {
-				result.append((Token) t.clone());
+				result.append(t.clone());
 			}
 		}
 		return result;

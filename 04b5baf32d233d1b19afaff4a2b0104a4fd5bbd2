@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "AABOHH///N8\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/preferences/GdbDebugPreferencePage.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 640,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-05-04T16:23:25Z",
+      "side": 1,
+      "message": "Don\u0027t bother, I was just curious. It probably forces re-layout which can be done by calling layout directly.",
+      "parentUuid": "AABOHH///OU\u003d",
+      "revId": "04b5baf32d233d1b19afaff4a2b0104a4fd5bbd2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOHH///Os\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/preferences/MessagesForPreferences.properties",
         "patchSetId": 4
@@ -72,6 +90,24 @@
     },
     {
       "key": {
+        "uuid": "AABOHH///N4\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/preferences/MessagesForPreferences.properties",
+        "patchSetId": 4
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-05-04T16:23:25Z",
+      "side": 1,
+      "message": "I didn\u0027t realize that stepping threads weren\u0027t hidden when I wrote this. But it should be OK.",
+      "parentUuid": "AABOHH///OQ\u003d",
+      "revId": "04b5baf32d233d1b19afaff4a2b0104a4fd5bbd2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOHH///Og\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/viewmodel/launch/ContainerVMNode.java",
         "patchSetId": 4
@@ -101,6 +137,24 @@
       "side": 1,
       "message": "That is what I started with, but then I was worried that the update calls can happen very often, so I thought I may need this optimization.  What do you think?",
       "parentUuid": "AABOHH///Og\u003d",
+      "revId": "04b5baf32d233d1b19afaff4a2b0104a4fd5bbd2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHH///N0\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/viewmodel/launch/ContainerVMNode.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-05-04T16:23:25Z",
+      "side": 1,
+      "message": "It\u0027s better to leave it.",
+      "parentUuid": "AABOHH///OM\u003d",
       "revId": "04b5baf32d233d1b19afaff4a2b0104a4fd5bbd2",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -171,6 +225,24 @@
       "side": 1,
       "message": "No reason.  I guess you are saying ArrayList is faster because it is not synchronized.  I\u0027ll make the change.",
       "parentUuid": "AABOHH///Oc\u003d",
+      "revId": "04b5baf32d233d1b19afaff4a2b0104a4fd5bbd2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHH///Nw\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/viewmodel/launch/ThreadVMNode.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 266,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-05-04T16:23:25Z",
+      "side": 1,
+      "message": "Yes, Vector, Hashtable and their subclasses are regarded as legacy classes and should be avoided if the synchronization is not required.",
+      "parentUuid": "AABOHH///OE\u003d",
       "revId": "04b5baf32d233d1b19afaff4a2b0104a4fd5bbd2",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

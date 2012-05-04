@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOHH///Oo\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/preferences/GdbDebugPreferencePage.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 640,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-05-04T15:46:33Z",
+      "side": 1,
+      "message": "Why do you need to set layout here? I\u0027ve just noticed that it is done for each field.",
+      "revId": "04b5baf32d233d1b19afaff4a2b0104a4fd5bbd2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHH///Os\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/preferences/MessagesForPreferences.properties",
+        "patchSetId": 4
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-05-04T15:46:33Z",
+      "side": 1,
+      "message": "Wouldn\u0027t it be better to replace this label by \"Show only suspended threads...\"?",
+      "revId": "04b5baf32d233d1b19afaff4a2b0104a4fd5bbd2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHH///Og\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/viewmodel/launch/ContainerVMNode.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-05-04T15:46:33Z",
+      "side": 1,
+      "message": "Why don\u0027t you get the property value directly when you need it instead of storing it and using IPropertyChangeListener?",
+      "revId": "04b5baf32d233d1b19afaff4a2b0104a4fd5bbd2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHH///Ok\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/viewmodel/launch/ContainerVMNode.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 381,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-05-04T15:46:33Z",
+      "side": 1,
+      "message": "I think \"filtered running threads\" should be localized.",
+      "revId": "04b5baf32d233d1b19afaff4a2b0104a4fd5bbd2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHH///Oc\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/viewmodel/launch/ThreadVMNode.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 266,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-05-04T15:46:33Z",
+      "side": 1,
+      "message": "Why are you using Vector instead of ArrayList? Vector is synchronized, ArrayList is not.",
+      "revId": "04b5baf32d233d1b19afaff4a2b0104a4fd5bbd2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

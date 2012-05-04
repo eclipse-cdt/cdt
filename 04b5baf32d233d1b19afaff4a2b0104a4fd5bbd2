@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "AABOHH///OU\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/preferences/GdbDebugPreferencePage.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 640,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-05-04T16:07:01Z",
+      "side": 1,
+      "message": "Don\u0027t know, it was there from the start.  I can try to remove them and see what happens.  I\u0027ll let you know.",
+      "parentUuid": "AABOHH///Oo\u003d",
+      "revId": "04b5baf32d233d1b19afaff4a2b0104a4fd5bbd2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOHH///Os\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/preferences/MessagesForPreferences.properties",
         "patchSetId": 4
@@ -30,6 +48,24 @@
       "writtenOn": "2012-05-04T15:46:33Z",
       "side": 1,
       "message": "Wouldn\u0027t it be better to replace this label by \"Show only suspended threads...\"?",
+      "revId": "04b5baf32d233d1b19afaff4a2b0104a4fd5bbd2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHH///OQ\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/preferences/MessagesForPreferences.properties",
+        "patchSetId": 4
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-05-04T16:07:01Z",
+      "side": 1,
+      "message": "That sounds ok to me.  Do you think the fact that \u0027stepping\u0027 threads are not hidden will be confusing with either wording?",
+      "parentUuid": "AABOHH///Os\u003d",
       "revId": "04b5baf32d233d1b19afaff4a2b0104a4fd5bbd2",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "AABOHH///OM\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/viewmodel/launch/ContainerVMNode.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-05-04T16:07:01Z",
+      "side": 1,
+      "message": "That is what I started with, but then I was worried that the update calls can happen very often, so I thought I may need this optimization.  What do you think?",
+      "parentUuid": "AABOHH///Og\u003d",
+      "revId": "04b5baf32d233d1b19afaff4a2b0104a4fd5bbd2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOHH///Ok\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/viewmodel/launch/ContainerVMNode.java",
         "patchSetId": 4
@@ -70,6 +124,24 @@
     },
     {
       "key": {
+        "uuid": "AABOHH///OI\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/viewmodel/launch/ContainerVMNode.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 381,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-05-04T16:07:01Z",
+      "side": 1,
+      "message": "Woops, you are right!",
+      "parentUuid": "AABOHH///Ok\u003d",
+      "revId": "04b5baf32d233d1b19afaff4a2b0104a4fd5bbd2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOHH///Oc\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/viewmodel/launch/ThreadVMNode.java",
         "patchSetId": 4
@@ -81,6 +153,24 @@
       "writtenOn": "2012-05-04T15:46:33Z",
       "side": 1,
       "message": "Why are you using Vector instead of ArrayList? Vector is synchronized, ArrayList is not.",
+      "revId": "04b5baf32d233d1b19afaff4a2b0104a4fd5bbd2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHH///OE\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/viewmodel/launch/ThreadVMNode.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 266,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-05-04T16:07:01Z",
+      "side": 1,
+      "message": "No reason.  I guess you are saying ArrayList is faster because it is not synchronized.  I\u0027ll make the change.",
+      "parentUuid": "AABOHH///Oc\u003d",
       "revId": "04b5baf32d233d1b19afaff4a2b0104a4fd5bbd2",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

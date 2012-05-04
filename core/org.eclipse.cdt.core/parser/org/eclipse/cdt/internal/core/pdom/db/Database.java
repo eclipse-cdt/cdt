@@ -29,7 +29,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
 
-
 /**
  * Database encapsulates access to a flat binary format file with a memory-manager-like API for
  * obtaining and releasing areas of storage (memory).
@@ -126,8 +125,7 @@ public class Database {
 				fVersion= version;
 				fChunks= new Chunk[1];
 				fChunksUsed = fChunksAllocated = fChunks.length;
-			}
-			else {
+			} else {
 				fHeaderChunk.read();
 				fVersion= fHeaderChunk.getInt(VERSION_OFFSET);
 				fChunks = new Chunk[nChunksOnDisk];	// chunk[0] is unused.
@@ -148,8 +146,7 @@ public class Database {
 			try {
 				fFile.getChannel().read(buf, position);
 				return;
-			}
-			catch (ClosedChannelException e) {
+			} catch (ClosedChannelException e) {
 				// bug 219834 file may have be closed by interrupting a thread during an I/O operation.
 				reopen(e, ++retries);
 			} 
@@ -158,16 +155,15 @@ public class Database {
 
 	void write(ByteBuffer buf, long position) throws IOException {
 		int retries= 0;
-		do {
+		while (true) {
 			try {
 				fFile.getChannel().write(buf, position);
 				return;
-			}
-			catch (ClosedChannelException e) {
+			} catch (ClosedChannelException e) {
 				// bug 219834 file may have be closed by interrupting a thread during an I/O operation.
 				reopen(e, ++retries);
 			} 
-		} while(true);
+		}
 	}
 
 	private void reopen(ClosedChannelException e, int attempt) throws ClosedChannelException, FileNotFoundException {
@@ -177,7 +173,6 @@ public class Database {
 		}
 		openFile();
 	}
-
 
 	public void transferTo(FileChannel target) throws IOException {
 		assert fLocked;
@@ -222,8 +217,7 @@ public class Database {
 		try {
 			fHeaderChunk.flush();	// zero out header chunk
 			fFile.getChannel().truncate(CHUNK_SIZE);	// truncate database
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			CCorePlugin.log(e);
 		}
 		malloced = freed = 0;
@@ -236,17 +230,17 @@ public class Database {
 		 * 8388608 for a file starting at 32G
 		 * 
 		 */
-		long setasideChunks = Long.getLong("org.eclipse.cdt.core.parser.pdom.dense.recptr.setaside.chunks", 0 ); //$NON-NLS-1$
-		if( setasideChunks != 0 ) {
-			setVersion( getVersion() );
-			createNewChunks( (int) setasideChunks );
+		long setasideChunks = Long.getLong("org.eclipse.cdt.core.parser.pdom.dense.recptr.setaside.chunks", 0); //$NON-NLS-1$
+		if (setasideChunks != 0) {
+			setVersion(getVersion());
+			createNewChunks((int) setasideChunks);
 			flush();
 		}
 	}
 
 	private void removeChunksFromCache() {
 		synchronized (fCache) {
-			for (int i=1; i < fChunks.length; i++) {
+			for (int i= 1; i < fChunks.length; i++) {
 				Chunk chunk= fChunks[i];
 				if (chunk != null) {
 					fCache.remove(chunk);
@@ -255,7 +249,6 @@ public class Database {
 			}
 		}
 	}
-	
 	
 	/**
 	 * Return the Chunk that contains the given offset.
@@ -268,7 +261,7 @@ public class Database {
 		long long_index = offset / CHUNK_SIZE;
 		assert long_index < Integer.MAX_VALUE; 
 
-		synchronized(fCache) {
+		synchronized (fCache) {
 			assert fLocked;
 			final int index = (int)long_index;
 			Chunk chunk= fChunks[index];
@@ -276,8 +269,7 @@ public class Database {
 				cacheMisses++;
 				chunk = fChunks[index] = new Chunk(this, index);
 				chunk.read();
-			}
-			else {
+			} else {
 				cacheHits++;
 			}
 			fCache.add(chunk, fExclusiveLock);
@@ -359,7 +351,7 @@ public class Database {
 			long address = (long) newChunkIndex * CHUNK_SIZE;
 
 			/*
-			 * non-dense pointers are at most 31 bits dense pointers are at most 35 bits Check the sizes here
+			 * Non-dense pointers are at most 31 bits dense pointers are at most 35 bits Check the sizes here
 			 * and throw an exception if the address is too large. By throwing the CoreException with the
 			 * special status, the indexing operation should be stopped. This is desired since generally, once
 			 * the max size is exceeded, there are lots of errors.
@@ -375,7 +367,7 @@ public class Database {
 	}
 
 	/**
-	 * for testing purposes, only.
+	 * For testing purposes, only.
 	 */
 	private long createNewChunks(int numChunks) throws CoreException {
 		assert fExclusiveLock;
@@ -383,7 +375,7 @@ public class Database {
 			final int oldLen= fChunks.length;
 			Chunk[] newchunks = new Chunk[oldLen+numChunks];
 			System.arraycopy(fChunks, 0, newchunks, 0, oldLen);
-			for( int i = oldLen; i < oldLen + numChunks; i++ ) {
+			for (int i = oldLen; i < oldLen + numChunks; i++) {
 				newchunks[i]= null;
 			}
 			final Chunk chunk= new Chunk(this, oldLen + numChunks - 1);
@@ -393,7 +385,7 @@ public class Database {
 			fCache.add(chunk, true);
 			fChunksAllocated=oldLen+numChunks;
 			fChunksUsed=oldLen+numChunks;
-			return (long)(oldLen + numChunks - 1) * CHUNK_SIZE;
+			return (long) (oldLen + numChunks - 1) * CHUNK_SIZE;
 		}
 	}
 	
@@ -411,10 +403,11 @@ public class Database {
 		assert fExclusiveLock;
 		long prevblock = chunk.getFreeRecPtr(block + BLOCK_PREV_OFFSET);
 		long nextblock = chunk.getFreeRecPtr(block + BLOCK_NEXT_OFFSET);
-		if (prevblock != 0)
+		if (prevblock != 0) {
 			putFreeRecPtr(prevblock + BLOCK_NEXT_OFFSET, nextblock);
-		else // we were the head
+		} else { // we were the head
 			setFirstBlock(blocksize, nextblock);
+		}
 			
 		if (nextblock != 0)
 			putFreeRecPtr(nextblock + BLOCK_PREV_OFFSET, prevblock);
@@ -543,10 +536,11 @@ public class Database {
 			bytelen= 2*len;
 		}
 		
-		if (bytelen > ShortString.MAX_BYTE_LENGTH)
+		if (bytelen > ShortString.MAX_BYTE_LENGTH) {
 			return new LongString(this, chars, useBytes);
-		else
+		} else {
 			return new ShortString(this, chars, useBytes);
+		}
 	}
 	
 	private boolean useBytes(char[] chars) {
@@ -557,11 +551,9 @@ public class Database {
 		return true;
 	}
 
-
-
 	public IString getString(long offset) throws CoreException {
 		final int l = getInt(offset);
-		int bytelen= l<0 ? -l : 2*l;
+		int bytelen= l < 0 ? -l : 2 * l;
 		if (bytelen > ShortString.MAX_BYTE_LENGTH) {
 			return new LongString(this, offset);
 		}
@@ -661,24 +653,20 @@ public class Database {
 								// locked chunk that has been removed from cache.
 								if (chunk.fDirty) {
 									dirtyChunks.add(chunk); // keep in fChunks until it is flushed.
-								}
-								else {
+								} else {
 									chunk.fLocked= false;
 									fChunks[i]= null;
 								}
-							}
-							else if (chunk.fLocked) {
+							} else if (chunk.fLocked) {
 								// locked chunk, still in cache.
 								if (chunk.fDirty) {
 									if (flush) {
 										dirtyChunks.add(chunk);
 									}
-								}
-								else {
+								} else {
 									chunk.fLocked= false;
 								}
-							}
-							else {
+							} else {
 								assert !chunk.fDirty; // dirty chunks must be locked.
 							}
 						}
@@ -698,8 +686,7 @@ public class Database {
 		if (fExclusiveLock) {
 			try {
 				giveUpExclusiveLock(true);
-			}
-			finally {
+			} finally {
 				setExclusiveLock();
 			}
 			return;

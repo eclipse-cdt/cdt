@@ -53,8 +53,8 @@ public class PDOMInclude implements IIndexFragmentInclude {
 	// Cached fields
 	private String fName;
 
-	public PDOMInclude(PDOMLinkage pdom, long record) {
-		this.linkage = pdom;
+	public PDOMInclude(PDOMLinkage linkage, long record) {
+		this.linkage = linkage;
 		this.record = record;
 	}
 

@@ -47,7 +47,7 @@ public interface IConfiguration extends IBuildObject, IBuildObjectPropertiesCont
 	public static final String CONFIGURATION_ELEMENT_NAME = "configuration";	//$NON-NLS-1$
 	public static final String ERROR_PARSERS = "errorParsers";	//$NON-NLS-1$
 	/** @since 8.1 */
-	public static final String LANGUAGE_SETTINGS_PROVIDERS = "languageSettingsProviders";
+	public static final String LANGUAGE_SETTINGS_PROVIDERS = "languageSettingsProviders"; //$NON-NLS-1$
 	public static final String EXTENSION = "artifactExtension";	//$NON-NLS-1$
 	public static final String PARENT = "parent";	//$NON-NLS-1$
 

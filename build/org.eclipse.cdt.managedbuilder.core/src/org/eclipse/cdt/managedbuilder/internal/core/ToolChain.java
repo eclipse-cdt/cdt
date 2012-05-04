@@ -558,7 +558,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 		// Get the target tool id
 		targetToolIds = SafeStringInterner.safeIntern(element.getAttribute(TARGET_TOOL));
 
-		// Get the initial/default language setttings providers IDs
+		// Get the initial/default language settings providers IDs
 		defaultLanguageSettingsProviderIds = element.getAttribute(LANGUAGE_SETTINGS_PROVIDERS);
 
 		// Get the scanner config discovery profile id
@@ -1545,9 +1545,9 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 	}
 
 	/**
-	 * Temporary method to support compatibility during SD transition.
+	 * Check if legacy scanner discovery method should be used.
 	 */
-	private boolean isLanguageSettingsProvidersFunctionalityEnabled() {
+	private boolean isLegacyScannerDiscovery() {
 		boolean isLanguageSettingsProvidersEnabled = false;
 		IConfiguration cfg = getParent();
 		if (cfg != null) {
@@ -1557,13 +1557,13 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 				isLanguageSettingsProvidersEnabled = ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityEnabled(project);
 			}
 		}
-		return isLanguageSettingsProvidersEnabled;
+		return !isLanguageSettingsProvidersEnabled;
 	}
 
 	/**
-	 * Temporary method to support compatibility during SD transition.
+	 * Get list of scanner discovery profiles supported by previous version.
 	 * @see ScannerDiscoveryLegacySupport#getDeprecatedLegacyProfiles(String)
-	 * 
+	 *
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public String getLegacyScannerConfigDiscoveryProfileId() {
@@ -1580,21 +1580,17 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 		return profileId;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.managedbuilder.core.IToolChain#getScannerConfigDiscoveryProfileId()
-	 */
 	@Override
 	public String getScannerConfigDiscoveryProfileId() {
-		if (!isLanguageSettingsProvidersFunctionalityEnabled())
+		if (isLegacyScannerDiscovery()) {
 			return getLegacyScannerConfigDiscoveryProfileId();
+		}
 
 		return getScannerConfigDiscoveryProfileIdInternal();
 	}
 
 	/**
-	 * Method extracted temporarily to support compatibility during SD transition.
+	 * Do not inline! This method needs to call itself recursively.
 	 */
 	private String getScannerConfigDiscoveryProfileIdInternal() {
 		if (scannerConfigDiscoveryProfileId == null && superClass instanceof ToolChain) {

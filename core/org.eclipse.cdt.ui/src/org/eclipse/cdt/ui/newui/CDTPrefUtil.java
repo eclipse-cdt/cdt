@@ -125,10 +125,10 @@ public class CDTPrefUtil {
 
 	/**
 	 * Returns string list display mode for multi-configuration edits (conjunction/disjunction).
-	 * 
+	 *
 	 * @return the mode which can be either {@link CDTPrefUtil#DMODE_CONJUNCTION} (default value)
 	 *    or else {@link CDTPrefUtil#DMODE_DISJUNCTION}.
-	 * 
+	 *
 	 * @since 5.3
 	 */
 	public static int getMultiCfgStringListDisplayMode() {
@@ -141,10 +141,10 @@ public class CDTPrefUtil {
 
 	/**
 	 * Sets string list display mode for multi-configuration edits (conjunction/disjunction).
-	 * 
+	 *
 	 * @param mode must be either {@link CDTPrefUtil#DMODE_CONJUNCTION}
 	 *    or {@link CDTPrefUtil#DMODE_DISJUNCTION}.
-	 * 
+	 *
 	 * @since 5.3
 	 */
 	public static void setMultiCfgStringListDisplayMode(int mode) {
@@ -153,10 +153,10 @@ public class CDTPrefUtil {
 
 	/**
 	 * Returns string list write mode for multi-configuration edits (modify/replace).
-	 * 
+	 *
 	 * @return the mode which can be either {@link CDTPrefUtil#WMODE_MODIFY} (default value)
 	 *    or else {@link CDTPrefUtil#WMODE_REPLACE}.
-	 * 
+	 *
 	 * @since 5.3
 	 */
 	public static int getMultiCfgStringListWriteMode() {
@@ -169,10 +169,10 @@ public class CDTPrefUtil {
 
 	/**
 	 * Sets string list write mode for multi-configuration edits (modify/replace).
-	 * 
+	 *
 	 * @param mode must be either {@link CDTPrefUtil#WMODE_MODIFY}
 	 *    or {@link CDTPrefUtil#WMODE_REPLACE}.
-	 * 
+	 *
 	 * @since 5.3
 	 */
 	public static void setMultiCfgStringListWriteMode(int mode) {
@@ -256,25 +256,23 @@ public class CDTPrefUtil {
 	/**
 	 * Utility method forms string list
 	 * according to current list display mode
-	 * 
+	 *
 	 * @param input - array of string arrays
 	 * @return
 	 */
 	private static final Object[] getListForDisplay(Object[][] input, int mode, Comparator<Object> cmp) {
 		if (input == null || input.length == 0)
 			return EMPTY_ARRAY;
+
 		if (input.length == 1) {
-			return (input[0] == null) ?
-					EMPTY_ARRAY :
-						input[0];
+			return (input[0] == null) ? EMPTY_ARRAY : input[0];
 		}
 
 		Object[] s1 = input[0];
-		if (s1 == null ||
-				s1.length == 0)
+		if (s1 == null || s1.length == 0)
 			return EMPTY_ARRAY;
-		if (getMultiCfgStringListDisplayMode() == DMODE_CONJUNCTION)
-		{
+
+		if (getMultiCfgStringListDisplayMode() == DMODE_CONJUNCTION) {
 			ArrayList<Object> lst = new ArrayList<Object>();
 			for (int i=0; i<s1.length; i++) {
 				if (s1[i] == null)
@@ -282,10 +280,12 @@ public class CDTPrefUtil {
 				boolean found = true;
 				for (int k = 1; k<input.length; k++) {
 					Object[] s2 = input[k];
-					if (s2 == null || s2.length == 0)
+					if (s2 == null || s2.length == 0) {
 						return EMPTY_ARRAY;
-					if (i == 0)
+					}
+					if (i == 0) {
 						Arrays.sort(s2, cmp);
+					}
 					if (Arrays.binarySearch(s2, s1[i], cmp) < 0) {
 						found = false;
 						break;
@@ -299,11 +299,12 @@ public class CDTPrefUtil {
 		}
 		TreeSet<Object> lst = new TreeSet<Object>(cmp); // set, to avoid doubles
 		for (Object[] element : input) {
-			if (element == null ||
-					element.length == 0)
+			if (element == null || element.length == 0) {
 				continue;
-			for (Object element2 : element)
+			}
+			for (Object element2 : element) {
 				lst.add(element2);
+			}
 		}
 		s1 = lst.toArray();
 		Arrays.sort(s1, cmp);

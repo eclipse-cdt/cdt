@@ -1702,10 +1702,10 @@
    	  </builder>   
    	  
       <toolChain
-          archList="all"
+            archList="all"
             id="cdt.managedbuild.toolchain.gnu.base"
             languageSettingsProviders="org.eclipse.cdt.managedbuilder.core.GCCBuildCommandParser;org.eclipse.cdt.managedbuilder.core.GCCBuiltinSpecsDetector"
-          name="%ToolChainName.Linux"
+            name="%ToolChainName.Linux"
             osList="linux,hpux,aix,qnx"
             targetTool="cdt.managedbuild.tool.gnu.c.linker;cdt.managedbuild.tool.gnu.cpp.linker;cdt.managedbuild.tool.gnu.archiver">
 		          <targetPlatform
@@ -2481,27 +2481,27 @@
       </projectType>
       
       <configuration
-               artifactExtension="exe"
+            artifactExtension="exe"
             cleanCommand="rm -rf"
             id="cdt.managedbuild.config.gnu.cygwin.base"
             languageSettingsProviders="org.eclipse.cdt.ui.UserLanguageSettingsProvider;org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider;${Toolchain};-org.eclipse.cdt.managedbuilder.core.GCCBuildCommandParser">
-		    <enablement type="CONTAINER_ATTRIBUTE" 
-              	attribute="artifactExtension" 
-              	value="dll"
-              	extensionAdjustment="false">
-			  	<checkBuildProperty 
-			  		property="org.eclipse.cdt.build.core.buildArtefactType"
-			  		value="org.eclipse.cdt.build.core.buildArtefactType.sharedLib"/>
-			  </enablement>
-		    <enablement type="CONTAINER_ATTRIBUTE" 
-              	attribute="artifactExtension" 
-              	value="a"
-              	extensionAdjustment="false">
-			  	<checkBuildProperty 
-			  		property="org.eclipse.cdt.build.core.buildArtefactType"
-			  		value="org.eclipse.cdt.build.core.buildArtefactType.staticLib"/>
-			  </enablement>
-		</configuration>
+         <enablement type="CONTAINER_ATTRIBUTE" 
+               attribute="artifactExtension" 
+               value="dll"
+               extensionAdjustment="false">
+            <checkBuildProperty 
+                  property="org.eclipse.cdt.build.core.buildArtefactType"
+                  value="org.eclipse.cdt.build.core.buildArtefactType.sharedLib"/>
+         </enablement>
+         <enablement type="CONTAINER_ATTRIBUTE" 
+               attribute="artifactExtension" 
+               value="a"
+               extensionAdjustment="false">
+            <checkBuildProperty 
+                  property="org.eclipse.cdt.build.core.buildArtefactType"
+                  value="org.eclipse.cdt.build.core.buildArtefactType.staticLib"/>
+         </enablement>
+      </configuration>
 
       <projectType 
             buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe"
@@ -2879,7 +2879,7 @@
       </projectType>
       
       <configuration
-               artifactExtension="exe"
+            artifactExtension="exe"
             cleanCommand="rm -rf"
             id="cdt.managedbuild.config.gnu.mingw.base"
             languageSettingsProviders="org.eclipse.cdt.ui.UserLanguageSettingsProvider;org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider;${Toolchain};-org.eclipse.cdt.managedbuilder.core.GCCBuildCommandParser">

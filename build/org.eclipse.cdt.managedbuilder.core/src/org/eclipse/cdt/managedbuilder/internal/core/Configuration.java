@@ -786,7 +786,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		// Get the semicolon separated list of IDs of the error parsers
 		errorParserIds = SafeStringInterner.safeIntern(element.getAttribute(ERROR_PARSERS));
 
-		// Get the initial/default language setttings providers IDs
+		// Get the initial/default language settings providers IDs
 		defaultLanguageSettingsProvidersAttribute = SafeStringInterner.safeIntern(element.getAttribute(LANGUAGE_SETTINGS_PROVIDERS));
 
 		// Get the artifact extension
@@ -1475,7 +1475,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * This function will try to find default provider Ids specified in this instance.
 	 * It none defined, it will try to pull Ids from the parent configuration.
 	 */

@@ -54,7 +54,7 @@ public interface IToolChain extends IBuildObject, IHoldsOptions {
 	public static final String SCANNER_CONFIG_PROFILE_ID = "scannerConfigDiscoveryProfileId"; //$NON-NLS-1$
 
 	/** @since 8.1 */
-	public static final String LANGUAGE_SETTINGS_PROVIDERS = "languageSettingsProviders";
+	public static final String LANGUAGE_SETTINGS_PROVIDERS = "languageSettingsProviders"; //$NON-NLS-1$
 
 	/**
 	 * Returns the configuration that is the parent of this tool-chain.

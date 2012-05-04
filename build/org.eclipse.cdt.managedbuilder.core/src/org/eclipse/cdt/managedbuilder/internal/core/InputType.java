@@ -1842,9 +1842,9 @@ public class InputType extends BuildObject implements IInputType {
 	}
 
 	/**
-	 * Temporary method to support compatibility during SD transition.
+	 * Check if legacy scanner discovery method should be used.
 	 */
-	private boolean isLanguageSettingsProvidersFunctionalityEnabled() {
+	private boolean isLegacyScannerDiscovery() {
 		boolean isLanguageSettingsProvidersEnabled = false;
 		ITool tool = getParent();
 		if (tool!=null) {
@@ -1860,14 +1860,14 @@ public class InputType extends BuildObject implements IInputType {
 				}
 			}
 		}
-		return isLanguageSettingsProvidersEnabled;
+		return !isLanguageSettingsProvidersEnabled;
 	}
 
 	/**
 	 * Temporary method to support compatibility during SD transition.
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
-	public String getLegacyDiscoveryProfileIdAttribute(){
+	public String getLegacyDiscoveryProfileIdAttribute() {
 		String profileId = buildInfoDicsoveryProfileId;
 		if (profileId == null) {
 			profileId = ScannerDiscoveryLegacySupport.getDeprecatedLegacyProfiles(id);
@@ -1878,19 +1878,21 @@ public class InputType extends BuildObject implements IInputType {
 		return profileId;
 	}
 
-	public String getDiscoveryProfileIdAttribute(){
-		if (!isLanguageSettingsProvidersFunctionalityEnabled())
+	public String getDiscoveryProfileIdAttribute() {
+		if (isLegacyScannerDiscovery()) {
 			return getLegacyDiscoveryProfileIdAttribute();
-		
+		}
+
 		return getDiscoveryProfileIdAttributeInternal();
 	}
 
 	/**
-	 * Method extracted temporarily to support compatibility during SD transition.
+	 * Do not inline! This method needs to call itself recursively.
 	 */
-	private String getDiscoveryProfileIdAttributeInternal(){
-		if(buildInfoDicsoveryProfileId == null && superClass instanceof InputType)
+	private String getDiscoveryProfileIdAttributeInternal() {
+		if (buildInfoDicsoveryProfileId == null && superClass instanceof InputType) {
 			return ((InputType)superClass).getDiscoveryProfileIdAttributeInternal();
+		}
 		return buildInfoDicsoveryProfileId;
 	}
 

@@ -442,7 +442,7 @@ public class MultiConfiguration extends MultiItemsHolder implements
 
 	@Override
 	public String[] getDefaultLanguageSettingsProviderIds() {
-		ManagedBuilderCorePlugin.error("Default Language Settings Providers are not supported in multiconfiguration mode");
+		ManagedBuilderCorePlugin.error("Default Language Settings Providers are not supported in multiconfiguration mode"); //$NON-NLS-1$
 		return null;
 	}
 

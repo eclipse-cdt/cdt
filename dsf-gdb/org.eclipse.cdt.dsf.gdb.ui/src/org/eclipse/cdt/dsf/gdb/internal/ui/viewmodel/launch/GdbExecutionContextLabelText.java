@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Wind River Systems and others.
+ * Copyright (c) 2008, 2012 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,6 +32,9 @@ public class GdbExecutionContextLabelText extends ExecutionContextLabelText {
         if (IGdbLaunchVMConstants.PROP_CORES_ID_KNOWN.equals(propertyName)) {
             return properties.get(IGdbLaunchVMConstants.PROP_CORES_ID) != null ? 1 : 0;
         } 
+        if (IGdbLaunchVMConstants.PROP_THREAD_SUMMARY_KNOWN.equals(propertyName)) {
+            return properties.get(IGdbLaunchVMConstants.PROP_THREAD_SUMMARY) != null ? 1 : 0;
+        } 
         return super.getPropertyValue(propertyName, status, properties);
     }
 
@@ -43,6 +46,11 @@ public class GdbExecutionContextLabelText extends ExecutionContextLabelText {
             IGdbLaunchVMConstants.PROP_CORES_ID.equals(propertyName)) 
         {
             return true;
+        }
+        if (IGdbLaunchVMConstants.PROP_THREAD_SUMMARY_KNOWN.equals(propertyName) ||
+        	IGdbLaunchVMConstants.PROP_THREAD_SUMMARY.equals(propertyName)) 
+        {
+        	return true;
         } 
         return super.checkProperty(propertyName, status, properties);
     }

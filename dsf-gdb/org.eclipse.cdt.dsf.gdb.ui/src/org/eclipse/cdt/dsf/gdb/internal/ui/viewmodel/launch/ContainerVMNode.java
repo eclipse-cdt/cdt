@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Ericsson and others.
+ * Copyright (c) 2006, 2012 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,13 +27,17 @@ import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMData;
+import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlShutdownDMEvent;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.AbstractContainerVMNode;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.ExecutionContextLabelText;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.ILaunchVMConstants;
+import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbPinProvider;
+import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.cdt.dsf.gdb.service.IGDBProcesses.IGdbThreadDMData;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.cdt.dsf.service.DsfSession;
@@ -59,6 +63,9 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRe
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.IMemento;
 
 
@@ -66,10 +73,33 @@ import org.eclipse.ui.IMemento;
 public class ContainerVMNode extends AbstractContainerVMNode
     implements IElementLabelProvider, IElementMementoProvider 
 {
+	/** Indicator that we should not display running threads */
+	private boolean fHideRunningThreadsProperty = false;
+	
+	/** PropertyChangeListener to keep track of the PREF_HIDE_RUNNING_THREADS preference */
+	private IPropertyChangeListener fPropertyChangeListener = new IPropertyChangeListener() {
+		@Override
+		public void propertyChange(PropertyChangeEvent event) {
+			if (event.getProperty().equals(IGdbDebugPreferenceConstants.PREF_HIDE_RUNNING_THREADS)) {
+				fHideRunningThreadsProperty = (Boolean)event.getNewValue();
+			}
+		}
+	};
+	
 	public ContainerVMNode(AbstractDMVMProvider provider, DsfSession session) {
         super(provider, session);
+
+        IPreferenceStore store = GdbUIPlugin.getDefault().getPreferenceStore();
+        store.addPropertyChangeListener(fPropertyChangeListener);
+        fHideRunningThreadsProperty = store.getBoolean(IGdbDebugPreferenceConstants.PREF_HIDE_RUNNING_THREADS);
 	}
 	
+    @Override
+    public void dispose() {
+		GdbUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(fPropertyChangeListener);
+    	super.dispose();
+    }
+ 
 	@Override
 	public String toString() {
 	    return "ContainerVMNode(" + getSession().getId() + ")";  //$NON-NLS-1$ //$NON-NLS-2$
@@ -90,7 +120,9 @@ public class ContainerVMNode extends AbstractContainerVMNode
                         ExecutionContextLabelText.PROP_ID_KNOWN, 
                         ILaunchVMConstants.PROP_ID, 
                         IGdbLaunchVMConstants.PROP_CORES_ID_KNOWN, 
-                        IGdbLaunchVMConstants.PROP_CORES_ID }), 
+                        IGdbLaunchVMConstants.PROP_CORES_ID,
+                        IGdbLaunchVMConstants.PROP_THREAD_SUMMARY_KNOWN, 
+                        IGdbLaunchVMConstants.PROP_THREAD_SUMMARY }), 
                 new LabelText(MessagesForGdbLaunchVM.ContainerVMNode_No_columns__Error__label, new String[0]),
                 
                 /* RUNNING CONTAINER - RED PIN */
@@ -276,6 +308,11 @@ public class ContainerVMNode extends AbstractContainerVMNode
             }
             }
             
+            if (update.getProperties().contains(IGdbLaunchVMConstants.PROP_THREAD_SUMMARY)) {
+            	fillThreadSummary(update, countringRm);
+            	count++;
+            }
+            
             countringRm.setDoneCount(count);
         }
         
@@ -302,6 +339,51 @@ public class ContainerVMNode extends AbstractContainerVMNode
         update.setProperty(IGdbLaunchVMConstants.PROP_CORES_ID, coresStr);        	
     }
 
+    protected void fillThreadSummary(final IPropertiesUpdate update, final RequestMonitor rm) {
+    	if (!fHideRunningThreadsProperty) {
+    		// Disable the thread summary when we are not hiding threads
+            update.setProperty(IGdbLaunchVMConstants.PROP_THREAD_SUMMARY, null);  
+            rm.done();
+            return;
+    	}
+    	
+        IProcesses processService = getServicesTracker().getService(IProcesses.class);
+        final IContainerDMContext procDmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IContainerDMContext.class);
+        
+        if (processService == null || procDmc == null) {
+            update.setStatus(DsfUIPlugin.newErrorStatus(IDsfStatusConstants.INVALID_HANDLE, "Service or handle invalid", null)); //$NON-NLS-1$
+        } else {
+        	// Fetch all the threads
+            processService.getProcessesBeingDebugged(
+                procDmc,
+                new ViewerDataRequestMonitor<IDMContext[]>(getSession().getExecutor(), update) {
+                    @Override
+                    public void handleCompleted() {
+                    	IRunControl runControl = getServicesTracker().getService(IRunControl.class);
+						if (!isSuccess() ||
+								!(getData() instanceof IExecutionDMContext[]) ||
+								runControl == null) {
+				            update.setStatus(DsfUIPlugin.newErrorStatus(IDsfStatusConstants.INVALID_HANDLE, "Unable to get threads summary", null)); //$NON-NLS-1$
+                            rm.done();
+                            return;
+                        }
+                        
+                        // For each thread, count how many are running and therefore hidden
+						// Remove running threads from the list
+						int runningCount = 0;
+						for (IExecutionDMContext execDmc : (IExecutionDMContext[])getData()) {
+							// Keep suspended or stepping threads
+							if (!runControl.isSuspended(execDmc) && !runControl.isStepping(execDmc)) {
+								runningCount++;
+							}
+						}
+				        update.setProperty(IGdbLaunchVMConstants.PROP_THREAD_SUMMARY, 
+				        		           "(" + runningCount + " filtered running threads)");
+				        rm.done();
+                    }
+                });
+        }
+    }
     
 	@Override
 	public int getDeltaFlags(Object e) {

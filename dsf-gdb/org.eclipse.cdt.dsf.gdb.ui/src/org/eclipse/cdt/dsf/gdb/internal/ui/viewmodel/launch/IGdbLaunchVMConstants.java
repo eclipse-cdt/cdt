@@ -39,4 +39,7 @@ public interface IGdbLaunchVMConstants {
      * The pin color. One of the <code>IPinElementColorDescriptor</code> color value.
      */
     public static final String PROP_PIN_COLOR = "pin_color"; //$NON-NLS-1$
+    
+    public static final String PROP_THREAD_SUMMARY_KNOWN = "thread_summary_known"; //$NON-NLS-1$
+    public static final String PROP_THREAD_SUMMARY = "thread_summary"; //$NON-NLS-1$
 }

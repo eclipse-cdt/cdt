@@ -349,7 +349,6 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 		if (isExecuted) {
 			return;
 		}
-		isExecuted = true;
 
 		WorkspaceJob job = new WorkspaceJob(ManagedMakeMessages.getResourceString("AbstractBuiltinSpecsDetector.DiscoverBuiltInSettingsJobName")) { //$NON-NLS-1$
 			@Override
@@ -362,6 +361,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 					ManagedBuilderCorePlugin.log(e);
 					status = new Status(IStatus.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID, IStatus.ERROR, "Error running Builtin Specs Detector", e); //$NON-NLS-1$
 				} finally {
+					isExecuted = true;
 					shutdown();
 				}
 

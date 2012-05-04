@@ -106,6 +106,10 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 		@Override
 		protected void execute() {
 			super.execute();
+			try {
+				Job.getJobManager().join(AbstractBuiltinSpecsDetector.JOB_FAMILY_BUILTIN_SPECS_DETECTOR, null);
+			} catch (Exception e) {
+			}
 		}
 		protected boolean isExecuted() {
 			return isExecuted;

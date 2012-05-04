@@ -20,6 +20,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.cdt.build.internal.core.scannerconfig2.CfgScannerConfigInfoFactory2;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvidersKeeper;
+import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
+import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
 import org.eclipse.cdt.core.model.ILanguageDescriptor;
 import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
@@ -509,9 +513,58 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 			// Update the ManagedBuildInfo in the ManagedBuildManager map. Doing this creates a barrier for subsequent
 			// ManagedBuildManager#getBuildInfo(...) see Bug 305146 for more
 			ManagedBuildManager.setLoaddedBuildInfo(cfgDescription.getProjectDescription().getProject(), info);
+			setDefaultLanguageSettingsProvidersIds(cfg, cfgDescription);
 			return cfg.getConfigurationData();
 		}
 		return null;
+	}
+
+	private static List<ILanguageSettingsProvider> getDefaultLanguageSettingsProviders(IConfiguration cfg) {
+		List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
+		String[] ids = cfg.getDefaultLanguageSettingsProviderIds();
+		if (ids != null) {
+			for (String id : ids) {
+				ILanguageSettingsProvider provider = null;
+				if (!LanguageSettingsManager.isPreferShared(id)) {
+					provider = LanguageSettingsManager.getExtensionProviderCopy(id, false);
+				}
+				if (provider == null) {
+					provider = LanguageSettingsManager.getWorkspaceProvider(id);
+				}
+				providers.add(provider);
+			}
+		}
+
+		if (providers.isEmpty()) {
+			providers = ScannerDiscoveryLegacySupport.getDefaultProvidersLegacy();
+		}
+
+		return providers;
+	}
+
+	private static void setDefaultLanguageSettingsProvidersIds(IConfiguration cfg, ICConfigurationDescription cfgDescription) {
+		if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
+			List<ILanguageSettingsProvider> providers = getDefaultLanguageSettingsProviders(cfg);
+			String[] ids = new String[providers.size()];
+			for (int i = 0; i < ids.length; i++) {
+				ILanguageSettingsProvider provider = providers.get(i);
+				ids[i] = provider.getId();
+			}
+			((ILanguageSettingsProvidersKeeper) cfgDescription).setDefaultLanguageSettingsProvidersIds(ids);
+		}
+
+	}
+
+	public static void setDefaultLanguageSettingsProviders(IProject project, IConfiguration cfg, ICConfigurationDescription cfgDescription) {
+		// propagate the preference to project properties
+		boolean isPreferenceEnabled = ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityEnabled(null);
+		ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, isPreferenceEnabled);
+
+		if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
+			ConfigurationDataProvider.setDefaultLanguageSettingsProvidersIds(cfg, cfgDescription);
+			List<ILanguageSettingsProvider> providers = ConfigurationDataProvider.getDefaultLanguageSettingsProviders(cfg);
+			((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(providers);
+		}
 	}
 
 	private boolean isPersistedCfg(ICConfigurationDescription cfgDescription){

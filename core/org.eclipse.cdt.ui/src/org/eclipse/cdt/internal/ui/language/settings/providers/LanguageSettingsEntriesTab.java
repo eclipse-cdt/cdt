@@ -47,6 +47,7 @@ import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvide
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvidersKeeper;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsBaseProvider;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
+import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
@@ -56,7 +57,6 @@ import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
-import org.eclipse.cdt.ui.newui.CDTPrefUtil;
 
 import org.eclipse.cdt.internal.ui.newui.LanguageSettingsImages;
 import org.eclipse.cdt.internal.ui.newui.Messages;
@@ -1054,7 +1054,7 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 			List<ILanguageSettingsProvider> newProviders = new ArrayList<ILanguageSettingsProvider>(oldProviders.size());
 
 			// clear entries for a given resource for all languages where applicable
-providers:	for (ILanguageSettingsProvider provider : oldProviders) {
+			providers:	for (ILanguageSettingsProvider provider : oldProviders) {
 				ILanguageSettingsEditableProvider providerCopy = null;
 				if (provider instanceof ILanguageSettingsEditableProvider) {
 					for (TreeItem langItems : treeLanguages.getItems()) {
@@ -1113,7 +1113,7 @@ providers:	for (ILanguageSettingsProvider provider : oldProviders) {
 
 	@Override
 	public boolean canBeVisible() {
-		if (CDTPrefUtil.getBool(LanguageSettingsProvidersPage.KEY_NO_SHOW_PROVIDERS)) {
+		if (!ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityEnabled(null)) {
 			return false;
 		}
 

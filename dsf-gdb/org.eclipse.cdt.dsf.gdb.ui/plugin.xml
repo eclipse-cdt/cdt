@@ -311,6 +311,13 @@
             id="org.eclipse.cdt.dsf.gdb.ui.tracecontrol.view"
             name="%view.traceControl.name">
       </view>
+      <view
+            category="org.eclipse.debug.ui"
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.osview.OSView"
+            id="org.eclipse.cdt.dsf.gdb.ui.os.view"                 
+            name="%view.os.name"
+            icon="icons/osawareness.gif">
+      </view>      
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">

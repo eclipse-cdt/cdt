@@ -118,6 +118,7 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetTargetCharset;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetTargetWideCharset;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBShowExitCode;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIInferiorTTYSet;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIInfoOs;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIInterpreterExec;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIInterpreterExecConsole;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIInterpreterExecConsoleKill;
@@ -181,6 +182,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIDataReadMemoryInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIDataWriteMemoryInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIGDBShowExitCodeInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIInfoOsInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIListFeaturesInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIListThreadGroupsInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIStackInfoDepthInfo;
@@ -741,6 +743,20 @@ public class CommandFactory {
 	/** @since 4.1 */
 	public ICommand<MIListThreadGroupsInfo> createMIListThreadGroups(ICommandControlDMContext ctx, boolean listAll, boolean recurse) {
 		return new MIListThreadGroups(ctx, listAll, recurse);
+	}
+
+	/**
+	 * @since 4.2
+	 */
+	public ICommand<MIInfoOsInfo> createMIInfoOS(IDMContext ctx) {
+		return new MIInfoOs(ctx);
+	}
+
+	/**
+	 * @since 4.2
+	 */
+	public ICommand<MIInfoOsInfo> createMIInfoOS(IDMContext ctx, String resourceClass) {
+		return new MIInfoOs(ctx, resourceClass);
 	}
 
 	/** @since 4.0 */

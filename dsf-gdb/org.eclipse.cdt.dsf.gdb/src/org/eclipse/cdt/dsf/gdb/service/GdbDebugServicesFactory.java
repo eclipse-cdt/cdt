@@ -62,6 +62,8 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 	public static final String GDB_7_3_VERSION = "7.3"; //$NON-NLS-1$
 	/** @since 4.1 */
 	public static final String GDB_7_4_VERSION = "7.4"; //$NON-NLS-1$
+	/** @since 4.2*/
+	public static final String GDB_7_5_VERSION = "7.5"; //$NON-NLS-1$
 
 	private final String fVersion;
 	
@@ -229,6 +231,9 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 	
 	/** @since 4.1 */
 	protected IGDBHardwareAndOS createHardwareAndOSService(DsfSession session, ILaunchConfiguration config) {
+		if (GDB_7_5_VERSION.compareTo(fVersion) <= 0) {
+			return new GDBHardwareAndOS_7_5(session);
+		}
 		return new GDBHardwareAndOS(session);
 	}
 }

@@ -23,16 +23,12 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
-import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvidersKeeper;
-import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
 import org.eclipse.cdt.core.templateengine.process.ProcessFailureException;
-import org.eclipse.cdt.internal.ui.language.settings.providers.LanguageSettingsProvidersPage;
 import org.eclipse.cdt.internal.ui.wizards.ICDTCommonProjectWizard;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildProperty;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyValue;
@@ -94,11 +90,11 @@ public class MBSWizardHandler extends CWizardHandler {
 	private static final String PROP_VAL = PROPERTY + ".debug"; //$NON-NLS-1$
 
 	private static final String tooltip =
-		Messages.CWizardHandler_1 +
-		Messages.CWizardHandler_2 +
-		Messages.CWizardHandler_3 +
-		Messages.CWizardHandler_4 +
-		Messages.CWizardHandler_5;
+			Messages.CWizardHandler_1 +
+			Messages.CWizardHandler_2 +
+			Messages.CWizardHandler_3 +
+			Messages.CWizardHandler_4 +
+			Messages.CWizardHandler_5;
 
 	protected SortedMap<String, IToolChain> full_tcs = new TreeMap<String, IToolChain>();
 	private String propertyId = null;
@@ -108,7 +104,7 @@ public class MBSWizardHandler extends CWizardHandler {
 	private IToolChain[] savedToolChains = null;
 	private IWizard wizard;
 	private IWizardPage startingPage;
-//	private EntryDescriptor entryDescriptor = null;
+	//	private EntryDescriptor entryDescriptor = null;
 	private EntryInfo entryInfo;
 	protected CfgHolder[] cfgs = null;
 	protected IWizardPage[] customPages;
@@ -181,13 +177,13 @@ public class MBSWizardHandler extends CWizardHandler {
 							List<Template> lstTemplates = new ArrayList<Template>();
 							for (String id : langIDs) {
 								lstTemplates.addAll(Arrays.asList(TemplateEngineUI.getDefault().
-									getTemplates(projectTypeId, null, id)));
+										getTemplates(projectTypeId, null, id)));
 							}
 							templates = lstTemplates.toArray(new Template[lstTemplates.size()]);
 						}
 					}
 					if(null == templates) {
-						 templates = TemplateEngineUI.getDefault().getTemplates(projectTypeId);
+						templates = TemplateEngineUI.getDefault().getTemplates(projectTypeId);
 					}
 					if((null == templates) || (templates.length == 0))
 						break;
@@ -216,7 +212,7 @@ public class MBSWizardHandler extends CWizardHandler {
 
 			if(template != null){
 				Map<String, String> valueStore = template.getValueStore();
-//				valueStore.clear();
+				//				valueStore.clear();
 				for (IWizardPage page : templatePages) {
 					if (page instanceof UIWizardPage)
 						valueStore.putAll(((UIWizardPage)page).getPageData());
@@ -301,7 +297,7 @@ public class MBSWizardHandler extends CWizardHandler {
 
 			for (String id : toolChainIds) {
 				if ((id != null && id.equals(id1)) ||
-					(id != null && id.equals(id2)))
+						(id != null && id.equals(id2)))
 					return true;
 			}
 			return false;
@@ -472,7 +468,7 @@ public class MBSWizardHandler extends CWizardHandler {
 					MBSCustomPageManager.PAGE_ID,
 					MBSCustomPageManager.PROJECT_TYPE,
 					getProjectType().getId()
-				);
+					);
 
 		IToolChain[] tcs = getSelectedToolChains();
 		ArrayList<IToolChain> x = new ArrayList<IToolChain>();
@@ -525,7 +521,7 @@ public class MBSWizardHandler extends CWizardHandler {
 		// New style managed project type. Configurations are referenced via propertyId.
 		if (propertyId != null) {
 			cfgs = ManagedBuildManager.getExtensionConfigurations(tc, ARTIFACT, propertyId);
-		// Old style managewd project type. Configs are obtained via projectType
+			// Old style managewd project type. Configs are obtained via projectType
 		} else if (pt != null) {
 			cfgs = ManagedBuildManager.getExtensionConfigurations(tc, pt);
 		}
@@ -598,22 +594,13 @@ public class MBSWizardHandler extends CWizardHandler {
 			if (cfgFirst == null) // select at least first configuration
 				cfgFirst = cfgDes;
 
-			if (cfgDes instanceof ILanguageSettingsProvidersKeeper) {
-				boolean isEnableProvidersPreference = !CDTPrefUtil.getBool(LanguageSettingsProvidersPage.KEY_NO_SHOW_PROVIDERS);
-				ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, isEnableProvidersPreference);
-				if (isEnableProvidersPreference) {
-					ConfigurationDataProvider.setDefaultLanguageSettingsProviders(config, cfgDes);
-				} else {
-					((ILanguageSettingsProvidersKeeper) cfgDes).setLanguageSettingProviders(ScannerDiscoveryLegacySupport.getDefaultProvidersLegacy());
-				}
-			} else {
-				ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, false);
-			}
+			ConfigurationDataProvider.setDefaultLanguageSettingsProviders(project, config, cfgDes);
 
 			monitor.worked(work);
 		}
 		mngr.setProjectDescription(project, des);
 	}
+
 
 	@Override
 	protected void doTemplatesPostProcess(IProject prj) {

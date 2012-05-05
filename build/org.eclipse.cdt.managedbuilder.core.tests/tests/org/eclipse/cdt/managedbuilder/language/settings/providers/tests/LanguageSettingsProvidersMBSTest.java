@@ -8,7 +8,7 @@
  * Contributors:
  *     Andrew Gvozdev - Initial API and implementation
  *******************************************************************************/
- package org.eclipse.cdt.managedbuilder.language.settings.providers.tests;
+package org.eclipse.cdt.managedbuilder.language.settings.providers.tests;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,9 +66,8 @@ public class LanguageSettingsProvidersMBSTest extends BaseTestCase {
 			assertNotNull(cfgDescription);
 			assertTrue(cfgDescription instanceof ILanguageSettingsProvidersKeeper);
 
-			ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, true);
 			IConfiguration cfg = ManagedBuildManager.getConfigurationForDescription(cfgDescription);
-			ConfigurationDataProvider.setDefaultLanguageSettingsProviders(cfg, cfgDescription);
+			ConfigurationDataProvider.setDefaultLanguageSettingsProviders(project, cfg, cfgDescription);
 
 			assertTrue(((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders().size() > 0);
 		}

@@ -100,8 +100,8 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 			String bPath = b.getDefaultBuildPath();
 			b.setBuildPathAttribute(bPath);
 		}
-//		cfg.setConfigurationDescription(des);
-//		ManagedBuildManager.performValueHandlerEvent(cfg, IManagedOptionValueHandler.EVENT_APPLY);
+		//		cfg.setConfigurationDescription(des);
+		//		ManagedBuildManager.performValueHandlerEvent(cfg, IManagedOptionValueHandler.EVENT_APPLY);
 		cfg.serialize(cfgElemen);
 
 		return appliedCfg;
@@ -129,7 +129,7 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 			CConfigurationData base,
 			IModificationContext context,
 			IProgressMonitor monitor)
-			throws CoreException {
+					throws CoreException {
 		if(cfgDescription.isPreferenceConfiguration())
 			return applyPreferences(cfgDescription, base);
 
@@ -178,14 +178,14 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 
 	protected CConfigurationData createPreferences(
 			ICConfigurationDescription cfgDescription, CConfigurationData base)
-			throws CoreException {
+					throws CoreException {
 		Configuration cfg = (Configuration)((BuildConfigurationData)base).getConfiguration();
 		Configuration newCfg = new Configuration((ManagedProject)cfg.getManagedProject(), cfg, cfgDescription.getId(), true, true, true);
 		newCfg.setConfigurationDescription(cfgDescription);
 		newCfg.setName(cfgDescription.getName());
-//		if(!newCfg.getId().equals(cfg.getId())){
-//			newCfg.exportArtifactInfo();
-//		}
+		//		if(!newCfg.getId().equals(cfg.getId())){
+		//			newCfg.exportArtifactInfo();
+		//		}
 
 		return newCfg.getConfigurationData();
 	}
@@ -197,7 +197,7 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 			ICConfigurationDescription baseCfgDescription,
 			CConfigurationData base, boolean clone,
 			IProgressMonitor monitor)
-			throws CoreException {
+					throws CoreException {
 		if(cfgDescription.isPreferenceConfiguration())
 			return createPreferences(cfgDescription, base);
 
@@ -229,9 +229,9 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 
 		ManagedBuildManager.performValueHandlerEvent(newCfg, IManagedOptionValueHandler.EVENT_OPEN);
 
-//		if(!newCfg.getId().equals(cfg.getId())){
-//			newCfg.exportArtifactInfo();
-//		}
+		//		if(!newCfg.getId().equals(cfg.getId())){
+		//			newCfg.exportArtifactInfo();
+		//		}
 
 		return newCfg;
 	}
@@ -337,7 +337,7 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 	}
 
 	protected CConfigurationData loadPreferences(ICConfigurationDescription cfgDescription)
-								throws CoreException {
+			throws CoreException {
 
 		Configuration cfg = load(cfgDescription, null, true);
 
@@ -554,12 +554,17 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 
 	}
 
-	public static void setDefaultLanguageSettingsProviders(IConfiguration cfg, ICConfigurationDescription cfgDescription) {
-		setDefaultLanguageSettingsProvidersIds(cfg, cfgDescription);
-		List<ILanguageSettingsProvider> providers = getDefaultLanguageSettingsProviders(cfg);
-		((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(providers);
-	}
+	public static void setDefaultLanguageSettingsProviders(IProject project, IConfiguration cfg, ICConfigurationDescription cfgDescription) {
+		// propagate the preference to project properties
+		boolean isPreferenceEnabled = ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityEnabled(null);
+		ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, isPreferenceEnabled);
 
+		if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
+			ConfigurationDataProvider.setDefaultLanguageSettingsProvidersIds(cfg, cfgDescription);
+			List<ILanguageSettingsProvider> providers = ConfigurationDataProvider.getDefaultLanguageSettingsProviders(cfg);
+			((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(providers);
+		}
+	}
 
 	private boolean isPersistedCfg(ICConfigurationDescription cfgDescription){
 		return cfgDescription.getSessionProperty(CFG_PERSISTED_PROPERTY) != null;

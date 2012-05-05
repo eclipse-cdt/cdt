@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Marc Khouzam (Ericsson) - Initial API and implementation
+ *     Vladimir Prus (Mentor Graphics) - Support for OS resources.
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
@@ -108,5 +109,4 @@ public interface IGDBHardwareAndOS extends IDsfService {
      * @param coreId The id of the core
      */
     public ICoreDMContext createCoreContext(ICPUDMContext cpuDmc, String coreId);
-
 }

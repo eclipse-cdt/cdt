@@ -38,7 +38,7 @@ public class CfgScannerConfigUtil {
         IInputType inType = context.getInputType();
         boolean adjust = false;
         CfgInfoContext newContext = context;
-        
+
    		if(tool != null){
    			if(inType != null){
         		if(!tool.hasScannerConfigSettings(inType)){
@@ -59,10 +59,10 @@ public class CfgScannerConfigUtil {
    				inType = null;
    				adjust = true;
    			}
-    			
+
    			if(rcInfo != null){
     			ToolChain tc = getToolChain(rcInfo);
-    					
+
     			if(tc != null){
     				if(!tc.hasScannerConfigSettings()){
     					adjust = true;
@@ -85,23 +85,23 @@ public class CfgScannerConfigUtil {
 //        		adjust = true;
 //        	}
 //        }
-        
+
         if(adjust){
         	if(rcInfo == null)
         		newContext = new CfgInfoContext(context.getConfiguration());
         	else
         		newContext = new CfgInfoContext(rcInfo, tool, inType);
         }
-        
+
         return newContext;
 	}
-	
+
 	private static ToolChain getToolChain(IResourceInfo rcInfo){
-		return rcInfo instanceof FolderInfo ? 
+		return rcInfo instanceof FolderInfo ?
 				(ToolChain)((FolderInfo)rcInfo).getToolChain()
 				: (ToolChain)((ResourceConfiguration)rcInfo).getBaseToolChain();
 	}
-	
+
 	public static String getDefaultProfileId(CfgInfoContext context, boolean searchFirstIfNone){
 		String id = null;
 		if(context.getInputType() != null)
@@ -116,19 +116,19 @@ public class CfgScannerConfigUtil {
 		if(id == null){
 			id = ((Configuration)context.getConfiguration()).getDiscoveryProfileId();
 		}
-		
+
 		if(id == null && searchFirstIfNone){
 			id = getFirstProfileId(context.getConfiguration().getFilteredTools());
 		}
 		return id;
 	}
-	
+
 	public static String getFirstProfileId(ITool[] tools){
 		String id = null;
 		for(int i = 0; i < tools.length; i++){
 			ITool tool = tools[i];
 			IInputType[] types = tool.getInputTypes();
-			
+
 			if(types.length != 0){
 				for(int k = 0; k < types.length; k++){
 					id = types[k].getDiscoveryProfileId(tool);
@@ -142,24 +142,30 @@ public class CfgScannerConfigUtil {
 			if(id != null)
 				break;
 		}
-		
+
 		return id;
 	}
 
 	/**
 	 * Search for toolchain's discovery profiles. Discovery profiles could be
 	 * specified on toolchain level, input types level or in their super-classes.
-	 * 
+	 *
 	 * @param toolchain - toolchain to search for scanner discovery profiles.
 	 * @return all available discovery profiles in given toolchain
 	 */
 	public static Set<String> getAllScannerDiscoveryProfileIds(IToolChain toolchain) {
 		Assert.isNotNull(toolchain);
-		
+
 		Set<String> profiles = new TreeSet<String>();
-		
+
 		if (toolchain!=null) {
-			String toolchainProfileId = toolchain.getScannerConfigDiscoveryProfileId();
+			String toolchainProfileId = null;
+			if (toolchain instanceof ToolChain) {
+				// still allow a user a choice to select any legacy profiles
+				toolchainProfileId = ((ToolChain) toolchain).getLegacyScannerConfigDiscoveryProfileId();
+			} else {
+				toolchainProfileId = toolchain.getScannerConfigDiscoveryProfileId();
+			}
 			if (toolchainProfileId!=null && toolchainProfileId.length()>0) {
 				profiles.add(toolchainProfileId);
 			}
@@ -172,15 +178,15 @@ public class CfgScannerConfigUtil {
 				profiles.addAll(getAllScannerDiscoveryProfileIds(superClass));
 			}
 		}
-		
+
 		return profiles;
 	}
-	
+
 	/**
 	 * Search for tool's discovery profiles. Discovery profiles could be retrieved
 	 * from tool/input type super-class. Input type could hold list of profiles
 	 * separated by pipe character '|'.
-	 * 
+	 *
 	 * @param tool - tool to search for scanner discovery profiles
 	 * @return all available discovery profiles in given configuration
 	 */
@@ -192,42 +198,42 @@ public class CfgScannerConfigUtil {
 					new Object[] { Tool.class.getName() });
 			throw new UnsupportedOperationException(msg);
 		}
-		
+
 		Set<String> profiles = new TreeSet<String>();
-		
+
 		for (IInputType inputType : ((Tool) tool).getAllInputTypes()) {
 			for (String profileId : getAllScannerDiscoveryProfileIds(inputType)) {
 				profiles.add(profileId);
 			}
 		}
-		
+
 		ITool superClass = tool.getSuperClass();
 		if (superClass!=null) {
 			profiles.addAll(getAllScannerDiscoveryProfileIds(superClass));
 		}
 		return profiles;
 	}
-	
+
 	/**
 	 * Search for input type's discovery profiles. Discovery profiles could be specified
 	 * on input type super-class. Input type could hold list of profiles
 	 * separated by pipe character '|'.
-	 * 
+	 *
 	 * @param inputType - input type to search for scanner discovery profiles
 	 * @return all available discovery profiles in given configuration
 	 */
 	private static Set<String> getAllScannerDiscoveryProfileIds(IInputType inputType) {
 		Assert.isNotNull(inputType);
-		
+
 		if ( ! (inputType instanceof InputType) ) {
 			String msg = MessageFormat.format(ManagedMakeMessages.getString("CfgScannerConfigUtil_ErrorNotSupported"), //$NON-NLS-1$
 					new Object[] { InputType.class.getName() });
 			throw new UnsupportedOperationException(msg);
 		}
-		
+
 		Set<String> profiles = new TreeSet<String>();
 
-		String attribute = ((InputType) inputType).getDiscoveryProfileIdAttribute();
+		String attribute = ((InputType) inputType).getLegacyDiscoveryProfileIdAttribute();
 		if (attribute!=null) {
 			// FIXME: temporary; we should add new method to IInputType instead of that
 			for (String profileId : attribute.split("\\|")) { //$NON-NLS-1$

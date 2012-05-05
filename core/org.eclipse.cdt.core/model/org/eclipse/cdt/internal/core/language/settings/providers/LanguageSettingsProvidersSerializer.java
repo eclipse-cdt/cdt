@@ -28,6 +28,8 @@ import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsSerializableProvider;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsStorage;
 import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
+import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
@@ -498,6 +500,9 @@ public class LanguageSettingsProvidersSerializer {
 	 * @throws CoreException
 	 */
 	public static void serializeLanguageSettingsWorkspace() throws CoreException {
+		// AG FIXME - temporary log to remove before CDT Juno release
+		LanguageSettingsLogger.logWarning("LanguageSettingsProvidersSerializer.serializeLanguageSettingsWorkspace()");
+
 		URI uriStoreWsp = getStoreInWorkspaceArea(STORAGE_WORKSPACE_LANGUAGE_SETTINGS);
 		List<LanguageSettingsSerializableProvider> serializableWorkspaceProviders = new ArrayList<LanguageSettingsSerializableProvider>();
 		for (ILanguageSettingsProvider provider : rawGlobalWorkspaceProviders.values()) {
@@ -804,6 +809,9 @@ public class LanguageSettingsProvidersSerializer {
 	 */
 	public static void serializeLanguageSettings(ICProjectDescription prjDescription) throws CoreException {
 		IProject project = prjDescription.getProject();
+		// AG FIXME - temporary log to remove before CDT Juno release
+		LanguageSettingsLogger.logWarning("LanguageSettingsProvidersSerializer.serializeLanguageSettings() for " + project);
+
 		try {
 			// Using side effect of adding the module to the storage
 			prjDescription.getStorage(CPROJECT_STORAGE_MODULE, true);
@@ -1230,6 +1238,35 @@ public class LanguageSettingsProvidersSerializer {
 	}
 
 	/**
+	 * Reports inconsistency in log.
+	 * AG FIXME - temporary method to remove before CDT Juno release
+	 */
+	@SuppressWarnings("nls")
+	@Deprecated
+	public static void assertConsistency(ICProjectDescription prjDescription) {
+		if (prjDescription != null) {
+			List<ILanguageSettingsProvider> prjProviders = new ArrayList<ILanguageSettingsProvider>();
+			for (ICConfigurationDescription cfgDescription : prjDescription.getConfigurations()) {
+				if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
+					List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
+					for (ILanguageSettingsProvider provider : providers) {
+						if (!LanguageSettingsManager.isWorkspaceProvider(provider)) {
+							if (isInList(prjProviders, provider)) {
+								IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, "Inconsistent state, duplicate LSP in project description "
+										+ "[" + System.identityHashCode(provider) + "] "
+										+ provider);
+								CoreException e = new CoreException(status);
+								CCorePlugin.log(e);
+							}
+							prjProviders.add(provider);
+						}
+					}
+				}
+			}
+		}
+	}
+
+	/**
 	 * Check that this particular element is in the list.
 	 */
 	private static <T> boolean isInList(Collection<T> list, T element) {
@@ -1320,8 +1357,12 @@ public class LanguageSettingsProvidersSerializer {
 	 */
 	public static void reRegisterListeners(ICProjectDescription oldPrjDescription, ICProjectDescription newPrjDescription) {
 		if (oldPrjDescription == newPrjDescription) {
+			assertConsistency(oldPrjDescription);
 			return;
 		}
+
+		assertConsistency(oldPrjDescription);
+		assertConsistency(newPrjDescription);
 
 		List<ICListenerAgent> oldListeners = getListeners(oldPrjDescription);
 		List<ListenerAssociation> newAssociations = getListenersAssociations(newPrjDescription);
@@ -1389,6 +1430,9 @@ public class LanguageSettingsProvidersSerializer {
 	 * @param event - the {@link ILanguageSettingsChangeEvent} event to be broadcast.
 	 */
 	private static void notifyLanguageSettingsChangeListeners(ILanguageSettingsChangeEvent event) {
+		// AG FIXME - temporary log to remove before CDT Juno release
+		LanguageSettingsLogger.logWarning("Firing " + event);
+
 		for (Object listener : fLanguageSettingsChangeListeners.getListeners()) {
 			((ILanguageSettingsChangeListener) listener).handleEvent(event);
 		}

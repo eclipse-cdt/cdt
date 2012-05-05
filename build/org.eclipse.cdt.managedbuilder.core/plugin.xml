@@ -307,14 +307,15 @@
             fileVersion="4.0.0">
       </managedBuildRevision>
       <configuration
-      	id="org.eclipse.cdt.build.core.emptycfg" 
-      	name="%cfg1_empty">
+            id="org.eclipse.cdt.build.core.emptycfg" 
+            languageSettingsProviders="org.eclipse.cdt.ui.UserLanguageSettingsProvider;${Toolchain}"
+            name="%cfg1_empty">
       </configuration>
 
 	 <configuration
-	 	id="org.eclipse.cdt.build.core.prefbase.cfg"
-	 	name="%cfg1_base"
-	 	 >     
+        id="org.eclipse.cdt.build.core.prefbase.cfg"
+        languageSettingsProviders="org.eclipse.cdt.ui.UserLanguageSettingsProvider;${Toolchain}"
+        name="%cfg1_base">
 	  <toolChain
 	  	id="org.eclipse.cdt.build.core.prefbase.toolchain"
 	  	name="%toolChain.name"
@@ -608,6 +609,14 @@
             class="org.eclipse.cdt.managedbuilder.language.settings.providers.GCCBuiltinSpecsDetector"
             id="org.eclipse.cdt.managedbuilder.core.GCCBuiltinSpecsDetector"
             name="CDT GCC Builtin Compiler Settings"
+            parameter="${COMMAND} -E -P -v -dD ${INPUTS}">
+         <language-scope id="org.eclipse.cdt.core.gcc"/>
+         <language-scope id="org.eclipse.cdt.core.g++"/>
+      </provider>
+      <provider
+            class="org.eclipse.cdt.managedbuilder.internal.language.settings.providers.GCCBuiltinSpecsDetectorCygwin"
+            id="org.eclipse.cdt.managedbuilder.core.GCCBuiltinSpecsDetectorCygwin"
+            name="CDT GCC Builtin Compiler Settings Cygwin"
             parameter="${COMMAND} -E -P -v -dD ${INPUTS}">
          <language-scope id="org.eclipse.cdt.core.gcc"/>
          <language-scope id="org.eclipse.cdt.core.g++"/>

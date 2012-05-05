@@ -14,16 +14,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.CIncludePathEntry;
 import org.eclipse.cdt.core.settings.model.CMacroEntry;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.internal.core.Cygwin;
+import org.eclipse.cdt.managedbuilder.internal.language.settings.providers.GCCBuiltinSpecsDetectorCygwin;
 import org.eclipse.cdt.managedbuilder.language.settings.providers.GCCBuiltinSpecsDetector;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 /**
  * Test cases to test GCC built-in specs detector.
@@ -45,6 +52,20 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		}
 	}
 
+	/**
+	 * Mock GCCBuiltinSpecsDetectorCygwin to gain access to protected methods.
+	 */
+	class MockGCCBuiltinSpecsDetectorCygwin extends GCCBuiltinSpecsDetectorCygwin {
+		@Override
+		public void startupForLanguage(String languageId) throws CoreException {
+			super.startupForLanguage(languageId);
+		}
+		@Override
+		public void shutdownForLanguage() {
+			super.shutdownForLanguage();
+		}
+	}
+
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -53,6 +74,21 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
+	}
+
+	/**
+	 * Helper method to fetch configuration descriptions.
+	 */
+	private ICConfigurationDescription[] getConfigurationDescriptions(IProject project) {
+		CoreModel coreModel = CoreModel.getDefault();
+		ICProjectDescriptionManager mngr = coreModel.getProjectDescriptionManager();
+		// project description
+		ICProjectDescription projectDescription = mngr.getProjectDescription(project);
+		assertNotNull(projectDescription);
+		assertEquals(1, projectDescription.getConfigurations().length);
+		// configuration description
+		ICConfigurationDescription[] cfgDescriptions = projectDescription.getConfigurations();
+		return cfgDescriptions;
 	}
 
 	/**
@@ -360,6 +396,70 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		// check populated entries
 		List<ICLanguageSettingEntry> entries = detector.getSettingEntries(null, null, null);
 		assertEquals(new CIncludePathEntry(dir2.removeLastSegments(1), ICSettingEntry.BUILTIN | ICSettingEntry.READONLY), entries.get(0));
+		assertEquals(1, entries.size());
+	}
+
+	/**
+	 * Test parsing of include directives for Cygwin for global provider.
+	 */
+	public void testGCCBuiltinSpecsDetector_Cygwin_NoProject() throws Exception {
+		if (!Cygwin.isAvailable()) {
+			// Skip the test if Cygwin is not available.
+			return;
+		}
+
+		String cygwinLocation = "/usr/include";
+		String windowsLocation = ResourceHelper.cygwinToWindowsPath(cygwinLocation);
+		assertTrue("windowsLocation=["+windowsLocation+"]", new Path(windowsLocation).getDevice()!=null);
+
+		MockGCCBuiltinSpecsDetectorCygwin detector = new MockGCCBuiltinSpecsDetectorCygwin();
+
+		detector.startup(null, null);
+		detector.startupForLanguage(null);
+		detector.processLine("#include <...> search starts here:");
+		detector.processLine(" /usr/include");
+		detector.processLine("End of search list.");
+		detector.shutdownForLanguage();
+		detector.shutdown();
+
+		// check populated entries
+		List<ICLanguageSettingEntry> entries = detector.getSettingEntries(null, null, null);
+		assertEquals(new CIncludePathEntry(new Path(windowsLocation), ICSettingEntry.BUILTIN | ICSettingEntry.READONLY), entries.get(0));
+		assertEquals(1, entries.size());
+	}
+
+	/**
+	 * Test parsing of include directives for Cygwin for provider running for a configuration.
+	 */
+	public void testGCCBuiltinSpecsDetector_Cygwin_Configuration() throws Exception {
+		if (!Cygwin.isAvailable()) {
+			// Skip the test if Cygwin is not available.
+			return;
+		}
+
+		String cygwinLocation = "/usr/include";
+		String windowsLocation = ResourceHelper.cygwinToWindowsPath(cygwinLocation);
+		assertTrue("windowsLocation=["+windowsLocation+"]", new Path(windowsLocation).getDevice()!=null);
+
+		// Create model project and folders to test
+		String projectName = getName();
+		IProject project = ResourceHelper.createCDTProjectWithConfig(projectName);
+		ICConfigurationDescription[] cfgDescriptions = getConfigurationDescriptions(project);
+		ICConfigurationDescription cfgDescription = cfgDescriptions[0];
+
+		MockGCCBuiltinSpecsDetectorCygwin detector = new MockGCCBuiltinSpecsDetectorCygwin();
+
+		detector.startup(cfgDescription, null);
+		detector.startupForLanguage(null);
+		detector.processLine("#include <...> search starts here:");
+		detector.processLine(" /usr/include");
+		detector.processLine("End of search list.");
+		detector.shutdownForLanguage();
+		detector.shutdown();
+
+		// check populated entries
+		List<ICLanguageSettingEntry> entries = detector.getSettingEntries(null, null, null);
+		assertEquals(new CIncludePathEntry(new Path(windowsLocation), ICSettingEntry.BUILTIN | ICSettingEntry.READONLY), entries.get(0));
 		assertEquals(1, entries.size());
 	}
 

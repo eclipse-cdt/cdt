@@ -223,6 +223,7 @@ public class Messages extends NLS {
 	public static String PropertyPageDefsTab_9;
 	public static String PropertyPageDefsTab_showIncludeFileTab;
 	public static String PropertyPageDefsTab_showProvidersTab;
+	public static String PropertyPageDefsTab_showScannerDiscoveryTab;
 	public static String RefreshPolicyExceptionDialog_addDialogLabel;
 	public static String RefreshPolicyExceptionDialog_AddExceptionInfoDialog_message;
 	public static String RefreshPolicyExceptionDialog_AddExceptionInfoDialog_title;

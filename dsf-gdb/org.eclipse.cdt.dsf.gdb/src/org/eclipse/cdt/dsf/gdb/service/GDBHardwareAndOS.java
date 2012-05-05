@@ -8,6 +8,7 @@
  * Contributors:
  *     Marc Khouzam (Ericsson) - initial API and implementation
  *     Marc Khouzam (Ericsson) - Updated to use /proc/cpuinfo for remote targets (Bug 374024)
+ *     Vladimir Prus (Mentor Graphics) - Support for OS resources.
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
@@ -21,6 +22,7 @@ import java.util.Set;
 import java.util.Vector;
 
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
@@ -501,5 +503,43 @@ public class GDBHardwareAndOS extends AbstractDsfService implements IGDBHardware
 		@Override
 		public void removeCommand(ICommandToken token) { assert false : "Not supported"; } //$NON-NLS-1$
 
+	}
+
+	/**
+	 * @since 4.2
+	 */
+	@Override
+	public void getResourceClasses(final IDMContext dmc, final DataRequestMonitor<IResourceClass[]> rm) {
+		
+		getExecutor().submit(new DsfRunnable() {
+			
+			@Override
+			public void run() {
+				rm.done(new IResourceClass[0]);
+			}			
+		});		
+	}
+
+	/**
+	 * @since 4.2
+	 */
+	@Override
+	public void getResourcesInformation(final IDMContext dmc, final String resourceClass, final DataRequestMonitor<IResourcesInformation> rm) {
+		
+		getExecutor().submit(new DsfRunnable() {
+
+			@Override
+			public void run() {
+				
+				rm.done(new IResourcesInformation() {
+					
+					@Override
+					public String[][] getContent() { return new String[0][]; }
+					
+					@Override
+					public String[] getColumnNames() { return new String[0]; }
+				});
+			}
+		});
 	}
 }

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Marc Khouzam (Ericsson) - Initial API and implementation
+ *     Vladimir Prus (Mentor Graphics) - Support for OS resources.
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
@@ -108,5 +109,35 @@ public interface IGDBHardwareAndOS extends IDsfService {
      * @param coreId The id of the core
      */
     public ICoreDMContext createCoreContext(ICPUDMContext cpuDmc, String coreId);
+    
+    /** Information about OS resource class. 
+     * @since 4.2*/
+    public interface IResourceClass
+    {
+    	public String getId();
+    	public String getHunamDescription();
+    }
+    
+    /**
+     * Return a list of OS resource classes GDB knows about 
+     * @param dmc
+     * @param rm
+     * @since 4.2
+     */
+    public void getResourceClasses(IDMContext dmc, DataRequestMonitor<IResourceClass[]> rm);
+        
+    /**
+	 * @since 4.2
+	 */
+    public interface IResourcesInformation
+    {
+    	public String[] getColumnNames();
+    	public String[][] getContent();
+    }
+    
+    /**
+	 * @since 4.2
+	 */
+    void getResourcesInformation(IDMContext dmc, String resourceClassId, DataRequestMonitor<IResourcesInformation> rm);
 
 }

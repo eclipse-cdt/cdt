@@ -130,7 +130,7 @@
        id="cdt.managedbuild.tool.xlc.c.compiler.abstract"
        isAbstract="true"
        name="%tool.compiler.c.abstract"
-       natureFilter="cnature"
+       natureFilter="both"
        outputFlag="-o"
        superClass="org.eclipse.cdt.managedbuilder.xlc.ui.tool.abstractCompiler">
 		<option

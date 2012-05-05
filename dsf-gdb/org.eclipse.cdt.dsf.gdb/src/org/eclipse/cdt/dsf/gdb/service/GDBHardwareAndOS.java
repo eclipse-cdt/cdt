@@ -8,6 +8,7 @@
  * Contributors:
  *     Marc Khouzam (Ericsson) - initial API and implementation
  *     Marc Khouzam (Ericsson) - Updated to use /proc/cpuinfo for remote targets (Bug 374024)
+ *     Vladimir Prus (Mentor Graphics) - Support for OS resources.
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 

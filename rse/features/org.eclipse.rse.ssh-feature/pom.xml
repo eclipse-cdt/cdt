@@ -10,6 +10,6 @@
   </parent>
   <groupId>org.eclipse.tm.features</groupId>
   <artifactId>org.eclipse.rse.ssh</artifactId>
-  <version>3.0.301-SNAPSHOT</version>
+  <version>3.0.400-SNAPSHOT</version>
   <packaging>eclipse-feature</packaging>
 </project>

@@ -9,7 +9,7 @@
     <relativePath>../../../</relativePath>
   </parent>
   <groupId>org.eclipse.tm.features</groupId>
-  <artifactId>org.eclipse.tm.terminal.ssh</artifactId>
-  <version>2.1.100-SNAPSHOT</version>
+  <artifactId>org.eclipse.rse.wince</artifactId>
+  <version>0.3.100-SNAPSHOT</version>
   <packaging>eclipse-feature</packaging>
 </project>

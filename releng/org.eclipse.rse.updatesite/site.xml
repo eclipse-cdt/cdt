@@ -752,10 +752,10 @@
    <feature url="features/org.eclipse.rse.dstore_3.4.0.qualifier.jar" id="org.eclipse.rse.dstore" version="3.4.0.qualifier">
       <category name="TM and RSE Uncategorized 3.4"/>
    </feature>
-   <feature url="features/org.eclipse.rse.ftp_3.0.301.qualifier.jar" id="org.eclipse.rse.ftp" version="3.0.301.qualifier">
+   <feature url="features/org.eclipse.rse.ftp_3.0.400.qualifier.jar" id="org.eclipse.rse.ftp" version="3.0.400.qualifier">
       <category name="TM and RSE Uncategorized 3.4"/>
    </feature>
-   <feature url="features/org.eclipse.rse.local_2.1.300.qualifier.jar" id="org.eclipse.rse.local" version="2.1.300.qualifier">
+   <feature url="features/org.eclipse.rse.local_2.1.400.qualifier.jar" id="org.eclipse.rse.local" version="2.1.400.qualifier">
       <category name="TM and RSE Uncategorized 3.4"/>
    </feature>
    <feature url="features/org.eclipse.rse_3.4.0.qualifier.jar" id="org.eclipse.rse" version="3.4.0.qualifier">
@@ -764,37 +764,37 @@
    <feature url="features/org.eclipse.rse.sdk_3.4.0.qualifier.jar" id="org.eclipse.rse.sdk" version="3.4.0.qualifier">
       <category name="TM and RSE Uncategorized 3.4"/>
    </feature>
-   <feature url="features/org.eclipse.rse.ssh_3.0.301.qualifier.jar" id="org.eclipse.rse.ssh" version="3.0.301.qualifier">
+   <feature url="features/org.eclipse.rse.ssh_3.0.400.qualifier.jar" id="org.eclipse.rse.ssh" version="3.0.400.qualifier">
       <category name="TM and RSE Uncategorized 3.4"/>
    </feature>
-   <feature url="features/org.eclipse.rse.telnet_2.2.200.qualifier.jar" id="org.eclipse.rse.telnet" version="2.2.200.qualifier">
+   <feature url="features/org.eclipse.rse.telnet_2.2.300.qualifier.jar" id="org.eclipse.rse.telnet" version="2.2.300.qualifier">
       <category name="TM and RSE Uncategorized 3.4"/>
    </feature>
-   <feature url="features/org.eclipse.rse.examples_3.1.200.qualifier.jar" id="org.eclipse.rse.examples" version="3.1.200.qualifier">
+   <feature url="features/org.eclipse.rse.examples_3.1.300.qualifier.jar" id="org.eclipse.rse.examples" version="3.1.300.qualifier">
       <category name="TM and RSE Uncategorized 3.4"/>
    </feature>
-   <feature url="features/org.eclipse.rse.terminals_1.1.1.qualifier.jar" id="org.eclipse.rse.terminals" version="1.1.1.qualifier">
+   <feature url="features/org.eclipse.rse.terminals_1.1.100.qualifier.jar" id="org.eclipse.rse.terminals" version="1.1.100.qualifier">
       <category name="TM and RSE Uncategorized 3.4"/>
    </feature>
-   <feature url="features/org.eclipse.rse.tests_3.3.0.qualifier.jar" id="org.eclipse.rse.tests" version="3.3.0.qualifier">
+   <feature url="features/org.eclipse.rse.tests_3.4.0.qualifier.jar" id="org.eclipse.rse.tests" version="3.4.0.qualifier">
       <category name="TM and RSE Uncategorized 3.4"/>
    </feature>
-   <feature url="features/org.eclipse.rse.useractions_1.1.300.qualifier.jar" id="org.eclipse.rse.useractions" version="1.1.300.qualifier">
+   <feature url="features/org.eclipse.rse.useractions_1.1.400.qualifier.jar" id="org.eclipse.rse.useractions" version="1.1.400.qualifier">
       <category name="TM and RSE Uncategorized 3.4"/>
    </feature>
-   <feature url="features/org.eclipse.rse.scp_0.1.0.qualifier.jar" id="org.eclipse.rse.scp" version="0.1.0.qualifier">
+   <feature url="features/org.eclipse.rse.scp_0.2.0.qualifier.jar" id="org.eclipse.rse.scp" version="0.2.0.qualifier">
       <category name="TM and RSE Uncategorized 3.4"/>
    </feature>
-   <feature url="features/org.eclipse.rse.wince_0.3.0.qualifier.jar" id="org.eclipse.rse.wince" version="0.3.0.qualifier" os="win32" arch="x86">
+   <feature url="features/org.eclipse.rse.wince_0.3.100.qualifier.jar" id="org.eclipse.rse.wince" version="0.3.100.qualifier" os="win32" arch="x86">
       <category name="TM and RSE Uncategorized 3.4"/>
    </feature>
-   <feature url="features/org.eclipse.tm.terminal.sdk_3.2.1.qualifier.jar" id="org.eclipse.tm.terminal.sdk" version="3.2.1.qualifier">
+   <feature url="features/org.eclipse.tm.terminal.sdk_3.3.0.qualifier.jar" id="org.eclipse.tm.terminal.sdk" version="3.3.0.qualifier">
       <category name="TM and RSE Uncategorized 3.4"/>
    </feature>
-   <feature url="features/org.eclipse.tm.terminal.local_0.2.0.qualifier.jar" id="org.eclipse.tm.terminal.local" version="0.2.0.qualifier" os="linux,macosx,solaris">
+   <feature url="features/org.eclipse.tm.terminal.local_0.2.100.qualifier.jar" id="org.eclipse.tm.terminal.local" version="0.2.100.qualifier" os="linux,macosx,solaris">
       <category name="TM and RSE Uncategorized 3.4"/>
    </feature>
-   <feature url="features/org.eclipse.tm.terminal.local.sdk_0.2.1.qualifier.jar" id="org.eclipse.tm.terminal.local.sdk" version="0.2.1.qualifier" os="linux,macosx,solaris">
+   <feature url="features/org.eclipse.tm.terminal.local.sdk_0.3.0.qualifier.jar" id="org.eclipse.tm.terminal.local.sdk" version="0.3.0.qualifier" os="linux,macosx,solaris">
       <category name="TM and RSE Uncategorized 3.4"/>
    </feature>
    <category-def name="TM and RSE Uncategorized 3.4" label="TM and RSE Uncategorized 3.4">

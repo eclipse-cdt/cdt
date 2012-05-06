@@ -9,7 +9,7 @@
     <relativePath>../../../</relativePath>
   </parent>
   <groupId>org.eclipse.tm</groupId>
-  <artifactId>org.eclipse.rse.subsystems.files.dstore</artifactId>
-  <version>2.1.300-SNAPSHOT</version>
+  <artifactId>org.eclipse.rse.subsystems.wince</artifactId>
+  <version>0.1.400-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 </project>

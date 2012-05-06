@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM Rational Software - Initial API and implementation
+ *     IBM Rational Software - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner;
 
@@ -14,10 +14,8 @@ import java.io.File;
 
 /**
  * @author jcamelon
- *
  */
 public class ScannerUtility {
-
 	static final char DOT    = '.';  
 	static final char SLASH  = '/';
 	static final char BSLASH = '\\'; 
@@ -68,8 +66,7 @@ public class ScannerUtility {
 			}
 		}
 
-		
-		for (int i=0; i<len; i++) {
+		for (int i= 0; i < len; i++) {
 			char c = ein[i]; 
 			switch (c) {
 			case QUOTE:	  // quotes are removed
@@ -83,35 +80,24 @@ public class ScannerUtility {
 				}
 				break;
 			case DOT:
-				// no separator before, not a 1st string symbol. 
-				if (noSepBefore && j>0) 
+				// No separator before, not a 1st string symbol. 
+				if (noSepBefore && j > 0) {
 					aus[j++] = c;
-				else { // separator before "." ! 
+				} else { // Separator before "."
 					if (i < len1) {
-						c = ein[i+1]; // check for next symbol
-						// check for "/./" case
+						c = ein[i + 1]; // Check for next symbol
+						// Check for "/./" case
 						if (c == SLASH || c == BSLASH) {
-							// write nothing to output
-							// skip the next symbol
+							// Write nothing to output, skip the next symbol
 							i++;
 							noSepBefore = false;
-						} 
-						// symbol other than "." - write it also 
-						else if (c != DOT) {
+						} else {  // Process as usual
 							i++;
 							noSepBefore = true;
 							aus[j++] = DOT;
 							aus[j++] = c;
 						}
-						// Processed as usual
-						else {
-							i++;
-							noSepBefore = true;
-							aus[j++] = DOT;
-							aus[j++] = DOT;
-						}
-					} else 
-					{} // do nothing when "." is last symbol
+					}
 				}
 				break;
 			default: 
@@ -125,10 +111,10 @@ public class ScannerUtility {
 	/**
 	 * @param path     - include path
 	 * @param fileName - include file name
-	 * @return         - reconsiled path
+	 * @return         - reconciled path
 	 */
 	public static String createReconciledPath(String path, String fileName) {
 		boolean pathEmpty = (path == null || path.length() == 0);
-		return (pathEmpty ? fileName : reconcilePath(path + File.separatorChar + fileName));
+		return pathEmpty ? fileName : reconcilePath(path + File.separatorChar + fileName);
 	}
 }

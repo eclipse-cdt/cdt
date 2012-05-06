@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.pdom.indexer;
 
@@ -30,7 +30,7 @@ import org.eclipse.core.runtime.Path;
  * Heuristics for picking up includes from the project
  */
 public class ProjectIndexerIncludeResolutionHeuristics implements IIncludeFileResolutionHeuristics {
-	private static final String TRUE = "true"; //$NON-NLS-1$
+	private static final String TRUE = String.valueOf(true);
 
 	private IProject fProject;
 	private IProject[] fProjects;
@@ -52,8 +52,7 @@ public class ProjectIndexerIncludeResolutionHeuristics implements IIncludeFileRe
 		
 		if (fProject == null)
 			return null;
-		
-		
+
 		if (fProjects == null) {
 			if (fProject.isOpen()) {
 				String val= IndexerPreferences.get(fProject, IndexerPreferences.KEY_INCLUDE_HEURISTICS, TRUE);
@@ -77,8 +76,7 @@ public class ProjectIndexerIncludeResolutionHeuristics implements IIncludeFileRe
 		
 		return bestLocation.toString();
 	}
-	
-	
+
 	private IResource selectBest(IFile[] files, char[] currentFullPath) {
 		IFile best= files[0];
 		int bestScore= computeScore(best.getFullPath().toString().toCharArray(), currentFullPath);
@@ -96,14 +94,14 @@ public class ProjectIndexerIncludeResolutionHeuristics implements IIncludeFileRe
 
 	private int computeScore(char[] path1, char[] path2) {
 		final int limit= Math.min(path1.length, path2.length);
-		int match=0;
+		int match= 0;
 		for (int i = 0; i < limit; i++) {
 			if (path1[i] != path2[i])
 				break;
 			if (path1[i] == '/')
 				match= i;
 		}
-		// prefer shortest path with longest matches with 
+		// Prefer shortest path with longest matches with.
 		return (match << 16) - path1.length; 
 	}
 
@@ -115,7 +113,7 @@ public class ProjectIndexerIncludeResolutionHeuristics implements IIncludeFileRe
 
 			List<IProject> projectsToSearch= new ArrayList<IProject>();
 			projectsToSearch.add(prj);
-			for (int i=0; i<projectsToSearch.size(); i++) {
+			for (int i= 0; i < projectsToSearch.size(); i++) {
 				IProject project= projectsToSearch.get(i);
 				IProject[] nextLevel;
 				try {

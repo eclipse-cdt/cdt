@@ -6,10 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    QNX - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     QNX - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.core.pdom.indexer;
 
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -20,6 +19,7 @@ import org.eclipse.cdt.internal.core.dom.IIncludeFileResolutionHeuristics;
  * Configures the abstract indexer to return tasks suitable for fast indexing.
  */
 class PDOMFastIndexerTask extends PDOMIndexerTask {
+
 	public PDOMFastIndexerTask(PDOMFastIndexer indexer, ITranslationUnit[] added, 
 			ITranslationUnit[] changed, ITranslationUnit[] removed) {
 		super(added, changed, removed, indexer, true);

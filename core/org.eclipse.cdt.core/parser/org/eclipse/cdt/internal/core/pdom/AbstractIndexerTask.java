@@ -307,6 +307,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	private final LinkedList<AbstractIndexerTask> fUrgentTasks;
 	boolean fTaskCompleted;
 	private IndexerProgress fInfo= new IndexerProgress();
+
 	public AbstractIndexerTask(Object[] filesToUpdate, Object[] filesToRemove,
 			IndexerInputAdapter resolver, boolean fastIndexer) {
 		super(resolver);
@@ -384,6 +385,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	protected abstract IWritableIndex createIndex();
 	protected abstract IIncludeFileResolutionHeuristics createIncludeHeuristics();
 	protected abstract IncludeFileContentProvider createReaderFactory();
+
 	protected ITodoTaskUpdater createTodoTaskUpdater() {
 		return null;
 	}

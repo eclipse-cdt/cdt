@@ -43,7 +43,7 @@ import org.eclipse.osgi.util.NLS;
  */
 public class PDOMUpdateTask implements IPDOMIndexerTask {
 	protected static final String TRUE= String.valueOf(true);
-	protected static final ITranslationUnit[] NO_TUS = new ITranslationUnit[0];
+	protected static final ITranslationUnit[] NO_TUS = {};
 	
 	private final IPDOMIndexer fIndexer;
 	private final IndexerProgress fProgress;
@@ -89,7 +89,8 @@ public class PDOMUpdateTask implements IPDOMIndexerTask {
 		}
 	}
 	
-	private void createDelegate(ICProject project, IProgressMonitor monitor) throws CoreException, InterruptedException {
+	private void createDelegate(ICProject project, IProgressMonitor monitor)
+			throws CoreException, InterruptedException {
 		HashSet<ITranslationUnit> set= new HashSet<ITranslationUnit>();
 		TranslationUnitCollector collector= new TranslationUnitCollector(set, set, monitor);
 		boolean haveProject= false;

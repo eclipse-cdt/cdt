@@ -21,7 +21,7 @@
 		<tstamp>
 			<format property="buildTimestamp" pattern="yyyyMMddHHmm" />
 		</tstamp>
-		<property name="forceContextQualifier" value="v${buildTimestamp}" />
+		<property name="forceContextQualifier" value="${buildTimestamp}" />
 
 		<!-- 1. Import these projects using File > Import > Team Project Set > ./psfs/athena.psf.
 			 2. Close the org.eclipse.releng.basebuilder project - it does not need to compile to be of use.

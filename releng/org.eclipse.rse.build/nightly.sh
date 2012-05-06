@@ -93,7 +93,8 @@ command="$command -DmapVersionTag=${tag} "
 command="$command -Dmydstamp=${mydstamp} "
 command="$command -Dmytstamp=${mytstamp} "
 if [ "$buildType" = "N" ]; then
-  command="$command -DforceContextQualifier=${buildId} "
+  #command="$command -DforceContextQualifier=${buildId} "
+  command="$command -DforceContextQualifier=${mydstamp}${mytstamp} "
   command="$command -DfetchTag=HEAD "
 fi
 command="$command -DdoPublish=true "

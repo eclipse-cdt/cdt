@@ -1842,25 +1842,25 @@ public class InputType extends BuildObject implements IInputType {
 	}
 
 	/**
-	 * Check if legacy scanner discovery method should be used.
+	 * Check if legacy scanner discovery profiles should be used.
 	 */
-	private boolean isLegacyScannerDiscovery() {
-		boolean isLanguageSettingsProvidersEnabled = false;
+	private boolean useLegacyScannerDiscoveryProfiles() {
+		boolean useLegacy = true;
 		ITool tool = getParent();
-		if (tool!=null) {
-			IBuildObject bo = tool.getParent();
-			if (bo instanceof IToolChain) {
-				IConfiguration cfg = ((IToolChain) bo).getParent();
-				if (cfg!=null) {
+		if (tool != null) {
+			IBuildObject toolchain = tool.getParent();
+			if (toolchain instanceof IToolChain && ((IToolChain) toolchain).getDefaultLanguageSettingsProviderIds() != null) {
+				IConfiguration cfg = ((IToolChain) toolchain).getParent();
+				if (cfg != null && cfg.getDefaultLanguageSettingsProviderIds() != null) {
 					IResource rc = cfg.getOwner();
-					if (rc!=null) {
+					if (rc != null) {
 						IProject project = rc.getProject();
-						isLanguageSettingsProvidersEnabled = ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityEnabled(project);
+						useLegacy = !ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityEnabled(project);
 					}
 				}
 			}
 		}
-		return !isLanguageSettingsProvidersEnabled;
+		return useLegacy;
 	}
 
 	/**
@@ -1879,11 +1879,12 @@ public class InputType extends BuildObject implements IInputType {
 	}
 
 	public String getDiscoveryProfileIdAttribute() {
-		if (isLegacyScannerDiscovery()) {
-			return getLegacyDiscoveryProfileIdAttribute();
+		String discoveryProfileAttribute = getDiscoveryProfileIdAttributeInternal();
+		if (discoveryProfileAttribute == null && useLegacyScannerDiscoveryProfiles()) {
+			discoveryProfileAttribute = getLegacyDiscoveryProfileIdAttribute();
 		}
 
-		return getDiscoveryProfileIdAttributeInternal();
+		return discoveryProfileAttribute;
 	}
 
 	/**

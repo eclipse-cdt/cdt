@@ -6,24 +6,23 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-
 package org.eclipse.cdt.internal.core.pdom.db;
 
 public final class ChunkCache {
 	private static ChunkCache sSharedInstance= new ChunkCache();
 	
 	private Chunk[] fPageTable;
-	private boolean fTableIsFull= false;
-	private int fPointer= 0;
+	private boolean fTableIsFull;
+	private int fPointer;
 	
 	public static ChunkCache getSharedInstance() {
 		return sSharedInstance;
 	}
 
 	public ChunkCache() {
-		this(5*1024*1024);
+		this(5 * 1024 * 1024);
 	}
 	
 	public ChunkCache(long maxSize) {
@@ -42,8 +41,7 @@ public final class ChunkCache {
 			evictChunk();
 			chunk.fCacheIndex= fPointer;
 			fPageTable[fPointer]= chunk;
-		}
-		else {
+		} else {
 			chunk.fCacheIndex= fPointer;
 			fPageTable[fPointer]= chunk;
 
@@ -88,8 +86,7 @@ public final class ChunkCache {
 			if (fTableIsFull) {
 				fPointer= fPageTable.length-1;
 				fTableIsFull= false;
-			}
-			else {
+			} else {
 				fPointer--;
 			}
 			chunk.fCacheIndex= -1;
@@ -121,9 +118,8 @@ public final class ChunkCache {
 			fTableIsFull= false;
 			fPointer= oldLength;
 			fPageTable= newTable;
-		}
-		else {
-			for (int i=newLength; i<oldLength; i++) {
+		} else {
+			for (int i= newLength; i < oldLength; i++) {
 				final Chunk chunk= fPageTable[i];
 				chunk.fDatabase.releaseChunk(chunk);
 				chunk.fCacheIndex= -1;

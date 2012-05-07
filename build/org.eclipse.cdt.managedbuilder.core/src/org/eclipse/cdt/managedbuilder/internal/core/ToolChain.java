@@ -89,7 +89,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 	private String secondaryOutputIds;
 	private Boolean isAbstract;
 	private String defaultLanguageSettingsProviderIds;
-    private String scannerConfigDiscoveryProfileId;
+	private String scannerConfigDiscoveryProfileId;
 	private String versionsSupported;
 	private String convertToId;
 	private IConfigurationElement managedIsToolChainSupportedElement = null;
@@ -1545,19 +1545,21 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 	}
 
 	/**
-	 * Check if legacy scanner discovery method should be used.
+	 * Check if legacy scanner discovery profiles should be used.
 	 */
-	private boolean isLegacyScannerDiscovery() {
-		boolean isLanguageSettingsProvidersEnabled = false;
-		IConfiguration cfg = getParent();
-		if (cfg != null) {
-			IResource rc = cfg.getOwner();
-			if (rc != null) {
-				IProject project = rc.getProject();
-				isLanguageSettingsProvidersEnabled = ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityEnabled(project);
+	private boolean useLegacyScannerDiscoveryProfiles() {
+		boolean useLegacy = true;
+		if (getDefaultLanguageSettingsProviderIds() != null) {
+			IConfiguration cfg = getParent();
+			if (cfg != null && cfg.getDefaultLanguageSettingsProviderIds() != null) {
+				IResource rc = cfg.getOwner();
+				if (rc != null) {
+					IProject project = rc.getProject();
+					useLegacy = !ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityEnabled(project);
+				}
 			}
 		}
-		return !isLanguageSettingsProvidersEnabled;
+		return useLegacy;
 	}
 
 	/**
@@ -1582,11 +1584,12 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 
 	@Override
 	public String getScannerConfigDiscoveryProfileId() {
-		if (isLegacyScannerDiscovery()) {
-			return getLegacyScannerConfigDiscoveryProfileId();
+		String discoveryProfileId = getScannerConfigDiscoveryProfileIdInternal();
+		if (discoveryProfileId == null && useLegacyScannerDiscoveryProfiles()) {
+			discoveryProfileId = getLegacyScannerConfigDiscoveryProfileId();
 		}
 
-		return getScannerConfigDiscoveryProfileIdInternal();
+		return discoveryProfileId;
 	}
 
 	/**

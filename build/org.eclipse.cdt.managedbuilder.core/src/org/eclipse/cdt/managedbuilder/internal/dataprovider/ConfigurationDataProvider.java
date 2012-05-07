@@ -533,10 +533,7 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 				}
 				providers.add(provider);
 			}
-		}
-
-		// AG TODO - should it be when empty or when ids==null?
-		if (providers.isEmpty()) {
+		} else {
 			providers = ScannerDiscoveryLegacySupport.getDefaultProvidersLegacy();
 		}
 

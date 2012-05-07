@@ -28,7 +28,7 @@
     </license>
   </licenses>
   <properties>
-    <tycho-version>0.14.0</tycho-version>
+    <tycho-version>0.14.1</tycho-version>
     <tycho-extras-version>0.14.0</tycho-extras-version>
     <platform-version-name>juno</platform-version-name>
     <eclipse-site>http://download.eclipse.org/releases/${platform-version-name}</eclipse-site>
@@ -109,7 +109,7 @@
         <eclipse-site>http://download.eclipse.org/releases/staging</eclipse-site>
         <platform-version>[4.2,)</platform-version>
         <sdk-version>4.2</sdk-version>
-        <cdt-site>http://download.eclipse.org/tools/cdt/builds/juno/milestones/M6</cdt-site>
+        <cdt-site>http://download.eclipse.org/tools/cdt/builds/juno/milestones/M7</cdt-site>
         <cdt-test-site>http://download.eclipse.org/tools/cdt/updates/indigo/</cdt-test-site>
       </properties>
       <repositories>

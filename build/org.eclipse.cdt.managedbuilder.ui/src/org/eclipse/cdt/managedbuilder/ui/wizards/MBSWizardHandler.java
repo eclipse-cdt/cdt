@@ -270,6 +270,29 @@ public class MBSWizardHandler extends CWizardHandler {
 					out.add(s);
 			return out;
 		}
+		
+		/**
+		 * Get a map from toolchain names to actual toolchains.
+		 * This list should mirror the list displayed in the wizard.
+		 * Bug #363612
+		 *
+		 * @since 8.0
+		 * @return the map
+		 */
+		public SortedMap<String, IToolChain> getToolChains() {
+			Set<String> toolChainNames = this.tc_filter();
+			SortedMap<String, IToolChain> toolChainMap = new TreeMap<String, IToolChain>();
+
+			for (String toolChainName : toolChainNames) {
+				IToolChain tc = tcs.get(toolChainName);
+				if (tc == null) {
+					toolChainMap.put(toolChainName, null);
+				} else {
+					toolChainMap.put(tc.getUniqueRealName(), tc);
+				}
+			}
+			return toolChainMap;
+		}
 
 		/**
 		 * Checks whether given toolchain can be displayed
@@ -707,6 +730,30 @@ public class MBSWizardHandler extends CWizardHandler {
 			return full_tcs.size();
 		else
 			return entryInfo.tc_filter().size();
+	}
+	/**
+	 * Get a map from toolchain names to actual toolchains.
+	 * Bug #363612
+	 *
+	 * @since 8.0
+	 * @return the map
+	 */
+	public SortedMap<String, IToolChain> getToolChains() {
+		if (entryInfo == null)
+			return full_tcs;
+		else
+			return entryInfo.getToolChains();
+	}
+	/**
+	 * Get the table that is displayed in the left pane.
+	 * This allow for changes after handler creation.
+	 * Bug #363612
+	 *
+	 * @since 8.0
+	 * @return the table
+	 */
+	public Table getToolChainsTable() {
+		return table;
 	}
 	public String getPropertyId() {
 		return propertyId;

@@ -11,14 +11,18 @@
 package org.eclipse.cdt.tests.dsf.gdb.tests;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IExpressions;
@@ -3238,7 +3242,7 @@ public class MIExpressionsTest extends BaseTestCase {
 	}
 
     // This method tests IExspressions.getSubExpressions(IExpressionDMC, DRM);
-    private IExpressionDMContext[] getChildren(
+    protected IExpressionDMContext[] getChildren(
     		final IExpressionDMContext parentDmc, 
     		String[] expectedValues) throws Throwable {
 
@@ -3288,7 +3292,7 @@ public class MIExpressionsTest extends BaseTestCase {
     }
 
     // This method tests IExpressions.getSubExpressions(IExpressionDMC, int, int, DRM);
-    private IExpressionDMContext[] getChildren(
+    protected IExpressionDMContext[] getChildren(
     		final IExpressionDMContext parentDmc,
     		final int startIndex,
     		final int length,
@@ -3522,8 +3526,49 @@ public class MIExpressionsTest extends BaseTestCase {
 	    getChildren(arrayDoubleSmallChildExprDMC, 3, 2, new String[] { "array_double_small[3][3]", "array_double_small[3][4]" });
 	    getChildren(arrayDoubleSmallChildExprDMC, 19, 3, new String[] { "array_double_small[3][19]","array_double_small[3][20]" });
     }
+    
+    /**
+     * This test verifies that there is no RTTI support before GDB 7.5.
+     */
+    @Test
+    public void testRTTI() throws Throwable {
+    	SyncUtil.runToLocation("testRTTI");    	
+    	MIStoppedEvent stoppedEvent = SyncUtil.step(3, StepType.STEP_OVER);    	
+        IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
+        
+        // The expression we will follow as it changes types: derived.ptr
+	    IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, "derived.ptr");
+	    
+	    // Now, the expression should be type VirtualBase
+	    getExpressionType(exprDmc, "VirtualBase *");
+	    getChildrenCount(exprDmc, 2);
+	    // get all children
+	    String[] expectedValues = new String[2];
+	    expectedValues[0] = "a";
+	    expectedValues[1] = "b";
+	    getChildren(exprDmc, expectedValues);
+	    
+	    // Make the type of our expression change
+	    SyncUtil.step(1, StepType.STEP_OVER);
+	    // Now, the expression should be type Derived, but GDB < 7.5 does not tell us
+	    // so we should still get the base type.
+	    getExpressionType(exprDmc, "VirtualBase *");
+	    getChildrenCount(exprDmc, 2);
+	    // The children are also the same as before
+	    getChildren(exprDmc, expectedValues);
+	    
+	    // Make the type of our expression change
+	    SyncUtil.step(1, StepType.STEP_OVER);
+	    // Now, the expression should be type OtherDerived, but GDB < 7.5 does not tell us
+	    // so we should still get the base type.
+	    getExpressionType(exprDmc, "VirtualBase *");
+	    getChildrenCount(exprDmc, 2);
+	    // The children are also the same as before
+	    getChildren(exprDmc, expectedValues);
+	}
 
-    private int getChildrenCount(final IExpressionDMContext parentDmc, final int expectedCount) throws Throwable {
+
+    protected int getChildrenCount(final IExpressionDMContext parentDmc, final int expectedCount) throws Throwable {
 
         final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 
@@ -3568,5 +3613,32 @@ public class MIExpressionsTest extends BaseTestCase {
 		assertTrue(String.format("Expected %d but got %d", expectedCount, count), count == expectedCount);
         
         return count;
+    }
+    
+    protected String getExpressionType(final IExpressionDMContext exprDmc, final String expectedType) throws Throwable {
+    	
+    	Query<String> query = new Query<String>() {
+			@Override
+			protected void execute(final DataRequestMonitor<String> rm) {
+		        fExpService.getExecutor().submit(new Runnable() {
+		        	@Override
+					public void run() {
+		        		fExpService.getExpressionData(
+		        				exprDmc, 
+		        				new ImmediateDataRequestMonitor<IExpressionDMData>(rm) {
+		        					@Override
+		        					protected void handleCompleted() {
+		        						rm.done(getData().getTypeName());
+		        					}	
+		        				});
+		        	}
+		        });				
+			}	
+    	};
+    	
+        fSession.getExecutor().execute(query);
+        String type = query.get(500, TimeUnit.MILLISECONDS);
+		assertEquals(expectedType, type);
+		return type;
     }
 }

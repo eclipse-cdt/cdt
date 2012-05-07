@@ -1923,10 +1923,11 @@
 
                <toolChain
                      archList="all"
-                     osList="macosx"
+                     id="cdt.managedbuild.toolchain.gnu.macosx.base"
+                     languageSettingsProviders="org.eclipse.cdt.managedbuilder.core.GCCBuildCommandParser;org.eclipse.cdt.managedbuilder.core.GCCBuiltinSpecsDetector"
                      name="%ToolChainName.Macosx"
-                     targetTool="cdt.managedbuild.tool.macosx.c.linker.macosx.base;cdt.managedbuild.tool.macosx.cpp.linker.macosx.base;cdt.managedbuild.tool.gnu.archiver"
-                     id="cdt.managedbuild.toolchain.gnu.macosx.base">
+                     osList="macosx"
+                     targetTool="cdt.managedbuild.tool.macosx.c.linker.macosx.base;cdt.managedbuild.tool.macosx.cpp.linker.macosx.base;cdt.managedbuild.tool.gnu.archiver">
                   <targetPlatform
 					  id="cdt.managedbuild.target.gnu.platform.macosx.base"
 				 	  name="%PlatformName.Dbg"
@@ -2053,9 +2054,10 @@
 
                <toolChain
                      archList="all"
-                     osList="solaris"
                      id="cdt.managedbuild.toolchain.gnu.solaris.base"
+                     languageSettingsProviders="org.eclipse.cdt.managedbuilder.core.GCCBuildCommandParser;org.eclipse.cdt.managedbuilder.core.GCCBuiltinSpecsDetector"
                      name="%ToolChainName.Solaris"
+                     osList="solaris"
                      superClass="cdt.managedbuild.toolchain.gnu.base">
 		          <targetPlatform
 		              id="cdt.managedbuild.target.gnu.solaris.base"
@@ -3256,9 +3258,9 @@
       </projectType>
 
             <configuration
-               id="cdt.managedbuild.config.gnu.macosx.base"
-               cleanCommand="rm -rf"
-			   >
+                  cleanCommand="rm -rf"
+                  id="cdt.managedbuild.config.gnu.macosx.base"
+                  languageSettingsProviders="org.eclipse.cdt.ui.UserLanguageSettingsProvider;org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider;${Toolchain};-org.eclipse.cdt.managedbuilder.core.GCCBuildCommandParser">
 		    <enablement type="CONTAINER_ATTRIBUTE" 
               	attribute="artifactExtension" 
               	value="dylib"
@@ -3669,8 +3671,9 @@
       </projectType>      
         
       <configuration
-               id="cdt.managedbuild.config.gnu.solaris.base"
-               cleanCommand="rm -rf">
+            cleanCommand="rm -rf"
+            id="cdt.managedbuild.config.gnu.solaris.base"
+            languageSettingsProviders="org.eclipse.cdt.ui.UserLanguageSettingsProvider;org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider;${Toolchain};-org.eclipse.cdt.managedbuilder.core.GCCBuildCommandParser">
 		    <enablement type="CONTAINER_ATTRIBUTE" 
               	attribute="artifactExtension" 
               	value="so"

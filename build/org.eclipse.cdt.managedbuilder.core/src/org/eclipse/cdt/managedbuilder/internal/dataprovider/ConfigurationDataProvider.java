@@ -533,9 +533,7 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 				}
 				providers.add(provider);
 			}
-		}
-
-		if (providers.isEmpty()) {
+		} else {
 			providers = ScannerDiscoveryLegacySupport.getDefaultProvidersLegacy();
 		}
 

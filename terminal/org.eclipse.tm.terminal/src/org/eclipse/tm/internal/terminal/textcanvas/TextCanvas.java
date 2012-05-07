@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2012 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@
  * Anton Leherbauer (Wind River) - [219589] Copy an entire line selection
  * Anton Leherbauer (Wind River) - [196465] Resizing Terminal changes Scroller location
  * Anton Leherbauer (Wind River) - [324608] Terminal has strange scrolling behaviour
+ * Martin Oberhuber (Wind River) - [265352][api] Allow setting fonts programmatically
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.textcanvas;
 
@@ -373,8 +374,18 @@ public class TextCanvas extends GridCanvas {
 		}
 	}
 
+	/**
+	 * Notify about a change of the global Font Preference.
+	 */
 	public void onFontChange() {
 		fCellRenderer.onFontChange();
+		setCellWidth(fCellRenderer.getCellWidth());
+		setCellHeight(fCellRenderer.getCellHeight());
+		calculateGrid();
+	}
+
+	public void updateFont(String fontName) {
+		fCellRenderer.updateFont(fontName);
 		setCellWidth(fCellRenderer.getCellWidth());
 		setCellHeight(fCellRenderer.getCellHeight());
 		calculateGrid();

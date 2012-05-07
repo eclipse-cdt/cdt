@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2012 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  * Michael Scharf (Wind River) - [205260] Terminal does not take the font from the preferences
  * Michael Scharf (Wind River) - [206328] Terminal does not draw correctly with proportional fonts
  * Anton Leherbauer (Wind River) - [294468] Fix scroller and text line rendering
+ * Martin Oberhuber (Wind River) - [265352][api] Allow setting fonts programmatically
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.textcanvas;
 
@@ -156,6 +157,9 @@ public class TextLineRenderer implements ILinelRenderer {
 	}
 	public void onFontChange() {
 		fStyleMap.updateFont();
+	}
+	public void updateFont(String fontName) {
+		fStyleMap.updateFont(fontName);
 	}
 	public void setInvertedColors(boolean invert) {
 		fStyleMap.setInvertedColors(invert);

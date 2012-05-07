@@ -674,4 +674,13 @@ public class AST2KnRTests extends AST2BaseTest {
         	fail(e.getMessage());
         }
     }
+    
+    //    void push_constant (in_char, conv_base)
+    //    char (*in_char)(void);
+    //    int conv_base;
+    //    {}
+    public void testFunctionPtrParameter_378614() throws Exception {
+    	String code= getAboveComment();
+    	parseAndCheckBindings(code, ParserLanguage.C, true);
+    }
 }

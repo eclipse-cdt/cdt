@@ -37,7 +37,7 @@ public class PasswordsTest extends RSECoreTestCase {
 		super.tearDown();
 	}
 
-/*	public void testAddRemove() {
+	public void testAddRemove() {
 		//-test-author-:DavidDykstal
 		if (isTestDisabled())
 			return;
@@ -90,7 +90,7 @@ public class PasswordsTest extends RSECoreTestCase {
 		returnedInfo = ppm.find(systemType, hostAddress, userId, false);
 		assertNull("signon info was found but should not be", returnedInfo);
 	}
-*/
+
 	public void testSaveDenial() {
 		//-test-author-:DavidDykstal
 		if (isTestDisabled())

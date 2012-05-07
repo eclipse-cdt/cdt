@@ -9,6 +9,7 @@
  * Michael Scharf (Wind River) - initial API and implementation
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
  * Martin Oberhuber (Wind River) - [204796] Terminal should allow setting the encoding to use
+ * Martin Oberhuber (Wind River) - [265352][api] Allow setting fonts programmatically
  ******************************************************************************/
 package org.eclipse.tm.internal.terminal.control;
 

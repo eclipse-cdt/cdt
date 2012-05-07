@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2011 Wind River Systems, Inc. and others.
+ * Copyright (c) 2003, 2012 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,7 @@
  * Pawel Piech (Wind River) - [333613] "Job found still running" after shutdown
  * Martin Oberhuber (Wind River) - [348700] Terminal unusable after disconnect
  * Simon Bernard (Sierra Wireless) - [351424] [terminal] Terminal does not support del and insert key
+ * Martin Oberhuber (Wind River) - [265352][api] Allow setting fonts programmatically
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.emulator;
 
@@ -554,6 +555,21 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 		setupControls(parent);
 		setupListeners();
 		setupHelp(fWndParent, TerminalPlugin.HELP_VIEW);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.tm.internal.terminal.control.ITerminalViewControl#setFont(java.lang.String)
+	 */
+	public void setFont(String fontName) {
+		Font font=JFaceResources.getFont(fontName);
+		getCtlText().setFont(font);
+		if(fCommandInputField!=null) {
+			fCommandInputField.setFont(font);
+		}
+		// Tell the TerminalControl singleton that the font has changed.
+		fCtlText.updateFont(fontName);
+		getTerminalText().fontChanged();
 	}
 
 	/* (non-Javadoc)

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2012 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
  * Michael Scharf (Wind River) - [206328] Terminal does not draw correctly with proportional fonts
  * Martin Oberhuber (Wind River) - [247700] Terminal uses ugly fonts in JEE package
  * Martin Oberhuber (Wind River) - [335358] Fix Terminal color definition
+ * Martin Oberhuber (Wind River) - [265352][api] Allow setting fonts programmatically
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.textcanvas;
 
@@ -26,6 +27,7 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.tm.internal.terminal.preferences.ITerminalConstants;
 import org.eclipse.tm.terminal.model.Style;
 import org.eclipse.tm.terminal.model.StyleColor;
 
@@ -42,9 +44,7 @@ public class StyleMap {
 	private static final String RED = "red"; //$NON-NLS-1$
 	
 	private static final String PREFIX = "org.eclipse.tm.internal."; //$NON-NLS-1$
-	// TODO propagate the name of the font in the FontRegistry
-	private static final String fDefaultFontName="terminal.views.view.font.definition"; //$NON-NLS-1$
-	String fFontName=fDefaultFontName;
+	String fFontName=ITerminalConstants.FONT_DEFINITION;
 	Map fColorMapForeground=new HashMap();
 	Map fColorMapBackground=new HashMap();
 	Map fColorMapIntense=new HashMap();
@@ -194,13 +194,19 @@ public class StyleMap {
 		return fCharSize.y;
 	}
 	public void updateFont() {
+		updateFont(ITerminalConstants.FONT_DEFINITION);
+	}
+	/**
+	 * Update the StyleMap for a new font name.
+	 * The font name must be a valid name in the Jface font registry.
+	 * @param fontName Jface name of the new font to use.
+	 * @since 3.2
+	 */
+	public void updateFont(String fontName) {
 		Display display=Display.getCurrent();
 		GC gc = new GC (display);
-		if (JFaceResources.getFontRegistry().hasValueFor(fDefaultFontName)) {
-			fFontName = fDefaultFontName;
-		} else if (JFaceResources.getFontRegistry().hasValueFor("REMOTE_COMMANDS_VIEW_FONT")) { //$NON-NLS-1$
-			//try RSE Shell View Font
-			fFontName = "REMOTE_COMMANDS_VIEW_FONT"; //$NON-NLS-1$
+		if (JFaceResources.getFontRegistry().hasValueFor(fontName)) {
+			fFontName = fontName;
 		} else {
 			//fall back to "basic jface text font"
 			fFontName = "org.eclipse.jface.textfont"; //$NON-NLS-1$

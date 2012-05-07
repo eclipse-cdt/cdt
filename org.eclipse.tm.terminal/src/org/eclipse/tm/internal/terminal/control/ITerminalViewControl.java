@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2012 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,7 +45,19 @@ public interface ITerminalViewControl {
 	String getEncoding();
 
     boolean isEmpty();
+    /**
+     * Sets the Terminal font
+     * @deprecated use {@link #setFont(String)} in order to support bold and italic variants of the given font
+     * @param font
+     */
 	void setFont(Font font);
+	/**
+	 * Sets the font for the Terminal, using a JFace symbolic font name, such
+	 * that bold and italic variants can be leveraged.
+	 * @since 3.2
+	 * @param fontName
+	 */
+	void setFont(String fontName);
 	void setInvertedColors(boolean invert);
 	Font getFont();
 	/**

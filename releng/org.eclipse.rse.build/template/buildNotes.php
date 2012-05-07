@@ -23,24 +23,26 @@
 </table>
 <table><tbody><tr><td>
 <ul>
-<li>TM @buildId@ <b>requires Eclipse 3.4 or later</b>.
+<li>TM @buildId@ <b>requires Eclipse 3.4 (Ganymede) or later</b>.
   <b>Import/Export, Telnet and FTP require Java 1.5</b>, the rest of
   RSE runs on Java 1.4.
   Platform Runtime is the minimum requirement for core RSE and Terminal.
-  Local Terminal needs CDT Core.</li>
+  Local Terminal needs CDT Core 7.0 (Helios) or later.</li>
 
 <li>Highlights of Fixes and Features since <a href="http://archive.eclipse.org/tm/downloads/drops/R-3.3.1-201109141310/">TM 3.3.1</a>:
-<!--
 <ul>
-  <li>Performance improvements were made to reduce the number of queries when an RSE Tableview is open
-      [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=215814">215814</a>]
-      [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=284157">284157</a>].</li>
+  <li>Equinox Secure Storage is now used for enhanced security of saved passwords,
+      and compatibility with Eclipse 4.2 or later
+      [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=225320">225320</a>].</li>
+  <li>The stand-alone terminal now has a UI control for changing its encoding. This
+      can even be changed while connected, in order to support foreign language terminals.
+      Many thanks to Ahmet Alptekin (Tubitak) for this contribution
+      [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=244405">244405</a>].</li>
 </ul>
 </li>
--->
-<li>At least 2 bugs were resolved: Use 
-  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?type0-0-4=regexp;negate0=1;field0-0-0=target_milestone;type0-0-1=regexp;field0-0-1=target_milestone;resolution=FIXED;resolution=WONTFIX;resolution=WORKSFORME;field0-0-4=target_milestone;value0-0-2=backport;chfieldfrom=2011-09-27;chfieldto=2011-11-11;chfield=resolution;query_format=advanced;type0-0-3=regexp;field0-0-3=target_milestone;value0-0-3=3\.4%20M[4567];value0-0-4=3\.4%20RC[1234];field0-0-2=short_desc;value0-0-1=3\.2\.[12];type0-0-0=regexp;value0-0-0=[23]\.[0123]\..*;component=Core;component=RSE;component=Terminal;product=Target%20Management;type0-0-2=substring"> -->
-  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced;component=Core;component=RSE;component=Terminal;resolution=FIXED;resolution=WONTFIX;resolution=WORKSFORME;target_milestone=3.4%20M3;product=Target%20Management">
+<li>At least 57 bugs were resolved: Use 
+  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?type0-0-4=regexp;negate0=1;field0-0-0=target_milestone;type0-0-1=regexp;field0-0-1=target_milestone;resolution=FIXED;resolution=WONTFIX;resolution=WORKSFORME;field0-0-4=target_milestone;value0-0-2=backport;chfieldfrom=2011-09-27;chfieldto=2012-05-08;chfield=resolution;query_format=advanced;type0-0-3=regexp;field0-0-3=target_milestone;value0-0-3=3\.4%20M[1];value0-0-4=3\.4%20RC[1234];field0-0-2=short_desc;value0-0-1=3\.2\.[12];type0-0-0=regexp;value0-0-0=[23]\.[0123]\..*;component=Core;component=RSE;component=Terminal;product=Target%20Management;type0-0-2=substring"> -->
+  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced;component=Core;component=RSE;component=Terminal;resolution=FIXED;resolution=WONTFIX;resolution=WORKSFORME;target_milestone=3.4%20M3;target_milestone=3.4%20M4;target_milestone=3.4%20M5;target_milestone=3.4%20M6;target_milestone=3.4%20M7;product=Target%20Management">
   this query</a> to show the list of bugs fixed since
   <a href="http://archive.eclipse.org/tm/downloads/drops/R-3.3.1-201109141310/">
   TM 3.3.1</a>
@@ -112,7 +114,13 @@ More information can be found in the associated bugzilla items.
 <ul>
 <li>TM @buildId@ API Specification Updates
 <ul>
-  <li>None.</li>
+  <li><b>TM Terminal Preference Page has been moved from terminal.view into terminal.</b>
+      Clients which adopt the TM Terminal widget in a view other than the TM Terminal View
+      can now choose whether they want to leverage the Terminal widget's Preferences for
+      "invert colors", "line buffer" and "font" or not. By default, Preferences are not
+      adopted; clients elect adoption by running makeTerminalView(...<b>true</b>). Clients
+      which don't want to see the Preference page need to hide it by means of a Capability
+      [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=378691">bug 378691</a>].</li>
 </ul></li>
 </ul>
 </li>

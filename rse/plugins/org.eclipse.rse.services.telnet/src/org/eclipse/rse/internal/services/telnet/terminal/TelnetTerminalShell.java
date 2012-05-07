@@ -26,12 +26,11 @@ import java.io.Writer;
 
 import org.apache.commons.net.io.ToNetASCIIInputStream;
 import org.apache.commons.net.telnet.EchoOptionHandler;
-import org.apache.commons.net.telnet.InvalidTelnetOptionException;
-import org.apache.commons.net.telnet.WindowSizeOptionHandler;
 import org.apache.commons.net.telnet.SuppressGAOptionHandler;
 import org.apache.commons.net.telnet.TelnetClient;
 import org.apache.commons.net.telnet.TelnetOption;
 import org.apache.commons.net.telnet.TerminalTypeOptionHandler;
+import org.apache.commons.net.telnet.WindowSizeOptionHandler;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.rse.internal.services.telnet.ITelnetSessionProvider;
 import org.eclipse.rse.services.clientserver.PathUtility;
@@ -281,7 +280,7 @@ public class TelnetTerminalShell extends AbstractTerminalShell {
 					fTelnetClient.deleteOptionHandler(TelnetOption.WINDOW_SIZE);
 					fTelnetClient.addOptionHandler(new WindowSizeOptionHandler(
 							newWidth, newHeight, true, true, true, true));
-				} catch (InvalidTelnetOptionException e) {
+				} catch (/*InvalidTelnetOptionException*/ Exception e) {
 					e.printStackTrace();
 				}
 			}

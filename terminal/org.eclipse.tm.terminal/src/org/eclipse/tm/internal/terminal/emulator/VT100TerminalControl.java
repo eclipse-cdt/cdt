@@ -31,6 +31,7 @@
  * Martin Oberhuber (Wind River) - [348700] Terminal unusable after disconnect
  * Simon Bernard (Sierra Wireless) - [351424] [terminal] Terminal does not support del and insert key
  * Martin Oberhuber (Wind River) - [265352][api] Allow setting fonts programmatically
+ * Martin Oberhuber (Wind River) - [378691][api] push Preferences into the Widget
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.emulator;
 
@@ -43,9 +44,12 @@ import java.net.SocketException;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
@@ -74,6 +78,7 @@ import org.eclipse.tm.internal.terminal.control.ITerminalViewControl;
 import org.eclipse.tm.internal.terminal.control.impl.ITerminalControlForText;
 import org.eclipse.tm.internal.terminal.control.impl.TerminalMessages;
 import org.eclipse.tm.internal.terminal.control.impl.TerminalPlugin;
+import org.eclipse.tm.internal.terminal.preferences.ITerminalConstants;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
 import org.eclipse.tm.internal.terminal.provisional.api.Logger;
@@ -121,6 +126,8 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
     private FocusListener             fFocusListener;
     private ITerminalConnector		  fConnector;
     private final ITerminalConnector[]      fConnectors;
+	private final boolean fUseCommonPrefs;
+	
     PipedInputStream fInputStream;
 	private static final String defaultEncoding = new java.io.InputStreamReader(new java.io.ByteArrayInputStream(new byte[0])).getEncoding();
 	private String fEncoding = defaultEncoding;
@@ -133,12 +140,46 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 	private final ITerminalTextData fTerminalModel;
 
 	/**
+	 * Listens to changes in the preferences
+	 */
+	private final IPropertyChangeListener fPreferenceListener=new IPropertyChangeListener() {
+		public void propertyChange(PropertyChangeEvent event) {
+			if(event.getProperty().equals(ITerminalConstants.PREF_BUFFERLINES)
+					|| event.getProperty().equals(ITerminalConstants.PREF_INVERT_COLORS)) {
+				updatePreferences();
+			}
+		}
+	};
+	private final IPropertyChangeListener fFontListener = new IPropertyChangeListener() {
+		public void propertyChange(PropertyChangeEvent event) {
+			if (event.getProperty().equals(ITerminalConstants.FONT_DEFINITION)) {
+				onTerminalFontChanged();
+			}
+		}
+	};
+	
+	/**
 	 * Is protected by synchronize on this
 	 */
 	volatile private Job fJob;
 
 	public VT100TerminalControl(ITerminalListener target, Composite wndParent, ITerminalConnector[] connectors) {
+		this(target, wndParent, connectors, false);
+	}
+	
+	/**
+	 * Instantiate a Terminal widget.
+	 * @param target Callback for notifying the owner of Terminal state changes.
+	 * @param wndParent The Window parent to embed the Terminal in.
+	 * @param connectors Provided connectors.
+	 * @param useCommonPrefs If <code>true</code>, the Terminal widget will pick up settings 
+	 *    from the <code>org.eclipse.tm.terminal.TerminalPreferencePage</code> Preference page.
+	 *    Otherwise, clients need to maintain settings themselves.
+	 * @since 3.2
+	 */
+	public VT100TerminalControl(ITerminalListener target, Composite wndParent, ITerminalConnector[] connectors, boolean useCommonPrefs) {
 		fConnectors=connectors;
+		fUseCommonPrefs = useCommonPrefs;
 		fTerminalListener=target;
 		fTerminalModel=TerminalTextDataFactory.makeTerminalTextData();
 		fTerminalModel.setMaxHeight(1000);
@@ -318,6 +359,10 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 	 */
 	public void disposeTerminal() {
 		Logger.log("entered."); //$NON-NLS-1$
+		if(fUseCommonPrefs) {
+			TerminalPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(fPreferenceListener);
+			JFaceResources.getFontRegistry().removeListener(fFontListener);
+		}
 		disconnectTerminal();
 		fClipboard.dispose();
 		getTerminalText().dispose();
@@ -554,7 +599,29 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 		fState=TerminalState.CLOSED;
 		setupControls(parent);
 		setupListeners();
+		if (fUseCommonPrefs) {
+			updatePreferences();
+			onTerminalFontChanged();
+			TerminalPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(fPreferenceListener);
+			JFaceResources.getFontRegistry().addListener(fFontListener);
+		}
 		setupHelp(fWndParent, TerminalPlugin.HELP_VIEW);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.tm.internal.terminal.control.ITerminalViewControl#updatePreferences()
+	 */
+	private void updatePreferences() {
+		int bufferLineLimit = Platform.getPreferencesService().getInt(TerminalPlugin.PLUGIN_ID, ITerminalConstants.PREF_BUFFERLINES, 0, null);
+		boolean invert = Platform.getPreferencesService().getBoolean(TerminalPlugin.PLUGIN_ID, ITerminalConstants.PREF_INVERT_COLORS, false, null);
+		setBufferLineLimit(bufferLineLimit);
+		setInvertedColors(invert);
+	}
+
+	private void onTerminalFontChanged() {
+		// set the font for all 
+		setFont(ITerminalConstants.FONT_DEFINITION);
 	}
 
 	/*
@@ -635,7 +702,7 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 		fDisplay = getCtlText().getDisplay();
 		fClipboard = new Clipboard(fDisplay);
 //		fViewer.setDocument(new TerminalDocument());
-		setFont(JFaceResources.getTextFont());
+//		setFont(JFaceResources.getTextFont());
 	}
 
 	protected void setupListeners() {

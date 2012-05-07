@@ -65,6 +65,9 @@
 	<activityPatternBinding
        activityId="org.eclipse.tm.terminal.activity"
        pattern="org\.eclipse\.tm\.terminal\..*/.*"/>
+	<activityPatternBinding
+       activityId="org.eclipse.tm.terminal.activity"
+       pattern="org\.eclipse\.tm\.terminal/.*"/>
 
   </extension>
 </plugin>

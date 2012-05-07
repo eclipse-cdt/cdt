@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2012 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
@@ -8,6 +8,7 @@
  * Contributors: 
  * Michael Scharf (Wind River) - initial API and implementation
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
+ * Martin Oberhuber (Wind River) - [378691][api] push Preferences into the Widget
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.control.impl;
 
@@ -23,4 +24,9 @@ public class TerminalMessages extends NLS {
     public static String IOError;
     public static String CannotConnectTo;
     public static String NotInitialized;
+
+    //Preference Page
+    public static String INVERT_COLORS;
+    public static String BUFFERLINES;
+
 }

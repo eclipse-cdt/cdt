@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2009 IBM Corporation and others.
+ * Copyright (c) 2002, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@
  * Anna Dushistova  (MontaVista) - [244437] [rseterminal] Possible race condition when multiple Terminals are launched after each other                             
  * Martin Oberhuber (Wind River) - [247700] Terminal uses ugly fonts in JEE package
  * Anna Dushistova  (MontaVista) - [267609] [rseterminal] The first "Launch Terminal" command creates no terminal tab 
+ * Martin Oberhuber (Wind River) - [378691][api] push Preferences into the Terminal Widget
  ********************************************************************************/
 package org.eclipse.rse.internal.terminals.ui.views;
 
@@ -31,9 +32,6 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.resource.FontRegistry;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
 import org.eclipse.rse.core.events.SystemResourceChangeEvent;
@@ -50,7 +48,6 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.events.MenuListener;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -67,8 +64,6 @@ import org.eclipse.tm.internal.terminal.control.actions.TerminalActionPaste;
 import org.eclipse.tm.internal.terminal.control.actions.TerminalActionSelectAll;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.themes.IThemeManager;
 
 /**
  * This is the desktop view wrapper of the System View viewer.
@@ -78,8 +73,6 @@ public class TerminalViewTab extends Composite {
 	public static String DATA_KEY_CONTROL = "$_control_$"; //$NON-NLS-1$
 
 	private final CTabFolder tabFolder;
-
-	private IPropertyChangeListener propertyChangeListener;
 
 	private Menu menu;
 
@@ -133,11 +126,6 @@ public class TerminalViewTab extends Composite {
 	}
 
 	public void dispose() {
-		if (propertyChangeListener != null) {
-			IThemeManager mgr = PlatformUI.getWorkbench().getThemeManager();
-			mgr.removePropertyChangeListener(propertyChangeListener);
-			propertyChangeListener = null;
-		}
 		if (!tabFolder.isDisposed()) {
 			tabFolder.dispose();
 		}
@@ -202,47 +190,6 @@ public class TerminalViewTab extends Composite {
 		}
 	}
 
-	public void propertyChange(PropertyChangeEvent e) {
-		// for now always update
-		if (tabFolder!=null) {
-			CTabItem[] items = tabFolder.getItems();
-			for (int i=0; i<items.length; i++) {
-				Object control = items[i].getData(DATA_KEY_CONTROL);
-				if (control instanceof ITerminalViewControl) {
-					updateTheme((ITerminalViewControl) control);
-				}
-			}
-		}
-	}
-
-	public void updateTheme(final ITerminalViewControl control) {
-		if (control != null) {
-			IThemeManager mgr = PlatformUI.getWorkbench().getThemeManager();
-			Font font;
-			FontRegistry fr = mgr.getCurrentTheme().getFontRegistry();
-			if (fr.hasValueFor("terminal.views.view.font.definition")) { //$NON-NLS-1$
-				//Terminal View font if available
-				font = fr.get("terminal.views.view.font.definition"); //$NON-NLS-1$
-			} else if (fr.hasValueFor("REMOTE_COMMANDS_VIEW_FONT")) { //$NON-NLS-1$
-				//fallback: "Remote Shell Font"
-				font = fr.get("REMOTE_COMMANDS_VIEW_FONT"); //$NON-NLS-1$
-			} else {
-				//fallback: "Basic Text Font"
-				font = fr.get("org.eclipse.jface.textfont"); //$NON-NLS-1$
-			}
-			control.setFont(font);
-			if (propertyChangeListener == null) {
-				final TerminalViewTab myself = this;
-				propertyChangeListener = new IPropertyChangeListener() {
-					public void propertyChange(PropertyChangeEvent event) {
-						myself.propertyChange(event);
-					}
-				};
-				mgr.addPropertyChangeListener(propertyChangeListener);
-			}
-		}
-	}
-
 	public CTabItem createTabItem(IAdaptable root,
 			final String initialWorkingDirCmd) {
 		final CTabItem item = new CTabItem(tabFolder, SWT.CLOSE);
@@ -301,7 +248,7 @@ public class TerminalViewTab extends Composite {
 						public void setTerminalTitle(String title) {
 
 						}
-					}, c, new ITerminalConnector[] { connector });
+					}, c, new ITerminalConnector[] { connector }, true);
 			// Specify Encoding for Terminal
 			try {
 				terminalControl.setEncoding(host.getDefaultEncoding(true));
@@ -310,7 +257,6 @@ public class TerminalViewTab extends Composite {
 			}
 			terminalControl.setConnector(connector);
 			item.setData(DATA_KEY_CONTROL, terminalControl);
-			updateTheme(terminalControl);
 			terminalControl.connectTerminal();
 		}
 		item.setControl(c);

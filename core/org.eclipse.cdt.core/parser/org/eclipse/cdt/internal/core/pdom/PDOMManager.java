@@ -20,11 +20,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -139,17 +139,17 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		ILinkage.C_LINKAGE_ID, ILinkage.CPP_LINKAGE_ID, ILinkage.FORTRAN_LINKAGE_ID
 	};
 
-	private final LinkedList<ICProject> fProjectQueue= new LinkedList<ICProject>();
+	private final ArrayDeque<ICProject> fProjectQueue= new ArrayDeque<ICProject>();
 	private final PDOMSetupJob fSetupJob;
 	/**
 	 * Protects fIndexerJob, fCurrentTask and fTaskQueue.
 	 */
-	private final LinkedList<IPDOMIndexerTask> fTaskQueue = new LinkedList<IPDOMIndexerTask>();
+	private final ArrayDeque<IPDOMIndexerTask> fTaskQueue = new ArrayDeque<IPDOMIndexerTask>();
     private final PDOMIndexerJob fIndexerJob;
 	private IPDOMIndexerTask fCurrentTask;
 	private int fSourceCount, fHeaderCount, fTickCount;
 	
-	private final LinkedList<Runnable> fChangeEvents= new LinkedList<Runnable>();
+	private final ArrayDeque<Runnable> fChangeEvents= new ArrayDeque<Runnable>();
 	private final Job fNotificationJob;
 
 	private final AtomicMultiSet<IIndexFileLocation> fFilesIndexedUnconditionlly= new AtomicMultiSet<IIndexFileLocation>(); 
@@ -1513,10 +1513,10 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 			IIndex index= getIndex(cproject);
 			index.acquireReadLock();
 			try {
-				for(ITranslationUnit tu : sources) {
+				for (ITranslationUnit tu : sources) {
 					IResource resource= tu.getResource();
 					if (resource instanceof IFile && isSubjectToIndexing(tu.getLanguage())) {
-						IIndexFileLocation location= IndexLocationFactory.getWorkspaceIFL((IFile)resource);
+						IIndexFileLocation location= IndexLocationFactory.getWorkspaceIFL((IFile) resource);
 						if (!areSynchronized(new HashSet<IIndexFileLocation>(), index, resource, location)) {
 							return false;
 						}
@@ -1566,7 +1566,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 			// if it is up-to-date, the includes have not changed and may
 			// be read from the index.
 			IIndexInclude[] includes= index.findIncludes(file[0]);
-			for(IIndexInclude inc : includes) {
+			for (IIndexInclude inc : includes) {
 				IIndexFileLocation newLocation= inc.getIncludesLocation();
 				if (newLocation != null) {
 					String path= newLocation.getFullPath();

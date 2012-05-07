@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2012 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Michael Scharf (Wind River) - initial API and implementation
+ * Martin Oberhuber (Wind River) - [265352][api] Allow setting fonts programmatically
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.view;
 
@@ -147,6 +148,10 @@ public class TerminalViewControlDecorator implements ITerminalViewControl {
 
 	public void setFont(Font font) {
 		fViewContoler.setFont(font);
+	}
+
+	public void setFont(String fontName) {
+		fViewContoler.setFont(fontName);
 	}
 
 	public void setInvertedColors(boolean invert) {

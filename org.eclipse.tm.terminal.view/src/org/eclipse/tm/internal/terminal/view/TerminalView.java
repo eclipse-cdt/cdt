@@ -26,13 +26,13 @@
  * Michael Scharf (Wind River) - [262996] get rid of TerminalState.OPENED
  * Martin Oberhuber (Wind River) - [205486] Enable ScrollLock
  * Ahmet Alptekin (Tubitak) - [244405] Add a UI Control for setting the Terminal's encoding
+ * Martin Oberhuber (Wind River) - [378691][api] push Preferences into the Widget
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.view;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -68,6 +68,7 @@ import org.eclipse.tm.internal.terminal.control.actions.TerminalActionCopy;
 import org.eclipse.tm.internal.terminal.control.actions.TerminalActionCut;
 import org.eclipse.tm.internal.terminal.control.actions.TerminalActionPaste;
 import org.eclipse.tm.internal.terminal.control.actions.TerminalActionSelectAll;
+import org.eclipse.tm.internal.terminal.preferences.ITerminalConstants;
 import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
 import org.eclipse.tm.internal.terminal.provisional.api.LayeredSettingsStore;
@@ -95,7 +96,7 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalVi
     
 	private static final String STORE_TITLE = "Title"; //$NON-NLS-1$
 
-	public static final String  FONT_DEFINITION = "terminal.views.view.font.definition"; //$NON-NLS-1$
+	public static final String  FONT_DEFINITION = ITerminalConstants.FONT_DEFINITION;
 
 	protected ITerminalViewControl fCtlTerminal;
 
@@ -135,18 +136,6 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalVi
 	private SettingsStore fStore;
 
 	private final ITerminalViewConnectionManager fMultiConnectionManager=new TerminalViewConnectionManager();
-	/**
-	 * Listens to changes in the preferences
-	 */
-	private final IPropertyChangeListener fPreferenceListener=new IPropertyChangeListener() {
-		public void propertyChange(PropertyChangeEvent event) {
-			if(event.getProperty().equals(TerminalPreferencePage.PREF_LIMITOUTPUT)
-					|| event.getProperty().equals(TerminalPreferencePage.PREF_BUFFERLINES)
-					|| event.getProperty().equals(TerminalPreferencePage.PREF_INVERT_COLORS)) {
-				updatePreferences();
-			}
-		}
-	};
 
 	private PageBook fPageBook;
 
@@ -228,23 +217,6 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalVi
 			if(!names.contains(uniqueTitle))
 				return uniqueTitle;
 			uniqueTitle=title+" "+i++; //$NON-NLS-1$
-		}
-	}
-	/**
-	 * Update the text limits from the preferences
-	 */
-	private void updatePreferences() {
-		Preferences preferences = TerminalViewPlugin.getDefault().getPluginPreferences();
-//		boolean limitOutput = preferences.getBoolean(TerminalPreferencePage.PREF_LIMITOUTPUT);
-//		if(!limitOutput)
-//			bufferLineLimit=-1;
-		int bufferLineLimit = preferences.getInt(TerminalPreferencePage.PREF_BUFFERLINES);
-		boolean invert=preferences.getBoolean(TerminalPreferencePage.PREF_INVERT_COLORS);
-		// update the preferences for all controls
-		ITerminalViewConnection[] conn=fMultiConnectionManager.getConnections();
-		for (int i = 0; i < conn.length; i++) {
-			conn[i].getCtlTerminal().setBufferLineLimit(bufferLineLimit);
-			conn[i].getCtlTerminal().setInvertedColors(invert);
 		}
 	}
 	/**
@@ -404,12 +376,7 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalVi
 	}
 
 	public void onTerminalFontChanged() {
-		// set the font for all 
-		Font font=JFaceResources.getFont(FONT_DEFINITION);
-		ITerminalViewConnection[] conn=fMultiConnectionManager.getConnections();
-		for (int i = 0; i < conn.length; i++) {
-			conn[i].getCtlTerminal().setFont(font);
-		}
+		// set the font for all - empty hook for extenders
 	}
 
 	// ViewPart interface
@@ -448,8 +415,6 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalVi
 
 		legacyLoadState();
 		legacySetTitle();
-		// make sure we take the values defined in the preferences
-		updatePreferences();
 
 		refresh();
 		onTerminalFontChanged();
@@ -458,8 +423,6 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalVi
 
 	public void dispose() {
 		Logger.log("entered."); //$NON-NLS-1$
-
-		TerminalViewPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(fPreferenceListener);
 
 		JFaceResources.getFontRegistry().removeListener(fPropertyChangeHandler);
 		
@@ -485,14 +448,12 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalVi
 		fMultiConnectionManager.addConnection(conn);
 		fMultiConnectionManager.setActiveConnection(conn);
 		setupContextMenus(fCtlTerminal.getControl());
-		// make sure we take the values defined in the preferences
-		updatePreferences();
 	}
 
 	private ITerminalViewConnection makeViewConnection() {
 		ITerminalConnector[] connectors = makeConnectors();
 		TerminalListener listener=new TerminalListener();
-		ITerminalViewControl ctrl = TerminalViewControlFactory.makeControl(listener, fPageBook, connectors);
+		ITerminalViewControl ctrl = TerminalViewControlFactory.makeControl(listener, fPageBook, connectors, true);
 		setTerminalControl(ctrl);
 		ITerminalViewConnection conn = new TerminalViewConnection(fCtlTerminal);
 		listener.setConnection(conn);
@@ -502,8 +463,6 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalVi
 		// set the connector....
 		ctrl.setConnector(connector);
 
-		TerminalViewPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(fPreferenceListener);
-		
 		return conn;
 	}
 

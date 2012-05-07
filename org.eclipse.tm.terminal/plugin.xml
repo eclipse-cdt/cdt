@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <!--
-# Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
+# Copyright (c) 2006, 2012 Wind River Systems, Inc. and others.
 # All rights reserved. This program and the accompanying materials
 # are made available under the terms of the Eclipse Public License v1.0
 # which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 # Michael Scharf (Wind River) - initial API and implementation 
 # Martin Oberhuber (Wind River) - fixed copyright headers and beautified
 # Michael Scharf (Wind River) - [237425] undefined tm.terminal command
+# Martin Oberhuber (Wind River) - [378691][api] push Preferences into the Widget
 -->
 <plugin>
    <extension-point id="terminalConnectors" name="Terminal Connectors" schema="schema/terminalConnectors.exsd"/>
@@ -106,4 +107,30 @@
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="Alt+W"/> <!-- Window -->
    </extension>
+
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            name="%terminal.preferences.name"
+            class="org.eclipse.tm.internal.terminal.preferences.TerminalPreferencePage"
+            id="org.eclipse.tm.terminal.TerminalPreferencePage">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer class="org.eclipse.tm.internal.terminal.preferences.TerminalPreferenceInitializer"/>
+      <modifier class="org.eclipse.tm.internal.terminal.preferences.PreferenceModifyListener"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.themes" id="terminal.font">
+      <fontDefinition
+            defaultsTo="org.eclipse.jface.textfont"
+            id="terminal.views.view.font.definition"
+            label="%terminal.font.label">
+         <description>
+            %terminal.font.description
+         </description>
+      </fontDefinition>
+   </extension>
+
 </plugin>

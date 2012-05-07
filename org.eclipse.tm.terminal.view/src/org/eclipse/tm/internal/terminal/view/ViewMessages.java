@@ -17,6 +17,7 @@
  * Martin Oberhuber (Wind River) - [206917] Add validation for Terminal Settings
  * Martin Oberhuber (Wind River) - [262996] get rid of TerminalState.OPENED
  * Ahmet Alptekin (Tubitak) - [244405] Add a UI Control for setting the Terminal's encoding
+ * Martin Oberhuber (Wind River) - [378691][api] push Preferences into the Widget
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.view;
 
@@ -39,11 +40,6 @@ public class ViewMessages extends NLS {
 	public static String INVALID_SETTINGS;
 	public static String ENCODING;
 	public static String ENCODING_WITH_PARENTHESES;
-
-    public static String INVERT_COLORS;
-    public static String BUFFERLINES;
-    public static String SERIALTIMEOUT;
-    public static String NETWORKTIMEOUT;
 
 	public static String STATE_CONNECTED;
 	public static String STATE_CONNECTING;

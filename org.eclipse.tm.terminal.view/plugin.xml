@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <!--
-# Copyright (c) 2003, 2008 Wind River Systems, Inc. and others.
+# Copyright (c) 2003, 2012 Wind River Systems, Inc. and others.
 # All rights reserved. This program and the accompanying materials
 # are made available under the terms of the Eclipse Public License v1.0
 # which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@
 # Contributors:
 # Michael Scharf (Wind River) - split into core, view and connector plugins 
 # Martin Oberhuber (Wind River) - fixed copyright headers and beautified
+# Martin Oberhuber (Wind River) - [378691][api] push Preferences into the Widget
 -->
 <plugin>
    <extension
@@ -41,30 +42,6 @@
          	relationship="stack">
          </view> 
       </perspectiveExtension>
-   </extension>
-   <extension
-         point="org.eclipse.ui.preferencePages">
-      <page
-            name="%terminal.views.view.name"
-            class="org.eclipse.tm.internal.terminal.view.TerminalPreferencePage"
-            id="org.eclipse.tm.terminal.TerminalPreferencePage">
-      </page>
-   </extension>
-
-   <extension
-         point="org.eclipse.ui.fontDefinitions">
-      <fontDefinition
-            label="%terminal.views.view.font.label"
-            defaultsTo="org.eclipse.jface.textfont"
-            id="terminal.views.view.font.definition">
-         <description>
-            %terminal.views.view.font.description
-         </description>
-      </fontDefinition>
-   </extension>
-   <extension
-         point="org.eclipse.core.runtime.preferences">
-      <initializer class="org.eclipse.tm.internal.terminal.view.TerminalPreferenceInitializer"/>
    </extension>
 
 	<!-- ============================================ -->

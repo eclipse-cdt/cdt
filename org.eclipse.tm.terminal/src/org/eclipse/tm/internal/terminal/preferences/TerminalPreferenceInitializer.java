@@ -24,7 +24,8 @@ public class TerminalPreferenceInitializer extends AbstractPreferenceInitializer
 	}
 
 	public void initializeDefaultPreferences() {
-		IEclipsePreferences defaultPrefs = DefaultScope.INSTANCE.getNode(TerminalPlugin.PLUGIN_ID);
+		//DefaultScope.INSTANCE was only added in Eclipse 3.7 - we want to be compatible further back
+		IEclipsePreferences defaultPrefs = new DefaultScope().getNode(TerminalPlugin.PLUGIN_ID);
 		defaultPrefs.putBoolean(ITerminalConstants.PREF_INVERT_COLORS, ITerminalConstants.DEFAULT_INVERT_COLORS);
 		defaultPrefs.putInt(ITerminalConstants.PREF_BUFFERLINES, ITerminalConstants.DEFAULT_BUFFERLINES);
         migrateTerminalPreferences();
@@ -34,10 +35,11 @@ public class TerminalPreferenceInitializer extends AbstractPreferenceInitializer
 	 * Migrate settings from the older org.eclipse.tm.terminal.view bundle into the o.e.tm.terminal bundle 
 	 */
 	public static void migrateTerminalPreferences() {
-		IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(TerminalPlugin.PLUGIN_ID);
+		//InstanceScope.INSTANCE was only added in Eclipse 3.7 - we want to be compatible further back
+		IEclipsePreferences prefs = new InstanceScope().getNode(TerminalPlugin.PLUGIN_ID);
 		if (!prefs.getBoolean(ITerminalConstants.PREF_HAS_MIGRATED, false)) {
 			prefs.putBoolean(ITerminalConstants.PREF_HAS_MIGRATED, true);
-			PreferenceModifyListener.migrateTerminalPreferences(InstanceScope.INSTANCE.getNode("")); //$NON-NLS-1$
+			PreferenceModifyListener.migrateTerminalPreferences(new InstanceScope().getNode("")); //$NON-NLS-1$
 		}
 	}
 

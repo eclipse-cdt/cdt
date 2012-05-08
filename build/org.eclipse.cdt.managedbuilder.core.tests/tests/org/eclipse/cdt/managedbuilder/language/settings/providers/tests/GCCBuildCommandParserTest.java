@@ -574,6 +574,51 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 	}
 
 	/**
+	 * Parse Mac Frameworks.
+	 */
+	public void testCIncludePathEntryFrameworks() throws Exception {
+		// Create model project and accompanied descriptions
+		String projectName = getName();
+		IProject project = ResourceHelper.createCDTProjectWithConfig(projectName);
+		ICConfigurationDescription[] cfgDescriptions = getConfigurationDescriptions(project);
+		ICConfigurationDescription cfgDescription = cfgDescriptions[0];
+
+		IFile file=ResourceHelper.createFile(project, "file.cpp");
+		ICLanguageSetting ls = cfgDescription.getLanguageSettingForFile(file.getProjectRelativePath(), true);
+		String languageId = ls.getLanguageId();
+
+		// create GCCBuildCommandParser
+		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
+
+		// parse line
+		parser.startup(cfgDescription, null);
+		parser.processLine("gcc"
+				// framework
+				+ " -F/Framework "
+				// framework system
+				+ " -iframework/framework/system "
+				// with spaces
+				+ " -F '/Framework with spaces' "
+				+ " file.cpp");
+		parser.shutdown();
+
+		// check populated entries
+		List<ICLanguageSettingEntry> entries = parser.getSettingEntries(cfgDescription, file, languageId);
+		{
+			IPath path = new Path("/Framework").setDevice(project.getLocation().getDevice());
+			assertEquals(new CIncludePathEntry(path, ICSettingEntry.FRAMEWORKS_MAC), entries.get(0));
+		}
+		{
+			IPath path = new Path("/framework/system").setDevice(project.getLocation().getDevice());
+			assertEquals(new CIncludePathEntry(path, ICSettingEntry.FRAMEWORKS_MAC), entries.get(1));
+		}
+		{
+			IPath path = new Path("/Framework with spaces").setDevice(project.getLocation().getDevice());
+			assertEquals(new CIncludePathEntry(path, ICSettingEntry.FRAMEWORKS_MAC), entries.get(2));
+		}
+	}
+
+	/**
 	 * Parse variations of -D options.
 	 */
 	public void testCMacroEntry() throws Exception {

@@ -2250,7 +2250,7 @@
          </command>
       </menuContribution>      
       <menuContribution
-            locationURI="menu:org.eclipse.ui.run?before=threadGroup">
+            locationURI="menu:org.eclipse.ui.run?after=stepGroup">
          <command
                commandId="org.eclipse.cdt.debug.ui.command.reverseResume"
                icon="icons/obj16/reverse_resume.gif"
@@ -2359,6 +2359,8 @@
             </visibleWhen>
          </command>
       </menuContribution>
+      
+ <!-- Tracepoint contributions to Debug view popup -->
       <menuContribution
           locationURI="popup:org.eclipse.debug.ui.DebugView?before=renderGroup">
        <command

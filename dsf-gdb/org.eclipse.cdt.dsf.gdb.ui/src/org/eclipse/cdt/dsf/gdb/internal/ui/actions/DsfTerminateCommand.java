@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Wind River Systems and others.
+ * Copyright (c) 2006, 2012 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,9 +13,6 @@ package org.eclipse.cdt.dsf.gdb.internal.ui.actions;
 
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
@@ -31,76 +28,12 @@ import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.dsf.service.DsfSession.SessionEndedListener;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.commands.IDebugCommandRequest;
 import org.eclipse.debug.core.commands.IEnabledStateRequest;
 import org.eclipse.debug.core.commands.ITerminateHandler;
 
 public class DsfTerminateCommand implements ITerminateHandler {
-
-	private class WaitForTerminationJob extends Job implements SessionEndedListener {
-
-		final private IDebugCommandRequest fRequest;
-		final private String fSessionId;
-		final private Lock fLock = new ReentrantLock();
-		final private Condition fTerminated = fLock.newCondition();
-
-		public WaitForTerminationJob(String sessionId, IDebugCommandRequest request) {
-			super("Wait for termination job"); //$NON-NLS-1$
-			setUser(false);
-			setSystem(true);
-			fSessionId = sessionId;
-			fRequest = request;
-			DsfSession.addSessionEndedListener(WaitForTerminationJob.this);
-		}
-
-		@Override
-		protected IStatus run(IProgressMonitor monitor) {
-			// Wait for all processes associated with the launch 
-			// and the shutdown sequence to be completed.
-			// The wait time is restricted to stop the job in case  
-			// of termination error.
-			boolean result = !DsfSession.isSessionActive(fSessionId);
-			if (!result) {
-				fLock.lock();
-				try {
-					result = fTerminated.await(1, TimeUnit.MINUTES);
-				}
-				catch(InterruptedException e) {
-				}
-				finally {
-					fLock.unlock();
-				}
-			}
-			// Marking the request as cancelled will prevent the removal of 
-			// the launch from the Debug view in case of "Terminate and Remove".
-			// This is important for multi-process sessions when "Terminate and Remove"
-			// is applied to one of the running processes. In this case the selected
-			// process will be terminated but the associated launch will not be removed 
-			// from the Debug view.
-			fRequest.setStatus(result ? Status.OK_STATUS : Status.CANCEL_STATUS);
-			fRequest.done();
-			DsfSession.removeSessionEndedListener(WaitForTerminationJob.this);
-			return Status.OK_STATUS;
-		}
-
-		@Override
-		public void sessionEnded(DsfSession session) {
-			if (fSessionId.equals(session.getId())) {
-				fLock.lock();
-				try {
-					fTerminated.signal();
-				}
-				finally {
-					fLock.unlock();
-				}
-			}
-		}
-	}
-
 	private final DsfSession fSession;
 	private final DsfExecutor fExecutor;
     private final DsfServicesTracker fTracker;
@@ -115,7 +48,6 @@ public class DsfTerminateCommand implements ITerminateHandler {
         fTracker.dispose();
     }
 
-    // Run control may not be available after a connection is terminated and shut down.
     @Override
     public void canExecute(final IEnabledStateRequest request) {
         if (request.getElements().length != 1 || 
@@ -189,8 +121,7 @@ public class DsfTerminateCommand implements ITerminateHandler {
                             		request.done();
                             	}
                             	else {
-	                            	WaitForTerminationJob job = new WaitForTerminationJob(fSession.getId(), request);
-	                            	job.schedule();
+                            		waitForTermination(request);
                             	}
                             };
                         });
@@ -249,8 +180,7 @@ public class DsfTerminateCommand implements ITerminateHandler {
                             		request.done();
                             	}
                             	else {
-	                            	WaitForTerminationJob job = new WaitForTerminationJob(fSession.getId(), request);
-	                            	job.schedule();
+                            		waitForTermination(request);
                             	}
                             };
                         });
@@ -263,5 +193,65 @@ public class DsfTerminateCommand implements ITerminateHandler {
             request.done();
         }
         return false;
+    }
+    
+    /**
+     * Wait for the debug session to be fully shutdown before reporting
+     * that the terminate was completed.  This is important for the
+     * 'Terminate and remove' operation.
+     * The wait time is limited with a timeout so as to eventually complete the
+     * request in the case of termination error, or when terminating
+     * a single process in a multi-process session.
+     * See bug 377447
+     */
+    private void waitForTermination(final IDebugCommandRequest request) {
+    	// It is possible that the session already had time to terminate
+		if (!DsfSession.isSessionActive(fSession.getId())) {
+			request.done();
+			return;
+		}
+
+		// Listener that will indicate when the shutdown is complete
+		final SessionEndedListener endedListener = new SessionEndedListener () { 
+			@Override
+			public void sessionEnded(DsfSession session) {
+				if (fSession.equals(session)) {
+					DsfSession.removeSessionEndedListener(this);
+					request.done(); 
+				}
+			}
+		};
+
+		DsfSession.addSessionEndedListener(endedListener); 
+
+		// Create the timeout
+		// For a multi-process session, if a single process is
+		// terminated, this timeout will always hit (unless the
+		// session is also terminated before the timeout).
+		// We haven't found a problem with delaying the completion
+		// of the request that way.
+		// Note that this timeout is not removed even if we don't
+		// need it anymore, once the session has terminated;
+		// instead, we let it timeout and ignore it if the session
+		// is already terminated.
+		fExecutor.schedule(new Runnable() { 
+			@Override
+			public void run() {
+				// Check that the session is still active when the timeout hits.
+				// If it is not, then everything has been cleaned up already.
+				if (DsfSession.isSessionActive(fSession.getId())) {
+					DsfSession.removeSessionEndedListener(endedListener);
+
+					// Marking the request as cancelled will prevent the removal of 
+					// the launch from the Debug view in case of "Terminate and Remove".
+					// This is important for multi-process sessions when "Terminate and Remove"
+					// is applied to one of the running processes. In this case the selected
+					// process will be terminated but the associated launch will not be removed 
+					// from the Debug view.
+					request.setStatus(Status.CANCEL_STATUS);
+					request.done();
+				}
+			}},
+			1, TimeUnit.MINUTES);
     }
 }

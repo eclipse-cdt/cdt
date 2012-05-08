@@ -1620,9 +1620,9 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 		IASTDeclarator[] decltors = declaration.getDeclarators();
 		for (IASTDeclarator decltor : decltors) {
 			boolean decltorOk = false;
-			final char[] nchars = decltor.getName().toCharArray();
+			final char[] nchars = ASTQueries.findInnermostDeclarator(decltor).getName().toCharArray();
 			for (IASTName parmName : parmNames) {
-				if (CharArrayUtils.equals(nchars,	parmName.toCharArray())) {
+				if (CharArrayUtils.equals(nchars, parmName.toCharArray())) {
 					decltorOk= true;
 					break;
 				}

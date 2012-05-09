@@ -6,9 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.actions;
 
 import java.util.Iterator;
@@ -24,7 +23,6 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ICProject;
 
 public class RebuildIndexAction implements IObjectActionDelegate {
-
 	private ISelection fSelection;
 
 	@Override

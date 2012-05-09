@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Andrew Ferguson (Symbian) - initial API and implementation
+ *     Andrew Ferguson (Symbian) - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.index;
 

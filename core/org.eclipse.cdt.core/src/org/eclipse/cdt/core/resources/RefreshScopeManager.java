@@ -148,8 +148,10 @@ public class RefreshScopeManager {
 													|| (delta.getKind() == IResourceDelta.CHANGED && ((delta
 															.getFlags() & IResourceDelta.OPEN) != 0))) {
 
+												fIsLoading = true;
 												loadSettings(ResourcesPlugin.getWorkspace()
 														.getRoot(), project);
+												fIsLoading = false;
 												return false;
 
 											}
@@ -344,17 +346,17 @@ public class RefreshScopeManager {
 			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 
-				HashMap<String,HashMap<IResource, List<RefreshExclusion>>> configMap = getConfigurationToResourcesMap(project);
-
-				Iterator<String> it = configMap.keySet().iterator();		
-				while (it.hasNext()) {
-					String configName = it.next();
-					List<IResource> resourcesToRefresh = getResourcesToRefresh(project,configName);
-					for (IResource resource : resourcesToRefresh) {
-						List<RefreshExclusion> exclusions = getExclusions(project,configName,resource);
-						refreshResources(configName, resource, exclusions, monitor);
-					}
-				}	
+				
+				CProjectDescriptionManager descriptionManager = CProjectDescriptionManager
+						.getInstance();
+				ICProjectDescription projectDescription = descriptionManager.getProjectDescription(project, false);
+				ICConfigurationDescription active_conf = projectDescription.getActiveConfiguration();
+				String name = active_conf.getName();
+				List<IResource> resourcesToRefresh = getResourcesToRefresh(project,name);
+				for (IResource resource : resourcesToRefresh) {
+					List<RefreshExclusion> exclusions = getExclusions(project,name,resource);
+					refreshResources(name, resource, exclusions, monitor);
+				}
 			}
 		};
 
@@ -723,8 +725,7 @@ public class RefreshScopeManager {
 	/**
 	 * @since 5.4
 	 */
-	public synchronized void setResourcesToExclusionsMap(IProject project, String configName, HashMap<IResource, List<RefreshExclusion>> source_resourceMap) { // List<IResource> resources) {
-
+	public synchronized void setResourcesToExclusionsMap(IProject project, String configName, HashMap<IResource, List<RefreshExclusion>> source_resourceMap) { 
 		HashMap<IResource, List<RefreshExclusion>> target_resourceMap = getResourcesToExclusionsMap(project,configName);
 		target_resourceMap.clear();
 		

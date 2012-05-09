@@ -18,13 +18,18 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+
 import org.eclipse.cdt.core.resources.ExclusionInstance;
 import org.eclipse.cdt.core.resources.ExclusionType;
 import org.eclipse.cdt.core.resources.RefreshExclusion;
 import org.eclipse.cdt.core.resources.RefreshScopeManager;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
+import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
 import org.eclipse.cdt.ui.CDTSharedImages;
+import org.eclipse.cdt.ui.newui.CDTPropertyManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -66,7 +71,7 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
  * @since 8.0
  */
 @SuppressWarnings("restriction")
-public class RefreshPolicyTab extends AbstractCBuildPropertyTab {
+public class RefreshPolicyTab extends AbstractCBuildPropertyTab { 
 
 	private final Image IMG_FOLDER = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_FOLDER);
 	private final Image IMG_FILE = ManagedBuilderUIImages.get(ManagedBuilderUIImages.IMG_FILE_OBJ);
@@ -93,6 +98,7 @@ public class RefreshPolicyTab extends AbstractCBuildPropertyTab {
 		 HashMap<IResource, List<RefreshExclusion>> resourceMap = fConfigurationToResourcesToExclusionsMap.get(configName);
 		 if (resourceMap == null) {
 			 resourceMap = new HashMap<IResource, List<RefreshExclusion>>();
+			 resourceMap.put(fProject, new ArrayList<RefreshExclusion>());
 			 fConfigurationToResourcesToExclusionsMap.put(configName, resourceMap);
 		 }
 		 
@@ -107,8 +113,8 @@ public class RefreshPolicyTab extends AbstractCBuildPropertyTab {
 		
 		HashMap<String, HashMap<IResource, List<RefreshExclusion>>> target = new HashMap<String, HashMap<IResource, List<RefreshExclusion>>>();
 		
-		if (source.size() == 0)
-			return null;
+		if (source.isEmpty())
+			return target;
 		
 		Iterator<String> config_iterator = source.keySet().iterator();
 		// for each Configuration ...
@@ -125,8 +131,13 @@ public class RefreshPolicyTab extends AbstractCBuildPropertyTab {
 				List<RefreshExclusion> target_exclusions = new LinkedList<RefreshExclusion>();
 				for (RefreshExclusion exclusion : source_exclusions) {
 					// ADD each exclusion to the target exclusion list.
-					RefreshExclusion target_exclusion = (RefreshExclusion) exclusion.clone();
-					target_exclusions.add(target_exclusion);
+					try {
+						RefreshExclusion target_exclusion = (RefreshExclusion) exclusion.clone();
+						target_exclusions.add(target_exclusion);
+					} catch (CloneNotSupportedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 
 				// ADD the exclusion list for this resource
@@ -135,13 +146,15 @@ public class RefreshPolicyTab extends AbstractCBuildPropertyTab {
 			
 			// ADD each resource.
 			target.put(configName, target_resourceMap);
+			
 		}
+		
 		return target;
 	}
 	
 	private void loadInfo() {
 			HashMap<String, HashMap<IResource, List<RefreshExclusion>>> configMap = fManager.getConfigurationToResourcesMap(fProject);
-			if ( (configMap != null) && !(configMap.isEmpty()))
+			if (configMap != null)
 				fConfigurationToResourcesToExclusionsMap = copyHashMap(configMap);
 	}
 
@@ -151,6 +164,7 @@ public class RefreshPolicyTab extends AbstractCBuildPropertyTab {
 		if(exclusions == null) {
 			exclusions = new LinkedList<RefreshExclusion>();
 			resourceMap.put(resource, exclusions);
+			
 		}
 		return resourceMap.get(resource);
 	}
@@ -159,10 +173,10 @@ public class RefreshPolicyTab extends AbstractCBuildPropertyTab {
 	 * Wrapper for IResource/RefreshExclusion
 	 */
 	class _Entry {
-		//if this is a refresh exclusion, resourceToRefresh will be null
+		//if this is not a resource to refresh, resourceToRefresh will be null
 		IResource resourceToRefresh = null;
 
-		//if this is a resource to refresh, exclusion will be null
+		//if this is not a refresh exclusion, exclusion will be null
 		RefreshExclusion exclusion = null;
 
 		//if this is a refresh exclusion, parent is the Exceptions node this is a child of
@@ -300,6 +314,7 @@ public class RefreshPolicyTab extends AbstractCBuildPropertyTab {
 				if (exclusions == null) {
 					exclusions = new LinkedList<RefreshExclusion>();
 					getResourcesToExclusionsMap(getConfigName()).put(parent.resourceToRefresh, exclusions);
+					
 				}
 				exclusions.add(exclusion);
 			}
@@ -349,6 +364,8 @@ public class RefreshPolicyTab extends AbstractCBuildPropertyTab {
 		}
 	}
 
+
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.newui.AbstractCPropertyTab#createControls(org.eclipse.swt.widgets.Composite)
 	 */
@@ -370,7 +387,7 @@ public class RefreshPolicyTab extends AbstractCBuildPropertyTab {
 		Group g1 = setupGroup(usercomp, Messages.RefreshPolicyTab_resourcesGroupLabel, 2, GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL);
 
 		fSrc = new ArrayList<_Entry>();
-		generateTreeContent();
+		generateTreeContent(); 
 
 		fTree = new TreeViewer(g1);
 		fTree.getTree().setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -505,6 +522,7 @@ public class RefreshPolicyTab extends AbstractCBuildPropertyTab {
 	@Override
 	protected void performDefaults() {
 		// TODO Auto-generated method stub
+
 	}
 
 	@Override
@@ -520,6 +538,7 @@ public class RefreshPolicyTab extends AbstractCBuildPropertyTab {
 			fTree.expandAll();
 		}
 	}
+
 
 	@Override
 	protected void updateButtons() {
@@ -538,7 +557,7 @@ public class RefreshPolicyTab extends AbstractCBuildPropertyTab {
 		@Override
 		public Object[] getChildren(Object element) {
 			ArrayList<Object> filteredChildren = new ArrayList<Object>(Arrays.asList(super.getChildren(element)));
-			Iterator<IResource> iterator = getResourcesToExclusionsMap(getConfigName()).keySet().iterator(); //fResourcesToRefresh.iterator();
+			Iterator<IResource> iterator = getResourcesToExclusionsMap(getConfigName()).keySet().iterator(); 
 			
 			while (iterator.hasNext()) {
 				filteredChildren.remove(iterator.next());
@@ -676,12 +695,15 @@ public class RefreshPolicyTab extends AbstractCBuildPropertyTab {
 	 */
 	@Override
 	protected void performOK() {
+		
+		
 		Iterator<String> config_iterator = fConfigurationToResourcesToExclusionsMap.keySet().iterator();
 		
 		while (config_iterator.hasNext()) {
 			String configName = config_iterator.next();
 		
-			fManager.setResourcesToExclusionsMap(fProject, configName, getResourcesToExclusionsMap(configName));
+			fManager.setResourcesToExclusionsMap(fProject, configName, getResourcesToExclusionsMap(configName)); 
+	
 		}
 		try {
 			fManager.persistSettings(getResDesc().getConfiguration().getProjectDescription());

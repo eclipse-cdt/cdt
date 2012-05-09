@@ -18,18 +18,13 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-
 import org.eclipse.cdt.core.resources.ExclusionInstance;
 import org.eclipse.cdt.core.resources.ExclusionType;
 import org.eclipse.cdt.core.resources.RefreshExclusion;
 import org.eclipse.cdt.core.resources.RefreshScopeManager;
-import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
-import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
 import org.eclipse.cdt.ui.CDTSharedImages;
-import org.eclipse.cdt.ui.newui.CDTPropertyManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -527,6 +522,7 @@ public class RefreshPolicyTab extends AbstractCBuildPropertyTab {
 			setAllVisible(false, null);
 			return;
 		} else {
+			setAllVisible(true, null);
 			clearTreeContent();
 			generateTreeContent();
 			fTree.refresh();

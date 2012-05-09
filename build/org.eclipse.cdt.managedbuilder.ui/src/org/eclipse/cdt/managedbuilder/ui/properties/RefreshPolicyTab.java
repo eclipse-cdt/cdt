@@ -131,13 +131,8 @@ public class RefreshPolicyTab extends AbstractCBuildPropertyTab {
 				List<RefreshExclusion> target_exclusions = new LinkedList<RefreshExclusion>();
 				for (RefreshExclusion exclusion : source_exclusions) {
 					// ADD each exclusion to the target exclusion list.
-					try {
-						RefreshExclusion target_exclusion = (RefreshExclusion) exclusion.clone();
-						target_exclusions.add(target_exclusion);
-					} catch (CloneNotSupportedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					RefreshExclusion target_exclusion = (RefreshExclusion) exclusion.clone();
+					target_exclusions.add(target_exclusion);
 				}
 
 				// ADD the exclusion list for this resource

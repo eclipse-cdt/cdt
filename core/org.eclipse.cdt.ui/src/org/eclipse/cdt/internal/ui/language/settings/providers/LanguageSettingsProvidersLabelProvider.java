@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.ui.language.settings.providers;
 
 import java.net.URL;
 
+import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Image;
@@ -63,7 +64,11 @@ public class LanguageSettingsProvidersLabelProvider extends LabelProvider {
 	 * Returns keys for image overlays. Returning {@code null} is not allowed.
 	 */
 	protected String[] getOverlayKeys(ILanguageSettingsProvider provider) {
-		return new String[5];
+		String[] overlayKeys = new String[5];
+		if (provider.getName() == null) {
+			overlayKeys[IDecoration.BOTTOM_LEFT] = CDTSharedImages.IMG_OVR_ERROR;
+		}
+		return overlayKeys;
 	}
 
 	@Override

@@ -115,13 +115,10 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 	private class ProvidersTableLabelProvider extends LanguageSettingsProvidersLabelProvider {
 		@Override
 		protected String[] getOverlayKeys(ILanguageSettingsProvider provider) {
+			String[] overlayKeys = super.getOverlayKeys(provider);
 			if (provider.getName() == null) {
-				String[] overlayKeys = new String[5];
-				overlayKeys[IDecoration.TOP_RIGHT] = CDTSharedImages.IMG_OVR_ERROR;
 				return overlayKeys;
 			}
-
-			String[] overlayKeys = super.getOverlayKeys(provider);
 
 			if (page.isForProject()) {
 				if (isEditedForProject(provider)) {

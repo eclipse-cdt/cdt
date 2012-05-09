@@ -1095,9 +1095,11 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 
 				} else if (page.isForPrefs()) {
 					presentedProviders = new ArrayList<ILanguageSettingsProvider>();
-					for (ILanguageSettingsProvider provider : LanguageSettingsManager.getWorkspaceProviders()) {
-						if (!LanguageSettingsManager.isEqualExtensionProvider(provider, true)) {
-							ILanguageSettingsProvider extProvider = LanguageSettingsManager.getExtensionProviderCopy(provider.getId(), true);
+					for (String id : LanguageSettingsManager.getExtensionProviderIds()) {
+						ILanguageSettingsProvider provider = LanguageSettingsManager.getWorkspaceProvider(id);
+						ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(provider);
+						if (!LanguageSettingsManager.isEqualExtensionProvider(rawProvider, true)) {
+							ILanguageSettingsProvider extProvider = LanguageSettingsManager.getExtensionProviderCopy(id, true);
 							if (extProvider != null) {
 								provider = extProvider;
 							}
@@ -1112,7 +1114,9 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 
 			updateData(rcDescription);
 			// update other tabs
-			masterPropertyPage.informAll(UPDATE, rcDescription);
+			if (masterPropertyPage != null) {
+				masterPropertyPage.informAll(UPDATE, rcDescription);
+			}
 		}
 	}
 

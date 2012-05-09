@@ -28,7 +28,7 @@
    <extension-point id="workingSetConfigurations" name="%workingSetConfigurationsExtensionPoint" schema="schema/workingSetConfigurations.exsd"/>
    <extension-point id="LanguageSettingsProviderAssociation" name="%LanguageSettingsProviderAssociationExtensionPoint" schema="schema/LanguageSettingsProviderAssociation.exsd"/>
    <extension-point id="RefreshExclusionContributor" name="%extension-point.name" schema="schema/RefreshExclusionContributor.exsd"/>
-   <extension-point id="projectTypePages" name="%ProjectTypePages" schema="schema/projectTypePages.exsd"/>
+   <extension-point id="projectTypePages" name="%projectTypePages" schema="schema/projectTypePages.exsd"/>
 
    <extension
          point="org.eclipse.core.runtime.adapters">

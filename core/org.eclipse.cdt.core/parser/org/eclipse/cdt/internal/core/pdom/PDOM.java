@@ -72,6 +72,7 @@ import org.eclipse.cdt.internal.core.pdom.db.BTree;
 import org.eclipse.cdt.internal.core.pdom.db.ChunkCache;
 import org.eclipse.cdt.internal.core.pdom.db.DBProperties;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
+import org.eclipse.cdt.internal.core.pdom.db.IBTreeComparator;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
 import org.eclipse.cdt.internal.core.pdom.dom.BindingCollector;
 import org.eclipse.cdt.internal.core.pdom.dom.FindBinding;
@@ -215,10 +216,11 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  122.0 - Compacting strings
 	 *  123.0 - Combined file size and encoding hash code.
 	 *  124.0 - GCC attributes and NO_RETURN flag for functions.
+	 *  125.0 - Indexes for unresolved includes and files indexed with I/O errors.
 	 */
-	private static final int MIN_SUPPORTED_VERSION= version(124, 0);
-	private static final int MAX_SUPPORTED_VERSION= version(124, Short.MAX_VALUE);
-	private static final int DEFAULT_VERSION = version(124, 0);
+	private static final int MIN_SUPPORTED_VERSION= version(125, 0);
+	private static final int MAX_SUPPORTED_VERSION= version(125, Short.MAX_VALUE);
+	private static final int DEFAULT_VERSION = version(125, 0);
 
 	private static int version(int major, int minor) {
 		return (major << 16) + minor;
@@ -251,8 +253,10 @@ public class PDOM extends PlatformObject implements IPDOM {
 
 	public static final int LINKAGES = Database.DATA_AREA;
 	public static final int FILE_INDEX = Database.DATA_AREA + 4;
-	public static final int PROPERTIES = Database.DATA_AREA + 8;
-	public static final int END= Database.DATA_AREA + 12;
+	public static final int INDEX_OF_DEFECTIVE_FILES = Database.DATA_AREA + 8;
+	public static final int INDEX_OF_FILES_WITH_UNRESOLVED_INCLUDES = Database.DATA_AREA + 12;
+	public static final int PROPERTIES = Database.DATA_AREA + 16;
+	public static final int END= Database.DATA_AREA + 20;
 	static {
 		assert END <= Database.CHUNK_SIZE;
 	}
@@ -303,9 +307,19 @@ public class PDOM extends PlatformObject implements IPDOM {
 		public void handleChange(PDOM pdom, ChangeEvent event);
 	}
 
+	// Primitive comparator that compares database offsets of two records.
+	private static final IBTreeComparator offsetComparator = new IBTreeComparator() {
+		@Override
+		public int compare(long record1, long record2) throws CoreException {
+	        return record1 < record2 ? -1 : record1 == record2 ? 0 : 1;
+		}
+	};
+
 	// Local caches
 	protected Database db;
 	private BTree fileIndex;
+	private BTree indexOfDefectiveFiles;
+	private BTree indexOfFiledWithUnresolvedIncludes;
 	private Map<Integer, PDOMLinkage> fLinkageIDCache = new HashMap<Integer, PDOMLinkage>();
 	private File fPath;
 	private IIndexLocationConverter locationConverter;
@@ -432,6 +446,26 @@ public class PDOM extends PlatformObject implements IPDOM {
 		return fileIndex;
 	}
 
+	/**
+	 * Returns the index of files that were read with I/O errors.
+	 */
+	public BTree getIndexOfDefectiveFiles() throws CoreException {
+		if (indexOfDefectiveFiles == null)
+			indexOfDefectiveFiles = new BTree(getDB(), INDEX_OF_DEFECTIVE_FILES, offsetComparator);
+		return indexOfDefectiveFiles;
+	}
+
+	/**
+	 * Returns the index of files containg unresolved includes.
+	 */
+	public BTree getIndexOfFilesWithUnresolvedIncludes() throws CoreException {
+		if (indexOfFiledWithUnresolvedIncludes == null) {
+			indexOfFiledWithUnresolvedIncludes =
+					new BTree(getDB(), INDEX_OF_FILES_WITH_UNRESOLVED_INCLUDES, offsetComparator);
+		}
+		return indexOfFiledWithUnresolvedIncludes;
+	}
+
 	@Deprecated
 	@Override
 	public PDOMFile getFile(int linkageID, IIndexFileLocation location) throws CoreException {
@@ -471,8 +505,22 @@ public class PDOM extends PlatformObject implements IPDOM {
 
 	@Override
 	public IIndexFragmentFile[] getAllFiles() throws CoreException {
-		final List<PDOMFile> locations = new ArrayList<PDOMFile>();
-		getFileIndex().accept(new IBTreeVisitor() {
+		return getFiles(getFileIndex());
+	}
+
+	@Override
+	public IIndexFragmentFile[] getDefectiveFiles() throws CoreException {
+		return getFiles(getIndexOfDefectiveFiles());
+	}
+
+	@Override
+	public IIndexFragmentFile[] getFilesWithUnresolvedIncludes() throws CoreException {
+		return getFiles(getIndexOfFilesWithUnresolvedIncludes());
+	}
+
+	private IIndexFragmentFile[] getFiles(BTree index) throws CoreException {
+		final List<PDOMFile> files = new ArrayList<PDOMFile>();
+		index.accept(new IBTreeVisitor() {
 			@Override
 			public int compare(long record) throws CoreException {
 				return 0;
@@ -481,13 +529,13 @@ public class PDOM extends PlatformObject implements IPDOM {
 			@Override
 			public boolean visit(long record) throws CoreException {
 				PDOMFile file = PDOMFile.recreateFile(PDOM.this, record);
-				locations.add(file);
+				files.add(file);
 				return true;
 			}
 		});
-		return locations.toArray(new IIndexFragmentFile[locations.size()]);
+		return files.toArray(new IIndexFragmentFile[files.size()]);
 	}
-
+		
 	protected IIndexFragmentFile addFile(int linkageID, IIndexFileLocation location,
 			ISignificantMacros sigMacros) throws CoreException {
 		PDOMLinkage linkage= createLinkage(linkageID);
@@ -1296,6 +1344,8 @@ public class PDOM extends PlatformObject implements IPDOM {
 
 	private void clearCaches() {
 		fileIndex= null;
+		indexOfDefectiveFiles= null;
+		indexOfFiledWithUnresolvedIncludes= null;
 		fLinkageIDCache.clear();
 		clearResultCache();
 	}

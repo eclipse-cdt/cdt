@@ -79,6 +79,7 @@ abstract public class PDOMWriter {
 		final long timestamp;
 		final long fileSize;
 		final long contentsHash;
+		final long sourceReadTime;
 		final boolean hasError;
 
 		public FileInAST(IASTPreprocessorIncludeStatement includeStmt, FileContentKey key) {
@@ -87,6 +88,7 @@ abstract public class PDOMWriter {
 			timestamp= includeStmt.getIncludedFileTimestamp();
 			fileSize = includeStmt.getIncludedFileSize();
 			contentsHash= includeStmt.getIncludedFileContentsHash();
+			sourceReadTime= includeStmt.getIncludedFileReadTime();
 			hasError= includeStmt.isErrorInIncludedFile();
 		}
 
@@ -96,6 +98,7 @@ abstract public class PDOMWriter {
 			timestamp= codeReader.getTimestamp();
 			fileSize= codeReader.getFileSize();
 			contentsHash= codeReader.getContentsHash();
+			sourceReadTime= codeReader.getReadTime();
 			hasError= codeReader.hasError();
 		}
 
@@ -577,6 +580,7 @@ abstract public class PDOMWriter {
 				index.setFileContent(file, linkageID, includeInfoArray, macros, names, fResolver, lock);
 			}
 			file.setTimestamp(astFile.hasError ? 0 : astFile.timestamp);
+			file.setSourceReadTime(astFile.sourceReadTime);
 			file.setSizeAndEncodingHashcode(computeFileSizeAndEncodingHashcode(astFile.fileSize, location));
 			file.setContentsHash(astFile.contentsHash);
 			file = index.commitUncommittedFile();

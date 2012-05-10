@@ -15,7 +15,7 @@ import java.io.File;
 /** 
  * Represents an entry of the include search path
  */
-final class IncludeSearchPathElement {
+public final class IncludeSearchPathElement {
 	private static final boolean NON_SLASH_SEPARATOR = File.separatorChar != '/';
 	public static final String FRAMEWORK_VAR = "__framework__"; //$NON-NLS-1$
 	public static final String FILE_VAR = "__header__"; //$NON-NLS-1$

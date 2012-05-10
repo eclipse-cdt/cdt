@@ -60,6 +60,7 @@ public class InternalFileContent extends FileContent {
 	private IncludeSearchPathElement fFoundOnPath;
 	private final long fTimestamp;
 	private final long fFileSize;
+	private final long fReadTime;
 	
 	/**
 	 * For skipping include files.
@@ -79,7 +80,8 @@ public class InternalFileContent extends FileContent {
 		fSource= null;
 		fNonPragmaOnceFiles= null;
 		fTimestamp= NULL_TIMESTAMP;
-		fFileSize = NULL_FILE_SIZE;
+		fFileSize= NULL_FILE_SIZE;
+		fReadTime= 0;
 	}
 
 	/**
@@ -87,7 +89,7 @@ public class InternalFileContent extends FileContent {
 	 * @throws IllegalArgumentException in case the codeReader or its location is <code>null</code>.
 	 */
 	public InternalFileContent(String filePath, AbstractCharArray content, long timestamp,
-			long fileSize) throws IllegalArgumentException {
+			long fileSize, long fileReadTime) throws IllegalArgumentException {
 		if (content == null) {
 			throw new IllegalArgumentException();
 		}
@@ -101,7 +103,8 @@ public class InternalFileContent extends FileContent {
 			throw new IllegalArgumentException();
 		}
 		fTimestamp= timestamp;
-		fFileSize = fileSize;
+		fFileSize= fileSize;
+		fReadTime= fileReadTime; 
 	}
 
 	/**
@@ -123,6 +126,7 @@ public class InternalFileContent extends FileContent {
 		}
 		fTimestamp= NULL_TIMESTAMP;
 		fFileSize = NULL_FILE_SIZE;
+		fReadTime= 0;
 	}
 
 	/**
@@ -144,6 +148,7 @@ public class InternalFileContent extends FileContent {
 		fNonPragmaOnceFiles= nonPragmaOnceVersions;
 		fTimestamp= NULL_TIMESTAMP;
 		fFileSize = NULL_FILE_SIZE;
+		fReadTime= 0;
 	}
 
 	/**
@@ -164,6 +169,11 @@ public class InternalFileContent extends FileContent {
 	@Override
 	public long getTimestamp() {
 		return fTimestamp;
+	}
+
+	@Override
+	public long getReadTime() {
+		return fReadTime;
 	}
 
 	@Override

@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.HashSet;
+import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -62,6 +63,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFile;
+import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.index.IIndexInclude;
 import org.eclipse.cdt.core.index.IIndexMacro;
@@ -85,6 +87,7 @@ import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.pdom.CModelListener;
+import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -105,7 +108,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
 public class IndexBugsTests extends BaseTestCase {
-	private static final int INDEX_WAIT_TIME = 8000;
+	private static final int INDEX_WAIT_TIME = 800000; //XXX
 	private ICProject fCProject;
 	protected IIndex fIndex;
 
@@ -2468,6 +2471,60 @@ public class IndexBugsTests extends BaseTestCase {
 			assertEquals(2, fIndex.findDefinitions(vars[0]).length);
 		} finally {
 			fIndex.releaseReadLock();
+		}
+	}
+
+	//	// test.cpp
+	//	#include "a.h"
+	//	using ns::INT;
+
+	//	// a.h
+	//	#include "b.h"
+
+	//	// b.h
+	//	namespace ns { typedef int INT; }
+	public void testUpdateUnresolvedIncludes_378317() throws Exception {
+		// Turn off indexing of unused headers.
+		IndexerPreferences.set(fCProject.getProject(), IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG, "false");
+		// Turn off automatic index update.
+		IndexerPreferences.setUpdatePolicy(fCProject.getProject(), IndexerPreferences.UPDATE_POLICY_MANUAL);
+
+		try {
+			String[] contents= getContentsForTest(3);
+			final IIndexManager indexManager = CCorePlugin.getIndexManager();
+			TestSourceReader.createFile(fCProject.getProject(), "test.c", contents[0]);
+			IFile ah= TestSourceReader.createFile(fCProject.getProject(), "a.h", contents[1]);
+			// b.h is not created yet, so #include "b.h" in a.h is unresolved.
+			indexManager.reindex(fCProject);
+			waitForIndexer();
+			fIndex.acquireReadLock();
+			try {
+				IIndexFile[] files = fIndex.getFilesWithUnresolvedIncludes();
+				assertEquals(1, files.length);
+				assertEquals(IndexLocationFactory.getWorkspaceIFL(ah), files[0].getLocation());
+			} finally {
+				fIndex.releaseReadLock();
+			}
+			
+			IFile bh= TestSourceReader.createFile(fCProject.getProject(), "b.h", contents[2]);
+			indexManager.update(new ICElement[] { fCProject }, IIndexManager.UPDATE_UNRESOLVED_INCLUDES);
+			waitForIndexer();
+			fIndex.acquireReadLock();
+			try {
+				IIndexFile[] files = fIndex.getFilesWithUnresolvedIncludes();
+				assertEquals(0, files.length);
+				IIndexFileLocation location = IndexLocationFactory.getWorkspaceIFL(bh);
+				files = fIndex.getFiles(IndexLocationFactory.getWorkspaceIFL(bh));
+				assertEquals(1, files.length);
+			} finally {
+				fIndex.releaseReadLock();
+			}
+		} finally {
+			// Restore default indexer preferences.
+			Properties defaults = IndexerPreferences.getDefaultIndexerProperties();
+			IndexerPreferences.set(fCProject.getProject(), IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG,
+					defaults.getProperty(IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG));
+			IndexerPreferences.setUpdatePolicy(fCProject.getProject(), IndexerPreferences.getDefaultUpdatePolicy());
 		}
 	}
 }

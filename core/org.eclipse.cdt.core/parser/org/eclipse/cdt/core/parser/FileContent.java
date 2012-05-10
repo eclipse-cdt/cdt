@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2009, 2012 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,12 +40,19 @@ public abstract class FileContent {
 	public abstract String getFileLocation();
 
 	/**
-	 * Returns the modification time of the file containing the content or NULL_TIMESTAMP if
+	 * Returns the modification time of the file containing the content, or NULL_TIMESTAMP if
 	 * the content does not originate from a file. A zero value may be returned if there was
 	 * an I/O error.
 	 * @since 5.4
 	 */
 	public abstract long getTimestamp();
+
+	/**
+	 * Returns time when the file was read. Corresponds to the start of reading.    
+	 * @return time before reading started in milliseconds since epoch
+	 * @since 5.4
+	 */
+	public abstract long getReadTime();
 
 	/**
 	 * Returns the size of the file, or NULL_FILE_SIZE if the content does not originate from

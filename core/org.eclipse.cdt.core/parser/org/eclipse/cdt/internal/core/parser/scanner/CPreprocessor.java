@@ -302,7 +302,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
         if (contextPath == null) {
         	contextPath= fRootContent.getFileLocation();
         }
-        configureIncludeSearchPath(new File(contextPath).getParentFile(), info);
+        fIncludeSearchPath = configureIncludeSearchPath(new File(contextPath).getParentFile(), info);
         setupMacroDictionary(configuration, info, language);		
 
         ILocationCtx ctx= fLocationMap.pushTranslationUnit(fRootContent.getFileLocation(), fRootContent.getSource());
@@ -396,37 +396,39 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 		return array == null ? CharArrayUtils.EMPTY_CHAR_ARRAY : array;
 	}
 
-    private void configureIncludeSearchPath(File directory, IScannerInfo info) {
+    public static IncludeSearchPathElement[] configureIncludeSearchPath(File directory, IScannerInfo info) {
+    	IncludeSearchPathElement[] includeSearchPath = null;
     	String[] searchPath= info.getIncludePaths();
     	int idx= 0;
         if (info instanceof IExtendedScannerInfo) {
         	final IExtendedScannerInfo einfo= (IExtendedScannerInfo) info;
             final String[] quoteIncludeSearchPath= einfo.getLocalIncludePath();
             if (quoteIncludeSearchPath != null && quoteIncludeSearchPath.length > 0) {
-            	fIncludeSearchPath= new IncludeSearchPathElement[quoteIncludeSearchPath.length + searchPath.length];
-            	for (String qip : quoteIncludeSearchPath) {
-					fIncludeSearchPath[idx++]= new IncludeSearchPathElement(makeAbsolute(directory, qip), true);
+            	includeSearchPath= new IncludeSearchPathElement[quoteIncludeSearchPath.length + searchPath.length];
+            	for (String path : quoteIncludeSearchPath) {
+            		includeSearchPath[idx++]= new IncludeSearchPathElement(makeAbsolute(directory, path), true);
 				}
             }
         }
-        if (fIncludeSearchPath == null) {
-        	fIncludeSearchPath= new IncludeSearchPathElement[searchPath.length];
+        if (includeSearchPath == null) {
+        	includeSearchPath= new IncludeSearchPathElement[searchPath.length];
         }
         for (String path : searchPath) {
-			fIncludeSearchPath[idx++]= new IncludeSearchPathElement(makeAbsolute(directory, path), false);
+        	includeSearchPath[idx++]= new IncludeSearchPathElement(makeAbsolute(directory, path), false);
 		}
+        return includeSearchPath;
 	}
 
-	private String makeAbsolute(File directory, String inlcudePath) {
-		if (directory == null || new File(inlcudePath).isAbsolute()) {
-			return inlcudePath;
+	private static String makeAbsolute(File directory, String includePath) {
+		if (directory == null || new File(includePath).isAbsolute()) {
+			return includePath;
 		}
-		return ScannerUtility.createReconciledPath(directory.getAbsolutePath(), inlcudePath);
+		return ScannerUtility.createReconciledPath(directory.getAbsolutePath(), includePath);
 	}
 
 	private void setupMacroDictionary(IScannerExtensionConfiguration config, IScannerInfo info,
 			ParserLanguage lang) {
-    	// built in macros
+    	// Built-in macros
     	fMacroDictionary.put(__CDT_PARSER__.getNameCharArray(), __CDT_PARSER__);
         fMacroDictionary.put(__STDC__.getNameCharArray(), __STDC__);
         fMacroDictionary.put(__FILE__.getNameCharArray(), __FILE__);
@@ -1066,20 +1068,10 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     private <T> T findInclusion(final String includeDirective, final boolean quoteInclude,
     		final boolean includeNext, final String currentFile, final IIncludeFileTester<T> tester) {
         T reader = null;
-		// Filename is an absolute path
-		if (new File(includeDirective).isAbsolute()) {
-		    return tester.checkFile(includeDirective, false, null);
-		}
-		// Filename is a Linux absolute path on a windows machine
-		if (File.separatorChar == '\\' && includeDirective.length() > 0) {
-			final char firstChar = includeDirective.charAt(0);
-			if (firstChar == '\\' || firstChar == '/') {
-				if (currentFile != null && currentFile.length() > 1 && currentFile.charAt(1) == ':') {
-					return tester.checkFile(currentFile.substring(0, 2) + includeDirective, false, null);
-				}
-			    return tester.checkFile(includeDirective, false, null);
-			}
-		}
+        String absoluteInclusionPath = getAbsoluteInclusionPath(includeDirective, currentFile);
+        if (absoluteInclusionPath != null) {
+        	return tester.checkFile(absoluteInclusionPath, false, null);
+        }
 
         if (currentFile != null && quoteInclude && !includeNext) {
             // Check to see if we find a match in the current directory
@@ -1134,6 +1126,24 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
         return null;
     }
 
+    public static String getAbsoluteInclusionPath(String includeDirective, String currentFile) {
+		// Filename is an absolute path
+		if (new File(includeDirective).isAbsolute()) {
+		    return includeDirective;
+		}
+		// Filename is a Linux absolute path on a Windows machine
+		if (File.separatorChar == '\\' && includeDirective.length() > 0) {
+			final char firstChar = includeDirective.charAt(0);
+			if (firstChar == '\\' || firstChar == '/') {
+				if (currentFile != null && currentFile.length() > 1 && currentFile.charAt(1) == ':') {
+					return currentFile.substring(0, 2) + includeDirective;
+				}
+			    return includeDirective;
+			}
+		}
+		return null;
+    }
+    
     private IncludeSearchPathElement findFileInIncludePath(String file, String includeDirective) {
         for (IncludeSearchPathElement path : fIncludeSearchPath) {
     		String fileLocation = path.getLocation(includeDirective);
@@ -1490,6 +1500,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 				stmt.setIncludedFileTimestamp(fi.getTimestamp());
 				stmt.setIncludedFileSize(fi.getFileSize());
 				stmt.setIncludedFileContentsHash(source.getContentsHash());
+				stmt.setIncludedFileReadTime(fi.getReadTime());
 				stmt.setErrorInIncludedFile(source.hasError());
 				if (!fCurrentContext.isPragmaOnce()) {
 					// Track the loaded version count, even in a non-pragma-once context.

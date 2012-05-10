@@ -186,6 +186,7 @@ public class FileCharArray extends LazyCharArray {
 			decode(channel, chunk.fSourceOffset, chunk.fSourceEndOffset, CharBuffer.wrap(dest));
 		} catch (IOException e) {
 			// File cannot be read
+			CCorePlugin.log(e);
 			fHasError = true;
 		} finally {
 			try {

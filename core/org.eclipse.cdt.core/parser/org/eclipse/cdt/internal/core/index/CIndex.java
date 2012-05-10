@@ -759,6 +759,32 @@ public class CIndex implements IIndex {
 	}
 
 	@Override
+	public IIndexFile[] getDefectiveFiles() throws CoreException {
+		HashMap<IIndexFileLocation, IIndexFile> result= new HashMap<IIndexFileLocation, IIndexFile>();
+		for (IIndexFragment fragment : fFragments) {
+			for (IIndexFragmentFile file : fragment.getDefectiveFiles()) {
+				if (file.hasContent()) { 
+					result.put(file.getLocation(), file);
+				}
+			}
+		}
+		return result.values().toArray(new IIndexFile[result.size()]);
+	}
+
+	@Override
+	public IIndexFile[] getFilesWithUnresolvedIncludes() throws CoreException {
+		HashMap<IIndexFileLocation, IIndexFile> result= new HashMap<IIndexFileLocation, IIndexFile>();
+		for (IIndexFragment fragment : fFragments) {
+			for (IIndexFragmentFile file : fragment.getFilesWithUnresolvedIncludes()) {
+				if (file.hasContent()) { 
+					result.put(file.getLocation(), file);
+				}
+			}
+		}
+		return result.values().toArray(new IIndexFile[result.size()]);
+	}
+
+	@Override
 	public IIndexScope[] getInlineNamespaces() throws CoreException {
 		if (SPECIALCASE_SINGLES && fFragments.length == 1) {
 			return fFragments[0].getInlineNamespaces();

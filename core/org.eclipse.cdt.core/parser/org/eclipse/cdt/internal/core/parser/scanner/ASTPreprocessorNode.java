@@ -298,6 +298,7 @@ class ASTInclusionStatement extends ASTPreprocessorNode implements IASTPreproces
 	private long fIncludedFileContentsHash;
 	private long fIncludedFileTimestamp = -1;
 	private long fIncludedFileSize;
+	private long fIncludedFileReadTime;
 	private boolean fErrorInIncludedFile;
 
 	public ASTInclusionStatement(IASTTranslationUnit parent, 
@@ -402,6 +403,19 @@ class ASTInclusionStatement extends ASTPreprocessorNode implements IASTPreproces
 	public void setIncludedFileTimestamp(long timestamp) {
 		assert fNominationDelegate == null;
 		fIncludedFileTimestamp= timestamp;
+	}
+
+	@Override
+	public long getIncludedFileReadTime() {
+		if (fNominationDelegate != null) {
+			return 0;
+		} 	
+		return fIncludedFileReadTime;
+	}
+
+	public void setIncludedFileReadTime(long time) {
+		assert fNominationDelegate == null;
+		fIncludedFileReadTime= time;
 	}
 
 	@Override

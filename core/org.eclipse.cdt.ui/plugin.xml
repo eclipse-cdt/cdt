@@ -1372,15 +1372,20 @@
             </or>
          </visibility>
          <action
-             class="org.eclipse.cdt.internal.ui.actions.FreshenIndexAction"
-             id="org.eclipse.cdt.ui.updateIndexAction"
-             label="%FreshenIndex.name"
-             menubarPath="org.eclipse.cdt.ui.indexmenu/update"/>
+               class="org.eclipse.cdt.internal.ui.actions.UpdateUnresolvedIncludesAction"
+               id="org.eclipse.cdt.ui.updateUnresolvedIncludesAction"
+               label="%UpdateUnresolvedIncludes.name"
+               menubarPath="org.eclipse.cdt.ui.indexmenu/update"/>
          <action
-             class="org.eclipse.cdt.internal.ui.actions.UpdateIndexWithModifiedFilesAction"
-             id="org.eclipse.cdt.ui.syncIndexWithDiskAction"
-             label="%SyncIndex.name"
-             menubarPath="org.eclipse.cdt.ui.indexmenu/update"/>
+               class="org.eclipse.cdt.internal.ui.actions.UpdateIndexWithModifiedFilesAction"
+               id="org.eclipse.cdt.ui.syncIndexWithDiskAction"
+               label="%SyncIndex.name"
+               menubarPath="org.eclipse.cdt.ui.indexmenu/update"/>
+         <action
+               class="org.eclipse.cdt.internal.ui.actions.FreshenIndexAction"
+               id="org.eclipse.cdt.ui.updateIndexAction"
+               label="%FreshenIndex.name"
+               menubarPath="org.eclipse.cdt.ui.indexmenu/update"/>
          <menu
                id="org.eclipse.cdt.ui.indexmenu"
                label="%Index.menu"
@@ -1445,14 +1450,19 @@
                  value="org.eclipse.cdt.core.cnature"/>
          </visibility>          
          <action
-             class="org.eclipse.cdt.internal.ui.actions.FreshenIndexAction"
-             id="org.eclipse.cdt.ui.updateIndexAction"
-             label="%FreshenIndex.name"
+             class="org.eclipse.cdt.internal.ui.actions.UpdateUnresolvedIncludesAction"
+             id="org.eclipse.cdt.ui.updateUnresolvedIncludesAction"
+             label="%UpdateUnresolvedIncludes.name"
              menubarPath="org.eclipse.cdt.ui.indexmenu/update"/>
          <action
              class="org.eclipse.cdt.internal.ui.actions.UpdateIndexWithModifiedFilesAction"
              id="org.eclipse.cdt.ui.syncIndexWithDiskAction"
              label="%SyncIndex.name"
+             menubarPath="org.eclipse.cdt.ui.indexmenu/update"/>
+         <action
+             class="org.eclipse.cdt.internal.ui.actions.FreshenIndexAction"
+             id="org.eclipse.cdt.ui.updateIndexAction"
+             label="%FreshenIndex.name"
              menubarPath="org.eclipse.cdt.ui.indexmenu/update"/>
          <action
              class="org.eclipse.cdt.internal.ui.actions.RebuildIndexAction"

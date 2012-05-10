@@ -87,17 +87,36 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 	public IIndexFragmentFile commitUncommittedFile() throws CoreException {
 		if (uncommittedFile == null)
 			return null;
+
+		int defectiveStateChange = uncommittedFile.getTimestamp() == 0 ? 1 : 0;
+		int unresolvedIncludeStateChange = uncommittedFile.hasUnresolvedInclude() ? 1 : 0;
+
 		PDOMFile file;
 		if (fileBeingUpdated == null) {
 			// New file, insert it into the index.
 			file = uncommittedFile;
-			getFileIndex().insert(file.getRecord()); 
+			getFileIndex().insert(file.getRecord());
 		} else {
 			// Existing file.
+			if (fileBeingUpdated.getTimestamp() == 0)
+				defectiveStateChange -= 1;
+			if (fileBeingUpdated.hasUnresolvedInclude())
+				unresolvedIncludeStateChange -= 1;
 			fileBeingUpdated.replaceContentsFrom(uncommittedFile);
 			file = fileBeingUpdated;
 			fileBeingUpdated = null;
 		}
+		if (defectiveStateChange > 0) {
+			getIndexOfDefectiveFiles().insert(file.getRecord());
+		} else if (defectiveStateChange < 0) {
+			getIndexOfDefectiveFiles().delete(file.getRecord());
+		}
+		if (unresolvedIncludeStateChange > 0) {
+			getIndexOfFilesWithUnresolvedIncludes().insert(file.getRecord());
+		} else if (unresolvedIncludeStateChange < 0) {
+			getIndexOfFilesWithUnresolvedIncludes().delete(file.getRecord());
+		}
+
 		fEvent.fFilesWritten.add(uncommittedKey.getLocation());
 		uncommittedFile = null;
 		uncommittedKey = null;

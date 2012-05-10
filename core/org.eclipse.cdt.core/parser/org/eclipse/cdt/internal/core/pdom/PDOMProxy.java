@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2012 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,7 +41,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 /**
  * The PDOMProxy is returned by the PDOMManager before the indexer kicks in. Also and more
  * importantly it is returned when the indexer has been shut down (clients may not be aware
- * of this yet). Doing that prevents the creation of empty pdoms for deleted projects.
+ * of this yet). Doing that prevents the creation of empty PDOMs for deleted projects.
  */
 public class PDOMProxy implements IPDOM {
 	private PDOM fDelegate;
@@ -315,6 +315,20 @@ public class PDOMProxy implements IPDOM {
 	public synchronized IIndexFragmentFile[] getAllFiles() throws CoreException {
 		if (fDelegate != null)
 			return fDelegate.getAllFiles();
+		return IIndexFragmentFile.EMPTY_ARRAY;
+	}
+
+	@Override
+	public synchronized IIndexFragmentFile[] getDefectiveFiles() throws CoreException {
+		if (fDelegate != null)
+			return fDelegate.getDefectiveFiles();
+		return IIndexFragmentFile.EMPTY_ARRAY;
+	}
+
+	@Override
+	public synchronized IIndexFragmentFile[] getFilesWithUnresolvedIncludes() throws CoreException {
+		if (fDelegate != null)
+			return fDelegate.getFilesWithUnresolvedIncludes();
 		return IIndexFragmentFile.EMPTY_ARRAY;
 	}
 

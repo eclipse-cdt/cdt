@@ -729,9 +729,10 @@ public class SyncRegisterDataAccess {
                 IRegisterGroupDMContext.class);
         }
 
+        if (dmc != null) {
         DsfSession session = DsfSession.getSession(dmc.getSessionId());
 
-        if (dmc != null && session != null) {
+        if (session != null) {
             GetRegisterGroupDataQuery query = new GetRegisterGroupDataQuery(dmc);
             session.getExecutor().execute(query);
 
@@ -740,6 +741,7 @@ public class SyncRegisterDataAccess {
             } catch (InterruptedException e) {
             } catch (ExecutionException e) {
             }
+        }
         }
         return null;
     }
@@ -762,9 +764,11 @@ public class SyncRegisterDataAccess {
         if (element instanceof IDMVMContext) {
             dmc = DMContexts.getAncestorOfType( ((IDMVMContext) element).getDMContext(), IRegisterDMContext.class );
         }
+
+        if (dmc != null) {
         DsfSession session = DsfSession.getSession(dmc.getSessionId());
 
-        if (dmc != null && session != null) {
+        if (session != null) {
             GetRegisterDataQuery query = new GetRegisterDataQuery(dmc);
             session.getExecutor().execute(query);
 
@@ -773,6 +777,7 @@ public class SyncRegisterDataAccess {
             } catch (InterruptedException e) {
             } catch (ExecutionException e) {
             }
+        }
         }
         return null;
     }
@@ -794,9 +799,11 @@ public class SyncRegisterDataAccess {
         if (element instanceof IDMVMContext) {
             dmc = DMContexts.getAncestorOfType( ((IDMVMContext) element).getDMContext(), IBitFieldDMContext.class );
         }
-        DsfSession session = DsfSession.getSession(dmc.getSessionId());
 
-        if (dmc != null && session != null) {
+        if (dmc != null) {
+       	DsfSession session = DsfSession.getSession(dmc.getSessionId());
+
+       	if (session != null) {
             GetBitFieldQuery query = new GetBitFieldQuery(dmc);
             session.getExecutor().execute(query);
 
@@ -805,6 +812,7 @@ public class SyncRegisterDataAccess {
             } catch (InterruptedException e) {
             } catch (ExecutionException e) {
             }
+        }
         }
         return null;
     }

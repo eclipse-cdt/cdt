@@ -788,7 +788,7 @@ public class NumberFormatDetailPane implements IDetailPane2, IAdaptable, IProper
      *  elements being displayed in this view
      */
     protected void setDebugModel(String id) {
-        if (id != fDebugModelIdentifier) {
+        if (!id.equals(fDebugModelIdentifier)) {
             fDebugModelIdentifier = id;
             configureDetailsViewer();
         }

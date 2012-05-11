@@ -851,7 +851,7 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 		if (positions != null) {
 			positions.removeAll(toRemove);
 		}
-		if (category != CATEGORY_MODEL) {
+		if (!category.equals(CATEGORY_MODEL)) {
 			positions = (List<Position>) getDocumentManagedPositions().get(CATEGORY_MODEL);
 			if (positions != null) {
 				positions.removeAll(toRemove);

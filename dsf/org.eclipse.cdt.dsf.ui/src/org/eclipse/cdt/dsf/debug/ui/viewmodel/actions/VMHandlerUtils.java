@@ -65,8 +65,9 @@ public class VMHandlerUtils {
             IPartService partService = (IPartService)serviceLocator.getService(IPartService.class);
             if (partService != null) {
                 part = partService.getActivePart();
+                return getVMProviderForPart(part);
             }
-            return getVMProviderForPart(part);
+            return null;
         }
     }
 

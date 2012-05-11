@@ -473,9 +473,9 @@ public class DsfSession
                     if (o1.fListener == o2.fListener) {
                         return 0;
                     } if (o1.fListener instanceof IDsfService && !(o2.fListener instanceof IDsfService)) {
-                        return Integer.MIN_VALUE;
+                        return -1;
                     } else if (o2.fListener instanceof IDsfService && !(o1.fListener instanceof IDsfService)) {
-                        return Integer.MAX_VALUE;
+                        return 1;
                     } else if ( (o1.fListener instanceof IDsfService) && (o2.fListener instanceof IDsfService) ) {
                         return ((IDsfService)o1.fListener).getStartupNumber() - ((IDsfService)o2.fListener).getStartupNumber();
                     }

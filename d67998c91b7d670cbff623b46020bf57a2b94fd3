@@ -16,6 +16,24 @@
       "revId": "d67998c91b7d670cbff623b46020bf57a2b94fd3",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHX///gA\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/EvaluationContextManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-05-11T19:22:10Z",
+      "side": 1,
+      "message": "Because this code runs on the UI thread, you are right that this does not make a difference, as there is no multithreading.  FindBugs does not know about this though, so since it was an safe change, I figure I\u0027d make FindBugs stop complaining.",
+      "parentUuid": "AABOHX///gk\u003d",
+      "revId": "d67998c91b7d670cbff623b46020bf57a2b94fd3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

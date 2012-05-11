@@ -152,7 +152,7 @@ public abstract class AbstractBreakpointVMNode extends AbstractVMNode {
                 return IModelDelta.EXPAND | IModelDelta.SELECT;
             } 
         } 
-        else if (event instanceof DebugContextEvent && (((DebugContextEvent)event).getFlags() | DebugContextEvent.ACTIVATED) != 0) {
+        else if (event instanceof DebugContextEvent && (((DebugContextEvent)event).getFlags() & DebugContextEvent.ACTIVATED) != 0) {
             int flags = IModelDelta.NO_CHANGE;
             if ( Boolean.TRUE.equals(getVMProvider().getPresentationContext().getProperty(IBreakpointUIConstants.PROP_BREAKPOINTS_FILTER_SELECTION)) ) {
                 flags |= IModelDelta.CONTENT;
@@ -203,7 +203,7 @@ public abstract class AbstractBreakpointVMNode extends AbstractVMNode {
                 }
             } 
         } 
-        else if (event instanceof DebugContextEvent && (((DebugContextEvent)event).getFlags() | DebugContextEvent.ACTIVATED) != 0) {
+        else if (event instanceof DebugContextEvent && (((DebugContextEvent)event).getFlags() & DebugContextEvent.ACTIVATED) != 0) {
             if ( Boolean.TRUE.equals(getVMProvider().getPresentationContext().getProperty(IBreakpointUIConstants.PROP_BREAKPOINTS_FILTER_SELECTION)) ) {
                 parent.setFlags(parent.getFlags() | IModelDelta.CONTENT);
             } 

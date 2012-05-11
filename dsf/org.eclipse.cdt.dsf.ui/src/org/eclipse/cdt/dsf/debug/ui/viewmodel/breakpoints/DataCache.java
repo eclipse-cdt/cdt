@@ -114,7 +114,7 @@ abstract class DataCache<V> {
 	                    if (!isCanceled()) {
     	                    fValid = true;
     	                    fRm = null;
-    	                    set(getData(), getStatus()); 
+    	                    set(super.getData(), super.getStatus()); 
 	                    }
 	                } 
 	            }; 

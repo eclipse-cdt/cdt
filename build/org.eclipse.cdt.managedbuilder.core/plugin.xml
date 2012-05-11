@@ -617,7 +617,7 @@
             class="org.eclipse.cdt.managedbuilder.language.settings.providers.GCCBuildCommandParser"
             id="org.eclipse.cdt.managedbuilder.core.GCCBuildCommandParser"
             name="CDT GCC Build Output Parser"
-            parameter="(gcc)|([gc]\+\+)"
+            parameter="(gcc)|([gc]\+\+)|(clang)"
             prefer-non-shared="true">
       </provider>
    </extension>

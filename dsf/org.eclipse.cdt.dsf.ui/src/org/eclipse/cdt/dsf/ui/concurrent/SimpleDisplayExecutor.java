@@ -7,12 +7,15 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     NVIDIA - coalesce runnable in the single event loop iteration
  *******************************************************************************/
 package org.eclipse.cdt.dsf.ui.concurrent;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.RejectedExecutionException;
 
@@ -57,21 +60,60 @@ public class SimpleDisplayExecutor implements Executor{
      * The display class used by this executor to execute the submitted runnables. 
      */
     private final Display fDisplay;
+    /**
+     * Runnables waiting for the UI loop iteration
+     */
+    private Queue<Runnable> runnables;
     
     private SimpleDisplayExecutor(Display display) {
         fDisplay = display;
     }
 
     @Override
-	public void execute(Runnable command) {
-        try {
-            fDisplay.asyncExec(command);
-        } catch (SWTException e) {
-            if (e.code == SWT.ERROR_DEVICE_DISPOSED) {
-                throw new RejectedExecutionException("Display " + fDisplay + " is disposed", e); //$NON-NLS-1$ //$NON-NLS-2$
-            } else {
-                throw e;
+    public void execute(Runnable command) {
+        final boolean needsPosting = enqueue(command);
+        if (needsPosting) {
+            try {
+                fDisplay.asyncExec(new Runnable() {
+                    @Override
+                    public void run() {
+                        runInSwtThread();
+                    }
+                });
+            } catch (final SWTException e) {
+                if (e.code == SWT.ERROR_DEVICE_DISPOSED) {
+                    throw new RejectedExecutionException("Display " + fDisplay + " is disposed", e); //$NON-NLS-1$ //$NON-NLS-2$
+                } else {
+                    throw e;
+                }
             }
+        }
+    }
+    
+    private synchronized boolean enqueue(final Runnable runnable) {
+        boolean needsPosting = false;
+        if (runnables == null) {
+            runnables = new LinkedList<Runnable>();
+            needsPosting = true;
+        }
+        runnables.offer(runnable);
+        return needsPosting;
+    }
+
+    private synchronized Runnable getNextRunnable() {
+        final Runnable runnable = runnables.poll();
+        if (runnable == null) {
+            runnables = null;
+            return null;
+        } else {
+            return runnable;
+        }
+    }
+
+    protected void runInSwtThread() {
+        Runnable runnable;
+        while ((runnable = getNextRunnable()) != null) {
+            runnable.run();
         }
     }
 }

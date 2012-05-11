@@ -28,6 +28,7 @@ public class Messages extends NLS {
 	public static String AbstractLangsListTab_Unexport;
 	public static String AbstractLangsListTab_Conjunction;
 	public static String AbstractLangsListTab_Disjunction;
+	public static String AbstractLangsListTab_MbsProviderNotEnabled;
 	public static String AbstractLangsListTab_Modify;
 	public static String AbstractLangsListTab_MultiConfigStringListModeLinkHint;
 	public static String AbstractLangsListTab_Replace;

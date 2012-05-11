@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2012 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -435,6 +435,20 @@ public interface IIndex {
 	 * linkages, or in multiple fragments only one of the files will be returned.
 	 */
 	public IIndexFile[] getAllFiles() throws CoreException;
+
+	/**
+	 * Returns an array of files that were indexed with I/O errors.
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @since 5.4
+	 */
+	public IIndexFile[] getDefectiveFiles() throws CoreException;
+
+	/**
+	 * Returns an array of files containg unresolved includes.
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @since 5.4
+	 */
+	public IIndexFile[] getFilesWithUnresolvedIncludes() throws CoreException;
 
 	/**
 	 * Returns the global inline c++ namespaces.

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.ui.search;
 
@@ -37,7 +38,7 @@ public class CSearchUnresolvedIncludesQuery extends CSearchQuery {
 	@Override
 	protected IStatus runWithIndex(final IIndex index, IProgressMonitor monitor) {
 		try {
-			for (IIndexFile file : index.getAllFiles()) {
+			for (IIndexFile file : index.getFilesWithUnresolvedIncludes()) {
 				for (IIndexInclude include : file.getIncludes()) {
 					if (include.isActive() && !include.isResolved()) {
 						result.addMatch(new CSearchMatch(new ProblemSearchElement(

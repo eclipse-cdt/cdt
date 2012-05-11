@@ -188,9 +188,7 @@ public class IndexerPreferences {
 	}
 
 	public static int getDefaultUpdatePolicy() {
-		Preferences[] prefs = new Preferences[] {
-				getDefaultPreferences()
-			};
+		Preferences[] prefs = new Preferences[] { getDefaultPreferences() };
 		return getUpdatePolicy(prefs);
 	}
 
@@ -203,7 +201,7 @@ public class IndexerPreferences {
 	}
 
 	private static void setProperties(Preferences prefs, Properties props) {
-		for (Map.Entry<Object,Object> entry : props.entrySet()) {
+		for (Map.Entry<Object, Object> entry : props.entrySet()) {
 			String key = (String) entry.getKey();
 			String val = (String) entry.getValue();
 			prefs.put(key, val);

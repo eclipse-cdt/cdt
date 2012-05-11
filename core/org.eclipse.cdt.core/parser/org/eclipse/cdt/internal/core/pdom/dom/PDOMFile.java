@@ -72,13 +72,14 @@ public class PDOMFile implements IIndexFragmentFile {
 	private static final int LOCATION_REPRESENTATION = FIRST_MACRO + Database.PTR_SIZE;
 	private static final int LINKAGE_ID= LOCATION_REPRESENTATION + Database.PTR_SIZE;  // size 3
 	private static final int FLAGS= LINKAGE_ID + 3;  // size 1
-	private static final int TIME_STAMP = FLAGS + 1; // long
-	private static final int CONTENT_HASH= TIME_STAMP + 8;  // long
+	private static final int TIME_STAMP= FLAGS + 1;  // long
+	private static final int SOURCE_READ_TIME= TIME_STAMP + 8;  // long
+	private static final int CONTENT_HASH= SOURCE_READ_TIME + 8;  // long
 	private static final int SIZE_AND_ENCODING_HASH= CONTENT_HASH + 8;
 	private static final int LAST_USING_DIRECTIVE= SIZE_AND_ENCODING_HASH + 4;
 	private static final int FIRST_MACRO_REFERENCE= LAST_USING_DIRECTIVE + Database.PTR_SIZE;
 	private static final int SIGNIFICANT_MACROS= FIRST_MACRO_REFERENCE + Database.PTR_SIZE;
-	private static final int RECORD_SIZE= SIGNIFICANT_MACROS + Database.PTR_SIZE;   // 8*PTR_SIZE + 3+1+8+8+4 = 56
+	private static final int RECORD_SIZE= SIGNIFICANT_MACROS + Database.PTR_SIZE;   // 8*PTR_SIZE + 3+1+8+8+8+4 = 64
 
 	private static final int FLAG_PRAGMA_ONCE_SEMANTICS	= 0x01;
 
@@ -205,6 +206,7 @@ public class PDOMFile implements IIndexFragmentFile {
 		}
 
 		setTimestamp(sourceFile.getTimestamp());
+		setSourceReadTime(sourceFile.getSourceReadTime());
 		setSizeAndEncodingHashcode(sourceFile.getSizeAndEncodingHashcode());
 		setContentsHash(sourceFile.getContentsHash());
 
@@ -307,6 +309,18 @@ public class PDOMFile implements IIndexFragmentFile {
 	public void setTimestamp(long timestamp) throws CoreException {
 		Database db= fLinkage.getDB();
 		db.putLong(record + TIME_STAMP, timestamp);
+	}
+
+	@Override
+	public long getSourceReadTime() throws CoreException {
+		Database db = fLinkage.getDB();
+		return db.getLong(record + SOURCE_READ_TIME);
+	}
+
+	@Override
+	public void setSourceReadTime(long time) throws CoreException {
+		Database db= fLinkage.getDB();
+		db.putLong(record + SOURCE_READ_TIME, time);
 	}
 
 	@Override
@@ -571,6 +585,7 @@ public class PDOMFile implements IIndexFragmentFile {
 			m.delete();
 		}
 		setFirstMacroReference(null);
+		setSourceReadTime(0);
 		setTimestamp(-1);
 	}
 
@@ -642,6 +657,17 @@ public class PDOMFile implements IIndexFragmentFile {
 			include = include.getNextInIncludes();
 		}
 		return result.toArray(new IIndexInclude[result.size()]);
+	}
+
+	@Override
+	public boolean hasUnresolvedInclude() throws CoreException {
+		PDOMInclude include = getFirstInclude();
+		while (include != null) {
+			if (!include.isResolved() && include.isActive())
+				return true;
+			include = include.getNextInIncludes();
+		}
+		return false;
 	}
 
 	@Override

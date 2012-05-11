@@ -27,10 +27,12 @@ import org.eclipse.cdt.core.resources.ExclusionInstance;
 import org.eclipse.cdt.core.resources.ExclusionType;
 import org.eclipse.cdt.core.resources.RefreshExclusion;
 import org.eclipse.cdt.core.resources.RefreshScopeManager;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.internal.core.resources.ResourceExclusion;
+import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -406,8 +408,13 @@ public class RefreshScopeTests extends TestCase {
 		
 		IResource config1_resource = fProject;
 		
-		manager.addResourceToRefresh(fProject, config1, config1_resource);
+		CProjectDescriptionManager descriptionManager = CProjectDescriptionManager.getInstance();
+		ICProjectDescription projectDescription = descriptionManager.getProjectDescription(fProject, false);
+		ICConfigurationDescription conf = projectDescription.getActiveConfiguration();
+		String conf_name = conf.getName();
 		
+		manager.addResourceToRefresh(fProject, conf_name, config1_resource);
+				
 		// create a series of nested exclusions that include/exclude certain folders
 		// will be included/excluded as follows
 		/*
@@ -428,7 +435,8 @@ public class RefreshScopeTests extends TestCase {
 		ExclusionInstance instance2 = new ExclusionInstance();
 		instance2.setResource(fFolder2);
 		exclusion1.addExclusionInstance(instance2);
-		manager.addExclusion(fProject, config1, config1_resource, exclusion1);
+		manager.addExclusion(fProject, conf_name, config1_resource, exclusion1);
+		
 		
 		ResourceExclusion exclusion2 = new ResourceExclusion();
 		ExclusionInstance instance3 = new ExclusionInstance();
@@ -444,14 +452,15 @@ public class RefreshScopeTests extends TestCase {
 		
 		
 		// now check and see if the right folders are included/excluded
-		assertEquals(true, manager.shouldResourceBeRefreshed(config1, config1_resource));
-		assertEquals(false, manager.shouldResourceBeRefreshed(config1, fFolder1));
-		assertEquals(false, manager.shouldResourceBeRefreshed(config1, fFolder2));
-		assertEquals(true, manager.shouldResourceBeRefreshed(config1, fFolder3));
-		assertEquals(false, manager.shouldResourceBeRefreshed(config1, fFolder4));
-		assertEquals(true, manager.shouldResourceBeRefreshed(config1, fFolder5));
-		assertEquals(false, manager.shouldResourceBeRefreshed(config1, fFolder6));
-		
+		assertEquals(true, manager.shouldResourceBeRefreshed(conf_name, config1_resource));
+		assertEquals(false, manager.shouldResourceBeRefreshed(conf_name, fFolder1));
+		assertEquals(false, manager.shouldResourceBeRefreshed(conf_name, fFolder2));
+		assertEquals(true, manager.shouldResourceBeRefreshed(conf_name, fFolder3));
+		assertEquals(false, manager.shouldResourceBeRefreshed(conf_name, fFolder4));
+		assertEquals(true, manager.shouldResourceBeRefreshed(conf_name, fFolder5));
+		assertEquals(false, manager.shouldResourceBeRefreshed(conf_name, fFolder6));
+	
+				
 		// now let's create a bunch of files in these directories using java.io.File (so that we don't get
 		// resource deltas happening), and refresh the project according to the policy.  We should only see the files
 		// in the same folders above when consulting the resource system

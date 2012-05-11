@@ -10,7 +10,6 @@
  *     Anton Leherbauer (Wind River Systems)
  *     Warren Paul (Nokia) - Bug 218266
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.core.model;
 
 import java.net.URI;

@@ -178,8 +178,19 @@ public class EmptyIndexFragment implements IIndexFragment {
 	public IIndexFragmentFileSet createFileSet() {
 		return null;
 	}
+
 	@Override
 	public IIndexFragmentFile[] getAllFiles() {
+		return IIndexFragmentFile.EMPTY_ARRAY;
+	}
+
+	@Override
+	public IIndexFragmentFile[] getDefectiveFiles() {
+		return IIndexFragmentFile.EMPTY_ARRAY;
+	}
+
+	@Override
+	public IIndexFragmentFile[] getFilesWithUnresolvedIncludes() {
 		return IIndexFragmentFile.EMPTY_ARRAY;
 	}
 

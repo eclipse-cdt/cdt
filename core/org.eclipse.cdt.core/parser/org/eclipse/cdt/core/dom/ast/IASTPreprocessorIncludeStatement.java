@@ -96,6 +96,13 @@ public interface IASTPreprocessorIncludeStatement extends IASTPreprocessorStatem
 	public long getIncludedFileContentsHash();
 
 	/**
+	 * Returns time when the included file was read. Corresponds to the start of reading.    
+	 * @return time before reading started in milliseconds since epoch
+	 * @since 5.4
+	 */
+	public long getIncludedFileReadTime(); 
+
+	/**
 	 * Returns <code>true</code> if I/O errors were encountered while reading the included file.
 	 * @since 5.4
 	 */
@@ -113,5 +120,5 @@ public interface IASTPreprocessorIncludeStatement extends IASTPreprocessorStatem
 	 * if the include creates AST or is unresolved or skipped.
 	 * @since 5.4
 	 */
-	public IIndexFile getImportedIndexFile(); 
+	public IIndexFile getImportedIndexFile();
 }

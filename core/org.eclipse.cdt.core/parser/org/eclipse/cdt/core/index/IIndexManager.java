@@ -113,32 +113,31 @@ public interface IIndexManager extends IPDOMManager {
 	public final static int ADD_EXTENSION_FRAGMENTS_SEARCH = 0x200;
 
 	/**
-	 * Constant for indicating there is no time out period for joining the indexer job. 
+	 * Constant for indicating that there is no time out period for joining the indexer job. 
 	 * @see IIndexManager#joinIndexer(int, IProgressMonitor)
 	 */
 	public final static int FOREVER= -1;
 	
 	/**
-	 * Constant for indicating to update all translation units.
+	 * Constant for requesting an update of all translation units.
 	 */
 	public final static int UPDATE_ALL= 0x1;
 
 	/**
-	 * Constant for indicating to update translation units if their timestamp
-	 * has changed.
+	 * Constant for requesting an update of translation units if theit timestamps have changed.
 	 */
 	public final static int UPDATE_CHECK_TIMESTAMPS= 0x2;
 
 	/**
-	 * Constant for indicating to update translation units if their configuration
-	 * has changed. The flag currently has no effect.
+	 * Constant for requesting an update of translation units if their configurations
+	 * have changed. The flag currently has no effect.
 	 */
 	public final static int UPDATE_CHECK_CONFIGURATION= 0x4;
 
 	/**
-	 * Constant for requesting to update the external files for a project, also. This flag works only
-	 * if it is used to update one or more projects. It shall be used together with {@link #UPDATE_ALL} 
-	 * or {@link #UPDATE_CHECK_TIMESTAMPS}.
+	 * Constant for requesting to update the external files for a project, also. This flag works
+	 * only if it is used to update one or more projects. It shall be used together with
+	 * {@link #UPDATE_ALL} or {@link #UPDATE_CHECK_TIMESTAMPS}.
 	 * @since 5.1
 	 */
 	public final static int UPDATE_EXTERNAL_FILES_FOR_PROJECT= 0x8;
@@ -167,6 +166,12 @@ public interface IIndexManager extends IPDOMManager {
 	 * @since 5.4
 	 */
 	public final static int RESET_INDEX_INCLUSION= 0x40;
+
+	/**
+	 * Constant for requesting an update of translation units that had unresolved includes.
+	 * @since 5.4
+	 */
+	public final static int UPDATE_UNRESOLVED_INCLUDES= 0x80;
 
 	/**
 	 * Returns the index for the given project.

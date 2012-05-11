@@ -307,6 +307,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	private final LinkedList<AbstractIndexerTask> fUrgentTasks;
 	boolean fTaskCompleted;
 	private IndexerProgress fInfo= new IndexerProgress();
+
 	public AbstractIndexerTask(Object[] filesToUpdate, Object[] filesToRemove,
 			IndexerInputAdapter resolver, boolean fastIndexer) {
 		super(resolver);
@@ -384,6 +385,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	protected abstract IWritableIndex createIndex();
 	protected abstract IIncludeFileResolutionHeuristics createIncludeHeuristics();
 	protected abstract IncludeFileContentProvider createReaderFactory();
+
 	protected ITodoTaskUpdater createTodoTaskUpdater() {
 		return null;
 	}
@@ -582,6 +584,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		final boolean forceAll= (fUpdateFlags & IIndexManager.UPDATE_ALL) != 0;
 		final boolean checkTimestamps= (fUpdateFlags & IIndexManager.UPDATE_CHECK_TIMESTAMPS) != 0;
 		final boolean checkFileContentsHash = (fUpdateFlags & IIndexManager.UPDATE_CHECK_CONTENTS_HASH) != 0;
+		final boolean forceUnresolvedIncludes = (fUpdateFlags & IIndexManager.UPDATE_UNRESOLVED_INCLUDES) != 0;
 		final boolean both = fIndexHeadersWithoutContext == UnusedHeaderStrategy.useBoth;
 		int count= 0;
 		int forceFirst= fForceNumberFiles;
@@ -614,7 +617,9 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 							if (ifile != null && ifile.getLinkageID() == linkageID && ifile.hasContent()) {
 								foundInLinkage = true;
 								indexFiles[i]= null;  // Take the file.
-								boolean update= force || isModified(checkTimestamps, checkFileContentsHash, ifl, tu, ifile);
+								boolean update= force ||
+										(forceUnresolvedIncludes && ifile.hasUnresolvedInclude()) ||
+										isModified(checkTimestamps, checkFileContentsHash, ifl, tu, ifile);
 								if (update && requestUpdate(linkageID, ifl, ifile, tu, updateKind)) {
 									count++;
 									linkages.set(linkageID);
@@ -637,7 +642,9 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 						iFilesToRemove.add(ifile);
 						count++;
 					} else {
-						boolean update= force || isModified(checkTimestamps, checkFileContentsHash, ifl, tu, ifile);
+						boolean update= force ||
+								(forceUnresolvedIncludes && ifile.hasUnresolvedInclude()) ||
+								isModified(checkTimestamps, checkFileContentsHash, ifl, tu, ifile);
 						final int linkageID = ifile.getLinkageID();
 						if (update && requestUpdate(linkageID, ifl, ifile, tu, UpdateKind.OTHER_HEADER)) {
 							count++;
@@ -646,7 +653,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 					}
 				}
 			}
-			for (int lid = linkages.nextSetBit(0); lid >= 0; lid= linkages.nextSetBit(lid+1)) {
+			for (int lid = linkages.nextSetBit(0); lid >= 0; lid= linkages.nextSetBit(lid + 1)) {
 				addPerLinkage(lid, ifl, files);
 			}
 		}

@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *	  Sergey Prigogin (Google)
+ *     Markus Schorn - initial API and implementation
+ *	   Sergey Prigogin (Google)
 ******************************************************************************/
 package org.eclipse.cdt.internal.ui.search.actions;
 
@@ -98,7 +98,6 @@ import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
 import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
 
 class OpenDeclarationsJob extends Job implements ASTRunnable {
-
 	private enum NameKind { REFERENCE, DECLARATION, USING_DECL, DEFINITION }
 
 	private final SelectionParseAction fAction;

@@ -374,7 +374,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 				status = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, "This discovery method is deprecated, use 'Preprocessor Include Paths' instead.");
 			}
 		} else {
-			status = new Status(IStatus.INFO, CUIPlugin.PLUGIN_ID, "Managed Build language settings provider is not enabled (see 'Preprocessor Include Paths' page).");
+			status = new Status(IStatus.INFO, CUIPlugin.PLUGIN_ID, org.eclipse.cdt.internal.ui.newui.Messages.AbstractLangsListTab_MbsProviderNotEnabled);
 		}
 		fStatusLine.setErrorStatus(status);
 	}

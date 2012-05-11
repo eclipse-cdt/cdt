@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2012 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,9 +24,14 @@ public interface IIndexFragmentFile extends IIndexFile {
 	IIndexFragment getIndexFragment();
 
 	/**
-	 * Sets the timestamp of the file
+	 * Sets the timestamp of the file.
 	 */
 	void setTimestamp(long timestamp) throws CoreException;
+
+	/**
+	 * Sets the file read time.
+	 */
+	void setSourceReadTime(long time) throws CoreException;
 
 	/**
 	 * Sets the hash of the file content. 
@@ -58,6 +63,12 @@ public interface IIndexFragmentFile extends IIndexFile {
 	boolean hasContent() throws CoreException;
 
 	/**
+	 * Checks if the file contains at least one unresolved include.
+	 * @return {@code true} if the file contains an unresolved include
+	 */
+	boolean hasUnresolvedInclude() throws CoreException;
+
+	/**
 	 * Returns the id of the linkage this file belongs to.
 	 */
 	@Override
@@ -74,4 +85,5 @@ public interface IIndexFragmentFile extends IIndexFile {
 	 * The file 'source' must belong to the same fragment as this file.
 	 */
 	void transferContext(IIndexFragmentFile source) throws CoreException;
+
 }

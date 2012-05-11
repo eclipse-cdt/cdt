@@ -326,6 +326,16 @@ public interface IIndexFragment {
 	IIndexFragmentFile[] getAllFiles() throws CoreException;
 
 	/**
+	 * @return an array of files that were indexed with I/O errors.
+	 */
+	IIndexFragmentFile[] getDefectiveFiles() throws CoreException;
+
+	/**
+	 * @return an array of files containg unresolved includes.
+	 */
+	IIndexFragmentFile[] getFilesWithUnresolvedIncludes() throws CoreException;
+
+	/**
 	 * Caches an object with the key, the cache must be cleared at latest when the fragment no
 	 * longer holds a locks.
 	 * @param replace if <code>false</code> an existing entry will not be replaced.

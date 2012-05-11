@@ -112,6 +112,9 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 		@Override
 		protected String[] getOverlayKeys(ILanguageSettingsProvider provider) {
 			String[] overlayKeys = super.getOverlayKeys(provider);
+			if (provider.getName() == null) {
+				return overlayKeys;
+			}
 
 			if (currentLanguageId != null) {
 				IResource rc = getResource();

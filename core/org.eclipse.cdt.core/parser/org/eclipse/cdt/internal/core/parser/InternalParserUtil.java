@@ -155,6 +155,7 @@ public class InternalParserUtil extends ParserFactory {
 
 		InputStream input;
 		try {
+			long fileReadTime = System.currentTimeMillis();
 			IFileStore store = EFS.getStore(file.getLocationURI());
 			IFileInfo fileInfo = store.fetchInfo();
 			input= file.getContents(true);
@@ -173,7 +174,7 @@ public class InternalParserUtil extends ParserFactory {
 			}
 			try {
 				return createFileContent(path, file.getCharset(), input,
-						fileInfo.getLastModified(), fileInfo.getLength());
+						fileInfo.getLastModified(), fileInfo.getLength(), fileReadTime);
 			} finally {
 				try {
 					input.close();
@@ -201,6 +202,7 @@ public class InternalParserUtil extends ParserFactory {
 	 * canonical path. 
 	 */
 	public static InternalFileContent createExternalFileContent(String externalLocation, String encoding) {
+		long fileReadTime = System.currentTimeMillis();
 		File includeFile = null;
 		String path = null;
 		if (!UNCPathConverter.isUNC(externalLocation)) {
@@ -228,7 +230,7 @@ public class InternalParserUtil extends ParserFactory {
 				return null;
 			}
 			try {
-				return createFileContent(path, encoding, in, timestamp, fileSize);
+				return createFileContent(path, encoding, in, timestamp, fileSize, fileReadTime);
 			} finally {
 				try {
 					in.close();
@@ -240,13 +242,13 @@ public class InternalParserUtil extends ParserFactory {
 	}
 
 	private static InternalFileContent createFileContent(String path, String charset, InputStream in,
-			long fileTimestamp, long fileSize) {
+			long fileTimestamp, long fileSize, long fileReadTime) {
 		try {
 			AbstractCharArray chars= FileCharArray.create(path, charset, in);
 			if (chars == null)
 				return null;
 			
-			return new InternalFileContent(path, chars, fileTimestamp, fileSize);
+			return new InternalFileContent(path, chars, fileTimestamp, fileSize, fileReadTime);
 		} catch (IOException e) {
 			CCorePlugin.log(e);
 		}

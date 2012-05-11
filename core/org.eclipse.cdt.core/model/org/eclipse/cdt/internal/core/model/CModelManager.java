@@ -133,7 +133,7 @@ public class CModelManager implements IResourceChangeListener, IContentTypeChang
 	/**
 	 * Set of elements which are out of sync with their buffers.
 	 */
-	protected Map<ICElement,ICElement> elementsOutOfSynchWithBuffers = new HashMap<ICElement, ICElement>(11);
+	protected Map<ICElement, ICElement> elementsOutOfSynchWithBuffers = new HashMap<ICElement, ICElement>(11);
 
 	/*
 	 * Temporary cache of newly opened elements
@@ -378,11 +378,11 @@ public class CModelManager implements IResourceChangeListener, IContentTypeChang
 
 				if (bin.getType() == IBinaryFile.ARCHIVE) {
 					ArchiveContainer vlib = (ArchiveContainer)cproject.getArchiveContainer();
-					celement = new Archive(cfolder, file, (IBinaryArchive)bin);
+					celement = new Archive(cfolder, file, (IBinaryArchive) bin);
 					vlib.addChild(celement);
 				} else {
 					BinaryContainer vbin = (BinaryContainer)cproject.getBinaryContainer();
-					celement = new Binary(cfolder, file, (IBinaryObject)bin);
+					celement = new Binary(cfolder, file, (IBinaryObject) bin);
 					vbin.addChild(celement);
 				}
 			}
@@ -421,7 +421,7 @@ public class CModelManager implements IResourceChangeListener, IContentTypeChang
 			} catch (CModelException e) {
 			}
 
-			// if the file exists and it has a known C/C++ file extension then just create
+			// If the file exists and it has a known C/C++ file extension then just create
 			// an external translation unit for it.
 			if (contentTypeId != null && path.toFile().exists()) {
 				// TODO:  use URI
@@ -470,41 +470,42 @@ public class CModelManager implements IResourceChangeListener, IContentTypeChang
 		IFileStore fileStore = null;
 		try {
 			fileStore = EFS.getStore(locationURI);
-		} catch (CoreException e1) {
-			CCorePlugin.log(e1);
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
 			return null;
 		}
 
 		final String contentTypeId = CoreModel.getRegistedContentTypeId(project, fileStore.getName());
-			if (!Util.isNonZeroLengthFile(locationURI)) {
-				return null;
-			}
+		if (!Util.isNonZeroLengthFile(locationURI)) {
+			return null;
+		}
 
-			try {
-				IIncludeReference[] includeReferences = cproject.getIncludeReferences();
-				for (IIncludeReference includeReference : includeReferences) {
-					// crecoskie
-					// TODO FIXME:  include entries don't handle URIs yet
-					IPath path = URIUtil.toPath(locationURI);
-					if (path != null && includeReference.isOnIncludeEntry(path)) {
-						String headerContentTypeId= contentTypeId;
-						if (headerContentTypeId == null) {
-							headerContentTypeId= CoreModel.hasCCNature(project) ? CCorePlugin.CONTENT_TYPE_CXXHEADER : CCorePlugin.CONTENT_TYPE_CHEADER;
-						}
-
-						return new ExternalTranslationUnit(includeReference, locationURI, headerContentTypeId);
+		try {
+			IIncludeReference[] includeReferences = cproject.getIncludeReferences();
+			for (IIncludeReference includeReference : includeReferences) {
+				// crecoskie
+				// TODO FIXME:  include entries don't handle URIs yet
+				IPath path = URIUtil.toPath(locationURI);
+				if (path != null && includeReference.isOnIncludeEntry(path)) {
+					String headerContentTypeId= contentTypeId;
+					if (headerContentTypeId == null) {
+						headerContentTypeId= CoreModel.hasCCNature(project) ?
+								CCorePlugin.CONTENT_TYPE_CXXHEADER : CCorePlugin.CONTENT_TYPE_CHEADER;
 					}
+
+					return new ExternalTranslationUnit(includeReference, locationURI, headerContentTypeId);
 				}
-			} catch (CModelException e) {
 			}
+		} catch (CModelException e) {
+		}
 
-			// if the file exists and it has a known C/C++ file extension then just create
-			// an external translation unit for it.
-			IFileInfo info = fileStore.fetchInfo();
+		// if the file exists and it has a known C/C++ file extension then just create
+		// an external translation unit for it.
+		IFileInfo info = fileStore.fetchInfo();
 
-			if (contentTypeId != null && info != null && info.exists()) {
-				return new ExternalTranslationUnit(cproject, locationURI, contentTypeId);
-			}
+		if (contentTypeId != null && info != null && info.exists()) {
+			return new ExternalTranslationUnit(cproject, locationURI, contentTypeId);
+		}
 
 		return null;
 	}
@@ -663,11 +664,11 @@ public class CModelManager implements IResourceChangeListener, IContentTypeChang
 		}
 
 		URI fileUri = file.getLocationURI();
-		//Avoid name special devices, empty files and the like
+		// Avoid name special devices, empty files and the like
 		if (!Util.isNonZeroLengthFile(fileUri)) {
 			// PR:xxx the EFS does not seem to work for newly created file
 			// so before bailing out give another try?
-			//Avoid name special devices, empty files and the like
+			// Avoid name special devices, empty files and the like
 			if("file".equals(fileUri.getScheme())) { //$NON-NLS-1$
 				File f = new File(fileUri);
 				if (f.length() == 0) {
@@ -770,14 +771,14 @@ public class CModelManager implements IResourceChangeListener, IContentTypeChang
 			runner = binaryRunners.get(project);
 		}
 		if (runner == null) {
-			// creation of BinaryRunner must occur outside the synchronized block
+			// Creation of BinaryRunner must occur outside the synchronized block
 			runner = new BinaryRunner(project);
 			synchronized (binaryRunners) {
 				if (binaryRunners.get(project) == null) {
 					binaryRunners.put(project, runner);
 					runner.start();
 				} else {
-					// another thread was faster
+					// Another thread was faster
 					runner = binaryRunners.get(project);
 				}
 			}
@@ -920,12 +921,12 @@ public class CModelManager implements IResourceChangeListener, IContentTypeChang
 					}
 				}
 				if ((flags & ICDescriptionDelta.EXT_REF) != 0) {
-					// update binary parsers
+					// Update binary parsers
 					IProject project = newDes.getProject();
 					try {
 						ICConfigExtensionReference[] newExts = CCorePlugin.getDefault().getDefaultBinaryParserExtensions(project);
 						BinaryParserConfig[] currentConfigs = binaryParsersMap.get(project);
-						// anything added/removed
+						// Anything added/removed
 						if (currentConfigs != null) {
 							if (newExts.length != currentConfigs.length) {
 								resetBinaryParser(project);
@@ -959,9 +960,6 @@ public class CModelManager implements IResourceChangeListener, IContentTypeChang
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.content.IContentTypeManager.IContentTypeListener#contentTypeChanged()
-	 */
 	@Override
 	public void contentTypeChanged(ContentTypeChangeEvent event) {
 		ContentTypeProcessor.processContentTypeChanges(new ContentTypeChangeEvent[]{ event });
@@ -1048,7 +1046,7 @@ public class CModelManager implements IResourceChangeListener, IContentTypeChang
 			System.out.println(deltaToNotify == null ? "<NONE>" : deltaToNotify.toString()); //$NON-NLS-1$
 		}
 		if (deltaToNotify != null) {
-				// flush now so as to keep listener reactions to post their own deltas for subsequent iteration
+			// flush now so as to keep listener reactions to post their own deltas for subsequent iteration
 			this.flush();
 			notifyListeners(deltaToNotify, ElementChangedEvent.POST_CHANGE, listeners, listenerMask, listenerCount);
 		}
@@ -1061,7 +1059,7 @@ public class CModelManager implements IResourceChangeListener, IContentTypeChang
 			System.out.println(deltaToNotify == null ? "<NONE>" : deltaToNotify.toString()); //$NON-NLS-1$
 		}
 		if (deltaToNotify != null) {
-			// flush now so as to keep listener reactions to post their own deltas for subsequent iteration
+			// Flush now so as to keep listener reactions to post their own deltas for subsequent iteration
 			this.reconcileDeltas = new HashMap<IWorkingCopy, ICElementDelta>();
 			notifyListeners(deltaToNotify, ElementChangedEvent.POST_RECONCILE, listeners, listenerMask, listenerCount);
 		}
@@ -1069,7 +1067,7 @@ public class CModelManager implements IResourceChangeListener, IContentTypeChang
 
 	private void fireShiftEvent(ICElementDelta deltaToNotify, IElementChangedListener[] listeners,
 			int[] listenerMask, int listenerCount) {
-		// post change deltas
+		// Post change deltas
 		if (Util.VERBOSE_DELTA) {
 			System.out.println("FIRING POST_SHIFT event [" + Thread.currentThread() + "]:"); //$NON-NLS-1$//$NON-NLS-2$
 			System.out.println(deltaToNotify == null ? "<NONE>" : deltaToNotify.toString()); //$NON-NLS-1$
@@ -1092,7 +1090,7 @@ public class CModelManager implements IResourceChangeListener, IContentTypeChang
 					System.out.print("Listener #" + (i + 1) + "=" + listener.toString());//$NON-NLS-1$//$NON-NLS-2$
 					start = System.currentTimeMillis();
 				}
-				// wrap callbacks with Safe runnable for subsequent listeners to be called when some are causing grief
+				// Wrap callbacks with Safe runnable for subsequent listeners to be called when some are causing grief
 				SafeRunner.run(new ISafeRunnable() {
 					@Override
 					public void handleException(Throwable exception) {

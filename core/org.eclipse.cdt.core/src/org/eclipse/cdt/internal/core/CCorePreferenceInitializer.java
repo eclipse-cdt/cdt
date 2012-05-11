@@ -14,6 +14,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core;
 
+import java.util.HashSet;
+import java.util.Map;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CCorePreferenceConstants;
 import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
@@ -23,9 +26,6 @@ import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-
-import java.util.HashSet;
-import java.util.Map;
 
 public class CCorePreferenceInitializer extends AbstractPreferenceInitializer {
 
@@ -51,7 +51,7 @@ public class CCorePreferenceInitializer extends AbstractPreferenceInitializer {
 
 		// Store default values to default preferences
 	 	IEclipsePreferences defaultPreferences = DefaultScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID);
-		for (Map.Entry<String,String> entry : defaultOptionsMap.entrySet()) {
+		for (Map.Entry<String, String> entry : defaultOptionsMap.entrySet()) {
 			String optionName = entry.getKey();
 			defaultPreferences.put(optionName, entry.getValue());
 			optionNames.add(optionName);

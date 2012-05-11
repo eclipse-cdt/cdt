@@ -11,7 +11,6 @@
 package org.eclipse.cdt.debug.mi.core; 
 
 import java.io.File;
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -19,11 +18,13 @@ import java.util.List;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
+import org.eclipse.cdt.debug.mi.core.cdi.CdiResources;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.cdi.SharedLibraryManager;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
 import org.eclipse.cdt.debug.mi.core.command.CLITargetAttach;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
+import org.eclipse.cdt.debug.mi.core.command.MIGDBSet;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBSetNewConsole;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.core.resources.IProject;
@@ -36,6 +37,8 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
+
+import com.ibm.icu.text.MessageFormat;
  
 /**
  * Implementing the cdebugger extension point for basic launch configurations.
@@ -107,6 +110,7 @@ public class GDBCDIDebugger2 extends AbstractGDBCDIDebugger {
 	@Override
 	protected void doStartSession( ILaunch launch, Session session, IProgressMonitor monitor ) throws CoreException {
 		ILaunchConfiguration config = launch.getLaunchConfiguration();
+		setAsyncMode( config, session );
 		initializeLibraries( config, session );
 		if ( monitor.isCanceled() ) {
 			throw new OperationCanceledException();
@@ -260,5 +264,26 @@ public class GDBCDIDebugger2 extends AbstractGDBCDIDebugger {
 	protected String getCommandFile( ILaunchConfiguration config ) throws CoreException {
 		String gdbinit = config.getAttribute( IMILaunchConfigurationConstants.ATTR_GDB_INIT, IMILaunchConfigurationConstants.DEBUGGER_GDB_INIT_DEFAULT );
 		return (gdbinit != null && gdbinit.length() > 0) ? "--command=" + gdbinit : "--nx"; //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	private void setAsyncMode( ILaunchConfiguration config, Session session ) throws CoreException {
+		ICDITarget[] dtargets = session.getTargets();
+		for( int i = 0; i < dtargets.length; ++i ) {
+			MISession miSession = ((Target)dtargets[i]).getMISession();
+			try {
+				MIGDBSet setAsyncMode = miSession.getCommandFactory().createMIGDBSet( 
+						new String[] { 
+							"target-async",  //$NON-NLS-1$
+							"0"  //$NON-NLS-1$
+						} );
+				miSession.postCommand( setAsyncMode );
+				MIInfo info = setAsyncMode.getMIInfo();
+				if (info == null) {
+					throw newCoreException(new CDIException(CdiResources.getString( "cdi.Common.No_answer"))); //$NON-NLS-1$
+				}
+			} catch (MIException e) {
+				// Earlier versions of GDB don't support "target-async".
+			}
+		}
 	}
 }

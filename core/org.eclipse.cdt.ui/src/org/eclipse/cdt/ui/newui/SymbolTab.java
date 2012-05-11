@@ -95,6 +95,7 @@ public class SymbolTab extends AbstractLangsListTab {
 				table.setSelection(0);
 		}
 		updateStringListModeControl();
+		updateStatusLine();
 		updateButtons();
 	}
 

@@ -63,6 +63,14 @@ public interface IIndexFile extends IFileNomination {
 	long getTimestamp() throws CoreException;
 
 	/**
+	 * Time when the file was read during indexing. Corresponds to the start of reading.    
+	 * @return time of indexing in milliseconds since epoch
+	 * @throws CoreException
+	 * @since 5.4
+	 */
+	long getSourceReadTime() throws CoreException;
+
+	/**
 	 * Hash of the file contents when the file was indexed.
 	 * @return 64-bit hash of the file content.
 	 * @throws CoreException

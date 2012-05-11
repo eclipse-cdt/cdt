@@ -41,8 +41,7 @@ public class CLITraceInfo extends MIInfo {
 			for (int i = 0; i < oobs.length; i++) {
 				if (oobs[i] instanceof MIConsoleStreamOutput) {
 					MIStreamRecord cons = (MIStreamRecord) oobs[i];
-					String str = cons.getString();
-					str.trim();
+					String str = cons.getString().trim();
 					if(str.length() > 0 ){
 						Pattern pattern = Pattern.compile("^Tracepoint\\s(\\d+)", Pattern.MULTILINE); //$NON-NLS-1$
 						Matcher matcher = pattern.matcher(str);

@@ -236,8 +236,12 @@ public class MulticoreVisualizerUIPlugin extends AbstractUIPlugin
 	/** Returns resource manager for this plugin */
 	public UIResourceManager getPluginResources() {
 		if (s_resources == null) {
-			s_resources = new UIResourceManager(this);
-			s_resources.setParentManager(CDTVisualizerUIPlugin.getResources());
+			// FindBugs reported that it is unsafe to set s_resources
+			// before we finish to initialize the object, because of
+			// multi-threading.  This is why we use a temporary variable.
+			UIResourceManager resourceManager = new UIResourceManager(this);
+			resourceManager.setParentManager(CDTVisualizerUIPlugin.getResources());
+			s_resources = resourceManager;
 		}
 		
 		return s_resources;
@@ -245,7 +249,7 @@ public class MulticoreVisualizerUIPlugin extends AbstractUIPlugin
 	
 	/** Releases resource manager for this plugin. */
 	public void cleanupPluginResources() {
-		s_resources.dispose();
+		if (s_resources != null) s_resources.dispose();
 	}
 	
 	/** Convenience method for getting plugin resource manager */

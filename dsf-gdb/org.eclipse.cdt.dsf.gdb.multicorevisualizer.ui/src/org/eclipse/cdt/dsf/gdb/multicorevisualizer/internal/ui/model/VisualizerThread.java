@@ -69,6 +69,11 @@ public class VisualizerThread
 		return result;
 	}
 
+	@Override
+	public int hashCode() {
+		return m_pid ^ m_tid ^ m_gdbtid;
+	}
+	
 	/** Returns string representation. */
 	@Override
 	public String toString() {

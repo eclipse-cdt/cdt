@@ -65,7 +65,6 @@ import org.osgi.framework.BundleContext;
  * 
  * @since 4.1
  */
-@SuppressWarnings("restriction")
 public class GDBHardwareAndOS extends AbstractDsfService implements IGDBHardwareAndOS, ICachingService {
 
 	@Immutable

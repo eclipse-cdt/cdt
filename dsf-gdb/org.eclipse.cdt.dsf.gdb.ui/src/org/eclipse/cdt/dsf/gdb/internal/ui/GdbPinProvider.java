@@ -215,9 +215,9 @@ public class GdbPinProvider implements IPinProvider {
 		IDMContext dmc = null;
 		if (debugContext instanceof IAdaptable) {
 			dmc = (IDMContext) ((IAdaptable) debugContext).getAdapter(IDMContext.class);
-			sessionId = dmc.getSessionId() + "."; //$NON-NLS-1$
 			
 			if (dmc != null) {
+				sessionId = dmc.getSessionId() + "."; //$NON-NLS-1$
 				IMIExecutionDMContext execDmc = getExecutionDmc(dmc);
 				IProcessDMContext processDmc = getProcessDmc(dmc);
 				

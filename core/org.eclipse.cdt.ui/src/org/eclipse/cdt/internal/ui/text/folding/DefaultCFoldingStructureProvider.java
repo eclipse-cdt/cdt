@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,7 +55,9 @@ import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTBreakStatement;
 import org.eclipse.cdt.core.dom.ast.IASTCaseStatement;
+import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
+import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDefaultStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDoStatement;
@@ -73,6 +75,7 @@ import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIfdefStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIfndefStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSwitchStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -121,7 +124,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 		}
 		private final Stack<StatementRegion> fStatements;
 		int fLevel= 0;
-		String fFunction= ""; //$NON-NLS-1$
+		Stack<String> fScope= new Stack<String>();
 
 		private StatementVisitor(Stack<StatementRegion> statements) {
 			fStatements = statements;
@@ -239,8 +242,13 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 			if (declaration instanceof IASTFunctionDefinition) {
 				final IASTFunctionDeclarator declarator = ((IASTFunctionDefinition)declaration).getDeclarator();
 				if (declarator != null) {
-					fFunction= new String(ASTQueries.findInnermostDeclarator(declarator).getName().toCharArray());
+					fScope.push(new String(ASTQueries.findInnermostDeclarator(declarator).getName().toCharArray()));
 					fLevel= 0;
+				}
+			} else if (declaration instanceof IASTSimpleDeclaration) {
+				IASTDeclSpecifier declSpecifier = ((IASTSimpleDeclaration) declaration).getDeclSpecifier();
+				if (declSpecifier instanceof IASTCompositeTypeSpecifier) {
+					fScope.push(new String(((IASTCompositeTypeSpecifier) declSpecifier).getName().toCharArray()));
 				}
 			}
 			return PROCESS_CONTINUE;
@@ -249,13 +257,20 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 		@Override
 		public int leave(IASTDeclaration declaration) {
 			if (declaration instanceof IASTFunctionDefinition) {
-				fFunction= ""; //$NON-NLS-1$
+				if (!fScope.isEmpty())
+					fScope.pop();
+			} else if (declaration instanceof IASTSimpleDeclaration) {
+				IASTDeclSpecifier declSpecifier = ((IASTSimpleDeclaration) declaration).getDeclSpecifier();
+				if (declSpecifier instanceof IASTCompositeTypeSpecifier) {
+					if (!fScope.isEmpty())
+						fScope.pop();
+				}
 			}
 			return PROCESS_CONTINUE;
 		}
 
 		private StatementRegion createRegion() {
-			return new StatementRegion(fFunction, fLevel);
+			return new StatementRegion(fScope.toString(), fLevel);
 		}
 	}
 

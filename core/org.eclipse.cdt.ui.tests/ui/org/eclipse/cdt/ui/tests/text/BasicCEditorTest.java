@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2012 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -209,7 +209,7 @@ public class BasicCEditorTest extends BaseUITestCase {
 		content= fDocument.get();
 		assertEquals("Save failed", newContent, content);
 		// check reconciler
-		ITranslationUnit tUnit= (ITranslationUnit)fEditor.getInputCElement();
+		ITranslationUnit tUnit= fEditor.getInputCElement();
 		ICElement[] children= tUnit.getChildren();
 		assertEquals(2, children.length);
 		setCaret(content.length());
@@ -287,7 +287,7 @@ public class BasicCEditorTest extends BaseUITestCase {
 		content= fDocument.get().trim();
 		assertEquals("Save failed", newContent, content);
 		// check reconciler
-		ITranslationUnit tUnit= (ITranslationUnit)fEditor.getInputCElement();
+		ITranslationUnit tUnit= fEditor.getInputCElement();
 		ICElement[] children= tUnit.getChildren();
 		assertEquals(4, children.length);
 		setCaret(content.length());
@@ -349,7 +349,7 @@ public class BasicCEditorTest extends BaseUITestCase {
 		content= fDocument.get();
 		assertEquals("Save failed", newContent, content);
 		// check reconciler
-		ITranslationUnit tUnit= (ITranslationUnit)fEditor.getInputCElement();
+		ITranslationUnit tUnit= fEditor.getInputCElement();
 		ICElement[] children= tUnit.getChildren();
 		assertEquals(2, children.length);
 		setCaret(content.length());
@@ -390,7 +390,7 @@ public class BasicCEditorTest extends BaseUITestCase {
 		content= fDocument.get();
 		assertEquals("Save failed", newContent, content);
 		// check reconciler
-		ITranslationUnit tUnit= (ITranslationUnit)fEditor.getInputCElement();
+		ITranslationUnit tUnit= fEditor.getInputCElement();
 		ICElement[] children= tUnit.getChildren();
 		assertEquals(2, children.length);
 		setCaret(content.length());
@@ -459,7 +459,7 @@ public class BasicCEditorTest extends BaseUITestCase {
 		int ngc = 10;
 		while (ref.get() != null && ngc-- > 0) {
 			System.gc();
-			Thread.sleep(200);
+			EditorTestHelper.runEventQueue(200);
 		}
 		assertNull("CEditor instance seems to be leaking after close", ref.get());		
 	}

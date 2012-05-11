@@ -9,6 +9,7 @@
  *     Ericsson			  - Initial API and implementation
  *     Wind River Systems - Factored out AbstractContainerVMNode
  *     Patrick Chuong (Texas Instruments) - Add support for icon overlay in the debug view (Bug 334566)     
+ *     Marc Khouzam (Ericsson) - Respect the "Show Full Path" option for the process name (Bug 378418)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.internal.ui.viewmodel.launch;
@@ -32,6 +33,7 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlShutdownDMEvent;
+import org.eclipse.cdt.dsf.debug.ui.IDsfDebugUIConstants;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.AbstractContainerVMNode;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.ExecutionContextLabelText;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.ILaunchVMConstants;
@@ -55,6 +57,7 @@ import org.eclipse.cdt.dsf.ui.viewmodel.properties.PropertiesBasedLabelProvider;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.VMDelegatingPropertiesUpdate;
 import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider;
@@ -320,7 +323,14 @@ public class ContainerVMNode extends AbstractContainerVMNode
     }
     
     protected void fillThreadDataProperties(IPropertiesUpdate update, IThreadDMData data) {
-        update.setProperty(PROP_NAME, data.getName());
+        String fileName = data.getName();
+        if (fileName != null) {
+	        Object showFullPathPreference = getVMProvider().getPresentationContext().getProperty(IDsfDebugUIConstants.DEBUG_VIEW_SHOW_FULL_PATH_PROPERTY);
+	        if (showFullPathPreference instanceof Boolean && (Boolean)showFullPathPreference == false) {
+	        	fileName = new Path(fileName).lastSegment();
+	        }
+        }
+        update.setProperty(PROP_NAME, fileName);
         update.setProperty(ILaunchVMConstants.PROP_ID, data.getId());
         
 		String coresStr = null;

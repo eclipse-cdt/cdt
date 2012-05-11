@@ -916,7 +916,7 @@ public class LanguageSettingsProvidersSerializer {
 				}
 			}
 			if (folder.isAccessible()) {
-				rule = fileStorePrj;
+				rule = folder;
 			}
 		}
 		if (rule == null) {

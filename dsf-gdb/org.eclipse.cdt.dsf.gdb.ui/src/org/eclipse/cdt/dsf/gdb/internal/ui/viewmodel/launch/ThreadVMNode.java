@@ -36,7 +36,6 @@ import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbPinProvider;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.cdt.dsf.gdb.service.IGDBProcesses.IGdbThreadDMData;
-import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.dsf.ui.concurrent.ViewerCountingRequestMonitor;
@@ -53,6 +52,7 @@ import org.eclipse.cdt.dsf.ui.viewmodel.properties.PropertiesBasedLabelProvider;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.VMDelegatingPropertiesUpdate;
 import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider;
@@ -67,7 +67,6 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.IMemento;
 
 
-@SuppressWarnings("restriction")
 public class ThreadVMNode extends AbstractThreadVMNode 
     implements IElementLabelProvider, IElementMementoProvider
 {
@@ -317,7 +316,7 @@ public class ThreadVMNode extends AbstractThreadVMNode
             	final IThreadDMContext threadDmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IThreadDMContext.class);
 
             	if (processService == null || threadDmc == null) {
-                    update.setStatus(DsfUIPlugin.newErrorStatus(IDsfStatusConstants.INVALID_HANDLE, "Service or handle invalid", null)); //$NON-NLS-1$
+            		update.setStatus(new Status(IDsfStatusConstants.INVALID_HANDLE, GdbUIPlugin.PLUGIN_ID, "Service or handle invalid", null)); //$NON-NLS-1$
                 } else {
                     processService.getExecutionData(
                     	threadDmc,

@@ -77,7 +77,6 @@ import org.eclipse.ui.PlatformUI;
 /**
  * A preference page for settings that are currently only supported in GDB.
  */
-@SuppressWarnings("restriction")
 public class GdbDebugPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 	
 	/**

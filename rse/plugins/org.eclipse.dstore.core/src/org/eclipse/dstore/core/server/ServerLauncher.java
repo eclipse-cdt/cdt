@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2011 IBM Corporation and others.
+ * Copyright (c) 2002, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@
  * David McKnight   (IBM) - [226561] [apidoc] Add API markup to RSE Javadocs where extend / implement is allowed
  * David McKnight   (IBM) - [245714] [dstore] Multiple user ID/password prompts and connect fails
  * David McKnight   (IBM) - [283613] [dstore] Create a Constants File for all System Properties we support
+ * David McKnight   (IBM) - [378878] [dstore] Need ability to log handshake messages from the authentication/server process to ServerLauncher
  *******************************************************************************/
 
 package org.eclipse.dstore.core.server;
@@ -27,12 +28,14 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.RandomAccessFile;
 import java.net.BindException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Date;
 
 import javax.net.ssl.HandshakeCompletedEvent;
 import javax.net.ssl.HandshakeCompletedListener;
@@ -98,7 +101,9 @@ public class ServerLauncher extends Thread {
 				_reader = new BufferedReader(new InputStreamReader(_socket
 						.getInputStream(), DE.ENCODING_UTF_8));
 			} catch (java.io.IOException e) {
-				System.out.println("ServerLauncher:" + e); //$NON-NLS-1$
+				String msg = "ServerLauncher:" + e; //$NON-NLS-1$
+				System.out.println(msg);
+				logError(msg, e);
 			}
 		}
 
@@ -143,11 +148,15 @@ public class ServerLauncher extends Thread {
 
 						_serverProcess.waitFor();
 					} catch (Exception e) {
-						System.out.println("ServerLauncher:" + e); //$NON-NLS-1$
+						String msg = "ServerLauncher:" + e; //$NON-NLS-1$
+						System.out.println(msg);
+						logError(msg, e);
 					}
 				}
 
-				System.out.println("finished on port " + _port); //$NON-NLS-1$
+				String msg = "finished on port " + _port; //$NON-NLS-1$
+				System.out.println(msg);
+				
 				_outReader = null;
 				_errReader = null;
 				_serverProcess = null;
@@ -334,6 +343,7 @@ public class ServerLauncher extends Thread {
 							launchStatus = "success"; //$NON-NLS-1$
 						}
 	
+						logMessage("launch status = "+launchStatus); //$NON-NLS-1$
 						if ((launchStatus == null) || !launchStatus.equals("success")) //$NON-NLS-1$
 						{
 							_writer.println(IDataStoreConstants.AUTHENTICATION_FAILED);
@@ -343,6 +353,7 @@ public class ServerLauncher extends Thread {
 							// look for the server startup string, it needs to occur
 							// somewhere in the line.
 							String status = _errReader.readLine();
+							logMessage("status = "+status); //$NON-NLS-1$
 							while (status!=null && (status.indexOf(ServerReturnCodes.RC_DSTORE_SERVER_MAGIC) < 0))
 							{
 								status = _errReader.readLine();
@@ -360,7 +371,9 @@ public class ServerLauncher extends Thread {
 								_writer.println(_port);
 								_writer.println(ticket);
 	
-								System.out.println("launched new server on " + _port); //$NON-NLS-1$
+								String msg = "launched new server on " + _port; //$NON-NLS-1$
+								System.out.println(msg);
+								logMessage(msg);
 								connected = true;
 							}
 							else
@@ -400,16 +413,20 @@ public class ServerLauncher extends Thread {
 			}
 			catch (IOException e)
 			{
-				System.out.println("ServerLauncher:" + e); //$NON-NLS-1$
+				String msg = "ServerLauncher:" + e; //$NON-NLS-1$
+				System.out.println(msg);
+				logError(msg, e);
 			}
 
 			return connected;
 		}
 
 		public void handshakeCompleted(HandshakeCompletedEvent event) {
-			System.out.println("handshake completed"); //$NON-NLS-1$
+			String msg = "handshake completed"; //$NON-NLS-1$
+			System.out.println(msg);
 			System.out.println(event);
-
+			
+			logMessage(msg);
 		}
 	}
 
@@ -423,6 +440,9 @@ public class ServerLauncher extends Thread {
 
 	private ISSLProperties _sslProperties;
 
+	private boolean _logDaemon = false;
+	private RandomAccessFile _logFile = null;
+	
 	public static int DEFAULT_DAEMON_PORT = 4075;
 
 	/**
@@ -503,6 +523,31 @@ public class ServerLauncher extends Thread {
 	 * @param portStr the daemon port
 	 */
 	public void init(String portStr) {
+		
+		String logdaemonLocation = System.getProperty("logdaemonpath"); //$NON-NLS-1$
+		if (logdaemonLocation != null && logdaemonLocation.length() > 0){
+			// create temp file for logging
+			File traceFileHandle = new File(logdaemonLocation);
+			if (!traceFileHandle.exists()){
+				try { // try to create it
+					traceFileHandle.createNewFile();
+				} catch (IOException e) {
+				}
+			}
+			if (traceFileHandle.canWrite()){
+				try {
+					_logFile = new RandomAccessFile(traceFileHandle, "rw"); //$NON-NLS-1$					
+					_logFile.seek(traceFileHandle.length());
+
+					logMessage("-----------------------------------------"); //$NON-NLS-1$
+					logMessage("Start Tracing at " + System.currentTimeMillis()); //$NON-NLS-1$
+					_logDaemon = true;
+				}
+				catch (Exception e){	
+				}
+			}
+		}
+		
 		// create server socket from port
 		_sslProperties = new ServerSSLProperties();
 
@@ -542,23 +587,27 @@ public class ServerLauncher extends Thread {
 					if (_serverSocket != null
 							&& _serverSocket.getLocalPort() > 0) {
 						socketBound = true;
-						System.out.println("Daemon running on: " //$NON-NLS-1$
-								+ InetAddress.getLocalHost().getHostName()
-								+ ", port: " + i); //$NON-NLS-1$
+						String msg = "Daemon running on: " + InetAddress.getLocalHost().getHostName() + ", port: " + i; //$NON-NLS-1$ //$NON-NLS-2$
+						System.out.println(msg);
+						logMessage(msg);
 					}
 				} catch (UnknownHostException e) {
-					System.err
-							.println("Networking problem, can't resolve local host"); //$NON-NLS-1$
+					String msg = "Networking problem, can't resolve local host"; //$NON-NLS-1$
+					System.err.println(msg);
 					// don't display exceptions 193426
-					//e.printStackTrace();
+					logError(msg, e);
 					System.exit(-1);
 				} catch (BindException e) {
-					System.err.println("socket taken on " + i); //$NON-NLS-1$
+					String msg = "socket taken on " + i; //$NON-NLS-1$
+					System.err.println(msg);
+					logError(msg, e);
 					// keep going
 				} catch (IOException e) {
-					System.err.println("Failure to create ServerSocket"); //$NON-NLS-1$
+					String msg = "Failure to create ServerSocket"; //$NON-NLS-1$
+					System.err.println(msg);
 					// don't display exceptions 193426
 					//e.printStackTrace();
+					logError(msg, e);
 					System.exit(-1);
 				}
 
@@ -581,28 +630,70 @@ public class ServerLauncher extends Thread {
 						// don't display exceptions 193426
 						//e.printStackTrace();
 						System.err.println(e.getMessage());
+						logError(e.getMessage(), e);
 						System.exit(-1);
 					}
 				} else {
 					_serverSocket = new ServerSocket(port);
 				}
-				System.out.println("Daemon running on: " //$NON-NLS-1$
-						+ InetAddress.getLocalHost().getHostName() + ", port: " //$NON-NLS-1$
-						+ port);
+				
+				String msg = "Daemon running on: " //$NON-NLS-1$
+					+ InetAddress.getLocalHost().getHostName() + ", port: " //$NON-NLS-1$
+					+ port;
+				
+				System.out.println(msg);
+				logMessage(msg);
 			} catch (UnknownHostException e) {
-				System.err
-						.println("Networking problem, can't resolve local host"); //$NON-NLS-1$
+				String msg = "Networking problem, can't resolve local host"; //$NON-NLS-1$
+				System.err.println(msg);
 				// don't display exceptions 193426
 				//e.printStackTrace();
+				logError(msg, e);
 				System.exit(-1);
 			} catch (IOException e) {
-				System.err.println("Failure to create ServerSocket"); //$NON-NLS-1$
+				String msg = "Failure to create ServerSocket"; //$NON-NLS-1$
+				System.err.println(msg);
 				// don't display exceptions 193426
 				//e.printStackTrace();
+				logError(msg, e);
 				System.exit(-1);
 			}
 		}
 	}
+	
+	private void logMessage(String msg){
+		if (_logDaemon && _logFile != null){
+			try {
+				_logFile.writeBytes((new Date()).toString() + ": "); //$NON-NLS-1$
+				_logFile.writeBytes(msg);
+				_logFile.writeBytes(System.getProperty("line.separator")); //$NON-NLS-1$
+			}
+			catch (IOException e)
+			{
+			}
+		}
+	}
+	
+	private void logError(String msg, Throwable e){
+		if (_logDaemon && _logFile != null){
+			try {
+				_logFile.writeBytes((new Date()).toString() + ": "); //$NON-NLS-1$
+				_logFile.writeBytes(msg);
+				_logFile.writeBytes(System.getProperty("line.separator")); //$NON-NLS-1$
+
+				StackTraceElement[] stack = e.getStackTrace();
+				for (int i = 0;i<stack.length;i++){
+					_logFile.writeBytes(stack[i].toString());
+					_logFile.writeBytes(System.getProperty("line.separator")); //$NON-NLS-1$
+				}
+				_logFile.writeBytes(System.getProperty("line.separator")); //$NON-NLS-1$
+			}
+			catch (IOException ex)
+			{
+			}
+		}
+	}
+
 
 	/**
 	 * Return the connection listener for the specified port if there is one
@@ -639,14 +730,17 @@ public class ServerLauncher extends Thread {
 
 								public void handshakeCompleted(
 										HandshakeCompletedEvent event) {
-									System.out.println("handshake completed"); //$NON-NLS-1$
+									String msg = "handshake completed"; //$NON-NLS-1$
+									System.out.println(msg);
+									logMessage(msg);
 								}
 
 							});
 					SSLSession session = sslSocket.getSession();
 					if (session == null) {
-						System.out.println("handshake failed"); //$NON-NLS-1$
-
+						String msg = "handshake failed"; //$NON-NLS-1$
+						System.out.println(msg);
+						logMessage(msg);
 						sslSocket.close();
 						connectionOkay = false;
 					}
@@ -658,7 +752,9 @@ public class ServerLauncher extends Thread {
 					_connections.add(listener);
 				}
 			} catch (IOException ioe) {
-				System.err.println("Server: error initializing socket: " + ioe); //$NON-NLS-1$
+				String msg = "Server: error initializing socket: " + ioe; //$NON-NLS-1$
+				System.err.println(msg);
+				logMessage(msg);
 				System.exit(-1);
 			}
 		}

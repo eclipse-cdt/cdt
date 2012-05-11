@@ -117,7 +117,7 @@ public class REDRun implements CharSequence {
 		try {
 			return asString();
 		} catch (IOException e) {
-			return null;
+			return ""; //$NON-NLS-1$
 		}
 	}
 

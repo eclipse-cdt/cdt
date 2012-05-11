@@ -264,6 +264,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 	/**
 	 * Displays warning message - if any - for selected language settings entry.
 	 * Multiline selection is not supported.
+	 * @since 5.4
 	 */
 	protected void updateStatusLine() {
 		ICConfigurationDescription cfgDescription = page.getResDesc().getConfiguration();

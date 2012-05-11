@@ -41,7 +41,6 @@ import org.eclipse.debug.core.commands.IEnabledStateRequest;
  * 
  * @since 2.1
  */
-@SuppressWarnings("restriction")
 public class GdbSelectNextTraceRecordCommand extends AbstractDebugCommand implements ISelectNextTraceRecordHandler {
 	private final DsfExecutor fExecutor;
 	private final DsfServicesTracker fTracker;

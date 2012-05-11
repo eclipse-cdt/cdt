@@ -399,7 +399,7 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
         @Override
         public boolean equals(Object other) {
             return super.baseEquals(other) && 
-                expression == null ? ((InvalidContextExpressionDMC) other).getExpression() == null : expression.equals(((InvalidContextExpressionDMC) other).getExpression());
+            		(expression == null ? ((InvalidContextExpressionDMC) other).getExpression() == null : expression.equals(((InvalidContextExpressionDMC) other).getExpression()));
         }
 
         @Override

@@ -36,12 +36,7 @@ public class CLITraceDumpInfo extends MIInfo {
 	// tdump parsed info
 	private String fTracepointNum = null;
 	private String fTraceFrameNumber = null;
-	/* 
-	 * Timestamp, if present in tracepoint frame data
-	 * Note: not yet available in printout of command
-	 * "tdump" -> revisit when it is.
-	 */
-	private String timestamp = null;
+
 	// keep the tdump header in parsed result or not - by default we keep
 	private static final boolean KEEP_HEADER = true;
 
@@ -156,7 +151,9 @@ public class CLITraceDumpInfo extends MIInfo {
 	 * @return the timestamp of the tracepoint frame
 	 */
 	public String getTimestamp() {
-		return timestamp;
+		// Timestamp not yet available in printout of command
+		// "tdump" -> revisit when it is.
+		return null;
 	}
 }
 

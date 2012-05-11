@@ -256,7 +256,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints, I
          */
         @Override
         public boolean equals(Object obj) {
-            return baseEquals(obj) && (fReference == ((MIBreakpointDMContext) obj).fReference);
+            return baseEquals(obj) && (fReference.equals(((MIBreakpointDMContext)obj).fReference));
         }
         
         /* (non-Javadoc)

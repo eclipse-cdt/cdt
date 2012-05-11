@@ -180,6 +180,9 @@ public class MIParser {
                 case '=' :
                     async = new MINotifyAsyncOutput();
                     break;
+                default :
+                	assert false;
+                	async = new MINotifyAsyncOutput();
             }
             async.setToken(id);
             // Extract the Async-Class
@@ -212,6 +215,9 @@ public class MIParser {
                 case '&' :
                     stream = new MILogStreamOutput();
                     break;
+                default :
+                	assert false;
+                	stream = new MIConsoleStreamOutput();
             }
             // translateCString() assumes that the leading " is deleted
             if (buffer.length() > 0 && buffer.charAt(0) == '"') {

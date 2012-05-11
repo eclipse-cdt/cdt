@@ -169,7 +169,7 @@ abstract public class AbstractDMVMNode extends AbstractVMNode implements IVMNode
         if (element instanceof IDMVMContext) {
             // If update element is a DMC, check if session is still alive.
             IDMContext dmc = ((IDMVMContext)element).getDMContext();
-            if (dmc.getSessionId() != getSession().getId() || !DsfSession.isSessionActive(dmc.getSessionId())) {
+            if (!dmc.getSessionId().equals(getSession().getId()) || !DsfSession.isSessionActive(dmc.getSessionId())) {
                 handleFailedUpdate(update);
                 return false;
             }

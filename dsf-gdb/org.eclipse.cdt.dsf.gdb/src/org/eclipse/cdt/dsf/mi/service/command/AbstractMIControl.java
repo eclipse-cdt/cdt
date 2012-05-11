@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -814,7 +815,7 @@ public abstract class AbstractMIControl extends AbstractDsfService
         			} catch(IllegalArgumentException e2) {
         				// Message format string invalid.  Fallback to just appending the strings. 
         				clientMsg.append(message);
-        				clientMsg.append(parameters);
+        				clientMsg.append(Arrays.toString(parameters));
         			}
         		} else {
         			clientMsg.append(message);
@@ -865,7 +866,7 @@ public abstract class AbstractMIControl extends AbstractDsfService
         			} catch(IllegalArgumentException e2) {
         				// Message format string invalid.  Fallback to just appending the strings. 
         				clientMsg.append(message);
-        				clientMsg.append(parameters);
+        				clientMsg.append(Arrays.toString(parameters));
         			}
         		} else {
         			clientMsg.append(message);

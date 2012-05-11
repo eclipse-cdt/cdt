@@ -50,7 +50,6 @@ import org.eclipse.jface.viewers.TreePath;
  * A specialization of ExpressionVMProvider that uses a GDB-specific variable VM
  * node. To understand why this is necessary, see GdbVariableVMNode.
  */
-@SuppressWarnings("restriction")
 public class GdbExpressionVMProvider extends ExpressionVMProvider {
 
 	private IPropertyChangeListener fPreferencesListener;

@@ -41,7 +41,6 @@ import org.eclipse.jface.viewers.TreePath;
  * A specialization of VariableVMProvider that uses a GDB-specific variable VM
  * node. To understand why this is necessary, see GdbVariableVMNode.
  */
-@SuppressWarnings("restriction")
 public class GdbVariableVMProvider extends VariableVMProvider {
 
 	private IPropertyChangeListener fPreferencesListener;

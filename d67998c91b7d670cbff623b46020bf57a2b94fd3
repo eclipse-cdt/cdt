@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOHX///gk\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/EvaluationContextManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 569
+      },
+      "writtenOn": "2012-05-11T18:56:43Z",
+      "side": 1,
+      "message": "I don\u0027t see how this makes a practical difference, but it won\u0027t hurt.  BTW, I think this whole mechanism of adding listeners from a static method is suspicious, but not enough to bother changing it.",
+      "revId": "d67998c91b7d670cbff623b46020bf57a2b94fd3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

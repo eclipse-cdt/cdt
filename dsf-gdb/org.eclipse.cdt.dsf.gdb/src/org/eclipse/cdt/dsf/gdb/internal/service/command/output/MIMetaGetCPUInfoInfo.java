@@ -10,15 +10,16 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.service.command.output;
 
+import java.util.Arrays;
+
 import org.eclipse.cdt.dsf.debug.service.command.ICommand;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandResult;
 import org.eclipse.cdt.internal.core.ICoreInfo;
 
 /**
- * Result obtined from MIMetaGetCPUInfo.
+ * Result obtained from MIMetaGetCPUInfo.
  * @since 4.1
  */
-@SuppressWarnings("restriction")
 public class MIMetaGetCPUInfoInfo implements ICommandResult {
 
 	private final ICoreInfo[] fCoresInfo;
@@ -36,6 +37,6 @@ public class MIMetaGetCPUInfoInfo implements ICommandResult {
 
 	@Override
 	public String toString() {
-		return getClass().getSimpleName() + " (" + getInfo() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+		return getClass().getSimpleName() + " (" + Arrays.toString(getInfo()) + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }

@@ -110,6 +110,7 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
 		}		
 	}
 
+	/** @since 4.1 */
 	protected void launchDebugSession( final ILaunchConfiguration config, ILaunch l, IProgressMonitor monitor ) throws CoreException {
 		if ( monitor.isCanceled() ) {
 			cleanupLaunch();

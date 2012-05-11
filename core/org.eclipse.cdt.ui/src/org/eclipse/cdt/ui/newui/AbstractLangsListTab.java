@@ -19,6 +19,9 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -49,6 +52,7 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
 
+import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
 import org.eclipse.cdt.core.model.ILanguageDescriptor;
 import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.core.model.util.CDTListComparator;
@@ -66,7 +70,9 @@ import org.eclipse.cdt.core.settings.model.ICSettingBase;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.settings.model.MultiLanguageSetting;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
+import org.eclipse.cdt.ui.CUIPlugin;
 
+import org.eclipse.cdt.internal.ui.language.settings.providers.LanguageSettingsProvidersPage;
 import org.eclipse.cdt.internal.ui.newui.LanguageSettingsImages;
 import org.eclipse.cdt.internal.ui.newui.Messages;
 import org.eclipse.cdt.internal.ui.newui.StatusMessageLine;
@@ -259,8 +265,18 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 	 * Displays warning message - if any - for selected language settings entry.
 	 * Multiline selection is not supported.
 	 */
-	private void updateStatusLine() {
-		fStatusLine.setErrorStatus(LanguageSettingsImages.getStatus(getSelectedEntry(), getResDesc().getConfiguration()));
+	protected void updateStatusLine() {
+		ICConfigurationDescription cfgDescription = page.getResDesc().getConfiguration();
+		IStatus status = LanguageSettingsImages.getStatus(getSelectedEntry(), cfgDescription);
+		if (cfgDescription != null && (status == null || status.isOK())) {
+			IProject project = cfgDescription.getProjectDescription().getProject();
+			boolean isEnabled = !LanguageSettingsProvidersPage.isLanguageSettingsProvidersEnabled(project) || ScannerDiscoveryLegacySupport.isMbsLanguageSettingsProviderOn(cfgDescription);
+			if (!isEnabled) {
+				status = new Status(IStatus.INFO, CUIPlugin.PLUGIN_ID, Messages.AbstractLangsListTab_MbsProviderNotEnabled);
+			}
+		}
+
+		fStatusLine.setErrorStatus(status);
 	}
 
 	/**

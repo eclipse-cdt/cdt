@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.language.settings.providers;
 
+import java.io.ByteArrayInputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -916,7 +917,19 @@ public class LanguageSettingsProvidersSerializer {
 				}
 			}
 			if (folder.isAccessible()) {
-				rule = folder;
+				// Create dummy file to reduce scheduling to the file itself
+				if (!fileStorePrj.exists()) {
+					try {
+						fileStorePrj.create(new ByteArrayInputStream("<project/>".getBytes()), true, null); //$NON-NLS-1$
+					} catch (CoreException e) {
+						CCorePlugin.log(e);
+					}
+				}
+				if (fileStorePrj.exists()) {
+					rule = fileStorePrj;
+				} else {
+					rule = folder;
+				}
 			}
 		}
 		if (rule == null) {

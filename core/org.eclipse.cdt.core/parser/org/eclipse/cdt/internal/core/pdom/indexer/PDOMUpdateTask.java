@@ -260,8 +260,8 @@ public class PDOMUpdateTask implements IPDOMIndexerTask {
 	 */
 	private boolean fileIsNotOlderThanTimestamp(String filename, long timestamp) {
 		// We are subtracting 1 second from the timestamp to account for limited precision
-		// of File.lastModified() method and possible asynchrony between clocks on multi-CPU
-		// systems. This may produce false positives, but they are pretty harmless.
+		// of File.lastModified() method and possible skew between clocks on a multi-CPU
+		// system. This may produce false positives, but they are pretty harmless.
 		return new File(filename).lastModified() >= timestamp - 1000;
 	}
 

@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.pdom;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsChangeEvent;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsChangeListener;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.core.resources.IProject;
@@ -47,7 +48,7 @@ public class LanguageSettingsChangeListener implements ILanguageSettingsChangeLi
 
 				for (String cfgId : event.getConfigurationDescriptionIds()) {
 					if (cfgId.equals(indexedCfgId)) {
-						fManager.handlePostBuildEvent();
+						fManager.reindex(CoreModel.getDefault().getCModel().getCProject(project.getName()));
 						return;
 					}
 				}

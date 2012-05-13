@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Andrew Niefer (IBM Corporation) - Initial API and implementation 
+ *     Andrew Niefer (IBM Corporation) - Initial API and implementation 
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.util;
 
@@ -15,47 +15,47 @@ import java.util.List;
 
 public class CharArraySet extends CharTable {
 	
-    public static final CharArraySet EMPTY_SET = new CharArraySet( 0 ){
+    public static final CharArraySet EMPTY_SET = new CharArraySet(0) {
         @Override
-		public Object clone()               { return this; }
+		public Object clone() { return this; }
         @Override
-		public List<char[]> toList()                { return Collections.emptyList(); }
+		public List<char[]> toList() { return Collections.emptyList(); }
         @Override
-		public void put( char[] key )       { throw new UnsupportedOperationException(); }
+		public void put(char[] key) { throw new UnsupportedOperationException(); }
         @Override
-		public void addAll( List<char[]> list )     { throw new UnsupportedOperationException(); }
+		public void addAll(List<char[]> list) { throw new UnsupportedOperationException(); }
         @Override
-		public void addAll( CharArraySet set ) { throw new UnsupportedOperationException(); }
+		public void addAll(CharArraySet set) { throw new UnsupportedOperationException(); }
     };
 
 	public CharArraySet(int initialSize) {
 		super(initialSize);
 	}
 	
-	public void put(char[] key ){
+	public void put(char[] key) {
 		addIndex(key);
 	}
 	
-	public void addAll( List<char[]> list ){
-	    if( list == null )
+	public void addAll(List<char[]> list) {
+	    if (list == null)
 	        return;
 	    
 	    int size = list.size();
-	    for( int i = 0; i < size; i++ ){
-	        addIndex( list.get( i ) );
+	    for (int i = 0; i < size; i++) {
+	        addIndex(list.get(i));
 	    }
 	}
 	
-	public void addAll( CharArraySet set ){
-	    if( set == null )
+	public void addAll(CharArraySet set) {
+	    if (set == null)
 	        return;
 	    int size = set.size();
-	    for( int i = 0; i < size; i++ ){
-	        addIndex( set.keyAt( i ) );
+	    for (int i = 0; i < size; i++) {
+	        addIndex(set.keyAt(i));
 	    }
 	}
 	
-	final public boolean remove( char[] key ) {
+	final public boolean remove(char[] key) {
 		int i = lookup(key);
 		if (i < 0)
 			return false;
@@ -65,11 +65,11 @@ public class CharArraySet extends CharTable {
 	}
 
 	@Override
-	final public void clear(){
-	    for( int i = 0; i < keyTable.length; i++ ){
+	final public void clear() {
+	    for (int i = 0; i < keyTable.length; i++) {
 	        keyTable[i] = null;
-	        hashTable[ 2*i ] = 0;
-	        hashTable[ 2*i + 1 ] = 0;
+	        hashTable[2 * i] = 0;
+	        hashTable[2 * i + 1] = 0;
 	        nextTable[i] = 0;
 	    }
 	    currEntry = -1;

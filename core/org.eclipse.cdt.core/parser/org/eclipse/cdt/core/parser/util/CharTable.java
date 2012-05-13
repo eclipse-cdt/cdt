@@ -10,7 +10,6 @@
  *     Markus Schorn (Wind River Systems)
  *     Andrew Ferguson (Symbian)
  *******************************************************************************/
-
 package org.eclipse.cdt.core.parser.util;
 
 import java.util.ArrayList;
@@ -18,7 +17,6 @@ import java.util.List;
 
 /**
  * @author ddaoust
- *
  */
 public class CharTable extends HashTable {
 	protected char[][] keyTable;
@@ -39,12 +37,12 @@ public class CharTable extends HashTable {
 	@Override
 	public void clear() {
 		super.clear();
-		for( int i = 0; i < capacity(); i++ )
+		for (int i = 0; i < capacity(); i++)
 			keyTable[i] = null;
 	}
 	
 	@Override
-	public Object clone(){
+	public Object clone() {
 	    CharTable newTable = (CharTable) super.clone();
         
         int size = capacity();
@@ -59,53 +57,49 @@ public class CharTable extends HashTable {
 	}
 	
 	@Override
-	protected final int hash( int pos ){
+	protected final int hash(int pos) {
 	    return hash(keyTable[pos], 0, keyTable[pos].length);
 	}
 	
-	protected final int hash( char[] obj ){
-	    return hash( obj, 0, obj.length );
+	protected final int hash(char[] obj) {
+	    return hash(obj, 0, obj.length);
 	}
 
-	protected final int addIndex(char[] buffer ) {
+	protected final int addIndex(char[] buffer) {
 		return addIndex(buffer, 0, buffer.length);
 	}
 	
 	public final int addIndex(char[] buffer, int start, int len) {
-		if (hashTable != null)
-		{
+		if (hashTable != null) {
 			int hash = hash(buffer, start, len);
 			int pos = lookup(buffer, start, len, hash);
 			if (pos != -1)
 				return pos;
 			
 			// key is not here, add it.
-			if( (currEntry + 1) >= capacity()) {
+			if ((currEntry + 1) >= capacity()) {
 				resize();
 				hash = hash(buffer, start, len);
 			}
 			currEntry++;
 			keyTable[currEntry] = CharArrayUtils.extract(buffer, start, len);
 			linkIntoHashTable(currEntry, hash);		
-		}
-		else 
-		{
+		} else {
 			int pos = lookup(buffer, start, len);
 			if (pos != -1)
 				return pos;
 			// key is not here, add it.
-			if( (currEntry + 1) >= capacity()) {
+			if ((currEntry + 1) >= capacity()) {
 				resize();
-				if( capacity() > minHashSize ){
+				if (capacity() > minHashSize) {
 					//if we grew from list to hash, then recurse and add as a hashtable
-				    return addIndex( buffer, start, len );
+				    return addIndex(buffer, start, len);
 				}
 			}
 			currEntry++;
 			keyTable[currEntry] = CharArrayUtils.extract(buffer, start, len);
 		}
 		return currEntry;
-		
 	}
 	
 	protected void removeEntry(int i) {		
@@ -120,17 +114,17 @@ public class CharTable extends HashTable {
 		removeEntry(i, hash);
 	}
 	
-	public List<char[]> toList(){
-	    List<char[]> list = new ArrayList<char[]>( size() );
+	public List<char[]> toList() {
+	    List<char[]> list = new ArrayList<char[]>(size());
 	    int size = size();
-	    for( int i = 0; i < size; i++ ){
-	        list.add( keyAt( i ) );
+	    for (int i = 0; i < size; i++) {
+	        list.add(keyAt(i));
 	    }
 	    return list;
 	}
 	
-	public final char[] keyAt( int i ){
-	    if( i < 0 || i > currEntry )
+	public final char[] keyAt(int i) {
+	    if (i < 0 || i > currEntry)
 	        return null;
 	    
 	    return keyTable[ i ];
@@ -140,25 +134,25 @@ public class CharTable extends HashTable {
 		return lookup(key, start, len) != -1;
 	}
 	
-	public final boolean containsKey(char[] key){
+	public final boolean containsKey(char[] key) {
 	    return lookup(key) != -1; 
 	}
 	
-	public final char[] findKey( char[] buffer, int start, int len ){
-	    int idx = lookup( buffer, start, len );
-	    if( idx == -1 )
+	public final char[] findKey(char[] buffer, int start, int len) {
+	    int idx = lookup(buffer, start, len);
+	    if (idx == -1)
 	        return null;
 	    
 	    return keyTable[ idx ];
 	}
 	
-	public int lookup(char[] buffer ){
+	public int lookup(char[] buffer) {
 		return lookup(buffer, 0, buffer.length);
 	}
 	
 	protected final int lookup(char[] buffer, int start, int len) {
 		if (hashTable != null)
-			return lookup(buffer, start, len, hash(buffer, start, len) );
+			return lookup(buffer, start, len, hash(buffer, start, len));
 		for (int i = 0; i <= currEntry; i++) {
 			if (CharArrayUtils.equals(buffer, start, len, keyTable[i]))
 				return i;
@@ -182,9 +176,9 @@ public class CharTable extends HashTable {
 		return -1;
 	}
 	
-	public Object [] keyArray(){
-	    Object [] keys = new Object[ size() ];
-	    System.arraycopy( keyTable, 0, keys, 0, keys.length );
+	public Object[] keyArray() {
+	    Object[] keys = new Object[ size() ];
+	    System.arraycopy(keyTable, 0, keys, 0, keys.length);
 	    return keys;
 	}
 }

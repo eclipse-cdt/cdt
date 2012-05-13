@@ -43,6 +43,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
+import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVariableReadWriteFlags;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 
@@ -171,14 +173,45 @@ public class ClassMembersInitializationChecker extends AbstractIndexAstChecker {
 				Set<IField> actualConstructorFields = constructorsStack.peek();
 				if (!actualConstructorFields.isEmpty()) {
 					IBinding binding = name.resolveBinding();
-					if (actualConstructorFields.contains(binding)) {
+					IField equivalentFieldBinding = getContainedEquivalentBinding(actualConstructorFields, binding, name.getTranslationUnit().getIndex());
+					if (equivalentFieldBinding != null) {
 						if ((CPPVariableReadWriteFlags.getReadWriteFlags(name) & PDOMName.WRITE_ACCESS) != 0) {
-							actualConstructorFields.remove(binding);
+							actualConstructorFields.remove(equivalentFieldBinding);
 						}
 					}
 				}
 			}
 			return PROCESS_CONTINUE;
+		}
+		
+		private IField getContainedEquivalentBinding(Iterable<IField> fields, IBinding binding, IIndex index) {
+			for (IField field : fields) {
+				if (areEquivalentBindings(binding, field, index)) {
+					return field;
+				}
+			}
+			
+			return null;
+		}
+		
+		private boolean areEquivalentBindings(IBinding binding1, IBinding binding2, IIndex index) {
+			if (binding1.equals(binding2)) {
+				return true;
+			}
+			if ((binding1 instanceof IIndexBinding) != (binding2 instanceof IIndexBinding) && index != null) {
+				if (binding1 instanceof IIndexBinding) {
+					binding2 = index.adaptBinding(binding2);
+				} else {
+					binding1 = index.adaptBinding(binding1);
+				}
+				if (binding1 == null || binding2 == null) {
+					return false;
+				}
+				if (binding1.equals(binding2)) {
+					return true;
+				}
+			}
+			return false;
 		}
 		
 		/** Checks whether class member of the specified type should be initialized

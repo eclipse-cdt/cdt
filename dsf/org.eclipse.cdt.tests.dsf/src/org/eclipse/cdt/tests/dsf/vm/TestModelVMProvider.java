@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.vm;
 
+import org.eclipse.cdt.dsf.concurrent.DefaultDsfExecutor;
+import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.ui.viewmodel.AbstractVMAdapter;
 import org.eclipse.cdt.dsf.ui.viewmodel.AbstractVMProvider;
 import org.eclipse.cdt.dsf.ui.viewmodel.IVMModelProxy;
@@ -23,14 +25,27 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
  */
 public class TestModelVMProvider extends AbstractVMProvider {
     
+    private DsfExecutor fDsfExecutor;
+    
     public TestModelVMProvider(AbstractVMAdapter adapter, IPresentationContext context) {
         super(adapter, context);
+        
+        fDsfExecutor = new DefaultDsfExecutor("TestModelVMProvider");
         
         setRootNode(new TestModelVMNode(this));
         addChildNodes(getRootVMNode(), new IVMNode[] { getRootVMNode() });
     }
 
-
+    @Override
+    public void dispose() {
+        super.dispose();
+        fDsfExecutor.shutdown();
+    }
+    
+    public DsfExecutor getDsfExecutor() {
+        return fDsfExecutor;
+    }
+    
     public TestElementVMContext getElementVMContext(IPresentationContext context, TestElement element) {
         return ((TestModelVMNode)getRootVMNode()).createVMContext(element);
     }

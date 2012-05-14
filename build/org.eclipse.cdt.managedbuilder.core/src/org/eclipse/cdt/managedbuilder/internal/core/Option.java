@@ -2975,15 +2975,15 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 
 	@Override
 	public ITreeRoot getTreeRoot() throws BuildException {
+		if (getValueType() != TREE) {
+			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
+		}
 		if (treeRoot == null) {
 			if (superClass != null) {
 				return superClass.getTreeRoot();
 			} else {
 				return null;
 			}
-		}
-		if (getValueType() != TREE) {
-			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
 
 		return treeRoot;

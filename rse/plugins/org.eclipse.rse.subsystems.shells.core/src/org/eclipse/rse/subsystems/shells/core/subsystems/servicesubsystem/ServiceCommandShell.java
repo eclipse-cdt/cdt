@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
  *
  * Contributors:
  * Martin Oberhuber (Wind River) - [225510][api] Fix OutputRefreshJob API leakage
+ * David McKnight   (IBM)        - [379454] [shells] too many output refresh jobs created when populating shell output
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem;
@@ -88,16 +89,7 @@ public class ServiceCommandShell extends RemoteCommandShell implements IServiceC
 				outputs[i] = output;
 			}
 		}
-		// FIXME unify with notifyListeners() below?
-		if (_lastRefreshJob == null || _lastRefreshJob.isComplete())
-		{
-			_lastRefreshJob = new OutputRefreshJob(this, outputs, false);
-			_lastRefreshJob.schedule();
-		}
-		else
-		{
-			_lastRefreshJob.addOutputs(outputs);
-		}
+		notifyOutputChanged(outputs, false);
 	}
 
 	/**
@@ -109,15 +101,14 @@ public class ServiceCommandShell extends RemoteCommandShell implements IServiceC
 	 * @since org.eclipse.rse.subsystems.shells.core 3.0
 	 */
 	protected void notifyOutputChanged(IRemoteOutput[] outputs, boolean cwdChanged) {
-		// if (_lastRefreshJob == null || _lastRefreshJob.isComplete())
-		{
+		if (_lastRefreshJob == null || _lastRefreshJob.isComplete()){
 			_lastRefreshJob = new OutputRefreshJob(this, outputs, cwdChanged);
 			_lastRefreshJob.schedule();
 		}
-		/*
-		 * else { _lastRefreshJob.addOutputs(outputs);
-		 * _lastRefreshJob.schedule(); }
-		 */
+		else {
+			_lastRefreshJob.addOutputs(outputs);
+			_lastRefreshJob.schedule(); 
+		}
 	}
 
 	public ICandidateCommand[] getCandidateCommands()

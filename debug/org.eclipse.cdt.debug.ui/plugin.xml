@@ -2637,5 +2637,42 @@
            type="org.eclipse.cdt.debug.ui.breakpoints.ICBreakpointContext">
      </propertyTester>
   </extension>
+  <extension
+        point="org.eclipse.ui.commands">
+     <category
+           description="%RunningCategory.description"
+           id="org.eclipse.cdt.debug.ui.category.running"
+           name="%RunningCategory.name">
+     </category>
+     <command
+           categoryId="org.eclipse.cdt.debug.ui.category.running"
+           defaultHandler="org.eclipse.cdt.debug.internal.ui.commands.AttachCommandHandler"
+           description="%AttachCommand.description"
+           id="org.eclipse.cdt.debug.ui.command.attach"
+           name="%AttachCommand.name">
+     </command>
+  </extension>
+  <extension
+        point="org.eclipse.ui.menus">
+     <menuContribution
+           allPopups="false"
+           locationURI="menu:org.eclipse.ui.run?after=relaunchGroup">
+        <separator
+              name="debugSession"
+              visible="true">
+        </separator>
+        <command
+              commandId="org.eclipse.cdt.debug.ui.command.attach"
+              style="push">
+        </command>
+     </menuContribution>
+  </extension>
+  <extension
+        point="org.eclipse.ui.commandImages">
+     <image
+           commandId="org.eclipse.cdt.debug.ui.command.attach"
+           icon="icons/obj16/attach.gif">
+     </image>
+  </extension>
     
 </plugin>

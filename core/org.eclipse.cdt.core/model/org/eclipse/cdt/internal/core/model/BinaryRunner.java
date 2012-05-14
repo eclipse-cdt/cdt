@@ -198,13 +198,16 @@ public class BinaryRunner {
 			}
 
 			// check against known content types
+			// if the file has an extension
 			String name = proxy.getName();
-			IContentType contentType = CCorePlugin.getContentType(project, name);
-			if (contentType != null && textContentType != null) {
-				if (contentType.isKindOf(textContentType)) {
-					return true;
-				} else if (textContentType.isAssociatedWith(name)) {
-					return true;
+			if (name.contains(".")) {
+				IContentType contentType = CCorePlugin.getContentType(project, name);
+				if (contentType != null && textContentType != null) {
+					if (contentType.isKindOf(textContentType)) {
+						return true;
+					} else if (textContentType.isAssociatedWith(name)) {
+						return true;
+					}
 				}
 			}
 

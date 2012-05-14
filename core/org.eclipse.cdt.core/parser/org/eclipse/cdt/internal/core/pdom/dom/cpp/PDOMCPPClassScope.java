@@ -30,11 +30,9 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.index.IIndexName;
@@ -140,10 +138,6 @@ class PDOMCPPClassScope implements ICPPClassScope, IIndexScope {
 	}
 
 	private IBinding getClassNameBinding() {
-		if (fBinding instanceof ICPPClassTemplatePartialSpecialization)
-			return ((ICPPClassTemplatePartialSpecialization) fBinding).getPrimaryClassTemplate();
-		if (fBinding instanceof ICPPSpecialization)
-			return ((ICPPSpecialization) fBinding).getSpecializedBinding();
 		return fBinding;
 	}
 	

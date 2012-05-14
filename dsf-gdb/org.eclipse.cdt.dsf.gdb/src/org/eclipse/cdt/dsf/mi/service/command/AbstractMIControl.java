@@ -42,6 +42,7 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandListener;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandResult;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandToken;
 import org.eclipse.cdt.dsf.debug.service.command.IEventListener;
+import org.eclipse.cdt.dsf.gdb.internal.GdbDebugOptions;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
@@ -658,6 +659,9 @@ public abstract class AbstractMIControl extends AbstractDsfService
                 }
                 
                 try {
+                	//write command sent to GDB to sysout or file
+                	GdbDebugOptions.trace(str);
+                	
                     if (fOutputStream != null) {
                         fOutputStream.write(str.getBytes());
                         fOutputStream.flush();
@@ -876,6 +880,9 @@ public abstract class AbstractMIControl extends AbstractDsfService
         }
 
         void processMIOutput(String line) {
+        	
+        	//Write Gdb response to sysout or file
+        	GdbDebugOptions.trace(line);
 
             MIParser.RecordType recordType = fMiParser.getRecordType(line);
             

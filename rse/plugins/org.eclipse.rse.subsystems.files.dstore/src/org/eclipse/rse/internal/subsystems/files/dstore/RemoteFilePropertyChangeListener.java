@@ -163,7 +163,9 @@ public class RemoteFilePropertyChangeListener implements IDomainListener,
 
     public void finish()
     {
-        dataStore.getDomainNotifier().removeDomainListener(this);
+    	if (dataStore != null){
+    		dataStore.getDomainNotifier().removeDomainListener(this);
+    	}
         _finished = true;
     }
 

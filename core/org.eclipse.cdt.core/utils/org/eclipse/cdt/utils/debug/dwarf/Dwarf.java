@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 QNX Software Systems and others.
+ * Copyright (c) 2000, 2012 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Salvatore Culcasi - Bug 322475
  *******************************************************************************/
 
 package org.eclipse.cdt.utils.debug.dwarf;
@@ -476,7 +477,7 @@ public class Dwarf {
 			case DwarfConstants.DW_FORM_block1 :
 				{
 					int size = in.get();
-					byte[] bytes = new byte[size];
+					byte[] bytes = new byte[size & 0xff];
 					in.get(bytes);
 					obj = bytes;
 				}
@@ -485,7 +486,7 @@ public class Dwarf {
 			case DwarfConstants.DW_FORM_block2 :
 				{
 					int size = read_2_bytes(in);
-					byte[] bytes = new byte[size];
+					byte[] bytes = new byte[size & 0xffff];
 					in.get(bytes);
 					obj = bytes;
 				}

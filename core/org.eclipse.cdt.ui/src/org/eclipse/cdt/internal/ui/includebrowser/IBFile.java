@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2012 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
+ *    IBM Corporation
  *******************************************************************************/ 
 
 package org.eclipse.cdt.internal.ui.includebrowser;
@@ -37,7 +38,10 @@ public class IBFile {
 	
 	public IBFile(ICProject preferredProject, IIndexFileLocation location) throws CModelException {
 		fLocation= location;
-		fTU= CoreModelUtil.findTranslationUnitForLocation(location, preferredProject);
+		ITranslationUnit TU = CoreModelUtil.findTranslationUnitForLocation(location, preferredProject);
+		if (TU == null) //for EFS file that might not be on this filesystem
+			TU = CoreModelUtil.findTranslationUnitForLocation(location.getURI(), preferredProject);
+		fTU = TU;
 		String name= fLocation.getURI().getPath();
 		fName= name.substring(name.lastIndexOf('/')+1);
 	}

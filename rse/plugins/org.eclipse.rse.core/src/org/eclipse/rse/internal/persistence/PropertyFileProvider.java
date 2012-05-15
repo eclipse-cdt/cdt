@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2012 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -16,6 +16,7 @@
  * David Dykstal (IBM) - [189274] provide import and export operations for profiles
  * David Dykstal (IBM) - [225988] need API to mark persisted profiles as migrated
  * David Dykstal (IBM) - [252357] made nested property sets and properties embedded nodes in the persistent form
+ * David McKnight (IBM)- [376738] PropertyFileProvider should catch exceptions in care a written profile was corrupted
  ********************************************************************************/
 package org.eclipse.rse.internal.persistence;
 
@@ -795,7 +796,13 @@ public class PropertyFileProvider implements IRSEPersistenceProvider, IRSEImport
 		for (Iterator z = childNames.iterator(); z.hasNext();) {
 			String childName = (String) z.next();
 			Properties p = getProperties(childPropertiesMap, childName);
-			makeNode(node, location, p, monitor);
+			try {
+				makeNode(node, location, p, monitor);
+			}
+			catch (Exception e){
+				// minimize impact of unexpected exception
+				logException(e);
+			}
 		}
 		for (Iterator z = referenceKeys.iterator(); z.hasNext();) {
 			String key = (String) z.next();

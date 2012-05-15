@@ -690,7 +690,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 	}
 
 	/** Preference key for temporary problems */
-	private final static String HANDLE_TEMPORARY_PROBLEMS= PreferenceConstants.EDITOR_EVALUATE_TEMPORARY_PROBLEMS;
+	private static final String HANDLE_TEMPORARY_PROBLEMS= PreferenceConstants.EDITOR_EVALUATE_TEMPORARY_PROBLEMS;
 
 	/** Internal property changed listener */
 	private IPropertyChangeListener fPropertyListener;

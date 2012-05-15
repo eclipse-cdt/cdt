@@ -109,11 +109,11 @@ public class CCorePlugin extends Plugin {
 
 	public static final String BUILDER_MODEL_ID = PLUGIN_ID + ".CBuildModel"; //$NON-NLS-1$
 	public static final String BINARY_PARSER_SIMPLE_ID = "BinaryParser"; //$NON-NLS-1$
-	public final static String BINARY_PARSER_UNIQ_ID = PLUGIN_ID + "." + BINARY_PARSER_SIMPLE_ID; //$NON-NLS-1$
-	public final static String PREF_BINARY_PARSER = "binaryparser"; //$NON-NLS-1$
-	public final static String DEFAULT_BINARY_PARSER_SIMPLE_ID = "ELF"; //$NON-NLS-1$
-	public final static String DEFAULT_BINARY_PARSER_UNIQ_ID = PLUGIN_ID + "." + DEFAULT_BINARY_PARSER_SIMPLE_ID; //$NON-NLS-1$
-	public final static String PREF_USE_STRUCTURAL_PARSE_MODE = "useStructualParseMode"; //$NON-NLS-1$
+	public static final String BINARY_PARSER_UNIQ_ID = PLUGIN_ID + "." + BINARY_PARSER_SIMPLE_ID; //$NON-NLS-1$
+	public static final String PREF_BINARY_PARSER = "binaryparser"; //$NON-NLS-1$
+	public static final String DEFAULT_BINARY_PARSER_SIMPLE_ID = "ELF"; //$NON-NLS-1$
+	public static final String DEFAULT_BINARY_PARSER_UNIQ_ID = PLUGIN_ID + "." + DEFAULT_BINARY_PARSER_SIMPLE_ID; //$NON-NLS-1$
+	public static final String PREF_USE_STRUCTURAL_PARSE_MODE = "useStructualParseMode"; //$NON-NLS-1$
 
 	public static final String INDEX_SIMPLE_ID = "CIndex"; //$NON-NLS-1$
 	public static final String INDEX_UNIQ_ID = PLUGIN_ID + "." + INDEX_SIMPLE_ID; //$NON-NLS-1$
@@ -126,23 +126,23 @@ public class CCorePlugin extends Plugin {
 	/**
 	 * Name of the extension point for contributing an error parser
 	 */
-	public final static String ERROR_PARSER_SIMPLE_ID = "ErrorParser"; //$NON-NLS-1$
+	public static final String ERROR_PARSER_SIMPLE_ID = "ErrorParser"; //$NON-NLS-1$
 	/**
 	 * Full unique name of the extension point for contributing an error parser
 	 */
-	public final static String ERROR_PARSER_UNIQ_ID = PLUGIN_ID + "." + ERROR_PARSER_SIMPLE_ID; //$NON-NLS-1$
+	public static final String ERROR_PARSER_UNIQ_ID = PLUGIN_ID + "." + ERROR_PARSER_SIMPLE_ID; //$NON-NLS-1$
 
 	// default store for pathentry
-	public final static String DEFAULT_PATHENTRY_STORE_ID = PLUGIN_ID + ".cdtPathEntryStore"; //$NON-NLS-1$
+	public static final String DEFAULT_PATHENTRY_STORE_ID = PLUGIN_ID + ".cdtPathEntryStore"; //$NON-NLS-1$
 
 	// Build Model Interface Discovery
-	public final static String BUILD_SCANNER_INFO_SIMPLE_ID = "ScannerInfoProvider"; //$NON-NLS-1$
-	public final static String BUILD_SCANNER_INFO_UNIQ_ID = PLUGIN_ID + "." + BUILD_SCANNER_INFO_SIMPLE_ID; //$NON-NLS-1$
+	public static final String BUILD_SCANNER_INFO_SIMPLE_ID = "ScannerInfoProvider"; //$NON-NLS-1$
+	public static final String BUILD_SCANNER_INFO_UNIQ_ID = PLUGIN_ID + "." + BUILD_SCANNER_INFO_SIMPLE_ID; //$NON-NLS-1$
 
 	public static final String DEFAULT_PROVIDER_ID = CCorePlugin.PLUGIN_ID + ".defaultConfigDataProvider"; //$NON-NLS-1$
 
-	private final static String SCANNER_INFO_PROVIDER2_NAME = "ScannerInfoProvider2"; //$NON-NLS-1$
-	private final static String SCANNER_INFO_PROVIDER2 = PLUGIN_ID + "." + SCANNER_INFO_PROVIDER2_NAME; //$NON-NLS-1$
+	private static final String SCANNER_INFO_PROVIDER2_NAME = "ScannerInfoProvider2"; //$NON-NLS-1$
+	private static final String SCANNER_INFO_PROVIDER2 = PLUGIN_ID + "." + SCANNER_INFO_PROVIDER2_NAME; //$NON-NLS-1$
 
 	/**
 	 * Name of the extension point for contributing a source code formatter
@@ -158,27 +158,27 @@ public class CCorePlugin extends Plugin {
 	/**
 	 * IContentType id for C Source Unit
 	 */
-	public final static String CONTENT_TYPE_CSOURCE =  "org.eclipse.cdt.core.cSource"; //$NON-NLS-1$
+	public static final String CONTENT_TYPE_CSOURCE =  "org.eclipse.cdt.core.cSource"; //$NON-NLS-1$
 	/**
 	 * IContentType id for C Header Unit
 	 */
-	public final static String CONTENT_TYPE_CHEADER =  "org.eclipse.cdt.core.cHeader"; //$NON-NLS-1$
+	public static final String CONTENT_TYPE_CHEADER =  "org.eclipse.cdt.core.cHeader"; //$NON-NLS-1$
 	/**
 	 * IContentType id for C++ Source Unit
 	 */
-	public final static String CONTENT_TYPE_CXXSOURCE = "org.eclipse.cdt.core.cxxSource"; //$NON-NLS-1$
+	public static final String CONTENT_TYPE_CXXSOURCE = "org.eclipse.cdt.core.cxxSource"; //$NON-NLS-1$
 	/**
 	 * IContentType id for C++ Header Unit
 	 */
-	public final static String CONTENT_TYPE_CXXHEADER = "org.eclipse.cdt.core.cxxHeader"; //$NON-NLS-1$
+	public static final String CONTENT_TYPE_CXXHEADER = "org.eclipse.cdt.core.cxxHeader"; //$NON-NLS-1$
 	/**
 	 * IContentType id for ASM Unit
 	 */
-	public final static String CONTENT_TYPE_ASMSOURCE = "org.eclipse.cdt.core.asmSource"; //$NON-NLS-1$
+	public static final String CONTENT_TYPE_ASMSOURCE = "org.eclipse.cdt.core.asmSource"; //$NON-NLS-1$
 	/**
 	 * IContentType id for Binary Files
 	 */
-	public final static String CONTENT_TYPE_BINARYFILE = "org.eclipse.cdt.core.binaryFile"; //$NON-NLS-1$
+	public static final String CONTENT_TYPE_BINARYFILE = "org.eclipse.cdt.core.binaryFile"; //$NON-NLS-1$
 
 	/**
 	 * Possible  configurable option value.

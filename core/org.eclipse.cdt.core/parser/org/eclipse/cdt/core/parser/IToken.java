@@ -24,17 +24,17 @@ public interface IToken {
 	public int getLength();
 	public int getEndOffset();
 	public IToken getNext();
-	
+
 	public void setNext(IToken t);
 	public void setType(int i);
-	
+
 	// Token types
 	int FIRST_RESERVED_PREPROCESSOR= -200;
 	int LAST_RESERVED_PREPROCESSOR= -101;
 	int FIRST_RESERVED_SCANNER= -100;
 	int LAST_RESERVED_SCANNER= -1;
 
-	/** @since 5.2 */ 
+	/** @since 5.2 */
 	int t_PRAGMA = 5200;
 
 	int tIDENTIFIER = 1;
@@ -90,11 +90,11 @@ public interface IToken {
 	int tDIVASSIGN = 51;
 	int tDIV = 52;
 	/**
-	 * @see IScanner#setSplitShiftROperator(boolean) 
-	 * @since 5.2 
+	 * @see IScanner#setSplitShiftROperator(boolean)
+	 * @since 5.2
 	 */
 	int tGT_in_SHIFTR= 5201;
-	
+
 	/** @deprecated use {@link #tAND} */ @Deprecated int t_and = 54;
 	/** @deprecated use {@link #tAMPERASSIGN} */ @Deprecated int t_and_eq = 55;
 	int t_asm = 56;
@@ -106,9 +106,9 @@ public interface IToken {
 	int t_case = 62;
 	int t_catch = 63;
 	int t_char = 64;
-	/** @since 5.2 */ 
+	/** @since 5.2 */
 	int t_char16_t= 5202;
-	/** @since 5.2 */ 
+	/** @since 5.2 */
 	int t_char32_t= 5203;
 	int t_class = 65;
 	/** @deprecated use {@link #tBITCOMPLEMENT} */ @Deprecated int tCOMPL= tBITCOMPLEMENT;
@@ -118,7 +118,7 @@ public interface IToken {
 	/** @since 5.4 */ int t_constexpr = 5400;
 	int t_const_cast = 69;
 	int t_continue = 70;
-	/** @since 5.2 */ 
+	/** @since 5.2 */
 	int t_decltype= 5204;
 	int t_default = 71;
 	int t_delete = 72;
@@ -158,7 +158,7 @@ public interface IToken {
 	int t_short = 104;
 	int t_sizeof = 105;
 	int t_static = 106;
-	/** @since 5.2 */ 
+	/** @since 5.2 */
 	int t_static_assert = 5205;
 	int t_static_cast = 107;
 	int t_signed = 108;
@@ -182,24 +182,24 @@ public interface IToken {
 	int t_wchar_t = 125;
 	int t_while = 126;
 	/** @deprecated use {@link #tXOR} */ @Deprecated int t_xor = 127;
-	/** @deprecated use {@link #tXORASSIGN} */ @Deprecated int t_xor_eq = 128; 
+	/** @deprecated use {@link #tXORASSIGN} */ @Deprecated int t_xor_eq = 128;
 	int tFLOATINGPT = 129;
-	
+
 	int tSTRING = 130;
 	int tLSTRING = 131;
 	/** @since 5.1 */ int tUTF16STRING = 5000;
 	/** @since 5.1 */ int tUTF32STRING = 5001;
-	
+
 	int tCHAR = 132;
 	int tLCHAR = 133;
 	/** @since 5.1 */ int tUTF16CHAR = 5002;
 	/** @since 5.1 */ int tUTF32CHAR = 5003;
-	
+
 	int t__Bool = 134;
 	int t__Complex = 135;
 	int t__Imaginary = 136;
 	int t_restrict = 137;
-	/** @deprecated don't use it */ @Deprecated int tMACROEXP = 138; 
+	/** @deprecated don't use it */ @Deprecated int tMACROEXP = 138;
 	int tPOUND= 	  138;
 	int tPOUNDPOUND = 139;
 	int tCOMPLETION = 140;
@@ -210,14 +210,14 @@ public interface IToken {
 	/** @since 5.1 */ int tINACTIVE_CODE_START= 145;
 	/** @since 5.1 */ int tINACTIVE_CODE_SEPARATOR= 146;
 	/** @since 5.1 */ int tINACTIVE_CODE_END  = 147;
-	
+
 	int FIRST_RESERVED_IGCCToken		= 150;
 	int LAST_RESERVED_IGCCToken			= 199;
-	
+
 	int FIRST_RESERVED_IExtensionToken	= 243;
 	int LAST_RESERVED_IExtensionToken	= 299;
-	
-	
+
+
 	/**
 	 * @noreference This method is not intended to be referenced by clients.
 	 */

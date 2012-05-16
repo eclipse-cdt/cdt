@@ -52,10 +52,7 @@ import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -98,8 +95,10 @@ public class MIRunControlTest extends BaseTestCase {
 	private static final String EXEC_NAME = "MultiThread.exe";
 	private static final String SOURCE_NAME = "MultiThread.cc";
 	
-	@Before
-	public void init() throws Exception {
+	@Override
+	public void doBeforeTest() throws Exception {
+		super.doBeforeTest();
+		
 		final DsfSession session = getGDBLaunch().getSession();
 		
         Runnable runnable = new Runnable() {
@@ -123,13 +122,17 @@ public class MIRunControlTest extends BaseTestCase {
 	}
 
 
-	@After
-	public void tearDown() {
+	@Override
+	public void doAfterTest() throws Exception {
+		super.doAfterTest();
+		
 		fServicesTracker.dispose();
 	}
 	
-	@BeforeClass
-	public static void beforeClassMethod() {
+	@Override
+	protected void setLaunchAttributes() {
+		super.setLaunchAttributes();
+		
 		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, 
 				           EXEC_PATH + EXEC_NAME);
 

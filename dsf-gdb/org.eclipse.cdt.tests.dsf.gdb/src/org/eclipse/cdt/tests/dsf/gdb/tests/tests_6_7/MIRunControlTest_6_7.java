@@ -13,14 +13,13 @@ package org.eclipse.cdt.tests.dsf.gdb.tests.tests_6_7;
 
 import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
 import org.eclipse.cdt.tests.dsf.gdb.tests.ITestConstants;
-import org.eclipse.cdt.tests.dsf.gdb.tests.MIRunControlTest;
-import org.junit.BeforeClass;
+import org.eclipse.cdt.tests.dsf.gdb.tests.tests_6_6.MIRunControlTest_6_6;
 import org.junit.runner.RunWith;
 
 @RunWith(BackgroundRunner.class)
-public class MIRunControlTest_6_7 extends MIRunControlTest {
-	@BeforeClass
-    public static void beforeClassMethod_6_7() {
+public class MIRunControlTest_6_7 extends MIRunControlTest_6_6 {
+    @Override
+	protected void setGdbVersion() {
 		setGdbProgramNamesLaunchAttributes(ITestConstants.SUFFIX_GDB_6_7);		
 	}
 }

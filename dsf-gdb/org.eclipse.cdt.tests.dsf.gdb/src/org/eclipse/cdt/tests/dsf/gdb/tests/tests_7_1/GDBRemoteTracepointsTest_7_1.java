@@ -14,13 +14,12 @@ package org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_1;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
 import org.eclipse.cdt.tests.dsf.gdb.tests.ITestConstants;
 import org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_0.GDBRemoteTracepointsTest_7_0;
-import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 
 @RunWith(BackgroundRunner.class)
 public class GDBRemoteTracepointsTest_7_1 extends GDBRemoteTracepointsTest_7_0 {
-	@BeforeClass
-	public static void beforeClassMethod_7_1() {
+	@Override
+	protected void setGdbVersion() {
 		setGdbProgramNamesLaunchAttributes(ITestConstants.SUFFIX_GDB_7_1);		
 	}
 }

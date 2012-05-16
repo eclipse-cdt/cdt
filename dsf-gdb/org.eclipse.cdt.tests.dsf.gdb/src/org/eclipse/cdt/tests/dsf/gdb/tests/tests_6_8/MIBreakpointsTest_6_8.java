@@ -21,17 +21,15 @@ import org.eclipse.cdt.dsf.mi.service.MIBreakpoints.MIBreakpointDMContext;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.tests.ITestConstants;
-import org.eclipse.cdt.tests.dsf.gdb.tests.MIBreakpointsTest;
+import org.eclipse.cdt.tests.dsf.gdb.tests.tests_6_7.MIBreakpointsTest_6_7;
 import org.eclipse.core.runtime.Platform;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(BackgroundRunner.class)
-public class MIBreakpointsTest_6_8 extends MIBreakpointsTest {
-	
-	@BeforeClass
-    public static void beforeClassMethod_6_8() {
+public class MIBreakpointsTest_6_8 extends MIBreakpointsTest_6_7 {	
+	@Override
+	protected void setGdbVersion() {
 		setGdbProgramNamesLaunchAttributes(ITestConstants.SUFFIX_GDB_6_8);
 	}
 	

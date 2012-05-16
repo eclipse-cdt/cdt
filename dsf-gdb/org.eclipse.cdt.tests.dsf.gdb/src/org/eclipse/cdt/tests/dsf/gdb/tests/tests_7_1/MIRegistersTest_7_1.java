@@ -12,14 +12,13 @@ package org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_1;
 
 import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
 import org.eclipse.cdt.tests.dsf.gdb.tests.ITestConstants;
-import org.eclipse.cdt.tests.dsf.gdb.tests.MIRegistersTest;
-import org.junit.BeforeClass;
+import org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_0.MIRegistersTest_7_0;
 import org.junit.runner.RunWith;
 
 @RunWith(BackgroundRunner.class)
-public class MIRegistersTest_7_1 extends MIRegistersTest {
-	@BeforeClass
-	public static void beforeClassMethod_7_1() {
+public class MIRegistersTest_7_1 extends MIRegistersTest_7_0 {
+    @Override
+	protected void setGdbVersion() {
 		setGdbProgramNamesLaunchAttributes(ITestConstants.SUFFIX_GDB_7_1);
 	}
 }

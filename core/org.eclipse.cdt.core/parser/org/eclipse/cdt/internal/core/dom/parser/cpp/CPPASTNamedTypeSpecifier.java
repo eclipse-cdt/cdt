@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM) - Initial API and implementation
- *    Bryan Wilkinson (QNX)
+ *     John Camelon (IBM) - Initial API and implementation
+ *     Bryan Wilkinson (QNX)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -26,12 +26,10 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 
-public class CPPASTNamedTypeSpecifier extends CPPASTBaseDeclSpecifier implements
-        ICPPASTNamedTypeSpecifier, ICPPASTCompletionContext {
-
+public class CPPASTNamedTypeSpecifier extends CPPASTBaseDeclSpecifier
+		implements ICPPASTNamedTypeSpecifier, ICPPASTCompletionContext {
     private boolean typename;
     private IASTName name;
-
     
     public CPPASTNamedTypeSpecifier() {
 	}
@@ -47,8 +45,8 @@ public class CPPASTNamedTypeSpecifier extends CPPASTBaseDeclSpecifier implements
 
 	@Override
 	public CPPASTNamedTypeSpecifier copy(CopyStyle style) {
-		CPPASTNamedTypeSpecifier copy = new CPPASTNamedTypeSpecifier(name == null ? null
-				: name.copy(style));
+		CPPASTNamedTypeSpecifier copy =
+				new CPPASTNamedTypeSpecifier(name == null ? null : name.copy(style));
 		copyBaseDeclSpec(copy);
 		copy.typename = typename;
 		if (style == CopyStyle.withLocations) {
@@ -72,7 +70,6 @@ public class CPPASTNamedTypeSpecifier extends CPPASTBaseDeclSpecifier implements
 	public IASTName getName() {
         return name;
     }
-
 
     @Override
 	public void setName(IASTName name) {

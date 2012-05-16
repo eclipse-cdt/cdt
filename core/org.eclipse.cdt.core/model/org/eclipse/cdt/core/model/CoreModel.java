@@ -376,7 +376,6 @@ public class CoreModel {
 		return null;
 	}
 
-
 	/**
 	 * Return true if project has C nature.
 	 */

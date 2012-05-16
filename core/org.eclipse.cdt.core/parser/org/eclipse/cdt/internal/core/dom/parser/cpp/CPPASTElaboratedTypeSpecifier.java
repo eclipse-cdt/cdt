@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *     IBM - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -27,7 +27,6 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTInternalNameOwner;
  */
 public class CPPASTElaboratedTypeSpecifier extends CPPASTBaseDeclSpecifier
         implements ICPPASTElaboratedTypeSpecifier, IASTInternalNameOwner {
-
     private int kind;
     private IASTName name;
     

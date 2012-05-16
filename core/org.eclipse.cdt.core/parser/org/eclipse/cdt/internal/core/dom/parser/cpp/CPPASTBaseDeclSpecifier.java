@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM) - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     John Camelon (IBM) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -19,7 +19,6 @@ import org.eclipse.cdt.internal.core.model.ASTStringUtil;
  * Base for all c++ declaration specifiers
  */
 public abstract class CPPASTBaseDeclSpecifier extends ASTNode implements ICPPASTDeclSpecifier {
-
     private boolean friend;
     private boolean inline;
     private boolean isConst;

@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM) - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     John Camelon (IBM) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -18,16 +18,16 @@ import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
-public class CPPASTSimpleDeclSpecifier extends CPPASTBaseDeclSpecifier implements ICPPASTSimpleDeclSpecifier,
-		IASTAmbiguityParent {
+public class CPPASTSimpleDeclSpecifier extends CPPASTBaseDeclSpecifier
+		implements ICPPASTSimpleDeclSpecifier, IASTAmbiguityParent {
     private int type;
     private boolean isSigned;
     private boolean isUnsigned;
     private boolean isShort;
     private boolean isLong;
     private boolean isLonglong;
-    private boolean isComplex=false;
-    private boolean isImaginary=false;
+    private boolean isComplex;
+    private boolean isImaginary;
 	private IASTExpression fDeclTypeExpression;
 
     @Override

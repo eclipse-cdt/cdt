@@ -1184,6 +1184,24 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		assertInstance(d, IASTProblemDeclaration.class);
 	}
 
+	//	constexpr int square(int x);
+	//	constexpr int bufsz = 1024;
+	//	struct pixel {
+	//	int x;
+	//	int y;
+	//	constexpr pixel(int);
+	//	};
+	//	constexpr pixel::pixel(int a)
+	//	: x(square(a)), y(square(a))
+	//	{ }
+	//	constexpr int square(int x) {
+	//	return x * x;
+	//	}
+	//	constexpr pixel large(4);
+	public void test7_1_5s1() throws Exception {
+		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
+	}
+
 	// int foo() {
 	// const int ci = 3; // cvqualified (initialized as required)
 	// ci = 4; // illformed: attempt to modify const

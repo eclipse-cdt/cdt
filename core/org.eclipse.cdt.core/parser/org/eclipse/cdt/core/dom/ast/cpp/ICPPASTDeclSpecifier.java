@@ -64,6 +64,22 @@ public interface ICPPASTDeclSpecifier extends IASTDeclSpecifier {
 	public void setExplicit(boolean value);
 	
 	/**
+	 * Is this a constexpr
+	 * 
+	 * @return boolean
+	 * @since 5.4
+	 */
+	public boolean isConstexpr();
+
+	/**
+	 * Sets this to be constexpr.
+	 * 
+	 * @param value the new value
+	 * @since 5.4
+	 */
+	public void setConstexpr(boolean value);
+
+	/**
 	 * @since 5.1
 	 */
 	@Override

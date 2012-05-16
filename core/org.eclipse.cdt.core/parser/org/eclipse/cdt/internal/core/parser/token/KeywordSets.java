@@ -393,6 +393,7 @@ public class KeywordSets {
 		ALL_CPP.add(Keywords.CLASS);
 		ALL_CPP.add(Keywords.COMPL);
 		ALL_CPP.add(Keywords.CONST);
+		ALL_CPP.add(Keywords.CONSTEXPR);
 		ALL_CPP.add(Keywords.CONST_CAST);
 		ALL_CPP.add(Keywords.CONTINUE);
 		ALL_CPP.add(Keywords.DECLTYPE);
@@ -418,6 +419,7 @@ public class KeywordSets {
 		ALL_CPP.add(Keywords.MUTABLE);
 		ALL_CPP.add(Keywords.NAMESPACE);
 		ALL_CPP.add(Keywords.NEW);
+		ALL_CPP.add(Keywords.NOEXCEPT);
 		ALL_CPP.add(Keywords.NOT);
 		ALL_CPP.add(Keywords.NOT_EQ);
 		ALL_CPP.add(Keywords.NULLPTR);
@@ -440,6 +442,7 @@ public class KeywordSets {
 		ALL_CPP.add(Keywords.SWITCH);
 		ALL_CPP.add(Keywords.TEMPLATE);
 		ALL_CPP.add(Keywords.THIS);
+		ALL_CPP.add(Keywords.THREAD_LOCAL);
 		ALL_CPP.add(Keywords.THROW);
 		ALL_CPP.add(Keywords.TRUE);
 		ALL_CPP.add(Keywords.TRY);
@@ -480,6 +483,7 @@ public class KeywordSets {
 		KEYWORDS_CPP.add(Keywords.CLASS);
 		KEYWORDS_CPP.add(Keywords.COMPL);
 		KEYWORDS_CPP.add(Keywords.CONST);
+		KEYWORDS_CPP.add(Keywords.CONSTEXPR);
 		KEYWORDS_CPP.add(Keywords.CONST_CAST);
 		KEYWORDS_CPP.add(Keywords.CONTINUE);
 		KEYWORDS_CPP.add(Keywords.DECLTYPE);
@@ -501,6 +505,7 @@ public class KeywordSets {
 		KEYWORDS_CPP.add(Keywords.MUTABLE);
 		KEYWORDS_CPP.add(Keywords.NAMESPACE);
 		KEYWORDS_CPP.add(Keywords.NEW);
+		KEYWORDS_CPP.add(Keywords.NOEXCEPT);
 		KEYWORDS_CPP.add(Keywords.NOT);
 		KEYWORDS_CPP.add(Keywords.NOT_EQ);
 		KEYWORDS_CPP.add(Keywords.NULLPTR);
@@ -522,6 +527,7 @@ public class KeywordSets {
 		KEYWORDS_CPP.add(Keywords.SWITCH);
 		KEYWORDS_CPP.add(Keywords.TEMPLATE);
 		KEYWORDS_CPP.add(Keywords.THIS);
+		KEYWORDS_CPP.add(Keywords.THREAD_LOCAL);
 		KEYWORDS_CPP.add(Keywords.THROW);
 		KEYWORDS_CPP.add(Keywords.TRUE);
 		KEYWORDS_CPP.add(Keywords.TRY);

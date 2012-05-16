@@ -45,13 +45,9 @@ public class CPPASTElaboratedTypeSpecifier extends CPPASTBaseDeclSpecifier
 	
 	@Override
 	public CPPASTElaboratedTypeSpecifier copy(CopyStyle style) {
-		CPPASTElaboratedTypeSpecifier copy = new CPPASTElaboratedTypeSpecifier(kind, name == null
-				? null : name.copy(style));
-		copyBaseDeclSpec(copy);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		CPPASTElaboratedTypeSpecifier copy =
+				new CPPASTElaboratedTypeSpecifier(kind, name == null ? null : name.copy(style));
+		return super.copy(copy, style);
 	}
 
 	@Override

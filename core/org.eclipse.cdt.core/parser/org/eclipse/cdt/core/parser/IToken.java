@@ -114,7 +114,8 @@ public interface IToken {
 	/** @deprecated use {@link #tBITCOMPLEMENT} */ @Deprecated int tCOMPL= tBITCOMPLEMENT;
 	/** @deprecated use {@link #tBITCOMPLEMENT} */ @Deprecated int t_compl = 66;
 	int t_const = 67;
-	
+
+	/** @since 5.4 */ int t_constexpr = 5400;
 	int t_const_cast = 69;
 	int t_continue = 70;
 	/** @since 5.2 */ 
@@ -141,7 +142,8 @@ public interface IToken {
 	int t_mutable = 90;
 	int t_namespace = 91;
 	int t_new = 92;
-	/** @since 5.4 */ int t_nullptr = 5400;
+	/** @since 5.4 */ int t_noexcept = 5401;
+	/** @since 5.4 */ int t_nullptr = 5402;
 	/** @deprecated use {@link #tNOT} */ @Deprecated int t_not = 93;
 	/** @deprecated use {@link #tNOTEQUAL} */ @Deprecated int t_not_eq = 94;
 	int t_operator = 95;
@@ -164,6 +166,7 @@ public interface IToken {
 	int t_switch = 110;
 	int t_template = 111;
 	int t_this = 112;
+	/** @since 5.4 */ int t_thread_local = 5403;
 	int t_throw = 113;
 	int t_true = 114;
 	int t_try = 115;

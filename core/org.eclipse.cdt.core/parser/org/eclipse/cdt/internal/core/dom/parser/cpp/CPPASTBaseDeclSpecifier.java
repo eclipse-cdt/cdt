@@ -22,6 +22,7 @@ public abstract class CPPASTBaseDeclSpecifier extends ASTNode implements ICPPAST
     private boolean friend;
     private boolean inline;
     private boolean isConst;
+    private boolean isConstexpr;
     private boolean isVolatile;
     private boolean isRestrict;
     private int sc;
@@ -53,6 +54,17 @@ public abstract class CPPASTBaseDeclSpecifier extends ASTNode implements ICPPAST
 	public void setConst(boolean value) {
         assertNotFrozen();
         isConst = value;
+    }
+
+    @Override
+	public boolean isConstexpr() {
+        return isConstexpr;
+    }
+
+    @Override
+	public void setConstexpr(boolean value) {
+        assertNotFrozen();
+        isConstexpr = value;
     }
 
     @Override
@@ -116,18 +128,19 @@ public abstract class CPPASTBaseDeclSpecifier extends ASTNode implements ICPPAST
         this.explicit = value;
     }
 
-    protected void copyBaseDeclSpec(CPPASTBaseDeclSpecifier other) {
-    	other.friend = friend;
-    	other.inline = inline;
-    	other.isConst = isConst;
-    	other.isVolatile = isVolatile;
-    	other.isRestrict= isRestrict;
-    	other.virtual = virtual;
-    	other.explicit = explicit;
-    	other.sc = sc;
-    	other.setOffsetAndLength(this);
-    }
-    
+	protected <T extends CPPASTBaseDeclSpecifier> T copy(T copy, CopyStyle style) {
+    	copy.friend = friend;
+    	copy.inline = inline;
+    	copy.isConst = isConst;
+    	copy.isConstexpr = isConstexpr;
+    	copy.isVolatile = isVolatile;
+    	copy.isRestrict= isRestrict;
+    	copy.virtual = virtual;
+    	copy.explicit = explicit;
+    	copy.sc = sc;
+		return super.copy(copy, style);
+	}
+
 	/**
 	 * Provided for debugging purposes, only.
 	 */

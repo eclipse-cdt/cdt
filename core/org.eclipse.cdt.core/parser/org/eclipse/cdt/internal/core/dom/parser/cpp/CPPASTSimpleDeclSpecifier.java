@@ -37,27 +37,22 @@ public class CPPASTSimpleDeclSpecifier extends CPPASTBaseDeclSpecifier
     
 	@Override
 	public CPPASTSimpleDeclSpecifier copy(CopyStyle style) {
-		CPPASTSimpleDeclSpecifier copy = new CPPASTSimpleDeclSpecifier();
-		copySimpleDeclSpec(copy, style);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(new CPPASTSimpleDeclSpecifier(), style);
 	}
 
-	protected void copySimpleDeclSpec(CPPASTSimpleDeclSpecifier other, CopyStyle style) {
-    	copyBaseDeclSpec(other);
-    	other.type = type;
-    	other.isSigned = isSigned;
-    	other.isUnsigned = isUnsigned;
-    	other.isShort = isShort;
-    	other.isLong = isLong;
-    	other.isLonglong= isLonglong;
-    	other.isComplex= isComplex;
-    	other.isImaginary= isImaginary;
+	protected <T extends CPPASTSimpleDeclSpecifier> T copy(T copy, CopyStyle style) {
+    	copy.type = type;
+    	copy.isSigned = isSigned;
+    	copy.isUnsigned = isUnsigned;
+    	copy.isShort = isShort;
+    	copy.isLong = isLong;
+    	copy.isLonglong= isLonglong;
+    	copy.isComplex= isComplex;
+    	copy.isImaginary= isImaginary;
     	if (fDeclTypeExpression != null) {
-			other.setDeclTypeExpression(fDeclTypeExpression.copy(style));
+			copy.setDeclTypeExpression(fDeclTypeExpression.copy(style));
     	}
+    	return super.copy(copy, style);
     }
 
 	/**

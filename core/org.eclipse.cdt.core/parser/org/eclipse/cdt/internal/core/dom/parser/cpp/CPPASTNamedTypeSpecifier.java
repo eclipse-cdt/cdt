@@ -47,12 +47,8 @@ public class CPPASTNamedTypeSpecifier extends CPPASTBaseDeclSpecifier
 	public CPPASTNamedTypeSpecifier copy(CopyStyle style) {
 		CPPASTNamedTypeSpecifier copy =
 				new CPPASTNamedTypeSpecifier(name == null ? null : name.copy(style));
-		copyBaseDeclSpec(copy);
 		copy.typename = typename;
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return super.copy(copy, style);
 	}
 	
 	@Override

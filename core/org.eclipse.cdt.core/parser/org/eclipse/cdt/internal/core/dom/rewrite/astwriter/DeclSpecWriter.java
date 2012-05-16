@@ -54,11 +54,12 @@ public class DeclSpecWriter extends NodeWriter {
 	private static final String STRUCT = "struct"; //$NON-NLS-1$
 	private static final String CLASS = "class"; //$NON-NLS-1$
 	private static final String FRIEND = "friend "; //$NON-NLS-1$
+	private static final String CONSTEXPR = "constexpr "; //$NON-NLS-1$
 	private static final String EXPLICIT = "explicit "; //$NON-NLS-1$
 	private static final String VIRTUAL = "virtual "; //$NON-NLS-1$
 	private static final String UNION_SPACE = "union "; //$NON-NLS-1$
 	private static final String STRUCT_SPACE = "struct "; //$NON-NLS-1$
-	private static final String ENUM = "enum "; //$NON-NLS-1$
+	private static final String ENUM_SPACE = "enum "; //$NON-NLS-1$
 	private static final String _BOOL = "_Bool"; //$NON-NLS-1$
 	
 	public DeclSpecWriter(Scribe scribe, ASTWriterVisitor visitor, NodeCommentMap commentMap) {
@@ -168,7 +169,7 @@ public class DeclSpecWriter extends NodeWriter {
 	private String getElabTypeString(int kind) {
 		switch (kind) {
 		case IASTElaboratedTypeSpecifier.k_enum:
-			return ENUM;
+			return ENUM_SPACE;
 		case IASTElaboratedTypeSpecifier.k_struct:
 			return STRUCT_SPACE;
 		case IASTElaboratedTypeSpecifier.k_union:
@@ -184,6 +185,9 @@ public class DeclSpecWriter extends NodeWriter {
 	private void writeCPPDeclSpec(ICPPASTDeclSpecifier cppDelcSpec) {
 		if (cppDelcSpec.isVirtual()) {
 			scribe.print(VIRTUAL);
+		}
+		if (cppDelcSpec.isConstexpr()) {
+			scribe.print(CONSTEXPR);
 		}
 		if (cppDelcSpec.isExplicit()) {
 			scribe.print(EXPLICIT);
@@ -209,7 +213,7 @@ public class DeclSpecWriter extends NodeWriter {
 	}
 
 	private void writeEnumSpec(IASTEnumerationSpecifier enumSpec) {
-		scribe.print(ENUM);
+		scribe.print(ENUM_SPACE);
 		enumSpec.getName().accept(visitor);
 		scribe.print('{');
 		scribe.printSpace();

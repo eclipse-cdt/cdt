@@ -2593,9 +2593,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     }
 
     
-	private final static int INLINE=0x1, CONST=0x2, RESTRICT=0x4, VOLATILE=0x8, 
-    	SHORT=0x10,	UNSIGNED= 0x20, SIGNED=0x40, COMPLEX=0x80, IMAGINARY=0x100,
-    	VIRTUAL=0x200, EXPLICIT=0x400, FRIEND=0x800;
+	private final static int INLINE= 0x1, CONST= 0x2, CONSTEXPR= 0x4, RESTRICT= 0x8, VOLATILE= 0x10, 
+    	SHORT= 0x20, UNSIGNED= 0x40, SIGNED= 0x80, COMPLEX= 0x100, IMAGINARY= 0x200,
+    	VIRTUAL= 0x400, EXPLICIT= 0x800, FRIEND= 0x1000;
 	private static final int FORBID_IN_EMPTY_DECLSPEC = 
 		CONST | RESTRICT | VOLATILE | SHORT | UNSIGNED | SIGNED | COMPLEX | IMAGINARY | FRIEND;
 
@@ -2605,14 +2605,14 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * the ANSI C++ specification. 
      * declSpecifier : 
      * 		"register" | "static" | "extern" | "mutable" | 
-     * 		"inline" | "virtual" | "explicit" | 
-     * 		"typedef" | "friend" | 
-     * 		"const" | "volatile" | 
+     * 		"inline" | "virtual" | "explicit" |
+     * 		"typedef" | "friend" | "constexpr" | 
+     * 		"const" | "volatile" |
      * 		"short" | "long" | "signed" | "unsigned" | "int" |
      * 		"char" | "wchar_t" | "bool" | "float" | "double" | "void" | 
      *      "auto" |
-     * 		("typename")? name | 
-     * 		{ "class" | "struct" | "union" } classSpecifier | 
+     * 		("typename")? name |
+     * 		{ "class" | "struct" | "union" } classSpecifier |
      * 		{"enum"} enumSpecifier
      */
     @Override
@@ -2705,6 +2705,10 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         			break;
         		case IToken.t_friend:
         			options |= FRIEND;
+        			endOffset= consume().getEndOffset();
+        			break;
+        		case IToken.t_constexpr:
+        			options |= CONSTEXPR;
         			endOffset= consume().getEndOffset();
         			break;
         			// type specifier
@@ -3007,6 +3011,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 	private void configureDeclSpec(ICPPASTDeclSpecifier declSpec, int storageClass, int options) {
 		declSpec.setStorageClass(storageClass);
 		declSpec.setConst((options & CONST) != 0);
+		declSpec.setConstexpr((options & CONSTEXPR) != 0);
 		declSpec.setVolatile((options & VOLATILE) != 0);
 		declSpec.setInline((options & INLINE) != 0);
         declSpec.setFriend((options & FRIEND) != 0);

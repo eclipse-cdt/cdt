@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Institute for Software, HSR Hochschule fuer Technik
+ * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -16,7 +16,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
@@ -106,8 +105,7 @@ public class TrailNodeEqualityChecker implements EqualityChecker<IASTNode> {
 			} else if (node instanceof IASTName) {
 				return isNameEqual(trailNode, node);
 			} else {
-				Assert.isLegal(false, "Unexpected node type " + node.getClass().getSimpleName() + //$NON-NLS-1$
-						", this code shoud not be reached"); //$NON-NLS-1$
+				CUIPlugin.logError("Unexpected node type " + node.getClass().getSimpleName()); //$NON-NLS-1$
 				return true;
 			}
 		}
@@ -140,10 +138,11 @@ public class TrailNodeEqualityChecker implements EqualityChecker<IASTNode> {
 			ICPPASTNamedTypeSpecifier decl = (ICPPASTNamedTypeSpecifier) node;
 			return isDeclSpecifierEqual(trailDecl, decl)
 					&& isSameNamedTypeSpecifierName(trailDecl, decl)
-					&& trailDecl.isTypename() 	== decl.isTypename()
-					&& trailDecl.isExplicit() 	== decl.isExplicit()
-					&& trailDecl.isFriend() 	== decl.isFriend()
-					&& trailDecl.isVirtual() 	== decl.isVirtual();
+					&& trailDecl.isTypename() == decl.isTypename()
+					&& trailDecl.isConstexpr() == decl.isConstexpr()
+					&& trailDecl.isExplicit() == decl.isExplicit()
+					&& trailDecl.isFriend() == decl.isFriend()
+					&& trailDecl.isVirtual() == decl.isVirtual();
 		} else if (trailNode instanceof IASTNamedTypeSpecifier) {
 			IASTNamedTypeSpecifier trailDecl = (IASTNamedTypeSpecifier) trailNode;
 			IASTNamedTypeSpecifier decl = (IASTNamedTypeSpecifier) node;
@@ -163,9 +162,10 @@ public class TrailNodeEqualityChecker implements EqualityChecker<IASTNode> {
 			ICPPASTDeclSpecifier trailDecl = (ICPPASTDeclSpecifier) trailNode;
 			ICPPASTDeclSpecifier decl = (ICPPASTDeclSpecifier) node;
 			return isDeclSpecifierEqual(trailDecl, decl)
-					&& trailDecl.isExplicit() 	== decl.isExplicit()
-					&& trailDecl.isFriend() 	== decl.isFriend()
-					&& trailDecl.isVirtual() 	== decl.isVirtual();
+					&& trailDecl.isConstexpr() == decl.isConstexpr()
+					&& trailDecl.isExplicit() == decl.isExplicit()
+					&& trailDecl.isFriend() == decl.isFriend()
+					&& trailDecl.isVirtual() == decl.isVirtual();
 		} else if (trailNode instanceof ICASTDeclSpecifier) {
 			ICASTDeclSpecifier trailDecl = (ICASTDeclSpecifier) trailNode;
 			ICASTDeclSpecifier decl = (ICASTDeclSpecifier) node;
@@ -176,7 +176,7 @@ public class TrailNodeEqualityChecker implements EqualityChecker<IASTNode> {
 			IASTDeclSpecifier decl = (IASTDeclSpecifier) node;
 			return isDeclSpecifierEqual(trailDecl, decl);
 		} else {
-			//is same
+			// The same.
 			return true;
 		}
 	}
@@ -315,7 +315,8 @@ public class TrailNodeEqualityChecker implements EqualityChecker<IASTNode> {
 		if (trailDeclSpeci instanceof ICPPASTDeclSpecifier) {
 			ICPPASTDeclSpecifier trailCppDecl= (ICPPASTDeclSpecifier) trailDeclSpeci;
 			ICPPASTDeclSpecifier cppDecl= (ICPPASTDeclSpecifier) declSpeci;
-			if (trailCppDecl.isExplicit() != cppDecl.isExplicit()
+			if (trailCppDecl.isConstexpr() != cppDecl.isConstexpr()
+					|| trailCppDecl.isExplicit() != cppDecl.isExplicit()
 					|| trailCppDecl.isFriend() != cppDecl.isFriend()
 					|| trailCppDecl.isVirtual() != cppDecl.isVirtual()) {
 				return false;

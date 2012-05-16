@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM Rational Software) - Initial API and implementation
- *    Anton Leherbauer (Wind River Systems)
- *    Markus Schorn (Wind River Systems)
+ *     John Camelon (IBM Rational Software) - Initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser;
 
@@ -20,9 +20,10 @@ import org.eclipse.cdt.core.parser.util.CharArrayIntMap;
  */
 @SuppressWarnings("nls")
 public class Keywords {
-
-	public static final String CAST = "cast"; 
-	public static final String ALIGNOF = "alignof"; 
+	public static final String CAST = "cast";
+	/** @since 5.4 */
+	public static final String ALIGNAS = "alignas";
+	public static final String ALIGNOF = "alignof";
 	public static final String TYPEOF = "typeof"; 
 	
 	public static final String _BOOL = "_Bool"; 
@@ -46,6 +47,8 @@ public class Keywords {
 	public static final String CLASS = "class"; 
 	public static final String COMPL = "compl"; 
 	public static final String CONST = "const"; 
+	/** @since 5.4 */
+	public static final String CONSTEXPR = "constexpr";
 	public static final String CONST_CAST = "const_cast"; 
 	public static final String CONTINUE = "continue"; 
 	/** @since 5.2 */
@@ -75,7 +78,9 @@ public class Keywords {
 	/** @since 5.4 */
 	public static final String NULLPTR = "nullptr";
 	public static final String NEW = "new"; 
-	public static final String NOT = "not"; 
+	/** @since 5.4 */
+	public static final String NOEXCEPT = "noexcept";
+	public static final String NOT = "not";
 	public static final String NOT_EQ = "not_eq"; 
 	public static final String OPERATOR = "operator"; 
 	public static final String OR = "or"; 
@@ -98,6 +103,8 @@ public class Keywords {
 	public static final String SWITCH = "switch"; 
 	public static final String TEMPLATE = "template"; 
 	public static final String THIS = "this"; 
+	/** @since 5.4 */
+	public static final String THREAD_LOCAL = "thread_local"; 
 	public static final String THROW = "throw"; 
 	public static final String TRUE = "true"; 
 	public static final String TRY = "try"; 
@@ -119,6 +126,8 @@ public class Keywords {
 	public static final char[] c_BOOL = "_Bool".toCharArray(); 
 	public static final char[] c_COMPLEX = "_Complex".toCharArray(); 
 	public static final char[] c_IMAGINARY = "_Imaginary".toCharArray(); 
+	/** @since 5.4 */
+	public static final char[] cALIGNAS = "alignas".toCharArray(); 
 	/** @since 5.3 */
 	public static final char[] cALIGNOF = "alignof".toCharArray(); 
 	public static final char[] cAND = "and".toCharArray(); 
@@ -139,6 +148,8 @@ public class Keywords {
 	public static final char[] cCLASS = "class".toCharArray(); 
 	public static final char[] cCOMPL = "compl".toCharArray(); 
 	public static final char[] cCONST = "const".toCharArray(); 
+	/** @since 5.4 */
+	public static final char[] cCONSTEXPR = "constexpr".toCharArray(); 
 	public static final char[] cCONST_CAST = "const_cast".toCharArray(); 
 	public static final char[] cCONTINUE = "continue".toCharArray(); 
 	public static final char[] cDEFAULT = "default".toCharArray(); 
@@ -167,6 +178,8 @@ public class Keywords {
 	public static final char[] cNEW = "new".toCharArray(); 
 	/** @since 5.4 */
 	public static final char[] cNULLPTR = NULLPTR.toCharArray(); 
+	/** @since 5.4 */
+	public static final char[] cNOEXCEPT = "noexcept".toCharArray(); 
 	public static final char[] cNOT = "not".toCharArray(); 
 	public static final char[] cNOT_EQ = "not_eq".toCharArray(); 
 	public static final char[] cOPERATOR = "operator".toCharArray(); 
@@ -192,6 +205,8 @@ public class Keywords {
 	public static final char[] cSWITCH = "switch".toCharArray(); 
 	public static final char[] cTEMPLATE = "template".toCharArray(); 
 	public static final char[] cTHIS = "this".toCharArray(); 
+	/** @since 5.4 */
+	public static final char[] cTHREAD_LOCAL = "thread_local".toCharArray(); 
 	public static final char[] cTHROW = "throw".toCharArray(); 
 	public static final char[] cTRUE = "true".toCharArray(); 
 	public static final char[] cTRY = "try".toCharArray(); 
@@ -301,7 +316,6 @@ public class Keywords {
 		addCpp(kw);
 	}
 
-
 	private static void addCommon(CharArrayIntMap words) {
 		words.put(Keywords._Pragma, IToken.t_PRAGMA);
         words.put(Keywords.cAUTO, IToken.t_auto);
@@ -354,6 +368,7 @@ public class Keywords {
         cppkeywords.put(Keywords.cCHAR16_T, IToken.t_char16_t); 
         cppkeywords.put(Keywords.cCHAR32_T, IToken.t_char32_t); 
         cppkeywords.put(Keywords.cCLASS, IToken.t_class); 
+        cppkeywords.put(Keywords.cCONSTEXPR, IToken.t_constexpr); 
         cppkeywords.put(Keywords.cCONST_CAST, IToken.t_const_cast); 
         cppkeywords.put(Keywords.cDECLTYPE, IToken.t_decltype);
         cppkeywords.put(Keywords.cDELETE, IToken.t_delete); 
@@ -365,6 +380,7 @@ public class Keywords {
         cppkeywords.put(Keywords.cMUTABLE, IToken.t_mutable); 
         cppkeywords.put(Keywords.cNAMESPACE, IToken.t_namespace); 
         cppkeywords.put(Keywords.cNEW, IToken.t_new); 
+        cppkeywords.put(Keywords.cNOEXCEPT, IToken.t_noexcept);
         cppkeywords.put(Keywords.cNULLPTR, IToken.t_nullptr);
         cppkeywords.put(Keywords.cOPERATOR, IToken.t_operator); 
         cppkeywords.put(Keywords.cPRIVATE, IToken.t_private); 
@@ -375,6 +391,7 @@ public class Keywords {
         cppkeywords.put(Keywords.cSTATIC_CAST, IToken.t_static_cast); 
         cppkeywords.put(Keywords.cTEMPLATE, IToken.t_template); 
         cppkeywords.put(Keywords.cTHIS, IToken.t_this); 
+        cppkeywords.put(Keywords.cTHREAD_LOCAL, IToken.t_thread_local); 
         cppkeywords.put(Keywords.cTHROW, IToken.t_throw); 
         cppkeywords.put(Keywords.cTRUE, IToken.t_true); 
         cppkeywords.put(Keywords.cTRY, IToken.t_try); 

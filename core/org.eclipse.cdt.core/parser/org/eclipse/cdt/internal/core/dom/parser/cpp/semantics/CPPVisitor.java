@@ -1471,6 +1471,8 @@ public class CPPVisitor extends ASTQueries {
 						if (p instanceof IASTSimpleDeclaration &&
 								((IASTSimpleDeclaration) p).getDeclarators().length == 0) {
 							break;
+						} else if (p instanceof IASTParameterDeclaration) {
+							break;
 						}
 					} else if (prop == IASTDeclarator.DECLARATOR_NAME) {
 					    IASTNode p = name.getParent();

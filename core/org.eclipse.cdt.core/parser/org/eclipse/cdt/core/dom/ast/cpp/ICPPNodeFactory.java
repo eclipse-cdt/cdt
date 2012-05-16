@@ -8,6 +8,7 @@
  * Contributors:
  *     Mike Kucera (IBM Corporation) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
@@ -354,4 +355,14 @@ public interface ICPPNodeFactory extends INodeFactory {
 	
 	@Override
 	public ICPPASTWhileStatement newWhileStatement(IASTExpression condition, IASTStatement body);
+	
+	/**
+	 * @since 5.4
+	 */
+	public ICPPASTLiteralExpression newUserDefinedLiteralExpression(int kind, String image);
+	
+	/**
+	 * @since 5.4
+	 */
+	public IASTName newLiteralOperatorName(String image);
 }

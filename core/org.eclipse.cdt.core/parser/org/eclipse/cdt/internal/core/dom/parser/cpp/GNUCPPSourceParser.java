@@ -13,6 +13,7 @@
  *     Mike Kucera (IBM)
  *     Andrew Ferguson (Symbian)
  *     Sergey Prigogin (Google)
+ *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -545,6 +546,10 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         case IToken.tIDENTIFIER:
         case IToken.t_operator:
         case IToken.tCOMPLETION:
+        case IToken.tUSER_DEFINED_INTEGER_LITERAL:
+        case IToken.tUSER_DEFINED_FLOATING_LITERAL:
+        case IToken.tUSER_DEFINED_STRING_LITERAL:
+        case IToken.tUSER_DEFINED_CHARACTER_LITERAL:
 			return NO_TEMPLATE_ID;
 			
 		// Tokens that end an expression
@@ -708,6 +713,12 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         	endOffset= consume(IToken.tGT_in_SHIFTR).getEndOffset();
         	op= OverloadableOperator.SHIFTR;
         	break;
+        case IToken.tSTRING:
+        		consume(); // shall be ""
+        		IToken udSuffix = consume(IToken.tIDENTIFIER);
+        		IASTName literalOperatorName = nodeFactory.newLiteralOperatorName(udSuffix.getImage());
+        		setRange(literalOperatorName, firstToken.getOffset(), udSuffix.getEndOffset());
+        		return literalOperatorName;
         default:
         	op= OverloadableOperator.valueOf(LA(1));
         	if (op != null) {
@@ -1696,6 +1707,26 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         }
         case IToken.tLBRACKET:
         	return lambdaExpression();
+        case IToken.tUSER_DEFINED_INTEGER_LITERAL:
+            int udKind = IASTLiteralExpression.lk_integer_constant;
+            t= consume();
+        	literalExpression= nodeFactory.newUserDefinedLiteralExpression(udKind, t.getImage());
+    		return setRange(literalExpression, t.getOffset(), t.getEndOffset());
+		case IToken.tUSER_DEFINED_FLOATING_LITERAL:
+            udKind = IASTLiteralExpression.lk_float_constant;
+            t= consume();
+        	literalExpression= nodeFactory.newUserDefinedLiteralExpression(udKind, t.getImage());
+    		return setRange(literalExpression, t.getOffset(), t.getEndOffset());
+        case IToken.tUSER_DEFINED_STRING_LITERAL:
+            udKind = IASTLiteralExpression.lk_string_literal;
+            t= consume();
+        	literalExpression= nodeFactory.newUserDefinedLiteralExpression(udKind, t.getImage());
+    		return setRange(literalExpression, t.getOffset(), t.getEndOffset());
+        case IToken.tUSER_DEFINED_CHARACTER_LITERAL:
+            udKind = IASTLiteralExpression.lk_char_constant;
+        	t= consume();
+        	literalExpression= nodeFactory.newUserDefinedLiteralExpression(udKind, t.getImage());
+    		return setRange(literalExpression, t.getOffset(), t.getEndOffset());
         
         default:
             IToken la = LA(1);
@@ -2660,7 +2691,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         		case IToken.t_auto:
         			if (supportAutoTypeSpecifier) {
             			if (encounteredTypename)
-            				break declSpecifiers;
             			simpleType = IASTSimpleDeclSpecifier.t_auto;
             			encounteredRawType= true;
             			endOffset= consume().getEndOffset();

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
+ *    Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.scanner;
 
@@ -151,6 +152,22 @@ public class LexerTests extends BaseTestCase {
 	
 	private void utf32ch(String expectedImage) throws Exception {
 		token(IToken.tUTF32CHAR, expectedImage);
+	}
+	
+	private void userDefinedIntegerLiteral(String expectedImage) throws Exception {
+		token(IToken.tUSER_DEFINED_INTEGER_LITERAL, expectedImage);
+	}
+	
+	private void userDefinedFloatingLiteral(String expectedImage) throws Exception {
+		token(IToken.tUSER_DEFINED_FLOATING_LITERAL, expectedImage);
+	}
+	
+	private void userDefinedStringLiteral(String expectedImage) throws Exception {
+		token(IToken.tUSER_DEFINED_STRING_LITERAL, expectedImage);
+	}
+	
+	private void userDefinedCharacterLiteral(String expectedImage) throws Exception {
+		token(IToken.tUSER_DEFINED_CHARACTER_LITERAL, expectedImage);
 	}
 
 	private void eof() throws Exception {
@@ -402,7 +419,7 @@ public class LexerTests extends BaseTestCase {
 	}
 	
 	public void testNumber() throws Exception {
-		final String number= ".0123456789.abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_" +
+		final String number= ".0123456789.abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" +
 			"\\uaaaa\\Uaaaaaaaae+e-E+E-";
 		for (int i = 0; i < 11; i++) {
 			String n= number.substring(i);
@@ -809,6 +826,129 @@ public class LexerTests extends BaseTestCase {
 		fLexer.nextDirective();
 		ws();
 		token(IToken.tPOUND);
+		eof();
+	}
+	
+	
+	public void testUserDefinedIntegerLiteral() throws Exception {
+		String udSuffix = "_suff";
+		
+		String decInteger = "1";
+		userDefinedIntegerLiteralCase(decInteger + udSuffix);
+		
+		String octLiteral = "0";
+		userDefinedIntegerLiteralCase(octLiteral + udSuffix);
+		
+		String hexLiteral = "0xf";
+		userDefinedIntegerLiteralCase(hexLiteral + udSuffix);
+	}
+
+	private void userDefinedIntegerLiteralCase(String literal) throws Exception {
+		init(literal);
+		userDefinedIntegerLiteral(literal);
+		eof();
+	}
+	
+	public void testUserDefinedFloatingLiteral() throws Exception {
+		String udSuffix = "_suff";
+		
+		String fractionalFloat = "1.";
+		userDefinedFloatingLiteralCase(fractionalFloat + udSuffix);
+		
+		String leadingfractionalFloat = ".1";
+		userDefinedFloatingLiteralCase(leadingfractionalFloat + udSuffix);
+		
+		String exponentFloat = "1e1";
+		userDefinedFloatingLiteralCase(exponentFloat + udSuffix);
+
+		String floatSuffixFloat = "1.f";
+		userDefinedFloatingLiteralCase(floatSuffixFloat + udSuffix);	
+		
+		String longSuffixFloat = "1.l";
+		userDefinedFloatingLiteralCase(longSuffixFloat + udSuffix);		
+	}
+
+	private void userDefinedFloatingLiteralCase(String literal)
+			throws Exception {
+		init(literal);
+		userDefinedFloatingLiteral(literal);
+		eof();
+	}
+	
+	public void testUserDefinedStringLiteral() throws Exception {
+		String udSuffix = "_suff";
+		
+		String content= "abc0123\\\"'.:; \\\\";
+		
+		String stringLiteral = '"' + content + '"';
+		testUserDefinedStringLiteralCase(stringLiteral + udSuffix);
+
+		String literalWithUnderscore= '"' + "part_part" + '"';
+		testUserDefinedStringLiteralCase(literalWithUnderscore + udSuffix);
+
+		String wString = "L\"" + content + '"';
+		testUserDefinedStringLiteralCase(wString + udSuffix);
+		
+		String utf8String = "u8\"" + content + '"';
+		testUserDefinedStringLiteralCase(utf8String + udSuffix);
+		
+		String utf16String = "u\"" + content + '"';
+		testUserDefinedStringLiteralCase(utf16String + udSuffix);
+		
+		String utf32String =  "U\"" + content + '"';
+		testUserDefinedStringLiteralCase(utf32String + udSuffix);
+	}
+	
+
+	public void testUserDefinedRawStringLiteral() throws Exception {
+		String udSuffix = "_suff";
+		
+		String rawContent= "abc0123\\\"'.:; \\\\ \n\"(";
+		
+		String rawStringLiteral = "R\"("+ rawContent + ")\"";
+		testUserDefinedStringLiteralCase(rawStringLiteral  + udSuffix);
+
+		String rawWStringLiteral = "LR\"("+ rawContent + ")\"";
+		testUserDefinedStringLiteralCase(rawWStringLiteral  + udSuffix);
+		
+		String rawUTF8WStringLiteral = "u8R\"("+ rawContent + ")\"";
+		testUserDefinedStringLiteralCase(rawUTF8WStringLiteral  + udSuffix);
+
+		String rawUTF16WStringLiteral = "uR\"("+ rawContent + ")\"";
+		testUserDefinedStringLiteralCase(rawUTF16WStringLiteral  + udSuffix);
+
+		String rawUTF32WStringLiteral = "UR\"("+ rawContent + ")\"";
+		testUserDefinedStringLiteralCase(rawUTF32WStringLiteral  + udSuffix);
+	}
+
+	private void testUserDefinedStringLiteralCase(String literal) throws Exception {
+		init(literal);
+		userDefinedStringLiteral(literal);
+		eof();
+	}
+	
+	public void testUserDefinedCharacterLiteral() throws Exception {
+		String udSuffix = "_suff";
+		
+		String characterLiteral= "'abc0123\\'\".:; \\\\'";
+		testUserDefinedCharacterLiteralCase(characterLiteral + udSuffix);
+		
+		String underscoreChar = "'_'";
+		testUserDefinedCharacterLiteralCase(underscoreChar + udSuffix);		
+
+		String wcharLiteral= 'L' + characterLiteral;
+		testUserDefinedCharacterLiteralCase(wcharLiteral + udSuffix);
+		
+		String utf16charLiteral= 'u' + characterLiteral;
+		testUserDefinedCharacterLiteralCase(utf16charLiteral + udSuffix);
+		
+		String utf32charLiteral= 'U' + characterLiteral;
+		testUserDefinedCharacterLiteralCase(utf32charLiteral + udSuffix);
+	}
+
+	private void testUserDefinedCharacterLiteralCase(String literal) throws Exception {
+		init(literal);
+		userDefinedCharacterLiteral(literal);
 		eof();
 	}
 }

@@ -8,6 +8,7 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *    Mike Kucera (IBM) - UTF string literals
+ *    Thomas Corbat (IFS)
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.parser.scanner;
 
@@ -740,10 +741,14 @@ final public class Lexer implements ITokenSequence {
 			length++;
 			c= nextCharPhase3();
 		}
+		if(c == '_'){
+			Token udSuffix = identifier(start + length, 0);
+			return newToken(IToken.tUSER_DEFINED_STRING_LITERAL, start, length + udSuffix.getLength());
+		}
 		return newToken(tokenType, start, length);
 	}
 
-	private Token rawStringLiteral(final int start, int length, final int tokenType) throws OffsetLimitReachedException {
+	private Token rawStringLiteral(final int start, int length, int tokenType) throws OffsetLimitReachedException {
 		final int delimOffset= fOffset;
 		int delimEndOffset = delimOffset;
 		int offset;
@@ -786,7 +791,12 @@ final public class Lexer implements ITokenSequence {
 		fOffset= offset-1;
 		fEndOffset= offset;
 		fCharPhase3=  0;
-		nextCharPhase3();
+		int charBeyond= nextCharPhase3();
+		if( charBeyond == '_'){
+			tokenType = IToken.tUSER_DEFINED_STRING_LITERAL;
+			Token udSuffix = identifier(offset, 0);
+			offset = udSuffix.getEndOffset();
+		}
 		return newToken(tokenType, start, offset-start);
 	}
 
@@ -821,6 +831,10 @@ final public class Lexer implements ITokenSequence {
 			}
 			length++;
 			c= nextCharPhase3();
+		}
+		if (c == '_') {
+			Token udSuffix = identifier(start + length, 0);
+			return newToken(IToken.tUSER_DEFINED_CHARACTER_LITERAL, start, length + udSuffix.getLength());
 		}
 		return newToken(tokenType, start, length);
 	}
@@ -897,6 +911,7 @@ final public class Lexer implements ITokenSequence {
 	private Token number(final int start, int length, boolean isFloat) throws OffsetLimitReachedException {
 		boolean isPartOfNumber= true;
 		boolean isHex= false;
+		boolean isUserDefined= false;
 		int c= fCharPhase3;
 		while (true) {
 			switch(c) {
@@ -907,11 +922,14 @@ final public class Lexer implements ITokenSequence {
             case 'A': case 'B': case 'C': case 'D':           case 'F': case 'G': case 'H': case 'I':
             case 'J': case 'K': case 'L': case 'M': case 'N': case 'O':           case 'Q': case 'R': 
             case 'S': case 'T': case 'U': case 'V': case 'W': 		    case 'Y': case 'Z':
-            case '_': 
             	
             // digit
             case '0': case '1': case '2': case '3': case '4':
             case '5': case '6': case '7': case '8': case '9':
+            	break;
+            
+            case '_': 
+            	isUserDefined= true;
             	break;
             	
             case 'x': case 'X':
@@ -977,8 +995,12 @@ final public class Lexer implements ITokenSequence {
         	c= nextCharPhase3();
         	length++;
 		}
-		
-        return newToken((isFloat ? IToken.tFLOATINGPT : IToken.tINTEGER), start, length);
+		if(isUserDefined){
+			return newToken((isFloat ? IToken.tUSER_DEFINED_FLOATING_LITERAL : IToken.tUSER_DEFINED_INTEGER_LITERAL), start, length);
+		}
+		else{
+			return newToken((isFloat ? IToken.tFLOATINGPT : IToken.tINTEGER), start, length);
+		}
 	}
 	
 	

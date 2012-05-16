@@ -8,6 +8,7 @@
  * Contributors:
  *     Mike Kucera (IBM) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -746,5 +747,17 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 	@Override
 	public ICPPASTWhileStatement newWhileStatement(IASTExpression condition, IASTStatement body) {
 		return new CPPASTWhileStatement(condition, body);
+	}
+
+	@Override
+	public ICPPASTLiteralExpression newUserDefinedLiteralExpression(int kind, String image) {
+		// TODO Auto-generated method stub
+		return newLiteralExpression(kind, image);
+	}
+
+	@Override
+	public IASTName newLiteralOperatorName(String image) {
+		// TODO Auto-generated method stub
+		return newOperatorName(image.toCharArray());
 	}
 }

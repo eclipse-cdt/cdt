@@ -1,4 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+     Copyright (c) 2011, 2012 Eclipse contributors and others.
+     All rights reserved. This program and the accompanying materials
+     are made available under the terms of the Eclipse Public License v1.0
+     which accompanies this distribution, and is available at
+     http://www.eclipse.org/legal/epl-v10.html
+    
+     Contributors:
+         Anna Dushistova(MontaVista) - copied from parent poms of Linux Tools and CDT projects
+ -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <prerequisites>
@@ -145,7 +155,6 @@
     <module>org.eclipse.tm.rse/features/org.eclipse.rse.core.source</module>
     <module>org.eclipse.tm.rse/features/org.eclipse.rse.dstore-feature</module>
     <module>org.eclipse.tm.rse/features/org.eclipse.rse.dstore.source</module>
-    <!--    <module>org.eclipse.tm.rse/features/org.eclipse.rse.efs-feature</module> -->
     <module>org.eclipse.tm.rse/features/org.eclipse.rse.ftp-feature</module>
     <module>org.eclipse.tm.rse/features/org.eclipse.rse.ftp-patch</module>
     <module>org.eclipse.tm.rse/features/org.eclipse.rse.ftp.source</module>
@@ -161,8 +170,7 @@
     <module>org.eclipse.tm.rse/features/org.eclipse.rse.terminals.source</module>
     <module>org.eclipse.tm.rse/features/org.eclipse.rse.useractions-feature</module>
     <module>org.eclipse.tm.rse/features/org.eclipse.rse.useractions.wrapper-feature</module>
-    <!--    <module>org.eclipse.tm.rse/features/org.eclipse.rse.wince.wrapper-feature</module>                                                                                     
--->
+    <!--<module>org.eclipse.tm.rse/features/org.eclipse.rse.wince.wrapper-feature</module>-->
     <module>org.eclipse.tm.rse/plugins/org.eclipse.dstore.core</module>
     <module>org.eclipse.tm.rse/plugins/org.eclipse.dstore.extra</module>
     <module>org.eclipse.tm.rse/plugins/org.eclipse.rse</module>
@@ -206,16 +214,15 @@
     <module>org.eclipse.tm.rse/plugins/org.eclipse.rse.ui</module>
     <module>org.eclipse.tm.rse/plugins/org.eclipse.rse.ui.capabilities</module>
     <module>org.eclipse.tm.rse/plugins/org.eclipse.rse.useractions</module>
-    <!--    <module>releng/org.eclipse.rse.updatesite</module>                                                                                                                     
-    <module>releng/org.eclipse.tm.releng.master-feature</module>                                                                                                                   
+    <!--<module>org.eclipse.tm.rse/releng/org.eclipse.rse.updatesite</module>-->
+    <!--<module>releng/org.eclipse.tm.releng.master-feature</module>                                                                                                                   
     <module>releng/org.eclipse.tm.releng.test-feature</module>                                                                                                                     
 -->
     <module>org.eclipse.tm.core/terminal/org.eclipse.tm.terminal</module>
     <module>org.eclipse.tm.core/terminal/org.eclipse.tm.terminal-feature</module>
-    <!--    <module>org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.local</module>                                                                                            
-<module>org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.local-feature</module>                                                                                                
-<module>org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.local.sdk-feature</module>                                                                                            
--->
+    <module>org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.local</module>
+    <module>org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.local-feature</module>
+    <module>org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.local.sdk-feature</module>
     <module>org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.sdk-feature</module>
     <module>org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.serial</module>
     <module>org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.serial-feature</module>
@@ -280,6 +287,29 @@
           <strictBinIncludes>false</strictBinIncludes>
           <archiveSite>true</archiveSite>
         </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <inherited>false</inherited>
+        <executions>
+          <execution>
+            <id>prepare-serverruntime</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <target>
+                <property name="buildDirectory" value="${project.build.directory}/../"/>
+                <property name="builder" value="${project.build.directory}/../org.eclipse.tm.rse/releng/org.eclipse.rse.build/"/>
+                <property name="buildId" value="3.4.0"/>
+                <ant antfile="${project.build.directory}/../dstoreTargets.xml">
+                  <target name="serverruntime"/>
+                </ant>
+              </target>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
     <pluginManagement>

@@ -42,6 +42,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.TestName;
+import org.junit.rules.TestRule;
+import org.junit.rules.Timeout;
 
 /**
  * This is the base class for the GDB/MI Unit tests.
@@ -52,9 +54,14 @@ import org.junit.rules.TestName;
  * code is to be run.
  */
 public class BaseTestCase {
+	// Timeout value for each individual test
+	private final static int TEST_TIMEOUT = 5 * 60 * 1000; // 5 minutes in milliseconds
 	
 	// Make the current test naem available through testName.getMethodName()
 	@Rule public TestName testName = new TestName();
+	
+	// Add a timeout for each test, to make sure no test hangs
+	@Rule public TestRule timeout = new Timeout(TEST_TIMEOUT);
 	
 	public static final String ATTR_DEBUG_SERVER_NAME = TestsPlugin.PLUGIN_ID + ".DEBUG_SERVER_NAME";
 	private static final String DEFAULT_TEST_APP = "data/launch/bin/GDBMIGenericTestApp.exe";

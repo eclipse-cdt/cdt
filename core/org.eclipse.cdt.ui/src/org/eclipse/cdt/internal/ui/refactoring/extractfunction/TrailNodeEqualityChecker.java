@@ -138,10 +138,11 @@ public class TrailNodeEqualityChecker implements EqualityChecker<IASTNode> {
 			ICPPASTNamedTypeSpecifier decl = (ICPPASTNamedTypeSpecifier) node;
 			return isDeclSpecifierEqual(trailDecl, decl)
 					&& isSameNamedTypeSpecifierName(trailDecl, decl)
-					&& trailDecl.isTypename() == decl.isTypename()
 					&& trailDecl.isConstexpr() == decl.isConstexpr()
 					&& trailDecl.isExplicit() == decl.isExplicit()
 					&& trailDecl.isFriend() == decl.isFriend()
+					&& trailDecl.isThreadLocal() == decl.isThreadLocal()
+					&& trailDecl.isTypename() == decl.isTypename()
 					&& trailDecl.isVirtual() == decl.isVirtual();
 		} else if (trailNode instanceof IASTNamedTypeSpecifier) {
 			IASTNamedTypeSpecifier trailDecl = (IASTNamedTypeSpecifier) trailNode;
@@ -157,7 +158,7 @@ public class TrailNodeEqualityChecker implements EqualityChecker<IASTNode> {
 			IASTCompositeTypeSpecifier trailDecl = (IASTCompositeTypeSpecifier) trailNode;
 			IASTCompositeTypeSpecifier decl = (IASTCompositeTypeSpecifier) node;
 			return isDeclSpecifierEqual(trailDecl, decl)
-					&& trailDecl.getKey() 	== decl.getKey();
+					&& trailDecl.getKey() == decl.getKey();
 		} else if (trailNode instanceof ICPPASTDeclSpecifier) {
 			ICPPASTDeclSpecifier trailDecl = (ICPPASTDeclSpecifier) trailNode;
 			ICPPASTDeclSpecifier decl = (ICPPASTDeclSpecifier) node;
@@ -165,12 +166,13 @@ public class TrailNodeEqualityChecker implements EqualityChecker<IASTNode> {
 					&& trailDecl.isConstexpr() == decl.isConstexpr()
 					&& trailDecl.isExplicit() == decl.isExplicit()
 					&& trailDecl.isFriend() == decl.isFriend()
+					&& trailDecl.isThreadLocal() == decl.isThreadLocal()
 					&& trailDecl.isVirtual() == decl.isVirtual();
 		} else if (trailNode instanceof ICASTDeclSpecifier) {
 			ICASTDeclSpecifier trailDecl = (ICASTDeclSpecifier) trailNode;
 			ICASTDeclSpecifier decl = (ICASTDeclSpecifier) node;
 			return isDeclSpecifierEqual(trailDecl, decl)
-					&& trailDecl.isRestrict() 	== decl.isRestrict();
+					&& trailDecl.isRestrict() == decl.isRestrict();
 		} else if (trailNode instanceof IASTDeclSpecifier) {
 			IASTDeclSpecifier trailDecl = (IASTDeclSpecifier) trailNode;
 			IASTDeclSpecifier decl = (IASTDeclSpecifier) node;
@@ -318,6 +320,7 @@ public class TrailNodeEqualityChecker implements EqualityChecker<IASTNode> {
 			if (trailCppDecl.isConstexpr() != cppDecl.isConstexpr()
 					|| trailCppDecl.isExplicit() != cppDecl.isExplicit()
 					|| trailCppDecl.isFriend() != cppDecl.isFriend()
+					|| trailCppDecl.isThreadLocal() != cppDecl.isThreadLocal()
 					|| trailCppDecl.isVirtual() != cppDecl.isVirtual()) {
 				return false;
 			}

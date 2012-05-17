@@ -39,6 +39,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTBinaryExpression;
+import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 
 /**
@@ -112,6 +113,7 @@ public class ExpressionWriter extends NodeWriter{
 	private static final String OPENING_SQUARE_BRACKET = "["; //$NON-NLS-1$
 	private static final String CLOSING_SQUARE_BRACKET = "]"; //$NON-NLS-1$
 	private static final String THIS = "this"; //$NON-NLS-1$
+	private static final String THROW = "throw "; //$NON-NLS-1$
 	private final MacroExpansionHandler macroHandler;
 	
 	public ExpressionWriter(Scribe scribe, ASTWriterVisitor visitor, MacroExpansionHandler macroHandler, NodeCommentMap commentMap) {
@@ -423,7 +425,7 @@ public class ExpressionWriter extends NodeWriter{
 		if (fieldRef instanceof ICPPASTFieldReference) {
 			ICPPASTFieldReference cppFieldRef = (ICPPASTFieldReference) fieldRef;
 			if (cppFieldRef.isTemplate()) {
-				scribe.print(TEMPLATE);
+				scribe.printStringSpace(Keywords.TEMPLATE);
 			}
 		}
 		fieldRef.getFieldName().accept(visitor);

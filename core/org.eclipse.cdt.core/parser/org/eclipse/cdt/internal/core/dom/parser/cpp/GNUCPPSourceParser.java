@@ -2595,9 +2595,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     
 	private final static int INLINE= 0x1, CONST= 0x2, CONSTEXPR= 0x4, RESTRICT= 0x8, VOLATILE= 0x10, 
     	SHORT= 0x20, UNSIGNED= 0x40, SIGNED= 0x80, COMPLEX= 0x100, IMAGINARY= 0x200,
-    	VIRTUAL= 0x400, EXPLICIT= 0x800, FRIEND= 0x1000;
+    	VIRTUAL= 0x400, EXPLICIT= 0x800, FRIEND= 0x1000, THREAD_LOCAL= 0x2000;
 	private static final int FORBID_IN_EMPTY_DECLSPEC = 
-		CONST | RESTRICT | VOLATILE | SHORT | UNSIGNED | SIGNED | COMPLEX | IMAGINARY | FRIEND;
+		CONST | RESTRICT | VOLATILE | SHORT | UNSIGNED | SIGNED | COMPLEX | IMAGINARY | FRIEND | THREAD_LOCAL;
 
 
     /**
@@ -2680,6 +2680,10 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         			break;
         		case IToken.t_extern:
         			storageClass = IASTDeclSpecifier.sc_extern;
+        			endOffset= consume().getEndOffset();
+        			break;
+        		case IToken.t_thread_local:
+        			options |= THREAD_LOCAL;  // thread_local may appear with static or extern
         			endOffset= consume().getEndOffset();
         			break;
         		case IToken.t_mutable:
@@ -3018,6 +3022,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         declSpec.setVirtual((options & VIRTUAL) != 0);
         declSpec.setExplicit((options & EXPLICIT) != 0);
         declSpec.setRestrict((options & RESTRICT) != 0);
+        declSpec.setThreadLocal((options & THREAD_LOCAL) != 0);
 	}
 
 	private ICPPASTDeclSpecifier enumDeclaration(boolean allowOpaque) throws BacktrackException, EndOfFileException {

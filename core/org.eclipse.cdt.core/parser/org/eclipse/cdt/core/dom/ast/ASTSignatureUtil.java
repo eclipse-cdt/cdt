@@ -511,6 +511,14 @@ public class ASTSignatureUtil {
 
 		if (declSpec instanceof ICPPASTDeclSpecifier) {
 			ICPPASTDeclSpecifier cppDeclSpec = (ICPPASTDeclSpecifier) declSpec;
+			if (cppDeclSpec.isThreadLocal()) {
+				if (needSpace) {
+					result.append(SPACE);
+					needSpace = false;
+				}
+				result.append(Keywords.THREAD_LOCAL);
+				needSpace = true;
+			}
 			if (cppDeclSpec.isConstexpr()) {
 				if (needSpace) {
 					result.append(SPACE);

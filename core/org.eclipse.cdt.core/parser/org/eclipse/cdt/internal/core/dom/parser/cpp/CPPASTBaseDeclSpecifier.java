@@ -26,6 +26,7 @@ public abstract class CPPASTBaseDeclSpecifier extends ASTNode implements ICPPAST
     private boolean isVolatile;
     private boolean isRestrict;
     private int sc;
+    private boolean isThreadLocal;
     private boolean virtual;
     private boolean explicit;
     
@@ -43,6 +44,17 @@ public abstract class CPPASTBaseDeclSpecifier extends ASTNode implements ICPPAST
 	public void setStorageClass(int storageClass) {
         assertNotFrozen();
         sc = storageClass;
+    }
+
+    @Override
+	public boolean isThreadLocal() {
+        return isThreadLocal;
+    }
+
+    @Override
+	public void setThreadLocal(boolean value) {
+        assertNotFrozen();
+        isThreadLocal = value;
     }
 
     @Override

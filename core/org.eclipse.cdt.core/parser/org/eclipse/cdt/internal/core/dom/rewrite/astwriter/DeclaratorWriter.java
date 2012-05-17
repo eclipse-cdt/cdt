@@ -9,6 +9,7 @@
  * Contributors: 
  *     Institute for Software - initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.astwriter;
 
@@ -29,6 +30,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPointerToMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTReferenceOperator;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
+import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 
 /**
@@ -41,7 +43,6 @@ import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 public class DeclaratorWriter extends NodeWriter {
 	private static final String AMPERSAND_AMPERSAND = "&&"; //$NON-NLS-1$
 	private static final String PURE_VIRTUAL = " = 0"; //$NON-NLS-1$
-	private static final String MUTABLE = "mutable"; //$NON-NLS-1$
 	private static final String ARROW_OPERATOR = "->"; //$NON-NLS-1$
 	
 	public DeclaratorWriter(Scribe scribe, ASTWriterVisitor visitor, NodeCommentMap commentMap) {
@@ -128,15 +129,15 @@ public class DeclaratorWriter extends NodeWriter {
 	private void writeCppFunctionDeclarator(ICPPASTFunctionDeclarator funcDec) {
 		if (funcDec.isConst()) {
 			scribe.printSpace();
-			scribe.print(CONST);
+			scribe.print(Keywords.CONST);
 		}
 		if (funcDec.isVolatile()) {
 			scribe.printSpace();
-			scribe.print(VOLATILE);
+			scribe.print(Keywords.VOLATILE);
 		}
 		if (funcDec.isMutable()) {
 			scribe.printSpace();
-			scribe.print(MUTABLE);
+			scribe.print(Keywords.MUTABLE);
 		}
 		if (funcDec.isPureVirtual()) {
 			scribe.print(PURE_VIRTUAL);
@@ -153,7 +154,7 @@ public class DeclaratorWriter extends NodeWriter {
 	protected void writeExceptionSpecification(ICPPASTFunctionDeclarator funcDec, IASTTypeId[] exceptions) {
 		if (exceptions != ICPPASTFunctionDeclarator.NO_EXCEPTION_SPECIFICATION) {
 			scribe.printSpace();
-			scribe.print(THROW);
+			scribe.printStringSpace(Keywords.THROW);
 			scribe.print('(');
 			writeNodeList(exceptions);
 			scribe.print(')');
@@ -182,13 +183,13 @@ public class DeclaratorWriter extends NodeWriter {
 		}
 
 		if (operator.isConst()) {
-			scribe.printStringSpace(CONST);
+			scribe.printStringSpace(Keywords.CONST);
 		}
 		if (operator.isVolatile()) {
-			scribe.printStringSpace(VOLATILE);
+			scribe.printStringSpace(Keywords.VOLATILE);
 		}
 		if (operator.isRestrict()) {
-			scribe.print(RESTRICT);
+			scribe.printStringSpace(Keywords.RESTRICT);
 		}
 	}
 

@@ -1077,6 +1077,13 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
+	// thread_local int e;
+	// static thread_local int f;
+	// extern thread_local int g;
+	public void test7_1_1s1() throws Exception {
+		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
+	}
+
 	// static char* f(); // f() has internal linkage
 	// char* f() // f() still has internal linkage
 	// { //

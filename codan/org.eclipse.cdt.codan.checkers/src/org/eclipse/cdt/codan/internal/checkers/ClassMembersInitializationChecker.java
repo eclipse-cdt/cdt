@@ -35,6 +35,7 @@ import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
@@ -173,10 +174,13 @@ public class ClassMembersInitializationChecker extends AbstractIndexAstChecker {
 				Set<IField> actualConstructorFields = constructorsStack.peek();
 				if (!actualConstructorFields.isEmpty()) {
 					IBinding binding = name.resolveBinding();
-					IField equivalentFieldBinding = getContainedEquivalentBinding(actualConstructorFields, binding, name.getTranslationUnit().getIndex());
-					if (equivalentFieldBinding != null) {
-						if ((CPPVariableReadWriteFlags.getReadWriteFlags(name) & PDOMName.WRITE_ACCESS) != 0) {
-							actualConstructorFields.remove(equivalentFieldBinding);
+					if (binding != null && !(binding instanceof IProblemBinding)) {
+						IField equivalentFieldBinding = getContainedEquivalentBinding(
+								actualConstructorFields, binding, name.getTranslationUnit().getIndex());
+						if (equivalentFieldBinding != null) {
+							if ((CPPVariableReadWriteFlags.getReadWriteFlags(name) & PDOMName.WRITE_ACCESS) != 0) {
+								actualConstructorFields.remove(equivalentFieldBinding);
+							}
 						}
 					}
 				}

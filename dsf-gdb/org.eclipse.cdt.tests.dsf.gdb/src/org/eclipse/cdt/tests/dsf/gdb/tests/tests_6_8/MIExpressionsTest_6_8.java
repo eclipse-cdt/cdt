@@ -30,4 +30,10 @@ public class MIExpressionsTest_6_8 extends MIExpressionsTest_6_7 {
     	super.testCanWriteLValue();
     }
 
+	// Re-enable this test starting with GDB 6.8
+    @Override
+    @Test
+    public void testRTTI() throws Throwable {
+    	super.testRTTI();
+    }
 }

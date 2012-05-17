@@ -16,15 +16,14 @@ import java.util.List;
 
 import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
 import org.eclipse.cdt.tests.dsf.gdb.tests.ITestConstants;
-import org.eclipse.cdt.tests.dsf.gdb.tests.MIRegistersTest;
+import org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_1.MIRegistersTest_7_1;
 import org.eclipse.core.runtime.Platform;
-import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 
 @RunWith(BackgroundRunner.class)
-public class MIRegistersTest_7_2 extends MIRegistersTest {
-	@BeforeClass
-	public static void beforeClassMethod_7_2() {
+public class MIRegistersTest_7_2 extends MIRegistersTest_7_1 {
+    @Override
+	protected void setGdbVersion() {
 		setGdbProgramNamesLaunchAttributes(ITestConstants.SUFFIX_GDB_7_2);
 	}
 	

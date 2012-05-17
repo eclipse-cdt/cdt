@@ -12,14 +12,13 @@ package org.eclipse.cdt.tests.dsf.gdb.tests.tests_6_8;
 
 import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
 import org.eclipse.cdt.tests.dsf.gdb.tests.ITestConstants;
-import org.eclipse.cdt.tests.dsf.gdb.tests.PostMortemCoreTest;
-import org.junit.BeforeClass;
+import org.eclipse.cdt.tests.dsf.gdb.tests.tests_6_7.PostMortemCoreTest_6_7;
 import org.junit.runner.RunWith;
 
 @RunWith(BackgroundRunner.class)
-public class PostMortemCoreTest_6_8 extends PostMortemCoreTest {
-	@BeforeClass
-    public static void beforeClassMethod_6_8() {
+public class PostMortemCoreTest_6_8 extends PostMortemCoreTest_6_7 {
+    @Override
+	protected void setGdbVersion() {
 		setGdbProgramNamesLaunchAttributes(ITestConstants.SUFFIX_GDB_6_8);		
 	}
 }

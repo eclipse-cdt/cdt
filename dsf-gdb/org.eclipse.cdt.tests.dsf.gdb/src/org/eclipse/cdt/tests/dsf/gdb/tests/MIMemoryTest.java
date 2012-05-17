@@ -40,10 +40,6 @@ import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
 import org.eclipse.cdt.utils.Addr64;
 import org.eclipse.debug.core.model.MemoryByte;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -81,18 +77,12 @@ public class MIMemoryTest extends BaseTestCase {
 	// Housekeeping stuff
 	// ========================================================================
 
-	@BeforeClass
-	public static void testSuiteInitialization() {
-		// Select the binary to run the tests against
-		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, "data/launch/bin/MemoryTestApp.exe");
-	}
 
-	@AfterClass
-	public static void testSuiteCleanup() {
-	}
 
-	@Before
-	public void testCaseInitialization() throws Throwable {
+	@Override
+	public void doBeforeTest() throws Exception {
+		super.doBeforeTest();
+		
 	    fSession = getGDBLaunch().getSession();
 	    fMemoryDmc = (IMemoryDMContext)SyncUtil.getContainerContext();
 	    assert(fMemoryDmc != null);
@@ -121,8 +111,18 @@ public class MIMemoryTest extends BaseTestCase {
         fSession.getExecutor().submit(runnable).get();
 	}
 
-	@After
-	public void testCaseCleanup() throws Exception {
+	@Override
+	protected void setLaunchAttributes() {
+		super.setLaunchAttributes();
+		
+		// Select the binary to run the tests against
+		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, "data/launch/bin/MemoryTestApp.exe");
+	}
+
+	@Override
+	public void doAfterTest() throws Exception {
+		super.doAfterTest();
+		
 		// Clear the references (not strictly necessary)
         Runnable runnable = new Runnable() {
             @Override

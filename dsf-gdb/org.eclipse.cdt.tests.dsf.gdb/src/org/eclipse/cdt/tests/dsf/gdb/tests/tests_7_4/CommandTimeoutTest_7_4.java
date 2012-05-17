@@ -12,15 +12,14 @@
 package org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_4;
 
 import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
-import org.eclipse.cdt.tests.dsf.gdb.tests.CommandTimeoutTest;
 import org.eclipse.cdt.tests.dsf.gdb.tests.ITestConstants;
-import org.junit.BeforeClass;
+import org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_3.CommandTimeoutTest_7_3;
 import org.junit.runner.RunWith;
 
 @RunWith(BackgroundRunner.class)
-public class CommandTimeoutTest_7_4 extends CommandTimeoutTest {
-	@BeforeClass
-    public static void beforeClassMethod_7_4() {
+public class CommandTimeoutTest_7_4 extends CommandTimeoutTest_7_3 {
+    @Override
+	protected void setGdbVersion() {
 		setGdbProgramNamesLaunchAttributes(ITestConstants.SUFFIX_GDB_7_4);		
 	}
 }

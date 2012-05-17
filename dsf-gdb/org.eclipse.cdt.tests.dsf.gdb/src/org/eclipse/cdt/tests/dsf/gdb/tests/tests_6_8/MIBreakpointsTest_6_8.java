@@ -21,29 +21,29 @@ import org.eclipse.cdt.dsf.mi.service.MIBreakpoints.MIBreakpointDMContext;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.tests.ITestConstants;
-import org.eclipse.cdt.tests.dsf.gdb.tests.MIBreakpointsTest;
+import org.eclipse.cdt.tests.dsf.gdb.tests.tests_6_7.MIBreakpointsTest_6_7;
 import org.eclipse.core.runtime.Platform;
-import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(BackgroundRunner.class)
-public class MIBreakpointsTest_6_8 extends MIBreakpointsTest {
-	
-	@BeforeClass
-    public static void beforeClassMethod_6_8() {
+public class MIBreakpointsTest_6_8 extends MIBreakpointsTest_6_7 {	
+	@Override
+	protected void setGdbVersion() {
 		setGdbProgramNamesLaunchAttributes(ITestConstants.SUFFIX_GDB_6_8);
 	}
 	
+	// GDB 6.8 has a bug that ignores watchpoint conditions,which makes this 
+	// test fail.  We therefore ignore this test for GDB 6.8 only, but run it 
+	// for all other versions
 	@Override
+	@Ignore("This test does not work with GDB 6.8")
 	@Test
 	public void breakpointHit_watchpointUpdateCondition() throws Throwable {
-		// GDB 6.8 has a bug that ignores watchpoint conditions,which makes this 
-		// test fail.  We therefore ignore this test for GDB 6.8 only, but run it 
-		// for all other versions
-		if (getClass().equals(MIBreakpointsTest_6_8.class) == false) {
-			super.breakpointHit_watchpointUpdateCondition();
-		}
+		// Must call the test in the super class to allow further derived
+		// classes to run this test.
+		super.breakpointHit_watchpointUpdateCondition();
 	}
 	
 	/**

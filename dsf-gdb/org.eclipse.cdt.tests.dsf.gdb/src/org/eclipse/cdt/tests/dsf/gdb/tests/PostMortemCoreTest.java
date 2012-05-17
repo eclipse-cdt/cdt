@@ -51,9 +51,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.MemoryByte;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -70,22 +67,16 @@ public class PostMortemCoreTest extends BaseTestCase {
 
 	private IMemoryDMContext fMemoryDmc;
 
-
-    @BeforeClass
-    public static void beforeClassMethod() {
-    }
-
     @Override
-	@Before
- 	public void baseBeforeMethod() throws Exception {
-    	// The class BaseTestCase sets up the launch in its @BeforeClass method.
-    	// Usually this is ok, because every test uses the same launch configuration.
-    	// However, for some of the tests of this class, we are changing the launch
-    	// configuration.  Therefore, we need to reset it to the default
-    	// before every test; that means in the @Before method instead of @BeforeClass
-
-    	// Reset the launch configuration
-    	super.baseBeforeClassMethod();
+	public void doBeforeTest() throws Exception {
+		setLaunchAttributes();
+		// Can't run the launch right away because each test needs to first set some 
+		// parameters.  The individual tests will be responsible for starting the launch. 
+	}
+	
+	@Override
+ 	protected void setLaunchAttributes() {
+    	super.setLaunchAttributes();
     	
 		// Set a working directory for GDB that is different than eclipse's directory.
 		// This allows us to make sure we properly handle finding the core file,
@@ -103,18 +94,15 @@ public class PostMortemCoreTest extends BaseTestCase {
 		                   IGDBLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_CORE_FILE);
 		// Set default core file path
 		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_COREFILE_PATH, "data/launch/bin/core");
-        
-
-    	// Can't run the launch right away because each test needs to first set some 
-        // parameters.  The individual tests will be responsible for starting the launch. 
     }
     
     // This method cannot be tagged as @Before, because the launch is not
     // running yet.  We have to call this manually after all the proper
     // parameters have been set for the launch
-    public void performLaunch() throws Exception {
+    @Override
+	protected void doLaunch() throws Exception {
     	// perform the launch
-        super.baseBeforeMethod();
+        super.doLaunch();
 
         fSession = getGDBLaunch().getSession();
 
@@ -132,8 +120,10 @@ public class PostMortemCoreTest extends BaseTestCase {
         fSession.getExecutor().submit(runnable).get();
     }
 
-    @After
-    public void shutdown() throws Exception {
+    @Override
+	public void doAfterTest() throws Exception {
+    	super.doAfterTest();
+    	
     	if (fSession != null) {
     		Runnable runnable = new Runnable() {
     			@Override
@@ -161,7 +151,7 @@ public class PostMortemCoreTest extends BaseTestCase {
     	
 		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_COREFILE_PATH, absoluteCoreFile);
 
-		performLaunch();
+		doLaunch();
 		
 		// If the launch passed, we are ok, nothing more to check
     }
@@ -178,7 +168,7 @@ public class PostMortemCoreTest extends BaseTestCase {
     	
 		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_COREFILE_PATH, relativeCoreFile);
 
-		performLaunch();
+		doLaunch();
 		
 		// If the launch passed, we are ok, nothing more to check
     }
@@ -196,7 +186,7 @@ public class PostMortemCoreTest extends BaseTestCase {
 		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_COREFILE_PATH, absoluteCoreFile);
 
         try {
-        	performLaunch();
+        	doLaunch();
         } catch (DebugException e) {
         	// Success of the test
         	return;
@@ -218,7 +208,7 @@ public class PostMortemCoreTest extends BaseTestCase {
 		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_COREFILE_PATH, relativeCoreFile);
 
         try {
-        	performLaunch();
+        	doLaunch();
         } catch (CoreException e) {
         	// Success of the test
         	return;
@@ -240,7 +230,7 @@ public class PostMortemCoreTest extends BaseTestCase {
 		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_COREFILE_PATH, absoluteCoreFile);
 
         try {
-        	performLaunch();
+        	doLaunch();
         } catch (CoreException e) {
         	// Success of the test
         	return;
@@ -262,7 +252,7 @@ public class PostMortemCoreTest extends BaseTestCase {
 		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_COREFILE_PATH, relativeCoreFile);
 
         try {
-        	performLaunch();
+        	doLaunch();
         } catch (CoreException e) {
         	// Success of the test
         	return;
@@ -319,7 +309,7 @@ public class PostMortemCoreTest extends BaseTestCase {
 
 		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_COREFILE_PATH, coreFile);
 
-       	performLaunch();
+       	doLaunch();
     }
 
     /**
@@ -327,7 +317,7 @@ public class PostMortemCoreTest extends BaseTestCase {
      */
     @Test
     public void testLiteralIntegerExpressions() throws Throwable {
-       	performLaunch();
+       	doLaunch();
 
         // Create a map of expressions and their expected values.
         Map<String, String[]> tests = new HashMap<String, String[]>();
@@ -350,7 +340,7 @@ public class PostMortemCoreTest extends BaseTestCase {
      */
     @Test
     public void testLiteralFloatingPointExpressions() throws Throwable {
-       	performLaunch();
+       	doLaunch();
 
         // Create a map of expressions and their expected values.
         Map<String, String[]> tests = new HashMap<String, String[]>();
@@ -374,7 +364,7 @@ public class PostMortemCoreTest extends BaseTestCase {
      */
     @Test
     public void testLocalVariables() throws Throwable {
-       	performLaunch();
+       	doLaunch();
 
         // Create a map of expressions to expected values.
         Map<String, String[]> tests1 = new HashMap<String, String[]>();
@@ -406,7 +396,7 @@ public class PostMortemCoreTest extends BaseTestCase {
  
 	@Test
 	public void readMemoryArray() throws Throwable {
-       	performLaunch();
+       	doLaunch();
 
 		IAddress address = evaluateExpression(SyncUtil.getStackFrame(SyncUtil.getExecutionContext(0), 0), "&lBoolPtr2");
 

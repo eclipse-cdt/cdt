@@ -55,10 +55,6 @@ import org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
 import org.eclipse.core.runtime.Platform;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -167,18 +163,17 @@ public class MIBreakpointsTest extends BaseTestCase {
     // Housekeeping stuff
     // ========================================================================
 
-    @BeforeClass
-    public static void testSuiteInitialization() {
+    @Override
+    protected void setLaunchAttributes() {
+    	super.setLaunchAttributes();
+    	
         // Select the binary to run the tests against
         setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, TEST_APPL);
     }
 
-    @AfterClass
-    public static void testSuiteCleanup() {
-    }
-
-    @Before
-    public void testCaseInitialization() throws Exception {
+    @Override
+    public void doBeforeTest() throws Exception {
+    	super.doBeforeTest();
 
         // Get a reference to the breakpoint service
         fSession = getGDBLaunch().getSession();
@@ -210,9 +205,10 @@ public class MIBreakpointsTest extends BaseTestCase {
         assert(fBreakpointsDmc != null);
     }
 
-    @After
-    public void testCaseCleanup() throws Exception {
-
+    @Override
+    public void doAfterTest() throws Exception {
+    	super.doAfterTest();
+    	
 		// Clear the references (not strictly necessary)
         Runnable runnable = new Runnable() {
             @Override

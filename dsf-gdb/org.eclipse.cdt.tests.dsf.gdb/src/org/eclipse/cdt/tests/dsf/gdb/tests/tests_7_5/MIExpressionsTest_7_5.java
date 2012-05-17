@@ -18,14 +18,13 @@ import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.tests.ITestConstants;
 import org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_4.MIExpressionsTest_7_4;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(BackgroundRunner.class)
 public class MIExpressionsTest_7_5 extends MIExpressionsTest_7_4 {
-	@BeforeClass
-	public static void beforeClassMethod_7_5() {
+	@Override
+	protected void setGdbVersion() {
 		setGdbProgramNamesLaunchAttributes(ITestConstants.SUFFIX_GDB_7_5);
 	}
 	

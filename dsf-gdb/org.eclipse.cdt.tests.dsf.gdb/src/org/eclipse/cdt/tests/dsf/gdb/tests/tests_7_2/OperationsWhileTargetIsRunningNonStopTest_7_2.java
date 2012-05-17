@@ -14,14 +14,19 @@ package org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_2;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
 import org.eclipse.cdt.tests.dsf.gdb.tests.ITestConstants;
-import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 
 @RunWith(BackgroundRunner.class)
 public class OperationsWhileTargetIsRunningNonStopTest_7_2 extends OperationsWhileTargetIsRunningTest_7_2 {
-	@BeforeClass
-    public static void beforeClassMethod_7_2() {
+    @Override
+	protected void setGdbVersion() {
 		setGdbProgramNamesLaunchAttributes(ITestConstants.SUFFIX_GDB_7_2);
+	}
+	
+	@Override
+	protected void setLaunchAttributes() {
+		super.setLaunchAttributes();
+		
     	setLaunchAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_NON_STOP, true);
 	}
 }

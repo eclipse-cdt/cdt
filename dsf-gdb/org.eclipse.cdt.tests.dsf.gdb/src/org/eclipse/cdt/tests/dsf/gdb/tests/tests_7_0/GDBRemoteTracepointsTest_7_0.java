@@ -44,28 +44,15 @@ import org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
 import org.eclipse.cdt.tests.dsf.gdb.tests.ITestConstants;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(BackgroundRunner.class)
 public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
-	@BeforeClass
-	public static void beforeClassMethod_7_0() {
+	@Override
+	protected void setGdbVersion() {
 		setGdbProgramNamesLaunchAttributes(ITestConstants.SUFFIX_GDB_7_0);
-
-		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, "data/launch/bin/TracepointTestApp.exe");
-
-		// GDB tracepoints are only supported on a remote target (e.g., using gdbserver)
-		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
-				IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE);
-
-		// To test both fast and normal tracepoints, we use the FAST_THEN_NORMAL setting
-		setLaunchAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_TRACEPOINT_MODE,
-				IGDBLaunchConfigurationConstants.DEBUGGER_TRACEPOINT_FAST_THEN_NORMAL);
 	}
 
 	protected DsfSession fSession;
@@ -161,8 +148,10 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 
 	}
 
-	@Before
-	public void initialTest() throws Exception {
+	@Override
+	public void doBeforeTest() throws Exception {
+		super.doBeforeTest();
+	
 		fSession = getGDBLaunch().getSession();
 		Runnable runnable = new Runnable() {
 			@Override
@@ -190,8 +179,25 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 
 	}
 
-	@After
-	public void shutdown() throws Exception {
+	@Override
+	protected void setLaunchAttributes() {
+		super.setLaunchAttributes();
+		
+		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, "data/launch/bin/TracepointTestApp.exe");
+		
+		// GDB tracepoints are only supported on a remote target (e.g., using gdbserver)
+		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
+				IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE);
+		
+		// To test both fast and normal tracepoints, we use the FAST_THEN_NORMAL setting
+		setLaunchAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_TRACEPOINT_MODE,
+				IGDBLaunchConfigurationConstants.DEBUGGER_TRACEPOINT_FAST_THEN_NORMAL);
+	}
+
+	@Override
+	public void doAfterTest() throws Exception {
+		super.doAfterTest();
+
 		Runnable runnable = new Runnable() {
 			@Override
 			public void run() {

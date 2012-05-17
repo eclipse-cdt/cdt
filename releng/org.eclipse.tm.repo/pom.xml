@@ -88,11 +88,12 @@
                 </goals>
                 <configuration>
                   <tasks>
-                    <delete includeemptydirs="false">
+<!--                    <delete includeemptydirs="false">
                       <fileset dir="${tm-install}">
                         <include name="**"/>
                       </fileset>
                     </delete>
+-->                    
                     <zip destfile="${tm-install}/org.eclipse.tm.repo.zip">
                       <fileset dir="target/checksumFix">
                         <include name="**"/>

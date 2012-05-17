@@ -32,10 +32,7 @@ import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -62,8 +59,10 @@ public class GDBProcessesTest extends BaseTestCase {
      */
     private final AsyncCompletionWaitor fWait = new AsyncCompletionWaitor();
     
-	@Before
-	public void init() throws Exception {
+    @Override
+	public void doBeforeTest() throws Exception {
+		super.doBeforeTest();
+		
 	    fSession = getGDBLaunch().getSession();
         Runnable runnable = new Runnable() {
             @Override
@@ -75,14 +74,18 @@ public class GDBProcessesTest extends BaseTestCase {
         fSession.getExecutor().submit(runnable).get();
 	}
 
-	@After
-	public void tearDown() {
+	@Override
+	public void doAfterTest() throws Exception {
+		super.doAfterTest();
+
 		fProcService = null;
 		fServicesTracker.dispose();
 	}
 	
-	@BeforeClass
-	public static void beforeClassMethod() {
+	@Override
+	protected void setLaunchAttributes() {
+		super.setLaunchAttributes();
+		
 		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, 
 				           EXEC_PATH + EXEC_NAME);
 	}

@@ -11,15 +11,14 @@
 package org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_2;
 
 import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
-import org.eclipse.cdt.tests.dsf.gdb.tests.GDBProcessesTest;
 import org.eclipse.cdt.tests.dsf.gdb.tests.ITestConstants;
-import org.junit.BeforeClass;
+import org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_1.GDBProcessesTest_7_1;
 import org.junit.runner.RunWith;
 
 @RunWith(BackgroundRunner.class)
-public class GDBProcessesTest_7_2 extends GDBProcessesTest {   
-	@BeforeClass
-	public static void beforeClassMethod_7_2() {
+public class GDBProcessesTest_7_2 extends GDBProcessesTest_7_1 {   
+    @Override
+	protected void setGdbVersion() {
 		setGdbProgramNamesLaunchAttributes(ITestConstants.SUFFIX_GDB_7_2);		
 	}
 }

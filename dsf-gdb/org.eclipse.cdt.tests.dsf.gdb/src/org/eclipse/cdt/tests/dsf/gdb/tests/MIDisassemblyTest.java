@@ -40,10 +40,6 @@ import org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
 import org.eclipse.cdt.utils.Addr64;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -78,18 +74,10 @@ public class MIDisassemblyTest extends BaseTestCase {
     // Housekeeping stuff
     // ========================================================================
 
-    @BeforeClass
-    public static void testSuiteInitialization() {
-        // Select the binary to run the tests against
-        setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, "data/launch/bin/MemoryTestApp.exe");
-    }
-
-    @AfterClass
-    public static void testSuiteCleanup() {
-    }
-
-    @Before
-    public void testCaseInitialization() throws Exception {
+    @Override
+	public void doBeforeTest() throws Exception {
+		super.doBeforeTest();
+		
         fSession = getGDBLaunch().getSession();
         Runnable runnable = new Runnable() {
             @Override
@@ -113,8 +101,18 @@ public class MIDisassemblyTest extends BaseTestCase {
 
     }
 
-    @After
-    public void testCaseCleanup() {
+    @Override
+    protected void setLaunchAttributes() {
+    	super.setLaunchAttributes();
+    	
+    	// Select the binary to run the tests against
+    	setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, "data/launch/bin/MemoryTestApp.exe");
+    }
+    
+	@Override
+	public void doAfterTest() throws Exception {
+		super.doAfterTest();
+		
         fExpressionService = null;
         fDisassembly = null;
         fServicesTracker.dispose();

@@ -12,14 +12,13 @@ package org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_3;
 
 import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
 import org.eclipse.cdt.tests.dsf.gdb.tests.ITestConstants;
-import org.eclipse.cdt.tests.dsf.gdb.tests.MIMemoryTest;
-import org.junit.BeforeClass;
+import org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_2.MIMemoryTest_7_2;
 import org.junit.runner.RunWith;
 
 @RunWith(BackgroundRunner.class)
-public class MIMemoryTest_7_3 extends MIMemoryTest {
-	@BeforeClass
-	public static void beforeClassMethod_7_3() {
+public class MIMemoryTest_7_3 extends MIMemoryTest_7_2 {
+	@Override
+	protected void setGdbVersion() {
 		setGdbProgramNamesLaunchAttributes(ITestConstants.SUFFIX_GDB_7_3);
 	}
 }

@@ -55,16 +55,12 @@ import org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
 import org.eclipse.core.runtime.Platform;
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(BackgroundRunner.class)
-
 public class MIRegistersTest extends BaseTestCase {
 	
 	protected List<String> get_X86_REGS() {
@@ -90,16 +86,16 @@ public class MIRegistersTest extends BaseTestCase {
 	private static final String EXEC_NAME = "MultiThread.exe";
 	private static final String SRC_NAME = "MultiThread.cc";
 
-    // Will be used to wait for asynchronous call to complete
-    //private final AsyncCompletionWaitor fWait = new AsyncCompletionWaitor();
 	private DsfSession fSession;
 	private DsfServicesTracker fServicesTracker;
 	private IContainerDMContext fContainerDmc;
     private IRegisters fRegService;
     private IRunControl fRunControl;
-    
-	@Before
-	public void init() throws Exception {
+
+    @Override
+	public void doBeforeTest() throws Exception {
+		super.doBeforeTest();
+		
 	    fSession = getGDBLaunch().getSession();
 	    
         Runnable runnable = new Runnable() {
@@ -121,15 +117,19 @@ public class MIRegistersTest extends BaseTestCase {
 	    fSession.getExecutor().submit(runnable).get();
 	}
 	
-	@BeforeClass
-	public static void beforeClassMethod() {
+	@Override
+	protected void setLaunchAttributes() {
+		super.setLaunchAttributes();
+		
 		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, 
 				           EXEC_PATH + EXEC_NAME);
 	}
 
 
-	@After
-	public void tearDown() {
+	@Override
+	public void doAfterTest() throws Exception {
+		super.doAfterTest();
+		
 		fServicesTracker.dispose();
 		fRegService = null;
 	}

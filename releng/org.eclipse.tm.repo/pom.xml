@@ -25,6 +25,11 @@
   <profiles>
     <profile>
       <id>build-server</id>
+      <!-- Temporarily, because I don't know where to install the bits-->
+      <properties>
+	      <tm-install>${project.build.directory}/../../../../</tm-install>
+      </properties>
+      
       <build>
         <plugins>
           <plugin>

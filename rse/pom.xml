@@ -214,6 +214,7 @@
     <module>org.eclipse.tm.rse/plugins/org.eclipse.rse.ui</module>
     <module>org.eclipse.tm.rse/plugins/org.eclipse.rse.ui.capabilities</module>
     <module>org.eclipse.tm.rse/plugins/org.eclipse.rse.useractions</module>
+    <module>org.eclipse.tm.rse/releng/org.eclipse.tm.repo</module>
     <!--<module>org.eclipse.tm.rse/releng/org.eclipse.rse.updatesite</module>-->
     <!--<module>releng/org.eclipse.tm.releng.master-feature</module>                                                                                                                   
     <module>releng/org.eclipse.tm.releng.test-feature</module>                                                                                                                     

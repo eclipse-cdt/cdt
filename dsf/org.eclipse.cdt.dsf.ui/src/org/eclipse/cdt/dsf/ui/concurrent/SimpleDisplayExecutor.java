@@ -110,6 +110,7 @@ public class SimpleDisplayExecutor implements Executor{
         }
     }
 
+    /** @since 2.3 */
     protected void runInSwtThread() {
         Runnable runnable;
         while ((runnable = getNextRunnable()) != null) {

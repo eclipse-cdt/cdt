@@ -15,15 +15,16 @@
  *  David McKnight     (IBM)   [224906] [dstore] changes for getting properties and doing exit due to single-process capability
  *  David McKnight     (IBM)   [281712] [dstore] Warning message is needed when disk is full
  *  David McKnight     (IBM)   [367424] [dstore] upload mechanism should provide backups of files
+ *  David McKnight     (IBM)   [380023] [dstore] remote file permissions lost after upload
  *******************************************************************************/
 
 package org.eclipse.dstore.core.model;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-
-import org.eclipse.dstore.internal.core.model.IDataStoreSystemProperties;
 
 /**
  * <p>
@@ -60,6 +61,52 @@ public class ByteStreamHandler implements IByteStreamHandler
 		return getClass().getName();
 	}
 	
+	private void backupFile(File file, File backupFile){
+		
+		/* this is nice but orginal file permissions not perserved
+		if(!file.renameTo(backupFile) && backupFile.exists()) {
+			backupFile.delete();	
+			file.renameTo(backupFile);
+		}
+		*/
+		
+		/* in order to preserve original permissions for orignal file we can't rename
+		 * instead we need to copy the file over		 
+		 */
+		FileInputStream inputStream = null;
+		FileOutputStream backupFileStream = null;
+		try {
+			inputStream = new FileInputStream(file);
+			backupFileStream = new FileOutputStream(backupFile);
+			
+			byte[] buffer = new byte[512000];
+			long totalSize = file.length();
+			int totalRead = 0;
+
+			while (totalRead < totalSize){
+				int available = inputStream.available();
+				available = (available < 512000) ? available : 512000;
+
+				int bytesRead = inputStream.read(buffer, 0, available);
+				if (bytesRead == -1) {
+					break;
+				}
+				backupFileStream.write(buffer, 0, bytesRead);				
+				totalRead += bytesRead;
+			}			
+		} catch (FileNotFoundException e) {
+		} catch (IOException e){			
+		} finally {
+			try {
+				inputStream.close();
+				backupFileStream.close();
+			}
+			catch (IOException e){				
+			}
+		}
+	}
+	
+	
 	/**
 	 * Save a file in the specified location.  This method is called by the
 	 * DataStore when the communication layer receives a file transfer    
@@ -89,16 +136,15 @@ public class ByteStreamHandler implements IByteStreamHandler
 				}
 				else
 				{
-					// backup file on upload by default
-					String doBackups = System.getProperty("backupfiles"); //$NON-NLS-1$
-					if (doBackups == null || doBackups.equals("true")){ //$NON-NLS-1$
-						// backup the file first	
-						String n = file.getName();			
-						File backupFile = new File(parent, '.' + n + '~');
-						_dataStore.trace("Backing up as "+backupFile.getAbsolutePath()); //$NON-NLS-1$
-						if(!file.renameTo(backupFile) && backupFile.exists()) {
-							backupFile.delete();
-							file.renameTo(backupFile);
+					if (!_dataStore.isVirtual()){ // only applies to server
+						// backup file on upload by default
+						String doBackups = System.getProperty("backupfiles"); //$NON-NLS-1$
+						if (doBackups == null || doBackups.equals("true")){ //$NON-NLS-1$
+							// backup the file first	
+							String n = file.getName();			
+							File backupFile = new File(parent, '.' + n + '~');
+							_dataStore.trace("Backing up as "+backupFile.getAbsolutePath()); //$NON-NLS-1$
+							backupFile(file, backupFile);
 						}
 					}
 				}

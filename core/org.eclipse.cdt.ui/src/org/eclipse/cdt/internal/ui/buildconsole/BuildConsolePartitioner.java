@@ -10,16 +10,19 @@
  *     Dmitry Kozlov (CodeSourcery) - Build error highlighting and navigation
  *     Andrew Gvozdev (Quoin Inc.)  - Copy build log (bug 306222)
  *     Alex Collins (Broadcom Corp.) - Global console
+ *     Sergey Prigogin (Google) - Performance improvements
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.buildconsole;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Deque;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
@@ -49,6 +52,200 @@ import org.eclipse.cdt.internal.ui.preferences.BuildConsolePreferencePage;
 
 public class BuildConsolePartitioner
 		implements IDocumentPartitioner, IDocumentPartitionerExtension, IConsole, IPropertyChangeListener {
+
+	private static class SynchronizedDeque<E> implements Deque<E> {
+		private final Deque<E> deque;
+
+		public SynchronizedDeque(Deque<E> deque) {
+			this.deque = deque;
+		}
+
+		@Override
+		public synchronized boolean isEmpty() {
+			return deque.isEmpty();
+		}
+
+		@Override
+		public synchronized void addFirst(E e) {
+			deque.addFirst(e);
+		}
+
+		@Override
+		public synchronized void addLast(E e) {
+			deque.addLast(e);
+		}
+
+		@Override
+		public synchronized Object[] toArray() {
+			return deque.toArray();
+		}
+
+		@Override
+		public synchronized <T> T[] toArray(T[] a) {
+			return deque.toArray(a);
+		}
+
+		@Override
+		public synchronized boolean offerFirst(E e) {
+			return deque.offerFirst(e);
+		}
+
+		@Override
+		public synchronized boolean offerLast(E e) {
+			return deque.offerLast(e);
+		}
+
+		@Override
+		public synchronized E removeFirst() {
+			return deque.removeFirst();
+		}
+
+		@Override
+		public synchronized E removeLast() {
+			return deque.removeLast();
+		}
+
+		@Override
+		public synchronized E pollFirst() {
+			return deque.pollFirst();
+		}
+
+		@Override
+		public synchronized E pollLast() {
+			return deque.pollLast();
+		}
+
+		@Override
+		public synchronized E getFirst() {
+			return deque.getFirst();
+		}
+
+		@Override
+		public synchronized E getLast() {
+			return deque.getLast();
+		}
+
+		@Override
+		public synchronized E peekFirst() {
+			return deque.peekFirst();
+		}
+
+		@Override
+		public synchronized E peekLast() {
+			return deque.peekLast();
+		}
+
+		@Override
+		public synchronized boolean removeFirstOccurrence(Object o) {
+			return deque.removeFirstOccurrence(o);
+		}
+
+		@Override
+		public synchronized boolean containsAll(Collection<?> c) {
+			return deque.containsAll(c);
+		}
+
+		@Override
+		public synchronized boolean removeLastOccurrence(Object o) {
+			return deque.removeLastOccurrence(o);
+		}
+
+		@Override
+		public synchronized boolean addAll(Collection<? extends E> c) {
+			return deque.addAll(c);
+		}
+
+		@Override
+		public synchronized boolean add(E e) {
+			return deque.add(e);
+		}
+
+		@Override
+		public synchronized boolean removeAll(Collection<?> c) {
+			return deque.removeAll(c);
+		}
+
+		@Override
+		public synchronized boolean offer(E e) {
+			return deque.offer(e);
+		}
+
+		@Override
+		public synchronized boolean retainAll(Collection<?> c) {
+			return deque.retainAll(c);
+		}
+
+		@Override
+		public synchronized E remove() {
+			return deque.remove();
+		}
+
+		@Override
+		public synchronized E poll() {
+			return deque.poll();
+		}
+
+		@Override
+		public synchronized E element() {
+			return deque.element();
+		}
+
+		@Override
+		public synchronized void clear() {
+			deque.clear();
+		}
+
+		@Override
+		public synchronized boolean equals(Object o) {
+			return deque.equals(o);
+		}
+
+		@Override
+		public synchronized E peek() {
+			return deque.peek();
+		}
+
+		@Override
+		public synchronized void push(E e) {
+			deque.push(e);
+		}
+
+		@Override
+		public synchronized E pop() {
+			return deque.pop();
+		}
+
+		@Override
+		public synchronized int hashCode() {
+			return deque.hashCode();
+		}
+
+		@Override
+		public synchronized boolean remove(Object o) {
+			return deque.remove(o);
+		}
+
+		@Override
+		public synchronized boolean contains(Object o) {
+			return deque.contains(o);
+		}
+
+		@Override
+		public synchronized int size() {
+			return deque.size();
+		}
+
+		@Override
+		public synchronized Iterator<E> iterator() {
+			return deque.iterator();
+		}
+
+		@Override
+		public synchronized Iterator<E> descendingIterator() {
+			return deque.descendingIterator();
+		}
+	}
+
 	private IProject fProject;
 
 	/**
@@ -71,19 +268,18 @@ public class BuildConsolePartitioner
 	/**
 	 * A queue of stream entries written to standard out and standard err.
 	 * Entries appended to the end of the queue and removed from the front.
-	 * Intentionally a vector to obtain synchronization as entries are added and
-	 * removed.
 	 */
-	Vector<StreamEntry> fQueue = new Vector<StreamEntry>(5);
+	private final Deque<StreamEntry> fQueue =
+			new SynchronizedDeque<StreamEntry>(new ArrayDeque<StreamEntry>());
 
 	private URI fLogURI;
 	private OutputStream fLogStream;
 
 	private class StreamEntry {
-		static public final int EVENT_APPEND = 0;
-		static public final int EVENT_OPEN_LOG = 1;
-		static public final int EVENT_CLOSE_LOG = 2;
-		static public final int EVENT_OPEN_APPEND_LOG = 3;
+		public static final int EVENT_APPEND = 0;
+		public static final int EVENT_OPEN_LOG = 1;
+		public static final int EVENT_CLOSE_LOG = 2;
+		public static final int EVENT_OPEN_APPEND_LOG = 3;
 
 		/** Identifier of the stream written to. */
 		private BuildConsoleStreamDecorator fStream;
@@ -208,11 +404,10 @@ public class BuildConsolePartitioner
 	public void appendToDocument(String text, BuildConsoleStreamDecorator stream, ProblemMarkerInfo marker) {
 		boolean addToQueue = true;
 		synchronized (fQueue) {
-			int i = fQueue.size();
-			if (i > 0) {
-				StreamEntry entry = fQueue.get(i - 1);
-				// if last stream is the same and we have not exceeded our
-				// display write limit, append.
+			StreamEntry entry = fQueue.peekLast();
+			if (entry != null) {
+				// If last stream is the same and we have not exceeded
+				// the display write limit, append.
 				if (entry.getStream() == stream && entry.getEventType() == StreamEntry.EVENT_APPEND &&
 						entry.getMarker() == marker && entry.size() < 10000) {
 					entry.appendText(text);
@@ -238,11 +433,10 @@ public class BuildConsolePartitioner
 			@Override
 			public void run() {
 				StreamEntry entry;
-				try {
-					entry = fQueue.remove(0);
-				} catch (ArrayIndexOutOfBoundsException e) {
+				entry = fQueue.pollFirst();
+				if (entry == null)
 					return;
-				}
+
 				switch (entry.getEventType()) {
 				case StreamEntry.EVENT_OPEN_LOG:
 				case StreamEntry.EVENT_OPEN_APPEND_LOG:
@@ -263,7 +457,15 @@ public class BuildConsolePartitioner
 						if (text.length() > 0) {
 							addStreamEntryToDocument(entry);
 							log(text);
-							checkOverflow();
+							boolean allowSlack = false;
+							entry = fQueue.peekFirst();
+							if (entry != null && entry.getEventType() == StreamEntry.EVENT_APPEND) {
+								// Buffer truncation is an expensive operation. Allow some slack
+								// if more data is coming and we will be truncating the buffer
+								// again soon.
+								allowSlack = true;
+							}
+							checkOverflow(allowSlack);
 						}
 					} catch (BadLocationException e) {
 					}
@@ -372,8 +574,7 @@ public class BuildConsolePartitioner
 
 	public void setDocumentSize(int nLines) {
 		fMaxLines = nLines;
-		nLines = fDocument.getNumberOfLines();
-		checkOverflow();
+		checkOverflow(false);
 	}
 
 	@Override
@@ -484,54 +685,55 @@ public class BuildConsolePartitioner
 	 * Checks to see if the console buffer has overflowed, and empties the
 	 * overflow if needed, updating partitions and hyperlink positions.
 	 */
-	protected void checkOverflow() {
-		if (fMaxLines >= 0) {
-			int nLines = fDocument.getNumberOfLines();
-			if (nLines > fMaxLines + 1) {
-				int overflow = 0;
-				try {
-					overflow = fDocument.getLineOffset(nLines - fMaxLines);
-				} catch (BadLocationException e) {
-				}
-				// update partitions
-				List<ITypedRegion> newParitions = new ArrayList<ITypedRegion>(fPartitions.size());
-				Iterator<ITypedRegion> partitions = fPartitions.iterator();
-				while (partitions.hasNext()) {
-					ITypedRegion region = partitions.next();
-					if (region instanceof BuildConsolePartition) {
-						BuildConsolePartition messageConsolePartition = (BuildConsolePartition) region;
+	protected void checkOverflow(boolean allowSlack) {
+		if (fMaxLines <= 0)
+			return;
+		int nLines = fDocument.getNumberOfLines();
+		if (nLines <= (allowSlack ? fMaxLines * 2 : fMaxLines) + 1)
+			return;
 
-						ITypedRegion newPartition = null;
-						int offset = region.getOffset();
-						String type = messageConsolePartition.getType();
-						if (offset < overflow) {
-							int endOffset = offset + region.getLength();
-							if (endOffset < overflow || BuildConsolePartition.isProblemPartitionType(type)) {
-								// remove partition,
-								// partitions with problem markers can't be split - remove them too
-							} else {
-								// split partition
-								int length = endOffset - overflow;
-								newPartition = messageConsolePartition.createNewPartition(0, length, type);
-							}
-						} else {
-							// modify partition offset
-							offset = messageConsolePartition.getOffset() - overflow;
-							newPartition = messageConsolePartition.createNewPartition(offset, messageConsolePartition.getLength(), type);
-						}
-						if (newPartition != null) {
-							newParitions.add(newPartition);
-						}
+		int overflow = 0;
+		try {
+			overflow = fDocument.getLineOffset(nLines - fMaxLines);
+		} catch (BadLocationException e) {
+		}
+		// Update partitions
+		List<ITypedRegion> newParitions = new ArrayList<ITypedRegion>(fPartitions.size());
+		Iterator<ITypedRegion> partitions = fPartitions.iterator();
+		while (partitions.hasNext()) {
+			ITypedRegion region = partitions.next();
+			if (region instanceof BuildConsolePartition) {
+				BuildConsolePartition messageConsolePartition = (BuildConsolePartition) region;
+
+				ITypedRegion newPartition = null;
+				int offset = region.getOffset();
+				String type = messageConsolePartition.getType();
+				if (offset < overflow) {
+					int endOffset = offset + region.getLength();
+					if (endOffset < overflow || BuildConsolePartition.isProblemPartitionType(type)) {
+						// Remove partition,
+						// partitions with problem markers can't be split - remove them too.
+					} else {
+						// Split partition
+						int length = endOffset - overflow;
+						newPartition = messageConsolePartition.createNewPartition(0, length, type);
 					}
+				} else {
+					// Modify partition offset
+					offset = messageConsolePartition.getOffset() - overflow;
+					newPartition = messageConsolePartition.createNewPartition(offset, messageConsolePartition.getLength(), type);
 				}
-				fPartitions = newParitions;
-				fDocumentMarkerManager.moveToFirstError();
-
-				try {
-					fDocument.replace(0, overflow, ""); //$NON-NLS-1$
-				} catch (BadLocationException e) {
+				if (newPartition != null) {
+					newParitions.add(newPartition);
 				}
 			}
+		}
+		fPartitions = newParitions;
+		fDocumentMarkerManager.moveToFirstError();
+
+		try {
+			fDocument.replace(0, overflow, ""); //$NON-NLS-1$
+		} catch (BadLocationException e) {
 		}
 	}
 
@@ -543,7 +745,7 @@ public class BuildConsolePartitioner
 			fPartitions.add(partition);
 		} else {
 			int index = fPartitions.size() - 1;
-			BuildConsolePartition last = (BuildConsolePartition)fPartitions.get(index);
+			BuildConsolePartition last = (BuildConsolePartition) fPartitions.get(index);
 			if (last.canBeCombinedWith(partition)) {
 				// replace with a single partition
 				partition = last.combineWith(partition);

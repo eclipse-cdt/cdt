@@ -48,12 +48,7 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.internal.ui.preferences.BuildConsolePreferencePage;
 
 public class BuildConsolePartitioner
-		implements
-			IDocumentPartitioner,
-			IDocumentPartitionerExtension,
-			IConsole,
-			IPropertyChangeListener {
-
+		implements IDocumentPartitioner, IDocumentPartitionerExtension, IConsole, IPropertyChangeListener {
 	private IProject fProject;
 
 	/**
@@ -66,7 +61,7 @@ public class BuildConsolePartitioner
 	/**
 	 * The stream that was last appended to
 	 */
-	BuildConsoleStreamDecorator fLastStream = null;
+	BuildConsoleStreamDecorator fLastStream;
 
 	BuildConsoleDocument fDocument;
 	DocumentMarkerManager fDocumentMarkerManager;
@@ -153,7 +148,6 @@ public class BuildConsolePartitioner
 		public int getEventType() {
 			return eventType;
 		}
-
 	}
 
 	/**
@@ -219,7 +213,8 @@ public class BuildConsolePartitioner
 				StreamEntry entry = fQueue.get(i - 1);
 				// if last stream is the same and we have not exceeded our
 				// display write limit, append.
-				if (entry.getStream()==stream && entry.getEventType()==StreamEntry.EVENT_APPEND && entry.getMarker()==marker && entry.size()<10000) {
+				if (entry.getStream() == stream && entry.getEventType() == StreamEntry.EVENT_APPEND &&
+						entry.getMarker() == marker && entry.size() < 10000) {
 					entry.appendText(text);
 					addToQueue = false;
 				}
@@ -265,7 +260,7 @@ public class BuildConsolePartitioner
 							fDocument.set(""); //$NON-NLS-1$
 						}
 						String text = entry.getText();
-						if (text.length()>0) {
+						if (text.length() > 0) {
 							addStreamEntryToDocument(entry);
 							log(text);
 							checkOverflow();
@@ -285,7 +280,7 @@ public class BuildConsolePartitioner
 			 */
 			private void logOpen(boolean append) {
 				fLogURI = fManager.getLogURI(fProject);
-				if (fLogURI!=null) {
+				if (fLogURI != null) {
 					try {
 						IFileStore logStore = EFS.getStore(fLogURI);
 						// Ensure the directory exists before opening the file
@@ -303,7 +298,7 @@ public class BuildConsolePartitioner
 			}
 
 			private void log(String text) {
-				if (fLogStream!=null) {
+				if (fLogStream != null) {
 					try {
 						fLogStream.write(text.getBytes());
 						if (fQueue.isEmpty()) {
@@ -318,7 +313,7 @@ public class BuildConsolePartitioner
 			}
 
 			private void logClose() {
-				if (fLogStream!=null) {
+				if (fLogStream != null) {
 					try {
 						fLogStream.close();
 					} catch (IOException e) {
@@ -339,7 +334,7 @@ public class BuildConsolePartitioner
 
 	private void addStreamEntryToDocument(StreamEntry entry) throws BadLocationException {
 		ProblemMarkerInfo marker = entry.getMarker();
-		if (marker==null) {
+		if (marker == null) {
 			// It is plain unmarkered console output
 			addPartition(new BuildConsolePartition(fLastStream,
 					fDocument.getLength(),
@@ -349,9 +344,9 @@ public class BuildConsolePartitioner
 			// this text line in entry is markered with ProblemMarkerInfo,
 			// create special partition for it.
 			String errorPartitionType;
-			if (marker.severity==IMarker.SEVERITY_INFO) {
+			if (marker.severity == IMarker.SEVERITY_INFO) {
 				errorPartitionType = BuildConsolePartition.INFO_PARTITION_TYPE;
-			} else if (marker.severity==IMarker.SEVERITY_WARNING) {
+			} else if (marker.severity == IMarker.SEVERITY_WARNING) {
 				errorPartitionType = BuildConsolePartition.WARNING_PARTITION_TYPE;
 			} else {
 				errorPartitionType = BuildConsolePartition.ERROR_PARTITION_TYPE;
@@ -437,7 +432,7 @@ public class BuildConsolePartitioner
 			ITypedRegion partition = fPartitions.get(i);
 			int partitionStart = partition.getOffset();
 			int partitionEnd = partitionStart + partition.getLength();
-			if ( (offset >= partitionStart && offset <= partitionEnd) ||
+			if ((offset >= partitionStart && offset <= partitionEnd) ||
 					(offset < partitionStart && end >= partitionStart)) {
 				list.add(partition);
 			}
@@ -496,7 +491,7 @@ public class BuildConsolePartitioner
 				int overflow = 0;
 				try {
 					overflow = fDocument.getLineOffset(nLines - fMaxLines);
-				} catch (BadLocationException e1) {
+				} catch (BadLocationException e) {
 				}
 				// update partitions
 				List<ITypedRegion> newParitions = new ArrayList<ITypedRegion>(fPartitions.size());
@@ -504,7 +499,7 @@ public class BuildConsolePartitioner
 				while (partitions.hasNext()) {
 					ITypedRegion region = partitions.next();
 					if (region instanceof BuildConsolePartition) {
-						BuildConsolePartition messageConsolePartition = (BuildConsolePartition)region;
+						BuildConsolePartition messageConsolePartition = (BuildConsolePartition) region;
 
 						ITypedRegion newPartition = null;
 						int offset = region.getOffset();

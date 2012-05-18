@@ -39,7 +39,10 @@ public class GdbPlugin extends Plugin {
 	// The shared instance
 	private static GdbPlugin plugin;
 	
-    private static BundleContext fgBundleContext; 
+    private static BundleContext fgBundleContext;
+    
+    //Debug tracing
+    GdbDebugOptions fDebugOptions;
     
 	/**
 	 * The constructor
@@ -58,6 +61,7 @@ public class GdbPlugin extends Plugin {
 		plugin = this;
 		
         DEBUG = "true".equals(Platform.getDebugOption("org.eclipse.cdt.dsf.gdb/debug"));  //$NON-NLS-1$//$NON-NLS-2$
+        fDebugOptions = new GdbDebugOptions(context);
 	}
 
 	/*

@@ -11,6 +11,7 @@
  *     Nokia - create and use backend service.
  *     Onur Akdemir (TUBITAK BILGEM-ITI) - Multi-process debugging (Bug 237306)
  *     Marc Khouzam (Ericsson) - New method to properly created ErrorThread (Bug 350837)
+ *     Jason Litton (Sage Electronic Engineering, LLC) - Use Dynamic Tracing option (Bug 379169)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service.command;
 
@@ -42,6 +43,7 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandListener;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandResult;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandToken;
 import org.eclipse.cdt.dsf.debug.service.command.IEventListener;
+import org.eclipse.cdt.dsf.gdb.internal.GdbDebugOptions;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
@@ -658,11 +660,14 @@ public abstract class AbstractMIControl extends AbstractDsfService
                 }
                 
                 try {
+                	//write command sent to GDB to sysout or file
+                	
+                	
                     if (fOutputStream != null) {
                         fOutputStream.write(str.getBytes());
                         fOutputStream.flush();
 
-                        GdbPlugin.debug(GdbPlugin.getDebugTime() + MI_TRACE_IDENTIFIER + str);
+                        GdbDebugOptions.trace(str);
                         if (getMITracingStream() != null) {
                         	try {
                         		String message = GdbPlugin.getDebugTime() + " " + str; //$NON-NLS-1$
@@ -724,7 +729,8 @@ public abstract class AbstractMIControl extends AbstractDsfService
                 String line;
                 while ((line = reader.readLine()) != null) {
                     if (line.length() != 0) {
-                        GdbPlugin.debug(GdbPlugin.getDebugTime() + MI_TRACE_IDENTIFIER + line + "\n"); //$NON-NLS-1$
+                    	//Write Gdb response to sysout or file
+                    	GdbDebugOptions.trace(line);
                         
                         final String finalLine = line;
                         if (getMITracingStream() != null) {
@@ -876,6 +882,7 @@ public abstract class AbstractMIControl extends AbstractDsfService
         }
 
         void processMIOutput(String line) {
+        	
 
             MIParser.RecordType recordType = fMiParser.getRecordType(line);
             

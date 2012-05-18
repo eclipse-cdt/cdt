@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2009 IBM Corporation. All rights reserved.
+ * Copyright (c) 2012 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,6 +12,7 @@
  * Mike Kucera         (IBM) - [241316] [efs] Cannot restore editors for RSE/EFS-backed resources
  * David McKnight      (IBM) - [241316] [efs] Cannot restore editors for RSE/EFS-backed resources
  * David McKnight  (IBM)         - [291738] [efs] repeated queries to RSEFileStoreImpl.fetchInfo() in short time-span should be reduced
+ * David McKnight      (IBM) - [380025] [efs] shutdown in certain product shell sharing environments can result in NPE
  ********************************************************************************/
 package org.eclipse.rse.internal.efs;
 
@@ -226,34 +227,44 @@ public class RemoteEditorManager implements ISaveParticipant, IResourceChangeLis
 	 */
 	public boolean closeRemoteEditors() {
 		boolean result = true;
-		IWorkbench wb = PlatformUI.getWorkbench();
-		IWorkbenchWindow[] windows = wb.getWorkbenchWindows();
-		for (int w = 0; w < windows.length; w++){
-			IWorkbenchWindow win = windows[w];
-			IWorkbenchPage[] pages = win.getPages();
-			for (int p = 0; p < pages.length && result; p++){
-				IWorkbenchPage page = pages[p];
-				IEditorReference[] activeReferences = page.getEditorReferences();
-				for (int er = 0; er < activeReferences.length; er++){
-					IEditorReference editorReference = activeReferences[er];
-
-					try {
-						IEditorInput input = editorReference.getEditorInput();
-						if (input instanceof FileEditorInput){
-							IFile file = ((FileEditorInput)input).getFile();
-							URI uri = file.getLocationURI();
-							if ("rse".equals(uri.getScheme())) { //$NON-NLS-1$
-								IEditorPart editor = editorReference.getEditor(false);
-
-								// close the editor
-								result = page.closeEditor(editor, true);
+		try {
+			IWorkbench wb = PlatformUI.getWorkbench();
+			if (wb != null){
+				IWorkbenchWindow[] windows = wb.getWorkbenchWindows();
+				if (windows != null){
+					for (int w = 0; w < windows.length; w++){
+						IWorkbenchWindow win = windows[w];
+						IWorkbenchPage[] pages = win.getPages();
+						if (pages != null){
+							for (int p = 0; p < pages.length && result; p++){
+								IWorkbenchPage page = pages[p];
+								IEditorReference[] activeReferences = page.getEditorReferences();
+								for (int er = 0; er < activeReferences.length; er++){
+									IEditorReference editorReference = activeReferences[er];
+				
+									try {
+										IEditorInput input = editorReference.getEditorInput();
+										if (input instanceof FileEditorInput){
+											IFile file = ((FileEditorInput)input).getFile();
+											URI uri = file.getLocationURI();
+											if ("rse".equals(uri.getScheme())) { //$NON-NLS-1$
+												IEditorPart editor = editorReference.getEditor(false);
+				
+												// close the editor
+												result = page.closeEditor(editor, true);
+											}
+										}
+									} catch (PartInitException e){
+										e.printStackTrace();
+									}
+								}
 							}
 						}
-					} catch (PartInitException e){
-						e.printStackTrace();
 					}
 				}
 			}
+		}
+		catch (Exception e){			
 		}
 		return result;
 	}

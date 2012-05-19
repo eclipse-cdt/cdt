@@ -248,6 +248,8 @@ public class BuildConsolePartitioner
 
 	private IProject fProject;
 
+	private int openStreamCount = 0;
+
 	/**
 	 * List of partitions
 	 */
@@ -439,6 +441,8 @@ public class BuildConsolePartitioner
 
 				switch (entry.getEventType()) {
 				case StreamEntry.EVENT_OPEN_LOG:
+					openStreamCount++;
+					//$FALL-THROUGH$
 				case StreamEntry.EVENT_OPEN_APPEND_LOG:
 					logOpen(entry.getEventType() == StreamEntry.EVENT_OPEN_APPEND_LOG);
 					break;
@@ -471,7 +475,11 @@ public class BuildConsolePartitioner
 					}
 					break;
 				case StreamEntry.EVENT_CLOSE_LOG:
-					logClose();
+					openStreamCount--;
+					if (openStreamCount <= 0) {
+						openStreamCount = 0;
+						logClose();
+					}
 					break;
 				}
 			}

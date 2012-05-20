@@ -162,5 +162,4 @@ public class CharArrayObjectMap <T> extends CharTable {
 	    System.arraycopy(valueTable, 0, values, 0, values.length);
 	    return values;
 	}
-
 }

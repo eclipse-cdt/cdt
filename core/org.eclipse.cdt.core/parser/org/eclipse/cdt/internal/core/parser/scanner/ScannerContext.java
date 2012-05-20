@@ -24,8 +24,8 @@ import org.eclipse.cdt.core.parser.util.CharArraySet;
  * @since 5.0
  */
 final class ScannerContext {
-	enum BranchKind {eIf, eElif, eElse, eEnd}
-	enum CodeState {eActive, eParseInactive, eSkipInactive}
+	enum BranchKind { eIf, eElif, eElse, eEnd }
+	enum CodeState { eActive, eParseInactive, eSkipInactive }
 
 	final static class Conditional {
 		private final CodeState fInitialState;
@@ -52,7 +52,7 @@ final class ScannerContext {
 	private final ScannerContext fParent;
 	private final Lexer fLexer;
 	private Token fTokens;
-	private ArrayList<Conditional> fConditionals= null;
+	private ArrayList<Conditional> fConditionals;
 	private CodeState fCurrentState= CodeState.eActive;
 	private IncludeSearchPathElement fFoundOnPath;
 	private String fFoundViaDirective;
@@ -60,7 +60,6 @@ final class ScannerContext {
 	private CharArrayObjectMap<char[]> fSignificantMacros;
 	private boolean fPragmaOnce;
 	private int fLoadedVersionCount;
-	
 
 	/**
 	 * @param ctx 
@@ -70,7 +69,7 @@ final class ScannerContext {
 		fLocationCtx= ctx;
 		fParent= parent;
 		fLexer= lexer;
-		fDepth = parent == null ? 0 : parent.fDepth+1;
+		fDepth = parent == null ? 0 : parent.fDepth + 1;
 	}
 	
 	public ScannerContext(ILocationCtx ctx, ScannerContext parent, TokenList tokens) {
@@ -131,7 +130,7 @@ final class ScannerContext {
 		}
 		
 		// if we are not inside of an conditional there shouldn't be an #else, #elsif or #end
-		final int pos= fConditionals.size()-1;
+		final int pos= fConditionals.size() - 1;
 		if (pos < 0) {
 			return null;
 		}
@@ -393,7 +392,7 @@ final class ScannerContext {
 				// Propagate significant macros to direct parent, if it is interested.
 				if (collector == fParent.fInternalModifications) {
 					final CharArrayObjectMap<char[]> significant = fParent.fSignificantMacros;
-					for (int i=0; i<fSignificantMacros.size(); i++) {
+					for (int i= 0; i < fSignificantMacros.size(); i++) {
 						final char[] name = fSignificantMacros.keyAt(i);
 						if (!collector.containsKey(name)) {
 							final char[] value= fSignificantMacros.getAt(i);
@@ -425,6 +424,7 @@ final class ScannerContext {
 				}
 				return true;
 			}
+
 			@Override
 			public boolean visitUndefined(char[] macro) {
 				if (!fInternalModifications.containsKey(macro)) {
@@ -432,6 +432,7 @@ final class ScannerContext {
 				}
 				return true;
 			}
+
 			@Override
 			public boolean visitDefined(char[] macro) {
 				if (!fInternalModifications.containsKey(macro)) {

@@ -347,6 +347,11 @@ final class ScannerContext {
 	}
 
 	public void significantMacro(IMacroBinding macro) {
+		if (fCurrentState == CodeState.eParseInactive) {
+			// Macros in inactive code should not be considered significant to match behavior of indexer,
+			// which doesn't parse inactive code (see http://bugs.eclipse.org/bugs/show_bug.cgi?id=370146).
+			return;
+		}
 		final char[] macroName= macro.getNameCharArray();
 		if (fInternalModifications != null && !fInternalModifications.containsKey(macroName)) {
 			final char[] expansion = macro.getExpansion();

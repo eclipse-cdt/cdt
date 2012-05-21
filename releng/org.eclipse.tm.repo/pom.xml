@@ -104,7 +104,8 @@
                       </fileset>
                     </chmod>
                     <copy todir="${tm-install}">
-                  <fileset dir="${project.build.directory}/../../../../" includes="rseserver*"/>                    
+                      <fileset dir="${project.build.directory}/../../../../" includes="rseserver*"/>
+                    </copy>
                   </tasks>
                 </configuration>
               </execution>
@@ -116,7 +117,7 @@
     <profile>
       <id>local-build</id>
       <properties>
-	      <tm-install>${project.build.directory}/../../../../</tm-install>
+        <tm-install>${project.build.directory}/../../../../</tm-install>
       </properties>
       <build>
         <plugins>
@@ -131,7 +132,7 @@
                 </goals>
                 <configuration>
                   <target>
-			  <!--   <delete includeemptydirs="false">
+                    <!--   <delete includeemptydirs="false">
                       <fileset dir="${tm-install}">
                         <include name="**"/>
                       </fileset>

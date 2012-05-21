@@ -310,6 +310,23 @@
               </target>
             </configuration>
           </execution>
+          <execution>
+            <id>upload-serverruntime</id>
+            <phase>install</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <properties>
+                <tm-install>/home/data/httpd/download.eclipse.org/tm/builds/${platform-version-name}/nightly</tm-install>
+              </properties>
+              <target>
+                <copy todir="${tm-install}">
+                  <fileset dir="${project.build.directory}" includes="rseserver*"/>
+                </copy>
+              </target>
+            </configuration>
+          </execution>
         </executions>
       </plugin>
     </plugins>

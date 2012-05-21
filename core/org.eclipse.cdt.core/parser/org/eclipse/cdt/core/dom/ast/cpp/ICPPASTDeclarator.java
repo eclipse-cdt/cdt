@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.core.dom.ast.cpp;
 
@@ -21,15 +21,14 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
  */
 public interface ICPPASTDeclarator extends IASTDeclarator {
 	/**
-	 * Returns whether the declarator contains an ellipsis, in which case it declares a
-	 * parameter pack.
+	 * Returns whether the declarator contains an ellipsis, in which case it declares
+	 * a parameter pack.
 	 */
 	public boolean declaresParameterPack();
-	
-	
+
 	/**
 	 * Set whether the declarator contains an ellipsis, denoting a pack expansion. 
-	 * Not allowed on frozen AST.
+	 * Not allowed on a frozen AST.
 	 */
 	public void setDeclaresParameterPack(boolean val);
 }

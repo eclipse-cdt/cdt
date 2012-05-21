@@ -9683,5 +9683,30 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertEquals("void (char *)", ASTTypeUtil.getType(f.getType()));
 		f= bh.assertNonProblem("f( 0 )", 1);
 		assertEquals("void (int)", ASTTypeUtil.getType(f.getType()));
-	}	
+	}
+	
+	// struct F {};
+	// struct S {
+	//     friend F;
+	// };
+	public void testFriendClass() throws Exception {
+		parseAndCheckBindings();
+	}
+	
+	// struct F {};
+	// typedef F T;
+	// struct S {
+	//     friend T;
+	// };
+	public void testFriendTypedef() throws Exception {
+		parseAndCheckBindings();
+	}
+	
+	// template<typename P>
+	// struct T {
+	//     friend P;
+	// };
+	public void testFriendTemplateParameter() throws Exception {
+		parseAndCheckBindings();
+	}
 }

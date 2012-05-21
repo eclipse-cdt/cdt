@@ -2313,6 +2313,10 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 	protected boolean isLegalWithoutDtor(IASTDeclSpecifier declSpec) {
 		if (declSpec instanceof IASTElaboratedTypeSpecifier) {
 			return ((IASTElaboratedTypeSpecifier) declSpec).getKind() != IASTElaboratedTypeSpecifier.k_enum;
+		} else if(declSpec instanceof ICPPASTNamedTypeSpecifier){
+			if(((ICPPASTNamedTypeSpecifier) declSpec).isFriend()){
+				return true;
+			}
 		}
 		return super.isLegalWithoutDtor(declSpec);
 	}

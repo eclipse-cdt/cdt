@@ -310,7 +310,7 @@
               </target>
             </configuration>
           </execution>
-          <execution>
+<!--          <execution>
             <id>upload-serverruntime</id>
             <phase>install</phase>
             <goals>
@@ -327,6 +327,7 @@
               </target>
             </configuration>
           </execution>
+-->          
         </executions>
       </plugin>
     </plugins>

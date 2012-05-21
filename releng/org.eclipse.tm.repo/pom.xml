@@ -103,6 +103,8 @@
                         <include name="**"/>
                       </fileset>
                     </chmod>
+                    <copy todir="${tm-install}">
+                  <fileset dir="${project.build.directory}/../../../../" includes="rseserver*"/>                    
                   </tasks>
                 </configuration>
               </execution>

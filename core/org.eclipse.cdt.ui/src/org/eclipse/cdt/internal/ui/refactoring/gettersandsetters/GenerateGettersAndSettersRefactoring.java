@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -26,7 +26,6 @@ import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
 
-import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
@@ -44,6 +43,7 @@ import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.ContainerNode;
 
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
@@ -87,7 +87,6 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring {
 		}
 	}
 
-	private static final String MEMBER_DECLARATION = "MEMBER_DECLARATION"; //$NON-NLS-1$
 	private final GetterSetterContext context;
 	private InsertLocation definitionInsertLocation;	
 	
@@ -195,27 +194,23 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring {
 			@Override
 			public int visit(IASTDeclaration declaration) {
 				if (declaration instanceof IASTSimpleDeclaration) {
-					IASTSimpleDeclaration fieldDeclaration = (IASTSimpleDeclaration) declaration;
-					ASTNodeProperty props = fieldDeclaration.getPropertyInParent();
-					if (props.getName().contains(MEMBER_DECLARATION)) {
-						final IASTDeclarator[] declarators = fieldDeclaration.getDeclarators();
-						if (declarators.length > 0) {
-							IASTDeclarator innermostDeclarator = declarators[0];
+					IASTSimpleDeclaration simpleDeclaration = (IASTSimpleDeclaration) declaration;
+					if (simpleDeclaration.getPropertyInParent() == IASTCompositeTypeSpecifier.MEMBER_DECLARATION) {
+						for (IASTDeclarator declarator : simpleDeclaration.getDeclarators()) {
+							IASTDeclarator innermostDeclarator = declarator;
 							while (innermostDeclarator.getNestedDeclarator() != null) {
 								innermostDeclarator = innermostDeclarator.getNestedDeclarator();
 							}
 							if ((innermostDeclarator instanceof IASTFunctionDeclarator)) {
-								context.existingFunctionDeclarations.add(fieldDeclaration);
-							} else if (fieldDeclaration.isPartOfTranslationUnitFile()) {
-								context.existingFields.add(fieldDeclaration);
+								context.existingFunctionDeclarations.add(simpleDeclaration);
+							} else if (simpleDeclaration.isPartOfTranslationUnitFile()) {
+								context.existingFields.add(declarator);
 							}
 						}
 					}
-				}
-				if (declaration instanceof IASTFunctionDefinition) {
+				} else if (declaration instanceof IASTFunctionDefinition) {
 					IASTFunctionDefinition functionDefinition = (IASTFunctionDefinition) declaration;
-					ASTNodeProperty props = functionDefinition.getPropertyInParent();
-					if (props.getName().contains(MEMBER_DECLARATION)) {
+					if (functionDefinition.getPropertyInParent() == IASTCompositeTypeSpecifier.MEMBER_DECLARATION) {
 						context.existingFunctionDefinitions.add(functionDefinition);
 					}
 				}
@@ -246,7 +241,7 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring {
 			addDefinition(collector, definitions, pm);
 		}
 		ICPPASTCompositeTypeSpecifier classDefinition =
-				(ICPPASTCompositeTypeSpecifier) context.existingFields.get(context.existingFields.size() - 1).getParent();
+				CPPVisitor.findAncestorWithType(context.existingFields.get(0), ICPPASTCompositeTypeSpecifier.class);
 
 		ClassMemberInserter.createChange(classDefinition, VisibilityEnum.v_public,
 				getterAndSetters, false, collector);
@@ -275,7 +270,8 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring {
 			return;
 		}
 		
-		IASTSimpleDeclaration decl = context.existingFields.get(0);
+		IASTSimpleDeclaration decl =
+				CPPVisitor.findAncestorWithType(context.existingFields.get(0), IASTSimpleDeclaration.class);
 		MethodDefinitionInsertLocationFinder locationFinder = new MethodDefinitionInsertLocationFinder();
 		InsertLocation location = locationFinder.find(tu, decl.getFileLocation(), decl.getParent(),
 				refactoringContext, pm);

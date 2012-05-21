@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2011, 2012 Google, Inc and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ * 	   Sergey Prigogin (Google) - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.gettersandsetters;
 
 import java.util.ArrayList;
@@ -6,9 +16,9 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
@@ -23,21 +33,21 @@ import org.eclipse.cdt.internal.ui.refactoring.gettersandsetters.AccessorDescrip
 
 class FieldDescriptor {
 	private final IASTName fieldName;
-	private final IASTSimpleDeclaration fieldDeclaration;
+	private final IASTDeclarator fieldDeclarator;
 	private final AccessorDescriptor getter;
 	private final AccessorDescriptor setter;
 	private final AccessorDescriptor[] childNodes;
 	private final GetterSetterContext context;
 	
-	FieldDescriptor(IASTSimpleDeclaration fieldDeclaration, GetterSetterContext context) {
-		this.fieldName = GetterSetterContext.getDeclarationName(fieldDeclaration);
-		this.fieldDeclaration = fieldDeclaration;
+	FieldDescriptor(IASTDeclarator field, GetterSetterContext context) {
+		this.fieldName = GetterSetterContext.getDeclaratorName(field);
+		this.fieldDeclarator = field;
 		this.context = context;
 		Set<String> namesToAvoid = getNamesToAvoid();
 		String name = GetterSetterNameGenerator.generateGetterName(fieldName, namesToAvoid);
 		this.getter = new AccessorDescriptor(AccessorKind.GETTER, name,	this);
 		name = GetterSetterNameGenerator.generateSetterName(fieldName, namesToAvoid);
-		 if (!isAssignable(fieldDeclaration))
+		 if (!isAssignable(field))
 			 name = null;
 		this.setter = new AccessorDescriptor(AccessorKind.SETTER, name,	this);
 
@@ -54,8 +64,8 @@ class FieldDescriptor {
 	private Set<String> getNamesToAvoid() {
 		Set<String> namesToAvoid = new HashSet<String>();
 		// Add field names.
-		for (IASTSimpleDeclaration fieldDeclaration : context.existingFields) {
-			namesToAvoid.add(String.valueOf(GetterSetterContext.getDeclarationName(fieldDeclaration).getSimpleID()));
+		for (IASTDeclarator fieldDeclarator : context.existingFields) {
+			namesToAvoid.add(String.valueOf(GetterSetterContext.getDeclaratorName(fieldDeclarator).getSimpleID()));
 		}
 		// Add constructor name.
 		if (!context.existingFields.isEmpty()) {
@@ -69,8 +79,8 @@ class FieldDescriptor {
 		return namesToAvoid;
 	}
 
-	private static boolean isAssignable(IASTSimpleDeclaration declaration) {
-		IASTName name = GetterSetterContext.getDeclarationName(declaration);
+	private static boolean isAssignable(IASTDeclarator fieldDeclarator) {
+		IASTName name = GetterSetterContext.getDeclaratorName(fieldDeclarator);
 		IBinding binding = name.resolveBinding();
 		if (!(binding instanceof ICPPField))
 			return false;
@@ -107,8 +117,8 @@ class FieldDescriptor {
 		return fieldName;
 	}
 
-	public IASTSimpleDeclaration getFieldDeclaration() {
-		return fieldDeclaration;
+	public IASTDeclarator getFieldDeclarator() {
+		return fieldDeclarator;
 	}
 
 	public AccessorDescriptor getGetter() {

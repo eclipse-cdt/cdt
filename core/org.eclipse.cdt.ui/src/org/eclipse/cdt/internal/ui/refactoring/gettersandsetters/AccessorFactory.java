@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -55,26 +55,29 @@ import org.eclipse.cdt.internal.ui.refactoring.gettersandsetters.AccessorDescrip
 
 public abstract class AccessorFactory {	
 	protected final IASTName fieldName;
-	protected final IASTSimpleDeclaration fieldDeclaration;
+	protected final IASTDeclarator fieldDeclarator;
+	private final IASTDeclSpecifier declSpecifier;
 	protected final String accessorName;
 	protected boolean passByReference;
 
 	public static AccessorFactory createFactory(AccessorKind kind, IASTName fieldName,
-			IASTSimpleDeclaration fieldDeclaration,	String accessorName) {
+			IASTDeclarator declarator,	String accessorName) {
 		if (kind == AccessorKind.GETTER) {
-			return new GetterFactory(fieldName, fieldDeclaration, accessorName);
+			return new GetterFactory(fieldName, declarator, accessorName);
 		} else {
-			return new SetterFactory(fieldName, fieldDeclaration, accessorName);
+			return new SetterFactory(fieldName, declarator, accessorName);
 		}
 	}
 
-	protected AccessorFactory(IASTName fieldName, IASTSimpleDeclaration fieldDeclaration,
-			String accessorName) {
+	protected AccessorFactory(IASTName fieldName, IASTDeclarator fieldDeclarator, String accessorName) {
 		this.fieldName = fieldName;
-		this.fieldDeclaration = fieldDeclaration;
+		this.fieldDeclarator = fieldDeclarator;
 		this.accessorName = accessorName;
-		IType type = CPPVisitor.createType(fieldDeclaration.getDeclSpecifier());
-		passByReference = TypeHelper.shouldBePassedByReference(type, fieldDeclaration.getTranslationUnit());
+		IASTSimpleDeclaration declaration =
+				CPPVisitor.findAncestorWithType(fieldDeclarator, IASTSimpleDeclaration.class);
+		this.declSpecifier = declaration.getDeclSpecifier();
+		IType type = CPPVisitor.createType(declSpecifier);
+		passByReference = TypeHelper.shouldBePassedByReference(type, fieldDeclarator.getTranslationUnit());
 	}
 
 	/**
@@ -90,16 +93,16 @@ public abstract class AccessorFactory {
 	public abstract IASTFunctionDefinition createDefinition(ICPPASTQualifiedName className);
 
 	protected IASTDeclSpecifier getParamOrReturnDeclSpecifier() {
-		IASTDeclSpecifier declSpec = fieldDeclaration.getDeclSpecifier().copy(CopyStyle.withLocations);
-		if (passByReference || fieldDeclaration.getDeclarators()[0] instanceof IASTArrayDeclarator) {
+		IASTDeclSpecifier declSpec = declSpecifier.copy(CopyStyle.withLocations);
+		if (passByReference || fieldDeclarator instanceof IASTArrayDeclarator) {
 			declSpec.setConst(true);
 		}
 		return declSpec;
 	}
 
 	private static class GetterFactory extends AccessorFactory {
-		GetterFactory(IASTName fieldName, IASTSimpleDeclaration fieldDeclaration, String getterName) {
-			super(fieldName, fieldDeclaration, getterName);
+		GetterFactory(IASTName fieldName, IASTDeclarator fieldDeclarator, String getterName) {
+			super(fieldName, fieldDeclarator, getterName);
 		}
 
 		@Override
@@ -142,7 +145,7 @@ public abstract class AccessorFactory {
 			getterName.setName(accessorName.toCharArray());
 
 			// Copy declarator hierarchy
-			IASTDeclarator topDeclarator = fieldDeclaration.getDeclarators()[0].copy(CopyStyle.withLocations);
+			IASTDeclarator topDeclarator = fieldDeclarator.copy(CopyStyle.withLocations);
 			
 			if (topDeclarator instanceof IASTArrayDeclarator) {
 				boolean isCpp = topDeclarator instanceof ICPPASTArrayDeclarator;
@@ -190,8 +193,8 @@ public abstract class AccessorFactory {
 	}
 
 	private static class SetterFactory extends AccessorFactory {
-		SetterFactory(IASTName fieldName, IASTSimpleDeclaration fieldDeclaration, String setterName) {
-			super(fieldName, fieldDeclaration, setterName);
+		SetterFactory(IASTName fieldName, IASTDeclarator fieldDeclarator, String setterName) {
+			super(fieldName, fieldDeclarator, setterName);
 		}
 
 		@Override
@@ -215,7 +218,7 @@ public abstract class AccessorFactory {
 			CPPASTCompoundStatement compound = new CPPASTCompoundStatement();
 			CPPASTExpressionStatement exprStmt = new CPPASTExpressionStatement();
 			CPPASTBinaryExpression binExpr = new CPPASTBinaryExpression();
-			IASTDeclarator innerDeclarator = fieldDeclaration.getDeclarators()[0];
+			IASTDeclarator innerDeclarator = fieldDeclarator;
 			while (innerDeclarator.getNestedDeclarator() != null) {
 				innerDeclarator = innerDeclarator.getNestedDeclarator();
 			}
@@ -252,7 +255,7 @@ public abstract class AccessorFactory {
 				declarator.setName(setterName);
 			}
 			CPPASTParameterDeclaration parameterDeclaration = new CPPASTParameterDeclaration();
-			IASTDeclarator parameterDeclarator = fieldDeclaration.getDeclarators()[0].copy(CopyStyle.withLocations);
+			IASTDeclarator parameterDeclarator = fieldDeclarator.copy(CopyStyle.withLocations);
 			parameterDeclarator.setName(getSetterParameterName());
 			if (passByReference) {
 				parameterDeclarator.addPointerOperator(new CPPASTReferenceOperator(false));

@@ -1599,4 +1599,36 @@ public class GenerateGettersAndSettersTest extends RefactoringTestBase {
 		selectedSetters = new String[] { "mClass" };
 		assertRefactoringSuccess();
 	}
+
+	//A.h
+	//class Foo {
+	//	int a, *b, /*$*/c[2]/*$$*/;
+	//};
+	//====================
+	//class Foo {
+	//public:
+	//	void setA(int a) {
+	//		this->a = a;
+	//	}
+	//
+	//	int* getB() const {
+	//		return b;
+	//	}
+	//
+	//	void setB(int* b) {
+	//		this->b = b;
+	//	}
+	//
+	//	const int* getC() const {
+	//		return c;
+	//	}
+	//
+	//private:
+	//	int a, *b, c[2];
+	//};
+	public void testMultipleDeclarators_371840() throws Exception {
+		selectedGetters = new String[] { "b", "c" };
+		selectedSetters = new String[] { "a", "b" };
+		assertRefactoringSuccess();
+	}
 }

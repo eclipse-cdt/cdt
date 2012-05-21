@@ -522,25 +522,17 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 	 */
 	private class CustomFieldEditorDescriptor
 	{
-		private final String editorClassName;
-		private final String bundleName;
+		private final IConfigurationElement element;
 
-		CustomFieldEditorDescriptor(String editorClassName, String bundleName) {
-			this.editorClassName = editorClassName;
-			this.bundleName = bundleName;
+		public CustomFieldEditorDescriptor(IConfigurationElement providerElement) {
+			this.element = providerElement;
 		}
 
 		FieldEditor createEditor() {
 			try {
-				Bundle bundle = Platform.getBundle(this.bundleName);
-				if(bundle != null) {
-					Class<?> editorClass = bundle.loadClass(this.editorClassName);
-					if(editorClass != null) {
-						Object editor = editorClass.newInstance();
-						if(editor instanceof FieldEditor && editor instanceof ICustomBuildOptionEditor) {
-							return (FieldEditor)editor;
-						}
-					}
+				Object editor = element.createExecutableExtension("class"); //$NON-NLS-1$
+				if(editor instanceof FieldEditor && editor instanceof ICustomBuildOptionEditor) {
+					return (FieldEditor)editor;
 				}
 			}
 			catch(Exception x) {
@@ -567,11 +559,8 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 		for(IExtension e : ep.getExtensions()) {
 			for(IConfigurationElement providerElement : e.getConfigurationElements()) {
 				String editorId = providerElement.getAttribute("id"); //$NON-NLS-1$
-				String editorClassName = providerElement.getAttribute("class"); //$NON-NLS-1$
 
-				String bundleName = providerElement.getContributor().getName();
-
-				this.customFieldEditorDescriptorIndex.put(editorId, new CustomFieldEditorDescriptor(editorClassName, bundleName));
+				this.customFieldEditorDescriptorIndex.put(editorId, new CustomFieldEditorDescriptor(providerElement));
 			}
 		}
 	}

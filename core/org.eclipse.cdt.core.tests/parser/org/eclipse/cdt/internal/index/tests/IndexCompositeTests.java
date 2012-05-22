@@ -45,14 +45,17 @@ import org.eclipse.core.runtime.Path;
 /**
  * Tests the behavior of the IIndex API when dealing with multiple projects
  */
-public class IndexCompositeTests  extends BaseTestCase {
+public class IndexCompositeTests extends BaseTestCase {
 
 	public static Test suite() {
 		return suite(IndexCompositeTests.class);
 	}
 
-	private static final int NONE = 0, REFS = IIndexManager.ADD_DEPENDENCIES;
-	private static final int REFD = IIndexManager.ADD_DEPENDENT, BOTH = REFS | REFD;
+	private static final int NONE = 0;
+	private static final int REFS = IIndexManager.ADD_DEPENDENCIES;
+	private static final int REFD = IIndexManager.ADD_DEPENDENT;
+	private static final int BOTH = REFS | REFD;
+
 	private static final IndexFilter FILTER= new IndexFilter() {
 		@Override
 		public boolean acceptBinding(IBinding binding) throws CoreException {
@@ -75,15 +78,15 @@ public class IndexCompositeTests  extends BaseTestCase {
 	// class B {};
 	public void testPairDisjointContent() throws Exception {
 		CharSequence[] contents = getContentsForTest(2);
-		List projects = new ArrayList();
+		List<ICProject> projects = new ArrayList<ICProject>();
 
 		try {
-			ProjectBuilder pb = new ProjectBuilder("projB"+System.currentTimeMillis(), true);
+			ProjectBuilder pb = new ProjectBuilder("projB" + System.currentTimeMillis(), true);
 			pb.addFile("h1.h", contents[0]);
 			ICProject cprojB = pb.create();
 			projects.add(cprojB);
 
-			pb = new ProjectBuilder("projA"+System.currentTimeMillis(), true);
+			pb = new ProjectBuilder("projA" + System.currentTimeMillis(), true);
 			pb.addFile("h2.h", contents[1]).addDependency(cprojB.getProject());
 			ICProject cprojA = pb.create();
 			projects.add(cprojA);
@@ -98,8 +101,8 @@ public class IndexCompositeTests  extends BaseTestCase {
 			setIndex(cprojA, REFD);	assertBCount(1, 1);
 			setIndex(cprojA, BOTH);	assertBCount(2, 2);
 		} finally {
-			for (Iterator i = projects.iterator(); i.hasNext();)
-				((ICProject)i.next()).getProject().delete(true, true, new NullProgressMonitor());
+			for (ICProject project : projects)
+				project.getProject().delete(true, true, new NullProgressMonitor());
 		}
 	}
 
@@ -122,20 +125,20 @@ public class IndexCompositeTests  extends BaseTestCase {
 	// namespace X { class A2 {}; B2 b; C2 c; }
 	public void testTripleLinear() throws Exception {
 		CharSequence[] contents = getContentsForTest(3);
-		List projects = new ArrayList();
+		List<ICProject> projects = new ArrayList<ICProject>();
 
 		try {
-			ProjectBuilder pb = new ProjectBuilder("projC"+System.currentTimeMillis(), true);
+			ProjectBuilder pb = new ProjectBuilder("projC" + System.currentTimeMillis(), true);
 			pb.addFile("h3.h", contents[0]);
 			ICProject cprojC = pb.create();
 			projects.add(cprojC);
 
-			pb = new ProjectBuilder("projB"+System.currentTimeMillis(), true);
+			pb = new ProjectBuilder("projB" + System.currentTimeMillis(), true);
 			pb.addFile("h2.h", contents[1]).addDependency(cprojC.getProject());
 			ICProject cprojB = pb.create();
 			projects.add(cprojB);
 
-			pb = new ProjectBuilder("projA"+System.currentTimeMillis(), true);
+			pb = new ProjectBuilder("projA" + System.currentTimeMillis(), true);
 			pb.addFile("h1.h", contents[2]).addDependency(cprojB.getProject());
 			ICProject cprojA = pb.create();
 			projects.add(cprojA);
@@ -150,8 +153,8 @@ public class IndexCompositeTests  extends BaseTestCase {
 			final int gB= 6, aB= gB + 1;
 			final int gA= 3, aA= gA + 3;
 			
-			final int gBC= gB+gC-1, aBC= aB+aC-1;
-			final int gABC= gA+gBC-1, aABC= aA+aBC-1;
+			final int gBC= gB + gC - 1, aBC= aB + aC - 1;
+			final int gABC= gA + gBC - 1, aABC= aA + aBC - 1;
 			
 			setIndex(cprojC, NONE);
 			assertBCount(gC, aC); assertNamespaceXMemberCount(1);
@@ -214,8 +217,8 @@ public class IndexCompositeTests  extends BaseTestCase {
 			assertNamespaceXMemberCount(5);
 			assertFieldCount("C1", 1);
 		} finally {
-			for (Iterator i = projects.iterator(); i.hasNext();)
-				((ICProject)i.next()).getProject().delete(true, true, new NullProgressMonitor());
+			for (ICProject project : projects)
+				project.getProject().delete(true, true, new NullProgressMonitor());
 		}
 	}
 
@@ -238,20 +241,20 @@ public class IndexCompositeTests  extends BaseTestCase {
 	// void foo(C1 c) {}
 	public void testTripleUpwardV() throws Exception {
 		CharSequence[] contents = getContentsForTest(3);
-		List projects = new ArrayList();
+		List<ICProject> projects = new ArrayList<ICProject>();
 		
 		try {
-			ProjectBuilder pb = new ProjectBuilder("projB"+System.currentTimeMillis(), true);
+			ProjectBuilder pb = new ProjectBuilder("projB" + System.currentTimeMillis(), true);
 			pb.addFile("h2.h", contents[0]);
 			ICProject cprojB = pb.create();
 			projects.add(cprojB);
 
-			pb = new ProjectBuilder("projA"+System.currentTimeMillis(), true);
+			pb = new ProjectBuilder("projA" + System.currentTimeMillis(), true);
 			pb.addFile("h1.h", contents[1]).addDependency(cprojB.getProject());
 			ICProject cprojA = pb.create();
 			projects.add(cprojA);
 
-			pb = new ProjectBuilder("projC"+System.currentTimeMillis(), true);
+			pb = new ProjectBuilder("projC" + System.currentTimeMillis(), true);
 			pb.addFile("h3.h", contents[2]).addDependency(cprojB.getProject());
 			ICProject cprojC = pb.create();
 			projects.add(cprojC);
@@ -271,9 +274,9 @@ public class IndexCompositeTests  extends BaseTestCase {
 			final int gB= 4, aB= gB + 1;
 			final int gA= 4, aA= gA + 1;
 			
-			final int gBC= gB+gC-1, aBC= aB+aC-1;
-			final int gAB= gA+gB-1, aAB= aA+aB-1;
-			final int gABC= gA+gBC-1, aABC= aA+aBC-1;
+			final int gBC= gB + gC - 1, aBC= aB + aC - 1;
+			final int gAB= gA + gB - 1, aAB= aA + aB - 1;
+			final int gABC= gA + gBC - 1, aABC= aA + aBC - 1;
 
 
 			setIndex(cprojC, NONE);
@@ -315,8 +318,8 @@ public class IndexCompositeTests  extends BaseTestCase {
 			assertBCount(gABC, aABC);
 			assertNamespaceXMemberCount(4);
 		} finally {
-			for (Iterator i = projects.iterator(); i.hasNext();)
-				((ICProject)i.next()).getProject().delete(true, true, new NullProgressMonitor());
+			for (ICProject project : projects)
+				project.getProject().delete(true, true, new NullProgressMonitor());
 		}
 	}
 
@@ -337,20 +340,20 @@ public class IndexCompositeTests  extends BaseTestCase {
 	// namespace X { class A2 {}; }
 	public void testTripleDownwardV() throws Exception {
 		CharSequence[] contents = getContentsForTest(3);
-		List projects = new ArrayList();
+		List<ICProject> projects = new ArrayList<ICProject>();
 
 		try {
-			ProjectBuilder pb = new ProjectBuilder("projC"+System.currentTimeMillis(), true);
+			ProjectBuilder pb = new ProjectBuilder("projC" + System.currentTimeMillis(), true);
 			pb.addFile("h3.h", contents[0]);
 			ICProject cprojC = pb.create();
 			projects.add(cprojC);
 
-			pb = new ProjectBuilder("projA"+System.currentTimeMillis(), true);
+			pb = new ProjectBuilder("projA" + System.currentTimeMillis(), true);
 			pb.addFile("h1.h", contents[2]);
 			ICProject cprojA = pb.create();
 			projects.add(cprojA);
 
-			pb = new ProjectBuilder("projB"+System.currentTimeMillis(), true);
+			pb = new ProjectBuilder("projB" + System.currentTimeMillis(), true);
 			pb.addFile("h2.h", contents[1]).addDependency(cprojC.getProject()).addDependency(cprojA.getProject());
 			ICProject cprojB = pb.create();
 			projects.add(cprojB);
@@ -369,9 +372,9 @@ public class IndexCompositeTests  extends BaseTestCase {
 			final int gB= 4, aB= gB + 2;
 			final int gA= 3, aA= gA + 1;
 			
-			final int gBC= gB+gC-1, aBC= aB+aC-1;
-			final int gAB= gA+gB-1, aAB= aA+aB-1;
-			final int gABC= gA+gBC-1, aABC= aA+aBC-1;
+			final int gBC= gB + gC - 1, aBC= aB + aC - 1;
+			final int gAB= gA + gB - 1, aAB= aA + aB - 1;
+			final int gABC= gA + gBC - 1, aABC= aA + aBC - 1;
 
 			setIndex(cprojC, NONE);
 			assertBCount(gC, aC);
@@ -412,8 +415,8 @@ public class IndexCompositeTests  extends BaseTestCase {
 			assertBCount(gABC, aABC);
 			assertNamespaceXMemberCount(4);
 		} finally {
-			for (Iterator i = projects.iterator(); i.hasNext();)
-				((ICProject)i.next()).getProject().delete(true, true, new NullProgressMonitor());
+			for (ICProject project : projects)
+				project.getProject().delete(true, true, new NullProgressMonitor());
 		}
 	}
 	
@@ -465,10 +468,11 @@ public class IndexCompositeTests  extends BaseTestCase {
  * Convenience class for setting up projects.
  */
 class ProjectBuilder {
-	private String name;
+	private static final int INDEXER_TIMEOUT_SEC = 5;
+	private final String name;
+	private final boolean cpp;
 	private List dependencies = new ArrayList();
 	private Map path2content = new HashMap();
-	private boolean cpp;
 
 	ProjectBuilder(String name, boolean cpp) {
 		this.name = name;
@@ -503,7 +507,7 @@ class ProjectBuilder {
 		CCorePlugin.getIndexManager().setIndexerId(result, IPDOMManager.ID_FAST_INDEXER);
 		if (lastFile != null) {
 			IIndex index= CCorePlugin.getIndexManager().getIndex(result);
-			TestSourceReader.waitUntilFileIsIndexed(index, lastFile, 2000);
+			TestSourceReader.waitUntilFileIsIndexed(index, lastFile, INDEXER_TIMEOUT_SEC * 1000);
 		} 
 		BaseTestCase.waitForIndexer(result);
 		return result;

@@ -40,9 +40,9 @@
       [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=244405">244405</a>].</li>
 </ul>
 </li>
-<li>At least 57 bugs were resolved: Use 
-  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?type0-0-4=regexp;negate0=1;field0-0-0=target_milestone;type0-0-1=regexp;field0-0-1=target_milestone;resolution=FIXED;resolution=WONTFIX;resolution=WORKSFORME;field0-0-4=target_milestone;value0-0-2=backport;chfieldfrom=2011-09-27;chfieldto=2012-05-08;chfield=resolution;query_format=advanced;type0-0-3=regexp;field0-0-3=target_milestone;value0-0-3=3\.4%20M[1];value0-0-4=3\.4%20RC[1234];field0-0-2=short_desc;value0-0-1=3\.2\.[12];type0-0-0=regexp;value0-0-0=[23]\.[0123]\..*;component=Core;component=RSE;component=Terminal;product=Target%20Management;type0-0-2=substring"> -->
-  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced;component=Core;component=RSE;component=Terminal;resolution=FIXED;resolution=WONTFIX;resolution=WORKSFORME;target_milestone=3.4%20M3;target_milestone=3.4%20M4;target_milestone=3.4%20M5;target_milestone=3.4%20M6;target_milestone=3.4%20M7;product=Target%20Management">
+<li>At least 65 bugs were resolved: Use 
+  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?type0-0-4=regexp;negate0=1;field0-0-0=target_milestone;type0-0-1=regexp;field0-0-1=target_milestone;resolution=FIXED;resolution=WONTFIX;resolution=WORKSFORME;field0-0-4=target_milestone;value0-0-2=backport;chfieldfrom=2011-09-27;chfieldto=2012-05-23;chfield=resolution;query_format=advanced;type0-0-3=regexp;field0-0-3=target_milestone;value0-0-3=3\.4%20M[1];value0-0-4=3\.4%20RC[234];field0-0-2=short_desc;value0-0-1=3\.2\.[12];type0-0-0=regexp;value0-0-0=[23]\.[0123]\..*;component=Core;component=RSE;component=Terminal;product=Target%20Management;type0-0-2=substring"> -->
+  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced;component=Core;component=RSE;component=Terminal;resolution=FIXED;resolution=WONTFIX;resolution=WORKSFORME;target_milestone=3.4%20M3;target_milestone=3.4%20M4;target_milestone=3.4%20M5;target_milestone=3.4%20M6;target_milestone=3.4%20M7;target_milestone=3.4%20RC1;product=Target%20Management">
   this query</a> to show the list of bugs fixed since
   <a href="http://archive.eclipse.org/tm/downloads/drops/R-3.3.1-201109141310/">
   TM 3.3.1</a>
@@ -103,7 +103,7 @@ Also, observe the API Tooling tags such as <b>@noextend</b> and
 <table border="0" cellspacing="5" cellpadding="2" width="100%">
 	<tr>
 		<td align="LEFT" valign="TOP" colspan="3" bgcolor="#808080"><b>
-		<font face="Arial,Helvetica" color="#FFFFFF">API Specification Updates since TM 3.2</font></b></td>
+		<font face="Arial,Helvetica" color="#FFFFFF">API Specification Updates since TM 3.3</font></b></td>
 	</tr>
 </table>
 <table><tbody><tr><td>
@@ -113,6 +113,16 @@ More information can be found in the associated bugzilla items.
 
 <ul>
 <li>TM @buildId@ API Specification Updates
+<ul>
+  <li><b>The RSE Telnet and FTP features have been upgraded from Commons Net 2.2 to Commons Net 3.3.</b>
+      That release of Commons Net is binary compatible, but there are few minor changes
+      in source compatibility (some methods throw <b>IOException</b> now). 
+      For details see the <a href="http://commons.apache.org/net/changes-report.html">Commons Net Release Notes</a>.
+      Adopters which directly call Commons Net may need to update their version ranges in MANIFEST.MF and
+      potentially make minor adaptions to their source code
+      [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=346892">bug 346892</a>].</li>
+</ul></li>
+<li>TM 3.4M7 API Specification Updates
 <ul>
   <li><b>TM Terminal Preference Page has been moved from terminal.view into terminal.</b>
       Clients which adopt the TM Terminal widget in a view other than the TM Terminal View
@@ -125,7 +135,6 @@ More information can be found in the associated bugzilla items.
 </ul>
 </li>
 </ul>
-
 
 Use 
   <!-- 

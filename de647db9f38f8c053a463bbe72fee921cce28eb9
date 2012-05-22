@@ -1,0 +1,276 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOHn///Cs\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/GdbDebugOptions.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-05-22T20:31:35Z",
+      "side": 1,
+      "message": "It seems that the new Preference-\u003eGeneral-\u003eTracing UI automatically fills in the possible traces based on the plugins .options file (org.eclipse.cdt.dsf.gdb/.options).  Therefore, the UI automatically shows org.eclipse.cdt.dsf.gdb/debug/timeouts, so we have to support it in this file.\n\nAnd then the old support should be removed from GdbCommandTimeoutManager.",
+      "revId": "de647db9f38f8c053a463bbe72fee921cce28eb9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHn///Dw\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/GdbDebugOptions.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-05-22T20:31:35Z",
+      "side": 1,
+      "message": "Please remove @since",
+      "revId": "de647db9f38f8c053a463bbe72fee921cce28eb9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHn///DQ\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/GdbDebugOptions.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-05-22T20:31:35Z",
+      "side": 1,
+      "message": "Please duplicate the logic in GdbPlugin.debug() which breaks down the printouts in lines of 100 characters.\n\nI wonder if we should do this only for the sysout call or for the file as well?  Files can be read with a smart pager which will do the wrapping, while the Eclipse console does not.  What do you think?",
+      "revId": "de647db9f38f8c053a463bbe72fee921cce28eb9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHn///C4\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/GdbDebugOptions.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-05-22T20:31:35Z",
+      "side": 1,
+      "message": "I noticed the trace file is filled with extra information like timestamp and pluginId.  There is redundancy with our own timestamp, but I prefer this than to remove it from the sysout printout.\n\nI think it is ok to leave the extra info in the trace file.",
+      "revId": "de647db9f38f8c053a463bbe72fee921cce28eb9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHn///Dc\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/GdbPlugin.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-05-22T20:31:35Z",
+      "side": 1,
+      "message": "Please update copyright header",
+      "revId": "de647db9f38f8c053a463bbe72fee921cce28eb9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHn///DI\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/GdbPlugin.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-05-22T20:31:35Z",
+      "side": 1,
+      "message": "Please remove, it is no longer needed.",
+      "revId": "de647db9f38f8c053a463bbe72fee921cce28eb9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHn///Ds\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/GdbPlugin.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-05-22T20:31:35Z",
+      "side": 1,
+      "message": "Please remove, or make private.  You can actually remove since it is not used",
+      "revId": "de647db9f38f8c053a463bbe72fee921cce28eb9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHn///DM\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/GdbPlugin.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-05-22T20:31:35Z",
+      "side": 1,
+      "message": "Please remove, it is no longer needed.",
+      "revId": "de647db9f38f8c053a463bbe72fee921cce28eb9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHn///Do\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/GdbPlugin.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-05-22T20:31:35Z",
+      "side": 1,
+      "message": "Here you can just call \u0027new GdbDebugOptions(context);\u0027 without assigning it to anything.  The object won\u0027t be garbage collected because the constructor registers it with the context.  This is what JDT does.\n\nIf you don\u0027t like that, please make the global flag private, so we can modify/remove it later on.  If it is not private, it becomes API.",
+      "revId": "de647db9f38f8c053a463bbe72fee921cce28eb9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHn///DE\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/GdbPlugin.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-05-22T20:31:35Z",
+      "side": 1,
+      "message": "Please remove the debug() method below.  It should no longer be used.",
+      "revId": "de647db9f38f8c053a463bbe72fee921cce28eb9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHn///DA\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 665,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-05-22T20:31:35Z",
+      "side": 1,
+      "message": "Please remove left-over comment and empty lines",
+      "revId": "de647db9f38f8c053a463bbe72fee921cce28eb9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHn///DY\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 669,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-05-22T20:31:35Z",
+      "side": 1,
+      "message": "Put a check\n if (GdbDebugOptions.DEBUG) {\n\nbefore calling the trace method",
+      "revId": "de647db9f38f8c053a463bbe72fee921cce28eb9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHn///Dk\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 670,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-05-22T20:31:35Z",
+      "side": 1,
+      "message": "Don\u0027t just print \u0027str\u0027, print \"GdbPlugin.getDebugTime() + MI_TRACE_IDENTIFIER + str, as was done before.",
+      "revId": "de647db9f38f8c053a463bbe72fee921cce28eb9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHn///DU\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 732,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-05-22T20:31:35Z",
+      "side": 1,
+      "message": "Put a check\n if (GdbDebugOptions.DEBUG) {\n\nbefore calling the trace method",
+      "revId": "de647db9f38f8c053a463bbe72fee921cce28eb9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHn///Dg\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 733,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-05-22T20:31:35Z",
+      "side": 1,
+      "message": "Here too, print the same as before with timestamp and all.",
+      "revId": "de647db9f38f8c053a463bbe72fee921cce28eb9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHn///C8\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 885,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-05-22T20:31:35Z",
+      "side": 1,
+      "message": "Please remove added empty lines.",
+      "revId": "de647db9f38f8c053a463bbe72fee921cce28eb9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -752,7 +752,7 @@
    <feature url="features/org.eclipse.rse.dstore_3.4.0.qualifier.jar" id="org.eclipse.rse.dstore" version="3.4.0.qualifier">
       <category name="TM and RSE Uncategorized 3.4"/>
    </feature>
-   <feature url="features/org.eclipse.rse.ftp_3.0.400.qualifier.jar" id="org.eclipse.rse.ftp" version="3.0.400.qualifier">
+   <feature url="features/org.eclipse.rse.ftp_3.1.0.qualifier.jar" id="org.eclipse.rse.ftp" version="3.1.0.qualifier">
       <category name="TM and RSE Uncategorized 3.4"/>
    </feature>
    <feature url="features/org.eclipse.rse.local_2.1.400.qualifier.jar" id="org.eclipse.rse.local" version="2.1.400.qualifier">
@@ -767,7 +767,7 @@
    <feature url="features/org.eclipse.rse.ssh_3.0.400.qualifier.jar" id="org.eclipse.rse.ssh" version="3.0.400.qualifier">
       <category name="TM and RSE Uncategorized 3.4"/>
    </feature>
-   <feature url="features/org.eclipse.rse.telnet_2.2.300.qualifier.jar" id="org.eclipse.rse.telnet" version="2.2.300.qualifier">
+   <feature url="features/org.eclipse.rse.telnet_2.3.0.qualifier.jar" id="org.eclipse.rse.telnet" version="2.3.0.qualifier">
       <category name="TM and RSE Uncategorized 3.4"/>
    </feature>
    <feature url="features/org.eclipse.rse.examples_3.1.300.qualifier.jar" id="org.eclipse.rse.examples" version="3.1.300.qualifier">

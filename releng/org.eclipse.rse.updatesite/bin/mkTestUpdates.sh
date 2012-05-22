@@ -49,19 +49,26 @@ TYPE=none
 SITEDIR=`basename ${SITE}`
 SITEPARENT=`dirname ${SITE}`
 SITEPARENT=`basename ${SITEPARENT}`
+SITEDIRVER=${SITEDIR}
 case ${SITEDIR} in
   test*Updates)   TYPE=test ;;
   signed*Updates) TYPE=testSigned ; DO_CATEGORIES=1 ;;
   *milestones)    TYPE=milestone ;;
   *interim)       TYPE=interim ;;
-  *)              TYPE=unknown ;;
+  *)              
+     case ${SITEPARENT} in
+       *milestones) TYPE=milestone ; SITEDIRVER=${SITEPARENT} ;;
+       *interim)    TYPE=interim ; SITEDIRVER=${SITEPARENT} ;;
+       *) TYPE=unknown ;;
+     esac
+     ;;
 esac
-case ${SITEDIR} in
+case ${SITEDIRVER} in
   3.2*)  VERSION=3.2 ; DO_CATEGORIES=1 ;;
   3.3*)  VERSION=3.3 ; DO_CATEGORIES=1 ;;
   3.4*)  VERSION=3.4 ; DO_CATEGORIES=1 ;;
 esac
-case ${SITEDIR} in
+case ${SITEDIRVER} in
   3.2) DO_STATS=1 ;;
   3.3) DO_STATS=1 ;;
   3.4) DO_STATS=1 ;;

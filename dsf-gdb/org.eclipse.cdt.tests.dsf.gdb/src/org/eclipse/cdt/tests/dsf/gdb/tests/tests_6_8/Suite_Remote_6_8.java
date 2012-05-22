@@ -12,6 +12,9 @@ package org.eclipse.cdt.tests.dsf.gdb.tests.tests_6_8;
 
 import org.eclipse.cdt.dsf.mi.service.command.commands.Suite_Sessionless_Tests;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BaseRemoteSuite;
+import org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase;
+import org.eclipse.cdt.tests.dsf.gdb.tests.ITestConstants;
+import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -43,4 +46,9 @@ import org.junit.runners.Suite;
 })
 
 public class Suite_Remote_6_8 extends BaseRemoteSuite {
+	@BeforeClass
+	public static void beforeClassMethod() {
+		BaseTestCase.setGdbProgramNamesLaunchAttributes(ITestConstants.SUFFIX_GDB_6_8);
+		BaseTestCase.ignoreIfGDBMissing();
+	}
 }

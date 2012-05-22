@@ -11,6 +11,7 @@
 package org.eclipse.cdt.tests.dsf.gdb.framework;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.HashMap;
@@ -39,6 +40,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.junit.After;
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.TestName;
@@ -355,6 +357,22 @@ public class BaseTestCase {
 
  	protected void setGdbVersion() {
  		// Leave empty for the base class
+ 	}
+
+ 	/**
+ 	 * This method will verify that the GDB binary is available, and if it is not, the test will
+ 	 * be ignored.  This method should be called by a Suite that specifies a specific GDB version.
+ 	 */
+ 	public static void ignoreIfGDBMissing() {
+        try {
+        	// See if we can find GDB by actually running it.
+        	String gdb = (String)globalLaunchAttributes.get(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME);
+        	Process process = ProcessFactory.getFactory().exec(gdb + " --version");
+        	process.destroy();
+        } catch (IOException e) {
+        	// If we cannot run GDB, just ignore the test case.
+        	Assume.assumeNoException(e);
+        }
  	}
  	
  	/**

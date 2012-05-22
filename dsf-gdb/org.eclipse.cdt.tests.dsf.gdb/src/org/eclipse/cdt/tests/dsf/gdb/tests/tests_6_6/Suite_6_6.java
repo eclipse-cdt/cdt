@@ -11,6 +11,9 @@
 package org.eclipse.cdt.tests.dsf.gdb.tests.tests_6_6;
 
 import org.eclipse.cdt.dsf.mi.service.command.commands.Suite_Sessionless_Tests;
+import org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase;
+import org.eclipse.cdt.tests.dsf.gdb.tests.ITestConstants;
+import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -43,5 +46,11 @@ import org.junit.runners.Suite;
 	/* Add your test class here */
 })
 
-public class Suite_6_6 {}
+public class Suite_6_6 {
+	@BeforeClass
+	public static void beforeClassMethod() {
+		BaseTestCase.setGdbProgramNamesLaunchAttributes(ITestConstants.SUFFIX_GDB_6_6);
+		BaseTestCase.ignoreIfGDBMissing();
+	}
+}
 

@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *    Sergey Prigogin (Google)
+ *     Markus Schorn - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/ 
 package org.eclipse.cdt.ui.tests.text.selection;
 
@@ -34,7 +34,7 @@ import org.eclipse.cdt.ui.testplugin.CTestPlugin;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
 /**
- * Test Ctrl_F3/F3 with the DOM Indexer for a C++ project.
+ * Test Ctrl-F3/F3 with the DOM Indexer for a C++ project.
  */
 public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsIndexer {
 	private static final int MAX_WAIT_TIME = 8000;
@@ -170,7 +170,7 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
         
         int hoffset= hcode.indexOf("testTemplate"); 
         int soffset = scode.indexOf("testTemplate"); 
-        IASTNode def = testF3(file, soffset+2);
+        IASTNode def = testF3(file, soffset + 2);
         assertTrue(def instanceof IASTName);
         assertEquals("testTemplate", ((IASTName) def).toString());
         assertEquals(hoffset, ((ASTNode) def).getOffset());
@@ -227,8 +227,8 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
         
         int hoffset= hcode.indexOf("MyInt"); 
         int soffset = scode.indexOf("MyInt"); 
-        IASTNode decl = testF3(file, soffset+2);
-        IASTNode def = testF3(hfile, hoffset+2);
+        IASTNode decl = testF3(file, soffset + 2);
+        IASTNode def = testF3(hfile, hoffset + 2);
         assertTrue(def instanceof IASTName);
         assertTrue(decl instanceof IASTName);
         assertEquals("MyInt", ((IASTName) decl).toString());
@@ -240,8 +240,8 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
         
         hoffset= hcode.indexOf("MyConst"); 
         soffset = scode.indexOf("MyConst"); 
-        decl = testF3(file, soffset+2);
-        def = testF3(hfile, hoffset+2);
+        decl = testF3(file, soffset + 2);
+        def = testF3(hfile, hoffset + 2);
         assertTrue(def instanceof IASTName);
         assertTrue(decl instanceof IASTName);
         assertEquals("MyConst", ((IASTName) decl).toString());
@@ -253,8 +253,8 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
         
         hoffset= hcode.indexOf("MyFunc"); 
         soffset = scode.indexOf("MyFunc"); 
-        decl = testF3(file, soffset+2);
-        def = testF3(hfile, hoffset+2);
+        decl = testF3(file, soffset + 2);
+        def = testF3(hfile, hoffset + 2);
         assertTrue(def instanceof IASTName);
         assertTrue(decl instanceof IASTName);
         assertEquals("MyFunc", ((IASTName) decl).toString());
@@ -266,8 +266,8 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
         
         hoffset= hcode.indexOf("MyStruct"); 
         soffset = scode.indexOf("MyStruct"); 
-        decl = testF3(file, soffset+2);
-        def = testF3(hfile, hoffset+2);
+        decl = testF3(file, soffset + 2);
+        def = testF3(hfile, hoffset + 2);
         assertTrue(def instanceof IASTName);
         assertTrue(decl instanceof IASTName);
         assertEquals("MyStruct", ((IASTName) decl).toString());
@@ -279,8 +279,8 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
         
         hoffset= hcode.indexOf("MyClass"); 
         soffset = scode.indexOf("MyClass"); 
-        decl = testF3(file, soffset+2);
-        def = testF3(hfile, hoffset+2);
+        decl = testF3(file, soffset + 2);
+        def = testF3(hfile, hoffset + 2);
         assertTrue(def instanceof IASTName);
         assertTrue(decl instanceof IASTName);
         assertEquals("MyClass", ((IASTName) decl).toString());
@@ -983,6 +983,24 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
         decl = testF3(file, offset1);
         assertNode("gvar", offset0, decl);
     }
+
+	//	#define MYMACRO
+
+	//	#undef MYMACRO
+	public void testUndef_312399() throws Exception {
+        StringBuilder[] buffers= getContents(2);
+        String hcode= buffers[0].toString();
+        String scode= buffers[1].toString();
+        IFile hfile = importFile("testUndef_312399.h", hcode); 
+        IFile file = importFile("testUndef_312399.cpp", scode); 
+        waitUntilFileIsIndexed(index, file, MAX_WAIT_TIME);
+        
+        IASTNode target = testF3(file, scode.indexOf("MYMACRO"));
+        assertTrue(target instanceof IASTName);
+        assertEquals("MYMACRO", ((IASTName) target).toString());
+        assertEquals(hcode.indexOf("MYMACRO"), target.getFileLocation().getNodeOffset());
+        assertEquals("MYMACRO".length(), ((ASTNode) target).getLength());
+	}
     
     //  int wurscht;
 
@@ -1228,23 +1246,5 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
 		} catch (RuntimeException e) {
 			assertEquals("ambiguous input: 2", e.getMessage());
 		}
-	}
-
-	//	#define MYMACRO
-
-	//	#undef MYMACRO
-	public void testUndef_312399() throws Exception {
-        StringBuilder[] buffers= getContents(2);
-        String hcode= buffers[0].toString();
-        String scode= buffers[1].toString();
-        IFile hfile = importFile("testUndef_312399.h", hcode); 
-        IFile file = importFile("testUndef_312399.cpp", scode); 
-        waitUntilFileIsIndexed(index, file, MAX_WAIT_TIME);
-        
-        IASTNode target = testF3(file, scode.indexOf("MYMACRO"));
-        assertTrue(target instanceof IASTName);
-        assertEquals("MYMACRO", ((IASTName) target).toString());
-        assertEquals(hcode.indexOf("MYMACRO"), target.getFileLocation().getNodeOffset());
-        assertEquals("MYMACRO".length(), ((ASTNode) target).getLength());
 	}
 }

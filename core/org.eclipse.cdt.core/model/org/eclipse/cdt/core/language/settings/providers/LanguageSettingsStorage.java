@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -91,8 +92,10 @@ public class LanguageSettingsStorage implements Cloneable {
 	/**
 	 * Sets language settings entries for the resource and language.
 	 *
-	 * @param rcProjectPath - path to the resource relative to the project.
-	 * @param languageId - language id.
+	 * @param rcProjectPath - path to the resource relative to the project. If {@code null} the entries are
+	 *    considered to be being defined as default entries for resources.
+	 * @param languageId - language id. If {@code null}, then entries are considered
+	 *    to be defined for the language scope.
 	 * @param entries - language settings entries to set.
 	 */
 	public void setSettingEntries(String rcProjectPath, String languageId, List<ICLanguageSettingEntry> entries) {
@@ -132,6 +135,31 @@ public class LanguageSettingsStorage implements Cloneable {
 		synchronized (fStorage) {
 			fStorage.clear();
 		}
+	}
+
+	/**
+	 * @return set of all languages associated with the entries.
+	 * Note that the storage can keep default entries for the language scope
+	 * of the provider, so the set can contain {@code null}.
+	 */
+	public Set<String> getLanguages() {
+		return new HashSet<String>(fStorage.keySet());
+	}
+
+	/**
+	 * Returns set of paths for all resources associated with entries for given language.
+	 * The paths are project relative.
+	 *
+	 * @param languageId - language ID.
+	 * @return the set of resource paths associated with entries for the given language or empty set.
+	 * Note that the storage can keep default entries for resources, so the set can contain {@code null}.
+	 */
+	public Set<String> getResourcePaths(String languageId) {
+		Map<String, List<ICLanguageSettingEntry>> rcPathsMap = fStorage.get(languageId);
+		if (rcPathsMap == null) {
+			return new HashSet<String>();
+		}
+		return new HashSet<String>(rcPathsMap.keySet());
 	}
 
 	/**

@@ -14,8 +14,10 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.language.settings.providers.ICListenerAgent;
@@ -304,6 +306,26 @@ public class LanguageSettingsProvidersSerializer {
 		public String toString() {
 			return "LanguageSettingsChangeEvent for project=[" + getProjectName() + "]"
 					+ ", configurations=" + deltaMap.keySet();
+		}
+
+		@Override
+		public Set<IResource> getAffectedResources(String cfgId) {
+			LanguageSettingsDelta delta = deltaMap.get(cfgId);
+			if (delta != null) {
+				Set<String> paths = delta.getAffectedResourcePaths();
+				if (!paths.isEmpty()) {
+					IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
+					Set<IResource> resources = new HashSet<IResource>();
+					for (String path : paths) {
+						IResource rc = project.findMember(path);
+						if (rc != null) {
+							resources.add(rc);
+						}
+					}
+					return resources;
+				}
+			}
+			return null;
 		}
 	}
 

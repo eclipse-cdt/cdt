@@ -57,6 +57,7 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
@@ -321,15 +322,26 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 	}
 
 	private IName[] findDeclarations(IIndex index, IASTTranslationUnit ast, IBinding binding) throws CoreException {
-		IName[] declNames= ast.getDeclarationsInAST(binding);
-		for (int i = 0; i < declNames.length; i++) {
-			IName name = declNames[i];
-			if (name.isDefinition())
-				declNames[i]= null;
+		IASTName[] astNames= ast.getDeclarationsInAST(binding);
+		ArrayList<IASTName> usingDeclarations = null;
+		for (int i = 0; i < astNames.length; i++) {
+			IASTName name = astNames[i];
+			if (name.isDefinition()) {
+				astNames[i]= null;
+			} else if (CPPVisitor.findAncestorWithType(name, ICPPASTUsingDeclaration.class) != null) {
+				if (usingDeclarations == null)
+					usingDeclarations = new ArrayList<IASTName>(1);
+				usingDeclarations.add(name);
+				astNames[i]= null;
+			}
 		}
-		declNames= ArrayUtil.removeNulls(IName.class, declNames);
+		IName[] declNames= ArrayUtil.removeNulls(astNames);
 		if (declNames.length == 0) {
-			declNames= index.findNames(binding, IIndex.FIND_DECLARATIONS | IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES);
+			declNames = index.findNames(binding, IIndex.FIND_DECLARATIONS | IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES);
+		}
+		// 'using' declarations are considered only when there are no other declarations.
+		if (declNames.length == 0 && usingDeclarations != null) {
+			declNames = usingDeclarations.toArray(new IName[usingDeclarations.size()]);
 		}
 		return declNames;
 	}

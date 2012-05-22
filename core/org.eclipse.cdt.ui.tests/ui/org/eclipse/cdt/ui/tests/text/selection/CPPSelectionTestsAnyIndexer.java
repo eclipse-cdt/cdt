@@ -1247,4 +1247,32 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
 			assertEquals("ambiguous input: 2", e.getMessage());
 		}
 	}
+
+	// namespace ns {
+	// void func();
+	// }
+
+	// #include "test.h"
+	// using ns::func;
+	//
+	// void test() {
+	//   func();
+	// }
+	public void testBug380197() throws Exception {
+		StringBuilder[] buffers= getContents(2);
+        String hcode= buffers[0].toString();
+        String scode= buffers[1].toString();
+        IFile hfile = importFile("test.h", hcode); 
+        IFile file = importFile("test.cpp", scode);
+        waitUntilFileIsIndexed(index, file, MAX_WAIT_TIME);
+        
+        int hoffset= hcode.indexOf("func"); 
+        int offset = scode.indexOf("func()"); 
+        IASTNode def = testF3(file, offset + 1);
+        assertTrue(def instanceof IASTName);
+        assertEquals("func", def.toString());
+        IASTFileLocation location = def.getFileLocation();
+        assertEquals(hfile.getLocation().toOSString(), location.getFileName());
+        assertEquals(hoffset, location.getNodeOffset());
+	}
 }

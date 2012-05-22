@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.cdt.core.IAddress;
+import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
@@ -55,9 +56,11 @@ import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommand;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlShutdownDMEvent;
+import org.eclipse.cdt.dsf.gdb.IGdbDebugConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.internal.service.command.events.MITracepointSelectedEvent;
 import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceRecordSelectedChangedDMEvent;
+import org.eclipse.cdt.dsf.gdb.service.command.GDBControl;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
@@ -70,6 +73,7 @@ import org.eclipse.cdt.dsf.mi.service.MIRunControl;
 import org.eclipse.cdt.dsf.mi.service.MIStack;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.events.IMIDMEvent;
+import org.eclipse.cdt.dsf.mi.service.command.events.MIBreakpointErrorEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIBreakpointHitEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MICatchpointHitEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIErrorEvent;
@@ -86,6 +90,8 @@ import org.eclipse.cdt.dsf.mi.service.command.events.MIThreadExitEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIWatchpointTriggerEvent;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakInsertInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIResultRecord;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIThread;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIThreadInfoInfo;
 import org.eclipse.cdt.dsf.service.AbstractDsfService;
@@ -615,7 +621,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 		rm.done();
 	}
 
-	private void doResume(IMIExecutionDMContext context, final RequestMonitor rm) {
+	private void doResume(final IMIExecutionDMContext context, final RequestMonitor rm) {
 		if (!doCanResume(context)) {
 			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE,
 				"Given context: " + context + ", is already running.", null)); //$NON-NLS-1$ //$NON-NLS-2$
@@ -636,12 +642,13 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 			@Override
 			protected void handleFailure() {
 				threadState.fResumePending = false;
+				handleRunFailure(context, getStatus(), getData(), Messages.Target_cannot_be_resumed);
 				super.handleFailure();
 			}
 		});
 	}
 
-	private void doResume(IMIContainerDMContext context, final RequestMonitor rm) {
+	private void doResume(final IMIContainerDMContext context, final RequestMonitor rm) {
 		if (!doCanResume(context)) {
 			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE,
 				"Given context: " + context + ", is already running.", null)); //$NON-NLS-1$ //$NON-NLS-2$
@@ -650,7 +657,13 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 		}
 
 		String groupId = context.getGroupId();
-		fConnection.queueCommand(fCommandFactory.createMIExecContinue(context, groupId), new DataRequestMonitor<MIInfo>(getExecutor(), rm));
+		fConnection.queueCommand(fCommandFactory.createMIExecContinue(context, groupId), new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
+			@Override
+			protected void handleFailure() {
+				handleRunFailure(context, getStatus(), getData(), Messages.Target_cannot_be_resumed);
+				super.handleFailure();
+			}
+		});
 	}
 
 	// ------------------------------------------------------------------------
@@ -709,7 +722,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 	}
 
 	@Override
-	public void step(IExecutionDMContext context, StepType stepType, final RequestMonitor rm) {
+	public void step(final IExecutionDMContext context, StepType stepType, final RequestMonitor rm) {
 
 		assert context != null;
 
@@ -777,7 +790,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 			public void handleFailure() {
 				threadState.fResumePending = false;
 				threadState.fStepping = false;
-
+				handleRunFailure(context, getStatus(), getData(), Messages.Target_cannot_be_stepped);
 				super.handleFailure();
 			}   
 		});
@@ -1488,9 +1501,15 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
     				}
     			}
     		}
-    	}
+    	} 
     	
-		IMIExecutionDMContext threadDmc = DMContexts.getAncestorOfType(e.getDMContext(), IMIExecutionDMContext.class);
+    	// Process asynchronous errors first
+    	if (e instanceof MIErrorEvent) {
+    		if (!handleAsyncDebugError((MIErrorEvent)e))
+    			return;
+    	}
+
+		IMIExecutionDMContext threadDmc = DMContexts.getAncestorOfType(e.getDMContext(), IMIExecutionDMContext.class);    	
 		if (e instanceof MISignalEvent && fDisableNextSignalEventDmcSet.remove(threadDmc)) {			
 			fSilencedSignalEventMap.put(threadDmc, e);
 
@@ -1515,7 +1534,71 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
         getSession().dispatchEvent(event, getProperties());
 	}
 
+    /**
+     * Some of GDB's error messages are not very informative. This method 
+     * provides the clients with the ability to override the default status.
+     *  
+	 * @since 4.1
+	 */
+	protected IStatus createExtendedStatus(String message, IStatus status) {
+		return new Status(
+				status.getSeverity(),
+				GdbPlugin.PLUGIN_ID,
+				IGdbDebugConstants.STATUS_HANDLER_CODE,
+				message,
+				status.getException());
+	}
 
+    /**
+     * Handles stopped events that are caused by an asynchronous error.
+     * 
+     * @return whether a further processing is required
+	 * @since 4.1
+	 */
+	protected boolean handleAsyncDebugError(MIErrorEvent event) {
+		if (event instanceof MIBreakpointErrorEvent) {
+			String details = ((MIBreakpointErrorEvent)event).getDetails();
+			IStatus status = new Status(
+					IStatus.ERROR, 
+					GdbPlugin.PLUGIN_ID,
+					IGdbDebugConstants.STATUS_HANDLER_CODE, 
+					details,
+					new Exception(details));
+			handleRunError(event.getMessage(), status, null, false);
+		}
+		return true;
+	}
+
+    /**
+     * Handles failures that occur when resuming or stepping.
+     * 
+	 * @since 4.1
+	 */
+    protected void handleRunFailure(IExecutionDMContext context, IStatus status, MIInfo info, String message) {
+        handleRunError(message, status, info, true);
+        fireSuspended(context, info);
+    }
+	
+	private void handleRunError(
+			String defaultMessage, 
+			IStatus status,
+			MIInfo info, 
+			boolean checkIsInitialized) {
+		if (!checkIsInitialized || 
+		    fConnection instanceof GDBControl && 
+		    ((GDBControl) fConnection).isInitialized()) {
+			CDebugUtils.error(createExtendedStatus(defaultMessage, status), info);
+		}
+    }
+
+    private void fireSuspended(IExecutionDMContext context, MIInfo info) {
+		// Refresh the debug view and enable the run/step actions.
+    	MIOutput output = info.getMIOutput();
+    	MIResultRecord rr = output.getMIResultRecord();
+    	MIBreakpointErrorEvent miEvent = MIBreakpointErrorEvent.parse(context, rr.getToken(), rr.getMIResults());
+		getSession().dispatchEvent(new SuspendedEvent(context, miEvent), getProperties());
+    }
+	
     /**
      * @nooverride This method is not intended to be re-implemented or extended by clients.
      * @noreference This method is not intended to be referenced by clients.

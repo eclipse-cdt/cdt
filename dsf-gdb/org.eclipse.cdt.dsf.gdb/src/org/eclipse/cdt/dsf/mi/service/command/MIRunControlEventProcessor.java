@@ -41,6 +41,7 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecReturn;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecStep;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecStepInstruction;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecUntil;
+import org.eclipse.cdt.dsf.mi.service.command.events.MIBreakpointErrorEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIBreakpointHitEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MICatchpointHitEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIEvent;
@@ -157,6 +158,20 @@ public class MIRunControlEventProcessor
     					}
     				}
     				
+    				// GDB does not provide a reason or an error string when stopping
+    				// on a failed temporary breakpoint step. In this case we need to read
+    				// the preceding stream records and generate an MIBreakpointErrorEvent. 
+    				if (events.isEmpty()) {
+    					MIStreamRecord[] streamRecords = ((MIOutput)output).getStreamRecords();
+    					for (MIStreamRecord streamRecord : streamRecords) {
+    						String log = streamRecord.getString();
+    						if (log.startsWith("Cannot insert breakpoint ")) { //$NON-NLS-1$
+    							events.add(MIBreakpointErrorEvent.parse(getExecutionContext(exec), exec.getToken(), results, streamRecords));
+    							break;
+    						}
+    					}
+    				}
+    				
         			// We were stopped for some unknown reason, for example
         			// GDB for temporary breakpoints will not send the
         			// "reason" ??? still fire a stopped event.
@@ -190,6 +205,20 @@ public class MIRunControlEventProcessor
     				if (var.equals("msg")) { //$NON-NLS-1$
     					if (val instanceof MIConst) {
     						String message = ((MIConst) val).getString();
+    						
+							// Catch the case where GDB outputs a breakpoint error 
+							// result record after already having reported ^running.
+							if (message.contains("Cannot insert breakpoint ")) { //$NON-NLS-1$
+    							IMIProcesses procService = fServicesTracker.getService(IMIProcesses.class);
+    							if (procService != null) {
+									IContainerDMContext processContainerDmc = procService.createContainerContextFromGroupId(fControlDmc, MIProcesses.UNIQUE_GROUP_ID);
+									Object event = MIBreakpointErrorEvent.parse(
+											processContainerDmc, rr.getToken(), results);
+									fCommandControl.getSession().dispatchEvent(
+											event, fCommandControl.getProperties());
+    							}
+							}
+    						
     						if (message.toLowerCase().startsWith("quit")) { //$NON-NLS-1$
     							IRunControl runControl = fServicesTracker.getService(IRunControl.class);
     							IMIProcesses procService = fServicesTracker.getService(IMIProcesses.class);
@@ -210,7 +239,7 @@ public class MIRunControlEventProcessor
     		}
     	}
     }
-
+	
 	/**
 	 * Create an execution context given an exec-async-output OOB record 
 	 * 

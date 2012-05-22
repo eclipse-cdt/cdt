@@ -14,6 +14,7 @@ package org.eclipse.cdt.dsf.gdb.internal.ui;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.IStatusHandler;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -33,7 +34,7 @@ public class GdbStatusHandler implements IStatusHandler {
 				public void run() {
 					Shell parent = GdbUIPlugin.getActiveWorkbenchShell();
 					if ( parent != null )
-						MessageDialog.openError( parent, Messages.GdbStatusHandler_Error, status.getMessage() );
+						ErrorDialog.openError( parent, Messages.GdbStatusHandler_Error, null, status );
 				}
 			};
 		}

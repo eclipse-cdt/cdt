@@ -16,7 +16,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
+import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
+import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
@@ -26,6 +28,9 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommand
 import org.eclipse.cdt.dsf.debug.service.command.ICommandResult;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandToken;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.gdb.service.IGDBProcesses;
+import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
+import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
 import org.eclipse.cdt.dsf.mi.service.MIProcesses;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecContinue;
@@ -36,6 +41,7 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecReturn;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecStep;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecStepInstruction;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecUntil;
+import org.eclipse.cdt.dsf.mi.service.command.events.MIBreakpointErrorEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIBreakpointHitEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIFunctionFinishedEvent;
@@ -60,6 +66,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOOBRecord;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIResult;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIResultRecord;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIStreamRecord;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIValue;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 
@@ -127,7 +134,7 @@ public class MIRunControlEventProcessor_7_0
     				fCommandControl.resetCurrentThreadLevel();
     				fCommandControl.resetCurrentStackLevel();
 
-    				MIResult[] results = exec.getMIResults();
+    				final MIResult[] results = exec.getMIResults();
     				for (int i = 0; i < results.length; i++) {
     					String var = results[i].getVariable();
     					MIValue val = results[i].getMIValue();
@@ -142,16 +149,35 @@ public class MIRunControlEventProcessor_7_0
     						}
     					}
     				}
-        			// We were stopped for some unknown reason, for example
-        			// GDB for temporary breakpoints will not send the
-        			// "reason" ??? still fire a stopped event.
-        			if (events.isEmpty()) {
-        				MIEvent<?> e = createEvent(STOPPED_REASON, exec);
-						if (e != null) {
-							events.add(e);
-						}
-        			}
-
+    				
+    				// GDB does not provide a reason or an error string when stopping
+    				// on a failed temporary breakpoint step. In this case we need to read
+    				// the preceding stream records and generate an MIBreakpointErrorEvent.
+    				boolean processed = false;
+    				if (events.isEmpty()) {
+    					MIStreamRecord[] streamRecords = ((MIOutput)output).getStreamRecords();
+    					for (MIStreamRecord streamRecord : streamRecords) {
+    						String log = streamRecord.getString();
+    						if (log.startsWith("Cannot insert breakpoint ")) { //$NON-NLS-1$
+    		    		    	IGDBProcesses procService = fServicesTracker.getService(IGDBProcesses.class);
+    		    		    	if (procService != null) {
+    		    		    		fireBreakpointErrorEvent(procService, exec.getToken(), results, streamRecords);
+    		    		    	}
+    		    		    	processed = true;
+    							break;
+    						}
+    					}
+    					if (!processed) {
+    	        			// We were stopped for some unknown reason, for example
+    	        			// GDB for temporary breakpoints will not send the
+    	        			// "reason" ??? still fire a stopped event.
+	        				MIEvent<?> e = createEvent(STOPPED_REASON, exec);
+							if (e != null) {
+								events.add(e);
+							}
+    					}
+    				}
+    				
         			for (MIEvent<?> event : events) {
         				fCommandControl.getSession().dispatchEvent(event, fCommandControl.getProperties());
         			}
@@ -270,8 +296,25 @@ public class MIRunControlEventProcessor_7_0
     			}
     		}
     	}
+		// Catch the case where GDB outputs a breakpoint error result
+		// record after already having reported ^running.
+		MIResultRecord rr = ((MIOutput) output).getMIResultRecord();
+		if (rr != null && rr.getResultClass().equals(MIResultRecord.ERROR)) {
+			int token = rr.getToken();
+			MIResult[] results = rr.getMIResults();
+	    	IGDBProcesses procService = fServicesTracker.getService(IGDBProcesses.class);
+	    	if (procService != null) {
+				for (int i = 0; i < results.length; i++) {
+					MIValue val = results[i].getMIValue();
+					if (val.toString().contains("Cannot insert breakpoint ")) { //$NON-NLS-1$
+						fireBreakpointErrorEvent(procService, token, results, null);
+						break;
+					}
+				}
+	    	}
+		}
     }
-
+	
     @ConfinedToDsfExecutor("")     
     protected MIEvent<?> createEvent(String reason, MIExecAsyncOutput exec) {
     	MIEvent<?> event = null;
@@ -406,4 +449,31 @@ public class MIRunControlEventProcessor_7_0
             } 
         }
     }
+
+	private void fireBreakpointErrorEvent(
+			final IGDBProcesses procService, 
+			final int token, 
+			final MIResult[] results, 
+			final MIStreamRecord[] records) {
+		procService.getProcessesBeingDebugged(
+    			fCommandControl.getContext(), 
+    			new DataRequestMonitor<IDMContext[]>(fCommandControl.getExecutor(), null) {
+    				@Override
+    				@ConfinedToDsfExecutor( "fExecutor" )
+    				protected void handleSuccess() {
+    					for (IDMContext ctx : getData()) {
+    						IMIContainerDMContext contContext = DMContexts.getAncestorOfType(ctx, IMIContainerDMContext.class);
+    						if (contContext != null) {
+    							IMIExecutionDMContext[] threadContexts = procService.getExecutionContexts(contContext);
+    							for (IMIExecutionDMContext threadCtx : threadContexts) {
+						    		MIBreakpointErrorEvent event = (records == null) ? 
+						    				MIBreakpointErrorEvent.parse(threadCtx, token, results) :
+						    				MIBreakpointErrorEvent.parse(threadCtx, token, results, records);
+						    		fCommandControl.getSession().dispatchEvent(event, fCommandControl.getProperties());
+    							}
+    						}
+    					}
+    				}
+    			});
+	}
 }

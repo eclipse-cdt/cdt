@@ -167,7 +167,7 @@ public class GDBRunControl_7_2_NS extends GDBRunControl_7_0_NS
 		});
 	}
 
-	private void doResume(IMIExecutionDMContext context, final RequestMonitor rm) {
+	private void doResume(final IMIExecutionDMContext context, final RequestMonitor rm) {
 		final MIThreadRunState threadState = fThreadRunStates.get(context);
 		if (threadState == null) {
             rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE,
@@ -181,13 +181,20 @@ public class GDBRunControl_7_2_NS extends GDBRunControl_7_0_NS
 			@Override
 			protected void handleFailure() {
 				threadState.fResumePending = false;
+				handleRunFailure(context, getStatus(), getData(), Messages.Target_cannot_be_resumed);
 				super.handleFailure();
 			}
 		});
 	}
 
-	private void doResume(IMIContainerDMContext context, final RequestMonitor rm) {
-		fConnection.queueCommand(fCommandFactory.createMIExecContinue(context), new DataRequestMonitor<MIInfo>(getExecutor(), rm));
+	private void doResume(final IMIContainerDMContext context, final RequestMonitor rm) {
+		fConnection.queueCommand(fCommandFactory.createMIExecContinue(context), new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
+			@Override
+			protected void handleFailure() {
+				handleRunFailure(context, getStatus(), getData(), Messages.Target_cannot_be_resumed);
+				super.handleFailure();
+			}
+		});
 	}
 	
     /**

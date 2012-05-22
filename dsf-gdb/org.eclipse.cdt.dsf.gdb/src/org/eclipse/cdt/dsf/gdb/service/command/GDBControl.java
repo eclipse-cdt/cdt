@@ -657,7 +657,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 	/**
 	 * @since 4.1
 	 */
-	protected boolean isInitialized() {
+	public boolean isInitialized() {
 		return fInitialized;
 	}
 }

@@ -20,6 +20,8 @@ class Messages extends NLS {
 	public static String Tracing_not_supported_error;
 	public static String Invalid_post_mortem_type_error;
 	public static String Cannot_get_post_mortem_file_path_error;
+	public static String Target_cannot_be_resumed;
+	public static String Target_cannot_be_stepped;
 	
 	static {
 		// initialize resource bundle

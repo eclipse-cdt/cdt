@@ -19,6 +19,7 @@ import java.util.LinkedList;
 import java.util.Map;
 
 import org.eclipse.cdt.core.IAddress;
+import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
@@ -47,11 +48,14 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommand;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlShutdownDMEvent;
+import org.eclipse.cdt.dsf.gdb.IGdbDebugConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.internal.service.command.events.MITracepointSelectedEvent;
+import org.eclipse.cdt.dsf.gdb.service.command.GDBControl;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpoints.MIBreakpointDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.events.IMIDMEvent;
+import org.eclipse.cdt.dsf.mi.service.command.events.MIBreakpointErrorEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIBreakpointHitEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MICatchpointHitEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIErrorEvent;
@@ -67,6 +71,8 @@ import org.eclipse.cdt.dsf.mi.service.command.events.MIThreadExitEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIWatchpointTriggerEvent;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIThreadInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIResultRecord;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIThreadListIdsInfo;
 import org.eclipse.cdt.dsf.service.AbstractDsfService;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
@@ -501,6 +507,12 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
     		return;
     	}
 
+    	// Process asynchronous errors first
+    	if (e instanceof MIErrorEvent) {
+    		if (!handleAsyncDebugError((MIErrorEvent)e))
+    			return;
+    	}
+
     	MIBreakpointDMContext _bp = null;
     	if (e instanceof MIBreakpointHitEvent) {
     	    int bpId = ((MIBreakpointHitEvent)e).getNumber();
@@ -730,7 +742,7 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
                     protected void handleFailure() {
         	            fResumePending = false;
         	            fMICommandCache.setContextAvailable(context, true);
-
+        	            handleRunFailure(context, getStatus(), getData(), Messages.Target_cannot_be_resumed);
                         super.handleFailure();
                     }
             	}
@@ -741,6 +753,75 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
         }
 	}
 	
+    /**
+     * Some of GDB's error messages are not very informative. This method 
+     * provides the clients with the ability to override the default status.
+     *  
+	 * @since 4.1
+	 */
+	protected IStatus createExtendedStatus(String message, IStatus status) {
+		return new Status(
+				status.getSeverity(),
+				GdbPlugin.PLUGIN_ID,
+				IGdbDebugConstants.STATUS_HANDLER_CODE,
+				message,
+				status.getException());
+	}
+
+    /**
+     * Handles stopped events that are caused by an asynchronous error.
+     * 
+     * @return whether a further processing is required
+	 * @since 4.1
+	 */
+	protected boolean handleAsyncDebugError(MIErrorEvent event) {
+		if (event instanceof MIBreakpointErrorEvent) {
+			String details = ((MIBreakpointErrorEvent)event).getDetails();
+			IStatus status = new Status(
+					IStatus.ERROR, 
+					GdbPlugin.PLUGIN_ID,
+					IGdbDebugConstants.STATUS_HANDLER_CODE, 
+					details,
+					new Exception(details));
+			handleRunError(event.getMessage(), status, null, false);
+		}
+		return true;
+	}
+
+    /**
+     * Handles failures that occur when resuming or stepping.
+     * 
+	 * @since 4.1
+	 */
+    protected void handleRunFailure(IExecutionDMContext context, IStatus status, MIInfo info, String message) {
+        handleRunError(message, status, info, true);
+        fireSuspended(context, info);
+    }
+	
+	private void handleRunError(
+			String defaultMessage, 
+			IStatus status,
+			MIInfo info, 
+			boolean checkIsInitialized) {
+		if (!checkIsInitialized || 
+		    fConnection instanceof GDBControl && 
+		    ((GDBControl) fConnection).isInitialized()) {
+			CDebugUtils.error(createExtendedStatus(defaultMessage, status), info);
+		}
+    }
+
+    private void fireSuspended(IExecutionDMContext context, MIInfo info) {
+		// Refresh the debug view and enable the run/step actions.
+    	MIOutput output = info.getMIOutput();
+    	MIResultRecord rr = output.getMIResultRecord();
+    	MIBreakpointErrorEvent miEvent = MIBreakpointErrorEvent.parse(context, rr.getToken(), rr.getMIResults());
+    	IContainerDMContext contCtx = DMContexts.getAncestorOfType(context, IContainerDMContext.class);
+    	SuspendedEvent event = (contCtx != null) ? 
+    			new ContainerSuspendedEvent(contCtx, miEvent, context) :
+    			new SuspendedEvent(context, miEvent);
+		getSession().dispatchEvent(event, getProperties());
+    }
+
 	@Override
 	public void suspend(IExecutionDMContext context, final RequestMonitor rm){
 		assert context != null;
@@ -840,7 +921,7 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
                 fResumePending = false;
                 fStepping = false;
                 fMICommandCache.setContextAvailable(context, true);
-                
+                handleRunFailure(context, getStatus(), getData(), Messages.Target_cannot_be_stepped);
                 super.handleFailure();
         	}
         });
@@ -939,7 +1020,7 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 						protected void handleFailure() {
 							fResumePending = false;
 							fMICommandCache.setContextAvailable(dmc, true);
-
+							handleRunFailure(dmc, getStatus(), getData(), Messages.Target_cannot_be_resumed);
 							super.handleFailure();
 						}
 					});

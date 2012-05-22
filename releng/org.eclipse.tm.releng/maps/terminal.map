@@ -1,4 +1,4 @@
-feature@org.eclipse.tm.terminal=v201205071400,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools,,org.eclipse.tm.core/terminal/org.eclipse.tm.terminal-feature
+feature@org.eclipse.tm.terminal=v201205221738,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools,,org.eclipse.tm.core/terminal/org.eclipse.tm.terminal-feature
 feature@org.eclipse.tm.terminal.local=v201205071400,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools,,org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.local-feature
 feature@org.eclipse.tm.terminal.local.sdk=v201205071400,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools,,org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.local.sdk-feature
 feature@org.eclipse.tm.terminal.sdk=v201205071400,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools,,org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.sdk-feature
@@ -7,7 +7,7 @@ feature@org.eclipse.tm.terminal.ssh=v201205071400,:pserver:anonymous:none@dev.ec
 feature@org.eclipse.tm.terminal.telnet=v201205071400,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools,,org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.telnet-feature
 feature@org.eclipse.tm.terminal.test=v201205071400,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools,,org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.test-feature
 feature@org.eclipse.tm.terminal.view=v201205071400,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools,,org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.view-feature
-plugin@org.eclipse.tm.terminal=v201205071400,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools,,org.eclipse.tm.core/terminal/org.eclipse.tm.terminal
+plugin@org.eclipse.tm.terminal=v201205221738,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools,,org.eclipse.tm.core/terminal/org.eclipse.tm.terminal
 plugin@org.eclipse.tm.terminal.local=v201205071400,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools,,org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.local
 plugin@org.eclipse.tm.terminal.serial=v201205071400,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools,,org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.serial
 plugin@org.eclipse.tm.terminal.ssh=v201205071400,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools,,org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.ssh

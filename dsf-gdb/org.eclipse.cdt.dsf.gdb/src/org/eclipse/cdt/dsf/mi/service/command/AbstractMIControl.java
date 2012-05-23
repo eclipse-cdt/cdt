@@ -272,20 +272,13 @@ public abstract class AbstractMIControl extends AbstractDsfService
             commandHandle.getRequestMonitor().setStatus(genStatus("Connection is shut down")); //$NON-NLS-1$
             commandHandle.getRequestMonitor().done();
         }
-    	fCommandQueue.clear();
+    	fCommandQueue.clear();   
     	
     	/*
     	 *  Now go through the commands which are outstanding in that they have been sent to the backend.
     	 */
-        synchronized(fRxCommands) {
-            for (CommandHandle commandHandle : fRxCommands.values()) {
-                if (commandHandle.getRequestMonitor() == null) continue;
-                commandHandle.getRequestMonitor().setStatus(genStatus( "Connection is shut down")); //$NON-NLS-1$
-                commandHandle.getRequestMonitor().done();
-            }
-            fRxCommands.clear();
-        }
-        
+    	cancelRxCommands();
+    	
         /*
          *  Now handle any requests which have not been transmitted, but weconsider them handed off.
          */
@@ -299,6 +292,15 @@ public abstract class AbstractMIControl extends AbstractDsfService
         
         // Queue a null value to tell the send thread to shut down.
         fTxCommands.add(fTerminatorHandle);
+    }
+    
+    private synchronized void cancelRxCommands() {
+        for (CommandHandle commandHandle : fRxCommands.values()) {
+            if (commandHandle.getRequestMonitor() == null) continue;
+            commandHandle.getRequestMonitor().setStatus(genStatus( "Connection is shut down")); //$NON-NLS-1$
+            commandHandle.getRequestMonitor().done();
+        }
+        fRxCommands.clear();
     }
     
     /**
@@ -613,10 +615,6 @@ public abstract class AbstractMIControl extends AbstractDsfService
             while (true) {
                 CommandHandle commandHandle = null;
                 
-                /*
-                 *   Note: Acquiring locks for both fRxCommands and fTxCommands collections. 
-                 */
-                synchronized(fTxCommands) {
                     try {
                         commandHandle = fTxCommands.take();
                     } catch (InterruptedException e) {
@@ -624,7 +622,12 @@ public abstract class AbstractMIControl extends AbstractDsfService
                     }
         
                     if (commandHandle == fTerminatorHandle) {
-                        
+                    	// There is a small possibility that a new command was inserted
+                    	// in the fRxCommands map after we cleared that map.
+                    	// Just to be safe, clear it again.
+                    	// We do this to avoid synchronizing the handling of fRxCommands
+                    	// because this is more efficient, as it happens only once at shutdown.
+                    	cancelRxCommands();
                         break; // Null command is an indicator that we're shutting down. 
                     }
                     
@@ -635,7 +638,6 @@ public abstract class AbstractMIControl extends AbstractDsfService
                     	// RawCommands will not get an answer, so we cannot put them in the receive queue.
                     	fRxCommands.put(commandHandle.getTokenId(), commandHandle);
                     }
-                }
                 
                 /*
                  *   Construct the new command and push this command out the pipeline.
@@ -811,7 +813,7 @@ public abstract class AbstractMIControl extends AbstractDsfService
         		clientMsg.append("Error message from debugger back end:\n"); //$NON-NLS-1$
         		if (parameters != null) {
         			try {
-        				clientMsg.append(MessageFormat.format(message, parameters));
+        				clientMsg.append(MessageFormat.format(message, (Object[])parameters));
         			} catch(IllegalArgumentException e2) {
         				// Message format string invalid.  Fallback to just appending the strings. 
         				clientMsg.append(message);
@@ -862,7 +864,7 @@ public abstract class AbstractMIControl extends AbstractDsfService
         	if (message != null) {
         		if (parameters != null) {
         			try {
-        				clientMsg.append(MessageFormat.format(message, parameters));
+        				clientMsg.append(MessageFormat.format(message, (Object[])parameters));
         			} catch(IllegalArgumentException e2) {
         				// Message format string invalid.  Fallback to just appending the strings. 
         				clientMsg.append(message);

@@ -16,6 +16,24 @@
       "revId": "5c2eef108a0cf690d280dc82b572ac03a5428bdf",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHn//+64\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 297,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-05-23T20:01:09Z",
+      "side": 1,
+      "message": "This method can be accessed from two different threads, so you are right that it should technically be synchronized.  I\u0027ll add the keyword as it makes sense.\n\nFor information purpose, I believe we were safe anyway because the only time cancelRxCommands() can be called from the TxThread, is if fTerminatorHandle was added to fTxCommands, which is only done after cancelRxCommands() has been called from stopCommandProcessing(). Of course, if the code changes and cancelRxCommands() is ever called from elsewhere, this would break, so I\u0027ll add the synchronized keyword.",
+      "parentUuid": "AABOHn//+78\u003d",
+      "revId": "5c2eef108a0cf690d280dc82b572ac03a5428bdf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

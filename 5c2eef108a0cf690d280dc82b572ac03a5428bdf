@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOHn//+78\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 297,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-05-23T15:58:41Z",
+      "side": 1,
+      "message": "Wouldn\u0027t it be safer to make this method synchronized?",
+      "revId": "5c2eef108a0cf690d280dc82b572ac03a5428bdf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

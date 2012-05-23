@@ -107,7 +107,7 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 	 */
 	private List<ILanguageSettingsProvider> presentedProviders = null;
 	private final Map<String, ICOptionPage> optionsPageMap = new HashMap<String, ICOptionPage>();
-	private Map<String, List<ILanguageSettingsProvider>> initialProvidersByCfg = new HashMap<String, List<ILanguageSettingsProvider>>();
+	private Map<String/*cfgId*/, List<ILanguageSettingsProvider>> initialProvidersByCfg = new HashMap<String, List<ILanguageSettingsProvider>>();
 
 	/**
 	 * Label provider for language settings providers displayed by this tab.
@@ -167,6 +167,27 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 	 */
 	public ILanguageSettingsProvider getProvider(String id) {
 		return findProvider(id, presentedProviders);
+	}
+
+	/**
+	 * Returns the provider equal to provider at the point from which editing started. 
+	 * Used by option pages when there is a need.
+	 * @param id - id of the provider.
+	 *
+	 * @return the initial provider.
+	 */
+	public ILanguageSettingsProvider getInitialProvider(String id) {
+		ILanguageSettingsProvider initialProvider = null;
+		if (page.isForPrefs()) {
+			initialProvider = LanguageSettingsManager.getWorkspaceProvider(id);
+		} else {
+			ICConfigurationDescription cfgDescription = getConfigurationDescription();
+			List<ILanguageSettingsProvider> initialProviders = initialProvidersByCfg.get(cfgDescription.getId());
+			if (initialProviders != null) {
+				initialProvider = findProvider(id, initialProviders);
+			}
+		}
+		return initialProvider;
 	}
 
 	/**
@@ -1136,7 +1157,16 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 
 	@Override
 	protected void performOK() {
-		// Build Settings page
+		// give option pages a chance for provider-specific pre-apply actions
+		Collection<ICOptionPage> optionPages = optionsPageMap.values();
+		for (ICOptionPage op : optionPages) {
+			try {
+				op.performApply(null);
+			} catch (CoreException e) {
+				CUIPlugin.log("Error applying options page", e); //$NON-NLS-1$
+			}
+		}
+
 		if (page.isForPrefs()) {
 			try {
 				LanguageSettingsManager.setWorkspaceProviders(presentedProviders);
@@ -1148,15 +1178,6 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 
 		if (masterPropertyPage != null && enableProvidersCheckBox.getEnabled()) {
 			masterPropertyPage.applyLanguageSettingsProvidersEnabled();
-		}
-
-		Collection<ICOptionPage> optionPages = optionsPageMap.values();
-		for (ICOptionPage op : optionPages) {
-			try {
-				op.performApply(null);
-			} catch (CoreException e) {
-				CUIPlugin.log("Error applying options page", e); //$NON-NLS-1$
-			}
 		}
 	}
 

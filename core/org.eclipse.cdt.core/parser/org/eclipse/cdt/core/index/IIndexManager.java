@@ -33,21 +33,21 @@ public interface IIndexManager extends IPDOMManager {
 	 * projects referenced by the set of input projects should also be added
 	 * to the resulting index.
 	 */
-	public final static int ADD_DEPENDENCIES = 0x1;
+	public static final int ADD_DEPENDENCIES = 0x1;
 
 	/**
 	 * Constant for passing to getIndex methods. This constant, when set, indicates
 	 * projects which reference any of the set of input projects should also be
 	 * added to the resulting index.
 	 */
-	public final static int ADD_DEPENDENT    = 0x2;
+	public static final int ADD_DEPENDENT    = 0x2;
 	
 	/**
 	 * @deprecated Extension fragments are now used depending on their configuration. 
 	 * Use one of the ADD_EXTENSION_XX flags instead.
 	 */
 	@Deprecated
-	public final static int SKIP_PROVIDED    = 0x4;
+	public static final int SKIP_PROVIDED    = 0x4;
 	
 	/**
 	 * Constant for passing to getIndex methods. This constant, when set, indicates that each index
@@ -56,7 +56,7 @@ public interface IIndexManager extends IPDOMManager {
 	 *
 	 * @since 5.4
 	 */
-	public final static int ADD_EXTENSION_FRAGMENTS_NAVIGATION = 0x8;
+	public static final int ADD_EXTENSION_FRAGMENTS_NAVIGATION = 0x8;
 
 	/**
 	 * Constant for passing to getIndex methods. This constant, when set, indicates that the each index
@@ -65,7 +65,7 @@ public interface IIndexManager extends IPDOMManager {
 	 *
 	 * @since 5.4
 	 */
-	public final static int ADD_EXTENSION_FRAGMENTS_CONTENT_ASSIST = 0x10;
+	public static final int ADD_EXTENSION_FRAGMENTS_CONTENT_ASSIST = 0x10;
 
 	/**
 	 * Constant for passing to getIndex methods. This constant, when set, indicates that each index
@@ -74,7 +74,7 @@ public interface IIndexManager extends IPDOMManager {
 	 *
 	 * @since 5.4
 	 */
-	public final static int ADD_EXTENSION_FRAGMENTS_ADD_IMPORT = 0x20;
+	public static final int ADD_EXTENSION_FRAGMENTS_ADD_IMPORT = 0x20;
 
 	/**
 	 * Constant for passing to getIndex methods. This constant, when set, indicates that each index
@@ -83,7 +83,7 @@ public interface IIndexManager extends IPDOMManager {
 	 *
 	 * @since 5.4
 	 */
-	public final static int ADD_EXTENSION_FRAGMENTS_CALL_HIERARCHY = 0x40;
+	public static final int ADD_EXTENSION_FRAGMENTS_CALL_HIERARCHY = 0x40;
 
 	/**
 	 * Constant for passing to getIndex methods. This constant, when set, indicates that each index
@@ -92,7 +92,7 @@ public interface IIndexManager extends IPDOMManager {
 	 *
 	 * @since 5.4
 	 */
-	public final static int ADD_EXTENSION_FRAGMENTS_TYPE_HIERARCHY = 0x80;
+	public static final int ADD_EXTENSION_FRAGMENTS_TYPE_HIERARCHY = 0x80;
 
 	/**
 	 * Constant for passing to getIndex methods. This constant, when set, indicates that each index
@@ -101,7 +101,7 @@ public interface IIndexManager extends IPDOMManager {
 	 *
 	 * @since 5.4
 	 */
-	public final static int ADD_EXTENSION_FRAGMENTS_INCLUDE_BROWSER = 0x100;
+	public static final int ADD_EXTENSION_FRAGMENTS_INCLUDE_BROWSER = 0x100;
 
 	/**
 	 * Constant for passing to getIndex methods. This constant, when set, indicates that each index
@@ -110,29 +110,29 @@ public interface IIndexManager extends IPDOMManager {
 	 *
 	 * @since 5.4
 	 */
-	public final static int ADD_EXTENSION_FRAGMENTS_SEARCH = 0x200;
+	public static final int ADD_EXTENSION_FRAGMENTS_SEARCH = 0x200;
 
 	/**
 	 * Constant for indicating that there is no time out period for joining the indexer job. 
 	 * @see IIndexManager#joinIndexer(int, IProgressMonitor)
 	 */
-	public final static int FOREVER= -1;
+	public static final int FOREVER= -1;
 	
 	/**
 	 * Constant for requesting an update of all translation units.
 	 */
-	public final static int UPDATE_ALL= 0x1;
+	public static final int UPDATE_ALL= 0x1;
 
 	/**
 	 * Constant for requesting an update of translation units if theit timestamps have changed.
 	 */
-	public final static int UPDATE_CHECK_TIMESTAMPS= 0x2;
+	public static final int UPDATE_CHECK_TIMESTAMPS= 0x2;
 
 	/**
 	 * Constant for requesting an update of translation units if their configurations
 	 * have changed. The flag currently has no effect.
 	 */
-	public final static int UPDATE_CHECK_CONFIGURATION= 0x4;
+	public static final int UPDATE_CHECK_CONFIGURATION= 0x4;
 
 	/**
 	 * Constant for requesting to update the external files for a project, also. This flag works
@@ -140,7 +140,7 @@ public interface IIndexManager extends IPDOMManager {
 	 * {@link #UPDATE_ALL} or {@link #UPDATE_CHECK_TIMESTAMPS}.
 	 * @since 5.1
 	 */
-	public final static int UPDATE_EXTERNAL_FILES_FOR_PROJECT= 0x8;
+	public static final int UPDATE_EXTERNAL_FILES_FOR_PROJECT= 0x8;
 
 	/**
 	 * This flag modifies behavior of UPDATE_CHECK_TIMESTAMPS. Both, the timestamp and the hash
@@ -149,7 +149,7 @@ public interface IIndexManager extends IPDOMManager {
 	 * generation since generated files are sometimes recreated with identical contents. 
 	 * @since 5.2
 	 */
-	public final static int UPDATE_CHECK_CONTENTS_HASH= 0x10;
+	public static final int UPDATE_CHECK_CONTENTS_HASH= 0x10;
 
 	/**
 	 * Include files that are otherwise would be excluded from the index. This flag is sticky
@@ -157,7 +157,7 @@ public interface IIndexManager extends IPDOMManager {
 	 * they remain in the index.  
 	 * @since 5.3
 	 */
-	public final static int FORCE_INDEX_INCLUSION= 0x20;
+	public static final int FORCE_INDEX_INCLUSION= 0x20;
 
 	/**
 	 * Causes files previously included in the index due to FORCE_INDEX_INCLUSION to loose
@@ -165,13 +165,13 @@ public interface IIndexManager extends IPDOMManager {
 	 * will be removed from the index.
 	 * @since 5.4
 	 */
-	public final static int RESET_INDEX_INCLUSION= 0x40;
+	public static final int RESET_INDEX_INCLUSION= 0x40;
 
 	/**
 	 * Constant for requesting an update of translation units that had unresolved includes.
 	 * @since 5.4
 	 */
-	public final static int UPDATE_UNRESOLVED_INCLUDES= 0x80;
+	public static final int UPDATE_UNRESOLVED_INCLUDES= 0x80;
 
 	/**
 	 * Returns the index for the given project.

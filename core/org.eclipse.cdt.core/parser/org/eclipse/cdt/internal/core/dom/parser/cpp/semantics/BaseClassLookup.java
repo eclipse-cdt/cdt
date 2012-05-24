@@ -250,7 +250,7 @@ class BaseClassLookup {
 				continue;
 
 			final IName nbaseName = nbase.getBaseClassSpecifierName();
-			int cmp= baseName == null ? -1 : CPPSemantics.compareByRelevance(data, baseName, nbaseName);
+			int cmp= baseName == null ? 0 : CPPSemantics.compareByRelevance(data, baseName, nbaseName);
 			if (cmp <= 0) {
 				if (cmp < 0) {
 					selectedBases.clear();

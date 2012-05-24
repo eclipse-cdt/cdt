@@ -1336,7 +1336,7 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 	private SurroundWithActionGroup fSurroundWithActionGroup;
 
 	/** Pairs of brackets, used to match. */
-    protected final static char[] BRACKETS = { '{', '}', '(', ')', '[', ']', '<', '>' };
+    protected static final char[] BRACKETS = { '{', '}', '(', ')', '[', ']', '<', '>' };
 
 	/** Matches the brackets. */
     protected CPairMatcher fBracketMatcher = new CPairMatcher(BRACKETS);
@@ -1348,24 +1348,24 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 	private CEditorErrorTickUpdater fCEditorErrorTickUpdater;
 
 	/** Preference key for sub-word navigation, aka smart caret positioning */
-	public final static String SUB_WORD_NAVIGATION = "subWordNavigation"; //$NON-NLS-1$
+	public static final String SUB_WORD_NAVIGATION = "subWordNavigation"; //$NON-NLS-1$
 	/** Preference key for matching brackets */
-	public final static String MATCHING_BRACKETS = "matchingBrackets"; //$NON-NLS-1$
+	public static final String MATCHING_BRACKETS = "matchingBrackets"; //$NON-NLS-1$
 	/** Preference key for matching brackets color */
-	public final static String MATCHING_BRACKETS_COLOR = "matchingBracketsColor"; //$NON-NLS-1$
+	public static final String MATCHING_BRACKETS_COLOR = "matchingBracketsColor"; //$NON-NLS-1$
 	/** Preference key for inactive code painter enablement */
 	public static final String INACTIVE_CODE_ENABLE = "inactiveCodeEnable"; //$NON-NLS-1$
 	/** Preference key for inactive code painter color */
 	public static final String INACTIVE_CODE_COLOR = "inactiveCodeColor"; //$NON-NLS-1$
 	/** Preference key for automatically closing strings */
-	private final static String CLOSE_STRINGS = PreferenceConstants.EDITOR_CLOSE_STRINGS;
+	private static final String CLOSE_STRINGS = PreferenceConstants.EDITOR_CLOSE_STRINGS;
 	/** Preference key for automatically closing brackets and parenthesis */
-	private final static String CLOSE_BRACKETS = PreferenceConstants.EDITOR_CLOSE_BRACKETS;
+	private static final String CLOSE_BRACKETS = PreferenceConstants.EDITOR_CLOSE_BRACKETS;
 	/** Preference key for automatically closing angular brackets */
-	private final static String CLOSE_ANGULAR_BRACKETS = PreferenceConstants.EDITOR_CLOSE_ANGULAR_BRACKETS;
+	private static final String CLOSE_ANGULAR_BRACKETS = PreferenceConstants.EDITOR_CLOSE_ANGULAR_BRACKETS;
 
     /** Preference key for compiler task tags */
-    private final static String TODO_TASK_TAGS = CCorePreferenceConstants.TODO_TASK_TAGS;
+    private static final String TODO_TASK_TAGS = CCorePreferenceConstants.TODO_TASK_TAGS;
 
 	/**
 	 * This editor's projection support

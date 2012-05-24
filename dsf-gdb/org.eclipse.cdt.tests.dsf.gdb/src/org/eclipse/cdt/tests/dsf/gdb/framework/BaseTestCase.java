@@ -31,18 +31,19 @@ import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
 import org.eclipse.cdt.utils.spawner.ProcessFactory;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.rules.TestName;
+import org.junit.rules.TestRule;
+import org.junit.rules.Timeout;
 
 /**
  * This is the base class for the GDB/MI Unit tests.
@@ -53,19 +54,22 @@ import org.junit.rules.TestName;
  * code is to be run.
  */
 public class BaseTestCase {
+	// Timeout value for each individual test
+	private final static int TEST_TIMEOUT = 5 * 60 * 1000; // 5 minutes in milliseconds
 	
 	// Make the current test naem available through testName.getMethodName()
 	@Rule public TestName testName = new TestName();
+	
+	// Add a timeout for each test, to make sure no test hangs
+	@Rule public TestRule timeout = new Timeout(TEST_TIMEOUT);
 	
 	public static final String ATTR_DEBUG_SERVER_NAME = TestsPlugin.PLUGIN_ID + ".DEBUG_SERVER_NAME";
 	private static final String DEFAULT_TEST_APP = "data/launch/bin/GDBMIGenericTestApp.exe";
 	
     private static GdbLaunch fLaunch;
 
-    // The set of attributes used for the launch
-    // These are seset to their default whenever a new class
-    // of tests is started.
-	private static Map<String, Object> launchAttributes;
+    // The set of attributes used for the launch of a single test.
+	private Map<String, Object> launchAttributes;
 	
 	// A set of global launch attributes which are not
 	// reset when we load a new class of tests.
@@ -87,11 +91,11 @@ public class BaseTestCase {
 	
     public GdbLaunch getGDBLaunch() { return fLaunch; }
     
-    public static void setLaunchAttribute(String key, Object value) { 
+    public void setLaunchAttribute(String key, Object value) { 
     	launchAttributes.put(key, value);
     }
 
-    public static void removeLaunchAttribute(String key) { 
+    public void removeLaunchAttribute(String key) { 
     	launchAttributes.remove(key);
     }
 
@@ -105,7 +109,7 @@ public class BaseTestCase {
     
     public synchronized MIStoppedEvent getInitialStoppedEvent() { return fInitialStoppedEvent; }
 
-    public static boolean isRemoteSession() {
+    public boolean isRemoteSession() {
 		return launchAttributes.get(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE)
 	              .equals(IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE);
     }
@@ -173,13 +177,17 @@ public class BaseTestCase {
     		}
     	}
     }
-   
-    @BeforeClass
-    public static void baseBeforeClassMethod() {
-    	// Clear all launch attributes before starting a new class of tests
+
+	@Before
+	public void doBeforeTest() throws Exception {
+		setLaunchAttributes();
+		doLaunch();
+	}
+	
+    protected void setLaunchAttributes() {
+    	// Clear all launch attributes before starting a new test
     	launchAttributes = new HashMap<String, Object>();
     	
-		// Setup information for the launcher
    		launchAttributes.put(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, DEFAULT_TEST_APP);
 
 		launchAttributes.put(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, true);
@@ -196,14 +204,21 @@ public class BaseTestCase {
     	launchAttributes.put(IGDBLaunchConfigurationConstants.ATTR_HOST, "localhost");
     	launchAttributes.put(IGDBLaunchConfigurationConstants.ATTR_PORT, "9999");
     	
+    	setGdbVersion();
+    	
     	// Set the global launch attributes
     	launchAttributes.putAll(globalLaunchAttributes);
     }
-    
-    @Before
- 	public void baseBeforeMethod() throws Exception {
+
+    /**
+     * Launch GDB.  The launch attributes must have been set already.
+     */
+ 	protected void doLaunch() throws Exception {
+ 		boolean remote = launchAttributes.get(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE).equals(IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE);
+ 		
     	System.out.println("====================================================================================================");
-		System.out.println("Running test: " + testName.getMethodName() + " using GDB: " + launchAttributes.get(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME));
+		System.out.println(String.format("Running test: %s using GDB: %s remote %s", 
+				                         testName.getMethodName(), launchAttributes.get(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME), remote ? "on" : "off"));
     	System.out.println("====================================================================================================");
 		
  		boolean postMortemLaunch = launchAttributes.get(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE)
@@ -272,22 +287,22 @@ public class BaseTestCase {
 	}
 
  	@After
-	public void baseAfterMethod() throws Exception {
+	public void doAfterTest() throws Exception {
  		if (fLaunch != null) {
- 			fLaunch.terminate();
+ 			try {
+				fLaunch.terminate();
+			} catch (DebugException e) {
+				assert false : "Could not terminate launch";
+			}
             fLaunch = null;
  		}
 	}
- 	
- 	@AfterClass
- 	public static void baseAfterClassMehod() throws Exception {
- 	}
- 	
+
  	/**
  	 * This method start gdbserver on the localhost.
  	 * If the user specified a different host, things won't work.
  	 */
- 	private static void launchGdbServer() {
+ 	private void launchGdbServer() {
  		if (launchAttributes.get(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE)
  				              .equals(IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE)) {
  			if (launchAttributes.get(IGDBLaunchConfigurationConstants.ATTR_REMOTE_TCP).equals(Boolean.TRUE)) {
@@ -331,13 +346,17 @@ public class BaseTestCase {
 	 *            string that contains the major and minor version number, e.g.,
 	 *            "6.8"
 	 */
- 	protected static void setGdbProgramNamesLaunchAttributes(String version) {
+ 	public static void setGdbProgramNamesLaunchAttributes(String version) {
 		// See bugzilla 303811 for why we have to append ".exe" on Windows
  		boolean isWindows = Platform.getOS().equals(Platform.OS_WIN32);
- 		BaseTestCase.setLaunchAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb." + version + (isWindows ? ".exe" : ""));
- 		BaseTestCase.setLaunchAttribute(ATTR_DEBUG_SERVER_NAME, "gdbserver." + version + (isWindows ? ".exe" : ""));
+ 		setGlobalLaunchAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb." + version + (isWindows ? ".exe" : ""));
+ 		setGlobalLaunchAttribute(ATTR_DEBUG_SERVER_NAME, "gdbserver." + version + (isWindows ? ".exe" : ""));
  	}
 
+ 	protected void setGdbVersion() {
+ 		// Leave empty for the base class
+ 	}
+ 	
  	/**
  	 * In some tests we need to start a gdbserver session without starting gdbserver. 
  	 * This method allows super classes of this class control the launch of gdbserver.

@@ -151,7 +151,7 @@ public class CBreakIterator extends BreakIterator {
 
 		private int fState;
 
-		private final static int[][] MATRIX= new int[][] {
+		private static final int[][] MATRIX= new int[][] {
 				// K_INVALID, K_LOWER,           K_UPPER,    K_UNDERSCORE, K_OTHER
 				{  S_EXIT,    S_LOWER,           S_ONE_CAP,  S_UNDERSCORE, S_LOWER }, // S_INIT
 				{  S_EXIT,    S_LOWER,           S_EXIT,     S_UNDERSCORE, S_LOWER }, // S_LOWER

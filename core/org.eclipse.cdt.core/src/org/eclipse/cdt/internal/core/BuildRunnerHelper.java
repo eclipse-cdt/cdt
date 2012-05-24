@@ -268,7 +268,7 @@ public class BuildRunnerHelper implements Closeable {
 	}
 
 	/**
-	 * Close all streams.
+	 * Close all streams except console Info stream which is handled by {@link #greeting(String)}/{@link #goodbye()}.
 	 */
 	@Override
 	public void close() throws IOException {
@@ -303,14 +303,6 @@ public class BuildRunnerHelper implements Closeable {
 						CCorePlugin.log(e);
 					} finally {
 						consoleOut = null;
-						try {
-							if (consoleInfo != null)
-								consoleInfo.close();
-						} catch (Exception e) {
-							CCorePlugin.log(e);
-						} finally {
-							consoleInfo = null;
-						}
 					}
 				}
 			}
@@ -349,6 +341,9 @@ public class BuildRunnerHelper implements Closeable {
 	 * Print a standard greeting to the console.
 	 * Note that start time of the build is recorded by this method.
 	 *
+	 * This method may open an Info stream which must be closed by call to {@link #goodbye()}
+	 * after all informational messages are printed.
+	 *
 	 * @param kind - kind of build. {@link IncrementalProjectBuilder} constants such as
 	 *    {@link IncrementalProjectBuilder#FULL_BUILD} should be used.
 	 */
@@ -361,6 +356,9 @@ public class BuildRunnerHelper implements Closeable {
 	/**
 	 * Print a standard greeting to the console.
 	 * Note that start time of the build is recorded by this method.
+	 *
+	 * This method may open an Info stream which must be closed by call to {@link #goodbye()}
+	 * after all informational messages are printed.
 	 *
 	 * @param kind - kind of build. {@link IncrementalProjectBuilder} constants such as
 	 *    {@link IncrementalProjectBuilder#FULL_BUILD} should be used.
@@ -375,6 +373,9 @@ public class BuildRunnerHelper implements Closeable {
 	/**
 	 * Print a standard greeting to the console.
 	 * Note that start time of the build is recorded by this method.
+	 *
+	 * This method may open an Info stream which must be closed by call to {@link #goodbye()}
+	 * after all informational messages are printed.
 	 *
 	 * @param kind - kind of build as a String.
 	 * @param cfgName - configuration name.
@@ -396,6 +397,9 @@ public class BuildRunnerHelper implements Closeable {
 	/**
 	 * Print the specified greeting to the console.
 	 * Note that start time of the build is recorded by this method.
+	 *
+	 * This method may open an Info stream which must be closed by call to {@link #goodbye()}
+	 * after all informational messages are printed.
 	 */
 	public void greeting(String msg) {
 		startTime = System.currentTimeMillis();
@@ -410,14 +414,14 @@ public class BuildRunnerHelper implements Closeable {
 	}
 
 	/**
-	 * Print a standard footer to the console.
+	 * Print a standard footer to the console and close Info stream (must be open with one of {@link #greeting(String)} calls).
 	 * That prints duration of the build determined by start time recorded in {@link #greeting(String)}.
 	 *
 	 * <br><strong>Important: {@link #close()} the streams BEFORE calling this method to properly flush all outputs</strong>
 	 */
 	public void goodbye() {
-		Assert.isTrue(startTime != 0, "Start time must be set before calling this method"); //$NON-NLS-1$
-		Assert.isTrue(!isStreamsOpen, "Close streams before calling this method."); //$NON-NLS-1$
+		Assert.isTrue(startTime != 0, "Start time must be set before calling this method."); //$NON-NLS-1$
+		Assert.isTrue(consoleInfo != null, "consoleInfo must be open with greetings(...) call before using this method."); //$NON-NLS-1$
 
 		endTime = System.currentTimeMillis();
 		String duration = durationToString(endTime - startTime);
@@ -425,17 +429,15 @@ public class BuildRunnerHelper implements Closeable {
 				: CCorePlugin.getFormattedString("BuildRunnerHelper.buildFinished", duration); //$NON-NLS-1$
 		String goodbye = '\n' + timestamp(endTime) + msg + '\n';
 
-		if (consoleInfo != null) {
+		try {
 			toConsole(goodbye);
-		} else {
-			// in current flow goodbye() can be called after close()
+		} finally {
 			try {
-				consoleInfo = console.getInfoStream();
-				toConsole(goodbye);
 				consoleInfo.close();
-				consoleInfo = null;
 			} catch (Exception e) {
 				CCorePlugin.log(e);
+			} finally {
+				consoleInfo = null;
 			}
 		}
 	}

@@ -51,10 +51,7 @@ public class DeclarationWriter extends NodeWriter {
 	private static final String ASM_END = ")"; //$NON-NLS-1$
 	private static final String ASM_START = "asm("; //$NON-NLS-1$
 	private static final String TEMPLATE_DECLARATION = "template<"; //$NON-NLS-1$
-	private static final String EXPORT = "export "; //$NON-NLS-1$
 	private static final String TEMPLATE_SPECIALIZATION = "template <> "; //$NON-NLS-1$
-	private static final String NAMESPACE = "namespace "; //$NON-NLS-1$
-	private static final String USING = "using "; //$NON-NLS-1$
 	private boolean printSemicolon;
 
 	public DeclarationWriter(Scribe scribe, ASTWriterVisitor visitor, NodeCommentMap commentMap) {
@@ -111,15 +108,15 @@ public class DeclarationWriter extends NodeWriter {
 		scribe.decrementIndentationLevel();
 		switch (visiblityLabel.getVisibility()) {
 		case ICPPASTVisibilityLabel.v_private:
-			scribe.print(PRIVATE);
+			scribe.print(Keywords.PRIVATE);
 			scribe.print(':');
 			break;
 		case ICPPASTVisibilityLabel.v_protected:
-			scribe.print(PROTECTED);
+			scribe.print(Keywords.PROTECTED);
 			scribe.print(':');
 			break;
 		case ICPPASTVisibilityLabel.v_public:
-			scribe.print(PUBLIC);
+			scribe.print(Keywords.PUBLIC);
 			scribe.print(':');
 			break;
 		default:
@@ -129,15 +126,16 @@ public class DeclarationWriter extends NodeWriter {
 	}
 
 	private void writeUsingDirective(ICPPASTUsingDirective usingDirective) {
-		scribe.print(USING + NAMESPACE);
+		scribe.printStringSpace(Keywords.USING);
+		scribe.printStringSpace(Keywords.NAMESPACE);
 		usingDirective.getQualifiedName().accept(visitor);
 		scribe.printSemicolon();
 	}
 
 	private void writeUsingDeclaration(ICPPASTUsingDeclaration usingDeclaration) {
-		scribe.print(USING);
+		scribe.printStringSpace(Keywords.USING);
 		if (usingDeclaration.isTypename()) {
-			scribe.print(TYPENAME);
+			scribe.printStringSpace(Keywords.TYPENAME);
 		}
 		usingDeclaration.getName().accept(visitor);
 		scribe.printSemicolon();
@@ -150,7 +148,7 @@ public class DeclarationWriter extends NodeWriter {
 
 	protected void writeTemplateDeclaration(ICPPASTTemplateDeclaration templateDeclaration) {
 		if (templateDeclaration.isExported()) {
-			scribe.print(EXPORT);
+			scribe.printStringSpace(Keywords.EXPORT);
 		}
 		scribe.print(TEMPLATE_DECLARATION);
 		ICPPASTTemplateParameter[] paraDecls = templateDeclaration.getTemplateParameters();
@@ -172,7 +170,7 @@ public class DeclarationWriter extends NodeWriter {
 	}
 
 	private void writeNamespaceDefinition(ICPPASTNamespaceDefinition namespaceDefinition) {
-		scribe.print(NAMESPACE);
+		scribe.printStringSpace(Keywords.NAMESPACE);
 		namespaceDefinition.getName().accept(visitor);
 		if (!hasTrailingComments(namespaceDefinition.getName())) {
 			scribe.newLine();
@@ -200,7 +198,7 @@ public class DeclarationWriter extends NodeWriter {
 	}
 
 	private void writeNamespaceAlias(ICPPASTNamespaceAlias namespaceAliasDefinition) {
-		scribe.print(NAMESPACE);
+		scribe.printStringSpace(Keywords.NAMESPACE);
 		namespaceAliasDefinition.getAlias().accept(visitor);
 		scribe.print(EQUALS);
 		namespaceAliasDefinition.getMappingName().accept(visitor);
@@ -208,9 +206,8 @@ public class DeclarationWriter extends NodeWriter {
 	}
 
 	private void writeLinkageSpecification(ICPPASTLinkageSpecification linkageSpecification) {
-		scribe.print(EXTERN);
-		scribe.print(linkageSpecification.getLiteral());
-		scribe.printSpaces(1);
+		scribe.printStringSpace(Keywords.EXTERN);
+		scribe.printStringSpace(linkageSpecification.getLiteral());
 
 		IASTDeclaration[] declarations = linkageSpecification.getDeclarations();
 		if (declarations.length > 1) {
@@ -230,17 +227,17 @@ public class DeclarationWriter extends NodeWriter {
 	private void writeExplicitTemplateInstantiation(ICPPASTExplicitTemplateInstantiation explicitTemplateInstantiation) {
 		switch(explicitTemplateInstantiation.getModifier()) {
 		case ICPPASTExplicitTemplateInstantiation.EXTERN:
-			scribe.print(EXTERN);
+			scribe.printStringSpace(Keywords.EXTERN);
 			break;
 		case ICPPASTExplicitTemplateInstantiation.INLINE:
-			scribe.print(INLINE);
+			scribe.printStringSpace(Keywords.INLINE);
 			break;
 		case ICPPASTExplicitTemplateInstantiation.STATIC:
-			scribe.print(STATIC);
+			scribe.printStringSpace(Keywords.STATIC);
 			break;
 		}
 
-		scribe.print(TEMPLATE);
+		scribe.printStringSpace(Keywords.TEMPLATE);
 		explicitTemplateInstantiation.getDeclaration().accept(visitor);
 	}
 

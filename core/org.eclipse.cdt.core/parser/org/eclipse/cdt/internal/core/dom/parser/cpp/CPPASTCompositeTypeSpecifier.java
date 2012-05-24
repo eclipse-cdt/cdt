@@ -61,16 +61,11 @@ public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
 	public CPPASTCompositeTypeSpecifier copy(CopyStyle style) {
 		CPPASTCompositeTypeSpecifier copy =
 				new CPPASTCompositeTypeSpecifier(fKey, fName == null ? null : fName.copy(style));
-		copyBaseDeclSpec(copy);
 		for (IASTDeclaration member : getMembers())
 			copy.addMemberDeclaration(member == null ? null : member.copy(style));
 		for (ICPPASTBaseSpecifier baseSpecifier : getBaseSpecifiers())
 			copy.addBaseSpecifier(baseSpecifier == null ? null : baseSpecifier.copy(style));
-
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return super.copy(copy, style);
 	}
 
     @Override

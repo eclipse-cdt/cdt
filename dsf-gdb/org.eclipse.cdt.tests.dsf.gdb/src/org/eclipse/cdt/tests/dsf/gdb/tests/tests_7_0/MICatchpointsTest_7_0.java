@@ -12,14 +12,13 @@ package org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_0;
 
 import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
 import org.eclipse.cdt.tests.dsf.gdb.tests.ITestConstants;
-import org.eclipse.cdt.tests.dsf.gdb.tests.MICatchpointsTest;
-import org.junit.BeforeClass;
+import org.eclipse.cdt.tests.dsf.gdb.tests.tests_6_8.MICatchpointsTest_6_8;
 import org.junit.runner.RunWith;
 
 @RunWith(BackgroundRunner.class)
-public class MICatchpointsTest_7_0 extends MICatchpointsTest {
-	@BeforeClass
-	public static void beforeClassMethod_7_0() {
+public class MICatchpointsTest_7_0 extends MICatchpointsTest_6_8 {
+	@Override
+	protected void setGdbVersion() {
 		setGdbProgramNamesLaunchAttributes(ITestConstants.SUFFIX_GDB_7_0);		
 	}
 }

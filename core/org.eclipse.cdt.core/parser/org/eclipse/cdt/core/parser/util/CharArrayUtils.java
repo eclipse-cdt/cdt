@@ -291,7 +291,7 @@ public class CharArrayUtils {
 		return -1;
 	}
 
-	final static public char[] trim(char[] chars) {
+	static final public char[] trim(char[] chars) {
 		if (chars == null)
 			return null;
 
@@ -308,7 +308,7 @@ public class CharArrayUtils {
 		return chars;
 	}
 
-	final static public char[] lastSegment(char[] array, char[] separator) {
+	static final public char[] lastSegment(char[] array, char[] separator) {
 		int pos = lastIndexOf(separator, array);
 		if (pos < 0)
 			return array;

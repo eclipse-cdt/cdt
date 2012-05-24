@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM Rational Software) - Initial API and implementation
+ *     John Camelon (IBM Rational Software) - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
@@ -17,7 +17,6 @@ package org.eclipse.cdt.core.dom.ast;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTEnumerationSpecifier extends IASTDeclSpecifier, IASTNameOwner {
-
 	/**
 	 * This interface represents an enumerator member of an enum specifier.
 	 * 
@@ -59,14 +58,14 @@ public interface IASTEnumerationSpecifier extends IASTDeclSpecifier, IASTNameOwn
 				"IASTEnumerator.ENUMERATOR_VALUE - IASTExpression (value) for IASTEnumerator"); //$NON-NLS-1$
 
 		/**
-		 * Set enumerator value.
+		 * Sets enumerator value.
 		 * 
 		 * @param expression
 		 */
 		public void setValue(IASTExpression expression);
 
 		/**
-		 * Get enumerator value.
+		 * Returns enumerator value.
 		 * 
 		 * @return <code>IASTExpression</code> value
 		 */
@@ -95,7 +94,7 @@ public interface IASTEnumerationSpecifier extends IASTDeclSpecifier, IASTNameOwn
 			"IASTEnumerationSpecifier.ENUMERATOR - nested IASTEnumerator for IASTEnumerationSpecifier"); //$NON-NLS-1$
 
 	/**
-	 * Add an enumerator.
+	 * Adds an enumerator.
 	 * 
 	 * @param enumerator
 	 *            <code>IASTEnumerator</code>
@@ -103,7 +102,7 @@ public interface IASTEnumerationSpecifier extends IASTDeclSpecifier, IASTNameOwn
 	public void addEnumerator(IASTEnumerator enumerator);
 
 	/**
-	 * Get enumerators.
+	 * Returns enumerators.
 	 * 
 	 * @return <code>IASTEnumerator []</code> array
 	 */
@@ -117,7 +116,7 @@ public interface IASTEnumerationSpecifier extends IASTDeclSpecifier, IASTNameOwn
 			"IASTEnumerationSpecifier.ENUMERATION_NAME - IASTName for IASTEnumerationSpecifier"); //$NON-NLS-1$
 
 	/**
-	 * Set the enum's name.
+	 * Sets the enum's name.
 	 * 
 	 * @param name
 	 */

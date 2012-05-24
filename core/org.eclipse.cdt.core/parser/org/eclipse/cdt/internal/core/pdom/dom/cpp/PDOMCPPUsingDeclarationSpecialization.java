@@ -61,7 +61,7 @@ class PDOMCPPUsingDeclarationSpecialization extends PDOMCPPSpecialization implem
 
 	@Override
 	public int getNodeType() {
-		return IIndexCPPBindingConstants.CPP_USING_DECLARATION;
+		return IIndexCPPBindingConstants.CPP_USING_DECLARATION_SPECIALIZATION;
 	}
 
 	@Override

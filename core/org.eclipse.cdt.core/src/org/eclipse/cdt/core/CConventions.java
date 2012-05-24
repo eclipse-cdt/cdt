@@ -33,10 +33,10 @@ import org.eclipse.osgi.util.NLS;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class CConventions {
-	private final static String scopeResolutionOperator= "::"; //$NON-NLS-1$
-	private final static char fgDot= '.';
+	private static final String scopeResolutionOperator= "::"; //$NON-NLS-1$
+	private static final char fgDot= '.';
 
-	private final static String ILLEGAL_FILE_CHARS = "/\\:<>?*|\""; //$NON-NLS-1$
+	private static final String ILLEGAL_FILE_CHARS = "/\\:<>?*|\""; //$NON-NLS-1$
 	
 	public static boolean isLegalIdentifier(String name) {
 		if (name == null) {

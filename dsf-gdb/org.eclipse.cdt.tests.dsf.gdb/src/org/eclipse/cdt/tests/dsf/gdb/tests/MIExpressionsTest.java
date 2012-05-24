@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.tests;
 
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -52,9 +52,6 @@ import org.eclipse.cdt.utils.Addr32;
 import org.eclipse.cdt.utils.Addr64;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -75,15 +72,18 @@ public class MIExpressionsTest extends BaseTestCase {
     private IExpressionDMContext globalExpressionCtx1 = null;
     private IExpressionDMContext globalExpressionCtx2 = null;
 
-
-    @BeforeClass
-    public static void beforeClassMethod() {
-        setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, "data/launch/bin/ExpressionTestApp.exe");
+    @Override
+    protected void setLaunchAttributes() {
+    	super.setLaunchAttributes();
+    	    	
+    	setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, "data/launch/bin/ExpressionTestApp.exe");
     }
 
-    @Before
-    public void init() throws Exception {
-        fSession = getGDBLaunch().getSession();
+    @Override
+    public void doBeforeTest() throws Exception {
+    	super.doBeforeTest();
+
+    	fSession = getGDBLaunch().getSession();
         Runnable runnable = new Runnable() {
             @Override
 			public void run() {
@@ -97,8 +97,10 @@ public class MIExpressionsTest extends BaseTestCase {
         fSession.getExecutor().submit(runnable).get();
     }
 
-    @After
-    public void shutdown() throws Exception {
+    @Override
+    public void doAfterTest() throws Exception {
+    	super.doAfterTest();
+    	
         Runnable runnable = new Runnable() {
             @Override
 			public void run() {

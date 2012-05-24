@@ -67,7 +67,7 @@ public class CodeFormatterConfigurationBlock extends ProfileConfigurationBlock {
 	/**
 	 * Some C++ source code used for preview.
 	 */
-	private final static String PREVIEW=
+	private static final String PREVIEW=
 		"/*\n* " + //$NON-NLS-1$
 		FormatterMessages.CodingStyleConfigurationBlock_preview_title + 
 		"\n*/\n" + //$NON-NLS-1$

@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.index.IndexFilter;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.core.runtime.CoreException;
 
 
@@ -30,7 +31,7 @@ import org.eclipse.core.runtime.CoreException;
  */
 class PDOMClassUtil {
 	static class FieldCollector implements IPDOMVisitor {
-		private List<ICPPField> fields = new ArrayList<ICPPField>();
+		private final List<ICPPField> fields = new ArrayList<ICPPField>();
 		@Override
 		public boolean visit(IPDOMNode node) throws CoreException {
 			if (node instanceof ICPPField) {
@@ -50,7 +51,7 @@ class PDOMClassUtil {
 	}
 	
 	static class ConstructorCollector implements IPDOMVisitor {
-		private List<ICPPConstructor> fConstructors = new ArrayList<ICPPConstructor>();
+		private final List<ICPPConstructor> fConstructors = new ArrayList<ICPPConstructor>();
 		@Override
 		public boolean visit(IPDOMNode node) throws CoreException {
 			if (node instanceof ICPPConstructor) {
@@ -108,10 +109,10 @@ class PDOMClassUtil {
 	}
 	
 	static class NestedClassCollector implements IPDOMVisitor {
-		private List<IPDOMNode> nestedClasses = new ArrayList<IPDOMNode>();
+		private final List<IPDOMNode> nestedClasses = new ArrayList<IPDOMNode>();
 		@Override
 		public boolean visit(IPDOMNode node) throws CoreException {
-			if (node instanceof ICPPClassType)
+			if (node instanceof ICPPClassType && !(node instanceof ICPPDeferredClassInstance))
 				nestedClasses.add(node);
 			return false;
 		}

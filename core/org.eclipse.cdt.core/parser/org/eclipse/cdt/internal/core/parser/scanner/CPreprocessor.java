@@ -242,11 +242,12 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 	private boolean fHandledCompletion= false;
 	private boolean fSplitShiftRightOperator= false;
 
-    // state information
+    // State information
     private final CharArrayMap<PreprocessorMacro> fMacroDictionary = new CharArrayMap<PreprocessorMacro>(512);
 	private final IMacroDictionary fMacroDictionaryFacade = new MacroDictionary();
     private final LocationMap fLocationMap;
-	private CharArraySet fPreventInclusion= new CharArraySet(0); 
+	private CharArraySet fPreventInclusion;
+	private CharArraySet fImports;
 
 	private final ScannerContext fRootContext;
 	protected ScannerContext fCurrentContext;
@@ -1233,11 +1234,8 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     	switch (type) {
     	case IPreprocessorDirective.ppImport:
     	case IPreprocessorDirective.ppInclude:
-    		executeInclude(lexer, startOffset, false, fCurrentContext.getCodeState() == CodeState.eActive,
-    				withinExpansion);
-    		break;
     	case IPreprocessorDirective.ppInclude_next:
-    		executeInclude(lexer, startOffset, true, fCurrentContext.getCodeState() == CodeState.eActive,
+    		executeInclude(lexer, startOffset, type, fCurrentContext.getCodeState() == CodeState.eActive,
     				withinExpansion);
     		break;
     	case IPreprocessorDirective.ppDefine:
@@ -1329,7 +1327,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     	}
     }
 
-	private void executeInclude(final Lexer lexer, int poundOffset, boolean include_next,
+	private void executeInclude(final Lexer lexer, int poundOffset, int includeType,
 			boolean active, boolean withinExpansion) throws OffsetLimitReachedException {
 		// Make sure to clear the extern include guard.
 		final char[] externGuard= fExternIncludeGuard;
@@ -1409,13 +1407,29 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 			return;
 		}
 		
-		if (active && fCurrentContext.getDepth() == MAX_INCLUSION_DEPTH || fPreventInclusion.containsKey(headerName)) {
+		if (includeType == IPreprocessorDirective.ppImport) {
+			// Imports are executed only once.
+			// See http://gcc.gnu.org/onlinedocs/gcc-3.2/cpp/Obsolete-once-only-headers.html.
+			if (fImports != null && fImports.containsKey(headerName))
+				return;
+			if (active) {
+				if (fImports == null)
+					fImports = new CharArraySet(0);
+				fImports.put(headerName);
+			}
+		}
+
+		if ((active && fCurrentContext.getDepth() == MAX_INCLUSION_DEPTH) ||
+				(fPreventInclusion != null && fPreventInclusion.containsKey(headerName))) {
 			handleProblem(IProblem.PREPROCESSOR_EXCEEDS_MAXIMUM_INCLUSION_DEPTH,
             		lexer.getInputChars(poundOffset, condEndOffset), poundOffset, condEndOffset);
+			if (fPreventInclusion == null)
+				fPreventInclusion = new CharArraySet(0);
 			fPreventInclusion.put(headerName);
 			return;
 		}
-		
+
+		boolean includeNext = includeType == IPreprocessorDirective.ppInclude_next;
 		final String includeDirective = new String(headerName);
 		if (!active) {
 			// Inactive include 
@@ -1429,7 +1443,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 				// #endif
 				// When the extern guard matches we need to resolve the inclusion. We don't actually
 				// check whether the guard matches.
-				final IncludeResolution resolved= findInclusion(includeDirective, userInclude, include_next,
+				final IncludeResolution resolved= findInclusion(includeDirective, userInclude, includeNext,
 						getCurrentFilename(), createPathTester);
 				if (resolved != null) {
 					nominationDelegate = fFileContentProvider.isIncludedWithPragmaOnceSemantics(resolved.fLocation);
@@ -1445,7 +1459,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 		}
 		
 		// Active include
-		final InternalFileContent fi= findInclusion(includeDirective, userInclude, include_next,
+		final InternalFileContent fi= findInclusion(includeDirective, userInclude, includeNext,
 				getCurrentFilename(), createCodeReaderTester);
 		if (fi == null) {
 			// Unresolved active include
@@ -1824,10 +1838,8 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 			switch (type) {
 			case IPreprocessorDirective.ppImport:
 			case IPreprocessorDirective.ppInclude:
-				executeInclude(lexer, ident.getOffset(), false, false, withinExpansion);
-				break;
 			case IPreprocessorDirective.ppInclude_next:
-				executeInclude(lexer, ident.getOffset(), true, false, withinExpansion);
+				executeInclude(lexer, ident.getOffset(), type, false, withinExpansion);
 				break;
 			case IPreprocessorDirective.ppIfdef:
 				return executeIfdef(lexer, pound.getOffset(), false, withinExpansion);

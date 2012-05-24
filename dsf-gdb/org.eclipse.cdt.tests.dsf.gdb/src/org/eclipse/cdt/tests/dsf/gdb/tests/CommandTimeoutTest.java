@@ -22,8 +22,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.debug.core.DebugException;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,8 +33,7 @@ public class CommandTimeoutTest extends BaseTestCase {
 	private static int fgTimeout = IGdbDebugPreferenceConstants.COMMAND_TIMEOUT_VALUE_DEFAULT;
 	
     @BeforeClass
-    public static void beforeClassMethod() {
-		// Save the original values of the timeout-related preferences
+	public static void doBeforeClass() throws Exception {
 		fgTimeoutEnabled = Platform.getPreferencesService().getBoolean( 
 				GdbPlugin.PLUGIN_ID, 
 				IGdbDebugPreferenceConstants.PREF_COMMAND_TIMEOUT, 
@@ -48,19 +45,30 @@ public class CommandTimeoutTest extends BaseTestCase {
 				IGdbDebugPreferenceConstants.COMMAND_TIMEOUT_VALUE_DEFAULT,
 				null );		
     }
+    
+    @Override
+	public void doBeforeTest() throws Exception {
+		setLaunchAttributes();
+		// Can't run the launch right away because each test needs to first set some 
+		// parameters.  The individual tests will be responsible for starting the launch. 
+		// Save the original values of the timeout-related preferences
+    }
 
-    @Before
 	@Override
-	public void baseBeforeMethod() throws Exception {
-	}
+	public void doAfterTest() throws Exception {
+		// Don't call super here, as the launch is already terminated
 
-	@After
-	@Override
-	public void baseAfterMethod() throws Exception {
 		// Restore the timeout preferences
 		IEclipsePreferences node = InstanceScope.INSTANCE.getNode( GdbPlugin.PLUGIN_ID );
 		node.putBoolean( IGdbDebugPreferenceConstants.PREF_COMMAND_TIMEOUT, fgTimeoutEnabled );
 		node.putInt( IGdbDebugPreferenceConstants.PREF_COMMAND_TIMEOUT_VALUE, fgTimeout );
+	}
+
+	protected void performLaunchAndTerminate() throws Exception {
+	   	// perform the launch
+        doLaunch();
+        // terminate the launch right away
+		super.doAfterTest();
 	}
 
 	@Override
@@ -107,11 +115,6 @@ public class CommandTimeoutTest extends BaseTestCase {
 		catch( Exception e ) {
 			processException( e );
 		}
-	}
-
-	private void performLaunchAndTerminate() throws Exception {
-		super.baseBeforeMethod();
-		super.baseAfterMethod();
 	}
 
 	/**

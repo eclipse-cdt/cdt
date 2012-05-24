@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -28,7 +28,7 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.internal.ui.refactoring.gettersandsetters.AccessorDescriptor.AccessorKind;
 
 public class GetterSetterContext implements ITreeContentProvider {
-	final List<IASTSimpleDeclaration> existingFields = new ArrayList<IASTSimpleDeclaration>();
+	final List<IASTDeclarator> existingFields = new ArrayList<IASTDeclarator>();
 	final List<IASTFunctionDefinition> existingFunctionDefinitions = new ArrayList<IASTFunctionDefinition>();
 	final List<IASTSimpleDeclaration> existingFunctionDeclarations = new ArrayList<IASTSimpleDeclaration>();
 	final SortedSet<AccessorDescriptor> selectedAccessors = new TreeSet<AccessorDescriptor>();
@@ -110,7 +110,7 @@ public class GetterSetterContext implements ITreeContentProvider {
 	private List<FieldDescriptor> getFieldDescriptors() {
 		if (fieldDescriptors == null) {
 			fieldDescriptors = new ArrayList<FieldDescriptor>();
-			for (IASTSimpleDeclaration field : existingFields) {
+			for (IASTDeclarator field : existingFields) {
 				FieldDescriptor descriptor = new FieldDescriptor(field, this);
 				if (descriptor.missingGetterOrSetter()) {
 					fieldDescriptors.add(descriptor);
@@ -120,11 +120,14 @@ public class GetterSetterContext implements ITreeContentProvider {
 		return fieldDescriptors;
 	}
 
-	static IASTName getDeclarationName(IASTSimpleDeclaration declaration) {
-		IASTDeclarator declarator = declaration.getDeclarators()[0];
+	static IASTName getDeclaratorName(IASTDeclarator declarator) {
 		while (declarator.getNestedDeclarator() != null) {
 			declarator = declarator.getNestedDeclarator();
 		}
 		return declarator.getName();
+	}
+
+	static IASTName getDeclarationName(IASTSimpleDeclaration declaration) {
+		return getDeclaratorName(declaration.getDeclarators()[0]);
 	}
 }

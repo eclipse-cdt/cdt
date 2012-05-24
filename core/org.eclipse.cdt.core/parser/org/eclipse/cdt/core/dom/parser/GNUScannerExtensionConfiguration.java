@@ -1,15 +1,15 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2011 IBM Corporation and others.
- *  All rights reserved. This program and the accompanying materials
- *  are made available under the terms of the Eclipse Public License v1.0
- *  which accompanies this distribution, and is available at
- *  http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  * 
- *  Contributors:
- *    IBM - Initial API and implementation
- *    Anton Leherbauer (Wind River Systems)
- *    Markus Schorn (Wind River Systems)
- *    Sergey Prigogin (Google)
+ * Contributors:
+ *     IBM - Initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
+ *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.parser;
 
@@ -50,15 +50,15 @@ public abstract class GNUScannerExtensionConfiguration extends AbstractScannerEx
     	addPreprocessorKeyword(Keywords.cASSERT, IPreprocessorDirective.ppIgnore);
     	addPreprocessorKeyword(Keywords.cUNASSERT, IPreprocessorDirective.ppIgnore);
 
-		addKeyword(GCCKeywords.cp__ALIGNOF, IGCCToken.t___alignof__ );
-		addKeyword(GCCKeywords.cp__ALIGNOF__, IGCCToken.t___alignof__ );
+		addKeyword(GCCKeywords.cp__ALIGNOF, IGCCToken.t___alignof__);
+		addKeyword(GCCKeywords.cp__ALIGNOF__, IGCCToken.t___alignof__);
 		addKeyword(GCCKeywords.cp__ASM, IToken.t_asm); 
 		addKeyword(GCCKeywords.cp__ASM__, IToken.t_asm); 
-		addKeyword(GCCKeywords.cp__ATTRIBUTE, IGCCToken.t__attribute__ );
-		addKeyword(GCCKeywords.cp__ATTRIBUTE__, IGCCToken.t__attribute__ );
+		addKeyword(GCCKeywords.cp__ATTRIBUTE, IGCCToken.t__attribute__);
+		addKeyword(GCCKeywords.cp__ATTRIBUTE__, IGCCToken.t__attribute__);
 		addKeyword(GCCKeywords.cp__CONST, IToken.t_const); 
 		addKeyword(GCCKeywords.cp__CONST__, IToken.t_const); 
-		addKeyword(GCCKeywords.cp__DECLSPEC, IGCCToken.t__declspec );
+		addKeyword(GCCKeywords.cp__DECLSPEC, IGCCToken.t__declspec);
 		addKeyword(GCCKeywords.cp__INLINE, IToken.t_inline); 
 		addKeyword(GCCKeywords.cp__INLINE__, IToken.t_inline); 
 		addKeyword(GCCKeywords.cp__RESTRICT, IToken.t_restrict); 
@@ -69,7 +69,7 @@ public abstract class GNUScannerExtensionConfiguration extends AbstractScannerEx
 		addKeyword(GCCKeywords.cp__SIGNED__, IToken.t_signed); 
 		addKeyword(GCCKeywords.cp__TYPEOF, IGCCToken.t_typeof); 
 		addKeyword(GCCKeywords.cp__TYPEOF__, IGCCToken.t_typeof); 
-		addKeyword(GCCKeywords.cpTYPEOF, IGCCToken.t_typeof );
+		addKeyword(GCCKeywords.cpTYPEOF, IGCCToken.t_typeof);
 	}
 
     @Override

@@ -30,31 +30,7 @@ public class NodeWriter {
 	protected NodeCommentMap commentMap;
 	protected static final String COMMA_SPACE = ", "; //$NON-NLS-1$
 	protected static final String EQUALS = " = "; //$NON-NLS-1$
-	protected static final String RESTRICT = "restrict "; //$NON-NLS-1$
-	protected static final String TYPENAME = "typename "; //$NON-NLS-1$
-	protected static final String PUBLIC = "public"; //$NON-NLS-1$
-	protected static final String PRIVATE = "private"; //$NON-NLS-1$
-	protected static final String PROTECTED = "protected"; //$NON-NLS-1$
-	protected static final String CONST = "const"; //$NON-NLS-1$
-	protected static final String VOLATILE = "volatile"; //$NON-NLS-1$
-	protected static final String INLINE = "inline "; //$NON-NLS-1$
-	protected static final String EXTERN = "extern "; //$NON-NLS-1$
-	protected static final String STATIC = "static "; //$NON-NLS-1$
-	protected static final String THROW = "throw "; //$NON-NLS-1$
 	protected static final String SPACE_COLON_SPACE = " : "; //$NON-NLS-1$
-	protected static final String TEMPLATE = "template "; //$NON-NLS-1$
-	protected static final String DOUBLE = "double"; //$NON-NLS-1$
-	protected static final String FLOAT = "float"; //$NON-NLS-1$
-	protected static final String INT = "int"; //$NON-NLS-1$
-	protected static final String CHAR = "char"; //$NON-NLS-1$
-	protected static final String VOID = "void"; //$NON-NLS-1$
-	protected static final String WCHAR_T = "wchar_t"; //$NON-NLS-1$
-	protected static final String CPP_BOOL = "bool"; //$NON-NLS-1$
-	protected static final String LONG = "long"; //$NON-NLS-1$
-	protected static final String SHORT = "short"; //$NON-NLS-1$
-	protected static final String UNSIGNED = "unsigned"; //$NON-NLS-1$
-	protected static final String SIGNED = "signed"; //$NON-NLS-1$
-	protected static final String CLASS_SPACE = "class "; //$NON-NLS-1$
 	protected static final String VAR_ARGS = "..."; //$NON-NLS-1$
 	protected static final String COLON_COLON = "::"; //$NON-NLS-1$
 	protected static final String COLON_SPACE = ": "; //$NON-NLS-1$

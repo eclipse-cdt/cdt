@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *     IBM - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -27,7 +27,6 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTInternalNameOwner;
  */
 public class CPPASTElaboratedTypeSpecifier extends CPPASTBaseDeclSpecifier
         implements ICPPASTElaboratedTypeSpecifier, IASTInternalNameOwner {
-
     private int kind;
     private IASTName name;
     
@@ -46,13 +45,9 @@ public class CPPASTElaboratedTypeSpecifier extends CPPASTBaseDeclSpecifier
 	
 	@Override
 	public CPPASTElaboratedTypeSpecifier copy(CopyStyle style) {
-		CPPASTElaboratedTypeSpecifier copy = new CPPASTElaboratedTypeSpecifier(kind, name == null
-				? null : name.copy(style));
-		copyBaseDeclSpec(copy);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		CPPASTElaboratedTypeSpecifier copy =
+				new CPPASTElaboratedTypeSpecifier(kind, name == null ? null : name.copy(style));
+		return super.copy(copy, style);
 	}
 
 	@Override

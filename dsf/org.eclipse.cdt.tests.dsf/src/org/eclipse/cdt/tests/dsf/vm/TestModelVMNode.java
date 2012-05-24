@@ -15,7 +15,6 @@ import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.FormattedValueLabelText;
 import org.eclipse.cdt.dsf.ui.viewmodel.AbstractVMNode;
-import org.eclipse.cdt.dsf.ui.viewmodel.AbstractVMProvider;
 import org.eclipse.cdt.dsf.ui.viewmodel.IRootVMNode;
 import org.eclipse.cdt.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.IElementPropertiesProvider;
@@ -60,48 +59,69 @@ public class TestModelVMNode extends AbstractVMNode implements IRootVMNode, IEle
         fLabelProvider.update(updates);
     }
     
-    public TestModelVMNode(AbstractVMProvider provider) {
+    public TestModelVMNode(TestModelVMProvider provider) {
         super(provider);
     }
 
-    public void update(IHasChildrenUpdate[] updates) {
-        for (IHasChildrenUpdate update : updates) {
-            if (update.getElement() instanceof TestElementVMContext) {
-                TestElement element = ((TestElementVMContext)update.getElement()).getElement();
-                update.setHasChilren(element.getChildren().length != 0);
-            }
-            update.done();
-        }
+    private TestModelVMProvider getTestProvider() {
+        return (TestModelVMProvider)getVMProvider();
+           
     }
     
-    public void update(IChildrenCountUpdate[] updates) {
-        for (IChildrenCountUpdate update : updates) {
-            if (update.getElement() instanceof TestElementVMContext) {
-                TestElement element = ((TestElementVMContext)update.getElement()).getElement();
-                update.setChildCount(element.getChildren().length);
+    public void update(final IHasChildrenUpdate[] updates) {
+        getTestProvider().getDsfExecutor().execute(new Runnable() {
+            public void run() {
+                for (IHasChildrenUpdate update : updates) {
+                    if (update.getElement() instanceof TestElementVMContext) {
+                        TestElement element = ((TestElementVMContext)update.getElement()).getElement();
+                        update.setHasChilren(element.getChildren().length != 0);
+                    }
+                    update.done();
+                }
             }
-            update.done();
-        }
+        });
+    }
+    
+    public void update(final IChildrenCountUpdate[] updates) {
+        getTestProvider().getDsfExecutor().execute(new Runnable() {
+            public void run() {
+                for (IChildrenCountUpdate update : updates) {
+                    if (update.getElement() instanceof TestElementVMContext) {
+                        TestElement element = ((TestElementVMContext)update.getElement()).getElement();
+                        update.setChildCount(element.getChildren().length);
+                    }
+                    update.done();
+                }
+            }
+        });
     }
 
-    public void update(IChildrenUpdate[] updates) {
-        for (IChildrenUpdate update : updates) {
-            if (update.getElement() instanceof TestElementVMContext) {
-                TestElement element = ((TestElementVMContext)update.getElement()).getElement();
-                fillUpdateWithTestElements(update, element.getChildren());
+    public void update(final IChildrenUpdate[] updates) {
+        getTestProvider().getDsfExecutor().execute(new Runnable() {
+            public void run() {        
+                for (IChildrenUpdate update : updates) {
+                    if (update.getElement() instanceof TestElementVMContext) {
+                        TestElement element = ((TestElementVMContext)update.getElement()).getElement();
+                        fillUpdateWithTestElements(update, element.getChildren());
+                    }
+                    update.done();
+                }        
             }
-            update.done();
-        }        
+        });
     }
     
-    public void update(IPropertiesUpdate[] updates) {
-        for (IPropertiesUpdate update : updates) {
-            if (update.getElement() instanceof TestElementVMContext) {
-                TestElement element = ((TestElementVMContext)update.getElement()).getElement();
-                update.setProperty(PROP_TEST_ELEMENT_LABEL, element.getLabel());
+    public void update(final IPropertiesUpdate[] updates) {
+        getTestProvider().getDsfExecutor().execute(new Runnable() {
+            public void run() {
+                for (IPropertiesUpdate update : updates) {
+                    if (update.getElement() instanceof TestElementVMContext) {
+                        TestElement element = ((TestElementVMContext)update.getElement()).getElement();
+                        update.setProperty(PROP_TEST_ELEMENT_LABEL, element.getLabel());
+                    }
+                    update.done();
+                }
             }
-            update.done();
-        }
+        });
     }
 
     private void fillUpdateWithTestElements(IChildrenUpdate update, TestElement[] elements) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -197,7 +197,14 @@ public class ParameterNamesInputPage extends UserInputWizardPage {
 		}
 	}
 
+	/**
+	 * @return true if the preview job could still be running, false otherwise 
+	 */
 	protected boolean cancelPreviewJob() {
+		if (delayedPreviewUpdater == null) {
+			return false;
+		}
+
 		// We cannot rely on getState being accurate in all cases so we only use this
 		// as a hint to change the preview text
 		if (delayedPreviewUpdater.getState() != Job.NONE) {
@@ -207,6 +214,10 @@ public class ParameterNamesInputPage extends UserInputWizardPage {
 	}
 	
 	protected void joinPreviewJob() {
+		if (delayedPreviewUpdater == null) {
+			return;
+		}
+		
 		try {
 			delayedPreviewUpdater.join();
 		} catch (InterruptedException e1) {

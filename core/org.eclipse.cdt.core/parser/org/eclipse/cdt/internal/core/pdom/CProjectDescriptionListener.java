@@ -49,8 +49,7 @@ public class CProjectDescriptionListener implements	ICProjectDescriptionListener
 				if (project != null) {
 					fIndexerSetupParticipant.notifyIndexerSetup(project);
 				}
-			}
-			else if (old != null && changedDefaultSettingConfiguration(old, act)) {
+			} else if (old != null && changedDefaultSettingConfiguration(old, act)) {
 				ICProject project= getProject(event);
 				if (project != null) {
 					fIndexManager.reindex(project);
@@ -86,7 +85,7 @@ public class CProjectDescriptionListener implements	ICProjectDescriptionListener
 		// Check for a project that has been created by the new project wizard just
 		// just for the purpose of editing preferences (Advanced button)
 		ICProjectDescription desc= CProjectDescriptionManager.getInstance().getProjectDescription(project.getProject(), false, false);
-		return desc==null || !desc.isCdtProjectCreating();
+		return desc == null || !desc.isCdtProjectCreating();
 	}
 
 	private boolean completedProjectCreation(ICProjectDescription old, ICProjectDescription act) {

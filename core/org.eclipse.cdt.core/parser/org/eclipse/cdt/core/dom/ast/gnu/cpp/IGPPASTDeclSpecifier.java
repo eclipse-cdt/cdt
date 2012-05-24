@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM) - Initial API and implementation
+ *     John Camelon (IBM) - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.gnu.cpp;
 
@@ -21,7 +21,6 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
  */
 @Deprecated
 public interface IGPPASTDeclSpecifier extends IASTDeclSpecifier {
-
 	/**
 	 * @since 5.1
 	 */

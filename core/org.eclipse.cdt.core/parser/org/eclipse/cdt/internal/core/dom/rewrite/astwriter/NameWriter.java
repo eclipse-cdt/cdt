@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
+import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTypeParameter;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 
@@ -58,7 +59,7 @@ public class NameWriter extends NodeWriter {
 	
 	private void writeTempalteId(ICPPASTTemplateId tempId) {
 		if (needsTemplateQualifier(tempId)) {
-			scribe.print(TEMPLATE);
+			scribe.printStringSpace(Keywords.TEMPLATE);
 		}
 		scribe.print(tempId.getTemplateName().toString());
 		scribe.print('<');

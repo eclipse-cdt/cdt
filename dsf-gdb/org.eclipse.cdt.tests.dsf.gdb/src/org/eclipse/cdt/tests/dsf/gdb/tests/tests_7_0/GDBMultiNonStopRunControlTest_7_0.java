@@ -38,9 +38,6 @@ import org.eclipse.cdt.tests.dsf.gdb.framework.ServiceEventWaitor;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
 import org.eclipse.cdt.tests.dsf.gdb.tests.ITestConstants;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -50,6 +47,10 @@ import org.junit.runner.RunWith;
  */
 @RunWith(BackgroundRunner.class)
 public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
+	@Override
+	protected void setGdbVersion() {
+		setGdbProgramNamesLaunchAttributes(ITestConstants.SUFFIX_GDB_7_0);
+	}
 
 	private DsfServicesTracker fServicesTracker;    
 
@@ -64,8 +65,10 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
 	 */
 	private static final String EXEC_NAME = "MultiThreadRunControl.exe";
 	
-	@Before
-	public void init() throws Exception {
+	@Override
+	public void doBeforeTest() throws Exception {
+		super.doBeforeTest();
+			
 		final DsfSession session = getGDBLaunch().getSession();
 		
         Runnable runnable = new Runnable() {
@@ -80,21 +83,22 @@ public class GDBMultiNonStopRunControlTest_7_0 extends BaseTestCase {
         session.getExecutor().submit(runnable).get();
 	}
 
-
-	@After
-	public void tearDown() {
-		fServicesTracker.dispose();
-	}
-	
-	@BeforeClass
-	public static void beforeClassMethod_7_0() {
-		setGdbProgramNamesLaunchAttributes(ITestConstants.SUFFIX_GDB_7_0);
+	@Override
+	protected void setLaunchAttributes() {
+		super.setLaunchAttributes();
 
 		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, 
 				           EXEC_PATH + EXEC_NAME);
 
 		// Multi run control only makes sense for non-stop mode
     	setLaunchAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_NON_STOP, true);
+	}
+
+	@Override
+	public void doAfterTest() throws Exception {
+		super.doAfterTest();
+		
+		fServicesTracker.dispose();
 	}
 	
 	private abstract class AsyncRunnable<V> {

@@ -45,8 +45,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunchManager;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -71,29 +69,27 @@ public class LaunchConfigurationAndRestartTest extends BaseTestCase {
     protected boolean fRestart;
     
     @Override
-	@Before
- 	public void baseBeforeMethod() throws Exception {
-    	// The class BaseTestCase sets up the launch in its @BeforeClass method.
-    	// Usually this is ok, because every test uses the same launch configuration.
-    	// However, for the tests of this class, we are changing the launch
-    	// configuration every time.  Therefore, we need to reset it to the default
-    	// before every test; that means in the @Before method instead of @BeforeClass
+	public void doBeforeTest() throws Exception {
+		setLaunchAttributes();
+		// Can't run the launch right away because each test needs to first set some 
+		// parameters.  The individual tests will be responsible for starting the launch. 
+	}
 
-    	// Reset the launch configuration
-    	super.baseBeforeClassMethod();
+	@Override
+ 	protected void setLaunchAttributes() {
+    	super.setLaunchAttributes();
+
     	// Set the binary
         setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, PROGRAM);
-        
-    	// Can't run the launch right away because each test needs to first set some 
-        // parameters.  The individual tests will be responsible for starting the launch. 
     }
     
     // This method cannot be tagged as @Before, because the launch is not
     // running yet.  We have to call this manually after all the proper
     // parameters have been set for the launch
-    public void performLaunch() throws Exception {
+    @Override
+	protected void doLaunch() throws Exception {
     	// perform the launch
-        super.baseBeforeMethod();
+        super.doLaunch();
  
         fSession = getGDBLaunch().getSession();
         Runnable runnable = new Runnable() {
@@ -121,8 +117,10 @@ public class LaunchConfigurationAndRestartTest extends BaseTestCase {
         }
     }
 
-    @After
-    public void shutdown() throws Exception {
+	@Override
+	public void doAfterTest() throws Exception {
+		super.doAfterTest();
+		
         if (fServicesTracker != null) fServicesTracker.dispose();
     }
 
@@ -132,7 +130,7 @@ public class LaunchConfigurationAndRestartTest extends BaseTestCase {
     private static String fFullProgramPath;
 	@Test
     public void getFullPath() throws Throwable {
-		performLaunch();
+		doLaunch();
 		MIStoppedEvent stopped = getInitialStoppedEvent();
 		fFullProgramPath = stopped.getFrame().getFullname();
 	}
@@ -153,7 +151,7 @@ public class LaunchConfigurationAndRestartTest extends BaseTestCase {
         setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, dir);
         setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, dir + PROGRAM_NAME);
 
-       	performLaunch();
+       	doLaunch();
         
     	Query<MIInfo> query = new Query<MIInfo>() {
     		@Override
@@ -185,7 +183,7 @@ public class LaunchConfigurationAndRestartTest extends BaseTestCase {
         setLaunchAttribute(IGDBLaunchConfigurationConstants.ATTR_GDB_INIT, 
                            "gdbinitThatDoesNotExist");
         try {
-        	performLaunch();
+        	doLaunch();
         } catch (CoreException e) {
         	// Success of the test
         	return;
@@ -203,7 +201,7 @@ public class LaunchConfigurationAndRestartTest extends BaseTestCase {
         setLaunchAttribute(IGDBLaunchConfigurationConstants.ATTR_GDB_INIT, 
                            ".gdbinit");
         try {
-        	performLaunch();
+        	doLaunch();
         } catch (CoreException e) {
         	fail("Launch has failed even though the gdbinit file has the default name of .gdbinit");
         }
@@ -219,7 +217,7 @@ public class LaunchConfigurationAndRestartTest extends BaseTestCase {
     public void testSourceGdbInit() throws Throwable {
         setLaunchAttribute(IGDBLaunchConfigurationConstants.ATTR_GDB_INIT, 
                            "data/launch/src/launchConfigTestGdbinit");
-        performLaunch();
+        doLaunch();
         
     	MIStoppedEvent stoppedEvent = getInitialStoppedEvent();
 
@@ -286,7 +284,7 @@ public class LaunchConfigurationAndRestartTest extends BaseTestCase {
     @Test
     public void testClearingEnvironment() throws Throwable {
         setLaunchAttribute(ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES, false);
-        performLaunch();
+        doLaunch();
         
         SyncUtil.runToLocation("envTest");
         MIStoppedEvent stoppedEvent = SyncUtil.step(2, StepType.STEP_OVER);
@@ -335,7 +333,7 @@ public class LaunchConfigurationAndRestartTest extends BaseTestCase {
     	Map<String, String> map = new HashMap<String, String>(1);
     	map.put("LAUNCHTEST", "IS SET");
     	setLaunchAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, map);
-    	performLaunch();
+    	doLaunch();
 
     	SyncUtil.runToLocation("envTest");
     	MIStoppedEvent stoppedEvent = SyncUtil.step(2, StepType.STEP_OVER);
@@ -409,7 +407,7 @@ public class LaunchConfigurationAndRestartTest extends BaseTestCase {
        	Map<String, String> map = new HashMap<String, String>(1);
     	map.put("LAUNCHTEST", "IS SET");
     	setLaunchAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, map);
-    	performLaunch();
+    	doLaunch();
 
     	SyncUtil.runToLocation("envTest");
     	MIStoppedEvent stoppedEvent = SyncUtil.step(2, StepType.STEP_OVER);
@@ -477,7 +475,7 @@ public class LaunchConfigurationAndRestartTest extends BaseTestCase {
     @Test
     public void testSettingArguments() throws Throwable {
     	setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, "1 2 3\n4 5 6");
-    	performLaunch();
+    	doLaunch();
 
     	MIStoppedEvent stoppedEvent = getInitialStoppedEvent();
 
@@ -544,7 +542,7 @@ public class LaunchConfigurationAndRestartTest extends BaseTestCase {
     public void testStopAtMain() throws Throwable {
     	setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, true);
     	setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL, "main");
-    	performLaunch();
+    	doLaunch();
 
     	MIStoppedEvent stoppedEvent = getInitialStoppedEvent();
     	assertTrue("Expected to stop at main:27 but got " +
@@ -571,7 +569,7 @@ public class LaunchConfigurationAndRestartTest extends BaseTestCase {
     public void testStopAtOther() throws Throwable {
     	setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, true);
     	setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL, "stopAtOther");
-    	performLaunch();
+    	doLaunch();
 
     	MIStoppedEvent stoppedEvent = getInitialStoppedEvent();
     	assertTrue("Expected to stop at stopAtOther but got " +
@@ -608,7 +606,7 @@ public class LaunchConfigurationAndRestartTest extends BaseTestCase {
     	
     	IFile fakeFile = null;
         CDIDebugModel.createLineBreakpoint(PROGRAM, fakeFile, ICBreakpointType.REGULAR, LAST_LINE_IN_MAIN + 1, true, 0, "", true); //$NON-NLS-1$
-    	performLaunch();
+    	doLaunch();
 
     	MIStoppedEvent stoppedEvent = getInitialStoppedEvent();
     	assertTrue("Expected to stop at envTest but got " +

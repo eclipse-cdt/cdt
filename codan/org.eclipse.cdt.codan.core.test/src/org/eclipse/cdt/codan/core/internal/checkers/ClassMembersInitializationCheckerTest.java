@@ -543,4 +543,28 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
+
+	//@file:test.h
+	//template <typename>
+	//struct B;
+
+	//@file:test.cpp
+	//#include "test.h"
+	//
+	//template <typename>
+	//struct A {
+	//};
+	//
+	//template <typename valueT>
+	//struct B<A<valueT> > {
+	//    const A<valueT>& obj;
+	//    B(const A<valueT>& o) : obj(o) {}
+	//};
+	public void testBug368611_templatePartialSpecialization() throws Exception {
+		CharSequence[] code = getContents(2);
+		loadcode(code[0].toString());
+		loadcode(code[1].toString());
+		runOnProject();
+		checkNoErrors();
+	}
 }

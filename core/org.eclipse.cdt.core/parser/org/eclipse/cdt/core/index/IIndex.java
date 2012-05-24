@@ -419,7 +419,7 @@ public interface IIndex {
 	 * Returns an IIndexBinding for this IIndex that is equivalent to the specified binding,
 	 * or null if such a binding does not exist in this index. This is useful for adapting
 	 * bindings obtained from IIndex objects that might have been created for a different scope
-     * or for IBinding objects obtained direct from the AST.
+     * or for IBinding objects obtained directly from the AST.
 	 * @param binding
 	 * @return an IIndexBinding for this IIndex that is equivalent to the specified binding
 	 */

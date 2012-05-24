@@ -27,9 +27,7 @@ public interface IASTDeclSpecifier extends IASTNode {
 	public static final int sc_static = 3;
 	public static final int sc_auto = 4;
 	public static final int sc_register = 5;
-	/**
-	 * @since 5.2
-	 */
+	/** @since 5.2 */
 	public static final int sc_mutable = 6;
 
 	/**
@@ -40,6 +38,7 @@ public interface IASTDeclSpecifier extends IASTNode {
 	// Type qualifier
 	public boolean isConst();
 	public boolean isVolatile();
+
 	/**
 	 * @since 5.2
 	 */

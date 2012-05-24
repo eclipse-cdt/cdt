@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Doug Schaefer (IBM) - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
- *	  Sergey Prigogin (Google)
+ *     Doug Schaefer (IBM) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *	   Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
@@ -26,7 +26,6 @@ public interface IASTSimpleDeclSpecifier extends IASTDeclSpecifier {
 	 */
 	public static final ASTNodeProperty DECLTYPE_EXPRESSION = new ASTNodeProperty(
 		"IASTSimpleDeclSpecifier.EXPRESSION [IASTExpression]"); //$NON-NLS-1$
-
 
 	/**
 	 * Used for omitted declaration specifiers. E.g. for declaration of constructors,
@@ -109,7 +108,7 @@ public interface IASTSimpleDeclSpecifier extends IASTDeclSpecifier {
 	public IASTSimpleDeclSpecifier copy();
 
 	/**
-	 * This returns the built-in type for the declaration. The type is then
+	 * Returns the built-in type for the declaration. The type is then
 	 * refined by qualifiers for signed/unsigned and short/long. The type could
 	 * also be unspecified which usually means int.
 	 */
@@ -231,5 +230,4 @@ public interface IASTSimpleDeclSpecifier extends IASTDeclSpecifier {
 	 */
 	@Deprecated
 	public static final int t_last = t_double; // used only in subclasses
-
 }

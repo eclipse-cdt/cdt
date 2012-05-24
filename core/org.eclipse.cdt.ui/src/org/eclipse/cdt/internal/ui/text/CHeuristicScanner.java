@@ -262,7 +262,7 @@ public final class CHeuristicScanner implements Symbols {
 
 	/* preset stop conditions */
 	private final StopCondition fNonWSDefaultPart= new NonWhitespaceDefaultPartition();
-	private final static StopCondition fNonWS= new NonWhitespace();
+	private static final StopCondition fNonWS= new NonWhitespace();
 	private final StopCondition fNonIdent= new NonJavaIdentifierPartDefaultPartition();
 
 	/**

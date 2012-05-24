@@ -17,7 +17,6 @@ package org.eclipse.cdt.core.dom.ast;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTCompositeTypeSpecifier extends IASTDeclSpecifier, IASTNameOwner, IASTDeclarationListOwner {
-
 	/**
 	 * <code>TYPE_NAME</code> represents the relationship between an
 	 * <code>IASTCompositeTypeSpecifier</code> and its <code>IASTName</code>.

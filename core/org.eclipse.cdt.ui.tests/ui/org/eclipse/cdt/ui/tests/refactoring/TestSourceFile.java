@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -25,13 +25,13 @@ public class TestSourceFile {
 	private static final String LINE_SEPARATOR = "\n"; //$NON-NLS-1$
 	private static final Pattern SELECTION_START = Pattern.compile("/\\*\\$\\*/"); //$NON-NLS-1$
 	private static final Pattern SELECTION_END = Pattern.compile("/\\*\\$\\$\\*/"); //$NON-NLS-1$
-	
+
 	private final String name;
 	private final StringBuilder source = new StringBuilder();
 	private final StringBuilder expectedSource = new StringBuilder();
 	private int selectionStart = -1;
 	private int selectionEnd = -1;
-	
+
 	public TestSourceFile(String name) {
 		super();
 		this.name = name;
@@ -44,7 +44,7 @@ public class TestSourceFile {
 	public String getSource() {
 		return source.toString();
 	}
-	
+
 	public String getExpectedSource() {
 		if (expectedSource.length() == 0) {
 			return getSource();
@@ -66,12 +66,12 @@ public class TestSourceFile {
 		source.append(code);
 		source.append(LINE_SEPARATOR);
 	}
-	
+
 	public void addLineToExpectedSource(String code) {
 		expectedSource.append(code);
 		expectedSource.append(LINE_SEPARATOR);
 	}
-	
+
 	public TextSelection getSelection() {
 		if (selectionStart < 0 || selectionEnd < selectionStart)
 			return null;

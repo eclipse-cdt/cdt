@@ -30,12 +30,8 @@ public class XlcCPPASTVectorTypeSpecifier extends CPPASTSimpleDeclSpecifier impl
 	@Override
 	public XlcCPPASTVectorTypeSpecifier copy(CopyStyle style) {
 		XlcCPPASTVectorTypeSpecifier copy = new XlcCPPASTVectorTypeSpecifier();
-		copySimpleDeclSpec(copy, style);
 		copy.isPixel = isPixel;
-		if(style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 
 	public boolean isPixel() {

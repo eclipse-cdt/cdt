@@ -510,7 +510,24 @@ public class ASTSignatureUtil {
 		}
 
 		if (declSpec instanceof ICPPASTDeclSpecifier) {
-			if (((ICPPASTDeclSpecifier) declSpec).isExplicit()) {
+			ICPPASTDeclSpecifier cppDeclSpec = (ICPPASTDeclSpecifier) declSpec;
+			if (cppDeclSpec.isThreadLocal()) {
+				if (needSpace) {
+					result.append(SPACE);
+					needSpace = false;
+				}
+				result.append(Keywords.THREAD_LOCAL);
+				needSpace = true;
+			}
+			if (cppDeclSpec.isConstexpr()) {
+				if (needSpace) {
+					result.append(SPACE);
+					needSpace = false;
+				}
+				result.append(Keywords.CONSTEXPR);
+				needSpace = true;
+			}
+			if (cppDeclSpec.isExplicit()) {
 				if (needSpace) {
 					result.append(SPACE);
 					needSpace = false;
@@ -518,7 +535,7 @@ public class ASTSignatureUtil {
 				result.append(Keywords.EXPLICIT);
 				needSpace = true;
 			}
-			if (((ICPPASTDeclSpecifier) declSpec).isFriend()) {
+			if (cppDeclSpec.isFriend()) {
 				if (needSpace) {
 					result.append(SPACE);
 					needSpace = false;
@@ -526,7 +543,7 @@ public class ASTSignatureUtil {
 				result.append(Keywords.FRIEND);
 				needSpace = true;
 			}
-			if (((ICPPASTDeclSpecifier) declSpec).isVirtual()) {
+			if (cppDeclSpec.isVirtual()) {
 				if (needSpace) {
 					result.append(SPACE);
 					needSpace = false;

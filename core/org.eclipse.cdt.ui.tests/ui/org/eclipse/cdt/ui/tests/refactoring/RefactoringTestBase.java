@@ -368,7 +368,7 @@ public abstract class RefactoringTestBase extends BaseTestCase {
 		while ((read= reader.read(part)) != -1)
 			buffer.append(part, 0, read);
 		reader.close();
-		return buffer.toString();
+		return buffer.toString().replace("\r", "");
 	}
 
 	protected void resetPreferences() {

@@ -13,7 +13,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.*;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.ALLCVQ;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.CVTYPE;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getNestedType;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getUltimateTypeUptoPointers;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -1468,8 +1472,9 @@ public class CPPVisitor extends ASTQueries {
 				        break;
 				    } else if (prop == IASTElaboratedTypeSpecifier.TYPE_NAME) {
 						IASTNode p = name.getParent().getParent();
-						if (p instanceof IASTSimpleDeclaration &&
-								((IASTSimpleDeclaration) p).getDeclarators().length == 0) {
+						if (p instanceof IASTParameterDeclaration ||
+								(p instanceof IASTSimpleDeclaration &&
+								((IASTSimpleDeclaration) p).getDeclarators().length == 0)) {
 							break;
 						}
 					} else if (prop == IASTDeclarator.DECLARATOR_NAME) {

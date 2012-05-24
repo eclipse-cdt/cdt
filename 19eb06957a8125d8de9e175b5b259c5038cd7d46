@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOHn//+4Q\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1579,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-05-24T15:14:03Z",
+      "side": 1,
+      "message": "Is this fake event only to re-enable the resume button?    If we didn\u0027t get a *running event, I don\u0027t think we should need to issue a fake *stopped event.  Instead, we should force a refresh of the enablement of the resume command.  This should be possible if we deal with the failure in the UI code (DsfResumeCommand)",
+      "revId": "19eb06957a8125d8de9e175b5b259c5038cd7d46",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHn//+4M\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1589,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-05-24T15:14:03Z",
+      "side": 1,
+      "message": "When and why do we need this logic if initialization?",
+      "revId": "19eb06957a8125d8de9e175b5b259c5038cd7d46",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

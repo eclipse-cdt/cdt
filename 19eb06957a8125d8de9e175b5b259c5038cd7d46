@@ -73,6 +73,24 @@
     },
     {
       "key": {
+        "uuid": "AABOHn//+w8\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1579,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-05-24T18:55:06Z",
+      "side": 1,
+      "message": "refreshThreadStates() also sends a fake event, for any thread that we think is running but GDB says is stopped (and vice versa) so I think it should work in this case.  I\u0027m hoping it would make the code simpler by re-using existing code.\n\nAnd we shouldn\u0027t worry about the fact we would refresh all threads, instead of just one, because this will only happen in the error case.",
+      "parentUuid": "AABOHn//+xk\u003d",
+      "revId": "19eb06957a8125d8de9e175b5b259c5038cd7d46",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOHn//+4M\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
         "patchSetId": 1
@@ -138,6 +156,24 @@
       "side": 1,
       "message": "Ok, to reproduce the case where isInitialized() \u003d\u003d false, and checkIsInitialized \u003d\u003d true, a command in the initialization sequence needs to fail. In our product, we use \u0027continue\u0027 instead of \u0027run\u0027 as we need to load the code first. After setting an invalid breakpoint, the continue command fails properly, that is, it produces a single ^error record, so this method is called but the error is skipped allowing for the initialization error to be subsequently displayed.\n\nThe run command however, first produces ^running, so the run step actually completes successfully. In this case, we want to ignore the isInitialized() check.\n\nSo unfortunately unless you have a setup where you\u0027re using continue instead of run, I don\u0027t know how you can reproduce this. Does that make sense?",
       "parentUuid": "AABOHn//+xc\u003d",
+      "revId": "19eb06957a8125d8de9e175b5b259c5038cd7d46",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHn//+w0\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1589,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-05-24T18:55:06Z",
+      "side": 1,
+      "message": "When connecting to a remote target we use \u0027continue\u0027 instead of run, would that cause the problem?",
+      "parentUuid": "AABOHn//+xE\u003d",
       "revId": "19eb06957a8125d8de9e175b5b259c5038cd7d46",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

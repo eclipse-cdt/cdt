@@ -43,6 +43,7 @@
  * David McKnight  (IBM)  - [283617] [dstore] UniversalFileSystemMiner.handleQueryGetRemoteObject does not return correct result when the queried file does not exist.
  * David McKnight  (IBM)  - [dstore] cancelable threads not removed fast enough from Hashmap, resulting in OOM
  * David McKnight   (IBM) - [371401] [dstore][multithread] avoid use of static variables - causes memory leak after disconnect
+ * Noriaki Takatsu  (IBM) - [380562] [multithread][dstore] File Search is not canceled by the client UI on disconnect
  *******************************************************************************/
 
 package org.eclipse.rse.dstore.universal.miners;
@@ -54,6 +55,7 @@ import java.net.ServerSocket;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.eclipse.dstore.core.miners.Miner;
@@ -1362,7 +1364,26 @@ public class UniversalFileSystemMiner extends Miner {
 	}
 
 	public void finish() {
-		_cancellableThreads.clear();
+		try {
+			if (_cancellableThreads != null) {
+				Set keys = _cancellableThreads.keySet();
+				Iterator iteratorKeys = keys.iterator();
+				while (iteratorKeys.hasNext()) {
+					Object key = iteratorKeys.next();
+					ICancellableHandler thread = (ICancellableHandler) _cancellableThreads.get(key);
+					if (thread != null) {
+						if (!thread.isDone()) {
+							thread.cancel();
+						}
+					}
+				}
+				
+				_cancellableThreads.clear();
+			}
+		}
+		catch(Throwable e) {
+			e.printStackTrace();
+		}
 		super.finish();
 	}
 

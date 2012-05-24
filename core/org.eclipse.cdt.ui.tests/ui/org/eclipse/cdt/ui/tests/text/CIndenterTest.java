@@ -25,7 +25,6 @@ import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
 import org.eclipse.cdt.core.formatter.DefaultCodeFormatterOptions;
 import org.eclipse.cdt.ui.tests.BaseUITestCase;
 
-
 import org.eclipse.cdt.internal.ui.editor.CDocumentSetupParticipant;
 import org.eclipse.cdt.internal.ui.editor.IndentUtil;
 
@@ -977,6 +976,29 @@ public class CIndenterTest extends BaseUITestCase {
 	//{
 	//}
 	public void testIndentationAfterFunctionHeaderWithPointerReturnType_Bug334805() throws Exception {
+		assertIndenterResult();
+	}
+
+	//void test(int arg1, int arg2) {
+	//if (BooleanFunction1(arg1,
+	//arg2) ||
+	//BooleanFunction2(arg1, arg2)) {
+	//x++;
+	//}
+	//}
+
+	//void test(int arg1, int arg2) {
+	//    if (BooleanFunction1(arg1,
+	//                         arg2) ||
+	//            BooleanFunction2(arg1, arg2)) {
+	//        x++;
+	//    }
+	//}
+	public void testMultilineFunctionCall_Bug380490() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ARGUMENTS_IN_METHOD_INVOCATION, 
+				DefaultCodeFormatterConstants.createAlignmentValue(false, DefaultCodeFormatterConstants.WRAP_COMPACT,
+						DefaultCodeFormatterConstants.INDENT_ON_COLUMN));
 		assertIndenterResult();
 	}
 }

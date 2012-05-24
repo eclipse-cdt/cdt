@@ -46,13 +46,16 @@ case ${uname_s}${uname_m} in
              ;;
 esac
 
+#http://download.eclipse.org/eclipse/downloads/drops/S-3.8RC1-201205182345/
+#http://download.eclipse.org/eclipse/downloads/drops4/S-4.2RC1-201205182145/
+
 # prepare the base Eclipse installation in folder "eclipse"
-ep_rel="R-"
-ep_ver=3.7.1
-ep_date="-201109091335"
+ep_rel="S-"
+ep_ver=3.8RC1
+ep_date="-201205182345"
 P2_disabled=false
 P2_no_dropins=false
-if [ ! -f eclipse/plugins/org.eclipse.swt_3.7.1.v3738a.jar ]; then
+if [ ! -f eclipse/plugins/org.eclipse.swt_3.8.0.v3832.jar ]; then
   curdir2=`pwd`
   if [ ! -d eclipse -o -h eclipse ]; then
     if [ -d eclipse-${ep_ver}-${ep_arch} ]; then
@@ -138,8 +141,10 @@ CDTFEAT=8.0.0
 CDTVER=201109151620
 #CDTNAME=cdt-master-${CDTREL}-I${CDTVER}.zip
 #CDTLOC=builds/${CDTREL}/I.I${CDTVER}/${CDTNAME}
-CDTNAME=cdt-master-${CDTREL}.zip
-CDTLOC=releases/indigo/dist/${CDTNAME}
+#CDTNAME=cdt-master-${CDTREL}.zip
+#CDTLOC=releases/indigo/dist/${CDTNAME}
+CDTNAME=org.eclipse.cdt.repo.zip
+CDTLOC=builds/juno/milestones/RC1/${CDTNAME}
 if [ ! -f eclipse/plugins/org.eclipse.cdt_${CDTFEAT}.${CDTVER}.jar ]; then
   echo "Getting CDT Runtime..."
   wget "http://download.eclipse.org/tools/cdt/${CDTLOC}"
@@ -154,14 +159,16 @@ if [ ! -f eclipse/plugins/org.eclipse.cdt_${CDTFEAT}.${CDTVER}.jar ]; then
     -application org.eclipse.update.core.standaloneUpdate \
     -command install \
     -from file://${CDTTMP} \
-    -featureId org.eclipse.cdt.platform \
-    -version ${CDTFEAT}.${CDTVER}
+    -featureId org.eclipse.cdt.platform
+    # \
+    #-version ${CDTFEAT}.${CDTVER}
   java -jar ${LAUNCHER} \
     -application org.eclipse.update.core.standaloneUpdate \
     -command install \
     -from file://${CDTTMP} \
-    -featureId org.eclipse.cdt \
-    -version ${CDTFEAT}.${CDTVER}
+    -featureId org.eclipse.cdt
+    # \
+    #-version ${CDTFEAT}.${CDTVER}
   rm -rf ${CDTTMP}
   rm ${CDTNAME}
 fi

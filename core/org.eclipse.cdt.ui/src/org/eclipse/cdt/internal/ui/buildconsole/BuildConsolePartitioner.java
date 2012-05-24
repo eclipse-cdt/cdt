@@ -408,10 +408,12 @@ public class BuildConsolePartitioner
 		synchronized (fQueue) {
 			StreamEntry entry = fQueue.peekLast();
 			if (entry != null) {
-				// If last stream is the same and we have not exceeded
-				// the display write limit, append.
+				// If last stream is the same and the size of the queued entry has not exceeded
+				// the batch size, avoid creating a new entry and append the new text to the last
+				// entry in the queue. The batch size is adaptive and grows with the length of
+				// the queue.
 				if (entry.getStream() == stream && entry.getEventType() == StreamEntry.EVENT_APPEND &&
-						entry.getMarker() == marker && entry.size() < 10000) {
+						entry.getMarker() == marker && entry.size() < 1000 * fQueue.size()) {
 					entry.appendText(text);
 					addToQueue = false;
 				}

@@ -24,7 +24,7 @@ umask 022
 #Use Java5 on build.eclipse.org - need JRE for pack200
 export PATH=/shared/tools/tm/jdk-1.5/jre/bin:/shared/tools/tm/jdk-1.5/bin:$PATH
 basebuilder=${HOME}/ws2/org.eclipse.releng.basebuilder
-tgtlauncher=`ls ${HOME}/ws2/eclipse/plugins/org.eclipse.equinox.launcher_* | sort | tail -1`
+tgtlauncher=`ls ${HOME}/ws2/eclipse4/plugins/org.eclipse.equinox.launcher_* | sort | tail -1`
 
 # patch site.xml
 cd ..

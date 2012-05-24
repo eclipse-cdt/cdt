@@ -50,12 +50,15 @@ esac
 #http://download.eclipse.org/eclipse/downloads/drops4/S-4.2RC1-201205182145/
 
 # prepare the base Eclipse installation in folder "eclipse"
-ep_rel="drops4/S-"
-ep_ver=4.2RC1
-ep_date="-201205182145"
+#ep_rel="drops4/S-"
+#ep_ver=4.2RC1
+#ep_date="-201205182145"
+ep_rel="drops/R-"
+ep_ver=3.7.2
+ep_date="-201202080800"
 P2_disabled=false
 P2_no_dropins=false
-if [ ! -f eclipse/plugins/org.eclipse.swt_3.100.0.v4232.jar ]; then
+if [ ! -f eclipse/plugins/org.eclipse.swt_3.7.2.v3740f.jar ]; then
   curdir2=`pwd`
   if [ ! -d eclipse -o -h eclipse ]; then
     if [ -d eclipse-${ep_ver}-${ep_arch} ]; then
@@ -137,15 +140,18 @@ if [ ! -f ${DROPIN}/org.sonatype.tycho.p2.updatesite_0.9.0.201005191712.jar ]; t
 fi
 
 # CDT Runtime
-CDTREL=8.1.0
-CDTFEAT=8.1.0
-CDTVER=201205221655
+#CDTREL=8.1.0
+#CDTFEAT=8.1.0
+#CDTVER=201205221655
+CDTREL=8.0.1
+CDTFEAT=8.0.0
+CDTVER=201109151620
 #CDTNAME=cdt-master-${CDTREL}-I${CDTVER}.zip
 #CDTLOC=builds/${CDTREL}/I.I${CDTVER}/${CDTNAME}
-#CDTNAME=cdt-master-${CDTREL}.zip
-#CDTLOC=releases/indigo/dist/${CDTNAME}
-CDTNAME=org.eclipse.cdt.repo.zip
-CDTLOC=builds/juno/milestones/RC1/${CDTNAME}
+CDTNAME=cdt-master-${CDTREL}.zip
+CDTLOC=releases/indigo/dist/${CDTNAME}
+#CDTNAME=org.eclipse.cdt.repo.zip
+#CDTLOC=builds/juno/milestones/RC1/${CDTNAME}
 if [ ! -f eclipse/plugins/org.eclipse.cdt_${CDTFEAT}.${CDTVER}.jar ]; then
   echo "Getting CDT Runtime..."
   wget "http://download.eclipse.org/tools/cdt/${CDTLOC}"

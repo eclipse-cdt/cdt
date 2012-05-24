@@ -118,7 +118,8 @@ if [ ! -f ${DROPIN}/eclipse/plugins/gnu.io.rxtx_2.1.7.4_v20071016.jar ]; then
   #wget "http://rxtx.qbang.org/eclipse/downloads/RXTX-SDK-I20071016-1945.zip"
   #unzip -o RXTX-SDK-I20071016-1945.zip
   #rm RXTX-SDK-I20071016-1945.zip
-  wget "http://download.eclipse.org/athena/runnables/RXTX-runtime-I20071016-1945.zip"
+  #wget "http://download.eclipse.org/athena/runnables/RXTX-runtime-I20071016-1945.zip"
+  wget "http://archive.eclipse.org/tm/updates/rxtx/downloads/RXTX-runtime-I20071016-1945.zip"
   unzip -o RXTX-runtime-I20071016-1945.zip
   rm RXTX-runtime-I20071016-1945.zip
   cd ${DROPUP}
@@ -136,9 +137,9 @@ if [ ! -f ${DROPIN}/org.sonatype.tycho.p2.updatesite_0.9.0.201005191712.jar ]; t
 fi
 
 # CDT Runtime
-CDTREL=8.0.1
-CDTFEAT=8.0.0
-CDTVER=201109151620
+CDTREL=8.1.0
+CDTFEAT=8.1.0
+CDTVER=201205221655
 #CDTNAME=cdt-master-${CDTREL}-I${CDTVER}.zip
 #CDTLOC=builds/${CDTREL}/I.I${CDTVER}/${CDTNAME}
 #CDTNAME=cdt-master-${CDTREL}.zip
@@ -159,16 +160,14 @@ if [ ! -f eclipse/plugins/org.eclipse.cdt_${CDTFEAT}.${CDTVER}.jar ]; then
     -application org.eclipse.update.core.standaloneUpdate \
     -command install \
     -from file://${CDTTMP} \
-    -featureId org.eclipse.cdt.platform
-    # \
-    #-version ${CDTFEAT}.${CDTVER}
+    -featureId org.eclipse.cdt.platform \
+    -version ${CDTFEAT}.${CDTVER}
   java -jar ${LAUNCHER} \
     -application org.eclipse.update.core.standaloneUpdate \
     -command install \
     -from file://${CDTTMP} \
-    -featureId org.eclipse.cdt
-    # \
-    #-version ${CDTFEAT}.${CDTVER}
+    -featureId org.eclipse.cdt \
+    -version ${CDTFEAT}.${CDTVER}
   rm -rf ${CDTTMP}
   rm ${CDTNAME}
 fi

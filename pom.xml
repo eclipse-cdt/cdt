@@ -162,6 +162,7 @@
 		<module>codan/org.eclipse.cdt.codan.core.test</module>
 		<module>build/org.eclipse.cdt.managedbuilder.core.tests</module>
 		<module>build/org.eclipse.cdt.managedbuilder.ui.tests</module>
+		<module>dsf-gdb/org.eclipse.cdt.tests.dsf.gdb</module>
 		
 		<module>build/org.eclipse.cdt.autotools.core</module>
 		<module>build/org.eclipse.cdt.autotools.docs</module>

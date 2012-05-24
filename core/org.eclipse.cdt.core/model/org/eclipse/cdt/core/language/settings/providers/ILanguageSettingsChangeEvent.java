@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.language.settings.providers;
 
+import java.util.Set;
+
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
+import org.eclipse.core.resources.IResource;
 
 /**
  * Contains the details of changes that occurred as a result of modifying
@@ -21,7 +24,7 @@ import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class interface is not stable yet as
  * it is not currently clear how it may need to be used in future. Only bare
- * minimum is provided here at this point (CDT 9.0, Juno).
+ * minimum is provided here at this point (CDT 8.1, Juno).
  * There is no guarantee that this API will work or that it will remain the same.
  * Please do not use this API without consulting with the CDT team.
  * </p>
@@ -38,8 +41,12 @@ public interface ILanguageSettingsChangeEvent {
 	public String getProjectName();
 
 	/**
-	 * @return configuration IDs which are affected by the language settings changes.
+	 * @return configuration IDs which are affected by the language settings entries changes.
 	 */
 	public String[] getConfigurationDescriptionIds();
 
+	/**
+	 * @return list of resources affected by the language settings entries changes.
+	 */
+	public Set<IResource> getAffectedResources(String cfgId);
 }

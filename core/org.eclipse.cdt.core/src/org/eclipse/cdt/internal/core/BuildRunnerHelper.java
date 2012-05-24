@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2012 Andrew Gvozdev and others.
+ * Copyright (c) 2012 Andrew Gvozdev and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Andrew Gvozdev - initial API and implementation
+ *     IBM Corporation
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core;
@@ -313,10 +314,11 @@ public class BuildRunnerHelper implements Closeable {
 	/**
 	 * Refresh project in the workspace.
 	 *
+	 * @param configName - the configuration to refresh
 	 * @param monitor - progress monitor in the initial state where {@link IProgressMonitor#beginTask(String, int)}
 	 *    has not been called yet.
 	 */
-	public void refreshProject(IProgressMonitor monitor) {
+	public void refreshProject(String configName, IProgressMonitor monitor) {
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
@@ -328,7 +330,7 @@ public class BuildRunnerHelper implements Closeable {
 			// The caveat is for huge projects, it may take sometimes at every build.
 			// Use the refresh scope manager to refresh
 			RefreshScopeManager refreshManager = RefreshScopeManager.getInstance();
-			IWorkspaceRunnable runnable = refreshManager.getRefreshRunnable(project);
+			IWorkspaceRunnable runnable = refreshManager.getRefreshRunnable(project, configName);
 			ResourcesPlugin.getWorkspace().run(runnable, null, IWorkspace.AVOID_UPDATE, null);
 		} catch (CoreException e) {
 			// ignore exceptions

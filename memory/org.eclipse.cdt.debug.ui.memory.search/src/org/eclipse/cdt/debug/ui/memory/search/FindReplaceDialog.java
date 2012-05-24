@@ -1134,7 +1134,15 @@ public class FindReplaceDialog extends SelectionDialog
 							{
 								try
 								{
-									fMemoryBlock.setValue(currentPosition.subtract(fMemoryBlock.getBigBaseAddress()), replaceData);
+									if ((searchPhrase instanceof BigIntegerSearchPhrase) && (bytes.length > 0) && bytes[0].isEndianessKnown() && !bytes[0].isBigEndian())
+									{
+										// swap the bytes when replacing an integer on little-endian targets
+										fMemoryBlock.setValue(currentPosition.subtract(fMemoryBlock.getBigBaseAddress()), swapBytes(replaceData));
+									}
+									else
+									{
+										fMemoryBlock.setValue(currentPosition.subtract(fMemoryBlock.getBigBaseAddress()), replaceData);
+									}
 								}
 								catch(DebugException de)
 								{
@@ -1376,9 +1384,18 @@ public class FindReplaceDialog extends SelectionDialog
 			byte[] targetBytes = new byte[bytes.length + 1];
 			targetBytes[0] = 0;
 			for(int i = 0; i < bytes.length; i++)
-				targetBytes[i + 1] = bytes[i].getValue();
+			{
+				if (bytes[i].isEndianessKnown() && !bytes[i].isBigEndian())
+				{
+					// swap the bytes when matching an integer on little-endian targets
+					targetBytes[i + 1] = bytes[bytes.length - i - 1].getValue(); 
+				}
+				else
+				{
+					targetBytes[i + 1] = bytes[i].getValue();
+				}
+			}
 			
-			// TODO endian?
 			BigInteger targetBigInteger = new BigInteger(targetBytes);
 
 			return fPhrase.equals(targetBigInteger);
@@ -1394,6 +1411,14 @@ public class FindReplaceDialog extends SelectionDialog
 		System.arraycopy(bytes, 1, processedBytes, 0, processedBytes.length);
 		return processedBytes;
 	}
+	
+	private byte[] swapBytes(byte[] bytes)
+	{
+		byte[] processedBytes = new byte[bytes.length];
+		for (int i = 0; i < bytes.length; i++)
+			processedBytes[i] = bytes[bytes.length - i - 1];
+		return processedBytes;
+	}	
 	
 	interface IMemorySearchQuery extends ISearchQuery
 	{

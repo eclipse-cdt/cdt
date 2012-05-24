@@ -144,8 +144,7 @@ public class RefreshPolicyTab extends AbstractCBuildPropertyTab {
 	
 	private void loadInfo() {
 			HashMap<String, HashMap<IResource, List<RefreshExclusion>>> configMap = fManager.getConfigurationToResourcesMap(fProject);
-			if (configMap != null)
-				fConfigurationToResourcesToExclusionsMap = copyHashMap(configMap);
+			fConfigurationToResourcesToExclusionsMap = copyHashMap(configMap);
 	}
 
 	private List<RefreshExclusion> getExclusions(String configName, IResource resource) {

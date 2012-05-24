@@ -39,7 +39,6 @@ import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
  * </p>
  */
 public final class CIndenter {
-	
 	/**
 	 * The CDT Core preferences.
 	 */
@@ -1588,6 +1587,7 @@ public final class CIndenter {
 	private int skipToPreviousListItemOrListStart() {
 		int startLine= fLine;
 		int startPosition= fPosition;
+		int linesSkippedInsideScopes = 0;
 		boolean continuationLineCandidate =
 				fToken == Symbols.TokenEQUAL || fToken == Symbols.TokenSHIFTLEFT ||
 				fToken == Symbols.TokenRPAREN;
@@ -1596,7 +1596,7 @@ public final class CIndenter {
 			nextToken();
 
 			// If any line item comes with its own indentation, adapt to it
-			if (fLine < startLine) {
+			if (fLine < startLine - linesSkippedInsideScopes) {
 				try {
 					int lineOffset= fDocument.getLineOffset(startLine);
 					int bound= Math.min(fDocument.getLength(), startPosition + 1);
@@ -1617,6 +1617,7 @@ public final class CIndenter {
 				return startPosition;
 			}
 
+			int line = fLine;
 			switch (fToken) {
 			// scopes: skip them
 			case Symbols.TokenRPAREN:
@@ -1625,6 +1626,7 @@ public final class CIndenter {
 			case Symbols.TokenRBRACKET:
 			case Symbols.TokenRBRACE:
 				skipScope();
+				linesSkippedInsideScopes = line - fLine;
 				break;
 
 			// scope introduction: special treat who special is

@@ -11,11 +11,11 @@
 package org.eclipse.cdt.core.resources;
 
 import java.util.ArrayList;
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
@@ -97,6 +97,7 @@ public class RefreshScopeManager {
 	private boolean fIsLoaded = false;
 
 	private boolean fIsLoading = false;
+	private boolean fIsNewProject = false;
 	private HashMap<IProject,HashMap<String,HashMap<IResource, List<RefreshExclusion>>>> fProjToConfToResToExcluMap;	
 	private int fVersion = 2;	
 
@@ -214,9 +215,7 @@ public class RefreshScopeManager {
 	}
 
 	private synchronized void clearDataForProject(IProject project) {
-		HashMap<String,HashMap<IResource, List<RefreshExclusion>>> configMap = fProjToConfToResToExcluMap.get(project);
-		if (configMap != null)
-			configMap.clear();
+		fProjToConfToResToExcluMap.remove(project);
 	}
 
 	/**
@@ -286,7 +285,8 @@ public class RefreshScopeManager {
 		
 		if (resourceMap == null) {
 			resourceMap = new HashMap<IResource, List<RefreshExclusion>>();
-			resourceMap.put(project, new LinkedList<RefreshExclusion>());
+			if (!fIsLoading)
+				resourceMap.put(project, new LinkedList<RefreshExclusion>());
 			configMap.put(configName, resourceMap);
 		}
 		
@@ -317,9 +317,24 @@ public class RefreshScopeManager {
 		
 		return fProjToConfToResToExcluMap;
 	}
-		
 	
+	/**
+	 * Refresh the given project using the refresh setting for the active configuration
+	 * @param project
+	 * @return the refresh runnable for the given project
+	 */
 	public IWorkspaceRunnable getRefreshRunnable(final IProject project) {
+		return getRefreshRunnable(project, null);
+	}
+	
+	/**
+	 * Refresh the given project using the refresh setting for the configuration with the given name
+	 * @param project
+	 * @param configName
+	 * @return the refresh runnable for the given project
+	 * @since 5.4
+	 */
+	public IWorkspaceRunnable getRefreshRunnable(final IProject project, final String configName) {
 		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
 
 			/**
@@ -345,13 +360,14 @@ public class RefreshScopeManager {
 
 			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
-
-				
-				CProjectDescriptionManager descriptionManager = CProjectDescriptionManager
-						.getInstance();
-				ICProjectDescription projectDescription = descriptionManager.getProjectDescription(project, false);
-				ICConfigurationDescription active_conf = projectDescription.getActiveConfiguration();
-				String name = active_conf.getName();
+				String name = configName;
+				if (name == null) {
+					CProjectDescriptionManager descriptionManager = CProjectDescriptionManager
+							.getInstance();
+					ICProjectDescription projectDescription = descriptionManager.getProjectDescription(project, false);
+					ICConfigurationDescription active_conf = projectDescription.getActiveConfiguration();
+					name = active_conf.getName();
+				}
 				List<IResource> resourcesToRefresh = getResourcesToRefresh(project,name);
 				for (IResource resource : resourcesToRefresh) {
 					List<RefreshExclusion> exclusions = getExclusions(project,name,resource);
@@ -473,7 +489,7 @@ public class RefreshScopeManager {
 				// walk the tree and load the settings
 				String str = storageElement.getAttribute(VERSION_NUMBER_ATTRIBUTE_NAME);
 				
-				if ((str == null) || (str.equals("1"))) {  //$NON-NLS-1$
+				if ( (children.length != 0) && ((str == null) || (str.equals("1")))) {  //$NON-NLS-1$
 					ICConfigurationDescription cfgDescs[] = projectDescription.getConfigurations();	
 					for (ICConfigurationDescription cfgDesc : cfgDescs) 
 						loadResourceData(workspaceRoot, project, cfgDesc.getName(), children);
@@ -488,7 +504,9 @@ public class RefreshScopeManager {
 					// else there are no children, and this is a "new" project.
 					//  so initialize it.
 					if (children.length == 0) {
+						fIsNewProject = true;
 						getConfigurationToResourcesMap(project);  // this will initialize the config map.
+						fIsNewProject = false;
 					}
 				} 
 			} 
@@ -506,7 +524,7 @@ public class RefreshScopeManager {
 		for (ICConfigurationDescription cfgDesc : cfgDescs) { 
 			String configName = cfgDesc.getName();
 			HashMap<IResource, List<RefreshExclusion>> resourceMap = new HashMap<IResource, List<RefreshExclusion>>();
-			if (!fIsLoading)
+			if (!fIsLoading || fIsNewProject) //config settings could be loading and detects a new project and if so, add the default refresh setting
 				resourceMap.put(project, new LinkedList<RefreshExclusion>()); 
 			configMap.put(configName, resourceMap);
 		}
@@ -520,76 +538,80 @@ public class RefreshScopeManager {
 	 */
 	public synchronized void loadResourceData(IWorkspaceRoot workspaceRoot, IProject project, String configName, ICStorageElement[] children) {
 	
-		for (ICStorageElement child : children) {
-			if (child.getName().equals(RESOURCE_ELEMENT_NAME)) {
-	
-				// get the resource path
-				String resourcePath = child.getAttribute(WORKSPACE_PATH_ATTRIBUTE_NAME);
-	
-				if (resourcePath == null) {
-					// error... skip this resource
-					continue;
-	
-				}
-	
-				else {
-					String resourceTypeString = child
-							.getAttribute(RESOURCE_TYPE_ATTRIBUTE_NAME);
-	
-					if (resourceTypeString == null) {
-						// we'll do our best, but we won't be able to create handles to non-existent
-						// resources
-						resourceTypeString = OTHER_VALUE;
-					}
-	
-					// find the resource
-					IResource resource = null;
-	
-					if (resourceTypeString.equals(PROJECT_VALUE)) {
-						resource = workspaceRoot.getProject(resourcePath);
-					}
-	
-					else if (resourceTypeString.equals(FILE_VALUE)) {
-						resource = workspaceRoot.getFile(new Path(resourcePath));
-					}
-	
-					else if (resourceTypeString.equals(FOLDER_VALUE)) {
-						resource = workspaceRoot.getFolder(new Path(resourcePath));
-					}
-	
-					else {
-						// Find arbitrary resource.
-						// The only way to do this is to ask the workspace root to find
-						// it, if it exists. If it doesn't exist, we have no way of
-						// creating a handle to the right type of object, so we must
-						// give up. In practice, this would likely happen if we had
-						// a virtual group resource that has been deleted somehow since
-						// the settings were created, and since the resource is virtual,
-						// it's impossible to refresh it if it doesn't exist anyway.
-						resource = workspaceRoot.findMember(resourcePath);
-					}
-	
-					if (resource == null) {
-						// error.. skip this resource
+		if (children.length == 0) {
+			// we have an empty config to resource map.  This call will create an empty resource set for the config name.
+			getResourcesToExclusionsMap(project,configName);
+		} else {
+			for (ICStorageElement child : children) {
+				if (child.getName().equals(RESOURCE_ELEMENT_NAME)) {
+		
+					// get the resource path
+					String resourcePath = child.getAttribute(WORKSPACE_PATH_ATTRIBUTE_NAME);
+		
+					if (resourcePath == null) {
+						// error... skip this resource
 						continue;
 					}
 	
 					else {
-							addResourceToRefresh(project,configName, resource);
+						String resourceTypeString = child
+								.getAttribute(RESOURCE_TYPE_ATTRIBUTE_NAME);
+		
+						if (resourceTypeString == null) {
+							// we'll do our best, but we won't be able to create handles to non-existent
+							// resources
+							resourceTypeString = OTHER_VALUE;
+						}
+		
+						// find the resource
+						IResource resource = null;
+		
+						if (resourceTypeString.equals(PROJECT_VALUE)) {
+							resource = workspaceRoot.getProject(resourcePath);
+						}
+		
+						else if (resourceTypeString.equals(FILE_VALUE)) {
+							resource = workspaceRoot.getFile(new Path(resourcePath));
+						}
+		
+						else if (resourceTypeString.equals(FOLDER_VALUE)) {
+							resource = workspaceRoot.getFolder(new Path(resourcePath));
+						}
+		
+						else {
+							// Find arbitrary resource.
+							// The only way to do this is to ask the workspace root to find
+							// it, if it exists. If it doesn't exist, we have no way of
+							// creating a handle to the right type of object, so we must
+							// give up. In practice, this would likely happen if we had
+							// a virtual group resource that has been deleted somehow since
+							// the settings were created, and since the resource is virtual,
+							// it's impossible to refresh it if it doesn't exist anyway.
+							resource = workspaceRoot.findMember(resourcePath);
+						}
+		
+						if (resource == null) {
+							// error.. skip this resource
+							continue;
+						}
+		
+						else {
+								addResourceToRefresh(project,configName, resource);
+		
+							// load any exclusions
+							List<RefreshExclusion> exclusions;
+							try {
+								exclusions = RefreshExclusion.loadData(
+										child, null, resource, this);
 	
-						// load any exclusions
-						List<RefreshExclusion> exclusions;
-						try {
-							exclusions = RefreshExclusion.loadData(
-									child, null, resource, this);
-
-							// add them
-							for (RefreshExclusion exclusion : exclusions) {
-								addExclusion(project, configName, resource, exclusion);
+								// add them
+								for (RefreshExclusion exclusion : exclusions) {
+									addExclusion(project, configName, resource, exclusion);
+								}
+							} catch (CoreException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
 							}
-						} catch (CoreException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
 						}
 					}
 				}

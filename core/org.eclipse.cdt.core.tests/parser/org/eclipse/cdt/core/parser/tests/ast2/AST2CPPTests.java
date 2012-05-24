@@ -27,6 +27,7 @@ import java.util.Iterator;
 
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
@@ -9684,4 +9685,13 @@ public class AST2CPPTests extends AST2BaseTest {
 		f= bh.assertNonProblem("f( 0 )", 1);
 		assertEquals("void (int)", ASTTypeUtil.getType(f.getType()));
 	}	
+
+	// void foo(struct S s);
+	public void testParameterForwardDeclaration_379511() throws Exception {
+		BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), true);
+		ICPPClassType struct= bh.assertNonProblem("S", 1, ICPPClassType.class);
+		IName[] declarations= bh.getTranslationUnit().getDeclarations(struct);
+		assertEquals(1, declarations.length);
+		assertEquals(bh.findName("S", 1), declarations[0]);
+	}
 }

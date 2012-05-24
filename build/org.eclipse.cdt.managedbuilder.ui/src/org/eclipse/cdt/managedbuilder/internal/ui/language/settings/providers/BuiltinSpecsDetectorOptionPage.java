@@ -10,11 +10,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.ui.language.settings.providers;
 
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
 import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
 import org.eclipse.cdt.managedbuilder.language.settings.providers.AbstractBuiltinSpecsDetector;
 import org.eclipse.cdt.ui.language.settings.providers.AbstractLanguageSettingProviderOptionPage;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
@@ -32,6 +35,8 @@ import org.eclipse.swt.widgets.Text;
 
 /**
  * Options page for {@link AbstractBuiltinSpecsDetector}.
+ *
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public final class BuiltinSpecsDetectorOptionPage extends AbstractLanguageSettingProviderOptionPage {
 	private boolean fEditable;
@@ -150,6 +155,20 @@ public final class BuiltinSpecsDetectorOptionPage extends AbstractLanguageSettin
 				widgetSelected(e);
 			}
 		});
+	}
+
+	@Override
+	public void performApply(IProgressMonitor monitor) throws CoreException {
+		ILanguageSettingsProvider provider = providerTab.getProvider(providerId);
+		if ((provider instanceof AbstractBuiltinSpecsDetector)) { // basically check for working copy
+			ILanguageSettingsProvider initialProvider = providerTab.getInitialProvider(providerId);
+			if (!(initialProvider instanceof AbstractBuiltinSpecsDetector) || !((AbstractBuiltinSpecsDetector) initialProvider).getCommand().equals(((AbstractBuiltinSpecsDetector) provider).getCommand())) {
+				// clear and reset isExecuted flag
+				((AbstractBuiltinSpecsDetector) provider).clear();
+			}
+		}
+
+		super.performApply(monitor);
 	}
 
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 Wind River Systems and others.
+ * Copyright (c) 2010, 2012 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  * Wind River Systems - Initial API and implementation
  * James Blackburn (Broadcom Corp.)
+ * IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.core;
 
@@ -136,7 +137,7 @@ public class InternalBuildRunner extends AbstractBuildRunner {
 			buildRunnerHelper.goodbye();
 
 			if (status != ICommandLauncher.ILLEGAL_COMMAND) {
-				buildRunnerHelper.refreshProject(new SubProgressMonitor(monitor, TICKS_REFRESH_PROJECT, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+				buildRunnerHelper.refreshProject(cfgName, new SubProgressMonitor(monitor, TICKS_REFRESH_PROJECT, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 			}
 
 		} catch (Exception e) {

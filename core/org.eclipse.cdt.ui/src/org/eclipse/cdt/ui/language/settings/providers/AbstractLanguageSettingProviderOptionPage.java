@@ -22,12 +22,13 @@ import org.eclipse.cdt.internal.ui.language.settings.providers.LanguageSettingsP
 
 /**
  * Abstract class to implement language settings providers Options page.
+ * @noextend This class is not intended to be subclassed by clients, only internally by CDT.
  *
  * @since 5.4
  */
 public abstract class AbstractLanguageSettingProviderOptionPage extends AbstractCOptionPage {
-	private LanguageSettingsProviderTab providerTab;
-	private String providerId;
+	protected LanguageSettingsProviderTab providerTab;
+	protected String providerId;
 
 	/**
 	 * Initialize the options page with the owning tab and provider ID.

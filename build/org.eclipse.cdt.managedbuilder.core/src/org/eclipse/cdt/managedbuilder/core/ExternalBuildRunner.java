@@ -9,6 +9,7 @@
  *   Wind River Systems - Initial API and implementation
  *   James Blackburn (Broadcom Corp.)
  *   Andrew Gvozdev
+ *   IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.core;
 
@@ -129,7 +130,7 @@ public class ExternalBuildRunner extends AbstractBuildRunner {
 				buildRunnerHelper.goodbye();
 
 				if (state != ICommandLauncher.ILLEGAL_COMMAND) {
-					buildRunnerHelper.refreshProject(new SubProgressMonitor(monitor, TICKS_REFRESH_PROJECT, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+					buildRunnerHelper.refreshProject(cfgName, new SubProgressMonitor(monitor, TICKS_REFRESH_PROJECT, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 				}
 			} else {
 				String msg = ManagedMakeMessages.getFormattedString("ManagedMakeBuilder.message.undefined.build.command", builder.getId()); //$NON-NLS-1$

@@ -13,6 +13,7 @@ package org.eclipse.cdt.core.language.settings.providers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import junit.framework.TestSuite;
 
@@ -25,7 +26,10 @@ import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsProvidersSerializer;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.jobs.Job;
 
 /**
@@ -1129,6 +1133,372 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 			assertEquals(project.getName(), event.getProjectName());
 			assertEquals(1, event.getConfigurationDescriptionIds().length);
 			assertEquals(cfgDescriptionId, event.getConfigurationDescriptionIds()[0]);
+		}
+	}
+
+	/**
+	 * Test case when a project is present in the list of resources in delta.
+	 */
+	public void testDelta_AffectedResources_Project() throws Exception {
+		// create project
+		IProject project = ResourceHelper.createCDTProjectWithConfig(this.getName());
+		ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, true);
+
+		// create a mock provider and add to cfgDescription
+		{
+			// get project descriptions
+			ICProjectDescription prjDescriptionWritable = CProjectDescriptionManager.getInstance().getProjectDescription(project, true);
+			assertNotNull(prjDescriptionWritable);
+			ICConfigurationDescription[] cfgDescriptions = prjDescriptionWritable.getConfigurations();
+			assertEquals(1, cfgDescriptions.length);
+			ICConfigurationDescription cfgDescription = cfgDescriptions[0];
+			assertTrue(cfgDescription instanceof ILanguageSettingsProvidersKeeper);
+
+			// add mock provider to cfgDescription
+			List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
+			MockLanguageSettingsEditableProvider mockProvider = new MockLanguageSettingsEditableProvider(PROVIDER_1, PROVIDER_NAME_1);
+			providers.add(mockProvider);
+			((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(providers);
+			List<ILanguageSettingsProvider> storedProviders = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
+			assertEquals(1, storedProviders.size());
+
+			// write to project description
+			CoreModel.getDefault().setProjectDescription(project, prjDescriptionWritable);
+		}
+
+		// register mock listener to inspect the notifications
+		{
+			LanguageSettingsManager.registerLanguageSettingsChangeListener(mockLseListener);
+			assertEquals(0, mockLseListener.getCount());
+			assertEquals(null, mockLseListener.getLastEvent());
+		}
+
+		// trigger an event on the project
+		ICConfigurationDescription cfgDescription;
+		{
+			// get project descriptions
+			ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project, false);
+			assertNotNull(prjDescription);
+			ICConfigurationDescription[] cfgDescriptions = prjDescription.getConfigurations();
+			assertEquals(1, cfgDescriptions.length);
+			cfgDescription = cfgDescriptions[0];
+			assertTrue(cfgDescription instanceof ILanguageSettingsProvidersKeeper);
+			List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper)cfgDescription).getLanguageSettingProviders();
+			assertEquals(1, providers.size());
+			MockLanguageSettingsEditableProvider mockProvider = (MockLanguageSettingsEditableProvider) providers.get(0);
+
+			List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+			entries.add(SAMPLE_LSE);
+			mockProvider.setSettingEntries(cfgDescription, project, null, entries);
+			mockProvider.serializeLanguageSettings(cfgDescription);
+		}
+
+		// inspect event
+		{
+			assertEquals(1, mockLseListener.getCount());
+			ILanguageSettingsChangeEvent event = mockLseListener.getLastEvent();
+			assertNotNull(event);
+			assertEquals(event.getProjectName(), project.getName());
+
+			Set<IResource> resources = event.getAffectedResources(cfgDescription.getId());
+			assertNotNull(resources);
+			assertEquals(project, resources.toArray()[0]);
+			assertEquals(1, resources.size());
+		}
+	}
+
+	/**
+	 * Test case when a default resource (null) is represented in the list of resources in delta.
+	 */
+	public void testDelta_AffectedResources_DefaultResource() throws Exception {
+		// create project
+		IProject project = ResourceHelper.createCDTProjectWithConfig(this.getName());
+		ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, true);
+
+		// create a mock provider and add to cfgDescription
+		{
+			// get project descriptions
+			ICProjectDescription prjDescriptionWritable = CProjectDescriptionManager.getInstance().getProjectDescription(project, true);
+			assertNotNull(prjDescriptionWritable);
+			ICConfigurationDescription[] cfgDescriptions = prjDescriptionWritable.getConfigurations();
+			assertEquals(1, cfgDescriptions.length);
+			ICConfigurationDescription cfgDescription = cfgDescriptions[0];
+			assertTrue(cfgDescription instanceof ILanguageSettingsProvidersKeeper);
+
+			// add mock provider to cfgDescription
+			List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
+			MockLanguageSettingsEditableProvider mockProvider = new MockLanguageSettingsEditableProvider(PROVIDER_1, PROVIDER_NAME_1);
+			providers.add(mockProvider);
+			((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(providers);
+			List<ILanguageSettingsProvider> storedProviders = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
+			assertEquals(1, storedProviders.size());
+
+			// write to project description
+			CoreModel.getDefault().setProjectDescription(project, prjDescriptionWritable);
+		}
+
+		// register mock listener to inspect the notifications
+		{
+			LanguageSettingsManager.registerLanguageSettingsChangeListener(mockLseListener);
+			assertEquals(0, mockLseListener.getCount());
+			assertEquals(null, mockLseListener.getLastEvent());
+		}
+
+		// trigger an event on the project
+		ICConfigurationDescription cfgDescription;
+		{
+			// get project descriptions
+			ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project, false);
+			assertNotNull(prjDescription);
+			ICConfigurationDescription[] cfgDescriptions = prjDescription.getConfigurations();
+			assertEquals(1, cfgDescriptions.length);
+			cfgDescription = cfgDescriptions[0];
+			assertTrue(cfgDescription instanceof ILanguageSettingsProvidersKeeper);
+			List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper)cfgDescription).getLanguageSettingProviders();
+			assertEquals(1, providers.size());
+			MockLanguageSettingsEditableProvider mockProvider = (MockLanguageSettingsEditableProvider) providers.get(0);
+
+			List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+			entries.add(SAMPLE_LSE);
+			mockProvider.setSettingEntries(cfgDescription, null, null, entries);
+			mockProvider.serializeLanguageSettings(cfgDescription);
+		}
+
+		// inspect event
+		{
+			assertEquals(1, mockLseListener.getCount());
+			ILanguageSettingsChangeEvent event = mockLseListener.getLastEvent();
+			assertNotNull(event);
+			assertEquals(event.getProjectName(), project.getName());
+
+			Set<IResource> resources = event.getAffectedResources(cfgDescription.getId());
+			assertNotNull(resources);
+			assertEquals(project, resources.toArray()[0]);
+			assertEquals(1, resources.size());
+		}
+	}
+
+	/**
+	 * Test case when a folder is present in the list of resources in delta.
+	 */
+	public void testDelta_AffectedResources_Folder() throws Exception {
+		// create project
+		IProject project = ResourceHelper.createCDTProjectWithConfig(this.getName());
+		IFolder folder = ResourceHelper.createFolder(project, "Folder");
+		ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, true);
+
+		// create a mock provider and add to cfgDescription
+		{
+			// get project descriptions
+			ICProjectDescription prjDescriptionWritable = CProjectDescriptionManager.getInstance().getProjectDescription(project, true);
+			assertNotNull(prjDescriptionWritable);
+			ICConfigurationDescription[] cfgDescriptions = prjDescriptionWritable.getConfigurations();
+			assertEquals(1, cfgDescriptions.length);
+			ICConfigurationDescription cfgDescription = cfgDescriptions[0];
+			assertTrue(cfgDescription instanceof ILanguageSettingsProvidersKeeper);
+
+			// add mock provider to cfgDescription
+			List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
+			MockLanguageSettingsEditableProvider mockProvider = new MockLanguageSettingsEditableProvider(PROVIDER_1, PROVIDER_NAME_1);
+			providers.add(mockProvider);
+			((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(providers);
+			List<ILanguageSettingsProvider> storedProviders = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
+			assertEquals(1, storedProviders.size());
+
+			// write to project description
+			CoreModel.getDefault().setProjectDescription(project, prjDescriptionWritable);
+		}
+
+		// register mock listener to inspect the notifications
+		{
+			LanguageSettingsManager.registerLanguageSettingsChangeListener(mockLseListener);
+			assertEquals(0, mockLseListener.getCount());
+			assertEquals(null, mockLseListener.getLastEvent());
+		}
+
+		// trigger an event on the project
+		ICConfigurationDescription cfgDescription;
+		{
+			// get project descriptions
+			ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project, false);
+			assertNotNull(prjDescription);
+			ICConfigurationDescription[] cfgDescriptions = prjDescription.getConfigurations();
+			assertEquals(1, cfgDescriptions.length);
+			cfgDescription = cfgDescriptions[0];
+			assertTrue(cfgDescription instanceof ILanguageSettingsProvidersKeeper);
+			List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper)cfgDescription).getLanguageSettingProviders();
+			assertEquals(1, providers.size());
+			MockLanguageSettingsEditableProvider mockProvider = (MockLanguageSettingsEditableProvider) providers.get(0);
+
+			List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+			entries.add(SAMPLE_LSE);
+			mockProvider.setSettingEntries(cfgDescription, folder, null, entries);
+			mockProvider.serializeLanguageSettings(cfgDescription);
+		}
+
+		// inspect event
+		{
+			assertEquals(1, mockLseListener.getCount());
+			ILanguageSettingsChangeEvent event = mockLseListener.getLastEvent();
+			assertNotNull(event);
+			assertEquals(event.getProjectName(), project.getName());
+
+			Set<IResource> resources = event.getAffectedResources(cfgDescription.getId());
+			assertNotNull(resources);
+			assertEquals(folder, resources.toArray()[0]);
+			assertEquals(1, resources.size());
+		}
+	}
+
+	/**
+	 * Test case when a file is present in the list of resources in delta.
+	 */
+	public void testDelta_AffectedResources_File() throws Exception {
+		// create project
+		IProject project = ResourceHelper.createCDTProjectWithConfig(this.getName());
+		IFile file = ResourceHelper.createFile(project, "file.cpp");
+		ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, true);
+
+		// create a mock provider and add to cfgDescription
+		{
+			// get project descriptions
+			ICProjectDescription prjDescriptionWritable = CProjectDescriptionManager.getInstance().getProjectDescription(project, true);
+			assertNotNull(prjDescriptionWritable);
+			ICConfigurationDescription[] cfgDescriptions = prjDescriptionWritable.getConfigurations();
+			assertEquals(1, cfgDescriptions.length);
+			ICConfigurationDescription cfgDescription = cfgDescriptions[0];
+			assertTrue(cfgDescription instanceof ILanguageSettingsProvidersKeeper);
+
+			// add mock provider to cfgDescription
+			List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
+			MockLanguageSettingsEditableProvider mockProvider = new MockLanguageSettingsEditableProvider(PROVIDER_1, PROVIDER_NAME_1);
+			providers.add(mockProvider);
+			((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(providers);
+			List<ILanguageSettingsProvider> storedProviders = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
+			assertEquals(1, storedProviders.size());
+
+			// write to project description
+			CoreModel.getDefault().setProjectDescription(project, prjDescriptionWritable);
+		}
+
+		// register mock listener to inspect the notifications
+		{
+			LanguageSettingsManager.registerLanguageSettingsChangeListener(mockLseListener);
+			assertEquals(0, mockLseListener.getCount());
+			assertEquals(null, mockLseListener.getLastEvent());
+		}
+
+		// trigger an event on the project
+		ICConfigurationDescription cfgDescription;
+		{
+			// get project descriptions
+			ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project, false);
+			assertNotNull(prjDescription);
+			ICConfigurationDescription[] cfgDescriptions = prjDescription.getConfigurations();
+			assertEquals(1, cfgDescriptions.length);
+			cfgDescription = cfgDescriptions[0];
+			assertTrue(cfgDescription instanceof ILanguageSettingsProvidersKeeper);
+			List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper)cfgDescription).getLanguageSettingProviders();
+			assertEquals(1, providers.size());
+			MockLanguageSettingsEditableProvider mockProvider = (MockLanguageSettingsEditableProvider) providers.get(0);
+
+			List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+			entries.add(SAMPLE_LSE);
+			mockProvider.setSettingEntries(cfgDescription, file, null, entries);
+			mockProvider.serializeLanguageSettings(cfgDescription);
+		}
+
+		// inspect event
+		{
+			assertEquals(1, mockLseListener.getCount());
+			ILanguageSettingsChangeEvent event = mockLseListener.getLastEvent();
+			assertNotNull(event);
+			assertEquals(event.getProjectName(), project.getName());
+
+			Set<IResource> resources = event.getAffectedResources(cfgDescription.getId());
+			assertNotNull(resources);
+			assertEquals(file, resources.toArray()[0]);
+			assertEquals(1, resources.size());
+		}
+	}
+
+	/**
+	 * Test case when a mix of files and folders is present in the list of resources in delta.
+	 */
+	public void testDelta_AffectedResources_Mix() throws Exception {
+		// create project
+		IProject project = ResourceHelper.createCDTProjectWithConfig(this.getName());
+		IFolder folder = ResourceHelper.createFolder(project, "Folder");
+		IFile file1 = ResourceHelper.createFile(project, "file1.cpp");
+		IFile file2 = ResourceHelper.createFile(project, "file2.cpp");
+		IFile file3 = ResourceHelper.createFile(project, "file3.cpp");
+		ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, true);
+
+		// create a mock provider and add to cfgDescription
+		{
+			// get project descriptions
+			ICProjectDescription prjDescriptionWritable = CProjectDescriptionManager.getInstance().getProjectDescription(project, true);
+			assertNotNull(prjDescriptionWritable);
+			ICConfigurationDescription[] cfgDescriptions = prjDescriptionWritable.getConfigurations();
+			assertEquals(1, cfgDescriptions.length);
+			ICConfigurationDescription cfgDescription = cfgDescriptions[0];
+			assertTrue(cfgDescription instanceof ILanguageSettingsProvidersKeeper);
+
+			// add mock provider to cfgDescription
+			List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
+			MockLanguageSettingsEditableProvider mockProvider = new MockLanguageSettingsEditableProvider(PROVIDER_1, PROVIDER_NAME_1);
+			providers.add(mockProvider);
+			((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(providers);
+			List<ILanguageSettingsProvider> storedProviders = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
+			assertEquals(1, storedProviders.size());
+
+			// write to project description
+			CoreModel.getDefault().setProjectDescription(project, prjDescriptionWritable);
+		}
+
+		// register mock listener to inspect the notifications
+		{
+			LanguageSettingsManager.registerLanguageSettingsChangeListener(mockLseListener);
+			assertEquals(0, mockLseListener.getCount());
+			assertEquals(null, mockLseListener.getLastEvent());
+		}
+
+		// trigger an event on the project
+		ICConfigurationDescription cfgDescription;
+		{
+			// get project descriptions
+			ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project, false);
+			assertNotNull(prjDescription);
+			ICConfigurationDescription[] cfgDescriptions = prjDescription.getConfigurations();
+			assertEquals(1, cfgDescriptions.length);
+			cfgDescription = cfgDescriptions[0];
+			assertTrue(cfgDescription instanceof ILanguageSettingsProvidersKeeper);
+			List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper)cfgDescription).getLanguageSettingProviders();
+			assertEquals(1, providers.size());
+			MockLanguageSettingsEditableProvider mockProvider = (MockLanguageSettingsEditableProvider) providers.get(0);
+
+			List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+			entries.add(SAMPLE_LSE);
+			mockProvider.setSettingEntries(cfgDescription, folder, null, entries);
+			mockProvider.setSettingEntries(cfgDescription, file1, null, entries);
+			mockProvider.setSettingEntries(cfgDescription, file2, null, entries);
+			mockProvider.serializeLanguageSettings(cfgDescription);
+		}
+
+		// inspect event
+		{
+			assertEquals(1, mockLseListener.getCount());
+			ILanguageSettingsChangeEvent event = mockLseListener.getLastEvent();
+			assertNotNull(event);
+			assertEquals(event.getProjectName(), project.getName());
+
+			Set<IResource> resources = event.getAffectedResources(cfgDescription.getId());
+			assertNotNull(resources);
+			assertTrue(resources.contains(folder));
+			assertTrue(resources.contains(file1));
+			assertTrue(resources.contains(file2));
+			assertFalse(resources.contains(file3));
+			assertEquals(3, resources.size());
 		}
 	}
 }

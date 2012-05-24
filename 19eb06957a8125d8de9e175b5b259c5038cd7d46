@@ -145,6 +145,24 @@
     },
     {
       "key": {
+        "uuid": "AABOHn//+wA\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1579,
+      "author": {
+        "id": 672
+      },
+      "writtenOn": "2012-05-24T20:22:05Z",
+      "side": 1,
+      "message": "There\u0027s one slight issue with moving the error handling into the DSF handlers that I can see. Because the MIRunControl methods take a RequestMonitor rather than a DataRequestMonitor, callers of these methods don\u0027t have access to the MIInfo of the command which was executed, which is very useful when parsing the results - in our product, for example, we require the command result to produce nice structured error messages.\n\nThe other thing is that the asynchronous errors we receive are not really connected to any command, so we need to process these somewhere, although we could probably do this in the RunControlEventProcessor classes.",
+      "parentUuid": "AABOHn//+wM\u003d",
+      "revId": "19eb06957a8125d8de9e175b5b259c5038cd7d46",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOHn//+4M\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
         "patchSetId": 1

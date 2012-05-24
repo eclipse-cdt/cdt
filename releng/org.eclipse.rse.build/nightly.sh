@@ -101,6 +101,7 @@ command="$command -DdoPublish=true "
 command="$command -Dbootclasspath=${bootclasspath} "
 command="$command -DJ2SE-1.4=${bootclasspath_14} "
 command="$command -DJ2SE-1.5=${bootclasspath_15} "
+command="$command -DJ2SE-1.6=${bootclasspath_16} "
 command="$command -DCDC-1.1/Foundation-1.1=${bootclasspath_foundation11} "
 #command="$command postBuild "
 

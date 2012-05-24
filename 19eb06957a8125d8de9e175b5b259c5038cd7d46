@@ -109,6 +109,24 @@
     },
     {
       "key": {
+        "uuid": "AABOHn//+wY\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1579,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-05-24T19:27:40Z",
+      "side": 1,
+      "message": "I find it strange that we send a special event ourselves, to tell ourselves to display an error.  But maybe there is no way around that.  I haven\u0027t looked at the changes you made to the MIRunControlEventProcessor files, so I don\u0027t know all the details yet.\n\nLeave it as is, and we\u0027ll see once I look at the complete patch.  My current understanding is that you will update the patch to put the error handling in DsfResumeCommand et al., so I\u0027m planning on waiting until that version is ready.",
+      "parentUuid": "AABOHn//+wk\u003d",
+      "revId": "19eb06957a8125d8de9e175b5b259c5038cd7d46",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOHn//+4M\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
         "patchSetId": 1

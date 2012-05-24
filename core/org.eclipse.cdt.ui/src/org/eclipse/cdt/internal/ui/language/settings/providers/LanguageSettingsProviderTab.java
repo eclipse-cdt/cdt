@@ -170,7 +170,7 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 	}
 
 	/**
-	 * Returns the provider equal to provider at the point from which editing started. 
+	 * Returns the provider equal to provider at the point from which editing started.
 	 * Used by option pages when there is a need.
 	 * @param id - id of the provider.
 	 *
@@ -529,6 +529,7 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 	 */
 	private void createProjectStorageCheckBox(Composite parent) {
 		projectStorageCheckBox = new Button(parent, SWT.CHECK);
+		projectStorageCheckBox.setLayoutData(new GridData(SWT.END, SWT.NONE, false, false));
 		projectStorageCheckBox.setText(Messages.LanguageSettingsProviderTab_StoreEntriesInsideProject);
 		projectStorageCheckBox.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -582,7 +583,14 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 			createLinkToPreferences(groupOptionsPage, 2);
 		}
 
-		compositeOptionsPage = new Composite(groupOptionsPage, SWT.NONE);
+		// composite to span over 2 columns
+		Composite comp = new Composite(groupOptionsPage, SWT.NONE);
+		comp.setLayout(new GridLayout());
+		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+		gd.horizontalSpan = 2;
+		comp.setLayoutData(gd);
+
+		compositeOptionsPage = new Composite(comp, SWT.NONE);
 		compositeOptionsPage.setLayout(new TabFolderLayout());
 	}
 
@@ -961,6 +969,7 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 			optionsPage.setContainer(page);
 			optionsPage.createControl(compositeOptionsPage);
 			optionsPage.setVisible(false);
+			compositeOptionsPage.setBounds(compositeOptionsPage.getParent().getClientArea());
 			compositeOptionsPage.layout(true);
 		}
 	}
@@ -1006,6 +1015,8 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 			boolean isEditable = isEditableForProject || isEditableForPrefs;
 			currentOptionsPage.getControl().setEnabled(isEditable);
 			compositeOptionsPage.setEnabled(isEditable);
+			compositeOptionsPage.setBounds(compositeOptionsPage.getParent().getClientArea());
+			compositeOptionsPage.layout(true);
 		}
 	}
 

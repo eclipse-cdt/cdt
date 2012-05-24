@@ -24,7 +24,8 @@ umask 022
 #Use Java5 on build.eclipse.org - need JRE for pack200
 export PATH=/shared/tools/tm/jdk-1.5/jre/bin:/shared/tools/tm/jdk-1.5/bin:$PATH
 basebuilder=${HOME}/ws2/org.eclipse.releng.basebuilder
-tgtlauncher=`ls ${HOME}/ws2/eclipse4/plugins/org.eclipse.equinox.launcher_* | sort | tail -1`
+tgtlauncher=`ls ${HOME}/ws2/eclipse/plugins/org.eclipse.equinox.launcher_* | sort | tail -1`
+tgtlauncher4=`ls ${HOME}/ws2/eclipse4/plugins/org.eclipse.equinox.launcher_* | sort | tail -1`
 
 # patch site.xml
 cd ..
@@ -572,7 +573,7 @@ if [ x${DO_STATS} = x1 ]; then
   #  -application org.eclipse.equinox.p2.publisher.UpdateSitePublisher \
   #CMD="java -jar ${basebuilder}/plugins/org.eclipse.equinox.launcher.jar \
   #  -p2.statsTrackedBundles org.eclipse.rse.sdk,org.eclipse.dstore.core,org.eclipse.rse.core,org.eclipse.rse.useractions,org.eclipse.rse.examples.tutorial,org.eclipse.rse.tests,org.eclipse.tm.rapi,org.eclipse.tm.terminal,org.eclipse.tm.terminal.view,org.eclipse.tm.terminal.local \
-  CMD="java -jar ${tgtlauncher} \
+  CMD="java -jar ${tgtlauncher4} \
     -application org.sonatype.tycho.p2.updatesite.UpdateSitePublisherWithJRE \
     -source ${SITE} \
     -metadataRepository file:${SITE} \
@@ -591,7 +592,7 @@ if [ x${DO_STATS} = x1 ]; then
 else
 
   echo "Creating P2 metadata (no download stats)..."
-  CMD="java -jar ${tgtlauncher} \
+  CMD="java -jar ${tgtlauncher4} \
     -application org.eclipse.equinox.p2.publisher.UpdateSitePublisher \
     -metadataRepository file:${SITE} \
     -artifactRepository file:${SITE} \
@@ -610,7 +611,7 @@ fi
     
 if [ x${DO_CATEGORIES} = x1 ]; then
   echo "Adding Categories..."
-  CMD="java -jar ${tgtlauncher} \
+  CMD="java -jar ${tgtlauncher4} \
     -application org.eclipse.equinox.p2.publisher.CategoryPublisher \
     -metadataRepository file:${SITE}/ \
     -categoryDefinition file:${SITE}/category.xml \

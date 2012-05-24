@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOHn//+4I\u003d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2CPPTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 9691,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-05-24T03:17:24Z",
+      "side": 1,
+      "message": "The test can be written simpler:\n\n\t\tBindingAssertionHelper bh\u003d new BindingAssertionHelper(getAboveComment(), true);\n\t\tICPPClassType struct \u003d bh.assertNonProblem(\"S\", 1, ICPPClassType.class);\n\t\tIName[] declarations \u003d bh.getTranslationUnit().getDeclarations(struct);\n\t\tassertEquals(1, declarations.length);\n\t\tassertEquals(bh.findName(\"S\", 1), declarations[0]);",
+      "revId": "b687bbcf5e25bae0f03afa7b3e2ae4522a651f83",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

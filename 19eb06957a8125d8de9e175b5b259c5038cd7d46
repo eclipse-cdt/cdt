@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "AABOHn//+xg\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1579,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-05-24T18:14:10Z",
+      "side": 1,
+      "message": "I see now.  What is worst is that we also get a *running event.  So I guess there is no way to distinguish this case from a valid one.\n\nThis is a bug in GDB, but I guess we have to work around it.\n\nGDB knows the proper state of the threads even though it messed up the events, right?  What if we simply refreshed such state, instead of faking an event?  Would calling refreshThreadStates() be enough?",
+      "parentUuid": "AABOHn//+x0\u003d",
+      "revId": "19eb06957a8125d8de9e175b5b259c5038cd7d46",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOHn//+4M\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
         "patchSetId": 1
@@ -66,6 +84,24 @@
       "side": 1,
       "message": "When an error occurs during initialization, the initialization sequence will fail and the standard \u0027startup sequence failed\u0027 error dialog will be shown - so this check is to make sure we don\u0027t display 2 popups.\n\nThe extra flag was added because there is case where we receive ^running, followed by an asynchronous ^error result, while initialization has not yet finished. In this case, initialization will complete successfully (the run command did not catch the error) so we need to always display the error popup.",
       "parentUuid": "AABOHn//+4M\u003d",
+      "revId": "19eb06957a8125d8de9e175b5b259c5038cd7d46",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHn//+xc\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1589,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-05-24T18:14:10Z",
+      "side": 1,
+      "message": "How can I reproduce this situation?",
+      "parentUuid": "AABOHn//+xw\u003d",
       "revId": "19eb06957a8125d8de9e175b5b259c5038cd7d46",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

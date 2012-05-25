@@ -14,7 +14,10 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.*;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.glvalueType;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.prvalueType;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.typeFromFunctionCall;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.valueCategoryFromFunctionCall;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
@@ -44,7 +47,7 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
     private IASTInitializerClause operand2;
     private IType type;
     private ICPPFunction overload= UNINITIALIZED_FUNCTION;
-    private IASTImplicitName[] implicitNames = null;
+    private IASTImplicitName[] implicitNames;
 
     public CPPASTBinaryExpression() {
 	}
@@ -66,11 +69,7 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
 		copy.op = op;
 		copy.setOperand1(operand1 == null ? null : operand1.copy(style));
 		copy.setInitOperand2(operand2 == null ? null : operand2.copy(style));
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 
 	@Override

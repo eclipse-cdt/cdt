@@ -407,14 +407,14 @@
           <artifactId>maven-site-plugin</artifactId>
           <version>3.0</version>
         </plugin>
-<!--        <plugin>
+        <plugin>
           <groupId>org.eclipse.tycho</groupId>
           <artifactId>tycho-packaging-plugin</artifactId>
           <version>${tycho-version}</version>
           <configuration>
-            <qualifier>v${buildQualifier}</qualifier>
+            <format>'v'yyyyMMddHHmm</format>
           </configuration>
-        </plugin> -->
+        </plugin>
       </plugins>
     </pluginManagement>
   </build>

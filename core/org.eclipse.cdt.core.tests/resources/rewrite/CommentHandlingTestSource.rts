@@ -2978,6 +2978,7 @@ class test
 
 //=
 =>leading
+#ifndef TEST_H_ = //TEST
 =>trailing
 =>freestanding
 
@@ -2999,6 +3000,9 @@ class test
 
 //=
 =>leading
+#ifndef TEST_H_ = /*
+ * Licence information...
+ */
 =>trailing
 =>freestanding
 
@@ -3021,6 +3025,9 @@ class test
 
 //=
 =>leading
+#ifndef TEST_H_ = /*
+ * Licence information...
+ */
 class test
 {
 }; = //test
@@ -3054,7 +3061,11 @@ private:
 
 //=
 =>leading
+#ifndef HIDEMETHOD_H_ = /*
+ * HideMethod.h
+ */
 =>trailing
+#endif = /* HIDEMETHOD_H_ */
 =>freestanding
 
 //!CommentRecognition Bug 233438
@@ -3077,6 +3088,7 @@ private:
 //=
 =>leading
 =>trailing
+#endif = /* HIDEMETHOD_H_ */
 =>freestanding
 
 //@test.cpp
@@ -3122,6 +3134,7 @@ private:
 //=
 =>leading
 =>trailing
+#endif = /* HIDEMETHOD_H_ */
 =>freestanding
 
 //@test.cpp
@@ -3145,4 +3158,44 @@ int HideMethod::methode2(){
 =>trailing
 i++; = //comment
 =>freestanding
+//!CommentRecognition preprocessor directives comment recognition
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@main.cpp
+//c1
+int i;//c2
+//inc1
 
+//inc2
+
+#include "foo.h" /*inc3*/ /*inc4*/
+//main
+int main() {
+	return 0;
+	//block1
+}
+//ifdef1
+#ifdef X //ifdef2
+//=
+=>leading
+int i; = //c1
+#include "foo.h" = //inc1 , //inc2
+int main() {
+	return 0;
+	//block1
+} = //main
+#ifdef X = //ifdef1
+=>trailing
+int i; = //c2
+#include "foo.h" = /*inc3*/ , /*inc4*/
+#ifdef X = //ifdef2
+=>freestanding
+{
+	return 0;
+	//block1
+} = //block1
+//@foo.h
+void foo();
+//=
+=>leading
+=>trailing
+=>freestanding

@@ -28,8 +28,9 @@ cd `dirname $0`
 mydir=`pwd`
 echo ${mydir}
 
-#Use Java5 on build.eclipse.org
-export PATH=/shared/tools/tm/jdk-1.5/jre/bin:/shared/tools/tm/jdk-1.5/bin:$PATH
+#Use Java6 on build.eclipse.org since CDT .core needs Java 6
+export PATH=/shared/tools/tm/jdk-1.6/jre/bin:/shared/tools/tm/jdk-1.6/bin:$PATH
+#export PATH=/shared/tools/tm/jdk-1.5/jre/bin:/shared/tools/tm/jdk-1.5/bin:$PATH
 
 
 #Get parameters

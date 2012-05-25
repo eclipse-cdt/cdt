@@ -163,6 +163,24 @@
     },
     {
       "key": {
+        "uuid": "AABOHn//+tA\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1579,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-05-25T13:48:59Z",
+      "side": 1,
+      "message": "I think you could create a new Status in which you can put the info you need from MIInfo, and use that for the RM.  I think it is fine to modify the RunControl services to adapt the error result, but I don\u0027t think the decision about what to do about this error should be in the service.\n\nFor example, one can imagine that for an operation as runToLine, which can interrupt and then resume the target automatically, we may want to do something different than trigger an error dialog if the resume operation fails.\n\nAs for the aync error, using RunControlEventProcessor sounds right to me.",
+      "parentUuid": "AABOHn//+wA\u003d",
+      "revId": "19eb06957a8125d8de9e175b5b259c5038cd7d46",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOHn//+4M\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
         "patchSetId": 1

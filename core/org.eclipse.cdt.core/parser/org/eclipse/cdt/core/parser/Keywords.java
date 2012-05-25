@@ -167,6 +167,8 @@ public class Keywords {
 	public static final char[] cFALSE = "false".toCharArray();
 	public static final char[] cFLOAT = "float".toCharArray();
 	public static final char[] cFOR = "for".toCharArray();
+	/** @since 5.4 */
+	public static final char[] cFINAL = "final".toCharArray();
 	public static final char[] cFRIEND = "friend".toCharArray();
 	public static final char[] cGOTO = "goto".toCharArray();
 	public static final char[] cIF = "if".toCharArray();
@@ -185,6 +187,8 @@ public class Keywords {
 	public static final char[] cOPERATOR = "operator".toCharArray();
 	public static final char[] cOR = "or".toCharArray();
 	public static final char[] cOR_EQ = "or_eq".toCharArray();
+	/** @since 5.4 */
+	public static final char[] cOVERRIDE = "override".toCharArray();
 	public static final char[] cPRIVATE = "private".toCharArray();
 	public static final char[] cPROTECTED = "protected".toCharArray();
 	public static final char[] cPUBLIC = "public".toCharArray();

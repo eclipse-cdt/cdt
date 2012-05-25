@@ -53,12 +53,13 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 
 	private static final int FIRSTBASE = PDOMCPPSpecialization.RECORD_SIZE + 0;
 	private static final int MEMBERLIST = PDOMCPPSpecialization.RECORD_SIZE + 4;
+	private static final int FINAL = PDOMCPPSpecialization.RECORD_SIZE + 8; // byte
 	
 	/**
 	 * The size in bytes of a PDOMCPPClassSpecialization record in the database.
 	 */
 	@SuppressWarnings("hiding")
-	protected static final int RECORD_SIZE = PDOMCPPSpecialization.RECORD_SIZE + 8;
+	protected static final int RECORD_SIZE = PDOMCPPSpecialization.RECORD_SIZE + 9;
 	
 	private volatile ICPPClassScope fScope;
 	private ObjectMap specializationMap= null; // Obtained from the synchronized PDOM cache
@@ -66,10 +67,20 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 	public PDOMCPPClassSpecialization(PDOMLinkage linkage, PDOMNode parent, ICPPClassType classType,
 			PDOMBinding specialized) throws CoreException {
 		super(linkage, parent, (ICPPSpecialization) classType, specialized);
+		setFinal(classType);
 	}
 
 	public PDOMCPPClassSpecialization(PDOMLinkage linkage, long bindingRecord) {
 		super(linkage, bindingRecord);
+	}
+	
+	@Override
+	public void update(PDOMLinkage linkage, IBinding newBinding) throws CoreException {
+		if (newBinding instanceof ICPPClassType) {
+			ICPPClassType ct= (ICPPClassType) newBinding;
+			setFinal(ct);
+			super.update(linkage, newBinding);
+		}
 	}
 	
 	@Override
@@ -360,5 +371,19 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 	@Override
 	public boolean isAnonymous() {
 		return false;
+	}
+
+	@Override
+	public boolean isFinal() {
+		try {
+			return getDB().getByte(record + FINAL) != 0;
+		} catch (CoreException e){
+			CCorePlugin.log(e);
+			return false;
+		}
+	}
+	
+	private void setFinal(ICPPClassType ct) throws CoreException {
+		getDB().putByte(record + FINAL, (byte) (ct.isFinal() ? 1 : 0));
 	}
 }

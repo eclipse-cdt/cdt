@@ -150,4 +150,14 @@ class PDOMCPPMethodTemplate extends PDOMCPPFunctionTemplate implements ICPPMetho
 	public boolean isPureVirtual() {
 		return false;
 	}
+
+	@Override
+	public boolean isOverride() {
+		return false;
+	}
+
+	@Override
+	public boolean isFinal() {
+		return false;
+	}
 }

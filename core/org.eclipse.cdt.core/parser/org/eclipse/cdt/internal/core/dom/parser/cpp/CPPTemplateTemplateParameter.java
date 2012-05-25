@@ -245,4 +245,9 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter implement
 	public ICPPDeferredClassInstance asDeferredInstance() {
 		return null;
 	}
+
+	@Override
+	public boolean isFinal() {
+		return false;
+	}
 }

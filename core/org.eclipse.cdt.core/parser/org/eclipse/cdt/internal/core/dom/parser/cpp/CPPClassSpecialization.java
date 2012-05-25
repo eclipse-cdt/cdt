@@ -271,4 +271,14 @@ public class CPPClassSpecialization extends CPPSpecialization
 
 		return ((ICPPClassType) owner1).isSameType((ICPPClassType) owner2);
 	}
+
+
+	@Override
+	public boolean isFinal() {
+		ICPPASTCompositeTypeSpecifier typeSpecifier = getCompositeTypeSpecifier();
+		if (typeSpecifier != null) {
+			return typeSpecifier.isFinal();
+		}
+		return false;
+	}
 }

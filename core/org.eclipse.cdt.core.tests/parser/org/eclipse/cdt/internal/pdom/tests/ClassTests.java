@@ -232,4 +232,14 @@ public class ClassTests extends PDOMTestBase {
 		assertTrue(bindings[0] instanceof ICPPClassType);
 		return (ICPPClassType) bindings[0];
 	}
+	
+	public void testFinalClass() throws Exception {
+		char[][] name = {"E".toCharArray()};
+		IBinding[] bindings = pdom.findBindings(name, IndexFilter.ALL, npm());
+		assertEquals(1, bindings.length);
+		assertInstance(bindings[0], ICPPClassType.class);
+		ICPPClassType classBinding = (ICPPClassType) bindings[0];
+		
+		assertTrue(classBinding.isFinal());
+	}
 }

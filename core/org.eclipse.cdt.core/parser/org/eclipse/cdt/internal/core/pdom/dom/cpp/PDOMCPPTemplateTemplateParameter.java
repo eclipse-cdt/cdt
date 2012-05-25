@@ -339,6 +339,11 @@ public class PDOMCPPTemplateTemplateParameter extends PDOMCPPBinding
 	public boolean isAnonymous() {
 		return false;
 	}
+	
+	@Override
+	public boolean isFinal() {
+		return false;
+	}
 
 	@Override
 	public ICPPTemplateParameter adaptTemplateParameter(ICPPTemplateParameter param) {

@@ -257,4 +257,14 @@ class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod {
 		}
 		return super.getExceptionSpecification();
 	}
+
+	@Override
+	public boolean isOverride() {
+		return getBit(getAnnotation1(), PDOMCPPAnnotation.OVERRIDE_OFFSET);
+	}
+
+	@Override
+	public boolean isFinal() {
+		return getBit(getAnnotation1(), PDOMCPPAnnotation.FINAL_OFFSET);
+	}
 }

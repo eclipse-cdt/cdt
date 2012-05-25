@@ -39,6 +39,18 @@ struct B {
 
 struct D : public A, public B {};
 
+struct E {
+	virtual void virtualMemberFunction(){}
+};
+
+struct F : public E {
+	void virtualMemberFunction() override{}
+};
+
+struct G : public F {
+	void virtualMemberFunction() override final{}
+};
+
 class Class2 : public Class1 {
 public:
 	void pureVirtualMethod();

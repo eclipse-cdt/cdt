@@ -17,6 +17,7 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -130,6 +131,7 @@ import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IToken;
+import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
@@ -3296,17 +3298,23 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 			final IASTDeclarator typeRelevantDtor = ASTQueries.findTypeRelevantDeclarator(dtor);
 			if (option != DeclarationOptions.PARAMETER && typeRelevantDtor instanceof IASTFunctionDeclarator) {
 				// Function declarations don't have initializers
-                // For member functions we need to consider pure-virtual syntax
-				if (option == DeclarationOptions.CPP_MEMBER && LTcatchEOF(1) == IToken.tASSIGN
-						&& LTcatchEOF(2) == IToken.tINTEGER) {
-					consume();
-					IToken t = consume();
-					char[] image = t.getCharImage();
-					if (image.length != 1 || image[0] != '0') {
-						throwBacktrack(t); 
+                // For member functions we need to consider virtual specifiers and pure-virtual syntax
+				if (option == DeclarationOptions.CPP_MEMBER) {
+					int lt1 = LTcatchEOF(1);
+					if (lt1 == IToken.tIDENTIFIER) {
+						virtSpecifierSeq((ICPPASTFunctionDeclarator) typeRelevantDtor);
+						lt1 = LTcatchEOF(1);
 					}
-					((ICPPASTFunctionDeclarator) typeRelevantDtor).setPureVirtual(true);
-					adjustEndOffset(dtor, t.getEndOffset()); // we can only adjust the offset of the outermost dtor.
+					if(lt1 == IToken.tASSIGN && LTcatchEOF(2) == IToken.tINTEGER) {
+						consume();
+						IToken t = consume();
+						char[] image = t.getCharImage();
+						if (image.length != 1 || image[0] != '0') {
+							throwBacktrack(t); 
+						}
+						((ICPPASTFunctionDeclarator) typeRelevantDtor).setPureVirtual(true);
+						adjustEndOffset(dtor, t.getEndOffset()); // we can only adjust the offset of the outermost dtor.
+					}
     			}
 			} else {
 				if (LTcatchEOF(1) == IToken.tASSIGN && LTcatchEOF(2) == IToken.tLBRACE) 
@@ -3336,7 +3344,34 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         return dtor;
     }
     
-    /**
+	/**
+     * virt-specifier-seq
+     *    virt-specifier
+     *    virt-specifier-seq virt-specifier
+     * 
+     * virt-specifier:
+     *    override
+     *    final
+	 * @throws EndOfFileException 
+	 * @throws BacktrackException 
+     */
+    private void virtSpecifierSeq(ICPPASTFunctionDeclarator typeRelevantDtor) throws EndOfFileException, BacktrackException {
+    	while(LTcatchEOF(1) == IToken.tIDENTIFIER) {
+    		IToken token = consume(IToken.tIDENTIFIER);
+    		char[] tokenImage = token.getCharImage();
+    		if(Arrays.equals(Keywords.cOVERRIDE, tokenImage)) {
+    			typeRelevantDtor.setOverride(true);
+    		}
+    		else if(Arrays.equals(Keywords.cFINAL, tokenImage)) {
+    			typeRelevantDtor.setFinal(true);    			
+    		}
+    		else {
+    			throwBacktrack(token);
+    		}
+    	}		
+	}
+
+	/**
      * initializer:
      *    brace-or-equal-initializer
      *    ( expression-list )
@@ -4048,6 +4083,11 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         
         ICPPASTCompositeTypeSpecifier astClassSpecifier = nodeFactory.newCompositeTypeSpecifier(classKind, name);
 
+        // class virt specifier
+        if(LT(1) == IToken.tIDENTIFIER) {
+        	classVirtSpecifier(astClassSpecifier);
+        }
+
         // base clause
         if (LT(1) == IToken.tCOLON) {
             baseClause(astClassSpecifier);
@@ -4112,7 +4152,22 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         	consume();
         }
     }
-
+    
+    /**
+     * Parse a class virtual specifier for a class specification. 
+     * class-virt-specifier:
+     *    final
+     * @param astClassSpecifier 
+     */
+	private void classVirtSpecifier(ICPPASTCompositeTypeSpecifier astClassSpecifier) throws EndOfFileException, BacktrackException {
+		IToken token = LA();
+		char[] tokenImage = token.getCharImage();
+		if(token.getType() == IToken.tIDENTIFIER && Arrays.equals(Keywords.cFINAL, tokenImage)){
+			consume();
+			astClassSpecifier.setFinal(true);
+		}
+	}
+    
 	/**
 	 * base-specifier: 
 	 *    ::? nested-name-specifier? class-name 

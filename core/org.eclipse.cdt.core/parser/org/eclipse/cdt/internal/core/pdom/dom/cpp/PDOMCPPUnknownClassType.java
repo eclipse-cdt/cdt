@@ -281,4 +281,9 @@ class PDOMCPPUnknownClassType extends PDOMCPPUnknownBinding implements ICPPClass
 	public boolean isAnonymous() {
 		return false;
 	}
+	
+	@Override
+	public boolean isFinal() {
+		return false;
+	}
 }

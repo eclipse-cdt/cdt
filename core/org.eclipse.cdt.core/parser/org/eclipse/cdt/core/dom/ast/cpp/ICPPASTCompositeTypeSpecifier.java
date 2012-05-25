@@ -138,4 +138,18 @@ public interface ICPPASTCompositeTypeSpecifier extends IASTCompositeTypeSpecifie
 	 */
 	@Override
 	public ICPPASTCompositeTypeSpecifier copy(CopyStyle style);
+	
+	/**
+	 * Queries whether the type is final.
+	 * 
+	 * @since 5.4
+	 */
+	public boolean isFinal();
+	
+	/**
+	 * Sets whether the type is final.
+	 * 
+	 * @since 5.4
+	 */
+	public void setFinal(boolean isFinal);
 }

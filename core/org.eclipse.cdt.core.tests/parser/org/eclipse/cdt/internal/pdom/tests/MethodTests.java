@@ -302,4 +302,31 @@ public class MethodTests extends PDOMTestBase {
 		assertEquals(IBasicType.t_int, Math.min(t1, t2));
 		assertEquals(IBasicType.t_double, Math.max(t1, t2));
 	}
+	
+	public void testVirtualMemberFunction() throws Exception {
+		IBinding[] bindings = findQualifiedName(pdom, "E::virtualMemberFunction");
+		assertEquals(1, bindings.length);
+		assertInstance(bindings[0], ICPPMethod.class);
+		ICPPMethod virtMemFun = (ICPPMethod) bindings[0];
+		assertFalse(virtMemFun.isOverride());
+		assertFalse(virtMemFun.isFinal());
+	}
+	
+	public void testOverrideVirtualMemberFunction() throws Exception {
+		IBinding[] bindings = findQualifiedName(pdom, "F::virtualMemberFunction");
+		assertEquals(1, bindings.length);
+		assertInstance(bindings[0], ICPPMethod.class);
+		ICPPMethod virtMemFun = (ICPPMethod) bindings[0];
+		assertTrue(virtMemFun.isOverride());
+		assertFalse(virtMemFun.isFinal());
+	}
+	
+	public void testOverrideFinalVirtualMemberFunction() throws Exception {
+		IBinding[] bindings = findQualifiedName(pdom, "G::virtualMemberFunction");
+		assertEquals(1, bindings.length);
+		assertInstance(bindings[0], ICPPMethod.class);
+		ICPPMethod virtMemFun = (ICPPMethod) bindings[0];
+		assertTrue(virtMemFun.isOverride());
+		assertTrue(virtMemFun.isFinal());
+	}
 }

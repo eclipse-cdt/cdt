@@ -74,4 +74,14 @@ public class CPPMethodInstance extends CPPFunctionInstance implements ICPPMethod
 	public boolean isImplicit() {
 		return false;
 	}
+
+	@Override
+	public boolean isOverride() {
+        return ((ICPPMethod)getTemplateDefinition()).isOverride();
+	}
+
+	@Override
+	public boolean isFinal() {
+        return ((ICPPMethod)getTemplateDefinition()).isFinal();
+	}
 }

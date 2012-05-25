@@ -188,6 +188,16 @@ public class CPPImplicitMethod extends CPPImplicitFunction implements ICPPMethod
 	}
 
 	@Override
+	public boolean isOverride() {
+		return false;
+	}
+		
+	@Override
+	public boolean isFinal() {
+		return false;
+	}
+	
+	@Override
 	public IBinding getOwner() {
 		return getClassOwner();
 	}

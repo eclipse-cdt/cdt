@@ -205,21 +205,51 @@ public class CPPMethodTemplate extends CPPFunctionTemplate implements ICPPMethod
 
 	@Override
 	public boolean isPureVirtual() {
+		ICPPASTFunctionDeclarator functionDeclarator = findFunctionDeclarator();
+		if(functionDeclarator != null){
+			return functionDeclarator.isPureVirtual();
+		}
+		return false;
+	}
+
+	@Override
+	public boolean isOverride() {
+		ICPPASTFunctionDeclarator functionDeclarator = findFunctionDeclarator();
+		if(functionDeclarator != null){
+			return functionDeclarator.isOverride();
+		}
+		return false;
+	}
+
+	@Override
+	public boolean isFinal() {
+		ICPPASTFunctionDeclarator functionDeclarator = findFunctionDeclarator();
+		if(functionDeclarator != null){
+			return functionDeclarator.isFinal();
+		}
+		return false;
+	}
+	
+	private ICPPASTFunctionDeclarator findFunctionDeclarator() {
+		IASTName target = null;
 		if (declarations != null && declarations.length > 0) {
-			IASTName decl= declarations[0];
-			if (decl != null) {
-				IASTNode parent = decl.getParent();
-				while (!(parent instanceof IASTDeclarator) && parent != null)
-					parent = parent.getParent();
-				
-				if (parent instanceof IASTDeclarator) {
-					IASTDeclarator dtor= ASTQueries.findTypeRelevantDeclarator((IASTDeclarator) parent);
-					if (dtor instanceof ICPPASTFunctionDeclarator) {
-						return ((ICPPASTFunctionDeclarator) dtor).isPureVirtual();
-					}
+			target = declarations[0];
+		} else {
+			target = definition;
+		}
+		if (target != null) {
+			IASTNode parent = target.getParent();
+			while (!(parent instanceof IASTDeclarator) && parent != null)
+				parent = parent.getParent();
+
+			if (parent instanceof IASTDeclarator) {
+				IASTDeclarator dtor = ASTQueries
+						.findTypeRelevantDeclarator((IASTDeclarator) parent);
+				if (dtor instanceof ICPPASTFunctionDeclarator) {
+					return (ICPPASTFunctionDeclarator) dtor;
 				}
 			}
 		}
-		return false;
+		return null;
 	}
 }

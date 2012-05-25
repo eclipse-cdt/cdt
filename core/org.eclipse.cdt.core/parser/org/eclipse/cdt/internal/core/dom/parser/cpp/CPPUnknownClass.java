@@ -129,4 +129,9 @@ public class CPPUnknownClass extends CPPUnknownBinding implements ICPPUnknownCla
 	public String toString() {
 		return ASTTypeUtil.getType(this);
 	}
+
+	@Override
+	public boolean isFinal() {
+		return false;
+	}
 }

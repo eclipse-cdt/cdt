@@ -338,6 +338,11 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 	public void addDeclaration(IASTNode node) {
 	}
 
+	@Override
+	public boolean isFinal() {
+		return false;
+	}
+
 
 	private final class ClassScope implements ICPPClassScope {
 		@Override

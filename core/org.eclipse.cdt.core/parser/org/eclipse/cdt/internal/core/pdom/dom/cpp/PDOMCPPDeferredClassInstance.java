@@ -212,6 +212,11 @@ class PDOMCPPDeferredClassInstance extends PDOMCPPSpecialization
 	}
 	
 	@Override
+	public boolean isFinal() {
+		return getClassTemplate().isFinal();
+	}
+	
+	@Override
 	public ICPPTemplateArgument[] getTemplateArguments() {
 		try {
 			final long rec= getPDOM().getDB().getRecPtr(record+ARGUMENTS);

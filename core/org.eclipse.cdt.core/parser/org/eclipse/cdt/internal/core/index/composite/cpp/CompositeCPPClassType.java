@@ -184,4 +184,9 @@ class CompositeCPPClassType extends CompositeCPPBinding implements ICPPClassType
 	public boolean isAnonymous() {
 		return ((ICPPClassType) rbinding).isAnonymous();
 	}
+
+	@Override
+	public boolean isFinal() {
+		return ((ICPPClassType) rbinding).isFinal();
+	}
 }

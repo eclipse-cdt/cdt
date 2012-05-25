@@ -81,4 +81,13 @@ public class CPPMethodTemplateSpecialization extends CPPFunctionTemplateSpeciali
 		return false;
 	}
 
+	@Override
+	public boolean isOverride() {
+		return false;
+	}
+
+	@Override
+	public boolean isFinal() {
+		return false;
+	}
 }

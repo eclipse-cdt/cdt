@@ -95,6 +95,17 @@ public class CPPMethodSpecialization extends CPPFunctionSpecialization
 
 		return false;
 	}
+	
+	@Override
+	public boolean isOverride() {
+		return false;
+	}
+	
+	@Override
+	public boolean isFinal() {
+		return false;
+	}
+	
 
 	@Override
 	public IType[] getExceptionSpecification() {

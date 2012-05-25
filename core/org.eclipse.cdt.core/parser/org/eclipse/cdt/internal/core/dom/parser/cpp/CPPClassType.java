@@ -105,6 +105,10 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 		public ICPPClassType[] getNestedClasses() {
 			return ICPPClassType.EMPTY_CLASS_ARRAY;
 		}
+		@Override
+		public boolean isFinal() {
+			return false;
+		}
 	}
 
 	private IASTName definition;
@@ -390,6 +394,15 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 					return true;
 				}
 			}
+		}
+		return false;
+	}
+
+	@Override
+	public boolean isFinal() {
+		ICPPASTCompositeTypeSpecifier typeSpecifier = getCompositeTypeSpecifier();
+		if (typeSpecifier != null) {
+			return typeSpecifier.isFinal();
 		}
 		return false;
 	}

@@ -9694,4 +9694,177 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertEquals(1, declarations.length);
 		assertEquals(bh.findName("S", 1), declarations[0]);
 	}
+	
+	// struct S {
+	//     virtual void mFuncDecl() final;
+	//     virtual void mFuncDef() final {}
+	// };
+	public void testFinalFunction() throws Exception {
+		String code = getAboveComment();
+		IASTTranslationUnit tu = parseAndCheckBindings(code);
+		
+		ICPPASTCompositeTypeSpecifier typeDeclarationS = getCompositeType(tu, 0);
+	
+		IASTSimpleDeclaration functionDeclaration = getDeclaration(typeDeclarationS, 0);
+		IASTDeclarator[] functionDeclarators = functionDeclaration.getDeclarators();
+		assertEquals(1, functionDeclarators.length);
+		assertInstance(functionDeclarators[0], ICPPASTFunctionDeclarator.class);
+		assertVirtualSpecifiers((ICPPASTFunctionDeclarator)functionDeclarators[0], false, true);
+		
+		ICPPASTFunctionDefinition functionDefinition = getDeclaration(typeDeclarationS, 1);
+		IASTFunctionDeclarator declarator = functionDefinition.getDeclarator();
+		assertInstance(declarator, ICPPASTFunctionDeclarator.class);
+		assertVirtualSpecifiers((ICPPASTFunctionDeclarator)declarator, false, true);
+		
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+
+		ICPPMethod funcDecl = bh.assertNonProblem("mFuncDecl()", 9);
+		assertFalse(funcDecl.isOverride());
+		assertTrue(funcDecl.isFinal());
+
+		ICPPMethod funcDef = bh.assertNonProblem("mFuncDef()", 8);
+		assertFalse(funcDef.isOverride());
+		assertTrue(funcDef.isFinal());
+		
+	}
+	
+	// struct Base {
+	//     virtual void mFuncDecl(); 
+	//     virtual void mFuncDef(){}
+	// };
+	// struct S : public Base {
+	//     void mFuncDecl() override;
+	//     void mFuncDef() override {}
+	// };
+	public void testOverrideFunction() throws Exception {
+		String code = getAboveComment();
+		IASTTranslationUnit tu = parseAndCheckBindings(code);
+		
+		ICPPASTCompositeTypeSpecifier typeDeclarationS = getCompositeType(tu, 1);
+	
+		IASTSimpleDeclaration functionDeclaration = getDeclaration(typeDeclarationS, 0);
+		IASTDeclarator[] functionDeclarators = functionDeclaration.getDeclarators();
+		assertEquals(1, functionDeclarators.length);
+		assertInstance(functionDeclarators[0], ICPPASTFunctionDeclarator.class);
+		assertVirtualSpecifiers((ICPPASTFunctionDeclarator)functionDeclarators[0], true, false);
+		
+		ICPPASTFunctionDefinition functionDefinition = getDeclaration(typeDeclarationS, 1);
+		IASTFunctionDeclarator declarator = functionDefinition.getDeclarator();
+		assertInstance(declarator, ICPPASTFunctionDeclarator.class);
+		assertVirtualSpecifiers((ICPPASTFunctionDeclarator)declarator, true, false);
+		
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+
+		ICPPMethod funcDecl = bh.assertNonProblem("mFuncDecl() override", 9);
+		assertTrue(funcDecl.isOverride());
+		assertFalse(funcDecl.isFinal());
+
+		ICPPMethod funcDef = bh.assertNonProblem("mFuncDef() override", 8);
+		assertTrue(funcDef.isOverride());
+		assertFalse(funcDef.isFinal());
+	}
+	
+	// struct Base {
+	//     virtual void mFuncDecl(); 
+	//     virtual void mFuncDef(){}
+	// };
+	// struct S : public Base {
+	//     void mFuncDecl() final override;
+	//     void mFuncDef() final override {}
+	// };
+	public void testOverrideFinalFunction() throws Exception {
+		String code = getAboveComment();
+		IASTTranslationUnit tu = parseAndCheckBindings(code);
+		
+		ICPPASTCompositeTypeSpecifier typeDeclarationS = getCompositeType(tu, 1);
+	
+		IASTSimpleDeclaration functionDeclaration = getDeclaration(typeDeclarationS, 0);
+		IASTDeclarator[] functionDeclarators = functionDeclaration.getDeclarators();
+		assertEquals(1, functionDeclarators.length);
+		assertInstance(functionDeclarators[0], ICPPASTFunctionDeclarator.class);
+		assertVirtualSpecifiers((ICPPASTFunctionDeclarator)functionDeclarators[0], true, true);
+		
+		ICPPASTFunctionDefinition functionDefinition = getDeclaration(typeDeclarationS, 1);
+		IASTFunctionDeclarator declarator = functionDefinition.getDeclarator();
+		assertInstance(declarator, ICPPASTFunctionDeclarator.class);
+		assertVirtualSpecifiers((ICPPASTFunctionDeclarator)declarator, true, true);
+		
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+
+		ICPPMethod funcDecl = bh.assertNonProblem("mFuncDecl() final", 9);
+		assertTrue(funcDecl.isOverride());
+		assertTrue(funcDecl.isFinal());
+
+		ICPPMethod funcDef = bh.assertNonProblem("mFuncDef() final", 8);
+		assertTrue(funcDef.isOverride());
+		assertTrue(funcDef.isFinal());
+	}
+
+	private void assertVirtualSpecifiers(ICPPASTFunctionDeclarator declarator, boolean expectOverride, boolean expectFinal) {
+		assertEquals(expectOverride, declarator.isOverride());
+		assertEquals(expectFinal, declarator.isFinal());
+	}
+	
+	// struct Base {
+	// };
+	// struct S final : public Base {
+	// };
+	public void testFinalClass() throws Exception {
+		String code = getAboveComment();
+		IASTTranslationUnit tu = parseAndCheckBindings(code);
+		
+		ICPPASTCompositeTypeSpecifier typeDeclarationBase = getCompositeType(tu, 0);
+		assertFalse(typeDeclarationBase.isFinal());
+		ICPPASTCompositeTypeSpecifier typeDeclarationS = getCompositeType(tu, 1);
+		assertTrue(typeDeclarationS.isFinal());
+		
+		BindingAssertionHelper bh = new BindingAssertionHelper(code, true);
+
+		ICPPClassType structBase = bh.assertNonProblem("Base {", 4);
+		assertFalse(structBase.isFinal());
+		
+		ICPPClassType structS = bh.assertNonProblem("S", 1);
+		assertTrue(structS.isFinal());
+	}
+	
+	
+	// struct S{
+	//     template<typename T>
+	// 	   void foo(T t) final {
+	// 	   }
+	// };
+	//
+	// int main() {
+	// 	   S s;
+	// 	   s.foo(1);
+	// }
+	public void testFinalTemplateMethod() throws Exception {
+		String code = getAboveComment();
+		IASTTranslationUnit tu = parseAndCheckBindings(code);
+		
+		BindingAssertionHelper bh = new BindingAssertionHelper(code, true);
+		
+		ICPPMethod fooTemplate = bh.assertNonProblem("foo(T", 3);
+		assertFalse(fooTemplate.isOverride());
+		assertTrue(fooTemplate.isFinal());
+	}
+	
+	// void foo(){
+	//     int final, override;
+	//     final = 4;
+	//     override = 2;
+	// }
+	public void testFinalAndOverrideVariables() throws Exception {
+		parseAndCheckBindings();
+	}
+	
+	// struct S{
+	//     int i;
+	// };
+	// void foo(struct S final){
+	//     final.i = 23;
+	// }
+	public void testFinalParameter() throws Exception {
+		parseAndCheckBindings();
+	}
 }

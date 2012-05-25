@@ -57,4 +57,14 @@ implements ICPPMethod {
 	public boolean isPureVirtual() {
 		return ((ICPPMethod)rbinding).isPureVirtual();
 	}
+
+	@Override
+	public boolean isOverride() {
+		return ((ICPPMethod)rbinding).isOverride();
+	}
+
+	@Override
+	public boolean isFinal() {
+		return ((ICPPMethod)rbinding).isFinal();
+	}
 }

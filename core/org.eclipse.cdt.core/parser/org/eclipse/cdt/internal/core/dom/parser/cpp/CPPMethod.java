@@ -225,6 +225,32 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
      */
     @Override
 	public boolean isPureVirtual() {
+    	ICPPASTFunctionDeclarator declarator = findFunctionDeclarator();
+    	if(declarator != null){
+    		return declarator.isPureVirtual();
+    	}
+    	return false;
+    }
+    
+    @Override
+    public boolean isFinal() {
+    	ICPPASTFunctionDeclarator declarator = findFunctionDeclarator();
+    	if(declarator != null){
+    		return declarator.isFinal();
+    	}
+    	return false;
+    }
+    
+    @Override
+    public boolean isOverride() {
+    	ICPPASTFunctionDeclarator declarator = findFunctionDeclarator();
+    	if(declarator != null){
+    		return declarator.isOverride();
+    	}
+    	return false;
+    }
+    
+    private ICPPASTFunctionDeclarator findFunctionDeclarator(){
     	if (declarations != null) {
 			for (IASTDeclarator dtor : declarations) {
 				if (dtor == null)
@@ -235,12 +261,12 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
 				if (decl.getParent() instanceof ICPPASTCompositeTypeSpecifier) {
 					dtor= ASTQueries.findTypeRelevantDeclarator(dtor);
 					if (dtor instanceof ICPPASTFunctionDeclarator) {
-						return ((ICPPASTFunctionDeclarator) dtor).isPureVirtual();
+						return (ICPPASTFunctionDeclarator) dtor;
 					}
 				}
 			}
 		}
-    	return false;
+    	return definition;
     }
 
     @Override

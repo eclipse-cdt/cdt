@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -25,7 +26,6 @@ import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
-import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
@@ -43,6 +43,7 @@ public class ASTCommenterVisitor extends ASTVisitor {
 	protected NodeCommentMap commentMap;
 		
 	private NodeCommenter nodeCommenter;
+	private IASTDeclaration lastDecl;
 	
 	{
 		shouldVisitBaseSpecifiers = true;
@@ -57,6 +58,7 @@ public class ASTCommenterVisitor extends ASTVisitor {
 		shouldVisitStatements = true;
 		shouldVisitTemplateParameters = true;
 		shouldVisitTypeIds = true;
+		shouldVisitTranslationUnit = true;
 	}
 	
 	public ASTCommenterVisitor(CommentHandler commHandler, NodeCommentMap commentMap) {
@@ -67,10 +69,6 @@ public class ASTCommenterVisitor extends ASTVisitor {
 
 	private void init() {
 		nodeCommenter = new NodeCommenter(this, commHandler, commentMap);
-	}
-	
-	public void addRemainingComments(IASTDeclaration declaration) {
-		nodeCommenter.appendRemainingComments(declaration);
 	}
 	
 	@Override
@@ -100,7 +98,10 @@ public class ASTCommenterVisitor extends ASTVisitor {
 
 	@Override
 	public int visit(IASTDeclaration declaration) {
-		return nodeCommenter.appendComments((ASTNode) declaration);
+		if (ASTCommenter.isInWorkspace(declaration)) {
+			return nodeCommenter.appendComments((ASTNode) declaration);
+		}
+		return PROCESS_SKIP;
 	}
 
 	@Override
@@ -131,8 +132,12 @@ public class ASTCommenterVisitor extends ASTVisitor {
 	@Override
 	public int leave(IASTTranslationUnit tu) {
 		nodeCommenter.appendComments((ASTNode) tu);
+		if (lastDecl != null) {
+			nodeCommenter.appendRemainingComments(lastDecl);
+		}
 		return PROCESS_CONTINUE;
 	}
+
 
 	@Override
 	public int leave(IASTName name) {
@@ -142,6 +147,7 @@ public class ASTCommenterVisitor extends ASTVisitor {
 
 	@Override
 	public int leave(IASTDeclaration declaration) {
+		lastDecl = declaration;
 		nodeCommenter.appendComments((ASTNode) declaration);
 		return PROCESS_CONTINUE;
 	}
@@ -215,5 +221,5 @@ public class ASTCommenterVisitor extends ASTVisitor {
 	public int leave( IASTComment comment){
 		nodeCommenter.appendComments((ASTNode) comment);
 		return PROCESS_CONTINUE;
-	}	
+	}
 }

@@ -413,7 +413,7 @@ public class BuildConsolePartitioner
 				// entry in the queue. The batch size is adaptive and grows with the length of
 				// the queue.
 				if (entry.getStream() == stream && entry.getEventType() == StreamEntry.EVENT_APPEND &&
-						entry.getMarker() == marker && entry.size() < 1000 * fQueue.size()) {
+						entry.getMarker() == marker && entry.size() < 2000 * fQueue.size()) {
 					entry.appendText(text);
 					addToQueue = false;
 				}

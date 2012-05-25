@@ -10,7 +10,6 @@
  *     Andrew Ferguson (Symbian)
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.core.pdom.db;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -47,8 +46,8 @@ public class LongString implements IString {
 	}
 	
 	public LongString(Database db, final char[] chars, boolean useBytes) throws CoreException {
-		final int numChars1 = useBytes ? NUM_CHARS1*2 : NUM_CHARS1;
-		final int numCharsn = useBytes ? NUM_CHARSN*2 : NUM_CHARSN;
+		final int numChars1 = useBytes ? NUM_CHARS1 * 2 : NUM_CHARS1;
+		final int numCharsn = useBytes ? NUM_CHARSN * 2 : NUM_CHARSN;
 
 		this.db = db;
 		this.record = db.malloc(Database.MAX_MALLOC_SIZE);
@@ -67,7 +66,7 @@ public class LongString implements IString {
 		// write the subsequent records
 		long lastNext = this.record + NEXT1;
 		int start = numChars1;
-		while (length-start > numCharsn) {
+		while (length - start > numCharsn) {
 			long nextRecord = db.malloc(Database.MAX_MALLOC_SIZE);
 			db.putRecPtr(lastNext, nextRecord);
 			chunk= db.getChunk(nextRecord);
@@ -115,9 +114,9 @@ public class LongString implements IString {
 		long p = record;
 		Chunk chunk= db.getChunk(p);
 		if (useBytes) {
-			chunk.getCharsFromBytes(p+CHARS1, chars, 0, numChars1);
+			chunk.getCharsFromBytes(p + CHARS1, chars, 0, numChars1);
 		} else {
-			chunk.getChars(p+CHARS1, chars, 0, numChars1);
+			chunk.getChars(p + CHARS1, chars, 0, numChars1);
 		}
 		
 		int start= numChars1;
@@ -129,12 +128,12 @@ public class LongString implements IString {
 			int partLen= Math.min(length-start, numCharsn);
 			chunk= db.getChunk(p);
 			if (useBytes) {
-				chunk.getCharsFromBytes(p+CHARSN, chars, start, partLen);
+				chunk.getCharsFromBytes(p + CHARSN, chars, start, partLen);
 			} else {
-				chunk.getChars(p+CHARSN, chars, start, partLen);
+				chunk.getChars(p + CHARSN, chars, start, partLen);
 			}
-			start+= partLen;
-			p=p+NEXTN;
+			start += partLen;
+			p=p + NEXTN;
 		}
 		return chars;
 	}
@@ -201,7 +200,7 @@ public class LongString implements IString {
 				chars = getChars();
 				final int len = chars.length;
 				for (int i = 0; i < len; i++) {
-					h = 31*h + chars[i];
+					h = 31 * h + chars[i];
 				}
 			} catch (CoreException e) {
 			}
@@ -235,7 +234,6 @@ public class LongString implements IString {
 		return ShortString.comparePrefix(getChars(), other, caseSensitive);
 	}
 
-	
 	@Override
 	public String getString() throws CoreException {
 		return new String(getChars());

@@ -6,9 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
+ *     QNX - Initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.core.pdom.db;
 
 import java.io.IOException;
@@ -19,15 +18,12 @@ import org.eclipse.core.runtime.Status;
 
 /**
  * @author Doug Schaefer
- *
  */
 public class DBStatus extends Status {
-
 	/**
 	 * @param exception
 	 */
 	public DBStatus(IOException exception) {
 		super(IStatus.ERROR, CCorePlugin.PLUGIN_ID, 0, "IOException", exception); //$NON-NLS-1$
 	}
-
 }

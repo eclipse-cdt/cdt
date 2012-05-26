@@ -26,6 +26,7 @@ import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
+import org.eclipse.cdt.managedbuilder.core.ManagedCProjectNature;
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -431,6 +432,48 @@ public class BuilderFactory {
 		if(builders != null)
 			return builders;
 		return EMPTY_BUILDERS_ARRAY;
+	}
+
+	public static int applyBuilder(IProjectDescription eDes, IBuilder builder){
+		return applyBuilder(eDes, CommonBuilder.BUILDER_ID, builder);
+	}
+
+	public static final int CMD_UNDEFINED = -1;
+	public static final int NO_CHANGES = 0;
+	public static final int CMD_CHANGED = 1;
+	
+	private static int applyBuilder(IProjectDescription eDes, String eBuilderId, IBuilder builder){
+		ICommand cmd = ManagedCProjectNature.getBuildSpec(eDes, eBuilderId);
+		if(cmd == null)
+			return CMD_UNDEFINED;
+		
+		if(applyBuilder(cmd, builder)){
+			ManagedCProjectNature.setBuildSpec(eDes, cmd);
+			return CMD_CHANGED; 
+		}
+		return NO_CHANGES;
+	}
+	
+	private static boolean applyBuilder(ICommand cmd, IBuilder builder) {
+		boolean changesMade = false;
+		
+		if(cmd.isBuilding(IncrementalProjectBuilder.AUTO_BUILD) != builder.isAutoBuildEnable()) {
+			cmd.setBuilding(IncrementalProjectBuilder.AUTO_BUILD, builder.isAutoBuildEnable());
+			changesMade = true;
+		}
+		if(cmd.isBuilding(IncrementalProjectBuilder.FULL_BUILD) != builder.isFullBuildEnabled()) {
+			cmd.setBuilding(IncrementalProjectBuilder.FULL_BUILD, builder.isFullBuildEnabled());
+			changesMade = true;
+		}
+		if(cmd.isBuilding(IncrementalProjectBuilder.INCREMENTAL_BUILD) != builder.isIncrementalBuildEnabled()) {
+			cmd.setBuilding(IncrementalProjectBuilder.INCREMENTAL_BUILD, builder.isIncrementalBuildEnabled());
+			changesMade = true;
+		}
+		if(cmd.isBuilding(IncrementalProjectBuilder.CLEAN_BUILD) != builder.isCleanBuildEnabled()) {
+			cmd.setBuilding(IncrementalProjectBuilder.CLEAN_BUILD, builder.isCleanBuildEnabled());
+			changesMade = true;
+		}
+		return changesMade;
 	}
 
 }

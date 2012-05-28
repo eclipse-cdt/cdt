@@ -82,6 +82,7 @@
  * David McKnight   (IBM)        - [342095] Properties in Properties view remain "Pending..." in some cases
  * David McKnight   (IBM)        - [372976] ClassCastException when SystemView assumes widget a TreeItem when it's a Tree
  * David Dykstal    (IBM)        - [257110] Prompting filter called twice on double click rather than just once
+ * David McKnight   (IBM)        - [380613] Problem in SystemView with disposed TreeItem when Link With Editor toolbar icon is used
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -4602,7 +4603,7 @@ public class SystemView extends SafeTreeViewer
 	public Item findFirstRemoteItemReference(Object remoteObject, Item parentItem) {
 
 		Item match = mappedFindFirstRemoteItemReference(remoteObject);
-		if (match != null)
+		if (match != null && !match.isDisposed())
 			return match;
 
 		//List matches = new Vector();
@@ -4777,7 +4778,7 @@ public class SystemView extends SafeTreeViewer
 		// use map first
 		Item match = mappedFindFirstRemoteItemReference(elementObject);
 
-		for (int idx = 0; (match == null) && (idx < roots.length); idx++) {
+		for (int idx = 0; (match == null || match.isDisposed()) && (idx < roots.length); idx++) {
 			//System.out.println("recursiveFindFirstRemoteItemReference(parentItem, remoteObjectName, remoteObject, subsystem)");
 			match = recursiveFindFirstRemoteItemReference(roots[idx], searchString, elementObject, subsystem);
 		}
@@ -5803,7 +5804,7 @@ public class SystemView extends SafeTreeViewer
 	 */
 	public Object[] getElementNodes(Object element) {
 		Widget w = findItem(element);
-		if ((w != null) && (w instanceof TreeItem)) return getElementNodes((TreeItem) w);
+		if ((w != null) && (!w.isDisposed()) && (w instanceof TreeItem)) return getElementNodes((TreeItem) w);
 		return null;
 	}
 

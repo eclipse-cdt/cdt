@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOHn//+kg\u003d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/pdom/tests/ChangeConfigurationTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-05-29T21:35:41Z",
+      "side": 1,
+      "message": "Is is possible to create a lighter-weight test that doesn\u0027t require a zipped project?",
+      "revId": "a379fd4b791b4fe5dd1b13b2553648009cbcc550",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

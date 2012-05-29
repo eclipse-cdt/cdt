@@ -24,14 +24,14 @@ import org.eclipse.core.runtime.Path;
  */
 public class CWDLocator extends AbstractErrorParser {
 	private static boolean enabled = true;
-	
+
 	@Override
 	public boolean processLine(String line, ErrorParserManager manager) {
 		int lineNumber = manager.getLineCounter();
 		// enable on first line (can be previously disabled if processed parallel build)
 		if (lineNumber==1)
 			enabled = true;
-		
+
 		if (enabled)
 			return super.processLine(line, manager);
 		return false;
@@ -53,7 +53,8 @@ public class CWDLocator extends AbstractErrorParser {
 				}
 				return false;
 			}
-		}, new ErrorPattern("make\\[(.*)\\]: Entering directory `(.*)'", 0, 0) { //$NON-NLS-1$
+		},
+		new ErrorPattern("make\\[(.*)\\]: Entering directory `(.*)'", 0, 0) { //$NON-NLS-1$
 			@Override
 			protected boolean recordError(Matcher matcher, ErrorParserManager eoParser) {
 				int level;
@@ -74,7 +75,17 @@ public class CWDLocator extends AbstractErrorParser {
 				eoParser.pushDirectory(new Path(dir));
 				return true;
 			}
-		}, new ErrorPattern("make\\[.*\\]: Leaving directory", 0, 0) { //$NON-NLS-1$
+		},
+		// This is emitted by GNU make using options -n, --just-print or -w, --print-directory.
+		new ErrorPattern("make: Entering directory `(.*)'", 0, 0) { //$NON-NLS-1$
+			@Override
+			protected boolean recordError(Matcher matcher, ErrorParserManager eoParser) {
+				String dir = matcher.group(1);
+				eoParser.pushDirectory(new Path(dir));
+				return true;
+			}
+		},
+		new ErrorPattern("make(\\[.*\\])?: Leaving directory", 0, 0) { //$NON-NLS-1$
 			@Override
 			protected boolean recordError(Matcher matcher, ErrorParserManager eoParser) {
 				eoParser.popDirectoryURI();

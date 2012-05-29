@@ -1206,6 +1206,36 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	}
 
 	/**
+	 * Checks if output of '-n'/'--just-print' or '-w'/'--print-directory' options of make can be recognized.
+	 *
+	 * @throws Exception...
+	 */
+	public void testPushPop_WithNoLevel() throws Exception {
+		String fileName = getName() + ".c";
+
+		ResourceHelper.createFolder(fProject, "Folder");
+		ResourceHelper.createFolder(fProject, "Folder/SubFolder");
+
+		ResourceHelper.createFile(fProject, fileName);
+		ResourceHelper.createFile(fProject, "Folder/"+fileName);
+		ResourceHelper.createFile(fProject, "Folder/SubFolder/"+fileName);
+
+		String lines = "make: Entering directory `Folder'\n"
+				+ "make: Entering directory `SubFolder'\n"
+				+ "make: Leaving directory `SubFolder'\n"
+				+ fileName+":1:error\n";
+
+		String[] errorParsers = {CWD_LOCATOR_ID, mockErrorParserId };
+		parseOutput(fProject, fProject.getLocation(), errorParsers, lines);
+		assertEquals(1, errorList.size());
+
+		ProblemMarkerInfo problemMarkerInfo = errorList.get(0);
+		assertEquals("L/FindMatchingFilesTest/Folder/"+fileName,problemMarkerInfo.file.toString());
+		assertEquals(1,problemMarkerInfo.lineNumber);
+		assertEquals("error",problemMarkerInfo.description);
+	}
+
+	/**
 	 * Checks if a file from error output can be found.
 	 *
 	 * @throws Exception...

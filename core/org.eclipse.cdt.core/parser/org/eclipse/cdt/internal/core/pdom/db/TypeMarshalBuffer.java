@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.pdom.db;
 
@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.CoreException;
  * For marshalling types to byte arrays.
  */
 public class TypeMarshalBuffer implements ITypeMarshalBuffer {
-	public final static byte [] EMPTY= {0,0,0,0,0,0};
+	public final static byte[] EMPTY= { 0, 0, 0, 0, 0, 0 };
 	public final static byte NULL_TYPE= 0;
 	public final static byte INDIRECT_TYPE= (byte) -1;
 	public final static byte BINDING_TYPE= (byte) -2;

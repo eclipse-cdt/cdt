@@ -10,7 +10,6 @@
  *     Andrew Ferguson (Symbian)
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.core.pdom.db;
 
 import org.eclipse.core.runtime.CoreException;

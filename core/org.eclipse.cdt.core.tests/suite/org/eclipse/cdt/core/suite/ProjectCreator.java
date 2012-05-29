@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *     IBM - Initial API and implementation
+ *     Marc-Andre Laperle
  *******************************************************************************/
 package org.eclipse.cdt.core.suite;
 
@@ -76,7 +77,9 @@ public class ProjectCreator extends TestCase {
 		IProject project = root.getProject(zipProjectName);
 		project.create(monitor);
 		project.open(monitor);
-		project.move(new Path(projectName), true, monitor);
+		if(!project.getName().equals(projectName)) {
+			project.move(new Path(projectName), true, monitor);	
+		}
 
 		return project;
 	}

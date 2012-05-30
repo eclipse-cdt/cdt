@@ -6,6 +6,10 @@ int Hallo;
 //%CPP
 int TestClass::Hallo;
 
+//!FullyQualifiedName
+//%CPP
+int ::name;
+
 //!OperatorName
 //%CPP
 class Foo

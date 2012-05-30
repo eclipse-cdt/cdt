@@ -118,6 +118,9 @@ public class NameWriter extends NodeWriter {
 	}
 
 	private void writeQualifiedName(ICPPASTQualifiedName qname) {
+		if (qname.isFullyQualified()) {
+			scribe.print(COLON_COLON);
+		}
 		IASTName[] nodes = qname.getNames();
 		for (int i = 0; i < nodes.length; ++i) {
 			nodes[i].accept(visitor);

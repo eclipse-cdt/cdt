@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "AABOHn//+gA\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/GdbDebugOptions.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 559
+      },
+      "writtenOn": "2012-05-30T15:11:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOHn///Cs\u003d",
+      "revId": "de647db9f38f8c053a463bbe72fee921cce28eb9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOHn///Dw\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/GdbDebugOptions.java",
         "patchSetId": 3
@@ -30,6 +48,24 @@
       "writtenOn": "2012-05-22T20:31:35Z",
       "side": 1,
       "message": "Please remove @since",
+      "revId": "de647db9f38f8c053a463bbe72fee921cce28eb9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHn//+f8\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/GdbDebugOptions.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 559
+      },
+      "writtenOn": "2012-05-30T15:11:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOHn///Dw\u003d",
       "revId": "de647db9f38f8c053a463bbe72fee921cce28eb9",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "AABOHn//+gc\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/GdbDebugOptions.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 559
+      },
+      "writtenOn": "2012-05-30T15:11:10Z",
+      "side": 1,
+      "message": "I think you\u0027re right about the file doing the wrapping for us. I\u0027m thinking of copying message to a new String, then breaking down the new String into substrings of 100 characters or less. Then we can still pass the original message to fgDebugTrace.",
+      "parentUuid": "AABOHn///DQ\u003d",
+      "revId": "de647db9f38f8c053a463bbe72fee921cce28eb9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOHn///C4\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/GdbDebugOptions.java",
         "patchSetId": 3
@@ -64,6 +118,24 @@
       "writtenOn": "2012-05-22T20:31:35Z",
       "side": 1,
       "message": "I noticed the trace file is filled with extra information like timestamp and pluginId.  There is redundancy with our own timestamp, but I prefer this than to remove it from the sysout printout.\n\nI think it is ok to leave the extra info in the trace file.",
+      "revId": "de647db9f38f8c053a463bbe72fee921cce28eb9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHn//+f4\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/GdbDebugOptions.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 559
+      },
+      "writtenOn": "2012-05-30T15:11:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOHn///C4\u003d",
       "revId": "de647db9f38f8c053a463bbe72fee921cce28eb9",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -121,6 +193,24 @@
     },
     {
       "key": {
+        "uuid": "AABOHn//+f0\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/GdbPlugin.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 559
+      },
+      "writtenOn": "2012-05-30T15:11:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOHn///Ds\u003d",
+      "revId": "de647db9f38f8c053a463bbe72fee921cce28eb9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOHn///DM\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/GdbPlugin.java",
         "patchSetId": 3
@@ -132,6 +222,24 @@
       "writtenOn": "2012-05-22T20:31:35Z",
       "side": 1,
       "message": "Please remove, it is no longer needed.",
+      "revId": "de647db9f38f8c053a463bbe72fee921cce28eb9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHn//+fs\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/GdbPlugin.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 559
+      },
+      "writtenOn": "2012-05-30T15:11:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOHn///DM\u003d",
       "revId": "de647db9f38f8c053a463bbe72fee921cce28eb9",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -155,6 +263,24 @@
     },
     {
       "key": {
+        "uuid": "AABOHn//+fw\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/GdbPlugin.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 559
+      },
+      "writtenOn": "2012-05-30T15:11:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOHn///Do\u003d",
+      "revId": "de647db9f38f8c053a463bbe72fee921cce28eb9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOHn///DE\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/GdbPlugin.java",
         "patchSetId": 3
@@ -166,6 +292,24 @@
       "writtenOn": "2012-05-22T20:31:35Z",
       "side": 1,
       "message": "Please remove the debug() method below.  It should no longer be used.",
+      "revId": "de647db9f38f8c053a463bbe72fee921cce28eb9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHn//+fo\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/GdbPlugin.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 559
+      },
+      "writtenOn": "2012-05-30T15:11:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOHn///DE\u003d",
       "revId": "de647db9f38f8c053a463bbe72fee921cce28eb9",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -189,6 +333,24 @@
     },
     {
       "key": {
+        "uuid": "AABOHn//+gM\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 665,
+      "author": {
+        "id": 559
+      },
+      "writtenOn": "2012-05-30T15:11:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOHn///DA\u003d",
+      "revId": "de647db9f38f8c053a463bbe72fee921cce28eb9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOHn///DY\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
         "patchSetId": 3
@@ -200,6 +362,24 @@
       "writtenOn": "2012-05-22T20:31:35Z",
       "side": 1,
       "message": "Put a check\n if (GdbDebugOptions.DEBUG) {\n\nbefore calling the trace method",
+      "revId": "de647db9f38f8c053a463bbe72fee921cce28eb9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHn//+gQ\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 669,
+      "author": {
+        "id": 559
+      },
+      "writtenOn": "2012-05-30T15:11:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOHn///DY\u003d",
       "revId": "de647db9f38f8c053a463bbe72fee921cce28eb9",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -223,6 +403,24 @@
     },
     {
       "key": {
+        "uuid": "AABOHn//+gU\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 670,
+      "author": {
+        "id": 559
+      },
+      "writtenOn": "2012-05-30T15:11:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOHn///Dk\u003d",
+      "revId": "de647db9f38f8c053a463bbe72fee921cce28eb9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOHn///DU\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
         "patchSetId": 3
@@ -234,6 +432,24 @@
       "writtenOn": "2012-05-22T20:31:35Z",
       "side": 1,
       "message": "Put a check\n if (GdbDebugOptions.DEBUG) {\n\nbefore calling the trace method",
+      "revId": "de647db9f38f8c053a463bbe72fee921cce28eb9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHn//+gI\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 732,
+      "author": {
+        "id": 559
+      },
+      "writtenOn": "2012-05-30T15:11:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOHn///DU\u003d",
       "revId": "de647db9f38f8c053a463bbe72fee921cce28eb9",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -257,6 +473,24 @@
     },
     {
       "key": {
+        "uuid": "AABOHn//+gE\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 733,
+      "author": {
+        "id": 559
+      },
+      "writtenOn": "2012-05-30T15:11:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOHn///Dg\u003d",
+      "revId": "de647db9f38f8c053a463bbe72fee921cce28eb9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOHn///C8\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
         "patchSetId": 3
@@ -268,6 +502,24 @@
       "writtenOn": "2012-05-22T20:31:35Z",
       "side": 1,
       "message": "Please remove added empty lines.",
+      "revId": "de647db9f38f8c053a463bbe72fee921cce28eb9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHn//+fk\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 885,
+      "author": {
+        "id": 559
+      },
+      "writtenOn": "2012-05-30T15:11:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOHn///C8\u003d",
       "revId": "de647db9f38f8c053a463bbe72fee921cce28eb9",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

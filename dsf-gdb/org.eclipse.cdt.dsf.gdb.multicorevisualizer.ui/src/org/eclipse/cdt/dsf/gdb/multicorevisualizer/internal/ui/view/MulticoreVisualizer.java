@@ -297,21 +297,13 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 	{
 		if (! m_actionsInitialized) return;
 
-		// TODO: do we need any special enabling code here?
-		// Seems like we can rely on the enabling done by the DebugView itself,
-		// since we've associated these actions with it.
-
 		boolean enabled = hasSelection();
+		m_selectAllAction.setEnabled(enabled);
+		m_refreshAction.setEnabled(enabled);
 		
-		m_resumeAction.setEnabled(enabled);
-		m_suspendAction.setEnabled(enabled);
-		m_terminateAction.setEnabled(enabled);
-		
-		m_stepReturnAction.setEnabled(enabled);
-		m_stepOverAction.setEnabled(enabled);
-		m_stepIntoAction.setEnabled(enabled);
-		m_dropToFrameAction.setEnabled(enabled);
-
+		// We should not change the enablement of the debug view
+		// actions, as they are automatically enabled/disabled
+		// by the platform.
 	}
 
 	/** Updates actions specific to context menu. */

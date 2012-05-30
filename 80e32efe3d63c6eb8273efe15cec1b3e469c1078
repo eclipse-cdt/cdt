@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "AABOHn//+dM\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/plugin.properties",
+        "patchSetId": 4
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 559
+      },
+      "writtenOn": "2012-05-30T19:34:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOHn//+eo\u003d",
+      "revId": "80e32efe3d63c6eb8273efe15cec1b3e469c1078",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOHn//+eY\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/GdbDebugOptions.java",
         "patchSetId": 4
@@ -30,6 +48,24 @@
       "writtenOn": "2012-05-30T19:04:29Z",
       "side": 1,
       "message": "Please rename to DEBUG_COMMAND_TIMEOUTS",
+      "revId": "80e32efe3d63c6eb8273efe15cec1b3e469c1078",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHn//+ds\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/GdbDebugOptions.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 559
+      },
+      "writtenOn": "2012-05-30T19:34:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOHn//+eY\u003d",
       "revId": "80e32efe3d63c6eb8273efe15cec1b3e469c1078",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -70,6 +106,24 @@
     },
     {
       "key": {
+        "uuid": "AABOHn//+do\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/GdbDebugOptions.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 559
+      },
+      "writtenOn": "2012-05-30T19:34:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOHn//+ew\u003d",
+      "revId": "80e32efe3d63c6eb8273efe15cec1b3e469c1078",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOHn//+es\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/GdbDebugOptions.java",
         "patchSetId": 4
@@ -87,6 +141,24 @@
     },
     {
       "key": {
+        "uuid": "AABOHn//+dk\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/GdbDebugOptions.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 559
+      },
+      "writtenOn": "2012-05-30T19:34:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOHn//+es\u003d",
+      "revId": "80e32efe3d63c6eb8273efe15cec1b3e469c1078",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOHn//+ek\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/GdbPlugin.java",
         "patchSetId": 4
@@ -98,6 +170,24 @@
       "writtenOn": "2012-05-30T19:04:29Z",
       "side": 1,
       "message": "The format eclipse uses is\n   Copyright (c) 2006, 2012 Wind River Systems and others.\n\ni.e., just the first and last years",
+      "revId": "80e32efe3d63c6eb8273efe15cec1b3e469c1078",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHn//+dg\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/GdbPlugin.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 559
+      },
+      "writtenOn": "2012-05-30T19:34:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOHn//+ek\u003d",
       "revId": "80e32efe3d63c6eb8273efe15cec1b3e469c1078",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -155,6 +245,24 @@
     },
     {
       "key": {
+        "uuid": "AABOHn//+dc\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 230,
+      "author": {
+        "id": 559
+      },
+      "writtenOn": "2012-05-30T19:34:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOHn//+eM\u003d",
+      "revId": "80e32efe3d63c6eb8273efe15cec1b3e469c1078",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOHn//+eI\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
         "patchSetId": 4
@@ -166,6 +274,24 @@
       "writtenOn": "2012-05-30T19:04:29Z",
       "side": 1,
       "message": "Use GdbDebugOptions.trace() here.  Also add a \\n at the end of the string, since the GdbDebugOptions.trace() does not have one.",
+      "revId": "80e32efe3d63c6eb8273efe15cec1b3e469c1078",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHn//+dY\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 416,
+      "author": {
+        "id": 559
+      },
+      "writtenOn": "2012-05-30T19:34:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOHn//+eI\u003d",
       "revId": "80e32efe3d63c6eb8273efe15cec1b3e469c1078",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -189,6 +315,24 @@
     },
     {
       "key": {
+        "uuid": "AABOHn//+dU\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 668,
+      "author": {
+        "id": 559
+      },
+      "writtenOn": "2012-05-30T19:34:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOHn//+eg\u003d",
+      "revId": "80e32efe3d63c6eb8273efe15cec1b3e469c1078",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOHn//+ec\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
         "patchSetId": 4
@@ -200,6 +344,24 @@
       "writtenOn": "2012-05-30T19:04:29Z",
       "side": 1,
       "message": "Must add a \\n at the end in this case:\n   \"%s %s  %s\\n\"",
+      "revId": "80e32efe3d63c6eb8273efe15cec1b3e469c1078",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHn//+dQ\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 733,
+      "author": {
+        "id": 559
+      },
+      "writtenOn": "2012-05-30T19:34:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOHn//+ec\u003d",
       "revId": "80e32efe3d63c6eb8273efe15cec1b3e469c1078",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

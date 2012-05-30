@@ -46,12 +46,12 @@
 -splitIndex
 -windowtitle "RSE API Specification"
 -doctitle "RSE API Specification"
--header "<b>RSE</b><br>Release 3.3"
--bottom "Copyright (c) IBM Corporation and others 2000, 2011. All Rights Reserved."
+-header "<b>RSE</b><br>Release 3.4"
+-bottom "Copyright (c) IBM Corporation and others 2000, 2012. All Rights Reserved."
 -group "RSE Services Plug-in Packages" "org.eclipse.rse.services;org.eclipse.rse.services.*;org.eclipse.rse.internal.services.*"
 -group "RSE Core Plug-in Packages" "org.eclipse.rse.core;org.eclipse.rse.core.*"
 -group "RSE UI Plug-in Packages" "org.eclipse.rse.ui;org.eclipse.rse.ui.*;org.eclipse.rse.files.ui.*;org.eclipse.rse.shells.ui.*;org.eclipse.rse.processes.ui.*"
--link http://java.sun.com/j2se/1.5.0/docs/api
+-link http://docs.oracle.com/javase/1.5.0/docs/api
 -linkoffline ./../../../org.eclipse.platform.doc.isv/reference/api @javadoc.link.location@/platform/reference/api/
 -linkoffline ./../../../org.eclipse.dstore.doc.isv/reference/api ../org.eclipse.dstore.doc.isv/reference/api
 -link http://bundles.osgi.org/javadoc/r4

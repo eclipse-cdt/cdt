@@ -31,6 +31,8 @@ import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -592,6 +594,15 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 
 		compositeOptionsPage = new Composite(comp, SWT.NONE);
 		compositeOptionsPage.setLayout(new TabFolderLayout());
+		compositeOptionsPage.addControlListener(new ControlListener() {
+			@Override
+			public void controlResized(ControlEvent e) {
+				compositeOptionsPage.setBounds(compositeOptionsPage.getParent().getClientArea());
+			}
+			@Override
+			public void controlMoved(ControlEvent e) {
+			}
+		});
 	}
 
 	/**
@@ -969,7 +980,6 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 			optionsPage.setContainer(page);
 			optionsPage.createControl(compositeOptionsPage);
 			optionsPage.setVisible(false);
-			compositeOptionsPage.setBounds(compositeOptionsPage.getParent().getClientArea());
 			compositeOptionsPage.layout(true);
 		}
 	}
@@ -1015,7 +1025,6 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 			boolean isEditable = isEditableForProject || isEditableForPrefs;
 			currentOptionsPage.getControl().setEnabled(isEditable);
 			compositeOptionsPage.setEnabled(isEditable);
-			compositeOptionsPage.setBounds(compositeOptionsPage.getParent().getClientArea());
 			compositeOptionsPage.layout(true);
 		}
 	}

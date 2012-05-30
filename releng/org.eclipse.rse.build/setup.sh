@@ -54,17 +54,17 @@ esac
 #ep_rel="drops4/S-"
 #ep_ver=4.2RC1
 #ep_date="-201205182145"
-ep_rel="drops/S-"
-ep_ver=3.8RC2
-ep_date="-201205251400"
-#ep_rel="drops/R-"
-#ep_ver=3.7.2
-#ep_date="-201202080800"
+#ep_rel="drops/S-"
+#ep_ver=3.8RC2
+#ep_date="-201205251400"
+ep_rel="drops/R-"
+ep_ver=3.7.2
+ep_date="-201202080800"
 P2_disabled=false
 P2_no_dropins=false
-#if [ ! -f eclipse/plugins/org.eclipse.swt_3.7.2.v3740f.jar ]; then
+if [ ! -f eclipse/plugins/org.eclipse.swt_3.7.2.v3740f.jar ]; then
 #if [ ! -f eclipse/plugins/org.eclipse.swt_3.100.0.v4232.jar ]; then
-if [ ! -f eclipse/plugins/org.eclipse.swt_3.8.0.v3832b.jar ]; then
+#if [ ! -f eclipse/plugins/org.eclipse.swt_3.8.0.v3832b.jar ]; then
   curdir2=`pwd`
   if [ ! -d eclipse -o -h eclipse ]; then
     if [ -d eclipse-${ep_ver}-${ep_arch} ]; then

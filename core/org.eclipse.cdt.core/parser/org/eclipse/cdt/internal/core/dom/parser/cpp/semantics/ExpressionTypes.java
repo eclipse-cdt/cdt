@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
@@ -26,7 +26,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 
-
 /**
  * Methods for computing the type of an expression
  */
@@ -40,7 +39,6 @@ public class ExpressionTypes {
 	public static IType prvalueType(IType type) {
 		return Conversions.lvalue_to_rvalue(type);
 	}
-
 
 	public static ValueCategory valueCategoryFromFunctionCall(ICPPFunction function) {
 		final ICPPFunctionType ft = function.getType();

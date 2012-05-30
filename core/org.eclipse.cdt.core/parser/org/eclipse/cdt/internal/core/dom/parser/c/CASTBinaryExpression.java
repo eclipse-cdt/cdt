@@ -54,11 +54,7 @@ public class CASTBinaryExpression extends ASTNode
 		copy.op = op;
 		copy.setOperand1(operand1 == null ? null : operand1.copy(style));
 		copy.setOperand2(operand2 == null ? null : operand2.copy(style));
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 
 	@Override
@@ -118,9 +114,9 @@ public class CASTBinaryExpression extends ASTNode
     	
         if (action.shouldVisitExpressions) {
 		    switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
         
@@ -147,7 +143,7 @@ public class CASTBinaryExpression extends ASTNode
 	
 	public static boolean acceptWithoutRecursion(IASTBinaryExpression bexpr, ASTVisitor action) {
 		N stack= new N(bexpr);
-		while(stack != null) {
+		while (stack != null) {
 			IASTBinaryExpression expr= stack.fExpression;
 			if (stack.fState == 0) {
 				if (action.shouldVisitExpressions) {

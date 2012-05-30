@@ -19,9 +19,8 @@ import org.eclipse.cdt.core.dom.ast.IType;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPPointerToMemberType extends IPointerType {
-
 	/**
-	 * Get the class to whose members this points to.
+	 * Returns the class to whose members this points to.
 	 * @return Either ICPPClassType or ICPPTeplateTypeParameter.
 	 */
 	public IType getMemberOfClass();

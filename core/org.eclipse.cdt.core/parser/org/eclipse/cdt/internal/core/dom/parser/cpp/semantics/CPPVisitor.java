@@ -2017,7 +2017,8 @@ public class CPPVisitor extends ASTQueries {
 		return createAutoType(autoInitClause, declSpec, declarator);
 	}
 
-	private static IType createAutoType(IASTInitializerClause initClause, IASTDeclSpecifier declSpec, IASTDeclarator declarator) {
+	private static IType createAutoType(IASTInitializerClause initClause, IASTDeclSpecifier declSpec,
+			IASTDeclarator declarator) {
 		//  C++0x: 7.1.6.4
 		if (initClause == null || !autoTypeDeclSpecs.get().add(declSpec)) {
 			// Detected a self referring auto type, e.g.: auto x = x;

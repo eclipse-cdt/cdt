@@ -6,15 +6,15 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Intel Corporation - Initial API and implementation
+ *     Intel Corporation - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.settings.model.extension;
 
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 
 public abstract class CLanguageData extends CDataObject {
+
 	protected CLanguageData() {
-		
 	}
 
 //	public abstract CDataObject[] getChildrenOfKind(int kind);
@@ -52,7 +52,7 @@ public abstract class CLanguageData extends CDataObject {
 
 	public abstract void setSourceExtensions(String exts[]);
 	
-	public boolean containsDiscoveredScannerInfo(){
+	public boolean containsDiscoveredScannerInfo() {
 		return true;
 	}
 }

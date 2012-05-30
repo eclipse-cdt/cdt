@@ -22,7 +22,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IType extends Cloneable {
-	public static final IType[] EMPTY_TYPE_ARRAY = new IType[0];
+	public static final IType[] EMPTY_TYPE_ARRAY = {};
 	public static final ASTTypeMatcher TYPE_MATCHER = new ASTTypeMatcher();
 
     public Object clone();

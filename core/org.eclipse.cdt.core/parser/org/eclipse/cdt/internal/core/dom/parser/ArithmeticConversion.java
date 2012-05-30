@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser;
 
@@ -85,7 +85,7 @@ public abstract class ArithmeticConversion {
 	
 	private boolean isArithmeticOrUnscopedEnum(IType op1) {
 		if (op1 instanceof IBasicType)  {
-			final Kind kind = ((IBasicType)op1).getKind();
+			final Kind kind = ((IBasicType) op1).getKind();
 			switch (kind) {
 			case eUnspecified:
 			case eVoid:
@@ -190,7 +190,8 @@ public abstract class ArithmeticConversion {
 			return signedType;
 		}
 		
-		return createBasicType(signedType.getKind(), changeModifier(signedType.getModifiers(), IBasicType.IS_SIGNED, IBasicType.IS_UNSIGNED));
+		return createBasicType(signedType.getKind(),
+				changeModifier(signedType.getModifiers(), IBasicType.IS_SIGNED, IBasicType.IS_UNSIGNED));
 	}
 	
 	private IBasicType promote(IType type, Domain domain) {
@@ -331,21 +332,21 @@ public abstract class ArithmeticConversion {
 				return false;
 			
 			if (basicTarget.isShort()) {
-				return n < (Short.MAX_VALUE + 1L)*2;
+				return n < (Short.MAX_VALUE + 1L) * 2;
 			}
 			// Can't represent long longs with java longs.
 			if (basicTarget.isLong() || basicTarget.isLongLong()) {
 				return true;
 			}
-			return n < (Integer.MAX_VALUE + 1L)*2;
+			return n < (Integer.MAX_VALUE + 1L) * 2;
 
 		case eFloat:
 			float f= n;
-			return  (long)f == n;
+			return (long) f == n;
 		
 		case eDouble:
 			double d= n;
-			return  (long)d == n;
+			return (long) d == n;
 			
 		default:
 			return false;

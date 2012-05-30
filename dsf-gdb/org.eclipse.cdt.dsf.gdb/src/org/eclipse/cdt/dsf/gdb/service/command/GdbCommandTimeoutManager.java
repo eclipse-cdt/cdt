@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Mentor Graphics and others.
+ * Copyright (c) 2011, 2012 Mentor Graphics and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Mentor Graphics - Initial API and implementation
+ * Jason Litton (Sage Electronic Engineering, LLC) - Use Dynamic Tracing option (Bug 379169)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.service.command;
@@ -20,6 +21,7 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandListener;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandResult;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandToken;
 import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
+import org.eclipse.cdt.dsf.gdb.internal.GdbDebugOptions;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.mi.service.command.AbstractMIControl;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MICommand;
@@ -50,8 +52,6 @@ public class GdbCommandTimeoutManager implements ICommandListener, IPreferenceCh
 		
 		void commandTimedOut( ICommandToken token );
 	}
-
-	public final static boolean DEBUG = "true".equals( Platform.getDebugOption( "org.eclipse.cdt.dsf.gdb/debug/timeouts" ) ); //$NON-NLS-1$//$NON-NLS-2$
 	
 	private class QueueEntry {
 		private long fTimestamp;
@@ -141,12 +141,14 @@ public class GdbCommandTimeoutManager implements ICommandListener, IPreferenceCh
 						// expires.
 						long commandTimeout = getTimeoutForCommand( entry.fCommandToken.getCommand() );
 						
-						if ( DEBUG ) {
+						if ( GdbDebugOptions.DEBUG_TIMEOUTS ) {
 							String commandText = entry.fCommandToken.getCommand().toString();
 							if ( commandText.endsWith( "\n" ) ) //$NON-NLS-1$
 								commandText = commandText.substring( 0, commandText.length() - 1 );
-							printDebugMessage( String.format( "Processing command '%s', command timeout is %d", //$NON-NLS-1$ 
+
+							GdbDebugOptions.trace( String.format( "Processing command '%s', command timeout is %d", //$NON-NLS-1$ 
 									commandText, Long.valueOf( commandTimeout ) ) );
+							
 						}
 
 						long currentTime = System.currentTimeMillis();
@@ -167,12 +169,14 @@ public class GdbCommandTimeoutManager implements ICommandListener, IPreferenceCh
 							// Adjust the wait timeout because the time remaining for 
 							// the current command to expire may be less than the current wait timeout. 
 							timeout = Math.min( timeout, commandTimeout - elapsedTime );
-						
-							if ( DEBUG ) {
+
+							if ( GdbDebugOptions.DEBUG_TIMEOUTS ) {
 								String commandText = entry.fCommandToken.getCommand().toString();
 								if ( commandText.endsWith( "\n" ) ) //$NON-NLS-1$
 									commandText = commandText.substring( 0, commandText.length() - 1 );
-								printDebugMessage( String.format( "Setting timeout %d for command '%s'", Long.valueOf( timeout ), commandText ) ); //$NON-NLS-1$
+								
+								GdbDebugOptions.trace( String.format( "Setting timeout %d for command '%s'", Long.valueOf( timeout ), commandText ) ); //$NON-NLS-1$
+								
 							}
 						}
 					}
@@ -191,8 +195,8 @@ public class GdbCommandTimeoutManager implements ICommandListener, IPreferenceCh
 		
 		private synchronized void setWaitTimout( int waitTimeout ) {
 			fWaitTimeout = waitTimeout;
-			if ( DEBUG )
-				printDebugMessage( String.format( "Wait timeout is set to %d", Integer.valueOf( fWaitTimeout ) ) ); //$NON-NLS-1$
+			if ( GdbDebugOptions.DEBUG_TIMEOUTS )
+				GdbDebugOptions.trace( String.format( "Wait timeout is set to %d", Integer.valueOf( fWaitTimeout ) ) ); //$NON-NLS-1$
 		}
 		
 		private synchronized int getWaitTimeout() {
@@ -223,6 +227,7 @@ public class GdbCommandTimeoutManager implements ICommandListener, IPreferenceCh
 	public GdbCommandTimeoutManager( ICommandControl commandControl ) {
 		fCommandControl = commandControl;
 		fListeners = new ListenerList();
+		new GdbDebugOptions(GdbPlugin.getBundleContext());
 	}
 
 	public void initialize() {
@@ -278,11 +283,11 @@ public class GdbCommandTimeoutManager implements ICommandListener, IPreferenceCh
 		if ( !isTimeoutEnabled() )
 			return;
 		int commandTimeout = getTimeoutForCommand( token.getCommand() );
-		if ( DEBUG ) {
+		if ( GdbDebugOptions.DEBUG_TIMEOUTS ) {
 			String commandText = token.getCommand().toString();
 			if ( commandText.endsWith( "\n" ) ) //$NON-NLS-1$
 				commandText = commandText.substring( 0, commandText.length() - 1 );
-			printDebugMessage( String.format( "Command '%s' sent, timeout = %d", commandText, Integer.valueOf( commandTimeout ) ) ); //$NON-NLS-1$
+			GdbDebugOptions.trace( String.format( "Command '%s' sent, timeout = %d", commandText, Integer.valueOf( commandTimeout ) ) ); //$NON-NLS-1$
 		}
 		if ( commandTimeout == 0 )
 			// Skip commands with no timeout 
@@ -310,11 +315,11 @@ public class GdbCommandTimeoutManager implements ICommandListener, IPreferenceCh
 		if ( !isTimeoutEnabled() )
 			return;
 		fCommandQueue.remove( new QueueEntry( 0, token ) );
-		if ( DEBUG ) {
+		if ( GdbDebugOptions.DEBUG_TIMEOUTS ) {
 			String commandText = token.getCommand().toString();
 			if ( commandText.endsWith( "\n" ) ) //$NON-NLS-1$
 				commandText = commandText.substring( 0, commandText.length() - 1 );
-			printDebugMessage( String.format( "Command '%s' is done", commandText ) ); //$NON-NLS-1$
+			GdbDebugOptions.trace( String.format( "Command '%s' is done", commandText ) ); //$NON-NLS-1$
 		}
 		// Reset the timestamp of the next command in the queue because 
 		// regardless how long it has been in the queue GDB will start 
@@ -379,11 +384,11 @@ public class GdbCommandTimeoutManager implements ICommandListener, IPreferenceCh
 	}
 
 	protected void processTimedOutCommand( ICommandToken token ) {
-		if ( DEBUG ) {
+		if ( GdbDebugOptions.DEBUG_TIMEOUTS ) {
 			String commandText = token.getCommand().toString();
 			if ( commandText.endsWith( "\n" ) ) //$NON-NLS-1$
 				commandText = commandText.substring( 0, commandText.length() - 1 );
-			printDebugMessage( String.format( "Command '%s' is timed out", commandText ) ); //$NON-NLS-1$
+			GdbDebugOptions.trace( String.format( "Command '%s' is timed out", commandText ) ); //$NON-NLS-1$
 		}
 		for ( Object l : fListeners.getListeners() ) {
 			((ICommandTimeoutListener)l).commandTimedOut( token );
@@ -406,9 +411,9 @@ public class GdbCommandTimeoutManager implements ICommandListener, IPreferenceCh
 		return fTimeoutEnabled;
 	}
 
-	private void printDebugMessage( String message ) {
-		System.out.println( String.format( "%s %s  %s", GdbPlugin.getDebugTime(), TIMEOUT_TRACE_IDENTIFIER, message ) ); //$NON-NLS-1$		
-	}
+//	private void printDebugMessage( String message ) {
+//		System.out.println( String.format( "%s %s  %s", GdbPlugin.getDebugTime(), TIMEOUT_TRACE_IDENTIFIER, message ) ); //$NON-NLS-1$		
+//	}
 
 	private int calculateWaitTimeout() {
 		int waitTimeout = 0;
@@ -432,11 +437,11 @@ public class GdbCommandTimeoutManager implements ICommandListener, IPreferenceCh
 		if ( nextEntry != null ) {
 			nextEntry.fTimestamp = currentTime;
 			
-			if ( DEBUG ) {
+			if ( GdbDebugOptions.DEBUG_TIMEOUTS ) {
 				String commandText = nextEntry.fCommandToken.getCommand().toString();
 				if ( commandText.endsWith( "\n" ) ) //$NON-NLS-1$
 					commandText = commandText.substring( 0, commandText.length() - 1 );
-				printDebugMessage( String.format( "Setting the timestamp for command '%s' to %d", commandText, Long.valueOf( currentTime ) ) ); //$NON-NLS-1$
+				GdbDebugOptions.trace( String.format( "Setting the timestamp for command '%s' to %d", commandText, Long.valueOf( currentTime ) ) ); //$NON-NLS-1$
 			}
 		}
 	}

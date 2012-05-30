@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 Wind River Systems and others.
+ * Copyright (c) 2006, 2009, 2012 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Abeer Bagul (Tensilica) - Updated error message (Bug 339048)
+ *     Jason Litton (Sage Electronic Engineering, LLC) - Added support for dynamic tracing option (Bug 379169)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal;
 
@@ -18,7 +19,6 @@ import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
@@ -30,16 +30,13 @@ import org.osgi.framework.BundleContext;
  */
 public class GdbPlugin extends Plugin {
 
-    // Debugging flag
-    public static boolean DEBUG = false;
-
 	// The plug-in ID
 	public static final String PLUGIN_ID = "org.eclipse.cdt.dsf.gdb"; //$NON-NLS-1$
 
 	// The shared instance
 	private static GdbPlugin plugin;
 	
-    private static BundleContext fgBundleContext; 
+    private static BundleContext fgBundleContext;
     
 	/**
 	 * The constructor
@@ -57,7 +54,7 @@ public class GdbPlugin extends Plugin {
 		super.start(context);
 		plugin = this;
 		
-        DEBUG = "true".equals(Platform.getDebugOption("org.eclipse.cdt.dsf.gdb/debug"));  //$NON-NLS-1$//$NON-NLS-2$
+        new GdbDebugOptions(context);
 	}
 
 	/*
@@ -128,17 +125,6 @@ public class GdbPlugin extends Plugin {
                     getLog().log(new Status(IStatus.ERROR, PLUGIN_ID, "Exception while shutting down launch " + gdbLaunch, e.getCause())); //$NON-NLS-1$
                 }
             }
-        }
-    }
-
-    public static void debug(String message) {
-        if (DEBUG) {
-			while (message.length() > 100) {
-				String partial = message.substring(0, 100); 
-				message = message.substring(100);
-				System.out.println(partial + "\\"); //$NON-NLS-1$
-			}
-			System.out.print(message);
         }
     }
 

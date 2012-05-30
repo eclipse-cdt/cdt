@@ -146,18 +146,18 @@ if [ ! -f ${DROPIN}/org.sonatype.tycho.p2.updatesite_0.9.0.201005191712.jar ]; t
 fi
 
 # CDT Runtime
-CDTREL=8.1.0
-CDTFEAT=8.1.0
-CDTVER=201205261005
-#CDTREL=8.0.1
-#CDTFEAT=8.0.0
-#CDTVER=201109151620
+#CDTREL=8.1.0
+#CDTFEAT=8.1.0
+#CDTVER=201205261005
+CDTREL=8.0.2
+CDTFEAT=8.0.2
+CDTVER=201202111925
 #CDTNAME=cdt-master-${CDTREL}-I${CDTVER}.zip
 #CDTLOC=builds/${CDTREL}/I.I${CDTVER}/${CDTNAME}
-#CDTNAME=cdt-master-${CDTREL}.zip
-#CDTLOC=releases/indigo/dist/${CDTNAME}
-CDTNAME=org.eclipse.cdt.repo.zip
-CDTLOC=builds/juno/milestones/RC2/${CDTNAME}
+CDTNAME=cdt-master-${CDTREL}.zip
+CDTLOC=releases/indigo/dist/${CDTNAME}
+#CDTNAME=org.eclipse.cdt.repo.zip
+#CDTLOC=builds/juno/milestones/RC2/${CDTNAME}
 if [ ! -f eclipse/plugins/org.eclipse.cdt_${CDTFEAT}.${CDTVER}.jar ]; then
   echo "Getting CDT Runtime..."
   wget "http://download.eclipse.org/tools/cdt/${CDTLOC}"

@@ -501,8 +501,8 @@ public class BuildRunnerHelper implements Closeable {
 	 * Get environment variables from configuration as array of "var=value" suitable
 	 * for using as "envp" with Runtime.exec(String[] cmdarray, String[] envp, File dir)
 	 *
-	 * @param cfgDescription - configuration description
-	 * @return String array of environment variables in format "var=value"
+	 * @param cfgDescription - configuration description.
+	 * @return String array of environment variables in format "var=value". Does not return {@code null}.
 	 */
 	public static String[] getEnvp(ICConfigurationDescription cfgDescription) {
 		IEnvironmentVariableManager mngr = CCorePlugin.getDefault().getBuildEnvironmentManager();

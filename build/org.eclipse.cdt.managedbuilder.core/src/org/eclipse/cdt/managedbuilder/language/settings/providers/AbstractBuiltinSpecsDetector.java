@@ -16,6 +16,8 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -83,6 +85,9 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 
 	private static final String ATTR_PARAMETER = "parameter"; //$NON-NLS-1$
 	private static final String ATTR_CONSOLE = "console"; //$NON-NLS-1$
+
+	private static final String ENV_LANGUAGE = "LANGUAGE"; //$NON-NLS-1$
+	private static final String ENV_LC_ALL = "LC_ALL"; //$NON-NLS-1$
 
 	private static final int MONITOR_SCALE = 100;
 	private static final int TICKS_REMOVE_MARKERS = 1 * MONITOR_SCALE;
@@ -533,7 +538,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 				}
 			}
 
-			String[] envp = BuildRunnerHelper.getEnvp(currentCfgDescription);
+			String[] envp = getEnvp();
 
 			// Using GMAKE_ERROR_PARSER_ID as it can handle generated error messages
 			ErrorParserManager epm = new ErrorParserManager(currentProject, buildDirURI, markerGenerator, new String[] {GMAKE_ERROR_PARSER_ID});
@@ -565,6 +570,30 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 			}
 			monitor.done();
 		}
+	}
+
+	/**
+	 * Get array of environment variables in format "var=value".
+	 */
+	private String[] getEnvp() {
+		// On POSIX (Linux, UNIX) systems reset language variables to default (English)
+		// with UTF-8 encoding since GNU compilers can handle only UTF-8 characters.
+		// Include paths with locale characters will be handled properly regardless
+		// of the language as long as the encoding is set to UTF-8.
+		// Default language is set for parser because it relies on English messages
+		// in the output of the 'gcc -v' command.
+
+		List<String> envp = new ArrayList<String>(Arrays.asList(BuildRunnerHelper.getEnvp(currentCfgDescription)));
+		for (Iterator<String> iterator = envp.iterator(); iterator.hasNext();) {
+			String var = iterator.next();
+			if (var.startsWith(ENV_LANGUAGE + '=') || var.startsWith(ENV_LC_ALL + '=')) {
+				iterator.remove();
+			}
+		}
+		envp.add(ENV_LANGUAGE + "=C");        // override for GNU gettext //$NON-NLS-1$
+		envp.add(ENV_LC_ALL + "=C.UTF-8"); // for other parts of the system libraries //$NON-NLS-1$
+
+		return envp.toArray(new String[envp.size()]);
 	}
 
 	protected int runProgramForLanguage(String languageId, String command, String[] envp, URI workingDirectoryURI, OutputStream consoleOut, OutputStream consoleErr, IProgressMonitor monitor) throws CoreException, IOException {

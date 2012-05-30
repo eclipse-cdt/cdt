@@ -1,0 +1,208 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOHn//+eo\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/plugin.properties",
+        "patchSetId": 4
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-05-30T19:04:29Z",
+      "side": 1,
+      "message": "Update copyright header.  sorry, I missed it last time.",
+      "revId": "80e32efe3d63c6eb8273efe15cec1b3e469c1078",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHn//+eY\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/GdbDebugOptions.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-05-30T19:04:29Z",
+      "side": 1,
+      "message": "Please rename to DEBUG_COMMAND_TIMEOUTS",
+      "revId": "80e32efe3d63c6eb8273efe15cec1b3e469c1078",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHn//+d0\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/GdbDebugOptions.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-05-30T19:04:29Z",
+      "side": 1,
+      "message": "The above is correct according to the current way the debug timeouts are printed.  However, I wonder if we should not only enable debug timeouts if DEBUG is on.  Since the tracing is org.eclipse.cdt.dsf.gdb/debug/timeouts, it implies it is dependent on org.eclipse.cdt.dsf.gdb/debug.\nThe line would become\n  DEBUG_TIMEOUTS \u003d DEBUG \u0026\u0026 options.getBooleanOption(DEBUG_TIMEOUTS_FLAG, false);\n\nWe should ask Mikhail what he wants to do for this, as it is his feature.",
+      "revId": "80e32efe3d63c6eb8273efe15cec1b3e469c1078",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHn//+ew\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/GdbDebugOptions.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-05-30T19:04:29Z",
+      "side": 1,
+      "message": "We are not actually copying the string at line 65, just adding another pointer to the same string.  This is fine because the call to substring() does create a new string.  But please update the comment, which is not saying what is really happening.",
+      "revId": "80e32efe3d63c6eb8273efe15cec1b3e469c1078",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHn//+es\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/GdbDebugOptions.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-05-30T19:04:29Z",
+      "side": 1,
+      "message": "Missing\n   System.out.print(systemPrintableMessage);\nafter the while loop, to deal with the part of the string that is \u003c\u003d 100.",
+      "revId": "80e32efe3d63c6eb8273efe15cec1b3e469c1078",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHn//+ek\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/GdbPlugin.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-05-30T19:04:29Z",
+      "side": 1,
+      "message": "The format eclipse uses is\n   Copyright (c) 2006, 2012 Wind River Systems and others.\n\ni.e., just the first and last years",
+      "revId": "80e32efe3d63c6eb8273efe15cec1b3e469c1078",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHn//+eU\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-05-30T19:04:29Z",
+      "side": 1,
+      "message": "The DEBUG variable is public, so we probably won\u0027t be able to remove it.  Please mark it as @Deprecated and add javadoc @deprecated saying it is replaced by GdbDebugOption.DEBUG_COMMAND_TIMEOUTS",
+      "revId": "80e32efe3d63c6eb8273efe15cec1b3e469c1078",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHn//+eQ\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 149,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-05-30T19:04:29Z",
+      "side": 1,
+      "message": "Don\u0027t use GdbDebugOptions directly here.  Instead, keep printDebugMessage, which does extra stuff, and modify printDebugMessage to use GdbDebugOptions.trace\n\nDo that in all the file",
+      "revId": "80e32efe3d63c6eb8273efe15cec1b3e469c1078",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHn//+eM\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 230,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-05-30T19:04:29Z",
+      "side": 1,
+      "message": "Remove.  This is done only once in the plugin.start() method.",
+      "revId": "80e32efe3d63c6eb8273efe15cec1b3e469c1078",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHn//+eI\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 416,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-05-30T19:04:29Z",
+      "side": 1,
+      "message": "Use GdbDebugOptions.trace() here.  Also add a \\n at the end of the string, since the GdbDebugOptions.trace() does not have one.",
+      "revId": "80e32efe3d63c6eb8273efe15cec1b3e469c1078",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHn//+eg\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 668,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-05-30T19:04:29Z",
+      "side": 1,
+      "message": "It is good that you added the spaces between the %s, but you should remove the extra spaces from the definition of MI_TRACE_IDENTIFIER to match.",
+      "revId": "80e32efe3d63c6eb8273efe15cec1b3e469c1078",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHn//+ec\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 733,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-05-30T19:04:29Z",
+      "side": 1,
+      "message": "Must add a \\n at the end in this case:\n   \"%s %s  %s\\n\"",
+      "revId": "80e32efe3d63c6eb8273efe15cec1b3e469c1078",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

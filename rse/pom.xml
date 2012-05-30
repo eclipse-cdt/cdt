@@ -42,7 +42,7 @@
     <tycho-extras-version>0.14.0</tycho-extras-version>
     <platform-version-name>juno</platform-version-name>
     <eclipse-site>http://download.eclipse.org/releases/${platform-version-name}</eclipse-site>
-    <orbit-site>http://download.eclipse.org/tools/orbit/downloads/drops/S20120123151124/repository</orbit-site>
+    <orbit-site>http://download.eclipse.org/tools/orbit/downloads/drops/S20120523061527/repository</orbit-site>
     <rxtx-version>1.0.0.7837QcJa5vE7MnhE77YA7AU3SWUlbntVZAnlDoIGojcQd</rxtx-version>
     <rxtx-site>http://rxtx.qbang.org/eclipse</rxtx-site>
   </properties>

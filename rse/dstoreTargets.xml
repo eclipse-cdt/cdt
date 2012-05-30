@@ -77,7 +77,7 @@
   <!-- and features. Results exist as folders and have not yet been jarred.  -->
   <!-- ===================================================================== -->
   <!--  <target name="post.gather.bin.parts"> -->
-  <target name="hideServerStuff">
+<!--  <target name="hideServerStuff">
     <mkdir dir="${buildDirectory}/hidden"/>
     <move todir="${buildDirectory}/hidden">
       <fileset dir="${buildDirectory}/plugins">
@@ -104,14 +104,14 @@
         <include name="**/dstore_minerssrc.zip"/>
       </fileset>
     </move>
-  </target>
+  </target>-->
   <!-- </target> -->
   <!-- ===================================================================== -->
   <!-- Called after all plugins and features have been jarred                -->
   <!-- (and potentially signed)                                              -->
   <!-- ===================================================================== -->
   <!-- <target name="post.jarUp"> -->
-  <target name="revealServerStuff">
+<!--  <target name="revealServerStuff">
     <move todir="${buildDirectory}/tmp">
       <fileset dir="${buildDirectory}/hidden.tmp" includes="**"/>
     </move>
@@ -121,5 +121,6 @@
     </move>
     <delete dir="${buildDirectory}/hidden"/>
   </target>
+  -->
   <!-- </target> -->
 </project>

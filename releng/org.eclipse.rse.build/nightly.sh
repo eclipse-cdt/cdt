@@ -77,7 +77,7 @@ java16bin="/shared/tools/tm/jdk-1.6/bin"
 bootclasspath_16="/shared/tools/tm/jdk-1.6/jre/lib/rt.jar"
 #bootclasspath_foundation="/shared/common/Java_ME_platform_SDK_3.0_EA/runtimes/cdc-hi/lib/rt.jar"
 bootclasspath_foundation11="/shared/tools/tm/JDKs/win32/j9_cdc11/lib/jclFoundation11/classes.zip"
-bootclasspath=${bootclasspath_14}
+bootclasspath=${bootclasspath_16}
 
 command="${java16bin}/java -cp ${basebuilder}/plugins/${launcher} org.eclipse.core.launcher.Main "
 command="$command -application org.eclipse.ant.core.antRunner "

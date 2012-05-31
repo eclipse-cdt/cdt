@@ -580,7 +580,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 		// with UTF-8 encoding since GNU compilers can handle only UTF-8 characters.
 		// Include paths with locale characters will be handled properly regardless
 		// of the language as long as the encoding is set to UTF-8.
-		// Default language is set for parser because it relies on English messages
+		// English language is set for parser because it relies on English messages
 		// in the output of the 'gcc -v' command.
 
 		List<String> envp = new ArrayList<String>(Arrays.asList(BuildRunnerHelper.getEnvp(currentCfgDescription)));
@@ -590,7 +590,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 				iterator.remove();
 			}
 		}
-		envp.add(ENV_LANGUAGE + "=C");        // override for GNU gettext //$NON-NLS-1$
+		envp.add(ENV_LANGUAGE + "=en");    // override for GNU gettext //$NON-NLS-1$
 		envp.add(ENV_LC_ALL + "=C.UTF-8"); // for other parts of the system libraries //$NON-NLS-1$
 
 		return envp.toArray(new String[envp.size()]);

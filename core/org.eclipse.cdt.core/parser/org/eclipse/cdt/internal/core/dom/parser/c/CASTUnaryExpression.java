@@ -9,8 +9,11 @@
  *     John Camelon (IBM Rational Software) - Initial API and implementation
  *     Yuan Zhang / Beth Tibbitts (IBM Research)
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
+
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.restoreTypedefs;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
@@ -122,17 +125,17 @@ public class CASTUnaryExpression extends ASTNode implements IASTUnaryExpression,
 			}
 			break;
 		case op_amper:
-			return new CPointerType(type, 0);
+			return new CPointerType(exprType, 0);
 		case op_minus:
 		case op_plus:
 		case op_tilde:
 			IType t= CArithmeticConversion.promoteCType(type);
 			if (t != null) {
-				return t;
+				return restoreTypedefs(t, exprType);
 			}
 			break;
 		}
-		return exprType; // return the original
+		return exprType; // Return the original.
 	}
 
 	@Override

@@ -9,6 +9,7 @@
  *     Doug Schaefer (IBM) - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     Andrew Ferguson (Symbian)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
@@ -6079,6 +6080,29 @@ public class AST2Tests extends AST2BaseTest {
 			assertSame(s1, s2);
 			assertSame(s1, t.getType());
 		}
+	}
+
+	//	typedef long unsigned int size_t;
+	//	
+    //	size_t a = 0;
+    //	size_t x = a + 5;
+    //	size_t y = 2 + a;
+    //	size_t y = a * 2;
+    public void testTypeOfExpressionWithTypedef_380498() throws Exception {
+    	final boolean[] isCpps= { false, true };
+    	String code= getAboveComment();
+    	for (boolean isCpp : isCpps) {
+    		BindingAssertionHelper ba= new BindingAssertionHelper(code, isCpp);
+    		IASTExpression exp = ba.assertNode("a + 5", IASTExpression.class);
+    		assertTrue(exp.getExpressionType() instanceof ITypedef);
+    		assertEquals("size_t", ((ITypedef) exp.getExpressionType()).getName());
+    		exp = ba.assertNode("2 + a", IASTExpression.class);
+    		assertTrue(exp.getExpressionType() instanceof ITypedef);
+    		assertEquals("size_t", ((ITypedef) exp.getExpressionType()).getName());
+    		exp = ba.assertNode("a * 2", IASTExpression.class);
+    		assertTrue(exp.getExpressionType() instanceof ITypedef);
+    		assertEquals("size_t", ((ITypedef) exp.getExpressionType()).getName());
+    	}
 	}
 
     // typedef int TInt;

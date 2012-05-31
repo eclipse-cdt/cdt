@@ -4705,6 +4705,33 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertSame(i, col.getName(7).resolveBinding());
 	}
 
+	//	template<typename T>
+	//	class basic_string {
+	//	  basic_string& operator+=(const T* s);
+	//	};
+	//
+	//	template<typename T>
+	//	basic_string<T> operator+(const T* cs, const basic_string<T>& s);
+	//
+	//	template<typename T>
+	//	basic_string<T> operator+(const basic_string<T>& s, const T* cs);
+	//
+	//	typedef basic_string<char> string;
+	//
+	//	void test(const string& s) {
+	//	  auto s1 = "" + s + "";
+	//	  auto s2 = s1 += "";
+	//	}
+    public void testTypedefPreservation_380498() throws Exception {
+		BindingAssertionHelper ba= getAssertionHelper();
+		ICPPVariable s1 = ba.assertNonProblem("s1", ICPPVariable.class);
+		assertTrue(s1.getType() instanceof ITypedef);
+		assertEquals("string", ((ITypedef) s1.getType()).getName());
+		ICPPVariable s2 = ba.assertNonProblem("s2", ICPPVariable.class);
+		assertTrue(s2.getType() instanceof ITypedef);
+		assertEquals("string", ((ITypedef) s2.getType()).getName());
+	}
+
 	// int f() {
 	//     return 5;
 	// }
@@ -4979,7 +5006,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	// void f2() {
 	//   f1(__null);
 	// }
-	public void testBug240567() throws Exception {    
+	public void testBug240567() throws Exception {
     	BindingAssertionHelper bh= getAssertionHelper();
 		bh.assertNonProblem("f1(__null", 2, ICPPFunction.class);
 	}

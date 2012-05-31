@@ -2065,6 +2065,9 @@ public class CPPVisitor extends ASTQueries {
 			return new ProblemType(ISemanticProblem.TYPE_CANNOT_DEDUCE_AUTO_TYPE);
 		}
 		type = argument.getTypeValue();
+		IType t = SemanticUtil.substituteTypedef(type, initType);
+		if (t != null)
+			type = t;
 		if (initClause instanceof ICPPASTInitializerList) {
 			type = (IType) CPPTemplates.instantiate(initializer_list_template,
 					new ICPPTemplateArgument[] { new CPPTemplateArgument(type) });

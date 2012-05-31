@@ -110,7 +110,7 @@ public class CPPArrayType implements IArrayType, ITypeContainer, ISerializableTy
 
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
-		final byte firstByte = ITypeMarshalBuffer.ARRAY;
+		final byte firstByte = ITypeMarshalBuffer.ARRAY_TYPE;
 
 		IValue val= getSize();
 		if (val == null) {

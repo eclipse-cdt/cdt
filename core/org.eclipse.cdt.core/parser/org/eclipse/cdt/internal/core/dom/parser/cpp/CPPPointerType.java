@@ -108,7 +108,7 @@ public class CPPPointerType implements IPointerType, ITypeContainer, ISerializab
 
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
-		int firstByte= ITypeMarshalBuffer.POINTER;
+		int firstByte= ITypeMarshalBuffer.POINTER_TYPE;
 		if (isConst()) firstByte |= ITypeMarshalBuffer.FLAG1;
 		if (isVolatile()) firstByte |= ITypeMarshalBuffer.FLAG2;
 		if (isRestrict()) firstByte |= ITypeMarshalBuffer.FLAG3;

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.c;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
@@ -23,7 +22,7 @@ class CompositeCEnumerator extends CompositeCBinding implements IEnumerator {
 	}
 
 	@Override
-	public IType getType() throws DOMException {
+	public IType getType() {
 		return cf.getCompositeType(((IEnumerator) rbinding).getType());
 	}
 

@@ -92,7 +92,7 @@ public class CPPQualifierType implements IQualifierType, ITypeContainer, ISerial
 
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
-		int firstByte= ITypeMarshalBuffer.CVQUALIFIER;
+		int firstByte= ITypeMarshalBuffer.CVQUALIFIER_TYPE;
 		if (isConst()) firstByte |= ITypeMarshalBuffer.FLAG1;
 		if (isVolatile()) firstByte |= ITypeMarshalBuffer.FLAG2;
 		buffer.putByte((byte) firstByte);

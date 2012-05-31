@@ -459,7 +459,7 @@ public class SemanticUtil {
 		} else if (type instanceof ICPPClassType && type instanceof IIndexBinding) {
 			IASTTranslationUnit tu = node.getTranslationUnit();
 			if (tu instanceof CPPASTTranslationUnit) {
-				return ((CPPASTTranslationUnit) tu).mapToAST((ICPPClassType) type);
+				return ((CPPASTTranslationUnit) tu).mapToAST((ICPPClassType) type, node);
 			}
 		}
 		return type;

@@ -11,12 +11,11 @@ import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
 
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
-import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Cost.Rank;
 
 /**
@@ -24,19 +23,17 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Cost.Rank;
  */
 public class FunctionSetType implements IType {
 
-	private ICPPFunction[] fFunctionSet;
-	private boolean fPointerType;
-	private IASTName fName;
+	private final CPPFunctionSet fFunctionSet;
+	private final boolean fPointerType;
 
-	public FunctionSetType(ICPPFunction[] functions, IASTName name, boolean addressOf) {
-		fName= name;
-		fFunctionSet= functions;
+	public FunctionSetType(CPPFunctionSet set, boolean addressOf) {
+		fFunctionSet= set;
 		fPointerType= addressOf;
 	}
 
 	@Override
 	public boolean isSameType(IType type) {
-		return type == this;
+		return type instanceof FunctionSetType && fFunctionSet == ((FunctionSetType) type).fFunctionSet;
 	}
 
 	@Override
@@ -48,8 +45,8 @@ public class FunctionSetType implements IType {
 		return fPointerType ? PRVALUE : LVALUE;
 	}
 
-	public Cost costForTarget(IType paramType) {
-		IBinding result = CPPSemantics.resolveTargetedFunction(paramType, fName, fFunctionSet);
+	public Cost costForTarget(IType paramType, IASTNode point) {
+		IBinding result = CPPSemantics.resolveTargetedFunction(paramType, fFunctionSet, point);
 		if (result instanceof ICPPFunction && !(result instanceof IProblemBinding)) {
 			Cost c= new Cost(paramType, paramType, Rank.IDENTITY);
 			c.setSelectedFunction((ICPPFunction) result);
@@ -59,16 +56,14 @@ public class FunctionSetType implements IType {
 	}
 
 	public void applySelectedFunction(ICPPFunction selectedFunction) {
-		if (selectedFunction != null) {
-			fName.setBinding(selectedFunction);
-		}
+		fFunctionSet.applySelectedFunction(selectedFunction);
 	}
 	
-	public ICPPFunction[] getFunctionSet() {
+	public CPPFunctionSet getFunctionSet() {
 		return fFunctionSet;
 	}
 
 	public void setToUnknown() {
-		fName.setBinding(new CPPUnknownFunction(null, fName.toCharArray()));
+		fFunctionSet.setToUnknown();
 	}
 }

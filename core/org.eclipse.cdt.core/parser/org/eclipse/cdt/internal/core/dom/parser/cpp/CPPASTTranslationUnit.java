@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
@@ -175,8 +176,8 @@ public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPAST
 	}
 
 	// bug 262719: class types from the index have to be mapped back to the AST.
-	public ICPPClassType mapToAST(ICPPClassType binding) {
-		return fScopeMapper.mapToAST(binding);
+	public ICPPClassType mapToAST(ICPPClassType binding, IASTNode point) {
+		return fScopeMapper.mapToAST(binding, point);
 	}
 
 	/**

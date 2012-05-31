@@ -17,6 +17,7 @@ import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -1544,19 +1545,19 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	
 	// CT<int> v1;
 	public void testUniqueInstance_Bug241641() throws Exception {
+		IASTName name= findName("v1", 2);
 		ICPPVariable v1= getBindingFromASTName("v1", 2, ICPPVariable.class);
-		ICPPVariable v2= getBindingFromASTName("v1", 2, ICPPVariable.class);
 		
 		IType t1= v1.getType();
 		assertInstance(t1, ICPPTemplateInstance.class);
 		
 		ICPPTemplateInstance inst= (ICPPTemplateInstance) t1;
 		final ICPPClassTemplate tmplDef = (ICPPClassTemplate) inst.getTemplateDefinition();
-		IBinding inst2= CPPTemplates.instantiate(tmplDef, inst.getTemplateArguments());
+		IBinding inst2= CPPTemplates.instantiate(tmplDef, inst.getTemplateArguments(), name);
 		assertSame(inst, inst2);
 		
-		IBinding charInst1= CPPTemplates.instantiate(tmplDef, new ICPPTemplateArgument[] {new CPPTemplateArgument(new CPPBasicType(Kind.eChar, 0))});
-		IBinding charInst2= CPPTemplates.instantiate(tmplDef, new ICPPTemplateArgument[] {new CPPTemplateArgument(new CPPBasicType(Kind.eChar, 0))});
+		IBinding charInst1= CPPTemplates.instantiate(tmplDef, new ICPPTemplateArgument[] {new CPPTemplateArgument(new CPPBasicType(Kind.eChar, 0))}, name);
+		IBinding charInst2= CPPTemplates.instantiate(tmplDef, new ICPPTemplateArgument[] {new CPPTemplateArgument(new CPPBasicType(Kind.eChar, 0))}, name);
 		assertSame(charInst1, charInst2);
 	}
 	

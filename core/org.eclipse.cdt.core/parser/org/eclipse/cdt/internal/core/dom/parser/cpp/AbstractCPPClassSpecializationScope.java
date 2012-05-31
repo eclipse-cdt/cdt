@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -63,11 +64,11 @@ public class AbstractCPPClassSpecializationScope implements ICPPClassSpecializat
 
 	@Override
 	public final IBinding[] getBindings(IASTName name, boolean resolve, boolean prefix) {
-		return getBindings(name, resolve, prefix, IIndexFileSet.EMPTY);
+		return getBindings(new ScopeLookupData(name, resolve, prefix));
 	}
 
 	@Override
-	public IBinding getBinding(IASTName name, boolean forceResolve, IIndexFileSet fileSet) {
+	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) {
 		char[] c = name.getLookupKey();
 		
 		if (CharArrayUtils.equals(c, specialClass.getNameCharArray())
@@ -77,44 +78,39 @@ public class AbstractCPPClassSpecializationScope implements ICPPClassSpecializat
 
 		ICPPClassType specialized = specialClass.getSpecializedBinding();
 		IScope classScope = specialized.getCompositeScope();
-		IBinding[] bindings = classScope != null ? classScope.getBindings(name, forceResolve, false) : null;
+		IBinding[] bindings = classScope != null ? classScope.getBindings(new ScopeLookupData(name, resolve, false)) : null;
 		
 		if (bindings == null)
 			return null;
     	
 		IBinding[] specs = new IBinding[0];
 		for (IBinding binding : bindings) {
-			specs = ArrayUtil.append(IBinding.class, specs, specialClass.specializeMember(binding));
+			specs = ArrayUtil.append(IBinding.class, specs, specialClass.specializeMember(binding, name));
 		}
 		specs = ArrayUtil.trim(IBinding.class, specs);
     	return CPPSemantics.resolveAmbiguities(name, specs);
 	}
 
-	@Override
-	final public IBinding[] getBindings(IASTName name, boolean forceResolve, boolean prefixLookup,
+	@Deprecated	@Override
+	final public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup,
 			IIndexFileSet fileSet) {
-		return getBindings(name, forceResolve, prefixLookup, fileSet, true);
+		return getBindings(new ScopeLookupData(name, resolve, prefixLookup));
 	}
 
-	public IBinding[] getBindings(IASTName name, boolean forceResolve, boolean prefixLookup,
-			IIndexFileSet fileSet, boolean checkPointOfDecl) {
+	@Override
+	final public IBinding[] getBindings(ScopeLookupData lookup) {
 		ICPPClassType specialized = specialClass.getSpecializedBinding();
 		IScope classScope = specialized.getCompositeScope();
 		if (classScope == null)
 			return IBinding.EMPTY_BINDING_ARRAY;
 		
-		IBinding[] bindings;
-		if (classScope instanceof ICPPASTInternalScope) {
-			bindings= ((ICPPASTInternalScope) classScope).getBindings(name, forceResolve, prefixLookup, fileSet, checkPointOfDecl);
-		} else {
-			bindings= classScope.getBindings(name, forceResolve, prefixLookup, fileSet);
-		}
+		IBinding[] bindings= classScope.getBindings(lookup);
 		IBinding[] result= null;
 		for (IBinding binding : bindings) {
 			if (binding == specialized) {
 				binding= specialClass;
 			} else {
-				binding= specialClass.specializeMember(binding);
+				binding= specialClass.specializeMember(binding, lookup.getLookupPoint());
 			}
 			result = ArrayUtil.append(IBinding.class, result, binding);
 		}
@@ -134,11 +130,12 @@ public class AbstractCPPClassSpecializationScope implements ICPPClassSpecializat
 			if (bases.length == 0) {
 				fBases= bases;
 			} else {
+				IASTNode point= null; // Instantiation of dependent expression may not work.
 				final ICPPTemplateParameterMap tpmap = specialClass.getTemplateParameterMap();
 				for (ICPPBase base : bases) {
 					IBinding origClass = base.getBaseClass();
 					if (origClass instanceof ICPPTemplateParameter && ((ICPPTemplateParameter) origClass).isParameterPack()) {
-						IType[] specClasses= CPPTemplates.instantiateTypes(new IType[]{new CPPParameterPackType((IType) origClass)}, tpmap, -1, specialClass);
+						IType[] specClasses= CPPTemplates.instantiateTypes(new IType[]{new CPPParameterPackType((IType) origClass)}, tpmap, -1, specialClass, point);
 						if (specClasses.length == 1 && specClasses[0] instanceof ICPPParameterPackType) {
 							result= ArrayUtil.append(ICPPBase.class, result, base);
 						} else {
@@ -155,7 +152,7 @@ public class AbstractCPPClassSpecializationScope implements ICPPClassSpecializat
 					}
 					if (origClass instanceof IType) {
 						ICPPBase specBase = base.clone();
-						IType specClass= CPPTemplates.instantiateType((IType) origClass, tpmap, -1, specialClass);
+						IType specClass= CPPTemplates.instantiateType((IType) origClass, tpmap, -1, specialClass, point);
 						specClass = SemanticUtil.getUltimateType(specClass, false);
 						if (specClass instanceof IBinding && !(specClass instanceof IProblemBinding)) {
 							specBase.setBaseClass((IBinding) specClass);
@@ -172,31 +169,33 @@ public class AbstractCPPClassSpecializationScope implements ICPPClassSpecializat
 	}
 	
 	@SuppressWarnings("unchecked")
-	private <T extends IBinding> T[] specializeMembers(T[] array) {
+	private <T extends IBinding> T[] specializeMembers(T[] array, IASTNode point) {
 		if (array == null || array.length == 0) 
 			return array;
 
 		T[] newArray= array.clone();
 		for (int i = 0; i < newArray.length; i++) {
-			newArray[i]= (T) specialClass.specializeMember(array[i]);
+			newArray[i]= (T) specialClass.specializeMember(array[i], point);
 		}
 		return newArray;
 	}
 
 	@Override
 	public ICPPField[] getDeclaredFields() {
+		IASTNode point= null; // Instantiation of dependent expression may not work.
 		ICPPField[] fields= specialClass.getSpecializedBinding().getDeclaredFields();
-		return specializeMembers(fields);
+		return specializeMembers(fields, point);
 	}
 	
 	@Override
 	public ICPPMethod[] getImplicitMethods() {
+		IASTNode point= null; // Instantiation of dependent expression may not work.
 		ICPPClassScope origClassScope= (ICPPClassScope) specialClass.getSpecializedBinding().getCompositeScope();
 		if (origClassScope == null) {
 			return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 		}
 		ICPPMethod[] methods= origClassScope.getImplicitMethods();
-		return specializeMembers(methods);
+		return specializeMembers(methods, point);
 	}
 
 	@Override
@@ -208,26 +207,31 @@ public class AbstractCPPClassSpecializationScope implements ICPPClassSpecializat
 
 	@Override
 	public ICPPConstructor[] getConstructors() {
+		// mstodo need to pass the point of instantiation
+		IASTNode point= null; // Instantiation of dependent expression may not work.
 		ICPPConstructor[] ctors= specialClass.getSpecializedBinding().getConstructors();
-		return specializeMembers(ctors);
+		return specializeMembers(ctors, point);
 	}
 		
 	@Override
 	public ICPPMethod[] getDeclaredMethods() {
+		IASTNode point= null; // Instantiation of dependent expression may not work.
 		ICPPMethod[] bindings = specialClass.getSpecializedBinding().getDeclaredMethods();
-		return specializeMembers(bindings);
+		return specializeMembers(bindings, point);
 	}
 
 	@Override
 	public ICPPClassType[] getNestedClasses() {
+		IASTNode point= null; // Instantiation of dependent expression may not work.
 		ICPPClassType[] bindings = specialClass.getSpecializedBinding().getNestedClasses();
-		return specializeMembers(bindings);
+		return specializeMembers(bindings, point);
 	}
 
 	@Override
 	public IBinding[] getFriends() {
+		IASTNode point= null; // Instantiation of dependent expression may not work.
 		IBinding[] friends = specialClass.getSpecializedBinding().getFriends();
-		return specializeMembers(friends);
+		return specializeMembers(friends, point);
 	}
 
 	@Override

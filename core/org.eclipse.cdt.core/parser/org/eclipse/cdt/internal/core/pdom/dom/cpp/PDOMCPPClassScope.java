@@ -117,7 +117,7 @@ class PDOMCPPClassScope implements ICPPClassScope, IIndexScope {
 
 	@Override
 	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup) {
-		return getBindings(name, resolve, prefixLookup, null);
+		return getBindings(new ScopeLookupData(name, resolve, prefixLookup));
 	}
 
 	@Override
@@ -141,19 +141,24 @@ class PDOMCPPClassScope implements ICPPClassScope, IIndexScope {
 		return fBinding;
 	}
 	
-	@Override
+	@Deprecated	@Override
 	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) {
+		return getBindings(new ScopeLookupData(name, resolve, prefixLookup));
+	}
+
+	@Override
+	public IBinding[] getBindings(ScopeLookupData lookup) {
 		try {
-			if (name instanceof ICPPASTConversionName) {
+			if (lookup.getLookupName() instanceof ICPPASTConversionName) {
 				BindingCollector visitor = new BindingCollector(fBinding.getLinkage(), Keywords.cOPERATOR, CONVERSION_FILTER, true, false, true);
 				acceptViaCache(fBinding, visitor, true);
 				return visitor.getBindings();
 			} 
 
-			final char[] nameChars = name.getSimpleID();
-			if (!prefixLookup) {
+			final char[] nameChars = lookup.getLookupKey();
+			if (!lookup.isPrefixLookup()) {
 				if (CharArrayUtils.equals(fBinding.getNameCharArray(), nameChars)) {
-			        if (CPPClassScope.shallReturnConstructors(name, prefixLookup)){
+			        if (CPPClassScope.shallReturnConstructors(lookup.getLookupName(), false)){
 			            return fBinding.getConstructors();
 			        }
 			        return new IBinding[] {getClassNameBinding()};
@@ -162,7 +167,7 @@ class PDOMCPPClassScope implements ICPPClassScope, IIndexScope {
 			}
 			
 			// prefix lookup
-			BindingCollector visitor = new BindingCollector(fBinding.getLinkage(), nameChars, IndexFilter.CPP_DECLARED_OR_IMPLICIT_NO_INSTANCE, prefixLookup, prefixLookup, !prefixLookup);
+			BindingCollector visitor = new BindingCollector(fBinding.getLinkage(), nameChars, IndexFilter.CPP_DECLARED_OR_IMPLICIT_NO_INSTANCE, true, true, !true);
 			if (ContentAssistMatcherFactory.getInstance().match(nameChars, fBinding.getNameCharArray())) {
 				// add the class itself, constructors will be found during the visit
 		        visitor.visit((IPDOMNode) getClassNameBinding());

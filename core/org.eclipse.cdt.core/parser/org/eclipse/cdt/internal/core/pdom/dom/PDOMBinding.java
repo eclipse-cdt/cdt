@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
+import org.eclipse.cdt.core.dom.ast.IScope.ScopeLookupData;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
@@ -426,10 +427,15 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 	}
 
 	public final IBinding[] getBindings(IASTName name, boolean resolve, boolean prefix) {
-		return getBindings(name, resolve, prefix, null);
+		return getBindings(new ScopeLookupData(name, resolve, prefix));
 	}
 
+	@Deprecated
 	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefix, IIndexFileSet fileSet) {
-		return null;
+		return IBinding.EMPTY_BINDING_ARRAY;
+	}
+
+	public IBinding[] getBindings(ScopeLookupData lookup) {
+		return IBinding.EMPTY_BINDING_ARRAY;
 	}
 }

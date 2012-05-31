@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.c.CArrayType;
@@ -329,20 +330,26 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 	public IType unmarshalType(ITypeMarshalBuffer buffer) throws CoreException {
 		int firstByte= buffer.getByte();
 		switch((firstByte & ITypeMarshalBuffer.KIND_MASK)) {
-		case ITypeMarshalBuffer.ARRAY:
+		case ITypeMarshalBuffer.ARRAY_TYPE:
 			return CArrayType.unmarshal(firstByte, buffer);
 		case ITypeMarshalBuffer.BASIC_TYPE:
 			return CBasicType.unmarshal(firstByte, buffer);
-		case ITypeMarshalBuffer.CVQUALIFIER:
+		case ITypeMarshalBuffer.CVQUALIFIER_TYPE:
 			return CQualifierType.unmarshal(firstByte, buffer);
 		case ITypeMarshalBuffer.FUNCTION_TYPE:
 			return CFunctionType.unmarshal(firstByte, buffer);
-		case ITypeMarshalBuffer.POINTER:
+		case ITypeMarshalBuffer.POINTER_TYPE:
 			return CPointerType.unmarshal(firstByte, buffer);
 		case ITypeMarshalBuffer.PROBLEM_TYPE:
 			return ProblemType.unmarshal(firstByte, buffer);
 		}
 		
 		throw new CoreException(CCorePlugin.createStatus("Cannot unmarshal a type, first byte=" + firstByte)); //$NON-NLS-1$
+	}
+	
+	@Override
+	public ISerializableEvaluation unmarshalEvaluation(ITypeMarshalBuffer buffer)
+			throws CoreException {
+		throw new CoreException(CCorePlugin.createStatus("Cannot unmarshal an evaluation, first byte=" + buffer.getByte())); //$NON-NLS-1$
 	}
 }

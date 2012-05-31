@@ -70,6 +70,7 @@ import org.eclipse.cdt.core.dom.ast.ILabel;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.IScope.ScopeLookupData;
 import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
@@ -356,7 +357,7 @@ public class CVisitor extends ASTQueries {
 	public static class CollectReferencesAction extends ASTVisitor {
 		private static final int DEFAULT_LIST_SIZE = 8;
 		private IASTName[] refs;
-		private IBinding binding;
+		private final IBinding binding;
 		private int idx = 0;
 		private int kind;
 		
@@ -1065,23 +1066,11 @@ public class CVisitor extends ASTQueries {
 		if (scope == null)
 			return null;
 		
-		IIndexFileSet fileSet= IIndexFileSet.EMPTY;
-		IASTTranslationUnit tu= name.getTranslationUnit();
-		if (tu == null && scope instanceof IASTInternalScope) {
-			tu= ((IASTInternalScope) scope).getPhysicalNode().getTranslationUnit();
-		}
-		if (tu != null) {
-			final IIndexFileSet fs= (IIndexFileSet) tu.getAdapter(IIndexFileSet.class);
-			if (fs != null) {
-				fileSet= fs;
-			}
-		}
-		
 		IBinding[] result = null;
 		CharArraySet handled= new CharArraySet(1);
 		while (scope != null) {
 			if (!(scope instanceof ICCompositeTypeScope)) {
-				IBinding[] bindings= scope.getBindings(name, true, true, fileSet);
+				IBinding[] bindings= scope.getBindings(new ScopeLookupData(name, true, true));
 				for (IBinding b : bindings) {
 					final char[] n= b.getNameCharArray();
 					// consider binding only if no binding with the same name was found in another scope.

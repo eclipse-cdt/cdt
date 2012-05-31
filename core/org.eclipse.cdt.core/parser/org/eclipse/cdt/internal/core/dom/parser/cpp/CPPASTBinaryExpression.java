@@ -14,9 +14,6 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
-import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.*;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
@@ -25,33 +22,25 @@ import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IPointerType;
-import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTBinaryExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
-import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalBinary;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
+
 
 public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpression, IASTAmbiguityParent {
 	private int op;
-    private IASTExpression operand1;
-    private IASTInitializerClause operand2;
-    private IType type;
-    private ICPPFunction overload= UNINITIALIZED_FUNCTION;
+    private ICPPASTExpression operand1;
+    private ICPPASTInitializerClause operand2;
+    
+    private ICPPEvaluation evaluation;
     private IASTImplicitName[] implicitNames = null;
-	@Override
-	public ICPPInitClauseEvaluation getEvaluation() {
-		// mstodo Auto-generated method stub
-		return null;
-	}
 
     public CPPASTBinaryExpression() {
 	}
@@ -107,20 +96,25 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
     @Override
 	public void setOperand1(IASTExpression expression) {
         assertNotFrozen();
-        operand1 = expression;
         if (expression != null) {
+        	if (!(expression instanceof ICPPASTExpression))
+        		throw new IllegalArgumentException(expression.getClass().getName());
+        	
 			expression.setParent(this);
 			expression.setPropertyInParent(OPERAND_ONE);
 		}
+        operand1 = (ICPPASTExpression) expression;
     }
 
     public void setInitOperand2(IASTInitializerClause operand) {
         assertNotFrozen();
-        operand2 = operand;
         if (operand != null) {
+        	if (!(operand instanceof ICPPASTInitializerClause))
+        		throw new IllegalArgumentException(operand.getClass().getName());
         	operand.setParent(this);
         	operand.setPropertyInParent(OPERAND_TWO);
 		}
+        operand2 = (ICPPASTInitializerClause) operand;
     }
 
     @Override
@@ -251,144 +245,51 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
 		if (child == operand1) {
 			other.setPropertyInParent(child.getPropertyInParent());
 			other.setParent(child.getParent());
-			operand1 = (IASTExpression) other;
+			operand1 = (ICPPASTExpression) other;
 		}
 		if (child == operand2) {
 			other.setPropertyInParent(child.getPropertyInParent());
 			other.setParent(child.getParent());
-			operand2 = (IASTInitializerClause) other;
+			operand2 = (ICPPASTInitializerClause) other;
 		}
 	}
 
-    @Override
-	public IType getExpressionType() {
-    	if (type == null) {
-    		type= createExpressionType();
-    	}
-    	return type;
-    }
 
     @Override
 	public ICPPFunction getOverload() {
-    	if (overload != UNINITIALIZED_FUNCTION)
-    		return overload;
-    	
-    	return overload = CPPSemantics.findOverloadedOperator(this);
-    }
-
-    @Override
-	public ValueCategory getValueCategory() {
-    	ICPPFunction op = getOverload();
-		if (op != null) {
-			return valueCategoryFromFunctionCall(op);
-		}
-		switch (getOperator()) {
-		case op_assign:
-		case op_binaryAndAssign:
-		case op_binaryOrAssign:
-		case op_binaryXorAssign:
-		case op_divideAssign:
-		case op_minusAssign:
-		case op_moduloAssign:
-		case op_multiplyAssign:
-		case op_plusAssign:
-		case op_shiftLeftAssign:
-		case op_shiftRightAssign:
-			return LVALUE;
-
-		case op_pmdot:
-			if (!(getExpressionType() instanceof ICPPFunctionType)) {
-				return operand1.getValueCategory();
-			}
-			return PRVALUE;
-			
-		case op_pmarrow:
-			if (!(getExpressionType() instanceof ICPPFunctionType)) 
-				return LVALUE;
-			return PRVALUE;
-		}
-		
-		return PRVALUE;
+		ICPPEvaluation eval = getEvaluation();
+		if (eval instanceof EvalBinary)
+			return ((EvalBinary) eval).getOverload(this);
+		return null;
     }
     
 	@Override
-	public boolean isLValue() {
-		return getValueCategory() == LVALUE;
+	public ICPPEvaluation getEvaluation() {
+		if (evaluation == null) 
+			evaluation= computeEvaluation();
+		
+		return evaluation;
 	}
 	
-	private IType createExpressionType() {
-		IType originalType1 = operand1.getExpressionType();
-		IType originalType2 = operand2 instanceof IASTExpression ?
-				((IASTExpression) operand2).getExpressionType() : null;
-
-		// Check for overloaded operator.
-		ICPPFunction o= getOverload();
-		if (o != null) {
-			IType type = typeFromFunctionCall(o);
-    		return restoreTypedefs(type, originalType1, originalType2);
-		}
+	private ICPPEvaluation computeEvaluation() {
+		if (operand1 == null || operand2 == null)
+			return EvalFixed.INCOMPLETE;
 		
-        final int op = getOperator();
-		IType type1 = prvalueType(originalType1);
-		if (type1 instanceof ISemanticProblem) {
-			return type1;
-		}
+		return new EvalBinary(op, operand1.getEvaluation(), operand2.getEvaluation());
+	}
+    
+    @Override
+	public IType getExpressionType() {
+    	return getEvaluation().getTypeOrFunctionSet(this);
+    }
 
-		IType type2 = null;
-		if (originalType2 != null) {
-			type2= prvalueType(originalType2);
-			if (type2 instanceof ISemanticProblem) {
-				return type2;
-			}
-		}
-		
-    	IType type= CPPArithmeticConversion.convertCppOperandTypes(op, type1, type2);
-    	if (type != null) {
-    		return restoreTypedefs(type, originalType1, originalType2);
-    	}
+	@Override
+	public ValueCategory getValueCategory() {
+		return getEvaluation().getValueCategory(this);
+	}
 
-        switch (op) {
-        case IASTBinaryExpression.op_lessEqual:
-        case IASTBinaryExpression.op_lessThan:
-        case IASTBinaryExpression.op_greaterEqual:
-        case IASTBinaryExpression.op_greaterThan:
-        case IASTBinaryExpression.op_logicalAnd:
-        case IASTBinaryExpression.op_logicalOr:
-        case IASTBinaryExpression.op_equals:
-        case IASTBinaryExpression.op_notequals:
-        	return CPPBasicType.BOOLEAN;
-
-        case IASTBinaryExpression.op_plus:
-        	if (SemanticUtil.getNestedType(type1, TDEF) instanceof IPointerType) {
-        		return type1;
-        	} 
-        	if (SemanticUtil.getNestedType(type2, TDEF) instanceof IPointerType) {
-        		return type2;
-        	} 
-        	break;
-
-        case IASTBinaryExpression.op_minus:
-        	if (SemanticUtil.getNestedType(type1, TDEF) instanceof IPointerType) {
-            	if (SemanticUtil.getNestedType(type2, TDEF) instanceof IPointerType) {
-            		return CPPVisitor.getPointerDiffType(this);
-        		}
-        		return type1;
-        	}
-        	break;
-
-        case ICPPASTBinaryExpression.op_pmarrow:
-        case ICPPASTBinaryExpression.op_pmdot:
-        	if (type2 instanceof ICPPPointerToMemberType) {
-        		IType t= ((ICPPPointerToMemberType) type2).getType();
-        		if (t instanceof ICPPFunctionType)
-        			return t;
-        		if (op == ICPPASTBinaryExpression.op_pmdot && operand1.getValueCategory() == PRVALUE) {
-        			return prvalueType(t);
-        		}
-        		return glvalueType(t);
-        	}
-    		return new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
-        }
-		return restoreTypedefs(type1, originalType1);
+	@Override
+	public boolean isLValue() {
+		return getValueCategory() == LVALUE;
 	}
 }

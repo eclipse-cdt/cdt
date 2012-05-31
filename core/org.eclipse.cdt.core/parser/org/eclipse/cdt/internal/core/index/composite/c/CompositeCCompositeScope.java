@@ -43,9 +43,14 @@ class CompositeCCompositeScope extends CompositeScope implements ICCompositeType
 		return processUncertainBinding(binding);
 	}
 	
-	@Override
+	@Override @Deprecated
 	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) {
-		IBinding[] bindings = ((ICompositeType)rbinding).getCompositeScope().getBindings(name, resolve, prefixLookup, fileSet);
+		return getBindings(new ScopeLookupData(name, resolve, prefixLookup));
+	}
+
+	@Override
+	public IBinding[] getBindings(ScopeLookupData lookup) {
+		IBinding[] bindings = ((ICompositeType)rbinding).getCompositeScope().getBindings(lookup);
 		return processUncertainBindings(bindings);
 	}
 	

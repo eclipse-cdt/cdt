@@ -144,7 +144,7 @@ public class CQualifierType implements ICQualifierType, ITypeContainer, ISeriali
 
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
-		int firstByte= ITypeMarshalBuffer.CVQUALIFIER;
+		int firstByte= ITypeMarshalBuffer.CVQUALIFIER_TYPE;
 		if (isConst()) firstByte |= ITypeMarshalBuffer.FLAG1;
 		if (isVolatile()) firstByte |= ITypeMarshalBuffer.FLAG2;
 		if (isRestrict()) firstByte |= ITypeMarshalBuffer.FLAG3;

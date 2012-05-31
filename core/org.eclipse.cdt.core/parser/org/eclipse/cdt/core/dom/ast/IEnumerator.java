@@ -23,7 +23,7 @@ public interface IEnumerator extends IBinding {
 	 * 
 	 * @return the type of the enumeration
 	 */
-	public IType getType() throws DOMException;
+	public IType getType();
 	
 	/**
 	 * Returns the value assigned to this enumerator.

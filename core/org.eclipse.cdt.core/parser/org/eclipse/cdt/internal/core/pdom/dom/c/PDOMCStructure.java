@@ -126,7 +126,7 @@ public class PDOMCStructure extends PDOMBinding implements ICompositeType, ICCom
 	}
 
 	private static class GetFields implements IPDOMVisitor {
-		private List<IPDOMNode> fields = new ArrayList<IPDOMNode>();
+		private final List<IPDOMNode> fields = new ArrayList<IPDOMNode>();
 		@Override
 		public boolean visit(IPDOMNode node) throws CoreException {
 			if (node instanceof IField) {
@@ -277,9 +277,14 @@ public class PDOMCStructure extends PDOMBinding implements ICompositeType, ICCom
 		return getBinding(name.toCharArray());
 	}
 	
-	@Override
+	@Deprecated	@Override
 	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) {
-		return getBindings(name.toCharArray());
+		return getBindings(new ScopeLookupData(name, resolve, prefixLookup));
+	}
+
+	@Override
+	public IBinding[] getBindings(ScopeLookupData lookup) {
+		return getBindings(lookup.getLookupKey());
 	}
 	
 	@Override

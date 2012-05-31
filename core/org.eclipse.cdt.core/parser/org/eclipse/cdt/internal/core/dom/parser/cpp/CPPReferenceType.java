@@ -109,7 +109,7 @@ public class CPPReferenceType implements ICPPReferenceType, ITypeContainer, ISer
 
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
-		int firstByte= ITypeMarshalBuffer.REFERENCE;
+		int firstByte= ITypeMarshalBuffer.REFERENCE_TYPE;
 		if (isRValueReference()) {
 			firstByte |= ITypeMarshalBuffer.FLAG1;
 		}

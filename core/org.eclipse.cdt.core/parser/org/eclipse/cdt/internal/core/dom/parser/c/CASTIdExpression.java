@@ -14,7 +14,6 @@
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -105,21 +104,17 @@ public class CASTIdExpression extends ASTNode implements IASTIdExpression, IASTC
 	@Override
 	public IType getExpressionType() {
 		IBinding binding = getName().resolveBinding();
-		try {
-			if (binding instanceof IVariable) {
-				return ((IVariable)binding).getType();
-			} 
-			if (binding instanceof IFunction) {
-				return ((IFunction)binding).getType();
-			}
-			if (binding instanceof IEnumerator) {
-				return ((IEnumerator)binding).getType();
-			}
-			if (binding instanceof IProblemBinding) {
-				return new ProblemType(ISemanticProblem.TYPE_UNRESOLVED_NAME);
-			}
-		} catch (DOMException e) {
-			return e.getProblem();
+		if (binding instanceof IVariable) {
+			return ((IVariable)binding).getType();
+		} 
+		if (binding instanceof IFunction) {
+			return ((IFunction)binding).getType();
+		}
+		if (binding instanceof IEnumerator) {
+			return ((IEnumerator)binding).getType();
+		}
+		if (binding instanceof IProblemBinding) {
+			return new ProblemType(ISemanticProblem.TYPE_UNRESOLVED_NAME);
 		}
 		return new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
 	}

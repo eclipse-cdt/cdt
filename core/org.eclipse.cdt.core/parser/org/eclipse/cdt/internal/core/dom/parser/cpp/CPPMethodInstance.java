@@ -11,7 +11,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 
@@ -20,8 +22,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
  */
 public class CPPMethodInstance extends CPPFunctionInstance implements ICPPMethod {
 
-	public CPPMethodInstance(ICPPMethod orig, ICPPClassType owner, CPPTemplateParameterMap tpmap, ICPPTemplateArgument[] args) {
-		super(orig, owner, tpmap, args);
+	public CPPMethodInstance(ICPPMethod orig, ICPPClassType owner, CPPTemplateParameterMap tpmap, ICPPTemplateArgument[] args, ICPPFunctionType type, IType[] exceptionSpecs) {
+		super(orig, owner, tpmap, args, type, exceptionSpecs);
 	}
 
 	/* (non-Javadoc)

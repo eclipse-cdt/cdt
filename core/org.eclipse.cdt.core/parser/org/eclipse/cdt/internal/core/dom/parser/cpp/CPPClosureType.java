@@ -404,18 +404,27 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 
 		@Override
 		public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup) {
-			if (name instanceof ICPPASTTemplateId)
-				return IBinding.EMPTY_BINDING_ARRAY;
-			
-			if (prefixLookup)
-				return getPrefixBindings(name.getSimpleID());
-			return getBindings(name.getSimpleID());
+			return getBindings(new ScopeLookupData(name, resolve, prefixLookup));
 		}
 
+		/**
+		 * @deprecated Use {@link #getBindings(ScopeLookupData)} instead
+		 */
+		@Deprecated
 		@Override
 		public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup,
 				IIndexFileSet acceptLocalBindings) {
-			return getBindings(name, resolve, prefixLookup);
+					return getBindings(new ScopeLookupData(name, resolve, prefixLookup));
+				}
+
+		@Override
+		public IBinding[] getBindings(ScopeLookupData lookup) {
+			if (lookup.getLookupName() instanceof ICPPASTTemplateId)
+				return IBinding.EMPTY_BINDING_ARRAY;
+			
+			if (lookup.isPrefixLookup())
+				return getPrefixBindings(lookup.getLookupKey());
+			return getBindings(lookup.getLookupKey());
 		}
 
 		@Override

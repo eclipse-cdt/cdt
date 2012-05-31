@@ -13,33 +13,17 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import org.eclipse.cdt.core.dom.IName;
-import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.EScopeKind;
-import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
-import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 
 /**
  * Models the scope represented by an unknown binding such (e.g.: template type parameter). Used within
  * the context of templates, only.
  * For safe usage in index bindings, all fields need to be final or used in a thread-safe manner otherwise.
  */
-public class CPPUnknownScope implements ICPPInternalUnknownScope {
-    private final ICPPUnknownBinding binding;
-    private final IASTName scopeName;
+public class CPPUnknownScope extends CPPUnknownTypeScope implements ICPPInternalUnknownScope {
     /**
      * This field needs to be protected when used in PDOMCPPUnknownScope, 
      * don't use it outside of {@link #getOrCreateBinding(IASTName, int)}
@@ -47,162 +31,36 @@ public class CPPUnknownScope implements ICPPInternalUnknownScope {
     private CharArrayObjectMap<IBinding[]> map;
 
     public CPPUnknownScope(ICPPUnknownBinding binding, IASTName name) {
-        super();
-        this.scopeName = name;
-        this.binding = binding;
+        super(name, binding);
     }
 
-	@Override
-	public EScopeKind getKind() {
-		return EScopeKind.eClassType;
-	}
-
-    @Override
-	public IName getScopeName() {
-        return scopeName;
-    }
-
-    @Override
-	public IScope getParent() throws DOMException {
-        return binding.getScope();
-    }
-
-    @Override
-	public IBinding[] find(String name) {
-        return IBinding.EMPTY_BINDING_ARRAY;
-    }
-
-    @Override
-	public IASTNode getPhysicalNode() {
-        return scopeName;
-    }
 
     @Override
 	public void addName(IASTName name) {
     }
 
 	@Override
-	public final IBinding getBinding(IASTName name, boolean resolve) {
-		return getBinding(name, resolve, IIndexFileSet.EMPTY);
-	}
-
-    @Override
-	public IBinding getBinding(final IASTName name, boolean resolve, IIndexFileSet fileSet) {
-    	boolean type= false;
-    	boolean function= false;
-
-    	if (name.getPropertyInParent() == CPPSemantics.STRING_LOOKUP_PROPERTY) {
-    		type= true;
-    	} else {
-    		IASTName n= name;
-    		IASTNode parent= name.getParent();
-    		if (parent instanceof ICPPASTTemplateId) {
-    			n= (IASTName) parent;
-    			parent= n.getParent();
-    		}
-    		if (parent instanceof ICPPASTQualifiedName) {
-    			ICPPASTQualifiedName qname= (ICPPASTQualifiedName) parent;
-    			if (qname.getLastName() != n) {
-    				type= true;
-    			} else {
-    				parent= qname.getParent();
-    			}
-    		}
-    		if (!type) {
-    			if (parent instanceof ICPPASTBaseSpecifier ||
-    				parent instanceof ICPPASTConstructorChainInitializer) {
-    					type= true;
-    			} else if (parent instanceof ICPPASTNamedTypeSpecifier) {
-    				ICPPASTNamedTypeSpecifier nts= (ICPPASTNamedTypeSpecifier) parent;
-    				type= nts.isTypename();
-    			} else if (parent instanceof ICPPASTUsingDeclaration) {
-    				ICPPASTUsingDeclaration ud= (ICPPASTUsingDeclaration) parent;
-    				type= ud.isTypename();
-    			}
-    			
-    			if (!type && parent.getPropertyInParent() == IASTFunctionCallExpression.FUNCTION_NAME) {
-    				function=  true;
-    			}
-    		}
-    	}
-    	
-    	int idx= type ? 0 : function ? 1 : 2;
-
-    	IBinding result = getOrCreateBinding(name, idx);
-        return result;
-    }
-
-	protected IBinding getOrCreateBinding(final IASTName name, int idx) {
+	protected IBinding getOrCreateBinding(final char[] name, int idx) {
 		if (map == null)
             map = new CharArrayObjectMap<IBinding[]>(2);
 
-        final char[] c = name.getLookupKey();
-		IBinding[] o = map.get(c);
+        IBinding[] o = map.get(name);
 		if (o == null) {
 			o = new IBinding[3];
-			map.put(c, o);
+			map.put(name, o);
 		}
         
         IBinding result= o[idx];
         if (result == null) {
-        	switch (idx) {
-        	case 0:
-        		result= new CPPUnknownClass(binding, name.getSimpleID());
-        		break;
-        	case 1:
-        		result= new CPPUnknownFunction(binding, name.getSimpleID());
-        		break;
-        	case 2:
-        		result= new CPPUnknownBinding(binding, name.getSimpleID());
-        		break;
-        	}
+        	result= super.getOrCreateBinding(name, idx);
         	o[idx]= result;
         }
 		return result;
 	}
 
 	@Override
-	public final IBinding[] getBindings(IASTName name, boolean resolve, boolean prefix) {
-		return getBindings(name, resolve, prefix, IIndexFileSet.EMPTY);
-	}
-
-    @Override
-	public final IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) {
-    	return getBindings(name, resolve, prefixLookup, fileSet, true);
-    }
-
-    @Override
-	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet acceptLocalBindings, boolean checkPointOfDecl) {
-    	if (prefixLookup) {
-    		if (binding instanceof ICPPDeferredClassInstance) {
-	    		ICPPDeferredClassInstance instance = (ICPPDeferredClassInstance) binding;
-				IScope scope = instance.getClassTemplate().getCompositeScope();
-				if (scope != null) {
-					return scope.getBindings(name, resolve, prefixLookup, acceptLocalBindings);
-				}
-    		}
-    		return IBinding.EMPTY_BINDING_ARRAY;
-    	}
-    	
-    	return new IBinding[] {getBinding(name, resolve, acceptLocalBindings)};
-	}
-
-	@Override
 	public void addBinding(IBinding binding) {
 		// do nothing, this is part of template magic and not a normal scope
-	}
-
-	@Override
-	public ICPPBinding getScopeBinding() {
-		return binding;
-	}
-
-	/* (non-Javadoc)
-	 * For debug purposes only
-	 */
-	@Override
-	public String toString() {
-		return scopeName.toString();
 	}
 
 	@Override

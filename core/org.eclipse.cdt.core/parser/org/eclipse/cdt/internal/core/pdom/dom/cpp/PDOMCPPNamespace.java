@@ -182,20 +182,26 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 		return null;
 	}
 	
-	@Override
+	@Deprecated	@Override
 	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) {
+		return getBindings(new ScopeLookupData(name, resolve, prefixLookup));
+	}
+
+	@Override
+	public IBinding[] getBindings(ScopeLookupData lookup) {
 		IBinding[] result = null;
 		try {
-			if (!prefixLookup) {
-				result= getBindingsViaCache(name.getLookupKey());
+			if (!lookup.isPrefixLookup()) {
+				result= getBindingsViaCache(lookup.getLookupKey());
 			} else {
-				BindingCollector visitor= new BindingCollector(getLinkage(), name.getLookupKey(),
-						IndexFilter.CPP_DECLARED_OR_IMPLICIT_NO_INSTANCE, prefixLookup, prefixLookup, !prefixLookup);
+				BindingCollector visitor= new BindingCollector(getLinkage(), lookup.getLookupKey(),
+						IndexFilter.CPP_DECLARED_OR_IMPLICIT_NO_INSTANCE, true, true, false);
 				getIndex().accept(visitor);
 				result = visitor.getBindings();
 			}
-			if (fileSet != null) {
-				result= fileSet.filterFileLocalBindings(result);
+			IIndexFileSet filter = lookup.getIncludedFiles();
+			if (filter != null) {
+				result= filter.filterFileLocalBindings(result);
 			}
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

@@ -12,7 +12,7 @@
 package org.eclipse.cdt.core.dom.ast.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInitClauseEvaluation;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 
 /**
  * C++ specific initializer clause
@@ -26,5 +26,5 @@ public interface ICPPASTInitializerClause extends IASTInitializerClause {
 	 * Returns the evaluation object for this expression.
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
-	ICPPInitClauseEvaluation getEvaluation();
+	ICPPEvaluation getEvaluation();
 }

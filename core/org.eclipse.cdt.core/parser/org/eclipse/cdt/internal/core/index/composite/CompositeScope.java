@@ -121,7 +121,7 @@ public abstract class CompositeScope implements IIndexScope {
 
 	@Override
 	public final IBinding[] getBindings(IASTName name, boolean resolve, boolean prefix) {
-		return getBindings(name, resolve, prefix, IIndexFileSet.EMPTY);
+		return getBindings(new ScopeLookupData(name, resolve, prefix));
 	}
 	
 	/**

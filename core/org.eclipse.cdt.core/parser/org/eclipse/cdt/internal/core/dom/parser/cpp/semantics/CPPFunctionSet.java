@@ -9,12 +9,15 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPTwoPhaseBinding;
 
 /**
@@ -23,10 +26,14 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPTwoPhaseBinding;
  */
 public class CPPFunctionSet implements ICPPTwoPhaseBinding {
 
-	final ICPPFunction[] fBindings;
+	private final ICPPFunction[] fBindings;
+	private final IASTName fName;
+	private final ICPPTemplateArgument[] fTemplateArguments;
 	
-	public CPPFunctionSet(ICPPFunction[] bindingList) {
+	public CPPFunctionSet(ICPPFunction[] bindingList, ICPPTemplateArgument[] args, IASTName name) {
 		fBindings = ArrayUtil.removeNulls(bindingList);
+		fTemplateArguments= args;
+		fName= name;
 	}
 	
 	@Override
@@ -60,15 +67,30 @@ public class CPPFunctionSet implements ICPPTwoPhaseBinding {
 
 	@Override
 	public IBinding resolveFinalBinding(CPPASTNameBase astName) {
-		return CPPSemantics.resolveTargetedFunction(astName, fBindings);
+		return CPPSemantics.resolveTargetedFunction(astName, this);
 	}
 
-	
 	@Override
 	@SuppressWarnings("unchecked")
 	public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
 		if (adapter.isAssignableFrom(getClass())) 
 			return this;
 		return null;
+	}
+
+	public ICPPTemplateArgument[] getTemplateArguments() {
+		return fTemplateArguments;
+	}
+
+	public void applySelectedFunction(ICPPFunction selectedFunction) {
+		if (selectedFunction != null && fName != null) {
+			fName.setBinding(selectedFunction);
+		}
+	}
+	
+	public void setToUnknown() {
+		if (fName != null) {
+			fName.setBinding(new CPPUnknownFunction(null, fName.toCharArray()));
+		}
 	}
 }

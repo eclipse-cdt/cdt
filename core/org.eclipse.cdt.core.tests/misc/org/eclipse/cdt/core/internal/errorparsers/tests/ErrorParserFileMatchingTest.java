@@ -1206,7 +1206,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	}
 
 	/**
-	 * Checks if output of '-n'/'--just-print' or '-w'/'--print-directory' options of make can be recognized.
+	 * Checks if output of -w or --print-directory options of make can be recognized.
 	 *
 	 * @throws Exception...
 	 */

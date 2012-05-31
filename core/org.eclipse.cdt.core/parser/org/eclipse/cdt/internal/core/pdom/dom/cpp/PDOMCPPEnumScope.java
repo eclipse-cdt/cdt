@@ -59,7 +59,7 @@ class PDOMCPPEnumScope implements ICPPScope, IIndexScope {
 
 	@Override
 	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup) {
-		return getBindings(name, resolve, prefixLookup, null);
+		return getBindings(new ScopeLookupData(name, resolve, prefixLookup));
 	}
 
 	@Override
@@ -73,13 +73,18 @@ class PDOMCPPEnumScope implements ICPPScope, IIndexScope {
 		}
 	}
 
-	@Override
+	@Deprecated	@Override
 	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) {
+		return getBindings(new ScopeLookupData(name, resolve, prefixLookup));
+	}
+
+	@Override
+	public IBinding[] getBindings(ScopeLookupData lookup) {
 		try {
 			CharArrayMap<PDOMCPPEnumerator> map= getBindingMap(fBinding);
-			if (prefixLookup) {
+			if (lookup.isPrefixLookup()) {
 				final List<IBinding> result= new ArrayList<IBinding>();
-				final char[] nc= name.toCharArray();
+				final char[] nc= lookup.getLookupKey();
 				IContentAssistMatcher matcher = ContentAssistMatcherFactory.getInstance().createMatcher(nc);
 				for (char[] key : map.keys()) {
 					if (matcher.match(key)) {
@@ -88,7 +93,7 @@ class PDOMCPPEnumScope implements ICPPScope, IIndexScope {
 				}
 				return result.toArray(new IBinding[result.size()]);
 			} 
-			IBinding b= map.get(name.toCharArray());
+			IBinding b= map.get(lookup.getLookupKey());
 			if (b != null) {
 				return new IBinding[] {b};
 			}

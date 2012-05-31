@@ -94,8 +94,7 @@ public abstract class RefactoringTestBase extends BaseTestCase {
 		Bundle bundle = CTestPlugin.getDefault().getBundle();
 		CharSequence[] testData = TestSourceReader.getContentsForTest(bundle, "ui", getClass(), getName(), 0);
 
-		for (int i = 0; i < testData.length; i++) {
-			CharSequence contents = testData[i];
+		for (CharSequence contents : testData) {
 			TestSourceFile testFile = null;
 			boolean expectedResult = false;
 			BufferedReader reader = new BufferedReader(new StringReader(contents.toString()));
@@ -356,6 +355,8 @@ public abstract class RefactoringTestBase extends BaseTestCase {
 			String expectedSource = testFile.getExpectedSource();
 			IFile file = cproject.getProject().getFile(new Path(testFile.getName()));
 			String actualSource = getFileContents(file);
+			expectedSource= expectedSource.replace("\r\n", "\n");
+			actualSource= actualSource.replace("\r\n", "\n");
 			assertEquals(expectedSource, actualSource);
 		}
 	}

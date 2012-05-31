@@ -23,7 +23,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.internal.core.dom.Linkage;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.core.runtime.PlatformObject;
 
@@ -39,7 +38,6 @@ public class CPPUnknownBinding extends PlatformObject
     public CPPUnknownBinding(IBinding owner, char[] name) {
         super();
         this.name = new CPPASTName(name);
-        this.name.setPropertyInParent(CPPSemantics.STRING_LOOKUP_PROPERTY);
         fOwner= owner;
     }
 

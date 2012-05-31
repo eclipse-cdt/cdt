@@ -247,7 +247,7 @@ public class CScope implements ICScope, IASTInternalScope {
     
 	@Override
 	public final IBinding[] getBindings(IASTName name, boolean resolve, boolean prefix) {
-		return getBindings(name, resolve, prefix, IIndexFileSet.EMPTY);
+		return getBindings(new ScopeLookupData(name, resolve, prefix));
 	}
 
 	@Override
@@ -330,16 +330,28 @@ public class CScope implements ICScope, IASTInternalScope {
     }
     
     /* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.c.ICScope#getBinding(org.eclipse.cdt.core.dom.ast.IASTName, boolean)
+	 */
+	/**
+	 * @deprecated Use {@link #getBindings(ScopeLookupData)} instead
+	 */
+	@Deprecated
+	@Override
+	public final IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) {
+		return getBindings(new ScopeLookupData(name, resolve, prefixLookup));
+	}
+
+	/* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.c.ICScope#getBinding(org.eclipse.cdt.core.dom.ast.IASTName, boolean)
      */
 	@Override
-	public final IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) {
-        char[] c = name.toCharArray();
+	public final IBinding[] getBindings(ScopeLookupData lookup) {
+        char[] c = lookup.getLookupKey();
         Object[] obj = null;
 
         populateCache();
         for (CharArrayObjectMap<?> map : mapsToNameOrBinding) {
-        	if (prefixLookup) {
+        	if (lookup.isPrefixLookup()) {
         		IContentAssistMatcher matcher = ContentAssistMatcherFactory.getInstance().createMatcher(c);
         		Object[] keys = map.keyArray();
         		for (Object key2 : keys) {
@@ -358,11 +370,12 @@ public class CScope implements ICScope, IASTInternalScope {
 			IIndex index = tu.getIndex();
 			if (index != null) {
 				try {
-					IBinding[] bindings = prefixLookup ?
-							index.findBindingsForContentAssist(name.toCharArray(), true, INDEX_FILTERS[NAMESPACE_TYPE_BOTH], null) :
-							index.findBindings(name.toCharArray(), INDEX_FILTERS[NAMESPACE_TYPE_BOTH], null);
-					if (fileSet != null) {
-						bindings = fileSet.filterFileLocalBindings(bindings);
+					IBinding[] bindings = lookup.isPrefixLookup() ?
+							index.findBindingsForContentAssist(lookup.getLookupKey(), true, INDEX_FILTERS[NAMESPACE_TYPE_BOTH], null) :
+							index.findBindings(lookup.getLookupKey(), INDEX_FILTERS[NAMESPACE_TYPE_BOTH], null);
+					IIndexFileSet filter = lookup.getIncludedFiles();
+					if (filter != null) {
+						bindings = filter.filterFileLocalBindings(bindings);
 					}
 
 					obj = ArrayUtil.addAll(Object.class, obj, bindings);
@@ -387,7 +400,7 @@ public class CScope implements ICScope, IASTInternalScope {
 				if (n != null) {
 					IBinding b = n.getBinding();
 					if (b == null) {
-						if (resolve && n != name) {
+						if (lookup.isResolve() && n != lookup.getLookupPoint()) {
 							b = n.resolveBinding();
 						}
 					}

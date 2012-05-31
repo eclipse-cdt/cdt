@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
@@ -42,11 +43,12 @@ public class CPPClassTemplateSpecialization extends CPPClassSpecialization
 	@Override
 	public ICPPClassTemplatePartialSpecialization[] getPartialSpecializations() {
 		if (fPartialSpecs == null) {
+			IASTNode point= null; // Instantiation of dependent expression may not work.
 			ICPPClassTemplate origTemplate= (ICPPClassTemplate) getSpecializedBinding();
 			ICPPClassTemplatePartialSpecialization[] orig = origTemplate.getPartialSpecializations();
 			ICPPClassTemplatePartialSpecialization[] spec = new ICPPClassTemplatePartialSpecialization[orig.length];
 			for (int i = 0; i < orig.length; i++) {
-				spec[i]= (ICPPClassTemplatePartialSpecialization) specializeMember(orig[i]);
+				spec[i]= (ICPPClassTemplatePartialSpecialization) specializeMember(orig[i], point);
 			}
 			fPartialSpecs = spec;
 		}

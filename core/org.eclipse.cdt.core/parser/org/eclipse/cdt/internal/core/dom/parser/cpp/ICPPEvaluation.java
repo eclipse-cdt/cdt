@@ -12,19 +12,22 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
+import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 
 /**
  * Assists in evaluating expressions.
  */
-public interface ICPPInitClauseEvaluation {
-	
+public interface ICPPEvaluation extends ISerializableEvaluation {
 	boolean isInitializerList();
+	boolean isFunctionSet();
+
 	boolean isTypeDependent();
 	boolean isValueDependent();
 	
-	IType getTypeOrFunctionSet();
-	IValue getValue();
-	ValueCategory getCategory();
+	IType getTypeOrFunctionSet(IASTNode point);
+	IValue getValue(IASTNode point);
+	ValueCategory getValueCategory(IASTNode point);
 }

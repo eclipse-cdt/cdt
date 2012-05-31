@@ -11,6 +11,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
@@ -23,6 +27,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassSpecialization.RecursionResolvingBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPClassSpecializationScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
@@ -34,6 +39,8 @@ import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 public class CompositeCPPClassSpecialization extends CompositeCPPClassType implements ICPPClassSpecialization {
 	
 	private ObjectMap specializationMap= null;
+	private final ThreadLocal<Set<IBinding>> fInProgress= new ThreadLocal<Set<IBinding>>();
+
 
 	public CompositeCPPClassSpecialization(ICompositesFactory cf, ICPPClassType rbinding) {
 		super(cf, rbinding);
@@ -60,6 +67,11 @@ public class CompositeCPPClassSpecialization extends CompositeCPPClassType imple
 
 	@Override
 	public IBinding specializeMember(IBinding original) {
+		return specializeMember(original, null);
+	}
+	
+	@Override
+	public IBinding specializeMember(IBinding original, IASTNode point) {
 		if (specializationMap == null) {
 			final Object key= CPPCompositesFactory.createSpecializationKey(cf, rbinding);
 			final IIndexFragment frag= rbinding.getFragment();
@@ -89,12 +101,23 @@ public class CompositeCPPClassSpecialization extends CompositeCPPClassType imple
 				specializationMap= (ObjectMap) frag.putCachedResult(key, newMap, false);
 			}
 		}
+		Set<IBinding> set;
 		synchronized (specializationMap) {
 			IBinding result= (IBinding) specializationMap.get(original);
 			if (result != null) 
 				return result;
+			set= fInProgress.get();
+			if (set == null) {
+				set= new HashSet<IBinding>();
+				fInProgress.set(set);
+			} 
+			if (!set.add(original)) 
+				return new RecursionResolvingBinding(null, null);
+
 		}
-		IBinding newSpec= CPPTemplates.createSpecialization(this, original);
+		IBinding newSpec= CPPTemplates.createSpecialization(this, original, point);
+		set.remove(original);
+
 		synchronized (specializationMap) {
 			IBinding oldSpec= (IBinding) specializationMap.put(original, newSpec);
 			if (oldSpec != null) {

@@ -610,18 +610,14 @@ public class ASTTypeUtil {
 		IBinding binding = declarator.getName().resolveBinding();
 		IType type = null;
 		
-		try {
-			if (binding instanceof IEnumerator) {
-				type = ((IEnumerator) binding).getType();
-			} else if (binding instanceof IFunction) {
-				type = ((IFunction) binding).getType();
-			} else if (binding instanceof ITypedef) {
-				type = ((ITypedef) binding).getType();
-			} else if (binding instanceof IVariable) {
-				type = ((IVariable) binding).getType();
-			}
-		} catch (DOMException e) {
-			return EMPTY_STRING;
+		if (binding instanceof IEnumerator) {
+			type = ((IEnumerator)binding).getType();
+		} else if (binding instanceof IFunction) {
+			type = ((IFunction)binding).getType();
+		} else if (binding instanceof ITypedef) {
+			type = ((ITypedef)binding).getType();
+		} else if (binding instanceof IVariable) {
+			type = ((IVariable)binding).getType();
 		}
 		
 		if (type != null) {

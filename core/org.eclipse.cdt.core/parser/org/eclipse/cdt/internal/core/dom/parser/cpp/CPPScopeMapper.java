@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -104,13 +105,18 @@ public class CPPScopeMapper {
 		public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet acceptLocalBindings) {
 			return fScope.getBinding(name, resolve, acceptLocalBindings);
 		}
-		@Override
+		@Override @Deprecated
 		public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup) {
 			return fScope.getBindings(name, resolve, prefixLookup);
 		}
-		@Override
+		@Override @Deprecated
 		public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup,	IIndexFileSet acceptLocalBindings) {
-			return fScope.getBindings(name, resolve, prefixLookup, acceptLocalBindings);
+			return getBindings(name, resolve, prefixLookup, acceptLocalBindings);
+		}
+
+		@Override
+		public IBinding[] getBindings(ScopeLookupData lookup) {
+			return fScope.getBindings(lookup);
 		}
 		@Override
 		public IScope getParent() throws DOMException {
@@ -363,14 +369,14 @@ public class CPPScopeMapper {
 		return scope;
 	}
 	
-	public ICPPClassType mapToAST(ICPPClassType type) {
+	public ICPPClassType mapToAST(ICPPClassType type, IASTNode point) {
 		if (type instanceof ICPPTemplateInstance) {
 			ICPPTemplateInstance inst= (ICPPTemplateInstance) type;
 			ICPPTemplateDefinition template= inst.getTemplateDefinition();
 			if (template instanceof IIndexBinding && template instanceof ICPPClassType) {
-				IBinding mapped= mapToAST((ICPPClassType) template);
+				IBinding mapped= mapToAST((ICPPClassType) template, point);
 				if (mapped != template && mapped instanceof ICPPClassType) {
-					mapped= CPPTemplates.instantiate((ICPPClassTemplate) mapped, inst.getTemplateArguments());
+					mapped= CPPTemplates.instantiate((ICPPClassTemplate) mapped, inst.getTemplateArguments(), point);
 					if (mapped instanceof ICPPClassType)
 						return (ICPPClassType) mapped;
 				}

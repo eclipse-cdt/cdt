@@ -72,7 +72,7 @@ public class CPPParameterPackType implements ICPPParameterPackType, ITypeContain
 
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
-		int firstByte= ITypeMarshalBuffer.PACK_EXPANSION;
+		int firstByte= ITypeMarshalBuffer.PACK_EXPANSION_TYPE;
 		buffer.putByte((byte) firstByte);
 		buffer.marshalType(getType());
 	}

@@ -226,10 +226,10 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	}
 
 	@Override
-	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup,
-			IIndexFileSet fileSet, boolean checkPointOfDecl) {
-	    char[] c = name.getLookupKey();
-
+	public IBinding[] getBindings(ScopeLookupData lookup) {
+	    char[] c = lookup.getLookupKey();
+	    final boolean prefixLookup= lookup.isPrefixLookup();
+	    
 	    ICPPASTCompositeTypeSpecifier compType = (ICPPASTCompositeTypeSpecifier) getPhysicalNode();
 	    IASTName compName = compType.getName().getLastName();
 		if (compName instanceof ICPPASTTemplateId) {
@@ -238,16 +238,16 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	    IBinding[] result = null;
 	    if ((!prefixLookup && CharArrayUtils.equals(c, compName.getLookupKey()))
 				|| (prefixLookup && ContentAssistMatcherFactory.getInstance().match(c, compName.getLookupKey()))) {
-	        if (shallReturnConstructors(name, prefixLookup)) {
-	            result = ArrayUtil.addAll(IBinding.class, result, getConstructors(name, resolve));
+	        final IASTName lookupName = lookup.getLookupName();
+			if (shallReturnConstructors(lookupName, prefixLookup)) {
+	            result = ArrayUtil.addAll(IBinding.class, result, getConstructors(lookupName, lookup.isResolve()));
 	        }
             //9.2 ... The class-name is also inserted into the scope of the class itself
             result = ArrayUtil.append(IBinding.class, result, compName.resolveBinding());
             if (!prefixLookup)
             	return ArrayUtil.trim(IBinding.class, result);
 	    }
-	    result = ArrayUtil.addAll(IBinding.class, result,
-	    		super.getBindings(name, resolve, prefixLookup, fileSet, checkPointOfDecl));
+	    result = ArrayUtil.addAll(IBinding.class, result, super.getBindings(lookup));
 	    return ArrayUtil.trim(IBinding.class, result);
 	}
 
@@ -325,11 +325,11 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	}
 
 	public static boolean shallReturnConstructors(IASTName name, boolean isPrefixLookup) {
+		if (name == null)
+			return false;
+		
 		if (!isPrefixLookup)
 			return CPPVisitor.isConstructorDeclaration(name);
-		
-		if (name.getPropertyInParent() == CPPSemantics.STRING_LOOKUP_PROPERTY)
-			return false;
 		
 		IASTNode node = name.getParent();
 		if (node instanceof ICPPASTTemplateId)

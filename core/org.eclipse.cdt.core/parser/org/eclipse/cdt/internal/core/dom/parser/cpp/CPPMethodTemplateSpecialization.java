@@ -12,7 +12,9 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 
@@ -23,8 +25,8 @@ public class CPPMethodTemplateSpecialization extends CPPFunctionTemplateSpeciali
 		implements ICPPMethod {
 
 	public CPPMethodTemplateSpecialization(ICPPMethod specialized, ICPPClassType owner, 
-			ICPPTemplateParameterMap ctmap) {
-		super(specialized, owner, ctmap);
+			ICPPTemplateParameterMap ctmap, ICPPFunctionType type, IType[] exceptionSpecs) {
+		super(specialized, owner, ctmap, type, exceptionSpecs);
 	}
 
 	@Override

@@ -10,7 +10,6 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.typeOrFunctionSet;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.*;
 
 import java.util.ArrayList;
@@ -21,9 +20,7 @@ import java.util.Set;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
-import org.eclipse.cdt.core.dom.ast.IASTExpression;
-import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
@@ -48,6 +45,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBuiltinParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPReferenceType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 
 /**
@@ -59,12 +57,12 @@ class BuiltinOperators {
 	private static final int SECOND = 1;
 	private static final IType PTR_DIFF = new CPPBasicType(Kind.eInt, 0);
 
-	public static ICPPFunction[] create(OverloadableOperator operator, IASTInitializerClause[] args,
-			IASTTranslationUnit tu, Object[] globCandidates) {
+	public static ICPPFunction[] create(OverloadableOperator operator, ICPPEvaluation[] args,
+			IASTNode point, Object[] globCandidates) {
 		if (operator == null || args == null || args.length == 0)
 			return EMPTY;
 		
-		return new BuiltinOperators(operator, args, tu.getScope(), globCandidates).create();
+		return new BuiltinOperators(operator, args, point, globCandidates).create();
 	}
 
 	private final OverloadableOperator fOperator;
@@ -78,20 +76,20 @@ class BuiltinOperators {
 	private Set<String> fSignatures;
 	private Object[] fGlobalCandidates;
 
-	BuiltinOperators(OverloadableOperator operator, IASTInitializerClause[] args, IScope fileScope,
+	BuiltinOperators(OverloadableOperator operator, ICPPEvaluation[] args, IASTNode point,
 			Object[] globCandidates) {
-		fFileScope= fileScope;
+		fFileScope= point.getTranslationUnit().getScope();
 		fOperator= operator;
 		fUnary= args.length<2;
 		fGlobalCandidates= globCandidates;
-		if (args.length > 0 && args[0] instanceof IASTExpression) {
-			IType type= typeOrFunctionSet((IASTExpression) args[0]);
+		if (args.length > 0) {
+			IType type= args[0].getTypeOrFunctionSet(point);
 			if (!(type instanceof ISemanticProblem)) 
 				fType1= type;
 			
 		}
-		if (args.length > 1 && args[1] instanceof IASTExpression) {
-			IType type= typeOrFunctionSet((IASTExpression) args[1]);
+		if (args.length > 1) {
+			IType type= args[1].getTypeOrFunctionSet(point);
 			if (!(type instanceof ISemanticProblem))
 				fType2= type;
 		}

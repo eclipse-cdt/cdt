@@ -12,6 +12,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
@@ -33,7 +36,9 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
+import org.eclipse.core.runtime.Assert;
 
 /**
  * Specialization of a class.
@@ -41,8 +46,16 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 public class CPPClassSpecialization extends CPPSpecialization 
 		implements ICPPClassSpecialization, ICPPInternalClassTypeMixinHost {
 
+	public final static class RecursionResolvingBinding extends ProblemBinding {
+		public RecursionResolvingBinding(IASTNode node, char[] arg) {
+			super(node, IProblemBinding.SEMANTIC_RECURSION_IN_LOOKUP, arg);
+			Assert.isTrue(CPPASTNameBase.sAllowRecursionBindings, getMessage());
+		}
+	}
+
 	private ICPPClassSpecializationScope specScope;
 	private ObjectMap specializationMap= ObjectMap.EMPTY_MAP;
+	private final ThreadLocal<Set<IBinding>> fInProgress= new ThreadLocal<Set<IBinding>>();
 
 	public CPPClassSpecialization(ICPPClassType specialized, IBinding owner, ICPPTemplateParameterMap argumentMap) {
 		super(specialized, owner, argumentMap);
@@ -55,14 +68,29 @@ public class CPPClassSpecialization extends CPPSpecialization
 	}
 	
 	@Override
-	public IBinding specializeMember(IBinding original) {		
+	public IBinding specializeMember(IBinding original) {
+		return specializeMember(original, null);
+	}
+
+	@Override
+	public IBinding specializeMember(IBinding original, IASTNode point) {		
+		Set<IBinding> set;
 		synchronized(this) {
 			IBinding result= (IBinding) specializationMap.get(original);
 			if (result != null) 
 				return result;
+			
+			set= fInProgress.get();
+			if (set == null) {
+				set= new HashSet<IBinding>();
+				fInProgress.set(set);
+			} 
+			if (!set.add(original)) 
+				return new RecursionResolvingBinding(null, null);
 		}
 		
-		IBinding result= CPPTemplates.createSpecialization(this, original);
+		IBinding result= CPPTemplates.createSpecialization(this, original, point);
+		set.remove(original);
 		synchronized(this) {
 			IBinding concurrent= (IBinding) specializationMap.get(original);
 			if (concurrent != null) 

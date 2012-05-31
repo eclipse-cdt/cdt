@@ -125,7 +125,7 @@ public class CPPASTRangeBasedForStatement extends ASTAttributeOwner
 					fImplicitNames= IASTImplicitName.EMPTY_NAME_ARRAY;
 				} else if (type instanceof ICPPClassType) {
 					ICPPClassType ct= (ICPPClassType) type;
-					if (CPPSemantics.findBindings(ct.getCompositeScope(), CPPVisitor.BEGIN_STR, true).length > 0) {
+					if (CPPSemantics.findBindings(ct.getCompositeScope(), CPPVisitor.BEGIN, true, this).length > 0) {
 						CPPASTName name = new CPPASTName(CPPVisitor.BEGIN);
 						name.setOffset(position.getOffset());
 						CPPASTFieldReference fieldRef = new CPPASTFieldReference(name, forInitExpr.copy());

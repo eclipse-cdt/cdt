@@ -174,8 +174,8 @@ public enum OverloadableOperator {
 	 * 
 	 * @throws NullPointerException if {@code expression} is {@code null}.
 	 */
-	public static OverloadableOperator fromBinaryExpression(IASTBinaryExpression expression) {
-		switch (expression.getOperator()) {
+	public static OverloadableOperator fromBinaryExpression(int binaryOp) {
+		switch (binaryOp) {
 		case IASTBinaryExpression.op_binaryAnd:     	return AMPER;
 		case IASTBinaryExpression.op_binaryAndAssign:   return AMPERASSIGN;
 		case IASTBinaryExpression.op_pmarrow:         	return ARROW;
@@ -219,8 +219,8 @@ public enum OverloadableOperator {
 		return null;
 	}
 	
-	public static OverloadableOperator fromUnaryExpression(IASTUnaryExpression expression) {
-		switch(expression.getOperator()) {
+	public static OverloadableOperator fromUnaryExpression(int unaryOp) {
+		switch(unaryOp) {
 		case IASTUnaryExpression.op_prefixIncr:  return INCR;
 		case IASTUnaryExpression.op_prefixDecr:  return DECR;
 		case IASTUnaryExpression.op_plus:        return PLUS;

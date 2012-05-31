@@ -75,6 +75,8 @@ public class TemplateInstanceUtil {
 	}
 	
 	public static ICPPTemplateArgument[] convert(ICompositesFactory cf, ICPPTemplateArgument[] arguments) {
+		if (arguments == null)
+			return null;
 		try {
 			ICPPTemplateArgument[] result= new ICPPTemplateArgument[arguments.length];
 			for (int i = 0; i < arguments.length; i++) {

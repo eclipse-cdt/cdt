@@ -57,11 +57,16 @@ class CompositeCPPNamespaceScope extends CompositeScope implements ICPPNamespace
 		return processUncertainBinding(preresult);
 	}
 	
-	@Override
+	@Deprecated @Override
 	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) {
+		return getBindings(new ScopeLookupData(name, resolve, prefixLookup));
+	}
+
+	@Override
+	public IBinding[] getBindings(ScopeLookupData lookup) {
 		IIndexFragmentBinding[][] preresult = new IIndexFragmentBinding[namespaces.length][];
 		for(int i=0; i<namespaces.length; i++) {
-			IBinding[] raw = namespaces[i].getNamespaceScope().getBindings(name, resolve, prefixLookup, fileSet);
+			IBinding[] raw = namespaces[i].getNamespaceScope().getBindings(lookup);
 			preresult[i] = new IIndexFragmentBinding[raw.length];
 			System.arraycopy(raw, 0, preresult[i], 0, raw.length);
 		}

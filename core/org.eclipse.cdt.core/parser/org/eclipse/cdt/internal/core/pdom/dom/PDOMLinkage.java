@@ -36,6 +36,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective;
 import org.eclipse.cdt.core.index.IIndexLinkage;
 import org.eclipse.cdt.core.parser.util.CharArrayMap;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
+import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.index.IIndexBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
@@ -430,6 +431,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 
 	public abstract PDOMBinding addTypeBinding(IBinding type) throws CoreException;
 	public abstract IType unmarshalType(ITypeMarshalBuffer buffer) throws CoreException;
+	public abstract ISerializableEvaluation unmarshalEvaluation(ITypeMarshalBuffer typeMarshalBuffer) throws CoreException;
 
 	public void storeType(long offset, IType type) throws CoreException {
 		final Database db= getDB();

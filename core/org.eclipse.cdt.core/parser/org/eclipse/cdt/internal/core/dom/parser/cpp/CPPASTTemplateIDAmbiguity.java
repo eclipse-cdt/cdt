@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
@@ -40,13 +41,13 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.NameOrTemplateIDVariants.Var
 /**
  * Models expression variants for the ambiguity of a template id.
  */
-public class CPPASTTemplateIDAmbiguity extends ASTAmbiguousNode implements IASTAmbiguousExpression {
-
+public class CPPASTTemplateIDAmbiguity extends ASTAmbiguousNode implements IASTAmbiguousExpression,
+		ICPPASTExpression {
 	private BinaryOperator fLastOperator;
 	private IASTInitializerClause fLastExpression;
 	private final BranchPoint fVariants;
 	private IASTNode[] fNodes;
-	private AbstractGNUSourceCodeParser fParser;
+	private final AbstractGNUSourceCodeParser fParser;
 
 	public CPPASTTemplateIDAmbiguity(AbstractGNUSourceCodeParser parser, BinaryOperator lastOperator, IASTInitializerClause expr,
 			BranchPoint variants) {

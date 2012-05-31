@@ -10,6 +10,8 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
+
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
@@ -19,6 +21,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLambdaExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.Value;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 
 /**
  * Implementation for lambda expressions.
@@ -32,17 +36,13 @@ public class CPPASTLambdaExpression extends ASTNode implements ICPPASTLambdaExpr
 
 	private IASTCompoundStatement fBody;
 	
-	private CPPClosureType fClosureType;
 	private IASTImplicitName fClosureTypeName;
 	private IASTImplicitName fImplicitFunctionCallName;
 
+	private ICPPEvaluation fEvaluation;
+
 	public CPPASTLambdaExpression() {
 		fCaptureDefault= CaptureDefault.UNSPECIFIED;
-	}
-	@Override
-	public ICPPInitClauseEvaluation getEvaluation() {
-		// mstodo Auto-generated method stub
-		return null;
 	}
 
 	/* (non-Javadoc)
@@ -206,11 +206,16 @@ public class CPPASTLambdaExpression extends ASTNode implements ICPPASTLambdaExpr
 	}
 
 	@Override
+	public ICPPEvaluation getEvaluation() {
+		if (fEvaluation == null) {
+			fEvaluation= new EvalFixed(new CPPClosureType(this), PRVALUE, Value.UNKNOWN);
+		}
+		return fEvaluation;
+	}
+	
+	@Override
 	public CPPClosureType getExpressionType() {
-		if (fClosureType == null)
-			fClosureType= new CPPClosureType(this);
-
-		return fClosureType;
+		return (CPPClosureType) getEvaluation().getTypeOrFunctionSet(this);
 	}
 
 	@Override

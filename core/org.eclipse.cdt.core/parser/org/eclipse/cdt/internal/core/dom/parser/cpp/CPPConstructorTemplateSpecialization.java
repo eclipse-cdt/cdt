@@ -11,8 +11,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 
 /**
@@ -22,7 +24,7 @@ public class CPPConstructorTemplateSpecialization extends CPPMethodTemplateSpeci
 		implements ICPPConstructor {
 	
 	public CPPConstructorTemplateSpecialization(ICPPConstructor original,
-			ICPPClassType owner, ICPPTemplateParameterMap tpmap) {
-		super(original, owner, tpmap);
+			ICPPClassType owner, ICPPTemplateParameterMap tpmap, ICPPFunctionType type, IType[] exceptionSpecs) {
+		super(original, owner, tpmap, type, exceptionSpecs);
 	}
 }

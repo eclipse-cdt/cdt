@@ -19,12 +19,15 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 
 /**
  * Represents a reference to a (member) function (instance), which cannot be resolved because 
  * it depends on a template parameter. A compiler would resolve it during instantiation.
  */
 public class CPPUnknownFunction extends CPPUnknownBinding implements ICPPFunction {
+
+	private static final ICPPFunctionType FUNCTION_TYPE= new CPPFunctionType(ProblemType.UNKNOWN_FOR_EXPRESSION, IType.EMPTY_TYPE_ARRAY);
 
 	public static ICPPFunction createForSample(IFunction sample) throws DOMException {
 		if (sample instanceof ICPPConstructor)
@@ -33,7 +36,6 @@ public class CPPUnknownFunction extends CPPUnknownBinding implements ICPPFunctio
 		return new CPPUnknownFunction(sample.getOwner(), sample.getNameCharArray());
 	}
 
-	private ICPPFunctionType fType;
 
 	public CPPUnknownFunction(IBinding owner, char[] name) {
 		super(owner, name);
@@ -76,10 +78,7 @@ public class CPPUnknownFunction extends CPPUnknownBinding implements ICPPFunctio
 
 	@Override
 	public ICPPFunctionType getType() {
-		if (fType == null) {
-			fType= new CPPUnknownFunctionType();
-		}
-		return fType;
+		return FUNCTION_TYPE;
 	}
 
 	@Override

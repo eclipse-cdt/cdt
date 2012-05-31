@@ -13,6 +13,7 @@
 package org.eclipse.cdt.core.dom.ast;
 
 import org.eclipse.cdt.core.dom.IName;
+import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 
 /**
@@ -87,19 +88,96 @@ public interface IScope {
 	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet acceptLocalBindings);
 
 	/**
-	 * Get the bindings in this scope that the given name or prefix could resolve to. Could
-	 * return null if there is no matching bindings in this scope, if the bindings have not
-	 * yet been cached in this scope, or if resolve == false and the appropriate bindings 
-	 * have not yet been resolved.
-	 * 
-	 * @param name
-	 * @param resolve :
-	 *            whether or not to resolve the matching bindings if they have not
-	 *            been so already.
-	 * @param prefixLookup whether the lookup is for a full name or a prefix
-	 * @return : the bindings in this scope that match the name or prefix, or null
+	 * @deprecated Use {@link #getBindings(ScopeLookupData)} instead
 	 */
+	@Deprecated
 	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup);
+
+	/**
+	 * @deprecated Use {@link #getBindings(ScopeLookupData)} instead
+	 */
+	@Deprecated
+	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet acceptLocalBindings);
+
+	
+	/**
+	 * @since 5.4
+	 * @noextend This class is not intended to be subclassed by clients.
+	 */
+	public static class ScopeLookupData {
+		private char[] fLookupKey;
+		private final IASTNode fLookupPoint;
+		private final IASTTranslationUnit fTu;
+		private final boolean fLookupPointIsName;
+		private boolean fResolve= true;
+		private boolean fPrefixLookup= false;
+		private boolean fIgnorePointOfDeclaration= false;
+		
+		public ScopeLookupData(IASTName name, boolean resolve, boolean prefixLookup) {
+			if (name == null)
+				throw new IllegalArgumentException();
+			fLookupPoint = name;
+			fLookupPointIsName= true;
+			fLookupKey= name.getLookupKey();
+			fResolve = resolve;
+			fPrefixLookup = prefixLookup;
+			fTu= name.getTranslationUnit();
+		}
+
+		public ScopeLookupData(char[] name, IASTNode point) {
+			// To support IScope.find(...) the lookup point may be null.
+			fLookupPoint= point;
+			fLookupPointIsName= false;
+			fLookupKey= name;
+			fIgnorePointOfDeclaration= true;
+			if (fLookupPoint == null) {
+				fTu= null;
+				fIgnorePointOfDeclaration= true;
+			} else {
+				fTu= fLookupPoint.getTranslationUnit();
+			}
+		}
+
+		public void setPrefixLookup(boolean prefixLookup) {
+			fPrefixLookup = prefixLookup;
+		}
+		public void setResolve(boolean resolve) {
+			fResolve = resolve;
+		}
+		public void setIgnorePointOfDeclaration(boolean ignorePointOfDeclaration) {
+			fIgnorePointOfDeclaration = ignorePointOfDeclaration;
+		}
+		public void setLookupKey(char[] key) {
+			fLookupKey= key;
+		}
+		public char[] getLookupKey() {
+			return fLookupKey;
+		}
+		public IASTNode getLookupPoint() {
+			return fLookupPoint;
+		}
+		public boolean isResolve() {
+			return fResolve;
+		}
+		public boolean isPrefixLookup() {
+			return fPrefixLookup;
+		}
+		public boolean isIgnorePointOfDeclaration() {
+			return fIgnorePointOfDeclaration;
+		}
+		public IIndexFileSet getIncludedFiles() {
+			return fTu == null ? IIndexFileSet.EMPTY : fTu.getIndexFileSet();
+		}
+		public IIndex getIndex() {
+			return fTu == null ? null : fTu.getIndex();
+		}
+		public IASTName getLookupName() {
+			return fLookupPointIsName ? (IASTName) fLookupPoint : null;
+		}
+		public IASTTranslationUnit getTranslationUnit() {
+			return fTu;
+		}
+	}
 
 	/**
 	 * Get the bindings in this scope that the given name or prefix could resolve to. Could
@@ -107,14 +185,9 @@ public interface IScope {
 	 * yet been cached in this scope, or if resolve == false and the appropriate bindings 
 	 * have not yet been resolved.
 	 * 
-	 * @param name
-	 * @param resolve :
-	 *            whether or not to resolve the matching bindings if they have not
-	 *            been so already.
-	 * @param prefixLookup whether the lookup is for a full name or a prefix
-	 * @param acceptLocalBindings a set of files for which to accept local bindings.
 	 * @return : the bindings in this scope that match the name or prefix, or null
+	 * @since 5.4
 	 */
-	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet acceptLocalBindings);
+	public IBinding[] getBindings(ScopeLookupData lookup);
 
 }

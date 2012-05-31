@@ -100,7 +100,7 @@ public abstract class ASTTypeIdInitializerExpression extends ASTNode implements 
 	}
 	
 	@Override
-	public final ValueCategory getValueCategory() {
+	public ValueCategory getValueCategory() {
 		return ValueCategory.PRVALUE;
 	}
 }

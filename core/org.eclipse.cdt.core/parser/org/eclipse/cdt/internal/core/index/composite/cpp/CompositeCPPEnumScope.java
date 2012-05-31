@@ -37,9 +37,14 @@ class CompositeCPPEnumScope extends CompositeScope implements ICPPScope {
 		return processUncertainBinding(binding);
 	}
 
-	@Override
+	@Deprecated	@Override
 	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) {
-		IBinding[] bindings = ((ICPPEnumeration)rbinding).asScope().getBindings(name, resolve, prefixLookup, fileSet);
+		return getBindings(new ScopeLookupData(name, resolve, prefixLookup));
+	}
+
+	@Override
+	public IBinding[] getBindings(ScopeLookupData lookup) {
+		IBinding[] bindings = ((ICPPEnumeration)rbinding).asScope().getBindings(lookup);
 		return processUncertainBindings(bindings);
 	}
 	

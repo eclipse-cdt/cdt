@@ -22,7 +22,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
  * Binding for a specialization of a parameter.
  */
 public class CPPParameterSpecialization extends CPPSpecialization implements ICPPParameter {
-	private IType fType;
+	private final IType fType;
 	
 	public CPPParameterSpecialization(ICPPParameter orig, IBinding owner, IType type, ICPPTemplateParameterMap tpmap) {
 		super(orig, owner, tpmap);
@@ -44,12 +44,6 @@ public class CPPParameterSpecialization extends CPPSpecialization implements ICP
 	@Override
 	public boolean isParameterPack() {
 		return fType instanceof ICPPParameterPackType;
-	}
-
-	@Override
-	public IType specializeType(IType type) {
-		assert false;
-		return type;
 	}
 
 	/* (non-Javadoc)

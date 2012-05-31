@@ -16,6 +16,7 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
@@ -85,7 +86,7 @@ class FunctionCost {
 		return false;
 	}
 	
-	public boolean performUDC() throws DOMException {
+	public boolean performUDC(IASTNode point) throws DOMException {
 		for (int i = 0; i < fCosts.length; i++) {
 			Cost cost = fCosts[i];
 			Cost udcCost= null;
@@ -94,20 +95,20 @@ class FunctionCost {
 				continue;
 			case COPY_INIT_OF_CLASS:
 				udcCost = Conversions.copyInitializationOfClass(fValueCategories[i], cost.source,
-						(ICPPClassType) cost.target, false);
+						(ICPPClassType) cost.target, false, point);
 				break;
 			case INIT_BY_CONVERSION:
 				IType uqSource= getNestedType(cost.source, TDEF | REF | CVTYPE);
 				udcCost = Conversions.initializationByConversion(fValueCategories[i], cost.source,
-						(ICPPClassType) uqSource, cost.target, false);
+						(ICPPClassType) uqSource, cost.target, false, point);
 				break;
 			case LIST_INIT_OF_CLASS:
-				udcCost = Conversions.listInitializationOfClass((InitializerListType) cost.source, 
-						(ICPPClassType) cost.target, false, false); 
+				udcCost = Conversions.listInitializationOfClass(((InitializerListType) cost.source).getEvaluation(), 
+						(ICPPClassType) cost.target, false, false, point); 
 				break;
 			case DIRECT_LIST_INIT_OF_CLASS:
-				udcCost = Conversions.listInitializationOfClass((InitializerListType) cost.source, 
-						(ICPPClassType) cost.target, true, false); 
+				udcCost = Conversions.listInitializationOfClass(((InitializerListType) cost.source).getEvaluation(), 
+						(ICPPClassType) cost.target, true, false, point); 
 				break;
 			default:
 				return false;
@@ -123,8 +124,9 @@ class FunctionCost {
 
 	/**
 	 * Compares this function call cost to another one.
+	 * @param point 
 	 */
-	public int compareTo(IASTTranslationUnit tu, FunctionCost other) throws DOMException {
+	public int compareTo(IASTTranslationUnit tu, FunctionCost other, IASTNode point) throws DOMException {
 		if (other == null)
 			return -1;
 		
@@ -164,7 +166,7 @@ class FunctionCost {
 				haveBetter = true;
 			} else if (isTemplate && otherIsTemplate) {
 				TypeSelection ts= SemanticUtil.isConversionOperator(f1) ? RETURN_TYPE : PARAMETERS;
- 				int order = CPPTemplates.orderFunctionTemplates(otherAsTemplate, asTemplate, ts);
+ 				int order = CPPTemplates.orderFunctionTemplates(otherAsTemplate, asTemplate, ts, point);
 				if (order < 0) {
 					haveBetter= true;	 				
 				} else if (order > 0) {

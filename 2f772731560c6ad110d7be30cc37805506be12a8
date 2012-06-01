@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOHn//+RQ\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/GdbDebugOptions.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-06-01T18:47:15Z",
+      "side": 1,
+      "message": "Please make two above private.  Sorry, I seem to have forgotten to ask this in the last review.",
+      "revId": "2f772731560c6ad110d7be30cc37805506be12a8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHn//+RM\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/GdbDebugOptions.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-06-01T18:47:15Z",
+      "side": 1,
+      "message": "System.out.print() not println()",
+      "revId": "2f772731560c6ad110d7be30cc37805506be12a8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHn//+RA\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-06-01T18:47:15Z",
+      "side": 1,
+      "message": "Also add the java annotation\n@Deprecated \nabove the method declaration but after the javadoc",
+      "revId": "2f772731560c6ad110d7be30cc37805506be12a8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHn//+RI\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 419,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-06-01T18:47:15Z",
+      "side": 1,
+      "message": "Remove sysout printout",
+      "revId": "2f772731560c6ad110d7be30cc37805506be12a8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHn//+RE\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GdbCommandTimeoutManager.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 424,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-06-01T18:47:15Z",
+      "side": 1,
+      "message": "The output should be as before.  That means you should print what the sysout was printing:\n   String.format( \"%s %s  %s\", GdbPlugin.getDebugTime(), TIMEOUT_TRACE_IDENTIFIER, message )",
+      "revId": "2f772731560c6ad110d7be30cc37805506be12a8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

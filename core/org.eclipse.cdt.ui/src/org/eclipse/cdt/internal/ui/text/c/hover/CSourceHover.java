@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    QNX Software Systems - Initial API and implementation
- *    Anton Leherbauer (Wind River Systems)
+ *     QNX Software Systems - Initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.c.hover;
 
@@ -95,15 +95,16 @@ import org.eclipse.cdt.internal.ui.util.EditorUtility;
  * A text hover presenting the source of the element under the cursor.
  */
 public class CSourceHover extends AbstractCEditorTextHover {
-
 	private static final boolean DEBUG = false;
 
 	protected static class SingletonRule implements ISchedulingRule {
 		public static final ISchedulingRule INSTANCE = new SingletonRule();
+
 		@Override
 		public boolean contains(ISchedulingRule rule) {
 			return rule == this;
 		}
+
 		@Override
 		public boolean isConflicting(ISchedulingRule rule) {
 			return rule == this;
@@ -114,7 +115,6 @@ public class CSourceHover extends AbstractCEditorTextHover {
 	 * Computes the source location for a given identifier.
 	 */
 	protected static class ComputeSourceRunnable implements ASTRunnable {
-
 		private final ITranslationUnit fTU;
 		private final IRegion fTextRegion;
 		private final IProgressMonitor fMonitor;
@@ -132,7 +132,7 @@ public class CSourceHover extends AbstractCEditorTextHover {
 		}
 
 		/*
-		 * @see org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable#runOnAST(org.eclipse.cdt.core.dom.ast.IASTTranslationUnit)
+		 * @see org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable#runOnAST(IASTTranslationUnit)
 		 */
 		@Override
 		public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) {
@@ -142,21 +142,20 @@ public class CSourceHover extends AbstractCEditorTextHover {
 					if (name != null) {
 						IBinding binding= name.resolveBinding();
 						if (binding != null) {
-							
 							// Check for implicit names first, could be an implicit constructor call
-							if(name.getParent() instanceof IASTImplicitNameOwner) {
+							if (name.getParent() instanceof IASTImplicitNameOwner) {
 								IASTImplicitNameOwner iastImplicitNameOwner = (IASTImplicitNameOwner) name.getParent();
 								IASTName [] implicitNames = iastImplicitNameOwner.getImplicitNames();
-								if(implicitNames.length == 1) {
+								if (implicitNames.length == 1) {
 									IBinding implicitNameBinding = implicitNames[0].resolveBinding();
-									if(implicitNameBinding instanceof ICPPConstructor) {
+									if (implicitNameBinding instanceof ICPPConstructor) {
 										binding = implicitNameBinding;
 									}
 								}
 							}
 							
 							if (binding instanceof IProblemBinding) {
-								// report problem as source comment
+								// Report problem as source comment
 								if (DEBUG) {
 									IProblemBinding problem= (IProblemBinding) binding;
 									fSource= "/* Indexer Problem!\n" + //$NON-NLS-1$
@@ -173,10 +172,10 @@ public class CSourceHover extends AbstractCEditorTextHover {
 							}
 						}
 					}
-				} catch (CoreException exc) {
-					return exc.getStatus();
-				} catch (DOMException exc) {
-					return new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, "Internal Error", exc); //$NON-NLS-1$
+				} catch (CoreException e) {
+					return e.getStatus();
+				} catch (DOMException e) {
+					return new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, "Internal Error", e); //$NON-NLS-1$
 				}
 			}
 			return Status.CANCEL_STATUS;
@@ -219,8 +218,8 @@ public class CSourceHover extends AbstractCEditorTextHover {
 		private String computeSourceForBinding(IASTTranslationUnit ast, IBinding binding) throws CoreException, DOMException {
 			IName[] names = findDefsOrDecls(ast, binding);
 			
-			// in case the binding is a non-explicit specialization we need
-			// to consider the original binding (bug 281396)
+			// In case the binding is a non-explicit specialization we need
+			// to consider the original binding (bug 281396).
 			while (names.length == 0 && binding instanceof ICPPSpecialization) {
 				IBinding specializedBinding = ((ICPPSpecialization) binding).getSpecializedBinding();
 				if (specializedBinding == null || specializedBinding instanceof IProblemBinding) {
@@ -275,24 +274,24 @@ public class CSourceHover extends AbstractCEditorTextHover {
 					int hoverOffset = fTextRegion.getOffset();
 					if (hoverOffset <= nodeOffset && nodeOffset < hoverOffset + fTextRegion.getLength() ||
 							hoverOffset >= nodeOffset && hoverOffset < nodeOffset + nodeLength) {
-						// bug 359352 - don't show source if its the same we are hovering on
+						// Bug 359352 - don't show source if its the same we are hovering on.
 						return null;
 					}
 					if (fTU.getResource() != null) {
-						// reuse editor buffer for names local to the translation unit
+						// Reuse editor buffer for names local to the translation unit
 						location= fTU.getResource().getFullPath();
 						locationKind= LocationKind.IFILE;
 					}
 				}
 			} else {
-				// try to resolve path to a resource for proper encoding (bug 221029)
+				// Try to resolve path to a resource for proper encoding (bug 221029)
 				IFile file= EditorUtility.getWorkspaceFileAtLocation(location, fTU);
 				if (file != null) {
 					location= file.getFullPath();
 					locationKind= LocationKind.IFILE;
 					if (name instanceof IIndexName) {
-						// need to adjust index offsets to current offsets
-						// in case file has been modified since last index time
+						// Need to adjust index offsets to current offsets
+						// in case file has been modified since last index time.
 						IIndexName indexName= (IIndexName) name;
 						long timestamp= indexName.getFile().getTimestamp();
 						IPositionConverter converter= CCorePlugin.getPositionTrackerManager().findPositionConverter(file, timestamp);
@@ -331,7 +330,7 @@ public class CSourceHover extends AbstractCEditorTextHover {
 						return null;
 					}
 				} else {
-					// expand source range to include preceding comment, if any
+					// Expand source range to include preceding comment, if any
 					boolean isKnR= isKnRSource(name);
 					sourceStart= computeSourceStart(doc, nameOffset, binding, isKnR);
 					if (sourceStart == CHeuristicScanner.NOT_FOUND) {
@@ -342,9 +341,9 @@ public class CSourceHover extends AbstractCEditorTextHover {
 				String source= buffer.getDocument().get(sourceStart, sourceEnd - sourceStart);
 				return source;
 
-			} catch (BadLocationException exc) {
-				// ignore - should not happen anyway
-				if (DEBUG) exc.printStackTrace();
+			} catch (BadLocationException e) {
+				// Ignore - should not happen anyway
+				if (DEBUG) e.printStackTrace();
 			} finally {
 				mgr.disconnect(location, LocationKind.LOCATION, fMonitor);
 			}
@@ -455,7 +454,7 @@ public class CSourceHover extends AbstractCEditorTextHover {
 					if (nextNonWS != CHeuristicScanner.NOT_FOUND) {
 						int nextNonWSLine= doc.getLineOfOffset(nextNonWS);
 						int lineOffset= doc.getLineOffset(nextNonWSLine);
-						if (doc.get(lineOffset, nextNonWS - lineOffset).trim().length() == 0) {
+						if (doc.get(lineOffset, nextNonWS - lineOffset).trim().isEmpty()) {
 							sourceStart= doc.getLineOffset(nextNonWSLine);
 						}
 					}
@@ -467,7 +466,7 @@ public class CSourceHover extends AbstractCEditorTextHover {
 		private int computeSourceEnd(IDocument doc, int start, IBinding binding, boolean isDefinition, boolean isKnR) throws BadLocationException {
 			int sourceEnd= start;
 			CHeuristicScanner scanner= new CHeuristicScanner(doc);
-			// expand forward to the end of the definition/declaration
+			// Expand forward to the end of the definition/declaration
 			boolean searchBrace= false;
 			boolean searchSemi= false;
 			boolean searchComma= false;
@@ -498,7 +497,7 @@ public class CSourceHover extends AbstractCEditorTextHover {
 						sourceEnd= doc.getLength();
 					}
 				}
-				// expand region to include whole line
+				// Expand region to include whole line
 				IRegion lineRegion= doc.getLineInformationOfOffset(sourceEnd);
 				sourceEnd= lineRegion.getOffset() + lineRegion.getLength();
 			} else if (searchSemi) {
@@ -506,7 +505,7 @@ public class CSourceHover extends AbstractCEditorTextHover {
 				if (semi != CHeuristicScanner.NOT_FOUND) {
 					sourceEnd= semi+1;
 				}
-				// expand region to include whole line
+				// Expand region to include whole line
 				IRegion lineRegion= doc.getLineInformationOfOffset(sourceEnd);
 				sourceEnd= lineRegion.getOffset() + lineRegion.getLength();
 			} else if (searchComma) {
@@ -552,8 +551,7 @@ public class CSourceHover extends AbstractCEditorTextHover {
 		 * @return an array of definitions, never <code>null</code>
 		 * @throws CoreException
 		 */
-		private IName[] findDefinitions(IASTTranslationUnit ast,
-				IBinding binding) throws CoreException {
+		private IName[] findDefinitions(IASTTranslationUnit ast, IBinding binding) throws CoreException {
 			IName[] declNames= ast.getDefinitionsInAST(binding);
 			if (declNames.length == 0 && ast.getIndex() != null) {
 				// search definitions in index
@@ -570,8 +568,7 @@ public class CSourceHover extends AbstractCEditorTextHover {
 		 * @return an array of declarations, never <code>null</code>
 		 * @throws CoreException
 		 */
-		private IName[] findDeclarations(IASTTranslationUnit ast,
-				IBinding binding) throws CoreException {
+		private IName[] findDeclarations(IASTTranslationUnit ast, IBinding binding) throws CoreException {
 			IName[] declNames= ast.getDeclarationsInAST(binding);
 			if (declNames.length == 0 && ast.getIndex() != null) {
 				// search declarations in index
@@ -586,7 +583,6 @@ public class CSourceHover extends AbstractCEditorTextHover {
 		public String getSource() {
 			return fSource;
 		}
-
 	}
 
 	/**
@@ -618,10 +614,10 @@ public class CSourceHover extends AbstractCEditorTextHover {
 			try {
 				expression = textViewer.getDocument().get(hoverRegion.getOffset(), hoverRegion.getLength());
 				expression = expression.trim();
-				if (expression.length() == 0)
+				if (expression.isEmpty())
 					return null;
 
-				//Before trying a search lets make sure that the user is not hovering over a keyword 
+				// Before trying a search lets make sure that the user is not hovering over a keyword 
 				if (selectionIsKeyword(expression))
 					return null;
 
@@ -630,10 +626,10 @@ public class CSourceHover extends AbstractCEditorTextHover {
 				// Try with the indexer
 				source= searchInIndex(copy, hoverRegion);
 
-				if (source == null || source.trim().length() == 0)
+				if (source == null || source.trim().isEmpty())
 					return null;
 
-				// we are actually interested in the comments, too.
+				// We are actually interested in the comments, too.
 //				source= removeLeadingComments(source);
 
 				String delim= System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -645,7 +641,6 @@ public class CSourceHover extends AbstractCEditorTextHover {
 
 				source = Strings.concatenate(sourceLines, delim);
 				return source;
-
 			} catch (BadLocationException e) {
 			}
 		}
@@ -680,7 +675,7 @@ public class CSourceHover extends AbstractCEditorTextHover {
 				final int startLine= doc.getLineOfOffset(partitionOffset);
 				final int lineOffset= doc.getLineOffset(startLine);
 				if (partitionOffset == lineOffset || 
-						doc.get(lineOffset, partitionOffset - lineOffset).trim().length() == 0) {
+						doc.get(lineOffset, partitionOffset - lineOffset).trim().isEmpty()) {
 					return lineOffset;
 				}
 				return commentOffset;
@@ -690,13 +685,13 @@ public class CSourceHover extends AbstractCEditorTextHover {
 				final int startLine= doc.getLineOfOffset(partitionOffset);
 				final int lineOffset= doc.getLineOffset(startLine);
 				if (partitionOffset == lineOffset || 
-						doc.get(lineOffset, partitionOffset - lineOffset).trim().length() == 0) {
+						doc.get(lineOffset, partitionOffset - lineOffset).trim().isEmpty()) {
 					commentOffset= lineOffset;
 					continue;
 				}
 				return commentOffset;
 			} else if (IDocument.DEFAULT_CONTENT_TYPE.equals(partition.getType())) {
-				if (doc.get(partition.getOffset(), partition.getLength()).trim().length() == 0) {
+				if (doc.get(partition.getOffset(), partition.getLength()).trim().isEmpty()) {
 					continue;
 				}
 				if (commentOffset >= 0) {
@@ -712,7 +707,6 @@ public class CSourceHover extends AbstractCEditorTextHover {
 	private static int getTabWidth() {
 		return 4;
 	}
-
 
 	/**
 	 * Strip the leading comment from the given source string.
@@ -732,13 +726,13 @@ public class CSourceHover extends AbstractCEditorTextHover {
 			}
 			i= reader.getOffset();
 			reader.close();
-		} catch (IOException ex) {
+		} catch (IOException e) {
 			i= 0;
 		} finally {
 			try {
 				reader.close();
-			} catch (IOException ex) {
-				CUIPlugin.log(ex);
+			} catch (IOException e) {
+				CUIPlugin.log(e);
 			}
 		}
 
@@ -753,7 +747,8 @@ public class CSourceHover extends AbstractCEditorTextHover {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
-					return ASTProvider.getASTProvider().runOnAST(tUnit, ASTProvider.WAIT_ACTIVE_ONLY, monitor, computer);
+					return ASTProvider.getASTProvider().runOnAST(tUnit, ASTProvider.WAIT_ACTIVE_ONLY,
+							monitor, computer);
 				} catch (Throwable t) {
 					CUIPlugin.log(t);
 				}
@@ -776,9 +771,8 @@ public class CSourceHover extends AbstractCEditorTextHover {
 		return computer.getSource();
 	}
 
-
 	/**
-	 * Test whether the given name is a known keyword.
+	 * Checks whether the given name is a known keyword.
 	 * 
 	 * @param name
 	 * @return <code>true</code> if the name is a known keyword or <code>false</code> if the
@@ -802,7 +796,8 @@ public class CSourceHover extends AbstractCEditorTextHover {
 				int orientation= SWT.NONE;
 				if (editor instanceof IWorkbenchPartOrientation)
 					orientation= ((IWorkbenchPartOrientation) editor).getOrientation();
-				return new SourceViewerInformationControl(parent, false, orientation, getTooltipAffordanceString());
+				return new SourceViewerInformationControl(parent, false, orientation,
+						getTooltipAffordanceString());
 			}
 		};
 	}

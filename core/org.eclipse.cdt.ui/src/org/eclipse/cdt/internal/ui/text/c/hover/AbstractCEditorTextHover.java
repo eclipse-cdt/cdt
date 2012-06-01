@@ -10,7 +10,6 @@
  *     IBM Corporation
  *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.text.c.hover;
 
 import org.eclipse.jface.text.DefaultInformationControl;
@@ -32,12 +31,10 @@ import org.eclipse.cdt.ui.text.c.hover.ICEditorTextHover;
 import org.eclipse.cdt.internal.ui.text.CWordFinder;
 
 /**
- * Abstract class for providing hover information for C
- * elements.
- * 
+ * Abstract class for providing hover information for C elements.
  */
-public abstract class AbstractCEditorTextHover implements ICEditorTextHover, ITextHoverExtension, ITextHoverExtension2, IInformationProviderExtension2 {
-
+public abstract class AbstractCEditorTextHover implements ICEditorTextHover, ITextHoverExtension,
+		ITextHoverExtension2, IInformationProviderExtension2 {
 	private IEditorPart fEditor;
 
 	/*
@@ -102,7 +99,7 @@ public abstract class AbstractCEditorTextHover implements ICEditorTextHover, ITe
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.ITextHoverExtension2#getInformationPresenterControlCreator()
+	 * @see ITextHoverExtension2#getInformationPresenterControlCreator()
 	 * @since 5.0
 	 */
 	@Override

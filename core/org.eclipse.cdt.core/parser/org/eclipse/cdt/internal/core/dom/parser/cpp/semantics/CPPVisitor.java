@@ -1762,10 +1762,9 @@ public class CPPVisitor extends ASTQueries {
 	 * Creates the type for a parameter declaration.
 	 */
 	public static IType createType(final ICPPASTParameterDeclaration pdecl, boolean forFuncType) {
-		IType pt;
 		IASTDeclSpecifier pDeclSpec = pdecl.getDeclSpecifier();
 		ICPPASTDeclarator pDtor = pdecl.getDeclarator();
-		pt = createType(pDeclSpec);
+		IType pt = createType(pDeclSpec);
 		if (pDtor != null) {
 			pt = createType(pt, pDtor);
 		}

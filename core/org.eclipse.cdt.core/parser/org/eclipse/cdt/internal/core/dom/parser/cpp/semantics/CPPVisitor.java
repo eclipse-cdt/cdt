@@ -1762,10 +1762,9 @@ public class CPPVisitor extends ASTQueries {
 	 * Creates the type for a parameter declaration.
 	 */
 	public static IType createType(final ICPPASTParameterDeclaration pdecl, boolean forFuncType) {
-		IType pt;
 		IASTDeclSpecifier pDeclSpec = pdecl.getDeclSpecifier();
 		ICPPASTDeclarator pDtor = pdecl.getDeclarator();
-		pt = createType(pDeclSpec);
+		IType pt = createType(pDeclSpec);
 		if (pDtor != null) {
 			pt = createType(pt, pDtor);
 		}
@@ -2017,7 +2016,8 @@ public class CPPVisitor extends ASTQueries {
 		return createAutoType(autoInitClause, declSpec, declarator);
 	}
 
-	private static IType createAutoType(IASTInitializerClause initClause, IASTDeclSpecifier declSpec, IASTDeclarator declarator) {
+	private static IType createAutoType(IASTInitializerClause initClause, IASTDeclSpecifier declSpec,
+			IASTDeclarator declarator) {
 		//  C++0x: 7.1.6.4
 		if (initClause == null || !autoTypeDeclSpecs.get().add(declSpec)) {
 			// Detected a self referring auto type, e.g.: auto x = x;
@@ -2064,6 +2064,9 @@ public class CPPVisitor extends ASTQueries {
 			return new ProblemType(ISemanticProblem.TYPE_CANNOT_DEDUCE_AUTO_TYPE);
 		}
 		type = argument.getTypeValue();
+		IType t = SemanticUtil.substituteTypedef(type, initType);
+		if (t != null)
+			type = t;
 		if (initClause instanceof ICPPASTInitializerList) {
 			type = (IType) CPPTemplates.instantiate(initializer_list_template,
 					new ICPPTemplateArgument[] { new CPPTemplateArgument(type) });

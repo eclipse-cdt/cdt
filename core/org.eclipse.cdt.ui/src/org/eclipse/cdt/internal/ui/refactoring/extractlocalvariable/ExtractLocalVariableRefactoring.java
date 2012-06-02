@@ -100,7 +100,7 @@ public class ExtractLocalVariableRefactoring extends CRefactoring {
 	@Override
 	public RefactoringStatus checkInitialConditions(IProgressMonitor pm)
 			throws CoreException, OperationCanceledException {
-		SubMonitor sm = SubMonitor.convert(pm, 9);
+		SubMonitor sm = SubMonitor.convert(pm, 10);
 
 		RefactoringStatus status = super.checkInitialConditions(sm.newChild(6));
 		if (status.hasError()) {
@@ -127,11 +127,6 @@ public class ExtractLocalVariableRefactoring extends CRefactoring {
 
 		if (isProgressMonitorCanceled(sm, initStatus))
 			return initStatus;
-
-		sm.worked(1);
-
-		container.getNames(); //XXX Is this needed?
-		sm.worked(1);
 
 		info.addNamesToUsedNames(findAllDeclaredNames());
 		sm.worked(1);

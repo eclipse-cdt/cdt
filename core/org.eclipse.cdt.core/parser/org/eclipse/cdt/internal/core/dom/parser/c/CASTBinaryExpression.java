@@ -9,8 +9,11 @@
  *     John Camelon (IBM Rational Software) - Initial API and implementation
  *     Yuan Zhang / Beth Tibbitts (IBM Research)
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
+
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.restoreTypedefs;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
@@ -54,11 +57,7 @@ public class CASTBinaryExpression extends ASTNode
 		copy.op = op;
 		copy.setOperand1(operand1 == null ? null : operand1.copy(style));
 		copy.setOperand2(operand2 == null ? null : operand2.copy(style));
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 
 	@Override
@@ -118,9 +117,9 @@ public class CASTBinaryExpression extends ASTNode
     	
         if (action.shouldVisitExpressions) {
 		    switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
         
@@ -147,7 +146,7 @@ public class CASTBinaryExpression extends ASTNode
 	
 	public static boolean acceptWithoutRecursion(IASTBinaryExpression bexpr, ASTVisitor action) {
 		N stack= new N(bexpr);
-		while(stack != null) {
+		while (stack != null) {
 			IASTBinaryExpression expr= stack.fExpression;
 			if (stack.fState == 0) {
 				if (action.shouldVisitExpressions) {
@@ -211,11 +210,13 @@ public class CASTBinaryExpression extends ASTNode
     @Override
 	public IType getExpressionType() {
         final int op = getOperator();
-        final IType t1= CVisitor.unwrapTypedefs(getOperand1().getExpressionType());
-    	final IType t2= CVisitor.unwrapTypedefs(getOperand2().getExpressionType());
-    	IType type= CArithmeticConversion.convertCOperandTypes(op, t1, t2);
+        IType originalType1 = getOperand1().getExpressionType();
+    	IType originalType2 = getOperand2().getExpressionType();
+		final IType type1= CVisitor.unwrapTypedefs(originalType1);
+		final IType type2= CVisitor.unwrapTypedefs(originalType2);
+    	IType type= CArithmeticConversion.convertCOperandTypes(op, type1, type2);
     	if (type != null) {
-    		return type;
+    		return restoreTypedefs(type, originalType1, originalType2);
     	}
 
 		switch (op) {
@@ -230,25 +231,25 @@ public class CASTBinaryExpression extends ASTNode
 			return new CBasicType(Kind.eInt, 0, this);
 
         case IASTBinaryExpression.op_plus:
-        	if (t1 instanceof IArrayType) {
-        		return arrayTypeToPointerType((ICArrayType) t1);
-        	} else if (t2 instanceof IPointerType) {
-        		return t2;
-        	} else if (t2 instanceof IArrayType) {
-        		return arrayTypeToPointerType((ICArrayType) t2);
+        	if (type1 instanceof IArrayType) {
+        		return arrayTypeToPointerType((ICArrayType) type1);
+        	} else if (type2 instanceof IPointerType) {
+        		return restoreTypedefs(type2, originalType2);
+        	} else if (type2 instanceof IArrayType) {
+        		return arrayTypeToPointerType((ICArrayType) type2);
         	}
         	break;
 
 		case IASTBinaryExpression.op_minus:
-			if (t2 instanceof IPointerType || t2 instanceof IArrayType) {
-				if (t1 instanceof IPointerType || t1 instanceof IArrayType) {
+			if (type2 instanceof IPointerType || type2 instanceof IArrayType) {
+				if (type1 instanceof IPointerType || type1 instanceof IArrayType) {
 	    			return CVisitor.getPtrDiffType(this);
 				}
-				return t1;
+        		return restoreTypedefs(type1, originalType1);
 			}
 			break;
 		}
-		return t1;
+		return restoreTypedefs(type1, originalType1);
     }
 
 	private IType arrayTypeToPointerType(ICArrayType type) {

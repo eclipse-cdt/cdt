@@ -45,8 +45,8 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 /**
- * This is a utility class to help convert AST elements to Strings corresponding to the
- * AST element's type.
+ * This is a utility class to help convert AST elements to Strings corresponding to
+ * the AST element's type.
  * 
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
@@ -58,9 +58,9 @@ public class ASTTypeUtil {
 	private static final int DEAULT_ITYPE_SIZE = 2;
 
 	/**
-	 * Returns a string representation for the parameters of the given function type. The 
-	 * representation contains the comma-separated list of the normalized parameter type
-	 * representations wrapped in parentheses. 
+	 * Returns a string representation for the parameters of the given function type. 
+	 * The representation contains the comma-separated list of the normalized parameter
+	 * type representations wrapped in parentheses. 
 	 */
 	public static String getParameterTypeString(IFunctionType type) {
 		StringBuilder result = new StringBuilder();
@@ -493,7 +493,7 @@ public class ASTTypeUtil {
 			} else {
 				if (type instanceof ICPPReferenceType) {
 					// reference types ignore cv-qualifiers
-					cvq=null;
+					cvq= null;
 					// lvalue references win over rvalue references
 					if (ref == null || ref.isRValueReference()) {
 						// delay reference to see if there are more
@@ -599,23 +599,24 @@ public class ASTTypeUtil {
 	 *  
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
-	public static String getType(IASTDeclarator decltor) {
+	public static String getType(IASTDeclarator declarator) {
 		// get the most nested declarator
-		while (decltor.getNestedDeclarator() != null)
-			decltor = decltor.getNestedDeclarator();
+		while (declarator.getNestedDeclarator() != null) {
+			declarator = declarator.getNestedDeclarator();
+		}
 		
-		IBinding binding = decltor.getName().resolveBinding();
+		IBinding binding = declarator.getName().resolveBinding();
 		IType type = null;
 		
 		try {
 			if (binding instanceof IEnumerator) {
-				type = ((IEnumerator)binding).getType();
+				type = ((IEnumerator) binding).getType();
 			} else if (binding instanceof IFunction) {
-				type = ((IFunction)binding).getType();
+				type = ((IFunction) binding).getType();
 			} else if (binding instanceof ITypedef) {
-				type = ((ITypedef)binding).getType();
+				type = ((ITypedef) binding).getType();
 			} else if (binding instanceof IVariable) {
-				type = ((IVariable)binding).getType();
+				type = ((IVariable) binding).getType();
 			}
 		} catch (DOMException e) {
 			return EMPTY_STRING;

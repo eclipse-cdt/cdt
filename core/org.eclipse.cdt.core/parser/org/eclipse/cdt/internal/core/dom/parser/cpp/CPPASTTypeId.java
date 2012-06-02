@@ -43,12 +43,8 @@ public class CPPASTTypeId extends ASTNode implements ICPPASTTypeId {
 		CPPASTTypeId copy = new CPPASTTypeId();
 		copy.setDeclSpecifier(declSpec == null ? null : declSpec.copy(style));
 		copy.setAbstractDeclarator(absDecl == null ? null : absDecl.copy(style));
-		copy.setOffsetAndLength(this);
 		copy.isPackExpansion = isPackExpansion;
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 
 	@Override

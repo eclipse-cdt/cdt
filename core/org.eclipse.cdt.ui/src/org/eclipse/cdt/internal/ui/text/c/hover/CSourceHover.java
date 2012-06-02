@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2011 QNX Software Systems and others.
+ * Copyright (c) 2002, 2012 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    QNX Software Systems - Initial API and implementation
- *    Anton Leherbauer (Wind River Systems)
+ *     QNX Software Systems - Initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.c.hover;
 
@@ -47,12 +48,20 @@ import org.eclipse.ui.part.IWorkbenchPartOrientation;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IPositionConverter;
 import org.eclipse.cdt.core.dom.IName;
+import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
+import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
@@ -62,9 +71,14 @@ import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.dom.ast.IProblemType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
@@ -77,12 +91,14 @@ import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.KeywordSetKey;
+import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IWorkingCopyManager;
 import org.eclipse.cdt.ui.text.ICPartitions;
 
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
 import org.eclipse.cdt.internal.corext.util.Strings;
 
@@ -95,15 +111,16 @@ import org.eclipse.cdt.internal.ui.util.EditorUtility;
  * A text hover presenting the source of the element under the cursor.
  */
 public class CSourceHover extends AbstractCEditorTextHover {
-
 	private static final boolean DEBUG = false;
 
 	protected static class SingletonRule implements ISchedulingRule {
 		public static final ISchedulingRule INSTANCE = new SingletonRule();
+
 		@Override
 		public boolean contains(ISchedulingRule rule) {
 			return rule == this;
 		}
+
 		@Override
 		public boolean isConflicting(ISchedulingRule rule) {
 			return rule == this;
@@ -114,69 +131,100 @@ public class CSourceHover extends AbstractCEditorTextHover {
 	 * Computes the source location for a given identifier.
 	 */
 	protected static class ComputeSourceRunnable implements ASTRunnable {
-
 		private final ITranslationUnit fTU;
 		private final IRegion fTextRegion;
+		private final String fSelection;
 		private final IProgressMonitor fMonitor;
 		private String fSource;
 
 		/**
-		 * @param tUnit
-		 * @param textRegion 
+		 * @param tUnit the translation unit
+		 * @param textRegion the selected region
+		 * @param selection the text of the selected region without 
 		 */
-		public ComputeSourceRunnable(ITranslationUnit tUnit, IRegion textRegion) {
+		public ComputeSourceRunnable(ITranslationUnit tUnit, IRegion textRegion, String selection) {
 			fTU= tUnit;
 			fTextRegion= textRegion;
+			fSelection = selection;
 			fMonitor= new NullProgressMonitor();
 			fSource= null;
 		}
 
 		/*
-		 * @see org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable#runOnAST(org.eclipse.cdt.core.dom.ast.IASTTranslationUnit)
+		 * @see org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable#runOnAST(IASTTranslationUnit)
 		 */
 		@Override
 		public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) {
 			if (ast != null) {
 				try {
-					IASTName name= ast.getNodeSelector(null).findEnclosingName(fTextRegion.getOffset(), fTextRegion.getLength());
-					if (name != null) {
-						IBinding binding= name.resolveBinding();
-						if (binding != null) {
-							
-							// Check for implicit names first, could be an implicit constructor call
-							if(name.getParent() instanceof IASTImplicitNameOwner) {
-								IASTImplicitNameOwner iastImplicitNameOwner = (IASTImplicitNameOwner) name.getParent();
-								IASTName [] implicitNames = iastImplicitNameOwner.getImplicitNames();
-								if(implicitNames.length == 1) {
-									IBinding implicitNameBinding = implicitNames[0].resolveBinding();
-									if(implicitNameBinding instanceof ICPPConstructor) {
-										binding = implicitNameBinding;
+					IASTNodeSelector nodeSelector = ast.getNodeSelector(null);
+					if (fSelection.equals(Keywords.AUTO)) {
+						IASTNode node = nodeSelector.findEnclosingNode(fTextRegion.getOffset(), fTextRegion.getLength());
+						if (node instanceof ICPPASTDeclSpecifier) {
+							ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) node;
+							IASTNode parent = declSpec.getParent();
+							IASTDeclarator[] declarators = IASTDeclarator.EMPTY_DECLARATOR_ARRAY;
+							if (parent instanceof IASTSimpleDeclaration) {
+								declarators = ((IASTSimpleDeclaration) parent).getDeclarators();
+							} else if (parent instanceof IASTParameterDeclaration) {
+								declarators = new IASTDeclarator[] { ((IASTParameterDeclaration) parent).getDeclarator() };
+							} else if (parent instanceof ICPPASTTypeId) {
+								declarators = new IASTDeclarator[] { ((ICPPASTTypeId) parent).getAbstractDeclarator() };
+							}
+							IType type = null;
+							for (IASTDeclarator declarator : declarators) {
+								IType t = CPPVisitor.createType(declarator);
+								if (type == null) {
+									type = t;
+								} else if (!type.isSameType(t)) {
+									// Type varies between declarators - don't display anything.
+									type = null;
+									break;
+								}
+							}
+							if (type != null && !(type instanceof IProblemType))
+								fSource = ASTTypeUtil.getType(type, false);
+						}
+					} else {
+						IASTName name= nodeSelector.findEnclosingName(fTextRegion.getOffset(), fTextRegion.getLength());
+						if (name != null) {
+							IBinding binding= name.resolveBinding();
+							if (binding != null) {
+								// Check for implicit names first, could be an implicit constructor call.
+								if (name.getParent() instanceof IASTImplicitNameOwner) {
+									IASTImplicitNameOwner implicitNameOwner = (IASTImplicitNameOwner) name.getParent();
+									IASTName[] implicitNames = implicitNameOwner.getImplicitNames();
+									if (implicitNames.length == 1) {
+										IBinding implicitNameBinding = implicitNames[0].resolveBinding();
+										if (implicitNameBinding instanceof ICPPConstructor) {
+											binding = implicitNameBinding;
+										}
 									}
 								}
-							}
-							
-							if (binding instanceof IProblemBinding) {
-								// report problem as source comment
-								if (DEBUG) {
-									IProblemBinding problem= (IProblemBinding) binding;
-									fSource= "/* Indexer Problem!\n" + //$NON-NLS-1$
-											" * " + problem.getMessage() +  //$NON-NLS-1$
-											"\n */"; //$NON-NLS-1$
+								
+								if (binding instanceof IProblemBinding) {
+									// Report problem as source comment.
+									if (DEBUG) {
+										IProblemBinding problem= (IProblemBinding) binding;
+										fSource= "/* Problem:\n" + //$NON-NLS-1$
+												" * " + problem.getMessage() +  //$NON-NLS-1$
+												"\n */"; //$NON-NLS-1$
+									}
+								} else if (binding instanceof IMacroBinding) {
+									fSource= computeSourceForMacro(ast, name, binding);
+								} else {
+									fSource= computeSourceForBinding(ast, binding);
 								}
-							} else if (binding instanceof IMacroBinding) {
-								fSource= computeSourceForMacro(ast, name, binding);
-							} else {
-								fSource= computeSourceForBinding(ast, binding);
-							}
-							if (fSource != null) {
-								return Status.OK_STATUS;
 							}
 						}
 					}
-				} catch (CoreException exc) {
-					return exc.getStatus();
-				} catch (DOMException exc) {
-					return new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, "Internal Error", exc); //$NON-NLS-1$
+					if (fSource != null) {
+						return Status.OK_STATUS;
+					}
+				} catch (CoreException e) {
+					return e.getStatus();
+				} catch (DOMException e) {
+					return new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, "Internal Error", e); //$NON-NLS-1$
 				}
 			}
 			return Status.CANCEL_STATUS;
@@ -219,8 +267,8 @@ public class CSourceHover extends AbstractCEditorTextHover {
 		private String computeSourceForBinding(IASTTranslationUnit ast, IBinding binding) throws CoreException, DOMException {
 			IName[] names = findDefsOrDecls(ast, binding);
 			
-			// in case the binding is a non-explicit specialization we need
-			// to consider the original binding (bug 281396)
+			// In case the binding is a non-explicit specialization we need
+			// to consider the original binding (bug 281396).
 			while (names.length == 0 && binding instanceof ICPPSpecialization) {
 				IBinding specializedBinding = ((ICPPSpecialization) binding).getSpecializedBinding();
 				if (specializedBinding == null || specializedBinding instanceof IProblemBinding) {
@@ -270,29 +318,29 @@ public class CSourceHover extends AbstractCEditorTextHover {
 			IPath location= Path.fromOSString(fileName);
 			LocationKind locationKind= LocationKind.LOCATION;
 			if (name instanceof IASTName && !name.isReference()) {
-				IASTName astName= (IASTName)name;
+				IASTName astName= (IASTName) name;
 				if (astName.getTranslationUnit().getFilePath().equals(fileName)) {
 					int hoverOffset = fTextRegion.getOffset();
 					if (hoverOffset <= nodeOffset && nodeOffset < hoverOffset + fTextRegion.getLength() ||
 							hoverOffset >= nodeOffset && hoverOffset < nodeOffset + nodeLength) {
-						// bug 359352 - don't show source if its the same we are hovering on
-						return null;
+						// Bug 359352 - don't show source if its the same we are hovering on.
+						return computeHoverForDeclaration(astName);
 					}
 					if (fTU.getResource() != null) {
-						// reuse editor buffer for names local to the translation unit
+						// Reuse editor buffer for names local to the translation unit
 						location= fTU.getResource().getFullPath();
 						locationKind= LocationKind.IFILE;
 					}
 				}
 			} else {
-				// try to resolve path to a resource for proper encoding (bug 221029)
+				// Try to resolve path to a resource for proper encoding (bug 221029)
 				IFile file= EditorUtility.getWorkspaceFileAtLocation(location, fTU);
 				if (file != null) {
 					location= file.getFullPath();
 					locationKind= LocationKind.IFILE;
 					if (name instanceof IIndexName) {
-						// need to adjust index offsets to current offsets
-						// in case file has been modified since last index time
+						// Need to adjust index offsets to current offsets
+						// in case file has been modified since last index time.
 						IIndexName indexName= (IIndexName) name;
 						long timestamp= indexName.getFile().getTimestamp();
 						IPositionConverter converter= CCorePlugin.getPositionTrackerManager().findPositionConverter(file, timestamp);
@@ -331,7 +379,7 @@ public class CSourceHover extends AbstractCEditorTextHover {
 						return null;
 					}
 				} else {
-					// expand source range to include preceding comment, if any
+					// Expand source range to include preceding comment, if any
 					boolean isKnR= isKnRSource(name);
 					sourceStart= computeSourceStart(doc, nameOffset, binding, isKnR);
 					if (sourceStart == CHeuristicScanner.NOT_FOUND) {
@@ -342,13 +390,44 @@ public class CSourceHover extends AbstractCEditorTextHover {
 				String source= buffer.getDocument().get(sourceStart, sourceEnd - sourceStart);
 				return source;
 
-			} catch (BadLocationException exc) {
-				// ignore - should not happen anyway
-				if (DEBUG) exc.printStackTrace();
+			} catch (BadLocationException e) {
+				// Ignore - should not happen anyway
+				if (DEBUG) e.printStackTrace();
 			} finally {
 				mgr.disconnect(location, LocationKind.LOCATION, fMonitor);
 			}
 			return null;
+		}
+
+		/**
+		 * Computes the hover containing the deduced type for a declaration based on {@code auto}
+		 * keyword.
+		 * 
+		 * @param name the name of the declarator
+		 * @return the hover text, if the declaration is based on {@code auto} keyword,
+		 *     otherwise {@code null}.
+		 */
+		private String computeHoverForDeclaration(IASTName name) {
+			ICPPASTDeclarator declarator =
+					CPPVisitor.findAncestorWithType(name, ICPPASTDeclarator.class);
+			if (declarator == null)
+				return null;
+			IASTDeclaration declaration =
+					CPPVisitor.findAncestorWithType(declarator, IASTDeclaration.class);
+			IASTDeclSpecifier declSpec = null;
+			if (declaration instanceof IASTSimpleDeclaration) {
+				declSpec = ((IASTSimpleDeclaration) declaration).getDeclSpecifier();
+			} else if (declaration instanceof IASTParameterDeclaration) {
+				declSpec = ((IASTParameterDeclaration) declaration).getDeclSpecifier();
+			}
+			if (!(declSpec instanceof ICPPASTSimpleDeclSpecifier) ||
+					((ICPPASTSimpleDeclSpecifier) declSpec).getType() != IASTSimpleDeclSpecifier.t_auto) {
+				return null;
+			}
+			IType type = CPPVisitor.createType(declarator);
+			if (type instanceof IProblemType)
+				return null;
+			return ASTTypeUtil.getType(type, false) + " " + name.getRawSignature(); //$NON-NLS-1$
 		}
 
 		/**
@@ -455,7 +534,7 @@ public class CSourceHover extends AbstractCEditorTextHover {
 					if (nextNonWS != CHeuristicScanner.NOT_FOUND) {
 						int nextNonWSLine= doc.getLineOfOffset(nextNonWS);
 						int lineOffset= doc.getLineOffset(nextNonWSLine);
-						if (doc.get(lineOffset, nextNonWS - lineOffset).trim().length() == 0) {
+						if (doc.get(lineOffset, nextNonWS - lineOffset).trim().isEmpty()) {
 							sourceStart= doc.getLineOffset(nextNonWSLine);
 						}
 					}
@@ -467,7 +546,7 @@ public class CSourceHover extends AbstractCEditorTextHover {
 		private int computeSourceEnd(IDocument doc, int start, IBinding binding, boolean isDefinition, boolean isKnR) throws BadLocationException {
 			int sourceEnd= start;
 			CHeuristicScanner scanner= new CHeuristicScanner(doc);
-			// expand forward to the end of the definition/declaration
+			// Expand forward to the end of the definition/declaration
 			boolean searchBrace= false;
 			boolean searchSemi= false;
 			boolean searchComma= false;
@@ -498,7 +577,7 @@ public class CSourceHover extends AbstractCEditorTextHover {
 						sourceEnd= doc.getLength();
 					}
 				}
-				// expand region to include whole line
+				// Expand region to include whole line
 				IRegion lineRegion= doc.getLineInformationOfOffset(sourceEnd);
 				sourceEnd= lineRegion.getOffset() + lineRegion.getLength();
 			} else if (searchSemi) {
@@ -506,7 +585,7 @@ public class CSourceHover extends AbstractCEditorTextHover {
 				if (semi != CHeuristicScanner.NOT_FOUND) {
 					sourceEnd= semi+1;
 				}
-				// expand region to include whole line
+				// Expand region to include whole line
 				IRegion lineRegion= doc.getLineInformationOfOffset(sourceEnd);
 				sourceEnd= lineRegion.getOffset() + lineRegion.getLength();
 			} else if (searchComma) {
@@ -552,8 +631,7 @@ public class CSourceHover extends AbstractCEditorTextHover {
 		 * @return an array of definitions, never <code>null</code>
 		 * @throws CoreException
 		 */
-		private IName[] findDefinitions(IASTTranslationUnit ast,
-				IBinding binding) throws CoreException {
+		private IName[] findDefinitions(IASTTranslationUnit ast, IBinding binding) throws CoreException {
 			IName[] declNames= ast.getDefinitionsInAST(binding);
 			if (declNames.length == 0 && ast.getIndex() != null) {
 				// search definitions in index
@@ -570,8 +648,7 @@ public class CSourceHover extends AbstractCEditorTextHover {
 		 * @return an array of declarations, never <code>null</code>
 		 * @throws CoreException
 		 */
-		private IName[] findDeclarations(IASTTranslationUnit ast,
-				IBinding binding) throws CoreException {
+		private IName[] findDeclarations(IASTTranslationUnit ast, IBinding binding) throws CoreException {
 			IName[] declNames= ast.getDeclarationsInAST(binding);
 			if (declNames.length == 0 && ast.getIndex() != null) {
 				// search declarations in index
@@ -586,7 +663,6 @@ public class CSourceHover extends AbstractCEditorTextHover {
 		public String getSource() {
 			return fSource;
 		}
-
 	}
 
 	/**
@@ -605,12 +681,12 @@ public class CSourceHover extends AbstractCEditorTextHover {
 		if (editor != null) {
 			IEditorInput input= editor.getEditorInput();
 			IWorkingCopyManager manager= CUIPlugin.getDefault().getWorkingCopyManager();				
-			IWorkingCopy copy = manager.getWorkingCopy(input);
+			IWorkingCopy workingCopy = manager.getWorkingCopy(input);
 			try {
-				if (copy == null || !copy.isConsistent()) {
+				if (workingCopy == null || !workingCopy.isConsistent()) {
 					return null;
 				}
-			} catch (CModelException exc) {
+			} catch (CModelException e) {
 				return null;
 			}
 			
@@ -618,22 +694,21 @@ public class CSourceHover extends AbstractCEditorTextHover {
 			try {
 				expression = textViewer.getDocument().get(hoverRegion.getOffset(), hoverRegion.getLength());
 				expression = expression.trim();
-				if (expression.length() == 0)
+				if (expression.isEmpty())
 					return null;
 
-				//Before trying a search lets make sure that the user is not hovering over a keyword 
-				if (selectionIsKeyword(expression))
+				// Before trying a search lets make sure that the user is not hovering
+				// over a keyword other than 'auto'.
+				if (selectionIsKeyword(expression) && !expression.equals(Keywords.AUTO))
 					return null;
 
-				String source= null;
+				// Try with the indexer.
+				String source= searchInIndex(workingCopy, hoverRegion, expression);
 
-				// Try with the indexer
-				source= searchInIndex(copy, hoverRegion);
-
-				if (source == null || source.trim().length() == 0)
+				if (source == null || source.trim().isEmpty())
 					return null;
 
-				// we are actually interested in the comments, too.
+				// We are actually interested in the comments, too.
 //				source= removeLeadingComments(source);
 
 				String delim= System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -645,7 +720,6 @@ public class CSourceHover extends AbstractCEditorTextHover {
 
 				source = Strings.concatenate(sourceLines, delim);
 				return source;
-
 			} catch (BadLocationException e) {
 			}
 		}
@@ -680,7 +754,7 @@ public class CSourceHover extends AbstractCEditorTextHover {
 				final int startLine= doc.getLineOfOffset(partitionOffset);
 				final int lineOffset= doc.getLineOffset(startLine);
 				if (partitionOffset == lineOffset || 
-						doc.get(lineOffset, partitionOffset - lineOffset).trim().length() == 0) {
+						doc.get(lineOffset, partitionOffset - lineOffset).trim().isEmpty()) {
 					return lineOffset;
 				}
 				return commentOffset;
@@ -690,13 +764,13 @@ public class CSourceHover extends AbstractCEditorTextHover {
 				final int startLine= doc.getLineOfOffset(partitionOffset);
 				final int lineOffset= doc.getLineOffset(startLine);
 				if (partitionOffset == lineOffset || 
-						doc.get(lineOffset, partitionOffset - lineOffset).trim().length() == 0) {
+						doc.get(lineOffset, partitionOffset - lineOffset).trim().isEmpty()) {
 					commentOffset= lineOffset;
 					continue;
 				}
 				return commentOffset;
 			} else if (IDocument.DEFAULT_CONTENT_TYPE.equals(partition.getType())) {
-				if (doc.get(partition.getOffset(), partition.getLength()).trim().length() == 0) {
+				if (doc.get(partition.getOffset(), partition.getLength()).trim().isEmpty()) {
 					continue;
 				}
 				if (commentOffset >= 0) {
@@ -712,7 +786,6 @@ public class CSourceHover extends AbstractCEditorTextHover {
 	private static int getTabWidth() {
 		return 4;
 	}
-
 
 	/**
 	 * Strip the leading comment from the given source string.
@@ -732,13 +805,13 @@ public class CSourceHover extends AbstractCEditorTextHover {
 			}
 			i= reader.getOffset();
 			reader.close();
-		} catch (IOException ex) {
+		} catch (IOException e) {
 			i= 0;
 		} finally {
 			try {
 				reader.close();
-			} catch (IOException ex) {
-				CUIPlugin.log(ex);
+			} catch (IOException e) {
+				CUIPlugin.log(e);
 			}
 		}
 
@@ -747,13 +820,14 @@ public class CSourceHover extends AbstractCEditorTextHover {
 		return source.substring(i);
 	}
 
-	protected String searchInIndex(final ITranslationUnit tUnit, IRegion textRegion) {
-		final ComputeSourceRunnable computer= new ComputeSourceRunnable(tUnit, textRegion);
+	protected String searchInIndex(final ITranslationUnit tUnit, IRegion textRegion, String selection) {
+		final ComputeSourceRunnable computer= new ComputeSourceRunnable(tUnit, textRegion, selection);
 		Job job= new Job(CHoverMessages.CSourceHover_jobTitle) {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
-					return ASTProvider.getASTProvider().runOnAST(tUnit, ASTProvider.WAIT_ACTIVE_ONLY, monitor, computer);
+					return ASTProvider.getASTProvider().runOnAST(tUnit, ASTProvider.WAIT_ACTIVE_ONLY,
+							monitor, computer);
 				} catch (Throwable t) {
 					CUIPlugin.log(t);
 				}
@@ -769,16 +843,15 @@ public class CSourceHover extends AbstractCEditorTextHover {
 		job.schedule();
 		try {
 			job.join();
-		} catch (InterruptedException exc) {
+		} catch (InterruptedException e) {
 			job.cancel();
 			return null;
 		}
 		return computer.getSource();
 	}
 
-
 	/**
-	 * Test whether the given name is a known keyword.
+	 * Checks whether the given name is a known keyword.
 	 * 
 	 * @param name
 	 * @return <code>true</code> if the name is a known keyword or <code>false</code> if the
@@ -802,7 +875,8 @@ public class CSourceHover extends AbstractCEditorTextHover {
 				int orientation= SWT.NONE;
 				if (editor instanceof IWorkbenchPartOrientation)
 					orientation= ((IWorkbenchPartOrientation) editor).getOrientation();
-				return new SourceViewerInformationControl(parent, false, orientation, getTooltipAffordanceString());
+				return new SourceViewerInformationControl(parent, false, orientation,
+						getTooltipAffordanceString());
 			}
 		};
 	}

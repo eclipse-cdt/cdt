@@ -16,7 +16,16 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.valueCategoryFromReturnType;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.*;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.ALLCVQ;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.COND_TDEF;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.CVTYPE;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.REF;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.addQualifiers;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.calculateInheritanceDepth;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getCVQualifier;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getNestedType;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.isVoidType;
 
 import java.util.Collections;
 
@@ -179,7 +188,7 @@ public class Conversions {
 						return cost;
 					}
 				}
-				// — otherwise, the program is ill-formed.
+				// ï¿½ otherwise, the program is ill-formed.
 				return Cost.NO_CONVERSION;
 			}
 			
@@ -1147,18 +1156,18 @@ public class Conversions {
 	 * 4.1, 4.2, 4.3
 	 */
 	public static IType lvalue_to_rvalue(IType type) {
-		type= SemanticUtil.getNestedType(type, TDEF | REF);
-		if (type instanceof IArrayType) {
-			return new CPPPointerType(((IArrayType) type).getType());
+		IType t= SemanticUtil.getNestedType(type, TDEF | REF);
+		if (t instanceof IArrayType) {
+			return new CPPPointerType(((IArrayType) t).getType());
 		}
-		if (type instanceof IFunctionType) {
-			return new CPPPointerType(type);
+		if (t instanceof IFunctionType) {
+			return new CPPPointerType(t);
 		}
-		IType uqType= SemanticUtil.getNestedType(type, TDEF | REF | ALLCVQ);
+		IType uqType= SemanticUtil.getNestedType(t, TDEF | REF | ALLCVQ);
 		if (uqType instanceof ICPPClassType) {
-			return type;
+			return SemanticUtil.getNestedType(type, COND_TDEF | REF);
 		}
-		return uqType;
+		return SemanticUtil.getNestedType(t, COND_TDEF | REF | ALLCVQ);
 	}
 
 	/**

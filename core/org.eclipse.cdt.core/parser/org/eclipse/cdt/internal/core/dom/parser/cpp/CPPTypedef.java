@@ -35,7 +35,7 @@ public class CPPTypedef extends PlatformObject implements ITypedef, ITypeContain
 	private IType type;
 
 	public CPPTypedef(IASTName name) {
-		// bug 223020 even though qualified names are not legal, we need to deal with them.
+		// Bug 223020 even though qualified names are not legal, we need to deal with them.
 		if (name != null && name.getParent() instanceof ICPPASTQualifiedName) {
 			name= (IASTName) name.getParent();
 		}
@@ -61,7 +61,7 @@ public class CPPTypedef extends PlatformObject implements ITypedef, ITypeContain
 	    if (o instanceof ITypedef) {
             IType t = getType();
 			if (t != null)
-			    return t.isSameType(((ITypedef)o).getType());
+			    return t.isSameType(((ITypedef) o).getType());
 			return false;
 	    }
 
@@ -105,7 +105,7 @@ public class CPPTypedef extends PlatformObject implements ITypedef, ITypeContain
    		try {
             t = (IType) super.clone();
         } catch (CloneNotSupportedException e) {
-            //not going to happen
+            // Not going to happen
         }
         return t;
     }
@@ -123,7 +123,7 @@ public class CPPTypedef extends PlatformObject implements ITypedef, ITypeContain
     @Override
 	public boolean isGloballyQualified() throws DOMException {
         IScope scope = getScope();
-        while(scope != null) {
+        while (scope != null) {
             if (scope instanceof ICPPBlockScope)
                 return false;
             scope = scope.getParent();

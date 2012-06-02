@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.core.dom.ast;
 
@@ -20,7 +20,6 @@ package org.eclipse.cdt.core.dom.ast;
  * @since 5.0
  */
 public interface IASTNodeSelector {
-
 	/**
 	 * Returns the name for the exact given range, or <code>null</code> if there is no such node.
      * Will not return an implicit name.

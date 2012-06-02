@@ -9,7 +9,6 @@
  *     QNX Software Systems - Initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.text.c.hover;
 
 import org.eclipse.jface.text.IInformationControlCreator;
@@ -26,7 +25,6 @@ import org.eclipse.cdt.ui.text.c.hover.ICEditorTextHover;
  * CEditorTexHoverProxy
  */
 public class CEditorTextHoverProxy extends AbstractCEditorTextHover {
-
 	private CEditorTextHoverDescriptor fHoverDescriptor;
 	private ICEditorTextHover fHover;
 
@@ -132,5 +130,4 @@ public class CEditorTextHoverProxy extends AbstractCEditorTextHover {
 		}
 		return null;
 	}
-
 }

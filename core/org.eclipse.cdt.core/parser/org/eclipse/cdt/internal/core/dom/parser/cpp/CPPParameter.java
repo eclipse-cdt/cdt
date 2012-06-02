@@ -38,20 +38,20 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.core.runtime.PlatformObject;
 
 /**
- * Binding for a c++ function parameter
+ * Binding for a c++ function parameter.
  */
 public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPInternalBinding, ICPPTwoPhaseBinding {
+
     public static class CPPParameterProblem extends ProblemBinding implements ICPPParameter {
         public CPPParameterProblem(IASTNode node, int id, char[] arg) {
             super(node, id, arg);
         }
     }
 
-	private IType fType = null;
-	private IASTName[] fDeclarations = null;
+	private IType fType;
+	private IASTName[] fDeclarations;
 	private int fPosition;
-	
-	
+
 	public CPPParameter(IASTName name, int pos) {
 		this.fDeclarations = new IASTName[] { name };
 		fPosition= pos;
@@ -61,23 +61,17 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
 	    this.fType = type;
 	    fPosition= pos;
 	}
-	
+
     @Override
 	public boolean isParameterPack() {
 		return getType() instanceof ICPPParameterPackType;
 	}
 
-	/* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPBinding#getDeclarations()
-     */
     @Override
 	public IASTNode[] getDeclarations() {
         return fDeclarations;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPBinding#getDefinition()
-     */
     @Override
 	public IASTNode getDefinition() {
         return null;
@@ -121,17 +115,12 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
 	    }
 	    return null;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
-	 */
+
 	@Override
 	public String getName() {
 		return new String(getNameCharArray());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getNameCharArray()
-	 */
 	@Override
 	public char[] getNameCharArray() {
 	    IASTName name = getPrimaryDeclaration();
@@ -140,26 +129,17 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
 	    return CharArrayUtils.EMPTY;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
-	 */
 	@Override
 	public IScope getScope() {
 		return CPPVisitor.getContainingScope(getPrimaryDeclaration());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getPhysicalNode()
-	 */
 	public IASTNode getPhysicalNode() {
 	    if (fDeclarations != null)
 	        return fDeclarations[0];
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IVariable#getType()
-	 */
 	@Override
 	public IType getType() {
 		if (fType == null && fDeclarations != null) {
@@ -175,75 +155,48 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
 		return fType;
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IVariable#isStatic()
-     */
     @Override
 	public boolean isStatic() {
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IBinding#getFullyQualifiedName()
-     */
     @Override
 	public String[] getQualifiedName() {
         return new String[] { getName() };
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IBinding#getFullyQualifiedNameCharArray()
-     */
     @Override
 	public char[][] getQualifiedNameCharArray() {
         return new char[][] { getNameCharArray() };
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#isGloballyQualified()
-     */
     @Override
 	public boolean isGloballyQualified() {
         return false;
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#addDefinition(org.eclipse.cdt.core.dom.ast.IASTNode)
-	 */
 	@Override
 	public void addDefinition(IASTNode node) {
 		addDeclaration(node);
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IVariable#isExtern()
-     */
     @Override
 	public boolean isExtern() {
-        //7.1.1-5 extern can not be used in the declaration of a parameter
+        // 7.1.1-5 extern can not be used in the declaration of a parameter
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable#isMutable()
-     */
     @Override
 	public boolean isMutable() {
-        //7.1.1-8 mutable can only apply to class members
+        // 7.1.1-8 mutable can only apply to class members
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IVariable#isAuto()
-     */
     @Override
 	public boolean isAuto() {
         return hasStorageClass(IASTDeclSpecifier.sc_auto);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IVariable#isRegister()
-     */
     @Override
 	public boolean isRegister() {
         return hasStorageClass(IASTDeclSpecifier.sc_register);

@@ -14,7 +14,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CVQualifier.*;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CVQualifier.CONST;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CVQualifier.CONST_RESTRICT;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CVQualifier.CONST_VOLATILE;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CVQualifier.CONST_VOLATILE_RESTRICT;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CVQualifier.NONE;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CVQualifier.RESTRICT;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CVQualifier.VOLATILE;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CVQualifier.VOLATILE_RESTRICT;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -60,20 +67,23 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 
 /**
- *
+ * Collection of static methods operating on C++ bindings.
  */
 public class SemanticUtil {
 	private static final char[] OPERATOR_CHARS = Keywords.OPERATOR.toCharArray();
 	// Cache of overloadable operator names for fast lookup. Used by isConversionOperator.
 	private static final CharArraySet cas= new CharArraySet(OverloadableOperator.values().length);
-	
-	public static final int TDEF =    0x01;
-	public static final int REF =     0x02;
-	public static final int CVTYPE =  0x04;
-	public static final int ALLCVQ=   0x08;
-	public static final int PTR=      0x10;
-	public static final int MPTR=     0x20;
-	public static final int ARRAY=    0x40;
+
+	// Resolve typedefs.
+	public static final int TDEF =      0x01;
+	// Resolve typedefs, but only if necessary for a nested type transformation.
+	public static final int COND_TDEF = 0x02; 
+	public static final int REF =       0x04;
+	public static final int CVTYPE =    0x08;
+	public static final int ALLCVQ =    0x10;
+	public static final int PTR =       0x20;
+	public static final int MPTR =      0x40;
+	public static final int ARRAY =     0x80;
 	
 	static {
 		final int OPERATOR_SPC= OPERATOR_CHARS.length + 1;
@@ -221,14 +231,25 @@ public class SemanticUtil {
 	 */
 	public static IType getNestedType(IType type, int options) {
 		final boolean tdef= (options & TDEF) != 0;
+		final boolean cond_tdef= (options & COND_TDEF) != 0;
 		final boolean ptr= (options & PTR) != 0;
 		final boolean mptr= (options & MPTR) != 0;
 		final boolean allcvq= (options & ALLCVQ) != 0;
 		final boolean cvtype = (options & CVTYPE) != 0;
 
+		IType beforeTypedefs = null;
+
 		while (true) {
 			IType t= null;
-			if (type instanceof IPointerType) {
+			if (type instanceof ITypedef) {
+				if (tdef || cond_tdef) {
+					if (beforeTypedefs == null && cond_tdef) {
+						beforeTypedefs = type;
+					}
+					t= ((ITypedef) type).getType();
+				}
+			} else if (type instanceof IPointerType) {
+				beforeTypedefs = null;
 				final boolean isMbrPtr = type instanceof ICPPPointerToMemberType;
 				if ((ptr && !isMbrPtr) || (mptr && isMbrPtr)) {
 					t= ((IPointerType) type).getType();
@@ -244,20 +265,20 @@ public class SemanticUtil {
 					}
 					return pt;
 				}
-			} else if (tdef && type instanceof ITypedef) {
-				t= ((ITypedef) type).getType();
 			} else if (type instanceof IQualifierType) {
+				beforeTypedefs = null;
 				final IQualifierType qt = (IQualifierType) type;
 				final IType qttgt = qt.getType();
 				if (allcvq || cvtype) {
 					t= qttgt;
-				} else if (tdef) {
+				} else if (tdef || cond_tdef) {
 					t= getNestedType(qttgt, options);
 					if (t == qttgt) 
 						return qt;
 					return addQualifiers(t, qt.isConst(), qt.isVolatile(), false);
 				} 
 			} else if (type instanceof IArrayType) {
+				beforeTypedefs = null;
 				final IArrayType atype= (IArrayType) type;
 				if ((options & ARRAY) != 0) {
 					t= atype.getType();
@@ -269,11 +290,12 @@ public class SemanticUtil {
 					return replaceNestedType((ITypeContainer) atype, newNested);
 				}
 			} else if (type instanceof ICPPReferenceType) {
+				beforeTypedefs = null;
 				final ICPPReferenceType rt = (ICPPReferenceType) type;
 				if ((options & REF) != 0) {
 					t= rt.getType();
 				} else if (tdef) {
-					// a typedef within the reference type can influence whether the reference is lvalue or rvalue
+					// A typedef within the reference type can influence whether the reference is lvalue or rvalue
 					IType nested= rt.getType();
 					IType newNested = getNestedType(nested, TDEF);
 					if (nested == newNested) 
@@ -282,8 +304,12 @@ public class SemanticUtil {
 				}
 			}
 			// Pack expansion types are dependent types, there is no need to descend into those.
-			if (t == null)
+			if (t == null) {
+				if (beforeTypedefs != null) {
+					return beforeTypedefs;
+				}
 				return type;
+			}
 			
 			type= t;
 		}
@@ -354,7 +380,7 @@ public class SemanticUtil {
 		if (newNestedType == null)
 			return type;
 		
-		// bug 249085 make sure not to add unnecessary qualifications
+		// Bug 249085 make sure not to add unnecessary qualifications
 		if (type instanceof IQualifierType) {
 			IQualifierType qt= (IQualifierType) type;
 			return addQualifiers(newNestedType, qt.isConst(), qt.isVolatile(), false);
@@ -364,7 +390,41 @@ public class SemanticUtil {
 		type.setType(newNestedType);
 		return type;
 	}
-	
+
+	/**
+	 * Replaces the given type or its nested type with a typedef if that type is the same as
+	 * the type the typedef resolves to. 
+	 * 
+	 * @param type the type subject to substitution 
+	 * @param typedefType the type possibly containing the typedef as its nested type.
+	 * @return the given type with the nested type replaced by the typedef, or {@code null} if
+	 *	   the typedefType doesn't contain a typedef or the nested type doesn't match the typedef.
+	 */
+	public static IType substituteTypedef(IType type, IType typedefType) {
+		typedefType = getNestedType(typedefType, REF | ALLCVQ | PTR | ARRAY);
+		if (!(typedefType instanceof ITypedef))
+			return null;
+		IType nestedType = getNestedType(type, REF | ALLCVQ | PTR | ARRAY);
+		if (!nestedType.isSameType(((ITypedef) typedefType).getType()))
+			return null;
+
+		IType result = null;
+		ITypeContainer containerType = null;
+		for (IType t = type; ; t = containerType.getType()) {
+			IType newType = t == nestedType ? typedefType : (IType) t.clone();
+			if (result == null)
+				result = newType;
+			if (containerType != null) {
+				containerType.setType(newType);
+			}
+			if (t == nestedType)
+				return result;
+			if (!(t instanceof ITypeContainer))
+				return null;
+			containerType = (ITypeContainer) t;
+		}
+	}
+
 	public static IType mapToAST(IType type, IASTNode node) {
 		if (type instanceof IFunctionType) {
 			final ICPPFunctionType ft = (ICPPFunctionType) type;

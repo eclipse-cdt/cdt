@@ -76,7 +76,7 @@ public class CWDLocator extends AbstractErrorParser {
 				return true;
 			}
 		},
-		// This is emitted by GNU make using options -n, --just-print or -w, --print-directory.
+		// This is emitted by GNU make using options -w or --print-directory.
 		new ErrorPattern("make: Entering directory `(.*)'", 0, 0) { //$NON-NLS-1$
 			@Override
 			protected boolean recordError(Matcher matcher, ErrorParserManager eoParser) {

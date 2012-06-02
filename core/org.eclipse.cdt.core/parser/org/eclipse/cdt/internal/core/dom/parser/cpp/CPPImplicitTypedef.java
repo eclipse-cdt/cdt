@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *   Devin Steffler (IBM) - Initial API and implementation
- *   Markus Schorn (Wind River Systems)
+ *     Devin Steffler (IBM) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -23,9 +23,9 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
  * An example is the GCC built-in typedef:  typedef char * __builtin_va_list;
  */
 public class CPPImplicitTypedef extends CPPTypedef {
-    private IType type=null;
-    private char[] name=null;
-    private IScope scope=null;
+    private IType type;
+    private char[] name;
+    private IScope scope;
     
     public CPPImplicitTypedef(IType type, char[] name, IScope scope) {
         super(null);
@@ -135,5 +135,4 @@ public class CPPImplicitTypedef extends CPPTypedef {
 	public boolean isGloballyQualified() {
         return true;
     }
-    
 }

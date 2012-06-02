@@ -9,12 +9,17 @@
  *     John Camelon (IBM) - Initial API and implementation
  *     Mike Kucera (IBM)
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.*;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.glvalueType;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.prvalueType;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.restoreTypedefs;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.typeFromFunctionCall;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.valueCategoryFromFunctionCall;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
@@ -37,14 +42,13 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
-
 public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpression, IASTAmbiguityParent {
 	private int op;
     private IASTExpression operand1;
     private IASTInitializerClause operand2;
     private IType type;
     private ICPPFunction overload= UNINITIALIZED_FUNCTION;
-    private IASTImplicitName[] implicitNames = null;
+    private IASTImplicitName[] implicitNames;
 
     public CPPASTBinaryExpression() {
 	}
@@ -66,11 +70,7 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
 		copy.op = op;
 		copy.setOperand1(operand1 == null ? null : operand1.copy(style));
 		copy.setInitOperand2(operand2 == null ? null : operand2.copy(style));
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 
 	@Override
@@ -314,21 +314,26 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
 	}
 	
 	private IType createExpressionType() {
+		IType originalType1 = operand1.getExpressionType();
+		IType originalType2 = operand2 instanceof IASTExpression ?
+				((IASTExpression) operand2).getExpressionType() : null;
+
 		// Check for overloaded operator.
 		ICPPFunction o= getOverload();
 		if (o != null) {
-			return typeFromFunctionCall(o);
+			IType type = typeFromFunctionCall(o);
+    		return restoreTypedefs(type, originalType1, originalType2);
 		}
 		
         final int op = getOperator();
-		IType type1 = prvalueType(operand1.getExpressionType());
+		IType type1 = prvalueType(originalType1);
 		if (type1 instanceof ISemanticProblem) {
 			return type1;
 		}
-		
+
 		IType type2 = null;
-		if (operand2 instanceof IASTExpression) {
-			type2= prvalueType(((IASTExpression) operand2).getExpressionType());
+		if (originalType2 != null) {
+			type2= prvalueType(originalType2);
 			if (type2 instanceof ISemanticProblem) {
 				return type2;
 			}
@@ -336,7 +341,7 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
 		
     	IType type= CPPArithmeticConversion.convertCppOperandTypes(op, type1, type2);
     	if (type != null) {
-    		return type;
+    		return restoreTypedefs(type, originalType1, originalType2);
     	}
 
         switch (op) {
@@ -352,10 +357,10 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
 
         case IASTBinaryExpression.op_plus:
         	if (type1 instanceof IPointerType) {
-        		return type1;
+        		return restoreTypedefs(type1, originalType1);
         	} 
         	if (type2 instanceof IPointerType) {
-        		return type2;
+        		return restoreTypedefs(type2, originalType2);
         	} 
         	break;
 
@@ -364,7 +369,7 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
             	if (type2 instanceof IPointerType) {
             		return CPPVisitor.getPointerDiffType(this);
         		}
-        		return type1;
+        		return restoreTypedefs(type1, originalType1);
         	}
         	break;
 
@@ -381,6 +386,6 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
         	}
     		return new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
         }
-        return type1;
+		return restoreTypedefs(type1, originalType1);
 	}
 }

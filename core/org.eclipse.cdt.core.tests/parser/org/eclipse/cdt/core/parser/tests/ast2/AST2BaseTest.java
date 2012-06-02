@@ -10,6 +10,7 @@
  *     Markus Schorn (Wind River Systems)
  *     Andrew Ferguson (Symbian)
  *     Mike Kucera (IBM)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
@@ -366,19 +367,20 @@ public class AST2BaseTest extends BaseTestCase {
         public int size() { return nameList.size(); }
         
         public void dump() {
-        	for (int i=0; i<size(); i++) {
+        	for (int i= 0; i < size(); i++) {
         		IASTName name= getName(i);
         		String parent= name.getParent() != null ? name.getParent().getRawSignature() : "";
-        		System.out.println(i+": #"+name.getRawSignature()+"# "+parent);
+        		System.out.println(i + ": #" + name.getRawSignature() + "# " + parent);
         	}
         }
     }
 
     protected void assertInstances(CPPNameCollector collector, IBinding binding, int num) throws Exception {
         int count = 0;
-        for (int i = 0; i < collector.size(); i++)
+        for (int i = 0; i < collector.size(); i++) {
             if (collector.getName(i).resolveBinding() == binding)
                 count++;
+        }
         
         assertEquals(num, count);
     }
@@ -490,11 +492,11 @@ public class AST2BaseTest extends BaseTestCase {
 	}
 
 	protected static <T> T assertInstance(Object o, Class<T> clazz, Class... cs) {
-		assertNotNull("Expected object of "+clazz.getName()+" but got a null value", o);
+		assertNotNull("Expected object of " + clazz.getName() + " but got a null value", o);
 		assertTrue("Expected "+clazz.getName()+" but got "+o.getClass().getName(), clazz.isInstance(o));
 		for (Class c : cs) {
-			assertNotNull("Expected object of "+c.getName()+" but got a null value", o);
-			assertTrue("Expected "+c.getName()+" but got "+o.getClass().getName(), c.isInstance(o));
+			assertNotNull("Expected object of " + c.getName() + " but got a null value", o);
+			assertTrue("Expected " + c.getName() + " but got " + o.getClass().getName(), c.isInstance(o));
 		}
 		return clazz.cast(o);
 	}
@@ -516,14 +518,14 @@ public class AST2BaseTest extends BaseTestCase {
     		this.isCPP= isCPP;
     		this.tu= parse(contents, isCPP ? ParserLanguage.CPP : ParserLanguage.C, true, false);
 		}
-    	
+
     	public IASTTranslationUnit getTranslationUnit() {
     		return tu;
     	}
-    	
-    	public IProblemBinding assertProblem(String section, int len) {
+
+		public IProblemBinding assertProblem(String section, int len) {
     		if (len <= 0)
-    			len= section.length()+len;
+    			len= section.length() + len;
     		IBinding binding= binding(section, len);
     		assertTrue("Non-ProblemBinding for name: " + section.substring(0, len),
     				binding instanceof IProblemBinding);
@@ -532,11 +534,11 @@ public class AST2BaseTest extends BaseTestCase {
     	
     	public <T extends IBinding> T assertNonProblem(String section, int len) {
     		if (len <= 0)
-    			len= section.length()+len;
+    			len= section.length() + len;
     		IBinding binding= binding(section, len);
     		if (binding instanceof IProblemBinding) {
     			IProblemBinding problem= (IProblemBinding) binding;
-    			fail("ProblemBinding for name: " + section.substring(0, len) + " (" + renderProblemID(problem.getID())+")"); 
+    			fail("ProblemBinding for name: " + section.substring(0, len) + " (" + renderProblemID(problem.getID()) + ")"); 
     		}
     		if (binding == null) {
     			fail("Null binding resolved for name: " + section.substring(0, len));
@@ -548,7 +550,7 @@ public class AST2BaseTest extends BaseTestCase {
 			IASTName name= findName(section, len);
 			if (name != null) {
 				String selection = section.substring(0, len);
-				fail("Found unexpected \""+selection+"\": " + name.resolveBinding());
+				fail("Found unexpected \"" + selection + "\": " + name.resolveBinding());
 			}
     	}
 
@@ -559,7 +561,7 @@ public class AST2BaseTest extends BaseTestCase {
     	public IASTImplicitName assertImplicitName(String section, int len, Class<?> bindingClass) {
     		IASTName name = findImplicitName(section, len);
     		final String selection = section.substring(0, len);
-			assertNotNull("did not find \""+selection+"\"", name);
+			assertNotNull("did not find \"" + selection + "\"", name);
 			
 			assertInstance(name, IASTImplicitName.class);
 			IASTImplicitNameOwner owner = (IASTImplicitNameOwner) name.getParent();
@@ -587,7 +589,7 @@ public class AST2BaseTest extends BaseTestCase {
     	public void assertNoImplicitName(String section, int len) {
     		IASTName name = findImplicitName(section, len);
     		final String selection = section.substring(0, len);
-    		assertNull("found name \""+selection+"\"", name);
+    		assertNull("found name \"" + selection + "\"", name);
     	}
     	
     	public IASTImplicitName[] getImplicitNames(String section, int len) {
@@ -627,6 +629,23 @@ public class AST2BaseTest extends BaseTestCase {
     		return selector.findImplicitName(offset, len);
     	}
 
+    	public <T extends IASTNode> T assertNode(String context, String nodeText, Class<T> type, Class... cs) {
+    		if (context == null) {
+    			context = contents;
+    		}
+    		int offset = contents.indexOf(context);
+    		assertTrue("Context \"" + context + "\" not found", offset >= 0);
+    		int nodeOffset = context.indexOf(nodeText);
+    		assertTrue("Node \"" + nodeText + "\" not found", nodeOffset >= 0);
+    		IASTNodeSelector selector = tu.getNodeSelector(null);
+    		IASTNode node = selector.findNode(offset + nodeOffset, nodeText.length());
+    		return assertType(node, type, cs);
+    	}
+
+    	public <T extends IASTNode> T assertNode(String nodeText, Class<T> type, Class... cs) {
+    		return assertNode(contents, nodeText, type, cs);
+    	}
+
     	private String renderProblemID(int i) {
     		try {
     			for (Field field : IProblemBinding.class.getDeclaredFields()) {
@@ -647,29 +666,53 @@ public class AST2BaseTest extends BaseTestCase {
     	
     	public <T extends IBinding> T assertNonProblem(String section, int len, Class<T> type, Class... cs) {
     		if (len <= 0)
-    			len+= section.length();
+    			len += section.length();
     		IBinding binding= binding(section, len);
     		assertTrue("ProblemBinding for name: " + section.substring(0, len),
     				!(binding instanceof IProblemBinding));
-    		assertInstance(binding, type);
-    		for (Class c : cs) {
-    			assertInstance(binding, c);
-    		}
-    		return type.cast(binding);
+    		return assertType(binding, type, cs);
     	}
-    	
+
+    	public <T extends IBinding> T assertNonProblem(String section, Class<T> type, Class... cs) {
+    		return assertNonProblem(section, section.length(), type, cs);
+    	}
+
+    	public <T extends IBinding> T assertNonProblem(String context, String name, Class<T> type, Class... cs) {
+    		IBinding binding= binding(context, name);
+    		assertTrue("ProblemBinding for name: " + name, !(binding instanceof IProblemBinding));
+    		return assertType(binding, type, cs);
+    	}
+
+		public <T, U extends T> U assertType(T obj, Class<U> type, Class... cs) {
+			assertInstance(obj, type);
+    		for (Class c : cs) {
+    			assertInstance(obj, c);
+    		}
+    		return type.cast(obj);
+		}
+
     	private IBinding binding(String section, int len) {
     		IASTName name = findName(section, len);
     		final String selection = section.substring(0, len);
-			assertNotNull("did not find \""+selection+"\"", name);
+			assertNotNull("Did not find \"" + selection + "\"", name);
     		assertEquals(selection, name.getRawSignature());
     			
     		IBinding binding = name.resolveBinding();
-    		assertNotNull("No binding for "+name.getRawSignature(), binding);
+    		assertNotNull("No binding for " + name.getRawSignature(), binding);
     		
     		return name.resolveBinding();
     	}
-    }
+
+    	private IBinding binding(String context, String name) {
+    		IASTName astName = findName(context, name);
+    		assertEquals(name, astName.getRawSignature());
+    			
+    		IBinding binding = astName.resolveBinding();
+    		assertNotNull("No binding for " + astName.getRawSignature(), binding);
+    		
+    		return astName.resolveBinding();
+    	}
+	}
 
 	final protected IASTTranslationUnit parseAndCheckBindings(String code, ParserLanguage lang) throws Exception {
 		return parseAndCheckBindings(code, lang, false);

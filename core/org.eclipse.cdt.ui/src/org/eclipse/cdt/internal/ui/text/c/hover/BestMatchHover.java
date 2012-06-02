@@ -10,7 +10,6 @@
  *     Anton Leherbauer (Wind River Systems)
  *     Ericsson             - Fix improper hover order (Bug 294812)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.text.c.hover;
 
 import java.util.ArrayList;
@@ -39,10 +38,8 @@ import org.eclipse.cdt.ui.text.c.hover.ICEditorTextHover;
  * hovers being placed before less specific ones.
  */
 public class BestMatchHover extends AbstractCEditorTextHover {
-
 	/*
-	 * Note that hover ordering is very important to be preserved by this
-	 * class. (Bug 294812)
+	 * Note that hover ordering is very important to be preserved by this class (bug 294812).
 	 */
 	private List<CEditorTextHoverDescriptor> fTextHoverSpecifications;
 	private List<ITextHover> fInstantiatedTextHovers;
@@ -63,16 +60,16 @@ public class BestMatchHover extends AbstractCEditorTextHover {
 	private void installTextHovers() {
 		CEditorTextHoverDescriptor[] hoverDescs= CUIPlugin.getDefault().getCEditorTextHoverDescriptors();
 		
-		// initialize lists - indicates that the initialization happened
+		// Initialize lists - indicates that the initialization happened
 		fTextHoverSpecifications= new ArrayList<CEditorTextHoverDescriptor>(hoverDescs.length-1);
 		fInstantiatedTextHovers= new ArrayList<ITextHover>(hoverDescs.length-1);
 
-		// populate list
+		// Populate list
 		for (int i= 0; i < hoverDescs.length; i++) {
-			// ensure that we don't add ourselves to the list
+			// Ensure that we don't add ourselves to the list
 			if (!PreferenceConstants.ID_BESTMATCH_HOVER.equals(hoverDescs[i].getId())) {
 				fTextHoverSpecifications.add(hoverDescs[i]);
-				// add place-holder for hover instance
+				// Add place-holder for hover instance
 				fInstantiatedTextHovers.add(null);
 			}
 		}
@@ -90,7 +87,7 @@ public class BestMatchHover extends AbstractCEditorTextHover {
 			ICEditorTextHover hover= spec.createTextHover();
 			if (hover != null) {
 				hover.setEditor(getEditor());
-				// remember instance and mark as created
+				// Remember instance and mark as created
 				fInstantiatedTextHovers.set(i, hover);
 				fTextHoverSpecifications.set(i, null);
 			} else {
@@ -109,7 +106,6 @@ public class BestMatchHover extends AbstractCEditorTextHover {
 	@SuppressWarnings("deprecation")
 	@Override
 	public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion) {
-
 		checkTextHovers();
 		fBestHover= null;
 
@@ -130,12 +126,11 @@ public class BestMatchHover extends AbstractCEditorTextHover {
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.ITextHoverExtension2#getHoverInfo2(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
+	 * @see ITextHoverExtension2#getHoverInfo2(ITextViewer, IRegion)
 	 */
 	@SuppressWarnings("deprecation")
 	@Override
 	public Object getHoverInfo2(ITextViewer textViewer, IRegion hoverRegion) {
-		
 		checkTextHovers();
 		fBestHover= null;
 		
@@ -164,7 +159,7 @@ public class BestMatchHover extends AbstractCEditorTextHover {
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.ITextHoverExtension#getHoverControlCreator()
+	 * @see ITextHoverExtension#getHoverControlCreator()
 	 * @since 3.0
 	 */
 	@Override
@@ -176,16 +171,15 @@ public class BestMatchHover extends AbstractCEditorTextHover {
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.information.IInformationProviderExtension2#getInformationPresenterControlCreator()
+	 * @see IInformationProviderExtension2#getInformationPresenterControlCreator()
 	 * @since 3.0
 	 */
 	@Override
 	public IInformationControlCreator getInformationPresenterControlCreator() {
-		// this is wrong, but left here for backwards compatibility
+		// This is wrong, but left here for backwards compatibility
 		if (fBestHover instanceof IInformationProviderExtension2)
-			return ((IInformationProviderExtension2)fBestHover).getInformationPresenterControlCreator();
+			return ((IInformationProviderExtension2) fBestHover).getInformationPresenterControlCreator();
 
 		return null;
 	}
-
 }

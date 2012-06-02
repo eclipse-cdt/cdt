@@ -170,7 +170,6 @@
     <module>org.eclipse.tm.rse/features/org.eclipse.rse.terminals.source</module>
     <module>org.eclipse.tm.rse/features/org.eclipse.rse.useractions-feature</module>
     <module>org.eclipse.tm.rse/features/org.eclipse.rse.useractions.wrapper-feature</module>
-    <!--<module>org.eclipse.tm.rse/features/org.eclipse.rse.wince.wrapper-feature</module>-->
     <module>org.eclipse.tm.rse/plugins/org.eclipse.dstore.core</module>
     <module>org.eclipse.tm.rse/plugins/org.eclipse.dstore.extra</module>
     <module>org.eclipse.tm.rse/plugins/org.eclipse.rse</module>
@@ -239,10 +238,9 @@
     <module>org.eclipse.tm.rse/tests/org.eclipse.rse.tests-feature</module>
     <module>org.eclipse.tm.rse/tests/org.eclipse.rse.tests.framework</module>
     <module>org.eclipse.tm.rse/tests/org.eclipse.rse.tests.framework.examples</module>
-<!--    <module>org.eclipse.tm.core/wince/org.eclipse.rse.wince-feature</module>                                                                                                       
+    <module>org.eclipse.tm.core/wince/org.eclipse.rse.wince-feature</module>                                                                                                       
     <module>org.eclipse.tm.core/wince/org.eclipse.rse.subsystems.wince</module>                                                                                                    
-    <module>org.eclipse.tm.core/wince/org.eclipse.tm.rapi</module>
--->     
+    <module>org.eclipse.tm.core/wince/org.eclipse.tm.rapi</module>    
   </modules>
   <build>
     <plugins>

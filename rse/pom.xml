@@ -239,6 +239,10 @@
     <module>org.eclipse.tm.rse/tests/org.eclipse.rse.tests-feature</module>
     <module>org.eclipse.tm.rse/tests/org.eclipse.rse.tests.framework</module>
     <module>org.eclipse.tm.rse/tests/org.eclipse.rse.tests.framework.examples</module>
+<!--    <module>org.eclipse.tm.core/wince/org.eclipse.rse.wince-feature</module>                                                                                                       
+    <module>org.eclipse.tm.core/wince/org.eclipse.rse.subsystems.wince</module>                                                                                                    
+    <module>org.eclipse.tm.core/wince/org.eclipse.tm.rapi</module>
+-->     
   </modules>
   <build>
     <plugins>

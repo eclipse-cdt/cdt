@@ -12,6 +12,7 @@
  *     Sergey Prigogin (Google)
  *     Tim Kelly (Nokia)
  *     Anna Dushistova (MontaVista)
+ *     Marc-Andre Laperle
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
@@ -242,7 +243,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		model.addElementChangedListener(fCModelListener);
 		LanguageManager.getInstance().registerLanguageChangeListener(fLanguageChangeListener);
 		LanguageSettingsManager.registerLanguageSettingsChangeListener(fLanguageSettingsChangeListener);
-		final int types= CProjectDescriptionEvent.DATA_APPLIED;
+		final int types= CProjectDescriptionEvent.APPLIED;
 		CCorePlugin.getDefault().getProjectDescriptionManager().addCProjectDescriptionListener(fProjectDescriptionListener, types);
 
 		try {

@@ -87,11 +87,7 @@ public class CPPASTFunctionCallExpression extends ASTNode
 
 		CPPASTFunctionCallExpression copy = new CPPASTFunctionCallExpression(null, args);
 		copy.setFunctionNameExpression(functionName == null ? null : functionName.copy(style));
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 	
     @Override
@@ -240,7 +236,7 @@ public class CPPASTFunctionCallExpression extends ASTNode
     		overload= null;
     		IType t= isExplicitTypeConversion();
     		if (t != null) {
-    			t = getNestedType(t, TDEF|CVTYPE|REF);
+    			t = getNestedType(t, TDEF | CVTYPE | REF);
     			if (t instanceof ICPPClassType && !(t instanceof ICPPUnknownBinding)) {
     				ICPPClassType cls= (ICPPClassType) t;
     				LookupData data= CPPSemantics.createLookupData(((IASTIdExpression) functionName).getName());
@@ -252,9 +248,9 @@ public class CPPASTFunctionCallExpression extends ASTNode
 					}
     			}
     		} else {
-    			t= SemanticUtil.getNestedType(functionName.getExpressionType(), TDEF|REF|CVTYPE);
+    			t= SemanticUtil.getNestedType(functionName.getExpressionType(), TDEF | REF | CVTYPE);
     			if (t instanceof ICPPClassType) {
-    				overload = CPPSemantics.findOverloadedOperator(this, (ICPPClassType)t);
+    				overload = CPPSemantics.findOverloadedOperator(this, (ICPPClassType) t);
     			}
     		}
 		}
@@ -272,10 +268,10 @@ public class CPPASTFunctionCallExpression extends ASTNode
 			return prvalueType(t);
 		} 
 		
-		t= SemanticUtil.getNestedType(functionName.getExpressionType(), TDEF|REF|CVTYPE);
+		t= SemanticUtil.getNestedType(functionName.getExpressionType(), TDEF | REF | CVTYPE);
 		if (t instanceof ICPPClassType) {
 			if (overload == UNINITIALIZED_FUNCTION) {
-				overload = CPPSemantics.findOverloadedOperator(this, (ICPPClassType)t);
+				overload = CPPSemantics.findOverloadedOperator(this, (ICPPClassType) t);
 			}
 			if (overload != null) {
 				return typeFromFunctionCall(overload);
@@ -294,7 +290,7 @@ public class CPPASTFunctionCallExpression extends ASTNode
 
 		return new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
     }
-    
+
 	private IType isExplicitTypeConversion() {
 		if (functionName instanceof IASTIdExpression) {
 			final IASTName name = ((IASTIdExpression) functionName).getName();
@@ -318,7 +314,7 @@ public class CPPASTFunctionCallExpression extends ASTNode
 		IType t= functionName.getExpressionType();
 		if (t instanceof ICPPClassType) {
 			if (overload == UNINITIALIZED_FUNCTION) {
-				overload = CPPSemantics.findOverloadedOperator(this, (ICPPClassType)t);
+				overload = CPPSemantics.findOverloadedOperator(this, (ICPPClassType) t);
 			}
 			if (overload != null) {
 				return valueCategoryFromFunctionCall(overload);

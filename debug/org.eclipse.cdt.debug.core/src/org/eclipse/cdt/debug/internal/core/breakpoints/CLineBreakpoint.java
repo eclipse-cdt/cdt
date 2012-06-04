@@ -13,11 +13,14 @@ package org.eclipse.cdt.debug.internal.core.breakpoints;
 import java.util.Map;
 
 import org.eclipse.cdt.debug.core.CDebugUtils;
+import org.eclipse.cdt.debug.core.DebugCoreMessages;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint2;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -67,7 +70,16 @@ public class CLineBreakpoint extends AbstractLineBreakpoint {
 		    (bp_file == null && bp_reqest_file != null) ||  
 		    (bp_file != null && !bp_file.equals(bp_reqest_file)) ) 
 		{
-			return MessageFormat.format( BreakpointMessages.getString( "CLineBreakpoint.1" ), (Object[])new String[] { CDebugUtils.getBreakpointText( this, false ) } ); //$NON-NLS-1$			
+			StringBuffer label = new StringBuffer();
+			if (bp_file != null && !bp_file.equals(bp_reqest_file)) {
+				IPath path = new Path(bp_reqest_file);
+				if (path.isValidPath(bp_reqest_file)) {
+					label.append(path.lastSegment());
+				}
+				label.append(' ');
+			}
+			label.append(MessageFormat.format(DebugCoreMessages.getString("CDebugUtils.0"), (Object[])new String[]{ Integer.toString(bp_request_line) })); //$NON-NLS-1$
+			return MessageFormat.format( BreakpointMessages.getString( "CLineBreakpoint.1" ), (Object[])new String[] { label.toString(), CDebugUtils.getBreakpointText( this, false ) } ); //$NON-NLS-1$			
 		}
 		else {
 			return MessageFormat.format( BreakpointMessages.getString( "CLineBreakpoint.0" ), (Object[])new String[] { CDebugUtils.getBreakpointText( this, false ) } ); //$NON-NLS-1$

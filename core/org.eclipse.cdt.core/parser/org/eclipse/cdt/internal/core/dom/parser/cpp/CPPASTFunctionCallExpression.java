@@ -19,6 +19,7 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionT
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.typeFromReturnType;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.valueCategoryFromFunctionCall;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.valueCategoryFromReturnType;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.COND_TDEF;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.CVTYPE;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.REF;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
@@ -40,6 +41,7 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpressionList;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
@@ -260,15 +262,16 @@ public class CPPASTFunctionCallExpression extends ASTNode
     @Override
 	public IType getExpressionType() {
 		// Handle explicit type conversion in functional notation.
-    	IType t= isExplicitTypeConversion();
-    	if (t != null) {
-			if (t instanceof IProblemBinding) {
+    	IType type= isExplicitTypeConversion();
+    	if (type != null) {
+			if (type instanceof IProblemBinding) {
 				return ProblemType.UNRESOLVED_NAME;
 			}
-			return prvalueType(t);
+			return prvalueType(type);
 		} 
 		
-		t= SemanticUtil.getNestedType(functionName.getExpressionType(), TDEF | REF | CVTYPE);
+		type= SemanticUtil.getNestedType(functionName.getExpressionType(), COND_TDEF | REF | CVTYPE);
+		IType t = SemanticUtil.getNestedType(type, TDEF | REF | CVTYPE);
 		if (t instanceof ICPPClassType) {
 			if (overload == UNINITIALIZED_FUNCTION) {
 				overload = CPPSemantics.findOverloadedOperator(this, (ICPPClassType) t);
@@ -283,9 +286,16 @@ public class CPPASTFunctionCallExpression extends ASTNode
 			t= SemanticUtil.getNestedType(((IPointerType) t).getType(), TDEF | REF | CVTYPE);
 		}
 		if (t instanceof IFunctionType) {
-			return typeFromReturnType(((IFunctionType) t).getReturnType());
+			type = typeFromReturnType(((IFunctionType) t).getReturnType());
+			if (functionName instanceof ICPPASTFieldReference) {
+				IType ownerType = ((ICPPASTFieldReference) functionName).getFieldOwnerType();
+				t = SemanticUtil.substituteTypedef(type, ownerType);
+				if (t != null)
+					type = t;
+			}
+			return type;
 		}
-		if (CPPTemplates.isDependentType(t))
+		if (CPPTemplates.isDependentType(type))
 			return CPPUnknownClass.createUnnamedInstance();
 
 		return new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);

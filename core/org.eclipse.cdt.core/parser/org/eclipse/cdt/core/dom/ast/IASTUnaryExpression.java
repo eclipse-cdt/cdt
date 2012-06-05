@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM Rational Software) - Initial API and implementation
+ *     John Camelon (IBM Rational Software) - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
@@ -142,7 +142,8 @@ public interface IASTUnaryExpression extends IASTExpression {
 	 * <code>OPERAND</code> represents the relationship between an <code>IASTUnaryExpression</code> and
 	 * it's nested <code>IASTExpression</code>.
 	 */
-	public static final ASTNodeProperty OPERAND = new ASTNodeProperty("IASTUnaryExpression.OPERAND - IASTExpression (operand) for IASTUnaryExpression"); //$NON-NLS-1$
+	public static final ASTNodeProperty OPERAND =
+			new ASTNodeProperty("IASTUnaryExpression.OPERAND - IASTExpression (operand) for IASTUnaryExpression"); //$NON-NLS-1$
 
 	/**
 	 * Get the operand.

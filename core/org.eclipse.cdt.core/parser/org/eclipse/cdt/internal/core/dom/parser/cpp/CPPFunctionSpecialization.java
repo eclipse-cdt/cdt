@@ -50,7 +50,8 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 		this(orig, owner, argMap, null);
 	}
 	
-	public CPPFunctionSpecialization(ICPPFunction orig, IBinding owner, ICPPTemplateParameterMap argMap, ICPPClassSpecialization context) {
+	public CPPFunctionSpecialization(ICPPFunction orig, IBinding owner, ICPPTemplateParameterMap argMap,
+			ICPPClassSpecialization context) {
 		super(orig, owner, argMap);
 		fContext= context;
 	}

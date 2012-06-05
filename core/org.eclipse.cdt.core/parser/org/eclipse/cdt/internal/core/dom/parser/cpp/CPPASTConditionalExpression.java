@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2011 IBM Corporation and others.
+ *  Copyright (c) 2004, 2012 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -222,9 +222,9 @@ public class CPPASTConditionalExpression extends ASTNode implements IASTConditio
 		// Void types: Either both are void or one is a throw expression.
 		if (void2 || void3) {
 			if (isThrowExpression(expr2)) {
-				fType= Conversions.lvalue_to_rvalue(t3);
+				fType= Conversions.lvalue_to_rvalue(t3, false);
 			} else if (isThrowExpression(expr3)) {
-				fType= Conversions.lvalue_to_rvalue(t2);
+				fType= Conversions.lvalue_to_rvalue(t2, false);
 			} else if (void2 && void3) {
 				fType= uqt2;
 			} else {
@@ -293,8 +293,8 @@ public class CPPASTConditionalExpression extends ASTNode implements IASTConditio
 		}
 
 		// 5.16-6
-		t2= Conversions.lvalue_to_rvalue(t2);
-		t3= Conversions.lvalue_to_rvalue(t3);
+		t2= Conversions.lvalue_to_rvalue(t2, false);
+		t3= Conversions.lvalue_to_rvalue(t3, false);
 		if (t2.isSameType(t3)) {
 			fType= t2;
 		} else {
@@ -353,7 +353,7 @@ public class CPPASTConditionalExpression extends ASTNode implements IASTConditio
 			}
 			// Unrelated class types or just one class:
 			if (vcat2 != PRVALUE) {
-				t2= Conversions.lvalue_to_rvalue(t2);
+				t2= Conversions.lvalue_to_rvalue(t2, false);
 			}
 			Cost c= Conversions.checkImplicitConversionSequence(t2, t1, vcat1, UDCMode.ALLOWED, Context.ORDINARY);
 			if (c.converts()) {

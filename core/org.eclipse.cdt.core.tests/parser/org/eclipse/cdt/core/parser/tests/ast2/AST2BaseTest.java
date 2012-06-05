@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -514,9 +514,13 @@ public class AST2BaseTest extends BaseTestCase {
 		protected boolean isCPP;
     	
     	public BindingAssertionHelper(String contents, boolean isCPP) throws ParserException {
+    		this(contents, isCPP ? ParserLanguage.CPP : ParserLanguage.C);
+		}
+
+    	public BindingAssertionHelper(String contents, ParserLanguage lang) throws ParserException {
     		this.contents= contents;
-    		this.isCPP= isCPP;
-    		this.tu= parse(contents, isCPP ? ParserLanguage.CPP : ParserLanguage.C, true, false);
+    		this.isCPP= lang.isCPP();
+    		this.tu= parse(contents, lang, true, false);
 		}
 
     	public IASTTranslationUnit getTranslationUnit() {

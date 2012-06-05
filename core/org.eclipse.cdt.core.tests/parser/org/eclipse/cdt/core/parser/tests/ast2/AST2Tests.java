@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -125,7 +125,7 @@ import org.eclipse.cdt.internal.core.model.ASTStringUtil;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 
 /**
- * Testcases on the AST.
+ * Test cases on the AST.
  */
 public class AST2Tests extends AST2BaseTest {
 	private static final int NUM_TESTS = 3;
@@ -4866,10 +4866,9 @@ public class AST2Tests extends AST2BaseTest {
     //    	myUnionPointer->bar=4;
     //    }
     public void testBug228504_nonExistingMembers() throws Exception {
-    	boolean[] isCpps= {true, false};
-    	for (boolean isCpp : isCpps) {
-    		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), isCpp);
-    		for (int i=1; i < 5; i++) {
+    	for (ParserLanguage lang: ParserLanguage.values()) {
+    		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), lang);
+    		for (int i= 1; i < 5; i++) {
 				ba.assertNonProblem("foo=" + i, 3);
 				ba.assertProblem("bar=" + i, 3);
 			}
@@ -4912,10 +4911,9 @@ public class AST2Tests extends AST2BaseTest {
     //        function1(); // ref
     //    }
     public void testOutOfOrderResolution_Bug232300() throws Exception {
-    	final boolean[] isCpps= {false, true};
     	String code= getAboveComment();
-    	for (boolean isCpp : isCpps) {
-    		BindingAssertionHelper ba= new BindingAssertionHelper(code, isCpp);
+    	for (ParserLanguage lang: ParserLanguage.values()) {
+    		BindingAssertionHelper ba= new BindingAssertionHelper(code, lang);
     		IBinding b1= ba.assertNonProblem("function1(); // decl", 9);
     		IBinding b2= ba.assertNonProblem("function1() {", 9);
     		IBinding b3= ba.assertNonProblem("function1(); // ref", 9);
@@ -4927,10 +4925,9 @@ public class AST2Tests extends AST2BaseTest {
     // #define foo __typeof__((int*)0 - (int*)0)
     // typedef foo ptrdiff_t;
     public void testRedefinePtrdiff_Bug230895() throws Exception {
-    	final boolean[] isCpps= {false, true};
     	String code= getAboveComment();
-    	for (boolean isCpp : isCpps) {
-    		BindingAssertionHelper ba= new BindingAssertionHelper(code, isCpp);
+    	for (ParserLanguage lang: ParserLanguage.values()) {
+    		BindingAssertionHelper ba= new BindingAssertionHelper(code, lang);
     		IBinding b1= ba.assertNonProblem("ptrdiff_t", 9);
     		assertInstance(b1, ITypedef.class);
     		ITypedef td= (ITypedef) b1;
@@ -4944,10 +4941,9 @@ public class AST2Tests extends AST2BaseTest {
     // struct S;
     // typedef struct S S; // td
     public void testRedefineStructInScopeThatIsFullyResolved() throws Exception {
-    	final boolean[] isCpps= {false, true};
     	String code= getAboveComment();
-    	for (boolean isCpp : isCpps) {
-    		BindingAssertionHelper ba= new BindingAssertionHelper(code, isCpp);
+    	for (ParserLanguage lang: ParserLanguage.values()) {
+    		BindingAssertionHelper ba= new BindingAssertionHelper(code, lang);
     		ba.assertNonProblem("a; // ref", 1);
     		// now scope is fully resolved
     		ICompositeType ct= ba.assertNonProblem("S;", 1, ICompositeType.class);
@@ -4972,10 +4968,9 @@ public class AST2Tests extends AST2BaseTest {
     //    VOID func(VOID) {
     //    }
     public void testTypedefVoid_Bug221567() throws Exception {
-    	final boolean[] isCpps= { false, true };
     	String code= getAboveComment();
-    	for (boolean isCpp : isCpps) {
-    		BindingAssertionHelper ba= new BindingAssertionHelper(code, isCpp);
+    	for (ParserLanguage lang: ParserLanguage.values()) {
+    		BindingAssertionHelper ba= new BindingAssertionHelper(code, lang);
     		ITypedef td= ba.assertNonProblem("VOID;", 4, ITypedef.class);
     		IBinding ref= ba.assertNonProblem("VOID)", 4);
     		assertSame(td, ref);
@@ -5021,9 +5016,8 @@ public class AST2Tests extends AST2BaseTest {
     // int f5(int *(tint[10]));
     public void testParamWithFunctionType_Bug84242() throws Exception {
     	final String comment= getAboveComment();
-    	final boolean[] isCpps= {false, true};
-    	for (boolean isCpp : isCpps) {
-        	BindingAssertionHelper ba= new BindingAssertionHelper(comment, isCpp);
+    	for (ParserLanguage lang: ParserLanguage.values()) {
+        	BindingAssertionHelper ba= new BindingAssertionHelper(comment, lang);
 
         	IFunction f= ba.assertNonProblem("f1", 2, IFunction.class);
         	isTypeEqual(f.getType(), "int (int (*)(int))");
@@ -5055,9 +5049,8 @@ public class AST2Tests extends AST2BaseTest {
     // int (*f1 (int par))[5];
     public void testFunctionReturningPtrToArray_Bug216609() throws Exception {
     	final String comment= getAboveComment();
-    	final boolean[] isCpps= {false, true};
-    	for (boolean isCpp : isCpps) {
-    		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), isCpp);
+    	for (ParserLanguage lang: ParserLanguage.values()) {
+    		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), lang);
 
     		IFunction f= ba.assertNonProblem("f1", 2, IFunction.class);
     		isTypeEqual(f.getType(), "int (* (int))[5]");
@@ -5077,7 +5070,6 @@ public class AST2Tests extends AST2BaseTest {
     // void ((f4)());
     public void testNestedFunctionDeclarators() throws Exception {
     	final String comment= getAboveComment();
-    	final boolean[] isCpps= {false, true};
     	for (ParserLanguage lang: ParserLanguage.values()) {
     		IASTTranslationUnit tu= parseAndCheckBindings(comment, lang);
     		IASTFunctionDefinition fdef= getDeclaration(tu, 0);
@@ -5133,8 +5125,8 @@ public class AST2Tests extends AST2BaseTest {
     public void testLocalVariableResolution_Bug235831() throws Exception {
     	final String comment= getAboveComment();
     	final boolean[] isCpps= {false, true};
-    	for (boolean isCpp : isCpps) {
-    		BindingAssertionHelper ba= new BindingAssertionHelper(comment, isCpp);
+    	for (ParserLanguage lang: ParserLanguage.values()) {
+    		BindingAssertionHelper ba= new BindingAssertionHelper(comment, lang);
 
     		ba.assertNonProblem("b; a", 1, IVariable.class);	// fill cache of inner block
     		IVariable v3= ba.assertNonProblem("a; }", 1, IVariable.class);
@@ -5148,9 +5140,8 @@ public class AST2Tests extends AST2BaseTest {
     // int foo(int (*ptr) (int, int));
     public void testComplexParameterBinding_Bug214482() throws Exception {
     	final String comment= getAboveComment();
-    	final boolean[] isCpps= {false, true};
-    	for (boolean isCpp : isCpps) {
-    		BindingAssertionHelper ba= new BindingAssertionHelper(comment, isCpp);
+    	for (ParserLanguage lang: ParserLanguage.values()) {
+    		BindingAssertionHelper ba= new BindingAssertionHelper(comment, lang);
     		IParameter p= ba.assertNonProblem("ptr", 3, IParameter.class);
     		assertEquals("ptr", p.getName());
     	}
@@ -5519,8 +5510,8 @@ public class AST2Tests extends AST2BaseTest {
 	// }
 	public void testAnonymousUnionMember() throws Exception {
 		final boolean[] isCpps= {false, true};
-		for (boolean isCpp : isCpps) {
-			BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), isCpp);
+    	for (ParserLanguage lang: ParserLanguage.values()) {
+			BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), lang);
 			bh.assertNonProblem("a1=", 2);
 			bh.assertProblem("a2=", 2);
 			bh.assertNonProblem("a3=", 2);
@@ -5794,9 +5785,8 @@ public class AST2Tests extends AST2BaseTest {
 	// enum X {e0, e4=4, e5, e2=2, e3};
 	public void testValues() throws Exception {
 		final String code= getAboveComment();
-		boolean isCpp= false;
-		do {
-			BindingAssertionHelper bh= new BindingAssertionHelper(code, false);
+    	for (ParserLanguage lang: ParserLanguage.values()) {
+			BindingAssertionHelper bh= new BindingAssertionHelper(code, lang);
 			IVariable v= (IVariable) bh.assertNonProblem("a=", 1);
 			checkValue(v.getInitialValue(), -4);
 			v= (IVariable) bh.assertNonProblem("b=", 1);
@@ -5814,8 +5804,7 @@ public class AST2Tests extends AST2BaseTest {
 			checkValue(e.getValue(), 4);
 			e= (IEnumerator) bh.assertNonProblem("e5", 2);
 			checkValue(e.getValue(), 5);
-			isCpp= !isCpp;
-		} while (isCpp);
+		}
 	}
 
 	private void checkValue(IValue initialValue, int i) {
@@ -6088,11 +6077,10 @@ public class AST2Tests extends AST2BaseTest {
     //	size_t x = a + 5;
     //	size_t y = 2 + a;
     //	size_t y = a * 2;
-    public void testTypeOfExpressionWithTypedef_380498() throws Exception {
-    	final boolean[] isCpps= { false, true };
+    public void testTypeOfExpressionWithTypedef_380498_1() throws Exception {
     	String code= getAboveComment();
-    	for (boolean isCpp : isCpps) {
-    		BindingAssertionHelper ba= new BindingAssertionHelper(code, isCpp);
+    	for (ParserLanguage lang: ParserLanguage.values()) {
+    		BindingAssertionHelper ba= new BindingAssertionHelper(code, lang);
     		IASTExpression exp = ba.assertNode("a + 5", IASTExpression.class);
     		assertTrue(exp.getExpressionType() instanceof ITypedef);
     		assertEquals("size_t", ((ITypedef) exp.getExpressionType()).getName());
@@ -6105,6 +6093,21 @@ public class AST2Tests extends AST2BaseTest {
     	}
 	}
 
+	//	typedef void* VoidPtr;
+	//	typedef VoidPtr (*Func)();
+	//	
+	//	void test(Func f) {
+	//	  f();
+	//	}
+    public void testTypeOfExpressionWithTypedef_380498_2() throws Exception {
+    	String code= getAboveComment();
+    	for (ParserLanguage lang: ParserLanguage.values()) {
+    		BindingAssertionHelper ba= new BindingAssertionHelper(code, lang);
+    		IASTExpression exp = ba.assertNode("f()", IASTExpression.class);
+    		assertTrue(exp.getExpressionType() instanceof ITypedef);
+    		assertEquals("VoidPtr", ((ITypedef) exp.getExpressionType()).getName());
+    	}
+    }
     // typedef int TInt;
     // int a= TInt; //ref
     public void testTypeAsExpressionIsProblem_261175() throws Exception {

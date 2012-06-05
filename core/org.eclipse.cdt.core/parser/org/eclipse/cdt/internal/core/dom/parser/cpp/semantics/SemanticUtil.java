@@ -235,7 +235,7 @@ public class SemanticUtil {
 		final boolean ptr= (options & PTR) != 0;
 		final boolean mptr= (options & MPTR) != 0;
 		final boolean allcvq= (options & ALLCVQ) != 0;
-		final boolean cvtype = (options & CVTYPE) != 0;
+		final boolean cvtype= (options & CVTYPE) != 0;
 
 		IType beforeTypedefs = null;
 
@@ -249,10 +249,10 @@ public class SemanticUtil {
 					t= ((ITypedef) type).getType();
 				}
 			} else if (type instanceof IPointerType) {
-				beforeTypedefs = null;
 				final boolean isMbrPtr = type instanceof ICPPPointerToMemberType;
 				if ((ptr && !isMbrPtr) || (mptr && isMbrPtr)) {
 					t= ((IPointerType) type).getType();
+					beforeTypedefs = null;
 				} else if (allcvq) {
 					IPointerType pt= (IPointerType) type;
 					if (pt.isConst() || pt.isVolatile() || pt.isRestrict()) {
@@ -263,14 +263,13 @@ public class SemanticUtil {
 							return new CPPPointerType(pt.getType(), false, false, false);
 						}
 					}
-					return pt;
 				}
 			} else if (type instanceof IQualifierType) {
-				beforeTypedefs = null;
 				final IQualifierType qt = (IQualifierType) type;
 				final IType qttgt = qt.getType();
 				if (allcvq || cvtype) {
 					t= qttgt;
+					beforeTypedefs = null;
 				} else if (tdef || cond_tdef) {
 					t= getNestedType(qttgt, options);
 					if (t == qttgt) 
@@ -278,10 +277,10 @@ public class SemanticUtil {
 					return addQualifiers(t, qt.isConst(), qt.isVolatile(), false);
 				} 
 			} else if (type instanceof IArrayType) {
-				beforeTypedefs = null;
 				final IArrayType atype= (IArrayType) type;
 				if ((options & ARRAY) != 0) {
 					t= atype.getType();
+					beforeTypedefs = null;
 				} else if (allcvq) {
 					IType nested= atype.getType();
 					IType newNested= getNestedType(nested, ALLCVQ);
@@ -290,10 +289,10 @@ public class SemanticUtil {
 					return replaceNestedType((ITypeContainer) atype, newNested);
 				}
 			} else if (type instanceof ICPPReferenceType) {
-				beforeTypedefs = null;
 				final ICPPReferenceType rt = (ICPPReferenceType) type;
 				if ((options & REF) != 0) {
 					t= rt.getType();
+					beforeTypedefs = null;
 				} else if (tdef) {
 					// A typedef within the reference type can influence whether the reference is lvalue or rvalue
 					IType nested= rt.getType();
@@ -404,9 +403,20 @@ public class SemanticUtil {
 		typedefType = getNestedType(typedefType, REF | ALLCVQ | PTR | ARRAY);
 		if (!(typedefType instanceof ITypedef))
 			return null;
-		IType nestedType = getNestedType(type, REF | ALLCVQ | PTR | ARRAY);
-		if (!nestedType.isSameType(((ITypedef) typedefType).getType()))
-			return null;
+		IType nestedType = type;
+		while (!nestedType.isSameType(((ITypedef) typedefType).getType())) {
+			if (nestedType instanceof IQualifierType) {
+				nestedType = ((IQualifierType) nestedType).getType();
+			} else if (nestedType instanceof IPointerType) {
+				nestedType = ((IPointerType) nestedType).getType();
+			} else if (nestedType instanceof IArrayType) {
+				nestedType = ((IArrayType) nestedType).getType();
+			} else if (nestedType instanceof ICPPReferenceType) {
+				nestedType = ((ICPPReferenceType) nestedType).getType();
+			} else {
+				return null;
+			}
+		}
 
 		IType result = null;
 		ITypeContainer containerType = null;

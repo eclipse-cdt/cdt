@@ -17,6 +17,7 @@ import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.glvalueType;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.prvalueType;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.prvalueTypeWithResolvedTypedefs;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.typeFromFunctionCall;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.valueCategoryFromFunctionCall;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getUltimateTypeUptoPointers;
@@ -254,7 +255,7 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
 
 		if (op == op_star) {
 			IType type= operand.getExpressionType();
-			type = prvalueType(type);
+			type = prvalueTypeWithResolvedTypedefs(type);
 	    	if (type instanceof IPointerType) {
 	    		type= ((ITypeContainer) type).getType();
 	    		return glvalueType(type);

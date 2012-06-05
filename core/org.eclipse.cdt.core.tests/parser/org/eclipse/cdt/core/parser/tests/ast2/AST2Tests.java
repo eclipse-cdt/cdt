@@ -7038,7 +7038,7 @@ public class AST2Tests extends AST2BaseTest {
     //  newArray var5;
     //
     //	void foo() {
-	//      /* The type of the arraysubscript expression should be struct s
+	//      /* The type of the array subscript expression should be struct s
 	//       * each of the following statements
 	//       */
     //	    var1[1].a  = 1;

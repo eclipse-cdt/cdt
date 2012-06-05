@@ -4706,8 +4706,9 @@ public class AST2CPPTests extends AST2BaseTest {
 	}
 
 	//	template<typename T>
-	//	class basic_string {
+	//	struct basic_string {
 	//	  basic_string& operator+=(const T* s);
+	//	  basic_string& append(const T* s);
 	//	};
 	//
 	//	template<typename T>
@@ -4721,8 +4722,9 @@ public class AST2CPPTests extends AST2BaseTest {
 	//	void test(const string& s) {
 	//	  auto s1 = "" + s + "";
 	//	  auto s2 = s1 += "";
+	//	  auto s3 = s2.append("foo");
 	//	}
-    public void testTypedefPreservation_380498() throws Exception {
+    public void testTypedefPreservation_380498_1() throws Exception {
 		BindingAssertionHelper ba= getAssertionHelper();
 		ICPPVariable s1 = ba.assertNonProblem("s1", ICPPVariable.class);
 		assertTrue(s1.getType() instanceof ITypedef);
@@ -4730,6 +4732,25 @@ public class AST2CPPTests extends AST2BaseTest {
 		ICPPVariable s2 = ba.assertNonProblem("s2", ICPPVariable.class);
 		assertTrue(s2.getType() instanceof ITypedef);
 		assertEquals("string", ((ITypedef) s2.getType()).getName());
+		ICPPVariable s3 = ba.assertNonProblem("s3", ICPPVariable.class);
+		assertTrue(s3.getType() instanceof ITypedef);
+		assertEquals("string", ((ITypedef) s3.getType()).getName());
+	}
+
+    //	template <typename T>
+    //	struct vector {
+    //	  typedef T* const_iterator;
+    //	  const_iterator begin() const;
+    //	};
+    //
+	//	void test(const vector<int>& v) {
+	//	  auto it = v.begin();
+	//	}
+    public void testTypedefPreservation_380498_2() throws Exception {
+		BindingAssertionHelper ba= getAssertionHelper();
+		ICPPVariable it = ba.assertNonProblem("it =", "it", ICPPVariable.class);
+		assertTrue(it.getType() instanceof ITypedef);
+		assertEquals("vector<int>::const_iterator", ASTTypeUtil.getType(it.getType(), false));
 	}
 
 	// int f() {

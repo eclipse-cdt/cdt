@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -203,7 +203,7 @@ public class CPPASTArraySubscriptExpression extends ASTNode
 			return ExpressionTypes.typeFromFunctionCall(op);
 		}
 		IType t1 = getArrayExpression().getExpressionType();
-		t1= Conversions.lvalue_to_rvalue(t1);
+		t1= Conversions.lvalue_to_rvalue(t1, true);
 		if (t1 instanceof IPointerType) {
 			t1= ((IPointerType) t1).getType();
 			return glvalueType(t1);
@@ -212,7 +212,7 @@ public class CPPASTArraySubscriptExpression extends ASTNode
 		IType t2= null;
 		IASTInitializerClause arg = getArgument();
 		if (arg instanceof IASTExpression) {
-			t2= Conversions.lvalue_to_rvalue(t2);
+			t2= Conversions.lvalue_to_rvalue(t2, true);
 			if (t2 instanceof IPointerType) {
 				t2= ((IPointerType) t2).getType();
 				return glvalueType(t2);

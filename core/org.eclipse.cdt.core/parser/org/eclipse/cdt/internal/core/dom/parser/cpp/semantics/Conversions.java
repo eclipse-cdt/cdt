@@ -1155,7 +1155,7 @@ public class Conversions {
 	/**
 	 * 4.1, 4.2, 4.3
 	 */
-	public static IType lvalue_to_rvalue(IType type) {
+	public static IType lvalue_to_rvalue(IType type, boolean resolveTypedefs) {
 		IType t= SemanticUtil.getNestedType(type, TDEF | REF);
 		if (t instanceof IArrayType) {
 			return new CPPPointerType(((IArrayType) t).getType());
@@ -1165,9 +1165,9 @@ public class Conversions {
 		}
 		IType uqType= SemanticUtil.getNestedType(t, TDEF | REF | ALLCVQ);
 		if (uqType instanceof ICPPClassType) {
-			return SemanticUtil.getNestedType(type, COND_TDEF | REF);
+			return resolveTypedefs ? t : SemanticUtil.getNestedType(type, COND_TDEF | REF);
 		}
-		return SemanticUtil.getNestedType(t, COND_TDEF | REF | ALLCVQ);
+		return resolveTypedefs ? uqType : SemanticUtil.getNestedType(type, COND_TDEF | REF | ALLCVQ);
 	}
 
 	/**

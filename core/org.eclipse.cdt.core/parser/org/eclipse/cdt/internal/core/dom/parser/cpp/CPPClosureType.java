@@ -152,7 +152,7 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 					IASTExpression expr= rtstmt.getReturnValue();
 					if (expr != null) {
 						IType type= expr.getExpressionType();
-						type= Conversions.lvalue_to_rvalue(type);
+						type= Conversions.lvalue_to_rvalue(type, false);
 						if (type != null) {
 							return type;
 						}

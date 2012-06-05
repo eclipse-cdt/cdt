@@ -20,6 +20,7 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionT
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.restoreTypedefs;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.typeFromFunctionCall;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.valueCategoryFromFunctionCall;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
@@ -41,6 +42,7 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpression, IASTAmbiguityParent {
 	private int op;
@@ -356,20 +358,20 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
         	return CPPBasicType.BOOLEAN;
 
         case IASTBinaryExpression.op_plus:
-        	if (type1 instanceof IPointerType) {
-        		return restoreTypedefs(type1, originalType1);
+        	if (SemanticUtil.getNestedType(type1, TDEF) instanceof IPointerType) {
+        		return type1;
         	} 
-        	if (type2 instanceof IPointerType) {
-        		return restoreTypedefs(type2, originalType2);
+        	if (SemanticUtil.getNestedType(type2, TDEF) instanceof IPointerType) {
+        		return type2;
         	} 
         	break;
 
         case IASTBinaryExpression.op_minus:
-        	if (type1 instanceof IPointerType) {
-            	if (type2 instanceof IPointerType) {
+        	if (SemanticUtil.getNestedType(type1, TDEF) instanceof IPointerType) {
+            	if (SemanticUtil.getNestedType(type2, TDEF) instanceof IPointerType) {
             		return CPPVisitor.getPointerDiffType(this);
         		}
-        		return restoreTypedefs(type1, originalType1);
+        		return type1;
         	}
         	break;
 

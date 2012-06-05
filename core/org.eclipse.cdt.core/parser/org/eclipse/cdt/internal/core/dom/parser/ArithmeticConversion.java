@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2009, 2012 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,8 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser;
 
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
+
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
@@ -17,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 /**
  * Arithmetic conversions as required to compute the type of unary or binary expressions.
@@ -47,6 +50,8 @@ public abstract class ArithmeticConversion {
 	 * or 5.0.9 of C++ standard
 	 */
 	public final IType convertOperandTypes(int operator, IType op1, IType op2) {
+		op1 = SemanticUtil.getNestedType(op1, TDEF);
+		op2 = SemanticUtil.getNestedType(op2, TDEF);
 		if (!isArithmeticOrUnscopedEnum(op1) || !isArithmeticOrUnscopedEnum(op2)) {
 			return null;
 		}

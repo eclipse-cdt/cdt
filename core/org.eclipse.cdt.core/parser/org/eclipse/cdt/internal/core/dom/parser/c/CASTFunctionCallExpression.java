@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM Rational Software) - Initial API and implementation
- *    Yuan Zhang / Beth Tibbitts (IBM Research)
- *    Markus Schorn (Wind River Systems)
+ *     John Camelon (IBM Rational Software) - Initial API and implementation
+ *     Yuan Zhang / Beth Tibbitts (IBM Research)
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -29,9 +29,8 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 /**
  * Function call expression in C.
  */
-public class CASTFunctionCallExpression extends ASTNode implements
-        IASTFunctionCallExpression, IASTAmbiguityParent {
-
+public class CASTFunctionCallExpression extends ASTNode
+		implements IASTFunctionCallExpression, IASTAmbiguityParent {
     private IASTExpression functionName;
     private IASTInitializerClause[] fArguments;
 
@@ -62,11 +61,7 @@ public class CASTFunctionCallExpression extends ASTNode implements
 
 		CASTFunctionCallExpression copy = new CASTFunctionCallExpression(null, args);
 		copy.setFunctionNameExpression(functionName == null ? null : functionName.copy(style));
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 
 	@Override
@@ -104,12 +99,12 @@ public class CASTFunctionCallExpression extends ASTNode implements
     }
 
     @Override
-	public boolean accept( ASTVisitor action ){
-        if( action.shouldVisitExpressions ){
-		    switch( action.visit( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+	public boolean accept(ASTVisitor action) {
+        if (action.shouldVisitExpressions) {
+		    switch (action.visit(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
       

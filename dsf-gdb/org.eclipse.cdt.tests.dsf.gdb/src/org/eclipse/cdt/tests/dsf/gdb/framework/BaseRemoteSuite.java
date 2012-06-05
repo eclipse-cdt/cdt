@@ -21,12 +21,12 @@ import org.junit.BeforeClass;
  */
 public class BaseRemoteSuite {
 	@BeforeClass
-    public static void beforeClassMethod() {
+    public static void baseRemoteSuiteBeforeClassMethod() {
 		BaseTestCase.setGlobalLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
 				                        IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE);
 	}
 	@AfterClass
-    public static void afterClassMethod() {
+    public static void baseRemoteSuiteAfterClassMethod() {
 		BaseTestCase.removeGlobalLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE);
 	}
 }

@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOHn//988\u003d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 569
+      },
+      "writtenOn": "2012-06-05T04:38:13Z",
+      "side": 1,
+      "message": "You should skip the \u0027[]\u0027 brackets as per: http://wiki.eclipse.org/CDT/policy#Committing_Code\n\nAlthough with git we can use multi-line messages so the commit message is somewhat in flux.",
+      "revId": "814868d0c1dce170d076371773749b8400f1e99d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHn//99E\u003d",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/internal/core/breakpoints/BreakpointMessages.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 569
+      },
+      "writtenOn": "2012-06-05T04:38:13Z",
+      "side": 1,
+      "message": "This is getting into fine details but what about:\n\n    Line breakpoint: {0} (moved from {1})\n\nI think I\u0027d rather see the more relevant line # first, then the less important number (the original line) second.",
+      "revId": "814868d0c1dce170d076371773749b8400f1e99d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHn//99A\u003d",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/internal/core/breakpoints/CLineBreakpoint.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 569
+      },
+      "writtenOn": "2012-06-05T04:38:13Z",
+      "side": 1,
+      "message": "I don\u0027t quite understand this part.  It seems that it appends two \"Line breakpoint:...\" messages together.   \nFor i18n purposes the whole label text should be formatted using a single message format.  I.e. no label.append(...  Otherwise right to left languages are out of luck.",
+      "revId": "814868d0c1dce170d076371773749b8400f1e99d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

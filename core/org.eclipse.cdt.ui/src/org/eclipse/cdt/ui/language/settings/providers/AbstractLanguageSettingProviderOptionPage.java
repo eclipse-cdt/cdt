@@ -22,6 +22,14 @@ import org.eclipse.cdt.internal.ui.language.settings.providers.LanguageSettingsP
 
 /**
  * Abstract class to implement language settings providers Options page.
+ *
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class interface is not stable yet as
+ * it is not currently clear how it may need to be used in future. Only bare
+ * minimum is provided here at this point (CDT 8.1, Juno).
+ * There is no guarantee that this API will work or that it will remain the same.
+ * Please do not use this API without consulting with the CDT team.
+ * </p>
  * @noextend This class is not intended to be subclassed by clients, only internally by CDT.
  *
  * @since 5.4

@@ -9,10 +9,12 @@
  *     Ericsson - initial API and implementation
  *     Marc Khouzam (Ericsson) - Support setting the path in which the core file 
  *                               dialog should start (Bug 362039)
+ *     Sergey Prigogin (Google) - Bug 381804 
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Properties;
 
@@ -201,7 +203,7 @@ public class DebugNewProcessSequence extends ReflectionSequence {
 			String args = fBackend.getProgramArguments();
 
 			if (args != null) {
-				String[] argArray = args.replaceAll("\n", " ").split(" ");  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				String[] argArray = splitArguments(args);
 				fCommandControl.queueCommand(
 						fCommandFactory.createMIGDBSetArgs(getContainerContext(), argArray), 
 						new ImmediateDataRequestMonitor<MIInfo>(rm));
@@ -214,6 +216,58 @@ public class DebugNewProcessSequence extends ReflectionSequence {
 		}    		
 	}
 
+	/**
+	 * Splits an argument string into individual arguments. Arguments can be separated by
+	 * one or more spaces and/or newline characters. Spaces inside single and double quotes
+	 * and backslash-escaped spaces are not considered separators and are preserved as part
+	 * of the arguments.
+	 * 
+	 * @param args arguments as a single string
+	 * @return an array of arguments, each argument in a separate element
+	 */
+	private String[] splitArguments(String args) {
+		ArrayList<String> argList = new ArrayList<String>();
+		StringBuilder buf = new StringBuilder();
+		boolean insideSingleQuotes = false;
+		boolean insideDoubleQuotes = false;
+		boolean escaped = false;;
+		for (int i = 0; i < args.length(); i++) {
+			char c = args.charAt(i);
+			switch (c) {
+			case '\\':
+				escaped = !escaped;
+				break;
+			case '\'':
+				if (!escaped && !insideDoubleQuotes) {
+					insideSingleQuotes = !insideSingleQuotes;
+				}
+				break;
+			case '"':
+				if (!escaped && !insideSingleQuotes) {
+					insideDoubleQuotes = !insideDoubleQuotes;
+				}
+				break;
+			case '\n':
+			case '\t':
+				c = ' ';
+				//$FALL-THROUGH$
+			case ' ':
+				if (!escaped && !insideDoubleQuotes && !insideSingleQuotes) {
+					if (buf.length() > 0) {
+						argList.add(buf.toString());
+						buf.delete(0, buf.length());
+					}
+					continue;
+				}
+				break;
+			}
+			buf.append(c);
+		}
+		if (buf.length() > 0)
+			argList.add(buf.toString());
+		return argList.toArray(new String[argList.size()]);
+	}
+	
 	/** 
 	 * If we are dealing with a remote debugging session, connect to the target.
 	 * @since 4.0

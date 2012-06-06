@@ -30,7 +30,7 @@
           <plugin>
             <groupId>org.eclipse.dash.maven</groupId>
             <artifactId>eclipse-signing-maven-plugin</artifactId>
-            <version>1.0.3</version>
+            <version>1.0.5</version>
             <executions>
               <execution>
                 <id>pack</id>

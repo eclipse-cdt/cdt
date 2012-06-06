@@ -136,6 +136,7 @@
       <id>local-build</id>
       <properties>
         <tm-install>${project.build.directory}/../../../../</tm-install>
+        <tm-zipfile>${project.artifactId}-${project.version}.zip</tm-zipfile>
       </properties>
       <build>
         <plugins>
@@ -155,7 +156,7 @@
                         <include name="**"/>
                       </fileset>
 	      </delete> -->
-                    <copy file="target/org.eclipse.tm.repo.zip" todir="${tm-install}">
+                    <copy file="target/${tm-zipfile}" todir="${tm-install}">
                     </copy>
                     <chmod perm="g+w">
                       <fileset dir="${tm-install}">

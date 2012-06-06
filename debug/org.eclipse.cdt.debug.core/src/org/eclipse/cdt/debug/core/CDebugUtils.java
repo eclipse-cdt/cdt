@@ -37,6 +37,7 @@ import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpointType;
 import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
+import org.eclipse.cdt.debug.core.model.ICLineBreakpoint2;
 import org.eclipse.cdt.debug.core.model.ICValue;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint2;
@@ -340,11 +341,31 @@ public class CDebugUtils {
 
 	protected static String getLineBreakpointText(ICLineBreakpoint breakpoint, boolean qualified) throws CoreException {
 		StringBuffer label = new StringBuffer();
+		IMarker marker = breakpoint.getMarker();
+		int bp_line = 0;
+		int bp_request_line = 0;
+		String bp_file = null;
+		String bp_reqest_file = null;
+	
 		appendSourceName(breakpoint, label, qualified);
 		appendLineNumber(breakpoint, label);
 		appendBreakpointType(breakpoint, label);
 		appendIgnoreCount(breakpoint, label);
 		appendCondition(breakpoint, label);
+		
+		if (marker != null) {
+			bp_line = marker.getAttribute(IMarker.LINE_NUMBER, -1);
+			bp_request_line = marker.getAttribute(ICLineBreakpoint2.REQUESTED_LINE, -1);
+			bp_file = marker.getAttribute(ICBreakpoint.SOURCE_HANDLE, (String)null);
+            bp_reqest_file = marker.getAttribute(ICLineBreakpoint2.REQUESTED_SOURCE_HANDLE, (String)null);
+		}
+
+		if ( bp_line != bp_request_line || 
+		    (bp_file == null && bp_reqest_file != null) ||  
+		    (bp_file != null && !bp_file.equals(bp_reqest_file)) ) {
+			appendRelocation(breakpoint, label);
+		}
+
 		return label.toString();
 	}
 
@@ -494,6 +515,31 @@ public class CDebugUtils {
 			}
 		}
 		return label;
+	}
+
+	private static void appendRelocation(ICBreakpoint breakpoint, StringBuffer buffer) throws CoreException {
+		IMarker marker = breakpoint.getMarker();
+		int bp_request_line = 0;
+		String bp_file = null;
+		String bp_reqest_file = null;
+		
+		if (marker != null) {
+			bp_request_line = marker.getAttribute(ICLineBreakpoint2.REQUESTED_LINE, -1);
+			bp_file = marker.getAttribute(ICBreakpoint.SOURCE_HANDLE, (String)null);
+            bp_reqest_file = marker.getAttribute(ICLineBreakpoint2.REQUESTED_SOURCE_HANDLE, (String)null);
+		}
+		
+		StringBuffer label = new StringBuffer();
+		String file = DebugCoreMessages.getString("CDebugUtils.line"); //$NON-NLS-1$
+		if (bp_file != null && !bp_file.equals(bp_reqest_file)) {
+			IPath path = new Path(bp_reqest_file);
+			if (path.isValidPath(bp_reqest_file)) {
+				file = path.lastSegment();
+			}
+		}
+		label.append(' ');
+		label.append(MessageFormat.format(DebugCoreMessages.getString("CDebugUtils.9"), (Object[])new String[]{ file, Integer.toString(bp_request_line) })); //$NON-NLS-1$
+		buffer.append(label.toString());
 	}
 
 	private static boolean isEmpty(String string) {

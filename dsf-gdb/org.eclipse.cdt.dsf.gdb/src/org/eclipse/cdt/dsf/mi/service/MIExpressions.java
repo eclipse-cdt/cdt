@@ -497,7 +497,21 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
         	return new ExpressionInfo(expression, expression);
         }
     }
-    
+
+	private class CastedIndexedPartitionDMC extends IndexedPartitionDMC implements ICastedExpressionDMContext {
+
+		final private CastInfo fCastInfo;
+
+		private CastedIndexedPartitionDMC(MIExpressionDMC exprDmc, int index, int length, CastInfo castInfo) {
+			super(exprDmc.getSessionId(), exprDmc.getExpressionInfo(), exprDmc, index, length );
+			fCastInfo = castInfo;
+		}
+
+		@Override
+		public CastInfo getCastInfo() {
+			return fCastInfo;
+		}
+	}    
     
 	/**
 	 * Contains the address of an expression as well as the size of its type.
@@ -1554,6 +1568,8 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 		int startIndex1 = (startIndex < 0) ? 0 : startIndex;
 		int length1 = (length < 0) ? numChildren - startIndex1 : Math.min(length, numChildren - startIndex1);
 
+		CastInfo castInfo = (exprCtx instanceof ICastedExpressionDMContext) ? 
+				((ICastedExpressionDMContext)exprCtx).getCastInfo() : null;
 		IndexedPartitionDMC[] children = new IndexedPartitionDMC[numChildren];
 		int index = 0;
 		for(int i = 0; i < children.length; ++i) {
@@ -1562,7 +1578,8 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 				exprCtx.getParents()[0], 
 				exprCtx.getExpressionInfo(), 
 				index, 
-				partLength);
+				partLength,
+				castInfo);
 			index += partLength;
 		}
 		return Arrays.copyOfRange(children, startIndex1, startIndex1 + length1 );
@@ -1574,6 +1591,9 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 			final int length, 
 			final DataRequestMonitor<IExpressionDMContext[]> rm) {
 		
+		CastInfo castInfo = (partDmc instanceof ICastedExpressionDMContext) ? 
+				((ICastedExpressionDMContext)partDmc).getCastInfo() : null;
+
 		final int startIndex1 = (startIndex < 0) ? 0 : startIndex;
 		final int length1 = (length < 0) ? Integer.MAX_VALUE : length;
 
@@ -1600,7 +1620,8 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 					partDmc, 
 					partDmc.getParentInfo(), 
 					index, 
-					childPartLength);
+					childPartLength,
+					castInfo);
 				index += childPartLength;
 			}
 			rm.setData(children);
@@ -1613,8 +1634,11 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 				rm.done();
 			}
 			else {
+				IExpressionDMContext parentCtx = createExpression(partDmc.getParents()[0], partDmc.getParentInfo());
+				if (castInfo != null)
+					parentCtx = createCastedExpression(parentCtx, castInfo);
 				getRealSubExpressions(
-						createExpression(partDmc.getParents()[0], partDmc.getParentInfo()), 
+						parentCtx, 
 						partStartIndex + startIndex1, 
 						Math.min(length1, partLength - startIndex1), 
 						rm);
@@ -1687,10 +1711,18 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 		return ( diff > length ) ? length : diff ;
 	}
 
-	private IndexedPartitionDMC createIndexedPartition(IDMContext ctx, ExpressionInfo info, int index, int length) {
+	private IndexedPartitionDMC createIndexedPartition(
+			IDMContext ctx, 
+			ExpressionInfo info, 
+			int index, 
+			int length, 
+			CastInfo castInfo) {
 	    IFrameDMContext frameDmc = DMContexts.getAncestorOfType(ctx, IFrameDMContext.class);
 	    if (frameDmc != null) {
-	        return new IndexedPartitionDMC(getSession().getId(), info, frameDmc, index, length);
+	    	IndexedPartitionDMC partDmc = 
+	    		new IndexedPartitionDMC(getSession().getId(), info, frameDmc, index, length);
+	        return (castInfo != null) ? 
+	        	new CastedIndexedPartitionDMC(partDmc, index, length, castInfo) : partDmc;
 	    } 
 	    
 	    IMIExecutionDMContext execCtx = DMContexts.getAncestorOfType(ctx, IMIExecutionDMContext.class);
@@ -1701,11 +1733,17 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 	    	MIStack stackService = getServicesTracker().getService(MIStack.class);
 	    	if (stackService != null) {
 	    		frameDmc = stackService.createFrameDMContext(execCtx, 0);
-	            return new IndexedPartitionDMC(getSession().getId(), info, frameDmc, index, length);
+		    	IndexedPartitionDMC partDmc = 
+		    		new IndexedPartitionDMC(getSession().getId(), info, frameDmc, index, length);
+		        return (castInfo != null) ? 
+		        	new CastedIndexedPartitionDMC(partDmc, index, length, castInfo) : partDmc;
 	    	}
         } 
 
-        return new IndexedPartitionDMC(getSession().getId(), info, ctx, index, length);
+    	IndexedPartitionDMC partDmc = 
+        		new IndexedPartitionDMC(getSession().getId(), info, ctx, index, length);
+        return (castInfo != null) ? 
+            	new CastedIndexedPartitionDMC(partDmc, index, length, castInfo) : partDmc;
 	}
 
 	private void getRealSubExpressionCount(IExpressionDMContext dmc, int numChildLimit, final DataRequestMonitor<Integer> rm) {

@@ -199,6 +199,24 @@
     },
     {
       "key": {
+        "uuid": "AABOHn//9nc\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1579,
+      "author": {
+        "id": 672
+      },
+      "writtenOn": "2012-06-07T20:18:18Z",
+      "side": 1,
+      "message": "Can we not modify the code in handleFailure() in SteppingController.doStep() ?",
+      "parentUuid": "AABOHn//9nk\u003d",
+      "revId": "19eb06957a8125d8de9e175b5b259c5038cd7d46",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOHn//+4M\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
         "patchSetId": 1

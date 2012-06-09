@@ -1,18 +1,21 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 QNX Software Systems and others.
+ * Copyright (c) 2006, 2012 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
- * Markus Schorn (Wind River Systems)
- * Symbian - Repeatedly index classTests test project to detect a particular race condition
+ *     QNX - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *     Symbian - Repeatedly index classTests test project to detect a particular race condition
+ *     Marc-Andre Laperle
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
 import java.util.regex.Pattern;
+
+import junit.framework.Test;
 
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.index.IndexFilter;
@@ -26,6 +29,11 @@ import org.eclipse.core.runtime.NullProgressMonitor;
  * Test case for a race condition from Bugzilla#157992
  */
 public class RaceCondition157992Test extends PDOMTestBase {
+	
+	public static Test suite() {
+		return suite(RaceCondition157992Test.class);
+	}
+	
 	public void testRepeatedly() throws Exception {
 		int successes = 0, noTrials = 100;
 		

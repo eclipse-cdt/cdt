@@ -22,6 +22,13 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * Language settings provider to detect built-in compiler settings for GCC compiler.
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class interface is not stable yet as
+ * it is not currently (CDT 8.1, Juno) clear how it may need to be used in future.
+ * There is no guarantee that this API will work or that it will remain the same.
+ * Please do not use this API without consulting with the CDT team.
+ * </p>
+ * @noextend This class is not intended to be subclassed by clients.
  *
  * @since 8.1
  */

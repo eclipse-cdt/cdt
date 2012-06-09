@@ -1,14 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 QNX Software Systems and others.
+ * Copyright (c) 2006, 2012 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
- * IBM Corporation
- * Andrew Ferguson (Symbian)
+ *     QNX - Initial API and implementation
+ *     IBM Corporation
+ *     Andrew Ferguson (Symbian)
+ *     Marc-Andre Laperle
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
@@ -55,6 +56,8 @@ public class PDOMTests extends TestSuite {
 		suite.addTest(CCompositeTypeTests.suite());
     
 		suite.addTest(DefDeclTests.suite());
+		suite.addTest(RaceCondition157992Test.suite());
+		suite.addTest(ChangeConfigurationTests.suite());
 		
 		return suite;
 	}

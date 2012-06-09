@@ -9,6 +9,7 @@
  *     Ericsson - initial API and implementation
  *     Marc Khouzam (Ericsson) - Support setting the path in which the core file 
  *                               dialog should start (Bug 362039)
+ *     Sergey Prigogin (Google) - Bug 381804 
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
@@ -40,6 +41,7 @@ import org.eclipse.cdt.dsf.mi.service.MIProcesses;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
+import org.eclipse.cdt.utils.CommandLineUtil;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -201,7 +203,7 @@ public class DebugNewProcessSequence extends ReflectionSequence {
 			String args = fBackend.getProgramArguments();
 
 			if (args != null) {
-				String[] argArray = args.replaceAll("\n", " ").split(" ");  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				String[] argArray = CommandLineUtil.argumentsToArray(args);
 				fCommandControl.queueCommand(
 						fCommandFactory.createMIGDBSetArgs(getContainerContext(), argArray), 
 						new ImmediateDataRequestMonitor<MIInfo>(rm));

@@ -379,8 +379,8 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 		 * @since 4.0
 		 */
 		public void setExpressionInfo(ExpressionInfo info) {
-			assert (this.exprInfo.getFullExpr().equals(info.getFullExpr()));
-			assert (this.exprInfo.getRelExpr().equals(info.getRelExpr()));
+//			assert (this.exprInfo.getFullExpr().equals(info.getFullExpr()));
+//			assert (this.exprInfo.getRelExpr().equals(info.getRelExpr()));
 
 			this.exprInfo = info;
 		}
@@ -1560,7 +1560,7 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 			int partLength = computePartitionLength(realNumChildren, i);
 			children[i] = createIndexedPartition(
 				exprCtx.getParents()[0], 
-				exprCtx.getExpressionInfo(), 
+				new ExpressionInfo(exprCtx.getExpression(), exprCtx.getRelativeExpression()), 
 				index, 
 				partLength);
 			index += partLength;

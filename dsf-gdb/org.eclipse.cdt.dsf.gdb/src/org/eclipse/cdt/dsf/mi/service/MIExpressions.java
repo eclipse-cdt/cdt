@@ -1448,13 +1448,10 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 	protected class CastedExpressionDMC extends MIExpressionDMC implements ICastedExpressionDMContext {
 
 		private final CastInfo fCastInfo;
-		/** if non-null, interpret result as this type rather than the raw expression's type */
-		private String fCastExpression;
 
 		public CastedExpressionDMC(MIExpressionDMC exprDMC, String castExpression, CastInfo castInfo) {
-			super(getSession().getId(), exprDMC.getExpression(), exprDMC.getRelativeExpression(), exprDMC);
+			super(getSession().getId(), castExpression, exprDMC.getRelativeExpression(), exprDMC);
 			fCastInfo = castInfo;
-			fCastExpression = castExpression;
 		}
 		
 		/* (non-Javadoc)
@@ -1464,15 +1461,7 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 		public CastInfo getCastInfo() {
 			return fCastInfo;
 		}
-		
-		/* (non-Javadoc)
-		 * @see org.eclipse.cdt.dsf.mi.service.MIExpressions.java#getExpression()
-		 */
-        @Override
-		public String getExpression() {
-            return fCastExpression;
-        }
-        
+		        
         /**
          * @return True if the two objects are equal, false otherwise.
          */
@@ -1481,13 +1470,6 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 			return super.equals(other)
 					&& fCastInfo.equals(((CastedExpressionDMC) other).fCastInfo);
         }
-        
-        @Override
-        public String toString() {
-            return baseToString() + ".expr" + "[" + //$NON-NLS-1$ //$NON-NLS-2$
-                    getExpression() +", " + getRelativeExpression() + "]"; //$NON-NLS-1$//$NON-NLS-2$
-        }
-
 	}
 	
     /* (non-Javadoc)
@@ -1513,10 +1495,10 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 			// cast to array (can be in addition to cast to type) 
 			if (castingLength > 0) {
 				StringBuffer buffer = new StringBuffer();
-				buffer.append("*("); //$NON-NLS-1$
+				buffer.append("(*("); //$NON-NLS-1$
 				buffer.append('(').append(castExpression).append(')');
 				buffer.append('+').append(castingIndex).append(')');
-				buffer.append('@').append(castingLength);
+				buffer.append('@').append(castingLength).append(')');
 				castExpression = buffer.toString();
 			}
 			

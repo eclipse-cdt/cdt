@@ -1337,9 +1337,6 @@ public class MIVariableManager implements ICommandControl {
         		int castingIndex = 0;
 	        	// in case of casts, need to resolve that before dereferencing, to be safe
 	        	if (exprDmc instanceof ICastedExpressionDMContext) {
-	        		// When casting, if we are dealing with a resulting array, we should surround
-	        		// it with parenthesis before we subscript it.
-	        		exprName = '(' + exprName + ')';
 	        		castingIndex = ((ICastedExpressionDMContext)exprDmc).getCastInfo().getArrayStartIndex();
 	        	}
 	        	if (exprDmc instanceof IIndexedPartitionDMContext) {

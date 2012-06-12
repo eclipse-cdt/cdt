@@ -49,7 +49,7 @@ public class GCCBuiltinSpecsDetector extends ToolchainBuiltinSpecsDetector imple
 	};
 
 	@Override
-	protected String getToolchainId() {
+	public String getToolchainId() {
 		return GCC_TOOLCHAIN_ID;
 	}
 

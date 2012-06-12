@@ -11,14 +11,22 @@
 
 package org.eclipse.cdt.managedbuilder.language.settings.providers;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
+import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IInputType;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
+import org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable;
+import org.eclipse.cdt.managedbuilder.envvar.IConfigurationEnvironmentVariableSupplier;
+import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider;
 
 /**
  * Abstract parser capable to execute compiler command printing built-in compiler
@@ -43,7 +51,7 @@ public abstract class ToolchainBuiltinSpecsDetector extends AbstractBuiltinSpecs
 	 * Tool-chain id must be supplied for global providers where we don't
 	 * have configuration description to figure that out programmatically.
 	 */
-	protected abstract String getToolchainId();
+	public abstract String getToolchainId();
 
 	/**
 	 * Finds a tool handling given language in the tool-chain of the provider.
@@ -109,4 +117,22 @@ public abstract class ToolchainBuiltinSpecsDetector extends AbstractBuiltinSpecs
 		return ext;
 	}
 
+	@Override
+	protected List<IEnvironmentVariable> getEnvironmentVariables() {
+		List<IEnvironmentVariable> vars = new ArrayList<IEnvironmentVariable>(super.getEnvironmentVariables());
+
+		String toolchainId = getToolchainId();
+		for (IToolChain toolchain = ManagedBuildManager.getExtensionToolChain(toolchainId); toolchain != null; toolchain = toolchain.getSuperClass()) {
+			IConfigurationEnvironmentVariableSupplier envSupplier = toolchain.getEnvironmentVariableSupplier();
+			if (envSupplier != null) {
+				IConfiguration cfg = ManagedBuildManager.getConfigurationForDescription(currentCfgDescription);
+				IEnvironmentVariableProvider provider = ManagedBuildManager.getEnvironmentVariableProvider();
+				IBuildEnvironmentVariable[] added = envSupplier.getVariables(cfg, provider);
+				vars.addAll(Arrays.asList(added));
+				break;
+			}
+		}
+
+		return vars;
+	}
 }

@@ -51,7 +51,7 @@ public class XlcBuiltinSpecsDetector extends ToolchainBuiltinSpecsDetector imple
 	};
 
 	@Override
-	protected String getToolchainId() {
+	public String getToolchainId() {
 		return XLC_TOOLCHAIN_ID;
 	}
 

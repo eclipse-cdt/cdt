@@ -11,14 +11,21 @@
 package org.eclipse.cdt.managedbuilder.internal.ui.language.settings.providers;
 
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
+import org.eclipse.cdt.internal.ui.newui.StatusMessageLine;
+import org.eclipse.cdt.managedbuilder.core.IToolChain;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
 import org.eclipse.cdt.managedbuilder.language.settings.providers.AbstractBuiltinSpecsDetector;
+import org.eclipse.cdt.managedbuilder.language.settings.providers.ToolchainBuiltinSpecsDetector;
+import org.eclipse.cdt.managedbuilder.ui.properties.ManagedBuilderUIPlugin;
 import org.eclipse.cdt.ui.language.settings.providers.AbstractLanguageSettingProviderOptionPage;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -43,6 +50,8 @@ public final class BuiltinSpecsDetectorOptionPage extends AbstractLanguageSettin
 	private Text inputCommand;
 	private Button allocateConsoleCheckBox;
 
+	private StatusMessageLine fStatusLine;
+
 	@Override
 	public void createControl(Composite parent) {
 		fEditable = parent.isEnabled();
@@ -52,6 +61,7 @@ public final class BuiltinSpecsDetectorOptionPage extends AbstractLanguageSettin
 		createCompilerCommandInputControl(composite, provider);
 		createBrowseButton(composite);
 		createConsoleCheckbox(composite, provider);
+		createStatusLine(composite, provider);
 
 		setControl(composite);
 	}
@@ -155,6 +165,25 @@ public final class BuiltinSpecsDetectorOptionPage extends AbstractLanguageSettin
 				widgetSelected(e);
 			}
 		});
+	}
+
+	/**
+	 * Create status line to display messages for user.
+	 */
+	private void createStatusLine(Composite composite, AbstractBuiltinSpecsDetector provider) {
+		fStatusLine = new StatusMessageLine(composite, SWT.LEFT, 2);
+
+		if (provider instanceof ToolchainBuiltinSpecsDetector) {
+			String toolchainId = ((ToolchainBuiltinSpecsDetector) provider).getToolchainId();
+			IToolChain toolchain = ManagedBuildManager.getExtensionToolChain(toolchainId);
+			if (toolchain == null) {
+				fStatusLine.setErrorStatus(new Status(IStatus.ERROR, ManagedBuilderUIPlugin.getUniqueIdentifier(),
+						IStatus.ERROR, "Toolchain support for CDT is not installed. Toolchain id=[" + toolchainId + "].", null));
+			} else if (!toolchain.isSupported()) {
+				fStatusLine.setErrorStatus(new Status(IStatus.INFO, ManagedBuilderUIPlugin.getUniqueIdentifier(), IStatus.INFO,
+						"Toolchain " + toolchain.getName() + " is not detected on this system.", null));
+			}
+		}
 	}
 
 	@Override

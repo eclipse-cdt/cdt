@@ -18,11 +18,13 @@ import org.eclipse.cdt.managedbuilder.language.settings.providers.GCCBuiltinSpec
 import org.eclipse.core.resources.IResource;
 
 /**
- * Class to detect built-in compiler settings.
+ * Class to detect built-in compiler settings for Cygwin toolchain.
  * The paths are converted to cygwin "file-system" representation.
- *
  */
 public class GCCBuiltinSpecsDetectorCygwin extends GCCBuiltinSpecsDetector {
+	// ID must match the tool-chain definition in org.eclipse.cdt.managedbuilder.core.buildDefinitions extension point
+	private static final String GCC_TOOLCHAIN_ID_CYGWIN = "cdt.managedbuild.toolchain.gnu.cygwin.base";  //$NON-NLS-1$
+
 	private static final URI CYGWIN_ROOT;
 	static {
 		try {
@@ -31,6 +33,11 @@ public class GCCBuiltinSpecsDetectorCygwin extends GCCBuiltinSpecsDetector {
 			// hey we know this works
 			throw new IllegalStateException(e);
 		}
+	}
+
+	@Override
+	public String getToolchainId() {
+		return GCC_TOOLCHAIN_ID_CYGWIN;
 	}
 
 	@Override

@@ -17,8 +17,9 @@ import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CommandLauncher;
@@ -27,6 +28,9 @@ import org.eclipse.cdt.core.ICommandLauncher;
 import org.eclipse.cdt.core.IConsoleParser;
 import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.core.ProblemMarkerInfo;
+import org.eclipse.cdt.core.envvar.EnvironmentVariable;
+import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
+import org.eclipse.cdt.core.envvar.IEnvironmentVariableManager;
 import org.eclipse.cdt.core.language.settings.providers.ICBuildOutputParser;
 import org.eclipse.cdt.core.language.settings.providers.ICListenerAgent;
 import org.eclipse.cdt.core.language.settings.providers.IWorkingDirectoryTracker;
@@ -43,6 +47,7 @@ import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSetting
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedMakeMessages;
 import org.eclipse.cdt.utils.CommandLineUtil;
+import org.eclipse.cdt.utils.envvar.EnvironmentCollector;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -149,7 +154,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 							}
 						}
 					} catch (CoreException e) {
-						return new Status(Status.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID, "Error checking markers.", e); //$NON-NLS-1$
+						return new Status(IStatus.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID, "Error checking markers.", e); //$NON-NLS-1$
 					}
 
 					try {
@@ -166,7 +171,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 							marker.setAttribute(IMarker.LOCATION, msgProperties);
 						}
 					} catch (CoreException e) {
-						return new Status(Status.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID, "Error adding markers.", e); //$NON-NLS-1$
+						return new Status(IStatus.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID, "Error adding markers.", e); //$NON-NLS-1$
 					}
 
 					return Status.OK_STATUS;
@@ -192,7 +197,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 					}
 				}
 			} catch (CoreException e) {
-				ManagedBuilderCorePlugin.log(new Status(Status.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID, "Error deleting markers.", e)); //$NON-NLS-1$
+				ManagedBuilderCorePlugin.log(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID, "Error deleting markers.", e)); //$NON-NLS-1$
 			}
 		}
 
@@ -596,26 +601,39 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 	}
 
 	/**
-	 * Get array of environment variables in format "var=value".
+	 * Returns list of environment variables to be used during execution of provider's command.
+	 * Implementers are expected to add their variables to the end of the list.
+	 *
+	 * @return list of environment variables.
 	 */
-	private String[] getEnvp() {
+	protected List<IEnvironmentVariable> getEnvironmentVariables() {
+		IEnvironmentVariableManager mngr = CCorePlugin.getDefault().getBuildEnvironmentManager();
+		List<IEnvironmentVariable> vars = new ArrayList<IEnvironmentVariable>(Arrays.asList(mngr.getVariables(currentCfgDescription, true)));
+
 		// On POSIX (Linux, UNIX) systems reset language variables to default (English)
 		// with UTF-8 encoding since GNU compilers can handle only UTF-8 characters.
 		// Include paths with locale characters will be handled properly regardless
 		// of the language as long as the encoding is set to UTF-8.
 		// English language is set for parser because it relies on English messages
 		// in the output of the 'gcc -v' command.
+		vars.add(new EnvironmentVariable(ENV_LANGUAGE, "en")); //$NON-NLS-1$
+		vars.add(new EnvironmentVariable(ENV_LC_ALL, "C.UTF-8")); //$NON-NLS-1$
 
-		List<String> envp = new ArrayList<String>(Arrays.asList(BuildRunnerHelper.getEnvp(currentCfgDescription)));
-		for (Iterator<String> iterator = envp.iterator(); iterator.hasNext();) {
-			String var = iterator.next();
-			if (var.startsWith(ENV_LANGUAGE + '=') || var.startsWith(ENV_LC_ALL + '=')) {
-				iterator.remove();
-			}
+		return vars;
+	}
+
+	/**
+	 * Get array of environment variables in format "var=value".
+	 */
+	private String[] getEnvp() {
+		EnvironmentCollector collector = new EnvironmentCollector();
+		List<IEnvironmentVariable> vars = getEnvironmentVariables();
+		collector.addVariables(vars.toArray(new IEnvironmentVariable[vars.size()]));
+
+		Set<String> envp = new HashSet<String>();
+		for (IEnvironmentVariable var : collector.getVariables()) {
+			envp.add(var.getName() + '=' + var.getValue());
 		}
-		envp.add(ENV_LANGUAGE + "=en");    // override for GNU gettext //$NON-NLS-1$
-		envp.add(ENV_LC_ALL + "=C.UTF-8"); // for other parts of the system libraries //$NON-NLS-1$
-
 		return envp.toArray(new String[envp.size()]);
 	}
 

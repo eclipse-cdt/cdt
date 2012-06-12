@@ -124,7 +124,7 @@ public interface IIndexManager extends IPDOMManager {
 	public static final int UPDATE_ALL= 0x1;
 
 	/**
-	 * Constant for requesting an update of translation units if theit timestamps have changed.
+	 * Constant for requesting an update of translation units if their timestamps have changed.
 	 */
 	public static final int UPDATE_CHECK_TIMESTAMPS= 0x2;
 

@@ -18,7 +18,6 @@ import org.eclipse.jface.text.IRegion;
 
 import org.eclipse.cdt.ui.CUIPlugin;
 
-
 /**
  * This implementation of <code>IRangeComparator</code> compares lines of a document.
  * The lines are compared using a DJB hash function.

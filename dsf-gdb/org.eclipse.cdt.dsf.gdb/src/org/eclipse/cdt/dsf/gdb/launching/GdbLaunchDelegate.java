@@ -14,6 +14,7 @@
  * Abeer Bagul (Tensilica) - Allow to better override GdbLaunch (bug 339550)
  * Anton Gorenkov         - Need to use a process factory (Bug 210366)
  * Marc Khouzam (Ericsson) - Cleanup the launch if it is cancelled (Bug 374374)
+ * Marc-Andre Laperle      - Bug 382462
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.launching; 
 
@@ -275,7 +276,7 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
 	}
 	
 	/**
-	 * Method used to check that the project, program and binary are correct.
+	 * Method used to check that the project and program are correct.
 	 * Can be overridden to avoid checking certain things.
 	 * @since 3.0
 	 */
@@ -284,8 +285,6 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
 		ICProject project = verifyCProject(config);
 		// Now verify we know the program to debug.
 		IPath exePath = LaunchUtils.verifyProgramPath(config, project);
-		// Finally, make sure the program is a proper binary.
-		LaunchUtils.verifyBinary(config, exePath);
 		return exePath;
 	}
 

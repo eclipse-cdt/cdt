@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 QNX Software Systems and others.
+ * Copyright (c) 2000, 2012 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     QNX Software Systems - Initial API and implementation
  *     Ken Ryall (Nokia) - bugs 118894, 170027, 91771
  *     Wind River Systems - adapted to work with platform Modules view (bug 210558)
+ *     Marc-Andre Laperle - Bug 382462
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core.model;
 
@@ -97,6 +98,7 @@ import org.eclipse.cdt.debug.internal.core.CSignalManager;
 import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLookupParticipant;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceManager;
+import org.eclipse.cdt.utils.Addr64Factory;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IProject;
@@ -109,8 +111,8 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -1798,12 +1800,16 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 			// And if that doesn't work, use the one from the file.
 			if (fAddressFactory == null) {
 				if (getExecFile() != null && getProject() != null) {
-					IBinaryObject file;
-					file = getBinaryFile();
+					IBinaryObject file = getBinaryFile();
 					if (file != null) {
 						fAddressFactory = file.getAddressFactory();
 					}
 				}
+			}
+			
+			// As a last resort, fallback to 64 bit address factory
+			if (fAddressFactory == null) {
+				fAddressFactory = new Addr64Factory();
 			}
 		}
 		return fAddressFactory;

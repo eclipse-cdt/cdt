@@ -1495,13 +1495,19 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 			// cast to array (can be in addition to cast to type) 
 			if (castingLength > 0) {
 				StringBuffer buffer = new StringBuffer();
-				buffer.append("(*("); //$NON-NLS-1$
+				buffer.append("*("); //$NON-NLS-1$
 				buffer.append('(').append(castExpression).append(')');
 				buffer.append('+').append(castingIndex).append(')');
-				buffer.append('@').append(castingLength).append(')');
+				buffer.append('@').append(castingLength);
 				castExpression = buffer.toString();
 			}
 			
+			// Surround the entire casted expression with parenthesis in case we are
+			// dealing with an array.  Arrays must be parenthesized before they are
+			// subscripted.  Note that we can be casting to an array or displaying
+			// as an array, so we must do this all the time.
+			castExpression = String.format("(%s)", castExpression); //$NON-NLS-1$
+					
 			return new CastedExpressionDMC((MIExpressionDMC) exprDMC, castExpression, castInfo);
 		} else {
 			assert false;

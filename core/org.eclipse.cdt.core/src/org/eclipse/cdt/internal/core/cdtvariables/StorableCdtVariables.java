@@ -173,7 +173,7 @@ public class StorableCdtVariables implements IStorableCdtVariables {
 		return null;
 	}
 
-	/*
+	/**
 	 * sets the storable macros to hold the geven number of macros
 	 * all macros that are present in the store but not included in the given array
 	 * will be removed
@@ -185,9 +185,6 @@ public class StorableCdtVariables implements IStorableCdtVariables {
 			deleteAll();
 		else{
 			if (getMap().size() != 0) {
-				/*
-				 * Fix for Bugzilla #348884
-				 */
 				Set<String> existing = new HashSet<String>();
 				Set<String> macroNames = new HashSet<String>();
 				

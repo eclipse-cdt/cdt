@@ -12,7 +12,8 @@
 
 package org.eclipse.cdt.utils;
 
-import java.util.ConcurrentModificationException;
+import java.util.ArrayList;
+import java.util.List;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -39,8 +40,8 @@ public class StorableCdtVariablesTest extends TestCase {
 		ResourceHelper.cleanUp();
 	}
 	
-	/*
-	 * Unit test for Bugzilla #348884
+	/**
+	 * Unit test for bug 348884
 	 */
 	public void testSetMacros() throws Exception {
 		IProject project = ResourceHelper.createCDTProjectWithConfig("projectWithUserVars"); //$NON-NLS-1$
@@ -59,16 +60,28 @@ public class StorableCdtVariablesTest extends TestCase {
 		try{
 			supplier.setMacros(new ICdtVariable[]{varA1, varA2, varA3, varA4}, desc);
 		}catch(Throwable e){
-			fail("1.0 Cannot set macros"); //$NON-NLS-1$
+			fail(e.toString());
 		}
+		ICdtVariable[] vars = supplier.getMacros(desc);
+		List<String> macroStrings = new ArrayList<String>();
+		for (ICdtVariable var : vars) {
+			macroStrings.add(var.getName() + '=' + var.getStringValue());
+		}
+		assertTrue(macroStrings.contains(varA1.getName() + '=' + varA1.getStringValue()));
+		assertTrue(macroStrings.contains(varA2.getName() + '=' + varA2.getStringValue()));
+		assertTrue(macroStrings.contains(varA3.getName() + '=' + varA3.getStringValue()));
+		assertTrue(macroStrings.contains(varA4.getName() + '=' + varA4.getStringValue()));
+		assertEquals(4, macroStrings.size());
 		
 		try{
 			supplier.setMacros(new ICdtVariable[]{varA1, varA2, varA5}, desc);
-		}catch(ConcurrentModificationException e){
-			fail("1.1 Bugzilla #348884 unresolved"); //$NON-NLS-1$
 		}catch(Exception e){
-			fail("1.2 Cannot set macros"); //$NON-NLS-1$
+			fail(e.toString());
 		}
+		assertTrue(macroStrings.contains(varA1.getName() + '=' + varA1.getStringValue()));
+		assertTrue(macroStrings.contains(varA2.getName() + '=' + varA2.getStringValue()));
+		assertTrue(macroStrings.contains(varA5.getName() + '=' + varA5.getStringValue()));
+		assertEquals(3, macroStrings.size());
 	}
 
 }

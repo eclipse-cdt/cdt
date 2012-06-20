@@ -1623,8 +1623,8 @@ public class CPPTemplates {
 	
 	/**
 	 * @param id the template id containing the template arguments
-	 * @return an array of template arguments, currently modeled as IType objects. The
-	 * empty IType array is returned if id is <code>null</code>
+	 * @return an array of template arguments, currently modeled as IType objects.
+	 *     The empty ICPPTemplateArgument array is returned if id is <code>null</code>
 	 */
 	public static ICPPTemplateArgument[] createTemplateArgumentArray(ICPPASTTemplateId id) {
 		ICPPTemplateArgument[] result= ICPPTemplateArgument.EMPTY_ARGUMENTS;
@@ -1641,7 +1641,7 @@ public class CPPTemplates {
 					IValue value= Value.create((IASTExpression) arg, Value.MAX_RECURSION_DEPTH);
 					result[i]= new CPPTemplateArgument(value, type);
 				} else {
-					throw new IllegalArgumentException();
+					throw new IllegalArgumentException("Unexpected type: " + arg.getClass().getName()); //$NON-NLS-1$
 				}
 			}
 		}

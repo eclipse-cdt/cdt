@@ -41,6 +41,7 @@ import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
 
 import org.eclipse.cdt.internal.ui.editor.IndentUtil;
+import org.eclipse.cdt.internal.ui.text.CIndenter.MatchMode;
 
 /**
  * Auto indent strategy sensitive to brackets.
@@ -183,7 +184,7 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 			// shift only when line does not contain any text up to the closing bracket
 			if (whiteend == c.offset) {
 				// evaluate the line with the opening bracket that matches out closing bracket
-				int reference = indenter.findReferencePosition(c.offset, false, true, false, false, false);
+				int reference = indenter.findReferencePosition(c.offset, false, MatchMode.MATCH_BRACE);
 				int indLine = d.getLineOfOffset(reference);
 				if (indLine != -1 && indLine != line) {
 					// take the indent of the found line
@@ -219,7 +220,7 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 			int lineOffset = d.getLineOffset(line);
 
 			// make sure we don't have any leading comments etc.
-			if (d.get(lineOffset, c.offset - lineOffset).trim().length() != 0)
+			if (!d.get(lineOffset, c.offset - lineOffset).trim().isEmpty())
 				return;
 
 			// Line of last C code
@@ -851,7 +852,7 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
     			case Symbols.TokenDEFAULT:
     			    {
     					CIndenter indenter= new CIndenter(document, dScanner, fProject);
-    					peer= indenter.findReferencePosition(dPos, false, false, false, true, false);
+    					peer= indenter.findReferencePosition(dPos, false, MatchMode.MATCH_CASE);
     					if (peer == CHeuristicScanner.NOT_FOUND)
     						return firstPeer;
     					firstPeer= peer;
@@ -863,7 +864,7 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
     			case Symbols.TokenPRIVATE:
 				    {
 						CIndenter indenter= new CIndenter(document, dScanner, fProject);
-						peer= indenter.findReferencePosition(dPos, false, false, false, false, true);
+						peer= indenter.findReferencePosition(dPos, false, MatchMode.MATCH_ACCESS_SPECIFIER);
 						if (peer == CHeuristicScanner.NOT_FOUND)
 							return firstPeer;
 						firstPeer= peer;
@@ -969,7 +970,7 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 				// Only shift if the last C line is further up and is a braceless block candidate
 				if (lastLine < line) {
 					CIndenter indenter = new CIndenter(doc, scanner, fProject);
-					int ref = indenter.findReferencePosition(p, true, false, false, false, false);
+					int ref = indenter.findReferencePosition(p, true, MatchMode.REGULAR);
 					if (ref == CHeuristicScanner.NOT_FOUND)
 						return;
 					int refLine = doc.getLineOfOffset(ref);
@@ -1006,7 +1007,7 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 				// Only shift if the last C line is further up and is a braceless block candidate
 				if (lastLine < line) {
 					CIndenter indenter = new CIndenter(doc, scanner, fProject);
-					int ref = indenter.findReferencePosition(p, false, false, false, true, false);
+					int ref = indenter.findReferencePosition(p, false, MatchMode.MATCH_CASE);
 					if (ref == CHeuristicScanner.NOT_FOUND)
 						return;
 					int refLine = doc.getLineOfOffset(ref);
@@ -1069,9 +1070,9 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 				CIndenter indenter = new CIndenter(doc, scanner, fProject);
 				int ref;
 				if (prevToken == Symbols.TokenDEFAULT)
-					ref = indenter.findReferencePosition(p, false, false, false, true, false);
+					ref = indenter.findReferencePosition(p, false, MatchMode.MATCH_CASE);
 				else
-					ref = indenter.findReferencePosition(p, false, false, false, false, true);
+					ref = indenter.findReferencePosition(p, false, MatchMode.MATCH_ACCESS_SPECIFIER);
 				if (ref == CHeuristicScanner.NOT_FOUND)
 					return;
 				int refLine = doc.getLineOfOffset(ref);

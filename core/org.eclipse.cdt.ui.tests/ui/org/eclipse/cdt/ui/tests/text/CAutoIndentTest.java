@@ -40,7 +40,6 @@ import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.cdt.ui.text.doctools.DefaultMultilineCommentAutoEditStrategy;
 
-
 import org.eclipse.cdt.internal.ui.text.CAutoIndentStrategy;
 import org.eclipse.cdt.internal.ui.text.CTextTools;
 
@@ -270,28 +269,28 @@ public class CAutoIndentTest extends AbstractAutoEditTest {
 		String[] kw_inh= new String[] {"class", "union", "struct"};
 		String[] kw_anon= new String[] {"union", "struct", "enum"};
 
-		for(int i=0; i<kw.length; i++) {
+		for (int i= 0; i < kw.length; i++) {
 			tester.reset();
 
 			tester.type("\n\n\n "+kw[i]+" A {\n"); //$NON-NLS-1$
 			assertEquals("\n\n\n "+kw[i]+" A {\n\t \n };", tester.fDoc.get()); //$NON-NLS-1$
 		}
 		
-		for(int i=0; i<kw.length; i++) {
+		for (int i= 0; i < kw.length; i++) {
 			tester.reset();
 
 			tester.type("\n\n\n"+kw[i]+" A {\n"); //$NON-NLS-1$
 			assertEquals("\n\n\n"+kw[i]+" A {\n\t\n};", tester.fDoc.get()); //$NON-NLS-1$
 		}
 		
-		for(int i=0; i<kw.length; i++) {		
+		for (int i= 0; i < kw.length; i++) {		
 			tester.reset();
 
 			tester.type("\n\n\n "+kw[i]+" A {\n"); //$NON-NLS-1$
 			assertEquals("\n\n\n "+kw[i]+" A {\n\t \n };", tester.fDoc.get()); //$NON-NLS-1$
 		}
 		
-		for(int i=0; i<kw.length; i++) {		
+		for (int i= 0; i < kw.length; i++) {		
 			tester.reset();
 
 			tester.type("\n// foo\n\n\n//bar\n\n"); //$NON-NLS-1$
@@ -300,17 +299,17 @@ public class CAutoIndentTest extends AbstractAutoEditTest {
 			assertEquals("\n// foo\n"+kw[i]+" A {\n\t\n};\n\n//bar\n\n", tester.fDoc.get()); //$NON-NLS-1$
 		}
 
-		// this tests for a sensible behaviour for enums, although the
+		// this tests for a sensible behavior for enums, although the
 		// code generated is invalid, its the user entered part that is
 		// the problem
-		for(int i=0; i<kw_inh.length; i++) {		
+		for (int i= 0; i < kw_inh.length; i++) {		
 			tester.reset();
 
 			tester.type("\n\n\n"+kw_inh[i]+" A\n:\npublic B\n,\npublic C\n{\n"); //$NON-NLS-1$
-			assertEquals("\n\n\n"+kw_inh[i]+" A\n:\n\tpublic B\n\t,\n\tpublic C\n\t{\n\t\t\n\t};", tester.fDoc.get()); //$NON-NLS-1$
+			assertEquals("\n\n\n"+kw_inh[i]+" A\n:\n\t\tpublic B\n\t\t,\n\t\tpublic C\n{\n\t\n};", tester.fDoc.get()); //$NON-NLS-1$
 		}
 		
-		for(int i=0; i<kw.length; i++) {		
+		for (int i= 0; i < kw.length; i++) {		
 			tester.reset();
 
 			tester.type("\n// foo\n\n\n//bar\n\n"); //$NON-NLS-1$
@@ -319,13 +318,13 @@ public class CAutoIndentTest extends AbstractAutoEditTest {
 			assertEquals("\n// foo\n"+kw[i]+" /* for(int i=0; i<100; i++) {} */\nA \n{\n\t\n};\n\n//bar\n\n", tester.fDoc.get()); //$NON-NLS-1$
 		}		
 
-		for(int i=0; i<kw_anon.length; i++) {		
+		for (int i= 0; i < kw_anon.length; i++) {		
 			tester.reset();
 
 			tester.type("\n\n\n"+kw_anon[i]+" {\n"); //$NON-NLS-1$
 			assertEquals("\n\n\n"+kw_anon[i]+" {\n\t\n};", tester.fDoc.get()); //$NON-NLS-1$
 		}
-}
+	}
 	
 	/**
 	 * Tests that brackets are inserted (without semi-colons) in appropriate

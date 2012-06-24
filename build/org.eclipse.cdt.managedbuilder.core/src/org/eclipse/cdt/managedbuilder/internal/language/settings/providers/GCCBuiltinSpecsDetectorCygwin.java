@@ -30,7 +30,7 @@ public class GCCBuiltinSpecsDetectorCygwin extends GCCBuiltinSpecsDetector {
 		try {
 			CYGWIN_ROOT = new URI("cygwin:/"); //$NON-NLS-1$
 		} catch (URISyntaxException e) {
-			// hey we know this works
+			// hey we know this URI works
 			throw new IllegalStateException(e);
 		}
 	}

@@ -37,7 +37,7 @@ public class ManagedBuilderUIPlugin extends AbstractUIPlugin {
 //		super();
 		plugin = this;
 	}
-	
+
 
 	/**
 	 * @return
@@ -100,7 +100,7 @@ public class ManagedBuilderUIPlugin extends AbstractUIPlugin {
 				message = null;
 			}
 		} else {
-			status = new Status(IStatus.ERROR, ManagedBuilderUIPlugin.getUniqueIdentifier(), -1, "Internal Error: ", t); //$NON-NLS-1$	
+			status = new Status(IStatus.ERROR, ManagedBuilderUIPlugin.getUniqueIdentifier(), -1, "Internal Error: ", t); //$NON-NLS-1$
 		}
 		ErrorDialog.openError(shell, title, message, status);
 	}
@@ -114,7 +114,7 @@ public class ManagedBuilderUIPlugin extends AbstractUIPlugin {
 	}
 
 	/**
-	 * Answers the <code>Shell</code> associated with the active workbench, or 
+	 * Answers the <code>Shell</code> associated with the active workbench, or
 	 * one of the windows associated with the workbench.
 	 * @return
 	 */
@@ -126,6 +126,6 @@ public class ManagedBuilderUIPlugin extends AbstractUIPlugin {
 			return windows[0].getShell();
 		}
 	}
-	
+
 
 }

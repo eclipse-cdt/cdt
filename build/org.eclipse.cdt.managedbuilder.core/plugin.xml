@@ -614,6 +614,14 @@
          <language-scope id="org.eclipse.cdt.core.g++"/>
       </provider>
       <provider
+            class="org.eclipse.cdt.managedbuilder.internal.language.settings.providers.GCCBuiltinSpecsDetectorMinGW"
+            id="org.eclipse.cdt.managedbuilder.core.GCCBuiltinSpecsDetectorMinGW"
+            name="CDT GCC Builtin Compiler Settings MinGW"
+            parameter="${COMMAND} -E -P -v -dD ${INPUTS}">
+         <language-scope id="org.eclipse.cdt.core.gcc"/>
+         <language-scope id="org.eclipse.cdt.core.g++"/>
+      </provider>
+      <provider
             class="org.eclipse.cdt.managedbuilder.language.settings.providers.GCCBuildCommandParser"
             id="org.eclipse.cdt.managedbuilder.core.GCCBuildCommandParser"
             name="CDT GCC Build Output Parser"

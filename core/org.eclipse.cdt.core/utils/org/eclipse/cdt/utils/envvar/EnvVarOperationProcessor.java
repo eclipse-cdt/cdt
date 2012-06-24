@@ -20,21 +20,21 @@ import org.eclipse.cdt.internal.core.envvar.EnvironmentVariableManager;
 
 
 /**
- * This is an utility class that implements environment variable operations 
+ * This is an utility class that implements environment variable operations
  * functionality: append, prepend, replace and remove
- * 
+ *
  * @since 3.0
  */
 public class EnvVarOperationProcessor {
 	/**
 	 * performs the environment variable operation given an initial variable and
 	 * a variable representing an operation to be performed
-	 * Returns a new variable the represents the result of a performed operation 
-	 * 
+	 * Returns a new variable the represents the result of a performed operation
+	 *
 	 * @param initial the initial variable
 	 * @param added the variable that specifies an operation to be performed on the
-	 * initial variable value 
-	 * @return the new variable the represents the result of a performed operation 
+	 * initial variable value
+	 * @return the new variable the represents the result of a performed operation
 	 */
 	static public IEnvironmentVariable performOperation(IEnvironmentVariable initial, IEnvironmentVariable added){
 		if(initial == null){
@@ -42,9 +42,9 @@ public class EnvVarOperationProcessor {
 		}
 		if(added == null)
 			return initial;
-		
+
 		String name = added.getName();
-		
+
 		switch(added.getOperation()){
 		case IEnvironmentVariable.ENVVAR_REMOVE:
 			return new EnvironmentVariable(name,null,IEnvironmentVariable.ENVVAR_REMOVE,null);
@@ -82,24 +82,24 @@ public class EnvVarOperationProcessor {
 			return addValue;
 		if(addValue == null)
 			return initialValue;
-		
+
 		if(delimiter == null || "".equals(delimiter)){   //$NON-NLS-1$
 			return prepend ? addValue + initialValue : initialValue + addValue;
 		}
-		
+
 		List<String> value = convertToList(initialValue, delimiter);
 		List<String> added = convertToList(addValue, delimiter);
 
 		value = removeDuplicates(value, added);
-		
+
 		if(prepend)
 			value.addAll(0,added);
 		else
 			value.addAll(added);
-		
+
 		return convertToString(value, delimiter);
 	}
-	
+
 	/**
 	 * performs append given an initial String, a string to be appended and a delimiter
 	 * Returns a String representing the result of the operation
@@ -111,7 +111,7 @@ public class EnvVarOperationProcessor {
 	static public String performAppend(String initialValue, String addValue, String delimiter){
 		return performAppendPrepend(initialValue,addValue,delimiter,false);
 	}
-	
+
 	/**
 	 * performs prepend given an initial String, a string to be prepended and a delimiter
 	 * Returns a String representing the result of the operation
@@ -123,7 +123,7 @@ public class EnvVarOperationProcessor {
 	static public String performPrepend(String initialValue, String addValue, String delimiter){
 		return performAppendPrepend(initialValue,addValue,delimiter,true);
 	}
-	
+
 	/**
 	 * performs an environment variable operation
 	 * Returns String representing the result of the operation
@@ -141,7 +141,7 @@ public class EnvVarOperationProcessor {
 			return performPrepend(initialValue,newValue,delimiter);
 		case IEnvironmentVariable.ENVVAR_APPEND:
 			return performAppend(initialValue,newValue,delimiter);
-		case IEnvironmentVariable.ENVVAR_REPLACE:	
+		case IEnvironmentVariable.ENVVAR_REPLACE:
 		default:
 			return initialValue;
 		}
@@ -175,8 +175,8 @@ public class EnvVarOperationProcessor {
 
 		return list;
 	}
-	
-	/*
+
+	/**
 	 * removes duplicates
 	 */
 	static public List<String> removeDuplicates(List<String> value, List<String> duplicates){
@@ -198,7 +198,7 @@ public class EnvVarOperationProcessor {
 		}
 		return list;
 	}
-	
+
 	/**
 	 * Converts list to a single String using a given delimiter to separate
 	 * the list value in the resulting String
@@ -209,18 +209,18 @@ public class EnvVarOperationProcessor {
 	static public String convertToString(List<String> list, String delimiter){
 		Iterator<String> iter = list.iterator();
 		StringBuffer buffer = new StringBuffer();
-		
+
 		while(iter.hasNext()){
 			buffer.append(iter.next());
-			
+
 			if(iter.hasNext())
 				buffer.append(delimiter);
 		}
-		
+
 		return buffer.toString();
 	}
-		
-	/*
+
+	/**
 	 * normalizes the variable name. That is: removes prepended and appended spaces
 	 * and converts the name to upper-case for Win32 systems
 	 * @return the normalized name or <code>null</code> in case the name is not valid
@@ -234,12 +234,12 @@ public class EnvVarOperationProcessor {
 			name = name.toUpperCase();
 		return name;
 	}
-	
+
 	static public IEnvironmentVariable[] filterVariables(IEnvironmentVariable variables[], String remove[]){
-		
+
 		if(variables == null || variables.length == 0)
 			return variables;
-		
+
 		IEnvironmentVariable filtered[] = new IEnvironmentVariable[variables.length];
 		int filteredNum = 0;
 		for (IEnvironmentVariable var : variables) {

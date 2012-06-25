@@ -16,7 +16,7 @@
 	<packaging>eclipse-repository</packaging>
 	
 	<properties>
-		<cdt-stream>juno</cdt-stream>
+		<cdt-stream>kepler</cdt-stream>
 		<cdt-zipfile>org.eclipse.cdt.repo.zip</cdt-zipfile>
 		<cdt-install>/home/data/httpd/download.eclipse.org/tools/cdt/builds/${cdt-stream}/nightly</cdt-install>
 	</properties>

@@ -62,26 +62,35 @@ public class StorableCdtVariablesTest extends TestCase {
 		}catch(Throwable e){
 			fail(e.toString());
 		}
-		ICdtVariable[] vars = supplier.getMacros(desc);
-		List<String> macroStrings = new ArrayList<String>();
-		for (ICdtVariable var : vars) {
-			macroStrings.add(var.getName() + '=' + var.getStringValue());
+		{
+			ICdtVariable[] vars = supplier.getMacros(desc);
+			List<String> macroStrings = new ArrayList<String>();
+			for (ICdtVariable var : vars) {
+				macroStrings.add(var.getName() + '=' + var.getStringValue());
+			}
+			assertTrue(macroStrings.contains(varA1.getName() + '=' + varA1.getStringValue()));
+			assertTrue(macroStrings.contains(varA2.getName() + '=' + varA2.getStringValue()));
+			assertTrue(macroStrings.contains(varA3.getName() + '=' + varA3.getStringValue()));
+			assertTrue(macroStrings.contains(varA4.getName() + '=' + varA4.getStringValue()));
+			assertEquals(4, macroStrings.size());
 		}
-		assertTrue(macroStrings.contains(varA1.getName() + '=' + varA1.getStringValue()));
-		assertTrue(macroStrings.contains(varA2.getName() + '=' + varA2.getStringValue()));
-		assertTrue(macroStrings.contains(varA3.getName() + '=' + varA3.getStringValue()));
-		assertTrue(macroStrings.contains(varA4.getName() + '=' + varA4.getStringValue()));
-		assertEquals(4, macroStrings.size());
 		
 		try{
 			supplier.setMacros(new ICdtVariable[]{varA1, varA2, varA5}, desc);
 		}catch(Exception e){
 			fail(e.toString());
 		}
-		assertTrue(macroStrings.contains(varA1.getName() + '=' + varA1.getStringValue()));
-		assertTrue(macroStrings.contains(varA2.getName() + '=' + varA2.getStringValue()));
-		assertTrue(macroStrings.contains(varA5.getName() + '=' + varA5.getStringValue()));
-		assertEquals(3, macroStrings.size());
+		{
+			ICdtVariable[] vars = supplier.getMacros(desc);
+			List<String> macroStrings = new ArrayList<String>();
+			for (ICdtVariable var : vars) {
+				macroStrings.add(var.getName() + '=' + var.getStringValue());
+			}
+			assertTrue(macroStrings.contains(varA1.getName() + '=' + varA1.getStringValue()));
+			assertTrue(macroStrings.contains(varA2.getName() + '=' + varA2.getStringValue()));
+			assertTrue(macroStrings.contains(varA5.getName() + '=' + varA5.getStringValue()));
+			assertEquals(3, macroStrings.size());
+		}
 	}
 
 }

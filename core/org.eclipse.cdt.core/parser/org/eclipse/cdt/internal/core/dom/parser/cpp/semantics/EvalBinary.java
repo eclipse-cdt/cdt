@@ -13,9 +13,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.glvalueType;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.prvalueType;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.typeFromFunctionCall;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.*;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.CVTYPE;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.REF;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
@@ -92,7 +90,9 @@ public class EvalBinary implements ICPPEvaluation {
 			} else {
 				ICPPFunction overload = getOverload(point);
 				if (overload != null) {
-					fType= ExpressionTypes.typeFromFunctionCall(overload);
+					fType= ExpressionTypes.restoreTypedefs(
+							ExpressionTypes.typeFromFunctionCall(overload),
+							fArg1.getTypeOrFunctionSet(point), fArg2.getTypeOrFunctionSet(point));
 				} else {
 					fType= computeType(point);
 				}
@@ -189,19 +189,21 @@ public class EvalBinary implements ICPPEvaluation {
 		if (o != null) 
 			return typeFromFunctionCall(o);
 		
-		IType type1 = prvalueType(fArg1.getTypeOrFunctionSet(point));
+		final IType originalType1 = fArg1.getTypeOrFunctionSet(point);
+		final IType type1 = prvalueTypeWithResolvedTypedefs(originalType1);
 		if (type1 instanceof ISemanticProblem) {
 			return type1;
 		}
 		
-		IType type2 = prvalueType(fArg2.getTypeOrFunctionSet(point));
+    	final IType originalType2 = fArg2.getTypeOrFunctionSet(point);
+		final IType type2 = prvalueTypeWithResolvedTypedefs(originalType2);
 		if (type2 instanceof ISemanticProblem) {
 			return type2;
 		}
 
     	IType type= CPPArithmeticConversion.convertCppOperandTypes(fOperator, type1, type2);
     	if (type != null) {
-    		return type;
+    		return ExpressionTypes.restoreTypedefs(type, originalType1, originalType2);
     	}
 
 
@@ -227,10 +229,10 @@ public class EvalBinary implements ICPPEvaluation {
 
     	case IASTBinaryExpression.op_plus:
     		if (type1 instanceof IPointerType) {
-    			return type1;
+        		return ExpressionTypes.restoreTypedefs(type1, originalType1);
     		} 
     		if (type2 instanceof IPointerType) {
-    			return type2;
+        		return ExpressionTypes.restoreTypedefs(type2, originalType2);
     		} 
     		break;
 
@@ -239,7 +241,7 @@ public class EvalBinary implements ICPPEvaluation {
     			if (type2 instanceof IPointerType) {
     				return CPPVisitor.getPointerDiffType(point);
     			}
-    			return type1;
+    			return originalType1;
     		}
     		break;
 

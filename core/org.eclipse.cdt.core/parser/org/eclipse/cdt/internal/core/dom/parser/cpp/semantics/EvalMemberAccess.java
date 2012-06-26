@@ -14,9 +14,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.XVALUE;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.glvalueType;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.prvalueType;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.typeFromFunctionCall;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.*;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.*;
 
 import java.util.Collection;
@@ -182,7 +180,7 @@ public class EvalMemberAccess implements ICPPEvaluation {
 			type= SemanticUtil.mapToAST(type, point);
     	}
     	
-		IType prValue=  prvalueType(type);
+		IType prValue=  prvalueTypeWithResolvedTypedefs(type);
 		if (prValue instanceof IPointerType) {
 			return glvalueType(((IPointerType) prValue).getType());
 		}

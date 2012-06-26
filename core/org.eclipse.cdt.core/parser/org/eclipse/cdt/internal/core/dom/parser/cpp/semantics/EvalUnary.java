@@ -14,9 +14,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
 import static org.eclipse.cdt.core.dom.ast.IASTUnaryExpression.*;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.glvalueType;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.prvalueType;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.valueCategoryFromFunctionCall;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.*;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.CVTYPE;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.REF;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
@@ -162,7 +160,7 @@ public class EvalUnary implements ICPPEvaluation {
 			return new CPPPointerType(fArgument.getTypeOrFunctionSet(point));
 		case op_star:
 			IType type= fArgument.getTypeOrFunctionSet(point);
-			type = prvalueType(type);
+			type = prvalueTypeWithResolvedTypedefs(type);
 	    	if (type instanceof IPointerType) {
 	    		return glvalueType(((IPointerType) type).getType());
 			} 
@@ -179,8 +177,9 @@ public class EvalUnary implements ICPPEvaluation {
 		case op_plus:
 		case op_tilde:
 	    	final IType t1 = prvalueType(fArgument.getTypeOrFunctionSet(point));
-			final IType t2= CPPArithmeticConversion.promoteCppType(t1);
-			return t2 != null ? t2 : t1;
+			final IType t2 = SemanticUtil.getNestedType(t1, TDEF);
+			final IType t3= CPPArithmeticConversion.promoteCppType(t2);
+			return (t3 == null || t3 == t2) ? t1 : t3;
 		}
 		return fArgument.getTypeOrFunctionSet(point);
 	}

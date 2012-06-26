@@ -112,7 +112,8 @@ public class EvalFunctionCall implements ICPPEvaluation {
 			return ExpressionTypes.typeFromFunctionCall(overload);
 
 		
-		IType t= SemanticUtil.getNestedType(fArguments[0].getTypeOrFunctionSet(point), TDEF|REF|CVTYPE);
+		final ICPPEvaluation arg0 = fArguments[0];
+		IType t= SemanticUtil.getNestedType(arg0.getTypeOrFunctionSet(point), TDEF|REF|CVTYPE);
 		if (t instanceof ICPPClassType) {
 			return new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
 		}
@@ -121,7 +122,11 @@ public class EvalFunctionCall implements ICPPEvaluation {
 			t= SemanticUtil.getNestedType(((IPointerType) t).getType(), TDEF | REF | CVTYPE);
 		}
 		if (t instanceof IFunctionType) {
-			return typeFromReturnType(((IFunctionType) t).getReturnType());
+			t = typeFromReturnType(((IFunctionType) t).getReturnType());
+			if (arg0 instanceof EvalMemberAccess) {
+				t= ExpressionTypes.restoreTypedefs(t, ((EvalMemberAccess) arg0).getOwnerType());
+			}
+			return t;
 		}
 		return new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
 	}

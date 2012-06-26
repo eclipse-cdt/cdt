@@ -60,6 +60,9 @@ case ${SITEDIR} in
      case ${SITEPARENT} in
        *milestones) TYPE=milestone ; SITEDIRVER=${SITEPARENT} ;;
        *interim)    TYPE=interim ; SITEDIRVER=${SITEPARENT} ;;
+       3.2) VERSION=3.2 ; DO_CATEGORIES=1 ; DO_STATS=1 ;;
+       3.3) VERSION=3.3 ; DO_CATEGORIES=1 ; DO_STATS=1 ;;
+       3.4) VERSION=3.4 ; DO_CATEGORIES=1 ; DO_STATS=1 ;;
        *) TYPE=unknown ;;
      esac
      ;;
@@ -464,7 +467,7 @@ being contributed to the Eclipse Indigo coordinated release train (Eclipse 3.7.x
     sed -e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \
     	web/site.xsl > web/site.xsl.new
     mv -f web/site.xsl.new web/site.xsl
-elif [ `basename $SITE` = 3.4 ]; then
+elif [ $VERSION = 3.4 -a x$DO_STATS = x1 ]; then
     TPTYPE="3.4"
     TPVERSION="${TPVERSION} ${TPTYPE}"
     TYPE=official
@@ -582,7 +585,7 @@ if [ x${DO_STATS} = x1 ]; then
     -p2.statsURI http://download.eclipse.org/stats/tm \
     -p2.statsTrackedFeatures org.eclipse.rse.sdk,org.eclipse.rse.dstore,org.eclipse.rse.core,org.eclipse.rse.useractions,org.eclipse.rse.examples,org.eclipse.rse.tests,org.eclipse.rse.wince,org.eclipse.tm.terminal.view,org.eclipse.tm.terminal.local \
     -p2.statsTrackedBundles org.eclipse.rse.core,org.eclipse.rse.core.source,org.eclipse.tm.terminal \
-    -p2.statsSuffix _tm331
+    -p2.statsSuffix _tm34
     -vmargs -Xmx256M"
   echo $CMD
   $CMD

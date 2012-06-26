@@ -17,7 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
  * Interface for c++ expressions.
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
- * @since 5.4
+ * @since 5.5
  */
 public interface ICPPASTExpression extends IASTExpression, ICPPASTInitializerClause {
 	

@@ -31,13 +31,13 @@ public interface ICPPASTArraySubscriptExpression extends IASTArraySubscriptExpre
 	public ICPPASTArraySubscriptExpression copy(CopyStyle style);
 	
 	/**
-	 * @since 5.4
+	 * @since 5.5
 	 */
 	@Override
 	public ICPPASTExpression getArrayExpression();
 
 	/**
-	 * @since 5.4
+	 * @since 5.5
 	 */
 	@Override
 	public ICPPASTInitializerClause getArgument();

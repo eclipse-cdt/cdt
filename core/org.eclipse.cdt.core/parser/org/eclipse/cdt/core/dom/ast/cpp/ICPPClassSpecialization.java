@@ -34,7 +34,7 @@ public interface ICPPClassSpecialization extends ICPPSpecialization, ICPPClassTy
 	/**
 	 * Creates a specialized binding for a member of the original class. The result is 
 	 * a member of this class specialization.
-	 * @since 5.4
+	 * @since 5.5
 	 */
 	IBinding specializeMember(IBinding binding, IASTNode point);
 }

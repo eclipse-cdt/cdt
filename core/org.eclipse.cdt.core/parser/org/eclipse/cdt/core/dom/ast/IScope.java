@@ -101,7 +101,7 @@ public interface IScope {
 
 	
 	/**
-	 * @since 5.4
+	 * @since 5.5
 	 * @noextend This class is not intended to be subclassed by clients.
 	 */
 	public static class ScopeLookupData {
@@ -186,7 +186,7 @@ public interface IScope {
 	 * have not yet been resolved.
 	 * 
 	 * @return : the bindings in this scope that match the name or prefix, or null
-	 * @since 5.4
+	 * @since 5.5
 	 */
 	public IBinding[] getBindings(ScopeLookupData lookup);
 

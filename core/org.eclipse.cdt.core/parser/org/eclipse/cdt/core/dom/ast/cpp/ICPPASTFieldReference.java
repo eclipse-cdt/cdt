@@ -54,7 +54,7 @@ public interface ICPPASTFieldReference extends IASTFieldReference, ICPPASTExpres
 	public IType getFieldOwnerType();
 	
 	/**
-	 * @since 5.4
+	 * @since 5.5
 	 */
 	@Override
 	public ICPPASTExpression getFieldOwner();

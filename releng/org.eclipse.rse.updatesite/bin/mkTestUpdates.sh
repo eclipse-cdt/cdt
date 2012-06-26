@@ -582,11 +582,12 @@ if [ x${DO_STATS} = x1 ]; then
     -metadataRepository file:${SITE} \
     -artifactRepository file:${SITE} \
     -compress \
+    -publishArtifacts \
+    -reusePack200Files \
     -p2.statsURI http://download.eclipse.org/stats/tm \
     -p2.statsTrackedFeatures org.eclipse.rse.sdk,org.eclipse.rse.dstore,org.eclipse.rse.core,org.eclipse.rse.useractions,org.eclipse.rse.examples,org.eclipse.rse.tests,org.eclipse.rse.wince,org.eclipse.tm.terminal.view,org.eclipse.tm.terminal.local \
     -p2.statsTrackedBundles org.eclipse.rse.core,org.eclipse.rse.core.source,org.eclipse.tm.terminal \
-    -p2.statsSuffix _tm34
-    -reusePack200Files \
+    -p2.statsSuffix _tm34 \
     -vmargs -Xmx256M"
   echo $CMD
   $CMD

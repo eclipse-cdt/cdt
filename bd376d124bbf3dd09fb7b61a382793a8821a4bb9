@@ -1,0 +1,157 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOHn//8Uw\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/rewrite/commenthandler/ASTCommenter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-06-27T02:19:30Z",
+      "side": 1,
+      "message": "Break the line after || for readability.",
+      "revId": "bd376d124bbf3dd09fb7b61a382793a8821a4bb9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHn//8Us\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/rewrite/commenthandler/ASTCommenter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 178,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-06-27T02:19:30Z",
+      "side": 1,
+      "message": "A space is missing before \u003d\u003d",
+      "revId": "bd376d124bbf3dd09fb7b61a382793a8821a4bb9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHn//8Uo\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/rewrite/commenthandler/ASTCommenter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-06-27T02:19:30Z",
+      "side": 1,
+      "message": "Arrays.asList(commentsArray) is sufficient. Constructing another ArrayList is not necessary.",
+      "revId": "bd376d124bbf3dd09fb7b61a382793a8821a4bb9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHn//8Uk\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/rewrite/commenthandler/ASTCommenter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 190,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-06-27T02:19:30Z",
+      "side": 1,
+      "message": "Please don\u0027t use concrete collection classes in method signatures. Change to List.",
+      "revId": "bd376d124bbf3dd09fb7b61a382793a8821a4bb9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHn//8Ug\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/rewrite/commenthandler/ASTCommenter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 201,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-06-27T02:19:30Z",
+      "side": 1,
+      "message": "Simpler length \u003d\u003d 0",
+      "revId": "bd376d124bbf3dd09fb7b61a382793a8821a4bb9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHn//8UU\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/rewrite/commenthandler/ASTCommenter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 219,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-06-27T02:19:30Z",
+      "side": 1,
+      "message": "ArrayList -\u003e List",
+      "revId": "bd376d124bbf3dd09fb7b61a382793a8821a4bb9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHn//8UY\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/rewrite/commenthandler/ASTCommenter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 230,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-06-27T02:19:30Z",
+      "side": 1,
+      "message": "ArrayList -\u003e List",
+      "revId": "bd376d124bbf3dd09fb7b61a382793a8821a4bb9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHn//8Uc\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/rewrite/commenthandler/ASTCommenter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 235,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-06-27T02:19:30Z",
+      "side": 1,
+      "message": "Break the line after \u003d",
+      "revId": "bd376d124bbf3dd09fb7b61a382793a8821a4bb9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHn//8UQ\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/rewrite/commenthandler/ASTCommenter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 247,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-06-27T02:19:30Z",
+      "side": 1,
+      "message": "Please avoid cryptic abbreviations. ppLineNr -\u003e statementLineNumber",
+      "revId": "bd376d124bbf3dd09fb7b61a382793a8821a4bb9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -443,6 +443,9 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
     		this(new MIExpressionDMC(sessionId, parentInfo, frameCtx), frameCtx, index, length);
 		}
 
+    	/**
+		 * @since 4.2
+		 */
     	public IndexedPartitionDMC(
     			MIExpressionDMC parentExpr,
     			int index, 
@@ -508,6 +511,7 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 		/**
 		 * Get the context of the parent array.  This can be used to know if the
 		 * parent array is a casted expression.
+		 * @since 4.2
 		 */
 		public MIExpressionDMC getParentExpressionContext() {
 			return fParentExpression;

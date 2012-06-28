@@ -314,6 +314,16 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 		checkNoErrors();
 	}
 
+	// class C {
+	// public:
+	//   C(const C& c) = delete;
+	//   int i1, i2;
+	// };
+	public void testNoErrorsOnDeletedConstructor() {
+		loadCodeAndRun(getAboveComment());
+		checkNoErrors();
+	}
+
 	// void	func(int & a) { a = 0; }
 	// class C {
 	//   C() { func(i); }  // No warnings.

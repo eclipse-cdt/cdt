@@ -248,6 +248,8 @@ public class ClassMembersInitializationChecker extends AbstractIndexAstChecker {
 		private ICPPConstructor getConstructor(IASTDeclaration decl) {
 			if (decl instanceof ICPPASTFunctionDefinition) {
 				ICPPASTFunctionDefinition functionDefinition = (ICPPASTFunctionDefinition) decl;
+//				if (functionDefinition.isDeleted())
+//					return null;
 				IBinding binding = functionDefinition.getDeclarator().getName().resolveBinding();
 				if (binding instanceof ICPPConstructor) {
 					ICPPConstructor constructor = (ICPPConstructor) binding;

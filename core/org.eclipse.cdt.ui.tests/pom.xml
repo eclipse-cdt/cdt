@@ -45,7 +45,7 @@
 						</dependency>
 						<dependency>
 							<artifactId>org.eclipse.cdt.feature.group</artifactId>
-							<version>8.1.0.${buildQualifier}</version>
+							<version>8.2.0.${buildQualifier}</version>
 							<type>p2-installable-unit</type>
 						</dependency>
 					</dependencies>

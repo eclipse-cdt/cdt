@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.cdt.msw"
-      label="CDT Visual C++ Support"
-      version="1.0.0.qualifier"
+      label="Visual C++ Support"
+      version="1.2.0.qualifier"
       provider-name="Eclipse CDT">
 
    <description>

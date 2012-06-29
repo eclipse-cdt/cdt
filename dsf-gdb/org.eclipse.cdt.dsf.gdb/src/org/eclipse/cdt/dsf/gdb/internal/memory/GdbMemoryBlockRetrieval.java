@@ -24,7 +24,10 @@ import org.eclipse.cdt.dsf.debug.model.DsfMemoryBlock;
 import org.eclipse.cdt.dsf.debug.model.DsfMemoryBlockRetrieval;
 import org.eclipse.cdt.dsf.debug.service.IMemory.IMemoryDMContext;
 import org.eclipse.cdt.dsf.debug.service.IMemorySpaces;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.IStartedDMEvent;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfServices;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.CoreException;
@@ -380,5 +383,22 @@ public class GdbMemoryBlockRetrieval extends DsfMemoryBlockRetrieval implements
         	return service.creatingBlockRequiresMemorySpaceID();
         }
 		return false;
+	}
+
+	@DsfServiceEventHandler 
+    public void eventDispatched(IStartedDMEvent event) {
+		if (event instanceof org.eclipse.cdt.dsf.gdb.service.GDBProcesses_7_0.ContainerStartedDMEvent) {
+			handleContainerStartedEvent(event.getDMContext());
+		}
+		else if (event instanceof org.eclipse.cdt.dsf.mi.service.MIProcesses.ContainerStartedDMEvent) {
+			handleContainerStartedEvent(event.getDMContext());
+		}
+    }
+	
+	private void handleContainerStartedEvent(IExecutionDMContext context) {
+		IMemoryDMContext memoryDmc = DMContexts.getAncestorOfType(context, IMemoryDMContext.class);
+		if (memoryDmc != null) {
+			initialize(memoryDmc);
+		}
 	}
 }

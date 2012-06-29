@@ -69,6 +69,24 @@
       "revId": "2621c97c57d2f2e1393144e8bcc551adbdad031e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIX////A\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrieval.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 397,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-06-29T19:43:59Z",
+      "side": 1,
+      "message": "I\u0027m not very familiar with MemoryBlock vs MemoryMonitors.  Don\u0027t we need to only persist the memory monitors?  In that case, we don\u0027t need to save them per process, but only for the session, right?\n\nSo, since this patch initializes memory blocks for each process, I assumed we would need to clean up those blocks when the process was removed.  Unless there is nothing to cleanup?",
+      "parentUuid": "AABOIX////c\u003d",
+      "revId": "2621c97c57d2f2e1393144e8bcc551adbdad031e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

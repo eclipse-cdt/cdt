@@ -16,6 +16,41 @@
       "revId": "2621c97c57d2f2e1393144e8bcc551adbdad031e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOH3///1k\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrieval.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 389,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-06-29T18:10:26Z",
+      "side": 1,
+      "message": "You can use\n  if (event.getDMContext() instanceof IContainerDMContext)\nto know if you are dealing with a container or a thread.",
+      "parentUuid": "AABOH3///1w\u003d",
+      "revId": "2621c97c57d2f2e1393144e8bcc551adbdad031e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOH3///1c\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrieval.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 397,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-06-29T18:10:26Z",
+      "side": 1,
+      "message": "What happens when a process stops?  Do we need to clean up the corresponding memory blocks?  We\u0027d need a matching eventDispatched() method for IExitedDMEvent.",
+      "revId": "2621c97c57d2f2e1393144e8bcc551adbdad031e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

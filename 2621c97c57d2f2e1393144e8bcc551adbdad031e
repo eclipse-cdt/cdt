@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOH3///1w\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrieval.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 389,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-06-29T16:49:55Z",
+      "side": 1,
+      "message": "GdbMemoryBlockRetrieval is not a service. I don\u0027t think we want to have different versions of it for different GDBs.\nDo we need to add a common \u0027ContainerStartedEvent\u0027 for all services? Or this code is good enough?",
+      "revId": "2621c97c57d2f2e1393144e8bcc551adbdad031e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

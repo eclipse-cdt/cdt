@@ -50,6 +50,7 @@ public abstract class ToolchainBuiltinSpecsDetector extends AbstractBuiltinSpecs
 	 *
 	 * Tool-chain id must be supplied for global providers where we don't
 	 * have configuration description to figure that out programmatically.
+	 * @since 8.2
 	 */
 	public abstract String getToolchainId();
 

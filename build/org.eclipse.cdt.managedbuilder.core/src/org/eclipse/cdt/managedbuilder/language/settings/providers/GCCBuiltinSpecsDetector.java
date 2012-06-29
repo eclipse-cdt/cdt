@@ -48,6 +48,9 @@ public class GCCBuiltinSpecsDetector extends ToolchainBuiltinSpecsDetector imple
 			new MacroOptionParser("#define\\s+(\\S*)\\s*(\\S*)", "$1", "$2", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY),
 	};
 
+	/**
+	 * @since 8.2
+	 */
 	@Override
 	public String getToolchainId() {
 		return GCC_TOOLCHAIN_ID;

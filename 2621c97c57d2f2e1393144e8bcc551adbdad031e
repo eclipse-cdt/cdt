@@ -51,6 +51,24 @@
       "revId": "2621c97c57d2f2e1393144e8bcc551adbdad031e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIX////c\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/memory/GdbMemoryBlockRetrieval.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 397,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-06-29T19:09:02Z",
+      "side": 1,
+      "message": "I have thought about it but don\u0027t really know what to do in this case. Should we save the memory monitor related to the exited process here and remove them from the view? It seems logical. Currently it is done in GdbLaunch.shutdownSession().\nNote that removing the monitors from the view doesn\u0027t work, see https://bugs.eclipse.org/bugs/show_bug.cgi?id\u003d383683.",
+      "parentUuid": "AABOH3///1c\u003d",
+      "revId": "2621c97c57d2f2e1393144e8bcc551adbdad031e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

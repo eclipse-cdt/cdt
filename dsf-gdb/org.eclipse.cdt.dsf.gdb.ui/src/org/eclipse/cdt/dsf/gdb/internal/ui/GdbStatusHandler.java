@@ -7,18 +7,22 @@
  *
  * Contributors:
  * Mentor Graphics - Initial API and implementation
+ * Jason Litton (Sage Electronic Engineering, LLC) - added implementation of IGdbErrorListener
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.internal.ui;
 
+import org.eclipse.cdt.dsf.gdb.IGdbErrorListener;
+import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-public class GdbStatusHandler implements IStatusHandler {
+public class GdbStatusHandler implements IStatusHandler, IGdbErrorListener {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IStatusHandler#handleStatus(org.eclipse.core.runtime.IStatus, java.lang.Object)
@@ -62,5 +66,17 @@ public class GdbStatusHandler implements IStatusHandler {
 		if ( runnable != null )
 			Display.getDefault().asyncExec( runnable );
 		return null;
+	}
+
+	@Override
+	public void gdbErrorNotification(String message) {
+		Status status = new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, message);
+		try {
+			handleStatus(status, this);
+		} catch (CoreException e) {
+			// Not sure what to do here
+			e.printStackTrace();
+		}
+		
 	}
 }

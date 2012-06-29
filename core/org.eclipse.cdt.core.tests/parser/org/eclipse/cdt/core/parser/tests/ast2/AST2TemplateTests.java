@@ -5256,7 +5256,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	void test() {
 	//	  P(C());
 	//	}
-	public void _testFunctionInstanceAsTemplateArg_Bug334472() throws Exception {
+	public void testFunctionInstanceAsTemplateArg_Bug334472() throws Exception {
 		parseAndCheckBindings();
 	}
 

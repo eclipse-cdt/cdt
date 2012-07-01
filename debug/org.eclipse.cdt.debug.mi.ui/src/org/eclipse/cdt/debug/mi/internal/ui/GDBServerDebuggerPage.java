@@ -68,6 +68,11 @@ public class GDBServerDebuggerPage extends StandardGDBDebuggerPage {
 		Composite comp = ControlFactory.createCompositeEx( comp1, 2, GridData.FILL_BOTH );
 		((GridLayout)comp.getLayout()).makeColumnsEqualWidth = false;
 		comp.setFont( comp1.getFont() );
+		
+		createConnectionWidgets(comp);		
+	}
+
+	protected void createConnectionWidgets(Composite comp) {
 		fConnectionField.doFillIntoGrid( comp, 2 );
 		((GridData)fConnectionField.getComboControl( null ).getLayoutData()).horizontalAlignment = GridData.BEGINNING;
 		PixelConverter converter = new PixelConverter( comp );
@@ -76,7 +81,7 @@ public class GDBServerDebuggerPage extends StandardGDBDebuggerPage {
 		fConnectionStack.setLayout( stackLayout );
 		((GridData)fConnectionStack.getLayoutData()).horizontalSpan = 2;
 		fTCPBlock.createBlock( fConnectionStack );
-		fSerialBlock.createBlock( fConnectionStack );		
+		fSerialBlock.createBlock( fConnectionStack );
 	}
 
 	private ComboDialogField createConnectionField() {
@@ -188,5 +193,12 @@ public class GDBServerDebuggerPage extends StandardGDBDebuggerPage {
 	public void createTabs( TabFolder tabFolder ) {
 		super.createTabs( tabFolder );
 		createConnectionTab( tabFolder );
+	}
+
+	public void dispose() {
+		fTCPBlock.dispose();
+		fSerialBlock.dispose();
+		fConnectionStack.dispose();
+		fConnectionField.dispose();
 	}
 }

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOIX///vg\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 244,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-07-02T19:29:19Z",
+      "side": 1,
+      "message": "Based on the comment a little further down, we should check that fMemRetrieval is not null before doing this.  Doing a auto remote session with an invalid gdbserver triggered this NPE:\njava.lang.NullPointerException\n\tat org.eclipse.cdt.dsf.service.DsfSession$ListenerEntry.hashCode(DsfSession.java:262)\n\tat java.util.HashMap.removeEntryForKey(HashMap.java:548)\n\tat java.util.HashMap.remove(HashMap.java:538)\n\tat org.eclipse.cdt.dsf.service.DsfSession.removeServiceEventListener(DsfSession.java:355)\n\tat org.eclipse.cdt.dsf.gdb.launching.GdbLaunch$4.handleCompleted(GdbLaunch.java:244)",
+      "revId": "b4c6202233b376f978d53b2f7047ac1046101647",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

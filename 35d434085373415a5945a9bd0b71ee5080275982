@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "AABOIX///2Y\u003d",
+        "filename": "core/org.eclipse.cdt.core.tests/resources/rewrite/CommentHandlingTestSource.rts",
+        "patchSetId": 2
+      },
+      "lineNbr": 3171,
+      "author": {
+        "id": 660
+      },
+      "writtenOn": "2012-07-02T12:13:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOH3///94\u003d",
+      "revId": "35d434085373415a5945a9bd0b71ee5080275982",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOH3///90\u003d",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/rewrite/commenthandler/ASTCommenter.java",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2012-06-27T22:31:51Z",
       "side": 1,
       "message": "Please break the line after the equals sign.",
+      "revId": "35d434085373415a5945a9bd0b71ee5080275982",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIX///2U\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/rewrite/commenthandler/ASTCommenter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 249,
+      "author": {
+        "id": 660
+      },
+      "writtenOn": "2012-07-02T12:13:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOH3///90\u003d",
       "revId": "35d434085373415a5945a9bd0b71ee5080275982",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

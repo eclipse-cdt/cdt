@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOIX///nY\u003d",
+        "filename": "debug/org.eclipse.cdt.debug.mi.ui/src/org/eclipse/cdt/debug/mi/internal/ui/GDBServerDebuggerPage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 198,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-07-03T17:39:17Z",
+      "side": 1,
+      "message": "This method overrides StandardGDBDebuggerPage.dispose(). Why don\u0027t you just use super.dispose() in it and dispose only of the widgets and classes added to GDBServerDebuggerPage?",
+      "revId": "0dce03c49c622e05f58d40c3eaab5711c6bff301",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

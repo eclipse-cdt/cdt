@@ -662,16 +662,17 @@ public class CModelManager implements IResourceChangeListener, IContentTypeChang
 				baseFileName = baseFileName.removeFileExtension();
 				ext = baseFileName.getFileExtension();
 			} while (ext != null && ext.length() > 0);
-
-			boolean isBinary= false;
 			final IContentTypeManager ctm = Platform.getContentTypeManager();
 			final IContentType ctbin = ctm.getContentType(CCorePlugin.CONTENT_TYPE_BINARYFILE);
-			final IContentType[] cts= ctm.findContentTypesFor(baseFileName.toString());
-			for (int i=0; !isBinary && i < cts.length; i++) {
-				isBinary= cts[i].isKindOf(ctbin);
-			}
-			if (!isBinary) {
-				return null;
+			final IContentType[] cts = ctm.findContentTypesFor(baseFileName.toString());
+			if (cts.length > 0) {
+				boolean isBinary= false;
+				for (int i=0; !isBinary && i < cts.length; i++) {
+					isBinary = cts[i].isKindOf(ctbin);
+				}
+				if (!isBinary) {
+					return null;
+				}
 			}
 		}
 

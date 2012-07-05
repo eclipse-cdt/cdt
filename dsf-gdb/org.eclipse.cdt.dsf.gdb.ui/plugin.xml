@@ -60,13 +60,21 @@
             class="org.eclipse.cdt.dsf.gdb.internal.ui.launching.CMainTab">
         <associatedDelegate delegate="org.eclipse.cdt.dsf.gdb.launch.remoteCLaunch"/>
       </tab>
+      <tab 
+            id="org.eclipse.cdt.dsf.gdb.launch.remoteApplicationLaunch.environmentTab"
+            group="org.eclipse.cdt.launch.remoteApplicationLaunchTabGroup"
+            name="%launchTab.environment.name"
+            class="org.eclipse.debug.ui.EnvironmentTab">
+        <associatedDelegate delegate="org.eclipse.cdt.dsf.gdb.launch.remoteCLaunch"/>
+        <placement after="org.eclipse.cdt.dsf.gdb.launch.mainTab"/>
+      </tab>
       <tab
             id="org.eclipse.cdt.dsf.gdb.launch.remoteApplicationLaunch.debuggerTab"
             group="org.eclipse.cdt.launch.remoteApplicationLaunchTabGroup"
             name="%launchTab.debugger.name"
             class="org.eclipse.cdt.dsf.gdb.internal.ui.launching.RemoteApplicationCDebuggerTab">
         <associatedDelegate delegate="org.eclipse.cdt.dsf.gdb.launch.remoteCLaunch"/>
-        <placement after="org.eclipse.cdt.dsf.gdb.launch.mainTab"/>
+        <placement after="org.eclipse.debug.ui.environmentTab"/>
       </tab>
       <tab
             id="org.eclipse.cdt.dsf.gdb.launch.remoteApplicationLaunch.sourceLookupTab"

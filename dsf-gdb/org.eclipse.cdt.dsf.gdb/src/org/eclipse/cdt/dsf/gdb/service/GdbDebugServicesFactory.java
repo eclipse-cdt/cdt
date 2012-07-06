@@ -102,7 +102,7 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 					return (V)createHardwareAndOSService(session, (ILaunchConfiguration)arg);
 				}
 			}
-	}
+		}
 
         return super.createService(clazz, session);
 	}
@@ -151,7 +151,12 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 	
 	@Override
 	protected IExpressions createExpressionService(DsfSession session) {
-		return new MIExpressions(session);
+		// Replace the standard Expressions service with a version that supports pattern matching.
+		// Pass in the original service which will be used as a delegate.
+		// This way of doing things allows to keep the pattern matching aspect isolated
+		// and easy to remove.
+		IExpressions originialExpressionService = new MIExpressions(session);
+		return new GDBPatternMatchingExpressions(session, originialExpressionService);
 	}
 
 	@Override

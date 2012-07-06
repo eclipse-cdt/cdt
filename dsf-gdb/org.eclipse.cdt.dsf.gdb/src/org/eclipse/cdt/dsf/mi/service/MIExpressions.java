@@ -30,6 +30,7 @@ import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.ICachingService;
 import org.eclipse.cdt.dsf.debug.service.IExpressions;
 import org.eclipse.cdt.dsf.debug.service.IExpressions2;
+import org.eclipse.cdt.dsf.debug.service.IExpressions3;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
 import org.eclipse.cdt.dsf.debug.service.IMemory.IMemoryChangedEvent;
 import org.eclipse.cdt.dsf.debug.service.IMemory.IMemoryDMContext;
@@ -836,12 +837,18 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 		// Register to receive service events for this session.
         getSession().addServiceEventListener(this, null);
         
-		// Register this service.
-		register(new String[] { IExpressions.class.getName(),
-				IExpressions2.class.getName(),
-				MIExpressions.class.getName() },
-				new Hashtable<String, String>());
-		
+		// Register this service, but only if we don't already have an
+        // IExpression service present.  This allows another expression
+        // service to be used, while delegating calls to this service.
+        if (getServicesTracker().getService(IExpressions.class) == null) {
+        	register(new String[] { IExpressions.class.getName(),
+        			                IExpressions2.class.getName(), 
+        			                IExpressions3.class.getName(),
+        			                IMIExpressions.class.getName(),
+        			                MIExpressions.class.getName() },
+        			new Hashtable<String, String>());
+        }
+        
 		// Create the expressionService-specific CommandControl which is our
         // variable object manager.
         // It will deal with the meta-commands, before sending real MI commands

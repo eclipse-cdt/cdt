@@ -9,6 +9,7 @@
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
  *     Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
+ *     Jason Litton (Sage Electronic Engineering, LLC) - Added debug tracing (Bug 384413)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
@@ -25,6 +26,7 @@ import org.eclipse.cdt.core.index.IIndexLinkage;
 import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.parser.ISignificantMacros;
+import org.eclipse.cdt.internal.core.CdtCoreDebugOptions;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFileSet;
@@ -50,7 +52,7 @@ public class PDOMProxy implements IPDOM {
 	private Map<Thread, DebugLockInfo> fLockDebugging;
 
 	public PDOMProxy() {
-		if (PDOM.sDEBUG_LOCKS) {
+		if (CdtCoreDebugOptions.DEBUG_PDOM_INDEX_LOCKS) {
 			fLockDebugging= new HashMap<Thread, DebugLockInfo>();
 		}
 	}
@@ -61,7 +63,7 @@ public class PDOMProxy implements IPDOM {
 			fDelegate.acquireReadLock();
 		} else {
 			fReadLockCount++;
-			if (PDOM.sDEBUG_LOCKS) {
+			if (CdtCoreDebugOptions.DEBUG_PDOM_INDEX_LOCKS) {
 				PDOM.incReadLock(fLockDebugging);
 			}
 		}
@@ -231,7 +233,7 @@ public class PDOMProxy implements IPDOM {
 		// read-locks not forwarded to delegate need to be released here
 		if (fReadLockCount > 0) {
 			fReadLockCount--;
-			if (PDOM.sDEBUG_LOCKS)
+			if (CdtCoreDebugOptions.DEBUG_PDOM_INDEX_LOCKS)
 				PDOM.decReadLock(fLockDebugging);
 		} else if (fDelegate != null) {
 			fDelegate.releaseReadLock();
@@ -290,7 +292,7 @@ public class PDOMProxy implements IPDOM {
 				pdom.acquireReadLock();
 				fReadLockCount--;
 			}
-			if (PDOM.sDEBUG_LOCKS) {
+			if (CdtCoreDebugOptions.DEBUG_PDOM_INDEX_LOCKS) {
 				pdom.adjustThreadForReadLock(fLockDebugging);
 			}
 		} catch (InterruptedException e) {

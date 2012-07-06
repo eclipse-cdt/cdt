@@ -13,6 +13,7 @@
  *     Tim Kelly (Nokia)
  *     Anna Dushistova (MontaVista)
  *     Marc-Andre Laperle
+ *     Jason Litton (Sage Electronic Engineering, LLC) - Added debug tracing (Bug 384413)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
@@ -61,6 +62,7 @@ import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.core.settings.model.CProjectDescriptionEvent;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionListener;
 import org.eclipse.cdt.internal.core.CCoreInternals;
+import org.eclipse.cdt.internal.core.CdtCoreDebugOptions;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IWritableIndex;
 import org.eclipse.cdt.internal.core.index.IWritableIndexManager;
@@ -114,7 +116,7 @@ import com.ibm.icu.text.MessageFormat;
  * stabilized.
  */
 public class PDOMManager implements IWritableIndexManager, IListener {
-	private static final String TRACE_INDEXER_SETUP = CCorePlugin.PLUGIN_ID + "/debug/indexer/setup"; //$NON-NLS-1$
+//	private static final String TRACE_INDEXER_SETUP = CCorePlugin.PLUGIN_ID + "/debug/indexer/setup"; //$NON-NLS-1$
 
 	private final class PCL implements IPreferenceChangeListener {
 		private ICProject fProject;
@@ -189,10 +191,8 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	private int fLastNotifiedState= IndexerStateEvent.STATE_IDLE;
 	private boolean fInShutDown;
 
-	boolean fTraceIndexerSetup;
     
 	public PDOMManager() {
-		PDOM.sDEBUG_LOCKS= "true".equals(Platform.getDebugOption(CCorePlugin.PLUGIN_ID + "/debug/index/locks"));  //$NON-NLS-1$//$NON-NLS-2$
 		addIndexerSetupParticipant(new WaitForRefreshJobs());
 		fProjectDescriptionListener= new CProjectDescriptionListener(this);
 		fJobChangeListener= new JobChangeListener(this);
@@ -237,7 +237,6 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		updatePathCanonicalizationStrategy();
 		fIndexProviderManager.startup();
 		
-		fTraceIndexerSetup= String.valueOf(true).equals(Platform.getDebugOption(TRACE_INDEXER_SETUP));
 		final CoreModel model = CoreModel.getDefault();
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(fCModelListener, IResourceChangeEvent.POST_BUILD);
 		model.addElementChangedListener(fCModelListener);
@@ -546,15 +545,15 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	void createIndexer(ICProject project, IProgressMonitor pm) throws InterruptedException {
 		final IProject prj= project.getProject();
 		final String name = prj.getName();
-		if (fTraceIndexerSetup) 
-			System.out.println("Indexer: Creation for project " + name); //$NON-NLS-1$
+		if (CdtCoreDebugOptions.DEBUG_INDEXER_SETUP) 
+			CdtCoreDebugOptions.trace("Indexer: Creation for project " + name); //$NON-NLS-1$
 		
 		assert !Thread.holdsLock(fProjectToPDOM);
 		try {
 			synchronized (fUpdatePolicies) {
 				if (fClosingProjects.contains(name)) {
-					if (fTraceIndexerSetup) 
-						System.out.println("Indexer: Aborting setup (1) for closing project " + name + " [1]"); //$NON-NLS-1$ //$NON-NLS-2$
+					if (CdtCoreDebugOptions.DEBUG_INDEXER_SETUP) 
+						CdtCoreDebugOptions.trace("Indexer: Aborting setup (1) for closing project " + name + " [1]"); //$NON-NLS-1$ //$NON-NLS-2$
 					return;
 				}
 				
@@ -591,8 +590,8 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 							pdom.releaseReadLock();
 						}
 						if (resume) {
-							if (fTraceIndexerSetup) 
-								System.out.println("Indexer: Resuming for project " + name); //$NON-NLS-1$
+							if (CdtCoreDebugOptions.DEBUG_INDEXER_SETUP) 
+								CdtCoreDebugOptions.trace("Indexer: Resuming for project " + name); //$NON-NLS-1$
 
 							enqueue(new PDOMUpdateTask(indexer,
 									IIndexManager.UPDATE_CHECK_TIMESTAMPS | IIndexManager.UPDATE_CHECK_CONTENTS_HASH));
@@ -608,8 +607,8 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 
 			synchronized (fUpdatePolicies) {
 				if (fClosingProjects.contains(name)) {
-					if (fTraceIndexerSetup) 
-						System.out.println("Indexer: Aborting setup for closing project " + name + " [2]"); //$NON-NLS-1$ //$NON-NLS-2$
+					if (CdtCoreDebugOptions.DEBUG_INDEXER_SETUP) 
+						CdtCoreDebugOptions.trace("Indexer: Aborting setup for closing project " + name + " [2]"); //$NON-NLS-1$ //$NON-NLS-2$
 					return;
 				}
 
@@ -623,13 +622,13 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 				if (policy.isAutomatic() || policy.isInitialRebuildRequested()) {
 					policy.clearInitialFlags();
 					if (operation.wasSuccessful()) {
-						if (fTraceIndexerSetup) 
-							System.out.println("Indexer: Imported shared index for project " + name); //$NON-NLS-1$ 
+						if (CdtCoreDebugOptions.DEBUG_INDEXER_SETUP) 
+							CdtCoreDebugOptions.trace("Indexer: Imported shared index for project " + name); //$NON-NLS-1$ 
 						task= new PDOMUpdateTask(indexer,
 								IIndexManager.UPDATE_CHECK_TIMESTAMPS | IIndexManager.UPDATE_CHECK_CONTENTS_HASH);
 					} else {
-						if (fTraceIndexerSetup) 
-							System.out.println("Indexer: Rebuiding for project " + name); //$NON-NLS-1$ 
+						if (CdtCoreDebugOptions.DEBUG_INDEXER_SETUP) 
+							CdtCoreDebugOptions.trace("Indexer: Rebuiding for project " + name); //$NON-NLS-1$ 
 						task= new PDOMRebuildTask(indexer);
 					}
 					enqueue(task);
@@ -723,8 +722,8 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 
 	void addProject(final ICProject cproject) {
 		final String name = cproject.getProject().getName();
-		if (fTraceIndexerSetup) {
-			System.out.println("Indexer: Adding new project " + name); //$NON-NLS-1$
+		if (CdtCoreDebugOptions.DEBUG_INDEXER_SETUP) {
+			CdtCoreDebugOptions.trace("Indexer: Adding new project " + name); //$NON-NLS-1$
 		}	
 		
 		synchronized (fUpdatePolicies) {
@@ -820,8 +819,8 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		final IProject rproject= cproject.getProject();
 		final String name = rproject.getName();
 
-		if (fTraceIndexerSetup) 
-			System.out.println("Indexer: Removing project " + name + "; delete=" + delete); //$NON-NLS-1$ //$NON-NLS-2$ 
+		if (CdtCoreDebugOptions.DEBUG_INDEXER_SETUP) 
+			CdtCoreDebugOptions.trace("Indexer: Removing project " + name + "; delete=" + delete); //$NON-NLS-1$ //$NON-NLS-2$ 
 
 		IPDOMIndexer indexer;
 		synchronized (fUpdatePolicies) {

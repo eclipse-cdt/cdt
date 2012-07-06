@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2012 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,11 +7,13 @@
  *
  * Contributors:
  *     Markus Schorn (Wind River Systems) - initial API and implementation
+ *     Jason Litton (Sage Electronic Engineering, LLC) - Added debug tracing (Bug 384413)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.internal.core.CdtCoreDebugOptions;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -46,11 +48,11 @@ public class PDOMSetupJob extends Job {
 			final IProject project= cproject.getProject();
 			monitor.setTaskName(project.getName());
 			if (!project.isOpen()) {
-				if (fManager.fTraceIndexerSetup) 
-					System.out.println("Indexer: Project is not open: " + project.getName()); //$NON-NLS-1$
+				if (CdtCoreDebugOptions.DEBUG_INDEXER_SETUP) 
+					CdtCoreDebugOptions.trace("Indexer: Project is not open: " + project.getName()); //$NON-NLS-1$
 			} else if (fManager.postponeSetup(cproject)) {
-				if (fManager.fTraceIndexerSetup) 
-					System.out.println("Indexer: Setup is postponed: " + project.getName()); //$NON-NLS-1$
+				if (CdtCoreDebugOptions.DEBUG_INDEXER_SETUP) 
+					CdtCoreDebugOptions.trace("Indexer: Setup is postponed: " + project.getName()); //$NON-NLS-1$
 			} else {
 				syncronizeProjectSettings(project, new SubProgressMonitor(monitor, 1));
 				if (fManager.getIndexer(cproject) == null) {
@@ -60,8 +62,8 @@ public class PDOMSetupJob extends Job {
 						Thread.currentThread().interrupt();
 						return Status.CANCEL_STATUS;
 					}
-				} else if (fManager.fTraceIndexerSetup) { 
-					System.out.println("Indexer: No action, indexer already exists: " + project.getName()); //$NON-NLS-1$
+				} else if (CdtCoreDebugOptions.DEBUG_INDEXER_SETUP) { 
+					CdtCoreDebugOptions.trace("Indexer: No action, indexer already exists: " + project.getName()); //$NON-NLS-1$
 				}
 			}
 		}

@@ -12,6 +12,7 @@
  *     Anton Leherbauer (Wind River Systems)
  *     oyvind.harboe@zylin.com - http://bugs.eclipse.org/250638
  *     Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
+ *     Jason Litton (Sage Electronic Engineering, LLC) - Added debug tracing (Bug 384413)
  *******************************************************************************/
 package org.eclipse.cdt.core;
 
@@ -45,6 +46,7 @@ import org.eclipse.cdt.core.settings.model.WriteAccessException;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.internal.core.CContentTypes;
 import org.eclipse.cdt.internal.core.CDTLogWriter;
+import org.eclipse.cdt.internal.core.CdtCoreDebugOptions;
 import org.eclipse.cdt.internal.core.CdtVarPathEntryVariableManager;
 import org.eclipse.cdt.internal.core.ICConsole;
 import org.eclipse.cdt.internal.core.PositionTrackerManager;
@@ -344,7 +346,7 @@ public class CCorePlugin extends Plugin {
 
 		// do harmless stuff first.
 		cdtLog = new CDTLogWriter(CCorePlugin.getDefault().getStateLocation().append(".log").toFile()); //$NON-NLS-1$
-		configurePluginDebugOptions();
+		new CdtCoreDebugOptions(context);
         PositionTrackerManager.getInstance().install();
         ResourceLookup.startup();
 
@@ -1128,6 +1130,8 @@ public class CCorePlugin extends Plugin {
 
 	/**
 	 * Configure the plug-in with respect to option settings defined in ".options" file
+	 * @deprecated Use org.eclipse.cdt.internal.core.CdtCoreDebugOptions
+	 * for debug tracing
 	 */
 	public void configurePluginDebugOptions() {
 
@@ -1383,6 +1387,20 @@ public class CCorePlugin extends Plugin {
 	 */
 	public static void log(IStatus status) {
 		getDefault().getLog().log(status);
+	}
+	
+	/**
+	 * Convenience method which returns the unique identifier of this plugin.
+	 * @since 5.5
+	 */
+	public static String getUniqueIdentifier() {
+		if (getDefault() == null) {
+			// If the default instance is not yet initialized,
+			// return a static identifier. This identifier must
+			// match the plugin id defined in plugin.xml
+			return PLUGIN_ID;
+		}
+		return getDefault().getBundle().getSymbolicName();
 	}
 
 	/**

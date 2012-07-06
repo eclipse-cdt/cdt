@@ -10,6 +10,7 @@
  *     Markus Schorn (Wind River Systems)
  *     Anton Leherbauer (Wind River Systems)
  *     IBM Corporation - EFS support
+ *     Jason Litton (Sage Electronic Engineering, LLC) - Added debug tracing (Bug 384413)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.model;
@@ -24,6 +25,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICLogConstants;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICModelStatusConstants;
+import org.eclipse.cdt.internal.core.CdtCoreDebugOptions;
 import org.eclipse.cdt.internal.core.util.CharArrayBuffer;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
@@ -183,40 +185,39 @@ public class Util implements ICLogConstants {
 		IStatus status = new Status(IStatus.INFO, CCorePlugin.PLUGIN_ID, IStatus.INFO, message,	null);
 		Util.log(status, logType);
 	}
-
+	
+	/**
+	 * @deprecated Use org.eclipse.cdt.internal.core.CdtCoreDebugOptions.trace()
+	 */
+	@Deprecated
 	public static void debugLog(String message, DebugLogConstants client) {
 		Util.debugLog(message, client, true);
 	}
 
+	/**
+	 * @deprecated Use org.eclipse.cdt.internal.core.CdtCoreDebugOptions.trace()
+	 */
+	@Deprecated
 	public static void debugLog(String message, DebugLogConstants client,
 			boolean addTimeStamp) {
 		if (CCorePlugin.getDefault() == null)
 			return;
-		if (CCorePlugin.getDefault().isDebugging() && isActive(client)) {
+		if (CdtCoreDebugOptions.DEBUG && isActive(client)) {
 			// Time stamp
 			if (addTimeStamp)
 				message = MessageFormat.format("[{0}] {1}", new Object[]{ //$NON-NLS-1$
 						new Long(System.currentTimeMillis()), message}); 
-			while (message.length() > 100) {
-				String partial = message.substring(0, 100);
-				message = message.substring(100);
-				System.out.println(partial + "\\"); //$NON-NLS-1$
-			}
-			if (message.endsWith("\n")) { //$NON-NLS-1$
-				System.err.print(message);
-			} else {
-				System.out.println(message);
-			}
+			CdtCoreDebugOptions.trace(message);
 		}
 	}
 
 	public static boolean isActive(DebugLogConstants client) {
 		if (client.equals(DebugLogConstants.PARSER)) {
-			return VERBOSE_PARSER;
+			return CdtCoreDebugOptions.DEBUG_PARSER;
 		} else if (client.equals(DebugLogConstants.SCANNER))
-			return VERBOSE_SCANNER;
+			return CdtCoreDebugOptions.DEBUG_SCANNER;
 		else if (client.equals(DebugLogConstants.MODEL)) {
-			return VERBOSE_MODEL;
+			return CdtCoreDebugOptions.DEBUG_MODEL;
 		}
 		return false;
 	}

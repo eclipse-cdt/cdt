@@ -9,6 +9,7 @@
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     Sergey Prigogin (Google)
+ *     Jason Litton (Sage Electronic Engineering, LLC) - Added debug tracing (Bug 384413)
  *******************************************************************************/
 package org.eclipse.cdt.internal.formatter;
 
@@ -143,6 +144,7 @@ import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
 import org.eclipse.cdt.core.formatter.DefaultCodeFormatterOptions;
 import org.eclipse.cdt.core.parser.IToken;
+import org.eclipse.cdt.internal.core.CdtCoreDebugOptions;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.formatter.align.Alignment;
 import org.eclipse.cdt.internal.formatter.align.AlignmentException;
@@ -164,7 +166,6 @@ import org.eclipse.text.edits.TextEdit;
  * @since 4.0
  */
 public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, ICASTVisitor {
-	private static boolean DEBUG = "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.cdt.core/debug/formatter")); //$NON-NLS-1$ //$NON-NLS-2$
 
 	private static class ASTProblemException extends RuntimeException {
 		ASTProblemException(IASTProblem problem) {
@@ -388,7 +389,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		// reset the scribe
 		scribe.reset();
 
-		final long startTime = DEBUG ? System.currentTimeMillis() : 0;
+		final long startTime = CdtCoreDebugOptions.DEBUG_FORMATTER ? System.currentTimeMillis() : 0;
 
 		final char[] compilationUnitSource = string.toCharArray();
 
@@ -402,10 +403,10 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			unit.accept(this);
 		} catch (RuntimeException e) {
 			reportFormattingProblem(e);
-			if (DEBUG) return failedToFormat(e);
+			if (CdtCoreDebugOptions.DEBUG_FORMATTER) return failedToFormat(e);
 		}
-		if (DEBUG){
-			System.out.println("Formatting time: " + (System.currentTimeMillis() - startTime)); //$NON-NLS-1$
+		if (CdtCoreDebugOptions.DEBUG_FORMATTER){
+			CdtCoreDebugOptions.trace("Formatting time: " + (System.currentTimeMillis() - startTime)); //$NON-NLS-1$
 		}
 		return scribe.getRootEdit();
 	}
@@ -418,10 +419,10 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	}
 
 	private TextEdit failedToFormat(RuntimeException e) {
-		if (DEBUG) {
-			System.out.println("COULD NOT FORMAT: " + e.getMessage()); //$NON-NLS-1$
-			System.out.println(scribe.scanner);
-			System.out.println(scribe);
+		if (CdtCoreDebugOptions.DEBUG_FORMATTER) {
+			CdtCoreDebugOptions.trace("COULD NOT FORMAT: " + e.getMessage()); //$NON-NLS-1$
+			CdtCoreDebugOptions.trace(String.valueOf(scribe.scanner));
+			CdtCoreDebugOptions.trace(String.valueOf(scribe));
 			System.out.flush();
 			System.err.flush();
 			e.printStackTrace();

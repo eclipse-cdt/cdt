@@ -782,5 +782,15 @@
             factoryClass="org.eclipse.cdt.internal.core.resources.ResourceExclusionFactory">
       </exclusionFactory>
    </extension>
-
+   <extension
+         point="org.eclipse.ui.trace.traceComponents">
+      <component
+            id="org.eclipse.cdt.core.component"
+            label="%cdt.core.component.label">
+         <bundle
+               consumed="true"
+               name="org.eclipse.cdt.core">
+         </bundle>
+      </component>
+   </extension>
 </plugin>

@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.IWizardPage;
@@ -314,8 +315,15 @@ import org.eclipse.cdt.internal.ui.newui.Messages;
 			if (tree.getItemCount() > 0) {
 				TreeItem target = null;
 				// try to search item which was selected before
-				if (savedLabel!=null) {
+				if (savedLabel != null) {
 					target = findItem(tree, savedLabel, savedParentLabel);
+				}
+				if (target == null) {
+					// Default selection associated with "org.eclipse.cdt.build.core.buildArtefactType.exe" project type
+					target = findItem(tree, Messages.CDTMainWizardPage_DefaultProjectType, Messages.CDTMainWizardPage_DefaultProjectCategory);
+					if (target == null) {
+						CUIPlugin.log(new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, "Default project not found in New C/C++ Project Wizard")); //$NON-NLS-1$
+					}
 				}
 				if (target == null) {
 					target = tree.getItem(0);

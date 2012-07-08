@@ -25,9 +25,7 @@ import org.eclipse.core.runtime.Platform;
  *
  * @noextend This class is not intended to be subclassed by clients.
  */
-public class MingwEnvironmentVariableSupplier implements
-		IConfigurationEnvironmentVariableSupplier {
-
+public class MingwEnvironmentVariableSupplier implements IConfigurationEnvironmentVariableSupplier {
 	private static boolean checked = false;
 	private static IPath binDir = null;
 

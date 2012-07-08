@@ -63,16 +63,13 @@ public class CygwinPathResolver implements IBuildPathResolver {
 	private static String rootCygwin = null;
 	private static String etcCygwin = null;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IBuildPathResolver#resolveBuildPaths(int, java.lang.String, java.lang.String, org.eclipse.cdt.managedbuilder.core.IConfiguration)
-	 */
 	@Override
 	public String[] resolveBuildPaths(int pathType, String variableName,
 			String variableValue, IConfiguration configuration) {
 
-		if(!isWindows()){
+		if(!isWindows()) {
 			return variableValue.split(DELIMITER_UNIX);
-		} else if(isMinGW(configuration)){
+		} else if(isMinGW(configuration)) {
 			return variableValue.split(DELIMITER_WIN);
 		}
 
@@ -92,7 +89,8 @@ public class CygwinPathResolver implements IBuildPathResolver {
 		}
 		return result;
 	}
-	/*
+
+	/**
 	 * returns "/etc" path in Windows format
 	 */
 	public static String getEtcPath() {
@@ -100,17 +98,17 @@ public class CygwinPathResolver implements IBuildPathResolver {
 		return etcCygwin;
 	}
 
-	/*
+	/**
 	 * returns "/usr/bin" path in Windows format
 	 */
 	public static String getBinPath() {
 		if (!checked) findPaths();
 		return binCygwin;
 	}
-	/*
+
+	/**
 	 * returns Cygwin root ("/") path in Windows format
 	 */
-
 	public static String getRootPath() {
 		if (!checked) findPaths();
 		return rootCygwin;
@@ -140,6 +138,7 @@ public class CygwinPathResolver implements IBuildPathResolver {
 		}
 		return null;
 	}
+
 	/**
 	 *  Returns the absolute path of the pattern by
 	 *  simply appending the pattern to the root
@@ -233,7 +232,7 @@ public class CygwinPathResolver implements IBuildPathResolver {
 		try {
 			IEnvironmentVariable vars[] = ManagedBuildManager.getEnvironmentVariableProvider().getVariables(cfg,true);
 			String env[] = new String[vars.length];
-			for(int i = 0; i < env.length; i++){
+			for(int i = 0; i < env.length; i++) {
 				env[i] = vars[i].getName() + "="; //$NON-NLS-1$
 				String value = vars[i].getValue();
 				if(value != null)
@@ -258,10 +257,10 @@ public class CygwinPathResolver implements IBuildPathResolver {
 		return null;
 	}
 
-	public static boolean isMinGW(IConfiguration cfg){
+	public static boolean isMinGW(IConfiguration cfg) {
 		String versionInfo[] = exec(GCC_VERSION_CMD, cfg);
 		if(versionInfo != null) {
-			for(int i = 0; i < versionInfo.length; i++){
+			for(int i = 0; i < versionInfo.length; i++) {
 				if(versionInfo[i].indexOf(MINGW_SPECIAL) != -1)
 					return true;
 				else if(versionInfo[i].indexOf(CYGWIN_SPECIAL) != -1)

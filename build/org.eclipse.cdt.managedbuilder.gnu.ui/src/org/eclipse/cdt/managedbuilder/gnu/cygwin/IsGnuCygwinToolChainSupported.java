@@ -32,24 +32,17 @@ import org.osgi.framework.Version;
  *
  * @noextend This class is not intended to be subclassed by clients.
  */
-public class IsGnuCygwinToolChainSupported implements
-		IManagedIsToolChainSupported {
-
+public class IsGnuCygwinToolChainSupported implements IManagedIsToolChainSupported {
 	static final String[] CHECKED_NAMES = {"gcc", "binutils", "make"};  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 	static boolean suppChecked = false;
 	static boolean toolchainIsSupported = false;
 
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IManagedIsToolChainSupported#isSupported(org.eclipse.cdt.managedbuilder.core.IToolChain, org.eclipse.core.runtime.PluginVersionIdentifier, java.lang.String)
-	 */
 	/**
 	 * @since 8.0
 	 */
 	@Override
 	public boolean isSupported(IToolChain toolChain, Version version, String instance) {
-
 		if (suppChecked) return toolchainIsSupported;
 
 		String etcCygwin = CygwinPathResolver.getEtcPath();
@@ -80,7 +73,9 @@ public class IsGnuCygwinToolChainSupported implements
 			String s;
 			while ((s = data.readLine()) != null ) {
 				for (int j = 0; j < CHECKED_NAMES.length; j++) {
-					if (s.startsWith(CHECKED_NAMES[j])) {found[j] = true;}
+					if (s.startsWith(CHECKED_NAMES[j])) {
+						found[j] = true;
+					}
 				}
 			}
 			arePackagesInstalled = true;

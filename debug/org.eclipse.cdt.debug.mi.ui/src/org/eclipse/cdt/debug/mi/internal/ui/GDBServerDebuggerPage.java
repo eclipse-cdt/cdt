@@ -19,7 +19,6 @@ import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.layout.GridData;
@@ -68,15 +67,19 @@ public class GDBServerDebuggerPage extends StandardGDBDebuggerPage {
 		Composite comp = ControlFactory.createCompositeEx( comp1, 2, GridData.FILL_BOTH );
 		((GridLayout)comp.getLayout()).makeColumnsEqualWidth = false;
 		comp.setFont( comp1.getFont() );
+		
+		createConnectionWidgets(comp);		
+	}
+
+	protected void createConnectionWidgets(Composite comp) {
 		fConnectionField.doFillIntoGrid( comp, 2 );
 		((GridData)fConnectionField.getComboControl( null ).getLayoutData()).horizontalAlignment = GridData.BEGINNING;
-		PixelConverter converter = new PixelConverter( comp );
 		fConnectionStack = ControlFactory.createCompositeEx( comp, 1, GridData.FILL_BOTH );
 		StackLayout stackLayout = new StackLayout();
 		fConnectionStack.setLayout( stackLayout );
 		((GridData)fConnectionStack.getLayoutData()).horizontalSpan = 2;
 		fTCPBlock.createBlock( fConnectionStack );
-		fSerialBlock.createBlock( fConnectionStack );		
+		fSerialBlock.createBlock( fConnectionStack );
 	}
 
 	private ComboDialogField createConnectionField() {
@@ -188,5 +191,13 @@ public class GDBServerDebuggerPage extends StandardGDBDebuggerPage {
 	public void createTabs( TabFolder tabFolder ) {
 		super.createTabs( tabFolder );
 		createConnectionTab( tabFolder );
+	}
+
+	public void dispose() {
+		fTCPBlock.dispose();
+		fSerialBlock.dispose();
+		fConnectionStack.dispose();
+		fConnectionField.dispose();
+		super.dispose();
 	}
 }

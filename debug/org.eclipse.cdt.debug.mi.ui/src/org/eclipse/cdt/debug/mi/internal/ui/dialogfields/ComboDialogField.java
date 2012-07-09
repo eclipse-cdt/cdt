@@ -231,4 +231,11 @@ public class ComboDialogField extends DialogField {
 		}
 	}
 	
+	public void dispose() {
+		if (fComboControl != null) fComboControl.dispose();
+		if (fItems != null) fItems = null;
+		if (fModifyListener != null) fModifyListener = null;
+		super.dispose();
+	}
+	
 }

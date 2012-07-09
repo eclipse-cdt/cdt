@@ -1,10 +1,13 @@
-/*
- * CPPFunctionSet.java
- * Created on Sep 13, 2010
+/*******************************************************************************
+ * Copyright (c) 2010 Wind River Systems, Inc. and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  *
- * Copyright 2010 Wind River Systems, Inc. All rights reserved.
- */
-
+ * Contributors:
+ *     Markus Schorn - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import org.eclipse.cdt.core.dom.ILinkage;
@@ -25,7 +28,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPTwoPhaseBinding;
  * The actual function can be resolved in certain contexts.
  */
 public class CPPFunctionSet implements ICPPTwoPhaseBinding {
-
 	private final ICPPFunction[] fBindings;
 	private final IASTName fName;
 	private final ICPPTemplateArgument[] fTemplateArguments;

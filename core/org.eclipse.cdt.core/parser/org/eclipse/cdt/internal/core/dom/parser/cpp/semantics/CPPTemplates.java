@@ -163,13 +163,13 @@ public class CPPTemplates {
 	 * Instantiates a class template with the given arguments. May return <code>null</code>.
 	 */
 	public static IBinding instantiate(ICPPClassTemplate template, ICPPTemplateArgument[] args, IASTNode point) {
-		return instantiate(template, args, false, false, point); 
+		return instantiate(template, args, false, false, point);
 	}
-	
+
 	/**
 	 * Instantiates a class template with the given arguments. May return <code>null</code>.
 	 */
-	private static IBinding instantiate(ICPPClassTemplate template, ICPPTemplateArgument[] args, 
+	private static IBinding instantiate(ICPPClassTemplate template, ICPPTemplateArgument[] args,
 			boolean isDefinition, boolean isExplicitSpecialization, IASTNode point) {
 		try {
 			// Add default arguments, if necessary.
@@ -181,7 +181,7 @@ public class CPPTemplates {
 			if (template instanceof ICPPTemplateTemplateParameter || hasDependentArgument(arguments)) {
 				return deferredInstance(template, arguments);
 			}
-			
+
 			if (template instanceof ICPPClassTemplatePartialSpecialization) {
 				return instantiatePartialSpecialization((ICPPClassTemplatePartialSpecialization) template, arguments, isDefinition, null, point);
 			}
@@ -192,7 +192,7 @@ public class CPPTemplates {
 			final int length= Math.max(numArgs, numParams);
 
 			CPPTemplateParameterMap map= new CPPTemplateParameterMap(numParams);
-				
+
 			boolean isPack= false;
 			ICPPTemplateParameter param= null;
 			for (int i = 0; i < length; i++) {
@@ -221,9 +221,9 @@ public class CPPTemplates {
 				} else {
 					// Parameter pack with empty arguments.
 					assert isPack;
-				} 
+				}
 			}
-			
+
 			if (isPack) {
 				int packOffset= numParams-1;
 				int packSize= numArgs - packOffset;
@@ -241,8 +241,8 @@ public class CPPTemplates {
 				if (result != null)
 					return result;
 			}
-			
-			return instantiatePrimaryTemplate(template, arguments, map, isDefinition, point);	
+
+			return instantiatePrimaryTemplate(template, arguments, map, isDefinition, point);
 		} catch (DOMException e) {
 			return e.getProblem();
 		}
@@ -296,7 +296,7 @@ public class CPPTemplates {
 					scope= CPPVisitor.getContainingScope(internalScope.getPhysicalNode());
 					if (scope == internalScope)
 						return null;
-				} else { 
+				} else {
 					scope= scope.getParent();
 				}
 			}
@@ -311,7 +311,7 @@ public class CPPTemplates {
 		if (instance != null) {
 			return instance;
 		}
-	
+
 		IBinding owner= template.getOwner();
 		instance = CPPTemplates.createInstance(owner, template, map, arguments, point);
 		addInstance(template, arguments, instance);
@@ -320,7 +320,7 @@ public class CPPTemplates {
 
 	/**
 	 * Instantiates a partial class template specialization.
-	 * @param point 
+	 * @param point
 	 */
 	private static IBinding instantiatePartialSpecialization(
 			ICPPClassTemplatePartialSpecialization partialSpec, ICPPTemplateArgument[] args, boolean isDef,
@@ -341,13 +341,13 @@ public class CPPTemplates {
 		return instance;
 	}
 
-	/** 
+	/**
 	 * Instantiates the selected template, without looking for specializations. May return <code>null</code>.
-	 * @param map 
+	 * @param map
 	 */
-	private static IBinding instantiatePrimaryTemplate(ICPPClassTemplate template, ICPPTemplateArgument[] arguments, 
+	private static IBinding instantiatePrimaryTemplate(ICPPClassTemplate template, ICPPTemplateArgument[] arguments,
 			CPPTemplateParameterMap map, boolean isDef, IASTNode point) throws DOMException {
-		
+
 		assert !(template instanceof ICPPClassTemplatePartialSpecialization);
 		ICPPTemplateInstance instance= getInstance(template, arguments, isDef);
 		if (instance != null) {
@@ -397,7 +397,7 @@ public class CPPTemplates {
 			ICPPTemplateArgument[] arguments, IASTNode point) throws DOMException {
 		if (template instanceof ICPPClassTemplatePartialSpecialization)
 			return arguments;
-		
+
 		boolean havePackExpansion= false;
 		for (int i = 0; i < arguments.length; i++) {
 			ICPPTemplateArgument arg = arguments[i];
@@ -408,38 +408,38 @@ public class CPPTemplates {
 				havePackExpansion= true;
 			}
 		}
-		
+
 		ICPPTemplateParameter[] tpars = template.getTemplateParameters();
 		int tparCount = tpars.length;
 		final int argCount = arguments.length;
-		
+
 		if (tparCount == argCount)
 			return arguments;
-		
+
 		if (tparCount == 0)
 			return null;
-		
+
 		// More arguments allowed if we have a parameter pack.
 		if (tparCount < argCount) {
 			if (tpars[tparCount-1].isParameterPack())
 				return arguments;
-			
+
 			if (havePackExpansion && tparCount+1 == argCount)
 				return arguments;
 			return null;
-		} 
-		
+		}
+
 		// Fewer arguments are allowed with a pack expansion
 		if (havePackExpansion)
 			return arguments;
-		
+
 		// Fewer arguments are allowed with	default arguments
 		if (tpars[tparCount-1].isParameterPack())
 			tparCount--;
-		
-		if (tparCount == argCount) 
+
+		if (tparCount == argCount)
 			return arguments;
-		
+
 		ICPPTemplateArgument[] completeArgs= new ICPPTemplateArgument[tparCount];
 		CPPTemplateParameterMap map= new CPPTemplateParameterMap(tparCount);
 		for (int i = 0; i < tparCount; i++) {
@@ -464,7 +464,7 @@ public class CPPTemplates {
 				arg= SemanticUtil.getSimplifiedArgument(arg);
 				if (!isValidArgument(arg)) {
 					return null;
-				}								
+				}
 			}
 			map.put(tpar, arg);
 			completeArgs[i]= arg;
@@ -504,7 +504,7 @@ public class CPPTemplates {
 		return args;
 	}
 
-	/** 
+	/**
 	 * Extracts the IASTName of a template parameter.
 	 */
 	public static IASTName getTemplateParameterName(ICPPASTTemplateParameter param) {
@@ -586,7 +586,7 @@ public class CPPTemplates {
 	public static IBinding createBinding(ICPPASTTemplateParameter tp) {
 		if (tp instanceof ICPPASTSimpleTypeTemplateParameter) {
     		return new CPPTemplateTypeParameter(((ICPPASTSimpleTypeTemplateParameter) tp).getName(), tp.isParameterPack());
-    	} 
+    	}
     	if (tp instanceof ICPPASTTemplatedTypeTemplateParameter) {
         	return new CPPTemplateTemplateParameter(((ICPPASTTemplatedTypeTemplateParameter) tp).getName(), tp.isParameterPack());
     	}
@@ -594,7 +594,7 @@ public class CPPTemplates {
     	final IASTDeclarator dtor = ((ICPPASTParameterDeclaration) tp).getDeclarator();
     	return new CPPTemplateNonTypeParameter(ASTQueries.findInnermostDeclarator(dtor).getName());
 	}
-	
+
 	public static IBinding createBinding(ICPPASTTemplateId id) {
 		if (!isClassTemplate(id)) {
 			//functions are instantiated as part of the resolution process
@@ -612,7 +612,7 @@ public class CPPTemplates {
 				return result;
 			}
 		}
-		
+
 		IASTNode parentOfName = id.getParent();
 		boolean isLastName= true;
 		if (parentOfName instanceof ICPPASTQualifiedName) {
@@ -630,7 +630,7 @@ public class CPPTemplates {
 					isDeclaration= true;
 				} else if (parentOfName instanceof ICPPASTCompositeTypeSpecifier) {
 					isDefinition= true;
-				} 
+				}
 				if (isDeclaration || isDefinition) {
 					IASTNode parentOfDeclaration = declaration.getParent();
 					if (parentOfDeclaration instanceof ICPPASTExplicitTemplateInstantiation) {
@@ -650,7 +650,7 @@ public class CPPTemplates {
 			if (template instanceof ICPPConstructor) {
 				template= template.getOwner();
 			}
-			
+
 			if (template instanceof ICPPUnknownClassType) {
 				IBinding owner= template.getOwner();
 				if (owner instanceof ICPPUnknownBinding) {
@@ -660,7 +660,7 @@ public class CPPTemplates {
 				}
 			}
 
-			if (!(template instanceof ICPPClassTemplate) || template instanceof ICPPClassTemplatePartialSpecialization) 
+			if (!(template instanceof ICPPClassTemplate) || template instanceof ICPPClassTemplatePartialSpecialization)
 				return new ProblemBinding(id, IProblemBinding.SEMANTIC_INVALID_TYPE, templateName.toCharArray());
 
 			final ICPPClassTemplate classTemplate = (ICPPClassTemplate) template;
@@ -669,12 +669,12 @@ public class CPPTemplates {
 				ICPPASTTemplateDeclaration tdecl= getTemplateDeclaration(id);
 				if (tdecl != null) {
 					if (argsAreTrivial(classTemplate.getTemplateParameters(), args)) {
-						result= classTemplate;  
+						result= classTemplate;
 					} else {
 						args= addDefaultArguments(classTemplate, args, id);
 						if (args == null) {
 							return new ProblemBinding(id, IProblemBinding.SEMANTIC_INVALID_TEMPLATE_ARGUMENTS, templateName.toCharArray());
-						}							
+						}
 						ICPPClassTemplatePartialSpecialization partialSpec= findPartialSpecialization(classTemplate, args);
 						if (isDeclaration || isDefinition) {
 							if (partialSpec == null) {
@@ -682,7 +682,7 @@ public class CPPTemplates {
 								if (template instanceof ICPPInternalClassTemplate)
 									((ICPPInternalClassTemplate) template).addPartialSpecialization(partialSpec);
 								return partialSpec;
-							} 
+							}
 						}
 						if (partialSpec == null)
 							return new ProblemBinding(id, IProblemBinding.SEMANTIC_INVALID_TYPE, templateName.toCharArray());
@@ -717,10 +717,10 @@ public class CPPTemplates {
 
 		if (parentOfName instanceof ICPPASTElaboratedTypeSpecifier ||
 				parentOfName instanceof ICPPASTCompositeTypeSpecifier ||
-				parentOfName instanceof ICPPASTNamedTypeSpecifier || 
+				parentOfName instanceof ICPPASTNamedTypeSpecifier ||
 				parentOfName instanceof ICPPASTBaseSpecifier)
 			return true;
-		
+
 		if (parentOfName instanceof IASTDeclarator) {
 			IASTDeclarator rel= ASTQueries.findTypeRelevantDeclarator((IASTDeclarator) parentOfName);
 			return !(rel instanceof IASTFunctionDeclarator);
@@ -729,7 +729,7 @@ public class CPPTemplates {
 	}
 
 
-	public static ICPPTemplateInstance createInstance(IBinding owner, ICPPTemplateDefinition template, 
+	public static ICPPTemplateInstance createInstance(IBinding owner, ICPPTemplateDefinition template,
 			CPPTemplateParameterMap tpMap, ICPPTemplateArgument[] args, IASTNode point) {
 		if (owner instanceof ICPPSpecialization) {
 			ICPPTemplateParameterMap map= ((ICPPSpecialization) owner).getTemplateParameterMap();
@@ -737,7 +737,7 @@ public class CPPTemplates {
 				tpMap.putAll(map);
 			}
 		}
-		
+
 		ICPPTemplateInstance instance = null;
 		if (template instanceof ICPPClassType) {
 			instance = new CPPClassInstance((ICPPClassType) template, owner, tpMap, args);
@@ -839,7 +839,7 @@ public class CPPTemplates {
 		}
 		return spec;
 	}
-	
+
 	private static ICPPClassSpecialization getSpecializationContext(IBinding owner) {
 		if (!(owner instanceof ICPPClassSpecialization))
 			return null;
@@ -848,17 +848,18 @@ public class CPPTemplates {
 		for(;;) {
 			IBinding o1 = within.getOwner();
 			IBinding o2 = orig.getOwner();
-			if (!(o1 instanceof ICPPClassSpecialization && o2 instanceof ICPPClassType)) 
+			if (!(o1 instanceof ICPPClassSpecialization && o2 instanceof ICPPClassType))
 				return within;
 			ICPPClassSpecialization nextWithin = (ICPPClassSpecialization) o1;
 			orig= (ICPPClassType) o2;
-			if (orig.isSameType(nextWithin)) 
+			if (orig.isSameType(nextWithin))
 				return within;
 			within= nextWithin;
 		}
 	}
 
-public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpMap, int packOffset, ICPPClassSpecialization within, int maxdepth, IASTNode point) {
+	public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpMap, int packOffset,
+			ICPPClassSpecialization within, int maxdepth, IASTNode point) {
 		if (value == null)
 			return null;
 		IBinding[] unknowns= value.getUnknownBindings();
@@ -883,11 +884,11 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
 				}
 			}
 		}
-		
+
 		if (resolvedUnknowns != null)
 			return Value.reevaluate(value, packOffset, resolvedUnknowns, tpMap, maxdepth);
-			
-		if (Value.referencesTemplateParameter(value)) 
+
+		if (Value.referencesTemplateParameter(value))
 			return Value.reevaluate(value, packOffset, unknowns, tpMap, maxdepth);
 
 		return value;
@@ -902,7 +903,7 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
 			final ICPPFunctionType ft = (ICPPFunctionType) type;
 			final IType rt = ft.getReturnType();
 			int r = determinePackSize(rt, tpMap);
-			if (r < 0) 
+			if (r < 0)
 				return r;
 			IType[] ps = ft.getParameterTypes();
 			for (IType pt : ps) {
@@ -911,7 +912,7 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
 					return r;
 			}
 			return r;
-		} 
+		}
 
 		if (type instanceof ICPPTemplateParameter) {
 			final ICPPTemplateParameter tpar = (ICPPTemplateParameter) type;
@@ -922,7 +923,7 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
 				return PACK_SIZE_DEFER;
 			}
 			return PACK_SIZE_NOT_FOUND;
-		} 
+		}
 
 		int r= PACK_SIZE_NOT_FOUND;
 		if (type instanceof ICPPUnknownBinding) {
@@ -944,7 +945,7 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
 
 		if (type instanceof ICPPParameterPackType)
 			return PACK_SIZE_NOT_FOUND;
-		
+
 		if (type instanceof IArrayType) {
 			IArrayType at= (IArrayType) type;
 			IValue asize= at.getSize();
@@ -956,7 +957,7 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
 		if (type instanceof ITypeContainer) {
 			final ITypeContainer typeContainer = (ITypeContainer) type;
 			r= combine(r, determinePackSize(typeContainer.getType(), tpMap));
-		} 
+		}
 		return r;
 	}
 
@@ -1003,13 +1004,13 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
 	 * Instantiates types contained in an array.
 	 * @param types an array of types
 	 * @param tpMap template argument map
-	 * @param point 
+	 * @param point
 	 * @return an array containing instantiated types.
 	 */
 	public static IType[] instantiateTypes(IType[] types, ICPPTemplateParameterMap tpMap, int packOffset, ICPPClassSpecialization within, IASTNode point) {
 		if (types == null)
 			return null;
-		
+
 		// Don't create a new array until it's really needed.
 		IType[] result = types;
 		int j= 0;
@@ -1051,7 +1052,7 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
 
 	/**
 	 * Instantiates arguments contained in an array.
-	 * @param point 
+	 * @param point
 	 */
 	public static ICPPTemplateArgument[] instantiateArguments(ICPPTemplateArgument[] args,
 			ICPPTemplateParameterMap tpMap, int packOffset, ICPPClassSpecialization within, IASTNode point)
@@ -1099,7 +1100,7 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
 
 	/**
 	 * Instantiates an argument
-	 * @param point 
+	 * @param point
 	 */
 	static ICPPTemplateArgument instantiateArgument(ICPPTemplateArgument arg,
 			ICPPTemplateParameterMap tpMap, int packOffset, ICPPClassSpecialization within, IASTNode point) {
@@ -1114,14 +1115,14 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
 				return arg;
 			return new CPPTemplateArgument(instValue, instType);
 		}
-		
+
 		final IType orig= arg.getTypeValue();
 		final IType inst= instantiateType(orig, tpMap, packOffset, within, point);
 		if (orig == inst)
 			return arg;
 		return new CPPTemplateArgument(inst);
 	}
-	
+
 	private static CPPTemplateParameterMap instantiateArgumentMap(ICPPTemplateParameterMap orig, ICPPTemplateParameterMap tpMap,
 			int packOffset, ICPPClassSpecialization within, IASTNode point) {
 		final Integer[] positions = orig.getAllParameterPositions();
@@ -1147,7 +1148,7 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
 	/**
 	 * Instantiates the given type with the provided map and packoffset.
 	 * The context is used to replace templates with their specialization, where appropriate.
-	 * @param point 
+	 * @param point
 	 */
 	public static IType instantiateType(IType type, ICPPTemplateParameterMap tpMap, int packOffset,
 			ICPPClassSpecialization within, IASTNode point) {
@@ -1174,7 +1175,7 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
 					}
 				}
 				return new CPPFunctionType(ret, params, ft.isConst(), ft.isVolatile(), ft.takesVarArgs());
-			} 
+			}
 
 			if (type instanceof ICPPTemplateParameter) {
 				final ICPPTemplateParameter tpar = (ICPPTemplateParameter) type;
@@ -1199,7 +1200,7 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
 						return t;
 				}
 				return type;
-			} 
+			}
 
 			if (type instanceof ICPPUnknownBinding) {
 				IBinding binding= resolveUnknown((ICPPUnknownBinding) type, tpMap, packOffset, within, point);
@@ -1213,7 +1214,7 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
 				IType unwound= getNestedType(type, TDEF);
 				if (unwound instanceof ICPPClassType && unwound.isSameType(within.getSpecializedBinding())) {
 					// Convert (partial) class-templates (specializations) to the more specialized version.
-					if (within instanceof ICPPClassTemplate || !(unwound instanceof ICPPClassTemplate)) 
+					if (within instanceof ICPPClassTemplate || !(unwound instanceof ICPPClassTemplate))
 						return within;
 				}
 				IBinding typeAsBinding= (IBinding) type;
@@ -1222,18 +1223,18 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
 					final IType ownerAsType = getNestedType((IType) owner, TDEF);
 					Object newOwner= owner;
 					if (ownerAsType instanceof ICPPClassType && ownerAsType.isSameType(within.getSpecializedBinding())) {
-						// Convert (partial) class-templates (specializations) that are used as owner of 
+						// Convert (partial) class-templates (specializations) that are used as owner of
 						// another binding, to the more specialized version.
 						newOwner= within;
 					} else {
 						newOwner= instantiateType(ownerAsType, tpMap, packOffset, within, point);
 					}
-					
+
 					if (newOwner != owner && newOwner instanceof ICPPClassSpecialization) {
 						return (IType) ((ICPPClassSpecialization) newOwner).specializeMember(typeAsBinding, point);
 					}
 				}
-				
+
 				if (unwound instanceof ICPPTemplateInstance && !(unwound instanceof ICPPDeferredClassInstance)) {
 					// Argument of a class specialization can be a nested class subject to specialization.
 					final ICPPTemplateInstance classInstance = (ICPPTemplateInstance) unwound;
@@ -1246,8 +1247,8 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
 							return new CPPClassInstance((ICPPClassType) origClass, classInstance.getOwner(), tparMap, args);
 						}
 					}
-				}	
-			}		
+				}
+			}
 
 			if (type instanceof ITypeContainer) {
 				final ITypeContainer typeContainer = (ITypeContainer) type;
@@ -1260,7 +1261,7 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
 					if (newMemberOfClass instanceof IQualifierType) {
 						newMemberOfClass = ((IQualifierType) newMemberOfClass).getType();
 					}
-					if (!(newMemberOfClass instanceof ICPPClassType || newMemberOfClass instanceof UniqueType 
+					if (!(newMemberOfClass instanceof ICPPClassType || newMemberOfClass instanceof UniqueType
 							|| newMemberOfClass instanceof ICPPUnknownBinding)) {
 						return new ProblemType(ISemanticProblem.BINDING_INVALID_TYPE);
 					}
@@ -1269,7 +1270,7 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
 								ptm.isConst(), ptm.isVolatile(), ptm.isRestrict());
 					}
 					return typeContainer;
-				} 
+				}
 				if (typeContainer instanceof IArrayType) {
 					IArrayType at= (IArrayType) typeContainer;
 					IValue asize= at.getSize();
@@ -1282,9 +1283,9 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
 				}
 				if (newNestedType != nestedType) {
 					return SemanticUtil.replaceNestedType(typeContainer, newNestedType);
-				} 
+				}
 				return typeContainer;
-			} 
+			}
 
 			return type;
 		} catch (DOMException e) {
@@ -1304,14 +1305,14 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
 	 * correspond to a template declaration.
 	 */
 	public static ICPPASTTemplateDeclaration getTemplateDeclaration(IASTName name) {
-		if (name == null) 
+		if (name == null)
 			return null;
 
 		// first look for a related sequence of template declarations
 		ICPPASTInternalTemplateDeclaration tdecl= getInnerTemplateDeclaration(name);
 		if (tdecl == null)
 			return null;
-		
+
 		name= name.getLastName();
 		IASTNode parent= name.getParent();
 		if (!(parent instanceof ICPPASTQualifiedName)) {
@@ -1320,23 +1321,23 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
 			}
 			// one name: use innermost template declaration
 			return tdecl;
-		} 
-		
+		}
+
 		// last name can be associated even if it is not a template-id
 		final ICPPASTQualifiedName qname= (ICPPASTQualifiedName) parent;
 		final IASTName lastName = qname.getLastName();
 		final boolean lastIsTemplate= tdecl.isAssociatedWithLastName();
-		if (name == lastName) { 
+		if (name == lastName) {
 			if (lastIsTemplate) {
 				return tdecl;
 			}
 			return null;
-		} 
-		
+		}
+
 		// not the last name, search for the matching template declaration
-		if (!(name instanceof ICPPASTTemplateId)) 
+		if (!(name instanceof ICPPASTTemplateId))
 			return null;
-			
+
 		if (lastIsTemplate) {
 			// skip one
 			tdecl= getDirectlyEnclosingTemplateDeclaration(tdecl);
@@ -1354,7 +1355,7 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
 		// not enough template declarations
 		return null;
 	}
-	
+
 	public static void associateTemplateDeclarations(ICPPASTInternalTemplateDeclaration tdecl) {
 		// Find innermost template declaration
 		IASTDeclaration decl= tdecl.getDeclaration();
@@ -1363,7 +1364,7 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
 			decl= tdecl.getDeclaration();
 		}
 		final ICPPASTInternalTemplateDeclaration innerMostTDecl= tdecl;
-		
+
 		// Find name declared within the template declaration
 		final IASTName declName= getNameForDeclarationInTemplateDeclaration(decl);
 
@@ -1400,14 +1401,14 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
 				if (n instanceof ICPPASTTemplateId) {
 					if (depIDCount > 0 || usesTemplateParameter((ICPPASTTemplateId) n, tparnames)) {
 						depIDCount++;
-					} 
-				} 
-				if (depIDCount == 0) { 
+					}
+				}
+				if (depIDCount == 0) {
 					owner= n;
 				}
 			}
-			
-			if (qname.getLastName() instanceof ICPPASTTemplateId 
+
+			if (qname.getLastName() instanceof ICPPASTTemplateId
 					|| paramTDeclCount > depIDCount // not enough template ids
 					|| ns.length < 2                // ::name
 					) {
@@ -1416,7 +1417,7 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
 			} else {
 				lastIsTemplate= false;
 			}
-			
+
 			nestingLevel= 0;
 			if (owner != null) {
 				int consumesTDecl= 0;
@@ -1468,7 +1469,7 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
 				}
 			}
 		}
-		
+
 		node= innerMostTDecl;
 		while(node instanceof ICPPASTInternalTemplateDeclaration) {
 			if (--nestingLevel < 0)
@@ -1531,7 +1532,7 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
 						return PROCESS_SKIP;
 					return PROCESS_CONTINUE;
 				}
-				
+
 				if (names.containsKey(name.getLookupKey())) {
 					IASTNode parent= name.getParent();
 					if (parent instanceof ICPPASTQualifiedName) {
@@ -1576,14 +1577,14 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
 				} else if (declspec instanceof IASTElaboratedTypeSpecifier) {
 					name= ((IASTElaboratedTypeSpecifier) declspec).getName();
 				}
-			} 
+			}
 		} else if (decl instanceof IASTFunctionDefinition) {
 			IASTFunctionDefinition fdef= (IASTFunctionDefinition) decl;
 			name= ASTQueries.findInnermostDeclarator(fdef.getDeclarator()).getName();
 		}
 		return name;
 	}
-	
+
 
 	private static ICPPASTInternalTemplateDeclaration getInnerTemplateDeclaration(final IASTName name) {
 		IASTNode parent = name.getParent();
@@ -1601,22 +1602,22 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
 			    parent = parent.getParent();
 			}
 		}
-		if (!(parent instanceof IASTDeclaration)) 
+		if (!(parent instanceof IASTDeclaration))
 			return null;
-		
+
 		parent = parent.getParent();
-		if (parent instanceof ICPPASTInternalTemplateDeclaration) 
+		if (parent instanceof ICPPASTInternalTemplateDeclaration)
 			return (ICPPASTInternalTemplateDeclaration) parent;
 
 		return null;
 	}
-	
+
 	private static ICPPASTInternalTemplateDeclaration getDirectlyEnclosingTemplateDeclaration(
 			ICPPASTInternalTemplateDeclaration tdecl ) {
 		final IASTNode parent= tdecl.getParent();
-		if (parent instanceof ICPPASTInternalTemplateDeclaration) 
+		if (parent instanceof ICPPASTInternalTemplateDeclaration)
 			return (ICPPASTInternalTemplateDeclaration) parent;
-		
+
 		return null;
 	}
 
@@ -1681,12 +1682,12 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
 			return false;
 		}
 		for (int i=0; i < args.length; i++) {
-			if (!specArgs[i].isSameValue(args[i])) 
+			if (!specArgs[i].isSameValue(args[i]))
 				return false;
 		}
 		return true;
 	}
-	
+
 	/**
 	 * @param id the template id containing the template arguments
 	 * @return an array of template arguments, currently modeled as IType objects.
@@ -1717,13 +1718,13 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
 		}
 		return result;
 	}
-	
+
 	static ICPPFunction[] instantiateForFunctionCall(ICPPFunction[] fns, ICPPTemplateArgument[] tmplArgs,
 			List<IType> fnArgs, List<ValueCategory> argCats, boolean withImpliedObjectArg, IASTNode point) {
 		// Extract template arguments.
 		boolean requireTemplate= tmplArgs != null;
 		boolean haveTemplate= false;
-		
+
 		for (final ICPPFunction func : fns) {
 			if (func instanceof ICPPConstructor || (func instanceof ICPPMethod && ((ICPPMethod) func).isDestructor()))
 				requireTemplate= false;
@@ -1731,11 +1732,11 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
 			if (func instanceof ICPPFunctionTemplate) {
 				ICPPFunctionTemplate template= (ICPPFunctionTemplate) func;
 				try {
-					if (containsDependentType(fnArgs)) 
+					if (containsDependentType(fnArgs))
 						return new ICPPFunction[] {CPPUnknownFunction.createForSample(template)};
 
 					if (requireTemplate) {
-						if (hasDependentArgument(tmplArgs)) 
+						if (hasDependentArgument(tmplArgs))
 							return new ICPPFunction[] {CPPUnknownFunction.createForSample(template)};
 					}
 				} catch (DOMException e) {
@@ -1746,9 +1747,9 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
 			}
 		}
 
-		if (!haveTemplate && !requireTemplate) 
+		if (!haveTemplate && !requireTemplate)
 			return fns;
-		
+
 		final List<ICPPFunction> result= new ArrayList<ICPPFunction>(fns.length);
 		for (ICPPFunction fn : fns) {
 			if (fn != null) {
@@ -1772,7 +1773,7 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
 			fnArgs= fnArgs.subList(1, fnArgs.size());
 			argCats= argCats.subList(1, argCats.size());
 		}
-		
+
 		CPPTemplateParameterMap map= new CPPTemplateParameterMap(fnArgs.size());
 		try {
 			ICPPTemplateArgument[] args= TemplateArgumentDeduction.deduceForFunctionCall(template, tmplArgs, fnArgs, argCats, map, point);
@@ -1780,9 +1781,9 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
 				IBinding instance= instantiateFunctionTemplate(template, args, map, point);
 				if (instance instanceof ICPPFunction) {
 					final ICPPFunction f = (ICPPFunction) instance;
-					if (isValidType(f.getType())) 
+					if (isValidType(f.getType()))
 						return f;
-				} 
+				}
 			}
 		} catch (DOMException e) {
 		}
@@ -1791,7 +1792,7 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
 
 	/**
 	 * 14.8.2.3 Deducing conversion function template arguments
-	 * @param point 
+	 * @param point
 	 */
 	static ICPPFunction[] instantiateConversionTemplates(ICPPFunction[] functions, IType conversionType, IASTNode point) {
 		boolean checkedForDependentType= false;
@@ -1803,7 +1804,7 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
 			if (f instanceof ICPPFunctionTemplate) {
 				ICPPFunctionTemplate template= (ICPPFunctionTemplate) f;
 				inst= null;
-				
+
 				// Extract template arguments and parameter types.
 				if (!checkedForDependentType) {
 					try {
@@ -1823,12 +1824,12 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
 						IBinding instance= instantiateFunctionTemplate(template, args, map, point);
 						if (instance instanceof ICPPFunction) {
 							inst= (ICPPFunction) instance;
-						} 
+						}
 					}
 				} catch (DOMException e) {
 					// try next candidate
 				}
-			} 
+			}
 			if (result != functions || f != inst) {
 				if (result == functions) {
 					result= new ICPPFunction[functions.length];
@@ -1841,11 +1842,11 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
 		}
 		return result;
 	}
-	
+
 	/**
 	 * 14.8.2.6 Deducing template arguments from a function declaration
-	 * @param point 
-	 * @return 
+	 * @param point
+	 * @return
 	 */
 	static ICPPFunction instantiateForFunctionDeclaration(ICPPFunctionTemplate template,
 			ICPPTemplateArgument[] args, ICPPFunctionType functionType, IASTNode point) {
@@ -1856,7 +1857,7 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
 				IBinding instance= instantiateFunctionTemplate(template, args, map, point);
 				if (instance instanceof ICPPFunction) {
 					return (ICPPFunction) instance;
-				} 
+				}
 			}
 		} catch (DOMException e) {
 			// try next candidate
@@ -1868,14 +1869,14 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
 	/**
 	 * 14.8.2.2 Deducing template arguments taking the address of a function template [temp.deduct.funcaddr]
 	 */
-	static ICPPFunction instantiateForAddressOfFunction(ICPPFunctionTemplate template, IFunctionType target, 
+	static ICPPFunction instantiateForAddressOfFunction(ICPPFunctionTemplate template, IFunctionType target,
 			ICPPTemplateArgument[] args, IASTNode point) {
 		try {
 			if (target != null && isDependentType(target)) {
 				return CPPUnknownFunction.createForSample(template);
 			}
-			
-			if (template instanceof ICPPConstructor || args == null) 
+
+			if (template instanceof ICPPConstructor || args == null)
 				args= ICPPTemplateArgument.EMPTY_ARGUMENTS;
 
 			CPPTemplateParameterMap map= new CPPTemplateParameterMap(4);
@@ -1884,7 +1885,7 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
 				IBinding instance= instantiateFunctionTemplate(template, args, map, point);
 				if (instance instanceof ICPPFunction) {
 					return (ICPPFunction) instance;
-				} 
+				}
 			}
 		} catch (DOMException e) {
 		}
@@ -1900,10 +1901,10 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
 			return -1;
 		if (f2 == null)
 			return 1;
-		
+
 		int s1 = compareSpecialization(f1, f2, mode, point);
 		int s2 = compareSpecialization(f2, f1, mode, point);
-		
+
 		if (s1 == s2)
 			return 0;
 		if (s1 < 0 || s2 > 0)
@@ -1915,7 +1916,7 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
 	private static ICPPFunction transferFunctionTemplate(ICPPFunctionTemplate f, IASTNode point) throws DOMException {
 		final ICPPTemplateParameter[] tpars = f.getTemplateParameters();
 		final int argLen = tpars.length;
-		
+
 		// Create arguments and map
 		ICPPTemplateArgument[] args = new ICPPTemplateArgument[argLen];
 		CPPTemplateParameterMap map = new CPPTemplateParameterMap(argLen);
@@ -1925,7 +1926,7 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
 			args[i]= arg;
 			if (tpar.isParameterPack()) {
 				map.put(tpar, new ICPPTemplateArgument[] {arg});
-			} else { 
+			} else {
 				map.put(tpar, arg);
 			}
 		}
@@ -1933,12 +1934,12 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
 		IBinding result = instantiateFunctionTemplate(f, args, map, point);
 		if (result instanceof ICPPFunction)
 			return (ICPPFunction) result;
-		
+
 		return null;
 	}
 
 	private static CPPTemplateArgument uniqueArg(final ICPPTemplateParameter tpar) throws DOMException {
-		final CPPTemplateArgument arg; 
+		final CPPTemplateArgument arg;
 		if (tpar instanceof ICPPTemplateNonTypeParameter) {
 			arg = new CPPTemplateArgument(Value.unique(), ((ICPPTemplateNonTypeParameter) tpar).getType());
 		} else {
@@ -2052,7 +2053,7 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
 
 		if (bestMatch == null)
 			return null;
-		
+
 		return instantiatePartialSpecialization(bestMatch, args, isDef, bestMap, point);
 	}
 
@@ -2061,7 +2062,7 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
 	 * is more specialized, = 0 otherwise.
 	 * @param spec1
 	 * @param spec2
-	 * @param point 
+	 * @param point
 	 * @return
 	 * @throws DOMException
 	 */
@@ -2100,7 +2101,7 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
 		final ICPPTemplateArgument[] targs2 = f2.getTemplateArguments();
 		if (targs1.length != targs2.length)
 			return false;
-		
+
 		// Transfer arguments of specialization 1
 		final int tpars1Len = tpars1.length;
 		ICPPTemplateArgument[] args = new ICPPTemplateArgument[tpars1Len];
@@ -2112,12 +2113,12 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
 			transferMap.put(param, arg);
 		}
 		final ICPPTemplateArgument[] transferredArgs1 = instantiateArguments(targs1, transferMap, -1, null, point);
-		
+
 		// Deduce arguments for specialization 2
 		final CPPTemplateParameterMap deductionMap= new CPPTemplateParameterMap(2);
 		if (!TemplateArgumentDeduction.fromTemplateArguments(tpars2, targs2, transferredArgs1, deductionMap, point))
 			return false;
-		
+
 		// Compare
 		for (int i = 0; i < targs2.length; i++) {
 			ICPPTemplateArgument transferredArg2= instantiateArgument(targs2[i], deductionMap, -1, null, point);
@@ -2150,12 +2151,12 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
 			}
 		}
 	}
-	
+
 	static boolean isValidArgument(ICPPTemplateArgument arg) {
 		return arg != null && isValidType(arg.isTypeValue() ? arg.getTypeValue() : arg.getTypeOfNonTypeValue());
 	}
 
-	static ICPPTemplateArgument matchTemplateParameterAndArgument(ICPPTemplateParameter param, 
+	static ICPPTemplateArgument matchTemplateParameterAndArgument(ICPPTemplateParameter param,
 			ICPPTemplateArgument arg, CPPTemplateParameterMap map, IASTNode point) {
 		if (arg == null || !isValidType(arg.getTypeValue())) {
 			return null;
@@ -2165,8 +2166,8 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
 			if (t != null && ! (t instanceof ICPPTemplateDefinition))
 				return arg;
 			return null;
-		} 
-		
+		}
+
 		if (param instanceof ICPPTemplateTemplateParameter) {
 			IType t= arg.getTypeValue();
 			while (!(t instanceof ICPPTemplateDefinition)) {
@@ -2191,8 +2192,8 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
 			}
 
 			return arg;
-		} 
-		
+		}
+
 		if (param instanceof ICPPTemplateNonTypeParameter) {
 			if (!arg.isNonTypeValue())
 				return null;
@@ -2209,7 +2210,7 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
 					return new CPPTemplateArgument(arg.getNonTypeValue(), pType);
 				}
 				return null;
-				
+
 			} catch (DOMException e) {
 				return null;
 			}
@@ -2217,7 +2218,7 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
 		assert false;
 		return null;
 	}
-	
+
 	private static boolean matchTemplateTemplateParameters(ICPPTemplateParameter[] pParams,
 			ICPPTemplateParameter[] aParams) throws DOMException {
 		int pi=0;
@@ -2225,17 +2226,17 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
 		while (pi < pParams.length && ai < aParams.length) {
 			final ICPPTemplateParameter pp = pParams[pi];
 			final ICPPTemplateParameter ap = aParams[ai];
-			
+
 			// A parameter pack does not match a regular template parameter.
 			if (ap.isParameterPack() && !pp.isParameterPack())
 				return false;
-			
-			
+
+
 			boolean pb= pp instanceof ICPPTemplateTypeParameter;
 			boolean ab= ap instanceof ICPPTemplateTypeParameter;
 			if (pb != ab)
 				return false;
-			
+
 			if (pb) {
 				// Both are template type parameters
 			} else {
@@ -2252,7 +2253,7 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
 						assert false;
 						return false;
 					}
-			
+
 					if (!matchTemplateTemplateParameters(((ICPPTemplateTemplateParameter) pp).getTemplateParameters(),
 					((ICPPTemplateTemplateParameter) ap).getTemplateParameters()) )
 						return false;
@@ -2267,7 +2268,7 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
 				return true;
 			return false;
 		}
-		
+
 		return ai == aParams.length;
 	}
 
@@ -2310,7 +2311,7 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
 					if (argType == null)
 						return false;
 				}
-				if (!argType.isSameType((IType) par)) 
+				if (!argType.isSameType((IType) par))
 					return false;
 			} else {
 				if (arg.isTypeValue())
@@ -2330,11 +2331,11 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
 		}
 		return false;
 	}
-	
+
 	public static boolean isDependentArgument(ICPPTemplateArgument arg) {
-		if (arg.isTypeValue()) 
+		if (arg.isTypeValue())
 			return isDependentType(arg.getTypeValue());
-		
+
 		return Value.isDependentValue(arg.getNonTypeValue());
 	}
 
@@ -2353,12 +2354,12 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
 		}
 		return false;
 	}
-	
+
 	public static boolean isDependentType(IType t) {
 		while (true) {
 			if (t instanceof ICPPUnknownType)
 				return true;
-			
+
 			if (t instanceof ICPPFunctionType) {
 				final ICPPFunctionType ft = (ICPPFunctionType) t;
 				if (containsDependentType(ft.getParameterTypes()))
@@ -2390,7 +2391,7 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
 			}
 		}
 	}
-	
+
 	public static boolean containsDependentArg(ObjectMap tpMap) {
 		for (Object arg : tpMap.valueArray()) {
 			if (isDependentType((IType)arg))
@@ -2411,7 +2412,7 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
         final IBinding owner= unknown.getOwner();
         if (!(owner instanceof ICPPTemplateTypeParameter || owner instanceof ICPPUnknownClassType))
         	return unknown;
-        
+
         IBinding result = unknown;
         IType t = CPPTemplates.instantiateType((IType) owner, tpMap, packOffset, within, point);
         if (t != null) {
@@ -2433,7 +2434,7 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
             		} else {
             			result= new CPPUnknownBinding((ICPPUnknownBinding) t, unknown.getNameCharArray());
             		}
-            	} 
+            	}
             } else if (t instanceof ICPPClassType) {
 	            IScope s = ((ICPPClassType) t).getCompositeScope();
 	            if (s != null) {
@@ -2450,7 +2451,7 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
             	return new ProblemBinding(unknown.getUnknownName(), IProblemBinding.SEMANTIC_BAD_SCOPE);
             }
         }
-        
+
         return result;
 	}
 
@@ -2491,7 +2492,7 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
 	public static boolean haveSameArguments(ICPPTemplateInstance i1, ICPPTemplateInstance i2) {
 		final ICPPTemplateArgument[] m1= i1.getTemplateArguments();
 		final ICPPTemplateArgument[] m2= i2.getTemplateArguments();
-		
+
 		if (m1 == null || m2 == null || m1.length != m2.length)
 			return false;
 
@@ -2528,7 +2529,7 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
 		}
 		return types;
 	}
-		
+
 	/**
 	 * @deprecated for backwards compatibility, only.
 	 */
@@ -2538,7 +2539,7 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
 		Integer[] keys= tpmap.getAllParameterPositions();
 		if (keys.length == 0)
 			return ObjectMap.EMPTY_MAP;
-		
+
 		List<ICPPTemplateDefinition> defs= new ArrayList<ICPPTemplateDefinition>();
 		IBinding owner= b;
 		while (owner != null) {
@@ -2552,7 +2553,7 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
 		Collections.reverse(defs);
 
 		ObjectMap result= new ObjectMap(keys.length);
-		for (int key: keys) {
+		for (int key : keys) {
 			int nestingLevel= key >> 16;
 			int numParam= key & 0xffff;
 
@@ -2573,9 +2574,9 @@ public static IValue instantiateValue(IValue value, ICPPTemplateParameterMap tpM
 
 	public static IBinding findDeclarationForSpecialization(IBinding binding) {
 		while (binding instanceof ICPPSpecialization) {
-			if (ASTInternal.hasDeclaration(binding)) 
+			if (ASTInternal.hasDeclaration(binding))
 				return binding;
-			
+
 			IBinding original= ((ICPPSpecialization) binding).getSpecializedBinding();
 			if (original == null)
 				return binding;

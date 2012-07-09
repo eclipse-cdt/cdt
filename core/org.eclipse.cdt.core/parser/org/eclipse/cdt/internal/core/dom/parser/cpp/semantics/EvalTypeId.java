@@ -6,9 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
-
+ *     Markus Schorn - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.typeFromReturnType;
@@ -31,7 +30,7 @@ public class EvalTypeId implements ICPPEvaluation {
 	private final IType fInputType;
 	private final ICPPEvaluation[] fArguments;
 	private IType fOutputType;
-	
+
 	public EvalTypeId(IType type, ICPPEvaluation... argument) {
 		fInputType= type;
 		fArguments= argument;
@@ -44,7 +43,7 @@ public class EvalTypeId implements ICPPEvaluation {
 	public ICPPEvaluation[] getArguments() {
 		return fArguments;
 	}
-	
+
 	@Override
 	public boolean isInitializerList() {
 		return false;
@@ -62,7 +61,7 @@ public class EvalTypeId implements ICPPEvaluation {
 		}
 		return fOutputType;
 	}
-	
+
 	private IType computeType() {
 		if (CPPTemplates.isDependentType(fInputType))
 			return new TypeOfDependentExpression(this);
@@ -103,7 +102,7 @@ public class EvalTypeId implements ICPPEvaluation {
 		int firstByte = ITypeMarshalBuffer.EVAL_TYPE_ID;
 		if (includeValue)
 			firstByte |= ITypeMarshalBuffer.FLAG1;
-		
+
 		buffer.putByte((byte) firstByte);
 		buffer.marshalType(fInputType);
 		if (includeValue) {
@@ -113,7 +112,7 @@ public class EvalTypeId implements ICPPEvaluation {
 			}
 		}
 	}
-	
+
 	public static ISerializableEvaluation unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
 		IType type= buffer.unmarshalType();
 		ICPPEvaluation[] args= null;

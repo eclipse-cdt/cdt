@@ -6,9 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
-
+ *     Markus Schorn - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
@@ -77,7 +76,7 @@ public class EvalCompound implements ICPPEvaluation {
 		buffer.putByte(ITypeMarshalBuffer.EVAL_COMPOUND);
 		buffer.marshalEvaluation(fDelegate, includeValue);
 	}
-	
+
 	public static ISerializableEvaluation unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
 		ICPPEvaluation arg= (ICPPEvaluation) buffer.unmarshalEvaluation();
 		return new EvalCompound(arg);

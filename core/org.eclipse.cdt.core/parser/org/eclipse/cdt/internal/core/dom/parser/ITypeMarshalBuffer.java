@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *     Markus Schorn - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
 
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -30,7 +30,7 @@ public interface ITypeMarshalBuffer {
 	final static byte PROBLEM_TYPE= 				9;
 	final static byte VALUE= 				   	   10;
 	final static byte DEPENDENT_EXPRESSION_TYPE=   11;
-	
+
 	final static byte
 		EVAL_BINARY= 1,
 		EVAL_BINARY_TYPE_ID = 2,
@@ -47,16 +47,16 @@ public interface ITypeMarshalBuffer {
 		EVAL_TYPE_ID= 13,
 		EVAL_UNARY= 14,
 		EVAL_UNARY_TYPE_ID = 15;
-	
+
 	static final byte KIND_MASK= 				   15;
-	
+
 	final static int FLAG1	= 0x10;
 	final static int FLAG2	= 0x20;
 	final static int FLAG3	= 0x40;
 	final static int FLAG4	= 0x80;
 
 	CoreException unmarshallingError();
-	
+
 	IType unmarshalType() throws CoreException;
 	IValue unmarshalValue() throws CoreException;
 	IBinding unmarshalBinding() throws CoreException;

@@ -6,9 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
-
+ *     Markus Schorn - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.typeFromReturnType;
@@ -41,7 +40,7 @@ public class EvalFunctionCall implements ICPPEvaluation {
 	private final ICPPEvaluation[] fArguments;
 	private ICPPFunction fOverload= CPPFunction.UNINITIALIZED_FUNCTION;
 	private IType fType;
-	
+
 	public EvalFunctionCall(ICPPEvaluation[] args) {
 		fArguments= args;
 	}
@@ -88,36 +87,36 @@ public class EvalFunctionCall implements ICPPEvaluation {
 	private ICPPFunction computeOverload(IASTNode point) {
 		if (isTypeDependent())
 			return null;
-		
+
 		IType t= SemanticUtil.getNestedType(fArguments[0].getTypeOrFunctionSet(point), TDEF|REF|CVTYPE);
 		if (t instanceof ICPPClassType) {
 	    	return CPPSemantics.findOverloadedOperator(point, fArguments, t, OverloadableOperator.PAREN, LookupMode.NO_GLOBALS);
 		}
 		return null;
     }
-	
+
 	@Override
 	public IType getTypeOrFunctionSet(IASTNode point) {
-		if (fType == null) 
+		if (fType == null)
 			fType= computeType(point);
 		return fType;
 	}
-	
+
 	private IType computeType(IASTNode point) {
-		if (isTypeDependent()) 
+		if (isTypeDependent())
 			return new TypeOfDependentExpression(this);
-		
+
 		ICPPFunction overload = getOverload(point);
-		if (overload != null) 
+		if (overload != null)
 			return ExpressionTypes.typeFromFunctionCall(overload);
 
-		
+
 		final ICPPEvaluation arg0 = fArguments[0];
 		IType t= SemanticUtil.getNestedType(arg0.getTypeOrFunctionSet(point), TDEF|REF|CVTYPE);
 		if (t instanceof ICPPClassType) {
 			return new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
 		}
-		
+
 		if (t instanceof IPointerType) {
 			t= SemanticUtil.getNestedType(((IPointerType) t).getType(), TDEF | REF | CVTYPE);
 		}
@@ -142,7 +141,7 @@ public class EvalFunctionCall implements ICPPEvaluation {
     	if (overload != null)
     		return valueCategoryFromFunctionCall(overload);
 
-		
+
 		IType t= fArguments[0].getTypeOrFunctionSet(point);
 		if (t instanceof IPointerType) {
 			t= SemanticUtil.getNestedType(((IPointerType) t).getType(), TDEF | REF | CVTYPE);
@@ -161,7 +160,7 @@ public class EvalFunctionCall implements ICPPEvaluation {
 			buffer.marshalEvaluation(arg, includeValue);
 		}
 	}
-	
+
 	public static ISerializableEvaluation unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
 		int len= buffer.getShort();
 		ICPPEvaluation[] args = new ICPPEvaluation[len];

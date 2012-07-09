@@ -16,6 +16,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
+import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.managedbuilder.core.IManagedIsToolChainSupported;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.osgi.framework.Version;
@@ -33,24 +34,23 @@ import org.osgi.framework.Version;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class IsGnuCygwinToolChainSupported implements IManagedIsToolChainSupported {
-	static final String[] CHECKED_NAMES = {"gcc", "binutils", "make"};  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	private static final String[] CHECKED_NAMES = {"gcc", "binutils", "make"};  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
-	static boolean suppChecked = false;
-	static boolean toolchainIsSupported = false;
+	private static String etcCygwinCached = null;
+	private static boolean toolchainIsSupported = false;
 
 	/**
 	 * @since 8.0
 	 */
 	@Override
 	public boolean isSupported(IToolChain toolChain, Version version, String instance) {
-		if (suppChecked) return toolchainIsSupported;
-
 		String etcCygwin = CygwinPathResolver.getEtcPath();
-		if (etcCygwin != null) {
-			toolchainIsSupported = arePackagesInstalled(etcCygwin);
+		if (CDataUtil.objectsEqual(etcCygwin, etcCygwinCached)) {
+			return toolchainIsSupported;
 		}
 
-		suppChecked = true;
+		toolchainIsSupported = etcCygwin != null && arePackagesInstalled(etcCygwin);
+		etcCygwinCached = etcCygwin;
 
 		return toolchainIsSupported;
 	}

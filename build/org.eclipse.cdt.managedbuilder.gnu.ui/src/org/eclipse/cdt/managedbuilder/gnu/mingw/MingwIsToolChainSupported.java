@@ -21,17 +21,10 @@ import org.osgi.framework.Version;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class MingwIsToolChainSupported implements IManagedIsToolChainSupported {
-
-	private final boolean supported;
-
-	public MingwIsToolChainSupported() {
-		// Only supported if we can find the mingw bin dir to run the compiler
-		supported = MingwEnvironmentVariableSupplier.getBinDir() != null;
-	}
-
 	@Override
 	public boolean isSupported(IToolChain toolChain, Version version, String instance) {
-		return supported;
+		// Only supported if we can find the mingw bin dir to run the compiler
+		return MingwEnvironmentVariableSupplier.getBinDir() != null;
 	}
 
 }

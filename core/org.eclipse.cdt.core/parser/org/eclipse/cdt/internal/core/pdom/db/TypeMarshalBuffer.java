@@ -117,7 +117,7 @@ public class TypeMarshalBuffer implements ITypeMarshalBuffer {
 		} else if (type instanceof IBinding) {
 			marshalBinding((IBinding) type);
 		} else {
-			assert false : "Cannot serialize " + ASTTypeUtil.getType(type) + "(" + type.getClass().getName() + ")";   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+			assert false : "Cannot serialize " + ASTTypeUtil.getType(type) + " (" + type.getClass().getName() + ")";   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 			putByte(UNSTORABLE_TYPE);
 		}
 	}
@@ -239,6 +239,7 @@ public class TypeMarshalBuffer implements ITypeMarshalBuffer {
 		return (((byte1 << 8) | (byte2 & 0xff)));
 	}
 
+	@Override
 	public void putInt(int value) {
 		request(4);
 		fPos += 4;
@@ -249,6 +250,7 @@ public class TypeMarshalBuffer implements ITypeMarshalBuffer {
 		fBuffer[--p]= (byte) (value);
 	}
 
+	@Override
 	public int getInt() throws CoreException {
 		if (fPos + 4 > fBuffer.length)
 			throw unmarshallingError();

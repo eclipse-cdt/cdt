@@ -41,7 +41,7 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * Performs evaluation of an expression.
  */
-public class EvalConditional implements ICPPEvaluation {
+public class EvalConditional extends CPPEvaluation {
 	private final ICPPEvaluation fCondition, fPositive, fNegative;
 	private final boolean fPositiveThrows, fNegativeThrows;
 

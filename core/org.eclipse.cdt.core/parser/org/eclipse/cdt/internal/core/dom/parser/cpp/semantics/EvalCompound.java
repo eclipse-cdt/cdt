@@ -25,7 +25,7 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * Performs evaluation of an expression.
  */
-public class EvalCompound implements ICPPEvaluation {
+public class EvalCompound extends CPPEvaluation {
 	private final ICPPEvaluation fDelegate;
 
 	public EvalCompound(ICPPEvaluation delegate) {

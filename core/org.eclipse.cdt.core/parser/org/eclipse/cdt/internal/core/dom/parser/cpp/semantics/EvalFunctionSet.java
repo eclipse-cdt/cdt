@@ -21,14 +21,13 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.core.runtime.CoreException;
 
 /**
  * Performs evaluation of an expression.
  */
-public class EvalFunctionSet implements ICPPEvaluation {
+public class EvalFunctionSet extends CPPEvaluation {
 	private final CPPFunctionSet fFunctionSet;
 	private final boolean fAddressOf;
 

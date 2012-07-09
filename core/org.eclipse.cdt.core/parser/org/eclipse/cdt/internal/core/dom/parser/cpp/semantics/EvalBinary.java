@@ -43,7 +43,7 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * Performs evaluation of an expression.
  */
-public class EvalBinary implements ICPPEvaluation {
+public class EvalBinary extends CPPEvaluation {
 	public final static int op_arrayAccess= Byte.MAX_VALUE;
 	private final int fOperator;
 

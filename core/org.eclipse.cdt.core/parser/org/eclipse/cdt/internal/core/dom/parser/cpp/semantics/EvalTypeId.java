@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * Performs evaluation of an expression.
  */
-public class EvalTypeId implements ICPPEvaluation {
+public class EvalTypeId extends CPPEvaluation {
 	private final IType fInputType;
 	private final ICPPEvaluation[] fArguments;
 	private IType fOutputType;

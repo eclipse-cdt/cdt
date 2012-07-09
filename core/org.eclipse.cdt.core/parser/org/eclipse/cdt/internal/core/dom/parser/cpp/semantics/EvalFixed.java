@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * Performs evaluation of an expression.
  */
-public class EvalFixed implements ICPPEvaluation {
+public class EvalFixed extends CPPEvaluation {
 	public static final ICPPEvaluation INCOMPLETE =
 			new EvalFixed(ProblemType.UNKNOWN_FOR_EXPRESSION, PRVALUE, Value.UNKNOWN);
 

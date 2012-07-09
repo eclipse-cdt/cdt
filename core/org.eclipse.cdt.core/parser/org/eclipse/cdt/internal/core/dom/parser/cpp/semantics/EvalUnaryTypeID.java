@@ -23,10 +23,9 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.core.runtime.CoreException;
 
-public class EvalUnaryTypeID implements ICPPEvaluation {
+public class EvalUnaryTypeID extends CPPEvaluation {
 	private final int fOperator;
 	private final IType fOrigType;
 	private IType fType;

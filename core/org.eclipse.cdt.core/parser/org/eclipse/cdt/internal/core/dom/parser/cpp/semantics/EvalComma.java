@@ -25,7 +25,7 @@ import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.core.runtime.CoreException;
 
-public class EvalComma implements ICPPEvaluation {
+public class EvalComma extends CPPEvaluation {
 	private static final ICPPFunction[] NO_FUNCTIONS = {};
 
 	private final ICPPEvaluation[] fArguments;

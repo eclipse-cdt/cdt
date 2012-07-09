@@ -43,7 +43,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.core.runtime.CoreException;
 
-public class EvalID implements ICPPEvaluation {
+public class EvalID extends CPPEvaluation {
 	private final ICPPEvaluation fFieldOwner;
 	private final char[] fName;
 	private final IBinding fNameOwner;

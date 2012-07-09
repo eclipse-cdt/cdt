@@ -63,6 +63,7 @@ public interface ITypeMarshalBuffer {
 	ISerializableEvaluation unmarshalEvaluation() throws CoreException;
 	int getByte() throws CoreException;
 	int getShort() throws CoreException;
+	int getInt() throws CoreException;
 	long getLong() throws CoreException;
 	char[] getCharArray() throws CoreException;
 
@@ -72,6 +73,7 @@ public interface ITypeMarshalBuffer {
 	void marshalEvaluation(ISerializableEvaluation eval, boolean includeValue) throws CoreException;
 	void putByte(byte data);
 	void putShort(short data);
+	void putInt(int data);
 	void putLong(long data);
 	void putCharArray(char[] data);
 }

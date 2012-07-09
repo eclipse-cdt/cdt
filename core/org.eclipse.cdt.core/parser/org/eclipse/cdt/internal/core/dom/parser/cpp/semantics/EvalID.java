@@ -6,9 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
-
+ *     Markus Schorn - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
@@ -60,7 +59,7 @@ public class EvalID implements ICPPEvaluation {
 		fQualified= qualified;
 		fTemplateArgs= templateArgs;
 	}
-	
+
 	public ICPPEvaluation getFieldOwner() {
 		return fFieldOwner;
 	}
@@ -68,7 +67,7 @@ public class EvalID implements ICPPEvaluation {
 	public IBinding getNameOwner() {
 		return fNameOwner;
 	}
-	
+
 	public char[] getName() {
 		return fName;
 	}
@@ -80,11 +79,11 @@ public class EvalID implements ICPPEvaluation {
 	public boolean isQualified() {
 		return fQualified;
 	}
-	
+
 	public ICPPTemplateArgument[] getTemplateArgs() {
 		return fTemplateArgs;
 	}
-	
+
 	@Override
 	public boolean isInitializerList() {
 		return false;
@@ -99,22 +98,22 @@ public class EvalID implements ICPPEvaluation {
 	public boolean isTypeDependent() {
 		return true;
 	}
-	
+
 	@Override
 	public boolean isValueDependent() {
 		return true;
 	}
-	
+
 	@Override
 	public IType getTypeOrFunctionSet(IASTNode point) {
 		return new TypeOfDependentExpression(this);
 	}
-	
+
 	@Override
 	public IValue getValue(IASTNode point) {
 		return Value.create(this, point);
 	}
-	
+
 	@Override
 	public ValueCategory getValueCategory(IASTNode point) {
 		return PRVALUE;
@@ -129,7 +128,7 @@ public class EvalID implements ICPPEvaluation {
 			firstByte |= ITypeMarshalBuffer.FLAG2;
 		if (fTemplateArgs != null)
 			firstByte |= ITypeMarshalBuffer.FLAG3;
-		
+
 		buffer.putByte((byte) firstByte);
 		buffer.marshalEvaluation(fFieldOwner, false);
 		buffer.putCharArray(fName);
@@ -138,7 +137,7 @@ public class EvalID implements ICPPEvaluation {
 			// mstodo marshall arguments
 		}
 	}
-	
+
 	public static ISerializableEvaluation unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
 		final boolean addressOf= (firstByte & ITypeMarshalBuffer.FLAG1) != 0;
 		final boolean qualified= (firstByte & ITypeMarshalBuffer.FLAG2) != 0;
@@ -155,7 +154,7 @@ public class EvalID implements ICPPEvaluation {
 	public static ICPPEvaluation create(IASTIdExpression expr) {
 		final IASTName name = expr.getName();
 		IBinding binding = name.resolvePreBinding();
-		if (binding instanceof IProblemBinding || binding instanceof IType || binding instanceof ICPPConstructor) 
+		if (binding instanceof IProblemBinding || binding instanceof IType || binding instanceof ICPPConstructor)
 			return EvalFixed.INCOMPLETE;
 		if (binding instanceof CPPFunctionSet) {
 			return new EvalFunctionSet((CPPFunctionSet) binding, isAddressOf(expr));
@@ -164,7 +163,7 @@ public class EvalID implements ICPPEvaluation {
 			IBinding owner = binding.getOwner();
 			if (owner instanceof IProblemBinding)
 				return EvalFixed.INCOMPLETE;
-	
+
 			ICPPEvaluation fieldOwner= null;
 			IType fieldOwnerType= withinNonStaticMethod(expr);
 			if (fieldOwnerType != null) {
@@ -175,20 +174,20 @@ public class EvalID implements ICPPEvaluation {
 			if (lastName instanceof ICPPASTTemplateId) {
 				templateArgs= CPPTemplates.createTemplateArgumentArray((ICPPASTTemplateId) lastName);
 			}
-			return new EvalID(fieldOwner, owner, name.getSimpleID(), isAddressOf(expr), 
+			return new EvalID(fieldOwner, owner, name.getSimpleID(), isAddressOf(expr),
 					name instanceof ICPPASTQualifiedName, templateArgs);
 		}
 		/**
-		 * 9.3.1-3 Transformation to class member access within a non-static member function. 
+		 * 9.3.1-3 Transformation to class member access within a non-static member function.
 		 */
-		if (binding instanceof ICPPMember && !(binding instanceof IType) 
+		if (binding instanceof ICPPMember && !(binding instanceof IType)
 				&& !(binding instanceof ICPPConstructor) &&!((ICPPMember) binding).isStatic()) {
 			IType fieldOwnerType= withinNonStaticMethod(expr);
 			if (fieldOwnerType != null) {
 				return new EvalMemberAccess(fieldOwnerType, LVALUE, binding, true);
 			}
 		}
-	
+
 		if (binding instanceof IEnumerator) {
 			IType type= ((IEnumerator) binding).getType();
 			if (type instanceof ICPPEnumeration) {
@@ -206,7 +205,7 @@ public class EvalID implements ICPPEvaluation {
 				}
 			}
 			return new EvalBinding(binding, null);
-		} 
+		}
 		if (binding instanceof ICPPTemplateNonTypeParameter || binding instanceof IVariable
 				|| binding instanceof IFunction) {
 			return new EvalBinding(binding, null);
@@ -239,7 +238,7 @@ public class EvalID implements ICPPEvaluation {
 				e= unary.getOperand();
 			} else {
 				return op == IASTUnaryExpression.op_amper;
-			} 
+			}
 		}
 		return false;
 	}

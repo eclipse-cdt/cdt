@@ -6,9 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
-
+ *     Markus Schorn - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
@@ -70,7 +69,7 @@ public class EvalMemberAccess implements ICPPEvaluation {
 	public IType getOwnerType() {
 		return fOwnerType;
 	}
-	
+
 	public ValueCategory getOwnerValueCategory() {
 		return fOwnerValueCategory;
 	}
@@ -101,7 +100,7 @@ public class EvalMemberAccess implements ICPPEvaluation {
 		}
 		return fIsTypeDependent;
 	}
-	
+
 	private boolean computeIsTypeDependent() {
 		IType t;
 		if (fMember instanceof ICPPUnknownBinding) {
@@ -126,71 +125,71 @@ public class EvalMemberAccess implements ICPPEvaluation {
 		}
 		return fIsValueDependent;
 	}
-	
+
 	private boolean computeIsValueDependent() {
 		if (fMember instanceof ICPPUnknownBinding) {
 			return true;
-		} 
+		}
 		if (fMember instanceof IEnumerator) {
 			return Value.isDependentValue(((IEnumerator) fMember).getValue());
-		} 
+		}
 		if (fMember instanceof IVariable) {
 			return Value.isDependentValue(((IVariable) fMember).getInitialValue());
-		} 
+		}
 		if (fMember instanceof IFunction) {
 			return false;
-		} 
+		}
 		return false;
 	}
-	
+
 	public static IType getFieldOwnerType(IType fieldOwnerExpressionType, boolean isDeref, IASTNode point, Collection<ICPPFunction> functionBindings,
 			boolean returnUnnamed) {
     	IType type= fieldOwnerExpressionType;
     	if (!isDeref)
     		return type;
-    	
-    	// Bug 205964: as long as the type is a class type, recurse. 
+
+    	// Bug 205964: as long as the type is a class type, recurse.
     	// Be defensive and allow a max of 20 levels.
     	for (int j = 0; j < 20; j++) {
     		IType classType= getUltimateTypeUptoPointers(type);
-    		if (!(classType instanceof ICPPClassType)) 
+    		if (!(classType instanceof ICPPClassType))
     			break;
-    		
+
     		IScope scope = ((ICPPClassType) classType).getCompositeScope();
     		if (scope == null || scope instanceof ICPPInternalUnknownScope)
     			break;
-    		
+
     		/*
     		 * 13.5.6-1: An expression x->m is interpreted as (x.operator->())->m for a
     		 * class object x of type T
-    		 * 
+    		 *
     		 * Construct an AST fragment for x.operator-> which the lookup routines can
     		 * examine for type information.
     		 */
-    		
+
     		ICPPEvaluation[] args= {new EvalFixed(type, LVALUE, Value.UNKNOWN)};
 			ICPPFunction op= CPPSemantics.findOverloadedOperator(point, args, classType, OverloadableOperator.ARROW, LookupMode.NO_GLOBALS);
-    		if (op == null) 
+    		if (op == null)
     			break;
 
     		if (functionBindings != null)
     			functionBindings.add(op);
-    		
+
     		type= typeFromFunctionCall(op);
 			type= SemanticUtil.mapToAST(type, point);
     	}
-    	
+
 		IType prValue=  prvalueTypeWithResolvedTypedefs(type);
 		if (prValue instanceof IPointerType) {
 			return glvalueType(((IPointerType) prValue).getType());
 		}
-		
+
 		if (CPPTemplates.isDependentType(type))
 			return returnUnnamed ? CPPUnknownClass.createUnnamedInstance() : null;
 
 		return new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
 	}
-	
+
 	@Override
 	public IType getTypeOrFunctionSet(IASTNode point) {
 		if (fType == null) {
@@ -198,14 +197,14 @@ public class EvalMemberAccess implements ICPPEvaluation {
 		}
 		return fType;
 	}
-	
+
 	private IType computeType(IASTNode point) {
 		if (fMember instanceof ICPPUnknownBinding) {
 			return new TypeOfDependentExpression(this);
 		}
 		if (fMember instanceof IEnumerator) {
 			return ((IEnumerator) fMember).getType();
-		} 
+		}
 		if (fMember instanceof IVariable) {
 			IType e2 = ((IVariable) fMember).getType();
 			e2= SemanticUtil.getNestedType(e2, TDEF);
@@ -220,15 +219,15 @@ public class EvalMemberAccess implements ICPPEvaluation {
 				} else {
 					e2= glvalueType(e2);
 				}
-			} 
+			}
 		    return SemanticUtil.mapToAST(e2, point);
-		} 
+		}
 		if (fMember instanceof IFunction) {
 			return SemanticUtil.mapToAST(((IFunction) fMember).getType(), point);
 		}
 		return ProblemType.UNKNOWN_FOR_EXPRESSION;
 	}
-	
+
 	private IType addQualifiersForAccess(ICPPField field, IType fieldType, IType ownerType) {
 		CVQualifier cvq1 = SemanticUtil.getCVQualifier(ownerType);
 		CVQualifier cvq2 = SemanticUtil.getCVQualifier(fieldType);
@@ -248,7 +247,7 @@ public class EvalMemberAccess implements ICPPEvaluation {
 	public IValue getValue(IASTNode point) {
 		return Value.create(this, point);
 	}
-	
+
 	@Override
 	public ValueCategory getValueCategory(IASTNode point) {
 		if (fMember instanceof IVariable) {
@@ -256,7 +255,7 @@ public class EvalMemberAccess implements ICPPEvaluation {
 			e2= SemanticUtil.getNestedType(e2, TDEF);
 			if (e2 instanceof ICPPReferenceType) {
 				return LVALUE;
-			} 
+			}
 			if (fMember instanceof ICPPField && !((ICPPField) fMember).isStatic()) {
 				if (fIsPointerDeref)
 					return LVALUE;
@@ -264,7 +263,7 @@ public class EvalMemberAccess implements ICPPEvaluation {
 				return fOwnerValueCategory;
 			}
 			return LVALUE;
-		} 
+		}
 		if (fMember instanceof IFunction) {
 			return LVALUE;
 		}
@@ -281,12 +280,12 @@ public class EvalMemberAccess implements ICPPEvaluation {
 		} else if (fOwnerValueCategory == XVALUE) {
 			firstByte |= ITypeMarshalBuffer.FLAG3;
 		}
-		
+
 		buffer.putByte((byte) firstByte);
 		buffer.marshalType(fOwnerType);
 		buffer.marshalBinding(fMember);
 	}
-	
+
 	public static ISerializableEvaluation unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
 		boolean isDeref= (firstByte & ITypeMarshalBuffer.FLAG1) != 0;
 		ValueCategory ownerValueCat;
@@ -297,7 +296,7 @@ public class EvalMemberAccess implements ICPPEvaluation {
 		} else {
 			ownerValueCat= PRVALUE;
 		}
-		
+
 		IType ownerType= buffer.unmarshalType();
 		IBinding member= buffer.unmarshalBinding();
 		return new EvalMemberAccess(ownerType, ownerValueCat, member, isDeref);

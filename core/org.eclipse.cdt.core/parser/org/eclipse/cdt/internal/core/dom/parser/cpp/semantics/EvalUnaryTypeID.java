@@ -6,9 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
-
+ *     Markus Schorn - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
@@ -31,7 +30,7 @@ public class EvalUnaryTypeID implements ICPPEvaluation {
 	private final int fOperator;
 	private final IType fOrigType;
 	private IType fType;
-	
+
 	public EvalUnaryTypeID(int operator, IType type) {
 		fOperator= operator;
 		fOrigType= type;
@@ -44,7 +43,7 @@ public class EvalUnaryTypeID implements ICPPEvaluation {
 	public IType getArgument() {
 		return fOrigType;
 	}
-	
+
 	@Override
 	public boolean isInitializerList() {
 		return false;
@@ -82,7 +81,7 @@ public class EvalUnaryTypeID implements ICPPEvaluation {
 		case op_is_polymorphic:
 		case op_is_union:
 			return CPPTemplates.isDependentType(fOrigType);
-			
+
 		case op_typeid:
 		case op_typeof:
 			return false;
@@ -92,11 +91,11 @@ public class EvalUnaryTypeID implements ICPPEvaluation {
 
 	@Override
 	public IType getTypeOrFunctionSet(IASTNode point) {
-		if (fType == null) 
+		if (fType == null)
 			fType= computeType(point);
 		return fType;
 	}
-	
+
 	private IType computeType(IASTNode point) {
 		switch (fOperator) {
 		case op_sizeof:
@@ -120,7 +119,7 @@ public class EvalUnaryTypeID implements ICPPEvaluation {
 		case op_is_union:
 			return CPPBasicType.BOOLEAN;
 		case op_typeof:
-			if (isTypeDependent()) 
+			if (isTypeDependent())
 				return new TypeOfDependentExpression(this);
 			return fOrigType;
 		}
@@ -143,7 +142,7 @@ public class EvalUnaryTypeID implements ICPPEvaluation {
 		buffer.putByte((byte) fOperator);
 		buffer.marshalType(fType);
 	}
-	
+
 	public static ISerializableEvaluation unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
 		int op= buffer.getByte();
 		IType arg= buffer.unmarshalType();

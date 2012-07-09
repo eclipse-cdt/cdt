@@ -25,7 +25,7 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * Performs evaluation of an expression.
  */
-public class EvalInitList implements ICPPEvaluation {
+public class EvalInitList extends CPPEvaluation {
 	private final ICPPEvaluation[] fClauses;
 
 	public EvalInitList(ICPPEvaluation[] clauses) {

@@ -23,13 +23,12 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.core.runtime.CoreException;
 
 /**
  * Performs evaluation of an expression.
  */
-public class EvalBinaryTypeId implements ICPPEvaluation {
+public class EvalBinaryTypeId extends CPPEvaluation {
 	private final Operator fOperator;
 	private final IType fType1, fType2;
 

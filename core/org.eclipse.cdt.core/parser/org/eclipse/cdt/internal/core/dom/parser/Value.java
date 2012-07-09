@@ -158,7 +158,7 @@ public class Value implements IValue {
 		return parseLong(fExpression);
 	}
 
-	public void marshall(TypeMarshalBuffer buf) throws CoreException {
+	public void marshall(ITypeMarshalBuffer buf) throws CoreException {
 		if (UNKNOWN == this) {
 			buf.putByte((byte) (ITypeMarshalBuffer.VALUE | ITypeMarshalBuffer.FLAG1));
 		} else {
@@ -183,7 +183,7 @@ public class Value implements IValue {
 		}
 	}
 
-	public static IValue unmarshal(TypeMarshalBuffer buf) throws CoreException {
+	public static IValue unmarshal(ITypeMarshalBuffer buf) throws CoreException {
 		int firstByte= buf.getByte();
 		if (firstByte == TypeMarshalBuffer.NULL_TYPE)
 			return null;

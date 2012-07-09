@@ -36,7 +36,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics.LookupMode;
 import org.eclipse.core.runtime.CoreException;
 
-public class EvalFunctionCall implements ICPPEvaluation {
+public class EvalFunctionCall extends CPPEvaluation {
 	private final ICPPEvaluation[] fArguments;
 	private ICPPFunction fOverload= CPPFunction.UNINITIALIZED_FUNCTION;
 	private IType fType;

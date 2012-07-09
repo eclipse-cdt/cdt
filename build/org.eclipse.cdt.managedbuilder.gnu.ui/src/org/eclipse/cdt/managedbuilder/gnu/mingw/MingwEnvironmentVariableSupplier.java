@@ -11,6 +11,9 @@
 
 package org.eclipse.cdt.managedbuilder.gnu.mingw;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
+import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable;
 import org.eclipse.cdt.managedbuilder.envvar.IConfigurationEnvironmentVariableSupplier;
@@ -26,7 +29,8 @@ import org.eclipse.core.runtime.Platform;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class MingwEnvironmentVariableSupplier implements IConfigurationEnvironmentVariableSupplier {
-	private static boolean checked = false;
+	private static String envPathValueCached = null;
+	private static String envMingwHomeValueCached = null;
 	private static IPath binDir = null;
 
 	private static class MingwBuildEnvironmentVariable implements IBuildEnvironmentVariable {
@@ -63,41 +67,61 @@ public class MingwEnvironmentVariableSupplier implements IConfigurationEnvironme
 
 	private IBuildEnvironmentVariable path;
 
+	/**
+	 * @return location of $MINGW_HOME/bin folder on the file-system.
+	 *
+	 * If you use this do not cache results to ensure user preferences are accounted for.
+	 * Please rely on internal caching.
+	 */
 	public static IPath getBinDir() {
-		if (!checked) {
-			binDir = findBinDir();
-			checked = true;
-		}
-		return binDir;
-	}
+		IEnvironmentVariable varPath = CCorePlugin.getDefault().getBuildEnvironmentManager().getVariable("PATH", null, true); //$NON-NLS-1$
+		String envPathValue = varPath != null ? varPath.getValue() : null;
+		IEnvironmentVariable varMingwHome = CCorePlugin.getDefault().getBuildEnvironmentManager().getVariable("MINGW_HOME", null, true); //$NON-NLS-1$
+		String envMingwHomeValue = varMingwHome != null ? varMingwHome.getValue() : null;
 
-	private static IPath findBinDir() {
-		// Try in MinGW home
-		String mingwHome = System.getenv("MINGW_HOME"); //$NON-NLS-1$
-		IPath mingwBinDir = new Path(mingwHome + "\\bin"); //$NON-NLS-1$
-		if (mingwBinDir.toFile().isDirectory())
-			return mingwBinDir;
+		if (CDataUtil.objectsEqual(envPathValue, envPathValueCached) && CDataUtil.objectsEqual(envMingwHomeValue, envMingwHomeValueCached)) {
+			return binDir;
+		}
+
+		envPathValueCached = envPathValue;
+		envMingwHomeValueCached = envMingwHomeValue;
+		binDir = null;
+
+		// Check $MINGW_HOME
+		IPath mingwBinDir = new Path(envMingwHomeValue + "\\bin"); //$NON-NLS-1$
+		if (mingwBinDir.toFile().isDirectory()) {
+			binDir = mingwBinDir;
+			return binDir;
+		}
 
 		// Try the mingw directory in the platform install directory
 		// CDT distributions like Wascana may distribute MinGW like that
 		IPath installPath = new Path(Platform.getInstallLocation().getURL().getFile());
 		mingwBinDir = installPath.append("mingw\\bin"); //$NON-NLS-1$
-		if (mingwBinDir.toFile().isDirectory())
-			return mingwBinDir;
+		if (mingwBinDir.toFile().isDirectory()) {
+			binDir = mingwBinDir;
+			return binDir;
+		}
 
 		// Look in PATH values. Look for mingw32-gcc.exe
 		// TODO: Since this dir is already in the PATH, why are we adding it here?
 		// This is really only to support isToolchainAvail. Must be a better way.
-		IPath gccLoc = PathUtil.findProgramLocation("mingw32-gcc.exe"); //$NON-NLS-1$
-		if (gccLoc != null)
-			return gccLoc.removeLastSegments(1);
+		// AG: Because otherwise the toolchain won't be shown in the list of "supported" toolchains in UI
+		// when MinGW installed in custom location even if it is in the PATH
+		IPath gccLoc = PathUtil.findProgramLocation("mingw32-gcc.exe", envPathValue); //$NON-NLS-1$
+		if (gccLoc != null) {
+			binDir = gccLoc.removeLastSegments(1);
+			return binDir;
+		}
 
 		// Try the default MinGW install dir
 		mingwBinDir = new Path("C:\\MinGW\\bin"); //$NON-NLS-1$
-		if (mingwBinDir.toFile().isDirectory())
-			return mingwBinDir;
+		if (mingwBinDir.toFile().isDirectory()) {
+			binDir = mingwBinDir;
+			return binDir;
+		}
 
-		return null;
+		return binDir;
 	}
 
 	public static IPath getMsysBinDir() {
@@ -107,7 +131,7 @@ public class MingwEnvironmentVariableSupplier implements IConfigurationEnvironme
 		if (msysBinPath.toFile().isDirectory())
 			return msysBinPath;
 
-		String mingwHome = System.getenv("MINGW_HOME"); //$NON-NLS-1$
+		String mingwHome = envMingwHomeValueCached;
 		if (mingwHome != null) {
 			msysBinPath = new Path(mingwHome + "\\msys\\1.0\\bin"); //$NON-NLS-1$
 			if (msysBinPath.toFile().isDirectory())

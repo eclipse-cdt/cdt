@@ -19,7 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface ICPPASTArraySubscriptExpression extends IASTArraySubscriptExpression, IASTImplicitNameOwner {
+public interface ICPPASTArraySubscriptExpression extends IASTArraySubscriptExpression, ICPPASTExpression, IASTImplicitNameOwner {
 
 	@Override
 	public ICPPASTArraySubscriptExpression copy();
@@ -29,4 +29,16 @@ public interface ICPPASTArraySubscriptExpression extends IASTArraySubscriptExpre
 	 */
 	@Override
 	public ICPPASTArraySubscriptExpression copy(CopyStyle style);
+	
+	/**
+	 * @since 5.5
+	 */
+	@Override
+	public ICPPASTExpression getArrayExpression();
+
+	/**
+	 * @since 5.5
+	 */
+	@Override
+	public ICPPASTInitializerClause getArgument();
 }

@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text;
 
+import static org.eclipse.cdt.internal.ui.text.CHeuristicScanner.NOT_FOUND;
+
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.Platform;
@@ -386,7 +388,7 @@ public final class CIndenter {
 	private int fExtraSpaces;
 	/**
 	 * The absolute (character-counted) indentation offset for special cases
-	 * (method defs, array initializers)
+	 * (method definitions, array initializers)
 	 */
 	private int fAlign;
 	/** The stateful scan position for the indentation methods. */
@@ -458,14 +460,11 @@ public final class CIndenter {
 	 *         if it cannot be determined
 	 */
 	private StringBuilder getReferenceIndentation(int offset, boolean assumeOpeningBrace) {
-		int unit;
-		if (assumeOpeningBrace)
-			unit= findReferencePosition(offset, Symbols.TokenLBRACE);
-		else
-			unit= findReferencePosition(offset, peekToken(offset));
+		int unit= findReferencePosition(offset,
+				assumeOpeningBrace ? Symbols.TokenLBRACE : peekToken(offset));
 
 		// if we were unable to find anything, return null
-		if (unit == CHeuristicScanner.NOT_FOUND)
+		if (unit == NOT_FOUND)
 			return null;
 
 		return getLeadingWhitespace(unit);
@@ -496,7 +495,7 @@ public final class CIndenter {
 		StringBuilder reference= getReferenceIndentation(offset, assumeOpeningBrace);
 
 		// handle special alignment
-		if (fAlign != CHeuristicScanner.NOT_FOUND) {
+		if (fAlign != NOT_FOUND) {
 			try {
 				// a special case has been detected.
 				IRegion line= fDocument.getLineInformationOfOffset(fAlign);
@@ -717,13 +716,13 @@ public final class CIndenter {
 
 	/**
 	 * Returns the reference position regarding to indentation for <code>offset</code>,
-	 * or <code>NOT_FOUND</code>. This method calls
+	 * or {@link CHeuristicScanner#NOT_FOUND NOT_FOUND}. This method calls
 	 * {@link #findReferencePosition(int, int) findReferencePosition(offset, nextChar)} where
 	 * <code>nextChar</code> is the next character after <code>offset</code>.
 	 *
 	 * @param offset the offset for which the reference is computed
 	 * @return the reference statement relative to which <code>offset</code>
-	 *         should be indented, or {@link CHeuristicScanner#NOT_FOUND}
+	 *         should be indented, or {@link CHeuristicScanner#NOT_FOUND NOT_FOUND}
 	 */
 	public int findReferencePosition(int offset) {
 		return findReferencePosition(offset, peekToken(offset));
@@ -740,8 +739,29 @@ public final class CIndenter {
 		if (offset < fDocument.getLength()) {
 			try {
 				IRegion line= fDocument.getLineInformationOfOffset(offset);
-				int lineOffset= line.getOffset();
-				int next= fScanner.nextToken(offset, lineOffset + line.getLength());
+				int lineEnd= line.getOffset() + line.getLength();
+				int next= fScanner.nextToken(offset, lineEnd);
+				return next;
+			} catch (BadLocationException e) {
+			}
+		}
+		return Symbols.TokenEOF;
+	}
+
+	/**
+	 * Peeks the second next token in the document that comes after <code>offset</code>
+	 * on the same line as <code>offset</code>.
+	 *
+	 * @param offset the offset into document
+	 * @return the token symbol of the second next element, or TokenEOF if there is none
+	 */
+	private int peekSecondToken(int offset) {
+		if (offset < fDocument.getLength()) {
+			try {
+				IRegion line= fDocument.getLineInformationOfOffset(offset);
+				int lineEnd= line.getOffset() + line.getLength();
+				fScanner.nextToken(offset, lineEnd);
+				int next = fScanner.nextToken(fScanner.getPosition(), lineEnd);
 				return next;
 			} catch (BadLocationException e) {
 			}
@@ -751,7 +771,7 @@ public final class CIndenter {
 
 	/**
 	 * Returns the reference position regarding to indentation for <code>position</code>,
-	 * or <code>NOT_FOUND</code>.
+	 * or {@link CHeuristicScanner#NOT_FOUND NOT_FOUND}.
 	 *
 	 * <p>If <code>peekNextChar</code> is <code>true</code>, the next token after
 	 * <code>offset</code> is read and taken into account when computing the
@@ -773,16 +793,13 @@ public final class CIndenter {
 	 * @param offset the offset for which the reference is computed
 	 * @param nextToken the next token to assume in the document
 	 * @return the reference statement relative to which <code>offset</code>
-	 *         should be indented, or {@link CHeuristicScanner#NOT_FOUND}
+	 *         should be indented, or {@link CHeuristicScanner#NOT_FOUND NOT_FOUND}
 	 */
 	public int findReferencePosition(int offset, int nextToken) {
 		boolean danglingElse= false;
 		boolean cancelIndent= false; // If set to true, fIndent is ignored.
 		int extraIndent= 0; // Can be either positive or negative.
-		boolean matchBrace= false;
-		boolean matchParen= false;
-		boolean matchCase= false;
-		boolean matchAccessSpecifier= false;
+		MatchMode matchMode = MatchMode.REGULAR;
 
 		// Account for un-indentation characters already typed in, but after position.
 		// If they are on a line by themselves, the indentation gets adjusted accordingly.
@@ -793,7 +810,8 @@ public final class CIndenter {
 				IRegion line= fDocument.getLineInformationOfOffset(offset);
 				int lineOffset= line.getOffset();
 				int prevPos= Math.max(offset - 1, 0);
-				boolean isFirstTokenOnLine= fDocument.get(lineOffset, prevPos + 1 - lineOffset).trim().length() == 0;
+				boolean isFirstTokenOnLine=
+						fDocument.get(lineOffset, prevPos + 1 - lineOffset).trim().length() == 0;
 				int prevToken= fScanner.previousToken(prevPos, CHeuristicScanner.UNBOUND);
 				boolean bracelessBlockStart= fScanner.isBracelessBlockStart(prevPos, CHeuristicScanner.UNBOUND);
 
@@ -805,14 +823,14 @@ public final class CIndenter {
 				case Symbols.TokenCASE:
 				case Symbols.TokenDEFAULT:
 					if (isFirstTokenOnLine)
-						matchCase= true;
+						matchMode = MatchMode.MATCH_CASE;
 					break;
 					
 				case Symbols.TokenPUBLIC:
 				case Symbols.TokenPROTECTED:
 				case Symbols.TokenPRIVATE:
-					if (isFirstTokenOnLine)
-						matchAccessSpecifier= true;
+					if (isFirstTokenOnLine && peekSecondToken(offset) != Symbols.TokenIDENT)
+						matchMode = MatchMode.MATCH_ACCESS_SPECIFIER;
 					break;
 					
 				case Symbols.TokenLBRACE: // for opening-brace-on-new-line style
@@ -825,34 +843,41 @@ public final class CIndenter {
 						cancelIndent= true;
 					} else if ((prevToken == Symbols.TokenRPAREN || prevToken == Symbols.TokenCONST) && fPrefs.prefIndentBracesForMethods) {
 						extraIndent= 1;
-					} else if (prevToken == Symbols.TokenIDENT && fPrefs.prefIndentBracesForTypes) {
-						extraIndent= 1;
+					} else if (prevToken == Symbols.TokenIDENT) {
+						if (fPrefs.prefIndentBracesForTypes) {
+							extraIndent= 1;
+						}
+						int pos = fPosition;
+						fPosition = offset;
+						if (matchTypeDeclaration() != NOT_FOUND) {
+							matchMode = MatchMode.MATCH_TYPE_DECLARATION;
+						}
+						fPosition = pos;
 					}
 					break;
 					
 				case Symbols.TokenRBRACE: // closing braces get unindented
 					if (isFirstTokenOnLine || prevToken != Symbols.TokenLBRACE)
-						matchBrace= true;
+						matchMode = MatchMode.MATCH_BRACE;
 					break;
 					
 				case Symbols.TokenRPAREN:
 					if (isFirstTokenOnLine)
-						matchParen= true;
+						matchMode = MatchMode.MATCH_PAREN;
 					break;
 				}
 			} catch (BadLocationException e) {
 			}
 		} else {
-			// don't assume an else could come if we are at the end of file
+			// Don't assume an else could come if we are at the end of file.
 			danglingElse= false;
 		}
 
-		int ref= findReferencePosition(offset, danglingElse, matchBrace, matchParen, matchCase,
-				matchAccessSpecifier);
+		int ref= findReferencePosition(offset, danglingElse, matchMode);
 		if (cancelIndent) {
 			fIndent = 0;
 		} else if (extraIndent > 0) {
-			fAlign= CHeuristicScanner.NOT_FOUND;
+			fAlign= NOT_FOUND;
 			fIndent += extraIndent;
 		} else {
 			fIndent += extraIndent;
@@ -861,90 +886,129 @@ public final class CIndenter {
 	}
 
 	/**
+	 * Enumeration used by {@link #findReferencePosition(int, boolean, MatchMode)} method.
+	 */
+	public enum MatchMode {
+		/**
+		 * The reference position should be returned based on the regular code analysis.
+		 */
+		REGULAR,
+		/**
+		 * The position of the matching brace should be returned instead of doing code analysis.
+		 */
+		MATCH_BRACE,
+		/**
+		 * The position of the matching parenthesis should be returned instead of doing code
+		 * analysis. 
+		 */
+		MATCH_PAREN,
+		/**
+		 * The position of a switch statement reference should be returned (either an earlier case
+		 * statement or the switch block brace).
+		 */
+		MATCH_CASE,
+		/**
+		 * The position of a class body reference should be returned (either an earlier
+		 * public/protected/private or the class body brace).
+		 */
+		MATCH_ACCESS_SPECIFIER,
+		/**
+		 * The position of a class declaration should be returned.
+		 */
+		MATCH_TYPE_DECLARATION
+	}
+
+	/**
 	 * Returns the reference position regarding to indentation for <code>position</code>,
-	 * or <code>NOT_FOUND</code>.<code>fIndent</code> will contain the
-	 * relative indentation (in indentation units, not characters) after the
-	 * call. If there is a special alignment (e.g. for a method declaration
-	 * where parameters should be aligned), <code>fAlign</code> will contain
-	 * the absolute position of the alignment reference in <code>fDocument</code>,
-	 * otherwise <code>fAlign</code> is set to <code>CHeuristicScanner.NOT_FOUND</code>.
+	 * or {@link CHeuristicScanner#NOT_FOUND NOT_FOUND}. <code>fIndent</code> will contain
+	 * the relative indentation (in indentation units, not characters) after the call. If there is
+	 * a special alignment (e.g. for a method declaration where parameters should be aligned),
+	 * <code>fAlign</code> will contain the absolute position of the alignment reference
+	 * in <code>fDocument</code>, otherwise <code>fAlign</code> is set to
+	 * {@link CHeuristicScanner#NOT_FOUND}.
 	 *
 	 * @param offset the offset for which the reference is computed
 	 * @param danglingElse whether a dangling else should be assumed at <code>position</code>
-	 * @param matchBrace whether the position of the matching brace should be
-	 *            returned instead of doing code analysis
-	 * @param matchParen whether the position of the matching parenthesis
-	 *            should be returned instead of doing code analysis
-	 * @param matchCase whether the position of a switch statement reference
-	 *            should be returned (either an earlier case statement or the
-	 *            switch block brace)
-	 * @param matchAccessSpecifier whether the position of a class body reference
-	 *            should be returned (either an earlier public/protected/private
-	 *            or the class body brace)
+	 * @param matchMode determines what kind of reference position should be returned.
+	 *     See {@link MatchMode}.
 	 * @return the reference statement relative to which <code>position</code>
 	 *         should be indented, or {@link CHeuristicScanner#NOT_FOUND}
 	 */
-	public int findReferencePosition(int offset, boolean danglingElse, boolean matchBrace, boolean matchParen,
-			boolean matchCase, boolean matchAccessSpecifier) {
+	public int findReferencePosition(int offset, boolean danglingElse, MatchMode matchMode) {
 		fIndent= 0; // The indentation modification
 		fExtraSpaces= 0;
-		fAlign= CHeuristicScanner.NOT_FOUND;
+		fAlign= NOT_FOUND;
 		fPosition= offset;
 
-		// forward cases
-		// An unindentation happens sometimes if the next token is special, namely on braces, parens and case
-		// labels align braces, but handle the case where we align with the method declaration start instead
-		// of the opening brace.
-		if (matchBrace) {
+		// Forward cases.
+		// An unindentation happens sometimes if the next token is special, namely on braces,
+		// parens and case labels align braces, but handle the case where we align with the method
+		// declaration start instead of the opening brace.
+		switch (matchMode) {
+		case MATCH_BRACE:
 			if (skipScope(Symbols.TokenLBRACE, Symbols.TokenRBRACE)) {
 				try {
 					// Align with the opening brace that is on a line by its own
 					int lineOffset= fDocument.getLineOffset(fLine);
-					if (lineOffset <= fPosition && fDocument.get(lineOffset, fPosition - lineOffset).trim().length() == 0)
+					if (lineOffset <= fPosition &&
+							fDocument.get(lineOffset, fPosition - lineOffset).trim().isEmpty()) {
 						return fPosition;
+					}
 				} catch (BadLocationException e) {
 					// Concurrent modification - walk default path
 				}
-				// If the opening brace is not on the start of the line, skip to the start
+				// If the opening brace is not on the start of the line, skip to the start.
 				int pos= skipToStatementStart(true, true);
 				fIndent= 0; // indent is aligned with reference position
 				return pos;
 			} else {
 				// If we can't find the matching brace, the heuristic is to unindent
 				// by one against the normal position
-				int pos= findReferencePosition(offset, danglingElse, false, matchParen, matchCase,
-						matchAccessSpecifier);
+				int pos= findReferencePosition(offset, danglingElse, MatchMode.REGULAR);
 				fIndent--;
 				return pos;
 			}
-		}
 
-		// Align parentheses
-		if (matchParen) {
+		case MATCH_PAREN:
+			// Align parentheses.
 			if (skipScope(Symbols.TokenLPAREN, Symbols.TokenRPAREN)) {
 				return fPosition;
 			} else {
-				// if we can't find the matching paren, the heuristic is to unindent
-				// by one against the normal position
-				int pos= findReferencePosition(offset, danglingElse, matchBrace, false, matchCase,
-						matchAccessSpecifier);
+				// If we can't find the matching paren, the heuristic is to unindent by one
+				// against the normal position.
+				int pos= findReferencePosition(offset, danglingElse, MatchMode.REGULAR);
 				fIndent--;
 				return pos;
 			}
-		}
 
-		// The only reliable way to get case labels aligned (due to many different styles of using braces in
-		// a block) is to go for another case statement, or the scope opening brace.
-		if (matchCase) {
+		case MATCH_CASE:
+			// The only reliable way to get case labels aligned (due to many different styles of
+			// using braces in a block) is to go for another case statement, or the scope opening
+			// brace.
 			return matchCaseAlignment();
+
+		case MATCH_ACCESS_SPECIFIER:
+			// The only reliable way to get access specifiers aligned (due to many different styles
+			// of using braces in a block) is to go for another access specifier, or the scope
+			// opening brace.
+			return matchAccessSpecifierAlignment();
+
+		case MATCH_TYPE_DECLARATION:
+			return matchTypeDeclaration();
+
+		case REGULAR:
+			break;
 		}
 
-		// the only reliable way to get access specifiers aligned (due to many different styles of using
-		// braces in a block) is to go for another access specifier, or the scope opening brace.
-		if (matchAccessSpecifier) {
-			return matchAccessSpecifierAlignment();
+		if (peekToken(offset) == Symbols.TokenCOLON) {
+			int pos= fPosition;
+			if (looksLikeTypeInheritanceDecl()) {
+				fIndent = fPrefs.prefContinuationIndent;
+				return fPosition;
+			}
+			fPosition = pos;
 		}
-		
+
 		nextToken();
 		// Skip access specifiers
 		while (fToken == Symbols.TokenCOLON && isAccessSpecifier()) {
@@ -955,21 +1019,21 @@ public final class CIndenter {
 		switch (fToken) {
 		case Symbols.TokenGREATERTHAN:
 		case Symbols.TokenRBRACE:
-			// skip the block and fall through
-			// if we can't complete the scope, reset the scan position
+			// Skip the block and fall through.
+			// If we can't complete the scope, reset the scan position
 			int pos= fPosition;
 			if (!skipScope())
 				fPosition= pos;
 			return skipToStatementStart(danglingElse, false);
 
 		case Symbols.TokenSEMICOLON:
-			// this is the 90% case: after a statement block
+			// This is the 90% case: after a statement block
 			// the end of the previous statement / block previous.end
 			// search to the end of the statement / block before the previous;
 			// the token just after that is previous.start
 			return skipToStatementStart(danglingElse, false);
 
-		// scope introduction: special treat who special is
+		// Scope introduction: special treat who special is
 		case Symbols.TokenLPAREN:
 		case Symbols.TokenLBRACE:
 		case Symbols.TokenLBRACKET:
@@ -977,7 +1041,7 @@ public final class CIndenter {
 
 		case Symbols.TokenEOF:
 			// trap when hitting start of document
-			return CHeuristicScanner.NOT_FOUND;
+			return NOT_FOUND;
 
 		case Symbols.TokenEQUAL:
 			// indent assignments
@@ -992,7 +1056,7 @@ public final class CIndenter {
 			}
 			fPosition= pos;
 			if (looksLikeTypeInheritanceDecl()) {
-				fIndent= fPrefs.prefBlockIndent;
+				fIndent= fPrefs.prefContinuationIndent;
 				return pos;
 			}
 			fPosition= pos;
@@ -1114,10 +1178,10 @@ public final class CIndenter {
 				if (fToken == Symbols.TokenSEMICOLON || fToken == Symbols.TokenEOF) {
 					return pos;
 				} else {
-					return CHeuristicScanner.NOT_FOUND;
+					return NOT_FOUND;
 				}
 			} else {
-				return CHeuristicScanner.NOT_FOUND;
+				return NOT_FOUND;
 			}
 		}
 	}
@@ -1341,6 +1405,13 @@ public final class CIndenter {
 				return fPreviousPos;
 
 			case Symbols.TokenCOLON:
+				switch (prevToken) {
+				case Symbols.TokenPRIVATE:
+				case Symbols.TokenPROTECTED:
+				case Symbols.TokenPUBLIC:
+				case Symbols.TokenVIRTUAL:
+					continue; // Don't stop at colon in a class declaration
+				}
 				int pos= fPreviousPos;
 				if (!isConditional())
 					return pos;
@@ -1549,7 +1620,7 @@ public final class CIndenter {
 				int typeDeclPos= matchTypeDeclaration();
 				fIndent= fPrefs.prefAccessSpecifierIndent;
 				fExtraSpaces = fPrefs.prefAccessSpecifierExtraSpaces;
-				if (typeDeclPos != CHeuristicScanner.NOT_FOUND) {
+				if (typeDeclPos != NOT_FOUND) {
 					return typeDeclPos;
 				}
 				return pos;
@@ -1799,7 +1870,7 @@ public final class CIndenter {
 				fIndent = fPrefs.prefTypeIndent;
 			} else {
 				int typeDeclPos = matchTypeDeclaration();
-				if (typeDeclPos == CHeuristicScanner.NOT_FOUND) {
+				if (typeDeclPos == NOT_FOUND) {
 					fIndent= fPrefs.prefBlockIndent;
 				} else {
 					fIndent= fPrefs.prefAccessSpecifierIndent + fPrefs.prefTypeIndent;
@@ -1845,7 +1916,7 @@ public final class CIndenter {
 	private int setFirstElementAlignment(int scopeIntroducerOffset, int bound) {
 		int firstPossible= scopeIntroducerOffset + 1; // align with the first position after the scope intro
 		fAlign= fScanner.findNonWhitespaceForwardInAnyPartition(firstPossible, bound);
-		if (fAlign == CHeuristicScanner.NOT_FOUND) {
+		if (fAlign == NOT_FOUND) {
 			fAlign= firstPossible;
 		} else {
 			try {

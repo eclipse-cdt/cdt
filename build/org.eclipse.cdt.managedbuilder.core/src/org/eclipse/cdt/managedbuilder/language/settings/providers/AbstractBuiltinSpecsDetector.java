@@ -605,6 +605,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 	 * Implementers are expected to add their variables to the end of the list.
 	 *
 	 * @return list of environment variables.
+	 * @since 8.2
 	 */
 	protected List<IEnvironmentVariable> getEnvironmentVariables() {
 		IEnvironmentVariableManager mngr = CCorePlugin.getDefault().getBuildEnvironmentManager();

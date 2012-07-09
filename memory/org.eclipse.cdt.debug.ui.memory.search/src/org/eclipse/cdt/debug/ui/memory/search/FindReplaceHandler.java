@@ -25,7 +25,6 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 
 public class FindReplaceHandler extends AbstractHandler implements IHandler {
-    private static FindReplaceDialog dialog = null;
     
     public Object execute(ExecutionEvent event) throws ExecutionException {
     	IWorkbenchPart part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
@@ -48,10 +47,8 @@ public class FindReplaceHandler extends AbstractHandler implements IHandler {
                     }
                     
                     if (memBlock instanceof IMemoryBlockExtension) {
-                    	if (dialog == null) {
-                    		dialog = new FindReplaceDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
-                    				(IMemoryBlockExtension) memBlock, fView, FindAction.getProperties(), null);
-                    	}
+                    	FindReplaceDialog dialog = new FindReplaceDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
+                				(IMemoryBlockExtension) memBlock, fView, FindAction.getProperties(), null);
                     	dialog.open();
                     }
                 }

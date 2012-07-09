@@ -10,19 +10,24 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.prvalueType;
-
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdInitializerExpression;
+import org.eclipse.cdt.core.dom.ast.IProblemType;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause;
 import org.eclipse.cdt.internal.core.dom.parser.ASTTypeIdInitializerExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalTypeId;
 
 /**
  * C++ variant of type id initializer expression. type-id { initializer }
  */
-public class CPPASTTypeIdInitializerExpression extends ASTTypeIdInitializerExpression {
+public class CPPASTTypeIdInitializerExpression extends ASTTypeIdInitializerExpression implements ICPPASTExpression {
+
+	private ICPPEvaluation fEvaluation;
 
 	private CPPASTTypeIdInitializerExpression() {
 	}
@@ -44,8 +49,32 @@ public class CPPASTTypeIdInitializerExpression extends ASTTypeIdInitializerExpre
 	}
 
 	@Override
+	public ICPPEvaluation getEvaluation() {
+		if (fEvaluation == null) 
+			fEvaluation= computeEvaluation();
+		
+		return fEvaluation;
+	}
+	
+	private ICPPEvaluation computeEvaluation() {
+		final IASTInitializer initializer = getInitializer();
+		if (!(initializer instanceof ICPPASTInitializerClause))
+			return EvalFixed.INCOMPLETE;
+		
+		IType type= CPPVisitor.createType(getTypeId());
+		if (type == null || type instanceof IProblemType)
+			return EvalFixed.INCOMPLETE;
+		
+		return new EvalTypeId(type, ((ICPPASTInitializerClause) initializer).getEvaluation());
+	}
+
+    @Override
 	public IType getExpressionType() {
-		final IASTTypeId typeId = getTypeId();
-		return prvalueType(CPPVisitor.createType(typeId.getAbstractDeclarator()));
+    	return getEvaluation().getTypeOrFunctionSet(this);
+    }
+    
+	@Override
+	public ValueCategory getValueCategory() {
+    	return getEvaluation().getValueCategory(this);
 	}
 }

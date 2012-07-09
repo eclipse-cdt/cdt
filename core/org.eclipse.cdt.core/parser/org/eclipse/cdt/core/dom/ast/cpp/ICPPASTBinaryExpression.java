@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface ICPPASTBinaryExpression extends IASTBinaryExpression, IASTImplicitNameOwner {
+public interface ICPPASTBinaryExpression extends IASTBinaryExpression, ICPPASTExpression, IASTImplicitNameOwner {
 	/**
 	 * <code>op_pmdot</code> pointer-to-member field dereference.
 	 */

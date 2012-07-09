@@ -101,8 +101,16 @@ public class C99Scope implements IC99Scope, IASTInternalScope {
 		return null;
 	}
 
+	/**
+	 * @deprecated Use {@link #getBindings(ScopeLookupData)} instead
+	 */
+	@Deprecated
 	public IBinding[] getBindings(IASTName name, boolean resolve,
 			boolean prefixLookup, IIndexFileSet acceptLocalBindings) {
+				return getBindings(new ScopeLookupData(name, resolve, prefixLookup));
+			}
+
+	public IBinding[] getBindings(ScopeLookupData lookup) {
 		// TODO Auto-generated method stub
 		return null;
 	}

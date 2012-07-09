@@ -25,11 +25,9 @@ import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
@@ -41,25 +39,14 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
  * also used as base class for function instances.
  */
 public class CPPFunctionSpecialization extends CPPSpecialization implements ICPPFunction, ICPPInternalFunction {
-	private ICPPFunctionType type;
+	private final ICPPFunctionType fType;
 	private ICPPParameter[] fParams;
-	private IType[] specializedExceptionSpec;
-	private final ICPPClassSpecialization fContext;
+	private final IType[] fExceptionSpecs;
 
-	public CPPFunctionSpecialization(ICPPFunction orig, IBinding owner, ICPPTemplateParameterMap argMap) {
-		this(orig, owner, argMap, null);
-	}
-	
-	public CPPFunctionSpecialization(ICPPFunction orig, IBinding owner, ICPPTemplateParameterMap argMap, ICPPClassSpecialization context) {
+	public CPPFunctionSpecialization(ICPPFunction orig, IBinding owner, ICPPTemplateParameterMap argMap, ICPPFunctionType type, IType[] exceptionSpecs) {
 		super(orig, owner, argMap);
-		fContext= context;
-	}
-	
-	@Override
-	protected ICPPClassSpecialization getSpecializationContext() {
-		if (fContext != null)
-			return fContext;
-		return super.getSpecializationContext(); 
+		fType= type;
+		fExceptionSpecs= exceptionSpecs;
 	}
 	
 	private ICPPFunction getFunction() {
@@ -108,12 +95,7 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 
 	@Override
 	public ICPPFunctionType getType() {
-		if (type == null) {
-			ICPPFunction function = (ICPPFunction) getSpecializedBinding();
-			type = (ICPPFunctionType) specializeType(function.getType());
-		}
-		
-		return type;
+		return fType;
 	}
 
 	@Override
@@ -330,31 +312,6 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 
 	@Override
 	public IType[] getExceptionSpecification() {
-		if (specializedExceptionSpec == null) {
-			ICPPFunction function = (ICPPFunction) getSpecializedBinding();
-			IType[] types = function.getExceptionSpecification();
-			if (types != null) {
-				IType[] specializedTypeList = new IType[types.length];
-				int j= 0;
-				for (int i= 0; i < types.length; ++i) {
-					final IType origType = types[i];
-					if (origType instanceof ICPPParameterPackType) {
-						IType[] specialized= specializeTypePack((ICPPParameterPackType) origType);
-						if (specialized.length != 1) {
-							IType[] x= new IType[specializedTypeList.length + specialized.length-1];
-							System.arraycopy(specializedTypeList, 0, x, 0, j);
-							specializedTypeList= x;
-						}
-						for (IType iType : specialized) {
-							specializedTypeList[j++] = iType;
-						}
-					} else {
-						specializedTypeList[j++] = specializeType(origType);
-					}
-				}
-				specializedExceptionSpec= specializedTypeList;
-			}
-		}
-		return specializedExceptionSpec;
+		return fExceptionSpecs;
 	}
 }

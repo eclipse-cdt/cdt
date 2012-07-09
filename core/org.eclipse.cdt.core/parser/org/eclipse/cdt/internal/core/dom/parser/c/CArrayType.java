@@ -160,7 +160,7 @@ public class CArrayType implements ICArrayType, ITypeContainer, ISerializableTyp
 	
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
-		int firstByte= ITypeMarshalBuffer.ARRAY;
+		int firstByte= ITypeMarshalBuffer.ARRAY_TYPE;
 		int flags= 0;
 		short nval= -1;
 		IValue val= null;

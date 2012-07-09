@@ -14,10 +14,13 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -33,6 +36,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassSpecialization;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassSpecialization.RecursionResolvingBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPClassSpecializationScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
@@ -62,7 +66,8 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 	
 	private volatile ICPPClassScope fScope;
 	private ObjectMap specializationMap= null; // Obtained from the synchronized PDOM cache
-	
+	private final ThreadLocal<Set<IBinding>> fInProgress= new ThreadLocal<Set<IBinding>>();
+
 	public PDOMCPPClassSpecialization(PDOMLinkage linkage, PDOMNode parent, ICPPClassType classType,
 			PDOMBinding specialized) throws CoreException {
 		super(linkage, parent, (ICPPSpecialization) classType, specialized);
@@ -88,7 +93,12 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 	}
 	
 	@Override
-	public IBinding specializeMember(IBinding original) {	
+	public IBinding specializeMember(IBinding original) {
+		return specializeMember(original, null);
+	}
+
+	@Override
+	public IBinding specializeMember(IBinding original, IASTNode point) {	
 		if (specializationMap == null) {
 			final Long key= record+PDOMCPPLinkage.CACHE_INSTANCE_SCOPE;
 			Object cached= getPDOM().getCachedResult(key);
@@ -111,12 +121,22 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 				specializationMap= (ObjectMap) getPDOM().putCachedResult(key, newMap, false);
 			}
 		}
+		Set<IBinding> set;
 		synchronized (specializationMap) {
 			IBinding result= (IBinding) specializationMap.get(original);
 			if (result != null) 
 				return result;
+			set= fInProgress.get();
+			if (set == null) {
+				set= new HashSet<IBinding>();
+				fInProgress.set(set);
+			} 
+			if (!set.add(original)) 
+				return new RecursionResolvingBinding(null, null);
 		}
-		IBinding newSpec= CPPTemplates.createSpecialization(this, original);
+		IBinding newSpec= CPPTemplates.createSpecialization(this, original, point);
+		set.remove(original);
+
 		synchronized (specializationMap) {
 			IBinding oldSpec= (IBinding) specializationMap.put(original, newSpec);
 			if (oldSpec != null) {

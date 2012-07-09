@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 
 /**
  * Base implementation for all ambiguous nodes.
@@ -163,4 +164,7 @@ public abstract class ASTAmbiguousNode extends ASTNode  {
 	public final boolean isLValue() {
 		throw new UnsupportedOperationException();
     }
+	public final ICPPEvaluation getEvaluation() {
+		throw new UnsupportedOperationException();
+	}
 }

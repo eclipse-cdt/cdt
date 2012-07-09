@@ -12,7 +12,6 @@ package org.eclipse.cdt.core.dom.ast.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
-import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
 
@@ -23,7 +22,7 @@ import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface ICPPASTLambdaExpression extends IASTExpression, IASTImplicitNameOwner {
+public interface ICPPASTLambdaExpression extends ICPPASTExpression, IASTImplicitNameOwner {
 	ASTNodeProperty CAPTURE = new ASTNodeProperty("ICPPASTLambdaExpression - CAPTURE [ICPPASTCapture]"); //$NON-NLS-1$
 	ASTNodeProperty DECLARATOR = new ASTNodeProperty("ICPPASTLambdaExpression - DECLARATOR [ICPPASTFunctionDeclarator]"); //$NON-NLS-1$
 	ASTNodeProperty BODY = new ASTNodeProperty("ICPPASTLambdaExpression - BODY [IASTCompoundStatement]"); //$NON-NLS-1$

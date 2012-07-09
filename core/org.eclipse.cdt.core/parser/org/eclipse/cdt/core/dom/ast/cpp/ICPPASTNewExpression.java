@@ -25,7 +25,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface ICPPASTNewExpression extends IASTExpression, IASTImplicitNameOwner {
+public interface ICPPASTNewExpression extends ICPPASTExpression, IASTImplicitNameOwner {
 	public static final ASTNodeProperty NEW_PLACEMENT = new ASTNodeProperty(
 			"ICPPASTNewExpression.NEW_PLACEMENT [IASTExpression]"); //$NON-NLS-1$
 

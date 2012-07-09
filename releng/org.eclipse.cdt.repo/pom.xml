@@ -7,16 +7,16 @@
 	<parent>
 		<groupId>org.eclipse.cdt</groupId>
 		<artifactId>cdt-parent</artifactId>
-		<version>8.1.0-SNAPSHOT</version>
+		<version>8.2.0-SNAPSHOT</version>
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 
-	<version>8.1.0-SNAPSHOT</version>
+	<version>8.2.0-SNAPSHOT</version>
 	<artifactId>org.eclipse.cdt.repo</artifactId>
 	<packaging>eclipse-repository</packaging>
 	
 	<properties>
-		<cdt-stream>juno</cdt-stream>
+		<cdt-stream>kepler</cdt-stream>
 		<cdt-zipfile>org.eclipse.cdt.repo.zip</cdt-zipfile>
 		<cdt-install>/home/data/httpd/download.eclipse.org/tools/cdt/builds/${cdt-stream}/nightly</cdt-install>
 	</properties>

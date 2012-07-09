@@ -23,10 +23,14 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 
 
 public class CPPASTDeleteExpression extends ASTNode implements ICPPASTDeleteExpression {
+    private static final ICPPEvaluation EVALUATION = new EvalFixed(CPPSemantics.VOID_TYPE, PRVALUE, Value.UNKNOWN);
+	
     private IASTExpression operand;
     private boolean isGlobal;
     private boolean isVectored;
@@ -166,6 +170,11 @@ public class CPPASTDeleteExpression extends ASTNode implements ICPPASTDeleteExpr
 		}
         return true;
     }
+
+	@Override
+	public ICPPEvaluation getEvaluation() {
+		return EVALUATION;
+	}
 
     @Override
 	public IType getExpressionType() {

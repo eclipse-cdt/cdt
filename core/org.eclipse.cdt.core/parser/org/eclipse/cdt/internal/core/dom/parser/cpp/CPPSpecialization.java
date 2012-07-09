@@ -16,14 +16,10 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
-import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
@@ -40,9 +36,9 @@ import org.eclipse.core.runtime.PlatformObject;
  * is a need to synchronize non-final members.
  */
 public abstract class CPPSpecialization extends PlatformObject implements ICPPSpecialization, ICPPInternalBinding {
-	private IBinding owner;
-	private IBinding specialized;
-	private ICPPTemplateParameterMap argumentMap;
+	private final IBinding owner;
+	private final IBinding specialized;
+	private final ICPPTemplateParameterMap argumentMap;
 	protected IASTNode definition;
 	private IASTNode[] declarations;
 	
@@ -50,45 +46,6 @@ public abstract class CPPSpecialization extends PlatformObject implements ICPPSp
 		this.specialized = specialized;
 		this.owner = owner;
 		this.argumentMap = argumentMap;
-	}
-
-	public IType specializeType(IType type) {
-		return CPPTemplates.instantiateType(type, getTemplateParameterMap(), -1, getSpecializationContext());
-	}
-
-	protected ICPPClassSpecialization getSpecializationContext() {
-		if (owner instanceof ICPPClassSpecialization) {
-			ICPPClassSpecialization within = (ICPPClassSpecialization) owner;
-			ICPPClassType orig = within.getSpecializedBinding();
-			for(;;) {
-				IBinding o1 = within.getOwner();
-				IBinding o2 = orig.getOwner();
-				if (!(o1 instanceof ICPPClassSpecialization && o2 instanceof ICPPClassType)) 
-					return within;
-				ICPPClassSpecialization nextWithin = (ICPPClassSpecialization) o1;
-				orig= (ICPPClassType) o2;
-				if (orig.isSameType(nextWithin)) 
-					return within;
-				within= nextWithin;
-			}
-		}		
-		return null;
-	}
-	
-	public IType[] specializeTypePack(ICPPParameterPackType type) {
-		if (owner instanceof ICPPClassSpecialization) {
-			return CPPTemplates.instantiateTypes(new IType[]{type}, getTemplateParameterMap(), -1, (ICPPClassSpecialization) owner);
-		} else {
-			return CPPTemplates.instantiateTypes(new IType[]{type}, getTemplateParameterMap(), -1, null);
-		}
-	}
-
-	public IValue specializeValue(IValue value, int maxdepth) {
-		if (owner instanceof ICPPClassSpecialization) {
-			return CPPTemplates.instantiateValue(value, getTemplateParameterMap(), -1, (ICPPClassSpecialization) owner, maxdepth);
-		} else {
-			return CPPTemplates.instantiateValue(value, getTemplateParameterMap(), -1, null, maxdepth);
-		}
 	}
 
 	@Override

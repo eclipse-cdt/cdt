@@ -56,6 +56,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.ExprMetaGetVarInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIDataEvaluateExpressionInfo;
 import org.eclipse.cdt.dsf.service.AbstractDsfService;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
+import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.utils.Addr32;
 import org.eclipse.cdt.utils.Addr64;
@@ -423,33 +424,80 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 	 */
     protected static class IndexedPartitionDMC extends MIExpressionDMC implements IIndexedPartitionDMContext {
 
-    	final private ExpressionInfo fParentInfo;
+    	final private MIExpressionDMC fParentExpression;
 		private final int fIndex;
     	private final int fLength;
     	
-		public IndexedPartitionDMC(
+    	/**
+    	 * @deprecated This method does not keep track of casted expressions.
+    	 * It has been replaced by the constructor that takes an MIExpressionDMC
+    	 * as a parameter.
+    	 */
+    	@Deprecated
+    	public IndexedPartitionDMC(
 				String sessionId, 
 				ExpressionInfo parentInfo, 
 				IFrameDMContext frameCtx, 
 				int index, 
 				int length) {
-			this(sessionId, parentInfo, (IDMContext)frameCtx, index, length);
+    		this(new MIExpressionDMC(sessionId, parentInfo, frameCtx), frameCtx, index, length);
 		}
 
-    	private IndexedPartitionDMC(
-    			String sessionId, 
-    			ExpressionInfo parentInfo, 
-    			IDMContext parent, 
+    	/**
+		 * @since 4.2
+		 */
+    	public IndexedPartitionDMC(
+    			MIExpressionDMC parentExpr,
     			int index, 
     			int length) {
-			super(sessionId, createExpressionInfo(parentInfo, index, length), parent);
+    		this(parentExpr, getParentDmc(parentExpr), index, length);
+    	}
+    	/**
+    	 * @param parentExpr The expression of the array.  This can be a casted expression.
+    	 *                   This is not the parent that will be used in the context hierarchy, as we chose
+    	 *                   not to stack up partitions.
+    	 * @param parentDmc The frame or thread context that will be used as a parent in the context hierarchy.
+    	 */
+    	private IndexedPartitionDMC(
+    			MIExpressionDMC parentExpr,
+    			IDMContext parentDmc,
+    			int index, 
+    			int length) {
+			super(parentExpr.getSessionId(), createExpressionInfo(parentExpr.getExpressionInfo(), index, length), parentDmc);
 			fIndex = index;
 			fLength = length;
-			fParentInfo = parentInfo;
+			fParentExpression = parentExpr;
 		}
 
+    	/**
+    	 * Find the frame context that will be the parent of this partition in the context hierarchy.
+    	 * Not to be confused with the original parent array that contains the partition.  That parent
+    	 * can be obtained using getParentExpressionContext()
+    	 */
+    	private static IDMContext getParentDmc(MIExpressionDMC parentExpr) {
+    		IFrameDMContext frameDmc = DMContexts.getAncestorOfType(parentExpr, IFrameDMContext.class);
+    		if (frameDmc != null) {
+    			return frameDmc;
+    		}
+    		
+    		IMIExecutionDMContext execCtx = DMContexts.getAncestorOfType(parentExpr, IMIExecutionDMContext.class);
+    		if (execCtx != null) {
+    			// If we have a thread context but not a frame context, we give the user
+    			// the expression as per the top-most frame of the specified thread.
+    			// To do this, we create our own frame context.
+    			DsfServicesTracker tracker = new DsfServicesTracker(GdbPlugin.getBundleContext(), parentExpr.getSessionId());
+    			MIStack stackService = tracker.getService(MIStack.class);
+    			tracker.dispose();
+    			
+    			if (stackService != null) {
+    				return stackService.createFrameDMContext(execCtx, 0);
+    			}
+    		}
+    	
+    		return parentExpr;
+    	}
     	public ExpressionInfo getParentInfo() {
-    		return fParentInfo;
+    		return fParentExpression.getExpressionInfo();
     	}
 
 		/* (non-Javadoc)
@@ -457,9 +505,18 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 		 */
 		@Override
 		public String getParentExpression() {
-			return getParentInfo().getFullExpr();
+			return getParentExpressionContext().getExpression();
 		}
 
+		/**
+		 * Get the context of the parent array.  This can be used to know if the
+		 * parent array is a casted expression.
+		 * @since 4.2
+		 */
+		public MIExpressionDMC getParentExpressionContext() {
+			return fParentExpression;
+		}
+		
 		@Override
 		public int getIndex() {
 			return fIndex;
@@ -473,7 +530,7 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
         @Override
         public boolean equals(Object other) {
             return super.baseEquals(other) &&
-                    ((IndexedPartitionDMC) other).getParentInfo().equals(getParentInfo()) &&
+                    ((IndexedPartitionDMC) other).getParentExpressionContext().equals(getParentExpressionContext()) &&
                     ((IndexedPartitionDMC) other).getIndex() == getIndex() &&
                     ((IndexedPartitionDMC) other).getLength() == getLength();                
         }
@@ -497,21 +554,7 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
         	return new ExpressionInfo(expression, expression);
         }
     }
-
-	private class CastedIndexedPartitionDMC extends IndexedPartitionDMC implements ICastedExpressionDMContext {
-
-		final private CastInfo fCastInfo;
-
-		private CastedIndexedPartitionDMC(MIExpressionDMC exprDmc, int index, int length, CastInfo castInfo) {
-			super(exprDmc.getSessionId(), exprDmc.getExpressionInfo(), exprDmc, index, length );
-			fCastInfo = castInfo;
-		}
-
-		@Override
-		public CastInfo getCastInfo() {
-			return fCastInfo;
-		}
-	}    
+    
     
 	/**
 	 * Contains the address of an expression as well as the size of its type.
@@ -1462,13 +1505,10 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 	protected class CastedExpressionDMC extends MIExpressionDMC implements ICastedExpressionDMContext {
 
 		private final CastInfo fCastInfo;
-		/** if non-null, interpret result as this type rather than the raw expression's type */
-		private String fCastExpression;
 
 		public CastedExpressionDMC(MIExpressionDMC exprDMC, String castExpression, CastInfo castInfo) {
-			super(getSession().getId(), exprDMC.getExpression(), exprDMC.getRelativeExpression(), exprDMC);
+			super(getSession().getId(), castExpression, exprDMC.getRelativeExpression(), exprDMC);
 			fCastInfo = castInfo;
-			fCastExpression = castExpression;
 		}
 		
 		/* (non-Javadoc)
@@ -1478,15 +1518,7 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 		public CastInfo getCastInfo() {
 			return fCastInfo;
 		}
-		
-		/* (non-Javadoc)
-		 * @see org.eclipse.cdt.dsf.mi.service.MIExpressions.java#getExpression()
-		 */
-        @Override
-		public String getExpression() {
-            return fCastExpression;
-        }
-        
+		        
         /**
          * @return True if the two objects are equal, false otherwise.
          */
@@ -1495,13 +1527,6 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 			return super.equals(other)
 					&& fCastInfo.equals(((CastedExpressionDMC) other).fCastInfo);
         }
-        
-        @Override
-        public String toString() {
-            return baseToString() + ".expr" + "[" + //$NON-NLS-1$ //$NON-NLS-2$
-                    getExpression() +", " + getRelativeExpression() + "]"; //$NON-NLS-1$//$NON-NLS-2$
-        }
-
 	}
 	
     /* (non-Javadoc)
@@ -1534,6 +1559,12 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 				castExpression = buffer.toString();
 			}
 			
+			// Surround the entire casted expression with parenthesis in case we are
+			// dealing with an array.  Arrays must be parenthesized before they are
+			// subscripted.  Note that we can be casting to an array or displaying
+			// as an array, so we must do this all the time.
+			castExpression = String.format("(%s)", castExpression); //$NON-NLS-1$
+					
 			return new CastedExpressionDMC((MIExpressionDMC) exprDMC, castExpression, castInfo);
 		} else {
 			assert false;
@@ -1568,18 +1599,19 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 		int startIndex1 = (startIndex < 0) ? 0 : startIndex;
 		int length1 = (length < 0) ? numChildren - startIndex1 : Math.min(length, numChildren - startIndex1);
 
-		CastInfo castInfo = (exprCtx instanceof ICastedExpressionDMContext) ? 
-				((ICastedExpressionDMContext)exprCtx).getCastInfo() : null;
 		IndexedPartitionDMC[] children = new IndexedPartitionDMC[numChildren];
 		int index = 0;
+		// If the parent array is a casted expression it could have a different
+		// start index.  We want the partition to start at the right index, not always 0
+//		if (exprCtx instanceof ICastedExpressionDMContext) {
+//			index = ((ICastedExpressionDMContext)exprCtx).getCastInfo().getArrayStartIndex();
+//		}
 		for(int i = 0; i < children.length; ++i) {
 			int partLength = computePartitionLength(realNumChildren, i);
 			children[i] = createIndexedPartition(
-				exprCtx.getParents()[0], 
-				exprCtx.getExpressionInfo(), 
+				exprCtx, 
 				index, 
-				partLength,
-				castInfo);
+				partLength);
 			index += partLength;
 		}
 		return Arrays.copyOfRange(children, startIndex1, startIndex1 + length1 );
@@ -1591,9 +1623,6 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 			final int length, 
 			final DataRequestMonitor<IExpressionDMContext[]> rm) {
 		
-		CastInfo castInfo = (partDmc instanceof ICastedExpressionDMContext) ? 
-				((ICastedExpressionDMContext)partDmc).getCastInfo() : null;
-
 		final int startIndex1 = (startIndex < 0) ? 0 : startIndex;
 		final int length1 = (length < 0) ? Integer.MAX_VALUE : length;
 
@@ -1617,11 +1646,9 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 			for (int i = 0; i < children.length; ++i) {
 				int childPartLength = computePartitionLength(partLength, i + startIndex1);
 				children[i] = createIndexedPartition(
-					partDmc, 
-					partDmc.getParentInfo(), 
+					partDmc.getParentExpressionContext(), 
 					index, 
-					childPartLength,
-					castInfo);
+					childPartLength);
 				index += childPartLength;
 			}
 			rm.setData(children);
@@ -1634,11 +1661,8 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 				rm.done();
 			}
 			else {
-				IExpressionDMContext parentCtx = createExpression(partDmc.getParents()[0], partDmc.getParentInfo());
-				if (castInfo != null)
-					parentCtx = createCastedExpression(parentCtx, castInfo);
 				getRealSubExpressions(
-						parentCtx, 
+						partDmc.getParentExpressionContext(), 
 						partStartIndex + startIndex1, 
 						Math.min(length1, partLength - startIndex1), 
 						rm);
@@ -1711,39 +1735,8 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 		return ( diff > length ) ? length : diff ;
 	}
 
-	private IndexedPartitionDMC createIndexedPartition(
-			IDMContext ctx, 
-			ExpressionInfo info, 
-			int index, 
-			int length, 
-			CastInfo castInfo) {
-	    IFrameDMContext frameDmc = DMContexts.getAncestorOfType(ctx, IFrameDMContext.class);
-	    if (frameDmc != null) {
-	    	IndexedPartitionDMC partDmc = 
-	    		new IndexedPartitionDMC(getSession().getId(), info, frameDmc, index, length);
-	        return (castInfo != null) ? 
-	        	new CastedIndexedPartitionDMC(partDmc, index, length, castInfo) : partDmc;
-	    } 
-	    
-	    IMIExecutionDMContext execCtx = DMContexts.getAncestorOfType(ctx, IMIExecutionDMContext.class);
-	    if (execCtx != null) {
-	    	// If we have a thread context but not a frame context, we give the user
-	    	// the expression as per the top-most frame of the specified thread.
-	    	// To do this, we create our own frame context.
-	    	MIStack stackService = getServicesTracker().getService(MIStack.class);
-	    	if (stackService != null) {
-	    		frameDmc = stackService.createFrameDMContext(execCtx, 0);
-		    	IndexedPartitionDMC partDmc = 
-		    		new IndexedPartitionDMC(getSession().getId(), info, frameDmc, index, length);
-		        return (castInfo != null) ? 
-		        	new CastedIndexedPartitionDMC(partDmc, index, length, castInfo) : partDmc;
-	    	}
-        } 
-
-    	IndexedPartitionDMC partDmc = 
-        		new IndexedPartitionDMC(getSession().getId(), info, ctx, index, length);
-        return (castInfo != null) ? 
-            	new CastedIndexedPartitionDMC(partDmc, index, length, castInfo) : partDmc;
+	private IndexedPartitionDMC createIndexedPartition(MIExpressionDMC parentExpr, int index, int length) {
+		return new IndexedPartitionDMC(parentExpr, index, length);
 	}
 
 	private void getRealSubExpressionCount(IExpressionDMContext dmc, int numChildLimit, final DataRequestMonitor<Integer> rm) {

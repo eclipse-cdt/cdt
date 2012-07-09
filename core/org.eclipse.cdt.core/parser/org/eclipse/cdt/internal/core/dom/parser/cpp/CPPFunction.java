@@ -59,6 +59,8 @@ import org.eclipse.core.runtime.PlatformObject;
  * Binding for c++ function
  */
 public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInternalFunction {
+	public static final ICPPFunction UNINITIALIZED_FUNCTION = new CPPFunction(null);
+
 	protected IASTDeclarator[] declarations;
 	protected ICPPASTFunctionDeclarator definition;
 	protected ICPPFunctionType type;
@@ -253,14 +255,19 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
     @Override
 	public ICPPFunctionType getType() {
         if (type == null) {
-			final IType t = getNestedType(CPPVisitor.createType((definition != null) ? definition : declarations[0]), TDEF);
+			IType t = CPPVisitor.createType((definition != null) ? definition : declarations[0]);
 			if (t instanceof ICPPFunctionType) {
 				type = (ICPPFunctionType) t;
-			} else if (t instanceof ISemanticProblem){
-				type= new ProblemFunctionType(((ISemanticProblem) t).getID());
 			} else {
-				// This case is unexpected
-				type = new ProblemFunctionType(ISemanticProblem.TYPE_UNRESOLVED_NAME);
+				t = getNestedType(t, TDEF);
+				if (t instanceof ICPPFunctionType) {
+					type = (ICPPFunctionType) t;
+				} else if (t instanceof ISemanticProblem){
+					type= new ProblemFunctionType(((ISemanticProblem) t).getID());
+				} else {
+					// This case is unexpected
+					type = new ProblemFunctionType(ISemanticProblem.TYPE_UNRESOLVED_NAME);
+				}
 			}
 		}
         return type;

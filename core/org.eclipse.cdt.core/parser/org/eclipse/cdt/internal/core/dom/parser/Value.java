@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -36,6 +37,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator.SizeAndAlignment;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.parser.scanner.ExpressionEvaluator;
 import org.eclipse.cdt.internal.core.parser.scanner.ExpressionEvaluator.EvalException;
@@ -75,7 +77,7 @@ public class Value implements IValue {
 
 	private static class Reevaluation {
 		public final char[] fExpression;
-		private int fPackOffset;
+		private final int fPackOffset;
 		public int pos=0;
 		public final Map<String, Integer> fUnknownSigs;
 		public final List<ICPPUnknownBinding> fUnknowns;
@@ -988,5 +990,10 @@ public class Value implements IValue {
 		char[] result= new char[len];
 		buf.getChars(0, len, result, 0);
 		return result;
+	}
+
+	public static IValue create(ICPPEvaluation eval, IASTNode point) {
+		// compute value of evaluation
+		return Value.UNKNOWN;
 	}
 }

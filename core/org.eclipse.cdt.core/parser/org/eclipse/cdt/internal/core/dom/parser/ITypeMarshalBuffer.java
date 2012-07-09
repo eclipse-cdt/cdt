@@ -19,17 +19,36 @@ import org.eclipse.core.runtime.CoreException;
  * Buffer for marshalling and unmarshalling types.
  */
 public interface ITypeMarshalBuffer {
-	final static byte BASIC_TYPE=     			1;
-	final static byte POINTER=        			2;
-	final static byte ARRAY=            		3;
-	final static byte CVQUALIFIER=      		4;
-	final static byte FUNCTION_TYPE=    		5;
-	final static byte REFERENCE=        		6;
-	final static byte POINTER_TO_MEMBER=    	7;
-	final static byte PACK_EXPANSION= 			8;
-	final static byte PROBLEM_TYPE= 			9;
-	final static byte VALUE= 				   10;
-	static final byte KIND_MASK = 0xf;
+	final static byte BASIC_TYPE=     				1;
+	final static byte POINTER_TYPE=        			2;
+	final static byte ARRAY_TYPE=            		3;
+	final static byte CVQUALIFIER_TYPE=      		4;
+	final static byte FUNCTION_TYPE=    			5;
+	final static byte REFERENCE_TYPE=        		6;
+	final static byte POINTER_TO_MEMBER_TYPE=   	7;
+	final static byte PACK_EXPANSION_TYPE= 			8;
+	final static byte PROBLEM_TYPE= 				9;
+	final static byte VALUE= 				   	   10;
+	final static byte DEPENDENT_EXPRESSION_TYPE=   11;
+	
+	final static byte
+		EVAL_BINARY= 1,
+		EVAL_BINARY_TYPE_ID = 2,
+		EVAL_BINDING = 3,
+		EVAL_COMMA = 4,
+		EVAL_COMPOUND = 5,
+		EVAL_CONDITIONAL = 6,
+		EVAL_FIXED= 7,
+		EVAL_FUNCTION_CALL= 8,
+		EVAL_FUNCTION_SET= 9,
+		EVAL_ID= 10,
+		EVAL_INIT_LIST= 11,
+		EVAL_MEMBER_ACCESS= 12,
+		EVAL_TYPE_ID= 13,
+		EVAL_UNARY= 14,
+		EVAL_UNARY_TYPE_ID = 15;
+	
+	static final byte KIND_MASK= 				   15;
 	
 	final static int FLAG1	= 0x10;
 	final static int FLAG2	= 0x20;
@@ -41,6 +60,7 @@ public interface ITypeMarshalBuffer {
 	IType unmarshalType() throws CoreException;
 	IValue unmarshalValue() throws CoreException;
 	IBinding unmarshalBinding() throws CoreException;
+	ISerializableEvaluation unmarshalEvaluation() throws CoreException;
 	int getByte() throws CoreException;
 	int getShort() throws CoreException;
 	long getLong() throws CoreException;
@@ -49,6 +69,7 @@ public interface ITypeMarshalBuffer {
 	void marshalType(IType type) throws CoreException;
 	void marshalValue(IValue value) throws CoreException;
 	void marshalBinding(IBinding binding) throws CoreException;
+	void marshalEvaluation(ISerializableEvaluation eval, boolean includeValue) throws CoreException;
 	void putByte(byte data);
 	void putShort(short data);
 	void putLong(long data);

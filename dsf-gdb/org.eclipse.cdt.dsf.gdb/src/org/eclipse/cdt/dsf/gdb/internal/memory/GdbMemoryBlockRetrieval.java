@@ -24,16 +24,23 @@ import org.eclipse.cdt.dsf.debug.model.DsfMemoryBlock;
 import org.eclipse.cdt.dsf.debug.model.DsfMemoryBlockRetrieval;
 import org.eclipse.cdt.dsf.debug.service.IMemory.IMemoryDMContext;
 import org.eclipse.cdt.dsf.debug.service.IMemorySpaces;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.IExitedDMEvent;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.IStartedDMEvent;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfServices;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.IMemoryBlockManager;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.osgi.framework.BundleContext;
@@ -381,4 +388,35 @@ public class GdbMemoryBlockRetrieval extends DsfMemoryBlockRetrieval implements
         }
 		return false;
 	}
+
+	@DsfServiceEventHandler 
+	public void eventDispatched(IStartedDMEvent event) {
+		if (event.getDMContext() instanceof IContainerDMContext) {
+			IMemoryDMContext memoryDmc = DMContexts.getAncestorOfType(event.getDMContext(), IMemoryDMContext.class);
+			if (memoryDmc != null) {
+				initialize(memoryDmc);
+			}
+		}
+    }
+
+	@DsfServiceEventHandler 
+	public void eventDispatched(IExitedDMEvent event) {
+		if (event.getDMContext() instanceof IContainerDMContext) {
+			IMemoryDMContext memoryDmc = DMContexts.getAncestorOfType(event.getDMContext(), IMemoryDMContext.class);
+			if (memoryDmc != null) {
+				saveMemoryBlocks();
+				Job removeJob = new Job("Removing memory blocks") { //$NON-NLS-1$
+					
+					@Override
+					protected IStatus run( IProgressMonitor monitor ) {
+						IMemoryBlockManager mbm = DebugPlugin.getDefault().getMemoryBlockManager();
+						IMemoryBlock[] deletedMemoryBlocks = mbm.getMemoryBlocks(GdbMemoryBlockRetrieval.this);
+						mbm.removeMemoryBlocks(deletedMemoryBlocks);
+						return Status.OK_STATUS;
+					}
+				};
+				removeJob.schedule();
+			}
+		}
+    }
 }

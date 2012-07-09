@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Andrew Niefer (IBM) - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     Andrew Niefer (IBM) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -18,37 +18,38 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 
 /**
  * The specialization of a method in the context of a class-specialization.
  */
-public class CPPMethodSpecialization extends CPPFunctionSpecialization
-		implements ICPPMethod {
+public class CPPMethodSpecialization extends CPPFunctionSpecialization implements ICPPMethod {
 
-	public CPPMethodSpecialization(ICPPMethod orig, ICPPClassType owner, ICPPTemplateParameterMap argMap ) {
-		super(orig, owner, argMap );
+	public CPPMethodSpecialization(ICPPMethod orig, ICPPClassType owner, ICPPTemplateParameterMap argMap, ICPPFunctionType type, IType[] exceptionSpec ) {
+		super(orig, owner, argMap, type, exceptionSpec );
 	}
 
 	@Override
 	public boolean isVirtual() {
 		ICPPMethod f = (ICPPMethod) getSpecializedBinding();
-		if( f != null )
+		if (f != null)
 			return f.isVirtual();
 		IASTNode definition = getDefinition();
-		if( definition != null ){
+		if (definition != null) {
 			IASTNode node = definition.getParent();
-			while( node instanceof IASTDeclarator )
+			while(node instanceof IASTDeclarator)
 				node = node.getParent();
 			
 			ICPPASTDeclSpecifier declSpec = null;
-			if( node instanceof IASTSimpleDeclaration )
-				declSpec = (ICPPASTDeclSpecifier) ((IASTSimpleDeclaration)node).getDeclSpecifier();
-			else if( node instanceof IASTFunctionDefinition )
-				declSpec = (ICPPASTDeclSpecifier) ((IASTFunctionDefinition)node).getDeclSpecifier();
+			if (node instanceof IASTSimpleDeclaration) {
+				declSpec = (ICPPASTDeclSpecifier) ((IASTSimpleDeclaration) node).getDeclSpecifier();
+			} else if (node instanceof IASTFunctionDefinition) {
+				declSpec = (ICPPASTDeclSpecifier) ((IASTFunctionDefinition) node).getDeclSpecifier();
+			}
 			
-			if( declSpec != null ){
+			if (declSpec != null) {
 				return declSpec.isVirtual();
 			}
 		}
@@ -58,7 +59,7 @@ public class CPPMethodSpecialization extends CPPFunctionSpecialization
 	@Override
 	public int getVisibility() {
 		ICPPMethod f = (ICPPMethod) getSpecializedBinding();
-		if( f != null )
+		if (f != null)
 			return f.getVisibility();
 		return 0;
 	}
@@ -73,13 +74,13 @@ public class CPPMethodSpecialization extends CPPFunctionSpecialization
 		char[] name = getNameCharArray();
 		if (name.length > 1 && name[0] == '~')
 			return true;
-		
+
 		return false;
 	}
 
 	@Override
 	public boolean isExplicit() {
-		return ((ICPPMethod)getSpecializedBinding()).isExplicit();
+		return ((ICPPMethod) getSpecializedBinding()).isExplicit();
 	}
 
 	@Override

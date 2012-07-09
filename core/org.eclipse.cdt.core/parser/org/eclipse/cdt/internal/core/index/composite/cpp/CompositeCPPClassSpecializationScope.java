@@ -83,11 +83,16 @@ public class CompositeCPPClassSpecializationScope extends CompositeScope impleme
 		return fDelegate.getBinding(name, resolve, acceptLocalBindings);
 	}
 
-	@Override
+	@Deprecated	@Override 
 	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup,
 			IIndexFileSet acceptLocalBindings) {
+		return getBindings(new ScopeLookupData(name, resolve, prefixLookup));
+	}
+
+	@Override
+	public IBinding[] getBindings(ScopeLookupData lookup) {
 		createDelegate();
-		return fDelegate.getBindings(name, resolve, prefixLookup, acceptLocalBindings);
+		return fDelegate.getBindings(lookup);
 	}
 
 	@Override

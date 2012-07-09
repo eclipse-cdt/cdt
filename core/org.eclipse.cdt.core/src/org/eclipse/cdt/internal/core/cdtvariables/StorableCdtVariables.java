@@ -12,7 +12,9 @@ package org.eclipse.cdt.internal.core.cdtvariables;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
@@ -171,7 +173,7 @@ public class StorableCdtVariables implements IStorableCdtVariables {
 		return null;
 	}
 
-	/*
+	/**
 	 * sets the storable macros to hold the geven number of macros
 	 * all macros that are present in the store but not included in the given array
 	 * will be removed
@@ -183,14 +185,21 @@ public class StorableCdtVariables implements IStorableCdtVariables {
 			deleteAll();
 		else{
 			if (getMap().size() != 0) {
+				Set<String> existing = new HashSet<String>();
+				Set<String> macroNames = new HashSet<String>();
+				
 				for (ICdtVariable m : getMap().values()){
-					int i;
-					for(i = 0 ; i < macros.length; i++){
-						if(m.getName().equals(macros[i].getName()))
-							break;
+					existing.add(m.getName());
+				}
+				
+				for (ICdtVariable m : macros){
+					macroNames.add(m.getName());
+				}
+				
+				for (String name : existing){
+					if (!macroNames.contains(name)){
+						deleteMacro(name);
 					}
-					if(i == macros.length)
-						deleteMacro(m.getName());
 				}
 			}
 			createMacros(macros);

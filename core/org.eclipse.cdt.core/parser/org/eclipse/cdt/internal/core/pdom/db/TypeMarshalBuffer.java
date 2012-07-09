@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
+import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableType;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
@@ -109,12 +110,12 @@ public class TypeMarshalBuffer implements ITypeMarshalBuffer {
 
 	@Override
 	public void marshalType(IType type) throws CoreException {
-		if (type instanceof IBinding) {
-			marshalBinding((IBinding) type);
-		} else if (type instanceof ISerializableType) {
+		if (type instanceof ISerializableType) {
 			((ISerializableType) type).marshal(this);
 		} else if (type == null) {
 			putByte(NULL_TYPE);
+		} else if (type instanceof IBinding) {
+			marshalBinding((IBinding) type);
 		} else {
 			assert false : "Cannot serialize " + ASTTypeUtil.getType(type) + "(" + type.getClass().getName() + ")";   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 			putByte(UNSTORABLE_TYPE);
@@ -140,6 +141,28 @@ public class TypeMarshalBuffer implements ITypeMarshalBuffer {
 		}
 		
 		return fLinkage.unmarshalType(this);
+	}
+
+	@Override
+	public void marshalEvaluation(ISerializableEvaluation eval, boolean includeValues) throws CoreException {
+		if (eval == null) {
+			putByte(NULL_TYPE);
+		} else {
+			eval.marshal(this, includeValues);
+		}
+	} 
+	
+	@Override
+	public ISerializableEvaluation unmarshalEvaluation() throws CoreException {
+		if (fPos >= fBuffer.length)
+			throw unmarshallingError();
+		
+		byte firstByte= fBuffer[fPos];
+		if (firstByte == NULL_TYPE) {
+			fPos++;
+			return null;
+		} 
+		return fLinkage.unmarshalEvaluation(this);
 	}
 
 	@Override

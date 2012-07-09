@@ -1329,7 +1329,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 	//	    v.push_back(/*cursor*/);
 	//	} 
 	public void testTypedefSpecialization_Bug307818() throws Exception {
-		final String[] expected= { "push_back(const int & value) : void" };
+		final String[] expected= { "push_back(const vector<int>::value_type & value) : void" };
 		assertParameterHint(expected);
 	}
 	

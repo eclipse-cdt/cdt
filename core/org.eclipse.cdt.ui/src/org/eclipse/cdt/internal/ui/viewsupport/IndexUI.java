@@ -511,10 +511,11 @@ public class IndexUI {
 		// Check for specializations of the owner
 		IBinding owner = binding.getOwner();
 		if (owner != null) {
+			IASTNode point= null; // Instantiation of dependent expression may not work.
 			for (IBinding specOwner : findSpecializations(index, owner)) {
 				if (specOwner instanceof ICPPClassSpecialization) {
 					// Add the specialized member
-					IBinding specializedMember = ((ICPPClassSpecialization) specOwner).specializeMember(binding);
+					IBinding specializedMember = ((ICPPClassSpecialization) specOwner).specializeMember(binding, point);
 					specializedMember= index.adaptBinding(specializedMember);
 					if (specializedMember != null) {
 						if (result == null)

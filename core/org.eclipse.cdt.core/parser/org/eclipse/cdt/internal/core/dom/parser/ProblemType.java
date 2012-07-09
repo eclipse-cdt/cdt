@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.dom.parser;
 
 import org.eclipse.cdt.core.dom.ast.IProblemType;
+import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.internal.core.parser.ParserMessages;
 import org.eclipse.core.runtime.CoreException;
@@ -20,6 +21,7 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class ProblemType implements IProblemType, ISerializableType {
 	public static final IType UNRESOLVED_NAME = new ProblemType(TYPE_UNRESOLVED_NAME);
+	public static final IType UNKNOWN_FOR_EXPRESSION = new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
 	
 	private final int fID;
 

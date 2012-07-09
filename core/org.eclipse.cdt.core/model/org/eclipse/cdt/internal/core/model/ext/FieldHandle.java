@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model.ext;
 
@@ -17,7 +17,6 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 
 public class FieldHandle extends CElementHandle implements org.eclipse.cdt.core.model.IField {
-
 	private ASTAccessVisibility fVisibility;
 	private String fTypeName;
 	private boolean fIsStatic;

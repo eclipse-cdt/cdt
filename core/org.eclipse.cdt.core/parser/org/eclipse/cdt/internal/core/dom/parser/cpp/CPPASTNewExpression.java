@@ -34,9 +34,11 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
+import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.c.CASTExpressionList;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 import org.eclipse.core.runtime.Assert;
 
 
@@ -49,6 +51,7 @@ public class CPPASTNewExpression extends ASTNode implements ICPPASTNewExpression
     private boolean isNewTypeId;
 	
     private IASTExpression[] cachedArraySizes;
+	private ICPPEvaluation fEvaluation;
     
     public CPPASTNewExpression() {
 	}
@@ -58,7 +61,7 @@ public class CPPASTNewExpression extends ASTNode implements ICPPASTNewExpression
 		setTypeId(typeId);
 		setInitializer(initializer);
 	}
-	
+
 	@Override
 	public CPPASTNewExpression copy() {
 		return copy(CopyStyle.withoutLocations);
@@ -243,13 +246,21 @@ public class CPPASTNewExpression extends ASTNode implements ICPPASTNewExpression
 		}
 	}
     
+	@Override
+	public ICPPEvaluation getEvaluation() {
+		if (fEvaluation == null) {
+			IType t= CPPVisitor.createType(getTypeId());
+			if (t instanceof IArrayType) {
+				t= ((IArrayType) t).getType();
+			}
+			fEvaluation= new EvalFixed(new CPPPointerType(t), PRVALUE, Value.UNKNOWN);
+		}
+		return fEvaluation;
+	}
+	
     @Override
 	public IType getExpressionType() {
-		IType t= CPPVisitor.createType(getTypeId());
-		if (t instanceof IArrayType) {
-			t= ((IArrayType) t).getType();
-		}
-		return new CPPPointerType(t);
+    	return getEvaluation().getTypeOrFunctionSet(this);
     }
 
 	@Override

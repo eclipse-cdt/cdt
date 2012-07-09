@@ -19,7 +19,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
+import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.managedbuilder.core.IBuildPathResolver;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
@@ -28,7 +30,6 @@ import org.eclipse.cdt.utils.PathUtil;
 import org.eclipse.cdt.utils.WindowsRegistry;
 import org.eclipse.cdt.utils.spawner.ProcessFactory;
 import org.eclipse.core.runtime.IPath;
-
 
 /**
  * @noextend This class is not intended to be subclassed by clients.
@@ -58,21 +59,16 @@ public class CygwinPathResolver implements IBuildPathResolver {
 	private static final String MINGW_SPECIAL = "mingw ";    //$NON-NLS-1$
 	private static final String CYGWIN_SPECIAL = "cygwin ";    //$NON-NLS-1$
 
-	private static boolean checked = false;
+	private static String envPathValueCached = null;
 	private static String binCygwin  = null;
 	private static String rootCygwin = null;
 	private static String etcCygwin = null;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IBuildPathResolver#resolveBuildPaths(int, java.lang.String, java.lang.String, org.eclipse.cdt.managedbuilder.core.IConfiguration)
-	 */
 	@Override
-	public String[] resolveBuildPaths(int pathType, String variableName,
-			String variableValue, IConfiguration configuration) {
-
-		if(!isWindows()){
+	public String[] resolveBuildPaths(int pathType, String variableName, String variableValue, IConfiguration configuration) {
+		if(!isWindows()) {
 			return variableValue.split(DELIMITER_UNIX);
-		} else if(isMinGW(configuration)){
+		} else if(isMinGW(configuration)) {
 			return variableValue.split(DELIMITER_WIN);
 		}
 
@@ -92,27 +88,37 @@ public class CygwinPathResolver implements IBuildPathResolver {
 		}
 		return result;
 	}
-	/*
+
+	/**
 	 * returns "/etc" path in Windows format
+	 *
+	 * If you use this do not cache results to ensure user preferences are accounted for.
+	 * Please rely on internal caching.
 	 */
 	public static String getEtcPath() {
-		if (!checked) findPaths();
+		findPaths();
 		return etcCygwin;
 	}
 
-	/*
+	/**
 	 * returns "/usr/bin" path in Windows format
+	 *
+	 * If you use this do not cache results to ensure user preferences are accounted for.
+	 * Please rely on internal caching.
 	 */
 	public static String getBinPath() {
-		if (!checked) findPaths();
+		findPaths();
 		return binCygwin;
 	}
-	/*
-	 * returns Cygwin root ("/") path in Windows format
-	 */
 
+	/**
+	 * returns Cygwin root ("/") path in Windows format
+	 *
+	 * If you use this do not cache results to ensure user preferences are accounted for.
+	 * Please rely on internal caching.
+	 */
 	public static String getRootPath() {
-		if (!checked) findPaths();
+		findPaths();
 		return rootCygwin;
 	}
 
@@ -140,6 +146,7 @@ public class CygwinPathResolver implements IBuildPathResolver {
 		}
 		return null;
 	}
+
 	/**
 	 *  Returns the absolute path of the pattern by
 	 *  simply appending the pattern to the root
@@ -165,11 +172,11 @@ public class CygwinPathResolver implements IBuildPathResolver {
 	 *
 	 * @return The absolute path to cygwin's root or null if not found
 	 */
-	private static String findRoot() {
+	private static String findRoot(String paths) {
 		String rootValue = null;
 
 		// 1. Look in PATH values. Look for bin\cygwin1.dll
-		IPath location = PathUtil.findProgramLocation("cygwin1.dll"); //$NON-NLS-1$
+		IPath location = PathUtil.findProgramLocation("cygwin1.dll", paths); //$NON-NLS-1$
 		if (location!=null) {
 			rootValue = location.removeLastSegments(2).toOSString();
 		}
@@ -203,16 +210,25 @@ public class CygwinPathResolver implements IBuildPathResolver {
 	}
 
 	/**
-	 * Finds Cygwin's paths and sets corresponding properties
+	 * Finds Cygwin's paths and sets corresponding properties.
 	 */
 	private static synchronized void findPaths() {
-		if (checked) return;
+		if (!isWindows()) {
+			return;
+		}
+
+		IEnvironmentVariable varPath = CCorePlugin.getDefault().getBuildEnvironmentManager().getVariable("PATH", null, true); //$NON-NLS-1$
+		String envPathValue = varPath != null ? varPath.getValue() : null;
+
+		if (CDataUtil.objectsEqual(envPathValue, envPathValueCached)) {
+			return;
+		}
+
 		etcCygwin  = null;
 		binCygwin  = null;
 		rootCygwin = null;
-		if (!isWindows()) return;
 
-		rootCygwin = findRoot();
+		rootCygwin = findRoot(envPathValue);
 
 		// 1. Try to find the paths by appending the patterns to the root dir
 		etcCygwin = getValueFromRoot(ETCPATTERN);
@@ -226,14 +242,14 @@ public class CygwinPathResolver implements IBuildPathResolver {
 		if(binCygwin == null)
 			binCygwin = readValueFromRegistry(REGISTRY_KEY_MOUNTS + BINPATTERN, PATH_NAME);
 
-		checked = true;
+		envPathValueCached = envPathValue;
 	}
 
 	private static String[] exec(String cmd, IConfiguration cfg) {
 		try {
 			IEnvironmentVariable vars[] = ManagedBuildManager.getEnvironmentVariableProvider().getVariables(cfg,true);
 			String env[] = new String[vars.length];
-			for(int i = 0; i < env.length; i++){
+			for(int i = 0; i < env.length; i++) {
 				env[i] = vars[i].getName() + "="; //$NON-NLS-1$
 				String value = vars[i].getValue();
 				if(value != null)
@@ -258,10 +274,10 @@ public class CygwinPathResolver implements IBuildPathResolver {
 		return null;
 	}
 
-	public static boolean isMinGW(IConfiguration cfg){
+	public static boolean isMinGW(IConfiguration cfg) {
 		String versionInfo[] = exec(GCC_VERSION_CMD, cfg);
 		if(versionInfo != null) {
-			for(int i = 0; i < versionInfo.length; i++){
+			for(int i = 0; i < versionInfo.length; i++) {
 				if(versionInfo[i].indexOf(MINGW_SPECIAL) != -1)
 					return true;
 				else if(versionInfo[i].indexOf(CYGWIN_SPECIAL) != -1)

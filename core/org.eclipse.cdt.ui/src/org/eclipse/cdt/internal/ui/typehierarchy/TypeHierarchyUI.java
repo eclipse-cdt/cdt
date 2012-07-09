@@ -26,7 +26,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
@@ -212,21 +211,15 @@ public class TypeHierarchyUI {
 	}
 
 	private static IBinding findTypeBinding(IBinding memberBinding) {
-		try {
-			if (memberBinding instanceof IEnumerator) {
-				IType type= ((IEnumerator) memberBinding).getType();
-				if (type instanceof IBinding) {
-					return (IBinding) type;
-				}
+		if (memberBinding instanceof IEnumerator) {
+			IType type= ((IEnumerator) memberBinding).getType();
+			if (type instanceof IBinding) {
+				return (IBinding) type;
 			}
-			else if (memberBinding instanceof ICPPMember) {
-				return ((ICPPMember) memberBinding).getClassOwner();
-			}
-			else if (memberBinding instanceof IField) {
-				return ((IField) memberBinding).getCompositeTypeOwner();
-			}
-		} catch (DOMException e) {
-			// don't log problem bindings
+		} else if (memberBinding instanceof ICPPMember) {
+			return ((ICPPMember) memberBinding).getClassOwner();
+		} else if (memberBinding instanceof IField) {
+			return ((IField) memberBinding).getCompositeTypeOwner();
 		}
 		return null;
 	}

@@ -32,16 +32,11 @@ import org.eclipse.cdt.dsf.concurrent.ThreadSafeAndProhibitedFromDsfExecutor;
 import org.eclipse.cdt.dsf.debug.model.DsfLaunch;
 import org.eclipse.cdt.dsf.debug.model.DsfMemoryBlockRetrieval;
 import org.eclipse.cdt.dsf.debug.service.IDsfDebugServicesFactory;
-import org.eclipse.cdt.dsf.debug.service.IMemory.IMemoryDMContext;
-import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
-import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlShutdownDMEvent;
 import org.eclipse.cdt.dsf.gdb.IGdbDebugConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.internal.memory.GdbMemoryBlockRetrieval;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
-import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
-import org.eclipse.cdt.dsf.mi.service.MIProcesses;
 import org.eclipse.cdt.dsf.mi.service.command.AbstractCLIProcess;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
@@ -83,12 +78,7 @@ public class GdbLaunch extends DsfLaunch
 
         // Create the dispatch queue to be used by debugger control and services 
         // that belong to this launch
-        final DefaultDsfExecutor dsfExecutor = new DefaultDsfExecutor(GdbLaunchDelegate.GDB_DEBUG_MODEL_ID);
-        // Bug 293109 comment 14
-        // We can use delayed task on the executor, but once it is shutdown, we don't want to execute them.
-        // For instance, in GDBBackend, we start a 30-second delayed task to check that GDB properly started.
-        dsfExecutor.setExecuteExistingDelayedTasksAfterShutdownPolicy(false);
-        
+        final DefaultDsfExecutor dsfExecutor = new DefaultDsfExecutor(GdbLaunchDelegate.GDB_DEBUG_MODEL_ID);        
         dsfExecutor.prestartCoreThread();
         fExecutor = dsfExecutor;
         fSession = DsfSession.startSession(fExecutor, GdbLaunchDelegate.GDB_DEBUG_MODEL_ID);
@@ -137,17 +127,10 @@ public class GdbLaunch extends DsfLaunch
             fExecutor.submit( new Callable<Object>() {
             	@Override
                 public Object call() throws CoreException {
-                	ICommandControlService commandControl = fTracker.getService(ICommandControlService.class);
-                	IMIProcesses procService = fTracker.getService(IMIProcesses.class);
-                    if (commandControl != null && procService != null) {
-                        fMemRetrieval = new GdbMemoryBlockRetrieval(
-                                GdbLaunchDelegate.GDB_DEBUG_MODEL_ID, getLaunchConfiguration(), fSession);
-                        fSession.registerModelAdapter(IMemoryBlockRetrieval.class, fMemRetrieval);
-                        
-                   		IProcessDMContext procDmc = procService.createProcessContext(commandControl.getContext(), MIProcesses.UNKNOWN_PROCESS_ID);
-                        IMemoryDMContext memoryDmc = (IMemoryDMContext)procService.createContainerContext(procDmc, MIProcesses.UNIQUE_GROUP_ID);
-                        fMemRetrieval.initialize(memoryDmc);
-                    }
+                    fMemRetrieval = new GdbMemoryBlockRetrieval(
+                            GdbLaunchDelegate.GDB_DEBUG_MODEL_ID, getLaunchConfiguration(), fSession);
+                    fSession.registerModelAdapter(IMemoryBlockRetrieval.class, fMemRetrieval);
+                    fSession.addServiceEventListener(fMemRetrieval, null);
                     return null;
                 }
             }).get();
@@ -258,6 +241,9 @@ public class GdbLaunch extends DsfLaunch
             new RequestMonitor(fSession.getExecutor(), rm) { 
                 @Override
                 public void handleCompleted() {
+                	if (fMemRetrieval != null)
+                		fSession.removeServiceEventListener(fMemRetrieval);
+
                     fSession.removeServiceEventListener(GdbLaunch.this);
                     if (!isSuccess()) {
                         GdbPlugin.getDefault().getLog().log(new MultiStatus(
@@ -273,8 +259,6 @@ public class GdbLaunch extends DsfLaunch
                     // launch with an invalid gdbserver
                     // Bug 368597
                     if (fMemRetrieval != null) {
-                    	// DsfMemoryBlockRetrieval.saveMemoryBlocks();
-                    	fMemRetrieval.saveMemoryBlocks();
 
                     	// Fire a terminate event for the memory retrieval object so
                     	// that the hosting memory views can clean up. See 255120 and

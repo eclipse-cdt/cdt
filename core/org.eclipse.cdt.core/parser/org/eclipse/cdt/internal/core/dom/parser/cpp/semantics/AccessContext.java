@@ -224,11 +224,11 @@ public class AccessContext {
 
 	private ICPPClassType getFirstCandidateForNamingClass(IASTName name) throws DOMException {
 		LookupData data = new LookupData(name);
-		isUnqualifiedLookup= !data.qualified();
+		isUnqualifiedLookup= !data.qualified;
 		
-		ICPPScope scope= CPPSemantics.getLookupScope(name, data);
+		ICPPScope scope= CPPSemantics.getLookupScope(name);
 		while (scope != null && !(scope instanceof ICPPClassScope)) {
-			scope = CPPSemantics.getParentScope(scope, data.tu);
+			scope = CPPSemantics.getParentScope(scope, data.getTranslationUnit());
 		}
 		if (scope instanceof ICPPClassScope) {
 			return ((ICPPClassScope) scope).getClassType();

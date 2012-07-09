@@ -26,10 +26,10 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
  * The instantiation of a function template.
  */
 public class CPPFunctionInstance extends CPPFunctionSpecialization implements ICPPTemplateInstance {
-	private ICPPTemplateArgument[] fArguments;
+	private final ICPPTemplateArgument[] fArguments;
 
-	public CPPFunctionInstance(ICPPFunction orig, IBinding owner, CPPTemplateParameterMap argMap, ICPPTemplateArgument[] args) {
-		super(orig, owner, argMap);
+	public CPPFunctionInstance(ICPPFunction orig, IBinding owner, CPPTemplateParameterMap argMap, ICPPTemplateArgument[] args, ICPPFunctionType type, IType[] exceptionSpecs) {
+		super(orig, owner, argMap, type, exceptionSpecs);
 		fArguments = args;
 	}
 

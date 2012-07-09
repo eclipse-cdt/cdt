@@ -44,6 +44,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
@@ -65,10 +66,28 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPQualifierType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPReferenceType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPClassSpecializationScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknownScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownClassType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPFunctionSet;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalBinary;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalBinaryTypeId;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalComma;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalCompound;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalConditional;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFunctionCall;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFunctionSet;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalID;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalInitList;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalMemberAccess;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalTypeId;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalUnary;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalUnaryTypeID;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.TypeOfDependentExpression;
 import org.eclipse.cdt.internal.core.index.CIndex;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
@@ -198,7 +217,15 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 				return new CPPArrayType(r2, v2);
 			}
 			return at;
-		} 
+		}
+		if (rtype instanceof TypeOfDependentExpression) {
+			TypeOfDependentExpression tde= (TypeOfDependentExpression) rtype;
+			ICPPEvaluation e= tde.getEvaluation();
+			ICPPEvaluation e2= getCompositeEvaluation(e);
+			if (e != e2)
+				return new TypeOfDependentExpression(e2);
+			return tde;
+		}
 		if (rtype instanceof IBasicType || rtype == null || rtype instanceof ISemanticProblem) {
 			return rtype;
 		} 
@@ -206,6 +233,194 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 		throw new CompositingNotImplementedError();
 	}
 	
+	private ICPPEvaluation getCompositeEvaluation(ICPPEvaluation eval) {
+		if (eval == null)
+			return null;
+		if (eval instanceof EvalBinary) {
+			EvalBinary e= (EvalBinary) eval;
+			ICPPEvaluation a = e.getArg1();
+			ICPPEvaluation b = e.getArg2();
+			
+			ICPPEvaluation a2 = getCompositeEvaluation(a);
+			ICPPEvaluation b2 = getCompositeEvaluation(b);
+			if (a != a2 || b != b2)
+				e= new EvalBinary(e.getOperator(), a2, b2);
+			return e;
+		}
+		if (eval instanceof EvalBinaryTypeId) {
+			EvalBinaryTypeId e= (EvalBinaryTypeId) eval;
+			IType a = e.getType1();
+			IType b = e.getType2();
+			
+			IType a2 = getCompositeType(a);
+			IType b2 = getCompositeType(b);
+			if (a != a2 || b != b2)
+				e= new EvalBinaryTypeId(e.getOperator(), a2, b2);
+			return e;
+		}
+		if (eval instanceof EvalBinding) {
+			EvalBinding e= (EvalBinding) eval;
+			IBinding a = e.getBinding();
+			IType b = e.getFixedType();
+			
+			IBinding a2 = getCompositeBinding((IIndexFragmentBinding) a);
+			IType b2 = getCompositeType(b);
+			if (a != a2 || b != b2)
+				e= new EvalBinding(a2, b2);
+			return e;
+		}
+		if (eval instanceof EvalComma) {
+			EvalComma e= (EvalComma) eval;
+			ICPPEvaluation[] a = e.getArguments();
+			ICPPEvaluation[] a2 = getCompositeEvaluationArray(a);
+			if (a != a2)
+				e= new EvalComma(a2);
+			return e;
+		}
+		if (eval instanceof EvalCompound) {
+			EvalCompound e= (EvalCompound) eval;
+			ICPPEvaluation a = e.getLastEvaluation();
+			ICPPEvaluation a2 = getCompositeEvaluation(a);
+			if (a != a2)
+				e= new EvalCompound(a2);
+			return e;
+		}
+		if (eval instanceof EvalConditional) {
+			EvalConditional e= (EvalConditional) eval;
+			ICPPEvaluation a = e.getCondition();
+			ICPPEvaluation b = e.getPositive();
+			ICPPEvaluation c = e.getNegative();
+			ICPPEvaluation a2 = getCompositeEvaluation(a);
+			ICPPEvaluation b2 = getCompositeEvaluation(b);
+			ICPPEvaluation c2 = getCompositeEvaluation(c);
+			if (a != a2 || b != b2 || c != c2)
+				e= new EvalConditional(a2, b2, c2, e.isPositiveThrows(), e.isNegativeThrows());
+			return e;
+		}
+		if (eval instanceof EvalFixed) {
+			EvalFixed e= (EvalFixed) eval;
+			IType a = e.getType();
+			IValue b = e.getValue();
+			IType a2 = getCompositeType(a);
+			IValue b2= getCompositeValue(b);
+			if (a != a2 || b != b2)
+				e= new EvalFixed(a2, e.getValueCategory(), b2);
+			return e;
+		}
+		if (eval instanceof EvalFunctionCall) {
+			EvalFunctionCall e= (EvalFunctionCall) eval;
+			ICPPEvaluation[] a = e.getArguments();
+			ICPPEvaluation[] a2 = getCompositeEvaluationArray(a);
+			if (a != a2)
+				e= new EvalFunctionCall(a2);
+			return e;
+		}
+		if (eval instanceof EvalFunctionSet) {
+			EvalFunctionSet e= (EvalFunctionSet) eval;
+			final CPPFunctionSet fset = e.getFunctionSet();
+			ICPPFunction[] a = fset.getBindings();
+			ICPPTemplateArgument[] b = fset.getTemplateArguments();
+			
+			ICPPFunction[] a2 = getCompositeFunctionArray(a);
+			ICPPTemplateArgument[] b2 = TemplateInstanceUtil.convert(this, b);
+			if (a != a2 || b != b2)
+				e= new EvalFunctionSet(new CPPFunctionSet(a2, b2, null), e.isAddressOf());
+			return e;
+		}
+		if (eval instanceof EvalID) {
+			EvalID e= (EvalID) eval;
+			ICPPEvaluation a = e.getFieldOwner();
+			IBinding b = e.getNameOwner();
+			ICPPTemplateArgument[] c = e.getTemplateArgs();
+			
+			ICPPEvaluation a2 = getCompositeEvaluation(a);
+			IIndexBinding b2 = getCompositeBinding((IIndexFragmentBinding) b);
+			ICPPTemplateArgument[] c2 = TemplateInstanceUtil.convert(this, c);
+			
+			if (a != a2 || b != b2 || c != c2)
+				e= new EvalID(a2, b2, e.getName(), e.isAddressOf(), e.isQualified(), c2);
+			return e;
+		}
+		if (eval instanceof EvalInitList) {
+			EvalInitList e= (EvalInitList) eval;
+			ICPPEvaluation[] a = e.getClauses();
+			ICPPEvaluation[] a2 = getCompositeEvaluationArray(a);
+			if (a != a2)
+				e= new EvalInitList(a2);
+			return e;
+		}
+		if (eval instanceof EvalMemberAccess) {
+			EvalMemberAccess e= (EvalMemberAccess) eval;
+			IType a = e.getOwnerType();
+			IBinding b = e.getMember();
+			IType a2= getCompositeType(a);
+			IBinding b2= getCompositeBinding((IIndexFragmentBinding) b);
+			if (a != a2 || b != b2)
+				e= new EvalMemberAccess(a2, e.getOwnerValueCategory(), b2, e.isPointerDeref());
+			return e;
+		}
+		if (eval instanceof EvalTypeId) {
+			EvalTypeId e= (EvalTypeId) eval;
+			IType a = e.getInputType();
+			ICPPEvaluation[] b = e.getArguments();
+			IType a2= getCompositeType(a);
+			ICPPEvaluation[] b2 = getCompositeEvaluationArray(b);
+			if (a != a2 || b != b2)
+				e= new EvalTypeId(a2, b2);
+			return e;
+		}
+		if (eval instanceof EvalUnary) {
+			EvalUnary e= (EvalUnary) eval;
+			ICPPEvaluation a = e.getArgument();
+			ICPPEvaluation a2 = getCompositeEvaluation(a);
+			if (a != a2)
+				e= new EvalUnary(e.getOperator(), a2);
+			return e;
+		}
+		if (eval instanceof EvalUnaryTypeID) {
+			EvalUnaryTypeID e= (EvalUnaryTypeID) eval;
+			IType a = e.getArgument();
+			IType a2 = getCompositeType(a);
+			if (a != a2)
+				e= new EvalUnaryTypeID(e.getOperator(), a2);
+			return e;
+		}
+		
+		throw new CompositingNotImplementedError();
+	}
+
+	private ICPPEvaluation[] getCompositeEvaluationArray(ICPPEvaluation[] array) {
+		ICPPEvaluation[] array2= array;
+		for (int i = 0; i < array.length; i++) {
+			ICPPEvaluation a = array[i];
+			ICPPEvaluation a2= getCompositeEvaluation(a);
+			if (array != array2) {
+				array2[i]= a2;
+			} else if (a != a2) {
+				array2= new ICPPEvaluation[array.length];
+				System.arraycopy(array, 0, array2, 0, i);
+				array2[i]= a2;
+			}
+		}
+		return array2;
+	}
+
+	private ICPPFunction[] getCompositeFunctionArray(ICPPFunction[] array) {
+		ICPPFunction[] array2= array;
+		for (int i = 0; i < array.length; i++) {
+			ICPPFunction a = array[i];
+			ICPPFunction a2= (ICPPFunction) getCompositeBinding((IIndexFragmentBinding) a);
+			if (array != array2) {
+				array2[i]= a2;
+			} else if (a != a2) {
+				array2= new ICPPFunction[array.length];
+				System.arraycopy(array, 0, array2, 0, i);
+				array2[i]= a2;
+			}
+		}
+		return array2;
+	}
+
 	@Override
 	public IValue getCompositeValue(IValue v) {
 		if (v == null)

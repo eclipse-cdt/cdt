@@ -97,7 +97,7 @@ public class CPPPointerToMemberType extends CPPPointerType implements ICPPPointe
 	
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
-		int firstByte= ITypeMarshalBuffer.POINTER_TO_MEMBER;
+		int firstByte= ITypeMarshalBuffer.POINTER_TO_MEMBER_TYPE;
 		if (isConst()) firstByte |= ITypeMarshalBuffer.FLAG1;
 		if (isVolatile()) firstByte |= ITypeMarshalBuffer.FLAG2;
 		if (isRestrict()) firstByte |= ITypeMarshalBuffer.FLAG3;

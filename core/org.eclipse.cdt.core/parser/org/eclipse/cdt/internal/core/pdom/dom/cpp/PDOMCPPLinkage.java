@@ -70,6 +70,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
+import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPArrayType;
@@ -86,6 +87,22 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownClassType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalBinary;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalBinaryTypeId;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalComma;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalCompound;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalConditional;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFunctionCall;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFunctionSet;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalID;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalInitList;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalMemberAccess;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalTypeId;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalUnary;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalUnaryTypeID;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.TypeOfDependentExpression;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.composite.CompositeIndexBinding;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -117,7 +134,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 	private final static int RECORD_SIZE= FIRST_NAMESPACE_CHILD_OFFSET + Database.PTR_SIZE;
 
 	// Only used when writing to database, which is single-threaded
-	private LinkedList<Runnable> postProcesses = new LinkedList<Runnable>(); 
+	private final LinkedList<Runnable> postProcesses = new LinkedList<Runnable>(); 
 	
 	public PDOMCPPLinkage(PDOM pdom, long record) {
 		super(pdom, record);
@@ -1030,26 +1047,67 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 	public IType unmarshalType(ITypeMarshalBuffer buffer) throws CoreException {
 		int firstByte= buffer.getByte();
 		switch((firstByte & ITypeMarshalBuffer.KIND_MASK)) {
-		case ITypeMarshalBuffer.ARRAY:
+		case ITypeMarshalBuffer.ARRAY_TYPE:
 			return CPPArrayType.unmarshal(firstByte, buffer);
 		case ITypeMarshalBuffer.BASIC_TYPE:
 			return CPPBasicType.unmarshal(firstByte, buffer);
-		case ITypeMarshalBuffer.CVQUALIFIER:
+		case ITypeMarshalBuffer.CVQUALIFIER_TYPE:
 			return CPPQualifierType.unmarshal(firstByte, buffer);
 		case ITypeMarshalBuffer.FUNCTION_TYPE:
 			return CPPFunctionType.unmarshal(firstByte, buffer);
-		case ITypeMarshalBuffer.POINTER:
+		case ITypeMarshalBuffer.POINTER_TYPE:
 			return CPPPointerType.unmarshal(firstByte, buffer);
 		case ITypeMarshalBuffer.PROBLEM_TYPE:
 			return ProblemType.unmarshal(firstByte, buffer);
-		case ITypeMarshalBuffer.REFERENCE:
+		case ITypeMarshalBuffer.REFERENCE_TYPE:
 			return CPPReferenceType.unmarshal(firstByte, buffer);
-		case ITypeMarshalBuffer.PACK_EXPANSION:
+		case ITypeMarshalBuffer.PACK_EXPANSION_TYPE:
 			return CPPParameterPackType.unmarshal(firstByte, buffer);
-		case ITypeMarshalBuffer.POINTER_TO_MEMBER:
+		case ITypeMarshalBuffer.POINTER_TO_MEMBER_TYPE:
 			return CPPPointerToMemberType.unmarshal(firstByte, buffer);
+		case ITypeMarshalBuffer.DEPENDENT_EXPRESSION_TYPE:
+			return TypeOfDependentExpression.unmarshal(firstByte, buffer);
 		}
 		
 		throw new CoreException(CCorePlugin.createStatus("Cannot unmarshal a type, first byte=" + firstByte)); //$NON-NLS-1$
 	}
+	
+	@Override
+	public ISerializableEvaluation unmarshalEvaluation(ITypeMarshalBuffer buffer) throws CoreException {
+		int firstByte= buffer.getByte();
+		switch((firstByte & ITypeMarshalBuffer.KIND_MASK)) {
+		case ITypeMarshalBuffer.EVAL_BINARY:
+			return EvalBinary.unmarshal(firstByte, buffer);
+		case ITypeMarshalBuffer.EVAL_BINARY_TYPE_ID:
+			return EvalBinaryTypeId.unmarshal(firstByte, buffer);
+		case ITypeMarshalBuffer.EVAL_BINDING:
+			return EvalBinding.unmarshal(firstByte, buffer);
+		case ITypeMarshalBuffer.EVAL_COMMA:
+			return EvalComma.unmarshal(firstByte, buffer);
+		case ITypeMarshalBuffer.EVAL_COMPOUND:
+			return EvalCompound.unmarshal(firstByte, buffer);
+		case ITypeMarshalBuffer.EVAL_CONDITIONAL:
+			return EvalConditional.unmarshal(firstByte, buffer);
+		case ITypeMarshalBuffer.EVAL_FIXED:
+			return EvalFixed.unmarshal(firstByte, buffer);
+		case ITypeMarshalBuffer.EVAL_FUNCTION_CALL:
+			return EvalFunctionCall.unmarshal(firstByte, buffer);
+		case ITypeMarshalBuffer.EVAL_FUNCTION_SET:
+			return EvalFunctionSet.unmarshal(firstByte, buffer);
+		case ITypeMarshalBuffer.EVAL_ID:
+			return EvalID.unmarshal(firstByte, buffer);
+		case ITypeMarshalBuffer.EVAL_INIT_LIST:
+			return EvalInitList.unmarshal(firstByte, buffer);
+		case ITypeMarshalBuffer.EVAL_MEMBER_ACCESS:
+			return EvalMemberAccess.unmarshal(firstByte, buffer);
+		case ITypeMarshalBuffer.EVAL_TYPE_ID:
+			return EvalTypeId.unmarshal(firstByte, buffer);
+		case ITypeMarshalBuffer.EVAL_UNARY:
+			return EvalUnary.unmarshal(firstByte, buffer);
+		case ITypeMarshalBuffer.EVAL_UNARY_TYPE_ID:
+			return EvalUnaryTypeID.unmarshal(firstByte, buffer);
+		}
+		throw new CoreException(CCorePlugin.createStatus("Cannot unmarshal an evaluation, first byte=" + firstByte)); //$NON-NLS-1$
+	}
+
 }

@@ -1,4 +1,4 @@
-/*******************************************************************************
+                                                   /*******************************************************************************
  * Copyright (c) 2009, 2011 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -15,7 +15,6 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecializationSpecialization;
@@ -34,11 +33,14 @@ public class CPPClassTemplatePartialSpecializationSpecialization extends CPPClas
 
 	private ObjectMap instances = null;
 	private ICPPDeferredClassInstance fDeferredInstance;
-	private ICPPClassTemplate fClassTemplate;
+	private final ICPPClassTemplate fClassTemplate;
+	private final ICPPTemplateArgument[] fArguments;
 
-	public CPPClassTemplatePartialSpecializationSpecialization(ICPPClassTemplatePartialSpecialization orig, ICPPClassTemplate template, ICPPTemplateParameterMap argumentMap) throws DOMException {
+	public CPPClassTemplatePartialSpecializationSpecialization(ICPPClassTemplatePartialSpecialization orig, ICPPTemplateParameterMap argumentMap, ICPPClassTemplate template,
+			ICPPTemplateArgument[] args) throws DOMException {
 		super(orig, template.getOwner(), argumentMap);
 		fClassTemplate= template;
+		fArguments= args;
 	}
 
 	@Override
@@ -96,17 +98,7 @@ public class CPPClassTemplatePartialSpecializationSpecialization extends CPPClas
 
 	@Override
 	public ICPPTemplateArgument[] getTemplateArguments() {
-		ICPPTemplateArgument[] args = ((ICPPClassTemplatePartialSpecialization) getSpecializedBinding()).getTemplateArguments();
-		try {
-			final IBinding owner = getOwner();
-			if (owner instanceof ICPPClassSpecialization) {
-				return CPPTemplates.instantiateArguments(args, getTemplateParameterMap(), -1,
-						(ICPPClassSpecialization) owner);
-			}
-			return CPPTemplates.instantiateArguments(args, getTemplateParameterMap(), -1, null);
-		} catch (DOMException e) {
-			return args;
-		}
+		return fArguments;
 	}
 	
 	@Override

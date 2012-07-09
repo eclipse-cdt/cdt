@@ -41,7 +41,7 @@ public class PDOMCPPUnknownScope extends CPPUnknownScope implements IIndexScope 
 	
 	@Override
 	// Needs to be thread-safe.
-	protected synchronized IBinding getOrCreateBinding(IASTName name, int idx) {
+	protected synchronized IBinding getOrCreateBinding(char[] name, int idx) {
 		return super.getOrCreateBinding(name, idx);
 	}
 }

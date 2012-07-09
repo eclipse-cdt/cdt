@@ -65,9 +65,14 @@ class CompositeCPPClassScope extends CompositeScope implements ICPPClassScope {
 		return processUncertainBinding(binding);
 	}
 
-	@Override
+	@Override @Deprecated
 	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) {
-		IBinding[] bindings = ((ICPPClassType)rbinding).getCompositeScope().getBindings(name, resolve, prefixLookup, fileSet);
+		return getBindings(new ScopeLookupData(name, resolve, prefixLookup));
+	}
+
+	@Override
+	public IBinding[] getBindings(ScopeLookupData lookup) {
+		IBinding[] bindings = ((ICPPClassType)rbinding).getCompositeScope().getBindings(lookup);
 		return processUncertainBindings(bindings);
 	}
 	

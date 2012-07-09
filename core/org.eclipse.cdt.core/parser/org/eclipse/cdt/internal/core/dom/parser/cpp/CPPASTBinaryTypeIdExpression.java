@@ -11,22 +11,24 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
-import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
-import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalBinaryTypeId;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 
-public class CPPASTBinaryTypeIdExpression extends ASTNode implements IASTBinaryTypeIdExpression {
+public class CPPASTBinaryTypeIdExpression extends ASTNode implements ICPPASTExpression, IASTBinaryTypeIdExpression {
     private Operator fOperator;
     private IASTTypeId fOperand1;
     private IASTTypeId fOperand2;
-
+    private ICPPEvaluation fEvaluation;
+    
     public CPPASTBinaryTypeIdExpression() {
 	}
 
@@ -116,12 +118,26 @@ public class CPPASTBinaryTypeIdExpression extends ASTNode implements IASTBinaryT
     }
     
 	@Override
-	public IType getExpressionType() {
-		switch (getOperator()) {
-		case __is_base_of:
-			return CPPBasicType.BOOLEAN;
+	public ICPPEvaluation getEvaluation() {
+		if (fEvaluation == null) {
+			if (fOperand1 == null || fOperand2 == null) {
+				fEvaluation= EvalFixed.INCOMPLETE;
+			} else {
+				IType t1= CPPVisitor.createType(fOperand1);
+				IType t2= CPPVisitor.createType(fOperand1);
+				if (t1 == null || t2 == null) {
+					fEvaluation= EvalFixed.INCOMPLETE;
+				} else {
+					fEvaluation= new EvalBinaryTypeId(fOperator, t1, t2);
+				}
+			}
 		}
-		return new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
+		return fEvaluation;
+	}
+
+	@Override
+	public IType getExpressionType() {
+		return getEvaluation().getTypeOrFunctionSet(this);
 	}
 	
 	@Override
@@ -131,6 +147,6 @@ public class CPPASTBinaryTypeIdExpression extends ASTNode implements IASTBinaryT
 
 	@Override
 	public ValueCategory getValueCategory() {
-		return isLValue() ? LVALUE : PRVALUE;
+		return PRVALUE;
 	}
 }

@@ -460,6 +460,32 @@ public class CIndenterTest extends BaseUITestCase {
 		assertIndenterResult();
 	}
 
+	//class ClassWithLongName :
+	//public AnotherClassWithLongName,
+	//protected YetAnotherClassWithLongName
+	//{
+	//};
+	//class ClassWithLongName
+	//: public AnotherClassWithLongName,
+	//protected YetAnotherClassWithLongName
+	//{
+	//};
+
+	//class ClassWithLongName :
+	//        public AnotherClassWithLongName,
+	//        protected YetAnotherClassWithLongName
+	//{
+	//};
+	//class ClassWithLongName
+	//        : public AnotherClassWithLongName,
+	//          protected YetAnotherClassWithLongName
+	//{
+	//};
+	public void testBaseClause_Bug383277() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
+		assertIndenterResult();
+	}
+
 	//namespace ns {
 	//class A;
 	//}

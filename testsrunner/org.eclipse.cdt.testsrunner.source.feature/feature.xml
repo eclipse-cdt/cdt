@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.cdt.testsrunner.source.feature"
       label="%featureName"
-      version="7.0.0.qualifier"
+      version="7.2.0.qualifier"
       provider-name="%providerName">
 
    <description>
@@ -16,11 +16,11 @@
    <license url="%licenseURL">
       %license
    </license>
-   
+
    <url>
       <update label="%updateSiteName" url="http://download.eclipse.org/tools/cdt/releases/indigo"/>
    </url>
-   
+
    <plugin
          id="org.eclipse.cdt.testsrunner.source"
          download-size="0"
@@ -28,24 +28,25 @@
          version="0.0.0"
          unpack="false"/>
 
-    <plugin
+   <plugin
          id="org.eclipse.cdt.testsrunner.boost.source"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
-    <plugin
+   <plugin
          id="org.eclipse.cdt.testsrunner.gtest.source"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
-    <plugin
+   <plugin
          id="org.eclipse.cdt.testsrunner.qttest.source"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+
 </feature>

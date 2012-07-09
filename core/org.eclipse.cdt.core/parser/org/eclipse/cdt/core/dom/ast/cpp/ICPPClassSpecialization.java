@@ -10,6 +10,7 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.core.dom.ast.cpp;
 
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 
 /**
@@ -25,8 +26,15 @@ public interface ICPPClassSpecialization extends ICPPSpecialization, ICPPClassTy
 	ICPPClassType getSpecializedBinding();
 
 	/**
+	 * @deprecated Specializing a member may require a point of instantiation.
+	 */
+	@Deprecated
+	IBinding specializeMember(IBinding binding);
+
+	/**
 	 * Creates a specialized binding for a member of the original class. The result is 
 	 * a member of this class specialization.
+	 * @since 5.5
 	 */
-	IBinding specializeMember(IBinding binding);
+	IBinding specializeMember(IBinding binding, IASTNode point);
 }

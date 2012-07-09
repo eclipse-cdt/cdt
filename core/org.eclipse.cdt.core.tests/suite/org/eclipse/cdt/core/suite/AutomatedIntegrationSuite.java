@@ -36,6 +36,7 @@ import org.eclipse.cdt.utils.ByteUtilsTest;
 import org.eclipse.cdt.utils.CdtVariableResolverTest;
 import org.eclipse.cdt.utils.CommandLineUtilTest;
 import org.eclipse.cdt.utils.FindProgramLocationTest;
+import org.eclipse.cdt.utils.StorableCdtVariablesTest;
 import org.eclipse.cdt.utils.WeakHashSetTest;
 
 /**
@@ -76,6 +77,7 @@ public class AutomatedIntegrationSuite extends TestSuite {
 		suite.addTest(AllLanguageTests.suite());
 		suite.addTest(RewriteTests.suite());
 		suite.addTest(CdtVariableResolverTest.suite());
+		suite.addTest(StorableCdtVariablesTest.suite());
 		suite.addTest(CommandLineUtilTest.suite());
 		suite.addTest(WeakHashSetTest.suite());
 		suite.addTest(FindProgramLocationTest.suite());

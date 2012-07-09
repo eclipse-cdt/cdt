@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
@@ -22,7 +21,7 @@ class CompositeCPPEnumerator extends CompositeCPPBinding implements IEnumerator 
 	}
 
 	@Override
-	public IType getType() throws DOMException {
+	public IType getType() {
 		IType type = ((IEnumerator) rbinding).getType();
 		return cf.getCompositeType(type);
 	}

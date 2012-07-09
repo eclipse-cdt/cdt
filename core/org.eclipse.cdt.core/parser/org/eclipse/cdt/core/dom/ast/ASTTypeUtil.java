@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Rational Software - initial implementation
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
@@ -350,7 +351,8 @@ public class ASTTypeUtil {
 				result.append(Keywords.ENUM);
 				result.append(SPACE);
 			}
-			appendCppName((ICPPBinding) type, normalize, normalize, result);
+			boolean qualify = normalize || (type instanceof ITypedef && type instanceof ICPPSpecialization);
+			appendCppName((ICPPBinding) type, normalize, qualify, result);
 		} else if (type instanceof ICompositeType) {
 //			101114 fix, do not display class, and for consistency don't display struct/union as well
 			appendNameCheckAnonymous((ICompositeType) type, result);
@@ -469,13 +471,13 @@ public class ASTTypeUtil {
 	public static void appendType(IType type, boolean normalize, StringBuilder result) {
 		IType[] types = new IType[DEAULT_ITYPE_SIZE];
 		
-		// push all of the types onto the stack
+		// Push all of the types onto the stack
 		int i = 0;
 		IQualifierType cvq= null;
 		ICPPReferenceType ref= null;
 		while (type != null && ++i < 100) {
 			if (type instanceof ITypedef) {
-				if (normalize || type instanceof ICPPSpecialization) {
+				if (normalize) {
 					// Skip the typedef and proceed with its target type.
 				} else {
 					// Output reference, qualifier and typedef, then stop.
@@ -608,18 +610,14 @@ public class ASTTypeUtil {
 		IBinding binding = declarator.getName().resolveBinding();
 		IType type = null;
 		
-		try {
-			if (binding instanceof IEnumerator) {
-				type = ((IEnumerator) binding).getType();
-			} else if (binding instanceof IFunction) {
-				type = ((IFunction) binding).getType();
-			} else if (binding instanceof ITypedef) {
-				type = ((ITypedef) binding).getType();
-			} else if (binding instanceof IVariable) {
-				type = ((IVariable) binding).getType();
-			}
-		} catch (DOMException e) {
-			return EMPTY_STRING;
+		if (binding instanceof IEnumerator) {
+			type = ((IEnumerator)binding).getType();
+		} else if (binding instanceof IFunction) {
+			type = ((IFunction)binding).getType();
+		} else if (binding instanceof ITypedef) {
+			type = ((ITypedef)binding).getType();
+		} else if (binding instanceof IVariable) {
+			type = ((IVariable)binding).getType();
 		}
 		
 		if (type != null) {

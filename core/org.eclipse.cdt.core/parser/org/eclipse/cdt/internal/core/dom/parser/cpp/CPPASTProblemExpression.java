@@ -11,14 +11,16 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
+
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTProblemExpression;
-import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 
-public class CPPASTProblemExpression extends CPPASTProblemOwner implements IASTProblemExpression {
+public class CPPASTProblemExpression extends CPPASTProblemOwner implements IASTProblemExpression, ICPPASTExpression {
 
     public CPPASTProblemExpression() {
 		super();
@@ -32,7 +34,6 @@ public class CPPASTProblemExpression extends CPPASTProblemOwner implements IASTP
 	public CPPASTProblemExpression copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-	
 	@Override
 	public CPPASTProblemExpression copy(CopyStyle style) {
 		CPPASTProblemExpression copy = new CPPASTProblemExpression();
@@ -58,19 +59,24 @@ public class CPPASTProblemExpression extends CPPASTProblemOwner implements IASTP
 		}
         return true;
     }
-    
+
+	@Override
+	public ICPPEvaluation getEvaluation() {
+		return EvalFixed.INCOMPLETE;
+	}
+
     @Override
 	public IType getExpressionType() {
-		return new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
+    	return getEvaluation().getTypeOrFunctionSet(this);
     }
 
 	@Override
 	public boolean isLValue() {
-		return false;
+		return getValueCategory() == LVALUE;
 	}
 
 	@Override
 	public ValueCategory getValueCategory() {
-		return ValueCategory.PRVALUE;
+    	return getEvaluation().getValueCategory(this);
 	}
 }

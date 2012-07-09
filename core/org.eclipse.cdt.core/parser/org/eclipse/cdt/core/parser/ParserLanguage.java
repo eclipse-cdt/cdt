@@ -9,14 +9,12 @@
  *     IBM Corp. - Rational Software - initial implementation
  *     Mike Kucera (IBM) - convert to Java 5 enum
  *******************************************************************************/
-
 package org.eclipse.cdt.core.parser;
 
 /**
  * Enumeration of base languages supported by CDT.
  */
 public enum ParserLanguage {
-	
 	C {
 		@Override public boolean isCPP() { return false; }
 		@Override public String toString() { return "C"; } //$NON-NLS-1$
@@ -28,5 +26,4 @@ public enum ParserLanguage {
 	};
 
 	public abstract boolean isCPP();
-
 }

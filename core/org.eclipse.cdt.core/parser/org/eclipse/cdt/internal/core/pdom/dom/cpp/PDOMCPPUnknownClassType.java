@@ -140,8 +140,13 @@ class PDOMCPPUnknownClassType extends PDOMCPPUnknownBinding implements ICPPClass
 		return null;
 	}
 	
-	@Override
+	@Deprecated @Override
 	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) {
+		return IBinding.EMPTY_BINDING_ARRAY;
+	}
+
+	@Override
+	public IBinding[] getBindings(ScopeLookupData lookup) {
 		return IBinding.EMPTY_BINDING_ARRAY;
 	}
 	

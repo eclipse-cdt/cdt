@@ -34,6 +34,7 @@ import org.junit.runners.Suite;
 	MIRunControlTest_6_7.class,
 	MIRunControlTargetAvailableTest_6_7.class,
 	MIExpressionsTest_6_7.class,
+	GDBPatternMatchingExpressionsTest_6_7.class,
 	MIMemoryTest_6_7.class,
 	MIBreakpointsTest_6_7.class,
 	MICatchpointsTest_6_7.class,

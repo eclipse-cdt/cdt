@@ -33,6 +33,7 @@ import org.junit.runners.Suite;
 	MIRunControlTest_6_6.class,
 	MIRunControlTargetAvailableTest_6_6.class,
 	MIExpressionsTest_6_6.class,
+	GDBPatternMatchingExpressionsTest_6_6.class,
 	MIMemoryTest_6_6.class,
 	MIBreakpointsTest_6_6.class,
 	MICatchpointsTest_6_6.class,

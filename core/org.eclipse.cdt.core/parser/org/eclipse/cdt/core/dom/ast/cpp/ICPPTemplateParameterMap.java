@@ -6,10 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.core.dom.ast.cpp;
-
 
 /**
  * Models the mapping of template parameters to values, or pack-expansions.
@@ -19,7 +18,6 @@ package org.eclipse.cdt.core.dom.ast.cpp;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPTemplateParameterMap {
-
 	/**
 	 * Returns the value for the template parameter with the given id.
 	 * @see ICPPTemplateParameter#getParameterID()
@@ -31,7 +29,6 @@ public interface ICPPTemplateParameterMap {
 	 * the parameter is not mapped or the parameter is a parameter pack.
 	 */
 	public ICPPTemplateArgument getArgument(ICPPTemplateParameter param);
-
 
 	/**
 	 * Returns the values for the template parameter pack with the given id in the map, 

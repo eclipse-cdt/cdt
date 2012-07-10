@@ -18,7 +18,6 @@ import org.eclipse.cdt.core.dom.ast.IVariable;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPVariable extends IVariable, ICPPBinding {
-	
     /**
      * does this variable have the mutable storage class specifier
      */

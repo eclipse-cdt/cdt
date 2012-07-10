@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
-
 /**
  * A namespace scope is either a block-scope or a namespace-scope or global scope.
  * 
@@ -19,7 +18,6 @@ package org.eclipse.cdt.core.dom.ast.cpp;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPNamespaceScope extends ICPPScope {
-
 	/**
 	 * @since 5.3
 	 */

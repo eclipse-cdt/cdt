@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.glvalueType;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.prvalueType;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -22,11 +23,14 @@ import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.core.runtime.CoreException;
 
@@ -39,7 +43,6 @@ public class EvalBinding extends CPPEvaluation {
 	private boolean fIsValueDependent;
 	private boolean fIsTypeDependent;
 	private boolean fCheckedIsTypeDependent;
-
 
 	public EvalBinding(IBinding binding, IType type) {
 		fBinding= binding;
@@ -75,11 +78,11 @@ public class EvalBinding extends CPPEvaluation {
  	}
 
 	private boolean computeIsTypeDependent() {
-		if (fBinding instanceof ICPPUnknownBinding)
-			return true;
-
 		IType t= null;
-		if (fBinding instanceof IEnumerator) {
+		// mstodo: Please review this change.
+		if (fFixedType) {
+			t = fType;
+		} else if (fBinding instanceof IEnumerator) {
 			t= ((IEnumerator) fBinding).getType();
 		} else if (fBinding instanceof ICPPTemplateNonTypeParameter) {
 			t= ((ICPPTemplateNonTypeParameter) fBinding).getType();
@@ -183,5 +186,30 @@ public class EvalBinding extends CPPEvaluation {
 		IBinding binding= buffer.unmarshalBinding();
 		IType type= buffer.unmarshalType();
 		return new EvalBinding(binding, type);
+	}
+
+	@Override
+	public ICPPEvaluation instantiate(ICPPTemplateParameterMap tpMap, int packOffset,
+			ICPPClassSpecialization within, int maxdepth, IASTNode point) {
+		IBinding binding = fBinding;
+		if (fBinding instanceof IEnumerator) {
+			// TODO(sprigogin): Not sure what to do in this case.
+		} else if (fBinding instanceof ICPPTemplateNonTypeParameter) {
+			// TODO(sprigogin): Not sure what to do in this case.
+		} else if (fBinding instanceof IVariable) {
+			// TODO(sprigogin): Not sure what to do in this case.
+		} else if (fBinding instanceof IFunction) {
+			// TODO(sprigogin): Not sure what to do in this case.
+		} else if (fBinding instanceof ICPPUnknownBinding) {
+			try {
+				binding = CPPTemplates.resolveUnknown((ICPPUnknownBinding) fBinding, tpMap,
+						packOffset, within, point);
+			} catch (DOMException e) {
+				// TODO(sprigogin): Is the exception safe to ignore?
+			}
+		}
+		if (binding == fBinding)
+			return this;
+		return new EvalBinding(binding, getFixedType());
 	}
 }

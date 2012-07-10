@@ -57,11 +57,11 @@ public class CPPClassSpecialization extends CPPSpecialization
 	private ObjectMap specializationMap= ObjectMap.EMPTY_MAP;
 	private final ThreadLocal<Set<IBinding>> fInProgress= new ThreadLocal<Set<IBinding>>();
 
-	public CPPClassSpecialization(ICPPClassType specialized, IBinding owner, ICPPTemplateParameterMap argumentMap) {
+	public CPPClassSpecialization(ICPPClassType specialized, IBinding owner,
+			ICPPTemplateParameterMap argumentMap) {
 		super(specialized, owner, argumentMap);
 	}
 
-	
 	@Override
 	public ICPPClassType getSpecializedBinding() {
 		return (ICPPClassType) super.getSpecializedBinding();
@@ -75,7 +75,7 @@ public class CPPClassSpecialization extends CPPSpecialization
 	@Override
 	public IBinding specializeMember(IBinding original, IASTNode point) {		
 		Set<IBinding> set;
-		synchronized(this) {
+		synchronized (this) {
 			IBinding result= (IBinding) specializationMap.get(original);
 			if (result != null) 
 				return result;
@@ -91,7 +91,7 @@ public class CPPClassSpecialization extends CPPSpecialization
 		
 		IBinding result= CPPTemplates.createSpecialization(this, original, point);
 		set.remove(original);
-		synchronized(this) {
+		synchronized (this) {
 			IBinding concurrent= (IBinding) specializationMap.get(original);
 			if (concurrent != null) 
 				return concurrent;
@@ -233,9 +233,6 @@ public class CPPClassSpecialization extends CPPSpecialization
 		return specScope;		
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IType#isSameType(org.eclipse.cdt.core.dom.ast.IType)
-	 */
 	@Override
 	public boolean isSameType(IType type) {
 		if (type == this)
@@ -251,7 +248,6 @@ public class CPPClassSpecialization extends CPPSpecialization
 
 	@Override
 	public Object clone() {
-		// TODO Auto-generated method stub
 		return this;
 	}
 

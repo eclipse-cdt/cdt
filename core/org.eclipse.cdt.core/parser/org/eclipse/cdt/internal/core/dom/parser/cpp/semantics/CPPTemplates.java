@@ -845,7 +845,7 @@ public class CPPTemplates {
 			return null;
 		ICPPClassSpecialization within= (ICPPClassSpecialization) owner;
 		ICPPClassType orig = within.getSpecializedBinding();
-		for(;;) {
+		for (;;) {
 			IBinding o1 = within.getOwner();
 			IBinding o2 = orig.getOwner();
 			if (!(o1 instanceof ICPPClassSpecialization && o2 instanceof ICPPClassType))
@@ -1028,7 +1028,7 @@ public class CPPTemplates {
 					IType[] newResult= new IType[result.length+packSize-1];
 					System.arraycopy(result, 0, newResult, 0, j);
 					result= newResult;
-					for(int k=0; k<packSize; k++) {
+					for (int k= 0; k < packSize; k++) {
 						result[j++]= CPPTemplates.instantiateType(origType, tpMap, k, within, point);
 					}
 					continue;
@@ -1071,23 +1071,23 @@ public class CPPTemplates {
 				} else if (packSize == PACK_SIZE_DEFER) {
 					newArg= origArg;
 				} else {
-					final int shift = packSize-1;
+					final int shift = packSize - 1;
 					ICPPTemplateArgument[] newResult= new ICPPTemplateArgument[args.length + resultShift + shift];
-					System.arraycopy(result, 0, newResult, 0, i+resultShift);
-					for(int j=0; j<packSize; j++) {
-						newResult[i+resultShift+j]= CPPTemplates.instantiateArgument(origArg, tpMap, j, within, point);
+					System.arraycopy(result, 0, newResult, 0, i + resultShift);
+					for (int j= 0; j < packSize; j++) {
+						newResult[i + resultShift + j]= CPPTemplates.instantiateArgument(origArg, tpMap, j, within, point);
 					}
 					result= newResult;
-					resultShift+= shift;
+					resultShift += shift;
 					continue;
 				}
 			} else {
 				newArg = CPPTemplates.instantiateArgument(origArg, tpMap, packOffset, within, point);
 			}
 			if (result != args) {
-				result[i+resultShift]= newArg;
+				result[i + resultShift]= newArg;
 			} else if (newArg != origArg) {
-				assert resultShift==0;
+				assert resultShift == 0;
 				result = new ICPPTemplateArgument[args.length];
 				if (i > 0) {
 					System.arraycopy(args, 0, result, 0, i);
@@ -1146,7 +1146,7 @@ public class CPPTemplates {
 	}
 
 	/**
-	 * Instantiates the given type with the provided map and packoffset.
+	 * Instantiates the given type with the provided map and packОffset.
 	 * The context is used to replace templates with their specialization, where appropriate.
 	 * @param point
 	 */

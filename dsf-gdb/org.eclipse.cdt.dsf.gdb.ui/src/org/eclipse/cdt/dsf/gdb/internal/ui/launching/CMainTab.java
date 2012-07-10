@@ -470,8 +470,13 @@ public class CMainTab extends CAbstractMainTab {
 			if (exePath.isAbsolute()) {
 				// For absolute paths, we don't need a project, we can debug the binary directly
 				// as long as it exists
-				if (!exePath.toFile().exists()) {
+				File executable = exePath.toFile();
+				if (!executable.exists()) {
 					setErrorMessage(LaunchMessages.getString("CMainTab.Program_does_not_exist")); //$NON-NLS-1$
+					return false;
+				}
+				if (!executable.isFile()) {
+					setErrorMessage(LaunchMessages.getString("CMainTab.Selection_must_be_file")); //$NON-NLS-1$
 					return false;
 				}
 			} else {

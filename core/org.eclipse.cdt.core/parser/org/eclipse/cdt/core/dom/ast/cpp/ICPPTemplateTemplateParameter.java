@@ -20,7 +20,6 @@ import org.eclipse.cdt.core.dom.ast.IType;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPTemplateTemplateParameter extends ICPPTemplateParameter, ICPPClassTemplate {
-
 	@Override
 	public ICPPTemplateParameter[] getTemplateParameters();
 	

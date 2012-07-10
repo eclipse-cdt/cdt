@@ -18,7 +18,6 @@ import org.eclipse.cdt.core.dom.ast.IType;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPReferenceType extends IType {
-	
 	/**
 	 * Returns the type that this is a reference of
 	 */

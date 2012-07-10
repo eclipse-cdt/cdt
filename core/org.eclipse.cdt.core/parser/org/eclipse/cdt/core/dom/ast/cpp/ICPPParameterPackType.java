@@ -21,7 +21,6 @@ import org.eclipse.cdt.core.dom.ast.IType;
  * @since 5.2
  */
 public interface ICPPParameterPackType extends IType {
-	
 	/**
 	 * Returns the pattern for the pack-expansion
 	 */

@@ -23,7 +23,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPUsingDirective {
-	ICPPUsingDirective[] EMPTY_ARRAY = new ICPPUsingDirective[0];
+	ICPPUsingDirective[] EMPTY_ARRAY = {};
 
 	/**
 	 * Returns the scope of the namespace that is nominated by this

@@ -127,6 +127,14 @@ public class MingwEnvironmentVariableSupplier implements IConfigurationEnvironme
 			return mingwBinDir;
 		}
 
+		// Check for MinGW-w64 on Windows 64 bit, see http://mingw-w64.sourceforge.net/
+		if (Platform.ARCH_X86_64.equals(Platform.getOSArch())) {
+			IPath gcc64Loc = PathUtil.findProgramLocation("x86_64-w64-mingw32-gcc.exe", envPathValueCached); //$NON-NLS-1$
+			if (gcc64Loc != null) {
+				return gcc64Loc.removeLastSegments(1);
+			}
+		}
+
 		// Look in PATH values. Look for mingw32-gcc.exe
 		// TODO: Since this dir is already in the PATH, why are we adding it here?
 		// This is really only to support isToolchainAvail. Must be a better way.

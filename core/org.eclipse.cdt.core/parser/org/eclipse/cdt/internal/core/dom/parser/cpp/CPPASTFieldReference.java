@@ -274,10 +274,10 @@ public class CPPASTFieldReference extends ASTNode
 			IASTName[] ns= ((ICPPASTQualifiedName) n).getNames();
 			if (ns.length < 2)
 				return EvalFixed.INCOMPLETE;
-			qualifier= ns[ns.length-2].resolveBinding();
+			qualifier= ns[ns.length - 2].resolveBinding();
 			if (qualifier instanceof IProblemBinding)
 				return EvalFixed.INCOMPLETE;
-			n= ns[ns.length-1];
+			n= ns[ns.length - 1];
 		}
 		if (n instanceof ICPPASTTemplateId) {
 			args= CPPTemplates.createTemplateArgumentArray((ICPPASTTemplateId) n);

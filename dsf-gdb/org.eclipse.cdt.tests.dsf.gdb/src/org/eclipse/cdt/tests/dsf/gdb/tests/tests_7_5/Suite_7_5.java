@@ -34,6 +34,7 @@ import org.junit.runners.Suite;
 	MIRunControlTargetAvailableTest_7_5.class,
 	MIRunControlNonStopTargetAvailableTest_7_5.class,
 	MIExpressionsTest_7_5.class,
+	GDBPatternMatchingExpressionsTest_7_5.class,
 	MIMemoryTest_7_5.class,
 	MIBreakpointsTest_7_5.class,
 	MICatchpointsTest_7_5.class,

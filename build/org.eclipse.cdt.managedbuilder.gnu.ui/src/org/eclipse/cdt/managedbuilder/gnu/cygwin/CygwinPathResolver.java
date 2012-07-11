@@ -30,17 +30,19 @@ import org.eclipse.cdt.utils.PathUtil;
 import org.eclipse.cdt.utils.WindowsRegistry;
 import org.eclipse.cdt.utils.spawner.ProcessFactory;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 /**
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class CygwinPathResolver implements IBuildPathResolver {
 	private static final String DEFAULT_ROOT = "C:\\cygwin"; //$NON-NLS-1$
+	private static final String CYGWIN_DLL = "cygwin1.dll"; //$NON-NLS-1$
 	private static final String TOOL = "/cygpath -w -p "; //$NON-NLS-1$
 	private static final char BS = '\\';
 	private static final char SLASH = '/';
 	private static final String PROPERTY_OS_NAME = "os.name"; //$NON-NLS-1$
-	private static final String PROPERTY_OS_VALUE = "windows";//$NON-NLS-1$
+	private static final String OS_WINDOWS = "windows";//$NON-NLS-1$
 	private static final String SP = " ";         //$NON-NLS-1$
 	private static final String REGISTRY_KEY_SETUP = "SOFTWARE\\Cygwin\\setup"; //$NON-NLS-1$
 	private static final String REGISTRY_KEY_SETUP_WIN64 = "SOFTWARE\\Wow6432Node\\Cygwin\\setup"; //$NON-NLS-1$
@@ -59,7 +61,10 @@ public class CygwinPathResolver implements IBuildPathResolver {
 	private static final String MINGW_SPECIAL = "mingw ";    //$NON-NLS-1$
 	private static final String CYGWIN_SPECIAL = "cygwin ";    //$NON-NLS-1$
 
+	private static final String ENV_PATH = "PATH"; //$NON-NLS-1$
+
 	private static String envPathValueCached = null;
+	private static String envCygwinHomeValueCached = null;
 	private static String binCygwin  = null;
 	private static String rootCygwin = null;
 	private static String etcCygwin = null;
@@ -90,40 +95,40 @@ public class CygwinPathResolver implements IBuildPathResolver {
 	}
 
 	/**
-	 * returns "/etc" path in Windows format
+	 * @return "/etc" path in Windows format.
 	 *
 	 * If you use this do not cache results to ensure user preferences are accounted for.
 	 * Please rely on internal caching.
 	 */
 	public static String getEtcPath() {
-		findPaths();
+		locateCygwin();
 		return etcCygwin;
 	}
 
 	/**
-	 * returns "/usr/bin" path in Windows format
+	 * @return "/usr/bin" path in Windows format.
 	 *
 	 * If you use this do not cache results to ensure user preferences are accounted for.
 	 * Please rely on internal caching.
 	 */
 	public static String getBinPath() {
-		findPaths();
+		locateCygwin();
 		return binCygwin;
 	}
 
 	/**
-	 * returns Cygwin root ("/") path in Windows format
+	 * @return Cygwin root ("/") path in Windows format.
 	 *
 	 * If you use this do not cache results to ensure user preferences are accounted for.
 	 * Please rely on internal caching.
 	 */
 	public static String getRootPath() {
-		findPaths();
+		locateCygwin();
 		return rootCygwin;
 	}
 
 	public static boolean isWindows() {
-		return (System.getProperty(PROPERTY_OS_NAME).toLowerCase().startsWith(PROPERTY_OS_VALUE));
+		return (System.getProperty(PROPERTY_OS_NAME).toLowerCase().startsWith(OS_WINDOWS));
 	}
 
 	/**
@@ -148,55 +153,63 @@ public class CygwinPathResolver implements IBuildPathResolver {
 	}
 
 	/**
-	 *  Returns the absolute path of the pattern by
-	 *  simply appending the pattern to the root
+	 * Returns the absolute path of the pattern by simply appending the relativePath to the root.
 	 *
-	 * @param pattern The pattern to find
-	 * @return The absolute path to the pattern or null if pattern is not found
+	 * @param relativePath - the pattern to find.
+	 * @return The absolute path to the pattern or {@code null} if path does not exist.
 	 */
-	private static String getValueFromRoot(String pattern) {
+	private static String getPathFromRoot(String relativePath) {
 		if (rootCygwin != null) {
-			String path = rootCygwin + pattern;
+			String path = rootCygwin + relativePath;
 			File file = new File(path);
-			if (file.exists() && file.isDirectory())
+			if (file.exists() && file.isDirectory()) {
 				return (path.replaceAll(BSLASH, SSLASH));
-			else
-				return null;
+			}
 		}
 
 		return null;
 	}
 
 	/**
-	 * Returns the absolute path to cygwin's root
-	 *
 	 * @return The absolute path to cygwin's root or null if not found
 	 */
 	private static String findRoot(String paths) {
 		String rootValue = null;
 
-		// 1. Look in PATH values. Look for bin\cygwin1.dll
-		IPath location = PathUtil.findProgramLocation("cygwin1.dll", paths); //$NON-NLS-1$
-		if (location!=null) {
-			rootValue = location.removeLastSegments(2).toOSString();
+		// Check $CYGWIN_HOME
+		if (envCygwinHomeValueCached != null && !envCygwinHomeValueCached.isEmpty()) {
+			IPath location = new Path(envCygwinHomeValueCached + "/bin/" + CYGWIN_DLL);
+			if (location.toFile().exists()) {
+				// deduct rootValue from "rootValue\bin\cygwin1.dll"
+				rootValue = location.removeLastSegments(2).toOSString();
+			}
 		}
 
-		// 2. Try to find the root dir in SOFTWARE\Cygwin\setup
+		// Look in PATH values. Look for cygwin1.dll
+		if(rootValue == null) {
+			IPath location = PathUtil.findProgramLocation(CYGWIN_DLL, paths);
+			if (location != null) {
+				// deduct rootValue from "rootValue\bin\cygwin1.dll"
+				rootValue = location.removeLastSegments(2).toOSString();
+			}
+		}
+
+		// Try to find the root dir in SOFTWARE\Cygwin\setup
 		if(rootValue == null) {
 			rootValue = readValueFromRegistry(REGISTRY_KEY_SETUP, "rootdir"); //$NON-NLS-1$
 		}
 
-		// 3. Try to find the root dir in SOFTWARE\Wow6432Node\Cygwin\setup
+		// Try to find the root dir in SOFTWARE\Wow6432Node\Cygwin\setup
 		if(rootValue == null) {
 			rootValue = readValueFromRegistry(REGISTRY_KEY_SETUP_WIN64, "rootdir"); //$NON-NLS-1$
 		}
 
-		// 4. Try to find the root dir in SOFTWARE\Cygnus Solutions
+		// Try to find the root dir in SOFTWARE\Cygnus Solutions
 		if (rootValue == null) {
 			rootValue = readValueFromRegistry(REGISTRY_KEY_MOUNTS + ROOTPATTERN, PATH_NAME);
 		}
 
-		// 5. Try the default Cygwin install dir
+		// Try the default Cygwin install dir
 		if(rootValue == null) {
 			File file = new File(DEFAULT_ROOT);
 			if (file.exists() && file.isDirectory())
@@ -212,17 +225,22 @@ public class CygwinPathResolver implements IBuildPathResolver {
 	/**
 	 * Finds Cygwin's paths and sets corresponding properties.
 	 */
-	private static synchronized void findPaths() {
+	private static synchronized void locateCygwin() {
 		if (!isWindows()) {
 			return;
 		}
 
-		IEnvironmentVariable varPath = CCorePlugin.getDefault().getBuildEnvironmentManager().getVariable("PATH", null, true); //$NON-NLS-1$
+		IEnvironmentVariable varPath = CCorePlugin.getDefault().getBuildEnvironmentManager().getVariable(ENV_PATH, null, true);
 		String envPathValue = varPath != null ? varPath.getValue() : null;
+		IEnvironmentVariable varCygwinHome = CCorePlugin.getDefault().getBuildEnvironmentManager().getVariable("CYGWIN_HOME", null, true); //$NON-NLS-1$
+		String envCygwinHomeValue = varCygwinHome != null ? varCygwinHome.getValue() : null;
 
-		if (CDataUtil.objectsEqual(envPathValue, envPathValueCached)) {
+		if (CDataUtil.objectsEqual(envPathValue, envPathValueCached) && CDataUtil.objectsEqual(envCygwinHomeValue, envCygwinHomeValueCached)) {
 			return;
 		}
+
+		envPathValueCached = envPathValue;
+		envCygwinHomeValueCached = envCygwinHomeValue;
 
 		etcCygwin  = null;
 		binCygwin  = null;
@@ -230,13 +248,13 @@ public class CygwinPathResolver implements IBuildPathResolver {
 
 		rootCygwin = findRoot(envPathValue);
 
-		// 1. Try to find the paths by appending the patterns to the root dir
-		etcCygwin = getValueFromRoot(ETCPATTERN);
-		binCygwin = getValueFromRoot(BINPATTERN);
+		// Try to find the paths by appending the patterns to the root dir
+		etcCygwin = getPathFromRoot(ETCPATTERN);
+		binCygwin = getPathFromRoot(BINPATTERN);
 		if(binCygwin == null)
-			binCygwin = getValueFromRoot(BINPATTERN_ALTERNATE);
+			binCygwin = getPathFromRoot(BINPATTERN_ALTERNATE);
 
-		// 2. Try to find the paths in SOFTWARE\\Cygnus Solutions
+		// Try to find the paths in SOFTWARE\\Cygnus Solutions
 		if(etcCygwin == null)
 			etcCygwin = readValueFromRegistry(REGISTRY_KEY_MOUNTS + ETCPATTERN, PATH_NAME);
 		if(binCygwin == null)

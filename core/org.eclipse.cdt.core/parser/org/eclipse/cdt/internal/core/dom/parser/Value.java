@@ -78,7 +78,7 @@ public class Value implements IValue {
 	private static class Reevaluation {
 		public final char[] fExpression;
 		private final int fPackOffset;
-		public int pos=0;
+		public int pos= 0;
 		public final Map<String, Integer> fUnknownSigs;
 		public final List<ICPPUnknownBinding> fUnknowns;
 		public final IBinding[] fResolvedUnknown;
@@ -94,7 +94,7 @@ public class Value implements IValue {
 			fMap= map;
 		}
 
-		public void nextSeperator() throws UnknownValueException {
+		public void nextSeparator() throws UnknownValueException {
 			final char[] expression = fExpression;
 			final int len = expression.length;
 			int idx = pos;
@@ -783,17 +783,17 @@ public class Value implements IValue {
 		switch (c) {
 		case BINARY_OP_CHAR:
 			int op= parseNonNegative(buf, idx + 1);
-			reeval.nextSeperator();
+			reeval.nextSeparator();
 			Object o1= reevaluate(reeval, maxdepth);
 			Object o2= reevaluate(reeval, maxdepth);
 			return combineBinary(op, o1, o2);
 		case UNARY_OP_CHAR:
 			op= parseNonNegative(buf, idx + 1);
-			reeval.nextSeperator();
+			reeval.nextSeparator();
 			o1= reevaluate(reeval, maxdepth);
 			return combineUnary(op, o1);
 		case CONDITIONAL_CHAR:
-			reeval.nextSeperator();
+			reeval.nextSeparator();
 			Object cond= reevaluate(reeval, maxdepth);
 			Object po= reevaluate(reeval, maxdepth);
 			Object neg= reevaluate(reeval, maxdepth);
@@ -811,12 +811,12 @@ public class Value implements IValue {
 			final IBinding[] resolvedUnknowns= reeval.fResolvedUnknown;
 			if (num >= resolvedUnknowns.length)
 				throw UNKNOWN_EX;
-			reeval.nextSeperator();
+			reeval.nextSeparator();
 			return evaluateBinding(resolvedUnknowns[num], reeval.fUnknownSigs, reeval.fUnknowns, maxdepth);
 
 		case TEMPLATE_PARAM_CHAR:
 			num= parseHex(buf, idx + 1);
-			reeval.nextSeperator();
+			reeval.nextSeparator();
 			ICPPTemplateArgument arg = reeval.fMap.getArgument(num);
 			if (arg != null) {
 				IValue val= arg.getNonTypeValue();
@@ -828,7 +828,7 @@ public class Value implements IValue {
 
 		case TEMPLATE_PARAM_PACK_CHAR:
 			num= parseHex(buf, idx + 1);
-			reeval.nextSeperator();
+			reeval.nextSeparator();
 			arg= null;
 			if (reeval.fPackOffset >= 0) {
 				ICPPTemplateArgument[] args= reeval.fMap.getPackExpansion(num);
@@ -845,7 +845,7 @@ public class Value implements IValue {
 			return createTemplateParamExpression(num, true);
 
 		default:
-			reeval.nextSeperator();
+			reeval.nextSeparator();
 			return parseLong(buf, idx);
 		}
 	}

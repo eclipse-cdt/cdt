@@ -6,12 +6,18 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.*;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.ALLCVQ;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.CVTYPE;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.REF;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getCVQualifier;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getNestedType;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getSimplifiedType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -69,9 +75,8 @@ public class TemplateArgumentDeduction {
 	 * @param point 
 	 */
 	static ICPPTemplateArgument[] deduceForFunctionCall(ICPPFunctionTemplate template,
-			ICPPTemplateArgument[] tmplArgs, List<IType> fnArgs, List<ValueCategory> argIsLValue, CPPTemplateParameterMap map, IASTNode point)
-			throws DOMException {
-		
+			ICPPTemplateArgument[] tmplArgs, List<IType> fnArgs, List<ValueCategory> argIsLValue,
+			CPPTemplateParameterMap map, IASTNode point) throws DOMException {
 		final ICPPTemplateParameter[] tmplParams = template.getTemplateParameters();
 		
 		if (tmplArgs != null && !addExplicitArguments(tmplParams, tmplArgs, map, point))
@@ -87,13 +92,14 @@ public class TemplateArgumentDeduction {
 	 * Deduces the mapping for the template parameters from the function parameters,
 	 * returns <code>false</code> if there is no mapping.
 	 */
-	static boolean deduceFromFunctionArgs(ICPPFunctionTemplate template, List<IType> fnArgs, List<ValueCategory> argCats,
-			CPPTemplateParameterMap map, IASTNode point) {
+	static boolean deduceFromFunctionArgs(ICPPFunctionTemplate template, List<IType> fnArgs,
+			List<ValueCategory> argCats, CPPTemplateParameterMap map, IASTNode point) {
 		try {
 			IType[] fnPars = template.getType().getParameterTypes();
 			final int fnParCount = fnPars.length;
 			final ICPPTemplateParameter[] tmplPars = template.getTemplateParameters();
-			TemplateArgumentDeduction deduct= new TemplateArgumentDeduction(tmplPars, map, new CPPTemplateParameterMap(fnParCount), 0);
+			TemplateArgumentDeduction deduct=
+					new TemplateArgumentDeduction(tmplPars, map, new CPPTemplateParameterMap(fnParCount), 0);
 			IType fnParPack= null;
 			argLoop: for (int j= 0; j < fnArgs.size(); j++) {
 				IType par;
@@ -474,7 +480,6 @@ public class TemplateArgumentDeduction {
 		return result.toArray(new ICPPTemplateArgument[result.size()]);
 	}
 
-	
 	/**
 	 * 14.8.2.1.3 If P is a class and has the form template-id, then A can be a derived class of the deduced A.
 	 */
@@ -543,7 +548,9 @@ public class TemplateArgumentDeduction {
 	 * Deduces the template parameter mapping from pairs of template arguments.
 	 * @param point 
 	 */
-	public static boolean fromTemplateArguments(final ICPPTemplateParameter[] pars, final ICPPTemplateArgument[] p, final ICPPTemplateArgument[] a, CPPTemplateParameterMap map, IASTNode point) throws DOMException {
+	public static boolean fromTemplateArguments(final ICPPTemplateParameter[] pars,
+			final ICPPTemplateArgument[] p, final ICPPTemplateArgument[] a, CPPTemplateParameterMap map,
+			IASTNode point) throws DOMException {
 		TemplateArgumentDeduction deduct= new TemplateArgumentDeduction(pars, null, map, 0);
 		final int len= a.length;
 		if (p == null || p.length != len) {
@@ -662,7 +669,6 @@ public class TemplateArgumentDeduction {
 		
 		return fromType(p.getTypeValue(), a.getTypeValue(), false, point);
 	}
-
 
 	private boolean fromType(IType p, IType a, boolean allowCVQConversion, IASTNode point) throws DOMException {
 		while (p != null) {

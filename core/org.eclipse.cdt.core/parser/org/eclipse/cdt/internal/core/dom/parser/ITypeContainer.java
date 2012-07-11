@@ -18,12 +18,12 @@ import org.eclipse.cdt.core.dom.ast.IType;
  */
 public interface ITypeContainer extends IType {
     /**
-     * get the type this contains
+     * Returns the type this container contains.
      */
     IType getType();
 
     /**
-     * set the type this contains
+     * Sets the type this container contains.
      */
     void setType(IType type);
 }

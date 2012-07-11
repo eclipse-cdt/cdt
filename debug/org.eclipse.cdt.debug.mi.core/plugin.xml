@@ -119,5 +119,16 @@
             name="%StandardWindowsCommandFactory.name"
             platforms="win32"/>
    </extension>
+   <extension
+         point="org.eclipse.ui.trace.traceComponents">
+      <component
+            id="org.eclipse.cdt.debug.mi.core.component"
+            label="%cdt.debug.mi.core.component.label">
+         <bundle
+               consumed="true"
+               name="org.eclipse.cdt.debug.mi.core">
+         </bundle>
+      </component>
+   </extension>
 
 </plugin>

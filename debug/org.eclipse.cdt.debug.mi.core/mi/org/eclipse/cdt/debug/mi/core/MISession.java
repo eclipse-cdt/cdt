@@ -604,8 +604,8 @@ public class MISession extends Observable {
 	 */
 	public synchronized void postCommand0(Command cmd, long timeout) throws MIException {
 		// TRACING: print the command;
-		if (MIPlugin.DEBUG) {
-			MIPlugin.getDefault().debugLog(cmd.toString());
+		if (MiCoreDebugOptions.DEBUG) {
+			MiCoreDebugOptions.trace(cmd.toString());
 		}
 
 		if (isVerboseModeEnabled())

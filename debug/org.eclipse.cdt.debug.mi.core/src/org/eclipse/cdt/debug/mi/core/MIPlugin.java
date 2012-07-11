@@ -36,7 +36,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
@@ -74,8 +73,7 @@ public class MIPlugin extends Plugin {
 	 * Has tracing for this plug-in been turned on? 
 	 * @since 7.0
 	 */
-	public static final boolean DEBUG = "true".equals( //$NON-NLS-1$
-            Platform.getDebugOption("org.eclipse.cdt.debug.mi.core/debug")); //$NON-NLS-1$
+	public static final boolean DEBUG = MiCoreDebugOptions.DEBUG;
 	/**
 	 * The singleton command factory manager.
 	 */
@@ -231,13 +229,13 @@ public class MIPlugin extends Plugin {
 		int launchTimeout = MIPlugin.getDefault().getPluginPreferences().getInt(IMIConstants.PREF_REQUEST_LAUNCH_TIMEOUT);		
 		MIProcess pgdb = new MIProcessAdapter(args, launchTimeout, monitor);
 
-		if (MIPlugin.DEBUG) {
+		if (MiCoreDebugOptions.DEBUG) {
 			StringBuffer sb = new StringBuffer();
 			for (int i = 0; i < args.length; ++i) {
 				sb.append(args[i]);
 				sb.append(' ');
 			}
-			MIPlugin.getDefault().debugLog(sb.toString());
+			MiCoreDebugOptions.trace(sb.toString());
 		}
 		
 		MISession session;
@@ -299,13 +297,13 @@ public class MIPlugin extends Plugin {
 		int launchTimeout = MIPlugin.getDefault().getPluginPreferences().getInt(IMIConstants.PREF_REQUEST_LAUNCH_TIMEOUT);		
 		MIProcess pgdb = new MIProcessAdapter(args, launchTimeout, monitor);
 		
-		if (MIPlugin.DEBUG) {
+		if (MiCoreDebugOptions.DEBUG) {
 			StringBuffer sb = new StringBuffer();
 			for (int i = 0; i < args.length; ++i) {
 				sb.append(args[i]);
 				sb.append(' ');
 			}
-			MIPlugin.getDefault().debugLog(sb.toString());
+			MiCoreDebugOptions.trace(sb.toString());
 		}
 		
 		MISession session;
@@ -351,13 +349,13 @@ public class MIPlugin extends Plugin {
 		int launchTimeout = MIPlugin.getDefault().getPluginPreferences().getInt(IMIConstants.PREF_REQUEST_LAUNCH_TIMEOUT);		
 		MIProcess pgdb = new MIProcessAdapter(args, launchTimeout, monitor);
 		
-		if (MIPlugin.getDefault().isDebugging()) {
+		if (MiCoreDebugOptions.DEBUG) {
 			StringBuffer sb = new StringBuffer();
 			for (int i = 0; i < args.length; ++i) {
 				sb.append(args[i]);
 				sb.append(' ');
 			}
-			MIPlugin.getDefault().debugLog(sb.toString());
+			MiCoreDebugOptions.trace(sb.toString());
 		}
 		
 		MISession session;
@@ -465,13 +463,13 @@ public class MIPlugin extends Plugin {
 		try {
 			pgdb = factory.createMIProcess(args, launchTimeout, monitor);
 	
-			if (MIPlugin.DEBUG) {
+			if (MiCoreDebugOptions.DEBUG) {
 				StringBuffer sb = new StringBuffer();
 				for (int i = 0; i < args.length; ++i) {
 					sb.append(args[i]);
 					sb.append(' ');
 				}
-				MIPlugin.getDefault().debugLog(sb.toString());
+				MiCoreDebugOptions.trace(sb.toString());
 			}
 		
 			miSession = createMISession0(sessionType, pgdb, factory, pty, getCommandTimeout());
@@ -517,22 +515,10 @@ public class MIPlugin extends Plugin {
 		if (getDefault().isDebugging()) {			
 			// Time stamp
 			message = MessageFormat.format( "[{0}] {1}", new Object[] { new Long( System.currentTimeMillis() ), message } ); //$NON-NLS-1$
-			// This is to verbose for a log file, better use the console.
-			//	getDefault().getLog().log(StatusUtil.newStatus(Status.ERROR, message, null));
-			// ALERT:FIXME: For example for big buffers say 4k length,
-			// the console will simply blows taking down eclipse.
-			// This seems only to happen in Eclipse-gtk and Eclipse-motif
-			// on GNU/Linux, so we break the lines in smaller chunks.
-			while (message.length() > 100) {
-				String partial = message.substring(0, 100);
-				message = message.substring(100);
-				System.out.println(partial + "\\"); //$NON-NLS-1$
-			}
-			if (message.endsWith("\n")) { //$NON-NLS-1$
-				System.out.print(message);
-			} else {
-				System.out.println(message);
-			}
+			//Since we're now using dynamic debug tracing from platform,
+			//we don't need to worry about verbosity. We can simply increase
+			//the size of our log file if need be
+			MiCoreDebugOptions.trace(message);
 		}
 	}
 	public static String getResourceString(String key) {
@@ -555,6 +541,7 @@ public class MIPlugin extends Plugin {
 		if (dc == null) {
 			CDebugCorePlugin.getDefault().getPluginPreferences().setDefault(ICDebugConstants.PREF_DEFAULT_DEBUGGER_TYPE, "org.eclipse.cdt.debug.mi.core.CDebuggerNew"); //$NON-NLS-1$
 		}
+		new MiCoreDebugOptions(context);
 	}
 
 	/* (non-Javadoc)

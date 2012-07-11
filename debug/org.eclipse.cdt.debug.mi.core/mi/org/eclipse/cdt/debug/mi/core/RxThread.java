@@ -91,8 +91,8 @@ public class RxThread extends Thread {
 			String line;
 			while ((line = reader.readLine()) != null) {
 				// TRACING: print the output.
-				if (MIPlugin.DEBUG) {
-					MIPlugin.getDefault().debugLog(line);
+				if (MiCoreDebugOptions.DEBUG) {
+					MiCoreDebugOptions.trace(line);
 				}
 				
 				if (session.isVerboseModeEnabled())

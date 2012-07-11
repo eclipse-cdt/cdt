@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Institute for Software, HSR Hochschule fuer Technik
+ * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -37,7 +37,6 @@ import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
@@ -771,10 +770,8 @@ public class ChangeGenerator extends ASTVisitor {
 			IASTNode sibling = siblings[i];
 			if (sibling == node) {
 				beforeNode = true;
-			} else if (beforeNode) {
-				sibling = getReplacementNode(sibling);
-				if (sibling != null)
-					return sibling;
+			} else if (beforeNode && getReplacementNode(sibling) != null) {
+				return sibling;
 			}
 		}
 		return null;
@@ -795,18 +792,21 @@ public class ChangeGenerator extends ASTVisitor {
 				low = mid + 1;
 			}
 		}
-		low--;
-		if (low >= 0) {
-			IASTNode statement = preprocessorStatements[low];
-			if (statement.isPartOfTranslationUnitFile()) {
-				int endOffset = endOffset(statement);
-				if (!doesRegionContainNode(ast, endOffset, offset - endOffset)) {
-					return statement;
-				}
-			}
+		IASTNode statement = --low >= 0 ? preprocessorStatements[low] : null;
+
+		IASTNode originalSibling = getPreviousSiblingNode(node);
+		IASTNode sibling = originalSibling == null ? null : getReplacementNode(originalSibling);
+		if (statement == null || !statement.isPartOfTranslationUnitFile()) {
+			return sibling;
+		}
+		if (sibling == null) {
+			IASTNode parent = node.getParent();
+			if (offset(parent) >= endOffset(statement))
+				return null;
+			return statement;
 		}
 
-		return getPreviousSiblingNode(node);
+		return endOffset(originalSibling) >= endOffset(statement) ? sibling : statement; 
 	}
 
 	private IASTNode getNextSiblingNode(IASTNode node) {
@@ -823,10 +823,8 @@ public class ChangeGenerator extends ASTVisitor {
 		for (IASTNode sibling : siblings) {
 			if (sibling == node) {
 				beforeNode = true;
-			} else if (beforeNode) {
-				sibling = getReplacementNode(sibling);
-				if (sibling != null)
-					return sibling;
+			} else if (beforeNode && getReplacementNode(sibling) != null) {
+				return sibling;
 			}
 		}
 		return null;
@@ -847,44 +845,21 @@ public class ChangeGenerator extends ASTVisitor {
 				low = mid + 1;
 			}
 		}
-		if (high < preprocessorStatements.length) {
-			IASTNode statement = preprocessorStatements[high];
-			if (statement.isPartOfTranslationUnitFile()) {
-				int offset = offset(statement);
-				if (!doesRegionContainNode(ast, endOffset, offset - endOffset)) {
-					return statement;
-				}
-			}
+		IASTNode statement =  high < preprocessorStatements.length ? preprocessorStatements[high] : null;
+
+		IASTNode originalSibling = getNextSiblingNode(node);
+		IASTNode sibling = originalSibling == null ? null : getReplacementNode(originalSibling);
+		if (statement == null || !statement.isPartOfTranslationUnitFile()) {
+			return sibling;
+		}
+		if (sibling == null) {
+			IASTNode parent = node.getParent();
+			if (endOffset(parent) <= offset(statement))
+				return null;
+			return statement;
 		}
 
-		return getNextSiblingNode(node);
-	}
-
-	/**
-	 * Checks if a given region contains at least a piece of a node after rewrite.
-	 */
-	private boolean doesRegionContainNode(IASTTranslationUnit ast, int offset, int length) {
-		IASTNodeSelector nodeSelector = ast.getNodeSelector(ast.getFilePath());
-		while (length > 0) {
-			IASTNode node = nodeSelector.findFirstContainedNode(offset, length - 1);
-			if (node == null)
-				return false;
-			if (!isNodeRemoved(node))
-				return true;
-			int oldOffset = offset;
-			offset = endOffset(node);
-			length -= offset - oldOffset;
-		}
-		return false;
-	}
-
-	private boolean isNodeRemoved(IASTNode node) {
-		do {
-			if (getReplacementNode(node) == null)
-				return true;
-		} while ((node = node.getParent()) != null);
-
-		return false;
+		return offset(originalSibling) <= offset(statement) ? sibling : statement; 
 	}
 
 	/**

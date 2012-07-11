@@ -34,6 +34,9 @@ import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryArchive;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsChangeEvent;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsChangeListener;
+import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
@@ -87,7 +90,9 @@ import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.core.runtime.content.IContentTypeManager.ContentTypeChangeEvent;
 import org.eclipse.core.runtime.content.IContentTypeManager.IContentTypeChangeListener;
 
-public class CModelManager implements IResourceChangeListener, IContentTypeChangeListener, ICProjectDescriptionListener {
+public class CModelManager implements IResourceChangeListener, IContentTypeChangeListener,
+		ICProjectDescriptionListener, ILanguageSettingsChangeListener {
+
 	public static boolean VERBOSE = false;
 
 	/**
@@ -197,6 +202,9 @@ public class CModelManager implements IResourceChangeListener, IContentTypeChang
 				// Register the Core Model on the ContentTypeManager
 				// it needs to know about changes.
 				Platform.getContentTypeManager().addContentTypeChangeListener(factory);
+
+				// Register to listen on language settings changes from LSP providers
+				LanguageSettingsManager.registerLanguageSettingsChangeListener(factory);
 			}
 		}
 		return factory;
@@ -837,7 +845,7 @@ public class CModelManager implements IResourceChangeListener, IContentTypeChang
 
 	/**
 	 * Registers the given delta with this manager. This API is to be
-	 * used to registerd deltas that are created explicitly by the C
+	 * used to register deltas that are created explicitly by the C
 	 * Model. Deltas created as translations of <code>IResourceDeltas</code>
 	 * are to be registered with <code>#registerResourceDelta</code>.
 	 */
@@ -967,6 +975,31 @@ public class CModelManager implements IResourceChangeListener, IContentTypeChang
 
 	public void contentTypeChanged(ContentTypeChangeEvent[] events) {
 		ContentTypeProcessor.processContentTypeChanges(events);
+	}
+
+	@Override
+	public void handleEvent(ILanguageSettingsChangeEvent event) {
+		try {
+			IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(event.getProjectName());
+
+			// Recalculate cached settings
+			CoreModel.getDefault().updateProjectDescriptions(new IProject[] {project}, null);
+
+			// Notify listeners
+			ICProject cproject = CModelManager.getDefault().getCModel().getCProject(project);
+			CElementDelta delta = new CElementDelta(cproject);
+			// just add all possible flags, listeners tend to recalculate themselves anyway
+			int flag = ICElementDelta.F_CHANGED_PATHENTRY_PROJECT
+					| ICElementDelta.F_CHANGED_PATHENTRY_INCLUDE
+					| ICElementDelta.F_CHANGED_PATHENTRY_MACRO
+					| ICElementDelta.F_ADDED_PATHENTRY_LIBRARY
+					| ICElementDelta.F_REMOVED_PATHENTRY_LIBRARY
+					| ICElementDelta.F_PATHENTRY_REORDER;
+			delta.changed(cproject, flag);
+			fire(delta, ElementChangedEvent.POST_CHANGE);
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		}
 	}
 
 	public void fire(int eventType) {
@@ -1277,9 +1310,13 @@ public class CModelManager implements IResourceChangeListener, IContentTypeChang
 	}
 
 	public void shutdown() {
+		// Unregister from language settings changes
+		LanguageSettingsManager.unregisterLanguageSettingsChangeListener(factory);
+
 		// Remove ourself from the DescriptorManager.
 		CProjectDescriptionManager.getInstance().removeCProjectDescriptionListener(this);
 //		CCorePlugin.getDefault().getCDescriptorManager().removeDescriptorListener(factory);
+
 		// Remove ourself from the ContentTypeManager
 		Platform.getContentTypeManager().removeContentTypeChangeListener(factory);
 

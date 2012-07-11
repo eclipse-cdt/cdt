@@ -9,6 +9,7 @@
  *     QNX Software Systems - Initial API and implementation
  *     Ken Ryall (Nokia) - Support for breakpoint actions (bug 118308)
  *     Sergey Prigogin (Google)
+ *     Jason Litton (Sage Electronic Engineering, LLC) - Added debug tracing (Bug 384682)
  *******************************************************************************/
 package org.eclipse.cdt.debug.core;
 
@@ -26,11 +27,11 @@ import org.eclipse.cdt.debug.core.sourcelookup.AbsolutePathSourceContainer;
 import org.eclipse.cdt.debug.core.sourcelookup.CProjectSourceContainer;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
 import org.eclipse.cdt.debug.core.sourcelookup.ProgramRelativePathSourceContainer;
+import org.eclipse.cdt.debug.internal.core.CdtDebugCoreDebugOptions;
 import org.eclipse.cdt.debug.internal.core.DebugConfiguration;
 import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
 import org.eclipse.cdt.debug.internal.core.ListenerList;
 import org.eclipse.cdt.debug.internal.core.SessionManager;
-import org.eclipse.cdt.debug.internal.core.Trace;
 import org.eclipse.cdt.debug.internal.core.disassembly.DisassemblyContextService;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLookupDirector;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CommonSourceLookupDirector;
@@ -341,13 +342,13 @@ public class CDebugCorePlugin extends Plugin {
     public void start(BundleContext context) throws Exception {
 		super.start(context);
 
-		Trace.init();
 		initializeCommonSourceLookupDirector();
 		createCommandAdapterFactory();
 		createBreakpointListenersList();
 		createDisassemblyContextService();
 		setSessionManager(new SessionManager());
 		setDefaultLaunchDelegates();
+		new CdtDebugCoreDebugOptions(context);
 	}
 
 	/* (non-Javadoc)

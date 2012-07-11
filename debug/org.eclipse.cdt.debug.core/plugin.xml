@@ -377,5 +377,16 @@
                type="org.eclipse.cdt.core.ISourceFinder">
          </adapter>
       </factory>
+   </extension>
+   <extension
+         point="org.eclipse.ui.trace.traceComponents">
+      <component
+            id="org.eclipse.cdt.debug.core.component"
+            label="%cdt.debug.core.component.label">
+         <bundle
+               consumed="true"
+               name="org.eclipse.cdt.debug.core">
+         </bundle>
+      </component>
    </extension>  
 </plugin>

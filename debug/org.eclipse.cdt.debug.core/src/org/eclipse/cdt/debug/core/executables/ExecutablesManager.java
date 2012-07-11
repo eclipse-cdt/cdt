@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Nokia - Initial API and implementation
+ * Jason Litton (Sage Electronic Engineering, LLC) - Added dynamic debug tracing (Bug 384413)
  *******************************************************************************/
 
 package org.eclipse.cdt.debug.core.executables;
@@ -33,7 +34,7 @@ import org.eclipse.cdt.core.settings.model.CProjectDescriptionEvent;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionListener;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
-import org.eclipse.cdt.debug.internal.core.Trace;
+import org.eclipse.cdt.debug.internal.core.CdtDebugCoreDebugOptions;
 import org.eclipse.cdt.debug.internal.core.executables.StandardExecutableImporter;
 import org.eclipse.cdt.debug.internal.core.executables.StandardSourceFileRemappingFactory;
 import org.eclipse.cdt.debug.internal.core.executables.StandardSourceFilesProvider;
@@ -145,7 +146,7 @@ public class ExecutablesManager extends PlatformObject implements ICProjectDescr
 		
 		@Override
 		public IStatus run(IProgressMonitor monitor) {
-			if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().trace(null, "Search for executables started"); //$NON-NLS-1$
+			if (CdtDebugCoreDebugOptions.DEBUG_EXECUTABLES) CdtDebugCoreDebugOptions.trace("Search for executables started"); //$NON-NLS-1$
 			
 			IStatus status = Status.OK_STATUS;
 
@@ -180,7 +181,7 @@ public class ExecutablesManager extends PlatformObject implements ICProjectDescr
 
 			for (IProject project : projects) {
 				if (subMonitor.isCanceled()) {
-					if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().trace(null, "Search for executables canceled"); //$NON-NLS-1$
+					if (CdtDebugCoreDebugOptions.DEBUG_EXECUTABLES) CdtDebugCoreDebugOptions.trace("Search for executables canceled"); //$NON-NLS-1$
 					status = Status.CANCEL_STATUS;
 					break; // we've already changed our model; stop searching but proceed to notify listeners that the model changed
 				}
@@ -190,7 +191,7 @@ public class ExecutablesManager extends PlatformObject implements ICProjectDescr
 				// get the executables provider for this project
 				IProjectExecutablesProvider provider = getExecutablesProviderForProject(project);
 				if (provider != null) {
-					if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().trace(null, "Getting executables for project: " + project.getName() + " using " + provider.toString());					 //$NON-NLS-1$ //$NON-NLS-2$
+					if (CdtDebugCoreDebugOptions.DEBUG_EXECUTABLES) CdtDebugCoreDebugOptions.trace("Getting executables for project: " + project.getName() + " using " + provider.toString());					 //$NON-NLS-1$ //$NON-NLS-2$
 
 					List<Executable> executables = provider.getExecutables(project, subMonitor.newChild(1, SubMonitor.SUPPRESS_NONE));
 					// store the list of executables for this project
@@ -230,7 +231,7 @@ public class ExecutablesManager extends PlatformObject implements ICProjectDescr
 				}
 			}
 
-			if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().trace(null, "Search for executables finished"); //$NON-NLS-1$			
+			if (CdtDebugCoreDebugOptions.DEBUG_EXECUTABLES) CdtDebugCoreDebugOptions.trace("Search for executables finished"); //$NON-NLS-1$			
 
 			return status;
 		}
@@ -425,19 +426,19 @@ public class ExecutablesManager extends PlatformObject implements ICProjectDescr
 	 * @since 7.0
 	 */
 	public Collection<Executable> getExecutables(boolean wait) {
-		if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().traceEntry(null, Boolean.valueOf(wait));		
+		if (CdtDebugCoreDebugOptions.DEBUG_EXECUTABLES) CdtDebugCoreDebugOptions.traceEntry(null, Boolean.valueOf(wait));		
 		
 		// Wait for running search to finish, if asked to
 		if (wait && searchJob.getState() != Job.NONE) {
-			if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().trace(null, "Waiting for executable search to finish..."); //$NON-NLS-1$
+			if (CdtDebugCoreDebugOptions.DEBUG_EXECUTABLES) CdtDebugCoreDebugOptions.trace("Waiting for executable search to finish..."); //$NON-NLS-1$
 			try {
 				searchJob.join();
 			} catch (InterruptedException e) {
 			}
-			if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().trace(null, "...executable search finished."); //$NON-NLS-1$
+			if (CdtDebugCoreDebugOptions.DEBUG_EXECUTABLES) CdtDebugCoreDebugOptions.trace("...executable search finished."); //$NON-NLS-1$
 		}
 		
-		if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().traceExit(null);
+		if (CdtDebugCoreDebugOptions.DEBUG_EXECUTABLES) CdtDebugCoreDebugOptions.traceExit(null);
 		return flattenExecutablesMap();
 	}
 
@@ -535,7 +536,7 @@ public class ExecutablesManager extends PlatformObject implements ICProjectDescr
 	 * @return an array of source files which may be empty
 	 */
 	public String[] getSourceFiles(final Executable executable, IProgressMonitor monitor) {
-		if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().traceEntry(null, executable);
+		if (CdtDebugCoreDebugOptions.DEBUG_EXECUTABLES) CdtDebugCoreDebugOptions.traceEntry(null, executable);
 		
 		String[] result = new String[0];
 
@@ -558,14 +559,14 @@ public class ExecutablesManager extends PlatformObject implements ICProjectDescr
 				String[] sourceFiles = provider.getSourceFiles(executable, new SubProgressMonitor(monitor, 1000));
 				if (sourceFiles.length > 0) {
 					result = sourceFiles;
-					if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().trace(null, "Got " + sourceFiles.length + " files from " + provider.toString()); //$NON-NLS-1$ //$NON-NLS-2$
+					if (CdtDebugCoreDebugOptions.DEBUG_EXECUTABLES) CdtDebugCoreDebugOptions.trace("Got " + sourceFiles.length + " files from " + provider.toString()); //$NON-NLS-1$ //$NON-NLS-2$
 					break;
 				}
 			}
 			monitor.done();
 		}
 
-		if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().traceExit(null, result);
+		if (CdtDebugCoreDebugOptions.DEBUG_EXECUTABLES) CdtDebugCoreDebugOptions.traceExit(null, result);
 		return result;
 	}
 
@@ -640,7 +641,7 @@ public class ExecutablesManager extends PlatformObject implements ICProjectDescr
 	 */
 	@Override
 	public void handleEvent(CProjectDescriptionEvent event) {
-		if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().traceEntry(null, event);
+		if (CdtDebugCoreDebugOptions.DEBUG_EXECUTABLES) CdtDebugCoreDebugOptions.traceEntry(null, event);
 		
 		// this handles the cases where the active build configuration changes,
 		// and when new projects are created or loaded at startup.
@@ -655,13 +656,13 @@ public class ExecutablesManager extends PlatformObject implements ICProjectDescr
 				String newConfigName = newDesc.getActiveConfiguration().getName();
 				String oldConfigName = oldDesc.getActiveConfiguration().getName();
 				if (!newConfigName.equals(oldConfigName)) {
-					if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().trace(null, "Scheduling refresh because active build configuration changed");					 //$NON-NLS-1$
+					if (CdtDebugCoreDebugOptions.DEBUG_EXECUTABLES) CdtDebugCoreDebugOptions.trace("Scheduling refresh because active build configuration changed");					 //$NON-NLS-1$
 					scheduleExecutableSearch(new IProject[]{newDesc.getProject()});
 				}
 			} else if (newDesc != null && oldDesc == null) {
 				// project just created
 				scheduleExecutableSearch(null);
-				if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().trace(null, "Scheduling refresh because project " + newDesc.getProject().getName() + " created");  //$NON-NLS-1$//$NON-NLS-2$
+				if (CdtDebugCoreDebugOptions.DEBUG_EXECUTABLES) CdtDebugCoreDebugOptions.trace("Scheduling refresh because project " + newDesc.getProject().getName() + " created");  //$NON-NLS-1$//$NON-NLS-2$
 			}
 		}
 	}
@@ -673,7 +674,7 @@ public class ExecutablesManager extends PlatformObject implements ICProjectDescr
 	 * takes an array instead of a list
 	 */
 	private void scheduleExecutableSearch(final IProject[] projectsToRefresh) {
-		if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().traceEntry(null, projectsToRefresh);
+		if (CdtDebugCoreDebugOptions.DEBUG_EXECUTABLES) CdtDebugCoreDebugOptions.traceEntry(null, projectsToRefresh);
 
 		// Don't schedule multiple search jobs simultaneously. If one is
 		// running, cancel it, wait for it to terminate, then schedule a new
@@ -687,12 +688,12 @@ public class ExecutablesManager extends PlatformObject implements ICProjectDescr
 					searchJob.cancel();
 					if (searchJob.getState() != Job.NONE) {
 						try {
-							if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().trace(null, "Waiting for canceled job to terminate"); //$NON-NLS-1$
+							if (CdtDebugCoreDebugOptions.DEBUG_EXECUTABLES) CdtDebugCoreDebugOptions.trace("Waiting for canceled job to terminate"); //$NON-NLS-1$
 							searchJob.join();
 						} catch (InterruptedException e) {
 						}
 					}
-					if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().trace(null, "Scheduling new search job"); //$NON-NLS-1$
+					if (CdtDebugCoreDebugOptions.DEBUG_EXECUTABLES) CdtDebugCoreDebugOptions.trace("Scheduling new search job"); //$NON-NLS-1$
 					searchJob.schedule(projectsToRefresh);
 				}
 				
@@ -876,8 +877,8 @@ public class ExecutablesManager extends PlatformObject implements ICProjectDescr
 	 */
 	@Override
 	public void elementChanged(ElementChangedEvent event) {
-		if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().traceEntry(null);
-		if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().trace(null, "event = \n" + event); // must be done separately because of traceEntry() limitation //$NON-NLS-1$ 
+		if (CdtDebugCoreDebugOptions.DEBUG_EXECUTABLES) CdtDebugCoreDebugOptions.traceEntry(null);
+		if (CdtDebugCoreDebugOptions.DEBUG_EXECUTABLES) CdtDebugCoreDebugOptions.trace("event = \n" + event); // must be done separately because of traceEntry() limitation //$NON-NLS-1$ 
 		
 		// Examine the event and figure out what needs to be done
 		Set<IProject> refreshProjects = new HashSet<IProject>(5); 
@@ -889,14 +890,14 @@ public class ExecutablesManager extends PlatformObject implements ICProjectDescr
 		
 		// Schedule executable searches in projects 
 		if (refreshProjects.size() > 0) {
-			if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().trace(null, "One or more projects need to be re-searched");  //$NON-NLS-1$
+			if (CdtDebugCoreDebugOptions.DEBUG_EXECUTABLES) CdtDebugCoreDebugOptions.trace("One or more projects need to be re-searched");  //$NON-NLS-1$
 			scheduleExecutableSearch(refreshProjects.toArray(new IProject[refreshProjects.size()]));
 		}
 		
 		// Invalidate the source file cache in changed Executables and inform
 		// listeners
 		if (executablesChanged.size() > 0) {
-			if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().trace(null, "One or more executables changed");  //$NON-NLS-1$			
+			if (CdtDebugCoreDebugOptions.DEBUG_EXECUTABLES) CdtDebugCoreDebugOptions.trace("One or more executables changed");  //$NON-NLS-1$			
 			for (Executable exec : executablesChanged) {
 				exec.setRefreshSourceFiles(true);
 			}
@@ -909,7 +910,7 @@ public class ExecutablesManager extends PlatformObject implements ICProjectDescr
 		}
 		if (executablesRemoved.size() > 0) {
 			// Update our model (i.e., our collection of Executables) and inform listeners
-			if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().trace(null, "One or more executables were removed");  //$NON-NLS-1$			
+			if (CdtDebugCoreDebugOptions.DEBUG_EXECUTABLES) CdtDebugCoreDebugOptions.trace("One or more executables were removed");  //$NON-NLS-1$			
 			synchronized (executablesMap) {
 				for (Executable executableRemoved : executablesRemoved) {
 					List<Executable> execs = executablesMap.get(executableRemoved.getProject());

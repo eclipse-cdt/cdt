@@ -11,7 +11,6 @@
 package org.eclipse.cdt.debug.internal.core;
 
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.osgi.service.debug.DebugOptions;
 import org.eclipse.osgi.service.debug.DebugTrace;
@@ -55,6 +54,9 @@ import org.osgi.util.tracker.ServiceTracker;
  * trace. When making a copy of this class for your plugin, make sure to update
  * the Activator class reference (appears three times). Also, the DEBUG_XXXX
  * fields will need to be whatever options are used in your plugin.
+ * 
+ * @deprecated This class uses static debug tracing options
+ * please use org.eclipse.cdt.debug.internal.core.CdtDebugCoreDebugOptions instead
  */
 public class Trace {
 	// See .options file in plugin for description of these flags. DEBUG is the base option.
@@ -86,10 +88,8 @@ public class Trace {
 
 	/** Should be called by plugin's  startup method() */
 	public static void init() {
-		DEBUG = CDebugCorePlugin.getDefault().isDebugging();
-
-		String option = Platform.getDebugOption(CDebugCorePlugin.PLUGIN_ID + "/debug/executables"); //$NON-NLS-1$
-		DEBUG_EXECUTABLES = DEBUG && ((option != null) ? option.equalsIgnoreCase("true") : false); //$NON-NLS-1$
+		DEBUG = CdtDebugCoreDebugOptions.DEBUG;
+		DEBUG_EXECUTABLES = CdtDebugCoreDebugOptions.DEBUG_EXECUTABLES;
 	}
 	/** Singleton trace object */
 	private static DebugTrace trace;

@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Nokia - Initial API and implementation
+ * Jason Litton (Sage Electronic Engineering, LLC) - Added dynamic debug tracing (Bug 384413)
  *******************************************************************************/
 
 package org.eclipse.cdt.debug.core.executables;
@@ -22,7 +23,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.debug.internal.core.Trace;
+import org.eclipse.cdt.debug.internal.core.CdtDebugCoreDebugOptions;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.cdt.internal.core.model.ExternalTranslationUnit;
@@ -183,10 +184,10 @@ public class Executable extends PlatformObject {
 	 * @since 6.0
 	 */
 	public synchronized ITranslationUnit[] getSourceFiles(IProgressMonitor monitor) {
-		if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().traceEntry(null);
+		if (CdtDebugCoreDebugOptions.DEBUG_EXECUTABLES) CdtDebugCoreDebugOptions.traceEntry(null);
 		
 		if (!refreshSourceFiles && !remapSourceFiles) {
-			if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().trace(null, "returning cached result");			 //$NON-NLS-1$
+			if (CdtDebugCoreDebugOptions.DEBUG_EXECUTABLES) CdtDebugCoreDebugOptions.trace("returning cached result");			 //$NON-NLS-1$
 			return sourceFiles.toArray(new TranslationUnit[sourceFiles.size()]) ;
 		}
 		
@@ -307,7 +308,7 @@ public class Executable extends PlatformObject {
 	 * @since 6.0
 	 */
 	public void setRefreshSourceFiles(boolean refreshSourceFiles) {
-		if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().traceEntry(null, refreshSourceFiles);		
+		if (CdtDebugCoreDebugOptions.DEBUG_EXECUTABLES) CdtDebugCoreDebugOptions.traceEntry(null, refreshSourceFiles);		
 				
 		this.refreshSourceFiles = refreshSourceFiles;
 	}
@@ -344,7 +345,7 @@ public class Executable extends PlatformObject {
 	 * @since 7.0
 	 */
 	public void setRemapSourceFiles(boolean remapSourceFiles) {
-		if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().traceEntry(null, remapSourceFiles);		
+		if (CdtDebugCoreDebugOptions.DEBUG_EXECUTABLES) CdtDebugCoreDebugOptions.traceEntry(null, remapSourceFiles);		
 		this.remapSourceFiles = remapSourceFiles;
 	}
 

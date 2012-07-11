@@ -979,8 +979,11 @@ implements
 	}
 
 	protected void cfgChanged(ICConfigurationDescription _cfgd) {
-
 		CConfigurationStatus st = _cfgd.getConfigurationStatus();
+		if (st.getCode() == CConfigurationStatus.TOOLCHAIN_NOT_SUPPORTED) {
+			// Re-check, maybe user got the problem fixed 
+			st = _cfgd.getConfigurationData().getStatus();
+		}
 		if (errPane != null && errMessage != null) {
 			if (st.isOK()) {
 				errPane.setVisible(false);

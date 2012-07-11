@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "AABOHn//+UA\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/plugin.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 570
+      },
+      "writtenOn": "2012-07-11T19:14:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOHn//+sc\u003d",
+      "revId": "f5a9d361fd297080fb611d6e54a34de2b3bd65c0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOHX///Z0\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/plugin.properties",
         "patchSetId": 1
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "AABOHn//+T8\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/plugin.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 570
+      },
+      "writtenOn": "2012-07-11T19:14:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOHX///Z0\u003d",
+      "revId": "f5a9d361fd297080fb611d6e54a34de2b3bd65c0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOHX///Zw\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/plugin.xml",
         "patchSetId": 1
@@ -47,6 +83,24 @@
       "writtenOn": "2012-05-25T17:43:29Z",
       "side": 1,
       "message": "Please rename to\norg.eclipse.cdt.dsf.gdb.internal.ui.osview.OSResourcesView",
+      "revId": "f5a9d361fd297080fb611d6e54a34de2b3bd65c0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHn//+T4\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/plugin.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 316,
+      "author": {
+        "id": 570
+      },
+      "writtenOn": "2012-07-11T19:14:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOHX///Zw\u003d",
       "revId": "f5a9d361fd297080fb611d6e54a34de2b3bd65c0",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +141,24 @@
     },
     {
       "key": {
+        "uuid": "AABOHn//+T0\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/plugin.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 318,
+      "author": {
+        "id": 570
+      },
+      "writtenOn": "2012-07-11T19:14:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOHX///Zo\u003d",
+      "revId": "f5a9d361fd297080fb611d6e54a34de2b3bd65c0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOHX///Z4\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/plugin.xml",
         "patchSetId": 1
@@ -98,6 +170,24 @@
       "writtenOn": "2012-05-25T17:43:29Z",
       "side": 1,
       "message": "Please rename to icons/osresources.gif",
+      "revId": "f5a9d361fd297080fb611d6e54a34de2b3bd65c0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHn//+Tw\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/plugin.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 319,
+      "author": {
+        "id": 570
+      },
+      "writtenOn": "2012-07-11T19:14:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOHX///Z4\u003d",
       "revId": "f5a9d361fd297080fb611d6e54a34de2b3bd65c0",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -132,6 +222,24 @@
       "writtenOn": "2012-05-25T17:43:29Z",
       "side": 1,
       "message": "I\u0027m concerned that using \"fetch\" will break if that string is translated.  From what I can see it is defined in Messages.properties, and I don\u0027t know if that word will be translated or not since it is an \u0027href\u0027.  The patch I have attached to bugzilla in comment 14 fixes this.",
+      "revId": "f5a9d361fd297080fb611d6e54a34de2b3bd65c0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHn//+sE\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/OSView.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 570
+      },
+      "writtenOn": "2012-07-11T19:14:46Z",
+      "side": 1,
+      "message": "It\u0027s anchor text, not use-visible text. It should not be translated. I am probably missing something, but I cannot see how your patch in c#14 addresses this.",
+      "parentUuid": "AABOHn//+sg\u003d",
       "revId": "f5a9d361fd297080fb611d6e54a34de2b3bd65c0",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -206,6 +314,24 @@
     },
     {
       "key": {
+        "uuid": "AABOHn//+Ts\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/SessionOSData.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 178,
+      "author": {
+        "id": 570
+      },
+      "writtenOn": "2012-07-11T19:14:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOHn//+sU\u003d",
+      "revId": "f5a9d361fd297080fb611d6e54a34de2b3bd65c0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOHn//+sY\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/SessionOSData.java",
         "patchSetId": 1
@@ -217,6 +343,24 @@
       "writtenOn": "2012-05-25T17:43:29Z",
       "side": 1,
       "message": "Use fTracker instead of creating a new one",
+      "revId": "f5a9d361fd297080fb611d6e54a34de2b3bd65c0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHn//+To\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/SessionOSData.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 570
+      },
+      "writtenOn": "2012-07-11T19:14:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOHn//+sY\u003d",
       "revId": "f5a9d361fd297080fb611d6e54a34de2b3bd65c0",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -240,6 +384,24 @@
     },
     {
       "key": {
+        "uuid": "AABOHn//+Tk\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/SessionOSData.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 183,
+      "author": {
+        "id": 570
+      },
+      "writtenOn": "2012-07-11T19:14:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOHn//+wg\u003d",
+      "revId": "f5a9d361fd297080fb611d6e54a34de2b3bd65c0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOHn//+xI\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/MIInfoOs.java",
         "patchSetId": 1
@@ -251,6 +413,24 @@
       "writtenOn": "2012-05-25T17:43:29Z",
       "side": 1,
       "message": "Please add a constructor that only takes IDMContext.  It will be used to ask GDB for the list of all available resources.",
+      "revId": "f5a9d361fd297080fb611d6e54a34de2b3bd65c0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOHn//+TY\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/MIInfoOs.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 570
+      },
+      "writtenOn": "2012-07-11T19:14:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOHn//+xI\u003d",
       "revId": "f5a9d361fd297080fb611d6e54a34de2b3bd65c0",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

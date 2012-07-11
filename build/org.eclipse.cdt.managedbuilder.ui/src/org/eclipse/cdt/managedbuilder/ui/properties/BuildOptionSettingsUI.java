@@ -68,6 +68,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
@@ -132,6 +133,17 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 			try {
 				treeRoot = option.getTreeRoot();
 				TreeSelectionDialog dlg = new TreeSelectionDialog(getShell(), treeRoot, nameStr, contextId);
+				String name = getStringValue();
+				if (name != null) {
+					String treeId = option.getId(name);
+					if (treeId != null) {
+						ITreeOption node = treeRoot.findNode(treeId);
+						if (node != null) {
+							dlg.setSelection(node);
+						}
+					}
+				}
+				
 				if (dlg.open() == Window.OK) {
 					ITreeOption selected = dlg.getSelection();
 					return selected.getName();
@@ -1073,7 +1085,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 	}
 
 	/**
-	 * @since 8.1
+	 * @since 8.2
 	 */
 	public static class TreeSelectionDialog extends TitleAreaDialog {
 		private final ITreeRoot treeRoot;
@@ -1081,6 +1093,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 		private final String name;
 		private String contextId;
 		private String baseMessage = ""; //$NON-NLS-1$
+		private TreeViewer viewer;
 
 		public TreeSelectionDialog(Shell parentShell, ITreeRoot root, String name, String contextId) {
 			super(parentShell);
@@ -1117,7 +1130,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 			FilteredTree tree = new FilteredTree(control,
 					SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER,
 					filter, true);
-			final TreeViewer viewer = tree.getViewer();
+			viewer = tree.getViewer();
 			viewer.setContentProvider(new ITreeContentProvider() {
 
 				@Override
@@ -1275,9 +1288,41 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 
 			return control;
 		}
+		
+		@Override
+		public void create() {
+			super.create();
+			// Need to update selection after the dialog has been created
+			// so that we trigger the listener and correctly update the label
+			// and buttons
+			setUISelection();
+		}
 
 		public ITreeOption getSelection() {
 			return selected;
+		}
+		
+		public void setSelection(ITreeOption option) {
+			if (treeRoot == getRoot(option)) { // only work in the same tree
+				selected = option;
+				setUISelection();
+			}
+		}
+
+		private void setUISelection() {
+			if (viewer != null && selected != null) viewer.setSelection(new StructuredSelection(selected), true);
+		}
+		
+		private static ITreeRoot getRoot(ITreeOption option) {
+			if (option != null) {
+				ITreeOption parent = option.getParent();
+				while (parent != null) {
+					option = parent;
+					parent = option.getParent();
+				}
+				return option instanceof ITreeRoot? (ITreeRoot) option : null;
+			}
+			return null;
 		}
 
 		private Image createImage(String icon) {

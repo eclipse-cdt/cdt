@@ -16,7 +16,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.core.runtime.CoreException;
 
-
 /**
  * Implementation of problem types.
  */

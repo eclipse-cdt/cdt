@@ -6,9 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
-
+ *     Markus Schorn - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.glvalueType;
@@ -28,14 +27,13 @@ import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.core.runtime.CoreException;
 
-public class EvalBinding implements ICPPEvaluation {
+public class EvalBinding extends CPPEvaluation {
 	private final IBinding fBinding;
 	private final boolean fFixedType;
-	
+
 	private IType fType;
 	private boolean fCheckedIsValueDependent;
 	private boolean fIsValueDependent;
@@ -56,7 +54,7 @@ public class EvalBinding implements ICPPEvaluation {
 	public IType getFixedType() {
 		return fFixedType ? fType : null;
 	}
-	
+
 	@Override
 	public boolean isInitializerList() {
 		return false;
@@ -75,9 +73,9 @@ public class EvalBinding implements ICPPEvaluation {
 		}
 		return fIsTypeDependent;
  	}
- 	
+
 	private boolean computeIsTypeDependent() {
-		if (fBinding instanceof ICPPUnknownBinding) 
+		if (fBinding instanceof ICPPUnknownBinding)
 			return true;
 
 		IType t= null;
@@ -105,26 +103,26 @@ public class EvalBinding implements ICPPEvaluation {
 		}
 		return fIsValueDependent;
  	}
- 	
+
  	private boolean computeIsValueDependent() {
 		if (fBinding instanceof IEnumerator) {
 			return Value.isDependentValue(((IEnumerator) fBinding).getValue());
-		} 
+		}
 		if (fBinding instanceof ICPPTemplateNonTypeParameter) {
 			return true;
 		}
 		if (fBinding instanceof IVariable) {
 			return Value.isDependentValue(((IVariable) fBinding).getInitialValue());
-		} 
+		}
 		if (fBinding instanceof IFunction) {
 			return false;
-		} 
+		}
 		if (fBinding instanceof ICPPUnknownBinding) {
 			return true;
-		} 
+		}
 		return false;
 	}
-	
+
 	@Override
 	public IType getTypeOrFunctionSet(IASTNode point) {
 		if (fType == null) {
@@ -132,42 +130,42 @@ public class EvalBinding implements ICPPEvaluation {
 		}
 		return fType;
 	}
-	
+
 	private IType computeType(IASTNode point) {
 		if (fBinding instanceof IEnumerator) {
 			return ((IEnumerator) fBinding).getType();
-		} 
+		}
 		if (fBinding instanceof ICPPTemplateNonTypeParameter) {
 			IType type= ((ICPPTemplateNonTypeParameter) fBinding).getType();
 			if (CPPTemplates.isDependentType(type))
 				return new TypeOfDependentExpression(this);
 			return prvalueType(type);
-		} 
+		}
 		if (fBinding instanceof IVariable) {
 			final IType type = ((IVariable) fBinding).getType();
 			if (CPPTemplates.isDependentType(type))
 				return new TypeOfDependentExpression(this);
 			return SemanticUtil.mapToAST(glvalueType(type), point);
-		} 
+		}
 		if (fBinding instanceof IFunction) {
 			final IFunctionType type = ((IFunction) fBinding).getType();
 			if (CPPTemplates.isDependentType(type))
 				return new TypeOfDependentExpression(this);
 			return  SemanticUtil.mapToAST(type, point);
-		} 
+		}
 		return ProblemType.UNKNOWN_FOR_EXPRESSION;
 	}
-	
+
 	@Override
 	public IValue getValue(IASTNode point) {
 		return Value.create(this, point);
 	}
-	
+
 	@Override
 	public ValueCategory getValueCategory(IASTNode point) {
         if (fBinding instanceof ICPPTemplateNonTypeParameter)
         	return ValueCategory.PRVALUE;
-        
+
 		if (fBinding instanceof IVariable || fBinding instanceof IFunction) {
 			return ValueCategory.LVALUE;
 		}
@@ -180,7 +178,7 @@ public class EvalBinding implements ICPPEvaluation {
 		buffer.marshalBinding(fBinding);
 		buffer.marshalType(fFixedType ? fType : null);
 	}
-	
+
 	public static ISerializableEvaluation unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
 		IBinding binding= buffer.unmarshalBinding();
 		IType type= buffer.unmarshalType();

@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Doug Schaefer (IBM) - Initial API and implementation
+ *     Doug Schaefer (IBM) - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
@@ -18,17 +18,15 @@ import org.eclipse.cdt.core.dom.ast.IType;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPTemplateTypeParameter extends ICPPTemplateParameter, IType {
-
 	/**
-	 * The default type for this parameter. May be null
-	 * 
+	 * The default type for this parameter. May be {@code null}.
 	 */
 	public IType getDefault() throws DOMException;
 
 	/**
 	 * Types containing template parameters need to be compared even before it is known to which
-	 * binding the template parameter belongs to. Therefore {@link #isSameType(IType)} compares the
-	 * kind and the parameter position of the template parameter, only. The name and the owner
+	 * binding the template parameter belongs to. Therefore {@link #isSameType(IType)} compares
+	 * the kind and the parameter position of the template parameter, only. The name and the owner
 	 * is ignored.
 	 * 
 	 * @since 5.1

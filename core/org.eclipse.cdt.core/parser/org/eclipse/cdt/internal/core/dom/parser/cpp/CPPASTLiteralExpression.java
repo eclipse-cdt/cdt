@@ -59,13 +59,9 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 	
 	@Override
 	public CPPASTLiteralExpression copy(CopyStyle style) {
-		CPPASTLiteralExpression copy = new CPPASTLiteralExpression(kind,
-				value == null ? null : value.clone());
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		CPPASTLiteralExpression copy =
+				new CPPASTLiteralExpression(kind, value == null ? null : value.clone());
+		return copy(copy, style);
 	}
 
 	@Override
@@ -250,7 +246,7 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
     		case lk_float_constant: 
     			return new EvalFixed(classifyTypeOfFloatLiteral(), PRVALUE, Value.UNKNOWN);
     		case lk_integer_constant: 
-    			return new EvalFixed(classifyTypeOfIntLiteral(),PRVALUE, createIntValue());
+    			return new EvalFixed(classifyTypeOfIntLiteral(), PRVALUE, createIntValue());
     		case lk_string_literal:
     			IType type = new CPPBasicType(getCharType(), 0, this);
     			type = new CPPQualifierType(type, true, false);

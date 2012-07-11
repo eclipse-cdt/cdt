@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.db;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -29,13 +29,13 @@ import org.eclipse.core.runtime.CoreException;
  * For marshalling types to byte arrays.
  */
 public class TypeMarshalBuffer implements ITypeMarshalBuffer {
-	public final static byte[] EMPTY= { 0, 0, 0, 0, 0, 0 };
-	public final static byte NULL_TYPE= 0;
-	public final static byte INDIRECT_TYPE= (byte) -1;
-	public final static byte BINDING_TYPE= (byte) -2;
-	public final static byte UNSTORABLE_TYPE= (byte) -3;
-	
-	public final static IType UNSTORABLE_TYPE_PROBLEM = new ProblemType(ISemanticProblem.TYPE_NOT_PERSISTED);
+	public static final byte[] EMPTY= { 0, 0, 0, 0, 0, 0 };
+	public static final byte NULL_TYPE= 0;
+	public static final byte INDIRECT_TYPE= (byte) -1;
+	public static final byte BINDING_TYPE= (byte) -2;
+	public static final byte UNSTORABLE_TYPE= (byte) -3;
+
+	public static final IType UNSTORABLE_TYPE_PROBLEM = new ProblemType(ISemanticProblem.TYPE_NOT_PERSISTED);
 
 	static {
 		assert EMPTY.length == Database.TYPE_SIZE;
@@ -83,14 +83,14 @@ public class TypeMarshalBuffer implements ITypeMarshalBuffer {
 				putByte((byte) 0);
 				putRecordPointer(pb.getRecord());
 			}
-		} 
+		}
 	}
 
 	@Override
 	public IBinding unmarshalBinding() throws CoreException {
 		if (fPos >= fBuffer.length)
 			throw unmarshallingError();
-		
+
 		byte firstByte= fBuffer[fPos];
 		if (firstByte == BINDING_TYPE) {
 			fPos+= 2;
@@ -99,12 +99,12 @@ public class TypeMarshalBuffer implements ITypeMarshalBuffer {
 		} else if (firstByte == NULL_TYPE || firstByte == UNSTORABLE_TYPE) {
 			fPos++;
 			return null;
-		} 
-		
+		}
+
 		IType type= fLinkage.unmarshalType(this);
 		if (type == null || type instanceof IBinding)
 			return (IBinding) type;
-		
+
 		throw unmarshallingError();
 	}
 
@@ -117,7 +117,7 @@ public class TypeMarshalBuffer implements ITypeMarshalBuffer {
 		} else if (type instanceof IBinding) {
 			marshalBinding((IBinding) type);
 		} else {
-			assert false : "Cannot serialize " + ASTTypeUtil.getType(type) + "(" + type.getClass().getName() + ")";   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+			assert false : "Cannot serialize " + ASTTypeUtil.getType(type) + " (" + type.getClass().getName() + ")";   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 			putByte(UNSTORABLE_TYPE);
 		}
 	}
@@ -126,10 +126,10 @@ public class TypeMarshalBuffer implements ITypeMarshalBuffer {
 	public IType unmarshalType() throws CoreException {
 		if (fPos >= fBuffer.length)
 			throw unmarshallingError();
-		
+
 		byte firstByte= fBuffer[fPos];
 		if (firstByte == BINDING_TYPE) {
-			fPos+= 2;
+			fPos += 2;
 			long rec= getRecordPointer();
 			return (IType) fLinkage.getNode(rec);
 		} else if (firstByte == NULL_TYPE) {
@@ -139,7 +139,7 @@ public class TypeMarshalBuffer implements ITypeMarshalBuffer {
 			fPos++;
 			return UNSTORABLE_TYPE_PROBLEM;
 		}
-		
+
 		return fLinkage.unmarshalType(this);
 	}
 
@@ -150,18 +150,18 @@ public class TypeMarshalBuffer implements ITypeMarshalBuffer {
 		} else {
 			eval.marshal(this, includeValues);
 		}
-	} 
-	
+	}
+
 	@Override
 	public ISerializableEvaluation unmarshalEvaluation() throws CoreException {
 		if (fPos >= fBuffer.length)
 			throw unmarshallingError();
-		
+
 		byte firstByte= fBuffer[fPos];
 		if (firstByte == NULL_TYPE) {
 			fPos++;
 			return null;
-		} 
+		}
 		return fLinkage.unmarshalEvaluation(this);
 	}
 
@@ -171,14 +171,14 @@ public class TypeMarshalBuffer implements ITypeMarshalBuffer {
 			((Value) value).marshall(this);
 		} else {
 			putByte(NULL_TYPE);
-		} 
+		}
 	}
 
 	@Override
 	public IValue unmarshalValue() throws CoreException {
 		if (fPos >= fBuffer.length)
 			throw unmarshallingError();
-		
+
 		return Value.unmarshal(this);
 	}
 
@@ -209,7 +209,7 @@ public class TypeMarshalBuffer implements ITypeMarshalBuffer {
 
 	@Override
 	public int getByte() throws CoreException {
-		if (fPos+1 > fBuffer.length)
+		if (fPos + 1 > fBuffer.length)
 			throw unmarshallingError();
 		return 0xff & fBuffer[fPos++];
 	}
@@ -218,6 +218,7 @@ public class TypeMarshalBuffer implements ITypeMarshalBuffer {
 	public CoreException unmarshallingError() {
 		return new CoreException(CCorePlugin.createStatus("Unmarshalling error")); //$NON-NLS-1$
 	}
+
 	public CoreException marshallingError() {
 		return new CoreException(CCorePlugin.createStatus("Marshalling error")); //$NON-NLS-1$
 	}
@@ -225,31 +226,33 @@ public class TypeMarshalBuffer implements ITypeMarshalBuffer {
 	@Override
 	public void putShort(short value) {
 		request(2);
-		fBuffer[fPos++]= (byte)(value >> 8);
-		fBuffer[fPos++]= (byte)(value);
+		fBuffer[fPos++]= (byte) (value >> 8);
+		fBuffer[fPos++]= (byte) (value);
 	}
 
 	@Override
 	public int getShort() throws CoreException {
-		if (fPos+2 > fBuffer.length)
+		if (fPos + 2 > fBuffer.length)
 			throw unmarshallingError();
 		final int byte1 = 0xff & fBuffer[fPos++];
 		final int byte2 = 0xff & fBuffer[fPos++];
 		return (((byte1 << 8) | (byte2 & 0xff)));
 	}
-	
+
+	@Override
 	public void putInt(int value) {
 		request(4);
 		fPos += 4;
 		int p= fPos;
-		fBuffer[--p]= (byte)(value); value >>= 8;
-		fBuffer[--p]= (byte)(value); value >>= 8;
-		fBuffer[--p]= (byte)(value); value >>= 8;
-		fBuffer[--p]= (byte)(value); 
+		fBuffer[--p]= (byte) (value); value >>= 8;
+		fBuffer[--p]= (byte) (value); value >>= 8;
+		fBuffer[--p]= (byte) (value); value >>= 8;
+		fBuffer[--p]= (byte) (value);
 	}
 
+	@Override
 	public int getInt() throws CoreException {
-		if (fPos+4 > fBuffer.length)
+		if (fPos + 4 > fBuffer.length)
 			throw unmarshallingError();
 		int result= 0;
 		result |= fBuffer[fPos++] & 0xff; result <<= 8;
@@ -264,19 +267,19 @@ public class TypeMarshalBuffer implements ITypeMarshalBuffer {
 		request(8);
 		fPos += 8;
 		int p= fPos;
-		fBuffer[--p]= (byte)(value); value >>= 8;
-		fBuffer[--p]= (byte)(value); value >>= 8;
-		fBuffer[--p]= (byte)(value); value >>= 8;
-		fBuffer[--p]= (byte)(value); value >>= 8;
-		fBuffer[--p]= (byte)(value); value >>= 8;
-		fBuffer[--p]= (byte)(value); value >>= 8;
-		fBuffer[--p]= (byte)(value); value >>= 8;
-		fBuffer[--p]= (byte)(value); 
+		fBuffer[--p]= (byte) (value); value >>= 8;
+		fBuffer[--p]= (byte) (value); value >>= 8;
+		fBuffer[--p]= (byte) (value); value >>= 8;
+		fBuffer[--p]= (byte) (value); value >>= 8;
+		fBuffer[--p]= (byte) (value); value >>= 8;
+		fBuffer[--p]= (byte) (value); value >>= 8;
+		fBuffer[--p]= (byte) (value); value >>= 8;
+		fBuffer[--p]= (byte) (value);
 	}
 
 	@Override
 	public long getLong() throws CoreException {
-		if (fPos+8 > fBuffer.length)
+		if (fPos + 8 > fBuffer.length)
 			throw unmarshallingError();
 		long result= 0;
 		result |= fBuffer[fPos++] & 0xff; result <<= 8;
@@ -293,7 +296,7 @@ public class TypeMarshalBuffer implements ITypeMarshalBuffer {
 	private void putRecordPointer(long record) {
 		request(Database.PTR_SIZE);
 		Chunk.putRecPtr(record, fBuffer, fPos);
-		fPos+= Database.PTR_SIZE;
+		fPos += Database.PTR_SIZE;
 	}
 
 	private long getRecordPointer() throws CoreException {

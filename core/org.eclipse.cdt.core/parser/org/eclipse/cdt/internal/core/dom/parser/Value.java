@@ -8,7 +8,7 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
 
 import java.util.ArrayList;
@@ -45,15 +45,15 @@ import org.eclipse.cdt.internal.core.pdom.db.TypeMarshalBuffer;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * Represents values of variables, enumerators or expressions. The primary purpose of the representation
- * is to support instantiation of templates with non-type template parameters. 
+ * Represents values of variables, enumerators or expressions. The primary purpose of
+ * the representation is to support instantiation of templates with non-type template parameters.
  */
 public class Value implements IValue {
 	public static final int MAX_RECURSION_DEPTH = 25;
 	public final static IValue UNKNOWN= new Value("<unknown>".toCharArray(), ICPPUnknownBinding.EMPTY_UNKNOWN_BINDING_ARRAY); //$NON-NLS-1$
 	public final static IValue NOT_INITIALIZED= new Value("<__>".toCharArray(), ICPPUnknownBinding.EMPTY_UNKNOWN_BINDING_ARRAY); //$NON-NLS-1$
 	private static final int[] NO_INT = {};
-	
+
 	private static final String SCOPE_OP = "::"; //$NON-NLS-1$
 	private static final char UNIQUE_CHAR = '_';
 	private static final char TEMPLATE_PARAM_CHAR = '#';
@@ -62,23 +62,23 @@ public class Value implements IValue {
 	private static final char UNARY_OP_CHAR = '$';
 	private static final char BINARY_OP_CHAR = '@';
 	private static final char CONDITIONAL_CHAR= '?';
-	
+
 	private static final char SEPARATOR = ',';
 
 	private final static IValue[] TYPICAL= {
-		new Value(new char[] {'0'}, ICPPUnknownBinding.EMPTY_UNKNOWN_BINDING_ARRAY), 
-		new Value(new char[] {'1'}, ICPPUnknownBinding.EMPTY_UNKNOWN_BINDING_ARRAY), 
-		new Value(new char[] {'2'}, ICPPUnknownBinding.EMPTY_UNKNOWN_BINDING_ARRAY), 
-		new Value(new char[] {'3'}, ICPPUnknownBinding.EMPTY_UNKNOWN_BINDING_ARRAY), 
-		new Value(new char[] {'4'}, ICPPUnknownBinding.EMPTY_UNKNOWN_BINDING_ARRAY), 
-		new Value(new char[] {'5'}, ICPPUnknownBinding.EMPTY_UNKNOWN_BINDING_ARRAY), 
+		new Value(new char[] {'0'}, ICPPUnknownBinding.EMPTY_UNKNOWN_BINDING_ARRAY),
+		new Value(new char[] {'1'}, ICPPUnknownBinding.EMPTY_UNKNOWN_BINDING_ARRAY),
+		new Value(new char[] {'2'}, ICPPUnknownBinding.EMPTY_UNKNOWN_BINDING_ARRAY),
+		new Value(new char[] {'3'}, ICPPUnknownBinding.EMPTY_UNKNOWN_BINDING_ARRAY),
+		new Value(new char[] {'4'}, ICPPUnknownBinding.EMPTY_UNKNOWN_BINDING_ARRAY),
+		new Value(new char[] {'5'}, ICPPUnknownBinding.EMPTY_UNKNOWN_BINDING_ARRAY),
 		new Value(new char[] {'6'}, ICPPUnknownBinding.EMPTY_UNKNOWN_BINDING_ARRAY)};
 
 
 	private static class Reevaluation {
 		public final char[] fExpression;
 		private final int fPackOffset;
-		public int pos=0;
+		public int pos= 0;
 		public final Map<String, Integer> fUnknownSigs;
 		public final List<ICPPUnknownBinding> fUnknowns;
 		public final IBinding[] fResolvedUnknown;
@@ -94,7 +94,7 @@ public class Value implements IValue {
 			fMap= map;
 		}
 
-		public void nextSeperator() throws UnknownValueException {
+		public void nextSeparator() throws UnknownValueException {
 			final char[] expression = fExpression;
 			final int len = expression.length;
 			int idx = pos;
@@ -113,13 +113,13 @@ public class Value implements IValue {
 	private final char[] fExpression;
 	private final ICPPUnknownBinding[] fUnknownBindings;
 	private char[] fSignature;
-	
+
 	private Value(char[] rep, ICPPUnknownBinding[] unknown) {
 		assert rep != null;
 		fExpression= rep;
 		fUnknownBindings= unknown;
 	}
-	
+
 	@Override
 	public char[] getInternalExpression() {
 		return fExpression;
@@ -129,7 +129,7 @@ public class Value implements IValue {
 	public IBinding[] getUnknownBindings() {
 		return fUnknownBindings;
 	}
-	
+
 	@Override
 	public char[] getSignature() {
 		if (fSignature == null) {
@@ -152,13 +152,13 @@ public class Value implements IValue {
 		}
 		return fSignature;
 	}
-	
+
 	@Override
 	public Long numericalValue() {
 		return parseLong(fExpression);
 	}
-	
-	public void marshall(TypeMarshalBuffer buf) throws CoreException {
+
+	public void marshall(ITypeMarshalBuffer buf) throws CoreException {
 		if (UNKNOWN == this) {
 			buf.putByte((byte) (ITypeMarshalBuffer.VALUE | ITypeMarshalBuffer.FLAG1));
 		} else {
@@ -182,12 +182,12 @@ public class Value implements IValue {
 			}
 		}
 	}
-	
-	public static IValue unmarshal(TypeMarshalBuffer buf) throws CoreException {
+
+	public static IValue unmarshal(ITypeMarshalBuffer buf) throws CoreException {
 		int firstByte= buf.getByte();
 		if (firstByte == TypeMarshalBuffer.NULL_TYPE)
 			return null;
-		if ((firstByte & ITypeMarshalBuffer.FLAG1) != 0) 
+		if ((firstByte & ITypeMarshalBuffer.FLAG1) != 0)
 			return Value.UNKNOWN;
 		if ((firstByte & ITypeMarshalBuffer.FLAG2) != 0) {
 			int val= buf.getInt();
@@ -197,7 +197,7 @@ public class Value implements IValue {
 			long val= buf.getLong();
 			return Value.create(val);
 		}
-		
+
 		char[] expr = buf.getCharArray();
 		final int len= buf.getShort();
 		ICPPUnknownBinding[] unknowns= new ICPPUnknownBinding[len];
@@ -215,7 +215,7 @@ public class Value implements IValue {
 	public int hashCode() {
 		return CharArrayUtils.hash(fExpression);
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		if (!(obj instanceof IValue)) {
@@ -224,11 +224,11 @@ public class Value implements IValue {
 		final IValue rhs = (IValue) obj;
 		if (!CharArrayUtils.equals(fExpression, rhs.getInternalExpression()))
 			return false;
-		
+
 		IBinding[] rhsUnknowns= rhs.getUnknownBindings();
 		if (fUnknownBindings.length != rhsUnknowns.length)
 			return false;
-		
+
 		for (int i = 0; i < rhsUnknowns.length; i++) {
 			final IBinding rhsUnknown = rhsUnknowns[i];
 			if (rhsUnknown instanceof ICPPUnknownBinding) {
@@ -241,7 +241,7 @@ public class Value implements IValue {
 		}
 		return true;
 	}
-	
+
 	@Override
 	public String toString() {
 		return new String(getSignature());
@@ -255,7 +255,7 @@ public class Value implements IValue {
 			return TYPICAL[(int) value];
 		return new Value(toCharArray(value), ICPPUnknownBinding.EMPTY_UNKNOWN_BINDING_ARRAY);
 	}
-	
+
 	/**
 	 * Creates a value representing the given template parameter.
 	 */
@@ -272,7 +272,7 @@ public class Value implements IValue {
 	}
 
 	/**
-	 * Tests whether the value is a template parameter (or parameter pack), 
+	 * Tests whether the value is a template parameter (or parameter pack),
 	 * returns the parameter id of the parameter, or <code>-1</code> if it is not a template parameter.
 	 */
 	public static int isTemplateParameter(IValue tval) {
@@ -292,7 +292,7 @@ public class Value implements IValue {
 		}
 		return -1;
 	}
-	
+
 	/**
 	 * Tests whether the value directly references some template parameter.
 	 */
@@ -351,7 +351,7 @@ public class Value implements IValue {
 		}
 		if (result != -1)
 			return new int[] {result};
-		
+
 		return NO_INT;
 	}
 
@@ -365,7 +365,7 @@ public class Value implements IValue {
 			Object obj= evaluate(expr, unknownSigs, unknown, maxRecursionDepth);
 			if (obj instanceof Number)
 				return create(((Number) obj).longValue());
-			
+
 			ICPPUnknownBinding[] ua;
 			if (unknown.isEmpty()) {
 				ua= ICPPUnknownBinding.EMPTY_UNKNOWN_BINDING_ARRAY;
@@ -377,18 +377,18 @@ public class Value implements IValue {
 		}
 		return UNKNOWN;
 	}
-	
+
 	/**
 	 * Creates a value off its canonical representation.
 	 */
 	public static IValue fromInternalRepresentation(char[] rep, ICPPUnknownBinding[] unknown) {
 		if (CharArrayUtils.equals(rep, UNKNOWN.getInternalExpression()))
 			return UNKNOWN;
-		
+
 		Long l= parseLong(rep);
-		if (l != null) 
+		if (l != null)
 			return create(l.longValue());
-	
+
 		return new Value(rep, unknown);
 	}
 
@@ -399,11 +399,11 @@ public class Value implements IValue {
 		StringBuilder buf= new StringBuilder(10);
 		buf.append(UNIQUE_CHAR);
 		buf.append(++sUnique);
-		return new Value(extractChars(buf), ICPPUnknownBinding.EMPTY_UNKNOWN_BINDING_ARRAY); 
+		return new Value(extractChars(buf), ICPPUnknownBinding.EMPTY_UNKNOWN_BINDING_ARRAY);
 	}
 
 	/**
-	 * Computes the canonical representation of the value of the expression. 
+	 * Computes the canonical representation of the value of the expression.
 	 * Returns a {@code Number} for numerical values or a {@code String}, otherwise.
 	 * @throws UnknownValueException
 	 */
@@ -411,7 +411,7 @@ public class Value implements IValue {
 			List<ICPPUnknownBinding> unknowns, int maxdepth) throws UnknownValueException {
 		if (maxdepth < 0 || e == null)
 			throw UNKNOWN_EX;
-		
+
 		if (e instanceof IASTArraySubscriptExpression) {
 			throw UNKNOWN_EX;
 		}
@@ -465,7 +465,7 @@ public class Value implements IValue {
 			case IASTLiteralExpression.lk_char_constant:
 				try {
 					final char[] image= litEx.getValue();
-					if (image.length > 1 && image[0] == 'L') 
+					if (image.length > 1 && image[0] == 'L')
 						return ExpressionEvaluator.getChar(image, 2);
 					return ExpressionEvaluator.getChar(image, 1);
 				} catch (EvalException e1) {
@@ -489,7 +489,7 @@ public class Value implements IValue {
 		}
 		throw UNKNOWN_EX;
 	}
-	
+
 	/**
 	 * Extract a value off a binding.
 	 */
@@ -502,11 +502,11 @@ public class Value implements IValue {
 			final ICPPTemplateNonTypeParameter tp = (ICPPTemplateNonTypeParameter) b;
 			return createTemplateParamExpression(tp.getParameterID(), tp.isParameterPack());
 		}
-		
+
 		if (b instanceof ICPPUnknownBinding) {
 			return createReference((ICPPUnknownBinding) b, unknownSigs, unknowns);
 		}
-			
+
 		IValue value= null;
 		if (b instanceof IInternalVariable) {
 			value= ((IInternalVariable) b).getInitialValue(maxdepth - 1);
@@ -514,10 +514,10 @@ public class Value implements IValue {
 			value= ((IVariable) b).getInitialValue();
 		} else if (b instanceof IEnumerator) {
 			value= ((IEnumerator) b).getValue();
-		} 
+		}
 		if (value != null)
 			return evaluateValue(value, unknownSigs, unknowns);
-		
+
 		throw UNKNOWN_EX;
 	}
 
@@ -532,21 +532,21 @@ public class Value implements IValue {
 		}
 		return "" + REFERENCE_CHAR + idx.toString();  //$NON-NLS-1$
 	}
-	
+
 	private static Object evaluateValue(IValue cv, Map<String, Integer> unknownSigs,
 			List<ICPPUnknownBinding> unknowns) throws UnknownValueException {
-		if (cv == Value.UNKNOWN) 
+		if (cv == Value.UNKNOWN)
 			throw UNKNOWN_EX;
-		
+
 		Long lv= cv.numericalValue();
 		if (lv != null)
 			return lv;
-		
+
 		final IBinding[] oldUnknowns = cv.getUnknownBindings();
 		final char[] expr= cv.getInternalExpression();
 		if (oldUnknowns.length == 0)
 			return new String(expr);
-		
+
 		StringBuilder buf= new StringBuilder(expr.length);
 		boolean skipToSeparator= false;
 		for (int i = 0; i < expr.length; i++) {
@@ -557,7 +557,7 @@ public class Value implements IValue {
 				if (idx >= oldUnknowns.length)
 					throw UNKNOWN_EX;
 				final IBinding old = oldUnknowns[idx];
-				if (!(old instanceof ICPPUnknownBinding)) 
+				if (!(old instanceof ICPPUnknownBinding))
 					throw UNKNOWN_EX;
 
 				buf.append(createReference((ICPPUnknownBinding) old, unknownSigs, unknowns));
@@ -576,7 +576,7 @@ public class Value implements IValue {
 		}
 		return buf.toString();
 	}
-	
+
 	private static Object evaluateUnaryExpression(IASTUnaryExpression ue,
 			Map<String, Integer> unknownSigs, List<ICPPUnknownBinding> unknowns, int maxdepth)
 			throws UnknownValueException {
@@ -599,11 +599,11 @@ public class Value implements IValue {
 				unaryOp == IASTUnaryExpression.op_sizeofParameterPack) {
 			throw UNKNOWN_EX;
 		}
-			
+
 		final Object value= evaluate(ue.getOperand(), unknownSigs, unknowns, maxdepth);
-		return combineUnary(unaryOp, value); 
+		return combineUnary(unaryOp, value);
 	}
-	
+
 	private static Object combineUnary(final int unaryOp, final Object value) throws UnknownValueException {
 		switch (unaryOp) {
 		case IASTUnaryExpression.op_bracketedPrimary:
@@ -628,8 +628,8 @@ public class Value implements IValue {
 				return v == 0 ? 1 : 0;
 			}
 			throw UNKNOWN_EX;
-		} 
-		
+		}
+
 		switch (unaryOp) {
 		case IASTUnaryExpression.op_prefixIncr:
 		case IASTUnaryExpression.op_postFixIncr:
@@ -643,7 +643,7 @@ public class Value implements IValue {
 		throw UNKNOWN_EX;
 	}
 
-	private static Object evaluateBinaryExpression(IASTBinaryExpression be, 
+	private static Object evaluateBinaryExpression(IASTBinaryExpression be,
 			Map<String, Integer> unknownSigs, List<ICPPUnknownBinding> unknowns, int maxdepth)
 			throws UnknownValueException {
 		final Object o1= evaluate(be.getOperand1(), unknownSigs, unknowns, maxdepth);
@@ -652,7 +652,7 @@ public class Value implements IValue {
 		final int op= be.getOperator();
 		return combineBinary(op, o1, o2);
 	}
-	
+
 	private static Object combineBinary(final int op, final Object o1, final Object o2)
 			throws UnknownValueException {
 		if (o1 instanceof Number && o2 instanceof Number) {
@@ -737,10 +737,10 @@ public class Value implements IValue {
 		default:
 			throw UNKNOWN_EX;
 		}
-		
+
 		return "" + BINARY_OP_CHAR + op + SEPARATOR + o1.toString() + SEPARATOR + o2.toString(); //$NON-NLS-1$
 	}
-	
+
 	public static IValue reevaluate(IValue val, int packOffset, IBinding[] resolvedUnknowns,
 			ICPPTemplateParameterMap map, int maxdepth) {
 		try {
@@ -752,10 +752,10 @@ public class Value implements IValue {
 			Object obj= reevaluate(reeval, maxdepth);
 			if (reeval.pos != reeval.fExpression.length)
 				return UNKNOWN;
-			
+
 			if (obj instanceof Number)
 				return create(((Number) obj).longValue());
-			
+
 			ICPPUnknownBinding[] ua;
 			if (unknown.isEmpty()) {
 				ua= ICPPUnknownBinding.EMPTY_UNKNOWN_BINDING_ARRAY;
@@ -768,7 +768,7 @@ public class Value implements IValue {
 		return UNKNOWN;
 	}
 
-	private static Object reevaluate(Reevaluation reeval, int maxdepth) 
+	private static Object reevaluate(Reevaluation reeval, int maxdepth)
 			throws UnknownValueException {
 		if (maxdepth < 0)
 			throw UNKNOWN_EX;
@@ -778,22 +778,22 @@ public class Value implements IValue {
 		final int length = buf.length;
 		if (idx >= length)
 			throw UNKNOWN_EX;
-		
+
 		final char c= buf[idx];
 		switch (c) {
-		case BINARY_OP_CHAR: 
+		case BINARY_OP_CHAR:
 			int op= parseNonNegative(buf, idx + 1);
-			reeval.nextSeperator();
+			reeval.nextSeparator();
 			Object o1= reevaluate(reeval, maxdepth);
 			Object o2= reevaluate(reeval, maxdepth);
 			return combineBinary(op, o1, o2);
-		case UNARY_OP_CHAR: 
+		case UNARY_OP_CHAR:
 			op= parseNonNegative(buf, idx + 1);
-			reeval.nextSeperator();
+			reeval.nextSeparator();
 			o1= reevaluate(reeval, maxdepth);
 			return combineUnary(op, o1);
 		case CONDITIONAL_CHAR:
-			reeval.nextSeperator();
+			reeval.nextSeparator();
 			Object cond= reevaluate(reeval, maxdepth);
 			Object po= reevaluate(reeval, maxdepth);
 			Object neg= reevaluate(reeval, maxdepth);
@@ -806,17 +806,17 @@ public class Value implements IValue {
 			}
 			return "" + CONDITIONAL_CHAR + SEPARATOR + cond.toString() + SEPARATOR + //$NON-NLS-1$
 					po.toString() +	SEPARATOR + neg.toString();
-		case REFERENCE_CHAR: 
+		case REFERENCE_CHAR:
 			int num= parseNonNegative(buf, idx + 1);
 			final IBinding[] resolvedUnknowns= reeval.fResolvedUnknown;
 			if (num >= resolvedUnknowns.length)
 				throw UNKNOWN_EX;
-			reeval.nextSeperator();
+			reeval.nextSeparator();
 			return evaluateBinding(resolvedUnknowns[num], reeval.fUnknownSigs, reeval.fUnknowns, maxdepth);
 
 		case TEMPLATE_PARAM_CHAR:
 			num= parseHex(buf, idx + 1);
-			reeval.nextSeperator();
+			reeval.nextSeparator();
 			ICPPTemplateArgument arg = reeval.fMap.getArgument(num);
 			if (arg != null) {
 				IValue val= arg.getNonTypeValue();
@@ -825,10 +825,10 @@ public class Value implements IValue {
 				return evaluateValue(val, reeval.fUnknownSigs, reeval.fUnknowns);
 			}
 			return createTemplateParamExpression(num, false);
-			
+
 		case TEMPLATE_PARAM_PACK_CHAR:
 			num= parseHex(buf, idx + 1);
-			reeval.nextSeperator();
+			reeval.nextSeparator();
 			arg= null;
 			if (reeval.fPackOffset >= 0) {
 				ICPPTemplateArgument[] args= reeval.fMap.getPackExpansion(num);
@@ -843,9 +843,9 @@ public class Value implements IValue {
 				return evaluateValue(val, reeval.fUnknownSigs, reeval.fUnknowns);
 			}
 			return createTemplateParamExpression(num, true);
-			
+
 		default:
-			reeval.nextSeperator();
+			reeval.nextSeparator();
 			return parseLong(buf, idx);
 		}
 	}
@@ -858,13 +858,13 @@ public class Value implements IValue {
 		final int len= value.length;
 		int result = 0;
 		boolean ok= false;
-		for(; offset < len; offset++) {
+		for (; offset < len; offset++) {
 			final int digit= (value[offset] - '0');
 			if (digit < 0 || digit > 9)
 				break;
 			if (result > maxvalue)
 				return -1;
-			
+
 			result= result * 10 + digit;
 			ok= true;
 		}
@@ -880,7 +880,7 @@ public class Value implements IValue {
 		int result = 0;
 		boolean ok= false;
 		final int len= value.length;
-		for(; offset < len; offset++) {
+		for (; offset < len; offset++) {
 			int digit= (value[offset] - '0');
 			if (digit < 0 || digit > 9) {
 				digit += '0' - 'a' + 10;
@@ -893,13 +893,13 @@ public class Value implements IValue {
 			}
 			if ((result & 0xf0000000) != 0)
 				throw UNKNOWN_EX;
-			
+
 			result= (result << 4) + digit;
 			ok= true;
 		}
 		if (!ok)
 			throw UNKNOWN_EX;
-		
+
 		return result;
 	}
 
@@ -911,26 +911,26 @@ public class Value implements IValue {
 		final int len= value.length;
 		boolean negative= false;
 		long result = 0;
-		
+
 		boolean ok= false;
 		if (offset < len && value[offset] == '-') {
 			negative = true;
 			offset++;
 		}
-		for(; offset < len; offset++) {
+		for (; offset < len; offset++) {
 			final int digit= (value[offset] - '0');
 			if (digit < 0 || digit > 9)
 				break;
-			
+
 			if (result > maxvalue)
 				throw UNKNOWN_EX;
-			
+
 			result= result * 10 + digit;
 			ok= true;
 		}
 		if (!ok)
 			throw UNKNOWN_EX;
-		
+
 		return negative ? -result : result;
 	}
 
@@ -943,18 +943,18 @@ public class Value implements IValue {
 		boolean negative= false;
 		long result = 0;
 		int i= 0;
-		
+
 		if (len > 0 && value[0] == '-') {
 			negative = true;
 			i++;
 		}
 		if (i == len)
 			return null;
-		
-		for(; i < len; i++) {
+
+		for (; i < len; i++) {
 			if (result > maxvalue)
 				return null;
-			
+
 			final int digit= (value[i] - '0');
 			if (digit < 0 || digit > 9)
 				return null;
@@ -993,7 +993,7 @@ public class Value implements IValue {
 	}
 
 	public static IValue create(ICPPEvaluation eval, IASTNode point) {
-		// compute value of evaluation
+		// Compute value of evaluation
 		return Value.UNKNOWN;
 	}
 }

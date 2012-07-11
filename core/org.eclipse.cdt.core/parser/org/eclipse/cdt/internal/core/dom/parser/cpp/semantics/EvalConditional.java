@@ -6,9 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
-
+ *     Markus Schorn - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
@@ -42,15 +41,15 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * Performs evaluation of an expression.
  */
-public class EvalConditional implements ICPPEvaluation {
+public class EvalConditional extends CPPEvaluation {
 	private final ICPPEvaluation fCondition, fPositive, fNegative;
 	private final boolean fPositiveThrows, fNegativeThrows;
-	
+
 	private ValueCategory fValueCategory;
 	private IType fType;
 	private ICPPFunction fOverload;
 
-	
+
 	public EvalConditional(ICPPEvaluation arg1, ICPPEvaluation arg2, ICPPEvaluation arg3,
 			boolean positiveThrows, boolean negativeThrows) {
     	// Gnu-extension: Empty positive expression is replaced by condition.
@@ -85,7 +84,7 @@ public class EvalConditional implements ICPPEvaluation {
 	public boolean isInitializerList() {
 		return false;
 	}
-	
+
 	@Override
 	public boolean isFunctionSet() {
 		return false;
@@ -95,7 +94,7 @@ public class EvalConditional implements ICPPEvaluation {
 		evaluate(point);
 		return fOverload;
 	}
-	
+
 	@Override
 	public IType getTypeOrFunctionSet(IASTNode point) {
 		evaluate(point);
@@ -106,36 +105,36 @@ public class EvalConditional implements ICPPEvaluation {
 	public IValue getValue(IASTNode point) {
 		return Value.create(this, point);
 	}
-	
+
 	@Override
 	public ValueCategory getValueCategory(IASTNode point) {
 		evaluate(point);
 		return fValueCategory;
 	}
-	
+
 	@Override
 	public boolean isTypeDependent() {
 		final ICPPEvaluation positive = fPositive == null ? fCondition : fPositive;
 		return positive.isTypeDependent() || fNegative.isTypeDependent();
 	}
-	
+
 	@Override
 	public boolean isValueDependent() {
 		return fCondition.isValueDependent() || (fPositive != null && fPositive.isValueDependent())
 				|| fNegative.isValueDependent();
 	}
-	
+
 	private void evaluate(IASTNode point) {
     	if (fValueCategory != null)
     		return;
-    	
+
     	fValueCategory= PRVALUE;
-    	
+
 		final ICPPEvaluation positive = fPositive == null ? fCondition : fPositive;
-		
+
 		IType t2 = positive.getTypeOrFunctionSet(point);
 		IType t3 = fNegative.getTypeOrFunctionSet(point);
-		
+
 		final IType uqt2= getNestedType(t2, TDEF | REF | CVTYPE);
 		final IType uqt3= getNestedType(t3, TDEF | REF | CVTYPE);
 		if (uqt2 instanceof ISemanticProblem || uqt2 instanceof ICPPUnknownType) {
@@ -146,7 +145,7 @@ public class EvalConditional implements ICPPEvaluation {
 			fType= uqt3;
 			return;
 		}
-		
+
 		final boolean void2= isVoidType(uqt2);
 		final boolean void3= isVoidType(uqt3);
 
@@ -163,7 +162,7 @@ public class EvalConditional implements ICPPEvaluation {
 			}
 			return;
 		}
-		
+
 		final ValueCategory vcat2= positive.getValueCategory(point);
 		final ValueCategory vcat3= fNegative.getValueCategory(point);
 
@@ -177,8 +176,8 @@ public class EvalConditional implements ICPPEvaluation {
 				fValueCategory= PRVALUE;
 			}
 			return;
-		} 
-		
+		}
+
 		final boolean isClassType2 = uqt2 instanceof ICPPClassType;
 		final boolean isClassType3 = uqt3 instanceof ICPPClassType;
 
@@ -211,7 +210,7 @@ public class EvalConditional implements ICPPEvaluation {
 			}
 			return;
 		}
-		
+
 		// 5.16-5: At least one class type but no conversion
 		if (isClassType2 || isClassType3) {
 			fOverload = CPPSemantics.findOverloadedConditionalOperator(point, positive, fNegative);
@@ -293,13 +292,13 @@ public class EvalConditional implements ICPPEvaluation {
 			firstByte |= ITypeMarshalBuffer.FLAG1;
 		if (fNegativeThrows)
 			firstByte |= ITypeMarshalBuffer.FLAG2;
-		
+
 		buffer.putByte((byte) firstByte);
 		buffer.marshalEvaluation(fCondition, includeValue);
 		buffer.marshalEvaluation(fPositive, includeValue);
 		buffer.marshalEvaluation(fNegative, includeValue);
 	}
-	
+
 	public static ISerializableEvaluation unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
 		boolean pth= (firstByte & ITypeMarshalBuffer.FLAG1) != 0;
 		boolean nth= (firstByte & ITypeMarshalBuffer.FLAG2) != 0;

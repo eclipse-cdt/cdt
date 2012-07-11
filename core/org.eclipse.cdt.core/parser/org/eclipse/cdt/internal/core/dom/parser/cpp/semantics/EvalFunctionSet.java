@@ -6,9 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
-
+ *     Markus Schorn - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
@@ -22,17 +21,16 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.core.runtime.CoreException;
 
 /**
  * Performs evaluation of an expression.
  */
-public class EvalFunctionSet implements ICPPEvaluation {
+public class EvalFunctionSet extends CPPEvaluation {
 	private final CPPFunctionSet fFunctionSet;
 	private final boolean fAddressOf;
-	
+
 	public EvalFunctionSet(CPPFunctionSet set, boolean addressOf) {
 		fFunctionSet= set;
 		fAddressOf= addressOf;
@@ -101,7 +99,7 @@ public class EvalFunctionSet implements ICPPEvaluation {
 			firstByte |= ITypeMarshalBuffer.FLAG1;
 		if (args != null)
 			firstByte |= ITypeMarshalBuffer.FLAG2;
-		
+
 		buffer.putByte((byte) firstByte);
 		buffer.putShort((short) bindings.length);
 		for (ICPPFunction binding : bindings) {
@@ -111,7 +109,7 @@ public class EvalFunctionSet implements ICPPEvaluation {
 			// mstodo marshall arguments
 		}
 	}
-	
+
 	public static ISerializableEvaluation unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
 		final boolean addressOf= (firstByte & ITypeMarshalBuffer.FLAG1) != 0;
 		int bindingCount= buffer.getShort();

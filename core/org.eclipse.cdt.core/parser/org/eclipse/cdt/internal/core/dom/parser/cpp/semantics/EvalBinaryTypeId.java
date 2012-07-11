@@ -6,9 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
-
+ *     Markus Schorn - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
@@ -24,19 +23,18 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.core.runtime.CoreException;
 
 /**
  * Performs evaluation of an expression.
  */
-public class EvalBinaryTypeId implements ICPPEvaluation {
+public class EvalBinaryTypeId extends CPPEvaluation {
 	private final Operator fOperator;
 	private final IType fType1, fType2;
-	
+
 	private boolean fCheckedValueDependent;
 	private boolean fIsValueDependent;
-	
+
 	public EvalBinaryTypeId(Operator kind, IType type1, IType type2) {
 		fOperator= kind;
 		fType1= type1;
@@ -105,7 +103,7 @@ public class EvalBinaryTypeId implements ICPPEvaluation {
 		buffer.marshalType(fType1);
 		buffer.marshalType(fType2);
 	}
-	
+
 	public static ISerializableEvaluation unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
 		int op= buffer.getByte();
 		IType arg1= buffer.unmarshalType();

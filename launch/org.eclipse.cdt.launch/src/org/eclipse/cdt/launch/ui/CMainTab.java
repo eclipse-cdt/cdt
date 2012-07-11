@@ -498,6 +498,11 @@ public class CMainTab extends CAbstractMainTab {
 				// Notice that we don't check if exePath points to a valid executable since such
 				// check is too expensive to be done on the UI thread.
 				// See "https://bugs.eclipse.org/bugs/show_bug.cgi?id=328012".
+				// We only verify that the program path represents a file.
+				if (!exePath.toFile().isFile()) {
+					setErrorMessage(fPreviouslyCheckedProgramErrorMsg = LaunchMessages.CMainTab_Selection_must_be_file); 
+					return (fPreviouslyCheckedProgramIsValid = false);
+				}
 			}
 		}
 		

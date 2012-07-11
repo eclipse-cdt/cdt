@@ -17,10 +17,8 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPNamespaceAlias extends ICPPNamespace {
-
     /**
-     * get the binding of the original namespace.
+     * Returns the binding of the original namespace.
      */
     public IBinding getBinding();
-
 }

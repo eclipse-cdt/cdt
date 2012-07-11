@@ -6,9 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
-
+ *     Markus Schorn - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.typeFromFunctionCall;
@@ -26,14 +25,14 @@ import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.core.runtime.CoreException;
 
-public class EvalComma implements ICPPEvaluation {
+public class EvalComma extends CPPEvaluation {
 	private static final ICPPFunction[] NO_FUNCTIONS = {};
 
 	private final ICPPEvaluation[] fArguments;
 	private ICPPFunction[] fOverloads;
-	
+
 	private IType fType;
-	
+
 	public EvalComma(ICPPEvaluation[] evals) {
 		fArguments= evals;
 	}
@@ -54,9 +53,9 @@ public class EvalComma implements ICPPEvaluation {
 
 	@Override
 	public boolean isTypeDependent() {
-		if (fType != null) 
+		if (fType != null)
 			return fType instanceof TypeOfDependentExpression;
-		
+
 		for (ICPPEvaluation arg : fArguments) {
 			if (arg.isTypeDependent())
 				return true;
@@ -83,12 +82,12 @@ public class EvalComma implements ICPPEvaluation {
 	private ICPPFunction[] computeOverloads(IASTNode point) {
 		if (fArguments.length < 2)
 			return NO_FUNCTIONS;
-	    	
+
 		if (isTypeDependent())
 			return NO_FUNCTIONS;
-	    	
+
 		ICPPFunction[] overloads = new ICPPFunction[fArguments.length - 1];
-		ICPPEvaluation e1= fArguments[0];	    	
+		ICPPEvaluation e1= fArguments[0];
 		for (int i = 1; i < fArguments.length; i++) {
 			ICPPEvaluation e2 = fArguments[i];
 			ICPPFunction overload = CPPSemantics.findOverloadedOperatorComma(point, e1, e2);
@@ -99,7 +98,7 @@ public class EvalComma implements ICPPEvaluation {
 				e1= new EvalFixed(typeFromFunctionCall(overload), valueCategoryFromFunctionCall(overload), Value.UNKNOWN);
 				if (e1.getTypeOrFunctionSet(point) instanceof ISemanticProblem) {
 					e1= e2;
-				}  
+				}
 			}
 		}
 		return overloads;
@@ -112,11 +111,11 @@ public class EvalComma implements ICPPEvaluation {
 		}
 		return fType;
 	}
-	
+
 	private IType computeType(IASTNode point) {
 		if (isTypeDependent()) {
 			return new TypeOfDependentExpression(this);
-		} 
+		}
 		ICPPFunction[] overloads = getOverloads(point);
 		if (overloads.length > 0) {
 			ICPPFunction last = overloads[overloads.length - 1];
@@ -126,7 +125,7 @@ public class EvalComma implements ICPPEvaluation {
 		}
 		return fArguments[fArguments.length-1].getTypeOrFunctionSet(point);
 	}
-	
+
 	@Override
 	public IValue getValue(IASTNode point) {
 		return Value.create(this, point);
@@ -152,7 +151,7 @@ public class EvalComma implements ICPPEvaluation {
 			buffer.marshalEvaluation(arg, includeValue);
 		}
 	}
-	
+
 	public static ISerializableEvaluation unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
 		int len= buffer.getShort();
 		ICPPEvaluation[] args = new ICPPEvaluation[len];

@@ -6,13 +6,16 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates.TypeSelection.PARAMETERS;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates.TypeSelection.RETURN_TYPE;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.*;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.CVTYPE;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.REF;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getNestedType;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;

@@ -6,9 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
-
+ *     Markus Schorn - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
@@ -29,10 +28,10 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * Performs evaluation of an expression.
  */
-public class EvalFixed implements ICPPEvaluation {
-	public static final ICPPEvaluation INCOMPLETE = new EvalFixed(
-			ProblemType.UNKNOWN_FOR_EXPRESSION, PRVALUE, Value.UNKNOWN);
-	
+public class EvalFixed extends CPPEvaluation {
+	public static final ICPPEvaluation INCOMPLETE =
+			new EvalFixed(ProblemType.UNKNOWN_FOR_EXPRESSION, PRVALUE, Value.UNKNOWN);
+
 	private final IType fType;
 	private final IValue fValue;
 	private final ValueCategory fValueCategory;
@@ -108,7 +107,7 @@ public class EvalFixed implements ICPPEvaluation {
 		int firstByte = ITypeMarshalBuffer.EVAL_FIXED;
 		if (includeValue)
 			firstByte |= ITypeMarshalBuffer.FLAG1;
-		switch(fValueCategory) {
+		switch (fValueCategory) {
 		case LVALUE:
 			firstByte |= ITypeMarshalBuffer.FLAG2;
 			break;
@@ -118,30 +117,30 @@ public class EvalFixed implements ICPPEvaluation {
 		default:
 			break;
 		}
-		
+
 		buffer.putByte((byte) firstByte);
 		buffer.marshalType(fType);
 		if (includeValue) {
 			buffer.marshalValue(fValue);
 		}
 	}
-	
+
 	public static ISerializableEvaluation unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
 		final boolean readValue= (firstByte & ITypeMarshalBuffer.FLAG1) != 0;
 		IValue value;
 		ValueCategory cat;
 		switch (firstByte & (ITypeMarshalBuffer.FLAG2 | ITypeMarshalBuffer.FLAG3)) {
-			case ITypeMarshalBuffer.FLAG2:
-				cat= LVALUE;
-				break;
-			case ITypeMarshalBuffer.FLAG3:
-				cat= PRVALUE;
-				break;
-			default:
-				cat= XVALUE;
-				break;
+		case ITypeMarshalBuffer.FLAG2:
+			cat= LVALUE;
+			break;
+		case ITypeMarshalBuffer.FLAG3:
+			cat= PRVALUE;
+			break;
+		default:
+			cat= XVALUE;
+			break;
 		}
-		
+
 		IType type= buffer.unmarshalType();
 		value= readValue ? buffer.unmarshalValue() : Value.UNKNOWN;
 		return new EvalFixed(type, cat, value);

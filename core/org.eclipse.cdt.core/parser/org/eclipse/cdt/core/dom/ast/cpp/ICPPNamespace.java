@@ -21,12 +21,12 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
  */
 public interface ICPPNamespace extends ICPPBinding {
 	/**
-	 * get the scope object associated with this namespace
+	 * Returns the scope object associated with this namespace
 	 */
 	public ICPPNamespaceScope getNamespaceScope();
 	
 	/**
-	 * get an array of the all the bindings declared in this namespace.
+	 * Returns an array of the all the bindings declared in this namespace.
 	 */
 	public IBinding[] getMemberBindings();
 

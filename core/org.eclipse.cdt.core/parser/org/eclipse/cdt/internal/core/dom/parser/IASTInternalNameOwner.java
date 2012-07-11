@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser;
 
@@ -17,7 +17,6 @@ import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
  * Provides additional methods for internal use by the name resolution.
  */
 public interface IASTInternalNameOwner extends IASTNameOwner {
-	
 	/**
 	 * Get the role for the name. If the name needs to be resolved to determine that and 
 	 * <code>allowResolution</code> is set to <code>false</code>, then {@link IASTNameOwner#r_unclear}

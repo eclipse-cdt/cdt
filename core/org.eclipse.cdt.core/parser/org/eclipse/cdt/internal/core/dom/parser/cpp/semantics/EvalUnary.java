@@ -6,9 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
-
+ *     Markus Schorn - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
@@ -40,14 +39,14 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics.LookupMode;
 import org.eclipse.core.runtime.CoreException;
 
-public class EvalUnary implements ICPPEvaluation {
+public class EvalUnary extends CPPEvaluation {
 	private static final ICPPEvaluation ZERO_EVAL = new EvalFixed(CPPSemantics.INT_TYPE, PRVALUE, Value.create(0));
-	
+
 	private final int fOperator;
 	private final ICPPEvaluation fArgument;
 	private ICPPFunction fOverload= CPPFunction.UNINITIALIZED_FUNCTION;
 	private IType fType;
-	
+
 	public EvalUnary(int operator, ICPPEvaluation operand) {
 		fOperator= operator;
 		fArgument= operand;
@@ -60,7 +59,7 @@ public class EvalUnary implements ICPPEvaluation {
 	public ICPPEvaluation getArgument() {
 		return fArgument;
 	}
-	
+
 	@Override
 	public boolean isInitializerList() {
 		return false;
@@ -73,7 +72,7 @@ public class EvalUnary implements ICPPEvaluation {
 
 	@Override
 	public boolean isTypeDependent() {
-		if (fType != null) 
+		if (fType != null)
 			return fType instanceof TypeOfDependentExpression;
 
 		switch(fOperator) {
@@ -115,10 +114,10 @@ public class EvalUnary implements ICPPEvaluation {
     	OverloadableOperator op = OverloadableOperator.fromUnaryExpression(fOperator);
 		if (op == null)
 			return null;
-		
+
 		if (fArgument.isTypeDependent())
 			return null;
-		
+
     	IType type = fArgument.getTypeOrFunctionSet(point);
 		type = SemanticUtil.getNestedType(type, TDEF | REF | CVTYPE);
 		if (!CPPSemantics.isUserDefined(type))
@@ -132,20 +131,20 @@ public class EvalUnary implements ICPPEvaluation {
 	    }
     	return CPPSemantics.findOverloadedOperator(point, args, type, op, LookupMode.LIMITED_GLOBALS);
 	}
-	
+
 	@Override
 	public IType getTypeOrFunctionSet(IASTNode point) {
-		if (fType == null) 
+		if (fType == null)
 			fType= computeType(point);
 		return fType;
 	}
-	
+
 	private IType computeType(IASTNode point) {
-		if (isTypeDependent()) 
+		if (isTypeDependent())
 			return new TypeOfDependentExpression(this);
-		
+
 		ICPPFunction overload = getOverload(point);
-		if (overload != null) 
+		if (overload != null)
 			return ExpressionTypes.typeFromFunctionCall(overload);
 
     	switch (fOperator) {
@@ -163,7 +162,7 @@ public class EvalUnary implements ICPPEvaluation {
 			type = prvalueTypeWithResolvedTypedefs(type);
 	    	if (type instanceof IPointerType) {
 	    		return glvalueType(((IPointerType) type).getType());
-			} 
+			}
 	    	if (type instanceof ISemanticProblem) {
 	    		return type;
 	    	}
@@ -212,7 +211,7 @@ public class EvalUnary implements ICPPEvaluation {
 		buffer.putByte((byte) fOperator);
 		buffer.marshalEvaluation(fArgument, includeValue);
 	}
-	
+
 	public static ISerializableEvaluation unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
 		int op= buffer.getByte();
 		ICPPEvaluation arg= (ICPPEvaluation) buffer.unmarshalEvaluation();

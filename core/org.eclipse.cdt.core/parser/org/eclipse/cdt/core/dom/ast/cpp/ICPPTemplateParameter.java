@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Doug Schaefer (IBM) - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     Doug Schaefer (IBM) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
@@ -18,7 +18,7 @@ package org.eclipse.cdt.core.dom.ast.cpp;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPTemplateParameter extends ICPPBinding {
-	public static final ICPPTemplateParameter[] EMPTY_TEMPLATE_PARAMETER_ARRAY = new ICPPTemplateParameter[0];
+	public static final ICPPTemplateParameter[] EMPTY_TEMPLATE_PARAMETER_ARRAY = {};
 
 	/**
 	 * Returns the zero-based position of this parameter within the template parameter list it belongs to. 

@@ -6,9 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
-
+ *     Markus Schorn - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
@@ -44,13 +43,13 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * Performs evaluation of an expression.
  */
-public class EvalBinary implements ICPPEvaluation {
+public class EvalBinary extends CPPEvaluation {
 	public final static int op_arrayAccess= Byte.MAX_VALUE;
 	private final int fOperator;
 
 	private final ICPPEvaluation fArg1;
 	private final ICPPEvaluation fArg2;
-	
+
 	private ICPPFunction fOverload= CPPFunction.UNINITIALIZED_FUNCTION;
 	private IType fType;
 
@@ -81,7 +80,7 @@ public class EvalBinary implements ICPPEvaluation {
 	public boolean isFunctionSet() {
 		return false;
 	}
-	
+
 	@Override
 	public IType getTypeOrFunctionSet(IASTNode point) {
 		if (fType == null) {
@@ -121,11 +120,11 @@ public class EvalBinary implements ICPPEvaluation {
 
 	@Override
 	public ValueCategory getValueCategory(IASTNode point) {
-		if (isTypeDependent()) 
+		if (isTypeDependent())
 			return ValueCategory.PRVALUE;
-		
+
 		ICPPFunction overload = getOverload(point);
-		if (overload != null) 
+		if (overload != null)
 			return ExpressionTypes.valueCategoryFromFunctionCall(overload);
 
 		switch (fOperator) {
@@ -144,12 +143,12 @@ public class EvalBinary implements ICPPEvaluation {
 			return LVALUE;
 
 		case IASTBinaryExpression.op_pmdot:
-			if (!(getTypeOrFunctionSet(point) instanceof ICPPFunctionType)) 
+			if (!(getTypeOrFunctionSet(point) instanceof ICPPFunctionType))
 				return fArg1.getValueCategory(point);
 			break;
 
 		case IASTBinaryExpression.op_pmarrow:
-			if (!(getTypeOrFunctionSet(point) instanceof ICPPFunctionType)) 
+			if (!(getTypeOrFunctionSet(point) instanceof ICPPFunctionType))
 				return LVALUE;
 			break;
 		}
@@ -186,15 +185,15 @@ public class EvalBinary implements ICPPEvaluation {
 	public IType computeType(IASTNode point) {
 		// Check for overloaded operator.
 		ICPPFunction o= getOverload(point);
-		if (o != null) 
+		if (o != null)
 			return typeFromFunctionCall(o);
-		
+
 		final IType originalType1 = fArg1.getTypeOrFunctionSet(point);
 		final IType type1 = prvalueTypeWithResolvedTypedefs(originalType1);
 		if (type1 instanceof ISemanticProblem) {
 			return type1;
 		}
-		
+
     	final IType originalType2 = fArg2.getTypeOrFunctionSet(point);
 		final IType type2 = prvalueTypeWithResolvedTypedefs(originalType2);
 		if (type2 instanceof ISemanticProblem) {
@@ -206,7 +205,6 @@ public class EvalBinary implements ICPPEvaluation {
     		return ExpressionTypes.restoreTypedefs(type, originalType1, originalType2);
     	}
 
-
     	switch (fOperator) {
     	case op_arrayAccess:
     		if (type1 instanceof IPointerType) {
@@ -216,7 +214,7 @@ public class EvalBinary implements ICPPEvaluation {
     			return glvalueType(((IPointerType) type2).getType());
     		}
     		return ProblemType.UNKNOWN_FOR_EXPRESSION;
-    		
+
     	case IASTBinaryExpression.op_lessEqual:
     	case IASTBinaryExpression.op_lessThan:
     	case IASTBinaryExpression.op_greaterEqual:
@@ -230,10 +228,10 @@ public class EvalBinary implements ICPPEvaluation {
     	case IASTBinaryExpression.op_plus:
     		if (type1 instanceof IPointerType) {
         		return ExpressionTypes.restoreTypedefs(type1, originalType1);
-    		} 
+    		}
     		if (type2 instanceof IPointerType) {
         		return ExpressionTypes.restoreTypedefs(type2, originalType2);
-    		} 
+    		}
     		break;
 
     	case IASTBinaryExpression.op_minus:
@@ -268,7 +266,7 @@ public class EvalBinary implements ICPPEvaluation {
 		buffer.marshalEvaluation(fArg1, includeValue);
 		buffer.marshalEvaluation(fArg2, includeValue);
 	}
-	
+
 	public static ISerializableEvaluation unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
 		int op= buffer.getByte();
 		ICPPEvaluation arg1= (ICPPEvaluation) buffer.unmarshalEvaluation();

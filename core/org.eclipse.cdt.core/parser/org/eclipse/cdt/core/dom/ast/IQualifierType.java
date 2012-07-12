@@ -29,7 +29,7 @@ public interface IQualifierType extends IType {
     public boolean isVolatile();
     
     /** 
-     * get the type that this is qualifying
+     * Returns the type that this is qualifying
      */
     public IType getType();
 }

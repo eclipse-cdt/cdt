@@ -982,8 +982,10 @@ public class CModelManager implements IResourceChangeListener, IContentTypeChang
 		try {
 			IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(event.getProjectName());
 
-			// Recalculate cached settings
-			CoreModel.getDefault().updateProjectDescriptions(new IProject[] {project}, null);
+			// Recalculate cached settings unless already inside CProjectDescriptionManager.setProjectDescription()
+			if (!CProjectDescriptionManager.getInstance().isCurrentThreadSetProjectDescription()) {
+				CoreModel.getDefault().updateProjectDescriptions(new IProject[] {project}, null);
+			}
 
 			// Notify listeners
 			ICProject cproject = CModelManager.getDefault().getCModel().getCProject(project);

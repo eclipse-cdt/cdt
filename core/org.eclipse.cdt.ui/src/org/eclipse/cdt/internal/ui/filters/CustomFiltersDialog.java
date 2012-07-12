@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,6 +32,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.accessibility.AccessibleAdapter;
+import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -183,6 +185,14 @@ public class CustomFiltersDialog extends SelectionDialog {
 		List<?> initialSelection= getInitialElementSelections();
 		if (initialSelection != null && !initialSelection.isEmpty())
 			checkInitialSelections();
+		
+		fCheckBoxList.getTable().getAccessible().addAccessibleListener(new AccessibleAdapter() {
+			@Override
+			public void getName(AccessibleEvent e) {
+				e.result = FilterMessages.CustomFiltersDialog_filterList_label;
+			}
+		});
+		fCheckBoxList.getTable().setToolTipText(FilterMessages.CustomFiltersDialog_filterList_label);
 
 		// Description
 		info= new Label(parent, SWT.LEFT);

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
@@ -16,6 +17,8 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
@@ -80,5 +83,14 @@ public class EvalCompound extends CPPEvaluation {
 	public static ISerializableEvaluation unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
 		ICPPEvaluation arg= (ICPPEvaluation) buffer.unmarshalEvaluation();
 		return new EvalCompound(arg);
+	}
+
+	@Override
+	public ICPPEvaluation instantiate(ICPPTemplateParameterMap tpMap, int packOffset,
+			ICPPClassSpecialization within, int maxdepth, IASTNode point) {
+		ICPPEvaluation delegate = fDelegate.instantiate(tpMap, packOffset, within, maxdepth, point);
+		if (delegate == fDelegate)
+			return this;
+		return new EvalCompound(delegate);
 	}
 }

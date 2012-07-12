@@ -7,13 +7,17 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.XVALUE;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.prvalueType;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.*;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.CVTYPE;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.REF;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getNestedType;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
@@ -23,8 +27,10 @@ import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
@@ -49,13 +55,12 @@ public class EvalConditional extends CPPEvaluation {
 	private IType fType;
 	private ICPPFunction fOverload;
 
-
-	public EvalConditional(ICPPEvaluation arg1, ICPPEvaluation arg2, ICPPEvaluation arg3,
+	public EvalConditional(ICPPEvaluation condition, ICPPEvaluation positive, ICPPEvaluation negative,
 			boolean positiveThrows, boolean negativeThrows) {
     	// Gnu-extension: Empty positive expression is replaced by condition.
-		fCondition= arg1;
-		fPositive= arg2;
-		fNegative= arg3;
+		fCondition= condition;
+		fPositive= positive;
+		fNegative= negative;
 		fPositiveThrows= positiveThrows;
 		fNegativeThrows= negativeThrows;
 	}
@@ -306,5 +311,17 @@ public class EvalConditional extends CPPEvaluation {
 		ICPPEvaluation pos= (ICPPEvaluation) buffer.unmarshalEvaluation();
 		ICPPEvaluation neg= (ICPPEvaluation) buffer.unmarshalEvaluation();
 		return new EvalConditional(cond, pos, neg, pth, nth);
+	}
+
+	@Override
+	public ICPPEvaluation instantiate(ICPPTemplateParameterMap tpMap, int packOffset,
+			ICPPClassSpecialization within, int maxdepth, IASTNode point) {
+		ICPPEvaluation condition = fCondition.instantiate(tpMap, packOffset, within, maxdepth, point);
+		ICPPEvaluation positive = fPositive == null ?
+				null : fPositive.instantiate(tpMap, packOffset, within, maxdepth, point);
+		ICPPEvaluation negative = fNegative.instantiate(tpMap, packOffset, within, maxdepth, point);
+		if (condition == fCondition && positive == fPositive && negative == fNegative)
+			return this;
+		return new EvalConditional(condition, positive, negative, fPositiveThrows, fNegativeThrows);
 	}
 }

@@ -13,6 +13,8 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
@@ -30,12 +32,15 @@ import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
@@ -51,7 +56,8 @@ public class EvalID extends CPPEvaluation {
 	private final boolean fQualified;
 	private final ICPPTemplateArgument[] fTemplateArgs;
 
-	public EvalID(ICPPEvaluation fieldOwner, IBinding nameOwner, char[] simpleID, boolean addressOf, boolean qualified, ICPPTemplateArgument[] templateArgs) {
+	public EvalID(ICPPEvaluation fieldOwner, IBinding nameOwner, char[] simpleID, boolean addressOf,
+			boolean qualified, ICPPTemplateArgument[] templateArgs) {
 		fFieldOwner= fieldOwner;
 		fName= simpleID;
 		fNameOwner= nameOwner;
@@ -241,5 +247,31 @@ public class EvalID extends CPPEvaluation {
 			}
 		}
 		return false;
+	}
+
+	@Override
+	public ICPPEvaluation instantiate(ICPPTemplateParameterMap tpMap, int packOffset,
+			ICPPClassSpecialization within, int maxdepth, IASTNode point) {
+		ICPPEvaluation fieldOwner = fFieldOwner.instantiate(tpMap, packOffset, within, maxdepth, point);
+		IBinding nameOwner = fNameOwner;
+		if (fNameOwner instanceof ICPPTemplateParameter) {
+			ICPPTemplateArgument argument = tpMap.getArgument((ICPPTemplateParameter) fNameOwner);
+			if (argument != null) {
+				IType type = argument.getTypeValue();
+				if (type instanceof IBinding)
+					nameOwner = (IBinding) type;
+			}
+		} else if (fNameOwner instanceof ICPPUnknownBinding) {
+			try {
+				nameOwner = CPPTemplates.resolveUnknown((ICPPUnknownBinding) fNameOwner, tpMap,
+						packOffset, within, point);
+			} catch (DOMException e) {
+				CCorePlugin.log(e); // TODO(sprigogin): Is this exception safe to ignore?
+			}
+		}
+		if (fieldOwner == fFieldOwner && nameOwner == fNameOwner)
+			return this;
+		// TODO(sprigogin): Not sure how to construct the new evaluation.
+		return this;
 	}
 }

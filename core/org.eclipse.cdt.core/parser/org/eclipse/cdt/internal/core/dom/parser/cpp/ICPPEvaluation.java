@@ -14,6 +14,8 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 
 /**
@@ -59,4 +61,12 @@ public interface ICPPEvaluation extends ISerializableEvaluation {
 	 * signatures are guaranteed to produce the same results.
 	 */
 	char[] getSignature();
+
+	/**
+	 * Instantiates the evaluation with the provided template parameter map and pack offset.
+	 * The context is used to replace templates with their specialization, where appropriate.
+	 * @return a fully or partially instantiated evaluation, or the original evaluation
+	 */
+	ICPPEvaluation instantiate(ICPPTemplateParameterMap tpMap, int packOffset,
+			ICPPClassSpecialization within, int maxdepth, IASTNode point);
 }

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
@@ -18,7 +19,9 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
@@ -158,6 +161,21 @@ public class EvalComma extends CPPEvaluation {
 		for (int i = 0; i < args.length; i++) {
 			args[i]= (ICPPEvaluation) buffer.unmarshalEvaluation();
 		}
+		return new EvalComma(args);
+	}
+
+	@Override
+	public ICPPEvaluation instantiate(ICPPTemplateParameterMap tpMap, int packOffset,
+			ICPPClassSpecialization within, int maxdepth, IASTNode point) {
+		ICPPEvaluation[] args = new ICPPEvaluation[fArguments.length];
+		boolean changed = false;
+		for (int i = 0; i < fArguments.length; i++) {
+			args[i] = fArguments[i].instantiate(tpMap, packOffset, within, maxdepth, point);
+			if (args[i] != fArguments[i])
+				changed = true;
+		}
+		if (!changed)
+			return this;
 		return new EvalComma(args);
 	}
 }

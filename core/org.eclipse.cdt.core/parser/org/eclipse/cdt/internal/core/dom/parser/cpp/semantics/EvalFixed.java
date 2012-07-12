@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
@@ -18,6 +19,8 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
@@ -144,5 +147,15 @@ public class EvalFixed extends CPPEvaluation {
 		IType type= buffer.unmarshalType();
 		value= readValue ? buffer.unmarshalValue() : Value.UNKNOWN;
 		return new EvalFixed(type, cat, value);
+	}
+
+	@Override
+	public ICPPEvaluation instantiate(ICPPTemplateParameterMap tpMap, int packOffset,
+			ICPPClassSpecialization within, int maxdepth, IASTNode point) {
+		IType type = CPPTemplates.instantiateType(fType, tpMap, packOffset, within, point);
+		IValue value = CPPTemplates.instantiateValue(fValue, tpMap, packOffset, within, maxdepth, point);
+		if (type == fType && value == fValue)
+			return this;
+		return new EvalFixed(type, fValueCategory, value);
 	}
 }

@@ -7,13 +7,31 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
-import static org.eclipse.cdt.core.dom.ast.IASTUnaryExpression.*;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.*;
+import static org.eclipse.cdt.core.dom.ast.IASTUnaryExpression.op_alignOf;
+import static org.eclipse.cdt.core.dom.ast.IASTUnaryExpression.op_amper;
+import static org.eclipse.cdt.core.dom.ast.IASTUnaryExpression.op_minus;
+import static org.eclipse.cdt.core.dom.ast.IASTUnaryExpression.op_not;
+import static org.eclipse.cdt.core.dom.ast.IASTUnaryExpression.op_plus;
+import static org.eclipse.cdt.core.dom.ast.IASTUnaryExpression.op_postFixDecr;
+import static org.eclipse.cdt.core.dom.ast.IASTUnaryExpression.op_postFixIncr;
+import static org.eclipse.cdt.core.dom.ast.IASTUnaryExpression.op_prefixDecr;
+import static org.eclipse.cdt.core.dom.ast.IASTUnaryExpression.op_prefixIncr;
+import static org.eclipse.cdt.core.dom.ast.IASTUnaryExpression.op_sizeof;
+import static org.eclipse.cdt.core.dom.ast.IASTUnaryExpression.op_sizeofParameterPack;
+import static org.eclipse.cdt.core.dom.ast.IASTUnaryExpression.op_star;
+import static org.eclipse.cdt.core.dom.ast.IASTUnaryExpression.op_throw;
+import static org.eclipse.cdt.core.dom.ast.IASTUnaryExpression.op_tilde;
+import static org.eclipse.cdt.core.dom.ast.IASTUnaryExpression.op_typeid;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.glvalueType;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.prvalueType;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.prvalueTypeWithResolvedTypedefs;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.valueCategoryFromFunctionCall;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.CVTYPE;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.REF;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
@@ -25,7 +43,9 @@ import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
@@ -90,7 +110,7 @@ public class EvalUnary extends CPPEvaluation {
 
 	@Override
 	public boolean isValueDependent() {
-		switch(fOperator) {
+		switch (fOperator) {
 		case op_alignOf:
 		case op_sizeof:
 		case op_sizeofParameterPack:
@@ -216,5 +236,14 @@ public class EvalUnary extends CPPEvaluation {
 		int op= buffer.getByte();
 		ICPPEvaluation arg= (ICPPEvaluation) buffer.unmarshalEvaluation();
 		return new EvalUnary(op, arg);
+	}
+
+	@Override
+	public ICPPEvaluation instantiate(ICPPTemplateParameterMap tpMap, int packOffset,
+			ICPPClassSpecialization within, int maxdepth, IASTNode point) {
+		ICPPEvaluation argument = fArgument.instantiate(tpMap, packOffset, within, maxdepth, point);
+		if (argument == fArgument)
+			return this;
+		return new EvalUnary(fOperator, argument);
 	}
 }

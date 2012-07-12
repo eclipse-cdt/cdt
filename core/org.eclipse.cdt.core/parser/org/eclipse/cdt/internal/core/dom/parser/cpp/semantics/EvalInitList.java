@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
@@ -16,6 +17,8 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
@@ -95,5 +98,20 @@ public class EvalInitList extends CPPEvaluation {
 			args[i]= (ICPPEvaluation) buffer.unmarshalEvaluation();
 		}
 		return new EvalComma(args);
+	}
+
+	@Override
+	public ICPPEvaluation instantiate(ICPPTemplateParameterMap tpMap, int packOffset,
+			ICPPClassSpecialization within, int maxdepth, IASTNode point) {
+		ICPPEvaluation[] clauses = new ICPPEvaluation[fClauses.length];
+		boolean changed = false;
+		for (int i = 0; i < fClauses.length; i++) {
+			clauses[i] = fClauses[i].instantiate(tpMap, packOffset, within, maxdepth, point);
+			if (clauses[i] != fClauses[i])
+				changed = true;
+		}
+		if (!changed)
+			return this;
+		return new EvalInitList(clauses);
 	}
 }

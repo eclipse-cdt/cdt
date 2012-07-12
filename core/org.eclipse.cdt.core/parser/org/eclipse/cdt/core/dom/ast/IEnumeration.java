@@ -16,9 +16,8 @@ package org.eclipse.cdt.core.dom.ast;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IEnumeration extends IBinding, IType {
-    
     /**
-     * returns an array of the IEnumerators declared in this enumeration
+     * Returns an array of the IEnumerators declared in this enumeration
      * @throws DOMException
      */
     IEnumerator[] getEnumerators() throws DOMException;

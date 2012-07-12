@@ -17,7 +17,7 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface IPointerType extends IType {
     /**
-     * get the type that this is a pointer to
+     * Returns the type that this is a pointer to
      */
     public IType getType();
     
@@ -37,5 +37,4 @@ public interface IPointerType extends IType {
 	 * @since 5.3
 	 */
 	boolean isRestrict();
-
 }

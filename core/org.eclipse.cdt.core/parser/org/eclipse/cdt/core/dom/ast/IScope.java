@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
- *    Bryan Wilkinson (QNX)
+ *     IBM - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *     Bryan Wilkinson (QNX)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
@@ -24,7 +24,6 @@ import org.eclipse.cdt.core.index.IIndexFileSet;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IScope {
-	
 	/**
 	 * Classifies the scope.
 	 * @since 5.1
@@ -32,13 +31,13 @@ public interface IScope {
 	EScopeKind getKind();
 
 	/**
-     * Get the IName for this scope, may be null 
+     * Returns the IName for this scope, may be null 
      * @return The name of this scope.
      */
     public IName getScopeName();
     
 	/**
-	 * The method returns the first enclosing non-template scope, or <code>null</code> if this
+	 * Returns the first enclosing non-template scope, or <code>null</code> if this
 	 * is the global scope.
 	 * <p>
 	 * For scopes obtained from an index, <code>null</code> is returned to indicate that the
@@ -58,32 +57,32 @@ public interface IScope {
 	public IBinding[] find(String name);
 	
 	/**
-	 * Get the binding in this scope that the given name would resolve to. Could
+	 * Returns the binding in this scope that the given name would resolve to. Could
 	 * return null if there is no matching binding in this scope, if the binding has not
 	 * yet been cached in this scope, or if resolve == false and the appropriate binding 
 	 * has not yet been resolved.
 	 * 
 	 * @param name
-	 * @param resolve :
+	 * @param resolve
 	 *            whether or not to resolve the matching binding if it has not
 	 *            been so already.
-	 * @return : the binding in this scope that matches the name, or null
+	 * @return the binding in this scope that matches the name, or null
 	 */
 	public IBinding getBinding(IASTName name, boolean resolve);
 	
 	/**
-	 * Get the binding in this scope that the given name would resolve to. Could
+	 * Returns the binding in this scope that the given name would resolve to. Could
 	 * return null if there is no matching binding in this scope, if the binding has not
 	 * yet been cached in this scope, or if resolve == false and the appropriate binding 
 	 * has not yet been resolved. Accepts file local bindings from the index for the files
-	 * int the given set, only.
+	 * in the given set, only.
 	 * 
 	 * @param name
-	 * @param resolve :
+	 * @param resolve
 	 *            whether or not to resolve the matching binding if it has not
 	 *            been so already.
 	 * @param acceptLocalBindings a set of files for which to accept local bindings.
-	 * @return : the binding in this scope that matches the name, or null
+	 * @return the binding in this scope that matches the name, or null
 	 */
 	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet acceptLocalBindings);
 
@@ -189,5 +188,4 @@ public interface IScope {
 	 * @since 5.5
 	 */
 	public IBinding[] getBindings(ScopeLookupData lookup);
-
 }

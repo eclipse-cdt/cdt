@@ -7,13 +7,13 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     Jason Litton (Sage Electronic Engineering, LLC) - Added dynamic debug tracing (bug 385076)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.concurrent;
 
 import java.util.concurrent.Executor;
 
-import org.eclipse.cdt.dsf.internal.DsfPlugin;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.cdt.dsf.internal.DsfDebugOptions;
 
 /**
  * Executor that executes a runnable immediately (synchronously) when it is
@@ -34,8 +34,7 @@ public class ImmediateExecutor implements Executor {
      */
     protected static boolean DEBUG_EXECUTOR = false;
     static {
-        DEBUG_EXECUTOR = DsfPlugin.DEBUG && "true".equals( //$NON-NLS-1$
-            Platform.getDebugOption("org.eclipse.cdt.dsf/debug/executor")); //$NON-NLS-1$
+        DEBUG_EXECUTOR = DsfDebugOptions.DEBUG && DsfDebugOptions.DEBUG_EXECUTOR;
     }  
 
     private static ImmediateExecutor fInstance = new ImmediateExecutor();
@@ -56,7 +55,7 @@ public class ImmediateExecutor implements Executor {
     @Override
     public void execute(Runnable command) {
         // Check if executable wasn't executed already.
-        if (DEBUG_EXECUTOR && command instanceof DsfExecutable) {
+        if (DsfDebugOptions.DEBUG && DsfDebugOptions.DEBUG_EXECUTOR && command instanceof DsfExecutable) {
             assert !((DsfExecutable)command).getSubmitted() : "Executable was previously executed."; //$NON-NLS-1$
             ((DsfExecutable)command).setSubmitted();
         }

@@ -7,10 +7,10 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     Jason Litton (Sage Electronic Engineering, LLC) - Added dynamic debug tracing (bug 385076)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.internal;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.osgi.framework.BundleContext;
 
@@ -31,6 +31,10 @@ public class DsfPlugin extends Plugin {
     private static BundleContext fgBundleContext; 
 
     // Debugging flag
+    /**
+     * @deprecated Please use the flags in DsfDebugOptions instead
+     * for dynamic tracing
+     */
     public static boolean DEBUG = false;
 
 	/**
@@ -48,7 +52,7 @@ public class DsfPlugin extends Plugin {
     public void start(BundleContext context) throws Exception {
         fgBundleContext = context;
 		super.start(context);
-        DEBUG = "true".equals(Platform.getDebugOption("org.eclipse.cdt.dsf/debug"));  //$NON-NLS-1$//$NON-NLS-2$
+		new DsfDebugOptions(context);
     }
 
 	/*
@@ -79,10 +83,13 @@ public class DsfPlugin extends Plugin {
 	 * option for this plugin has been turned on
 	 * 
 	 * @param message
+	 * @deprecated Please use DsfDebugOptions.trace instead
+	 * in order to use dynamic tracing
 	 */
+    @Deprecated
     public static void debug(String message) {
-        if (DEBUG) {
-            System.out.println(message);
+        if (DsfDebugOptions.DEBUG) {
+        	DsfDebugOptions.trace(message);
         }
     }
 

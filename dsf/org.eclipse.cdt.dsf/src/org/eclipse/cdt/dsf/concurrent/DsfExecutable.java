@@ -7,14 +7,14 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     Jason Litton (Sage Electronic Engineering, LLC) - Added dynamic debug tracing (bug 385076)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.concurrent;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.cdt.dsf.internal.DsfPlugin;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.cdt.dsf.internal.DsfDebugOptions;
 
 /**
  * Instrumented base class for
@@ -81,11 +81,9 @@ public class DsfExecutable {
 
     static {
         assert (ASSERTIONS_ENABLED = true) == true;
-        DEBUG_EXECUTOR = DsfPlugin.DEBUG && "true".equals( //$NON-NLS-1$
-                Platform.getDebugOption("org.eclipse.cdt.dsf/debug/executor")); //$NON-NLS-1$
+        DEBUG_EXECUTOR = DsfDebugOptions.DEBUG && DsfDebugOptions.DEBUG_EXECUTOR;
         
-        DEBUG_MONITORS = DsfPlugin.DEBUG && "true".equals( //$NON-NLS-1$
-                Platform.getDebugOption("org.eclipse.cdt.dsf/debug/monitors")); //$NON-NLS-1$          
+        DEBUG_MONITORS = DsfDebugOptions.DEBUG && DsfDebugOptions.DEBUG_MONITORS;       
     }
 
 	/**
@@ -112,7 +110,7 @@ public class DsfExecutable {
     @SuppressWarnings("unchecked")
     public DsfExecutable() {
         // Use assertion flag (-ea) to jre to avoid affecting performance when not debugging.
-        if (ASSERTIONS_ENABLED || DEBUG_EXECUTOR || DEBUG_MONITORS) {
+        if (ASSERTIONS_ENABLED || DsfDebugOptions.DEBUG_EXECUTOR || DsfDebugOptions.DEBUG_MONITORS) {
             // Find the runnable/callable that is currently running.
             DefaultDsfExecutor executor = DefaultDsfExecutor.fThreadToExecutorMap.get(Thread.currentThread()); 
             if (executor != null) {

@@ -9,7 +9,8 @@ Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.debug.core,
  org.eclipse.cdt.core,
- org.eclipse.cdt.debug.core
+ org.eclipse.cdt.debug.core,
+ org.eclipse.ui.trace
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.cdt.dsf.concurrent,
  org.eclipse.cdt.dsf.datamodel,

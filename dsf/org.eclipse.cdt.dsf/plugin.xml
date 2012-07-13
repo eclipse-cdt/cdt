@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.trace.traceComponents">
+      <component
+            id="org.eclipse.cdt.dsf.component"
+            label="%cdt.dsf.component.label">
+         <bundle
+               consumed="true"
+               name="org.eclipse.cdt.dsf">
+         </bundle>
+      </component>
+   </extension>
+
+</plugin>

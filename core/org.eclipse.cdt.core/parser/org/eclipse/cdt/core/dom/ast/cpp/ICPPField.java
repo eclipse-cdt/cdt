@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Doug Schaefer (IBM) - Initial API and implementation
+ *     Doug Schaefer (IBM) - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
@@ -17,6 +17,5 @@ import org.eclipse.cdt.core.dom.ast.IField;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPField extends IField, ICPPMember, ICPPVariable {
-    public static final ICPPField [] EMPTY_CPPFIELD_ARRAY = new ICPPField[0];
-
+    public static final ICPPField[] EMPTY_CPPFIELD_ARRAY = {};
 }

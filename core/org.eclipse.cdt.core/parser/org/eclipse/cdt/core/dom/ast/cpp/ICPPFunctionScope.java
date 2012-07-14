@@ -18,7 +18,6 @@ import org.eclipse.cdt.core.dom.ast.IScope;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPFunctionScope extends ICPPScope {
-
 	/**
 	 * Get the scope representing the function body. returns null if there is no
 	 * function definition

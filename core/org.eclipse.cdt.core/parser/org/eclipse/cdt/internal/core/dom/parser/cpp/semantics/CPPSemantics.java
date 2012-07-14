@@ -16,7 +16,17 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.*;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.ALLCVQ;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.ARRAY;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.CVTYPE;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.MPTR;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.PTR;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.REF;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.calculateInheritanceDepth;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getNestedType;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getUltimateTypeUptoPointers;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.isConversionOperator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -3261,7 +3271,7 @@ public class CPPSemantics {
 				if (tu != null && funcData.foundItems instanceof Object[]) {
 					final IIndexFileSet fileSet = tu.getIndexFileSet();
 					if (fileSet != null) {
-						int j=0;
+						int j= 0;
 						final Object[] items= (Object[]) funcData.foundItems;
 						for (int i = 0; i < items.length; i++) {
 							Object item = items[i];
@@ -3292,7 +3302,7 @@ public class CPPSemantics {
 							items[j++]= func;
 					}
 				}
-				if (j>0) {
+				if (j > 0) {
 					while (j < items.length)
 						items[j++]= null;
 				}

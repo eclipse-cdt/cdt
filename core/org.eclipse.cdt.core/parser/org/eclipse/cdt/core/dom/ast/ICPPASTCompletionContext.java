@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Tomasz Wesolowski - initial API and implementation
+ *     Tomasz Wesolowski - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
@@ -19,7 +19,6 @@ package org.eclipse.cdt.core.dom.ast;
  * @since 5.3
  */
 public interface ICPPASTCompletionContext extends IASTCompletionContext {
-
 	/**
 	 * Returns bindings that start with the given name or prefix, only considering those that are valid for
 	 * this context, including those in the requested set of namespaces.

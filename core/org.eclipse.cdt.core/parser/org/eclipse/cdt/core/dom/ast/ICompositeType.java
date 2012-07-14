@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM - Initial API and implementation
+ *     IBM - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
@@ -21,15 +21,16 @@ public interface ICompositeType extends IBinding, IType {
 	public static final int k_union = IASTCompositeTypeSpecifier.k_union;
 
 	/**
-	 *  Returns the type of the composite, {@link #k_struct}, {@link #k_union}, or
-	 *  {@link org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#k_class}.
+	 * Returns the type of the composite, {@link #k_struct}, {@link #k_union},
+	 * or {@link org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#k_class}.
 	 */
 	public int getKey();
 	
 	/**
 	 * Returns whether the type is anonymous or not. A type for which objects or 
 	 * pointers are declared is not considered an anonymous type.
-	 * <pre> struct Outer {
+	 * <pre>
+	 * struct Outer {
 	 *    struct {int a;}; // anonymous
 	 *    struct {int b;} c; // not anonymous
 	 * }

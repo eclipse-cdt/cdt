@@ -32,8 +32,9 @@ public class CPPASTAmbiguousStatement extends ASTAmbiguousNode implements IASTAm
 	private IASTDeclaration fDeclaration;
     
     public CPPASTAmbiguousStatement(IASTStatement... statements) {
-		for (IASTStatement s : statements)
+		for (IASTStatement s : statements) {
 			addStatement(s);
+		}
 	}
 
 	@Override

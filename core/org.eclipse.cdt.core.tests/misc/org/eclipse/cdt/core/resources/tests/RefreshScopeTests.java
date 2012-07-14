@@ -22,6 +22,7 @@ import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.resources.ExclusionInstance;
 import org.eclipse.cdt.core.resources.ExclusionType;
@@ -29,6 +30,7 @@ import org.eclipse.cdt.core.resources.RefreshExclusion;
 import org.eclipse.cdt.core.resources.RefreshScopeManager;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.core.settings.model.WriteAccessException;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.internal.core.resources.ResourceExclusion;
@@ -408,10 +410,8 @@ public class RefreshScopeTests extends TestCase {
 		
 		IResource config1_resource = fProject;
 		
-		CProjectDescriptionManager descriptionManager = CProjectDescriptionManager.getInstance();
-		ICProjectDescription projectDescription = descriptionManager.getProjectDescription(fProject, false);
-		ICConfigurationDescription conf = projectDescription.getActiveConfiguration();
-		String conf_name = conf.getName();
+		
+		String conf_name = getCurrentConfigName();
 		
 		manager.addResourceToRefresh(fProject, conf_name, config1_resource);
 				
@@ -567,6 +567,101 @@ public class RefreshScopeTests extends TestCase {
 		
 	}
 
+	public void closeProject(ICProjectDescription projDesc) {
+		
+		try {
+			// save the project description
+			CCorePlugin.getDefault().setProjectDescription(fProject, projDesc);
+			fProject.close(null);
+		} catch (CoreException e1) {
+			fail();
+		}
+	}
+	
+	public void openProject() {
+		try {			
+			fProject.open(null);			
+		} catch (CoreException e) {
+			fail();
+		}
+	}
+	
+	public String getCurrentConfigName() {
+		CProjectDescriptionManager descriptionManager = CProjectDescriptionManager.getInstance();
+		ICProjectDescription projectDescription = descriptionManager.getProjectDescription(fProject, false);
+		ICConfigurationDescription conf = projectDescription.getActiveConfiguration();
+		return conf.getName();
+	}
+	
+	public void testEmptyRefreshScopeCloseAndReopen() {
+	
+		RefreshScopeManager manager = RefreshScopeManager.getInstance();
+		manager.clearAllData();
+		
+		String config_name = getCurrentConfigName();
+		
+		// get the resources.  since we are not loading ... the project should auto-magically be added by default.
+		List<IResource> config_resources = manager.getResourcesToRefresh(fProject, config_name);
+		assertEquals(1,config_resources.size());
+		assertEquals(true, config_resources.contains(fProject));
+	
+		// now delete it.
+		manager.deleteResourceToRefresh(fProject, config_name, fProject);
+		
+		// and make sure it is empty.
+		config_resources = manager.getResourcesToRefresh(fProject, config_name);
+		assertEquals(0,config_resources.size());
+		
+		// write the persistent data.
+		ICProjectDescription projectDescription = CCorePlugin.getDefault().getProjectDescription(fProject);
+		try {
+			manager.persistSettings(projectDescription);
+		} catch (CoreException e) {
+			fail();
+		}
+		
+		// close and reopen
+		closeProject(projectDescription);	
+		openProject();
+		
+		// now verify that there are no resources.
+		HashMap<String, HashMap<IResource, List<RefreshExclusion>>> config_map = manager.getConfigurationToResourcesMap(fProject);
+		assertEquals(1,config_map.size());
+		config_resources = manager.getResourcesToRefresh(fProject, config_name);
+		assertEquals(0,config_resources.size());
+	}
+	
+	public void testAddEmptyConfiguration() {
+		final String CFG_NAME="empty_config";
+		
+		CoreModel model = CoreModel.getDefault();
+		RefreshScopeManager manager = RefreshScopeManager.getInstance();
+		manager.clearAllData();
+		
+		CProjectDescriptionManager descriptionManager = CProjectDescriptionManager.getInstance();
+		ICProjectDescription projectDescription = descriptionManager.getProjectDescription(fProject, false);
+		ICConfigurationDescription base = projectDescription.getActiveConfiguration();
+		
+		ICProjectDescription propertyProjectDescription = CoreModel.getDefault().getProjectDescription(fProject);
+		ICConfigurationDescription propertyDefaultConfigurationDescription = propertyProjectDescription.getConfigurations()[0];
+		try {
+			projectDescription.setReadOnly(false, true);
+			ICConfigurationDescription newCfg = projectDescription.createConfiguration(CFG_NAME + ".id", CFG_NAME, propertyDefaultConfigurationDescription);
+		} catch (WriteAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+
+		List<IResource> empty_config_resources = manager.getResourcesToRefresh(fProject, CFG_NAME);
+		assertEquals(1,empty_config_resources.size());
+		assertEquals(true,empty_config_resources.contains(fProject));
+		
+	}
+	
 	public static Test suite() {
 		return new TestSuite(RefreshScopeTests.class);
 	}

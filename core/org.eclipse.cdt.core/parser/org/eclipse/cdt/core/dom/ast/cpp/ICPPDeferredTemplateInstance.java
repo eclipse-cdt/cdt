@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Bryan Wilkinson (QNX) - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     Bryan Wilkinson (QNX) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 

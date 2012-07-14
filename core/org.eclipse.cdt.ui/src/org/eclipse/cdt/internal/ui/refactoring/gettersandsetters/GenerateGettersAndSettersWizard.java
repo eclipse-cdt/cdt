@@ -17,7 +17,7 @@ import org.eclipse.ltk.ui.refactoring.UserInputWizardPage;
 /**
  * @author Thomas Corbat
  */
-public class GenerateGettersAndSettersWizard extends	RefactoringWizard {
+public class GenerateGettersAndSettersWizard extends RefactoringWizard {
 	public GenerateGettersAndSettersWizard(
 			GenerateGettersAndSettersRefactoring refactoring) {
 		super(refactoring, DIALOG_BASED_USER_INTERFACE | PREVIEW_EXPAND_FIRST_NODE);

@@ -25,8 +25,6 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 
 import java.util.Collection;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -316,24 +314,14 @@ public class EvalMemberAccess extends CPPEvaluation {
 	@Override
 	public ICPPEvaluation instantiate(ICPPTemplateParameterMap tpMap, int packOffset,
 			ICPPClassSpecialization within, int maxdepth, IASTNode point) {
-		IType type = CPPTemplates.instantiateType(fOwnerType, tpMap, packOffset, within, point);
-		IBinding member = fMember;
-		if (fMember instanceof ICPPUnknownBinding) {
-			try {
-				member = CPPTemplates.resolveUnknown((ICPPUnknownBinding) fMember, tpMap,
-						packOffset, within, point);
-			} catch (DOMException e) {
-				CCorePlugin.log(e); // TODO(sprigogin): Is this exception safe to ignore?
-			}
-		} else if (fMember instanceof IEnumerator) {
-			// TODO(sprigogin): Not sure what to do in this case.
-		} else if (fMember instanceof IVariable) {
-			// TODO(sprigogin): Not sure what to do in this case.
-		} else if (fMember instanceof IFunction) {
-			// TODO(sprigogin): Not sure what to do in this case.
-		}
-		if (type == fOwnerType && member == fMember)
+		IType ownerType = CPPTemplates.instantiateType(fOwnerType, tpMap, packOffset, within, point);
+		if (ownerType == fOwnerType)
 			return this;
-		return new EvalMemberAccess(type, fOwnerValueCategory, member, fIsPointerDeref);
+
+		IBinding member = fMember;
+		if (ownerType instanceof ICPPClassSpecialization) {
+			member = CPPTemplates.createSpecialization((ICPPClassSpecialization) ownerType, fMember, point);
+		}
+		return new EvalMemberAccess(ownerType, fOwnerValueCategory, member, fIsPointerDeref);
 	}
 }

@@ -7,11 +7,14 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
+
+import java.util.Arrays;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -22,6 +25,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
@@ -252,6 +256,13 @@ public class EvalID extends CPPEvaluation {
 	@Override
 	public ICPPEvaluation instantiate(ICPPTemplateParameterMap tpMap, int packOffset,
 			ICPPClassSpecialization within, int maxdepth, IASTNode point) {
+		ICPPTemplateArgument[] arguments = fTemplateArgs;
+		try {
+			arguments = CPPTemplates.instantiateArguments(fTemplateArgs, tpMap, packOffset, within, point);
+		} catch (DOMException e) {
+			CCorePlugin.log(e);
+		}
+
 		ICPPEvaluation fieldOwner = fFieldOwner.instantiate(tpMap, packOffset, within, maxdepth, point);
 		IBinding nameOwner = fNameOwner;
 		if (fNameOwner instanceof ICPPTemplateParameter) {
@@ -266,12 +277,34 @@ public class EvalID extends CPPEvaluation {
 				nameOwner = CPPTemplates.resolveUnknown((ICPPUnknownBinding) fNameOwner, tpMap,
 						packOffset, within, point);
 			} catch (DOMException e) {
-				CCorePlugin.log(e); // TODO(sprigogin): Is this exception safe to ignore?
+				CCorePlugin.log(e);
 			}
 		}
-		if (fieldOwner == fFieldOwner && nameOwner == fNameOwner)
+		if (Arrays.equals(arguments, fTemplateArgs) && fieldOwner == fFieldOwner && nameOwner == fNameOwner)
 			return this;
-		// TODO(sprigogin): Not sure how to construct the new evaluation.
-		return this;
+
+		if (nameOwner == null)
+			nameOwner = (IBinding) fFieldOwner.getTypeOrFunctionSet(point);
+
+		if (nameOwner instanceof ICompositeType) {
+			ICompositeType ownerType = (ICompositeType) nameOwner;
+			// TODO(sprigogin): Is this the right way to do lookup, or should findBindings be used instead?
+			LookupData data = new LookupData(fName, fTemplateArgs, point);
+			try {
+				CPPSemantics.lookup(data, ownerType.getScope());
+			} catch (DOMException e) {
+			}
+			IBinding[] bindings = data.getFoundBindings();
+			IBinding binding = bindings.length == 1 ? bindings[0] : null;
+			if (binding instanceof IEnumerator) {
+				return new EvalBinding(binding, null);
+			} else if (binding instanceof ICPPMember) {
+				return new EvalMemberAccess(ownerType, ValueCategory.PRVALUE, binding, false);
+			} else if (binding instanceof CPPFunctionSet) {
+				return new EvalFunctionSet((CPPFunctionSet) binding, fAddressOf);
+			}
+		}
+
+		return new EvalID(fieldOwner, nameOwner, fName, fAddressOf, fQualified, arguments);
 	}
 }

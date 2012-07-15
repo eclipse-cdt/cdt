@@ -201,7 +201,7 @@ public class EvalBinding extends CPPEvaluation {
 			IType type = CPPTemplates.instantiateType(originalType, tpMap, packOffset, within, point);
 			IValue originalValue = enumerator.getValue();
 			IValue value = CPPTemplates.instantiateValue(originalValue, tpMap, packOffset, within, maxdepth, point);
-			// TODO(sprigogin): Not sure is the following condition is correct.
+			// TODO(sprigogin): Not sure if following condition is correct.
 			if (type != originalType || value != originalValue)
 				return new EvalFixed(type, ValueCategory.PRVALUE, value);
 		} else if (fBinding instanceof ICPPTemplateNonTypeParameter) {
@@ -211,16 +211,12 @@ public class EvalBinding extends CPPEvaluation {
 				return new EvalFixed(null, ValueCategory.PRVALUE, value);
 			}
 			// TODO(sprigogin): Do we need something similar for pack expansion?
-		} else if (fBinding instanceof IVariable) {
-			// TODO(sprigogin): Not sure what to do in this case.
-		} else if (fBinding instanceof IFunction) {
-			// TODO(sprigogin): Not sure what to do in this case.
 		} else if (fBinding instanceof ICPPUnknownBinding) {
 			try {
 				binding = CPPTemplates.resolveUnknown((ICPPUnknownBinding) fBinding, tpMap,
 						packOffset, within, point);
 			} catch (DOMException e) {
-				CCorePlugin.log(e); // TODO(sprigogin): Is this exception safe to ignore?
+				CCorePlugin.log(e);
 			}
 		}
 		if (binding == fBinding)

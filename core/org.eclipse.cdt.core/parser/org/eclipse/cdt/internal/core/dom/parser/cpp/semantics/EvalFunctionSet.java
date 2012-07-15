@@ -7,13 +7,19 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
 
+import java.util.Arrays;
+
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
@@ -130,7 +136,39 @@ public class EvalFunctionSet extends CPPEvaluation {
 	@Override
 	public ICPPEvaluation instantiate(ICPPTemplateParameterMap tpMap, int packOffset,
 			ICPPClassSpecialization within, int maxdepth, IASTNode point) {
-		// TODO(sprigogin): Not sure how to instantiate what to instantiate a CPPFunctionSet.
-		return this;
+		ICPPTemplateArgument[] originalArguments = fFunctionSet.getTemplateArguments();
+		ICPPTemplateArgument[] arguments = originalArguments;
+		try {
+			arguments = CPPTemplates.instantiateArguments(originalArguments, tpMap, packOffset, within, point);
+		} catch (DOMException e) {
+			CCorePlugin.log(e);
+		}
+
+		IBinding originalOwner = fFunctionSet.getOwner();
+		IBinding owner = originalOwner;
+		if (originalOwner instanceof ICPPUnknownBinding) {
+			try {
+				owner = CPPTemplates.resolveUnknown((ICPPUnknownBinding) owner, tpMap,
+						packOffset, within, point);
+			} catch (DOMException e) {
+				CCorePlugin.log(e); // TODO(sprigogin): Is this exception safe to ignore?
+			}
+		} else if (owner instanceof IType) {
+			IType type = CPPTemplates.instantiateType((IType) owner, tpMap, packOffset, within, point);
+			if (type instanceof IBinding)
+				owner = (IBinding) type;
+		}
+		ICPPFunction[] originalFunctions = fFunctionSet.getBindings();
+		ICPPFunction[] functions = originalFunctions;
+		if (owner instanceof ICPPClassSpecialization && owner != originalOwner) {
+			functions = new ICPPFunction[originalFunctions.length];
+			for (int i = 0; i < originalFunctions.length; i++) {
+				functions[i] = (ICPPFunction) CPPTemplates.createSpecialization((ICPPClassSpecialization) owner,
+						originalFunctions[i], point);
+			}
+		}
+		if (Arrays.equals(arguments, originalArguments) && functions == originalFunctions)
+			return this;
+		return new EvalFunctionSet(new CPPFunctionSet(functions, arguments, null), fAddressOf);
 	}
 }

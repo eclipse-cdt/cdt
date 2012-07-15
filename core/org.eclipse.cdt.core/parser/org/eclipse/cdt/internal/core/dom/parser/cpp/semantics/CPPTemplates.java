@@ -224,7 +224,7 @@ public class CPPTemplates {
 			}
 
 			if (isPack) {
-				int packOffset= numParams-1;
+				int packOffset= numParams - 1;
 				int packSize= numArgs - packOffset;
 				ICPPTemplateArgument[] pack= new ICPPTemplateArgument[packSize];
 				System.arraycopy(arguments, packOffset, pack, 0, packSize);
@@ -401,7 +401,7 @@ public class CPPTemplates {
 		for (int i = 0; i < arguments.length; i++) {
 			ICPPTemplateArgument arg = arguments[i];
 			if (arg.isPackExpansion()) {
-				if (i != arguments.length-1) {
+				if (i != arguments.length - 1) {
 					return arguments;
 				}
 				havePackExpansion= true;
@@ -420,10 +420,10 @@ public class CPPTemplates {
 
 		// More arguments allowed if we have a parameter pack.
 		if (tparCount < argCount) {
-			if (tpars[tparCount-1].isParameterPack())
+			if (tpars[tparCount - 1].isParameterPack())
 				return arguments;
 
-			if (havePackExpansion && tparCount+1 == argCount)
+			if (havePackExpansion && tparCount + 1 == argCount)
 				return arguments;
 			return null;
 		}
@@ -433,7 +433,7 @@ public class CPPTemplates {
 			return arguments;
 
 		// Fewer arguments are allowed with	default arguments
-		if (tpars[tparCount-1].isParameterPack())
+		if (tpars[tparCount - 1].isParameterPack())
 			tparCount--;
 
 		if (tparCount == argCount)
@@ -1024,7 +1024,7 @@ public class CPPTemplates {
 				} else if (packSize == PACK_SIZE_DEFER) {
 					newType= origType;
 				} else {
-					IType[] newResult= new IType[result.length+packSize-1];
+					IType[] newResult= new IType[result.length + packSize - 1];
 					System.arraycopy(result, 0, newResult, 0, j);
 					result= newResult;
 					for (int k= 0; k < packSize; k++) {
@@ -1167,7 +1167,7 @@ public class CPPTemplates {
 					return type;
 				}
 				// The parameter types need to be adjusted.
-				for (int i=0; i<params.length; i++) {
+				for (int i= 0; i < params.length; i++) {
 					IType p= params[i];
 					if (!isDependentType(p)) {
 						params[i]= CPPVisitor.adjustParameterType(p, true);
@@ -1395,7 +1395,7 @@ public class CPPTemplates {
 			int depIDCount= 0;
 			IASTName owner= null;
 			final IASTName[] ns= qname.getNames();
-			for (int i = 0; i < ns.length-1; i++) {
+			for (int i = 0; i < ns.length - 1; i++) {
 				IASTName n= ns[i];
 				if (n instanceof ICPPASTTemplateId) {
 					if (depIDCount > 0 || usesTemplateParameter((ICPPASTTemplateId) n, tparnames)) {
@@ -1438,17 +1438,17 @@ public class CPPTemplates {
 					b= b.getOwner();
 				}
 				if (depIDCount > 0) {
-					nestingLevel+= depIDCount;
+					nestingLevel += depIDCount;
 				} else if (consumesTDecl < tdeclCount && !lastIsTemplate) {
 					nestingLevel++;
 					lastIsTemplate= true;
 				}
 			} else {
-				nestingLevel+= depIDCount;
+				nestingLevel += depIDCount;
 				node= outerMostTDecl.getParent();
 				while (node != null) {
 					if (node instanceof ICPPASTInternalTemplateDeclaration) {
-						nestingLevel+= ((ICPPASTInternalTemplateDeclaration) node).getNestingLevel() + 1;
+						nestingLevel += ((ICPPASTInternalTemplateDeclaration) node).getNestingLevel() + 1;
 						break;
 					}
 					node= node.getParent();
@@ -1461,7 +1461,7 @@ public class CPPTemplates {
 				node= outerMostTDecl.getParent();
 				while (node != null) {
 					if (node instanceof ICPPASTInternalTemplateDeclaration) {
-						nestingLevel+= ((ICPPASTInternalTemplateDeclaration) node).getNestingLevel() + 1;
+						nestingLevel += ((ICPPASTInternalTemplateDeclaration) node).getNestingLevel() + 1;
 						break;
 					}
 					node= node.getParent();
@@ -1470,7 +1470,7 @@ public class CPPTemplates {
 		}
 
 		node= innerMostTDecl;
-		while(node instanceof ICPPASTInternalTemplateDeclaration) {
+		while (node instanceof ICPPASTInternalTemplateDeclaration) {
 			if (--nestingLevel < 0)
 				nestingLevel= 0;
 			tdecl= (ICPPASTInternalTemplateDeclaration) node;
@@ -1500,7 +1500,7 @@ public class CPPTemplates {
 
 	private static CharArraySet collectTemplateParameterNames(ICPPASTTemplateDeclaration tdecl) {
 		CharArraySet set= new CharArraySet(4);
-		while(true) {
+		while (true) {
 			ICPPASTTemplateParameter[] pars = tdecl.getTemplateParameters();
 			for (ICPPASTTemplateParameter par : pars) {
 				IASTName name= CPPTemplates.getTemplateParameterName(par);
@@ -1520,7 +1520,7 @@ public class CPPTemplates {
 	private static boolean usesTemplateParameter(final ICPPASTTemplateId id, final CharArraySet names) {
 		final boolean[] result= {false};
 		ASTVisitor v= new ASTVisitor(false) {
-			{ shouldVisitNames= true; shouldVisitAmbiguousNodes=true;}
+			{ shouldVisitNames= true; shouldVisitAmbiguousNodes= true; }
 			@Override
 			public int visit(IASTName name) {
 				if (name instanceof ICPPASTTemplateId)
@@ -1612,7 +1612,7 @@ public class CPPTemplates {
 	}
 
 	private static ICPPASTInternalTemplateDeclaration getDirectlyEnclosingTemplateDeclaration(
-			ICPPASTInternalTemplateDeclaration tdecl ) {
+			ICPPASTInternalTemplateDeclaration tdecl) {
 		final IASTNode parent= tdecl.getParent();
 		if (parent instanceof ICPPASTInternalTemplateDeclaration)
 			return (ICPPASTInternalTemplateDeclaration) parent;
@@ -1680,7 +1680,7 @@ public class CPPTemplates {
 		if (args.length != specArgs.length) {
 			return false;
 		}
-		for (int i=0; i < args.length; i++) {
+		for (int i= 0; i < args.length; i++) {
 			if (!specArgs[i].isSameValue(args[i]))
 				return false;
 		}
@@ -1792,7 +1792,7 @@ public class CPPTemplates {
 	static ICPPFunction[] instantiateConversionTemplates(ICPPFunction[] functions, IType conversionType, IASTNode point) {
 		boolean checkedForDependentType= false;
 		ICPPFunction[] result= functions;
-		int i=0;
+		int i= 0;
 		boolean done= false;
 		for (ICPPFunction f : functions) {
 			ICPPFunction inst = f;
@@ -1993,7 +1993,7 @@ public class CPPTemplates {
 	}
 
 	private static IType[] concat(final IType t, IType[] types) {
-		IType[] result= new IType[types.length+1];
+		IType[] result= new IType[types.length + 1];
 		result[0]= t;
 		System.arraycopy(types, 0, result, 1, types.length);
 		return result;
@@ -2216,8 +2216,8 @@ public class CPPTemplates {
 
 	private static boolean matchTemplateTemplateParameters(ICPPTemplateParameter[] pParams,
 			ICPPTemplateParameter[] aParams) throws DOMException {
-		int pi=0;
-		int ai=0;
+		int pi= 0;
+		int ai= 0;
 		while (pi < pParams.length && ai < aParams.length) {
 			final ICPPTemplateParameter pp = pParams[pi];
 			final ICPPTemplateParameter ap = aParams[ai];
@@ -2250,8 +2250,9 @@ public class CPPTemplates {
 					}
 
 					if (!matchTemplateTemplateParameters(((ICPPTemplateTemplateParameter) pp).getTemplateParameters(),
-					((ICPPTemplateTemplateParameter) ap).getTemplateParameters()) )
+							((ICPPTemplateTemplateParameter) ap).getTemplateParameters())) {
 						return false;
+					}
 				}
 			}
 			if (!pp.isParameterPack())

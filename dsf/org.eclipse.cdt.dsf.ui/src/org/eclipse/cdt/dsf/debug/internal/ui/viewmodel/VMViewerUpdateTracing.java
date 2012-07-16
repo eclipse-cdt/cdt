@@ -7,6 +7,7 @@
  * 
  *  Contributors:
  *     Freescale Semiconductor. - initial API and implementation
+ *     Jason Litton (Sage Electronic Engineering, LLC) - Added Dynamic Debug Tracing (Bug 385076)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.internal.ui.viewmodel;
 
@@ -14,27 +15,36 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.cdt.dsf.internal.ui.DsfUiDebugOptions;
 
 /**
  * Constants and utility functions used to trace VMViewerUpdate results. As
  * VMViewerUpdate is an external class, we avoid polluting that API by housing
  * these trace facilities in an internal package.
+ * 
+ * @deprecated use org.eclipse.cdt.dsf.internal.ui.DsfUiDebugOptions instead
+ * to take advantage of dynamic tracing
  */
+@Deprecated
 public final class VMViewerUpdateTracing {
 
 	/**
 	 * The value of the trace option "debug/vmUpdates/regex", which is a regular
 	 * expression used to filter VMViewerUpdate traces.
+	 * 
+	 * @deprecated
 	 */
-    public final static String DEBUG_VMUPDATE_REGEX = Platform.getDebugOption("org.eclipse.cdt.dsf.ui/debug/vm/updates/regex"); //$NON-NLS-1$
+    @Deprecated
+	public final static String DEBUG_VMUPDATE_REGEX = DsfUiDebugOptions.DEBUG_VM_UPDATES_REGEX;
 
 	/**
 	 * Has the "debug/vmUpdates/properties" tracing option been turned on? Requires
 	 * "debug/vmUpdates" to also be turned on.
+	 * 
+	 * @deprecated
 	 */
-    public static final boolean DEBUG_VMUPDATES = DsfUIPlugin.DEBUG  && "true".equals(Platform.getDebugOption("org.eclipse.cdt.dsf.ui/debug/vm/updates"));  //$NON-NLS-1$//$NON-NLS-2$
+    @Deprecated
+	public static final boolean DEBUG_VMUPDATES = DsfUiDebugOptions.DEBUG  && DsfUiDebugOptions.DEBUG_VM_UPDATES;
 
 	/**
 	 * Looks at the optional filter (regular expression) set in the tracing
@@ -45,14 +55,17 @@ public final class VMViewerUpdateTracing {
 	 * check it here (other than to assert it).
 	 * 
 	 * @return true if this class's activity should be traced
+	 * 
+	 * @deprecated
 	 */
+    @Deprecated
     public static boolean matchesFilterRegex(Class<?> clazz) {
-    	assert DEBUG_VMUPDATES;
-    	if (DEBUG_VMUPDATE_REGEX == null || DEBUG_VMUPDATE_REGEX.length() == 0) {
+    	assert DsfUiDebugOptions.DEBUG && DsfUiDebugOptions.DEBUG_VM_UPDATES;
+    	if (DsfUiDebugOptions.DEBUG_VM_UPDATES_REGEX == null || DsfUiDebugOptions.DEBUG_VM_UPDATES_REGEX.length() == 0) {
     		return true;
     	}
     	try {
-	    	Pattern regex = Pattern.compile(DEBUG_VMUPDATE_REGEX);
+	    	Pattern regex = Pattern.compile(DsfUiDebugOptions.DEBUG_VM_UPDATES_REGEX);
 	    	Matcher matcher = regex.matcher(clazz.toString());
 	    	return matcher.find();
     	}

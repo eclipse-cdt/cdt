@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     Jason Litton (Sage Electronic Engineering, LLC) - Added Dynamic Debug Tracing (Bug 385076)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.internal.ui;
 
@@ -40,8 +41,11 @@ public class DsfUIPlugin extends AbstractUIPlugin {
 
     // The document provider for source documents in the disassembly.
     private SourceDocumentProvider fSourceDocumentProvider;
-
-    public static boolean DEBUG = false;
+    
+    /**
+     * @deprecated Use DsfUiDebugOptions.DEBUG instead
+     */
+    public static boolean DEBUG = DsfUiDebugOptions.DEBUG;
 
 	/**
 	 * The constructor
@@ -58,7 +62,7 @@ public class DsfUIPlugin extends AbstractUIPlugin {
     public void start(BundleContext context) throws Exception {
         fgBundleContext = context;
 		super.start(context);
-	    DEBUG = "true".equals(Platform.getDebugOption("org.eclipse.cdt.dsf.ui/debug"));  //$NON-NLS-1$//$NON-NLS-2$
+	    new DsfUiDebugOptions(context);
 
         fSourceDocumentProvider = new SourceDocumentProvider();
         
@@ -119,10 +123,11 @@ public class DsfUIPlugin extends AbstractUIPlugin {
     /**
      * If the debug flag is set the specified message is printed to the console
      * @param message
+     * @deprecated Use DsfUiDebugOptions.trace instead
      */
     public static void debug(String message) {
-        if (DEBUG) {
-            System.out.println(message);
+        if (DsfUiDebugOptions.DEBUG) {
+        	DsfUiDebugOptions.trace(message);
         }
     }
 

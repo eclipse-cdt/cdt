@@ -7,12 +7,15 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     Jason Litton (Sage Electronic Engineering, LLC) - Added Dynamic Debug Tracing (Bug 385076)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.internal.ui.disassembly.text;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+
+import org.eclipse.cdt.dsf.internal.ui.DsfUiDebugOptions;
 
 /**
  * File with buffered character access.
@@ -53,7 +56,6 @@ public final class REDFile {
 		}
 	}
 
-	final static private boolean DEBUG = false;
 
 	/** The maximum number of buffers for this file. */
 	final static public int fcNrBufs = 4;
@@ -252,8 +254,8 @@ public final class REDFile {
 	 * @throws IOException
 	 */
 	private void write(int position, char[] data, int offset, int length) throws IOException {
-		if (DEBUG)
-			System.out.println("REDFile.write " + length + " at " + position); //$NON-NLS-1$ //$NON-NLS-2$
+		if (DsfUiDebugOptions.DEBUG_DISASSEMBLY)
+			DsfUiDebugOptions.trace("REDFile.write " + length + " at " + position); //$NON-NLS-1$ //$NON-NLS-2$
 		if (fFile == null) {
 			setFile(createTmpFile());
 		}
@@ -375,8 +377,8 @@ public final class REDFile {
 			}
 			blen += count;
 		}
-		if (DEBUG)
-			System.out.println("REDFile.read " + length + " at " + position + " = " + blen / 2); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		if (DsfUiDebugOptions.DEBUG_DISASSEMBLY)
+			DsfUiDebugOptions.trace("REDFile.read " + length + " at " + position + " = " + blen / 2); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		// convert to character length
 		return blen / 2;
 	}

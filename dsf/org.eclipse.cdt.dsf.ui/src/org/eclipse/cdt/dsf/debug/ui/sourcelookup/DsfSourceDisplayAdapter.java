@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Wind River Systems - initial API and implementation
+ *     Jason Litton (Sage Electronic Engineering, LLC) - Added Dynamic Debug Tracing (Bug 385076)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.ui.sourcelookup;
 
@@ -42,6 +43,7 @@ import org.eclipse.cdt.dsf.debug.ui.viewmodel.SteppingController;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.SteppingController.ISteppingControlParticipant;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.SteppingController.SteppingTimedOutEvent;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
+import org.eclipse.cdt.dsf.internal.ui.DsfUiDebugOptions;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
@@ -571,8 +573,6 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
         }
     }
 
-	private static final boolean DEBUG = false;
-
     private DsfSession fSession;
     private DsfExecutor fExecutor;
     private DsfServicesTracker fServicesTracker;
@@ -694,7 +694,7 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
 	}
 
 	private void doDisplaySource(final IFrameDMContext context, final IWorkbenchPage page, final boolean force, final boolean eventTriggered) {
-	    if (DEBUG) System.out.println("[DsfSourceDisplayAdapter] doDisplaySource ctx="+context+" eventTriggered="+eventTriggered); //$NON-NLS-1$ //$NON-NLS-2$
+	    if (DsfUiDebugOptions.DEBUG_SOURCE_DISPLAY_ADAPTER) DsfUiDebugOptions.trace("[DsfSourceDisplayAdapter] doDisplaySource ctx="+context+" eventTriggered="+eventTriggered); //$NON-NLS-1$ //$NON-NLS-2$
     	if (context.getLevel() < 0) {
     		return;
     	}
@@ -886,7 +886,7 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
     public void eventDispatched(final IRunControl.ISuspendedDMEvent e) {
 		updateStepTiming();
     	if (e.getReason() == StateChangeReason.STEP || e.getReason() == StateChangeReason.BREAKPOINT) {
-    	    if (DEBUG) System.out.println("[DsfSourceDisplayAdapter] eventDispatched e="+e); //$NON-NLS-1$
+    	    if (DsfUiDebugOptions.DEBUG_SOURCE_DISPLAY_ADAPTER) DsfUiDebugOptions.trace("[DsfSourceDisplayAdapter] eventDispatched e="+e); //$NON-NLS-1$
 	        // trigger source display immediately (should be optional?)
 	        Display.getDefault().asyncExec(new Runnable() {
 				@Override
@@ -916,10 +916,10 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
 		}
 		fLastStepTime = now;
 		++fStepCount;
-		if (DEBUG) {
+		if (DsfUiDebugOptions.DEBUG_SOURCE_DISPLAY_ADAPTER) {
 			long delta = now - fStepStartTime;
 			float meanTime = delta/(float)fStepCount/1000;
-			System.out.println("[DsfSourceDisplayAdapter] step speed = " + 1/meanTime); //$NON-NLS-1$
+			DsfUiDebugOptions.trace("[DsfSourceDisplayAdapter] step speed = " + 1/meanTime); //$NON-NLS-1$
 		}
 	}
 

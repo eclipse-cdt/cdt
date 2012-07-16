@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOIn//++M\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/service/DsfSession.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-07-16T18:54:41Z",
+      "side": 0,
+      "message": "Can you move this javadoc to DsfDebugOptions",
+      "revId": "e477f03d08dce38b39b14c26403c4e220fb6d536",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//++I\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/service/DsfSession.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-07-16T18:54:41Z",
+      "side": 0,
+      "message": "Can you move this javadoc to DsfDebugOptions",
+      "revId": "e477f03d08dce38b39b14c26403c4e220fb6d536",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//++E\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/service/DsfSession.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-07-16T18:54:41Z",
+      "side": 0,
+      "message": "Can you move this javadoc to DsfDebugOptions",
+      "revId": "e477f03d08dce38b39b14c26403c4e220fb6d536",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//++A\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/service/DsfSession.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-07-16T18:54:41Z",
+      "side": 0,
+      "message": "Can you move this javadoc to DsfDebugOptions",
+      "revId": "e477f03d08dce38b39b14c26403c4e220fb6d536",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

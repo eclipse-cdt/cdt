@@ -1,0 +1,548 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOIn//+/M\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf/META-INF/MANIFEST.MF",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-07-16T18:54:41Z",
+      "side": 1,
+      "message": "I don\u0027t think we need this, do we?",
+      "revId": "c50e43f06a8a0b95d116f23b56b5f25a6e7ef3bd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//+/U\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf/build.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-07-16T18:54:41Z",
+      "side": 1,
+      "message": "Add your copyright",
+      "revId": "c50e43f06a8a0b95d116f23b56b5f25a6e7ef3bd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//+/Q\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf/plugin.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-07-16T18:54:41Z",
+      "side": 1,
+      "message": "Add your copyright",
+      "revId": "c50e43f06a8a0b95d116f23b56b5f25a6e7ef3bd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//+8U\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/concurrent/DefaultDsfExecutor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-07-16T18:54:41Z",
+      "side": 1,
+      "message": "This is done in the constructor and therefore does not allow to be changed during a debug session.  However, other areas below do allow such a dynamic change.  I\u0027m worried that we\u0027ll have a conflict where we try tracing while not everything is initialized.\n\nEither the stuff in the constructor should be moved out in a smart way, or the flags should be per instance of the class and not allowed to change once the class is created.",
+      "revId": "c50e43f06a8a0b95d116f23b56b5f25a6e7ef3bd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//+9U\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/concurrent/DefaultDsfExecutor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 133,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-07-16T18:54:41Z",
+      "side": 1,
+      "message": "Please deprecate the two above.",
+      "revId": "c50e43f06a8a0b95d116f23b56b5f25a6e7ef3bd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//+9Q\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/concurrent/DefaultDsfExecutor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-07-16T18:54:41Z",
+      "side": 1,
+      "message": "Are the variables in DsfDebugOptions initialized by this time?",
+      "revId": "c50e43f06a8a0b95d116f23b56b5f25a6e7ef3bd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//+8o\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/concurrent/DsfExecutable.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-07-16T18:54:41Z",
+      "side": 1,
+      "message": "Remove DEBUG_EXECUTOR and move its javadoc to DsfDebugOptions",
+      "revId": "c50e43f06a8a0b95d116f23b56b5f25a6e7ef3bd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//+8s\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/concurrent/DsfExecutable.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-07-16T18:54:41Z",
+      "side": 1,
+      "message": "Remove and move its javadoc to DsfDebugOptions",
+      "revId": "c50e43f06a8a0b95d116f23b56b5f25a6e7ef3bd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//+8k\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/concurrent/DsfExecutable.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-07-16T18:54:41Z",
+      "side": 1,
+      "message": "Remove",
+      "revId": "c50e43f06a8a0b95d116f23b56b5f25a6e7ef3bd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//+8g\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/concurrent/DsfExecutable.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-07-16T18:54:41Z",
+      "side": 1,
+      "message": "Remove",
+      "revId": "c50e43f06a8a0b95d116f23b56b5f25a6e7ef3bd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//+88\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/concurrent/ImmediateExecutor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-07-16T18:54:41Z",
+      "side": 1,
+      "message": "Deprecate",
+      "revId": "c50e43f06a8a0b95d116f23b56b5f25a6e7ef3bd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//+84\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/concurrent/ImmediateExecutor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-07-16T18:54:41Z",
+      "side": 1,
+      "message": "Are the DsfDebugOptions already initialized here?",
+      "revId": "c50e43f06a8a0b95d116f23b56b5f25a6e7ef3bd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//+80\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/concurrent/ImmediateExecutor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-07-16T18:54:41Z",
+      "side": 1,
+      "message": "Remove chedk for DEBUG which should be part of DsfDebugOptions directly",
+      "revId": "c50e43f06a8a0b95d116f23b56b5f25a6e7ef3bd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//++0\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/command/CommandCache.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-07-16T18:54:41Z",
+      "side": 1,
+      "message": "Add your copyright",
+      "revId": "c50e43f06a8a0b95d116f23b56b5f25a6e7ef3bd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//+9A\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/command/CommandCache.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 212,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-07-16T18:54:41Z",
+      "side": 1,
+      "message": "Put back the line-splitting code here and just change the sysout for the new call.",
+      "revId": "c50e43f06a8a0b95d116f23b56b5f25a6e7ef3bd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//++Q\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/internal/DsfDebugOptions.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-07-16T18:54:41Z",
+      "side": 1,
+      "message": "Please add javadoc to explain the class",
+      "revId": "c50e43f06a8a0b95d116f23b56b5f25a6e7ef3bd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//+9M\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/internal/DsfDebugOptions.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-07-16T18:54:41Z",
+      "side": 1,
+      "message": "add \n  DEBUG \u0026\u0026\nto the above check",
+      "revId": "c50e43f06a8a0b95d116f23b56b5f25a6e7ef3bd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//+9I\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/internal/DsfDebugOptions.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-07-16T18:54:41Z",
+      "side": 1,
+      "message": "add \n  DEBUG \u0026\u0026\nto the above check",
+      "revId": "c50e43f06a8a0b95d116f23b56b5f25a6e7ef3bd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//+8c\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/internal/DsfDebugOptions.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-07-16T18:54:41Z",
+      "side": 1,
+      "message": "add \n  DEBUG \u0026\u0026\nto the above check",
+      "revId": "c50e43f06a8a0b95d116f23b56b5f25a6e7ef3bd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//+9k\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/internal/DsfDebugOptions.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-07-16T18:54:41Z",
+      "side": 1,
+      "message": "add \n  DEBUG \u0026\u0026\nto the above check",
+      "revId": "c50e43f06a8a0b95d116f23b56b5f25a6e7ef3bd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//+9g\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/internal/DsfDebugOptions.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-07-16T18:54:41Z",
+      "side": 1,
+      "message": "add \n  DEBUG_SESSION \u0026\u0026\nto the above check",
+      "revId": "c50e43f06a8a0b95d116f23b56b5f25a6e7ef3bd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//+9c\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/internal/DsfDebugOptions.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-07-16T18:54:41Z",
+      "side": 1,
+      "message": "add \n  DEBUG_SESSION \u0026\u0026\nto the above check",
+      "revId": "c50e43f06a8a0b95d116f23b56b5f25a6e7ef3bd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//+9Y\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/internal/DsfDebugOptions.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-07-16T18:54:41Z",
+      "side": 1,
+      "message": "add \n  DEBUG_SESSION \u0026\u0026\nto the above check",
+      "revId": "c50e43f06a8a0b95d116f23b56b5f25a6e7ef3bd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//+9E\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/internal/DsfDebugOptions.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-07-16T18:54:41Z",
+      "side": 1,
+      "message": "This method should behave exactly like DsfPlugin.debug() used to behave, or else we will affect different printouts.\n\nTherefore, I suggest moving the line splitting stuff back to CommandCache, and leaving this one with\nif (DEBUG) {\n  sysout.println\n}\nand the tracing to the file",
+      "revId": "c50e43f06a8a0b95d116f23b56b5f25a6e7ef3bd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//++w\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/internal/DsfPlugin.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-07-16T18:54:41Z",
+      "side": 1,
+      "message": "Since this is an internal package, you can remove this variable completely.\n\nBut we\u0027ll have to commit the change to dsf.ui first, as that plugin depends on this variable.",
+      "revId": "c50e43f06a8a0b95d116f23b56b5f25a6e7ef3bd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//++s\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/internal/DsfPlugin.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-07-16T18:54:41Z",
+      "side": 1,
+      "message": "Since it is internal, you can remove completely",
+      "revId": "c50e43f06a8a0b95d116f23b56b5f25a6e7ef3bd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//+98\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/service/DsfSession.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 281,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-07-16T18:54:41Z",
+      "side": 1,
+      "message": "Let\u0027s only use DsfDebugOptions.DEBUG_SESSION_LISTENERS here but have it include the others directly in DsfDebugOptions.",
+      "revId": "c50e43f06a8a0b95d116f23b56b5f25a6e7ef3bd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//+94\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/service/DsfSession.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 304,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-07-16T18:54:41Z",
+      "side": 1,
+      "message": "Let\u0027s only use DsfDebugOptions.DEBUG_SESSION_LISTENERS here but have it include the others directly in DsfDebugOptions.",
+      "revId": "c50e43f06a8a0b95d116f23b56b5f25a6e7ef3bd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//+90\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/service/DsfSession.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 335,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-07-16T18:54:41Z",
+      "side": 1,
+      "message": "Let\u0027s only use DsfDebugOptions... as mentioned above",
+      "revId": "c50e43f06a8a0b95d116f23b56b5f25a6e7ef3bd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//+9w\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/service/DsfSession.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 363,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-07-16T18:54:41Z",
+      "side": 1,
+      "message": "Let\u0027s only use DsfDebugOptions... as mentioned above",
+      "revId": "c50e43f06a8a0b95d116f23b56b5f25a6e7ef3bd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//+9s\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/service/DsfSession.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 386,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-07-16T18:54:41Z",
+      "side": 1,
+      "message": "Let\u0027s only use DsfDebugOptions... as mentioned above",
+      "revId": "c50e43f06a8a0b95d116f23b56b5f25a6e7ef3bd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//+9o\u003d",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/service/DsfSession.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 475,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-07-16T18:54:41Z",
+      "side": 1,
+      "message": "Let\u0027s only use DsfDebugOptions... as mentioned above",
+      "revId": "c50e43f06a8a0b95d116f23b56b5f25a6e7ef3bd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     Jason Litton (Sage Electronic Engineering, LLC) - Added Dynamic Debug Tracing (Bug 385076)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.ui.concurrent;
 
@@ -16,9 +17,8 @@ import java.util.concurrent.Executor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutable;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
-import org.eclipse.cdt.dsf.internal.DsfPlugin;
+import org.eclipse.cdt.dsf.internal.DsfDebugOptions;
 import org.eclipse.cdt.dsf.ui.viewmodel.VMViewerUpdate;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 
 /**
@@ -29,12 +29,6 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
  * @since 1.0
  */
 public class ViewerDataRequestMonitor<V> extends DataRequestMonitor<V> {
-
-    /**
-     * Same as {@link DsfExecutable#DEBUG_MONITORS} 
-     */
-    static private boolean DEBUG_MONITORS = DsfPlugin.DEBUG && "true".equals( //$NON-NLS-1$
-            Platform.getDebugOption("org.eclipse.cdt.dsf/debug/monitors")); //$NON-NLS-1$
     
 
     private final IViewerUpdate fUpdate;
@@ -44,7 +38,7 @@ public class ViewerDataRequestMonitor<V> extends DataRequestMonitor<V> {
         super(executor, null);
         fUpdate = update;
         
-        if (DEBUG_MONITORS) {
+        if (DsfDebugOptions.DEBUG && DsfDebugOptions.DEBUG_MONITORS) {
         	createMonitorBacktrace();
         }
     }

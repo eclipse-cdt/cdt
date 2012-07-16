@@ -8,10 +8,9 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Patrick Chuong (Texas Instruments) - Bug 315443
+ *     Jason Litton (Sage Electronic Engineering, LLC) - Added Dynamic Debug Tracing (Bug 385076)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.internal.ui.disassembly.model;
-
-import static org.eclipse.cdt.debug.internal.ui.disassembly.dsf.DisassemblyUtils.DEBUG;
 
 import java.io.File;
 import java.math.BigInteger;
@@ -30,6 +29,7 @@ import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.LabelPosition;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.SourcePosition;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.text.REDDocument;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.text.REDTextStore;
+import org.eclipse.cdt.dsf.internal.ui.DsfUiDebugOptions;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -745,7 +745,7 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 		if (list == null) {
 			throw new BadPositionCategoryException();
 		}
-		if (DEBUG) System.out.println("Adding position to category <" + category + "> : " + pos); //$NON-NLS-1$ //$NON-NLS-2$
+		if (DsfUiDebugOptions.DEBUG_DISASSEMBLY) DsfUiDebugOptions.trace("Adding position to category <" + category + "> : " + pos); //$NON-NLS-1$ //$NON-NLS-2$
 		list.add(computeIndexInPositionListLast(list, pos.fAddressOffset), pos);
 	}
 
@@ -826,7 +826,7 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 	public void removePosition(String category, Position position) throws BadPositionCategoryException {
 		super.removePosition(category, position);
 
-		if (DEBUG && isOneOfOurs(category)) System.out.println("Removing position from category(" + category + ") :" + position);	 //$NON-NLS-1$ //$NON-NLS-2$
+		if (DsfUiDebugOptions.DEBUG_DISASSEMBLY && isOneOfOurs(category)) DsfUiDebugOptions.trace("Removing position from category(" + category + ") :" + position);	 //$NON-NLS-1$ //$NON-NLS-2$
 		
 		if (!category.equals(CATEGORY_MODEL) && position instanceof AddressRangePosition) {
 			super.removePosition(CATEGORY_MODEL, position);
@@ -839,11 +839,11 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 			return;
 		}
 		
-		if (DEBUG && isOneOfOurs(category)) { 
-			System.out.println("Removing positions from category(" + category + ')'); //$NON-NLS-1$
+		if (DsfUiDebugOptions.DEBUG_DISASSEMBLY && isOneOfOurs(category)) { 
+			DsfUiDebugOptions.trace("Removing positions from category(" + category + ')'); //$NON-NLS-1$
 			int i = 0;
 			for (AddressRangePosition pos : toRemove) {
-				System.out.println("[" + i++ +"] " + pos); //$NON-NLS-1$ //$NON-NLS-2$
+				DsfUiDebugOptions.trace("[" + i++ +"] " + pos); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		
@@ -924,14 +924,14 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 			}
 		}
 		
-		if (DEBUG) {
+		if (DsfUiDebugOptions.DEBUG_DISASSEMBLY) {
 			String escapedText = null;
 			if (text != null) {
 				escapedText = text.replace(new StringBuffer("\n"), new StringBuffer("\\n")); //$NON-NLS-1$ //$NON-NLS-2$
 				escapedText = escapedText.replace(new StringBuffer("\r"), new StringBuffer("\\r")); //$NON-NLS-1$ //$NON-NLS-2$
 				escapedText = escapedText.replace(new StringBuffer("\t"), new StringBuffer("\\t")); //$NON-NLS-1$ //$NON-NLS-2$
 			}
-			System.out.println("Calling AbstractDocument.replace("+insertPos.offset+','+replaceLength+",\""+escapedText+"\")");  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+			DsfUiDebugOptions.trace("Calling AbstractDocument.replace("+insertPos.offset+','+replaceLength+",\""+escapedText+"\")");  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 		}
 		super.replace(insertPos.offset, replaceLength, text);
 	}
@@ -1013,7 +1013,7 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 			addModelPosition(insertPos);
 		}
 		replace(insertPos, replaceLength, line);
-		if (DEBUG) checkConsistency();
+		if (DsfUiDebugOptions.DEBUG_DISASSEMBLY) checkConsistency();
 		return pos;
 	}
 
@@ -1145,7 +1145,7 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 					before.fAddressLength = before.fAddressLength.add(mergeLen);
 					address = address.add(mergeLen);
 					length = length.subtract(mergeLen);
-					if (DEBUG) checkConsistency();
+					if (DsfUiDebugOptions.DEBUG_DISASSEMBLY) checkConsistency();
 					if (length.compareTo(BigInteger.ZERO) == 0) {
 						return pos;
 					}
@@ -1168,7 +1168,7 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 						removeInvalidAddressRange(pos);
 						pos = null;
 					}
-					if (DEBUG) checkConsistency();
+					if (DsfUiDebugOptions.DEBUG_DISASSEMBLY) checkConsistency();
 					length = length.subtract(mergeLen);
 					if (length.compareTo(BigInteger.ZERO) == 0) {
 						return pos;
@@ -1388,7 +1388,7 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 		} finally {
 			stopRewriteSession(session);
 		}
-		if (DEBUG) checkConsistency();
+		if (DsfUiDebugOptions.DEBUG_DISASSEMBLY) checkConsistency();
 	}
 
 	public void invalidateSource() {
@@ -1417,13 +1417,13 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 
 	public boolean addInvalidSourcePositions(SourcePosition srcPos) {
 		assert isGuiThread();
-		if (DEBUG) System.out.println("Adding invalid source position to list: " + srcPos); //$NON-NLS-1$
+		if (DsfUiDebugOptions.DEBUG_DISASSEMBLY) DsfUiDebugOptions.trace("Adding invalid source position to list: " + srcPos); //$NON-NLS-1$
 		return fInvalidSource.add(srcPos);
 	}
 
 	public boolean removeInvalidSourcePosition(SourcePosition srcPos) {
 		assert isGuiThread();
-		if (DEBUG) System.out.println("Removing invalid source position from list: " + srcPos); //$NON-NLS-1$		
+		if (DsfUiDebugOptions.DEBUG_DISASSEMBLY) DsfUiDebugOptions.trace("Removing invalid source position from list: " + srcPos); //$NON-NLS-1$		
 		return fInvalidSource.remove(srcPos);
 	}
 	
@@ -1550,31 +1550,40 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 	}
 
 	private void internalError(Throwable e) {
-		if (DEBUG) {
-			System.err.println("Disassembly: Internal error"); //$NON-NLS-1$
-			e.printStackTrace();
+		if (DsfUiDebugOptions.DEBUG_DISASSEMBLY) {
+			DsfUiDebugOptions.trace("Disassembly: Internal error"); //$NON-NLS-1$
+			//create our own stack trace that will write to sysout and trace file
+			StackTraceElement[] elements = e.getStackTrace();
+			for (int i = 0; i < elements.length; i++) {
+				DsfUiDebugOptions.trace(String.format("    [%2d] %s.%s (%s.%d)", //$NON-NLS-1$
+						i,
+						elements[i].getClassName(),
+						elements[i].getMethodName(),
+						elements[i].getFileName(),
+						elements[i].getLineNumber()));
+			}
 		}
 	}
 
 	@Override
 	public void addInvalidAddressRange(AddressRangePosition pos) {
 		assert isGuiThread();
-		if (DEBUG) System.out.println("Adding to invalid range list: " + pos); //$NON-NLS-1$
+		if (DsfUiDebugOptions.DEBUG_DISASSEMBLY) DsfUiDebugOptions.trace("Adding to invalid range list: " + pos); //$NON-NLS-1$
 		fInvalidAddressRanges.add(pos);
 	}
 
 	public void removeInvalidAddressRanges(Collection<AddressRangePosition> positions) {
 		assert isGuiThread();
-		if (DEBUG) {
+		if (DsfUiDebugOptions.DEBUG_DISASSEMBLY) {
 			for (AddressRangePosition pos : positions)
-				System.out.println("Removing from invalid range list: " + pos); //$NON-NLS-1$
+				DsfUiDebugOptions.trace("Removing from invalid range list: " + pos); //$NON-NLS-1$
 		}
 		fInvalidAddressRanges.removeAll(positions);
 	}
 
 	public void removeInvalidAddressRange(AddressRangePosition pos) {
 		assert isGuiThread(); 
-		if (DEBUG) System.out.println("Removing from invalid range list: " + pos); //$NON-NLS-1$
+		if (DsfUiDebugOptions.DEBUG_DISASSEMBLY) DsfUiDebugOptions.trace("Removing from invalid range list: " + pos); //$NON-NLS-1$
 		fInvalidAddressRanges.remove(pos);
 	}
 	

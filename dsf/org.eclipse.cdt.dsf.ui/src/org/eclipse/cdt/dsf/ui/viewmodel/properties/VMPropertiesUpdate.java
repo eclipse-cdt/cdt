@@ -7,6 +7,7 @@
  * 
  *  Contributors:
  *      Wind River Systems - initial API and implementation
+ *      Jason Litton (Sage Electronic Engineering, LLC) - Added Dynamic Debug Tracing (Bug 385076)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.ui.viewmodel.properties;
 
@@ -17,10 +18,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
-import org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.VMViewerUpdateTracing;
 import org.eclipse.cdt.dsf.internal.DsfPlugin;
 import org.eclipse.cdt.dsf.internal.LoggingUtils;
-import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
+import org.eclipse.cdt.dsf.internal.ui.DsfUiDebugOptions;
 import org.eclipse.cdt.dsf.ui.viewmodel.VMViewerUpdate;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
@@ -135,7 +135,7 @@ public class VMPropertiesUpdate extends VMViewerUpdate implements IPropertiesUpd
         rm.setData(fValues);
         
         // trace our result
-        if (VMViewerUpdateTracing.DEBUG_VMUPDATES && !isCanceled() && VMViewerUpdateTracing.matchesFilterRegex(this.getClass())) {
+        if (DsfUiDebugOptions.DEBUG_VM_UPDATES && !isCanceled() && DsfUiDebugOptions.matchesFilterRegex(this.getClass())) {
         	StringBuilder str = new StringBuilder();
         	str.append(DsfPlugin.getDebugTime() + " " + LoggingUtils.toString(this) + " marked done; element = " + LoggingUtils.toString(getElement())); //$NON-NLS-1$ //$NON-NLS-2$
         	if (fValues != null) {
@@ -150,7 +150,7 @@ public class VMPropertiesUpdate extends VMViewerUpdate implements IPropertiesUpd
 	            }
 	            str.deleteCharAt(str.length()-1); // remove trailing linefeed
         	}
-        	DsfUIPlugin.debug(str.toString());
+        	DsfUiDebugOptions.trace(str.toString());
         }
         
         super.done();

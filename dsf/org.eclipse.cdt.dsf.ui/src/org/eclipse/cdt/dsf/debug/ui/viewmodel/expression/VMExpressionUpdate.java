@@ -7,15 +7,16 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     Jason Litton (Sage Electronic Engineering, LLC) - Added Dynamic Debug Tracing (Bug 385076)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.ui.viewmodel.expression;
 
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
-import org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.VMViewerUpdateTracing;
 import org.eclipse.cdt.dsf.internal.DsfPlugin;
 import org.eclipse.cdt.dsf.internal.LoggingUtils;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
+import org.eclipse.cdt.dsf.internal.ui.DsfUiDebugOptions;
 import org.eclipse.cdt.dsf.ui.viewmodel.VMViewerUpdate;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -80,8 +81,8 @@ class VMExpressionUpdate extends VMViewerUpdate implements IExpressionUpdate {
         }
         
         // trace our result
-        if (VMViewerUpdateTracing.DEBUG_VMUPDATES && !isCanceled() && VMViewerUpdateTracing.matchesFilterRegex(this.getClass())) {
-			DsfUIPlugin.debug(DsfPlugin.getDebugTime()
+        if (DsfUiDebugOptions.DEBUG_VM_UPDATES && !isCanceled() && DsfUiDebugOptions.matchesFilterRegex(this.getClass())) {
+        	DsfUiDebugOptions.trace(DsfPlugin.getDebugTime()
 				+ " " + LoggingUtils.toString(this) + " marked done; element = " + LoggingUtils.toString(getElement()) + //$NON-NLS-1$ //$NON-NLS-2$
 				"\n   expression = " //$NON-NLS-1$
 				+ (fExpressionElement != null ? LoggingUtils.toString(fExpressionElement) : "<unset>"));  //$NON-NLS-1$

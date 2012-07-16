@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     Jason Litton (Sage Electronic Engineering, LLC) - Added Dynamic Debug Tracing (Bug 385076)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.ui.viewmodel;
 
@@ -37,10 +38,10 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.StateChangeReason;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.StepType;
 import org.eclipse.cdt.dsf.debug.ui.IDsfDebugUIConstants;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
+import org.eclipse.cdt.dsf.internal.ui.DsfUiDebugOptions;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -78,8 +79,6 @@ public final class SteppingController {
 	 * control participants fail to indicate completion of event processing.
 	 */
     public final static int MAX_STEP_DELAY= 5000;
-
-    private final static boolean DEBUG = "true".equals(Platform.getDebugOption("org.eclipse.cdt.dsf.ui/debug/stepping")); //$NON-NLS-1$ //$NON-NLS-2$
 
     /**
      * Indicates that the given context has been stepping for some time, 
@@ -284,7 +283,7 @@ public final class SteppingController {
      * @param execCtx
      */
     public void doneStepping(final IExecutionDMContext execCtx, final ISteppingControlParticipant participant) {
-    	if (DEBUG) System.out.println("[SteppingController] doneStepping participant=" + participant.getClass().getSimpleName()); //$NON-NLS-1$
+    	if (DsfUiDebugOptions.DEBUG_STEPPING) DsfUiDebugOptions.trace("[SteppingController] doneStepping participant=" + participant.getClass().getSimpleName()); //$NON-NLS-1$
     	List<ISteppingControlParticipant> participants = fStepInProgress.get(execCtx);
     	if (participants != null) {
     		participants.remove(participant);
@@ -357,7 +356,7 @@ public final class SteppingController {
 	 */
 	private boolean shouldDelayStep(IExecutionDMContext execCtx) {
         final int stepDelay= getStepDelay(execCtx);
-        if (DEBUG) System.out.println("[SteppingController] shouldDelayStep delay=" + stepDelay); //$NON-NLS-1$
+        if (DsfUiDebugOptions.DEBUG_STEPPING) DsfUiDebugOptions.trace("[SteppingController] shouldDelayStep delay=" + stepDelay); //$NON-NLS-1$
 		return stepDelay > 0;
 	}
 
@@ -419,7 +418,7 @@ public final class SteppingController {
      * @param stepType Type of step to execute.
      */
     public void enqueueStep(final IExecutionDMContext execCtx, final StepType stepType) {
-    	if (DEBUG) System.out.println("[SteppingController] enqueueStep ctx=" + execCtx); //$NON-NLS-1$
+    	if (DsfUiDebugOptions.DEBUG_STEPPING) DsfUiDebugOptions.trace("[SteppingController] enqueueStep ctx=" + execCtx); //$NON-NLS-1$
         if (!shouldDelayStep(execCtx) || doCanEnqueueStep(execCtx, stepType)) {
             doEnqueueStep(execCtx, stepType);
             processStepQueue(execCtx);
@@ -427,7 +426,7 @@ public final class SteppingController {
     }
 
 	private void doStep(final IExecutionDMContext execCtx, final StepType stepType) {
-		if (DEBUG) System.out.println("[SteppingController] doStep ctx="+execCtx); //$NON-NLS-1$
+		if (DsfUiDebugOptions.DEBUG_STEPPING) DsfUiDebugOptions.trace("[SteppingController] doStep ctx="+execCtx); //$NON-NLS-1$
 	    disableStepping(execCtx);
         updateLastStepTime(execCtx);
         
@@ -503,7 +502,7 @@ public final class SteppingController {
 				return;
 			}
             final StepRequest request = queue.get(0);
-    		if (DEBUG) System.out.println("[SteppingController] processStepQueue request-in-progress="+request.inProgress); //$NON-NLS-1$
+    		if (DsfUiDebugOptions.DEBUG_STEPPING) DsfUiDebugOptions.trace("[SteppingController] processStepQueue request-in-progress="+request.inProgress); //$NON-NLS-1$
             if (!request.inProgress) {
         		if (isSteppingDisabled(request.fContext)) {
         			return;
@@ -560,7 +559,7 @@ public final class SteppingController {
      * @param execCtx
      */
     private void doneStepping(final IExecutionDMContext execCtx) {
-    	if (DEBUG) System.out.println("[SteppingController] doneStepping ctx=" + execCtx); //$NON-NLS-1$
+    	if (DsfUiDebugOptions.DEBUG_STEPPING) DsfUiDebugOptions.trace("[SteppingController] doneStepping ctx=" + execCtx); //$NON-NLS-1$
         enableStepping(execCtx);
         processStepQueue(execCtx);
     }
@@ -593,7 +592,7 @@ public final class SteppingController {
         	long now = System.currentTimeMillis();
         	long lastStepTime = getLastStepTime(execCtx);
         	if (now - lastStepTime > MAX_STEP_DELAY) {
-        		if (DEBUG) System.out.println("[SteppingController] stepping control participant(s) timed out"); //$NON-NLS-1$
+        		if (DsfUiDebugOptions.DEBUG_STEPPING) DsfUiDebugOptions.trace("[SteppingController] stepping control participant(s) timed out"); //$NON-NLS-1$
         		enableStepping(execCtx);
         		disabled = false;
         	}

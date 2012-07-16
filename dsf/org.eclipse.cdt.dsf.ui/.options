@@ -11,3 +11,4 @@ org.eclipse.cdt.dsf.ui/debug/disassembly = false
 
 org.eclipse.cdt.dsf.ui/debug/vm/updates = false
 org.eclipse.cdt.dsf.ui/debug/vm/updates/regex =
+org.eclipse.cdt.dsf.ui/debug/source/display/adapter=false

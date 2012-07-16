@@ -21,6 +21,7 @@ import com.ibm.icu.text.DateFormat;
 import com.ibm.icu.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.eclipse.cdt.make.core.MakeCoreDebugOptions;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 
@@ -28,6 +29,8 @@ import org.eclipse.core.runtime.IStatus;
  * Log writer utility
  * 
  * @author vhirsl
+ * @deprecated use org.eclipse.cdt.make.core.MakeCoreDebugOptions
+ * to use dynamic debug tracing
  */
 public class LogWriter {
 	protected File logFile = null;
@@ -197,7 +200,7 @@ public class LogWriter {
 	}
 	protected void write(String message) throws IOException {
 		if (message != null)
-			log.write(message);
+			MakeCoreDebugOptions.trace(message);
 	}
 	protected void writeSpace() throws IOException {
 		write(" ");//$NON-NLS-1$

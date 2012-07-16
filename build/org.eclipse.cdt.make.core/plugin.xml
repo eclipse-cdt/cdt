@@ -182,5 +182,16 @@
          	class="org.eclipse.cdt.make.internal.core.dataprovider.MakeConfigurationDataProvider"
          />
    </extension>
+   <extension
+         point="org.eclipse.ui.trace.traceComponents">
+      <component
+            id="org.eclipse.cdt.make.core.component"
+            label="%cdt.make.core.component.label">
+         <bundle
+               consumed="true"
+               name="org.eclipse.cdt.make.core">
+         </bundle>
+      </component>
+   </extension>
 
 </plugin>

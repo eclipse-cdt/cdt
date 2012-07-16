@@ -42,6 +42,7 @@
  * David McKnight   (IBM) - [367096] [dstore] DataElement.isSpirit() may return true for newly created DStore objects
  * David McKnight   (IBM) - [370260] [dstore] log the RSE version in server traces
  * David McKnight   (IBM) - [373507] [dstore][multithread] reduce heap memory on disconnect for server
+ * David McKnight   (IBM) - [385097] [dstore] DataStore spirit mechanism is not enabled
  *******************************************************************************/
 
 package org.eclipse.dstore.core.model;
@@ -160,6 +161,8 @@ public final class DataStore
 	private File _traceFileHandle;
 	private RandomAccessFile _traceFile;
 	private boolean _tracingOn;
+
+	private boolean _queriedSpiritState = false; // for the client - so we don't keep sending down the same query
 
 	private boolean _spiritModeOn = false;
 	private boolean _spiritCommandReceived = false;
@@ -2295,17 +2298,26 @@ public final class DataStore
 		return synchronizedCommand(cmd, _dummy);
 	}
 
+	/**
+	 * Client calls this to start the spiriting mechanism on the server.  The return value shouldn't be reliable here.  
+	 * Originally this was a synchronized command but that can slow connect time.  Since no one should use the return value here,
+	 * 
+	 * @return whether the server spirit state has been queried
+	 */
 	public boolean queryServerSpiritState()
 	{
-		DataElement spirittype = findObjectDescriptor(IDataStoreConstants.DATASTORE_SPIRIT_DESCRIPTOR);
-		if (spirittype == null) return false;
-		DataElement cmd = localDescriptorQuery(spirittype, IDataStoreConstants.C_START_SPIRIT, 2);
-		if (cmd == null) return false;
-
-		DataElement status = synchronizedCommand(cmd, _dummy);
-		if ((status != null) && status.getName().equals(DataStoreResources.model_done))
-			return true;
-		else return false;
+		if (!_queriedSpiritState){
+			DataElement spirittype = findObjectDescriptor(IDataStoreConstants.DATASTORE_SPIRIT_DESCRIPTOR);
+			if (spirittype != null){		
+				DataElement cmd = localDescriptorQuery(spirittype, IDataStoreConstants.C_START_SPIRIT, 2);
+			
+				if (cmd != null){
+					command(cmd, _dummy); // start 
+					_queriedSpiritState = true;
+				}
+			}
+		}
+		return _queriedSpiritState;
 	}
 
 	public DataElement queryHostJVM()

@@ -19,6 +19,7 @@
  *  David McKnight   (IBM) - [331922] [dstore] enable DataElement recycling
  *  David McKnight   (IBM) - [371401] [dstore][multithread] avoid use of static variables - causes memory leak after disconnect
  *  David McKnight   (IBM)  - [373507] [dstore][multithread] reduce heap memory on disconnect for server
+ *  David McKnight   (IBM)  - [385097] [dstore] DataStore spirit mechanism is not enabled
  *******************************************************************************/
 
 package org.eclipse.dstore.internal.core.util;
@@ -60,9 +61,6 @@ public class DataElementRemover extends Handler
 		_queue = new LinkedList();
 		getTimes();
 		setWaitTime(_intervalTime);
-		DataElement spiritnode = _dataStore.createObjectDescriptor(_dataStore.getDescriptorRoot(), IDataStoreConstants.DATASTORE_SPIRIT_DESCRIPTOR);
-		_dataStore.createCommandDescriptor(spiritnode, "StartSpirit", "DataElementRemover", IDataStoreConstants.C_START_SPIRIT); //$NON-NLS-1$ //$NON-NLS-2$
-		_dataStore.refresh(_dataStore.getDescriptorRoot());
 	}
 	
 	protected void getTimes()

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2012 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * David McKnight   (IBM) - [226561] [apidoc] Add API markup to RSE Javadocs where extend / implement is allowed
+ * David McKnight   (IBM)  - [385097] [dstore] DataStore spirit mechanism is not enabled
  ********************************************************************************/
 
 package org.eclipse.dstore.core.model;
@@ -332,7 +333,11 @@ public class DataStoreSchema
 		
 		_dataStore.createCommandDescriptor(rootD, "Notification", "*", C_NOTIFICATION, false); //$NON-NLS-1$ //$NON-NLS-2$
 		_dataStore.createCommandDescriptor(rootD, "Send Input", "*", C_SEND_INPUT, false); //$NON-NLS-1$ //$NON-NLS-2$
-		
+				
+		// spirit stuff
+		DataElement spiritnode = _dataStore.createObjectDescriptor(_dataStore.getDescriptorRoot(), IDataStoreConstants.DATASTORE_SPIRIT_DESCRIPTOR);
+		_dataStore.createCommandDescriptor(spiritnode, "StartSpirit", "DataElementRemover", IDataStoreConstants.C_START_SPIRIT); //$NON-NLS-1$ //$NON-NLS-2$
+
 		
 		// both ends have this base schema, so mark each descriptor as updated
 		for (int i = 0; i < schemaRoot.getNestedSize(); i++)

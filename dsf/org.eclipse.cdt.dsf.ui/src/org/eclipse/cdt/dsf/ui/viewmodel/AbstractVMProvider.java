@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     Jason Litton (Sage Electronic Engineering, LLC) - Added Dynamic Debug Tracing (Bug 385085)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.ui.viewmodel;
 
@@ -23,13 +24,13 @@ import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
+import org.eclipse.cdt.dsf.internal.DsfDebugOptions;
 import org.eclipse.cdt.dsf.internal.DsfPlugin;
 import org.eclipse.cdt.dsf.internal.LoggingUtils;
-import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
+import org.eclipse.cdt.dsf.internal.ui.DsfUiDebugOptions;
 import org.eclipse.cdt.dsf.ui.concurrent.SimpleDisplayExecutor;
 import org.eclipse.cdt.dsf.ui.concurrent.ViewerDataRequestMonitor;
 import org.eclipse.cdt.dsf.ui.viewmodel.update.UserEditEvent;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentation;
@@ -66,24 +67,22 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
 {
     // debug flags
     /** @since 1.1 */
-    public static String DEBUG_PRESENTATION_ID = null;
+    public static String DEBUG_PRESENTATION_ID = DsfUiDebugOptions.DEBUG_VM_PRESENTATION_ID;
 
     /** @since 1.1 */
-    public static boolean DEBUG_CONTENT_PROVIDER = false;
+    public static boolean DEBUG_CONTENT_PROVIDER = DsfUiDebugOptions.DEBUG_VM_CONTENT_PROVIDER;
 
     /** @since 1.1 */
-    public static boolean DEBUG_DELTA = false;
+    public static boolean DEBUG_DELTA = DsfUiDebugOptions.DEBUG_VM_DELTA;
 
     static {
-        DEBUG_PRESENTATION_ID = Platform.getDebugOption("org.eclipse.cdt.dsf.ui/debug/vm/presentationId"); //$NON-NLS-1$
-        if (!DsfUIPlugin.DEBUG || "".equals(DEBUG_PRESENTATION_ID)) { //$NON-NLS-1$
+        DEBUG_PRESENTATION_ID = DsfUiDebugOptions.DEBUG_VM_PRESENTATION_ID;
+        if (!DsfUiDebugOptions.DEBUG || "".equals(DsfUiDebugOptions.DEBUG_VM_PRESENTATION_ID)) { //$NON-NLS-1$
             DEBUG_PRESENTATION_ID = null;
         }
-        DEBUG_CONTENT_PROVIDER = DsfUIPlugin.DEBUG && "true".equals( //$NON-NLS-1$
-         Platform.getDebugOption("org.eclipse.cdt.dsf.ui/debug/vm/contentProvider")); //$NON-NLS-1$
+        DEBUG_CONTENT_PROVIDER = DsfUiDebugOptions.DEBUG && DsfUiDebugOptions.DEBUG_VM_CONTENT_PROVIDER;
 
-        DEBUG_DELTA = DsfUIPlugin.DEBUG && "true".equals( //$NON-NLS-1$
-            Platform.getDebugOption("org.eclipse.cdt.dsf.ui/debug/vm/delta")); //$NON-NLS-1$
+        DEBUG_DELTA = DsfUiDebugOptions.DEBUG && DsfUiDebugOptions.DEBUG_VM_DELTA;
     }   
 
     /** Reference to the VM adapter that owns this provider */
@@ -258,7 +257,9 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
 	 */
     @Override
     public void handleEvent(final Object event, RequestMonitor rm) {
-        if (DEBUG_DELTA && (DEBUG_PRESENTATION_ID == null || getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
+    	if (DsfUiDebugOptions.DEBUG && DsfUiDebugOptions.DEBUG_VM_DELTA && 
+        		(DsfUiDebugOptions.DEBUG_VM_PRESENTATION_ID == null || 
+        		getPresentationContext().getId().equals(DsfUiDebugOptions.DEBUG_VM_PRESENTATION_ID))) {
         	trace(event, null, null, EventHandlerAction.received);
         }
 
@@ -294,7 +295,9 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
                         EventInfo eventToSkipInfo = queue.fEventQueue.get(queue.fEventQueue.size() - 1);
                         
                         if (canSkipHandlingEvent(event, eventToSkipInfo.fEvent)) {
-                            if (DEBUG_DELTA && (DEBUG_PRESENTATION_ID == null || getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
+                        	if (DsfUiDebugOptions.DEBUG && DsfUiDebugOptions.DEBUG_VM_DELTA && 
+                            		(DsfUiDebugOptions.DEBUG_VM_PRESENTATION_ID == null || 
+                            		getPresentationContext().getId().equals(DsfUiDebugOptions.DEBUG_VM_PRESENTATION_ID))) {
                             	trace(event, eventToSkipInfo.fEvent, proxyStrategy, EventHandlerAction.skipped);
                             }
                             queue.fEventQueue.remove(queue.fEventQueue.size() - 1);
@@ -307,13 +310,17 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
                     // being processed can be skipped.  If so, cancel its
                     // processing 
                     if (queue.fEventQueue.isEmpty() && canSkipHandlingEvent(event, queue.fCurrentEvent.fEvent)) {
-                        if (DEBUG_DELTA && (DEBUG_PRESENTATION_ID == null || getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
+                    	if (DsfUiDebugOptions.DEBUG && DsfUiDebugOptions.DEBUG_VM_DELTA && 
+                        		(DsfUiDebugOptions.DEBUG_VM_PRESENTATION_ID == null || 
+                        		getPresentationContext().getId().equals(DsfUiDebugOptions.DEBUG_VM_PRESENTATION_ID))) {
                         	trace(event, queue.fCurrentEvent.fEvent, proxyStrategy, EventHandlerAction.canceled);
                         }
                         queue.fCurrentRm.cancel();
                     }
 
-                    if (DEBUG_DELTA && (DEBUG_PRESENTATION_ID == null || getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
+                    if (DsfUiDebugOptions.DEBUG && DsfUiDebugOptions.DEBUG_VM_DELTA && 
+                    		(DsfUiDebugOptions.DEBUG_VM_PRESENTATION_ID == null || 
+                    		getPresentationContext().getId().equals(DsfUiDebugOptions.DEBUG_VM_PRESENTATION_ID))) {
                     	trace(event, null, proxyStrategy, EventHandlerAction.queued);
                     }
                     queue.fEventQueue.add(new EventInfo(event, crm));
@@ -375,7 +382,9 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
      */
     protected void handleEvent(final IVMModelProxy proxyStrategy, final Object event, final RequestMonitor rm) {   
         if (!proxyStrategy.isDisposed()) {
-            if (DEBUG_DELTA && (DEBUG_PRESENTATION_ID == null || getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
+        	if (DsfUiDebugOptions.DEBUG && DsfUiDebugOptions.DEBUG_VM_DELTA && 
+            		(DsfUiDebugOptions.DEBUG_VM_PRESENTATION_ID == null || 
+            		getPresentationContext().getId().equals(DsfUiDebugOptions.DEBUG_VM_PRESENTATION_ID))) {
             	trace(event, null, proxyStrategy, EventHandlerAction.processing);
             }
             proxyStrategy.createDelta(
@@ -384,7 +393,9 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
                     @Override
                     public void handleSuccess() {
                         proxyStrategy.fireModelChanged(getData());
-                        if (DEBUG_DELTA && (DEBUG_PRESENTATION_ID == null || getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
+                        if (DsfUiDebugOptions.DEBUG && DsfUiDebugOptions.DEBUG_VM_DELTA && 
+                        		(DsfUiDebugOptions.DEBUG_VM_PRESENTATION_ID == null || 
+                        		getPresentationContext().getId().equals(DsfUiDebugOptions.DEBUG_VM_PRESENTATION_ID))) {
                         	trace(event, null, proxyStrategy, EventHandlerAction.firedDeltaFor);
                         }
                         rm.done();
@@ -573,8 +584,10 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
         IHasChildrenUpdate[] updateProxies = new IHasChildrenUpdate[updates.length];
         for (int i = 0; i < updates.length; i++) {
             final IHasChildrenUpdate update = updates[i];
-            if (DEBUG_CONTENT_PROVIDER && (DEBUG_PRESENTATION_ID == null || getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
-                DsfUIPlugin.debug("updateNodeHasChildren(node = " + node + ", update = " + update + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            if (DsfUiDebugOptions.DEBUG && DsfUiDebugOptions.DEBUG_VM_CONTENT_PROVIDER && 
+            		(DsfUiDebugOptions.DEBUG_VM_PRESENTATION_ID == null || 
+            		getPresentationContext().getId().equals(DsfUiDebugOptions.DEBUG_VM_PRESENTATION_ID))) {
+            	DsfUiDebugOptions.trace("updateNodeHasChildren(node = " + node + ", update = " + update + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             }
             updateProxies[i] = new VMHasChildrenUpdate(
                 update,
@@ -588,8 +601,10 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
                     @Override
                     protected void handleErrorOrWarning() {
                         if (getStatus().getCode() == IDsfStatusConstants.NOT_SUPPORTED) {
-                            if (DEBUG_CONTENT_PROVIDER && (DEBUG_PRESENTATION_ID == null || getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
-                                DsfUIPlugin.debug("not-supported:updateNodeHasChildren(node = " + node + ", update = " + update + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                        	if (DsfUiDebugOptions.DEBUG && DsfUiDebugOptions.DEBUG_VM_CONTENT_PROVIDER && 
+                            		(DsfUiDebugOptions.DEBUG_VM_PRESENTATION_ID == null || 
+                            		getPresentationContext().getId().equals(DsfUiDebugOptions.DEBUG_VM_PRESENTATION_ID))) {
+                        		DsfUiDebugOptions.trace("not-supported:updateNodeHasChildren(node = " + node + ", update = " + update + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                             }
                             updateNode(
                                 node, 
@@ -625,8 +640,10 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
      */
     @Override
     public void updateNode(final IVMNode node, final IChildrenCountUpdate update) {
-        if (DEBUG_CONTENT_PROVIDER && (DEBUG_PRESENTATION_ID == null || getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
-            DsfUIPlugin.debug("updateNodeChildCount(node = " + node + ", update = " + update + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    	if (DsfUiDebugOptions.DEBUG && DsfUiDebugOptions.DEBUG_VM_CONTENT_PROVIDER && 
+        		(DsfUiDebugOptions.DEBUG_VM_PRESENTATION_ID == null || 
+        		getPresentationContext().getId().equals(DsfUiDebugOptions.DEBUG_VM_PRESENTATION_ID))) {
+    		DsfUiDebugOptions.trace("updateNodeChildCount(node = " + node + ", update = " + update + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         }
         node.update(new IChildrenCountUpdate[] { 
             new VMChildrenCountUpdate(
@@ -641,8 +658,10 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
                     @Override
                     protected void handleErrorOrWarning() {
                         if (getStatus().getCode() == IDsfStatusConstants.NOT_SUPPORTED) {
-                            if (DEBUG_CONTENT_PROVIDER && (DEBUG_PRESENTATION_ID == null || getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
-                                DsfUIPlugin.debug("not-supported:updateNodeChildCount(node = " + node + ", update = " + update + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                        	if (DsfUiDebugOptions.DEBUG && DsfUiDebugOptions.DEBUG_VM_CONTENT_PROVIDER && 
+                            		(DsfUiDebugOptions.DEBUG_VM_PRESENTATION_ID == null || 
+                            		getPresentationContext().getId().equals(DsfUiDebugOptions.DEBUG_VM_PRESENTATION_ID))) {
+                        		DsfUiDebugOptions.trace("not-supported:updateNodeChildCount(node = " + node + ", update = " + update + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                             }
                             updateNode(
                                 node, 
@@ -675,8 +694,10 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
      */
     @Override
     public void updateNode(IVMNode node, IChildrenUpdate update) {
-        if (DEBUG_CONTENT_PROVIDER && (DEBUG_PRESENTATION_ID == null || getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
-            DsfUIPlugin.debug("updateNodeChildren(node = " + node + ", update = " + update + ")");  //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$
+    	if (DsfUiDebugOptions.DEBUG && DsfUiDebugOptions.DEBUG_VM_CONTENT_PROVIDER && 
+        		(DsfUiDebugOptions.DEBUG_VM_PRESENTATION_ID == null || 
+        		getPresentationContext().getId().equals(DsfUiDebugOptions.DEBUG_VM_PRESENTATION_ID))) {
+    		DsfUiDebugOptions.trace("updateNodeChildren(node = " + node + ", update = " + update + ")");  //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$
         }
         node.update(new IChildrenUpdate[] { update });
     }
@@ -822,7 +843,7 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
 	 *            what phased of the event handling has beeb reached
 	 */
     private void trace(Object event, Object skippedOrCanceledEvent, IVMModelProxy proxy, EventHandlerAction action) {
-    	assert DEBUG_DELTA;
+    	assert DsfDebugOptions.DEBUG && DsfUiDebugOptions.DEBUG_VM_DELTA;
         StringBuilder str = new StringBuilder();
         str.append(DsfPlugin.getDebugTime());
         str.append(' ');
@@ -836,6 +857,6 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
         if (action != EventHandlerAction.received) {
         	str.append(" for proxy " + LoggingUtils.toString(proxy) + ", whose root is " + LoggingUtils.toString(proxy.getRootElement())); //$NON-NLS-1$ //$NON-NLS-2$
         }
-        DsfUIPlugin.debug(str.toString());
+        DsfDebugOptions.trace(str.toString());
     }
 }

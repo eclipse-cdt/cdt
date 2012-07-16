@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     Jason Litton (Sage Electronic Engineering, LLC) - Added Dynamic Debug Tracing (Bug 385085)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.ui.viewmodel;
 
@@ -14,10 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
-import org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.VMViewerUpdateTracing;
 import org.eclipse.cdt.dsf.internal.DsfPlugin;
 import org.eclipse.cdt.dsf.internal.LoggingUtils;
-import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
+import org.eclipse.cdt.dsf.internal.ui.DsfUiDebugOptions;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
@@ -126,7 +126,7 @@ public class VMChildrenUpdate extends VMViewerUpdate implements IChildrenUpdate 
         rm.setData(fElements);
         
         // trace our result
-        if (VMViewerUpdateTracing.DEBUG_VMUPDATES && !isCanceled() && VMViewerUpdateTracing.matchesFilterRegex(this.getClass())) {
+        if (DsfUiDebugOptions.DEBUG_VM_UPDATES && !isCanceled() && DsfUiDebugOptions.matchesFilterRegex(this.getClass())) {
         	StringBuilder str = new StringBuilder();
         	str.append(DsfPlugin.getDebugTime() + " " + LoggingUtils.toString(this) + " marked done; element = " + LoggingUtils.toString(getElement())); //$NON-NLS-1$ //$NON-NLS-2$
         	if (fElements != null && fElements.size() > 0) {
@@ -135,7 +135,7 @@ public class VMChildrenUpdate extends VMViewerUpdate implements IChildrenUpdate 
 	            }
 	            str.deleteCharAt(str.length()-1); // remove trailing \n
         	}
-        	DsfUIPlugin.debug(str.toString());        	
+        	DsfUiDebugOptions.trace(str.toString());        	
         }
         
         super.done();

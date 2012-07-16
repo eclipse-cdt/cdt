@@ -12,10 +12,10 @@
  *     Patrick Chuong (Texas Instruments) - Bug 329682
  *     Patrick Chuong (Texas Instruments) - Bug 328168
  *     Patrick Chuong (Texas Instruments) - Bug 353351
+ *     Jason Litton (Sage Electronic Engineering, LLC) - Added Dynamic Debug Tracing (Bug 385085)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.internal.ui.disassembly;
 
-import static org.eclipse.cdt.debug.internal.ui.disassembly.dsf.DisassemblyUtils.DEBUG;
 import static org.eclipse.cdt.debug.internal.ui.disassembly.dsf.DisassemblyUtils.internalError;
 
 import java.math.BigInteger;
@@ -60,6 +60,7 @@ import org.eclipse.cdt.dsf.debug.service.IStack;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMData;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
+import org.eclipse.cdt.dsf.internal.ui.DsfUiDebugOptions;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
@@ -170,7 +171,7 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 		
 		if (!dsfSessionId.equals(fDsfSessionId)) {
 			// switch to different session or initiate session
-			if (DEBUG) System.out.println("DisassemblyBackendDsf() " + dsfSessionId); //$NON-NLS-1$
+			if (DsfUiDebugOptions.DEBUG_DISASSEMBLY) DsfUiDebugOptions.trace("DisassemblyBackendDsf() " + dsfSessionId); //$NON-NLS-1$
 			fTargetContext= null;
 			fTargetFrameContext = null;
 			result.contextChanged = true;
@@ -330,7 +331,7 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 				if (!isCanceled() && frameData != null) {
 					final IAddress address= frameData.getAddress();
 					final BigInteger addressValue= address.getValue();
-					if (DEBUG) System.out.println("retrieveFrameAddress done "+ DisassemblyUtils.getAddressText(addressValue)); //$NON-NLS-1$
+					if (DsfUiDebugOptions.DEBUG_DISASSEMBLY) DsfUiDebugOptions.trace("retrieveFrameAddress done "+ DisassemblyUtils.getAddressText(addressValue)); //$NON-NLS-1$
 					fCallback.asyncExec(new Runnable() {
 						@Override
 						public void run() {
@@ -651,7 +652,7 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 			// return true to avoid a retry
 			return true;
 		}
-		if (DEBUG) System.out.println("insertDisassembly "+ DisassemblyUtils.getAddressText(startAddress)); //$NON-NLS-1$
+		if (DsfUiDebugOptions.DEBUG_DISASSEMBLY) DsfUiDebugOptions.trace("insertDisassembly "+ DisassemblyUtils.getAddressText(startAddress)); //$NON-NLS-1$
 		assert fCallback.getUpdatePending();
 		if (!fCallback.getUpdatePending()) {
 			// safe-guard in case something weird is going on
@@ -679,10 +680,10 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 					p.fValid = false;
 					fCallback.getDocument().addInvalidAddressRange(p);
 				} else if (p == null || address.compareTo(endAddress) > 0) {
-					if (DEBUG) System.out.println("Excess disassembly lines at " + DisassemblyUtils.getAddressText(address)); //$NON-NLS-1$
+					if (DsfUiDebugOptions.DEBUG_DISASSEMBLY) DsfUiDebugOptions.trace("Excess disassembly lines at " + DisassemblyUtils.getAddressText(address)); //$NON-NLS-1$
 					return insertedAnyAddress;
 				} else if (p.fValid) {
-					if (DEBUG) System.out.println("Excess disassembly lines at " + DisassemblyUtils.getAddressText(address)); //$NON-NLS-1$
+					if (DsfUiDebugOptions.DEBUG_DISASSEMBLY) DsfUiDebugOptions.trace("Excess disassembly lines at " + DisassemblyUtils.getAddressText(address)); //$NON-NLS-1$
 					if (!p.fAddressOffset.equals(address)) {
 						// override probably unaligned disassembly
 						p.fValid = false;
@@ -764,7 +765,7 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 			// return true to avoid a retry
 			return true;
 		}
-		if (DEBUG) System.out.println("insertDisassembly "+ DisassemblyUtils.getAddressText(startAddress)); //$NON-NLS-1$
+		if (DsfUiDebugOptions.DEBUG_DISASSEMBLY) DsfUiDebugOptions.trace("insertDisassembly "+ DisassemblyUtils.getAddressText(startAddress)); //$NON-NLS-1$
 		boolean updatePending = fCallback.getUpdatePending();
 		assert updatePending;
 		if (!updatePending) {
@@ -797,10 +798,10 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 						p.fValid = false;
 						fCallback.getDocument().addInvalidAddressRange(p);
 					} else if (p == null || address.compareTo(endAddress) > 0) {
-						if (DEBUG) System.out.println("Excess disassembly lines at " + DisassemblyUtils.getAddressText(address)); //$NON-NLS-1$
+						if (DsfUiDebugOptions.DEBUG_DISASSEMBLY) DsfUiDebugOptions.trace("Excess disassembly lines at " + DisassemblyUtils.getAddressText(address)); //$NON-NLS-1$
 						return insertedAnyAddress;
 					} else if (p.fValid) {
-						if (DEBUG) System.out.println("Excess disassembly lines at " + DisassemblyUtils.getAddressText(address)); //$NON-NLS-1$
+						if (DsfUiDebugOptions.DEBUG_DISASSEMBLY) DsfUiDebugOptions.trace("Excess disassembly lines at " + DisassemblyUtils.getAddressText(address)); //$NON-NLS-1$
 						if (!p.fAddressOffset.equals(address)) {
 							// override probably unaligned disassembly
 							p.fValid = false;

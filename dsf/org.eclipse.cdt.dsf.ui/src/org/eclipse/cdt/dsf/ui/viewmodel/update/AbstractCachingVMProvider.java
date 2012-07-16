@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     Jason Litton (Sage Electronic Engineering, LLC) - Added Dynamic Debug Tracing (Bug 385085)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.ui.viewmodel.update;
 
@@ -28,6 +29,7 @@ import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.internal.DsfPlugin;
 import org.eclipse.cdt.dsf.internal.LoggingUtils;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
+import org.eclipse.cdt.dsf.internal.ui.DsfUiDebugOptions;
 import org.eclipse.cdt.dsf.ui.concurrent.ViewerCountingRequestMonitor;
 import org.eclipse.cdt.dsf.ui.concurrent.ViewerDataRequestMonitor;
 import org.eclipse.cdt.dsf.ui.viewmodel.AbstractVMAdapter;
@@ -43,7 +45,6 @@ import org.eclipse.cdt.dsf.ui.viewmodel.properties.IPropertiesUpdate;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.PropertiesUpdateStatus;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.VMPropertiesUpdate;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate;
@@ -80,8 +81,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
     static boolean DEBUG_CACHE = false;
 
     static {
-        DEBUG_CACHE = DsfUIPlugin.DEBUG && "true".equals( //$NON-NLS-1$
-         Platform.getDebugOption("org.eclipse.cdt.dsf.ui/debug/vm/cache")); //$NON-NLS-1$
+        DEBUG_CACHE = DsfUiDebugOptions.DEBUG && DsfUiDebugOptions.DEBUG_VM_CACHE;
     }   
 
     private static final int MAX_CACHE_SIZE = 1000;
@@ -472,8 +472,10 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
             // Check if the cache entry has this request result cached. 
             if (entry.fHasChildren != null) {
                 // Cache Hit!  Just return the value.
-                if (DEBUG_CACHE && (DEBUG_PRESENTATION_ID == null || getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
-                    DsfUIPlugin.debug("cacheHitHasChildren(node = " + node + ", update = " + update + ", " + entry.fHasChildren + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                if (DsfUiDebugOptions.DEBUG && DsfUiDebugOptions.DEBUG_VM_CACHE && 
+                		(DsfUiDebugOptions.DEBUG_VM_PRESENTATION_ID == null || 
+                		getPresentationContext().getId().equals(DsfUiDebugOptions.DEBUG_VM_PRESENTATION_ID))) {
+                	DsfUiDebugOptions.trace("cacheHitHasChildren(node = " + node + ", update = " + update + ", " + entry.fHasChildren + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                 }
                 update.setHasChilren(entry.fHasChildren.booleanValue());
                 update.done();
@@ -490,8 +492,10 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
                                 // and the cache entry wasn't flushed in the mean time. 
                                 if(isSuccess()) {
                                     if (flushCounter == entry.fFlushCounter) {
-                                        if (DEBUG_CACHE && (DEBUG_PRESENTATION_ID == null || getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
-                                            DsfUIPlugin.debug("cacheSavedHasChildren(node = " + node + ", update = " + update + ", " + getData() + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                                        if (DsfUiDebugOptions.DEBUG && DsfUiDebugOptions.DEBUG_VM_CACHE && 
+                                        		(DsfUiDebugOptions.DEBUG_VM_PRESENTATION_ID == null 
+                                        		|| getPresentationContext().getId().equals(DsfUiDebugOptions.DEBUG_VM_PRESENTATION_ID))) {
+                                        	DsfUiDebugOptions.trace("cacheSavedHasChildren(node = " + node + ", update = " + update + ", " + getData() + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                                         }
                                         entry.fHasChildren = this.getData();
                                     }
@@ -521,8 +525,10 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
         // Check if the cache entry has this request result cached. 
         if(entry.fChildrenCount != null) {
             // Cache Hit!  Just return the value.
-            if (DEBUG_CACHE && (DEBUG_PRESENTATION_ID == null || getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
-                DsfUIPlugin.debug("cacheHitChildrenCount(node = " + node + ", update = " + update + ", " + entry.fChildrenCount + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+            if (DsfUiDebugOptions.DEBUG && DsfUiDebugOptions.DEBUG_VM_CACHE && 
+            		(DsfUiDebugOptions.DEBUG_VM_PRESENTATION_ID == null || 
+            		getPresentationContext().getId().equals(DsfUiDebugOptions.DEBUG_VM_PRESENTATION_ID))) {
+            	DsfUiDebugOptions.trace("cacheHitChildrenCount(node = " + node + ", update = " + update + ", " + entry.fChildrenCount + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
             }
             update.setChildCount(entry.fChildrenCount.intValue());
             update.done();
@@ -538,8 +544,10 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
                         // and the cache entry wasn't flushed in the mean time. 
                         if(isSuccess()) {
                             if (flushCounter == entry.fFlushCounter) {
-                                if (DEBUG_CACHE && (DEBUG_PRESENTATION_ID == null || getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
-                                    DsfUIPlugin.debug("cacheSavedChildrenCount(node = " + node + ", update = " + update + ", " + getData() + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                                if (DsfUiDebugOptions.DEBUG && DsfUiDebugOptions.DEBUG_VM_CACHE && 
+                                		(DsfUiDebugOptions.DEBUG_VM_PRESENTATION_ID == null || 
+                                		getPresentationContext().getId().equals(DsfUiDebugOptions.DEBUG_VM_PRESENTATION_ID))) {
+                                	DsfUiDebugOptions.trace("cacheSavedChildrenCount(node = " + node + ", update = " + update + ", " + getData() + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                                 }
                                 entry.fChildrenCount = this.getData();
                             }
@@ -581,8 +589,10 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
                             }
                         }
 
-                        if (DEBUG_CACHE && (DEBUG_PRESENTATION_ID == null || getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
-                            DsfUIPlugin.debug("cacheSavedChildren(node = " + node + ", update = " + update + ", children = {" + updateOffset + "->" + (updateOffset + getData().size()) + "})"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+                        if (DsfUiDebugOptions.DEBUG && DsfUiDebugOptions.DEBUG_VM_CACHE && 
+                        		(DsfUiDebugOptions.DEBUG_VM_PRESENTATION_ID == null || 
+                        		getPresentationContext().getId().equals(DsfUiDebugOptions.DEBUG_VM_PRESENTATION_ID))) {
+                        	DsfUiDebugOptions.trace("cacheSavedChildren(node = " + node + ", update = " + update + ", children = {" + updateOffset + "->" + (updateOffset + getData().size()) + "})"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
                         }
 
                         if (flushCounter == entry.fFlushCounter) {
@@ -605,8 +615,10 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
                     
                     @Override
                     protected void handleCancel() {
-                        if (DEBUG_CACHE && (DEBUG_PRESENTATION_ID == null || getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
-                            DsfUIPlugin.debug("cacheCanceledChildren(node = " + node + ", update = " + update + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
+                        if (DsfUiDebugOptions.DEBUG && DsfUiDebugOptions.DEBUG_VM_CACHE && 
+                        		(DsfUiDebugOptions.DEBUG_VM_PRESENTATION_ID == null || 
+                        		getPresentationContext().getId().equals(DsfUiDebugOptions.DEBUG_VM_PRESENTATION_ID))) {
+                        	DsfUiDebugOptions.trace("cacheCanceledChildren(node = " + node + ", update = " + update + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
                         }
                         super.handleCancel();
                     }
@@ -616,8 +628,10 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
             // The update requested all children.  Fill in all children assuming that 
             // the children array is complete.
 
-            if (DEBUG_CACHE && (DEBUG_PRESENTATION_ID == null || getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
-                DsfUIPlugin.debug("cacheHitChildren(node = " + node + ", update = " + update + ", children = " + entry.fChildren.keySet() + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ 
+            if (DsfUiDebugOptions.DEBUG && DsfUiDebugOptions.DEBUG_VM_CACHE && 
+            		(DsfUiDebugOptions.DEBUG_VM_PRESENTATION_ID == null || 
+            		getPresentationContext().getId().equals(DsfUiDebugOptions.DEBUG_VM_PRESENTATION_ID))) {
+            	DsfUiDebugOptions.trace("cacheHitChildren(node = " + node + ", update = " + update + ", children = " + entry.fChildren.keySet() + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ 
             }
 
             // The following assert should never fail given the first if statement. 
@@ -646,8 +660,10 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
                 }
             }
             
-            if (DEBUG_CACHE && (DEBUG_PRESENTATION_ID == null || getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
-                DsfUIPlugin.debug("cachePartialHitChildren(node = " + node + ", update = " + update + ", missing = " + childrenMissingFromCache + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ 
+            if (DsfUiDebugOptions.DEBUG && DsfUiDebugOptions.DEBUG_VM_CACHE && 
+            		(DsfUiDebugOptions.DEBUG_VM_PRESENTATION_ID == null || 
+            		getPresentationContext().getId().equals(DsfUiDebugOptions.DEBUG_VM_PRESENTATION_ID))) {
+            	DsfUiDebugOptions.trace("cachePartialHitChildren(node = " + node + ", update = " + update + ", missing = " + childrenMissingFromCache + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ 
             }
             
             if (childrenMissingFromCache.size() > 0) {
@@ -680,8 +696,10 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
                             protected void handleSuccess() {
                                 // Only save the children to the cahce if the entry wasn't flushed.
                                 if (flushCounter == entry.fFlushCounter) {
-                                    if (DEBUG_CACHE && (DEBUG_PRESENTATION_ID == null || getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
-                                        DsfUIPlugin.debug("cachePartialSaveChildren(node = " + node + ", update = " + update + ", saved = {" + offset + "->" + (offset + getData().size()) + "})"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ 
+                                	if (DsfUiDebugOptions.DEBUG && DsfUiDebugOptions.DEBUG_VM_CACHE && 
+                                    		(DsfUiDebugOptions.DEBUG_VM_PRESENTATION_ID == null || 
+                                    		getPresentationContext().getId().equals(DsfUiDebugOptions.DEBUG_VM_PRESENTATION_ID))) {
+                                		DsfUiDebugOptions.trace("cachePartialSaveChildren(node = " + node + ", update = " + update + ", saved = {" + offset + "->" + (offset + getData().size()) + "})"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ 
                                     }
                                     entry.ensureChildrenMap();
                                 }
@@ -720,8 +738,10 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
      * @param archive
      */
     private void flush(FlushMarkerKey flushKey) {
-        if (DEBUG_CACHE && (DEBUG_PRESENTATION_ID == null || getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
-            DsfUIPlugin.debug("cacheFlushing(" + flushKey + ")"); //$NON-NLS-1$ //$NON-NLS-2$  
+    	if (DsfUiDebugOptions.DEBUG && DsfUiDebugOptions.DEBUG_VM_CACHE && 
+        		(DsfUiDebugOptions.DEBUG_VM_PRESENTATION_ID == null || 
+        		getPresentationContext().getId().equals(DsfUiDebugOptions.DEBUG_VM_PRESENTATION_ID))) {
+    		DsfUiDebugOptions.trace("cacheFlushing(" + flushKey + ")"); //$NON-NLS-1$ //$NON-NLS-2$  
         }
         // For each entry that has the given context as a parent, perform the flush.
         // Iterate through the cache entries backwards.  This means that we will be
@@ -876,7 +896,9 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
         flush(new FlushMarkerKey(proxyStrategy.getRootElement(), elementTester));
         
         if (!proxyStrategy.isDisposed()) {
-            if (DEBUG_DELTA && (DEBUG_PRESENTATION_ID == null || getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
+        	if (DsfUiDebugOptions.DEBUG && DsfUiDebugOptions.DEBUG_VM_DELTA && 
+            		(DsfUiDebugOptions.DEBUG_VM_PRESENTATION_ID == null || 
+            		getPresentationContext().getId().equals(DsfUiDebugOptions.DEBUG_VM_PRESENTATION_ID))) {
                 trace(event, null, proxyStrategy, EventHandlerAction.processing);
             }
             proxyStrategy.createDelta(
@@ -884,7 +906,9 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
                 new DataRequestMonitor<IModelDelta>(getExecutor(), rm) {
                     @Override
                     public void handleSuccess() {
-                        if (DEBUG_DELTA && (DEBUG_PRESENTATION_ID == null || getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
+                    	if (DsfUiDebugOptions.DEBUG && DsfUiDebugOptions.DEBUG_VM_DELTA && 
+                        		(DsfUiDebugOptions.DEBUG_VM_PRESENTATION_ID == null || 
+                        		getPresentationContext().getId().equals(DsfUiDebugOptions.DEBUG_VM_PRESENTATION_ID))) {
                             trace(event, null, proxyStrategy, EventHandlerAction.firedDeltaFor);
                         }
 
@@ -1171,8 +1195,10 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
             // found in the map.
             if (entry.fProperties != null && entry.fProperties.keySet().containsAll(update.getProperties())) {
                 // Cache Hit!  Just return the value.
-                if (DEBUG_CACHE && (DEBUG_PRESENTATION_ID == null || getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
-                    DsfUIPlugin.debug("cacheHitProperties(node = " + node + ", update = " + update + ", " + entry.fProperties + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                if (DsfUiDebugOptions.DEBUG && DsfUiDebugOptions.DEBUG_VM_DELTA && 
+                		(DsfUiDebugOptions.DEBUG_VM_PRESENTATION_ID == null || 
+                		getPresentationContext().getId().equals(DsfUiDebugOptions.DEBUG_VM_PRESENTATION_ID))) {
+                	DsfUiDebugOptions.trace("cacheHitProperties(node = " + node + ", update = " + update + ", " + entry.fProperties + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                 }
                 if (entry.fProperties.containsKey(PROP_UPDATE_POLICY_ID)) {
                     entry.fProperties.put(PROP_UPDATE_POLICY_ID, getActiveUpdatePolicy().getID());
@@ -1307,8 +1333,10 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
                                 }
                             }
                             
-                            if (DEBUG_CACHE && (DEBUG_PRESENTATION_ID == null || getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
-                                DsfUIPlugin.debug("cacheSavedProperties(node = " + node + ", update = " + update + ", " + getData() + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                            if (DsfUiDebugOptions.DEBUG && DsfUiDebugOptions.DEBUG_VM_CACHE && 
+                            		(DsfUiDebugOptions.DEBUG_VM_PRESENTATION_ID == null || 
+                            		getPresentationContext().getId().equals(DsfUiDebugOptions.DEBUG_VM_PRESENTATION_ID))) {
+                            	DsfUiDebugOptions.trace("cacheSavedProperties(node = " + node + ", update = " + update + ", " + getData() + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                             }
                             
                             // Fill in requested properties and status into the update.
@@ -1374,7 +1402,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
      *            what phased of the event handling has beeb reached
      */
     private void trace(Object event, Object skippedOrCanceledEvent, IVMModelProxy proxy, EventHandlerAction action) {
-        assert DEBUG_DELTA;
+        assert DsfUiDebugOptions.DEBUG && DsfUiDebugOptions.DEBUG_VM_DELTA;
         StringBuilder str = new StringBuilder();
         str.append(DsfPlugin.getDebugTime());
         str.append(' ');
@@ -1388,7 +1416,7 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
         if (action != EventHandlerAction.received) {
             str.append(" for proxy " + LoggingUtils.toString(proxy) + ", whose root is " + LoggingUtils.toString(proxy.getRootElement())); //$NON-NLS-1$ //$NON-NLS-2$
         }
-        DsfUIPlugin.debug(str.toString());
+        DsfUiDebugOptions.trace(str.toString());
     }
 
 }

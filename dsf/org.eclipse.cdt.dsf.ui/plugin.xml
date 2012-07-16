@@ -870,5 +870,16 @@
          </targetClass>
       </column>
    </extension>
+   <extension
+         point="org.eclipse.ui.trace.traceComponents">
+      <component
+            id="org.eclipse.cdt.dsf.ui.component"
+            label="%cdt.dsf.ui.component.label">
+         <bundle
+               consumed="true"
+               name="org.eclipse.cdt.dsf.ui">
+         </bundle>
+      </component>
+   </extension>
 
 </plugin>

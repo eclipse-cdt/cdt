@@ -13,6 +13,7 @@
  *     Patrick Chuong (Texas Instruments) - Pin and Clone Supports (331781)
  *     Patrick Chuong (Texas Instruments) - Bug 364405
  *     Patrick Chuong (Texas Instruments) - Bug 369998
+ *     Jason Litton (Sage Electronic Engineering, LLC) - Added Dynamic Debug Tracing (Bug 385085)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.internal.ui.disassembly;
 
@@ -64,6 +65,7 @@ import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional.Disassembly
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional.IDisassemblyPart;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.util.HSL;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
+import org.eclipse.cdt.dsf.internal.ui.DsfUiDebugOptions;
 import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 import org.eclipse.cdt.internal.ui.dnd.TextViewerDragAdapter;
 import org.eclipse.core.commands.NotEnabledException;
@@ -77,7 +79,6 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
@@ -193,8 +194,6 @@ import com.ibm.icu.text.MessageFormat;
  */
 @SuppressWarnings("restriction")
 public abstract class DisassemblyPart extends WorkbenchPart implements IDisassemblyPart, IViewportListener, ITextPresentationListener, IDisassemblyPartCallback  {
-
-	final static boolean DEBUG = "true".equals(Platform.getDebugOption("org.eclipse.cdt.dsf.ui/debug/disassembly"));  //$NON-NLS-1$//$NON-NLS-2$
 
 	/**
 	 * Annotation model attachment key for breakpoint annotations.
@@ -1399,7 +1398,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		if (fDebugSessionId == null) {
 			return;
 		}
-		if (DEBUG) System.out.println("gotoAddress " + getAddressText(address)); //$NON-NLS-1$
+		if (DsfUiDebugOptions.DEBUG_DISASSEMBLY) DsfUiDebugOptions.trace("gotoAddress " + getAddressText(address)); //$NON-NLS-1$
 		if (fGotoAddressPending == PC_UNKNOWN) {
 			fGotoAddressPending = address;
 		}
@@ -1539,7 +1538,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		AddressRangePosition bestPosition = null;
 		int bestLine = -1;
 		BigInteger bestDistance = null;
-		if (DEBUG) System.out.println("DisassemblyPart.updateVisibleArea() called. There are " + fDocument.getInvalidAddressRanges().length + " invalid ranges to consider updating"); //$NON-NLS-1$ //$NON-NLS-2$
+		if (DsfUiDebugOptions.DEBUG_DISASSEMBLY) DsfUiDebugOptions.trace("DisassemblyPart.updateVisibleArea() called. There are " + fDocument.getInvalidAddressRanges().length + " invalid ranges to consider updating"); //$NON-NLS-1$ //$NON-NLS-2$
 		for (AddressRangePosition p : fDocument.getInvalidAddressRanges()) {
 			try {
 				int line = fDocument.getLineOfOffset(p.offset);
@@ -1566,7 +1565,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 			}
 		}
 		if (bestPosition != null) {
-			if (DEBUG) System.out.println("...and the best candidate is: " + bestPosition); //$NON-NLS-1$
+			if (DsfUiDebugOptions.DEBUG_DISASSEMBLY) DsfUiDebugOptions.trace("...and the best candidate is: " + bestPosition); //$NON-NLS-1$
 			int lines = fBufferZone+3;
 			BigInteger startAddress = bestPosition.fAddressOffset;
 			BigInteger endAddress = bestPosition.fAddressOffset.add(bestPosition.fAddressLength);
@@ -1597,11 +1596,11 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 			retrieveDisassembly(startAddress, endAddress, lines);
 		}
 		else {
-			if (DEBUG) {
-				System.out.println("...but alas we didn't deem any of them worth updating. They are:"); //$NON-NLS-1$
+			if (DsfUiDebugOptions.DEBUG_DISASSEMBLY) {
+				DsfUiDebugOptions.trace("...but alas we didn't deem any of them worth updating. They are:"); //$NON-NLS-1$
 				int i = 0;
 				for (AddressRangePosition p : fDocument.getInvalidAddressRanges()) {
-					System.out.println("[" + i++ + "] " + p); //$NON-NLS-1$ //$NON-NLS-2$
+					DsfUiDebugOptions.trace("[" + i++ + "] " + p); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
 		}
@@ -1653,8 +1652,8 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 			for (SourcePosition p : invalidSources) {
 				if (!p.fValid) {
 					insertSource(p);
-				} else if (DEBUG && fDocument.removeInvalidSourcePosition(p)) {
-					System.err.println("!!! valid source position in invalid source list at "+ getAddressText(p.fAddressOffset)); //$NON-NLS-1$
+				} else if (DsfUiDebugOptions.DEBUG_DISASSEMBLY && fDocument.removeInvalidSourcePosition(p)) {
+					DsfUiDebugOptions.trace("!!! valid source position in invalid source list at "+ getAddressText(p.fAddressOffset)); //$NON-NLS-1$
 				}
 			}
 		} finally {
@@ -1681,7 +1680,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
         startUpdate(new Runnable() {
             @Override
 			public void run() {
-                if (DEBUG) System.out.println("retrieveDisassembly "+file); //$NON-NLS-1$
+                if (DsfUiDebugOptions.DEBUG_DISASSEMBLY) DsfUiDebugOptions.trace("retrieveDisassembly "+file); //$NON-NLS-1$
                 fBackend.retrieveDisassembly(file, lines, fEndAddress, mixed, fShowSymbols, fShowDisassembly);
             }
         });
@@ -1691,7 +1690,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		if (fDebugSessionId == null) {
 			return;
 		}
-		if (DEBUG) System.out.println("retrieveDisassembly "+getAddressText(startAddress)+" "+lines+" lines"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		if (DsfUiDebugOptions.DEBUG_DISASSEMBLY) DsfUiDebugOptions.trace("retrieveDisassembly "+getAddressText(startAddress)+" "+lines+" lines"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		retrieveDisassembly(startAddress, endAddress, lines, fShowSource, true);
 	}
 
@@ -1720,7 +1719,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 				lineNumber= fBackend.getFrameLine();
 			}
 		}
-		if (DEBUG) System.out.println("Asking backend to retrieve disassembly: sa=" + startAddress + ",ea=" + endAddress + ",file=" + file + ",lineNumber=" + lineNumber + ",lines=" + lines); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+		if (DsfUiDebugOptions.DEBUG_DISASSEMBLY) DsfUiDebugOptions.trace("Asking backend to retrieve disassembly: sa=" + startAddress + ",ea=" + endAddress + ",file=" + file + ",lineNumber=" + lineNumber + ",lines=" + lines); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 		fBackend.retrieveDisassembly(startAddress, endAddress, file, lineNumber, lines, mixed, fShowSymbols, fShowDisassembly, linesHint);
 	}
 
@@ -1833,7 +1832,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	}
 
 	protected void setActive(boolean active) {
-		if (DEBUG) System.out.println("setActive("+ active +")"); //$NON-NLS-1$ //$NON-NLS-2$
+		if (DsfUiDebugOptions.DEBUG_DISASSEMBLY) DsfUiDebugOptions.trace("setActive("+ active +")"); //$NON-NLS-1$ //$NON-NLS-2$
 		fActive = active;
 		if (fActive) {
 			if (fRefreshAll) {
@@ -1945,7 +1944,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	}
 
 	private void debugContextChanged() {
-		if (DEBUG) System.out.println("DisassemblyPart.debugContextChanged()"); //$NON-NLS-1$
+		if (DsfUiDebugOptions.DEBUG_DISASSEMBLY) DsfUiDebugOptions.trace("DisassemblyPart.debugContextChanged()"); //$NON-NLS-1$
         fUpdateCount++;
 		fRunnableQueue.clear();
 		fUpdatePending = false;
@@ -2012,7 +2011,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 				fRefreshViewPending = false;
 				long now = System.currentTimeMillis();
 				if (now >= refreshViewScheduled) {
-					if (DEBUG) System.err.println("*** refreshing view ***"); //$NON-NLS-1$
+					if (DsfUiDebugOptions.DEBUG_DISASSEMBLY) DsfUiDebugOptions.trace("*** refreshing view ***"); //$NON-NLS-1$
 					
 					// save viewport position and frame info
 					BigInteger topAddress = getTopAddress();
@@ -2211,7 +2210,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	@Override
 	public void gotoFrame(int frame, BigInteger address) {
 		assert isGuiThread();
-		if (DEBUG) System.out.println("gotoFrame " + frame + " " + getAddressText(address)); //$NON-NLS-1$ //$NON-NLS-2$
+		if (DsfUiDebugOptions.DEBUG_DISASSEMBLY) DsfUiDebugOptions.trace("gotoFrame " + frame + " " + getAddressText(address)); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		// cache the last PC address
 		if (!isSyncWithActiveDebugContext()) {
@@ -2256,7 +2255,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 			if (!fUpdatePending) {
 				fGotoFramePending = false;
 				if (fBackend != null && fBackend.hasDebugContext() && fBackend.isSuspended()) {
-					if (DEBUG) System.out.println("retrieveFrameAddress "+frame); //$NON-NLS-1$
+					if (DsfUiDebugOptions.DEBUG_DISASSEMBLY) DsfUiDebugOptions.trace("retrieveFrameAddress "+frame); //$NON-NLS-1$
 					fUpdatePending = true;
 					fBackend.retrieveFrameAddress(fTargetFrame);
 				}
@@ -2395,7 +2394,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	}
 
 	private void addToPCHistory(AddressRangePosition pcPos) {
-		if (DEBUG) System.out.println("addToPCHistory "+getAddressText(pcPos.fAddressOffset)); //$NON-NLS-1$
+		if (DsfUiDebugOptions.DEBUG_DISASSEMBLY) DsfUiDebugOptions.trace("addToPCHistory "+getAddressText(pcPos.fAddressOffset)); //$NON-NLS-1$
 		if (fPCHistorySizeMax <= 1) {
 			return;
 		}

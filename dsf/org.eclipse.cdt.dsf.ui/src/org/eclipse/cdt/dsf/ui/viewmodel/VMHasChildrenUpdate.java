@@ -7,14 +7,14 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     Jason Litton (Sage Electronic Engineering, LLC) - Added Dynamic Debug Tracing (Bug 385085)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.ui.viewmodel;
 
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
-import org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.VMViewerUpdateTracing;
 import org.eclipse.cdt.dsf.internal.DsfPlugin;
 import org.eclipse.cdt.dsf.internal.LoggingUtils;
-import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
+import org.eclipse.cdt.dsf.internal.ui.DsfUiDebugOptions;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
@@ -62,9 +62,9 @@ public class VMHasChildrenUpdate extends VMViewerUpdate implements IHasChildrenU
         assert isCanceled() || fHasElemsRequestMonitor.getData() != null || !fHasElemsRequestMonitor.isSuccess();
 
         // trace our result
-        if (VMViewerUpdateTracing.DEBUG_VMUPDATES && !isCanceled() && VMViewerUpdateTracing.matchesFilterRegex(this.getClass())) {
+        if (DsfUiDebugOptions.DEBUG_VM_UPDATES && !isCanceled() && DsfUiDebugOptions.matchesFilterRegex(this.getClass())) {
         	final Boolean data = fHasElemsRequestMonitor.getData();
-			DsfUIPlugin.debug(DsfPlugin.getDebugTime() + " " //$NON-NLS-1$
+        	DsfUiDebugOptions.trace(DsfPlugin.getDebugTime() + " " //$NON-NLS-1$
 					+ LoggingUtils.toString(this) + " marked done; element = " //$NON-NLS-1$
 					+ LoggingUtils.toString(getElement())
 					+ "\n   has children = " //$NON-NLS-1$

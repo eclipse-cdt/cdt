@@ -8,6 +8,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Ericsson			  - Modified for caching commands corresponding to multiple execution contexts 
+ *     Jason Litton (Sage Electronic Engineering, LLC) - Added dynamic debug tracing (bug 385076)
  *******************************************************************************/
  
 package org.eclipse.cdt.dsf.debug.service.command;
@@ -27,10 +28,10 @@ import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
+import org.eclipse.cdt.dsf.internal.DsfDebugOptions;
 import org.eclipse.cdt.dsf.internal.DsfPlugin;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 
 /**
@@ -172,11 +173,9 @@ public class CommandCache implements ICommandListener
     
     private ArrayList<CommandInfo> fPendingQWaitingForCoalescedCompletion = new ArrayList<CommandInfo>();
     
-    private static boolean DEBUG = false;
 	private static final String CACHE_TRACE_IDENTIFIER = " [CHE]"; //$NON-NLS-1$
 	private static String BLANK_CACHE_TRACE_IDENTIFIER = ""; //$NON-NLS-1$
 	static {
-        DEBUG = "true".equals(Platform.getDebugOption("org.eclipse.cdt.dsf/debugCache"));  //$NON-NLS-1$//$NON-NLS-2$
 		for (int i=0; i<CACHE_TRACE_IDENTIFIER.length(); i++) {
 			BLANK_CACHE_TRACE_IDENTIFIER += " "; //$NON-NLS-1$
 		}
@@ -187,7 +186,7 @@ public class CommandCache implements ICommandListener
     }
     
     private void debug(String message, String prefix) {
-    	if (DEBUG) {
+    	if (DsfDebugOptions.DEBUG_CACHE) {
     		// The message can span more than one line
     		String[] multiLine = message.split("\n"); //$NON-NLS-1$
     		
@@ -211,13 +210,7 @@ public class CommandCache implements ICommandListener
     			message = DsfPlugin.getDebugTime() + traceIdentifier + 
     						" " + multiLine[i]; //$NON-NLS-1$
 
-    			// Make sure our lines are not too long
-    			while (message.length() > 100) {
-    				String partial = message.substring(0, 100) + "\\"; //$NON-NLS-1$
-    				message = message.substring(100);
-    				System.out.println(partial);
-    			}
-    			System.out.println(message);
+    			DsfDebugOptions.trace(message);
     		}
     	}
     }

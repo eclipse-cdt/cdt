@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.RejectedExecutionException;
 
+import org.eclipse.cdt.dsf.internal.DsfDebugOptions;
 import org.eclipse.cdt.dsf.internal.DsfPlugin;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
@@ -160,7 +161,7 @@ public class RequestMonitor extends DsfExecutable {
             fCanceledListener = null;
         }
         
-        if (DEBUG_MONITORS) {
+        if (DsfDebugOptions.DEBUG_MONITORS) {
         	createMonitorBacktrace();
         }
     }

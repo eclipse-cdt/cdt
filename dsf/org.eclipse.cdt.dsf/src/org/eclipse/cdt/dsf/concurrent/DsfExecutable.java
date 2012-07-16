@@ -7,14 +7,14 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     Jason Litton (Sage Electronic Engineering, LLC) - Added dynamic debug tracing (bug 385076)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.concurrent;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.cdt.dsf.internal.DsfPlugin;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.cdt.dsf.internal.DsfDebugOptions;
 
 /**
  * Instrumented base class for
@@ -52,26 +52,6 @@ import org.eclipse.core.runtime.Platform;
  */
 @ThreadSafe
 public class DsfExecutable {
-    /** 
-     * Flag indicating that tracing of the DSF executor is enabled.  It enables
-     * storing of the "creator" information as well as tracing of disposed
-     * runnables that have not been submitted to the executor.  
-     */
-    static boolean DEBUG_EXECUTOR = false;
-
-	/**
-	 * Flag indicating that monitor objects should be instrumented. A monitor is
-	 * an object that is usually constructed as an anonymous inner classes and
-	 * is used when making an asynchronous call--one that needs to return some
-	 * result or at least notify its caller when it has completed. These objects
-	 * usually end up getting chained together at runtime, forming what is
-	 * effectively a very disjointed code path. When this trace option is
-	 * enabled, these objects are given a String field at construction time that
-	 * contains the instantiation backtrace. This turns out to be a fairly
-	 * dependable alternative to the standard program stack trace, which is of
-	 * virtually no help when debugging asynchronous, monitor-assisted code.
-	 */
-    static boolean DEBUG_MONITORS = false;
 
     /** 
      * Flag indicating that assertions are enabled.  It enables storing of the
@@ -80,12 +60,7 @@ public class DsfExecutable {
     static boolean ASSERTIONS_ENABLED = false;
 
     static {
-        assert (ASSERTIONS_ENABLED = true) == true;
-        DEBUG_EXECUTOR = DsfPlugin.DEBUG && "true".equals( //$NON-NLS-1$
-                Platform.getDebugOption("org.eclipse.cdt.dsf/debug/executor")); //$NON-NLS-1$
-        
-        DEBUG_MONITORS = DsfPlugin.DEBUG && "true".equals( //$NON-NLS-1$
-                Platform.getDebugOption("org.eclipse.cdt.dsf/debug/monitors")); //$NON-NLS-1$          
+    	assert (ASSERTIONS_ENABLED = true) == true;
     }
 
 	/**
@@ -112,7 +87,7 @@ public class DsfExecutable {
     @SuppressWarnings("unchecked")
     public DsfExecutable() {
         // Use assertion flag (-ea) to jre to avoid affecting performance when not debugging.
-        if (ASSERTIONS_ENABLED || DEBUG_EXECUTOR || DEBUG_MONITORS) {
+        if (ASSERTIONS_ENABLED || DsfDebugOptions.DEBUG_EXECUTOR || DsfDebugOptions.DEBUG_MONITORS) {
             // Find the runnable/callable that is currently running.
             DefaultDsfExecutor executor = DefaultDsfExecutor.fThreadToExecutorMap.get(Thread.currentThread()); 
             if (executor != null) {

@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     Jason Litton (Sage Electronic Engineering, LLC) - Added dynamic debug tracing (bug 385076)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.concurrent;
 
@@ -23,11 +24,11 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
+import org.eclipse.cdt.dsf.internal.DsfDebugOptions;
 import org.eclipse.cdt.dsf.internal.DsfPlugin;
 import org.eclipse.cdt.dsf.internal.LoggingUtils;
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 
 /**
@@ -125,17 +126,20 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
         }
     }
     
-    //
-    // Utilities used for tracing.
-    //
-    protected static boolean DEBUG_EXECUTOR = false;
-    protected static String DEBUG_EXECUTOR_NAME = ""; //$NON-NLS-1$
+    /**
+     * Utilities used for tracing.
+     * @deprecated please use compatible variables in
+     * org.eclipse.cdt.dsf.internal.DsfDebugOptions to use
+     * dynamic debug tracing
+     */
+    @Deprecated
+    protected static boolean DEBUG_EXECUTOR = DsfDebugOptions.DEBUG_EXECUTOR;
+    @Deprecated
+    protected static String DEBUG_EXECUTOR_NAME = DsfDebugOptions.DEBUG_EXECUTOR_NAME;
     protected static boolean ASSERTIONS_ENABLED = false;
     static {
-        DEBUG_EXECUTOR = DsfPlugin.DEBUG && "true".equals( //$NON-NLS-1$
-            Platform.getDebugOption("org.eclipse.cdt.dsf/debug/executor")); //$NON-NLS-1$
-        DEBUG_EXECUTOR_NAME = DsfPlugin.DEBUG 
-            ? Platform.getDebugOption("org.eclipse.cdt.dsf/debug/executorName") : ""; //$NON-NLS-1$ //$NON-NLS-2$
+        DEBUG_EXECUTOR_NAME = DsfDebugOptions.DEBUG 
+            ? DsfDebugOptions.DEBUG_EXECUTOR_NAME : ""; //$NON-NLS-1$
         assert (ASSERTIONS_ENABLED = true) == true;
     }  
 
@@ -227,7 +231,7 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
             fCurrentlyExecuting = this;
 
             // Write to console only if tracing is enabled (as opposed to tracing or assertions).
-            if (DEBUG_EXECUTOR && ("".equals(DEBUG_EXECUTOR_NAME) || fName.equals(DEBUG_EXECUTOR_NAME))) { //$NON-NLS-1$
+            if (DsfDebugOptions.DEBUG_EXECUTOR && ("".equals(DsfDebugOptions.DEBUG_EXECUTOR_NAME) || fName.equals(DsfDebugOptions.DEBUG_EXECUTOR_NAME))) { //$NON-NLS-1$
                 StringBuilder traceBuilder = new StringBuilder();
     
                 // Record the time
@@ -339,7 +343,7 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
                 }
                                 
                 // Finally write out to console
-                DsfPlugin.debug(traceBuilder.toString());
+                DsfDebugOptions.trace(traceBuilder.toString());
             }
         }
 
@@ -356,7 +360,7 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
             fRunnable = runnable;
 
             // Check if executable wasn't executed already.
-            if (DEBUG_EXECUTOR && fRunnable instanceof DsfExecutable) {
+            if (DsfDebugOptions.DEBUG_EXECUTOR && fRunnable instanceof DsfExecutable) {
                 assert !((DsfExecutable)fRunnable).getSubmitted() : "Executable was previously executed."; //$NON-NLS-1$
                 ((DsfExecutable)fRunnable).setSubmitted();
             }
@@ -421,7 +425,7 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
 
     @Override
     public <V> ScheduledFuture<V> schedule(Callable<V> callable, long delay, TimeUnit unit) {
-        if(DEBUG_EXECUTOR || ASSERTIONS_ENABLED) {
+        if(DsfDebugOptions.DEBUG_EXECUTOR || ASSERTIONS_ENABLED) {
             if ( !(callable instanceof TracingWrapper) ) {
                 callable = new TracingWrapperCallable<V>(callable);
             }
@@ -430,7 +434,7 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
     }
      @Override
      public ScheduledFuture<?> schedule(Runnable command, long delay, TimeUnit unit) {
-         if(DEBUG_EXECUTOR || ASSERTIONS_ENABLED) {
+         if(DsfDebugOptions.DEBUG_EXECUTOR || ASSERTIONS_ENABLED) {
              if ( !(command instanceof TracingWrapper) ) {
                  command = new TracingWrapperRunnable(command);
              }
@@ -440,7 +444,7 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
 
     @Override
     public ScheduledFuture<?> scheduleAtFixedRate(Runnable command, long initialDelay, long period, TimeUnit unit) {
-        if(DEBUG_EXECUTOR || ASSERTIONS_ENABLED) {
+        if(DsfDebugOptions.DEBUG_EXECUTOR || ASSERTIONS_ENABLED) {
             command = new TracingWrapperRunnable(command);
         }
         return super.scheduleAtFixedRate(command, initialDelay, period, unit);
@@ -448,7 +452,7 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
 
     @Override
     public ScheduledFuture<?> scheduleWithFixedDelay(Runnable command, long initialDelay, long delay, TimeUnit unit) {
-        if(DEBUG_EXECUTOR || ASSERTIONS_ENABLED) {
+        if(DsfDebugOptions.DEBUG_EXECUTOR || ASSERTIONS_ENABLED) {
             command = new TracingWrapperRunnable(command);
         }
         return super.scheduleWithFixedDelay(command, initialDelay, delay, unit);
@@ -456,7 +460,7 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
     
     @Override
     public void execute(Runnable command) {
-        if(DEBUG_EXECUTOR || ASSERTIONS_ENABLED) {
+        if(DsfDebugOptions.DEBUG_EXECUTOR || ASSERTIONS_ENABLED) {
             command = new TracingWrapperRunnable(command);
         }
         super.execute(command);
@@ -464,7 +468,7 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
     
     @Override
     public Future<?> submit(Runnable command) {
-        if(DEBUG_EXECUTOR || ASSERTIONS_ENABLED) {
+        if(DsfDebugOptions.DEBUG_EXECUTOR || ASSERTIONS_ENABLED) {
             command = new TracingWrapperRunnable(command);
         }
         return super.submit(command);
@@ -472,7 +476,7 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
     
     @Override
     public <T> Future<T> submit(Callable<T> callable) {
-        if(DEBUG_EXECUTOR || ASSERTIONS_ENABLED) {
+        if(DsfDebugOptions.DEBUG_EXECUTOR || ASSERTIONS_ENABLED) {
             callable = new TracingWrapperCallable<T>(callable);
         }
         return super.submit(callable);
@@ -480,7 +484,7 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
     
     @Override
     public <T> Future<T> submit(Runnable command, T result) {
-        if(DEBUG_EXECUTOR || ASSERTIONS_ENABLED) {
+        if(DsfDebugOptions.DEBUG_EXECUTOR || ASSERTIONS_ENABLED) {
             command = new TracingWrapperRunnable(command);
         }
         return super.submit(command, result);
@@ -488,16 +492,16 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
     
     @Override
 	public void shutdown() {
-    	if (DEBUG_EXECUTOR && ("".equals(DEBUG_EXECUTOR_NAME) || fName.equals(DEBUG_EXECUTOR_NAME))) { //$NON-NLS-1$    		
-    		DsfPlugin.debug(DsfPlugin.getDebugTime() + " Executor (" + ((DsfThreadFactory)getThreadFactory()).fThreadName + ") is being shut down. Already submitted tasks will be executed, new ones will not.");	 //$NON-NLS-1$ //$NON-NLS-2$
+    	if (DsfDebugOptions.DEBUG_EXECUTOR && ("".equals(DsfDebugOptions.DEBUG_EXECUTOR_NAME) || fName.equals(DsfDebugOptions.DEBUG_EXECUTOR_NAME))) { //$NON-NLS-1$
+    		DsfDebugOptions.trace(DsfPlugin.getDebugTime() + " Executor (" + ((DsfThreadFactory)getThreadFactory()).fThreadName + ") is being shut down. Already submitted tasks will be executed, new ones will not.");	 //$NON-NLS-1$ //$NON-NLS-2$
     	}
     	super.shutdown();
     }
 
     @Override
 	public List<Runnable> shutdownNow() {
-    	if (DEBUG_EXECUTOR && ("".equals(DEBUG_EXECUTOR_NAME) || fName.equals(DEBUG_EXECUTOR_NAME))) { //$NON-NLS-1$
-    		DsfPlugin.debug(DsfPlugin.getDebugTime() + " Executor (" + ((DsfThreadFactory)getThreadFactory()).fThreadName + ") is being shut down. No queued or new tasks will be executed, and will attempt to cancel active ones.");	 //$NON-NLS-1$ //$NON-NLS-2$
+    	if (DsfDebugOptions.DEBUG_EXECUTOR && ("".equals(DsfDebugOptions.DEBUG_EXECUTOR_NAME) || fName.equals(DsfDebugOptions.DEBUG_EXECUTOR_NAME))) { //$NON-NLS-1$
+    		DsfDebugOptions.trace(DsfPlugin.getDebugTime() + " Executor (" + ((DsfThreadFactory)getThreadFactory()).fThreadName + ") is being shut down. No queued or new tasks will be executed, and will attempt to cancel active ones.");	 //$NON-NLS-1$ //$NON-NLS-2$
     	}
     	return super.shutdownNow();
     }

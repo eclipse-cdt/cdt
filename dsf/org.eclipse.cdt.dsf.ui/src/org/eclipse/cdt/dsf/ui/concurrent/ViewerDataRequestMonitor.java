@@ -16,7 +16,7 @@ import java.util.concurrent.Executor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutable;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
-import org.eclipse.cdt.dsf.internal.DsfPlugin;
+import org.eclipse.cdt.dsf.internal.DsfDebugOptions;
 import org.eclipse.cdt.dsf.ui.viewmodel.VMViewerUpdate;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
@@ -33,7 +33,7 @@ public class ViewerDataRequestMonitor<V> extends DataRequestMonitor<V> {
     /**
      * Same as {@link DsfExecutable#DEBUG_MONITORS} 
      */
-    static private boolean DEBUG_MONITORS = DsfPlugin.DEBUG && "true".equals( //$NON-NLS-1$
+    static private boolean DEBUG_MONITORS = DsfDebugOptions.DEBUG && "true".equals( //$NON-NLS-1$
             Platform.getDebugOption("org.eclipse.cdt.dsf/debug/monitors")); //$NON-NLS-1$
     
 

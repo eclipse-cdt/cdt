@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Anton Leherbauer (Wind River Systems) - Adapted for CDT
+ *     Jason Litton (Sage Electronic Engineering, LLC) - Added support for dynamic debug tracing
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
@@ -54,6 +55,7 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexName;
+import org.eclipse.cdt.ui.CUIDebugOptions;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 
@@ -185,9 +187,6 @@ public class SemanticHighlightings {
 	 */
 	public static final String OVERLOADED_OPERATOR= "overloadedOperator"; //$NON-NLS-1$
 
-
-	/** Init debugging mode */
-	private static final boolean DEBUG= "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.cdt.ui/debug/SemanticHighlighting"));  //$NON-NLS-1$//$NON-NLS-2$
 
 	/**
 	 * Semantic highlightings
@@ -1588,12 +1587,12 @@ public class SemanticHighlightings {
 
 		SemanticHighlighting[] semanticHighlightings= getSemanticHighlightings();
 		for (SemanticHighlighting semanticHighlighting : semanticHighlightings) {
-			store.setDefault(SemanticHighlightings.getEnabledPreferenceKey(semanticHighlighting), DEBUG || semanticHighlighting.isEnabledByDefault());
+			store.setDefault(SemanticHighlightings.getEnabledPreferenceKey(semanticHighlighting), CUIDebugOptions.DEBUG_SEMANTIC_HIGHLIGHTING || semanticHighlighting.isEnabledByDefault());
 			PreferenceConverter.setDefault(store, SemanticHighlightings.getColorPreferenceKey(semanticHighlighting), semanticHighlighting.getDefaultTextColor());
 			store.setDefault(SemanticHighlightings.getBoldPreferenceKey(semanticHighlighting), semanticHighlighting.isBoldByDefault());
 			store.setDefault(SemanticHighlightings.getItalicPreferenceKey(semanticHighlighting), semanticHighlighting.isItalicByDefault());
 			store.setDefault(SemanticHighlightings.getStrikethroughPreferenceKey(semanticHighlighting), semanticHighlighting.isStrikethroughByDefault());
-			store.setDefault(SemanticHighlightings.getUnderlinePreferenceKey(semanticHighlighting), DEBUG || semanticHighlighting.isUnderlineByDefault());
+			store.setDefault(SemanticHighlightings.getUnderlinePreferenceKey(semanticHighlighting), CUIDebugOptions.DEBUG_SEMANTIC_HIGHLIGHTING || semanticHighlighting.isUnderlineByDefault());
 		}
 	}
 

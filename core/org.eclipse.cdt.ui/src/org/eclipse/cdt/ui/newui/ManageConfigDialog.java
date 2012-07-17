@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2009 IBM Corporation and others.
+ * Copyright (c) 2002, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM Rational Software - Initial API and implementation
+ * Jason Litton (Sage Electronic Engineering, LLC) - Added support for dynamic debug tracing
  *******************************************************************************/
 package org.eclipse.cdt.ui.newui;
 
@@ -37,6 +38,7 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.cdt.core.model.util.CDTListComparator;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.ui.CUIDebugOptions;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.newui.Messages;
@@ -196,7 +198,7 @@ public class ManageConfigDialog extends Dialog {
 						dialog.setShell(getShell());
 						return dialog;
 					} catch (CoreException e) {
-						System.out.println("Cannot create dialog: " + e.getLocalizedMessage()); //$NON-NLS-1$
+						CUIDebugOptions.trace("Cannot create dialog: " + e.getLocalizedMessage()); //$NON-NLS-1$
 						return null; 
 					}
 				}					

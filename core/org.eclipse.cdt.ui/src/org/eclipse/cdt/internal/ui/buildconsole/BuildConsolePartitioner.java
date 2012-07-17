@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2010 QNX Software Systems and others.
+ * Copyright (c) 2002, 2012 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *     Andrew Gvozdev (Quoin Inc.)  - Copy build log (bug 306222)
  *     Alex Collins (Broadcom Corp.) - Global console
  *     Sergey Prigogin (Google) - Performance improvements
+ *     Jason Litton (Sage Electronic Engineering, LLC) - Added support for dynamic debug tracing
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.buildconsole;
 
@@ -46,6 +47,7 @@ import org.eclipse.cdt.core.ConsoleOutputStream;
 import org.eclipse.cdt.core.ProblemMarkerInfo;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.core.resources.ResourcesUtil;
+import org.eclipse.cdt.ui.CUIDebugOptions;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.preferences.BuildConsolePreferencePage;
@@ -817,7 +819,7 @@ public class BuildConsolePartitioner
 	/** This method is useful for future debugging and bug-fixing */
 	@SuppressWarnings({ "unused", "nls" })
 	private void printDocumentPartitioning() {
-		System.out.println("Document partitioning: ");
+		CUIDebugOptions.trace("Document partitioning: ");
 		for (ITypedRegion tr : fPartitions) {
 			BuildConsolePartition p = (BuildConsolePartition) tr;
 			int start = p.getOffset();
@@ -842,7 +844,7 @@ public class BuildConsolePartitioner
 			if (text.endsWith("\n")) {
 				text = text.substring(0, text.length() - 1);
 			}
-			System.out.println("    " + isError + " " + start + "-" + end + ":[" + text + "]");
+			CUIDebugOptions.trace("    " + isError + " " + start + "-" + end + ":[" + text + "]");
 		}
 	}
 

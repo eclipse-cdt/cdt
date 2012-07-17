@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2002, 2009 IBM Corporation and others.
+ *  Copyright (c) 2002, 2012 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  *  Contributors:
  *      Rational Software - Initial API and implementation
  *      Markus Schorn (Wind River Systems)
+ *      Jason Litton (Sage Electronic Engineering, LLC) - Added support for dynamic debug tracing
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring;
 
@@ -45,6 +46,7 @@ import org.eclipse.cdt.core.model.IBufferChangedListener;
 import org.eclipse.cdt.core.model.IOpenable;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.ui.CUIDebugOptions;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.core.model.IBufferFactory;
@@ -100,7 +102,6 @@ public class DocumentAdapter implements IBuffer, IAdaptable, IDocumentListener {
 		}
 	}
 
-	private static final boolean DEBUG_LINE_DELIMITERS= true;
 	public static final IBuffer NULL_BUFFER = new IBuffer() {
 		@Override
 		public void addBufferChangedListener(IBufferChangedListener listener) {}
@@ -254,7 +255,7 @@ public class DocumentAdapter implements IBuffer, IAdaptable, IDocumentListener {
 	 */
 	@Override
 	public void append(String text) {
-		if (DEBUG_LINE_DELIMITERS) {
+		if (CUIDebugOptions.DEBUG_LINE_DELIMITERS) {
 			validateLineDelimiters(text);
 		}
 		fReplaceCmd.replace(fDocument.getLength(), 0, text);		
@@ -396,7 +397,7 @@ public class DocumentAdapter implements IBuffer, IAdaptable, IDocumentListener {
 	 */
 	@Override
 	public void replace(int position, int length, String text) {
-		if (DEBUG_LINE_DELIMITERS) {
+		if (CUIDebugOptions.DEBUG_LINE_DELIMITERS) {
 			validateLineDelimiters(text);
 		}
 		fReplaceCmd.replace(position, length, text);
@@ -435,7 +436,7 @@ public class DocumentAdapter implements IBuffer, IAdaptable, IDocumentListener {
 				fSetCmd.set(""); //$NON-NLS-1$
 		} else {
 			// set only if different
-			if (DEBUG_LINE_DELIMITERS) {
+			if (CUIDebugOptions.DEBUG_LINE_DELIMITERS) {
 				validateLineDelimiters(contents);
 			}
 			

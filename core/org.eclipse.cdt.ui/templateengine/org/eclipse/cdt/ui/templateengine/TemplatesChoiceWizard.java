@@ -30,6 +30,7 @@ import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
 
 import org.eclipse.cdt.core.templateengine.TemplateInfo;
 import org.eclipse.cdt.core.templateengine.process.ProcessFailureException;
+import org.eclipse.cdt.ui.CUIDebugOptions;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 
@@ -41,7 +42,6 @@ import org.eclipse.cdt.ui.CUIPlugin;
  *
  */
 public abstract class TemplatesChoiceWizard extends Wizard implements ITemplatesListProvider, IWorkbenchWizard {
-	private static final boolean DEBUG = false;
 	private TemplateListSelectionPage templateListSelectionPage;
 	protected IWorkbench workbench;
 	protected IStructuredSelection selection;
@@ -134,7 +134,7 @@ public abstract class TemplatesChoiceWizard extends Wizard implements ITemplates
 			TemplateEngineUIUtil.showError(statuses[0].getMessage(), statuses[0].getException());
 			return false;
 		}
-		if (DEBUG) {
+		if (CUIDebugOptions.DEBUG) {
 			String msg = Messages.getString("TemplatesChoiceWizard.3"); //$NON-NLS-1$
 			TemplateEngineUIUtil.showStatusDialog(msg, new MultiStatus(CUIPlugin.getPluginId(), IStatus.OK, statuses, msg, null));
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *     Bryan Wilkinson (QNX)
  *     Markus Schorn (Wind River Systems)
  *     Kirk Beitz (Nokia)
+ *     Jason Litton (Sage Electronic Engineering, LLC) - Added support for dynamic debug tracing
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.contentassist;
 
@@ -57,6 +58,7 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 
+import org.eclipse.cdt.ui.CUIDebugOptions;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.text.contentassist.ContentAssistInvocationContext;
@@ -83,7 +85,6 @@ import org.eclipse.cdt.internal.ui.util.Messages;
  * @since 4.0
  */
 public class ContentAssistProcessor implements IContentAssistProcessor {
-	private static final boolean DEBUG= "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.cdt.ui/debug/ResultCollector"));  //$NON-NLS-1$//$NON-NLS-2$
 
 	/**
 	 * Dialog settings key for the "all categories are disabled" warning dialog. See
@@ -206,7 +207,7 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 	 */
 	@Override
 	public final ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int offset) {
-		long start= DEBUG ? System.currentTimeMillis() : 0;
+		long start= CUIDebugOptions.DEBUG_RESULT_COLLECTOR ? System.currentTimeMillis() : 0;
 		
 		if (isAutoActivated() && !verifyAutoActivation(viewer, offset)) {
 			return NO_PROPOSALS;
@@ -222,25 +223,26 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 			return null;
 
 		try {
-			long setup= DEBUG ? System.currentTimeMillis() : 0;
+			long setup= CUIDebugOptions.DEBUG_RESULT_COLLECTOR ? System.currentTimeMillis() : 0;
 			
 			monitor.subTask(ContentAssistMessages.ContentAssistProcessor_collecting_proposals);
 			List<ICompletionProposal> proposals= collectProposals(viewer, offset, monitor, context);
-			long collect= DEBUG ? System.currentTimeMillis() : 0;
+			long collect= CUIDebugOptions.DEBUG_RESULT_COLLECTOR ? System.currentTimeMillis() : 0;
 
 			monitor.subTask(ContentAssistMessages.ContentAssistProcessor_sorting_proposals);
 			List<ICompletionProposal> filtered= filterAndSortProposals(proposals, monitor, context);
 			fNumberOfComputedResults= filtered.size();
-			long filter= DEBUG ? System.currentTimeMillis() : 0;
+			long filter= CUIDebugOptions.DEBUG_RESULT_COLLECTOR ? System.currentTimeMillis() : 0;
 			
 			ICompletionProposal[] result= filtered.toArray(new ICompletionProposal[filtered.size()]);
 			monitor.done();
 			
-			if (DEBUG) {
-				System.err.println("Code Assist Stats (" + result.length + " proposals)"); //$NON-NLS-1$ //$NON-NLS-2$
-				System.err.println("Code Assist (setup):\t" + (setup - start) ); //$NON-NLS-1$
-				System.err.println("Code Assist (collect):\t" + (collect - setup) ); //$NON-NLS-1$
-				System.err.println("Code Assist (sort):\t" + (filter - collect) ); //$NON-NLS-1$
+			if (CUIDebugOptions.DEBUG_RESULT_COLLECTOR) {
+				//added newlines to end of messages so trace() will print to sys.err
+				CUIDebugOptions.trace("Code Assist Stats (" + result.length + " proposals)\n"); //$NON-NLS-1$ //$NON-NLS-2$
+				CUIDebugOptions.trace("Code Assist (setup):\t" + (setup - start) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
+				CUIDebugOptions.trace("Code Assist (collect):\t" + (collect - setup) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
+				CUIDebugOptions.trace("Code Assist (sort):\t" + (filter - collect) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			
 			return result;

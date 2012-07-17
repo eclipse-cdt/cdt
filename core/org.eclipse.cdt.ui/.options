@@ -8,3 +8,9 @@ org.eclipse.cdt.ui/debug/SemanticHighlighting=false
 
 # Enables debug information related to folding
 org.eclipse.cdt.ui/debug/folding=false
+
+# Enables debug information for the result collector
+org.eclipse.cdt.ui/debug/ResultCollector=false
+
+# Enables debugging of printing
+org.eclipse.cdt.ui/debug/LineDelimiters=true

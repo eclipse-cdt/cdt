@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Intel Corporation, QNX Software Systems, and others.
+ * Copyright (c) 2007, 2012 Intel Corporation, QNX Software Systems, and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *     Andrew Gvozdev
  *     QNX Software Systems - [271628] NPE in configs for project that failed to convert
  *     James Blackburn (Broadcom Corp.)
+ *     Jason Litton (Sage Electronic Engineering, LLC) - Added support for dynamic debug tracing
  *******************************************************************************/
 package org.eclipse.cdt.ui.newui;
 
@@ -92,6 +93,7 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.core.settings.model.MultiItemsHolder;
 import org.eclipse.cdt.ui.CDTSharedImages;
+import org.eclipse.cdt.ui.CUIDebugOptions;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
@@ -969,7 +971,7 @@ implements
 						else
 							out = cf.createFileDescription(p, out);
 					} catch (CoreException e) {
-						System.out.println(Messages.AbstractPage_10 +
+						CUIDebugOptions.trace(Messages.AbstractPage_10 +
 								p.toOSString() + "\n" + e.getLocalizedMessage()); //$NON-NLS-1$
 					}
 				}
@@ -1087,7 +1089,7 @@ implements
 			if (element.getName().equals(ELEMENT_NAME)) {
 				if (loadTab(element, parent)) return;
 			} else {
-				System.out.println(Messages.AbstractPage_13 + element.getName());
+				CUIDebugOptions.trace(Messages.AbstractPage_13 + element.getName());
 			}
 		}
 	}
@@ -1109,7 +1111,7 @@ implements
 		try {
 			page = (ICPropertyTab) element.createExecutableExtension(CLASS_NAME);
 		} catch (CoreException e) {
-			System.out.println(Messages.AbstractPage_14 +
+			CUIDebugOptions.trace(Messages.AbstractPage_14 +
 					e.getLocalizedMessage());
 			return false;
 		}

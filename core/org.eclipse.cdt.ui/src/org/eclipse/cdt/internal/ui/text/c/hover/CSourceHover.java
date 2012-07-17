@@ -9,6 +9,7 @@
  *     QNX Software Systems - Initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
  *     Sergey Prigogin (Google)
+ *     Jason Litton (Sage Electronic Engineering, LLC) - Added support for dynamic debug tracing
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.c.hover;
 
@@ -94,6 +95,7 @@ import org.eclipse.cdt.core.parser.KeywordSetKey;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserLanguage;
+import org.eclipse.cdt.ui.CUIDebugOptions;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IWorkingCopyManager;
 import org.eclipse.cdt.ui.text.ICPartitions;
@@ -111,7 +113,6 @@ import org.eclipse.cdt.internal.ui.util.EditorUtility;
  * A text hover presenting the source of the element under the cursor.
  */
 public class CSourceHover extends AbstractCEditorTextHover {
-	private static final boolean DEBUG = false;
 
 	protected static class SingletonRule implements ISchedulingRule {
 		public static final ISchedulingRule INSTANCE = new SingletonRule();
@@ -204,7 +205,7 @@ public class CSourceHover extends AbstractCEditorTextHover {
 								
 								if (binding instanceof IProblemBinding) {
 									// Report problem as source comment.
-									if (DEBUG) {
+									if (CUIDebugOptions.DEBUG) {
 										IProblemBinding problem= (IProblemBinding) binding;
 										fSource= "/* Problem:\n" + //$NON-NLS-1$
 												" * " + problem.getMessage() +  //$NON-NLS-1$
@@ -314,7 +315,7 @@ public class CSourceHover extends AbstractCEditorTextHover {
 			int nodeLength= fileLocation.getNodeLength();
 			
 			String fileName= fileLocation.getFileName();
-			if (DEBUG) System.out.println("[CSourceHover] Computing source for " + name + " in " + fileName);  //$NON-NLS-1$//$NON-NLS-2$
+			if (CUIDebugOptions.DEBUG) CUIDebugOptions.trace("[CSourceHover] Computing source for " + name + " in " + fileName);  //$NON-NLS-1$//$NON-NLS-2$
 			IPath location= Path.fromOSString(fileName);
 			LocationKind locationKind= LocationKind.LOCATION;
 			if (name instanceof IASTName && !name.isReference()) {
@@ -392,7 +393,7 @@ public class CSourceHover extends AbstractCEditorTextHover {
 
 			} catch (BadLocationException e) {
 				// Ignore - should not happen anyway
-				if (DEBUG) e.printStackTrace();
+				if (CUIDebugOptions.DEBUG) e.printStackTrace();
 			} finally {
 				mgr.disconnect(location, LocationKind.LOCATION, fMonitor);
 			}

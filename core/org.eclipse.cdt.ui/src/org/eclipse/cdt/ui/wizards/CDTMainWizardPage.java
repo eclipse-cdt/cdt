@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Intel Corporation and others.
+ * Copyright (c) 2007, 2012 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Intel Corporation - initial API and implementation
  *     IBM Corporation
+ *     Jason Litton (Sage Electronic Engineering, LLC) - Added support for dynamic debug tracing
  *******************************************************************************/
 package org.eclipse.cdt.ui.wizards;
 	import java.net.URI;
@@ -47,6 +48,7 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 
 import org.eclipse.cdt.ui.CDTSharedImages;
+import org.eclipse.cdt.ui.CUIDebugOptions;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;
 import org.eclipse.cdt.ui.newui.PageLayout;
@@ -284,7 +286,7 @@ import org.eclipse.cdt.internal.ui.newui.Messages;
 						try {
 							w = (CNewWizard) element.createExecutableExtension(CLASS_NAME);
 						} catch (CoreException e) {
-							System.out.println(Messages.CMainWizardPage_5 + e.getLocalizedMessage());
+							CUIDebugOptions.trace(Messages.CMainWizardPage_5 + e.getLocalizedMessage());
 							return null;
 						}
 						if (w == null) return null;

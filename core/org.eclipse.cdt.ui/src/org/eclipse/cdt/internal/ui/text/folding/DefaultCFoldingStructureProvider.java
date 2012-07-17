@@ -11,6 +11,7 @@
  *     Markus Schorn (Wind River Systems)
  *     Elazar Leibovich (IDF) - Code folding of compound statements (bug 174597)
  *     Andrew Ferguson (Symbian)
+ *     Jason Litton (Sage Electronic Engineering, LLC) - Added support for dynamic debug tracing
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.text.folding;
@@ -89,6 +90,7 @@ import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.IProblem;
+import org.eclipse.cdt.ui.CUIDebugOptions;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.text.ICPartitions;
@@ -859,8 +861,6 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 		}
 	}
 
-	private final static boolean DEBUG= "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.cdt.ui/debug/folding"));  //$NON-NLS-1$//$NON-NLS-2$;
-
 	private ITextEditor fEditor;
 	private ProjectionListener fProjectionListener;
 	protected ICElement fInput;
@@ -952,7 +952,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 	 * </p>
 	 */
 	protected void handleProjectionEnabled() {
-		if (DEBUG) System.out.println("DefaultCFoldingStructureProvider.handleProjectionEnabled()"); //$NON-NLS-1$
+		if (CUIDebugOptions.DEBUG_FOLDING) CUIDebugOptions.trace("DefaultCFoldingStructureProvider.handleProjectionEnabled()"); //$NON-NLS-1$
 		// projectionEnabled messages are not always paired with projectionDisabled
 		// i.e. multiple enabled messages may be sent out.
 		// we have to make sure that we disable first when getting an enable
@@ -994,7 +994,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 	 */
 	@Override
 	public final void initialize() {
-		if (DEBUG) System.out.println("DefaultCFoldingStructureProvider.initialize()"); //$NON-NLS-1$
+		if (CUIDebugOptions.DEBUG_FOLDING) CUIDebugOptions.trace("DefaultCFoldingStructureProvider.initialize()"); //$NON-NLS-1$
 		fInitialReconcilePending= true;
 		fCursorPosition= -1;
 		update(createInitialContext());
@@ -1068,7 +1068,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 
 			List<Tuple> annotations= previous.get(key);
 			if (annotations == null) {
-				if (DEBUG) System.out.println("DefaultCFoldingStructureProvider.update() new annotation " + newAnnotation); //$NON-NLS-1$
+				if (CUIDebugOptions.DEBUG_FOLDING) CUIDebugOptions.trace("DefaultCFoldingStructureProvider.update() new annotation " + newAnnotation); //$NON-NLS-1$
 
 				additions.put(newAnnotation, newPosition);
 
@@ -1085,7 +1085,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 							existingPosition.setOffset(newPosition.getOffset());
 							existingPosition.setLength(newPosition.getLength());
 							if (collapseChanged) {
-								if (DEBUG) System.out.println("DefaultCFoldingStructureProvider.update() change annotation " + newAnnotation); //$NON-NLS-1$
+								if (CUIDebugOptions.DEBUG_FOLDING) CUIDebugOptions.trace("DefaultCFoldingStructureProvider.update() change annotation " + newAnnotation); //$NON-NLS-1$
 								if (newAnnotation.isCollapsed())
 									existingAnnotation.markCollapsed();
 								else
@@ -1099,7 +1099,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 					}
 				}
 				if (!matched) {
-					if (DEBUG) System.out.println("DefaultCFoldingStructureProvider.update() new annotation " + newAnnotation); //$NON-NLS-1$
+					if (CUIDebugOptions.DEBUG_FOLDING) CUIDebugOptions.trace("DefaultCFoldingStructureProvider.update() new annotation " + newAnnotation); //$NON-NLS-1$
 
 					additions.put(newAnnotation, newPosition);
 				}
@@ -1114,7 +1114,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 			int size= list.size();
 			for (int i= 0; i < size; i++) {
 				CProjectionAnnotation annotation= list.get(i).annotation;
-				if (DEBUG) System.out.println("DefaultCFoldingStructureProvider.update() deleted annotation " + annotation); //$NON-NLS-1$
+				if (CUIDebugOptions.DEBUG_FOLDING) CUIDebugOptions.trace("DefaultCFoldingStructureProvider.update() deleted annotation " + annotation); //$NON-NLS-1$
 				deletions.add(annotation);
 			}
 		}
@@ -1125,7 +1125,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 		deletions.toArray(removals);
 		Annotation[] changes= new Annotation[updates.size()];
 		updates.toArray(changes);
-		if (DEBUG) System.out.println("DefaultCFoldingStructureProvider.update() "+removals.length+" deleted, "+additions.size()+" added, "+changes.length+" changed"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		if (CUIDebugOptions.DEBUG_FOLDING) CUIDebugOptions.trace("DefaultCFoldingStructureProvider.update() "+removals.length+" deleted, "+additions.size()+" added, "+changes.length+" changed"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		ctx.getModel().modifyAnnotations(removals, additions, changes);
     }
 
@@ -1171,11 +1171,11 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 				}
 
 				deletionIterator.remove();
-				if (DEBUG) System.out.println("DefaultCFoldingStructureProvider.update() changed annotation " + deleted); //$NON-NLS-1$
+				if (CUIDebugOptions.DEBUG_FOLDING) CUIDebugOptions.trace("DefaultCFoldingStructureProvider.update() changed annotation " + deleted); //$NON-NLS-1$
 				newChanges.add(deleted);
 
 				if (addToDeletions) {
-					if (DEBUG) System.out.println("DefaultCFoldingStructureProvider.update() deleted annotation " + match.annotation); //$NON-NLS-1$
+					if (CUIDebugOptions.DEBUG_FOLDING) CUIDebugOptions.trace("DefaultCFoldingStructureProvider.update() deleted annotation " + match.annotation); //$NON-NLS-1$
 					newDeletions.add(match.annotation);
 				}
 			}

@@ -4573,5 +4573,16 @@
           name="%RefreshExclusionContributor.name">
     </exclusionContributor>
  </extension>
+ <extension
+       point="org.eclipse.ui.trace.traceComponents">
+    <component
+          id="org.eclipse.cdt.ui.component"
+          label="%cdt.ui.component.label">
+       <bundle
+             consumed="true"
+             name="org.eclipse.cdt.ui">
+       </bundle>
+    </component>
+ </extension>
 
 </plugin>

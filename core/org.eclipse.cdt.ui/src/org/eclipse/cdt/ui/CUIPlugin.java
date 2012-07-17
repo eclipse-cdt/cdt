@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2011 IBM Corporation and others.
+ * Copyright (c) 2003, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
  *     Anton Leherbauer (Wind River Systems)
  *     Jeff Johnston (Red Hat Inc.)
  *     Sergey Prigogin (Google)
+ *     Jason Litton (Sage Electronic Engineering, LLC) - Added support for dynamic debug tracing
  *******************************************************************************/
 package org.eclipse.cdt.ui;
 
@@ -140,8 +141,6 @@ public class CUIPlugin extends AbstractUIPlugin {
 
 	private static CUIPlugin fgCPlugin;
 	private static ResourceBundle fgResourceBundle;
-
-	private static final String CONTENTASSIST = CUIPlugin.PLUGIN_ID + "/debug/contentassist" ; //$NON-NLS-1$
 
 	/**
 	 * The id of the C perspective
@@ -321,12 +320,36 @@ public class CUIPlugin extends AbstractUIPlugin {
 	}
 
 	public static void log(IStatus status) {
-		getDefault().getLog().log(status);
+		//build error message and stack trace
+		StringBuffer errorBuffer = new StringBuffer();
+		errorBuffer.append(status.getMessage() + "@ "); //$NON-NLS-1$
+		errorBuffer.append(status.getPlugin() + "\n"); //$NON-NLS-1$
+		Throwable e = status.getException();
+		if (e != null) {
+			String eol = System.getProperty("line.separator"); //$NON-NLS-1$
+			if (eol == null) {
+				eol = "\n"; //$NON-NLS-1$
+			}
+			StackTraceElement[] elements = e.getStackTrace();
+			for (int i = 0; i < elements.length; i++) {
+				errorBuffer.append(String.format("    [%2d] %s.%s (%s.%d)%s", //$NON-NLS-1$
+						i,
+						elements[i].getClassName(),
+						elements[i].getMethodName(),
+						elements[i].getFileName(),
+						elements[i].getLineNumber(),
+						eol));
+			}
+		}
+		//pass for logging
+		CUIDebugOptions.trace(errorBuffer.toString());
 	}
 
 	/**
 	 * @noreference This method is not intended to be referenced by clients.
+	 * @deprecated Use CUIDebugOptions.trace instead
 	 */
+	@Deprecated
 	public static void logError(String message) {
 		log(message, null);
 	}
@@ -548,7 +571,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-
+		new CUIDebugOptions(context);
 		//Set debug tracing options
 		configurePluginDebugOptions();
 
@@ -717,11 +740,14 @@ public class CUIPlugin extends AbstractUIPlugin {
 		return EditorsUI.getSharedTextColors();
 	}
 
+	/**
+	 * @deprecated use org.eclipse.cdt.ui.CUIDebugOptions to take
+	 * advantage of dynamic debugging
+	 */
+	@Deprecated
 	public void configurePluginDebugOptions() {
-		if (isDebugging()) {
-			String option = Platform.getDebugOption(CONTENTASSIST);
-			if (option != null)
-				Util.VERBOSE_CONTENTASSIST = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
+		if (CUIDebugOptions.DEBUG) {
+			Util.VERBOSE_CONTENTASSIST = CUIDebugOptions.DEBUG_CONTENT_ASSIST;
 		}
 	}
 

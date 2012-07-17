@@ -7,6 +7,7 @@
  *
  *  Contributors:
  *  IBM Rational Software - Initial API and implementation
+ *  Jason Litton (Sage Electronic Engineering, LLC) - Added dynamic debug tracing
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
@@ -42,6 +43,7 @@ import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCoreDebugOptions;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable;
 import org.eclipse.cdt.managedbuilder.internal.buildmodel.DescriptionBuilder;
@@ -314,6 +316,11 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	private static final int TICKS_STREAM_PROGRESS_MONITOR = 1 * PROGRESS_MONITOR_SCALE;
 	private static final int TICKS_DELETE_MARKERS = 1 * PROGRESS_MONITOR_SCALE;
 
+	/**
+	 * @deprecated use org.eclipse.cdt.managedbuilder.core.ManagedBuilderCoreDebugOptions.DEBUG_BUILDER
+	 * to use dynamic debug options
+	 */
+	@Deprecated
 	public static boolean VERBOSE = false;
 
 	// Local variables
@@ -322,14 +329,14 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	protected List<IResource> resourcesToBuild;
 	private IConsole console;
 	public static void outputTrace(String resourceName, String message) {
-		if (VERBOSE) {
-			System.out.println(TRACE_HEADER + resourceName + TRACE_FOOTER + message + NEWLINE);
+		if (ManagedBuilderCoreDebugOptions.DEBUG_BUILDER) {
+			ManagedBuilderCoreDebugOptions.trace(TRACE_HEADER + resourceName + TRACE_FOOTER + message + NEWLINE);
 		}
 	}
 
 	public static void outputError(String resourceName, String message) {
-		if (VERBOSE) {
-			System.err.println(ERROR_HEADER + resourceName + TRACE_FOOTER + message + NEWLINE);
+		if (ManagedBuilderCoreDebugOptions.DEBUG_BUILDER) {
+			ManagedBuilderCoreDebugOptions.trace(ERROR_HEADER + resourceName + TRACE_FOOTER + message + NEWLINE);
 		}
 	}
 

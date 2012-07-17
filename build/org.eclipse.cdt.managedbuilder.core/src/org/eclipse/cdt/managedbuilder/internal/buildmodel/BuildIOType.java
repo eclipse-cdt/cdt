@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Intel Corporation and others.
+ * Copyright (c) 2006, 2012 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * Jason Litton (Sage Electronic Engineering, LLC) - Added dynamic debug tracing
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.buildmodel;
 
@@ -19,6 +20,7 @@ import org.eclipse.cdt.managedbuilder.buildmodel.IBuildStep;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IInputType;
 import org.eclipse.cdt.managedbuilder.core.IOutputType;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCoreDebugOptions;
 
 public class BuildIOType implements IBuildIOType {
 	private BuildStep fStep;
@@ -64,7 +66,7 @@ public class BuildIOType implements IBuildIOType {
 	public void addResource(BuildResource rc){
 		fResources.add(rc);
 		rc.addToArg(this);
-		if(DbgUtil.DEBUG)
+		if(ManagedBuilderCoreDebugOptions.DEBUG_BUILD_MODEL)
 			DbgUtil.trace("resource " + DbgUtil.resourceName(rc) + " added as "  	//$NON-NLS-1$	//$NON-NLS-2$
 					+ (fIsInput ? "input" : "output")	//$NON-NLS-1$	//$NON-NLS-2$
 					+ " to the action " + DbgUtil.stepName(fStep));	//$NON-NLS-1$
@@ -76,7 +78,7 @@ public class BuildIOType implements IBuildIOType {
 		fResources.remove(rc);
 		rc.removeFromArg(this);
 
-		if(DbgUtil.DEBUG)
+		if(ManagedBuilderCoreDebugOptions.DEBUG_BUILD_MODEL)
 			DbgUtil.trace("resource " + DbgUtil.resourceName(rc) + " removed as "  	//$NON-NLS-1$	//$NON-NLS-2$
 					+ (fIsInput ? "input" : "output")	//$NON-NLS-1$	//$NON-NLS-2$
 					+ " from the action " + DbgUtil.stepName(fStep));	//$NON-NLS-1$

@@ -9,7 +9,7 @@
  *     Ericsson - initial API and implementation
  *     Marc Khouzam (Ericsson) - Add support for multi-attach (Bug 293679)
  *******************************************************************************/
-package org.eclipse.cdt.dsf.gdb.internal.ui.actions;
+package org.eclipse.cdt.dsf.gdb.internal.ui.commands;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.RejectedExecutionException;
 
+import org.eclipse.cdt.debug.core.model.IConnectHandler;
 import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
@@ -33,7 +34,6 @@ import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMData;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
-import org.eclipse.cdt.dsf.gdb.actions.IConnect;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.cdt.dsf.gdb.internal.ui.launching.LaunchUIMessages;
 import org.eclipse.cdt.dsf.gdb.internal.ui.launching.ProcessPrompter.PrompterInfo;
@@ -45,6 +45,7 @@ import org.eclipse.cdt.dsf.gdb.service.IGDBProcesses.IGdbThreadDMData;
 import org.eclipse.cdt.dsf.gdb.service.SessionType;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
+import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -53,14 +54,18 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IRequest;
 import org.eclipse.debug.core.IStatusHandler;
+import org.eclipse.debug.core.commands.AbstractDebugCommand;
+import org.eclipse.debug.core.commands.IDebugCommandRequest;
+import org.eclipse.debug.core.commands.IEnabledStateRequest;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.progress.UIJob;
 
-public class GdbConnectCommand implements IConnect {
+public class GdbConnectCommand extends AbstractDebugCommand implements IConnectHandler {
     
 	private final DsfExecutor fExecutor;
     private final DsfServicesTracker fTracker;
@@ -85,7 +90,9 @@ public class GdbConnectCommand implements IConnect {
     }
 
     @Override
-    public boolean canConnect() {
+	protected boolean isExecutable(Object[] targets, IProgressMonitor monitor, IEnabledStateRequest request)
+        throws CoreException 
+    {
        	Query<Boolean> canConnectQuery = new Query<Boolean>() {
             @Override
             public void execute(DataRequestMonitor<Boolean> rm) {
@@ -242,15 +249,9 @@ public class GdbConnectCommand implements IConnect {
     }
 
     @Override
-    public void connect(RequestMonitor requestMonitor)
-    {
+	protected void doExecute(Object[] targets, IProgressMonitor monitor, IRequest request) throws CoreException {
     	// Create a fake rm to avoid null pointer exceptions
-    	final RequestMonitor rm;
-    	if (requestMonitor == null) {
-    		rm = new RequestMonitor(fExecutor, null);
-    	} else {
-    		rm = requestMonitor;
-    	}
+    	final RequestMonitor rm = new RequestMonitor(fExecutor, null);
     	
     	// Don't wait for the operation to finish because this
     	// method can be called from the UI thread, and it will
@@ -482,6 +483,19 @@ public class GdbConnectCommand implements IConnect {
     	}
 
     }
+    
+    @Override
+	protected Object getTarget(Object element) {
+    	if (element instanceof IDMVMContext) {
+    		return element;
+    	}
+        return null;
+    }
+
+    @Override
+	protected boolean isRemainEnabled(IDebugCommandRequest request) {
+		return false;
+	}
 }
 
 

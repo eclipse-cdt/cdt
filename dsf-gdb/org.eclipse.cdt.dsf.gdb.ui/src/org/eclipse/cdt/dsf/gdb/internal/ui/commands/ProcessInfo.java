@@ -8,7 +8,7 @@
  * Contributors:
  *     Ericsson - initial API and implementation          
  *******************************************************************************/
-package org.eclipse.cdt.dsf.gdb.internal.ui.actions;
+package org.eclipse.cdt.dsf.gdb.internal.ui.commands;
 
 import org.eclipse.cdt.dsf.concurrent.Immutable;
 import org.eclipse.cdt.dsf.gdb.launching.IProcessExtendedInfo;

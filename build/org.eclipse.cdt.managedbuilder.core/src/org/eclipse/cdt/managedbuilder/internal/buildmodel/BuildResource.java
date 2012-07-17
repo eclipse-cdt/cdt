@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 Intel Corporation and others.
+ * Copyright (c) 2006, 2012 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * Jason Litton (Sage Electronic Engineering, LLC) - Added dynamic debug tracing
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.buildmodel;
 
@@ -21,6 +22,7 @@ import org.eclipse.cdt.managedbuilder.buildmodel.IBuildDescription;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildIOType;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildResource;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildStep;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCoreDebugOptions;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
@@ -54,7 +56,7 @@ public class BuildResource implements IBuildResource {
 
 		info.resourceCreated(this);
 
-		if(DbgUtil.DEBUG)
+		if(ManagedBuilderCoreDebugOptions.DEBUG_BUILD_MODEL)
 			DbgUtil.trace("resource " + fullWorkspacePath + " created");	//$NON-NLS-1$	//$NON-NLS-2$
 	}
 	/* (non-Javadoc)
@@ -119,7 +121,7 @@ public class BuildResource implements IBuildResource {
 	}
 
 	public void setRemoved(boolean removed) {
-		if(DbgUtil.DEBUG){
+		if(ManagedBuilderCoreDebugOptions.DEBUG_BUILD_MODEL){
 			if(removed)
 				DbgUtil.trace("REMOVED state: resource " + DbgUtil.resourceName(this)); //$NON-NLS-1$
 		}
@@ -152,7 +154,7 @@ public class BuildResource implements IBuildResource {
 
 				String externalizedErr = BuildModelMessages.getFormattedString("BuildResource.0", rcs); //$NON-NLS-1$
 
-				if(DbgUtil.DEBUG){
+				if(ManagedBuilderCoreDebugOptions.DEBUG_BUILD_MODEL){
 					err = err + externalizedErr + "curent producer: " + DbgUtil.dumpStep(fProducerArg.getStep()) + "\n producer attempt: " + DbgUtil.dumpStep(arg.getStep());	//$NON-NLS-1$	//$NON-NLS-2$
 				}
 
@@ -197,7 +199,7 @@ public class BuildResource implements IBuildResource {
 	BuildIOType[][] remove(){
 		BuildIOType types[][] = clear();
 
-		if(DbgUtil.DEBUG)
+		if(ManagedBuilderCoreDebugOptions.DEBUG_BUILD_MODEL)
 			DbgUtil.trace("resource " + DbgUtil.resourceName(this) + " removed");	//$NON-NLS-1$	//$NON-NLS-2$
 
 		fInfo.resourceRemoved(this);

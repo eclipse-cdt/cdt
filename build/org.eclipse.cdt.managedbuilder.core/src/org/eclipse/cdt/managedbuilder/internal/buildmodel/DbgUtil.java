@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Intel Corporation and others.
+ * Copyright (c) 2021 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * Jason Litton (Sage Electronic Engineering, LLC) - Added dynamic debug tracing
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.buildmodel;
 
@@ -18,11 +19,17 @@ import org.eclipse.cdt.managedbuilder.buildmodel.IBuildIOType;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildResource;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildStep;
 import org.eclipse.cdt.managedbuilder.core.ITool;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCoreDebugOptions;
 
 /*
  * this is the build description debug utility class
  */
 public class DbgUtil {
+	/**
+	 * @deprecated use org.eclipse.cdt.managedbuilder.core.ManagedBuilderCoreDebugOptions.DEBUG_BUILD_MODEL
+	 * to use dynamic debug options
+	 */
+	@Deprecated
 	public static boolean DEBUG = false;
 	private static PrintStream out = System.out;
 	private static final String TRACE_PREFIX = "BuildModel[ ";	//$NON-NLS-1$
@@ -30,7 +37,7 @@ public class DbgUtil {
 
 	
 	public static void trace(String str){
-		out.println(formatMsg(str));
+		ManagedBuilderCoreDebugOptions.trace(formatMsg(str));
 	}
 	
 	public static String formatMsg(String msg){

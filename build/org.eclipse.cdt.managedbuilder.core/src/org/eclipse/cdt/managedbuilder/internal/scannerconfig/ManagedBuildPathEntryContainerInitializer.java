@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * Jason Litton (Sage Electronic Engineering, LLC) - Added dynamic debug tracing
  *******************************************************************************/
 
 package org.eclipse.cdt.managedbuilder.internal.scannerconfig;
@@ -14,6 +15,7 @@ package org.eclipse.cdt.managedbuilder.internal.scannerconfig;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.PathEntryContainerInitializer;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCoreDebugOptions;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 
@@ -23,6 +25,11 @@ import org.eclipse.core.runtime.IPath;
 public class ManagedBuildPathEntryContainerInitializer extends PathEntryContainerInitializer {
 	private static final String TRACE_FOOTER = "]: ";	//$NON-NLS-1$
 	private static final String TRACE_HEADER = "PathEntryContainerInitializer trace [";	//$NON-NLS-1$
+	/**
+	 * @deprecated use org.eclipse.cdt.managedbuilder.core.ManagedBuilderCoreDebugOptions.DEBUG_PATH_ENTRY_INIT
+	 * to use dynamic debug options
+	 */
+	@Deprecated
 	public static boolean VERBOSE = false;
 
 	/**
@@ -38,8 +45,8 @@ public class ManagedBuildPathEntryContainerInitializer extends PathEntryContaine
 	 */
 	@Override
 	public void initialize(IPath containerPath, ICProject project) throws CoreException {
-		if (VERBOSE) {
-			System.out.println(TRACE_HEADER + 
+		if (ManagedBuilderCoreDebugOptions.DEBUG_PATH_ENTRY_INIT) {
+			ManagedBuilderCoreDebugOptions.trace(TRACE_HEADER + 
 					project.getProject().getName() + 
 					TRACE_FOOTER + 
 					"Initializing path entry container");	//$NON-NLS-1$

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 Intel Corporation and others.
+ * Copyright (c) 2006, 2012 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  * Intel Corporation - Initial API and implementation
  * IBM Corporation
+ * Jason Litton (Sage Electronic Engineering, LLC) - Added dynamic debug tracing
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.buildmodel;
 
@@ -51,6 +52,7 @@ import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCoreDebugOptions;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
@@ -270,7 +272,7 @@ public class BuildDescription implements IBuildDescription {
 //		private Set<IBuildStep> fStepSet = new HashSet<IBuildStep>();
 //
 //		public int visit(IBuildStep action) throws CoreException {
-//			if(DbgUtil.DEBUG){
+//			if(ManagedBuilderCoreDebugOptions.DEBUG_BUILD_MODEL){
 //				DbgUtil.trace("StepCollector: visiting step " + DbgUtil.stepName(action));	//$NON-NLS-1$
 //			}
 //			fStepSet.add(action);
@@ -302,7 +304,7 @@ public class BuildDescription implements IBuildDescription {
 			boolean rebuild = action.needsRebuild();
 			boolean removed = action.isRemoved();
 
-			if(DbgUtil.DEBUG){
+			if(ManagedBuilderCoreDebugOptions.DEBUG_BUILD_MODEL){
 				DbgUtil.trace(">>visiting step " + DbgUtil.stepName(a));	//$NON-NLS-1$
 			}
 
@@ -331,12 +333,12 @@ public class BuildDescription implements IBuildDescription {
 			if(!removed && !rebuild){
 				for (BuildResource rc : rcs) {
 					if(rc.needsRebuild()){
-						if(DbgUtil.DEBUG)
+						if(ManagedBuilderCoreDebugOptions.DEBUG_BUILD_MODEL)
 							DbgUtil.trace("resource " + locationToRel(rc.getLocation()).toString() + " needs rebuild");	//$NON-NLS-1$	//$NON-NLS-2$
 						rebuild = true;
 						break;
 					} else if(rc.isRemoved()){
-						if(DbgUtil.DEBUG)
+						if(ManagedBuilderCoreDebugOptions.DEBUG_BUILD_MODEL)
 							DbgUtil.trace("resource " + locationToRel(rc.getLocation()).toString() + " is removed");	//$NON-NLS-1$ 	//$NON-NLS-2$
 						rebuild = true;
 						break;
@@ -345,33 +347,33 @@ public class BuildDescription implements IBuildDescription {
 			}
 
 			if(removed){
-				if(DbgUtil.DEBUG)
+				if(ManagedBuilderCoreDebugOptions.DEBUG_BUILD_MODEL)
 					DbgUtil.trace("action to be removed");	//$NON-NLS-1$
 
 				action.setRemoved();
 
 				for (IBuildResource outRc : action.getOutputResources()) {
-					if(DbgUtil.DEBUG)
+					if(ManagedBuilderCoreDebugOptions.DEBUG_BUILD_MODEL)
 						DbgUtil.trace("setting remove state for resource " + locationToRel(outRc.getLocation()).toString());	//$NON-NLS-1$
 
 					((BuildResource)outRc).setRemoved(true);
 				}
 
 			} else if(rebuild){
-				if(DbgUtil.DEBUG)
+				if(ManagedBuilderCoreDebugOptions.DEBUG_BUILD_MODEL)
 					DbgUtil.trace("action needs rebuild");	//$NON-NLS-1$
 
 				action.setRebuildState(true);
 
 				for (IBuildResource outRc : action.getOutputResources()) {
-					if(DbgUtil.DEBUG)
+					if(ManagedBuilderCoreDebugOptions.DEBUG_BUILD_MODEL)
 						DbgUtil.trace("setting rebuild state for resource " + locationToRel(outRc.getLocation()).toString());	//$NON-NLS-1$
 
 					((BuildResource)outRc).setRebuildState(true);
 				}
 			}
 
-			if(DbgUtil.DEBUG)
+			if(ManagedBuilderCoreDebugOptions.DEBUG_BUILD_MODEL)
 				DbgUtil.trace("<<leaving..");	//$NON-NLS-1$
 
 			return VISIT_CONTINUE;
@@ -422,7 +424,7 @@ public class BuildDescription implements IBuildDescription {
 	}
 
 	public void synchRebuildState() throws CoreException{
-		if(DbgUtil.DEBUG)
+		if(ManagedBuilderCoreDebugOptions.DEBUG_BUILD_MODEL)
 			DbgUtil.trace("--->Synch started");	//$NON-NLS-1$
 
 		BuildDescriptionManager.accept(new RebuildStateSynchronizer(), this, true);
@@ -430,7 +432,7 @@ public class BuildDescription implements IBuildDescription {
 		if(fOutputStep.needsRebuild())
 			fInputStep.setRebuildState(true);//needed for the pre-build step invocation
 
-		if(DbgUtil.DEBUG)
+		if(ManagedBuilderCoreDebugOptions.DEBUG_BUILD_MODEL)
 			DbgUtil.trace("<---Synch stopped");	//$NON-NLS-1$
 	}
 
@@ -892,7 +894,7 @@ public class BuildDescription implements IBuildDescription {
 						break;
 				}
 				if(i == rcs.length){
-					if(DbgUtil.DEBUG){
+					if(ManagedBuilderCoreDebugOptions.DEBUG_BUILD_MODEL){
 						DbgUtil.trace("unused step found: " + DbgUtil.stepName(step));	//$NON-NLS-1$
 					}
 
@@ -900,7 +902,7 @@ public class BuildDescription implements IBuildDescription {
 					if(step.needsRebuild()
 							&& step.getTool() != null
 							&& step.getTool().getCustomBuildStep()){
-						if(DbgUtil.DEBUG){
+						if(ManagedBuilderCoreDebugOptions.DEBUG_BUILD_MODEL){
 							DbgUtil.trace("unused step is an RCBS needing rebuild, settings input step rebuild state to true");	//$NON-NLS-1$
 						}
 						fInputStep.setRebuildState(true);
@@ -2056,7 +2058,7 @@ public class BuildDescription implements IBuildDescription {
 	private ITool[] doCalcDeps(ITool tool){
 		if(!fToolInProcesSet.add(tool)){
 			//TODO throw error?
-			if(DbgUtil.DEBUG)
+			if(ManagedBuilderCoreDebugOptions.DEBUG_BUILD_MODEL)
 				DbgUtil.trace("loop dependency for tool" + tool.getName());	//$NON-NLS-1$
 			return new ITool[0];
 		}
@@ -2082,7 +2084,7 @@ public class BuildDescription implements IBuildDescription {
 							if(dep != tool)
 								set.add(dep);
 							else{
-								if(DbgUtil.DEBUG)
+								if(ManagedBuilderCoreDebugOptions.DEBUG_BUILD_MODEL)
 									DbgUtil.trace("loop dependency for tool" + tool.getName());	//$NON-NLS-1$
 								//TODO throw error
 							}
@@ -2099,7 +2101,7 @@ public class BuildDescription implements IBuildDescription {
 	private ITool[] doCalcConsumers(ITool tool){
 		if(!fToolInProcesSet.add(tool)){
 			//TODO throw error?
-			if(DbgUtil.DEBUG)
+			if(ManagedBuilderCoreDebugOptions.DEBUG_BUILD_MODEL)
 				DbgUtil.trace("loop dependency for tool" + tool.getName());	//$NON-NLS-1$
 			return new ITool[0];
 		}
@@ -2125,7 +2127,7 @@ public class BuildDescription implements IBuildDescription {
 							if(consumer != tool)
 								set.add(consumer);
 							else{
-								if(DbgUtil.DEBUG)
+								if(ManagedBuilderCoreDebugOptions.DEBUG_BUILD_MODEL)
 									DbgUtil.trace("loop dependency for tool" + tool.getName());	//$NON-NLS-1$
 								//TODO throw error
 							}
@@ -2171,7 +2173,7 @@ public class BuildDescription implements IBuildDescription {
 				){
 			if(fTargetStep != null){
 				//TODO: this is an error case, log or perform some special handling
-				if(DbgUtil.DEBUG)
+				if(ManagedBuilderCoreDebugOptions.DEBUG_BUILD_MODEL)
 					DbgUtil.trace("ERROR: target action already created");	//$NON-NLS-1$
 			}
 			fTargetStep = step;

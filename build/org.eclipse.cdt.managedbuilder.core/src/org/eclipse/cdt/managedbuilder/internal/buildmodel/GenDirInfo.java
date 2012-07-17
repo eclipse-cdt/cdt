@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Intel Corporation and others.
+ * Copyright (c) 2006, 2012 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * Jason Litton (Sage Electronic Engineering, LLC) - Added dynamic debug tracing
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.buildmodel;
 
@@ -15,6 +16,7 @@ import java.util.Set;
 
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildResource;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCoreDebugOptions;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -65,7 +67,7 @@ public class GenDirInfo {
 					folder.create(true, true, monitor);
 					folder.setDerived(true);
 				} catch (CoreException e) {
-					if(DbgUtil.DEBUG)
+					if(ManagedBuilderCoreDebugOptions.DEBUG_BUILD_MODEL)
 						DbgUtil.trace("GenDirInfo: failed to create dir: " + e.getLocalizedMessage()); //$NON-NLS-1$ 
 					//TODO: log the error
 				}

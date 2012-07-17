@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2010 IBM Corporation and others.
+ * Copyright (c) 2003, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  * IBM Rational Software - Initial API and implementation
  * James Blackburn (Broadcom Corp.)
+ * Jason Litton (Sage Electronic Engineering, LLC) - Added dynamic debug tracing
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.core;
 
@@ -88,6 +89,7 @@ public class ManagedBuilderCorePlugin extends Plugin {
 		// Turn on logging for plugin when debugging
 		super.start(context);
 		configurePluginDebugOptions();
+		new ManagedBuilderCoreDebugOptions(context);
 
 
 		//	  NOTE: The code below is for tracking resource renaming and deleting.  This is needed to keep
@@ -197,11 +199,6 @@ public class ManagedBuilderCorePlugin extends Plugin {
 		super.stop(context);
 	}
 
-	private static final String PATH_ENTRY = ManagedBuilderCorePlugin.getUniqueIdentifier() + "/debug/pathEntry"; //$NON-NLS-1$
-	private static final String PATH_ENTRY_INIT = ManagedBuilderCorePlugin.getUniqueIdentifier() + "/debug/pathEntryInit"; //$NON-NLS-1$
-	private static final String BUILDER = ManagedBuilderCorePlugin.getUniqueIdentifier() + "/debug/builder"; //$NON-NLS-1$
-	private static final String BUILD_MODEL = ManagedBuilderCorePlugin.getUniqueIdentifier() + "/debug/buildModel"; //$NON-NLS-1$
-
 	public static void log(IStatus status) {
 		ResourcesPlugin.getPlugin().getLog().log(status);
 	}
@@ -239,23 +236,11 @@ public class ManagedBuilderCorePlugin extends Plugin {
 	 *
 	 */
 	private void configurePluginDebugOptions() {
-		if (isDebugging()) {
-			String pathInit = Platform.getDebugOption(PATH_ENTRY_INIT);
-			if (pathInit != null) {
-				ManagedBuildPathEntryContainerInitializer.VERBOSE = pathInit.equalsIgnoreCase("true") ; //$NON-NLS-1$
-			}
-			String pathCalc = Platform.getDebugOption(PATH_ENTRY);
-			if (pathCalc != null) {
-				ManagedBuildCPathEntryContainer.VERBOSE = pathCalc.equalsIgnoreCase("true") ; //$NON-NLS-1$
-			}
-			String builder = Platform.getDebugOption(BUILDER);
-			if (builder != null) {
-				GeneratedMakefileBuilder.VERBOSE = builder.equalsIgnoreCase("true") ; //$NON-NLS-1$
-			}
-			String buildModel = Platform.getDebugOption(BUILD_MODEL);
-			if(buildModel != null){
-				DbgUtil.DEBUG = buildModel.equalsIgnoreCase("true"); //$NON-NLS-1$
-			}
+		if (ManagedBuilderCoreDebugOptions.DEBUG) {
+			ManagedBuildPathEntryContainerInitializer.VERBOSE = ManagedBuilderCoreDebugOptions.DEBUG_PATH_ENTRY_INIT;
+			ManagedBuildCPathEntryContainer.VERBOSE = ManagedBuilderCoreDebugOptions.DEBUG_PATH_ENTRY;
+			GeneratedMakefileBuilder.VERBOSE = ManagedBuilderCoreDebugOptions.DEBUG_BUILDER;
+			DbgUtil.DEBUG = ManagedBuilderCoreDebugOptions.DEBUG_BUILD_MODEL;
 		}
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Intel Corporation and others.
+ * Copyright (c) 2006, 2012 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * Jason Litton (Sage Electronic Engineering, LLC) - Added dynamic debug tracing
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.buildmodel;
 
@@ -33,6 +34,7 @@ import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineInfo;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCoreDebugOptions;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.core.Tool;
 import org.eclipse.cdt.managedbuilder.internal.macros.BuildMacroProvider;
@@ -62,7 +64,7 @@ public class BuildStep implements IBuildStep {
 		fInputType = inputType;
 		fBuildDescription = des;
 
-		if(DbgUtil.DEBUG)
+		if(ManagedBuilderCoreDebugOptions.DEBUG_BUILD_MODEL)
 			DbgUtil.trace("step " + DbgUtil.stepName(this) + " created");	//$NON-NLS-1$	//$NON-NLS-2$
 
 		des.stepCreated(this);
@@ -119,7 +121,7 @@ public class BuildStep implements IBuildStep {
 	BuildResource[][] remove(){
 		BuildResource[][] rcs = clear();
 
-		if(DbgUtil.DEBUG)
+		if(ManagedBuilderCoreDebugOptions.DEBUG_BUILD_MODEL)
 			DbgUtil.trace("step  " + DbgUtil.stepName(this) + " removed");	//$NON-NLS-1$	//$NON-NLS-2$
 
 		fBuildDescription.stepRemoved(this);

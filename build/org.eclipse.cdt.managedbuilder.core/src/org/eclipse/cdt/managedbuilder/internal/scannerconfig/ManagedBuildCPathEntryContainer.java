@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * Jason Litton (Sage Electronic Engineering, LLC) - Added dynamic debug tracing
  *******************************************************************************/
 
 package org.eclipse.cdt.managedbuilder.internal.scannerconfig;
@@ -32,6 +33,7 @@ import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.ITarget;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCoreDebugOptions;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
@@ -66,17 +68,22 @@ public class ManagedBuildCPathEntryContainer implements IPathEntryContainer {
 	private Vector<IPathEntry> entries;
 	private IProject project;
 	private ManagedBuildInfo info;
+	/**
+	 * @deprecated use org.eclipse.cdt.managedbuilder.core.ManagedBuilderCoreDebugOptions.DEBUG_PATH_ENTRY
+	 * to use dynamic debug options
+	 */
+	@Deprecated
 	public static boolean VERBOSE = false;
 
 	public static void outputTrace(String resourceName, String message) {
-		if (VERBOSE) {
-			System.out.println(TRACE_HEADER + resourceName + TRACE_FOOTER + message + NEWLINE);
+		if (ManagedBuilderCoreDebugOptions.DEBUG_PATH_ENTRY) {
+			ManagedBuilderCoreDebugOptions.trace(TRACE_HEADER + resourceName + TRACE_FOOTER + message + NEWLINE);
 		}
 	}
 
 	public static void outputError(String resourceName, String message) {
-		if (VERBOSE) {
-			System.err.println(ERROR_HEADER + resourceName + TRACE_FOOTER + message + NEWLINE);
+		if (ManagedBuilderCoreDebugOptions.DEBUG_PATH_ENTRY) {
+			ManagedBuilderCoreDebugOptions.trace(ERROR_HEADER + resourceName + TRACE_FOOTER + message + NEWLINE);
 		}
 	}
 

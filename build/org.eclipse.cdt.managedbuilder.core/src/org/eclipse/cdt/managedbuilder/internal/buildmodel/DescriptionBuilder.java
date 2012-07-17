@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Intel Corporation and others.
+ * Copyright (c) 2006, 2012 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * Jason Litton (Sage Electronic Engineering, LLC) - Added dynamic debug tracing
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.buildmodel;
 
@@ -20,6 +21,7 @@ import org.eclipse.cdt.managedbuilder.buildmodel.IBuildDescription;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildResource;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildStep;
 import org.eclipse.cdt.managedbuilder.buildmodel.IStepVisitor;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCoreDebugOptions;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedMakeMessages;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -80,11 +82,11 @@ public class DescriptionBuilder implements IBuildModelBuilder {
 			if(fMonitor.isCanceled())
 				return VISIT_STOP;
 
-			if(DbgUtil.DEBUG)
+			if(ManagedBuilderCoreDebugOptions.DEBUG_BUILD_MODEL)
 				DbgUtil.trace("visiting step " + DbgUtil.stepName(action)); //$NON-NLS-1$
 			if(!action.isRemoved()
 					&& (!fBuildIncrementaly || action.needsRebuild())){
-				if(DbgUtil.DEBUG)
+				if(ManagedBuilderCoreDebugOptions.DEBUG_BUILD_MODEL)
 					DbgUtil.trace("step " + DbgUtil.stepName(action) + " needs rebuild" ); //$NON-NLS-1$ //$NON-NLS-2$
 				StepBuilder builder = getStepBuilder(action);//new StepBuilder(action, fCWD, fResumeOnErrs, fDir);
 
@@ -190,7 +192,7 @@ public class DescriptionBuilder implements IBuildModelBuilder {
 			} catch (CoreException e) {
 				//TODO: report an error
 			}
-			if(DbgUtil.DEBUG)
+			if(ManagedBuilderCoreDebugOptions.DEBUG_BUILD_MODEL)
 				DbgUtil.trace("Description Builder: total work = " + fNumCommands);	//$NON-NLS-1$
 		}
 		return fNumCommands;

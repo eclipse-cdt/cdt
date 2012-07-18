@@ -9,16 +9,19 @@
  *     Ericsson - initial API and implementation
  *     Marc Khouzam (Ericsson) - Add support for multi-attach (Bug 293679)
  *******************************************************************************/
-package org.eclipse.cdt.dsf.gdb.internal.ui.actions;
+package org.eclipse.cdt.dsf.gdb.internal.ui.commands;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.RejectedExecutionException;
 
+import org.eclipse.cdt.debug.core.model.IConnectHandler;
+import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
@@ -35,8 +38,10 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.cdt.dsf.gdb.actions.IConnect;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
+import org.eclipse.cdt.dsf.gdb.internal.ui.actions.ProcessInfo;
 import org.eclipse.cdt.dsf.gdb.internal.ui.launching.LaunchUIMessages;
 import org.eclipse.cdt.dsf.gdb.internal.ui.launching.ProcessPrompter.PrompterInfo;
+import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
 import org.eclipse.cdt.dsf.gdb.launching.IProcessExtendedInfo;
 import org.eclipse.cdt.dsf.gdb.launching.LaunchMessages;
 import org.eclipse.cdt.dsf.gdb.service.IGDBBackend;
@@ -45,6 +50,7 @@ import org.eclipse.cdt.dsf.gdb.service.IGDBProcesses.IGdbThreadDMData;
 import org.eclipse.cdt.dsf.gdb.service.SessionType;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
+import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -53,14 +59,18 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IRequest;
 import org.eclipse.debug.core.IStatusHandler;
+import org.eclipse.debug.core.commands.AbstractDebugCommand;
+import org.eclipse.debug.core.commands.IDebugCommandRequest;
+import org.eclipse.debug.core.commands.IEnabledStateRequest;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.progress.UIJob;
 
-public class GdbConnectCommand implements IConnect {
+public class GdbConnectCommand extends AbstractDebugCommand implements IConnectHandler, IConnect {
     
 	private final DsfExecutor fExecutor;
     private final DsfServicesTracker fTracker;
@@ -85,7 +95,19 @@ public class GdbConnectCommand implements IConnect {
     }
 
     @Override
-    public boolean canConnect() {
+	protected boolean isExecutable(Object[] targets, IProgressMonitor monitor, IEnabledStateRequest request)
+        throws CoreException 
+    {
+    	return canConnect();
+    }
+    
+    /* 
+     * This method should not be called from the UI thread.
+     * (non-Javadoc)
+     * @see org.eclipse.cdt.dsf.gdb.actions.IConnect#canConnect()
+     */
+	@Override
+	public boolean canConnect() {
        	Query<Boolean> canConnectQuery = new Query<Boolean>() {
             @Override
             public void execute(DataRequestMonitor<Boolean> rm) {
@@ -242,21 +264,36 @@ public class GdbConnectCommand implements IConnect {
     }
 
     @Override
-    public void connect(RequestMonitor requestMonitor)
-    {
-    	// Create a fake rm to avoid null pointer exceptions
-    	final RequestMonitor rm;
-    	if (requestMonitor == null) {
-    		rm = new RequestMonitor(fExecutor, null);
-    	} else {
-    		rm = requestMonitor;
-    	}
-    	
-    	// Don't wait for the operation to finish because this
-    	// method can be called from the UI thread, and it will
-    	// block it, which is bad, because we need to use the UI
-    	// thread to prompt the user for the process to choose.
-    	// This is why we simply use a DsfRunnable.
+	protected void doExecute(Object[] targets, IProgressMonitor monitor, IRequest request) throws CoreException {
+       	Query<Boolean> connectQuery = new Query<Boolean>() {
+            @Override
+            public void execute(DataRequestMonitor<Boolean> rm) {
+       			connect(rm);
+       		}
+       	};
+    	try {
+    		fExecutor.execute(connectQuery);
+			connectQuery.get();
+		} catch (InterruptedException e) {
+		} catch (ExecutionException e) {
+		} catch (CancellationException e) {
+			// Nothing to do, just ignore the command since the user
+			// cancelled it.
+			System.out.println();
+        } catch (RejectedExecutionException e) {
+        	// Can be thrown if the session is shutdown        	
+        }
+    }
+    
+    /* 
+     * This method should not be called from the UI thread.
+     * (non-Javadoc)
+     * @see org.eclipse.cdt.dsf.gdb.actions.IConnect#canConnect()
+     */
+    @ConfinedToDsfExecutor("fExecutor")
+    @Override
+    public void connect(final RequestMonitor rm)
+    { 
     	fExecutor.execute(new DsfRunnable() {
             @Override
     		public void run() {
@@ -265,12 +302,15 @@ public class GdbConnectCommand implements IConnect {
 
     			if (procService != null && commandControl != null) {
         			final ICommandControlDMContext controlCtx = commandControl.getContext();
-        			procService.isDebugNewProcessSupported(controlCtx, new DataRequestMonitor<Boolean>(fExecutor, null) {
+        			
+        			// First check if the "New..." button should be enabled.
+        			procService.isDebugNewProcessSupported(controlCtx, new DataRequestMonitor<Boolean>(fExecutor, rm) {
         			@Override	
         			protected void handleCompleted() {
         				final boolean newProcessSupported = isSuccess() && getData();
         				
-    				procService.getRunningProcesses(
+        				// Now get the list of all processes
+        				procService.getRunningProcesses(
     						controlCtx,        
     						new DataRequestMonitor<IProcessDMContext[]>(fExecutor, rm) {
     							@Override
@@ -282,8 +322,11 @@ public class GdbConnectCommand implements IConnect {
 										new CountingRequestMonitor(fExecutor, rm) {
 										@Override
 										protected void handleSuccess() {
+											// Prompt the user to choose one or more processes, or to start a new one
 											new PromptForPidJob(
-													LaunchUIMessages.getString("ProcessPrompter.PromptJob"), newProcessSupported, procInfoList.toArray(new IProcessExtendedInfo[0]),   //$NON-NLS-1$
+													LaunchUIMessages.getString("ProcessPrompter.PromptJob"),    //$NON-NLS-1$
+													newProcessSupported, 
+													procInfoList.toArray(new IProcessExtendedInfo[procInfoList.size()]),
 													new DataRequestMonitor<Object>(fExecutor, rm) {
 														@Override
 														protected void handleCancel() {
@@ -299,8 +342,7 @@ public class GdbConnectCommand implements IConnect {
 															} else if (data instanceof IProcessExtendedInfo[]) {
 																attachToProcesses(controlCtx, (IProcessExtendedInfo[])data, rm);
 															} else {
-																rm.setStatus(new Status(IStatus.ERROR, GdbUIPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR, "Invalid return type for process prompter", null)); //$NON-NLS-1$
-																rm.done();
+																rm.done(new Status(IStatus.ERROR, GdbUIPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR, "Invalid return type for process prompter", null)); //$NON-NLS-1$
 															}
 														}
 													}).schedule();
@@ -382,7 +424,7 @@ public class GdbConnectCommand implements IConnect {
     }
     
     private void startNewProcess(ICommandControlDMContext controlDmc, String binaryPath, RequestMonitor rm) {
-		final IGDBProcesses procService = fTracker.getService(IGDBProcesses.class);
+		IGDBProcesses procService = fTracker.getService(IGDBProcesses.class);
 		procService.debugNewProcess(
 				controlDmc, binaryPath, 
 				new HashMap<String, Object>(), new DataRequestMonitor<IDMContext>(fExecutor, rm));
@@ -457,6 +499,8 @@ public class GdbConnectCommand implements IConnect {
     											                        LaunchUIMessages.getString("ProcessPrompterDialog.TitlePrefix") + process.getName(), //$NON-NLS-1$
     											                        processShortName, new AttachToProcessRequestMonitor()).schedule();
     								} else {
+    									// For a local attach, we can attach directly without looking for the binary
+    									// since GDB will figure it out by itself
     									IProcessDMContext procDmc = procService.createProcessContext(controlDmc, pidStr);
     									procService.attachDebuggerToProcess(procDmc, null, new AttachToProcessRequestMonitor());
     								}
@@ -477,11 +521,24 @@ public class GdbConnectCommand implements IConnect {
     		new AttachToProcessRequestMonitor().done();
 
     	} else {
-    		rm.setStatus(new Status(IStatus.ERROR, GdbUIPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR, "Cannot find service", null)); //$NON-NLS-1$
-    		rm.done();
+    		rm.done(new Status(IStatus.ERROR, GdbUIPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR, "Cannot find service", null)); //$NON-NLS-1$
     	}
 
     }
+    
+    @Override
+	protected Object getTarget(Object element) {
+    	if (element instanceof GdbLaunch ||
+    	    element instanceof IDMVMContext) {
+    		return element;
+    	}
+        return null;
+    }
+    
+    @Override
+	protected boolean isRemainEnabled(IDebugCommandRequest request) {
+		return false;
+	}
 }
 
 

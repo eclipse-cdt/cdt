@@ -12,7 +12,6 @@
 package org.eclipse.cdt.managedbuilder.language.settings.providers;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -741,38 +740,61 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	}
 
 	/**
-	 * The manipulations here are done to resolve "../" navigation for symbolic links where "link/.." cannot
-	 * be collapsed as it must follow the real file-system path. {@link java.io.File#getCanonicalPath()} deals
-	 * with that correctly but {@link Path} or {@link URI} try to normalize the path which would be incorrect
-	 * here.
+	 * The manipulations here are done to resolve problems such as "../" navigation for symbolic links where
+	 * "link/.." cannot be collapsed as it must follow the real file-system path. {@link java.io.File#getCanonicalPath()}
+	 * deals with that correctly but {@link Path} or {@link URI} try to normalize the path which would be incorrect here.
+	 * Another issue being resolved here is fixing drive letters in URI syntax.
 	 */
-	private static URI resolvePathFromBaseLocation(String name, IPath baseLocation) {
-		String pathName = name;
+	private static URI resolvePathFromBaseLocation(String pathStr0, IPath baseLocation) {
+		String pathStr = pathStr0;
 		if (baseLocation != null && !baseLocation.isEmpty()) {
-			pathName = pathName.replace(File.separatorChar, '/');
-			String device = new Path(pathName).getDevice();
-			if (device==null || device.equals(baseLocation.getDevice())) {
+			pathStr = pathStr.replace(File.separatorChar, '/');
+			String device = new Path(pathStr).getDevice();
+			if (device == null || device.equals(baseLocation.getDevice())) {
 				if (device != null && device.length() > 0) {
-					pathName = pathName.substring(device.length());
+					pathStr = pathStr.substring(device.length());
 				}
 
 				baseLocation = baseLocation.addTrailingSeparator();
-				if (pathName.startsWith("/")) { //$NON-NLS-1$
-					pathName = pathName.substring(1);
+				if (pathStr.startsWith("/")) { //$NON-NLS-1$
+					pathStr = pathStr.substring(1);
 				}
-				pathName = baseLocation.toString() + pathName;
+				pathStr = baseLocation.toString() + pathStr;
 			}
 		}
 
 		try {
-			File file = new File(pathName);
+			File file = new File(pathStr);
 			file = file.getCanonicalFile();
-			return file.toURI();
-		} catch (IOException e) {
-			// if error just leave it as is
+			URI uri = file.toURI();
+			if (file.exists()) {
+				return uri;
+			}
+
+			IPath path0 = new Path(pathStr0);
+			if (!path0.isAbsolute()) {
+				return uri;
+			}
+
+			String device = path0.getDevice();
+			if (device == null || device.isEmpty()) {
+				// Avoid spurious adding of drive letters on Windows
+				pathStr = path0.setDevice(null).toString();
+			} else {
+				// On Windows "C:/folder/" -> "/C:/folder/"
+				if (pathStr.charAt(0) != IPath.SEPARATOR) {
+					pathStr = IPath.SEPARATOR + pathStr;
+				}
+			}
+
+			return new URI(uri.getScheme(), uri.getAuthority(), pathStr, uri.getQuery(), uri.getFragment());
+
+		} catch (Exception e) {
+			// if error will leave it as is
+			ManagedBuilderCorePlugin.log(e);
 		}
 
-		return org.eclipse.core.filesystem.URIUtil.toURI(pathName);
+		return org.eclipse.core.filesystem.URIUtil.toURI(pathStr);
 	}
 
 	/**
@@ -916,12 +938,17 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 		String pathStr = EFSExtensionManager.getDefault().getMappedPath(uri);
 		uri = org.eclipse.core.filesystem.URIUtil.toURI(pathStr);
 
-		try {
-			File file = new java.io.File(uri);
-			String canonicalPathStr = file.getCanonicalPath();
-			return new Path(canonicalPathStr);
-		} catch (Exception e) {
-			ManagedBuilderCorePlugin.log(e);
+		if (uri != null && uri.isAbsolute()) {
+			try {
+				File file = new java.io.File(uri);
+				String canonicalPathStr = file.getCanonicalPath();
+				if (new Path(pathStr).getDevice() == null) {
+					return new Path(canonicalPathStr).setDevice(null);
+				}
+				return new Path(canonicalPathStr);
+			} catch (Exception e) {
+				ManagedBuilderCorePlugin.log(e);
+			}
 		}
 		return null;
 	}

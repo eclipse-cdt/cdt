@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOIn//+oY\u003d",
+        "filename": "debug/org.eclipse.cdt.debug.ui/plugin.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 2509,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-07-18T15:08:28Z",
+      "side": 1,
+      "message": "I wonder if the menu contributions should be in cdt.debug.ui as I put them, or in cdt.dsf.gdb.ui?  \n\nIf an integrator does not use DSF-GDB but provides another implementation of the connect command, they will benefit from having it automatically displayed in cdt.debug.ui, instead of having to display it themselves.  However, if an integrator does not use DSF-GDB and does not support the Connection action, maybe they don\u0027t want to show it at all?  In which case they may prefer it to be in cdt.dsf.gdb.ui.\n\nAny opinion?",
+      "revId": "8c339c8e2ffc9a07db5a00fbe0b5e5fcf2b99065",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//+oU\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/GdbAdapterFactory.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 191,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-07-18T15:08:28Z",
+      "side": 1,
+      "message": "Should we also keep IConnect registered as a session adaptor for some kind of backwards-compatibility?",
+      "revId": "8c339c8e2ffc9a07db5a00fbe0b5e5fcf2b99065",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//+oQ\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/commands/GdbConnectCommand.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 295,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-07-18T15:08:28Z",
+      "side": 1,
+      "message": "I kept this method so it could be called from the FinalLaunchSequence",
+      "revId": "8c339c8e2ffc9a07db5a00fbe0b5e5fcf2b99065",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

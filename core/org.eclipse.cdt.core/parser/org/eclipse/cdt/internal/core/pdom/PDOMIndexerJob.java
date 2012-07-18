@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 QNX Software Systems
+ * Copyright (c) 2005, 2012 QNX Software Systems
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,12 +8,14 @@
  * Contributors:
  *     Doug Schaefer (QNX Software Systems) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Jason Litton (Sage Electronic Engineering, LLC) - Added debug tracing (Bug 384413)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMIndexer;
 import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
+import org.eclipse.cdt.internal.core.CdtCoreDebugOptions;
 import org.eclipse.cdt.internal.core.pdom.indexer.PDOMIndexerTask;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -66,7 +68,7 @@ public class PDOMIndexerJob extends Job {
 	public PDOMIndexerJob(PDOMManager manager) {
 		super(CCorePlugin.getResourceString("pdom.indexer.name")); //$NON-NLS-1$
 		this.pdomManager = manager;
-		fShowActivity= PDOMIndexerTask.checkDebugOption(IPDOMIndexerTask.TRACE_ACTIVITY, "true"); //$NON-NLS-1$
+		fShowActivity= CdtCoreDebugOptions.DEBUG_INDEXER_ACTIVITY;
 		setPriority(Job.LONG);
 	}
 

@@ -9,6 +9,7 @@
  *     Markus Schorn - initial API and implementation
  *     IBM Corporation
  *     Sergey Prigogin (Google)
+ *     Jason Litton (Sage Electronic Engineering, LLC) - Added debug tracing (Bug 384413)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
@@ -51,6 +52,7 @@ import org.eclipse.cdt.core.index.IIndexInclude;
 import org.eclipse.cdt.core.parser.FileContent;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.ISignificantMacros;
+import org.eclipse.cdt.internal.core.CdtCoreDebugOptions;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.index.FileContentKey;
@@ -632,7 +634,7 @@ abstract public class PDOMWriter {
 	}
 
 	protected void trace(String message) {
-		System.out.println(message);
+		CdtCoreDebugOptions.trace(message);
 	}
 
 	protected IStatus createStatus(String msg) {

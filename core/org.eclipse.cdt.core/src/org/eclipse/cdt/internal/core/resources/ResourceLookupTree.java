@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2012 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
+ *    Jason Litton (Sage Electronic Engineering, LLC) - Added debug tracing (Bug 384413)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.resources;
 
@@ -26,6 +27,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.internal.core.CdtCoreDebugOptions;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -122,8 +124,6 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 	private boolean fNeedCleanup;
 	private Node fLastFolderNode;
 
-	private boolean fTrace;
-
 	public ResourceLookupTree() {
 		fRootNode= new Node(null, CharArrayUtils.EMPTY, false, false) {};
 		fFileExtensions= new HashMap<String, Extensions>();
@@ -135,7 +135,6 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 			}
 		};
 		fUnrefJob.setSystem(true);
-		fTrace= "true".equals(Platform.getDebugOption(CCorePlugin.PLUGIN_ID + "/debug/resourceLookup"));  //$NON-NLS-1$//$NON-NLS-2$
 	}
 
 	public void startup() {
@@ -269,7 +268,7 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 			}
 		} else {
 			long time=0, count=0;
-			final boolean trace = fTrace && res instanceof IProject;
+			final boolean trace = CdtCoreDebugOptions.DEBUG_RESOURCE_LOOKUP && res instanceof IProject;
 			if (trace) {
 				time= System.currentTimeMillis();
 				count= countNodes();
@@ -280,7 +279,7 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 				CCorePlugin.log(e);
 			}
 			if (trace) {
-				System.out.println("Built file lookup tree for " + res.getName() + ", took " +   //$NON-NLS-1$//$NON-NLS-2$
+				CdtCoreDebugOptions.trace("Built file lookup tree for " + res.getName() + ", took " +   //$NON-NLS-1$//$NON-NLS-2$
 						(System.currentTimeMillis() - time) + "ms to add " + (countNodes()-count) + " nodes."); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}

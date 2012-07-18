@@ -21,6 +21,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IPDOMIndexerTask {
+	//since we're now tracing through org.eclipse.cdt.internal.core.CdtCoreDebugOptions,
+	//these strings can probably be removed, but it causes breakage further down the chain
 	public static final String TRACE_ACTIVITY   = CCorePlugin.PLUGIN_ID + "/debug/indexer/activity";  //$NON-NLS-1$
 	public static final String TRACE_STATISTICS = CCorePlugin.PLUGIN_ID + "/debug/indexer/statistics";  //$NON-NLS-1$
 	public static final String TRACE_INCLUSION_PROBLEMS = CCorePlugin.PLUGIN_ID + "/debug/indexer/problems/inclusion";  //$NON-NLS-1$

@@ -13,6 +13,7 @@
  *     Anton Leherbauer (Wind River Systems)
  *     Sergey Prigogin (Google)
  *     Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
+ *     Jason Litton (Sage Electronic Engineering, LLC) - Added debug tracing (Bug 384413)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
@@ -59,6 +60,7 @@ import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.parser.ISignificantMacros;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.internal.core.CdtCoreDebugOptions;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.index.IIndexCBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
@@ -103,7 +105,6 @@ public class PDOM extends PlatformObject implements IPDOM {
 	private static final int BLOCKED_WRITE_LOCK_OUTPUT_INTERVAL = 30000;
 	private static final int LONG_WRITE_LOCK_REPORT_THRESHOLD = 1000;
 	private static final int LONG_READ_LOCK_WAIT_REPORT_THRESHOLD = 1000;
-	static boolean sDEBUG_LOCKS= false; // initialized in the PDOMManager, because IBM needs PDOM independent of runtime plugin.
 
 	/**
 	 * Identifier for PDOM format
@@ -341,9 +342,9 @@ public class PDOM extends PlatformObject implements IPDOM {
 		fPDOMLinkageFactoryCache = linkageFactoryMappings;
 		loadDatabase(dbPath, cache);
 		this.locationConverter = locationConverter;
-		if (sDEBUG_LOCKS) {
+		if (CdtCoreDebugOptions.DEBUG_PDOM_INDEX_LOCKS) {
 			fLockDebugging= new HashMap<Thread, DebugLockInfo>();
-			System.out.println("Debugging PDOM Locks"); //$NON-NLS-1$
+			CdtCoreDebugOptions.trace("Debugging PDOM Locks"); //$NON-NLS-1$
 		}
 	}
 
@@ -905,7 +906,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 
 	@Override
 	public void acquireReadLock() throws InterruptedException {
-		long t = sDEBUG_LOCKS ? System.nanoTime() : 0;
+		long t = CdtCoreDebugOptions.DEBUG_PDOM_INDEX_LOCKS ? System.nanoTime() : 0;
 		synchronized (mutex) {
 			++waitingReaders;
 			try {
@@ -917,10 +918,10 @@ public class PDOM extends PlatformObject implements IPDOM {
 			++lockCount;
 			db.setLocked(true);
 
-			if (sDEBUG_LOCKS) {
+			if (CdtCoreDebugOptions.DEBUG_PDOM_INDEX_LOCKS) {
 				t = (System.nanoTime() - t) / 1000000;
 				if (t >= LONG_READ_LOCK_WAIT_REPORT_THRESHOLD) {
-					System.out.println("Acquired index read lock after " + t + " ms wait."); //$NON-NLS-1$//$NON-NLS-2$
+					CdtCoreDebugOptions.trace("Acquired index read lock after " + t + " ms wait."); //$NON-NLS-1$//$NON-NLS-2$
 				}
 				incReadLock(fLockDebugging);
 			}
@@ -932,7 +933,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 		boolean clearCache= false;
 		synchronized (mutex) {
 			assert lockCount > 0: "No lock to release"; //$NON-NLS-1$
-			if (sDEBUG_LOCKS) {
+			if (CdtCoreDebugOptions.DEBUG_PDOM_INDEX_LOCKS) {
 				decReadLock(fLockDebugging);
 			}
 
@@ -966,7 +967,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	public void acquireWriteLock(int giveupReadLocks) throws InterruptedException {
 		assert !isPermanentlyReadOnly();
 		synchronized (mutex) {
-			if (sDEBUG_LOCKS) {
+			if (CdtCoreDebugOptions.DEBUG_PDOM_INDEX_LOCKS) {
 				incWriteLock(giveupReadLocks);
 			}
 
@@ -981,15 +982,15 @@ public class PDOM extends PlatformObject implements IPDOM {
 			}
 
 			// Let the readers go first
-			long start= sDEBUG_LOCKS ? System.currentTimeMillis() : 0;
+			long start= CdtCoreDebugOptions.DEBUG_PDOM_INDEX_LOCKS ? System.currentTimeMillis() : 0;
 			while (lockCount > giveupReadLocks || waitingReaders > 0) {
 				mutex.wait(BLOCKED_WRITE_LOCK_OUTPUT_INTERVAL);
-				if (sDEBUG_LOCKS) {
+				if (CdtCoreDebugOptions.DEBUG_PDOM_INDEX_LOCKS) {
 					start = reportBlockedWriteLock(start, giveupReadLocks);
 				}
 			}
 			lockCount= -1;
-			if (sDEBUG_LOCKS)
+			if (CdtCoreDebugOptions.DEBUG_PDOM_INDEX_LOCKS)
 				timeWriteLockAcquired = System.currentTimeMillis();
 			db.setExclusiveLock();
 		}
@@ -1016,10 +1017,10 @@ public class PDOM extends PlatformObject implements IPDOM {
 		final ChangeEvent event= fEvent;
 		fEvent= new ChangeEvent();
 		synchronized (mutex) {
-			if (sDEBUG_LOCKS) {
+			if (CdtCoreDebugOptions.DEBUG_PDOM_INDEX_LOCKS) {
 				long timeHeld = lastWriteAccess - timeWriteLockAcquired;
 				if (timeHeld >= LONG_WRITE_LOCK_REPORT_THRESHOLD) {
-					System.out.println("Index write lock held for " + timeHeld + " ms");
+					CdtCoreDebugOptions.trace("Index write lock held for " + timeHeld + " ms");
 				}
 				decWriteLock(establishReadLocks);
 			}
@@ -1571,11 +1572,11 @@ public class PDOM extends PlatformObject implements IPDOM {
 		}
 		@SuppressWarnings("nls")
 		public void write(String threadName) {
-			System.out.println("Thread: '" + threadName + "': " + fReadLocks + " readlocks, " + fWriteLocks + " writelocks");
+			CdtCoreDebugOptions.trace("Thread: '" + threadName + "': " + fReadLocks + " readlocks, " + fWriteLocks + " writelocks");
 			for (StackTraceElement[] trace : fTraces) {
-				System.out.println("  Stacktrace:");
+				CdtCoreDebugOptions.trace("  Stacktrace:");
 				for (StackTraceElement ste : trace) {
-					System.out.println("    " + ste);
+					CdtCoreDebugOptions.trace("    " + ste);
 				}
 			}
 		}
@@ -1591,7 +1592,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 
 	// For debugging lock issues
 	private static DebugLockInfo getLockInfo(Map<Thread, DebugLockInfo> lockDebugging) {
-		assert sDEBUG_LOCKS;
+		assert CdtCoreDebugOptions.DEBUG_PDOM_INDEX_LOCKS;
 
 		Thread key = Thread.currentThread();
 		DebugLockInfo result= lockDebugging.get(key);
@@ -1661,9 +1662,9 @@ public class PDOM extends PlatformObject implements IPDOM {
 	private long reportBlockedWriteLock(long start, int giveupReadLocks) {
 		long now= System.currentTimeMillis();
 		if (now >= start + BLOCKED_WRITE_LOCK_OUTPUT_INTERVAL) {
-			System.out.println();
-			System.out.println("Blocked writeLock");
-			System.out.println("  lockcount= " + lockCount + ", giveupReadLocks=" + giveupReadLocks + ", waitingReaders=" + waitingReaders);
+			CdtCoreDebugOptions.trace("");
+			CdtCoreDebugOptions.trace("Blocked writeLock");
+			CdtCoreDebugOptions.trace("  lockcount= " + lockCount + ", giveupReadLocks=" + giveupReadLocks + ", waitingReaders=" + waitingReaders);
 			outputReadLocks(fLockDebugging);
 			start= now;
 		}
@@ -1673,12 +1674,12 @@ public class PDOM extends PlatformObject implements IPDOM {
 	// For debugging lock issues
 	@SuppressWarnings("nls")
 	private static void outputReadLocks(Map<Thread, DebugLockInfo> lockDebugging) {
-		System.out.println("---------------------  Lock Debugging -------------------------");
+		CdtCoreDebugOptions.trace("---------------------  Lock Debugging -------------------------");
 		for (Thread th: lockDebugging.keySet()) {
 			DebugLockInfo info = lockDebugging.get(th);
 			info.write(th.getName());
 		}
-		System.out.println("---------------------------------------------------------------");
+		CdtCoreDebugOptions.trace("---------------------------------------------------------------");
 	}
 
 	// For debugging lock issues

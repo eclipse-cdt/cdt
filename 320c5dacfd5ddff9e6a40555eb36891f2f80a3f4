@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOIn//+oI\u003d",
+        "filename": "core/org.eclipse.cdt.core/META-INF/MANIFEST.MF",
+        "patchSetId": 1
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 599
+      },
+      "writtenOn": "2012-07-18T15:14:44Z",
+      "side": 1,
+      "message": "org.eclipse.cdt.core should not have dependency on any UI package",
+      "revId": "320c5dacfd5ddff9e6a40555eb36891f2f80a3f4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -50,6 +50,23 @@
       "revId": "8c339c8e2ffc9a07db5a00fbe0b5e5fcf2b99065",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//+nw\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/commands/GdbConnectCommand.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 540,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-07-18T16:38:10Z",
+      "side": 1,
+      "message": "Why not return true here? It would solve the enablement issue when the command is cancelled.",
+      "revId": "8c339c8e2ffc9a07db5a00fbe0b5e5fcf2b99065",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

@@ -1990,6 +1990,13 @@
           id="org.eclipse.cdt.debug.ui.command.ungroupDebugContexts"
           name="%UngroupDebugContexts.name">
     </command>
+    <command
+          categoryId="org.eclipse.cdt.debug.ui.category.debugViewLayout"
+          description="%Connect.description"
+          id="org.eclipse.cdt.debug.ui.command.connect"
+          name="%Connect.name">
+    </command>
+    
  </extension>
  <extension
          point="org.eclipse.ui.handlers">
@@ -2051,6 +2058,10 @@
       <handler
             class="org.eclipse.cdt.debug.internal.ui.commands.UngroupDebugContextsCommandHandler"
             commandId="org.eclipse.cdt.debug.ui.command.ungroupDebugContexts">
+      </handler>
+      <handler
+            class="org.eclipse.cdt.debug.internal.ui.commands.ConnectCommandHandler"
+            commandId="org.eclipse.cdt.debug.ui.command.connect">
       </handler>
  </extension>
  <extension
@@ -2494,6 +2505,25 @@
          </command>
       </menuContribution>
       
+      <!-- Connect contributions to debug view menu, toolbar menu -->
+      <menuContribution
+            locationURI="toolbar:org.eclipse.debug.ui.DebugView?before=stepGroup">
+         <command
+               commandId="org.eclipse.cdt.debug.ui.command.connect"
+               icon="icons/obj16/connect.gif"
+               label="%Connect.label"
+               style="push">
+         </command>
+      </menuContribution>
+      <menuContribution
+          locationURI="popup:org.eclipse.debug.ui.DebugView?before=emptyLaunchGroup">
+         <command
+             commandId="org.eclipse.cdt.debug.ui.command.connect"
+             icon="icons/obj16/connect.gif"
+             label="%Connect.label"
+             style="push">
+         </command>
+       </menuContribution>
  </extension>
  
  <!-- Cast to Type / Display as Array -->

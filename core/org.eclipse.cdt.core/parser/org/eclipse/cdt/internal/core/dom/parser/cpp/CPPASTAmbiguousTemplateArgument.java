@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Andrew Ferguson (Symbian) - Initial Implementation
- *    Markus Schorn (Wind River Systems)
- *    IBM Corporation
+ *     Andrew Ferguson (Symbian) - Initial Implementation
+ *     Markus Schorn (Wind River Systems)
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -33,15 +33,15 @@ import org.eclipse.core.runtime.Assert;
  * Ambiguity node for deciding between type-id and id-expression in a template argument.
  */
 public class CPPASTAmbiguousTemplateArgument extends ASTAmbiguousNode implements ICPPASTAmbiguousTemplateArgument {
-
 	private List<IASTNode> fNodes;
-	
+
 	/**
-	 * @param nodes  nodes of type {@link IASTTypeId}, {@link IASTIdExpression} or {@link ICPPASTPackExpansionExpression}.
+	 * @param nodes  nodes of type {@link IASTTypeId}, {@link IASTIdExpression}
+	 * or {@link ICPPASTPackExpansionExpression}.
 	 */
 	public CPPASTAmbiguousTemplateArgument(IASTNode... nodes) {
 		fNodes= new ArrayList<IASTNode>(2);
-		for(IASTNode node : nodes) {
+		for (IASTNode node : nodes) {
 			if (node instanceof IASTTypeId || node instanceof IASTIdExpression) {
 				fNodes.add(node);
 			} else if (node instanceof ICPPASTPackExpansionExpression) {
@@ -56,7 +56,6 @@ public class CPPASTAmbiguousTemplateArgument extends ASTAmbiguousNode implements
 			}
 		}
 	}
-
 	
 	@Override
 	protected void beforeAlternative(IASTNode node) {
@@ -77,12 +76,10 @@ public class CPPASTAmbiguousTemplateArgument extends ASTAmbiguousNode implements
 		}
 	}
 
-
 	@Override
 	protected void afterResolution(ASTVisitor resolver, IASTNode best) {
 		beforeAlternative(best);
 	}
-
 
 	@Override
 	public IASTNode copy() {
@@ -91,15 +88,14 @@ public class CPPASTAmbiguousTemplateArgument extends ASTAmbiguousNode implements
 
 	@Override
 	public IASTNode copy(CopyStyle style) {
-
 		int sizeOfNodes = fNodes.size();
 		IASTNode[] copyNodes = new IASTNode[sizeOfNodes];
 		int arrayIndex = 0;
-		for(IASTNode node : fNodes) {
-			if(node!=null){
+		for (IASTNode node : fNodes) {
+			if (node != null) {
 				copyNodes[arrayIndex] = node.copy(style);
-			}else{
-				copyNodes[arrayIndex]=null;
+			} else {
+				copyNodes[arrayIndex] = null;
 			}
 			arrayIndex++;
 		}

@@ -235,6 +235,24 @@
     },
     {
       "key": {
+        "uuid": "AABOIn//+h4\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1579,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-07-19T14:47:16Z",
+      "side": 1,
+      "message": "Having to go through the SteppingController complicates things, but I still think it makes better sense.  If the solution is possible.\n\nLooking at handleFailure() in SteppingController.doStep(), in only ignores errors that are tagged IDsfStatusConstants.INVALID_STATE.  If the runControl service returns a different error code when we are in the situation you are trying to fix, couldn\u0027t we make it work? \n\nIn GDBRunControl_7_0_NS.step(), I tried having a step-return always set an error status.  In that case, I can see the following in the console:\n\n!ENTRY org.eclipse.cdt.dsf 4 10005 2012-07-19 10:44:15.469\n!MESSAGE Request for monitor: \u0027RequestMonitor (org.eclipse.cdt.dsf.debug.ui.viewmodel.SteppingController$3@15704bc): Status ERROR: org.eclipse.cdt.dsf.gdb code\u003d10003 testing errors null\u0027 resulted in an error.\n!SUBENTRY 1 org.eclipse.cdt.dsf.gdb 4 10003 2012-07-19 10:44:15.470\n!MESSAGE testing errors\n\nCouldn\u0027t we trigger a dialog for the user in that case?\n\nThe complexity will probably be that we may need to override the SteppingController, as it is part of DSF.\n\nLet me assure you that I am not looking to create more work :)  but it really seems wrong to have the service decide what to do with error situations.\n\nLet me know what you think.",
+      "parentUuid": "AABOHn//9nQ\u003d",
+      "revId": "19eb06957a8125d8de9e175b5b259c5038cd7d46",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOHn//+4M\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
         "patchSetId": 1

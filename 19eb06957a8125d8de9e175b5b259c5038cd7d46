@@ -253,6 +253,24 @@
     },
     {
       "key": {
+        "uuid": "AABOIn//+hw\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1579,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-07-19T15:38:21Z",
+      "side": 1,
+      "message": "I agree with you, reporting errors from the UI components is a better approach. I\u0027ll take a better look at \u0027SteppingController\u0027.\nThanks",
+      "parentUuid": "AABOIn//+h4\u003d",
+      "revId": "19eb06957a8125d8de9e175b5b259c5038cd7d46",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOHn//+4M\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBRunControl_7_0_NS.java",
         "patchSetId": 1

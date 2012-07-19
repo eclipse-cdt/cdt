@@ -46,6 +46,7 @@
  * David McKnight   (IBM)        - [359704] SystemEditableRemoteFile does not release reference to editor
  * Rick Sawyer      (IBM)        - [376535] RSE does not respect editor overrides
  * David McKnight   (IBM)        - [357111] [DSTORE]File with invalid characters can't be opened in editor
+ * David McKnight   (IBM)        - [385420] double-click to open System editor from Remote Systems view not working
  *******************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -1737,6 +1738,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 			if (_usingDefaultDescriptor){
 				_editorDescriptor = IDE.getEditorDescriptor(file);
 				editorId = _editorDescriptor.getId();
+				_usingDefaultDescriptor = false;
 			}	
 			else {
 				editorId = _editorDescriptor.getId();
@@ -1744,26 +1746,30 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 		}
 
 		IDE.setDefaultEditor(file, editorId);
-
-		FileEditorInput finput = new FileEditorInput(file);
-
-		// check for files already open
-
-		// DKM - when _editorId is not lpex, this causes problem
-		// DY - changed editor from SystemTextEditor to IEditorPart
-		//editor = (SystemTextEditor)activePage.openEditor(file, _editorId);
-		if (_editorDescriptor != null && _editorDescriptor.isOpenExternal()){
-			editor = ((WorkbenchPage)activePage).openEditorFromDescriptor(new FileEditorInput(file), _editorDescriptor, true, null);
+		if (_editorDescriptor.isOpenExternal()){
+			openSystemEditor(); // opening regular way doesn't work anymore
 		}
 		else {
-			editor =  activePage.openEditor(finput, _editorDescriptor.getId());
-		}
-
-
-		SystemIFileProperties properties = new SystemIFileProperties(file);
-		properties.setRemoteFileObject(this);
-		if (properties.getDirty()){
-			updateDirtyIndicator();
+			FileEditorInput finput = new FileEditorInput(file);
+	
+			// check for files already open
+	
+			// DKM - when _editorId is not lpex, this causes problem
+			// DY - changed editor from SystemTextEditor to IEditorPart
+			//editor = (SystemTextEditor)activePage.openEditor(file, _editorId);
+			if (_editorDescriptor != null && _editorDescriptor.isOpenExternal()){
+				editor = ((WorkbenchPage)activePage).openEditorFromDescriptor(new FileEditorInput(file), _editorDescriptor, true, null);
+			}
+			else {
+				editor =  activePage.openEditor(finput, _editorDescriptor.getId());
+			}
+	
+	
+			SystemIFileProperties properties = new SystemIFileProperties(file);
+			properties.setRemoteFileObject(this);
+			if (properties.getDirty()){
+				updateDirtyIndicator();
+			}
 		}
 	}
 

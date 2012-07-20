@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
@@ -102,12 +104,19 @@ public class GdbConnectCommand implements IConnect {
        	};
     	try {
     		fExecutor.execute(canConnectQuery);
-			return canConnectQuery.get();
+			return canConnectQuery.get(50, TimeUnit.MILLISECONDS);
 		} catch (InterruptedException e) {
 		} catch (ExecutionException e) {
         } catch (RejectedExecutionException e) {
         	// Can be thrown if the session is shutdown
-        }
+        } catch (TimeoutException e) {
+        	// Bug 365601
+        	// Don't wait forever so as to not lock the UI and
+        	// potentially create a deadlock.
+        	// If we timeout, we just return false and disable
+        	// the connect command.  The next call to this method
+        	// will likely succeed and fix this.
+		}
 
 		return false;
      }

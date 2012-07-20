@@ -20,12 +20,16 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Random;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.eclipse.cdt.autotools.core.AutotoolsNewProjectNature;
 import org.eclipse.cdt.autotools.core.AutotoolsPlugin;
+import org.eclipse.cdt.autotools.core.IAutotoolsOption;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
@@ -45,7 +49,10 @@ import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -58,8 +65,18 @@ public class AutotoolsConfigurationManager implements IResourceChangeListener {
 	public final static String CFG_FILE_NAME = ".autotools"; //$NON-NLS-1$
 	private final static String CFG_CANT_SAVE = "Configure.Error.NoProjectToSave"; //$NON-NLS-1$
 	
-	
+	/**
+	 * @since 1.2
+	 */
+	public static final String INVALID_AUTOTOOLS_PROJECT = "CfgOptions.Invalid.Project"; //$NON-NLS-1$
+	/**
+	 * @since 1.2
+	 */
+
+	public static final String INVALID_AUTOTOOLS_CONFIG_ID = "CfgOptions.Invalid.Config"; //$NON-NLS-1$
+
 	private static AutotoolsConfigurationManager instance;
+	private static Random rand = new Random();
 	
 	private boolean isSyncing;
 	
@@ -79,21 +96,21 @@ public class AutotoolsConfigurationManager implements IResourceChangeListener {
 		return instance;
 	}
 
-	public IAConfiguration createDefaultConfiguration(IProject project, String id) {
+	public synchronized IAConfiguration createDefaultConfiguration(IProject project, String id) {
 		IAConfiguration cfg = new AutotoolsConfiguration(id);
 		return cfg;
 	}
 	
-	public IAConfiguration findCfg(IProject p, String id) {
+	public synchronized IAConfiguration findCfg(IProject p, String id) {
 		Map<String, IAConfiguration> cfgs = getConfigurations(p);
 		return cfgs.get(id);
 	}
 
-	public IAConfiguration getConfiguration(IProject p, String cfgId) {
+	public synchronized IAConfiguration getConfiguration(IProject p, String cfgId) {
 		return getConfiguration(p, cfgId, true);
 	}
 
-	public IAConfiguration getConfiguration(IProject p, String cfgId, boolean persist) {
+	public synchronized IAConfiguration getConfiguration(IProject p, String cfgId, boolean persist) {
 		IAConfiguration cfg = findCfg(p, cfgId);
 		if (cfg == null) {
 			cfg = createDefaultConfiguration(p, cfgId);
@@ -109,14 +126,14 @@ public class AutotoolsConfigurationManager implements IResourceChangeListener {
 	}
 	
 	
-	public boolean isConfigurationAlreadySaved(IProject project, ICConfigurationDescription cfgd) {
+	public synchronized boolean isConfigurationAlreadySaved(IProject project, ICConfigurationDescription cfgd) {
 		Map<String, IAConfiguration> cfgs = getSavedConfigs(project);
 		if (cfgs != null)
 			return cfgs.get(cfgd.getId()) != null;
 		return false;
 	}
 	
-	public void addConfiguration(IProject project, IAConfiguration cfg) {
+	public synchronized void addConfiguration(IProject project, IAConfiguration cfg) {
 		String projectName = project.getName();
 		Map<String, IAConfiguration> cfgs = getSavedConfigs(project);
 		if (cfgs == null) {
@@ -127,11 +144,11 @@ public class AutotoolsConfigurationManager implements IResourceChangeListener {
 		saveConfigs(project);
 	}
 	
-	public boolean isSyncing() {
+	public synchronized boolean isSyncing() {
 		return isSyncing;
 	}
 
-	private void setSyncing(boolean value) {
+	private synchronized void setSyncing(boolean value) {
 		isSyncing = value;
 	}
 	
@@ -144,7 +161,7 @@ public class AutotoolsConfigurationManager implements IResourceChangeListener {
 	 * @param project to synchronize configurations for
 	 * 
 	 */
-	public void syncConfigurations(IProject project) {
+	public synchronized void syncConfigurations(IProject project) {
 		setSyncing(true);
 		clearTmpConfigurations(project);
 		ICProjectDescription pd = CoreModel.getDefault().getProjectDescription(project);
@@ -160,13 +177,13 @@ public class AutotoolsConfigurationManager implements IResourceChangeListener {
 		replaceProjectConfigurations(project, newCfgList);
 	}
 	
-	public void replaceProjectConfigurations(IProject project, Map<String, IAConfiguration> cfgs) {
+	public synchronized void replaceProjectConfigurations(IProject project, Map<String, IAConfiguration> cfgs) {
 		String projectName = project.getName();
 		configs.put(projectName, cfgs);
 		saveConfigs(project);
 	}
 
-	public void replaceProjectConfigurations(IProject project, Map<String, IAConfiguration> cfgs, ICConfigurationDescription[] cfgds) {
+	public synchronized void replaceProjectConfigurations(IProject project, Map<String, IAConfiguration> cfgs, ICConfigurationDescription[] cfgds) {
 		String projectName = project.getName();
 		configs.put(projectName, cfgs);
 		saveConfigs(project, cfgds);
@@ -201,7 +218,7 @@ public class AutotoolsConfigurationManager implements IResourceChangeListener {
 						else if (nameNode != null) {
 							String cfgName = nameNode.getNodeValue();
 							ICConfigurationDescription cfgd = 
-								CoreModel.getDefault().getProjectDescription(project).getConfigurationByName(cfgName);
+									CoreModel.getDefault().getProjectDescription(project).getConfigurationByName(cfgName);
 							if (cfgd != null)
 								cfgId = cfgd.getId();
 							else
@@ -258,7 +275,7 @@ public class AutotoolsConfigurationManager implements IResourceChangeListener {
 		return list;
 	}
 
-	public IAConfiguration getTmpConfiguration(IProject p, ICConfigurationDescription cfgd) {
+	public synchronized IAConfiguration getTmpConfiguration(IProject p, ICConfigurationDescription cfgd) {
 		Map <String, IAConfiguration> list = getTmpConfigs(p);
 		IAConfiguration acfg = list.get(cfgd.getId());
 		if (acfg != null) {
@@ -278,7 +295,7 @@ public class AutotoolsConfigurationManager implements IResourceChangeListener {
 	 * @param cfgd the configuration descriptor for the clone
 	 * @return true if the configuration is already saved, false otherwise
 	 */
-	public boolean cloneCfg(IProject p, String oldId, ICConfigurationDescription cfgd) {
+	public synchronized boolean cloneCfg(IProject p, String oldId, ICConfigurationDescription cfgd) {
 		if (isConfigurationAlreadySaved(p, cfgd))
 			return true;
 		Map <String, IAConfiguration> tmpList = getTmpConfigs(p);
@@ -316,13 +333,15 @@ public class AutotoolsConfigurationManager implements IResourceChangeListener {
 		return tmpList;
 	}
 	
-	public void clearTmpConfigurations(IProject p) {
+	public synchronized void clearTmpConfigurations(IProject p) {
 		tmpConfigs.remove(p.getName());
 	}
 
-	public void saveConfigs(IProject project) {
-		ICConfigurationDescription[] cfgds = CoreModel.getDefault().getProjectDescription(project).getConfigurations();
-		saveConfigs(project, cfgds);
+	public synchronized void saveConfigs(IProject project) {
+		synchronized (project) {
+			ICConfigurationDescription[] cfgds = CoreModel.getDefault().getProjectDescription(project).getConfigurations();
+			saveConfigs(project, cfgds);
+		}
 	}
 	
 	private void syncNameField(ICConfigurationDescription cfgd) {
@@ -417,7 +436,7 @@ public class AutotoolsConfigurationManager implements IResourceChangeListener {
 	// with any changes currently that have been made to them.  If a configuration has been renamed, but this
 	// has not yet been confirmed by the end-user, then only the changes to the configuration are made.  The
 	// name currently remains the same in the output file.
-	public void applyConfigs(String projectName, ICConfigurationDescription[] cfgds) {
+	public synchronized void applyConfigs(String projectName, ICConfigurationDescription[] cfgds) {
 		try {
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 			IResource res = (IProject)root.findMember(projectName, false);
@@ -489,7 +508,7 @@ public class AutotoolsConfigurationManager implements IResourceChangeListener {
 		}
 	}
 	
-	public Map<String, IAConfiguration> getConfigurations(IProject project) {
+	public synchronized Map<String, IAConfiguration> getConfigurations(IProject project) {
 		Map<String, IAConfiguration> list = getSavedConfigs(project);
 		if (list == null) {
 			list = new HashMap<String, IAConfiguration>();
@@ -498,7 +517,7 @@ public class AutotoolsConfigurationManager implements IResourceChangeListener {
 		return list;
 	}
 	
-	public void resourceChanged(IResourceChangeEvent event) {
+	public synchronized void resourceChanged(IResourceChangeEvent event) {
 		IResource res = event.getResource();
 		if (!(res instanceof IProject))
 			return;
@@ -527,4 +546,134 @@ public class AutotoolsConfigurationManager implements IResourceChangeListener {
 		}
 	}
 	
+	private class AutotoolsOption implements IAutotoolsOption {
+		
+		private IConfigureOption option;
+		private final static String UNMODIFIABLE_CONFIG_OPTION = "CfgOptions.Unmodifiable.Option"; //$NON-NLS-1$
+		
+
+		public AutotoolsOption(IConfigureOption option) {
+			this.option = option;
+		}
+		
+		@Override
+		public int getType() {
+			return option.getType();
+		}
+
+		@Override
+		public boolean canUpdate() {
+			int type = getType();
+			switch (type) {
+			case STRING:
+			case BIN:
+			case TOOL:
+			case FLAGVALUE:
+			case MULTIARG:
+			case INTERNAL:
+				return true;
+			}
+			return false;
+		}
+
+		@Override
+		public void setValue(String value) throws CoreException {
+			if (!canUpdate()) {
+				throw new CoreException(new Status(IStatus.ERROR, AutotoolsPlugin.PLUGIN_ID, 
+						ConfigureMessages.getString(UNMODIFIABLE_CONFIG_OPTION)));
+			}
+			synchronized (option) {
+				option.setValue(value);
+			}
+		}
+
+		@Override
+		public String getValue() {
+			synchronized (option) {
+				return option.getValue();
+			}
+		}
+		
+	}
+	
+	private String createDummyId() {
+		for (;;) {
+			String id = "TEMP_" + rand.nextInt();
+			if (tmpConfigs.get(id) == null)
+				return id;
+		}
+	}
+	
+	/**
+	 * @since 1.2
+	 */
+	public synchronized Map<String, IAutotoolsOption> getAutotoolsCfgOptions(IProject project,
+			String cfgId) throws CoreException {
+		
+		// Verify project is valid Autotools project
+		if (project == null || !project.hasNature(AutotoolsNewProjectNature.AUTOTOOLS_NATURE_ID)) {
+			throw new CoreException(new Status(IStatus.ERROR, AutotoolsPlugin.PLUGIN_ID, 
+					ConfigureMessages.getString(INVALID_AUTOTOOLS_PROJECT)));
+		}
+		
+		// Verify configuration id is valid
+		ICConfigurationDescription cfgd = 
+				CoreModel.getDefault().getProjectDescription(project).getConfigurationById(cfgId);
+		IConfiguration icfg = ManagedBuildManager.getConfigurationForDescription(cfgd);
+		if (icfg == null) {
+			throw new CoreException(new Status(IStatus.ERROR, AutotoolsPlugin.PLUGIN_ID, 
+					ConfigureMessages.getString(INVALID_AUTOTOOLS_CONFIG_ID)));
+		}
+
+		IAConfiguration cfg = getConfiguration(project, cfgId);
+		HashMap<String, IAutotoolsOption> options = new HashMap<String, IAutotoolsOption>();
+
+		// Get set of configuration options and convert to set of IAutotoolOptions
+		Map<String, IConfigureOption> cfgOptions = cfg.getOptions();
+		IAConfiguration dummyCfg = createDefaultConfiguration(project, createDummyId());
+		for (Iterator<Entry<String, IConfigureOption>> i = cfgOptions.entrySet().iterator(); i.hasNext();) {
+			Map.Entry<String, IConfigureOption> entry = (Entry<String, IConfigureOption>) i.next();
+			String name = entry.getKey();
+			IAutotoolsOption configOption = 
+					new AutotoolsOption(entry.getValue().copy((AutotoolsConfiguration)dummyCfg));
+			options.put(name, configOption);
+		}
+
+		return options;
+	}
+	
+	/**
+	 * @since 1.2
+	 */
+	public synchronized void updateAutotoolCfgOptions(IProject project, String cfgId,
+			Map<String,IAutotoolsOption> options) throws CoreException {
+		
+		// Verify project is valid Autotools project
+		if (project == null || !project.hasNature(AutotoolsNewProjectNature.AUTOTOOLS_NATURE_ID)) {
+			throw new CoreException(new Status(IStatus.ERROR, AutotoolsPlugin.PLUGIN_ID, 
+					ConfigureMessages.getString(INVALID_AUTOTOOLS_PROJECT)));
+		}
+		
+		// Verify configuration id is valid
+		IAConfiguration cfg = findCfg(project, cfgId);
+		if (cfg == null) {
+			throw new CoreException(new Status(IStatus.ERROR, AutotoolsPlugin.PLUGIN_ID, 
+					ConfigureMessages.getString(INVALID_AUTOTOOLS_CONFIG_ID)));
+		}
+
+		// Get set of configuration options and convert to set of IAutotoolOptions
+		for (Iterator<Entry<String, IAutotoolsOption>> i = options.entrySet().iterator(); i.hasNext();) {
+			Map.Entry<String, IAutotoolsOption> entry = (Entry<String, IAutotoolsOption>) i.next();
+			String name = entry.getKey();
+			IAutotoolsOption option = entry.getValue();
+			IConfigureOption cfgOption = cfg.getOption(name);
+			if (cfgOption != null) {
+				cfgOption.setValue(option.getValue());
+			}
+		}
+		
+		// Save changes
+		saveConfigs(project);
+	}
+
 }

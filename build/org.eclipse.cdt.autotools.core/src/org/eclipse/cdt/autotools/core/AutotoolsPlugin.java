@@ -12,9 +12,11 @@ package org.eclipse.cdt.autotools.core;
 
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
+import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import org.eclipse.cdt.internal.autotools.core.configure.AutotoolsConfigurationManager;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
@@ -289,5 +291,35 @@ public class AutotoolsPlugin extends AbstractUIPlugin {
 			return window.getActivePage();
 		}
 		return null;
+	}
+	
+	/**
+	 * Return set of Autotool configuration options for a given build configuration id.
+	 * 
+	 * @param project existing autotools project
+	 * @param cfgId configuration id
+	 * @return a copy of Autotools configurations for the given configuration id
+	 * @throws CoreException if project is not valid Autotools project or cfgId does not exist
+	 * @since 1.2
+	 */
+	public Map<String, IAutotoolsOption> getAutotoolCfgOptions(IProject project,
+			String cfgId) throws CoreException {
+		return AutotoolsConfigurationManager.getInstance().getAutotoolsCfgOptions(project, cfgId);
+	}
+
+	/**
+	 * Update Autotool configuration options for a specified build configuration
+	 *
+	 * @param project existing autotools project
+	 * @param cfgId configuation id
+	 * @param options set of updated Autotool configuration options
+	 * @throws CoreException if project is not valid Autotools project or cfgId does not exist
+	 * 
+	 * @since 1.2
+	 */
+	public void updateAutotoolCfgOptions(IProject project, String cfgId,
+			Map<String,IAutotoolsOption> options) throws CoreException {
+		AutotoolsConfigurationManager.getInstance().updateAutotoolCfgOptions(project, cfgId, options);
+
 	}
 }

@@ -47,6 +47,7 @@
  * Rick Sawyer      (IBM)        - [376535] RSE does not respect editor overrides
  * David McKnight   (IBM)        - [357111] [DSTORE]File with invalid characters can't be opened in editor
  * David McKnight   (IBM)        - [385420] double-click to open System editor from Remote Systems view not working
+ * David McKnight   (IBM)        - [385416] NPE during shutdown with remote editor open
  *******************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -1866,12 +1867,14 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 			//delete();
 		       
 			SystemUniversalTempFileListener.getListener().unregisterEditedFile(this);
-
-			IWorkbenchPage page = SystemBasePlugin.getActiveWorkbenchWindow().getActivePage();			
-			if (page != null){
-				page.removePartListener(this);
-				editor = null;
-			}
+			IWorkbenchWindow win = SystemBasePlugin.getActiveWorkbenchWindow();
+			if (win != null){ // if the window is already closed, the listener doesn't matter
+				IWorkbenchPage page = win.getActivePage();			
+				if (page != null){
+					page.removePartListener(this);
+					editor = null;
+				}
+			}			
 		}
 	}
 

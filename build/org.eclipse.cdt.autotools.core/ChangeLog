@@ -1,3 +1,16 @@
+2012-07-20  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* src/org/eclipse/cdt/autotools/core/AutotoolsPlugin.java (getAutotoolCfgOptions): New publicly accessible
+	method for retrieving Autotool configuration options for a given build configuration.
+	(updateAutotoolCfgOptions): New publicly accessible method for updating Autotool configuration options for
+	a given build configuration.
+	* src/org/eclipse/cdt/internal/autotools/core/configure/ConfigureMessages.properties: Add new messages for
+	errors caused by user reading and updating configuration options.
+	* src/org/eclipse/cdt/internal/autotools/core/configure/AutotoolsConfigurationManager.java: Add synchronization to
+	all public methods. 
+	(updateAutotoolCfgOptions): New method to allow external users to update configuration options.
+	(getAutotoolsCfgOptions): New method to get configuration options for a given configuration id.
+
 2012-04-20  Jeff Johnston  <jjohnstn@redhat.com>
 
 	* META-INF/MANIFEST.MF: Bump up version to 1.1.0.

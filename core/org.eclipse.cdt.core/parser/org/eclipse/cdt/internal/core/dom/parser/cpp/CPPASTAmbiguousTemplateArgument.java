@@ -34,14 +34,14 @@ import org.eclipse.core.runtime.Assert;
  */
 public class CPPASTAmbiguousTemplateArgument extends ASTAmbiguousNode implements ICPPASTAmbiguousTemplateArgument {
 	private List<IASTNode> fNodes;
-	
+
 	/**
 	 * @param nodes  nodes of type {@link IASTTypeId}, {@link IASTIdExpression}
 	 * or {@link ICPPASTPackExpansionExpression}.
 	 */
 	public CPPASTAmbiguousTemplateArgument(IASTNode... nodes) {
 		fNodes= new ArrayList<IASTNode>(2);
-		for(IASTNode node : nodes) {
+		for (IASTNode node : nodes) {
 			if (node instanceof IASTTypeId || node instanceof IASTIdExpression) {
 				fNodes.add(node);
 			} else if (node instanceof ICPPASTPackExpansionExpression) {
@@ -92,10 +92,10 @@ public class CPPASTAmbiguousTemplateArgument extends ASTAmbiguousNode implements
 		IASTNode[] copyNodes = new IASTNode[sizeOfNodes];
 		int arrayIndex = 0;
 		for (IASTNode node : fNodes) {
-			if (node != null){
+			if (node != null) {
 				copyNodes[arrayIndex] = node.copy(style);
 			} else {
-				copyNodes[arrayIndex]= null;
+				copyNodes[arrayIndex] = null;
 			}
 			arrayIndex++;
 		}

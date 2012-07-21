@@ -51,6 +51,7 @@ import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IValue;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAmbiguousTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
@@ -1706,6 +1707,10 @@ public class CPPTemplates {
 					IType type= expr.getExpressionType();
 					IValue value= Value.create((IASTExpression) arg, Value.MAX_RECURSION_DEPTH);
 					result[i]= new CPPTemplateArgument(value, type);
+				} else if (arg instanceof ICPPASTAmbiguousTemplateArgument) {
+					throw new IllegalArgumentException(id.getRawSignature()
+							+ " contains an ambiguous template argument at position " + i + " in " //$NON-NLS-1$ //$NON-NLS-2$
+							+ id.getContainingFilename());
 				} else {
 					throw new IllegalArgumentException("Unexpected type: " + arg.getClass().getName()); //$NON-NLS-1$
 				}

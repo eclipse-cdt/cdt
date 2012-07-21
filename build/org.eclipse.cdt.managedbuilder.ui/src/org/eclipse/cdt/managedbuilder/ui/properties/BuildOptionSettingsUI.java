@@ -1302,6 +1302,9 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 			return selected;
 		}
 		
+		/**
+		 * @since 8.2
+		 */
 		public void setSelection(ITreeOption option) {
 			if (treeRoot == getRoot(option)) { // only work in the same tree
 				selected = option;

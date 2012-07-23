@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOIn//+RE\u003d",
+        "filename": "debug/org.eclipse.cdt.debug.ui/plugin.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 2511,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-07-23T22:57:55Z",
+      "side": 1,
+      "message": "Tooltip is missing.",
+      "revId": "4c361343d21ce750064e9cccc743c72517a32b12",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -12,16 +12,18 @@ package org.eclipse.cdt.internal.autotools.core.configure;
 
 import java.util.ArrayList;
 
+import org.eclipse.cdt.autotools.core.IAutotoolsOption;
+
 public interface IConfigureOption {
 	
-	public final static int CATEGORY = 0;
-	public final static int BIN = 1;
-	public final static int STRING = 2;
-	public final static int INTERNAL = 3;
-	public final static int MULTIARG = 4;
-	public final static int TOOL = 5;
-	public final static int FLAG = 6;
-	public final static int FLAGVALUE = 7;
+	public final static int CATEGORY = IAutotoolsOption.CATEGORY;
+	public final static int BIN = IAutotoolsOption.BIN;
+	public final static int STRING = IAutotoolsOption.STRING;
+	public final static int INTERNAL = IAutotoolsOption.INTERNAL;
+	public final static int MULTIARG = IAutotoolsOption.MULTIARG;
+	public final static int TOOL = IAutotoolsOption.TOOL;
+	public final static int FLAG = IAutotoolsOption.FLAG;
+	public final static int FLAGVALUE = IAutotoolsOption.FLAGVALUE;
 	public String getName();
 	public String getParameter();
 	public ArrayList<String> getParameters();

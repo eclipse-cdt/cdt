@@ -16,6 +16,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.cdt.autotools.core.AutotoolsOptionConstants;
+
 
 public class AutotoolsConfiguration implements IAConfiguration {
 
@@ -67,48 +69,48 @@ public class AutotoolsConfiguration implements IAConfiguration {
 	// All options following a category are children of that category
 	// in a tree view, up to the next category.
 	private static Option[] configOpts = new Option[] {
-		new Option("configure", IConfigureOption.TOOL), // $NON-NLS-1$
-		new Option("general", IConfigureOption.CATEGORY), // $NON-NLS-1$
-		new Option("configdir", IConfigureOption.INTERNAL), // $NON-NLS-1$
-		new Option("cache-file", "cache_file", IConfigureOption.STRING), // $NON-NLS-1$
-		new Option("help", IConfigureOption.BIN), // $NON-NLS-1$
-		new Option("no-create", "no_create", IConfigureOption.BIN), // $NON-NLS-1$
-		new Option("quiet", IConfigureOption.BIN), // $NON-NLS-1$
-		new Option("version", IConfigureOption.BIN), // $NON-NLS-1$
-		new Option("platform", IConfigureOption.CATEGORY), // $NON-NLS-1$
-		new Option("host", IConfigureOption.STRING), // $NON-NLS-1$
-		new Option("build", IConfigureOption.STRING), // $NON-NLS-1$
-		new Option("target", IConfigureOption.STRING), // $NON-NLS-1$
-		new Option("directories", IConfigureOption.CATEGORY), // $NON-NLS-1$
-		new Option("prefix", IConfigureOption.STRING), // $NON-NLS-1$
-		new Option("exec-prefix", "exec_prefix", IConfigureOption.STRING), // $NON-NLS-1$
-		new Option("libdir", IConfigureOption.STRING), // $NON-NLS-1$
-		new Option("bindir", IConfigureOption.STRING), // $NON-NLS-1$
-		new Option("sbindir", IConfigureOption.STRING), // $NON-NLS-1$
-		new Option("includedir", IConfigureOption.STRING), // $NON-NLS-1$
-		new Option("datadir", IConfigureOption.STRING), // $NON-NLS-1$
-		new Option("sysconfdir", IConfigureOption.STRING), // $NON-NLS-1$
-		new Option("infodir", IConfigureOption.STRING), // $NON-NLS-1$
-		new Option("mandir", IConfigureOption.STRING), // $NON-NLS-1$
-		new Option("srcdir", IConfigureOption.STRING), // $NON-NLS-1$
-		new Option("localstatedir", IConfigureOption.STRING), // $NON-NLS-1$
-		new Option("sharedstatedir", IConfigureOption.STRING), // $NON-NLS-1$
-		new Option("libexecdir", IConfigureOption.STRING), // $NON-NLS-1$
-		new Option("oldincludedir", IConfigureOption.STRING), // $NON-NLS-1$
-		new Option("filenames", IConfigureOption.CATEGORY), // $NON-NLS-1$
-		new Option("program-prefix", "program_prefix", IConfigureOption.STRING), // $NON-NLS-1$
-		new Option("program-suffix", "program_suffix", IConfigureOption.STRING), // $NON-NLS-1$
-		new Option("program-transform-name", "program_transform_name", IConfigureOption.STRING), // $NON-NLS-1$
-		new Option("features", IConfigureOption.CATEGORY), // $NON-NLS-1$
-		new Option("enable-maintainer-mode", "enable_maintainer_mode", IConfigureOption.BIN), // $NON-NLS-1$
-		new Option("CFLAGS", IConfigureOption.FLAG), // $NON-NLS-1$
-		new Option("cflags-debug", "cflags_debug", IConfigureOption.FLAGVALUE), // $NON-NLS-1$ // $NON-NLS-2$
-		new Option("cflags-gprof", "cflags_gprof", IConfigureOption.FLAGVALUE), // $NON-NLS-1$ // $NON-NLS-2$ 
-		new Option("cflags-gcov", "cflags_gcov", IConfigureOption.FLAGVALUE), // $NON-NLS-1$ // $NON-NLS-2$ 
-		new Option("user", IConfigureOption.MULTIARG), // $NON-NLS-1$
-		new Option("autogen", "autogen", "autogen.sh", IConfigureOption.TOOL), // $NON-NLS-1$
-		new Option("options", IConfigureOption.CATEGORY), // $NON-NLS-1$
-		new Option("autogenOpts", IConfigureOption.MULTIARG), // $NON-NLS-1$
+		new Option(AutotoolsOptionConstants.TOOL_CONFIGURE, IConfigureOption.TOOL),
+		new Option(AutotoolsOptionConstants.CATEGORY_GENERAL, IConfigureOption.CATEGORY),
+		new Option(AutotoolsOptionConstants.OPT_CONFIGDIR, IConfigureOption.INTERNAL),
+		new Option(AutotoolsOptionConstants.OPT_CACHE_FILE, "cache_file", IConfigureOption.STRING), // $NON-NLS-1$
+		new Option(AutotoolsOptionConstants.OPT_HELP, IConfigureOption.BIN),
+		new Option(AutotoolsOptionConstants.OPT_NO_CREATE, "no_create", IConfigureOption.BIN), // $NON-NLS-1$
+		new Option(AutotoolsOptionConstants.OPT_QUIET, IConfigureOption.BIN),
+		new Option(AutotoolsOptionConstants.OPT_VERSION, IConfigureOption.BIN),
+		new Option(AutotoolsOptionConstants.CATEGORY_PLATFORM, IConfigureOption.CATEGORY),
+		new Option(AutotoolsOptionConstants.OPT_HOST, IConfigureOption.STRING),
+		new Option(AutotoolsOptionConstants.OPT_BUILD, IConfigureOption.STRING),
+		new Option(AutotoolsOptionConstants.OPT_TARGET, IConfigureOption.STRING),
+		new Option(AutotoolsOptionConstants.CATEGORY_DIRECTORIES, IConfigureOption.CATEGORY),
+		new Option(AutotoolsOptionConstants.OPT_PREFIX, IConfigureOption.STRING),
+		new Option(AutotoolsOptionConstants.OPT_EXEC_PREFIX, "exec_prefix", IConfigureOption.STRING), // $NON-NLS-1$
+		new Option(AutotoolsOptionConstants.OPT_LIBDIR, IConfigureOption.STRING),
+		new Option(AutotoolsOptionConstants.OPT_BINDIR, IConfigureOption.STRING),
+		new Option(AutotoolsOptionConstants.OPT_SBINDIR, IConfigureOption.STRING),
+		new Option(AutotoolsOptionConstants.OPT_INCLUDEDIR, IConfigureOption.STRING),
+		new Option(AutotoolsOptionConstants.OPT_DATADIR, IConfigureOption.STRING),
+		new Option(AutotoolsOptionConstants.OPT_SYSCONFDIR, IConfigureOption.STRING),
+		new Option(AutotoolsOptionConstants.OPT_INFODIR, IConfigureOption.STRING),
+		new Option(AutotoolsOptionConstants.OPT_MANDIR, IConfigureOption.STRING),
+		new Option(AutotoolsOptionConstants.OPT_SRCDIR, IConfigureOption.STRING),
+		new Option(AutotoolsOptionConstants.OPT_LOCALSTATEDIR, IConfigureOption.STRING),
+		new Option(AutotoolsOptionConstants.OPT_SHAREDSTATEDIR, IConfigureOption.STRING),
+		new Option(AutotoolsOptionConstants.OPT_LIBEXECDIR, IConfigureOption.STRING),
+		new Option(AutotoolsOptionConstants.OPT_OLDINCLUDEDIR, IConfigureOption.STRING),
+		new Option(AutotoolsOptionConstants.CATEGORY_FILENAMES, IConfigureOption.CATEGORY),
+		new Option(AutotoolsOptionConstants.OPT_PROGRAM_PREFIX, "program_prefix", IConfigureOption.STRING), // $NON-NLS-1$
+		new Option(AutotoolsOptionConstants.OPT_PROGRAM_SUFFIX, "program_suffix", IConfigureOption.STRING), // $NON-NLS-1$
+		new Option(AutotoolsOptionConstants.OPT_PROGRAM_TRANSFORM_NAME, "program_transform_name", IConfigureOption.STRING), // $NON-NLS-1$
+		new Option(AutotoolsOptionConstants.CATEGORY_FEATURES, IConfigureOption.CATEGORY),
+		new Option(AutotoolsOptionConstants.OPT_ENABLE_MAINTAINER_MODE, "enable_maintainer_mode", IConfigureOption.BIN), // $NON-NLS-1$
+		new Option(AutotoolsOptionConstants.FLAG_CFLAGS, IConfigureOption.FLAG),
+		new Option(AutotoolsOptionConstants.OPT_CFLAGS_DEBUG, "cflags_debug", IConfigureOption.FLAGVALUE), // $NON-NLS-1$ // $NON-NLS-2$
+		new Option(AutotoolsOptionConstants.OPT_CFLAGS_GPROF, "cflags_gprof", IConfigureOption.FLAGVALUE), // $NON-NLS-1$ // $NON-NLS-2$ 
+		new Option(AutotoolsOptionConstants.OPT_CFLAGS_GCOV, "cflags_gcov", IConfigureOption.FLAGVALUE), // $NON-NLS-1$ // $NON-NLS-2$ 
+		new Option(AutotoolsOptionConstants.OPT_USER, IConfigureOption.MULTIARG),
+		new Option(AutotoolsOptionConstants.TOOL_AUTOGEN, "autogen", "autogen.sh", IConfigureOption.TOOL), // $NON-NLS-1$
+		new Option(AutotoolsOptionConstants.CATEGORY_OPTIONS, IConfigureOption.CATEGORY),
+		new Option(AutotoolsOptionConstants.OPT_AUTOGENOPTS, IConfigureOption.MULTIARG),
 	};
 	
 	private static Option[] toolList;

@@ -12,8 +12,8 @@ package org.eclipse.cdt.autotools.tests;
 
 import junit.framework.TestCase;
 
-import org.eclipse.cdt.managedbuilder.core.ManagedCProjectNature;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.cdt.autotools.core.AutotoolsNewProjectNature;
 
 public class AutotoolsProjectNatureTest extends TestCase {
     
@@ -31,7 +31,7 @@ public class AutotoolsProjectNatureTest extends TestCase {
 		if(testProject == null) {
             fail("Unable to create test project");
         }
-		assertTrue(testProject.hasNature(ManagedCProjectNature.MNG_NATURE_ID));
+		assertTrue(testProject.hasNature(AutotoolsNewProjectNature.AUTOTOOLS_NATURE_ID));
 		testProject.delete(true, false, ProjectTools.getMonitor());
 	}
 }

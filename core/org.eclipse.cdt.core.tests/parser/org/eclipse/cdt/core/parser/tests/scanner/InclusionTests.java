@@ -278,4 +278,31 @@ public class InclusionTests extends PreprocessorTestsBase {
     	validateInteger("1");
     	validateEOF();
     }
+    
+    // #include "test.h"
+    public void testSuppressingUseOfCurrentFileDirectory() throws Exception {    
+    	String content= getAboveComment();
+
+    	importFolder("f1"); 
+    	IFolder inc = importFolder("f1/inc"); 
+    	importFile("f1/test.h", "1"); 
+    	importFile("f1/inc/test.h", "2"); 
+    	IFile base = importFile("f1/base.cpp", getAboveComment()); 
+
+    	String[] path = {inc.getLocation().toFile().toString()};  
+    	IScannerInfo scannerInfo = new ExtendedScannerInfo(Collections.EMPTY_MAP, path, new String[]{}, null);
+    	FileContent reader= FileContent.create(base);
+    	initializeScanner(reader, ParserLanguage.C, ParserMode.COMPLETE_PARSE, scannerInfo);
+
+    	validateInteger("1");
+    	validateEOF();
+    	
+    	path = new String[] {inc.getLocation().toFile().toString(), "-"};  // Suppress use of current file directory
+    	scannerInfo = new ExtendedScannerInfo(Collections.EMPTY_MAP, path, new String[]{}, null);
+    	reader= FileContent.create(base);
+    	initializeScanner(reader, ParserLanguage.C, ParserMode.COMPLETE_PARSE, scannerInfo);
+
+    	validateInteger("2");
+    	validateEOF();
+    }
 }

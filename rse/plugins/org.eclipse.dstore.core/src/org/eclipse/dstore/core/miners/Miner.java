@@ -22,6 +22,7 @@
  * David McKnight    (IBM)  - [358301] [DSTORE] Hang during debug source look up
  * David McKnight    (IBM)  - [373507] [dstore][multithread] reduce heap memory on disconnect for server
  * David McKnight    (IBM)  - [378136] [dstore] miner.finish is stuck
+ * David McKnight    (IBM)  - [383544] [dstore] Better handling needed for Errors in miners
  *******************************************************************************/
 
 package org.eclipse.dstore.core.miners;
@@ -30,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import org.eclipse.dstore.core.model.Client;
 import org.eclipse.dstore.core.model.DE;
 import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;
@@ -57,7 +59,6 @@ implements ISchemaExtender
 	public DataElement _minerElement;
 	public DataElement _minerData;
 	public DataElement _minerTransient;
-
 
 
 	private boolean _initialized;
@@ -310,6 +311,7 @@ implements ISchemaExtender
 		}
 		else
 		{
+			Client client = _dataStore.getClient();
 			try
 			{
 				status = handleCommand(command);
@@ -318,6 +320,11 @@ implements ISchemaExtender
 			{
 				//e.printStackTrace();
 				_dataStore.trace(e);
+				if (client != null) {
+					client.getLogger().logError(this.getClass().toString(), "Exception in Miner.command()", e); //$NON-NLS-1$
+				}
+				
+				
 				status.setAttribute(DE.A_VALUE, "Failed with Exception:"+getStack(e)); //$NON-NLS-1$
 				status.setAttribute(DE.A_NAME, DataStoreResources.model_done);
 				//status.setAttribute(DE.A_SOURCE, getStack(e));
@@ -337,6 +344,10 @@ implements ISchemaExtender
 			{
 			    er.printStackTrace();
 				_dataStore.trace(er);
+				if (client != null) {
+					client.getLogger().logError(this.getClass().toString(), "Error in Miner.command()", er); //$NON-NLS-1$
+					client.getLogger().logInfo(this.getClass().toString(), "Finishing due to error condition"); //$NON-NLS-1$
+				}
 				_dataStore.finish();
 
 				if (SystemServiceManager.getInstance().getSystemService() == null)

@@ -31,6 +31,11 @@ public interface IScannerInfo {
 	 * Returns an array of paths that are searched when processing an include directive.
 	 * see {@link IExtendedScannerInfo#getLocalIncludePath()}
 	 * <p>
+	 * In order to suppress the use of the directory of the current file (side effect of gcc option
+	 * -I-) you can pass '-' as one of the include paths. Other than that, the '-' will not have an
+	 * effect, in particular it will not split the include path as the -I- option would do. To achieve
+	 * that, use {@link IExtendedScannerInfo#getLocalIncludePath()}.
+	 * <p>
 	 * In order to handle framework includes used on Apple Computers you can make use of
 	 * the two variables: '__framework__' and '__header__'. 
 	 * <br> E.g.:  /System/Library/Frameworks/__framework__.framework/Headers/__header__,

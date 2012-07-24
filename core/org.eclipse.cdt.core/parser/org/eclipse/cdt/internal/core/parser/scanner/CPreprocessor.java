@@ -14,6 +14,7 @@
 package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -225,7 +226,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     final private AbstractParserLogService fLog;
     final private InternalFileContentProvider fFileContentProvider;
 
-    private IIncludeFileResolutionHeuristics fIncludeFileResolutionHeuristics;
+    private final IIncludeFileResolutionHeuristics fIncludeFileResolutionHeuristics;
     private final ExpressionEvaluator fExpressionEvaluator;
 	private final MacroDefinitionParser fMacroDefinitionParser;
 	private final MacroExpander fMacroExpander;
@@ -235,7 +236,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     final private char[] fAdditionalNumericLiteralSuffixes;
     final private CharArrayIntMap fKeywords;
     final private CharArrayIntMap fPPKeywords;
-    private IncludeSearchPathElement[] fIncludeSearchPath;
+    private final IncludeSearchPath fIncludeSearchPath;
     private String[][] fPreIncludedFiles= null;
 
     private int fContentAssistLimit= -1;
@@ -397,27 +398,36 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 		return array == null ? CharArrayUtils.EMPTY_CHAR_ARRAY : array;
 	}
 
-    public static IncludeSearchPathElement[] configureIncludeSearchPath(File directory, IScannerInfo info) {
-    	IncludeSearchPathElement[] includeSearchPath = null;
-    	String[] searchPath= info.getIncludePaths();
-    	int idx= 0;
-        if (info instanceof IExtendedScannerInfo) {
+	public static IncludeSearchPath configureIncludeSearchPath(File directory, IScannerInfo info) {
+    	boolean inhibitUseOfCurrentFileDirectory= false;
+    	List<IncludeSearchPathElement> elements = new ArrayList<IncludeSearchPathElement>();
+
+    	// Quote includes first
+    	if (info instanceof IExtendedScannerInfo) {
         	final IExtendedScannerInfo einfo= (IExtendedScannerInfo) info;
-            final String[] quoteIncludeSearchPath= einfo.getLocalIncludePath();
-            if (quoteIncludeSearchPath != null && quoteIncludeSearchPath.length > 0) {
-            	includeSearchPath= new IncludeSearchPathElement[quoteIncludeSearchPath.length + searchPath.length];
-            	for (String path : quoteIncludeSearchPath) {
-            		includeSearchPath[idx++]= new IncludeSearchPathElement(makeAbsolute(directory, path), true);
+            final String[] paths= einfo.getLocalIncludePath();
+            if (paths != null) {
+            	for (String path : paths) {
+            		if ("-".equals(path)) { //$NON-NLS-1$
+            			inhibitUseOfCurrentFileDirectory= true;
+            		} else {
+            			elements.add(new IncludeSearchPathElement(makeAbsolute(directory, path), true));
+            		}
 				}
             }
         }
-        if (includeSearchPath == null) {
-        	includeSearchPath= new IncludeSearchPathElement[searchPath.length];
-        }
-        for (String path : searchPath) {
-        	includeSearchPath[idx++]= new IncludeSearchPathElement(makeAbsolute(directory, path), false);
-		}
-        return includeSearchPath;
+    	// Regular includes
+    	String[] paths= info.getIncludePaths();
+    	if (paths != null) {
+        	for (String path : paths) {
+        		if ("-".equals(path)) { //$NON-NLS-1$
+        			inhibitUseOfCurrentFileDirectory= true;
+        		} else {
+        			elements.add(new IncludeSearchPathElement(makeAbsolute(directory, path), false));
+        		}
+			}
+    	}
+        return new IncludeSearchPath(elements, inhibitUseOfCurrentFileDirectory);
 	}
 
 	private static String makeAbsolute(File directory, String includePath) {
@@ -1074,8 +1084,8 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
         	return tester.checkFile(absoluteInclusionPath, false, null);
         }
 
-        if (currentFile != null && quoteInclude && !includeNext) {
-            // Check to see if we find a match in the current directory
+        if (currentFile != null && quoteInclude && !includeNext && !fIncludeSearchPath.isInhibitUseOfCurrentFileDirectory()) {
+            // Check to see if we find a match in the directory of the current file
     		final File currentDir= new File(currentFile).getParentFile();
     		if (currentDir != null) {
         		final String fileLocation = ScannerUtility.createReconciledPath(
@@ -1103,7 +1113,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
         	}
         }
 
-        for (IncludeSearchPathElement path : fIncludeSearchPath) {
+        for (IncludeSearchPathElement path : fIncludeSearchPath.getElements()) {
         	if (searchAfter != null) {
         		if (searchAfter.equals(path)) {
         			searchAfter= null;
@@ -1146,7 +1156,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     }
     
     private IncludeSearchPathElement findFileInIncludePath(String file, String includeDirective) {
-        for (IncludeSearchPathElement path : fIncludeSearchPath) {
+        for (IncludeSearchPathElement path : fIncludeSearchPath.getElements()) {
     		String fileLocation = path.getLocation(includeDirective);
     		if (file.equals(fileLocation)) {
     			return path;

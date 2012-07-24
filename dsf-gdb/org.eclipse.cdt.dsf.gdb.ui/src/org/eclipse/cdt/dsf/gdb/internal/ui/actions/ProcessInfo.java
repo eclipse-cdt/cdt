@@ -14,7 +14,7 @@ import org.eclipse.cdt.dsf.concurrent.Immutable;
 import org.eclipse.cdt.dsf.gdb.launching.IProcessExtendedInfo;
 
 @Immutable
-class ProcessInfo implements IProcessExtendedInfo, Comparable<ProcessInfo> {
+public class ProcessInfo implements IProcessExtendedInfo, Comparable<ProcessInfo> {
 	private final int pid;
 	private final String name;
 	private final String[] cores;

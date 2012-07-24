@@ -282,8 +282,8 @@ public class SingleExpressionVMNode extends AbstractVMNode implements IElementLa
                     }
                 }
             }
+            requestMonitor.done();
         }
-        requestMonitor.done();
     }
     
     private void buildDeltaForExpressionsChangedEvent(ExpressionsChangedEvent event, VMDelta parentDelta, 

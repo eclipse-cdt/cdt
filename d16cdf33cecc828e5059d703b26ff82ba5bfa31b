@@ -16,6 +16,24 @@
       "revId": "d16cdf33cecc828e5059d703b26ff82ba5bfa31b",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//+KE\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/commands/GdbConnectCommand.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 268,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-07-25T14:34:41Z",
+      "side": 1,
+      "message": "Thanks!  I add this when testing and forgot it.",
+      "parentUuid": "AABOIn//+KQ\u003d",
+      "revId": "d16cdf33cecc828e5059d703b26ff82ba5bfa31b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

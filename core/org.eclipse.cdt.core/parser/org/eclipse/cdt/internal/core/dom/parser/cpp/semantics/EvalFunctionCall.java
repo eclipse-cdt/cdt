@@ -135,7 +135,10 @@ public class EvalFunctionCall extends CPPEvaluation {
 
 	@Override
 	public IValue getValue(IASTNode point) {
-		return Value.create(this, point);
+		if (isValueDependent())
+			return Value.create(this);
+		// TODO(sprigogin): Simulate execution of a function call.
+		return Value.UNKNOWN;
 	}
 
 	@Override
@@ -170,7 +173,7 @@ public class EvalFunctionCall extends CPPEvaluation {
 		for (int i = 0; i < args.length; i++) {
 			args[i]= (ICPPEvaluation) buffer.unmarshalEvaluation();
 		}
-		return new EvalComma(args);
+		return new EvalFunctionCall(args);
 	}
 
 	@Override
@@ -186,5 +189,14 @@ public class EvalFunctionCall extends CPPEvaluation {
 		if (!changed)
 			return this;
 		return new EvalFunctionCall(args);
+	}
+
+	@Override
+	public int determinePackSize(ICPPTemplateParameterMap tpMap) {
+		int r = CPPTemplates.PACK_SIZE_NOT_FOUND;
+		for (ICPPEvaluation arg : fArguments) {
+			r = CPPTemplates.combinePackSize(r, arg.determinePackSize(tpMap));
+		}
+		return r;
 	}
 }

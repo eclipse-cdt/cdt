@@ -205,7 +205,17 @@ public class EvalUnary extends CPPEvaluation {
 
 	@Override
 	public IValue getValue(IASTNode point) {
-		return Value.create(this, point);
+		if (fOverload != null) {
+			// TODO(sprigogin): Simulate execution of a function call.
+			return Value.create(this);
+		}
+
+		IValue val = fArgument.getValue(point);
+		Long num = val.numericalValue();
+		if (num != null) {
+			return Value.evaluateUnaryExpression(fOperator, num);
+		}
+		return Value.create(this);
 	}
 
 	@Override
@@ -245,5 +255,10 @@ public class EvalUnary extends CPPEvaluation {
 		if (argument == fArgument)
 			return this;
 		return new EvalUnary(fOperator, argument);
+	}
+
+	@Override
+	public int determinePackSize(ICPPTemplateParameterMap tpMap) {
+		return fArgument.determinePackSize(tpMap);
 	}
 }

@@ -69,4 +69,11 @@ public interface ICPPEvaluation extends ISerializableEvaluation {
 	 */
 	ICPPEvaluation instantiate(ICPPTemplateParameterMap tpMap, int packOffset,
 			ICPPClassSpecialization within, int maxdepth, IASTNode point);
+
+	/**
+	 * Determines size of the template parameter pack.
+	 *
+	 * @noreference This method is not intended to be referenced by clients. 
+	 */
+	int determinePackSize(ICPPTemplateParameterMap tpMap);
 }

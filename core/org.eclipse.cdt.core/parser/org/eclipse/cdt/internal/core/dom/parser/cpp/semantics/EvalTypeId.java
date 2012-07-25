@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
@@ -73,7 +74,20 @@ public class EvalTypeId extends CPPEvaluation {
 
 	@Override
 	public IValue getValue(IASTNode point) {
-		return Value.create(this, point);
+		if (isValueDependent())
+			return Value.create(this);
+		if (fArguments == null)
+			return Value.UNKNOWN;
+		
+		if (isTypeDependent())
+			return Value.create(this);
+		if (fOutputType instanceof ICPPClassType) {
+			// TODO(sprigogin): Simulate execution of a ctor call.
+			return Value.UNKNOWN;
+		}
+		if (fArguments.length == 1)
+			return fArguments[0].getValue(point);
+		return Value.UNKNOWN;
 	}
 
 	@Override
@@ -143,5 +157,14 @@ public class EvalTypeId extends CPPEvaluation {
 		if (!argsChanged && type == fInputType)
 			return this;
 		return new EvalTypeId(type, args);
+	}
+
+	@Override
+	public int determinePackSize(ICPPTemplateParameterMap tpMap) {
+		int r = CPPTemplates.determinePackSize(fInputType, tpMap);
+		for (ICPPEvaluation arg : fArguments) {
+			r = CPPTemplates.combinePackSize(r, arg.determinePackSize(tpMap));
+		}
+		return r;
 	}
 }

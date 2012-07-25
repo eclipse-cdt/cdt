@@ -21,7 +21,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
-import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.core.runtime.CoreException;
 
@@ -66,7 +65,7 @@ public class EvalCompound extends CPPEvaluation {
 
 	@Override
 	public IValue getValue(IASTNode point) {
-		return Value.create(this, point);
+		return fDelegate.getValue(point);
 	}
 
 	@Override
@@ -92,5 +91,10 @@ public class EvalCompound extends CPPEvaluation {
 		if (delegate == fDelegate)
 			return this;
 		return new EvalCompound(delegate);
+	}
+
+	@Override
+	public int determinePackSize(ICPPTemplateParameterMap tpMap) {
+		return fDelegate.determinePackSize(tpMap);
 	}
 }

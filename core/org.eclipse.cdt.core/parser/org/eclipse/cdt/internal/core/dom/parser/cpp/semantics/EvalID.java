@@ -70,6 +70,9 @@ public class EvalID extends CPPEvaluation {
 		fTemplateArgs= templateArgs;
 	}
 
+	/**
+	 * Returns the field owner expression, or {@code null}.
+	 */
 	public ICPPEvaluation getFieldOwner() {
 		return fFieldOwner;
 	}
@@ -90,6 +93,9 @@ public class EvalID extends CPPEvaluation {
 		return fQualified;
 	}
 
+	/**
+	 * Returns the template arguments, or {@code null} if there are no template arguments.
+	 */
 	public ICPPTemplateArgument[] getTemplateArgs() {
 		return fTemplateArgs;
 	}
@@ -121,7 +127,7 @@ public class EvalID extends CPPEvaluation {
 
 	@Override
 	public IValue getValue(IASTNode point) {
-		return Value.create(this, point);
+		return Value.create(this);
 	}
 
 	@Override
@@ -256,14 +262,19 @@ public class EvalID extends CPPEvaluation {
 	@Override
 	public ICPPEvaluation instantiate(ICPPTemplateParameterMap tpMap, int packOffset,
 			ICPPClassSpecialization within, int maxdepth, IASTNode point) {
-		ICPPTemplateArgument[] arguments = fTemplateArgs;
-		try {
-			arguments = CPPTemplates.instantiateArguments(fTemplateArgs, tpMap, packOffset, within, point);
-		} catch (DOMException e) {
-			CCorePlugin.log(e);
+		ICPPTemplateArgument[] templateArgs = fTemplateArgs;
+		if (templateArgs != null) {
+			try {
+				templateArgs = CPPTemplates.instantiateArguments(templateArgs, tpMap, packOffset, within, point);
+			} catch (DOMException e) {
+				CCorePlugin.log(e);
+			}
 		}
 
-		ICPPEvaluation fieldOwner = fFieldOwner.instantiate(tpMap, packOffset, within, maxdepth, point);
+		ICPPEvaluation fieldOwner = fFieldOwner;
+		if (fieldOwner != null) {
+			fieldOwner = fieldOwner.instantiate(tpMap, packOffset, within, maxdepth, point);
+		}
 		IBinding nameOwner = fNameOwner;
 		if (fNameOwner instanceof ICPPTemplateParameter) {
 			ICPPTemplateArgument argument = tpMap.getArgument((ICPPTemplateParameter) fNameOwner);
@@ -280,16 +291,16 @@ public class EvalID extends CPPEvaluation {
 				CCorePlugin.log(e);
 			}
 		}
-		if (Arrays.equals(arguments, fTemplateArgs) && fieldOwner == fFieldOwner && nameOwner == fNameOwner)
+		if (Arrays.equals(templateArgs, fTemplateArgs) && fieldOwner == fFieldOwner && nameOwner == fNameOwner)
 			return this;
 
-		if (nameOwner == null)
-			nameOwner = (IBinding) fFieldOwner.getTypeOrFunctionSet(point);
+		if (nameOwner == null && fieldOwner != null)
+			nameOwner = (IBinding) fieldOwner.getTypeOrFunctionSet(point);
 
-		if (nameOwner instanceof ICompositeType) {
+		if (nameOwner instanceof ICompositeType && point != null) {
 			ICompositeType ownerType = (ICompositeType) nameOwner;
 			// TODO(sprigogin): Is this the right way to do lookup, or should findBindings be used instead?
-			LookupData data = new LookupData(fName, fTemplateArgs, point);
+			LookupData data = new LookupData(fName, templateArgs, point);
 			try {
 				CPPSemantics.lookup(data, ownerType.getScope());
 			} catch (DOMException e) {
@@ -305,6 +316,15 @@ public class EvalID extends CPPEvaluation {
 			}
 		}
 
-		return new EvalID(fieldOwner, nameOwner, fName, fAddressOf, fQualified, arguments);
+		return new EvalID(fieldOwner, nameOwner, fName, fAddressOf, fQualified, templateArgs);
+	}
+
+	@Override
+	public int determinePackSize(ICPPTemplateParameterMap tpMap) {
+		int r = fFieldOwner.determinePackSize(tpMap);
+		for (ICPPTemplateArgument arg : fTemplateArgs) {
+			r = CPPTemplates.combinePackSize(r, CPPTemplates.determinePackSize(arg, tpMap));
+		}
+		return r;
 	}
 }

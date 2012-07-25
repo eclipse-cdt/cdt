@@ -254,7 +254,16 @@ public class EvalMemberAccess extends CPPEvaluation {
 
 	@Override
 	public IValue getValue(IASTNode point) {
-		return Value.create(this, point);
+		if (fMember instanceof IEnumerator) {
+			return ((IEnumerator) fMember).getValue();
+		}
+		if (fMember instanceof IVariable) {
+			return ((IVariable) fMember).getInitialValue();
+		}
+		if (fMember instanceof IFunction) {
+			return Value.UNKNOWN;
+		}
+		return Value.create(this);
 	}
 
 	@Override
@@ -323,5 +332,10 @@ public class EvalMemberAccess extends CPPEvaluation {
 			member = CPPTemplates.createSpecialization((ICPPClassSpecialization) ownerType, fMember, point);
 		}
 		return new EvalMemberAccess(ownerType, fOwnerValueCategory, member, fIsPointerDeref);
+	}
+
+	@Override
+	public int determinePackSize(ICPPTemplateParameterMap tpMap) {
+		return CPPTemplates.determinePackSize(fOwnerType, tpMap);
 	}
 }

@@ -458,6 +458,10 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 		// "relative" should make no difference for VALUE_WORKSPACE_PATH
 		IPath incWorkspaceRelativePath_3 = incWorkspace_3.getFullPath().makeRelative();
 		IPath incWorkspaceLocation_3 = incWorkspace_3.getLocation();
+		// not having "RESOLVED" should make no difference for well formed path
+		IFolder incWorkspace_4 = ResourceHelper.createFolder(project, "include_4");
+		IPath incWorkspacePathNoResolved_4 = incWorkspace_4.getFullPath();
+		IPath incWorkspaceLocation_4 = incWorkspace_4.getLocation();
 		// folder defined by absolute path on the filesystem
 		IPath incFilesystem = ResourceHelper.createWorkspaceFolder("includeFilesystem");
 
@@ -465,12 +469,14 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 		CIncludePathEntry incWorkspaceEntry_1 = new CIncludePathEntry(incWorkspace_1, 0);
 		CIncludePathEntry incWorkspaceEntry_2 = new CIncludePathEntry(incWorkspacePath_2, ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.RESOLVED);
 		CIncludePathEntry incWorkspaceEntry_3 = new CIncludePathEntry(incWorkspaceRelativePath_3, ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.RESOLVED);
+		CIncludePathEntry incWorkspaceEntry_4 = new CIncludePathEntry(incWorkspacePathNoResolved_4, ICSettingEntry.VALUE_WORKSPACE_PATH);
 		CIncludePathEntry incFilesystemEntry = new CIncludePathEntry(incFilesystem, 0);
 
 		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
 		entries.add(incWorkspaceEntry_1);
 		entries.add(incWorkspaceEntry_2);
 		entries.add(incWorkspaceEntry_3);
+		entries.add(incWorkspaceEntry_4);
 		entries.add(incFilesystemEntry);
 
 		// add provider to the configuration
@@ -490,8 +496,9 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 		assertEquals(incWorkspaceLocation_1, new Path(actualIncludePaths[0]));
 		assertEquals(incWorkspaceLocation_2, new Path(actualIncludePaths[1]));
 		assertEquals(incWorkspaceLocation_3, new Path(actualIncludePaths[2]));
-		assertEquals(incFilesystem, new Path(actualIncludePaths[3]));
-		assertEquals(4, actualIncludePaths.length);
+		assertEquals(incWorkspaceLocation_4, new Path(actualIncludePaths[3]));
+		assertEquals(incFilesystem, new Path(actualIncludePaths[4]));
+		assertEquals(5, actualIncludePaths.length);
 
 	}
 

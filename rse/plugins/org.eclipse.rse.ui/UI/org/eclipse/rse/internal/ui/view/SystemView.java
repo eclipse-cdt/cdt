@@ -83,6 +83,7 @@
  * David McKnight   (IBM)        - [372976] ClassCastException when SystemView assumes widget a TreeItem when it's a Tree
  * David Dykstal    (IBM)        - [257110] Prompting filter called twice on double click rather than just once
  * David McKnight   (IBM)        - [380613] Problem in SystemView with disposed TreeItem when Link With Editor toolbar icon is used
+ * David McKnight   (IBM)        - [385774] select folder dialog doesn't update enablement properly after new folder created
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -3731,8 +3732,16 @@ public class SystemView extends SafeTreeViewer
 					if ((parentItem == null) && (selItem instanceof TreeItem)) parentItem = ((TreeItem) selItem).getParentItem();
 				}
 			}
-			if (selItems.size() > 0) {
-				setSelection(selItems);
+			if (selItems.size() > 0) {		
+				List dataList = new ArrayList();
+				for (int i = 0; i < selItems.size(); i++){
+					Item item = (Item)selItems.get(i);
+					if (item != null){
+						dataList.add(item.getData());
+					}
+				}
+				IStructuredSelection sel = new StructuredSelection(dataList);				
+				setSelection(sel);
 				updatePropertySheet();
 				return true;
 			}
@@ -3744,9 +3753,9 @@ public class SystemView extends SafeTreeViewer
 				selItem = findFirstRemoteItemReference(src, parentItem);
 
 			if (selItem != null) {
-				ArrayList selItems = new ArrayList();
-				selItems.add(selItem);
-				setSelection(selItems);
+
+				IStructuredSelection sel = new StructuredSelection(selItem.getData());
+				setSelection(sel);
 				updatePropertySheet();
 				return true;
 			}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others.
+ * Copyright (c) 2002, 212 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@
  * Contributors:
  * David McKnight   (IBM)   [202822] should not be synchronizing on clean method
  * David McKnight   (IBM) - [226561] [apidoc] Add API markup to RSE Javadocs where extend / implement is allowed
+ * David McKnight   (IBM) - [385793] [dstore] DataStore spirit mechanism and other memory improvements needed
  *******************************************************************************/
 
 package org.eclipse.dstore.core.model;
@@ -88,13 +89,17 @@ public abstract class UpdateHandler extends Handler
 
 					cleanChildren(child); // clean the children
 
+					boolean virtual = _dataStore.isVirtual();
 					if (child.isSpirit())
 					{
-						// officially delete this now
-						child.delete();
+						if (!virtual){ // leave the client copy
+							// officially delete this now
+							child.delete();
+						}
 					}
-					child.clear();
-
+					if (!virtual || !child.isSpirit()){ // leave the client attributes if spirited
+						child.clear();
+					}
 					if (parent != null)
 					{
 						synchronized (parent)

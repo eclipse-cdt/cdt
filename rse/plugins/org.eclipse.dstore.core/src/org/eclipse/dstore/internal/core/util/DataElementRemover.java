@@ -39,7 +39,7 @@ public class DataElementRemover extends Handler
 	private static int numRemoved = 0;
 	private static int numDisconnected = 0;
 	private static int numCreated = 0;
-	//private static int numGCed = 0;
+	//private int numGCed = 0;
 	
 	// The following determine how DataElements are chosen to be removed once they
 	// are in the queue for removal. 	

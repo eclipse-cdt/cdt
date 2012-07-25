@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2010 IBM Corporation and others.
+ * Copyright (c) 2002, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,12 +19,14 @@
  * David McKnight   (IBM) - [257666] modified original patch to simplify
  * Noriaki Takatsu  (IBM) - [283656] [dstore][multithread] Serviceability issue
  * Noriaki Takatsu  (IBM) - [289234][multithread][api] Reset and Restart KeepAliveRequestThread
+ * David McKnight   (IBM) - [385793] [dstore] DataStore spirit mechanism and other memory improvements needed
  *******************************************************************************/
 
 package org.eclipse.dstore.core.server;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.List;
 
 import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.util.Receiver;
@@ -38,7 +40,10 @@ import org.eclipse.dstore.core.util.Receiver;
  */
 public class ServerReceiver extends Receiver
 {
-
+	private DataElement _log;
+	private int _maxLog = 20;
+	private int _logIndex = 0;
+	
 	private ConnectionEstablisher _connection;
 
 	/**
@@ -51,6 +56,7 @@ public class ServerReceiver extends Receiver
 	{
 		super(socket, connection.getDataStore());
 		_connection = connection;
+		_log = _dataStore.getLogRoot();
 	}
 
 
@@ -67,8 +73,25 @@ public class ServerReceiver extends Receiver
 		{
 			DataElement rootOutput = documentObject.get(a);
 
-			DataElement log = _dataStore.getLogRoot();
-			log.addNestedData(rootOutput, false);
+			// max log 
+			List logged = _log.getNestedData();
+			if (logged == null){
+				_log.addNestedData(rootOutput, false);
+				_logIndex++;
+			}
+			else {
+				if (_logIndex > _maxLog){
+					_logIndex = 0; // reset logindex
+				}
+			
+				if (logged.size() > _logIndex){
+					logged.set(_logIndex, rootOutput);
+				}
+				else {
+					logged.add(_logIndex, rootOutput);
+				}
+				_logIndex++;
+			}
 
 			if (rootOutput.getName().equals("C_EXIT")) //$NON-NLS-1$
 			{

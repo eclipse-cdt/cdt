@@ -36,6 +36,7 @@ import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICMacroEntry;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
+import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
 import org.eclipse.cdt.internal.core.settings.model.SettingsModelMessages;
 import org.eclipse.core.resources.IProject;
@@ -221,14 +222,21 @@ public class LanguageSettingsScannerInfoProvider implements IScannerInfoProvider
 		for (ICLanguageSettingEntry entry : entriesPath) {
 			ACPathEntry entryPath = (ACPathEntry)entry;
 			if (entryPath.isValueWorkspacePath()) {
-				IPath loc = entryPath.getLocation();
-				if (loc!=null) {
-					if (checkBit(entryPath.getFlags(), ICSettingEntry.FRAMEWORKS_MAC)) {
-						// handle frameworks, see IScannerInfo.getIncludePaths()
-						locations.add(loc.append(FRAMEWORK_HEADERS_INCLUDE).toOSString());
-						locations.add(loc.append(FRAMEWORK_PRIVATE_HEADERS_INCLUDE).toOSString());
-					} else {
-						locations.add(loc.toOSString());
+				ICLanguageSettingEntry[] entries = new ICLanguageSettingEntry[] {entry};
+				if (!entry.isResolved()) {
+					entries = CDataUtil.resolveEntries(entries, cfgDescription);
+				}
+
+				for (ICLanguageSettingEntry resolved : entries) {
+					IPath loc = ((ACPathEntry) resolved).getLocation();
+					if (loc != null) {
+						if (checkBit(resolved.getFlags(), ICSettingEntry.FRAMEWORKS_MAC)) {
+							// handle frameworks, see IScannerInfo.getIncludePaths()
+							locations.add(loc.append(FRAMEWORK_HEADERS_INCLUDE).toOSString());
+							locations.add(loc.append(FRAMEWORK_PRIVATE_HEADERS_INCLUDE).toOSString());
+						} else {
+							locations.add(loc.toOSString());
+						}
 					}
 				}
 			} else {

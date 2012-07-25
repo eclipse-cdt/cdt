@@ -108,7 +108,18 @@ public class EvalConditional extends CPPEvaluation {
 
 	@Override
 	public IValue getValue(IASTNode point) {
-		return Value.create(this, point);
+		IValue condValue = fCondition.getValue(point);
+		if (condValue == Value.UNKNOWN)
+			return Value.UNKNOWN;
+		Long cond = condValue.numericalValue();
+		if (cond != null) {
+			if (cond.longValue() != 0) {
+				return fPositive == null ? condValue : fPositive.getValue(point);
+			} else {
+				return fNegative.getValue(point);
+			}
+		}
+		return Value.create(this);
 	}
 
 	@Override
@@ -323,5 +334,14 @@ public class EvalConditional extends CPPEvaluation {
 		if (condition == fCondition && positive == fPositive && negative == fNegative)
 			return this;
 		return new EvalConditional(condition, positive, negative, fPositiveThrows, fNegativeThrows);
+	}
+
+	@Override
+	public int determinePackSize(ICPPTemplateParameterMap tpMap) {
+		int r = fCondition.determinePackSize(tpMap);
+		r = CPPTemplates.combinePackSize(r, fNegative.determinePackSize(tpMap));
+		if (fPositive != null)
+			r = CPPTemplates.combinePackSize(r, fPositive.determinePackSize(tpMap));
+		return r;
 	}
 }

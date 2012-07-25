@@ -15,6 +15,8 @@ import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableType;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
@@ -45,6 +47,10 @@ public abstract class CPPEvaluation implements ICPPEvaluation {
 			return fBuffer.toString();
 		}
 
+		public char[] getSignature() {
+			return CharArrayUtils.extractChars(fBuffer);
+		}
+
 		@Override
 		public void marshalBinding(IBinding binding) throws CoreException {
 			if (binding instanceof ISerializableType) {
@@ -53,12 +59,11 @@ public abstract class CPPEvaluation implements ICPPEvaluation {
 				putByte(NULL_TYPE);
 			} else {
 				appendSeparator();
-				IBinding owner= binding.getOwner();
-				if (owner instanceof IType) {
-					ASTTypeUtil.appendType((IType) owner, true, fBuffer);
-					fBuffer.append("::"); //$NON-NLS-1$
+				if (binding instanceof ICPPBinding) {
+					fBuffer.append(ASTTypeUtil.getQualifiedName((ICPPBinding) binding));
+				} else {
+					fBuffer.append(binding.getNameCharArray());
 				}
-				fBuffer.append(binding.getName());
 			}
 		}
 
@@ -223,6 +228,6 @@ public abstract class CPPEvaluation implements ICPPEvaluation {
 			CCorePlugin.log(e);
 			return new char[] { '?' };
 		}
-		return buf.toString().toCharArray();
+		return buf.getSignature();
 	}
 }

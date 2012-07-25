@@ -7,8 +7,11 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/ 
 package org.eclipse.cdt.core.dom.ast;
+
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 
 /**
  * Models a value of a variable, enumerator or expression.
@@ -19,27 +22,33 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface IValue {
 	/**
-	 * Returns the value as a number, or <code>null</code> if this is not possible.
+	 * Returns the value as a number, or {@code null} if it is not possible.
 	 */
 	Long numericalValue();
-	
+
 	/**
-	 * Returns an internal representation of the expression that builds up
-	 * the value. It is suitable for instantiating dependent values but may not be
-	 * used for the purpose of displaying values.
+	 * Returns the evaluation object if this value is dependent, or {@code null} otherwise.
+	 * If {@link #numericalValue()} returns {@code null}, {@link #getEvaluation()} returns
+	 * not {@code null} and vice versa.
+	 * @noreference This method is not intended to be referenced by clients. 
 	 */
-	char[] getInternalExpression(); 
-	
+	ICPPEvaluation getEvaluation();
+
 	/**
-	 * A value may be dependent on template parameters, in which case a list
-	 * of unknown bindings is maintained for later instantiation.
-	 */
-	IBinding[] getUnknownBindings();
-	
-	/**
-	 * Returns a signature containing both the internal representation and 
-	 * the unknown bindings. The representation is sufficient to distinguish values
-	 * for the purpose of instantiation, it may not be used to display the value.
+	 * Returns a signature uniquely identifying the value.  Two values with identical
+	 * signatures are guaranteed to be equal.
 	 */
 	char[] getSignature();
+
+	/**
+	 * @deprecated Returns an empty character array.
+	 */
+	@Deprecated
+	char[] getInternalExpression(); 
+
+	/**
+	 * @deprecated Returns an empty array.
+	 */
+	@Deprecated
+	IBinding[] getUnknownBindings();
 }

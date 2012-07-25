@@ -26,9 +26,13 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
+import org.eclipse.cdt.internal.core.dom.parser.IInternalVariable;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
@@ -164,7 +168,21 @@ public class EvalBinding extends CPPEvaluation {
 
 	@Override
 	public IValue getValue(IASTNode point) {
-		return Value.create(this, point);
+		if (isValueDependent())
+			return Value.create(this);
+
+		IValue value= null;
+		if (fBinding instanceof IInternalVariable) {
+			value= ((IInternalVariable) fBinding).getInitialValue(Value.MAX_RECURSION_DEPTH);
+		} else if (fBinding instanceof IVariable) {
+			value= ((IVariable) fBinding).getInitialValue();
+		} else if (fBinding instanceof IEnumerator) {
+			value= ((IEnumerator) fBinding).getValue();
+		}
+		if (value == null)
+			value = Value.UNKNOWN;
+
+		return value;
 	}
 
 	@Override
@@ -222,5 +240,33 @@ public class EvalBinding extends CPPEvaluation {
 		if (binding == fBinding)
 			return this;
 		return new EvalBinding(binding, getFixedType());
+	}
+
+	@Override
+	public int determinePackSize(ICPPTemplateParameterMap tpMap) {
+		if (fBinding instanceof IEnumerator) {
+			return CPPTemplates.determinePackSize(((IEnumerator) fBinding).getValue(), tpMap);
+		}
+		if (fBinding instanceof ICPPTemplateNonTypeParameter) {
+			return CPPTemplates.determinePackSize((ICPPTemplateNonTypeParameter) fBinding, tpMap);
+		}
+		if (fBinding instanceof ICPPUnknownBinding) {
+			return CPPTemplates.determinePackSize((ICPPUnknownBinding) fBinding, tpMap);
+		}
+		
+		IBinding binding = fBinding;
+		if (fBinding instanceof ICPPSpecialization) {
+			binding = ((ICPPSpecialization) fBinding).getSpecializedBinding();
+		}
+
+		int r = CPPTemplates.PACK_SIZE_NOT_FOUND;
+		if (binding instanceof ICPPTemplateDefinition) {
+			ICPPTemplateParameter[] parameters = ((ICPPTemplateDefinition) binding).getTemplateParameters();
+			for (ICPPTemplateParameter param : parameters) {
+				r = CPPTemplates.combinePackSize(r, CPPTemplates.determinePackSize(param, tpMap));
+			}
+		}
+
+		return r;
 	}
 }

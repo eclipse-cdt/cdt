@@ -68,6 +68,7 @@ public class EvalComma extends CPPEvaluation {
 
 	@Override
 	public boolean isValueDependent() {
+		// TODO(sprigogin): Should the value depend only on the last argument?
 		for (ICPPEvaluation arg : fArguments) {
 			if (arg.isValueDependent())
 				return true;
@@ -126,12 +127,18 @@ public class EvalComma extends CPPEvaluation {
 				return typeFromFunctionCall(last);
 			}
 		}
-		return fArguments[fArguments.length-1].getTypeOrFunctionSet(point);
+		return fArguments[fArguments.length - 1].getTypeOrFunctionSet(point);
 	}
 
 	@Override
 	public IValue getValue(IASTNode point) {
-		return Value.create(this, point);
+		ICPPFunction[] overloads = getOverloads(point);
+		if (overloads.length > 0) {
+			// TODO(sprigogin): Simulate execution of a function call.
+			return Value.create(this);
+		}
+
+		return fArguments[fArguments.length - 1].getValue(point);
 	}
 
 	@Override
@@ -143,7 +150,7 @@ public class EvalComma extends CPPEvaluation {
 				return valueCategoryFromFunctionCall(last);
 			}
 		}
-		return fArguments[fArguments.length-1].getValueCategory(point);
+		return fArguments[fArguments.length - 1].getValueCategory(point);
 	}
 
 	@Override
@@ -177,5 +184,14 @@ public class EvalComma extends CPPEvaluation {
 		if (!changed)
 			return this;
 		return new EvalComma(args);
+	}
+
+	@Override
+	public int determinePackSize(ICPPTemplateParameterMap tpMap) {
+		int r = CPPTemplates.PACK_SIZE_NOT_FOUND;
+		for (ICPPEvaluation arg : fArguments) {
+			r = CPPTemplates.combinePackSize(r, arg.determinePackSize(tpMap));
+		}
+		return r;
 	}
 }

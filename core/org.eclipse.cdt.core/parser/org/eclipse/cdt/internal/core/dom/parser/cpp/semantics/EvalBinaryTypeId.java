@@ -20,12 +20,14 @@ import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.core.runtime.CoreException;
 
@@ -78,7 +80,16 @@ public class EvalBinaryTypeId extends CPPEvaluation {
 
 	@Override
 	public IValue getValue(IASTNode point) {
-		return Value.create(this, point);
+		if (isValueDependent())
+			return Value.create(this);
+
+		switch (fOperator) {
+		case __is_base_of:
+			if (!(fType1 instanceof ICPPClassType) || !(fType1 instanceof ICPPClassType))
+				return Value.UNKNOWN;
+			return Value.create(ClassTypeHelper.isSubclass((ICPPClassType) fType2, (ICPPClassType) fType1));
+		}
+		return Value.create(this);
 	}
 
 	@Override
@@ -123,5 +134,11 @@ public class EvalBinaryTypeId extends CPPEvaluation {
 		if (type1 == fType1 && type2 == fType2)
 			return this;
 		return new EvalBinaryTypeId(fOperator, type1, type2);
+	}
+
+	@Override
+	public int determinePackSize(ICPPTemplateParameterMap tpMap) {
+		return CPPTemplates.combinePackSize(CPPTemplates.determinePackSize(fType1, tpMap),
+				CPPTemplates.determinePackSize(fType2, tpMap));
 	}
 }

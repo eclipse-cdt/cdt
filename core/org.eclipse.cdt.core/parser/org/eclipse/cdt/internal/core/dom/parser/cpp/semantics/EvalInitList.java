@@ -74,7 +74,9 @@ public class EvalInitList extends CPPEvaluation {
 
 	@Override
 	public IValue getValue(IASTNode point) {
-		return Value.create(this, point);
+		if (isValueDependent())
+			return Value.create(this);
+		return Value.UNKNOWN;  // TODO(sprigogin): Is this correct?
 	}
 
 	@Override
@@ -97,7 +99,7 @@ public class EvalInitList extends CPPEvaluation {
 		for (int i = 0; i < args.length; i++) {
 			args[i]= (ICPPEvaluation) buffer.unmarshalEvaluation();
 		}
-		return new EvalComma(args);
+		return new EvalInitList(args);
 	}
 
 	@Override
@@ -113,5 +115,14 @@ public class EvalInitList extends CPPEvaluation {
 		if (!changed)
 			return this;
 		return new EvalInitList(clauses);
+	}
+
+	@Override
+	public int determinePackSize(ICPPTemplateParameterMap tpMap) {
+		int r = CPPTemplates.PACK_SIZE_NOT_FOUND;
+		for (ICPPEvaluation arg : fClauses) {
+			r = CPPTemplates.combinePackSize(r, arg.determinePackSize(tpMap));
+		}
+		return r;
 	}
 }

@@ -171,4 +171,14 @@ public class EvalFunctionSet extends CPPEvaluation {
 			return this;
 		return new EvalFunctionSet(new CPPFunctionSet(functions, arguments, null), fAddressOf);
 	}
+
+	@Override
+	public int determinePackSize(ICPPTemplateParameterMap tpMap) {
+		int r = CPPTemplates.PACK_SIZE_NOT_FOUND;
+		ICPPTemplateArgument[] templateArguments = fFunctionSet.getTemplateArguments();
+		for (ICPPTemplateArgument arg : templateArguments) {
+			r = CPPTemplates.combinePackSize(r, CPPTemplates.determinePackSize(arg, tpMap));
+		}
+		return r;
+	}
 }

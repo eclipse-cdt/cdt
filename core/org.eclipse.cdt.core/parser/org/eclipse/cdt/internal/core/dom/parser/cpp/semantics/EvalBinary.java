@@ -108,7 +108,32 @@ public class EvalBinary extends CPPEvaluation {
 
 	@Override
 	public IValue getValue(IASTNode point) {
-		return Value.create(this, point);
+		if (fOverload != null) {
+			// TODO(sprigogin): Simulate execution of a function call.
+			return Value.create(this);
+		}
+
+		IValue v1 = fArg1.getValue(point);
+		IValue v2 = fArg2.getValue(point);
+		switch (fOperator) {
+		case IASTBinaryExpression.op_equals:
+			if (v1.equals(v2))
+				return Value.create(1);
+			break;
+		case IASTBinaryExpression.op_notequals:
+			if (v1.equals(v2))
+				return Value.create(0);
+			break;
+		}
+
+		Long num1 = v1.numericalValue();
+		if (num1 != null) {
+			Long num2 = v2.numericalValue();
+			if (num2 != null) {
+				return Value.evaluateBinaryExpression(fOperator, num1, num2);
+			}
+		}
+		return Value.create(this);
 	}
 
 	@Override
@@ -288,5 +313,10 @@ public class EvalBinary extends CPPEvaluation {
 		if (arg1 == fArg1 && arg2 == fArg2)
 			return this;
 		return new EvalBinary(fOperator, arg1, arg2);
+	}
+
+	@Override
+	public int determinePackSize(ICPPTemplateParameterMap tpMap) {
+		return CPPTemplates.combinePackSize(fArg1.determinePackSize(tpMap), fArg2.determinePackSize(tpMap));
 	}
 }

@@ -68,7 +68,6 @@ public class EvalComma extends CPPEvaluation {
 
 	@Override
 	public boolean isValueDependent() {
-		// TODO(sprigogin): Should the value depend only on the last argument?
 		for (ICPPEvaluation arg : fArguments) {
 			if (arg.isValueDependent())
 				return true;
@@ -193,5 +192,14 @@ public class EvalComma extends CPPEvaluation {
 			r = CPPTemplates.combinePackSize(r, arg.determinePackSize(tpMap));
 		}
 		return r;
+	}
+
+	@Override
+	public boolean referencesTemplateParameter() {
+		for (ICPPEvaluation arg : fArguments) {
+			if (arg.referencesTemplateParameter())
+				return true;
+		}
+		return false;
 	}
 }

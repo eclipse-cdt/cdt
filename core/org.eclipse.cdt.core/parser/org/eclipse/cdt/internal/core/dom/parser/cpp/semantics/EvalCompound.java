@@ -25,7 +25,8 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * Performs evaluation of an expression.
+ * Performs evaluation of a compound statement expression. Most but not all methods
+ * delegate to the evaluation of the last expression in the compound one.
  */
 public class EvalCompound extends CPPEvaluation {
 	private final ICPPEvaluation fDelegate;
@@ -96,5 +97,10 @@ public class EvalCompound extends CPPEvaluation {
 	@Override
 	public int determinePackSize(ICPPTemplateParameterMap tpMap) {
 		return fDelegate.determinePackSize(tpMap);
+	}
+
+	@Override
+	public boolean referencesTemplateParameter() {
+		return fDelegate.referencesTemplateParameter();
 	}
 }

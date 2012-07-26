@@ -167,4 +167,13 @@ public class EvalTypeId extends CPPEvaluation {
 		}
 		return r;
 	}
+
+	@Override
+	public boolean referencesTemplateParameter() {
+		for (ICPPEvaluation arg : fArguments) {
+			if (arg.referencesTemplateParameter())
+				return true;
+		}
+		return false;
+	}
 }

@@ -269,4 +269,9 @@ public class EvalBinding extends CPPEvaluation {
 
 		return r;
 	}
+
+	@Override
+	public boolean referencesTemplateParameter() {
+		return fBinding instanceof ICPPTemplateParameter;
+	}
 }

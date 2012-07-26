@@ -141,4 +141,9 @@ public class EvalBinaryTypeId extends CPPEvaluation {
 		return CPPTemplates.combinePackSize(CPPTemplates.determinePackSize(fType1, tpMap),
 				CPPTemplates.determinePackSize(fType2, tpMap));
 	}
+
+	@Override
+	public boolean referencesTemplateParameter() {
+		return false;
+	}
 }

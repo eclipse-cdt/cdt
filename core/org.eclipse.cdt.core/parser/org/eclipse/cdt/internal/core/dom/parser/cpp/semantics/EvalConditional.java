@@ -344,4 +344,11 @@ public class EvalConditional extends CPPEvaluation {
 			r = CPPTemplates.combinePackSize(r, fPositive.determinePackSize(tpMap));
 		return r;
 	}
+
+	@Override
+	public boolean referencesTemplateParameter() {
+		return fCondition.referencesTemplateParameter() ||
+				(fPositive != null && fPositive.referencesTemplateParameter()) ||
+				fNegative.referencesTemplateParameter();
+	}
 }

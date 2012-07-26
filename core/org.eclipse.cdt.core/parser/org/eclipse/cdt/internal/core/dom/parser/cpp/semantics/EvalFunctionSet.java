@@ -181,4 +181,9 @@ public class EvalFunctionSet extends CPPEvaluation {
 		}
 		return r;
 	}
+
+	@Override
+	public boolean referencesTemplateParameter() {
+		return false;
+	}
 }

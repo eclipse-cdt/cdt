@@ -76,4 +76,10 @@ public interface ICPPEvaluation extends ISerializableEvaluation {
 	 * @noreference This method is not intended to be referenced by clients. 
 	 */
 	int determinePackSize(ICPPTemplateParameterMap tpMap);
+
+	/**
+	 * Checks if the evaluation references a template parameter either directly or though nested
+	 * evaluations. 
+	 */
+	boolean referencesTemplateParameter();
 }

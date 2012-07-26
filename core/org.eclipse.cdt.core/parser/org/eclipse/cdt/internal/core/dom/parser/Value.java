@@ -215,7 +215,7 @@ public class Value implements IValue {
 	}
 
 	/**
-	 * Tests whether the value is a template parameter (or parameter pack).
+	 * Tests whether the value is a template parameter (or a parameter pack).
 	 * 
 	 * @return the parameter id of the parameter, or <code>-1</code> if it is not a template
 	 *         parameter.
@@ -225,25 +225,20 @@ public class Value implements IValue {
 		if (eval instanceof EvalBinding) {
 			IBinding binding = ((EvalBinding) eval).getBinding();
 			if (binding instanceof ICPPTemplateParameter) {
-				((ICPPTemplateParameter) binding).getParameterID();
+				return ((ICPPTemplateParameter) binding).getParameterID();
 			}
 		}
 		return -1;
 	}
 
 	/**
-	 * Tests whether the value directly references some template parameter.
+	 * Tests whether the value references some template parameter.
 	 */
-	// TODO(sprigogin): The semantics of "directly" is unclear.
 	public static boolean referencesTemplateParameter(IValue tval) {
-		// TODO(sprigogin): Implementation of this method is probably incomplete since it interprets "directly" in a very direct way. The old code is kept below for reference.
-		return isTemplateParameter(tval) >= 0;
-//		final char[] rep= tval.getInternalExpression();
-//		for (char element : rep) {
-//			if (element == TEMPLATE_PARAM_CHAR || element == TEMPLATE_PARAM_PACK_CHAR)
-//				return true;
-//		}
-//		return false;
+		ICPPEvaluation eval = tval.getEvaluation();
+		if (eval == null)
+			return false;
+		return eval.referencesTemplateParameter();
 	}
 
 	/**

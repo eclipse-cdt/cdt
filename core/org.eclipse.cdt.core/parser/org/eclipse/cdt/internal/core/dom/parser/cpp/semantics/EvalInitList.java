@@ -125,4 +125,13 @@ public class EvalInitList extends CPPEvaluation {
 		}
 		return r;
 	}
+
+	@Override
+	public boolean referencesTemplateParameter() {
+		for (ICPPEvaluation clause : fClauses) {
+			if (clause.referencesTemplateParameter())
+				return true;
+		}
+		return false;
+	}
 }

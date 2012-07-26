@@ -108,7 +108,7 @@ public class EvalBinary extends CPPEvaluation {
 
 	@Override
 	public IValue getValue(IASTNode point) {
-		if (fOverload != null) {
+		if (getOverload(point) != null) {
 			// TODO(sprigogin): Simulate execution of a function call.
 			return Value.create(this);
 		}
@@ -318,5 +318,10 @@ public class EvalBinary extends CPPEvaluation {
 	@Override
 	public int determinePackSize(ICPPTemplateParameterMap tpMap) {
 		return CPPTemplates.combinePackSize(fArg1.determinePackSize(tpMap), fArg2.determinePackSize(tpMap));
+	}
+
+	@Override
+	public boolean referencesTemplateParameter() {
+		return fArg1.referencesTemplateParameter() || fArg2.referencesTemplateParameter();
 	}
 }

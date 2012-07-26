@@ -235,4 +235,9 @@ public class EvalUnaryTypeID extends CPPEvaluation {
 	public int determinePackSize(ICPPTemplateParameterMap tpMap) {
 		return CPPTemplates.determinePackSize(fOrigType, tpMap);
 	}
+
+	@Override
+	public boolean referencesTemplateParameter() {
+		return false;
+	}
 }

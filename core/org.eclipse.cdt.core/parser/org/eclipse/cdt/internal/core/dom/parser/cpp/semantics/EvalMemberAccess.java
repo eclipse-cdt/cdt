@@ -338,4 +338,9 @@ public class EvalMemberAccess extends CPPEvaluation {
 	public int determinePackSize(ICPPTemplateParameterMap tpMap) {
 		return CPPTemplates.determinePackSize(fOwnerType, tpMap);
 	}
+
+	@Override
+	public boolean referencesTemplateParameter() {
+		return false;
+	}
 }

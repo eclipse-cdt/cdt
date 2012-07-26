@@ -163,4 +163,9 @@ public class EvalFixed extends CPPEvaluation {
 	public int determinePackSize(ICPPTemplateParameterMap tpMap) {
 		return CPPTemplates.determinePackSize(fValue, tpMap);
 	}
+
+	@Override
+	public boolean referencesTemplateParameter() {
+		return false;
+	}
 }

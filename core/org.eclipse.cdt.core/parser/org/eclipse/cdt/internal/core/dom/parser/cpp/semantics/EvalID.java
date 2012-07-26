@@ -299,10 +299,10 @@ public class EvalID extends CPPEvaluation {
 
 		if (nameOwner instanceof ICompositeType && point != null) {
 			ICompositeType ownerType = (ICompositeType) nameOwner;
-			// TODO(sprigogin): Is this the right way to do lookup, or should findBindings be used instead?
 			LookupData data = new LookupData(fName, templateArgs, point);
+			data.qualified = fQualified;
 			try {
-				CPPSemantics.lookup(data, ownerType.getScope());
+				CPPSemantics.lookup(data, ownerType.getCompositeScope());
 			} catch (DOMException e) {
 			}
 			IBinding[] bindings = data.getFoundBindings();
@@ -326,5 +326,10 @@ public class EvalID extends CPPEvaluation {
 			r = CPPTemplates.combinePackSize(r, CPPTemplates.determinePackSize(arg, tpMap));
 		}
 		return r;
+	}
+
+	@Override
+	public boolean referencesTemplateParameter() {
+		return fFieldOwner.referencesTemplateParameter();
 	}
 }

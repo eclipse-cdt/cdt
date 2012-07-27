@@ -25,7 +25,6 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
@@ -37,6 +36,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
@@ -127,6 +127,15 @@ public class EvalID extends CPPEvaluation {
 
 	@Override
 	public IValue getValue(IASTNode point) {
+		IBinding nameOwner = fNameOwner;
+		if (nameOwner == null && fFieldOwner != null)
+			nameOwner = (IBinding) fFieldOwner.getTypeOrFunctionSet(point);
+
+		if (nameOwner instanceof ICPPClassType) {
+			ICPPEvaluation eval = resolveName((ICPPClassType) nameOwner, fTemplateArgs, point);
+			if (eval != null)
+				return eval.getValue(point);
+		}
 		return Value.create(this);
 	}
 
@@ -294,29 +303,30 @@ public class EvalID extends CPPEvaluation {
 		if (Arrays.equals(templateArgs, fTemplateArgs) && fieldOwner == fFieldOwner && nameOwner == fNameOwner)
 			return this;
 
-		if (nameOwner == null && fieldOwner != null)
-			nameOwner = (IBinding) fieldOwner.getTypeOrFunctionSet(point);
-
-		if (nameOwner instanceof ICompositeType && point != null) {
-			ICompositeType ownerType = (ICompositeType) nameOwner;
-			LookupData data = new LookupData(fName, templateArgs, point);
-			data.qualified = fQualified;
-			try {
-				CPPSemantics.lookup(data, ownerType.getCompositeScope());
-			} catch (DOMException e) {
-			}
-			IBinding[] bindings = data.getFoundBindings();
-			IBinding binding = bindings.length == 1 ? bindings[0] : null;
-			if (binding instanceof IEnumerator) {
-				return new EvalBinding(binding, null);
-			} else if (binding instanceof ICPPMember) {
-				return new EvalMemberAccess(ownerType, ValueCategory.PRVALUE, binding, false);
-			} else if (binding instanceof CPPFunctionSet) {
-				return new EvalFunctionSet((CPPFunctionSet) binding, fAddressOf);
-			}
-		}
+		// We don't do name lookup here since it is going to happen anyway when the getValue method
+		// is called. 
 
 		return new EvalID(fieldOwner, nameOwner, fName, fAddressOf, fQualified, templateArgs);
+	}
+
+	private ICPPEvaluation resolveName(ICPPClassType nameOwner, ICPPTemplateArgument[] templateArgs,
+			IASTNode point) {
+		LookupData data = new LookupData(fName, templateArgs, point);
+		data.qualified = fQualified;
+		try {
+			CPPSemantics.lookup(data, nameOwner.getCompositeScope());
+		} catch (DOMException e) {
+		}
+		IBinding[] bindings = data.getFoundBindings();
+		IBinding binding = bindings.length == 1 ? bindings[0] : null;
+		if (binding instanceof IEnumerator) {
+			return new EvalBinding(binding, null);
+		} else if (binding instanceof ICPPMember) {
+			return new EvalMemberAccess(nameOwner, ValueCategory.PRVALUE, binding, false);
+		} else if (binding instanceof CPPFunctionSet) {
+			return new EvalFunctionSet((CPPFunctionSet) binding, fAddressOf);
+		}
+		return null;
 	}
 
 	@Override

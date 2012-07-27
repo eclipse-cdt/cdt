@@ -4404,7 +4404,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 		assertEquals("void (#0 (* ...)())", ASTTypeUtil.getType(f.getType(), true));
 		assertTrue(f.getParameters()[0].isParameterPack());
 		f= bh.assertNonProblem("f4", 2);
-		assertEquals("void (int (& ...)[`0])", ASTTypeUtil.getType(f.getType(), true));
+		assertEquals("void (int (& ...)[3 *0 0])", ASTTypeUtil.getType(f.getType(), true));
 		assertTrue(f.getParameters()[0].isParameterPack());
 		f= bh.assertNonProblem("f5", 2);
 		assertEquals("void (#0 ...)", ASTTypeUtil.getType(f.getType(), true));

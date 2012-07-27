@@ -184,7 +184,7 @@ abstract public class CPPScope implements ICPPASTInternalScope {
 	@Override
 	public IBinding[] getBindings(ScopeLookupData lookup) {
 		IBinding[] result = getBindingsInAST(lookup);
-		final IASTTranslationUnit tu = lookup.getLookupPoint().getTranslationUnit();
+		final IASTTranslationUnit tu = lookup.getTranslationUnit();
 		if (tu != null) {
 			IIndex index = tu.getIndex();
 			if (index != null) {

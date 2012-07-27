@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableType;
@@ -29,11 +30,8 @@ public abstract class CPPEvaluation implements ICPPEvaluation {
 	private static class SignatureBuilder implements ITypeMarshalBuffer {
 		private static final byte NULL_TYPE= 0;
 		private static final byte UNSTORABLE_TYPE= (byte) -1;
-		private static final char[] HEX_DIGITS =
-				{ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 
 		private final StringBuilder fBuffer;
-		private boolean hexMode;
 
 		/**
 		 * Constructor for input buffer.
@@ -60,7 +58,13 @@ public abstract class CPPEvaluation implements ICPPEvaluation {
 			} else {
 				appendSeparator();
 				if (binding instanceof ICPPBinding) {
-					fBuffer.append(ASTTypeUtil.getQualifiedName((ICPPBinding) binding));
+					if (binding instanceof ICPPTemplateParameter) {
+						ICPPTemplateParameter param = (ICPPTemplateParameter) binding;
+						fBuffer.append(param.isParameterPack() ? '*' : '#');
+						fBuffer.append(param.getParameterID());
+					} else {
+						fBuffer.append(ASTTypeUtil.getQualifiedName((ICPPBinding) binding));
+					}
 				} else {
 					fBuffer.append(binding.getNameCharArray());
 				}
@@ -100,49 +104,27 @@ public abstract class CPPEvaluation implements ICPPEvaluation {
 		}
 
 		@Override
-		public void putByte(byte b) {
-			appendHexDigit(b >> 4);
-			appendHexDigit(b);
+		public void putByte(byte value) {
+			appendSeparator();
+			fBuffer.append(value);
 		}
 
 		@Override
 		public void putShort(short value) {
-			appendHexDigit(value >> 12);
-			appendHexDigit(value >> 8);
-			appendHexDigit(value >> 4);
-			appendHexDigit(value);
+			appendSeparator();
+			fBuffer.append(value);
 		}
 
 		@Override
 		public void putInt(int value) {
-			appendHexDigit(value >> 28);
-			appendHexDigit(value >> 24);
-			appendHexDigit(value >> 20);
-			appendHexDigit(value >> 16);
-			appendHexDigit(value >> 12);
-			appendHexDigit(value >> 8);
-			appendHexDigit(value >> 4);
-			appendHexDigit(value);
+			appendSeparator();
+			fBuffer.append(value);
 		}
 
 		@Override
 		public void putLong(long value) {
-			appendHexDigit((int) (value >> 60));
-			appendHexDigit((int) (value >> 56));
-			appendHexDigit((int) (value >> 52));
-			appendHexDigit((int) (value >> 48));
-			appendHexDigit((int) (value >> 44));
-			appendHexDigit((int) (value >> 40));
-			appendHexDigit((int) (value >> 36));
-			appendHexDigit((int) (value >> 32));
-			appendHexDigit((int) (value >> 28));
-			appendHexDigit((int) (value >> 24));
-			appendHexDigit((int) (value >> 20));
-			appendHexDigit((int) (value >> 16));
-			appendHexDigit((int) (value >> 12));
-			appendHexDigit((int) (value >> 8));
-			appendHexDigit((int) (value >> 4));
-			appendHexDigit((int) value);
+			appendSeparator();
+			fBuffer.append(value);
 		}
 
 		@Override
@@ -153,19 +135,9 @@ public abstract class CPPEvaluation implements ICPPEvaluation {
 			}
 		}
 
-		private void appendHexDigit(int val) {
-			if (hexMode) {
-				appendSeparator();
-				fBuffer.append("0x"); //$NON-NLS-1$
-				hexMode = true;
-			}
-			fBuffer.append(HEX_DIGITS[val & 0xF]);
-		}
-
 		private void appendSeparator() {
 			if (fBuffer.length() != 0)
 				fBuffer.append(' ');
-			hexMode = false;
 		}
 
 		@Override

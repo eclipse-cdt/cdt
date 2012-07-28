@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Andrew Ferguson (Symbian) - Initial implementation
- *    Bryan Wilkinson (QNX)
- *    Markus Schorn (Wind River Systems)
+ *     Andrew Ferguson (Symbian) - Initial implementation
+ *     Bryan Wilkinson (QNX)
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
@@ -26,15 +26,16 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateParameterMap;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTypeArgument;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
 /**
- * For implementation re-use in the absence of multiple inheritance
+ * For implementation re-use in the absence of multiple inheritance.
  */
 public class TemplateInstanceUtil {
+
 	public static ICPPTemplateParameterMap getTemplateParameterMap(ICompositesFactory cf, ICPPTemplateInstance rbinding) {
 		ICPPTemplateParameterMap preresult= rbinding.getTemplateParameterMap();
 		Integer[] keys= preresult.getAllParameterPositions();
@@ -50,8 +51,8 @@ public class TemplateInstanceUtil {
 					result.put(key, convert(cf, pack));
 				}
 			}
-		} catch(DOMException de) {
-			CCorePlugin.log(de);
+		} catch (DOMException e) {
+			CCorePlugin.log(e);
 		}
 		return result;
 	}
@@ -105,7 +106,7 @@ public class TemplateInstanceUtil {
 		final IType typeValue = arg.getTypeValue();
 		IType t= cf.getCompositeType(typeValue);
 		if (t != typeValue) {
-			return new CPPTemplateArgument(t);
+			return new CPPTemplateTypeArgument(t);
 		}
 		return arg;
 	}
@@ -113,8 +114,8 @@ public class TemplateInstanceUtil {
 	@Deprecated
 	public static ObjectMap getArgumentMap(ICompositesFactory cf, IIndexBinding rbinding) {
 		ICPPSpecialization specn= (ICPPSpecialization) rbinding; 
-		IBinding specd= ((CPPCompositesFactory)cf).findOneBinding(specn.getSpecializedBinding());
-		if(specd == null)
+		IBinding specd= ((CPPCompositesFactory) cf).findOneBinding(specn.getSpecializedBinding());
+		if (specd == null)
 			specd= specn.getSpecializedBinding();
 		
 		ObjectMap preresult= specn.getArgumentMap();
@@ -122,14 +123,13 @@ public class TemplateInstanceUtil {
 		Object[] keys= preresult.keyArray();
 		Object[] keysToAdapt= keys;
 		
-		if(specd instanceof ICPPTemplateDefinition) {
-			keysToAdapt= ((ICPPTemplateDefinition)specd).getTemplateParameters();
+		if (specd instanceof ICPPTemplateDefinition) {
+			keysToAdapt= ((ICPPTemplateDefinition) specd).getTemplateParameters();
 		}
-		for(int i = 0; i < keys.length && i < keysToAdapt.length; i++) {
+		for (int i= 0; i < keys.length && i < keysToAdapt.length; i++) {
 			IType type= (IType) preresult.get(keys[i]);
 			result.put(
-					cf.getCompositeBinding((IIndexFragmentBinding)keysToAdapt[i]),
-					cf.getCompositeType(type));
+					cf.getCompositeBinding((IIndexFragmentBinding) keysToAdapt[i]), cf.getCompositeType(type));
 		}
 		
 		return result;
@@ -144,15 +144,15 @@ public class TemplateInstanceUtil {
 	public static IType[] getArguments(ICompositesFactory cf, ICPPClassTemplatePartialSpecialization rbinding) {
 		try {
 			return getArguments(cf, rbinding.getArguments());
-		} catch(DOMException de) {
-			CCorePlugin.log(de);
+		} catch (DOMException e) {
+			CCorePlugin.log(e);
 			return IType.EMPTY_TYPE_ARRAY;
 		}
 	}
 	
 	@Deprecated
 	private static IType[] getArguments(ICompositesFactory cf, IType[] result) {
-		for(int i=0; i<result.length; i++) {
+		for (int i= 0; i < result.length; i++) {
 			result[i] = cf.getCompositeType(result[i]);
 		}
 		return result;

@@ -32,10 +32,9 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 /**
  * Binding for a non-type template parameter.
  */
-public class CPPTemplateNonTypeParameter extends CPPTemplateParameter implements
-		ICPPTemplateNonTypeParameter {
-
-	private IType type = null;
+public class CPPTemplateNonTypeParameter extends CPPTemplateParameter
+		implements ICPPTemplateNonTypeParameter {
+	private IType type;
 	
 	public CPPTemplateNonTypeParameter(IASTName name) {
 		super(name);
@@ -80,7 +79,7 @@ public class CPPTemplateNonTypeParameter extends CPPTemplateParameter implements
 			d= (IASTExpression) dc;
 		} else if (dc instanceof ICPPASTInitializerList) {
 			ICPPASTInitializerList list= (ICPPASTInitializerList) dc;
-			switch(list.getSize()) {
+			switch (list.getSize()) {
 			case 0:
 				return new CPPTemplateArgument(Value.create(0), getType());
 			case 1:
@@ -123,26 +122,32 @@ public class CPPTemplateNonTypeParameter extends CPPTemplateParameter implements
 	public boolean isStatic() {
 		return false;
 	}
+
 	@Override
 	public boolean isExtern() {
 		return false;
 	}
+
 	@Override
 	public boolean isAuto() {
 		return false;
 	}
+
 	@Override
 	public boolean isRegister() {
 		return false;
 	}
+
 	@Override
 	public IValue getInitialValue() {
 		return null;
 	}
+
 	@Override
 	public boolean isExternC() {
 		return false;
 	}
+
 	@Override
 	public boolean isMutable() {
 		return false;

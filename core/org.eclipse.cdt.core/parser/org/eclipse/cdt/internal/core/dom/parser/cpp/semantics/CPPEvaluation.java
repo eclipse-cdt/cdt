@@ -16,12 +16,14 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableType;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateNonTypeArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.core.runtime.CoreException;
 
@@ -104,6 +106,16 @@ public abstract class CPPEvaluation implements ICPPEvaluation {
 		}
 
 		@Override
+		public void marshalTemplateArgument(ICPPTemplateArgument arg) throws CoreException {
+			if (arg instanceof CPPTemplateNonTypeArgument) {
+				putByte(VALUE);
+				((CPPTemplateNonTypeArgument) arg).getEvaluation().marshal(this, true);
+			} else {
+				marshalType(arg.getTypeValue());
+			}
+		}
+
+		@Override
 		public void putByte(byte value) {
 			appendSeparator();
 			fBuffer.append(value);
@@ -157,6 +169,11 @@ public abstract class CPPEvaluation implements ICPPEvaluation {
 
 		@Override
 		public IValue unmarshalValue() throws CoreException {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public ICPPTemplateArgument unmarshalTemplateArgument() throws CoreException {
 			throw new UnsupportedOperationException();
 		}
 

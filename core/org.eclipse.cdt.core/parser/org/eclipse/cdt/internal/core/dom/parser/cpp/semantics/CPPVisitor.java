@@ -191,7 +191,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPReferenceType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPScope;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateArgument;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTypeArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTypedef;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownTypeScope;
@@ -2029,7 +2029,7 @@ public class CPPVisitor extends ASTQueries {
 					return new ProblemType(ISemanticProblem.TYPE_CANNOT_DEDUCE_AUTO_TYPE);
 				}
 				type = (IType) CPPTemplates.instantiate(initializer_list_template,
-						new ICPPTemplateArgument[] { new CPPTemplateArgument(type) }, initClause);
+						new ICPPTemplateArgument[] { new CPPTemplateTypeArgument(type) }, initClause);
 				if (type instanceof IProblemBinding) {
 					return new ProblemType(ISemanticProblem.TYPE_CANNOT_DEDUCE_AUTO_TYPE);
 				}
@@ -2058,7 +2058,7 @@ public class CPPVisitor extends ASTQueries {
 			type = t;
 		if (initClause instanceof ICPPASTInitializerList) {
 			type = (IType) CPPTemplates.instantiate(initializer_list_template,
-					new ICPPTemplateArgument[] { new CPPTemplateArgument(type) }, initClause);
+					new ICPPTemplateArgument[] { new CPPTemplateTypeArgument(type) }, initClause);
 		}
 		return decorateType(type, declSpec, declarator);
 	}

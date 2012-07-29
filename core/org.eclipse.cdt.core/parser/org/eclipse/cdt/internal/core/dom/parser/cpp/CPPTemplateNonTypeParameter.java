@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -81,7 +81,7 @@ public class CPPTemplateNonTypeParameter extends CPPTemplateParameter
 			ICPPASTInitializerList list= (ICPPASTInitializerList) dc;
 			switch (list.getSize()) {
 			case 0:
-				return new CPPTemplateArgument(Value.create(0), getType());
+				return new CPPTemplateNonTypeArgument(Value.create(0), getType());
 			case 1:
 				dc= list.getClauses()[0];
 				if (dc instanceof IASTExpression) {
@@ -95,7 +95,7 @@ public class CPPTemplateNonTypeParameter extends CPPTemplateParameter
 		
 		IValue val= Value.create(d, Value.MAX_RECURSION_DEPTH);
 		IType t= getType();
-		return new CPPTemplateArgument(val, t);
+		return new CPPTemplateNonTypeArgument(val, t);
 	}
 
 	@Override

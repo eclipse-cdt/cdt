@@ -131,7 +131,7 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter implement
 		if (d == null)
 			return null;
 		
-		return new CPPTemplateArgument(d);
+		return new CPPTemplateTypeArgument(d);
 	}
 
 	@Override

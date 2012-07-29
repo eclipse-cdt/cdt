@@ -16,7 +16,9 @@ import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateNonTypeArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateParameterMap;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTypeArgument;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -148,9 +150,9 @@ public class PDOMCPPTemplateParameterMap {
 		IValue val= linkage.loadValue(rec + VALUE_OFFSET);
 		ICPPTemplateArgument arg;
 		if (val != null) {
-			arg= new CPPTemplateArgument(val, type);
+			arg= new CPPTemplateNonTypeArgument(val, type);
 		} else {
-			arg= new CPPTemplateArgument(type);
+			arg= new CPPTemplateTypeArgument(type);
 		}
 		return arg;
 	}

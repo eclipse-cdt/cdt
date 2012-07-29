@@ -233,7 +233,7 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 		throw new CompositingNotImplementedError();
 	}
 	
-	private ICPPEvaluation getCompositeEvaluation(ICPPEvaluation eval) {
+	public ICPPEvaluation getCompositeEvaluation(ICPPEvaluation eval) {
 		if (eval == null)
 			return null;
 		if (eval instanceof EvalBinary) {

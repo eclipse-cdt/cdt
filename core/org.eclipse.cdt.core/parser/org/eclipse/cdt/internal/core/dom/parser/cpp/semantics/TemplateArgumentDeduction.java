@@ -60,8 +60,9 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPReferenceType;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateArgument;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateNonTypeArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateParameterMap;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTypeArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 
@@ -723,7 +724,7 @@ public class TemplateArgumentDeduction {
 					if (parID >= 0) { 
 						ICPPTemplateArgument old= fDeducedArgs.getArgument(parID, fPackOffset);
 						if (old == null) {
-							if (!deduce(parID, new CPPTemplateArgument(as, new CPPBasicType(ICPPBasicType.Kind.eInt, 0)))) {
+							if (!deduce(parID, new CPPTemplateNonTypeArgument(as, new CPPBasicType(ICPPBasicType.Kind.eInt, 0)))) {
 								return false;
 							} 
 						} else if (!as.equals(old.getNonTypeValue())) {
@@ -764,7 +765,7 @@ public class TemplateArgumentDeduction {
 				}
 				if (a == null)
 					return false;
-				return deduce(((ICPPTemplateParameter)p).getParameterID(), new CPPTemplateArgument(a));
+				return deduce(((ICPPTemplateParameter)p).getParameterID(), new CPPTemplateTypeArgument(a));
 			} else if (p instanceof ICPPTemplateInstance) {
 				if (!(a instanceof ICPPTemplateInstance))
 					return false;
@@ -792,7 +793,7 @@ public class TemplateArgumentDeduction {
 			if (current != null) {
 				if (current.isNonTypeValue() || !current.getTypeValue().isSameType(aTemplate))
 					return false;
-			} else if (!deduce(tparId, new CPPTemplateArgument(aTemplate))) {
+			} else if (!deduce(tparId, new CPPTemplateTypeArgument(aTemplate))) {
 				return false;
 			}
 		} else if (!aTemplate.isSameType(pTemplate)) {

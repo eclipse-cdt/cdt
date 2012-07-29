@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.internal.core.Util;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateNonTypeArgument;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
@@ -72,7 +73,7 @@ class PDOMCPPTemplateNonTypeParameter extends PDOMCPPBinding
 			IValue val= getLinkage().loadValue(record + DEFAULTVAL);
 			if (val == null) 
 				return null;
-			return new CPPTemplateArgument(val, getType());
+			return new CPPTemplateNonTypeArgument(val, getType());
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return null;

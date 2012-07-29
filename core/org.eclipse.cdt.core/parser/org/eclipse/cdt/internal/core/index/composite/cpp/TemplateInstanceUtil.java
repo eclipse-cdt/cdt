@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2012 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     Andrew Ferguson (Symbian) - Initial implementation
  *     Bryan Wilkinson (QNX)
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
@@ -16,7 +17,6 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
@@ -26,8 +26,10 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateNonTypeArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTypeArgument;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
@@ -91,22 +93,18 @@ public class TemplateInstanceUtil {
 	}
 
 	static ICPPTemplateArgument convert(ICompositesFactory cf, ICPPTemplateArgument arg) throws DOMException {
-		if (arg == null)
-			return null;
-		if (arg.isNonTypeValue()) {
-			final IType t= arg.getTypeOfNonTypeValue();
-			final IType t2= cf.getCompositeType(t);
-			final IValue v= arg.getNonTypeValue();
-			final IValue v2= cf.getCompositeValue(v);
-			if (t != t2 || v != v2) {
-				return new CPPTemplateArgument(v2, t2);
+		if (arg instanceof CPPTemplateTypeArgument) {
+			final IType typeValue = arg.getTypeValue();
+			IType t= cf.getCompositeType(typeValue);
+			if (t != typeValue) {
+				return new CPPTemplateTypeArgument(t);
 			}
-			return arg;
-		}
-		final IType typeValue = arg.getTypeValue();
-		IType t= cf.getCompositeType(typeValue);
-		if (t != typeValue) {
-			return new CPPTemplateTypeArgument(t);
+		} else if (arg instanceof CPPTemplateNonTypeArgument) {
+			ICPPEvaluation eval = ((CPPTemplateNonTypeArgument) arg).getEvaluation();
+			ICPPEvaluation eval2 = ((CPPCompositesFactory) cf).getCompositeEvaluation(eval);
+			if (eval2 != eval) {
+				return new CPPTemplateNonTypeArgument(eval2);
+			}
 		}
 		return arg;
 	}

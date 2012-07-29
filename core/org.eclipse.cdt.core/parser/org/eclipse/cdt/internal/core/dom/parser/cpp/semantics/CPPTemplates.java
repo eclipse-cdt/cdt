@@ -123,11 +123,12 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPMethodTemplateSpecializat
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPParameterPackType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateDefinition;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateNonTypeArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateNonTypeParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTemplateParameter;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTypeArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTypeParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTypedefSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownBinding;
@@ -492,11 +493,11 @@ public class CPPTemplates {
 				if (tp.isParameterPack()) {
 					t= new CPPParameterPackType(t);
 				}
-				args[i] = new CPPTemplateArgument(t);
+				args[i] = new CPPTemplateTypeArgument(t);
 			} else if (tp instanceof ICPPTemplateNonTypeParameter) {
 				// Non-type template parameter pack already has type 'ICPPParameterPackType'
 				final ICPPTemplateNonTypeParameter nttp = (ICPPTemplateNonTypeParameter) tp;
-				args[i] = new CPPTemplateArgument(Value.create(nttp), nttp.getType());
+				args[i] = new CPPTemplateNonTypeArgument(Value.create(nttp), nttp.getType());
 			} else {
 				assert false;
 			}
@@ -1083,14 +1084,14 @@ public class CPPTemplates {
 			final IType instType= instantiateType(origType, tpMap, packOffset, within, point);
 			if (origType == instType && origValue == instValue)
 				return arg;
-			return new CPPTemplateArgument(instValue, instType);
+			return new CPPTemplateNonTypeArgument(instValue, instType);
 		}
 
 		final IType orig= arg.getTypeValue();
 		final IType inst= instantiateType(orig, tpMap, packOffset, within, point);
 		if (orig == inst)
 			return arg;
-		return new CPPTemplateArgument(inst);
+		return new CPPTemplateTypeArgument(inst);
 	}
 
 	private static CPPTemplateParameterMap instantiateArgumentMap(ICPPTemplateParameterMap orig, ICPPTemplateParameterMap tpMap,
@@ -1138,7 +1139,7 @@ public class CPPTemplates {
 					return type;
 				}
 				// The parameter types need to be adjusted.
-				for (int i=0; i<params.length; i++) {
+				for (int i= 0; i < params.length; i++) {
 					IType p= params[i];
 					if (!isDependentType(p)) {
 						params[i]= CPPVisitor.adjustParameterType(p, true);
@@ -1651,7 +1652,7 @@ public class CPPTemplates {
 		if (args.length != specArgs.length) {
 			return false;
 		}
-		for (int i=0; i < args.length; i++) {
+		for (int i= 0; i < args.length; i++) {
 			if (!specArgs[i].isSameValue(args[i]))
 				return false;
 		}
@@ -1671,12 +1672,12 @@ public class CPPTemplates {
 			for (int i = 0; i < args.length; i++) {
 				IASTNode arg= args[i];
 				if (arg instanceof IASTTypeId) {
-					result[i]= new CPPTemplateArgument(CPPVisitor.createType((IASTTypeId) arg));
+					result[i]= new CPPTemplateTypeArgument(CPPVisitor.createType((IASTTypeId) arg));
 				} else if (arg instanceof IASTExpression) {
 					IASTExpression expr= (IASTExpression) arg;
 					IType type= expr.getExpressionType();
 					IValue value= Value.create((IASTExpression) arg, Value.MAX_RECURSION_DEPTH);
-					result[i]= new CPPTemplateArgument(value, type);
+					result[i]= new CPPTemplateNonTypeArgument(value, type);
 				} else {
 					throw new IllegalArgumentException("Unexpected type: " + arg.getClass().getName()); //$NON-NLS-1$
 				}
@@ -1763,7 +1764,7 @@ public class CPPTemplates {
 	static ICPPFunction[] instantiateConversionTemplates(ICPPFunction[] functions, IType conversionType, IASTNode point) {
 		boolean checkedForDependentType= false;
 		ICPPFunction[] result= functions;
-		int i=0;
+		int i= 0;
 		boolean done= false;
 		for (ICPPFunction f : functions) {
 			ICPPFunction inst = f;
@@ -1888,7 +1889,7 @@ public class CPPTemplates {
 		CPPTemplateParameterMap map = new CPPTemplateParameterMap(argLen);
 		for (int i = 0; i < argLen; i++) {
 			final ICPPTemplateParameter tpar = tpars[i];
-			final CPPTemplateArgument arg = uniqueArg(tpar);
+			final ICPPTemplateArgument arg = uniqueArg(tpar);
 			args[i]= arg;
 			if (tpar.isParameterPack()) {
 				map.put(tpar, new ICPPTemplateArgument[] {arg});
@@ -1904,12 +1905,12 @@ public class CPPTemplates {
 		return null;
 	}
 
-	private static CPPTemplateArgument uniqueArg(final ICPPTemplateParameter tpar) throws DOMException {
-		final CPPTemplateArgument arg;
+	private static ICPPTemplateArgument uniqueArg(final ICPPTemplateParameter tpar) throws DOMException {
+		final ICPPTemplateArgument arg;
 		if (tpar instanceof ICPPTemplateNonTypeParameter) {
-			arg = new CPPTemplateArgument(Value.unique(), ((ICPPTemplateNonTypeParameter) tpar).getType());
+			arg = new CPPTemplateNonTypeArgument(Value.unique(), ((ICPPTemplateNonTypeParameter) tpar).getType());
 		} else {
-			arg = new CPPTemplateArgument(new UniqueType(tpar.isParameterPack()));
+			arg = new CPPTemplateTypeArgument(new UniqueType(tpar.isParameterPack()));
 		}
 		return arg;
 	}
@@ -2074,7 +2075,7 @@ public class CPPTemplates {
 		final CPPTemplateParameterMap transferMap= new CPPTemplateParameterMap(tpars1Len);
 		for (int i = 0; i < tpars1Len; i++) {
 			final ICPPTemplateParameter param = tpars1[i];
-			final CPPTemplateArgument arg = uniqueArg(param);
+			final ICPPTemplateArgument arg = uniqueArg(param);
 			args[i]= arg;
 			transferMap.put(param, arg);
 		}
@@ -2173,7 +2174,7 @@ public class CPPTemplates {
 					pType= instantiateType(pType, map, -1, null, point);
 				}
 				if (argType instanceof ICPPUnknownType || argType instanceof ISemanticProblem || isNonTypeArgumentConvertible(pType, argType, point)) {
-					return new CPPTemplateArgument(arg.getNonTypeValue(), pType);
+					return new CPPTemplateNonTypeArgument(arg.getNonTypeValue(), pType);
 				}
 				return null;
 
@@ -2187,8 +2188,8 @@ public class CPPTemplates {
 
 	private static boolean matchTemplateTemplateParameters(ICPPTemplateParameter[] pParams,
 			ICPPTemplateParameter[] aParams) throws DOMException {
-		int pi=0;
-		int ai=0;
+		int pi= 0;
+		int ai= 0;
 		while (pi < pParams.length && ai < aParams.length) {
 			final ICPPTemplateParameter pp = pParams[pi];
 			final ICPPTemplateParameter ap = aParams[ai];

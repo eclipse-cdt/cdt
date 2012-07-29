@@ -62,7 +62,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPQualifierType;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateArgument;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTypeArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 
@@ -511,7 +511,7 @@ public class SemanticUtil {
 			final IType type= arg.getTypeValue();
 			final IType newType= getSimplifiedType(type);
 			if (newType != type) {
-				return new CPPTemplateArgument(newType);
+				return new CPPTemplateTypeArgument(newType);
 			}
 		}
 		return arg;

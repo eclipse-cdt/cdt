@@ -16,6 +16,7 @@
  *  David McKnight     (IBM)   [281712] [dstore] Warning message is needed when disk is full
  *  David McKnight     (IBM)   [367424] [dstore] upload mechanism should provide backups of files
  *  David McKnight     (IBM)   [380023] [dstore] remote file permissions lost after upload
+ *  David McKnight     (IBM)   [385630] [dstore] backup files created during upload should be removed when upload successful
  *******************************************************************************/
 
 package org.eclipse.dstore.core.model;
@@ -25,6 +26,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+
+import org.eclipse.dstore.core.server.SecuredThread;
 
 /**
  * <p>
@@ -45,20 +48,72 @@ public class ByteStreamHandler implements IByteStreamHandler
 	protected DataStore _dataStore;
 	protected DataElement _log;
 	protected static final String FILEMSG_REMOTE_SAVE_FAILED = "RSEF5006"; //$NON-NLS-1$
-
+	
+	// for file backups
+	private boolean _doBackups = true;
+	private boolean _keepBackups = false;
+	
 	/**
-	 * Contructor
+	 * Constructor
 	 * @param dataStore the DataStore instance
 	 */
 	public ByteStreamHandler(DataStore dataStore, DataElement log)
-	{
+	{		
 		_dataStore = dataStore;
 		_log = log;
+		
+		String doBackups = System.getProperty("backupfiles"); //$NON-NLS-1$
+		_doBackups = (doBackups == null || doBackups.equals("true")); //$NON-NLS-1$
+		
+		if (_doBackups){
+			String keepBackups = System.getProperty("keepbackupfiles"); //$NON-NLS-1$
+			_keepBackups = (keepBackups == null || keepBackups.equals("true")); //$NON-NLS-1$
+		}
 	}
 
 	public String getId()
 	{
 		return getClass().getName();
+	}
+	
+	class DeleteBackupThread extends SecuredThread {
+		private File _currentFile;
+		private File _backupFile;
+		private long _initialLength;
+		public DeleteBackupThread(DataStore dataStore, File currentFile, File backupFile){
+			super(dataStore);
+			_currentFile = currentFile;
+			_backupFile = backupFile;
+			_initialLength = _currentFile.length(); // get initial length so we can see if upload is still happening
+		}
+		
+		public void run(){
+			super.run();
+			boolean doneDelete = false;
+			while (!doneDelete){
+				try {
+					Thread.sleep(10000); // wait 10 seconds
+				}
+				catch (InterruptedException e){				
+				}
+		
+				long curLength = _currentFile.length();
+				if (curLength == _initialLength){ // looks like total upload is complete
+					_backupFile.delete();	
+					doneDelete = true;
+				}		
+				else {
+					_initialLength = curLength;
+				}
+			}	
+		}
+	}
+	
+	private void deleteBackupFile(File currentFile, File backupFile){
+		if (backupFile != null && _keepBackups){ // only matters if there is a backup file
+			DeleteBackupThread thread = new DeleteBackupThread(_dataStore, currentFile, backupFile);
+			thread.start();
+		}
 	}
 	
 	private void backupFile(File file, File backupFile){
@@ -129,6 +184,7 @@ public class ByteStreamHandler implements IByteStreamHandler
 			{
 				// need to create directories as well
 				File file = new File(fileName);
+				File backupFile = null;
 				File parent = new File(file.getParent());
 				if (!file.exists())
 				{					
@@ -138,11 +194,10 @@ public class ByteStreamHandler implements IByteStreamHandler
 				{
 					if (!_dataStore.isVirtual()){ // only applies to server
 						// backup file on upload by default
-						String doBackups = System.getProperty("backupfiles"); //$NON-NLS-1$
-						if (doBackups == null || doBackups.equals("true")){ //$NON-NLS-1$
+						if (_doBackups){ 
 							// backup the file first	
 							String n = file.getName();			
-							File backupFile = new File(parent, '.' + n + '~');
+							backupFile = new File(parent, '.' + n + '~');
 							_dataStore.trace("Backing up as "+backupFile.getAbsolutePath()); //$NON-NLS-1$
 							backupFile(file, backupFile);
 						}
@@ -165,6 +220,8 @@ public class ByteStreamHandler implements IByteStreamHandler
 				}
 
 				fileStream.close();
+				
+				deleteBackupFile(newFile, backupFile);
 				if (status == null)
 					return;
 				status.setAttribute(DE.A_SOURCE, "success"); //$NON-NLS-1$
@@ -213,9 +270,9 @@ public class ByteStreamHandler implements IByteStreamHandler
 			{
 				// need to create directories as well
 				File file = new File(fileName);
+				File parent = new File(file.getParent());
 				if (!file.exists())
-				{
-					File parent = new File(file.getParent());
+				{					
 					parent.mkdirs();
 
 					File newFile = new File(fileName);
@@ -255,6 +312,7 @@ public class ByteStreamHandler implements IByteStreamHandler
 					outStream.close();
 
 				}
+	
 				if (status == null)
 					return;
 				status.setAttribute(DE.A_SOURCE, "success"); //$NON-NLS-1$

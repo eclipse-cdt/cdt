@@ -36,6 +36,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
@@ -291,21 +292,20 @@ public class EvalID extends CPPEvaluation {
 		if (fieldOwner != null) {
 			fieldOwner = fieldOwner.instantiate(tpMap, packOffset, within, maxdepth, point);
 		}
+
 		IBinding nameOwner = fNameOwner;
-		if (fNameOwner instanceof ICPPTemplateParameter) {
-			ICPPTemplateArgument argument = tpMap.getArgument((ICPPTemplateParameter) fNameOwner);
+		if (nameOwner instanceof ICPPTemplateParameter) {
+			ICPPTemplateArgument argument = tpMap.getArgument((ICPPTemplateParameter) nameOwner);
 			if (argument != null) {
 				IType type = argument.getTypeValue();
 				if (type instanceof IBinding)
 					nameOwner = (IBinding) type;
 			}
-		} else if (fNameOwner instanceof ICPPUnknownBinding) {
-			try {
-				nameOwner = CPPTemplates.resolveUnknown((ICPPUnknownBinding) fNameOwner, tpMap,
-						packOffset, within, point);
-			} catch (DOMException e) {
-				CCorePlugin.log(e);
-			}
+		} else if (nameOwner instanceof ICPPUnknownBinding) {
+			nameOwner = resolveUnknown(nameOwner, tpMap, packOffset, within, point);
+		} else if (nameOwner instanceof ICPPClassTemplate) {
+			nameOwner = resolveUnknown(CPPTemplates.createDeferredInstance((ICPPClassTemplate) nameOwner),
+					tpMap, packOffset, within, point);
 		}
 		if (Arrays.equals(templateArgs, fTemplateArgs) && fieldOwner == fFieldOwner && nameOwner == fNameOwner)
 			return this;
@@ -314,6 +314,17 @@ public class EvalID extends CPPEvaluation {
 		// is called. 
 
 		return new EvalID(fieldOwner, nameOwner, fName, fAddressOf, fQualified, templateArgs);
+	}
+
+	IBinding resolveUnknown(IBinding binding, ICPPTemplateParameterMap tpMap, int packOffset,
+			ICPPClassSpecialization within, IASTNode point) {
+		try {
+			binding = CPPTemplates.resolveUnknown((ICPPUnknownBinding) binding, tpMap,
+					packOffset, within, point);
+		} catch (DOMException e) {
+			CCorePlugin.log(e);
+		}
+		return binding;
 	}
 
 	private ICPPEvaluation resolveName(ICPPClassType nameOwner, ICPPTemplateArgument[] templateArgs,

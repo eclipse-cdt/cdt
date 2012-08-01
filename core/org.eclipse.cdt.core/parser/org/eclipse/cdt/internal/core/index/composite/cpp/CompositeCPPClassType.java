@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Andrew Ferguson (Symbian) - Initial implementation
- *    Markus Schorn (Wind River Systems)
+ *     Andrew Ferguson (Symbian) - Initial implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
@@ -65,7 +65,7 @@ class CompositeCPPClassType extends CompositeCPPBinding implements ICPPClassType
 			if (baseClass != null) {
 				return baseClass;
 			} else {
-				return cf.getCompositeBinding((IIndexFragmentBinding)base.getBaseClass());
+				return cf.getCompositeBinding((IIndexFragmentBinding) base.getBaseClass());
 			}
 		}
 
@@ -122,7 +122,7 @@ class CompositeCPPClassType extends CompositeCPPBinding implements ICPPClassType
 	public ICPPField[] getDeclaredFields() {
 		ICPPField[] result = ((ICPPClassType) rbinding).getDeclaredFields();
 		for (int i= 0; i < result.length; i++) {
-			result[i] = (ICPPField) cf.getCompositeBinding((IIndexFragmentBinding)result[i]);
+			result[i] = (ICPPField) cf.getCompositeBinding((IIndexFragmentBinding) result[i]);
 		}
 		return result;
 	}
@@ -131,7 +131,7 @@ class CompositeCPPClassType extends CompositeCPPBinding implements ICPPClassType
 	public ICPPMethod[] getDeclaredMethods() {
 		ICPPMethod[] result = ((ICPPClassType) rbinding).getDeclaredMethods();
 		for (int i= 0; i < result.length; i++) {
-			result[i]= (ICPPMethod) cf.getCompositeBinding((IIndexFragmentBinding)result[i]);
+			result[i]= (ICPPMethod) cf.getCompositeBinding((IIndexFragmentBinding) result[i]);
 		}
 		return result;
 	}

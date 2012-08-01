@@ -4331,7 +4331,7 @@
 		<provider
 			class="org.eclipse.cdt.core.language.settings.providers.LanguageSettingsGenericProvider"
 			id="org.eclipse.cdt.ui.UserLanguageSettingsProvider"
-			name="CDT User Setting Entries"
+			name="%UserSettingEntries.name"
 			prefer-non-shared="true">
 		</provider>
 	</extension>

@@ -124,14 +124,13 @@ public class AbstractCPPClassSpecializationScope implements ICPPClassSpecializat
 	}
 	
 	@Override
-	public ICPPBase[] getBases() {
+	public ICPPBase[] getBases(IASTNode point) {
 		if (fBases == null) {
 			ICPPBase[] result = null;
 			ICPPBase[] bases = specialClass.getSpecializedBinding().getBases();
 			if (bases.length == 0) {
 				fBases= bases;
 			} else {
-				IASTNode point= null; // Instantiation of dependent expression may not work.
 				final ICPPTemplateParameterMap tpmap = specialClass.getTemplateParameterMap();
 				for (ICPPBase base : bases) {
 					IBinding origClass = base.getBaseClass();

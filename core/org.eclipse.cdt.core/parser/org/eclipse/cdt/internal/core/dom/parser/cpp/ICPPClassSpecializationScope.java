@@ -10,6 +10,7 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
@@ -39,7 +40,7 @@ public interface ICPPClassSpecializationScope extends ICPPClassScope {
 	/**
 	 * Computes the bases via the original class.
 	 */
-	ICPPBase[] getBases();
+	ICPPBase[] getBases(IASTNode point);
 
 	/**
 	 * Computes the methods via the original class.

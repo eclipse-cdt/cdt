@@ -36,4 +36,11 @@ public interface ICPPClassSpecialization extends ICPPSpecialization, ICPPClassTy
 	 * @since 5.5
 	 */
 	IBinding specializeMember(IBinding binding, IASTNode point);
+
+	/**
+	 * Similar to {@link ICPPClassType#getBases()} but a accepts a starting point for template
+	 * instantiation.
+	 * @since 5.5
+	 */
+	public ICPPBase[] getBases(IASTNode point);
 }

@@ -5591,6 +5591,50 @@ public class AST2TemplateTests extends AST2BaseTest {
 		parseAndCheckBindings();
 	}
 
+	//	class A;
+	//	class B;
+	//
+	//	template <bool bool_value>
+	//	struct bool_constant {
+	//	  static const bool value = bool_value;
+	//	};
+	//
+	//	template <typename From, typename To>
+	//	struct ImplicitlyConvertible {
+	//	  static From MakeFrom();
+	//
+	//	  static char Helper(To);
+	//	  static char (&Helper(...))[2];
+	//
+	//	  static const bool value = sizeof(Helper(ImplicitlyConvertible::MakeFrom())) == 1;
+	//	};
+	//
+	//	template <typename T>
+	//	struct IsAorB
+	//	    : public bool_constant<
+	//	  ImplicitlyConvertible<const T*, const A*>::value ||
+	//	  ImplicitlyConvertible<const T*, const B*>::value> {
+	//	};
+	//
+	//	namespace ns {
+	//
+	//	template <bool U>
+	//	class C {
+	//	};
+	//
+	//	template <typename V>
+	//	void f(V a);
+	//
+	//	} // namespace ns
+	//
+	//	void test() {
+	//	  ns::C<IsAorB<int>::value> a;
+	//	  f(a);
+	//	};
+	public void _testDependentExpressions() throws Exception {
+		parseAndCheckBindings();
+	}
+
 	//	template <int> void* foo(int);
 	//	template <typename T> void f(T t) {
 	//	    if (T* i = foo<0>(0))

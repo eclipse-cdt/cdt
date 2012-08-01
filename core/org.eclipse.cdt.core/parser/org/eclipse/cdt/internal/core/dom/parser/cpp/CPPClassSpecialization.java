@@ -122,11 +122,16 @@ public class CPPClassSpecialization extends CPPSpecialization
 	
 	@Override
 	public ICPPBase[] getBases() {
+		return getBases(null);
+	}
+
+	@Override
+	public ICPPBase[] getBases(IASTNode point) {
 		ICPPClassSpecializationScope scope= getSpecializationScope();
 		if (scope == null)
 			return ClassTypeHelper.getBases(this);
 
-		return scope.getBases();
+		return scope.getBases(point);
 	}
 
 	@Override

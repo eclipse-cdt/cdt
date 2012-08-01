@@ -129,9 +129,14 @@ public class CompositeCPPClassSpecialization extends CompositeCPPClassType imple
 
 	@Override
 	public final ICPPBase[] getBases() {
+		return getBases(null);
+	}
+
+	@Override
+	public final ICPPBase[] getBases(IASTNode point) {
 		IScope scope= getCompositeScope();
 		if (scope instanceof ICPPClassSpecializationScope) {
-			return ((ICPPClassSpecializationScope) scope).getBases();
+			return ((ICPPClassSpecializationScope) scope).getBases(point);
 		}
 		return super.getBases();
 	}

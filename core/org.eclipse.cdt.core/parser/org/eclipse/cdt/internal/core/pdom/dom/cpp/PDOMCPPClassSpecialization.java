@@ -207,10 +207,15 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 	
 	@Override
 	public ICPPBase[] getBases() {
+		return getBases(null);
+	}
+
+	@Override
+	public ICPPBase[] getBases(IASTNode point) {
 		IScope scope= getCompositeScope();
 		if (scope instanceof ICPPClassSpecializationScope) {
-			return ((ICPPClassSpecializationScope) scope).getBases();
-		} 
+			return ((ICPPClassSpecializationScope) scope).getBases(point);
+		}
 		
 		// This is an explicit specialization
 		Long key= record + PDOMCPPLinkage.CACHE_BASES;

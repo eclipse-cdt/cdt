@@ -67,7 +67,9 @@ public class ByteStreamHandler implements IByteStreamHandler
 		
 		if (_doBackups){
 			String keepBackups = System.getProperty("keepbackupfiles"); //$NON-NLS-1$
-			_keepBackups = (keepBackups == null || keepBackups.equals("true")); //$NON-NLS-1$
+			
+			// default is not NOT keep backups
+			_keepBackups = (keepBackups != null && keepBackups.equals("true")); //$NON-NLS-1$
 		}
 	}
 
@@ -90,27 +92,35 @@ public class ByteStreamHandler implements IByteStreamHandler
 		public void run(){
 			super.run();
 			boolean doneDelete = false;
+						
 			while (!doneDelete){
 				try {
 					Thread.sleep(10000); // wait 10 seconds
 				}
 				catch (InterruptedException e){				
 				}
-		
-				long curLength = _currentFile.length();
-				if (curLength == _initialLength){ // looks like total upload is complete
-					_backupFile.delete();	
+				
+				// make sure there was no disconnect
+				if (!_dataStore.isConnected()){
+					// keep the backup
 					doneDelete = true;
-				}		
+				}
 				else {
-					_initialLength = curLength;
+					long curLength = _currentFile.length();
+					if (curLength == _initialLength){ // looks like total upload is complete
+						_backupFile.delete();	
+						doneDelete = true;
+					}		
+					else {
+						_initialLength = curLength;
+					}
 				}
 			}	
 		}
 	}
 	
 	private void deleteBackupFile(File currentFile, File backupFile){
-		if (backupFile != null && _keepBackups){ // only matters if there is a backup file
+		if (backupFile != null  && !_keepBackups){ // only matters if there is a backup file
 			DeleteBackupThread thread = new DeleteBackupThread(_dataStore, currentFile, backupFile);
 			thread.start();
 		}

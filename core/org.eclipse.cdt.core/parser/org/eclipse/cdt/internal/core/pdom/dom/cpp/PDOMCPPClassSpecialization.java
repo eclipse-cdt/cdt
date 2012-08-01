@@ -54,9 +54,8 @@ import org.eclipse.core.runtime.CoreException;
  */
 class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 		ICPPClassSpecialization, IPDOMMemberOwner, IPDOMCPPClassType {
-
-	private static final int FIRSTBASE = PDOMCPPSpecialization.RECORD_SIZE + 0;
-	private static final int MEMBERLIST = PDOMCPPSpecialization.RECORD_SIZE + 4;
+	private static final int FIRST_BASE = PDOMCPPSpecialization.RECORD_SIZE + 0;
+	private static final int MEMBER_LIST = PDOMCPPSpecialization.RECORD_SIZE + 4;
 	
 	/**
 	 * The size in bytes of a PDOMCPPClassSpecialization record in the database.
@@ -167,13 +166,13 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 	}
 
 	public PDOMCPPBase getFirstBase() throws CoreException {
-		long rec = getDB().getRecPtr(record + FIRSTBASE);
+		long rec = getDB().getRecPtr(record + FIRST_BASE);
 		return rec != 0 ? new PDOMCPPBase(getLinkage(), rec) : null;
 	}
 
 	private void setFirstBase(PDOMCPPBase base) throws CoreException {
 		long rec = base != null ? base.getRecord() : 0;
-		getDB().putRecPtr(record + FIRSTBASE, rec);
+		getDB().putRecPtr(record + FIRST_BASE, rec);
 	}
 	
 	public void addBase(PDOMCPPBase base) throws CoreException {
@@ -206,7 +205,6 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 		}
 	}
 	
-	// implementation of class type
 	@Override
 	public ICPPBase[] getBases() {
 		IScope scope= getCompositeScope();
@@ -214,7 +212,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 			return ((ICPPClassSpecializationScope) scope).getBases();
 		} 
 		
-		// this is an explicit specialization
+		// This is an explicit specialization
 		Long key= record + PDOMCPPLinkage.CACHE_BASES;
 		ICPPBase[] bases= (ICPPBase[]) getPDOM().getCachedResult(key);
 		if (bases != null) 
@@ -222,8 +220,9 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 
 		try {
 			List<PDOMCPPBase> list = new ArrayList<PDOMCPPBase>();
-			for (PDOMCPPBase base = getFirstBase(); base != null; base = base.getNextBase())
+			for (PDOMCPPBase base = getFirstBase(); base != null; base = base.getNextBase()) {
 				list.add(base);
+			}
 			Collections.reverse(list);
 			bases = list.toArray(new ICPPBase[list.size()]);
 			getPDOM().putCachedResult(key, bases);
@@ -362,13 +361,13 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 
 	@Override
 	public void addChild(PDOMNode member) throws CoreException {
-		PDOMNodeLinkedList list = new PDOMNodeLinkedList(getLinkage(), record + MEMBERLIST);
+		PDOMNodeLinkedList list = new PDOMNodeLinkedList(getLinkage(), record + MEMBER_LIST);
 		list.addMember(member);
 	}
 
 	@Override
 	public void acceptUncached(IPDOMVisitor visitor) throws CoreException {
-		PDOMNodeLinkedList list = new PDOMNodeLinkedList(getLinkage(), record + MEMBERLIST);
+		PDOMNodeLinkedList list = new PDOMNodeLinkedList(getLinkage(), record + MEMBER_LIST);
 		list.accept(visitor);
 	}
 

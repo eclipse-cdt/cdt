@@ -25,10 +25,8 @@ public interface ICPPClassType extends ICompositeType, ICPPBinding {
 	public static final int k_class = ICPPASTCompositeTypeSpecifier.k_class;
 
 	/**
-	 * Returns a list of base class relationships. The list is empty if there
+	 * Returns an array of base class relationships. The returned array is empty if there
 	 * are none.
-	 * 
-	 * @return List of ICPPBase
 	 */
 	public ICPPBase[] getBases();
 

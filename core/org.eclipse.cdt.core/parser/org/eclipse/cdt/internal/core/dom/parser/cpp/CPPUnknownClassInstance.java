@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * 	  Sergey Prigogin (Google) - initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ * 	   Sergey Prigogin (Google) - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 

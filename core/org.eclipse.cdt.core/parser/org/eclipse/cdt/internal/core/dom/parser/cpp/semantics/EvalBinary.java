@@ -12,7 +12,6 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import static org.eclipse.cdt.core.dom.ast.IASTBinaryExpression.op_assign;
-import static org.eclipse.cdt.core.dom.ast.IASTBinaryExpression.op_binaryAnd;
 import static org.eclipse.cdt.core.dom.ast.IASTBinaryExpression.op_binaryAndAssign;
 import static org.eclipse.cdt.core.dom.ast.IASTBinaryExpression.op_binaryOrAssign;
 import static org.eclipse.cdt.core.dom.ast.IASTBinaryExpression.op_binaryXorAssign;
@@ -156,7 +155,7 @@ public class EvalBinary extends CPPEvaluation {
 		Long num1 = v1.numericalValue();
 		if (num1 != null) {
 			if (num1 == 0) {
-				if (fOperator == op_binaryAnd || fOperator == op_logicalAnd)
+				if (fOperator == op_logicalAnd)
 					return v1;
 			} else if (fOperator == op_logicalOr) {
 				return v1;

@@ -15,8 +15,6 @@ import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
 
 import java.util.Arrays;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -115,7 +113,10 @@ public class EvalFunctionSet extends CPPEvaluation {
 			buffer.marshalBinding(binding);
 		}
 		if (args != null) {
-			// mstodo marshall arguments
+			buffer.putShort((short) args.length);
+			for (ICPPTemplateArgument arg : args) {
+				buffer.marshalTemplateArgument(arg);
+			}
 		}
 	}
 
@@ -128,7 +129,11 @@ public class EvalFunctionSet extends CPPEvaluation {
 		}
 		ICPPTemplateArgument[] args= null;
 		if ((firstByte & ITypeMarshalBuffer.FLAG2) != 0) {
-			// mstodo marshall arguments
+			int len= buffer.getShort();
+			args = new ICPPTemplateArgument[len];
+			for (int i = 0; i < args.length; i++) {
+				args[i]= buffer.unmarshalTemplateArgument();
+			}
 		}
 		return new EvalFunctionSet(new CPPFunctionSet(bindings, args, null), addressOf);
 	}
@@ -138,21 +143,12 @@ public class EvalFunctionSet extends CPPEvaluation {
 			ICPPClassSpecialization within, int maxdepth, IASTNode point) {
 		ICPPTemplateArgument[] originalArguments = fFunctionSet.getTemplateArguments();
 		ICPPTemplateArgument[] arguments = originalArguments;
-		try {
-			arguments = CPPTemplates.instantiateArguments(originalArguments, tpMap, packOffset, within, point);
-		} catch (DOMException e) {
-			CCorePlugin.log(e);
-		}
+		arguments = instantiateArguments(originalArguments, tpMap, packOffset, within, point);
 
 		IBinding originalOwner = fFunctionSet.getOwner();
 		IBinding owner = originalOwner;
 		if (originalOwner instanceof ICPPUnknownBinding) {
-			try {
-				owner = CPPTemplates.resolveUnknown((ICPPUnknownBinding) owner, tpMap,
-						packOffset, within, point);
-			} catch (DOMException e) {
-				CCorePlugin.log(e); // TODO(sprigogin): Is this exception safe to ignore?
-			}
+			owner = resolveUnknown((ICPPUnknownBinding) owner, tpMap, packOffset, within, point);
 		} else if (owner instanceof IType) {
 			IType type = CPPTemplates.instantiateType((IType) owner, tpMap, packOffset, within, point);
 			if (type instanceof IBinding)

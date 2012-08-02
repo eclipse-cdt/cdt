@@ -16,7 +16,6 @@ import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
 
 import java.util.Arrays;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
@@ -40,6 +39,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
@@ -132,6 +132,7 @@ public class EvalID extends CPPEvaluation {
 		if (nameOwner == null && fFieldOwner != null)
 			nameOwner = (IBinding) fFieldOwner.getTypeOrFunctionSet(point);
 
+		// TODO(sprigogin): Verify that name resolution is required here.
 		if (nameOwner instanceof ICPPClassType) {
 			ICPPEvaluation eval = resolveName((ICPPClassType) nameOwner, fTemplateArgs, point);
 			if (eval != null)
@@ -281,11 +282,7 @@ public class EvalID extends CPPEvaluation {
 			ICPPClassSpecialization within, int maxdepth, IASTNode point) {
 		ICPPTemplateArgument[] templateArgs = fTemplateArgs;
 		if (templateArgs != null) {
-			try {
-				templateArgs = CPPTemplates.instantiateArguments(templateArgs, tpMap, packOffset, within, point);
-			} catch (DOMException e) {
-				CCorePlugin.log(e);
-			}
+			templateArgs = instantiateArguments(templateArgs, tpMap, packOffset, within, point);
 		}
 
 		ICPPEvaluation fieldOwner = fFieldOwner;
@@ -302,7 +299,7 @@ public class EvalID extends CPPEvaluation {
 					nameOwner = (IBinding) type;
 			}
 		} else if (nameOwner instanceof ICPPUnknownBinding) {
-			nameOwner = resolveUnknown(nameOwner, tpMap, packOffset, within, point);
+			nameOwner = resolveUnknown((ICPPUnknownBinding) nameOwner, tpMap, packOffset, within, point);
 		} else if (nameOwner instanceof ICPPClassTemplate) {
 			nameOwner = resolveUnknown(CPPTemplates.createDeferredInstance((ICPPClassTemplate) nameOwner),
 					tpMap, packOffset, within, point);
@@ -310,21 +307,11 @@ public class EvalID extends CPPEvaluation {
 		if (Arrays.equals(templateArgs, fTemplateArgs) && fieldOwner == fFieldOwner && nameOwner == fNameOwner)
 			return this;
 
-		// We don't do name lookup here since it is going to happen anyway when the getValue method
-		// is called. 
+		ICPPEvaluation eval = resolveName((ICPPClassType) nameOwner, fTemplateArgs, point);
+		if (eval != null)
+			return eval;
 
 		return new EvalID(fieldOwner, nameOwner, fName, fAddressOf, fQualified, templateArgs);
-	}
-
-	IBinding resolveUnknown(IBinding binding, ICPPTemplateParameterMap tpMap, int packOffset,
-			ICPPClassSpecialization within, IASTNode point) {
-		try {
-			binding = CPPTemplates.resolveUnknown((ICPPUnknownBinding) binding, tpMap,
-					packOffset, within, point);
-		} catch (DOMException e) {
-			CCorePlugin.log(e);
-		}
-		return binding;
 	}
 
 	private ICPPEvaluation resolveName(ICPPClassType nameOwner, ICPPTemplateArgument[] templateArgs,
@@ -336,6 +323,11 @@ public class EvalID extends CPPEvaluation {
 		} catch (DOMException e) {
 		}
 		IBinding[] bindings = data.getFoundBindings();
+		if (bindings.length > 1 && bindings[0] instanceof ICPPFunction) {
+			ICPPFunction[] functions = new ICPPFunction[bindings.length];
+			System.arraycopy(bindings, 0, functions, 0, bindings.length);
+			return new EvalFunctionSet(new CPPFunctionSet(functions, fTemplateArgs, null), fAddressOf);
+		}
 		IBinding binding = bindings.length == 1 ? bindings[0] : null;
 		if (binding instanceof IEnumerator) {
 			return new EvalBinding(binding, null);

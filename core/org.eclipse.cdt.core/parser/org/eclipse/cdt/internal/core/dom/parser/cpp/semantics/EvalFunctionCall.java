@@ -18,8 +18,13 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.REF;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
 
+import java.util.Arrays;
+
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
@@ -48,6 +53,10 @@ public class EvalFunctionCall extends CPPEvaluation {
 		fArguments= args;
 	}
 
+	/**
+	 * Returns arguments of the function call. The first argument is the function name, the rest
+	 * are arguments passed to the function.
+	 */
 	public ICPPEvaluation[] getArguments() {
 		return fArguments;
 	}
@@ -135,10 +144,8 @@ public class EvalFunctionCall extends CPPEvaluation {
 
 	@Override
 	public IValue getValue(IASTNode point) {
-		if (isValueDependent())
-			return Value.create(this);
-		// TODO(sprigogin): Simulate execution of a function call.
-		return Value.UNKNOWN;
+		// TODO(sprigogin): Simulate execution of a function call if the value is not dependent.
+		return Value.create(this);
 	}
 
 	@Override
@@ -188,6 +195,21 @@ public class EvalFunctionCall extends CPPEvaluation {
 		}
 		if (!changed)
 			return this;
+
+		if (args[0] instanceof EvalFunctionSet) {
+			CPPFunctionSet functionSet = ((EvalFunctionSet) args[0]).getFunctionSet();
+			ICPPFunction[] functions = functionSet.getBindings();
+			LookupData data = new LookupData(functions[0].getNameCharArray(),
+					functionSet.getTemplateArguments(), point);
+			data.setFunctionArguments(false, Arrays.copyOfRange(args, 1, args.length));
+			try {
+				IBinding binding = CPPSemantics.resolveFunction(data, functions, true);
+				if (binding instanceof ICPPFunction)
+					return new EvalBinding(binding, null);
+			} catch (DOMException e) {
+				CCorePlugin.log(e);
+			}
+		}
 		return new EvalFunctionCall(args);
 	}
 

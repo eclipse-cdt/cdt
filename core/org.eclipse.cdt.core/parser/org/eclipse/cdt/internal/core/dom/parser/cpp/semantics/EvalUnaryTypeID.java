@@ -157,15 +157,11 @@ public class EvalUnaryTypeID extends CPPEvaluation {
 
 		switch (fOperator) {
 			case op_sizeof: {
-				if (point == null)
-					return Value.UNKNOWN;
-				SizeAndAlignment info = new SizeofCalculator(point.getTranslationUnit()).sizeAndAlignment(fOrigType);
+				SizeAndAlignment info = getSizeAndAlignment(point);
 				return info == null ? Value.UNKNOWN : Value.create(info.size);
 			}
 			case op_alignof: {
-				if (point == null)
-					return Value.UNKNOWN;
-				SizeAndAlignment info = new SizeofCalculator(point.getTranslationUnit()).sizeAndAlignment(fOrigType);
+				SizeAndAlignment info = getSizeAndAlignment(point);
 				return info == null ? Value.UNKNOWN : Value.create(info.alignment);
 			}
 			case op_typeid:
@@ -202,6 +198,12 @@ public class EvalUnaryTypeID extends CPPEvaluation {
 				return Value.UNKNOWN;  // TODO(sprigogin): Implement
 		}
 		return Value.create(this);
+	}
+
+	private SizeAndAlignment getSizeAndAlignment(IASTNode point) {
+		if (point == null)
+			return null;
+		return new SizeofCalculator(point.getTranslationUnit()).sizeAndAlignment(fOrigType);
 	}
 
 	@Override

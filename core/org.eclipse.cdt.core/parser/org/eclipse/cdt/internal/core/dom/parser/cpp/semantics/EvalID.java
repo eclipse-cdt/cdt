@@ -128,16 +128,16 @@ public class EvalID extends CPPEvaluation {
 
 	@Override
 	public IValue getValue(IASTNode point) {
-		IBinding nameOwner = fNameOwner;
-		if (nameOwner == null && fFieldOwner != null)
-			nameOwner = (IBinding) fFieldOwner.getTypeOrFunctionSet(point);
-
-		// TODO(sprigogin): Verify that name resolution is required here.
-		if (nameOwner instanceof ICPPClassType) {
-			ICPPEvaluation eval = resolveName((ICPPClassType) nameOwner, fTemplateArgs, point);
-			if (eval != null)
-				return eval.getValue(point);
-		}
+		// Name lookup is not needed here because it was already done in "instantiate" method.
+//		IBinding nameOwner = fNameOwner;
+//		if (nameOwner == null && fFieldOwner != null)
+//			nameOwner = (IBinding) fFieldOwner.getTypeOrFunctionSet(point);
+//
+//		if (nameOwner instanceof ICPPClassType) {
+//			ICPPEvaluation eval = resolveName((ICPPClassType) nameOwner, fTemplateArgs, point);
+//			if (eval != null)
+//				return eval.getValue(point);
+//		}
 		return Value.create(this);
 	}
 

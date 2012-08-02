@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IField;
+import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
@@ -109,7 +110,9 @@ public class SizeofCalculator {
 	 */
 	public SizeAndAlignment sizeAndAlignment(IType type) {
 		type = SemanticUtil.getNestedType(type, SemanticUtil.CVTYPE | SemanticUtil.TDEF);
-
+		if (type instanceof IFunctionType) {
+			return sizeAndAlignment(((IFunctionType) type).getReturnType());
+		}
 		if (type instanceof IBasicType) {
 			return sizeAndAlignment((IBasicType) type);
 		}

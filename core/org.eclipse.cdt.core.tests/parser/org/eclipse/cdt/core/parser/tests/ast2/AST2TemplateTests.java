@@ -5631,7 +5631,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	  ns::C<IsAorB<int>::value> a;
 	//	  f(a);
 	//	};
-	public void _testDependentExpressions() throws Exception {
+	public void testDependentExpressions() throws Exception {
 		parseAndCheckBindings();
 	}
 

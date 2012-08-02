@@ -38,7 +38,6 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -49,6 +48,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
+import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator;
+import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator.SizeAndAlignment;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPArithmeticConversion;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
@@ -144,7 +145,7 @@ public class EvalUnary extends CPPEvaluation {
 			return null;
 
 		ICPPEvaluation[] args;
-	    if (fOperator == IASTUnaryExpression.op_postFixDecr || fOperator == IASTUnaryExpression.op_postFixIncr) {
+	    if (fOperator == op_postFixDecr || fOperator == op_postFixIncr) {
 	    	args = new ICPPEvaluation[] { fArgument, ZERO_EVAL };
 	    } else {
 	    	args = new ICPPEvaluation[] { fArgument };
@@ -205,9 +206,29 @@ public class EvalUnary extends CPPEvaluation {
 
 	@Override
 	public IValue getValue(IASTNode point) {
+		if (isValueDependent())
+			return Value.create(this);
+			
 		if (getOverload(point) != null) {
 			// TODO(sprigogin): Simulate execution of a function call.
 			return Value.create(this);
+		}
+
+		switch (fOperator) {
+			case op_sizeof: {
+				SizeAndAlignment info = getSizeAndAlignment(point);
+				return info == null ? Value.UNKNOWN : Value.create(info.size);
+			}
+			case op_alignOf: {
+				SizeAndAlignment info = getSizeAndAlignment(point);
+				return info == null ? Value.UNKNOWN : Value.create(info.alignment);
+			}
+			case op_sizeofParameterPack:
+				return Value.UNKNOWN;  // TODO(sprigogin): Implement
+			case op_typeid:
+				return Value.UNKNOWN;  // TODO(sprigogin): Implement
+			case op_throw:
+				return Value.UNKNOWN;  // TODO(sprigogin): Implement
 		}
 
 		IValue val = fArgument.getValue(point);
@@ -216,6 +237,14 @@ public class EvalUnary extends CPPEvaluation {
 			return Value.evaluateUnaryExpression(fOperator, num);
 		}
 		return Value.create(this);
+	}
+
+	private SizeAndAlignment getSizeAndAlignment(IASTNode point) {
+		if (point == null)
+			return null;
+
+		IType type = fArgument.getTypeOrFunctionSet(point);
+		return new SizeofCalculator(point.getTranslationUnit()).sizeAndAlignment(type);
 	}
 
 	@Override

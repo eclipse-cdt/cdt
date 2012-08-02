@@ -14,8 +14,6 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.glvalueType;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.prvalueType;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -26,6 +24,8 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
@@ -86,7 +86,6 @@ public class EvalBinding extends CPPEvaluation {
 
 	private boolean computeIsTypeDependent() {
 		IType t= null;
-		// mstodo: Please review this change.
 		if (fFixedType) {
 			t = fType;
 		} else if (fBinding instanceof IEnumerator) {
@@ -230,11 +229,16 @@ public class EvalBinding extends CPPEvaluation {
 			}
 			// TODO(sprigogin): Do we need something similar for pack expansion?
 		} else if (fBinding instanceof ICPPUnknownBinding) {
-			try {
-				binding = CPPTemplates.resolveUnknown((ICPPUnknownBinding) fBinding, tpMap,
-						packOffset, within, point);
-			} catch (DOMException e) {
-				CCorePlugin.log(e);
+			binding = resolveUnknown((ICPPUnknownBinding) fBinding, tpMap, packOffset, within, point);
+		} else if (fBinding instanceof ICPPMethod) {
+			IBinding owner = fBinding.getOwner();
+			if (owner instanceof ICPPClassTemplate) {
+				owner = resolveUnknown(CPPTemplates.createDeferredInstance((ICPPClassTemplate) owner),
+						tpMap, packOffset, within, point);
+			}
+			if (owner instanceof ICPPClassSpecialization) {
+				binding = CPPTemplates.createSpecialization((ICPPClassSpecialization) owner,
+						fBinding, point);
 			}
 		}
 		if (binding == fBinding)

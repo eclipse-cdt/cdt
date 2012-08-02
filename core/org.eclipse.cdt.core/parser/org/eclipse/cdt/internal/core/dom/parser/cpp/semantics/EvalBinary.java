@@ -11,6 +11,30 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
+import static org.eclipse.cdt.core.dom.ast.IASTBinaryExpression.op_assign;
+import static org.eclipse.cdt.core.dom.ast.IASTBinaryExpression.op_binaryAnd;
+import static org.eclipse.cdt.core.dom.ast.IASTBinaryExpression.op_binaryAndAssign;
+import static org.eclipse.cdt.core.dom.ast.IASTBinaryExpression.op_binaryOrAssign;
+import static org.eclipse.cdt.core.dom.ast.IASTBinaryExpression.op_binaryXorAssign;
+import static org.eclipse.cdt.core.dom.ast.IASTBinaryExpression.op_divideAssign;
+import static org.eclipse.cdt.core.dom.ast.IASTBinaryExpression.op_equals;
+import static org.eclipse.cdt.core.dom.ast.IASTBinaryExpression.op_greaterEqual;
+import static org.eclipse.cdt.core.dom.ast.IASTBinaryExpression.op_greaterThan;
+import static org.eclipse.cdt.core.dom.ast.IASTBinaryExpression.op_lessEqual;
+import static org.eclipse.cdt.core.dom.ast.IASTBinaryExpression.op_lessThan;
+import static org.eclipse.cdt.core.dom.ast.IASTBinaryExpression.op_logicalAnd;
+import static org.eclipse.cdt.core.dom.ast.IASTBinaryExpression.op_logicalOr;
+import static org.eclipse.cdt.core.dom.ast.IASTBinaryExpression.op_minus;
+import static org.eclipse.cdt.core.dom.ast.IASTBinaryExpression.op_minusAssign;
+import static org.eclipse.cdt.core.dom.ast.IASTBinaryExpression.op_moduloAssign;
+import static org.eclipse.cdt.core.dom.ast.IASTBinaryExpression.op_multiplyAssign;
+import static org.eclipse.cdt.core.dom.ast.IASTBinaryExpression.op_notequals;
+import static org.eclipse.cdt.core.dom.ast.IASTBinaryExpression.op_plus;
+import static org.eclipse.cdt.core.dom.ast.IASTBinaryExpression.op_plusAssign;
+import static org.eclipse.cdt.core.dom.ast.IASTBinaryExpression.op_pmarrow;
+import static org.eclipse.cdt.core.dom.ast.IASTBinaryExpression.op_pmdot;
+import static org.eclipse.cdt.core.dom.ast.IASTBinaryExpression.op_shiftLeftAssign;
+import static org.eclipse.cdt.core.dom.ast.IASTBinaryExpression.op_shiftRightAssign;
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.glvalueType;
@@ -21,14 +45,12 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.REF;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
 
-import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
@@ -114,13 +136,18 @@ public class EvalBinary extends CPPEvaluation {
 		}
 
 		IValue v1 = fArg1.getValue(point);
+		if (v1 == Value.UNKNOWN)
+			return Value.UNKNOWN;
 		IValue v2 = fArg2.getValue(point);
+		if (v2 == Value.UNKNOWN)
+			return Value.UNKNOWN;
+
 		switch (fOperator) {
-		case IASTBinaryExpression.op_equals:
+		case op_equals:
 			if (v1.equals(v2))
 				return Value.create(1);
 			break;
-		case IASTBinaryExpression.op_notequals:
+		case op_notequals:
 			if (v1.equals(v2))
 				return Value.create(0);
 			break;
@@ -128,6 +155,12 @@ public class EvalBinary extends CPPEvaluation {
 
 		Long num1 = v1.numericalValue();
 		if (num1 != null) {
+			if (num1 == 0) {
+				if (fOperator == op_binaryAnd || fOperator == op_logicalAnd)
+					return v1;
+			} else if (fOperator == op_logicalOr) {
+				return v1;
+			}
 			Long num2 = v2.numericalValue();
 			if (num2 != null) {
 				return Value.evaluateBinaryExpression(fOperator, num1, num2);
@@ -160,25 +193,25 @@ public class EvalBinary extends CPPEvaluation {
 
 		switch (fOperator) {
 		case op_arrayAccess:
-		case IASTBinaryExpression.op_assign:
-		case IASTBinaryExpression.op_binaryAndAssign:
-		case IASTBinaryExpression.op_binaryOrAssign:
-		case IASTBinaryExpression.op_binaryXorAssign:
-		case IASTBinaryExpression.op_divideAssign:
-		case IASTBinaryExpression.op_minusAssign:
-		case IASTBinaryExpression.op_moduloAssign:
-		case IASTBinaryExpression.op_multiplyAssign:
-		case IASTBinaryExpression.op_plusAssign:
-		case IASTBinaryExpression.op_shiftLeftAssign:
-		case IASTBinaryExpression.op_shiftRightAssign:
+		case op_assign:
+		case op_binaryAndAssign:
+		case op_binaryOrAssign:
+		case op_binaryXorAssign:
+		case op_divideAssign:
+		case op_minusAssign:
+		case op_moduloAssign:
+		case op_multiplyAssign:
+		case op_plusAssign:
+		case op_shiftLeftAssign:
+		case op_shiftRightAssign:
 			return LVALUE;
 
-		case IASTBinaryExpression.op_pmdot:
+		case op_pmdot:
 			if (!(getTypeOrFunctionSet(point) instanceof ICPPFunctionType))
 				return fArg1.getValueCategory(point);
 			break;
 
-		case IASTBinaryExpression.op_pmarrow:
+		case op_pmarrow:
 			if (!(getTypeOrFunctionSet(point) instanceof ICPPFunctionType))
 				return LVALUE;
 			break;
@@ -246,17 +279,17 @@ public class EvalBinary extends CPPEvaluation {
     		}
     		return ProblemType.UNKNOWN_FOR_EXPRESSION;
 
-    	case IASTBinaryExpression.op_lessEqual:
-    	case IASTBinaryExpression.op_lessThan:
-    	case IASTBinaryExpression.op_greaterEqual:
-    	case IASTBinaryExpression.op_greaterThan:
-    	case IASTBinaryExpression.op_logicalAnd:
-    	case IASTBinaryExpression.op_logicalOr:
-    	case IASTBinaryExpression.op_equals:
-    	case IASTBinaryExpression.op_notequals:
+    	case op_lessEqual:
+    	case op_lessThan:
+    	case op_greaterEqual:
+    	case op_greaterThan:
+    	case op_logicalAnd:
+    	case op_logicalOr:
+    	case op_equals:
+    	case op_notequals:
     		return CPPBasicType.BOOLEAN;
 
-    	case IASTBinaryExpression.op_plus:
+    	case op_plus:
     		if (type1 instanceof IPointerType) {
         		return ExpressionTypes.restoreTypedefs(type1, originalType1);
     		}
@@ -265,7 +298,7 @@ public class EvalBinary extends CPPEvaluation {
     		}
     		break;
 
-    	case IASTBinaryExpression.op_minus:
+    	case op_minus:
     		if (type1 instanceof IPointerType) {
     			if (type2 instanceof IPointerType) {
     				return CPPVisitor.getPointerDiffType(point);
@@ -274,13 +307,13 @@ public class EvalBinary extends CPPEvaluation {
     		}
     		break;
 
-    	case ICPPASTBinaryExpression.op_pmarrow:
-    	case ICPPASTBinaryExpression.op_pmdot:
+    	case op_pmarrow:
+    	case op_pmdot:
     		if (type2 instanceof ICPPPointerToMemberType) {
     			IType t= ((ICPPPointerToMemberType) type2).getType();
     			if (t instanceof ICPPFunctionType)
     				return t;
-    			if (fOperator == ICPPASTBinaryExpression.op_pmdot && fArg1.getValueCategory(point) == PRVALUE) {
+    			if (fOperator == op_pmdot && fArg1.getValueCategory(point) == PRVALUE) {
     				return prvalueType(t);
     			}
     			return glvalueType(t);

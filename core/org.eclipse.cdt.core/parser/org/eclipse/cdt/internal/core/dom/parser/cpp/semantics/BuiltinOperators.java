@@ -10,7 +10,10 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.*;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.ALLCVQ;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.CVTYPE;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.REF;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -80,7 +83,7 @@ class BuiltinOperators {
 			Object[] globCandidates) {
 		fFileScope= point.getTranslationUnit().getScope();
 		fOperator= operator;
-		fUnary= args.length<2;
+		fUnary= args.length < 2;
 		fGlobalCandidates= globCandidates;
 		if (args.length > 0) {
 			IType type= args[0].getTypeOrFunctionSet(point);
@@ -94,7 +97,6 @@ class BuiltinOperators {
 				fType2= type;
 		}
 	}
-
 
 	private ICPPFunction[] create() {
 		switch (fOperator) {
@@ -230,8 +232,6 @@ class BuiltinOperators {
 		
 		return fResult.toArray(new ICPPFunction[fResult.size()]);
 	}
-
-
 
 	// 13.6-3, 13.6-4, 13.6-5
 	private void opIncOrDec() {
@@ -423,7 +423,6 @@ class BuiltinOperators {
 		}
 		return p1;
 	}
-
 
 	// 13.6-13, 13.6.14
 	private void pointerArithmetic(boolean useRef, boolean isDiff) {

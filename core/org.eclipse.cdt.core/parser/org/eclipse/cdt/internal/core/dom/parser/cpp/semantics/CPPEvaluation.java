@@ -23,9 +23,11 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableType;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
+import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator.SizeAndAlignment;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateNonTypeArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
@@ -243,5 +245,10 @@ public abstract class CPPEvaluation implements ICPPEvaluation {
 			CCorePlugin.log(e);
 		}
 		return args;
+	}
+
+	protected static SizeAndAlignment getSizeAndAlignment(IType type, IASTNode point) {
+		ASTTranslationUnit ast = (ASTTranslationUnit) point.getTranslationUnit();
+		return ast.getSizeofCalculator().sizeAndAlignment(type);
 	}
 }

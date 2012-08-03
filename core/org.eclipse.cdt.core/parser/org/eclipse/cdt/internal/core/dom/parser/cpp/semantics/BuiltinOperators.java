@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 Wind River Systems, Inc. and others.
+ * Copyright (c) 2010, 2012 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -70,6 +70,7 @@ class BuiltinOperators {
 
 	private final OverloadableOperator fOperator;
 	private final boolean fUnary;
+	private final IASTNode fPoint;
 	private IType fType1;
 	private IType fType2;
 	private IType[][] fClassConversionTypes= { null, null };
@@ -83,6 +84,7 @@ class BuiltinOperators {
 			Object[] globCandidates) {
 		fFileScope= point.getTranslationUnit().getScope();
 		fOperator= operator;
+		fPoint = point;
 		fUnary= args.length < 2;
 		fGlobalCandidates= globCandidates;
 		if (args.length > 0) {
@@ -355,7 +357,7 @@ class BuiltinOperators {
 				IType t2= SemanticUtil.getNestedType(memPtr.getMemberOfClass(), TDEF);
 				if (t2 instanceof ICPPClassType) {
 					ICPPClassType c2= (ICPPClassType) t2;
-					if (SemanticUtil.calculateInheritanceDepth(c1, c2) >= 0) {
+					if (SemanticUtil.calculateInheritanceDepth(c1, c2, fPoint) >= 0) {
 						IType cvt= SemanticUtil.getNestedType(memPtr.getType(), TDEF);
 						IType rt= new CPPReferenceType(
 								SemanticUtil.addQualifiers(cvt, cv1.isConst(), cv1.isVolatile(), cv1.isRestrict()), false);
@@ -664,7 +666,7 @@ class BuiltinOperators {
 				if (type instanceof ICPPClassType) {
 					fIsClass[idx]= true;
 					try {
-						ICPPMethod[] ops = SemanticUtil.getConversionOperators((ICPPClassType) type);
+						ICPPMethod[] ops = SemanticUtil.getConversionOperators((ICPPClassType) type, fPoint);
 						result= new IType[ops.length];
 						int j= -1;
 						for (ICPPMethod op : ops) {

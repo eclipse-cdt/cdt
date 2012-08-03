@@ -2405,7 +2405,7 @@ public class CPPTemplates {
             } else if (t instanceof ICPPClassType) {
 	            IScope s = ((ICPPClassType) t).getCompositeScope();
 	            if (s != null) {
-	            	result= CPPSemantics.resolveUnknownName(s, unknown);
+	            	result= CPPSemantics.resolveUnknownName(s, unknown, point);
 	            	if (unknown instanceof ICPPUnknownClassInstance && result instanceof ICPPTemplateDefinition) {
 	            		ICPPTemplateArgument[] newArgs = CPPTemplates.instantiateArguments(
 	            				((ICPPUnknownClassInstance) unknown).getArguments(), tpMap, packOffset, within, point);

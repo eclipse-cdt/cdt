@@ -40,18 +40,21 @@ class FunctionCost {
 	private final ICPPFunction fFunction;
 	private final Cost[] fCosts;
 	private final ValueCategory[] fValueCategories;
+	private final IASTNode fPoint;
 	private boolean fIsDirectCopyCtor;
 	
-	public FunctionCost(ICPPFunction fn, int paramCount) {
+	public FunctionCost(ICPPFunction fn, int paramCount, IASTNode point) {
 		fFunction= fn;
 		fCosts= new Cost[paramCount];
 		fValueCategories= new ValueCategory[paramCount];
+		fPoint = point;
 	}
 	
-	public FunctionCost(ICPPFunction fn, Cost cost) {
+	public FunctionCost(ICPPFunction fn, Cost cost, IASTNode point) {
 		fFunction= fn;
 		fCosts= new Cost[] {cost};
 		fValueCategories= null; // no udc will be performed
+		fPoint = point;
 	}
 
 	public int getLength() {
@@ -127,9 +130,8 @@ class FunctionCost {
 
 	/**
 	 * Compares this function call cost to another one.
-	 * @param point 
 	 */
-	public int compareTo(IASTTranslationUnit tu, FunctionCost other, IASTNode point) throws DOMException {
+	public int compareTo(IASTTranslationUnit tu, FunctionCost other) throws DOMException {
 		if (other == null)
 			return -1;
 		
@@ -169,7 +171,7 @@ class FunctionCost {
 				haveBetter = true;
 			} else if (isTemplate && otherIsTemplate) {
 				TypeSelection ts= SemanticUtil.isConversionOperator(f1) ? RETURN_TYPE : PARAMETERS;
- 				int order = CPPTemplates.orderFunctionTemplates(otherAsTemplate, asTemplate, ts, point);
+ 				int order = CPPTemplates.orderFunctionTemplates(otherAsTemplate, asTemplate, ts, fPoint);
 				if (order < 0) {
 					haveBetter= true;	 				
 				} else if (order > 0) {
@@ -215,10 +217,10 @@ class FunctionCost {
 		if (!parameterTypesMatch(ft1, ft2))
 			return 0;
 		
-		int diff= SemanticUtil.calculateInheritanceDepth(o2, o1);
+		int diff= SemanticUtil.calculateInheritanceDepth(o2, o1, fPoint);
 		if (diff >= 0)
 			return diff;
-		return -SemanticUtil.calculateInheritanceDepth(o1, o2);
+		return -SemanticUtil.calculateInheritanceDepth(o1, o2, fPoint);
 	}
 
 	private boolean parameterTypesMatch(final ICPPFunctionType ft1, final ICPPFunctionType ft2) {

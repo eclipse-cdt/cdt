@@ -43,7 +43,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
-import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator;
 import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator.SizeAndAlignment;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
@@ -157,11 +156,11 @@ public class EvalUnaryTypeID extends CPPEvaluation {
 
 		switch (fOperator) {
 			case op_sizeof: {
-				SizeAndAlignment info = getSizeAndAlignment(point);
+				SizeAndAlignment info = getSizeAndAlignment(fOrigType, point);
 				return info == null ? Value.UNKNOWN : Value.create(info.size);
 			}
 			case op_alignof: {
-				SizeAndAlignment info = getSizeAndAlignment(point);
+				SizeAndAlignment info = getSizeAndAlignment(fOrigType, point);
 				return info == null ? Value.UNKNOWN : Value.create(info.alignment);
 			}
 			case op_typeid:
@@ -198,12 +197,6 @@ public class EvalUnaryTypeID extends CPPEvaluation {
 				return Value.UNKNOWN;  // TODO(sprigogin): Implement
 		}
 		return Value.create(this);
-	}
-
-	private SizeAndAlignment getSizeAndAlignment(IASTNode point) {
-		if (point == null)
-			return null;
-		return new SizeofCalculator(point.getTranslationUnit()).sizeAndAlignment(fOrigType);
 	}
 
 	@Override

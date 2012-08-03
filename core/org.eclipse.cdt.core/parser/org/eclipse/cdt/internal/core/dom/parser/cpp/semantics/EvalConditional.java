@@ -268,7 +268,7 @@ public class EvalConditional extends CPPEvaluation {
 			}
 			// Both are class types and one derives from the other
 			if (uqt1 instanceof ICPPClassType && uqt2 instanceof ICPPClassType) {
-				int dist= SemanticUtil.calculateInheritanceDepth(uqt1, uqt2);
+				int dist= SemanticUtil.calculateInheritanceDepth(uqt1, uqt2, point);
 				if (dist >= 0) {
 					CVQualifier cv1 = SemanticUtil.getCVQualifier(t1);
 					CVQualifier cv2 = SemanticUtil.getCVQualifier(t2);
@@ -279,7 +279,7 @@ public class EvalConditional extends CPPEvaluation {
 					}
 					return Cost.NO_CONVERSION;
 				}
-				if (SemanticUtil.calculateInheritanceDepth(uqt2, uqt1) >= 0)
+				if (SemanticUtil.calculateInheritanceDepth(uqt2, uqt1, point) >= 0)
 					return Cost.NO_CONVERSION;
 			}
 			// Unrelated class types or just one class:

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 QNX Software Systems and others.
+ * Copyright (c) 2007, 2012 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     QNX - Initial API and implementation
  *     Andrew Ferguson (Symbian)
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -64,7 +65,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 	protected static final int RECORD_SIZE = PDOMCPPSpecialization.RECORD_SIZE + 8;
 	
 	private volatile ICPPClassScope fScope;
-	private ObjectMap specializationMap= null; // Obtained from the synchronized PDOM cache
+	private ObjectMap specializationMap; // Obtained from the synchronized PDOM cache
 	private final ThreadLocal<Set<IBinding>> fInProgress= new ThreadLocal<Set<IBinding>>();
 
 	public PDOMCPPClassSpecialization(PDOMLinkage linkage, PDOMNode parent, ICPPClassType classType,
@@ -240,9 +241,14 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 	
 	@Override
 	public ICPPConstructor[] getConstructors() {
+		return getConstructors(null);
+	}
+
+	@Override
+	public ICPPConstructor[] getConstructors(IASTNode point) {
 		IScope scope= getCompositeScope();
 		if (scope instanceof ICPPClassSpecializationScope) {
-			return ((ICPPClassSpecializationScope) scope).getConstructors();
+			return ((ICPPClassSpecializationScope) scope).getConstructors(point);
 		}
 		try {
 			PDOMClassUtil.ConstructorCollector visitor= new PDOMClassUtil.ConstructorCollector();
@@ -256,9 +262,14 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 
 	@Override
 	public ICPPMethod[] getDeclaredMethods() {
+		return getDeclaredMethods(null);
+	}
+
+	@Override
+	public ICPPMethod[] getDeclaredMethods(IASTNode point) {
 		IScope scope= getCompositeScope();
 		if (scope instanceof ICPPClassSpecializationScope) {
-			return ((ICPPClassSpecializationScope) scope).getDeclaredMethods();
+			return ((ICPPClassSpecializationScope) scope).getDeclaredMethods(point);
 		}
 		try {
 			PDOMClassUtil.MethodCollector methods = new PDOMClassUtil.MethodCollector(false);
@@ -272,9 +283,14 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 
 	@Override
 	public ICPPField[] getDeclaredFields() {
+		return getDeclaredFields(null);
+	}
+
+	@Override
+	public ICPPField[] getDeclaredFields(IASTNode point) {
 		IScope scope= getCompositeScope();
 		if (scope instanceof ICPPClassSpecializationScope) {
-			return ((ICPPClassSpecializationScope) scope).getDeclaredFields();
+			return ((ICPPClassSpecializationScope) scope).getDeclaredFields(point);
 		} 
 		try {
 			PDOMClassUtil.FieldCollector visitor = new PDOMClassUtil.FieldCollector();
@@ -288,9 +304,14 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 	
 	@Override
 	public ICPPClassType[] getNestedClasses() {
+		return getNestedClasses(null);
+	}
+	
+	@Override
+	public ICPPClassType[] getNestedClasses(IASTNode point) {
 		IScope scope= getCompositeScope();
 		if (scope instanceof ICPPClassSpecializationScope) {
-			return ((ICPPClassSpecializationScope) scope).getNestedClasses();
+			return ((ICPPClassSpecializationScope) scope).getNestedClasses(point);
 		} 
 		try {
 			PDOMClassUtil.NestedClassCollector visitor = new PDOMClassUtil.NestedClassCollector();
@@ -304,7 +325,12 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 
 	@Override
 	public IBinding[] getFriends() {
-		// not yet supported.
+		return getFriends(null);
+	}
+
+	@Override
+	public IBinding[] getFriends(IASTNode point) {
+		// Not yet supported.
 		return IBinding.EMPTY_BINDING_ARRAY;
 	}
 

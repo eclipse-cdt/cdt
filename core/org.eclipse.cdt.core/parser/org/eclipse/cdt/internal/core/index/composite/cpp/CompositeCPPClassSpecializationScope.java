@@ -67,6 +67,11 @@ public class CompositeCPPClassSpecializationScope extends CompositeScope impleme
 	}
 
 	@Override
+	public ICPPMethod[] getImplicitMethods(IASTNode point) {
+		return getImplicitMethods(null);
+	}
+
+	@Override
 	public ICPPMethod[] getImplicitMethods() {
 		createDelegate();
 		return fDelegate.getImplicitMethods();
@@ -98,14 +103,19 @@ public class CompositeCPPClassSpecializationScope extends CompositeScope impleme
 
 	@Override
 	public ICPPConstructor[] getConstructors() {
-		createDelegate();
-		return fDelegate.getConstructors();
+		return getConstructors(null);
 	}
 
 	@Override
-	public ICPPMethod[] getDeclaredMethods() {
+	public ICPPConstructor[] getConstructors(IASTNode point) {
 		createDelegate();
-		return fDelegate.getDeclaredMethods();
+		return fDelegate.getConstructors(point);
+	}
+
+	@Override
+	public ICPPMethod[] getDeclaredMethods(IASTNode point) {
+		createDelegate();
+		return fDelegate.getDeclaredMethods(point);
 	}
 
 	@Override
@@ -115,20 +125,20 @@ public class CompositeCPPClassSpecializationScope extends CompositeScope impleme
 	}
 
 	@Override
-	public ICPPField[] getDeclaredFields() {
+	public ICPPField[] getDeclaredFields(IASTNode point) {
 		createDelegate();
-		return fDelegate.getDeclaredFields();
+		return fDelegate.getDeclaredFields(point);
 	}
 
 	@Override
-	public IBinding[] getFriends() {
+	public IBinding[] getFriends(IASTNode point) {
 		createDelegate();
-		return fDelegate.getFriends();
+		return fDelegate.getFriends(point);
 	}
 
 	@Override
-	public ICPPClassType[] getNestedClasses() {
+	public ICPPClassType[] getNestedClasses(IASTNode point) {
 		createDelegate();
-		return fDelegate.getNestedClasses();
+		return fDelegate.getNestedClasses(point);
 	}
 }

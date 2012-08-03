@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2012 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Andrew Ferguson (Symbian) - Initial implementation
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
@@ -39,7 +40,6 @@ import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 public class CompositeCPPClassSpecialization extends CompositeCPPClassType implements ICPPClassSpecialization {
 	private ObjectMap specializationMap;
 	private final ThreadLocal<Set<IBinding>> fInProgress= new ThreadLocal<Set<IBinding>>();
-
 
 	public CompositeCPPClassSpecialization(ICompositesFactory cf, ICPPClassType rbinding) {
 		super(cf, rbinding);
@@ -143,45 +143,70 @@ public class CompositeCPPClassSpecialization extends CompositeCPPClassType imple
 	
 	@Override
 	public final ICPPConstructor[] getConstructors() {
+		return getConstructors(null);
+	}
+
+	@Override
+	public final ICPPConstructor[] getConstructors(IASTNode point) {
 		IScope scope= getCompositeScope();
 		if (scope instanceof ICPPClassSpecializationScope) {
-			return ((ICPPClassSpecializationScope) scope).getConstructors();
+			return ((ICPPClassSpecializationScope) scope).getConstructors(point);
 		}
 		return super.getConstructors();
 	}
 
 	@Override
 	public final ICPPMethod[] getDeclaredMethods() {
+		return getDeclaredMethods(null);
+	}
+
+	@Override
+	public final ICPPMethod[] getDeclaredMethods(IASTNode point) {
 		IScope scope= getCompositeScope();
 		if (scope instanceof ICPPClassSpecializationScope) {
-			return ((ICPPClassSpecializationScope) scope).getDeclaredMethods();
+			return ((ICPPClassSpecializationScope) scope).getDeclaredMethods(point);
 		}
 		return super.getDeclaredMethods();
 	}
 
 	@Override
 	public final ICPPField[] getDeclaredFields() {
+		return getDeclaredFields(null);
+	}
+
+	@Override
+	public final ICPPField[] getDeclaredFields(IASTNode point) {
 		IScope scope= getCompositeScope();
 		if (scope instanceof ICPPClassSpecializationScope) {
-			return ((ICPPClassSpecializationScope) scope).getDeclaredFields();
+			return ((ICPPClassSpecializationScope) scope).getDeclaredFields(point);
 		}
 		return super.getDeclaredFields();
 	}
 
 	@Override
 	public final IBinding[] getFriends() {
+		return getFriends(null);
+	}
+
+	@Override
+	public final IBinding[] getFriends(IASTNode point) {
 		IScope scope= getCompositeScope();
 		if (scope instanceof ICPPClassSpecializationScope) {
-			return ((ICPPClassSpecializationScope) scope).getFriends();
+			return ((ICPPClassSpecializationScope) scope).getFriends(point);
 		}
 		return super.getFriends();
 	}
 
 	@Override
 	public final ICPPClassType[] getNestedClasses() {
+		return getNestedClasses(null);
+	}
+
+	@Override
+	public final ICPPClassType[] getNestedClasses(IASTNode point) {
 		IScope scope= getCompositeScope();
 		if (scope instanceof ICPPClassSpecializationScope) {
-			return ((ICPPClassSpecializationScope) scope).getNestedClasses();
+			return ((ICPPClassSpecializationScope) scope).getNestedClasses(point);
 		}
 		return super.getNestedClasses();
 	}

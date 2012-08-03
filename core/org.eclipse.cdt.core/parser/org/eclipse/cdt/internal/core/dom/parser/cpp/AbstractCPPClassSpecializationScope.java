@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Markus Schorn (Wind River Systems)
  *     Bryan Wilkinson (QNX)
  *     Andrew Ferguson (Symbian)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -181,15 +182,18 @@ public class AbstractCPPClassSpecializationScope implements ICPPClassSpecializat
 	}
 
 	@Override
-	public ICPPField[] getDeclaredFields() {
-		IASTNode point= null; // Instantiation of dependent expression may not work.
+	public ICPPField[] getDeclaredFields(IASTNode point) {
 		ICPPField[] fields= specialClass.getSpecializedBinding().getDeclaredFields();
 		return specializeMembers(fields, point);
 	}
-	
+
 	@Override
 	public ICPPMethod[] getImplicitMethods() {
-		IASTNode point= null; // Instantiation of dependent expression may not work.
+		return getImplicitMethods(null); // Instantiation of dependent expression may not work.
+	}
+
+	@Override
+	public ICPPMethod[] getImplicitMethods(IASTNode point) {
 		ICPPClassScope origClassScope= (ICPPClassScope) specialClass.getSpecializedBinding().getCompositeScope();
 		if (origClassScope == null) {
 			return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
@@ -207,29 +211,29 @@ public class AbstractCPPClassSpecializationScope implements ICPPClassSpecializat
 
 	@Override
 	public ICPPConstructor[] getConstructors() {
-		// mstodo need to pass the point of instantiation
-		IASTNode point= null; // Instantiation of dependent expression may not work.
-		ICPPConstructor[] ctors= specialClass.getSpecializedBinding().getConstructors();
-		return specializeMembers(ctors, point);
+		return getConstructors(null);  // Instantiation of dependent expression may not work.
 	}
 		
 	@Override
-	public ICPPMethod[] getDeclaredMethods() {
-		IASTNode point= null; // Instantiation of dependent expression may not work.
+	public ICPPConstructor[] getConstructors(IASTNode point) {
+		ICPPConstructor[] ctors= specialClass.getSpecializedBinding().getConstructors();
+		return specializeMembers(ctors, point);
+	}
+
+	@Override
+	public ICPPMethod[] getDeclaredMethods(IASTNode point) {
 		ICPPMethod[] bindings = specialClass.getSpecializedBinding().getDeclaredMethods();
 		return specializeMembers(bindings, point);
 	}
 
 	@Override
-	public ICPPClassType[] getNestedClasses() {
-		IASTNode point= null; // Instantiation of dependent expression may not work.
+	public ICPPClassType[] getNestedClasses(IASTNode point) {
 		ICPPClassType[] bindings = specialClass.getSpecializedBinding().getNestedClasses();
 		return specializeMembers(bindings, point);
 	}
 
 	@Override
-	public IBinding[] getFriends() {
-		IASTNode point= null; // Instantiation of dependent expression may not work.
+	public IBinding[] getFriends(IASTNode point) {
 		IBinding[] friends = specialClass.getSpecializedBinding().getFriends();
 		return specializeMembers(friends, point);
 	}

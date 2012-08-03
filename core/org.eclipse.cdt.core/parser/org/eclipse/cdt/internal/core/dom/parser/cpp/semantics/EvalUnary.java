@@ -48,7 +48,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
-import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator;
 import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator.SizeAndAlignment;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPArithmeticConversion;
@@ -216,11 +215,11 @@ public class EvalUnary extends CPPEvaluation {
 
 		switch (fOperator) {
 			case op_sizeof: {
-				SizeAndAlignment info = getSizeAndAlignment(point);
+				SizeAndAlignment info = getSizeAndAlignment(fArgument.getTypeOrFunctionSet(point), point);
 				return info == null ? Value.UNKNOWN : Value.create(info.size);
 			}
 			case op_alignOf: {
-				SizeAndAlignment info = getSizeAndAlignment(point);
+				SizeAndAlignment info = getSizeAndAlignment(fArgument.getTypeOrFunctionSet(point), point);
 				return info == null ? Value.UNKNOWN : Value.create(info.alignment);
 			}
 			case op_sizeofParameterPack:
@@ -237,14 +236,6 @@ public class EvalUnary extends CPPEvaluation {
 			return Value.evaluateUnaryExpression(fOperator, num);
 		}
 		return Value.create(this);
-	}
-
-	private SizeAndAlignment getSizeAndAlignment(IASTNode point) {
-		if (point == null)
-			return null;
-
-		IType type = fArgument.getTypeOrFunctionSet(point);
-		return new SizeofCalculator(point.getTranslationUnit()).sizeAndAlignment(type);
 	}
 
 	@Override

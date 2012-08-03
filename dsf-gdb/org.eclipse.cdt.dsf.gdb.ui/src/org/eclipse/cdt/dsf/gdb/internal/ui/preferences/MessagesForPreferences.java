@@ -9,6 +9,7 @@
  *     Ericsson - initial API and implementation
  *     Jens Elmenthaler (Verigy) - Added Full GDB pretty-printing support (bug 302121)
  *     Anton Gorenkov - A preference to use RTTI for variable types determination (Bug 377536)
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.preferences;
 
@@ -31,6 +32,7 @@ class MessagesForPreferences extends NLS {
 	/** @since 2.2 */
 	public static String GdbDebugPreferencePage_maxGdbTraces_label;
 	public static String GdbDebugPreferencePage_autoTerminateGdb_label;
+	public static String GdbDebugPreferencePage_Browse_button;
 	public static String GdbDebugPreferencePage_Command_column_name;
 	public static String GdbDebugPreferencePage_Command_field_can_not_be_empty;
 	public static String GdbDebugPreferencePage_Command_timeout;
@@ -48,11 +50,17 @@ class MessagesForPreferences extends NLS {
 	/** @since 2.2 */
 	public static String GdbDebugPreferencePage_defaults_label;
 	public static String GdbDebugPreferencePage_Delete_button;
+	public static String GdbDebugPreferencePage_GDB_command_file;
+	public static String GdbDebugPreferencePage_GDB_command_file_dialog_title;
+	public static String GdbDebugPreferencePage_GDB_debugger;
+	public static String GdbDebugPreferencePage_GDB_debugger_dialog_title;
 	public static String GdbDebugPreferencePage_Invalid_timeout_value;
+	public static String GdbDebugPreferencePage_Non_stop_mode;
 	public static String GdbDebugPreferencePage_Timeout_column_name;
 	public static String GdbDebugPreferencePage_Timeout_value_can_not_be_negative;
 	/** @since 2.3 */
 	public static String GdbDebugPreferencePage_rtti_label;
+	public static String GdbDebugPreferencePage_Stop_on_startup_at;
 	/** @since 2.3 */
 	public static String GdbDebugPreferencePage_use_rtti_label1;
 	/** @since 2.3 */

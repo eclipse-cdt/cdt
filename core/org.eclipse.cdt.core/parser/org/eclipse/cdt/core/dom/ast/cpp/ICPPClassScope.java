@@ -6,11 +6,10 @@
  *  http://www.eclipse.org/legal/epl-v10.html
  * 
  *  Contributors:
- *     Andrew Niefer (IBM Corporation) - initial API and implementation
- *     Markus Schorn (Wind River Systems)
+ *      Andrew Niefer (IBM Corporation) - initial API and implementation
+ *      Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
-
 
 /**
  * Interface for class scopes.
@@ -20,8 +19,7 @@ package org.eclipse.cdt.core.dom.ast.cpp;
  */
 public interface ICPPClassScope extends ICPPScope {
 	/**
-	 * Get the binding for the class this scope is associated with
-	 * 
+	 * Returns the binding for the class this scope is associated with.
 	 */
 	ICPPClassType getClassType();
 
@@ -30,7 +28,6 @@ public interface ICPPClassScope extends ICPPScope {
 	 * scope. These methods may or may not have been explicitly declared in the
 	 * code. The methods that will be implicitly declared are: the default
 	 * constructor, copy constructor, copy assignment operator, and destructor
-	 * 
 	 */
 	public ICPPMethod[] getImplicitMethods();
 	

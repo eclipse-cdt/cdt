@@ -136,47 +136,72 @@ public class CPPClassSpecialization extends CPPSpecialization
 
 	@Override
 	public ICPPField[] getDeclaredFields() {
+		return getDeclaredFields(null); // Instantiation of dependent expression may not work.
+	}
+
+	@Override
+	public ICPPField[] getDeclaredFields(IASTNode point) {
 		ICPPClassSpecializationScope scope= getSpecializationScope();
 		if (scope == null)
 			return ClassTypeHelper.getDeclaredFields(this);
 
-		return scope.getDeclaredFields();
+		return scope.getDeclaredFields(point);
 	}
 
 	@Override
 	public ICPPMethod[] getDeclaredMethods() {
+		return getDeclaredMethods(null); // Instantiation of dependent expression may not work.
+	}
+
+	@Override
+	public ICPPMethod[] getDeclaredMethods(IASTNode point) {
 		ICPPClassSpecializationScope scope= getSpecializationScope();
 		if (scope == null)
 			return ClassTypeHelper.getDeclaredMethods(this);
 
-		return scope.getDeclaredMethods();
+		return scope.getDeclaredMethods(point);
 	}
 
 	@Override
 	public ICPPConstructor[] getConstructors() {
+		return getConstructors(null);
+	}
+
+	@Override
+	public ICPPConstructor[] getConstructors(IASTNode point) {
 		ICPPClassSpecializationScope scope= getSpecializationScope();
 		if (scope == null)
 			return ClassTypeHelper.getConstructors(this);
 
-		return scope.getConstructors();
+		return scope.getConstructors(point);
 	}
 
 	@Override
 	public IBinding[] getFriends() {
+		return getFriends(null); // Instantiation of dependent expression may not work.
+	}
+
+	@Override
+	public IBinding[] getFriends(IASTNode point) {
 		ICPPClassSpecializationScope scope= getSpecializationScope();
 		if (scope == null)
 			return ClassTypeHelper.getFriends(this);
 
-		return scope.getFriends();
+		return scope.getFriends(point);
 	}
 	
 	@Override
 	public ICPPClassType[] getNestedClasses() {
+		return getNestedClasses(null); // Instantiation of dependent expression may not work.
+	}
+
+	@Override
+	public ICPPClassType[] getNestedClasses(IASTNode point) {
 		ICPPClassSpecializationScope scope= getSpecializationScope();
 		if (scope == null)
 			return ClassTypeHelper.getNestedClasses(this);
 
-		return scope.getNestedClasses();
+		return scope.getNestedClasses(point);
 	}
 
 	@Override
@@ -231,7 +256,7 @@ public class CPPClassSpecialization extends CPPSpecialization
 		if (getDefinition() != null)
 			return null;
 		
-		//implicit specialization: must specialize bindings in scope
+		// Implicit specialization: must specialize bindings in scope.
 		if (specScope == null) {
 			specScope = new CPPClassSpecializationScope(this);
 		}

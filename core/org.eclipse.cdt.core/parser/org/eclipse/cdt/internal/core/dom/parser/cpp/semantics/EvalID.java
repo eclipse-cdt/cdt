@@ -304,6 +304,9 @@ public class EvalID extends CPPEvaluation {
 			nameOwner = resolveUnknown(CPPTemplates.createDeferredInstance((ICPPClassTemplate) nameOwner),
 					tpMap, packOffset, within, point);
 		}
+		if (fieldOwner instanceof IProblemBinding || nameOwner instanceof IProblemBinding)
+			return this;
+
 		if (Arrays.equals(templateArgs, fTemplateArgs) && fieldOwner == fFieldOwner && nameOwner == fNameOwner)
 			return this;
 

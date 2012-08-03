@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2012 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/ 
 package org.eclipse.cdt.core.dom.ast.cpp;
 
@@ -42,5 +43,40 @@ public interface ICPPClassSpecialization extends ICPPSpecialization, ICPPClassTy
 	 * instantiation.
 	 * @since 5.5
 	 */
-	public ICPPBase[] getBases(IASTNode point);
+	ICPPBase[] getBases(IASTNode point);
+
+	/**
+	 * Similar to {@link ICPPClassType#getConstructors()} but a accepts a starting point
+	 * for template instantiation.
+	 * @since 5.5
+	 */
+	ICPPConstructor[] getConstructors(IASTNode point);
+
+	/**
+	 * Similar to {@link ICPPClassType#getDeclaredFields()} but a accepts a starting point
+	 * for template instantiation.
+	 * @since 5.5
+	 */
+	ICPPField[] getDeclaredFields(IASTNode point);
+
+	/**
+	 * Similar to {@link ICPPClassType#getDeclaredMethods()} but a accepts a starting point
+	 * for template instantiation.
+	 * @since 5.5
+	 */
+	ICPPMethod[] getDeclaredMethods(IASTNode point);
+
+	/**
+	 * Similar to {@link ICPPClassType#getFriends()} but a accepts a starting point
+	 * for template instantiation.
+	 * @since 5.5
+	 */
+	IBinding[] getFriends(IASTNode point);
+
+	/**
+	 * Similar to {@link ICPPClassType#getNestedClasses()} but a accepts a starting point
+	 * for template instantiation.
+	 * @since 5.5
+	 */
+	ICPPClassType[] getNestedClasses(IASTNode point);
 }

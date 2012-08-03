@@ -90,7 +90,7 @@ public class SemanticsTests extends AST2BaseTest {
 		// Test getDeclaredConversionOperators()
 		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
 		ICPPClassType c= ba.assertNonProblem("X {", 1, ICPPClassType.class);
-		ICPPMethod[] cops= SemanticUtil.getDeclaredConversionOperators(c);
+		ICPPMethod[] cops= SemanticUtil.getDeclaredConversionOperators(c, null);
 		assertEquals(2, cops.length);
 		Set actual= new HashSet();
 		actual.add(cops[0].getName()); actual.add(cops[1].getName());

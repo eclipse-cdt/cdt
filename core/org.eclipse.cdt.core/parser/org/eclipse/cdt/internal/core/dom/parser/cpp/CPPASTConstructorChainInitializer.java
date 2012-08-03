@@ -35,6 +35,7 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArraySet;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 /**
  * For example in the constructor definition <br>
@@ -174,7 +175,7 @@ public class CPPASTConstructorChainInitializer extends ASTNode implements
 				IBinding method= fdef.getDeclarator().getName().resolveBinding();
 				if (method instanceof ICPPMethod) {
 					ICPPClassType cls= ((ICPPMethod) method).getClassOwner();
-					for (ICPPBase base : cls.getBases()) {
+					for (ICPPBase base : SemanticUtil.getBases(cls, fdef)) {
 						result.put(base.getBaseClassSpecifierName().getSimpleID());
 					}
 					return result;

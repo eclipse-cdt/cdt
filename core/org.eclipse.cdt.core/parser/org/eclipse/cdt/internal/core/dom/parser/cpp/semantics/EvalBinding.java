@@ -94,10 +94,10 @@ public class EvalBinding extends CPPEvaluation {
 			t= ((ICPPTemplateNonTypeParameter) fBinding).getType();
 		} else if (fBinding instanceof IVariable) {
 			t = ((IVariable) fBinding).getType();
-		} else if (fBinding instanceof IFunction) {
-			t= ((IFunction) fBinding).getType();
 		} else if (fBinding instanceof ICPPUnknownBinding) {
 			return true;
+		} else if (fBinding instanceof IFunction) {
+			t= ((IFunction) fBinding).getType();
 		} else {
 			return false;
 		}
@@ -123,11 +123,11 @@ public class EvalBinding extends CPPEvaluation {
 		if (fBinding instanceof IVariable) {
 			return Value.isDependentValue(((IVariable) fBinding).getInitialValue());
 		}
-		if (fBinding instanceof IFunction) {
-			return false;
-		}
 		if (fBinding instanceof ICPPUnknownBinding) {
 			return true;
+		}
+		if (fBinding instanceof IFunction) {
+			return false;
 		}
 		return false;
 	}

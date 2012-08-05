@@ -105,14 +105,18 @@ public class EvalInitList extends CPPEvaluation {
 	@Override
 	public ICPPEvaluation instantiate(ICPPTemplateParameterMap tpMap, int packOffset,
 			ICPPClassSpecialization within, int maxdepth, IASTNode point) {
-		ICPPEvaluation[] clauses = new ICPPEvaluation[fClauses.length];
-		boolean changed = false;
+		ICPPEvaluation[] clauses = null;
 		for (int i = 0; i < fClauses.length; i++) {
-			clauses[i] = fClauses[i].instantiate(tpMap, packOffset, within, maxdepth, point);
-			if (clauses[i] != fClauses[i])
-				changed = true;
+			ICPPEvaluation clause = fClauses[i].instantiate(tpMap, packOffset, within, maxdepth, point);
+			if (clause != fClauses[i]) {
+				if (clauses == null) {
+					clauses = new ICPPEvaluation[fClauses.length];
+					System.arraycopy(fClauses, 0, clauses, 0, fClauses.length);
+				}
+				clauses[i] = clause;
+			}
 		}
-		if (!changed)
+		if (clauses == null)
 			return this;
 		return new EvalInitList(clauses);
 	}

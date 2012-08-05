@@ -146,16 +146,23 @@ public class EvalTypeId extends CPPEvaluation {
 	@Override
 	public ICPPEvaluation instantiate(ICPPTemplateParameterMap tpMap, int packOffset,
 			ICPPClassSpecialization within, int maxdepth, IASTNode point) {
-		ICPPEvaluation[] args = new ICPPEvaluation[fArguments.length];
-		boolean argsChanged = false;
+		ICPPEvaluation[] args = null;
 		for (int i = 0; i < fArguments.length; i++) {
-			args[i] = fArguments[i].instantiate(tpMap, packOffset, within, maxdepth, point);
-			if (args[i] != fArguments[i])
-				argsChanged = true;
+			ICPPEvaluation arg = fArguments[i].instantiate(tpMap, packOffset, within, maxdepth, point);
+			if (arg != fArguments[i]) {
+				if (args == null) {
+					args = new ICPPEvaluation[fArguments.length];
+					System.arraycopy(fArguments, 0, args, 0, fArguments.length);
+				}
+				args[i] = arg;
+			}
 		}
 		IType type = CPPTemplates.instantiateType(fInputType, tpMap, packOffset, within, point);
-		if (!argsChanged && type == fInputType)
-			return this;
+		if (args == null) {
+			if (type == fInputType)
+				return this;
+			args = fArguments;
+		}
 		return new EvalTypeId(type, args);
 	}
 

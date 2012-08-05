@@ -5876,4 +5876,52 @@ public class AST2TemplateTests extends AST2BaseTest {
 	public void testConstInTypeParameter_377223() throws Exception {
 		parseAndCheckBindings();
 	}
+
+	//	template<typename T, T v>
+	//	struct integral_constant {
+	//	  static constexpr T value = v;
+	//	  typedef T value_type;
+	//	  typedef integral_constant<T, v> type;
+	//	};
+	//
+	//	typedef integral_constant<bool, true> true_type;
+	//
+	//	typedef integral_constant<bool, false> false_type;
+	//
+	//	template<typename T>
+	//	class helper {
+	//	  typedef char one;
+	//	  typedef struct { char arr[2]; } two;
+	//	  template<typename U> struct Wrap_type {};
+	//	  template<typename U> static one test(Wrap_type<typename U::category>*);
+	//	  template<typename U> static two test(...);
+	//	  public: static const bool value = sizeof(test<T>(0)) == 1;
+	//	};
+	//
+	//	template<typename T>
+	//	struct has_category : integral_constant<bool, helper<T>::value> {};
+	//
+	//	template<typename Iterator, bool = has_category<Iterator>::value>
+	//	struct traits {};
+	//
+	//	template<typename Iterator>
+	//	struct traits<Iterator, true> {
+	//	  typedef typename Iterator::value_type value_type;
+	//	};
+	//
+	//	struct tag {};
+	//
+	//	struct C {
+	//	  typedef int value_type;
+	//	  typedef tag category;
+	//	};
+	//
+	//	template<typename It, typename Val = typename traits<It>::value_type>
+	//	class A {
+	//	};
+	//
+	//	typedef A<C> type;
+	public void testSFINAE() throws Exception {
+		parseAndCheckBindings();
+	}
 }

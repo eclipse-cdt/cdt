@@ -128,7 +128,7 @@ public class EvalID extends CPPEvaluation {
 
 	@Override
 	public IValue getValue(IASTNode point) {
-		// Name lookup is not needed here because it was already done in "instantiate" method.
+		// Name lookup is not needed here because it was already done in the "instantiate" method.
 //		IBinding nameOwner = fNameOwner;
 //		if (nameOwner == null && fFieldOwner != null)
 //			nameOwner = (IBinding) fFieldOwner.getTypeOrFunctionSet(point);

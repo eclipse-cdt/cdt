@@ -5635,6 +5635,42 @@ public class AST2TemplateTests extends AST2BaseTest {
 		parseAndCheckBindings();
 	}
 
+	//	template<typename T>
+	//	struct A {
+	//	  typedef T type;
+	//	};
+	//
+	//	template<typename T>
+	//	struct B {};
+	//
+	//	template <typename T, typename U = B<T> >
+	//	struct C {
+	//	  struct D {
+	//	    template<typename V>
+	//	    static typename V::pointer test(typename V::pointer*);
+	//	    template<typename V>
+	//	    static T* test(...);
+	//
+	//	    typedef typename A<U>::type E;
+	//	    typedef decltype(test<E>(0)) type;
+	//	  };
+	//
+	//	  typedef typename D::type pointer;
+	//	};
+	//
+	//	void f(int*);
+	//	void f(int);
+	//
+	//	void test(C<int>::pointer a) {
+	//	  f(a);
+	//	}
+	public void _testDependentExpressionsDecltype() throws Exception {
+		parseAndCheckBindings();
+		BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), CPP);
+		ICPPFunction func= bh.assertNonProblem("f(a)", 1, ICPPFunction.class);
+		assertFalse(func instanceof ICPPUnknownBinding);
+	}
+
 	//	template <int> void* foo(int);
 	//	template <typename T> void f(T t) {
 	//	    if (T* i = foo<0>(0))

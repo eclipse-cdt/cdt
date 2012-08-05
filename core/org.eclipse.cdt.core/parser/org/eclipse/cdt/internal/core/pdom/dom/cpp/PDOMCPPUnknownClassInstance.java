@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Sergey Prigogin (Google) - initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google) - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -31,7 +31,6 @@ import org.eclipse.core.runtime.CoreException;
  * @author Sergey Prigogin
  */
 class PDOMCPPUnknownClassInstance extends PDOMCPPUnknownClassType implements ICPPUnknownClassInstance, IPDOMOverloader {
-
 	private static final int ARGUMENTS = PDOMCPPUnknownClassType.RECORD_SIZE + 0;
 	private static final int SIGNATURE_HASH = ARGUMENTS + 4;
 
@@ -54,7 +53,6 @@ class PDOMCPPUnknownClassInstance extends PDOMCPPUnknownClassType implements ICP
 			db.putInt(record + SIGNATURE_HASH, sigHash != null ? sigHash.intValue() : 0);
 		} catch (DOMException e) {
 		}
-
 	}
 
 	public PDOMCPPUnknownClassInstance(PDOMLinkage linkage, long bindingRecord) {
@@ -80,7 +78,7 @@ class PDOMCPPUnknownClassInstance extends PDOMCPPUnknownClassType implements ICP
 	public ICPPTemplateArgument[] getArguments() {
 		if (arguments == null) {
 			try {
-				final long rec= getPDOM().getDB().getRecPtr(record+ARGUMENTS);
+				final long rec= getPDOM().getDB().getRecPtr(record + ARGUMENTS);
 				arguments= PDOMCPPArgumentList.getArguments(this, rec);
 			} catch (CoreException e) {
 				CCorePlugin.log(e);

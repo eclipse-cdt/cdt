@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Sergey Prigogin (Google) - initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google) - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -45,9 +45,8 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * @author Sergey Prigogin
  */
-class PDOMCPPUnknownClassType extends PDOMCPPUnknownBinding implements ICPPClassScope, ICPPUnknownClassType,
-		IPDOMMemberOwner, IIndexType, IIndexScope {
-
+class PDOMCPPUnknownClassType extends PDOMCPPUnknownBinding
+		implements ICPPClassScope, ICPPUnknownClassType, IPDOMMemberOwner, IIndexType, IIndexScope {
 	private static final int KEY = PDOMCPPBinding.RECORD_SIZE + 0; // byte
 	private static final int MEMBERLIST = PDOMCPPBinding.RECORD_SIZE + 4;
 	@SuppressWarnings("hiding")
@@ -59,7 +58,7 @@ class PDOMCPPUnknownClassType extends PDOMCPPUnknownBinding implements ICPPClass
 		super(linkage, parent, classType);
 
 		setKind(classType);
-		// linked list is initialized by storage being zero'd by malloc
+		// Linked list is initialized by storage being zero'd by malloc
 	}
 
 	public PDOMCPPUnknownClassType(PDOMLinkage linkage, long bindingRecord) {
@@ -245,7 +244,7 @@ class PDOMCPPUnknownClassType extends PDOMCPPUnknownBinding implements ICPPClass
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IType#isSameType(org.eclipse.cdt.core.dom.ast.IType)
+     * @see IType#isSameType(IType)
      */
     @Override
 	public boolean isSameType(IType type) {
@@ -263,8 +262,8 @@ class PDOMCPPUnknownClassType extends PDOMCPPUnknownBinding implements ICPPClass
 		}
 		
 		if (type instanceof ICPPUnknownClassType 
-				&& type instanceof ICPPUnknownClassInstance == false
-				&& type instanceof ICPPDeferredClassInstance == false) {
+				&& !(type instanceof ICPPUnknownClassInstance)
+				&& !(type instanceof ICPPDeferredClassInstance)) {
 			ICPPUnknownClassType rhs= (ICPPUnknownClassType) type;
 			if (CharArrayUtils.equals(getNameCharArray(), rhs.getNameCharArray())) {
 				final IBinding lhsContainer = getOwner();

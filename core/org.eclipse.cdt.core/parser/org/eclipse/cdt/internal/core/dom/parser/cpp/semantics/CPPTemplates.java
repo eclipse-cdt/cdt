@@ -796,12 +796,13 @@ public class CPPTemplates {
 			IType[] exceptionSpecs= instantiateTypes(func.getExceptionSpecification(), tpMap, -1, within, point);
 
 			if (decl instanceof ICPPFunctionTemplate) {
-				if (decl instanceof ICPPConstructor)
+				if (decl instanceof ICPPConstructor) {
 					spec = new CPPConstructorTemplateSpecialization((ICPPConstructor) decl, owner, tpMap, type, exceptionSpecs);
-				else if (decl instanceof ICPPMethod)
+				} else if (decl instanceof ICPPMethod) {
 					spec = new CPPMethodTemplateSpecialization((ICPPMethod) decl, owner, tpMap, type, exceptionSpecs);
-				else
+				} else {
 					spec = new CPPFunctionTemplateSpecialization((ICPPFunctionTemplate) decl, owner, tpMap, type, exceptionSpecs);
+				}
 			} else if (decl instanceof ICPPConstructor) {
 				spec = new CPPConstructorSpecialization((ICPPConstructor) decl, owner, tpMap, type, exceptionSpecs);
 			} else if (decl instanceof ICPPMethod) {
@@ -1265,11 +1266,11 @@ public class CPPTemplates {
 	}
 
 	/**
-	 * Checks whether a given name corresponds to a template declaration and returns the ast node for it.
-	 * This works for the name of a template-definition and also for a name needed to qualify a member
-	 * definition:
+	 * Checks whether a given name corresponds to a template declaration and returns the AST node
+	 * for it. This works for the name of a template-definition and also for a name needed to
+	 * qualify a member definition:
 	 * <pre>
-	 * template &lttypename T&gt void MyTemplate&ltT&gt::member() {}
+	 * template &lt;typename T&gt; void MyTemplate&ltT&gt;::member() {}
 	 * </pre>
 	 * @param name a name for which the corresponding template declaration is searched for.
 	 * @return the template declaration or <code>null</code> if <code>name</code> does not
@@ -1614,10 +1615,11 @@ public class CPPTemplates {
 		        name = dtor.getName();
 		    } else if (simple.getDeclarators().length == 0) {
 		        IASTDeclSpecifier spec = simple.getDeclSpecifier();
-		        if (spec instanceof ICPPASTCompositeTypeSpecifier)
+		        if (spec instanceof ICPPASTCompositeTypeSpecifier) {
 		            name = ((ICPPASTCompositeTypeSpecifier) spec).getName();
-		        else if (spec instanceof ICPPASTElaboratedTypeSpecifier)
+		        } else if (spec instanceof ICPPASTElaboratedTypeSpecifier) {
 		            name = ((ICPPASTElaboratedTypeSpecifier) spec).getName();
+		        }
 		    }
 		} else if (nestedDecl instanceof IASTFunctionDefinition) {
 		    IASTDeclarator declarator = ((IASTFunctionDefinition) nestedDecl).getDeclarator();
@@ -1633,11 +1635,10 @@ public class CPPTemplates {
 						if (currDecl == templateDecl) {
 							return ns[j];
 						}
-						if (currDecl instanceof ICPPASTTemplateDeclaration) {
-							currDecl = ((ICPPASTTemplateDeclaration) currDecl).getDeclaration();
-						} else {
+						if (!(currDecl instanceof ICPPASTTemplateDeclaration)) {
 							return null;
 						}
+						currDecl = ((ICPPASTTemplateDeclaration) currDecl).getDeclaration();
 					}
 				}
 		    } else {
@@ -2361,7 +2362,7 @@ public class CPPTemplates {
 
 	public static boolean containsDependentArg(ObjectMap tpMap) {
 		for (Object arg : tpMap.valueArray()) {
-			if (isDependentType((IType)arg))
+			if (isDependentType((IType) arg))
 				return true;
 		}
 		return false;
@@ -2395,9 +2396,9 @@ public class CPPTemplates {
             		}
             	} else if (!t.equals(owner)) {
             		if (unknown instanceof ICPPUnknownClassType) {
-            			result= new CPPUnknownClass((ICPPUnknownBinding)t, unknown.getNameCharArray());
+            			result= new CPPUnknownClass((ICPPUnknownBinding) t, unknown.getNameCharArray());
             		} else if (unknown instanceof IFunction) {
-            			result= new CPPUnknownClass((ICPPUnknownBinding)t, unknown.getNameCharArray());
+            			result= new CPPUnknownClass((ICPPUnknownBinding) t, unknown.getNameCharArray());
             		} else {
             			result= new CPPUnknownBinding((ICPPUnknownBinding) t, unknown.getNameCharArray());
             		}

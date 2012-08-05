@@ -211,7 +211,7 @@ public class CPPBasicType implements ICPPBasicType, ISerializableType {
 		int modifiers= 0;
 		int kind;
 		if (dense) {
-			kind= (firstByte & (ITypeMarshalBuffer.FLAG4-1))/ITypeMarshalBuffer.FLAG1;
+			kind= (firstByte & (ITypeMarshalBuffer.FLAG4 - 1)) / ITypeMarshalBuffer.FLAG1;
 		} else {
 			kind= buffer.getByte();
 			modifiers= buffer.getByte();

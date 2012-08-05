@@ -57,13 +57,13 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 		ICPPClassSpecialization, IPDOMMemberOwner, IPDOMCPPClassType {
 	private static final int FIRST_BASE = PDOMCPPSpecialization.RECORD_SIZE + 0;
 	private static final int MEMBER_LIST = PDOMCPPSpecialization.RECORD_SIZE + 4;
-	
+
 	/**
 	 * The size in bytes of a PDOMCPPClassSpecialization record in the database.
 	 */
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPSpecialization.RECORD_SIZE + 8;
-	
+
 	private volatile ICPPClassScope fScope;
 	private ObjectMap specializationMap; // Obtained from the synchronized PDOM cache
 	private final ThreadLocal<Set<IBinding>> fInProgress= new ThreadLocal<Set<IBinding>>();
@@ -76,7 +76,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 	public PDOMCPPClassSpecialization(PDOMLinkage linkage, long bindingRecord) {
 		super(linkage, bindingRecord);
 	}
-	
+
 	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
@@ -91,14 +91,14 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 	public ICPPClassType getSpecializedBinding() {
 		return (ICPPClassType) super.getSpecializedBinding();
 	}
-	
+
 	@Override
 	public IBinding specializeMember(IBinding original) {
 		return specializeMember(original, null);
 	}
 
 	@Override
-	public IBinding specializeMember(IBinding original, IASTNode point) {	
+	public IBinding specializeMember(IBinding original, IASTNode point) {
 		if (specializationMap == null) {
 			final Long key= record+PDOMCPPLinkage.CACHE_INSTANCE_SCOPE;
 			Object cached= getPDOM().getCachedResult(key);
@@ -124,14 +124,14 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 		Set<IBinding> set;
 		synchronized (specializationMap) {
 			IBinding result= (IBinding) specializationMap.get(original);
-			if (result != null) 
+			if (result != null)
 				return result;
 			set= fInProgress.get();
 			if (set == null) {
 				set= new HashSet<IBinding>();
 				fInProgress.set(set);
-			} 
-			if (!set.add(original)) 
+			}
+			if (!set.add(original))
 				return new RecursionResolvingBinding(null, null);
 		}
 		IBinding newSpec= CPPTemplates.createSpecialization(this, original, point);
@@ -154,7 +154,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 				if (hasOwnScope()) {
 					fScope= new PDOMCPPClassScope(this);
 					return fScope;
-				} 
+				}
 			} catch (CoreException e) {
 			}
 			fScope= new PDOMCPPClassSpecializationScope(this);
@@ -175,14 +175,14 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 		long rec = base != null ? base.getRecord() : 0;
 		getDB().putRecPtr(record + FIRST_BASE, rec);
 	}
-	
+
 	public void addBase(PDOMCPPBase base) throws CoreException {
 		getPDOM().removeCachedResult(record+PDOMCPPLinkage.CACHE_BASES);
 		PDOMCPPBase firstBase = getFirstBase();
 		base.setNextBase(firstBase);
 		setFirstBase(base);
 	}
-	
+
 	public void removeBase(PDOMName pdomName) throws CoreException {
 		getPDOM().removeCachedResult(record+PDOMCPPLinkage.CACHE_BASES);
 		PDOMCPPBase base= getFirstBase();
@@ -205,7 +205,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 			base.delete();
 		}
 	}
-	
+
 	@Override
 	public ICPPBase[] getBases() {
 		return getBases(null);
@@ -217,11 +217,11 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 		if (scope instanceof ICPPClassSpecializationScope) {
 			return ((ICPPClassSpecializationScope) scope).getBases(point);
 		}
-		
+
 		// This is an explicit specialization
 		Long key= record + PDOMCPPLinkage.CACHE_BASES;
 		ICPPBase[] bases= (ICPPBase[]) getPDOM().getCachedResult(key);
-		if (bases != null) 
+		if (bases != null)
 			return bases;
 
 		try {
@@ -238,7 +238,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 		}
 		return ICPPBase.EMPTY_BASE_ARRAY;
 	}
-	
+
 	@Override
 	public ICPPConstructor[] getConstructors() {
 		return getConstructors(null);
@@ -291,7 +291,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 		IScope scope= getCompositeScope();
 		if (scope instanceof ICPPClassSpecializationScope) {
 			return ((ICPPClassSpecializationScope) scope).getDeclaredFields(point);
-		} 
+		}
 		try {
 			PDOMClassUtil.FieldCollector visitor = new PDOMClassUtil.FieldCollector();
 			PDOMCPPClassScope.acceptViaCache(this, visitor, false);
@@ -301,18 +301,18 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 			return ICPPField.EMPTY_CPPFIELD_ARRAY;
 		}
 	}
-	
+
 	@Override
 	public ICPPClassType[] getNestedClasses() {
 		return getNestedClasses(null);
 	}
-	
+
 	@Override
 	public ICPPClassType[] getNestedClasses(IASTNode point) {
 		IScope scope= getCompositeScope();
 		if (scope instanceof ICPPClassSpecializationScope) {
 			return ((ICPPClassSpecializationScope) scope).getNestedClasses(point);
-		} 
+		}
 		try {
 			PDOMClassUtil.NestedClassCollector visitor = new PDOMClassUtil.NestedClassCollector();
 			PDOMCPPClassScope.acceptViaCache(this, visitor, false);
@@ -335,7 +335,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 	}
 
 	@Override
-	public ICPPMethod[] getMethods() { 
+	public ICPPMethod[] getMethods() {
 		return ClassTypeHelper.getMethods(this);
 	}
 
@@ -343,12 +343,12 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 	public ICPPMethod[] getAllDeclaredMethods() {
 		return ClassTypeHelper.getAllDeclaredMethods(this);
 	}
-	
+
 	@Override
 	public IField[] getFields() {
 		return ClassTypeHelper.getFields(this);
 	}
-	
+
 	@Override
 	public IField findField(String name) {
 		return ClassTypeHelper.findField(this, name);
@@ -380,7 +380,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 
 		return CPPClassSpecialization.isSameClassSpecialization(this, (ICPPClassSpecialization) type);
 	}
-	
+
 	@Override
 	public Object clone() {
 		try {
@@ -406,7 +406,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 	public void accept(IPDOMVisitor visitor) throws CoreException {
 		PDOMCPPClassScope.acceptViaCache(this, visitor, false);
 	}
-	
+
 	@Override
 	public boolean isAnonymous() {
 		return false;

@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn (Wind River Systems) - initial API and implementation
+ *     Markus Schorn (Wind River Systems) - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -24,7 +24,6 @@ import org.eclipse.core.runtime.CoreException;
  * serves as a base for unknown types.
  */
 class PDOMCPPUnknownBinding extends PDOMCPPBinding implements ICPPUnknownBinding {
-
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPBinding.RECORD_SIZE;
 	

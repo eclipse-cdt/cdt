@@ -13,7 +13,10 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.*;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.CVTYPE;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.REF;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getNestedType;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -163,7 +166,7 @@ public class CPPASTFunctionCallExpression extends ASTNode
 				}
 			} else {
 				n1.computeOperatorOffsets(functionName, true);
-				n2.computeOperatorOffsets(fArguments[fArguments.length-1], true);
+				n2.computeOperatorOffsets(fArguments[fArguments.length - 1], true);
 			}
 			
 			implicitNames = new IASTImplicitName[] { n1, n2 };
@@ -219,8 +222,6 @@ public class CPPASTFunctionCallExpression extends ASTNode
 		}
 	}
     
-    
-
 	@Override
 	@Deprecated
     public IASTExpression getParameterExpression() {
@@ -296,10 +297,10 @@ public class CPPASTFunctionCallExpression extends ASTNode
 		if (conversion != null)
 			return conversion;
 		
-		ICPPEvaluation[] args= new ICPPEvaluation[fArguments.length+1];
+		ICPPEvaluation[] args= new ICPPEvaluation[fArguments.length + 1];
 		args[0]= functionName.getEvaluation();
 		for (int i = 1; i < args.length; i++) {
-			args[i]= ((ICPPASTExpression) fArguments[i-1]).getEvaluation();
+			args[i]= ((ICPPASTExpression) fArguments[i - 1]).getEvaluation();
 		}
 		return new EvalFunctionCall(args);
 	}
@@ -318,7 +319,6 @@ public class CPPASTFunctionCallExpression extends ASTNode
 		}
 		return null;
 	}
-
     
     @Override
 	public IType getExpressionType() {

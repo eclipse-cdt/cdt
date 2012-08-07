@@ -1259,6 +1259,13 @@ public class CPPTemplates {
 				return typeContainer;
 			}
 
+			if (type instanceof TypeOfDependentExpression) {
+				ICPPEvaluation eval = ((TypeOfDependentExpression) type).getEvaluation();
+				ICPPEvaluation instantiated = eval.instantiate(tpMap, packOffset, within, Value.MAX_RECURSION_DEPTH, point);
+				if (instantiated != eval)
+					return instantiated.getTypeOrFunctionSet(point);
+			}
+
 			return type;
 		} catch (DOMException e) {
 			return e.getProblem();

@@ -160,7 +160,7 @@ public class EvalBinding extends CPPEvaluation {
 			final IFunctionType type = ((IFunction) fBinding).getType();
 			if (CPPTemplates.isDependentType(type))
 				return new TypeOfDependentExpression(this);
-			return  SemanticUtil.mapToAST(type, point);
+			return SemanticUtil.mapToAST(type, point);
 		}
 		return ProblemType.UNKNOWN_FOR_EXPRESSION;
 	}

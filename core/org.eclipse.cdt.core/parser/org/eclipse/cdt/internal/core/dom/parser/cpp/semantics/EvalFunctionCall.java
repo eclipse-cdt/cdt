@@ -40,6 +40,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics.LookupMode;
 import org.eclipse.core.runtime.CoreException;
@@ -201,6 +202,7 @@ public class EvalFunctionCall extends CPPEvaluation {
 			return this;
 
 		if (args[0] instanceof EvalFunctionSet) {
+			// Resolve the function using the parameters of the function call.
 			CPPFunctionSet functionSet = ((EvalFunctionSet) args[0]).getFunctionSet();
 			ICPPFunction[] functions = functionSet.getBindings();
 			LookupData data = new LookupData(functions[0].getNameCharArray(),
@@ -208,8 +210,8 @@ public class EvalFunctionCall extends CPPEvaluation {
 			data.setFunctionArguments(false, Arrays.copyOfRange(args, 1, args.length));
 			try {
 				IBinding binding = CPPSemantics.resolveFunction(data, functions, true);
-				if (binding instanceof ICPPFunction)
-					return new EvalBinding(binding, null);
+				if (binding instanceof ICPPFunction && !(binding instanceof ICPPUnknownBinding))
+					args[0] = new EvalBinding(binding, null);
 			} catch (DOMException e) {
 				CCorePlugin.log(e);
 			}

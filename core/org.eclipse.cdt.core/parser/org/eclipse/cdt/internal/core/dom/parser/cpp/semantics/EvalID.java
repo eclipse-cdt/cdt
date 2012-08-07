@@ -44,7 +44,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
@@ -291,26 +290,23 @@ public class EvalID extends CPPEvaluation {
 		}
 
 		IBinding nameOwner = fNameOwner;
-		if (nameOwner instanceof ICPPTemplateParameter) {
-			ICPPTemplateArgument argument = tpMap.getArgument((ICPPTemplateParameter) nameOwner);
-			if (argument != null) {
-				IType type = argument.getTypeValue();
-				if (type instanceof IBinding)
-					nameOwner = (IBinding) type;
-			}
-		} else if (nameOwner instanceof ICPPUnknownBinding) {
-			nameOwner = resolveUnknown((ICPPUnknownBinding) nameOwner, tpMap, packOffset, within, point);
-		} else if (nameOwner instanceof ICPPClassTemplate) {
+		if (nameOwner instanceof ICPPClassTemplate) {
+			// TODO(sprigogin): Figure out why testDependentExpressions_a fails without special-casing ICPPClassTemplate
 			nameOwner = resolveUnknown(CPPTemplates.createDeferredInstance((ICPPClassTemplate) nameOwner),
 					tpMap, packOffset, within, point);
+		} else if (nameOwner instanceof IType) {
+			IType type = CPPTemplates.instantiateType((IType) nameOwner, tpMap, packOffset, within, point);
+			if (type instanceof IBinding)
+				nameOwner = (IBinding) type;
 		}
+
 		if (fieldOwner instanceof IProblemBinding || nameOwner instanceof IProblemBinding)
 			return this;
 
 		if (Arrays.equals(templateArgs, fTemplateArgs) && fieldOwner == fFieldOwner && nameOwner == fNameOwner)
 			return this;
 
-		ICPPEvaluation eval = resolveName((ICPPClassType) nameOwner, fTemplateArgs, point);
+		ICPPEvaluation eval = resolveName((ICPPClassType) nameOwner, templateArgs, point);
 		if (eval != null)
 			return eval;
 
@@ -329,7 +325,7 @@ public class EvalID extends CPPEvaluation {
 		if (bindings.length > 1 && bindings[0] instanceof ICPPFunction) {
 			ICPPFunction[] functions = new ICPPFunction[bindings.length];
 			System.arraycopy(bindings, 0, functions, 0, bindings.length);
-			return new EvalFunctionSet(new CPPFunctionSet(functions, fTemplateArgs, null), fAddressOf);
+			return new EvalFunctionSet(new CPPFunctionSet(functions, templateArgs, null), fAddressOf);
 		}
 		IBinding binding = bindings.length == 1 ? bindings[0] : null;
 		if (binding instanceof IEnumerator) {

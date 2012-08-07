@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Andrew Ferguson (Symbian) - Initial implementation
- *    Markus Schorn (Wind River Systems)
+ *     Andrew Ferguson (Symbian) - Initial implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
@@ -43,8 +43,8 @@ class CompositeCPPClassScope extends CompositeScope implements ICPPClassScope {
 	public ICPPMethod[] getImplicitMethods() {
 		ICPPClassScope rscope = (ICPPClassScope) ((ICPPClassType)rbinding).getCompositeScope();
 		ICPPMethod[] result = rscope.getImplicitMethods();
-		for(int i=0; i<result.length; i++) {
-			result[i] = (ICPPMethod) cf.getCompositeBinding((IIndexFragmentBinding)result[i]);
+		for (int i= 0; i < result.length; i++) {
+			result[i] = (ICPPMethod) cf.getCompositeBinding((IIndexFragmentBinding) result[i]);
 		}
 		return result;
 	}
@@ -53,15 +53,15 @@ class CompositeCPPClassScope extends CompositeScope implements ICPPClassScope {
 	public ICPPConstructor[] getConstructors() {
 		ICPPClassScope rscope = (ICPPClassScope) ((ICPPClassType)rbinding).getCompositeScope();
 		ICPPConstructor[] result = rscope.getConstructors();
-		for(int i=0; i<result.length; i++) {
-			result[i] = (ICPPConstructor) cf.getCompositeBinding((IIndexFragmentBinding)result[i]);
+		for (int i= 0; i < result.length; i++) {
+			result[i] = (ICPPConstructor) cf.getCompositeBinding((IIndexFragmentBinding) result[i]);
 		}
 		return result;
 	}
 
 	@Override
 	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) {
-		IBinding binding = ((ICPPClassType)rbinding).getCompositeScope().getBinding(name, resolve, fileSet);
+		IBinding binding = ((ICPPClassType) rbinding).getCompositeScope().getBinding(name, resolve, fileSet);
 		return processUncertainBinding(binding);
 	}
 
@@ -72,13 +72,13 @@ class CompositeCPPClassScope extends CompositeScope implements ICPPClassScope {
 
 	@Override
 	public IBinding[] getBindings(ScopeLookupData lookup) {
-		IBinding[] bindings = ((ICPPClassType)rbinding).getCompositeScope().getBindings(lookup);
+		IBinding[] bindings = ((ICPPClassType) rbinding).getCompositeScope().getBindings(lookup);
 		return processUncertainBindings(bindings);
 	}
 	
 	@Override
 	public IBinding[] find(String name) {
-		IBinding[] preresult = ((ICPPClassType)rbinding).getCompositeScope().find(name);
+		IBinding[] preresult = ((ICPPClassType) rbinding).getCompositeScope().find(name);
 		return processUncertainBindings(preresult);	
 	}
 	

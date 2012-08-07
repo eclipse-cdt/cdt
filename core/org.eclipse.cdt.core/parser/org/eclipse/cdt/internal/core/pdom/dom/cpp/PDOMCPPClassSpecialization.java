@@ -208,7 +208,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 
 	@Override
 	public ICPPBase[] getBases() {
-		return getBases(null);
+		return getBases(null); // Instantiation of dependent expression may not work.
 	}
 
 	@Override
@@ -241,7 +241,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 
 	@Override
 	public ICPPConstructor[] getConstructors() {
-		return getConstructors(null);
+		return getConstructors(null); // Instantiation of dependent expression may not work.
 	}
 
 	@Override
@@ -262,7 +262,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 
 	@Override
 	public ICPPMethod[] getDeclaredMethods() {
-		return getDeclaredMethods(null);
+		return getDeclaredMethods(null); // Instantiation of dependent expression may not work.
 	}
 
 	@Override
@@ -283,7 +283,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 
 	@Override
 	public ICPPField[] getDeclaredFields() {
-		return getDeclaredFields(null);
+		return getDeclaredFields(null); // Instantiation of dependent expression may not work.
 	}
 
 	@Override
@@ -304,7 +304,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 
 	@Override
 	public ICPPClassType[] getNestedClasses() {
-		return getNestedClasses(null);
+		return getNestedClasses(null); // Instantiation of dependent expression may not work.
 	}
 
 	@Override
@@ -325,7 +325,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 
 	@Override
 	public IBinding[] getFriends() {
-		return getFriends(null);
+		return getFriends(null); // Instantiation of dependent expression may not work.
 	}
 
 	@Override

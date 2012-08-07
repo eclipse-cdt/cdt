@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -30,8 +30,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
  */
 public class CPPClassTemplatePartialSpecializationSpecialization extends CPPClassSpecialization
 		implements ICPPClassTemplatePartialSpecializationSpecialization, ICPPInternalClassTemplate {
-
-	private ObjectMap instances = null;
+	private ObjectMap instances;
 	private ICPPDeferredClassInstance fDeferredInstance;
 	private final ICPPClassTemplate fClassTemplate;
 	private final ICPPTemplateArgument[] fArguments;
@@ -70,7 +69,7 @@ public class CPPClassTemplatePartialSpecializationSpecialization extends CPPClas
 	public synchronized ICPPTemplateInstance[] getAllInstances() {
 		if (instances != null) {
 			ICPPTemplateInstance[] result= new ICPPTemplateInstance[instances.size()];
-			for (int i=0; i < instances.size(); i++) {
+			for (int i= 0; i < instances.size(); i++) {
 				result[i]= (ICPPTemplateInstance) instances.getAt(i);
 			}
 			return result;
@@ -142,7 +141,7 @@ public class CPPClassTemplatePartialSpecializationSpecialization extends CPPClas
 	
 	@Override
 	public ICPPTemplateArgument getDefaultArgFromIndex(int paramPos) throws DOMException {
-		// no default arguments for partial specializations
+		// No default arguments for partial specializations
 		return null;
 	}
 }

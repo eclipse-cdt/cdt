@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -50,7 +50,6 @@ import org.eclipse.core.runtime.CoreException;
 public class PDOMCPPTemplateTemplateParameter extends PDOMCPPBinding 
 		implements ICPPTemplateTemplateParameter, ICPPUnknownBinding, ICPPUnknownType, IIndexType, 
 		IPDOMCPPTemplateParameter, IPDOMCPPTemplateParameterOwner {
-
 	private static final int PACK_BIT = 1 << 31;
 
 	private static final int DEFAULT_TYPE = PDOMCPPBinding.RECORD_SIZE;	

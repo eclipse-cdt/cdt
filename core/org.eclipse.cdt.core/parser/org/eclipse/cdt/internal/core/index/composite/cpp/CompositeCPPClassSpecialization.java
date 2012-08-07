@@ -129,7 +129,7 @@ public class CompositeCPPClassSpecialization extends CompositeCPPClassType imple
 
 	@Override
 	public final ICPPBase[] getBases() {
-		return getBases(null);
+		return getBases(null); // Instantiation of dependent expression may not work.
 	}
 
 	@Override
@@ -143,7 +143,7 @@ public class CompositeCPPClassSpecialization extends CompositeCPPClassType imple
 	
 	@Override
 	public final ICPPConstructor[] getConstructors() {
-		return getConstructors(null);
+		return getConstructors(null); // Instantiation of dependent expression may not work.
 	}
 
 	@Override
@@ -157,7 +157,7 @@ public class CompositeCPPClassSpecialization extends CompositeCPPClassType imple
 
 	@Override
 	public final ICPPMethod[] getDeclaredMethods() {
-		return getDeclaredMethods(null);
+		return getDeclaredMethods(null); // Instantiation of dependent expression may not work.
 	}
 
 	@Override
@@ -171,7 +171,7 @@ public class CompositeCPPClassSpecialization extends CompositeCPPClassType imple
 
 	@Override
 	public final ICPPField[] getDeclaredFields() {
-		return getDeclaredFields(null);
+		return getDeclaredFields(null); // Instantiation of dependent expression may not work.
 	}
 
 	@Override
@@ -185,7 +185,7 @@ public class CompositeCPPClassSpecialization extends CompositeCPPClassType imple
 
 	@Override
 	public final IBinding[] getFriends() {
-		return getFriends(null);
+		return getFriends(null); // Instantiation of dependent expression may not work.
 	}
 
 	@Override
@@ -199,7 +199,7 @@ public class CompositeCPPClassSpecialization extends CompositeCPPClassType imple
 
 	@Override
 	public final ICPPClassType[] getNestedClasses() {
-		return getNestedClasses(null);
+		return getNestedClasses(null); // Instantiation of dependent expression may not work.
 	}
 
 	@Override

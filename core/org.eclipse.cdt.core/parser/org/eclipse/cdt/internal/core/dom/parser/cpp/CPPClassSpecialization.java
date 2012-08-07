@@ -122,7 +122,7 @@ public class CPPClassSpecialization extends CPPSpecialization
 	
 	@Override
 	public ICPPBase[] getBases() {
-		return getBases(null);
+		return getBases(null); // Instantiation of dependent expression may not work.
 	}
 
 	@Override
@@ -164,7 +164,7 @@ public class CPPClassSpecialization extends CPPSpecialization
 
 	@Override
 	public ICPPConstructor[] getConstructors() {
-		return getConstructors(null);
+		return getConstructors(null); // Instantiation of dependent expression may not work.
 	}
 
 	@Override

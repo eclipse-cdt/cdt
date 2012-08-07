@@ -15,6 +15,8 @@ import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
 
 import java.util.Arrays;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -166,6 +168,29 @@ public class EvalFunctionSet extends CPPEvaluation {
 		if (Arrays.equals(arguments, originalArguments) && functions == originalFunctions)
 			return this;
 		return new EvalFunctionSet(new CPPFunctionSet(functions, arguments, null), fAddressOf);
+	}
+
+	/**
+	 * Attempts to resolve the function using the parameters of a function call.
+	 *
+	 * @param args the arguments of a function call
+	 * @param point the name lookup context
+	 * @return the resolved or the original evaluation depending on whether function resolution
+	 *     succeeded or not
+	 */
+	public ICPPEvaluation resolveFunction(ICPPEvaluation[] args, IASTNode point) {
+		ICPPFunction[] functions = fFunctionSet.getBindings();
+		LookupData data = new LookupData(functions[0].getNameCharArray(),
+				fFunctionSet.getTemplateArguments(), point);
+		data.setFunctionArguments(false, args);
+		try {
+			IBinding binding = CPPSemantics.resolveFunction(data, functions, true);
+			if (binding instanceof ICPPFunction && !(binding instanceof ICPPUnknownBinding))
+				return new EvalBinding(binding, null);
+		} catch (DOMException e) {
+			CCorePlugin.log(e);
+		}
+		return this;
 	}
 
 	@Override

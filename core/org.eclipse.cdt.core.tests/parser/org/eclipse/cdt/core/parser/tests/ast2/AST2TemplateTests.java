@@ -88,6 +88,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknownScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 public class AST2TemplateTests extends AST2BaseTest {
 
@@ -5655,17 +5656,14 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	  typedef typename C::type pointer;
 	//	};
 	//
-	//	void f(int*);
-	//	void f(int);
-	//
-	//	void test(B<int>::pointer a) {
-	//	  f(a);
-	//	}
+	//	B<int>::pointer a;
 	public void testDependentExpressions_b() throws Exception {
 		parseAndCheckBindings();
 		BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), CPP);
-		ICPPFunction func= bh.assertNonProblem("f(a)", 1, ICPPFunction.class);
-		assertFalse(func instanceof ICPPUnknownBinding);
+		ICPPVariable var= bh.assertNonProblem("a;", 1, ICPPVariable.class);
+		IType type = var.getType();
+		type = SemanticUtil.getNestedType(type, TDEF);
+		assertEquals("int *", type.toString());
 	}
 
 	//	template <int> void* foo(int);

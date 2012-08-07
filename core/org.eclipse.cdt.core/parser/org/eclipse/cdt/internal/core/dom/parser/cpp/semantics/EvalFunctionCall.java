@@ -20,11 +20,8 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 
 import java.util.Arrays;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
@@ -40,7 +37,6 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics.LookupMode;
 import org.eclipse.core.runtime.CoreException;
@@ -187,34 +183,23 @@ public class EvalFunctionCall extends CPPEvaluation {
 	@Override
 	public ICPPEvaluation instantiate(ICPPTemplateParameterMap tpMap, int packOffset,
 			ICPPClassSpecialization within, int maxdepth, IASTNode point) {
-		ICPPEvaluation[] args = null;
+		ICPPEvaluation[] args = fArguments;
 		for (int i = 0; i < fArguments.length; i++) {
 			ICPPEvaluation arg = fArguments[i].instantiate(tpMap, packOffset, within, maxdepth, point);
 			if (arg != fArguments[i]) {
-				if (args == null) {
+				if (args == fArguments) {
 					args = new ICPPEvaluation[fArguments.length];
 					System.arraycopy(fArguments, 0, args, 0, fArguments.length);
 				}
 				args[i] = arg;
 			}
 		}
-		if (args == null)
+		if (args == fArguments)
 			return this;
 
-		if (args[0] instanceof EvalFunctionSet) {
+		if (args[0] instanceof EvalFunctionSet && getOverload(point) == null) {
 			// Resolve the function using the parameters of the function call.
-			CPPFunctionSet functionSet = ((EvalFunctionSet) args[0]).getFunctionSet();
-			ICPPFunction[] functions = functionSet.getBindings();
-			LookupData data = new LookupData(functions[0].getNameCharArray(),
-					functionSet.getTemplateArguments(), point);
-			data.setFunctionArguments(false, Arrays.copyOfRange(args, 1, args.length));
-			try {
-				IBinding binding = CPPSemantics.resolveFunction(data, functions, true);
-				if (binding instanceof ICPPFunction && !(binding instanceof ICPPUnknownBinding))
-					args[0] = new EvalBinding(binding, null);
-			} catch (DOMException e) {
-				CCorePlugin.log(e);
-			}
+			args[0] = ((EvalFunctionSet) args[0]).resolveFunction(Arrays.copyOfRange(args, 1, args.length), point);
 		}
 		return new EvalFunctionCall(args);
 	}

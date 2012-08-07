@@ -5661,7 +5661,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	void test(B<int>::pointer a) {
 	//	  f(a);
 	//	}
-	public void _testDependentExpressions_b() throws Exception {
+	public void testDependentExpressions_b() throws Exception {
 		parseAndCheckBindings();
 		BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), CPP);
 		ICPPFunction func= bh.assertNonProblem("f(a)", 1, ICPPFunction.class);

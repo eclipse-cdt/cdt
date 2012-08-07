@@ -215,6 +215,9 @@ public abstract class CPPEvaluation implements ICPPEvaluation {
 		}
 	}
 
+	CPPEvaluation() {
+	}
+
 	@Override
 	public char[] getSignature() {
 		SignatureBuilder buf = new SignatureBuilder();

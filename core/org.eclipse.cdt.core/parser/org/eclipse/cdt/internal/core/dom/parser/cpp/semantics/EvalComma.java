@@ -173,18 +173,18 @@ public class EvalComma extends CPPEvaluation {
 	@Override
 	public ICPPEvaluation instantiate(ICPPTemplateParameterMap tpMap, int packOffset,
 			ICPPClassSpecialization within, int maxdepth, IASTNode point) {
-		ICPPEvaluation[] args = null;
+		ICPPEvaluation[] args = fArguments;
 		for (int i = 0; i < fArguments.length; i++) {
 			ICPPEvaluation arg = fArguments[i].instantiate(tpMap, packOffset, within, maxdepth, point);
 			if (arg != fArguments[i]) {
-				if (args == null) {
+				if (args == fArguments) {
 					args = new ICPPEvaluation[fArguments.length];
 					System.arraycopy(fArguments, 0, args, 0, fArguments.length);
 				}
 				args[i] = arg;
 			}
 		}
-		if (args == null)
+		if (args == fArguments)
 			return this;
 		return new EvalComma(args);
 	}

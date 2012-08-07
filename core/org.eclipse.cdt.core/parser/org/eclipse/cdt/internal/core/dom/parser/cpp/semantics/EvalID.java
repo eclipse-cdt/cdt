@@ -14,8 +14,6 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
 
-import java.util.Arrays;
-
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
@@ -291,7 +289,6 @@ public class EvalID extends CPPEvaluation {
 
 		IBinding nameOwner = fNameOwner;
 		if (nameOwner instanceof ICPPClassTemplate) {
-			// TODO(sprigogin): Figure out why testDependentExpressions_a fails without special-casing ICPPClassTemplate
 			nameOwner = resolveUnknown(CPPTemplates.createDeferredInstance((ICPPClassTemplate) nameOwner),
 					tpMap, packOffset, within, point);
 		} else if (nameOwner instanceof IType) {
@@ -303,7 +300,7 @@ public class EvalID extends CPPEvaluation {
 		if (fieldOwner instanceof IProblemBinding || nameOwner instanceof IProblemBinding)
 			return this;
 
-		if (Arrays.equals(templateArgs, fTemplateArgs) && fieldOwner == fFieldOwner && nameOwner == fNameOwner)
+		if (templateArgs == fTemplateArgs && fieldOwner == fFieldOwner && nameOwner == fNameOwner)
 			return this;
 
 		ICPPEvaluation eval = resolveName((ICPPClassType) nameOwner, templateArgs, point);

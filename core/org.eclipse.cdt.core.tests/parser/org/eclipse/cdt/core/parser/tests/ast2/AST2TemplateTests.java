@@ -5631,7 +5631,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	  ns::C<IsAorB<int>::value> a;
 	//	  f(a);
 	//	};
-	public void testDependentExpressions() throws Exception {
+	public void testDependentExpressions_a() throws Exception {
 		parseAndCheckBindings();
 	}
 
@@ -5640,31 +5640,28 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	  typedef T type;
 	//	};
 	//
-	//	template<typename T>
-	//	struct B {};
-	//
-	//	template <typename T, typename U = B<T> >
-	//	struct C {
-	//	  struct D {
+	//	template <typename T>
+	//	struct B {
+	//	  struct C {
 	//	    template<typename V>
 	//	    static typename V::pointer test(typename V::pointer*);
 	//	    template<typename V>
 	//	    static T* test(...);
 	//
-	//	    typedef typename A<U>::type E;
-	//	    typedef decltype(test<E>(0)) type;
+	//	    typedef typename A<T>::type D;
+	//	    typedef decltype(test<D>(0)) type;
 	//	  };
 	//
-	//	  typedef typename D::type pointer;
+	//	  typedef typename C::type pointer;
 	//	};
 	//
 	//	void f(int*);
 	//	void f(int);
 	//
-	//	void test(C<int>::pointer a) {
+	//	void test(B<int>::pointer a) {
 	//	  f(a);
 	//	}
-	public void _testDependentExpressionsDecltype() throws Exception {
+	public void _testDependentExpressions_b() throws Exception {
 		parseAndCheckBindings();
 		BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), CPP);
 		ICPPFunction func= bh.assertNonProblem("f(a)", 1, ICPPFunction.class);

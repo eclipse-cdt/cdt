@@ -8,6 +8,7 @@
  * Contributors:
  *     Andrew Ferguson (Symbian) - Initial implementation
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
@@ -67,14 +68,14 @@ public class CompositeCPPClassSpecializationScope extends CompositeScope impleme
 	}
 
 	@Override
-	public ICPPMethod[] getImplicitMethods(IASTNode point) {
-		return getImplicitMethods(null);
+	public ICPPMethod[] getImplicitMethods() {
+		return getImplicitMethods(null); // Instantiation of dependent expression may not work.
 	}
 
 	@Override
-	public ICPPMethod[] getImplicitMethods() {
+	public ICPPMethod[] getImplicitMethods(IASTNode point) {
 		createDelegate();
-		return fDelegate.getImplicitMethods();
+		return fDelegate.getImplicitMethods(point);
 	}
 
 	@Override
@@ -103,7 +104,7 @@ public class CompositeCPPClassSpecializationScope extends CompositeScope impleme
 
 	@Override
 	public ICPPConstructor[] getConstructors() {
-		return getConstructors(null);
+		return getConstructors(null); // Instantiation of dependent expression may not work.
 	}
 
 	@Override

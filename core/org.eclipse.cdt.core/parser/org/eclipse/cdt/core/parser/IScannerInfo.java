@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM Rational Software - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     IBM Rational Software - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser;
 
@@ -19,11 +19,10 @@ import java.util.Map;
  */
 public interface IScannerInfo {
 	/**
-	 * Returns a <code>Map</code> containing all the defined preprocessor 
-	 * symbols and their values.
+	 * Returns a {@link Map} containing all the defined preprocessor symbols and their values.
 	 * Symbols defined without values have an empty string for a value. For 
-	 * example,-Dsymbol=value would have a map entry (symbol,value). A symbol
-	 * defined as -Dsymbol= would have a map entry of (symbol,"").
+	 * example, -Dsymbol=value would have a map entry (symbol, value). A symbol
+	 * defined as -Dsymbol= would have a map entry of (symbol, "").
 	 */
 	public Map<String, String> getDefinedSymbols();
 
@@ -36,9 +35,10 @@ public interface IScannerInfo {
 	 * <br> E.g.:  /System/Library/Frameworks/__framework__.framework/Headers/__header__,
 	 * /System/Library/Frameworks/__framework__.framework/PrivateHeaders/__header__
 	 * would handle the framework search for '/System/Library/Frameworks'
-	 * <br> The variables are handled only, if a search path element makes use of both of the variables. 
-	 * The __framework__ variable will receive the first segment of the include, the __header__ variable
-	 * the rest. Such a search path element is not used for directives with a single segment (e.g. 'header.h')
+	 * <br> The variables are handled only, if a search path element makes use of both of
+	 * the variables. The __framework__ variable will receive the first segment of the include,
+	 * the __header__ variable the rest. Such a search path element is not used for directives
+	 * with a single segment (e.g. 'header.h')
 	 */
 	public String[] getIncludePaths();
 }

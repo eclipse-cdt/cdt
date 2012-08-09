@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    QNX - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     QNX - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -19,7 +19,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
  * Interface for deferred class template instances. 
  */
 public interface ICPPDeferredClassInstance extends ICPPUnknownClassType, ICPPTemplateInstance {
-
 	/**
 	 * Returns the class template for the deferred instantiation.
 	 */

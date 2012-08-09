@@ -54,6 +54,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
@@ -101,14 +102,14 @@ public class ClassTypeHelper {
 		IASTDeclaration[] members = host.getCompositeTypeSpecifier().getMembers();
 		for (IASTDeclaration decl : members) {
 			while (decl instanceof ICPPASTTemplateDeclaration)
-				decl = ((ICPPASTTemplateDeclaration)decl).getDeclaration();
+				decl = ((ICPPASTTemplateDeclaration) decl).getDeclaration();
 
 			if (decl instanceof IASTSimpleDeclaration) {
-				ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) ((IASTSimpleDeclaration)decl).getDeclSpecifier();
+				ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) ((IASTSimpleDeclaration) decl).getDeclSpecifier();
 				if (declSpec.isFriend()) {
-					IASTDeclarator[] dtors = ((IASTSimpleDeclaration)decl).getDeclarators();
+					IASTDeclarator[] dtors = ((IASTSimpleDeclaration) decl).getDeclarators();
 					if (declSpec instanceof ICPPASTElaboratedTypeSpecifier && dtors.length == 0) {
-						resultSet.put(((ICPPASTElaboratedTypeSpecifier)declSpec).getName().resolveBinding());
+						resultSet.put(((ICPPASTElaboratedTypeSpecifier) declSpec).getName().resolveBinding());
 					} else {
 						for (IASTDeclarator dtor : dtors) {
 							if (dtor == null) break;
@@ -118,9 +119,9 @@ public class ClassTypeHelper {
 					}
 				}
 			} else if (decl instanceof IASTFunctionDefinition) {
-				ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) ((IASTFunctionDefinition)decl).getDeclSpecifier();
+				ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) ((IASTFunctionDefinition) decl).getDeclSpecifier();
 				if (declSpec.isFriend()) {
-					IASTDeclarator dtor = ((IASTFunctionDefinition)decl).getDeclarator();
+					IASTDeclarator dtor = ((IASTFunctionDefinition) decl).getDeclarator();
 					dtor= ASTQueries.findInnermostDeclarator(dtor);
 					resultSet.put(dtor.getName().resolveBinding());
 				}
@@ -144,7 +145,7 @@ public class ClassTypeHelper {
 			if (type.isSameType(classType)) {
 				return true;
 			}
-			for (IBinding friend : classType.getFriends()) {
+			for (IBinding friend : getFriends(classType, null)) {
 				if (friend instanceof ICPPClassType && type.isSameType((IType) friend)) {
 					return true;
 				}
@@ -152,7 +153,7 @@ public class ClassTypeHelper {
 		} else if (binding instanceof ICPPFunction) {
 			type = ((ICPPFunction) binding).getType();
 			char[] name = binding.getNameCharArray();
-			for (IBinding friend : classType.getFriends()) {
+			for (IBinding friend : getFriends(classType, null)) {
 				if (friend instanceof ICPPFunction &&
 						CharArrayUtils.equals(name, friend.getNameCharArray()) &&
 						SemanticUtil.isSameOwner(binding.getOwner(), friend.getOwner()) &&
@@ -217,17 +218,17 @@ public class ClassTypeHelper {
 		IASTDeclaration[] decls = host.getCompositeTypeSpecifier().getMembers();
 		for (IASTDeclaration decl : decls) {
 			if (decl instanceof IASTSimpleDeclaration) {
-				IASTDeclarator[] dtors = ((IASTSimpleDeclaration)decl).getDeclarators();
+				IASTDeclarator[] dtors = ((IASTSimpleDeclaration) decl).getDeclarators();
 				for (IASTDeclarator dtor : dtors) {
 					binding = ASTQueries.findInnermostDeclarator(dtor).getName().resolveBinding();
 					if (binding instanceof ICPPField)
 						result = ArrayUtil.append(ICPPField.class, result, (ICPPField) binding);
 				}
 			} else if (decl instanceof ICPPASTUsingDeclaration) {
-				IASTName n = ((ICPPASTUsingDeclaration)decl).getName();
+				IASTName n = ((ICPPASTUsingDeclaration) decl).getName();
 				binding = n.resolveBinding();
 				if (binding instanceof ICPPUsingDeclaration) {
-					IBinding[] bs = ((ICPPUsingDeclaration)binding).getDelegates();
+					IBinding[] bs = ((ICPPUsingDeclaration) binding).getDelegates();
 					for (IBinding element : bs) {
 						if (element instanceof ICPPField)
 							result = ArrayUtil.append(ICPPField.class, result, (ICPPField) element);
@@ -240,27 +241,63 @@ public class ClassTypeHelper {
 		return ArrayUtil.trim(ICPPField.class, result);
 	}
 
+	public static ICPPBase[] getBases(ICPPClassType classType, IASTNode point) {
+		if (classType instanceof ICPPClassSpecialization)
+			return ((ICPPClassSpecialization) classType).getBases(point);
+		return classType.getBases();
+	}
+
+	public static ICPPConstructor[] getConstructors(ICPPClassType classType, IASTNode point) {
+		if (classType instanceof ICPPClassSpecialization)
+			return ((ICPPClassSpecialization) classType).getConstructors(point);
+		return classType.getConstructors();
+	}
+
+	public static ICPPField[] getDeclaredFields(ICPPClassType classType, IASTNode point) {
+		if (classType instanceof ICPPClassSpecialization)
+			return ((ICPPClassSpecialization) classType).getDeclaredFields(point);
+		return classType.getDeclaredFields();
+	}
+
+	public static ICPPMethod[] getDeclaredMethods(ICPPClassType classType, IASTNode point) {
+		if (classType instanceof ICPPClassSpecialization)
+			return ((ICPPClassSpecialization) classType).getDeclaredMethods(point);
+		return classType.getDeclaredMethods();
+	}
+
+	public static IBinding[] getFriends(ICPPClassType classType, IASTNode point) {
+		if (classType instanceof ICPPClassSpecialization)
+			return ((ICPPClassSpecialization) classType).getFriends(point);
+		return classType.getFriends();
+	}
+
+	public static ICPPClassType[] getNestedClasses(ICPPClassType classType, IASTNode point) {
+		if (classType instanceof ICPPClassSpecialization)
+			return ((ICPPClassSpecialization) classType).getNestedClasses(point);
+		return classType.getNestedClasses();
+	}
+
 	/**
 	 * Returns all direct and indirect base classes. 
 	 * @param classType a class
 	 * @return An array of visible base classes in arbitrary order.
 	 */
-	public static ICPPClassType[] getAllBases(ICPPClassType classType) {
+	public static ICPPClassType[] getAllBases(ICPPClassType classType, IASTNode point) {
 		HashSet<ICPPClassType> result= new HashSet<ICPPClassType>();
 		result.add(classType);
-		getAllBases(classType, result);
+		getAllBases(classType, result, point);
 		result.remove(classType);
 		return result.toArray(new ICPPClassType[result.size()]);
 	}
 
-	private static void getAllBases(ICPPClassType classType, HashSet<ICPPClassType> result) {
-		ICPPBase[] bases= classType.getBases();
+	private static void getAllBases(ICPPClassType classType, HashSet<ICPPClassType> result, IASTNode point) {
+		ICPPBase[] bases= ClassTypeHelper.getBases(classType, point);
 		for (ICPPBase base : bases) {
 			IBinding b= base.getBaseClass();
 			if (b instanceof ICPPClassType) {
 				final ICPPClassType baseClass = (ICPPClassType) b;
 				if (result.add(baseClass)) { 
-					getAllBases(baseClass, result);
+					getAllBases(baseClass, result, point);
 				}
 			}
 		}
@@ -287,25 +324,22 @@ public class ClassTypeHelper {
 		return false;
 	}
 
-	public static ICPPMethod[] getAllDeclaredMethods(ICPPClassType ct) {
-		ICPPMethod[] methods= ct.getDeclaredMethods();
-		ICPPClassType[] bases= getAllBases(ct);
+	public static ICPPMethod[] getAllDeclaredMethods(ICPPClassType ct, IASTNode point) {
+		ICPPMethod[] methods= getDeclaredMethods(ct, point);
+		ICPPClassType[] bases= getAllBases(ct, point);
 		for (ICPPClassType base : bases) {
-			methods = ArrayUtil.addAll(ICPPMethod.class, methods, base.getDeclaredMethods());
+			methods = ArrayUtil.addAll(ICPPMethod.class, methods, getDeclaredMethods(base, point));
 		}
 		return ArrayUtil.trim(ICPPMethod.class, methods);
 	}
 
-	public static ICPPMethod[] getMethods(ICPPClassType ct) {
-		ObjectSet<ICPPMethod> set = getOwnMethods(ct);
+	public static ICPPMethod[] getMethods(ICPPClassType ct, IASTNode point) {
+		ObjectSet<ICPPMethod> set = getOwnMethods(ct, point);
 
-		ICPPClassType[] bases= getAllBases(ct);
+		ICPPClassType[] bases= getAllBases(ct, point);
 		for (ICPPClassType base : bases) {
-			set.addAll(base.getDeclaredMethods());
-			final IScope compositeScope = base.getCompositeScope();
-			if (compositeScope instanceof ICPPClassScope) {
-				set.addAll(((ICPPClassScope) compositeScope).getImplicitMethods());
-			}
+			set.addAll(getDeclaredMethods(base, point));
+			set.addAll(getImplicitMethods(base, point));
 		}
 		return set.keyArray(ICPPMethod.class);
 	}
@@ -314,14 +348,21 @@ public class ClassTypeHelper {
 	 * Returns methods either declared by the given class or generated by the compiler. Does not
 	 * include methods declared in base classes. 
 	 */
-	private static ObjectSet<ICPPMethod> getOwnMethods(ICPPClassType classType) {
+	private static ObjectSet<ICPPMethod> getOwnMethods(ICPPClassType classType, IASTNode point) {
 		ObjectSet<ICPPMethod> set= new ObjectSet<ICPPMethod>(4);
-		set.addAll(classType.getDeclaredMethods());
-		IScope scope = classType.getCompositeScope();
-		if (scope instanceof ICPPClassScope) {
-			set.addAll(((ICPPClassScope) scope).getImplicitMethods());
-		}
+		set.addAll(ClassTypeHelper.getDeclaredMethods(classType, point));
+		set.addAll(getImplicitMethods(classType, point));
 		return set;
+	}
+
+	public static ICPPMethod[] getImplicitMethods(ICPPClassType classType, IASTNode point) {
+		IScope scope = classType.getCompositeScope();
+		if (scope instanceof ICPPClassSpecializationScope) {
+			return ((ICPPClassSpecializationScope) scope).getImplicitMethods(point);
+		} else if (scope instanceof ICPPClassScope) {
+			return ((ICPPClassScope) scope).getImplicitMethods();
+		}
+		return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 	}
 
 	public static ICPPMethod[] getDeclaredMethods(ICPPInternalClassTypeMixinHost host) {
@@ -341,9 +382,9 @@ public class ClassTypeHelper {
 		IASTDeclaration[] decls = host.getCompositeTypeSpecifier().getMembers();
 		for (IASTDeclaration decl : decls) {
 			while (decl instanceof ICPPASTTemplateDeclaration)
-				decl = ((ICPPASTTemplateDeclaration)decl).getDeclaration();
+				decl = ((ICPPASTTemplateDeclaration) decl).getDeclaration();
 			if (decl instanceof IASTSimpleDeclaration) {
-				final IASTSimpleDeclaration sdecl = (IASTSimpleDeclaration)decl;
+				final IASTSimpleDeclaration sdecl = (IASTSimpleDeclaration) decl;
 				if (!((ICPPASTDeclSpecifier) sdecl.getDeclSpecifier()).isFriend()) {
 					IASTDeclarator[] dtors = sdecl.getDeclarators();
 					for (IASTDeclarator dtor : dtors) {
@@ -353,7 +394,7 @@ public class ClassTypeHelper {
 					}
 				}
 			} else if (decl instanceof IASTFunctionDefinition) {
-				final IASTFunctionDefinition fdef = (IASTFunctionDefinition)decl;
+				final IASTFunctionDefinition fdef = (IASTFunctionDefinition) decl;
 				if (!((ICPPASTDeclSpecifier) fdef.getDeclSpecifier()).isFriend()) {
 					IASTDeclarator dtor = fdef.getDeclarator();
 					dtor = ASTQueries.findInnermostDeclarator(dtor);
@@ -363,10 +404,10 @@ public class ClassTypeHelper {
 					}
 				}
 			} else if (decl instanceof ICPPASTUsingDeclaration) {
-				IASTName n = ((ICPPASTUsingDeclaration)decl).getName();
+				IASTName n = ((ICPPASTUsingDeclaration) decl).getName();
 				binding = n.resolveBinding();
 				if (binding instanceof ICPPUsingDeclaration) {
-					IBinding[] bs = ((ICPPUsingDeclaration)binding).getDelegates();
+					IBinding[] bs = ((ICPPUsingDeclaration) binding).getDelegates();
 					for (IBinding element : bs) {
 						if (element instanceof ICPPMethod)
 							result = ArrayUtil.append(ICPPMethod.class, result, (ICPPMethod) element);
@@ -407,15 +448,15 @@ public class ClassTypeHelper {
 		IASTDeclaration[] decls = host.getCompositeTypeSpecifier().getMembers();
 		for (IASTDeclaration decl : decls) {
 			while (decl instanceof ICPPASTTemplateDeclaration)
-				decl = ((ICPPASTTemplateDeclaration)decl).getDeclaration();
+				decl = ((ICPPASTTemplateDeclaration) decl).getDeclaration();
 			if (decl instanceof IASTSimpleDeclaration) {
 				IBinding binding = null;
 				IASTDeclSpecifier declSpec = ((IASTSimpleDeclaration) decl).getDeclSpecifier();
 				if (declSpec instanceof ICPPASTCompositeTypeSpecifier) {
-					binding = ((ICPPASTCompositeTypeSpecifier)declSpec).getName().resolveBinding();
+					binding = ((ICPPASTCompositeTypeSpecifier) declSpec).getName().resolveBinding();
 				} else if (declSpec instanceof ICPPASTElaboratedTypeSpecifier &&
-						((IASTSimpleDeclaration)decl).getDeclarators().length == 0) {
-					binding = ((ICPPASTElaboratedTypeSpecifier)declSpec).getName().resolveBinding();
+						((IASTSimpleDeclaration) decl).getDeclarators().length == 0) {
+					binding = ((ICPPASTElaboratedTypeSpecifier) declSpec).getName().resolveBinding();
 				}
 				if (binding instanceof ICPPClassType)
 					result = ArrayUtil.append(ICPPClassType.class, result, (ICPPClassType) binding);
@@ -424,11 +465,11 @@ public class ClassTypeHelper {
 		return ArrayUtil.trim(ICPPClassType.class, result);
 	}
 
-	public static IField[] getFields(ICPPClassType ct) {
-		IField[] fields = ct.getDeclaredFields();
-		ICPPClassType[] bases = getAllBases(ct);
+	public static IField[] getFields(ICPPClassType ct, IASTNode point) {
+		IField[] fields = getDeclaredFields(ct, point);
+		ICPPClassType[] bases = getAllBases(ct, point);
 		for (ICPPClassType base : bases) {
-			fields = ArrayUtil.addAll(IField.class, fields, base.getDeclaredFields());
+			fields = ArrayUtil.addAll(IField.class, fields, getDeclaredFields(base, point));
 		}
 		return ArrayUtil.trim(IField.class, fields);
 	}
@@ -464,7 +505,8 @@ public class ClassTypeHelper {
 		final ICPPClassType mcl= m.getClassOwner();
 		if (mcl != null) {
 			final ICPPFunctionType mft= m.getType();
-			ICPPMethod[] allMethods= mcl.getMethods();
+			IASTNode point = null; // Instantiation of dependent expressions may not work
+			ICPPMethod[] allMethods= ClassTypeHelper.getMethods(mcl, point);
 			for (ICPPMethod method : allMethods) {
 				if (CharArrayUtils.equals(mname, method.getNameCharArray()) && functionTypesAllowOverride(mft, method.getType())) {
 					if (method.isVirtual()) {
@@ -520,7 +562,7 @@ public class ClassTypeHelper {
 		if (sourceClass == null || targetClass == null)
 			return false;
 
-		ICPPClassType[] bases= getAllBases(sourceClass);
+		ICPPClassType[] bases= getAllBases(sourceClass, null);
 		for (ICPPClassType base : bases) {
 			if (base.isSameType(targetClass))
 				return true;
@@ -532,7 +574,7 @@ public class ClassTypeHelper {
 	/**
 	 * Returns all methods that are overridden by the given {@code method}.
 	 */
-	public static ICPPMethod[] findOverridden(ICPPMethod method) {
+	public static ICPPMethod[] findOverridden(ICPPMethod method, IASTNode point) {
 		if (method instanceof ICPPConstructor)
 			return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 
@@ -546,7 +588,7 @@ public class ClassTypeHelper {
 		final ICPPFunctionType mft= method.getType();
 
 		virtualInClass.put(mcl, method.isVirtual());
-		ICPPBase[] bases= mcl.getBases();
+		ICPPBase[] bases= getBases(mcl, point);
 		for (ICPPBase base : bases) {
 			IBinding b= base.getBaseClass();
 			if (b instanceof ICPPClassType) {
@@ -681,10 +723,10 @@ public class ClassTypeHelper {
 	/**
 	 * For implicit methods the exception specification is inherited, search it
 	 */
-	public static IType[] getInheritedExceptionSpecification(ICPPMethod implicitMethod) {
+	public static IType[] getInheritedExceptionSpecification(ICPPMethod implicitMethod, IASTNode point) {
 		// See 15.4.13
 		ICPPClassType owner= implicitMethod.getClassOwner();
-		if (owner == null || owner.getBases().length == 0) 
+		if (owner == null || ClassTypeHelper.getBases(owner, point).length == 0) 
 			return null;
 
 		// we use a list as types aren't comparable, and can have duplicates (15.4.6)
@@ -693,7 +735,7 @@ public class ClassTypeHelper {
 			return null;
 
 		List<IType> inheritedTypeids = new ArrayList<IType>();
-		ICPPClassType[] bases= getAllBases(owner);
+		ICPPClassType[] bases= getAllBases(owner, point);
 		for (ICPPClassType base : bases) {
 			if (!(base instanceof ICPPDeferredClassInstance)) {
 				ICPPMethod  baseMethod= getMethodInClass(base, kind);
@@ -792,10 +834,10 @@ public class ClassTypeHelper {
 	 * no private or protected non-static data members (Clause 11), 
 	 * no base classes (Clause 10), and no virtual functions (10.3).
 	 */
-	public static boolean isAggregateClass(ICPPClassType classTarget) {
-		if (classTarget.getBases().length > 0)
+	public static boolean isAggregateClass(ICPPClassType classTarget, IASTNode point) {
+		if (ClassTypeHelper.getBases(classTarget, point).length > 0)
 			return false;
-		ICPPMethod[] methods = classTarget.getDeclaredMethods();
+		ICPPMethod[] methods = ClassTypeHelper.getDeclaredMethods(classTarget, point);
 		for (ICPPMethod m : methods) {
 			if (m instanceof ICPPConstructor)
 				return false;
@@ -803,7 +845,7 @@ public class ClassTypeHelper {
 				return false;
 			}
 		}
-		ICPPField[] fields = classTarget.getDeclaredFields();
+		ICPPField[] fields = ClassTypeHelper.getDeclaredFields(classTarget, point);
 		for (ICPPField field : fields) {
 			if (!(field.getVisibility() == ICPPMember.v_public || field.isStatic())) {
 				return false;
@@ -837,7 +879,7 @@ public class ClassTypeHelper {
 			if (base.isVirtual())
 				return false;
 		}
-		for (ICPPClassType baseClass : getAllBases(classTarget)) {
+		for (ICPPClassType baseClass : getAllBases(classTarget, null)) {
 			if (!classTarget.isSameType(baseClass) && !hasTrivialCopyCtor(baseClass))
 				return false;
 		}
@@ -889,7 +931,7 @@ public class ClassTypeHelper {
 			if (!ctor.isImplicit() && ctor.getParameters().length == 0)
 				return false;
 		}
-		for (ICPPClassType baseClass : getAllBases(classTarget)) {
+		for (ICPPClassType baseClass : getAllBases(classTarget, null)) {
 			if (!classTarget.isSameType(baseClass) && !hasTrivialDefaultConstructor(baseClass))
 				return false;
 		}
@@ -925,7 +967,7 @@ public class ClassTypeHelper {
 			if (method.isDestructor())
 				return false;
 		}
-		for (ICPPClassType baseClass : getAllBases(classTarget)) {
+		for (ICPPClassType baseClass : getAllBases(classTarget, null)) {
 			if (!classTarget.isSameType(baseClass) && !hasTrivialDestructor(baseClass))
 				return false;
 		}
@@ -952,7 +994,7 @@ public class ClassTypeHelper {
 	public static boolean isPolymorphic(ICPPClassType classTarget) {
 		if (hasDeclaredVirtualMethod(classTarget))
 			return true;
-		for (ICPPClassType baseClass : getAllBases(classTarget)) {
+		for (ICPPClassType baseClass : getAllBases(classTarget, null)) {
 			if (hasDeclaredVirtualMethod(baseClass))
 				return true;
 		}
@@ -976,9 +1018,9 @@ public class ClassTypeHelper {
 	 * but doesn't take into account base classes and methods dependent on unspecified
 	 * template parameters.
 	 */
-	public static ICPPMethod[] getPureVirtualMethods(ICPPClassType classType) {
+	public static ICPPMethod[] getPureVirtualMethods(ICPPClassType classType, IASTNode point) {
 		Map<String, List<ICPPMethod>> result= collectPureVirtualMethods(classType, 
-				new HashMap<ICPPClassType, Map<String, List<ICPPMethod>>>());
+				new HashMap<ICPPClassType, Map<String, List<ICPPMethod>>>(), point);
 
 		int resultArraySize = 0;
 		for (List<ICPPMethod> methods : result.values()) {
@@ -995,7 +1037,7 @@ public class ClassTypeHelper {
 	}
 
 	private static Map<String, List<ICPPMethod>> collectPureVirtualMethods(ICPPClassType classType,
-			Map<ICPPClassType, Map<String, List<ICPPMethod>>> cache) {
+			Map<ICPPClassType, Map<String, List<ICPPMethod>>> cache, IASTNode point) {
 		Map<String, List<ICPPMethod>> result = cache.get(classType);
 		if (result != null)
 			return result;
@@ -1005,10 +1047,10 @@ public class ClassTypeHelper {
 
 		// Look at the pure virtual methods of the base classes
 		Set<IBinding> handledBaseClasses= new HashSet<IBinding>();
-		for (ICPPBase base : classType.getBases()) {
+		for (ICPPBase base : ClassTypeHelper.getBases(classType, point)) {
 			final IBinding baseClass = base.getBaseClass();
 			if (baseClass instanceof ICPPClassType && handledBaseClasses.add(baseClass)) {
-				Map<String, List<ICPPMethod>> pureVirtuals = collectPureVirtualMethods((ICPPClassType) baseClass, cache);
+				Map<String, List<ICPPMethod>> pureVirtuals = collectPureVirtualMethods((ICPPClassType) baseClass, cache, point);
 				// Merge derived pure virtual methods
 				for (String key : pureVirtuals.keySet()) {
 					List<ICPPMethod> list = result.get(key);
@@ -1021,8 +1063,8 @@ public class ClassTypeHelper {
 			}
 		}
 
-		// Remove overridden pure-virtual methods and add in new pure virutals.
-		final ObjectSet<ICPPMethod> methods = getOwnMethods(classType);
+		// Remove overridden pure-virtual methods and add in new pure virtuals.
+		final ObjectSet<ICPPMethod> methods = getOwnMethods(classType, point);
 		for (ICPPMethod method : methods) {
 			String key= getMethodNameForOverrideKey(method);
 			List<ICPPMethod> list = result.get(key);

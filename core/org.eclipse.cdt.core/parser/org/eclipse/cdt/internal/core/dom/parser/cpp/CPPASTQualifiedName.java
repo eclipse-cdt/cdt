@@ -271,14 +271,14 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 		IBinding[] bindings = CPPSemantics.findBindingsForContentAssist(n, isPrefix, namespaces);
 		
 		if (namesPos > 0) {
-			IBinding binding = names[namesPos-1].resolveBinding();
+			IBinding binding = names[namesPos - 1].resolveBinding();
 			if (binding instanceof ICPPClassType) {
 				ICPPClassType classType = (ICPPClassType) binding;
 				final boolean isDeclaration = getParent().getParent() instanceof IASTSimpleDeclaration;
 				List<IBinding> filtered = filterClassScopeBindings(classType, bindings, isDeclaration);
 				if (isDeclaration && nameMatches(classType.getNameCharArray(),
 						n.getLookupKey(), isPrefix)) {
-					ICPPConstructor[] constructors = classType.getConstructors();
+					ICPPConstructor[] constructors = ClassTypeHelper.getConstructors(classType, n);
 					for (int i = 0; i < constructors.length; i++) {
 						if (!constructors[i].isImplicit()) {
 							filtered.add(constructors[i]);
@@ -303,7 +303,7 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 				while(scope != null) {
 					if (scope instanceof ICPPClassScope) {
 						ICPPClassType classType = ((ICPPClassScope) scope).getClassType();
-						if (SemanticUtil.calculateInheritanceDepth(classType, baseClass) >= 0) {
+						if (SemanticUtil.calculateInheritanceDepth(classType, baseClass, this) >= 0) {
 							return true;
 						}
 					}

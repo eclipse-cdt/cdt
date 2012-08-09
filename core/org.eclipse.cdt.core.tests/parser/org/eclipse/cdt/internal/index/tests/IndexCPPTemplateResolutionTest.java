@@ -10,6 +10,7 @@
  *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.index.tests;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,13 +57,13 @@ import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateArgument;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTypeArgument;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.core.runtime.CoreException;
-
 
 /**
  * Tests for exercising resolution of template bindings against IIndex
@@ -629,23 +630,23 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		assertInstance(b2, ICPPClassType.class);
 		assertInstance(b2, ICPPTemplateInstance.class);
 		ICPPClassType ct2= (ICPPClassType) b2;
-		ICPPBase[] bss2= ct2.getBases();
+		ICPPBase[] bss2= ClassTypeHelper.getBases(ct2, null);
 		assertEquals(1, bss2.length);
 		assertInstance(bss2[0].getBaseClass(), ICPPClassType.class);
 		ICPPClassType ct2b= (ICPPClassType) bss2[0].getBaseClass();
 		assertInstance(ct2b, ICPPTemplateInstance.class);
-		
+
 		IBinding b0= getBindingFromASTName("B<int>", 6);
 		assertInstance(b0, ICPPClassType.class);
 		ICPPClassType ct= (ICPPClassType) b0;
-		ICPPBase[] bss= ct.getBases();
+		ICPPBase[] bss= ClassTypeHelper.getBases(ct, null);
 		assertEquals(1, bss.length);
 		assertInstance(bss[0].getBaseClass(), ICPPClassType.class);	
-		
+
 		IBinding b1= getBindingFromASTName("B<long>", 7);
 		assertInstance(b1, ICPPClassType.class);
 		ICPPClassType ct1= (ICPPClassType) b1;
-		ICPPBase[] bss1= ct1.getBases();
+		ICPPBase[] bss1= ClassTypeHelper.getBases(ct1, null);
 		assertEquals(1, bss1.length);
 		assertInstance(bss1[0].getBaseClass(), ICPPClassType.class);
 	}
@@ -672,13 +673,13 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
  		IBinding b0= getBindingFromASTName("A<B> ab", 4);
  		assertInstance(b0, ICPPClassType.class);
  		assertInstance(b0, ICPPSpecialization.class);
- 		
+
  		ICPPClassType ct= (ICPPClassType) b0;
- 		ICPPMethod[] dms= ct.getDeclaredMethods();
+ 		ICPPMethod[] dms= ClassTypeHelper.getDeclaredMethods(ct, null);
  		assertEquals(2, dms.length);
 
  		// if the specialization was used, we have 2 fields.
- 		ICPPField[] fs= ct.getDeclaredFields();
+ 		ICPPField[] fs= ClassTypeHelper.getDeclaredFields(ct, null);
  		assertEquals(2, fs.length);
 
  		ICPPMethod foo= dms[0].getName().equals("foo") ? dms[0] : dms[1];
@@ -1556,8 +1557,8 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		IBinding inst2= CPPTemplates.instantiate(tmplDef, inst.getTemplateArguments(), name);
 		assertSame(inst, inst2);
 		
-		IBinding charInst1= CPPTemplates.instantiate(tmplDef, new ICPPTemplateArgument[] {new CPPTemplateArgument(new CPPBasicType(Kind.eChar, 0))}, name);
-		IBinding charInst2= CPPTemplates.instantiate(tmplDef, new ICPPTemplateArgument[] {new CPPTemplateArgument(new CPPBasicType(Kind.eChar, 0))}, name);
+		IBinding charInst1= CPPTemplates.instantiate(tmplDef, new ICPPTemplateArgument[] {new CPPTemplateTypeArgument(new CPPBasicType(Kind.eChar, 0))}, name);
+		IBinding charInst2= CPPTemplates.instantiate(tmplDef, new ICPPTemplateArgument[] {new CPPTemplateTypeArgument(new CPPBasicType(Kind.eChar, 0))}, name);
 		assertSame(charInst1, charInst2);
 	}
 	
@@ -1574,7 +1575,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		assertInstance(m, ICPPSpecialization.class);
 		ICPPClassType ct= m.getClassOwner();
 		assertInstance(ct, ICPPTemplateInstance.class);
-		ICPPMethod[] ms= ct.getDeclaredMethods();
+		ICPPMethod[] ms= ClassTypeHelper.getDeclaredMethods(ct, null);
 		assertEquals(1, ms.length);
 		assertEquals(m, ms[0]);
 	}
@@ -1849,16 +1850,16 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		methods= ct.getMethods();
 		assertEquals(14, methods.length);
 		
-		ICPPBase[] bases = ct.getBases();
+		ICPPBase[] bases = ClassTypeHelper.getBases(ct, null);
 		assertEquals(1, bases.length);
 		
 		IField field = ct.findField("bfield");
 		assertNotNull(field);
 
-		IField[] fields = ct.getFields();
+		IField[] fields = ClassTypeHelper.getFields(ct, null);
 		assertEquals(2, fields.length);
 
-		IBinding[] friends = ct.getFriends();
+		IBinding[] friends = ClassTypeHelper.getFriends(ct, null);
 		assertEquals(0, friends.length); // not yet supported
 	}
 	

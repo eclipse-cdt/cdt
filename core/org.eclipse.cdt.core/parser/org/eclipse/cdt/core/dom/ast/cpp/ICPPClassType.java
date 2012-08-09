@@ -25,10 +25,8 @@ public interface ICPPClassType extends ICompositeType, ICPPBinding {
 	public static final int k_class = ICPPASTCompositeTypeSpecifier.k_class;
 
 	/**
-	 * Returns a list of base class relationships. The list is empty if there
+	 * Returns an array of base class relationships. The returned array is empty if there
 	 * are none.
-	 * 
-	 * @return List of ICPPBase
 	 */
 	public ICPPBase[] getBases();
 
@@ -88,18 +86,17 @@ public interface ICPPClassType extends ICompositeType, ICPPBinding {
 	 * Returns an array of ICPPConstructor objects representing the constructors
 	 * for this class. This list includes both declared and implicit
 	 * constructors.
-	 * 
 	 */
 	public ICPPConstructor[] getConstructors();
 
 	/**
-	 * return an array of bindings for those classes/functions declared as
+	 * Returns an array of bindings for those classes/functions declared as
 	 * friends of this class.
 	 */
 	public IBinding[] getFriends();
 	
 	/**
-	 * return an array of nested classes/structures
+	 * Returns an array of nested classes/structures
 	 */
 	public ICPPClassType[] getNestedClasses();
 }

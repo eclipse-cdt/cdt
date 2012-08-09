@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -15,7 +15,8 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateArgument;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateNonTypeArgument;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTypeArgument;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -36,24 +37,24 @@ public class PDOMCPPArgumentList {
 	public static long putArguments(PDOMNode parent, ICPPTemplateArgument[] templateArguments) throws CoreException {
 		final PDOMLinkage linkage= parent.getLinkage();
 		final Database db= linkage.getDB();
-		final short len= (short) Math.min(templateArguments.length, (Database.MAX_MALLOC_SIZE-2)/NODE_SIZE); 
-		final long block= db.malloc(2+NODE_SIZE*len);
+		final short len= (short) Math.min(templateArguments.length, (Database.MAX_MALLOC_SIZE - 2) / NODE_SIZE); 
+		final long block= db.malloc(2 + NODE_SIZE * len);
 		long p= block;
 
-		db.putShort(p, len); p+=2;
-		for (int i=0; i<len; i++, p+=NODE_SIZE) {
+		db.putShort(p, len);
+		p += 2;
+		for (int i= 0; i < len; i++, p += NODE_SIZE) {
 			final ICPPTemplateArgument arg = templateArguments[i];
 			final boolean isNonType= arg.isNonTypeValue();
 			if (isNonType) {
 				linkage.storeType(p, arg.getTypeOfNonTypeValue());
-				linkage.storeValue(p+VALUE_OFFSET, arg.getNonTypeValue());
+				linkage.storeValue(p + VALUE_OFFSET, arg.getNonTypeValue());
 			} else {
 				linkage.storeType(p, arg.getTypeValue());
 			}
 		}
 		return block;
 	}
-
 
 	/**
 	 * Restores an array of template arguments from the database.
@@ -63,11 +64,11 @@ public class PDOMCPPArgumentList {
 		final Database db= linkage.getDB();
 		final short len= db.getShort(record);
 		
-		Assert.isTrue(len >= 0 && len <= (Database.MAX_MALLOC_SIZE-2)/NODE_SIZE);
-		long p= record+2;
-		for (int i=0; i<len; i++) {
+		Assert.isTrue(len >= 0 && len <= (Database.MAX_MALLOC_SIZE - 2) / NODE_SIZE);
+		long p= record + 2;
+		for (int i= 0; i < len; i++) {
 			linkage.storeType(p, null);
-			linkage.storeValue(p+VALUE_OFFSET, null);
+			linkage.storeValue(p + VALUE_OFFSET, null);
 			p+= NODE_SIZE;
 		}
 		db.free(record);
@@ -81,25 +82,25 @@ public class PDOMCPPArgumentList {
 		final Database db= linkage.getDB();
 		final short len= db.getShort(rec);
 		
-		Assert.isTrue(len >= 0 && len <= (Database.MAX_MALLOC_SIZE-2)/NODE_SIZE);
+		Assert.isTrue(len >= 0 && len <= (Database.MAX_MALLOC_SIZE - 2) / NODE_SIZE);
 		if (len == 0) {
 			return ICPPTemplateArgument.EMPTY_ARGUMENTS;
 		}
 		
-		rec+=2;
+		rec += 2;
 		ICPPTemplateArgument[] result= new ICPPTemplateArgument[len];
-		for (int i=0; i<len; i++) {
+		for (int i= 0; i < len; i++) {
 			IType type= linkage.loadType(rec);
 			if (type == null) {
 				type= new ProblemType(ISemanticProblem.TYPE_NOT_PERSISTED);
 			}
-			IValue val= linkage.loadValue(rec+VALUE_OFFSET);
+			IValue val= linkage.loadValue(rec + VALUE_OFFSET);
 			if (val != null) {
-				result[i]= new CPPTemplateArgument(val, type);
+				result[i]= new CPPTemplateNonTypeArgument(val, type);
 			} else {
-				result[i]= new CPPTemplateArgument(type);
+				result[i]= new CPPTemplateTypeArgument(type);
 			}
-			rec+= NODE_SIZE;
+			rec += NODE_SIZE;
 		}
 		return result;
 	}

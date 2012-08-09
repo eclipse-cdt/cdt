@@ -152,7 +152,7 @@ public class AccessContext {
 			return isAccessible(bindingVisibility, accessLevel);
 		}
 
-		ICPPBase[] bases = derivedClass.getBases();
+		ICPPBase[] bases = ClassTypeHelper.getBases(derivedClass, name);
 		if (bases != null) {
 			for (ICPPBase base : bases) {
 				IBinding baseBinding = base.getBaseClass();

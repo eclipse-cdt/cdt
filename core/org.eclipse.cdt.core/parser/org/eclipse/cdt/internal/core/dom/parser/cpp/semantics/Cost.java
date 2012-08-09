@@ -6,10 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
- *    Bryan Wilkinson (QNX)
- *    Andrew Ferguson (Symbian)
+ *     IBM - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *     Bryan Wilkinson (QNX)
+ *     Andrew Ferguson (Symbian)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
@@ -114,7 +114,6 @@ public class Cost {
 	public void setRank(Rank rank) {
 		fRank= rank;
 	}
-	
 
 	public ReferenceBinding getReferenceBinding() {
 		return fReferenceBinding;
@@ -123,7 +122,6 @@ public class Cost {
 	public void setReferenceBinding(ReferenceBinding binding) {
 		fReferenceBinding= binding;
 	}
-
 	
 	public boolean isAmbiguousUDC() {
 		return fAmbiguousUDC;
@@ -303,7 +301,7 @@ public class Cost {
 	public void setSelectedFunction(ICPPFunction function) {
 		fSelectedFunction= function;
 	}
-	
+
 	public ICPPFunction getSelectedFunction() {
 		return fSelectedFunction;
 	}

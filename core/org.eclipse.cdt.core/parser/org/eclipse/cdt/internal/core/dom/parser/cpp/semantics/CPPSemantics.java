@@ -203,6 +203,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUsingDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUsingDirective;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVariable;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPASTInternalScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPClassSpecializationScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
@@ -244,7 +245,7 @@ public class CPPSemantics {
 	public static int traceIndent= 0;
 
 	// special return value for costForFunctionCall
-	private static final FunctionCost CONTAINS_DEPENDENT_TYPES = new FunctionCost(null, 0);
+	private static final FunctionCost CONTAINS_DEPENDENT_TYPES = new FunctionCost(null, 0, null);
 
 	static protected IBinding resolveBinding(IASTName name) {
 		if (traceBindingResolution) {
@@ -257,11 +258,11 @@ public class CPPSemantics {
 			((CPPASTNameBase) name).incResolutionDepth();
 		}
 
-		// 1: get some context info off of the name to figure out what kind of lookup we want
+		// 1: Get some context info off of the name to figure out what kind of lookup we want
 		LookupData data = createLookupData(name);
 
 		try {
-            // 2: lookup
+            // 2: Lookup
             lookup(data, null);
 
             // Perform argument dependent lookup
@@ -274,14 +275,14 @@ public class CPPSemantics {
 		if (data.problem != null)
 		    return data.problem;
 
-		// 3: resolve ambiguities
+		// 3: Resolve ambiguities
 		IBinding binding;
         try {
             binding = resolveAmbiguities(data);
         } catch (DOMException e) {
             binding = e.getProblem();
         }
-        // 4: post processing
+        // 4: Post processing
 		binding = postResolution(binding, data);
 		if (traceBindingResolution) {
 			traceIndent--;
@@ -306,6 +307,8 @@ public class CPPSemantics {
         if (lookupName == null)
         	return binding;
         
+		IASTNode lookupPoint = data.getLookupPoint();
+
         if (binding == null && data.checkClassContainingFriend()) {
         	// 3.4.1-10 if we don't find a name used in a friend declaration in the member declaration's class
         	// we should look in the class granting friendship
@@ -403,7 +406,7 @@ public class CPPSemantics {
 						if (data.getTranslationUnit() != null) {
 							ICPPASTTemplateId id = (ICPPASTTemplateId) lookupName;
 							ICPPTemplateArgument[] args = CPPTemplates.createTemplateArgumentArray(id);
-							IBinding inst= CPPTemplates.instantiate((ICPPClassTemplate) cls, args, data.getLookupPoint());
+							IBinding inst= CPPTemplates.instantiate((ICPPClassTemplate) cls, args, lookupPoint);
 							if (inst instanceof ICPPClassType) {
 								cls= (ICPPClassType) inst;
 							}
@@ -412,7 +415,7 @@ public class CPPSemantics {
 					if (cls instanceof ICPPUnknownBinding) {
 						binding= new CPPUnknownConstructor(cls);
 					} else {
-						binding= CPPSemantics.resolveFunction(data, cls.getConstructors(), true);
+						binding= CPPSemantics.resolveFunction(data, ClassTypeHelper.getConstructors(cls, lookupPoint), true);
 					}
 				} catch (DOMException e) {
 					return e.getProblem();
@@ -712,7 +715,7 @@ public class CPPSemantics {
     	}
 		if (t instanceof ICPPClassType && !(t instanceof ICPPClassTemplate)) {
 			ICPPClassType ct= (ICPPClassType) t;
-			ICPPBase[] bases = ct.getBases();
+			ICPPBase[] bases = ClassTypeHelper.getBases(ct, tu);
 			for (ICPPBase base : bases) {
 				IBinding b = base.getBaseClass();
 				if (b instanceof IType)
@@ -723,7 +726,7 @@ public class CPPSemantics {
 			//       (excluding template template parameters);
 			// * ... owners of which any template template arguments are members;
 			if (ct instanceof ICPPTemplateInstance) {
-				for (IBinding friend : ct.getFriends()) {
+				for (IBinding friend : ClassTypeHelper.getFriends(ct, tu)) {
 					if (friend instanceof ICPPFunction) {
 						friendFns.add((ICPPFunction) friend);
 					}
@@ -2413,7 +2416,7 @@ public class CPPSemantics {
 				potentialCosts.add(fnCost);
 				continue;
 			}
-			int cmp= fnCost.compareTo(tu, bestFnCost, lookupPoint);
+			int cmp= fnCost.compareTo(tu, bestFnCost);
 			if (cmp < 0) {
 				bestFnCost= fnCost;
 				ambiguousFunctions= null;
@@ -2425,7 +2428,7 @@ public class CPPSemantics {
 		if (potentialCosts != null) {
 			for (FunctionCost fnCost : potentialCosts) {
 				if (!fnCost.mustBeWorse(bestFnCost) && fnCost.performUDC(lookupPoint)) {
-					int cmp= fnCost.compareTo(tu, bestFnCost, lookupPoint);
+					int cmp= fnCost.compareTo(tu, bestFnCost);
 					if (cmp < 0) {
 						bestFnCost= fnCost;
 						ambiguousFunctions= null;
@@ -2630,9 +2633,9 @@ public class CPPSemantics {
 		final int sourceLen= argTypes.length - skipArg;
 		final FunctionCost result;
 		if (implicitParameterType == null) {
-			result= new FunctionCost(fn, sourceLen);
+			result= new FunctionCost(fn, sourceLen, data.getLookupPoint());
 		} else {
-			result= new FunctionCost(fn, sourceLen + 1);
+			result= new FunctionCost(fn, sourceLen + 1, data.getLookupPoint());
 
 			ValueCategory sourceIsLValue= LVALUE;
 			if (impliedObjectType == null) {
@@ -2656,7 +2659,7 @@ public class CPPSemantics {
 				    if (CPPTemplates.isDependentType(implicitParameterType) || CPPTemplates.isDependentType(impliedObjectType)) {
 				    	IType s= getNestedType(impliedObjectType, TDEF|REF|CVTYPE);
 				    	IType t= getNestedType(implicitParameterType, TDEF|REF|CVTYPE);
-				    	if (SemanticUtil.calculateInheritanceDepth(s, t) >= 0)
+				    	if (SemanticUtil.calculateInheritanceDepth(s, t, data.getLookupPoint()) >= 0)
 				    		return null;
 				
 				    	return CONTAINS_DEPENDENT_TYPES;
@@ -2671,7 +2674,7 @@ public class CPPSemantics {
 
 		final UDCMode udc = allowUDC ? UDCMode.DEFER : UDCMode.FORBIDDEN;
 		for (int j = 0; j < sourceLen; j++) {
-			final IType argType= SemanticUtil.getNestedType(argTypes[j+skipArg], TDEF | REF);
+			final IType argType= SemanticUtil.getNestedType(argTypes[j + skipArg], TDEF | REF);
 			if (argType == null)
 				return null;
 
@@ -2815,7 +2818,7 @@ public class CPPSemantics {
     				LookupData data= new LookupData(name);
     				data.setFunctionArguments(false, init.getArguments());
     				try {
-    					IBinding ctor = CPPSemantics.resolveFunction(data, ((ICPPClassType) targetType).getConstructors(), true);
+    					IBinding ctor = CPPSemantics.resolveFunction(data, ClassTypeHelper.getConstructors((ICPPClassType) targetType, name), true);
     					if (ctor instanceof ICPPConstructor) {
     						int i= 0;
     						for (IASTNode arg : init.getArguments()) {
@@ -3086,7 +3089,7 @@ public class CPPSemantics {
 				ValueCategory isLValue= evaluation.getValueCategory(name);
 	    		if (sourceType != null) {
 	    			Cost c;
-	    			if (calculateInheritanceDepth(sourceType, classType) >= 0) {
+	    			if (calculateInheritanceDepth(sourceType, classType, name) >= 0) {
 	    				c = Conversions.copyInitializationOfClass(isLValue, sourceType, classType, false, name);
 	    			} else {
 	    				c = Conversions.checkImplicitConversionSequence(type, sourceType, isLValue, UDCMode.ALLOWED, Context.ORDINARY, name);
@@ -3122,13 +3125,13 @@ public class CPPSemantics {
 			    LookupData data = new LookupData(astName);
 				data.setFunctionArguments(false, arguments);
 			    data.qualified = true;
-			    data.foundItems = classType.getConstructors();
+			    data.foundItems = ClassTypeHelper.getConstructors(classType, name);
 			    binding = resolveAmbiguities(data);
 			    if (binding instanceof ICPPConstructor)
 			    	return (ICPPConstructor) binding;
 	    	} else if (initializer == null) {
 	    		// Default initialization
-	    		ICPPConstructor[] ctors = classType.getConstructors();
+	    		ICPPConstructor[] ctors = ClassTypeHelper.getConstructors(classType, name);
 				for (ICPPConstructor ctor : ctors) {
 					if (ctor.getRequiredArgumentCount() == 0)
 						return ctor;
@@ -3342,7 +3345,7 @@ public class CPPSemantics {
     	if (callToObjectOfClassType != null) {
     		try {
     			// 13.3.1.1.2 call to object of class type
-    			ICPPMethod[] ops = SemanticUtil.getConversionOperators(callToObjectOfClassType);
+    			ICPPMethod[] ops = SemanticUtil.getConversionOperators(callToObjectOfClassType, point);
     			for (ICPPMethod op : ops) {
     				if (op.isExplicit())
     					continue;
@@ -3652,9 +3655,10 @@ public class CPPSemantics {
 		return false;
 	}
 
-	protected static IBinding resolveUnknownName(IScope scope, ICPPUnknownBinding unknown) {
+	protected static IBinding resolveUnknownName(IScope scope, ICPPUnknownBinding unknown, IASTNode point) {
 		final IASTName unknownName = unknown.getUnknownName();
-		LookupData data = new LookupData(unknownName);
+		LookupData data = unknownName.getTranslationUnit() != null ?
+				new LookupData(unknownName) : new LookupData(unknownName.getSimpleID(), null, point);
 		data.setIgnorePointOfDeclaration(true);
 		data.typesOnly= unknown instanceof IType;
 

@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2010 Tomasz Wesolowski and others
+ * Copyright (c) 2010, 2012 Tomasz Wesolowski and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Tomasz Wesolowski - initial API and implementation
+ *     Tomasz Wesolowski - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
@@ -52,13 +53,10 @@ import org.eclipse.cdt.internal.ui.text.ICReconcilingListener;
 import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
 
 public class OverrideIndicatorManager implements ICReconcilingListener {
-
 	static final String ANNOTATION_TYPE = "org.eclipse.cdt.ui.overrideIndicator"; //$NON-NLS-1$
-	
 	private static final String MESSAGE_SEPARATOR = ";\n"; //$NON-NLS-1$
 
 	public static class OverrideInfo {
-
 		public int nodeOffset;
 		public int resultType;
 		public String message;
@@ -79,7 +77,6 @@ public class OverrideIndicatorManager implements ICReconcilingListener {
 	public static final int RESULT_SHADOWS = 2;
 
 	public class OverrideIndicator extends Annotation {
-
 		public static final String ANNOTATION_TYPE_ID = "org.eclipse.cdt.ui.overrideIndicator"; //$NON-NLS-1$
 		private int type;
 		private ICElementHandle declaration;
@@ -108,9 +105,7 @@ public class OverrideIndicatorManager implements ICReconcilingListener {
 				CDTUITools.openInEditor(declaration, true, true);
 			} catch (CoreException e) {
 			}
-
 		}
-
 	}
 
 	private IAnnotationModel fAnnotationModel;
@@ -123,7 +118,6 @@ public class OverrideIndicatorManager implements ICReconcilingListener {
 	}
 
 	private void handleResult(OverrideInfo info, IIndex index) {
-
 		Position position = new Position(info.nodeOffset, info.nodeLength);
 
 		OverrideIndicator indicator = new OverrideIndicator(info.resultType, info.message, info.binding, index);
@@ -166,7 +160,7 @@ public class OverrideIndicatorManager implements ICReconcilingListener {
 					}
 					if (binding instanceof ICPPMethod) {
 						method = (ICPPMethod) binding;
-						OverrideInfo overrideInfo = testForOverride(method, declaration.getFileLocation());
+						OverrideInfo overrideInfo = checkForOverride(method, declaration);
 						if (overrideInfo != null) {
 							handleResult(overrideInfo, index);
 						}
@@ -209,7 +203,7 @@ public class OverrideIndicatorManager implements ICReconcilingListener {
 						return PROCESS_SKIP;
 					}
 					ICPPMethod method = (ICPPMethod) definitionBinding;
-					OverrideInfo overrideInfo = testForOverride(method, definition.getFileLocation());
+					OverrideInfo overrideInfo = checkForOverride(method, definition);
 					if (overrideInfo != null) {
 						handleResult(overrideInfo, index);
 					}
@@ -223,9 +217,8 @@ public class OverrideIndicatorManager implements ICReconcilingListener {
 		ast.accept(new MethodDefinitionFinder());
 	}
 	
-	public static OverrideInfo testForOverride(ICPPMethod testedOverride, IASTFileLocation location) throws DOMException {
-
-		testedOverride.getClassOwner().getBases();
+	private static OverrideInfo checkForOverride(ICPPMethod testedOverride, IASTNode node) throws DOMException {
+		IASTFileLocation location = node.getFileLocation();
 
 		boolean onlyPureVirtual = true;
 		StringBuilder sb = new StringBuilder();
@@ -234,7 +227,7 @@ public class OverrideIndicatorManager implements ICReconcilingListener {
 		
 		Set<ICPPClassType> alreadyTestedBases = new HashSet<ICPPClassType>();
 
-		ICPPBase[] bases = testedOverride.getClassOwner().getBases();
+		ICPPBase[] bases = ClassTypeHelper.getBases(testedOverride.getClassOwner(), node);
 		
 		// Don't override 'self' in cyclic inheritance
 		alreadyTestedBases.add(testedOverride.getClassOwner());
@@ -251,7 +244,6 @@ public class OverrideIndicatorManager implements ICReconcilingListener {
 			handleBaseClass(testedClass, testedOverride, overridenMethods, shadowedMethods, alreadyTestedBases);
 
 			for (ICPPMethod overriddenMethod : overridenMethods) {
-
 				if (sb.length() > 0) {
 					sb.append(MESSAGE_SEPARATOR);
 				}
@@ -296,12 +288,11 @@ public class OverrideIndicatorManager implements ICReconcilingListener {
 		}
 		
 		if (sb.length() > 0) {
-			OverrideInfo info = new OverrideInfo(location.getNodeOffset(), location.getNodeLength(), markerType,
-					sb.toString(), bindingToOpen);
+			OverrideInfo info = new OverrideInfo(location.getNodeOffset(), location.getNodeLength(),
+					markerType,	sb.toString(), bindingToOpen);
 			return info;
 		}
 		return null;
-
 	}
 
 	/**
@@ -314,8 +305,8 @@ public class OverrideIndicatorManager implements ICReconcilingListener {
 	 * @throws DOMException
 	 */
 	private static void handleBaseClass(ICPPClassType aClass, ICPPMethod testedOverride,
-			Set<ICPPMethod> foundMethods, Set<ICPPMethod> shadowedMethods, Set<ICPPClassType> alreadyTestedBases) throws DOMException {
-		
+			Set<ICPPMethod> foundMethods, Set<ICPPMethod> shadowedMethods,
+			Set<ICPPClassType> alreadyTestedBases) throws DOMException {
 		if (alreadyTestedBases.contains(aClass)) {
 			return;
 		} else {
@@ -427,5 +418,4 @@ public class OverrideIndicatorManager implements ICReconcilingListener {
 		}
 		return annotationModel;
 	}
-
 }

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
@@ -22,11 +23,21 @@ import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
+import org.eclipse.cdt.internal.core.dom.parser.IInternalVariable;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.core.runtime.CoreException;
 
@@ -39,7 +50,6 @@ public class EvalBinding extends CPPEvaluation {
 	private boolean fIsValueDependent;
 	private boolean fIsTypeDependent;
 	private boolean fCheckedIsTypeDependent;
-
 
 	public EvalBinding(IBinding binding, IType type) {
 		fBinding= binding;
@@ -75,20 +85,19 @@ public class EvalBinding extends CPPEvaluation {
  	}
 
 	private boolean computeIsTypeDependent() {
-		if (fBinding instanceof ICPPUnknownBinding)
-			return true;
-
 		IType t= null;
-		if (fBinding instanceof IEnumerator) {
+		if (fFixedType) {
+			t = fType;
+		} else if (fBinding instanceof IEnumerator) {
 			t= ((IEnumerator) fBinding).getType();
 		} else if (fBinding instanceof ICPPTemplateNonTypeParameter) {
 			t= ((ICPPTemplateNonTypeParameter) fBinding).getType();
 		} else if (fBinding instanceof IVariable) {
 			t = ((IVariable) fBinding).getType();
-		} else if (fBinding instanceof IFunction) {
-			t= ((IFunction) fBinding).getType();
 		} else if (fBinding instanceof ICPPUnknownBinding) {
 			return true;
+		} else if (fBinding instanceof IFunction) {
+			t= ((IFunction) fBinding).getType();
 		} else {
 			return false;
 		}
@@ -114,11 +123,11 @@ public class EvalBinding extends CPPEvaluation {
 		if (fBinding instanceof IVariable) {
 			return Value.isDependentValue(((IVariable) fBinding).getInitialValue());
 		}
-		if (fBinding instanceof IFunction) {
-			return false;
-		}
 		if (fBinding instanceof ICPPUnknownBinding) {
 			return true;
+		}
+		if (fBinding instanceof IFunction) {
+			return false;
 		}
 		return false;
 	}
@@ -151,14 +160,28 @@ public class EvalBinding extends CPPEvaluation {
 			final IFunctionType type = ((IFunction) fBinding).getType();
 			if (CPPTemplates.isDependentType(type))
 				return new TypeOfDependentExpression(this);
-			return  SemanticUtil.mapToAST(type, point);
+			return SemanticUtil.mapToAST(type, point);
 		}
 		return ProblemType.UNKNOWN_FOR_EXPRESSION;
 	}
 
 	@Override
 	public IValue getValue(IASTNode point) {
-		return Value.create(this, point);
+		if (isValueDependent())
+			return Value.create(this);
+
+		IValue value= null;
+		if (fBinding instanceof IInternalVariable) {
+			value= ((IInternalVariable) fBinding).getInitialValue(Value.MAX_RECURSION_DEPTH);
+		} else if (fBinding instanceof IVariable) {
+			value= ((IVariable) fBinding).getInitialValue();
+		} else if (fBinding instanceof IEnumerator) {
+			value= ((IEnumerator) fBinding).getValue();
+		}
+		if (value == null)
+			value = Value.UNKNOWN;
+
+		return value;
 	}
 
 	@Override
@@ -183,5 +206,76 @@ public class EvalBinding extends CPPEvaluation {
 		IBinding binding= buffer.unmarshalBinding();
 		IType type= buffer.unmarshalType();
 		return new EvalBinding(binding, type);
+	}
+
+	@Override
+	public ICPPEvaluation instantiate(ICPPTemplateParameterMap tpMap, int packOffset,
+			ICPPClassSpecialization within, int maxdepth, IASTNode point) {
+		IBinding binding = fBinding;
+		if (fBinding instanceof IEnumerator) {
+			IEnumerator enumerator = (IEnumerator) binding;
+			IType originalType = enumerator.getType();
+			IType type = CPPTemplates.instantiateType(originalType, tpMap, packOffset, within, point);
+			IValue originalValue = enumerator.getValue();
+			IValue value = CPPTemplates.instantiateValue(originalValue, tpMap, packOffset, within, maxdepth, point);
+			// TODO(sprigogin): Not sure if following condition is correct.
+			if (type != originalType || value != originalValue)
+				return new EvalFixed(type, ValueCategory.PRVALUE, value);
+		} else if (fBinding instanceof ICPPTemplateNonTypeParameter) {
+			ICPPTemplateArgument argument = tpMap.getArgument((ICPPTemplateNonTypeParameter) fBinding);
+			if (argument != null) {
+				IValue value = argument.getNonTypeValue();
+				return new EvalFixed(null, ValueCategory.PRVALUE, value);
+			}
+			// TODO(sprigogin): Do we need something similar for pack expansion?
+		} else if (fBinding instanceof ICPPUnknownBinding) {
+			binding = resolveUnknown((ICPPUnknownBinding) fBinding, tpMap, packOffset, within, point);
+		} else if (fBinding instanceof ICPPMethod) {
+			IBinding owner = fBinding.getOwner();
+			if (owner instanceof ICPPClassTemplate) {
+				owner = resolveUnknown(CPPTemplates.createDeferredInstance((ICPPClassTemplate) owner),
+						tpMap, packOffset, within, point);
+			}
+			if (owner instanceof ICPPClassSpecialization) {
+				binding = CPPTemplates.createSpecialization((ICPPClassSpecialization) owner,
+						fBinding, point);
+			}
+		}
+		if (binding == fBinding)
+			return this;
+		return new EvalBinding(binding, getFixedType());
+	}
+
+	@Override
+	public int determinePackSize(ICPPTemplateParameterMap tpMap) {
+		if (fBinding instanceof IEnumerator) {
+			return CPPTemplates.determinePackSize(((IEnumerator) fBinding).getValue(), tpMap);
+		}
+		if (fBinding instanceof ICPPTemplateNonTypeParameter) {
+			return CPPTemplates.determinePackSize((ICPPTemplateNonTypeParameter) fBinding, tpMap);
+		}
+		if (fBinding instanceof ICPPUnknownBinding) {
+			return CPPTemplates.determinePackSize((ICPPUnknownBinding) fBinding, tpMap);
+		}
+		
+		IBinding binding = fBinding;
+		if (fBinding instanceof ICPPSpecialization) {
+			binding = ((ICPPSpecialization) fBinding).getSpecializedBinding();
+		}
+
+		int r = CPPTemplates.PACK_SIZE_NOT_FOUND;
+		if (binding instanceof ICPPTemplateDefinition) {
+			ICPPTemplateParameter[] parameters = ((ICPPTemplateDefinition) binding).getTemplateParameters();
+			for (ICPPTemplateParameter param : parameters) {
+				r = CPPTemplates.combinePackSize(r, CPPTemplates.determinePackSize(param, tpMap));
+			}
+		}
+
+		return r;
+	}
+
+	@Override
+	public boolean referencesTemplateParameter() {
+		return fBinding instanceof ICPPTemplateParameter;
 	}
 }

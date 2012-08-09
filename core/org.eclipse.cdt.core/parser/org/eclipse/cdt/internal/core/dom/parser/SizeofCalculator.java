@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IField;
+import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
@@ -48,6 +49,8 @@ public class SizeofCalculator {
 		}
 	}
 
+	private static final SizeofCalculator defaultInstance = new SizeofCalculator();
+
 	private static final SizeAndAlignment SIZE_1 = new SizeAndAlignment(1, 1);
 
 	public final SizeAndAlignment size_2;
@@ -66,6 +69,15 @@ public class SizeofCalculator {
 	public final SizeAndAlignment sizeof_complex_double;
 	public final SizeAndAlignment sizeof_long_double;
 	public final SizeAndAlignment sizeof_complex_long_double;
+
+	/**
+	 * Returns the default instance of sizeof calculator. The default instance is not aware
+	 * of the parser configuration and can only calculate sizes that are the same across all
+	 * C/C++ implementations.
+	 */
+	public static SizeofCalculator getDefault() {
+		return defaultInstance;
+	}
 
 	public SizeofCalculator(IASTTranslationUnit ast) {
 		int maxAlignment = 32;
@@ -102,6 +114,25 @@ public class SizeofCalculator {
 		sizeof_complex_long_double = getSizeOfPair(sizeof_long_double);
 	}
 
+	private SizeofCalculator() {
+		size_2 = new SizeAndAlignment(2, 2);
+		size_4 = new SizeAndAlignment(4, 4);
+		size_8 = new SizeAndAlignment(8, 8);
+		sizeof_pointer = null;
+		sizeof_int = null;
+		sizeof_long = null;
+		sizeof_long_long = null;
+		sizeof_short = null;
+		sizeof_bool = null;
+		sizeof_wchar_t = null;
+		sizeof_float = null;
+		sizeof_complex_float = null;
+		sizeof_double = null;
+		sizeof_complex_double = null;
+		sizeof_long_double = null;
+		sizeof_complex_long_double = null;
+	}
+
 	/**
 	 * Calculates size and alignment for the given type.
 	 * @param type the type to get size and alignment for.
@@ -109,7 +140,9 @@ public class SizeofCalculator {
 	 */
 	public SizeAndAlignment sizeAndAlignment(IType type) {
 		type = SemanticUtil.getNestedType(type, SemanticUtil.CVTYPE | SemanticUtil.TDEF);
-
+		if (type instanceof IFunctionType) {
+			return sizeAndAlignment(((IFunctionType) type).getReturnType());
+		}
 		if (type instanceof IBasicType) {
 			return sizeAndAlignment((IBasicType) type);
 		}

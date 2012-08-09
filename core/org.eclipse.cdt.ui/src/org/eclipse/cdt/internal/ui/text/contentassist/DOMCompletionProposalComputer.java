@@ -36,6 +36,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorFunctionStyleMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
@@ -78,6 +79,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBuiltinVariable;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitMethod;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitTypedef;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.AccessContext;
 import org.eclipse.cdt.internal.core.parser.util.ContentAssistMatcherFactory;
 
@@ -309,7 +311,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 			if (binding instanceof ICPPClassType) {
 				handleClass((ICPPClassType) binding, astContext, cContext, baseRelevance, proposals);
 			} else if (binding instanceof IFunction) {
-				handleFunction((IFunction)binding, cContext, baseRelevance, proposals);
+				handleFunction((IFunction) binding, cContext, baseRelevance, proposals);
 			} else if (binding instanceof IVariable) {
 				handleVariable((IVariable) binding, cContext, baseRelevance, proposals);
 			} else if (!cContext.isContextInformationStyle()) {
@@ -466,7 +468,8 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 			t= unwindTypedefs(t);
 			if (t instanceof ICPPClassType) {
 				ICPPClassType classType= (ICPPClassType) t;
-				ICPPConstructor[] constructors = classType.getConstructors();
+				IASTTranslationUnit ast = context.getCompletionNode().getTranslationUnit();
+				ICPPConstructor[] constructors = ClassTypeHelper.getConstructors(classType, ast);
 				for (ICPPConstructor constructor : constructors) {
 					handleFunction(constructor, context, baseRelevance, proposals);
 				}

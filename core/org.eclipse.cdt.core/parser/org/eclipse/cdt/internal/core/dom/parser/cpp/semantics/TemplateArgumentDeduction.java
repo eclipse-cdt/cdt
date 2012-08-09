@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2009, 2012 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
@@ -60,8 +61,10 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPReferenceType;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateArgument;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateNonTypeArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateParameterMap;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTypeArgument;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 
@@ -70,9 +73,9 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
  */
 public class TemplateArgumentDeduction {
 	/**
-	 * Deduce arguments for a template function from the template id + the template function parameters.
+	 * Deduce arguments for a template function from the template id and the template function
+	 * parameters.
 	 * 14.8.2.1
-	 * @param point 
 	 */
 	static ICPPTemplateArgument[] deduceForFunctionCall(ICPPFunctionTemplate template,
 			ICPPTemplateArgument[] tmplArgs, List<IType> fnArgs, List<ValueCategory> argIsLValue,
@@ -235,7 +238,7 @@ public class TemplateArgumentDeduction {
 					ICPPTemplateInstance pInst = (ICPPTemplateInstance) pcheck;
 					ICPPClassTemplate pTemplate= getPrimaryTemplate(pInst);
 					if (pTemplate != null) {
-						ICPPClassType aInst= findBaseInstance((ICPPClassType) argcheck, pTemplate);	
+						ICPPClassType aInst= findBaseInstance((ICPPClassType) argcheck, pTemplate, point);	
 						if (aInst != null && aInst != argcheck) {
 							par= pcheck;
 							arg= aInst;
@@ -290,7 +293,6 @@ public class TemplateArgumentDeduction {
 	/**
 	 * Deduce arguments for a user defined conversion template 
 	 * 14.8.2.3
-	 * @param point 
 	 */
 	static ICPPTemplateArgument[] deduceForConversion(ICPPFunctionTemplate template,
 			IType conversionType, CPPTemplateParameterMap map, IASTNode point) throws DOMException {
@@ -325,7 +327,6 @@ public class TemplateArgumentDeduction {
 	/**
 	 * Deduce arguments for a function declaration
 	 * 14.8.2.6
-	 * @param point 
 	 */
 	static ICPPTemplateArgument[] deduceForDeclaration(ICPPFunctionTemplate template,
 			ICPPTemplateArgument[] args, ICPPFunctionType ftype, CPPTemplateParameterMap map, IASTNode point) throws DOMException {
@@ -360,7 +361,6 @@ public class TemplateArgumentDeduction {
 	/**
 	 * Deduces the mapping for the template parameters from the function parameters,
 	 * returns <code>false</code> if there is no mapping.
-	 * @param point 
 	 */
 	static int deduceForPartialOrdering(ICPPTemplateParameter[] tmplPars, IType[] fnPars, IType[] fnArgs, IASTNode point) {
 		try {
@@ -423,7 +423,6 @@ public class TemplateArgumentDeduction {
 
 	/**
 	 * Adds the explicit arguments to the map.
-	 * @param point 
 	 */
 	private static boolean addExplicitArguments(final ICPPTemplateParameter[] tmplParams,
 			ICPPTemplateArgument[] tmplArgs, CPPTemplateParameterMap map, IASTNode point) {
@@ -481,13 +480,14 @@ public class TemplateArgumentDeduction {
 	}
 
 	/**
-	 * 14.8.2.1.3 If P is a class and has the form template-id, then A can be a derived class of the deduced A.
+	 * 14.8.2.1.3 If P is a class and has the form template-id, then A can be a derived class of
+	 * the deduced A.
 	 */
-	private static ICPPClassType findBaseInstance(ICPPClassType a, ICPPClassTemplate pTemplate) throws DOMException {
-		return findBaseInstance(a, pTemplate, CPPSemantics.MAX_INHERITANCE_DEPTH, new HashSet<Object>());
+	private static ICPPClassType findBaseInstance(ICPPClassType a, ICPPClassTemplate pTemplate, IASTNode point) throws DOMException {
+		return findBaseInstance(a, pTemplate, CPPSemantics.MAX_INHERITANCE_DEPTH, new HashSet<Object>(), point);
 	}
 
-	private static ICPPClassType findBaseInstance(ICPPClassType a, ICPPClassTemplate pTemplate, int maxdepth, HashSet<Object> handled) throws DOMException {
+	private static ICPPClassType findBaseInstance(ICPPClassType a, ICPPClassTemplate pTemplate, int maxdepth, HashSet<Object> handled, IASTNode point) throws DOMException {
 		if (a instanceof ICPPTemplateInstance) {
 			final ICPPTemplateInstance inst = (ICPPTemplateInstance) a;
 			ICPPClassTemplate tmpl= getPrimaryTemplate(inst);
@@ -495,10 +495,10 @@ public class TemplateArgumentDeduction {
 				return a;
 		}
 		if (maxdepth-- > 0) {
-			for (ICPPBase cppBase : a.getBases()) {
+			for (ICPPBase cppBase : ClassTypeHelper.getBases(a, point)) {
 				IBinding base= cppBase.getBaseClass();
 				if (base instanceof ICPPClassType && handled.add(base)) {
-					final ICPPClassType inst= findBaseInstance((ICPPClassType) base, pTemplate, maxdepth, handled);
+					final ICPPClassType inst= findBaseInstance((ICPPClassType) base, pTemplate, maxdepth, handled, point);
 					if (inst != null)
 						return inst;
 				}
@@ -546,7 +546,6 @@ public class TemplateArgumentDeduction {
 
 	/**
 	 * Deduces the template parameter mapping from pairs of template arguments.
-	 * @param point 
 	 */
 	public static boolean fromTemplateArguments(final ICPPTemplateParameter[] pars,
 			final ICPPTemplateArgument[] p, final ICPPTemplateArgument[] a, CPPTemplateParameterMap map,
@@ -639,7 +638,6 @@ public class TemplateArgumentDeduction {
 
 	/**
 	 * Deduces the template parameter mapping from one pair of template arguments.
-	 * @param point 
 	 */
 	private boolean fromTemplateArgument(ICPPTemplateArgument p, ICPPTemplateArgument a, IASTNode point) throws DOMException {
 		if (p.isNonTypeValue() != a.isNonTypeValue()) 
@@ -723,7 +721,7 @@ public class TemplateArgumentDeduction {
 					if (parID >= 0) { 
 						ICPPTemplateArgument old= fDeducedArgs.getArgument(parID, fPackOffset);
 						if (old == null) {
-							if (!deduce(parID, new CPPTemplateArgument(as, new CPPBasicType(ICPPBasicType.Kind.eInt, 0)))) {
+							if (!deduce(parID, new CPPTemplateNonTypeArgument(as, new CPPBasicType(ICPPBasicType.Kind.eInt, 0)))) {
 								return false;
 							} 
 						} else if (!as.equals(old.getNonTypeValue())) {
@@ -764,7 +762,7 @@ public class TemplateArgumentDeduction {
 				}
 				if (a == null)
 					return false;
-				return deduce(((ICPPTemplateParameter)p).getParameterID(), new CPPTemplateArgument(a));
+				return deduce(((ICPPTemplateParameter)p).getParameterID(), new CPPTemplateTypeArgument(a));
 			} else if (p instanceof ICPPTemplateInstance) {
 				if (!(a instanceof ICPPTemplateInstance))
 					return false;
@@ -792,7 +790,7 @@ public class TemplateArgumentDeduction {
 			if (current != null) {
 				if (current.isNonTypeValue() || !current.getTypeValue().isSameType(aTemplate))
 					return false;
-			} else if (!deduce(tparId, new CPPTemplateArgument(aTemplate))) {
+			} else if (!deduce(tparId, new CPPTemplateTypeArgument(aTemplate))) {
 				return false;
 			}
 		} else if (!aTemplate.isSameType(pTemplate)) {

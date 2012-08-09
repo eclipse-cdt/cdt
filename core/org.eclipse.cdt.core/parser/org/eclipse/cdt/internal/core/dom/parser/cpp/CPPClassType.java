@@ -309,7 +309,7 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 
 	@Override
 	public IField[] getFields() {
-		return ClassTypeHelper.getFields(this);
+		return ClassTypeHelper.getFields(this, null);
 	}
 
 	@Override
@@ -319,12 +319,12 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 
 	@Override
 	public ICPPMethod[] getMethods() {
-		return ClassTypeHelper.getMethods(this);
+		return ClassTypeHelper.getMethods(this, null);
 	}
 
 	@Override
 	public ICPPMethod[] getAllDeclaredMethods() {
-		return ClassTypeHelper.getAllDeclaredMethods(this);
+		return ClassTypeHelper.getAllDeclaredMethods(this, null);
 	}
 
 	@Override

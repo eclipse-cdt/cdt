@@ -7,12 +7,14 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
@@ -30,12 +32,17 @@ import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
@@ -51,7 +58,8 @@ public class EvalID extends CPPEvaluation {
 	private final boolean fQualified;
 	private final ICPPTemplateArgument[] fTemplateArgs;
 
-	public EvalID(ICPPEvaluation fieldOwner, IBinding nameOwner, char[] simpleID, boolean addressOf, boolean qualified, ICPPTemplateArgument[] templateArgs) {
+	public EvalID(ICPPEvaluation fieldOwner, IBinding nameOwner, char[] simpleID, boolean addressOf,
+			boolean qualified, ICPPTemplateArgument[] templateArgs) {
 		fFieldOwner= fieldOwner;
 		fName= simpleID;
 		fNameOwner= nameOwner;
@@ -60,6 +68,9 @@ public class EvalID extends CPPEvaluation {
 		fTemplateArgs= templateArgs;
 	}
 
+	/**
+	 * Returns the field owner expression, or {@code null}.
+	 */
 	public ICPPEvaluation getFieldOwner() {
 		return fFieldOwner;
 	}
@@ -80,6 +91,9 @@ public class EvalID extends CPPEvaluation {
 		return fQualified;
 	}
 
+	/**
+	 * Returns the template arguments, or {@code null} if there are no template arguments.
+	 */
 	public ICPPTemplateArgument[] getTemplateArgs() {
 		return fTemplateArgs;
 	}
@@ -111,7 +125,17 @@ public class EvalID extends CPPEvaluation {
 
 	@Override
 	public IValue getValue(IASTNode point) {
-		return Value.create(this, point);
+		// Name lookup is not needed here because it was already done in the "instantiate" method.
+//		IBinding nameOwner = fNameOwner;
+//		if (nameOwner == null && fFieldOwner != null)
+//			nameOwner = (IBinding) fFieldOwner.getTypeOrFunctionSet(point);
+//
+//		if (nameOwner instanceof ICPPClassType) {
+//			ICPPEvaluation eval = resolveName((ICPPClassType) nameOwner, fTemplateArgs, point);
+//			if (eval != null)
+//				return eval.getValue(point);
+//		}
+		return Value.create(this);
 	}
 
 	@Override
@@ -134,7 +158,10 @@ public class EvalID extends CPPEvaluation {
 		buffer.putCharArray(fName);
 		buffer.marshalBinding(fNameOwner);
 		if (fTemplateArgs != null) {
-			// mstodo marshall arguments
+			buffer.putShort((short) fTemplateArgs.length);
+			for (ICPPTemplateArgument arg : fTemplateArgs) {
+				buffer.marshalTemplateArgument(arg);
+			}
 		}
 	}
 
@@ -146,7 +173,11 @@ public class EvalID extends CPPEvaluation {
 		IBinding nameOwner= buffer.unmarshalBinding();
 		ICPPTemplateArgument[] args= null;
 		if ((firstByte & ITypeMarshalBuffer.FLAG3) != 0) {
-			// mstodo marshall arguments
+			int len= buffer.getShort();
+			args = new ICPPTemplateArgument[len];
+			for (int i = 0; i < args.length; i++) {
+				args[i]= buffer.unmarshalTemplateArgument();
+			}
 		}
 		return new EvalID(fieldOwner, nameOwner, name, addressOf, qualified, args);
 	}
@@ -241,5 +272,80 @@ public class EvalID extends CPPEvaluation {
 			}
 		}
 		return false;
+	}
+
+	@Override
+	public ICPPEvaluation instantiate(ICPPTemplateParameterMap tpMap, int packOffset,
+			ICPPClassSpecialization within, int maxdepth, IASTNode point) {
+		ICPPTemplateArgument[] templateArgs = fTemplateArgs;
+		if (templateArgs != null) {
+			templateArgs = instantiateArguments(templateArgs, tpMap, packOffset, within, point);
+		}
+
+		ICPPEvaluation fieldOwner = fFieldOwner;
+		if (fieldOwner != null) {
+			fieldOwner = fieldOwner.instantiate(tpMap, packOffset, within, maxdepth, point);
+		}
+
+		IBinding nameOwner = fNameOwner;
+		if (nameOwner instanceof ICPPClassTemplate) {
+			nameOwner = resolveUnknown(CPPTemplates.createDeferredInstance((ICPPClassTemplate) nameOwner),
+					tpMap, packOffset, within, point);
+		} else if (nameOwner instanceof IType) {
+			IType type = CPPTemplates.instantiateType((IType) nameOwner, tpMap, packOffset, within, point);
+			if (type instanceof IBinding)
+				nameOwner = (IBinding) type;
+		}
+
+		if (fieldOwner instanceof IProblemBinding || nameOwner instanceof IProblemBinding)
+			return this;
+
+		if (templateArgs == fTemplateArgs && fieldOwner == fFieldOwner && nameOwner == fNameOwner)
+			return this;
+
+		ICPPEvaluation eval = resolveName((ICPPClassType) nameOwner, templateArgs, point);
+		if (eval != null)
+			return eval;
+
+		return new EvalID(fieldOwner, nameOwner, fName, fAddressOf, fQualified, templateArgs);
+	}
+
+	private ICPPEvaluation resolveName(ICPPClassType nameOwner, ICPPTemplateArgument[] templateArgs,
+			IASTNode point) {
+		LookupData data = new LookupData(fName, templateArgs, point);
+		data.qualified = fQualified;
+		try {
+			CPPSemantics.lookup(data, nameOwner.getCompositeScope());
+		} catch (DOMException e) {
+		}
+		IBinding[] bindings = data.getFoundBindings();
+		if (bindings.length > 1 && bindings[0] instanceof ICPPFunction) {
+			ICPPFunction[] functions = new ICPPFunction[bindings.length];
+			System.arraycopy(bindings, 0, functions, 0, bindings.length);
+			return new EvalFunctionSet(new CPPFunctionSet(functions, templateArgs, null), fAddressOf);
+		}
+		IBinding binding = bindings.length == 1 ? bindings[0] : null;
+		if (binding instanceof IEnumerator) {
+			return new EvalBinding(binding, null);
+		} else if (binding instanceof ICPPMember) {
+			return new EvalMemberAccess(nameOwner, ValueCategory.PRVALUE, binding, false);
+		} else if (binding instanceof CPPFunctionSet) {
+			return new EvalFunctionSet((CPPFunctionSet) binding, fAddressOf);
+		}
+		return null;
+	}
+
+	@Override
+	public int determinePackSize(ICPPTemplateParameterMap tpMap) {
+		int r = fFieldOwner.determinePackSize(tpMap);
+		for (ICPPTemplateArgument arg : fTemplateArgs) {
+			r = CPPTemplates.combinePackSize(r, CPPTemplates.determinePackSize(arg, tpMap));
+		}
+		return r;
+	}
+
+	@Override
+	public boolean referencesTemplateParameter() {
+		return fFieldOwner.referencesTemplateParameter();
 	}
 }

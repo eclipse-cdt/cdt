@@ -5747,7 +5747,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	//		g<C>(0); // The N member of C is not a non-type
 	//		h<D>(0); // The TT member of D is not a template
 	//	}
-	public void _test14_8_2s8d() throws Exception {
+	public void test14_8_2s8d() throws Exception {
 		final String content= getAboveComment();
 		BindingAssertionHelper bh= new BindingAssertionHelper(content, true);
 		bh.assertProblem("f<A>", 0);

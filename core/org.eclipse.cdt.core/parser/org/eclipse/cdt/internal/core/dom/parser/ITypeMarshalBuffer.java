@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.dom.parser;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -61,6 +62,7 @@ public interface ITypeMarshalBuffer {
 	IValue unmarshalValue() throws CoreException;
 	IBinding unmarshalBinding() throws CoreException;
 	ISerializableEvaluation unmarshalEvaluation() throws CoreException;
+	ICPPTemplateArgument unmarshalTemplateArgument() throws CoreException;
 	int getByte() throws CoreException;
 	int getShort() throws CoreException;
 	int getInt() throws CoreException;
@@ -71,6 +73,7 @@ public interface ITypeMarshalBuffer {
 	void marshalValue(IValue value) throws CoreException;
 	void marshalBinding(IBinding binding) throws CoreException;
 	void marshalEvaluation(ISerializableEvaluation eval, boolean includeValue) throws CoreException;
+	void marshalTemplateArgument(ICPPTemplateArgument arg) throws CoreException;
 	void putByte(byte data);
 	void putShort(short data);
 	void putInt(int data);

@@ -8,11 +8,14 @@
  * Contributors:
  *     Andrew Ferguson (Symbian) - Initial implementation
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
@@ -67,8 +70,14 @@ public class CompositeCPPClassSpecializationScope extends CompositeScope impleme
 
 	@Override
 	public ICPPMethod[] getImplicitMethods() {
+		CCorePlugin.log(new Exception("Unsafe method call. Instantiation of dependent expressions may not work.")); //$NON-NLS-1$
+		return getImplicitMethods(null);
+	}
+
+	@Override
+	public ICPPMethod[] getImplicitMethods(IASTNode point) {
 		createDelegate();
-		return fDelegate.getImplicitMethods();
+		return fDelegate.getImplicitMethods(point);
 	}
 
 	@Override
@@ -97,37 +106,43 @@ public class CompositeCPPClassSpecializationScope extends CompositeScope impleme
 
 	@Override
 	public ICPPConstructor[] getConstructors() {
-		createDelegate();
-		return fDelegate.getConstructors();
+		CCorePlugin.log(new Exception("Unsafe method call. Instantiation of dependent expressions may not work.")); //$NON-NLS-1$
+		return getConstructors(null);
 	}
 
 	@Override
-	public ICPPMethod[] getDeclaredMethods() {
+	public ICPPConstructor[] getConstructors(IASTNode point) {
 		createDelegate();
-		return fDelegate.getDeclaredMethods();
+		return fDelegate.getConstructors(point);
 	}
 
 	@Override
-	public ICPPBase[] getBases() {
+	public ICPPMethod[] getDeclaredMethods(IASTNode point) {
 		createDelegate();
-		return fDelegate.getBases();
+		return fDelegate.getDeclaredMethods(point);
 	}
 
 	@Override
-	public ICPPField[] getDeclaredFields() {
+	public ICPPBase[] getBases(IASTNode point) {
 		createDelegate();
-		return fDelegate.getDeclaredFields();
+		return fDelegate.getBases(point);
 	}
 
 	@Override
-	public IBinding[] getFriends() {
+	public ICPPField[] getDeclaredFields(IASTNode point) {
 		createDelegate();
-		return fDelegate.getFriends();
+		return fDelegate.getDeclaredFields(point);
 	}
 
 	@Override
-	public ICPPClassType[] getNestedClasses() {
+	public IBinding[] getFriends(IASTNode point) {
 		createDelegate();
-		return fDelegate.getNestedClasses();
+		return fDelegate.getFriends(point);
+	}
+
+	@Override
+	public ICPPClassType[] getNestedClasses(IASTNode point) {
+		createDelegate();
+		return fDelegate.getNestedClasses(point);
 	}
 }

@@ -329,7 +329,7 @@ public class CharArrayUtils {
     }
 
     /**
-     * Find an array of chars in an array of arrays of chars.
+     * Finds an array of chars in an array of arrays of chars.
      * @return offset where the array was found or <code>-1</code>
      */
     public static int indexOf(final char[] searchFor, final char[][] searchIn) {
@@ -340,4 +340,15 @@ public class CharArrayUtils {
 		}
 		return -1;
     }
+
+    /**
+     * Converts a {@link StringBuilder} to a character array.
+     * @since 5.5
+     */
+	public static char[] extractChars(StringBuilder buf) {
+		final int len = buf.length();
+		char[] result= new char[len];
+		buf.getChars(0, len, result, 0);
+		return result;
+	}
 }

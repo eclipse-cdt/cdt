@@ -53,7 +53,7 @@ public class CPPASTFieldReference extends ASTNode
     private boolean isDeref;
     private IASTImplicitName[] implicitNames;
 	private ICPPEvaluation fEvaluation;
-    
+
     public CPPASTFieldReference() {
 	}
 	
@@ -74,11 +74,7 @@ public class CPPASTFieldReference extends ASTNode
 		copy.setFieldOwner(owner == null ? null : owner.copy(style));
 		copy.isTemplate = isTemplate;
 		copy.isDeref = isDeref;
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 
 	@Override
@@ -282,7 +278,7 @@ public class CPPASTFieldReference extends ASTNode
 		if (n instanceof ICPPASTTemplateId) {
 			args= CPPTemplates.createTemplateArgumentArray((ICPPASTTemplateId) n);
 		}		
-		return new EvalID(ownerEval, qualifier, name.getSimpleID(), false, qualifier != null, args);
+		return new EvalID(ownerEval, qualifier, name.getSimpleID(), false, true, args);
 	}
 
 	@Override

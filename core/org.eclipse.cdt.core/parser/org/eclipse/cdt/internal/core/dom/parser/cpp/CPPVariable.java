@@ -47,9 +47,9 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.core.runtime.PlatformObject;
 
 public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInternalBinding, IInternalVariable {
-	private IASTName fDefinition = null;
-	private IASTName fDeclarations[] = null;
-	private IType fType = null;
+	private IASTName fDefinition;
+	private IASTName fDeclarations[];
+	private IType fType;
 	private boolean fAllResolved;
 	
 	public CPPVariable(IASTName name) {
@@ -59,10 +59,11 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
 	        name = ns[ns.length - 1];
 	    }
 	    
-	    if (isDef)
+	    if (isDef) {
 	        fDefinition = name;
-	    else 
+	    } else {
 	        fDeclarations = new IASTName[] { name };
+	    }
 	    
 	    // built-in variables supply a null
 	    if (name != null) {

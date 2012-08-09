@@ -43,6 +43,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFunctionCall;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalTypeId;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.LookupData;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 public class CPPASTFunctionCallExpression extends ASTNode
 		implements ICPPASTFunctionCallExpression, IASTAmbiguityParent {
@@ -270,7 +271,7 @@ public class CPPASTFunctionCallExpression extends ASTNode
 					ICPPClassType cls= (ICPPClassType) t;
 					LookupData data= CPPSemantics.createLookupData(((IASTIdExpression) functionName).getName());
 					try {
-						IBinding b= CPPSemantics.resolveFunction(data, cls.getConstructors(), true);
+						IBinding b= CPPSemantics.resolveFunction(data, ClassTypeHelper.getConstructors(cls, data.getLookupPoint()), true);
 						if (b instanceof ICPPFunction)
 							return (ICPPFunction) b;
 					} catch (DOMException e) {

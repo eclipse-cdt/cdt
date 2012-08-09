@@ -371,7 +371,7 @@ public class Conversions {
 				return Cost.NO_CONVERSION;
 			
 			ICPPClassType classTarget= (ICPPClassType) noCVTarget;
-			if (ClassTypeHelper.isAggregateClass(classTarget)) {
+			if (ClassTypeHelper.isAggregateClass(classTarget, point)) {
 				Cost cost= new Cost(arg.getTypeOrFunctionSet(point), target, Rank.IDENTITY);
 				cost.setUserDefinedConversion(null);
 				return cost;
@@ -546,7 +546,7 @@ public class Conversions {
 		ICPPConstructor usedCtor= null;
 		Cost bestCost= null;
 		boolean hasInitListConstructor= false;
-		final ICPPConstructor[] constructors = SemanticUtil.getConstructors(t, point);
+		final ICPPConstructor[] constructors = ClassTypeHelper.getConstructors(t, point);
 		ICPPConstructor[] ctors= constructors;
 		for (ICPPConstructor ctor : ctors) {
 			final int minArgCount = ctor.getRequiredArgumentCount();
@@ -640,7 +640,7 @@ public class Conversions {
 
 		FunctionCost cost1= null;
 		Cost cost2= null;
-		ICPPFunction[] ctors= SemanticUtil.getConstructors(t, point);
+		ICPPFunction[] ctors= ClassTypeHelper.getConstructors(t, point);
 		ctors = CPPTemplates.instantiateForFunctionCall(ctors, null,
 				Collections.singletonList(source), Collections.singletonList(valueCat), false, point);
 

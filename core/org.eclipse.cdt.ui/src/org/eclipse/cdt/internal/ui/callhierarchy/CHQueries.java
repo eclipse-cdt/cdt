@@ -82,7 +82,7 @@ public class CHQueries {
 		if (calleeBinding != null) {
 			findCalledBy1(index, calleeBinding, true, project, result);
 			if (calleeBinding instanceof ICPPMethod) {
-				IBinding[] overriddenBindings= ClassTypeHelper.findOverridden((ICPPMethod) calleeBinding);
+				IBinding[] overriddenBindings= ClassTypeHelper.findOverridden((ICPPMethod) calleeBinding, null);
 				for (IBinding overriddenBinding : overriddenBindings) {
 					findCalledBy1(index, overriddenBinding, false, project, result);
 				}

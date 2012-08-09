@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Tomasz Wesolowski and others
+ * Copyright (c) 2010, 2012 Tomasz Wesolowski and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Tomasz Wesolowski - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
@@ -218,7 +219,6 @@ public class OverrideIndicatorManager implements ICReconcilingListener {
 	
 	private static OverrideInfo checkForOverride(ICPPMethod testedOverride, IASTNode node) throws DOMException {
 		IASTFileLocation location = node.getFileLocation();
-		testedOverride.getClassOwner().getBases();
 
 		boolean onlyPureVirtual = true;
 		StringBuilder sb = new StringBuilder();
@@ -227,7 +227,7 @@ public class OverrideIndicatorManager implements ICReconcilingListener {
 		
 		Set<ICPPClassType> alreadyTestedBases = new HashSet<ICPPClassType>();
 
-		ICPPBase[] bases = testedOverride.getClassOwner().getBases();
+		ICPPBase[] bases = ClassTypeHelper.getBases(testedOverride.getClassOwner(), node);
 		
 		// Don't override 'self' in cyclic inheritance
 		alreadyTestedBases.add(testedOverride.getClassOwner());
@@ -244,7 +244,6 @@ public class OverrideIndicatorManager implements ICReconcilingListener {
 			handleBaseClass(testedClass, testedOverride, overridenMethods, shadowedMethods, alreadyTestedBases);
 
 			for (ICPPMethod overriddenMethod : overridenMethods) {
-
 				if (sb.length() > 0) {
 					sb.append(MESSAGE_SEPARATOR);
 				}
@@ -289,8 +288,8 @@ public class OverrideIndicatorManager implements ICReconcilingListener {
 		}
 		
 		if (sb.length() > 0) {
-			OverrideInfo info = new OverrideInfo(location.getNodeOffset(), location.getNodeLength(), markerType,
-					sb.toString(), bindingToOpen);
+			OverrideInfo info = new OverrideInfo(location.getNodeOffset(), location.getNodeLength(),
+					markerType,	sb.toString(), bindingToOpen);
 			return info;
 		}
 		return null;

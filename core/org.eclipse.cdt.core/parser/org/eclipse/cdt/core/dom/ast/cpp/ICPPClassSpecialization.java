@@ -13,6 +13,7 @@ package org.eclipse.cdt.core.dom.ast.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IField;
 
 /**
  * Specializations of all sorts of class types.
@@ -60,6 +61,20 @@ public interface ICPPClassSpecialization extends ICPPSpecialization, ICPPClassTy
 	ICPPField[] getDeclaredFields(IASTNode point);
 
 	/**
+	 * Similar to {@link ICPPClassType#getMethods()} but a accepts a starting point
+	 * for template instantiation.
+	 * @since 5.5
+	 */
+	ICPPMethod[] getMethods(IASTNode point);
+
+	/**
+	 * Similar to {@link ICPPClassType#getAllDeclaredMethods()} but a accepts a starting point
+	 * for template instantiation.
+	 * @since 5.5
+	 */
+	ICPPMethod[] getAllDeclaredMethods(IASTNode point);
+
+	/**
 	 * Similar to {@link ICPPClassType#getDeclaredMethods()} but a accepts a starting point
 	 * for template instantiation.
 	 * @since 5.5
@@ -72,6 +87,13 @@ public interface ICPPClassSpecialization extends ICPPSpecialization, ICPPClassTy
 	 * @since 5.5
 	 */
 	IBinding[] getFriends(IASTNode point);
+
+	/**
+	 * Similar to {@link ICPPClassType#getFriends()} but a accepts a starting point
+	 * for template instantiation.
+	 * @since 5.5
+	 */
+	IField[] getFields(IASTNode point);
 
 	/**
 	 * Similar to {@link ICPPClassType#getNestedClasses()} but a accepts a starting point

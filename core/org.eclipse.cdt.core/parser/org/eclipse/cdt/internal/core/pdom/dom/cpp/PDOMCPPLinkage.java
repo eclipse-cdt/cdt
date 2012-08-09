@@ -14,7 +14,6 @@
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -68,6 +67,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
@@ -82,6 +82,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPQualifierType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPReferenceType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownClassInstance;
@@ -252,7 +253,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		PDOMBinding pdomBinding = addBinding(binding, name);
 		if (pdomBinding instanceof PDOMCPPClassType || pdomBinding instanceof PDOMCPPClassSpecialization) {
 			if (binding instanceof ICPPClassType && name.isDefinition()) {
-				addImplicitMethods(pdomBinding, (ICPPClassType) binding);
+				addImplicitMethods(pdomBinding, (ICPPClassType) binding, name);
 			}
 		}
 
@@ -299,7 +300,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 					if (pdomBinding != null) {
 						getPDOM().putCachedResult(inputBinding, pdomBinding);
 						if (inputBinding instanceof CPPClosureType) {
-							addImplicitMethods(pdomBinding, (ICPPClassType) binding);
+							addImplicitMethods(pdomBinding, (ICPPClassType) binding, fromName);
 						}
 					}
 				} catch (DOMException e) {
@@ -490,17 +491,14 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		return result;
 	}
 
-	private void addImplicitMethods(PDOMBinding type, ICPPClassType binding) throws CoreException {
+	private void addImplicitMethods(PDOMBinding type, ICPPClassType binding, IASTNode point) throws CoreException {
 		try {
 			final long fileLocalRec= type.getLocalToFileRec();
 			IScope scope = binding.getCompositeScope();
 			if (scope instanceof ICPPClassScope) {
 				List<ICPPMethod> old= new ArrayList<ICPPMethod>();
 				if (type instanceof ICPPClassType) {
-					IScope oldScope = ((ICPPClassType)type).getCompositeScope();
-					if (oldScope instanceof ICPPClassScope) {
-						old.addAll(Arrays.asList(((ICPPClassScope) oldScope).getImplicitMethods()));
-					}
+					ArrayUtil.addAll(old, ClassTypeHelper.getImplicitMethods((ICPPClassType) type, point));
 				}
 				ICPPMethod[] implicit= ((ICPPClassScope) scope).getImplicitMethods();
 				for (ICPPMethod method : implicit) {

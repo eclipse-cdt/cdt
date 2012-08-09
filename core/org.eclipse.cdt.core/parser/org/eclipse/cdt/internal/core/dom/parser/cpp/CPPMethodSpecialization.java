@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Andrew Niefer (IBM) - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google) 
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -20,20 +21,27 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethodSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 
 /**
  * The specialization of a method in the context of a class-specialization.
  */
-public class CPPMethodSpecialization extends CPPFunctionSpecialization implements ICPPMethod {
+public class CPPMethodSpecialization extends CPPFunctionSpecialization implements ICPPMethodSpecialization {
 
-	public CPPMethodSpecialization(ICPPMethod orig, ICPPClassType owner, ICPPTemplateParameterMap argMap, ICPPFunctionType type, IType[] exceptionSpec ) {
-		super(orig, owner, argMap, type, exceptionSpec );
+	public CPPMethodSpecialization(ICPPMethod orig, ICPPClassType owner, ICPPTemplateParameterMap argMap,
+			ICPPFunctionType type, IType[] exceptionSpec) {
+		super(orig, owner, argMap, type, exceptionSpec);
+	}
+
+	@Override
+	public ICPPMethod getSpecializedBinding() {
+		return (ICPPMethod) super.getSpecializedBinding();
 	}
 
 	@Override
 	public boolean isVirtual() {
-		ICPPMethod f = (ICPPMethod) getSpecializedBinding();
+		ICPPMethod f = getSpecializedBinding();
 		if (f != null)
 			return f.isVirtual();
 		IASTNode definition = getDefinition();
@@ -58,7 +66,7 @@ public class CPPMethodSpecialization extends CPPFunctionSpecialization implement
 
 	@Override
 	public int getVisibility() {
-		ICPPMethod f = (ICPPMethod) getSpecializedBinding();
+		ICPPMethod f = getSpecializedBinding();
 		if (f != null)
 			return f.getVisibility();
 		return 0;
@@ -80,17 +88,17 @@ public class CPPMethodSpecialization extends CPPFunctionSpecialization implement
 
 	@Override
 	public boolean isExplicit() {
-		return ((ICPPMethod) getSpecializedBinding()).isExplicit();
+		return getSpecializedBinding().isExplicit();
 	}
 
 	@Override
 	public boolean isImplicit() {
-		return ((ICPPMethod) getSpecializedBinding()).isImplicit();
+		return getSpecializedBinding().isImplicit();
 	}
 
 	@Override
 	public boolean isPureVirtual() {
-		ICPPMethod f = (ICPPMethod) getSpecializedBinding();
+		ICPPMethod f = getSpecializedBinding();
 		if (f != null)
 			return f.isPureVirtual();
 
@@ -98,9 +106,9 @@ public class CPPMethodSpecialization extends CPPFunctionSpecialization implement
 	}
 
 	@Override
-	public IType[] getExceptionSpecification() {
+	public IType[] getExceptionSpecification(IASTNode point) {
 		if (isImplicit()) {
-			return ClassTypeHelper.getInheritedExceptionSpecification(this);
+			return ClassTypeHelper.getInheritedExceptionSpecification(this, point);
 		}
 		return super.getExceptionSpecification();
 	}

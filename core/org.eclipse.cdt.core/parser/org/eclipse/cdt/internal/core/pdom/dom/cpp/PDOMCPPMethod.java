@@ -253,7 +253,7 @@ class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod {
 	@Override
 	public IType[] getExceptionSpecification() {
 		if (isImplicit()) {
-			return ClassTypeHelper.getInheritedExceptionSpecification(this);
+			return ClassTypeHelper.getInheritedExceptionSpecification(this, null);
 		}
 		return super.getExceptionSpecification();
 	}

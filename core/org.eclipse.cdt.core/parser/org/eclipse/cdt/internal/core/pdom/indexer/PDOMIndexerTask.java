@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *    Sergey Prigogin (Google)
+ *     Markus Schorn - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.indexer;
 
@@ -48,8 +48,8 @@ public abstract class PDOMIndexerTask extends AbstractIndexerTask implements IPD
 	private AbstractPDOMIndexer fIndexer;
 	private boolean fWriteInfoToLog;
 	
-	protected PDOMIndexerTask(ITranslationUnit[] forceFiles, ITranslationUnit[] updateFiles, ITranslationUnit[] removeFiles,
-			AbstractPDOMIndexer indexer, boolean isFastIndexer) {
+	protected PDOMIndexerTask(ITranslationUnit[] forceFiles, ITranslationUnit[] updateFiles,
+			ITranslationUnit[] removeFiles, AbstractPDOMIndexer indexer, boolean isFastIndexer) {
 		super(concat(forceFiles, updateFiles), removeFiles, new ProjectIndexerInputAdapter(indexer.getProject()), isFastIndexer);
 		fIndexer= indexer;
 		setShowActivity(checkDebugOption(TRACE_ACTIVITY, TRUE));

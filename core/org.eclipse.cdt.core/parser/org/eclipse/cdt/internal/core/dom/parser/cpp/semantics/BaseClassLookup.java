@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -74,10 +75,13 @@ class BaseClassLookup {
 	private boolean fPropagationDone;
 	private boolean fCollected;
 	private boolean fCollectedAsRegularBase;
+	private final IASTNode fLookupPoint;
 
-	private BaseClassLookup(ICPPClassType type) {
+	private BaseClassLookup(ICPPClassType type, IASTNode lookupPoint) {
 		fClassType= type;
+		fLookupPoint= lookupPoint;
 	}
+
 	ICPPClassType getClassType() {
 		return fClassType;
 	}
@@ -161,10 +165,10 @@ class BaseClassLookup {
 		BaseClassLookup result;
 		IBinding[] matches= IBinding.EMPTY_BINDING_ARRAY;
 		if (baseClassScope == null) {
-			result= new BaseClassLookup(root);
+			result= new BaseClassLookup(root, data.getLookupPoint());
 			infoMap.put(root.getCompositeScope(), result);
 		} else {
-			result= new BaseClassLookup(baseClassScope.getClassType());
+			result= new BaseClassLookup(baseClassScope.getClassType(), data.getLookupPoint());
 			infoMap.put(baseClassScope, result);
 			try {
 				IBinding[] members= CPPSemantics.getBindingsFromScope(baseClassScope, data);
@@ -288,7 +292,7 @@ class BaseClassLookup {
 		
 		if (fClassType != null) { 
 			ICPPBase[] bases= null;
-			bases= fClassType.getBases();
+			bases= ClassTypeHelper.getBases(fClassType, fLookupPoint);
 			if (bases != null && bases.length > 0) {
 				for (ICPPBase base : bases) {
 					IBinding baseBinding = base.getBaseClass();
@@ -309,7 +313,7 @@ class BaseClassLookup {
 						baseInfo.propagateHiddenAsVirtual();
 					} else {
 						// mark to catch recursions
-						baseInfo= new BaseClassLookup(baseClass);
+						baseInfo= new BaseClassLookup(baseClass, fLookupPoint);
 						infoMap.put(baseScope, baseInfo);
 						baseInfo.hideVirtualBases(infoMap, depth);
 					}

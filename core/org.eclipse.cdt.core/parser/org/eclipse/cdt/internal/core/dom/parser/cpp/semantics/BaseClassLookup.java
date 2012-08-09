@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
@@ -70,8 +70,8 @@ class BaseClassLookup {
 	private IBinding[] fBindings;
 	private List<BaseClassLookup> fChildren= Collections.emptyList();
 	private BitSet fVirtual;
-	private boolean fHiddenAsVirtualBase= false;
-	private boolean fPropagationDone= false;
+	private boolean fHiddenAsVirtualBase;
+	private boolean fPropagationDone;
 	private boolean fCollected;
 	private boolean fCollectedAsRegularBase;
 
@@ -85,9 +85,11 @@ class BaseClassLookup {
 	IBinding[] getResult() {
 		return fBindings;
 	}
+
 	boolean containsVirtualBase() {
 		return (fVirtual != null && fVirtual.nextSetBit(0) >= 0);
 	}
+
 	boolean hasMatches() {
 		return fBindings != null && fBindings.length > 0 && fBindings[0] != null;
 	}
@@ -111,6 +113,7 @@ class BaseClassLookup {
 	public void setHiddenAsVirtualBase() {
 		fHiddenAsVirtualBase= true;
 	}
+
 	public void propagateHiddenAsVirtual() {
 		if (fPropagationDone)
 			return;
@@ -136,8 +139,8 @@ class BaseClassLookup {
 		return false;
 	}
 	
-	static BaseClassLookup lookupInBaseClass(LookupData data, ICPPClassScope baseClassScope, boolean isVirtual,
-			ICPPClassType root, HashMap<IScope, BaseClassLookup> infoMap, int depth) {
+	static BaseClassLookup lookupInBaseClass(LookupData data, ICPPClassScope baseClassScope,
+			boolean isVirtual, ICPPClassType root, HashMap<IScope, BaseClassLookup> infoMap, int depth) {
 		if (depth++ > CPPSemantics.MAX_INHERITANCE_DEPTH)
 			return null;
 	
@@ -314,6 +317,7 @@ class BaseClassLookup {
 			}
 		}
 	}
+
 	public void collectResultForContentAssist(LookupData data) {
 		if (fCollected)
 			return;

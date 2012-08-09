@@ -203,6 +203,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUsingDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUsingDirective;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVariable;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPASTInternalScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPClassSpecializationScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
@@ -414,7 +415,7 @@ public class CPPSemantics {
 					if (cls instanceof ICPPUnknownBinding) {
 						binding= new CPPUnknownConstructor(cls);
 					} else {
-						binding= CPPSemantics.resolveFunction(data, SemanticUtil.getConstructors(cls, lookupPoint), true);
+						binding= CPPSemantics.resolveFunction(data, ClassTypeHelper.getConstructors(cls, lookupPoint), true);
 					}
 				} catch (DOMException e) {
 					return e.getProblem();
@@ -714,7 +715,7 @@ public class CPPSemantics {
     	}
 		if (t instanceof ICPPClassType && !(t instanceof ICPPClassTemplate)) {
 			ICPPClassType ct= (ICPPClassType) t;
-			ICPPBase[] bases = SemanticUtil.getBases(ct, tu);
+			ICPPBase[] bases = ClassTypeHelper.getBases(ct, tu);
 			for (ICPPBase base : bases) {
 				IBinding b = base.getBaseClass();
 				if (b instanceof IType)
@@ -725,7 +726,7 @@ public class CPPSemantics {
 			//       (excluding template template parameters);
 			// * ... owners of which any template template arguments are members;
 			if (ct instanceof ICPPTemplateInstance) {
-				for (IBinding friend : ct.getFriends()) {
+				for (IBinding friend : ClassTypeHelper.getFriends(ct, tu)) {
 					if (friend instanceof ICPPFunction) {
 						friendFns.add((ICPPFunction) friend);
 					}
@@ -2817,7 +2818,7 @@ public class CPPSemantics {
     				LookupData data= new LookupData(name);
     				data.setFunctionArguments(false, init.getArguments());
     				try {
-    					IBinding ctor = CPPSemantics.resolveFunction(data, SemanticUtil.getConstructors((ICPPClassType) targetType, name), true);
+    					IBinding ctor = CPPSemantics.resolveFunction(data, ClassTypeHelper.getConstructors((ICPPClassType) targetType, name), true);
     					if (ctor instanceof ICPPConstructor) {
     						int i= 0;
     						for (IASTNode arg : init.getArguments()) {
@@ -3124,13 +3125,13 @@ public class CPPSemantics {
 			    LookupData data = new LookupData(astName);
 				data.setFunctionArguments(false, arguments);
 			    data.qualified = true;
-			    data.foundItems = SemanticUtil.getConstructors(classType, name);
+			    data.foundItems = ClassTypeHelper.getConstructors(classType, name);
 			    binding = resolveAmbiguities(data);
 			    if (binding instanceof ICPPConstructor)
 			    	return (ICPPConstructor) binding;
 	    	} else if (initializer == null) {
 	    		// Default initialization
-	    		ICPPConstructor[] ctors = SemanticUtil.getConstructors(classType, name);
+	    		ICPPConstructor[] ctors = ClassTypeHelper.getConstructors(classType, name);
 				for (ICPPConstructor ctor : ctors) {
 					if (ctor.getRequiredArgumentCount() == 0)
 						return ctor;

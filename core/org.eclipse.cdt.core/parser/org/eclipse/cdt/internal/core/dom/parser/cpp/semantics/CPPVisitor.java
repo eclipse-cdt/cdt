@@ -2241,6 +2241,8 @@ public class CPPVisitor extends ASTQueries {
 	}
 
 	private static IType getStdType(final IASTNode node, char[] name) {
+		if (node == null)
+			return null;
 		ASTTranslationUnit ast = (ASTTranslationUnit) node.getTranslationUnit();
 		IBinding[] std= ast.getScope().find(STD);
 		for (IBinding binding : std) {

@@ -31,7 +31,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 
-
 /**
  * Rename processor for methods.
  */
@@ -108,7 +107,7 @@ public class CRenameMethodProcessor extends CRenameGlobalProcessor {
         if (binding instanceof ICPPMethod) {
         	ICPPMethod m= (ICPPMethod) binding;
         	try {
-        		IBinding[] bs= ClassTypeHelper.findOverridden(m);
+        		IBinding[] bs= ClassTypeHelper.findOverridden(m, argument.getTranslationUnit());
         		bindings.addAll(Arrays.asList(bs));
         		bs= ClassTypeHelper.findOverriders(getIndex(), m);
         		bindings.addAll(Arrays.asList(bs));

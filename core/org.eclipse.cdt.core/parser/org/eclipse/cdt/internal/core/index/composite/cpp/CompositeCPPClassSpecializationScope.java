@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -69,7 +70,8 @@ public class CompositeCPPClassSpecializationScope extends CompositeScope impleme
 
 	@Override
 	public ICPPMethod[] getImplicitMethods() {
-		return getImplicitMethods(null); // Instantiation of dependent expression may not work.
+		CCorePlugin.log(new Exception("Unsafe method call. Instantiation of dependent expressions may not work.")); //$NON-NLS-1$
+		return getImplicitMethods(null);
 	}
 
 	@Override
@@ -104,7 +106,8 @@ public class CompositeCPPClassSpecializationScope extends CompositeScope impleme
 
 	@Override
 	public ICPPConstructor[] getConstructors() {
-		return getConstructors(null); // Instantiation of dependent expression may not work.
+		CCorePlugin.log(new Exception("Unsafe method call. Instantiation of dependent expressions may not work.")); //$NON-NLS-1$
+		return getConstructors(null);
 	}
 
 	@Override

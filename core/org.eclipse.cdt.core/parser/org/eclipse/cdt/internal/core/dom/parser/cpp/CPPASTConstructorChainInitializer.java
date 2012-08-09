@@ -175,7 +175,7 @@ public class CPPASTConstructorChainInitializer extends ASTNode implements
 				IBinding method= fdef.getDeclarator().getName().resolveBinding();
 				if (method instanceof ICPPMethod) {
 					ICPPClassType cls= ((ICPPMethod) method).getClassOwner();
-					for (ICPPBase base : SemanticUtil.getBases(cls, fdef)) {
+					for (ICPPBase base : ClassTypeHelper.getBases(cls, fdef)) {
 						result.put(base.getBaseClassSpecifierName().getSimpleID());
 					}
 					return result;

@@ -208,7 +208,8 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 
 	@Override
 	public ICPPBase[] getBases() {
-		return getBases(null); // Instantiation of dependent expression may not work.
+		CCorePlugin.log(new Exception("Unsafe method call. Instantiation of dependent expressions may not work.")); //$NON-NLS-1$
+		return getBases(null);
 	}
 
 	@Override
@@ -241,7 +242,8 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 
 	@Override
 	public ICPPConstructor[] getConstructors() {
-		return getConstructors(null); // Instantiation of dependent expression may not work.
+		CCorePlugin.log(new Exception("Unsafe method call. Instantiation of dependent expressions may not work.")); //$NON-NLS-1$
+		return getConstructors(null);
 	}
 
 	@Override
@@ -262,7 +264,8 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 
 	@Override
 	public ICPPMethod[] getDeclaredMethods() {
-		return getDeclaredMethods(null); // Instantiation of dependent expression may not work.
+		CCorePlugin.log(new Exception("Unsafe method call. Instantiation of dependent expressions may not work.")); //$NON-NLS-1$
+		return getDeclaredMethods(null);
 	}
 
 	@Override
@@ -283,7 +286,8 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 
 	@Override
 	public ICPPField[] getDeclaredFields() {
-		return getDeclaredFields(null); // Instantiation of dependent expression may not work.
+		CCorePlugin.log(new Exception("Unsafe method call. Instantiation of dependent expressions may not work.")); //$NON-NLS-1$
+		return getDeclaredFields(null);
 	}
 
 	@Override
@@ -304,7 +308,8 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 
 	@Override
 	public ICPPClassType[] getNestedClasses() {
-		return getNestedClasses(null); // Instantiation of dependent expression may not work.
+		CCorePlugin.log(new Exception("Unsafe method call. Instantiation of dependent expressions may not work.")); //$NON-NLS-1$
+		return getNestedClasses(null);
 	}
 
 	@Override
@@ -325,7 +330,8 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 
 	@Override
 	public IBinding[] getFriends() {
-		return getFriends(null); // Instantiation of dependent expression may not work.
+		CCorePlugin.log(new Exception("Unsafe method call. Instantiation of dependent expressions may not work.")); //$NON-NLS-1$
+		return getFriends(null);
 	}
 
 	@Override
@@ -336,17 +342,35 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 
 	@Override
 	public ICPPMethod[] getMethods() {
-		return ClassTypeHelper.getMethods(this);
+		CCorePlugin.log(new Exception("Unsafe method call. Instantiation of dependent expressions may not work.")); //$NON-NLS-1$
+		return getMethods(null);
+	}
+
+	@Override
+	public ICPPMethod[] getMethods(IASTNode point) {
+		return ClassTypeHelper.getMethods(this, point);
 	}
 
 	@Override
 	public ICPPMethod[] getAllDeclaredMethods() {
-		return ClassTypeHelper.getAllDeclaredMethods(this);
+		CCorePlugin.log(new Exception("Unsafe method call. Instantiation of dependent expressions may not work.")); //$NON-NLS-1$
+		return getAllDeclaredMethods(null);
+	}
+
+	@Override
+	public ICPPMethod[] getAllDeclaredMethods(IASTNode point) {
+		return ClassTypeHelper.getAllDeclaredMethods(this, point);
 	}
 
 	@Override
 	public IField[] getFields() {
-		return ClassTypeHelper.getFields(this);
+		CCorePlugin.log(new Exception("Unsafe method call. Instantiation of dependent expressions may not work.")); //$NON-NLS-1$
+		return getFields(null);
+	}
+
+	@Override
+	public IField[] getFields(IASTNode point) {
+		return ClassTypeHelper.getFields(this, point);
 	}
 
 	@Override

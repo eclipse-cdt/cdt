@@ -357,7 +357,8 @@ public abstract class CSearchQuery implements ISearchQuery {
 
 					if (binding instanceof ICPPMethod) {
 						ICPPMethod m= (ICPPMethod) binding;
-						ICPPMethod[] msInBases = ClassTypeHelper.findOverridden(m);
+						IASTNode point = null; // Instantiation of dependent expressions may not work.
+						ICPPMethod[] msInBases = ClassTypeHelper.findOverridden(m, point);
 						if (msInBases.length > 0) {
 							if (polymorphicNames == null) {
 								polymorphicNames= new ArrayList<IIndexName>();

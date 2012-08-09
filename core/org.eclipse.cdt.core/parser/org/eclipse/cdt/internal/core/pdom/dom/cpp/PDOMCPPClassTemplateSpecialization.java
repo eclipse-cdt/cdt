@@ -158,7 +158,7 @@ class PDOMCPPClassTemplateSpecialization extends PDOMCPPClassSpecialization
 	
 	@Override
 	public ICPPClassTemplatePartialSpecialization[] getPartialSpecializations() {
-		IASTNode point= null; // Instantiation of dependent expression may not work.
+		IASTNode point= null; // Instantiation of dependent expressions may not work.
 		ICPPClassTemplate origTemplate= (ICPPClassTemplate) getSpecializedBinding();
 		ICPPClassTemplatePartialSpecialization[] orig = origTemplate.getPartialSpecializations();
 		ICPPClassTemplatePartialSpecialization[] spec = new ICPPClassTemplatePartialSpecialization[orig.length];

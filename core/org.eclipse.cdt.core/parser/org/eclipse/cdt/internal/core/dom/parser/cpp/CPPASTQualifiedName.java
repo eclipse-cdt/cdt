@@ -278,7 +278,7 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 				List<IBinding> filtered = filterClassScopeBindings(classType, bindings, isDeclaration);
 				if (isDeclaration && nameMatches(classType.getNameCharArray(),
 						n.getLookupKey(), isPrefix)) {
-					ICPPConstructor[] constructors = SemanticUtil.getConstructors(classType, n);
+					ICPPConstructor[] constructors = ClassTypeHelper.getConstructors(classType, n);
 					for (int i = 0; i < constructors.length; i++) {
 						if (!constructors[i].isImplicit()) {
 							filtered.add(constructors[i]);

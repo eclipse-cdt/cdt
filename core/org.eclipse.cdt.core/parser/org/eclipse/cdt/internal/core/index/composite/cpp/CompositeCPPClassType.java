@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2012 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,8 +8,11 @@
  * Contributors:
  *     Andrew Ferguson (Symbian) - Initial implementation
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.cpp;
+
+import java.util.Arrays;
 
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -42,8 +45,8 @@ class CompositeCPPClassType extends CompositeCPPBinding implements ICPPClassType
 	}
 
 	@Override
-	public final ICPPMethod[] getAllDeclaredMethods() {
-		return ClassTypeHelper.getAllDeclaredMethods(this);
+	public ICPPMethod[] getAllDeclaredMethods() {
+		return ClassTypeHelper.getAllDeclaredMethods(this, null);
 	}
 
 	private class CPPBaseDelegate implements ICPPBase {
@@ -101,68 +104,48 @@ class CompositeCPPClassType extends CompositeCPPBinding implements ICPPClassType
 	
 	@Override
 	public ICPPBase[] getBases() {
-		final ICPPBase[] preresult = ((ICPPClassType) rbinding).getBases();
-		ICPPBase[] result = new ICPPBase[preresult.length];
-		for (int i= 0; i < preresult.length; i++) {
-			result[i] = new CPPBaseDelegate(preresult[i]);
-		}
-		return result;
+		ICPPBase[] bases = ((ICPPClassType) rbinding).getBases();
+		return wrapBases(bases);
 	}
 
 	@Override
 	public ICPPConstructor[] getConstructors() {
 		ICPPConstructor[] result = ((ICPPClassType) rbinding).getConstructors();
-		for (int i= 0; i < result.length; i++) {
-			result[i] = (ICPPConstructor) cf.getCompositeBinding((IIndexFragmentBinding) result[i]);
-		}
-		return result;
+		return wrapBindings(result);
 	}
 
 	@Override
 	public ICPPField[] getDeclaredFields() {
 		ICPPField[] result = ((ICPPClassType) rbinding).getDeclaredFields();
-		for (int i= 0; i < result.length; i++) {
-			result[i] = (ICPPField) cf.getCompositeBinding((IIndexFragmentBinding) result[i]);
-		}
-		return result;
+		return wrapBindings(result);
 	}
 
 	@Override
 	public ICPPMethod[] getDeclaredMethods() {
 		ICPPMethod[] result = ((ICPPClassType) rbinding).getDeclaredMethods();
-		for (int i= 0; i < result.length; i++) {
-			result[i]= (ICPPMethod) cf.getCompositeBinding((IIndexFragmentBinding) result[i]);
-		}
-		return result;
+		return wrapBindings(result);
 	}
 
 	@Override
-	public final IField[] getFields() {
-		return ClassTypeHelper.getFields(this);
+	public IField[] getFields() {
+		return ClassTypeHelper.getFields(this, null);
 	}
 
 	@Override
 	public IBinding[] getFriends() {
 		IBinding[] preResult = ((ICPPClassType) rbinding).getFriends();
-		IBinding[] result = new IBinding[preResult.length];
-		for (int i= 0; i < preResult.length; i++) {
-			result[i] = cf.getCompositeBinding((IIndexFragmentBinding) preResult[i]);
-		}
-		return result;
+		return wrapBindings(preResult);
 	}
 
 	@Override
-	public final ICPPMethod[] getMethods() {
-		return ClassTypeHelper.getMethods(this);
+	public ICPPMethod[] getMethods() {
+		return ClassTypeHelper.getMethods(this, null);
 	}
 
 	@Override
 	public ICPPClassType[] getNestedClasses() {
 		ICPPClassType[] result = ((ICPPClassType) rbinding).getNestedClasses();
-		for (int i= 0; i < result.length; i++) {
-			result[i] = (ICPPClassType) cf.getCompositeBinding((IIndexFragmentBinding) result[i]);
-		}
-		return result;
+		return wrapBindings(result);
 	}
 
 	@Override
@@ -183,5 +166,22 @@ class CompositeCPPClassType extends CompositeCPPBinding implements ICPPClassType
 	@Override
 	public boolean isAnonymous() {
 		return ((ICPPClassType) rbinding).isAnonymous();
+	}
+
+	protected ICPPBase[] wrapBases(final ICPPBase[] bases) {
+		ICPPBase[] result = new ICPPBase[bases.length];
+		for (int i= 0; i < bases.length; i++) {
+			result[i] = new CPPBaseDelegate(bases[i]);
+		}
+		return result;
+	}
+
+	@SuppressWarnings("unchecked")
+	protected <T extends IBinding> T[] wrapBindings(T[] bindings) {
+		T[] result = Arrays.copyOf(bindings, bindings.length);
+		for (int i= 0; i < bindings.length; i++) {
+			result[i] = (T) cf.getCompositeBinding((IIndexFragmentBinding) bindings[i]);
+		}
+		return result;
 	}
 }

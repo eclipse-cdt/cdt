@@ -85,6 +85,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknownScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
@@ -1907,7 +1908,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 		ICPPClassType B = (ICPPClassType) col.getName(3).resolveBinding();
 		ICPPClassType A = (ICPPClassType) col.getName(6).resolveBinding();
 
-		ICPPBase[] bases = A.getBases();
+		ICPPBase[] bases = ClassTypeHelper.getBases(A, tu);
 		assertEquals(bases.length, 1);
 		assertSame(bases[0].getBaseClass(), B);
 	}
@@ -4368,19 +4369,19 @@ public class AST2TemplateTests extends AST2BaseTest {
 		BindingAssertionHelper bh= new BindingAssertionHelper(code, CPP);
 
 		ICPPClassType type= bh.assertNonProblem("X<int&>", 7);
-		ICPPMethod[] ms= type.getMethods();
+		ICPPMethod[] ms= ClassTypeHelper.getMethods(type, null);
 		int i= ms[0].getName().equals("f") ? 0 : 1;
 		ICPPMethod m= ms[i];
 		assertEquals("int &", ASTTypeUtil.getType(m.getType().getParameterTypes()[0]));
-		m= ms[1-i];
+		m= ms[1 - i];
 		assertEquals("int &", ASTTypeUtil.getType(m.getType().getParameterTypes()[0]));
 
 		type= bh.assertNonProblem("X<const int&&>", 14);
-		ms= type.getMethods();
+		ms= ClassTypeHelper.getMethods(type, null);
 		i= ms[0].getName().equals("f") ? 0 : 1;
 		m= ms[i];
 		assertEquals("const int &", ASTTypeUtil.getType(m.getType().getParameterTypes()[0]));
-		m= ms[1-i];
+		m= ms[1 - i];
 		assertEquals("const int &&", ASTTypeUtil.getType(m.getType().getParameterTypes()[0]));
 	}
 

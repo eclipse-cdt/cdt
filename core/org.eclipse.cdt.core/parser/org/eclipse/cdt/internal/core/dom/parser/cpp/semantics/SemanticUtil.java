@@ -40,10 +40,7 @@ import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
@@ -66,6 +63,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPQualifierType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTypeArgument;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 
@@ -108,7 +106,7 @@ public class SemanticUtil {
 		if (clazz instanceof ICPPDeferredClassInstance) {
 			clazz= (ICPPClassType) ((ICPPDeferredClassInstance) clazz).getTemplateDefinition();
 		}
-		ICPPMethod[] decs= getDeclaredMethods(clazz, point);
+		ICPPMethod[] decs= ClassTypeHelper.getDeclaredMethods(clazz, point);
 		if (decs != null) {
 			for (ICPPMethod method : decs) {
 				if (isConversionOperator(method)) {
@@ -152,7 +150,7 @@ public class SemanticUtil {
 				ICPPClassType clazz= current.keyAt(i);				
 				done.put(clazz);
 
-				for (ICPPBase base : getBases(clazz, point)) {
+				for (ICPPBase base : ClassTypeHelper.getBases(clazz, point)) {
 					IBinding binding= base.getBaseClass();
 					if (binding instanceof ICPPClassType && !(binding instanceof IProblemBinding)) {
 						ICPPClassType ct= (ICPPClassType) binding;
@@ -167,42 +165,6 @@ public class SemanticUtil {
 		}
 
 		return done;
-	}
-
-	public static ICPPBase[] getBases(ICPPClassType classType, IASTNode point) {
-		if (classType instanceof ICPPClassSpecialization)
-			return ((ICPPClassSpecialization) classType).getBases(point);
-		return classType.getBases();
-	}
-
-	public static ICPPConstructor[] getConstructors(ICPPClassType classType, IASTNode point) {
-		if (classType instanceof ICPPClassSpecialization)
-			return ((ICPPClassSpecialization) classType).getConstructors(point);
-		return classType.getConstructors();
-	}
-
-	public static ICPPField[] getDeclaredFields(ICPPClassType classType, IASTNode point) {
-		if (classType instanceof ICPPClassSpecialization)
-			return ((ICPPClassSpecialization) classType).getDeclaredFields(point);
-		return classType.getDeclaredFields();
-	}
-
-	public static ICPPMethod[] getDeclaredMethods(ICPPClassType classType, IASTNode point) {
-		if (classType instanceof ICPPClassSpecialization)
-			return ((ICPPClassSpecialization) classType).getDeclaredMethods(point);
-		return classType.getDeclaredMethods();
-	}
-
-	public static IBinding[] getFriends(ICPPClassType classType, IASTNode point) {
-		if (classType instanceof ICPPClassSpecialization)
-			return ((ICPPClassSpecialization) classType).getFriends(point);
-		return classType.getFriends();
-	}
-
-	public static ICPPClassType[] getNestedClasses(ICPPClassType classType, IASTNode point) {
-		if (classType instanceof ICPPClassSpecialization)
-			return ((ICPPClassSpecialization) classType).getNestedClasses(point);
-		return classType.getNestedClasses();
 	}
 
 	/**
@@ -676,7 +638,7 @@ public class SemanticUtil {
 				clazz= (ICPPClassType) ((ICPPDeferredClassInstance) clazz).getSpecializedBinding();
 			}
 			
-			for (ICPPBase cppBase : getBases(clazz, point)) {
+			for (ICPPBase cppBase : ClassTypeHelper.getBases(clazz, point)) {
 				IBinding base= cppBase.getBaseClass();
 				if (base instanceof IType && hashSet.add(base)) {
 					IType tbase= (IType) base;

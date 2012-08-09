@@ -6252,20 +6252,20 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertFalse(ClassTypeHelper.isOverrider(m5, m2));
 		assertTrue(ClassTypeHelper.isOverrider(m4, m2));
 
-		ICPPMethod[] ors= ClassTypeHelper.findOverridden(m0);
+		ICPPMethod[] ors= ClassTypeHelper.findOverridden(m0, null);
 		assertEquals(0, ors.length);
-		ors= ClassTypeHelper.findOverridden(m1);
+		ors= ClassTypeHelper.findOverridden(m1, null);
 		assertEquals(0, ors.length);
-		ors= ClassTypeHelper.findOverridden(m2);
+		ors= ClassTypeHelper.findOverridden(m2, null);
 		assertEquals(1, ors.length);
 		assertSame(ors[0], m1);
-		ors= ClassTypeHelper.findOverridden(m3);
+		ors= ClassTypeHelper.findOverridden(m3, null);
 		assertEquals(0, ors.length);
-		ors= ClassTypeHelper.findOverridden(m4);
+		ors= ClassTypeHelper.findOverridden(m4, null);
 		assertEquals(2, ors.length);
 		assertSame(ors[0], m2);
 		assertSame(ors[1], m1);
-		ors= ClassTypeHelper.findOverridden(m5);
+		ors= ClassTypeHelper.findOverridden(m5, null);
 		assertEquals(1, ors.length);
 		assertSame(ors[0], m1);
 	}
@@ -8732,14 +8732,14 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertFalse(ClassTypeHelper.isOverrider(m3, m0));
 		assertFalse(ClassTypeHelper.isOverrider(m3, m1));
 
-		ICPPMethod[] ors= ClassTypeHelper.findOverridden(m0);
+		ICPPMethod[] ors= ClassTypeHelper.findOverridden(m0, null);
 		assertEquals(0, ors.length);
-		ors= ClassTypeHelper.findOverridden(m1);
+		ors= ClassTypeHelper.findOverridden(m1, null);
 		assertEquals(0, ors.length);
-		ors= ClassTypeHelper.findOverridden(m2);
+		ors= ClassTypeHelper.findOverridden(m2, null);
 		assertEquals(1, ors.length);
 		assertSame(ors[0], m0);
-		ors= ClassTypeHelper.findOverridden(m3);
+		ors= ClassTypeHelper.findOverridden(m3, null);
 		assertEquals(0, ors.length);
 	}
 
@@ -9546,7 +9546,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	public void testRecursiveClassInheritance_Bug357256() throws Exception {
 		BindingAssertionHelper bh= getAssertionHelper();
 		ICPPClassType c= bh.assertNonProblem("A", 1);
-		assertEquals(0, ClassTypeHelper.getPureVirtualMethods(c).length);
+		assertEquals(0, ClassTypeHelper.getPureVirtualMethods(c, null).length);
 	}
 
 	//	template <typename T> struct CT1 {};

@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 
 /**
@@ -46,8 +47,8 @@ public class NonVirtualDestructor extends AbstractIndexAstChecker {
 		ast.accept(new OnEachClass());
 	}
 
-	private static ICPPMethod getDestructor(ICPPClassType classType) {
-		for (ICPPMethod method : classType.getDeclaredMethods()) {
+	private static ICPPMethod getDestructor(ICPPClassType classType, IASTNode point) {
+		for (ICPPMethod method : ClassTypeHelper.getDeclaredMethods(classType, point)) {
 			if (method.isDestructor()) {
 				return method;
 			}
@@ -55,18 +56,18 @@ public class NonVirtualDestructor extends AbstractIndexAstChecker {
 		return null;
 	}
 
-	private static boolean hasVirtualDestructor(ICPPClassType classType) {
+	private static boolean hasVirtualDestructor(ICPPClassType classType, IASTNode point) {
 		checkedClassTypes.add(classType);
-		ICPPMethod destructor = getDestructor(classType);
+		ICPPMethod destructor = getDestructor(classType, point);
 		if (destructor != null && destructor.isVirtual()) {
 			return true;
 		}
-		ICPPBase[] bases = classType.getBases();   
+		ICPPBase[] bases = ClassTypeHelper.getBases(classType, point);   
 		for (ICPPBase base : bases) {
 			IBinding baseClass = base.getBaseClass();
 			if (baseClass instanceof ICPPClassType) {
 				ICPPClassType cppClassType = (ICPPClassType) baseClass;
-				if (!checkedClassTypes.contains(cppClassType) && hasVirtualDestructor(cppClassType)) {
+				if (!checkedClassTypes.contains(cppClassType) && hasVirtualDestructor(cppClassType, point)) {
 					return true;
 				}
 			}
@@ -89,13 +90,13 @@ public class NonVirtualDestructor extends AbstractIndexAstChecker {
 					return PROCESS_SKIP;
 				}
 				ICPPClassType classType = (ICPPClassType) binding;
-				boolean hasVirtualDestructor = hasVirtualDestructor(classType);
+				boolean hasVirtualDestructor = hasVirtualDestructor(classType, className);
 				checkedClassTypes.clear();
 				if (hasVirtualDestructor) {
 					return PROCESS_SKIP;
 				}
 				ICPPMethod virtualMethod = null;
-				for (ICPPMethod method : classType.getAllDeclaredMethods()) {
+				for (ICPPMethod method : ClassTypeHelper.getAllDeclaredMethods(classType, className)) {
 					if (!method.isDestructor() && method.isVirtual()) {
 						virtualMethod = method;
 					}
@@ -103,7 +104,7 @@ public class NonVirtualDestructor extends AbstractIndexAstChecker {
 				if (virtualMethod == null) {
 					return PROCESS_SKIP;
 				}
-				ICPPMethod destructor = getDestructor(classType);
+				ICPPMethod destructor = getDestructor(classType, className);
 				if (destructor != null &&
 						destructor.getVisibility() != ICPPASTVisibilityLabel.v_public &&
 						classType.getFriends().length == 0) {

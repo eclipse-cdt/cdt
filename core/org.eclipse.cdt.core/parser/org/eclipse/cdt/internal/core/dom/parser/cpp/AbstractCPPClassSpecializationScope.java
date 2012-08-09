@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
@@ -128,7 +129,7 @@ public class AbstractCPPClassSpecializationScope implements ICPPClassSpecializat
 	public ICPPBase[] getBases(IASTNode point) {
 		if (fBases == null) {
 			ICPPBase[] result = null;
-			ICPPBase[] bases = specialClass.getSpecializedBinding().getBases();
+			ICPPBase[] bases = ClassTypeHelper.getBases(specialClass.getSpecializedBinding(), point);
 			if (bases.length == 0) {
 				fBases= bases;
 			} else {
@@ -136,7 +137,8 @@ public class AbstractCPPClassSpecializationScope implements ICPPClassSpecializat
 				for (ICPPBase base : bases) {
 					IBinding origClass = base.getBaseClass();
 					if (origClass instanceof ICPPTemplateParameter && ((ICPPTemplateParameter) origClass).isParameterPack()) {
-						IType[] specClasses= CPPTemplates.instantiateTypes(new IType[]{new CPPParameterPackType((IType) origClass)}, tpmap, -1, specialClass, point);
+						IType[] specClasses= CPPTemplates.instantiateTypes(new IType[] { new CPPParameterPackType((IType) origClass) },
+								tpmap, -1, specialClass, point);
 						if (specClasses.length == 1 && specClasses[0] instanceof ICPPParameterPackType) {
 							result= ArrayUtil.append(ICPPBase.class, result, base);
 						} else {
@@ -183,13 +185,14 @@ public class AbstractCPPClassSpecializationScope implements ICPPClassSpecializat
 
 	@Override
 	public ICPPField[] getDeclaredFields(IASTNode point) {
-		ICPPField[] fields= specialClass.getSpecializedBinding().getDeclaredFields();
+		ICPPField[] fields= ClassTypeHelper.getDeclaredFields(specialClass.getSpecializedBinding(), point);
 		return specializeMembers(fields, point);
 	}
 
 	@Override
 	public ICPPMethod[] getImplicitMethods() {
-		return getImplicitMethods(null); // Instantiation of dependent expression may not work.
+		CCorePlugin.log(new Exception("Unsafe method call. Instantiation of dependent expressions may not work.")); //$NON-NLS-1$
+		return getImplicitMethods(null);
 	}
 
 	@Override
@@ -211,30 +214,31 @@ public class AbstractCPPClassSpecializationScope implements ICPPClassSpecializat
 
 	@Override
 	public ICPPConstructor[] getConstructors() {
-		return getConstructors(null);  // Instantiation of dependent expression may not work.
+		CCorePlugin.log(new Exception("Unsafe method call. Instantiation of dependent expressions may not work.")); //$NON-NLS-1$
+		return getConstructors(null);
 	}
 		
 	@Override
 	public ICPPConstructor[] getConstructors(IASTNode point) {
-		ICPPConstructor[] ctors= specialClass.getSpecializedBinding().getConstructors();
+		ICPPConstructor[] ctors= ClassTypeHelper.getConstructors(specialClass.getSpecializedBinding(), point);
 		return specializeMembers(ctors, point);
 	}
 
 	@Override
 	public ICPPMethod[] getDeclaredMethods(IASTNode point) {
-		ICPPMethod[] bindings = specialClass.getSpecializedBinding().getDeclaredMethods();
+		ICPPMethod[] bindings = ClassTypeHelper.getDeclaredMethods(specialClass.getSpecializedBinding(), point);
 		return specializeMembers(bindings, point);
 	}
 
 	@Override
 	public ICPPClassType[] getNestedClasses(IASTNode point) {
-		ICPPClassType[] bindings = specialClass.getSpecializedBinding().getNestedClasses();
+		ICPPClassType[] bindings = ClassTypeHelper.getNestedClasses(specialClass.getSpecializedBinding(), point);
 		return specializeMembers(bindings, point);
 	}
 
 	@Override
 	public IBinding[] getFriends(IASTNode point) {
-		IBinding[] friends = specialClass.getSpecializedBinding().getFriends();
+		IBinding[] friends = ClassTypeHelper.getFriends(specialClass.getSpecializedBinding(), point);
 		return specializeMembers(friends, point);
 	}
 

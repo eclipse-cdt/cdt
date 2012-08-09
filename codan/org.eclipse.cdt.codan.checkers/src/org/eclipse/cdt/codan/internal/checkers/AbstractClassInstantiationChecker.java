@@ -188,7 +188,7 @@ public class AbstractClassInstantiationChecker extends AbstractIndexAstChecker {
 		 *  Checks whether specified type (class or typedef to the class) is an abstract class.
 		 *  If it is, reports violations on each pure virtual method 
 		 */
-		private void reportProblemsIfAbstract(IType typeToCheck, IASTNode problemNode ) {
+		private void reportProblemsIfAbstract(IType typeToCheck, IASTNode problemNode) {
 			IType unwindedType = CxxAstUtils.unwindTypedef(typeToCheck);
 			if (!(unwindedType instanceof ICPPClassType) || unwindedType instanceof IProblemBinding) {
 				return;
@@ -196,7 +196,7 @@ public class AbstractClassInstantiationChecker extends AbstractIndexAstChecker {
 			ICPPClassType classType = (ICPPClassType) unwindedType;
 			ICPPMethod[] pureVirtualMethods = pureVirtualMethodsCache.get(classType);
 			if (pureVirtualMethods == null) {
-				pureVirtualMethods = ClassTypeHelper.getPureVirtualMethods(classType);
+				pureVirtualMethods = ClassTypeHelper.getPureVirtualMethods(classType, problemNode);
 				pureVirtualMethodsCache.put(classType, pureVirtualMethods);
 			}
 			

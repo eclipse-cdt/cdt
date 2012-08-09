@@ -5953,7 +5953,39 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	};
 	//
 	//	typedef A<C> type;
-	public void testSFINAE() throws Exception {
+	public void testSFINAE_a() throws Exception {
+		parseAndCheckBindings();
+	}
+
+	//	template <bool B, typename T = void> struct enable_if { typedef T type; };
+	//	template <typename T> struct enable_if<false, T> {};
+	//
+	//	template <typename T> struct is_int { static const bool value = false; };
+	//	template <> struct is_int<int> { static const bool value = true; };
+	//
+	//	template <typename T> struct is_double { static const bool value = false; };
+	//	template <> struct is_double<double> { static const bool value = true; };
+	//
+	//	template <typename T, typename Enabled = void>
+	//	struct A {
+	//	  static int get() { return 0; }
+	//	};
+	//
+	//	template<typename T>
+	//	struct A<T, typename enable_if<is_double<T>::value>::type> {
+	//	  static int get() { return 1; }
+	//	};
+	//
+	//	template <typename T>
+	//	struct A<T, typename enable_if<is_int<T>::value>::type> {
+	//	  static int get() { return 2; }
+	//	};
+	//
+	//	void test() {
+	//	  A<double>::get();
+	//	  A<int>::get();
+	//	}
+	public void _testSFINAE_b() throws Exception {
 		parseAndCheckBindings();
 	}
 }

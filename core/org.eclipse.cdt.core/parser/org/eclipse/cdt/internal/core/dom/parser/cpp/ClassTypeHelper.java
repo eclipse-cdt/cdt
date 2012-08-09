@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -738,7 +738,7 @@ public class ClassTypeHelper {
 		ICPPClassType[] bases= getAllBases(owner, point);
 		for (ICPPClassType base : bases) {
 			if (!(base instanceof ICPPDeferredClassInstance)) {
-				ICPPMethod  baseMethod= getMethodInClass(base, kind);
+				ICPPMethod  baseMethod= getMethodInClass(base, kind, point);
 				if (baseMethod != null) {
 					IType[] baseExceptionSpec= baseMethod.getExceptionSpecification();
 					if (baseExceptionSpec == null) 
@@ -801,17 +801,17 @@ public class ClassTypeHelper {
 		return false;
 	}
 
-	private static ICPPMethod getMethodInClass(ICPPClassType ct, int kind) {
+	private static ICPPMethod getMethodInClass(ICPPClassType ct, int kind, IASTNode point) {
 		switch (kind) {
 		case KIND_DEFAULT_CTOR:
 		case KIND_COPY_CTOR:
-			for (ICPPConstructor ctor : ct.getConstructors()) {
+			for (ICPPConstructor ctor : getConstructors(ct, point)) {
 				if (!ctor.isImplicit() && getImplicitMethodKind(ct, ctor) == kind)
 					return ctor;
 			}
 			return null;
 		case KIND_ASSIGNMENT_OP:
-			for (ICPPMethod method : ct.getDeclaredMethods()) {
+			for (ICPPMethod method : getDeclaredMethods(ct, point)) {
 				if (method instanceof ICPPConstructor)
 					continue;
 				if (getImplicitMethodKind(ct, method) == kind)
@@ -819,7 +819,7 @@ public class ClassTypeHelper {
 			}
 			return null;
 		case KIND_DTOR:
-			for (ICPPMethod method : ct.getDeclaredMethods()) {
+			for (ICPPMethod method : getDeclaredMethods(ct, point)) {
 				if (method.isDestructor())
 					return method;
 			}

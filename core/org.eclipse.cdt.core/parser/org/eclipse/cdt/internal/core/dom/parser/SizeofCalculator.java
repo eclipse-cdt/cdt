@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 /**
@@ -70,6 +71,8 @@ public class SizeofCalculator {
 	public final SizeAndAlignment sizeof_long_double;
 	public final SizeAndAlignment sizeof_complex_long_double;
 
+	private final IASTTranslationUnit ast;
+
 	/**
 	 * Returns the default instance of sizeof calculator. The default instance is not aware
 	 * of the parser configuration and can only calculate sizes that are the same across all
@@ -80,6 +83,7 @@ public class SizeofCalculator {
 	}
 
 	public SizeofCalculator(IASTTranslationUnit ast) {
+		this.ast = ast;
 		int maxAlignment = 32;
 		Map<String, String> sizeofMacros = new HashMap<String, String>();
 		for (IASTPreprocessorMacroDefinition macro : ast.getBuiltinMacroDefinitions()) {
@@ -131,6 +135,7 @@ public class SizeofCalculator {
 		sizeof_complex_double = null;
 		sizeof_long_double = null;
 		sizeof_complex_long_double = null;
+		ast = null;
 	}
 
 	/**
@@ -246,7 +251,7 @@ public class SizeofCalculator {
 		IField[] fields;
 		if (type instanceof ICPPClassType) {
 			ICPPClassType classType = (ICPPClassType) type;
-			for (ICPPBase base : classType.getBases()) {
+			for (ICPPBase base : ClassTypeHelper.getBases(classType, ast)) {
 				if (base.isVirtual())
 					return null;  // Don't know how to calculate size when there are virtual bases.
 				IBinding baseClass = base.getBaseClass();
@@ -258,14 +263,14 @@ public class SizeofCalculator {
 				size += info.alignment - (size - 1) % info.alignment - 1 + info.size;
 				if (maxAlignment < info.alignment)
 					maxAlignment = info.alignment;
-				for (ICPPMethod method : classType.getDeclaredMethods()) {
+				for (ICPPMethod method : ClassTypeHelper.getDeclaredMethods(classType, ast)) {
 					if (method.isVirtual()) {
 						// Don't know how to calculate size when there are virtual functions.
 						return null;
 					}
 				}
 			}
-			fields = classType.getDeclaredFields();
+			fields = ClassTypeHelper.getDeclaredFields(classType, ast);
 		} else {
 			fields = type.getFields();
 		}

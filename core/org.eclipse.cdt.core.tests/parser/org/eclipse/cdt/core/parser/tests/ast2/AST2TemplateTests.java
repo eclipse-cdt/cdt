@@ -5985,7 +5985,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	  A<double>::get();
 	//	  A<int>::get();
 	//	}
-	public void _testSFINAE_b() throws Exception {
+	public void testSFINAE_b() throws Exception {
 		parseAndCheckBindings();
 	}
 }

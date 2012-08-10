@@ -101,7 +101,6 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPArrayType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassSpecialization;
@@ -177,7 +176,7 @@ public class CPPTemplates {
 			ICPPTemplateArgument[] arguments= SemanticUtil.getSimplifiedArguments(args);
 			arguments= addDefaultArguments(template, arguments, point);
 			if (arguments == null)
-				return createProblem(template, IProblemBinding.SEMANTIC_INVALID_TEMPLATE_ARGUMENTS);
+				return createProblem(template, IProblemBinding.SEMANTIC_INVALID_TEMPLATE_ARGUMENTS, point);
 
 			if (template instanceof ICPPTemplateTemplateParameter || hasDependentArgument(arguments)) {
 				return deferredInstance(template, arguments);
@@ -202,14 +201,14 @@ public class CPPTemplates {
 						param= parameters[i];
 						isPack= param.isParameterPack();
 					} else {
-						return createProblem(template, IProblemBinding.SEMANTIC_INVALID_TEMPLATE_ARGUMENTS);
+						return createProblem(template, IProblemBinding.SEMANTIC_INVALID_TEMPLATE_ARGUMENTS, point);
 					}
 				}
 				if (i < numArgs) {
 					ICPPTemplateArgument arg= arguments[i];
 					ICPPTemplateArgument newArg = CPPTemplates.matchTemplateParameterAndArgument(param, arg, map, point);
 					if (newArg == null)
-						return createProblem(template, IProblemBinding.SEMANTIC_INVALID_TEMPLATE_ARGUMENTS);
+						return createProblem(template, IProblemBinding.SEMANTIC_INVALID_TEMPLATE_ARGUMENTS, point);
 					if (newArg != arg) {
 						if (arguments == args) {
 							arguments= args.clone();
@@ -249,9 +248,8 @@ public class CPPTemplates {
 		}
 	}
 
-	private static IBinding createProblem(ICPPClassTemplate template, int id) {
-		IASTNode node= new CPPASTName(template.getNameCharArray());
-		return new ProblemBinding(node, id, template.getNameCharArray());
+	private static IBinding createProblem(ICPPClassTemplate template, int id, IASTNode point) {
+		return new ProblemBinding(point, id, template.getNameCharArray());
 	}
 
 	static IBinding isUsedInClassTemplateScope(ICPPClassTemplate ct, IASTName name) {
@@ -845,7 +843,7 @@ public class CPPTemplates {
 			return null;
 		ICPPClassSpecialization within= (ICPPClassSpecialization) owner;
 		ICPPClassType orig = within.getSpecializedBinding();
-		for (;;) {
+		while (true) {
 			IBinding o1 = within.getOwner();
 			IBinding o2 = orig.getOwner();
 			if (!(o1 instanceof ICPPClassSpecialization && o2 instanceof ICPPClassType))
@@ -1997,18 +1995,20 @@ public class CPPTemplates {
 			return null;
 		}
 
-		ICPPClassTemplatePartialSpecialization bestMatch = null, spec = null;
+		ICPPClassTemplatePartialSpecialization bestMatch = null;
 		CPPTemplateParameterMap bestMap= null;
 		boolean bestMatchIsBest = true;
 		for (ICPPClassTemplatePartialSpecialization specialization : specializations) {
-			spec = specialization;
 			final CPPTemplateParameterMap map = new CPPTemplateParameterMap(args.length);
-			if (TemplateArgumentDeduction.fromTemplateArguments(spec.getTemplateParameters(), spec.getTemplateArguments(), args, map, point)) {
-				int compare = orderSpecializations(bestMatch, spec, point);
+			ICPPTemplateArgument[] specializationArguments = specialization.getTemplateArguments();
+			if (TemplateArgumentDeduction.fromTemplateArguments(specialization.getTemplateParameters(),
+					specializationArguments, args, map, point) &&
+					checkInstantiationOfArguments(specializationArguments, map, point)) {
+				int compare = orderSpecializations(bestMatch, specialization, point);
 				if (compare == 0) {
 					bestMatchIsBest = false;
 				} else if (compare < 0) {
-					bestMatch = spec;
+					bestMatch = specialization;
 					bestMap= map;
 					bestMatchIsBest = true;
 				}
@@ -2019,13 +2019,24 @@ public class CPPTemplates {
 		// specializations, then the use of the class template is ambiguous and the program is
 		// ill-formed.
 		if (!bestMatchIsBest) {
-			return new CPPTemplateDefinition.CPPTemplateProblem(null, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, null);
+			return new CPPTemplateDefinition.CPPTemplateProblem(null, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP,
+					template.getNameCharArray());
 		}
 
 		if (bestMatch == null)
 			return null;
 
 		return instantiatePartialSpecialization(bestMatch, args, isDef, bestMap, point);
+	}
+
+	private static boolean checkInstantiationOfArguments(ICPPTemplateArgument[] args,
+			CPPTemplateParameterMap tpMap, IASTNode point) throws DOMException {
+		args = instantiateArguments(args, tpMap, -1, null, point);
+		for (ICPPTemplateArgument arg : args) {
+			if (!isValidArgument(arg))
+				return false;
+		}
+		return true;
 	}
 
 	/**
@@ -2100,7 +2111,7 @@ public class CPPTemplates {
 	}
 
 	static boolean isValidType(IType t) {
-		for (;;) {
+		while (true) {
 			if (t instanceof ISemanticProblem) {
 				return false;
 			} else if (t instanceof IFunctionType) {

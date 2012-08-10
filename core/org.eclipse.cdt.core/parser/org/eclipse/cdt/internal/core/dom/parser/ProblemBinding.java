@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,7 +46,6 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
     protected final int id;
     protected char[] arg;
     protected IASTNode node;
-    private final String message = null;
 	private IBinding[] candidateBindings;
     
     public ProblemBinding(IASTName name, int id) {
@@ -100,15 +99,17 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
      */
     @Override
 	public String getMessage() {
-        if (message != null)
-            return message;
-
         String msg = ParserMessages.getProblemPattern(this);
         if (msg == null)
         	return ""; //$NON-NLS-1$
         
-        if (arg == null && node instanceof IASTName)
-        	arg= ((IASTName) node).toCharArray();
+        if (arg == null) {
+        	if (node instanceof IASTName) {
+            	arg= ((IASTName) node).toCharArray();
+        	} else if (candidateBindings != null && candidateBindings.length != 0) {
+        		arg = candidateBindings[0].getNameCharArray();
+        	}
+        }
         
         if (arg != null) {
             msg = MessageFormat.format(msg, new Object[] { new String(arg) });

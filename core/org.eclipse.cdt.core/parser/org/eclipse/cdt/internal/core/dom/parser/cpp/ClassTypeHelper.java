@@ -870,7 +870,7 @@ public class ClassTypeHelper {
 	 * @param classTarget the class to check
 	 * @return <code>true</code> if the class has a trivial copy constructor
 	 */
-	public static boolean hasTrivialCopyCtor(ICPPClassType classTarget) {
+	public static boolean hasTrivialCopyCtor(ICPPClassType classTarget, IASTNode point) {
 		if (getImplicitCopyCtor(classTarget) == null)
 			return false;
 		if (isPolymorphic(classTarget))
@@ -879,8 +879,8 @@ public class ClassTypeHelper {
 			if (base.isVirtual())
 				return false;
 		}
-		for (ICPPClassType baseClass : getAllBases(classTarget, null)) {
-			if (!classTarget.isSameType(baseClass) && !hasTrivialCopyCtor(baseClass))
+		for (ICPPClassType baseClass : getAllBases(classTarget, point)) {
+			if (!classTarget.isSameType(baseClass) && !hasTrivialCopyCtor(baseClass, point))
 				return false;
 		}
 		for (ICPPField field : classTarget.getDeclaredFields()) {
@@ -888,7 +888,7 @@ public class ClassTypeHelper {
 				IType type = field.getType();
 				type = SemanticUtil.getNestedType(type, TDEF | CVTYPE | ARRAY);
 				if (type instanceof ICPPClassType && !classTarget.isSameType(type) &&
-						!hasTrivialCopyCtor((ICPPClassType) type)) {
+						!hasTrivialCopyCtor((ICPPClassType) type, point)) {
 					return false;
 				}
 			}
@@ -924,23 +924,24 @@ public class ClassTypeHelper {
 	 * Similar to <code>std::tr1::has_trivial_default_constructor</code>.
 	 *
 	 * @param classTarget the class to check
+	 * @param point 
 	 * @return <code>true</code> if the class has a trivial default constructor
 	 */
-	public static boolean hasTrivialDefaultConstructor(ICPPClassType classTarget) {
-		for (ICPPConstructor ctor : classTarget.getConstructors()) {
+	public static boolean hasTrivialDefaultConstructor(ICPPClassType classTarget, IASTNode point) {
+		for (ICPPConstructor ctor : getConstructors(classTarget, point)) {
 			if (!ctor.isImplicit() && ctor.getParameters().length == 0)
 				return false;
 		}
 		for (ICPPClassType baseClass : getAllBases(classTarget, null)) {
-			if (!classTarget.isSameType(baseClass) && !hasTrivialDefaultConstructor(baseClass))
+			if (!classTarget.isSameType(baseClass) && !hasTrivialDefaultConstructor(baseClass, point))
 				return false;
 		}
-		for (ICPPField field : classTarget.getDeclaredFields()) {
+		for (ICPPField field : getDeclaredFields(classTarget, point)) {
 			if (!field.isStatic()) {
 				IType type = field.getType();
 				type = SemanticUtil.getNestedType(type, TDEF | CVTYPE | ARRAY);
 				if (type instanceof ICPPClassType && !classTarget.isSameType(type) &&
-						!hasTrivialDefaultConstructor((ICPPClassType) type)) {
+						!hasTrivialDefaultConstructor((ICPPClassType) type, point)) {
 					return false;
 				}
 			}
@@ -962,21 +963,21 @@ public class ClassTypeHelper {
 	 * @param classTarget the class to check
 	 * @return <code>true</code> if the class has a trivial destructor
 	 */
-	public static boolean hasTrivialDestructor(ICPPClassType classTarget) {
-		for (ICPPMethod method : classTarget.getDeclaredMethods()) {
+	public static boolean hasTrivialDestructor(ICPPClassType classTarget, IASTNode point) {
+		for (ICPPMethod method : getDeclaredMethods(classTarget, point)) {
 			if (method.isDestructor())
 				return false;
 		}
 		for (ICPPClassType baseClass : getAllBases(classTarget, null)) {
-			if (!classTarget.isSameType(baseClass) && !hasTrivialDestructor(baseClass))
+			if (!classTarget.isSameType(baseClass) && !hasTrivialDestructor(baseClass, point))
 				return false;
 		}
-		for (ICPPField field : classTarget.getDeclaredFields()) {
+		for (ICPPField field : getDeclaredFields(classTarget, point)) {
 			if (!field.isStatic()) {
 				IType type = field.getType();
 				type = SemanticUtil.getNestedType(type, TDEF | CVTYPE | ARRAY);
 				if (type instanceof ICPPClassType && !classTarget.isSameType(type) &&
-						!hasTrivialDestructor((ICPPClassType) type)) {
+						!hasTrivialDestructor((ICPPClassType) type, point)) {
 					return false;
 				}
 			}

@@ -29,7 +29,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
  * @since 5.4
  */
 public class TypeHelper {
-
 	// Do not instantiate - all methods are static.
 	private TypeHelper() {
 	}
@@ -49,8 +48,8 @@ public class TypeHelper {
 		if (type instanceof ICompositeType) {
 			if (type instanceof ICPPClassType) {
 				ICPPClassType classType = ((ICPPClassType) type);
-				if (!ClassTypeHelper.hasTrivialCopyCtor(classType) ||
-						!ClassTypeHelper.hasTrivialDestructor(classType)) {
+				if (!ClassTypeHelper.hasTrivialCopyCtor(classType, ast) ||
+						!ClassTypeHelper.hasTrivialDestructor(classType, ast)) {
 					return true;
 				}
 			}

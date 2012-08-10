@@ -59,11 +59,11 @@ public class ClassTypeHelperTests extends AST2BaseTest {
 	public void testHasTrivialCopyCtor() throws Exception {
 		BindingAssertionHelper helper = getAssertionHelper();
 		ICPPClassType classA = helper.assertNonProblem("A {", 1, ICPPClassType.class);
-		assertFalse(ClassTypeHelper.hasTrivialCopyCtor(classA));
+		assertFalse(ClassTypeHelper.hasTrivialCopyCtor(classA, null));
 		ICPPClassType classB = helper.assertNonProblem("B {", 1, ICPPClassType.class);
-		assertTrue(ClassTypeHelper.hasTrivialCopyCtor(classB));
+		assertTrue(ClassTypeHelper.hasTrivialCopyCtor(classB, null));
 		ICPPClassType classC = helper.assertNonProblem("C {", 1, ICPPClassType.class);
-		assertFalse(ClassTypeHelper.hasTrivialCopyCtor(classC));
+		assertFalse(ClassTypeHelper.hasTrivialCopyCtor(classC, null));
 	}
 
 	//	struct A {
@@ -87,11 +87,11 @@ public class ClassTypeHelperTests extends AST2BaseTest {
 	public void testHasTrivialDestructor() throws Exception {
 		BindingAssertionHelper helper = getAssertionHelper();
 		ICPPClassType classA = helper.assertNonProblem("A {", 1, ICPPClassType.class);
-		assertFalse(ClassTypeHelper.hasTrivialDestructor(classA));
+		assertFalse(ClassTypeHelper.hasTrivialDestructor(classA, null));
 		ICPPClassType classB = helper.assertNonProblem("B {", 1, ICPPClassType.class);
-		assertTrue(ClassTypeHelper.hasTrivialDestructor(classB));
+		assertTrue(ClassTypeHelper.hasTrivialDestructor(classB, null));
 		ICPPClassType classC = helper.assertNonProblem("C {", 1, ICPPClassType.class);
-		assertFalse(ClassTypeHelper.hasTrivialDestructor(classC));
+		assertFalse(ClassTypeHelper.hasTrivialDestructor(classC, null));
 	}
 
 	//	struct A {

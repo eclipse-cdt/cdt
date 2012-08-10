@@ -58,18 +58,23 @@ public abstract class UNCPathConverter {
 
 
 	/**
-	 * Convert a URI to an IPath. If URI has a host section, return a UNC rather than a file based path.
+	 * Convert a URI to an IPath. 
+	 * Resolves to local path if possible, including using EFS where required.
 	 * 
 	 * @param uri
 	 *            URI to convert to an IPath
 	 * @return IPath representation of the URI
 	 */
 	public static IPath toPath(URI uri) {
+		IPath localPath = URIUtil.toPath(uri);
 		String host = uri.getHost();
-		if (host != null) {
+		// try local path first
+		// that'll give EFS a chance to resolve a custom protocol path.
+		if (host != null && localPath == null) { 
 			return new Path(host + uri.getPath()).makeUNC(true);
-		}
-		return URIUtil.toPath(uri);
+		} else {
+			return localPath;
+		}	
 	}
 
 	/**

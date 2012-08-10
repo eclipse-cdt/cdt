@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -322,18 +321,23 @@ public class AST2BaseTest extends BaseTestCase {
         {
             shouldVisitNames = true;
         }
-        public List nameList = new ArrayList();
+        public List<IASTName> nameList = new ArrayList<IASTName>();
+
         @Override
 		public int visit(IASTName name) {
             nameList.add(name);
             return PROCESS_CONTINUE;
         }
+
         public IASTName getName(int idx) {
             if (idx < 0 || idx >= nameList.size())
                 return null;
-            return (IASTName) nameList.get(idx);
+            return nameList.get(idx);
         }
-        public int size() { return nameList.size(); } 
+        
+        public int size() {
+        	return nameList.size();
+        } 
     }
 
     protected void assertInstances(CNameCollector collector, IBinding binding, int num) throws Exception {
@@ -354,17 +358,22 @@ public class AST2BaseTest extends BaseTestCase {
             shouldVisitNames = true;
         }
         public List<IASTName> nameList = new ArrayList<IASTName>();
+
         @Override
 		public int visit(IASTName name) {
             nameList.add(name);
             return PROCESS_CONTINUE;
         }
+
         public IASTName getName(int idx) {
             if (idx < 0 || idx >= nameList.size())
                 return null;
             return nameList.get(idx);
         }
-        public int size() { return nameList.size(); }
+
+        public int size() {
+        	return nameList.size();
+        }
         
         public void dump() {
         	for (int i= 0; i < size(); i++) {
@@ -434,9 +443,10 @@ public class AST2BaseTest extends BaseTestCase {
 		{
 			shouldVisitNames = true;
 		}
-		public int numProblemBindings=0;
-		public int numNullBindings=0;
-		public List nameList = new ArrayList();
+		public int numProblemBindings;
+		public int numNullBindings;
+		public List<IASTName> nameList = new ArrayList<IASTName>();
+
 		@Override
 		public int visit(IASTName name) {
 			nameList.add(name);
@@ -447,21 +457,26 @@ public class AST2BaseTest extends BaseTestCase {
 				numNullBindings++;
 			return PROCESS_CONTINUE;
 		}
+
 		public IASTName getName(int idx) {
 			if (idx < 0 || idx >= nameList.size())
 				return null;
-			return (IASTName) nameList.get(idx);
+			return nameList.get(idx);
 		}
-		public int size() { return nameList.size(); } 
+
+		public int size() {
+			return nameList.size();
+		} 
 	}
 	
 	static protected class CPPNameResolver extends ASTVisitor {
 		{
 			shouldVisitNames = true;
 		}
-		public int numProblemBindings=0;
-		public int numNullBindings=0;
-		public List nameList = new ArrayList();
+		public int numProblemBindings;
+		public int numNullBindings;
+		public List<IASTName> nameList = new ArrayList<IASTName>();
+
 		@Override
 		public int visit(IASTName name) {
 			nameList.add(name);
@@ -472,12 +487,16 @@ public class AST2BaseTest extends BaseTestCase {
 				numNullBindings++;
 			return PROCESS_CONTINUE;
 		}
+
 		public IASTName getName(int idx) {
 			if (idx < 0 || idx >= nameList.size())
 				return null;
-			return (IASTName) nameList.get(idx);
+			return nameList.get(idx);
 		}
-		public int size() { return nameList.size(); } 
+
+		public int size() {
+			return nameList.size();
+		} 
 	}
 	
 	protected String getAboveComment() throws IOException {
@@ -575,7 +594,7 @@ public class AST2BaseTest extends BaseTestCase {
 			if (implicits.length > 1) {
 				boolean found = false;
 				for (IASTImplicitName n : implicits) {
-					if (((ASTNode) n).getOffset() == ((ASTNode)name).getOffset()) {
+					if (((ASTNode) n).getOffset() == ((ASTNode) name).getOffset()) {
 						assertFalse(found);
 						found = true;
 					}
@@ -662,8 +681,8 @@ public class AST2BaseTest extends BaseTestCase {
     					}
     				}
     			}
-    		} catch(IllegalAccessException iae) {
-    			throw new RuntimeException(iae);
+    		} catch (IllegalAccessException e) {
+    			throw new RuntimeException(e);
     		}
     		return "Unknown problem ID";
     	}
@@ -736,18 +755,14 @@ public class AST2BaseTest extends BaseTestCase {
 	}
 
 	final protected void assertNoProblemBindings(CNameCollector col) {
-		Iterator i = col.nameList.iterator();
-		while (i.hasNext()) {
-			IASTName n = (IASTName) i.next();
+		for (IASTName n : col.nameList) {
 			assertFalse("ProblemBinding for " + n.getRawSignature(), n.resolveBinding() instanceof IProblemBinding);
 		}
 	}
 
 	final protected void assertProblemBindings(CNameCollector col, int count) {
-		Iterator i = col.nameList.iterator();
 		int sum = 0;
-		while (i.hasNext()) {
-			IASTName n = (IASTName) i.next();
+		for (IASTName n : col.nameList) {
 			if (n.getBinding() instanceof IProblemBinding)
 				++sum;
 		}

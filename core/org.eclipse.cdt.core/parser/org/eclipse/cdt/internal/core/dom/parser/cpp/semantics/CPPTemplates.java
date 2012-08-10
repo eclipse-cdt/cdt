@@ -161,14 +161,14 @@ public class CPPTemplates {
 	static enum TypeSelection { PARAMETERS, RETURN_TYPE, PARAMETERS_AND_RETURN_TYPE }
 
 	/**
-	 * Instantiates a class template with the given arguments. May return <code>null</code>.
+	 * Instantiates a class template with the given arguments. May return {@code null}.
 	 */
 	public static IBinding instantiate(ICPPClassTemplate template, ICPPTemplateArgument[] args, IASTNode point) {
 		return instantiate(template, args, false, false, point);
 	}
 
 	/**
-	 * Instantiates a class template with the given arguments. May return <code>null</code>.
+	 * Instantiates a class template with the given arguments. May return {@code null}.
 	 */
 	private static IBinding instantiate(ICPPClassTemplate template, ICPPTemplateArgument[] args,
 			boolean isDefinition, boolean isExplicitSpecialization, IASTNode point) {
@@ -226,7 +226,7 @@ public class CPPTemplates {
 			}
 
 			if (isPack) {
-				int packOffset= numParams-1;
+				int packOffset= numParams - 1;
 				int packSize= numArgs - packOffset;
 				ICPPTemplateArgument[] pack= new ICPPTemplateArgument[packSize];
 				System.arraycopy(arguments, packOffset, pack, 0, packSize);
@@ -321,7 +321,6 @@ public class CPPTemplates {
 
 	/**
 	 * Instantiates a partial class template specialization.
-	 * @param point
 	 */
 	private static IBinding instantiatePartialSpecialization(
 			ICPPClassTemplatePartialSpecialization partialSpec, ICPPTemplateArgument[] args, boolean isDef,
@@ -343,12 +342,11 @@ public class CPPTemplates {
 	}
 
 	/**
-	 * Instantiates the selected template, without looking for specializations. May return <code>null</code>.
-	 * @param map
+	 * Instantiates the selected template, without looking for specializations.
+	 * May return {@code null}.
 	 */
 	private static IBinding instantiatePrimaryTemplate(ICPPClassTemplate template, ICPPTemplateArgument[] arguments,
 			CPPTemplateParameterMap map, boolean isDef, IASTNode point) throws DOMException {
-
 		assert !(template instanceof ICPPClassTemplatePartialSpecialization);
 		ICPPTemplateInstance instance= getInstance(template, arguments, isDef);
 		if (instance != null) {
@@ -403,7 +401,7 @@ public class CPPTemplates {
 		for (int i = 0; i < arguments.length; i++) {
 			ICPPTemplateArgument arg = arguments[i];
 			if (arg.isPackExpansion()) {
-				if (i != arguments.length-1) {
+				if (i != arguments.length - 1) {
 					return arguments;
 				}
 				havePackExpansion= true;
@@ -422,7 +420,7 @@ public class CPPTemplates {
 
 		// More arguments allowed if we have a parameter pack.
 		if (tparCount < argCount) {
-			if (tpars[tparCount-1].isParameterPack())
+			if (tpars[tparCount - 1].isParameterPack())
 				return arguments;
 
 			if (havePackExpansion && tparCount+1 == argCount)
@@ -435,7 +433,7 @@ public class CPPTemplates {
 			return arguments;
 
 		// Fewer arguments are allowed with	default arguments
-		if (tpars[tparCount-1].isParameterPack())
+		if (tpars[tparCount - 1].isParameterPack())
 			tparCount--;
 
 		if (tparCount == argCount)
@@ -598,7 +596,7 @@ public class CPPTemplates {
 
 	public static IBinding createBinding(ICPPASTTemplateId id) {
 		if (!isClassTemplate(id)) {
-			//functions are instantiated as part of the resolution process
+			// Functions are instantiated as part of the resolution process.
 			IBinding result= CPPVisitor.createBinding(id);
 			IASTName templateName = id.getTemplateName();
 			if (result instanceof ICPPClassTemplate) {
@@ -643,7 +641,7 @@ public class CPPTemplates {
 			}
 		}
 		try {
-			// class template instance
+			// Class template instance.
 			IBinding result= null;
 			IASTName templateName = id.getTemplateName();
 			IBinding template = templateName.resolvePreBinding();
@@ -976,10 +974,10 @@ public class CPPTemplates {
 	 * Instantiates types contained in an array.
 	 * @param types an array of types
 	 * @param tpMap template argument map
-	 * @param point
 	 * @return an array containing instantiated types.
 	 */
-	public static IType[] instantiateTypes(IType[] types, ICPPTemplateParameterMap tpMap, int packOffset, ICPPClassSpecialization within, IASTNode point) {
+	public static IType[] instantiateTypes(IType[] types, ICPPTemplateParameterMap tpMap,
+			int packOffset, ICPPClassSpecialization within, IASTNode point) {
 		if (types == null)
 			return null;
 
@@ -997,7 +995,7 @@ public class CPPTemplates {
 				} else if (packSize == PACK_SIZE_DEFER) {
 					newType= origType;
 				} else {
-					IType[] newResult= new IType[result.length+packSize-1];
+					IType[] newResult= new IType[result.length + packSize - 1];
 					System.arraycopy(result, 0, newResult, 0, j);
 					result= newResult;
 					for (int k= 0; k < packSize; k++) {
@@ -1024,7 +1022,6 @@ public class CPPTemplates {
 
 	/**
 	 * Instantiates arguments contained in an array.
-	 * @param point
 	 */
 	public static ICPPTemplateArgument[] instantiateArguments(ICPPTemplateArgument[] args,
 			ICPPTemplateParameterMap tpMap, int packOffset, ICPPClassSpecialization within, IASTNode point)
@@ -1072,7 +1069,6 @@ public class CPPTemplates {
 
 	/**
 	 * Instantiates an argument
-	 * @param point
 	 */
 	static ICPPTemplateArgument instantiateArgument(ICPPTemplateArgument arg,
 			ICPPTemplateParameterMap tpMap, int packOffset, ICPPClassSpecialization within, IASTNode point) {
@@ -1120,7 +1116,6 @@ public class CPPTemplates {
 	/**
 	 * Instantiates the given type with the provided map and packОffset.
 	 * The context is used to replace templates with their specialization, where appropriate.
-	 * @param point
 	 */
 	public static IType instantiateType(IType type, ICPPTemplateParameterMap tpMap, int packOffset,
 			ICPPClassSpecialization within, IASTNode point) {
@@ -1280,8 +1275,8 @@ public class CPPTemplates {
 	 * template &lt;typename T&gt; void MyTemplate&ltT&gt;::member() {}
 	 * </pre>
 	 * @param name a name for which the corresponding template declaration is searched for.
-	 * @return the template declaration or <code>null</code> if <code>name</code> does not
-	 * correspond to a template declaration.
+	 * @return the template declaration or {@code null} if {@code name} does not correspond
+	 *     to a template declaration.
 	 */
 	public static ICPPASTTemplateDeclaration getTemplateDeclaration(IASTName name) {
 		if (name == null)
@@ -1298,7 +1293,7 @@ public class CPPTemplates {
 			if (parent instanceof ICPPASTTemplateId) {
 				return null;
 			}
-			// one name: use innermost template declaration
+			// One name: use innermost template declaration
 			return tdecl;
 		}
 
@@ -1313,7 +1308,7 @@ public class CPPTemplates {
 			return null;
 		}
 
-		// not the last name, search for the matching template declaration
+		// Not the last name, search for the matching template declaration
 		if (!(name instanceof ICPPASTTemplateId))
 			return null;
 
@@ -1322,7 +1317,7 @@ public class CPPTemplates {
 			tdecl= getDirectlyEnclosingTemplateDeclaration(tdecl);
 		}
 		final IASTName[] ns= qname.getNames();
-		for (int i = ns.length-2; tdecl != null && i >= 0; i--) {
+		for (int i = ns.length - 2; tdecl != null && i >= 0; i--) {
 			final IASTName n = ns[i];
 			if (n == name) {
 				return tdecl;
@@ -1375,7 +1370,7 @@ public class CPPTemplates {
 			int depIDCount= 0;
 			IASTName owner= null;
 			final IASTName[] ns= qname.getNames();
-			for (int i = 0; i < ns.length-1; i++) {
+			for (int i = 0; i < ns.length - 1; i++) {
 				IASTName n= ns[i];
 				if (n instanceof ICPPASTTemplateId) {
 					if (depIDCount > 0 || usesTemplateParameter((ICPPASTTemplateId) n, tparnames)) {
@@ -1670,7 +1665,7 @@ public class CPPTemplates {
 	/**
 	 * @param id the template id containing the template arguments
 	 * @return an array of template arguments, currently modeled as IType objects.
-	 *     The empty ICPPTemplateArgument array is returned if id is <code>null</code>
+	 *     The empty ICPPTemplateArgument array is returned if id is {@code null}
 	 */
 	public static ICPPTemplateArgument[] createTemplateArgumentArray(ICPPASTTemplateId id) {
 		ICPPTemplateArgument[] result= ICPPTemplateArgument.EMPTY_ARGUMENTS;
@@ -2020,8 +2015,9 @@ public class CPPTemplates {
 			}
 		}
 
-		//14.5.4.1 If none of the specializations is more specialized than all the other matching
-		//specializations, then the use of the class template is ambiguous and the program is ill-formed.
+		// 14.5.4.1 If none of the specializations is more specialized than all the other matching
+		// specializations, then the use of the class template is ambiguous and the program is
+		// ill-formed.
 		if (!bestMatchIsBest) {
 			return new CPPTemplateDefinition.CPPTemplateProblem(null, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, null);
 		}

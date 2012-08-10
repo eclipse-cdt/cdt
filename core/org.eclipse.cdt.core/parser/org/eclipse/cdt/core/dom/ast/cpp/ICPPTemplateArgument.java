@@ -23,7 +23,7 @@ import org.eclipse.cdt.core.dom.ast.IValue;
  */
 public interface ICPPTemplateArgument {
 	ICPPTemplateArgument[] EMPTY_ARGUMENTS = {};
-	
+
 	/**
 	 * Returns whether this is an integral value, suitable for a template non-type parameter. 
 	 */

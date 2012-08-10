@@ -241,7 +241,8 @@ public class OverrideIndicatorManager implements ICReconcilingListener {
 
 			overridenMethods.clear();
 			shadowedMethods.clear();
-			handleBaseClass(testedClass, testedOverride, overridenMethods, shadowedMethods, alreadyTestedBases);
+			handleBaseClass(testedClass, testedOverride, overridenMethods, shadowedMethods,
+					alreadyTestedBases, node);
 
 			for (ICPPMethod overriddenMethod : overridenMethods) {
 				if (sb.length() > 0) {
@@ -296,25 +297,26 @@ public class OverrideIndicatorManager implements ICReconcilingListener {
 	}
 
 	/**
-	 * If the class directly has a valid override for testedOverride, it is added to foundBindings. Otherwise
-	 * each base class is added to handleBaseClass.
+	 * If the class directly has a valid override for testedOverride, it is added to foundBindings.
+	 * Otherwise each base class is added to handleBaseClass.
 	 * 
 	 * @param shadowedMethods
 	 * @param alreadyTestedBases 
+	 * @param point 
 	 * 
 	 * @throws DOMException
 	 */
-	private static void handleBaseClass(ICPPClassType aClass, ICPPMethod testedOverride,
+	private static void handleBaseClass(ICPPClassType classType, ICPPMethod testedOverride,
 			Set<ICPPMethod> foundMethods, Set<ICPPMethod> shadowedMethods,
-			Set<ICPPClassType> alreadyTestedBases) throws DOMException {
-		if (alreadyTestedBases.contains(aClass)) {
+			Set<ICPPClassType> alreadyTestedBases, IASTNode point) throws DOMException {
+		if (alreadyTestedBases.contains(classType)) {
 			return;
 		} else {
-			alreadyTestedBases.add(aClass);
+			alreadyTestedBases.add(classType);
 		}
 
 		Vector<ICPPMethod> validOverrides = new Vector<ICPPMethod>();
-		for (ICPPMethod method : aClass.getDeclaredMethods()) {
+		for (ICPPMethod method : ClassTypeHelper.getDeclaredMethods(classType, point)) {
 			if (testedOverride.getName().equals(method.getName())) {
 				if (ClassTypeHelper.isOverrider(testedOverride, method)) {
 					validOverrides.add(method);
@@ -331,12 +333,13 @@ public class OverrideIndicatorManager implements ICReconcilingListener {
 			return;
 		}
 
-		for (ICPPBase b : aClass.getBases()) {
+		for (ICPPBase b : ClassTypeHelper.getBases(classType, point)) {
 			if (!(b.getBaseClass() instanceof ICPPClassType)) {
 				continue;
 			}
 			ICPPClassType baseClass = (ICPPClassType) b.getBaseClass();
-			handleBaseClass(baseClass, testedOverride, foundMethods, shadowedMethods, alreadyTestedBases);
+			handleBaseClass(baseClass, testedOverride, foundMethods, shadowedMethods,
+					alreadyTestedBases, point);
 		}
 	}
 

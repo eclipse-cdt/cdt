@@ -61,7 +61,7 @@ public final class CPPVariableReadWriteFlags extends VariableReadWriteFlags {
 		IType type = CPPVisitor.createType(parent);
 		if (type instanceof ICPPUnknownType ||
 				type instanceof ICPPClassType &&
-				!ClassTypeHelper.hasTrivialDefaultConstructor((ICPPClassType) type)) {
+				!ClassTypeHelper.hasTrivialDefaultConstructor((ICPPClassType) type, parent)) {
 			return WRITE;
 		}
 		return super.rwInDeclarator(parent, indirection);

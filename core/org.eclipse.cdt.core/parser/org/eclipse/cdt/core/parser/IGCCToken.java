@@ -6,11 +6,11 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM Rational Software) - Initial API and implementation
- *    Ed Swartz (Nokia)
- *    Markus Schorn (Wind River Systems)
+ *     John Camelon (IBM Rational Software) - Initial API and implementation
+ *     Ed Swartz (Nokia)
+ *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
-
 package org.eclipse.cdt.core.parser;
 
 /**
@@ -41,4 +41,7 @@ public interface IGCCToken extends IToken {
 	/** @since 5.3 */ int tTT_is_pod= 					FIRST_RESERVED_IGCCToken + 19;
 	/** @since 5.3 */ int tTT_is_polymorphic= 			FIRST_RESERVED_IGCCToken + 20;
 	/** @since 5.3 */ int tTT_is_union= 				FIRST_RESERVED_IGCCToken + 21;
+	/** @since 5.5 */ int tTT_is_literal_type= 			FIRST_RESERVED_IGCCToken + 22;
+	/** @since 5.5 */ int tTT_is_standard_layout= 		FIRST_RESERVED_IGCCToken + 23;
+	/** @since 5.5 */ int tTT_is_trivial= 				FIRST_RESERVED_IGCCToken + 24;
 }

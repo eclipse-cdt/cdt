@@ -120,13 +120,31 @@ public interface IASTTypeIdExpression extends IASTExpression {
 	 * Built-in type trait of g++. 
 	 * @since 5.3
 	 */
-	public static final int op_is_polymorphic=17;
+	public static final int op_is_polymorphic= 17;
 	
 	/**
 	 * Built-in type trait of g++. 
 	 * @since 5.3
 	 */
 	public static final int op_is_union= 18;
+			
+	/**
+	 * Built-in type trait of g++. 
+	 * @since 5.5
+	 */
+	public static final int op_is_literal_type= 19;
+			
+	/**
+	 * Built-in type trait of g++. 
+	 * @since 5.5
+	 */
+	public static final int op_is_standard_layout= 20;
+			
+	/**
+	 * Built-in type trait of g++. 
+	 * @since 5.5
+	 */
+	public static final int op_is_trivial= 21;
 			
 	/**
 	 * @deprecated constants should be declared here, to avoid using the same constant in different

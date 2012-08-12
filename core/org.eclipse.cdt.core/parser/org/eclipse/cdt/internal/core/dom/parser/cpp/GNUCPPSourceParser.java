@@ -1302,8 +1302,11 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         case IGCCToken.tTT_is_class:
         case IGCCToken.tTT_is_empty:
         case IGCCToken.tTT_is_enum:
+        case IGCCToken.tTT_is_literal_type:
         case IGCCToken.tTT_is_pod:
         case IGCCToken.tTT_is_polymorphic:
+        case IGCCToken.tTT_is_standard_layout:
+        case IGCCToken.tTT_is_trivial:
         case IGCCToken.tTT_is_union:
         	return parseTypeTrait();
 
@@ -1376,15 +1379,21 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         case IGCCToken.tTT_is_class:
         	return IASTTypeIdExpression.op_is_class;
         case IGCCToken.tTT_is_empty:
-        	return IASTTypeIdExpression.op_is_abstract;
+        	return IASTTypeIdExpression.op_is_empty;
         case IGCCToken.tTT_is_enum:
-        	return IASTTypeIdExpression.op_is_abstract;
+        	return IASTTypeIdExpression.op_is_enum;
+        case IGCCToken.tTT_is_literal_type:
+        	return IASTTypeIdExpression.op_is_literal_type;
         case IGCCToken.tTT_is_pod:
-        	return IASTTypeIdExpression.op_is_abstract;
+        	return IASTTypeIdExpression.op_is_pod;
         case IGCCToken.tTT_is_polymorphic:
-        	return IASTTypeIdExpression.op_is_abstract;
+        	return IASTTypeIdExpression.op_is_polymorphic;
+        case IGCCToken.tTT_is_standard_layout:
+        	return IASTTypeIdExpression.op_is_standard_layout;
+        case IGCCToken.tTT_is_trivial:
+        	return IASTTypeIdExpression.op_is_trivial;
         case IGCCToken.tTT_is_union:
-        	return IASTTypeIdExpression.op_is_abstract;
+        	return IASTTypeIdExpression.op_is_union;
 		}
 		assert false;
 		return 0;

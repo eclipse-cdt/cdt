@@ -25,8 +25,11 @@ import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_abstract;
 import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_class;
 import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_empty;
 import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_enum;
+import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_literal_type;
 import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_pod;
 import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_polymorphic;
+import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_standard_layout;
+import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_trivial;
 import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_union;
 import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_sizeof;
 import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_typeid;
@@ -100,8 +103,11 @@ public class EvalUnaryTypeID extends CPPEvaluation {
 		case op_is_class:
 		case op_is_empty:
 		case op_is_enum:
+		case op_is_literal_type:
 		case op_is_pod:
 		case op_is_polymorphic:
+		case op_is_standard_layout:
+		case op_is_trivial:
 		case op_is_union:
 			return CPPTemplates.isDependentType(fOrigType);
 
@@ -137,8 +143,11 @@ public class EvalUnaryTypeID extends CPPEvaluation {
 		case op_is_class:
 		case op_is_empty:
 		case op_is_enum:
+		case op_is_literal_type:
 		case op_is_pod:
 		case op_is_polymorphic:
+		case op_is_standard_layout:
+		case op_is_trivial:
 		case op_is_union:
 			return CPPBasicType.BOOLEAN;
 		case op_typeof:
@@ -187,9 +196,15 @@ public class EvalUnaryTypeID extends CPPEvaluation {
 				return Value.UNKNOWN;  // TODO(sprigogin): Implement
 			case op_is_enum:
 				return Value.create(fOrigType instanceof IEnumeration);
+			case op_is_literal_type:
+				return Value.UNKNOWN;  // TODO(sprigogin): Implement
 			case op_is_pod:
 				return Value.UNKNOWN;  // TODO(sprigogin): Implement
 			case op_is_polymorphic:
+				return Value.UNKNOWN;  // TODO(sprigogin): Implement
+			case op_is_standard_layout:
+				return Value.UNKNOWN;  // TODO(sprigogin): Implement
+			case op_is_trivial:
 				return Value.UNKNOWN;  // TODO(sprigogin): Implement
 			case op_is_union:
 				return Value.create(fOrigType instanceof ICompositeType && ((ICompositeType) fOrigType).getKey() == ICompositeType.k_union);

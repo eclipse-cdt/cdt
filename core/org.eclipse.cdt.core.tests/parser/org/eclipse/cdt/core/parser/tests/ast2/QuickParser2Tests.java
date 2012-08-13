@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM Rational Software - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     IBM Rational Software - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
@@ -44,23 +44,15 @@ import org.eclipse.cdt.internal.core.parser.ParserException;
  * @author jcamelon
  */
 public class QuickParser2Tests extends TestCase {
-
     private static final NullLogService NULL_LOG = new NullLogService();
 
-    /**
-     *  
-     */
     public QuickParser2Tests() {
         super();
     }
 
-    /**
-     * @param name
-     */
     public QuickParser2Tests(String name) {
         super(name);
     }
-
     
     @Override
 	protected void setUp() throws Exception {
@@ -69,7 +61,7 @@ public class QuickParser2Tests extends TestCase {
 	}
 
 	/**
-     * Test code: int x = 5; Purpose: to test the simple decaration in it's
+     * Test code: int x = 5; Purpose: to test the simple declaration in it's
      * simplest form.
      */
     public void testIntGlobal() throws Exception {
@@ -160,30 +152,29 @@ public class QuickParser2Tests extends TestCase {
     public void testSimpleClassMembers() throws Exception {
         // Parse and get the translaton unit
         Writer code = new StringWriter();
-        code
-                .write("class A : public B, private C, virtual protected D { public: int x, y; float a,b,c; };"); 
+        code.write("class A : public B, private C, virtual protected D { public: int x, y; float a,b,c; };"); 
         parse(code.toString());
     }
 
     /**
-     * Test code: int myFunction( void );
+     * Test code: int myFunction(void);
      */
     public void testSimpleFunctionDeclaration() throws Exception {
         // Parse and get the translaton unit
         Writer code = new StringWriter();
-        code.write("void myFunction( void );"); 
+        code.write("void myFunction(void);"); 
         parse(code.toString());
     }
 
     /**
-     * Test code: bool myFunction( int parm1 = 3 * 4, double parm2 );
+     * Test code: bool myFunction(int parm1 = 3 * 4, double parm2);
      * 
      * @throws Exception
      */
     public void testFunctionDeclarationWithParameters() throws Exception {
         // Parse and get the translaton unit
         Writer code = new StringWriter();
-        code.write("bool myFunction( int parm1 = 3 * 4, double parm2 );"); 
+        code.write("bool myFunction(int parm1 = 3 * 4, double parm2);"); 
         parse(code.toString());
     }
 
@@ -208,8 +199,8 @@ public class QuickParser2Tests extends TestCase {
     }
 
     public void testBug36290() throws Exception {
-        parse("typedef void ( A:: * pMethod ) ( void ); "); 
-        parse("typedef void (boo) ( void ); "); 
+        parse("typedef void (A:: * pMethod) (void); "); 
+        parse("typedef void (boo) (void); "); 
         parse("typedef void boo (void); "); 
     }
 
@@ -245,113 +236,113 @@ public class QuickParser2Tests extends TestCase {
 
 	// failing, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=236856
     public void _testBug36932C() throws Exception {
-        parse("X::X( ) : var( new int ) {}"); 
-        parse("X::X( ) : var( new int(5) ) {}"); 
-        parse("X::X( ) : var( new int(B) ) {}"); 
-        parse("X::X( ) : var( new int(B,C) ) {}"); 
-        parse("X::X( ) : var( new int[5] ) {}"); 
-        parse("X::X( ) : var( new int[5][10] ) {}"); 
-        parse("X::X( ) : var( new int[B] ) {}"); 
-        parse("X::X( ) : var( new int[B][C][D] ) {}"); 
+        parse("X::X() : var(new int) {}"); 
+        parse("X::X() : var(new int(5)) {}"); 
+        parse("X::X() : var(new int(B)) {}"); 
+        parse("X::X() : var(new int(B,C)) {}"); 
+        parse("X::X() : var(new int[5]) {}"); 
+        parse("X::X() : var(new int[5][10]) {}"); 
+        parse("X::X() : var(new int[B]) {}"); 
+        parse("X::X() : var(new int[B][C][D]) {}"); 
 
-        parse("X::X( ) : var( new A ) {}"); 
-        parse("X::X( ) : var( new A(5) ) {}"); 
-        parse("X::X( ) : var( new A(B) ) {}"); 
-        parse("X::X( ) : var( new A(B,C) ) {}"); 
-        parse("X::X( ) : var( new A[5] ) {}"); 
-        parse("X::X( ) : var( new A[5][10] ) {}"); 
-        parse("X::X( ) : var( new A[B] ) {}"); 
-        parse("X::X( ) : var( new A[B][C][D] ) {}"); 
+        parse("X::X() : var(new A) {}"); 
+        parse("X::X() : var(new A(5)) {}"); 
+        parse("X::X() : var(new A(B)) {}"); 
+        parse("X::X() : var(new A(B,C)) {}"); 
+        parse("X::X() : var(new A[5]) {}"); 
+        parse("X::X() : var(new A[5][10]) {}"); 
+        parse("X::X() : var(new A[B]) {}"); 
+        parse("X::X() : var(new A[B][C][D]) {}"); 
 
-        parse("X::X( ) : var( new (int) ) {}"); 
-        parse("X::X( ) : var( new (int)(5) ) {}"); 
-        parse("X::X( ) : var( new (int)(B) ) {}"); 
-        parse("X::X( ) : var( new (int)(B,C) ) {}"); 
-        parse("X::X( ) : var( new (int[5]) ) {}"); 
-        parse("X::X( ) : var( new (int[5][10]) ) {}"); 
-        parse("X::X( ) : var( new (int[B]) ) {}"); 
-        parse("X::X( ) : var( new (int[B][C][D]) ) {}"); 
+        parse("X::X() : var(new (int)) {}"); 
+        parse("X::X() : var(new (int)(5)) {}"); 
+        parse("X::X() : var(new (int)(B)) {}"); 
+        parse("X::X() : var(new (int)(B,C)) {}"); 
+        parse("X::X() : var(new (int[5])) {}"); 
+        parse("X::X() : var(new (int[5][10])) {}"); 
+        parse("X::X() : var(new (int[B])) {}"); 
+        parse("X::X() : var(new (int[B][C][D])) {}"); 
 
-        parse("X::X( ) : var( new (A) ) {}"); 
-        parse("X::X( ) : var( new (A)(5) ) {}"); 
-        parse("X::X( ) : var( new (A)(B) ) {}"); 
-        parse("X::X( ) : var( new (A)(B,C) ) {}"); 
-        parse("X::X( ) : var( new (A[5]) ) {}"); 
-        parse("X::X( ) : var( new (A[5][10]) ) {}"); 
-        parse("X::X( ) : var( new (A[B]) ) {}"); 
-        parse("X::X( ) : var( new (A[B][C][D]) ) {}"); 
+        parse("X::X() : var(new (A)) {}"); 
+        parse("X::X() : var(new (A)(5)) {}"); 
+        parse("X::X() : var(new (A)(B)) {}"); 
+        parse("X::X() : var(new (A)(B,C)) {}"); 
+        parse("X::X() : var(new (A[5])) {}"); 
+        parse("X::X() : var(new (A[5][10])) {}"); 
+        parse("X::X() : var(new (A[B])) {}"); 
+        parse("X::X() : var(new (A[B][C][D])) {}"); 
 
-        parse("X::X( ) : var( new (0) int ) {}"); 
-        parse("X::X( ) : var( new (0) int(5) ) {}"); 
-        parse("X::X( ) : var( new (0) int(B) ) {}"); 
-        parse("X::X( ) : var( new (0) int(B,C) ) {}"); 
-        parse("X::X( ) : var( new (0) int[5] ) {}"); 
-        parse("X::X( ) : var( new (0) int[5][10] ) {}"); 
-        parse("X::X( ) : var( new (0) int[B] ) {}"); 
-        parse("X::X( ) : var( new (0) int[B][C][D] ) {}"); 
+        parse("X::X() : var(new (0) int) {}"); 
+        parse("X::X() : var(new (0) int(5)) {}"); 
+        parse("X::X() : var(new (0) int(B)) {}"); 
+        parse("X::X() : var(new (0) int(B,C)) {}"); 
+        parse("X::X() : var(new (0) int[5]) {}"); 
+        parse("X::X() : var(new (0) int[5][10]) {}"); 
+        parse("X::X() : var(new (0) int[B]) {}"); 
+        parse("X::X() : var(new (0) int[B][C][D]) {}"); 
 
-        parse("X::X( ) : var( new (0) A ) {}"); 
-        parse("X::X( ) : var( new (0) A(5) ) {}"); 
-        parse("X::X( ) : var( new (0) A(B) ) {}"); 
-        parse("X::X( ) : var( new (0) A(B,C) ) {}"); 
-        parse("X::X( ) : var( new (0) A[5] ) {}"); 
-        parse("X::X( ) : var( new (0) A[5][10] ) {}"); 
-        parse("X::X( ) : var( new (0) A[B] ) {}"); 
-        parse("X::X( ) : var( new (0) A[B][C][D] ) {}"); 
+        parse("X::X() : var(new (0) A) {}"); 
+        parse("X::X() : var(new (0) A(5)) {}"); 
+        parse("X::X() : var(new (0) A(B)) {}"); 
+        parse("X::X() : var(new (0) A(B,C)) {}"); 
+        parse("X::X() : var(new (0) A[5]) {}"); 
+        parse("X::X() : var(new (0) A[5][10]) {}"); 
+        parse("X::X() : var(new (0) A[B]) {}"); 
+        parse("X::X() : var(new (0) A[B][C][D]) {}"); 
 
-        parse("X::X( ) : var( new (0) (int) ) {}"); 
-        parse("X::X( ) : var( new (0) (int)(5) ) {}"); 
-        parse("X::X( ) : var( new (0) (int)(B) ) {}"); 
-        parse("X::X( ) : var( new (0) (int)(B,C) ) {}"); 
-        parse("X::X( ) : var( new (0) (int[5]) ) {}"); 
-        parse("X::X( ) : var( new (0) (int[5][10]) ) {}"); 
-        parse("X::X( ) : var( new (0) (int[B]) ) {}"); 
-        parse("X::X( ) : var( new (0) (int[B][C][D]) ) {}"); 
+        parse("X::X() : var(new (0) (int)) {}"); 
+        parse("X::X() : var(new (0) (int)(5)) {}"); 
+        parse("X::X() : var(new (0) (int)(B)) {}"); 
+        parse("X::X() : var(new (0) (int)(B,C)) {}"); 
+        parse("X::X() : var(new (0) (int[5])) {}"); 
+        parse("X::X() : var(new (0) (int[5][10])) {}"); 
+        parse("X::X() : var(new (0) (int[B])) {}"); 
+        parse("X::X() : var(new (0) (int[B][C][D])) {}"); 
 
-        parse("X::X( ) : var( new (0) (A) ) {}"); 
-        parse("X::X( ) : var( new (0) (A)(5) ) {}"); 
-        parse("X::X( ) : var( new (0) (A)(B) ) {}"); 
-        parse("X::X( ) : var( new (0) (A)(B,C) ) {}"); 
-        parse("X::X( ) : var( new (0) (A[5]) ) {}"); 
-        parse("X::X( ) : var( new (0) (A[5][10]) ) {}"); 
-        parse("X::X( ) : var( new (0) (A[B]) ) {}"); 
-        parse("X::X( ) : var( new (0) (A[B][C][D]) ) {}"); 
+        parse("X::X() : var(new (0) (A)) {}"); 
+        parse("X::X() : var(new (0) (A)(5)) {}"); 
+        parse("X::X() : var(new (0) (A)(B)) {}"); 
+        parse("X::X() : var(new (0) (A)(B,C)) {}"); 
+        parse("X::X() : var(new (0) (A[5])) {}"); 
+        parse("X::X() : var(new (0) (A[5][10])) {}"); 
+        parse("X::X() : var(new (0) (A[B])) {}"); 
+        parse("X::X() : var(new (0) (A[B][C][D])) {}"); 
 
-        parse("X::X( ) : var( new (P) int ) {}"); 
-        parse("X::X( ) : var( new (P) int(5) ) {}"); 
-        parse("X::X( ) : var( new (P) int(B) ) {}"); 
-        parse("X::X( ) : var( new (P) int(B,C) ) {}"); 
-        parse("X::X( ) : var( new (P) int[5] ) {}"); 
-        parse("X::X( ) : var( new (P) int[5][10] ) {}"); 
-        parse("X::X( ) : var( new (P) int[B] ) {}"); 
-        parse("X::X( ) : var( new (P) int[B][C][D] ) {}"); 
+        parse("X::X() : var(new (P) int) {}"); 
+        parse("X::X() : var(new (P) int(5)) {}"); 
+        parse("X::X() : var(new (P) int(B)) {}"); 
+        parse("X::X() : var(new (P) int(B,C)) {}"); 
+        parse("X::X() : var(new (P) int[5]) {}"); 
+        parse("X::X() : var(new (P) int[5][10]) {}"); 
+        parse("X::X() : var(new (P) int[B]) {}"); 
+        parse("X::X() : var(new (P) int[B][C][D]) {}"); 
 
-        parse("X::X( ) : var( new (P) A ) {}"); 
-        parse("X::X( ) : var( new (P) A(5) ) {}"); 
-        parse("X::X( ) : var( new (P) A(B) ) {}"); 
-        parse("X::X( ) : var( new (P) A(B,C) ) {}"); 
-        parse("X::X( ) : var( new (P) A[5] ) {}"); 
-        parse("X::X( ) : var( new (P) A[5][10] ) {}"); 
-        parse("X::X( ) : var( new (P) A[B] ) {}"); 
-        parse("X::X( ) : var( new (P) A[B][C][D] ) {}"); 
+        parse("X::X() : var(new (P) A) {}"); 
+        parse("X::X() : var(new (P) A(5)) {}"); 
+        parse("X::X() : var(new (P) A(B)) {}"); 
+        parse("X::X() : var(new (P) A(B,C)) {}"); 
+        parse("X::X() : var(new (P) A[5]) {}"); 
+        parse("X::X() : var(new (P) A[5][10]) {}"); 
+        parse("X::X() : var(new (P) A[B]) {}"); 
+        parse("X::X() : var(new (P) A[B][C][D]) {}"); 
 
-        parse("X::X( ) : var( new (P) (int) ) {}"); 
-        parse("X::X( ) : var( new (P) (int)(5) ) {}"); 
-        parse("X::X( ) : var( new (P) (int)(B) ) {}"); 
-        parse("X::X( ) : var( new (P) (int)(B,C) ) {}"); 
-        parse("X::X( ) : var( new (P) (int[5]) ) {}"); 
-        parse("X::X( ) : var( new (P) (int[5][10]) ) {}"); 
-        parse("X::X( ) : var( new (P) (int[B]) ) {}"); 
-        parse("X::X( ) : var( new (P) (int[B][C][D]) ) {}"); 
+        parse("X::X() : var(new (P) (int)) {}"); 
+        parse("X::X() : var(new (P) (int)(5)) {}"); 
+        parse("X::X() : var(new (P) (int)(B)) {}"); 
+        parse("X::X() : var(new (P) (int)(B,C)) {}"); 
+        parse("X::X() : var(new (P) (int[5])) {}"); 
+        parse("X::X() : var(new (P) (int[5][10])) {}"); 
+        parse("X::X() : var(new (P) (int[B])) {}"); 
+        parse("X::X() : var(new (P) (int[B][C][D])) {}"); 
 
-        parse("X::X( ) : var( new (P) (A) ) {}"); 
-        parse("X::X( ) : var( new (P) (A)(5) ) {}"); 
-        parse("X::X( ) : var( new (P) (A)(B) ) {}"); 
-        parse("X::X( ) : var( new (P) (A)(B,C) ) {}"); 
-        parse("X::X( ) : var( new (P) (A[5]) ) {}"); 
-        parse("X::X( ) : var( new (P) (A[5][10]) ) {}"); 
-        parse("X::X( ) : var( new (P) (A[B]) ) {}"); 
-        parse("X::X( ) : var( new (P) (A[B][C][D]) ) {}"); 
+        parse("X::X() : var(new (P) (A)) {}"); 
+        parse("X::X() : var(new (P) (A)(5)) {}"); 
+        parse("X::X() : var(new (P) (A)(B)) {}"); 
+        parse("X::X() : var(new (P) (A)(B,C)) {}"); 
+        parse("X::X() : var(new (P) (A[5])) {}"); 
+        parse("X::X() : var(new (P) (A[5][10])) {}"); 
+        parse("X::X() : var(new (P) (A[B])) {}"); 
+        parse("X::X() : var(new (P) (A[B][C][D])) {}"); 
     }
 
     public void testBugSingleton192() throws Exception {
@@ -372,7 +363,7 @@ public class QuickParser2Tests extends TestCase {
     }
 
     public void testBug37019() throws Exception {
-        parse("static const A a( 1, 0 );"); 
+        parse("static const A a(1, 0);"); 
     }
 
     public void testBug36766and36769A() throws Exception {
@@ -414,7 +405,7 @@ public class QuickParser2Tests extends TestCase {
     }
 
     public void testBug36932A() throws Exception {
-        parse("A::A( ) : var( new char [ (unsigned)bufSize ] ) {}"); 
+        parse("A::A() : var(new char[ (unsigned)bufSize ]) {}"); 
     }
 
 	// failing, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=236856
@@ -529,7 +520,6 @@ public class QuickParser2Tests extends TestCase {
     }
 
     public void testBug36769A() throws Exception {
-
         parse("template <class A, B> cls<A, C>::operator otherType() const {}\n"); 
         parse("template <class A, B> cls<A, C>::cls() {}\n"); 
         parse("template <class A, B> cls<A, C>::~cls() {}\n"); 
@@ -539,7 +529,6 @@ public class QuickParser2Tests extends TestCase {
         Writer code = new StringWriter();
         code.write("unsigned long a = 0UL;\n"); 
         code.write("unsigned long a2 = 0L; \n"); 
-
         parse(code.toString());
     }
 
@@ -548,11 +537,11 @@ public class QuickParser2Tests extends TestCase {
         	"class Functor {"+
         	"template <typename Fun> Functor(Fun fun) : spImpl_(new FunctorHandler<Functor, Fun>(fun)){}" +
         	"};"
-        ); 
+       ); 
     }
 
     public void testBug36932() throws Exception {
-        parse("A::A(): b( new int( 5 ) ), b( new B ), c( new int ) {}"); 
+        parse("A::A(): b(new int(5)), b(new B), c(new int) {}"); 
     }
 
     public void testBug36704() throws Exception {
@@ -590,8 +579,7 @@ public class QuickParser2Tests extends TestCase {
         Writer code = new StringWriter();
         code.write("void mad_decoder_init(struct mad_decoder *, void *,\n"); 
         code.write("			  enum mad_flow (*)(void *, struct mad_stream *),\n"); 
-        code
-                .write("			  enum mad_flow (*)(void *, struct mad_header const *),\n"); 
+        code.write("			  enum mad_flow (*)(void *, struct mad_header const *),\n"); 
         code.write("			  enum mad_flow (*)(void *,\n"); 
         code.write("					struct mad_stream const *,\n"); 
         code.write("					struct mad_frame *),\n"); 
@@ -605,16 +593,13 @@ public class QuickParser2Tests extends TestCase {
         code.write(");\n"); 
 
         parse(code.toString());
-
     }
 
     public void testBug36852() throws Exception {
         Writer code = new StringWriter();
-        code
-                .write("int CBT::senseToAllRect( double id_standardQuot = DOSE, double id_minToleranz =15.0,\n"); 
-        code
-                .write("double id_maxToleranz = 15.0, unsigned int iui_minY = 0, \n"); 
-        code.write("unsigned int iui_maxY = HEIGHT );\n"); 
+        code.write("int CBT::senseToAllRect(double id_standardQuot = DOSE, double id_minToleranz =15.0,\n"); 
+        code.write("double id_maxToleranz = 15.0, unsigned int iui_minY = 0, \n"); 
+        code.write("unsigned int iui_maxY = HEIGHT);\n"); 
         parse(code.toString());
     }
 
@@ -623,14 +608,12 @@ public class QuickParser2Tests extends TestCase {
         code.write("template\n"); 
         code.write("<\n"); 
         code.write("class AbstractFact,\n"); 
-        code
-                .write("template <class, class> class Creator = OpNewFactoryUnit,\n"); 
+        code.write("template <class, class> class Creator = OpNewFactoryUnit,\n"); 
         code.write("class TList = typename AbstractFact::ProductList\n"); 
         code.write(">\n"); 
         code.write("class ConcreteFactory\n"); 
         code.write(": public GenLinearHierarchy<\n"); 
-        code
-                .write("typename TL::Reverse<TList>::Result, Creator, AbstractFact>\n"); 
+        code.write("typename TL::Reverse<TList>::Result, Creator, AbstractFact>\n"); 
         code.write("{\n"); 
         code.write("public:\n"); 
         code.write("typedef typename AbstractFact::ProductList ProductList;\n"); 
@@ -688,23 +671,23 @@ public class QuickParser2Tests extends TestCase {
     }
 
     /**
-     * Test code: "class A { int floor( double input ), someInt; };"
+     * Test code: "class A { int floor(double input), someInt; };"
      */
     public void testMultipleDeclarators() throws Exception {
-        // Parse and get the translaton unit
-        parse("class A { int floor( double input ), someInt; };"); 
+        // Parse and get the translation unit
+        parse("class A { int floor(double input), someInt; };"); 
     }
 
     public void testFunctionModifiers() throws Exception {
-        parse("class A {virtual void foo( void ) const throw ( yay, nay, we::dont::care ) = 0;};"); 
+        parse("class A {virtual void foo(void) const throw (yay, nay, we::dont::care) = 0;};"); 
     }
 
     public void testArrays() throws Exception {
-        parse("int x [5][];"); 
+        parse("int x[5][];"); 
     }
 
     public void testElaboratedParms() throws Exception {
-        parse("int x( struct A myA ) { /* junk */ }"); 
+        parse("int x(struct A myA) { /* junk */ }"); 
     }
 
     public void testMemberDeclarations() throws Exception {
@@ -733,16 +716,16 @@ public class QuickParser2Tests extends TestCase {
     }
 
     public void testASMDefinition() throws Exception {
-        parse("asm( \"mov ep1 ds2\");"); 
+        parse("asm(\"mov ep1 ds2\");"); 
     }
 
     public void testConstructorChain() throws Exception {
         //TODO - requires CPPVisitor in order to reduce ambiguities
-        parse("TrafficLight_Actor::TrafficLight_Actor( RTController * rtg_rts, RTActorRef * rtg_ref )	: RTActor( rtg_rts, rtg_ref ), myId( 0 ) {}"); 
+        parse("TrafficLight_Actor::TrafficLight_Actor(RTController * rtg_rts, RTActorRef * rtg_ref)	: RTActor(rtg_rts, rtg_ref), myId(0) {}"); 
     }
 
     public void testBug36237() throws Exception {
-        parse("A::A():B( (char *)0 ){}"); 
+        parse("A::A():B((char *)0){}"); 
     }
 
     public void testBug36532() throws Exception {
@@ -760,7 +743,7 @@ public class QuickParser2Tests extends TestCase {
     }
 
     public void testTemplateDeclarationOfFunction() throws Exception {
-        parse("template<class A, typename B=C> A aTemplatedFunction( B bInstance );"); 
+        parse("template<class A, typename B=C> A aTemplatedFunction(B bInstance);"); 
     }
 
     public void testTemplateDeclarationOfClass() throws Exception {
@@ -779,15 +762,15 @@ public class QuickParser2Tests extends TestCase {
     }
 
     public void testBug36250() throws Exception {
-        parse("int f( int = 0 );"); 
+        parse("int f(int = 0);"); 
     }
 
     public void testBug36240() throws Exception {
-        parse("A & A::operator=( A ){}"); 
+        parse("A & A::operator=(A){}"); 
     }
 
     public void testBug36254() throws Exception {
-        parse("unsigned i;\nvoid f( unsigned p1 = 0 );"); 
+        parse("unsigned i;\nvoid f(unsigned p1 = 0);"); 
     }
 
     public void testBug36432() throws Exception {
@@ -868,8 +851,7 @@ public class QuickParser2Tests extends TestCase {
     public void testBug36692() throws Exception {
         Writer code = new StringWriter();
         code.write("template <typename T, typename Destroyer>\n"); 
-        code
-                .write("void SetLongevity(T* pDynObject, unsigned int longevity,\n"); 
+        code.write("void SetLongevity(T* pDynObject, unsigned int longevity,\n"); 
         code.write("Destroyer d = Private::Deleter<T>::Delete){}\n"); 
         parse(code.toString());
     }
@@ -888,7 +870,7 @@ public class QuickParser2Tests extends TestCase {
 //        code.write("INLINE_DEF int f ();\n"); 
 //        code.write("INLINE_DEF A   g ();"); 
 //        code.write("INLINE_DEF A * h ();"); 
-//        code.write("INLINE_DEF A & unlock( void );"); 
+//        code.write("INLINE_DEF A & unlock(void);"); 
 //        code.write("};"); 
 //        parse(code.toString());
 //    }
@@ -911,7 +893,7 @@ public class QuickParser2Tests extends TestCase {
 
     public void testPointersToFunctions() throws Exception {
         Writer code = new StringWriter();
-        code.write("void (*name)( void );\n"); 
+        code.write("void (*name)(void);\n"); 
         code
                 .write("static void * (* const orig_malloc_hook)(const char *file, int line, size_t size);\n"); 
 
@@ -924,8 +906,8 @@ public class QuickParser2Tests extends TestCase {
 
     public void testBug36713() throws Exception {
         Writer code = new StringWriter();
-        code.write("A ( * const fPtr) (void *); \n"); 
-        code.write("A (* const fPtr2) ( A * ); \n"); 
+        code.write("A (* const fPtr) (void *); \n"); 
+        code.write("A (* const fPtr2) (A *); \n"); 
         parse(code.toString());
     }
 
@@ -935,7 +917,7 @@ public class QuickParser2Tests extends TestCase {
     //	{
     //		// Parse and get the translaton unit
     //		Writer code = new StringWriter();
-    //		code.write("bool myFunction( parm1, parm2, parm3 )\n");
+    //		code.write("bool myFunction(parm1, parm2, parm3)\n");
     //		code.write("const char* parm1;\n");
     //		code.write("int (*parm2)(float);\n");
     //		code.write("{}");
@@ -946,82 +928,82 @@ public class QuickParser2Tests extends TestCase {
     //		assertEquals(1, declarations.size());
     //		SimpleDeclaration simpleDeclaration =
     // (SimpleDeclaration)declarations.get(0);
-    //		assertEquals( simpleDeclaration.getDeclSpecifier().getType(),
-    // DeclSpecifier.t_bool );
+    //		assertEquals(simpleDeclaration.getDeclSpecifier().getType(),
+    // DeclSpecifier.t_bool);
     //		List declarators = simpleDeclaration.getDeclarators();
-    //		assertEquals( 1, declarators.size() );
-    //		Declarator functionDeclarator = (Declarator)declarators.get( 0 );
-    //		assertEquals( functionDeclarator.getName().toString(), "myFunction" );
+    //		assertEquals(1, declarators.size());
+    //		Declarator functionDeclarator = (Declarator)declarators.get(0);
+    //		assertEquals(functionDeclarator.getName().toString(), "myFunction");
     //        
     //		ParameterDeclarationClause pdc = functionDeclarator.getParms();
-    //		assertNotNull( pdc );
+    //		assertNotNull(pdc);
     //		List parameterDecls = pdc.getDeclarations();
-    //		assertEquals( 3, parameterDecls.size() );
-    //		ParameterDeclaration parm1 = (ParameterDeclaration)parameterDecls.get( 0
-    // );
-    //		assertNotNull( parm1.getDeclSpecifier().getName() );
-    //		assertEquals( "parm1", parm1.getDeclSpecifier().getName().toString() );
+    //		assertEquals(3, parameterDecls.size());
+    //		ParameterDeclaration parm1 = (ParameterDeclaration)parameterDecls.get(0
+    //);
+    //		assertNotNull(parm1.getDeclSpecifier().getName());
+    //		assertEquals("parm1", parm1.getDeclSpecifier().getName().toString());
     //		List parm1Decls = parm1.getDeclarators();
-    //		assertEquals( 1, parm1Decls.size() );
+    //		assertEquals(1, parm1Decls.size());
     //
-    //		ParameterDeclaration parm2 = (ParameterDeclaration)parameterDecls.get( 1
-    // );
-    //		assertNotNull( parm2.getDeclSpecifier().getName() );
-    //		assertEquals( "parm2", parm2.getDeclSpecifier().getName().toString() );
+    //		ParameterDeclaration parm2 = (ParameterDeclaration)parameterDecls.get(1
+    //);
+    //		assertNotNull(parm2.getDeclSpecifier().getName());
+    //		assertEquals("parm2", parm2.getDeclSpecifier().getName().toString());
     //		List parm2Decls = parm2.getDeclarators();
-    //		assertEquals( 1, parm2Decls.size() );
+    //		assertEquals(1, parm2Decls.size());
     //        
-    //		ParameterDeclaration parm3 = (ParameterDeclaration)parameterDecls.get( 2
-    // );
-    //		assertNotNull( parm3.getDeclSpecifier().getName() );
-    //		assertEquals( "parm3", parm3.getDeclSpecifier().getName().toString() );
+    //		ParameterDeclaration parm3 = (ParameterDeclaration)parameterDecls.get(2
+    //);
+    //		assertNotNull(parm3.getDeclSpecifier().getName());
+    //		assertEquals("parm3", parm3.getDeclSpecifier().getName().toString());
     //		List parm3Decls = parm3.getDeclarators();
-    //		assertEquals( 1, parm3Decls.size() );
+    //		assertEquals(1, parm3Decls.size());
     //        
     //		OldKRParameterDeclarationClause clause = pdc.getOldKRParms();
-    //		assertNotNull( clause );
-    //		assertEquals( clause.getDeclarations().size(), 2 );
+    //		assertNotNull(clause);
+    //		assertEquals(clause.getDeclarations().size(), 2);
     //		SimpleDeclaration decl1 =
     // (SimpleDeclaration)clause.getDeclarations().get(0);
-    //		assertEquals( decl1.getDeclarators().size(), 1 );
+    //		assertEquals(decl1.getDeclarators().size(), 1);
     //		assertTrue(decl1.getDeclSpecifier().isConst());
     //		assertFalse(decl1.getDeclSpecifier().isVolatile());
-    //		assertEquals( decl1.getDeclSpecifier().getType(), DeclSpecifier.t_char);
-    //		Declarator declarator1 = (Declarator)decl1.getDeclarators().get( 0 );
-    //		assertEquals( declarator1.getName().toString(), "parm1" );
+    //		assertEquals(decl1.getDeclSpecifier().getType(), DeclSpecifier.t_char);
+    //		Declarator declarator1 = (Declarator)decl1.getDeclarators().get(0);
+    //		assertEquals(declarator1.getName().toString(), "parm1");
     //		List ptrOps1 = declarator1.getPointerOperators();
-    //		assertNotNull( ptrOps1 );
-    //		assertEquals( 1, ptrOps1.size() );
+    //		assertNotNull(ptrOps1);
+    //		assertEquals(1, ptrOps1.size());
     //		PointerOperator po1 = (PointerOperator)ptrOps1.get(0);
-    //		assertNotNull( po1 );
-    //		assertFalse( po1.isConst() );
-    //		assertFalse( po1.isVolatile() );
-    //		assertEquals( po1.getType(), PointerOperator.t_pointer );
+    //		assertNotNull(po1);
+    //		assertFalse(po1.isConst());
+    //		assertFalse(po1.isVolatile());
+    //		assertEquals(po1.getType(), PointerOperator.t_pointer);
     //        
     //		SimpleDeclaration declaration =
     // (SimpleDeclaration)clause.getDeclarations().get(1);
-    //		assertEquals( declaration.getDeclSpecifier().getType(),
-    // DeclSpecifier.t_int );
-    //		assertEquals( declaration.getDeclarators().size(), 1);
-    //		assertNull( ((Declarator)declaration.getDeclarators().get(0)).getName()
-    // );
+    //		assertEquals(declaration.getDeclSpecifier().getType(),
+    // DeclSpecifier.t_int);
+    //		assertEquals(declaration.getDeclarators().size(), 1);
+    //		assertNull(((Declarator)declaration.getDeclarators().get(0)).getName()
+    //);
     //		assertNotNull(
-    // ((Declarator)declaration.getDeclarators().get(0)).getDeclarator() );
+    // ((Declarator)declaration.getDeclarators().get(0)).getDeclarator());
     //		assertEquals(
     // ((Declarator)declaration.getDeclarators().get(0)).getDeclarator().getName().toString(),
-    // "parm2" );
+    // "parm2");
     //		ParameterDeclarationClause clause2 =
     // ((Declarator)declaration.getDeclarators().get(0)).getParms();
-    //		assertEquals( clause2.getDeclarations().size(), 1 );
+    //		assertEquals(clause2.getDeclarations().size(), 1);
     //		assertEquals(
     // ((ParameterDeclaration)clause2.getDeclarations().get(0)).getDeclarators().size(),
-    // 1 );
+    // 1);
     //		assertNull(
     // ((Declarator)((ParameterDeclaration)clause2.getDeclarations().get(0)).getDeclarators().get(0)).getName()
-    // );
+    //);
     //		assertEquals(
     // ((ParameterDeclaration)clause2.getDeclarations().get(0)).getDeclSpecifier().getType(),
-    // DeclSpecifier.t_float );
+    // DeclSpecifier.t_float);
     //	}
 
     public void testPointersToMemberFunctions() throws Exception {
@@ -1038,10 +1020,8 @@ public class QuickParser2Tests extends TestCase {
         code.write("%:define glue(x, y) x %:%: y	/* #define glue(x, y) x ## y. */\n"); 
         code.write("#ifndef glue\n"); 
         code.write("#error glue not defined!\n"); 
-        code.write("#endif\n"); 
-
+        code.write("#endif\n");
         code.write("%:define str(x) %:x		/* #define str(x) #x */\n"); 
-
         code.write("int main (int argc, char *argv<::>) /* argv[] */\n"); 
         code.write("glue (<, %) /* { */\n"); 
         code.write("			 /* di_str[] = */\n"); 
@@ -1063,17 +1043,14 @@ public class QuickParser2Tests extends TestCase {
         code.write("??=include <stdio.h>\n"); 
         code.write("??=define TWELVE 1??/\n"); 
         code.write("2\n"); 
-
         code.write("static const char str??(??) = \"0123456789??/n\";\n"); 
-
         code.write("int\n"); 
         code.write("main(void)\n"); 
         code.write("??<\n"); 
         code.write("  unsigned char x = 5;\n"); 
         code.write("  if (sizeof str != TWELVE)\n"); 
         code.write("	abort ();\n"); 
-        code
-                .write("  /* Test ^=, the only multi-character token to come from trigraphs.  */\n"); 
+        code.write("  /* Test ^=, the only multi-character token to come from trigraphs.  */\n"); 
         code.write("  x ??'= 3;\n"); 
         code.write("  if (x != 6)\n"); 
         code.write("	abort ();\n"); 
@@ -1098,7 +1075,7 @@ public class QuickParser2Tests extends TestCase {
     }
 
     public void testIndirectDeclarators() throws Exception {
-        parse("void (*x)( int );"); 
+        parse("void (*x)(int);"); 
     }
 
     public void testBug39532() throws Exception {
@@ -1143,7 +1120,7 @@ public class QuickParser2Tests extends TestCase {
             code.write("template <class T, class U>	struct SuperSubclass {\n"); 
             code.write("enum { value = (::Loki::Conversion<const volatile U*, const volatile T*>::exists && \n"); 
             code.write("!::Loki::Conversion<const volatile T*, const volatile void*>::sameType) };	};"); 
-        } catch (IOException ioe) {
+        } catch (IOException e) {
         }
         parse(code.toString());
     }
@@ -1210,7 +1187,7 @@ public class QuickParser2Tests extends TestCase {
             code.write("  catch (...)\n"); 
             code.write("	{ if (c != 3) r |= 1; }\n"); 
             code.write("};\n"); 
-        } catch (IOException ioe) {
+        } catch (IOException e) {
         }
         parse(code.toString());
     }
@@ -1266,64 +1243,64 @@ public class QuickParser2Tests extends TestCase {
     }
 
     public void testBug43110() throws Exception {
-        parse("void x( int y, ... );"); 
+        parse("void x(int y, ...);"); 
     }
 
     //	public void testBug44370() throws Exception
     //	{
-    //		parse( "#define SWAP(x,y) {x|=y;y|=x;x|=y;}\n"); 
+    //		parse("#define SWAP(x,y) {x|=y;y|=x;x|=y;}\n"); 
     //		Iterator macros = quickParseCallback.getMacros();
     //		assertNotNull(macros);
-    //		assertTrue( macros.hasNext());
+    //		assertTrue(macros.hasNext());
     //		IASTMacro swap = (IASTMacro) macros.next();
-    //		assertFalse( macros.hasNext() );
-    //		assertEquals( swap.getName(), "SWAP"); 
-    //		assertEquals( swap.getMacroType(),
-    // IMacroDescriptor.MacroType.FUNCTION_LIKE );
-    //		String [] params = swap.getParameters();
-    //		assertEquals( params.length, 2 );
-    //		assertEquals( params[0], "x"); 
-    //		assertEquals( params[1], "y"); 
+    //		assertFalse(macros.hasNext());
+    //		assertEquals(swap.getName(), "SWAP"); 
+    //		assertEquals(swap.getMacroType(),
+    // IMacroDescriptor.MacroType.FUNCTION_LIKE);
+    //		String[] params = swap.getParameters();
+    //		assertEquals(params.length, 2);
+    //		assertEquals(params[0], "x"); 
+    //		assertEquals(params[1], "y"); 
     //		String completeSignature = swap.getCompleteSignature().trim();
-    //		assertEquals( completeSignature, "#define SWAP(x,y) {x|=y;y|=x;x|=y;}");
+    //		assertEquals(completeSignature, "#define SWAP(x,y) {x|=y;y|=x;x|=y;}");
     // 
-    //		assertEquals( swap.getExpansionSignature().trim(),"{x|=y;y|=x;x|=y;}");
+    //		assertEquals(swap.getExpansionSignature().trim(),"{x|=y;y|=x;x|=y;}");
     // 
-    //		IToken [] tokens = swap.getTokenizedExpansion();
-    //		validateToken( tokens[0], IToken.tLBRACE);
-    //		validateIdentifier( tokens[1], "x"); 
-    //		validateToken( tokens[2], IToken.tBITORASSIGN );
-    //		validateIdentifier( tokens[3], "y"); 
-    //		validateToken( tokens[4], IToken.tSEMI );
-    //		validateIdentifier( tokens[5], "y"); 
-    //		validateToken( tokens[6], IToken.tBITORASSIGN );
-    //		validateIdentifier( tokens[7], "x"); 
-    //		validateToken( tokens[8], IToken.tSEMI );
-    //		validateIdentifier( tokens[9], "x"); 
-    //		validateToken( tokens[10], IToken.tBITORASSIGN );
-    //		validateIdentifier( tokens[11], "y"); 
-    //		validateToken( tokens[12], IToken.tSEMI );
-    //		validateToken( tokens[13], IToken.tRBRACE );
+    //		IToken[] tokens = swap.getTokenizedExpansion();
+    //		validateToken(tokens[0], IToken.tLBRACE);
+    //		validateIdentifier(tokens[1], "x"); 
+    //		validateToken(tokens[2], IToken.tBITORASSIGN);
+    //		validateIdentifier(tokens[3], "y"); 
+    //		validateToken(tokens[4], IToken.tSEMI);
+    //		validateIdentifier(tokens[5], "y"); 
+    //		validateToken(tokens[6], IToken.tBITORASSIGN);
+    //		validateIdentifier(tokens[7], "x"); 
+    //		validateToken(tokens[8], IToken.tSEMI);
+    //		validateIdentifier(tokens[9], "x"); 
+    //		validateToken(tokens[10], IToken.tBITORASSIGN);
+    //		validateIdentifier(tokens[11], "y"); 
+    //		validateToken(tokens[12], IToken.tSEMI);
+    //		validateToken(tokens[13], IToken.tRBRACE);
     //	}
     //	/**
     //	 * @param token
     //	 * @param string
     //	 */
-    //	private void validateIdentifier(IToken token, String identifierName ) {
-    //		validateToken( token, IToken.tIDENTIFIER);
-    //		assertEquals( token.getImage(), identifierName );
+    //	private void validateIdentifier(IToken token, String identifierName) {
+    //		validateToken(token, IToken.tIDENTIFIER);
+    //		assertEquals(token.getImage(), identifierName);
     //	}
     //	/**
     //	 * @param token
     //	 * @param i
     //	 */
     //	private void validateToken(IToken token, int signal) {
-    //		assertEquals( token.getType(), signal );
+    //		assertEquals(token.getType(), signal);
     //	}
 
     public void testBug47752() throws Exception {
         //TODO requires CPPVisitor
-        parse("void func( cFoo bar ) try {	} catch ( const char * error ){	}"); 
+        parse("void func(cFoo bar) try {	} catch (const char * error){	}"); 
     }
 
     public void testBug47628() throws Exception {
@@ -1354,15 +1331,8 @@ public class QuickParser2Tests extends TestCase {
         parse("struct file_operations driver_fops = {  open: device_open, release: device_release	};", true, ParserLanguage.C, true); 
     }
 
-    /**
-     * @param string
-     * @param b
-     * @param c
-     * @param d
-     */
     protected void parse(String code, boolean expectedToPass,
             ParserLanguage lang, boolean gcc) throws Exception {
-
 		FileContent codeReader = FileContent.create("<test-code>", code.toCharArray());
         IScannerInfo scannerInfo = new ScannerInfo();
         IScanner scanner= AST2BaseTest.createScanner(codeReader, lang, ParserMode.COMPLETE_PARSE, scannerInfo);
@@ -1373,8 +1343,7 @@ public class QuickParser2Tests extends TestCase {
                 config = new GPPParserExtensionConfiguration();
             else
                 config = new ANSICPPParserExtensionConfiguration();
-            parser2 = new GNUCPPSourceParser(scanner, ParserMode.QUICK_PARSE,
-                    NULL_LOG, config);
+            parser2 = new GNUCPPSourceParser(scanner, ParserMode.QUICK_PARSE, NULL_LOG, config);
         } else {
             ICParserExtensionConfiguration config = null;
             if (gcc)
@@ -1382,23 +1351,18 @@ public class QuickParser2Tests extends TestCase {
             else
                 config = new ANSICParserExtensionConfiguration();
 
-            parser2 = new GNUCSourceParser(scanner, ParserMode.QUICK_PARSE,
-                    NULL_LOG, config);
+            parser2 = new GNUCSourceParser(scanner, ParserMode.QUICK_PARSE, NULL_LOG, config);
         }
         IASTTranslationUnit tu = parser2.parse();
         if (parser2.encounteredError() && expectedToPass)
             throw new ParserException("FAILURE"); 
-        if (expectedToPass)
-        {
-            if( lang == ParserLanguage.C )
-            {
-            	IASTProblem [] problems = CVisitor.getProblems(tu);
-            	assertEquals( problems.length, 0 );
-            }
-            else if ( lang == ParserLanguage.CPP )
-            {
-            	IASTProblem [] problems = CPPVisitor.getProblems(tu);
-            	assertEquals( problems.length, 0 );
+        if (expectedToPass) {
+            if (lang == ParserLanguage.C) {
+            	IASTProblem[] problems = CVisitor.getProblems(tu);
+            	assertEquals(problems.length, 0);
+            } else if (lang == ParserLanguage.CPP) {
+            	IASTProblem[] problems = CPPVisitor.getProblems(tu);
+            	assertEquals(problems.length, 0);
             }
         }
     }
@@ -1409,8 +1373,7 @@ public class QuickParser2Tests extends TestCase {
 
     public void testBug61431() throws Exception {
         for (int i = 0; i < 2; ++i) {
-            ParserLanguage language = (i == 0) ? ParserLanguage.C
-                    : ParserLanguage.CPP;
+            ParserLanguage language = (i == 0) ? ParserLanguage.C : ParserLanguage.CPP;
             parse("int k[][] = { {0, {1}, {2,3}};", false, language); 
         }
     }
@@ -1458,14 +1421,14 @@ public class QuickParser2Tests extends TestCase {
     	StringWriter writer = new StringWriter();
     	writer.write("#define __declspec(x) __attribute__((x))"); 
     	writer.write("__declspec (dllimport) int foo;"); 
-        parse( writer.toString() );
+        parse(writer.toString());
     }
 
     public void testBug39704D() throws Exception {
     	StringWriter writer = new StringWriter();
     	writer.write("#define __declspec(x) __attribute__((x))"); 
     	writer.write("__declspec(dllexport) int func1 (int a) {}"); 
-        parse( writer.toString() );    	
+        parse(writer.toString());    	
     }
 
     public void testBug39695() throws Exception {
@@ -1510,8 +1473,7 @@ public class QuickParser2Tests extends TestCase {
         Writer code = new StringWriter();
         code.write("__complex__ double x; // complex double\n"); 
         code.write("__complex__ short int a; // complex short int\n"); 
-        code
-                .write("__complex__ float y = 2.5fi; // 2.5 imaginary float literal\n"); 
+        code.write("__complex__ float y = 2.5fi; // 2.5 imaginary float literal\n"); 
         code.write("__complex__ int a = 3i; // imaginary intege r literal\n"); 
         code.write("double v = __real__ x; // real part of expression\n"); 
         code.write("double w = __imag__ x; // imaginary part of expression\n"); 
@@ -1532,7 +1494,7 @@ public class QuickParser2Tests extends TestCase {
     public void testBug39677() throws Exception {
         parse("B::B() : a(({ 1; })) {}", true, ParserLanguage.CPP, true); 
         Writer writer = new StringWriter();
-        writer.write("B::B() : a(( { int y = foo (); int z;\n"); 
+        writer.write("B::B() : a(({ int y = foo (); int z;\n"); 
         writer.write("if (y > 0) z = y;\n"); 
         writer.write("else z = - y;\n");
         writer.write("z; })) {}\n");
@@ -1562,5 +1524,4 @@ public class QuickParser2Tests extends TestCase {
     public void testBug39701C() throws Exception {
         parse("static template class Foo<int>;", true, ParserLanguage.CPP, true); 
     }
-
 }

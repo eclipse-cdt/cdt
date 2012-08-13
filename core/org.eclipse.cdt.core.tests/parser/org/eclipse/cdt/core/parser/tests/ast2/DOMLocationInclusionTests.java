@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     IBM - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
@@ -151,15 +151,10 @@ public class DOMLocationInclusionTests extends AST2FileBasePluginTest {
 		public String getParserDialect() {
             return dialect;
         }
-
     }
 
     private static final String[] EMPTY_STRING_ARRAY = new String[0];
 
-    /**
-     * @param name
-     * @param className
-     */
     public DOMLocationInclusionTests(String name) {
         super(name, DOMLocationInclusionTests.class);
     }
@@ -178,13 +173,6 @@ public class DOMLocationInclusionTests extends AST2FileBasePluginTest {
                 new ParserConfiguration(s, code));
     }
 
-    /**
-     * @param pathEndsWith
-     *            TODO
-     * @param offset
-     * @param length
-     * @param declarator
-     */
     protected void assertSoleFileLocation(IASTNode n, String pathEndsWith, int offset, int length) {
         IASTNodeLocation[] locations = n.getNodeLocations();
         assertEquals(locations.length, 1);

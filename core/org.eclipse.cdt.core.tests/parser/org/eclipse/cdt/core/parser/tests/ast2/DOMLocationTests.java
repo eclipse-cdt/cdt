@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     IBM - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
@@ -178,11 +178,6 @@ public class DOMLocationTests extends AST2BaseTest {
 
     }
 
-    /**
-     * @param declarator
-     * @param offset
-     * @param length
-     */
     private void assertSoleLocation(IASTNode n, int offset, int length) {
     	assertEquals(length, ((ASTNode)n).getLength());
         IASTNodeLocation[] locations = n.getNodeLocations();

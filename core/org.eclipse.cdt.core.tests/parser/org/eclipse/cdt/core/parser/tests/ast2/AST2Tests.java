@@ -6327,11 +6327,6 @@ public class AST2Tests extends AST2BaseTest {
     	return false;
     }
 
-	/**
-	 * @param declarations
-	 * @param index
-	 * @return
-	 */
 	private IBasicType getTypeForDeclaration(IASTDeclaration[] declarations, int index) {
 		IASTInitializer init = ((IASTSimpleDeclaration) declarations[index]).getDeclarators()[0].getInitializer();
 		return (IBasicType)((IASTExpression)((IASTEqualsInitializer) init).getInitializerClause()).getExpressionType();

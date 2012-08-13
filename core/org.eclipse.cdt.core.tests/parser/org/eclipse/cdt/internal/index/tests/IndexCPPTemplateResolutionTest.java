@@ -8,6 +8,7 @@
  * Contributors:
  *    Andrew Ferguson (Symbian) - Initial implementation
  *    Markus Schorn (Wind River Systems)
+ *    Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.index.tests;
 
@@ -1953,5 +1954,85 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	public void testCurrentInstanceOfClassTemplatePartialSpec_368404() throws Exception {
 		ITypedef tdef= getBindingFromASTName("type t;", 4, ITypedef.class);
 		assertEquals("int", ASTTypeUtil.getType(tdef, true));
+	}
+
+	//	template<typename T, T v>
+	//	struct integral_constant {
+	//	  static constexpr T value = v;
+	//	  typedef T value_type;
+	//	  typedef integral_constant<T, v> type;
+	//	};
+	//
+	//	typedef integral_constant<bool, true> true_type;
+	//
+	//	typedef integral_constant<bool, false> false_type;
+	//
+	//	template<typename T>
+	//	class helper {
+	//	  typedef char one;
+	//	  typedef struct { char arr[2]; } two;
+	//	  template<typename U> struct Wrap_type {};
+	//	  template<typename U> static one test(Wrap_type<typename U::category>*);
+	//	  template<typename U> static two test(...);
+	//	  public: static const bool value = sizeof(test<T>(0)) == 1;
+	//	};
+	//
+	//	template<typename T>
+	//	struct has_category : integral_constant<bool, helper<T>::value> {};
+	//
+	//	template<typename Iterator, bool = has_category<Iterator>::value>
+	//	struct traits {};
+	//
+	//	template<typename Iterator>
+	//	struct traits<Iterator, true> {
+	//	  typedef typename Iterator::value_type value_type;
+	//	};
+	//
+	//	struct tag {};
+
+	//	struct C {
+	//	  typedef int value_type;
+	//	  typedef tag category;
+	//	};
+	//
+	//	template<typename It, typename Val = typename traits<It>::value_type>
+	//	class A {
+	//	};
+	//
+	//	typedef A<C> type;
+	public void _testSFINAE_a() throws Exception {
+		checkBindings();
+	}
+
+	//	template <bool B, typename T = void> struct enable_if { typedef T type; };
+	//	template <typename T> struct enable_if<false, T> {};
+	//
+	//	template <typename T> struct is_int { static const bool value = false; };
+	//	template <> struct is_int<int> { static const bool value = true; };
+	//
+	//	template <typename T> struct is_double { static const bool value = false; };
+	//	template <> struct is_double<double> { static const bool value = true; };
+	//
+	//	template <typename T, typename Enabled = void>
+	//	struct A {
+	//	  static int get() { return 0; }
+	//	};
+	//
+	//	template<typename T>
+	//	struct A<T, typename enable_if<is_double<T>::value>::type> {
+	//	  static int get() { return 1; }
+	//	};
+	//
+	//	template <typename T>
+	//	struct A<T, typename enable_if<is_int<T>::value>::type> {
+	//	  static int get() { return 2; }
+	//	};
+
+	//	void test() {
+	//	  A<double>::get();
+	//	  A<int>::get();
+	//	}
+	public void testSFINAE_b() throws Exception {
+		checkBindings();
 	}
 }

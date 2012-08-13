@@ -66,6 +66,7 @@ import org.osgi.framework.Bundle;
  */
 public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 	private static final boolean DEBUG= false;
+	private static final int INDEXER_TIMEOUT_SEC = 360;
 	protected ITestStrategy strategy;
 
 	public void setStrategy(ITestStrategy strategy) {
@@ -328,8 +329,9 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 
 		@Override
 		public void setUp() throws Exception {
-			cproject = cpp ? CProjectHelper.createCCProject(getName() + System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER)
-					: CProjectHelper.createCProject(getName() + System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER);
+			cproject = cpp ?
+					CProjectHelper.createCCProject(getName() + System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER) :
+					CProjectHelper.createCProject(getName() + System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER);
 			Bundle b = CTestPlugin.getDefault().getBundle();
 			testData = TestSourceReader.getContentsForTest(b, "parser", IndexBindingResolutionTestBase.this.getClass(), getName(), 2);
 
@@ -337,11 +339,11 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 				return;
 			IFile file = TestSourceReader.createFile(cproject.getProject(), new Path("header.h"), testData[0].toString());
 			CCorePlugin.getIndexManager().setIndexerId(cproject, IPDOMManager.ID_FAST_INDEXER);
-			assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));
+			assertTrue(CCorePlugin.getIndexManager().joinIndexer(INDEXER_TIMEOUT_SEC * 1000, new NullProgressMonitor()));
 
 			if (DEBUG) {
 				System.out.println("Project PDOM: " + getName());
-				((PDOM)CCoreInternals.getPDOMManager().getPDOM(cproject)).accept(new PDOMPrettyPrinter());
+				((PDOM) CCoreInternals.getPDOMManager().getPDOM(cproject)).accept(new PDOMPrettyPrinter());
 			}
 
 			index= CCorePlugin.getIndexManager().getIndex(cproject);
@@ -414,21 +416,22 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 
 		@Override
 		public void setUp() throws Exception {
-			cproject = cpp ? CProjectHelper.createCCProject(getName()+System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER)
-					: CProjectHelper.createCProject(getName()+System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER);
+			cproject = cpp ?
+					CProjectHelper.createCCProject(getName()+System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER) :
+					CProjectHelper.createCProject(getName()+System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER);
 			Bundle b = CTestPlugin.getDefault().getBundle();
 			testData = TestSourceReader.getContentsForTest(b, "parser", IndexBindingResolutionTestBase.this.getClass(), getName(), 2);
 
 			IFile file = TestSourceReader.createFile(cproject.getProject(), new Path("header.h"), testData[0].toString());
 			CCorePlugin.getIndexManager().setIndexerId(cproject, IPDOMManager.ID_FAST_INDEXER);
-			assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));
+			assertTrue(CCorePlugin.getIndexManager().joinIndexer(INDEXER_TIMEOUT_SEC * 1000, new NullProgressMonitor()));
 
 			IFile cppfile= TestSourceReader.createFile(cproject.getProject(), new Path("references.c" + (cpp ? "pp" : "")), testData[1].toString());
-			assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));
+			assertTrue(CCorePlugin.getIndexManager().joinIndexer(INDEXER_TIMEOUT_SEC * 1000, new NullProgressMonitor()));
 		
 			if (DEBUG) {
 				System.out.println("Project PDOM: " + getName());
-				((PDOM)CCoreInternals.getPDOMManager().getPDOM(cproject)).accept(new PDOMPrettyPrinter());
+				((PDOM) CCoreInternals.getPDOMManager().getPDOM(cproject)).accept(new PDOMPrettyPrinter());
 			}
 
 			index= CCorePlugin.getIndexManager().getIndex(cproject);
@@ -507,8 +510,9 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 
 		@Override
 		public void setUp() throws Exception {
-			cproject = cpp ? CProjectHelper.createCCProject(getName() + System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER)
-					: CProjectHelper.createCProject(getName() + System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER);
+			cproject = cpp ?
+					CProjectHelper.createCCProject(getName() + System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER) :
+					CProjectHelper.createCProject(getName() + System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER);
 			Bundle b = CTestPlugin.getDefault().getBundle();
 			testData = TestSourceReader.getContentsForTest(b, "parser", IndexBindingResolutionTestBase.this.getClass(), getName(), 0);
 
@@ -533,7 +537,7 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 				}
 			}
 			CCorePlugin.getIndexManager().setIndexerId(cproject, IPDOMManager.ID_FAST_INDEXER);
-			assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));
+			assertTrue(CCorePlugin.getIndexManager().joinIndexer(INDEXER_TIMEOUT_SEC * 1000, new NullProgressMonitor()));
 		
 			if (DEBUG) {
 				System.out.println("Project PDOM: " + getName());
@@ -600,8 +604,9 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 
 		@Override
 		public void setUp() throws Exception {
-			cproject= cpp ? CProjectHelper.createCCProject("OnlineContent"+System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER)
-					: CProjectHelper.createCProject("OnlineContent"+System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER);
+			cproject= cpp ?
+					CProjectHelper.createCCProject("OnlineContent"+System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER) :
+					CProjectHelper.createCProject("OnlineContent"+System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER);
 			Bundle b= CTestPlugin.getDefault().getBundle();
 			testData= TestSourceReader.getContentsForTest(b, "parser", IndexBindingResolutionTestBase.this.getClass(), getName(), 2);
 			referenced = createReferencedContent();
@@ -616,11 +621,11 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 
 			IndexerPreferences.set(cproject.getProject(), IndexerPreferences.KEY_INDEXER_ID, IPDOMManager.ID_FAST_INDEXER);
 			CCorePlugin.getIndexManager().reindex(cproject);
-			assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));
+			assertTrue(CCorePlugin.getIndexManager().joinIndexer(INDEXER_TIMEOUT_SEC * 1000, new NullProgressMonitor()));
 		
 			if (DEBUG) {
 				System.out.println("Online: "+getName());
-			 	((PDOM)CCoreInternals.getPDOMManager().getPDOM(cproject)).accept(new PDOMPrettyPrinter());
+			 	((PDOM) CCoreInternals.getPDOMManager().getPDOM(cproject)).accept(new PDOMPrettyPrinter());
 			}
 
 			index= CCorePlugin.getIndexManager().getIndex(cproject, IIndexManager.ADD_DEPENDENCIES);
@@ -629,19 +634,20 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 		}
 
 		protected ICProject createReferencedContent() throws CoreException {
-			ICProject referenced = cpp ? CProjectHelper.createCCProject("ReferencedContent"+System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER)
-					: CProjectHelper.createCProject("ReferencedContent"+System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER);
+			ICProject referenced = cpp ?
+					CProjectHelper.createCCProject("ReferencedContent" + System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER) :
+					CProjectHelper.createCProject("ReferencedContent" + System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER);
 			String content = testData[0].toString();
 			IFile file = TestSourceReader.createFile(referenced.getProject(), new Path("header.h"), content);
 		
 			IndexerPreferences.set(referenced.getProject(), IndexerPreferences.KEY_INDEXER_ID, IPDOMManager.ID_FAST_INDEXER);
 			CCorePlugin.getIndexManager().reindex(referenced);
 		
-			assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));
+			assertTrue(CCorePlugin.getIndexManager().joinIndexer(INDEXER_TIMEOUT_SEC * 1000, new NullProgressMonitor()));
 		
 			if (DEBUG) {
 				System.out.println("Referenced: "+getName());
-				((PDOM)CCoreInternals.getPDOMManager().getPDOM(referenced)).accept(new PDOMPrettyPrinter());
+				((PDOM) CCoreInternals.getPDOMManager().getPDOM(referenced)).accept(new PDOMPrettyPrinter());
 			}
 		
 			return referenced;

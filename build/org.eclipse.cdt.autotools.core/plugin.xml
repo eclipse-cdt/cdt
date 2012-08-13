@@ -562,7 +562,7 @@
        <errorparser
              class="org.eclipse.cdt.internal.autotools.core.ErrorParser"
              id="org.eclipse.cdt.autotools.core.ErrorParser"
-             name="Autoconf Error Parser">
+             name="%AutoconfErrorParser.name">
        </errorparser>
     </extension>
 </plugin>

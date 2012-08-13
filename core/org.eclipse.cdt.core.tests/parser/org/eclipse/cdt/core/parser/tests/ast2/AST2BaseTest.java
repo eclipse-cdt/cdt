@@ -140,12 +140,6 @@ public class AST2BaseTest extends BaseTestCase {
     	return parse(code, lang, useGNUExtensions, true);
     }
 
-    /**
-     * @param string
-     * @param c
-     * @return
-     * @throws ParserException
-     */
     protected IASTTranslationUnit parse(String code, ParserLanguage lang, boolean useGNUExtensions,
     		boolean expectNoProblems) throws ParserException {
     	return parse(code, lang, useGNUExtensions, expectNoProblems, false);
@@ -220,9 +214,6 @@ public class AST2BaseTest extends BaseTestCase {
 		return scanner;
 	}
 
-    /**
-     * @param string
-     */
     protected void validateSimplePostfixInitializerExpressionC(String code) throws ParserException {
         ICASTTypeIdInitializerExpression e = (ICASTTypeIdInitializerExpression) getExpressionFromStatementInCode(code, ParserLanguage.C);
         assertNotNull(e);
@@ -230,10 +221,6 @@ public class AST2BaseTest extends BaseTestCase {
         assertNotNull(e.getInitializer());
     }
 
-    /**
-     * @param string
-     * @throws ParserException
-     */
     protected void validateSimpleUnaryTypeIdExpression(String code, int op) throws ParserException {
         IASTCastExpression e = (IASTCastExpression) getExpressionFromStatementInCode(code, ParserLanguage.C);
         assertNotNull(e);
@@ -243,11 +230,6 @@ public class AST2BaseTest extends BaseTestCase {
         assertEquals(x.getName().toString(), "x"); //$NON-NLS-1$
     }
 
-    /**
-     * @param code
-     * @param op
-     * @throws ParserException
-     */
     protected void validateSimpleTypeIdExpressionC(String code, int op) throws ParserException {
         IASTTypeIdExpression e = (IASTTypeIdExpression) getExpressionFromStatementInCode(code, ParserLanguage.C);
         assertNotNull(e);
@@ -255,11 +237,6 @@ public class AST2BaseTest extends BaseTestCase {
         assertNotNull(e.getTypeId());
     }
 
-    /**
-     * @param string
-     * @param op_prefixIncr
-     * @throws ParserException
-     */
     protected void validateSimpleUnaryExpressionC(String code, int operator) throws ParserException {
         IASTUnaryExpression e = (IASTUnaryExpression) getExpressionFromStatementInCode(code, ParserLanguage.C);
         assertNotNull(e);
@@ -268,10 +245,6 @@ public class AST2BaseTest extends BaseTestCase {
         assertEquals(x.getName().toString(), "x"); //$NON-NLS-1$
     }
 
-    /**
-     * @param code 
-     * @throws ParserException
-     */
     protected void validateConditionalExpressionC(String code) throws ParserException {
         IASTConditionalExpression e = (IASTConditionalExpression) getExpressionFromStatementInCode(code, ParserLanguage.C);
         assertNotNull(e);
@@ -283,10 +256,6 @@ public class AST2BaseTest extends BaseTestCase {
         assertEquals(x.getName().toString(), x2.getName().toString());
     }
 
-    /**
-     * @param operand
-     * @throws ParserException
-     */
     protected void validateSimpleBinaryExpressionC(String code, int operand) throws ParserException {
         IASTBinaryExpression e = (IASTBinaryExpression) getExpressionFromStatementInCode(code, ParserLanguage.C); 
         assertNotNull(e);
@@ -343,7 +312,7 @@ public class AST2BaseTest extends BaseTestCase {
     protected void assertInstances(CNameCollector collector, IBinding binding, int num) throws Exception {
         int count = 0;
         
-        if (binding == null) assertTrue(false);
+        assertNotNull(binding);
         
         for (int i = 0; i < collector.size(); i++) {
             if (collector.getName(i).resolveBinding() == binding)

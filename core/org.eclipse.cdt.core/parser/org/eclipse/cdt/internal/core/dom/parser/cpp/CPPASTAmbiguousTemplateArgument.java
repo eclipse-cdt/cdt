@@ -36,7 +36,8 @@ public class CPPASTAmbiguousTemplateArgument extends ASTAmbiguousNode implements
 	private List<IASTNode> fNodes;
 
 	/**
-	 * @param nodes  nodes of type {@link IASTTypeId}, {@link IASTIdExpression} or {@link ICPPASTPackExpansionExpression}.
+	 * @param nodes  nodes of type {@link IASTTypeId}, {@link IASTIdExpression}
+	 * or {@link ICPPASTPackExpansionExpression}.
 	 */
 	public CPPASTAmbiguousTemplateArgument(IASTNode... nodes) {
 		fNodes= new ArrayList<IASTNode>(2);
@@ -92,9 +93,9 @@ public class CPPASTAmbiguousTemplateArgument extends ASTAmbiguousNode implements
 		int arrayIndex = 0;
 		for (IASTNode node : fNodes) {
 			if (node != null) {
-				copyNodes[arrayIndex] = node.copy(style);
+				copyNodes[arrayIndex]= node.copy(style);
 			} else {
-				copyNodes[arrayIndex]=null;
+				copyNodes[arrayIndex]= null;
 			}
 			arrayIndex++;
 		}

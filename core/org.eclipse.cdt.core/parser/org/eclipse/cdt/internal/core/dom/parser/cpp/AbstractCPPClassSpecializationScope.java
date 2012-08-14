@@ -6,10 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
- *    Bryan Wilkinson (QNX)
- *    Andrew Ferguson (Symbian)
+ *     IBM - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *     Bryan Wilkinson (QNX)
+ *     Andrew Ferguson (Symbian)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -91,7 +91,8 @@ public class AbstractCPPClassSpecializationScope implements ICPPClassSpecializat
     	return CPPSemantics.resolveAmbiguities(name, specs);
 	}
 
-	@Deprecated	@Override
+	@Deprecated
+	@Override
 	final public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup,
 			IIndexFileSet fileSet) {
 		return getBindings(new ScopeLookupData(name, resolve, prefixLookup));

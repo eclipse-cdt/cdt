@@ -15,10 +15,7 @@ package org.eclipse.cdt.core.dom.ast;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTTypeId extends IASTNode {
-	/**
-	 * Constant.
-	 */
-	public static final IASTTypeId[] EMPTY_TYPEID_ARRAY = new IASTTypeId[0];
+	public static final IASTTypeId[] EMPTY_TYPEID_ARRAY = {};
 
 	/**
 	 * <code>DECL_SPECIFIER</code> represents the relationship between an <code>IASTTypeId</code>
@@ -35,7 +32,7 @@ public interface IASTTypeId extends IASTNode {
 			"IASTTypeId.ABSTRACT_DECLARATOR - IASTDeclarator for IASTTypeId"); //$NON-NLS-1$
 
 	/**
-	 * Get the decl specifier.
+	 * Returns the decl specifier.
 	 * @return <code>IASTDeclSpecifier</code>
 	 */
 	public IASTDeclSpecifier getDeclSpecifier();
@@ -54,7 +51,7 @@ public interface IASTTypeId extends IASTNode {
 	public IASTDeclarator getAbstractDeclarator();
 
 	/**
-	 * Set the abstract declarator.
+	 * Sets the abstract declarator.
 	 * @param abstractDeclarator <code>IASTDeclarator</code>
 	 */
 	public void setAbstractDeclarator(IASTDeclarator abstractDeclarator);

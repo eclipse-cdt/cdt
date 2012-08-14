@@ -66,7 +66,7 @@ import org.osgi.framework.Bundle;
  */
 public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 	private static final boolean DEBUG= false;
-	private static final int INDEXER_TIMEOUT_SEC = 1200;
+	private static final int INDEXER_TIMEOUT_SEC = 300;
 	protected ITestStrategy strategy;
 
 	public void setStrategy(ITestStrategy strategy) {

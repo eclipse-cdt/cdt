@@ -24,7 +24,6 @@ public interface ICPPMethodSpecialization extends ICPPSpecialization, ICPPMethod
 	/**
 	 * Similar to {@link ICPPFunction#getExceptionSpecification()} but a accepts a starting point
 	 * for template instantiation.
-	 * @since 5.5
 	 */
 	IType[] getExceptionSpecification(IASTNode point);
 }

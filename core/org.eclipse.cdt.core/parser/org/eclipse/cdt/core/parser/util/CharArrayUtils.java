@@ -343,7 +343,7 @@ public class CharArrayUtils {
 
     /**
      * Converts a {@link StringBuilder} to a character array.
-     * @since 5.5
+     * @noreference This method is not intended to be referenced by clients.
      */
 	public static char[] extractChars(StringBuilder buf) {
 		final int len = buf.length();

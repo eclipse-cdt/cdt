@@ -130,19 +130,19 @@ public interface IASTTypeIdExpression extends IASTExpression {
 			
 	/**
 	 * Built-in type trait of g++. 
-	 * @since 5.5
+	 * Experimental API. May change without notice.
 	 */
 	public static final int op_is_literal_type= 19;
 			
 	/**
 	 * Built-in type trait of g++. 
-	 * @since 5.5
+	 * Experimental API. May change without notice.
 	 */
 	public static final int op_is_standard_layout= 20;
 			
 	/**
 	 * Built-in type trait of g++. 
-	 * @since 5.5
+	 * Experimental API. May change without notice.
 	 */
 	public static final int op_is_trivial= 21;
 			

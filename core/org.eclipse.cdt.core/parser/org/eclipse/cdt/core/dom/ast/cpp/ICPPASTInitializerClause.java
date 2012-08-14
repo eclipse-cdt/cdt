@@ -17,7 +17,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
  * C++ specific initializer clause.
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
- * @since 5.5
  */
 public interface ICPPASTInitializerClause extends IASTInitializerClause {
 	/**

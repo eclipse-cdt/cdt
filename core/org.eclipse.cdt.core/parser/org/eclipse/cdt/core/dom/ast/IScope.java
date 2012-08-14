@@ -100,7 +100,7 @@ public interface IScope {
 
 	
 	/**
-	 * @since 5.5
+	 * @noinstantiate This class is not intended to be instantiated by clients.
 	 * @noextend This class is not intended to be subclassed by clients.
 	 */
 	public static class ScopeLookupData {
@@ -185,7 +185,7 @@ public interface IScope {
 	 * have not yet been resolved.
 	 * 
 	 * @return : the bindings in this scope that match the name or prefix, or null
-	 * @since 5.5
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public IBinding[] getBindings(ScopeLookupData lookup);
 }

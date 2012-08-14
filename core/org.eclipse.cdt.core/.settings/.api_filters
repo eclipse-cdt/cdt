@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.cdt.core" version="2">
+    <resource path="META-INF/MANIFEST.MF">
+        <filter id="924844039">
+            <message_arguments>
+                <message_argument value="5.4.1"/>
+                <message_argument value="5.4.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="parser/org/eclipse/cdt/core/dom/ast/IASTTypeIdExpression.java" type="org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression">
+        <filter id="1209008130">
+            <message_arguments>
+                <message_argument value="op_is_literal_type"/>
+            </message_arguments>
+        </filter>
+        <filter id="1211105284">
+            <message_arguments>
+                <message_argument value="op_is_literal_type"/>
+            </message_arguments>
+        </filter>
+        <filter id="1211105284">
+            <message_arguments>
+                <message_argument value="op_is_standard_layout"/>
+            </message_arguments>
+        </filter>
+        <filter id="1211105284">
+            <message_arguments>
+                <message_argument value="op_is_trivial"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="parser/org/eclipse/cdt/core/dom/ast/IScope.java" type="org.eclipse.cdt.core.dom.ast.IScope$ScopeLookupData">
+        <filter id="1211105284">
+            <message_arguments>
+                <message_argument value="ScopeLookupData"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="parser/org/eclipse/cdt/core/dom/ast/cpp/ICPPASTExpression.java" type="org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression">
+        <filter id="1108344834">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression"/>
+            </message_arguments>
+        </filter>
+        <filter id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="parser/org/eclipse/cdt/core/dom/ast/cpp/ICPPASTInitializerClause.java" type="org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause">
+        <filter id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="parser/org/eclipse/cdt/core/dom/ast/cpp/ICPPMethodSpecialization.java" type="org.eclipse.cdt.core.dom.ast.cpp.ICPPMethodSpecialization">
+        <filter id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.core.dom.ast.cpp.ICPPMethodSpecialization"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="parser/org/eclipse/cdt/core/parser/GCCKeywords.java" type="org.eclipse.cdt.core.parser.GCCKeywords">
+        <filter id="1143996420">
+            <message_arguments>
+                <message_argument value="cp__is_literal_type"/>
+            </message_arguments>
+        </filter>
+        <filter id="1143996420">
+            <message_arguments>
+                <message_argument value="cp__is_standard_layout"/>
+            </message_arguments>
+        </filter>
+        <filter id="1143996420">
+            <message_arguments>
+                <message_argument value="cp__is_trivial"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="parser/org/eclipse/cdt/core/parser/IGCCToken.java" type="org.eclipse.cdt.core.parser.IGCCToken">
+        <filter id="1211105284">
+            <message_arguments>
+                <message_argument value="tTT_is_literal_type"/>
+            </message_arguments>
+        </filter>
+        <filter id="1211105284">
+            <message_arguments>
+                <message_argument value="tTT_is_standard_layout"/>
+            </message_arguments>
+        </filter>
+        <filter id="1211105284">
+            <message_arguments>
+                <message_argument value="tTT_is_trivial"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

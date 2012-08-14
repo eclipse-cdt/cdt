@@ -15,7 +15,6 @@ import org.eclipse.cdt.core.dom.ast.IType;
 
 /**
  * Specialization of a method.
- * @since 5.5
  * 
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
@@ -24,7 +23,6 @@ public interface ICPPMethodSpecialization extends ICPPSpecialization, ICPPMethod
 	/**
 	 * Similar to {@link ICPPFunction#getExceptionSpecification()} but a accepts a starting point
 	 * for template instantiation.
-	 * @since 5.5
 	 */
 	IType[] getExceptionSpecification(IASTNode point);
 }

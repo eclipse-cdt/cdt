@@ -217,13 +217,11 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  123.0 - Combined file size and encoding hash code.
 	 *  124.0 - GCC attributes and NO_RETURN flag for functions.
 	 *  #125.0# - Indexes for unresolved includes and files indexed with I/O errors. <<CDT 8.1>>
-	 *  
-	 *  CDT 8.2 development
-	 *  130.0 - Dependent expressions, bug 299911
+	 *  126.0 - Dependent expressions, bug 299911.
 	 */
-	private static final int MIN_SUPPORTED_VERSION= version(130, 0);
-	private static final int MAX_SUPPORTED_VERSION= version(130, Short.MAX_VALUE);
-	private static final int DEFAULT_VERSION = version(130, 0);
+	private static final int MIN_SUPPORTED_VERSION= version(126, 0);
+	private static final int MAX_SUPPORTED_VERSION= version(126, Short.MAX_VALUE);
+	private static final int DEFAULT_VERSION = version(126, 0);
 
 	private static int version(int major, int minor) {
 		return (major << 16) + minor;

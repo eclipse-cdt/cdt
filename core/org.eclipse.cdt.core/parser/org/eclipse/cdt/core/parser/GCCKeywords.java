@@ -68,7 +68,7 @@ public class GCCKeywords {
 		cp__is_union= 					"__is_union".toCharArray();
 
 	/**
-	 * @since 5.5
+	 * Experimental API. May change without notice.
 	 */
 	public static final char[] 
 		cp__is_literal_type= 			"__is_literal_type".toCharArray(),

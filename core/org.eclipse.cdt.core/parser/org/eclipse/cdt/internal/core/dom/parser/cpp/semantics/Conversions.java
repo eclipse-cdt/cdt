@@ -30,9 +30,7 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 import java.util.Collections;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
-import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
@@ -60,7 +58,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ArithmeticConversion;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
-import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
@@ -838,14 +835,10 @@ public class Conversions {
 		if (srcQTarget.isConst() && !srcQTarget.isVolatile()) {
 			srcTarget= srcQTarget.getType();
 			if (srcTarget instanceof CPPBasicType) {
-				IASTExpression val = ((CPPBasicType) srcTarget).getCreatedFromExpression();
-				if (val instanceof IASTLiteralExpression) {
-					IASTLiteralExpression lit= (IASTLiteralExpression) val;
-					if (lit.getKind() == IASTLiteralExpression.lk_string_literal) {
-						source= new CPPPointerType(srcTarget, false, false, false);
-						CVQualifier cvqTarget = getCVQualifier(targetPtrTgt).add(CVQualifier.CONST);
-						cost.setQualificationAdjustment(cvqTarget.partialComparison(CVQualifier.NONE) << 3);
-					}
+				if (((CPPBasicType) srcTarget).isFromStringLiteral()) {
+					source= new CPPPointerType(srcTarget, false, false, false);
+					CVQualifier cvqTarget = getCVQualifier(targetPtrTgt).add(CVQualifier.CONST);
+					cost.setQualificationAdjustment(cvqTarget.partialComparison(CVQualifier.NONE) << 3);
 				}
 			}
 		}
@@ -1134,12 +1127,9 @@ public class Conversions {
 			if (basicType.getKind() == Kind.eNullPtr)
 				return true;
 			
-			IASTExpression exp = basicType.getCreatedFromExpression();
-			if (exp != null) {
-				Long val= Value.create(exp, Value.MAX_RECURSION_DEPTH).numericalValue();
-				if (val != null && val == 0) {
-					return true;
-				}
+			Long val = basicType.getAssociatedNumericalValue();
+			if (val != null && val == 0) {
+				return true;
 			}
 		}
 		return false;

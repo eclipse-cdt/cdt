@@ -25,6 +25,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.core.runtime.CoreException;
 
@@ -44,6 +45,14 @@ public class EvalFixed extends CPPEvaluation {
 	private boolean fCheckedIsValueDependent;
 
 	public EvalFixed(IType type, ValueCategory cat, IValue value) {
+		if (type instanceof CPPBasicType) {
+			Long num = value.numericalValue();
+			if (num != null) {
+				CPPBasicType t = (CPPBasicType) type.clone();
+				t.setAssociatedNumericalValue(num);
+				type = t;
+			}
+		}
 		fType= type;
 		fValueCategory= cat;
 		fValue= value;

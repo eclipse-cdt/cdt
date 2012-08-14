@@ -18,7 +18,6 @@ import java.util.List;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
-import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
@@ -1378,11 +1377,11 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//	}
 	public void testClassInstanceWithNonTypeArgument_207871() throws Exception {
 		ICPPTemplateInstance c256 = getBindingFromASTName("C<256>", 6, ICPPTemplateInstance.class, ICPPClassType.class);
-		ObjectMap args= c256.getArgumentMap();
-		assertEquals(1, args.size());
-		assertInstance(args.keyAt(0), ICPPTemplateNonTypeParameter.class);
-		ICPPBasicType bt= assertInstance(args.getAt(0), ICPPBasicType.class);
-		IASTExpression val= bt.getValue();
+		ICPPTemplateParameterMap paramMap = c256.getTemplateParameterMap();
+		assertEquals(1, paramMap.getAllParameterPositions().length);
+		ICPPTemplateArgument arg = paramMap.getArgument(0);
+		assertEquals(Long.valueOf(256), arg.getNonTypeValue().numericalValue());
+		assertInstance(arg.getTypeOfNonTypeValue(), ICPPBasicType.class);
 	
 		ICPPFunction foo = getBindingFromASTName("foo(t)", 3, ICPPFunction.class);
 		ICPPFunction bar = getBindingFromASTName("bar(t)", 3, ICPPFunction.class);
@@ -2000,7 +1999,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//	};
 	//
 	//	typedef A<C> type;
-	public void _testSFINAE_a() throws Exception {
+	public void testSFINAE_a() throws Exception {
 		checkBindings();
 	}
 

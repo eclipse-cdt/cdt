@@ -2021,8 +2021,8 @@ public class CPPTemplates {
 		// specializations, then the use of the class template is ambiguous and the program is
 		// ill-formed.
 		if (!bestMatchIsBest) {
-			return new CPPTemplateDefinition.CPPTemplateProblem(null, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP,
-					template.getNameCharArray());
+			return new CPPTemplateDefinition.CPPTemplateProblem(point,
+					IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, template.getNameCharArray());
 		}
 
 		if (bestMatch == null)

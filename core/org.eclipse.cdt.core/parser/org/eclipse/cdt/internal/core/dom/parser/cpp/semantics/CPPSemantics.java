@@ -258,7 +258,7 @@ public class CPPSemantics {
 			((CPPASTNameBase) name).incResolutionDepth();
 		}
 
-		// 1: Get some context info off of the name to figure out what kind of lookup we want
+		// 1: Get some context info off of the name to figure out what kind of lookup we want.
 		LookupData data = createLookupData(name);
 
 		try {
@@ -375,13 +375,13 @@ public class CPPSemantics {
 						node= node.getParent();
 					}
 					if (!ok) {
-						binding = new ProblemBinding(lookupName, IProblemBinding.SEMANTIC_INVALID_TYPE,
-								data.getFoundBindings());
+						binding = new ProblemBinding(lookupName, lookupPoint,
+								IProblemBinding.SEMANTIC_INVALID_TYPE, data.getFoundBindings());
 					}
 				}
 			}
 		} else if (binding instanceof ICPPDeferredClassInstance) {
-			// try to replace binding by the one pointing to the enclosing template declaration.
+			// Try to replace binding by the one pointing to the enclosing template declaration.
 			ICPPDeferredClassInstance dcl= (ICPPDeferredClassInstance) binding;
 			IBinding usedHere= CPPTemplates.isUsedInClassTemplateScope(dcl.getClassTemplate(), lookupName);
 			if (usedHere instanceof ICPPClassTemplatePartialSpecialization) {
@@ -463,13 +463,13 @@ public class CPPSemantics {
 	        		if (parent instanceof IASTTypeId && parent.getPropertyInParent() == ICPPASTTemplateId.TEMPLATE_ID_ARGUMENT) {
 	        			if (!(binding instanceof IType)) {
 	        				// a type id needs to hold a type
-	        				binding = new ProblemBinding(lookupName, IProblemBinding.SEMANTIC_INVALID_TYPE,
-	        						data.getFoundBindings());
+	        				binding = new ProblemBinding(lookupName, lookupPoint,
+	        						IProblemBinding.SEMANTIC_INVALID_TYPE, data.getFoundBindings());
 	        			}
 	        			// don't create a problem here
 	        		} else {
-	        			binding = new ProblemBinding(lookupName, IProblemBinding.SEMANTIC_INVALID_TYPE,
-	        					data.getFoundBindings());
+	        			binding = new ProblemBinding(lookupName, lookupPoint,
+	        					IProblemBinding.SEMANTIC_INVALID_TYPE, data.getFoundBindings());
 	        		}
 	        	}
 	        } else if (namePropertyInParent == IASTIdExpression.ID_NAME) {
@@ -484,8 +484,8 @@ public class CPPSemantics {
 							&& ((ICPPASTUnaryExpression) idExpr.getParent()).getOperator() == IASTUnaryExpression.op_sizeofParameterPack) {
 						// Argument of sizeof... can be a type
 					} else {
-		        		binding= new ProblemBinding(lookupName, IProblemBinding.SEMANTIC_INVALID_TYPE,
-		        				data.getFoundBindings());
+		        		binding= new ProblemBinding(lookupName, lookupPoint,
+		        				IProblemBinding.SEMANTIC_INVALID_TYPE, data.getFoundBindings());
 		        	}
 	        	}
 	        }
@@ -515,11 +515,11 @@ public class CPPSemantics {
 		// If we're still null...
 		if (binding == null) {
 			if (name instanceof ICPPASTQualifiedName && declaration != null) {
-				binding = new ProblemBinding(lookupName, IProblemBinding.SEMANTIC_MEMBER_DECLARATION_NOT_FOUND,
-						data.getFoundBindings());
+				binding = new ProblemBinding(lookupName, lookupPoint,
+						IProblemBinding.SEMANTIC_MEMBER_DECLARATION_NOT_FOUND, data.getFoundBindings());
 			} else {
-				binding = new ProblemBinding(lookupName, IProblemBinding.SEMANTIC_NAME_NOT_FOUND,
-						data.getFoundBindings());
+				binding = new ProblemBinding(lookupName, lookupPoint,
+						IProblemBinding.SEMANTIC_NAME_NOT_FOUND, data.getFoundBindings());
 			}
 		}
         return binding;
@@ -1894,8 +1894,9 @@ public class CPPSemantics {
 	private static IBinding resolveAmbiguities(LookupData data) throws DOMException {
 	    if (!data.hasResults() || data.contentAssist)
 	        return null;
-	
+
 	    final IASTName lookupName = data.getLookupName();
+        IASTNode lookupPoint = data.getLookupPoint();
 	    final boolean indexBased= data.getIndex() != null;
 	    final boolean checkWholeClass= lookupName == null || LookupData.checkWholeClassScope(lookupName); 
 	    @SuppressWarnings("unchecked")
@@ -1908,7 +1909,7 @@ public class CPPSemantics {
 	    Object[] items = (Object[]) data.foundItems;
 		for (int i = 0; i < items.length && items[i] != null; i++) {
 	        Object o = items[i];
-	        boolean declaredBefore = data.isIgnorePointOfDeclaration() || declaredBefore(o, data.getLookupPoint(), indexBased);
+			boolean declaredBefore = data.isIgnorePointOfDeclaration() || declaredBefore(o, lookupPoint, indexBased);
 	        boolean checkResolvedNamesOnly= false;
 	        if (!checkWholeClass && !declaredBefore) {
 	        	if (lookupName != null && lookupName.getRoleOfName(false) != IASTNameOwner.r_reference) {
@@ -1983,8 +1984,8 @@ public class CPPSemantics {
         						type= temp;
         					}
         				} else {
-        					return new ProblemBinding(lookupName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP,
-        							data.getFoundBindings());
+        					return new ProblemBinding(lookupName, lookupPoint,
+        							IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.getFoundBindings());
         				}
         			}
 	            }
@@ -1998,8 +1999,8 @@ public class CPPSemantics {
 	        		if (c < 0) {
 	        			obj= temp;
 	        		} else if (c == 0) {
-	        			return new ProblemBinding(lookupName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP,
-	        					data.getFoundBindings());
+	        			return new ProblemBinding(lookupName, lookupPoint,
+	        					IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.getFoundBindings());
 	        		}
 	        	}
 	        }
@@ -2012,8 +2013,8 @@ public class CPPSemantics {
 		    		IFunction[] fnArray= fns.keyArray(IFunction.class);
 					cmp= compareByRelevance(data, obj, fnArray);
 					if (cmp == 0) {
-						return new ProblemBinding(lookupName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP,
-								data.getFoundBindings());
+						return new ProblemBinding(lookupName, lookupPoint,
+								IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.getFoundBindings());
 					}
 	            }
 	        }
@@ -2057,8 +2058,8 @@ public class CPPSemantics {
 	    	if (obj != null) {
 	    		int cmp= compareByRelevance(data, obj, fnArray);
 	    		if (cmp == 0) {
-	    			return new ProblemBinding(lookupName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP,
-	    					data.getFoundBindings());
+	    			return new ProblemBinding(lookupName, lookupPoint,
+	    					IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.getFoundBindings());
 	    		}
 	    		if (cmp > 0) {
 	    			return obj;
@@ -2363,8 +2364,9 @@ public class CPPSemantics {
 	    		Arrays.asList(argTypes),
 	    		Arrays.asList(data.getFunctionArgumentValueCategories()), 
 	    		data.argsContainImpliedObject, lookupPoint);
-	    if (tmp.length == 0 || tmp[0] == null)
-			return new ProblemBinding(lookupName, IProblemBinding.SEMANTIC_NAME_NOT_FOUND, fns);
+	    if (tmp.length == 0 || tmp[0] == null) {
+			return new ProblemBinding(lookupName, lookupPoint, IProblemBinding.SEMANTIC_NAME_NOT_FOUND, fns);
+	    }
 
 		int viableCount= 0;
 		for (IFunction f : tmp) {
@@ -2377,7 +2379,7 @@ public class CPPSemantics {
 			++viableCount;
 		}
 		if (viableCount == 0)
-			return new ProblemBinding(lookupName, IProblemBinding.SEMANTIC_NAME_NOT_FOUND, fns);
+			return new ProblemBinding(lookupName, lookupPoint, IProblemBinding.SEMANTIC_NAME_NOT_FOUND, fns);
 
 		// Check for dependent arguments
 		fns= tmp;
@@ -2450,12 +2452,12 @@ public class CPPSemantics {
 
 		if (ambiguousFunctions != null) {
 			ambiguousFunctions= ArrayUtil.append(IFunction.class, ambiguousFunctions, bestFnCost.getFunction());
-			return new ProblemBinding(lookupName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP,
-					ambiguousFunctions);
+			return new ProblemBinding(lookupName, lookupPoint,
+					IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, ambiguousFunctions);
 		}
 		if (bestFnCost.hasAmbiguousUserDefinedConversion()) {
-			return new ProblemBinding(lookupName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP,
-					data.getFoundBindings());
+			return new ProblemBinding(lookupName, lookupPoint,
+					IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.getFoundBindings());
 		}
 
 		for (int i = 0; i < argTypes.length; i++) {
@@ -2590,7 +2592,8 @@ public class CPPSemantics {
 			}
 		}
 		if (isAmbiguous)
-			return new ProblemBinding(data.getLookupName(), IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, fns);
+			return new ProblemBinding(data.getLookupName(), data.getLookupPoint(),
+					IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, fns);
 
 		return bestInst;
 	}
@@ -2738,7 +2741,8 @@ public class CPPSemantics {
 		ICPPASTConversionName astName= (ICPPASTConversionName) data.getLookupName();
 		IType t= CPPVisitor.createType(astName.getTypeId());
 		if (t instanceof ISemanticProblem) {
-			return new ProblemBinding(astName, IProblemBinding.SEMANTIC_INVALID_TYPE, data.getFoundBindings());
+			return new ProblemBinding(astName, data.getLookupPoint(),
+					IProblemBinding.SEMANTIC_INVALID_TYPE, data.getFoundBindings());
 		}
 		if (data.forDeclaration() == null ||
 				data.forExplicitFunctionSpecialization() || data.forExplicitFunctionInstantiation()) {
@@ -2758,7 +2762,8 @@ public class CPPSemantics {
 		}
 		if (unknown != null)
 			return unknown;
-		return new ProblemBinding(astName, IProblemBinding.SEMANTIC_NAME_NOT_FOUND, data.getFoundBindings());
+		return new ProblemBinding(astName, data.getLookupPoint(),
+				IProblemBinding.SEMANTIC_NAME_NOT_FOUND, data.getFoundBindings());
 	}
 
 	/**
@@ -3670,7 +3675,7 @@ public class CPPSemantics {
 		data.typesOnly= unknown instanceof IType;
 
 		try {
-            // 2: lookup
+            // 2: Lookup
             lookup(data, scope);
         } catch (DOMException e) {
             data.problem = (ProblemBinding) e.getProblem();
@@ -3679,7 +3684,7 @@ public class CPPSemantics {
 		if (data.problem != null)
 		    return data.problem;
 
-		// 3: resolve ambiguities
+		// 3: Resolve ambiguities
 		IBinding binding;
         try {
             binding = resolveAmbiguities(data);
@@ -3688,7 +3693,7 @@ public class CPPSemantics {
         }
         // 4: Normal post processing is not possible, because the name is not rooted in AST
         if (binding == null)
-			binding = new ProblemBinding(unknownName, IProblemBinding.SEMANTIC_NAME_NOT_FOUND);
+			binding = new ProblemBinding(unknownName, point, IProblemBinding.SEMANTIC_NAME_NOT_FOUND);
 
 		return binding;
 	}

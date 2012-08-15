@@ -42,18 +42,49 @@ import com.ibm.icu.text.MessageFormat;
  */
 public class ProblemBinding extends PlatformObject implements IProblemBinding, IASTInternalScope {
 	public static ProblemBinding NOT_INITIALIZED= new ProblemBinding(null, 0);
-	
+
     protected final int id;
     protected char[] arg;
     protected IASTNode node;
 	private IBinding[] candidateBindings;
-    
+
     public ProblemBinding(IASTName name, int id) {
     	this(name, id, null, null);
     }
 
     public ProblemBinding(IASTName name, int id, IBinding[] candidateBindings) {
     	this(name, id, null, candidateBindings);
+    }
+
+    /**
+     * @param name the name that could not be resolved, may be {@code null}
+     * @param point the point in code where the problem was encountered
+     * @param id the ID of the problem, see {@link IProblemBinding}
+     */
+    public ProblemBinding(IASTName name, IASTNode point, int id) {
+    	this(name, point, id, null);
+    }
+
+    /**
+     * @param name the name that could not be resolved, may be {@code null}
+     * @param point the point in code where the problem was encountered
+     * @param id the ID of the problem, see {@link IProblemBinding}
+     * @param candidateBindings candidate bindings that were rejected due to ambiguity or for other
+     *     reasons, may be {@code null}
+     */
+    public ProblemBinding(IASTName name, IASTNode point, int id, IBinding[] candidateBindings) {
+        this.id = id;
+        if (name != null && name.getTranslationUnit() != null) {
+        	this.node = name;
+        } else {
+        	this.node = point;
+        	if (name != null) {
+        		this.arg = name.getSimpleID();
+        	} else if (candidateBindings != null && candidateBindings.length != 0) {
+        		this.arg = candidateBindings[0].getNameCharArray();
+        	}
+        }
+		this.candidateBindings = candidateBindings;
     }
 
     public ProblemBinding(IASTNode node, int id, char[] arg) {
@@ -66,8 +97,8 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
         this.node = node;
 		this.candidateBindings = candidateBindings;
     }
-    
-	@Override
+
+    @Override
 	public EScopeKind getKind() {
 		return EScopeKind.eLocal;
 	}
@@ -81,28 +112,22 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
 	public IBinding[] getCandidateBindings() {
 		return candidateBindings != null ? candidateBindings : IBinding.EMPTY_BINDING_ARRAY;
 	}
-	
+
 	public void setCandidateBindings(IBinding[] foundBindings) {
 		candidateBindings= foundBindings;
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IProblemBinding#getID()
-     */
     @Override
 	public int getID() {
         return id;
     }
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IProblemBinding#getMessage()
-     */
+
     @Override
 	public String getMessage() {
         String msg = ParserMessages.getProblemPattern(this);
         if (msg == null)
         	return ""; //$NON-NLS-1$
-        
+
         if (arg == null) {
         	if (node instanceof IASTName) {
             	arg= ((IASTName) node).toCharArray();
@@ -110,7 +135,7 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
         		arg = candidateBindings[0].getNameCharArray();
         	}
         }
-        
+
         if (arg != null) {
             msg = MessageFormat.format(msg, new Object[] { new String(arg) });
         }
@@ -150,7 +175,7 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
         return getASTNode();
     }
 
-    
+
     @Override
 	public Object clone() {
     	// Don't clone problems
@@ -263,7 +288,7 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
 	public ILinkage getLinkage() {
 		return Linkage.NO_LINKAGE;
 	}
-	
+
 	@Override
 	public String toString() {
 		return getMessage();
@@ -292,7 +317,8 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
 	}
 
 	@Override
-	public void removeNestedFromCache(IASTNode container) {}
+	public void removeNestedFromCache(IASTNode container) {
+	}
 
 	// Dummy methods for derived classes
     public IType getType() {

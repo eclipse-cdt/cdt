@@ -989,7 +989,8 @@ public class CPPTemplates {
 				origType= ((ICPPParameterPackType) origType).getType();
 				int packSize= determinePackSize(origType, tpMap);
 				if (packSize == PACK_SIZE_FAIL || packSize == PACK_SIZE_NOT_FOUND) {
-					newType= new ProblemBinding(null, IProblemBinding.SEMANTIC_INVALID_TYPE);
+					newType= new ProblemBinding(point, IProblemBinding.SEMANTIC_INVALID_TYPE,
+							types[i] instanceof IBinding ? ((IBinding) types[i]).getNameCharArray() : null);
 				} else if (packSize == PACK_SIZE_DEFER) {
 					newType= origType;
 				} else {
@@ -1034,7 +1035,7 @@ public class CPPTemplates {
 				origArg= origArg.getExpansionPattern();
 				int packSize= determinePackSize(origArg, tpMap);
 				if (packSize == PACK_SIZE_FAIL || packSize == PACK_SIZE_NOT_FOUND) {
-					throw new DOMException(new ProblemBinding(null, IProblemBinding.SEMANTIC_INVALID_TEMPLATE_ARGUMENTS));
+					throw new DOMException(new ProblemBinding(point, IProblemBinding.SEMANTIC_INVALID_TEMPLATE_ARGUMENTS, null));
 				} else if (packSize == PACK_SIZE_DEFER) {
 					newArg= origArg;
 				} else {
@@ -1150,7 +1151,8 @@ public class CPPTemplates {
 						ICPPTemplateArgument[] args = tpMap.getPackExpansion(tpar);
 						if (args != null) {
 							if (packOffset >= args.length) {
-								return new ProblemBinding(null, IProblemBinding.SEMANTIC_INVALID_TYPE);
+								return new ProblemBinding(point, IProblemBinding.SEMANTIC_INVALID_TYPE,
+										tpar.getNameCharArray());
 							}
 							arg= args[packOffset];
 						}
@@ -2430,7 +2432,7 @@ public class CPPTemplates {
 	            	}
 	            }
             } else if (t != owner) {
-            	return new ProblemBinding(unknown.getUnknownName(), IProblemBinding.SEMANTIC_BAD_SCOPE);
+            	return new ProblemBinding(unknown.getUnknownName(), point, IProblemBinding.SEMANTIC_BAD_SCOPE);
             }
         }
 

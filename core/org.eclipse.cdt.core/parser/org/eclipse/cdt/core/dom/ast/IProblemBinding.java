@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Andrew Niefer (IBM Corporation) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
@@ -13,7 +13,7 @@ package org.eclipse.cdt.core.dom.ast;
 
 /**
  * Interface for problem bindings.
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  */
@@ -22,12 +22,12 @@ public interface IProblemBinding extends IBinding, IScope, IType, ISemanticProbl
      * Returns the AST node that this problem was created for
      */
     public IASTNode getASTNode();
-	
+
 	/**
-	 * Returns the file name this problem occurred in, or <code>null</code> if it is unknown.
+	 * Returns the file name this problem occurred in, or {@code null} if it is unknown.
 	 */
 	public String getFileName();
-	
+
 	/**
 	 * Returns the line number for this problem, or -1 if it is unknown.
 	 */
@@ -37,10 +37,8 @@ public interface IProblemBinding extends IBinding, IScope, IType, ISemanticProbl
      * Returns bindings that were considered when resolving the node corresponding
      * to this problem binding, but rejected for some reason.
      * @return an array of candidate bindings.
-     * 
-	 * This method is experimental.  Clients calling this method should expect
-	 * possible changes.
-     * @since 5.1 experimental
+     *
+     * @since 5.1
      */
 	public IBinding[] getCandidateBindings();
 
@@ -70,6 +68,4 @@ public interface IProblemBinding extends IBinding, IScope, IType, ISemanticProbl
 	 */
 	@Deprecated
 	public static final int LAST_PROBLEM = 0x00E;
-
-
 }

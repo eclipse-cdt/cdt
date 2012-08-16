@@ -14,8 +14,6 @@ public class AllTests extends TestSuite {
 		final AllTests suite = new AllTests();
 		suite.addTest(org.eclipse.cdt.autotools.tests.AllAutotoolsTests.suite()); // Works with MinGW but not Cygwin
 		suite.addTest(org.eclipse.cdt.codan.core.test.AutomatedIntegrationSuite.suite());
-		suite.addTest(org.eclipse.cdt.codan.core.test.AutomatedIntegrationSuite.suite());
-		suite.addTest(org.eclipse.cdt.core.lrparser.tests.LRParserTestSuite.suite());
 		suite.addTest(org.eclipse.cdt.core.lrparser.tests.LRParserTestSuite.suite());
 		suite.addTest(org.eclipse.cdt.core.parser.upc.tests.UPCParserTestSuite.suite());
 		suite.addTest(org.eclipse.cdt.core.parser.xlc.tests.suite.XlcTestSuite.suite());

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2011 IBM Corporation and others.
+ * Copyright (c) 2002, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,6 +42,7 @@
  * David McKnight   (IBM)        - [313653] [dstore] Not Secured using SSL message appears twice per connect
  * David McKnight   (IBM) 		 - [284950] [dstore] Error binding socket on relaunch
  * David McKnight   (IBM) - [283613] [dstore] Create a Constants File for all System Properties we support
+ * David McKnight   (IBM)        - [384301] (DSTORE)Cached password revokes the user ID
  *******************************************************************************/
 
 package org.eclipse.rse.connectorservice.dstore;
@@ -581,7 +582,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 			}
 			else
 			{
-				errorMsg = msg.getLevelTwoText();
+				errorMsg = msg.getLevelOneText();
 			}
 			connectStatus.setMessage(errorMsg);
 		}
@@ -1248,16 +1249,13 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 
 		clientConnection.disconnect();
 		clientConnection = null;
-
+		
 		// yantzi: artemis 6.0, check for invalid login (user ID / pwd) and reprompt for signon information
 		if (msg != null &&
 				// tODO use ID or something instead of string
 				msg.getLevelOneText().startsWith(NLS.bind(ConnectorServiceResources.MSG_COMM_INVALID_LOGIN, getHostName())))
 		{
-			if (launchFailed)
-		    {
-		        clearPassword(true, true);
-		    }
+			clearPassword(true, true);
 
 			DisplaySystemMessageAction msgAction = new DisplaySystemMessageAction(msg);
 			Display.getDefault().syncExec(msgAction);

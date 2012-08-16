@@ -14,3 +14,6 @@ Require-Bundle: org.junit,
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Vendor: %Bundle-Vendor
+Export-Package: org.eclipse.cdt.testsrunner.core,
+ org.eclipse.cdt.testsrunner.test,
+ org.eclipse.cdt.testsrunner.testsrunners

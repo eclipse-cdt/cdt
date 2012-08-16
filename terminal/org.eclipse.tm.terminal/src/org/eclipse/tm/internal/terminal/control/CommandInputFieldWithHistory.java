@@ -30,6 +30,7 @@ import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
@@ -117,6 +118,7 @@ public class CommandInputFieldWithHistory implements ICommandInputField {
 	 */
 	private Text fInputField;
 	private Sash fSash;
+	private Composite fPanel;
 	public CommandInputFieldWithHistory(int maxHistorySize) {
 		fMaxSize=maxHistorySize;
 	}
@@ -233,7 +235,7 @@ public class CommandInputFieldWithHistory implements ICommandInputField {
 				Rectangle containerRect = parent.getClientArea ();
 
 				int h=fInputField.getLineHeight();
-				// make sure the input filed hight is a multiple of the line height
+				// make sure the input filed height is a multiple of the line height
 				gdata.heightHint = Math.max(((containerRect.height-e.y-sashRect.height)/h)*h,h);
 				// do not show less then one line
 				e.y=Math.min(e.y,containerRect.height-h);
@@ -243,7 +245,12 @@ public class CommandInputFieldWithHistory implements ICommandInputField {
 				parent.redraw();
 			}
 		});
-		fInputField=new Text(parent, SWT.MULTI|SWT.BORDER|SWT.WRAP|SWT.V_SCROLL);
+		fPanel = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.marginWidth = 0; layout.marginHeight = 0; layout.marginTop = 0; layout.marginBottom = 2;
+		fPanel.setLayout(layout);
+		fPanel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		fInputField=new Text(fPanel, SWT.MULTI|SWT.BORDER|SWT.WRAP|SWT.V_SCROLL);
 		GridData data=new GridData(SWT.FILL, SWT.FILL, true, false);
 		boolean installDecoration=true;
 		if(installDecoration) {
@@ -306,8 +313,9 @@ public class CommandInputFieldWithHistory implements ICommandInputField {
 	public void dispose() {
 		fSash.dispose();
 		fSash=null;
+		fPanel.dispose();
+		fPanel=null;
 		fInputField.dispose();
 		fInputField=null;
-
 	}
 }

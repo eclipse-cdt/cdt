@@ -1013,8 +1013,8 @@ public class CPPVisitor extends ASTQueries {
 			    }
 			} else if (node instanceof IASTInitializer) {
 				if (node instanceof ICPPASTConstructorChainInitializer) {
-					// The name of the member initializer is resolved in the scope of the
-					// owner of the ctor.
+					// The name of the member initializer is resolved in the scope of
+					// the owner of the ctor.
 					ICPPASTConstructorChainInitializer initializer = (ICPPASTConstructorChainInitializer) node;
 					IASTFunctionDefinition fdef= (IASTFunctionDefinition) initializer.getParent();
 					IBinding binding = fdef.getDeclarator().getName().resolveBinding();

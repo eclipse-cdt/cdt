@@ -114,8 +114,8 @@ public interface ICPPASTFunctionDeclarator extends IASTStandardFunctionDeclarato
 	public void setTrailingReturnType(IASTTypeId typeId);
 
 	/**
-	 * Get function scope this node represents. Returns <code>null</code>, if this declarator does not
-	 * declare a function-prototype or function-definition.
+	 * Get function scope this node represents. Returns <code>null</code>, if this declarator
+	 * does not declare a function-prototype or function-definition.
 	 */
 	@Override
 	public ICPPFunctionScope getFunctionScope();

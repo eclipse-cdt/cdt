@@ -106,16 +106,22 @@ public interface IASTUnaryExpression extends IASTExpression {
 	public static final int op_typeof = 14;
 
 	/**
-	 * for gnu parsers, only. <code>op_alignOf</code> is used for __alignOf( unaryExpression ) type
+	 * For gnu parsers, only. <code>op_alignOf</code> is used for __alignOf( unaryExpression ) type
 	 * expressions.
 	 */
 	public static final int op_alignOf = 15;
 
 	/**
-	 * For c++, only: 'sizeof...(parameterPack)'
+	 * For c++, only: 'sizeof... ( parameterPack )'
 	 * @since 5.2
 	 */
 	public static final int op_sizeofParameterPack = 16;
+
+	/**
+	 * For c++, only: noexcept ( expression )
+	 * @since 5.5
+	 */
+	public static final int op_noexcept = 17;
 
 	/**
 	 * <code>op_last</code> is made available for subclasses.

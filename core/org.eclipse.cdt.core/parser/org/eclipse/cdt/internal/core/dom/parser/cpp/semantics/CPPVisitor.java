@@ -1001,7 +1001,8 @@ public class CPPVisitor extends ASTQueries {
 						return result;
 
 				}
-			} else if (node instanceof IASTParameterDeclaration) {
+			} else if (node instanceof IASTParameterDeclaration ||
+					node.getPropertyInParent() == ICPPASTFunctionDeclarator.NOEXCEPT_EXPRESSION) {
 			    IASTNode parent = node.getParent();
 			    if (parent instanceof ICPPASTFunctionDeclarator) {
 					IScope result = scopeViaFunctionDtor((ICPPASTFunctionDeclarator) parent);

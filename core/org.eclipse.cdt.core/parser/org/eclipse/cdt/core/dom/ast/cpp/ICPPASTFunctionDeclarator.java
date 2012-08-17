@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2011 IBM Corporation and others.
+ *  Copyright (c) 2004, 2012 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -8,12 +8,15 @@
  *  Contributors:
  *      IBM - Initial API and implementation
  *      Markus Schorn (Wind River Systems)
+ *      Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
+import org.eclipse.cdt.core.parser.Keywords;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTLiteralExpression;
 
 /**
  * C++ adds a few things to function declarators.
@@ -28,9 +31,19 @@ public interface ICPPASTFunctionDeclarator extends IASTStandardFunctionDeclarato
 	 */
 	public static final IASTTypeId[] NO_EXCEPTION_SPECIFICATION = {};
 
+	/**
+	 * Represents a 'noexcept' specification without an expression.
+	 * @since 5.5
+	 */
+	public static final ICPPASTLiteralExpression NOEXCEPT_DEFAULT =
+			new CPPASTLiteralExpression(ICPPASTLiteralExpression.lk_true, Keywords.cTRUE);
+
 	public static final ASTNodeProperty EXCEPTION_TYPEID = new ASTNodeProperty(
 			"ICPPASTFunctionDeclarator.EXCEPTION_TYPEID [IASTTypeId]"); //$NON-NLS-1$
-	/** @since 5.2*/
+	/** @since 5.5 */
+	public static final ASTNodeProperty NOEXCEPT_EXPRESSION = new ASTNodeProperty(
+			"ICPPASTFunctionDeclarator.NOEXCEPT_EXPRESSION [ICPPASTExpression]"); //$NON-NLS-1$
+	/** @since 5.2 */
 	public static final ASTNodeProperty TRAILING_RETURN_TYPE = new ASTNodeProperty(
 			"ICPPASTFunctionDeclarator.TRAILING_RETURN_TYPE [IASTTypeId]"); //$NON-NLS-1$
 	
@@ -40,7 +53,7 @@ public interface ICPPASTFunctionDeclarator extends IASTStandardFunctionDeclarato
 	public boolean isConst();
 
 	/**
-	 * Set the method to be const or not.
+	 * Sets the method to be const or not.
 	 */
 	public void setConst(boolean value);
 
@@ -50,7 +63,7 @@ public interface ICPPASTFunctionDeclarator extends IASTStandardFunctionDeclarato
 	public boolean isVolatile();
 
 	/**
-	 * Set the method to be volatile or not.
+	 * Sets the method to be volatile or not.
 	 */
 	public void setVolatile(boolean value);
 
@@ -72,7 +85,7 @@ public interface ICPPASTFunctionDeclarator extends IASTStandardFunctionDeclarato
 	public boolean isPureVirtual();
 
 	/**
-	 * Set this method to be pure virtual.
+	 * Sets this method to be pure virtual.
 	 */
 	public void setPureVirtual(boolean isPureVirtual);
 
@@ -100,6 +113,20 @@ public interface ICPPASTFunctionDeclarator extends IASTStandardFunctionDeclarato
 	 * @since 5.1
 	 */
 	public void setEmptyExceptionSpecification();
+
+	/**
+	 * Returns the noexcept expression, {@link #NOEXCEPT_DEFAULT} if the noexcept specification
+	 * does not contain an expression, or {@code null} the noexcept specification is not present.
+	 * See C++11 5.4.1.
+	 * @since 5.5
+	 */
+	public ICPPASTExpression getNoexceptExpression();
+
+	/**
+	 * Sets the noexcept expression. 
+	 * @since 5.5
+	 */
+	public void setNoexceptExpression(ICPPASTExpression expression);
 
 	/**
 	 * Returns the trailing return type as in <code> auto f() -> int </code>, or <code>null</code>.

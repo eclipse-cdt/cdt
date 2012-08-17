@@ -16,6 +16,7 @@ import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
 import static org.eclipse.cdt.core.dom.ast.IASTUnaryExpression.op_alignOf;
 import static org.eclipse.cdt.core.dom.ast.IASTUnaryExpression.op_amper;
 import static org.eclipse.cdt.core.dom.ast.IASTUnaryExpression.op_minus;
+import static org.eclipse.cdt.core.dom.ast.IASTUnaryExpression.op_noexcept;
 import static org.eclipse.cdt.core.dom.ast.IASTUnaryExpression.op_not;
 import static org.eclipse.cdt.core.dom.ast.IASTUnaryExpression.op_plus;
 import static org.eclipse.cdt.core.dom.ast.IASTUnaryExpression.op_postFixDecr;
@@ -116,6 +117,8 @@ public class EvalUnary extends CPPEvaluation {
 		case op_sizeofParameterPack:
 		case op_typeid:
 			return fArgument.isTypeDependent();
+		case op_noexcept:
+			return fArgument.referencesTemplateParameter();
 		case op_throw:
 			return false;
 		default:
@@ -187,6 +190,7 @@ public class EvalUnary extends CPPEvaluation {
 	    		return type;
 	    	}
 			return new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
+		case op_noexcept:
 		case op_not:
 			return CPPBasicType.BOOLEAN;
 		case op_postFixDecr:
@@ -222,6 +226,8 @@ public class EvalUnary extends CPPEvaluation {
 				SizeAndAlignment info = getSizeAndAlignment(fArgument.getTypeOrFunctionSet(point), point);
 				return info == null ? Value.UNKNOWN : Value.create(info.alignment);
 			}
+			case op_noexcept:
+				return Value.UNKNOWN;  // TODO(sprigogin): Implement
 			case op_sizeofParameterPack:
 				return Value.UNKNOWN;  // TODO(sprigogin): Implement
 			case op_typeid:

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -9,6 +9,7 @@
  * Contributors: 
  *     Institute for Software - initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.changegenerator;
 
@@ -22,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.ASTWriterVisitor;
@@ -62,19 +64,21 @@ public class ModifiedASTDeclaratorWriter extends DeclaratorWriter {
 
 	@Override
 	protected void writeExceptionSpecification(ICPPASTFunctionDeclarator funcDec,
-			IASTTypeId[] exceptions) {	
+			IASTTypeId[] exceptions, ICPPASTExpression noexceptExpression) {	
 		IASTTypeId[] modifiedExceptions = modificationHelper.createModifiedChildArray(funcDec,
 				exceptions, IASTTypeId.class, commentMap);
-		// it makes a difference whether the exception array is identical to 
-		// ICPPASTFunctionDeclarator.NO_EXCEPTION_SPECIFICATION
+		// It makes a difference whether the exception array is identical to 
+		// ICPPASTFunctionDeclarator.NO_EXCEPTION_SPECIFICATION or not.
 		if (modifiedExceptions.length == 0 &&
 				exceptions == ICPPASTFunctionDeclarator.NO_EXCEPTION_SPECIFICATION) {
 			modifiedExceptions= ICPPASTFunctionDeclarator.NO_EXCEPTION_SPECIFICATION;
 		}
-		
-		super.writeExceptionSpecification(funcDec, modifiedExceptions);
+
+		noexceptExpression = modificationHelper.getNodeAfterReplacement(noexceptExpression);
+
+		super.writeExceptionSpecification(funcDec, modifiedExceptions, noexceptExpression);
 	}
-	
+
 	@Override
 	protected void writeKnRParameterDeclarations(ICASTKnRFunctionDeclarator knrFunct,
 			IASTDeclaration[] knrDeclarations) {

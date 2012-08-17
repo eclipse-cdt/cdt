@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.IASTPointer;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPointerToMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTReferenceOperator;
@@ -142,7 +143,7 @@ public class DeclaratorWriter extends NodeWriter {
 		if (funcDec.isPureVirtual()) {
 			scribe.print(PURE_VIRTUAL);
 		}
-		writeExceptionSpecification(funcDec, funcDec.getExceptionSpecification());
+		writeExceptionSpecification(funcDec, funcDec.getExceptionSpecification(), funcDec.getNoexceptExpression());
 		if (funcDec.getTrailingReturnType() != null) {
 			scribe.printSpace();
 			scribe.print(ARROW_OPERATOR);
@@ -151,13 +152,24 @@ public class DeclaratorWriter extends NodeWriter {
 		}
 	}
 
-	protected void writeExceptionSpecification(ICPPASTFunctionDeclarator funcDec, IASTTypeId[] exceptions) {
+	protected void writeExceptionSpecification(ICPPASTFunctionDeclarator funcDec, IASTTypeId[] exceptions,
+			ICPPASTExpression noexceptExpression) {
 		if (exceptions != ICPPASTFunctionDeclarator.NO_EXCEPTION_SPECIFICATION) {
 			scribe.printSpace();
 			scribe.printStringSpace(Keywords.THROW);
 			scribe.print('(');
 			writeNodeList(exceptions);
 			scribe.print(')');
+		}
+		if (noexceptExpression != null) {
+			scribe.printSpace();
+			scribe.print(Keywords.NOEXCEPT);
+			if (noexceptExpression != ICPPASTFunctionDeclarator.NOEXCEPT_DEFAULT) {
+				scribe.printSpace();
+				scribe.print('(');
+				noexceptExpression.accept(visitor);
+				scribe.print(')');
+			}
 		}
 	}
 
@@ -266,7 +278,7 @@ public class DeclaratorWriter extends NodeWriter {
 
 	protected void writeKnRParameterDeclarations(ICASTKnRFunctionDeclarator knrFunct,
 			IASTDeclaration[] knrDeclarations) {
-		for (int i = 0; i < knrDeclarations.length;  ++i) {
+		for (int i = 0; i < knrDeclarations.length; ++i) {
 			scribe.noNewLines();
 			knrDeclarations[i].accept(visitor);
 			scribe.newLines();

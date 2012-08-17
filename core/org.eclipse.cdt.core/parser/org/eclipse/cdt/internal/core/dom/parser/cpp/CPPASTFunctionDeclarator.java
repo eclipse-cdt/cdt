@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -21,8 +22,10 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionScope;
+import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
@@ -32,7 +35,16 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
  */
 public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPASTFunctionDeclarator,
 		IASTAmbiguityParent {
-    private ICPPASTParameterDeclaration[] parameters;
+	/**
+	 * Represents a 'noexcept' specification without an expression.
+	 */
+	public static final ICPPASTLiteralExpression NOEXCEPT_DEFAULT =
+			new CPPASTLiteralExpression(ICPPASTLiteralExpression.lk_true, Keywords.cTRUE);
+
+	public static final ASTNodeProperty NOEXCEPT_EXPRESSION = new ASTNodeProperty(
+			"ICPPASTFunctionDeclarator.NOEXCEPT_EXPRESSION [ICPPASTExpression]"); //$NON-NLS-1$
+
+	private ICPPASTParameterDeclaration[] parameters;
     private IASTTypeId[] typeIds = NO_EXCEPTION_SPECIFICATION;
     private ICPPASTExpression noexceptExpression;
     private IASTTypeId trailingReturnType;

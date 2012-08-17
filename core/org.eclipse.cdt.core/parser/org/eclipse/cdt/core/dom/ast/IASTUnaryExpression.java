@@ -119,7 +119,6 @@ public interface IASTUnaryExpression extends IASTExpression {
 
 	/**
 	 * For c++, only: noexcept ( expression )
-	 * @since 5.5
 	 */
 	public static final int op_noexcept = 17;
 

@@ -15,8 +15,6 @@ package org.eclipse.cdt.core.dom.ast.cpp;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
-import org.eclipse.cdt.core.parser.Keywords;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTLiteralExpression;
 
 /**
  * C++ adds a few things to function declarators.
@@ -31,18 +29,8 @@ public interface ICPPASTFunctionDeclarator extends IASTStandardFunctionDeclarato
 	 */
 	public static final IASTTypeId[] NO_EXCEPTION_SPECIFICATION = {};
 
-	/**
-	 * Represents a 'noexcept' specification without an expression.
-	 * @since 5.5
-	 */
-	public static final ICPPASTLiteralExpression NOEXCEPT_DEFAULT =
-			new CPPASTLiteralExpression(ICPPASTLiteralExpression.lk_true, Keywords.cTRUE);
-
 	public static final ASTNodeProperty EXCEPTION_TYPEID = new ASTNodeProperty(
 			"ICPPASTFunctionDeclarator.EXCEPTION_TYPEID [IASTTypeId]"); //$NON-NLS-1$
-	/** @since 5.5 */
-	public static final ASTNodeProperty NOEXCEPT_EXPRESSION = new ASTNodeProperty(
-			"ICPPASTFunctionDeclarator.NOEXCEPT_EXPRESSION [ICPPASTExpression]"); //$NON-NLS-1$
 	/** @since 5.2 */
 	public static final ASTNodeProperty TRAILING_RETURN_TYPE = new ASTNodeProperty(
 			"ICPPASTFunctionDeclarator.TRAILING_RETURN_TYPE [IASTTypeId]"); //$NON-NLS-1$
@@ -115,16 +103,18 @@ public interface ICPPASTFunctionDeclarator extends IASTStandardFunctionDeclarato
 	public void setEmptyExceptionSpecification();
 
 	/**
-	 * Returns the noexcept expression, {@link #NOEXCEPT_DEFAULT} if the noexcept specification
-	 * does not contain an expression, or {@code null} the noexcept specification is not present.
+	 * Returns the noexcept expression, {@link
+	 * org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFunctionDeclarator#NOEXCEPT_DEFAULT}
+	 * if the noexcept specification does not contain an expression, or {@code null} the noexcept
+	 * specification is not present.
 	 * See C++11 5.4.1.
-	 * @since 5.5
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public ICPPASTExpression getNoexceptExpression();
 
 	/**
 	 * Sets the noexcept expression. 
-	 * @since 5.5
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public void setNoexceptExpression(ICPPASTExpression expression);
 

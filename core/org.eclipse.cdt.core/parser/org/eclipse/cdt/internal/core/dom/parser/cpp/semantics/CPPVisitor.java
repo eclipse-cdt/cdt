@@ -168,6 +168,7 @@ import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFieldReference;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFunctionCallExpression;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFunctionDeclarator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
@@ -1002,7 +1003,7 @@ public class CPPVisitor extends ASTQueries {
 
 				}
 			} else if (node instanceof IASTParameterDeclaration ||
-					node.getPropertyInParent() == ICPPASTFunctionDeclarator.NOEXCEPT_EXPRESSION) {
+					node.getPropertyInParent() == CPPASTFunctionDeclarator.NOEXCEPT_EXPRESSION) {
 			    IASTNode parent = node.getParent();
 			    if (parent instanceof ICPPASTFunctionDeclarator) {
 					IScope result = scopeViaFunctionDtor((ICPPASTFunctionDeclarator) parent);

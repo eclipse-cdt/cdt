@@ -41,6 +41,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.internal.WorkbenchPartReference;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -282,12 +283,15 @@ public class BaseUITestCase extends BaseTestCase {
 	}
 
 	final protected TreeItem checkTreeNode(IViewPart part, int i0, String label) {
+		IViewReference viewRef = part.getViewSite().getPage().findViewReference(part.getViewSite().getId());
+		Control viewControl = ((WorkbenchPartReference)viewRef).getPane().getControl();
+		
 		Tree tree= null;
 		TreeItem root= null;
 		StringBuilder cands= new StringBuilder();
 		for (int i= 0; i < 400; i++) {
 			cands.setLength(0);
-			Control[] trees= findControls(part.getSite().getShell(), Tree.class);
+			Control[] trees= findControls(viewControl, Tree.class);
 			for (int j = 0; j < trees.length; j++) {
 				try {
 					tree= (Tree) trees[j];

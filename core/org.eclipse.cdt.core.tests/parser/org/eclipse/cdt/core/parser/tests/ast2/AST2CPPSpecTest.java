@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Devin Steffler (IBM Corporation) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
@@ -856,6 +857,12 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	// int x=new float[n][5];
 	// int y=new float[5][n];
 	public void test5_3_4s6() throws Exception {
+		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
+	}
+
+	// const char* strchr(const char* s, int c);
+	// bool b = noexcept (strchr("abc", 'b'));
+	public void test5_3_7() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
@@ -6383,6 +6390,21 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 
 	// typedef int (*pf)() throw(int); // illformed
 	public void test15_4s1b() throws Exception {
+		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
+	}
+
+	//	template <typename T>
+	//	void f(T p);
+	//
+	//	template <typename T>
+	//	void g(T p) noexcept;
+	//
+	//	template <typename T>
+	//	void fg(T a) noexcept (noexcept(f(a)) && noexcept(g(a))) {
+	//	  f(a);
+	//	  g(a);
+	//	}
+	public void test15_4s1c() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 

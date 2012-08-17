@@ -945,6 +945,7 @@ public class ASTStringUtil {
 		// need to add a space to the unary expression if it is a specific operator
 		switch (expression.getOperator()) {
 		case IASTUnaryExpression.op_sizeof:
+		case ICPPASTUnaryExpression.op_noexcept:
 		case ICPPASTUnaryExpression.op_throw:
 		case ICPPASTUnaryExpression.op_typeid:
 			buffer.append(SPACE);
@@ -986,6 +987,8 @@ public class ASTStringUtil {
 	public static char[] getUnaryOperatorString(IASTUnaryExpression ue) {
 		int op = ue.getOperator();
 		switch (op) {
+		case IASTUnaryExpression.op_noexcept:
+			return Keywords.cNOEXCEPT;
 		case IASTUnaryExpression.op_throw:
 			return Keywords.cTHROW;
 		case IASTUnaryExpression.op_typeid:

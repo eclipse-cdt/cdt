@@ -80,6 +80,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTForStatement;
@@ -176,9 +177,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     	this(scanner, mode, log, config, null);
     }
 
-    public GNUCPPSourceParser(IScanner scanner, ParserMode mode,
-            IParserLogService log, ICPPParserExtensionConfiguration config,
-            IIndex index) {
+    public GNUCPPSourceParser(IScanner scanner, ParserMode mode, IParserLogService log,
+    		ICPPParserExtensionConfiguration config, IIndex index) {
         super(scanner, log, mode, CPPNodeFactory.getDefault(),
         		config.supportStatementsInExpressions(),
                 config.supportTypeofUnaryExpressions(),
@@ -1429,6 +1429,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     private IASTExpression postfixExpression(CastExprCtx ctx, ITemplateIdStrategy strat) throws EndOfFileException, BacktrackException {
         IASTExpression firstExpression = null;
         boolean isTemplate = false;
+        int offset;
 
 		switch (LT(1)) {
         case IToken.t_dynamic_cast:
@@ -1447,9 +1448,18 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         case IToken.t_typeid:
             // 'typeid' ( expression )
             // 'typeid' ( type-id )
-            int so = consume().getOffset();
-			firstExpression = parseTypeidInParenthesisOrUnaryExpression(true, so,
+			firstExpression = parseTypeidInParenthesisOrUnaryExpression(true, consume().getOffset(),
 					ICPPASTTypeIdExpression.op_typeid, ICPPASTUnaryExpression.op_typeid, ctx, strat);
+            break;
+
+        case IToken.t_noexcept:
+            // 'noexcept' ( expression )
+        	offset= consume().getOffset();  // noexcept
+    		consume(IToken.tLPAREN);        // (
+    		firstExpression= expression();
+    		firstExpression= nodeFactory.newUnaryExpression(IASTUnaryExpression.op_noexcept, firstExpression);
+			final int endOffset = consume(IToken.tRPAREN).getEndOffset();	// )
+			setRange(firstExpression, offset, endOffset);
             break;
 
         case IToken.tLPAREN:
@@ -1459,7 +1469,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         	IToken m = mark();
         	try {
         		if (canBeCompoundLiteral()) {
-        			int offset = consume().getOffset();
+        			offset = consume().getOffset();
         			IASTTypeId t= typeId(DeclarationOptions.TYPEID);
         			consume(IToken.tRPAREN);
         			if (LT(1) == IToken.tLBRACE) {
@@ -3931,7 +3941,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 						if (thoffset == thendoffset) {
 							thendoffset = consume().getEndOffset();
 						}
-						IASTProblem p = createProblem(IProblem.SYNTAX_ERROR, thoffset, thendoffset-thoffset);
+						IASTProblem p = createProblem(IProblem.SYNTAX_ERROR, thoffset, thendoffset - thoffset);
 						IASTProblemTypeId typeIdProblem = nodeFactory.newProblemTypeId(p);
 						((ASTNode) typeIdProblem).setOffsetAndLength(((ASTNode) p));
 						fc.addExceptionSpecificationTypeId(typeIdProblem);
@@ -3943,6 +3953,20 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 			// more __attribute__ after throws
 			attributes = CollectionUtils.merge(attributes,
 					__attribute_decl_seq(supportAttributeSpecifiers, false));
+		}
+
+		// noexcept specification
+		if (LT(1) == IToken.t_noexcept) {
+			consume();  // noexcept
+			IASTExpression expression;
+			if (LT(1) == IToken.tLPAREN) {
+	    		consume();        // (
+	    		expression = expression();
+				endOffset = consume(IToken.tRPAREN).getEndOffset();	// )
+			} else {
+				expression = ICPPASTFunctionDeclarator.NOEXCEPT_DEFAULT;
+			}
+			fc.setNoexceptExpression((ICPPASTExpression) expression);
 		}
 
 		if (LT(1) == IToken.tARROW) {

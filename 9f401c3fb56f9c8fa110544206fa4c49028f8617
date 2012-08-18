@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOIn//7Vs\u003d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2CPPTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 9708,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-08-18T02:26:04Z",
+      "side": 1,
+      "message": "Code would be more readable and easier to maintain if the declaration was obtained from the binding. Same in other similar tests.",
+      "revId": "9f401c3fb56f9c8fa110544206fa4c49028f8617",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

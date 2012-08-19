@@ -13,6 +13,7 @@
  *     Mike Kucera (IBM)
  *     Andrew Ferguson (Symbian)
  *     Sergey Prigogin (Google)
+ *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -2323,6 +2324,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 	protected boolean isLegalWithoutDtor(IASTDeclSpecifier declSpec) {
 		if (declSpec instanceof IASTElaboratedTypeSpecifier) {
 			return ((IASTElaboratedTypeSpecifier) declSpec).getKind() != IASTElaboratedTypeSpecifier.k_enum;
+		} else if (declSpec instanceof ICPPASTNamedTypeSpecifier &&
+				((ICPPASTNamedTypeSpecifier) declSpec).isFriend()) {
+			return true;
 		}
 		return super.isLegalWithoutDtor(declSpec);
 	}

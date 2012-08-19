@@ -11,6 +11,7 @@
  *     Markus Schorn (Wind River Systems)
  *     Andrew Ferguson (Symbian)
  *     Sergey Prigogin (Google)
+ *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
@@ -9741,5 +9742,30 @@ public class AST2CPPTests extends AST2BaseTest {
 		IName[] declarations= bh.getTranslationUnit().getDeclarations(struct);
 		assertEquals(1, declarations.length);
 		assertEquals(bh.findName("S", 1), declarations[0]);
+	}
+
+	// struct F {};
+	// struct S {
+	//     friend F;
+	// };
+	public void testFriendClass() throws Exception {
+		parseAndCheckBindings();
+	}
+
+	// struct F {};
+	// typedef F T;
+	// struct S {
+	//     friend T;
+	// };
+	public void testFriendTypedef() throws Exception {
+		parseAndCheckBindings();
+	}
+
+	// template<typename P>
+	// struct T {
+	//     friend P;
+	// };
+	public void testFriendTemplateParameter() throws Exception {
+		parseAndCheckBindings();
 	}
 }

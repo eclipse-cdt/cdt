@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 QNX Software Systems and others.
+ * Copyright (c) 2009, 2012 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     QNX Software Systems - Initial API and implementation
  *     Wind River Systems   - Modified for new DSF Reference Implementation
  *     Ericsson 		  	- Modified for additional features in DSF Reference implementation
+ *     Marc-Andre Laperle   - Fix for bug 330060
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command;
@@ -31,9 +32,10 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandResult;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandToken;
 import org.eclipse.cdt.dsf.debug.service.command.IEventListener;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLICommand;
+import org.eclipse.cdt.dsf.mi.service.command.commands.IProcessMIInterpreterExecConsole;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MICommand;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIInterpreterExecConsole;
 import org.eclipse.cdt.dsf.mi.service.command.commands.RawCommand;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIConsoleStreamOutput;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
@@ -265,7 +267,7 @@ public abstract class AbstractCLIProcess extends Process
         ICommand<?> command = token.getCommand();
         // Check if the command is a CLI command and if it did not originate from this class.
         if (command instanceof CLICommand<?> &&
-            !(command instanceof ProcessCLICommand || command instanceof ProcessMIInterpreterExecConsole)) 
+            !(command instanceof ProcessCLICommand || command instanceof IProcessMIInterpreterExecConsole )) 
         {
             fSuppressConsoleOutputCounter++;
         }
@@ -281,8 +283,8 @@ public abstract class AbstractCLIProcess extends Process
     
     private void checkMissingSecondaryPrompt(MICommand<?> command) {                          
         // If the command send is one of ours, check if it is one that is missing a secondary prompt
-    	if (command instanceof ProcessMIInterpreterExecConsole) {
-    		String[] operations = ((ProcessMIInterpreterExecConsole)command).getParameters();                                                         
+    	if (command instanceof IProcessMIInterpreterExecConsole) {
+    		String[] operations = ((MICommand<? extends MIInfo>)command).getParameters();                                                         
     		if (operations != null && operations.length > 0) {                                                     
     			// Get the command name.                                                                           
     			String operation = operations[0];                                                                   
@@ -355,7 +357,7 @@ public abstract class AbstractCLIProcess extends Process
     	
         ICommand<?> command = token.getCommand();
     	if (token.getCommand() instanceof CLICommand<?> &&
-    			!(command instanceof ProcessCLICommand || command instanceof ProcessMIInterpreterExecConsole)) 
+    			!(command instanceof ProcessCLICommand || command instanceof IProcessMIInterpreterExecConsole)) 
         {
             fSuppressConsoleOutputCounter--;
         }
@@ -444,7 +446,7 @@ public abstract class AbstractCLIProcess extends Process
             else if (! isMIOperation(str) &&
             		 ! CLIEventProcessor.isSteppingOperation(str))
             {
-                cmd = new ProcessMIInterpreterExecConsole(getCommandControlService().getContext(), str);
+                cmd = ((IMICommandControl)getCommandControlService()).getCommandFactory().createProcessMIInterpreterExecConsole(getCommandControlService().getContext(), str);
             } 
             else {
                 cmd = new ProcessCLICommand(getCommandControlService().getContext(), str);
@@ -461,12 +463,6 @@ public abstract class AbstractCLIProcess extends Process
     private class ProcessCLICommand extends CLICommand<MIInfo> {
         public ProcessCLICommand(IDMContext ctx, String oper) {
             super(ctx, oper);
-        }
-    }
-    
-    private class ProcessMIInterpreterExecConsole extends MIInterpreterExecConsole<MIInfo> {
-        public ProcessMIInterpreterExecConsole(IDMContext ctx, String cmd) {
-            super(ctx, cmd);
         }
     }
 }

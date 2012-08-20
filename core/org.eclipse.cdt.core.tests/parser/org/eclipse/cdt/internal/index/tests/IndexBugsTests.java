@@ -108,7 +108,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
 public class IndexBugsTests extends BaseTestCase {
-	private static final int INDEX_WAIT_TIME = 800000; //XXX
+	private static final int INDEXER_TIMEOUT_SEC = 20;
 	private ICProject fCProject;
 	protected IIndex fIndex;
 
@@ -305,13 +305,13 @@ public class IndexBugsTests extends BaseTestCase {
 
 	private void waitForIndexer() throws InterruptedException {
 		final IIndexManager indexManager = CCorePlugin.getIndexManager();
-		assertTrue(indexManager.joinIndexer(INDEX_WAIT_TIME, npm()));
+		assertTrue(indexManager.joinIndexer(INDEXER_TIMEOUT_SEC * 1000, npm()));
 		long waitms= 1;
 		while (waitms < 2000 && indexManager.isIndexerSetupPostponed(fCProject)) {
 			Thread.sleep(waitms);
 			waitms *= 2;
 		}
-		assertTrue(indexManager.joinIndexer(INDEX_WAIT_TIME, npm()));
+		assertTrue(indexManager.joinIndexer(INDEXER_TIMEOUT_SEC * 1000, npm()));
 	}
 
 	protected Pattern[] getPattern(String qname) {
@@ -385,7 +385,7 @@ public class IndexBugsTests extends BaseTestCase {
 		String[] content= getContentsForTest(2);
 
 		IFile file= createFile(getProject(), "header.h", content[0]);
-		waitUntilFileIsIndexed(file, INDEX_WAIT_TIME);
+		waitUntilFileIsIndexed(file, INDEXER_TIMEOUT_SEC * 1000);
 
 		IIndex index= CCorePlugin.getIndexManager().getIndex(fCProject);
 		index.acquireReadLock();
@@ -399,7 +399,7 @@ public class IndexBugsTests extends BaseTestCase {
 		}
 
 		file= createFile(getProject(), "header.h", content[1]);
-		waitUntilFileIsIndexed(file, INDEX_WAIT_TIME);
+		waitUntilFileIsIndexed(file, INDEXER_TIMEOUT_SEC * 1000);
 
 		index= CCorePlugin.getIndexManager().getIndex(fCProject);
 		index.acquireReadLock();
@@ -425,10 +425,10 @@ public class IndexBugsTests extends BaseTestCase {
     	content.append("unsigned int arrayDataSize = sizeof(arrayData);\n");
 		int indexOfDecl = content.indexOf(varName);
 
-		assertTrue(CCorePlugin.getIndexManager().joinIndexer(INDEX_WAIT_TIME, npm()));
+		assertTrue(CCorePlugin.getIndexManager().joinIndexer(INDEXER_TIMEOUT_SEC * 1000, npm()));
 		IFile file= createFile(getProject(), fileName, content.toString());
 		// must be done in a reasonable amount of time
-		waitUntilFileIsIndexed(file, INDEX_WAIT_TIME);
+		waitUntilFileIsIndexed(file, INDEXER_TIMEOUT_SEC * 1000);
 		fIndex.acquireReadLock();
 		try {
 			IIndexBinding[] bindings= fIndex.findBindings(getPattern("arrayDataSize"), true, IndexFilter.ALL, npm());
@@ -451,7 +451,7 @@ public class IndexBugsTests extends BaseTestCase {
 		String content= getContentsForTest(1)[0];
 
 		IFile file= TestSourceReader.createFile(fCProject.getProject(), "test156671.cpp", content);
-		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, INDEX_WAIT_TIME);
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, INDEXER_TIMEOUT_SEC * 1000);
 
 		fIndex.acquireReadLock();
 		try {
@@ -469,7 +469,7 @@ public class IndexBugsTests extends BaseTestCase {
 		TestScannerProvider.sIncludes= new String[]{include.getLocation().removeLastSegments(1).toString()};
 		TestScannerProvider.sIncludeFiles= new String[]{include.getName()};
 		IFile file= TestSourceReader.createFile(fCProject.getProject(), "test160281_1.cpp", "");
-		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, INDEX_WAIT_TIME);
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, INDEXER_TIMEOUT_SEC * 1000);
 
 		fIndex.acquireReadLock();
 		try {
@@ -493,7 +493,7 @@ public class IndexBugsTests extends BaseTestCase {
 		TestScannerProvider.sIncludes= new String[]{include.getLocation().removeLastSegments(1).toString()};
 		TestScannerProvider.sMacroFiles= new String[]{include.getName()};
 		IFile file= TestSourceReader.createFile(fCProject.getProject(), "test160281_2.cpp", "int X;");
-		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, INDEX_WAIT_TIME);
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, INDEXER_TIMEOUT_SEC * 1000);
 
 		fIndex.acquireReadLock();
 		try {
@@ -528,7 +528,7 @@ public class IndexBugsTests extends BaseTestCase {
 		int indexOfDecl = content.indexOf(funcName);
 		int indexOfDef  = content.indexOf(funcName, indexOfDecl+1);
 		IFile file= createFile(getProject(), fileName, content);
-		waitUntilFileIsIndexed(file, INDEX_WAIT_TIME);
+		waitUntilFileIsIndexed(file, INDEXER_TIMEOUT_SEC * 1000);
 
 		// make sure the ast is correct
 		ITranslationUnit tu= (ITranslationUnit) fCProject.findElement(new Path(fileName));
@@ -569,7 +569,7 @@ public class IndexBugsTests extends BaseTestCase {
 		IFile include= TestSourceReader.createFile(fCProject.getProject(), "test164360.h", "");
 		TestScannerProvider.sIncludeFiles= new String[] { include.getLocation().toOSString() };
 		IFile file= TestSourceReader.createFile(fCProject.getProject(), "test164360.cpp", "");
-		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, INDEX_WAIT_TIME);
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, INDEXER_TIMEOUT_SEC * 1000);
 
 		fIndex.acquireReadLock();
 		try {
@@ -592,7 +592,7 @@ public class IndexBugsTests extends BaseTestCase {
 		IFile include= TestSourceReader.createFile(fCProject.getProject(), "test164360.h", "");
 		TestScannerProvider.sMacroFiles= new String[]{include.getLocation().toOSString()};
 		IFile file= TestSourceReader.createFile(fCProject.getProject(), "test164360.cpp", "");
-		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, INDEX_WAIT_TIME);
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, INDEXER_TIMEOUT_SEC * 1000);
 
 		fIndex.acquireReadLock();
 		try {
@@ -618,7 +618,7 @@ public class IndexBugsTests extends BaseTestCase {
 		String content= getContentsForTest(1)[0];
 
 		IFile file= TestSourceReader.createFile(fCProject.getProject(), "test164500.cpp", content);
-		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, INDEX_WAIT_TIME);
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, INDEXER_TIMEOUT_SEC * 1000);
 
 		fIndex.acquireReadLock();
 		try {
@@ -655,7 +655,7 @@ public class IndexBugsTests extends BaseTestCase {
 			String[] testData = getContentsForTest(3);
 			IFile header= TestSourceReader.createFile(cproject.getProject(), "header.h", testData[0]);
 			IFile referer= TestSourceReader.createFile(cproject.getProject(), "content.cpp", testData[1]);
-			TestSourceReader.waitUntilFileIsIndexed(index, referer, INDEX_WAIT_TIME);
+			TestSourceReader.waitUntilFileIsIndexed(index, referer, INDEXER_TIMEOUT_SEC * 1000);
 
 			index.acquireReadLock();
 			try {
@@ -670,7 +670,7 @@ public class IndexBugsTests extends BaseTestCase {
 
 			InputStream in = new ByteArrayInputStream(testData[2].getBytes());
 			header.setContents(in, IResource.FORCE, null);
-			TestSourceReader.waitUntilFileIsIndexed(index, header, INDEX_WAIT_TIME);
+			TestSourceReader.waitUntilFileIsIndexed(index, header, INDEXER_TIMEOUT_SEC * 1000);
 
 			index.acquireReadLock();
 			try {
@@ -695,7 +695,7 @@ public class IndexBugsTests extends BaseTestCase {
 		String content= getContentsForTest(1)[0];
 
 		IFile file= TestSourceReader.createFile(fCProject.getProject(), "test172454.c", content);
-		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, INDEX_WAIT_TIME);
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, INDEXER_TIMEOUT_SEC * 1000);
 
 		fIndex.acquireReadLock();
 		try {
@@ -728,7 +728,7 @@ public class IndexBugsTests extends BaseTestCase {
 		String content= getContentsForTest(1)[0];
 
 		IFile file= TestSourceReader.createFile(fCProject.getProject(), "test172454.cpp", content);
-		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, INDEX_WAIT_TIME);
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, INDEXER_TIMEOUT_SEC * 1000);
 
 		fIndex.acquireReadLock();
 		try {
@@ -762,7 +762,7 @@ public class IndexBugsTests extends BaseTestCase {
 		String content= getContentsForTest(1)[0];
 
 		IFile file= TestSourceReader.createFile(fCProject.getProject(), "test173997.cpp", content);
-		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, INDEX_WAIT_TIME);
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, INDEXER_TIMEOUT_SEC * 1000);
 
 		fIndex.acquireReadLock();
 		try {
@@ -781,7 +781,7 @@ public class IndexBugsTests extends BaseTestCase {
 		long timestamp= file.getLocalTimeStamp();
 		content= "int UPDATED20070213;\n" + content.replaceFirst("int", "float");
 		file= TestSourceReader.createFile(fCProject.getProject(), "test173997.cpp", content);
-		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, INDEX_WAIT_TIME);
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, INDEXER_TIMEOUT_SEC * 1000);
 
 		fIndex.acquireReadLock();
 		try {
@@ -814,7 +814,7 @@ public class IndexBugsTests extends BaseTestCase {
 		String[] content= getContentsForTest(2);
 
 		IFile file= createFile(getProject(), "header.h", content[0]);
-		waitUntilFileIsIndexed(file, INDEX_WAIT_TIME);
+		waitUntilFileIsIndexed(file, INDEXER_TIMEOUT_SEC * 1000);
 
 		IIndex index= CCorePlugin.getIndexManager().getIndex(fCProject);
 		index.acquireReadLock();
@@ -829,7 +829,7 @@ public class IndexBugsTests extends BaseTestCase {
 		}
 
 		file= createFile(getProject(), "header.h", content[1]);
-		waitUntilFileIsIndexed(file, INDEX_WAIT_TIME);
+		waitUntilFileIsIndexed(file, INDEXER_TIMEOUT_SEC * 1000);
 
 		index= CCorePlugin.getIndexManager().getIndex(fCProject);
 		index.acquireReadLock();
@@ -971,7 +971,7 @@ public class IndexBugsTests extends BaseTestCase {
 		IIndex index = CCorePlugin.getIndexManager().getIndex(cproject);
 		String content= getContentsForTest(1)[0];
 		IFile file= TestSourceReader.createFile(cproject.getProject(), "content.cpp", content);
-		TestSourceReader.waitUntilFileIsIndexed(index, file, INDEX_WAIT_TIME);
+		TestSourceReader.waitUntilFileIsIndexed(index, file, INDEXER_TIMEOUT_SEC * 1000);
 		CProjectHelper.delete(cproject);
 
 		cproject = CProjectHelper.createCCProject(pname, "bin", IPDOMManager.ID_FAST_INDEXER);
@@ -997,7 +997,7 @@ public class IndexBugsTests extends BaseTestCase {
 		IIndex index = CCorePlugin.getIndexManager().getIndex(cproject);
 		String content= getContentsForTest(1)[0];
 		IFile file= TestSourceReader.createFile(cproject.getProject(), "content.cpp", content);
-		TestSourceReader.waitUntilFileIsIndexed(index, file, INDEX_WAIT_TIME);
+		TestSourceReader.waitUntilFileIsIndexed(index, file, INDEXER_TIMEOUT_SEC * 1000);
 
 		// move the project to a random new location
 		File newLocation = CProjectHelper.freshDir();
@@ -1030,7 +1030,7 @@ public class IndexBugsTests extends BaseTestCase {
 		String content= getContentsForTest(1)[0];
 
 		IFile file= TestSourceReader.createFile(fCProject.getProject(), "testFBWP.cpp", content);
-		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, INDEX_WAIT_TIME);
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, INDEXER_TIMEOUT_SEC * 1000);
 
 		fIndex.acquireReadLock();
 		try {
@@ -1063,7 +1063,7 @@ public class IndexBugsTests extends BaseTestCase {
 		String content= getContentsForTest(1)[0];
 
 		IFile file= TestSourceReader.createFile(fCProject.getProject(), "testFilterFindBindingsFQCharArray.cpp", content);
-		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, INDEX_WAIT_TIME);
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, INDEXER_TIMEOUT_SEC * 1000);
 
 		fIndex.acquireReadLock();
 		try {
@@ -1186,7 +1186,7 @@ public class IndexBugsTests extends BaseTestCase {
 		String[] contents= getContentsForTest(2);
 		final IIndexManager indexManager = CCorePlugin.getIndexManager();
 		IFile f1= TestSourceReader.createFile(fCProject.getProject(), "header.h", contents[0]);
-		waitUntilFileIsIndexed(f1, INDEX_WAIT_TIME);
+		waitUntilFileIsIndexed(f1, INDEXER_TIMEOUT_SEC * 1000);
 		IFile f2= TestSourceReader.createFile(fCProject.getProject(), "src.cpp", contents[1]);
 		waitForIndexer();
 
@@ -1212,7 +1212,7 @@ public class IndexBugsTests extends BaseTestCase {
 		String[] contents= getContentsForTest(2);
 		final IIndexManager indexManager = CCorePlugin.getIndexManager();
 		IFile f1= TestSourceReader.createFile(fCProject.getProject(), "header.h", contents[0]);
-		waitUntilFileIsIndexed(f1, INDEX_WAIT_TIME);
+		waitUntilFileIsIndexed(f1, INDEXER_TIMEOUT_SEC * 1000);
 		IFile f2= TestSourceReader.createFile(fCProject.getProject(), "src.cpp", contents[1]);
 		waitForIndexer();
 
@@ -2303,7 +2303,7 @@ public class IndexBugsTests extends BaseTestCase {
 		}
 
 		s= TestSourceReader.createFile(src, "source.cpp", "#include \"../h/a.h\"");
-		waitUntilFileIsIndexed(s, INDEX_WAIT_TIME);
+		waitUntilFileIsIndexed(s, INDEXER_TIMEOUT_SEC * 1000);
 		index.acquireReadLock();
 		try {
 			r = index.findBindings("version2".toCharArray(), IndexFilter.ALL_DECLARED, null);
@@ -2313,7 +2313,7 @@ public class IndexBugsTests extends BaseTestCase {
 		}
 
 		s= TestSourceReader.createFile(h, "a.h", "int version3;");
-		waitUntilFileIsIndexed(s, INDEX_WAIT_TIME);
+		waitUntilFileIsIndexed(s, INDEXER_TIMEOUT_SEC * 1000);
 		index.acquireReadLock();
 		try {
 			r = index.findBindings("version2".toCharArray(), IndexFilter.ALL_DECLARED, null);

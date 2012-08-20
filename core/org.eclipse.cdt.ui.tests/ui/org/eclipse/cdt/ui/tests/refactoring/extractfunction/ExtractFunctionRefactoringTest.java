@@ -1943,6 +1943,30 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 		assertRefactoringFailure();
 	}
 
+	//main.cpp
+	//void test() {
+	//	int b[10];
+	//	/*$*/for (auto a : b) {
+	//		if (a == 5)
+	//			continue;
+	//	}/*$$*/
+	//}
+	//====================
+	//void extracted(int b[10]) {
+	//	for (auto a : b) {
+	//		if (a == 5)
+	//			continue;
+	//	}
+	//}
+	//
+	//void test() {
+	//	int b[10];
+	//	extracted(b);
+	//}
+	public void testContinueInsideRangeBasedLoop() throws Exception {
+		assertRefactoringSuccess();
+	}
+
 	//Test.cpp
 	//#define ASSERTM(msg,cond) if (!(cond)) throw cute::test_failure((msg),__FILE__,__LINE__)
 	//#define ASSERT(cond) ASSERTM(#cond, cond)

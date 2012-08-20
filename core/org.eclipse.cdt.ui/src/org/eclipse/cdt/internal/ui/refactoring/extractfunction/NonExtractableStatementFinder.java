@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -7,7 +7,8 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  * 
  * Contributors: 
- *     Institute for Software - initial API and implementation 
+ *     Institute for Software - initial API and implementation
+ *     Sergey Prigogin (Google)
  ******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.extractfunction;
 
@@ -19,11 +20,12 @@ import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSwitchStatement;
 import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTRangeBasedForStatement;
 
 /**
  * @author Emanuel Graf IFS
  */
-class NonExtractableStmtFinder extends ASTVisitor{
+class NonExtractableStatementFinder extends ASTVisitor {
 	private boolean containsContinueStmt;
 	private boolean containsBreakStmt;
 	
@@ -40,10 +42,11 @@ class NonExtractableStmtFinder extends ASTVisitor{
 			containsBreakStmt = true;
 			return ASTVisitor.PROCESS_SKIP;
 		} else if (statement instanceof IASTForStatement ||
+				statement instanceof ICPPASTRangeBasedForStatement ||
 				statement instanceof IASTWhileStatement ||
-				statement instanceof IASTSwitchStatement ||
-				statement instanceof IASTDoStatement) {
-			// Extracting a whole loop statement is allowed
+				statement instanceof IASTDoStatement ||
+				statement instanceof IASTSwitchStatement) {
+			// Extracting a whole loop or switch statement is allowed.
 			return ASTVisitor.PROCESS_SKIP;
 		}
 		return ASTVisitor.PROCESS_CONTINUE;

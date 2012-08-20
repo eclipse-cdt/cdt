@@ -100,7 +100,9 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
@@ -1088,52 +1090,42 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	@Override
 	public boolean joinIndexer(final int waitMaxMillis, final IProgressMonitor monitor) {
 		assert monitor != null;
-		long startMillis = System.currentTimeMillis();
+		long deadline = waitMaxMillis == FOREVER ? Long.MAX_VALUE : System.currentTimeMillis() + waitMaxMillis;
 
-		// Unfortunately, IJobManager.join() doesn't take a timeout. So, we create a watchdog thread to
-		// interrupt the call if the indexer job doesn't complete in the alloted time
-		Thread th= null;
-		if (waitMaxMillis != FOREVER) {
-			final Thread callingThread= Thread.currentThread();
-			th= new Thread() {
-				@Override
-				public void run() {
+		final boolean[] idleCondition  = { false };
+		JobChangeAdapter listener = new JobChangeAdapter() {
+			@Override
+			public void done(IJobChangeEvent event) {
+				synchronized (idleCondition) {
+					Job[] jobs = Job.getJobManager().find(PDOMManager.this);
+					if (jobs.length == 0 || jobs.length == 1 && event.getJob() == jobs[0]) {
+						idleCondition[0] = true;
+						idleCondition.notifyAll();
+					}
+				}
+			}
+		};
+		Job.getJobManager().addJobChangeListener(listener);
+		try {
+			if (Job.getJobManager().find(this).length == 0) {
+				return true;
+			}
+			synchronized (idleCondition) {
+				while (!idleCondition[0]) {
 					try {
-						Thread.sleep(waitMaxMillis);
-						monitor.setCanceled(true);
-						callingThread.interrupt();
+						if (monitor.isCanceled())
+							return false;
+						long t = System.currentTimeMillis();
+						if (t >= deadline)
+							return false;
+						idleCondition.wait(Math.min(100, deadline - t));
 					} catch (InterruptedException e) {
 					}
 				}
-			};
-			th.setDaemon(true);
-			th.start();
-		}
-		try {
-			try {
-				Job.getJobManager().join(this, monitor);
 				return true;
-			} catch (OperationCanceledException e) {
-			} catch (InterruptedException e) {
 			}
-
-			// When the indexer job is interrupted, the join() above will throw an exception and that can
-			// happen slightly before the JobManager updates its job collection. Wait for it.
-			while (Job.getJobManager().find(this).length != 0) {
-				if (System.currentTimeMillis() - startMillis > waitMaxMillis) {
-					return false;
-				}
-				try {
-					Thread.sleep(50);
-				} catch (InterruptedException e) {
-				}
-			}
-			return true;
 		} finally {
-			// Make sure we don't leave the watchdog thread running
-			if (th != null) {
-				th.interrupt();
-			}
+			Job.getJobManager().removeJobChangeListener(listener);
 		}
 	}
 

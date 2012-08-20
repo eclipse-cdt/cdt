@@ -1092,13 +1092,12 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		assert monitor != null;
 		long deadline = waitMaxMillis == FOREVER ? Long.MAX_VALUE : System.currentTimeMillis() + waitMaxMillis;
 
-		final boolean[] idleCondition  = { false };
+		final boolean[] idleCondition = { false };
 		JobChangeAdapter listener = new JobChangeAdapter() {
 			@Override
 			public void done(IJobChangeEvent event) {
 				synchronized (idleCondition) {
-					Job[] jobs = Job.getJobManager().find(PDOMManager.this);
-					if (jobs.length == 0 || jobs.length == 1 && event.getJob() == jobs[0]) {
+					if (Job.getJobManager().find(PDOMManager.this).length == 0) {
 						idleCondition[0] = true;
 						idleCondition.notifyAll();
 					}

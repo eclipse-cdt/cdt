@@ -230,6 +230,10 @@ public class DeclSpecWriter extends NodeWriter {
 		compDeclSpec.getName().accept(visitor);
 		if (compDeclSpec instanceof ICPPASTCompositeTypeSpecifier) {
 			ICPPASTCompositeTypeSpecifier cppComp = (ICPPASTCompositeTypeSpecifier) compDeclSpec;
+			if(cppComp.isFinal()){
+				scribe.printSpace();
+				scribe.print(Keywords.cFINAL);
+			}
 			ICPPASTBaseSpecifier[] baseSpecifiers = cppComp.getBaseSpecifiers();
 			if (baseSpecifiers.length > 0) {
 				scribe.print(SPACE_COLON_SPACE);

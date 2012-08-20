@@ -106,6 +106,16 @@ public class CPPMethodSpecialization extends CPPFunctionSpecialization implement
 	}
 
 	@Override
+	public boolean isOverride() {
+		return false;
+	}
+
+	@Override
+	public boolean isFinal() {
+		return false;
+	}
+
+	@Override
 	public IType[] getExceptionSpecification(IASTNode point) {
 		if (isImplicit()) {
 			return ClassTypeHelper.getInheritedExceptionSpecification(this, point);

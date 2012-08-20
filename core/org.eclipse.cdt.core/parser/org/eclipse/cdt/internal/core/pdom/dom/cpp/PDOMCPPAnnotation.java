@@ -38,7 +38,9 @@ class PDOMCPPAnnotation {
 	public static final int IMPLICIT_METHOD_OFFSET = 2;
 	public static final int EXPLICIT_METHOD_OFFSET = 3;
 	public static final int PURE_VIRTUAL_OFFSET = 4;
-	public static final int MAX_EXTRA_OFFSET= PURE_VIRTUAL_OFFSET;
+	public static final int OVERRIDE_OFFSET = 5;
+	public static final int FINAL_OFFSET = 6;
+	public static final int MAX_EXTRA_OFFSET= FINAL_OFFSET;
 	
 	/**
 	 * Encodes storage class specifiers and other annotation, including
@@ -92,6 +94,8 @@ class PDOMCPPAnnotation {
 			modifiers |= (method.isImplicit() ? 1 : 0) << IMPLICIT_METHOD_OFFSET;
 			modifiers |= (method.isPureVirtual() ? 1 : 0) << PURE_VIRTUAL_OFFSET;
 			modifiers |= (method.isExplicit() ? 1 : 0) << EXPLICIT_METHOD_OFFSET;
+			modifiers |= (method.isOverride() ? 1 : 0) << OVERRIDE_OFFSET;
+			modifiers |= (method.isFinal() ? 1 : 0) << FINAL_OFFSET;
 		}
 		return modifiers;
 	}

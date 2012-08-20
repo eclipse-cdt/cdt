@@ -180,4 +180,9 @@ public class CompositeCPPTemplateTemplateParameter extends CompositeCPPBinding
 	public ICPPDeferredClassInstance asDeferredInstance() {
 		return null;
 	}
+
+	@Override
+	public boolean isFinal() {
+		return false;
+	}
 }

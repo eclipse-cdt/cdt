@@ -89,4 +89,14 @@ class PDOMCPPMethodInstance extends PDOMCPPFunctionInstance implements ICPPMetho
 	public int getVisibility() {
 		return ((ICPPMethod)getTemplateDefinition()).getVisibility();
 	}
+
+	@Override
+	public boolean isOverride() {
+		return ((ICPPMethod)getTemplateDefinition()).isOverride();
+	}
+
+	@Override
+	public boolean isFinal() {
+		return ((ICPPMethod)getTemplateDefinition()).isFinal();
+	}
 }

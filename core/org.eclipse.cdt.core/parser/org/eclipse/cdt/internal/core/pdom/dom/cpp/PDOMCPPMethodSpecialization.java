@@ -142,4 +142,14 @@ class PDOMCPPMethodSpecialization extends PDOMCPPFunctionSpecialization
 		}
 		return super.getExceptionSpecification();
 	}
+
+	@Override
+	public boolean isOverride() {
+		return false;
+	}
+
+	@Override
+	public boolean isFinal() {
+		return false;
+	}
 }

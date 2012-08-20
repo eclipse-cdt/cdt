@@ -36,6 +36,7 @@ public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
 	private ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier[] baseSpecs;
 	private int baseSpecsPos = -1;
 	private boolean fAmbiguitiesResolved;
+	private boolean isFinal;
 
     public CPPASTCompositeTypeSpecifier() {
 	}
@@ -65,6 +66,7 @@ public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
 			copy.addMemberDeclaration(member == null ? null : member.copy(style));
 		for (ICPPASTBaseSpecifier baseSpecifier : getBaseSpecifiers())
 			copy.addBaseSpecifier(baseSpecifier == null ? null : baseSpecifier.copy(style));
+		copy.isFinal = isFinal;
 		return super.copy(copy, style);
 	}
 
@@ -215,5 +217,16 @@ public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
 				fActiveDeclarations= null;
 			}
 		}
+	}
+
+	@Override
+	public boolean isFinal() {
+		return isFinal;
+	}
+
+	@Override
+	public void setFinal(boolean value) {
+		assertNotFrozen();
+		isFinal = value;
 	}
 }

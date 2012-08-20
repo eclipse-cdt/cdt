@@ -615,6 +615,11 @@ public class PDOMASTAdapter {
 		public boolean isAnonymous() {
 			return ((ICPPClassType) fDelegate).isAnonymous();
 		}
+
+		@Override
+		public boolean isFinal() {
+			return false;
+		}
 	}
 
 

@@ -99,4 +99,11 @@ public interface ICPPClassType extends ICompositeType, ICPPBinding {
 	 * Returns an array of nested classes/structures
 	 */
 	public ICPPClassType[] getNestedClasses();
+
+	/**
+	 * Returns whether this type is declared final.
+	 * 
+	 * @since 5.4
+	 */
+	public boolean isFinal();
 }

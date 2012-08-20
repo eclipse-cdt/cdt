@@ -49,4 +49,18 @@ public interface ICPPMethod extends ICPPFunction, ICPPMember {
 	 * @since 5.1
 	 */
 	public boolean isPureVirtual();
+
+	/**
+	 * Returns whether this type is declared override.
+	 * 
+	 * @since 5.4
+	 */
+	public boolean isOverride();
+
+	/**
+	 * Returns whether this type is declared final.
+	 * 
+	 * @since 5.4
+	 */
+	public boolean isFinal();
 }

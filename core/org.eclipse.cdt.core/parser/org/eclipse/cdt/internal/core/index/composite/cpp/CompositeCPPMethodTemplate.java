@@ -58,4 +58,14 @@ public class CompositeCPPMethodTemplate extends CompositeCPPFunctionTemplate imp
 		return ((ICPPMethod)rbinding).isPureVirtual();
 	}
 
+	@Override
+	public boolean isOverride() {
+		return ((ICPPMethod)rbinding).isOverride();
+	}
+
+	@Override
+	public boolean isFinal() {
+		return ((ICPPMethod)rbinding).isFinal();
+	}
+
 }

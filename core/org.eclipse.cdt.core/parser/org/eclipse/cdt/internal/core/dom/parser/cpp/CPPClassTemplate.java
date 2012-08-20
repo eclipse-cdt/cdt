@@ -244,4 +244,13 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements ICPPClass
 		}
 		return null;
 	}
+
+	@Override
+	public boolean isFinal() {
+		ICPPASTCompositeTypeSpecifier typeSpecifier = getCompositeTypeSpecifier();
+		if(typeSpecifier != null){
+			return typeSpecifier.isFinal();
+		}
+		return false;
+	}
 }

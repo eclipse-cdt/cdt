@@ -172,4 +172,32 @@ public interface ICPPASTFunctionDeclarator extends IASTStandardFunctionDeclarato
 	 */
 	@Override
 	public ICPPASTFunctionDeclarator copy(CopyStyle style);
+
+	/**
+	 * Returns whether this function is declared override.
+	 * 
+	 * @since 5.4
+	 */
+	public boolean isOverride();
+
+	/**
+	 * Sets whether this function is declared override.
+	 * 
+	 * @since 5.4
+	 */
+	public void setOverride(boolean isOverride);
+
+	/**
+	 * Returns whether this function is declared final.
+	 * 
+	 * @since 5.4
+	 */
+	public boolean isFinal();
+
+	/**
+	 * Sets whether this function is declared final.
+	 * 
+	 * @since 5.4
+	 */
+	public void setFinal(boolean isFinal);
 }

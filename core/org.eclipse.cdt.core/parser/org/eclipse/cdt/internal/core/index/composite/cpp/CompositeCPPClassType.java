@@ -184,4 +184,9 @@ class CompositeCPPClassType extends CompositeCPPBinding implements ICPPClassType
 		}
 		return result;
 	}
+
+	@Override
+	public boolean isFinal() {
+		return ((ICPPClassType) rbinding).isFinal();
+	}
 }

@@ -140,6 +140,14 @@ public class DeclaratorWriter extends NodeWriter {
 			scribe.printSpace();
 			scribe.print(Keywords.MUTABLE);
 		}
+		if(funcDec.isOverride()){
+			scribe.printSpace();
+			scribe.print(Keywords.cOVERRIDE);
+		}
+		if(funcDec.isFinal()){
+			scribe.printSpace();
+			scribe.print(Keywords.cFINAL);
+		}
 		if (funcDec.isPureVirtual()) {
 			scribe.print(PURE_VIRTUAL);
 		}

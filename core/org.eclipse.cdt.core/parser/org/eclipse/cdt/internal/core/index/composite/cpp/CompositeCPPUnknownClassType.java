@@ -140,4 +140,9 @@ class CompositeCPPUnknownClassType extends CompositeCPPUnknownBinding implements
 	public boolean isAnonymous() {
 		return false;
 	}
+
+	@Override
+	public boolean isFinal() {
+		return false;
+	}
 }

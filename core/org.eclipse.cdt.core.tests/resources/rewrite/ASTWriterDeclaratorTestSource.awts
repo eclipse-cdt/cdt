@@ -117,3 +117,32 @@ int&& foo(int&& a)
     char&& b;
 }
 
+//!ICPPASTFunctionDeclarator in member function declared final
+//%CPP
+struct S
+{
+    virtual void memFun() final;
+};
+
+//!ICPPASTFunctionDeclarator in member function declared override
+//%CPP
+struct S
+{
+    virtual void memFun() override;
+};
+
+//!ICPPASTFunctionDeclarator in member function declared override final
+//%CPP
+struct S
+{
+    virtual void memFun() override final;
+};
+
+//!ICPPASTFunctionDeclarator in member function definition declared final
+//%CPP
+struct S
+{
+    virtual void memFun() final
+    {
+    }
+};

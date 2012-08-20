@@ -181,3 +181,11 @@ decltype(i) j = 3;
 int i;
 typeof i j = 3;
 
+//!CPPCompositeTypeSpecifier declared final
+//%CPP
+class Base
+{
+};
+class TestClass final : public Base
+{
+};

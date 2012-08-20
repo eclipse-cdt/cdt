@@ -340,6 +340,11 @@ public class PDOMCPPTemplateTemplateParameter extends PDOMCPPBinding
 	}
 
 	@Override
+	public boolean isFinal() {
+		return false;
+	}
+
+	@Override
 	public ICPPTemplateParameter adaptTemplateParameter(ICPPTemplateParameter param) {
 		int pos = param.getParameterPosition();
 		ICPPTemplateParameter[] pars = getTemplateParameters();

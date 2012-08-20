@@ -42,6 +42,8 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
     private boolean isVolatile;
     private boolean isConst;
     private boolean isMutable;
+    private boolean isOverride;
+    private boolean isFinal;
     
     private ICPPFunctionScope scope;
     
@@ -66,6 +68,8 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
 		copy.isVolatile = isVolatile;
 		copy.isConst = isConst;
 		copy.isMutable = isMutable;
+		copy.isOverride = isOverride;
+		copy.isFinal = isFinal;
 
 		for (IASTParameterDeclaration param : getParameters()) {
 			copy.addParameterDeclaration(param == null ? null : param.copy(style));
@@ -293,5 +297,27 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
 			}
 		}
 		assert false;
+	}
+
+	@Override
+	public boolean isOverride() {
+		return isOverride;
+	}
+
+	@Override
+	public void setOverride(boolean value) {
+		assertNotFrozen();
+		this.isOverride = value;
+	}
+
+	@Override
+	public boolean isFinal() {
+		return isFinal;
+	}
+
+	@Override
+	public void setFinal(boolean value) {
+		assertNotFrozen();
+		this.isFinal = value;
 	}
 }

@@ -285,4 +285,9 @@ class PDOMCPPUnknownClassType extends PDOMCPPUnknownBinding
 	public boolean isAnonymous() {
 		return false;
 	}
+
+	@Override
+	public boolean isFinal() {
+		return false;
+	}
 }

@@ -57,4 +57,14 @@ public class CPPUnknownConstructor extends CPPUnknownFunction implements ICPPCon
 	public int getVisibility() {
 		return v_public;
 	}
+
+	@Override
+	public boolean isOverride() {
+		return false;
+	}
+
+	@Override
+	public boolean isFinal() {
+		return false;
+	}
 }

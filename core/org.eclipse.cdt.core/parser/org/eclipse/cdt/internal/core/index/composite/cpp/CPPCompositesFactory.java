@@ -233,7 +233,7 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 		throw new CompositingNotImplementedError();
 	}
 	
-	private ICPPEvaluation getCompositeEvaluation(ICPPEvaluation eval) {
+	public ICPPEvaluation getCompositeEvaluation(ICPPEvaluation eval) {
 		if (eval == null)
 			return null;
 		if (eval instanceof EvalBinary) {
@@ -425,16 +425,13 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 	public IValue getCompositeValue(IValue v) {
 		if (v == null)
 			return null;
-		
-		IBinding[] b= v.getUnknownBindings();
-		if (b.length == 0)
+
+		ICPPEvaluation eval = v.getEvaluation();
+		if (eval == null)
 			return v;
-		
-		ICPPUnknownBinding[] b2= new ICPPUnknownBinding[b.length];
-		for (int i = 0; i < b2.length; i++) {
-			b2[i]= (ICPPUnknownBinding) getCompositeBinding((IIndexFragmentBinding) b[i]);
-		}
-		return Value.fromInternalRepresentation(v.getInternalExpression(), b2);
+
+		eval = getCompositeEvaluation(eval);
+		return Value.fromInternalRepresentation(eval);
 	}
 
 	private ICPPNamespace[] getNamespaces(IBinding rbinding) throws CoreException {

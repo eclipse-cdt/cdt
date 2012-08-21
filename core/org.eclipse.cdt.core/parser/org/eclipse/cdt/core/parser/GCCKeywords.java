@@ -1,14 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2011 IBM Corporation and others.
+ * Copyright (c) 2002, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM Rational Software) - Initial API and implementation
- *    Ed Swartz (Nokia)
- *    Markus Schorn (Wind River Systems)
+ *     John Camelon (IBM Rational Software) - Initial API and implementation
+ *     Ed Swartz (Nokia)
+ *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser;
 
@@ -23,7 +24,7 @@ public class GCCKeywords {
 	public static final String __ATTRIBUTE__ = "__attribute__"; 
 	public static final String __DECLSPEC = "__declspec"; 
 
-	public static final char [] 
+	public static final char[] 
 		cpTYPEOF = 			TYPEOF.toCharArray(),
 		cp__ALIGNOF__ = 	__ALIGNOF__.toCharArray(),
 		cp__ATTRIBUTE__ = 	__ATTRIBUTE__.toCharArray(),
@@ -48,7 +49,7 @@ public class GCCKeywords {
 	/**
 	 * @since 5.3
 	 */
-	public static final char [] 
+	public static final char[] 
 		cp__has_nothrow_assign= 		"__has_nothrow_assign".toCharArray(),
 		cp__has_nothrow_copy= 			"__has_nothrow_copy".toCharArray(),
 		cp__has_nothrow_constructor= 	"__has_nothrow_constructor".toCharArray(),
@@ -65,4 +66,12 @@ public class GCCKeywords {
 		cp__is_pod= 					"__is_pod".toCharArray(),
 		cp__is_polymorphic= 			"__is_polymorphic".toCharArray(),
 		cp__is_union= 					"__is_union".toCharArray();
+
+	/**
+	 * @since 5.5
+	 */
+	public static final char[] 
+		cp__is_literal_type= 			"__is_literal_type".toCharArray(),
+		cp__is_standard_layout= 		"__is_standard_layout".toCharArray(),
+		cp__is_trivial= 			    "__is_trivial".toCharArray();
 }

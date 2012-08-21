@@ -672,6 +672,14 @@
       </actionSet>
    </extension>
 
+   <extension point="org.eclipse.ui.commands">
+      <command
+            categoryId="org.eclipse.debug.ui.category.run"
+            description="%command.refreshAll.description"
+            id="org.eclipse.cdt.dsf.debug.ui.refreshAll"
+            name="%command.refreshAll.name"/>
+   </extension>      
+      
    <!-- Debug perspective extension -->
    <extension
          point="org.eclipse.ui.perspectiveExtensions">

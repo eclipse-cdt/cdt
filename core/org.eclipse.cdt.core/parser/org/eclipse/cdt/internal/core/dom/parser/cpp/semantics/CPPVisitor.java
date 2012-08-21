@@ -13,7 +13,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.*;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.ALLCVQ;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.CVTYPE;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getNestedType;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getUltimateTypeUptoPointers;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -157,6 +161,7 @@ import org.eclipse.cdt.core.parser.util.AttributeUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
+import org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator;
@@ -191,8 +196,8 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPReferenceType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPScope;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateParameterMap;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTypeArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTypedef;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownTypeScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVariable;
@@ -996,7 +1001,8 @@ public class CPPVisitor extends ASTQueries {
 						return result;
 
 				}
-			} else if (node instanceof IASTParameterDeclaration) {
+			} else if (node instanceof IASTParameterDeclaration ||
+					node.getPropertyInParent() == ICPPASTFunctionDeclarator.NOEXCEPT_EXPRESSION) {
 			    IASTNode parent = node.getParent();
 			    if (parent instanceof ICPPASTFunctionDeclarator) {
 					IScope result = scopeViaFunctionDtor((ICPPASTFunctionDeclarator) parent);
@@ -1007,8 +1013,8 @@ public class CPPVisitor extends ASTQueries {
 			    }
 			} else if (node instanceof IASTInitializer) {
 				if (node instanceof ICPPASTConstructorChainInitializer) {
-					// The name of the member initializer is resolved in the scope of the
-					// owner of the ctor.
+					// The name of the member initializer is resolved in the scope of
+					// the owner of the ctor.
 					ICPPASTConstructorChainInitializer initializer = (ICPPASTConstructorChainInitializer) node;
 					IASTFunctionDefinition fdef= (IASTFunctionDefinition) initializer.getParent();
 					IBinding binding = fdef.getDeclarator().getName().resolveBinding();
@@ -2029,7 +2035,7 @@ public class CPPVisitor extends ASTQueries {
 					return new ProblemType(ISemanticProblem.TYPE_CANNOT_DEDUCE_AUTO_TYPE);
 				}
 				type = (IType) CPPTemplates.instantiate(initializer_list_template,
-						new ICPPTemplateArgument[] { new CPPTemplateArgument(type) }, initClause);
+						new ICPPTemplateArgument[] { new CPPTemplateTypeArgument(type) }, initClause);
 				if (type instanceof IProblemBinding) {
 					return new ProblemType(ISemanticProblem.TYPE_CANNOT_DEDUCE_AUTO_TYPE);
 				}
@@ -2058,7 +2064,7 @@ public class CPPVisitor extends ASTQueries {
 			type = t;
 		if (initClause instanceof ICPPASTInitializerList) {
 			type = (IType) CPPTemplates.instantiate(initializer_list_template,
-					new ICPPTemplateArgument[] { new CPPTemplateArgument(type) }, initClause);
+					new ICPPTemplateArgument[] { new CPPTemplateTypeArgument(type) }, initClause);
 		}
 		return decorateType(type, declSpec, declarator);
 	}
@@ -2236,7 +2242,10 @@ public class CPPVisitor extends ASTQueries {
 	}
 
 	private static IType getStdType(final IASTNode node, char[] name) {
-		IBinding[] std= node.getTranslationUnit().getScope().find(STD);
+		if (node == null)
+			return null;
+		ASTTranslationUnit ast = (ASTTranslationUnit) node.getTranslationUnit();
+		IBinding[] std= ast.getScope().find(STD);
 		for (IBinding binding : std) {
 			if (binding instanceof ICPPNamespace) {
 				final ICPPNamespaceScope scope = ((ICPPNamespace) binding).getNamespaceScope();

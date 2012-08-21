@@ -33,7 +33,7 @@ public class Linkage implements ILinkage {
 	}
 
 	public static String getLinkageName(int linkageID) throws CoreException {
-		switch(linkageID) {
+		switch (linkageID) {
 		case NO_LINKAGE_ID: return NO_LINKAGE_NAME;
 		case C_LINKAGE_ID: return C_LINKAGE_NAME;
 		case CPP_LINKAGE_ID: return CPP_LINKAGE_NAME;

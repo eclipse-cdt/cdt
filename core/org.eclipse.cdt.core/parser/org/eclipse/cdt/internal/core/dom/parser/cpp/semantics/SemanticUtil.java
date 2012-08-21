@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -62,7 +62,8 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPQualifierType;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateArgument;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTypeArgument;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 
@@ -100,12 +101,12 @@ public class SemanticUtil {
 	 * @param clazz
 	 * @return an array of conversion operators.
 	 */
-	public static final ICPPMethod[] getDeclaredConversionOperators(ICPPClassType clazz) throws DOMException {
+	public static final ICPPMethod[] getDeclaredConversionOperators(ICPPClassType clazz, IASTNode point) throws DOMException {
 		ICPPMethod[] methods= ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 		if (clazz instanceof ICPPDeferredClassInstance) {
 			clazz= (ICPPClassType) ((ICPPDeferredClassInstance) clazz).getTemplateDefinition();
 		}
-		ICPPMethod[] decs= clazz.getDeclaredMethods();
+		ICPPMethod[] decs= ClassTypeHelper.getDeclaredMethods(clazz, point);
 		if (decs != null) {
 			for (ICPPMethod method : decs) {
 				if (isConversionOperator(method)) {
@@ -123,11 +124,11 @@ public class SemanticUtil {
 	 * @param clazz
 	 * @return an array of conversion operators.
 	 */
-	public static ICPPMethod[] getConversionOperators(ICPPClassType clazz) throws DOMException {
+	public static ICPPMethod[] getConversionOperators(ICPPClassType clazz, IASTNode point) throws DOMException {
 		ICPPMethod[] methods= ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
-		ObjectSet<ICPPClassType> ancestry= inheritanceClosure(clazz);
+		ObjectSet<ICPPClassType> ancestry= inheritanceClosure(clazz, point);
 		for (int i = 0; i < ancestry.size(); i++) {
-			methods= ArrayUtil.addAll(methods, getDeclaredConversionOperators(ancestry.keyAt(i)));
+			methods= ArrayUtil.addAll(methods, getDeclaredConversionOperators(ancestry.keyAt(i), point));
 		}
 		return methods;
 	}
@@ -137,7 +138,7 @@ public class SemanticUtil {
 	 * @return the root and all its ancestor classes
 	 * @throws DOMException
 	 */
-	public static ObjectSet<ICPPClassType> inheritanceClosure(ICPPClassType root) throws DOMException {
+	public static ObjectSet<ICPPClassType> inheritanceClosure(ICPPClassType root, IASTNode point) throws DOMException {
 		ObjectSet<ICPPClassType> done= new ObjectSet<ICPPClassType>(2);
 		ObjectSet<ICPPClassType> current= new ObjectSet<ICPPClassType>(2);
 		current.put(root);
@@ -148,8 +149,8 @@ public class SemanticUtil {
 			for (int i = 0; i < current.size(); i++) {
 				ICPPClassType clazz= current.keyAt(i);				
 				done.put(clazz);
-				
-				for (ICPPBase base : clazz.getBases()) {
+
+				for (ICPPBase base : ClassTypeHelper.getBases(clazz, point)) {
 					IBinding binding= base.getBaseClass();
 					if (binding instanceof ICPPClassType && !(binding instanceof IProblemBinding)) {
 						ICPPClassType ct= (ICPPClassType) binding;
@@ -165,7 +166,7 @@ public class SemanticUtil {
 
 		return done;
 	}
-	
+
 	/**
 	 * @param method
 	 * @return true if the specified method is a conversion operator
@@ -511,7 +512,7 @@ public class SemanticUtil {
 			final IType type= arg.getTypeValue();
 			final IType newType= getSimplifiedType(type);
 			if (newType != type) {
-				return new CPPTemplateArgument(newType);
+				return new CPPTemplateTypeArgument(newType);
 			}
 		}
 		return arg;
@@ -622,11 +623,11 @@ public class SemanticUtil {
 	 * @return the number of edges in the inheritance graph, or -1 if the specified classes have
 	 * no inheritance relation
 	 */
-	public static final int calculateInheritanceDepth(IType type, IType baseClass) {
-		return calculateInheritanceDepth(CPPSemantics.MAX_INHERITANCE_DEPTH, new HashSet<Object>(), type, baseClass);
+	public static final int calculateInheritanceDepth(IType type, IType baseClass, IASTNode point) {
+		return calculateInheritanceDepth(CPPSemantics.MAX_INHERITANCE_DEPTH, new HashSet<Object>(), type, baseClass, point);
 	}
 	
-	private static final int calculateInheritanceDepth(int maxdepth, Set<Object> hashSet, IType type, IType baseClass) {
+	private static final int calculateInheritanceDepth(int maxdepth, Set<Object> hashSet, IType type, IType baseClass, IASTNode point) {
 		if (type == baseClass || type.isSameType(baseClass)) {
 			return 0;
 		}
@@ -637,7 +638,7 @@ public class SemanticUtil {
 				clazz= (ICPPClassType) ((ICPPDeferredClassInstance) clazz).getSpecializedBinding();
 			}
 			
-			for (ICPPBase cppBase : clazz.getBases()) {
+			for (ICPPBase cppBase : ClassTypeHelper.getBases(clazz, point)) {
 				IBinding base= cppBase.getBaseClass();
 				if (base instanceof IType && hashSet.add(base)) {
 					IType tbase= (IType) base;
@@ -648,7 +649,7 @@ public class SemanticUtil {
 					}
 	
 					if (tbase instanceof ICPPClassType) {
-						int n= calculateInheritanceDepth(maxdepth - 1, hashSet, tbase, baseClass);
+						int n= calculateInheritanceDepth(maxdepth - 1, hashSet, tbase, baseClass, point);
 						if (n > 0)
 							return n + 1;
 					}

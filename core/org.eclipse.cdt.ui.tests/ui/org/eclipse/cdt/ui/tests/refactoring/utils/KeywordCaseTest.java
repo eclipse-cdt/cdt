@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring.utils;
 
@@ -18,7 +18,6 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.IdentifierResult;
 
 /**
  * @author Thomas Corbat
- * 
  */
 public class KeywordCaseTest extends TestCase {
 
@@ -122,6 +121,8 @@ public class KeywordCaseTest extends TestCase {
 		assertTrue(result.getMessage(), IdentifierResult.KEYWORD == result.getResult());
 		result = IdentifierHelper.checkIdentifierName("typeid"); //$NON-NLS-1$
 		assertTrue(result.getMessage(), IdentifierResult.KEYWORD == result.getResult());
+		result = IdentifierHelper.checkIdentifierName("noexcept"); //$NON-NLS-1$
+		assertTrue(result.getMessage(), IdentifierResult.KEYWORD == result.getResult());
 		result = IdentifierHelper.checkIdentifierName("inline"); //$NON-NLS-1$
 		assertTrue(result.getMessage(), IdentifierResult.KEYWORD == result.getResult());
 		result = IdentifierHelper.checkIdentifierName("compl"); //$NON-NLS-1$
@@ -158,7 +159,5 @@ public class KeywordCaseTest extends TestCase {
 		assertTrue(result.getMessage(), IdentifierResult.KEYWORD == result.getResult());
 		result = IdentifierHelper.checkIdentifierName("public"); //$NON-NLS-1$
 		assertTrue(result.getMessage(), IdentifierResult.KEYWORD == result.getResult());
-
 	}
-
 }

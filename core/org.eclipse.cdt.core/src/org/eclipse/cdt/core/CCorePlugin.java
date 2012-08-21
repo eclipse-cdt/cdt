@@ -95,7 +95,6 @@ import com.ibm.icu.text.MessageFormat;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class CCorePlugin extends Plugin {
-
 	public static final int STATUS_CDTPROJECT_EXISTS = 1;
 	public static final int STATUS_CDTPROJECT_MISMATCH = 2;
 	public static final int CDT_PROJECT_NATURE_ID_MISMATCH = 3;
@@ -298,7 +297,6 @@ public class CCorePlugin extends Plugin {
 	public static CCorePlugin getDefault() {
 		return fgCPlugin;
 	}
-
 
 	/**
 	 * @see Plugin#shutdown
@@ -509,7 +507,6 @@ public class CCorePlugin extends Plugin {
         // persist options
         getDefault().savePluginPreferences();
     }
-
 
 	/**
 	 * Create CDT console adapter for build console defined as an extension.
@@ -833,61 +830,61 @@ public class CCorePlugin extends Plugin {
 			final IProject projectHandle,
 			final String bsId,
 			IProgressMonitor monitor)
-			throws CoreException, OperationCanceledException {
+					throws CoreException, OperationCanceledException {
 
-			getWorkspace().run(new IWorkspaceRunnable() {
-				@Override
-				public void run(IProgressMonitor monitor) throws CoreException {
-					try {
-						if (monitor == null) {
-							monitor = new NullProgressMonitor();
-						}
-						monitor.beginTask("Creating C Project...", 3); //$NON-NLS-1$
-						if (!projectHandle.exists()) {
-							projectHandle.create(description, new SubProgressMonitor(monitor, 1));
-						}
-
-						if (monitor.isCanceled()) {
-							throw new OperationCanceledException();
-						}
-
-						// Open first.
-						projectHandle.open(IResource.BACKGROUND_REFRESH, new SubProgressMonitor(monitor, 1));
-
-//						mapCProjectOwner(projectHandle, projectID, false);
-
-						// Add C Nature ... does not add duplicates
-						CProjectNature.addCNature(projectHandle, new SubProgressMonitor(monitor, 1));
-
-						if(bsId != null){
-							ICProjectDescription projDes = createProjectDescription(projectHandle, true);
-							ICConfigurationDescription cfgs[] = projDes.getConfigurations();
-							ICConfigurationDescription cfg = null;
-							for (ICConfigurationDescription cfg2 : cfgs) {
-								if(bsId.equals(cfg2.getBuildSystemId())){
-									cfg = cfg2;
-									break;
-								}
-							}
-
-							if(cfg == null){
-								ICConfigurationDescription prefCfg = getPreferenceConfiguration(bsId);
-								if(prefCfg != null){
-									cfg = projDes.createConfiguration(CDataUtil.genId(prefCfg.getId()), prefCfg.getName(), prefCfg);
-								}
-							}
-
-							if(cfg != null){
-								setProjectDescription(projectHandle, projDes);
-							}
-						}
-					} finally {
-						monitor.done();
+		getWorkspace().run(new IWorkspaceRunnable() {
+			@Override
+			public void run(IProgressMonitor monitor) throws CoreException {
+				try {
+					if (monitor == null) {
+						monitor = new NullProgressMonitor();
 					}
+					monitor.beginTask("Creating C Project...", 3); //$NON-NLS-1$
+					if (!projectHandle.exists()) {
+						projectHandle.create(description, new SubProgressMonitor(monitor, 1));
+					}
+
+					if (monitor.isCanceled()) {
+						throw new OperationCanceledException();
+					}
+
+					// Open first.
+					projectHandle.open(IResource.BACKGROUND_REFRESH, new SubProgressMonitor(monitor, 1));
+
+					//						mapCProjectOwner(projectHandle, projectID, false);
+
+					// Add C Nature ... does not add duplicates
+					CProjectNature.addCNature(projectHandle, new SubProgressMonitor(monitor, 1));
+
+					if (bsId != null){
+						ICProjectDescription projDes = createProjectDescription(projectHandle, true);
+						ICConfigurationDescription cfgs[] = projDes.getConfigurations();
+						ICConfigurationDescription cfg = null;
+						for (ICConfigurationDescription cfg2 : cfgs) {
+							if (bsId.equals(cfg2.getBuildSystemId())){
+								cfg = cfg2;
+								break;
+							}
+						}
+
+						if (cfg == null){
+							ICConfigurationDescription prefCfg = getPreferenceConfiguration(bsId);
+							if (prefCfg != null){
+								cfg = projDes.createConfiguration(CDataUtil.genId(prefCfg.getId()), prefCfg.getName(), prefCfg);
+							}
+						}
+
+						if (cfg != null){
+							setProjectDescription(projectHandle, projDes);
+						}
+					}
+				} finally {
+					monitor.done();
 				}
-			}, getWorkspace().getRoot(), 0, monitor);
-			return projectHandle;
-		}
+			}
+		}, getWorkspace().getRoot(), 0, monitor);
+		return projectHandle;
+	}
 
 	/**
 	 * Method convertProjectFromCtoCC converts
@@ -899,7 +896,6 @@ public class CCorePlugin extends Plugin {
 	 * @param monitor
 	 * @throws CoreException
 	 */
-
 	public void convertProjectFromCtoCC(IProject projectHandle, IProgressMonitor monitor) throws CoreException {
 		if ((projectHandle != null)
 			&& projectHandle.hasNature(CProjectNature.C_NATURE_ID)
@@ -974,7 +970,7 @@ public class CCorePlugin extends Plugin {
 				for (IConfigurationElement configElement : configElements) {
 					if (configElement.getName().equals("processList")) { //$NON-NLS-1$
 						String platform = configElement.getAttribute("platform"); //$NON-NLS-1$
-						if (platform == null ) { // first contributor found with not platform will be default.
+						if (platform == null) { // first contributor found with not platform will be default.
 							if (defaultContributor == null) {
 								defaultContributor = configElement;
 							}
@@ -985,12 +981,11 @@ public class CCorePlugin extends Plugin {
 					}
 				}
 			}
-			if ( defaultContributor != null) {
+			if (defaultContributor != null) {
 				return (IProcessList) defaultContributor.createExecutableExtension("class"); //$NON-NLS-1$
 			}
 		}
 		return null;
-
 	}
 
 	/**
@@ -1024,7 +1019,7 @@ public class CCorePlugin extends Plugin {
 		try {
 			// Look up in session property for previously created provider
 			QualifiedName scannerInfoProviderName = new QualifiedName(PLUGIN_ID, SCANNER_INFO_PROVIDER2_NAME);
-			provider = (IScannerInfoProvider)project.getSessionProperty(scannerInfoProviderName);
+			provider = (IScannerInfoProvider) project.getSessionProperty(scannerInfoProviderName);
 			if (provider != null)
 				return provider;
 
@@ -1117,8 +1112,6 @@ public class CCorePlugin extends Plugin {
 		CContentTypes.setUseProjectSpecificContentTypes(project, val);
 	}
 
-
-
 	private static final String MODEL = CCorePlugin.PLUGIN_ID + "/debug/model" ; //$NON-NLS-1$
 	private static final String PARSER = CCorePlugin.PLUGIN_ID + "/debug/parser" ; //$NON-NLS-1$
 	private static final String PARSER_EXCEPTIONS = CCorePlugin.PLUGIN_ID + "/debug/parser/exceptions" ; //$NON-NLS-1$
@@ -1130,27 +1123,25 @@ public class CCorePlugin extends Plugin {
 	 * Configure the plug-in with respect to option settings defined in ".options" file
 	 */
 	public void configurePluginDebugOptions() {
-
-		if(CCorePlugin.getDefault().isDebugging()) {
+		if (CCorePlugin.getDefault().isDebugging()) {
 			String option = Platform.getDebugOption(PARSER);
-			if(option != null) Util.VERBOSE_PARSER = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
+			if (option != null) Util.VERBOSE_PARSER = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
 
 			option = Platform.getDebugOption(PARSER_EXCEPTIONS);
-			if( option != null ) Util.PARSER_EXCEPTIONS = option.equalsIgnoreCase("true"); //$NON-NLS-1$
+			if (option != null) Util.PARSER_EXCEPTIONS = option.equalsIgnoreCase("true"); //$NON-NLS-1$
 
 			option = Platform.getDebugOption(SCANNER);
-			if( option != null ) Util.VERBOSE_SCANNER = option.equalsIgnoreCase("true"); //$NON-NLS-1$
+			if (option != null) Util.VERBOSE_SCANNER = option.equalsIgnoreCase("true"); //$NON-NLS-1$
 
 			option = Platform.getDebugOption(MODEL);
-			if(option != null) Util.VERBOSE_MODEL = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
+			if (option != null) Util.VERBOSE_MODEL = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
 
 			option = Platform.getDebugOption(DELTA);
-			if(option != null) Util.VERBOSE_DELTA= option.equalsIgnoreCase("true") ; //$NON-NLS-1$
-
+			if (option != null) Util.VERBOSE_DELTA= option.equalsIgnoreCase("true") ; //$NON-NLS-1$
 		}
 	}
 
-	// Preference to turn on/off the use of structural parse mode to build the CModel
+	// Preference to turn on/off the use of structural parse mode to build the CModel.
 	public void setStructuralParseMode(boolean useNewParser) {
 		getPluginPreferences().setValue(PREF_USE_STRUCTURAL_PARSE_MODE, useNewParser);
 		savePluginPreferences();

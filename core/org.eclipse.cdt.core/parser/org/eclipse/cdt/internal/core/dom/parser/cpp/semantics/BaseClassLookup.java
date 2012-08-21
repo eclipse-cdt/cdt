@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -29,6 +30,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknownScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
@@ -69,14 +71,17 @@ class BaseClassLookup {
 	private IBinding[] fBindings;
 	private List<BaseClassLookup> fChildren= Collections.emptyList();
 	private BitSet fVirtual;
-	private boolean fHiddenAsVirtualBase= false;
-	private boolean fPropagationDone= false;
+	private boolean fHiddenAsVirtualBase;
+	private boolean fPropagationDone;
 	private boolean fCollected;
 	private boolean fCollectedAsRegularBase;
+	private final IASTNode fLookupPoint;
 
-	private BaseClassLookup(ICPPClassType type) {
+	private BaseClassLookup(ICPPClassType type, IASTNode lookupPoint) {
 		fClassType= type;
+		fLookupPoint= lookupPoint;
 	}
+
 	ICPPClassType getClassType() {
 		return fClassType;
 	}
@@ -84,9 +89,11 @@ class BaseClassLookup {
 	IBinding[] getResult() {
 		return fBindings;
 	}
+
 	boolean containsVirtualBase() {
 		return (fVirtual != null && fVirtual.nextSetBit(0) >= 0);
 	}
+
 	boolean hasMatches() {
 		return fBindings != null && fBindings.length > 0 && fBindings[0] != null;
 	}
@@ -110,6 +117,7 @@ class BaseClassLookup {
 	public void setHiddenAsVirtualBase() {
 		fHiddenAsVirtualBase= true;
 	}
+
 	public void propagateHiddenAsVirtual() {
 		if (fPropagationDone)
 			return;
@@ -135,8 +143,8 @@ class BaseClassLookup {
 		return false;
 	}
 	
-	static BaseClassLookup lookupInBaseClass(LookupData data, ICPPClassScope baseClassScope, boolean isVirtual,
-			ICPPClassType root, HashMap<IScope, BaseClassLookup> infoMap, int depth) {
+	static BaseClassLookup lookupInBaseClass(LookupData data, ICPPClassScope baseClassScope,
+			boolean isVirtual, ICPPClassType root, HashMap<IScope, BaseClassLookup> infoMap, int depth) {
 		if (depth++ > CPPSemantics.MAX_INHERITANCE_DEPTH)
 			return null;
 	
@@ -157,10 +165,10 @@ class BaseClassLookup {
 		BaseClassLookup result;
 		IBinding[] matches= IBinding.EMPTY_BINDING_ARRAY;
 		if (baseClassScope == null) {
-			result= new BaseClassLookup(root);
+			result= new BaseClassLookup(root, data.getLookupPoint());
 			infoMap.put(root.getCompositeScope(), result);
 		} else {
-			result= new BaseClassLookup(baseClassScope.getClassType());
+			result= new BaseClassLookup(baseClassScope.getClassType(), data.getLookupPoint());
 			infoMap.put(baseClassScope, result);
 			try {
 				IBinding[] members= CPPSemantics.getBindingsFromScope(baseClassScope, data);
@@ -181,8 +189,7 @@ class BaseClassLookup {
 		// base-classes
 		ICPPClassType baseClass= result.getClassType();
 		if (baseClass != null) { 
-			ICPPBase[] grandBases= null;
-			grandBases= baseClass.getBases();
+			ICPPBase[] grandBases= ClassTypeHelper.getBases(baseClass, data.getLookupPoint());
 			if (grandBases != null && grandBases.length > 0) {
 				HashSet<IBinding> grandBaseBindings= null;
 				BitSet selectedBases= null;
@@ -285,7 +292,7 @@ class BaseClassLookup {
 		
 		if (fClassType != null) { 
 			ICPPBase[] bases= null;
-			bases= fClassType.getBases();
+			bases= ClassTypeHelper.getBases(fClassType, fLookupPoint);
 			if (bases != null && bases.length > 0) {
 				for (ICPPBase base : bases) {
 					IBinding baseBinding = base.getBaseClass();
@@ -306,7 +313,7 @@ class BaseClassLookup {
 						baseInfo.propagateHiddenAsVirtual();
 					} else {
 						// mark to catch recursions
-						baseInfo= new BaseClassLookup(baseClass);
+						baseInfo= new BaseClassLookup(baseClass, fLookupPoint);
 						infoMap.put(baseScope, baseInfo);
 						baseInfo.hideVirtualBases(infoMap, depth);
 					}
@@ -314,6 +321,7 @@ class BaseClassLookup {
 			}
 		}
 	}
+
 	public void collectResultForContentAssist(LookupData data) {
 		if (fCollected)
 			return;

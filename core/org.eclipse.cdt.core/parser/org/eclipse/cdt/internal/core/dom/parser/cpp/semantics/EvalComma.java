@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
@@ -18,7 +19,9 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
@@ -123,12 +126,18 @@ public class EvalComma extends CPPEvaluation {
 				return typeFromFunctionCall(last);
 			}
 		}
-		return fArguments[fArguments.length-1].getTypeOrFunctionSet(point);
+		return fArguments[fArguments.length - 1].getTypeOrFunctionSet(point);
 	}
 
 	@Override
 	public IValue getValue(IASTNode point) {
-		return Value.create(this, point);
+		ICPPFunction[] overloads = getOverloads(point);
+		if (overloads.length > 0) {
+			// TODO(sprigogin): Simulate execution of a function call.
+			return Value.create(this);
+		}
+
+		return fArguments[fArguments.length - 1].getValue(point);
 	}
 
 	@Override
@@ -140,7 +149,7 @@ public class EvalComma extends CPPEvaluation {
 				return valueCategoryFromFunctionCall(last);
 			}
 		}
-		return fArguments[fArguments.length-1].getValueCategory(point);
+		return fArguments[fArguments.length - 1].getValueCategory(point);
 	}
 
 	@Override
@@ -159,5 +168,42 @@ public class EvalComma extends CPPEvaluation {
 			args[i]= (ICPPEvaluation) buffer.unmarshalEvaluation();
 		}
 		return new EvalComma(args);
+	}
+
+	@Override
+	public ICPPEvaluation instantiate(ICPPTemplateParameterMap tpMap, int packOffset,
+			ICPPClassSpecialization within, int maxdepth, IASTNode point) {
+		ICPPEvaluation[] args = fArguments;
+		for (int i = 0; i < fArguments.length; i++) {
+			ICPPEvaluation arg = fArguments[i].instantiate(tpMap, packOffset, within, maxdepth, point);
+			if (arg != fArguments[i]) {
+				if (args == fArguments) {
+					args = new ICPPEvaluation[fArguments.length];
+					System.arraycopy(fArguments, 0, args, 0, fArguments.length);
+				}
+				args[i] = arg;
+			}
+		}
+		if (args == fArguments)
+			return this;
+		return new EvalComma(args);
+	}
+
+	@Override
+	public int determinePackSize(ICPPTemplateParameterMap tpMap) {
+		int r = CPPTemplates.PACK_SIZE_NOT_FOUND;
+		for (ICPPEvaluation arg : fArguments) {
+			r = CPPTemplates.combinePackSize(r, arg.determinePackSize(tpMap));
+		}
+		return r;
+	}
+
+	@Override
+	public boolean referencesTemplateParameter() {
+		for (ICPPEvaluation arg : fArguments) {
+			if (arg.referencesTemplateParameter())
+				return true;
+		}
+		return false;
 	}
 }

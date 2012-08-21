@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -17,6 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
@@ -32,6 +34,7 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
 		IASTAmbiguityParent {
     private ICPPASTParameterDeclaration[] parameters;
     private IASTTypeId[] typeIds = NO_EXCEPTION_SPECIFICATION;
+    private ICPPASTExpression noexceptExpression;
     private IASTTypeId trailingReturnType;
     
     private boolean varArgs;
@@ -64,10 +67,16 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
 		copy.isConst = isConst;
 		copy.isMutable = isMutable;
 
-		for (IASTParameterDeclaration param : getParameters())
+		for (IASTParameterDeclaration param : getParameters()) {
 			copy.addParameterDeclaration(param == null ? null : param.copy(style));
-		for (IASTTypeId typeId : getExceptionSpecification())
+		}
+		for (IASTTypeId typeId : getExceptionSpecification()) {
 			copy.addExceptionSpecificationTypeId(typeId == null ? null : typeId.copy(style));
+		}
+		if (noexceptExpression != null) {
+			copy.setNoexceptExpression(noexceptExpression == NOEXCEPT_DEFAULT ?
+					noexceptExpression : (ICPPASTExpression) noexceptExpression.copy(style));
+		}
 		if (trailingReturnType != null) {
 			copy.setTrailingReturnType(trailingReturnType.copy(style));
 		}
@@ -160,8 +169,23 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
 			typeId.setPropertyInParent(EXCEPTION_TYPEID);
     	}
     }
-    
-    @Override
+
+	@Override
+	public ICPPASTExpression getNoexceptExpression() {
+		return noexceptExpression;
+	}
+
+	@Override
+	public void setNoexceptExpression(ICPPASTExpression expression) {
+		assertNotFrozen();
+		noexceptExpression = expression;
+		if (expression != null && expression != NOEXCEPT_DEFAULT) {
+			expression.setParent(this);
+			expression.setPropertyInParent(NOEXCEPT_EXPRESSION);
+		}
+	}
+
+	@Override
 	public IASTTypeId getTrailingReturnType() {
 		return trailingReturnType;
 	}
@@ -242,6 +266,11 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
 		IASTTypeId[] ids = getExceptionSpecification();
 		for (int i = 0; i < ids.length; i++) {
 			if (!ids[i].accept(action))
+				return false;
+		}
+
+		if (noexceptExpression != null && noexceptExpression != NOEXCEPT_DEFAULT) {
+			if (!noexceptExpression.accept(action))
 				return false;
 		}
 		

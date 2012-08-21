@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFile;
+import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
@@ -315,18 +316,21 @@ public class TestSourceReader {
 	 * @since 4.0
 	 */
 	public static void waitUntilFileIsIndexed(IIndex index, IFile file, int maxmillis) throws Exception {
+		long fileTimestamp = file.getLocalTimeStamp();
+		IIndexFileLocation indexFileLocation = IndexLocationFactory.getWorkspaceIFL(file);
+
 		long endTime= System.currentTimeMillis() + maxmillis;
 		int timeLeft= maxmillis;
 		while (timeLeft >= 0) {
 			Assert.assertTrue(CCorePlugin.getIndexManager().joinIndexer(timeLeft, new NullProgressMonitor()));
 			index.acquireReadLock();
 			try {
-				IIndexFile[] files= index.getFiles(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(file));
-				if (files.length > 0 && areAllFilesNotOlderThan(files, file.getLocalTimeStamp())) {
+				IIndexFile[] files= index.getFiles(ILinkage.CPP_LINKAGE_ID, indexFileLocation);
+				if (files.length > 0 && areAllFilesNotOlderThan(files, fileTimestamp)) {
 					return;
 				}
-				files= index.getFiles(ILinkage.C_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(file));
-				if (files.length > 0 && areAllFilesNotOlderThan(files, file.getLocalTimeStamp())) {
+				files= index.getFiles(ILinkage.C_LINKAGE_ID, indexFileLocation);
+				if (files.length > 0 && areAllFilesNotOlderThan(files, fileTimestamp)) {
 					return;
 				}
 			} finally {

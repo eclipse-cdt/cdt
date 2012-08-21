@@ -15,14 +15,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
-import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
-import org.eclipse.cdt.dsf.debug.ui.viewmodel.expression.ExpressionVMProvider;
-import org.eclipse.cdt.dsf.debug.ui.viewmodel.expression.ExpressionsChangedEvent;
-import org.eclipse.cdt.dsf.debug.ui.viewmodel.expression.InvalidExpressionVMContext;
-import org.eclipse.cdt.dsf.ui.concurrent.ViewerCountingRequestMonitor;
+import org.eclipse.cdt.dsf.ui.concurrent.ViewerDataRequestMonitor;
 import org.eclipse.cdt.dsf.ui.viewmodel.AbstractVMContext;
 import org.eclipse.cdt.dsf.ui.viewmodel.AbstractVMNode;
 import org.eclipse.cdt.dsf.ui.viewmodel.IVMNode;
@@ -38,6 +34,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProv
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.jface.viewers.TreePath;
 
 /**
@@ -90,6 +87,10 @@ public class SingleExpressionVMNode extends AbstractVMNode implements IElementLa
             return getVMNode().hashCode() + fDmc.hashCode(); 
 		}
 
+        @Override
+        public String toString() {
+            return fDmc.toString();
+        }		
 	}
 
 	private static class SimpleExpression implements IExpression {
@@ -141,27 +142,8 @@ public class SingleExpressionVMNode extends AbstractVMNode implements IElementLa
         }
 	}
 
-	private static class SingleExpressionManager {
-		private static final IExpression[] NO_EXPRESSIONS = {};
-		IExpression fExpression;
-		public IExpression[] getExpressions() {
-			if (fExpression != null) {
-				return new IExpression[] { fExpression };
-			}
-			return NO_EXPRESSIONS;
-		}
-		public void setExpression(IExpression expression) {
-			fExpression = expression;
-		}
-
-	}
-
-	/** Local reference to the expression manager */ 
-    private final SingleExpressionManager fManager;
-    
     public SingleExpressionVMNode(ExpressionVMProvider provider) {
         super(provider);
-        fManager = new SingleExpressionManager();
     }
 
 	@Override
@@ -173,14 +155,21 @@ public class SingleExpressionVMNode extends AbstractVMNode implements IElementLa
         return (ExpressionVMProvider)getVMProvider();
     }
 
+    private IExpressionDMContext getUpdateExpressionDMC(IViewerUpdate update) {
+        if (update.getElement() instanceof IDMVMContext) {
+            IDMContext dmc = ((IDMVMContext)update.getElement()).getDMContext();
+            if (dmc instanceof IExpressionDMContext) {
+                return (IExpressionDMContext)dmc;
+            }
+        }
+        return null;
+    }
+
+
     @Override
 	public void update(IHasChildrenUpdate[] updates) {
-        // Test availability of children based on whether there are any expressions 
-        // in the manager.  We assume that the getExpressions() will just read 
-        // local state data, so we don't bother using a job to perform this 
-        // operation.
         for (int i = 0; i < updates.length; i++) {
-            updates[i].setHasChilren(fManager.getExpressions().length != 0);
+            updates[i].setHasChilren(getUpdateExpressionDMC(updates[i]) != null);
             updates[i].done();
         }
     }
@@ -192,7 +181,7 @@ public class SingleExpressionVMNode extends AbstractVMNode implements IElementLa
 
             // We assume that the getExpressions() will just read local state data,
             // so we don't bother using a job to perform this operation.
-            update.setChildCount(fManager.getExpressions().length);
+            update.setChildCount(getUpdateExpressionDMC(update) != null ? 1 : 0);
             update.done();
         }
     }
@@ -200,62 +189,38 @@ public class SingleExpressionVMNode extends AbstractVMNode implements IElementLa
     @Override
 	public void update(final IChildrenUpdate[] updates) {
         for (IChildrenUpdate update : updates) {
-            doUpdateChildren(update);
+            IExpressionDMContext dmc = getUpdateExpressionDMC(update);
+            if (dmc != null) {
+                doUpdateChildren(update, new SimpleExpression(dmc.getExpression()));                
+            }
+            else {
+                handleFailedUpdate(update);
+            }
         }        
     }
     
-    public void doUpdateChildren(final IChildrenUpdate update) {
-        final IExpression[] expressions = fManager.getExpressions();
-        
-        // For each (expression) element in update, find the layout node that can 
-        // parse it.  And for each expression that has a corresponding layout node, 
-        // call IExpressionLayoutNode#getElementForExpression to generate a VMC.
-        // Since the last is an async call, we need to create a multi-RM to wait
-        // for all the calls to complete.
-        final CountingRequestMonitor multiRm = new ViewerCountingRequestMonitor(getVMProvider().getExecutor(), update);
-        int multiRmCount = 0;
-        
-        int lowOffset= update.getOffset();
-        if (lowOffset < 0) {
-        	lowOffset = 0;
-        }
-		int length= update.getLength();
-		if (length <= 0) {
-			length = expressions.length;
-		}
-		final int highOffset= lowOffset + length;
-		for (int i = lowOffset; i < highOffset && i < expressions.length + 1; i++) {
-            if (i < expressions.length) {
-                multiRmCount++;
-                final int childIndex = i;
-                final IExpression expression = expressions[i];
-                // getElementForExpression() accepts a IElementsUpdate as an argument.
-                // Construct an instance of VMElementsUpdate which will call a 
-                // the request monitor when it is finished.  The request monitor
-                // will in turn set the element in the update argument in this method. 
-                ((ExpressionVMProvider)getVMProvider()).update(
-                    new VMExpressionUpdate(
-                        update, expression,
-                        new DataRequestMonitor<Object>(getVMProvider().getExecutor(), multiRm) {
-                            @Override
-                            protected void handleSuccess() {
-                                update.setChild(getData(), childIndex);
-                                multiRm.done();
-                            } 
-                            
-                            @Override
-                            protected void handleError() {
-                                update.setChild(new InvalidExpressionVMContext(SingleExpressionVMNode.this, expression), childIndex);                                
-                                multiRm.done();
-                            }
-                        })
-                    );
-            }
-        }
-
-        // If no expressions were parsed, we're finished.
-        // Set the count to the counting RM.
-        multiRm.setDoneCount(multiRmCount);
+    public void doUpdateChildren(final IChildrenUpdate update, final IExpression expression) {
+        // getElementForExpression() accepts a IElementsUpdate as an argument.
+        // Construct an instance of VMElementsUpdate which will call a 
+        // the request monitor when it is finished.  The request monitor
+        // will in turn set the element in the update argument in this method. 
+        ((ExpressionVMProvider)getVMProvider()).update(
+            new VMExpressionUpdate(
+                update, expression,
+                new ViewerDataRequestMonitor<Object>(getVMProvider().getExecutor(), update) {
+                    @Override
+                    protected void handleSuccess() {
+                        update.setChild(getData(), 0);
+                        update.done();
+                    } 
+                    
+                    @Override
+                    protected void handleError() {
+                        update.setChild(new InvalidExpressionVMContext(SingleExpressionVMNode.this, expression), 0);
+                        update.done();
+                    }
+                })
+            );
     }
 
     @Override
@@ -267,7 +232,7 @@ public class SingleExpressionVMNode extends AbstractVMNode implements IElementLa
         	update.done();
         }
     }
-
+    
     @Override
     public int getDeltaFlags(Object event) {
         int retVal = 0;
@@ -277,40 +242,47 @@ public class SingleExpressionVMNode extends AbstractVMNode implements IElementLa
             retVal |= IModelDelta.ADDED | IModelDelta.REMOVED | IModelDelta.INSERTED | IModelDelta.CONTENT ;
         }
 
-        for (IExpression expression : fManager.getExpressions()) {
-            retVal |= getExpressionVMProvider().getDeltaFlagsForExpression(expression, event);
+        // The expression in the hover is not known here, so assume that all 
+        // expression nodes need to provide delta flags for event.  Iterate 
+        // through them here and collect the flags.
+        for (IExpressionVMNode node : getExpressionVMProvider().getExpressionNodes()) {
+            retVal |= getDeltaFlagsForNode(node, event);
         }
         
         return retVal;
     }
 
+    private int getDeltaFlagsForNode(IVMNode node, Object event) {
+        int retVal = node.getDeltaFlags(event);
+        for (IVMNode child : getVMProvider().getChildVMNodes(node)) {
+            if (!node.equals(child)) {
+                retVal |= getDeltaFlagsForNode(child, event);
+            }
+        }
+        return retVal;
+    }
+    
     @Override
     public void buildDelta(final Object event, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor requestMonitor) {
         if (event instanceof ExpressionsChangedEvent) {
             buildDeltaForExpressionsChangedEvent((ExpressionsChangedEvent)event, parentDelta, nodeOffset, requestMonitor);
         } else {
-        
-            // For each expression, find its corresponding node and ask that
-            // layout node for its delta flags for given event.  If there are delta flags to be 
-            // generated, call the asynchronous method to do so.
-            CountingRequestMonitor multiRm = new CountingRequestMonitor(getExecutor(), requestMonitor);
-            
-            int buildDeltaForExpressionCallCount = 0;
-            
-            IExpression[] expressions = fManager.getExpressions();
-            for (int i = 0; i < expressions.length; i++ ) {
-                int flags = getExpressionVMProvider().getDeltaFlagsForExpression(expressions[i], event);
-                // If the given expression has no delta flags, skip it.
-                if (flags == IModelDelta.NO_CHANGE) continue;
-    
-                int elementOffset = nodeOffset >= 0 ? nodeOffset + i : -1;
-                getExpressionVMProvider().buildDeltaForExpression(
-                    expressions[i], elementOffset, event, parentDelta, getTreePathFromDelta(parentDelta), 
-                    new RequestMonitor(getExecutor(), multiRm));
-                buildDeltaForExpressionCallCount++;
+            Object parent = parentDelta.getElement();
+            if (parent instanceof IDMVMContext) {
+                IDMContext dmc = ((IDMVMContext)parent).getDMContext();
+                if (dmc instanceof IExpressionDMContext) {
+                    IExpression expression = new SimpleExpression( ((IExpressionDMContext)dmc).getExpression() );
+                    int flags = getExpressionVMProvider().getDeltaFlagsForExpression(expression, event);
+                    // If the given expression has no delta flags, skip it.
+                    if (flags != IModelDelta.NO_CHANGE) {
+                        getExpressionVMProvider().buildDeltaForExpression(
+                            expression, nodeOffset, event, parentDelta, getTreePathFromDelta(parentDelta), 
+                            requestMonitor);
+                        return;
+                    }
+                }
             }
-            
-            multiRm.setDoneCount(buildDeltaForExpressionCallCount);
+            requestMonitor.done();
         }
     }
     
@@ -340,16 +312,8 @@ public class SingleExpressionVMNode extends AbstractVMNode implements IElementLa
         return new TreePath(elementList.toArray());
     }
 
-	protected void updateElementsInSessionThread(IChildrenUpdate update) {
-        doUpdateChildren(update);
-	}
-
 	public IDMVMContext createVMContext(IDMContext dmc) {
         return new RootDMVMContext(getVMProvider().getRootVMNode(), dmc);
     }
 
-    public void setExpression(IExpressionDMContext dmc) {
-		String text = dmc.getExpression();
-		fManager.setExpression(new SimpleExpression(text));
-    }
 }

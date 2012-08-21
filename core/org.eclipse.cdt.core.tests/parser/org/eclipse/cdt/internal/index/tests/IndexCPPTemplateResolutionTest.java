@@ -3,20 +3,21 @@
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html 
+ * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
  *    Andrew Ferguson (Symbian) - Initial implementation
  *    Markus Schorn (Wind River Systems)
+ *    Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.index.tests;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
-import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
@@ -56,35 +57,36 @@ import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateArgument;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTypeArgument;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.core.runtime.CoreException;
 
-
 /**
  * Tests for exercising resolution of template bindings against IIndex
  */
 public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBase {
+
 	public static class SingleProject extends IndexCPPTemplateResolutionTest {
 		public SingleProject() {setStrategy(new SinglePDOMTestStrategy(true));}
 		public static TestSuite suite() {return suite(SingleProject.class);}
 	}
-	
+
 	public static class ProjectWithDepProj extends IndexCPPTemplateResolutionTest {
 		public ProjectWithDepProj() {setStrategy(new ReferencedProject(true));}
 		public static TestSuite suite() {return suite(ProjectWithDepProj.class);}
-		
+	
 		@Override
 		public void testDefaultTemplateArgInHeader_264988() throws Exception {
 			// Not supported across projects (the composite index does not merge
 			// default values of template parameters).
 		}
 	}
-	
-	public static void addTests(TestSuite suite) {		
+
+	public static void addTests(TestSuite suite) {	
 		suite.addTest(SingleProject.suite());
 		suite.addTest(ProjectWithDepProj.suite());
 	}
@@ -92,7 +94,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	public IndexCPPTemplateResolutionTest() {
 		setStrategy(new ReferencedProject(true));
 	}
-	
+
     // template<typename _TpAllocator>
     // struct Allocator {
     //   typedef _TpAllocator& alloc_reference;
@@ -145,7 +147,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		assertInstance(type, IBasicType.class);
 		assertEquals("int", ASTTypeUtil.getType(type));
     }
-	
+
     // template<typename _TpAllocatorForward>
     // class Allocator;
     //
@@ -251,17 +253,17 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		IBinding b0= getBindingFromASTName("C1<char> c1", 8);
 		IBinding b1= getBindingFromASTName("m1(\"aaa\")", 2);
     	IBinding b2= getBindingFromASTName("m2(\"aaa\")", 2);
-    	
+    
     	assertEquals(1, getIndex().findNames(b1, IIndex.FIND_REFERENCES).length);
     	assertEquals(1, getIndex().findNames(b2, IIndex.FIND_REFERENCES).length);
 	}
-	
-	
+
+
 	// template<typename T>
 	// class X {
 	//    public: static void foo() {}
 	// };
-	
+
 	// class A{};
 	// void bar() {
 	//   X<A>::foo();
@@ -270,12 +272,12 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		IBinding b0= getBindingFromASTName("foo()", 3);
 		assertInstance(b0, ICPPMethod.class);
 	}
-	
+
 	// template<typename T>
 	// class StrT {
 	//   public: void assign(const T* s) {}
 	// };
-	
+
     // #include "header.h"
 	// void main() {
 	//   StrT<char> x;
@@ -291,7 +293,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 
 	// template<typename T>
 	// class X {};
-	
+
 	// class A{};
 	// void bar() {
 	//   X<A> xa= new X<A>();
@@ -316,7 +318,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//	public:
 	//	  void m2(T t) {}
 	//	};
-	
+
 	//  class A {};
 	//  void foo() {
 	//     C1< StrT<A> > c1a;
@@ -329,7 +331,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		IBinding b3= getBindingFromASTName("c1a;", 3);
 		IBinding b4= getBindingFromASTName("m2(*", 2);
 	}
-	
+
 	//	class Str1 {
 	//	public:
 	//	   Str1(const char* s) {
@@ -366,11 +368,11 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	public void testUnindexedConstructorInstanceImplicitReference() throws Exception {
 		IBinding b0= getBindingFromASTName("m1(\"aaa\")", 2);
     	IBinding b1= getBindingFromASTName("m2(\"aaa\")", 2);
-    	
+    
     	assertEquals(1, getIndex().findNames(b0, IIndex.FIND_REFERENCES).length);
     	assertEquals(1, getIndex().findNames(b1, IIndex.FIND_REFERENCES).length);
 	}
-	
+
 	// // Bryan W.'s example from bugzilla#167098
 	//    template<class K>
 	//    class D { //CPPClassTemplate
@@ -395,35 +397,35 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
     public void testCPPConstructorTemplateSpecialization() throws Exception {
     	IBinding b0= getBindingFromASTName("D<int> *var", 1);
     	IBinding b1= getBindingFromASTName("D<int> *var", 6);
-    	
-    	assertInstance(b0, ICPPClassTemplate.class); 
-    	assertInstance(b0, ICPPClassType.class); 
+    
+    	assertInstance(b0, ICPPClassTemplate.class);
+    	assertInstance(b0, ICPPClassType.class);
     	assertInstance(b1, ICPPTemplateInstance.class);
-    	assertInstance(b1, ICPPClassType.class); 
-    	
+    	assertInstance(b1, ICPPClassType.class);
+    
     	// ICPPClassType _ct= (ICPPClassType) b1;
     	// ICPPConstructor[] _ctcs= _ct.getConstructors();
     	// assertEquals(3, _ctcs.length); // two implicit plus the constructor template
-    	
+    
     	IBinding b2= getBindingFromASTName("D<int>(", 1);
     	IBinding b3= getBindingFromASTName("D<int>(", 6);
-    	
+    
     	assertInstance(b2, ICPPClassTemplate.class); // *D*<int>(5, 6)
     	assertInstance(b2, ICPPClassType.class); // *D*<int>(5, 6)
     	assertInstance(b3, ICPPTemplateInstance.class); // *D<int>*(5, 6)
     	assertInstance(b3, ICPPConstructor.class); // *D<int>*(5, 6)
-    	
-    	// 
+    
+    	//
     	// ICPPClassType ct= (ICPPClassType) b2;
     	// ICPPConstructor[] ctcs= ct.getConstructors();
     	// assertEquals(3, ctcs.length); // two implicit plus the constructor template
-    	
+    
     	IBinding tidSpc= ((ICPPTemplateInstance)b3).getSpecializedBinding();
     	assertInstance(tidSpc, ICPPConstructor.class);
     	assertInstance(tidSpc, ICPPSpecialization.class);
     	assertInstance(tidSpc, ICPPFunctionTemplate.class);
     }
-	
+
 	// class B {};
     //
 	//	template<typename T>
@@ -444,7 +446,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		assertInstance(b0, ICPPFunction.class);
 		assertInstance(b0, ICPPSpecialization.class);
 	}
-	
+
 	//	template<typename T, template<typename U> class S>
 	//	class Foo {
 	//	public:
@@ -457,7 +459,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//	};
 	//
 	//	class A {};
-	
+
 	//	void qux() {
 	//		Foo<A,X> f;
 	//		f.s.foo(*new A());
@@ -468,22 +470,22 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		IBinding b2= getBindingFromASTName("f.s.foo", 1);
 		IBinding b3= getBindingFromASTName("s.foo", 1);
 		IBinding b4= getBindingFromASTName("foo(*", 3);
-		
+	
 		assertInstance(b0, ICPPClassTemplate.class);
 		assertInstance(b0, ICPPClassType.class);
 		ICPPTemplateParameter[] ps= ((ICPPClassTemplate)b0).getTemplateParameters();
 		assertEquals(2, ps.length);
 		assertInstance(ps[0], ICPPTemplateTypeParameter.class);
 		assertInstance(ps[1], ICPPTemplateTemplateParameter.class);
-		
+	
 		assertInstance(b1, ICPPTemplateInstance.class);
 		assertInstance(b1, ICPPClassType.class);
-		
+	
 		IType[] type= ((ICPPTemplateInstance)b1).getArguments();
 		assertInstance(type[0], ICPPClassType.class);
 		assertInstance(type[1], ICPPClassTemplate.class);
 		assertInstance(type[1], ICPPClassType.class);
-		
+	
 		ObjectMap om= ((ICPPTemplateInstance)b1).getArgumentMap();
 		assertEquals(2, om.size());
 		assertInstance(om.keyAt(0), ICPPTemplateTypeParameter.class);
@@ -491,14 +493,14 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		assertInstance(om.keyAt(1), ICPPTemplateTemplateParameter.class);
 		assertInstance(om.getAt(1), ICPPClassType.class);
 		assertInstance(om.getAt(1), ICPPClassTemplate.class);
-		
+	
 		IBinding b1_spcd= ((ICPPTemplateInstance)b1).getSpecializedBinding();
 		assertInstance(b1_spcd, ICPPClassTemplate.class);
 		assertInstance(b1_spcd, ICPPClassType.class);
 		assertTrue(((IType)b1_spcd).isSameType((IType)b0));
 	}
-	
-	
+
+
 	// template<typename T1, typename T2>
 	// class Foo {
 	// public:
@@ -516,7 +518,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//
 	// class AA {};
 	// class BB {};
-	// 
+	//
 	// class Z : public Foo<AA,BB> {};
 	//
 	// X x;
@@ -528,7 +530,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 				getBindingFromASTName("Y y;", 1),
 				getBindingFromASTName("Z z;", 1)
 		};
- 
+
 		for (IBinding b : bs) {
 			assertInstance(b, ICPPClassType.class);
  			ICPPClassType c= (ICPPClassType) b;
@@ -565,10 +567,10 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	// class A {}; class B {}; class C {};
 	// template<typename T1, typename T2>
 	// class D {};
-	// 
+	//
 	// template<typename T3>
 	// class D<A, T3> {};
-	
+
     // #include "header.h"
 	// template<typename T3> class D<A, T3>; // harmless declaration for test purposes
 	// template<typename T3> class D<B, T3> {};
@@ -578,20 +580,20 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		IBinding b1= getBindingFromASTName("D<B, T3>", 8);
 		IBinding b2= getBindingFromASTName("D<C, T3>", 8);
  		IBinding b3= getBindingFromASTName("D<B", 1);
- 		
+ 	
  		List spBindings= new ArrayList();
  		assertInstance(b0, ICPPSpecialization.class);
  		assertInstance(b0, ICPPClassTemplate.class);
  		spBindings.add(((ICPPSpecialization)b0).getSpecializedBinding());
- 		
+ 	
  		assertInstance(b1, ICPPSpecialization.class);
  		assertInstance(b1, ICPPClassTemplate.class);
  		spBindings.add(((ICPPSpecialization)b1).getSpecializedBinding());
- 		
+ 	
  		assertInstance(b2, ICPPSpecialization.class);
  		assertInstance(b2, ICPPClassTemplate.class);
  		spBindings.add(((ICPPSpecialization)b2).getSpecializedBinding());
- 		
+ 	
  		for(int i=0; i<spBindings.size(); i++) {
  			for(int j=0; j<spBindings.size(); j++) {
  	 			IType ty1= (IType) spBindings.get(i);
@@ -599,15 +601,15 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
  	 			assertTrue(ty1.isSameType(ty2));
  	 		}
  		}
- 		
+ 	
  		assertInstance(b3, ICPPClassTemplate.class);
  		ICPPClassTemplate ct= (ICPPClassTemplate) b3;
  		assertEquals(3, ct.getPartialSpecializations().length);
 	}
-	
+
 	// template<typename T1>
 	// class A {};
-	// 
+	//
 	// template<typename T2>
 	// class B : public A<T2> {
 	//    public:
@@ -615,7 +617,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	// };
 	//
 	// B<int> bb; // make sure the instance is in the pdom
-	
+
 	// template<typename T3>
 	// class X : public B<T3> {};
 	//
@@ -629,27 +631,27 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		assertInstance(b2, ICPPClassType.class);
 		assertInstance(b2, ICPPTemplateInstance.class);
 		ICPPClassType ct2= (ICPPClassType) b2;
-		ICPPBase[] bss2= ct2.getBases();
+		ICPPBase[] bss2= ClassTypeHelper.getBases(ct2, null);
 		assertEquals(1, bss2.length);
 		assertInstance(bss2[0].getBaseClass(), ICPPClassType.class);
 		ICPPClassType ct2b= (ICPPClassType) bss2[0].getBaseClass();
 		assertInstance(ct2b, ICPPTemplateInstance.class);
-		
+
 		IBinding b0= getBindingFromASTName("B<int>", 6);
 		assertInstance(b0, ICPPClassType.class);
 		ICPPClassType ct= (ICPPClassType) b0;
-		ICPPBase[] bss= ct.getBases();
+		ICPPBase[] bss= ClassTypeHelper.getBases(ct, null);
 		assertEquals(1, bss.length);
-		assertInstance(bss[0].getBaseClass(), ICPPClassType.class);	
-		
+		assertInstance(bss[0].getBaseClass(), ICPPClassType.class);
+
 		IBinding b1= getBindingFromASTName("B<long>", 7);
 		assertInstance(b1, ICPPClassType.class);
 		ICPPClassType ct1= (ICPPClassType) b1;
-		ICPPBase[] bss1= ct1.getBases();
+		ICPPBase[] bss1= ClassTypeHelper.getBases(ct1, null);
 		assertEquals(1, bss1.length);
 		assertInstance(bss1[0].getBaseClass(), ICPPClassType.class);
 	}
-	
+
 	//	class B {};
 	//
 	//	template<typename T>
@@ -666,48 +668,48 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//		B foo(B t) { B x= *new B(); return x; }
  	//      void bar(B t, int& x) { x++; }
  	//	};
- 	
+ 
  	// A<B> ab;
  	public void testClassSpecializationMethods() throws Exception {
  		IBinding b0= getBindingFromASTName("A<B> ab", 4);
  		assertInstance(b0, ICPPClassType.class);
  		assertInstance(b0, ICPPSpecialization.class);
- 		
+
  		ICPPClassType ct= (ICPPClassType) b0;
- 		ICPPMethod[] dms= ct.getDeclaredMethods();
+ 		ICPPMethod[] dms= ClassTypeHelper.getDeclaredMethods(ct, null);
  		assertEquals(2, dms.length);
 
  		// if the specialization was used, we have 2 fields.
- 		ICPPField[] fs= ct.getDeclaredFields();
+ 		ICPPField[] fs= ClassTypeHelper.getDeclaredFields(ct, null);
  		assertEquals(2, fs.length);
 
  		ICPPMethod foo= dms[0].getName().equals("foo") ? dms[0] : dms[1];
  		ICPPMethod bar= dms[0].getName().equals("bar") ? dms[0] : dms[1];
- 		
+ 	
  		assertEquals(foo.getName(), "foo");
  		assertEquals(bar.getName(), "bar");
- 		
+ 	
  		assertInstance(foo.getType().getReturnType(), ICPPClassType.class);
  		assertEquals(((ICPPClassType)foo.getType().getReturnType()).getName(), "B");
  		assertEquals(foo.getType().getParameterTypes().length, 1);
  		assertInstance(foo.getType().getParameterTypes()[0], ICPPClassType.class);
  		assertEquals(((ICPPClassType)foo.getType().getParameterTypes()[0]).getName(), "B");
- 		
+ 	
  		assertInstance(bar.getType().getReturnType(), ICPPBasicType.class);
  		assertEquals(((ICPPBasicType)bar.getType().getReturnType()).getType(), IBasicType.t_void);
  	}
- 	
+ 
 	// template<typename T> class A {
 	//    public:
     //       typedef T TD;
 	// };
-	// 
+	//
 	// class B {};
 	// A<B>::TD foo;
-	
+
 	// class C {};
 	// A<C>::TD bar;
-	// 
+	//
 	// void qux() {
 	//   A<B>::TD foo2= foo;
 	//   A<C>::TD bar2= bar;
@@ -777,20 +779,20 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		IBinding b7= getBindingFromASTName("foo<C3,C2>(", 3);
 		IBinding b8= getBindingFromASTName("foo<C1,C3>(", 3);
 	}
-	
+
 	//	class A {}; class B{}; class C {};
 	//
 	//	template<typename T1, typename T2>
-	//	void foo(T1 t1, T2 t2) {} // (0)	
+	//	void foo(T1 t1, T2 t2) {} // (0)
 	//
 	//	template<>
 	//	void foo(C c, A a) {} // (1)
-	
+
 	//	void bar() {
 	//		A a;
 	//		B b;
 	//		C c;
-	//		foo(a,b); // function instance of function template (0) 
+	//		foo(a,b); // function instance of function template (0)
 	//		foo(c,a); // function specialization (1)
 	//	}
 	public void testFunctionInstanceSpecializationsParameters() throws Exception {
@@ -805,25 +807,25 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		assertInstance(b0_ptypes[1], ICPPClassType.class);
 		assertEquals("A", ((ICPPClassType)b0_ptypes[0]).getName());
 		assertEquals("B", ((ICPPClassType)b0_ptypes[1]).getName());
-		
+	
 		IParameter[] b0_pms= ((ICPPFunction)b0).getParameters();
 		assertEquals(2, b0_pms.length);
 		assertInstance(b0_pms[0].getType(), ICPPClassType.class);
 		assertInstance(b0_pms[1].getType(), ICPPClassType.class);
 		assertEquals("A", ((ICPPClassType)b0_pms[0].getType()).getName());
 		assertEquals("B", ((ICPPClassType)b0_pms[1].getType()).getName());
-		
+	
 		IBinding b0_spcd= ((ICPPTemplateInstance)b0).getSpecializedBinding();
 		assertInstance(b0_spcd, ICPPFunction.class);
 		assertInstance(b0_spcd, ICPPTemplateDefinition.class);
-		
+	
 		IParameter[] b0_spcd_pms= ((ICPPFunction)b0_spcd).getParameters();
 		assertEquals(2, b0_spcd_pms.length);
 		assertInstance(b0_spcd_pms[0].getType(), ICPPTemplateTypeParameter.class);
 		assertInstance(b0_spcd_pms[1].getType(), ICPPTemplateTypeParameter.class);
 		assertEquals("T1", ((ICPPTemplateTypeParameter)b0_spcd_pms[0].getType()).getName());
 		assertEquals("T2", ((ICPPTemplateTypeParameter)b0_spcd_pms[1].getType()).getName());
-		
+	
 		ObjectMap b0_am= ((ICPPSpecialization)b0).getArgumentMap();
 		assertEquals(2, b0_am.size());
 		assertInstance(b0_am.getAt(0), ICPPClassType.class);
@@ -834,7 +836,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		assertEquals("T2", ((ICPPTemplateTypeParameter)b0_am.keyAt(1)).getName());
 		assertEquals("A", ((ICPPClassType)b0_am.getAt(0)).getName());
 		assertEquals("B", ((ICPPClassType)b0_am.getAt(1)).getName());
-		
+	
 		ICPPFunctionType b0_spcd_type= ((ICPPFunction)b0_spcd).getType();
 		assertInstance(b0_spcd_type.getReturnType(), ICPPBasicType.class);
 		IType[] b0_spcd_ptypes= b0_spcd_type.getParameterTypes();
@@ -843,7 +845,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		assertInstance(b0_spcd_ptypes[1], ICPPTemplateTypeParameter.class);
 		assertEquals("T1", ((ICPPTemplateTypeParameter)b0_spcd_ptypes[0]).getName());
 		assertEquals("T2", ((ICPPTemplateTypeParameter)b0_spcd_ptypes[1]).getName());
-		
+	
 		IBinding b1= getBindingFromASTName("foo(c,a)", 3);
 		assertInstance(b1, ICPPFunction.class);
 		ICPPFunctionType b1type= ((ICPPFunction)b1).getType();
@@ -854,20 +856,20 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		assertInstance(b1_ptypes[1], ICPPClassType.class);
 		assertEquals("C", ((ICPPClassType)b1_ptypes[0]).getName());
 		assertEquals("A", ((ICPPClassType)b1_ptypes[1]).getName());
-		
+	
 		IParameter[] b1_pms= ((ICPPFunction)b1).getParameters();
 		assertEquals(2, b1_pms.length);
 		assertInstance(b1_pms[0].getType(), ICPPClassType.class);
 		assertInstance(b1_pms[1].getType(), ICPPClassType.class);
 		assertEquals("C", ((ICPPClassType)b1_pms[0].getType()).getName());
 		assertEquals("A", ((ICPPClassType)b1_pms[1].getType()).getName());
-		
+	
 		assertInstance(b1, ICPPSpecialization.class);
 		ICPPSpecialization b1s= (ICPPSpecialization) b1;
 		IBinding b1_spcd= b1s.getSpecializedBinding();
 		assertInstance(b1_spcd, ICPPFunction.class);
 		assertInstance(b1_spcd, ICPPTemplateDefinition.class);
-		
+	
 		ICPPFunctionType b1_spcd_type= ((ICPPFunction)b1_spcd).getType();
 		assertInstance(b1_spcd_type.getReturnType(), ICPPBasicType.class);
 		IType[] b1_spcd_ptypes= b1_spcd_type.getParameterTypes();
@@ -876,14 +878,14 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		assertInstance(b1_spcd_ptypes[1], ICPPTemplateTypeParameter.class);
 		assertEquals("T1", ((ICPPTemplateTypeParameter)b1_spcd_ptypes[0]).getName());
 		assertEquals("T2", ((ICPPTemplateTypeParameter)b1_spcd_ptypes[1]).getName());
-		
+	
 		IParameter[] b1_spcd_pms= ((ICPPFunction)b1_spcd).getParameters();
 		assertEquals(2, b1_spcd_pms.length);
 		assertInstance(b1_spcd_pms[0].getType(), ICPPTemplateTypeParameter.class);
 		assertInstance(b1_spcd_pms[1].getType(), ICPPTemplateTypeParameter.class);
 		assertEquals("T1", ((ICPPTemplateTypeParameter)b1_spcd_pms[0].getType()).getName());
 		assertEquals("T2", ((ICPPTemplateTypeParameter)b1_spcd_pms[1].getType()).getName());
-		
+	
 		ObjectMap b1_am= b1s.getArgumentMap();
 		assertEquals(2, b1_am.size());
 		assertInstance(b1_am.keyAt(0), ICPPTemplateTypeParameter.class);
@@ -895,12 +897,12 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		assertEquals("C", ((ICPPClassType)b1_am.getAt(0)).getName());
 		assertEquals("A", ((ICPPClassType)b1_am.getAt(1)).getName());
 	}
-	
+
 	//	class A {};
 	//
 	//	template<typename T>
 	//	void foo(T t) {}
-	
+
 	//  void bar() {
 	//		A a;
 	//		foo(a);
@@ -909,17 +911,17 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		IBinding b0= getBindingFromASTName("foo(a)", 3);
 		assertInstance(b0, ICPPTemplateInstance.class);
 		assertInstance(b0, ICPPFunction.class);
-		
+	
 		ICPPFunction f= (ICPPFunction) b0;
 		ICPPFunctionType type= f.getType();
 		IType rt= type.getReturnType();
 		IType[] pts= type.getParameterTypes();
-		
+	
 		IParameter[] ps= f.getParameters();
 		assertEquals(1, ps.length);
 		ICPPParameter param= (ICPPParameter) ps[0];
 		assertInstance(param, ICPPSpecialization.class);
-		
+	
 		IType paramType= param.getType();
 		assertInstance(paramType, ICPPClassType.class);
 		ICPPParameter paramSpec= (ICPPParameter) ((ICPPSpecialization) param).getSpecializedBinding();
@@ -927,13 +929,13 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		ICPPTemplateTypeParameter ttp= (ICPPTemplateTypeParameter) paramSpec.getType();
 		assertEquals("T", ttp.getName());
 		assertNull(ttp.getDefault());
-		
+	
 		ICPPTemplateInstance inst= (ICPPTemplateInstance) b0;
 		IBinding sp= inst.getSpecializedBinding();
 		assertInstance(sp, ICPPFunction.class);
 		assertInstance(sp, ICPPTemplateDefinition.class);
 	}
-	
+
 	//	template <class T1, class T2, class R>
 	//	void func(T1* obj, R (T2::*member)()) {
 	//	}
@@ -941,7 +943,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//	struct A {
 	//	  void m();
 	//	};
-	
+
 	//	void test() {
 	//	  A a;
 	//	  func(&a, &A::m);
@@ -958,7 +960,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//	template <class U>
 	//	void func(U& u, const typename U::t& v) {
 	//	}
-	
+
 	//	template <typename T> class A {
 	//	  typedef T t;
 	//	};
@@ -978,10 +980,10 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//
 	// class B {};
 	//
-	// template<>	
+	// template<>
 	// class Foo<B> {};
-	
-	// Foo<B> b1; 
+
+	// Foo<B> b1;
 	//
 	// class A {};
 	//
@@ -992,10 +994,10 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	public void testClassSpecializations_180738() {
 		IBinding b1a = getBindingFromASTName("Foo<B> b1;", 3);
 		IBinding b1b = getBindingFromASTName("Foo<B> b1;", 6);
-		
+	
 		assertInstance(b1a, ICPPClassType.class);
 		assertInstance(b1a, ICPPClassTemplate.class);
-		
+	
 		assertInstance(b1b, ICPPClassType.class);
 		assertInstance(b1b, ICPPSpecialization.class);
 		ICPPSpecialization b1spc= (ICPPSpecialization) b1b;
@@ -1004,13 +1006,13 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		assertInstance(b1om.getAt(0), ICPPClassType.class);
 		ICPPClassType b1pct= (ICPPClassType) b1om.getAt(0);
 		assertEquals("B", b1pct.getName());
-		
+	
 		IBinding b2a = getBindingFromASTName("Foo<B> b2;", 3);
 		IBinding b2b = getBindingFromASTName("Foo<B> b2;", 6);
-		
+	
 		assertInstance(b2a, ICPPClassType.class);
 		assertInstance(b2a, ICPPClassTemplate.class);
-		
+	
 		assertInstance(b2b, ICPPClassType.class);
 		assertInstance(b2b, ICPPSpecialization.class);
 		ICPPSpecialization b2spc= (ICPPSpecialization) b2b;
@@ -1020,7 +1022,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		ICPPClassType b2pct= (ICPPClassType) b2om.getAt(0);
 		assertEquals("B", b2pct.getName());
 	}
-	
+
 	// // header file
 	//	template <class T>
 	//	T left(T a, T b) {
@@ -1028,7 +1030,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//	}
 	//  void sanity() {}
 	//  int d;
-	
+
 	//  void foo() { sanity(); }
 	//	class Int {};
 	//	Int a,b;
@@ -1043,11 +1045,11 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		IBinding b5 = getBindingFromASTName("left(a,b)", 4);
 		IBinding b6 = getBindingFromASTName("left(a,b)", 4);
 	}
-	
+
 	// class A {};
 	// template<typename T1, typename T2> class D {};
 	// template<typename X1> class D<X1,X1> {};
-	
+
 	// D<A,A> daa;
 	public void testClassPartialSpecializations_199572() throws Exception {
 		IBinding b0= getBindingFromASTName("D<A,A>", 6);
@@ -1085,7 +1087,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		assertEquals("int", ASTTypeUtil.getType(type));
     }
 
-	//	class A {}; class B {}; class X {};	
+	//	class A {}; class B {}; class X {};
 	//	template<typename T>
 	//	class C {
 	//	public:
@@ -1102,7 +1104,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//		X t;
 	//		operator B() {B b; return b;}
     //  };
-	
+
     //  class F : public C<A> {};
 	//	void refs() {
 	//		C<A> c;
@@ -1120,29 +1122,29 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
     	IBinding ca=   getBindingFromASTName("C<A>", 4);
     	assertInstance(ca, ICPPClassType.class);
     	assertInstance(ca, ICPPTemplateInstance.class);
-    	
+    
     	IBinding foo1= getBindingFromASTName("foo(c)", 3);
-    	
+    
     	IBinding da=   getBindingFromASTName("D<A>", 4);
     	assertInstance(da, ICPPClassType.class);
     	assertInstance(da, ICPPTemplateInstance.class);
-    	
+    
 		IBinding foo2= getBindingFromASTName("foo(d)", 3);
 		IBinding foo3= getBindingFromASTName("foo(e)", 3);
 		IBinding foo4= getBindingFromASTName("foo(cx)", 3);
-		
+	
 		assertEquals(foo1, foo2); assertEquals(foo2, foo3);
 		assertEquals(foo3, foo4);
     }
-    
+   
     // template<typename T>
     // class A {};
     //
     // class B {};
-    // 
+    //
     // template<>
     // class A<B> {};
-    
+   
     // class C {};
     //
     // A<B> ab;
@@ -1150,15 +1152,15 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
     public void testEnclosingScopes_a() throws Exception {
     	ICPPSpecialization   b0= getBindingFromASTName("A<B>", 4, ICPPSpecialization.class, ICPPClassType.class);
     	ICPPTemplateInstance b1= getBindingFromASTName("A<C>", 4, ICPPTemplateInstance.class, ICPPClassType.class);
-    	
+    
     	ICPPClassType sc0= assertInstance(b0.getSpecializedBinding(), ICPPClassType.class);
     	ICPPClassType sc1= assertInstance(b1.getSpecializedBinding(), ICPPClassType.class);
     	assertTrue(sc0.isSameType(sc1));
-    	
+    
     	assertNull(sc0.getScope());
     	assertNull(b0.getScope());
     }
-    
+   
     // template<typename T>
     // class A {
     //    public:
@@ -1172,7 +1174,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
     //   public:
     //   class B {};
     // };
-    
+   
     // #include "header.h"
     // void refs() {
     //    A<C>::B acb;
@@ -1182,7 +1184,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
     	ICPPClassType b0= getBindingFromASTName("B acb", 1, ICPPClassType.class);
     	ICPPClassType b1= getBindingFromASTName("B adb", 1, ICPPClassType.class, ICPPSpecialization.class);
     	ICPPClassType b2= getBindingFromASTName("A<C>", 4, ICPPClassType.class, ICPPSpecialization.class);
-    	
+    
     	IIndexBinding[] sr = getIndex().findBindings("A".toCharArray(), new IndexFilter() {
     		@Override
     		public boolean acceptBinding(IBinding binding) throws CoreException {
@@ -1191,7 +1193,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
     	}, npm());
     	assertTrue(sr.length == 1);
 		ICPPClassType b3= (ICPPClassType) sr[0];
-    	
+    
     	sr = getIndex().findBindings(new char[][] {"A".toCharArray(), "B".toCharArray()}, new IndexFilter() {
     		@Override
     		public boolean acceptBinding(IBinding binding) throws CoreException {
@@ -1200,21 +1202,21 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
     	}, npm());
     	assertTrue(sr.length == 1);
 		ICPPClassType b4= (ICPPClassType) sr[0];
-    	
+    
     	assertFalse(b0 instanceof ICPPSpecialization);
-    	
+    
     	IIndexScope s0= (IIndexScope) b0.getScope(), s4= (IIndexScope) b4.getScope();
     	IScope s1= b1.getScope();
-    	
+    
     	assertTrue(((IType)s0.getScopeBinding()).isSameType((IType)((IIndexScope)b2.getCompositeScope()).getScopeBinding()));
     	ICPPClassScope cs1= assertInstance(s1, ICPPClassScope.class);
     	assertInstance(cs1.getClassType(), ICPPClassType.class);
     	assertInstance(cs1.getClassType(), ICPPTemplateInstance.class);
     	assertTrue(((IType)((ICPPClassSpecialization) s4.getScopeBinding()).getSpecializedBinding()).isSameType( (IType) ((IIndexScope)b3.getCompositeScope()).getScopeBinding() ));
     }
-    
+   
 	// class A {};
-	// 
+	//
 	// template<typename T>
 	// class X {
 	// public:
@@ -1223,23 +1225,23 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//       class Z {};
 	//    };
 	// };
-	
+
 	// X<A>::Y::Z xayz;
     public void testEnclosingScopes_c() throws Exception {
     	ICPPClassType b0= getBindingFromASTName("Y::Z x", 1, ICPPClassType.class);
     	ICPPClassType b1= getBindingFromASTName("Z xayz", 1, ICPPClassType.class);
-    	
+    
     	IScope s0= b0.getScope(), s1= b1.getScope();
-    	
+    
     	ICPPClassScope cs0= assertInstance(s0, ICPPClassScope.class);
     	assertInstance(cs0.getClassType(), ICPPClassType.class);
     	assertInstance(cs0.getClassType(), ICPPSpecialization.class);
-    	
+    
     	ICPPClassScope cs1= assertInstance(s1, ICPPClassScope.class);
     	assertInstance(cs1.getClassType(), ICPPClassType.class);
-    	assertInstance(cs1.getClassType(), ICPPSpecialization.class);    	
+    	assertInstance(cs1.getClassType(), ICPPSpecialization.class);    
     }
-    
+   
     // class A {}; class B {};
     //
     // template<typename T1, typename T2>
@@ -1250,21 +1252,21 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
     // public:
     //     class N {};
     // };
-    
+   
     // X<B,A>::N n;
     public void testEnclosingScopes_d() throws Exception {
     	ICPPClassType b0= getBindingFromASTName("N n", 1, ICPPClassType.class, ICPPSpecialization.class);
     	ICPPClassType b1= assertInstance(((ICPPSpecialization) b0).getSpecializedBinding(), ICPPClassType.class);
-    	
+    
     	ICPPClassScope s0= assertInstance(b0.getScope(), ICPPClassScope.class);
     	assertInstance(s0.getClassType(), ICPPTemplateInstance.class);
-    	
+    
     	ICPPClassScope s1= assertInstance(b1.getScope(), ICPPClassScope.class);
     	assertInstance(s1.getClassType(), ICPPTemplateDefinition.class);
-    	
+    
     	assertNull(s1.getClassType().getScope());
     }
-    
+   
 	//    typedef signed int SI;
 	//
 	//    template <SI x>
@@ -1280,16 +1282,16 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
     	assertInstance(args.keyAt(0), ICPPTemplateNonTypeParameter.class);
     	assertEquals(1, args.size());
     }
-    
-	// template <class T> class A {                          
-	//    class B { T t; };                                  
-	//    B b;                                               
-	// };      
-    
-	// void f() {                                            
-	//    A<int> a;                                          
-	//    a.b.t;                                             
-	// }  
+   
+	// template <class T> class A {                         
+	//    class B { T t; };                                 
+	//    B b;                                              
+	// };     
+   
+	// void f() {                                           
+	//    A<int> a;                                         
+	//    a.b.t;                                            
+	// } 
 	public void testNestedClassTypeSpecializations() throws Exception {
 		ICPPField t2 = getBindingFromASTName("t;", 1, ICPPField.class);
 
@@ -1298,7 +1300,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		assertTrue(type instanceof IBasicType);
 		assertEquals(((IBasicType)type).getType(), IBasicType.t_int);
 	}
-	
+
 	//	template<typename _Iterator> struct iterator_traits {
 	//		typedef typename _Iterator::pointer           pointer;
 	//	};
@@ -1310,7 +1312,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//	template<typename _Iterator, typename _Container> class normal_iterator {
 	//	    protected:
 	//		_Iterator _M_current;
-	//	    
+	//	   
 	//      public:
 	//		typedef typename iterator_traits<_Iterator>::pointer   pointer;
 	//		normal_iterator() : _M_current(_Iterator()) { }
@@ -1347,12 +1349,12 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		ICPPField t2 = getBindingFromASTName("member; // it->member", 6, ICPPField.class);
 		ICPPClassType ct= t2.getClassOwner();
 		assertEquals("MyStruct", ct.getName());
-		
+	
 		final IType type = t2.getType();
 		assertTrue(type instanceof IBasicType);
 		assertEquals(((IBasicType)type).getType(), IBasicType.t_int);
 	}
-	
+
 	//	template <int x>
 	//	class C {
 	//	public:
@@ -1366,7 +1368,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//	void foo(aRef& aRefence) {}
 	//	void bar(C<_256>& aRefence) {}
 	//	void baz(void) {}
-	
+
 	//	int main (void) {
 	//		C<256> t;
 	//		foo(t);
@@ -1375,22 +1377,22 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//	}
 	public void testClassInstanceWithNonTypeArgument_207871() throws Exception {
 		ICPPTemplateInstance c256 = getBindingFromASTName("C<256>", 6, ICPPTemplateInstance.class, ICPPClassType.class);
-		ObjectMap args= c256.getArgumentMap();
-		assertEquals(1, args.size());
-		assertInstance(args.keyAt(0), ICPPTemplateNonTypeParameter.class);
-		ICPPBasicType bt= assertInstance(args.getAt(0), ICPPBasicType.class);
-		IASTExpression val= bt.getValue();
-		
+		ICPPTemplateParameterMap paramMap = c256.getTemplateParameterMap();
+		assertEquals(1, paramMap.getAllParameterPositions().length);
+		ICPPTemplateArgument arg = paramMap.getArgument(0);
+		assertEquals(Long.valueOf(256), arg.getNonTypeValue().numericalValue());
+		assertInstance(arg.getTypeOfNonTypeValue(), ICPPBasicType.class);
+	
 		ICPPFunction foo = getBindingFromASTName("foo(t)", 3, ICPPFunction.class);
 		ICPPFunction bar = getBindingFromASTName("bar(t)", 3, ICPPFunction.class);
 	}
-	
+
 	//	template<class T, int x> class A {public: class X {};};
 	//	template<class T1> class A<T1,'y'> {public: class Y {};};
 	//	template<class T2> class A<T2,'z'> {public: class Z {};};
 	//
 	//	class B {};
-	
+
 	//	A<B, 'x'>::X x;
 	//	A<B, 'y'>::Y y;
 	//	A<B, 'z'>::Z z;
@@ -1398,25 +1400,25 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		ICPPClassType b2= getBindingFromASTName("A<B, 'x'>", 9, ICPPClassType.class, ICPPTemplateInstance.class);
 		ICPPClassType b3= getBindingFromASTName("A<B, 'y'>", 9, ICPPClassType.class, ICPPTemplateInstance.class);
 		ICPPClassType b4= getBindingFromASTName("A<B, 'z'>", 9, ICPPClassType.class, ICPPTemplateInstance.class);
-		
+	
 		assertTrue(!b2.isSameType(b3));
 		assertTrue(!b3.isSameType(b4));
 		assertTrue(!b4.isSameType(b2));
-		
+	
 		ICPPClassType X= getBindingFromASTName("X x", 1, ICPPClassType.class);
 		ICPPClassType Y= getBindingFromASTName("Y y", 1, ICPPClassType.class);
 		ICPPClassType Z= getBindingFromASTName("Z z", 1, ICPPClassType.class);
-		
+	
 		assertTrue(!X.isSameType(Y));
 		assertTrue(!Y.isSameType(Z));
 		assertTrue(!Z.isSameType(X));
 	}
-	
+
 	//	template<class T, bool b> class A {public: class X {};};
 	//	template<class T1> class A<T1,true> {public: class Y {};};
 	//
 	//	class B {};
-	
+
 	//	A<B, false>::X x; //1
 	//	A<B, true>::Y y; //2
 	//
@@ -1427,10 +1429,10 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		ICPPClassType Y= getBindingFromASTName("Y y; //2", 1, ICPPClassType.class);
 		getProblemFromASTName("X x; //3", 1);
 		getProblemFromASTName("Y y; //4", 1);
-		
+	
 		assertTrue(!X.isSameType(Y));
 	}
-	
+
 	// template<int x> class A {};
 	// template<> class A<5> {public: class B{};};
 	//
@@ -1451,18 +1453,18 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		ICPPClassType a5c= getBindingFromASTName("A<FUNF>", 7, ICPPClassType.class, ICPPSpecialization.class);
 		ICPPClassType a5d= getBindingFromASTName("A<5>", 4, ICPPClassType.class, ICPPSpecialization.class);
 		ICPPClassType a1= getBindingFromASTName("A<1>", 4, ICPPClassType.class, ICPPTemplateInstance.class);
-		
+	
 		assertTrue(a5a.isSameType(a5b));
 		assertTrue(a5b.isSameType(a5c));
 		assertTrue(a5c.isSameType(a5d));
 		assertTrue(a5d.isSameType(a5a));
-		
+	
 		assertTrue(!a1.isSameType(a5a));
 		assertTrue(!a1.isSameType(a5b));
 		assertTrue(!a1.isSameType(a5c));
 		assertTrue(!a1.isSameType(a5d));
 	}
-	
+
     //	template<int I>
 	//	class That {
 	//	public:
@@ -1474,7 +1476,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//	public:
 	//		inline This();
 	//	};
-	
+
 	//	template <int I>
 	//	inline This<I>::This() : That<I>(I) {
 	//  }
@@ -1487,12 +1489,12 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		ICPPConstructor th1sCtor= ba.assertNonProblem("This() :", 4, ICPPConstructor.class);
 		assertFalse(th1sCtor instanceof ICPPSpecialization);ICPPTemplateNonTypeParameter np= ba.assertNonProblem("I)", 1, ICPPTemplateNonTypeParameter.class);
 		*/
-		
+	
 		ICPPTemplateNonTypeParameter np= getBindingFromASTName("I>(I)", 1, ICPPTemplateNonTypeParameter.class);
 		ICPPConstructor clazz= getBindingFromASTName("That<I>(I)", 4, ICPPConstructor.class);
 		ICPPConstructor ctor= getBindingFromASTName("That<I>(I)", 7, ICPPConstructor.class);
 	}
-	
+
 	//	template<typename I>
 	//	class That {
 	//		public:
@@ -1504,7 +1506,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//		public:
 	//			inline This();
 	//	};
-	
+
 	//	template <typename I>
 	//	inline This<I>::This() : That<I>() {
 	//	}
@@ -1513,59 +1515,59 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		assertFalse(tid instanceof ICPPSpecialization);
 		ICPPConstructor th1sCtor= getBindingFromASTName("This() :", 4, ICPPConstructor.class);
 		assertFalse(th1sCtor instanceof ICPPSpecialization);
-		
+	
 		ICPPTemplateTypeParameter np= getBindingFromASTName("I>()", 1, ICPPTemplateTypeParameter.class);
 		ICPPConstructor clazz= getBindingFromASTName("That<I>()", 4, ICPPConstructor.class);
 		ICPPConstructor ctor= getBindingFromASTName("That<I>()", 7, ICPPConstructor.class);
 	}
-	
-	
+
+
 	// template<typename T> class CT {
 	//    public: int field;
 	// };
-	
+
 	// CT<int> v1;
 	public void testUniqueSpecializations_Bug241641() throws Exception {
 		ICPPVariable v1= getBindingFromASTName("v1", 2, ICPPVariable.class);
 		ICPPVariable v2= getBindingFromASTName("v1", 2, ICPPVariable.class);
-		
+	
 		IType t1= v1.getType();
 		assertInstance(t1, ICPPClassType.class);
-		
+	
 		ICPPClassType ct= (ICPPClassType) t1;
 		IBinding f1= ct.getCompositeScope().find("field")[0];
 		IBinding f2= ct.getCompositeScope().find("field")[0];
-		
+	
 		assertSame(f1, f2);
 	}
-	
+
 	// template<typename T> class CT {
 	//    public: int field;
 	// };
-	
+
 	// CT<int> v1;
 	public void testUniqueInstance_Bug241641() throws Exception {
 		IASTName name= findName("v1", 2);
 		ICPPVariable v1= getBindingFromASTName("v1", 2, ICPPVariable.class);
-		
+	
 		IType t1= v1.getType();
 		assertInstance(t1, ICPPTemplateInstance.class);
-		
+	
 		ICPPTemplateInstance inst= (ICPPTemplateInstance) t1;
 		final ICPPClassTemplate tmplDef = (ICPPClassTemplate) inst.getTemplateDefinition();
 		IBinding inst2= CPPTemplates.instantiate(tmplDef, inst.getTemplateArguments(), name);
 		assertSame(inst, inst2);
-		
-		IBinding charInst1= CPPTemplates.instantiate(tmplDef, new ICPPTemplateArgument[] {new CPPTemplateArgument(new CPPBasicType(Kind.eChar, 0))}, name);
-		IBinding charInst2= CPPTemplates.instantiate(tmplDef, new ICPPTemplateArgument[] {new CPPTemplateArgument(new CPPBasicType(Kind.eChar, 0))}, name);
+	
+		IBinding charInst1= CPPTemplates.instantiate(tmplDef, new ICPPTemplateArgument[] {new CPPTemplateTypeArgument(new CPPBasicType(Kind.eChar, 0))}, name);
+		IBinding charInst2= CPPTemplates.instantiate(tmplDef, new ICPPTemplateArgument[] {new CPPTemplateTypeArgument(new CPPBasicType(Kind.eChar, 0))}, name);
 		assertSame(charInst1, charInst2);
 	}
-	
+
 	//	template<typename T> class XT {
 	//     public: void method() {};
 	//  };
 	//  XT<int> x;
-	
+
 	//	void test() {
 	//     x.method();
 	//  }
@@ -1574,26 +1576,26 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		assertInstance(m, ICPPSpecialization.class);
 		ICPPClassType ct= m.getClassOwner();
 		assertInstance(ct, ICPPTemplateInstance.class);
-		ICPPMethod[] ms= ct.getDeclaredMethods();
+		ICPPMethod[] ms= ClassTypeHelper.getDeclaredMethods(ct, null);
 		assertEquals(1, ms.length);
 		assertEquals(m, ms[0]);
 	}
-	
-    //	template<class T, class U> class A {};
-    //	template<class T> class A<T, int> {   
-    //	   void foo(T t);                     
-    //	};                                    
 
-	//	template<class T> void A<T, int>::foo(T t) {} 
+    //	template<class T, class U> class A {};
+    //	template<class T> class A<T, int> {  
+    //	   void foo(T t);                    
+    //	};                                   
+
+	//	template<class T> void A<T, int>::foo(T t) {}
     public void testBug177418() throws Exception {
 		ICPPMethod m= getBindingFromASTName("foo", 3, ICPPMethod.class);
 		ICPPClassType owner= m.getClassOwner();
 		assertInstance(owner, ICPPClassTemplatePartialSpecialization.class);
     }
-    
-    
+   
+   
     // template<typename T> class XT {
-    //    int f; 
+    //    int f;
     //    void m();
     // };
 
@@ -1603,26 +1605,26 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
     //    this->m(); // 2
     //    this->f; // 2
     // };
-    public void testUnknownBindings_Bug264988() throws Exception { 
+    public void testUnknownBindings_Bug264988() throws Exception {
 		ICPPMethod m= getBindingFromASTName("m(); // 1", 1, ICPPMethod.class);
 		assertFalse(m instanceof ICPPUnknownBinding);
 		m= getBindingFromASTName("m(); // 2", 1, ICPPMethod.class);
 		assertFalse(m instanceof ICPPUnknownBinding);
-		
+	
 		ICPPField f= getBindingFromASTName("f; // 1", 1, ICPPField.class);
 		assertFalse(f instanceof ICPPUnknownBinding);
 		f= getBindingFromASTName("f; // 2", 1, ICPPField.class);
 		assertFalse(f instanceof ICPPUnknownBinding);
     }
-    
+   
 	// template <typename T= int> class XT;
-	
+
     // #include "header.h"
 	// template <typename T> class XT {};
 	// void test() {
 	//    XT<> x;
 	// };
-	public void testDefaultTemplateArgInHeader_264988() throws Exception { 
+	public void testDefaultTemplateArgInHeader_264988() throws Exception {
 		ICPPTemplateInstance ti= getBindingFromASTName("XT<>", 4, ICPPTemplateInstance.class);
 	}
 
@@ -1630,11 +1632,11 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	// template <typename T> class XT {
 	//    void m();
 	// };
-	
+
 	// template<> void XT<int>::m() {
 	//    TInt t;
 	// }
-	public void testParentScopeOfSpecialization_267013() throws Exception { 
+	public void testParentScopeOfSpecialization_267013() throws Exception {
 		ITypedef ti= getBindingFromASTName("TInt", 4, ITypedef.class);
 	}
 
@@ -1704,10 +1706,10 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//	  vector<int> v;
 	//	  f(v.begin());
 	//	}
-	public void testTemplateMetaprogramming_284686() throws Exception { 
+	public void testTemplateMetaprogramming_284686() throws Exception {
 		getBindingFromASTName("f(v.begin())", 1, ICPPFunction.class);
 	}
-	
+
 	//	template<typename T> class op {
 	//  public:
 	//		inline static int DO(T key, T key2) {
@@ -1723,11 +1725,11 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//		Noder1<int> f;
 	//		Noder2<int> g;
 	//	}
-	public void testInstantiationOfValue_284683() throws Exception { 
+	public void testInstantiationOfValue_284683() throws Exception {
 		getBindingFromASTName("Noder1<int>", 11, ICPPClassSpecialization.class);
 		getBindingFromASTName("Noder2<int>", 11, ICPPClassSpecialization.class);
 	}
-	
+
 
 	//	template <typename> struct CT;
 	//	template <typename T> struct CT {
@@ -1739,9 +1741,9 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 
 	//	void test() {
 	//		CT<X> p;
-	//		p.f.x; 
+	//		p.f.x;
 	//	}
-	public void testTemplateParameterWithoutName_300978() throws Exception { 
+	public void testTemplateParameterWithoutName_300978() throws Exception {
 		getBindingFromASTName("x;", 1, ICPPField.class);
 		ICPPClassSpecialization ctx = getBindingFromASTName("CT<X>", 5, ICPPClassSpecialization.class);
 		ICPPClassTemplate ct= (ICPPClassTemplate) ctx.getSpecializedBinding();
@@ -1761,13 +1763,13 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//    f(1);
 	//    g(1);
 	// }
-	public void testExplicitSpecializations_296427() throws Exception { 
+	public void testExplicitSpecializations_296427() throws Exception {
 		ICPPTemplateInstance inst;
 		inst= getBindingFromASTName("X<int>", 0);
 		assertFalse(inst.isExplicitSpecialization());
 		inst = getBindingFromASTName("Y<int>", 0);
 		assertTrue(inst.isExplicitSpecialization());
-		
+	
 		inst = getBindingFromASTName("f(1)", 1);
 		assertFalse(inst.isExplicitSpecialization());
 		inst = getBindingFromASTName("g(1)", 1);
@@ -1782,7 +1784,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//	void test() {
 	//		OutStream<char> out;
 	//		out << endl;
-	//	} 
+	//	}
 	public void testInstantiationOfEndl_297457() throws Exception {
 		final IBinding reference = getBindingFromASTName("<< endl", 2);
 		assertTrue(reference instanceof ICPPSpecialization);
@@ -1817,7 +1819,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//	};
 	//	int main() {
 	//	    A<float, int> a;
-	//	    a.f(0);  
+	//	    a.f(0); 
 	//	    return 0;
 	//	}
 	public void testPartialSpecializationsOfClassTemplateSpecializations_332884() throws Exception {
@@ -1836,32 +1838,32 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//     struct Nested {};
 	//  };
 	//  struct TXT : XT<int> {};
-	
+
 	// TXT x;
 	public void testClassSpecialization_Bug354086() throws Exception {
 		ICPPClassType ct= getBindingFromASTName("TXT", 0, ICPPClassType.class);
 		ICPPMethod[] methods = ct.getAllDeclaredMethods();
 		assertEquals(2, methods.length);
-		
+	
 		methods= ct.getConstructors();
 		assertEquals(2, methods.length);
 
 		methods= ct.getMethods();
 		assertEquals(14, methods.length);
-		
-		ICPPBase[] bases = ct.getBases();
+	
+		ICPPBase[] bases = ClassTypeHelper.getBases(ct, null);
 		assertEquals(1, bases.length);
-		
+	
 		IField field = ct.findField("bfield");
 		assertNotNull(field);
 
-		IField[] fields = ct.getFields();
+		IField[] fields = ClassTypeHelper.getFields(ct, null);
 		assertEquals(2, fields.length);
 
-		IBinding[] friends = ct.getFriends();
+		IBinding[] friends = ClassTypeHelper.getFriends(ct, null);
 		assertEquals(0, friends.length); // not yet supported
 	}
-	
+
 	//	struct A {
 	//		void f() { }
 	//	};
@@ -1875,7 +1877,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//	};
 	//	B<float> b;
 	//	C<float> c;
-	
+
 	// #include "header.h"
 	//	void test() {
 	//		b.f();
@@ -1903,7 +1905,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	public void testUsageOfClassTemplateOutsideOfClassBody_357320() throws Exception {
 		getBindingFromASTName("m1", 0, ICPPMethod.class);
 	}
-	
+
 	//	template <typename> struct foo;
 	//	template <> struct foo<int> {
 	//	    typedef int type;
@@ -1931,7 +1933,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	public void testSpecializationInIndex_367563b() throws Exception {
 		getBindingFromASTName("type type", 4, ITypedef.class);
 	}
-	
+
 	//	template <typename T> struct remove_const_impl {};
 	//	template <typename T> struct remove_const_impl<T*> {
 	//	    typedef T type;
@@ -1951,5 +1953,85 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	public void testCurrentInstanceOfClassTemplatePartialSpec_368404() throws Exception {
 		ITypedef tdef= getBindingFromASTName("type t;", 4, ITypedef.class);
 		assertEquals("int", ASTTypeUtil.getType(tdef, true));
+	}
+
+	//	template<typename T, T v>
+	//	struct integral_constant {
+	//	  static constexpr T value = v;
+	//	  typedef T value_type;
+	//	  typedef integral_constant<T, v> type;
+	//	};
+	//
+	//	typedef integral_constant<bool, true> true_type;
+	//
+	//	typedef integral_constant<bool, false> false_type;
+	//
+	//	template<typename T>
+	//	class helper {
+	//	  typedef char one;
+	//	  typedef struct { char arr[2]; } two;
+	//	  template<typename U> struct Wrap_type {};
+	//	  template<typename U> static one test(Wrap_type<typename U::category>*);
+	//	  template<typename U> static two test(...);
+	//	  public: static const bool value = sizeof(test<T>(0)) == 1;
+	//	};
+	//
+	//	template<typename T>
+	//	struct has_category : integral_constant<bool, helper<T>::value> {};
+	//
+	//	template<typename Iterator, bool = has_category<Iterator>::value>
+	//	struct traits {};
+	//
+	//	template<typename Iterator>
+	//	struct traits<Iterator, true> {
+	//	  typedef typename Iterator::value_type value_type;
+	//	};
+	//
+	//	struct tag {};
+
+	//	struct C {
+	//	  typedef int value_type;
+	//	  typedef tag category;
+	//	};
+	//
+	//	template<typename It, typename Val = typename traits<It>::value_type>
+	//	class A {
+	//	};
+	//
+	//	typedef A<C> type;
+	public void testSFINAE_a() throws Exception {
+		checkBindings();
+	}
+
+	//	template <bool B, typename T = void> struct enable_if { typedef T type; };
+	//	template <typename T> struct enable_if<false, T> {};
+	//
+	//	template <typename T> struct is_int { static const bool value = false; };
+	//	template <> struct is_int<int> { static const bool value = true; };
+	//
+	//	template <typename T> struct is_double { static const bool value = false; };
+	//	template <> struct is_double<double> { static const bool value = true; };
+	//
+	//	template <typename T, typename Enabled = void>
+	//	struct A {
+	//	  static int get() { return 0; }
+	//	};
+	//
+	//	template<typename T>
+	//	struct A<T, typename enable_if<is_double<T>::value>::type> {
+	//	  static int get() { return 1; }
+	//	};
+	//
+	//	template <typename T>
+	//	struct A<T, typename enable_if<is_int<T>::value>::type> {
+	//	  static int get() { return 2; }
+	//	};
+
+	//	void test() {
+	//	  A<double>::get();
+	//	  A<int>::get();
+	//	}
+	public void testSFINAE_b() throws Exception {
+		checkBindings();
 	}
 }

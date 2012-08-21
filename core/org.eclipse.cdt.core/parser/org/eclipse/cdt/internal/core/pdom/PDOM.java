@@ -218,19 +218,20 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  124.0 - GCC attributes and NO_RETURN flag for functions.
 	 *  #125.0# - Indexes for unresolved includes and files indexed with I/O errors. <<CDT 8.1>>
 	 *  
-	 *  CDT 8.2 development
-	 *  130.0 - Dependent expressions, bug 299911
+	 *  CDT 8.2 development (versions not supported on the 8.1.x branch)
+	 *  130.0 - Dependent expressions, bug 299911.
+	 *  131.0 - Dependent expressions part 2, bug 299911.
 	 */
-	private static final int MIN_SUPPORTED_VERSION= version(130, 0);
-	private static final int MAX_SUPPORTED_VERSION= version(130, Short.MAX_VALUE);
-	private static final int DEFAULT_VERSION = version(130, 0);
+	private static final int MIN_SUPPORTED_VERSION= version(131, 0);
+	private static final int MAX_SUPPORTED_VERSION= version(131, Short.MAX_VALUE);
+	private static final int DEFAULT_VERSION = version(131, 0);
 
 	private static int version(int major, int minor) {
 		return (major << 16) + minor;
 	}
 
 	/**
-	 * Returns the version that shall be used when creating new databases
+	 * Returns the version that shall be used when creating new databases.
 	 */
 	public static int getDefaultVersion() {
 		return DEFAULT_VERSION;

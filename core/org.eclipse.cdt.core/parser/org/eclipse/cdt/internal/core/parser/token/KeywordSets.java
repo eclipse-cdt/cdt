@@ -189,6 +189,7 @@ public class KeywordSets {
 		EXPRESSION_CPP.add(Keywords.REINTERPRET_CAST);
 		EXPRESSION_CPP.add(Keywords.CONST_CAST);
 		EXPRESSION_CPP.add(Keywords.TYPEID);
+		EXPRESSION_CPP.add(Keywords.NOEXCEPT);
 		EXPRESSION_CPP.add(Keywords.TRUE);
 		EXPRESSION_CPP.add(Keywords.FALSE);
 		EXPRESSION_CPP.add(Keywords.THIS);

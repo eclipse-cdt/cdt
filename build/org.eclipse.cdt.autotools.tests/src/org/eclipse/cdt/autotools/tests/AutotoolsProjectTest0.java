@@ -13,7 +13,7 @@ package org.eclipse.cdt.autotools.tests;
 
 import junit.framework.TestCase;
 
-import org.eclipse.cdt.managedbuilder.core.ManagedCProjectNature;
+import org.eclipse.cdt.autotools.core.AutotoolsNewProjectNature;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -47,7 +47,7 @@ public class AutotoolsProjectTest0 extends TestCase {
 	public void testAutotoolsProject0() throws Exception {
 		Path p = new Path("zip/project1.zip");
 		ProjectTools.addSourceContainerWithImport(testProject, null, p, null, true);
-		assertTrue(testProject.hasNature(ManagedCProjectNature.MNG_NATURE_ID));
+		assertTrue(testProject.hasNature(AutotoolsNewProjectNature.AUTOTOOLS_NATURE_ID));
 		org.eclipse.core.runtime.Path x = new org.eclipse.core.runtime.Path("ChangeLog");
 		assertTrue(testProject.exists(x));
 		x = new org.eclipse.core.runtime.Path("configure");

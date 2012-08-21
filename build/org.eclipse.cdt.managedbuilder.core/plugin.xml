@@ -603,12 +603,12 @@
       <provider
             class="org.eclipse.cdt.managedbuilder.internal.language.settings.providers.MBSLanguageSettingsProvider"
             id="org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider"
-            name="CDT Managed Build Setting Entries">
+            name="%ManagedBuildSettingEntries.name">
       </provider>
       <provider
             class="org.eclipse.cdt.managedbuilder.language.settings.providers.GCCBuiltinSpecsDetector"
             id="org.eclipse.cdt.managedbuilder.core.GCCBuiltinSpecsDetector"
-            name="CDT GCC Builtin Compiler Settings"
+            name="%GCCBuildinCompilerSettings.name"
             parameter="${COMMAND} -E -P -v -dD ${INPUTS}">
          <language-scope id="org.eclipse.cdt.core.gcc"/>
          <language-scope id="org.eclipse.cdt.core.g++"/>
@@ -632,7 +632,7 @@
       <provider
             class="org.eclipse.cdt.managedbuilder.language.settings.providers.GCCBuildCommandParser"
             id="org.eclipse.cdt.managedbuilder.core.GCCBuildCommandParser"
-            name="CDT GCC Build Output Parser"
+            name="%GCCBuildOutputParser.name"
             parameter="(gcc)|([gc]\+\+)|(clang)"
             prefer-non-shared="true">
       </provider>

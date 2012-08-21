@@ -23,14 +23,10 @@ import junit.framework.TestSuite;
  * @author Judy N. Green
  * @since Jul 19, 2002
  */
-public class AllDebugTests {
+public class AllDebugTests extends TestSuite {
 	
-    public static void main(String[] args) {
-        junit.textui.TestRunner.run(suite());
-    }
-
     public static Test suite() {
-        TestSuite suite = new TestSuite();
+        TestSuite suite = new AllDebugTests();
 
         // Just add more test cases here as you create them for 
         // each class being tested
@@ -40,8 +36,6 @@ public class AllDebugTests {
         suite.addTest(LocationTests.suite());
         suite.addTest(EventBreakpointTests.suite());
         return suite;
-        
-        
     }
 } // End of AllDebugTests.java
 

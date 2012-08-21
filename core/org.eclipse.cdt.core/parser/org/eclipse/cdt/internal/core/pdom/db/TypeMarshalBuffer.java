@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2009, 2012 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.db;
 
@@ -16,11 +17,15 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableType;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateNonTypeArgument;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTypeArgument;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.core.runtime.CoreException;
@@ -93,7 +98,7 @@ public class TypeMarshalBuffer implements ITypeMarshalBuffer {
 
 		byte firstByte= fBuffer[fPos];
 		if (firstByte == BINDING_TYPE) {
-			fPos+= 2;
+			fPos += 2;
 			long rec= getRecordPointer();
 			return (IBinding) fLinkage.getNode(rec);
 		} else if (firstByte == NULL_TYPE || firstByte == UNSTORABLE_TYPE) {
@@ -180,6 +185,27 @@ public class TypeMarshalBuffer implements ITypeMarshalBuffer {
 			throw unmarshallingError();
 
 		return Value.unmarshal(this);
+	}
+
+	@Override
+	public void marshalTemplateArgument(ICPPTemplateArgument arg) throws CoreException {
+		if (arg instanceof CPPTemplateNonTypeArgument) {
+			putByte(VALUE);
+			((CPPTemplateNonTypeArgument) arg).getEvaluation().marshal(this, true);
+		} else {
+			marshalType(arg.getTypeValue());
+		}
+	}
+
+	@Override
+	public ICPPTemplateArgument unmarshalTemplateArgument() throws CoreException {
+		int firstByte= getByte();
+		if (firstByte == VALUE) {
+			return new CPPTemplateNonTypeArgument((ICPPEvaluation) unmarshalEvaluation());
+		} else {
+			fPos--;
+			return new CPPTemplateTypeArgument(unmarshalType());
+		}
 	}
 
 	private void request(int i) {

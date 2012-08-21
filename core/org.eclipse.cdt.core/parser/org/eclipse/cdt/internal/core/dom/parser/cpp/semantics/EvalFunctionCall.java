@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
@@ -17,6 +18,8 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.REF;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
 
+import java.util.Arrays;
+
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
@@ -24,8 +27,10 @@ import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
@@ -45,6 +50,10 @@ public class EvalFunctionCall extends CPPEvaluation {
 		fArguments= args;
 	}
 
+	/**
+	 * Returns arguments of the function call. The first argument is the function name, the rest
+	 * are arguments passed to the function.
+	 */
 	public ICPPEvaluation[] getArguments() {
 		return fArguments;
 	}
@@ -132,7 +141,8 @@ public class EvalFunctionCall extends CPPEvaluation {
 
 	@Override
 	public IValue getValue(IASTNode point) {
-		return Value.create(this, point);
+		// TODO(sprigogin): Simulate execution of a function call if the value is not dependent.
+		return Value.create(this);
 	}
 
 	@Override
@@ -167,6 +177,48 @@ public class EvalFunctionCall extends CPPEvaluation {
 		for (int i = 0; i < args.length; i++) {
 			args[i]= (ICPPEvaluation) buffer.unmarshalEvaluation();
 		}
-		return new EvalComma(args);
+		return new EvalFunctionCall(args);
+	}
+
+	@Override
+	public ICPPEvaluation instantiate(ICPPTemplateParameterMap tpMap, int packOffset,
+			ICPPClassSpecialization within, int maxdepth, IASTNode point) {
+		ICPPEvaluation[] args = fArguments;
+		for (int i = 0; i < fArguments.length; i++) {
+			ICPPEvaluation arg = fArguments[i].instantiate(tpMap, packOffset, within, maxdepth, point);
+			if (arg != fArguments[i]) {
+				if (args == fArguments) {
+					args = new ICPPEvaluation[fArguments.length];
+					System.arraycopy(fArguments, 0, args, 0, fArguments.length);
+				}
+				args[i] = arg;
+			}
+		}
+		if (args == fArguments)
+			return this;
+
+		if (args[0] instanceof EvalFunctionSet && getOverload(point) == null) {
+			// Resolve the function using the parameters of the function call.
+			args[0] = ((EvalFunctionSet) args[0]).resolveFunction(Arrays.copyOfRange(args, 1, args.length), point);
+		}
+		return new EvalFunctionCall(args);
+	}
+
+	@Override
+	public int determinePackSize(ICPPTemplateParameterMap tpMap) {
+		int r = CPPTemplates.PACK_SIZE_NOT_FOUND;
+		for (ICPPEvaluation arg : fArguments) {
+			r = CPPTemplates.combinePackSize(r, arg.determinePackSize(tpMap));
+		}
+		return r;
+	}
+
+	@Override
+	public boolean referencesTemplateParameter() {
+		for (ICPPEvaluation arg : fArguments) {
+			if (arg.referencesTemplateParameter())
+				return true;
+		}
+		return false;
 	}
 }

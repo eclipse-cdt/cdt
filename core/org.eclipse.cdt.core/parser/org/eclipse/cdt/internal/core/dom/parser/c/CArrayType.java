@@ -6,7 +6,7 @@
  *  http://www.eclipse.org/legal/epl-v10.html
  * 
  *  Contributors:
- *     Devin Steffler (IBM Corporation) - initial API and implementation
+ *      Devin Steffler (IBM Corporation) - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -157,7 +157,6 @@ public class CArrayType implements ICArrayType, ITypeContainer, ISerializableTyp
 		return ASTTypeUtil.getType(this);
 	}
 
-	
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
 		int firstByte= ITypeMarshalBuffer.ARRAY_TYPE;
@@ -174,14 +173,13 @@ public class CArrayType implements ICArrayType, ITypeContainer, ISerializableTyp
 			firstByte |= ITypeMarshalBuffer.FLAG1;
 		}
 
-
 		val= getSize();
 		if (val != null) {
 			firstByte |= ITypeMarshalBuffer.FLAG2;
 			Long num= val.numericalValue();
 			if (num != null) {
 				long l= num;
-				if (l>=0 && l <= Short.MAX_VALUE) {
+				if (l >= 0 && l <= Short.MAX_VALUE) {
 					nval= (short) l;
 					firstByte |= ITypeMarshalBuffer.FLAG3;
 				} 

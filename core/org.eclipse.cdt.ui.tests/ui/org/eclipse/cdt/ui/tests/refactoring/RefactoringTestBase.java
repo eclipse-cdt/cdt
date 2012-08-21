@@ -56,7 +56,7 @@ import org.eclipse.cdt.internal.ui.refactoring.CRefactoringContext;
  * Common base for refactoring tests.
  */
 public abstract class RefactoringTestBase extends BaseTestCase {
-	private static final int INDEXER_TIMEOUT_SEC = 360;
+	private static final int INDEXER_TIMEOUT_SEC = 300;
 	protected static final NullProgressMonitor NULL_PROGRESS_MONITOR = new NullProgressMonitor();
 
 	/** Allows empty files to be created during test setup. */

@@ -6,10 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
-
 
 /**
  * Represents the possible cv-qualification of a type.
@@ -23,16 +22,19 @@ public enum CVQualifier {
 	private static final int R = 4;
 
 	final private int fQualifiers;
+
 	private CVQualifier(int qualifiers) {
 		fQualifiers= qualifiers;
 	}
-	
+
 	public boolean isConst() {
 		return (fQualifiers & C) != 0;
 	}
+
 	public boolean isVolatile() {
 		return (fQualifiers & V) != 0;
 	}
+
 	public boolean isRestrict() {
 		return (fQualifiers & R) != 0;
 	}
@@ -54,7 +56,7 @@ public enum CVQualifier {
 	}
 
 	private CVQualifier fromQualifier(final int q) {
-		switch(q) {
+		switch (q) {
 		case C|V|R: return CONST_VOLATILE_RESTRICT;
 		case V|R: 	return VOLATILE_RESTRICT;
 		case C|R: 	return CONST_RESTRICT;
@@ -65,7 +67,7 @@ public enum CVQualifier {
 		case 0: default: return NONE;
 		}
 	}
-	
+
 	/**
 	 * [3.9.3-4] Implements cv-qualification (partial) comparison. There is a (partial)
 	 * ordering on cv-qualifiers, so that a type can be said to be more
@@ -83,12 +85,12 @@ public enum CVQualifier {
 	 * </ul>
 	 */
 	public int partialComparison(CVQualifier cv2) {
-		// same qualifications
+		// Same qualifications.
 		if (this == cv2)
 			return 0;
 
 		if (!isAtLeastAsQualifiedAs(cv2))
 			return -1;
-		return fQualifiers-cv2.fQualifiers;
+		return fQualifiers - cv2.fQualifiers;
 	}
 }

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     William R. Swanson (Tilera Corporation) - initial API and implementation
+ *     IBM Corporation
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;
@@ -187,15 +188,13 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 	/** Returns localized name to display for this visualizer. */
 	@Override
 	public String getDisplayName() {
-		// TODO: use a string resource here.
-		return "Multicore Visualizer"; //$NON-NLS-1$
+		return Messages.MulticoreVisualizer_name; 
 	}
 	
 	/** Returns localized tooltip text to display for this visualizer. */
 	@Override
 	public String getDescription() {
-		// TODO: use a string resource here.
-		return "Displays current state of selected debug target."; //$NON-NLS-1$
+		return Messages.MulticoreVisualizer_tooltip; 
 	}
 	
 	

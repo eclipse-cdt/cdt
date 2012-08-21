@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,10 +32,9 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 /**
  * Binding for a non-type template parameter.
  */
-public class CPPTemplateNonTypeParameter extends CPPTemplateParameter implements
-		ICPPTemplateNonTypeParameter {
-
-	private IType type = null;
+public class CPPTemplateNonTypeParameter extends CPPTemplateParameter
+		implements ICPPTemplateNonTypeParameter {
+	private IType type;
 	
 	public CPPTemplateNonTypeParameter(IASTName name) {
 		super(name);
@@ -80,9 +79,9 @@ public class CPPTemplateNonTypeParameter extends CPPTemplateParameter implements
 			d= (IASTExpression) dc;
 		} else if (dc instanceof ICPPASTInitializerList) {
 			ICPPASTInitializerList list= (ICPPASTInitializerList) dc;
-			switch(list.getSize()) {
+			switch (list.getSize()) {
 			case 0:
-				return new CPPTemplateArgument(Value.create(0), getType());
+				return new CPPTemplateNonTypeArgument(Value.create(0), getType());
 			case 1:
 				dc= list.getClauses()[0];
 				if (dc instanceof IASTExpression) {
@@ -96,7 +95,7 @@ public class CPPTemplateNonTypeParameter extends CPPTemplateParameter implements
 		
 		IValue val= Value.create(d, Value.MAX_RECURSION_DEPTH);
 		IType t= getType();
-		return new CPPTemplateArgument(val, t);
+		return new CPPTemplateNonTypeArgument(val, t);
 	}
 
 	@Override
@@ -123,26 +122,32 @@ public class CPPTemplateNonTypeParameter extends CPPTemplateParameter implements
 	public boolean isStatic() {
 		return false;
 	}
+
 	@Override
 	public boolean isExtern() {
 		return false;
 	}
+
 	@Override
 	public boolean isAuto() {
 		return false;
 	}
+
 	@Override
 	public boolean isRegister() {
 		return false;
 	}
+
 	@Override
 	public IValue getInitialValue() {
 		return null;
 	}
+
 	@Override
 	public boolean isExternC() {
 		return false;
 	}
+
 	@Override
 	public boolean isMutable() {
 		return false;

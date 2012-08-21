@@ -1,21 +1,24 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2012 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Andrew Ferguson (Symbian) - Initial implementation
- *    Markus Schorn (Wind River Systems)
+ *     Andrew Ferguson (Symbian) - Initial implementation
+ *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
@@ -29,6 +32,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassSpecialization.RecursionResolvingBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateParameterMap;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPClassSpecializationScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
@@ -37,10 +41,8 @@ import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
 public class CompositeCPPClassSpecialization extends CompositeCPPClassType implements ICPPClassSpecialization {
-	
-	private ObjectMap specializationMap= null;
+	private ObjectMap specializationMap;
 	private final ThreadLocal<Set<IBinding>> fInProgress= new ThreadLocal<Set<IBinding>>();
-
 
 	public CompositeCPPClassSpecialization(ICompositesFactory cf, ICPPClassType rbinding) {
 		super(cf, rbinding);
@@ -80,11 +82,11 @@ public class CompositeCPPClassSpecialization extends CompositeCPPClassType imple
 				specializationMap= (ObjectMap) cached;
 			} else {
 				final ObjectMap newMap= new ObjectMap(2);
-				// in any fragment explicit specializations may be defined.
+				// In any fragment explicit specializations may be defined.
 				IIndexFragmentBinding[] frags= cf.findEquivalentBindings(rbinding);
 				for (IIndexFragmentBinding fb : frags) {
 					if (fb instanceof ICPPClassType) {
-						final ICPPClassType[] nested = ((ICPPClassType)fb).getNestedClasses();
+						final ICPPClassType[] nested = ClassTypeHelper.getNestedClasses((ICPPClassType) fb, point);
 						if (nested.length > 0) {
 							for (ICPPClassType ct : nested) {
 								if (ct instanceof ICPPClassSpecialization && 
@@ -130,56 +132,131 @@ public class CompositeCPPClassSpecialization extends CompositeCPPClassType imple
 
 	@Override
 	public final ICPPBase[] getBases() {
+		CCorePlugin.log(new Exception("Unsafe method call. Instantiation of dependent expressions may not work.")); //$NON-NLS-1$
+		return getBases(null);
+	}
+
+	@Override
+	public final ICPPBase[] getBases(IASTNode point) {
 		IScope scope= getCompositeScope();
 		if (scope instanceof ICPPClassSpecializationScope) {
-			return ((ICPPClassSpecializationScope) scope).getBases();
+			return ((ICPPClassSpecializationScope) scope).getBases(point);
 		}
-		return super.getBases();
+		ICPPBase[] bases = ClassTypeHelper.getBases((ICPPClassType) rbinding, point);
+		return wrapBases(bases);
 	}
 	
 	@Override
 	public final ICPPConstructor[] getConstructors() {
+		CCorePlugin.log(new Exception("Unsafe method call. Instantiation of dependent expressions may not work.")); //$NON-NLS-1$
+		return getConstructors(null);
+	}
+
+	@Override
+	public final ICPPConstructor[] getConstructors(IASTNode point) {
 		IScope scope= getCompositeScope();
 		if (scope instanceof ICPPClassSpecializationScope) {
-			return ((ICPPClassSpecializationScope) scope).getConstructors();
+			return ((ICPPClassSpecializationScope) scope).getConstructors(point);
 		}
-		return super.getConstructors();
+		ICPPConstructor[] result = ClassTypeHelper.getConstructors((ICPPClassType) rbinding, point);
+		return wrapBindings(result);
+	}
+
+	@Override
+	public ICPPMethod[] getMethods() {
+		CCorePlugin.log(new Exception("Unsafe method call. Instantiation of dependent expressions may not work.")); //$NON-NLS-1$
+		return getMethods(null);
+	}
+
+	@Override
+	public ICPPMethod[] getMethods(IASTNode point) {
+		return ClassTypeHelper.getMethods(this, point);
 	}
 
 	@Override
 	public final ICPPMethod[] getDeclaredMethods() {
+		CCorePlugin.log(new Exception("Unsafe method call. Instantiation of dependent expressions may not work.")); //$NON-NLS-1$
+		return getDeclaredMethods(null);
+	}
+
+	@Override
+	public final ICPPMethod[] getDeclaredMethods(IASTNode point) {
 		IScope scope= getCompositeScope();
 		if (scope instanceof ICPPClassSpecializationScope) {
-			return ((ICPPClassSpecializationScope) scope).getDeclaredMethods();
+			return ((ICPPClassSpecializationScope) scope).getDeclaredMethods(point);
 		}
-		return super.getDeclaredMethods();
+		ICPPMethod[] result = ClassTypeHelper.getDeclaredMethods((ICPPClassType) rbinding, point);
+		return wrapBindings(result);
+	}
+
+	@Override
+	public final ICPPMethod[] getAllDeclaredMethods() {
+		CCorePlugin.log(new Exception("Unsafe method call. Instantiation of dependent expressions may not work.")); //$NON-NLS-1$
+		return getAllDeclaredMethods(null);
+	}
+
+	@Override
+	public final ICPPMethod[] getAllDeclaredMethods(IASTNode point) {
+		return ClassTypeHelper.getAllDeclaredMethods(this, point);
 	}
 
 	@Override
 	public final ICPPField[] getDeclaredFields() {
+		CCorePlugin.log(new Exception("Unsafe method call. Instantiation of dependent expressions may not work.")); //$NON-NLS-1$
+		return getDeclaredFields(null);
+	}
+
+	@Override
+	public final ICPPField[] getDeclaredFields(IASTNode point) {
 		IScope scope= getCompositeScope();
 		if (scope instanceof ICPPClassSpecializationScope) {
-			return ((ICPPClassSpecializationScope) scope).getDeclaredFields();
+			return ((ICPPClassSpecializationScope) scope).getDeclaredFields(point);
 		}
-		return super.getDeclaredFields();
+		ICPPField[] result = ClassTypeHelper.getDeclaredFields((ICPPClassType) rbinding, point);
+		return wrapBindings(result);
+	}
+
+	@Override
+	public IField[] getFields() {
+		CCorePlugin.log(new Exception("Unsafe method call. Instantiation of dependent expressions may not work.")); //$NON-NLS-1$
+		return getFields(null);
+	}
+
+	@Override
+	public final IField[] getFields(IASTNode point) {
+		return ClassTypeHelper.getFields(this, point);
 	}
 
 	@Override
 	public final IBinding[] getFriends() {
+		CCorePlugin.log(new Exception("Unsafe method call. Instantiation of dependent expressions may not work.")); //$NON-NLS-1$
+		return getFriends(null);
+	}
+
+	@Override
+	public final IBinding[] getFriends(IASTNode point) {
 		IScope scope= getCompositeScope();
 		if (scope instanceof ICPPClassSpecializationScope) {
-			return ((ICPPClassSpecializationScope) scope).getFriends();
+			return ((ICPPClassSpecializationScope) scope).getFriends(point);
 		}
-		return super.getFriends();
+		IBinding[] result = ClassTypeHelper.getFriends((ICPPClassType) rbinding, point);
+		return wrapBindings(result);
 	}
 
 	@Override
 	public final ICPPClassType[] getNestedClasses() {
+		CCorePlugin.log(new Exception("Unsafe method call. Instantiation of dependent expressions may not work.")); //$NON-NLS-1$
+		return getNestedClasses(null);
+	}
+
+	@Override
+	public final ICPPClassType[] getNestedClasses(IASTNode point) {
 		IScope scope= getCompositeScope();
 		if (scope instanceof ICPPClassSpecializationScope) {
-			return ((ICPPClassSpecializationScope) scope).getNestedClasses();
+			return ((ICPPClassSpecializationScope) scope).getNestedClasses(point);
 		}
-		return super.getNestedClasses();
+		ICPPClassType[] result = ClassTypeHelper.getNestedClasses((ICPPClassType) rbinding, point);
+		return wrapBindings(result);
 	}
 	
 	@Override

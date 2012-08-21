@@ -46,6 +46,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVariableReadWriteFlags;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 
@@ -84,7 +85,7 @@ public class ClassMembersInitializationChecker extends AbstractIndexAstChecker {
 				Set<IField> fieldsInConstructor = constructorsStack.push(new HashSet<IField>());
 				
 				// Add all class fields
-				for (IField field : constructor.getClassOwner().getDeclaredFields()) {
+				for (IField field : ClassTypeHelper.getDeclaredFields(constructor.getClassOwner(), declaration)) {
 					if (isSimpleType(field.getType()) && !field.isStatic()) {
 						fieldsInConstructor.add(field);
 					}

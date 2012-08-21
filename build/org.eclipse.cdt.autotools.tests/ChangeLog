@@ -1,3 +1,12 @@
+2012-07-23  Jeff Johnston  <jjohnstn@redhat.com>
+
+	* src/org/eclipse/cdt/autotools/tests/AllAutotoolsTests.java (suite): Add new UpdateConfigureTest.
+	* src/org/eclipse/cdt/autotools/tests/UpdateConfigureTest.java: New test.
+	* src/org/eclipse/cdt/autotools/tests/AutotoolsProjectTest0.java (testAutotoolsProject0): Fix nature id being tested.
+	* src/org/eclipse/cdt/autotools/tests/AutotoolsProjectTest1.java (testAutotoolsProject1): Ditto.
+	* src/org/eclipse/cdt/autotools/tests/AutotoolsProjectTest2.java (testAutotoolsProject2): Ditto.
+	* src/org/eclipse/cdt/autotools/tests/AutotoolsProjectNatureTest.java (testAutotoolsProjectNature): Ditto.
+
 2012-03-30  Jeff Johnston  <jjohnstn@redhat.com>
 
 	* src/org/eclipse/cdt/autotools/tests/ProjectTools.java

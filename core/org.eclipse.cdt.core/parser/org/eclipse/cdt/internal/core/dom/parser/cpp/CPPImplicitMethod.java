@@ -194,6 +194,6 @@ public class CPPImplicitMethod extends CPPImplicitFunction implements ICPPMethod
 
 	@Override
 	public IType[] getExceptionSpecification() {
-		return ClassTypeHelper.getInheritedExceptionSpecification(this);
+		return ClassTypeHelper.getInheritedExceptionSpecification(this, null);
 	}
 }

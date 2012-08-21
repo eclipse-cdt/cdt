@@ -21,7 +21,6 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPASTFunctionDefinition extends IASTFunctionDefinition {
-
 	/**
  	 * <code>MEMBER_INITIALIZER</code> is the role of a member initializer in the function definition.
 	 */

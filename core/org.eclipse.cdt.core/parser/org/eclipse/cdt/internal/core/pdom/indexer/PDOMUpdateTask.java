@@ -33,6 +33,7 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.internal.core.model.ExternalTranslationUnit;
 import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
+import org.eclipse.cdt.internal.core.parser.scanner.IncludeSearchPath;
 import org.eclipse.cdt.internal.core.parser.scanner.IncludeSearchPathElement;
 import org.eclipse.cdt.internal.core.parser.scanner.ScannerUtility;
 import org.eclipse.cdt.internal.core.pdom.IndexerProgress;
@@ -199,7 +200,7 @@ public class PDOMUpdateTask implements IPDOMIndexerTask {
 		try {
 			String filePath = IndexLocationFactory.getAbsolutePath(file.getLocation()).toOSString();
 			long fileReadTime = file.getSourceReadTime();
-			IncludeSearchPathElement[] includeSearchPath =
+			IncludeSearchPath includeSearchPath =
 					CPreprocessor.configureIncludeSearchPath(new File(filePath).getParentFile(), scannerInfo);
 			for (IIndexInclude include : file.getIncludes()) {
 				if (!include.isResolved() && include.isActive() &&
@@ -214,7 +215,7 @@ public class PDOMUpdateTask implements IPDOMIndexerTask {
 	}
 
 	private boolean canResolveInclude(IIndexInclude include, String currentFile, long timestamp,
-			IncludeSearchPathElement[] includeSearchPath,
+			IncludeSearchPath includeSearchPath,
 			ProjectIndexerIncludeResolutionHeuristics includeResolutionHeuristics) throws CoreException {
 		String includeName = include.getFullName();
         String filePath = CPreprocessor.getAbsoluteInclusionPath(includeName, currentFile);
@@ -222,7 +223,7 @@ public class PDOMUpdateTask implements IPDOMIndexerTask {
         	return true;
         }
 
-        if (currentFile != null && !include.isSystemInclude()) {
+        if (currentFile != null && !include.isSystemInclude() && !includeSearchPath.isInhibitUseOfCurrentFileDirectory()) {
             // Check to see if we find a match in the current directory
     		final File currentDir= new File(currentFile).getParentFile();
     		if (currentDir != null) {
@@ -237,7 +238,7 @@ public class PDOMUpdateTask implements IPDOMIndexerTask {
         // This simplification may produce false positives, but by checking file modification time
         // we guarantee that any false positive won't be produced again when this task runs
         // next time.
-        for (IncludeSearchPathElement path : includeSearchPath) {
+        for (IncludeSearchPathElement path : includeSearchPath.getElements()) {
         	if (!include.isSystemInclude() || !path.isForQuoteIncludesOnly()) {
         		filePath = path.getLocation(includeName);
         		if (filePath != null && fileIsNotOlderThanTimestamp(filePath, timestamp)) {

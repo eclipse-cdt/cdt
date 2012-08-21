@@ -430,7 +430,6 @@ public class ExpressionVMProvider extends AbstractDMVMProvider
         	if (input instanceof IExpressionDMContext) {
         		IExpressionDMContext dmc = (IExpressionDMContext) input;
         		SingleExpressionVMNode vmNode = (SingleExpressionVMNode) getChildVMNodes(getRootVMNode())[0];
-        		vmNode.setExpression(dmc);
 				final IDMVMContext viewerInput= vmNode.createVMContext(dmc);
 
 				// provide access to viewer (needed by details pane)

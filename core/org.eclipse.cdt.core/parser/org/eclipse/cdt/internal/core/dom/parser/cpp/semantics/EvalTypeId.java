@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
@@ -17,6 +18,9 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
@@ -70,7 +74,20 @@ public class EvalTypeId extends CPPEvaluation {
 
 	@Override
 	public IValue getValue(IASTNode point) {
-		return Value.create(this, point);
+		if (isValueDependent())
+			return Value.create(this);
+		if (fArguments == null)
+			return Value.UNKNOWN;
+		
+		if (isTypeDependent())
+			return Value.create(this);
+		if (fOutputType instanceof ICPPClassType) {
+			// TODO(sprigogin): Simulate execution of a ctor call.
+			return Value.UNKNOWN;
+		}
+		if (fArguments.length == 1)
+			return fArguments[0].getValue(point);
+		return Value.UNKNOWN;
 	}
 
 	@Override
@@ -124,5 +141,45 @@ public class EvalTypeId extends CPPEvaluation {
 			}
 		}
 		return new EvalTypeId(type, args);
+	}
+
+	@Override
+	public ICPPEvaluation instantiate(ICPPTemplateParameterMap tpMap, int packOffset,
+			ICPPClassSpecialization within, int maxdepth, IASTNode point) {
+		ICPPEvaluation[] args = fArguments;
+		if (fArguments != null) {
+			for (int i = 0; i < fArguments.length; i++) {
+				ICPPEvaluation arg = fArguments[i].instantiate(tpMap, packOffset, within, maxdepth, point);
+				if (arg != fArguments[i]) {
+					if (args == fArguments) {
+						args = new ICPPEvaluation[fArguments.length];
+						System.arraycopy(fArguments, 0, args, 0, fArguments.length);
+					}
+					args[i] = arg;
+				}
+			}
+		}
+		IType type = CPPTemplates.instantiateType(fInputType, tpMap, packOffset, within, point);
+		if (args == fArguments && type == fInputType)
+			return this;
+		return new EvalTypeId(type, args);
+	}
+
+	@Override
+	public int determinePackSize(ICPPTemplateParameterMap tpMap) {
+		int r = CPPTemplates.determinePackSize(fInputType, tpMap);
+		for (ICPPEvaluation arg : fArguments) {
+			r = CPPTemplates.combinePackSize(r, arg.determinePackSize(tpMap));
+		}
+		return r;
+	}
+
+	@Override
+	public boolean referencesTemplateParameter() {
+		for (ICPPEvaluation arg : fArguments) {
+			if (arg.referencesTemplateParameter())
+				return true;
+		}
+		return false;
 	}
 }

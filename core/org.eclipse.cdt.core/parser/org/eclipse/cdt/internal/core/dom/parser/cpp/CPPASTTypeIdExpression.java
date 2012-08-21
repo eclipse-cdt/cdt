@@ -1,13 +1,13 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2011 IBM Corporation and others.
+ *  Copyright (c) 2004, 2012 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
- *     John Camelon (IBM) - Initial API and implementation
- *     Markus Schorn (Wind River Systems)
+ *      John Camelon (IBM) - Initial API and implementation
+ *      Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -40,16 +40,12 @@ public class CPPASTTypeIdExpression extends ASTNode implements ICPPASTTypeIdExpr
 	public CPPASTTypeIdExpression copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-	
+
 	@Override
 	public CPPASTTypeIdExpression copy(CopyStyle style) {
-		CPPASTTypeIdExpression copy = new CPPASTTypeIdExpression(op, typeId == null ? null
-				: typeId.copy(style));
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		CPPASTTypeIdExpression copy =
+				new CPPASTTypeIdExpression(op, typeId == null ? null : typeId.copy(style));
+		return copy(copy, style);
 	}
 
 	@Override
@@ -66,11 +62,11 @@ public class CPPASTTypeIdExpression extends ASTNode implements ICPPASTTypeIdExpr
     @Override
 	public void setTypeId(IASTTypeId typeId) {
         assertNotFrozen();
-       this.typeId = typeId;
-       if (typeId != null) {
-    	   typeId.setParent(this);
-    	   typeId.setPropertyInParent(TYPE_ID);
-       } 
+        this.typeId = typeId;
+        if (typeId != null) {
+        	typeId.setParent(this);
+        	typeId.setPropertyInParent(TYPE_ID);
+        }
     }
 
     @Override
@@ -87,9 +83,9 @@ public class CPPASTTypeIdExpression extends ASTNode implements ICPPASTTypeIdExpr
 	            default: break;
 	        }
 		}
-      
+
         if (typeId != null && !typeId.accept(action)) return false;
-        
+
         if (action.shouldVisitExpressions) {
 		    switch (action.leave(this)) {
 	            case ASTVisitor.PROCESS_ABORT: return false;
@@ -99,7 +95,7 @@ public class CPPASTTypeIdExpression extends ASTNode implements ICPPASTTypeIdExpr
 		}
         return true;
     }
-    
+
 	@Override
 	public ICPPEvaluation getEvaluation() {
 		if (fEvaluation == null) {
@@ -112,7 +108,7 @@ public class CPPASTTypeIdExpression extends ASTNode implements ICPPASTTypeIdExpr
 		}
 		return fEvaluation;
 	}
-    
+
     @Override
 	public IType getExpressionType() {
     	return getEvaluation().getTypeOrFunctionSet(this);

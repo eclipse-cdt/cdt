@@ -167,8 +167,7 @@ public class RefreshScopeManager {
 
 								});
 							} catch (CoreException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
+								CCorePlugin.log(e);
 							}
 						}
 					}
@@ -393,6 +392,16 @@ public class RefreshScopeManager {
 		getProjectToConfigurationToResourcesMap();	
 
 		HashMap<IResource, List<RefreshExclusion>> resourceMap = getResourcesToExclusionsMap(project,configName);
+		
+		//special case for bug 387428
+		CProjectDescriptionManager descriptionManager = CProjectDescriptionManager.getInstance();
+		ICProjectDescription projectDescription = descriptionManager.getProjectDescription(project, false);
+		if (projectDescription == null && resourceMap.keySet().isEmpty()) {
+			//return project itself as the default to refresh
+			ArrayList<IResource> resources = new ArrayList<IResource>();
+			resources.add(project); 
+			return resources;
+		}
 		return new ArrayList<IResource>(resourceMap.keySet());
 	}
 	
@@ -520,13 +529,16 @@ public class RefreshScopeManager {
 		// for each build configuration 
 		CProjectDescriptionManager descriptionManager = CProjectDescriptionManager.getInstance();
 		ICProjectDescription projectDescription = descriptionManager.getProjectDescription(project, false);
-		ICConfigurationDescription cfgDescs[] = projectDescription.getConfigurations();	
-		for (ICConfigurationDescription cfgDesc : cfgDescs) { 
-			String configName = cfgDesc.getName();
-			HashMap<IResource, List<RefreshExclusion>> resourceMap = new HashMap<IResource, List<RefreshExclusion>>();
-			if (!fIsLoading || fIsNewProject) //config settings could be loading and detects a new project and if so, add the default refresh setting
-				resourceMap.put(project, new LinkedList<RefreshExclusion>()); 
-			configMap.put(configName, resourceMap);
+		
+		if (projectDescription != null) {
+			ICConfigurationDescription cfgDescs[] = projectDescription.getConfigurations();	
+			for (ICConfigurationDescription cfgDesc : cfgDescs) { 
+				String configName = cfgDesc.getName();
+				HashMap<IResource, List<RefreshExclusion>> resourceMap = new HashMap<IResource, List<RefreshExclusion>>();
+				if (!fIsLoading || fIsNewProject) //config settings could be loading and detects a new project and if so, add the default refresh setting
+					resourceMap.put(project, new LinkedList<RefreshExclusion>()); 
+				configMap.put(configName, resourceMap);
+			}
 		}
 		
 		// and add this configMap to the project to config map.
@@ -609,8 +621,7 @@ public class RefreshScopeManager {
 									addExclusion(project, configName, resource, exclusion);
 								}
 							} catch (CoreException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
+								CCorePlugin.log(e);
 							}
 						}
 					}

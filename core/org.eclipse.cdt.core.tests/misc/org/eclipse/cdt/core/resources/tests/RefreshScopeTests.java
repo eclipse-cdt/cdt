@@ -53,6 +53,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 public class RefreshScopeTests extends TestCase {
 	
 	private IProject fProject;
+	private IProject fGeneralProject;
 	private IFolder fFolder1;
 	private IFolder fFolder2;
 	private IFolder fFolder3;
@@ -73,6 +74,20 @@ public class RefreshScopeTests extends TestCase {
 			public void run(IProgressMonitor monitor) throws CoreException {
 				ICProject cProject = CProjectHelper.createNewStileCProject("testRefreshScope", IPDOMManager.ID_NO_INDEXER, false);
 				fProject = cProject.getProject();
+				
+				IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+				fGeneralProject = root.getProject("testRefreshScopeGeneral");
+				assertNotNull(fGeneralProject);
+				
+				if (!fGeneralProject.exists()) {
+					fGeneralProject.create(null);
+				} else {
+					fGeneralProject.refreshLocal(IResource.DEPTH_INFINITE, null);
+				}
+				
+				if (!fGeneralProject.isOpen()) {
+					fGeneralProject.open(null);
+				}
 			}
 		}, null);
 		
@@ -660,6 +675,21 @@ public class RefreshScopeTests extends TestCase {
 		assertEquals(1,empty_config_resources.size());
 		assertEquals(true,empty_config_resources.contains(fProject));
 		
+	}
+	
+	public void testNullProjectDescription_bug387428() {
+		final String CFG_NAME="empty_config";
+		
+		CProjectDescriptionManager descriptionManager = CProjectDescriptionManager.getInstance();
+		ICProjectDescription projectDescription = descriptionManager.getProjectDescription(fGeneralProject, false);
+		assertNull(projectDescription);
+		
+		RefreshScopeManager manager = RefreshScopeManager.getInstance();
+		manager.clearAllData();
+		
+		List<IResource> empty_config_resources = manager.getResourcesToRefresh(fGeneralProject, CFG_NAME);
+		assertEquals(1,empty_config_resources.size());
+		assertEquals(true,empty_config_resources.contains(fGeneralProject));
 	}
 	
 	public static Test suite() {

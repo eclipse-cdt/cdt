@@ -57,7 +57,7 @@ import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 public class PDOMTestBase extends BaseTestCase {
 	protected static final IProgressMonitor PROGRESS = new NullProgressMonitor();
 	static IPath rootPath = new Path("resources/pdomtests");
-	private String projectName= null;
+	private String projectName;
 
 	protected ICProject createProject(String folderName) throws CoreException {
 		return createProject(folderName, false);

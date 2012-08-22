@@ -45,6 +45,7 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
 public class BaseTestCase extends TestCase {
+	protected static final int INDEXER_TIMEOUT_SEC = 10;
 	private boolean fExpectFailure;
 	private int fBugNumber;
 	private int fExpectedLoggedNonOK;
@@ -290,12 +291,12 @@ public class BaseTestCase extends TestCase {
 
     public static void waitForIndexer(ICProject project) throws InterruptedException {
 		final PDOMManager indexManager = CCoreInternals.getPDOMManager();
-		assertTrue(indexManager.joinIndexer(10000, npm()));
+		assertTrue(indexManager.joinIndexer(INDEXER_TIMEOUT_SEC * 1000, npm()));
 		long waitms= 1;
 		while (waitms < 2000 && !indexManager.isProjectRegistered(project)) {
 			Thread.sleep(waitms);
 			waitms *= 2;
 		}
-		assertTrue(indexManager.joinIndexer(10000, npm()));
+		assertTrue(indexManager.joinIndexer(INDEXER_TIMEOUT_SEC * 1000, npm()));
 	}
 }

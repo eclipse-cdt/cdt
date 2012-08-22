@@ -70,7 +70,6 @@ import org.eclipse.cdt.internal.ui.search.actions.OpenDeclarationsAction;
  * @author dsteffle
  */
 public class BaseSelectionTestsIndexer extends BaseUITestCase {
-	protected static final int INDEXER_TIMEOUT_SEC = 20;
 	protected ICProject fCProject;
 	static FileManager fileManager = new FileManager();
 	IProgressMonitor monitor = new NullProgressMonitor();

@@ -33,6 +33,7 @@ import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -49,7 +50,7 @@ public class PDOMSearchTest extends PDOMTestBase {
 			return o1.getName().compareTo(o2.getName());
 		}};
 
-	protected ICProject project;	
+	protected ICProject project;
 	protected PDOM pdom;
 	protected IProgressMonitor NULL_MONITOR = new NullProgressMonitor();
 	protected IndexFilter INDEX_FILTER = IndexFilter.ALL_DECLARED;
@@ -60,16 +61,17 @@ public class PDOMSearchTest extends PDOMTestBase {
 	
 	@Override
 	protected void setUp() throws Exception {
-		if (pdom == null) {
-			ICProject project = createProject("searchTests", true);
-			pdom = (PDOM)CCoreInternals.getPDOMManager().getPDOM(project);
-		}
+		project = createProject("searchTests", true);
+		pdom = (PDOM) CCoreInternals.getPDOMManager().getPDOM(project);
 		pdom.acquireReadLock();
 	}
 	
 	@Override
 	protected void tearDown() throws Exception {
 		pdom.releaseReadLock();
+		if (project != null) {
+			project.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
+		}
 	}
 
 	/**

@@ -41,6 +41,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.internal.WorkbenchPartReference;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -282,6 +283,10 @@ public class BaseUITestCase extends BaseTestCase {
 	}
 
 	final protected TreeItem checkTreeNode(IViewPart part, int i0, String label) {
+		assertNotNull(label); // we don't handle testing for a base node to not appear; can be added if/when needed
+		IViewReference viewRef = part.getViewSite().getPage().findViewReference(part.getViewSite().getId());
+		Control viewControl = ((WorkbenchPartReference) viewRef).getPane().getControl();
+		
 		Tree tree= null;
 		TreeItem root= null;
 		StringBuilder cands= new StringBuilder();
@@ -314,6 +319,7 @@ public class BaseUITestCase extends BaseTestCase {
 	}
 
 	final protected TreeItem checkTreeNode(Tree tree, int i0, String label) {
+		assertNotNull(label); // we don't handle testing for a base node to not appear; can be added if/when needed
 		TreeItem root= null;
 		for (int millis= 0; millis < 5000; millis= millis == 0 ? 1 : millis * 2) {
 			runEventQueue(millis);
@@ -328,52 +334,50 @@ public class BaseUITestCase extends BaseTestCase {
 				// item does not yet exist.
 			}
 		}
-		assertNotNull("Tree node " + label + "{" + i0 + "} does not exist!", root);
-		assertEquals(label, root.getText());
-		return root;
+		fail("Tree node " + label + "{" + i0 + "} does not exist!");
+		return null;
 	}
 	
+	/**
+	 * Pass label=null to test that the {i0,i1} node doesn't exist
+	 */
 	final protected TreeItem checkTreeNode(Tree tree, int i0, int i1, String label) {
-		TreeItem item= null;
-		String itemText= null;
-		SWTException ex= null;
 		String firstItemText= null;
-		for (int millis= 0; millis < 5000; millis= millis == 0 ? 1 : millis * 2) {
+		int timeout = (label == null) ? 1000 : 5000; // see footnote[0]
+		
+		// If {i0,i1} exists, whether or not it matches label (when label != null)
+		boolean nodePresent = false;
+		
+		for (int millis= 0; millis < timeout; millis= millis == 0 ? 1 : millis * 2) {
+			nodePresent = false;
 			runEventQueue(millis);
-			TreeItem root= tree.getItem(i0);
-			if (!root.getExpanded()) {
-				expandTreeItem(root);
+			TreeItem i0Node= tree.getItem(i0);
+			if (!i0Node.getExpanded()) {
+				expandTreeItem(i0Node);
 			}
-			ex= null;
 			try {
-				TreeItem firstItem= root.getItem(0);
+				TreeItem firstItem= i0Node.getItem(0);
 				firstItemText= firstItem.getText();
 				if (firstItemText.length() > 0 && !firstItemText.equals("...")) {
-					item= root.getItem(i1);
-					itemText= item.getText();
-					assertNotNull("Unexpected tree node " + itemText, label);
-					if (label.equals(itemText)) {
-						return item;
-					}
-					if (millis > 2000) {
-						assertEquals(label, itemText);
+					TreeItem item = i0Node.getItem(i1);
+					nodePresent = true;
+					if (label != null && label.equals(item.getText())) {
 						return item;
 					}
 				}
-			} catch (IllegalArgumentException e) {
-				if (label != null) {
-					fail("Tree node " + label + "{" + i0 + "," + i1 + "} does not exist!");
-				}
-				return null;
 			} catch (SWTException e) {
-				// widget was disposed, try again.
-				ex= e;
+				// in case widget was disposed, item may be replaced
+			} catch (IllegalArgumentException e) {
+				// item does not yet exist.
 			}
 		}
-		if (ex != null)
-			throw ex;
-		
-		assertEquals("Timeout expired waiting for tree node {" + i0 + "," + i1 + "}; firstItem=" + firstItemText, label, itemText);
+
+		if (label == null) {
+			assertFalse("Tree node {" + i0 + "," + i1 + "} exists but shouldn't!", nodePresent);
+		}
+		else {
+			fail("Tree node " + label + "{" + i0 + "," + i1 + "} does not exist!");
+		}
 		return null;
 	}
 	
@@ -381,3 +385,17 @@ public class BaseUITestCase extends BaseTestCase {
 		StringAsserts.assertEqualString(actual, expected);
 	}
 }
+
+// Footnotes
+// [0] Waiting for something to appear is very efficient; waiting for it to not
+// appear is very inefficient. In the former case, regardless of how much time
+// is alloted, we stop waiting as soon as the item appears, whereas in the
+// latter we have to wait the entire timeout. In test suites with thousands of
+// tests, efficiency is critical. Thus, in testing that a tree node doesn't have
+// an Nth child, we shoot for efficiency and accept the risk of a false
+// negative. More specifically, we wait only one second for the item TO NOT
+// appear, whereas we give an item up to five seconds TO appear. This compromise
+// is better than not having that sort of test at all, which some would argue is
+// the better approach. In practice, it takes about 60-150 ms for the item to
+// appear (on my machine), but we give it up to five seconds. Waiting one second
+// for it to not appear should be more than adequate

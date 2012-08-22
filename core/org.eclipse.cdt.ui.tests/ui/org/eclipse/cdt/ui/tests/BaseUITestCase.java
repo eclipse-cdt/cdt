@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.ui.tests;
 
 import java.io.IOException;
@@ -57,18 +57,15 @@ import org.eclipse.cdt.ui.testplugin.CTestPlugin;
 import org.eclipse.cdt.ui.testplugin.util.StringAsserts;
 
 public class BaseUITestCase extends BaseTestCase {
-	
+
 	public BaseUITestCase() {
 		super();
 	}
-	
+
 	public BaseUITestCase(String name) {
 		super(name);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.testplugin.util.BaseTestCase#setUp()
-	 */
+
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -79,9 +76,6 @@ public class BaseUITestCase extends BaseTestCase {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.testplugin.util.BaseTestCase#tearDown()
-	 */
 	@Override
 	protected void tearDown() throws Exception {
 		runEventQueue(0);
@@ -89,14 +83,14 @@ public class BaseUITestCase extends BaseTestCase {
 	}
 
 	/**
-	 * Reads a section in comments form the source of the given class. Fully 
+	 * Reads a section in comments form the source of the given class. Fully
 	 * equivalent to <code>readTaggedComment(getClass(), tag)</code>
 	 * @since 4.0
 	 */
     protected String readTaggedComment(final String tag) throws IOException {
     	return TestSourceReader.readTaggedComment(CTestPlugin.getDefault().getBundle(), "ui", getClass(), tag);
     }
- 
+
     /**
      * Reads multiple sections in comments from the source of the given class.
      * @since 4.0
@@ -105,15 +99,15 @@ public class BaseUITestCase extends BaseTestCase {
 		return TestSourceReader.getContentsForTest(CTestPlugin.getDefault().getBundle(), "ui",
 				getClass(), getName(), sections);
 	}
-	
+
 	public String getAboveComment() throws IOException {
 		return getContentsForTest(1)[0].toString();
 	}
-	
+
     protected IFile createFile(IContainer container, String fileName, String contents) throws Exception {
     	return TestSourceReader.createFile(container, new Path(fileName), contents);
     }
-    
+
     protected IASTTranslationUnit createIndexBasedAST(IIndex index, ICProject project, IFile file) throws CModelException, CoreException {
     	return TestSourceReader.createIndexBasedAST(index, project, file);
     }
@@ -128,7 +122,7 @@ public class BaseUITestCase extends BaseTestCase {
 				sleep= Math.min(250, sleep * 2);
 			}
 			firstTime= false;
-			
+
 			if (CCorePlugin.getIndexManager().isIndexerSetupPostponed(CoreModel.getDefault().create(file.getProject())))
 				continue;
 			index.acquireReadLock();
@@ -149,7 +143,7 @@ public class BaseUITestCase extends BaseTestCase {
 		}
 		throw new Exception("Indexer did not complete in time!");
 	}
-	
+
 	protected void runEventQueue(int time) {
 		final long endTime= System.currentTimeMillis() + time;
 		while (true) {
@@ -185,11 +179,11 @@ public class BaseUITestCase extends BaseTestCase {
 			expandTreeItem(item);
 		}
 	}
-	
+
 	protected void expandTreeItem(TreeItem item) {
 		Event event = new Event();
 		event.item = item;
-		item.getParent().notifyListeners(SWT.Expand, event);	
+		item.getParent().notifyListeners(SWT.Expand, event);
 		item.setExpanded(true);
 		runEventQueue(0);
 	}
@@ -212,7 +206,7 @@ public class BaseUITestCase extends BaseTestCase {
 		tree.setSelection(item);
 		Event event = new Event();
 		event.item = item;
-		item.getParent().notifyListeners(SWT.Selection, event);	
+		item.getParent().notifyListeners(SWT.Selection, event);
 		runEventQueue(0);
 	}
 
@@ -223,7 +217,7 @@ public class BaseUITestCase extends BaseTestCase {
 			page.closeEditor(editor, false);
 		}
 	}
-	
+
 	protected void closeAllEditors() {
 		IWorkbenchWindow[] windows= PlatformUI.getWorkbench().getWorkbenchWindows();
 		for (IWorkbenchWindow window : windows) {
@@ -233,7 +227,7 @@ public class BaseUITestCase extends BaseTestCase {
 			}
 		}
 	}
-	
+
 	protected void restoreAllParts() throws WorkbenchException {
 		IWorkbenchPage page= PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		page.zoomOut();
@@ -249,14 +243,14 @@ public class BaseUITestCase extends BaseTestCase {
 		}
 		runEventQueue(0);
 	}
-	
+
 	protected IViewPart activateView(String id) throws PartInitException {
 		IViewPart view= PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(id);
 		assertNotNull(view);
 		runEventQueue(0);
 		return  view;
 	}
-	
+
 	protected void executeCommand(IViewPart viewPart, String commandID) throws ExecutionException, NotDefinedException, NotEnabledException, NotHandledException {
 		IHandlerService hs= (IHandlerService)viewPart.getSite().getService(IHandlerService.class);
 		assertNotNull(hs);
@@ -268,8 +262,8 @@ public class BaseUITestCase extends BaseTestCase {
 		findControls(w, clazz, result);
 		return result.toArray(new Control[result.size()]);
 	}
-	
-	private void findControls(Control w, Class<?> clazz, List<Control> result) {	
+
+	private void findControls(Control w, Class<?> clazz, List<Control> result) {
 		if (clazz.isInstance(w)) {
 			result.add(w);
 		}
@@ -285,8 +279,8 @@ public class BaseUITestCase extends BaseTestCase {
 	final protected TreeItem checkTreeNode(IViewPart part, int i0, String label) {
 		assertNotNull(label); // we don't handle testing for a base node to not appear; can be added if/when needed
 		IViewReference viewRef = part.getViewSite().getPage().findViewReference(part.getViewSite().getId());
-		Control viewControl = ((WorkbenchPartReference)viewRef).getPane().getControl();
-		
+		Control viewControl = ((WorkbenchPartReference) viewRef).getPane().getControl();
+
 		Tree tree= null;
 		TreeItem root= null;
 		StringBuilder cands= new StringBuilder();
@@ -337,17 +331,17 @@ public class BaseUITestCase extends BaseTestCase {
 		fail("Tree node " + label + "{" + i0 + "} does not exist!");
 		return null;
 	}
-	
+
 	/**
 	 * Pass label=null to test that the {i0,i1} node doesn't exist
 	 */
 	final protected TreeItem checkTreeNode(Tree tree, int i0, int i1, String label) {
 		String firstItemText= null;
 		int timeout = (label == null) ? 1000 : 5000; // see footnote[0]
-		
+
 		// If {i0,i1} exists, whether or not it matches label (when label != null)
 		boolean nodePresent = false;
-		
+
 		for (int millis= 0; millis < timeout; millis= millis == 0 ? 1 : millis * 2) {
 			nodePresent = false;
 			runEventQueue(millis);
@@ -374,13 +368,12 @@ public class BaseUITestCase extends BaseTestCase {
 
 		if (label == null) {
 			assertFalse("Tree node {" + i0 + "," + i1 + "} exists but shouldn't!", nodePresent);
-		}
-		else {
+		} else {
 			fail("Tree node " + label + "{" + i0 + "," + i1 + "} does not exist!");
 		}
 		return null;
 	}
-	
+
 	public static void assertEqualString(String actual, String expected) {
 		StringAsserts.assertEqualString(actual, expected);
 	}

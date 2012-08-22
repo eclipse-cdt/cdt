@@ -125,20 +125,25 @@ public class BaseUITestCase extends BaseTestCase {
 
 			if (CCorePlugin.getIndexManager().isIndexerSetupPostponed(CoreModel.getDefault().create(file.getProject())))
 				continue;
-			index.acquireReadLock();
 			try {
-				IIndexFile[] indexFiles= index.getFiles(IndexLocationFactory.getWorkspaceIFL(file));
-				for (IIndexFile indexFile : indexFiles) {
-					if (indexFile != null && indexFile.getTimestamp() >= file.getLocalTimeStamp()) {
-						return;
+				index.acquireReadLock();  
+				try {
+					IIndexFile[] indexFiles= index.getFiles(IndexLocationFactory.getWorkspaceIFL(file));
+					for (IIndexFile indexFile : indexFiles) {
+						if (indexFile != null && indexFile.getTimestamp() >= file.getLocalTimeStamp()) {
+							return;
+						}
+					}
+				} finally {
+					index.releaseReadLock();
+					int time= (int) (endTime - System.currentTimeMillis());
+					if (time > 0) {
+						CCorePlugin.getIndexManager().joinIndexer(time, npm());
 					}
 				}
-			} finally {
-				index.releaseReadLock();
-				int time= (int) (endTime - System.currentTimeMillis());
-				if (time > 0) {
-					CCorePlugin.getIndexManager().joinIndexer(time, npm());
-				}
+			}
+			catch (InterruptedException e) {
+				// index.acquireReadLock() can be interrupted
 			}
 		}
 		throw new Exception("Indexer did not complete in time!");

@@ -108,7 +108,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
 public class IndexBugsTests extends BaseTestCase {
-	private static final int INDEXER_TIMEOUT_SEC = 20;
 	private ICProject fCProject;
 	protected IIndex fIndex;
 

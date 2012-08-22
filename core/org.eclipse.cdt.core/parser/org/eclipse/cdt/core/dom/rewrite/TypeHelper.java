@@ -20,9 +20,9 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator;
 import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator.SizeAndAlignment;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.TypeTraits;
 
 /**
  * A collection of static methods related to types.
@@ -48,8 +48,8 @@ public class TypeHelper {
 		if (type instanceof ICompositeType) {
 			if (type instanceof ICPPClassType) {
 				ICPPClassType classType = ((ICPPClassType) type);
-				if (!ClassTypeHelper.hasTrivialCopyCtor(classType, ast) ||
-						!ClassTypeHelper.hasTrivialDestructor(classType, ast)) {
+				if (!TypeTraits.hasTrivialCopyCtor(classType, ast) ||
+						!TypeTraits.hasTrivialDestructor(classType, ast)) {
 					return true;
 				}
 			}

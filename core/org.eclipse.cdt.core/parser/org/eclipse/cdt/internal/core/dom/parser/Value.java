@@ -11,29 +11,58 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
 
+import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_alignof;
+import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_has_nothrow_constructor;
+import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_has_nothrow_copy;
+import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_has_trivial_assign;
+import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_has_trivial_constructor;
+import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_has_trivial_copy;
+import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_has_trivial_destructor;
+import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_has_virtual_destructor;
+import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_abstract;
+import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_class;
+import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_empty;
+import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_enum;
+import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_literal_type;
+import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_pod;
+import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_polymorphic;
+import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_standard_layout;
+import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_trivial;
+import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_union;
+import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_sizeof;
+import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_typeid;
+import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_typeof;
+
 import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
+import org.eclipse.cdt.core.dom.ast.IASTBinaryTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.ICompositeType;
+import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator.SizeAndAlignment;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.TypeTraits;
 import org.eclipse.cdt.internal.core.parser.scanner.ExpressionEvaluator;
 import org.eclipse.cdt.internal.core.parser.scanner.ExpressionEvaluator.EvalException;
 import org.eclipse.cdt.internal.core.pdom.db.TypeMarshalBuffer;
@@ -201,7 +230,7 @@ public class Value implements IValue {
 
 	public static IValue evaluateBinaryExpression(final int op, final long v1, final long v2) {
 		try {
-			return create(combineBinary(op, v1, v2));
+			return create(applyBinaryOperator(op, v1, v2));
 		} catch (UnknownValueException e) {
 		}
 		return UNKNOWN;
@@ -209,10 +238,99 @@ public class Value implements IValue {
 
 	public static IValue evaluateUnaryExpression(final int unaryOp, final long value) {
 		try {
-			return create(combineUnary(unaryOp, value));
+			return create(applyUnaryOperator(unaryOp, value));
 		} catch (UnknownValueException e) {
 		}
 		return UNKNOWN;
+	}
+
+	public static IValue evaluateUnaryTypeIdExpression(int operator, IType type, IASTNode point) {
+		try {
+			return create(applyUnaryTypeIdOperator(operator, type, point));
+		} catch (UnknownValueException e) {
+		}
+		return UNKNOWN;
+	}
+
+	public static IValue evaluateBinaryTypeIdExpression(IASTBinaryTypeIdExpression.Operator operator,
+			IType type1, IType type2, IASTNode point) {
+		try {
+			return create(applyBinaryTypeIdOperator(operator, type1, type2, point));
+		} catch (UnknownValueException e) {
+		}
+		return UNKNOWN;
+	}
+
+	private static long applyUnaryTypeIdOperator(int operator, IType type, IASTNode point) throws UnknownValueException{
+		switch (operator) {
+			case op_sizeof:
+				return getSizeAndAlignment(type, point).size;
+			case op_alignof:
+				return getSizeAndAlignment(type, point).alignment;
+			case op_typeid:
+				break;  // TODO(sprigogin): Implement
+			case op_has_nothrow_copy:
+				break;  // TODO(sprigogin): Implement
+			case op_has_nothrow_constructor:
+				break;  // TODO(sprigogin): Implement
+			case op_has_trivial_assign:
+				break;  // TODO(sprigogin): Implement
+			case op_has_trivial_constructor:
+				break;  // TODO(sprigogin): Implement
+			case op_has_trivial_copy:
+				return !(type instanceof ICPPClassType) ||
+						TypeTraits.hasTrivialCopyCtor((ICPPClassType) type, point) ? 1 : 0;
+			case op_has_trivial_destructor:
+				break;  // TODO(sprigogin): Implement
+			case op_has_virtual_destructor:
+				break;  // TODO(sprigogin): Implement
+			case op_is_abstract:
+				return type instanceof ICPPClassType &&
+						TypeTraits.isAbstract((ICPPClassType) type, point) ? 1 : 0;
+			case op_is_class:
+				return type instanceof ICompositeType &&
+						((ICompositeType) type).getKey() != ICompositeType.k_union ? 1 : 0;
+			case op_is_empty:
+				break;  // TODO(sprigogin): Implement
+			case op_is_enum:
+				return type instanceof IEnumeration ? 1 : 0;
+			case op_is_literal_type:
+				break;  // TODO(sprigogin): Implement
+			case op_is_pod:
+				return TypeTraits.isPOD(type, point) ? 1 : 0;
+			case op_is_polymorphic:
+				return type instanceof ICPPClassType &&
+						TypeTraits.isPolymorphic((ICPPClassType) type, point) ? 1 : 0;
+			case op_is_standard_layout:
+				return TypeTraits.isStandardLayout(type, point) ? 1 : 0;
+			case op_is_trivial:
+				return type instanceof ICPPClassType &&
+						TypeTraits.isTrivial((ICPPClassType) type, point) ? 1 : 0;
+			case op_is_union:
+				return type instanceof ICompositeType &&
+						((ICompositeType) type).getKey() == ICompositeType.k_union ? 1 : 0;
+			case op_typeof:
+				break;  // TODO(sprigogin): Implement
+		}
+		throw UNKNOWN_EX;
+	}
+
+	public static long applyBinaryTypeIdOperator(IASTBinaryTypeIdExpression.Operator operator,
+			IType type1, IType type2, IASTNode point) throws UnknownValueException {
+		switch (operator) {
+		case __is_base_of:
+			if (type1 instanceof ICPPClassType && type1 instanceof ICPPClassType) {
+				return ClassTypeHelper.isSubclass((ICPPClassType) type2, (ICPPClassType) type1) ? 1 : 0;
+			}
+		}
+		throw UNKNOWN_EX;
+	}
+
+	private static SizeAndAlignment getSizeAndAlignment(IType type, IASTNode point) throws UnknownValueException {
+		SizeAndAlignment sizeAndAlignment = SizeofCalculator.getSizeAndAlignment(type, point);
+		if (sizeAndAlignment == null)
+			throw UNKNOWN_EX;
+		return sizeAndAlignment;
 	}
 
 	/**
@@ -348,19 +466,15 @@ public class Value implements IValue {
 			}
 		}
 		if (exp instanceof IASTTypeIdExpression) {
-			IASTTypeIdExpression typeIdEx = (IASTTypeIdExpression) exp;
-			switch (typeIdEx.getOperator()) {
-			case IASTTypeIdExpression.op_sizeof:
-				ASTTranslationUnit ast = (ASTTranslationUnit) typeIdEx.getTranslationUnit();
-				final IType type = ast.createType(typeIdEx.getTypeId());
-				if (type instanceof ICPPUnknownType)
-					return null;
-				SizeofCalculator calculator = ast.getSizeofCalculator();
-				SizeAndAlignment info = calculator.sizeAndAlignment(type);
-				if (info == null)
-					throw UNKNOWN_EX;
-				return info.size;
-			}
+			ASTTranslationUnit ast = (ASTTranslationUnit) exp.getTranslationUnit();
+			final IType type = ast.createType(((IASTTypeIdExpression) exp).getTypeId());
+			if (type instanceof ICPPUnknownType)
+				return null;
+			return applyUnaryTypeIdOperator(((IASTTypeIdExpression) exp).getOperator(), type, exp);
+		}
+
+		if (exp instanceof IASTBinaryTypeIdExpression) {
+			
 		}
 		throw UNKNOWN_EX;
 	}
@@ -422,10 +536,10 @@ public class Value implements IValue {
 		final Long value= evaluate(exp.getOperand(), maxdepth);
 		if (value == null)
 			return null;
-		return combineUnary(unaryOp, value);
+		return applyUnaryOperator(unaryOp, value);
 	}
 
-	private static long combineUnary(final int unaryOp, final long value) throws UnknownValueException {
+	private static long applyUnaryOperator(final int unaryOp, final long value) throws UnknownValueException {
 		switch (unaryOp) {
 		case IASTUnaryExpression.op_bracketedPrimary:
 		case IASTUnaryExpression.op_plus:
@@ -470,10 +584,10 @@ public class Value implements IValue {
 		if (o2 == null)
 			return null;
 
-		return combineBinary(op, o1, o2);
+		return applyBinaryOperator(op, o1, o2);
 	}
 
-	private static long combineBinary(final int op, final long v1, final long v2)
+	private static long applyBinaryOperator(final int op, final long v1, final long v2)
 			throws UnknownValueException {
 		switch (op) {
 		case IASTBinaryExpression.op_multiply:

@@ -368,7 +368,7 @@ public class Conversions {
 				return Cost.NO_CONVERSION;
 			
 			ICPPClassType classTarget= (ICPPClassType) noCVTarget;
-			if (ClassTypeHelper.isAggregateClass(classTarget, point)) {
+			if (TypeTraits.isAggregateClass(classTarget, point)) {
 				Cost cost= new Cost(arg.getTypeOrFunctionSet(point), target, Rank.IDENTITY);
 				cost.setUserDefinedConversion(null);
 				return cost;

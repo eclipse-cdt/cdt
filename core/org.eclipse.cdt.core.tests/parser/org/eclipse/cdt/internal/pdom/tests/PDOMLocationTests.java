@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Andrew Ferguson (Symbian) - Initial implementation
+ *     Andrew Ferguson (Symbian) - Initial implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
@@ -39,7 +39,7 @@ public class PDOMLocationTests extends BaseTestCase {
 	
 	@Override
 	protected void setUp() throws Exception {
-		cproject= CProjectHelper.createCCProject("PDOMLocationTests"+System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER);
+		cproject= CProjectHelper.createCCProject("PDOMLocationTests" + System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER);
 		super.setUp();
 	}
 
@@ -66,11 +66,11 @@ public class PDOMLocationTests extends BaseTestCase {
 		
 		Set<String> externals= new HashSet();
 		externals.addAll(Arrays.asList(linuxExternals));
-		if(Platform.getOS().equals("win32")) {
+		if (Platform.getOS().equals("win32")) {
 			externals.addAll(Arrays.asList(winExternals));
 		}
 		
-		for(String ext : externals) {
+		for (String ext : externals) {
 			IIndexFileLocation loc = IndexLocationFactory.getExternalIFL(ext);
 			String raw = converter.toInternalFormat(loc);
 			IIndexFileLocation roundtrip = converter.fromInternalFormat(raw);

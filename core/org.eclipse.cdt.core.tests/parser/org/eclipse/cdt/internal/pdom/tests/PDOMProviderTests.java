@@ -55,7 +55,7 @@ public class PDOMProviderTests extends PDOMTestBase {
 		final File tempPDOM= File.createTempFile("foo", "bar");
 
 		{
-			ICProject cproject= CProjectHelper.createCCProject("foo"+System.currentTimeMillis(), null, IPDOMManager.ID_FAST_INDEXER);
+			ICProject cproject= CProjectHelper.createCCProject("foo" + System.currentTimeMillis(), null, IPDOMManager.ID_FAST_INDEXER);
 			TestSourceReader.createFile(cproject.getProject(), new Path("/this.h"), "class A {};\n\n");
 			CCorePlugin.getIndexManager().joinIndexer(INDEXER_TIMEOUT_SEC * 1000, npm());
 
@@ -76,7 +76,7 @@ public class PDOMProviderTests extends PDOMTestBase {
 		}
 
 		final URI baseURI= new File("c:/ExternalSDK/").toURI();
-		final ICProject cproject2= CProjectHelper.createCCProject("bar"+System.currentTimeMillis(), null, IPDOMManager.ID_FAST_INDEXER);
+		final ICProject cproject2= CProjectHelper.createCCProject("bar" + System.currentTimeMillis(), null, IPDOMManager.ID_FAST_INDEXER);
 		TestSourceReader.createFile(cproject2.getProject(), new Path("/source.cpp"), "namespace X { class A {}; }\n\n");
 		CCorePlugin.getIndexManager().joinIndexer(INDEXER_TIMEOUT_SEC * 1000, npm());
 
@@ -127,7 +127,7 @@ public class PDOMProviderTests extends PDOMTestBase {
 		final File tempPDOM= File.createTempFile("foo", "bar");
 
 		{
-			ICProject cproject= CProjectHelper.createCCProject("foo"+System.currentTimeMillis(), null, IPDOMManager.ID_FAST_INDEXER);
+			ICProject cproject= CProjectHelper.createCCProject("foo" + System.currentTimeMillis(), null, IPDOMManager.ID_FAST_INDEXER);
 			TestSourceReader.createFile(cproject.getProject(), new Path("/this.h"), "class A {};\n\n");
 			CCorePlugin.getIndexManager().joinIndexer(INDEXER_TIMEOUT_SEC * 1000, npm());
 
@@ -147,12 +147,12 @@ public class PDOMProviderTests extends PDOMTestBase {
 			CProjectHelper.delete(cproject);
 		}
 
-		final ICProject cproject3= CProjectHelper.createCCProject("bar"+System.currentTimeMillis(), null, IPDOMManager.ID_FAST_INDEXER);
+		final ICProject cproject3= CProjectHelper.createCCProject("bar" + System.currentTimeMillis(), null, IPDOMManager.ID_FAST_INDEXER);
 		TestSourceReader.createFile(cproject3.getProject(), new Path("/source.cpp"), "namespace Y { class A {}; }\n\n");
 		CCorePlugin.getIndexManager().joinIndexer(INDEXER_TIMEOUT_SEC * 1000, npm());
 
 		final URI baseURI= new File("c:/ExternalSDK/").toURI();
-		final ICProject cproject2= CProjectHelper.createCCProject("baz"+System.currentTimeMillis(), null, IPDOMManager.ID_FAST_INDEXER);
+		final ICProject cproject2= CProjectHelper.createCCProject("baz" + System.currentTimeMillis(), null, IPDOMManager.ID_FAST_INDEXER);
 		TestSourceReader.createFile(cproject2.getProject(), new Path("/source.cpp"), "namespace X { class A {}; }\n\n");
 		CCorePlugin.getIndexManager().joinIndexer(INDEXER_TIMEOUT_SEC * 1000, npm());
 

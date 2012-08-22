@@ -426,7 +426,7 @@ public class GCCCompleteParseExtensionsTest extends AST2BaseTest {
 	//		b= __is_polymorphic (int);
 	//		b= __is_union (int);
 	//	}
-	public void testTypetraits_Bug342683() throws Exception {
+	public void testTypeTraits_Bug342683() throws Exception {
 		parseGPP(getAboveComment());
 	}
 }

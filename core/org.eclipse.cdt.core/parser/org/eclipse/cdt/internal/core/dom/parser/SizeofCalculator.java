@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.dom.parser;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
@@ -72,6 +73,20 @@ public class SizeofCalculator {
 	public final SizeAndAlignment sizeof_complex_long_double;
 
 	private final IASTTranslationUnit ast;
+
+	/**
+	 * Calculates size and alignment for the given type.
+	 *
+	 * @param type the type to get size and alignment for.
+	 * @param point a node belonging to the AST of the translation unit defining context for
+	 *     the size calculation.
+	 * @return size and alignment, or <code>null</code> if could not be calculated.
+	 */
+	public static SizeAndAlignment getSizeAndAlignment(IType type, IASTNode point) {
+		SizeofCalculator calc = point == null ?
+				getDefault() : ((ASTTranslationUnit) point.getTranslationUnit()).getSizeofCalculator();
+		return calc.sizeAndAlignment(type);
+	}
 
 	/**
 	 * Returns the default instance of sizeof calculator. The default instance is not aware

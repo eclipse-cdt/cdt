@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.core.model;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit;
@@ -204,7 +205,8 @@ public class ASTCache {
 			ASTRunnable astRunnable) {
 		IIndex index;
 		try {
-			index = CCorePlugin.getIndexManager().getIndex(tUnit.getCProject());
+			index = CCorePlugin.getIndexManager().getIndex(tUnit.getCProject(),
+					IIndexManager.ADD_EXTENSION_FRAGMENTS_EDITOR);
 			index.acquireReadLock();
 		} catch (CoreException e) {
 			return e.getStatus();

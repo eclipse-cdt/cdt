@@ -111,6 +111,15 @@ public interface IIndexManager extends IPDOMManager {
 	 * @since 5.4
 	 */
 	public static final int ADD_EXTENSION_FRAGMENTS_SEARCH = 0x200;
+	
+	/**
+	 * Constant for passing to getIndex methods. This constant, when set, indicates that each index
+	 * content provided via the ReadOnlyIndexFragmentProvider or ReadOnlyPDOMProvider, which is not 
+	 * disabled for the editor shall be included in the resulting index. 
+	 *
+	 * @since 5.5
+	 */
+	public static final int ADD_EXTENSION_FRAGMENTS_EDITOR = 0x400;
 
 	/**
 	 * Constant for indicating that there is no time out period for joining the indexer job. 

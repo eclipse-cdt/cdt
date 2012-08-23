@@ -14,7 +14,7 @@ package org.eclipse.cdt.internal.ui.refactoring;
 
 import org.eclipse.osgi.util.NLS;
 
-public final class Messages extends NLS {
+final class Messages extends NLS {
 	public static String DeleteFileChange_0;
 	public static String DeleteFileChange_1;
 	public static String Refactoring_name;

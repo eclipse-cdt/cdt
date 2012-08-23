@@ -12,7 +12,7 @@ package org.eclipse.cdt.internal.ui.refactoring.implementmethod;
 
 import org.eclipse.osgi.util.NLS;
 
-public final class Messages extends NLS {
+final class Messages extends NLS {
 	public static String ParameterNamesInputPage_Title;
 	public static String ParameterNamesInputPage_CompleteMissingMails;
 	public static String ImplementMethodInputPage_PageTitle;

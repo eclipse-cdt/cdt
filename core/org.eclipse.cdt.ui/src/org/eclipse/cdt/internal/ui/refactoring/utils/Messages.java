@@ -14,7 +14,7 @@ package org.eclipse.cdt.internal.ui.refactoring.utils;
 
 import org.eclipse.osgi.util.NLS;
 
-public final class Messages extends NLS {
+final class Messages extends NLS {
 	public static String IdentifierHelper_isKeyword;
 	public static String IdentifierHelper_isValid;
 	public static String IdentifierHelper_leadingDigit;

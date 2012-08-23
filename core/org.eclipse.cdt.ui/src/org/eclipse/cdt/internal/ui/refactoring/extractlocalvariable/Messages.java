@@ -14,7 +14,7 @@ package org.eclipse.cdt.internal.ui.refactoring.extractlocalvariable;
 
 import org.eclipse.osgi.util.NLS;
 
-public final class Messages extends NLS {
+final class Messages extends NLS {
 	public static String CreateLocalVariable;
 	public static String EnterVariableName;
 	public static String ExpressionMustBeSelected;

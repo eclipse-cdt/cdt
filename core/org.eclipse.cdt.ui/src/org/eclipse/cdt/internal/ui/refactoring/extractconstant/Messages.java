@@ -13,7 +13,7 @@ package org.eclipse.cdt.internal.ui.refactoring.extractconstant;
 
 import org.eclipse.osgi.util.NLS;
 
-public final class Messages extends NLS {
+final class Messages extends NLS {
 	public static String InputPage_ConstName;
 	public static String InputPage_EnterConstName;
 	public static String InputPage_NameAlreadyDefined;

@@ -128,10 +128,9 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 			"org.eclipse.cdt.internal.ui.refactoring.extractfunction.ExtractFunctionRefactoring"; //$NON-NLS-1$
 
 	static final Integer NULL_INTEGER = Integer.valueOf(0);
-	static final char[] ZERO= "0".toCharArray(); //$NON-NLS-1$
 
 	private NodeContainer container;
-	final ExtractFunctionInformation info;
+	private final ExtractFunctionInformation info;
 
 	final Map<String, Integer> names;
 	final Container<Integer> namesCounter;
@@ -142,7 +141,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 
 	private FunctionExtractor extractor;
 	private INodeFactory nodeFactory;
-	DefaultCodeFormatterOptions formattingOptions;
+	private DefaultCodeFormatterOptions formattingOptions;
 
 	private IIndex index;
 	private IASTTranslationUnit ast;

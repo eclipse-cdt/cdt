@@ -76,7 +76,8 @@ public final class IndexProviderManager implements IElementChangedListener {
 		ATTRIBUTE_CALL_HIERARCHY = "call_hierarchy",
 		ATTRIBUTE_TYPE_HIERARCHY = "type_hierarchy",
 		ATTRIBUTE_INCLUDE_BROWSER = "include_browser",
-		ATTRIBUTE_SEARCH = "search";
+		ATTRIBUTE_SEARCH = "search",
+		ATTRIBUTE_EDITOR = "editor";
 
 
 	private IIndexFragmentProvider[] fragmentProviders;
@@ -171,6 +172,7 @@ public final class IndexProviderManager implements IElementChangedListener {
 		result |= getOption(elem, ATTRIBUTE_NAVIGATION, IIndexManager.ADD_EXTENSION_FRAGMENTS_NAVIGATION);
 		result |= getOption(elem, ATTRIBUTE_SEARCH, IIndexManager.ADD_EXTENSION_FRAGMENTS_SEARCH);
 		result |= getOption(elem, ATTRIBUTE_TYPE_HIERARCHY, IIndexManager.ADD_EXTENSION_FRAGMENTS_TYPE_HIERARCHY);
+		result |= getOption(elem, ATTRIBUTE_EDITOR, IIndexManager.ADD_EXTENSION_FRAGMENTS_EDITOR);
 		
 		return result;
 	}

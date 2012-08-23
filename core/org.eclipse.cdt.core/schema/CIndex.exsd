@@ -258,6 +258,13 @@ The only information needed for this extension point is the fully qualified name
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="editor" type="boolean" use="optional">
+            <annotation>
+               <documentation>
+                  Whether the fragment provider shall be used for C/C++ editor.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

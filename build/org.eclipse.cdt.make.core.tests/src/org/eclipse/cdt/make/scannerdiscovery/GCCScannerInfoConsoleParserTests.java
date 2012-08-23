@@ -21,11 +21,11 @@ import org.eclipse.cdt.make.internal.core.scannerconfig.gnu.GCCScannerInfoConsol
 
 /**
  * Scanner configuration console parser tests
- * 
+ *
  * @author vhirsl
  */
 public class GCCScannerInfoConsoleParserTests extends BaseBOPConsoleParserTests {
-	
+
 	public static TestSuite suite() {
 		return suite(GCCScannerInfoConsoleParserTests.class);
 	}
@@ -46,10 +46,10 @@ public class GCCScannerInfoConsoleParserTests extends BaseBOPConsoleParserTests 
 		super.tearDown();
 		fOutputParser.shutdown();
 	}
-	
+
 	/*
 	 * Tests GCCScannerInfoConsoleParser. Utility object not provided.
-	 * Only tests parsing of the input (make build output) 
+	 * Only tests parsing of the input (make build output)
 	 */
 	public void testParsingIncludePaths() {
 		fOutputParser.processLine("gcc -I /dir/include -I c:\\dir\\include -ID:/dir/include -c test.c");	// absolute paths //$NON-NLS-1$
@@ -68,7 +68,7 @@ public class GCCScannerInfoConsoleParserTests extends BaseBOPConsoleParserTests 
 		fOutputParser.processLine("gcc -Imultiline2 \\"); //$NON-NLS-1$
 		fOutputParser.processLine("-Imultiline3\\"); //$NON-NLS-1$
 		fOutputParser.processLine(" -DAA=\"BB\" test.c"); //$NON-NLS-1$
-		
+
 		@SuppressWarnings("unchecked")
 		List<String> sumIncludes = fCollector.getCollectedScannerInfo(null, ScannerInfoTypes.INCLUDE_PATHS);
 		assertTrue(sumIncludes.contains("/dir/include")); //$NON-NLS-1$

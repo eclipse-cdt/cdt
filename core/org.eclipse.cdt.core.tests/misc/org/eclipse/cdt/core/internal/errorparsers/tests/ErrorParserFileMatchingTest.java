@@ -937,7 +937,6 @@ public class ErrorParserFileMatchingTest extends TestCase {
 			// Skip the test if Cygwin is not available.
 			return;
 		}
-
 		assertTrue("usrIncludeWindowsPath=["+usrIncludeWindowsPath+"]",
 			usrIncludeWindowsPath.charAt(1)==IPath.DEVICE_SEPARATOR);
 

@@ -61,11 +61,8 @@ public class AutomatedSuite extends TestSuite {
 		// tests for package org.eclipse.cdt.ui.tests.viewsupport
 		addTest(ViewSupportTestSuite.suite());
 
-	// Has intermittent failures
-	if (System.getProperty("cdt.skip.known.test.failures") == null) { //$NON-NLS-1$		
 		// tests for package org.eclipse.cdt.ui.tests.callhierarchy
 		addTest(CallHierarchyTestSuite.suite());
-	}
 
 		// tests for package org.eclipse.cdt.ui.tests.typehierarchy
 		addTest(TypeHierarchyTestSuite.suite());
@@ -78,12 +75,9 @@ public class AutomatedSuite extends TestSuite {
 
 		// tests from package org.eclipse.cdt.ui.tests.text.contentAssist2
 		addTest(ContentAssist2TestSuite.suite());
-
-	// Has intermittent failures
-	if (System.getProperty("cdt.skip.known.test.failures") == null) { //$NON-NLS-1$		
+		
 		// tests from package org.eclipse.cdt.ui.tests.text.selection
 		addTest(SelectionTestSuite.suite());
-	}
 		
 		// tests from package org.eclipse.cdt.ui.tests.quickfix
 		addTest(AssistQuickFixTest.suite());
@@ -94,11 +88,8 @@ public class AutomatedSuite extends TestSuite {
 		// tests from package org.eclipse.cdt.ui.tests.search
 		addTest(SearchTestSuite.suite());
 
-	// Has intermittent failures
-	if (System.getProperty("cdt.skip.known.test.failures") == null) { //$NON-NLS-1$		
 		// tests from package org.eclipse.cdt.ui.tests.refactoring
 		addTest(RefactoringTestSuite.suite());
-	}
 		
 		// tests from package org.eclipse.cdt.ui.tests.chelp
 		addTest(CHelpTest.suite());

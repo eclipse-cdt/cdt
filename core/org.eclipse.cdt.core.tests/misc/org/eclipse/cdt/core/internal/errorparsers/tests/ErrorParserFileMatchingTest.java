@@ -937,9 +937,12 @@ public class ErrorParserFileMatchingTest extends TestCase {
 			// Skip the test if Cygwin is not available.
 			return;
 		}
-		
+
 		assertTrue("usrIncludeWindowsPath=["+usrIncludeWindowsPath+"]",
 			usrIncludeWindowsPath.charAt(1)==IPath.DEVICE_SEPARATOR);
+
+		java.io.File file = new java.io.File(usrIncludeWindowsPath + "\\" + fileName);
+		assertTrue("File " + file + " does not exist, check your cygwin installation", file.exists());
 
 		ResourceHelper.createLinkedFolder(fProject, "include", usrIncludeWindowsPath);
 

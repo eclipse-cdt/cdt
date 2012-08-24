@@ -457,7 +457,7 @@ public class ResourceHelper {
 	 */
 	public static IFolder createLinkedFolder(IProject project, String folderLink, IPath realFolder) throws CoreException {
 		IFolder folder = project.getFolder(folderLink);
-		folder.createLink(realFolder, IResource.REPLACE, null);
+		folder.createLink(realFolder, IResource.REPLACE | IResource.ALLOW_MISSING_LOCAL, null);
 		Assert.assertTrue(folder.exists());
 		resourcesCreated.add(folder);
 		return folder;

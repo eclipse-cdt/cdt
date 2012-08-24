@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 Red Hat Inc.
+ * Copyright (c) 2009, 2012 Red Hat Inc.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Red Hat Inc. - initial API and implementation
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.internal.autotools.core.configure;
 
@@ -16,6 +17,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.osgi.util.TextProcessor;
 
 public class AutotoolsConfiguration implements IAConfiguration {
 
@@ -55,11 +57,11 @@ public class AutotoolsConfiguration implements IAConfiguration {
 		}
 		
 		public String getDescription() {
-			return ConfigureMessages.getConfigureDescription(transformedName);
+			return TextProcessor.process(ConfigureMessages.getConfigureDescription(transformedName));
 		}
 		
 		public String getToolTip() {
-			return ConfigureMessages.getConfigureTip(transformedName);
+			return TextProcessor.process(ConfigureMessages.getConfigureTip(transformedName));
 		}
 	}
 	

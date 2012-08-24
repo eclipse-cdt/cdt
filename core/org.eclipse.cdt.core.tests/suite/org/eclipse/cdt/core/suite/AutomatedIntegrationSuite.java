@@ -62,12 +62,19 @@ public class AutomatedIntegrationSuite extends TestSuite {
 	public static Test suite() throws Exception {
 		final AutomatedIntegrationSuite suite = new AutomatedIntegrationSuite();
 
-		// Add all success tests
+	// Add all success tests
+		
+	// Has intermittent failures
+	if (System.getProperty("cdt.skip.known.test.failures") == null) {		
 		suite.addTest(CDescriptorTests.suite());
+	}
 		suite.addTest(CDescriptorOldTests.suite());
 		suite.addTest(IEnvironmentVariableManagerTests.suite());
 		suite.addTest(ErrorParserTests.suite());
+	// Has intermittent failures
+	if (System.getProperty("cdt.skip.known.test.failures") == null) {		
 		suite.addTest(ParserTestSuite.suite());
+	}
 		suite.addTest(AllCoreTests.suite());
 		suite.addTest(ElementDeltaTests.suite());
 		suite.addTest(WorkingCopyTests.suite());
@@ -84,9 +91,12 @@ public class AutomatedIntegrationSuite extends TestSuite {
 		suite.addTest(EFSExtensionTests.suite());
 		suite.addTest(ByteUtilsTest.suite());
 
+	// Has intermittent failures
+	if (System.getProperty("cdt.skip.known.test.failures") == null) { //$NON-NLS-1$		
 		// Add in PDOM tests
 		suite.addTest(PDOMTests.suite());
 		suite.addTest(IndexTests.suite());
+	}
 
 		suite.addTest(RefreshScopeTests.suite());
 

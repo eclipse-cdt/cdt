@@ -4347,14 +4347,14 @@
 		<tab
 			class="org.eclipse.cdt.internal.ui.language.settings.providers.LanguageSettingsEntriesTab"
 			icon="icons/obj16/ls_entries.gif"
-			name="Entries"
+			name="%AllLanguageSettingEntries.name"
 			weight="010"
 			parent="org.eclipse.cdt.internal.ui.language.settings.providers.LanguageSettingsProvidersPage"
 			tooltip="%AllLanguageSettingEntries.tooltip"/>
 		<tab
 			class="org.eclipse.cdt.internal.ui.language.settings.providers.LanguageSettingsProviderTab"
 			icon="icons/obj16/extension_obj.gif"
-			name="Providers"
+			name="%AllLanguageSettingProviders.name"
 			weight="020"
 			parent="org.eclipse.cdt.internal.ui.language.settings.providers.LanguageSettingsProvidersPage"
 			tooltip="%AllLanguageSettingEntries.tooltip"/>

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 Intel Corporation and others.
+ * Copyright (c) 2007, 2012 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Intel Corporation - initial API and implementation
  *     James Blackbrun (Broadcom Corp.)
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.wizards;
 
@@ -31,6 +32,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -140,7 +142,7 @@ public class CDTConfigWizardPage extends WizardPage {
 		tv.setLabelProvider(new LabelProvider() {
 			@Override
 			public String getText(Object element) {
-				return element == null ? EMPTY_STR : ((CfgHolder)element).getName();
+				return element == null ? EMPTY_STR : TextProcessor.process(((CfgHolder)element).getName());
 			}
 			@Override
 			public Image getImage(Object element) { return IMG_CONFIG; }

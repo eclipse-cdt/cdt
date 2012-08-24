@@ -16,6 +16,7 @@ import org.eclipse.cdt.autotools.tests.editors.EditorTests;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+/** On Windows requires either Cygwin or MinGW to be in PATH */
 public class AllAutotoolsTests {
 
 	public static Test suite() {

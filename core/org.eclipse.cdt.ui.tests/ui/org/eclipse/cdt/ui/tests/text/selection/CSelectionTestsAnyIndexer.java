@@ -100,8 +100,8 @@ public abstract class CSelectionTestsAnyIndexer extends BaseSelectionTestsIndexe
         
         int hoffset= hcode.indexOf("MyInt"); 
         int soffset = scode.indexOf("MyInt"); 
-        IASTNode decl = testF3(file, soffset+2);
-        IASTNode def = testF3(hfile, hoffset+2);
+        IASTNode decl = testF3(file, soffset + 2);
+        IASTNode def = testF3(hfile, hoffset + 2);
         assertTrue(def instanceof IASTName);
         assertTrue(decl instanceof IASTName);
         assertEquals("MyInt", ((IASTName) decl).toString()); //$NON-NLS-1$
@@ -113,8 +113,8 @@ public abstract class CSelectionTestsAnyIndexer extends BaseSelectionTestsIndexe
         
         hoffset= hcode.indexOf("MyConst"); 
         soffset = scode.indexOf("MyConst"); 
-        decl = testF3(file, soffset+2);
-        def = testF3(hfile, hoffset+2);
+        decl = testF3(file, soffset + 2);
+        def = testF3(hfile, hoffset + 2);
         assertTrue(def instanceof IASTName);
         assertTrue(decl instanceof IASTName);
         assertEquals("MyConst", ((IASTName) decl).toString()); //$NON-NLS-1$
@@ -126,8 +126,8 @@ public abstract class CSelectionTestsAnyIndexer extends BaseSelectionTestsIndexe
         
         hoffset= hcode.indexOf("MyFunc"); 
         soffset = scode.indexOf("MyFunc"); 
-        decl = testF3(file, soffset+2);
-        def = testF3(hfile, hoffset+2);
+        decl = testF3(file, soffset + 2);
+        def = testF3(hfile, hoffset + 2);
         assertTrue(def instanceof IASTName);
         assertTrue(decl instanceof IASTName);
         assertEquals("MyFunc", ((IASTName) decl).toString()); //$NON-NLS-1$
@@ -139,8 +139,8 @@ public abstract class CSelectionTestsAnyIndexer extends BaseSelectionTestsIndexe
         
         hoffset= hcode.indexOf("MyStruct"); 
         soffset = scode.indexOf("MyStruct"); 
-        decl = testF3(file, soffset+2);
-        def = testF3(hfile, hoffset+2);
+        decl = testF3(file, soffset + 2);
+        def = testF3(hfile, hoffset + 2);
         assertTrue(def instanceof IASTName);
         assertTrue(decl instanceof IASTName);
         assertEquals("MyStruct", ((IASTName) decl).toString()); //$NON-NLS-1$
@@ -150,8 +150,7 @@ public abstract class CSelectionTestsAnyIndexer extends BaseSelectionTestsIndexe
         assertEquals(hoffset, def.getFileLocation().getNodeOffset());
         assertEquals(8, ((ASTNode) def).getLength());
     }
-	
-    
+
 	// // the header
 	// extern int a; 				// declares 
 	// extern const int c = 1; 		// defines 

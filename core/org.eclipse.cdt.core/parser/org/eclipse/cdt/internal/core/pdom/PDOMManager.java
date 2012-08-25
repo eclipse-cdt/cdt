@@ -720,7 +720,9 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 
     @Override
 	public boolean isIndexerIdle() {
-    	return Job.getJobManager().find(this).length == 0;
+    	synchronized (fTaskQueue) {
+        	return Job.getJobManager().find(this).length == 0;
+		}
     }
 
 	void addProject(final ICProject cproject) {
@@ -1097,7 +1099,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 			@Override
 			public void done(IJobChangeEvent event) {
 				synchronized (idleCondition) {
-					if (Job.getJobManager().find(PDOMManager.this).length == 0) {
+					if (isIndexerIdle()) {
 						idleCondition[0] = true;
 						idleCondition.notifyAll();
 					}
@@ -1106,7 +1108,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		};
 		Job.getJobManager().addJobChangeListener(listener);
 		try {
-			if (Job.getJobManager().find(this).length == 0) {
+			if (isIndexerIdle()) {
 				return true;
 			}
 			synchronized (idleCondition) {

@@ -39,6 +39,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 
@@ -305,7 +306,8 @@ public class CRenameProcessor extends RenameProcessor {
 		if (indexLockCount == 0) {
 			if (fIndex == null) {
 				ICProject[] projects= CoreModel.getDefault().getCModel().getCProjects();
-				fIndex= CCorePlugin.getIndexManager().getIndex(projects);
+				fIndex = CCorePlugin.getIndexManager().getIndex(projects,
+						IIndexManager.ADD_EXTENSION_FRAGMENTS_EDITOR);
 			}
 			fIndex.acquireReadLock();
 		}

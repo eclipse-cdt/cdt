@@ -13,7 +13,7 @@ package org.eclipse.cdt.internal.ui.refactoring.gettersandsetters;
 
 import org.eclipse.osgi.util.NLS;
 
-public final class Messages extends NLS {
+final class Messages extends NLS {
 	public static String GenerateGettersAndSettersInputPage_DeselectAll;
 	public static String GenerateGettersAndSettersInputPage_Header;
 	public static String GenerateGettersAndSettersInputPage_LinkDescription;

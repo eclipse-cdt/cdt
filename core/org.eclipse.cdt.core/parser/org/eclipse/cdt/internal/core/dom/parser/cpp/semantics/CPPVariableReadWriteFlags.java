@@ -32,7 +32,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.VariableReadWriteFlags;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownType;
 
 /**
@@ -61,7 +60,7 @@ public final class CPPVariableReadWriteFlags extends VariableReadWriteFlags {
 		IType type = CPPVisitor.createType(parent);
 		if (type instanceof ICPPUnknownType ||
 				type instanceof ICPPClassType &&
-				!ClassTypeHelper.hasTrivialDefaultConstructor((ICPPClassType) type, parent)) {
+				!TypeTraits.hasTrivialDefaultConstructor((ICPPClassType) type, parent)) {
 			return WRITE;
 		}
 		return super.rwInDeclarator(parent, indirection);

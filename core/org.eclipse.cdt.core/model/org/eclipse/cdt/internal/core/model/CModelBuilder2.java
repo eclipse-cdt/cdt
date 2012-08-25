@@ -121,7 +121,8 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 	@Override
 	public void parse(boolean quickParseMode) throws Exception {
 		final IIndexManager indexManager= CCorePlugin.getIndexManager();
-		IIndex index= indexManager.getIndex(fTranslationUnit.getCProject());
+		IIndex index = indexManager.getIndex(fTranslationUnit.getCProject(),
+				IIndexManager.ADD_EXTENSION_FRAGMENTS_EDITOR);
 
 		try {
 			if (index != null) {

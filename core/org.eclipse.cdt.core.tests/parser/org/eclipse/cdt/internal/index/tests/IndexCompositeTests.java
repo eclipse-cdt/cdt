@@ -468,7 +468,7 @@ public class IndexCompositeTests extends BaseTestCase {
  * Convenience class for setting up projects.
  */
 class ProjectBuilder {
-	private static final int INDEXER_TIMEOUT_SEC = 5;
+	private static final int INDEXER_TIMEOUT_SEC = 10;
 	private final String name;
 	private final boolean cpp;
 	private List dependencies = new ArrayList();

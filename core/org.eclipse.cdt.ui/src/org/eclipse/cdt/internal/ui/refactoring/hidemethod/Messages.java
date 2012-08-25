@@ -13,7 +13,7 @@ package org.eclipse.cdt.internal.ui.refactoring.hidemethod;
 
 import org.eclipse.osgi.util.NLS;
 
-public final class Messages extends NLS {
+final class Messages extends NLS {
 	public static String HideMethodRefactoring_HasExternalReferences;
 	public static String HideMethodRefactoring_HIDE_METHOD;
 	public static String HideMethodRefactoring_NoNameSelected;

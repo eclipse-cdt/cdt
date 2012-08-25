@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-   <extension-point id="checkers" name="%extension-point.name.CodeAnalysis" schema="schema/checkers.exsd"/>
-   <extension-point id="checkerEnablement" name="Verification of checker enablement" schema="schema/checkerEnablement.exsd"/>
+   <extension-point id="checkers" name="%codeAnalysisCheckersExtensionPoint" schema="schema/checkers.exsd"/>
+   <extension-point id="checkerEnablement" name="%checkerEnablementExtensionPoint" schema="schema/checkerEnablement.exsd"/>
 
    <extension
          id="codanBuilder"

@@ -1330,7 +1330,7 @@ public class AST2TemplateTests extends AST2BaseTest {
     	ICPPClassType sc0= assertInstance(b0.getSpecializedBinding(), ICPPClassType.class);
     	ICPPClassType sc1= assertInstance(b1.getSpecializedBinding(), ICPPClassType.class);
     	assertTrue(sc0.isSameType(sc1));
-    	
+
     	assertInstance(b0, ICPPSpecialization.class);
     	assertInstance(b1, ICPPTemplateInstance.class);
 
@@ -5987,5 +5987,28 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	}
 	public void testSFINAE_b() throws Exception {
 		parseAndCheckBindings();
+	}
+
+	//	template<typename T>
+	//	struct is_pod {
+	//	  static const bool value = __is_pod(T);
+	//	};
+	//
+	//	template <bool, typename = void>
+	//	struct enable_if {};
+	//
+	//	template <typename T>
+	//	struct enable_if<true, T> {
+	//	  typedef T type;
+	//	};
+	//
+	//	template <typename T>
+	//	void f(typename enable_if<is_pod<T>::value>::type* = 0);
+	//
+	//	void test() {
+	//	  f<int>();
+	//	}
+	public void testIsPOD_367993() throws Exception {
+		parseAndCheckBindings(getAboveComment(), CPP, true);
 	}
 }

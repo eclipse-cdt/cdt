@@ -14,7 +14,7 @@ package org.eclipse.cdt.internal.ui.refactoring.togglefunction;
 
 import org.eclipse.osgi.util.NLS;
 
-public class Messages extends NLS {
+class Messages extends NLS {
 	public static String DeclaratorFinder_NestedFunction;
 	public static String DeclaratorFinder_NoDeclarator;
 	public static String DeclaratorFinder_MultipleDeclarators;

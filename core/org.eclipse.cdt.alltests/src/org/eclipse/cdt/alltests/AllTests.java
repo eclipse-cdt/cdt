@@ -12,15 +12,14 @@ import junit.framework.TestSuite;
 public class AllTests extends TestSuite {
 	public static Test suite() throws Exception {
 		final AllTests suite = new AllTests();
-		suite.addTest(org.eclipse.cdt.autotools.tests.AllAutotoolsTests.suite()); // Works with MinGW but not Cygwin
+		suite.addTest(org.eclipse.cdt.autotools.tests.AllAutotoolsTests.suite());
 //	// There are intermittent failures in these tests. No pattern to failures. Seems like indexer is interrupted  
 	if (System.getProperty("cdt.skip.known.test.failures") == null) { //$NON-NLS-1$
 		suite.addTest(org.eclipse.cdt.codan.core.test.AutomatedIntegrationSuite.suite());
 		suite.addTest(org.eclipse.cdt.core.lrparser.tests.LRParserTestSuite.suite());
 		suite.addTest(org.eclipse.cdt.core.parser.xlc.tests.suite.XlcTestSuite.suite());
-	}
-	
 		suite.addTest(org.eclipse.cdt.core.parser.upc.tests.UPCParserTestSuite.suite());
+	}
 		suite.addTest(org.eclipse.cdt.core.suite.AutomatedIntegrationSuite.suite());
 		
 	// These tests fail intermittently due to gdb not shutting down and thus

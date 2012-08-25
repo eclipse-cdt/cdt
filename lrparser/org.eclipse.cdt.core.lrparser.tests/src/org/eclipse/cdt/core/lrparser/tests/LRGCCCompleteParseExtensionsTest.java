@@ -32,7 +32,7 @@ public class LRGCCCompleteParseExtensionsTest extends GCCCompleteParseExtensions
 	
 	//override the test failed case for 342683
 	@Override
-	public void testTypetraits_Bug342683() throws Exception {}
+	public void testTypeTraits_Bug342683() throws Exception {}
 
 	 
     @Override

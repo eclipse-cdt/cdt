@@ -17,7 +17,7 @@
 	<properties>
 		<tycho-version>0.14.1</tycho-version>
 		<tycho-extras-version>0.14.0</tycho-extras-version>
-		<platform-version>3.8milestones</platform-version>
+		<platform-version>3.8</platform-version>
 		<platform-site>http://download.eclipse.org/eclipse/updates/${platform-version}</platform-site>
 		<orbit-version>R20110523182458</orbit-version>
 		<orbit-site>http://download.eclipse.org/tools/orbit/downloads/drops/${orbit-version}/repository</orbit-site>
@@ -162,6 +162,7 @@
 		<module>codan/org.eclipse.cdt.codan.core.test</module>
 		<module>build/org.eclipse.cdt.managedbuilder.core.tests</module>
 		<module>build/org.eclipse.cdt.managedbuilder.ui.tests</module>
+		<module>build/org.eclipse.cdt.make.core.tests</module>
 		<module>dsf-gdb/org.eclipse.cdt.tests.dsf.gdb</module>
 		
 		<module>build/org.eclipse.cdt.autotools.core</module>
@@ -181,6 +182,7 @@
 		<module>testsrunner/org.eclipse.cdt.testsrunner.feature</module>
 		<module>testsrunner/org.eclipse.cdt.testsrunner.source.feature</module>
 		
+		<module>xlc/org.eclipse.cdt.errorparsers.xlc.tests</module>
 <!-- 
 		<module>lrparser/org.eclipse.cdt.core.lrparser.tests</module>
 		<module>upc/org.eclipse.cdt.core.parser.upc.tests</module>

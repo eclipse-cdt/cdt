@@ -24,10 +24,10 @@
    <extension-point id="HelpInfo" name="%HelpInfo" schema="schema/HelpInfo.exsd"/>
    <extension-point id="quickFixProcessors" name="%quickFixProcessorExtensionPoint" schema="schema/quickFixProcessors.exsd"/>
    <extension-point id="quickAssistProcessors" name="%quickAssistProcessorExtensionPoint" schema="schema/quickAssistProcessors.exsd"/>
-   <extension-point id="DocCommentOwner" name="%DocCommentOwner.name" schema="schema/DocCommentOwner.exsd"/>
+   <extension-point id="DocCommentOwner" name="%DocCommentOwnerExtensionPoint" schema="schema/DocCommentOwner.exsd"/>
    <extension-point id="workingSetConfigurations" name="%workingSetConfigurationsExtensionPoint" schema="schema/workingSetConfigurations.exsd"/>
    <extension-point id="LanguageSettingsProviderAssociation" name="%LanguageSettingsProviderAssociationExtensionPoint" schema="schema/LanguageSettingsProviderAssociation.exsd"/>
-   <extension-point id="RefreshExclusionContributor" name="%extension-point.name" schema="schema/RefreshExclusionContributor.exsd"/>
+   <extension-point id="RefreshExclusionContributor" name="%RefreshExclusionContributorExtensionPoint" schema="schema/RefreshExclusionContributor.exsd"/>
    <extension-point id="projectTypePages" name="%projectTypePages" schema="schema/projectTypePages.exsd"/>
 
    <extension
@@ -4347,7 +4347,7 @@
 		<tab
 			class="org.eclipse.cdt.internal.ui.language.settings.providers.LanguageSettingsEntriesTab"
 			icon="icons/obj16/ls_entries.gif"
-			name="Entries"
+			name="%AllLanguageSettingEntries.name"
 			weight="010"
 			helpId="FIXME cdt_u_prop_pns_inc"
 			parent="org.eclipse.cdt.internal.ui.language.settings.providers.LanguageSettingsProvidersPage"
@@ -4355,7 +4355,7 @@
 		<tab
 			class="org.eclipse.cdt.internal.ui.language.settings.providers.LanguageSettingsProviderTab"
 			icon="icons/obj16/extension_obj.gif"
-			name="Providers"
+			name="%AllLanguageSettingProviders.name"
 			weight="020"
 			helpId="FIXME cdt_u_prop_pns_inc"
 			parent="org.eclipse.cdt.internal.ui.language.settings.providers.LanguageSettingsProvidersPage"

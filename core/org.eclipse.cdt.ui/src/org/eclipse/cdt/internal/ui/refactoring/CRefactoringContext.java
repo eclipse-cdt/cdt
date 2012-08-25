@@ -21,6 +21,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringContext;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -113,7 +114,8 @@ public class CRefactoringContext extends RefactoringContext {
 			throw new IllegalStateException("CRefactoringContext is already disposed."); //$NON-NLS-1$
 		if (fIndex == null) {
 			ICProject[] projects = CoreModel.getDefault().getCModel().getCProjects();
-			IIndex index = CCorePlugin.getIndexManager().getIndex(projects);
+			IIndex index = CCorePlugin.getIndexManager().getIndex(projects,
+					IIndexManager.ADD_EXTENSION_FRAGMENTS_EDITOR);
 			try {
 				index.acquireReadLock();
 			} catch (InterruptedException e) {

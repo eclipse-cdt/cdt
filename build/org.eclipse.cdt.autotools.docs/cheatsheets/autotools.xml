@@ -55,7 +55,7 @@
       <description>
          In the Console view, there is a button entitled &quot;Display Selected Console&quot;.  Its icon depicts a monitor with two lines of text on it.  Pressing this button will drop down to show all available consoles.  At this point, you should have three consoles:  one for configure output (&quot;Configure&quot;), one for build output (&quot;C-Build&quot;), and one for the binary output that you just ran (&quot;&lt;terminated&gt; sources ...&quot;).
       </description>
-      <subitem label="View configure output by selecting the Configure console in the drop-down list.  The configure console" skip="false">
+      <subitem label="View configure output by selecting the Configure console in the drop-down list." skip="false">
       </subitem>
       <subitem label="View build output by selecting the &quot;C-Build&quot; console in the drop-down list." skip="false">
       </subitem>

@@ -160,7 +160,7 @@ public class CIndex implements IIndex {
 
 	@Override
 	public IIndexName[] findNames(IBinding binding, int flags) throws CoreException {
-		LinkedList<IIndexFragmentName> result= new LinkedList<IIndexFragmentName>();
+		ArrayList<IIndexFragmentName> result= new ArrayList<IIndexFragmentName>();
 		if (binding instanceof ICPPUsingDeclaration) {
 			IBinding[] bindings= ((ICPPUsingDeclaration) binding).getDelegates();
 			if (bindings == null || bindings.length == 0) {
@@ -180,7 +180,7 @@ public class CIndex implements IIndex {
 		// variants in one or more index fragments, we need to filter out duplicate names.
 		// See bug 192352. 
 		// Read only fragments can be superseded by what the indexer writes into
-		// a writable fragment. Therefore names from a read-only fragement are
+		// a writable fragment. Therefore names from a read-only fragment are
 		// ignored if there is a match in a writable fragment.
 		HashSet<NameKey> encounteredNames = new HashSet<NameKey>();
 		for (IIndexFragment fragment : fFragments) {

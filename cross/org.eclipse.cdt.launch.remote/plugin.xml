@@ -11,6 +11,7 @@ Ewa Matejska     (PalmSource)      - initial API and implementation
 Martin Oberhuber (Wind River)      - fix 158529: Migrate docs to HTML / TOC format 
 Anna Dushistova  (Mentor Graphics) - [314659] added launch delegate for dsf
 Anna Dushistova  (Mentor Graphics) - code restructuring
+Anna Dushistova  (MontaVista)      - added a new DSF-TE launcher
 -->
 <?eclipse version="3.0"?>
 <plugin>
@@ -35,6 +36,16 @@ Anna Dushistova  (Mentor Graphics) - code restructuring
             sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"
             sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer">
       </launchDelegate>
+            <launchDelegate
+            id="org.eclipse.tcf.te.remotecdt.dsf.debug"
+            type="org.eclipse.cdt.launch.remoteApplicationLaunchType"
+            modes="debug"
+            delegate="org.eclipse.cdt.launch.remote.launching.TEGdbLaunchDelegate"
+            name="%tedsfLaunchDelegate.name"
+            delegateDescription="%tedsfLaunchDelegate.description"
+            sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"
+            sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer">
+      </launchDelegate>      
    </extension>
    
    <extension
@@ -59,6 +70,13 @@ Anna Dushistova  (Mentor Graphics) - code restructuring
             name="Main"
             class="org.eclipse.cdt.launch.remote.tabs.RemoteCDSFMainTab">
         <associatedDelegate delegate="org.eclipse.rse.remotecdt.dsf.debug"/>
+     </tab>
+     <tab
+            id="org.eclipse.tcf.te.remotecdt.dsf.gdb.mainTab"
+            group="org.eclipse.cdt.launch.remoteApplicationLaunchTabGroup"
+            name="Main"
+            class="org.eclipse.cdt.launch.remote.tabs.TECDSFMainTab">
+        <associatedDelegate delegate="org.eclipse.tcf.te.remotecdt.dsf.debug"/>
      </tab>         
      <tab
             id="org.eclipse.rse.remotecdt.launch.CAgrumentsTab"
@@ -83,6 +101,13 @@ Anna Dushistova  (Mentor Graphics) - code restructuring
         <associatedDelegate delegate="org.eclipse.rse.remotecdt.dsf.debug"/>
         <placement after="org.eclipse.cdt.launch.remote.dsf.mainTab"/>
       </tab>
+      <tab id="org.eclipse.tcf.te.remotecdt.dsf.debug.CArgumentsTab"
+            group="org.eclipse.cdt.launch.remoteApplicationLaunchTabGroup"
+            name="Arguments"
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.launching.CArgumentsTab">
+        <associatedDelegate delegate="org.eclipse.tcf.te.remotecdt.dsf.debug"/>
+        <placement after="org.eclipse.tcf.te.remotecdt.dsf.gdb.mainTab"/>
+      </tab>
       <tab
             id="org.eclipse.rse.remotecdt.launch.RemoteCDebuggerTab"
             group="org.eclipse.cdt.launch.remoteApplicationLaunchTabGroup"
@@ -96,6 +121,13 @@ Anna Dushistova  (Mentor Graphics) - code restructuring
             name="Debugger"
             class="org.eclipse.cdt.launch.remote.tabs.RemoteCDSFDebuggerTab">
         <associatedDelegate delegate="org.eclipse.rse.remotecdt.dsf.debug"/>
+        <placement after="org.eclipse.cdt.dsf.gdb.launch.argumentsTab"/>
+      </tab>
+      <tab id="org.eclipse.tcf.te.remotecdt.dsf.debug.RemoteCDSFDebuggerTab"
+            group="org.eclipse.cdt.launch.remoteApplicationLaunchTabGroup"
+            name="Debugger"
+            class="org.eclipse.cdt.launch.remote.tabs.RemoteCDSFDebuggerTab">
+        <associatedDelegate delegate="org.eclipse.tcf.te.remotecdt.dsf.debug"/>
         <placement after="org.eclipse.cdt.dsf.gdb.launch.argumentsTab"/>
       </tab>
       <tab
@@ -112,6 +144,14 @@ Anna Dushistova  (Mentor Graphics) - code restructuring
             name="Source"
             class="org.eclipse.debug.ui.sourcelookup.SourceLookupTab">
         <associatedDelegate delegate="org.eclipse.rse.remotecdt.dsf.debug"/>
+        <placement after="org.eclipse.rse.remotecdt.dsf.debug.RemoteCDSFDebuggerTab"/>        
+      </tab>         
+      <tab
+            id="org.eclipse.tcf.te.remotecdt.debug.dsf.SourceLookupTab"
+            group="org.eclipse.cdt.launch.remoteApplicationLaunchTabGroup"
+            name="Source"
+            class="org.eclipse.debug.ui.sourcelookup.SourceLookupTab">
+        <associatedDelegate delegate="org.eclipse.tcf.te.remotecdt.dsf.debug"/>
         <placement after="org.eclipse.rse.remotecdt.dsf.debug.RemoteCDSFDebuggerTab"/>        
       </tab>         
       <tab
@@ -136,6 +176,14 @@ Anna Dushistova  (Mentor Graphics) - code restructuring
             name="Common"
             class="org.eclipse.debug.ui.CommonTab">
         <associatedDelegate delegate="org.eclipse.rse.remotecdt.dsf.debug"/>
+        <placement after="org.eclipse.debug.ui.sourceLookupTab"/>                
+      </tab>         
+      <tab
+            id="org.eclipse.tcf.te.remotecdt.debug.dsf.CommonTab"
+            group="org.eclipse.cdt.launch.remoteApplicationLaunchTabGroup"
+            name="Common"
+            class="org.eclipse.debug.ui.CommonTab">
+        <associatedDelegate delegate="org.eclipse.tcf.te.remotecdt.dsf.debug"/>
         <placement after="org.eclipse.debug.ui.sourceLookupTab"/>                
       </tab>         
       

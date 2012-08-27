@@ -162,7 +162,7 @@ public class GdbConnectCommand extends AbstractDebugCommand implements IConnectH
     			Object result = new ProcessPrompter().handleStatus(null, info);
     			 if (result == null) {
  					fRequestMonitor.cancel();
- 				} else if (result instanceof IProcessExtendedInfo[] || result instanceof String) {
+ 				} else if (result instanceof IProcessExtendedInfo[] || result instanceof String || result instanceof Integer) {
     				fRequestMonitor.setData(result);
     		    } else {
     				fRequestMonitor.setStatus(NO_PID_STATUS);
@@ -323,6 +323,10 @@ public class GdbConnectCommand extends AbstractDebugCommand implements IConnectH
 															if (data instanceof String) {
 																// User wants to start a new process
 																startNewProcess(controlCtx, (String)data, rm);
+															} else if (data instanceof Integer) {
+																// User specified the process to attach to by
+																// entering its pid manually
+																attachToProcesses(controlCtx, new IProcessExtendedInfo[] { new ProcessInfo(((Integer)data).intValue(), "") }, rm); //$NON-NLS-1$
 															} else if (data instanceof IProcessExtendedInfo[]) {
 																attachToProcesses(controlCtx, (IProcessExtendedInfo[])data, rm);
 															} else {

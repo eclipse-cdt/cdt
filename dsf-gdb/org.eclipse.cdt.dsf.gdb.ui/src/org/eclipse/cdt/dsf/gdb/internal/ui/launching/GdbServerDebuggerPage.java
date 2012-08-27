@@ -22,11 +22,19 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.swt.widgets.Text;
 
 /**
  * The dynamic debugger tab for remote launches using gdb server.
@@ -44,8 +52,11 @@ public class GdbServerDebuggerPage extends GdbDebuggerPage {
 	private TCPSettingsBlock fTCPBlock;
 
 	private SerialPortSettingsBlock fSerialBlock;
-
+	
 	private Composite fConnectionStack;
+
+	private Button fMultiButton;
+	private Text fRemoteBinaryText;
 
 	private boolean fIsInitializing = false;
 
@@ -65,17 +76,19 @@ public class GdbServerDebuggerPage extends GdbDebuggerPage {
 		((GridLayout)comp1.getLayout()).makeColumnsEqualWidth = false;
 		comp1.setFont(tabFolder.getFont());
 		tabItem.setControl(comp1);
-		Composite comp = ControlFactory.createCompositeEx(comp1, 2, GridData.FILL_BOTH);
-		((GridLayout)comp.getLayout()).makeColumnsEqualWidth = false;
-		comp.setFont(comp1.getFont());
-		fConnectionField.doFillIntoGrid(comp, 2);
+		createRemoteOptions(comp1);
+		Group group = new Group(comp1, SWT.NONE);
+		group.setText("Connection");
+		group.setLayout(new GridLayout(2, false));
+		group.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+		fConnectionField.doFillIntoGrid(group, 2);
 		((GridData)fConnectionField.getComboControl(null).getLayoutData()).horizontalAlignment = GridData.BEGINNING;
-		fConnectionStack = ControlFactory.createCompositeEx(comp, 1, GridData.FILL_BOTH);
+		fConnectionStack = ControlFactory.createCompositeEx(group, 1, GridData.FILL_BOTH);
 		StackLayout stackLayout = new StackLayout();
 		fConnectionStack.setLayout(stackLayout);
 		((GridData)fConnectionStack.getLayoutData()).horizontalSpan = 2;
 		fTCPBlock.createBlock(fConnectionStack);
-		fSerialBlock.createBlock(fConnectionStack);		
+		fSerialBlock.createBlock(fConnectionStack);
 	}
 
 	private ComboDialogField createConnectionField() {
@@ -116,6 +129,12 @@ public class GdbServerDebuggerPage extends GdbDebuggerPage {
 		if (super.isValid(launchConfig)) {
 			setErrorMessage(null);
 			setMessage(null);
+			
+			if (fMultiButton.getSelection() && fRemoteBinaryText.getText().trim().length() == 0) {
+				setErrorMessage("Remote binary path must be specified if gdbserver is started in daemon mode");
+				return false;
+			}
+
 			int index = fConnectionField.getSelectionIndex();
 			if (index >= 0 && index < fConnections.length) {
 				String[] connTypes = fConnectionField.getItems();
@@ -141,6 +160,16 @@ public class GdbServerDebuggerPage extends GdbDebuggerPage {
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		setInitializing(true);
 		super.initializeFrom(configuration);
+		fMultiButton.setSelection(false);
+		try {
+			fMultiButton.setSelection(configuration.getAttribute(
+					IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REMOTE_MULTI, 
+					IGDBLaunchConfigurationConstants.DEBUGGER_REMOTE_MULTI_DEFAULT));
+			fRemoteBinaryText.setText(configuration.getAttribute(
+					IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REMOTE_BINARY, "")); //$NON-NLS-1$
+		}
+		catch( CoreException e1 ) {
+		}
 		boolean isTcp = true;
 		try {
 			isTcp = configuration.getAttribute(IGDBLaunchConfigurationConstants.ATTR_REMOTE_TCP, true);
@@ -150,6 +179,7 @@ public class GdbServerDebuggerPage extends GdbDebuggerPage {
 		fTCPBlock.initializeFrom(configuration);
 		fSerialBlock.initializeFrom(configuration);
 		fConnectionField.selectItem((isTcp) ? 0 : 1);
+		remoteOptionsChanged0();
 		connectionTypeChanged0();
 		setInitializing(false);
 	}
@@ -157,6 +187,11 @@ public class GdbServerDebuggerPage extends GdbDebuggerPage {
 	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		super.performApply(configuration);
+		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REMOTE_MULTI, fMultiButton.getSelection());
+		// FIXME: Add UI to specify the target mode
+		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REMOTE_EXTENDED, fMultiButton.getSelection());
+		if (fMultiButton.getSelection())
+			configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REMOTE_BINARY, fRemoteBinaryText.getText());
 		if (fConnectionField != null)
 			configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_REMOTE_TCP, fConnectionField.getSelectionIndex() == 0);
 		fTCPBlock.performApply(configuration);
@@ -167,6 +202,15 @@ public class GdbServerDebuggerPage extends GdbDebuggerPage {
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		super.setDefaults(configuration);
 		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_REMOTE_TCP, true);
+		configuration.setAttribute(
+				IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REMOTE_MULTI, 
+				IGDBLaunchConfigurationConstants.DEBUGGER_REMOTE_MULTI_DEFAULT);
+		configuration.setAttribute(
+				IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REMOTE_EXTENDED, 
+				IGDBLaunchConfigurationConstants.DEBUGGER_REMOTE_EXTENDED_DEFAULT);
+		configuration.setAttribute(
+				IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REMOTE_TERMINATE, 
+				IGDBLaunchConfigurationConstants.DEBUGGER_REMOTE_TERMINATE_DEFAULT);
 		fTCPBlock.setDefaults(configuration);
 		fSerialBlock.setDefaults(configuration);
 	}
@@ -184,5 +228,43 @@ public class GdbServerDebuggerPage extends GdbDebuggerPage {
 	public void createTabs(TabFolder tabFolder) {
 		super.createTabs(tabFolder);
 		createConnectionTab(tabFolder);
+	}
+
+	private void createRemoteOptions(Composite parent) {
+		Group group = new Group(parent, SWT.NONE);
+		group.setLayout(new GridLayout());
+		group.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+		fMultiButton = createCheckButton(group, "Daemon mode (--multi)");
+		fMultiButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				remoteOptionsChanged();
+			}
+		});
+
+		Composite comp = new Composite(group, SWT.NONE);
+		GridData gd = new GridData(SWT.FILL, SWT.TOP, true, false);
+		GridLayout layout = new GridLayout(2, false);
+		layout.marginHeight = 0;
+		comp.setLayout(layout);
+		comp.setLayoutData(gd);
+		new Label(comp, SWT.NONE).setText("Binary path on target: ");
+		fRemoteBinaryText = new Text(comp, SWT.BORDER | SWT.SINGLE);
+		fRemoteBinaryText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		fRemoteBinaryText.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText( ModifyEvent e ) {
+				remoteOptionsChanged();
+			}
+		});
+	}
+
+	private void remoteOptionsChanged0() {
+		fRemoteBinaryText.setEnabled(fMultiButton.getSelection());
+	}
+
+	private void remoteOptionsChanged() {
+		remoteOptionsChanged0();
+		updateLaunchConfigurationDialog();
 	}
 }

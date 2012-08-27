@@ -23,7 +23,10 @@ import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitorWithProgress;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.gdb.service.IGDBBackend;
+import org.eclipse.cdt.dsf.gdb.service.SessionType;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
+import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
@@ -37,7 +40,11 @@ import org.eclipse.core.runtime.Status;
  */
 public class FinalLaunchSequence_7_2 extends FinalLaunchSequence_7_0 {
 
+	private final static String INVALID = "invalid";   //$NON-NLS-1$
+
 	private IGDBControl fGdbControl;
+	private IGDBBackend	fGDBBackend;
+	private CommandFactory fCommandFactory;
 	private DsfSession fSession;
 	
 	// The launchConfiguration attributes
@@ -74,6 +81,7 @@ public class FinalLaunchSequence_7_2 extends FinalLaunchSequence_7_0 {
 	public void stepInitializeFinalLaunchSequence_7_2(RequestMonitor rm) {
 		DsfServicesTracker tracker = new DsfServicesTracker(GdbPlugin.getBundleContext(), fSession.getId());
 		fGdbControl = tracker.getService(IGDBControl.class);
+		fGDBBackend = tracker.getService(IGDBBackend.class);
 		tracker.dispose();
 		
         if (fGdbControl == null) {
@@ -81,6 +89,14 @@ public class FinalLaunchSequence_7_2 extends FinalLaunchSequence_7_0 {
 			rm.done();
 			return;
 		}
+
+        if (fGDBBackend == null) {
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR, "Cannot obtain GDBBackend service", null)); //$NON-NLS-1$
+			rm.done();
+			return;
+		}
+
+		fCommandFactory = fGdbControl.getCommandFactory();
 		
 		rm.done();
 	}
@@ -97,5 +113,44 @@ public class FinalLaunchSequence_7_2 extends FinalLaunchSequence_7_0 {
 		fGdbControl.queueCommand(
 				fGdbControl.getCommandFactory().createMIGDBSetDetachOnFork(fGdbControl.getContext(), !debugOnFork), 
 				new ImmediateDataRequestMonitor<MIInfo>(rm));
+	}
+
+	@Override
+	@Execute
+	public void stepRemoteConnection(RequestMonitor rm) {
+		if (fGDBBackend.getSessionType() == SessionType.REMOTE) {
+			boolean extended = CDebugUtils.getAttribute(
+					fAttributes,
+					IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REMOTE_EXTENDED,
+					IGDBLaunchConfigurationConstants.DEBUGGER_REMOTE_EXTENDED_DEFAULT);
+			boolean isTcpConnection = CDebugUtils.getAttribute(
+					fAttributes,
+					IGDBLaunchConfigurationConstants.ATTR_REMOTE_TCP,
+					false);
+			if (isTcpConnection) {
+				String remoteTcpHost = CDebugUtils.getAttribute(
+						fAttributes,
+						IGDBLaunchConfigurationConstants.ATTR_HOST, INVALID);
+				String remoteTcpPort = CDebugUtils.getAttribute(
+						fAttributes,
+						IGDBLaunchConfigurationConstants.ATTR_PORT, INVALID);
+
+				fGdbControl.queueCommand(
+						fCommandFactory.createMITargetSelect(fGdbControl.getContext(), 
+								remoteTcpHost, remoteTcpPort, extended), 
+								new ImmediateDataRequestMonitor<MIInfo>(rm));
+			} else {
+				String serialDevice = CDebugUtils.getAttribute(
+						fAttributes,
+						IGDBLaunchConfigurationConstants.ATTR_DEV, INVALID);
+
+				fGdbControl.queueCommand(
+						fCommandFactory.createMITargetSelect(fGdbControl.getContext(), 
+								serialDevice, extended), 
+								new ImmediateDataRequestMonitor<MIInfo>(rm));
+			}
+		} else {
+			rm.done();
+		}
 	}
 }

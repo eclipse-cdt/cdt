@@ -50,6 +50,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
 
 /**
  * Adding support for multi-process with GDB 7.2
@@ -153,10 +154,6 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 {
 			return false;
 		}
 
-		if (fBackend.getSessionType() == SessionType.REMOTE && !fBackend.getIsAttachSession()) {
-			return false;
-		}
-		
 		// Multi-process does not work for all-stop right now
 		IMIRunControl runControl = getServicesTracker().getService(IMIRunControl.class);
 		if (runControl != null && runControl.getRunMode() == MIRunMode.ALL_STOP) {
@@ -166,6 +163,19 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 {
 			// we will need to interrupt the target to when doing the attach.
 		}
 
+		if (fBackend.getSessionType() == SessionType.REMOTE && !fBackend.getIsAttachSession()) {
+			// Supported only if gdbserver is started in daemon mode
+			try {
+				return getLaunchConfiguration().getAttribute(
+						IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REMOTE_MULTI, 
+						IGDBLaunchConfigurationConstants.DEBUGGER_REMOTE_MULTI_DEFAULT);
+			}
+			catch(CoreException e) {
+				GdbPlugin.getDefault().getLog().log(e.getStatus());
+				return false;
+			}
+		}
+		
 		return true;
 	}
 
@@ -375,11 +385,14 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 {
 				attributes = launch.getLaunchConfiguration().getAttributes();
 			} catch (CoreException e) {}
 
+			boolean extended = CDebugUtils.getAttribute(
+					attributes,
+					IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REMOTE_EXTENDED,
+					IGDBLaunchConfigurationConstants.DEBUGGER_REMOTE_EXTENDED_DEFAULT);
 			boolean isTcpConnection = CDebugUtils.getAttribute(
 					attributes,
 					IGDBLaunchConfigurationConstants.ATTR_REMOTE_TCP,
 					false);
-
 			if (isTcpConnection) {
 				String remoteTcpHost = CDebugUtils.getAttribute(
 						attributes,
@@ -390,7 +403,7 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 {
 
 				fCommandControl.queueCommand(
 						fCommandFactory.createMITargetSelect(fCommandControl.getContext(), 
-								remoteTcpHost, remoteTcpPort, true), 
+								remoteTcpHost, remoteTcpPort, extended), 
 								new ImmediateDataRequestMonitor<MIInfo>(rm));
 			} else {
 				String serialDevice = CDebugUtils.getAttribute(
@@ -399,7 +412,7 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 {
 
 				fCommandControl.queueCommand(
 						fCommandFactory.createMITargetSelect(fCommandControl.getContext(), 
-								serialDevice, true), 
+								serialDevice, extended), 
 								new ImmediateDataRequestMonitor<MIInfo>(rm));
 			}
 		} else {
@@ -465,22 +478,30 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 {
 			return false;
 		}
 
-		if (type == SessionType.REMOTE && !fBackend.getIsAttachSession()) {
-			return false;
-		}
-
-		// We don't yet support starting a new process on a remote target
-		// Bug 344890
-		if (type == SessionType.REMOTE && fBackend.getIsAttachSession()) {
-			return false;
+		if (fBackend.getSessionType() == SessionType.REMOTE) {
+			// Supported only if gdbserver is started in daemon mode
+			try {
+				return getLaunchConfiguration().getAttribute(
+						IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REMOTE_MULTI, 
+						IGDBLaunchConfigurationConstants.DEBUGGER_REMOTE_MULTI_DEFAULT);
+			}
+			catch(CoreException e) {
+				GdbPlugin.getDefault().getLog().log(e.getStatus());
+				return false;
+			}
 		}
 
 		return true;
 	}
 
 	@Override
-	protected Sequence getDebugNewProcessSequence(DsfExecutor executor, boolean isInitial, IDMContext dmc, String file, 
-												  Map<String, Object> attributes, DataRequestMonitor<IDMContext> rm) {
+	protected Sequence getDebugNewProcessSequence(
+			DsfExecutor executor, 
+			boolean isInitial, 
+			IDMContext dmc, 
+			String file, 
+			Map<String, Object> attributes, 
+			DataRequestMonitor<IDMContext> rm) {
 		return new DebugNewProcessSequence_7_2(executor, isInitial, dmc, file, attributes, rm);
 	}
 	
@@ -587,5 +608,16 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 {
     public void eventDispatched(ITraceRecordSelectedChangedDMEvent e) {
     	setTraceVisualization(e.isVisualizationModeEnabled());
     }
+
+	@Override
+	protected Sequence getStartOrRestartProcessSequence(DsfExecutor executor, IContainerDMContext containerDmc, Map<String, Object> attributes,
+			boolean restart, DataRequestMonitor<IContainerDMContext> rm) {
+		return new StartOrRestartProcessSequence_7_2(executor, containerDmc, attributes, restart, rm);
+	}
+
+	private ILaunchConfiguration getLaunchConfiguration() {
+		ILaunch launch = (ILaunch)getSession().getModelAdapter(ILaunch.class);
+		return launch.getLaunchConfiguration();
+	}
 }
 

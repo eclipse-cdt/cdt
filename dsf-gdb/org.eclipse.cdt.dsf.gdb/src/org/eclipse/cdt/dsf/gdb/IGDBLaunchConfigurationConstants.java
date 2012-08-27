@@ -115,6 +115,53 @@ public class IGDBLaunchConfigurationConstants {
 	public static final String ATTR_DEBUGGER_TRACEPOINT_MODE = GdbPlugin.PLUGIN_ID + ".TRACEPOINT_MODE"; //$NON-NLS-1$
 	
 	/**
+	 * Launch configuration attribute key. The value is a Boolean specifying whether gdbserver is started 
+	 * in the daemon mode (--multi) or not.
+	 * @since 4.2
+	 */
+	public static final String ATTR_DEBUGGER_REMOTE_MULTI = GdbPlugin.PLUGIN_ID + ".REMOTE_MULTI"; //$NON-NLS-1$
+
+	/**
+	 * Default value of launch configuration attribute ATTR_DEBUGGER_REMOTE_MULTI.
+	 * @since 4.2
+	 */
+	public static final boolean DEBUGGER_REMOTE_MULTI_DEFAULT = false;
+	
+	/**
+	 * Launch configuration attribute key. The value is a Boolean specifying whether gdbserver 
+	 * will be terminated at the end of the session. This option is only valid when gdbserver is 
+	 * started in the daemon mode (--multi).
+	 * @since 4.2
+	 */
+	public static final String ATTR_DEBUGGER_REMOTE_TERMINATE = GdbPlugin.PLUGIN_ID + ".REMOTE_TERMINATE"; //$NON-NLS-1$
+	
+	/**
+	 * Default value of launch configuration attribute ATTR_DEBUGGER_REMOTE_TERMINATE.
+	 * @since 4.2
+	 */
+	public static final boolean DEBUGGER_REMOTE_TERMINATE_DEFAULT = false;
+	
+	/**
+	 * Launch configuration attribute key. The value is a String specifying the path of the executable 
+	 * on the target.
+	 * @since 4.2
+	 */
+	public static final String ATTR_DEBUGGER_REMOTE_BINARY = GdbPlugin.PLUGIN_ID + ".REMOTE_BINARY"; //$NON-NLS-1$
+	
+	/**
+	 * Launch configuration attribute key. The value is a Boolean specifying whether to use 
+	 * the "extended-remote" protocol for remote connections.
+	 * @since 4.2
+	 */
+	public static final String ATTR_DEBUGGER_REMOTE_EXTENDED = GdbPlugin.PLUGIN_ID + ".REMOTE_EXTENDED"; //$NON-NLS-1$
+	
+	/**
+	 * Default value of launch configuration attribute ATTR_DEBUGGER_REMOTE_EXTENDED.
+	 * @since 4.2
+	 */
+	public static final boolean DEBUGGER_REMOTE_EXTENDED_DEFAULT = false;
+	
+	/**
 	 * Launch configuration attribute value. The key is ATTR_DEBUG_NAME.
 	 */
 	public static final String DEBUGGER_DEBUG_NAME_DEFAULT = "gdb"; //$NON-NLS-1$

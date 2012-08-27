@@ -200,9 +200,13 @@ public class DebugNewProcessSequence extends ReflectionSequence {
 	@Execute
 	public void stepSetArguments(RequestMonitor rm) {
 		try {
-			String args = fBackend.getProgramArguments();
+			String args = CDebugUtils.getAttribute(
+					fAttributes,
+					ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS,
+					""); //$NON-NLS-1$
 
-			if (args != null) {
+			if (args.length() != 0) {
+				args = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(args);
 				String[] argArray = CommandLineUtil.argumentsToArray(args);
 				fCommandControl.queueCommand(
 						fCommandFactory.createMIGDBSetArgs(getContainerContext(), argArray), 
@@ -479,5 +483,12 @@ public class DebugNewProcessSequence extends ReflectionSequence {
 		fTracker.dispose();
 		fTracker = null;
 		rm.done();
+	}
+
+	/**
+	 * @since 4.2
+	 */
+	protected String getBinaryName() {
+		return fBinaryName;
 	}
 }

@@ -303,9 +303,11 @@ public class EvalID extends CPPEvaluation {
 		if (templateArgs == fTemplateArgs && fieldOwner == fFieldOwner && nameOwner == fNameOwner)
 			return this;
 
-		ICPPEvaluation eval = resolveName((ICPPClassType) nameOwner, templateArgs, point);
-		if (eval != null)
-			return eval;
+		if (nameOwner instanceof ICPPClassType) {
+			ICPPEvaluation eval = resolveName((ICPPClassType) nameOwner, templateArgs, point);
+			if (eval != null)
+				return eval;
+		}
 
 		return new EvalID(fieldOwner, nameOwner, fName, fAddressOf, fQualified, templateArgs);
 	}

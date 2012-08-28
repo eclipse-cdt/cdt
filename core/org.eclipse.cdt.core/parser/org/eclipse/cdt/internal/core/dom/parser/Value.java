@@ -148,6 +148,9 @@ public class Value implements IValue {
 					buf.putByte((byte) (ITypeMarshalBuffer.VALUE | ITypeMarshalBuffer.FLAG3));
 					buf.putLong(lv);
 				}
+			} else if (fFixedValue != null) {
+				buf.putByte((byte) (ITypeMarshalBuffer.VALUE | ITypeMarshalBuffer.FLAG4));
+				buf.putCharArray(fFixedValue);
 			} else {
 				buf.putByte((ITypeMarshalBuffer.VALUE));
 				fEvaluation.marshal(buf, true);
@@ -169,7 +172,10 @@ public class Value implements IValue {
 			long val= buf.getLong();
 			return Value.create(val);
 		}
-
+		if ((firstByte & ITypeMarshalBuffer.FLAG4) != 0) {
+			char[] fixedValue = buf.getCharArray();
+			return new Value(fixedValue, null);
+		}
 		ISerializableEvaluation eval= buf.unmarshalEvaluation();
 		if (eval instanceof ICPPEvaluation)
 			return new Value(null, (ICPPEvaluation) eval);

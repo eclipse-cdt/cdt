@@ -179,12 +179,7 @@ public class AbstractCPPClassSpecializationScope implements ICPPClassSpecializat
 		T[] newArray= array.clone();
 		for (int i = 0; i < newArray.length; i++) {
 			IBinding specializedMember = specialClass.specializeMember(array[i], point);
-			try {
-				newArray[i]= (T) specializedMember;
-			} catch (ArrayStoreException e) {
-				throw new ArrayStoreException("Can't cast " + specializedMember.getClass() + //$NON-NLS-1$
-						" to " + array.getClass().getComponentType().getName()); //$NON-NLS-1$
-			}
+			newArray[i]= (T) specializedMember;
 		}
 		return newArray;
 	}

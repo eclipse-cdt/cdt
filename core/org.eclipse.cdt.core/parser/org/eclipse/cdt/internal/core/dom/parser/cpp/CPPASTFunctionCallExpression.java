@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionCallExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
@@ -43,7 +44,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFunctionCall;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalTypeId;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.LookupData;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 public class CPPASTFunctionCallExpression extends ASTNode
 		implements ICPPASTFunctionCallExpression, IASTAmbiguityParent {
@@ -301,7 +301,7 @@ public class CPPASTFunctionCallExpression extends ASTNode
 		ICPPEvaluation[] args= new ICPPEvaluation[fArguments.length + 1];
 		args[0]= functionName.getEvaluation();
 		for (int i = 1; i < args.length; i++) {
-			args[i]= ((ICPPASTExpression) fArguments[i - 1]).getEvaluation();
+			args[i]= ((ICPPASTInitializerClause) fArguments[i - 1]).getEvaluation();
 		}
 		return new EvalFunctionCall(args);
 	}

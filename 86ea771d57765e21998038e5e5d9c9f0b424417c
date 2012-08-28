@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOIn//6Ms\u003d",
+        "filename": "cross/org.eclipse.cdt.launch.remote/src/org/eclipse/cdt/launch/remote/TEHelper.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 767
+      },
+      "writtenOn": "2012-08-28T14:15:10Z",
+      "side": 1,
+      "message": "As you call initializeTE() from different places, the sleep might be invoked more than once if no TCF agent is discovered. The sleep should be necessary only at the first time getting the model. Afterwards, the model is kept in sync by listening to the locator service events. So you probably want to mask this path with an additional boolean ...\n\n    if (!initialized \u0026\u0026 peers.length \u003d\u003d 0) {\n        initialized \u003d true;\n        try { Thread.sleep(300); } catch (InterruptedException e) {}\n    }",
+      "revId": "86ea771d57765e21998038e5e5d9c9f0b424417c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//6NE\u003d",
+        "filename": "cross/org.eclipse.cdt.launch.remote/src/org/eclipse/cdt/launch/remote/TEHelper.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 767
+      },
+      "writtenOn": "2012-08-28T14:15:10Z",
+      "side": 1,
+      "message": "This line should work fine, even if HOST_TO_TARGET is the default direction. What issue are you seeing?",
+      "revId": "86ea771d57765e21998038e5e5d9c9f0b424417c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//6M8\u003d",
+        "filename": "cross/org.eclipse.cdt.launch.remote/src/org/eclipse/cdt/launch/remote/TEHelper.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 767
+      },
+      "writtenOn": "2012-08-28T14:15:10Z",
+      "side": 1,
+      "message": "The use of ExecutorsUtil here to wrap Protocol.invokeAndWait is unnecessary. Call Protocol.invokeAndWait directly.",
+      "revId": "86ea771d57765e21998038e5e5d9c9f0b424417c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

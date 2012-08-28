@@ -11,6 +11,7 @@
  *     Ericsson AB - added support for event handling
  *     Ericsson AB - added memory cache
  *     Vladimir Prus (CodeSourcery) - support for -data-read-memory-bytes (bug 322658)
+ *     John Dallaway - support for -data-write-memory-bytes (bug 387793)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service;
 
@@ -47,6 +48,7 @@ import org.eclipse.cdt.dsf.mi.service.MIExpressions.ExpressionChangedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIDataReadMemoryBytesInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIDataReadMemoryInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIDataWriteMemoryBytesInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIDataWriteMemoryInfo;
 import org.eclipse.cdt.dsf.service.AbstractDsfService;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
@@ -400,22 +402,30 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
     protected void writeMemoryBlock(final IDMContext dmc, final IAddress address, final long offset,
     		final int word_size, final int count, final byte[] buffer, final RequestMonitor rm)
     {
-    	// Each byte is written individually (GDB power...)
-    	// so we need to keep track of the count
-    	final CountingRequestMonitor countingRM = new CountingRequestMonitor(getExecutor(), rm);
-    	countingRM.setDoneCount(count);
-
-    	// We will format the individual bytes in decimal
-    	int format = MIFormat.DECIMAL;
-    	String baseAddress = address.toString();
-
-    	// Issue an MI request for each byte to write
-    	for (int i = 0; i < count; i++) {
-    		String value = new Byte(buffer[i]).toString();
+    	if (fDataReadMemoryBytes) {
+    		// Use -data-write-memory-bytes for performance
     		fCommandCache.execute(
-    				fCommandFactory.createMIDataWriteMemory(dmc, offset + i, baseAddress, format, word_size, value),
-    				new DataRequestMonitor<MIDataWriteMemoryInfo>(getExecutor(), countingRM)
-    		);
+    				fCommandFactory.createMIDataWriteMemoryBytes(dmc, address.add(offset).toString(), buffer),
+    				new DataRequestMonitor<MIDataWriteMemoryBytesInfo>(getExecutor(), rm)
+    		);    		
+    	} else {
+    		// Each byte is written individually (GDB power...)
+    		// so we need to keep track of the count
+    		final CountingRequestMonitor countingRM = new CountingRequestMonitor(getExecutor(), rm);
+    		countingRM.setDoneCount(count);
+
+    		// We will format the individual bytes in decimal
+    		int format = MIFormat.DECIMAL;
+    		String baseAddress = address.toString();
+
+    		// Issue an MI request for each byte to write
+    		for (int i = 0; i < count; i++) {
+    			String value = new Byte(buffer[i]).toString();
+    			fCommandCache.execute(
+    					fCommandFactory.createMIDataWriteMemory(dmc, offset + i, baseAddress, format, word_size, value),
+    					new DataRequestMonitor<MIDataWriteMemoryInfo>(getExecutor(), countingRM)
+    			);
+    		}
     	}
     }
 

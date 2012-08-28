@@ -18,6 +18,7 @@
  *     Marc Khouzam (Ericsson) - New method for new MIGDBSetPythonPrintStack (Bug 367788)
  *     Mathias Kunter - New methods for handling different charsets (Bug 370462)
  *     Anton Gorenkov - A preference to use RTTI for variable types determination (Bug 377536)
+ *     John Dallaway - Support for -data-write-memory-bytes (bug 387793)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command;
@@ -72,6 +73,7 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIDataListRegisterValues;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIDataReadMemory;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIDataReadMemoryBytes;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIDataWriteMemory;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIDataWriteMemoryBytes;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIEnablePrettyPrinting;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIEnvironmentCD;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIEnvironmentDirectory;
@@ -178,6 +180,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIDataListRegisterNamesInfo
 import org.eclipse.cdt.dsf.mi.service.command.output.MIDataListRegisterValuesInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIDataReadMemoryBytesInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIDataReadMemoryInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIDataWriteMemoryBytesInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIDataWriteMemoryInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIGDBShowExitCodeInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
@@ -425,6 +428,11 @@ public class CommandFactory {
 	public ICommand<MIDataWriteMemoryInfo> createMIDataWriteMemory(IDMContext ctx, long offset, String address, 
 			int wordFormat, int wordSize, String value) {
 		return new MIDataWriteMemory(ctx, offset, address, wordFormat, wordSize, value);
+	}
+
+	/** @since 4.2 */
+	public ICommand<MIDataWriteMemoryBytesInfo> createMIDataWriteMemoryBytes(IDMContext ctx, String address, byte[] contents) {
+		return new MIDataWriteMemoryBytes(ctx, address, contents);
 	}
 
 	/** @since 4.0 */

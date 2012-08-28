@@ -1,0 +1,140 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOIn//6OU\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/macos/MacOSCommandFactory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-28T13:16:02Z",
+      "side": 1,
+      "message": "Let\u0027s make that return ICommand\u003cMIInfo\u003e and rename to createMIInterpreterExecConsole() to re-use the base one of the same name",
+      "revId": "989b4b88d975e165e4cb12b96bb8e160eceac681",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//6Ok\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractCLIProcess.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 270,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-28T13:16:02Z",
+      "side": 1,
+      "message": "There is a bug here before you made your changes.  We check for a CLICommand which means it can never be an MIInterpreterExecConsole command.  The impact of this bug is that when we terminate a single process, the \"Kill the program being debugged?\" query is shown in the gdb console instead of being suppressed.  You don\u0027t need to fix it but I wanted to document it.",
+      "revId": "989b4b88d975e165e4cb12b96bb8e160eceac681",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//6N0\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractCLIProcess.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 449,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-28T13:16:02Z",
+      "side": 1,
+      "message": "Use the result of the command factory to create the ProcessMIInterpreterExecConsole directly in this class.",
+      "revId": "989b4b88d975e165e4cb12b96bb8e160eceac681",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//6Sg\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/CommandFactory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-28T13:16:02Z",
+      "side": 1,
+      "message": "We prefer not to use the * format.  You probably didn\u0027t notice Eclipse did this for you :)  You must turn off the preference Java-\u003eCode Style-\u003eOrganize imports and put a high limit for \"Number of imports needed for .*\"",
+      "revId": "989b4b88d975e165e4cb12b96bb8e160eceac681",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//6OQ\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/CommandFactory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 850,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-28T13:16:02Z",
+      "side": 1,
+      "message": "Remove this one as we can use the one above called createMIInterpreterExecConsole, so no change needed in this file.",
+      "revId": "989b4b88d975e165e4cb12b96bb8e160eceac681",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//6OM\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/IProcessMIInterpreterExecConsole.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-28T13:16:02Z",
+      "side": 1,
+      "message": "Remove this file completely to avoid making public",
+      "revId": "989b4b88d975e165e4cb12b96bb8e160eceac681",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//6OI\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/ProcessMIInterpreterExecConsole.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-28T13:16:02Z",
+      "side": 1,
+      "message": "Remove this file",
+      "revId": "989b4b88d975e165e4cb12b96bb8e160eceac681",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//6OE\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/macos/MacOSProcessMIInterpreterExecConsole.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-28T13:16:02Z",
+      "side": 1,
+      "message": "Please add javadoc to explain what this class does different.",
+      "revId": "989b4b88d975e165e4cb12b96bb8e160eceac681",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -53,6 +53,23 @@
     },
     {
       "key": {
+        "uuid": "AABOIn//6Ns\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractCLIProcess.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 466,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-28T13:27:46Z",
+      "side": 1,
+      "message": "Let\u0027s keep ProcessMIInterpreterExecConsole in this file to keep it private.  But make it extend MICommand\u003cMIInfo\u003e so as to be able to work with the new MacOS case.",
+      "revId": "989b4b88d975e165e4cb12b96bb8e160eceac681",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOIn//6Sg\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/CommandFactory.java",
         "patchSetId": 1

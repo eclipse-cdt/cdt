@@ -45,11 +45,6 @@
         </filter>
     </resource>
     <resource path="parser/org/eclipse/cdt/core/dom/ast/cpp/ICPPASTExpression.java" type="org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression">
-        <filter id="1108344834">
-            <message_arguments>
-                <message_argument value="org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression"/>
-            </message_arguments>
-        </filter>
         <filter id="1110441988">
             <message_arguments>
                 <message_argument value="org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression"/>

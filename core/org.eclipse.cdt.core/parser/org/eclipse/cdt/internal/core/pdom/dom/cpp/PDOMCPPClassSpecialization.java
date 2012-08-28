@@ -100,7 +100,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 	@Override
 	public IBinding specializeMember(IBinding original, IASTNode point) {
 		if (specializationMap == null) {
-			final Long key= record+PDOMCPPLinkage.CACHE_INSTANCE_SCOPE;
+			final Long key= record + PDOMCPPLinkage.CACHE_INSTANCE_SCOPE;
 			Object cached= getPDOM().getCachedResult(key);
 			if (cached != null) {
 				specializationMap= (ObjectMap) cached;
@@ -177,14 +177,14 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 	}
 
 	public void addBase(PDOMCPPBase base) throws CoreException {
-		getPDOM().removeCachedResult(record+PDOMCPPLinkage.CACHE_BASES);
+		getPDOM().removeCachedResult(record + PDOMCPPLinkage.CACHE_BASES);
 		PDOMCPPBase firstBase = getFirstBase();
 		base.setNextBase(firstBase);
 		setFirstBase(base);
 	}
 
 	public void removeBase(PDOMName pdomName) throws CoreException {
-		getPDOM().removeCachedResult(record+PDOMCPPLinkage.CACHE_BASES);
+		getPDOM().removeCachedResult(record + PDOMCPPLinkage.CACHE_BASES);
 		PDOMCPPBase base= getFirstBase();
 		PDOMCPPBase predecessor= null;
 		long nameRec= pdomName.getRecord();

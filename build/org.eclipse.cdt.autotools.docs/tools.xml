@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?NLS TYPE="org.eclipse.help.toc"?>
 
-<toc label="GNU Tools">
-        <topic label="gcc"  href="http://gcc.gnu.org/onlinedocs/gcc-4.3.2/gcc/"/>
+<toc label="GNU Tools On-line Documentation">
+        <topic label="gcc"  href="http://gcc.gnu.org/onlinedocs/"/>
         <topic label="binutils" href="http://sourceware.org/binutils/docs/"/>
         <topic label="autoconf" href="http://www.gnu.org/software/autoconf/manual/html_node/index.html"/>
         <topic label="automake" href="http://www.gnu.org/software/automake/manual/html_node/index.html"/>

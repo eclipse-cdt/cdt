@@ -1,3 +1,9 @@
+2012-08-29  Jeff Johnston  <jjohnstn@redhat.com>
+
+	Resolves: bug #388354
+	* plugin.properties: Fix statedir option help tip message.
+	* src/org/eclipse/cdt/internal/autotools/core/configure/ConfigureMessages.properties: Ditto.
+	 
 2012-07-23  Jeff Johnston  <jjohnstn@redhat.com>
 
 	* src/org/eclipse/cdt/autotools/core/AutotoolsOptionConstants.java: New file.

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM - Initial API and implementation
+ *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
@@ -49,4 +50,16 @@ public interface ICPPMethod extends ICPPFunction, ICPPMember {
 	 * @since 5.1
 	 */
 	public boolean isPureVirtual();
+
+	/**
+	 * Returns whether this method is declared override.
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public boolean isOverride();
+
+	/**
+	 * Returns whether this method is declared final.
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public boolean isFinal();
 }

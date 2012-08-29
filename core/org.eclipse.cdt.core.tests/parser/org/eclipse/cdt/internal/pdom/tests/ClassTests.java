@@ -6,9 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
- * Markus Schorn (Wind River Systems)
- * IBM Corporation
+ *     QNX - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *     IBM Corporation
+ *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
@@ -231,5 +232,15 @@ public class ClassTests extends PDOMTestBase {
 		assertEquals(1, bindings.length);
 		assertTrue(bindings[0] instanceof ICPPClassType);
 		return (ICPPClassType) bindings[0];
+	}
+
+	public void testFinalClass() throws Exception {
+		char[][] name = {"E".toCharArray()};
+		IBinding[] bindings = pdom.findBindings(name, IndexFilter.ALL, npm());
+		assertEquals(1, bindings.length);
+		assertInstance(bindings[0], ICPPClassType.class);
+		ICPPClassType classBinding = (ICPPClassType) bindings[0];
+
+		assertTrue(classBinding.isFinal());
 	}
 }

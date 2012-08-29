@@ -9,6 +9,7 @@
  *     Andrew Niefer (IBM) - Initial API and implementation
  *     Bryan Wilkinson (QNX)
  *     Markus Schorn (Wind River Systems)
+ *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -123,6 +124,16 @@ public class CPPClassSpecialization extends CPPSpecialization
 		@Override
 		public ICPPFunctionType getType() {
 			return new ProblemFunctionType(getID());
+		}
+
+		@Override
+		public boolean isOverride() {
+			return false;
+		}
+
+		@Override
+		public boolean isFinal() {
+			return false;
 		}
 	}
 
@@ -421,5 +432,14 @@ public class CPPClassSpecialization extends CPPSpecialization
 			return false;
 
 		return ((ICPPClassType) owner1).isSameType((ICPPClassType) owner2);
+	}
+
+	@Override
+	public boolean isFinal() {
+		ICPPASTCompositeTypeSpecifier typeSpecifier = getCompositeTypeSpecifier();
+		if (typeSpecifier != null) {
+			return typeSpecifier.isFinal();
+		}
+		return false;
 	}
 }

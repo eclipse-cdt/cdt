@@ -99,4 +99,16 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="parser/org/eclipse/cdt/core/parser/Keywords.java" type="org.eclipse.cdt.core.parser.Keywords">
+        <filter id="1143996420">
+            <message_arguments>
+                <message_argument value="cFINAL"/>
+            </message_arguments>
+        </filter>
+        <filter id="1143996420">
+            <message_arguments>
+                <message_argument value="cOVERRIDE"/>
+            </message_arguments>
+        </filter>
+    </resource>
 </component>

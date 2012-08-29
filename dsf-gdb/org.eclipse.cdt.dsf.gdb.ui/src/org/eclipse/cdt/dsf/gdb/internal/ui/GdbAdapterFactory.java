@@ -204,7 +204,7 @@ public class GdbAdapterFactory
                 // @see org.eclipse.debug.core.model.IDebugModelProvider#getModelIdentifiers()
                 @Override
                 public String[] getModelIdentifiers() {
-                    return new String[] { GdbLaunchDelegate.GDB_DEBUG_MODEL_ID, ICBreakpoint.C_BREAKPOINTS_DEBUG_MODEL_ID };
+                    return new String[] { GdbLaunchDelegate.GDB_DEBUG_MODEL_ID, ICBreakpoint.C_BREAKPOINTS_DEBUG_MODEL_ID, "org.eclipse.cdt.gdb" }; //$NON-NLS-1$
                 }
             };
             session.registerModelAdapter(IDebugModelProvider.class, fDebugModelProvider);

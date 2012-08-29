@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 Intel Corporation, QNX Software Systems, and others.
+ * Copyright (c) 2007, 2010 Intel Corporation, QNX Software Systems, and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
  *     Andrew Gvozdev
  *     QNX Software Systems - [271628] NPE in configs for project that failed to convert
  *     James Blackburn (Broadcom Corp.)
- *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.ui.newui;
 
@@ -52,7 +51,6 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -776,7 +774,7 @@ implements
 			if (cfgDescs[i].isActive()) {
 				name = name + "  " + Messages.AbstractPage_16; //$NON-NLS-1$
 			}
-			configSelector.add(TextProcessor.process(name));
+			configSelector.add(name);
 		}
 
 		// Ensure that the last selected config is selected by default

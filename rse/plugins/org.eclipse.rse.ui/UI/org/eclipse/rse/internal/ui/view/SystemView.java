@@ -84,6 +84,7 @@
  * David Dykstal    (IBM)        - [257110] Prompting filter called twice on double click rather than just once
  * David McKnight   (IBM)        - [380613] Problem in SystemView with disposed TreeItem when Link With Editor toolbar icon is used
  * David McKnight   (IBM)        - [385774] select folder dialog doesn't update enablement properly after new folder created
+ * David McKnight   (IBM)        - [388364] RDz property view flickers when a user disconnects from zOS system
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -240,6 +241,7 @@ import org.eclipse.ui.progress.PendingUpdateAdapter;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
 import org.eclipse.ui.views.framelist.GoIntoAction;
+import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
 /**
  * This subclass of the standard JFace tree viewer is used to show a tree
@@ -413,6 +415,8 @@ public class SystemView extends SafeTreeViewer
 	protected List _setList;
 
 	protected boolean _allowAdapterToHandleDoubleClick = true;
+	
+	private Object[] _lastPropertyValues = null; // to reduce duplicate property sheet updates
 
 	/**
 	 * Constructor
@@ -5983,6 +5987,39 @@ public class SystemView extends SafeTreeViewer
 		{		
 			Object object = ((IStructuredSelection)selection).getFirstElement();
 			if (object != null){
+				ISystemViewElementAdapter adapter = getViewAdapter(object);
+				if (adapter != null){	
+					// figure out what properties this object has
+					adapter.setPropertySourceInput(object);
+					IPropertyDescriptor[] descriptors = adapter.getPropertyDescriptors();
+					Object[] propertyValues = new Object[descriptors.length];
+					for (int i = 0; i < descriptors.length; i++){
+						IPropertyDescriptor descriptor = descriptors[i];
+						propertyValues[i] = adapter.getPropertyValue(descriptor.getId());							
+					}						
+					
+					if (_lastPropertyValues != null){
+						if (_lastPropertyValues.length == propertyValues.length){
+							boolean theSame = true;					
+							// check to see if anything has changed
+							for (int i = 0; i < _lastPropertyValues.length && theSame; i++){
+								Object lastPropertyValue = _lastPropertyValues[i];
+								Object propertyValue = propertyValues[i];
+								if (lastPropertyValue != null && !lastPropertyValue.equals(propertyValue)){
+									theSame = false;
+								}
+							}
+							if (theSame){
+								// no need to refresh anything
+								return;
+							}
+						}
+					}
+					_lastPropertyValues = propertyValues;					
+						
+				}
+														
+				
 				IWorkbenchPart ourPart = getWorkbenchPart();
 				IWorkbenchPart activePart = null;
 				IWorkbenchWindow win = getWorkbenchWindow(); // from dialog it's possible to not have an active part
@@ -5995,8 +6032,8 @@ public class SystemView extends SafeTreeViewer
 				if (activePart != null){
 					if (activePart != ourPart){
 						ourPart.setFocus(); // without part focus, there are no post selection change listeners
-					}
-	
+					}	
+							
 					// create events in order to update the property sheet
 					 IStructuredSelection fakeSelection = new StructuredSelection(new Object());		
 					

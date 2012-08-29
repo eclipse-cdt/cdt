@@ -3,7 +3,7 @@
 <plugin>
 <extension point="org.eclipse.cdt.debug.ui.breakpointContribution">
 	<breakpointLabels 
-		debugModelId="org.eclipse.cdt.debug.core"
+		debugModelId="org.eclipse.cdt.gdb"
 		markerType="org.eclipse.cdt.debug.core.cEventBreakpointMarker"> 
 		<attribute name="org.eclipse.cdt.debug.core.eventbreakpoint_event_id" label="%catchType.label" type="string">
 			<value 

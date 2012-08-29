@@ -1,3 +1,9 @@
+2012-08-29  Jeff Johnston  <jjohnstn@redhat.com>
+
+	Resolves: bug #388354
+	* plugin.properties: Fix statedir option help tip message.
+	* src/org/eclipse/cdt/internal/autotools/core/configure/ConfigureMessages.properties: Ditto.
+	 
 2012-04-20  Jeff Johnston  <jjohnstn@redhat.com>
 
 	* META-INF/MANIFEST.MF: Bump up version to 1.1.0.

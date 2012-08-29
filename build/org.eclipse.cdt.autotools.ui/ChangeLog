@@ -1,3 +1,8 @@
+2012-08-29  Jeff Johnston  <jjohnstn@redhat.com>
+
+	Resolves: bug #388354
+	* plugin.properties: Fix statedir option help tip message.
+
 2012-03-30  Jeff Johnston  <jjohnstn@redhat.com>
 
 	* src/org/eclipse/cdt/internal/autotools/ui/editors/automake/AutomakeEditor.java

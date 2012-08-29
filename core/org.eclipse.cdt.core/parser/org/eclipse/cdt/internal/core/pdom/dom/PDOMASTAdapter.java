@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
+ *     Thomas Corbat (IFS)
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.pdom.dom;
 
@@ -614,6 +615,11 @@ public class PDOMASTAdapter {
 		@Override
 		public boolean isAnonymous() {
 			return ((ICPPClassType) fDelegate).isAnonymous();
+		}
+
+		@Override
+		public boolean isFinal() {
+			return false;
 		}
 	}
 

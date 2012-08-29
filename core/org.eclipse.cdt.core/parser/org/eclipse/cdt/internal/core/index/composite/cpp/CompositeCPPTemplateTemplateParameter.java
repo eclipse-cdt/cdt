@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2012 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Andrew Ferguson (Symbian) - Initial implementation
- *    Markus Schorn (Wind River Systems)
+ *     Andrew Ferguson (Symbian) - Initial implementation
+ *     Markus Schorn (Wind River Systems)
+ *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
@@ -35,8 +36,7 @@ import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
 public class CompositeCPPTemplateTemplateParameter extends CompositeCPPBinding 
-	implements ICPPTemplateTemplateParameter, ICPPUnknownBinding, ICPPUnknownType, IIndexType {
-
+		implements ICPPTemplateTemplateParameter, ICPPUnknownBinding, ICPPUnknownType, IIndexType {
 	private ICPPScope unknownScope;
 
 	public CompositeCPPTemplateTemplateParameter(ICompositesFactory cf,	ICPPTemplateTemplateParameter binding) {
@@ -45,33 +45,33 @@ public class CompositeCPPTemplateTemplateParameter extends CompositeCPPBinding
 
 	@Override
 	public IType getDefault() throws DOMException {
-		IType preresult= ((ICPPTemplateTemplateParameter)rbinding).getDefault();
+		IType preresult= ((ICPPTemplateTemplateParameter) rbinding).getDefault();
 		return cf.getCompositeType(preresult);
 	}
 
 	@Override
 	public short getParameterPosition() {
-		return ((ICPPTemplateParameter)rbinding).getParameterPosition();
+		return ((ICPPTemplateParameter) rbinding).getParameterPosition();
 	}
 
 	@Override
 	public short getTemplateNestingLevel() {
-		return ((ICPPTemplateParameter)rbinding).getTemplateNestingLevel();
+		return ((ICPPTemplateParameter) rbinding).getTemplateNestingLevel();
 	}
 	
 	@Override
 	public int getParameterID() {
-		return ((ICPPTemplateParameter)rbinding).getParameterID();
+		return ((ICPPTemplateParameter) rbinding).getParameterID();
 	}
 
 	@Override
 	public boolean isParameterPack() {
-		return ((ICPPTemplateParameter)rbinding).isParameterPack();
+		return ((ICPPTemplateParameter) rbinding).isParameterPack();
 	}
 
 	@Override
 	public boolean isSameType(IType type) {
-		return ((IType)rbinding).isSameType(type);
+		return ((IType) rbinding).isSameType(type);
 	}
 	
 	@Override
@@ -95,7 +95,7 @@ public class CompositeCPPTemplateTemplateParameter extends CompositeCPPBinding
 	@Override
 	public ICPPTemplateArgument getDefaultValue() {
 		try {
-			return TemplateInstanceUtil.convert(cf, ((ICPPTemplateTemplateParameter)rbinding).getDefaultValue());
+			return TemplateInstanceUtil.convert(cf, ((ICPPTemplateTemplateParameter) rbinding).getDefaultValue());
 		} catch (DOMException e) {
 			return null;
 		}
@@ -103,7 +103,7 @@ public class CompositeCPPTemplateTemplateParameter extends CompositeCPPBinding
 
 	@Override
 	public ICPPTemplateParameter[] getTemplateParameters() {
-		return TemplateInstanceUtil.convert(cf, ((ICPPTemplateTemplateParameter)rbinding).getTemplateParameters());
+		return TemplateInstanceUtil.convert(cf, ((ICPPTemplateTemplateParameter) rbinding).getTemplateParameters());
 	}
 
 	@Override
@@ -179,5 +179,10 @@ public class CompositeCPPTemplateTemplateParameter extends CompositeCPPBinding
 	@Override
 	public ICPPDeferredClassInstance asDeferredInstance() {
 		return null;
+	}
+
+	@Override
+	public boolean isFinal() {
+		return false;
 	}
 }

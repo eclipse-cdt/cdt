@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Google, Inc and others.
+ * Copyright (c) 2008, 2012 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Sergey Prigogin (Google) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -283,6 +284,11 @@ class PDOMCPPUnknownClassType extends PDOMCPPUnknownBinding
 	
 	@Override
 	public boolean isAnonymous() {
+		return false;
+	}
+
+	@Override
+	public boolean isFinal() {
 		return false;
 	}
 }

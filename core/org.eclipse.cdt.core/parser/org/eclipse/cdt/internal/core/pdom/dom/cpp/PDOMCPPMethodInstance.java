@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 QNX Software Systems and others.
+ * Copyright (c) 2007, 2012 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    QNX - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     QNX - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -21,10 +22,8 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author Bryan Wilkinson
- * 
  */
 class PDOMCPPMethodInstance extends PDOMCPPFunctionInstance implements ICPPMethod {
-
 	/**
 	 * The size in bytes of a PDOMCPPMethodInstance record in the database.
 	 */
@@ -52,7 +51,7 @@ class PDOMCPPMethodInstance extends PDOMCPPFunctionInstance implements ICPPMetho
 	
 	@Override
 	public boolean isDestructor() {
-		return ((ICPPMethod)getTemplateDefinition()).isDestructor();
+		return ((ICPPMethod) getTemplateDefinition()).isDestructor();
 	}
 
 	@Override
@@ -62,22 +61,22 @@ class PDOMCPPMethodInstance extends PDOMCPPFunctionInstance implements ICPPMetho
 
 	@Override
 	public boolean isImplicit() {
-		return ((ICPPMethod)getTemplateDefinition()).isImplicit();
+		return ((ICPPMethod) getTemplateDefinition()).isImplicit();
 	}
 
 	@Override
 	public boolean isVirtual() {
-		return ((ICPPMethod)getTemplateDefinition()).isVirtual();
+		return ((ICPPMethod) getTemplateDefinition()).isVirtual();
 	}
 
 	@Override
 	public boolean isPureVirtual() {
-		return ((ICPPMethod)getTemplateDefinition()).isPureVirtual();		
+		return ((ICPPMethod) getTemplateDefinition()).isPureVirtual();		
 	}
 
 	@Override
 	public boolean isExplicit() {
-		return ((ICPPMethod)getTemplateDefinition()).isExplicit();
+		return ((ICPPMethod) getTemplateDefinition()).isExplicit();
 	}
 	
 	@Override
@@ -87,6 +86,16 @@ class PDOMCPPMethodInstance extends PDOMCPPFunctionInstance implements ICPPMetho
 
 	@Override
 	public int getVisibility() {
-		return ((ICPPMethod)getTemplateDefinition()).getVisibility();
+		return ((ICPPMethod) getTemplateDefinition()).getVisibility();
+	}
+
+	@Override
+	public boolean isOverride() {
+		return ((ICPPMethod) getTemplateDefinition()).isOverride();
+	}
+
+	@Override
+	public boolean isFinal() {
+		return ((ICPPMethod) getTemplateDefinition()).isFinal();
 	}
 }

@@ -9,6 +9,7 @@
  *     Andrew Niefer (IBM) - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     Sergey Prigogin (Google) 
+ *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -102,6 +103,16 @@ public class CPPMethodSpecialization extends CPPFunctionSpecialization implement
 		if (f != null)
 			return f.isPureVirtual();
 
+		return false;
+	}
+
+	@Override
+	public boolean isOverride() {
+		return false;
+	}
+
+	@Override
+	public boolean isFinal() {
 		return false;
 	}
 

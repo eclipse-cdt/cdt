@@ -9,6 +9,7 @@
  *     Andrew Ferguson (Symbian) - Initial implementation
  *     Markus Schorn (Wind River Systems)
  *     Sergey Prigogin (Google)
+ *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
@@ -183,5 +184,10 @@ class CompositeCPPClassType extends CompositeCPPBinding implements ICPPClassType
 			result[i] = (T) cf.getCompositeBinding((IIndexFragmentBinding) bindings[i]);
 		}
 		return result;
+	}
+
+	@Override
+	public boolean isFinal() {
+		return ((ICPPClassType) rbinding).isFinal();
 	}
 }

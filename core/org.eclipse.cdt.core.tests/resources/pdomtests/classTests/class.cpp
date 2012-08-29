@@ -32,3 +32,6 @@ class D {
   public:
      D(D &) {}
 };
+
+class E final : public A {
+};

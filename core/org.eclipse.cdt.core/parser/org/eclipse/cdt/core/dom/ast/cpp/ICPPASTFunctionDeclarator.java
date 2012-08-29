@@ -1,14 +1,15 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2012 IBM Corporation and others.
- *  All rights reserved. This program and the accompanying materials
- *  are made available under the terms of the Eclipse Public License v1.0
- *  which accompanies this distribution, and is available at
- *  http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2004, 2012 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  * 
- *  Contributors:
- *      IBM - Initial API and implementation
- *      Markus Schorn (Wind River Systems)
- *      Sergey Prigogin (Google)
+ * Contributors:
+ *     IBM - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
+ *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
@@ -172,4 +173,32 @@ public interface ICPPASTFunctionDeclarator extends IASTStandardFunctionDeclarato
 	 */
 	@Override
 	public ICPPASTFunctionDeclarator copy(CopyStyle style);
+
+	/**
+	 * Returns whether this function is declared override.
+	 * 
+	 * @since 5.5
+	 */
+	public boolean isOverride();
+
+	/**
+	 * Sets whether this function is declared override.
+	 * 
+	 * @since 5.5
+	 */
+	public void setOverride(boolean isOverride);
+
+	/**
+	 * Returns whether this function is declared final.
+	 * 
+	 * @since 5.5
+	 */
+	public boolean isFinal();
+
+	/**
+	 * Sets whether this function is declared final.
+	 * 
+	 * @since 5.5
+	 */
+	public void setFinal(boolean isFinal);
 }

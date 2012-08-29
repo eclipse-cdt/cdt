@@ -8,7 +8,8 @@
  * Contributors:
  *     John Camelon (IBM) - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
- *******************************************************************************/
+ *     Thomas Corbat (IFS)
+******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
@@ -138,4 +139,18 @@ public interface ICPPASTCompositeTypeSpecifier extends IASTCompositeTypeSpecifie
 	 */
 	@Override
 	public ICPPASTCompositeTypeSpecifier copy(CopyStyle style);
+
+	/**
+	 * Queries whether the type is final.
+	 * 
+	 * @since 5.5
+	 */
+	public boolean isFinal();
+
+	/**
+	 * Sets whether the type is final.
+	 * 
+	 * @since 5.5
+	 */
+	public void setFinal(boolean isFinal);
 }

@@ -17,6 +17,7 @@
  * David McKnight   (IBM) - [245714] [dstore] Multiple user ID/password prompts and connect fails
  * David McKnight   (IBM) - [283613] [dstore] Create a Constants File for all System Properties we support
  * David McKnight   (IBM) - [378878] [dstore] Need ability to log handshake messages from the authentication/server process to ServerLauncher
+ * David McKnight    (IBM) - [388472] [dstore] need alternative option for getting at server hostname
  *******************************************************************************/
 
 package org.eclipse.dstore.core.server;
@@ -47,6 +48,7 @@ import org.eclipse.dstore.core.model.DE;
 import org.eclipse.dstore.core.model.IDataStoreConstants;
 import org.eclipse.dstore.core.model.ISSLProperties;
 import org.eclipse.dstore.internal.core.model.IDataStoreSystemProperties;
+import org.eclipse.dstore.internal.core.server.ServerAttributes;
 import org.eclipse.dstore.internal.core.server.ServerReturnCodes;
 import org.eclipse.dstore.internal.core.server.ServerSSLProperties;
 import org.eclipse.dstore.internal.core.util.ssl.DStoreSSLContext;
@@ -587,7 +589,7 @@ public class ServerLauncher extends Thread {
 					if (_serverSocket != null
 							&& _serverSocket.getLocalPort() > 0) {
 						socketBound = true;
-						String msg = "Daemon running on: " + InetAddress.getLocalHost().getHostName() + ", port: " + i; //$NON-NLS-1$ //$NON-NLS-2$
+						String msg = "Daemon running on: " + ServerAttributes.getHostName() + ", port: " + i; //$NON-NLS-1$ //$NON-NLS-2$
 						System.out.println(msg);
 						logMessage(msg);
 					}
@@ -638,7 +640,7 @@ public class ServerLauncher extends Thread {
 				}
 				
 				String msg = "Daemon running on: " //$NON-NLS-1$
-					+ InetAddress.getLocalHost().getHostName() + ", port: " //$NON-NLS-1$
+					+ ServerAttributes.getHostName() + ", port: " //$NON-NLS-1$
 					+ port;
 				
 				System.out.println(msg);

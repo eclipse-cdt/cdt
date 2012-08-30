@@ -29,6 +29,7 @@
  * David McKnight   (IBM) - [368072] [dstore][ssl] no exception logged upon bind error
  * David McKnight   (IBM) - [371401] [dstore][multithread] avoid use of static variables - causes memory leak after disconnect
  * David McKnight   (IBM) - [378136] [dstore] miner.finish is stuck
+ * David McKnight    (IBM) - [388472] [dstore] need alternative option for getting at server hostname
  *******************************************************************************/
 
 package org.eclipse.dstore.core.server;
@@ -522,14 +523,7 @@ public class ConnectionEstablisher
 				System.err.println(ServerReturnCodes.RC_SUCCESS);
 				System.err.println(_serverSocket.getLocalPort());
 				_msg = ServerReturnCodes.RC_SUCCESS;
-				try
-				{
-					System.err.println("Server running on: " + InetAddress.getLocalHost().getHostName()); //$NON-NLS-1$
-				}
-				catch (UnknownHostException e)
-				{
-					// keep running
-				}
+				System.err.println("Server running on: " + ServerAttributes.getHostName()); //$NON-NLS-1$
 			}
 		}
 		catch (UnknownHostException e)

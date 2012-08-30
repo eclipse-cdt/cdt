@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2011 IBM Corporation and others.
+ * Copyright (c) 2002, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,11 +13,16 @@
  * 
  * Contributors:
  * David McKnight   (IBM) - [283613] [dstore] Create a Constants File for all System Properties we support
+ * David McKnight    (IBM) - [388472] [dstore] need alternative option for getting at server hostname
  *******************************************************************************/
 
 package org.eclipse.dstore.internal.core.server;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
@@ -38,37 +43,59 @@ public class ServerAttributes extends DataStoreAttributes
 	{
 		super();
 
-		try
+		String pluginPath = System.getProperty(IDataStoreSystemProperties.A_PLUGIN_PATH);
+		if (pluginPath != null) pluginPath = pluginPath.trim();
+		if ((pluginPath != null) && (pluginPath.length() > 0))
 		{
-			String pluginPath = System.getProperty(IDataStoreSystemProperties.A_PLUGIN_PATH);
-			if (pluginPath != null) pluginPath = pluginPath.trim();
-			if ((pluginPath != null) && (pluginPath.length() > 0))
-			{
-			    File f = new File(pluginPath);
-			    try 
-			    {
-			        pluginPath = f.getCanonicalPath();
-			    }
-			    catch (Exception e)
-			    {
-			        pluginPath = f.getAbsolutePath();
-			    }
-			    
-				setAttribute(A_PLUGIN_PATH, pluginPath + File.separator);
-			}
-			else
-			{
-				setAttribute(A_PLUGIN_PATH, "/home/"); //$NON-NLS-1$
-			}
-
-			setAttribute(A_LOCAL_NAME, InetAddress.getLocalHost().getHostName());
-
-			setAttribute(A_HOST_NAME, "server_host"); //$NON-NLS-1$
-			setAttribute(A_HOST_PATH, "/home/"); //$NON-NLS-1$
+		    File f = new File(pluginPath);
+		    try 
+		    {
+		        pluginPath = f.getCanonicalPath();
+		    }
+		    catch (Exception e)
+		    {
+		        pluginPath = f.getAbsolutePath();
+		    }
+		    
+			setAttribute(A_PLUGIN_PATH, pluginPath + File.separator);
 		}
-		catch (UnknownHostException e)
+		else
 		{
+			setAttribute(A_PLUGIN_PATH, "/home/"); //$NON-NLS-1$
 		}
 
+		setAttribute(A_LOCAL_NAME, getHostName());
+
+		setAttribute(A_HOST_NAME, "server_host"); //$NON-NLS-1$
+		setAttribute(A_HOST_PATH, "/home/"); //$NON-NLS-1$
+	}
+
+	/**
+	 * Returns the server hostname, avoiding use of InetAddress.getLocalHost().getHostName() if possible
+	 * @return the hostname
+	 */
+	public static String getHostName(){
+		String hostname = System.getProperty("hostname"); //$NON-NLS-1$
+		if (hostname == null || hostname.length() == 0){
+			String readHostname = System.getProperty("read.hostname"); //$NON-NLS-1$
+			if (readHostname != null && readHostname.equals("true")){ //$NON-NLS-1$
+				try {
+					Process p = Runtime.getRuntime().exec("hostname"); //$NON-NLS-1$
+					InputStream inStream = p.getInputStream();
+					BufferedReader reader = new BufferedReader(new InputStreamReader(inStream));					
+					hostname = reader.readLine();				    				    
+				} catch (IOException e) {
+				}
+			}
+			if (hostname == null || hostname.length() == 0){ // still no hostname
+				try {
+					hostname = InetAddress.getLocalHost().getHostName();
+				} catch (UnknownHostException e) {
+				}
+			}			
+			// set this so we don't have to do it again
+			System.setProperty("hostname", hostname); //$NON-NLS-1$
+		}
+		return hostname;
 	}
 }

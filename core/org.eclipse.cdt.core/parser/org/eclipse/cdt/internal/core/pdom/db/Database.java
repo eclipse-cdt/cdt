@@ -29,6 +29,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
 
+import com.ibm.icu.text.MessageFormat;
+
 /**
  * Database encapsulates access to a flat binary format file with a memory-manager-like API for
  * obtaining and releasing areas of storage (memory).
@@ -263,7 +265,10 @@ public class Database {
 
 		synchronized (fCache) {
 			assert fLocked;
-			final int index = (int)long_index;
+			final int index = (int) long_index;
+			if (index < 0 || index >= fChunks.length) {
+				databaseCorruptionDetected();
+			}
 			Chunk chunk= fChunks[index];
 			if (chunk == null) {
 				cacheMisses++;
@@ -275,6 +280,12 @@ public class Database {
 			fCache.add(chunk, fExclusiveLock);
 			return chunk;
 		}
+	}
+
+	private void databaseCorruptionDetected() throws CoreException {
+		String msg = MessageFormat.format(Messages.getString("Database.CorruptedDatabase"), //$NON-NLS-1$
+				new Object[] { fLocation.getName() });
+		throw new CoreException(new DBStatus(msg));
 	}
 
 	/**

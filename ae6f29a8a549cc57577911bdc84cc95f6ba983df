@@ -1,0 +1,412 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOIn//6AU\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/GdbAdapterFactory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 267,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-30T14:01:39Z",
+      "side": 1,
+      "message": "Need to call fDebugNewExecutableCommand.dispose() a little below",
+      "revId": "ae6f29a8a549cc57577911bdc84cc95f6ba983df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//590\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/commands/GdbDebugNewExecutableCommand.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 264,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-30T14:01:39Z",
+      "side": 1,
+      "message": "Backend service is not actually used",
+      "revId": "ae6f29a8a549cc57577911bdc84cc95f6ba983df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//5/s\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/commands/Messages.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-30T14:01:39Z",
+      "side": 1,
+      "message": "Missing copyright header",
+      "revId": "ae6f29a8a549cc57577911bdc84cc95f6ba983df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//57U\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/launching/GdbServerDebuggerPage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 237,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-30T14:01:39Z",
+      "side": 1,
+      "message": "I find this working confusing as it made me think we were going to start gdbserver ourselves.  Instead of talking about gdbserver, can we talk about the connection?  So, instead of  \"Daemon mode (--multi)\" we can talk about \"Connect using extended protocol (--multi option)\" or \"Connect using legacy protocol\" or something of the kind",
+      "revId": "ae6f29a8a549cc57577911bdc84cc95f6ba983df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//57Y\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/launching/LaunchUIMessages.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-30T14:01:39Z",
+      "side": 1,
+      "message": "I find it confusing that we talk about gdbserver in the launch.  It gives the impression that we will be starting the gdbserver automatically.\n\nHow about if we leave this tab as \u0027Connection\u0027 and word the new UI with that in mind?  I put comments in the relevant section of the code about this.",
+      "revId": "ae6f29a8a549cc57577911bdc84cc95f6ba983df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//5+8\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/IGDBLaunchConfigurationConstants.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 136,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-30T14:01:39Z",
+      "side": 1,
+      "message": "Not used or settable anywhere",
+      "revId": "ae6f29a8a549cc57577911bdc84cc95f6ba983df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//5+4\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/IGDBLaunchConfigurationConstants.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-30T14:01:39Z",
+      "side": 1,
+      "message": "Not used",
+      "revId": "ae6f29a8a549cc57577911bdc84cc95f6ba983df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//5/A\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/IGDBLaunchConfigurationConstants.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 156,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-30T14:01:39Z",
+      "side": 1,
+      "message": "Since --multi must use extended-remote, and vice versa, could we use the same constant for both?\nBesides, the user only has one setting which will set both, so...",
+      "revId": "ae6f29a8a549cc57577911bdc84cc95f6ba983df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//5+A\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/actions/IDebugNewExecutable.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-30T14:01:39Z",
+      "side": 1,
+      "message": "This interface is not currently needed.\nThe reason there is an IConnect file is that we needed to call the connect command directly from the launch sequence, in the case of an attach launch.\n\nHowever, I think it is ok to keep it because it can help us define a simpler way to start a debug session.  For example, using the DebugNewExecutableCommand directly from the launch sequence, we could allow the user to use a launch that does not specify a binary at all; that launch could be used all the time and the user would be prompted for the binary to start.",
+      "revId": "ae6f29a8a549cc57577911bdc84cc95f6ba983df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//598\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/actions/IDebugNewExecutable.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-30T14:01:39Z",
+      "side": 1,
+      "message": "Javadoc please",
+      "revId": "ae6f29a8a549cc57577911bdc84cc95f6ba983df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//594\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/actions/IDebugNewExecutable.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-30T14:01:39Z",
+      "side": 1,
+      "message": "Javadoc please",
+      "revId": "ae6f29a8a549cc57577911bdc84cc95f6ba983df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//540\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/FinalLaunchSequence_7_2.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-30T14:01:39Z",
+      "side": 1,
+      "message": "The \"stepRemoteConnection\" must be done in DebugNewProcessSequence when we deal with the \u0027remote\u0027 protocol.  For \u0027extended-remote\u0027 it can (and should) be done in here.\n\nWe must revisit this once we settle the \u0027extended-remote\u0027 vs \u0027remote\u0027 question I posted on the bug.",
+      "revId": "ae6f29a8a549cc57577911bdc84cc95f6ba983df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//55I\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/DebugNewProcessSequence.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 493,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-30T14:01:39Z",
+      "side": 1,
+      "message": "I realize this is to access the private value of fBinaryName but I\u0027m curious to know how it will be used?  I\u0027m asking because it is marked as protected, but overriding it won\u0027t work so well since the field is used directly in this class.\n\nShould we have the class use getBinaryName() instead of fBinaryName, or should getBinaryName() be public?",
+      "revId": "ae6f29a8a549cc57577911bdc84cc95f6ba983df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//55E\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/DebugNewProcessSequence_7_2.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-30T14:01:39Z",
+      "side": 1,
+      "message": "No need for this new constructor since the fileOnTarget field is not used.  My guess is that you changed your approach to use IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REMOTE_BINARY instead",
+      "revId": "ae6f29a8a549cc57577911bdc84cc95f6ba983df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//544\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/DebugNewProcessSequence_7_2.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-30T14:01:39Z",
+      "side": 1,
+      "message": "The \"stepRemoteConnection\" must be done in DebugNewProcessSequence when we deal with the \u0027remote\u0027 protocol.  For \u0027extended-remote\u0027 it can (and should) be done in FinalLaunchSequence.\n\nTherefore removing the step may not be the right thing to do all the time.",
+      "revId": "ae6f29a8a549cc57577911bdc84cc95f6ba983df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//54w\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/DebugNewProcessSequence_7_2.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 163,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-30T14:01:39Z",
+      "side": 1,
+      "message": "If we support \u0027extended-remote\u0027 for remote-non-attach launch, we may need to move this to the base class to be able to start the first process.  In fact, I think putting in the base class makes sense, since it applies to older gdb\u0027s.",
+      "revId": "ae6f29a8a549cc57577911bdc84cc95f6ba983df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//54s\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/DebugNewProcessSequence_7_2.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 164,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-30T14:01:39Z",
+      "side": 1,
+      "message": "Please remove the check for getIsSttachSession() as this code should be allowed for the remote-attach launch.",
+      "revId": "ae6f29a8a549cc57577911bdc84cc95f6ba983df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//54k\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/DebugNewProcessSequence_7_2.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 178,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-30T14:01:39Z",
+      "side": 1,
+      "message": "Maybe put a trim() here just in case?",
+      "revId": "ae6f29a8a549cc57577911bdc84cc95f6ba983df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//5zU\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBProcesses_7_2.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 166,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-30T14:01:39Z",
+      "side": 1,
+      "message": "This will need to be adapted based on our decision for how to handle --multi for which launch type.",
+      "revId": "ae6f29a8a549cc57577911bdc84cc95f6ba983df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//5zI\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBProcesses_7_2.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 388,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-30T14:01:39Z",
+      "side": 1,
+      "message": "May need to be revisited based on our decision about the launch and the --multi flag",
+      "revId": "ae6f29a8a549cc57577911bdc84cc95f6ba983df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//5zA\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/StartOrRestartProcessSequence_7_2.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-30T14:01:39Z",
+      "side": 1,
+      "message": "I think this can apply to older GDB\u0027s so it can go in the base class.  If that is true, we don\u0027t need this new file.",
+      "revId": "ae6f29a8a549cc57577911bdc84cc95f6ba983df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//5zE\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/StartOrRestartProcessSequence_7_2.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-30T14:01:39Z",
+      "side": 1,
+      "message": "Can be \u0027return false\u0027 since the condition is the same as the check above.",
+      "revId": "ae6f29a8a549cc57577911bdc84cc95f6ba983df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//5/k\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/CommandFactory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-30T14:01:39Z",
+      "side": 1,
+      "message": "We prefer not to use the * format. You probably didn\u0027t notice Eclipse did this for you :) You must turn off the preference Java-\u003eCode Style-\u003eOrganize imports and put a high limit for \"Number of imports needed for .*\"",
+      "revId": "ae6f29a8a549cc57577911bdc84cc95f6ba983df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//5/g\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/CLIMonitor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-30T14:01:39Z",
+      "side": 1,
+      "message": "Java doc please to explain what \u0027monitor\u0027 is used for",
+      "revId": "ae6f29a8a549cc57577911bdc84cc95f6ba983df",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

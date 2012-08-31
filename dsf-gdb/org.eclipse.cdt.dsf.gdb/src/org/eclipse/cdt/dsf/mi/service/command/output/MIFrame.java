@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 QNX Software Systems and others.
+ * Copyright (c) 2000, 2013 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Wind River Systems   - Modified for new DSF Reference Implementation
+ *     Jens Elmenthaler (Advantest) - Fix empty names for functions in anonymous namespaces (bug 341336)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service.command.output;
 
@@ -108,13 +109,18 @@ public class MIFrame {
                         func = ""; //$NON-NLS-1$
                     else
                     {
-                        // In some situations gdb returns the function names that include parameter types.
-                        // To make the presentation consistent truncate the parameters. PR 46592
-                        int end = str.indexOf( '(' );
-                        if ( end != -1 )
-                            func = str.substring( 0, end );
-                        else
-                            func = str;
+						func = str;
+						// In some situations gdb returns the function names that include parameter types.
+						// To make the presentation consistent truncate the parameters. PR 46592
+						// However PR180059: only cut it if it is last brackets represent parameters,
+						// because gdb can return: func="(anonymous namespace)::func2((anonymous namespace)::Test*)"
+						int closing = str.lastIndexOf(')');
+						if (closing == str.length() - 1) {
+							int end = getMatchingBracketIndex(str, closing - 1);
+							if (end >= 0) {
+								func = str.substring(0, end);
+							}
+						}
                     }
                 }
             } else if (var.equals("file")) { //$NON-NLS-1$
@@ -134,5 +140,18 @@ public class MIFrame {
                 }
             }
         }
+    }
+
+	private int getMatchingBracketIndex(String str, int end) {
+	    int depth = 1;
+	    for (;end>=0;end--) {
+	    	int c = str.charAt(end);
+	    	if (c=='(') {
+	    		depth--;
+	    		if (depth==0) break;
+	    	} else if (c==')') 
+	    		depth++;
+	    }
+	    return end;
     }
 }

@@ -1,0 +1,854 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOIn//5wQ\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/plugin.properties",
+        "patchSetId": 3
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-31T18:21:19Z",
+      "side": 1,
+      "message": "replace 2010 with 2012",
+      "revId": "e0f1d11081adf6d64c33ceb5b943e4e78804bf56",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//5ig\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/ContentLabelProviderWrapper.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-31T18:21:19Z",
+      "side": 1,
+      "message": "MIssing copyright",
+      "revId": "e0f1d11081adf6d64c33ceb5b943e4e78804bf56",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//5oI\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/Messages.properties",
+        "patchSetId": 3
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-31T18:21:19Z",
+      "side": 1,
+      "message": "Please replace with:\n  OSView_7\u003dNo data has been fetched yet. \u003ca href\u003d\"{0}\"\u003eFetch now\u003c/a\u003e.\n\nthat way we don\u0027t have \u0027fetch\u0027 hard-coded in two places.",
+      "revId": "e0f1d11081adf6d64c33ceb5b943e4e78804bf56",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//5tk\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/OSData.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-31T18:21:19Z",
+      "side": 1,
+      "message": "Should this take IResourceClass instead of String?",
+      "revId": "e0f1d11081adf6d64c33ceb5b943e4e78804bf56",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//5tI\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/OSData.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-31T18:21:19Z",
+      "side": 1,
+      "message": "I think you can replace these 4 lines with:\n  \t\t// Move the element to the end of the list\n\t\tremap.add(remap.remove(index));",
+      "revId": "e0f1d11081adf6d64c33ceb5b943e4e78804bf56",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//5tc\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/OSData.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 149,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-31T18:21:19Z",
+      "side": 1,
+      "message": "Please move fields to top of the class",
+      "revId": "e0f1d11081adf6d64c33ceb5b943e4e78804bf56",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//5tw\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/OSResourcesView.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-31T18:21:19Z",
+      "side": 1,
+      "message": "Please remove.  We\u0027ll fix the warnings below.",
+      "revId": "e0f1d11081adf6d64c33ceb5b943e4e78804bf56",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//5oY\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/OSResourcesView.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-31T18:21:19Z",
+      "side": 1,
+      "message": "Please add\n  private final static String FETCH_LINK_TAG \u003d \"fetch\"; //$NON-NLS-1$",
+      "revId": "e0f1d11081adf6d64c33ceb5b943e4e78804bf56",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//5kQ\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/OSResourcesView.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-31T18:21:19Z",
+      "side": 1,
+      "message": "You must call\n  \t\tDsfSession.addSessionEndedListener(this);\nsomewhere in this method or in this class.",
+      "revId": "e0f1d11081adf6d64c33ceb5b943e4e78804bf56",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//5ts\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/OSResourcesView.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-31T18:21:19Z",
+      "side": 1,
+      "message": "Replace with\n  \t\tIDebugContextManager contextManager \u003d DebugUITools.getDebugContextManager();",
+      "revId": "e0f1d11081adf6d64c33ceb5b943e4e78804bf56",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//5to\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/OSResourcesView.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 196,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-31T18:21:19Z",
+      "side": 1,
+      "message": "Replace with\n  \t\tIDebugContextManager contextManager \u003d DebugUITools.getDebugContextManager();",
+      "revId": "e0f1d11081adf6d64c33ceb5b943e4e78804bf56",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//5kM\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/OSResourcesView.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 201,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-31T18:21:19Z",
+      "side": 1,
+      "message": "Must call\n  DsfSession.removeSessionEndedListener(this);",
+      "revId": "e0f1d11081adf6d64c33ceb5b943e4e78804bf56",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//5oM\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/OSResourcesView.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 313,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-31T18:21:19Z",
+      "side": 1,
+      "message": "Please replace with:\n  hideTable(NLS.bind(Messages.OSView_7, FETCH_LINK_TAG));",
+      "revId": "e0f1d11081adf6d64c33ceb5b943e4e78804bf56",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//5lA\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/ResourceClassContributionItem.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-31T18:21:19Z",
+      "side": 1,
+      "message": "We must check if resourceClasses is empty and in that case, set the width manually, as is done in fill().  Currently the following test is a problem:\n\n  Run two debug sessions.  \n  Display a resource class.  \n  Select the other debug session \n  \u003d\u003e the Combo box is resized much too small and does not resize anymore.",
+      "revId": "e0f1d11081adf6d64c33ceb5b943e4e78804bf56",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//5kE\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/SessionOSData.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-31T18:21:19Z",
+      "side": 1,
+      "message": "Should ICommandControlDMContext for a couple of reasons:\n1- so we can support fetching data even without debugging a process\n2- so we can support fetching data without selecting a process or thread\n3- because currently, -info-os applies to GDB in general, not a specific inferior or thread\n\nTo be future proof, we should leave any API to use IDMContext in case some -info-os command may actually apply to a thread or process.",
+      "revId": "e0f1d11081adf6d64c33ceb5b943e4e78804bf56",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//5kA\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/SessionOSData.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-31T18:21:19Z",
+      "side": 1,
+      "message": "Context should be of type ICommandControlDMContext",
+      "revId": "e0f1d11081adf6d64c33ceb5b943e4e78804bf56",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//5wE\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/SessionOSData.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-31T18:21:19Z",
+      "side": 1,
+      "message": "Must be done is executor.  Please move below.\n\nAgain, please add -ea in your launch of eclipse.  Nothing works for me when an assertion is thrown like this.",
+      "revId": "e0f1d11081adf6d64c33ceb5b943e4e78804bf56",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//5is\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/SessionOSData.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 188,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-31T18:21:19Z",
+      "side": 1,
+      "message": "What is this supposed to do?",
+      "revId": "e0f1d11081adf6d64c33ceb5b943e4e78804bf56",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//5ik\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/SessionOSData.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 224,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-31T18:21:19Z",
+      "side": 1,
+      "message": "Risk of NPE.  Should probably check that fUIListerner is not null",
+      "revId": "e0f1d11081adf6d64c33ceb5b943e4e78804bf56",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//5jY\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/SessionOSData.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 245,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-31T18:21:19Z",
+      "side": 1,
+      "message": "This is not future proof because we use a class name directly.  Instead you can use IMIRunControl.getRunMode().\n\nThe better way to handled this whole thing is to use\n  IMIRunControl.isTargetAcceptingCommands()\nto figure out what value fAcceptingCommands should have.",
+      "revId": "e0f1d11081adf6d64c33ceb5b943e4e78804bf56",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//5i8\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/SessionOSData.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 262,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-31T18:21:19Z",
+      "side": 1,
+      "message": "Won\u0027t be needed I think if you use IMIRunControl.isTargetAcceptingCommands()",
+      "revId": "e0f1d11081adf6d64c33ceb5b943e4e78804bf56",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//5i4\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/SessionOSData.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 276,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-31T18:21:19Z",
+      "side": 1,
+      "message": "Won\u0027t be needed I think if you use IMIRunControl.isTargetAcceptingCommands()",
+      "revId": "e0f1d11081adf6d64c33ceb5b943e4e78804bf56",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//5v4\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/.settings/.api_filters",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-31T18:21:19Z",
+      "side": 1,
+      "message": "Remove this file.  We have to deal with APIs properly",
+      "revId": "e0f1d11081adf6d64c33ceb5b943e4e78804bf56",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//5vc\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 514,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-31T18:21:19Z",
+      "side": 1,
+      "message": "This class is a DSF service and therefore can only be called using the DSF executor.  So you can run the code directly without submitting it to the executor.",
+      "revId": "e0f1d11081adf6d64c33ceb5b943e4e78804bf56",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//5vY\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 529,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-31T18:21:19Z",
+      "side": 1,
+      "message": "This class is a DSF service and therefore can only be called using the DSF executor.  So you can run the code directly without submitting it to the executor.",
+      "revId": "e0f1d11081adf6d64c33ceb5b943e4e78804bf56",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//5wA\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS_7_5.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-31T18:21:19Z",
+      "side": 1,
+      "message": "Copyright missing",
+      "revId": "e0f1d11081adf6d64c33ceb5b943e4e78804bf56",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//5v8\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS_7_5.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-31T18:21:19Z",
+      "side": 1,
+      "message": "@since tag",
+      "revId": "e0f1d11081adf6d64c33ceb5b943e4e78804bf56",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//5ug\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS_7_5.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-31T18:21:19Z",
+      "side": 1,
+      "message": "This class is a DSF service and therefore can only be called using the DSF executor.  So you can run the code directly without submitting it to the executor.",
+      "revId": "e0f1d11081adf6d64c33ceb5b943e4e78804bf56",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//5uY\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS_7_5.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-31T18:21:19Z",
+      "side": 1,
+      "message": "Check that control !\u003d null and if it is do:\n\n  rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, \"Service not available\", null)); //$NON-NLS-1$",
+      "revId": "e0f1d11081adf6d64c33ceb5b943e4e78804bf56",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//5uU\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS_7_5.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-31T18:21:19Z",
+      "side": 1,
+      "message": "We must wrap MIInfoOS into a CommandFactory.createMIInfoOS call to call it.  We should not call it directly to allow people to override the behavior.",
+      "revId": "e0f1d11081adf6d64c33ceb5b943e4e78804bf56",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//5uE\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS_7_5.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-31T18:21:19Z",
+      "side": 1,
+      "message": "This should be handleSuccess() instead of handleCompleted()",
+      "revId": "e0f1d11081adf6d64c33ceb5b943e4e78804bf56",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//5uA\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS_7_5.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-31T18:21:19Z",
+      "side": 1,
+      "message": "super.handleSuccess()\nor\nrm.done()",
+      "revId": "e0f1d11081adf6d64c33ceb5b943e4e78804bf56",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//5uc\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS_7_5.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-31T18:21:19Z",
+      "side": 1,
+      "message": "This class is a DSF service and therefore can only be called using the DSF executor.  So you can run the code directly without submitting it to the executor.",
+      "revId": "e0f1d11081adf6d64c33ceb5b943e4e78804bf56",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//5uQ\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS_7_5.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-31T18:21:19Z",
+      "side": 1,
+      "message": "We must wrap MIInfoOS into a CommandFactory.createMIInfoOS call to call it.  We should not call it directly to allow people to override the behavior.",
+      "revId": "e0f1d11081adf6d64c33ceb5b943e4e78804bf56",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//5uI\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS_7_5.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-31T18:21:19Z",
+      "side": 1,
+      "message": "This should be handleSuccess() instead of handleCompleted()",
+      "revId": "e0f1d11081adf6d64c33ceb5b943e4e78804bf56",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//5t8\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS_7_5.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-31T18:21:19Z",
+      "side": 1,
+      "message": "super.handleSuccess()\nor\nrm.done()",
+      "revId": "e0f1d11081adf6d64c33ceb5b943e4e78804bf56",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//5vg\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GdbDebugServicesFactory.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-31T18:21:19Z",
+      "side": 1,
+      "message": "Copyright update",
+      "revId": "e0f1d11081adf6d64c33ceb5b943e4e78804bf56",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//5v0\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/IGDBHardwareAndOS.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-31T18:21:19Z",
+      "side": 1,
+      "message": "I think we\u0027ll need to have an IGDBHardwareAndOS2.java interface to add the new methods, since it looks like CDT will not allow breaking APIs next release.",
+      "revId": "e0f1d11081adf6d64c33ceb5b943e4e78804bf56",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//5vM\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/IGDBHardwareAndOS.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-31T18:21:19Z",
+      "side": 1,
+      "message": "What is a \u0027Hunam\u0027? :)\nUse Eclipse\u0027s Refactoring feature to rename everything 5 seconds.\nI think getDescription() is a good name",
+      "revId": "e0f1d11081adf6d64c33ceb5b943e4e78804bf56",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//5vw\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/IGDBHardwareAndOS.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-31T18:21:19Z",
+      "side": 1,
+      "message": "Must move to IGDBHardwareAndOS2 interface",
+      "revId": "e0f1d11081adf6d64c33ceb5b943e4e78804bf56",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//5vU\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/IGDBHardwareAndOS.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-31T18:21:19Z",
+      "side": 1,
+      "message": "Javadoc.  For Interface classes, we have to be careful to properly document.",
+      "revId": "e0f1d11081adf6d64c33ceb5b943e4e78804bf56",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//5vQ\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/IGDBHardwareAndOS.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-31T18:21:19Z",
+      "side": 1,
+      "message": "Javadoc.  For Interface classes, we have to be careful to properly document.",
+      "revId": "e0f1d11081adf6d64c33ceb5b943e4e78804bf56",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//5uo\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/IGDBHardwareAndOS.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 140,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-31T18:21:19Z",
+      "side": 1,
+      "message": "Since getResourceClasses() is meant to provide the information to use for getResourcesInformation(), I think it would make sense that getResourcesInformation() take an IResourceClass parameter instead of a String.",
+      "revId": "e0f1d11081adf6d64c33ceb5b943e4e78804bf56",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//5vs\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/IGDBHardwareAndOS.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 141,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-31T18:21:19Z",
+      "side": 1,
+      "message": "Must move to IGDBHardwareAndOS2 interface",
+      "revId": "e0f1d11081adf6d64c33ceb5b943e4e78804bf56",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//5vo\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/MIInfoOs.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-31T18:21:19Z",
+      "side": 1,
+      "message": "Please add javadoc like other MICommands.  It is basically a copy/paste of the GDB manual",
+      "revId": "e0f1d11081adf6d64c33ceb5b943e4e78804bf56",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//5vA\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MIInfoOsInfo.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-31T18:21:19Z",
+      "side": 1,
+      "message": "Please add javadoc giving example of the different possible outputs",
+      "revId": "e0f1d11081adf6d64c33ceb5b943e4e78804bf56",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//5u0\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MIInfoOsInfo.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-31T18:21:19Z",
+      "side": 1,
+      "message": "Is it future-proof to look for the second element?  In the future couldn\u0027t MI insert an element before the one we are looking for.  Maybe it would be safer to look for the name of the field \"col0\" or \"col2\".  I\u0027m assuming MI must keep these fields the same for backwards-compatibility?",
+      "revId": "e0f1d11081adf6d64c33ceb5b943e4e78804bf56",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//5uw\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MIInfoOsInfo.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-31T18:21:19Z",
+      "side": 1,
+      "message": "Replace the size 0 with classes.size(), it is slightly more efficient and costs us nothing.",
+      "revId": "e0f1d11081adf6d64c33ceb5b943e4e78804bf56",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//5us\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MIInfoOsInfo.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-31T18:21:19Z",
+      "side": 1,
+      "message": "I like the below \u0027get\u0027 methods.  That simplifies the above code.  Nice.",
+      "revId": "e0f1d11081adf6d64c33ceb5b943e4e78804bf56",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//5vk\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MIInfoOsInfo.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 146,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-08-31T18:21:19Z",
+      "side": 1,
+      "message": "Please move these three fields to the top of the class",
+      "revId": "e0f1d11081adf6d64c33ceb5b943e4e78804bf56",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

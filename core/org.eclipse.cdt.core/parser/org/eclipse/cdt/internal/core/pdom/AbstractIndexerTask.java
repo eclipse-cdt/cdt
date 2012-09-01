@@ -74,6 +74,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	public static enum UnusedHeaderStrategy { skip, useC, useCPP, useDefaultLanguage, useBoth }
 	private static final int MAX_ERRORS = 500;
 
+	// Order of constants is important. Stronger update types have to precede the weaker ones.
 	private static enum UpdateKind { REQUIRED_SOURCE, REQUIRED_HEADER, ONE_LINKAGE_HEADER, OTHER_HEADER }
 
 	private static class LinkageTask {
@@ -119,7 +120,8 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		boolean requestUpdate(IIndexFragmentFile ifile, Object tu, UpdateKind kind) {
 			if (tu != null)
 				fTu= tu;
-			if (fKind == null)
+			// Change fKind only if it becomes stronger as a result.
+			if (fKind == null || (kind != null && kind.compareTo(fKind) < 0))
 				fKind= kind;
 
 			if (ifile == null) {

@@ -54,9 +54,6 @@ public abstract class GenericErrorParserTests extends TestCase {
 		super();
 	}
 
-	/*
-	 * @see TestCase#setUp()
-	 */
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -66,9 +63,6 @@ public abstract class GenericErrorParserTests extends TestCase {
 		}
 	}
 
-	/*
-	 * @see TestCase#tearDown()
-	 */
 	@Override
 	protected void tearDown() {
 		try {
@@ -112,9 +106,9 @@ public abstract class GenericErrorParserTests extends TestCase {
 		runParserTest(inputStream, expectedErrorCount, expectedWarningCount, 0, expectedFileNames, expectedDescriptions, parserID);
 	}
 	
-	protected void runParserTest(InputStream inputStream, int expectedErrorCount, int expectedWarningCount, int expectedInfoCount,
-			String[] expectedFileNames, String[] expectedDescriptions, String[] parserID) throws IOException {
-
+	protected void runParserTest(InputStream inputStream, int expectedErrorCount, int expectedWarningCount,
+			int expectedInfoCount, String[] expectedFileNames, String[] expectedDescriptions,
+			String[] parserID) throws IOException {
 		assertNotNull(inputStream);
 
 		CountingMarkerGenerator markerGenerator = new CountingMarkerGenerator();
@@ -166,41 +160,28 @@ public abstract class GenericErrorParserTests extends TestCase {
 
 		ByteArrayInputStream inputStream = new ByteArrayInputStream(errorStream.getBytes());
 
-		runParserTest(inputStream, expectedErrorCount, expectedWarningCount, expectedInfoCount, expectedFileNames, expectedDescriptions, parserID);
+		runParserTest(inputStream, expectedErrorCount, expectedWarningCount, expectedInfoCount,
+				expectedFileNames, expectedDescriptions, parserID);
 	}
 
-	class FileNameComparator implements Comparator {
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-		 */
+	private static class FileNameComparator implements Comparator<IResource> {
 		@Override
-		public int compare(Object arg0, Object arg1) {
-			try {
-				IFile f0 = (IFile)arg0;
-				IFile f1 = (IFile)arg1;
-				return f0.getName().compareToIgnoreCase(f1.getName());
-			} catch (Exception ex) {
-				/* Ignore */
-			}
-			return 1;
+		public int compare(IResource f0, IResource f1) {
+			return f0.getName().compareToIgnoreCase(f1.getName());
 		}
 	}
 
 	/**
-	 * Expand and grow this class to make it more usefull.
+	 * Expand and grow this class to make it more useful.
 	 */
 	class CountingMarkerGenerator implements IMarkerGenerator {
-
 		public int numErrors;
 		public int numWarnings;
 		public int numInfos;
 		public int numMarkers;
-		public ArrayList uniqFiles;
+		public ArrayList<IResource> uniqFiles;
 		public List<String> descriptions;
-		private Comparator fFileNameComparator;
+		private FileNameComparator fFileNameComparator;
 
 		@Override
 		public void addMarker(IResource file, int lineNumber, String errorDesc, int severity, String errorVar) {
@@ -208,10 +189,6 @@ public abstract class GenericErrorParserTests extends TestCase {
 			addMarker(problemMarkerInfo);
 		}
 
-		
-		/* (non-Javadoc)
-		 * @see org.eclipse.cdt.core.IMarkerGenerator#addMarker(org.eclipse.cdt.core.ProblemMarkerInfo)
-		 */
 		@Override
 		public void addMarker(ProblemMarkerInfo problemMarkerInfo) {
 			int index = Collections.binarySearch(uniqFiles, problemMarkerInfo.file, fFileNameComparator);
@@ -231,7 +208,6 @@ public abstract class GenericErrorParserTests extends TestCase {
 			numMarkers++;
 		}
 
-
 		public CountingMarkerGenerator() {
 			numErrors = 0;
 			numWarnings = 0;
@@ -247,7 +223,6 @@ public abstract class GenericErrorParserTests extends TestCase {
 	 * exist by just using the strings that come out as error codes.
 	 */
 	class ImaginaryFilesErrorParserManager extends ErrorParserManager {
-
 		IProject fProject;
 
 		public ImaginaryFilesErrorParserManager(IProject project, IMarkerGenerator generator, String[] ids) {
@@ -284,7 +259,7 @@ public abstract class GenericErrorParserTests extends TestCase {
 					InputStream stream = new ByteArrayInputStream("TestFile".getBytes());
 					file.create(stream, true, new NullProgressMonitor());
 					stream.close();
-				} catch (Exception ex) {
+				} catch (Exception e) {
 					/* Ignore */
 				}
 			}

@@ -178,7 +178,8 @@ public class AbstractCPPClassSpecializationScope implements ICPPClassSpecializat
 
 		T[] newArray= array.clone();
 		for (int i = 0; i < newArray.length; i++) {
-			newArray[i]= (T) specialClass.specializeMember(array[i], point);
+			IBinding specializedMember = specialClass.specializeMember(array[i], point);
+			newArray[i]= (T) specializedMember;
 		}
 		return newArray;
 	}

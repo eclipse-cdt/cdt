@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2010 IBM Corporation and others.
+ * Copyright (c) 2002, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     John Camelon (IBM Rational Software) - Initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
  *     Markus Schorn (Wind River Systems)
+ *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser;
 
@@ -167,6 +168,8 @@ public class Keywords {
 	public static final char[] cFALSE = "false".toCharArray();
 	public static final char[] cFLOAT = "float".toCharArray();
 	public static final char[] cFOR = "for".toCharArray();
+	/** @since 5.5 */
+	public static final char[] cFINAL = "final".toCharArray();
 	public static final char[] cFRIEND = "friend".toCharArray();
 	public static final char[] cGOTO = "goto".toCharArray();
 	public static final char[] cIF = "if".toCharArray();
@@ -185,6 +188,8 @@ public class Keywords {
 	public static final char[] cOPERATOR = "operator".toCharArray();
 	public static final char[] cOR = "or".toCharArray();
 	public static final char[] cOR_EQ = "or_eq".toCharArray();
+	/** @since 5.5 */
+	public static final char[] cOVERRIDE = "override".toCharArray();
 	public static final char[] cPRIVATE = "private".toCharArray();
 	public static final char[] cPROTECTED = "protected".toCharArray();
 	public static final char[] cPUBLIC = "public".toCharArray();

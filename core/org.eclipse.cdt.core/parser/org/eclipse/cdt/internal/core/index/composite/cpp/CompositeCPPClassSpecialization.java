@@ -114,8 +114,7 @@ public class CompositeCPPClassSpecialization extends CompositeCPPClassType imple
 				fInProgress.set(set);
 			} 
 			if (!set.add(original)) 
-				return new RecursionResolvingBinding(null, null);
-
+				return RecursionResolvingBinding.createFor(original, point);
 		}
 		IBinding newSpec= CPPTemplates.createSpecialization(this, original, point);
 		set.remove(original);

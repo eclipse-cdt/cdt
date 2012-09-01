@@ -17,11 +17,11 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -438,8 +438,7 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 			if (isWorkspaceFile(headerFile.getLocation().getURI())) {
 				return headerFile;
 			}
-			// TODO(sprigogin): Change to ArrayDeque when Java 5 support is no longer needed.
-			LinkedList<IIndexFile> front = new LinkedList<IIndexFile>();
+			ArrayDeque<IIndexFile> front = new ArrayDeque<IIndexFile>();
 			front.add(headerFile);
 			HashSet<IIndexFile> processed = new HashSet<IIndexFile>();
 			processed.add(headerFile);

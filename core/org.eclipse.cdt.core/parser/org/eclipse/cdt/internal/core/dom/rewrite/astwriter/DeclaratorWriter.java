@@ -10,6 +10,7 @@
  *     Institute for Software - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     Sergey Prigogin (Google)
+ *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.astwriter;
 
@@ -139,6 +140,14 @@ public class DeclaratorWriter extends NodeWriter {
 		if (funcDec.isMutable()) {
 			scribe.printSpace();
 			scribe.print(Keywords.MUTABLE);
+		}
+		if (funcDec.isOverride()) {
+			scribe.printSpace();
+			scribe.print(Keywords.cOVERRIDE);
+		}
+		if (funcDec.isFinal()) {
+			scribe.printSpace();
+			scribe.print(Keywords.cFINAL);
 		}
 		if (funcDec.isPureVirtual()) {
 			scribe.print(PURE_VIRTUAL);

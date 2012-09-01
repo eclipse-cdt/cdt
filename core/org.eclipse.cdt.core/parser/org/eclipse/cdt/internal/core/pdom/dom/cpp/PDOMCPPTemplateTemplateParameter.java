@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2012 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
+ *     Thomas Corbat (IFS)
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -336,6 +337,11 @@ public class PDOMCPPTemplateTemplateParameter extends PDOMCPPBinding
 
 	@Override
 	public boolean isAnonymous() {
+		return false;
+	}
+
+	@Override
+	public boolean isFinal() {
 		return false;
 	}
 

@@ -1,15 +1,16 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 QNX Software Systems and others.
+ * Copyright (c) 2006, 2012 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Doug Schaefer (QNX) - Initial API and implementation
- *    IBM Corporation
- *    Andrew Ferguson (Symbian)
- *    Markus Schorn (Wind River Systems)
+ *     Doug Schaefer (QNX) - Initial API and implementation
+ *     IBM Corporation
+ *     Andrew Ferguson (Symbian)
+ *     Markus Schorn (Wind River Systems)
+ *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -256,5 +257,15 @@ class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod {
 			return ClassTypeHelper.getInheritedExceptionSpecification(this, null);
 		}
 		return super.getExceptionSpecification();
+	}
+
+	@Override
+	public boolean isOverride() {
+		return getBit(getAnnotation1(), PDOMCPPAnnotation.OVERRIDE_OFFSET);
+	}
+
+	@Override
+	public boolean isFinal() {
+		return getBit(getAnnotation1(), PDOMCPPAnnotation.FINAL_OFFSET);
 	}
 }

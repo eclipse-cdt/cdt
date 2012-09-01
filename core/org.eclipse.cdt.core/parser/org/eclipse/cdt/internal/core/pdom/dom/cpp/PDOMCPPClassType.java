@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 QNX Software Systems and others.
+ * Copyright (c) 2005, 2012 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *     Andrew Ferguson (Symbian)
  *     Bryan Wilkinson (QNX)
  *     Sergey Prigogin (Google)
+ *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -52,8 +53,9 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 	private static final int FIRSTFRIEND = PDOMCPPBinding.RECORD_SIZE + 8;
 	private static final int KEY = PDOMCPPBinding.RECORD_SIZE + 12; // byte
 	private static final int ANONYMOUS= PDOMCPPBinding.RECORD_SIZE + 13; // byte
+	private static final int FINAL = PDOMCPPBinding.RECORD_SIZE + 14; // byte
 	@SuppressWarnings("hiding")
-	protected static final int RECORD_SIZE = PDOMCPPBinding.RECORD_SIZE + 14;
+	protected static final int RECORD_SIZE = PDOMCPPBinding.RECORD_SIZE + 15;
 
 	private PDOMCPPClassScope fScope; // No need for volatile, all fields of PDOMCPPClassScope are final.
 
@@ -62,6 +64,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 
 		setKind(classType);
 		setAnonymous(classType);
+		setFinal(classType);
 		// linked list is initialized by storage being zero'd by malloc
 	}
 
@@ -85,6 +88,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 			ICPPClassType ct= (ICPPClassType) newBinding;
 			setKind(ct);
 			setAnonymous(ct);
+			setFinal(ct);
 			super.update(linkage, newBinding);
 		}
 	}
@@ -95,6 +99,10 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 
 	private void setAnonymous(ICPPClassType ct) throws CoreException {
 		getDB().putByte(record + ANONYMOUS, (byte) (ct.isAnonymous() ? 1 : 0));
+	}
+
+	private void setFinal(ICPPClassType ct) throws CoreException {
+		getDB().putByte(record + FINAL, (byte) (ct.isFinal() ? 1 : 0));
 	}
 
 	@Override
@@ -228,6 +236,16 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return false; 
+		}
+	}
+
+	@Override
+	public boolean isFinal() {
+		try {
+			return getDB().getByte(record + FINAL) != 0;
+		} catch (CoreException e){
+			CCorePlugin.log(e);
+			return false;
 		}
 	}
 

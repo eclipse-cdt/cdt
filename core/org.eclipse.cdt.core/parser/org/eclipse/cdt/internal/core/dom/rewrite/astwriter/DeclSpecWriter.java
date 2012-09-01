@@ -9,6 +9,7 @@
  * Contributors: 
  * 	   Institute for Software - initial API and implementation
  *     Sergey Prigogin (Google)
+ *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.astwriter;
 
@@ -230,6 +231,10 @@ public class DeclSpecWriter extends NodeWriter {
 		compDeclSpec.getName().accept(visitor);
 		if (compDeclSpec instanceof ICPPASTCompositeTypeSpecifier) {
 			ICPPASTCompositeTypeSpecifier cppComp = (ICPPASTCompositeTypeSpecifier) compDeclSpec;
+			if (cppComp.isFinal()) {
+				scribe.printSpace();
+				scribe.print(Keywords.cFINAL);
+			}
 			ICPPASTBaseSpecifier[] baseSpecifiers = cppComp.getBaseSpecifiers();
 			if (baseSpecifiers.length > 0) {
 				scribe.print(SPACE_COLON_SPACE);

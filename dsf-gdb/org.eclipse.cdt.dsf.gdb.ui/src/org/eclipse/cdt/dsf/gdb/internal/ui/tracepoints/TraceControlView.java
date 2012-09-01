@@ -214,6 +214,8 @@ public class TraceControlView extends ViewPart implements IViewPart, SessionEnde
 		getSite().getPage().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, fDebugViewListener);
 		fStatusText = null;  // Indicate that we have been disposed
 		setDebugContext(null);
+		DsfSession.removeSessionEndedListener(this);
+
 		super.dispose();
 	}
 

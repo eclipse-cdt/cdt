@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,8 @@
  *
  * Contributors:
  *     Doug Schaefer (IBM) - Initial API and implementation
- *******************************************************************************/
+ *     Thomas Corbat (IFS)
+ ******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -99,4 +100,11 @@ public interface ICPPClassType extends ICompositeType, ICPPBinding {
 	 * Returns an array of nested classes/structures
 	 */
 	public ICPPClassType[] getNestedClasses();
+
+	/**
+	 * Returns whether this type is declared final.
+	 * 
+	 * @since 5.5
+	 */
+	public boolean isFinal();
 }

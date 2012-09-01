@@ -13,15 +13,14 @@ package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;
 import org.eclipse.osgi.util.NLS;
 
 /**
- * @since 1.0
+ * @since 1.1
  */
 public class Messages extends NLS {
-	private static final String BUNDLE_NAME = "org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view.messages"; //$NON-NLS-1$
 	public static String MulticoreVisualizer_name;
 	public static String MulticoreVisualizer_tooltip;
 	static {
 		// initialize resource bundle
-		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
+		NLS.initializeMessages(Messages.class.getName(), Messages.class);
 	}
 
 	private Messages() {

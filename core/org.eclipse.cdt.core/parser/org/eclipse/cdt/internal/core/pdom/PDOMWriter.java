@@ -107,13 +107,13 @@ abstract public class PDOMWriter {
 			return fileContentKey.toString();
 		}
 	}
-	
+
 	public static class FileContext {
 		final IIndexFragmentFile fContext;
 		final IIndexFragmentFile fOldFile;
 		IIndexFragmentFile fNewFile;
 		public boolean fLostPragmaOnceSemantics;
-		
+
 		public FileContext(IIndexFragmentFile context, IIndexFragmentFile oldFile) {
 			fContext= context;
 			fOldFile= oldFile;
@@ -132,7 +132,7 @@ abstract public class PDOMWriter {
 		final ArrayList<IASTPreprocessorStatement> fMacros= new ArrayList<IASTPreprocessorStatement>();
 		final ArrayList<IASTPreprocessorIncludeStatement> fIncludes= new ArrayList<IASTPreprocessorIncludeStatement>();
 	}
-	
+
 	private static class Data {
 		final IASTTranslationUnit fAST;
 		final FileInAST[] fSelectedFiles;
@@ -140,7 +140,7 @@ abstract public class PDOMWriter {
 		final Map<IASTPreprocessorIncludeStatement, Symbols> fSymbolMap = new HashMap<IASTPreprocessorIncludeStatement, Symbols>();
 		final Set<IASTPreprocessorIncludeStatement> fContextIncludes = new HashSet<IASTPreprocessorIncludeStatement>();
 		final List<IStatus> fStati= new ArrayList<IStatus>();
-		
+
 		public Data(IASTTranslationUnit ast, FileInAST[] selectedFiles, IWritableIndex index) {
 			fAST= ast;
 			fSelectedFiles= selectedFiles;
@@ -202,8 +202,8 @@ abstract public class PDOMWriter {
 
 	/**
 	 * Extracts symbols from the given AST and adds them to the index.
-	 * 
-	 * When flushIndex is set to <code>false</code>, you must make sure to flush 
+	 *
+	 * When flushIndex is set to <code>false</code>, you must make sure to flush
 	 * the index after your last write operation.
 	 */
 	final protected void addSymbols(IASTTranslationUnit ast, FileInAST[] selectedFiles,
@@ -215,23 +215,22 @@ abstract public class PDOMWriter {
 			fShowScannerProblems= true;
 			fShowSyntaxProblems= true;
 		}
-		
+
 		Data data= new Data(ast, selectedFiles, index);
 		for (FileInAST file : selectedFiles) {
 			data.fSymbolMap.put(file.includeStatement, new Symbols());
 		}
-		
 
-		// Extract symbols from AST
+		// Extract symbols from AST.
 		extractSymbols(data);
 
-		// Name resolution
+		// Name resolution.
 		resolveNames(data, pm);
 
-		// Index update
+		// Index update.
 		storeSymbolsInIndex(data, ctx, flushIndex, pm);
 
-		// Tasks update
+		// Tasks update.
 		if (taskUpdater != null) {
 			Set<IIndexFileLocation> locations= new HashSet<IIndexFileLocation>();
 			for (FileInAST file : selectedFiles) {
@@ -283,8 +282,8 @@ abstract public class PDOMWriter {
 					if (!isReplacement || newFile == null) {
 						ifile= storeFileInIndex(data, fileInAST, linkageID, lock);
 						reportFileWrittenToIndex(fileInAST, ifile);
-					} 
-					
+					}
+
 					if (isReplacement) {
 						if (ifile == null)
 							ifile= newFile;
@@ -297,7 +296,7 @@ abstract public class PDOMWriter {
 								data.fIndex.transferIncluders(ctx.fOldFile, ifile);
 							}
 						}
-					} 
+					}
 					} catch (RuntimeException e) {
 					th= e;
 				} catch (StackOverflowError e) {
@@ -538,13 +537,13 @@ abstract public class PDOMWriter {
 		// if another thread is waiting for a read lock.
 		final FileContentKey fileKey = astFile.fileContentKey;
 		final IASTPreprocessorIncludeStatement owner= astFile.includeStatement;
-		
+
 		IIndexFileLocation location = fileKey.getLocation();
 		ISignificantMacros significantMacros = fileKey.getSignificantMacros();
 		IIndexFragmentFile oldFile = index.getWritableFile(linkageID, location, significantMacros);
 		file= index.addUncommittedFile(linkageID, location, significantMacros);
 		try {
-			boolean pragmaOnce= owner != null ? owner.hasPragmaOnceSemantics() : data.fAST.hasPragmaOnceSemantics(); 
+			boolean pragmaOnce= owner != null ? owner.hasPragmaOnceSemantics() : data.fAST.hasPragmaOnceSemantics();
 			file.setPragmaOnceSemantics(pragmaOnce);
 
 			Symbols lists= data.fSymbolMap.get(owner);
@@ -571,7 +570,7 @@ abstract public class PDOMWriter {
 								includeInfos.add(new IncludeInformation(stmt, targetLoc, sig, false));
 							}
 						}
-						final boolean isContext = stmt.isActive() && stmt.isResolved() && 
+						final boolean isContext = stmt.isActive() && stmt.isResolved() &&
 								(data.fContextIncludes.contains(stmt) || isContextFor(oldFile, stmt));
 						includeInfos.add(new IncludeInformation(stmt, targetLoc, mainSig, isContext));
 					}

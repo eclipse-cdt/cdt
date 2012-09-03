@@ -12,7 +12,6 @@ package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.util.List;
 
-
 /** 
  * Represents the include search path
  */
@@ -20,7 +19,6 @@ public final class IncludeSearchPath {
 	private final boolean fInhibitUseOfCurrentFileDirectory;
 	private final IncludeSearchPathElement[] fElements;
 
-	
 	IncludeSearchPath(List<IncludeSearchPathElement> elements, boolean inhibitUseOfCurrentFileDirectory) {
 		fElements= elements.toArray(new IncludeSearchPathElement[elements.size()]);
 		fInhibitUseOfCurrentFileDirectory= inhibitUseOfCurrentFileDirectory;

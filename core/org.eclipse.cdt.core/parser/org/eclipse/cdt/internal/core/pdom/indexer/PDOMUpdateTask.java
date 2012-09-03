@@ -195,7 +195,7 @@ public class PDOMUpdateTask implements IPDOMIndexerTask {
 		return tu;
 	}
 
-	private boolean canResolveUnresolvedInclude(IIndexFile file, IScannerInfo scannerInfo,
+	private static boolean canResolveUnresolvedInclude(IIndexFile file, IScannerInfo scannerInfo,
 			ProjectIndexerIncludeResolutionHeuristics includeResolutionHeuristics) {
 		try {
 			String filePath = IndexLocationFactory.getAbsolutePath(file.getLocation()).toOSString();
@@ -214,7 +214,7 @@ public class PDOMUpdateTask implements IPDOMIndexerTask {
 		return false;
 	}
 
-	private boolean canResolveInclude(IIndexInclude include, String currentFile, long timestamp,
+	private static boolean canResolveInclude(IIndexInclude include, String currentFile, long timestamp,
 			IncludeSearchPath includeSearchPath,
 			ProjectIndexerIncludeResolutionHeuristics includeResolutionHeuristics) throws CoreException {
 		String includeName = include.getFullName();
@@ -259,7 +259,7 @@ public class PDOMUpdateTask implements IPDOMIndexerTask {
 	/**
 	 * Returns true if the file exists and is not older than the given timestamp.
 	 */
-	private boolean fileIsNotOlderThanTimestamp(String filename, long timestamp) {
+	private static boolean fileIsNotOlderThanTimestamp(String filename, long timestamp) {
 		// We are subtracting 1 second from the timestamp to account for limited precision
 		// of File.lastModified() method and possible skew between clocks on a multi-CPU
 		// system. This may produce false positives, but they are pretty harmless.

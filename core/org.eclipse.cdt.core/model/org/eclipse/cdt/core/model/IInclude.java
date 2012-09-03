@@ -20,23 +20,26 @@ package org.eclipse.cdt.core.model;
 public interface IInclude extends ICElement, ISourceReference, ISourceManipulation {
 	/**
 	 * Returns the name that of the included file. 
-	 * For example, for the statement <code>"#include <stdio.h></code>,
-	 * this returns <code>"stdio.h"</code>.
+	 * For example, for the statement {@code #include <stdio.h>},
+	 * this returns {@code "stdio.h"}.
 	 */
-	String getIncludeName();
+	public String getIncludeName();
 
 	/**
 	 * Returns whether the included was search on "standard places" like /usr/include first .
-	 * An include is standard if it starts with <code>"\<"</code>.
-	 * For example, <code>"#include \<stdio.h\>"</code> returns true and
-	 * <code>"#include "foobar.h"</code> returns false.
+	 * An include is standard if it starts with {@code '<'}.
+	 * For example, {@code #include <stdio.h>} returns {@code true} and
+	 * {@code #include "foobar.h"} returns {@code false}.
 	 */
-	boolean isStandard();
+	public boolean isStandard();
 	
-	public String getFullFileName(); 
-	
+	/**
+	 * The inverse of {@link #isStandard()}
+	 */
 	public boolean isLocal(); 
 	
+	public String getFullFileName(); 
+
 	/**
 	 * @return whether this include directive was resolved and followed.
 	 */

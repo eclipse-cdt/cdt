@@ -6,15 +6,17 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Andrew Ferguson (Symbian) - initial API and implementation
+ *     Andrew Ferguson (Symbian) - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.core.index;
 
 import java.net.URI;
 
 /**
- * Files in the index are (conceptually) partitioned into workspace and non-workspace (external) files.
- * Clients can obtain instances of IIndexFileLocation implementations from {@link IndexLocationFactory}
+ * Files in the index are (conceptually) partitioned into workspace and non-workspace (external)
+ * files. Clients can obtain instances of IIndexFileLocation implementations from
+ * {@link IndexLocationFactory}. Two index file locations are considered equal if their URIs are
+ * equal.
  * 
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
@@ -26,7 +28,7 @@ public interface IIndexFileLocation {
 	 * @return the URI of the indexed file (non-null)
 	 */
 	public URI getURI();
-	
+
 	/**
 	 * Return the workspace relative path of the indexed file or null if the file
 	 * is not in the workspace 

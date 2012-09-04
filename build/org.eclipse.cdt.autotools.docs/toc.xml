@@ -1,4 +1,5 @@
 <?xml version='1.0' encoding='utf-8' ?>
+<?NLS TYPE="org.eclipse.help.toc"?>
 <toc topic="CDT/Autotools/User_Guide/User-Guide.html" label="Autotools Plug-in User Guide">
 	<topic href="CDT/Autotools/User_Guide/User-Guide.html" label="Autotools Plug-in User Guide">
 		<topic href="CDT/Autotools/User_Guide/User-Guide.html" label="Introduction"></topic>

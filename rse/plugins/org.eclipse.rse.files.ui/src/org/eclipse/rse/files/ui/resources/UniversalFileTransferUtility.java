@@ -64,6 +64,7 @@
  * David McKnight     (IBM)      - [228743] [usability][dnd] Paste into read-only folder fails silently
  * David McKnight     (IBM)      - [376410] cross-system copy/paste operation doesn't transfer remote encodings for binary files
  * David McKnight     (IBM)      - [386486] when the original timestamp of a file is 0 don't set it after an upload
+ * David McKnight   (IBM)        - [389838] Fast folder transfer does not account for code page
  *******************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -183,7 +184,8 @@ public class UniversalFileTransferUtility {
 	 */
 	private static boolean doSuperTransfer(IRemoteFileSubSystem subsystem)
 	{
-		boolean doSuperTransferProperty = RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemFilePreferencesConstants.DOSUPERTRANSFER) &&
+		//boolean doSuperTransferProperty = RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemFilePreferencesConstants.DOSUPERTRANSFER) &&
+		boolean doSuperTransferProperty = false; // disabling due to potential corruption
 		subsystem.getParentRemoteFileSubSystemConfiguration().supportsArchiveManagement();
 		return doSuperTransferProperty;
 	}

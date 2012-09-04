@@ -77,6 +77,7 @@
  * David McKnight   (IBM)        - [341244] folder selection input to unlocked Remote Systems Details view sometimes fails
  * David McKnight   (IBM)        - [363490] PHP files opening in system editor (Dreamweaver)
  * Rick Sawyer      (IBM)        - [376535] RSE does not respect editor overrides
+ * David McKnight   (IBM)        - [389838] Fast folder transfer does not account for code page
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -1821,7 +1822,8 @@ public class SystemViewRemoteFileAdapter
 	{
 
 		boolean supportsSearch = ((IRemoteFileSubSystemConfiguration)set.getSubSystem().getSubSystemConfiguration()).supportsSearch();
-		boolean doSuperTransferProperty = RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemFilePreferencesConstants.DOSUPERTRANSFER);
+//		boolean doSuperTransferProperty = RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemFilePreferencesConstants.DOSUPERTRANSFER);
+		boolean doSuperTransferProperty = false; // disabling due to potential corruption
 		if (!doSuperTransferProperty && supportsSearch)
 		{
 			//flatset will contain all FILES that will be copied to workspace in UniversalFileTransferUtility and create corresponding folders.  Empty folders will be ignored
@@ -2176,7 +2178,8 @@ public class SystemViewRemoteFileAdapter
 			{
 				if (fromSet instanceof SystemWorkspaceResourceSet)
 				{
-					boolean doSuperTransferProperty = RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemFilePreferencesConstants.DOSUPERTRANSFER);
+					//boolean doSuperTransferProperty = RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemFilePreferencesConstants.DOSUPERTRANSFER);
+					boolean doSuperTransferProperty = false; // disabling due to potential corruption
 					if (!doSuperTransferProperty)
 					{
 						SystemWorkspaceResourceSet flatFromSet = new SystemWorkspaceResourceSet();

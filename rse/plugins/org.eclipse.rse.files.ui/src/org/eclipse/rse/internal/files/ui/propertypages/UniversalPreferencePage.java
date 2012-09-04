@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2010 IBM Corporation and others.
+ * Copyright (c) 2002, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@
  * David McKnight   (IBM)        - [223204] [cleanup] fix broken nls strings in files.ui and others
  * David McKnight   (IBM)        - [245260] Different user's connections on a single host are mapped to the same temp files cache
  * David McKnight (IBM)  - [283033] remoteFileTypes extension point should include "xml" type
+ * David McKnight   (IBM)        - [389838] Fast folder transfer does not account for code page
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.propertypages;
@@ -367,18 +368,21 @@ public class UniversalPreferencePage
 		    			});
 
 		
+		boolean enableSuperTransfer = false;
+		
 		// archive transfer
 		Composite archiveGroup = new Composite(parent, SWT.NULL);
 		GridLayout alayout = new GridLayout();
 		alayout.numColumns = 2;
 		archiveGroup.setLayout(alayout);
 		archiveGroup.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
-
+		archiveGroup.setEnabled(enableSuperTransfer); // set it can be disabled
 		
 		doSuperTransferButton = SystemWidgetHelpers.createCheckBox(archiveGroup, FileResources.RESID_SUPERTRANSFER_PREFS_ENABLE, this);
 		GridData cdata = new GridData();
 		cdata.horizontalSpan = 2;		
 		doSuperTransferButton.setLayoutData(cdata);
+		doSuperTransferButton.setEnabled(enableSuperTransfer); // so it can be disabled
 		
 		archiveTypeCombo = SystemWidgetHelpers.createLabeledReadonlyCombo(archiveGroup, null, FileResources.RESID_SUPERTRANSFER_PREFS_TYPE_LABEL, FileResources.RESID_SUPERTRANSFER_PREFS_TYPE_TOOLTIP);
 		archiveTypeCombo.setItems(ArchiveHandlerManager.getInstance().getRegisteredExtensions());
@@ -520,7 +524,8 @@ public class UniversalPreferencePage
 		String superTransferArcType = store.getString(ISystemFilePreferencesConstants.SUPERTRANSFER_ARC_TYPE);		
 		archiveTypeCombo.setText(superTransferArcType);
 		
-		boolean doSuperTransfer = store.getBoolean(ISystemFilePreferencesConstants.DOSUPERTRANSFER);
+		//boolean doSuperTransfer = store.getBoolean(ISystemFilePreferencesConstants.DOSUPERTRANSFER);
+		boolean doSuperTransfer = false; // disabling due to potential corruption		
 		doSuperTransferButton.setSelection(doSuperTransfer);
 		
 		// buffer sizes
@@ -974,7 +979,8 @@ public class UniversalPreferencePage
 	public static boolean getDoSuperTransfer() 
 	{
 		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
-		return store.getBoolean(ISystemFilePreferencesConstants.DOSUPERTRANSFER);
+		//return store.getBoolean(ISystemFilePreferencesConstants.DOSUPERTRANSFER);
+		return false; // disabling due to potential corruption
 	}
 	
 	public static int getDownloadBufferSize()

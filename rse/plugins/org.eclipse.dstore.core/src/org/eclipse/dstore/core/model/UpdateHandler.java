@@ -97,7 +97,7 @@ public abstract class UpdateHandler extends Handler
 							child.delete();
 						}
 					}
-					if (!virtual || !child.isSpirit()){ // leave the client attributes if spirited
+					if (!virtual){ // leave the client attributes if spirited
 						child.clear();
 					}
 					if (parent != null)

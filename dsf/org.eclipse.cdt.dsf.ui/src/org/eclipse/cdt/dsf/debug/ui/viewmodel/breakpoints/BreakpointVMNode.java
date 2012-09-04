@@ -31,7 +31,7 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.IMemento;
 
 /**
- * Breakpiont VM Node which uses VM Contexts to populate breakpoint elements 
+ * Breakpoint VM Node which uses VM Contexts to populate breakpoint elements 
  * in the view.  Any actions or other selection listeners which depend on the 
  * breakpoint object will not work with these elements unless they use the 
  * adapter mechanism to obtain the breakpoints. 

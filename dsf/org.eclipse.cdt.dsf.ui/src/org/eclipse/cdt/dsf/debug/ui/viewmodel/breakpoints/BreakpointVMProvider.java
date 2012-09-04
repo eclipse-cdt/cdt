@@ -24,7 +24,6 @@ import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
-import org.eclipse.cdt.dsf.debug.ui.viewmodel.expression.IExpressionVMNode;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.cdt.dsf.ui.viewmodel.AbstractVMAdapter;
 import org.eclipse.cdt.dsf.ui.viewmodel.AbstractVMProvider;
@@ -58,15 +57,8 @@ import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.ui.IWorkbenchWindow;
 
 /**
- * The expression provider is used to populate the contents of the expressions 
- * view.  The node hierarchy in this view is a little different than in a typical 
- * provider: the expression manager node should be registered as the single child
- * of the root node and no nodes should be registered as children of expression node.
- * Instead the top level expression nodes should be registered with a call to 
- * {@link #setExpressionNodes(IExpressionVMNode[])}.  And each expression node can
- * have its own sub-hierarchy of elements as needed.  However all nodes configured
- * with this provider (with the exception of the root and the expression manager) 
- * should implement {@link IExpressionVMNode}.
+ * The breakpoint provider is used to populate the contents of the breakpoints 
+ * view.
  * 
  * @since 2.1
  */ 

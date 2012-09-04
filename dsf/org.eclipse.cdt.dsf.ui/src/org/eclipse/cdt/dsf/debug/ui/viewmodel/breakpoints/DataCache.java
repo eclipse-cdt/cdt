@@ -98,7 +98,7 @@ abstract class DataCache<V> {
     }
     
     /** 
-     * Request data from the cache.  The cache is valid, it will complete the 
+     * Request data from the cache.  If the cache is valid, it will complete the 
      * request immediately, otherwise data will first be retrieved from the 
      * source. 
      * @param req 

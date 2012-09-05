@@ -235,7 +235,7 @@ public class EFSExtensionTests extends TestCase {
 		
 		String path = EFSExtensionManager.getDefault().getMappedPath(originalURI);
 		
-		assertEquals(path, "/c:/foo");
+		assertEquals(path, "c:/foo");
 	}
 	
 	public void testGetPathFromURI() {
@@ -248,7 +248,7 @@ public class EFSExtensionTests extends TestCase {
 		
 		String path = EFSExtensionManager.getDefault().getMappedPath(originalURI);
 		
-		assertEquals(path, "/c:/foo");
+		assertEquals(path, "c:/foo");
 	}
 	
 	public void testExtension() {

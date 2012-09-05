@@ -13,7 +13,9 @@ package org.eclipse.cdt.core;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.URIUtil;
 
 /**
@@ -54,7 +56,15 @@ public abstract class EFSExtensionProvider {
 	 *         physical file.
 	 */
 	public String getPathFromURI(URI locationURI) {
-		return locationURI.getPath();
+		String path = locationURI.getPath();
+		String schema = locationURI.getScheme();
+		if (schema != null && schema.equals(EFS.SCHEME_FILE) && Platform.getOS().equals(Platform.WS_WIN32)) {
+			// URI path on Windows is represented as "/C:/path"
+			if (path != null && path.matches("/[A-Za-z]:.*")) { //$NON-NLS-1$
+				path = path.substring(1);
+			}
+		}
+		return path;
 	}
 
 	/**
@@ -91,7 +101,7 @@ public abstract class EFSExtensionProvider {
 		final int length = pathString.length();
 		StringBuffer pathBuf = new StringBuffer(length + 1);
 
-		// force the path to be absolute
+		// force the path to be absolute including Windows where URI path is represented as "/C:/path"
 		if (length > 0 && (pathString.charAt(0) != '/')) {
 			pathBuf.append('/');
 		}

@@ -31,6 +31,7 @@
  * David McKnight   (IBM)        - [272882] [api] Handle exceptions in IService.initService()
  * David McKnight   (IBM)        - [368454] provide thread safety for cachedRemoteFiles hashmap
  * David McKnight   (IBM)        - [362440] File opened using remote system connection (SSH - Sftp) at some point save action was not saving it to the file system.
+ * David Mcknight   (IBM)        - [374681] Incorrect number of children on the properties page of a directory
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.subsystems;
@@ -1096,8 +1097,10 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 		// if not, the key must be for a file
 		if (key.lastIndexOf(IHostSearchResult.SEARCH_RESULT_DELIMITER) < 0) {
 
-		    IRemoteFile remoteFile = getRemoteFileObject(key, monitor);
-
+			IRemoteFile remoteFile = getCachedRemoteFile(key); // first check for cached file
+			if (remoteFile == null){ // not cached, do query
+				remoteFile = getRemoteFileObject(key, monitor);
+			}
 		    if (remoteFile != null) {
 		        return remoteFile;
 		    }

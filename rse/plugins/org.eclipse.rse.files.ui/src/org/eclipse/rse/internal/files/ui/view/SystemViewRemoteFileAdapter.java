@@ -78,6 +78,7 @@
  * David McKnight   (IBM)        - [363490] PHP files opening in system editor (Dreamweaver)
  * Rick Sawyer      (IBM)        - [376535] RSE does not respect editor overrides
  * David McKnight   (IBM)        - [389838] Fast folder transfer does not account for code page
+ * David Mcknight   (IBM)        - [374681] Incorrect number of children on the properties page of a directory
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -755,7 +756,7 @@ public class SystemViewRemoteFileAdapter
 		IRemoteFile originalFile = file;
 		if (ss instanceof RemoteFileSubSystem){
 			IRemoteFile cachedFile = ((RemoteFileSubSystem)ss).getCachedRemoteFile(file.getAbsolutePath());
-			if (cachedFile != null){
+			if (cachedFile != null && cachedFile != originalFile){
 				file = cachedFile;
 				if (originalFile.isStale()){ // the original file was marked stale, so the cached one should be too
 					file.markStale(true);
@@ -986,7 +987,7 @@ public class SystemViewRemoteFileAdapter
 		IRemoteFile originalFile = file;
 		if (ss instanceof RemoteFileSubSystem){
 			IRemoteFile cachedFile = ((RemoteFileSubSystem)ss).getCachedRemoteFile(file.getAbsolutePath());
-			if (cachedFile != null){
+			if (cachedFile != null && cachedFile != originalFile){
 				file = cachedFile;
 				if (originalFile.isStale()){ // the original file was marked stale, so the cached one should be too
 					file.markStale(true);

@@ -85,6 +85,7 @@
  * David McKnight   (IBM)        - [380613] Problem in SystemView with disposed TreeItem when Link With Editor toolbar icon is used
  * David McKnight   (IBM)        - [385774] select folder dialog doesn't update enablement properly after new folder created
  * David McKnight   (IBM)        - [388364] RDz property view flickers when a user disconnects from zOS system
+ * David Mcknight   (IBM)        - [374681] Incorrect number of children on the properties page of a directory
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -3405,9 +3406,12 @@ public class SystemView extends SafeTreeViewer
 			String newText = adapter.getText(element);
 			if (oldText == null || !oldText.equals(newText))
 			{
-				//if (newText != null){
+				if (newText != null){
 					item.setText(newText);
-				//}
+				}
+				else {
+					SystemBasePlugin.logInfo("SystemView.doUpdateItem() - text for " + element + " is null!");  //$NON-NLS-1$//$NON-NLS-2$
+				}
 			}
 		}
 

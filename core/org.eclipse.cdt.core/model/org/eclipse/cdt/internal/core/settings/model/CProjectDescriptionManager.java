@@ -648,12 +648,12 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 			CCorePlugin.log(e);
 		}
 
-		try {
-			if(checkProjectRefChange(eDes, newDes, newCfg, oldCfg, monitor))
-				modified = true;
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-		}
+//		try {
+//			if(checkProjectRefChange(eDes, newDes, newCfg, oldCfg, monitor))
+//				modified = true;
+//		} catch (CoreException e) {
+//			CCorePlugin.log(e);
+//		}
 
 		return modified;
 	}
@@ -682,6 +682,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 
 	/**
 	 * Fix up platform references having changed CDT configuration references
+	 * TODO remove me
 	 */
 	@SuppressWarnings("unchecked")
 	private boolean checkProjectRefChange(IProjectDescription des, ICProjectDescription newCDesc, ICConfigurationDescription newCfg, ICConfigurationDescription oldCfg, IProgressMonitor monitor) throws CoreException{

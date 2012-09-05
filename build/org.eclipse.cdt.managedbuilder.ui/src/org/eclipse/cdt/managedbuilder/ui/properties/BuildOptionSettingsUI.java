@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2011 IBM Corporation and others.
+ * Copyright (c) 2003, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -72,7 +72,6 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
-import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -279,8 +278,8 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 			if (applicabilityCalculator == null || applicabilityCalculator.isOptionVisible(config, holder, opt)) {
 
 				String optId = getToolSettingsPrefStore().getOptionId(opt);
-				final String nameStr = TextProcessor.process(opt.getName());
-				String tipStr = TextProcessor.process(opt.getToolTip());
+				final String nameStr = opt.getName();
+				String tipStr = opt.getToolTip();
 				String contextId = opt.getContextId();
 
 				if (pageHasToolTipBox && (tipStr==null || tipStr.trim().length()==0)) {
@@ -923,7 +922,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 				IHoldsOptions holder = (IHoldsOptions)options[index][0];
 				if (holder == null) break; //  The array may not be full
 				IOption opt = (IOption)options[index][1];
-				String tipStr = TextProcessor.process(opt.getToolTip());
+				String tipStr = opt.getToolTip();
 
 				// check to see if the option has an applicability calculator
 				IOptionApplicability applicabilityCalculator = opt.getApplicabilityCalculator();

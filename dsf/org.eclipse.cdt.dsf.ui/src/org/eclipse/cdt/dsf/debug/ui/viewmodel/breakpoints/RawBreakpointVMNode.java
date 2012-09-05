@@ -13,7 +13,7 @@ package org.eclipse.cdt.dsf.debug.ui.viewmodel.breakpoints;
 import org.eclipse.debug.core.model.IBreakpoint;
 
 /**
- * Breakpoint node which uses raw breakpiont objects (without a wrapper) as 
+ * Breakpoint node which uses raw breakpoint objects (without a wrapper) as 
  * elements which are populated into the view.  The breakpoint objects are 
  * responsible for supplying their own label and memento providers, as well
  * as content provider for any children.

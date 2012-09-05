@@ -200,6 +200,7 @@ import org.eclipse.cdt.ui.text.folding.ICFoldingStructureProvider;
 
 import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
+import org.eclipse.cdt.internal.corext.util.CModelUtil;
 import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
 
 import org.eclipse.cdt.internal.ui.CPluginImages;
@@ -1286,11 +1287,11 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 			try {
 				IIndexManager indexManager = CCorePlugin.getIndexManager();
 				if (tuToReset != null) {
-					indexManager.update(new ICElement[] { tuToReset },
+					indexManager.update(new ICElement[] { CModelUtil.toOriginal(tuToReset) },
 							IIndexManager.RESET_INDEX_INCLUSION | IIndexManager.UPDATE_CHECK_TIMESTAMPS);
 				}
 				if (tuToAdd != null) {
-					indexManager.update(new ICElement[] { tuToAdd },
+					indexManager.update(new ICElement[] { CModelUtil.toOriginal(tuToAdd) },
 							IIndexManager.FORCE_INDEX_INCLUSION | IIndexManager.UPDATE_CHECK_TIMESTAMPS);
 				}
 			} catch (CoreException e) {

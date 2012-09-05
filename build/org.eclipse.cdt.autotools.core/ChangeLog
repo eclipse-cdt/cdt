@@ -1,5 +1,11 @@
 2012-08-29  Jeff Johnston  <jjohnstn@redhat.com>
 
+	Resolves: bug #381291
+	* plugin.xml: Add other types of binary parsers for Autotools target since it can apply to
+	non-ELF OSes. 
+	
+2012-08-29  Jeff Johnston  <jjohnstn@redhat.com>
+
 	Resolves: bug #388354
 	* plugin.properties: Fix statedir option help tip message.
 	* src/org/eclipse/cdt/internal/autotools/core/configure/ConfigureMessages.properties: Ditto.

@@ -38,7 +38,7 @@ public class PDOMSetupJob extends Job {
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
 		monitor.beginTask("", IProgressMonitor.UNKNOWN); //$NON-NLS-1$
-		while(true) {
+		while (true) {
 			ICProject cproject= fManager.getNextProject();
 			if (cproject == null)
 				return Status.OK_STATUS;

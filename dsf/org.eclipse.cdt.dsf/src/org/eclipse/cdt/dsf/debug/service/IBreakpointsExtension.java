@@ -34,7 +34,7 @@ public interface IBreakpointsExtension extends IBreakpoints {
     }
 
     /**
-     * If a given execution context was suspended due hitting a breakpoint, 
+     * If a given execution context was suspended due to hitting a breakpoint, 
      * this method should return the breakpoints which caused the thread or 
      * container to suspend.
      * <p>

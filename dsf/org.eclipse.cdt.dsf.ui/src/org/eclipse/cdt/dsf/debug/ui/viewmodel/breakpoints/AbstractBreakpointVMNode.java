@@ -50,7 +50,7 @@ public abstract class AbstractBreakpointVMNode extends AbstractVMNode {
 
     /**
      * Class that creates the element object for the corresponding breakpoints.  
-     * This element object will be populated in the breakpoitns view to represent
+     * This element object will be populated in the breakpoints view to represent
      * the given breakpoint.
      */
     abstract protected Object createBreakpiontElement(IBreakpoint bp);

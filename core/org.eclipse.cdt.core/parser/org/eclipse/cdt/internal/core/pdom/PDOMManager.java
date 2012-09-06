@@ -233,9 +233,8 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	 * Called from a job after plugin start.
 	 */
 	protected void postStartup() {
-		// the model listener is attached outside of the job in
-		// order to avoid a race condition where its not noticed
-		// that new projects are being created
+		// The model listener is attached outside of the job in order to avoid a race condition
+		// where it is not noticed that new projects are being created.
 		InstanceScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID).addPreferenceChangeListener(fPreferenceChangeListener);
 		Job.getJobManager().addJobChangeListener(fJobChangeListener);
 		adjustCacheSize();

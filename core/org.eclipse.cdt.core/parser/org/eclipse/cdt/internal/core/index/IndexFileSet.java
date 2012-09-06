@@ -172,9 +172,6 @@ public class IndexFileSet implements IIndexFileSet {
 		return invert;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.index.IIndexFileSet#invert()
-	 */
 	@Override
 	public IIndexFileSet invert() {
 		if (fInverse == null) {

@@ -19,16 +19,16 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
 /**
- * Base class for the UNC path conversion extension point. UNC paths are used to represent remote include
- * locations, and this class is used to translate between UNC, IPath and URI representations. By default,
- * paths are translated into the equivalent local file version to preserve existing behavior, but by providing
- * an appropriate extension, these paths can be mapped into locations on a remote system.
+ * Base class for the UNC path conversion extension point. UNC paths are used to represent remote
+ * include locations, and this class is used to translate between UNC, IPath and URI
+ * representations. By default, paths are translated into the equivalent local file version to
+ * preserve existing behavior, but by providing an appropriate extension, these paths can be mapped
+ * into locations on a remote system.
  * 
  * May be subclassed by clients.
  * @since 5.3
  */
 public abstract class UNCPathConverter {
-
 	/**
 	 * Get the instance of the class that combines the registered converters.
 	 * @return instance of UNCPathConverter
@@ -36,7 +36,6 @@ public abstract class UNCPathConverter {
 	public static UNCPathConverter getInstance() {
 		return UNCPathConverterImpl.getInstance();
 	}
-
 
 	/**
 	 * Test if the string path is in UNC format.
@@ -55,7 +54,6 @@ public abstract class UNCPathConverter {
 		}
 		return false;
 	}
-
 
 	/**
 	 * Convert a URI to an IPath. 

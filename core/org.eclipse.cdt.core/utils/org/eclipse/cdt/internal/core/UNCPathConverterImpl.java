@@ -53,8 +53,8 @@ public class UNCPathConverterImpl extends UNCPathConverter {
 					for (IConfigurationElement ce : ext.getConfigurationElements()) {
 						if (ce.getAttribute(CLASS_ATTRIBUTE) != null) {
 							try {
-								UNCPathConverter converter = (UNCPathConverter) ce
-										.createExecutableExtension(CLASS_ATTRIBUTE);
+								UNCPathConverter converter =
+										(UNCPathConverter) ce.createExecutableExtension(CLASS_ATTRIBUTE);
 								list.add(converter);
 							} catch (Exception e) {
 								CCorePlugin.log(e);

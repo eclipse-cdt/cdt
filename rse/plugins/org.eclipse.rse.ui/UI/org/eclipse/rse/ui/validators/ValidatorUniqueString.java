@@ -16,6 +16,7 @@
  * Kevin Doyle (IBM) - 174776: perform required sorting of Collection arguments
  * David Dykstal (IBM) - 174776: disallowed sorting of input arguments, used copies
  * David McKnight (IBM)  [373326] When one of Duplicate Filter Names is deleted, both filters are deleted.
+ * David McKnight (IBM)  [388592] Renaming a file is case insensitive for Linux on remote systems
  *******************************************************************************/
 
 package org.eclipse.rse.ui.validators;
@@ -309,7 +310,7 @@ public class ValidatorUniqueString
 				  for (int i = 0; i < existingList.length && !match; i++){
 					  String existing = existingList[i];
 					  if (existing != null){
-						  match = newText.toLowerCase().equals(existing.toLowerCase());
+						  match = newText.equals(existing);
 					  }
 				  }
 				  if (match){

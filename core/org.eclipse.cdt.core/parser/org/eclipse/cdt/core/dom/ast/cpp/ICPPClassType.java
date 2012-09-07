@@ -104,7 +104,7 @@ public interface ICPPClassType extends ICompositeType, ICPPBinding {
 	/**
 	 * Returns whether this type is declared final.
 	 * 
-	 * @since 5.5
+	 * @since 5.4
 	 */
 	public boolean isFinal();
 }

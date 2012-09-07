@@ -398,34 +398,42 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 		return array == null ? CharArrayUtils.EMPTY_CHAR_ARRAY : array;
 	}
 
+	/**
+	 * Returns include search path for a given current directory and a IScannerInfo. 
+	 * @param directory the current directory
+	 * @param info scanner information, or {@code null} if not available
+	 * @return the include search path
+	 */
 	public static IncludeSearchPath configureIncludeSearchPath(File directory, IScannerInfo info) {
     	boolean inhibitUseOfCurrentFileDirectory= false;
     	List<IncludeSearchPathElement> elements = new ArrayList<IncludeSearchPathElement>();
 
-    	// Quote includes first
-    	if (info instanceof IExtendedScannerInfo) {
-        	final IExtendedScannerInfo einfo= (IExtendedScannerInfo) info;
-            final String[] paths= einfo.getLocalIncludePath();
-            if (paths != null) {
-            	for (String path : paths) {
-            		if ("-".equals(path)) { //$NON-NLS-1$
-            			inhibitUseOfCurrentFileDirectory= true;
-            		} else {
-            			elements.add(new IncludeSearchPathElement(makeAbsolute(directory, path), true));
-            		}
+    	if (info != null) {
+	    	// Quote includes first
+	    	if (info instanceof IExtendedScannerInfo) {
+	        	final IExtendedScannerInfo einfo= (IExtendedScannerInfo) info;
+	            final String[] paths= einfo.getLocalIncludePath();
+	            if (paths != null) {
+	            	for (String path : paths) {
+	            		if ("-".equals(path)) { //$NON-NLS-1$
+	            			inhibitUseOfCurrentFileDirectory= true;
+	            		} else {
+	            			elements.add(new IncludeSearchPathElement(makeAbsolute(directory, path), true));
+	            		}
+					}
+	            }
+	        }
+	    	// Regular includes
+	    	String[] paths= info.getIncludePaths();
+	    	if (paths != null) {
+	        	for (String path : paths) {
+	        		if ("-".equals(path)) { //$NON-NLS-1$
+	        			inhibitUseOfCurrentFileDirectory= true;
+	        		} else {
+	        			elements.add(new IncludeSearchPathElement(makeAbsolute(directory, path), false));
+	        		}
 				}
-            }
-        }
-    	// Regular includes
-    	String[] paths= info.getIncludePaths();
-    	if (paths != null) {
-        	for (String path : paths) {
-        		if ("-".equals(path)) { //$NON-NLS-1$
-        			inhibitUseOfCurrentFileDirectory= true;
-        		} else {
-        			elements.add(new IncludeSearchPathElement(makeAbsolute(directory, path), false));
-        		}
-			}
+	    	}
     	}
         return new IncludeSearchPath(elements, inhibitUseOfCurrentFileDirectory);
 	}

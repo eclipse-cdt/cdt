@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.index;
 
@@ -150,7 +150,7 @@ public class IndexFileSet implements IIndexFileSet {
 		int j= ok.nextSetBit(0);
 		for (int i = 0; i < result.length; i++) {
 			result[i]= bindings[j];
-			j= ok.nextSetBit(j+1);
+			j= ok.nextSetBit(j + 1);
 		}
 		return result;
 	}
@@ -172,9 +172,6 @@ public class IndexFileSet implements IIndexFileSet {
 		return invert;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.index.IIndexFileSet#invert()
-	 */
 	@Override
 	public IIndexFileSet invert() {
 		if (fInverse == null) {

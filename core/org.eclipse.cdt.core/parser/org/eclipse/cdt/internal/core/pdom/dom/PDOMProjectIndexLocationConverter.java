@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Andrew Ferguson (Symbian) - initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     Andrew Ferguson (Symbian) - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/ 
  package org.eclipse.cdt.internal.core.pdom.dom;
 
@@ -44,23 +44,20 @@ public class PDOMProjectIndexLocationConverter implements IIndexLocationConverte
 		fIgnoreExternal= ignoreWSExternal;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.pdom.dom.IIndexLocationConverter#fromInternalFormat(java.lang.String)
-	 */
 	@Override
 	public IIndexFileLocation fromInternalFormat(String raw) {
 		String fullPath = null;
 		URI uri= null;
-		if(raw.startsWith(EXTERNAL)) {
+		if (raw.startsWith(EXTERNAL)) {
 			try {
 				uri = new URI(raw.substring(EXTERNAL.length()));
-			} catch(URISyntaxException use) {
+			} catch (URISyntaxException e) {
 			}
 		} else {
 			if (raw.startsWith(WS)) {
 				fullPath= raw.substring(WS.length());
 			} else {
-				fullPath= fFullPathPrefix+raw;  
+				fullPath= fFullPathPrefix + raw;  
 			}
 			final IPath path= new Path(fullPath);
 			if (path.segmentCount() > 1) {
@@ -71,13 +68,10 @@ public class PDOMProjectIndexLocationConverter implements IIndexLocationConverte
 		return uri == null ? null : new IndexFileLocation(uri, fullPath);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.pdom.dom.IIndexLocationConverter#toRaw(java.net.URI)
-	 */
 	@Override
 	public String toInternalFormat(IIndexFileLocation location) {
 		String fullPath= location.getFullPath();
-		if(fullPath!=null) {
+		if (fullPath != null) {
 			if (fullPath.startsWith(fFullPathPrefix)) {
 				return fullPath.substring(fFullPathPrefix.length());
 			} 
@@ -87,6 +81,6 @@ public class PDOMProjectIndexLocationConverter implements IIndexLocationConverte
 		if (fIgnoreExternal)
 			return null;
 		
-		return EXTERNAL+location.getURI().toString();
+		return EXTERNAL + location.getURI().toString();
 	}
 }

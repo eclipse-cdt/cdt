@@ -54,6 +54,7 @@ import org.eclipse.cdt.dsf.debug.service.IDsfBreakpointExtension;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.ISuspendedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.ISourceLookup;
 import org.eclipse.cdt.dsf.debug.service.ISourceLookup.ISourceLookupDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControl;
@@ -65,6 +66,7 @@ import org.eclipse.cdt.dsf.mi.service.MIBreakpoints.BreakpointUpdatedEvent;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpoints.MIBreakpointDMContext;
 import org.eclipse.cdt.dsf.mi.service.MIRunControl.SuspendedEvent;
 import org.eclipse.cdt.dsf.mi.service.breakpoint.actions.BreakpointActionAdapter;
+import org.eclipse.cdt.dsf.mi.service.command.events.IMIDMEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIBreakpointHitEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIWatchpointScopeEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIWatchpointTriggerEvent;
@@ -1340,21 +1342,34 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
     // Breakpoint actions
     //-------------------------------------------------------------------------
 
+	/** @since 4.1 */
 	@DsfServiceEventHandler 
+    public void eventDispatched(ISuspendedDMEvent e) {
+		assert e instanceof IMIDMEvent;
+		if (e instanceof IMIDMEvent) {
+			Object miEvent = ((IMIDMEvent)e).getMIEvent();
+
+			if (miEvent instanceof MIBreakpointHitEvent) {
+				// This covers catchpoints, too
+				MIBreakpointHitEvent evt = (MIBreakpointHitEvent)miEvent;
+				performBreakpointAction(evt.getDMContext(), evt.getNumber());
+				return;
+			}
+
+			if (miEvent instanceof MIWatchpointTriggerEvent) {
+				MIWatchpointTriggerEvent evt = (MIWatchpointTriggerEvent)miEvent;
+				performBreakpointAction(evt.getDMContext(), evt.getNumber());
+				return;
+			}
+		}
+	}
+	
+	/**
+	 * @deprecated Replaced by the generic {@link #eventDispatched(ISuspendedDMEvent)}
+	 */
+	@Deprecated
+	@DsfServiceEventHandler
     public void eventDispatched(SuspendedEvent e) {
-
-		if (e.getMIEvent() instanceof MIBreakpointHitEvent) {
-			// This covers catchpoints, too 
-			MIBreakpointHitEvent evt = (MIBreakpointHitEvent) e.getMIEvent();
-	        performBreakpointAction(evt.getDMContext(), evt.getNumber());
-	        return;
-		}
-
-		if (e.getMIEvent() instanceof MIWatchpointTriggerEvent) {
-			MIWatchpointTriggerEvent evt = (MIWatchpointTriggerEvent) e.getMIEvent();
-	        performBreakpointAction(evt.getDMContext(), evt.getNumber());
-	        return;
-		}
 	}
 
     private void performBreakpointAction(final IDMContext context, int number) {

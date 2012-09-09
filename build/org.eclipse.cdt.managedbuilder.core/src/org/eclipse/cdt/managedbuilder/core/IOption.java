@@ -412,7 +412,19 @@ public interface IOption extends IBuildObject {
 	 */
 	public abstract String getId(String name) throws BuildException;
 
-	/**
+    /**
+    * Checks if this option has a child with the given id. 
+    * Applies to options of types that has children
+    * for example {@link #TREE} or {@link #ENUMERATED}
+    * 
+    * @param id the id to search children for
+    * @return <code>true</code> if a child with the given id is present,
+    * <code>false</code> otherwise.
+     * @since 8.2
+    */
+   public abstract boolean hasId(String id) throws BuildException;
+
+   /**
 	 * @return an array of <code>String</code> containing the includes paths
 	 * defined in the build model.
 	 */

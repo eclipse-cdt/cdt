@@ -1458,6 +1458,25 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		}
 		return null;
 	}
+	
+	@Override	
+	public boolean hasId(String id) throws BuildException {
+		if (id == null) return false;
+		
+		if (applicableValuesList == null) {
+			if (superClass != null) {
+				return superClass.hasId(id);
+			} else {
+				return false;
+			}
+		}
+		
+		if (getValueType() != ENUMERATED && getValueType() != TREE) {
+			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
+		}
+
+		return applicableValuesList.contains(id);
+	}
 
 	/* (non-Javadoc)
 	 *

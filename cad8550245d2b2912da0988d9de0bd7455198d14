@@ -1,0 +1,157 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOIn//4PQ\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/OSResourcesView.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 223,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-09-10T20:04:06Z",
+      "side": 1,
+      "message": "This must be done on the DSF Executor.\n\nI haven\u0027t looked into this new code yet, so there may be a better way, I\u0027m not sure yet, but I wanted to put the comment now to make sure I didn\u0027t forget.\n\nYou should have seen an assertion.  Did you set -ea in your launch?",
+      "revId": "cad8550245d2b2912da0988d9de0bd7455198d14",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//4PM\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/ResourceClassContributionItem.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-09-10T20:04:06Z",
+      "side": 1,
+      "message": "Needs fixing?",
+      "revId": "cad8550245d2b2912da0988d9de0bd7455198d14",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//4PI\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/ResourceClassContributionItem.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-09-10T20:04:06Z",
+      "side": 1,
+      "message": "Remove above line?",
+      "revId": "cad8550245d2b2912da0988d9de0bd7455198d14",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//4RI\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-09-10T20:04:06Z",
+      "side": 1,
+      "message": "Please remove",
+      "revId": "cad8550245d2b2912da0988d9de0bd7455198d14",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//4Qw\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS_7_5.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-09-10T20:04:06Z",
+      "side": 1,
+      "message": "Need to use CommandFactory here too",
+      "revId": "cad8550245d2b2912da0988d9de0bd7455198d14",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//4SE\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/IGDBHardwareAndOS.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-09-10T20:04:06Z",
+      "side": 1,
+      "message": "Remove changes to this file please, it should not be changed anymore.",
+      "revId": "cad8550245d2b2912da0988d9de0bd7455198d14",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//4Qk\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/CommandFactory.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-09-10T20:04:06Z",
+      "side": 1,
+      "message": "We prefer not to use the * format. You probably didn\u0027t notice Eclipse did this for you :) You must turn off the preference Java-\u003eCode Style-\u003eOrganize imports and put a high limit for \"Number of imports needed for .*\"",
+      "revId": "cad8550245d2b2912da0988d9de0bd7455198d14",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//4QE\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/CommandFactory.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 621,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-09-10T20:04:06Z",
+      "side": 1,
+      "message": "To be future proof, lets leave the context type to be IDMContext in case some -info-os command may actually apply to a thread or process later on.",
+      "revId": "cad8550245d2b2912da0988d9de0bd7455198d14",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//4Qc\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/CommandFactory.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 630,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-09-10T20:04:06Z",
+      "side": 1,
+      "message": "Please put the two new methods in their proper alphabetical location in the file.  Feel free to add a comment to mention this alphabetical order if you feel it would have helped you notice this.  You are not the first to not notice :)",
+      "revId": "cad8550245d2b2912da0988d9de0bd7455198d14",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -177,6 +177,24 @@
     },
     {
       "key": {
+        "uuid": "AABOIn//4PU\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/OSData.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-09-10T20:02:08Z",
+      "side": 1,
+      "message": "ok",
+      "parentUuid": "AABOIn//5SI\u003d",
+      "revId": "e0f1d11081adf6d64c33ceb5b943e4e78804bf56",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOIn//5tI\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/OSData.java",
         "patchSetId": 3
@@ -772,6 +790,24 @@
     },
     {
       "key": {
+        "uuid": "AABOIn//4RM\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/SessionOSData.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 262,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-09-10T20:02:08Z",
+      "side": 1,
+      "message": "You are right",
+      "parentUuid": "AABOIn//5Qw\u003d",
+      "revId": "e0f1d11081adf6d64c33ceb5b943e4e78804bf56",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOIn//5i4\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/SessionOSData.java",
         "patchSetId": 3
@@ -1028,6 +1064,24 @@
       "side": 1,
       "message": "Done, but why? How can IGDBControl be null here in a service associated with GDB?",
       "parentUuid": "AABOIn//5uY\u003d",
+      "revId": "e0f1d11081adf6d64c33ceb5b943e4e78804bf56",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//4Qs\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS_7_5.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-09-10T20:02:08Z",
+      "side": 1,
+      "message": "There could be some race conditions at shutdown.  I\u0027d rather err on the side of caution",
+      "parentUuid": "AABOIn//5QU\u003d",
       "revId": "e0f1d11081adf6d64c33ceb5b943e4e78804bf56",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -1692,6 +1746,24 @@
       "side": 1,
       "message": "Shall those be eventually promoted somewhere higher up?",
       "parentUuid": "AABOIn//5us\u003d",
+      "revId": "e0f1d11081adf6d64c33ceb5b943e4e78804bf56",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//4QU\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MIInfoOsInfo.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-09-10T20:02:08Z",
+      "side": 1,
+      "message": "That might be a good idea.  The handling of MI was copied from CDI and I\u0027m not very familiar with the details.  Maybe Mikhail may be interested in this from his CDI days.",
+      "parentUuid": "AABOIn//5PA\u003d",
       "revId": "e0f1d11081adf6d64c33ceb5b943e4e78804bf56",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

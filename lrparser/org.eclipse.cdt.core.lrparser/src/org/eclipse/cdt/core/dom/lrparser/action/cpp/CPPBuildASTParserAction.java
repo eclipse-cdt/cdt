@@ -172,12 +172,17 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 
 	
 	public void consumeNewInitializer() {
+		IASTExpression expr;
 		if(astStack.peek() == null) { // if there is an empty set of parens
 			astStack.pop();
-			IASTExpression initializer = nodeFactory.newExpressionList();
-			setOffsetAndLength(initializer);
-			astStack.push(initializer);
+			expr = nodeFactory.newExpressionList();
+			setOffsetAndLength(expr);
+		} else {
+			expr = (IASTExpression) astStack.pop(); // may be null
 		}
+		ICPPASTConstructorInitializer initializer = nodeFactory.newConstructorInitializer(expr);
+		setOffsetAndLength(initializer);
+		astStack.push(initializer);
 	}
 	
 	
@@ -189,13 +194,13 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
      *       | dcolon_opt 'new' new_placement_opt '(' type_id ')' <openscope-ast> new_array_expressions_op new_initializer_opt
 	 */
 	public void consumeExpressionNew(boolean isNewTypeId) {
-		IASTExpression initializer = (IASTExpression) astStack.pop(); // may be null
+		ICPPASTConstructorInitializer initializer = (ICPPASTConstructorInitializer) astStack.pop(); // may be null
 		List<Object> arrayExpressions = astStack.closeScope();
 		IASTTypeId typeId = (IASTTypeId) astStack.pop();
 		IASTExpression placement = (IASTExpression) astStack.pop(); // may be null
 		boolean hasDoubleColon = astStack.pop() != null;
 		
-		ICPPASTNewExpression newExpression = nodeFactory.newNewExpression(placement, initializer, typeId);
+		ICPPASTNewExpression newExpression = nodeFactory.newNewExpression(new IASTExpression[] {placement}, initializer, typeId);
 		newExpression.setIsGlobal(hasDoubleColon);
 		newExpression.setIsNewTypeId(isNewTypeId);
 		setOffsetAndLength(newExpression);
@@ -1635,9 +1640,30 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
      *     ::= mem_initializer_id '(' expression_list_opt ')'
  	 */
  	public void consumeConstructorChainInitializer() {
- 		IASTExpression expr = (IASTExpression) astStack.pop();
- 		IASTName name = (IASTName) astStack.pop();
- 		ICPPASTConstructorChainInitializer initializer = nodeFactory.newConstructorChainInitializer(name, expr);
+		Object o = astStack.pop();
+		IASTName name = (IASTName) astStack.pop();
+		IASTInitializerClause[] initClauseList =null;
+		if(o instanceof IASTExpressionList){
+			initClauseList = ((IASTExpressionList) o).getExpressions();
+		}else if(o instanceof IASTInitializerClause){
+			initClauseList = new IASTInitializerClause[]{(IASTInitializerClause)o};
+		}
+		ICPPASTConstructorInitializer init = nodeFactory.newConstructorInitializer(initClauseList);
+		int rule_start_offset = stream.getLeftIToken().getStartOffset();
+		int initClauseList_offset = ParserUtil.offset(initClauseList[0]);
+		List<IToken> ruleTokens = stream.getRuleTokens();
+		int start_offset = -1;
+		
+		for (int i = initClauseList_offset, n = rule_start_offset; i >= n; i--){
+			if(tokenMap.mapKind(ruleTokens.get(i).getKind()) == TK_LeftParen) {
+				start_offset = ruleTokens.get(i).getStartOffset();
+				break;
+			}
+		}
+		int ruleLength = stream.getRightIToken().getEndOffset() - start_offset;
+		ParserUtil.setOffsetAndLength(init, start_offset, ruleLength < 0 ? 0 : ruleLength);
+ 		
+ 		ICPPASTConstructorChainInitializer initializer = nodeFactory.newConstructorChainInitializer(name, init);
  		setOffsetAndLength(initializer);
 		astStack.push(initializer);
  	}

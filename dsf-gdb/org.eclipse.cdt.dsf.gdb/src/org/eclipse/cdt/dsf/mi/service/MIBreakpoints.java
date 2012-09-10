@@ -839,16 +839,12 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints, I
 								// Flag the event
 								getSession().dispatchEvent(new BreakpointAddedEvent(dmc), getProperties());
 
-								// Break/Watch/Catchpoints that are disabled when set are delayed (we
-								// don't tell gdb about them until the user enables them). So, we shouldn't 
-								// be here if this is a disabled breakpoint
-								assert ((Boolean)getProperty(attributes, IS_ENABLED, true)) == true;
-								
-			               		// Condition, ignore count and cannot be specified at creation time.
+			               		// Condition, ignore count and state cannot be specified at creation time.
 			               		// Therefore, we have to update the catchpoint if any of these is present
 			               		Map<String,Object> delta = new HashMap<String,Object>();
 			               		delta.put(CONDITION,    getProperty(attributes, CONDITION, NULL_STRING));
 			               		delta.put(IGNORE_COUNT, getProperty(attributes, IGNORE_COUNT, 0 ));
+			               		delta.put(IS_ENABLED,   getProperty(attributes, IS_ENABLED, true));
 			               		modifyBreakpoint(dmc, delta, rm, false);
 							}
 

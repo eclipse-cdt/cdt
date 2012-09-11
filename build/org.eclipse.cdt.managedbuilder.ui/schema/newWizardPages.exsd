@@ -152,10 +152,17 @@ If no projectType elements are specified, then it is assumed that the page poten
          </documentation>
       </annotation>
       <complexType>
-         <attribute name="projectTypeID" type="string" use="required">
+         <attribute name="projectTypeID" type="string">
             <annotation>
                <documentation>
                   The unique ID of a projectType for which this page should appear.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="projectTypeIDPattern" type="string">
+            <annotation>
+               <documentation>
+                  Regular expression that is matched against ID of a project type to determine whether this page must be should for that project type
                </documentation>
             </annotation>
          </attribute>

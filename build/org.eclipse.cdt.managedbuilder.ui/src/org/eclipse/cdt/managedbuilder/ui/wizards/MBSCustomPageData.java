@@ -13,9 +13,11 @@
 package org.eclipse.cdt.managedbuilder.ui.wizards;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -289,7 +291,8 @@ public final class MBSCustomPageData
 	}
 
 	/**
-	 * @return The set of project types supported by this page, or null if there are no such dependencies.
+	 * @return The set of patterns to match project types supported by this page, or null if there are no such dependencies.
+	 * The returned list should be treated as regex patterns to be matched by project types using {@link Pattern#matches(String, CharSequence)}
 	 * @since 3.0
 	 */
 	public String[] getProjectTypes()
@@ -366,14 +369,20 @@ public final class MBSCustomPageData
 		if (projectTypeSet == null)	return true;
 		if (projectType == null) return false;
 
-		if (projectType instanceof String)
-			return projectTypeSet.contains(projectType);
-		else if (projectType instanceof Set) {
-			Iterator it = ((Set)projectType).iterator();
-			while (it.hasNext()) {
-				String s = it.next().toString();
-				if (projectTypeSet.contains(s))
-					return true;
+		Set projectTypes = null;
+		if (projectType instanceof String) {
+			projectTypes = new HashSet();
+			projectTypes.add(projectType);
+		} else if (projectType instanceof Set) {
+			projectTypes = (Set) projectType;
+		}
+
+		if (projectTypes != null && !projectTypes.isEmpty()) {
+			for (Object typePattern : projectTypeSet) {
+				Pattern pattern = Pattern.compile((String) typePattern);
+				for (Object type : projectTypes) {
+					if (pattern.matcher((CharSequence) type).matches()) return true;
+				}
 			}
 		}
 		return false; // no one type fits
@@ -394,7 +403,25 @@ public final class MBSCustomPageData
 		if (projectTypeSet == null)
 			projectTypeSet = new TreeSet();
 
-		projectTypeSet.add(projectType);
+		projectTypeSet.add(Pattern.quote(projectType));
+	}
+
+	/**
+	 * Adds a dependency to this page upon a group of project types.  The page will be visible
+	 * iff the project type selected by the user matches the given regex pattern.
+	 * 
+	 * @param projectTypePattern - A regex pattern to match project type.
+	 * @since 8.2
+	 */
+	public void addProjectTypePattern(String projectTypePattern)
+	{
+		if(projectTypePattern == null)
+			return;
+			
+		if (projectTypeSet == null)
+			projectTypeSet = new TreeSet();
+
+		projectTypeSet.add(projectTypePattern);
 	}
 
 	/**

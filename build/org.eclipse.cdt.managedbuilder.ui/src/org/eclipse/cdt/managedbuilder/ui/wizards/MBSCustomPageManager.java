@@ -66,6 +66,11 @@ public final class MBSCustomPageManager
 	public static final String PROJECT_TYPE_ID = "projectTypeID"; //$NON-NLS-1$
 
 	/**
+	 *  ID attribute of projectType element
+	 */
+	public static final String PROJECT_TYPE_ID_PATTERN = "projectTypeIDPattern"; //$NON-NLS-1$
+
+	/**
 	 *  nature element
 	 */
 	public static final String NATURE = "nature"; //$NON-NLS-1$
@@ -272,9 +277,12 @@ public final class MBSCustomPageManager
 			MBSCustomPageData currentPageData) throws BuildException
 	{
 		String projectType = element.getAttribute(PROJECT_TYPE_ID);
+		String projectTypePattern = element.getAttribute(PROJECT_TYPE_ID_PATTERN);
 
 		if (projectType != null)
 			currentPageData.addProjectType(projectType);
+		else if (projectTypePattern != null)
+			currentPageData.addProjectTypePattern(projectTypePattern);
 		else
 			throw new BuildException(Messages.MBSCustomPageManager_error4); 
 	}

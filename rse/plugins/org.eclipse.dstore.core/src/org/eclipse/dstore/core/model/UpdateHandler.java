@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 212 IBM Corporation and others.
+ * Copyright (c) 2002, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@
  * David McKnight   (IBM)   [202822] should not be synchronizing on clean method
  * David McKnight   (IBM) - [226561] [apidoc] Add API markup to RSE Javadocs where extend / implement is allowed
  * David McKnight   (IBM) - [385793] [dstore] DataStore spirit mechanism and other memory improvements needed
+ * David McKnight   (IBM) - [389286] [dstore] element delete should not clear _attributes since elements get recycled
  *******************************************************************************/
 
 package org.eclipse.dstore.core.model;
@@ -127,11 +128,12 @@ public abstract class UpdateHandler extends Handler
 		List nestedData = parent.getNestedData();
 		if (nestedData != null)
 		{
+			boolean isVirtual = parent.getDataStore().isVirtual();
 		for (int i = 0; i < nestedData.size(); i++){
 			DataElement child = (DataElement)nestedData.get(i);
 			cleanChildren(child);
 
-			if (child.isSpirit())
+			if (!isVirtual && child.isSpirit())
 			{
 				// officially delete this now
 				child.delete();

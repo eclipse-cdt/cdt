@@ -16,6 +16,7 @@
  * David McKnight    (IBM)  - [373507] [dstore][multithread] reduce heap memory on disconnect for server
  * David McKnight   (IBM) - [380158] [dstore] DataStore.command() fails when multiple commands issue simultaneously
  * David McKnight   (IBM) - [385793] [dstore] DataStore spirit mechanism and other memory improvements needed
+ * David McKnight   (IBM) - [389286] [dstore] element delete should not clear _attributes since elements get recycled
  *******************************************************************************/
 
 package org.eclipse.dstore.core.model;
@@ -336,7 +337,7 @@ public final class DataElement implements IDataElement
 	 */
 	public boolean isDeleted()
 	{
-		if (_attributes == null)
+		if (_attributes == null ||  _attributes[0] == null || _attributes[0] == "") //$NON-NLS-1$
 		{
 			return true;
 		}
@@ -1556,6 +1557,7 @@ public final class DataElement implements IDataElement
 
 	private void initialize(DataElement typeDescriptor)
 	{
+		getAttributes(); // make sure attributes is not null
 		_isReference = false;
 		_isDescriptor = false;
 		_depth = 1;
@@ -1565,7 +1567,6 @@ public final class DataElement implements IDataElement
 		_isUpdated = false;
 		_descriptor = typeDescriptor;
 
-		
 		String depthStr = getAttribute(DE.A_DEPTH);
 		if (depthStr != null && depthStr.length() > 0)
 		{
@@ -1604,14 +1605,16 @@ public final class DataElement implements IDataElement
 		}
 
 		String type = getAttribute(DE.A_TYPE);
-		if (type.equals(DE.T_OBJECT_DESCRIPTOR)
-			|| type.equals(DE.T_COMMAND_DESCRIPTOR)
-			|| type.equals(DE.T_RELATION_DESCRIPTOR)
-			|| type.equals(DE.T_ABSTRACT_OBJECT_DESCRIPTOR)
-			|| type.equals(DE.T_ABSTRACT_COMMAND_DESCRIPTOR)
-			|| type.equals(DE.T_ABSTRACT_RELATION_DESCRIPTOR))
-		{
-			_isDescriptor = true;
+		if (type != null){
+			if (type.equals(DE.T_OBJECT_DESCRIPTOR)
+				|| type.equals(DE.T_COMMAND_DESCRIPTOR)
+				|| type.equals(DE.T_RELATION_DESCRIPTOR)
+				|| type.equals(DE.T_ABSTRACT_OBJECT_DESCRIPTOR)
+				|| type.equals(DE.T_ABSTRACT_COMMAND_DESCRIPTOR)
+				|| type.equals(DE.T_ABSTRACT_RELATION_DESCRIPTOR))
+			{
+				_isDescriptor = true;
+			}
 		}
 
 		if (_nestedData != null)
@@ -1628,9 +1631,9 @@ public final class DataElement implements IDataElement
 		{
 			for (int i = 0; i < _attributes.length; i++)
 			{
-				_attributes[i] = null;
+				_attributes[i] = ""; //$NON-NLS-1$
 			}
-			_attributes = null;
+			// do not delete _attributes, since we recycle elements
 		}
 
 		if (_nestedData != null)

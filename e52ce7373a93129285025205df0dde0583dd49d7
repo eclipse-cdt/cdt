@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "AABOIn//4BM\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/IGDBHardwareAndOS2.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 570
+      },
+      "writtenOn": "2012-09-12T05:47:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOIn//4QA\u003d",
+      "revId": "e52ce7373a93129285025205df0dde0583dd49d7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOIn//4P4\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/IGDBHardwareAndOS2.java",
         "patchSetId": 5
@@ -30,6 +48,24 @@
       "writtenOn": "2012-09-10T20:04:29Z",
       "side": 1,
       "message": "Java doc to quickly say what this file is meant for",
+      "revId": "e52ce7373a93129285025205df0dde0583dd49d7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//4BI\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/IGDBHardwareAndOS2.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 570
+      },
+      "writtenOn": "2012-09-12T05:47:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOIn//4P4\u003d",
       "revId": "e52ce7373a93129285025205df0dde0583dd49d7",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "AABOIn//4BE\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/IGDBHardwareAndOS2.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 570
+      },
+      "writtenOn": "2012-09-12T05:47:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOIn//4P0\u003d",
+      "revId": "e52ce7373a93129285025205df0dde0583dd49d7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOIn//4Pw\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/IGDBHardwareAndOS2.java",
         "patchSetId": 5
@@ -64,6 +118,24 @@
       "writtenOn": "2012-09-10T20:04:29Z",
       "side": 1,
       "message": "Remove @since since top one is for the whole class",
+      "revId": "e52ce7373a93129285025205df0dde0583dd49d7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//4BA\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/IGDBHardwareAndOS2.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 570
+      },
+      "writtenOn": "2012-09-12T05:47:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOIn//4Pw\u003d",
       "revId": "e52ce7373a93129285025205df0dde0583dd49d7",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "AABOIn//4A8\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/IGDBHardwareAndOS2.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 570
+      },
+      "writtenOn": "2012-09-12T05:47:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOIn//4Ps\u003d",
+      "revId": "e52ce7373a93129285025205df0dde0583dd49d7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOIn//4Pk\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/IGDBHardwareAndOS2.java",
         "patchSetId": 5
@@ -104,6 +194,24 @@
     },
     {
       "key": {
+        "uuid": "AABOIn//4A4\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/IGDBHardwareAndOS2.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 570
+      },
+      "writtenOn": "2012-09-12T05:47:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOIn//4Pk\u003d",
+      "revId": "e52ce7373a93129285025205df0dde0583dd49d7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOIn//4Po\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/IGDBHardwareAndOS2.java",
         "patchSetId": 5
@@ -115,6 +223,24 @@
       "writtenOn": "2012-09-10T20:04:29Z",
       "side": 1,
       "message": "Remove @since since top one is for the whole class",
+      "revId": "e52ce7373a93129285025205df0dde0583dd49d7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//4A0\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/IGDBHardwareAndOS2.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 570
+      },
+      "writtenOn": "2012-09-12T05:47:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOIn//4Po\u003d",
       "revId": "e52ce7373a93129285025205df0dde0583dd49d7",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

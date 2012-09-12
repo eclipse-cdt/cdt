@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "AABOIn//4CA\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/OSResourcesView.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 223,
+      "author": {
+        "id": 570
+      },
+      "writtenOn": "2012-09-12T05:43:30Z",
+      "side": 1,
+      "message": "So, as we\u0027ve found offlist, I had -ea in a wrong place. I have also modified the code to use Query here.",
+      "parentUuid": "AABOIn//4PQ\u003d",
+      "revId": "cad8550245d2b2912da0988d9de0bd7455198d14",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOIn//4PM\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/ResourceClassContributionItem.java",
         "patchSetId": 4
@@ -30,6 +48,24 @@
       "writtenOn": "2012-09-10T20:04:06Z",
       "side": 1,
       "message": "Needs fixing?",
+      "revId": "cad8550245d2b2912da0988d9de0bd7455198d14",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//4Bw\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/ResourceClassContributionItem.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 570
+      },
+      "writtenOn": "2012-09-12T05:43:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOIn//4PM\u003d",
       "revId": "cad8550245d2b2912da0988d9de0bd7455198d14",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "AABOIn//4B8\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/ResourceClassContributionItem.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 570
+      },
+      "writtenOn": "2012-09-12T05:43:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOIn//4PI\u003d",
+      "revId": "cad8550245d2b2912da0988d9de0bd7455198d14",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOIn//4RI\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
         "patchSetId": 4
@@ -64,6 +118,24 @@
       "writtenOn": "2012-09-10T20:04:06Z",
       "side": 1,
       "message": "Please remove",
+      "revId": "cad8550245d2b2912da0988d9de0bd7455198d14",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//4Bs\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 570
+      },
+      "writtenOn": "2012-09-12T05:43:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOIn//4RI\u003d",
       "revId": "cad8550245d2b2912da0988d9de0bd7455198d14",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "AABOIn//4Bo\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS_7_5.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 570
+      },
+      "writtenOn": "2012-09-12T05:43:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOIn//4Qw\u003d",
+      "revId": "cad8550245d2b2912da0988d9de0bd7455198d14",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOIn//4SE\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/IGDBHardwareAndOS.java",
         "patchSetId": 4
@@ -98,6 +188,24 @@
       "writtenOn": "2012-09-10T20:04:06Z",
       "side": 1,
       "message": "Remove changes to this file please, it should not be changed anymore.",
+      "revId": "cad8550245d2b2912da0988d9de0bd7455198d14",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//4Bk\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/IGDBHardwareAndOS.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 570
+      },
+      "writtenOn": "2012-09-12T05:43:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOIn//4SE\u003d",
       "revId": "cad8550245d2b2912da0988d9de0bd7455198d14",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "AABOIn//4Bg\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/CommandFactory.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 570
+      },
+      "writtenOn": "2012-09-12T05:43:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOIn//4Qk\u003d",
+      "revId": "cad8550245d2b2912da0988d9de0bd7455198d14",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOIn//4QE\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/CommandFactory.java",
         "patchSetId": 4
@@ -138,6 +264,24 @@
     },
     {
       "key": {
+        "uuid": "AABOIn//4Bc\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/CommandFactory.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 621,
+      "author": {
+        "id": 570
+      },
+      "writtenOn": "2012-09-12T05:43:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOIn//4QE\u003d",
+      "revId": "cad8550245d2b2912da0988d9de0bd7455198d14",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOIn//4Qc\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/CommandFactory.java",
         "patchSetId": 4
@@ -149,6 +293,24 @@
       "writtenOn": "2012-09-10T20:04:06Z",
       "side": 1,
       "message": "Please put the two new methods in their proper alphabetical location in the file.  Feel free to add a comment to mention this alphabetical order if you feel it would have helped you notice this.  You are not the first to not notice :)",
+      "revId": "cad8550245d2b2912da0988d9de0bd7455198d14",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//4BU\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/CommandFactory.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 630,
+      "author": {
+        "id": 570
+      },
+      "writtenOn": "2012-09-12T05:43:30Z",
+      "side": 1,
+      "message": "I actually tried to put in the right place, but missed later createMIL* method.",
+      "parentUuid": "AABOIn//4Qc\u003d",
       "revId": "cad8550245d2b2912da0988d9de0bd7455198d14",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

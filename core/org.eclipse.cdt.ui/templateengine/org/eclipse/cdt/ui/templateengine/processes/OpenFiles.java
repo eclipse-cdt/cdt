@@ -19,6 +19,10 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
@@ -43,17 +47,39 @@ public class OpenFiles extends ProcessRunner {
 			IProject projectHandle = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
 			IFile iFile = projectHandle.getFile(fileTargetPath);
 			if (iFile.exists()) {
-				try {
-					IDE.openEditor(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(),
-							iFile);
-				} catch (PartInitException e) {
-					throw new ProcessFailureException(Messages.OpenFiles_CannotOpen_error + fileTargetPath);
+				// Only open files if they are not open to avoid refresh problem if files have been modified multiple times
+				if (!isOpen(iFile)) {
+					try {
+						IDE.openEditor(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(),
+								iFile);
+					} catch (PartInitException e) {
+						throw new ProcessFailureException(Messages.OpenFiles_CannotOpen_error
+								+ fileTargetPath);
+					}
 				}
 			}
 			else {
 				throw new ProcessFailureException(Messages.OpenFiles_FileNotExist_error + fileTargetPath);
 			}
 		}
+	}
+	
+	private boolean isOpen(IFile file) {
+		IEditorReference[] editorReferences = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getEditorReferences();
+		if (editorReferences != null) {
+			IEditorInput editorInput;
+			for (IEditorReference editorReference : editorReferences) {
+				try {
+					editorInput = editorReference.getEditorInput();
+					if (editorInput instanceof IFileEditorInput 
+							&& file.equals(((IFileEditorInput)editorInput).getFile())) {
+						return true;
+					}
+				} catch (PartInitException e) {}
+			}
+		}
+		
+		return false;
 	}
 
 }

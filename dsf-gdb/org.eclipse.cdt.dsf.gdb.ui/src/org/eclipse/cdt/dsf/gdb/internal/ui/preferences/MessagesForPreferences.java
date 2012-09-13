@@ -56,8 +56,6 @@ class MessagesForPreferences extends NLS {
 	public static String GdbDebugPreferencePage_Non_stop_mode;
 	public static String GdbDebugPreferencePage_Timeout_column_name;
 	public static String GdbDebugPreferencePage_Timeout_value_can_not_be_negative;
-	/** @since 2.3 */
-	public static String GdbDebugPreferencePage_rtti_label;
 	public static String GdbDebugPreferencePage_Stop_on_startup_at;
 	/** @since 2.3 */
 	public static String GdbDebugPreferencePage_use_rtti_label1;

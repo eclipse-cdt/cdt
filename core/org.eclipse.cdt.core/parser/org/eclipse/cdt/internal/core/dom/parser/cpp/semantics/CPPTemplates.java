@@ -29,7 +29,6 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
-import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
@@ -44,6 +43,7 @@ import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
+import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -56,6 +56,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBas
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
@@ -1074,13 +1075,11 @@ public class CPPTemplates {
 		if (arg == null)
 			return null;
 		if (arg.isNonTypeValue()) {
-			final IValue origValue= arg.getNonTypeValue();
-			final IType origType= arg.getTypeOfNonTypeValue();
-			final IValue instValue= instantiateValue(origValue, tpMap, packOffset, within, Value.MAX_RECURSION_DEPTH, point);
-			final IType instType= instantiateType(origType, tpMap, packOffset, within, point);
-			if (origType == instType && origValue == instValue)
+			final ICPPEvaluation eval = arg.getNonTypeEvaluation();
+			final ICPPEvaluation newEval= eval.instantiate(tpMap, packOffset, within, Value.MAX_RECURSION_DEPTH, point);
+			if (eval == newEval)
 				return arg;
-			return new CPPTemplateNonTypeArgument(instValue, instType);
+			return new CPPTemplateNonTypeArgument(newEval);
 		}
 
 		final IType orig= arg.getTypeValue();
@@ -1676,11 +1675,9 @@ public class CPPTemplates {
 				IASTNode arg= args[i];
 				if (arg instanceof IASTTypeId) {
 					result[i]= new CPPTemplateTypeArgument(CPPVisitor.createType((IASTTypeId) arg));
-				} else if (arg instanceof IASTExpression) {
-					IASTExpression expr= (IASTExpression) arg;
-					IType type= expr.getExpressionType();
-					IValue value= Value.create((IASTExpression) arg, Value.MAX_RECURSION_DEPTH);
-					result[i]= new CPPTemplateNonTypeArgument(value, type);
+				} else if (arg instanceof ICPPASTExpression) {
+					ICPPASTExpression expr= (ICPPASTExpression) arg;
+					result[i]= new CPPTemplateNonTypeArgument(expr.getEvaluation());
 				} else {
 					throw new IllegalArgumentException("Unexpected type: " + arg.getClass().getName()); //$NON-NLS-1$
 				}
@@ -2190,11 +2187,11 @@ public class CPPTemplates {
 				if (map != null && pType != null) {
 					pType= instantiateType(pType, map, -1, null, point);
 				}
-				if (argType instanceof ICPPUnknownType || argType instanceof ISemanticProblem || isNonTypeArgumentConvertible(pType, argType, point)) {
+				
+				if (argType instanceof ICPPUnknownType) {
 					return new CPPTemplateNonTypeArgument(arg.getNonTypeValue(), pType);
 				}
-				return null;
-
+				return convertNonTypeTemplateArgument(pType, arg, point);
 			} catch (DOMException e) {
 				return null;
 			}
@@ -2257,22 +2254,45 @@ public class CPPTemplates {
 	}
 
 	/**
-	 * Returns whether the template argument <code>arg</code> can be converted to
-	 * the same type as <code>paramType</code> using the rules specified in 14.3.2.5.
-	 * @param paramType
-	 * @param arg
-	 * @return
+	 * Converts the template argument <code>arg</code> to match the parameter type
+	 * <code>paramType</code> or returns <code>null</code>, if this violates the rules 
+	 * specified in 14.3.2 - 5.
 	 * @throws DOMException
 	 */
-	private static boolean isNonTypeArgumentConvertible(IType paramType, IType arg, IASTNode point) throws DOMException {
+	private static ICPPTemplateArgument convertNonTypeTemplateArgument(final IType paramType, ICPPTemplateArgument arg, IASTNode point) throws DOMException {
 		//14.1s8 function to pointer and array to pointer conversions
+		IType a= arg.getTypeOfNonTypeValue();
+		IType p;
 		if (paramType instanceof IFunctionType) {
-			paramType = new CPPPointerType(paramType);
+			p = new CPPPointerType(paramType);
 	    } else if (paramType instanceof IArrayType) {
-	    	paramType = new CPPPointerType(((IArrayType) paramType).getType());
+	    	p = new CPPPointerType(((IArrayType) paramType).getType());
+		} else {
+			p= paramType;
+			if (p.isSameType(a))
+				return arg;
 		}
-		Cost cost = Conversions.checkImplicitConversionSequence(paramType, arg, LVALUE, UDCMode.FORBIDDEN, Context.ORDINARY, point);
-		return cost != null && cost.converts();
+		
+		if (a instanceof FunctionSetType) {
+			if (p instanceof IPointerType) {
+				p= ((IPointerType) p).getType();
+			}
+			if (p instanceof IFunctionType) {
+				final CPPFunctionSet functionSet = ((FunctionSetType) a).getFunctionSet();
+				for (ICPPFunction f : functionSet.getBindings()) {
+					if (p.isSameType(f.getType())) {
+						functionSet.applySelectedFunction(f);
+						return new CPPTemplateNonTypeArgument(new EvalBinding(f, null));
+					}
+				}
+			}
+			return null;
+		}
+		Cost cost = Conversions.checkImplicitConversionSequence(p, a, LVALUE, UDCMode.FORBIDDEN, Context.ORDINARY, point);
+		if (cost == null || !cost.converts())
+			return null;
+		
+		return new CPPTemplateNonTypeArgument(arg.getNonTypeValue(), paramType);
 	}
 
 	static boolean argsAreTrivial(ICPPTemplateParameter[] pars, ICPPTemplateArgument[] args) {
@@ -2320,7 +2340,7 @@ public class CPPTemplates {
 		if (arg.isTypeValue())
 			return isDependentType(arg.getTypeValue());
 
-		return Value.isDependentValue(arg.getNonTypeValue());
+		return arg.getNonTypeEvaluation().isValueDependent();
 	}
 
 	public static boolean containsDependentType(List<IType> ts) {

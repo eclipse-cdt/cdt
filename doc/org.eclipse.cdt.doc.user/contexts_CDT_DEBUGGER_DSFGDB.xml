@@ -2,7 +2,7 @@
 <?NLS TYPE="org.eclipse.help.contexts"?>
 <!DOCTYPE contexts [
 	<!ENTITY defaultCSHelp "Default Context Sensitive Help">
-	<!ENTITY gdbmiPrefs "GDB MI Preference Page">
+	<!ENTITY gdbPrefs "GDB Preferences">
 ]>
 <contexts>
 
@@ -12,12 +12,10 @@
    	label="&defaultCSHelp;"/>
 </context>
 <context id="dsfgdb_preference_page">
-   <description>Control the behavior of the C/C++ debugger when debugging with GDB, specifically when using a GDB (DSF) launcher.</description>
-   <topic href="reference/cdt_u_dsfgdb.htm" label="GDB Preferences"/>
+   <description>Control the behavior of the C/C++ debugger when debugging with GDB, specifically when using a GDB (DSF) launcher.  Click below to see detailed help.</description>
+   <topic href="reference/cdt_u_dsfgdb.htm" label="&gdbPrefs;"/>
 </context>
 <context id="update_threadlist_button_context" title="Force thread list update on suspend">
    <description>This checkbox controls whether the CDT debugger will ask gdb for the target program&apos;s thread list on each suspend event (breakpoint-hit, step, etc). Normally, this isn&apos;t necessary, as GDB sends notifications in realtime when a thread is created or destroyed. However, some lightweight GDB remote stubs won&apos;t send these notifications. As such, the CDT debugger doesn&apos;t find out about new or destroyed threads unless it polls gdb. Turn on this option if you are debugging such a target (typically an embedded one).</description>
 </context>
-
-
 </contexts>

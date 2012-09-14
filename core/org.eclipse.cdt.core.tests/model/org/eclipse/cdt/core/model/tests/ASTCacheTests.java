@@ -113,7 +113,7 @@ public class ASTCacheTests extends BaseTestCase {
 		assertNotNull(fTU1);
 		fTU2= (ITranslationUnit) CoreModel.getDefault().create(file2);
 		assertNotNull(fTU2);
-		CCorePlugin.getIndexManager().joinIndexer(5000, npm);
+		waitForIndexer(fProject);
 		fIndex= CCorePlugin.getIndexManager().getIndex(fProject);
 		fIndex.acquireReadLock();
 	}

@@ -43,16 +43,13 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.testplugin.FileManager;
-import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.ui.testplugin.EditorTestHelper;
 import org.eclipse.cdt.ui.tests.BaseUITestCase;
 
@@ -89,14 +86,6 @@ public class BaseSelectionTestsIndexer extends BaseUITestCase {
 		}
 	}
 	
-	public void waitForIndex(int maxSec) throws Exception {
-		assertTrue(CCorePlugin.getIndexManager().joinIndexer(maxSec * 1000, new NullProgressMonitor()));
-	}
-
-	protected void waitUntilFileIsIndexed(IIndex index, IFile file) throws Exception {
-		TestSourceReader.waitUntilFileIsIndexed(index, file, INDEXER_TIMEOUT_SEC * 1000);
-	}
-
 	protected String getMessage(IStatus status) {
 		StringBuffer message = new StringBuffer("["); //$NON-NLS-1$
 		message.append(status.getMessage());
@@ -123,7 +112,7 @@ public class BaseSelectionTestsIndexer extends BaseUITestCase {
         
         fileManager.addFile(file);
         
-        waitForIndex(20); // only wait 20 seconds max.
+        waitForIndexer(fCProject); 
         
         return file;
     }

@@ -108,7 +108,7 @@ public class ResolveBindingTests extends BaseUITestCase  {
 	public void testNamespaceVarBinding() throws Exception {
 		String content = readTaggedComment("namespace-var-test");
 		IFile file= createFile(fCProject.getProject(), "nsvar.cpp", content);
-		waitForIndexer(fIndex, file, WAIT_FOR_INDEXER);
+		waitUntilFileIsIndexed(fIndex, file);
 		
 		IIndex index= CCorePlugin.getIndexManager().getIndex(fCProject);
 		index.acquireReadLock();
@@ -132,7 +132,7 @@ public class ResolveBindingTests extends BaseUITestCase  {
 	public void testNamespaceVarBinding_156519() throws Exception {
 		String content = readTaggedComment("namespace-var-test");
 		IFile file= createFile(fCProject.getProject(), "nsvar.cpp", content);
-		waitForIndexer(fIndex, file, WAIT_FOR_INDEXER);
+		waitUntilFileIsIndexed(fIndex, file);
 		
 		IIndex index= CCorePlugin.getIndexManager().getIndex(fCProject);
 		index.acquireReadLock();
@@ -173,7 +173,7 @@ public class ResolveBindingTests extends BaseUITestCase  {
 		IFile hfile= createFile(fCProject.getProject(), "testMethods.h", content);
 		content = readTaggedComment("testMethods.cpp");
 		IFile cppfile= createFile(fCProject.getProject(), "testMethods.cpp", content);
-		waitForIndexer(fIndex, hfile, WAIT_FOR_INDEXER);
+		waitUntilFileIsIndexed(fIndex, hfile);
 		
 		IIndex index= CCorePlugin.getIndexManager().getIndex(fCProject);
 		index.acquireReadLock();

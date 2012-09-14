@@ -43,11 +43,11 @@ public class ChangeConfigurationTests extends PDOMTestBase {
 		return suite(ChangeConfigurationTests.class);
 	}
 	
-	private void changeConfigRelations(IProject project, int option) throws CoreException {
-		ICProjectDescription pd= CCorePlugin.getDefault().getProjectDescription(project);
+	private void changeConfigRelations(ICProject project, int option) throws CoreException, InterruptedException {
+		ICProjectDescription pd= CCorePlugin.getDefault().getProjectDescription(project.getProject());
 		pd.setConfigurationRelations(option);
-		CCorePlugin.getDefault().setProjectDescription(project, pd);
-		CCorePlugin.getIndexManager().joinIndexer(8000, npm());
+		CCorePlugin.getDefault().setProjectDescription(project.getProject(), pd);
+		waitForIndexer(project);
 	}
 	
 	// Emulates ChangeConfigAction
@@ -79,7 +79,7 @@ public class ChangeConfigurationTests extends PDOMTestBase {
 		IFile file= TestSourceReader.createFile(cProject.getProject(), new Path("test.c"), contents[0].toString());
 		mj.join();
 		mj.dispose();
-		changeConfigRelations(cProject.getProject(), ICProjectDescriptionPreferences.CONFIGS_LINK_SETTINGS_AND_ACTIVE);
+		changeConfigRelations(cProject, ICProjectDescriptionPreferences.CONFIGS_LINK_SETTINGS_AND_ACTIVE);
 		
 		ICProjectDescription prjd = CCorePlugin.getDefault().getProjectDescriptionManager().getProjectDescription(project);
 		ICConfigurationDescription configuration1 = prjd.getConfigurations()[0];

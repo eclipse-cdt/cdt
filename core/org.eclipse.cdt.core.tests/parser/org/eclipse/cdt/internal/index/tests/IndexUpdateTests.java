@@ -102,7 +102,8 @@ public class IndexUpdateTests extends IndexTestBase {
 		if (fCProject == null) {
 			fCProject= CProjectHelper.createCProject("indexUpdateTestsC", null, IPDOMManager.ID_FAST_INDEXER);
 		}
-		CCorePlugin.getIndexManager().joinIndexer(INDEXER_WAIT_TIME, npm());
+		waitForIndexer(fCppProject);
+		waitForIndexer(fCProject);
 		fIndex= CCorePlugin.getIndexManager().getIndex(new ICProject[] {fCProject, fCppProject});
 	}
 
@@ -113,7 +114,8 @@ public class IndexUpdateTests extends IndexTestBase {
 		}
 		IProject project= cpp ? fCppProject.getProject() : fCProject.getProject();
 		fHeader= TestSourceReader.createFile(project, "header.h", fContents[++fContentUsed].toString());
-		assertTrue(CCorePlugin.getIndexManager().joinIndexer(INDEXER_WAIT_TIME, npm()));
+		waitForIndexer(fCppProject);
+		waitForIndexer(fCProject);
 	}
 
 	private void updateHeader() throws Exception {
@@ -122,7 +124,7 @@ public class IndexUpdateTests extends IndexTestBase {
 		IProject project= fHeader.getProject();
 		fHeader= TestSourceReader.createFile(project, "header.h",
 				fContents[++fContentUsed].toString() + "\n// " + fContentUsed); 
-		TestSourceReader.waitUntilFileIsIndexed(fIndex, fHeader, INDEXER_WAIT_TIME);
+		waitUntilFileIsIndexed(fIndex, fHeader);
 	}
 
 	private void setupFile(int totalFileVersions, boolean cpp) throws Exception {
@@ -130,10 +132,10 @@ public class IndexUpdateTests extends IndexTestBase {
 			fContents= getContentsForTest(totalFileVersions);
 			fContentUsed= -1;
 		}
-		IProject project= cpp ? fCppProject.getProject() : fCProject.getProject();
-		fFile= TestSourceReader.createFile(project, "file" + (cpp ? ".cpp" : ".c"), fContents[++fContentUsed].toString());
+		ICProject cproject= cpp ? fCppProject : fCProject;
+		fFile= TestSourceReader.createFile(cproject.getProject(), "file" + (cpp ? ".cpp" : ".c"), fContents[++fContentUsed].toString());
 		TestSourceReader.waitUntilFileIsIndexed(fIndex, fFile, INDEXER_WAIT_TIME);
-		assertTrue(CCorePlugin.getIndexManager().joinIndexer(INDEXER_WAIT_TIME, npm()));
+		waitForIndexer(cproject);
 	}
 	
 	private void updateFile() throws Exception {
@@ -141,7 +143,7 @@ public class IndexUpdateTests extends IndexTestBase {
 		// Indexer would not reindex the file if its contents remain the same. 
 		fFile= TestSourceReader.createFile(fFile.getParent(), fFile.getName(),
 				fContents[++fContentUsed].toString() + "\n// " + fContentUsed); 
-		TestSourceReader.waitUntilFileIsIndexed(fIndex, fFile, INDEXER_WAIT_TIME);
+		waitUntilFileIsIndexed(fIndex, fFile);
 	}
 
 	@Override
@@ -153,7 +155,6 @@ public class IndexUpdateTests extends IndexTestBase {
 		if (fHeader != null) {
 			fHeader.delete(true, npm());
 		}
-		CCorePlugin.getIndexManager().joinIndexer(INDEXER_WAIT_TIME, npm());
 		super.tearDown();
 	}
 		
@@ -945,8 +946,7 @@ public class IndexUpdateTests extends IndexTestBase {
 		}
 
 		fHeader= TestSourceReader.createFile(fHeader.getParent(), fHeader.getName(), fContents[0].toString().replaceAll("globalVar", "newVar"));
-		TestSourceReader.waitUntilFileIsIndexed(fIndex, fHeader, INDEXER_WAIT_TIME);
-		assertTrue(CCorePlugin.getIndexManager().joinIndexer(INDEXER_WAIT_TIME, npm()));
+		waitUntilFileIsIndexed(fIndex, fHeader);
 
 		fIndex.acquireReadLock();
 		try {

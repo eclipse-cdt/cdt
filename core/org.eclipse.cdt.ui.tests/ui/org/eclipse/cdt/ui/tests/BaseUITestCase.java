@@ -43,13 +43,9 @@ import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.WorkbenchPartReference;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndex;
-import org.eclipse.cdt.core.index.IIndexFile;
-import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
@@ -111,43 +107,6 @@ public class BaseUITestCase extends BaseTestCase {
     protected IASTTranslationUnit createIndexBasedAST(IIndex index, ICProject project, IFile file) throws CModelException, CoreException {
     	return TestSourceReader.createIndexBasedAST(index, project, file);
     }
-
-	protected void waitForIndexer(IIndex index, IFile file, int maxmillis) throws Exception {
-		boolean firstTime= true;
-		long endTime= System.currentTimeMillis() + maxmillis;
-		long sleep= 1;
-		while (firstTime || System.currentTimeMillis() < endTime) {
-			if (!firstTime) {
-				Thread.sleep(sleep);
-				sleep= Math.min(250, sleep * 2);
-			}
-			firstTime= false;
-
-			if (CCorePlugin.getIndexManager().isIndexerSetupPostponed(CoreModel.getDefault().create(file.getProject())))
-				continue;
-			try {
-				index.acquireReadLock();  
-				try {
-					IIndexFile[] indexFiles= index.getFiles(IndexLocationFactory.getWorkspaceIFL(file));
-					for (IIndexFile indexFile : indexFiles) {
-						if (indexFile != null && indexFile.getTimestamp() >= file.getLocalTimeStamp()) {
-							return;
-						}
-					}
-				} finally {
-					index.releaseReadLock();
-					int time= (int) (endTime - System.currentTimeMillis());
-					if (time > 0) {
-						CCorePlugin.getIndexManager().joinIndexer(time, npm());
-					}
-				}
-			}
-			catch (InterruptedException e) {
-				// index.acquireReadLock() can be interrupted
-			}
-		}
-		throw new Exception("Indexer did not complete in time!");
-	}
 
 	protected void runEventQueue(int time) {
 		final long endTime= System.currentTimeMillis() + time;

@@ -98,7 +98,7 @@ public class IndexLocationTest extends BaseTestCase {
 			IFile file3 = TestSourceReader.createFile(cproject.getProject(), "source.cpp", content);
 
 			CCorePlugin.getIndexManager().reindex(cproject);		
-			assertTrue(CCorePlugin.getIndexManager().joinIndexer(10000, new NullProgressMonitor()));
+			waitForIndexer(cproject);
 
 			IIndex index = CCorePlugin.getIndexManager().getIndex(cproject);
 			index.acquireReadLock();
@@ -166,7 +166,6 @@ public class IndexLocationTest extends BaseTestCase {
 		
 		IIndex index = CCorePlugin.getIndexManager().getIndex(cproject);
 		TestSourceReader.waitUntilFileIsIndexed(index, content.getFile("external2.h"), 4000);
-		assertTrue(CCorePlugin.getIndexManager().joinIndexer(10000, new NullProgressMonitor()));
 		index.acquireReadLock();
 		try {
 			IBinding[] bs= index.findBindings("External".toCharArray(), IndexFilter.ALL, npm());

@@ -26,7 +26,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.text.IDocument;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.testplugin.TestScannerProvider;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 
@@ -862,11 +861,11 @@ public class CompletionTests extends AbstractContentAssistTest {
 		};
 		String disturbContent= readTaggedComment(DISTURB_FILE_NAME);
 		IFile dfile= createFile(fProject, DISTURB_FILE_NAME, disturbContent);
-		assertTrue(CCorePlugin.getIndexManager().joinIndexer(8000, npm()));
+		waitForIndexer(fCProject);
 		assertCompletionResults(fCursorOffset, expected, AbstractContentAssistTest.COMPARE_REP_STRINGS);
 		
 		dfile.delete(true, npm());
-		assertTrue(CCorePlugin.getIndexManager().joinIndexer(8000, npm()));
+		waitForIndexer(fCProject);
 		assertCompletionResults(fCursorOffset, expected2, AbstractContentAssistTest.COMPARE_REP_STRINGS);
 	}
 	

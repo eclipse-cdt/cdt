@@ -51,7 +51,7 @@ public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 	public void testMethods() throws Exception {
 		String content = readTaggedComment("testMethods");
 		IFile file= createFile(getProject(), "testMethods.cpp", content);
-		waitForIndexer(fIndex, file, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
+		waitUntilFileIsIndexed(fIndex, file);
 		CEditor editor = openEditor(file);
 
 		editor.selectAndReveal(content.indexOf("method"), 2);
@@ -134,7 +134,7 @@ public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 	public void testStaticMethods() throws Exception {
 		String content = readTaggedComment("testStaticMethods");
 		IFile file= createFile(getProject(), "testStaticMethods.cpp", content);
-		waitForIndexer(fIndex, file, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
+		waitUntilFileIsIndexed(fIndex, file);
 		CEditor editor = openEditor(file);
 
 		editor.selectAndReveal(content.indexOf("method"), 2);
@@ -222,7 +222,7 @@ public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 	public void testFields() throws Exception {
 		String content = readTaggedComment("testFields");
 		IFile file= createFile(getProject(), "testFields.cpp", content);
-		waitForIndexer(fIndex, file, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
+		waitUntilFileIsIndexed(fIndex, file);
 		CEditor editor = openEditor(file);
 
 		editor.selectAndReveal(content.indexOf("field"), 2);
@@ -296,7 +296,7 @@ public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 	public void testAutomaticConstructor_156668() throws Exception {
 		String content = readTaggedComment("testAutomaticConstructor");
 		IFile file= createFile(getProject(), "testConstructor.cpp", content);
-		waitForIndexer(fIndex, file, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
+		waitUntilFileIsIndexed(fIndex, file);
 		CEditor editor = openEditor(file);
 
 		editor.selectAndReveal(content.indexOf("MyClass()"), 2);
@@ -309,7 +309,7 @@ public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 	public void _testAutomaticDestructor_156668() throws Exception {
 		String content = readTaggedComment("testAutomaticConstructor");
 		IFile file= createFile(getProject(), "testConstructor.cpp", content);
-		waitForIndexer(fIndex, file, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
+		waitUntilFileIsIndexed(fIndex, file);
 		CEditor editor = openEditor(file);
 		openCallHierarchy(editor);
 		Tree tree = getCHTreeViewer().getTree();
@@ -334,7 +334,7 @@ public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 	public void testConstructor() throws Exception {
 		String content = readTaggedComment("testConstructor");
 		IFile file= createFile(getProject(), "testConstructor.cpp", content);
-		waitForIndexer(fIndex, file, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
+		waitUntilFileIsIndexed(fIndex, file);
 		CEditor editor = openEditor(file);
 
 		editor.selectAndReveal(content.indexOf("MyClass()"), 2);
@@ -347,7 +347,7 @@ public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 	public void testDestructor_156669() throws Exception {
 		String content = readTaggedComment("testConstructor");
 		IFile file= createFile(getProject(), "testConstructor.cpp", content);
-		waitForIndexer(fIndex, file, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
+		waitUntilFileIsIndexed(fIndex, file);
 		CEditor editor = openEditor(file);
 
 		editor.selectAndReveal(content.indexOf("~MyClass()"), 2);
@@ -382,7 +382,7 @@ public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 	public void testNamespace() throws Exception {
 		String content = readTaggedComment("testNamespace");
 		IFile file= createFile(getProject(), "testNamespace.cpp", content);
-		waitForIndexer(fIndex, file, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
+		waitUntilFileIsIndexed(fIndex, file);
 		CEditor editor = openEditor(file);
 
 		editor.selectAndReveal(content.indexOf("var"), 2);
@@ -439,7 +439,7 @@ public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 	public void testNamespacePart2_156519() throws Exception {
 		String content = readTaggedComment("testNamespace");
 		IFile file= createFile(getProject(), "testNamespace.cpp", content);
-		waitForIndexer(fIndex, file, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
+		waitUntilFileIsIndexed(fIndex, file);
 		CEditor editor = openEditor(file);
 
 		editor.selectAndReveal(content.indexOf("var; // r1"), 2);

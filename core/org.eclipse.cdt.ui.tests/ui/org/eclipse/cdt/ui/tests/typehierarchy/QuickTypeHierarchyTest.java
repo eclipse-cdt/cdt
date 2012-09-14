@@ -53,7 +53,7 @@ public class QuickTypeHierarchyTest extends TypeHierarchyBaseTest {
 	public void testSimpleInheritance() throws Exception {
 		String content= getContentsForTest(1)[0].toString();
 		IFile file= createFile(getProject(), "class.cpp", content);
-		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
+		waitUntilFileIsIndexed(fIndex, file);
 		
 		CEditor editor= openEditor(file);
 		Tree tree;
@@ -149,7 +149,7 @@ public class QuickTypeHierarchyTest extends TypeHierarchyBaseTest {
 	public void testSimpleInheritanceFromMember() throws Exception {
 		String content= getContentsForTest(1)[0].toString();
 		IFile file= createFile(getProject(), "classmem.cpp", content);
-		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
+		waitUntilFileIsIndexed(fIndex, file);
 		
 		CEditor editor= openEditor(file);
 		Tree tree;
@@ -231,7 +231,7 @@ public class QuickTypeHierarchyTest extends TypeHierarchyBaseTest {
 	public void testMultipleInheritance() throws Exception {
 		String content= getContentsForTest(1)[0].toString();
 		IFile file= createFile(getProject(), "multi.cpp", content);
-		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
+		waitUntilFileIsIndexed(fIndex, file);
 		
 		CEditor editor= openEditor(file);
 		Tree tree;
@@ -342,7 +342,7 @@ public class QuickTypeHierarchyTest extends TypeHierarchyBaseTest {
 	public void testMultipleInheritanceFromMember() throws Exception {
 		String content= getContentsForTest(1)[0].toString();
 		IFile file= createFile(getProject(), "multimem.cpp", content);
-		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
+		waitUntilFileIsIndexed(fIndex, file);
 		
 		CEditor editor= openEditor(file);
 		Tree tree;
@@ -434,7 +434,7 @@ public class QuickTypeHierarchyTest extends TypeHierarchyBaseTest {
 	public void testDiamondInheritance() throws Exception {
 		String content= getContentsForTest(1)[0].toString();
 		IFile file= createFile(getProject(), "diamond.cpp", content);
-		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
+		waitUntilFileIsIndexed(fIndex, file);
 		
 		CEditor editor= openEditor(file);
 		Tree tree;
@@ -545,7 +545,7 @@ public class QuickTypeHierarchyTest extends TypeHierarchyBaseTest {
 	public void testDiamondInheritanceFromMember() throws Exception {
 		String content= getContentsForTest(1)[0].toString();
 		IFile file= createFile(getProject(), "diamondmem.cpp", content);
-		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
+		waitUntilFileIsIndexed(fIndex, file);
 		
 		CEditor editor= openEditor(file);
 		Tree tree;
@@ -632,7 +632,7 @@ public class QuickTypeHierarchyTest extends TypeHierarchyBaseTest {
 	public void testViaTypedefInheritance() throws Exception {
 		String content= getContentsForTest(1)[0].toString();
 		IFile file= createFile(getProject(), "viaTypedef.cpp", content);
-		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
+		waitUntilFileIsIndexed(fIndex, file);
 		
 		CEditor editor= openEditor(file);
 		Tree tree;
@@ -726,7 +726,7 @@ public class QuickTypeHierarchyTest extends TypeHierarchyBaseTest {
 	public void testViaTypedefInheritanceFromMember() throws Exception {
 		String content= getContentsForTest(1)[0].toString();
 		IFile file= createFile(getProject(), "viaTypedefmem.cpp", content);
-		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
+		waitUntilFileIsIndexed(fIndex, file);
 		
 		CEditor editor= openEditor(file);
 		Tree tree;

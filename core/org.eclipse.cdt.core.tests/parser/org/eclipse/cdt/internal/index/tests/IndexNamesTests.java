@@ -76,8 +76,8 @@ public class IndexNamesTests extends BaseTestCase {
 		return TestSourceReader.createFile(container, new Path(fileName), contents);
 	}
 
-	protected void waitForIndexer() {
-		assertTrue(CCorePlugin.getIndexManager().joinIndexer(10000, npm()));
+	protected void waitForIndexer() throws InterruptedException {
+		waitForIndexer(fCProject);
 	}
 
 	protected Pattern[] getPattern(String qname) {

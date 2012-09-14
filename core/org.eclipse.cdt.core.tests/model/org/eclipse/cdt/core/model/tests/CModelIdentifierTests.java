@@ -18,7 +18,6 @@ import java.util.List;
 
 import junit.framework.Test;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
@@ -67,7 +66,7 @@ public class CModelIdentifierTests extends BaseTestCase {
 				e.printStackTrace();
 			}
 		}
-		CCorePlugin.getIndexManager().joinIndexer(10000, new NullProgressMonitor());
+		waitForIndexer(fCProject);
 	}
 
 	@Override

@@ -64,7 +64,7 @@ public class FilesOnReindexTests extends PDOMTestBase {
 		CCoreInternals.getPDOMManager().reindex(project);
 		
 		// wait until the indexer is done
-		assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));
+        waitForIndexer(project);
 		pdom.acquireReadLock();
 		performAssertions(file);
 	}

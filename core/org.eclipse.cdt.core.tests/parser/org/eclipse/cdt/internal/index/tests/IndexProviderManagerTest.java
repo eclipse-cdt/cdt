@@ -238,8 +238,7 @@ public class IndexProviderManagerTest extends IndexTestBase {
 					return true;
 				}
 			};
-			
-			CCorePlugin.getIndexManager().joinIndexer(8000, npm()); // ensure IPM is called only once under test conditions
+			waitForIndexer(cproject);
 			setExpectedNumberOfLoggedNonOKStatusObjects(3); // foo, bar and baz have no compatible fragments available
 			
 			ipm.reset(VERSION_405); ipm.startup();
@@ -298,7 +297,7 @@ public class IndexProviderManagerTest extends IndexTestBase {
 				}
 			};
 			
-			CCorePlugin.getIndexManager().joinIndexer(8000, npm()); // ensure IPM is called only once under test conditions
+			waitForIndexer(cproject);
 			setExpectedNumberOfLoggedNonOKStatusObjects(1); // contentA has no compatible fragments available
 			
 			ipm.reset(VERSION_502); ipm.startup();
@@ -348,21 +347,21 @@ public class IndexProviderManagerTest extends IndexTestBase {
 			core.setProjectDescription(project, pd);
 			
 			index= CCorePlugin.getIndexManager().getIndex(cproject, A_FRAGMENT_OPTION);
-			CCorePlugin.getIndexManager().joinIndexer(8000, npm());
+			waitForIndexer(cproject);
 		
 			DPT.reset(DP1);
-			changeConfigRelations(project, ICProjectDescriptionPreferences.CONFIGS_LINK_SETTINGS_AND_ACTIVE);
+			changeConfigRelations(cproject, ICProjectDescriptionPreferences.CONFIGS_LINK_SETTINGS_AND_ACTIVE);
 			assertEquals(0, DPT.getProjectsTrace(DP1).size());
 			assertEquals(0, DPT.getCfgsTrace(DP1).size());
 			
-			changeActiveConfiguration(project, cfg1);
+			changeActiveConfiguration(cproject, cfg1);
 			DPT.reset(DP1);
 			index= CCorePlugin.getIndexManager().getIndex(cproject, A_FRAGMENT_OPTION);
 			assertEquals(0, DPT.getProjectsTrace(DP1).size());
 			assertEquals(1, DPT.getCfgsTrace(DP1).size());
 			assertEquals("project.config1", ((ICConfigurationDescription)DPT.getCfgsTrace(DP1).get(0)).getId());
 			
-			changeActiveConfiguration(project, cfg2);
+			changeActiveConfiguration(cproject, cfg2);
 			DPT.reset(DP1);
 			index= CCorePlugin.getIndexManager().getIndex(cproject, A_FRAGMENT_OPTION);
 			assertEquals(0, DPT.getProjectsTrace(DP1).size());
@@ -370,11 +369,11 @@ public class IndexProviderManagerTest extends IndexTestBase {
 			assertEquals("project.config2", ((ICConfigurationDescription)DPT.getCfgsTrace(DP1).get(0)).getId());
 			
 			DPT.reset(DP1);
-			changeConfigRelations(project, ICProjectDescriptionPreferences.CONFIGS_INDEPENDENT);
+			changeConfigRelations(cproject, ICProjectDescriptionPreferences.CONFIGS_INDEPENDENT);
 			assertEquals(0, DPT.getProjectsTrace(DP1).size());
 			assertEquals(0, DPT.getCfgsTrace(DP1).size());
 			
-			changeActiveConfiguration(project, cfg1);
+			changeActiveConfiguration(cproject, cfg1);
 			DPT.reset(DP1);
 			index= CCorePlugin.getIndexManager().getIndex(cproject, A_FRAGMENT_OPTION);
 			assertEquals(0, DPT.getProjectsTrace(DP1).size());
@@ -382,7 +381,7 @@ public class IndexProviderManagerTest extends IndexTestBase {
 			// should still be config2, as the change in active configuration does not matter
 			assertEquals("project.config2", ((ICConfigurationDescription)DPT.getCfgsTrace(DP1).get(0)).getId());
 			
-			changeActiveConfiguration(project, cfg2);
+			changeActiveConfiguration(cproject, cfg2);
 			DPT.reset(DP1);
 			index= CCorePlugin.getIndexManager().getIndex(cproject, A_FRAGMENT_OPTION);
 			assertEquals(0, DPT.getProjectsTrace(DP1).size());
@@ -556,18 +555,18 @@ public class IndexProviderManagerTest extends IndexTestBase {
 		return des.createConfiguration(CCorePlugin.DEFAULT_PROVIDER_ID, data);		
 	}
 	
-	private void changeActiveConfiguration(IProject project, ICConfigurationDescription cfg) throws CoreException {
-		ICProjectDescription pd= core.getProjectDescription(project);
+	private void changeActiveConfiguration(ICProject cproject, ICConfigurationDescription cfg) throws CoreException, InterruptedException {
+		ICProjectDescription pd= core.getProjectDescription(cproject.getProject());
 		pd.setActiveConfiguration(pd.getConfigurationById(cfg.getId()));
-		core.setProjectDescription(project, pd);
-		CCorePlugin.getIndexManager().joinIndexer(8000, npm());
+		core.setProjectDescription(cproject.getProject(), pd);
+		waitForIndexer(cproject);
 	}
 	
-	private void changeConfigRelations(IProject project, int option) throws CoreException {
-		ICProjectDescription pd= core.getProjectDescription(project);
+	private void changeConfigRelations(ICProject cproject, int option) throws CoreException, InterruptedException {
+		ICProjectDescription pd= core.getProjectDescription(cproject.getProject());
 		pd.setConfigurationRelations(option);
-		core.setProjectDescription(project, pd);
-		CCorePlugin.getIndexManager().joinIndexer(8000, npm());
+		core.setProjectDescription(cproject.getProject(), pd);
+		waitForIndexer(cproject);
 	}
 }
 
@@ -830,7 +829,7 @@ class MockState {
 	public static final String DBG_V2_ID = "dbg_v2";
 	public static final List states = new ArrayList(Arrays.asList(new String[]{REL_V1_ID, REL_V2_ID, DBG_V1_ID, DBG_V2_ID}));
 
-	private IProject project;
+	private final IProject project;
 	private String currentConfig;
 
 	public MockState(ICProject cproject) {

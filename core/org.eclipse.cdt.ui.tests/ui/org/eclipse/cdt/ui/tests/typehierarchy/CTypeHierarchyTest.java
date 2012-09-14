@@ -36,7 +36,7 @@ public class CTypeHierarchyTest extends TypeHierarchyBaseTest {
 	public void testEnumC() throws Exception {
 		String content= getContentsForTest(1)[0].toString();
 		IFile file= createFile(getProject(), "enum.c", content);
-		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
+		waitUntilFileIsIndexed(fIndex, file);
 		CEditor editor= openEditor(file);
 		Tree tree;
 		TreeItem item;
@@ -72,7 +72,7 @@ public class CTypeHierarchyTest extends TypeHierarchyBaseTest {
 	public void testEnumCFromMember() throws Exception {
 		String content= getContentsForTest(1)[0].toString();
 		IFile file= createFile(getProject(), "enummem.c", content);
-		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
+		waitUntilFileIsIndexed(fIndex, file);
 		CEditor editor= openEditor(file);
 		Tree tree;
 		TreeItem item;
@@ -108,7 +108,7 @@ public class CTypeHierarchyTest extends TypeHierarchyBaseTest {
 	public void testEnumCPP() throws Exception {
 		String content= getContentsForTest(1)[0].toString();
 		IFile file= createFile(getProject(), "enum.cpp", content);
-		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
+		waitUntilFileIsIndexed(fIndex, file);
 		CEditor editor= openEditor(file);
 		Tree tree;
 		TreeItem item;
@@ -144,7 +144,7 @@ public class CTypeHierarchyTest extends TypeHierarchyBaseTest {
 	public void testEnumCPPFromMember() throws Exception {
 		String content= getContentsForTest(1)[0].toString();
 		IFile file= createFile(getProject(), "enummem.cpp", content);
-		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
+		waitUntilFileIsIndexed(fIndex, file);
 		CEditor editor= openEditor(file);
 		Tree tree;
 		TreeItem item;
@@ -188,7 +188,7 @@ public class CTypeHierarchyTest extends TypeHierarchyBaseTest {
 	public void testStructC() throws Exception {
 		String content= getContentsForTest(1)[0].toString();
 		IFile file= createFile(getProject(), "struct.c", content);
-		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
+		waitUntilFileIsIndexed(fIndex, file);
 		CEditor editor= openEditor(file);
 
 		editor.selectAndReveal(content.indexOf("S1"), 1);
@@ -242,7 +242,7 @@ public class CTypeHierarchyTest extends TypeHierarchyBaseTest {
 	public void testStructCFromMember() throws Exception {
 		String content= getContentsForTest(1)[0].toString();
 		IFile file= createFile(getProject(), "structmem.c", content);
-		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
+		waitUntilFileIsIndexed(fIndex, file);
 		CEditor editor= openEditor(file);
 
 		editor.selectAndReveal(content.indexOf("a1"), 1);
@@ -276,7 +276,7 @@ public class CTypeHierarchyTest extends TypeHierarchyBaseTest {
 	public void testStructCPP() throws Exception {
 		String content= getContentsForTest(1)[0].toString();
 		IFile file= createFile(getProject(), "struct.cpp", content);
-		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
+		waitUntilFileIsIndexed(fIndex, file);
 		CEditor editor= openEditor(file);
 
 		editor.selectAndReveal(content.indexOf("S1"), 1);
@@ -331,7 +331,7 @@ public class CTypeHierarchyTest extends TypeHierarchyBaseTest {
 	public void testStructCPPFromMember() throws Exception {
 		String content= getContentsForTest(1)[0].toString();
 		IFile file= createFile(getProject(), "structmem.cpp", content);
-		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
+		waitUntilFileIsIndexed(fIndex, file);
 		CEditor editor= openEditor(file);
 
 		editor.selectAndReveal(content.indexOf("a1"), 1);
@@ -365,7 +365,7 @@ public class CTypeHierarchyTest extends TypeHierarchyBaseTest {
 	public void testUnionC() throws Exception {
 		String content= getContentsForTest(1)[0].toString();
 		IFile file= createFile(getProject(), "union.c", content);
-		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
+		waitUntilFileIsIndexed(fIndex, file);
 		CEditor editor= openEditor(file);
 
 		editor.selectAndReveal(content.indexOf("U1"), 1);
@@ -415,7 +415,7 @@ public class CTypeHierarchyTest extends TypeHierarchyBaseTest {
 	public void testUnionCFromMember() throws Exception {
 		String content= getContentsForTest(1)[0].toString();
 		IFile file= createFile(getProject(), "unionmem.c", content);
-		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
+		waitUntilFileIsIndexed(fIndex, file);
 		CEditor editor= openEditor(file);
 
 		editor.selectAndReveal(content.indexOf("a1"), 1);
@@ -441,7 +441,7 @@ public class CTypeHierarchyTest extends TypeHierarchyBaseTest {
 	public void testUnionCPP() throws Exception {
 		String content= getContentsForTest(1)[0].toString();
 		IFile file= createFile(getProject(), "union.cpp", content);
-		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
+		waitUntilFileIsIndexed(fIndex, file);
 		CEditor editor= openEditor(file);
 
 		editor.selectAndReveal(content.indexOf("U1"), 1);
@@ -500,7 +500,7 @@ public class CTypeHierarchyTest extends TypeHierarchyBaseTest {
 	public void testUnionCPPFromMember() throws Exception {
 		String content= getContentsForTest(1)[0].toString();
 		IFile file= createFile(getProject(), "unionmem.cpp", content);
-		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
+		waitUntilFileIsIndexed(fIndex, file);
 		CEditor editor= openEditor(file);
 
 		editor.selectAndReveal(content.indexOf("a1"), 1);

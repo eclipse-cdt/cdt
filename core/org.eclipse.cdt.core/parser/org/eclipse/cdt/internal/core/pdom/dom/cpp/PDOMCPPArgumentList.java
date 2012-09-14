@@ -11,11 +11,8 @@
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
-import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateNonTypeArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTypeArgument;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
@@ -27,8 +24,7 @@ import org.eclipse.core.runtime.CoreException;
  * Collects methods to store an argument list in the database
  */
 public class PDOMCPPArgumentList {
-	private static final int VALUE_OFFSET= Database.TYPE_SIZE;
-	private static final int NODE_SIZE = VALUE_OFFSET + Database.VALUE_SIZE;
+	private static final int NODE_SIZE = Database.ARGUMENT_SIZE;
 	
 	/**
 	 * Stores the given template arguments in the database.
@@ -45,13 +41,7 @@ public class PDOMCPPArgumentList {
 		p += 2;
 		for (int i= 0; i < len; i++, p += NODE_SIZE) {
 			final ICPPTemplateArgument arg = templateArguments[i];
-			final boolean isNonType= arg.isNonTypeValue();
-			if (isNonType) {
-				linkage.storeType(p, arg.getTypeOfNonTypeValue());
-				linkage.storeValue(p + VALUE_OFFSET, arg.getNonTypeValue());
-			} else {
-				linkage.storeType(p, arg.getTypeValue());
-			}
+			linkage.storeTemplateArgument(p, arg);
 		}
 		return block;
 	}
@@ -67,8 +57,7 @@ public class PDOMCPPArgumentList {
 		Assert.isTrue(len >= 0 && len <= (Database.MAX_MALLOC_SIZE - 2) / NODE_SIZE);
 		long p= record + 2;
 		for (int i= 0; i < len; i++) {
-			linkage.storeType(p, null);
-			linkage.storeValue(p + VALUE_OFFSET, null);
+			linkage.storeTemplateArgument(p, null);
 			p+= NODE_SIZE;
 		}
 		db.free(record);
@@ -90,16 +79,11 @@ public class PDOMCPPArgumentList {
 		rec += 2;
 		ICPPTemplateArgument[] result= new ICPPTemplateArgument[len];
 		for (int i= 0; i < len; i++) {
-			IType type= linkage.loadType(rec);
-			if (type == null) {
-				type= new ProblemType(ISemanticProblem.TYPE_NOT_PERSISTED);
+			ICPPTemplateArgument arg= linkage.loadTemplateArgument(rec);
+			if (arg == null) {
+				arg= new CPPTemplateTypeArgument(new ProblemType(ISemanticProblem.TYPE_NOT_PERSISTED));
 			}
-			IValue val= linkage.loadValue(rec + VALUE_OFFSET);
-			if (val != null) {
-				result[i]= new CPPTemplateNonTypeArgument(val, type);
-			} else {
-				result[i]= new CPPTemplateTypeArgument(type);
-			}
+			result[i]= arg;
 			rec += NODE_SIZE;
 		}
 		return result;

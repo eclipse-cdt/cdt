@@ -201,7 +201,7 @@ public class TypeMarshalBuffer implements ITypeMarshalBuffer {
 	public ICPPTemplateArgument unmarshalTemplateArgument() throws CoreException {
 		int firstByte= getByte();
 		if (firstByte == VALUE) {
-			return new CPPTemplateNonTypeArgument((ICPPEvaluation) unmarshalEvaluation());
+			return new CPPTemplateNonTypeArgument((ICPPEvaluation) unmarshalEvaluation(), null);
 		} else {
 			fPos--;
 			return new CPPTemplateTypeArgument(unmarshalType());

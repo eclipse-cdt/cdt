@@ -1079,7 +1079,7 @@ public class CPPTemplates {
 			final ICPPEvaluation newEval= eval.instantiate(tpMap, packOffset, within, Value.MAX_RECURSION_DEPTH, point);
 			if (eval == newEval)
 				return arg;
-			return new CPPTemplateNonTypeArgument(newEval);
+			return new CPPTemplateNonTypeArgument(newEval, point);
 		}
 
 		final IType orig= arg.getTypeValue();
@@ -1677,7 +1677,7 @@ public class CPPTemplates {
 					result[i]= new CPPTemplateTypeArgument(CPPVisitor.createType((IASTTypeId) arg));
 				} else if (arg instanceof ICPPASTExpression) {
 					ICPPASTExpression expr= (ICPPASTExpression) arg;
-					result[i]= new CPPTemplateNonTypeArgument(expr.getEvaluation());
+					result[i]= new CPPTemplateNonTypeArgument(expr.getEvaluation(), expr);
 				} else {
 					throw new IllegalArgumentException("Unexpected type: " + arg.getClass().getName()); //$NON-NLS-1$
 				}
@@ -2282,7 +2282,7 @@ public class CPPTemplates {
 				for (ICPPFunction f : functionSet.getBindings()) {
 					if (p.isSameType(f.getType())) {
 						functionSet.applySelectedFunction(f);
-						return new CPPTemplateNonTypeArgument(new EvalBinding(f, null));
+						return new CPPTemplateNonTypeArgument(new EvalBinding(f, null), point);
 					}
 				}
 			}

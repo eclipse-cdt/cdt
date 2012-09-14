@@ -77,6 +77,7 @@ public class Database {
 	public static final int PTR_SIZE = 4;  // size of a pointer in the database in bytes  
 	public static final int TYPE_SIZE = 2+PTR_SIZE;  // size of a type in the database in bytes
 	public static final int VALUE_SIZE = TYPE_SIZE;  // size of a value in the database in bytes
+	public static final int ARGUMENT_SIZE = TYPE_SIZE;  // size of a template argument in the database in bytes
 	public static final long MAX_DB_SIZE= ((long) 1 << (Integer.SIZE + BLOCK_SIZE_DELTA_BITS));
 
 

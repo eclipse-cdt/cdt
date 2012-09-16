@@ -834,7 +834,7 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
         IFile hcppfile = importFile("cpp.h", hcppcode); 
         IFile cppfile = importFile("cpp.cpp", cppcode); 
         CCorePlugin.getIndexManager().reindex(fCProject);
-        waitForIndex(INDEXER_TIMEOUT_SEC * 1000);
+        waitForIndexer(fCProject); 
         
         IASTNode decl;
         int offset0, offset1;

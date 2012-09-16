@@ -580,20 +580,6 @@ public class GdbDebugPreferencePage extends FieldEditorPreferencePage implements
 		enableStopAtMain.fillIntoGrid(group1, 3);
 		addField(enableStopAtMain);
 
-//		final StringFieldEditor stopAtMainSymbol = new StringFieldEditor(
-//				IGdbDebugPreferenceConstants.PREF_DEFAULT_STOP_AT_MAIN_SYMBOL,
-//				"",	group1); //$NON-NLS-1$
-//		stopAtMainSymbol.fillIntoGrid(group1, 2);
-//		addField(stopAtMainSymbol);
-//
-//		enableStopAtMain.getChangeControl(group1).addSelectionListener(new SelectionAdapter() {
-//			@Override
-//			public void widgetSelected(SelectionEvent e) {
-//				boolean enabled = enableStopAtMain.getBooleanValue();
-//				stopAtMainSymbol.setEnabled(enabled, group1);
-//			}
-//		});
-
 		fCommandTimeoutField = new IntegerWithBooleanFieldEditor( 
 				IGdbDebugPreferenceConstants.PREF_COMMAND_TIMEOUT, 
 				IGdbDebugPreferenceConstants.PREF_COMMAND_TIMEOUT_VALUE, 
@@ -659,34 +645,28 @@ public class GdbDebugPreferencePage extends FieldEditorPreferencePage implements
 		// Need to set layout again.
 		group2.setLayout(groupLayout);
 
-		final ListenableBooleanFieldEditor enableGdbTracesField = new ListenableBooleanFieldEditor(
+		final IntegerWithBooleanFieldEditor enableGdbTracesField = new IntegerWithBooleanFieldEditor(
 				IGdbDebugPreferenceConstants.PREF_TRACES_ENABLE,
-				MessagesForPreferences.GdbDebugPreferencePage_enableTraces_label,
-				SWT.NONE, group2);
-
-		enableGdbTracesField.fillIntoGrid(group2, 3);
-		addField(enableGdbTracesField);
-
-		final IntegerFieldEditor maxCharactersField = new IntegerFieldEditor(
 				IGdbDebugPreferenceConstants.PREF_MAX_GDB_TRACES,
-				MessagesForPreferences.GdbDebugPreferencePage_maxGdbTraces_label,
+				MessagesForPreferences.GdbDebugPreferencePage_enableTraces_label,
 				group2);
 		// Instead of using Integer.MAX_VALUE which is some obscure number,
 		// using 2 billion is nice and readable.
-		maxCharactersField.setValidRange(10000, 2000000000);
-
-		maxCharactersField.fillIntoGrid(group2, 3);
-		addField(maxCharactersField);
-
-		enableGdbTracesField.getChangeControl(group2).addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				boolean enabled = enableGdbTracesField.getBooleanValue();
-				maxCharactersField.setEnabled(enabled, group2);
-			}
-		});
-
+		enableGdbTracesField.setValidRange(10000, 2000000000);
+		enableGdbTracesField.fillIntoGrid(group2, 2);
+		addField(enableGdbTracesField);
 		// Need to set layout again.
+		group2.setLayout(groupLayout);
+
+		boolField= new BooleanFieldEditor(
+				IGdbDebugPreferenceConstants.PREF_USE_RTTI,
+				MessagesForPreferences.GdbDebugPreferencePage_use_rtti_label1 + "\n" //$NON-NLS-1$
+				+ MessagesForPreferences.GdbDebugPreferencePage_use_rtti_label2,
+				group2);
+
+		boolField.fillIntoGrid(group2, 3);
+		addField(boolField);
+		// need to set layout again
 		group2.setLayout(groupLayout);
 
 		Group group = new Group(parent, SWT.NONE);
@@ -732,23 +712,6 @@ public class GdbDebugPreferencePage extends FieldEditorPreferencePage implements
 				childCountLimitField.setEnabled(enabled, indentHelper);
 			}
 		});
-
-		group= new Group(parent, SWT.NONE);
-		group.setText(MessagesForPreferences.GdbDebugPreferencePage_rtti_label);
-		groupLayout= new GridLayout(3, false);
-		group.setLayout(groupLayout);
-		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-		boolField= new BooleanFieldEditor(
-				IGdbDebugPreferenceConstants.PREF_USE_RTTI,
-				MessagesForPreferences.GdbDebugPreferencePage_use_rtti_label1 + "\n" //$NON-NLS-1$
-				+ MessagesForPreferences.GdbDebugPreferencePage_use_rtti_label2,
-				group);
-
-		boolField.fillIntoGrid(group, 3);
-		addField(boolField);
-		// need to set layout again
-		group.setLayout(groupLayout);
 
 		// need to set layouts again
 		indentHelper.setLayout(helperLayout);

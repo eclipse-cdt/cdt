@@ -148,7 +148,7 @@ public class CheckerTestCase extends CodanTestCase {
 	public void runOnProject() {
 		try {
 			indexFiles();
-		} catch (CoreException e) {
+		} catch (Exception e) {
 			fail(e.getMessage());
 		}
 		runCodan();

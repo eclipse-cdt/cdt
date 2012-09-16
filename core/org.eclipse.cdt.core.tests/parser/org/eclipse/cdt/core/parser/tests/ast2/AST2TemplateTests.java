@@ -6011,4 +6011,27 @@ public class AST2TemplateTests extends AST2BaseTest {
 	public void testIsPOD_367993() throws Exception {
 		parseAndCheckBindings(getAboveComment(), CPP, true);
 	}
+	
+	//	template<typename T, void (T::*M)()> class A {
+	//	public:
+	//		static void Delegate(void* thiz) { ((T*)thiz->*M)(); }
+	//	};
+	//	class B {
+	//	public:
+	//		void Method() {}
+	//	};
+	//	class C {
+	//	public:
+	//		template<typename T, void (T::*M)()>
+	//		void callDelegate(A<T, M>& thiz) { A<T, M>::Delegate(&thiz); }
+	//	};
+	//	void Run() {
+	//		C c;
+	//		B b;
+	//		A<B, &B::Method> a; /* no error this line */
+	//		c.callDelegate(a); /* Invalid arguments 'Candidates are: void callDelegate(A<#0,#1> &)' */
+	//	}
+	public void testDeductionOfNonTypeTemplateArg_372587() throws Exception {
+		parseAndCheckBindings(getAboveComment(), CPP, true);
+	}
 }

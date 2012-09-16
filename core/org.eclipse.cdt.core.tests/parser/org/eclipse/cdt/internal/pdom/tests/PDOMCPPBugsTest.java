@@ -58,7 +58,7 @@ public class PDOMCPPBugsTest extends BaseTestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		cproject= CProjectHelper.createCCProject("PDOMBugsTest"+System.currentTimeMillis(), "bin", IPDOMManager.ID_FAST_INDEXER);
-		assertTrue(CCorePlugin.getIndexManager().joinIndexer(8000, npm()));
+		waitForIndexer(cproject);
 	}
 
 	@Override
@@ -122,7 +122,7 @@ public class PDOMCPPBugsTest extends BaseTestCase {
 			assertFalse("Project pdom ID equals export PDOM id", id2.equals(id));
 			
 			pdomManager.reindex(cproject);
-			assertTrue(pdomManager.joinIndexer(4000, new NullProgressMonitor()));
+			waitForIndexer(cproject);
 			
 			String id3= pdom.getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID);
 			assertNotNull("Exported pdom ID is null after project reindex", id3);
@@ -217,7 +217,7 @@ public class PDOMCPPBugsTest extends BaseTestCase {
 		
 		IndexerPreferences.set(project, IndexerPreferences.KEY_INDEXER_ID, IPDOMManager.ID_FAST_INDEXER);
 		CCorePlugin.getIndexManager().reindex(cproject);
-		CCorePlugin.getIndexManager().joinIndexer(10000, npm());
+		waitForIndexer(cproject);
 		
 		final PDOM pdom= (PDOM) CCoreInternals.getPDOMManager().getPDOM(cproject);
 		pdom.acquireReadLock();

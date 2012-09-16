@@ -78,7 +78,7 @@ public class BasicOutlineTest extends BaseUITestCase {
 	}
 
 	private void waitForIndexer(IProject project, IFile source) throws Exception, CoreException {
-		waitForIndexer(CCorePlugin.getIndexManager().getIndex(fCProject), source, INDEXER_WAIT_TIME);
+		waitUntilFileIsIndexed(CCorePlugin.getIndexManager().getIndex(fCProject), source);
 	}
 
 	private void checkTreeItems(TreeItem[] items, String... labels) {

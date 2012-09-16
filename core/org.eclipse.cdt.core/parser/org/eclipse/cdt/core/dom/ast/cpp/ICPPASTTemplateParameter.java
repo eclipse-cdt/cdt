@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM) - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     John Camelon (IBM) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
@@ -20,7 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPASTTemplateParameter extends IASTNode {
-	public static final ICPPASTTemplateParameter[] EMPTY_TEMPLATEPARAMETER_ARRAY = new ICPPASTTemplateParameter[0];
+	public static final ICPPASTTemplateParameter[] EMPTY_TEMPLATEPARAMETER_ARRAY = {};
 
 	/**
 	 * Returns whether this template parameter is a parameter pack.

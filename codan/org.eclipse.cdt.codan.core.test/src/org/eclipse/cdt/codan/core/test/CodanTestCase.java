@@ -127,7 +127,7 @@ public class CodanTestCase extends BaseTestCase {
 		return cprojects[0];
 	}
 
-	protected void indexFiles() throws CoreException {
+	protected void indexFiles() throws CoreException, InterruptedException {
 		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		workspace.run(new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
@@ -138,9 +138,7 @@ public class CodanTestCase extends BaseTestCase {
 		CCorePlugin.getIndexManager().setIndexerId(cproject, IPDOMManager.ID_FAST_INDEXER);
 		CCorePlugin.getIndexManager().reindex(cproject);
 		// wait until the indexer is done
-		assertTrue(CCorePlugin.getIndexManager().joinIndexer(1000 * 60, // 1 min
-				new NullProgressMonitor()));
-		return;
+		waitForIndexer(cproject);
 	}
 
 	/**

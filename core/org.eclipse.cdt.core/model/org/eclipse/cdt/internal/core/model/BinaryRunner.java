@@ -65,11 +65,10 @@ public class BinaryRunner {
 			ICElement root = factory.getCModel();
 			CElementDelta cdelta = new CElementDelta(root);
 			cdelta.changed(cproj, ICElementDelta.F_CONTENT);
-			for (int j = 0; j < containers.length; ++j) {
+			for (IParent container : containers) {
 				if (fMonitor.isCanceled()) {
 					return;
 				}
-				IParent container = containers[j];
 				ICElement[] children = container.getChildren();
 				if (children.length > 0) {
 					cdelta.added((ICElement)container);
@@ -171,9 +170,9 @@ public class BinaryRunner {
 	}
 
 	private class Visitor implements IResourceProxyVisitor {
-		private IProgressMonitor vMonitor;
-		private IProject project;
-		private IContentType textContentType;
+		private final IProgressMonitor vMonitor;
+		private final IProject project;
+		private final IContentType textContentType;
 
 		public Visitor(IProgressMonitor monitor) {
 			vMonitor = monitor;
@@ -200,7 +199,7 @@ public class BinaryRunner {
 			// check against known content types
 			// if the file has an extension
 			String name = proxy.getName();
-			if (name.contains(".")) {
+			if (name.contains(".")) { //$NON-NLS-1$
 				IContentType contentType = CCorePlugin.getContentType(project, name);
 				if (contentType != null && textContentType != null) {
 					if (contentType.isKindOf(textContentType)) {
@@ -217,8 +216,8 @@ public class BinaryRunner {
 			// we have a candidate
 			IPath path = proxy.requestFullPath();
 			if (path != null) {
-				for (int i = 0; i < entries.length; ++i) {
-					if (isOnOutputEntry(entries[i], path)) {
+				for (IOutputEntry entrie : entries) {
+					if (isOnOutputEntry(entrie, path)) {
 						IFile file = (IFile) proxy.requestResource();
 						CModelManager factory = CModelManager.getDefault();
 						IBinaryFile bin = factory.createBinaryFile(file);

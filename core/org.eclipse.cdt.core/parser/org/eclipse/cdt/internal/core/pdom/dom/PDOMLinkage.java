@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective;
 import org.eclipse.cdt.core.index.IIndexLinkage;
 import org.eclipse.cdt.core.parser.util.CharArrayMap;
@@ -494,6 +495,68 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 			break;
 		}
 		return new TypeMarshalBuffer(this, data).unmarshalType();
+	}
+
+	public void storeTemplateArgument(long offset, ICPPTemplateArgument arg) throws CoreException {
+		final Database db= getDB();
+		deleteArgument(db, offset);
+		storeArgument(db, offset, arg);
+	}
+
+	private void storeArgument(Database db, long offset, ICPPTemplateArgument arg) throws CoreException {
+		if (arg != null) {
+			TypeMarshalBuffer bc= new TypeMarshalBuffer(this);
+			bc.marshalTemplateArgument(arg);
+			int len= bc.getPosition();
+			if (len > 0) {
+				if (len <= Database.ARGUMENT_SIZE) {
+					db.putBytes(offset, bc.getBuffer(), len);
+				} else if (len <= Database.MAX_MALLOC_SIZE-2){
+					long ptr= db.malloc(len+2);
+					db.putShort(ptr, (short) len);
+					db.putBytes(ptr+2, bc.getBuffer(), len);
+					db.putByte(offset, TypeMarshalBuffer.INDIRECT_TYPE);
+					db.putRecPtr(offset+2, ptr);
+				}
+			}
+		}
+	}
+
+	private void deleteArgument(Database db, long offset) throws CoreException {
+		byte firstByte= db.getByte(offset);
+		if (firstByte == TypeMarshalBuffer.INDIRECT_TYPE) {
+			long ptr= db.getRecPtr(offset+2);
+			clearArgument(db, offset);
+			db.free(ptr);
+		} else {
+			clearArgument(db, offset);
+		}
+	}
+
+	private void clearArgument(Database db, long offset) throws CoreException {
+		db.clearBytes(offset, Database.ARGUMENT_SIZE);
+	}
+
+	public ICPPTemplateArgument loadTemplateArgument(long offset) throws CoreException {
+		final Database db= getDB();
+		final byte firstByte= db.getByte(offset);
+		byte[] data= null;
+		switch(firstByte) {
+		case TypeMarshalBuffer.INDIRECT_TYPE:
+			long ptr= db.getRecPtr(offset+2);
+			int len= db.getShort(ptr) & 0xffff;
+			data= new byte[len];
+			db.getBytes(ptr+2, data);
+			break;
+		case TypeMarshalBuffer.UNSTORABLE_TYPE:
+		case TypeMarshalBuffer.NULL_TYPE:
+			return null;
+		default:
+			data= new byte[Database.TYPE_SIZE];
+			db.getBytes(offset, data);
+			break;
+		}
+		return new TypeMarshalBuffer(this, data).unmarshalTemplateArgument();
 	}
 
 	public void storeValue(long offset, IValue type) throws CoreException {

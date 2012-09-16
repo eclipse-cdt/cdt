@@ -20,14 +20,14 @@ import java.io.IOException;
  * symbolic links is undesirable. The default is to use File.getCanonicalPath.  
  */
 public abstract class PathCanonicalizationStrategy {
-	private static PathCanonicalizationStrategy instance;
+	private static volatile PathCanonicalizationStrategy instance;
 
 	static {
 		setPathCanonicalization(true);
 	}
 
 	public static String getCanonicalPath(File file) {
-		return getInstance().getCanonicalPathInternal(file);
+		return instance.getCanonicalPathInternal(file);
 	}
 
 	/**
@@ -38,7 +38,7 @@ public abstract class PathCanonicalizationStrategy {
 	 * @param canonicalize <code>true</code> to use File.getCanonicalPath, <code>false</code>
 	 * to use File.getAbsolutePath.
 	 */
-	public static synchronized void setPathCanonicalization(boolean canonicalize) {
+	public static void setPathCanonicalization(boolean canonicalize) {
 		if (canonicalize) {
 			instance = new PathCanonicalizationStrategy() {
 				@Override
@@ -58,10 +58,6 @@ public abstract class PathCanonicalizationStrategy {
 				}
 			};
 		}
-	}
-
-	private static synchronized PathCanonicalizationStrategy getInstance() {
-		return instance;
 	}
 
 	protected abstract String getCanonicalPathInternal(File file);

@@ -18,13 +18,12 @@ package org.eclipse.cdt.core.tests;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
-import junit.framework.TestCase;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.FileManager;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -38,7 +37,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 /**
  * @author aniefer
  */
-abstract public class BaseTestFramework extends TestCase {
+abstract public class BaseTestFramework extends BaseTestCase {
     static protected NullProgressMonitor	monitor;
     static protected IWorkspace 			workspace;
     static protected IProject 				project;
@@ -109,13 +108,13 @@ abstract public class BaseTestFramework extends TestCase {
             return;
         
         IResource [] members = project.members();
-        for (int i = 0; i < members.length; i++) {
-            if (members[i].getName().equals(".project") || members[i].getName().equals(".cproject")) //$NON-NLS-1$ //$NON-NLS-2$
+        for (IResource member : members) {
+            if (member.getName().equals(".project") || member.getName().equals(".cproject")) //$NON-NLS-1$ //$NON-NLS-2$
                 continue;
-            if (members[i].getName().equals(".settings"))
+            if (member.getName().equals(".settings"))
             	continue;
             try {
-                members[i].delete(false, monitor);
+                member.delete(false, monitor);
             } catch (Throwable e) {
                 /*boo*/
             }

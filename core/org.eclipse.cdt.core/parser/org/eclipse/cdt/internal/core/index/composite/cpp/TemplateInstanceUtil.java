@@ -93,17 +93,19 @@ public class TemplateInstanceUtil {
 	}
 
 	static ICPPTemplateArgument convert(ICompositesFactory cf, ICPPTemplateArgument arg) throws DOMException {
-		if (arg instanceof CPPTemplateTypeArgument) {
+		if (arg == null)
+			return null;
+		if (arg.isTypeValue()) {
 			final IType typeValue = arg.getTypeValue();
 			IType t= cf.getCompositeType(typeValue);
 			if (t != typeValue) {
 				return new CPPTemplateTypeArgument(t);
 			}
-		} else if (arg instanceof CPPTemplateNonTypeArgument) {
-			ICPPEvaluation eval = ((CPPTemplateNonTypeArgument) arg).getEvaluation();
+		} else {
+			ICPPEvaluation eval = arg.getNonTypeEvaluation();
 			ICPPEvaluation eval2 = ((CPPCompositesFactory) cf).getCompositeEvaluation(eval);
 			if (eval2 != eval) {
-				return new CPPTemplateNonTypeArgument(eval2);
+				return new CPPTemplateNonTypeArgument(eval2, null);
 			}
 		}
 		return arg;

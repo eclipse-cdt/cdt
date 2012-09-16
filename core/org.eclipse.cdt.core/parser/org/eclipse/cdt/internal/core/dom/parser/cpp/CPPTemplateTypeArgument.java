@@ -44,6 +44,11 @@ public class CPPTemplateTypeArgument implements ICPPTemplateArgument {
 	}
 
 	@Override
+	public ICPPEvaluation getNonTypeEvaluation() {
+		return null;
+	}
+	
+	@Override
 	public IValue getNonTypeValue() {
 		return null;
 	}

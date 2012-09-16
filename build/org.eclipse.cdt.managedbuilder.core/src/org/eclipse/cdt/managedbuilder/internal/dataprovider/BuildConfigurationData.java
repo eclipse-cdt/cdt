@@ -26,6 +26,7 @@ import org.eclipse.cdt.managedbuilder.core.IFileInfo;
 import org.eclipse.cdt.managedbuilder.core.IFolderInfo;
 import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
+import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
@@ -39,7 +40,7 @@ public class BuildConfigurationData extends CConfigurationData {
 	public BuildConfigurationData(IConfiguration cfg){
 		fCfg = (Configuration)cfg;
 	}
-	
+
 	public IConfiguration getConfiguration(){
 		return fCfg;
 	}
@@ -51,7 +52,7 @@ public class BuildConfigurationData extends CConfigurationData {
 		IFileInfo info = fCfg.createFileInfo(path, ((BuildFileData)base).getFileInfo(), id, path.lastSegment());
 		return info.getFileData();
 	}
-	
+
 	@Override
 	public CFileData createFileData(IPath path, CFolderData base, CLanguageData baseLangData)
 		throws CoreException {
@@ -67,7 +68,7 @@ public class BuildConfigurationData extends CConfigurationData {
 	}
 
 
-	
+
 	@Override
 	public CFolderData createFolderData(IPath path, CFolderData base)
 			throws CoreException {
@@ -153,7 +154,7 @@ public class BuildConfigurationData extends CConfigurationData {
 //		return fCdtVars;
 		return new BuildVariablesContributor(this);
 	}
-	
+
 	void clearCachedData(){
 		fCfg.clearCachedData();
 		CResourceData[] datas = getResourceDatas();
@@ -161,7 +162,7 @@ public class BuildConfigurationData extends CConfigurationData {
 //		BuildLanguageData lData;
 //		BuildLanguageData[] lDatas;
 
-		
+
 		for(int i = 0; i < datas.length; i++){
 			data = datas[i];
 			if(data.getType() == ICSettingBase.SETTING_FOLDER){
@@ -178,16 +179,17 @@ public class BuildConfigurationData extends CConfigurationData {
 		String msg = null;
 		if(!fCfg.isSupported()){
 			flags |= CConfigurationStatus.TOOLCHAIN_NOT_SUPPORTED;
-			msg = DataProviderMessages.getString("BuildConfigurationData.NoConfigurationSupport"); //$NON-NLS-1$
-			
+			IToolChain toolChain = fCfg.getToolChain();
+			String tname = toolChain != null ? toolChain.getName() : ""; //$NON-NLS-1$
+			msg = NLS.bind(DataProviderMessages.getString("BuildConfigurationData.NoToolchainSupport"), tname); //$NON-NLS-1$
 		} else if (ManagedBuildManager.getExtensionConfiguration(fCfg)==null){
 			flags |= CConfigurationStatus.SETTINGS_INVALID;
 			msg = NLS.bind(DataProviderMessages.getString("BuildConfigurationData.OrphanedConfiguration"), fCfg.getId()); //$NON-NLS-1$
 		}
-		
+
 		if(flags != 0)
 			return new CConfigurationStatus(ManagedBuilderCorePlugin.getUniqueIdentifier(), flags, msg, null);
-		
+
 		return CConfigurationStatus.CFG_STATUS_OK;
 	}
 }

@@ -431,8 +431,8 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
                 	// Even if the breakpoint is disabled when we start, the target filter 
                 	// can be accessed by the user through the breakpoint properties UI, so
                 	// we must set it right now.
-                	// This is the reason we don't do this in 'installBreakpoint', which is not
-                	// called right away if the breakpoint is disabled.
+                	// This is the reason we don't do this in 'installBreakpoint', which used to not
+                	// be called right away if the breakpoint was disabled (this is no longer the case).
                 	try {
                 		IContainerDMContext containerDmc = DMContexts.getAncestorOfType(dmc, IContainerDMContext.class);
                 		IDsfBreakpointExtension filterExt = getFilterExtension(breakpoint);
@@ -444,14 +444,9 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
 					} catch (CoreException e) {
 					}
                 	
-                	// Install only if the breakpoint is enabled at startup (Bug261082)
-                    // Note that Tracepoints are not affected by "skip-all"
-                	boolean bpEnabled = attributes.get(ICBreakpoint.ENABLED).equals(true) &&
-					                    (breakpoint instanceof ICTracepoint || fBreakpointManager.isEnabled());
-                	if (bpEnabled)
-                		installBreakpoint(dmc, breakpoint, attributes, countingRm);
-                	else
-                		countingRm.done();
+                	// Must install breakpoints right away, even if disabled, so that
+                	// we can find out if they apply to this target (Bug 389070)
+               		installBreakpoint(dmc, breakpoint, attributes, countingRm);
                 }
             });
         }
@@ -646,6 +641,8 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
             // Convert the breakpoint attributes for the back-end
             attributes.put(ATTR_THREAD_ID, thread);
             Map<String,Object> targetAttributes = convertToTargetBreakpoint(breakpoint, attributes);
+        	// Must install breakpoint right away, even if disabled, so that
+        	// we can find out if it applies to this target (Bug 389070)
             fBreakpoints.insertBreakpoint(dmc, targetAttributes, drm);
         }
     }
@@ -855,15 +852,11 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
             return;
         }
 
-        // Check if the breakpoint is installed: it might not have been if it wasn't enabled at startup (Bug261082)
-        // Or the installation might have failed; in this case, we still try to install it again because
+        // Check if the breakpoint is installed:
+        // the installation might have failed; in this case, we try to install it again because
         // some attribute might have changed which will make the install succeed.
         if (!breakpointIDs.containsKey(breakpoint) && !targetBPs.containsValue(breakpoint)) {
-        	// Install only if the breakpoint is enabled
-            // Note that Tracepoints are not affected by "skip-all"
-        	boolean bpEnabled = attributes.get(ICBreakpoint.ENABLED).equals(true) && 
-        						(breakpoint instanceof ICTracepoint || fBreakpointManager.isEnabled());
-        	if (!filtered && bpEnabled) {
+        	if (!filtered) {
                 attributes.put(ATTR_DEBUGGER_PATH, NULL_STRING);
                 attributes.put(ATTR_THREAD_FILTER, extractThreads(dmc, breakpoint));
                 attributes.put(ATTR_THREAD_ID, NULL_STRING);

@@ -312,7 +312,7 @@ public class CPPASTFunctionCallExpression extends ASTNode
 			IBinding b= name.resolvePreBinding();
 			if (b instanceof IType) {
 				ICPPEvaluation[] args= new ICPPEvaluation[fArguments.length];
-				for (int i = 1; i < args.length; i++) {
+				for (int i = 0; i < args.length; i++) {
 					args[i]= ((ICPPASTExpression) fArguments[i]).getEvaluation();
 				}
 				return new EvalTypeId((IType) b, args);

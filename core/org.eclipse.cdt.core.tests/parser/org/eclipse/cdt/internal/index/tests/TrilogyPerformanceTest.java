@@ -55,14 +55,14 @@ public class TrilogyPerformanceTest extends IndexTestBase {
 	}
 
 	// you must have the Windows SDK installed and the INETSDK env var setup
-	public void testIndexTrilogyPerformanceTimes() throws CoreException {
+	public void testIndexTrilogyPerformanceTimes() throws CoreException, InterruptedException {
 		if(Platform.getOS().equals(Platform.OS_WIN32)) { 
-			assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));
+			waitForIndexer(cproject);
 			TestScannerProvider.sIncludes = new String[]{EnvironmentReader.getEnvVar("INETSDK")+"\\Include"};
 			IndexerPreferences.set(cproject.getProject(), IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG, "true");
 			long start = System.currentTimeMillis();
 			CCorePlugin.getIndexManager().reindex(cproject);
-			assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));
+			waitForIndexer(cproject);
 			System.out.println("Took: "+(System.currentTimeMillis() - start));
 			IIndex index= CCorePlugin.getIndexManager().getIndex(cproject);
 			IBinding[] binding = index.findBindings(Pattern.compile("IXMLElementCollection"), false, IndexFilter.ALL, new NullProgressMonitor());

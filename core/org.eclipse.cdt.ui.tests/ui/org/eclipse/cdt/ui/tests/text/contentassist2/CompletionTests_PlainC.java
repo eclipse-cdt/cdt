@@ -17,7 +17,6 @@ import junit.framework.Test;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.text.IDocument;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -182,7 +181,7 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 		IFile sourceFile= createFile(project, SOURCE_FILE_NAME, sourceContent.toString());
 		// re-indexing is necessary to parse the header in context of the source. 
 		CCorePlugin.getIndexManager().reindex(fCProject);
-		CCorePlugin.getIndexManager().joinIndexer(4000, new NullProgressMonitor());
+		waitForIndexer(fCProject);
 		return sourceFile;
 	}
 
@@ -232,11 +231,11 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 			};
 		String disturbContent= readTaggedComment(DISTURB_FILE_NAME);
 		IFile dfile= createFile(fProject, DISTURB_FILE_NAME, disturbContent);
-		assertTrue(CCorePlugin.getIndexManager().joinIndexer(8000, npm()));
+		waitForIndexer(fCProject);
 		assertCompletionResults(expected);
 		
 		dfile.delete(true, npm());
-		assertTrue(CCorePlugin.getIndexManager().joinIndexer(8000, npm()));
+		waitForIndexer(fCProject);
 		assertCompletionResults(expected2);		
 	}
 	

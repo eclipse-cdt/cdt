@@ -223,9 +223,8 @@ public class EvalBinding extends CPPEvaluation {
 				return new EvalFixed(type, ValueCategory.PRVALUE, value);
 		} else if (fBinding instanceof ICPPTemplateNonTypeParameter) {
 			ICPPTemplateArgument argument = tpMap.getArgument((ICPPTemplateNonTypeParameter) fBinding);
-			if (argument != null) {
-				IValue value = argument.getNonTypeValue();
-				return new EvalFixed(null, ValueCategory.PRVALUE, value);
+			if (argument != null && argument.isNonTypeValue()) {
+				return argument.getNonTypeEvaluation();
 			}
 			// TODO(sprigogin): Do we need something similar for pack expansion?
 		} else if (fBinding instanceof ICPPUnknownBinding) {

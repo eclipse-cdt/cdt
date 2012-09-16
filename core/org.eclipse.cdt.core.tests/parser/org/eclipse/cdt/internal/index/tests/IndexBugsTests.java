@@ -303,14 +303,7 @@ public class IndexBugsTests extends BaseTestCase {
 	}			
 
 	private void waitForIndexer() throws InterruptedException {
-		final IIndexManager indexManager = CCorePlugin.getIndexManager();
-		assertTrue(indexManager.joinIndexer(INDEXER_TIMEOUT_SEC * 1000, npm()));
-		long waitms= 1;
-		while (waitms < 2000 && indexManager.isIndexerSetupPostponed(fCProject)) {
-			Thread.sleep(waitms);
-			waitms *= 2;
-		}
-		assertTrue(indexManager.joinIndexer(INDEXER_TIMEOUT_SEC * 1000, npm()));
+		waitForIndexer(fCProject);
 	}
 
 	protected Pattern[] getPattern(String qname) {
@@ -424,7 +417,7 @@ public class IndexBugsTests extends BaseTestCase {
     	content.append("unsigned int arrayDataSize = sizeof(arrayData);\n");
 		int indexOfDecl = content.indexOf(varName);
 
-		assertTrue(CCorePlugin.getIndexManager().joinIndexer(INDEXER_TIMEOUT_SEC * 1000, npm()));
+		waitForIndexer();
 		IFile file= createFile(getProject(), fileName, content.toString());
 		// must be done in a reasonable amount of time
 		waitUntilFileIsIndexed(file, INDEXER_TIMEOUT_SEC * 1000);

@@ -59,7 +59,7 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 	private void doTestFunctions(String filename) throws IOException, Exception, PartInitException {
 		String content = readTaggedComment("testFunctions");
 		IFile file= createFile(getProject(), filename, content);
-		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
+		waitUntilFileIsIndexed(fIndex, file);
 		CEditor editor = openEditor(file);
 
 		editor.selectAndReveal(content.indexOf("proto"), 5);
@@ -103,7 +103,7 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 	private void doTestVariables(String filename) throws Exception {
 		String content = readTaggedComment("testVariables");
 		IFile file= createFile(getProject(), filename, content);
-		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
+		waitUntilFileIsIndexed(fIndex, file);
 		CEditor editor = openEditor(file);
 
 		editor.selectAndReveal(content.indexOf("extern_var"), 0);
@@ -158,7 +158,7 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 	private void doTestEnumerator(String filename, String contentTag) throws Exception {
 		String content = readTaggedComment(contentTag);
 		IFile file= createFile(getProject(), filename, content);
-		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
+		waitUntilFileIsIndexed(fIndex, file);
 		CEditor editor = openEditor(file);
 
 		editor.selectAndReveal(content.indexOf("enumerator"), 0);
@@ -213,7 +213,7 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 	public void testStructMembersC() throws Exception {
 		String content = readTaggedComment("testStructMembers");
 		IFile file= createFile(getProject(), "struct_member.c", content);
-		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
+		waitUntilFileIsIndexed(fIndex, file);
 		CEditor editor = openEditor(file);
 		
 		editor.selectAndReveal(content.indexOf("mem1"), 0);
@@ -259,7 +259,7 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 	public void testStructMembersCpp() throws Exception {
 		String content = readTaggedComment("testStructMembers");
 		IFile file= createFile(getProject(), "struct_member.cpp", content);
-		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
+		waitUntilFileIsIndexed(fIndex, file);
 		CEditor editor = openEditor(file);
 		
 		editor.selectAndReveal(content.indexOf("mem1"), 0);
@@ -305,7 +305,7 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 	public void testAnonymousStructMembersC_156671() throws Exception {
 		String content = readTaggedComment("testStructMembers");
 		IFile file= createFile(getProject(), "anon_struct_member.c", content);
-		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
+		waitUntilFileIsIndexed(fIndex, file);
 		CEditor editor = openEditor(file);
 		
 		editor.selectAndReveal(content.indexOf("mem3"), 0);
@@ -333,7 +333,7 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 	public void testAnonymousStructMembersCpp_156671() throws Exception {
 		String content = readTaggedComment("testStructMembers");
 		IFile file= createFile(getProject(), "anon_struct_member.cpp", content);
-		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
+		waitUntilFileIsIndexed(fIndex, file);
 		CEditor editor = openEditor(file);
 		
 		editor.selectAndReveal(content.indexOf("mem3"), 0);
@@ -395,7 +395,7 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 	public void testUnionMembersC() throws Exception {
 		String content = readTaggedComment("testUnionMembers");
 		IFile file= createFile(getProject(), "union_member.c", content);
-		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
+		waitUntilFileIsIndexed(fIndex, file);
 		CEditor editor = openEditor(file);
 		
 		editor.selectAndReveal(content.indexOf("mem1"), 0);
@@ -441,7 +441,7 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 	public void testUnionMembersCpp() throws Exception {
 		String content = readTaggedComment("testUnionMembers");
 		IFile file= createFile(getProject(), "union_member.cpp", content);
-		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
+		waitUntilFileIsIndexed(fIndex, file);
 		CEditor editor = openEditor(file);
 		
 		editor.selectAndReveal(content.indexOf("mem1"), 0);
@@ -487,7 +487,7 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 	public void testAnonymousUnionMembersC_156671() throws Exception {
 		String content = readTaggedComment("testUnionMembers");
 		IFile file= createFile(getProject(), "anon_union_member.c", content);
-		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
+		waitUntilFileIsIndexed(fIndex, file);
 		CEditor editor = openEditor(file);
 		
 		editor.selectAndReveal(content.indexOf("mem3"), 0);
@@ -515,7 +515,7 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 	public void testAnonymousUnionMembersCpp_156671() throws Exception {
 		String content = readTaggedComment("testUnionMembers");
 		IFile file= createFile(getProject(), "anon_union_member.cpp", content);
-		waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
+		waitUntilFileIsIndexed(fIndex, file);
 		CEditor editor = openEditor(file);
 		
 		editor.selectAndReveal(content.indexOf("mem3"), 0);
@@ -556,8 +556,8 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 		String content1= content2 + sbs[1].toString();
 		IFile file1= createFile(getProject(), "staticFunc1.c", content1);
 		IFile file2= createFile(getProject(), "staticFunc2.c", content2);
-		waitForIndexer(fIndex, file1, INDEXER_WAIT_TIME);
-		waitForIndexer(fIndex, file2, INDEXER_WAIT_TIME);
+		waitUntilFileIsIndexed(fIndex, file1);
+		waitUntilFileIsIndexed(fIndex, file2);
 
 		TreeItem i1, i2, i3, i4, i5, i6;
 		Tree tree;
@@ -625,8 +625,8 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 		String content1= content2 + sbs[1].toString();
 		IFile file1= createFile(getProject(), "staticFunc1.cpp", content1);
 		IFile file2= createFile(getProject(), "staticFunc2.cpp", content2);
-		waitForIndexer(fIndex, file1, INDEXER_WAIT_TIME);
-		waitForIndexer(fIndex, file2, INDEXER_WAIT_TIME);
+		waitUntilFileIsIndexed(fIndex, file1);
+		waitUntilFileIsIndexed(fIndex, file2);
 
 		TreeItem i0, i1, i2, i3, i4, i5, i6;
 		Tree tree;
@@ -701,7 +701,7 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 		try {
 			String content = readTaggedComment("testFunctionsWithParams");
 			IFile file= createFile(getProject(), filename, content);
-			waitForIndexer(fIndex, file, INDEXER_WAIT_TIME);
+			waitUntilFileIsIndexed(fIndex, file);
 			CEditor editor = openEditor(file);
 
 			editor.selectAndReveal(content.indexOf("proto"), 5);

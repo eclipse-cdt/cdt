@@ -27,7 +27,6 @@ import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableType;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateNonTypeArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.core.runtime.CoreException;
@@ -112,9 +111,9 @@ public abstract class CPPEvaluation implements ICPPEvaluation {
 
 		@Override
 		public void marshalTemplateArgument(ICPPTemplateArgument arg) throws CoreException {
-			if (arg instanceof CPPTemplateNonTypeArgument) {
+			if (arg.isNonTypeValue()) {
 				putByte(VALUE);
-				((CPPTemplateNonTypeArgument) arg).getEvaluation().marshal(this, true);
+				arg.getNonTypeEvaluation().marshal(this, true);
 			} else {
 				marshalType(arg.getTypeValue());
 			}

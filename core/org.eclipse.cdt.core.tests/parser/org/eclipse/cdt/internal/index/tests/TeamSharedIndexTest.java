@@ -48,7 +48,7 @@ public class TeamSharedIndexTest extends IndexTestBase {
 		return suite(TeamSharedIndexTest.class);
 	}
 
-	private Collection fProjects= new LinkedList();
+	private final Collection fProjects= new LinkedList();
 	private static final IIndexManager fPDOMManager = CCorePlugin.getIndexManager();
 
 	public TeamSharedIndexTest(String name) {
@@ -77,7 +77,7 @@ public class TeamSharedIndexTest extends IndexTestBase {
 		fProjects.remove(prj);
 	}
 	
-	private ICProject createProject(String name) throws CoreException {
+	private ICProject createProject(String name) throws CoreException, InterruptedException {
 		ModelJoiner mj= new ModelJoiner();
 		try {
 			ICProject project= CProjectHelper.createCCProject(name, null, IPDOMManager.ID_NO_INDEXER);
@@ -88,7 +88,7 @@ public class TeamSharedIndexTest extends IndexTestBase {
 			mj.join(); // in order we are sure the indexer task has been scheduled before joining the indexer
 
 			fPDOMManager.setIndexerId(project, IPDOMManager.ID_FAST_INDEXER);
-			assertTrue(fPDOMManager.joinIndexer(INDEXER_WAIT_TIME, npm()));
+			waitForIndexer(project);
 			return project;
 		} finally {
 			mj.dispose();
@@ -151,7 +151,7 @@ public class TeamSharedIndexTest extends IndexTestBase {
 		fPDOMManager.setIndexerId(prj, FakeIndexer.ID);		
 		IndexerPreferences.setScope(prj.getProject(), IndexerPreferences.SCOPE_PROJECT_SHARED);
 		new ProjectScope(prj.getProject()).getNode(CCorePlugin.PLUGIN_ID).flush();
-		fPDOMManager.joinIndexer(INDEXER_WAIT_TIME, npm());
+		waitForIndexer(prj);
 		checkVariable(prj, "a", 0);
 		checkVariable(prj, "b", 0);
 		checkVariable(prj, "c", 0);
@@ -182,7 +182,7 @@ public class TeamSharedIndexTest extends IndexTestBase {
 		IndexerPreferences.setScope(prj.getProject(), IndexerPreferences.SCOPE_PROJECT_SHARED);
 		new ProjectScope(prj.getProject()).getNode(CCorePlugin.PLUGIN_ID).flush();
 		fPDOMManager.export(prj, loc, 0, npm());
-		fPDOMManager.joinIndexer(INDEXER_WAIT_TIME, npm());
+		waitForIndexer(prj);
 		
 		// change file
 		changeFile(prj);
@@ -228,13 +228,13 @@ public class TeamSharedIndexTest extends IndexTestBase {
 		
 		// export the project.
 		fPDOMManager.export(prj, loc, 0, npm());
-		fPDOMManager.joinIndexer(INDEXER_WAIT_TIME, npm());
+		waitForIndexer(prj);
 		
 		// set indexer to the fake one.
 		fPDOMManager.setIndexerId(prj, FakeIndexer.ID);		
 		IndexerPreferences.setScope(prj.getProject(), IndexerPreferences.SCOPE_PROJECT_SHARED);
 		new ProjectScope(prj.getProject()).getNode(CCorePlugin.PLUGIN_ID).flush();
-		fPDOMManager.joinIndexer(INDEXER_WAIT_TIME, npm());
+		waitForIndexer(prj);
 		checkVariable(prj, "a", 0);
 		checkVariable(prj, "b", 0);
 		checkVariable(prj, "c", 0);
@@ -264,7 +264,7 @@ public class TeamSharedIndexTest extends IndexTestBase {
 		IndexerPreferences.setScope(prj.getProject(), IndexerPreferences.SCOPE_PROJECT_SHARED);
 		new ProjectScope(prj.getProject()).getNode(CCorePlugin.PLUGIN_ID).flush();
 		fPDOMManager.export(prj, loc, 0, npm());
-		fPDOMManager.joinIndexer(INDEXER_WAIT_TIME, npm());
+		waitForIndexer(prj);
 		
 		// add file
 		TestSourceReader.createFile(prj.getProject(), "d.cpp", "int d;");
@@ -290,13 +290,13 @@ public class TeamSharedIndexTest extends IndexTestBase {
 		
 		// export the project.
 		fPDOMManager.export(prj, loc, 0, npm());
-		fPDOMManager.joinIndexer(INDEXER_WAIT_TIME, npm());
+		waitForIndexer(prj);
 		
 		// set indexer to the fake one.
 		fPDOMManager.setIndexerId(prj, FakeIndexer.ID);		
 		IndexerPreferences.setScope(prj.getProject(), IndexerPreferences.SCOPE_PROJECT_SHARED);
 		new ProjectScope(prj.getProject()).getNode(CCorePlugin.PLUGIN_ID).flush();
-		fPDOMManager.joinIndexer(INDEXER_WAIT_TIME, npm());
+		waitForIndexer(prj);
 		checkVariable(prj, "a", 0);
 		checkVariable(prj, "b", 0);
 		checkVariable(prj, "c", 0);
@@ -327,7 +327,7 @@ public class TeamSharedIndexTest extends IndexTestBase {
 		IndexerPreferences.setScope(prj.getProject(), IndexerPreferences.SCOPE_PROJECT_SHARED);
 		new ProjectScope(prj.getProject()).getNode(CCorePlugin.PLUGIN_ID).flush();
 		fPDOMManager.export(prj, loc, 0, npm());
-		fPDOMManager.joinIndexer(INDEXER_WAIT_TIME, npm());
+		waitForIndexer(prj);
 		
 		// delete file
 		prj.getProject().getFile("a.cpp").delete(true, npm());
@@ -352,13 +352,13 @@ public class TeamSharedIndexTest extends IndexTestBase {
 		
 		// export the project.
 		fPDOMManager.export(prj, loc, 0, npm());
-		fPDOMManager.joinIndexer(INDEXER_WAIT_TIME, npm());
+		waitForIndexer(prj);
 		
 		// set indexer to the fake one.
 		fPDOMManager.setIndexerId(prj, FakeIndexer.ID);		
 		IndexerPreferences.setScope(prj.getProject(), IndexerPreferences.SCOPE_PROJECT_SHARED);
 		new ProjectScope(prj.getProject()).getNode(CCorePlugin.PLUGIN_ID).flush();
-		fPDOMManager.joinIndexer(INDEXER_WAIT_TIME, npm());
+		waitForIndexer(prj);
 		checkVariable(prj, "a", 0);
 		checkVariable(prj, "b", 0);
 		checkVariable(prj, "c", 0);

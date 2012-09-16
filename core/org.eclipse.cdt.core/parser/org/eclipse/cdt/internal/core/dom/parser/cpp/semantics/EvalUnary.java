@@ -238,6 +238,9 @@ public class EvalUnary extends CPPEvaluation {
 		}
 
 		IValue val = fArgument.getValue(point);
+		if (val == null)
+			return Value.UNKNOWN;
+		
 		Long num = val.numericalValue();
 		if (num != null) {
 			return Value.evaluateUnaryExpression(fOperator, num);

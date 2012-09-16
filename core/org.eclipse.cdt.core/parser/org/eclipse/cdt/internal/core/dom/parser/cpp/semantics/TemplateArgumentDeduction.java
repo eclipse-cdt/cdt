@@ -54,6 +54,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
@@ -185,6 +186,20 @@ public class TemplateArgumentDeduction {
 			if (!map.addDeducedArgs(deduct.fDeducedArgs))
 				return false;
 			
+			// 14.8.2.5 - 17
+			for (ICPPTemplateParameter tpar : tmplPars) {
+				if (tpar instanceof ICPPTemplateNonTypeParameter) {
+					ICPPTemplateArgument arg = deduct.fDeducedArgs.getArgument(tpar);
+					if (arg != null) {
+						IType type1 = ((ICPPTemplateNonTypeParameter) tpar).getType();
+						type1= CPPTemplates.instantiateType(type1, map, -1, null, point);
+						IType type2= arg.getTypeOfNonTypeValue();
+						if (!type1.isSameType(type2))
+							return false;
+					}
+				}
+			}
+
 			return verifyDeduction(tmplPars, map, true, point);
 		} catch (DOMException e) {
 		}
@@ -649,8 +664,6 @@ public class TemplateArgumentDeduction {
 			if (Value.referencesTemplateParameter(tval)) {
 				int parId= Value.isTemplateParameter(tval);
 				if (parId >= 0) { 
-					if (!p.getTypeOfNonTypeValue().isSameType(a.getTypeOfNonTypeValue()))
-						return false;
 					ICPPTemplateArgument old= fDeducedArgs.getArgument(parId, fPackOffset);
 					if (old == null) {
 						return deduce(parId, a);

@@ -1,0 +1,225 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOIn//3co\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/META-INF/MANIFEST.MF",
+        "patchSetId": 8
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-09-17T19:00:48Z",
+      "side": 1,
+      "message": "Thanks.  I forgot about this.\nPlease update the pom.xml file to match this change.",
+      "revId": "cfcc245bb2d91a499b81f733463aeb3ebbae41d3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//3cs\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/META-INF/MANIFEST.MF",
+        "patchSetId": 8
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-09-17T19:00:48Z",
+      "side": 1,
+      "message": "Please add \n  ;x-internal:\u003dtrue,",
+      "revId": "cfcc245bb2d91a499b81f733463aeb3ebbae41d3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//3aM\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/OSResourcesView.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 208,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-09-17T19:00:48Z",
+      "side": 1,
+      "message": "Do we really want to dump the stack here?",
+      "revId": "cfcc245bb2d91a499b81f733463aeb3ebbae41d3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//3a8\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/OSResourcesView.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 240,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-09-17T19:00:48Z",
+      "side": 1,
+      "message": "Should use .equals() to compare contexts.  However you could be dealing with null, so you should check that first.",
+      "revId": "cfcc245bb2d91a499b81f733463aeb3ebbae41d3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//3a4\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/OSResourcesView.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 261,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-09-17T19:00:48Z",
+      "side": 1,
+      "message": "Please dispose of the tracker here.\n  tracker.dispose()",
+      "revId": "cfcc245bb2d91a499b81f733463aeb3ebbae41d3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//3a0\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/OSResourcesView.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 309,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-09-17T19:00:48Z",
+      "side": 1,
+      "message": "Should use .equals() here.  Careful with null",
+      "revId": "cfcc245bb2d91a499b81f733463aeb3ebbae41d3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//3aw\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/OSResourcesView.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 393,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-09-17T19:00:48Z",
+      "side": 1,
+      "message": "Should use .equals(). Careful with null",
+      "revId": "cfcc245bb2d91a499b81f733463aeb3ebbae41d3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//3as\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/OSResourcesView.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 484,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-09-17T19:00:48Z",
+      "side": 1,
+      "message": "Should use .equals()",
+      "revId": "cfcc245bb2d91a499b81f733463aeb3ebbae41d3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//3ao\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/OSResourcesView.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 561,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-09-17T19:00:48Z",
+      "side": 1,
+      "message": "Should use .equals(). Careful with null if applicable",
+      "revId": "cfcc245bb2d91a499b81f733463aeb3ebbae41d3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//3ak\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/ResourceClassContributionItem.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-09-17T19:00:48Z",
+      "side": 1,
+      "message": "FindBugs complains about this, so I suggest doing the following:\n\nassert id !\u003d null;\nif (id !\u003d null \u0026\u0026 !id.equals(fResourceClassId))",
+      "revId": "cfcc245bb2d91a499b81f733463aeb3ebbae41d3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//3bc\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/SessionOSData.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-09-17T19:00:48Z",
+      "side": 1,
+      "message": "Calling super.handleCompleted() here will cause further handling of the error which causes printous like below.  Instead don\u0027t call it at all since you\u0027ve done all the handling you needed to do already.  This is one of the reasons you will rarely see super.handle* being called; usually, all handling is done directly there and there is no need to do anything else.\n\n  !ENTRY org.eclipse.cdt.dsf 4 10005 2012-09-17 10:17:50.176\n!MESSAGE Request for monitor: \u0027RequestMonitor (org.eclipse.cdt.dsf.gdb.internal.ui.osview.SessionOSData$2@1792acc): Status ERROR: org.eclipse.cdt.dsf.gdb code\u003d10004 Failed to execute MI command:\n-info-os\nError message from debugger back end:\nCan not fetch data now. java.lang.Exception: Can not fetch data now.\u0027 resulted in an error.\n!SUBENTRY 1 org.eclipse.cdt.dsf.gdb 4 10004 2012-09-17 10:17:50.176\n!MESSAGE Failed to execute MI command:\n-info-os\nError message from debugger back end:\nCan not fetch data now.\n!STACK 0\njava.lang.Exception: Can not fetch data now.\n\tat org.eclipse.cdt.dsf.mi.service.command.AbstractMIControl$RxThread.processMIOutput(AbstractMIControl.java:925)\n\tat org.eclipse.cdt.dsf.mi.service.command.AbstractMIControl$RxThread.run(AbstractMIControl.java:754)",
+      "revId": "cfcc245bb2d91a499b81f733463aeb3ebbae41d3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//3aQ\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/IGDBHardwareAndOS2.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-09-17T19:00:48Z",
+      "side": 1,
+      "message": "This would normally belong in IGDBControl as it can be useful in the future.  However, for the sake of avoiding adding yet another interface IGDBControl2, let\u0027s leave it here.  It can still be used by other services nicely.",
+      "revId": "cfcc245bb2d91a499b81f733463aeb3ebbae41d3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//3aU\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/IGDBHardwareAndOS2.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-09-17T19:00:48Z",
+      "side": 1,
+      "message": "\"specified\"",
+      "revId": "cfcc245bb2d91a499b81f733463aeb3ebbae41d3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

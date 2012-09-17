@@ -65,7 +65,7 @@ class PDOMCPPDeferredClassInstance extends PDOMCPPSpecialization
 
 		final ICPPTemplateArgument[] args= classType.getTemplateArguments();
 		final long argListRec= PDOMCPPArgumentList.putArguments(this, args);
-		getDB().putRecPtr(record+ARGUMENTS, argListRec);
+		getDB().putRecPtr(record + ARGUMENTS, argListRec);
 	}
 
 	public PDOMCPPDeferredClassInstance(PDOMLinkage linkage, long bindingRecord) {
@@ -220,7 +220,7 @@ class PDOMCPPDeferredClassInstance extends PDOMCPPSpecialization
 	@Override
 	public ICPPTemplateArgument[] getTemplateArguments() {
 		try {
-			final long rec= getPDOM().getDB().getRecPtr(record+ARGUMENTS);
+			final long rec= getPDOM().getDB().getRecPtr(record + ARGUMENTS);
 			return PDOMCPPArgumentList.getArguments(this, rec);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

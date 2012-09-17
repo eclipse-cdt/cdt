@@ -196,6 +196,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNamespace;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNamespaceScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPReferenceType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPScope;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownClass;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownConstructor;
@@ -2496,13 +2497,20 @@ public class CPPSemantics {
 			if (haveASTResult && fromIndex)
 				break;
 
+			boolean isCandidate;
 			if (f instanceof ICPPFunctionTemplate) {
-				// Works only if there are template arguments
-				if (args == null || result != null)
-					return null;
-				result= f;
-				haveASTResult= !fromIndex;
-			} else if (args == null) {
+				if (args == null) {
+					isCandidate= true;
+				} else {
+					// See 14.3-7
+					final ICPPTemplateParameter[] tpars = ((ICPPFunctionTemplate) f).getTemplateParameters();
+					final CPPTemplateParameterMap map = new CPPTemplateParameterMap(tpars.length);
+					isCandidate= TemplateArgumentDeduction.addExplicitArguments(tpars, args, map, point);
+				}
+			} else {
+				isCandidate= args == null;
+			}
+			if (isCandidate) {
 				if (result != null)
 					return null;
 				result= f;

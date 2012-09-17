@@ -6034,4 +6034,14 @@ public class AST2TemplateTests extends AST2BaseTest {
 	public void testDeductionOfNonTypeTemplateArg_372587() throws Exception {
 		parseAndCheckBindings(getAboveComment(), CPP, true);
 	}
+	
+	//	template<typename _Functor> void b(_Functor __f) {}
+	//	template<typename T, typename V> void f(T __first, T __last, const V& __val) {}
+	//	template<typename T> void f(T __first, T __last, const T& __val) {}
+	//	void test() {
+	//		b(f<int*, int>);
+	//	}
+	public void testFunctionSetWithNonMatchingTemplateArgs_379604() throws Exception {
+		parseAndCheckBindings(getAboveComment(), CPP, true);
+	}		
 }

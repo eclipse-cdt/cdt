@@ -1,0 +1,123 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOIn//3WQ\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIMemory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 408,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-09-17T20:34:03Z",
+      "side": 1,
+      "message": "Should we only pass in a buffer of size \u0027count\u0027?  The previous behavior seems to accept that \u0027count\u0027 may be smaller than buffer.length.\n\nI don\u0027t see the point of having a \u0027count\u0027 parameter unless we do something like that.  Also the javadoc in IMemory.java hints that this is supported.\n\nWhat do you think?",
+      "revId": "590735d854c43bfaaeb2139eb6f4ed1d11b6391f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//3Xg\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/MIDataWriteMemoryBytes.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-09-17T20:34:03Z",
+      "side": 1,
+      "message": "Let\u0027s put just 2012",
+      "revId": "590735d854c43bfaaeb2139eb6f4ed1d11b6391f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//3XY\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/MIDataWriteMemoryBytes.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-09-17T20:34:03Z",
+      "side": 1,
+      "message": "Leave only your line but put the bug number next to it (bug 123456)",
+      "revId": "590735d854c43bfaaeb2139eb6f4ed1d11b6391f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//3XU\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/MIDataWriteMemoryBytes.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-09-17T20:34:03Z",
+      "side": 1,
+      "message": "change read to write",
+      "revId": "590735d854c43bfaaeb2139eb6f4ed1d11b6391f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//3XI\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/MIDataWriteMemoryBytes.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-09-17T20:34:03Z",
+      "side": 1,
+      "message": "Replace MIDataWriteMemoryBytesInfo with MIInfo",
+      "revId": "590735d854c43bfaaeb2139eb6f4ed1d11b6391f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//3XE\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/MIDataWriteMemoryBytes.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-09-17T20:34:03Z",
+      "side": 1,
+      "message": "Remove so we use the base class method",
+      "revId": "590735d854c43bfaaeb2139eb6f4ed1d11b6391f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//3XM\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MIDataWriteMemoryBytesInfo.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-09-17T20:34:03Z",
+      "side": 1,
+      "message": "I think you can get rid of this file.  I don\u0027t know why we have an MIDataWriteMemoryInfo at all",
+      "revId": "590735d854c43bfaaeb2139eb6f4ed1d11b6391f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

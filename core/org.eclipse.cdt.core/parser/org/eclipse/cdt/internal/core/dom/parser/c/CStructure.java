@@ -170,7 +170,7 @@ public class CStructure extends PlatformObject implements ICompositeType, ICInte
 						for (IASTDeclarator declarator : declarators) {
 							IASTName name = ASTQueries.findInnermostDeclarator(declarator).getName();
 							IBinding binding = name.resolveBinding();
-							if (binding != null)
+							if (binding instanceof IField)
 								fields = ArrayUtil.append(fields, (IField) binding);
 						}
 					}

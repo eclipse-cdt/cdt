@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "AABOIn//3Pg\u003d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-09-18T13:49:50Z",
+      "side": 1,
+      "message": "Can you use the following for the commit message:\n\nBug 387793: Support for -data-write-memory-bytes",
+      "revId": "590735d854c43bfaaeb2139eb6f4ed1d11b6391f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOIn//3WQ\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIMemory.java",
         "patchSetId": 1

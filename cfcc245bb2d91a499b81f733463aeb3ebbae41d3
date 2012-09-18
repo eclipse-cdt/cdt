@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "AABOIn//3Jw\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/META-INF/MANIFEST.MF",
+        "patchSetId": 8
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 570
+      },
+      "writtenOn": "2012-09-18T20:31:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOIn//3co\u003d",
+      "revId": "cfcc245bb2d91a499b81f733463aeb3ebbae41d3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOIn//3cs\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/META-INF/MANIFEST.MF",
         "patchSetId": 8
@@ -30,6 +48,24 @@
       "writtenOn": "2012-09-17T19:00:48Z",
       "side": 1,
       "message": "Please add \n  ;x-internal:\u003dtrue,",
+      "revId": "cfcc245bb2d91a499b81f733463aeb3ebbae41d3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//3Js\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/META-INF/MANIFEST.MF",
+        "patchSetId": 8
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 570
+      },
+      "writtenOn": "2012-09-18T20:31:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOIn//3cs\u003d",
       "revId": "cfcc245bb2d91a499b81f733463aeb3ebbae41d3",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "AABOIn//3Jg\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/OSResourcesView.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 208,
+      "author": {
+        "id": 570
+      },
+      "writtenOn": "2012-09-18T20:31:28Z",
+      "side": 1,
+      "message": "We don\u0027t even need try/catch here. It\u0027s leftover debug code, removed.",
+      "parentUuid": "AABOIn//3aM\u003d",
+      "revId": "cfcc245bb2d91a499b81f733463aeb3ebbae41d3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOIn//3a8\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/OSResourcesView.java",
         "patchSetId": 8
@@ -64,6 +118,24 @@
       "writtenOn": "2012-09-17T19:00:48Z",
       "side": 1,
       "message": "Should use .equals() to compare contexts.  However you could be dealing with null, so you should check that first.",
+      "revId": "cfcc245bb2d91a499b81f733463aeb3ebbae41d3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//3JU\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/OSResourcesView.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 240,
+      "author": {
+        "id": 570
+      },
+      "writtenOn": "2012-09-18T20:31:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOIn//3a8\u003d",
       "revId": "cfcc245bb2d91a499b81f733463aeb3ebbae41d3",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "AABOIn//3JY\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/OSResourcesView.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 261,
+      "author": {
+        "id": 570
+      },
+      "writtenOn": "2012-09-18T20:31:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOIn//3a4\u003d",
+      "revId": "cfcc245bb2d91a499b81f733463aeb3ebbae41d3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOIn//3a0\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/OSResourcesView.java",
         "patchSetId": 8
@@ -98,6 +188,24 @@
       "writtenOn": "2012-09-17T19:00:48Z",
       "side": 1,
       "message": "Should use .equals() here.  Careful with null",
+      "revId": "cfcc245bb2d91a499b81f733463aeb3ebbae41d3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//3JQ\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/OSResourcesView.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 309,
+      "author": {
+        "id": 570
+      },
+      "writtenOn": "2012-09-18T20:31:28Z",
+      "side": 1,
+      "message": "I don\u0027t quite get it. Here, SessionOSData instances are stored in a cache, so equality and identity is the same. Am I missing something?",
+      "parentUuid": "AABOIn//3a0\u003d",
       "revId": "cfcc245bb2d91a499b81f733463aeb3ebbae41d3",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "AABOIn//3JM\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/OSResourcesView.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 393,
+      "author": {
+        "id": 570
+      },
+      "writtenOn": "2012-09-18T20:31:28Z",
+      "side": 1,
+      "message": "Same comment as above.",
+      "parentUuid": "AABOIn//3aw\u003d",
+      "revId": "cfcc245bb2d91a499b81f733463aeb3ebbae41d3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOIn//3as\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/OSResourcesView.java",
         "patchSetId": 8
@@ -132,6 +258,24 @@
       "writtenOn": "2012-09-17T19:00:48Z",
       "side": 1,
       "message": "Should use .equals()",
+      "revId": "cfcc245bb2d91a499b81f733463aeb3ebbae41d3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//3JI\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/OSResourcesView.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 484,
+      "author": {
+        "id": 570
+      },
+      "writtenOn": "2012-09-18T20:31:28Z",
+      "side": 1,
+      "message": "I don\u0027t see what risks using identity comparison brings.",
+      "parentUuid": "AABOIn//3as\u003d",
       "revId": "cfcc245bb2d91a499b81f733463aeb3ebbae41d3",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -155,6 +299,24 @@
     },
     {
       "key": {
+        "uuid": "AABOIn//3JE\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/OSResourcesView.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 561,
+      "author": {
+        "id": 570
+      },
+      "writtenOn": "2012-09-18T20:31:28Z",
+      "side": 1,
+      "message": "Likewise.",
+      "parentUuid": "AABOIn//3ao\u003d",
+      "revId": "cfcc245bb2d91a499b81f733463aeb3ebbae41d3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOIn//3ak\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/ResourceClassContributionItem.java",
         "patchSetId": 8
@@ -172,6 +334,24 @@
     },
     {
       "key": {
+        "uuid": "AABOIn//3JA\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/ResourceClassContributionItem.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 570
+      },
+      "writtenOn": "2012-09-18T20:31:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOIn//3ak\u003d",
+      "revId": "cfcc245bb2d91a499b81f733463aeb3ebbae41d3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOIn//3bc\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/SessionOSData.java",
         "patchSetId": 8
@@ -183,6 +363,24 @@
       "writtenOn": "2012-09-17T19:00:48Z",
       "side": 1,
       "message": "Calling super.handleCompleted() here will cause further handling of the error which causes printous like below.  Instead don\u0027t call it at all since you\u0027ve done all the handling you needed to do already.  This is one of the reasons you will rarely see super.handle* being called; usually, all handling is done directly there and there is no need to do anything else.\n\n  !ENTRY org.eclipse.cdt.dsf 4 10005 2012-09-17 10:17:50.176\n!MESSAGE Request for monitor: \u0027RequestMonitor (org.eclipse.cdt.dsf.gdb.internal.ui.osview.SessionOSData$2@1792acc): Status ERROR: org.eclipse.cdt.dsf.gdb code\u003d10004 Failed to execute MI command:\n-info-os\nError message from debugger back end:\nCan not fetch data now. java.lang.Exception: Can not fetch data now.\u0027 resulted in an error.\n!SUBENTRY 1 org.eclipse.cdt.dsf.gdb 4 10004 2012-09-17 10:17:50.176\n!MESSAGE Failed to execute MI command:\n-info-os\nError message from debugger back end:\nCan not fetch data now.\n!STACK 0\njava.lang.Exception: Can not fetch data now.\n\tat org.eclipse.cdt.dsf.mi.service.command.AbstractMIControl$RxThread.processMIOutput(AbstractMIControl.java:925)\n\tat org.eclipse.cdt.dsf.mi.service.command.AbstractMIControl$RxThread.run(AbstractMIControl.java:754)",
+      "revId": "cfcc245bb2d91a499b81f733463aeb3ebbae41d3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//3I8\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/SessionOSData.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 570
+      },
+      "writtenOn": "2012-09-18T20:31:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOIn//3bc\u003d",
       "revId": "cfcc245bb2d91a499b81f733463aeb3ebbae41d3",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -217,6 +415,24 @@
       "writtenOn": "2012-09-17T19:00:48Z",
       "side": 1,
       "message": "\"specified\"",
+      "revId": "cfcc245bb2d91a499b81f733463aeb3ebbae41d3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//3I4\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/IGDBHardwareAndOS2.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 570
+      },
+      "writtenOn": "2012-09-18T20:31:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOIn//3aU\u003d",
       "revId": "cfcc245bb2d91a499b81f733463aeb3ebbae41d3",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

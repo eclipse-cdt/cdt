@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "AABOIn//3KM\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIMemory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 408,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2012-09-18T20:09:11Z",
+      "side": 1,
+      "message": "We could observe \u0027count\u0027 (which would require an array copy) or we could pass count through to the MIDataWriteMemoryBytes() constructor and use it when generating the hex string. In general, the parameter lists of the MI command functions match the corresponding GDB/MI command-line syntax, so adding a count parameter here seems inconsistent. Let me know what you prefer.",
+      "parentUuid": "AABOIn//3WQ\u003d",
+      "revId": "590735d854c43bfaaeb2139eb6f4ed1d11b6391f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOIn//3Xg\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/MIDataWriteMemoryBytes.java",
         "patchSetId": 1
@@ -115,6 +133,24 @@
       "writtenOn": "2012-09-17T20:34:03Z",
       "side": 1,
       "message": "Remove so we use the base class method",
+      "revId": "590735d854c43bfaaeb2139eb6f4ed1d11b6391f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//3J0\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/MIDataWriteMemoryBytes.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2012-09-18T20:09:11Z",
+      "side": 1,
+      "message": "I was following the example of MIDataWriteMemoryInfo here. No problem to change this.",
+      "parentUuid": "AABOIn//3XE\u003d",
       "revId": "590735d854c43bfaaeb2139eb6f4ed1d11b6391f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

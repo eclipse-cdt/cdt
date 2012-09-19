@@ -212,6 +212,24 @@
     },
     {
       "key": {
+        "uuid": "AABOIn//2+0\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/OSResourcesView.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 309,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-09-19T20:33:43Z",
+      "side": 1,
+      "message": "You are right in this case.  However, I don\u0027t see the added value compared to the risk.  equals() first checks for the same identity so performance-wise, besides the method call, you don\u0027t gain anything.\n\nNow about the risk :)  As it stands now, \u003d\u003d will work just fine.  But we don\u0027t know how the code will evolve.  It could be that a new SessionOSData object is created and then compared to the cached one in the future, and \u003d\u003d will fail.\n\nI find it safer to always use equals().  \n\nBut I\u0027m willing to be convinced if there is a good reason to use \u003d\u003d over equals().",
+      "parentUuid": "AABOIn//3JQ\u003d",
+      "revId": "cfcc245bb2d91a499b81f733463aeb3ebbae41d3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOIn//3aw\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/OSResourcesView.java",
         "patchSetId": 8

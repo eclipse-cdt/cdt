@@ -97,14 +97,14 @@ if [ ${TYPE} = test ]; then
       fi
     fi
     # CHECK VERSION CORRECTNESS for MICRO UPDATES only
-    # Major version updates are not allowed.
+    # Major version updates are not allowed, but minor update is OK.
     #MINOR_UPDATE_OK=1
     # Minor/major version updates are not allowed.
-    MINOR_UPDATE_OK=1
+    MINOR_UPDATE_OK=0
     # Update of "qualifier" requires also updating "micro"
-    echo "VERIFYING VERSION CORRECTNESS: Features against ../updates/3.3"
+    echo "VERIFYING VERSION CORRECTNESS: Features against ../updates/3.4"
     ls features/*.jar | sed -e 's,^.*features/,,' | sort > f1.$$.txt
-    ls ../updates/3.3/features/*.jar | sed -e 's,^.*features/,,' | sort > f2.$$.txt
+    ls ../updates/3.4/features/*.jar | sed -e 's,^.*features/,,' | sort > f2.$$.txt
     diff f2.$$.txt f1.$$.txt | grep '^[>]' \
        | sed -e 's,[>] \(.*_[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\)\..*,\1,' > f_new.txt
     for f in `cat f_new.txt`; do
@@ -128,9 +128,9 @@ if [ ${TYPE} = test ]; then
         fi
       fi
     done
-    echo "VERIFYING VERSION CORRECTNESS: Plugins against ../updates/3.3"
+    echo "VERIFYING VERSION CORRECTNESS: Plugins against ../updates/3.4"
     ls plugins/*.jar | sed -e 's,^.*plugins/,,' | sort > p1.$$.txt
-    ls ../updates/3.3/plugins/*.jar | sed -e 's,^.*plugins/,,' | sort > p2.$$.txt
+    ls ../updates/3.4/plugins/*.jar | sed -e 's,^.*plugins/,,' | sort > p2.$$.txt
     diff p2.$$.txt p1.$$.txt | grep '^[>]' \
        | sed -e 's,[>] \(.*_[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\)\..*,\1,' > p_new.txt
     for p in `cat p_new.txt`; do

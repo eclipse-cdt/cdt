@@ -13,7 +13,7 @@ function newWin(url) {
 </script>
 </head>
 <body>
-<h1 role="main">Tutorial: Importing an existing project</h1>
+<div role="main"><h1>Tutorial: Importing an existing project</h1>
 
 <p>The following tutorial takes you though the process of importing a 'legacy' application using the CDT.</p>
 
@@ -86,7 +86,7 @@ function newWin(url) {
 	<ul>
 	<li>Open the project properties (right mouse on project name in the <strong>Project Explorer</strong> view
 	and select <strong>Properties</strong> at the bottom on the context menu).</li>
-	<li>On the C/C++ Build Page, on its <strong>Builder Settings</strong> tab, uncheck "Use default build command"
+	<li>On the C/C++ Build Page, on its <strong>Builder Settings</strong> tab, uncheck <q>Use default build command</q>
 	and change the <code>make</code> command to <code>make -f hello.mak</code>
 	since our makefile is not named the default <code>makefile</code>.
 	<p><a href="javascript:void(0)" onClick="newWin('../images/cdt_w_importBrandon02.png')">Click
@@ -132,7 +132,7 @@ name, <code>hello.e</code> because that's what our makefile <code>hello.mak</cod
 	<p><a href="javascript:void(0)" onClick="newWin('../images/cdt_w_importBrandon04run.png')">Click
 	here to see an illustration (displayed in a separate window)</a>.</p>
 <ul>
-  <li>If you see the error "[Debugger]: No debugger available", select the Debugger tab
+  <li>If you see the error <q>[Debugger]: No debugger available</q>, select the Debugger tab
   and choose a valid debugger for your platform (e.g. gdb/mi).
   </li>
   </ul>
@@ -144,5 +144,5 @@ name, <code>hello.e</code> because that's what our makefile <code>hello.mak</cod
 <p>The application runs in the <strong>Console</strong> view. The <strong>Console</strong> also shows which application it is currently running in the title bar. You can configure the view to display different elements, such as user input elements using different colors.</p>
 </ol>
 <img src="../images/ng00_04a.gif" ALT="QNX Copyright Statement" >
-</body>
+</div></body>
 </html>

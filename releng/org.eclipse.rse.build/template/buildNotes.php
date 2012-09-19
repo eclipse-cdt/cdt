@@ -29,6 +29,7 @@
   Platform Runtime is the minimum requirement for core RSE and Terminal.
   Local Terminal needs CDT Core 7.0 (Helios) or later.</li>
 
+<!--
 <li>Highlights of Fixes and Features since <a href="http://archive.eclipse.org/tm/downloads/drops/R-3.3.1-201109141310/">TM 3.3.1</a>:
 <ul>
   <li>Equinox Secure Storage is now used for enhanced security of saved passwords,
@@ -40,13 +41,14 @@
       [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=244405">244405</a>].</li>
 </ul>
 </li>
-<li>At least 65 bugs were resolved: Use 
-  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?type0-0-4=regexp;negate0=1;field0-0-0=target_milestone;type0-0-1=regexp;field0-0-1=target_milestone;resolution=FIXED;resolution=WONTFIX;resolution=WORKSFORME;field0-0-4=target_milestone;value0-0-2=backport;chfieldfrom=2011-09-27;chfieldto=2012-05-30;chfield=resolution;query_format=advanced;type0-0-3=regexp;field0-0-3=target_milestone;value0-0-3=3\.4%20M[1];value0-0-4=3\.4%20RC[34];field0-0-2=short_desc;value0-0-1=3\.2\.[12];type0-0-0=regexp;value0-0-0=[23]\.[0123]\..*;component=Core;component=RSE;component=Terminal;product=Target%20Management;type0-0-2=substring"> -->
-  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced;component=Core;component=RSE;component=Terminal;resolution=FIXED;resolution=WONTFIX;resolution=WORKSFORME;target_milestone=3.4%20M3;target_milestone=3.4%20M4;target_milestone=3.4%20M5;target_milestone=3.4%20M6;target_milestone=3.4%20M7;target_milestone=3.4%20RC1;target_milestone=3.4%20RC2;product=Target%20Management">
+-->
+<li>At least 21 bugs were resolved: Use 
+  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?type0-0-4=regexp;negate0=1;field0-0-0=target_milestone;type0-0-1=regexp;field0-0-1=target_milestone;resolution=FIXED;resolution=WONTFIX;resolution=WORKSFORME;field0-0-4=target_milestone;value0-0-2=backport;chfieldfrom=2012-05-30;chfieldto=2012-09-19;chfield=resolution;query_format=advanced;type0-0-3=regexp;field0-0-3=target_milestone;value0-0-3=3\.4%20M[1];value0-0-4=3\.4%20RC[1234];field0-0-2=short_desc;value0-0-1=3\.2\.[12];type0-0-0=regexp;value0-0-0=[23]\.[0123]\..*;component=Core;component=RSE;component=Terminal;product=Target%20Management;type0-0-2=substring"> -->
+  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced;component=Core;component=RSE;component=Terminal;resolution=FIXED;resolution=WONTFIX;resolution=WORKSFORME;target_milestone=3.4.1;product=Target%20Management">
   this query</a> to show the list of bugs fixed since
-  <a href="http://archive.eclipse.org/tm/downloads/drops/R-3.3.1-201109141310/">
-  TM 3.3.1</a>
-  [<a href="http://archive.eclipse.org/tm/downloads/drops/R-3.3.1-201109141310/buildNotes.php">build notes</a>].</li>
+  <a href="http://archive.eclipse.org/tm/downloads/drops/R-3.4-201205300905/">
+  TM 3.4</a>
+  [<a href="http://archive.eclipse.org/tm/downloads/drops/R-3.4-201205300905/buildNotes.php">build notes</a>].</li>
 <li>For details on checkins, see the
   <a href="http://download.eclipse.org/tm/downloads/drops/N-changelog/index.html">
   RSE CVS changelog</a>, and the
@@ -89,7 +91,14 @@ are the best places for you to get started.
 	</tr>
 </table>
 <table><tbody><tr><td>
-<p>For the upcoming TM 3.4 release, only backward compatible API changes
+<p>No API changes are allowed in the TM 3.4.x maintenance stream.
+Therefore, <b>TM 3.4.x is fully upward and backward compatible with TM 3.4</b>,
+and can be fully exchanged for TM 3.4 in any product based on it.
+Take care of API specification updates though, where the TM 3.4.x API Docs
+have been updated to add clarifications or missing information compared
+to 3.4.</p>
+
+<p>For the upcoming TM 3.5 release, only backward compatible API changes
 are planned, especially in order to support improved componentization
 and UI/Non-UI splitting.
 In the interest of improving the code base, though, please 
@@ -103,7 +112,7 @@ Also, observe the API Tooling tags such as <b>@noextend</b> and
 <table border="0" cellspacing="5" cellpadding="2" width="100%">
 	<tr>
 		<td align="LEFT" valign="TOP" colspan="3" bgcolor="#808080"><b>
-		<font face="Arial,Helvetica" color="#FFFFFF">API Specification Updates since TM 3.3</font></b></td>
+		<font face="Arial,Helvetica" color="#FFFFFF">API Specification Updates since TM 3.4</font></b></td>
 	</tr>
 </table>
 <table><tbody><tr><td>
@@ -114,23 +123,7 @@ More information can be found in the associated bugzilla items.
 <ul>
 <li>TM @buildId@ API Specification Updates
 <ul>
-  <li><b>The RSE Telnet and FTP features have been upgraded from Commons Net 2.2 to Commons Net 3.3.</b>
-      That release of Commons Net is binary compatible, but there are few minor changes
-      in source compatibility (some methods throw <b>IOException</b> now). 
-      For details see the <a href="http://commons.apache.org/net/changes-report.html">Commons Net Release Notes</a>.
-      Adopters which directly call Commons Net may need to update their version ranges in MANIFEST.MF and
-      potentially make minor adaptions to their source code
-      [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=346892">bug 346892</a>].</li>
-</ul></li>
-<li>TM 3.4M7 API Specification Updates
-<ul>
-  <li><b>TM Terminal Preference Page has been moved from terminal.view into terminal.</b>
-      Clients which adopt the TM Terminal widget in a view other than the TM Terminal View
-      can now choose whether they want to leverage the Terminal widget's Preferences for
-      "invert colors", "line buffer" and "font" or not. By default, Preferences are not
-      adopted; clients elect adoption by running makeTerminalView(...<b>true</b>). Clients
-      which don't want to see the Preference page need to hide it by means of a Capability
-      [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=378691">bug 378691</a>].</li>
+  <li>None.</li>
 </ul></li>
 </ul>
 </li>
@@ -144,7 +137,7 @@ Use
   this query</a> to show the full list of API related updates since TM 3.3
   , and
   <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced;short_desc=[api;field0-0-0=target_milestone;short_desc_type=allwordssubstr;type0-0-0=regexp;value0-0-0=3\.4.*;component=Core;component=RSE;component=Terminal;resolution=---;product=Target%20Management">
-  this query</a> to show the list of additional API changes proposed for TM 3.4.
+  this query</a> to show the list of additional API changes proposed for TM 3.5.
   .
 </td></tr></tbody></table>
 

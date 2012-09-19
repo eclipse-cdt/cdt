@@ -10,7 +10,7 @@
 
 <body>
 
-<h1 role="main">Creating your C++ file</h1>
+<div role="main"><h1>Creating your C++ file</h1>
 
 <p>You can begin coding your HelloWorld program. The .cpp file that you  
 create will be saved in the project folder you just created
@@ -34,7 +34,7 @@ bar, displays icons for items such  as bookmarks, breakpoints, and compiler erro
   folder, and select <strong>New &gt; Source File</strong>.</li>
   <li>In the <strong>Source file: </strong> field, type <strong>main.cpp</strong>.
   <br>By default the source folder should be your project folder. 
-  <br>The template selected is probably "Default C/C++ Source Template." 
+  <br>The template selected is probably <q>Default C/C++ Source Template.</q> 
   </li>
   <li>Click <strong>Finish</strong>.</li>
   <li>A Comment template probably appears at the top of an otherwise empty file.
@@ -48,13 +48,13 @@ using namespace std;
 int main () {
     // Say Hello five times
     for (int index = 0; index &lt; 5; ++index)
-      cout &lt;&lt; "HelloWorld!" &lt;&lt; endl;
+      cout &lt;&lt; <q>HelloWorld!</q> &lt;&lt; endl;
     char input = 'i';
-    cout &lt;&lt; "To exit, press 'm'" &lt;&lt; endl;
+    cout &lt;&lt; <q>To exit, press 'm'</q> &lt;&lt; endl;
     while(input != 'm') {
         cin  >> input;
-        cout &lt;&lt; "You just entered " &lt;&lt; input
-             &lt;&lt; " you need to enter m to exit." &lt;&lt; endl;
+        cout &lt;&lt; <q>You just entered </q> &lt;&lt; input
+             &lt;&lt; <q> you need to enter m to exit.</q> &lt;&lt; endl;
     }
     exit(0);
 }
@@ -91,6 +91,6 @@ can build your HelloWorld project, you must create a makefile.</p>
 
 <p>
 <img src="../images/ng00_04a.gif" ALT="IBM Copyright Statement" >
-</body>
+</div></body>
 
 </html>

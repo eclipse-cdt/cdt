@@ -11,7 +11,7 @@
 </head>
 <body>
 
-<h1 role="main">Launch Group</h1>
+<div role="main"><h1>Launch Group</h1>
 
 <p>The user can launch multiple applications at the same time or in sequential order. This is made possible by the launch configuration type: <em>Launch Group</em>.</p>
 
@@ -51,11 +51,16 @@ The <em>Common</em> tab lets you select where the configuration is stored, see <
 <table width="580" fgcolor="#DDD" border="1" cellpadding="2" cellspacing="0" >
 <tr ><th id="component2">Component</th><th id="description2">Description</th></tr>
 <tr><td style="width:30%" headers="component2"><strong>Launch Mode</strong></td>
-  <td headers="description2">The Launch Mode combobox at the top of the dialog serves a dual purpose.<br>
-   1. It dictates the desired mode for the launch configuration being added,
-and <br>
-   2. It establishes a 'mode' filter for the launch configurations that are
-exposed to the user (for selection) in the area below the combobox<br>
+  <td headers="description2">The Launch Mode combobox at the top of the dialog serves a dual purpose.
+  <ol>
+  <li>
+   It dictates the desired mode for the launch configuration being added,
+and </li>
+<li>
+   It establishes a 'mode' filter for the launch configurations that are
+exposed to the user (for selection) in the area below the combobox
+</li>
+</ol>
 <p>
 For example, when the 'debug' mode is selected, (1) only launch configurations
 that support being invoked in 'debug' mode appear. Also, (2) when the launch
@@ -73,12 +78,12 @@ needs some clarification. First, realize that a launch configuration can be
 invoked from either the 'Debug' or the 'Run' actions (and some comparable
 'profile' action in certain Eclipse configurations/products). That means, the
 launch group itself can be launched either in debug or run mode. When you check
-the "Use default..." checkbox, you're saying: "launch this particular child
-configuration in the mode that the parent (launch group) is launched with." If
+the <q>Use default...</q> checkbox, you're saying: <q>launch this particular child
+configuration in the mode that the parent (launch group) is launched with.</q> If
 you do not have that checkbox checked, then the child configurations will be
 invoked in whatever mode each individual child is configured with.
 <p>
-Note that "Use default..." control can allow you to create a launch group
+Note that <q>Use default...</q> control can allow you to create a launch group
 that will not be successful. For example when one or more launch configurations
 selected cannot be launched in the mode dictated by launch group mode.
   </td></tr>
@@ -113,6 +118,6 @@ There are several actions available that control what should be done after each 
 <a href="cdt_o_run_dbg_pages.htm">Run and Debug dialog box</a></p>
 <img src="../images/ng00_04a.gif" ALT="IBM Copyright Statement" >
 
-</body>
+</div></body>
 
 </html>

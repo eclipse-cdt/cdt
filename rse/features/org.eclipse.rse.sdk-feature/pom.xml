@@ -10,6 +10,6 @@
   </parent>
   <groupId>org.eclipse.tm.features</groupId>
   <artifactId>org.eclipse.rse.sdk</artifactId>
-  <version>3.4.0-SNAPSHOT</version>
+  <version>3.4.1-SNAPSHOT</version>
   <packaging>eclipse-feature</packaging>
 </project>

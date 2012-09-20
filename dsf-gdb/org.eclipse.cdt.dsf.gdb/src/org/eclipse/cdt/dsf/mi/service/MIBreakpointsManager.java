@@ -1408,7 +1408,12 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
      */
     public IBreakpoint findPlatformBreakpoint(IBreakpointDMContext bpContext) {
         if (bpContext instanceof MIBreakpointDMContext) {
-            return findPlatformBreakpoint(((MIBreakpointDMContext)bpContext).getReference());
+        	IBreakpointsTargetDMContext targetCtx = DMContexts.getAncestorOfType(bpContext, IBreakpointsTargetDMContext.class);
+        	if (targetCtx != null) {
+                Map<IBreakpointDMContext, ICBreakpoint> bps = fTargetBPs.get(targetCtx);
+                if (bps != null)
+                	return bps.get(bpContext);
+        	}
         }
         return null;
     }

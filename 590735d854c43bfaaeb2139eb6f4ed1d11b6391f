@@ -54,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "AABOIn//23o\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIMemory.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 408,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-09-20T18:30:09Z",
+      "side": 1,
+      "message": "I agree that we should keep MIDataWriteMemoryBytes to match the GDB command so let\u0027s do the processing of \u0027count\u0027 in the MIMemory service.",
+      "parentUuid": "AABOIn//3KM\u003d",
+      "revId": "590735d854c43bfaaeb2139eb6f4ed1d11b6391f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOIn//3Xg\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/MIDataWriteMemoryBytes.java",
         "patchSetId": 1

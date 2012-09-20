@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOIn//26Q\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/Messages.properties",
+        "patchSetId": 9
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-09-20T15:32:58Z",
+      "side": 1,
+      "message": "When selecting a CDI debug context or a Java one, this message could be confusing to the user.\n\nHow about saying\n  \"Invalid debug session selected.\"\n\nI think this is ok for both the no-selection case and the invalid selection case.",
+      "revId": "67f2c32e3d5fb143f1f73032dfb015e617209abd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//25s\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/OSResourcesView.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 310,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-09-20T15:32:58Z",
+      "side": 1,
+      "message": "I found a tiny bug here.\n\nIf I have two debug sessions and I select a context from each, I\u0027ll properly get the error message \"Objects from different debug sessions are selected\".\n\nBut if I then select select a single \u0027gdb\u0027 node, the error message stays the same, instead of saying \"No debug session is selected\" (which will become \"\"Invalid debug session\").\n\nThis is because both cases have the sessionData \u003d\u003d null, so it does not call update().\n\nIt also happens when changing the selection to a CDI launch, or Java launch.\n\nThis is a minor thing and we can commit without fixing it, but if you have a simple solution, might as well do it.",
+      "revId": "67f2c32e3d5fb143f1f73032dfb015e617209abd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

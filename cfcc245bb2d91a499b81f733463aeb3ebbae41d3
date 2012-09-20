@@ -230,6 +230,24 @@
     },
     {
       "key": {
+        "uuid": "AABOIn//27Y\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/OSResourcesView.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 309,
+      "author": {
+        "id": 570
+      },
+      "writtenOn": "2012-09-20T05:12:13Z",
+      "side": 1,
+      "message": "The problem is that SessionOSData was never designed to be compared for equality. In your example, if we create new SessionOSData object and try to compare it to the cached one, you\u0027d get false right away, because they will have different fTracker fields (fTracker is created in constructor). \n\nI suppose I can override equals to compare just fSession, but that would only serve to allow creating duplicate SessionOSData instances for the same session, which has performance cost.",
+      "parentUuid": "AABOIn//2+0\u003d",
+      "revId": "cfcc245bb2d91a499b81f733463aeb3ebbae41d3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOIn//3aw\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/OSResourcesView.java",
         "patchSetId": 8
@@ -259,6 +277,24 @@
       "side": 1,
       "message": "Same comment as above.",
       "parentUuid": "AABOIn//3aw\u003d",
+      "revId": "cfcc245bb2d91a499b81f733463aeb3ebbae41d3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//27U\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/OSResourcesView.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 393,
+      "author": {
+        "id": 570
+      },
+      "writtenOn": "2012-09-20T05:12:13Z",
+      "side": 1,
+      "message": "Different comment - doing keep comparison is rather expensive.",
+      "parentUuid": "AABOIn//3JM\u003d",
       "revId": "cfcc245bb2d91a499b81f733463aeb3ebbae41d3",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

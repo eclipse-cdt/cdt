@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "AABOIn//238\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/Messages.properties",
+        "patchSetId": 9
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-09-20T18:24:07Z",
+      "side": 1,
+      "message": "I took care of this in review 7855",
+      "parentUuid": "AABOIn//26Q\u003d",
+      "revId": "67f2c32e3d5fb143f1f73032dfb015e617209abd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOIn//25s\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/OSResourcesView.java",
         "patchSetId": 9

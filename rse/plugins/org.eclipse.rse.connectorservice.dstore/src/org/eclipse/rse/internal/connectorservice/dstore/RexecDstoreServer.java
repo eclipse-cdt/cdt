@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others.
+ * Copyright (c) 2002, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@
  * David McKnight   (IBM)        - [221095] [dstore][launcher] Specified REXEC port number is not used
  * David McKnight   (IBM)        - [228334][api][breaking][dstore] Default DataStore connection timeout is too short     
  * David McKnight   (IBM)        - [235756] [dstore] Unable to connect to host with SSL via REXEC
+ * David McKnight   (IBM)        - [390055] [DSTORE)Timeout for REXEC connection is too long
  *******************************************************************************/
 
 package org.eclipse.rse.internal.connectorservice.dstore;
@@ -476,7 +477,7 @@ public class RexecDstoreServer implements IServerLauncher
 
 			int inBytes = rxIn.available(); // any data available?
 			
-			int timeout = _socketTimeoutValue;
+			int timeout = _socketTimeoutValue / 100;
 			
 			while (inBytes == 0 && timeout > 0)
 			{

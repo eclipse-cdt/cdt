@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOIn//2yY\u003d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-09-21T19:00:32Z",
+      "side": 1,
+      "message": "Pelase change to\nBug 387688: Memory cache update fix",
+      "revId": "0f29278f139693f7b01334c35fea9eb6148ab577",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

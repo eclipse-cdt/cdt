@@ -19,6 +19,7 @@
  *     Mathias Kunter - New methods for handling different charsets (Bug 370462)
  *     Anton Gorenkov - A preference to use RTTI for variable types determination (Bug 377536)
  *     Vladimir Prus (Mentor Graphics) - Support for -info-os (Bug 360314)
+ *     John Dallaway - Support for -data-write-memory-bytes (Bug 387793)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command;
@@ -73,6 +74,7 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIDataListRegisterValues;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIDataReadMemory;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIDataReadMemoryBytes;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIDataWriteMemory;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIDataWriteMemoryBytes;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIEnablePrettyPrinting;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIEnvironmentCD;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIEnvironmentDirectory;
@@ -428,6 +430,11 @@ public class CommandFactory {
 	public ICommand<MIDataWriteMemoryInfo> createMIDataWriteMemory(IDMContext ctx, long offset, String address, 
 			int wordFormat, int wordSize, String value) {
 		return new MIDataWriteMemory(ctx, offset, address, wordFormat, wordSize, value);
+	}
+
+	/** @since 4.2 */
+	public ICommand<MIInfo> createMIDataWriteMemoryBytes(IDMContext ctx, String address, byte[] contents) {
+		return new MIDataWriteMemoryBytes(ctx, address, contents);
 	}
 
 	/** @since 4.0 */

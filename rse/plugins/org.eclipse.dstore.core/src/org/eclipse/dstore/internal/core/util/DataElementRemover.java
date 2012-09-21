@@ -20,6 +20,7 @@
  *  David McKnight   (IBM) - [371401] [dstore][multithread] avoid use of static variables - causes memory leak after disconnect
  *  David McKnight   (IBM)  - [373507] [dstore][multithread] reduce heap memory on disconnect for server
  *  David McKnight   (IBM)  - [385097] [dstore] DataStore spirit mechanism is not enabled
+ *  David McKnight   (IBM) - [390037] [dstore] Duplicated items in the System view
  *******************************************************************************/
 
 package org.eclipse.dstore.internal.core.util;
@@ -31,24 +32,22 @@ import java.util.LinkedList;
 import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.dstore.core.model.Handler;
-import org.eclipse.dstore.core.model.IDataStoreConstants;
+
 
 public class DataElementRemover extends Handler 
 {
 	private LinkedList _queue;
-	private static int numRemoved = 0;
 	private static int numDisconnected = 0;
-	private static int numCreated = 0;
 	//private int numGCed = 0;
 	
 	// The following determine how DataElements are chosen to be removed once they
 	// are in the queue for removal. 	
 	// The queue is checked every _intervalTime milliseconds and all elements
 	// that are older than _expiryTime milliseconds are removed.
-	public static final int DEFAULT_EXPIRY_TIME = 600; // in seconds
+	public static final int DEFAULT_EXPIRY_TIME = 60; // in seconds
 	public static final int DEFAULT_INTERVAL_TIME = 60; // in seconds
-	private int _intervalTime = DEFAULT_INTERVAL_TIME * 10;
-	private int _expiryTime = DEFAULT_EXPIRY_TIME * 10;
+	private int _intervalTime = DEFAULT_INTERVAL_TIME * 1000;
+	private int _expiryTime = DEFAULT_EXPIRY_TIME * 1000;
 	public static final String EXPIRY_TIME_PROPERTY_NAME = "SPIRIT_EXPIRY_TIME"; //$NON-NLS-1$
 	public static final String INTERVAL_TIME_PROPERTY_NAME = "SPIRIT_INTERVAL_TIME"; //$NON-NLS-1$
 	public MemoryManager _memoryManager;
@@ -73,7 +72,6 @@ public class DataElementRemover extends Handler
 		catch (Exception e)
 		{
 			System.out.println("Invalid spirit expiry time property, using default."); //$NON-NLS-1$
-			_expiryTime = DEFAULT_EXPIRY_TIME;
 		}
 		try
 		{
@@ -83,23 +81,21 @@ public class DataElementRemover extends Handler
 		catch (Exception e)
 		{
 			System.out.println("Invalid spirit interval time property, using default."); //$NON-NLS-1$
-			_intervalTime = DEFAULT_INTERVAL_TIME;
 		}
 	}
 	
 	public static void addToRemovedCount()
 	{
-		numRemoved++;
+		// not using this anymore - better to get this from DataStore
 	}
 	
 	public static void addToCreatedCount()
 	{
-		numCreated++;
+		// not using this anymore - better to get this from DataStore
 	}
 	
 	public static void addToGCedCount()
 	{
-		//numGCed++;
 	}
 
 	
@@ -148,10 +144,11 @@ public class DataElementRemover extends Handler
 					_queue.clear();
 				}
 				_dataStore.memLog("Total heap size: " + Runtime.getRuntime().totalMemory()); //$NON-NLS-1$
-				_dataStore.memLog("Elements created so far: " + numCreated); //$NON-NLS-1$
+				_dataStore.memLog("Live elements: " + _dataStore.getNumElements()); //$NON-NLS-1$
+				_dataStore.memLog("Recycled elements: " + _dataStore.getNumRecycled()); //$NON-NLS-1$
 				_dataStore.memLog("Elements disconnected so far: " + numDisconnected); //$NON-NLS-1$
-				_dataStore.memLog("Spirit elements cleaned so far: " + numRemoved); //$NON-NLS-1$
-			
+
+
 				// no longer a helpful stat since we no longer use finalize
 				// _dataStore.memLog("DataElements GCed so far: " + numGCed); //$NON-NLS-1$
 				return;
@@ -188,9 +185,9 @@ public class DataElementRemover extends Handler
 			_dataStore.refresh(toRefresh);
 			
 			_dataStore.memLog("Disconnected " + disconnected + " DataElements."); //$NON-NLS-1$ //$NON-NLS-2$
-			_dataStore.memLog("Elements created so far: " + numCreated); //$NON-NLS-1$
+			_dataStore.memLog("Live elements: " + _dataStore.getNumElements()); //$NON-NLS-1$
+			_dataStore.memLog("Recycled elements: " + _dataStore.getNumRecycled()); //$NON-NLS-1$
 			_dataStore.memLog("Elements disconnected so far: " + numDisconnected); //$NON-NLS-1$
-			_dataStore.memLog("Spirit elements cleaned so far: " + numRemoved); //$NON-NLS-1$
 			
 			// no longer a helpful stat since we no longer use finalize
 			// _dataStore.memLog("DataElements GCed so far: " + numGCed); //$NON-NLS-1$
@@ -229,7 +226,7 @@ public class DataElementRemover extends Handler
 		{
 			try
 			{
-				Thread.sleep(100000); // wait 100 seconds
+				Thread.sleep(_intervalTime);
 				Thread.yield();
 			}
 			catch (InterruptedException e)

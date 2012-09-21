@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 IBM Corporation and others.
+ * Copyright (c) 2006, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -65,6 +65,7 @@
  * David McKnight   (IBM)        - [308770] [dstore] Remote Search using old server fails with NPE
  * David McKnight    (IBM) 		 - [339548] [dstore] shouldn't attempt file conversion on empty files
  * David McKnight    (IBM)       - [365780] [dstore] codepage conversion should only occur for different encodings
+ * David McKnight   (IBM)        - [390037] [dstore] Duplicated items in the System view
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.files;
@@ -2112,7 +2113,8 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		DataElement element = (DataElement)_fileElementMap.get(normalizedPath);
 		if (element != null)
 		{
-			if (element.isDeleted()){
+			if (element.isDeleted() 
+					|| ds.isDoSpirit()){ // when using spirit, don't use element cache 
 				_fileElementMap.remove(normalizedPath);
 				element = null;
 			}

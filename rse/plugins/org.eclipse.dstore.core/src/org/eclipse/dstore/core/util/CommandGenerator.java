@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others.
+ * Copyright (c) 2002, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@
  * Contributors:
  * David McKnight   (IBM) - [225507][api][breaking] RSE dstore API leaks non-API types
  * David McKnight   (IBM) - [226561] [apidoc] Add API markup to RSE Javadocs where extend / implement is allowed
+ * David McKnight   (IBM) - [390037] [dstore] Duplicated items in the System view
  *******************************************************************************/
 
 package org.eclipse.dstore.core.util;
@@ -156,8 +157,15 @@ public class CommandGenerator
             }
             else
             {
-            	dataObject.setPendingTransfer(true);
-                commandObject.addNestedData(dataObject, false);
+               	dataObject.setPendingTransfer(true);
+            	if (dataObject.isSpirit() && _dataStore.isVirtual()){
+            		// resurrecting spirited element
+            		dataObject.setSpirit(false);            		
+            		// clear out old data - otherwise, we can end up with duplicates
+            		dataObject.removeNestedData();
+            	}   
+            	
+                 commandObject.addNestedData(dataObject, false);
             }
 
             if (arguments != null)
@@ -213,6 +221,12 @@ public class CommandGenerator
             else
             {
             	dataObject.setPendingTransfer(true);
+               	if (dataObject.isSpirit() && _dataStore.isVirtual()){
+               		// resurrecting spirited element
+            		dataObject.setSpirit(false);            		
+            		// clear out old data - otherwise, we can end up with duplicates
+            		dataObject.removeNestedData();
+            	}   
                 commandObject.addNestedData(dataObject, false);
             }
 
@@ -259,6 +273,12 @@ public class CommandGenerator
             else
             {
             	dataObject.setPendingTransfer(true);
+               	if (dataObject.isSpirit() && _dataStore.isVirtual()){
+            		// resurrecting spirited element
+            		dataObject.setSpirit(false);            		
+            		// clear out old data - otherwise, we can end up with duplicates
+            		dataObject.removeNestedData();
+            	}   
                 commandObject.addNestedData(dataObject, false);
             }
 

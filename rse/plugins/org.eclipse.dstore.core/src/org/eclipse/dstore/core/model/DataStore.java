@@ -44,6 +44,7 @@
  * David McKnight   (IBM) - [373507] [dstore][multithread] reduce heap memory on disconnect for server
  * David McKnight   (IBM) - [385097] [dstore] DataStore spirit mechanism is not enabled
  * David McKnight   (IBM) - [385793] [dstore] DataStore spirit mechanism and other memory improvements needed
+ * David McKnight   (IBM) - [390037] [dstore] Duplicated items in the System view
  *******************************************************************************/
 
 package org.eclipse.dstore.core.model;
@@ -3797,6 +3798,13 @@ public final class DataStore
 			{
 				String logDir = getUserPreferencesDirectory();
 				_memLoggingFileHandle = new File(logDir, ".dstoreMemLogging"); //$NON-NLS-1$
+				// need this check, otherwise, we don't create this log file
+				if (!_memLoggingFileHandle.exists()){
+					try { // try to create it
+						_memLoggingFileHandle.createNewFile();
+					} catch (IOException e) {
+					}
+				}
 				if (_memLoggingFileHandle.canWrite()){
 					try
 					{

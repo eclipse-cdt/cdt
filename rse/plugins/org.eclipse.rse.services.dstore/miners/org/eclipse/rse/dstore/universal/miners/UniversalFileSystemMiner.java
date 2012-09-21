@@ -44,6 +44,7 @@
  * David McKnight  (IBM)  - [dstore] cancelable threads not removed fast enough from Hashmap, resulting in OOM
  * David McKnight   (IBM) - [371401] [dstore][multithread] avoid use of static variables - causes memory leak after disconnect
  * Noriaki Takatsu  (IBM) - [380562] [multithread][dstore] File Search is not canceled by the client UI on disconnect
+ * David McKnight   (IBM)        - [390037] [dstore] Duplicated items in the System view
  *******************************************************************************/
 
 package org.eclipse.rse.dstore.universal.miners;
@@ -1121,6 +1122,7 @@ public class UniversalFileSystemMiner extends Miner {
 		}
 
 		_dataStore.refresh(subject);
+		_dataStore.disconnectObject(subject);
 		return statusDone(status);
 	}
 

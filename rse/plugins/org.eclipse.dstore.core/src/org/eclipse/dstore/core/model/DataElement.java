@@ -17,6 +17,7 @@
  * David McKnight   (IBM) - [380158] [dstore] DataStore.command() fails when multiple commands issue simultaneously
  * David McKnight   (IBM) - [385793] [dstore] DataStore spirit mechanism and other memory improvements needed
  * David McKnight   (IBM) - [389286] [dstore] element delete should not clear _attributes since elements get recycled
+ * David McKnight   (IBM) - [390037] [dstore] Duplicated items in the System view
  *******************************************************************************/
 
 package org.eclipse.dstore.core.model;
@@ -885,6 +886,15 @@ public final class DataElement implements IDataElement
 	public void setSpirit(boolean flag)
 	{
 		_isSpirit = flag;
+		String refType = getAttribute(DE.A_REF_TYPE);
+		if (refType != null){
+			if (_isSpirit && !refType.equals(DataStoreResources.SPIRIT)) {
+				setAttribute(DE.A_REF_TYPE, DataStoreResources.SPIRIT);
+			}
+			else if (refType.equals(DataStoreResources.SPIRIT)){ // if it was a spirit, change it back
+				setAttribute(DE.A_REF_TYPE, DataStoreResources.VALUE);
+			}
+		}
 	}
 
 	/**
@@ -1557,7 +1567,6 @@ public final class DataElement implements IDataElement
 
 	private void initialize(DataElement typeDescriptor)
 	{
-		getAttributes(); // make sure attributes is not null
 		_isReference = false;
 		_isDescriptor = false;
 		_depth = 1;
@@ -1659,10 +1668,10 @@ public final class DataElement implements IDataElement
 		{
 			// set delete attribute
 			
-			setAttribute(DE.A_SOURCE, null);
+			setAttribute(DE.A_SOURCE, ""); //$NON-NLS-1$
 			setAttribute(DE.A_VALUE, DataStoreResources.DELETED);
-			setAttribute(DE.A_TYPE, null);
-			setAttribute(DE.A_NAME, null);
+			setAttribute(DE.A_TYPE, ""); //$NON-NLS-1$
+			setAttribute(DE.A_NAME, ""); //$NON-NLS-1$
 			
 			_isUpdated = false;
 			_isExpanded = true;

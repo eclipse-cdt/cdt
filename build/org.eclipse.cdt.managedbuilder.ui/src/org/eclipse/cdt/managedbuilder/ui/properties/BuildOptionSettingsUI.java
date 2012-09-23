@@ -113,10 +113,12 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 	 ** currently set to Enter rather than Hover since the former seems more responsive **/
 	private final static int selectAction = SWT.MouseEnter;
 
-	private final class TreeBrowseFieldEditor extends StringButtonFieldEditor {
-		private final String nameStr;
-		private final IOption option;
-		private String contextId;
+	public final class TreeBrowseFieldEditor extends StringButtonFieldEditor {
+		protected String nameStr;
+		protected IOption option;
+		protected String contextId;
+		
+		public TreeBrowseFieldEditor() {} 
 
 		private TreeBrowseFieldEditor(String name, String labelText, Composite parent, String nameStr,
 				IOption option, String contextId) {
@@ -1092,7 +1094,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 		private final String name;
 		private String contextId;
 		private String baseMessage = ""; //$NON-NLS-1$
-		private TreeViewer viewer;
+		protected TreeViewer viewer;
 
 		public TreeSelectionDialog(Shell parentShell, ITreeRoot root, String name, String contextId) {
 			super(parentShell);
@@ -1111,6 +1113,15 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 			}
 		}
 
+		/**
+		 * Creates the composite for filter tree
+		 */
+		protected FilteredTree createFilterTree (Composite parent, PatternFilter filter) {
+			return new FilteredTree(parent, 
+					SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER, 
+					filter, true);
+		}
+		
 		@Override
 		protected Control createDialogArea(Composite parent) {
 			if (contextId != null && contextId.length() > 0) {
@@ -1126,9 +1137,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 
 			PatternFilter filter = new PatternFilter();
 			filter.setIncludeLeadingWildcard(true);
-			FilteredTree tree = new FilteredTree(control,
-					SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER,
-					filter, true);
+			FilteredTree tree = createFilterTree(parent, filter);
 			viewer = tree.getViewer();
 			viewer.setContentProvider(new ITreeContentProvider() {
 
@@ -1277,8 +1286,8 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 			String msg = "Select " + name; //$NON-NLS-1$
 			getShell().setText(msg);
 			setTitle(msg);
-			if (treeRoot.getDescription() != null) {
-				baseMessage = treeRoot.getDescription();
+			if (getTreeDescription() != null) {
+				baseMessage = getTreeDescription();
 				setMessage(baseMessage);
 				baseMessage += "\nCurrent Selection: "; //$NON-NLS-1$
 			} else {
@@ -1286,6 +1295,10 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 			}
 
 			return control;
+		}
+
+		protected String getTreeDescription() {
+			return treeRoot.getDescription();
 		}
 		
 		@Override

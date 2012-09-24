@@ -11,6 +11,7 @@
  *     Ericsson AB - added support for event handling
  *     Ericsson AB - added memory cache
  *     Vladimir Prus (CodeSourcery) - support for -data-read-memory-bytes (bug 322658)
+ *     John Dallaway - memory cache update fix (bug 387688)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service;
 
@@ -829,12 +830,20 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 					System.arraycopy(modBlock, 0, cachedBlock.fBlock, pos, count);
 				}
 				
+				// Case where the cached block is completely included in the modified block
+				else if (modBlockStart.distanceTo(cachedBlockStart).longValue() >= 0
+					&& cachedBlockEnd.distanceTo(modBlockEnd).longValue() >= 0)
+				{
+					int pos = (int) modBlockStart.distanceTo(cachedBlockStart).longValue();
+					System.arraycopy(modBlock, pos, cachedBlock.fBlock, 0, (int) cachedBlock.fLength);
+				}
+
 				// Case where the beginning of the modified block is within the cached block  
 				else if (cachedBlockStart.distanceTo(modBlockStart).longValue() >= 0
 					&& modBlockStart.distanceTo(cachedBlockEnd).longValue() > 0)
 				{
 					int pos = (int) cachedBlockStart.distanceTo(modBlockStart).longValue();
-					int length = (int) cachedBlockStart.distanceTo(modBlockEnd).longValue();
+					int length = (int) modBlockStart.distanceTo(cachedBlockEnd).longValue();
 					System.arraycopy(modBlock, 0, cachedBlock.fBlock, pos, length);
 				}
 				

@@ -380,6 +380,7 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 				}
 			});
 
+            setForegroundColor(getShell().getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND));
 			setBackgroundColor(getShell().getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 		}
 
@@ -428,7 +429,16 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 			}
 		}
 
-		@Override
+        @Override
+        public void setForegroundColor(Color foreground) {
+            super.setForegroundColor(foreground);
+            if (fDetailPaneComposite != null) {
+                fDetailPaneComposite.setForeground(foreground);
+            }
+            fTree.setForeground(foreground);
+        }
+
+        @Override
 		public void setBackgroundColor(Color background) {
 			super.setBackgroundColor(background);
 			if (fDetailPaneComposite != null) {

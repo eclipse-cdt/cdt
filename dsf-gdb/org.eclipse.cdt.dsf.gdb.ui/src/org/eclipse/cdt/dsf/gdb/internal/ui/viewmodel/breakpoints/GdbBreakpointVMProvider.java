@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Wind River Systems and others.
+ * Copyright (c) 2008, 2012 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,13 +7,19 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     Mikhail Khodjaiants (Mentor), Marc Khouzam (Ericsson)
+ *                        - Optionally use aggressive breakpoint filtering (Bug 360735) 
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.viewmodel.breakpoints;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.RejectedExecutionException;
 
+import org.eclipse.cdt.debug.core.CDebugCorePlugin;
+import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
@@ -26,7 +32,7 @@ import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContex
 import org.eclipse.cdt.dsf.debug.service.IBreakpointsExtension;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.breakpoints.BreakpointVMProvider;
-import org.eclipse.cdt.dsf.debug.ui.viewmodel.breakpoints.RawBreakpointVMNode;
+import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpointDMData;
@@ -38,10 +44,14 @@ import org.eclipse.cdt.dsf.ui.viewmodel.IVMNode;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.breakpoints.provisional.IBreakpointUIConstants;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -57,14 +67,35 @@ public class GdbBreakpointVMProvider extends BreakpointVMProvider {
     
     final private DsfServicesTracker fServicesTracker;
     
+	/** Indicator that we should use aggressive breakpoint filtering */
+	private boolean fUseAggressiveBpFilter = false;
+
+	/** PropertyChangeListener to keep track of the PREF_HIDE_RUNNING_THREADS preference */
+	private IPropertyChangeListener fPropertyChangeListener = new IPropertyChangeListener() {
+		@Override
+		public void propertyChange(final PropertyChangeEvent event) {
+			if (IGdbDebugPreferenceConstants.PREF_AGGRESSIVE_BP_FILTER.equals(event.getProperty())) {
+				fUseAggressiveBpFilter = (Boolean)event.getNewValue();
+				// Set the property in the presentation context so it can be seen by the vmnode which
+				// will refresh the view
+				getPresentationContext().setProperty(IGdbDebugPreferenceConstants.PREF_AGGRESSIVE_BP_FILTER, fUseAggressiveBpFilter);
+			}
+		}
+	};
+
     public GdbBreakpointVMProvider(AbstractVMAdapter adapter, IPresentationContext presentationContext, DsfSession session) {
         super(adapter, presentationContext);
         fSession = session;
         fServicesTracker = new DsfServicesTracker(GdbUIPlugin.getBundleContext(), fSession.getId());
-    }
+	
+        IPreferenceStore store = GdbUIPlugin.getDefault().getPreferenceStore();
+        store.addPropertyChangeListener(fPropertyChangeListener);
+        fUseAggressiveBpFilter = store.getBoolean(IGdbDebugPreferenceConstants.PREF_AGGRESSIVE_BP_FILTER);
+	}
     
     @Override
     public void dispose() {
+    	GdbUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(fPropertyChangeListener);
         fServicesTracker.dispose();
         super.dispose();
     }
@@ -72,6 +103,8 @@ public class GdbBreakpointVMProvider extends BreakpointVMProvider {
     @Override
 	protected void calcFileteredBreakpoints( final DataRequestMonitor<IBreakpoint[]> rm ) {
 		if ( Boolean.TRUE.equals( getPresentationContext().getProperty( IBreakpointUIConstants.PROP_BREAKPOINTS_FILTER_SELECTION ) ) ) {
+		  if (fUseAggressiveBpFilter) {
+			// Aggressive filtering of breakpoints.  Only return bps that are installed on the target.  
 			IBreakpointsTargetDMContext bpContext = null;
 			IMIExecutionDMContext threadContext = null;
 			ISelection debugContext = getDebugContext();
@@ -88,13 +121,24 @@ public class GdbBreakpointVMProvider extends BreakpointVMProvider {
 						IStatus.ERROR, 
 						GdbUIPlugin.PLUGIN_ID, 
 						IDsfStatusConstants.INVALID_HANDLE,
-						"Debug context doesn't contain a thread", //$NON-NLS-1$
+						"Debug context doesn't contain a breakpoint context", //$NON-NLS-1$
 						 null ) );
 				rm.done();
 				return;
 			}
 
 			getInstalledBreakpoints( bpContext, threadContext, rm );
+		  } else {
+			  // Original behavior of bp filtering.  Return all bp of type ICBreakpoint
+			  IBreakpoint[] allBreakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints();
+	            List<IBreakpoint> filteredBPs = new ArrayList<IBreakpoint>(allBreakpoints.length);
+	            for (IBreakpoint bp : allBreakpoints) {
+	                if (bp instanceof ICBreakpoint && bp.getModelIdentifier().equals(CDebugCorePlugin.PLUGIN_ID)) {
+	                    filteredBPs.add(bp);
+	                }
+	            }
+	            rm.done( filteredBPs.toArray(new IBreakpoint[filteredBPs.size()]) );
+		  }
 		}
 		else {
 			super.calcFileteredBreakpoints( rm );
@@ -103,7 +147,7 @@ public class GdbBreakpointVMProvider extends BreakpointVMProvider {
 
     @Override
     protected IVMNode createBreakpointVMNode() {
-        return new RawBreakpointVMNode(this);
+        return new GdbBreakpointVMNode(this);
     }
     
     @Override
@@ -181,6 +225,7 @@ public class GdbBreakpointVMProvider extends BreakpointVMProvider {
 		
 		try {
 			fSession.getExecutor().execute( new DsfRunnable() {
+				@Override
 				public void run() {
 					final IBreakpointsExtension bpService = fServicesTracker.getService( IBreakpointsExtension.class );
 					if ( bpService == null ) {
@@ -201,14 +246,14 @@ public class GdbBreakpointVMProvider extends BreakpointVMProvider {
 								rm.setStatus( new Status( 
 										IStatus.ERROR, 
 										GdbUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE,
-										"Breakpoints service not available", //$NON-NLS-1$
+										"Breakpoint manager service not available", //$NON-NLS-1$
 										 null ) );
 								rm.done();
 								return;
 							}
 							
 							if ( getData().length > 0 ) {
-								final List<IBreakpoint> bps = new ArrayList<IBreakpoint>( getData().length );
+								final Set<IBreakpoint> bps = new HashSet<IBreakpoint>( getData().length );
 								final CountingRequestMonitor crm = new CountingRequestMonitor( ImmediateExecutor.getInstance(), rm ) {
 
 									@Override
@@ -236,8 +281,8 @@ public class GdbBreakpointVMProvider extends BreakpointVMProvider {
 														if ( bp != null )
 															bps.add( bp );
 													}
-													crm.done();
-													}
+												}
+												crm.done();
 											}												
 										} );
 								}

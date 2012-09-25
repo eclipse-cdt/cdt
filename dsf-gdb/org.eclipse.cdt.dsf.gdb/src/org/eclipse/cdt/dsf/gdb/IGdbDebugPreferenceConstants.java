@@ -10,6 +10,7 @@
  *     Jens Elmenthaler (Verigy) - Added Full GDB pretty-printing support (bug 302121)
  *     Sergey Prigogin (Google)
  *     Anton Gorenkov - A preference to use RTTI for variable types determination (Bug 377536)
+ *     Marc Khouzam (Ericsson) - Add preference for aggressive breakpoint filtering (Bug 360735)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb;
 
@@ -131,5 +132,19 @@ public interface IGdbDebugPreferenceConstants {
 	 * @since 4.1
 	 */
 	public static final String PREF_HIDE_RUNNING_THREADS = PREFIX + "hideRunningThreads"; //$NON-NLS-1$
+	
+	/**
+	 * Boolean preference whether to use the new behavior of the command 
+	 * "Show Breakpoints Supported by Selected Target" from the Breakpoints view.
+	 * The original behavior is to only show breakpoints that apply to the current debug 
+	 * session; so all C/C++ breakpoints but not Java ones.
+	 * The new behavior is to only show breakpoints that are actually installed in the current
+	 * debug session.
+	 * 
+	 * Default is <code>true</code>.
+	 * 
+	 * @since 4.2
+	 */
+	public static final String PREF_AGGRESSIVE_BP_FILTER = PREFIX + "aggressiveBpFilter"; //$NON-NLS-1$
 }
 

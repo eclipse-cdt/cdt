@@ -43,6 +43,7 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.CLIAttach;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLICatch;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLIDetach;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLIExecAbort;
+import org.eclipse.cdt.dsf.mi.service.command.commands.CLIInfoBreak;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLIInfoProgram;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLIInfoSharedLibrary;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLIInfoThreads;
@@ -167,6 +168,7 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIVarShowAttributes;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIVarShowFormat;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIVarUpdate;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLICatchInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoBreakInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoProgramInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoSharedLibraryInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoThreadsInfo;
@@ -239,6 +241,11 @@ public class CommandFactory {
 
 	public ICommand<MIInfo> createCLIExecAbort(ICommandControlDMContext ctx) {
 		return new CLIExecAbort(ctx);
+	}
+
+	/** @since 4.2 */
+	public ICommand<CLIInfoBreakInfo> createCLIInfoBreak(IDMContext ctx, int bpRef) {
+		return new CLIInfoBreak(ctx, bpRef);
 	}
 
 	public ICommand<CLIInfoProgramInfo> createCLIInfoProgram(IContainerDMContext ctx) {

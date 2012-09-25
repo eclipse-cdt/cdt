@@ -13,6 +13,7 @@
 package org.eclipse.cdt.dsf.gdb.internal.ui.viewmodel.breakpoints;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -24,19 +25,24 @@ import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
+import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointDMContext;
+import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointDMData;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
 import org.eclipse.cdt.dsf.debug.service.IBreakpointsExtension;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.breakpoints.BreakpointVMProvider;
 import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
+import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
+import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpointDMData;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpointsManager;
+import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoBreakInfo;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.dsf.ui.viewmodel.AbstractVMAdapter;
@@ -103,16 +109,16 @@ public class GdbBreakpointVMProvider extends BreakpointVMProvider {
     @Override
 	protected void calcFileteredBreakpoints( final DataRequestMonitor<IBreakpoint[]> rm ) {
 		if ( Boolean.TRUE.equals( getPresentationContext().getProperty( IBreakpointUIConstants.PROP_BREAKPOINTS_FILTER_SELECTION ) ) ) {
-		  if (fUseAggressiveBpFilter) {
+		  if ( fUseAggressiveBpFilter ) {
 			// Aggressive filtering of breakpoints.  Only return bps that are installed on the target.  
 			IBreakpointsTargetDMContext bpContext = null;
-			IMIExecutionDMContext threadContext = null;
+			IExecutionDMContext execContext = null;
 			ISelection debugContext = getDebugContext();
 			if ( debugContext instanceof IStructuredSelection ) {
-				Object element = ((IStructuredSelection)debugContext).getFirstElement();
+				Object element = ( (IStructuredSelection)debugContext ).getFirstElement();
 				if ( element instanceof IDMVMContext ) {
 					bpContext = DMContexts.getAncestorOfType( ((IDMVMContext)element).getDMContext(), IBreakpointsTargetDMContext.class );
-					threadContext = DMContexts.getAncestorOfType( ((IDMVMContext)element).getDMContext(), IMIExecutionDMContext.class );
+					execContext = DMContexts.getAncestorOfType( ((IDMVMContext)element).getDMContext(), IExecutionDMContext.class );
 				}
 			}
 
@@ -127,17 +133,17 @@ public class GdbBreakpointVMProvider extends BreakpointVMProvider {
 				return;
 			}
 
-			getInstalledBreakpoints( bpContext, threadContext, rm );
+			getInstalledBreakpoints( bpContext, execContext, rm );
 		  } else {
 			  // Original behavior of bp filtering.  Return all bp of type ICBreakpoint
 			  IBreakpoint[] allBreakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints();
-	            List<IBreakpoint> filteredBPs = new ArrayList<IBreakpoint>(allBreakpoints.length);
+	            List<IBreakpoint> filteredBPs = new ArrayList<IBreakpoint>( allBreakpoints.length );
 	            for (IBreakpoint bp : allBreakpoints) {
-	                if (bp instanceof ICBreakpoint && bp.getModelIdentifier().equals(CDebugCorePlugin.PLUGIN_ID)) {
-	                    filteredBPs.add(bp);
+	                if ( bp instanceof ICBreakpoint && bp.getModelIdentifier().equals( CDebugCorePlugin.PLUGIN_ID ) ) {
+	                    filteredBPs.add( bp );
 	                }
 	            }
-	            rm.done( filteredBPs.toArray(new IBreakpoint[filteredBPs.size()]) );
+	            rm.done( filteredBPs.toArray( new IBreakpoint[filteredBPs.size()]) );
 		  }
 		}
 		else {
@@ -221,7 +227,7 @@ public class GdbBreakpointVMProvider extends BreakpointVMProvider {
     	return StructuredSelection.EMPTY;
     }
 
-    void getInstalledBreakpoints( final IBreakpointsTargetDMContext targetContext, final IMIExecutionDMContext threadContext, final DataRequestMonitor<IBreakpoint[]> rm ) {
+    private void getInstalledBreakpoints( final IBreakpointsTargetDMContext targetContext, final IExecutionDMContext execContext, final DataRequestMonitor<IBreakpoint[]> rm ) {
 		
 		try {
 			fSession.getExecutor().execute( new DsfRunnable() {
@@ -237,7 +243,7 @@ public class GdbBreakpointVMProvider extends BreakpointVMProvider {
 						rm.done();
 						return;
 					}
-					bpService.getBreakpoints( targetContext, new DataRequestMonitor<IBreakpoints.IBreakpointDMContext[]>( fSession.getExecutor(), rm ) {
+					bpService.getBreakpoints( targetContext, new DataRequestMonitor<IBreakpointDMContext[]>( fSession.getExecutor(), rm ) {
 						
 						@Override
 						protected void handleSuccess() {
@@ -267,7 +273,7 @@ public class GdbBreakpointVMProvider extends BreakpointVMProvider {
 								for ( final IBreakpointDMContext bpCtx : getData() ) {
 									bpService.getBreakpointDMData( 
 										bpCtx, 
-										new DataRequestMonitor<IBreakpoints.IBreakpointDMData>( ImmediateExecutor.getInstance(), crm ) {
+										new DataRequestMonitor<IBreakpointDMData>( ImmediateExecutor.getInstance(), crm ) {
 
 											/* (non-Javadoc)
 											 * @see org.eclipse.cdt.dsf.concurrent.RequestMonitor#handleSuccess()
@@ -276,10 +282,19 @@ public class GdbBreakpointVMProvider extends BreakpointVMProvider {
 											protected void handleSuccess() {
 												if ( getData() instanceof MIBreakpointDMData ) {
 													MIBreakpointDMData data = (MIBreakpointDMData)getData();
-													if ( !data.isPending() && isThreadBreakpoint( threadContext, data )) {
-														IBreakpoint bp = bpManager.findPlatformBreakpoint( bpCtx );
-														if ( bp != null )
-															bps.add( bp );
+													if ( !data.isPending() ) {
+														bpBelongsToContext( execContext, data, new ImmediateDataRequestMonitor<Boolean>(crm) {
+															@Override
+															protected void handleSuccess() {
+																if (getData()) {
+																	IBreakpoint bp = bpManager.findPlatformBreakpoint( bpCtx );
+																	if ( bp != null )
+																		bps.add( bp );
+																}
+																crm.done();
+															}
+														});
+														return;
 													}
 												}
 												crm.done();
@@ -306,25 +321,75 @@ public class GdbBreakpointVMProvider extends BreakpointVMProvider {
 		}
     }
 
-    private boolean isThreadBreakpoint( IMIExecutionDMContext threadContext, MIBreakpointDMData data ) {
-    	if ( threadContext == null || data.getThreadId() == null || data.getThreadId().length() == 0 ) {
-    		// Ignore threads
-    		return true;
+    private void bpBelongsToContext( IExecutionDMContext execContext, final MIBreakpointDMData data, final DataRequestMonitor<Boolean> rm ) {
+    	if ( execContext == null ) {
+    		// No execution context so accept all breakpoints
+    		rm.done( true );
+    		return;
     	}
-    	
-    	int threadId = threadContext.getThreadId();
-    	try {
-			int bpThreadId = Integer.parseInt( data.getThreadId() );
-			if ( bpThreadId == 0 )
-				return true;
-			return ( threadId == bpThreadId );
+
+    	// First check if a thread is selected as the context.  In that case, we only want to show breakpoints that
+    	// are applicable to that thread.
+		IMIExecutionDMContext threadContext = DMContexts.getAncestorOfType( execContext, IMIExecutionDMContext.class );
+		if ( threadContext != null ) {
+			// A thread is selected.  Now make sure this breakpoint is assigned to this thread.
+			if ( data.getThreadId() != null && data.getThreadId().length() > 0 ) {
+				try {
+					int bpThreadId = Integer.parseInt( data.getThreadId() );
+					// A threadId of 0 means all threads of this process.  We therefore will have to check
+					// if this breakpoint applies to the process that is selected.  But if the threadId is not 0
+					// we simply make sure we have the right thread selected.
+					if ( bpThreadId != 0 ) {
+						rm.done( threadContext.getThreadId() == bpThreadId );
+						return;
+					}
+				}
+				catch( NumberFormatException e ) {
+					assert false;
+					GdbUIPlugin.getDefault().getLog().log( new Status( 
+							IStatus.ERROR, 
+							GdbUIPlugin.getUniqueIdentifier(), 
+							"Invalid breakpoint thread id" ) ); //$NON-NLS-1$
+					rm.done( true );
+					return;
+				}
+			}
+    	}
+
+		// If we get here it is that the breakpoint is not assigned to a single thread.
+		// We therefore make sure the breakpoint is applicable to the selected process.
+		final IMIContainerDMContext containerContext = DMContexts.getAncestorOfType( execContext, IMIContainerDMContext.class );
+		if ( containerContext != null ) {
+				// In older GDB's we don't have the groupIds as part of the breakpoint data.  In that case
+				// we fall back to using the CLI command 'info break'.  This special handling for GDB is difficult
+				// to put in the IBreakpoints service because there are multiple MI commands that are affected
+				// (-break-insert, -break-list, -break-info) but we only need the groupIds here.  Therefore,
+				// to minimize impact (both code and performance), we only trigger the CLI command here.
+				IMICommandControl controlService = fServicesTracker.getService( IMICommandControl.class );
+				controlService.queueCommand( controlService.getCommandFactory().createCLIInfoBreak( controlService.getContext(), data.getReference() ),
+						new ImmediateDataRequestMonitor<CLIInfoBreakInfo>( rm ) {
+					@Override
+					protected void handleSuccess() {
+						String[] inferiorIds = getData().getInferiorIds();
+						// If we don't have a list of inferiors, then we accept the breakpoint.
+						// This can happen for example, if we are only debugging a single process.
+						if ( inferiorIds == null || inferiorIds.length == 0) {
+							rm.done( true );
+							return;
+						}
+						
+						List<String> inferiorIdList = new ArrayList<String>( Arrays.asList( inferiorIds ) );
+						
+						// The CLI command returns only the integer id of the inferior without the 'i' prefix.
+						// Therefore, we take out this prefix from our container groupId.
+						rm.done( inferiorIdList.contains( containerContext.getGroupId().substring(1) ) );
+					}
+				});
+			return;
 		}
-		catch( NumberFormatException e ) {
-			GdbUIPlugin.getDefault().getLog().log( new Status( 
-					IStatus.ERROR, 
-					GdbUIPlugin.getUniqueIdentifier(), 
-					"Invalid breakpoint thread id" ) ); //$NON-NLS-1$
-		}
-		return true;
+
+    	// Accept breakpoint
+		rm.done( true );
+		return;
     }
 }

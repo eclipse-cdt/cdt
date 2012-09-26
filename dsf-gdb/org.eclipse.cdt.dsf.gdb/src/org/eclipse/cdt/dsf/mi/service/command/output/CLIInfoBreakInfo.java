@@ -25,6 +25,9 @@ import java.util.List;
  * 1       breakpoint     keep y   <MULTIPLE> 
  * 1.1                         y     0x08048533 in main() at loopfirst.cc:8 inf 2
  * 1.2                         y     0x08048533 in main() at loopfirst.cc:8 inf 1
+ * 
+ * Note that the below output is theoretically possible looking at GDB's code but
+ * I haven't figured out a way to trigger it.  Still, we should be prepared for it:
  * (gdb) info b 2
  * Num     Type           Disp Enb Address    What
  * 2       breakpoint     keep y   0x08048553 in main() at loopsecond.cc:9 inf 3, 2, 1
@@ -47,8 +50,8 @@ public class CLIInfoBreakInfo extends MIInfo {
 	}
 	
 	/**
-	 * Return the list of inferior ids to which this breakpoint applies or null
-	 * if there is only a single inferior being debugged.
+	 * Return the list of inferior ids to which this breakpoint applies or an
+	 * empty array if there is only a single inferior being debugged.
 	 */
 	public String[] getInferiorIds() {
 		return fInferiorIds; 

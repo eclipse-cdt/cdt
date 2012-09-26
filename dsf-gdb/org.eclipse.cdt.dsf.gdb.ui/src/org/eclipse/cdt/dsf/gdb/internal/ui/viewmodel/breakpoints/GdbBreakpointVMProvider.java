@@ -360,6 +360,10 @@ public class GdbBreakpointVMProvider extends BreakpointVMProvider {
 		// We therefore make sure the breakpoint is applicable to the selected process.
 		final IMIContainerDMContext containerContext = DMContexts.getAncestorOfType( execContext, IMIContainerDMContext.class );
 		if ( containerContext != null ) {
+			if ( data.getGroupIds() != null) {
+				List<String> groupIds = new ArrayList<String>( Arrays.asList( data.getGroupIds() ) );
+				rm.done( groupIds.contains( containerContext.getGroupId() ) );
+			} else {
 				// In older GDB's we don't have the groupIds as part of the breakpoint data.  In that case
 				// we fall back to using the CLI command 'info break'.  This special handling for GDB is difficult
 				// to put in the IBreakpoints service because there are multiple MI commands that are affected
@@ -385,6 +389,7 @@ public class GdbBreakpointVMProvider extends BreakpointVMProvider {
 						rm.done( inferiorIdList.contains( containerContext.getGroupId().substring(1) ) );
 					}
 				});
+			}
 			return;
 		}
 

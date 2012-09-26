@@ -11,10 +11,14 @@
  *     Ericsson             - Modified for the breakpoint service
  *     Ericsson             - Added Tracepoint support (284286)
  *     Abeer Bagul (Tensilica) - Differentiate between hw breakpoint and watchpoint
+ *     Marc Khouzam (Ericsson) - Add 'thread-group' field (bug 360735)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command.output;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.StringTokenizer;
 
 import org.eclipse.cdt.dsf.gdb.internal.tracepointactions.TracepointActionManager;
@@ -105,6 +109,13 @@ public class MIBreakpoint  {
 	 */
 	private boolean pending;
 	
+	/**
+	 * The list of groupIds to which this breakpoint applies.
+	 * This field is only reported by MI starting with GDB 7.6.
+	 * null will be returned if this field is not present. 
+	 */
+	private String[] groupIds;
+	
     public MIBreakpoint() {
 	}
 
@@ -134,6 +145,9 @@ public class MIBreakpoint  {
         isCatchpoint = other.isCatchpoint;
         catchpointType = other.catchpointType;
         pending = other.pending;
+        if (other.groupIds != null) {
+        	groupIds = Arrays.copyOf(other.groupIds, other.groupIds.length);
+        }
 	}
 
     public MIBreakpoint(MITuple tuple) {
@@ -409,6 +423,16 @@ public class MIBreakpoint  {
     	return pending;
     }
     
+    /**
+     * Returns the thread-groups to which this breakpoint applies.
+     * Returns null if the data is not known.
+     * 
+     * @since 4.2
+     */
+    public String[] getGroupIds() {
+    	return groupIds;
+    }
+    
     // Parse the result string
     void parse(MITuple tuple) {
         MIResult[] results = tuple.getMIResults();
@@ -504,6 +528,10 @@ public class MIBreakpoint  {
             	if (value instanceof MITuple) {
             		parseCommands((MITuple)value);
             	}
+            } else if (var.equals("thread-group")) { //$NON-NLS-1$
+                if (value instanceof MIList) {
+            		parseGroups((MIList)value);
+            	}
             }
         }
     }
@@ -523,5 +551,18 @@ public class MIBreakpoint  {
     	}
     	setCommands(cmds.toString());
 
+    }
+    
+    private void parseGroups(MIList list) {
+		List<String> groups = new ArrayList<String>();
+		
+		MIValue[] values = list.getMIValues();
+		for (int i = 0; i < values.length; i++) {
+			if (values[i] instanceof MIConst) {
+				groups.add(((MIConst)values[i]).getCString());
+			}
+		}
+		
+		groupIds = groups.toArray(new String[groups.size()]);
     }
 }

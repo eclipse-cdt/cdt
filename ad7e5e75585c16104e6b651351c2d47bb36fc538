@@ -16,6 +16,24 @@
       "revId": "ad7e5e75585c16104e6b651351c2d47bb36fc538",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//2OQ\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/preferences/GdbDebugPreferencePage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 657,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-09-26T18:32:23Z",
+      "side": 1,
+      "message": "If you don\u0027t the layout is not quite right for some reason.  Either the widget is too short or too long, I don\u0027t quite remember, but I know it was not aligned right.\n\nI can\u0027t explain why but calling setLayout each time makes things look good.",
+      "parentUuid": "AABOIn//2PY\u003d",
+      "revId": "ad7e5e75585c16104e6b651351c2d47bb36fc538",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

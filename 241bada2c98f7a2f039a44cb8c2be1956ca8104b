@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOIn//2P0\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/viewmodel/breakpoints/GdbBreakpointVMProvider.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-09-26T16:27:58Z",
+      "side": 1,
+      "message": "I was wondering whether we should we show the breakpoints set in ALL selected contexts instead of limiting it to the first one. WDYT?",
+      "revId": "241bada2c98f7a2f039a44cb8c2be1956ca8104b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

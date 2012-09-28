@@ -48,6 +48,7 @@
  * David McKnight   (IBM)        - [357111] [DSTORE]File with invalid characters can't be opened in editor
  * David McKnight   (IBM)        - [385420] double-click to open System editor from Remote Systems view not working
  * David McKnight   (IBM)        - [385416] NPE during shutdown with remote editor open
+ * David McKnight   (IBM)        - [390609] Cached file opened twice in case of eclipse linked resource..
  *******************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -1154,10 +1155,13 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 
 				if (editorInput instanceof IFileEditorInput)
 				{
-					IPath path = ((IFileEditorInput) editorInput).getFile().getLocation();
+					IFile file = ((IFileEditorInput) editorInput).getFile();
+					IPath path = file.getLocation();
 					if (path!=null && lFile.compareTo(new java.io.File(path.toOSString()))==0) {
-						//if (path.makeAbsolute().toOSString().equalsIgnoreCase(localPath))
-						return OPEN_IN_SAME_PERSPECTIVE;
+						if (!file.isLinked()){ // linked resources need to be treated differently						
+							//if (path.makeAbsolute().toOSString().equalsIgnoreCase(localPath))
+							return OPEN_IN_SAME_PERSPECTIVE;
+						}
 					}
 				}
 			}

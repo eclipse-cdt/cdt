@@ -26,6 +26,7 @@
  * David McKnight   (IBM)        - [251631] NullPointerException in SystemTempFileListener
  * David McKnight   (IBM)        - [256048] Saving a member open in Remote LPEX editor while Working Offline doesn't set the dirty property
  * David McKnight   (IBM)        - [381482] Improper use of save participant is causing a workspace hang
+ * David McKnight   (IBM)        - [390609] Cached file opened twice in case of eclipse linked resource..
  *******************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -784,9 +785,9 @@ public abstract class SystemTempFileListener implements IResourceChangeListener
 			return false;
 		
 		IResourceDelta[] subdeltas = delta.getAffectedChildren();
-		if (subdeltas.length > 0)
+		for (int i = 0; i < subdeltas.length; i++)
 		{
-			IResource resource = subdeltas[0].getResource();
+			IResource resource = subdeltas[i].getResource();
 			if ((resource != null) && (resource.getType() == IResource.PROJECT))
 			{
 				if (resource.getName().equals(SystemRemoteEditManager.REMOTE_EDIT_PROJECT_NAME))

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOIn//17Y\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/viewmodel/breakpoints/GdbBreakpointVMProvider.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 160,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-09-28T15:40:48Z",
+      "side": 1,
+      "message": "Where will this message appear eventually? If it is intended for end users we need a different wording, if it is logged it\u0027s fine.",
+      "revId": "baade4d65be2806d9abafc484e26519e7a38f65b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

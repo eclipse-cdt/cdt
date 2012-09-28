@@ -34,6 +34,24 @@
       "revId": "baade4d65be2806d9abafc484e26519e7a38f65b",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//16s\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/viewmodel/breakpoints/GdbBreakpointVMProvider.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 160,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-09-28T17:29:51Z",
+      "side": 1,
+      "message": "Sounds good.",
+      "parentUuid": "AABOIn//160\u003d",
+      "revId": "baade4d65be2806d9abafc484e26519e7a38f65b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

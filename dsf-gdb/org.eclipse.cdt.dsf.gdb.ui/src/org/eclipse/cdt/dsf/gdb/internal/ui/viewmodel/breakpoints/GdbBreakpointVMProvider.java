@@ -8,12 +8,15 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Mikhail Khodjaiants (Mentor), Marc Khouzam (Ericsson)
- *                        - Optionally use aggressive breakpoint filtering (Bug 360735) 
+ *                        - Optionally use aggressive breakpoint filtering (Bug 360735)
+ *     Marc Khouzam (Ericsson) - Add support to display proper breakpoints when dealing
+ *                               with a multi-selection in the debug view (Bug 360735)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.viewmodel.breakpoints;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -25,6 +28,7 @@ import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
+import org.eclipse.cdt.dsf.concurrent.ImmediateCountingRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
@@ -110,30 +114,52 @@ public class GdbBreakpointVMProvider extends BreakpointVMProvider {
 	protected void calcFileteredBreakpoints( final DataRequestMonitor<IBreakpoint[]> rm ) {
 		if ( Boolean.TRUE.equals( getPresentationContext().getProperty( IBreakpointUIConstants.PROP_BREAKPOINTS_FILTER_SELECTION ) ) ) {
 		  if ( fUseAggressiveBpFilter ) {
-			// Aggressive filtering of breakpoints.  Only return bps that are installed on the target.  
-			IBreakpointsTargetDMContext bpContext = null;
-			IExecutionDMContext execContext = null;
-			ISelection debugContext = getDebugContext();
-			if ( debugContext instanceof IStructuredSelection ) {
-				Object element = ( (IStructuredSelection)debugContext ).getFirstElement();
-				if ( element instanceof IDMVMContext ) {
-					bpContext = DMContexts.getAncestorOfType( ((IDMVMContext)element).getDMContext(), IBreakpointsTargetDMContext.class );
-					execContext = DMContexts.getAncestorOfType( ((IDMVMContext)element).getDMContext(), IExecutionDMContext.class );
-				}
-			}
+			  // Aggressive filtering of breakpoints.  Only return bps that are installed on the target.  
+			  ISelection debugContext = getDebugContext();
+			  if ( debugContext instanceof IStructuredSelection ) {
+				  // Use a set to avoid duplicates
+				  final Set<IBreakpoint> bps = new HashSet<IBreakpoint>();
 
-			if ( bpContext == null || !fSession.getId().equals( bpContext.getSessionId() ) ) {
-				rm.setStatus( new Status( 
-						IStatus.ERROR, 
-						GdbUIPlugin.PLUGIN_ID, 
-						IDsfStatusConstants.INVALID_HANDLE,
-						"Debug context doesn't contain a breakpoint context", //$NON-NLS-1$
-						 null ) );
-				rm.done();
-				return;
-			}
+				  int count = 0;
+				  final ImmediateCountingRequestMonitor crm = new ImmediateCountingRequestMonitor( rm ) {
+					  @Override
+					  protected void handleSuccess() {
+						  rm.done( bps.toArray( new IBreakpoint[bps.size()] ) );
+					  }
+				  };
+				  
+				  for ( Object element : ( (IStructuredSelection)debugContext ).toList() ) {
+					  
+					  IBreakpointsTargetDMContext bpContext = null;
+					  IExecutionDMContext execContext = null;
+					  if ( element instanceof IDMVMContext ) {
+						  bpContext = DMContexts.getAncestorOfType( ((IDMVMContext)element).getDMContext(), IBreakpointsTargetDMContext.class );
+						  execContext = DMContexts.getAncestorOfType( ((IDMVMContext)element).getDMContext(), IExecutionDMContext.class );
 
-			getInstalledBreakpoints( bpContext, execContext, rm );
+						  if ( bpContext != null && fSession.getId().equals( bpContext.getSessionId() ) ) {
+							  count++;
+							  getInstalledBreakpoints( bpContext, execContext, new DataRequestMonitor<Collection<IBreakpoint>>( getExecutor(), crm ) {
+								  @Override
+								  protected void handleCompleted() {
+									  if ( isSuccess() ) {
+										  bps.addAll( getData() );
+									  }
+									  crm.done();
+								  }
+							  } );
+						  }
+					  }
+				  }
+				  
+				  crm.setDoneCount(count);
+			  } else {
+				  rm.done( new Status( 
+						  IStatus.ERROR, 
+						  GdbUIPlugin.PLUGIN_ID, 
+						  IDsfStatusConstants.INVALID_HANDLE,
+						  "Invalid debug selection", //$NON-NLS-1$
+						  null ) );
+			  }
 		  } else {
 			  // Original behavior of bp filtering.  Return all bp of type ICBreakpoint
 			  IBreakpoint[] allBreakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints();
@@ -227,7 +253,9 @@ public class GdbBreakpointVMProvider extends BreakpointVMProvider {
     	return StructuredSelection.EMPTY;
     }
 
-    private void getInstalledBreakpoints( final IBreakpointsTargetDMContext targetContext, final IExecutionDMContext execContext, final DataRequestMonitor<IBreakpoint[]> rm ) {
+    private void getInstalledBreakpoints( final IBreakpointsTargetDMContext targetContext, 
+    		                              final IExecutionDMContext execContext, 
+    		                              final DataRequestMonitor<Collection<IBreakpoint>> rm ) {
 		
 		try {
 			fSession.getExecutor().execute( new DsfRunnable() {
@@ -264,7 +292,7 @@ public class GdbBreakpointVMProvider extends BreakpointVMProvider {
 
 									@Override
 									protected void handleSuccess() {
-										rm.setData( bps.toArray( new IBreakpoint[bps.size()] ) );
+										rm.setData( bps );
 										rm.done();
 									}
 								};
@@ -303,7 +331,7 @@ public class GdbBreakpointVMProvider extends BreakpointVMProvider {
 								}
 							}
 							else {
-								rm.setData( new IBreakpoint[0] );
+								rm.setData( new HashSet<IBreakpoint>() );
 								rm.done();
 							}
 						}

@@ -1,14 +1,15 @@
 /***************************************************************************************************
- * Copyright (c) 2008, 2010 Mirko Raner and others.
+ * Copyright (c) 2008, 2012 Mirko Raner and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Mirko Raner - [196337] initial implementation; some methods adapted from
- *               org.eclipse.tm.terminal.ssh/SshConnector
- * Mirko Raner - [314977] Dynamically disable when no PTY is available
+ * Mirko Raner                 - [196337] initial implementation; some methods adapted from
+ *                               org.eclipse.tm.terminal.ssh/SshConnector
+ * Mirko Raner                 - [314977] Dynamically disable when no PTY is available
+ * Anna Dushistova(MontaVista) - [386262] NPE in setTerminalSize
  **************************************************************************************************/
 
 package org.eclipse.tm.internal.terminal.local;
@@ -52,7 +53,7 @@ import org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnect
  * <code>vi</code> editor).
  *
  * @author Mirko Raner
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class LocalTerminalConnector extends TerminalConnectorImpl
 implements IDebugEventSetListener {
@@ -342,13 +343,14 @@ implements IDebugEventSetListener {
 	 * @param height the new terminal height (in lines)
 	 */
 	public void setTerminalSize(int width, int height) {
+		if(process != null){  
+			PTY pty = process.getPTY();
+			if (pty != null && (width != lastWidth || height != lastHeight)) {
 
-		PTY pty = process.getPTY();
-		if (pty != null && (width != lastWidth || height != lastHeight)) {
-
-			pty.setTerminalSize(width, height);
-			lastWidth = width;
-			lastHeight = height;
+				pty.setTerminalSize(width, height);
+				lastWidth = width;
+				lastHeight = height;
+			}
 		}
 	}
 

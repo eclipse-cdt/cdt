@@ -10,6 +10,7 @@
  *     Wind River Systems   - Modified for new DSF Reference Implementation
  *     Ericsson 		  	- Modified for additional features in DSF Reference implementation and bug 219920
  *     Onur Akdemir (TUBITAK BILGEM-ITI) - Multi-process debugging (Bug 237306)
+ *     Dmitry Kozlov (dmitry_kozlov@mentor.com) - Added quoteParametersWithSpaces
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command.commands;
@@ -28,6 +29,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 
 /**
  * Represents any MI command.
+ * @since 4.2
  */
 public class MICommand<V extends MIInfo> implements ICommand<V> {
     
@@ -75,7 +77,7 @@ public class MICommand<V extends MIInfo> implements ICommand<V> {
 		List<Adjustable> result = new ArrayList<Adjustable>();
 		if (parameters != null) {
 			for (String parameter : parameters) {
-				result.add(new MIStandardParameterAdjustable(parameter));
+				result.add(new MIStandardParameterAdjustable(parameter, quoteParametersWithSpaces()));				
 			}
 		}
 		return result;
@@ -210,6 +212,16 @@ public class MICommand<V extends MIInfo> implements ICommand<V> {
         return ( new MIInfo(MIresult) );
     }
     
+	/**
+	 * Returns whether parameters with spaces should be quoted.
+	 * If false is returned, the special characters in the parameter
+	 * will be still escaped, but not quoting will be done.
+	 * @since 4.2
+	 */
+	protected boolean quoteParametersWithSpaces() { 
+    	return true; 
+	}
+    
     protected String optionsToString() {
 		StringBuffer sb = new StringBuffer();
 		if (fOptions != null && fOptions.size() > 0) {
@@ -320,9 +332,20 @@ public class MICommand<V extends MIInfo> implements ICommand<V> {
 	}
 
 	public static class MIStandardParameterAdjustable extends
-			MICommandAdjustable {
+			MICommandAdjustable
+	{
+		private boolean fQuote;
+		
 		public MIStandardParameterAdjustable(String parameter) {
+			this(parameter, true);
+		}
+		
+		/**
+		 * @since 4.2
+		 */
+		public MIStandardParameterAdjustable(String parameter, boolean quote) {
 			super(parameter);
+			fQuote = quote;
 		}
 
 		@Override
@@ -338,7 +361,7 @@ public class MICommand<V extends MIInfo> implements ICommand<V> {
 
 			// If the string contains spaces instead of escaping
 			// surround the parameter with double quotes.
-			if (containsWhitespace(value)) {
+			if (fQuote && containsWhitespace(value)) {
 				builder.insert(0, '"');
 				builder.append('"');
 			}

@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     Dmitry Kozlov (Mentor) - Trace control view enhancements (Bug 390827)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.tracepoints;
 
@@ -37,6 +38,9 @@ public class TracepointImageRegistry extends AbstractImageRegistry {
     public static final String ICON_Refresh_disabled = add(ORG_ECLIPSE_UI_PLUGIN_ID, new String[] {"full/dlcl16"}, "refresh_nav.gif"); //$NON-NLS-1$ //$NON-NLS-2$
     public static final String ICON_Trace_Variables  = add(ORG_ECLIPSE_CDT_DSF_GDB_UI_PLUGIN_ID, new String[] {"full/obj16"}, "tracevariables.gif"); //$NON-NLS-1$ //$NON-NLS-2$
     public static final String ICON_Exit_Visualization = add(ORG_ECLIPSE_CDT_DSF_GDB_UI_PLUGIN_ID, new String[] {"full/obj16"}, "stop_visual_trace.gif"); //$NON-NLS-1$ //$NON-NLS-2$
+    public static final String ICON_Edit_Enabled = add(ORG_ECLIPSE_CDT_DSF_GDB_UI_PLUGIN_ID, new String[] {"full/obj16"}, "write_obj.gif"); //$NON-NLS-1$ //$NON-NLS-2$
+    public static final String ICON_Edit_Disabled = add(ORG_ECLIPSE_CDT_DSF_GDB_UI_PLUGIN_ID, new String[] {"full/obj16"}, "write_obj_disabled.gif"); //$NON-NLS-1$ //$NON-NLS-2$
+    public static final String ICON_Save = add(ORG_ECLIPSE_CDT_DSF_GDB_UI_PLUGIN_ID, new String[] {"full/obj16"}, "save_edit.gif"); //$NON-NLS-1$ //$NON-NLS-2$
     
     private static TracepointImageRegistry INSTANCE= new TracepointImageRegistry(GdbUIPlugin.getDefault());
     

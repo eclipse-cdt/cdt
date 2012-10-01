@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Ericsson - Initial API and implementation
+ *     Dmitry Kozlov (Mentor Graphics)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service.command.output;
 
@@ -30,6 +31,13 @@ public class MITraceStatusInfo extends MIInfo {
 	private boolean fIsTracingSupported = false;
 	private STOP_REASON_ENUM fStopReason = null;
 	private Integer fStoppingTracepoint = null;
+	private boolean fIsOffileTracing = false;
+	private String fUserName = ""; //$NON-NLS-1$
+	private String fStartNotes = ""; //$NON-NLS-1$
+	private String fStartTime = ""; //$NON-NLS-1$
+	private String fStopNotes = ""; //$NON-NLS-1$
+	private String fStopTime = ""; //$NON-NLS-1$
+	private boolean fIsCircularBuffer = false;
 
 	public MITraceStatusInfo(MIOutput out) {
 		super(out);
@@ -55,13 +63,48 @@ public class MITraceStatusInfo extends MIInfo {
 	public boolean isTracingSupported() {
 		return fIsTracingSupported;
 	}
-	
+
+	/** @since 4.2 */
+	public boolean isOffileTracing() {
+		return fIsOffileTracing;
+	}
+
 	public STOP_REASON_ENUM getStopReason() {
 		return fStopReason;
 	}
 	
 	public Integer getStopTracepoint() {
 		return fStoppingTracepoint;
+	}
+	
+	/** @since 4.2 */
+	public String getUserName() {
+		return fUserName;
+	}
+
+	/** @since 4.2 */	
+	public String getStartNotes() {
+		return fStartNotes;
+	}
+
+	/** @since 4.2 */
+	public String getStartTime() {
+		return fStartTime;
+	}
+
+	/** @since 4.2 */
+	public String getStopNotes() {
+		return fStopNotes;
+	}
+
+	/** @since 4.2 */
+	public String getStopTime() {
+		return fStopTime;
+	}
+
+	/** @since 4.2 */
+	public boolean isCircularBuffer() {
+		return fIsCircularBuffer;
 	}
 	
 	private void parse() {
@@ -76,6 +119,7 @@ public class MITraceStatusInfo extends MIInfo {
 						MIValue val = results[i].getMIValue();
 						if (val instanceof MIConst) {
 							fIsTracingSupported = ((MIConst)val).getString().equals("0") ? false : true;;  //$NON-NLS-1$
+							fIsOffileTracing = ((MIConst)val).getString().equals("file");  //$NON-NLS-1$
 						}
 					} else if (var.equals("running")) { //$NON-NLS-1$
 						MIValue val = results[i].getMIValue();
@@ -128,7 +172,37 @@ public class MITraceStatusInfo extends MIInfo {
 								fStoppingTracepoint = Integer.parseInt(((MIConst)val).getString());
 							} catch (NumberFormatException e) {}
 						}
-					}  
+					} else if (var.equals("user-name")) { //$NON-NLS-1$
+						MIValue val = results[i].getMIValue();
+						if (val instanceof MIConst) {
+							fUserName = ((MIConst)val).getString();
+						}
+					}  else if (var.equals("notes")) { //$NON-NLS-1$
+						MIValue val = results[i].getMIValue();
+						if (val instanceof MIConst) {
+							fStartNotes = ((MIConst)val).getString();
+						}
+					}  else if (var.equals("start-time")) { //$NON-NLS-1$
+						MIValue val = results[i].getMIValue();
+						if (val instanceof MIConst) {
+							fStartTime = ((MIConst)val).getString();
+						}
+					} else if (var.equals("stop-time")) { //$NON-NLS-1$
+						MIValue val = results[i].getMIValue();
+						if (val instanceof MIConst) {
+							fStopTime = ((MIConst)val).getString();
+						}
+					} else if (var.equals("circular")) { //$NON-NLS-1$
+						MIValue val = results[i].getMIValue();
+						if (val instanceof MIConst) {
+							fIsCircularBuffer = "1".equals(((MIConst)val).getString());  //$NON-NLS-1$
+						}
+					} else if (var.equals("stop-notes")) { //$NON-NLS-1$
+						MIValue val = results[i].getMIValue();
+						if (val instanceof MIConst) {
+							fStopNotes = ((MIConst)val).getString();
+						}
+					}
 				}
 			}
 		}

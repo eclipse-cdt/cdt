@@ -20,6 +20,7 @@
  *     Anton Gorenkov - A preference to use RTTI for variable types determination (Bug 377536)
  *     Vladimir Prus (Mentor Graphics) - Support for -info-os (Bug 360314)
  *     John Dallaway - Support for -data-write-memory-bytes (Bug 387793)
+ *     Dmitry Kozlov (Mentor Graphics) - New trace-related methods
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command;
@@ -105,6 +106,7 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetArgs;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetAutoSolib;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetBreakpointPending;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetCharset;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetCircularTraceBuffer;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetDetachOnFork;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetEnv;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetHostCharset;
@@ -119,6 +121,9 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetSolibSearchPath;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetTargetAsync;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetTargetCharset;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetTargetWideCharset;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetTraceNote;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetTraceStopNote;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetTraceUser;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBShowExitCode;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIInferiorTTYSet;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIInfoOs;
@@ -992,4 +997,25 @@ public class CommandFactory {
 	public ICommand<MIVarUpdateInfo> createMIVarUpdate(ICommandControlDMContext dmc, String name) {
 		return new MIVarUpdate(dmc, name);
 	}
+	
+	/** @since 4.2 */
+	public ICommand<MIInfo> createMIGDBSetCircularTraceBuffer(ITraceTargetDMContext ctx, boolean useCircularBuffer) {
+		return new MIGDBSetCircularTraceBuffer(ctx, useCircularBuffer);
+	}
+
+	/** @since 4.2 */
+	public ICommand<MIInfo> createMIGDBSetTraceUser(ITraceTargetDMContext ctx, String userName) {
+		return new MIGDBSetTraceUser(ctx, userName);
+	}
+
+	/** @since 4.2 */
+	public ICommand<MIInfo> createMIGDBSetTraceNote(ITraceTargetDMContext ctx, String note) {
+		return new MIGDBSetTraceNote(ctx, note);
+	}
+
+	/** @since 4.2 */
+	public ICommand<MIInfo> createMIGDBSetTraceStopNote(ITraceTargetDMContext ctx, String note) {
+		return new MIGDBSetTraceStopNote(ctx, note);
+	}
+
 }

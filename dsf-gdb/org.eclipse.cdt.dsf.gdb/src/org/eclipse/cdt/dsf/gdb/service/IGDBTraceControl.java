@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     Ericsson - Initial API and implementation
+ *     Dmitry Kozlov (Mentor Graphics) - add setCircularTraceBuffer, setTraceUser,
+ *                                       setTraceNotes, setTraceStopNotes
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
@@ -164,6 +166,7 @@ public interface IGDBTraceControl extends IDsfService {
 		 * Should be null if getStopReason is null
 		 */
 		Integer getStoppingTracepoint();
+
     }
     
     public interface ITraceVariableDMData extends IDMData {
@@ -195,4 +198,5 @@ public interface IGDBTraceControl extends IDsfService {
 	public void getCurrentTraceRecordContext(ITraceTargetDMContext context, DataRequestMonitor<ITraceRecordDMContext> drm);
 	public ITraceRecordDMContext createNextRecordContext(ITraceRecordDMContext ctx);
 	public ITraceRecordDMContext createPrevRecordContext(ITraceRecordDMContext ctx);
+
 }

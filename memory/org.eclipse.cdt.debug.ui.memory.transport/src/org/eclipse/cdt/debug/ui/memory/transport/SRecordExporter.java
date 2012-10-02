@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Ted R Williams (Wind River Systems, Inc.) - initial implementation
+ *     John Dallaway - Enhanced data buffering for performance (bug 390897)
  *******************************************************************************/
 
 package org.eclipse.cdt.debug.ui.memory.transport;
@@ -393,6 +394,7 @@ public class SRecordExporter implements IMemoryExporter
 					// FIXME 4 byte default
 					
 					BigInteger DATA_PER_RECORD = BigInteger.valueOf(16);
+					BigInteger DATA_PER_TRANSFER = BigInteger.valueOf(4096).multiply(DATA_PER_RECORD);
 					
 					BigInteger transferAddress = fStartAddress;
 					
@@ -411,71 +413,84 @@ public class SRecordExporter implements IMemoryExporter
 					BigInteger jobCount = BigInteger.ZERO;
 					while(transferAddress.compareTo(fEndAddress) < 0 && !monitor.isCanceled())
 					{
-						BigInteger length = DATA_PER_RECORD;
+						BigInteger length = DATA_PER_TRANSFER;
 						if(fEndAddress.subtract(transferAddress).compareTo(length) < 0)
 							length = fEndAddress.subtract(transferAddress);
 						
 						monitor.subTask(String.format(Messages.getString("Exporter.Progress"), length.toString(10), transferAddress.toString(16))); //$NON-NLS-1$
 
-						writer.write("S3"); // FIXME 4 byte address //$NON-NLS-1$
-						
-						StringBuffer buf = new StringBuffer();
-						
-						BigInteger sRecordLength = BigInteger.valueOf(4); // address size
-						sRecordLength = sRecordLength.add(length);
-						sRecordLength = sRecordLength.add(BigInteger.ONE); // checksum
-						
-						String transferAddressString = transferAddress.toString(16);
-						
-						String lengthString = sRecordLength.toString(16);
-						if(lengthString.length() == 1)
-							buf.append("0"); //$NON-NLS-1$
-						buf.append(lengthString);
-						for(int i = 0; i < 8 - transferAddressString.length(); i++)
-							buf.append("0"); //$NON-NLS-1$
-						buf.append(transferAddressString);
-						
-						// data
-						
 						MemoryByte bytes[] = ((IMemoryBlockExtension) fMemoryBlock).getBytesFromAddress(transferAddress, 
 							length.longValue() / ((IMemoryBlockExtension) fMemoryBlock).getAddressableSize());
-						for(int byteIndex = 0; byteIndex < bytes.length; byteIndex++)
+
+						BigInteger sRecordAddress = transferAddress;
+						BigInteger sRecordEndAddress = transferAddress.add(length);
+						while(sRecordAddress.compareTo(sRecordEndAddress) < 0 && !monitor.isCanceled() )
 						{
-							String bString = BigInteger.valueOf(0xFF & bytes[byteIndex].getValue()).toString(16);
+							BigInteger sRecordDataLength = DATA_PER_RECORD;
+							if(sRecordEndAddress.subtract(sRecordAddress).compareTo(sRecordDataLength) < 0)
+								sRecordDataLength = fEndAddress.subtract(sRecordAddress);
+
+							writer.write("S3"); // FIXME 4 byte address //$NON-NLS-1$
+
+							StringBuffer buf = new StringBuffer();
+
+							BigInteger sRecordLength = BigInteger.valueOf(4); // address size
+							sRecordLength = sRecordLength.add(sRecordDataLength);
+							sRecordLength = sRecordLength.add(BigInteger.ONE); // checksum
+
+							String transferAddressString = sRecordAddress.toString(16);
+
+							String lengthString = sRecordLength.toString(16);
+							if(lengthString.length() == 1)
+								buf.append("0"); //$NON-NLS-1$
+							buf.append(lengthString);
+							for(int i = 0; i < 8 - transferAddressString.length(); i++)
+								buf.append("0"); //$NON-NLS-1$
+							buf.append(transferAddressString);
+
+							final int byteOffset = sRecordAddress.subtract(transferAddress).intValue();
+							final int byteLength = byteOffset + sRecordDataLength.intValue();
+							for(int byteIndex = byteOffset; byteIndex < byteLength; byteIndex++)
+							{
+								String bString = BigInteger.valueOf(0xFF & bytes[byteIndex].getValue()).toString(16);
+								if(bString.length() == 1)
+									buf.append("0"); //$NON-NLS-1$
+								buf.append(bString);
+							}
+
+							/*
+							 * The least significant byte of the one's complement of the sum of the values
+	                         * represented by the pairs of characters making up the records length, address,
+	                         * and the code/data fields.
+							 */
+							byte checksum = 0;
+
+							for(int i = 0; i < buf.length(); i+=2)
+							{
+								BigInteger value = new BigInteger(buf.substring(i, i+2), 16);
+								checksum += value.byteValue();
+							}
+
+							String bString = BigInteger.valueOf(0xFF - checksum).and(BigInteger.valueOf(0xFF)).toString(16);
 							if(bString.length() == 1)
 								buf.append("0"); //$NON-NLS-1$
 							buf.append(bString);
-						}
-						
-						/*
-						 * The least significant byte of the one's complement of the sum of the values
-                         * represented by the pairs of characters making up the records length, address,
-                         * and the code/data fields.
-						 */
-						byte checksum = 0;
-						
-						for(int i = 0; i < buf.length(); i+=2)
-						{
-							BigInteger value = new BigInteger(buf.substring(i, i+2), 16);
-							checksum += value.byteValue();
-						}
-						
-						String bString = BigInteger.valueOf(0xFF - checksum).and(BigInteger.valueOf(0xFF)).toString(16);
-						if(bString.length() == 1)
-							buf.append("0"); //$NON-NLS-1$
-						buf.append(bString);
 
-						writer.write(buf.toString().toUpperCase());
-						writer.write("\n"); //$NON-NLS-1$
-						
-						transferAddress = transferAddress.add(length);
-						
-						jobCount = jobCount.add(BigInteger.ONE);
-						if(jobCount.compareTo(factor) == 0)
-						{
-							jobCount = BigInteger.ZERO;
-							monitor.worked(1);
+							writer.write(buf.toString().toUpperCase());
+							writer.write("\n"); //$NON-NLS-1$
+
+							sRecordAddress = sRecordAddress.add(sRecordDataLength);
+
+							jobCount = jobCount.add(BigInteger.ONE);
+							if(jobCount.compareTo(factor) == 0)
+							{
+								jobCount = BigInteger.ZERO;
+								monitor.worked(1);
+							}
 						}
+
+						transferAddress = transferAddress.add(length);
+
 					}
 					
 					writer.close();

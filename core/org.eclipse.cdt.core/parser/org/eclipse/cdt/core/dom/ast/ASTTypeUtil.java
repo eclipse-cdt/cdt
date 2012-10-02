@@ -41,7 +41,7 @@ import org.eclipse.cdt.internal.core.dom.parser.c.ICInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTypeId;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownClassInstance;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownMemberClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
@@ -727,8 +727,8 @@ public class ASTTypeUtil {
 		
 		if (binding instanceof ICPPTemplateInstance) {
 			appendArgumentList(((ICPPTemplateInstance) binding).getTemplateArguments(), normalize, result);
-		} else if (binding instanceof ICPPUnknownClassInstance) {
-			appendArgumentList(((ICPPUnknownClassInstance) binding).getArguments(), normalize, result);
+		} else if (binding instanceof ICPPUnknownMemberClassInstance) {
+			appendArgumentList(((ICPPUnknownMemberClassInstance) binding).getArguments(), normalize, result);
 		}
 	}
 	

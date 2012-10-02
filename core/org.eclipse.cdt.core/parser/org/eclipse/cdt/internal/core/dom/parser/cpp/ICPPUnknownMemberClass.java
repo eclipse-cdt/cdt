@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,19 +10,14 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 
 /**
- * Represents the binding for a dependent name within a template declaration.
+ * Represents a binding for a type found in a template definition, that can be 
+ * determined only after the template is instantiated. 
+ * 
+ * This interface should be made public.
+ * @since 5.0
  */
-public interface ICPPUnknownBinding extends ICPPBinding {
-	ICPPUnknownBinding[] EMPTY_UNKNOWN_BINDING_ARRAY = {};
-
-	/**
-	 * Returns the scope this binding represents.
-	 * @throws DOMException 
-	 */
-    public ICPPScope asScope() throws DOMException;
+public interface ICPPUnknownMemberClass extends ICPPUnknownMember, ICPPUnknownType, ICPPClassType {
 }

@@ -70,7 +70,7 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter implement
 	    	IASTNode[] nodes = getDeclarations();
 	    	if (nodes != null && nodes.length > 0)
 	    		n = (IASTName) nodes[0];
-	        unknownScope = new CPPUnknownScope(this, n);
+	        unknownScope = new CPPUnknownTypeScope(this, n);
 	    }
 	    return unknownScope;
 	}
@@ -232,11 +232,6 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter implement
 		return ICPPTemplateInstance.EMPTY_TEMPLATE_INSTANCE_ARRAY;
 	}
 	
-	@Override
-	public IASTName getUnknownName() {
-		return new CPPASTName(getNameCharArray());
-	}
-
 	@Override
 	public boolean isAnonymous() {
 		return false;

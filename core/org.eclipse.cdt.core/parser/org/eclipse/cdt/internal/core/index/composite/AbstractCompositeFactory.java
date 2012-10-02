@@ -31,7 +31,7 @@ import org.eclipse.core.runtime.CoreException;
  */
 public abstract class AbstractCompositeFactory implements ICompositesFactory {	
 	protected IIndex index;
-	private Comparator<IIndexFragmentBinding> fragmentComparator;
+	private final Comparator<IIndexFragmentBinding> fragmentComparator;
 	
 	public AbstractCompositeFactory(IIndex index) {
 		this.index= index;
@@ -135,7 +135,7 @@ public abstract class AbstractCompositeFactory implements ICompositesFactory {
 	}
 	
 	private static class FragmentBindingComparator implements Comparator<IIndexFragmentBinding> {
-		private IIndexFragmentBindingComparator[] comparators;
+		private final IIndexFragmentBindingComparator[] comparators;
 		
 		FragmentBindingComparator(IIndexFragmentBindingComparator[] comparators) {
 			this.comparators= comparators;

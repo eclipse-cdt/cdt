@@ -235,8 +235,6 @@ public class CPPVisitor extends ASTQueries {
 			return new HashSet<IASTDeclSpecifier>();
 		}
 	};
-	private static final ICPPScope UNKNOWN_TYPE_SCOPE = new CPPUnknownTypeScope(new CPPASTName("<unknown type>".toCharArray()), null); //$NON-NLS-1$
-
 	public static IBinding createBinding(IASTName name) {
 		IASTNode parent = name.getParent();
 		IBinding binding = null;
@@ -1226,7 +1224,7 @@ public class CPPVisitor extends ASTQueries {
 				} else if (type instanceof ICPPUnknownBinding) {
 					return ((ICPPUnknownBinding) type).asScope();
 				} else if (type instanceof ICPPUnknownType) {
-					return UNKNOWN_TYPE_SCOPE;
+					return new CPPUnknownTypeScope(type, null);
 				} else {
 					return new CPPScope.CPPScopeProblem(name, ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
 				}

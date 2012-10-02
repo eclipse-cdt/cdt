@@ -61,7 +61,7 @@ public interface IIndexFragmentBinding extends IIndexBinding {
 	IIndexFragmentBinding getOwner();
 
 	/**
-	 * Returns a unique id for the binding within the fragment
+	 * Returns a unique id for the binding within the fragment, or <code>null</code> for unknown bindings.
 	 * @since 5.1
 	 */
 	long getBindingID();

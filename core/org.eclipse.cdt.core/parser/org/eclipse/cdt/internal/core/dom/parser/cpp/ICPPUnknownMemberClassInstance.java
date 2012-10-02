@@ -19,7 +19,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
  * This interface should be made public.
  * @since 5.0
  */
-public interface ICPPUnknownClassInstance extends ICPPUnknownClassType {
+public interface ICPPUnknownMemberClassInstance extends ICPPUnknownMemberClass {
 	/**
 	 * Returns the arguments of the instantiation
 	 */

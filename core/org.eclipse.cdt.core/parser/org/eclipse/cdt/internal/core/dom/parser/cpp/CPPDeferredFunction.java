@@ -23,9 +23,9 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 
 /**
  * Represents a reference to a (member) function (instance), which cannot be resolved because 
- * it depends on a template parameter. A compiler would resolve it during instantiation.
+ * an argument depends on a template parameter. A compiler would resolve it during instantiation.
  */
-public class CPPUnknownFunction extends CPPUnknownBinding implements ICPPFunction {
+public class CPPDeferredFunction extends CPPUnknownBinding implements ICPPFunction {
 	private static final ICPPFunctionType FUNCTION_TYPE=
 			new CPPFunctionType(ProblemType.UNKNOWN_FOR_EXPRESSION, IType.EMPTY_TYPE_ARRAY);
 
@@ -33,11 +33,15 @@ public class CPPUnknownFunction extends CPPUnknownBinding implements ICPPFunctio
 		if (sample instanceof ICPPConstructor)
 			return new CPPUnknownConstructor(((ICPPConstructor) sample).getClassOwner());
 		
-		return new CPPUnknownFunction(sample.getOwner(), sample.getNameCharArray());
+		final IBinding owner = sample.getOwner();
+		return new CPPDeferredFunction(owner, sample.getNameCharArray());
 	}
 
-	public CPPUnknownFunction(IBinding owner, char[] name) {
-		super(owner, name);
+	private final IBinding fOwner;
+
+	public CPPDeferredFunction(IBinding owner, char[] name) {
+		super(name);
+		fOwner= owner;
 	}
 
 	@Override
@@ -118,5 +122,10 @@ public class CPPUnknownFunction extends CPPUnknownBinding implements ICPPFunctio
 	@Override
 	public boolean hasParameterPack() {
 		return false;
+	}
+	
+	@Override
+	public IBinding getOwner() {
+		return fOwner;
 	}
 }

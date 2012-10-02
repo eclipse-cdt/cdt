@@ -12,19 +12,18 @@
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredClassInstance;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownMemberClass;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownTypeScope;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.core.runtime.CoreException;
 
-public class CompositeCPPDeferredClassInstance extends CPPDeferredClassInstance implements IIndexBinding {
-	public CompositeCPPDeferredClassInstance(ICPPClassTemplate template, ICPPTemplateArgument[] args) {
-		super(template, args);
+public class CompositeCPPUnknownMemberClass extends CPPUnknownMemberClass implements IIndexBinding {
+	public CompositeCPPUnknownMemberClass(IType owner, char[] name) {
+		super(owner, name);
 	}
 
 	@Override

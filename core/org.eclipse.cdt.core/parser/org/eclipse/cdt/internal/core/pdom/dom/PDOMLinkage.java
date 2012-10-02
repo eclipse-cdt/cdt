@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IValue;
@@ -39,6 +40,7 @@ import org.eclipse.cdt.core.parser.util.CharArrayMap;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.index.IIndexBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -387,15 +389,6 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	}
 
 	/**
-	 * Usually bindings are added on behalf of a name, only. For unknown values or using declarations
-	 * we need to add further bindings.
-	 * @throws CoreException 
-	 */
-	public PDOMBinding addPotentiallyUnknownBinding(IBinding binding) throws CoreException {
-		return null;
-	}
-
-	/**
 	 * Returns the list of global bindings for the given name.
 	 * @throws CoreException 
 	 */
@@ -432,6 +425,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 
 	public abstract PDOMBinding addTypeBinding(IBinding type) throws CoreException;
 	public abstract IType unmarshalType(ITypeMarshalBuffer buffer) throws CoreException;
+	public abstract IBinding unmarshalBinding(ITypeMarshalBuffer buffer) throws CoreException;
 	public abstract ISerializableEvaluation unmarshalEvaluation(ITypeMarshalBuffer typeMarshalBuffer) throws CoreException;
 
 	public void storeType(long offset, IType type) throws CoreException {
@@ -495,6 +489,69 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 			break;
 		}
 		return new TypeMarshalBuffer(this, data).unmarshalType();
+	}
+
+	public void storeBinding(long offset, IBinding binding) throws CoreException {
+		final Database db= getDB();
+		deleteBinding(db, offset);
+		storeBinding(db, offset, binding);
+	}
+
+	private void storeBinding(Database db, long offset, IBinding binding) throws CoreException {
+		if (binding != null) {
+			TypeMarshalBuffer bc= new TypeMarshalBuffer(this);
+			bc.marshalBinding(binding);
+			int len= bc.getPosition();
+			if (len > 0) {
+				if (len <= Database.TYPE_SIZE) {
+					db.putBytes(offset, bc.getBuffer(), len);
+				} else if (len <= Database.MAX_MALLOC_SIZE-2){
+					long ptr= db.malloc(len+2);
+					db.putShort(ptr, (short) len);
+					db.putBytes(ptr+2, bc.getBuffer(), len);
+					db.putByte(offset, TypeMarshalBuffer.INDIRECT_TYPE);
+					db.putRecPtr(offset+2, ptr);
+				}
+			}
+		}
+	}
+
+	private void deleteBinding(Database db, long offset) throws CoreException {
+		byte firstByte= db.getByte(offset);
+		if (firstByte == TypeMarshalBuffer.INDIRECT_TYPE) {
+			long ptr= db.getRecPtr(offset+2);
+			clearBinding(db, offset);
+			db.free(ptr);
+		} else {
+			clearBinding(db, offset);
+		}
+	}
+
+	private void clearBinding(Database db, long offset) throws CoreException {
+		db.clearBytes(offset, Database.TYPE_SIZE);
+	}
+
+	public IBinding loadBinding(long offset) throws CoreException {
+		final Database db= getDB();
+		final byte firstByte= db.getByte(offset);
+		byte[] data= null;
+		switch(firstByte) {
+		case TypeMarshalBuffer.INDIRECT_TYPE:
+			long ptr= db.getRecPtr(offset+2);
+			int len= db.getShort(ptr) & 0xffff;
+			data= new byte[len];
+			db.getBytes(ptr+2, data);
+			break;
+		case TypeMarshalBuffer.UNSTORABLE_TYPE:
+			return new ProblemBinding(null, ISemanticProblem.TYPE_NOT_PERSISTED);
+		case TypeMarshalBuffer.NULL_TYPE:
+			return null;
+		default:
+			data= new byte[Database.TYPE_SIZE];
+			db.getBytes(offset, data);
+			break;
+		}
+		return new TypeMarshalBuffer(this, data).unmarshalBinding();
 	}
 
 	public void storeTemplateArgument(long offset, ICPPTemplateArgument arg) throws CoreException {

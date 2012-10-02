@@ -57,7 +57,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
@@ -327,7 +326,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 
 		// the instantiation of A<T> has to be deferred.
 		assertInstance(b0, ICPPUnknownBinding.class);
-		final ICPPBinding parent = ((ICPPInternalUnknownScope) b0.getScope()).getScopeBinding();
+		final IType parent = ((ICPPInternalUnknownScope) b0.getScope()).getScopeType();
 		assertInstance(parent, ICPPDeferredClassInstance.class);
 		assertSame(((ICPPDeferredClassInstance) parent).getSpecializedBinding(), A);
 

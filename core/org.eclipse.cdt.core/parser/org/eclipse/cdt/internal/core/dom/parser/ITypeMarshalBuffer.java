@@ -31,6 +31,9 @@ public interface ITypeMarshalBuffer {
 	final static byte PROBLEM_TYPE= 				9;
 	final static byte VALUE= 				   	   10;
 	final static byte DEPENDENT_EXPRESSION_TYPE=   11;
+	final static byte UNKNOWN_MEMBER=			   12;
+	final static byte UNKNOWN_MEMBER_CLASS_INSTANCE= 13;
+	final static byte DEFERRED_CLASS_INSTANCE=     	 14;
 
 	final static byte
 		EVAL_BINARY= 1,

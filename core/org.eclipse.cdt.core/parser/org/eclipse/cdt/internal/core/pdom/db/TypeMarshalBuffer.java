@@ -106,11 +106,7 @@ public class TypeMarshalBuffer implements ITypeMarshalBuffer {
 			return null;
 		}
 
-		IType type= fLinkage.unmarshalType(this);
-		if (type == null || type instanceof IBinding)
-			return (IBinding) type;
-
-		throw unmarshallingError();
+		return fLinkage.unmarshalBinding(this);
 	}
 
 	@Override

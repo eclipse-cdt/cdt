@@ -223,10 +223,11 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  131.0 - Dependent expressions part 2, bug 299911.
 	 *  132.0 - Explicit virtual overrides, bug 380623.
 	 *  133.0 - Storing template arguments via direct marshalling, bug 299911.
+	 *  134.0 - Storing unknown bindings via direct marshalling, bug 381824.
 	 */
-	private static final int MIN_SUPPORTED_VERSION= version(133, 0);
-	private static final int MAX_SUPPORTED_VERSION= version(133, Short.MAX_VALUE);
-	private static final int DEFAULT_VERSION = version(133, 0);
+	private static final int MIN_SUPPORTED_VERSION= version(134, 0);
+	private static final int MAX_SUPPORTED_VERSION= version(134, Short.MAX_VALUE);
+	private static final int DEFAULT_VERSION = version(134, 0);
 
 	private static int version(int major, int minor) {
 		return (major << 16) + minor;

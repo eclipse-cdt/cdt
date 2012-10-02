@@ -9,22 +9,26 @@
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 
-package org.eclipse.cdt.internal.core.index.composite.cpp;
+package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
-import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredClassInstance;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownMemberClass;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownTypeScope;
+import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
+import org.eclipse.cdt.internal.core.index.IIndexFragment;
+import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.core.runtime.CoreException;
 
-public class CompositeCPPDeferredClassInstance extends CPPDeferredClassInstance implements IIndexBinding {
-	public CompositeCPPDeferredClassInstance(ICPPClassTemplate template, ICPPTemplateArgument[] args) {
-		super(template, args);
+public class PDOMCPPUnknownMemberClass extends CPPUnknownMemberClass implements IIndexFragmentBinding {
+	private final IIndexFragment fFragment;
+
+	public PDOMCPPUnknownMemberClass(IIndexFragment frag, IType owner, char[] name) {
+		super(owner, name);
+		fFragment= frag;
 	}
 
 	@Override
@@ -38,8 +42,33 @@ public class CompositeCPPDeferredClassInstance extends CPPDeferredClassInstance 
 	}
 
 	@Override
-	public IIndexBinding getOwner() {
-		return (IIndexBinding) super.getOwner();
+	public IIndexFragment getFragment() {
+		return fFragment;
+	}
+
+	@Override
+	public boolean hasDefinition() throws CoreException {
+		return false;
+	}
+
+	@Override
+	public boolean hasDeclaration() throws CoreException {
+		return true;
+	}
+
+	@Override
+	public int getBindingConstant() {
+		return IIndexCPPBindingConstants.CPP_UNKNOWN_CLASS_TYPE;
+	}
+
+	@Override
+	public long getBindingID() {
+		return 0;
+	}
+	
+	@Override
+	public IIndexFragmentBinding getOwner() {
+		return (IIndexFragmentBinding) super.getOwner();
 	}
 	
 	@Override
@@ -53,6 +82,6 @@ public class CompositeCPPDeferredClassInstance extends CPPDeferredClassInstance 
 	
 	@Override
 	protected CPPUnknownTypeScope createScope() {
-		return new CompositeCPPUnknownScope(this, new CPPASTName(getNameCharArray()));
+		return new PDOMCPPUnknownScope(this, new CPPASTName(getNameCharArray()));
 	}
 }

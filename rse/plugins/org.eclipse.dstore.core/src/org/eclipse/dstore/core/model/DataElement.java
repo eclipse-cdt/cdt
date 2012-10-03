@@ -18,6 +18,7 @@
  * David McKnight   (IBM) - [385793] [dstore] DataStore spirit mechanism and other memory improvements needed
  * David McKnight   (IBM) - [389286] [dstore] element delete should not clear _attributes since elements get recycled
  * David McKnight   (IBM) - [390037] [dstore] Duplicated items in the System view
+ * David McKnight   (IBM) - [391065] [dstore][regression] DataElement with "" type treated as deleted (when it's not)
  *******************************************************************************/
 
 package org.eclipse.dstore.core.model;
@@ -334,18 +335,18 @@ public final class DataElement implements IDataElement
 	/**
 	 * Indicates whether the <code>DataElement</code> is deleted or not.
 	 *
-	 * @return whehther the element is deleted or not
+	 * @return whether the element is deleted or not
 	 */
 	public boolean isDeleted()
 	{
-		if (_attributes == null ||  _attributes[0] == null || _attributes[0] == "") //$NON-NLS-1$
+		if (_attributes == null ||  _attributes[0] == null)
 		{
 			return true;
 		}
 
 		String valueAttribute = getAttribute(DE.A_VALUE);
 
-		if (valueAttribute != null && valueAttribute.equals(DataStoreResources.DELETED))
+		if (valueAttribute != null && valueAttribute.equals(DataStoreResources.DELETED) && !isDescriptor())
 		{
 			return true;
 		}

@@ -372,8 +372,10 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 			EvalUnary e= (EvalUnary) eval;
 			ICPPEvaluation a = e.getArgument();
 			ICPPEvaluation a2 = getCompositeEvaluation(a);
-			if (a != a2)
-				e= new EvalUnary(e.getOperator(), a2);
+			IBinding b= e.getAddressOfQualifiedNameBinding();
+			IBinding b2= getCompositeBinding((IIndexFragmentBinding) b);
+			if (a != a2 || b != b2)
+				e= new EvalUnary(e.getOperator(), a2, b2);
 			return e;
 		}
 		if (eval instanceof EvalUnaryTypeID) {

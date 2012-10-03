@@ -3007,8 +3007,8 @@ public class CPPSemantics {
 			return null;
 
 		final IASTInitializerClause[] placement = expr.getPlacementArguments();
-		final ICPPEvaluation arg1= new EvalUnary(IASTUnaryExpression.op_star, evaluation);
-		final ICPPEvaluation arg2= new EvalUnary(IASTUnaryExpression.op_sizeof, evaluation);
+		final ICPPEvaluation arg1= new EvalUnary(IASTUnaryExpression.op_star, evaluation, null);
+		final ICPPEvaluation arg2= new EvalUnary(IASTUnaryExpression.op_sizeof, evaluation, null);
 
 		ICPPEvaluation[] args;
 		if (placement == null) {

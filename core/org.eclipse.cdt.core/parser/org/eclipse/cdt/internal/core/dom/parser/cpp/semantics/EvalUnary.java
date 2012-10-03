@@ -37,14 +37,17 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.REF;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
@@ -55,8 +58,10 @@ import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPArithmeticConversion;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics.LookupMode;
 import org.eclipse.core.runtime.CoreException;
@@ -66,12 +71,14 @@ public class EvalUnary extends CPPEvaluation {
 
 	private final int fOperator;
 	private final ICPPEvaluation fArgument;
+	private final IBinding fAddressOfQualifiedNameBinding;
 	private ICPPFunction fOverload= CPPFunction.UNINITIALIZED_FUNCTION;
 	private IType fType;
 
-	public EvalUnary(int operator, ICPPEvaluation operand) {
+	public EvalUnary(int operator, ICPPEvaluation operand, IBinding addressOfQualifiedNameBinding) {
 		fOperator= operator;
 		fArgument= operand;
+		fAddressOfQualifiedNameBinding= addressOfQualifiedNameBinding;
 	}
 
 	public int getOperator() {
@@ -80,6 +87,10 @@ public class EvalUnary extends CPPEvaluation {
 
 	public ICPPEvaluation getArgument() {
 		return fArgument;
+	}
+
+	public IBinding getAddressOfQualifiedNameBinding() {
+		return fAddressOfQualifiedNameBinding;
 	}
 
 	@Override
@@ -142,6 +153,12 @@ public class EvalUnary extends CPPEvaluation {
 		if (fArgument.isTypeDependent())
 			return null;
 
+		if (fAddressOfQualifiedNameBinding instanceof ICPPMember) {
+			ICPPMember member= (ICPPMember) fAddressOfQualifiedNameBinding;
+			if (!member.isStatic()) 
+				return null;
+		}
+
     	IType type = fArgument.getTypeOrFunctionSet(point);
 		type = SemanticUtil.getNestedType(type, TDEF | REF | CVTYPE);
 		if (!CPPSemantics.isUserDefined(type))
@@ -180,6 +197,16 @@ public class EvalUnary extends CPPEvaluation {
 		case op_throw:
 			return CPPSemantics.VOID_TYPE;
 		case op_amper:
+			if (fAddressOfQualifiedNameBinding instanceof ICPPMember) {
+				ICPPMember member= (ICPPMember) fAddressOfQualifiedNameBinding;
+				if (!member.isStatic()) {
+					try {
+						return new CPPPointerToMemberType(member.getType(), member.getClassOwner(), false, false, false);
+					} catch (DOMException e) {
+						return e.getProblem();
+					}
+				}
+			}
 			return new CPPPointerType(fArgument.getTypeOrFunctionSet(point));
 		case op_star:
 			IType type= fArgument.getTypeOrFunctionSet(point);
@@ -270,21 +297,31 @@ public class EvalUnary extends CPPEvaluation {
 		buffer.putByte(ITypeMarshalBuffer.EVAL_UNARY);
 		buffer.putByte((byte) fOperator);
 		buffer.marshalEvaluation(fArgument, includeValue);
+		buffer.marshalBinding(fAddressOfQualifiedNameBinding);
 	}
 
 	public static ISerializableEvaluation unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
 		int op= buffer.getByte();
 		ICPPEvaluation arg= (ICPPEvaluation) buffer.unmarshalEvaluation();
-		return new EvalUnary(op, arg);
+		IBinding binding= buffer.unmarshalBinding();
+		return new EvalUnary(op, arg, binding);
 	}
 
 	@Override
 	public ICPPEvaluation instantiate(ICPPTemplateParameterMap tpMap, int packOffset,
 			ICPPClassSpecialization within, int maxdepth, IASTNode point) {
 		ICPPEvaluation argument = fArgument.instantiate(tpMap, packOffset, within, maxdepth, point);
-		if (argument == fArgument)
+		IBinding aoqn = fAddressOfQualifiedNameBinding;
+		if (aoqn instanceof ICPPUnknownBinding) {
+			try {
+				aoqn= CPPTemplates.resolveUnknown((ICPPUnknownBinding) aoqn, tpMap, packOffset, within, point);
+			} catch (DOMException e) {
+			}
+		}
+		if (argument == fArgument && aoqn == fAddressOfQualifiedNameBinding)
 			return this;
-		return new EvalUnary(fOperator, argument);
+		
+		return new EvalUnary(fOperator, argument, aoqn);
 	}
 
 	@Override

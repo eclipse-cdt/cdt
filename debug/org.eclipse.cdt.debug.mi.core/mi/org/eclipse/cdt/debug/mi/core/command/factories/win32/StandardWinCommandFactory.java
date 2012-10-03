@@ -49,24 +49,7 @@ public class StandardWinCommandFactory extends StandardCommandFactory {
 
 	@Override
 	public MIGDBSetAutoSolib createMIGDBSetAutoSolib( boolean set ) {
-		// Suppress "set auto-solib" - returns error on Windows
-		return new MIGDBSetAutoSolib( getMIVersion(), true ) {
-
-			@Override
-			public String getOperation() {
-				return ""; //$NON-NLS-1$
-			}
-
-			@Override
-			public String[] getOptions() {
-				return new String[0];
-			}
-
-			@Override
-			public String[] getParameters() {
-				return new String[0];
-			}			
-		};
+		return new WinMIGDBSetAutoSolib( getMIVersion(), set );
 	}
 
 	@Override

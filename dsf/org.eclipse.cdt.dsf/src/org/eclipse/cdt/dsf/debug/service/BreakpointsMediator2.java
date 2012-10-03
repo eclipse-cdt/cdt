@@ -483,9 +483,11 @@ public class BreakpointsMediator2 extends AbstractDsfService implements IBreakpo
 	            for(Map.Entry<IBreakpoint, List<ITargetBreakpointInfo>> e: platformBPs.entrySet())
 	            {
 	                // Stop at the first occurrence
-	            	for (ITargetBreakpointInfo tbp : e.getValue())
-	            		if(tbp.getTargetBreakpoint().equals(bp))
+	            	for (ITargetBreakpointInfo tbp : e.getValue()) {
+                        IBreakpointDMContext targetBreakpoint = tbp.getTargetBreakpoint();
+                        if(targetBreakpoint != null && targetBreakpoint.equals(bp))
 	            			return e.getKey();
+                    }
 	            }    
 	        }
     	}

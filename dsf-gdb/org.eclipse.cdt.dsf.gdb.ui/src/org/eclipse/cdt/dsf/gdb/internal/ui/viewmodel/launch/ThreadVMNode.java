@@ -18,7 +18,6 @@ import java.util.Map;
 
 import org.eclipse.cdt.debug.internal.ui.pinclone.PinCloneUtils;
 import org.eclipse.cdt.debug.ui.IPinProvider.IPinElementColorDescriptor;
-import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
@@ -316,7 +315,7 @@ public class ThreadVMNode extends AbstractThreadVMNode
             	final IThreadDMContext threadDmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IThreadDMContext.class);
 
             	if (processService == null || threadDmc == null) {
-            		update.setStatus(new Status(IDsfStatusConstants.INVALID_HANDLE, GdbUIPlugin.PLUGIN_ID, "Service or handle invalid", null)); //$NON-NLS-1$
+            		update.setStatus(new Status(IStatus.ERROR, GdbUIPlugin.PLUGIN_ID, "Service or handle invalid", null)); //$NON-NLS-1$
                 } else {
                     processService.getExecutionData(
                     	threadDmc,

@@ -26,6 +26,8 @@ import org.eclipse.cdt.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IExpressionManager;
 import org.eclipse.debug.core.model.IExpression;
+import org.eclipse.debug.internal.ui.expression.workingset.ExpressionWorkingSetFilterManager;
+import org.eclipse.debug.internal.ui.model.elements.IAddNewExpression;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementEditor;
@@ -34,6 +36,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdat
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
+import org.eclipse.debug.internal.ui.views.expression.ExpressionView;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.resource.JFaceResources;
@@ -45,6 +48,8 @@ import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkingSet;
 
 /**
  * This is the top-level view model node in the expressions view.  Its job is to:
@@ -67,8 +72,22 @@ public class ExpressionManagerVMNode extends AbstractVMNode
      * VMC for a new expression object to be added.  When user clicks on this node to 
      * edit it, he will create a new expression.
      */
-    public class NewExpressionVMC extends AbstractVMContext {
-        public NewExpressionVMC() {
+    @SuppressWarnings("restriction")
+	public class NewExpressionVMC extends AbstractVMContext implements IAddNewExpression {
+    	
+    	private String[] workingSetNames = null;
+    	
+    	@Override
+        public String[] getWorkingSetNames() {
+			return workingSetNames;
+		}
+
+    	@Override
+		public void setWorkingSetNames(String[] workingSetNames) {
+			this.workingSetNames = workingSetNames;
+		}
+
+		public NewExpressionVMC() {
             super(ExpressionManagerVMNode.this);
         }
         
@@ -215,7 +234,17 @@ public class ExpressionManagerVMNode extends AbstractVMNode
             } else {
                 // Last element in the list of expressions is the "add new expression"
                 // dummy entry.
-                update.setChild(new NewExpressionVMC(), i);
+            	//get the working sets applied in this view
+            	IWorkbenchPart expressionView = update.getPresentationContext().getPart();
+            	IWorkingSet[] workingSets = ExpressionWorkingSetFilterManager.getWorkingSets((ExpressionView) expressionView);
+            	String[] workingSetNames = new String[workingSets.length];
+            	for (int j=0; j<workingSets.length; j++)
+            	{
+            		workingSetNames[j] = workingSets[j].getName();
+            	}
+            	NewExpressionVMC newVmc = new NewExpressionVMC();
+            	newVmc.setWorkingSetNames(workingSetNames);
+                update.setChild(newVmc, i);
             }
         }
 

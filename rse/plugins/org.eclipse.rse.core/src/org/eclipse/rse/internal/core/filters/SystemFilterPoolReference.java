@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2011 IBM Corporation and others.
+ * Copyright (c) 2002, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@
  * David Dykstal (IBM) - [192122] extended search to look for filter pools in
  *   profile during getReferencedFilterPool() rather than returning broken reference
  * David McKnight (IBM) - [358999] Deleting multiple connections takes long time
+ * David McKnight (IBM) -[391132] filterpools don't persist when profile names end in _
  *******************************************************************************/
 
 package org.eclipse.rse.internal.core.filters;
@@ -116,10 +117,17 @@ public class SystemFilterPoolReference extends SystemPersistableReferencingObjec
 		 * The filter pool manager name is the same as its owning profile.
 		 */
 		String savedName = getReferencedObjectName();
-		String[] parts = savedName.split(DELIMITER, 2);
-		String result = parts[0];
-		if (parts.length == 2) {
-			result = parts[1];
+		String result = null;
+		int lastDelim = savedName.lastIndexOf(DELIMITER);
+		if (lastDelim > 0){
+			result = savedName.substring(lastDelim + DELIMITER_LENGTH);
+		}
+		else {
+			String[] parts = savedName.split(DELIMITER, 2);
+			result = parts[0];
+			if (parts.length == 2) {
+				result = parts[1];
+			}
 		}
 		return result;
 	}
@@ -135,16 +143,22 @@ public class SystemFilterPoolReference extends SystemPersistableReferencingObjec
 		 * The filter pool manager name is the same as its owning profile.
 		 */
 		String result = null;
-		String savedName = getReferencedObjectName();
-		String[] parts = savedName.split(DELIMITER, 2);
-		if (parts.length == 2) {
-			result = parts[0];
-		} else {
-			ISystemFilterPoolReferenceManagerProvider provider = getProvider();
-			if (provider instanceof ISubSystem) {
-				ISubSystem subsystem = (ISubSystem) provider;
-				ISystemProfile profile = subsystem.getSystemProfile();
-				result = profile.getName();
+		String savedName = getReferencedObjectName();	
+		int lastDelim = savedName.lastIndexOf(DELIMITER);
+		if (lastDelim > 0){
+			result = savedName.substring(0, lastDelim);
+		}
+		else {
+			String[] parts = savedName.split(DELIMITER, 2);
+			if (parts.length == 2) {
+				result = parts[0];
+			} else {
+				ISystemFilterPoolReferenceManagerProvider provider = getProvider();
+				if (provider instanceof ISubSystem) {
+					ISubSystem subsystem = (ISubSystem) provider;
+					ISystemProfile profile = subsystem.getSystemProfile();
+					result = profile.getName();
+				}
 			}
 		}
 		if (result == null) {

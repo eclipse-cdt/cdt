@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2012 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -27,6 +27,7 @@
  * David McKnight (IBM) - [267052] need to be able to create subsystems-after-the-fact
  * David McKnight (IBM) - [271243] [files] Switching service type brings up TWO file subsystems after restart
  * Uwe Stieber (Wind River) - [283844] NPE on restoring property set if persistent data is corrupted
+ * David McKnight (IBM) -[391132] filterpools don't persist when profile names end in _
  ********************************************************************************/
 
 package org.eclipse.rse.internal.persistence.dom;
@@ -516,9 +517,9 @@ public class RSEDOMImporter {
 		ISystemProfile profile = subsystem.getSystemProfile();
 		String profileName = profile.getName();
 		String baseFilterPoolName = filterPoolName;
+		filterPoolName = filterPoolName.substring(profileName.length()); // in case there's an underscore in the profile name
 		String[] part = filterPoolName.split("___", 2); //$NON-NLS-1$
 		if (part.length == 2) { // name is qualified and refers to a filter pool in a specific profile
-			profileName = part[0];
 			baseFilterPoolName = part[1];
 		}
 		// special processing for host owned pool references

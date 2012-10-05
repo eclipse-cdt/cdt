@@ -66,6 +66,7 @@
  * David McKnight    (IBM) 		 - [339548] [dstore] shouldn't attempt file conversion on empty files
  * David McKnight    (IBM)       - [365780] [dstore] codepage conversion should only occur for different encodings
  * David McKnight   (IBM)        - [390037] [dstore] Duplicated items in the System view
+ * David McKnight   (IBM)        - [391164] [dstore] don't clear cached elements when they're not spirited or deleted
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.files;
@@ -2112,9 +2113,9 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		String normalizedPath = PathUtility.normalizeUnknown(path);
 		DataElement element = (DataElement)_fileElementMap.get(normalizedPath);
 		if (element != null)
-		{
+		{ 
 			if (element.isDeleted() 
-					|| ds.isDoSpirit()){ // when using spirit, don't use element cache 
+					|| element.isSpirit()){ // when using spirit, don't use element cache 
 				_fileElementMap.remove(normalizedPath);
 				element = null;
 			}

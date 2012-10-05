@@ -370,7 +370,10 @@ public class Value implements IValue {
 	 * Tests whether the value depends on a template parameter.
 	 */
 	public static boolean isDependentValue(IValue nonTypeValue) {
-		return nonTypeValue != null && nonTypeValue.getEvaluation() != null;
+		if (nonTypeValue == null)
+			return false;
+		ICPPEvaluation eval = nonTypeValue.getEvaluation();
+		return eval != null && eval.isValueDependent();
 	}
 
 	/**

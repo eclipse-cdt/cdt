@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Wind River Systems - initial API and implementation
+ *     Tensilica (Abeer Bagul) - fix for bug 391185
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.ui.sourcelookup;
 
@@ -749,7 +750,6 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
 	private void startLookupJob(final FrameData frameData, final IWorkbenchPage page, boolean eventTriggered) {
         // If there is a previous lookup job running, cancel it.
         if (fRunningLookupJob != null) {
-            fRunningLookupJob.cancel();
             if (!eventTriggered && frameData.isIdentical(fRunningLookupJob.fFrameData)) {
                 // identical location - we are done
                 return;

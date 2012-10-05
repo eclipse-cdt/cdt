@@ -6059,4 +6059,19 @@ public class AST2TemplateTests extends AST2BaseTest {
 	public void testPointerToMemberAsDependentExpression_391001() throws Exception {
 		parseAndCheckBindings(getAboveComment(), CPP, true);
 	}	
+	
+	//	class Memory { };
+	//	Memory memory;
+	//	template<Memory* m> struct Container {
+	//	    struct iterator {
+	//	        int test;
+	//	    };
+	//	};
+	//	int main() {
+	//	    Container<&memory>::iterator it;
+	//	    it.test;  // Field 'test' could not be resolved
+	//	}
+	public void testAddressAsTemplateArgument_391190() throws Exception {
+		parseAndCheckBindings(getAboveComment(), CPP, true);
+	}	
 }

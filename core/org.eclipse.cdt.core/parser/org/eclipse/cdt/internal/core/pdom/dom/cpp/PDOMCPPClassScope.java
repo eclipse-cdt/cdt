@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
@@ -159,7 +160,10 @@ class PDOMCPPClassScope implements ICPPClassScope, IIndexScope {
 			if (!lookup.isPrefixLookup()) {
 				if (CharArrayUtils.equals(fBinding.getNameCharArray(), nameChars)) {
 			        if (CPPClassScope.shallReturnConstructors(lookup.getLookupName(), false)){
-			            return fBinding.getConstructors();
+			        	if (fBinding instanceof ICPPClassSpecialization) {
+			        		return ((ICPPClassSpecialization) fBinding).getConstructors(lookup.getLookupPoint());
+			        	}
+			        	return fBinding.getConstructors();
 			        }
 			        return new IBinding[] {getClassNameBinding()};
 				}

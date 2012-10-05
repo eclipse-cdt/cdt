@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOIn//1Tk\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/MICommand.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-10-05T09:48:23Z",
+      "side": 1,
+      "message": "Should be \n Dmitry Kozlov (Mentor) - Added quoteParametersWithSpaces (Bug 317675)",
+      "revId": "34c06edf8566c0cea569bfe10ebe1ce86e8cc639",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//1Tg\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/MICommand.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 218,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-10-05T09:48:23Z",
+      "side": 1,
+      "message": "replace \"not\" with \"no\"",
+      "revId": "34c06edf8566c0cea569bfe10ebe1ce86e8cc639",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//1Tc\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/MICommand.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 362,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-10-05T09:48:23Z",
+      "side": 1,
+      "message": "Can you remove \"instead of escaping\" since it seems to be wrong",
+      "revId": "34c06edf8566c0cea569bfe10ebe1ce86e8cc639",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//1Ts\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/MIGDBSet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-10-05T09:48:23Z",
+      "side": 1,
+      "message": "Should be \n Dmitry Kozlov (Mentor) - Added quoteParametersWithSpaces (Bug 317675)",
+      "revId": "34c06edf8566c0cea569bfe10ebe1ce86e8cc639",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//1To\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/MITargetSelect.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-10-05T09:48:23Z",
+      "side": 1,
+      "message": "Should be \n Dmitry Kozlov (Mentor) - Added quoteParametersWithSpaces (Bug 317675)",
+      "revId": "34c06edf8566c0cea569bfe10ebe1ce86e8cc639",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//1TY\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/MITargetSelect.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-10-05T09:48:23Z",
+      "side": 1,
+      "message": "Why do we need this for this command?",
+      "revId": "34c06edf8566c0cea569bfe10ebe1ce86e8cc639",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

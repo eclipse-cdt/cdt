@@ -37,6 +37,8 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
+import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.db.PDOMNodeLinkedList;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
@@ -155,33 +157,38 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 	}
 
 	public void removeBases(PDOMName classDefName) throws CoreException {
-		getPDOM().removeCachedResult(record+PDOMCPPLinkage.CACHE_BASES);
+		final PDOM pdom = getPDOM();
+		final Database db = getDB();
+		pdom.removeCachedResult(record+PDOMCPPLinkage.CACHE_BASES);
+		
 		PDOMCPPBase base= getFirstBase();
-		PDOMCPPBase predecessor= null;
+		PDOMCPPBase prevBase= null;
 		long nameRec= classDefName.getRecord();
 		boolean deleted= false;
 		while (base != null) {
 			PDOMCPPBase nextBase = base.getNextBase();
-			long classDefRec= getDB().getRecPtr(base.getRecord() + PDOMCPPBase.CLASS_DEFINITION);
+			long classDefRec= db.getRecPtr(base.getRecord() + PDOMCPPBase.CLASS_DEFINITION);
 			if (classDefRec == nameRec) {
 				deleted= true;
 				base.delete();
-			} else if (deleted) {
-				deleted= false;
-				if (predecessor == null) {
-					setFirstBase(base);
-				} else {
-					predecessor.setNextBase(base);
+			} else {
+				if (deleted) {
+					deleted= false;
+					if (prevBase == null) {
+						setFirstBase(base);
+					} else {
+						prevBase.setNextBase(base);
+					}
 				}
-				predecessor= base;
+				prevBase= base;
 			}
 			base= nextBase;
 		}
 		if (deleted) {
-			if (predecessor == null) {
+			if (prevBase == null) {
 				setFirstBase(null);
 			} else {
-				predecessor.setNextBase(null);
+				prevBase.setNextBase(null);
 			}
 		}
 	}

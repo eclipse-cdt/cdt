@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
@@ -1457,6 +1458,45 @@ public class IndexUpdateTests extends IndexTestBase {
 			final ICPPConstructor[] ctors = s.getConstructors();
 			assertEquals(2, ctors.length); // 1 explicit and one implicit ctor
 			assertTrue(ctors[0].isImplicit() != ctors[1].isImplicit());
+		} finally {
+			fIndex.releaseReadLock();
+		}
+	}
+	
+	//	struct Base {
+	//	    void foo() {}
+	//	};
+	//	struct Derived: Base {
+	//		Derived();
+	//	};
+
+	//	struct Base {
+	//	    void foo() {}
+	//	};
+	//	struct Derived: Base {
+	//		Derived();
+	//	};
+	public void testBaseClass_Bug391284() throws Exception {
+		setupFile(2, true);
+		fIndex.acquireReadLock();
+		try { 
+			final ICPPClassType s = (ICPPClassType) findBinding("Derived");
+			assertNotNull(s);
+			final ICPPBase[] bases = s.getBases();
+			assertEquals(1, bases.length); 
+			assertEquals("Base", bases[0].getBaseClass().getName());
+		} finally {
+			fIndex.releaseReadLock();
+		}
+		updateFile();
+		
+		fIndex.acquireReadLock();
+		try { 
+			final ICPPClassType s = (ICPPClassType) findBinding("Derived");
+			assertNotNull(s);
+			final ICPPBase[] bases = s.getBases();
+			assertEquals(1, bases.length); 
+			assertEquals("Base", bases[0].getBaseClass().getName());
 		} finally {
 			fIndex.releaseReadLock();
 		}

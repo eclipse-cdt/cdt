@@ -18,6 +18,10 @@
       %license
    </license>
 
+   <url>
+      <update label="%updateSiteName" url="http://download.eclipse.org/tools/cdt/releases/juno"/>
+   </url>
+
    <plugin
          id="org.eclipse.cdt.p2"
          download-size="0"

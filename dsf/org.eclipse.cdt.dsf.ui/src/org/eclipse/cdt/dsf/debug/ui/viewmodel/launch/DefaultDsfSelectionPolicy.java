@@ -31,9 +31,6 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITreeSelection;
-import org.eclipse.jface.viewers.TreePath;
-import org.eclipse.jface.viewers.TreeSelection;
 
 /**
  * Default DSF selection policy implementation modelled after platform version
@@ -248,15 +245,6 @@ public class DefaultDsfSelectionPolicy implements IModelSelectionPolicy {
 	 */
 	@Override
 	public ISelection replaceInvalidSelection(ISelection invalidSelection, ISelection newSelection) {
-        if (invalidSelection instanceof ITreeSelection) {
-            ITreeSelection treeSelection = (ITreeSelection)invalidSelection;
-            if (treeSelection.getPaths().length == 1) {
-                TreePath path = treeSelection.getPaths()[0];
-                if (path.getSegmentCount() > 1) {
-                    return new TreeSelection(path.getParentPath());
-                }
-            }
-        }
         return newSelection;
 	}
 

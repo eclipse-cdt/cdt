@@ -4390,52 +4390,44 @@
              label="%ResourceConfigurations.menu">
             <visibleWhen
                   checkEnabled="false">
-              <with variable="activeMenuSelection">
-                  <iterate operator="and" ifEmpty="false">
-                      <adapt type="org.eclipse.core.resources.IResource">
-                          <test
-                                property="org.eclipse.core.resources.projectNature"
-                                value="org.eclipse.cdt.core.cnature"/>
-                      </adapt>
-                      <or>
-                          <adapt type="org.eclipse.core.resources.IFolder"/>
-                          <adapt type="org.eclipse.core.resources.IFile">
-                              <or>
-                                  <test
-                                        property="org.eclipse.core.resources.contentTypeId"
-                                        value="org.eclipse.cdt.core.cSource"/>
-                                  <test
-                                        property="org.eclipse.core.resources.contentTypeId"
-                                        value="org.eclipse.cdt.core.cxxSource"/>
-                                  <test
-                                        property="org.eclipse.core.resources.contentTypeId"
-                                        value="org.eclipse.cdt.core.asmSource"/>
-                              </or>
-                          </adapt>
-                      </or>
-                  </iterate>
-              </with>
+                <or>
+                    <with variable="activeMenuSelection">
+                        <iterate operator="and" ifEmpty="false">
+                            <adapt type="org.eclipse.core.resources.IResource">
+                                <test
+                                     property="org.eclipse.core.resources.projectNature"
+                                     value="org.eclipse.cdt.core.cnature"/>
+                            </adapt>
+                            <or>
+                                <adapt type="org.eclipse.core.resources.IFolder"/>
+                                <adapt type="org.eclipse.core.resources.IFile">
+                                <or>
+                                    <test
+                                         property="org.eclipse.core.resources.contentTypeId"
+                                         value="org.eclipse.cdt.core.cSource"/>
+                                    <test
+                                         property="org.eclipse.core.resources.contentTypeId"
+                                         value="org.eclipse.cdt.core.cxxSource"/>
+                                    <test
+                                         property="org.eclipse.core.resources.contentTypeId"
+                                         value="org.eclipse.cdt.core.asmSource"/>
+                                </or>
+                                </adapt>
+                            </or>
+                        </iterate>
+                    </with>
+                    <with variable="activeMenuEditorInput">
+                        <iterate ifEmpty="false">
+                            <adapt type="org.eclipse.core.resources.IFile">
+                                <test
+                                     property="org.eclipse.core.resources.projectNature"
+                                     value="org.eclipse.cdt.core.cnature"/>
+                            </adapt>
+                        </iterate>
+                    </with>
+                </or>
             </visibleWhen>
         </menu>
-    </menuContribution>
-    <menuContribution
-          locationURI="popup:org.eclipse.ui.popup.any?after=additions">
-       <menu
-             id="org.eclipse.cdt.ui.buildConfigContributionM"
-             label="%ResourceConfigurations.menu">
-            <visibleWhen
-                  checkEnabled="false">
-	   		  <with variable="activeMenuEditorInput">
- 				<iterate ifEmpty="false">
-		            <adapt type="org.eclipse.core.resources.IFile">
-			            <test
-			                  property="org.eclipse.core.resources.projectNature"
-			                  value="org.eclipse.cdt.core.cnature"/>
-		            </adapt>
-		   		</iterate>
-	   		  </with>
-            </visibleWhen>
-       </menu>
     </menuContribution>
     <menuContribution
           locationURI="popup:org.eclipse.cdt.ui.buildConfigContributionM">

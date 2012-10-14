@@ -190,16 +190,17 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBuiltinParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPCompositeBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNamespace;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNamespaceScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPReferenceType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPScope;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownBinding;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownClass;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownConstructor;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownFunction;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownMemberClass;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownMethod;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUsingDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUsingDirective;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVariable;
@@ -211,7 +212,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalNamespaceScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownClassType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates.TypeSelection;
@@ -446,12 +446,12 @@ public class CPPSemantics {
 		final ASTNodeProperty namePropertyInParent = name.getPropertyInParent();
 		if (binding == null && data.skippedScope != null) {
 			if (data.hasFunctionArguments()) {
-				binding= new CPPUnknownFunction(data.skippedScope, name.getSimpleID());
+				binding= new CPPDeferredFunction(data.skippedScope, name.getSimpleID());
 			} else {
 				if (namePropertyInParent == IASTNamedTypeSpecifier.NAME) {
-					binding= new CPPUnknownClass(data.skippedScope, name.getSimpleID());
+					binding= new CPPUnknownMemberClass(data.skippedScope, name.getSimpleID());
 				} else {
-					binding= new CPPUnknownBinding(data.skippedScope, name.getSimpleID());
+					binding= new CPPUnknownMethod(data.skippedScope, name.getSimpleID());
 				}
 			}
 		}
@@ -2387,7 +2387,7 @@ public class CPPSemantics {
 			if (viableCount == 1)
 				return fns[0];
 			setTargetedFunctionsToUnknown(argTypes);
-			return CPPUnknownFunction.createForSample(fns[0]);
+			return CPPDeferredFunction.createForSample(fns[0]);
 		}
 
 		IFunction[] ambiguousFunctions= null;   // ambiguity, 2 functions are equally good
@@ -2447,7 +2447,7 @@ public class CPPSemantics {
 				return null;
 
 			setTargetedFunctionsToUnknown(argTypes);
-			return CPPUnknownFunction.createForSample(unknownFunction);
+			return CPPDeferredFunction.createForSample(unknownFunction);
 		}
 
 		if (ambiguousFunctions != null) {
@@ -2496,13 +2496,20 @@ public class CPPSemantics {
 			if (haveASTResult && fromIndex)
 				break;
 
+			boolean isCandidate;
 			if (f instanceof ICPPFunctionTemplate) {
-				// Works only if there are template arguments
-				if (args == null || result != null)
-					return null;
-				result= f;
-				haveASTResult= !fromIndex;
-			} else if (args == null) {
+				if (args == null) {
+					isCandidate= true;
+				} else {
+					// See 14.3-7
+					final ICPPTemplateParameter[] tpars = ((ICPPFunctionTemplate) f).getTemplateParameters();
+					final CPPTemplateParameterMap map = new CPPTemplateParameterMap(tpars.length);
+					isCandidate= TemplateArgumentDeduction.addExplicitArguments(tpars, args, map, point);
+				}
+			} else {
+				isCandidate= args == null;
+			}
+			if (isCandidate) {
 				if (result != null)
 					return null;
 				result= f;
@@ -3000,8 +3007,8 @@ public class CPPSemantics {
 			return null;
 
 		final IASTInitializerClause[] placement = expr.getPlacementArguments();
-		final ICPPEvaluation arg1= new EvalUnary(IASTUnaryExpression.op_star, evaluation);
-		final ICPPEvaluation arg2= new EvalUnary(IASTUnaryExpression.op_sizeof, evaluation);
+		final ICPPEvaluation arg1= new EvalUnary(IASTUnaryExpression.op_star, evaluation, null);
+		final ICPPEvaluation arg2= new EvalUnary(IASTUnaryExpression.op_sizeof, evaluation, null);
 
 		ICPPEvaluation[] args;
 		if (placement == null) {
@@ -3088,7 +3095,7 @@ public class CPPSemantics {
 			type = SemanticUtil.getNestedType(((ICPPVariable) binding).getType(), TDEF | CVTYPE);
 	    	if (!(type instanceof ICPPClassType))
 	    		return null;
-	    	if (type instanceof ICPPClassTemplate || type instanceof ICPPUnknownClassType || type instanceof ISemanticProblem)
+	    	if (type instanceof ICPPClassTemplate || type instanceof ICPPUnknownType || type instanceof ISemanticProblem)
 	    		return null;
 	
 	    	final ICPPClassType classType = (ICPPClassType) type;
@@ -3668,9 +3675,8 @@ public class CPPSemantics {
 	}
 
 	protected static IBinding resolveUnknownName(IScope scope, ICPPUnknownBinding unknown, IASTNode point) {
-		final IASTName unknownName = unknown.getUnknownName();
-		LookupData data = unknownName.getTranslationUnit() != null ?
-				new LookupData(unknownName) : new LookupData(unknownName.getSimpleID(), null, point);
+		final char[] unknownName = unknown.getNameCharArray();
+		LookupData data = new LookupData(unknownName, null, point);
 		data.setIgnorePointOfDeclaration(true);
 		data.typesOnly= unknown instanceof IType;
 
@@ -3693,7 +3699,7 @@ public class CPPSemantics {
         }
         // 4: Normal post processing is not possible, because the name is not rooted in AST
         if (binding == null)
-			binding = new ProblemBinding(unknownName, point, IProblemBinding.SEMANTIC_NAME_NOT_FOUND);
+			binding = new ProblemBinding(new CPPASTName(unknownName), point, IProblemBinding.SEMANTIC_NAME_NOT_FOUND);
 
 		return binding;
 	}

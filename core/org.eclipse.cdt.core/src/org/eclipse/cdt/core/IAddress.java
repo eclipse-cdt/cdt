@@ -33,8 +33,8 @@ public interface IAddress extends Comparable<Object> {
 	/**
 	 * Adds offset to address and returns new address object
 	 * which is the result
-	 * <br><br>Note: This method has an offset limit of Long.MAX and Long.MIN, which under some addressing schems
-	 * may impose an unnesseary limitation, see <code>IAddressa.add(BigInteger offset)</code> to handle larger offsets.
+	 * <br><br>Note: This method has an offset limit of Long.MAX and Long.MIN, which under some addressing schemes
+	 * may impose an unnecessary limitation, see <code>IAddress.add(BigInteger offset)</code> to handle larger offsets.
 	 * @param offset to add
 	 * @return the new address
 	 */
@@ -42,7 +42,7 @@ public interface IAddress extends Comparable<Object> {
 
 	/**
 	 * Returns maximal offset possible for address. The offset
-	 * should be Identicall for all addresses of given class.
+	 * should be identical for all addresses of given class.
 	 * @return the max offset for this address class
 	 */
 	BigInteger getMaxOffset();
@@ -83,7 +83,7 @@ public interface IAddress extends Comparable<Object> {
 
 	/**
 	 * Converts address to string as an unsigned number with given radix
-	 * @param radix to use for strng conversion
+	 * @param radix to use for string conversion
 	 * @return a string representation of address
 	 */
 	String toString(int radix);
@@ -113,9 +113,9 @@ public interface IAddress extends Comparable<Object> {
 
 	/**
 	 * Returns amount of symbols in hex representation. Is identical to
-	 * toHexAddressString().length(). It is present for perfomance purpose.
+	 * toHexAddressString().length(). It is present for performance purpose.
 	 *
-	 * @return the nmber os chararcter symbols to represent this address in hex.
+	 * @return the number of character symbols to represent this address in hex.
 	 */
 	int getCharsNum();
 

@@ -20,7 +20,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownFunction;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPTwoPhaseBinding;
 
 /**
@@ -92,7 +92,7 @@ public class CPPFunctionSet implements ICPPTwoPhaseBinding {
 	
 	public void setToUnknown() {
 		if (fName != null) {
-			fName.setBinding(new CPPUnknownFunction(null, fName.toCharArray()));
+			fName.setBinding(new CPPDeferredFunction(null, fName.toCharArray()));
 		}
 	}
 }

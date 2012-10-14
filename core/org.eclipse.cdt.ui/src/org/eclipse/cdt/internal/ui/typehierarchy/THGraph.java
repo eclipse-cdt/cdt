@@ -164,15 +164,17 @@ class THGraph {
 						if (monitor.isCanceled()) {
 							return;
 						}
-						IName name= base.getBaseClassSpecifierName();
-						IBinding basecl= name != null ? index.findBinding(name) : base.getBaseClass();
-						ICElementHandle[] baseElems= IndexUI.findRepresentative(index, basecl);
-						for (ICElementHandle baseElem : baseElems) {
-							THGraphNode baseGraphNode= addNode(baseElem);
-							addMembers(index, baseGraphNode, basecl);							
-							addEdge(graphNode, baseGraphNode);
-							if (handled.add(baseElem)) {
-								stack.add(baseElem);
+						IType baseType= base.getBaseClassType();
+						if (baseType instanceof IBinding) {
+							final IBinding baseBinding = (IBinding) baseType;
+							ICElementHandle[] baseElems= IndexUI.findRepresentative(index, baseBinding);
+							for (ICElementHandle baseElem : baseElems) {
+								THGraphNode baseGraphNode= addNode(baseElem);
+								addMembers(index, baseGraphNode, baseBinding);							
+								addEdge(graphNode, baseGraphNode);
+								if (handled.add(baseElem)) {
+									stack.add(baseElem);
+								}
 							}
 						}
 					}

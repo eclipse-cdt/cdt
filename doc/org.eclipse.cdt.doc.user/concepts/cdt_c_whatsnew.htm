@@ -9,7 +9,8 @@
 </head>
 
 <body>
-	<h1 role="main" id="top">CDT 8.1 - New and Noteworthy</h1>
+<div role="main">
+	<h1 id="top">CDT 8.1 - New and Noteworthy</h1>
 	<p>See <a href="http://wiki.eclipse.org/CDT/User/NewIn81">What's new in CDT 8.1</a> on the CDT Wiki
 	which may contain more recent information.
 	</p>
@@ -166,7 +167,7 @@
 </p><p><img alt="Image:VisualizerSnapshot.png" src="../images/cdt81/visualizersnapshot.png" width="648" height="421" border="0" /> 
 </p><p>Note that the Multicore Visualizer will only work using a Linux target; it will not work debugging on a Windows or Mac target. This is a current limitation of GDB which does not provide information about cores, for those targets (at writing, GDB is at version 7.4). 
 </p><p>This feature was completed on February 10th, 2012. For details see <a href="http://bugs.eclipse.org/335027" class="external text" title="http://bugs.eclipse.org/335027" rel="nofollow">Bug 335027</a> 
-</p><p>The Multicore Visualizer is an optional feature of the CDT and must be installed manually. The feature is called "C/C++ Multicore Visualizer". Installing it will install both the Multicore Visualizer and the Visualizer Framework. If you only want to install the Visualizer Framework (to build your own visualizer), you can install that feature by itself; it is called "CDT Visualizer Framework".  Once the features are installed, you can access the Multicore Visualizer (or any other visualizer) by opening the view called "Visualizer".
+</p><p>The Multicore Visualizer is an optional feature of the CDT and must be installed manually. The feature is called <q>C/C++ Multicore Visualizer</q>. Installing it will install both the Multicore Visualizer and the Visualizer Framework. If you only want to install the Visualizer Framework (to build your own visualizer), you can install that feature by itself; it is called <q>CDT Visualizer Framework</q>.  Once the features are installed, you can access the Multicore Visualizer (or any other visualizer) by opening the view called <q>Visualizer</q>.
 </p>
 <a name="Partitioning_of_large_arrays"></a><h3> <span class="headline"> Partitioning of large arrays  </span></h3>
 <p>CDT now displays large arrays as collections of partitions. 
@@ -248,8 +249,9 @@
 </li><li> If both thread(s) and process(es) are selected, and the resume/suspend operation is triggered, each selected process will be resumed/suspended, and each selected thread <b>which is not part of any selected process</b> will be resumed/suspended.  The idea is that if a process is being resumed/suspended, each of its threads will be automatically resumed/suspended, and therefore, should not be resumed/suspended a second time because it is also selected.
 </li></ul>
 <p>As hinted above, CDT takes a permissive approach to multi-select resume/suspend.  This means that if a multi-selection includes both stopped and running threads, a resume operation is still allowed, and only the suspended threads will be resumed; similarly, on such a multi-selection, a suspend operation is allowed, and only the running threads will be suspended.
-</p><p><b>Example</b>
-</p><p><img alt="Image:MultiSelectRunControl.png" src="../images/cdt81/multiselectruncontrol.png" width="602" height="682" border="0" /> 
+</p>
+<h4>Example</h4>
+<p><img alt="Image:MultiSelectRunControl.png" src="../images/cdt81/multiselectruncontrol.png" width="602" height="682" border="0" /> 
 </p><p>In the above screenshot if the user were to press the Resume button with the current multi-selection the following would happen:
 </p>
 <ol><li> The <i>Consumer</i> process node is selected, therefore the entire process will be resumed.  This means that the suspended threads 7 and 9 will be resumed, while  threads 6, 8 and 10 will be ignored, as they are already running.
@@ -392,6 +394,6 @@ CDT 8.1 bug fixes</a>
 	<p><a href="#top">Back to Top</a></p>
 	
 	<p>&nbsp;</p>
-
+</div>
 </body>
 </html>

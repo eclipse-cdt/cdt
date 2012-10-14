@@ -18,6 +18,8 @@
  *     Marc Khouzam (Ericsson) - New method for new MIGDBSetPythonPrintStack (Bug 367788)
  *     Mathias Kunter - New methods for handling different charsets (Bug 370462)
  *     Anton Gorenkov - A preference to use RTTI for variable types determination (Bug 377536)
+ *     Vladimir Prus (Mentor Graphics) - Support for -info-os (Bug 360314)
+ *     John Dallaway - Support for -data-write-memory-bytes (Bug 387793)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command;
@@ -72,6 +74,7 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIDataListRegisterValues;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIDataReadMemory;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIDataReadMemoryBytes;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIDataWriteMemory;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIDataWriteMemoryBytes;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIEnablePrettyPrinting;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIEnvironmentCD;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIEnvironmentDirectory;
@@ -118,6 +121,7 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetTargetCharset;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetTargetWideCharset;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBShowExitCode;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIInferiorTTYSet;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIInfoOs;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIInterpreterExec;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIInterpreterExecConsole;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIInterpreterExecConsoleKill;
@@ -181,6 +185,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIDataReadMemoryInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIDataWriteMemoryInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIGDBShowExitCodeInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIInfoOsInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIListFeaturesInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIListThreadGroupsInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIStackInfoDepthInfo;
@@ -425,6 +430,11 @@ public class CommandFactory {
 	public ICommand<MIDataWriteMemoryInfo> createMIDataWriteMemory(IDMContext ctx, long offset, String address, 
 			int wordFormat, int wordSize, String value) {
 		return new MIDataWriteMemory(ctx, offset, address, wordFormat, wordSize, value);
+	}
+
+	/** @since 4.2 */
+	public ICommand<MIInfo> createMIDataWriteMemoryBytes(IDMContext ctx, String address, byte[] contents) {
+		return new MIDataWriteMemoryBytes(ctx, address, contents);
 	}
 
 	/** @since 4.0 */
@@ -708,6 +718,20 @@ public class CommandFactory {
 		return new MIInferiorTTYSet(dmc, tty);
 	}
 
+	/**
+	 * @since 4.2
+	 */
+	public ICommand<MIInfoOsInfo> createMIInfoOS(IDMContext ctx) {
+		return new MIInfoOs(ctx);
+	}
+
+	/**
+	 * @since 4.2
+	 */
+	public ICommand<MIInfoOsInfo> createMIInfoOS(IDMContext ctx, String resourceClass) {
+		return new MIInfoOs(ctx, resourceClass);
+	}
+	
 	public ICommand<MIInfo> createMIInterpreterExec(IDMContext ctx, String interpreter, String cmd) {
 		return new MIInterpreterExec<MIInfo>(ctx, interpreter, cmd);
 	}

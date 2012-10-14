@@ -11,9 +11,12 @@
  *     Ericsson AB - added support for event handling
  *     Ericsson AB - added memory cache
  *     Vladimir Prus (CodeSourcery) - support for -data-read-memory-bytes (bug 322658)
+ *     John Dallaway - support for -data-write-memory-bytes (bug 387793)
+ *     John Dallaway - memory cache update fix (bug 387688)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedList;
@@ -48,6 +51,7 @@ import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIDataReadMemoryBytesInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIDataReadMemoryInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIDataWriteMemoryInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.service.AbstractDsfService;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfSession;
@@ -400,22 +404,31 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
     protected void writeMemoryBlock(final IDMContext dmc, final IAddress address, final long offset,
     		final int word_size, final int count, final byte[] buffer, final RequestMonitor rm)
     {
-    	// Each byte is written individually (GDB power...)
-    	// so we need to keep track of the count
-    	final CountingRequestMonitor countingRM = new CountingRequestMonitor(getExecutor(), rm);
-    	countingRM.setDoneCount(count);
-
-    	// We will format the individual bytes in decimal
-    	int format = MIFormat.DECIMAL;
-    	String baseAddress = address.toString();
-
-    	// Issue an MI request for each byte to write
-    	for (int i = 0; i < count; i++) {
-    		String value = new Byte(buffer[i]).toString();
+    	if (fDataReadMemoryBytes) {
+    		// Use -data-write-memory-bytes for performance
     		fCommandCache.execute(
-    				fCommandFactory.createMIDataWriteMemory(dmc, offset + i, baseAddress, format, word_size, value),
-    				new DataRequestMonitor<MIDataWriteMemoryInfo>(getExecutor(), countingRM)
+    				fCommandFactory.createMIDataWriteMemoryBytes(dmc, address.add(offset).toString(),
+    						(buffer.length == count) ? buffer : Arrays.copyOf(buffer, count)),
+    				new DataRequestMonitor<MIInfo>(getExecutor(), rm)
     		);
+    	} else {
+    		// Each byte is written individually (GDB power...)
+    		// so we need to keep track of the count
+    		final CountingRequestMonitor countingRM = new CountingRequestMonitor(getExecutor(), rm);
+    		countingRM.setDoneCount(count);
+
+    		// We will format the individual bytes in decimal
+    		int format = MIFormat.DECIMAL;
+    		String baseAddress = address.toString();
+
+    		// Issue an MI request for each byte to write
+    		for (int i = 0; i < count; i++) {
+    			String value = new Byte(buffer[i]).toString();
+    			fCommandCache.execute(
+    					fCommandFactory.createMIDataWriteMemory(dmc, offset + i, baseAddress, format, word_size, value),
+    					new DataRequestMonitor<MIDataWriteMemoryInfo>(getExecutor(), countingRM)
+    			);
+    		}
     	}
     }
 
@@ -829,12 +842,20 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 					System.arraycopy(modBlock, 0, cachedBlock.fBlock, pos, count);
 				}
 				
+				// Case where the cached block is completely included in the modified block
+				else if (modBlockStart.distanceTo(cachedBlockStart).longValue() >= 0
+					&& cachedBlockEnd.distanceTo(modBlockEnd).longValue() >= 0)
+				{
+					int pos = (int) modBlockStart.distanceTo(cachedBlockStart).longValue();
+					System.arraycopy(modBlock, pos, cachedBlock.fBlock, 0, (int) cachedBlock.fLength);
+				}
+
 				// Case where the beginning of the modified block is within the cached block  
 				else if (cachedBlockStart.distanceTo(modBlockStart).longValue() >= 0
 					&& modBlockStart.distanceTo(cachedBlockEnd).longValue() > 0)
 				{
 					int pos = (int) cachedBlockStart.distanceTo(modBlockStart).longValue();
-					int length = (int) cachedBlockStart.distanceTo(modBlockEnd).longValue();
+					int length = (int) modBlockStart.distanceTo(cachedBlockEnd).longValue();
 					System.arraycopy(modBlock, 0, cachedBlock.fBlock, pos, length);
 				}
 				

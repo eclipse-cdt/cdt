@@ -57,7 +57,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
@@ -327,7 +326,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 
 		// the instantiation of A<T> has to be deferred.
 		assertInstance(b0, ICPPUnknownBinding.class);
-		final ICPPBinding parent = ((ICPPInternalUnknownScope) b0.getScope()).getScopeBinding();
+		final IType parent = ((ICPPInternalUnknownScope) b0.getScope()).getScopeType();
 		assertInstance(parent, ICPPDeferredClassInstance.class);
 		assertSame(((ICPPDeferredClassInstance) parent).getSpecializedBinding(), A);
 
@@ -6034,4 +6033,45 @@ public class AST2TemplateTests extends AST2BaseTest {
 	public void testDeductionOfNonTypeTemplateArg_372587() throws Exception {
 		parseAndCheckBindings(getAboveComment(), CPP, true);
 	}
+	
+	//	template<typename _Functor> void b(_Functor __f) {}
+	//	template<typename T, typename V> void f(T __first, T __last, const V& __val) {}
+	//	template<typename T> void f(T __first, T __last, const T& __val) {}
+	//	void test() {
+	//		b(f<int*, int>);
+	//	}
+	public void testFunctionSetWithNonMatchingTemplateArgs_379604() throws Exception {
+		parseAndCheckBindings(getAboveComment(), CPP, true);
+	}	
+	
+	//	template <typename T> struct C {
+	//		typedef decltype(&T::m) dtm;
+	//	};
+	//	struct X {
+	//		int m() {return 0;}
+	//	};
+	//	void f(int (X::*)()) {}
+	//	void test() {
+	//		f(&X::m);
+	//		C<X>::dtm v;
+	//		f(v);
+	//	}
+	public void testPointerToMemberAsDependentExpression_391001() throws Exception {
+		parseAndCheckBindings(getAboveComment(), CPP, true);
+	}	
+	
+	//	class Memory { };
+	//	Memory memory;
+	//	template<Memory* m> struct Container {
+	//	    struct iterator {
+	//	        int test;
+	//	    };
+	//	};
+	//	int main() {
+	//	    Container<&memory>::iterator it;
+	//	    it.test;  // Field 'test' could not be resolved
+	//	}
+	public void testAddressAsTemplateArgument_391190() throws Exception {
+		parseAndCheckBindings(getAboveComment(), CPP, true);
+	}	
 }

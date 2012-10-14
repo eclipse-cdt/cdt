@@ -13,15 +13,16 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.index.IIndexName;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownScope;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownTypeScope;
+import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 
-public class PDOMCPPUnknownScope extends CPPUnknownScope implements IIndexScope {
+public class PDOMCPPUnknownScope extends CPPUnknownTypeScope implements IIndexScope {
 
-	public PDOMCPPUnknownScope(PDOMCPPBinding binding, IASTName name) {
-		super((ICPPUnknownBinding) binding, name);
+	public PDOMCPPUnknownScope(IIndexFragmentBinding binding, IASTName name) {
+		super((IType) binding, name);
 	}
 		
 	@Override
@@ -35,8 +36,8 @@ public class PDOMCPPUnknownScope extends CPPUnknownScope implements IIndexScope 
 	}
 	
 	@Override
-	public PDOMCPPBinding getScopeBinding() {
-		return (PDOMCPPBinding) super.getScopeBinding();
+	public IIndexFragmentBinding getScopeBinding() {
+		return (IIndexFragmentBinding) super.getScopeType();
 	}
 	
 	@Override

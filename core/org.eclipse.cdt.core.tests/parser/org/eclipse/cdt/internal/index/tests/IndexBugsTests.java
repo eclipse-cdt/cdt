@@ -1777,10 +1777,6 @@ public class IndexBugsTests extends BaseTestCase {
 			assertEquals(1, bases.length);
 			IBinding inst = bases[0].getBaseClass();
 			assertTrue(inst instanceof ICPPTemplateInstance);
-
-			IIndexName name= (IIndexName) bases[0].getBaseClassSpecifierName();
-			IBinding inst2= fIndex.findBinding(name);
-			assertEquals(inst, inst2);
 		} finally {
 			fIndex.releaseReadLock();
 		}

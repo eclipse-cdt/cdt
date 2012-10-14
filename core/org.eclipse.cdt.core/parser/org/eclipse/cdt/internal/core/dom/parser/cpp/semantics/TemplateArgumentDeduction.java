@@ -439,7 +439,7 @@ public class TemplateArgumentDeduction {
 	/**
 	 * Adds the explicit arguments to the map.
 	 */
-	private static boolean addExplicitArguments(final ICPPTemplateParameter[] tmplParams,
+	public static boolean addExplicitArguments(final ICPPTemplateParameter[] tmplParams,
 			ICPPTemplateArgument[] tmplArgs, CPPTemplateParameterMap map, IASTNode point) {
 		tmplArgs= SemanticUtil.getSimplifiedArguments(tmplArgs);
 		ICPPTemplateParameter tmplParam= null;

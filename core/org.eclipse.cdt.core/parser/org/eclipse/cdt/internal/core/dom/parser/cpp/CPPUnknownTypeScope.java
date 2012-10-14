@@ -21,28 +21,33 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.index.IIndexFileSet;
+import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 
 /**
  * Models the scope represented by an unknown type (e.g.: typeof(template type parameter)). Used within
  * the context of templates, only.
  * For safe usage in index bindings, all fields need to be final or used in a thread-safe manner otherwise.
  */
-public class CPPUnknownTypeScope implements ICPPScope {
+public class CPPUnknownTypeScope implements ICPPInternalUnknownScope {
     private final IASTName fName;
-	private final ICPPBinding fScopeBinding;
+	private final IType fScopeType;
+    /**
+     * This field needs to be protected when used in PDOMCPPUnknownScope, 
+     * don't use it outside of {@link #getOrCreateBinding(IASTName, int)}
+     */
+    private CharArrayObjectMap<IBinding[]> map;
 
-	public CPPUnknownTypeScope(IASTName name, ICPPBinding scopeBinding) {
+	public CPPUnknownTypeScope(IType scopeType, IASTName name) {
     	fName= name;
-    	fScopeBinding= scopeBinding;
+    	fScopeType= scopeType;
     }
 
 	@Override
@@ -50,6 +55,7 @@ public class CPPUnknownTypeScope implements ICPPScope {
 		return EScopeKind.eClassType;
 	}
 
+	@Override
 	public IASTNode getPhysicalNode() {
         return fName;
     }
@@ -60,8 +66,15 @@ public class CPPUnknownTypeScope implements ICPPScope {
     }
 
     @Override
+	public IType getScopeType() {
+    	return fScopeType;
+    }
+    
+    @Override
 	public IScope getParent() throws DOMException {
-        return fScopeBinding == null ? null : fScopeBinding.getScope();
+    	if (fScopeType instanceof IBinding)
+    		return ((IBinding) fScopeType).getScope();
+    	return null;
     }
 
     @Override
@@ -106,6 +119,7 @@ public class CPPUnknownTypeScope implements ICPPScope {
     			} else if (parent instanceof ICPPASTUsingDeclaration) {
     				ICPPASTUsingDeclaration ud= (ICPPASTUsingDeclaration) parent;
     				type= ud.isTypename();
+    				function= true;
     			}
     			
     			if (!type && parent.getPropertyInParent() == IASTFunctionCallExpression.FUNCTION_NAME) {
@@ -120,22 +134,6 @@ public class CPPUnknownTypeScope implements ICPPScope {
         return result;
     }
 
-	protected IBinding getOrCreateBinding(final char[] name, int idx) {
-		IBinding result= null;
-		switch (idx) {
-		case 0:
-			result= new CPPUnknownClass(fScopeBinding, name);
-			break;
-		case 1:
-			result= new CPPUnknownFunction(fScopeBinding, name);
-			break;
-		case 2:
-			result= new CPPUnknownBinding(fScopeBinding, name);
-			break;
-		}
-		return result;
-	}
-
 	@Override @Deprecated
 	public final IBinding[] getBindings(IASTName name, boolean resolve, boolean prefix) {
 		return getBindings(name, resolve, prefix, IIndexFileSet.EMPTY);
@@ -149,8 +147,8 @@ public class CPPUnknownTypeScope implements ICPPScope {
 	@Override
 	public final IBinding[] getBindings(ScopeLookupData lookup) {
     	if (lookup.isPrefixLookup()) {
-    		if (fScopeBinding instanceof ICPPDeferredClassInstance) {
-	    		ICPPDeferredClassInstance instance = (ICPPDeferredClassInstance) fScopeBinding;
+    		if (fScopeType instanceof ICPPDeferredClassInstance) {
+	    		ICPPDeferredClassInstance instance = (ICPPDeferredClassInstance) fScopeType;
 				IScope scope = instance.getClassTemplate().getCompositeScope();
 				if (scope != null) {
 					return scope.getBindings(lookup);
@@ -167,12 +165,52 @@ public class CPPUnknownTypeScope implements ICPPScope {
     	return new IBinding[] {getOrCreateBinding(lookup.getLookupKey(), 0)};
 	}
 
-	public ICPPBinding getScopeBinding() {
-		return fScopeBinding;
-	}
-
 	@Override
 	public String toString() {
 		return fName.toString();
 	}
+	
+    @Override
+	public void addName(IASTName name) {
+    }
+
+	protected IBinding getOrCreateBinding(final char[] name, int idx) {
+		if (map == null)
+            map = new CharArrayObjectMap<IBinding[]>(2);
+
+        IBinding[] o = map.get(name);
+		if (o == null) {
+			o = new IBinding[3];
+			map.put(name, o);
+		}
+        
+        IBinding result= o[idx];
+        if (result == null) {
+    		switch (idx) {
+    		case 0:
+    			result= new CPPUnknownMemberClass(fScopeType, name);
+    			break;
+    		case 1:
+    			result= new CPPUnknownMethod(fScopeType, name);
+    			break;
+    		case 2:
+    			result= new CPPUnknownField(fScopeType, name);
+    			break;
+    		}
+    		o[idx]= result;
+        }
+		return result;
+	}
+
+	@Override
+	public void addBinding(IBinding binding) {
+		// do nothing, this is part of template magic and not a normal scope
+	}
+
+	@Override
+	public void populateCache() {}
+
+	@Override
+	public void removeNestedFromCache(IASTNode container) {}
+
 }

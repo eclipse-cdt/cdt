@@ -57,6 +57,7 @@ public interface IIndexCPPBindingConstants {
 	int CPP_FRIEND_DECLARATION = IIndexBindingConstants.LAST_CONSTANT + 45;
 	int CPP_TEMPLATE_TEMPLATE_PARAMETER= IIndexBindingConstants.LAST_CONSTANT + 46;
 	int CPP_CLASS_TEMPLATE_PARTIAL_SPEC_SPEC = IIndexBindingConstants.LAST_CONSTANT + 47;
-	int CPP_UNKNOWN_BINDING = IIndexBindingConstants.LAST_CONSTANT + 48;
+	int CPP_UNKNOWN_FIELD = IIndexBindingConstants.LAST_CONSTANT + 48;
 	int CPP_USING_DECLARATION_SPECIALIZATION= IIndexBindingConstants.LAST_CONSTANT + 49;
+	int CPP_UNKNOWN_METHOD = IIndexBindingConstants.LAST_CONSTANT + 50;
 }

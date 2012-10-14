@@ -14,7 +14,6 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -29,16 +28,14 @@ import org.eclipse.core.runtime.PlatformObject;
 /**
  * Represents a binding that is unknown because it depends on template arguments.
  */
-public class CPPUnknownBinding extends PlatformObject
+public abstract class CPPUnknownBinding extends PlatformObject
 		implements ICPPUnknownBinding, ICPPInternalBinding, Cloneable {
-    protected IBinding fOwner;
     private ICPPScope unknownScope;
-    protected IASTName name;
+    protected char[] name;
 
-    public CPPUnknownBinding(IBinding owner, char[] name) {
+    public CPPUnknownBinding(char[] name) {
         super();
-        this.name = new CPPASTName(name);
-        fOwner= owner;
+        this.name = name;
     }
 
     @Override
@@ -76,12 +73,12 @@ public class CPPUnknownBinding extends PlatformObject
 
     @Override
 	public String getName() {
-        return name.toString();
+        return new String(name);
     }
 
     @Override
 	public char[] getNameCharArray() {
-        return name.getSimpleID();
+        return name;
     }
 
     @Override
@@ -102,11 +99,15 @@ public class CPPUnknownBinding extends PlatformObject
 
     @Override
 	public ICPPScope asScope() {
-        if (unknownScope == null) {
-            unknownScope = new CPPUnknownScope(this, name);
-        }
+    	if (unknownScope == null && this instanceof ICPPUnknownType) {
+    		unknownScope = createScope();
+    	}
         return unknownScope;
     }
+
+	protected CPPUnknownTypeScope createScope() {
+		return new CPPUnknownTypeScope((ICPPUnknownType) this, new CPPASTName(name));
+	}
 
 	@Override
 	public ILinkage getLinkage() {
@@ -125,15 +126,5 @@ public class CPPUnknownBinding extends PlatformObject
 	@Override
 	public String toString() {
 		return getName();
-	}
-	
-	@Override
-	public IASTName getUnknownName() {
-		return name;
-	}
-
-	@Override
-	public IBinding getOwner() {
-		return fOwner;
 	}
 }

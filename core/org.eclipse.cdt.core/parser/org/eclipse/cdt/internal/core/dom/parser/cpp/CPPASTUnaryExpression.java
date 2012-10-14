@@ -14,31 +14,23 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
-import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
-import org.eclipse.cdt.core.dom.ast.IProblemType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
-import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
-import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalUnary;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.FunctionSetType;
@@ -175,39 +167,6 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
         }
     }
 
-    private IType computePointerToMemberType() {
-    	if (fOperator != op_amper)
-    		return null;
-
-    	IASTNode child= fOperand;
-		boolean inParenthesis= false;
-		while (child instanceof IASTUnaryExpression && ((IASTUnaryExpression) child).getOperator() == IASTUnaryExpression.op_bracketedPrimary) {
-			child= ((IASTUnaryExpression) child).getOperand();
-			inParenthesis= true;
-		}
-		if (child instanceof IASTIdExpression) {
-			IASTName name= ((IASTIdExpression) child).getName();
-			if (name instanceof ICPPASTQualifiedName) {
-				IBinding b= name.resolveBinding();
-				if (b instanceof ICPPMember) {
-					ICPPMember member= (ICPPMember) b;
-					if (!member.isStatic()) {
-						try {
-							if (!inParenthesis) {
-								return new CPPPointerToMemberType(member.getType(), member.getClassOwner(), false, false, false);
-							} else if (member instanceof IFunction) {
-								return new ProblemBinding(fOperand, IProblemBinding.SEMANTIC_INVALID_TYPE, fOperand.getRawSignature().toCharArray());
-							}
-						} catch (DOMException e) {
-							return e.getProblem();
-						}
-					}
-				}
-			}
-		}
-		return null;
-    }
-
     @Override
 	public ICPPFunction getOverload() {
 		ICPPEvaluation eval = getEvaluation();
@@ -219,26 +178,33 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
 	@Override
 	public ICPPEvaluation getEvaluation() {
 		if (fEvaluation == null) {
-			if (fOperand == null)
-				return EvalFixed.INCOMPLETE;
-			
-			final ICPPEvaluation arg = fOperand.getEvaluation();
-			if (fOperator == op_bracketedPrimary) {
-				fEvaluation= arg;
-			} else if (arg.isFunctionSet() && fOperator == op_amper) {
-				return arg;
-			} else {
-				IType type= computePointerToMemberType();
-				if (type != null) {
-					if (type instanceof IProblemType)
-						return EvalFixed.INCOMPLETE;
-					fEvaluation= new EvalFixed(type, PRVALUE, Value.UNKNOWN);
-				} else {
-					fEvaluation= new EvalUnary(fOperator, fOperand.getEvaluation());
-				}
-			}
+			fEvaluation= computeEvaluation();
 		}
 		return fEvaluation;
+	}
+	
+	private ICPPEvaluation computeEvaluation() {
+		if (fOperand == null)
+			return EvalFixed.INCOMPLETE;
+
+		final ICPPEvaluation nestedEval = fOperand.getEvaluation();
+		if (fOperator == op_bracketedPrimary) 
+			return nestedEval;
+
+		if (nestedEval.isFunctionSet() && fOperator == op_amper) {
+			return nestedEval;
+		} 
+
+		IBinding addressOfQualifiedNameBinding= null;
+    	if (fOperator == op_amper && fOperand instanceof IASTIdExpression) {
+			IASTName name= ((IASTIdExpression) fOperand).getName();
+			if (name instanceof ICPPASTQualifiedName) {
+				addressOfQualifiedNameBinding= name.resolveBinding();
+				if (addressOfQualifiedNameBinding instanceof IProblemBinding)
+					return EvalFixed.INCOMPLETE;
+			}
+		}
+    	return new EvalUnary(fOperator, nestedEval, addressOfQualifiedNameBinding);
 	}
     
     @Override

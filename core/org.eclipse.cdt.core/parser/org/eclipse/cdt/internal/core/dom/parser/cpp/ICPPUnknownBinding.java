@@ -11,7 +11,6 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 
@@ -26,10 +25,4 @@ public interface ICPPUnknownBinding extends ICPPBinding {
 	 * @throws DOMException 
 	 */
     public ICPPScope asScope() throws DOMException;
-
-	/**
-	 * Returns a the name of the unknown binding that has to be searched in the parent scope.
-	 * The ast-node may not be rooted in an ast-tree. May be <code>null</code>.
-	 */
-	public IASTName getUnknownName();
 }

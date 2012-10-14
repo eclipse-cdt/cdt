@@ -13,7 +13,6 @@
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -82,14 +81,9 @@ public class CompositeCPPTemplateTemplateParameter extends CompositeCPPBinding
 	@Override
 	public ICPPScope asScope() {
 		if (unknownScope == null) {
-			unknownScope= new CompositeCPPUnknownScope(this, getUnknownName());
+			unknownScope= new CompositeCPPUnknownScope(this, new CPPASTName(getNameCharArray()));
 		}
 		return unknownScope;
-	}
-
-	@Override
-	public IASTName getUnknownName() {
-		return new CPPASTName(getNameCharArray());
 	}
 	
 	@Override

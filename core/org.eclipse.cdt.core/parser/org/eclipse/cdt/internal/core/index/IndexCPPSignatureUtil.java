@@ -33,7 +33,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownClassInstance;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownMemberClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.core.runtime.CoreException;
 
@@ -60,8 +60,8 @@ public class IndexCPPSignatureUtil {
 		if (binding instanceof ICPPTemplateInstance) {
 			ICPPTemplateInstance inst = (ICPPTemplateInstance) binding;
 			buffer.append(getTemplateArgString(inst.getTemplateArguments(), true));
-		} else if (binding instanceof ICPPUnknownClassInstance) {
-			ICPPUnknownClassInstance inst = (ICPPUnknownClassInstance) binding;
+		} else if (binding instanceof ICPPUnknownMemberClassInstance) {
+			ICPPUnknownMemberClassInstance inst = (ICPPUnknownMemberClassInstance) binding;
 			buffer.append(getTemplateArgString(inst.getArguments(), true));
 		} else if (binding instanceof ICPPClassTemplatePartialSpecialization) {
 			ICPPClassTemplatePartialSpecialization partial = (ICPPClassTemplatePartialSpecialization) binding;

@@ -31,8 +31,7 @@ class CompositeCPPUsingDeclaration extends CompositeCPPBinding implements ICPPUs
 		IBinding[] delegates = ((ICPPUsingDeclaration) rbinding).getDelegates();
 		IBinding[] composites = new IBinding[delegates.length];
 		int j = 0;
-		for (int i = 0; i < delegates.length; i++) {
-			IBinding binding = delegates[i];
+		for (IBinding binding : delegates) {
 			if (binding instanceof IIndexFragmentBinding) {
 				composites[j++] = cf.getCompositeBinding((IIndexFragmentBinding) binding);
 			}

@@ -11,13 +11,18 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getNestedType;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBase;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.core.runtime.CoreException;
@@ -26,32 +31,31 @@ import org.eclipse.core.runtime.CoreException;
  * @author Doug Schaefer
  */
 class PDOMCPPBase implements ICPPBase, ICPPInternalBase {
-	private static final int BASECLASS_SPECIFIER = 0;
-	private static final int NEXTBASE = 4;
-	private static final int FLAGS = 8;
+	static final int CLASS_DEFINITION = 0;
+	private static final int BASECLASS_TYPE = CLASS_DEFINITION + Database.PTR_SIZE;
+	private static final int NEXTBASE = BASECLASS_TYPE + Database.TYPE_SIZE;
+	private static final int FLAGS = NEXTBASE + Database.PTR_SIZE;
 	
-	protected static final int RECORD_SIZE = 9;
+	protected static final int RECORD_SIZE = FLAGS + 1;
 	
 	private final PDOMLinkage linkage;
 	private final long record;
 	
-	private PDOMBinding fCachedBaseClass;
+	private IType fCachedBaseClass;
 	
 	public PDOMCPPBase(PDOMLinkage linkage, long record) {
 		this.linkage = linkage;
 		this.record = record;
 	}
 	
-	public PDOMCPPBase(PDOMLinkage linkage, PDOMName baseClassSpec, boolean isVirtual, int visibility)
-			throws CoreException {
+	public PDOMCPPBase(PDOMLinkage linkage, ICPPBase base, PDOMName classDefName) throws CoreException {
+		Database db = linkage.getDB();
 		this.linkage = linkage;
-		Database db = getDB();
 		this.record = db.malloc(RECORD_SIZE);
+		db.putRecPtr(record + CLASS_DEFINITION, classDefName.getRecord());
+		linkage.storeType(record+BASECLASS_TYPE, base.getBaseClassType());
 		
-		long baserec = baseClassSpec != null ? baseClassSpec.getRecord() : 0;
-		db.putRecPtr(record + BASECLASS_SPECIFIER, baserec);
-		
-		byte flags = (byte)(visibility | (isVirtual ? 4 : 0));
+		byte flags = (byte)(base.getVisibility() | (base.isVirtual() ? 4 : 0));
 		db.putByte(record + FLAGS, flags);
 	}
 
@@ -79,8 +83,13 @@ class PDOMCPPBase implements ICPPBase, ICPPInternalBase {
 
 	@Override
 	public PDOMName getBaseClassSpecifierName() {
+		return null;
+	}
+	
+	@Override
+	public PDOMName getClassDefinitionName() {
 		try {
-			long rec = getDB().getRecPtr(record + BASECLASS_SPECIFIER);
+			long rec = getDB().getRecPtr(record + CLASS_DEFINITION);
 			if (rec != 0) {
 				return new PDOMName(linkage, rec);
 			}
@@ -91,22 +100,23 @@ class PDOMCPPBase implements ICPPBase, ICPPInternalBase {
 	}
 	
 	@Override
-	public IBinding getBaseClass() {
-		if (fCachedBaseClass != null)
-			return fCachedBaseClass;
-		
-		try {
-			PDOMName name= getBaseClassSpecifierName();
-			if (name != null) {
-				PDOMBinding b = name.getBinding();
-		    	while (b instanceof PDOMCPPTypedef && ((PDOMCPPTypedef) b).getType() instanceof PDOMBinding) {
-					b = (PDOMBinding) ((PDOMCPPTypedef) b).getType();
-		    	}
-		    	return fCachedBaseClass= b;
-			}				
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
+	public IType getBaseClassType() {
+		if (fCachedBaseClass == null) {
+			try {
+				fCachedBaseClass= linkage.loadType(record + BASECLASS_TYPE);
+			} catch (CoreException e) {
+				fCachedBaseClass= new ProblemType(ISemanticProblem.TYPE_NOT_PERSISTED);
+			}
 		}
+		return fCachedBaseClass;
+	}
+
+	@Override
+	public IBinding getBaseClass() {
+		IType type= getBaseClassType();
+		type = getNestedType(type, TDEF);
+		if (type instanceof IBinding)
+			return (IBinding) type;
 		return null;
 	}
 
@@ -139,6 +149,10 @@ class PDOMCPPBase implements ICPPBase, ICPPInternalBase {
 	public void setBaseClass(IBinding binding) {
 		throw new UnsupportedOperationException(); 
 	}
+	@Override
+	public void setBaseClass(IType binding) {
+		throw new UnsupportedOperationException(); 
+	}
 	
 	@Override
 	public ICPPBase clone() {
@@ -146,23 +160,37 @@ class PDOMCPPBase implements ICPPBase, ICPPInternalBase {
 	}
 	
 	private static class PDOMCPPBaseClone implements ICPPBase, ICPPInternalBase {
-		private ICPPBase base;
-		private IBinding baseClass = null;
+		private final ICPPBase base;
+		private IType baseClass = null;
 		
 		public PDOMCPPBaseClone(ICPPBase base) {
 			this.base = base;
 		}
 		@Override
 		public IBinding getBaseClass() {
+			IType type= getBaseClassType();
+			type = getNestedType(type, TDEF);
+			if (type instanceof IBinding)
+				return (IBinding) type;
+			return null;
+		}
+		@Override
+		public IType getBaseClassType() {
 			if (baseClass == null) {
-				return base.getBaseClass();
+				baseClass=  base.getBaseClassType();
 			}
 			return baseClass;
 		}
-		@Override
+		
+		@Override @Deprecated
 		public IName getBaseClassSpecifierName() {
 			return base.getBaseClassSpecifierName();
 		}
+		@Override
+		public IName getClassDefinitionName() {
+			return base.getClassDefinitionName();
+		}
+		
 		@Override
 		public int getVisibility() {
 			return base.getVisibility();
@@ -173,6 +201,11 @@ class PDOMCPPBase implements ICPPBase, ICPPInternalBase {
 		}
 		@Override
 		public void setBaseClass(IBinding binding) {
+			if (binding instanceof IType)
+				baseClass = (IType) binding;
+		}
+		@Override
+		public void setBaseClass(IType binding) {
 			baseClass = binding;
 		}
 		@Override

@@ -37,6 +37,8 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
+import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.db.PDOMNodeLinkedList;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
@@ -141,35 +143,53 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 		long rec = base != null ? base.getRecord() : 0;
 		getDB().putRecPtr(record + FIRSTBASE, rec);
 	}
-
-	public void addBase(PDOMCPPBase base) throws CoreException {
+	
+	public void addBases(PDOMName classDefName, ICPPBase[] bases) throws CoreException {
 		getPDOM().removeCachedResult(record+PDOMCPPLinkage.CACHE_BASES);
+		final PDOMLinkage linkage = getLinkage();
 		PDOMCPPBase firstBase = getFirstBase();
-		base.setNextBase(firstBase);
-		setFirstBase(base);
+		for (ICPPBase base : bases) {
+			PDOMCPPBase nextBase= new PDOMCPPBase(linkage, base, classDefName);
+			nextBase.setNextBase(firstBase);
+			firstBase= nextBase;
+		}
+		setFirstBase(firstBase);
 	}
 
-	public void removeBase(PDOMName pdomName) throws CoreException {
-		getPDOM().removeCachedResult(record+PDOMCPPLinkage.CACHE_BASES);
-
+	public void removeBases(PDOMName classDefName) throws CoreException {
+		final PDOM pdom = getPDOM();
+		final Database db = getDB();
+		pdom.removeCachedResult(record+PDOMCPPLinkage.CACHE_BASES);
+		
 		PDOMCPPBase base= getFirstBase();
-		PDOMCPPBase predecessor= null;
-		long nameRec= pdomName.getRecord();
+		PDOMCPPBase prevBase= null;
+		long nameRec= classDefName.getRecord();
+		boolean deleted= false;
 		while (base != null) {
-			PDOMName name = base.getBaseClassSpecifierName();
-			if (name != null && name.getRecord() == nameRec) {
-				break;
-			}
-			predecessor= base;
-			base= base.getNextBase();
-		}
-		if (base != null) {
-			if (predecessor != null) {
-				predecessor.setNextBase(base.getNextBase());
+			PDOMCPPBase nextBase = base.getNextBase();
+			long classDefRec= db.getRecPtr(base.getRecord() + PDOMCPPBase.CLASS_DEFINITION);
+			if (classDefRec == nameRec) {
+				deleted= true;
+				base.delete();
 			} else {
-				setFirstBase(base.getNextBase());
+				if (deleted) {
+					deleted= false;
+					if (prevBase == null) {
+						setFirstBase(base);
+					} else {
+						prevBase.setNextBase(base);
+					}
+				}
+				prevBase= base;
 			}
-			base.delete();
+			base= nextBase;
+		}
+		if (deleted) {
+			if (prevBase == null) {
+				setFirstBase(null);
+			} else {
+				prevBase.setNextBase(null);
+			}
 		}
 	}
 	

@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getNestedType;
+
 import java.util.Arrays;
 
 import org.eclipse.cdt.core.dom.IName;
@@ -51,9 +54,9 @@ class CompositeCPPClassType extends CompositeCPPBinding implements ICPPClassType
 	}
 
 	private class CPPBaseDelegate implements ICPPBase {
-		private ICPPBase base;
-		private IBinding baseClass;
-		private boolean writable;
+		private final ICPPBase base;
+		private IType baseClass;
+		private final boolean writable;
 		
 		CPPBaseDelegate(ICPPBase b) {
 			this(b, false); 
@@ -66,16 +69,29 @@ class CompositeCPPClassType extends CompositeCPPBinding implements ICPPClassType
 		
 		@Override
 		public IBinding getBaseClass() {
-			if (baseClass != null) {
-				return baseClass;
-			} else {
-				return cf.getCompositeBinding((IIndexFragmentBinding) base.getBaseClass());
-			}
+			IType type= getBaseClassType();
+			type = getNestedType(type, TDEF);
+			if (type instanceof IBinding)
+				return (IBinding) type;
+			return null;
 		}
 
 		@Override
+		public IType getBaseClassType() {
+			if (baseClass == null) {
+				baseClass= cf.getCompositeType(base.getBaseClassType());
+			}
+			return baseClass;
+		}
+
+		@Override @Deprecated
 		public IName getBaseClassSpecifierName() {
 			return base.getBaseClassSpecifierName();
+		}
+		
+		@Override
+		public IName getClassDefinitionName() {
+			return base.getClassDefinitionName();
 		}
 
 		@Override
@@ -90,13 +106,22 @@ class CompositeCPPClassType extends CompositeCPPBinding implements ICPPClassType
 
 		@Override
 		public void setBaseClass(IBinding binding) {
+			if (writable && binding instanceof IType) {
+				baseClass= (IType) binding;
+			} else {
+				base.setBaseClass(binding);
+			}
+		}
+
+		@Override
+		public void setBaseClass(IType binding) {
 			if (writable) {
 				baseClass= binding;
 			} else {
 				base.setBaseClass(binding);
 			}
 		}
-		
+
 	    @Override
 		public ICPPBase clone(){
 	    	return new CPPBaseDelegate(base, true);

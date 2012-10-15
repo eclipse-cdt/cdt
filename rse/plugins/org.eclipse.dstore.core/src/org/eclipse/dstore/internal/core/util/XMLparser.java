@@ -27,6 +27,7 @@
  * David McKnight    (IBM)  - [358301] [DSTORE] Hang during debug source look up
  * David McKnight   (IBM)  - [367449] [dstore] allow custom encoding for data transport layer
  * David McKnight     (IBM) - [378136][dstore] miner.finish is stuck
+ * David McKnight   (IBM)   - [391966][dstore][performance] unnecessary call slows down large queries
  *******************************************************************************/
 
 package org.eclipse.dstore.internal.core.util;
@@ -1011,10 +1012,6 @@ public class XMLparser
 						else
 						{
 							// new object
-							if (_dataStore.isVirtual()) 
-							{
-								result = _dataStore.find(parent, DE.A_NAME, attributes[DE.A_NAME], 1);
-							}
 							if (isSpirit)
 							{
 								if (!_dataStore.isVirtual()) attributes[DE.A_REF_TYPE] = DataStoreResources.VALUE;

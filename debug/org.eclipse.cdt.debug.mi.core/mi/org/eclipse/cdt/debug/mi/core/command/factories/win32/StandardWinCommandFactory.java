@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 QNX Software Systems and others.
+ * Copyright (c) 2004, 2012 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,21 +46,7 @@ public class StandardWinCommandFactory extends StandardCommandFactory {
 	}
 
 	public MIGDBSetAutoSolib createMIGDBSetAutoSolib( boolean set ) {
-		// Suppress "set auto-solib" - returns error on Windows
-		return new MIGDBSetAutoSolib( getMIVersion(), true ) {
-
-			public String getOperation() {
-				return ""; //$NON-NLS-1$
-			}
-
-			public String[] getOptions() {
-				return new String[0];
-			}
-
-			public String[] getParameters() {
-				return new String[0];
-			}			
-		};
+		return new WinMIGDBSetAutoSolib( getMIVersion(), set );
 	}
 
 	public MIGDBShowSolibSearchPath createMIGDBShowSolibSearchPath() {

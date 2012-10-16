@@ -13,6 +13,7 @@ package org.eclipse.cdt.debug.ui.memory.traditional;
 
 import java.lang.reflect.Method;
 import java.math.BigInteger;
+import java.util.HashMap;
 
 import org.eclipse.cdt.debug.core.model.provisional.IMemoryRenderingViewportProvider;
 import org.eclipse.core.commands.AbstractHandler;
@@ -22,18 +23,26 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.core.model.MemoryByte;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.memory.IMemoryBlockConnection;
+import org.eclipse.debug.internal.ui.memory.provisional.MemoryViewPresentationContext;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelChangedListener;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.memory.AbstractMemoryRendering;
 import org.eclipse.debug.ui.memory.AbstractTableRendering;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
 import org.eclipse.debug.ui.memory.IMemoryRenderingContainer;
+import org.eclipse.debug.ui.memory.IMemoryRenderingSite;
 import org.eclipse.debug.ui.memory.IRepositionableMemoryRendering;
 import org.eclipse.debug.ui.memory.IResettableMemoryRendering;
 import org.eclipse.jface.action.Action;
@@ -86,7 +95,7 @@ import org.eclipse.ui.progress.UIJob;
  */
 
 @SuppressWarnings("restriction")
-public class TraditionalRendering extends AbstractMemoryRendering implements IRepositionableMemoryRendering, IResettableMemoryRendering, IMemoryRenderingViewportProvider
+public class TraditionalRendering extends AbstractMemoryRendering implements IRepositionableMemoryRendering, IResettableMemoryRendering, IMemoryRenderingViewportProvider, IModelChangedListener
 {
 	protected Rendering fRendering;
     protected Action displayEndianBigAction;
@@ -96,7 +105,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 	private IMemoryBlockConnection fConnection;
     
     private final static int MAX_MENU_COLUMN_COUNT = 8;
-
+    
 	public TraditionalRendering(String id)
     {
         super(id);
@@ -188,10 +197,129 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
     private int fAddressableSize;
     private int fAddressSize;
     
+    /*
+     * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IModelChangedListener#modelChanged(org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta, org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy)
+     */
+    public void modelChanged(IModelDelta delta, IModelProxy proxy) 
+	{
+    	/*
+    	 * The event model in the traditional renderer is written to expect a suspend first
+    	 * which will cause it to save its current  data set away in an archive.  Then when 
+    	 * the state change comes through it will compare and refresh showing a difference.
+    	 */
+    	int flags = delta.getFlags();
+    	if ( ( flags & IModelDelta.STATE ) != 0 ) {
+    		DebugEvent debugEvent = new DebugEvent(delta.getElement(), DebugEvent.SUSPEND, DebugEvent.CONTENT);
+    		DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[] { debugEvent });
+    	}
+
+    	DebugEvent debugEvent = new DebugEvent(delta.getElement(), DebugEvent.CHANGE, DebugEvent.CONTENT);
+    	DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[] { debugEvent });
+	}
+
+    /*
+     * These hashes make sure we do not create a separate model proxy for the same memory block. If
+     * we did then we would get duplicate state changes  which would hide the actual changes  since 
+     * the renderer would be notified  of state change  too many times  and wipe out the difference
+     * calculation it does.  If we create multiple renderers against  the same memory block we will 
+     * use the same Model Proxy  for all of them.  So we need to keep a count to know when the last 
+     * renderer has been torn down and we can freeup the proxy for that memory block.  These stores
+     * are always manipulate and tested on the UI dispatch thread for data integrity.
+     */
+    private static HashMap<IMemoryBlock,IModelProxy> proxies     = new HashMap<IMemoryBlock,IModelProxy>(); // MemoryBlock --> Proxy
+    private static HashMap<IMemoryBlock,Integer>     proxies_cnt = new HashMap<IMemoryBlock,Integer>();     // MemoryBlock --> count
+    
     @Override
-	public void init(IMemoryRenderingContainer container, IMemoryBlock block)
+	public void dispose()
+    {
+    	/*
+    	 * We use the UI dispatch thread to protect the proxy information. Even though I believe the
+    	 * dispose routine is always called in the UI dispatch thread. I am going to make sure.
+    	 */
+    	Display.getDefault().asyncExec(new Runnable() {
+			public void run() {
+				IMemoryBlock block = getMemoryBlock();
+		    	
+		    	/*
+		    	 * See if we already know about this block and already have a proxy for it.
+		    	 */
+		    	if ( proxies_cnt.containsKey( block ) ) {
+		    		Integer cur_cnt = proxies_cnt.get( block );
+		    		cur_cnt -- ;
+		    		
+		    		/*
+		    		 * If the count is zero this is the last render associated with this block.
+		    		 * We can clean out this block/proxy.
+		    		 */
+		    		if ( cur_cnt == 0 ) {
+		    			
+		    			proxies_cnt.remove( block );
+		    			IModelProxy proxy = proxies.remove( block );
+		    			
+		    			/*
+		    			 * Before disposal make sure we take down the listener so we do not get
+		    			 * any phantom notifications.
+		    			 */
+		    			proxy.removeModelChangedListener(TraditionalRendering.this);
+		        		proxy.dispose();
+		    			
+		    		}
+		    		else {
+		    			/*
+		    			 * Not the last so just put back the reduced count.
+		    			 */
+		    			proxies_cnt.put( block,  cur_cnt );
+		    		}
+		    	}
+			}});
+    	
+        if(this.fRendering != null)
+            this.fRendering.dispose();
+        disposeColors();
+        super.dispose();
+    }
+    
+//    private IModelProxy fModel;
+    @Override
+	public void init(final IMemoryRenderingContainer container, final IMemoryBlock block)
     {
     	super.init(container, block);
+
+    	if ( block instanceof IModelProxyFactory ) {
+    		Display.getDefault().asyncExec(new Runnable() {
+    			public void run() {
+    				
+    				if ( proxies.containsKey( block ) ) {
+    					/*
+    					 * Increment the count and reuse the proxy again.
+    					 */
+    					proxies_cnt.put( block, proxies_cnt.get( block ) + 1 );
+    				}
+    				else {
+    					/*
+    					 * We need to create a new proxy. First generate an acceptable Presentation Context.
+    					 */
+    					IMemoryRenderingSite site = container.getMemoryRenderingSite();
+    					MemoryViewPresentationContext context = new  MemoryViewPresentationContext(site, container, TraditionalRendering.this);
+
+    					/*
+    					 * Get a new proxy and perform the initialization sequence so we are known the
+    					 * the model provider.
+    					 */
+    					IModelProxyFactory factory = (IModelProxyFactory) block;
+    					IModelProxy proxy = factory.createModelProxy(block, context);
+    					proxy.installed(null);
+    					proxy.addModelChangedListener(TraditionalRendering.this);
+    					
+    					/*
+    					 * Now note this block/proxy so we can reuse it later if more renderers are create
+    					 * with the same block.
+    					 */
+    					proxies.put( block , proxy );
+    					proxies_cnt.put( block, new Integer(1) );
+    				}
+    			}});
+    	}
     	
     	try
     	{
@@ -1235,15 +1363,6 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
         // user can then change display endian if desired.
         fRendering.setDisplayLittleEndian(littleEndian);
     }
-    
-    @Override
-	public void dispose()
-    {
-        if(this.fRendering != null)
-            this.fRendering.dispose();
-        disposeColors();
-        super.dispose();
-    }
 
     /* (non-Javadoc)
      * @see org.eclipse.core.runtime.PlatformObject#getAdapter(java.lang.Class)
@@ -1251,7 +1370,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 	@Override
 	@SuppressWarnings("rawtypes")
 	public Object getAdapter(Class adapter)
-    {
+	{
         if(adapter == IWorkbenchAdapter.class)
         {
             if(this.fWorkbenchAdapter == null)
@@ -1317,7 +1436,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 
         return super.getAdapter(adapter);
     }
-
+		
 	public void resetRendering() throws DebugException {
 		fRendering.gotoAddress(fRendering.fBaseAddress);
 	}
@@ -1335,8 +1454,8 @@ class CopyBinaryAction extends CopyAction
 
 	public CopyBinaryAction(Rendering rendering) {
 		super(rendering, CopyType.BINARY, DND.CLIPBOARD);
-        setText(TraditionalRenderingMessages.getString("TraditionalRendering.BINARY")); //$NON-NLS-1$
-        setToolTipText(TraditionalRenderingMessages.getString("TraditionalRendering.COPY_SELECTED_DATA")); //$NON-NLS-1$
+		setText(TraditionalRenderingMessages.getString("TraditionalRendering.BINARY")); //$NON-NLS-1$
+		setToolTipText(TraditionalRenderingMessages.getString("TraditionalRendering.COPY_SELECTED_DATA")); //$NON-NLS-1$
 	}
 }
 

@@ -29,6 +29,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 
+import org.eclipse.cdt.core.CCorePreferenceConstants;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.ui.text.ICColorConstants;
 
@@ -39,14 +40,14 @@ import org.eclipse.cdt.internal.ui.text.spelling.SpellCheckEngine;
  * Preference constants used in the CDT-UI preference store. Clients should only read the
  * CDT-UI preference store using these values. Clients are not allowed to modify the
  * preference store programmatically.
- * 
- * The preferences defined in this file are exported in the plugin's 
- * "preferenceTransfer" extension. If adding a new preference please 
+ *
+ * The preferences defined in this file are exported in the plugin's
+ * "preferenceTransfer" extension. If adding a new preference please
  * also add it to one of the two if applicable:
  * <ol>
- * <li>"Editor Appearance" - Any preference related to how the editor presents 
+ * <li>"Editor Appearance" - Any preference related to how the editor presents
  * 							the edited code to the user.</li>
- * <li>"Editor Behavior" - Any preference related to how the editor process the 
+ * <li>"Editor Behavior" - Any preference related to how the editor process the
  * 						  edited code.</li>
  * </ol>
  * @noextend This class is not intended to be subclassed by clients.
@@ -805,7 +806,7 @@ public class PreferenceConstants {
 	 * @since 5.1
 	 */
 	public static final String OUTLINE_GROUP_MEMBERS= "org.eclipse.cdt.ui.outline.groupmembers"; //$NON-NLS-1$
-	
+
 	/**
 	 * A named preference that controls whether the Outline view should group macro definitions.
 	 * <p>
@@ -832,7 +833,7 @@ public class PreferenceConstants {
 	 * </p>
 	 */
 	public static final String CVIEW_GROUP_INCLUDES= "org.eclipse.cdt.ui.cview.groupincludes"; //$NON-NLS-1$
-	
+
 	/**
 	 * A named preference that controls whether macro definitions should be grouped in
 	 * the C/C++ Projects view and the Project Explorer view.
@@ -849,22 +850,22 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
+	 *
 	 * @since 5.0
 	 */
 	public static final String CVIEW_SEPARATE_HEADER_AND_SOURCE= "org.eclipse.cdt.ui.cview.separateheaderandsource"; //$NON-NLS-1$
-		
+
 	/**
-	 * A named preference that controls whether the sorting order of source files should be changed 
+	 * A named preference that controls whether the sorting order of source files should be changed
 	 * in the C/C++ Projects view and the Project Explorer view when they are excluded from build.
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
+	 *
 	 * @since 5.3
 	 */
 	public static final String SORT_ORDER_OF_EXCLUDED_FILES= "org.eclipse.cdt.ui.cview.sortorderofexcludedfiles"; //$NON-NLS-1$
-	
+
 	/**
 	 * A named preference that controls which completion proposal categories
 	 * have been excluded from the default proposal list.
@@ -921,7 +922,7 @@ public class PreferenceConstants {
 	 * </p>
 	 */
 	public static final String EDITOR_FOLDING_STATEMENTS = "editor_folding_statements"; //$NON-NLS-1$
-	
+
 	/**
 	 * A named preference that stores the value for functions folding for the default folding provider.
 	 * <p>
@@ -1025,7 +1026,7 @@ public class PreferenceConstants {
 	 * @since 5.0
 	 */
 	public final static String REMOVE_TRAILING_WHITESPACE = "removeTrailingWhitespace"; //$NON-NLS-1$
-	
+
 	/**
 	 * Preference key controlling how REMOVE_TRAILING_WHITESPACE option is applied.
 	 * If REMOVE_TRAILING_WHITESPACE is enabled, this option limits the scope of
@@ -1162,14 +1163,14 @@ public class PreferenceConstants {
 	 * @since 5.0
 	 */
 	public final static String CODEASSIST_PROPOSALS_FOREGROUND= "content_assist_proposals_foreground"; //$NON-NLS-1$
-	
+
 	/**
-     * A named preference that holds the duration (in milli seconds) a content proposal may compute 
+     * A named preference that holds the duration (in milli seconds) a content proposal may compute
      * until it is assumed that the proposal computer has a problem and should be disabled.
      * <p>
      * Value is of type <code>long</code>.
-     * 
-     * @since 5.4 
+     *
+     * @since 5.4
      */
     public final static String CODEASSIST_PROPOSALS_TIMEOUT= "content_assist_proposals_timeout"; //$NON-NLS-1$
 
@@ -1179,7 +1180,7 @@ public class PreferenceConstants {
 	 * Value is of type <code>String</code>. A RGB color value encoded as a string
 	 * using class <code>PreferenceConverter</code>
 	 * </p>
-	 * 
+	 *
 	 * @see org.eclipse.jface.resource.StringConverter
 	 * @see org.eclipse.jface.preference.PreferenceConverter
 	 *
@@ -1193,7 +1194,7 @@ public class PreferenceConstants {
 	 * Value is of type <code>String</code>. A RGB color value encoded as a string
 	 * using class <code>PreferenceConverter</code>
 	 * </p>
-	 * 
+	 *
 	 * @see org.eclipse.jface.resource.StringConverter
 	 * @see org.eclipse.jface.preference.PreferenceConverter
 	 *
@@ -1438,7 +1439,7 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
+	 *
 	 * @since 5.3
 	 */
 	public static final String EDITOR_MARK_OVERLOADED_OPERATOR_OCCURRENCES= "markOverloadedOperatorsOccurrences"; //$NON-NLS-1$
@@ -1462,7 +1463,7 @@ public class PreferenceConstants {
 	 * @since 5.0
 	 */
 	public static final String SCALABILITY_RECONCILER = "scalability.reconciler"; //$NON-NLS-1$
-	
+
 	/**
 	 * A named preference that controls whether syntax coloring is disabled.
 	 * <p>
@@ -1492,7 +1493,7 @@ public class PreferenceConstants {
 	 * @since 5.0
 	 */
 	public static final String SCALABILITY_ALERT = "scalability.detect"; //$NON-NLS-1$
-	
+
 	/**
 	 * The size of the file that will trigger scalability mode
 	 * <p>
@@ -1502,7 +1503,7 @@ public class PreferenceConstants {
 	 * @since 5.0
 	 */
 	public static final String SCALABILITY_NUMBER_OF_LINES = "scalability.numberOfLines"; //$NON-NLS-1$
-	
+
 	/**
 	 * A named preference that controls whether syntax coloring is disabled.
 	 * <p>
@@ -1512,7 +1513,7 @@ public class PreferenceConstants {
 	 * @since 5.0
 	 */
 	public static final String SCALABILITY_SEMANTIC_HIGHLIGHT = "scalability.semanticHighlight"; //$NON-NLS-1$
-	
+
 	/**
 	 * A named preference that controls whether the content assist auto activation is disabled in scalability mode.
 	 * <p>
@@ -1522,7 +1523,7 @@ public class PreferenceConstants {
 	 * @since 5.0
 	 */
 	public static final String SCALABILITY_CONTENT_ASSIST_AUTO_ACTIVATION = "scalability.contentAssistAutoActivation"; //$NON-NLS-1$
-	
+
 	/**
 	 * A named preference that controls how an include guard symbol is created.
 	 * <p>
@@ -1537,24 +1538,24 @@ public class PreferenceConstants {
 	 * The value of <code>CODE_TEMPLATES_INCLUDE_GUARD_GENERATION_SCHEME</code>
 	 * specifying that the include guard symbol is to be derived from
 	 * the include file's name.
-	 * 
+	 *
 	 * @since 5.1
 	 */
 	public static final int CODE_TEMPLATES_INCLUDE_GUARD_SCHEME_FILE_NAME = 0;
-	
+
 	/**
 	 * The value of <code>CODE_TEMPLATES_INCLUDE_GUARD_GENERATION_SCHEME</code>
 	 * specifying that the include guard symbol is to be derived from a UUID.
-	 * 
+	 *
 	 * @since 5.1
 	 */
 	public static final int CODE_TEMPLATES_INCLUDE_GUARD_SCHEME_UUID = 1;
-	
+
 	/**
 	 * The value of <code>CODE_TEMPLATES_INCLUDE_GUARD_GENERATION_SCHEME</code>
 	 * specifying that the include guard symbol is to be derived from
 	 * the include file's path relative to the source folder.
-	 * 
+	 *
 	 * @since 5.2
 	 */
 	public static final int CODE_TEMPLATES_INCLUDE_GUARD_SCHEME_FILE_PATH = 2;
@@ -1563,7 +1564,7 @@ public class PreferenceConstants {
 	 * A named preference that controls how capitalization of a constant name.
 	 * <p>
 	 * Value is of type <code>Integer</code>.
-	 * 
+	 *
 	 * @since 5.3
 	 */
 	public static final String NAME_STYLE_CONSTANT_CAPITALIZATION = "nameStyle.constant.capitalization"; //$NON-NLS-1$
@@ -1571,7 +1572,7 @@ public class PreferenceConstants {
 	 * A named preference that controls prefix of a constant name.
 	 * <p>
 	 * Value is of type <code>String</code>.
-	 * 
+	 *
 	 * @since 5.3
 	 */
 	public static final String NAME_STYLE_CONSTANT_PREFIX = "nameStyle.constant.prefix"; //$NON-NLS-1$
@@ -1579,7 +1580,7 @@ public class PreferenceConstants {
 	 * A named preference that controls suffix of a constant name.
 	 * <p>
 	 * Value is of type <code>String</code>.
-	 * 
+	 *
 	 * @since 5.3
 	 */
 	public static final String NAME_STYLE_CONSTANT_SUFFIX = "nameStyle.constant.suffix"; //$NON-NLS-1$
@@ -1588,7 +1589,7 @@ public class PreferenceConstants {
 	 * of a constant name.
 	 * <p>
 	 * Value is of type <code>String</code>.
-	 * 
+	 *
 	 * @since 5.3
 	 */
 	public static final String NAME_STYLE_CONSTANT_WORD_DELIMITER = "nameStyle.constant.wordDelimiter"; //$NON-NLS-1$
@@ -1597,7 +1598,7 @@ public class PreferenceConstants {
 	 * A named preference that controls how capitalization of a variable name.
 	 * <p>
 	 * Value is of type <code>Integer</code>.
-	 * 
+	 *
 	 * @since 5.3
 	 */
 	public static final String NAME_STYLE_VARIABLE_CAPITALIZATION = "nameStyle.variable.capitalization"; //$NON-NLS-1$
@@ -1605,7 +1606,7 @@ public class PreferenceConstants {
 	 * A named preference that controls prefix of a variable name.
 	 * <p>
 	 * Value is of type <code>String</code>.
-	 * 
+	 *
 	 * @since 5.3
 	 */
 	public static final String NAME_STYLE_VARIABLE_PREFIX = "nameStyle.variable.prefix"; //$NON-NLS-1$
@@ -1613,7 +1614,7 @@ public class PreferenceConstants {
 	 * A named preference that controls suffix of a variable name.
 	 * <p>
 	 * Value is of type <code>String</code>.
-	 * 
+	 *
 	 * @since 5.3
 	 */
 	public static final String NAME_STYLE_VARIABLE_SUFFIX = "nameStyle.variable.suffix"; //$NON-NLS-1$
@@ -1622,7 +1623,7 @@ public class PreferenceConstants {
 	 * of a variable name.
 	 * <p>
 	 * Value is of type <code>String</code>.
-	 * 
+	 *
 	 * @since 5.3
 	 */
 	public static final String NAME_STYLE_VARIABLE_WORD_DELIMITER = "nameStyle.variable.wordDelimiter"; //$NON-NLS-1$
@@ -1631,7 +1632,7 @@ public class PreferenceConstants {
 	 * A named preference that controls how capitalization of a field name.
 	 * <p>
 	 * Value is of type <code>Integer</code>.
-	 * 
+	 *
 	 * @since 5.3
 	 */
 	public static final String NAME_STYLE_FIELD_CAPITALIZATION = "nameStyle.field.capitalization"; //$NON-NLS-1$
@@ -1639,7 +1640,7 @@ public class PreferenceConstants {
 	 * A named preference that controls prefix of a field name.
 	 * <p>
 	 * Value is of type <code>String</code>.
-	 * 
+	 *
 	 * @since 5.3
 	 */
 	public static final String NAME_STYLE_FIELD_PREFIX = "nameStyle.field.prefix"; //$NON-NLS-1$
@@ -1647,7 +1648,7 @@ public class PreferenceConstants {
 	 * A named preference that controls suffix of a field name.
 	 * <p>
 	 * Value is of type <code>String</code>.
-	 * 
+	 *
 	 * @since 5.3
 	 */
 	public static final String NAME_STYLE_FIELD_SUFFIX = "nameStyle.field.suffix"; //$NON-NLS-1$
@@ -1656,7 +1657,7 @@ public class PreferenceConstants {
 	 * of a field name.
 	 * <p>
 	 * Value is of type <code>String</code>.
-	 * 
+	 *
 	 * @since 5.3
 	 */
 	public static final String NAME_STYLE_FIELD_WORD_DELIMITER = "nameStyle.field.wordDelimiter"; //$NON-NLS-1$
@@ -1665,7 +1666,7 @@ public class PreferenceConstants {
 	 * A named preference that controls how capitalization of a method name.
 	 * <p>
 	 * Value is of type <code>Integer</code>.
-	 * 
+	 *
 	 * @since 5.4
 	 */
 	public static final String NAME_STYLE_METHOD_CAPITALIZATION = "nameStyle.method.capitalization"; //$NON-NLS-1$
@@ -1673,7 +1674,7 @@ public class PreferenceConstants {
 	 * A named preference that controls prefix of a method name.
 	 * <p>
 	 * Value is of type <code>String</code>.
-	 * 
+	 *
 	 * @since 5.4
 	 */
 	public static final String NAME_STYLE_METHOD_PREFIX = "nameStyle.method.prefix"; //$NON-NLS-1$
@@ -1681,7 +1682,7 @@ public class PreferenceConstants {
 	 * A named preference that controls suffix of a method name.
 	 * <p>
 	 * Value is of type <code>String</code>.
-	 * 
+	 *
 	 * @since 5.4
 	 */
 	public static final String NAME_STYLE_METHOD_SUFFIX = "nameStyle.method.suffix"; //$NON-NLS-1$
@@ -1690,7 +1691,7 @@ public class PreferenceConstants {
 	 * of a method name.
 	 * <p>
 	 * Value is of type <code>String</code>.
-	 * 
+	 *
 	 * @since 5.4
 	 */
 	public static final String NAME_STYLE_METHOD_WORD_DELIMITER = "nameStyle.method.wordDelimiter"; //$NON-NLS-1$
@@ -1700,7 +1701,7 @@ public class PreferenceConstants {
 	 * depends on capitalization of the method name.
 	 * <p>
 	 * Value is of type <code>Integer</code>.
-	 * 
+	 *
 	 * @since 5.3
 	 */
 	public static final String NAME_STYLE_GETTER_CAPITALIZATION = "nameStyle.getter.capitalization"; //$NON-NLS-1$
@@ -1708,7 +1709,7 @@ public class PreferenceConstants {
 	 * A named preference that controls prefix of the getter name.
 	 * <p>
 	 * Value is of type <code>String</code>.
-	 * 
+	 *
 	 * @since 5.3
 	 */
 	public static final String NAME_STYLE_GETTER_PREFIX = "nameStyle.getter.prefix"; //$NON-NLS-1$
@@ -1716,7 +1717,7 @@ public class PreferenceConstants {
 	 * A named preference that controls prefix of the getter name for a boolean field.
 	 * <p>
 	 * Value is of type <code>String</code>.
-	 * 
+	 *
 	 * @since 5.3
 	 */
 	public static final String NAME_STYLE_GETTER_PREFIX_FOR_BOOLEAN = "nameStyle.getter.prefixForBoolean"; //$NON-NLS-1$
@@ -1724,7 +1725,7 @@ public class PreferenceConstants {
 	 * A named preference that controls suffix of the getter name.
 	 * <p>
 	 * Value is of type <code>String</code>.
-	 * 
+	 *
 	 * @since 5.3
 	 */
 	public static final String NAME_STYLE_GETTER_SUFFIX = "nameStyle.getter.suffix"; //$NON-NLS-1$
@@ -1733,7 +1734,7 @@ public class PreferenceConstants {
 	 * when composing the getter name from the field name.
 	 * <p>
 	 * Value is of type <code>String</code>.
-	 * 
+	 *
 	 * @since 5.3
 	 */
 	public static final String NAME_STYLE_GETTER_WORD_DELIMITER = "nameStyle.getter.wordDelimiter"; //$NON-NLS-1$
@@ -1743,7 +1744,7 @@ public class PreferenceConstants {
 	 * depends on capitalization of the field name.
 	 * <p>
 	 * Value is of type <code>Integer</code>.
-	 * 
+	 *
 	 * @since 5.3
 	 */
 	public static final String NAME_STYLE_SETTER_CAPITALIZATION = "nameStyle.setter.capitalization"; //$NON-NLS-1$
@@ -1751,7 +1752,7 @@ public class PreferenceConstants {
 	 * A named preference that controls prefix of the setter name.
 	 * <p>
 	 * Value is of type <code>String</code>.
-	 * 
+	 *
 	 * @since 5.3
 	 */
 	public static final String NAME_STYLE_SETTER_PREFIX = "nameStyle.setter.prefix"; //$NON-NLS-1$
@@ -1759,7 +1760,7 @@ public class PreferenceConstants {
 	 * A named preference that controls suffix of the setter name.
 	 * <p>
 	 * Value is of type <code>String</code>.
-	 * 
+	 *
 	 * @since 5.3
 	 */
 	public static final String NAME_STYLE_SETTER_SUFFIX = "nameStyle.setter.suffix"; //$NON-NLS-1$
@@ -1768,7 +1769,7 @@ public class PreferenceConstants {
 	 * when composing the setter name from the field name.
 	 * <p>
 	 * Value is of type <code>String</code>.
-	 * 
+	 *
 	 * @since 5.3
 	 */
 	public static final String NAME_STYLE_SETTER_WORD_DELIMITER = "nameStyle.setter.wordDelimiter"; //$NON-NLS-1$
@@ -1778,7 +1779,7 @@ public class PreferenceConstants {
 	 * depends on capitalization of the class name.
 	 * <p>
 	 * Value is of type <code>Integer</code>.
-	 * 
+	 *
 	 * @since 5.3
 	 */
 	public static final String NAME_STYLE_CPP_SOURCE_CAPITALIZATION = "nameStyle.cpp.source.capitalization"; //$NON-NLS-1$
@@ -1786,7 +1787,7 @@ public class PreferenceConstants {
 	 * A named preference that controls prefix of the C++ source file name.
 	 * <p>
 	 * Value is of type <code>String</code>.
-	 * 
+	 *
 	 * @since 5.3
 	 */
 	public static final String NAME_STYLE_CPP_SOURCE_PREFIX = "nameStyle.cpp.source.prefix"; //$NON-NLS-1$
@@ -1794,7 +1795,7 @@ public class PreferenceConstants {
 	 * A named preference that controls suffix of the C++ source file name.
 	 * <p>
 	 * Value is of type <code>String</code>.
-	 * 
+	 *
 	 * @since 5.3
 	 */
 	public static final String NAME_STYLE_CPP_SOURCE_SUFFIX = "nameStyle.cpp.source.suffix"; //$NON-NLS-1$
@@ -1803,7 +1804,7 @@ public class PreferenceConstants {
 	 * when composing the C++ source file name from the class name.
 	 * <p>
 	 * Value is of type <code>String</code>.
-	 * 
+	 *
 	 * @since 5.3
 	 */
 	public static final String NAME_STYLE_CPP_SOURCE_WORD_DELIMITER = "nameStyle.cpp.source.wordDelimiter"; //$NON-NLS-1$
@@ -1813,7 +1814,7 @@ public class PreferenceConstants {
 	 * depends on capitalization of the class name.
 	 * <p>
 	 * Value is of type <code>Integer</code>.
-	 * 
+	 *
 	 * @since 5.3
 	 */
 	public static final String NAME_STYLE_CPP_HEADER_CAPITALIZATION = "nameStyle.cpp.header.capitalization"; //$NON-NLS-1$
@@ -1821,7 +1822,7 @@ public class PreferenceConstants {
 	 * A named preference that controls prefix of the C++ header file name.
 	 * <p>
 	 * Value is of type <code>String</code>.
-	 * 
+	 *
 	 * @since 5.3
 	 */
 	public static final String NAME_STYLE_CPP_HEADER_PREFIX = "nameStyle.cpp.header.prefix"; //$NON-NLS-1$
@@ -1829,7 +1830,7 @@ public class PreferenceConstants {
 	 * A named preference that controls suffix of the C++ header file name.
 	 * <p>
 	 * Value is of type <code>String</code>.
-	 * 
+	 *
 	 * @since 5.3
 	 */
 	public static final String NAME_STYLE_CPP_HEADER_SUFFIX = "nameStyle.cpp.header.suffix"; //$NON-NLS-1$
@@ -1838,7 +1839,7 @@ public class PreferenceConstants {
 	 * when composing the C++ header file name from the class name.
 	 * <p>
 	 * Value is of type <code>String</code>.
-	 * 
+	 *
 	 * @since 5.3
 	 */
 	public static final String NAME_STYLE_CPP_HEADER_WORD_DELIMITER = "nameStyle.cpp.header.wordDelimiter"; //$NON-NLS-1$
@@ -1848,7 +1849,7 @@ public class PreferenceConstants {
 	 * depends on capitalization of the class name.
 	 * <p>
 	 * Value is of type <code>Integer</code>.
-	 * 
+	 *
 	 * @since 5.3
 	 */
 	public static final String NAME_STYLE_CPP_TEST_CAPITALIZATION = "nameStyle.cpp.test.capitalization"; //$NON-NLS-1$
@@ -1856,7 +1857,7 @@ public class PreferenceConstants {
 	 * A named preference that controls prefix of the C++ test file name.
 	 * <p>
 	 * Value is of type <code>String</code>.
-	 * 
+	 *
 	 * @since 5.3
 	 */
 	public static final String NAME_STYLE_CPP_TEST_PREFIX = "nameStyle.cpp.test.prefix"; //$NON-NLS-1$
@@ -1864,7 +1865,7 @@ public class PreferenceConstants {
 	 * A named preference that controls suffix of the C++ test file name.
 	 * <p>
 	 * Value is of type <code>String</code>.
-	 * 
+	 *
 	 * @since 5.3
 	 */
 	public static final String NAME_STYLE_CPP_TEST_SUFFIX = "nameStyle.cpp.test.suffix"; //$NON-NLS-1$
@@ -1873,7 +1874,7 @@ public class PreferenceConstants {
 	 * when composing the C++ test file name from the class name.
 	 * <p>
 	 * Value is of type <code>String</code>.
-	 * 
+	 *
 	 * @since 5.3
 	 */
 	public static final String NAME_STYLE_CPP_TEST_WORD_DELIMITER = "nameStyle.cpp.test.wordDelimiter"; //$NON-NLS-1$
@@ -1882,7 +1883,7 @@ public class PreferenceConstants {
 	 * The value of <code>NAME_STYLE_*_CAPITALIZATION</code> specifying that the name
 	 * is to be derived from the class or the variable name without changing
 	 * capitalization.
-	 * 
+	 *
 	 * @since 5.3
 	 */
 	public static final int NAME_STYLE_CAPITALIZATION_ORIGINAL = 0;
@@ -1890,7 +1891,7 @@ public class PreferenceConstants {
 	 * The value of <code>NAME_STYLE_*_CAPITALIZATION</code> specifying that the name
 	 * is to be derived from the class or the variable name by converting it to upper
 	 * case.
-	 * 
+	 *
 	 * @since 5.3
 	 */
 	public static final int NAME_STYLE_CAPITALIZATION_UPPER_CASE = 1;
@@ -1898,7 +1899,7 @@ public class PreferenceConstants {
 	 * The value of <code>NAME_STYLE_*_CAPITALIZATION</code> specifying that the name
 	 * is to be derived from the class or the variable name by converting it to lower
 	 * case.
-	 * 
+	 *
 	 * @since 5.3
 	 */
 	public static final int NAME_STYLE_CAPITALIZATION_LOWER_CASE = 2;
@@ -1906,7 +1907,7 @@ public class PreferenceConstants {
 	 * The value of <code>NAME_STYLE_*_CAPITALIZATION</code> specifying that the name
 	 * is to be derived from the class or the variable name by capitalizing first
 	 * letter of every word.
-	 * 
+	 *
 	 * @since 5.3
 	 */
 	public static final int NAME_STYLE_CAPITALIZATION_CAMEL_CASE = 3;
@@ -1914,7 +1915,7 @@ public class PreferenceConstants {
 	 * The value of <code>NAME_STYLE_*_CAPITALIZATION</code> specifying that the name
 	 * is to be derived from the class or the variable name by capitalizing first
 	 * letter of every word except the first one.
-	 * 
+	 *
 	 * @since 5.3
 	 */
 	public static final int NAME_STYLE_CAPITALIZATION_LOWER_CAMEL_CASE = 4;
@@ -1925,7 +1926,7 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>. The <code>true</code> value means that private members
 	 * are before public ones. The default is to put public members before private ones.
-	 * 
+	 *
 	 * @since 5.4
 	 */
 	public static final String CLASS_MEMBER_ASCENDING_VISIBILITY_ORDER = "class_member_ascending_visibility_order"; //$NON-NLS-1$
@@ -1936,7 +1937,7 @@ public class PreferenceConstants {
 	 * Value is of type <code>Boolean</code>. The <code>true</code> value means that output
 	 * parameters are before the input ones. The default is to put outputparameters after the input
 	 * ones.
-	 * 
+	 *
 	 * @since 5.4
 	 */
 	public static final String FUNCTION_OUTPUT_PARAMETERS_BEFORE_INPUT = "function_output_parameters_before_input"; //$NON-NLS-1$
@@ -1947,7 +1948,7 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>. The <code>true</code> value means that output
 	 * parameters are passed by pointer. The default is to pass output parameters by reference.
-	 * 
+	 *
 	 * @since 5.4
 	 */
 	public static final String FUNCTION_PASS_OUTPUT_PARAMETERS_BY_POINTER = "function_pass_output_parameters_by_pointer"; //$NON-NLS-1$
@@ -2057,7 +2058,7 @@ public class PreferenceConstants {
 
 		// Formatter profile
 		store.setDefault(PreferenceConstants.FORMATTER_PROFILE, FormatterProfileManager.DEFAULT_PROFILE);
-		
+
 		// Content assist
 		store.setDefault(PreferenceConstants.CODEASSIST_EXCLUDED_CATEGORIES, "org.eclipse.cdt.ui.textProposalCategory\0"); //$NON-NLS-1$
 		store.setDefault(PreferenceConstants.CODEASSIST_CATEGORY_ORDER, "org.eclipse.cdt.ui.parserProposalCategory:65539\0org.eclipse.cdt.ui.textProposalCategory:65541\0org.eclipse.cdt.ui.templateProposalCategory:2\0org.eclipse.cdt.ui.helpProposalCategory:5\0"); //$NON-NLS-1$
@@ -2102,12 +2103,12 @@ public class PreferenceConstants {
 
 		// codegen
 		store.setDefault(PreferenceConstants.CODEGEN_ADD_COMMENTS, false);
-		
+
 		// mark occurrences
 		store.setDefault(PreferenceConstants.EDITOR_MARK_OCCURRENCES, true);
 		store.setDefault(PreferenceConstants.EDITOR_MARK_OVERLOADED_OPERATOR_OCCURRENCES, false);
 		store.setDefault(PreferenceConstants.EDITOR_STICKY_OCCURRENCES, true);
-		
+
 		// Scalability
 		store.setDefault(PreferenceConstants.SCALABILITY_ALERT, true);
 		store.setDefault(PreferenceConstants.SCALABILITY_NUMBER_OF_LINES, 5000);
@@ -2117,7 +2118,7 @@ public class PreferenceConstants {
 		store.setDefault(PreferenceConstants.SCALABILITY_SEMANTIC_HIGHLIGHT, false);
 		store.setDefault(PreferenceConstants.SCALABILITY_PARSER_BASED_CONTENT_ASSIST, false);
 		store.setDefault(PreferenceConstants.SCALABILITY_CONTENT_ASSIST_AUTO_ACTIVATION, false);
-		
+
 		// Code Templates
 		store.setDefault(PreferenceConstants.CODE_TEMPLATES_INCLUDE_GUARD_SCHEME,
 				CODE_TEMPLATES_INCLUDE_GUARD_SCHEME_FILE_NAME);
@@ -2173,14 +2174,13 @@ public class PreferenceConstants {
     /**
      * Returns the node in the preference in the given context.
      * @param key The preference key.
-     * @param project The current context or <code>null</code> if no context is available and
-     *     the workspace setting should be taken. Note that passing <code>null</code> should
-     *     be avoided.
+     * @param project The current context or {@code null} if no context is available and
+     *     the workspace setting should be taken. Note that passing {@code null} should be avoided.
      * @return Returns the node matching the given context.
      */
 	private static IEclipsePreferences getPreferenceNode(String key, ICProject project) {
 		IEclipsePreferences node = null;
-		
+
 		if (project != null) {
 			node = new ProjectScope(project.getProject()).getNode(CUIPlugin.PLUGIN_ID);
 			if (node.get(key, null) != null) {
@@ -2191,7 +2191,7 @@ public class PreferenceConstants {
 		if (node.get(key, null) != null) {
 			return node;
 		}
-		
+
 		node = ConfigurationScope.INSTANCE.getNode(CUIPlugin.PLUGIN_ID);
 		if (node.get(key, null) != null) {
 			return node;
@@ -2203,21 +2203,33 @@ public class PreferenceConstants {
 	/**
 	 * Returns the string value for the given key in the given context.
 	 * @param key The preference key
-	 * @param project The current context or <code>null</code> if no context is available and
-	 *     the workspace setting should be taken. Note that passing <code>null</code> should
-	 *     be avoided.
+	 * @param project The current context or {@code null} if no context is available and
+	 *     the workspace setting should be taken. Note that passing {@code null} should be avoided.
 	 * @return Returns the current value for the string.
 	 * @since 5.0
 	 */
 	public static String getPreference(String key, ICProject project) {
-		return getPreferenceNode(key, project).get(key, null);
+		return getPreference(key, project, null);
+	}
+
+	/**
+	 * Returns the string value for the given key in the given context.
+	 * @param key The preference key
+	 * @param project The current context or {@code null} if no context is available and
+	 *     the workspace setting should be taken. Note that passing {@code null} should be avoided.
+	 * @param defaultValue The default value if not specified in the preferences.
+	 * @return Returns the current value of the preference.
+	 * @since 5.5
+	 */
+	public static String getPreference(String key, ICProject project, String defaultValue) {
+		return getPreferenceNode(key, project).get(key, defaultValue);
 	}
 
 	/**
 	 * Returns the integer value for the given key in the given context.
 	 * @param key The preference key
-	 * @param project The current context or <code>null</code> if no context is available and
-	 *     the workspace setting should be taken. Note that passing <code>null</code> should
+	 * @param project The current context or {@code null} if no context is available and
+	 *     the workspace setting should be taken. Note that passing {@code null} should
 	 *     be avoided.
 	 * @param defaultValue The default value if not specified in the preferences.
 	 * @return Returns the current value for the string.
@@ -2230,9 +2242,8 @@ public class PreferenceConstants {
 	/**
 	 * Returns the boolean value for the given key in the given context.
 	 * @param key The preference key
-	 * @param project The current context or <code>null</code> if no context is available and
-	 *     the workspace setting should be taken. Note that passing <code>null</code> should
-	 *     be avoided.
+	 * @param project The current context or {@code null} if no context is available and
+	 *     the workspace setting should be taken. Note that passing {@code null} should be avoided.
 	 * @param defaultValue The default value if not specified in the preferences.
 	 * @return Returns the current value for the string.
 	 * @since 5.1
@@ -2243,14 +2254,12 @@ public class PreferenceConstants {
 
 	/**
 	 * Returns the scopes for preference lookup.
-	 * 
-	 * @param project a project or <code>null</code>
+	 *
+	 * @param project a project or {@code null}
 	 * @return the scopes for preference lookup.
 	 * @since 5.4
 	 */
 	public static IScopeContext[] getPreferenceScopes(IProject project) {
-		return project != null ?
-				new IScopeContext[] { new ProjectScope(project), InstanceScope.INSTANCE, ConfigurationScope.INSTANCE, DefaultScope.INSTANCE } :
-				new IScopeContext[] { InstanceScope.INSTANCE, ConfigurationScope.INSTANCE, DefaultScope.INSTANCE };
+		return CCorePreferenceConstants.getPreferenceScopes(project);
 	}
 }

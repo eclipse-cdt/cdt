@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 IBM Corporation and others.
+ * Copyright (c) 2007, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@
  * David McKnight   (IBM)        - [264607] Unable to delete a broken symlink
  * David McKnight   (IBM)        - [321026][dstore] Broken symbolic link can't be removed
  * David McKnight   (IBM)        - [342450][dstore] Real files should not be deleted when deleting a symbolic link
+ * David McKnight   (IBM)        - [392012] [dstore] make server safer for delete operations
  *******************************************************************************/
 package org.eclipse.rse.internal.dstore.universal.miners.filesystem;
 
@@ -119,97 +120,107 @@ public class DeleteThread extends SecuredThread implements ICancellableHandler {
 	}
 	private DataElement handleDelete(DataElement subject, DataElement thisStatus) throws SystemMessageException
 	{
-
 		String type = subject.getType();
 		if (type.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FILE_DESCRIPTOR)
 				|| type.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FOLDER_DESCRIPTOR)) {
 			return handleDeleteFromArchive(subject, thisStatus);
 		}
-
-		File deleteObj = new File(subject.getAttribute(DE.A_VALUE)
-				+ File.separatorChar + subject.getName());
-		DataElement deObj = null;
-
-		String attributes = subject.getSource();
-		String classification = "file"; //$NON-NLS-1$
-		String[] str = attributes.split("\\"+IServiceConstants.TOKEN_SEPARATOR); //$NON-NLS-1$
-		if (str.length > 11){ // 11 is classification index
-			classification = str[11];
-		}
-		boolean exists = deleteObj.exists();
-		if (!exists){
-			// special case for broken symbolic link
-			if (classification.startsWith("broken symbolic link")){ //$NON-NLS-1$
-				exists = true;
+		else if (IUniversalDataStoreConstants.UNIVERSAL_FOLDER_DESCRIPTOR.equals(type) ||
+				IUniversalDataStoreConstants.UNIVERSAL_FILE_DESCRIPTOR.equals(type) ||
+				IUniversalDataStoreConstants.UNIVERSAL_ARCHIVE_FILE_DESCRIPTOR.equals(type) ||
+				IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR.equals(type)){			
+			
+			String path = subject.getAttribute(DE.A_VALUE)+ File.separatorChar + subject.getName();			
+			if (path.equals(""+File.separatorChar)){ // no path provided //$NON-NLS-1$
+				return _miner.statusCancelled(_status);
 			}
-		}
-		
-		if (!exists) {
-			thisStatus.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED_WITH_DOES_NOT_EXIST + "|" + deleteObj.getAbsolutePath()); //$NON-NLS-1$
-			UniversalServerUtilities.logError(CLASSNAME,
-					"The object to delete does not exist", null, _dataStore); //$NON-NLS-1$
-		} else {
-			try {
-				if (classification != null && classification.startsWith("symbolic link")){ //$NON-NLS-1$
-					// only delete the link - no the actual file or folder contents
-					deleteObj.delete();
+			File deleteObj = new File(path);
+			DataElement deObj = null;
+	
+			String attributes = subject.getSource();
+			String classification = "file"; //$NON-NLS-1$
+			String[] str = attributes.split("\\"+IServiceConstants.TOKEN_SEPARATOR); //$NON-NLS-1$
+			if (str.length > 11){ // 11 is classification index
+				classification = str[11];
+			}
+			boolean exists = deleteObj.exists();
+			if (!exists){
+				// special case for broken symbolic link
+				if (classification.startsWith("broken symbolic link")){ //$NON-NLS-1$
+					exists = true;
 				}
-				else if (deleteObj.isFile()) {
-					if (deleteObj.delete() == false) {
-						thisStatus.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED + "|" + deleteObj.getAbsolutePath()); //$NON-NLS-1$
-					} else {
-						// delete was successful and delete the object from the
-						// datastore
-						deObj = _dataStore.find(subject, DE.A_NAME, subject
-								.getName(), 1);
-						_dataStore.deleteObject(subject, deObj);
-						thisStatus.setAttribute(DE.A_SOURCE, IServiceConstants.SUCCESS + "|" + deleteObj.getAbsolutePath()); //$NON-NLS-1$
-					}
-					_dataStore.refresh(subject);
-				} else if (deleteObj.isDirectory()) { // it is directory and
-													  // need to delete the
-													  // entire directory +
-					// children
-					deleteDir(deleteObj, thisStatus);
-					if (deleteObj.delete() == false) {
-						thisStatus.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED + "|" + deleteObj.getAbsolutePath()); //$NON-NLS-1$
-						UniversalServerUtilities.logError(CLASSNAME,
-								"Deletion of dir fialed", null, _dataStore); //$NON-NLS-1$
-					} else {
-						_dataStore.deleteObjects(subject);
-						DataElement parent = subject.getParent();
-						_dataStore.deleteObject(parent, subject);
-						_dataStore.refresh(parent);
-						thisStatus.setAttribute(DE.A_SOURCE, IServiceConstants.SUCCESS + "|" + deleteObj.getAbsolutePath()); //$NON-NLS-1$
-					}
-				} else {
-					// try to treat this as a file
-					if (deleteObj.delete() == false) {
-						thisStatus.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED + "|" + deleteObj.getAbsolutePath()); //$NON-NLS-1$												
-						UniversalServerUtilities
-								.logError(
-										CLASSNAME,
-										"The object to delete is neither a File or Folder! in handleDelete", //$NON-NLS-1$
-										null, _dataStore);
-					} else {
-						// delete was successful and delete the object from the
-						// datastore
-						deObj = _dataStore.find(subject, DE.A_NAME, subject
-								.getName(), 1);
-						_dataStore.deleteObject(subject, deObj);
-						thisStatus.setAttribute(DE.A_SOURCE, IServiceConstants.SUCCESS + "|" + deleteObj.getAbsolutePath()); //$NON-NLS-1$
-					}
-					_dataStore.refresh(subject);
-
-				}
-			} catch (Exception e) {
-				thisStatus.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED_WITH_EXCEPTION + "|" + deleteObj.getAbsolutePath()); //$NON-NLS-1$
-				thisStatus.setAttribute(DE.A_VALUE, e.getLocalizedMessage());
+			}
+			
+			if (!exists) {
+				thisStatus.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED_WITH_DOES_NOT_EXIST + "|" + deleteObj.getAbsolutePath()); //$NON-NLS-1$
 				UniversalServerUtilities.logError(CLASSNAME,
-						"Delete of the object failed", e, _dataStore); //$NON-NLS-1$
+						"The object to delete does not exist", null, _dataStore); //$NON-NLS-1$
+			} else {
+				try {
+					if (classification != null && classification.startsWith("symbolic link")){ //$NON-NLS-1$
+						// only delete the link - no the actual file or folder contents
+						deleteObj.delete();
+					}
+					else if (deleteObj.isFile()) {
+						if (deleteObj.delete() == false) {
+							thisStatus.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED + "|" + deleteObj.getAbsolutePath()); //$NON-NLS-1$
+						} else {
+							// delete was successful and delete the object from the
+							// datastore
+							deObj = _dataStore.find(subject, DE.A_NAME, subject
+									.getName(), 1);
+							_dataStore.deleteObject(subject, deObj);
+							thisStatus.setAttribute(DE.A_SOURCE, IServiceConstants.SUCCESS + "|" + deleteObj.getAbsolutePath()); //$NON-NLS-1$
+						}
+						_dataStore.refresh(subject);
+					} else if (deleteObj.isDirectory()) { // it is directory and
+														  // need to delete the
+														  // entire directory +
+						// children
+						deleteDir(deleteObj, thisStatus);
+						if (deleteObj.delete() == false) {
+							thisStatus.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED + "|" + deleteObj.getAbsolutePath()); //$NON-NLS-1$
+							UniversalServerUtilities.logError(CLASSNAME,
+									"Deletion of dir fialed", null, _dataStore); //$NON-NLS-1$
+						} else {
+							_dataStore.deleteObjects(subject);
+							DataElement parent = subject.getParent();
+							_dataStore.deleteObject(parent, subject);
+							_dataStore.refresh(parent);
+							thisStatus.setAttribute(DE.A_SOURCE, IServiceConstants.SUCCESS + "|" + deleteObj.getAbsolutePath()); //$NON-NLS-1$
+						}
+					} else {
+						// try to treat this as a file
+						if (deleteObj.delete() == false) {
+							thisStatus.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED + "|" + deleteObj.getAbsolutePath()); //$NON-NLS-1$												
+							UniversalServerUtilities
+									.logError(
+											CLASSNAME,
+											"The object to delete is neither a File or Folder! in handleDelete", //$NON-NLS-1$
+											null, _dataStore);
+						} else {
+							// delete was successful and delete the object from the
+							// datastore
+							deObj = _dataStore.find(subject, DE.A_NAME, subject
+									.getName(), 1);
+							_dataStore.deleteObject(subject, deObj);
+							thisStatus.setAttribute(DE.A_SOURCE, IServiceConstants.SUCCESS + "|" + deleteObj.getAbsolutePath()); //$NON-NLS-1$
+						}
+						_dataStore.refresh(subject);
+	
+					}
+				} catch (Exception e) {
+					thisStatus.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED_WITH_EXCEPTION + "|" + deleteObj.getAbsolutePath()); //$NON-NLS-1$
+					thisStatus.setAttribute(DE.A_VALUE, e.getLocalizedMessage());
+					UniversalServerUtilities.logError(CLASSNAME,
+							"Delete of the object failed", e, _dataStore); //$NON-NLS-1$
+				}
 			}
+			_dataStore.refresh(subject);
 		}
-		_dataStore.refresh(subject);
+		else {
+			_dataStore.trace("attempt to delete "+subject + " prevented");  //$NON-NLS-1$//$NON-NLS-2$
+		}
 		return _miner.statusDone(_status);
 
 	}
@@ -254,7 +265,7 @@ public class DeleteThread extends SecuredThread implements ICancellableHandler {
 	public void deleteDir(File fileObj, DataElement status) {
 		try {
 			File list[] = fileObj.listFiles();
-			for (int i = 0; i < list.length; ++i) {
+			for (int i = 0; i < list.length && !_isCancelled; ++i) {
 				if (list[i].isFile()) {
 					if (!(list[i].delete())) {
 						status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED);

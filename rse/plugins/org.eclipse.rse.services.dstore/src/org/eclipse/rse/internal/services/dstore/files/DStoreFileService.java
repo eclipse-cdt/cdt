@@ -1524,7 +1524,12 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 	public void delete(String remoteParent, String fileName, IProgressMonitor monitor) throws SystemMessageException
 	{
 		String remotePath = remoteParent + getSeparator(remoteParent) + fileName;
-		DataElement de = getElementFor(remotePath);
+
+		// always get a fresh element for deletions (spiriting could cause issues on server-side)
+		DataElement universaltemp = getMinerElement();
+		String normalizedPath = PathUtility.normalizeUnknown(remotePath);
+		DataElement de = universaltemp.getDataStore().createObject(universaltemp, IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR, normalizedPath, normalizedPath, "", false); //$NON-NLS-1$
+
 		// if we don't have a proper element, we won't have a command descriptor
 		if (de.getType().equals(IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR)){
 			// need to fetch
@@ -1568,12 +1573,16 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			delete(remoteParents[0], fileNames[0], monitor);
 			return;
 		}
-
+		DataElement universaltemp = getMinerElement();
 		ArrayList dataElements = new ArrayList(remoteParents.length);
 		for (int i = 0; i < remoteParents.length; i++)
 		{
 			String remotePath = remoteParents[i] + getSeparator(remoteParents[i]) + fileNames[i];
-			DataElement de = getElementFor(remotePath);
+			
+			// always get a fresh element for deletions (spiriting could cause issues on server-side)
+			String normalizedPath = PathUtility.normalizeUnknown(remotePath);
+			DataElement de = universaltemp.getDataStore().createObject(universaltemp, IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR, normalizedPath, normalizedPath, "", false); //$NON-NLS-1$
+
 			// if we don't have a proper element, we won't have a command descriptor
 			if (de.getType().equals(IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR)){
 				// need to fetch
@@ -1633,7 +1642,11 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
  			 newPath = remoteParent + getSeparator(remoteParent) + newName;
  		}
 
- 		DataElement de = getElementFor(oldPath);
+ 		// always get a fresh element for renames (spiriting could cause issues on server-side)
+		DataElement universaltemp = getMinerElement();
+		String normalizedPath = PathUtility.normalizeUnknown(oldPath);
+		DataElement de = universaltemp.getDataStore().createObject(universaltemp, IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR, normalizedPath, normalizedPath, "", false); //$NON-NLS-1$
+ 		
 		// if we don't have a proper element, we won't have a command descriptor
 		if (de.getType().equals(IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR)){
 			// need to fetch

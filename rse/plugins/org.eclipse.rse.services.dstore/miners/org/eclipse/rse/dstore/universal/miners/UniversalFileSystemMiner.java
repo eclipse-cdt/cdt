@@ -45,6 +45,7 @@
  * David McKnight   (IBM) - [371401] [dstore][multithread] avoid use of static variables - causes memory leak after disconnect
  * Noriaki Takatsu  (IBM) - [380562] [multithread][dstore] File Search is not canceled by the client UI on disconnect
  * David McKnight   (IBM)        - [390037] [dstore] Duplicated items in the System view
+ * David McKnight   (IBM)        - [392012] [dstore] make server safer for delete operations
  *******************************************************************************/
 
 package org.eclipse.rse.dstore.universal.miners;
@@ -53,6 +54,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -462,6 +464,7 @@ public class UniversalFileSystemMiner extends Miner {
 	public void updateCancellableThreads(DataElement command, ICancellableHandler thread)
 	{
 		//First Check to make sure that there are no "zombie" threads
+		List threadsToRemove = new ArrayList();
 		Iterator iter = _cancellableThreads.keySet().iterator();
 		try
 		{
@@ -472,7 +475,12 @@ public class UniversalFileSystemMiner extends Miner {
 				if ((theThread == null) ||
 						theThread.isDone() || theThread.isCancelled())
 				{
-					_cancellableThreads.remove(threadElement);
+					threadsToRemove.add(threadElement);
+				}
+			}
+			if (!threadsToRemove.isEmpty()){
+				for (int i = 0; i < threadsToRemove.size(); i++){
+					_cancellableThreads.remove(threadsToRemove.get(i));
 				}
 			}
 		}
@@ -485,7 +493,7 @@ public class UniversalFileSystemMiner extends Miner {
 			_cancellableThreads.put(command, thread);
 		}
 	}
-
+	
 
 	  /**
 		    * Method to list the files for a given filter.
@@ -645,10 +653,24 @@ public class UniversalFileSystemMiner extends Miner {
 	 * Method to Delete a file or folder.
 	 */
 	public DataElement handleDelete(DataElement subject, DataElement status, boolean refreshDataStore) {
-		DeleteThread deleteThread = new DeleteThread(subject,  this, _dataStore, false, status);
-		deleteThread.start();
+		// first make sure this is a valid object to delete
+		String type = subject.getType();	
+		if (IUniversalDataStoreConstants.UNIVERSAL_FOLDER_DESCRIPTOR.equals(type) ||
+			IUniversalDataStoreConstants.UNIVERSAL_FILE_DESCRIPTOR.equals(type) ||
+			IUniversalDataStoreConstants.UNIVERSAL_ARCHIVE_FILE_DESCRIPTOR.equals(type) ||
+			IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FILE_DESCRIPTOR.equals(type) ||
+			IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FOLDER_DESCRIPTOR.equals(type) ||
+			IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR.equals(type)){
+			
+			DeleteThread deleteThread = new DeleteThread(subject,  this, _dataStore, false, status);
+			deleteThread.start();
 
-		updateCancellableThreads(status.getParent(), deleteThread);
+			updateCancellableThreads(status.getParent(), deleteThread);
+		}
+		else {
+			UniversalServerUtilities.logWarning(getName(), "illegal deletion type: " + type, _dataStore); //$NON-NLS-1$
+			statusCancelled(status);
+		}
 
 		return status;
 	}
@@ -659,9 +681,9 @@ public class UniversalFileSystemMiner extends Miner {
 		deleteThread.start();
 
 		updateCancellableThreads(status.getParent(), deleteThread);
-
 		return status;
 	}
+	
 
 	/**
 	 * Method to Rename a file or folder.

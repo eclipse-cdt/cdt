@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -2232,7 +2232,7 @@ public class PreferenceConstants {
 	 *     the workspace setting should be taken. Note that passing {@code null} should
 	 *     be avoided.
 	 * @param defaultValue The default value if not specified in the preferences.
-	 * @return Returns the current value for the string.
+	 * @return Returns the current value of the preference.
 	 * @since 5.1
 	 */
 	public static int getPreference(String key, ICProject project, int defaultValue) {
@@ -2245,7 +2245,7 @@ public class PreferenceConstants {
 	 * @param project The current context or {@code null} if no context is available and
 	 *     the workspace setting should be taken. Note that passing {@code null} should be avoided.
 	 * @param defaultValue The default value if not specified in the preferences.
-	 * @return Returns the current value for the string.
+	 * @return Returns the current value of the preference.
 	 * @since 5.1
 	 */
 	public static boolean getPreference(String key, ICProject project, boolean defaultValue) {

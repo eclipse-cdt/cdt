@@ -52,6 +52,7 @@ import org.eclipse.cdt.internal.ui.actions.CDTQuickMenuCreator;
 import org.eclipse.cdt.internal.ui.editor.AddIncludeOnSelectionAction;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.editor.ICEditorActionDefinitionIds;
+import org.eclipse.cdt.internal.ui.editor.OrganizeIncludesAction;
 import org.eclipse.cdt.internal.ui.editor.SortLinesAction;
 
 /**
@@ -128,7 +129,7 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 //	private ExternalizeStringsAction fExternalizeStrings;
 //	private CleanUpAction fCleanUp;
 //
-//	private OrganizeIncludesAction fOrganizeIncludes;
+	private OrganizeIncludesAction fOrganizeIncludes;
 //	private SortMembersAction fSortMembers;
 	private SortLinesAction fSortLines;
 	private FormatAllAction fFormatAll;
@@ -158,10 +159,10 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 		fAddInclude.setActionDefinitionId(ICEditorActionDefinitionIds.ADD_INCLUDE);
 		editor.setAction("AddIncludeOnSelection", fAddInclude); //$NON-NLS-1$
 
-//		fOrganizeIncludes= new OrganizeIncludesAction(editor);
-//		fOrganizeIncludes.setActionDefinitionId(ICEditorActionDefinitionIds.ORGANIZE_INCLUDES);
-//		editor.setAction("OrganizeIncludes", fOrganizeIncludes); //$NON-NLS-1$
-//
+		fOrganizeIncludes= new OrganizeIncludesAction(editor);
+		// TODO: fOrganizeIncludes.setActionDefinitionId(ICEditorActionDefinitionIds.ORGANIZE_INCLUDES);
+		editor.setAction("OrganizeIncludes", fOrganizeIncludes); //$NON-NLS-1$
+
 //		fSortMembers= new SortMembersAction(editor);
 //		fSortMembers.setActionDefinitionId(ICEditorActionDefinitionIds.SORT_MEMBERS);
 //		editor.setAction("SortMembers", fSortMembers); //$NON-NLS-1$
@@ -431,7 +432,7 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 		added+= addEditorAction(source, "Format"); //$NON-NLS-1$
 		source.add(new Separator(GROUP_ORGANIZE));
 		added+= addAction(source, fAddInclude);
-//		added+= addAction(source, fOrganizeIncludes);
+		added+= addAction(source, fOrganizeIncludes);
 //		added+= addAction(source, fSortMembers);
 		added+= addAction(source, fSortLines);
 //		added+= addAction(source, fCleanUp);
@@ -457,7 +458,7 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 		added+= addAction(source, fFormatAll);
 		source.add(new Separator(GROUP_ORGANIZE));
 		added+= addAction(source, fAddInclude);
-//		added+= addAction(source, fOrganizeIncludes);
+		added+= addAction(source, fOrganizeIncludes);
 //		added+= addAction(source, fSortMembers);
 //		added+= addAction(source, fCleanUp);
 		source.add(new Separator(GROUP_GENERATE));
@@ -506,7 +507,7 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 //		actionBar.setGlobalActionHandler(CdtActionConstants.ADD_CPP_DOC_COMMENT, fAddCppDocStub);
 //		actionBar.setGlobalActionHandler(CdtActionConstants.EXTERNALIZE_STRINGS, fExternalizeStrings);
 //		actionBar.setGlobalActionHandler(CdtActionConstants.CLEAN_UP, fCleanUp);
-//		actionBar.setGlobalActionHandler(CdtActionConstants.ORGANIZE_INCLUDES, fOrganizeIncludes);
+//		TODO: actionBar.setGlobalActionHandler(CdtActionConstants.ORGANIZE_INCLUDES, fOrganizeIncludes);
 //		actionBar.setGlobalActionHandler(CdtActionConstants.SORT_MEMBERS, fSortMembers);
 		if (!isEditorOwner()) {
 			// editor provides its own implementation of these actions.

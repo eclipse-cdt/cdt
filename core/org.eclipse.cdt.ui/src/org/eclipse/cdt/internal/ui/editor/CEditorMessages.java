@@ -36,6 +36,13 @@ public final class CEditorMessages extends NLS {
 	public static String AddIncludeOnSelection_insertion_failed;
 	public static String AddIncludeOnSelection_help_provider_error;
 	public static String AddIncludesOperation_description;
+	public static String OrganizeIncludes_label;
+	public static String OrganizeIncludes_description;
+	public static String OrganizeIncludes_error_title;
+	public static String OrganizeIncludes_insertion_failed;
+	public static String OrganizeIncludes_help_provider_error;
+	public static String OrganizeIncludes_failed;
+	public static String OrganizeIncludesOperation_description;
 	public static String ShowInCView_description;
 	public static String ShowInCView_label;
 	public static String ShowInCView_tooltip;

@@ -485,9 +485,9 @@ public class Rendering extends Composite implements IDebugEventSetListener
     
     protected BigInteger getCaretAddress()
     {
-		// Return the caret address if it has been set, otherwise return the
-		// viewport address. When the rendering is first created, the caret is
-		// unset until the user clicks somewhere in the rendering. It also reset
+	// Return the caret address if it has been set, otherwise return the
+	// viewport address. When the rendering is first created, the caret is
+	// unset until the user clicks somewhere in the rendering. It also reset
     	// (unset) when the user gives us a new viewport address
     	return (fCaretAddress != null) ? fCaretAddress : fViewportAddress;
     }
@@ -583,11 +583,15 @@ public class Rendering extends Composite implements IDebugEventSetListener
             {
                 final int kind = events[i].getKind();
                 final int detail = events[i].getDetail();
-                final IDebugElement source = (IDebugElement) events[i]
-                    .getSource();
-                
-                if(source.getDebugTarget() == getMemoryBlock()
-                        .getDebugTarget())
+                final IDebugElement source = (IDebugElement) events[i].getSource();
+                /*
+                 * We have to make sure we are comparing memory blocks here. It pretty much is now the
+                 * case that the IDebugTarget is always null. Almost no one in the Embedded Space is
+                 * using anything but CDT/DSF or CDT/TCF at this point. The older CDI stuff will still
+                 * be using the old Debug Model API. But this will generate the same memory block  and
+                 * a legitimate IDebugTarget which will match properly.
+                 */
+                if(source.equals( getMemoryBlock() ) && source.getDebugTarget() == getMemoryBlock().getDebugTarget() )
                 {
                 	if((detail & DebugEvent.BREAKPOINT) != 0)
                 		isBreakpointHit = true;
@@ -620,7 +624,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
             {
                 public void run()
                 {
-                	archiveDeltas();
+                    archiveDeltas();
                     refresh();
                 }
             });

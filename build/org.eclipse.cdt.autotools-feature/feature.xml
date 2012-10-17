@@ -17,10 +17,6 @@
       %license
    </license>
 
-   <url>
-      <update label="%updateSiteName" url="http://download.eclipse.org/tools/cdt/releases/indigo"/>
-   </url>
-
    <requires>
       <import plugin="org.eclipse.cdt.managedbuilder.core" version="5.0.100" match="greaterOrEqual"/>
       <import plugin="org.eclipse.cdt.core" version="5.1.0" match="greaterOrEqual"/>

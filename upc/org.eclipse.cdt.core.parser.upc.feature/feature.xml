@@ -18,10 +18,6 @@
       %license
    </license>
 
-   <url>
-      <update label="%updateSiteName" url="http://download.eclipse.org/tools/cdt/releases/indigo"/>
-   </url>
-
    <includes
          id="org.eclipse.cdt.core.lrparser.feature"
          version="0.0.0"/>

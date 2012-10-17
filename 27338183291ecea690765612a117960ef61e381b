@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOIn//z+w\u003d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-10-17T17:25:45Z",
+      "side": 1,
+      "message": "You can remove Update2 and Update3 from the commit comment",
+      "revId": "27338183291ecea690765612a117960ef61e381b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//z+g\u003d",
+        "filename": "build/org.eclipse.cdt.autotools-feature/p2.inf",
+        "patchSetId": 3
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-10-17T17:25:45Z",
+      "side": 1,
+      "message": "I don\u0027t know what this file is for, but the change seems safe, so let\u0027s go ahead with it.",
+      "revId": "27338183291ecea690765612a117960ef61e381b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

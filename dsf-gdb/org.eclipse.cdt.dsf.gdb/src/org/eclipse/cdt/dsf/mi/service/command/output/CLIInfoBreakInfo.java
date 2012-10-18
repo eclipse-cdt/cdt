@@ -10,8 +10,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service.command.output;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * 'info break [BP_REFERENCE] will return information about
@@ -20,26 +23,37 @@ import java.util.List;
  * 
  * sample output: 
  *
- * (gdb) inf b 1
+ * (gdb) info break
  * Num     Type           Disp Enb Address    What
  * 1       breakpoint     keep y   <MULTIPLE> 
  * 1.1                         y     0x08048533 in main() at loopfirst.cc:8 inf 2
  * 1.2                         y     0x08048533 in main() at loopfirst.cc:8 inf 1
- * (gdb) info b 2
+ * 2       breakpoint     keep y   <MULTIPLE> 
+ * 2.1                         y     0x08048553 in main() at loopfirst.cc:9 inf 2
+ * 2.2                         y     0x08048553 in main() at loopfirst.cc:9 inf 1
+ * 
+ * If only one inferior is being debugged there is not mention of the inferior:
+ * (gdb) info break
  * Num     Type           Disp Enb Address    What
- * 2       breakpoint     keep y   0x08048553 in main() at loopsecond.cc:9 inf 3, 2, 1
+ * 1       breakpoint     keep y   0x08048533 in main() at loopfirst.cc:8
+ * 2       breakpoint     keep y   0x08048553 in main() at loopfirst.cc:9
  *
- * If only one inferior is being debugged:
- * (gdb) info b 2
+ * Note that the below output is theoretically possible looking at GDB's code but
+ * I haven't figured out a way to trigger it.  Still, we should be prepared for it:
+ * (gdb) info break
  * Num     Type           Disp Enb Address    What
- * 2       breakpoint     keep y   0x08048553 in main() at loopsecond.cc:9
- *
+ * 1       breakpoint     keep y   <MULTIPLE> 
+ * 1.1                         y     0x08048533 in main() at loopfirst.cc:8 inf 3, 2
+ * 1.2                         y     0x08048533 in main() at loopfirst.cc:8 inf 2, 1
+ * 2       breakpoint     keep y   <MULTIPLE> 
+ * 2.1                         y     0x08048553 in main() at loopfirst.cc:9 inf 2, 1
+ * 2.2                         y     0x08048553 in main() at loopfirst.cc:9 inf 3, 2, 1
  * 
  * @since 4.2
  */
 public class CLIInfoBreakInfo extends MIInfo {
 
-	private String[] fInferiorIds = null;
+	private Map<Integer, String[]> fBreakpointToGroupMap = new HashMap<Integer, String[]>();
 
 	public CLIInfoBreakInfo(MIOutput out) {		
 		super(out);
@@ -47,35 +61,53 @@ public class CLIInfoBreakInfo extends MIInfo {
 	}
 	
 	/**
-	 * Return the list of inferior ids to which this breakpoint applies or null
-	 * if there is only a single inferior being debugged.
+	 * Returns the map of breakpoint to groupId array indicating to which thread-group
+	 * each breakpoint applies.  If there is only a single thread-group being debugged, an
+	 * empty map will be returned.
 	 */
-	public String[] getInferiorIds() {
-		return fInferiorIds; 
+	public Map<Integer, String[]> getBreakpointToGroupMap() {
+		return fBreakpointToGroupMap; 
 	}
 	
 	protected void parse() {
 		final String INFERIOR_PREFIX = " inf "; //$NON-NLS-1$
 		if (isDone()) {
-			List<String> inferiorIdList = new ArrayList<String>();
 			MIOutput out = getMIOutput();
 			for (MIOOBRecord oob : out.getMIOOBRecords()) {
 				if (oob instanceof MIConsoleStreamOutput) {
 					String line = ((MIConsoleStreamOutput)oob).getString().trim();
 					int loc = line.indexOf(INFERIOR_PREFIX);
 					if (loc >= 0) {
-						// Get the comma-separated list of inferiors
-						String inferiorIdStr = line.substring(loc + INFERIOR_PREFIX.length()).trim();
-						// Split the list into individual ids
-						for (String id : inferiorIdStr.split(",")) { //$NON-NLS-1$
-							inferiorIdList.add(id.trim());							
+						// Get the breakpoint id by extracting the first element before a white space
+						// or before a period.  We can set a limit of 2 since we only need the first element
+						String bpIdStr = line.split("[\\s\\.]", 2)[0]; //$NON-NLS-1$
+						int bpId = 0;
+						try {
+							bpId = Integer.parseInt(bpIdStr);
+						} catch (NumberFormatException e) {
+							assert false;
 						}
+						
+						String[] groups = fBreakpointToGroupMap.get(bpId);
+						Set<String> groupIdList = new HashSet<String>();
+						if (groups != null) {
+							// Since we already know about this breakpoint id we must retain the list
+							// we have been building
+							groupIdList.addAll(Arrays.asList(groups));
+						}
+						
+						// Get the comma-separated list of inferiors
+						// Split the list into individual ids
+						String inferiorIdStr = line.substring(loc + INFERIOR_PREFIX.length()).trim();
+						for (String id : inferiorIdStr.split(",")) { //$NON-NLS-1$
+							// Add the 'i' prefix as GDB does for MI commands
+							groupIdList.add("i" + id.trim());  //$NON-NLS-1$						
+						}
+						
+						fBreakpointToGroupMap.put(bpId, groupIdList.toArray(new String[groupIdList.size()]));
 					}
 				}
 			}
-			
-			fInferiorIds = inferiorIdList.toArray(new String[inferiorIdList.size()]);
 		}
 	}
 }
-

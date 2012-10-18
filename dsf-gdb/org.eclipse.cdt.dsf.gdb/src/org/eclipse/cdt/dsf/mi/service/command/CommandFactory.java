@@ -244,6 +244,11 @@ public class CommandFactory {
 	}
 
 	/** @since 4.2 */
+	public ICommand<CLIInfoBreakInfo> createCLIInfoBreak(IDMContext ctx) {
+		return new CLIInfoBreak(ctx);
+	}
+	
+	/** @since 4.2 */
 	public ICommand<CLIInfoBreakInfo> createCLIInfoBreak(IDMContext ctx, int bpRef) {
 		return new CLIInfoBreak(ctx, bpRef);
 	}

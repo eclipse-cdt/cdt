@@ -27,7 +27,10 @@ import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpointDMData;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpoints;
+import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoBreakInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakInsertInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakListInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakpoint;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -87,6 +90,73 @@ public class GDBBreakpoints_7_2 extends GDBBreakpoints_7_0
 	public void shutdown(RequestMonitor requestMonitor) {
         unregister();
 		super.shutdown(requestMonitor);
+	}
+	
+	/** 
+	 * {@inheritDoc}
+	 * 
+	 * Starting with GDB 7.2, also provides information about which process each breakpoint applies to.
+	 */
+	@Override
+	public void getBreakpoints(final IBreakpointsTargetDMContext context, final DataRequestMonitor<IBreakpointDMContext[]> drm)
+	{
+		// Validate the context
+		if (context == null) {
+       		drm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_EXECUTION_CONTEXT, null));
+       		drm.done();
+			return;
+		}
+
+		// Select the breakpoints context map
+		// If it doesn't exist then no breakpoint was ever inserted for this breakpoint space.
+		// In that case, return an empty list.
+		final Map<Integer, MIBreakpointDMData> breakpointContext = getBreakpointMap(context);
+		if (breakpointContext == null) {
+       		drm.setData(new IBreakpointDMContext[0]);
+       		drm.done();
+			return;
+		}
+
+		// Execute the command
+		fConnection.queueCommand(fConnection.getCommandFactory().createMIBreakList(context),
+			new DataRequestMonitor<MIBreakListInfo>(getExecutor(), drm) {
+				@Override
+				protected void handleSuccess() {
+					final MIBreakpoint[] breakpoints = getData().getMIBreakpoints();
+					
+					// Also fetch the information about which breakpoint belongs to which
+					// process.  We currently can only obtain this information from the CLI
+					// command.  This information is needed for breakpoint filtering.
+					// Bug 360735
+					fConnection.queueCommand(fConnection.getCommandFactory().createCLIInfoBreak(context),
+							new ImmediateDataRequestMonitor<CLIInfoBreakInfo>(drm) {
+						@Override
+						protected void handleSuccess() {
+							Map<Integer, String[]> groupIdMap = getData().getBreakpointToGroupMap();
+
+							// Refresh the breakpoints map and format the result
+							breakpointContext.clear();
+							IBreakpointDMContext[] result = new IBreakpointDMContext[breakpoints.length];
+							for (int i = 0; i < breakpoints.length; i++) {
+								MIBreakpointDMData breakpointData = new MIBreakpointDMData(breakpoints[i]);
+								
+								// Now fill in the thread-group information into the breakpoint data
+								// It is ok to get null.  For example, pending breakpoints are not
+								// associated to a thread-group; also, when debugging a single process,
+								// the thread-group list is empty.
+								int reference = breakpointData.getReference();
+								String[] groupIds = groupIdMap.get(reference);
+								breakpointData.setGroupIds(groupIds);
+								
+								result[i] = new MIBreakpointDMContext(GDBBreakpoints_7_2.this, new IDMContext[] { context }, reference);
+								breakpointContext.put(reference, breakpointData);
+							}
+							drm.setData(result);
+							drm.done();
+						}
+					});
+				}
+			});
 	}
 	
 	private void setTracepointMode() {

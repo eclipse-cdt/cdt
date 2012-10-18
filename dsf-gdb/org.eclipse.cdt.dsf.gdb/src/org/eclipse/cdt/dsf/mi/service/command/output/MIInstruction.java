@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Ericsson - Adapted for DSF
+ *     Dmitry Kozlov (Mentor) - Add tab symbols parsing (Bug 391115)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command.output;
@@ -111,6 +112,8 @@ public class MIInstruction extends AbstractInstruction {
                 translated string since the only thing we are doing is
                 displaying it. */
                 str = ((MIConst) value).getString();
+                /* to avoid improper displaying of instructions we need to translate tabs */
+                str = str.replace("\\t", "\t"); //$NON-NLS-1$ //$NON-NLS-2$
 
                 char chars[] = str.toCharArray();
                 int index = 0;

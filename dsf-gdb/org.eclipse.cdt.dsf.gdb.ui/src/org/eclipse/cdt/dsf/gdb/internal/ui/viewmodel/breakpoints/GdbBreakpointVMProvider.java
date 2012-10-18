@@ -37,12 +37,10 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.breakpoints.BreakpointVMProvider;
 import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
-import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpointDMData;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpointsManager;
-import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoBreakInfo;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.dsf.ui.viewmodel.AbstractVMAdapter;
@@ -360,36 +358,16 @@ public class GdbBreakpointVMProvider extends BreakpointVMProvider {
 		// We therefore make sure the breakpoint is applicable to the selected process.
 		final IMIContainerDMContext containerContext = DMContexts.getAncestorOfType( execContext, IMIContainerDMContext.class );
 		if ( containerContext != null ) {
-				// In older GDB's we don't have the groupIds as part of the breakpoint data.  In that case
-				// we fall back to using the CLI command 'info break'.  This special handling for GDB is difficult
-				// to put in the IBreakpoints service because there are multiple MI commands that are affected
-				// (-break-insert, -break-list, -break-info) but we only need the groupIds here.  Therefore,
-				// to minimize impact (both code and performance), we only trigger the CLI command here.
-				IMICommandControl controlService = fServicesTracker.getService( IMICommandControl.class );
-				controlService.queueCommand( controlService.getCommandFactory().createCLIInfoBreak( controlService.getContext(), data.getReference() ),
-						new ImmediateDataRequestMonitor<CLIInfoBreakInfo>( rm ) {
-					@Override
-					protected void handleSuccess() {
-						String[] inferiorIds = getData().getInferiorIds();
-						// If we don't have a list of inferiors, then we accept the breakpoint.
-						// This can happen for example, if we are only debugging a single process.
-						if ( inferiorIds == null || inferiorIds.length == 0) {
-							rm.done( true );
-							return;
-						}
-						
-						List<String> inferiorIdList = new ArrayList<String>( Arrays.asList( inferiorIds ) );
-						
-						// The CLI command returns only the integer id of the inferior without the 'i' prefix.
-						// Therefore, we take out this prefix from our container groupId.
-						rm.done( inferiorIdList.contains( containerContext.getGroupId().substring(1) ) );
-					}
-				});
-			return;
+			if ( data.getGroupIds() != null ) {
+				List<String> groupIds = Arrays.asList( data.getGroupIds() );
+				rm.done( groupIds.contains( containerContext.getGroupId() ) );
+			} else {
+				// This happens if we are debugging a single process, so all breakpoints apply.
+				rm.done( true );
+			}
+		} else {
+			// Accept breakpoint
+			rm.done( true );
 		}
-
-    	// Accept breakpoint
-		rm.done( true );
-		return;
     }
 }

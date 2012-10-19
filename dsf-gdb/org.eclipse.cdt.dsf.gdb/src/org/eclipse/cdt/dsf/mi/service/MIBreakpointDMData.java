@@ -269,6 +269,10 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 		return fBreakpoint.isEnabled();
 	}
 
+	///////////////////////////////////////////////////////////////////////////
+	// MIBreakpointDMData
+	///////////////////////////////////////////////////////////////////////////
+	
 	/**
 	 * @since 3.0
 	 */
@@ -283,10 +287,6 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 		return fBreakpoint.getCommands();
 	}
 
-	///////////////////////////////////////////////////////////////////////////
-	// MIBreakpointDMData
-	///////////////////////////////////////////////////////////////////////////
-
 	public int getNumber() {
 		return fBreakpoint.getNumber();
 	}
@@ -295,6 +295,16 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 		return fBreakpoint.getThreadId();
 	}
 
+	/** @since 4.2 */
+	public String[] getGroupIds() {
+		return fBreakpoint.getGroupIds();
+	}
+
+	/** @since 4.2 */
+	public void setGroupIds(String[] groups) {
+		fBreakpoint.setGroupIds(groups);
+	}
+	
 	public boolean isTemporary() {
 		return fBreakpoint.isTemporary();
 	}

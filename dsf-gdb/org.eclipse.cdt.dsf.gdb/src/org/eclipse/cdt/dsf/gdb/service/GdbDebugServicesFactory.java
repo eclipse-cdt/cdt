@@ -116,6 +116,9 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 
 	@Override
 	protected IBreakpoints createBreakpointService(DsfSession session) {
+		if (GDB_7_4_VERSION.compareTo(fVersion) <= 0) {
+			return new GDBBreakpoints_7_4(session);
+		}
 		// This service is available for GDB 7.2 but there is a pre-release of GDB that
 		// supports the same features and has version of 6.8.50.20090414
 		if (GDB_7_2_VERSION.compareTo(fVersion) <= 0 || "6.8.50.20090414".equals(fVersion)) { //$NON-NLS-1$

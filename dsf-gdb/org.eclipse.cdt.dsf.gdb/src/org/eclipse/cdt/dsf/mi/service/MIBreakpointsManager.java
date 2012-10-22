@@ -41,6 +41,7 @@ import org.eclipse.cdt.debug.internal.core.breakpoints.BreakpointProblems;
 import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
+import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ThreadSafe;
@@ -369,7 +370,16 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
                 getExecutor().submit(new Runnable() {
                 	@Override
                 	public void run() {
-                        installInitialBreakpoints(dmc, rm);
+                        installInitialBreakpoints(dmc, new RequestMonitor(ImmediateExecutor.getInstance(), rm) {
+                        	@Override
+							protected void handleSuccess() {
+                        		// Notify the breakpoints service that the tracking is started.
+                        		if (fBreakpoints instanceof IMIBreakpointsExtension) {
+                        			((IMIBreakpointsExtension)fBreakpoints).breakpointTrackingStarted();
+                        			rm.done();
+                        		}
+                        	};
+                        });
                     }
                 });
 
@@ -491,6 +501,9 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
                 fBreakpointIDs.remove(dmc);
                 fTargetBPs.remove(dmc);
                 fBreakpointThreads.remove(dmc);
+        		// Notify the breakpoints service that the tracking is stopped.
+                if (fBreakpoints instanceof IMIBreakpointsExtension)
+                	((IMIBreakpointsExtension)fBreakpoints).breakpointTrackingStopped();
                 rm.done();
             }
         };
@@ -719,8 +732,10 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
      * @param dmc
      * @param breakpoint
      * @param rm
+     * 
+     * @since 4.2
      */
-    private void uninstallBreakpoint(final IBreakpointsTargetDMContext dmc,
+    public void uninstallBreakpoint(final IBreakpointsTargetDMContext dmc,
             final ICBreakpoint breakpoint, final RequestMonitor rm)
     {
         // Retrieve the breakpoint maps

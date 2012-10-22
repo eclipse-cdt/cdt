@@ -77,7 +77,8 @@ public class MIBreakpoint  {
     String  threadId = "0"; //$NON-NLS-1$
     int     ignore   = 0;
     String  commands = ""; //$NON-NLS-1$
-    
+    String  originalLocation = ""; //$NON-NLS-1$
+
     // For tracepoints
     int     passcount = 0;
 
@@ -278,6 +279,13 @@ public class MIBreakpoint  {
         return exp;
     }
 
+    /**
+	 * @since 4.2
+	 */
+    public String getOriginalLocation() {
+    	return originalLocation;
+    }
+
 	/**
 	 * If isCatchpoint is true, then this indicates the type of catchpoint
 	 * (event), as reported by gdb in its response to the CLI catch command.
@@ -454,6 +462,9 @@ public class MIBreakpoint  {
                     type.startsWith("fast tracepoint")) { //$NON-NLS-1$
                 	isTpt = true;
                 }
+                if (type.startsWith("catchpoint")) { //$NON-NLS-1$
+                    isCatchpoint = true;
+                }
                 // type="breakpoint"
                 // default ok.
             } else if (var.equals("disp")) { //$NON-NLS-1$
@@ -485,6 +496,8 @@ public class MIBreakpoint  {
                 }
             } else if (var.equals("what") || var.equals("exp")) { //$NON-NLS-1$ //$NON-NLS-2$
                 exp = str;
+                if (var.equals("what")) //$NON-NLS-1$
+                	isCatchpoint = true;
             } else if (var.equals("ignore")) { //$NON-NLS-1$
                 try {
                     ignore = Integer.parseInt(str.trim());
@@ -504,6 +517,8 @@ public class MIBreakpoint  {
             	if (value instanceof MITuple) {
             		parseCommands((MITuple)value);
             	}
+            } else if (var.equals("original-location")) { //$NON-NLS-1$
+                originalLocation = str;
             }
         }
     }

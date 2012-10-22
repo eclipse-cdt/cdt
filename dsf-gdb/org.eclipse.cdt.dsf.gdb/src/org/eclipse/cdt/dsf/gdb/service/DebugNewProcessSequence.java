@@ -430,13 +430,13 @@ public class DebugNewProcessSequence extends ReflectionSequence {
 	 */
 	@Execute
 	public void stepStartTrackingBreakpoints(RequestMonitor rm) {
-		if (fBackend.getSessionType() != SessionType.CORE) {
+//		if (fBackend.getSessionType() != SessionType.CORE) {
 			MIBreakpointsManager bpmService = fTracker.getService(MIBreakpointsManager.class);
 			IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(getContainerContext(), IBreakpointsTargetDMContext.class);
 			bpmService.startTrackingBreakpoints(bpTargetDmc, rm);
-		} else {
-			rm.done();
-		}
+//		} else {
+//			rm.done();
+//		}
 	}
 
 	/**

@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.core.model.MemoryByte;
@@ -250,7 +251,8 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
     	/*
          * Working with the model proxy must be done on the UI dispatch thread.
          */
-    	if ( block instanceof IModelProxyFactory ) {
+    	final IModelProxyFactory factory = (IModelProxyFactory) DebugPlugin.getAdapter(block, IModelProxyFactory.class );
+    	if ( factory != null ) {
     		Display.getDefault().asyncExec(new Runnable() {
     			public void run() {
 
@@ -265,7 +267,6 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
     				 * Get a new proxy and perform the initialization sequence so we are known the
     				 * the model provider.
     				 */
-    				IModelProxyFactory factory = (IModelProxyFactory) block;
     				fModel = factory.createModelProxy(block, context);
     				fModel.installed(null);
     				fModel.addModelChangedListener(TraditionalRendering.this);

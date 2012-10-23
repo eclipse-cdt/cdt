@@ -8,7 +8,7 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -27,7 +27,7 @@ public class CPPTemplateTypeArgument implements ICPPTemplateArgument {
 		Assert.isNotNull(type);
 		fType= type;
 	}
-	
+
 	@Override
 	public boolean isTypeValue() {
 		return true;
@@ -47,17 +47,17 @@ public class CPPTemplateTypeArgument implements ICPPTemplateArgument {
 	public ICPPEvaluation getNonTypeEvaluation() {
 		return null;
 	}
-	
+
 	@Override
 	public IValue getNonTypeValue() {
 		return null;
 	}
-	
+
 	@Override
 	public IType getTypeOfNonTypeValue() {
 		return null;
 	}
-	
+
 	@Override
 	public boolean isPackExpansion() {
 		return fType instanceof ICPPParameterPackType;

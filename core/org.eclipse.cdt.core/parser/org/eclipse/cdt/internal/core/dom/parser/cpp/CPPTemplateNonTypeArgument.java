@@ -8,7 +8,7 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
@@ -34,11 +34,11 @@ public class CPPTemplateNonTypeArgument implements ICPPTemplateArgument {
 				evaluation.isTypeDependent() || evaluation.isValueDependent()) {
 			fEvaluation= evaluation;
 		} else {
-			fEvaluation= new EvalFixed(evaluation.getTypeOrFunctionSet(point), 
+			fEvaluation= new EvalFixed(evaluation.getTypeOrFunctionSet(point),
 					evaluation.getValueCategory(point), evaluation.getValue(point));
 		}
 	}
-	
+
 	public CPPTemplateNonTypeArgument(IValue value, IType type) {
 		fEvaluation = new EvalFixed(type, PRVALUE, value);
 	}
@@ -67,12 +67,12 @@ public class CPPTemplateNonTypeArgument implements ICPPTemplateArgument {
 	public IValue getNonTypeValue() {
 		return fEvaluation.getValue(null);
 	}
-	
+
 	@Override
 	public IType getTypeOfNonTypeValue() {
 		return fEvaluation.getTypeOrFunctionSet(null);
 	}
-	
+
 	@Override
 	public boolean isPackExpansion() {
 		return fEvaluation.getTypeOrFunctionSet(null) instanceof ICPPParameterPackType;

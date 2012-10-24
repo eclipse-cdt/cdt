@@ -4747,14 +4747,16 @@ public class AST2CPPTests extends AST2BaseTest {
 	//	  const_iterator begin() const;
 	//	};
 	//
-	//	void test(const vector<int>& v) {
+	//	typedef int Element;
+	//
+	//	void test(const vector<Element>& v) {
 	//	  auto it = v.begin();
 	//	}
 	public void testTypedefPreservation_380498_2() throws Exception {
 		BindingAssertionHelper ba= getAssertionHelper();
 		ICPPVariable it = ba.assertNonProblem("it =", "it", ICPPVariable.class);
 		assertTrue(it.getType() instanceof ITypedef);
-		assertEquals("vector<int>::const_iterator", ASTTypeUtil.getType(it.getType(), false));
+		assertEquals("vector<Element>::const_iterator", ASTTypeUtil.getType(it.getType(), false));
 	}
 
 	// int f() {

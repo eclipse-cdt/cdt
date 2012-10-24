@@ -49,6 +49,11 @@ public class CPPTemplateNonTypeArgument implements ICPPTemplateArgument {
 	}
 
 	@Override
+	public IType getOriginalTypeValue() {
+		return null;
+	}
+
+	@Override
 	public boolean isNonTypeValue() {
 		return true;
 	}

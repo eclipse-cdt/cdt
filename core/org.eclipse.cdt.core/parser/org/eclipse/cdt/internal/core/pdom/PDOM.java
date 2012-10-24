@@ -225,10 +225,11 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  133.0 - Storing template arguments via direct marshalling, bug 299911.
 	 *  134.0 - Storing unknown bindings via direct marshalling, bug 381824.
 	 *  135.0 - Changed marshalling of EvalUnary, bug 391001.
+	 *  136.0 - Extended CPPTemplateTypeArgument to include the original type, bug 392278.
 	 */
-	private static final int MIN_SUPPORTED_VERSION= version(135, 0);
-	private static final int MAX_SUPPORTED_VERSION= version(135, Short.MAX_VALUE);
-	private static final int DEFAULT_VERSION = version(135, 0);
+	private static final int MIN_SUPPORTED_VERSION= version(136, 0);
+	private static final int MAX_SUPPORTED_VERSION= version(136, Short.MAX_VALUE);
+	private static final int DEFAULT_VERSION = version(136, 0);
 
 	private static int version(int major, int minor) {
 		return (major << 16) + minor;

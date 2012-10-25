@@ -1262,7 +1262,7 @@ public class CPPTemplates {
 		}
 
 		if (arg != null) {
-			IType t= arg.getTypeValue();
+			IType t= arg.getOriginalTypeValue();
 			if (t != null)
 				return t;
 		}

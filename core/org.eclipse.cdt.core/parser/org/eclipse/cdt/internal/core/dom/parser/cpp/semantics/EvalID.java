@@ -13,6 +13,8 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getNestedType;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
@@ -126,15 +128,6 @@ public class EvalID extends CPPEvaluation {
 	@Override
 	public IValue getValue(IASTNode point) {
 		// Name lookup is not needed here because it was already done in the "instantiate" method.
-//		IBinding nameOwner = fNameOwner;
-//		if (nameOwner == null && fFieldOwner != null)
-//			nameOwner = (IBinding) fFieldOwner.getTypeOrFunctionSet(point);
-//
-//		if (nameOwner instanceof ICPPClassType) {
-//			ICPPEvaluation eval = resolveName((ICPPClassType) nameOwner, fTemplateArgs, point);
-//			if (eval != null)
-//				return eval.getValue(point);
-//		}
 		return Value.create(this);
 	}
 
@@ -294,7 +287,7 @@ public class EvalID extends CPPEvaluation {
 		} else if (nameOwner instanceof IType) {
 			IType type = CPPTemplates.instantiateType((IType) nameOwner, tpMap, packOffset, within, point);
 			if (type instanceof IBinding)
-				nameOwner = (IBinding) type;
+				nameOwner = (IBinding) getNestedType(type, TDEF);
 		}
 
 		if (fieldOwner instanceof IProblemBinding || nameOwner instanceof IProblemBinding)

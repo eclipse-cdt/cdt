@@ -4759,6 +4759,29 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertEquals("vector<Element>::const_iterator", ASTTypeUtil.getType(it.getType(), false));
 	}
 
+	//	template <typename T> class char_traits {};
+	//	template <typename C, typename T = char_traits<C>> class basic_string {};
+	//
+	//	template <typename T> struct vector {
+	//		typedef T* iterator;
+	//		iterator begin();
+	//		iterator end();
+	//	};
+	//
+	//	typedef basic_string<char> string;
+	//
+	//	void test() {
+	//		vector<string> v;
+	//		for (auto s : v) {
+	//		}
+	//	}
+	public void testTypedefPreservation_380498_3() throws Exception {
+		BindingAssertionHelper ba= getAssertionHelper();
+		ICPPVariable s = ba.assertNonProblem("s :", "s", ICPPVariable.class);
+		assertTrue(s.getType() instanceof ITypedef);
+		assertEquals("string", ASTTypeUtil.getType(s.getType(), false));
+	}
+
 	// int f() {
 	//     return 5;
 	// }

@@ -4816,8 +4816,26 @@ public class AST2CPPTests extends AST2BaseTest {
 	//	template <typename T> class char_traits {};
 	//	template <typename C, typename T = char_traits<C>> class basic_string {};
 	//
+	//	template<typename _Iterator>
+	//	struct iterator_traits {
+	//		typedef typename _Iterator::reference reference;
+	//	};
+	//
+	//	template<typename _Tp>
+	//	struct iterator_traits<_Tp*> {
+	//		typedef _Tp& reference;
+	//	};
+	//
+	//	template<typename _Iterator, typename _Container>
+	//	struct normal_iterator {
+	//	    typedef iterator_traits<_Iterator> traits_type;
+	//	    typedef typename traits_type::reference reference;
+	//	    reference operator*() const;
+	//	};
+	//
 	//	template <typename T> struct vector {
-	//		typedef T* iterator;
+	//	    typedef T* pointer;
+	//	    typedef normal_iterator<pointer, vector> iterator;
 	//		iterator begin();
 	//		iterator end();
 	//	};

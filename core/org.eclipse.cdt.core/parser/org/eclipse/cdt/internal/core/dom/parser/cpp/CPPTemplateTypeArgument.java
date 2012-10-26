@@ -30,6 +30,7 @@ public class CPPTemplateTypeArgument implements ICPPTemplateArgument {
 
 	public CPPTemplateTypeArgument(IType simplifiedType, IType originalType) {
 		Assert.isNotNull(simplifiedType);
+		Assert.isNotNull(originalType);
 		fType= simplifiedType;
 		fOriginalType= originalType;
 	}

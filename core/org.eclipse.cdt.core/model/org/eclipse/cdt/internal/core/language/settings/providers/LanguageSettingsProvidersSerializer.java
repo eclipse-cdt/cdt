@@ -1513,7 +1513,7 @@ public class LanguageSettingsProvidersSerializer {
 			for (ICLanguageSettingEntry entry : providerEntries) {
 				if (entry != null) {
 					String entryName = entry.getName();
-					boolean isRightKind = checkBit(entry.getKind(), kind);
+					boolean isRightKind = checkBit(kind, entry.getKind());
 					// Only first entry is considered
 					// Entry flagged as "UNDEFINED" prevents adding entry with the same name down the line
 					if (isRightKind && !alreadyAdded.contains(entryName)) {

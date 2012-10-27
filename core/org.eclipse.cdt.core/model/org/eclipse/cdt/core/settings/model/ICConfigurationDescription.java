@@ -369,12 +369,15 @@ public interface ICConfigurationDescription extends ICSettingContainer, ICSettin
 	boolean isPreferenceConfiguration();
 
 	/**
-	 * Convenience method to return a language setting for the file
-	 * with the specified project-relative path
+	 * @deprecated Deprecated as of CDT 8.1. This method returns settings supplied by MBS only.
+	 * For most cases, more generic Language Settings Providers mechanism should be used instead.
 	 *
+	 * Convenience method to return a language setting for the file with the specified project-relative path.
+	 * 
 	 * @param path - file project relative path
 	 * @return ICLanguageSetting or null if not found
 	 */
+	@Deprecated
 	ICLanguageSetting getLanguageSettingForFile(IPath path, boolean ignoreExludeStatus);
 
 	/**

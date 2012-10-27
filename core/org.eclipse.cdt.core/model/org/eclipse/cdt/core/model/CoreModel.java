@@ -13,10 +13,13 @@
 package org.eclipse.cdt.core.model;
 
 import java.net.URI;
+import java.util.List;
 
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CProjectNature;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvidersKeeper;
+import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
 import org.eclipse.cdt.core.resources.IPathEntryStore;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSetting;
@@ -26,6 +29,7 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescriptionListener;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.settings.model.WriteAccessException;
+import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsProvidersSerializer;
 import org.eclipse.cdt.internal.core.model.APathEntry;
 import org.eclipse.cdt.internal.core.model.BatchOperation;
 import org.eclipse.cdt.internal.core.model.CModel;
@@ -1253,27 +1257,41 @@ public class CoreModel {
 				if(!mngr.isNewStyleCfg(indexCfg)){
 					return oldIsScannerInformationEmpty(resource);
 				}
-				ICLanguageSetting lSetting = indexCfg.getLanguageSettingForFile(resource.getProjectRelativePath(), false);
-				if(lSetting != null && lSetting instanceof CLanguageSettingCache){
-					if(!((CLanguageSettingCache)lSetting).containsDiscoveredScannerInfo())
-						lSetting = null;
-				}
-				if(lSetting != null){
-					ICLanguageSettingEntry[] entries = lSetting.getSettingEntries(ICSettingEntry.INCLUDE_PATH);
-					if(entries.length != 0)
-						return false;
+				
+				if (indexCfg instanceof ILanguageSettingsProvidersKeeper) {
+					List<String> languageIds = LanguageSettingsManager.getLanguages(resource, indexCfg);
+					for (String langId : languageIds) {
+						List<ICLanguageSettingEntry> entries = LanguageSettingsProvidersSerializer.getSettingEntriesByKind(indexCfg, resource, langId,
+								ICSettingEntry.INCLUDE_PATH | ICSettingEntry.MACRO | ICSettingEntry.INCLUDE_FILE | ICSettingEntry.MACRO_FILE);
+						if (!(entries == null || entries.isEmpty())) {
+							return false;
+						}
+					}
+					return true;
 					
-					entries = lSetting.getSettingEntries(ICSettingEntry.MACRO);
-					if(entries.length != 0)
-						return false;
+				} else {
+					ICLanguageSetting lSetting = indexCfg.getLanguageSettingForFile(resource.getProjectRelativePath(), false);
+					if(lSetting != null && lSetting instanceof CLanguageSettingCache){
+						if(!((CLanguageSettingCache)lSetting).containsDiscoveredScannerInfo())
+							lSetting = null;
+					}
+					if(lSetting != null){
+						ICLanguageSettingEntry[] entries = lSetting.getSettingEntries(ICSettingEntry.INCLUDE_PATH);
+						if(entries.length != 0)
+							return false;
 
-					entries = lSetting.getSettingEntries(ICSettingEntry.INCLUDE_FILE);
-					if(entries.length != 0)
-						return false;
-					
-					entries = lSetting.getSettingEntries(ICSettingEntry.MACRO_FILE);
-					if(entries.length != 0)
-						return false;
+						entries = lSetting.getSettingEntries(ICSettingEntry.MACRO);
+						if(entries.length != 0)
+							return false;
+
+						entries = lSetting.getSettingEntries(ICSettingEntry.INCLUDE_FILE);
+						if(entries.length != 0)
+							return false;
+
+						entries = lSetting.getSettingEntries(ICSettingEntry.MACRO_FILE);
+						if(entries.length != 0)
+							return false;
+					}
 				}
 			}
 		}

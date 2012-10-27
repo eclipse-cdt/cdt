@@ -81,22 +81,31 @@ public class WinEnvironmentVariableSupplier
 		return envvars.values().toArray(new IBuildEnvironmentVariable[envvars.size()]);
 	}
 	
+	private static String getSoftwareKey(WindowsRegistry reg, String subkey, String name) {
+		String value = reg.getLocalMachineValue("SOFTWARE\\" + subkey, name);
+		// Visual Studio is a 32 bit application so on Windows 64 the keys will be in Wow6432Node 
+		if (value == null) {
+			value = reg.getLocalMachineValue("SOFTWARE\\Wow6432Node\\" + subkey, name);
+		}
+		return value;
+	}
+	
 	// Current support is for Windows SDK 7.1 with Visual C++ 10.0
 	// Secondary support for Windows SDK 7.0 with Visual C++ 9.0 
 	private static String getSDKDir() {
 		WindowsRegistry reg = WindowsRegistry.getRegistry();
-		String sdkDir = reg.getLocalMachineValue("SOFTWARE\\Microsoft\\Microsoft SDKs\\Windows\\v7.1", "InstallationFolder");
+		String sdkDir = getSoftwareKey(reg, "Microsoft\\Microsoft SDKs\\Windows\\v7.1", "InstallationFolder");
 		if (sdkDir != null)
 			return sdkDir;
-		return reg.getLocalMachineValue("SOFTWARE\\Microsoft\\Microsoft SDKs\\Windows\\v7.0", "InstallationFolder");
+		return getSoftwareKey(reg, "Microsoft SDKs\\Windows\\v7.0", "InstallationFolder");
 	}
 	
 	private static String getVCDir() {
 		WindowsRegistry reg = WindowsRegistry.getRegistry();
-		String vcDir = reg.getLocalMachineValue("SOFTWARE\\Microsoft\\VisualStudio\\SxS\\VC7", "10.0");
+		String vcDir = getSoftwareKey(reg, "Microsoft\\VisualStudio\\SxS\\VC7", "10.0");
 		if (vcDir != null)
 			return vcDir;
-		return reg.getLocalMachineValue("SOFTWARE\\Microsoft\\VisualStudio\\SxS\\VC7", "9.0");
+		return getSoftwareKey(reg, "Microsoft\\VisualStudio\\SxS\\VC7", "9.0");
 	}
 	
 	public static IPath[] getIncludePath() {

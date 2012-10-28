@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2012 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1329,7 +1329,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 	//	    v.push_back(/*cursor*/);
 	//	} 
 	public void testTypedefSpecialization_Bug307818() throws Exception {
-		final String[] expected= { "push_back(const vector<int>::value_type & value) : void" };
+		final String[] expected= { "push_back(const vector<MyType>::value_type & value) : void" };
 		assertParameterHint(expected);
 	}
 	

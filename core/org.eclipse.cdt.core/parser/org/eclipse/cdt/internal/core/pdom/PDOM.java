@@ -219,10 +219,11 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  #125.0# - Indexes for unresolved includes and files indexed with I/O errors. <<CDT 8.1>>
 	 *  126.0 - Dependent expressions, bug 299911.
 	 *  127.0 - Explicit virtual overrides, bug 380623.
+	 *  128.0 - Extended CPPTemplateTypeArgument to include the original type, bug 392278.
 	 */
-	private static final int MIN_SUPPORTED_VERSION= version(127, 0);
-	private static final int MAX_SUPPORTED_VERSION= version(127, Short.MAX_VALUE);
-	private static final int DEFAULT_VERSION = version(127, 0);
+	private static final int MIN_SUPPORTED_VERSION= version(128, 0);
+	private static final int MAX_SUPPORTED_VERSION= version(128, Short.MAX_VALUE);
+	private static final int DEFAULT_VERSION = version(128, 0);
 
 	private static int version(int major, int minor) {
 		return (major << 16) + minor;

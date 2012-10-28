@@ -683,7 +683,7 @@ public class TemplateArgumentDeduction {
 
 	private boolean fromType(IType p, IType a, boolean allowCVQConversion, IASTNode point) throws DOMException {
 		while (p != null) {
-			IType argyumentTypeBeforeTypedefResolution = a;
+			IType argumentTypeBeforeTypedefResolution = a;
 			while (a instanceof ITypedef)
 				a = ((ITypedef) a).getType();
 			if (p instanceof IBasicType) {
@@ -776,7 +776,7 @@ public class TemplateArgumentDeduction {
 				}
 				if (a == null)
 					return false;
-				return deduce(((ICPPTemplateParameter) p).getParameterID(), new CPPTemplateTypeArgument(a, argyumentTypeBeforeTypedefResolution));
+				return deduce(((ICPPTemplateParameter) p).getParameterID(), new CPPTemplateTypeArgument(a, argumentTypeBeforeTypedefResolution));
 			} else if (p instanceof ICPPTemplateInstance) {
 				if (!(a instanceof ICPPTemplateInstance))
 					return false;

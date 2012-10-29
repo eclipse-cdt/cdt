@@ -562,14 +562,33 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
                     }
                     
                     try {
+                    	boolean success = false;
+                    	
                         Reader r = new InputStreamReader(getMIInputStream());
                         BufferedReader reader = new BufferedReader(r);
                         String line;
                         while ((line = reader.readLine()) != null) {
                             line = line.trim();
                             if (line.endsWith("(gdb)")) { //$NON-NLS-1$
+                            	success = true;
                                 break;
                             }
+                        }
+                        
+                        // Failed to read initial prompt, check for error
+                        if (!success) {
+                        	r = new InputStreamReader(getMIErrorStream());
+                        	reader = new BufferedReader(r);
+                        	String errorInfo = reader.readLine();
+                        	if (errorInfo != null) {
+                        		errorInfo = "GDB reported an error: " + errorInfo;  //$NON-NLS-1$
+                        	}
+                        	else {
+                        		errorInfo = "Error launching GDB"; //$NON-NLS-1$
+                        	}
+                            gdbLaunchRequestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, errorInfo, null));
+                            gdbLaunchRequestMonitor.done();
+                            return Status.OK_STATUS;
                         }
                     } catch (IOException e) {
                         gdbLaunchRequestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Error reading GDB STDOUT", e)); //$NON-NLS-1$

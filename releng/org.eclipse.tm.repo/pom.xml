@@ -83,8 +83,8 @@
             </goals>
             <configuration>
               <target>
-                <property name="buildDirectory" value="${project.build.directory}/../../../../"/>
-                <property name="builder" value="${project.build.directory}/../../../../releng/org.eclipse.rse.build/"/>
+                <property name="buildDirectory" value="${project.build.directory}/../../../"/>
+                <property name="builder" value="${project.build.directory}/../../../releng/org.eclipse.rse.build/"/>
                 <property name="buildId" value="3.4.1"/>
                 <ant antfile="${project.build.directory}/../../../dstoreTargets-git.xml">
                   <target name="serverruntime"/>

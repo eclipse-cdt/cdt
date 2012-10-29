@@ -1,0 +1,803 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOIn//zZc\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBBreakpoints_7_4.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-10-29T15:39:51Z",
+      "side": 1,
+      "message": "Javadoc please.  Just to say what this version of the service does different.",
+      "revId": "244ba995392806a56a52852e0d0d9ea72f87edfa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//y90\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBBreakpoints_7_4.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-10-29T15:39:51Z",
+      "side": 1,
+      "message": "Can you make these comments javadoc.  It helps when navigating the code, even if it is not API, because it gets shown in the hover.",
+      "revId": "244ba995392806a56a52852e0d0d9ea72f87edfa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//y9U\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBBreakpoints_7_4.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 116,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-10-29T15:39:51Z",
+      "side": 1,
+      "message": "Please remove extra IBreakpoints. prefix",
+      "revId": "244ba995392806a56a52852e0d0d9ea72f87edfa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//zZU\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBBreakpoints_7_4.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-10-29T15:39:51Z",
+      "side": 1,
+      "message": "Should we also register with \u0027IMIBreakpointsExtension\u0027?",
+      "revId": "244ba995392806a56a52852e0d0d9ea72f87edfa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//zZI\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBBreakpoints_7_4.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 202,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-10-29T15:39:51Z",
+      "side": 1,
+      "message": "I usually prefer not to add extra APIs unless they really add value.  In this case I believe you only want this so that an overriding class can fetch the service.  That class could instead using the DsfServicesTracker to get the service.\n\nIs there a reason you need this API?",
+      "revId": "244ba995392806a56a52852e0d0d9ea72f87edfa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//zZQ\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBBreakpoints_7_4.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 215,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-10-29T15:39:51Z",
+      "side": 1,
+      "message": "I think it would be safer to remove the \u0027break\u0027.  Currently there will be no performance impact since there is not other field in MI, but it may avoid some mistake in the future if we ever want to parse another field.",
+      "revId": "244ba995392806a56a52852e0d0d9ea72f87edfa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//zZM\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBBreakpoints_7_4.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 227,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-10-29T15:39:51Z",
+      "side": 1,
+      "message": "You can remove \"val !\u003d null\" since the instanceof check will take care of it.",
+      "revId": "244ba995392806a56a52852e0d0d9ea72f87edfa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//y34\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBBreakpoints_7_4.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 286,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-10-29T15:39:51Z",
+      "side": 1,
+      "message": "I believe bm.breakpointAdded() will do much more than increment the install count.  It will behave as if a new platformBp was created, instead of re-using the existing platform bp.\n\nIn fact testing that case gives me:\n\n!ENTRY org.eclipse.cdt.dsf 4 10005 2012-10-24 15:34:53.193\n!MESSAGE Breakpoint already installed\n!SUBENTRY 1 org.eclipse.cdt.dsf.gdb 4 10005 2012-10-24 15:34:53.193\n!MESSAGE Breakpoint already installed",
+      "revId": "244ba995392806a56a52852e0d0d9ea72f87edfa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//y3w\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBBreakpoints_7_4.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 294,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-10-29T15:39:51Z",
+      "side": 1,
+      "message": "I\u0027m concerned about removing the entire map here.  We are only interested in the modifications relevant to miBpt.getNumber(), so all other modifications that apply to other breakpoints will be lost.\n\nMaybe fPendingModifications can be indexed on Integer only?  GDB does not re-use breakpoint number between processes, so I think that would be enough.  Or else maybe a key (IBpTargetDmc, Integer)?",
+      "revId": "244ba995392806a56a52852e0d0d9ea72f87edfa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//y3s\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBBreakpoints_7_4.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 299,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-10-29T15:39:51Z",
+      "side": 1,
+      "message": "Is it safe to do these modification in parallel or should we serialize these calls to make sure one modification is completed before another is started?",
+      "revId": "244ba995392806a56a52852e0d0d9ea72f87edfa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//y30\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBBreakpoints_7_4.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 303,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-10-29T15:39:51Z",
+      "side": 1,
+      "message": "Empty else",
+      "revId": "244ba995392806a56a52852e0d0d9ea72f87edfa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//y54\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBBreakpoints_7_4.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 315,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-10-29T15:39:51Z",
+      "side": 1,
+      "message": "Do we have to figure out if this bp is a catchpoint, like we do in the other two cases?",
+      "revId": "244ba995392806a56a52852e0d0d9ea72f87edfa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//zTo\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBBreakpoints_7_4.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 319,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-10-29T15:39:51Z",
+      "side": 1,
+      "message": "It is not clear to me why we have to uninstall breakpoints for every potential targetDMC.\n\nCan more than one targetDMC hold the same breakpoint id?",
+      "revId": "244ba995392806a56a52852e0d0d9ea72f87edfa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//y7w\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBBreakpoints_7_4.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 325,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-10-29T15:39:51Z",
+      "side": 1,
+      "message": "The above is fine, but just in case, I\u0027ll mention that you can simply use \u0027id\u0027 there and the auto-boxing feature of java 5 will convert it to an Integer automatically.",
+      "revId": "244ba995392806a56a52852e0d0d9ea72f87edfa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//y6g\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBBreakpoints_7_4.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 329,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-10-29T15:39:51Z",
+      "side": 1,
+      "message": "Here we are un-installing the platform breakpoint.  If that platform breakpoint is filtered on two threads, won\u0027t this remove the breakpoint from each thread instead of just the thread where it was removed in GDB?  Is that ok?",
+      "revId": "244ba995392806a56a52852e0d0d9ea72f87edfa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//ygA\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBBreakpoints_7_4.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 423,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-10-29T15:39:51Z",
+      "side": 1,
+      "message": "GDB 7.5 does not seem to trigger a notif when pass count changes.  I believe a fix for that has been posted by Yao from Mentor but the proposal is to use \u003dtracepoint-modified.\nhttp://sourceware.org/ml/gdb-patches/2012-10/msg00321.html\nI think we\u0027ll need to open a bug to track this until it is settled in GDB",
+      "revId": "244ba995392806a56a52852e0d0d9ea72f87edfa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//ygE\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBBreakpoints_7_4.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 426,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-10-29T15:39:51Z",
+      "side": 1,
+      "message": "Can we merge the two\n  if (plBpt instanceof ICTracepoint \u0026\u0026 miBpt.isTracepoint()\nand once we know we have a tracepoint, we check the different attributes?",
+      "revId": "244ba995392806a56a52852e0d0d9ea72f87edfa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//y4A\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBBreakpoints_7_4.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 454,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-10-29T15:39:51Z",
+      "side": 1,
+      "message": "Do we want a break or return here?  Or do we want to keep looping for all remaining breakpoints?\n\nSame comment for two ifs below",
+      "revId": "244ba995392806a56a52852e0d0d9ea72f87edfa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//yek\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBBreakpoints_7_4.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 510,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-10-29T15:39:51Z",
+      "side": 1,
+      "message": "The above code is used multiple times, can we factor it into a method?",
+      "revId": "244ba995392806a56a52852e0d0d9ea72f87edfa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//yeg\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBBreakpoints_7_4.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 560,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-10-29T15:39:51Z",
+      "side": 1,
+      "message": "I think this should be createFunctionTracepoint()",
+      "revId": "244ba995392806a56a52852e0d0d9ea72f87edfa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//y4M\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBBreakpoints_7_4.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 821,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-10-29T15:39:51Z",
+      "side": 1,
+      "message": "This method is tricky because GDB does not provide the thread-group on which the breakpoint was created.  I\u0027m trying to get GDB 7.6 to provide that info (as part of the bp filtering feature).\n\nI\u0027m not sure what the impact of \u0027randomly\u0027 picking a process will be.",
+      "revId": "244ba995392806a56a52852e0d0d9ea72f87edfa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//y4I\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBBreakpoints_7_4.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 827,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-10-29T15:39:51Z",
+      "side": 1,
+      "message": "I think threadId.equals(\"0\") is a special case of the bp applying to all processes, we may want to handle it like threadId \u003d\u003d null",
+      "revId": "244ba995392806a56a52852e0d0d9ea72f87edfa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//yck\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBBreakpoints_7_4.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 883,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-10-29T15:39:51Z",
+      "side": 1,
+      "message": "In the below logic, say isFunctionBreakpoint(miBpt) is true but function \u003d\u003d null, don\u0027t we run the risk of thinking the breakpoint matches?  Do we need a check for that and a continue?\n\nSame for address, fileName and lineNumber, isHardware, isTemporary.\n\nWe could take a different approach and avoid the continues, although I\u0027m not sure what is clearer.  I believe the below gives what you intend using a positive set of checks:\n\n\t\tfor (MIBreakpoint miBpt : targetBreakpoints) {\n\t\t\tif (!miBpt.isWatchpoint() \u0026\u0026 !miBpt.isCatchpoint() \u0026\u0026 !miBpt.isTracepoint() \u0026\u0026\n\t\t\t   ( (isFunctionBreakpoint(miBpt) \u0026\u0026 function !\u003d null \u0026\u0026 function.equals(miBpt.getFunction()) ||\n\t\t\t     (isAddressBreakpoint(miBpt) \u0026\u0026 address !\u003d null \u0026\u0026 \n\t\t\t                                    address.equals(getPlatformAddress(miBpt.getAddress()).toHexAddressString())) ||\n\t\t\t     (isLineBreakpoint(miBpt) \u0026\u0026 \n\t\t\t    \t\t fileName !\u003d null \u0026\u0026 fileName.equals(miBpt.getFullName()) \u0026\u0026\n\t\t\t    \t\t lineNumber !\u003d null \u0026\u0026 lineNumber.intValue() \u003d\u003d miBpt.getLine()) ) \u0026\u0026\n\t\t\t   (isHardware \u003d\u003d null || isHardware \u003d\u003d miBpt.isHardware()) \u0026\u0026\n               (isTemporary \u003d\u003d null || isTemporary \u003d\u003d miBpt.isHardware()))) {\n\t\t\t\t\n\t\t\t\treturn miBpt;\n\t\t\t}\n\t\t}\n\t\treturn null;",
+      "revId": "244ba995392806a56a52852e0d0d9ea72f87edfa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//ydg\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBBreakpoints_7_4.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 899,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-10-29T15:39:51Z",
+      "side": 1,
+      "message": "should be miBpt.isTemporary()",
+      "revId": "244ba995392806a56a52852e0d0d9ea72f87edfa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//yco\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBBreakpoints_7_4.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 914,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-10-29T15:39:51Z",
+      "side": 1,
+      "message": "In the below logic, say isFunctionBreakpoint(miBpt) is true but function \u003d\u003d null, don\u0027t we run the risk of thinking the breakpoint matches?  Do we need a check for that and a continue?\n\nSame for address, fileName and lineNumber, isHardware, isTemporary.",
+      "revId": "244ba995392806a56a52852e0d0d9ea72f87edfa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//ydk\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBBreakpoints_7_4.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 930,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-10-29T15:39:51Z",
+      "side": 1,
+      "message": "should be miBpt.isTemporary()",
+      "revId": "244ba995392806a56a52852e0d0d9ea72f87edfa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//yc0\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBBreakpoints_7_4.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 944,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-10-29T15:39:51Z",
+      "side": 1,
+      "message": "In the below logic, if expression or isHardware or isTemporary \u003d\u003d null, we could still end up returning miBpt as if it matched.  Is that correct or do we need a check for those values and a continue?",
+      "revId": "244ba995392806a56a52852e0d0d9ea72f87edfa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//ydo\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBBreakpoints_7_4.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 957,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-10-29T15:39:51Z",
+      "side": 1,
+      "message": "should be miBpt.isTemporary()",
+      "revId": "244ba995392806a56a52852e0d0d9ea72f87edfa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//ycI\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBBreakpoints_7_4.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 981,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-10-29T15:39:51Z",
+      "side": 1,
+      "message": "What if fileName \u003d\u003d null?  We\u0027d be returning true...\n\nWould this work?\n  if (fileName \u003d\u003d null || !fileName.equals(plBpt.getSourceHandle())) {\n    return false;\n  }",
+      "revId": "244ba995392806a56a52852e0d0d9ea72f87edfa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//yb0\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBBreakpoints_7_4.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1072,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-10-29T15:39:51Z",
+      "side": 1,
+      "message": "else if",
+      "revId": "244ba995392806a56a52852e0d0d9ea72f87edfa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//ybw\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBBreakpoints_7_4.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1074,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-10-29T15:39:51Z",
+      "side": 1,
+      "message": "else if",
+      "revId": "244ba995392806a56a52852e0d0d9ea72f87edfa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//ybg\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBBreakpoints_7_4.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1079,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-10-29T15:39:51Z",
+      "side": 1,
+      "message": "else if",
+      "revId": "244ba995392806a56a52852e0d0d9ea72f87edfa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//ybA\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBBreakpoints_7_4.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1118,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-10-29T15:39:51Z",
+      "side": 1,
+      "message": "Maybe we should only do this if we had to create a new action?  For performance reasons.",
+      "revId": "244ba995392806a56a52852e0d0d9ea72f87edfa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//ygQ\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBBreakpoints_7_4.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1149,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-10-29T15:39:51Z",
+      "side": 1,
+      "message": "Since this method is API, I wonder why we need to pass in ISourceLookup?  Can we instead let the method fetch the service itself?\n\nIf it is to check early if the sourcelookup service is available, I\u0027d suggest making it global like fConnection and stepping around that issue altogether",
+      "revId": "244ba995392806a56a52852e0d0d9ea72f87edfa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//ygM\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBBreakpoints_7_4.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1192,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-10-29T15:39:51Z",
+      "side": 1,
+      "message": "Is this right?  The OriginalLocation does not seem to be the same as the Function in the notification.\n\n38-break-insert --thread-group i1 -f /home/lmckhou/runtime-TestDSF/Producer/src/Producer.cpp:produce\n38^done,bkpt\u003d{number\u003d\"11\",type\u003d\"breakpoint\",disp\u003d\"keep\",enabled\u003d\"y\",addr\u003d\"0x08048d02\",func\u003d\"produce(void*)\",file\u003d\"../src/Producer.cpp\",fullname\u003d\"/home/lmckhou/runtime-TestDSF/Producer/src/Producer.cpp\",line\u003d\"107\",times\u003d\"0\",original-location\u003d\"/home/lmckhou/runtime-TestDSF/Producer/src/Producer.cpp:produce\"}\n\nor\n\n68-break-insert --thread-group i2 -f /home/lmckhou/testing/loopfirst.cc:main\n68^done,bkpt\u003d{number\u003d\"24\",type\u003d\"breakpoint\",disp\u003d\"keep\",enabled\u003d\"y\",addr\u003d\"0x0804850d\",func\u003d\"main()\",file\u003d\"loopfirst.cc\",fullname\u003d\"/home/lmckhou/testing/loopfirst.cc\",line\u003d\"5\",times\u003d\"0\",original-location\u003d\"/home/lmckhou/testing/loopfirst.cc:main\"}",
+      "revId": "244ba995392806a56a52852e0d0d9ea72f87edfa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//ygI\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBBreakpoints_7_4.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1210,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-10-29T15:39:51Z",
+      "side": 1,
+      "message": "To avoid a (small) memory leak, we technically need to clean up the 3 global maps of IBreakpointTargetDMC.  Listening for a process exit should do it:\n\n    @DsfServiceEventHandler\n    public void eventDispatched(IExitedDMEvent e) {\n    \tif (e.getDMContext() instanceof IContainerDMContext) {\n\nI haven\u0027t considered if there could be a race condition between this call and some \u003dbreakpoint-delete notifications when a process dies.  I\u0027m assuming GDB does things in order.  But if there is a race condition, then having the memory leak is a simpler way to go",
+      "revId": "244ba995392806a56a52852e0d0d9ea72f87edfa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//zZE\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/IMIBreakpointsExtension.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-10-29T15:39:51Z",
+      "side": 1,
+      "message": "How about \"IMIBreakpointTrackingListener\"?\n\nWith the current name, it is not clear if the methods are to notify of a change, or to query of a change (although the lack of a return value gives it away).  But this does match the listener pattern, no?",
+      "revId": "244ba995392806a56a52852e0d0d9ea72f87edfa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//zTI\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/IMIBreakpointsExtension.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-10-29T15:39:51Z",
+      "side": 1,
+      "message": "Do we need an IBreakpointsTargetDMContext as a parameter?  Same for the stopped one below.",
+      "revId": "244ba995392806a56a52852e0d0d9ea72f87edfa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//zUQ\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIBreakpoints.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1273,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-10-29T15:39:51Z",
+      "side": 1,
+      "message": "Can you put javadoc saying that this method should only deal with the removal of the breakpoint from GDB?\n\nMaybe even rename the method to \"deleteBreakpointFromTarget()\" (if I understood things correctly).",
+      "revId": "244ba995392806a56a52852e0d0d9ea72f87edfa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//zU0\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIBreakpoints.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1284,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-10-29T15:39:51Z",
+      "side": 1,
+      "message": "Should we not propagate an error through the rm?  \n\nThe original code would use that error code in removeBreakpoint() to not execute the sending of the BreakpointRemovedEvent.  With the new code, the BreakpointRemovedEvent is always sent.",
+      "revId": "244ba995392806a56a52852e0d0d9ea72f87edfa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//zTg\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIBreakpoints.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1351,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-10-29T15:39:51Z",
+      "side": 1,
+      "message": "When can a bp number belong to multiple targetDMCs?",
+      "revId": "244ba995392806a56a52852e0d0d9ea72f87edfa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//zSc\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIBreakpointsManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 378,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-10-29T15:39:51Z",
+      "side": 1,
+      "message": "Shouldn\u0027t this notification (breakpointTracingStopped) be for the specified IBreakpointsTargetDMContext?",
+      "revId": "244ba995392806a56a52852e0d0d9ea72f87edfa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//zSk\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIBreakpointsManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 379,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-10-29T15:39:51Z",
+      "side": 1,
+      "message": "rm.done() must be outside if statement",
+      "revId": "244ba995392806a56a52852e0d0d9ea72f87edfa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//zSg\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIBreakpointsManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 505,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-10-29T15:39:51Z",
+      "side": 1,
+      "message": "I find it is safer to always us {} even from one-line if statements.  This has been our approach in DSF.  I never mentioned it before because it is not a big deal, but then I found what could be a good reason right in this file, so I thought I\u0027d mention it.\n\nIn changes like the one above where the {} were used and included rm.done() by mistake, consistency in using {} may help.  If we don\u0027t always use the {} we run the risk of the person writing the code or reviewing it, to miss that the rm.done() is inside the brackets because she/he assumed there was no bracket in this case (as one could argue there should not have been above).\n\nBy always using the brackets, we always have to check what is contained inside of them and increase our changes of noticing such bugs.  So although I\u0027m probably not perfect at it, I try to always use brackets.\n\nThis is open for discussion of course, since you are the most active (and really the only) other DSF committer.",
+      "revId": "244ba995392806a56a52852e0d0d9ea72f87edfa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//zTY\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIBreakpointsManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 506,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-10-29T15:39:51Z",
+      "side": 1,
+      "message": "Shouldn\u0027t this notification (breakpointTracingStopped) be for the specified IBreakpointsTargetDMContext?\n\nIn multi-process, when a process completes, we stop tracking its breakpoints, but we keep tracking the ones for the other processes",
+      "revId": "244ba995392806a56a52852e0d0d9ea72f87edfa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//zZA\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MIBreakpoint.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-10-29T15:39:51Z",
+      "side": 1,
+      "message": "This new field must be copied over in the copy constructor\n  public MIBreakpoint(MIBreakpoint other)",
+      "revId": "244ba995392806a56a52852e0d0d9ea72f87edfa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//zXY\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MIBreakpoint.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 500,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-10-29T15:39:51Z",
+      "side": 1,
+      "message": "I don\u0027t think this is right.  For example, watchpoints also show the the \u0027what\u0027 field:\n\nbkpt\u003d{number\u003d\"14\",type\u003d\"hw watchpoint\",disp\u003d\"keep\",enabled\u003d\"y\",what\u003d\"myvar\",times\u003d\"0\",original-location\u003d\"myvar\"}",
+      "revId": "244ba995392806a56a52852e0d0d9ea72f87edfa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

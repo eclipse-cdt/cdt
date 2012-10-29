@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 QNX Software Systems and others.
+ * Copyright (c) 2009, 2012 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - initial API and implementation
+ *     Freescale Semiconductor - [392962] - Improve working set build configurations usability
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.workingsets;
@@ -350,7 +351,9 @@ public class WorkingSetConfigurationManager {
 			String property = event.getProperty();
 
 			if (IWorkingSetManager.CHANGE_WORKING_SET_NAME_CHANGE.equals(property)) {
-				handleNameChange((IWorkingSet) event.getNewValue());
+				handleChange((IWorkingSet) event.getNewValue(), true);
+			} else if (IWorkingSetManager.CHANGE_WORKING_SET_CONTENT_CHANGE.equals(property)) {
+				handleChange((IWorkingSet) event.getNewValue(), false);
 			} else if (IWorkingSetManager.CHANGE_WORKING_SET_REMOVE.equals(property)) {
 				handleRemove((IWorkingSet) event.getOldValue());
 			} else if (IWorkingSetManager.CHANGE_WORKING_SET_ADD.equals(property)) {
@@ -358,7 +361,7 @@ public class WorkingSetConfigurationManager {
 			}
 		}
 
-		private void handleNameChange(IWorkingSet workingSet) {
+		private void handleChange(IWorkingSet workingSet, boolean nameOnly) {
 			synchronized (storeLock) {
 				String oldName = get(workingSet);
 				IMemento wsMemento = null;
@@ -371,17 +374,19 @@ public class WorkingSetConfigurationManager {
 					}
 				}
 
-				if (wsMemento != null) {
-					// update the memento with the new name
+				// update the memento with the new name or the new content
+				if (wsMemento == null || !nameOnly) {
+					workingSet.saveState(store.createChild(KEY_WORKING_SET));
+				} else {
 					wsMemento.putString(ATTR_NAME, workingSet.getName());
-
-					// clone it
-					XMLMemento newStore = XMLMemento.createWriteRoot(TYPE_WORKING_SET_CONFIGS);
-					newStore.putMemento(store);
-
-					// save it asynchronously
-					save(newStore);
 				}
+
+				// clone it
+				XMLMemento newStore = XMLMemento.createWriteRoot(TYPE_WORKING_SET_CONFIGS);
+				newStore.putMemento(store);
+
+				// save it asynchronously
+				save(newStore);
 
 				// and update our mapping
 				put(workingSet, workingSet.getName());
@@ -411,6 +416,15 @@ public class WorkingSetConfigurationManager {
 
 		private void handleAdd(IWorkingSet workingSet) {
 			synchronized (storeLock) {
+				workingSet.saveState(store.createChild(KEY_WORKING_SET));
+				
+				// clone it
+				XMLMemento newStore = XMLMemento.createWriteRoot(TYPE_WORKING_SET_CONFIGS);
+				newStore.putMemento(store);
+
+				// save it asynchronously
+				save(newStore);
+
 				put(workingSet, workingSet.getName());
 			}
 		}

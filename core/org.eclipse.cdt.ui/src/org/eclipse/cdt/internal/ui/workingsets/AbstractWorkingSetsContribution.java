@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 QNX Software Systems and others.
+ * Copyright (c) 2009, 2012 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,16 +7,21 @@
  *
  * Contributors:
  *     QNX Software Systems - initial API and implementation
+ *     Freescale Semiconductor - [392962] - Improve working set build configurations usability
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.workingsets;
 
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.actions.CompoundContributionItem;
@@ -32,6 +37,26 @@ import org.eclipse.cdt.ui.CUIPlugin;
  * @since 6.0
  */
 abstract class AbstractWorkingSetsContribution extends CompoundContributionItem {
+
+	private final class EmptyContributionItem extends ContributionItem {
+		private final String text;
+
+		private EmptyContributionItem(String text) {
+			this.text = text;
+		}
+
+		@Override
+		public void fill(Menu menu, int index) {
+			MenuItem item = new MenuItem(menu, SWT.NONE);
+			item.setEnabled(false);
+			item.setText(text);
+		}
+
+		@Override
+		public boolean isEnabled() {
+			return false;
+		}
+	}
 
 	private IWorkingSetManager workingSetManager;
 
@@ -54,23 +79,34 @@ abstract class AbstractWorkingSetsContribution extends CompoundContributionItem 
 
 	@Override
 	protected IContributionItem[] getContributionItems() {
+		if (getWorkingsetManager().getWorkingSets().length == 0) {
+			return new IContributionItem[] { new EmptyContributionItem(
+					WorkingSetMessages.WorkingSetMenus_noWorkingSets) };
+		}
+		final IWorkingSet[] recentWorkingSets = getWorkingsetManager()
+				.getRecentWorkingSets();
+		if (recentWorkingSets.length == 0) {
+			return new IContributionItem[] { new EmptyContributionItem(
+					WorkingSetMessages.WorkingSetMenus_noRecentWorkingSets) };
+		}
 		// at most 5 recent working sets
-		List<IContributionItem> result = new java.util.ArrayList<IContributionItem>(5);
-
-		int i = 0;
-		for (IWorkingSet recent : getWorkingsetManager().getRecentWorkingSets()) {
+		final int maxValidCount = 5;
+		List<IContributionItem> items = new ArrayList<IContributionItem>();
+		for (IWorkingSet recent : recentWorkingSets) {
 			IWorkingSetProxy proxy = WorkingSetConfigurationManager.getDefault().getWorkingSet(
 					recent.getName());
-
-			if (proxy != null) {
-				IContributionItem item = createMenu(proxy, i++);
-				if (item != null) {
-					result.add(item);
+			if (proxy != null && proxy.isValid()) {
+				items.add(createMenu(proxy, items.size()));
+				if (items.size() == maxValidCount) {
+					break;
 				}
 			}
 		}
-
-		return result.toArray(new IContributionItem[result.size()]);
+		if (items.size() == 0) {
+			return new IContributionItem[] { new EmptyContributionItem(
+					WorkingSetMessages.WorkingSetMenus_noProjects) };
+		}
+		return items.toArray(new IContributionItem[items.size()]);
 	}
 
 	private IWorkingSetManager getWorkingsetManager() {
@@ -82,19 +118,18 @@ abstract class AbstractWorkingSetsContribution extends CompoundContributionItem 
 	}
 
 	private IContributionItem createMenu(IWorkingSetProxy workingSet, int index) {
-		IContributionItem result = null;
 		IWorkingSet ws = workingSet.resolve();
 		String label = NLS.bind(WorkingSetMessages.WorkingSetMenus_enumPattern, index + 1, ws.getLabel());
-		Collection<IWorkingSetConfiguration> configs = workingSet.getConfigurations();
 
-		if (!configs.isEmpty()) {
-			MenuManager submenu = new MenuManager(label, ws.getName());
-			result = submenu;
-
-			submenu.add(createContribution(workingSet));
+		MenuManager submenu = new MenuManager(label, ws.getName());
+		IContributionItem item = null;
+		if (workingSet.getConfigurations().size() > 0) {
+			item = createContribution(workingSet);
+		} else {
+			item = new EmptyContributionItem(WorkingSetMessages.WorkingSetMenus_noBuildConfigurations);
 		}
-
-		return result;
+		submenu.add(item);
+		return submenu;
 	}
 
 	/**

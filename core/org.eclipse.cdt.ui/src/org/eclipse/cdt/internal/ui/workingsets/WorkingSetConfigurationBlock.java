@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 QNX Software Systems and others.
+ * Copyright (c) 2009, 2012 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - initial API and implementation
+ *     Freescale Semiconductor - [392962] - Improve working set build configurations usability
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.workingsets;
@@ -335,10 +336,25 @@ public class WorkingSetConfigurationBlock {
 				Collection<IWorkingSetProxy> filtered = filterWorkingSets(workingSets);
 				return filtered.toArray();
 			} else if (parentElement instanceof IWorkingSetProxy) {
-				return ((IWorkingSetProxy) parentElement).getConfigurations().toArray();
+				return getConfigurations((IWorkingSetProxy) parentElement);
 			} else {
 				return new Object[0];
 			}
+		}
+
+		/**
+		 * Returns the real configurations associated with the given proxy,
+		 * suppressing the case of only the default configuration.
+		 * @param proxy
+		 * @return
+		 */
+		private Object[] getConfigurations(IWorkingSetProxy proxy) {
+			Object[] configurations = proxy.getConfigurations().toArray();
+			if (configurations.length == 1 && WorkingSetConfiguration.isReadOnly(
+					(IWorkingSetConfiguration) configurations[0])) {
+				return new Object[0];
+			}
+			return configurations;
 		}
 
 		private Collection<IWorkingSetProxy> filterWorkingSets(Collection<IWorkingSetProxy> workingSets) {
@@ -365,7 +381,8 @@ public class WorkingSetConfigurationBlock {
 
 		@Override
 		public boolean hasChildren(Object element) {
-			return (element != null) && !(element instanceof IWorkingSetConfiguration);
+			return (element instanceof IWorkingSetProxy)
+					&& getConfigurations((IWorkingSetProxy) element).length > 0;
 		}
 
 		@Override

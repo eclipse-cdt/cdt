@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation, QNX Software Systems, and others.
+ * Copyright (c) 2000, 2009, 2012 IBM Corporation, QNX Software Systems, and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software Systems - [272416] Rework the working set configurations
+ *     Freescale Semiconductor - [392962] - Improve working set build configurations usability
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.workingsets;
 
@@ -32,6 +33,10 @@ public final class WorkingSetMessages extends NLS {
 	public static String ProjConfigController_activeConfig;
 
 	public static String WorkingSetMenus_enumPattern;
+	public static String WorkingSetMenus_noBuildConfigurations;
+	public static String WorkingSetMenus_noProjects;
+	public static String WorkingSetMenus_noRecentWorkingSets;
+	public static String WorkingSetMenus_noWorkingSets;
 	public static String WorkspaceSnapshot_buildNoProj;
 	
 	public static String WSConfig_build_problems;

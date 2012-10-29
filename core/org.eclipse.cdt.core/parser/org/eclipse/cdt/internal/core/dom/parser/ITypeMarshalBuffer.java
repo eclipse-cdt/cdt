@@ -20,18 +20,18 @@ import org.eclipse.core.runtime.CoreException;
  * Buffer for marshalling and unmarshalling types.
  */
 public interface ITypeMarshalBuffer {
-	final static byte BASIC_TYPE=     				1;
-	final static byte POINTER_TYPE=        			2;
-	final static byte ARRAY_TYPE=            		3;
-	final static byte CVQUALIFIER_TYPE=      		4;
-	final static byte FUNCTION_TYPE=    			5;
-	final static byte REFERENCE_TYPE=        		6;
-	final static byte POINTER_TO_MEMBER_TYPE=   	7;
-	final static byte PACK_EXPANSION_TYPE= 			8;
-	final static byte PROBLEM_TYPE= 				9;
-	final static byte VALUE= 				   	   10;
-	final static byte DEPENDENT_EXPRESSION_TYPE=   11;
-	final static byte UNKNOWN_MEMBER=			   12;
+	final static byte BASIC_TYPE=     				  1;
+	final static byte POINTER_TYPE=        			  2;
+	final static byte ARRAY_TYPE=            		  3;
+	final static byte CVQUALIFIER_TYPE=      		  4;
+	final static byte FUNCTION_TYPE=    			  5;
+	final static byte REFERENCE_TYPE=        		  6;
+	final static byte POINTER_TO_MEMBER_TYPE=   	  7;
+	final static byte PACK_EXPANSION_TYPE= 			  8;
+	final static byte PROBLEM_TYPE= 				  9;
+	final static byte VALUE= 				   	     10;
+	final static byte DEPENDENT_EXPRESSION_TYPE=     11;
+	final static byte UNKNOWN_MEMBER=			     12;
 	final static byte UNKNOWN_MEMBER_CLASS_INSTANCE= 13;
 	final static byte DEFERRED_CLASS_INSTANCE=     	 14;
 

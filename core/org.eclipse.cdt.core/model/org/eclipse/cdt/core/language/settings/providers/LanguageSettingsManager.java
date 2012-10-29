@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.settings.model.ICLanguageSetting;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
+import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsExtensionManager;
 import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsProvidersSerializer;
 import org.eclipse.core.resources.IFile;
@@ -39,6 +40,29 @@ import org.eclipse.core.runtime.IPath;
  * @since 5.4
  */
 public class LanguageSettingsManager {
+	/**
+	 * Returns the list of setting entries of a certain kind (such as include paths)
+	 * for the given configuration description, resource and language. This is a
+	 * combined list for all providers taking into account settings of parent folder
+	 * if settings for the given resource are not defined. For include paths both
+	 * local (#include "...") and system (#include <...>) entries are returned.
+	 *
+	 * @param cfgDescription - configuration description.
+	 * @param rc - resource such as file or folder.
+	 * @param languageId - language id.
+	 * @param kind - kind of language settings entries, such as
+	 *     {@link ICSettingEntry#INCLUDE_PATH} etc. This is a binary flag
+	 *     and it is possible to specify composite kind.
+	 *     Use {@link ICSettingEntry#ALL} to get all kinds.
+	 *
+	 * @return the list of setting entries.
+	 *
+	 * @since 5.5
+	 */
+	public static List<ICLanguageSettingEntry> getSettingEntriesByKind(ICConfigurationDescription cfgDescription, IResource rc, String languageId, int kind) {
+		return LanguageSettingsProvidersSerializer.getSettingEntriesByKind(cfgDescription, rc, languageId, kind);
+	}
+
 	/**
 	 * Returns the list of setting entries of the given provider
 	 * for the given configuration description, resource and language.

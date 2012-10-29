@@ -17,6 +17,7 @@ import java.util.List;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.AbstractExecutableExtensionBase;
+import org.eclipse.cdt.core.settings.model.CIncludeFileEntry;
 import org.eclipse.cdt.core.settings.model.CIncludePathEntry;
 import org.eclipse.cdt.core.settings.model.CMacroEntry;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
@@ -647,6 +648,38 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 		// path3 gets there from low priority provider
 		assertEquals(entriesLow.get(3),includes.get(2));
 		assertEquals(3, includes.size());
+	}
+
+	/**
+	 * Test ability to get entries by kind.
+	 */
+	public void testEntriesByKind_CompositeKind() throws Exception {
+		MockConfigurationDescription cfgDescription = new MockConfigurationDescription(CFG_ID);
+
+		// contribute the entries
+		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+		entries.add(new CIncludePathEntry("path0", 0));
+		entries.add(new CMacroEntry("MACRO0", "value0",0));
+		entries.add(new CIncludePathEntry("path1", 0));
+		entries.add(new CMacroEntry("MACRO1", "value1",0));
+		entries.add(new CIncludePathEntry("path2", 0));
+
+		entries.add(new CIncludeFileEntry("include-path-file", 0));
+
+		ILanguageSettingsProvider provider0 = new MockProvider(PROVIDER_0, PROVIDER_NAME_0, entries);
+		List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
+		providers.add(provider0);
+		cfgDescription.setLanguageSettingProviders(providers);
+
+		// retrieve entries by kind
+		List<ICLanguageSettingEntry> result = LanguageSettingsProvidersSerializer
+			.getSettingEntriesByKind(cfgDescription, FILE_0, LANG_ID, ICSettingEntry.INCLUDE_PATH | ICSettingEntry.MACRO);
+		assertEquals(new CIncludePathEntry("path0", 0), result.get(0));
+		assertEquals(new CMacroEntry("MACRO0", "value0",0), result.get(1));
+		assertEquals(new CIncludePathEntry("path1", 0), result.get(2));
+		assertEquals(new CMacroEntry("MACRO1", "value1",0), result.get(3));
+		assertEquals(new CIncludePathEntry("path2", 0), result.get(4));
+		assertEquals(5, result.size());
 	}
 
 	/**

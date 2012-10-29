@@ -11,6 +11,7 @@
  *     Sergey Prigogin (Google)
  *     Anton Gorenkov - A preference to use RTTI for variable types determination (Bug 377536)
  *     IBM Corporation
+ *     Marc Khouzam (Ericsson) - Add preference for aggressive breakpoint filtering (Bug 360735)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.preferences;
 
@@ -645,6 +646,16 @@ public class GdbDebugPreferencePage extends FieldEditorPreferencePage implements
 		// Need to set layout again.
 		group2.setLayout(groupLayout);
 
+		boolField= new BooleanFieldEditor(
+				IGdbDebugPreferenceConstants.PREF_AGGRESSIVE_BP_FILTER,
+				MessagesForPreferences.GdbDebugPreferencePage_useAggressiveBpFilter,
+				group2);
+
+		boolField.fillIntoGrid(group2, 3);
+		addField(boolField);
+		// Need to set layout again.
+		group2.setLayout(groupLayout);
+		
 		final IntegerWithBooleanFieldEditor enableGdbTracesField = new IntegerWithBooleanFieldEditor(
 				IGdbDebugPreferenceConstants.PREF_TRACES_ENABLE,
 				IGdbDebugPreferenceConstants.PREF_MAX_GDB_TRACES,

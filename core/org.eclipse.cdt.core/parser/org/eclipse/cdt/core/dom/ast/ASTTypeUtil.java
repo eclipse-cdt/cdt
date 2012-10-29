@@ -183,7 +183,8 @@ public class ASTTypeUtil {
 		if (val != null) {
 			buf.append(val.getSignature());
 		} else {
-			appendType(arg.getTypeValue(), normalize, buf);
+			IType type = normalize ? arg.getTypeValue() : arg.getOriginalTypeValue();
+			appendType(type, normalize, buf);
 		}
 	}
 

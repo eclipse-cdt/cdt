@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2012 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,8 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Andrew Ferguson (Symbian)
- *******************************************************************************/ 
+ *     Sergey Prigogin (Google)
+ *******************************************************************************/
 package org.eclipse.cdt.core.testplugin.util;
 
 import java.io.BufferedReader;
@@ -57,23 +58,61 @@ import org.osgi.framework.Bundle;
  * Utilities for reading test source code from plug-in .java sources
  */
 public class TestSourceReader {
+	private final Bundle bundle;
+	private final String srcRoot;
+	private final Class clazz;
+	private final int numSections;
+
+	/**
+	 * @param bundle the bundle containing the source, if {@code null} can try to load using
+	 *     classpath (source folder has to be in the classpath for this to work)
+	 * @param srcRoot the directory inside the bundle containing the packages
+	 * @param clazz the name of the class containing the test
+	 */
+	public TestSourceReader(Bundle bundle, String srcRoot, Class clazz) {
+		this(bundle, srcRoot, clazz, 0);
+	}
+
+	/**
+	 * @param bundle the bundle containing the source, if {@code null} can try to load using
+	 *     classpath (source folder has to be in the classpath for this to work)
+	 * @param srcRoot the directory inside the bundle containing the packages
+	 * @param clazz the name of the class containing the test
+	 * @param numSections the number of comment sections preceding the named test to return.
+	 *     Pass zero to get all available sections.
+	 */
+	public TestSourceReader(Bundle bundle, String srcRoot, Class clazz, int numSections) {
+		this.bundle = bundle;
+		this.srcRoot = srcRoot;
+		this.clazz = clazz;
+		this.numSections = numSections;
+	}
+
+	public StringBuilder[] getContentsForTest(final String testName) throws IOException {
+		return getContentsForTest(bundle, srcRoot, clazz, testName, numSections);
+	}
+
+	public String readTaggedComment(String tag) throws IOException {
+		return readTaggedComment(bundle, tag, clazz, tag);
+	}
+
 	/**
 	 * Returns an array of StringBuilder objects for each comment section found preceding the named
 	 * test in the source code.
 	 *
-	 * @param bundle the bundle containing the source, if null can try to load using classpath
-	 *     (source folder has to be in the classpath for this to work)
+	 * @param bundle the bundle containing the source, if {@code null} can try to load using
+	 *      classpath (source folder has to be in the classpath for this to work)
 	 * @param srcRoot the directory inside the bundle containing the packages
 	 * @param clazz the name of the class containing the test
 	 * @param testName the name of the test
-	 * @param sections the number of comment sections preceding the named test to return. Pass zero
-	 *     to get all available sections.
+	 * @param numSections the number of comment sections preceding the named test to return.
+	 *     Pass zero to get all available sections.
 	 * @return an array of StringBuilder objects for each comment section found preceding the named
-	 *     test in the source code. 
+	 *     test in the source code.
 	 * @throws IOException
 	 */
 	public static StringBuilder[] getContentsForTest(Bundle bundle, String srcRoot, Class clazz,
-			final String testName, int sections) throws IOException {
+			final String testName, int numSections) throws IOException {
 		// Walk up the class inheritance chain until we find the test method.
 		try {
 			while (clazz.getMethod(testName).getDeclaringClass() != clazz) {
@@ -91,7 +130,7 @@ public class TestSourceReader {
 			fqn = fqn.indexOf("$") == -1 ? fqn : fqn.substring(0, fqn.indexOf("$"));
 			String classFile = fqn + ".java";
 			IPath filePath= new Path(srcRoot + '/' + classFile);
-		
+
 			InputStream in;
 			Class superclass = clazz.getSuperclass();
 			try {
@@ -107,7 +146,7 @@ public class TestSourceReader {
 				clazz = superclass;
 				continue;
 			}
-		    
+
 		    BufferedReader br = new BufferedReader(new InputStreamReader(in));
 		    try {
 		    	// Read the java file collecting comments until we encounter the test method.
@@ -120,7 +159,7 @@ public class TestSourceReader {
 			    	} else {
 			    		if (!line.startsWith("@") && content.length() > 0) {
 			    			contents.add(content);
-			    			if (sections > 0 && contents.size() == sections + 1)
+			    			if (numSections > 0 && contents.size() == numSections + 1)
 			    				contents.remove(0);
 			    			content = new StringBuilder();
 			    		}
@@ -145,14 +184,14 @@ public class TestSourceReader {
 			clazz = superclass;
 		}
 	}
-	
+
 	/**
 	 * Searches for the offset of the first occurrence of a string in a workspace file.
 	 * @param lookfor string to be searched for
 	 * @param fullPath full path of the workspace file
 	 * @return the offset or -1
-	 * @throws Exception 
-	 * @throws UnsupportedEncodingException 
+	 * @throws Exception
+	 * @throws UnsupportedEncodingException
 	 * @since 4.0
 	 */
 	public static int indexOfInFile(String lookfor, Path fullPath) throws Exception {
@@ -183,7 +222,7 @@ public class TestSourceReader {
 			reader.close();
 		}
 	}
-	
+
 	public static int getLineNumber(int offset, Path fullPath) throws Exception {
 		IFile file= ResourcesPlugin.getWorkspace().getRoot().getFile(fullPath);
 		Reader reader= new BufferedReader(new InputStreamReader(file.getContents(), file.getCharset()));
@@ -203,12 +242,12 @@ public class TestSourceReader {
 
 	/**
 	 * Reads a section in comments form the source of the given class. The section
-	 * is started with '// {tag}' and ends with the first line not started by '//' 
+	 * is started with '// {tag}' and ends with the first line not started by '//'
 	 * @since 4.0
 	 */
 	public static String readTaggedComment(Bundle bundle, String srcRoot, Class clazz, final String tag) throws IOException {
 	    IPath filePath= new Path(srcRoot + '/' + clazz.getName().replace('.', '/') + ".java");
-	    
+
 	    InputStream in= FileLocator.openStream(bundle, filePath, false);
 	    LineNumberReader reader= new LineNumberReader(new InputStreamReader(in));
 	    boolean found= false;
@@ -244,15 +283,15 @@ public class TestSourceReader {
 	}
 
 	/**
-	 * Creates a file with content at the given path inside the given container. 
+	 * Creates a file with content at the given path inside the given container.
 	 * If the file exists its content is replaced.
 	 * @param container a container to create the file in
 	 * @param filePath the path relative to the container to create the file at
 	 * @param contents the content for the file
 	 * @return a file object.
-	 * @throws CoreException 
+	 * @throws CoreException
 	 * @since 4.0
-	 */    
+	 */
 	public static IFile createFile(final IContainer container, final IPath filePath,
 			final CharSequence contents) throws CoreException {
 		final IWorkspace ws = ResourcesPlugin.getWorkspace();
@@ -295,7 +334,7 @@ public class TestSourceReader {
 	}
 
 	/**
-	 * Creates a file with content at the given path inside the given container. 
+	 * Creates a file with content at the given path inside the given container.
 	 * If the file exists its content is replaced.
 	 * @param container a container to create the file in
 	 * @param filePath the path relative to the container to create the file at
@@ -309,7 +348,7 @@ public class TestSourceReader {
 
 	/**
 	 * Waits until the given file is indexed. Fails if this does not happen within the
-	 * given time. 
+	 * given time.
 	 * @param file
 	 * @param maxmillis
 	 * @throws Exception
@@ -338,7 +377,7 @@ public class TestSourceReader {
 			} finally {
 				index.releaseReadLock();
 			}
-			
+
 			Thread.sleep(50);
 			timeLeft= (int) (endTime - System.currentTimeMillis());
 		}

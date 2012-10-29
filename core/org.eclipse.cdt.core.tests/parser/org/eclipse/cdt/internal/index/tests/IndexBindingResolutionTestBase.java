@@ -97,7 +97,7 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 				return name;
 			}
 		}
-	
+
 		return null;
 	}
 
@@ -122,7 +122,7 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 		IASTName name= findName(section, len);
 		assertNotNull("Name not found for \"" + section + "\"", name);
 		assertEquals(section.substring(0, len), name.getRawSignature());
-	
+
 		IBinding binding = name.resolveBinding();
 		assertNotNull("No binding for " + name.getRawSignature(), binding);
 		assertFalse("Binding is a ProblemBinding for name \"" + name.getRawSignature() + "\"", IProblemBinding.class.isAssignableFrom(name.resolveBinding().getClass()));
@@ -136,11 +136,11 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 	protected <T extends IBinding> T getBindingFromASTName(String section, int len) {
 		if (len <= 0)
 			len += section.length();
-	
+
 		IASTName name= findName(section, len);
 		assertNotNull("Name not found for \"" + section + "\"", name);
 		assertEquals(section.substring(0, len), name.getRawSignature());
-	
+
 		IBinding binding = name.resolveBinding();
 		assertNotNull("No binding for " + name.getRawSignature(), binding);
 		assertFalse("Binding is a ProblemBinding for name \"" + name.getRawSignature() + "\"", IProblemBinding.class.isAssignableFrom(name.resolveBinding().getClass()));
@@ -157,7 +157,7 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 		IASTName name= findName(section, len);
 		assertNotNull("Name not found for \"" + section + "\"", name);
 		assertEquals(section.substring(0, len), name.getRawSignature());
-	
+
 		IBinding binding = name.resolveBinding();
 		assertNotNull("No binding for " + name.getRawSignature(), binding);
 		assertTrue("Binding is not a ProblemBinding for name \"" + name.getRawSignature() + "\"", IProblemBinding.class.isAssignableFrom(name.resolveBinding().getClass()));
@@ -267,13 +267,13 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
                 return null;
             return nameList.get(idx);
         }
-       
+
         public int size() {
         	return nameList.size();
         }
     }
 
-	interface ITestStrategy {
+	protected interface ITestStrategy {
 		IIndex getIndex();
 		void setUp() throws Exception;
 		void tearDown() throws Exception;
@@ -300,7 +300,7 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 		public ICProject getCProject() {
 			return cproject;
 		}
-	
+
 		@Override
 		public StringBuilder[] getTestData() {
 			return testData;
@@ -365,7 +365,7 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 		public IIndex getIndex() {
 			return index;
 		}
-	
+
 		@Override
 		public boolean isCompositeIndex() {
 			return false;
@@ -426,7 +426,7 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 
 			IFile cppfile= TestSourceReader.createFile(cproject.getProject(), new Path("references.c" + (cpp ? "pp" : "")), testData[1].toString());
 	        waitForIndexer(cproject);
-		
+
 			if (DEBUG) {
 				System.out.println("Project PDOM: " + getName());
 				((PDOM) CCoreInternals.getPDOMManager().getPDOM(cproject)).accept(new PDOMPrettyPrinter());
@@ -452,7 +452,7 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 		public IIndex getIndex() {
 			return index;
 		}
-	
+
 		@Override
 		public boolean isCompositeIndex() {
 			return false;
@@ -467,7 +467,7 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 	 * to put the contents of the section to. To request the AST of a file, put an asterisk after
 	 * the file name.
 	 */
-	class SinglePDOMTestNamedFilesStrategy implements ITestStrategy {
+	protected class SinglePDOMTestNamedFilesStrategy implements ITestStrategy {
 		private IIndex index;
 		private ICProject cproject;
 		private StringBuilder[] testData;
@@ -536,7 +536,7 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 			}
 			CCorePlugin.getIndexManager().setIndexerId(cproject, IPDOMManager.ID_FAST_INDEXER);
 	        waitForIndexer(cproject);
-		
+
 			if (DEBUG) {
 				System.out.println("Project PDOM: " + getName());
 				((PDOM) CCoreInternals.getPDOMManager().getPDOM(cproject)).accept(new PDOMPrettyPrinter());
@@ -564,7 +564,7 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 		public IIndex getIndex() {
 			return index;
 		}
-	
+
 		@Override
 		public boolean isCompositeIndex() {
 			return false;
@@ -586,7 +586,7 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 		public ICProject getCProject() {
 			return cproject;
 		}
-	
+
 		@Override
 		public void tearDown() throws Exception {
 			if (index != null) {
@@ -620,7 +620,7 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 			IndexerPreferences.set(cproject.getProject(), IndexerPreferences.KEY_INDEXER_ID, IPDOMManager.ID_FAST_INDEXER);
 			CCorePlugin.getIndexManager().reindex(cproject);
 			waitForIndexer(cproject);
-		
+
 			if (DEBUG) {
 				System.out.println("Online: "+getName());
 			 	((PDOM) CCoreInternals.getPDOMManager().getPDOM(cproject)).accept(new PDOMPrettyPrinter());
@@ -637,17 +637,17 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 					CProjectHelper.createCProject("ReferencedContent" + System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER);
 			String content = testData[0].toString();
 			IFile file = TestSourceReader.createFile(referenced.getProject(), new Path("header.h"), content);
-		
+
 			IndexerPreferences.set(referenced.getProject(), IndexerPreferences.KEY_INDEXER_ID, IPDOMManager.ID_FAST_INDEXER);
 			CCorePlugin.getIndexManager().reindex(referenced);
-		
+
 			waitForIndexer(referenced);
-		
+
 			if (DEBUG) {
 				System.out.println("Referenced: "+getName());
 				((PDOM) CCoreInternals.getPDOMManager().getPDOM(referenced)).accept(new PDOMPrettyPrinter());
 			}
-		
+
 			return referenced;
 		}
 
@@ -679,7 +679,7 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 		public StringBuilder[] getTestData() {
 			return testData;
 		}
-	
+
 		@Override
 		public boolean isCompositeIndex() {
 			return true;

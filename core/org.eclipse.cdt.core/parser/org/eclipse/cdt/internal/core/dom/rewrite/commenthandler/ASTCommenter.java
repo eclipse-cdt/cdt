@@ -276,10 +276,11 @@ public class ASTCommenter {
 	}
 
 	private static <T extends IASTNode> T getNextNodeInTu(Iterator<T> iter) {
-		if (!iter.hasNext()) {
-			return null;
+		while (iter.hasNext()) {
+			T next = iter.next();
+			if (next.isPartOfTranslationUnitFile())
+				return next;
 		}
-		T next = iter.next();
-		return next.isPartOfTranslationUnitFile() ? next : getNextNodeInTu(iter);
+		return null;
 	}
 }

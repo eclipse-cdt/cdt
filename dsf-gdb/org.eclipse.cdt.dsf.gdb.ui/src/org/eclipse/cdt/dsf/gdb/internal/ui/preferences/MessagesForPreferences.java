@@ -10,6 +10,7 @@
  *     Jens Elmenthaler (Verigy) - Added Full GDB pretty-printing support (bug 302121)
  *     Anton Gorenkov - A preference to use RTTI for variable types determination (Bug 377536)
  *     IBM Corporation
+ *     Marc Khouzam (Ericsson) - Add preference for aggressive breakpoint filtering (Bug 360735)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.preferences;
 
@@ -37,6 +38,9 @@ class MessagesForPreferences extends NLS {
 	public static String GdbDebugPreferencePage_useInspectorHover_label;
 	/** @since 2.3 */
 	public static String GdbDebugPreferencePage_hideRunningThreads;
+	/** @since 2.4 */
+	public static String GdbDebugPreferencePage_useAggressiveBpFilter;
+
 	/** @since 2.2 */
 	public static String GdbDebugPreferencePage_prettyPrinting_label;
 	/** @since 2.2 */

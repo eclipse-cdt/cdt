@@ -240,7 +240,7 @@ public class BaseTestCase extends TestCase {
      * in the log should fail the test. If the logged number of non-OK status objects
      * differs from the last value passed, the test is failed. If this method is not called
      * at all, the expected number defaults to zero.
-     * @param value
+     * @param count the expected number of logged error and warning messages
      */
     public void setExpectedNumberOfLoggedNonOKStatusObjects(int count) {
     	fExpectedLoggedNonOK= count;
@@ -306,7 +306,7 @@ public class BaseTestCase extends TestCase {
 		assertTrue(indexManager.isProjectRegistered(project));
 		assertTrue(indexManager.joinIndexer(INDEXER_TIMEOUT_SEC * 1000, npm()));
 	}
-    
+
 	public static void waitUntilFileIsIndexed(IIndex index, IFile file) throws Exception {
 		TestSourceReader.waitUntilFileIsIndexed(index, file, INDEXER_TIMEOUT_SEC * 1000);
 	}

@@ -79,7 +79,7 @@ specifically when using a <em>GDB (DSF)</em> launcher.
 	<! -------------------------------------------------------------------------------------------------- >
 	
 	<tr>
-		<td rowspan=5 valign="top" headers="category"><strong>General Behavior</strong></td>
+		<td rowspan=7 valign="top" headers="category"><strong>General Behavior</strong></td>
 	</tr>
 	<tr>
 		<td valign="top" headers="option"><strong>Terminate GDB when last process exits</strong></td>
@@ -101,6 +101,14 @@ specifically when using a <em>GDB (DSF)</em> launcher.
 		<td valign="top" headers="description">When checked, the Debug view will only show threads that are suspended.
 		When dealing with a large number of threads, this helps focus on the threads being inspected.  Obviously, 
 		this option is only valuable in <em>non-stop</em> mode, where some threads can run while others are stopped.</td>
+	</tr>	
+	<tr>
+		<td valign="top" headers="option"><strong>Use aggressive breakpoint filtering</strong></td>
+		<td valign="top" headers="description">When checked, the button "Show Breakpoints Supported by Selected Target"
+		of the Breakpoints view will only show the breakpoints that affect the currently selected C/C++ debug context 
+		(e.g., thread, process).  Otherwise, "Show Breakpoints Supported by Selected Target" will show all breakpoints
+		that are for any C/C++ target.<p>
+			<img src="../images/cdt_debug_bp_filter.png"  alt="Show Breakpoints Supported by Selected Target button"></td>
 	</tr>
 	<tr>
 		<td valign="top" headers="option"><strong>Enable GDB traces</strong></td>
@@ -108,7 +116,17 @@ specifically when using a <em>GDB (DSF)</em> launcher.
 		will contain all the gdb/mi activity. Basically, this details the interaction between the CDT debugger and GDB. 
 		This information is often critical when the debugger is not behaving as you expect. Include this console output
 		when submitting a bugzilla report against the CDT debugger.  It is recommended to keep this setting enabled at 
-		all times, as it does not cause any negative effect.</td>
+		all times, as it does not cause any negative effect.
+		<p>
+		Once the number of characters specified by the <em>limit</em> field is reached, older trace lines will be discarded
+		gradually.  This is to avoid these traces consuming too much memory, for very long debug sessions.</td>
+	</tr>
+	<tr>
+		<td valign="top" headers="option"><strong>Display run-time type of variables</strong></td>
+		<td valign="top" headers="description">When checked, the CDT debugger will show the actual variable type (not the 
+		declared one) in Variables and Expressions views.  Not only does this allow to see what is the current run-time
+		type of a variable, but it allows to access fields that may not be in the base class.
+		Note that this feature will only work starting with GDB 7.5.</td>
 	</tr>
 
 	<! -------------------------------------------------------------------------------------------------- >

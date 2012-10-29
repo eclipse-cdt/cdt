@@ -11,6 +11,7 @@
  *     Sergey Prigogin (Google)
  *     Marc Khouzam (Ericsson) - Move to org.eclipse.cdt.dsf.gdb from UI plugin (bug 348159)
  *     Anton Gorenkov - A preference to use RTTI for variable types determination (Bug 377536)
+ *     Marc Khouzam (Ericsson) - Add preference for aggressive breakpoint filtering (Bug 360735)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal;
 
@@ -43,5 +44,6 @@ public class GdbPreferenceInitializer extends AbstractPreferenceInitializer {
 		node.putBoolean(IGdbDebugPreferenceConstants.PREF_COMMAND_TIMEOUT, false);
 		node.putInt(IGdbDebugPreferenceConstants.PREF_COMMAND_TIMEOUT_VALUE, IGdbDebugPreferenceConstants.COMMAND_TIMEOUT_VALUE_DEFAULT);
 		node.putBoolean(IGdbDebugPreferenceConstants.PREF_HIDE_RUNNING_THREADS, false);
+		node.putBoolean(IGdbDebugPreferenceConstants.PREF_AGGRESSIVE_BP_FILTER, true);
 	}
 }

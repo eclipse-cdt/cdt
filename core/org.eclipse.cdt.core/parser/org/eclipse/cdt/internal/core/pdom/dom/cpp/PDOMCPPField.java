@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    QNX - Initial API and implementation
- *    IBM Corporation
- *    Markus Schorn (Wind River Systems)
+ *     QNX - Initial API and implementation
+ *     IBM Corporation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -22,31 +22,28 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author Doug Schaefer
- *
  */
 class PDOMCPPField extends PDOMCPPVariable implements ICPPField {
-	
+
 	public PDOMCPPField(PDOMLinkage linkage, PDOMNode parent, ICPPField field)
 			throws CoreException {
 		super(linkage, parent, field);
-	}		
+	}
 
 	public PDOMCPPField(PDOMLinkage linkage, long bindingRecord) {
 		super(linkage, bindingRecord);
 	}
 
-	// @Override
 	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
-	
-	// @Override
+
 	@Override
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPPFIELD;
 	}
-	
+
 	@Override
 	public ICPPClassType getClassOwner() {
 		return (ICPPClassType) getOwner();
@@ -57,37 +54,32 @@ class PDOMCPPField extends PDOMCPPVariable implements ICPPField {
 		return PDOMCPPAnnotation.getVisibility(getByte(record + ANNOTATIONS));
 	}
 
-	// @Override
 	@Override
 	public boolean isMutable() {
 		return getBit(getByte(record + ANNOTATIONS), PDOMCPPAnnotation.MUTABLE_OFFSET);
 	}
 
-	// @Override
 	@Override
 	public boolean isAuto() {
 		// ISO/IEC 14882:2003 9.2.6
-		return false; 
+		return false;
 	}
 
-	// @Override
 	@Override
 	public boolean isExtern() {
 		// ISO/IEC 14882:2003 9.2.6
-		return false; 
+		return false;
 	}
 
-	// @Override
 	@Override
 	public boolean isExternC() {
-		return false; 
+		return false;
 	}
 
-	// @Override
 	@Override
 	public boolean isRegister() {
 		// ISO/IEC 14882:2003 9.2.6
-		return false; 
+		return false;
 	}
 
 	@Override

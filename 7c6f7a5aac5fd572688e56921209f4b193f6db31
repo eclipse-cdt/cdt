@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOIn//yM4\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBBackend.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 555,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-10-30T14:21:09Z",
+      "side": 1,
+      "message": "Please update the copyright header to put your name and company name in the same way as is done already.",
+      "revId": "7c6f7a5aac5fd572688e56921209f4b193f6db31",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//yMU\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBBackend.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 588,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-10-30T14:21:09Z",
+      "side": 1,
+      "message": "I believe we also have to close the two streams that we opened since we are aborting the launch.  It seems to also be missing from the catch clause below.\n\nSee LaunchUtils.getGDBVersion() for an example.",
+      "revId": "7c6f7a5aac5fd572688e56921209f4b193f6db31",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

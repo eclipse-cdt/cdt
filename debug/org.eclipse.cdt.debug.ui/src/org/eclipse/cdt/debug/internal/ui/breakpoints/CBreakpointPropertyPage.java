@@ -567,7 +567,7 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
             } else if (!isReadType && isWriteType) {
                 return BreakpointsMessages.getString("CBreakpointPropertyPage.breakpointType_watchpoint_label"); //$NON-NLS-1$
             } else {
-                return BreakpointsMessages.getString("CBreakpointPropertyPage.watchpointType_breakpointType_watchpoint_access_label"); //$NON-NLS-1$
+                return BreakpointsMessages.getString("CBreakpointPropertyPage.breakpointType_watchpoint_access_label"); //$NON-NLS-1$
             }
 	    }
 	    

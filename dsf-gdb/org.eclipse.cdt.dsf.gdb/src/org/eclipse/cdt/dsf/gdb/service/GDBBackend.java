@@ -10,6 +10,7 @@
  *     Wind River System
  *     Ericsson
  *     Marc Khouzam (Ericsson) - Use the new IMIBackend2 interface (Bug 350837)
+ *     Mark Bozeman (Mentor Graphics) - Report GDB start failures (Bug 376203)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
@@ -19,7 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -561,22 +561,53 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
                         return Status.OK_STATUS;
                     }
                     
+                    BufferedReader inputReader = null;
+                    BufferedReader errorReader = null;
+                    boolean success = false;
                     try {
-                        Reader r = new InputStreamReader(getMIInputStream());
-                        BufferedReader reader = new BufferedReader(r);
+                    	// Read initial GDB prompt
+                        inputReader = new BufferedReader(new InputStreamReader(getMIInputStream()));
                         String line;
-                        while ((line = reader.readLine()) != null) {
+                        while ((line = inputReader.readLine()) != null) {
                             line = line.trim();
                             if (line.endsWith("(gdb)")) { //$NON-NLS-1$
+                            	success = true;
                                 break;
                             }
                         }
+                        
+                        // Failed to read initial prompt, check for error
+                        if (!success) {
+                        	errorReader = new BufferedReader(new InputStreamReader(getMIErrorStream()));
+                        	String errorInfo = errorReader.readLine();
+                        	if (errorInfo == null) {
+                        		errorInfo = "GDB prompt not read"; //$NON-NLS-1$
+                        	}
+    	                    gdbLaunchRequestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, errorInfo, null));
+                        }
                     } catch (IOException e) {
-                        gdbLaunchRequestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Error reading GDB STDOUT", e)); //$NON-NLS-1$
-                        gdbLaunchRequestMonitor.done();
-                        return Status.OK_STATUS;
+                    	success = false;
+	                    gdbLaunchRequestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Error reading GDB output", e)); //$NON-NLS-1$
                     }
 
+                    // In the case of failure, close the MI streams so
+                    // they are not leaked.
+                    if (!success)
+                    {
+	                	if (inputReader != null) {
+	                		try {
+								inputReader.close();
+							} catch (IOException e) {
+							}
+	                	}
+	                	if (errorReader != null) {
+	                		try {
+								errorReader.close();
+							} catch (IOException e) {
+							}
+	                	}
+                    }
+                    
                     gdbLaunchRequestMonitor.done();
                     return Status.OK_STATUS;
                 }

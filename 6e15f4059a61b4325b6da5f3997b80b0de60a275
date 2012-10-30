@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOIn//yGM\u003d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-10-30T19:10:42Z",
+      "side": 1,
+      "message": "Please change commit message to:\nBug 393178: Creating Read/Write type access watchpoints, results in a mangled property page Class: name\n\nThe current format does not get picked up by Gerrit to create the hyperlink",
+      "revId": "6e15f4059a61b4325b6da5f3997b80b0de60a275",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//yGA\u003d",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/breakpoints/CBreakpointPropertyPage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 560,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-10-30T19:10:42Z",
+      "side": 1,
+      "message": "Please update copyright header with a line similar to:\n\n * Scott Tepavich (WindRiver) -  Fixed bad reference to messages.properties string (Bug 393178)",
+      "revId": "6e15f4059a61b4325b6da5f3997b80b0de60a275",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

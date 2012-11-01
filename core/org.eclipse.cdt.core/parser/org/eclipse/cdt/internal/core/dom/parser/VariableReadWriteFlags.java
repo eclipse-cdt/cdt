@@ -193,7 +193,7 @@ public abstract class VariableReadWriteFlags {
 				break;
 			}
 		}
-		return READ | WRITE;  // fallback
+		return READ | WRITE;  // Fallback
 	}
 
 	protected int rwArgumentForFunctionCall(IFunctionType type, int parameterIdx, int indirection) {

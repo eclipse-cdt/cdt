@@ -166,6 +166,11 @@
            wizardId="org.eclipse.cdt.ui.wizards.ConvertToMakeWizard">
 		 <enablement>
 		 	<and>
+				<with variable="activeWorkbenchWindow.activePerspective">
+	                <equals
+	                      value="org.eclipse.cdt.ui.CPerspective">
+	                </equals>
+	         	</with>
 	            <adapt type="org.eclipse.core.resources.IProject" />
 				<not>
 		            <adapt type="org.eclipse.core.resources.IProject" >

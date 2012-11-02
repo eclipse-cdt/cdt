@@ -18,6 +18,9 @@ import static org.eclipse.cdt.core.parser.ParserLanguage.CPP;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getNestedType;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getUltimateType;
+
+import java.io.IOException;
+
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.IName;
@@ -29,6 +32,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
+import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
@@ -50,7 +54,6 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
@@ -90,6 +93,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknownScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
+import org.eclipse.cdt.internal.core.parser.ParserException;
 
 public class AST2TemplateTests extends AST2BaseTest {
 
@@ -110,6 +114,11 @@ public class AST2TemplateTests extends AST2BaseTest {
 
 	private IASTTranslationUnit parseAndCheckBindings(final String code) throws Exception {
 		return parseAndCheckBindings(code, CPP);
+	}
+
+	protected BindingAssertionHelper getAssertionHelper() throws ParserException, IOException {
+		String code= getAboveComment();
+		return new BindingAssertionHelper(code, true);
 	}
 
 	public void testBasicClassTemplate() throws Exception {
@@ -1720,23 +1729,19 @@ public class AST2TemplateTests extends AST2BaseTest {
 	// void m(){
 	//    f(A<int>(1));
 	// }
-	public void testBug99254() throws Exception{
-		IASTTranslationUnit tu = parse(getAboveComment(), CPP);
-		CPPNameCollector col = new CPPNameCollector();
-		tu.accept(col);
-
-		ICPPConstructor ctor = (ICPPConstructor) col.getName(2).resolveBinding();
-		ICPPFunction f = (ICPPFunction) col.getName(5).resolveBinding();
-
-		final IASTName typeConversion = col.getName(11);
-		ICPPSpecialization spec = (ICPPSpecialization) typeConversion.resolveBinding();
+	public void testBug99254_1() throws Exception {
+		BindingAssertionHelper bh= getAssertionHelper();
+		ICPPConstructor ctor = bh.assertNonProblem("A(T t)", "A", ICPPConstructor.class);
+		ICPPSpecialization spec = bh.assertNonProblem("A<int>(1)", "A<int>", ICPPSpecialization.class);
 		assertSame(ctor.getOwner(), spec.getSpecializedBinding());
-
-		final ICPPASTFunctionCallExpression fcall = (ICPPASTFunctionCallExpression) typeConversion.getParent().getParent();
-		final IBinding ctorSpec = fcall.getImplicitNames()[0].resolveBinding();
-		assertSame(ctor, (((ICPPSpecialization) ctorSpec).getSpecializedBinding()));
-
-		assertSame(f, col.getName(10).resolveBinding());
+		IASTName name = bh.findName("A<int>(1)", "A<int>");
+		IASTImplicitName[] implicitNames = ((IASTImplicitNameOwner) name.getParent().getParent()).getImplicitNames();
+		assertEquals(1, implicitNames.length);
+		ICPPSpecialization ctor2 = (ICPPSpecialization) implicitNames[0].getBinding();
+		assertSame(ctor, ctor2.getSpecializedBinding());
+		ICPPFunction f = bh.assertNonProblem("f(A<int> a)", "f", ICPPFunction.class);
+		ICPPFunction f2 = bh.assertNonProblem("f(A<int>(1))", "f", ICPPFunction.class);
+		assertSame(f, f2);
 	}
 
 	// namespace core {
@@ -1745,67 +1750,59 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//    };
 	// }
 	// class B {
-	//    int add(const core::A<int> &rect);
+	//    int add(const core::A<int>& rect);
 	// };
 	// void f(B* b){
 	//    b->add(core::A<int>(10, 2));
 	// }
 	public void testBug99254_2() throws Exception {
-		IASTTranslationUnit tu = parse(getAboveComment(), CPP);
-		CPPNameCollector col = new CPPNameCollector();
-		tu.accept(col);
-
-		ICPPConstructor ctor = (ICPPConstructor) col.getName(3).resolveBinding();
-		ICPPMethod add = (ICPPMethod) col.getName(9).resolveBinding();
-
-		final IASTName typeConversion = col.getName(20);
-		ICPPSpecialization spec = (ICPPSpecialization) typeConversion.resolveBinding();
+		BindingAssertionHelper bh= getAssertionHelper();
+		ICPPConstructor ctor = bh.assertNonProblem("A(T x, T y)", "A", ICPPConstructor.class);
+		ICPPSpecialization spec = bh.assertNonProblem("A<int>(10, 2)", "A<int>", ICPPSpecialization.class);
 		assertSame(ctor.getOwner(), spec.getSpecializedBinding());
-
-		final ICPPASTFunctionCallExpression fcall = (ICPPASTFunctionCallExpression) typeConversion.getParent().getParent();
-		final IBinding ctorSpec = fcall.getImplicitNames()[0].resolveBinding();
-		assertSame(ctor, (((ICPPSpecialization) ctorSpec).getSpecializedBinding()));
-
-		assertSame(add, col.getName(19).resolveBinding());
+		IASTName name = bh.findName("A<int>(10, 2)", "A<int>");
+		IASTImplicitName[] implicitNames = ((IASTImplicitNameOwner) name.getParent().getParent().getParent()).getImplicitNames();
+		assertEquals(1, implicitNames.length);
+		ICPPSpecialization ctor2 = (ICPPSpecialization) implicitNames[0].getBinding();
+		assertSame(ctor, ctor2.getSpecializedBinding());
+		ICPPMethod add = bh.assertNonProblem("add(const core::A<int>& rect)", "add", ICPPMethod.class);
+		ICPPMethod add2 = bh.assertNonProblem("b->add(core::A<int>(10, 2))", "add", ICPPMethod.class);
+		assertSame(add, add2);
 	}
 
 	// template <class T> class A { A(T); };
 	// typedef signed int s32;
 	// class B {
-	//    int add(const A<s32> &rect);
+	//    int add(const A<s32>& rect);
 	// };
 	// void f(B* b){
 	//    b->add(A<int>(10));
 	// }
 	public void testBug99254_3() throws Exception {
-		IASTTranslationUnit tu = parse(getAboveComment(), CPP);
-		CPPNameCollector col = new CPPNameCollector();
-		tu.accept(col);
-
-		ICPPConstructor ctor = (ICPPConstructor) col.getName(2).resolveBinding();
-		ICPPMethod add = (ICPPMethod) col.getName(7).resolveBinding();
-
-		final IASTName typeConversion = col.getName(17);
-		ICPPSpecialization spec = (ICPPSpecialization) typeConversion.resolveBinding();
+		BindingAssertionHelper bh= getAssertionHelper();
+		ICPPConstructor ctor = bh.assertNonProblem("A(T)", "A", ICPPConstructor.class);
+		ICPPSpecialization spec = bh.assertNonProblem("A<int>(10)", "A<int>", ICPPSpecialization.class);
 		assertSame(ctor.getOwner(), spec.getSpecializedBinding());
-
-		final ICPPASTFunctionCallExpression fcall = (ICPPASTFunctionCallExpression) typeConversion.getParent().getParent();
-		final IBinding ctorSpec = fcall.getImplicitNames()[0].resolveBinding();
-		assertSame(ctor, (((ICPPSpecialization) ctorSpec).getSpecializedBinding()));
-
-		assertSame(add, col.getName(16).resolveBinding());
+		IASTName name = bh.findName("A<int>(10)", "A<int>");
+		IASTImplicitName[] implicitNames = ((IASTImplicitNameOwner) name.getParent().getParent()).getImplicitNames();
+		assertEquals(1, implicitNames.length);
+		ICPPSpecialization ctor2 = (ICPPSpecialization) implicitNames[0].getBinding();
+		assertSame(ctor, ctor2.getSpecializedBinding());
+		ICPPMethod add = bh.assertNonProblem("add(const A<s32>& rect)", "add", ICPPMethod.class);
+		ICPPMethod add2 = bh.assertNonProblem("b->add(A<int>(10))", "add", ICPPMethod.class);
+		assertSame(add, add2);
 	}
 
 	public void testBug98666() throws Exception {
 		CPPASTNameBase.sAllowNameComputation= true;
-		IASTTranslationUnit tu = parse("A::template B<T> b;", CPP); //$NON-NLS-1$
+		IASTTranslationUnit tu = parse("A::template B<T> b;", CPP);
 		CPPNameCollector col = new CPPNameCollector();
 		tu.accept(col);
 
 		ICPPASTQualifiedName qn = (ICPPASTQualifiedName) col.getName(0);
 		IASTName[] ns = qn.getNames();
 		assertTrue(ns[1] instanceof ICPPASTTemplateId);
-		assertEquals(ns[1].toString(), "B<T>"); //$NON-NLS-1$
+		assertEquals(ns[1].toString(), "B<T>");
 	}
 
 	// template <class T> struct A{

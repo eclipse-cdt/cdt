@@ -28,6 +28,8 @@ import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
+import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
+import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerList;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -41,6 +43,7 @@ import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
@@ -188,6 +191,15 @@ public abstract class VariableReadWriteFlags {
 					final IType type= functionNameExpression.getExpressionType();
 					if (type instanceof IFunctionType) {
 						return rwArgumentForFunctionCall((IFunctionType) type, i, indirection);
+					} else {
+						IASTImplicitName[] implicitNames = ((IASTImplicitNameOwner) funcCall).getImplicitNames();
+						if (implicitNames.length == 1) {
+							IASTImplicitName name = implicitNames[0];
+							IBinding binding = name.resolveBinding();
+							if (binding instanceof IFunction) {
+								return rwArgumentForFunctionCall(((IFunction) binding).getType(), i, indirection);
+							}
+						}
 					}
 				}
 				break;

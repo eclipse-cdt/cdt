@@ -160,6 +160,32 @@ public class VariableReadWriteFlagsTest extends AST2BaseTest {
 	}
 
 	//	struct A {
+	//	  A(int* x, int& y);
+	//	  A(const int* x, const int& y, int z);
+	//	};
+	//
+	//	void test(int a, int b, int c) {
+	//	  A(&a, b);
+	//	  A x(&a, b);
+	//	  A(&a, b, c);
+	//	  A y(&a, b, c);
+	//	};
+	public void testConstructorCall_393068() throws Exception {
+		AssertionHelper a = getCPPAssertionHelper();
+//		a.assertReadWriteFlags("A(&a, b)", "a", READ | WRITE);
+//		a.assertReadWriteFlags("A(&a, b)", "b", READ | WRITE);
+//		a.assertReadWriteFlags("x(&a, b)", "a", READ | WRITE);
+//		a.assertReadWriteFlags("x(&a, b)", "b", READ | WRITE);
+//		a.assertReadWriteFlags("x(&a, b)", "x", WRITE);
+		a.assertReadWriteFlags("A(&a, b, c)", "a", READ);
+		a.assertReadWriteFlags("A(&a, b, c)", "b", READ);
+		a.assertReadWriteFlags("A(&a, b, c)", "c", READ);
+		a.assertReadWriteFlags("y(&a, b, c)", "a", READ);
+		a.assertReadWriteFlags("y(&a, b, c)", "b", READ);
+		a.assertReadWriteFlags("y(&a, b, c)", "c", READ);
+	}
+
+	//	struct A {
 	//	  void m();
 	//	  void mc() const;
 	//	};

@@ -168,6 +168,9 @@ public class CodanRunner {
 
 	private static void removeMarkersForDisabledProblems(CheckersRegistry chegistry,
 			Set<String> markerTypes, IResource resource, IProgressMonitor monitor) throws CoreException {
+		if (!resource.isAccessible()) {
+			return;
+		}
 		IResource[] children = null;
 		if (resource instanceof IContainer) {
 			children = ((IContainer) resource).members();

@@ -50,6 +50,7 @@ import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IValue;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAmbiguousTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
@@ -1669,7 +1670,7 @@ public class CPPTemplates {
 	 * @return an array of template arguments, currently modeled as IType objects.
 	 *     The empty ICPPTemplateArgument array is returned if id is {@code null}
 	 */
-	public static ICPPTemplateArgument[] createTemplateArgumentArray(ICPPASTTemplateId id) {
+	public static ICPPTemplateArgument[] createTemplateArgumentArray(ICPPASTTemplateId id) throws DOMException {
 		ICPPTemplateArgument[] result= ICPPTemplateArgument.EMPTY_ARGUMENTS;
 		if (id != null) {
 			IASTNode[] args= id.getTemplateArguments();
@@ -1681,6 +1682,9 @@ public class CPPTemplates {
 				} else if (arg instanceof ICPPASTExpression) {
 					ICPPASTExpression expr= (ICPPASTExpression) arg;
 					result[i]= new CPPTemplateNonTypeArgument(expr.getEvaluation(), expr);
+				} else if (arg instanceof ICPPASTAmbiguousTemplateArgument) {
+					IProblemBinding problem = new ProblemBinding(id, IProblemBinding.SEMANTIC_INVALID_TEMPLATE_ARGUMENTS);
+					throw new DOMException(problem);
 				} else {
 					throw new IllegalArgumentException("Unexpected type: " + arg.getClass().getName()); //$NON-NLS-1$
 				}

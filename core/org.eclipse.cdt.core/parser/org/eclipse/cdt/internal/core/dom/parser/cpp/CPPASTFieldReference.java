@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -276,7 +277,11 @@ public class CPPASTFieldReference extends ASTNode
 			n= ns[ns.length - 1];
 		}
 		if (n instanceof ICPPASTTemplateId) {
-			args= CPPTemplates.createTemplateArgumentArray((ICPPASTTemplateId) n);
+			try {
+				args= CPPTemplates.createTemplateArgumentArray((ICPPASTTemplateId) n);
+			} catch (DOMException e) {
+				return EvalFixed.INCOMPLETE;
+			}
 		}		
 		return new EvalID(ownerEval, qualifier, name.getSimpleID(), false, true, args);
 	}

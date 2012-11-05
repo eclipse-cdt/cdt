@@ -196,7 +196,11 @@ public class EvalID extends CPPEvaluation {
 			ICPPTemplateArgument[] templateArgs = null;
 			final IASTName lastName = name.getLastName();
 			if (lastName instanceof ICPPASTTemplateId) {
-				templateArgs= CPPTemplates.createTemplateArgumentArray((ICPPASTTemplateId) lastName);
+				try {
+					templateArgs= CPPTemplates.createTemplateArgumentArray((ICPPASTTemplateId) lastName);
+				} catch (DOMException e) {
+					return EvalFixed.INCOMPLETE;
+				}
 			}
 			return new EvalID(fieldOwner, owner, name.getSimpleID(), isAddressOf(expr),
 					name instanceof ICPPASTQualifiedName, templateArgs);

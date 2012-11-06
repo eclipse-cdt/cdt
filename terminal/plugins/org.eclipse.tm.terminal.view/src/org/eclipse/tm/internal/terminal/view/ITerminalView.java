@@ -10,8 +10,11 @@
  * Martin Oberhuber (Wind River) - [227537] moved actions from terminal.view to terminal plugin
  * Michael Scharf (Wind River) - [172483] switch between connections
  * Michael Scharf (Wind River) - [240023] Get rid of the terminal's "Pin" button
+ * Kris De Volder (VMWare) - [392092] Extend ITerminalView API to allow programmatically opening a UI-less connector
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.view;
+
+import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
 
 public interface ITerminalView {
 
@@ -19,10 +22,21 @@ public interface ITerminalView {
 	 * Create a new terminal connection within the view.
 	 */
 	void onTerminalNewTerminal();
+
 	/**
-	 * Create a new Terminal view. 
+	 * Programmatically create a new terminal connection within the view. This method
+	 * does the same thing as onTerminalNewTerminal, but instead of popping up a settings
+	 * dialog to allow the user fill in connection details, a connector is provided as
+	 * a parameter. The connector should have all of its details pre-configured so it can
+	 * be opened without requiring user input.
+	 */
+	void newTerminal(ITerminalConnector c);
+
+	/**
+	 * Create a new Terminal view.
 	 */
 	void onTerminalNewView();
+
 	void onTerminalConnect();
 	void onTerminalDisconnect();
 	void onTerminalSettings();

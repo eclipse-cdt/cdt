@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Intel Corporation - initial API and implementation
- *     QNX Software Systems - [272416] Rework the config sets dialog 
+ *     QNX Software Systems - [272416] Rework the config sets dialog
  *     Freescale Semiconductor - [392954] disable the action if only invalid working sets exist
  *******************************************************************************/
 package org.eclipse.cdt.ui.actions;
@@ -28,12 +28,13 @@ import org.eclipse.cdt.internal.ui.workingsets.WorkingSetConfigurationDialog;
 /**
  */
 public class WorkingSetConfigAction implements IWorkbenchWindowActionDelegate, IPropertyChangeListener {
-	private static final IWorkingSetManager wsm = CUIPlugin.getDefault().getWorkbench().getWorkingSetManager();  
-	private boolean enabled = true;
 	
+	private static final IWorkingSetManager wsm = CUIPlugin.getDefault().getWorkbench().getWorkingSetManager();
+	private boolean enabled = true;
 	private IWorkbenchWindow window;
 	private IAction action;
-	
+
+	@Override
 	public void run(IAction action) {
 		this.action = action;
 		checkWS();
@@ -41,15 +42,19 @@ public class WorkingSetConfigAction implements IWorkbenchWindowActionDelegate, I
 			new WorkingSetConfigurationDialog(window.getShell()).open();
 		}
 	}
-	
+
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		this.action = action;
 		checkWS();
 	}
+
+	@Override
 	public void dispose() {
 		wsm.removePropertyChangeListener(this);
-		
 	}
+
+	@Override
 	public void init(IWorkbenchWindow window) {
 		this.window = window;
 		wsm.addPropertyChangeListener(this);
@@ -72,6 +77,7 @@ public class WorkingSetConfigAction implements IWorkbenchWindowActionDelegate, I
 		}
 	}
 
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		checkWS();
 	}

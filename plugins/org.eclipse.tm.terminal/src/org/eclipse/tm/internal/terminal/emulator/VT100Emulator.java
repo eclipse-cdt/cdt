@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2011 Wind River Systems, Inc. and others.
+ * Copyright (c) 2003, 2012 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@
  * Martin Oberhuber (Wind River) - [168197] Fix Terminal for CDC-1.1/Foundation-1.1
  * Michael Scharf (Wind River) - [262996] get rid of TerminalState.OPENED
  * Martin Oberhuber (Wind River) - [334969] Fix multi-command SGR sequence
+ * Kris De Volder (VMWare) - [392107] Switched interpretation for ESC[0K and ESC[1K sequences
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.emulator;
 
@@ -664,13 +665,13 @@ public class VT100Emulator implements ControlListener {
 
 		switch (ansiParameter) {
 		case 0:
-			// Erase from beginning to current position (inclusive).
-			text.eraseLineToCursor();
+			// Erase from current position to end (inclusive).
+			text.eraseLineToEnd();
 			break;
 
 		case 1:
-			// Erase from current position to end (inclusive).
-			text.eraseLineToEnd();
+			// Erase from beginning to current position (inclusive).
+			text.eraseLineToCursor();
 			break;
 
 		case 2:

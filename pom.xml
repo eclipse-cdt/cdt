@@ -216,22 +216,25 @@
     <module>releng/org.eclipse.tm.repo</module>
 <!--    <module>releng/org.eclipse.tm.releng.test-feature</module>                                                                                                                     
 -->
-    <module>terminal/org.eclipse.tm.terminal</module>
-    <module>terminal/org.eclipse.tm.terminal-feature</module>
-    <module>terminal/org.eclipse.tm.terminal.local</module>
-    <module>terminal/org.eclipse.tm.terminal.local-feature</module>
-    <module>terminal/org.eclipse.tm.terminal.local.sdk-feature</module>
-    <module>terminal/org.eclipse.tm.terminal.sdk-feature</module>
-    <module>terminal/org.eclipse.tm.terminal.serial</module>
-    <module>terminal/org.eclipse.tm.terminal.serial-feature</module>
-    <module>terminal/org.eclipse.tm.terminal.ssh</module>
-    <module>terminal/org.eclipse.tm.terminal.ssh-feature</module>
-    <module>terminal/org.eclipse.tm.terminal.telnet</module>
-    <module>terminal/org.eclipse.tm.terminal.telnet-feature</module>
-    <module>terminal/org.eclipse.tm.terminal.test</module>
-    <module>terminal/org.eclipse.tm.terminal.test-feature</module>
-    <module>terminal/org.eclipse.tm.terminal.view</module>
-    <module>terminal/org.eclipse.tm.terminal.view-feature</module>
+    <module>terminal/plugins/org.eclipse.tm.terminal</module>
+    <module>terminal/plugins/org.eclipse.tm.terminal.serial</module>
+    <module>terminal/plugins/org.eclipse.tm.terminal.ssh</module>
+    <module>terminal/plugins/org.eclipse.tm.terminal.telnet</module>
+    <module>terminal/plugins/org.eclipse.tm.terminal.view</module>
+    <module>terminal/plugins/org.eclipse.tm.terminal.local</module>
+    <module>terminal/plugins/org.eclipse.tm.terminal.test</module>
+
+    <module>terminal/features/org.eclipse.tm.terminal-feature</module>
+    <module>terminal/features/org.eclipse.tm.terminal.serial-feature</module>
+    <module>terminal/features/org.eclipse.tm.terminal.ssh-feature</module>
+    <module>terminal/features/org.eclipse.tm.terminal.telnet-feature</module>
+    <module>terminal/features/org.eclipse.tm.terminal.view-feature</module>
+    <module>terminal/features/org.eclipse.tm.terminal.core.sdk-feature</module>
+    <module>terminal/features/org.eclipse.tm.terminal.sdk-feature</module>
+    <module>terminal/features/org.eclipse.tm.terminal.local-feature</module>
+    <module>terminal/features/org.eclipse.tm.terminal.local.sdk-feature</module>
+    <module>terminal/features/org.eclipse.tm.terminal.test-feature</module>
+	
     <module>rse/tests/org.eclipse.rse.tests</module>
     <module>rse/tests/org.eclipse.rse.tests-feature</module>
     <module>rse/tests/org.eclipse.rse.tests.framework</module>

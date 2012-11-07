@@ -74,34 +74,32 @@ public class MapEntrySourceContainer extends AbstractSourceContainer {
 	public static IPath createPath(String path) {
 		if (path == null)
 			return null;
-		if (path.contains("\\")) { //$NON-NLS-1$
-			// handle Windows slashes and canonicalize
-			path = path.replaceAll("\\\\", "/"); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		
-		// also check for device or UNC
-		int firstSep = path.indexOf("/"); //$NON-NLS-1$
-		int idx = path.indexOf(":"); //$NON-NLS-1$
-		// ':' indicates a Windows device separator if it comes before
-		// the first segment separator
-		if (idx > 0 && (firstSep < 0 || idx < firstSep)) {
-			String device = path.substring(0, idx + 1);
-			path = path.substring(idx + 1);
-			return new Path(path).setDevice(device);
-		} else {
-			// Cygwin or UNC path
-			if (path.startsWith("//")) { //$NON-NLS-1$
-				String network;
-				idx = path.indexOf("/", 2); //$NON-NLS-1$
-				if (idx > 0) {
-					network = path.substring(0, idx);
-					path = path.substring(idx);
-				} else {
-					network = path;
-					path = ""; //$NON-NLS-1$
-				}
-				return new Path(network, path).makeUNC(true);
+
+		// Check for windows full-path formatting.
+		if (path.matches("^([a-zA-Z])[:](.*)$")) { //$NON-NLS-1$
+			String device = null;
+			String missingfile = path.replace("\\", "/"); //$NON-NLS-1$ //$NON-NLS-2$
+			int idx = missingfile.indexOf(":"); //$NON-NLS-1$
+			if ( idx > 0 ) {
+				device = missingfile.substring(0, idx + 1);
+				missingfile = missingfile.substring(idx + 1);
 			}
+			return new Path(device, missingfile);
+		}		
+
+		int idx = 0;
+		// Cygwin or UNC path
+		if (path.startsWith("//")) { //$NON-NLS-1$
+			String network;
+			idx = path.indexOf("/", 2); //$NON-NLS-1$
+			if (idx > 0) {
+				network = path.substring(0, idx);
+				path = path.substring(idx);
+			} else {
+				network = path;
+				path = ""; //$NON-NLS-1$
+			}
+			return new Path(network, path).makeUNC(true);
 		}		
 		
 		// fallthrough

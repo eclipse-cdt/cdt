@@ -37,7 +37,7 @@ public class MapEntrySourceContainerType extends AbstractSourceContainerTypeDele
 			Element element = (Element)node;
 			if (ELEMENT_NAME.equals(element.getNodeName())) {
 				String path = element.getAttribute(BACKEND_PATH);
-				IPath backend = new Path(path);
+				IPath backend = MapEntrySourceContainer.createPath(path);
 				if (!backend.isValidPath(path)) {
 					abort(InternalSourceLookupMessages.MapEntrySourceContainerType_0, null);
 				}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -312,8 +312,8 @@ public class CPPASTFunctionCallExpression extends ASTNode
 			IBinding b= name.resolvePreBinding();
 			if (b instanceof IType) {
 				ICPPEvaluation[] args= new ICPPEvaluation[fArguments.length];
-				for (int i = 1; i < args.length; i++) {
-					args[i]= ((ICPPASTExpression) fArguments[i]).getEvaluation();
+				for (int i = 0; i < args.length; i++) {
+					args[i]= ((ICPPASTInitializerClause) fArguments[i]).getEvaluation();
 				}
 				return new EvalTypeId((IType) b, args);
 			}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 QNX Software Systems and others.
+ * Copyright (c) 2004, 2012 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  * QNX Software Systems - Initial API and implementation
  * Nokia - https://bugs.eclipse.org/bugs/show_bug.cgi?id=145606
  * QNX Software Systems - Catchpoints support https://bugs.eclipse.org/bugs/show_bug.cgi?id=226689
+ *  Scott Tepavich (WindRiver) -  Fixed bad reference to messages.properties string (Bug 393178)
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.breakpoints;
 
@@ -567,7 +568,7 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
             } else if (!isReadType && isWriteType) {
                 return BreakpointsMessages.getString("CBreakpointPropertyPage.breakpointType_watchpoint_label"); //$NON-NLS-1$
             } else {
-                return BreakpointsMessages.getString("CBreakpointPropertyPage.watchpointType_breakpointType_watchpoint_access_label"); //$NON-NLS-1$
+                return BreakpointsMessages.getString("CBreakpointPropertyPage.breakpointType_watchpoint_access_label"); //$NON-NLS-1$
             }
 	    }
 	    

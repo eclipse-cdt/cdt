@@ -102,7 +102,7 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 		return hasDeclaration != 0;
 	}
 	
-	public void addDeclaration(PDOMName name) throws CoreException {
+	public final void addDeclaration(PDOMName name) throws CoreException {
 		PDOMName first = getFirstDeclaration();
 		if (first != null) {
 			first.setPrevInBinding(name);
@@ -111,7 +111,7 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 		setFirstDeclaration(name);
 	}
 	
-	public void addDefinition(PDOMName name) throws CoreException {
+	public final void addDefinition(PDOMName name) throws CoreException {
 		PDOMName first = getFirstDefinition();
 		if (first != null) {
 			first.setPrevInBinding(name);
@@ -120,7 +120,7 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 		setFirstDefinition(name);
 	}
 	
-	public void addReference(PDOMName name) throws CoreException {
+	public final void addReference(PDOMName name) throws CoreException {
 		PDOMName first = getFirstReference();
 		if (first != null) {
 			first.setPrevInBinding(name);

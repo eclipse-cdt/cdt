@@ -89,6 +89,7 @@ public class TypeHierarchyAcrossProjectsTest extends TypeHierarchyBaseTest {
 		String header= content[0].toString();
 		String source = content[1].toString();
 		IFile headerFile= createFile(fCProject.getProject(), "simpleHeader.h", header);
+		waitUntilFileIsIndexed(fIndex, headerFile);
 		IFile sourceFile= createFile(fCProject2.getProject(), "simple.cpp", source);
 		waitUntilFileIsIndexed(fIndex, sourceFile);
 		

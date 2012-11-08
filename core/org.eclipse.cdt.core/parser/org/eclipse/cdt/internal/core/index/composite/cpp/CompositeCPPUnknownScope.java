@@ -10,18 +10,18 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexName;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownScope;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownTypeScope;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 
-public class CompositeCPPUnknownScope extends CPPUnknownScope implements IIndexScope {
-	private CompositeCPPBinding fBinding;
+public class CompositeCPPUnknownScope extends CPPUnknownTypeScope implements IIndexScope {
 
-	public CompositeCPPUnknownScope(CompositeCPPBinding binding, IASTName name) {
-		super((ICPPUnknownBinding) binding, name);
-		fBinding= binding;
+	public CompositeCPPUnknownScope(IIndexBinding binding, IASTName name) {
+		super((IType) binding, name);
 	}
 
 	@Override
@@ -31,11 +31,15 @@ public class CompositeCPPUnknownScope extends CPPUnknownScope implements IIndexS
 	
 	@Override
 	public IIndexScope getParent() {
-		return fBinding.getScope();
+		try {
+			return (IIndexScope) super.getParent();
+		} catch (DOMException e) {
+			return null;
+		}
 	}
 	
 	@Override
-	public CompositeCPPBinding getScopeBinding() {
-		return fBinding;
+	public IIndexBinding getScopeBinding() {
+		return (IIndexBinding) super.getScopeType();
 	}
 }

@@ -12,23 +12,20 @@
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.index.IIndexFile;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredClassInstance;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownTypeScope;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownField;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.core.runtime.CoreException;
 
-public class PDOMCPPDeferredClassInstance extends CPPDeferredClassInstance implements IIndexFragmentBinding {
+public class PDOMCPPUnknownField extends CPPUnknownField implements IIndexFragmentBinding {
 	private final IIndexFragment fFragment;
 
-	public PDOMCPPDeferredClassInstance(IIndexFragment frag, ICPPClassTemplate template, ICPPTemplateArgument[] args) {
-		super(template, args);
+	public PDOMCPPUnknownField(IIndexFragment frag, IType owner, char[] name) {
+		super(owner, name);
 		fFragment= frag;
 	}
 
@@ -59,7 +56,7 @@ public class PDOMCPPDeferredClassInstance extends CPPDeferredClassInstance imple
 
 	@Override
 	public int getBindingConstant() {
-		return IIndexCPPBindingConstants.CPP_DEFERRED_CLASS_INSTANCE;
+		return IIndexCPPBindingConstants.CPP_UNKNOWN_FIELD;
 	}
 
 	@Override
@@ -79,10 +76,5 @@ public class PDOMCPPDeferredClassInstance extends CPPDeferredClassInstance imple
 		} catch (DOMException e) {
 			return null;
 		}
-	}
-	
-	@Override
-	protected CPPUnknownTypeScope createScope() {
-		return new PDOMCPPUnknownScope(this, new CPPASTName(getNameCharArray()));
 	}
 }

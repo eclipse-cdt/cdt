@@ -33,6 +33,7 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
@@ -40,7 +41,9 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecializationSpecialization;
@@ -76,17 +79,18 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPArrayType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClosureType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPParameterPackType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPQualifierType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPReferenceType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownClassInstance;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownMember;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownClassInstance;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownClassType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalBinary;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalBinaryTypeId;
@@ -261,11 +265,6 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		return pdomBinding;
 	}
 
-	@Override
-	public PDOMBinding addPotentiallyUnknownBinding(IBinding binding) throws CoreException {
-		return addBinding(binding, null);
-	}
-
 	/**
 	 * Adds or returns existing binding for the given one. If <code>fromName</code> is not <code>null</code>
 	 * then an existing binding is updated with the properties of the name.
@@ -352,6 +351,8 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		// template parameters are created directly by their owners.
 		if (binding instanceof ICPPTemplateParameter)
 			return null;
+		if (binding instanceof ICPPUnknownBinding) 
+			return null;
 
 		if (binding instanceof ICPPSpecialization) {
 			IBinding specialized = ((ICPPSpecialization) binding).getSpecializedBinding();
@@ -367,15 +368,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		} else if (binding instanceof ICPPClassTemplate) {
 			pdomBinding= new PDOMCPPClassTemplate(this, parent, (ICPPClassTemplate) binding);
 		} else if (binding instanceof ICPPClassType) {
-			if (binding instanceof ICPPUnknownClassInstance) {
-				pdomBinding= new PDOMCPPUnknownClassInstance(this, parent, (ICPPUnknownClassInstance) binding);
-			} else if (binding instanceof ICPPUnknownClassType) {
-				pdomBinding= new PDOMCPPUnknownClassType(this, parent, (ICPPUnknownClassType) binding);
-			} else {
-				pdomBinding= new PDOMCPPClassType(this, parent, (ICPPClassType) binding);
-			}
-		} else if (binding instanceof ICPPUnknownBinding) {
-			pdomBinding= new PDOMCPPUnknownBinding(this, parent, (ICPPUnknownBinding) binding);
+			pdomBinding= new PDOMCPPClassType(this, parent, (ICPPClassType) binding);
 		} else if (binding instanceof ICPPVariable) {
 			ICPPVariable var= (ICPPVariable) binding;
 			pdomBinding = new PDOMCPPVariable(this, parent, var);
@@ -443,11 +436,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 	private PDOMBinding createSpecialization(PDOMNode parent, PDOMBinding orig, IBinding special)
 			throws CoreException, DOMException {
 		PDOMBinding result= null;
-		if (special instanceof ICPPDeferredClassInstance) {
-			if (orig instanceof ICPPClassTemplate) {
-				result= new PDOMCPPDeferredClassInstance(this,	parent, (ICPPDeferredClassInstance) special, orig);
-			}
-		} else if (special instanceof ICPPTemplateInstance) {
+		if (special instanceof ICPPTemplateInstance) {
 			if (special instanceof ICPPConstructor && orig instanceof ICPPConstructor) {
 				result= new PDOMCPPConstructorInstance(this, parent, (ICPPConstructor) special, orig);
 			} else if (special instanceof ICPPMethod && orig instanceof ICPPMethod) {
@@ -527,7 +516,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		if (binding instanceof ICPPSpecialization) {
 			if (binding instanceof ICPPTemplateInstance) {
 				if (binding instanceof ICPPDeferredClassInstance) {
-					return CPP_DEFERRED_CLASS_INSTANCE;
+					return 0;
 				} else if (binding instanceof ICPPConstructor) {
 					return CPP_CONSTRUCTOR_INSTANCE;
 				} else if (binding instanceof ICPPMethod) {
@@ -594,11 +583,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		} else if (binding instanceof ICPPFunction) {
 			return CPPFUNCTION;
 		} else if (binding instanceof ICPPUnknownBinding) {
-			if (binding instanceof ICPPUnknownClassInstance) {
-				return CPP_UNKNOWN_CLASS_INSTANCE;
-			} else if (binding instanceof ICPPUnknownClassType) {
-				return CPP_UNKNOWN_CLASS_TYPE;
-			}
+			return 0;
 		} else if (binding instanceof ICPPClassTemplate) {
 			// this must be before class type
 			return CPP_CLASS_TEMPLATE;
@@ -812,14 +797,6 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			return new PDOMCPPConstructorInstance(this, record);
 		case CPP_CLASS_INSTANCE:
 			return new PDOMCPPClassInstance(this, record);
-		case CPP_DEFERRED_CLASS_INSTANCE:
-			return new PDOMCPPDeferredClassInstance(this, record);
-		case CPP_UNKNOWN_BINDING:
-			return new PDOMCPPUnknownBinding(this, record);
-		case CPP_UNKNOWN_CLASS_TYPE:
-			return new PDOMCPPUnknownClassType(this, record);
-		case CPP_UNKNOWN_CLASS_INSTANCE:
-			return new PDOMCPPUnknownClassInstance(this, record);
 		case CPP_TEMPLATE_TYPE_PARAMETER:
 			return new PDOMCPPTemplateTypeParameter(this, record);
 		case CPP_TEMPLATE_TEMPLATE_PARAMETER:
@@ -869,24 +846,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 	    	parentNode = parentNode.getParent();
 		}
 		if (parentNode instanceof ICPPASTBaseSpecifier) {
-			PDOMName derivedClassName= (PDOMName) pdomName.getEnclosingDefinition();
-			if (derivedClassName != null) {
-				ICPPASTBaseSpecifier baseNode= (ICPPASTBaseSpecifier) parentNode;
-				PDOMBinding derivedClassBinding= derivedClassName.getBinding();
-				if (derivedClassBinding instanceof PDOMCPPClassType) {
-					PDOMCPPClassType ownerClass = (PDOMCPPClassType) derivedClassBinding;
-					PDOMCPPBase pdomBase = new PDOMCPPBase(this, pdomName, baseNode.isVirtual(),
-							baseNode.getVisibility());
-					ownerClass.addBase(pdomBase);
-					pdomName.setIsBaseSpecifier();
-				} else if (derivedClassBinding instanceof PDOMCPPClassSpecialization) {
-					PDOMCPPClassSpecialization ownerClass = (PDOMCPPClassSpecialization) derivedClassBinding;
-					PDOMCPPBase pdomBase = new PDOMCPPBase(this, pdomName, baseNode.isVirtual(),
-							baseNode.getVisibility());
-					ownerClass.addBase(pdomBase);
-					pdomName.setIsBaseSpecifier();
-				}
-			}
+			pdomName.setIsBaseSpecifier();
 		} else if (parentNode instanceof ICPPASTUsingDirective) {
 			IASTNode parent= name.getParent();
 			if (parent instanceof ICPPASTQualifiedName) {
@@ -899,8 +859,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			IASTNode node= ASTInternal.getPhysicalNodeOfScope(container);
 			if (node instanceof IASTTranslationUnit) {
 				doit= true;
-			}
-			else if (node instanceof ICPPASTNamespaceDefinition) {
+			} else if (node instanceof ICPPASTNamespaceDefinition) {
 				ICPPASTNamespaceDefinition nsDef= (ICPPASTNamespaceDefinition) node;
 				IASTName nsContainerName= nsDef.getName();
 				if (nsContainerName != null) {
@@ -950,6 +909,24 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			if (nsdef.isInline()) {
 				pdomName.setIsInlineNamespace();
 			}
+		} else if (parentNode instanceof ICPPASTCompositeTypeSpecifier) {
+			IBinding classBinding = name.resolveBinding();
+			if (classBinding instanceof ICPPClassType) {
+				ICPPBase[] bases;
+				if (classBinding instanceof ICPPClassSpecialization) {
+					bases= ((ICPPClassSpecialization) classBinding).getBases(name);
+				} else {
+					bases= ((ICPPClassType) classBinding).getBases();
+				}
+				if (bases.length > 0) {
+					PDOMBinding pdomBinding = pdomName.getBinding();
+					if (pdomBinding instanceof PDOMCPPClassType) {
+						((PDOMCPPClassType) pdomBinding).addBases(pdomName, bases);
+					} else if (pdomBinding instanceof PDOMCPPClassSpecialization) {
+						((PDOMCPPClassSpecialization) pdomBinding).addBases(pdomName, bases);
+					}
+				}
+			}
 		}
 	}
 
@@ -972,20 +949,6 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 	@Override
 	public void onDeleteName(PDOMName pdomName) throws CoreException {
 		super.onDeleteName(pdomName);
-
-		if (pdomName.isBaseSpecifier()) {
-			PDOMName derivedClassName= (PDOMName) pdomName.getEnclosingDefinition();
-			if (derivedClassName != null) {
-				PDOMBinding derivedClassBinding= derivedClassName.getBinding();
-				if (derivedClassBinding instanceof PDOMCPPClassType) {
-					PDOMCPPClassType ownerClass = (PDOMCPPClassType)derivedClassBinding;
-					ownerClass.removeBase(pdomName);
-				} else if (derivedClassBinding instanceof PDOMCPPClassSpecialization) {
-					PDOMCPPClassSpecialization ownerClass = (PDOMCPPClassSpecialization)derivedClassBinding;
-					ownerClass.removeBase(pdomName);
-				}
-			}
-		}
 		if (pdomName.isFriendSpecifier()) {
 			PDOMName enclClassName = (PDOMName) pdomName.getEnclosingDefinition();
 			if (enclClassName != null) {
@@ -994,6 +957,13 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 					PDOMCPPClassType ownerClass = (PDOMCPPClassType) enclClassBinding;
 					ownerClass.removeFriend(pdomName);
 				}
+			}
+		} else if (pdomName.isDefinition()) {
+			PDOMBinding binding = pdomName.getBinding();
+			if (binding instanceof PDOMCPPClassType) {
+				((PDOMCPPClassType) binding).removeBases(pdomName);
+			} else if (binding instanceof PDOMCPPClassSpecialization) {
+				((PDOMCPPClassSpecialization) binding).removeBases(pdomName);
 			}
 		}
 	}
@@ -1065,6 +1035,30 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			return CPPPointerToMemberType.unmarshal(firstByte, buffer);
 		case ITypeMarshalBuffer.DEPENDENT_EXPRESSION_TYPE:
 			return TypeOfDependentExpression.unmarshal(firstByte, buffer);
+		case ITypeMarshalBuffer.UNKNOWN_MEMBER: 
+			IBinding binding= CPPUnknownMember.unmarshal(getPDOM(), firstByte, buffer);
+			if (binding instanceof IType)
+				return (IType) binding;
+			break;
+		case ITypeMarshalBuffer.UNKNOWN_MEMBER_CLASS_INSTANCE:
+			return CPPUnknownClassInstance.unmarshal(getPDOM(), firstByte, buffer);
+		case ITypeMarshalBuffer.DEFERRED_CLASS_INSTANCE:
+			return CPPDeferredClassInstance.unmarshal(getPDOM(), firstByte, buffer);
+		}
+
+		throw new CoreException(CCorePlugin.createStatus("Cannot unmarshal a type, first byte=" + firstByte)); //$NON-NLS-1$
+	}
+
+	@Override
+	public IBinding unmarshalBinding(ITypeMarshalBuffer buffer) throws CoreException {
+		int firstByte= buffer.getByte();
+		switch ((firstByte & ITypeMarshalBuffer.KIND_MASK)) {
+		case ITypeMarshalBuffer.UNKNOWN_MEMBER:
+			return CPPUnknownMember.unmarshal(getPDOM(), firstByte, buffer);
+		case ITypeMarshalBuffer.UNKNOWN_MEMBER_CLASS_INSTANCE:
+			return CPPUnknownClassInstance.unmarshal(getPDOM(), firstByte, buffer);
+		case ITypeMarshalBuffer.DEFERRED_CLASS_INSTANCE:
+			return CPPDeferredClassInstance.unmarshal(getPDOM(), firstByte, buffer);
 		}
 
 		throw new CoreException(CCorePlugin.createStatus("Cannot unmarshal a type, first byte=" + firstByte)); //$NON-NLS-1$

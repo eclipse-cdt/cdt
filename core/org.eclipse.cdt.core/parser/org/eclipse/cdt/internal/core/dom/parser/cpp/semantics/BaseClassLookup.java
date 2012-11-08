@@ -255,7 +255,7 @@ class BaseClassLookup {
 			if (nbase instanceof IProblemBinding) 
 				continue;
 
-			final IName nbaseName = nbase.getBaseClassSpecifierName();
+			final IName nbaseName = nbase.getClassDefinitionName();
 			int cmp= baseName == null ? 0 : CPPSemantics.compareByRelevance(data, baseName, nbaseName);
 			if (cmp <= 0) {
 				if (cmp < 0) {

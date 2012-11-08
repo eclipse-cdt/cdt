@@ -29,13 +29,12 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 /**
  * Represents a C++ class, declaration of which is not yet available.
  */
-public class CPPUnknownClass extends CPPUnknownBinding implements ICPPUnknownClassType {
-	public static CPPUnknownClass createUnnamedInstance() {
-    	return new CPPUnknownClass(null, CharArrayUtils.EMPTY);
+public class CPPUnknownMemberClass extends CPPUnknownMember implements ICPPUnknownMemberClass {
+	public static CPPUnknownMemberClass createUnnamedInstance() {
+    	return new CPPUnknownMemberClass(null, CharArrayUtils.EMPTY);
     }
-    
-    public CPPUnknownClass(IBinding binding, char[] name) {
-        super(binding, name);
+    public CPPUnknownMemberClass(IType owner, char[] name) {
+    	super(owner, name);
     }
 
     @Override
@@ -101,15 +100,13 @@ public class CPPUnknownClass extends CPPUnknownBinding implements ICPPUnknownCla
 		if (type instanceof ITypedef) 
 			return type.isSameType(this);
 		
-		if (type instanceof ICPPUnknownClassType 
-				&& !(type instanceof ICPPUnknownClassInstance)
-				&& !(type instanceof ICPPDeferredClassInstance)) {
-			ICPPUnknownClassType rhs= (ICPPUnknownClassType) type;
+		if (type instanceof ICPPUnknownMemberClass && !(type instanceof ICPPUnknownMemberClassInstance)) {
+			ICPPUnknownMemberClass rhs= (ICPPUnknownMemberClass) type;
 			if (CharArrayUtils.equals(getNameCharArray(), rhs.getNameCharArray())) {
-				final IBinding lhsContainer = getOwner();
-				final IBinding rhsContainer = rhs.getOwner();
-				if (lhsContainer instanceof IType && rhsContainer instanceof IType) {
-					return ((IType) lhsContainer).isSameType((IType) rhsContainer);
+				final IType lhsContainer = getOwnerType();
+				final IType rhsContainer = rhs.getOwnerType();
+				if (lhsContainer != null && rhsContainer != null) {
+					return lhsContainer.isSameType(rhsContainer);
 				}
 			}
 		}

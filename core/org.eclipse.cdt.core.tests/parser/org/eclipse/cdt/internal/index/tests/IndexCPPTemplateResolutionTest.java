@@ -2034,4 +2034,16 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	public void testSFINAE_b() throws Exception {
 		checkBindings();
 	}
+	
+	//	struct CString {
+	//	    template<template<class,class> class ListT, class UType, class Alloc, typename StringT>
+	//	    void split(ListT<UType,Alloc>& out, const StringT& sep, bool keepEmptyElements = false, bool trimElements = true, bool emptyBefore = true) const;
+	//	};
+	
+	//	template<template<class,class> class ListT, class UType, class Alloc, class StringT>
+	//	void CString::split(ListT<UType,Alloc>& out, const StringT& sep, bool keepEmptyElements, bool trimElements, bool emptyBefore) const {
+	//	}
+	public void testMemberOfTemplateTemplateParameter_Bug381824() throws Exception {
+		checkBindings();
+	}
 }

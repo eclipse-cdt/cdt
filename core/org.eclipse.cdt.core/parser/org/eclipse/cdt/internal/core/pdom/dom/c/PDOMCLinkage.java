@@ -325,6 +325,10 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 		return addBinding(type, null);
 	}
 
+	@Override
+	public IBinding unmarshalBinding(ITypeMarshalBuffer buffer) throws CoreException {
+		throw new CoreException(CCorePlugin.createStatus("Cannot unmarshal a binding, first byte=" + buffer.getByte())); //$NON-NLS-1$
+	}
 	
 	@Override
 	public IType unmarshalType(ITypeMarshalBuffer buffer) throws CoreException {

@@ -141,35 +141,48 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 		long rec = base != null ? base.getRecord() : 0;
 		getDB().putRecPtr(record + FIRSTBASE, rec);
 	}
-
-	public void addBase(PDOMCPPBase base) throws CoreException {
+	
+	public void addBases(PDOMName classDefName, ICPPBase[] bases) throws CoreException {
 		getPDOM().removeCachedResult(record+PDOMCPPLinkage.CACHE_BASES);
+		final PDOMLinkage linkage = getLinkage();
 		PDOMCPPBase firstBase = getFirstBase();
-		base.setNextBase(firstBase);
-		setFirstBase(base);
+		for (ICPPBase base : bases) {
+			PDOMCPPBase nextBase= new PDOMCPPBase(linkage, base, classDefName);
+			nextBase.setNextBase(firstBase);
+			firstBase= nextBase;
+		}
+		setFirstBase(firstBase);
 	}
 
-	public void removeBase(PDOMName pdomName) throws CoreException {
+	public void removeBases(PDOMName classDefName) throws CoreException {
 		getPDOM().removeCachedResult(record+PDOMCPPLinkage.CACHE_BASES);
-
 		PDOMCPPBase base= getFirstBase();
 		PDOMCPPBase predecessor= null;
-		long nameRec= pdomName.getRecord();
+		long nameRec= classDefName.getRecord();
+		boolean deleted= false;
 		while (base != null) {
-			PDOMName name = base.getBaseClassSpecifierName();
-			if (name != null && name.getRecord() == nameRec) {
-				break;
+			PDOMCPPBase nextBase = base.getNextBase();
+			long classDefRec= getDB().getRecPtr(base.getRecord() + PDOMCPPBase.CLASS_DEFINITION);
+			if (classDefRec == nameRec) {
+				deleted= true;
+				base.delete();
+			} else if (deleted) {
+				deleted= false;
+				if (predecessor == null) {
+					setFirstBase(base);
+				} else {
+					predecessor.setNextBase(base);
+				}
+				predecessor= base;
 			}
-			predecessor= base;
-			base= base.getNextBase();
+			base= nextBase;
 		}
-		if (base != null) {
-			if (predecessor != null) {
-				predecessor.setNextBase(base.getNextBase());
+		if (deleted) {
+			if (predecessor == null) {
+				setFirstBase(null);
 			} else {
-				setFirstBase(base.getNextBase());
+				predecessor.setNextBase(null);
 			}
-			base.delete();
 		}
 	}
 	

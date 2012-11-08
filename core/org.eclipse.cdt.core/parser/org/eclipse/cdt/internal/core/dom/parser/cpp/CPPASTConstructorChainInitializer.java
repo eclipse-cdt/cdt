@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICPPASTCompletionContext;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
@@ -175,7 +176,9 @@ public class CPPASTConstructorChainInitializer extends ASTNode implements
 				if (method instanceof ICPPMethod) {
 					ICPPClassType cls= ((ICPPMethod) method).getClassOwner();
 					for (ICPPBase base : ClassTypeHelper.getBases(cls, fdef)) {
-						result.put(base.getBaseClassSpecifierName().getSimpleID());
+						IType baseType= base.getBaseClassType();
+						if (baseType instanceof IBinding)
+							result.put(((IBinding) baseType).getNameCharArray());
 					}
 					return result;
 				}

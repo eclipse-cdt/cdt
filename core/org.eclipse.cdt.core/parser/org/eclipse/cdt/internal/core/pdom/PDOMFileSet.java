@@ -20,7 +20,7 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
 import org.eclipse.core.runtime.CoreException;
 
 public class PDOMFileSet implements IIndexFragmentFileSet {
-	private HashSet<Long> fFileIDs= new HashSet<Long>();
+	private final HashSet<Long> fFileIDs= new HashSet<Long>();
 	
 	@Override
 	public void add(IIndexFragmentFile fragFile) {
@@ -36,8 +36,11 @@ public class PDOMFileSet implements IIndexFragmentFileSet {
 
 	@Override
 	public boolean containsFileOfLocalBinding(IIndexFragmentBinding fb) throws CoreException {
-		PDOMBinding pdomBinding= (PDOMBinding) fb;
-		return fFileIDs.contains(pdomBinding.getLocalToFileRec());
+		if (fb instanceof PDOMBinding) {
+			PDOMBinding pdomBinding= (PDOMBinding) fb;
+			return fFileIDs.contains(pdomBinding.getLocalToFileRec());
+		} 
+		return false;
 	}
 
 	@Override

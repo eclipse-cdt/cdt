@@ -12,21 +12,24 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
-import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
+import org.eclipse.cdt.internal.core.index.IIndexFragment;
+import org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPUnknownMemberClassInstance;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * Represents a partially instantiated C++ class template, declaration of which is not yet available.
  *
  * @author Sergey Prigogin
  */
-public class CPPUnknownClassInstance extends CPPUnknownClass implements ICPPUnknownClassInstance {
+public class CPPUnknownClassInstance extends CPPUnknownMemberClass implements ICPPUnknownMemberClassInstance {
 	private final ICPPTemplateArgument[] arguments;
 
-	public CPPUnknownClassInstance(ICPPUnknownBinding scopeBinding, char[] name, ICPPTemplateArgument[] arguments) {
+	public CPPUnknownClassInstance(IType scopeBinding, char[] name, ICPPTemplateArgument[] arguments) {
 		super(scopeBinding, name);
 		this.arguments = arguments;
 	}
@@ -50,8 +53,8 @@ public class CPPUnknownClassInstance extends CPPUnknownClass implements ICPPUnkn
 			return type.isSameType(this);
 		}
 		
-		if (type instanceof ICPPUnknownClassInstance) { 
-			ICPPUnknownClassInstance rhs= (ICPPUnknownClassInstance) type;
+		if (type instanceof ICPPUnknownMemberClassInstance) { 
+			ICPPUnknownMemberClassInstance rhs= (ICPPUnknownMemberClassInstance) type;
 			if (CharArrayUtils.equals(getNameCharArray(), rhs.getNameCharArray())) {
 				ICPPTemplateArgument[] lhsArgs= getArguments();
 				ICPPTemplateArgument[] rhsArgs= rhs.getArguments();
@@ -67,13 +70,36 @@ public class CPPUnknownClassInstance extends CPPUnknownClass implements ICPPUnkn
 							return false;
 					}
 				}
-				final IBinding lhsContainer = getOwner();
-				final IBinding rhsContainer = rhs.getOwner();
-				if (lhsContainer instanceof IType && rhsContainer instanceof IType) {
-					 return (((IType)lhsContainer).isSameType((IType) rhsContainer));
+				final IType lhsContainer = getOwnerType();
+				final IType rhsContainer = rhs.getOwnerType();
+				if (lhsContainer != null && rhsContainer != null) {
+					 return (lhsContainer.isSameType(rhsContainer));
 				}
 			}
 		}
 		return false;
+	}
+	
+	@Override
+	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
+		int firstByte= ITypeMarshalBuffer.UNKNOWN_MEMBER_CLASS_INSTANCE;
+		buffer.putByte((byte) firstByte);
+		buffer.marshalType(getOwnerType());
+		buffer.putCharArray(getNameCharArray());
+		buffer.putShort((short) arguments.length);
+		for (ICPPTemplateArgument arg : arguments) {
+			buffer.marshalTemplateArgument(arg);
+		}
+	}
+	
+	public static ICPPUnknownMemberClassInstance unmarshal(IIndexFragment fragment, int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
+		IType owner= buffer.unmarshalType();
+		char[] name = buffer.getCharArray();
+		int argcount= buffer.getShort() & 0xffff;
+		ICPPTemplateArgument[] args = new ICPPTemplateArgument[argcount];
+		for (int i = 0; i < argcount; i++) {
+			args[i]= buffer.unmarshalTemplateArgument();
+		}
+		return new PDOMCPPUnknownMemberClassInstance(fragment, owner, name, args);
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 QNX Software Systems and others.
+ * Copyright (c) 2005, 2012 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     QNX - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     IBM Corporation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.db;
 
@@ -301,21 +302,22 @@ final class Chunk {
 	}
 
 	void put(final long offset, final byte[] data, final int len) {
+		put(offset, data, 0, len);
+	}
+	
+	void put(final long offset, final byte[] data, int dataPos, final int len) {
 		assert fLocked;
-		fDirty= true;
+		fDirty = true;
 		int idx = recPtrToIndex(offset);
-		int i= 0;
-		while (i < len) {
-			fBuffer[idx++]= data[i++];
-		}
+		System.arraycopy(data, dataPos, fBuffer, idx, len);
 	}
 	
 	public void get(final long offset, byte[] data) {
+		get(offset, data, 0, data.length);
+	}
+
+	public void get(final long offset, byte[] data, int dataPos, int len) {
 		int idx = recPtrToIndex(offset);
-		final int end= idx + data.length;
-		int i= 0;
-		while (idx < end) {
-			data[i++]= fBuffer[idx++];
-		}
+		System.arraycopy(fBuffer, idx, data, dataPos, len);
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 QNX Software Systems and others.
+ * Copyright (c) 2005, 2012 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Symbian - Add some non-javadoc implementation notes
  *     Markus Schorn (Wind River Systems)
  *     IBM Corporation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.db;
 
@@ -530,8 +531,16 @@ public class Database {
 		getChunk(offset).put(offset, data, len);
 	}
 
+	public void putBytes(long offset, byte[] data, int dataPos, int len) throws CoreException {
+		getChunk(offset).put(offset, data, dataPos, len);
+	}
+
 	public void getBytes(long offset, byte[] data) throws CoreException {
 		getChunk(offset).get(offset, data);
+	}
+
+	public void getBytes(long offset, byte[] data, int dataPos, int len) throws CoreException {
+		getChunk(offset).get(offset, data, dataPos, len);
 	}
 
 	public IString newString(String string) throws CoreException {

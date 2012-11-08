@@ -11,6 +11,7 @@
  *     IBM Corporation
  *     Andrew Ferguson (Symbian)
  *     Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom;
 
@@ -167,7 +168,6 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 			});
 		}
 	}
-
 
 	@Override
 	public void addChild(PDOMNode child) throws CoreException {
@@ -438,46 +438,94 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		if (type != null) {
 			TypeMarshalBuffer bc= new TypeMarshalBuffer(this);
 			bc.marshalType(type);
-			int len= bc.getPosition();
-			if (len > 0) {
-				if (len <= Database.TYPE_SIZE) {
-					db.putBytes(offset, bc.getBuffer(), len);
-				} else if (len <= Database.MAX_MALLOC_SIZE-2){
-					long ptr= db.malloc(len+2);
+			storeBuffer(db, offset, bc, Database.TYPE_SIZE);
+		}
+	}
+
+	private void storeBuffer(Database db, long offset, TypeMarshalBuffer buf, int maxInlineSize) throws CoreException {
+		int len= buf.getPosition();
+		if (len > 0) {
+			if (len <= maxInlineSize) {
+				db.putBytes(offset, buf.getBuffer(), len);
+			} else  {
+				db.putByte(offset, TypeMarshalBuffer.INDIRECT_TYPE);
+				long chainOffset = offset + 1;
+				int bufferPos = 0;
+				while (bufferPos < len) {
+					int chunkLength = len - bufferPos + 2;
+					boolean chainingRequired = false;
+					if (chunkLength > Database.MAX_MALLOC_SIZE) {
+						chunkLength = Database.MAX_MALLOC_SIZE;
+						chainingRequired = true;
+					}
+					long ptr = db.malloc(chunkLength);
+					db.putRecPtr(chainOffset, ptr);
 					db.putShort(ptr, (short) len);
-					db.putBytes(ptr+2, bc.getBuffer(), len);
-					db.putByte(offset, TypeMarshalBuffer.INDIRECT_TYPE);
-					db.putRecPtr(offset+2, ptr);
+					int pos = 2;
+					if (chainingRequired) {
+						// Reserve space for the chaining pointer.
+						chainOffset = ptr + 2; pos += Database.PTR_SIZE;
+					}
+					chunkLength -= pos;
+					db.putBytes(ptr + pos, buf.getBuffer(), bufferPos, chunkLength);
+					bufferPos += chunkLength;
 				}
 			}
 		}
 	}
 
-	private void deleteType(Database db, long offset) throws CoreException {
-		byte firstByte= db.getByte(offset);
-		if (firstByte == TypeMarshalBuffer.INDIRECT_TYPE) {
-			long ptr= db.getRecPtr(offset+2);
-			clearType(db, offset);
-			db.free(ptr);
-		} else {
-			clearType(db, offset);
+	private byte[] loadLinkedSerializedData(final Database db, long offset) throws CoreException {
+		long ptr= db.getRecPtr(offset);
+		int len= db.getShort(ptr) & 0xffff;
+		byte[] data= new byte[len];
+		int bufferPos = 0;
+		while (bufferPos < len) {
+			int chunkLength = len - bufferPos + 2;
+			int pos = 2;
+			long chunkPtr = ptr;
+			if (chunkLength > Database.MAX_MALLOC_SIZE) {
+				chunkLength = Database.MAX_MALLOC_SIZE;
+				ptr= db.getRecPtr(chunkPtr + pos); pos += Database.PTR_SIZE;
+			}
+			chunkLength -= pos;
+			db.getBytes(chunkPtr + pos, data, bufferPos, chunkLength);
+			bufferPos += chunkLength;
 		}
+		return data;
 	}
 
-	private void clearType(Database db, long offset) throws CoreException {
-		db.clearBytes(offset, Database.TYPE_SIZE);
+	private void deleteSerializedData(Database db, long offset, int maxInlineSize) throws CoreException {
+		byte firstByte= db.getByte(offset);
+		if (firstByte == TypeMarshalBuffer.INDIRECT_TYPE) {
+			long ptr= db.getRecPtr(offset + 1);
+			int len= db.getShort(ptr) & 0xffff;
+			while (len > 0) {
+				int chunkLength = len + 2;
+				int pos = 2;
+				long chunkPtr = ptr;
+				if (chunkLength > Database.MAX_MALLOC_SIZE) {
+					chunkLength = Database.MAX_MALLOC_SIZE;
+					ptr= db.getRecPtr(chunkPtr + pos); pos += Database.PTR_SIZE;
+				}
+				chunkLength -= pos;
+				db.free(chunkPtr);
+				len -= chunkLength;
+			}
+		}
+		db.clearBytes(offset, maxInlineSize);
+	}
+
+	private void deleteType(Database db, long offset) throws CoreException {
+		deleteSerializedData(db, offset, Database.TYPE_SIZE);
 	}
 
 	public IType loadType(long offset) throws CoreException {
 		final Database db= getDB();
 		final byte firstByte= db.getByte(offset);
 		byte[] data= null;
-		switch(firstByte) {
+		switch (firstByte) {
 		case TypeMarshalBuffer.INDIRECT_TYPE:
-			long ptr= db.getRecPtr(offset+2);
-			int len= db.getShort(ptr) & 0xffff;
-			data= new byte[len];
-			db.getBytes(ptr+2, data);
+			data = loadLinkedSerializedData(db, offset + 1);			
 			break;
 		case TypeMarshalBuffer.UNSTORABLE_TYPE:
 			return TypeMarshalBuffer.UNSTORABLE_TYPE_PROBLEM;
@@ -501,46 +549,21 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		if (binding != null) {
 			TypeMarshalBuffer bc= new TypeMarshalBuffer(this);
 			bc.marshalBinding(binding);
-			int len= bc.getPosition();
-			if (len > 0) {
-				if (len <= Database.TYPE_SIZE) {
-					db.putBytes(offset, bc.getBuffer(), len);
-				} else if (len <= Database.MAX_MALLOC_SIZE-2){
-					long ptr= db.malloc(len+2);
-					db.putShort(ptr, (short) len);
-					db.putBytes(ptr+2, bc.getBuffer(), len);
-					db.putByte(offset, TypeMarshalBuffer.INDIRECT_TYPE);
-					db.putRecPtr(offset+2, ptr);
-				}
-			}
+			storeBuffer(db, offset, bc, Database.TYPE_SIZE);
 		}
 	}
 
 	private void deleteBinding(Database db, long offset) throws CoreException {
-		byte firstByte= db.getByte(offset);
-		if (firstByte == TypeMarshalBuffer.INDIRECT_TYPE) {
-			long ptr= db.getRecPtr(offset+2);
-			clearBinding(db, offset);
-			db.free(ptr);
-		} else {
-			clearBinding(db, offset);
-		}
-	}
-
-	private void clearBinding(Database db, long offset) throws CoreException {
-		db.clearBytes(offset, Database.TYPE_SIZE);
+		deleteSerializedData(db, offset, Database.TYPE_SIZE);
 	}
 
 	public IBinding loadBinding(long offset) throws CoreException {
 		final Database db= getDB();
 		final byte firstByte= db.getByte(offset);
 		byte[] data= null;
-		switch(firstByte) {
+		switch (firstByte) {
 		case TypeMarshalBuffer.INDIRECT_TYPE:
-			long ptr= db.getRecPtr(offset+2);
-			int len= db.getShort(ptr) & 0xffff;
-			data= new byte[len];
-			db.getBytes(ptr+2, data);
+			data = loadLinkedSerializedData(db, offset + 1);			
 			break;
 		case TypeMarshalBuffer.UNSTORABLE_TYPE:
 			return new ProblemBinding(null, ISemanticProblem.TYPE_NOT_PERSISTED);
@@ -564,52 +587,27 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		if (arg != null) {
 			TypeMarshalBuffer bc= new TypeMarshalBuffer(this);
 			bc.marshalTemplateArgument(arg);
-			int len= bc.getPosition();
-			if (len > 0) {
-				if (len <= Database.ARGUMENT_SIZE) {
-					db.putBytes(offset, bc.getBuffer(), len);
-				} else if (len <= Database.MAX_MALLOC_SIZE-2){
-					long ptr= db.malloc(len+2);
-					db.putShort(ptr, (short) len);
-					db.putBytes(ptr+2, bc.getBuffer(), len);
-					db.putByte(offset, TypeMarshalBuffer.INDIRECT_TYPE);
-					db.putRecPtr(offset+2, ptr);
-				}
-			}
+			storeBuffer(db, offset, bc, Database.ARGUMENT_SIZE);
 		}
 	}
 
 	private void deleteArgument(Database db, long offset) throws CoreException {
-		byte firstByte= db.getByte(offset);
-		if (firstByte == TypeMarshalBuffer.INDIRECT_TYPE) {
-			long ptr= db.getRecPtr(offset+2);
-			clearArgument(db, offset);
-			db.free(ptr);
-		} else {
-			clearArgument(db, offset);
-		}
-	}
-
-	private void clearArgument(Database db, long offset) throws CoreException {
-		db.clearBytes(offset, Database.ARGUMENT_SIZE);
+		deleteSerializedData(db, offset, Database.ARGUMENT_SIZE);
 	}
 
 	public ICPPTemplateArgument loadTemplateArgument(long offset) throws CoreException {
 		final Database db= getDB();
 		final byte firstByte= db.getByte(offset);
 		byte[] data= null;
-		switch(firstByte) {
+		switch (firstByte) {
 		case TypeMarshalBuffer.INDIRECT_TYPE:
-			long ptr= db.getRecPtr(offset+2);
-			int len= db.getShort(ptr) & 0xffff;
-			data= new byte[len];
-			db.getBytes(ptr+2, data);
+			data = loadLinkedSerializedData(db, offset + 1);			
 			break;
 		case TypeMarshalBuffer.UNSTORABLE_TYPE:
 		case TypeMarshalBuffer.NULL_TYPE:
 			return null;
 		default:
-			data= new byte[Database.TYPE_SIZE];
+			data= new byte[Database.ARGUMENT_SIZE];
 			db.getBytes(offset, data);
 			break;
 		}
@@ -626,40 +624,26 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		if (value != null) {
 			TypeMarshalBuffer bc= new TypeMarshalBuffer(this);
 			bc.marshalValue(value);
-			int len= bc.getPosition();
-			if (len > 0) {
-				if (len <= Database.TYPE_SIZE) {
-					db.putBytes(offset, bc.getBuffer(), len);
-				} else if (len <= Database.MAX_MALLOC_SIZE-2){
-					long ptr= db.malloc(len+2);
-					db.putShort(ptr, (short) len);
-					db.putBytes(ptr+2, bc.getBuffer(), len);
-					db.putByte(offset, TypeMarshalBuffer.INDIRECT_TYPE);
-					db.putRecPtr(offset+2, ptr);
-				}
-			}
+			storeBuffer(db, offset, bc, Database.VALUE_SIZE);
 		}
 	}
 
 	private void deleteValue(Database db, long offset) throws CoreException {
-		deleteType(db, offset);
+		deleteSerializedData(db, offset, Database.VALUE_SIZE);
 	}
 
 	public IValue loadValue(long offset) throws CoreException {
 		final Database db= getDB();
 		final byte firstByte= db.getByte(offset);
 		byte[] data= null;
-		switch(firstByte) {
+		switch (firstByte) {
 		case TypeMarshalBuffer.INDIRECT_TYPE:
-			long ptr= db.getRecPtr(offset+2);
-			int len= db.getShort(ptr) & 0xffff;
-			data= new byte[len];
-			db.getBytes(ptr+2, data);
+			data = loadLinkedSerializedData(db, offset + 1);			
 			break;
 		case TypeMarshalBuffer.NULL_TYPE:
 			return null;
 		default:
-			data= new byte[Database.TYPE_SIZE];
+			data= new byte[Database.VALUE_SIZE];
 			db.getBytes(offset, data);
 			break;
 		}

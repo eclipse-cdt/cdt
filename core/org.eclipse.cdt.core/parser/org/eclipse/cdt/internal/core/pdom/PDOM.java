@@ -218,6 +218,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  124.0 - GCC attributes and NO_RETURN flag for functions.
 	 *  #125.0# - Indexes for unresolved includes and files indexed with I/O errors. <<CDT 8.1>>
 <<<<<<< cdt_8_1
+<<<<<<< cdt_8_1
 	 *  126.0 - Dependent expressions, bug 299911.
 	 *  127.0 - Explicit virtual overrides, bug 380623.
 	 *  128.0 - Merged several changes affecting index from the master branch.

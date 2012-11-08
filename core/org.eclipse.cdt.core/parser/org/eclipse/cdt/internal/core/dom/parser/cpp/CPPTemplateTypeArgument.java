@@ -22,10 +22,16 @@ import org.eclipse.core.runtime.Assert;
  */
 public class CPPTemplateTypeArgument implements ICPPTemplateArgument {
 	private final IType fType;
+	private final IType fOriginalType;
 
 	public CPPTemplateTypeArgument(IType type) {
-		Assert.isNotNull(type);
-		fType= type;
+		this(type, type);
+	}
+
+	public CPPTemplateTypeArgument(IType simplifiedType, IType originalType) {
+		Assert.isNotNull(simplifiedType);
+		fType= simplifiedType;
+		fOriginalType= originalType;
 	}
 
 	@Override
@@ -41,6 +47,11 @@ public class CPPTemplateTypeArgument implements ICPPTemplateArgument {
 	@Override
 	public IType getTypeValue() {
 		return fType;
+	}
+
+	@Override
+	public IType getOriginalTypeValue() {
+		return fOriginalType;
 	}
 
 	@Override

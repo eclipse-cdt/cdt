@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2012 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
@@ -40,8 +41,16 @@ public interface ICPPTemplateArgument {
 	 * If this is a type value (suitable for a template type and template template parameters),
 	 * the type used as a value is returned.
 	 * For non-type values, <code>null</code> is returned.
+	 * The returned type has all typedefs resolved.
 	 */
 	IType getTypeValue();
+
+	/**
+	 * Similar to {@link #getTypeValue()} but returns the original type value before typedef
+	 * resolution.
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	IType getOriginalTypeValue();
 
 	/**
 	 * If this is a non-type value (suitable for a template non-type parameters),

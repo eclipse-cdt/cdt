@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Marc Khouzam (Ericsson) - initial API and implementation
+ *     Grzegorz Kuligowski - Cannot cast to type that contain commas (bug 393474)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
@@ -69,9 +70,10 @@ public class GDBPatternMatchingExpressions extends AbstractDsfService implements
 	 * the different expressions contained in a group-expression.
 	 * The [] are not part the characters, but are used in the regex format.
 	 * Note that we don't allow a space separator because spaces are valid within
-	 * an expression (e.g., i + 1)
+	 * an expression (e.g., i + 1).
+	 * We also don't allow a comma because they are used in templates (bug 393474)
 	 */
-	private final static String GROUP_EXPRESSION_SEPARATORS_REGEXP = "[,;]"; //$NON-NLS-1$
+	private final static String GROUP_EXPRESSION_SEPARATORS_REGEXP = "[;]"; //$NON-NLS-1$
 
 	/**
 	 * A group-expression is an expression that requires expansion into a (potentially empty)

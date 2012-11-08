@@ -4795,63 +4795,20 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertEquals("string", ((ITypedef) s3.getType()).getName());
 	}
 
-	//	template <typename T>
-	//	struct vector {
-	//	  typedef T* const_iterator;
-	//	  const_iterator begin() const;
-	//	};
-	//
-	//	typedef int Element;
-	//
-	//	void test(const vector<Element>& v) {
+    //	template <typename T>
+    //	struct vector {
+    //	  typedef T* const_iterator;
+    //	  const_iterator begin() const;
+    //	};
+    //
+	//	void test(const vector<int>& v) {
 	//	  auto it = v.begin();
 	//	}
-	public void testTypedefPreservation_380498_2() throws Exception {
+    public void testTypedefPreservation_380498_2() throws Exception {
 		BindingAssertionHelper ba= getAssertionHelper();
 		ICPPVariable it = ba.assertNonProblem("it =", "it", ICPPVariable.class);
 		assertTrue(it.getType() instanceof ITypedef);
-		assertEquals("vector<Element>::const_iterator", ASTTypeUtil.getType(it.getType(), false));
-	}
-
-	//	template <typename T> class char_traits {};
-	//	template <typename C, typename T = char_traits<C>> class basic_string {};
-	//
-	//	template<typename _Iterator>
-	//	struct iterator_traits {
-	//		typedef typename _Iterator::reference reference;
-	//	};
-	//
-	//	template<typename _Tp>
-	//	struct iterator_traits<_Tp*> {
-	//		typedef _Tp& reference;
-	//	};
-	//
-	//	template<typename _Iterator, typename _Container>
-	//	struct normal_iterator {
-	//	    typedef iterator_traits<_Iterator> traits_type;
-	//	    typedef typename traits_type::reference reference;
-	//	    reference operator*() const;
-	//	};
-	//
-	//	template <typename T> struct vector {
-	//	    typedef T* pointer;
-	//	    typedef normal_iterator<pointer, vector> iterator;
-	//		iterator begin();
-	//		iterator end();
-	//	};
-	//
-	//	typedef basic_string<char> string;
-	//
-	//	void test() {
-	//		vector<string> v;
-	//		for (auto s : v) {
-	//		}
-	//	}
-	public void testTypedefPreservation_380498_3() throws Exception {
-		BindingAssertionHelper ba= getAssertionHelper();
-		ICPPVariable s = ba.assertNonProblem("s :", "s", ICPPVariable.class);
-		assertTrue(s.getType() instanceof ITypedef);
-		assertEquals("string", ASTTypeUtil.getType(s.getType(), false));
+		assertEquals("vector<int>::const_iterator", ASTTypeUtil.getType(it.getType(), false));
 	}
 
 	// int f() {

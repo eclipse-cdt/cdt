@@ -13,8 +13,6 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getNestedType;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
@@ -296,7 +294,7 @@ public class EvalID extends CPPEvaluation {
 		} else if (nameOwner instanceof IType) {
 			IType type = CPPTemplates.instantiateType((IType) nameOwner, tpMap, packOffset, within, point);
 			if (type instanceof IBinding)
-				nameOwner = (IBinding) getNestedType(type, TDEF);
+				nameOwner = (IBinding) type;
 		}
 
 		if (fieldOwner instanceof IProblemBinding || nameOwner instanceof IProblemBinding)

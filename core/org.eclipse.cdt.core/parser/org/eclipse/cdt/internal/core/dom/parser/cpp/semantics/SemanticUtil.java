@@ -512,7 +512,7 @@ public class SemanticUtil {
 			final IType type= arg.getTypeValue();
 			final IType newType= getSimplifiedType(type);
 			if (newType != type) {
-				return new CPPTemplateTypeArgument(newType, arg.getOriginalTypeValue());
+				return new CPPTemplateTypeArgument(newType);
 			}
 		}
 		return arg;

@@ -52,6 +52,11 @@ public class CPPTemplateNonTypeArgument implements ICPPTemplateArgument {
 	}
 
 	@Override
+	public ICPPEvaluation getNonTypeEvaluation() {
+		return fEvaluation;
+	}
+
+	@Override
 	public IValue getNonTypeValue() {
 		return fEvaluation.getValue(null);
 	}
@@ -93,9 +98,5 @@ public class CPPTemplateNonTypeArgument implements ICPPTemplateArgument {
 	@Override
 	public String toString() {
 		return getNonTypeValue().toString();
-	}
-
-	public ICPPEvaluation getEvaluation() {
-		return fEvaluation;
 	}
 }

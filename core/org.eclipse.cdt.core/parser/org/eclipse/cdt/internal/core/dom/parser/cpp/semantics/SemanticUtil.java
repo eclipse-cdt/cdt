@@ -437,6 +437,9 @@ public class SemanticUtil {
 	}
 
 	public static IType mapToAST(IType type, IASTNode node) {
+		if (node == null)
+			return type;
+		
 		if (type instanceof IFunctionType) {
 			final ICPPFunctionType ft = (ICPPFunctionType) type;
 			final IType r = ft.getReturnType();

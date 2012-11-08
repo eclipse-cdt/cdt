@@ -189,9 +189,9 @@ public class TypeMarshalBuffer implements ITypeMarshalBuffer {
 
 	@Override
 	public void marshalTemplateArgument(ICPPTemplateArgument arg) throws CoreException {
-		if (arg instanceof CPPTemplateNonTypeArgument) {
+		if (arg.isNonTypeValue()) {
 			putByte(VALUE);
-			((CPPTemplateNonTypeArgument) arg).getEvaluation().marshal(this, true);
+			arg.getNonTypeEvaluation().marshal(this, true);
 		} else {
 			marshalType(arg.getTypeValue());
 		}

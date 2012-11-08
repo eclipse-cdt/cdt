@@ -12,6 +12,7 @@ package org.eclipse.cdt.core.dom.ast.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 
 /**
  * Models the value of a template parameter or for the argument of a template-id. 
@@ -41,6 +42,14 @@ public interface ICPPTemplateArgument {
 	 * For non-type values, <code>null</code> is returned. 
 	 */
 	IType getTypeValue();
+	
+	/**
+	 * If this is a non-type value (suitable for a template non-type parameters), 
+	 * the evaluation object is returned. 
+	 * For type values, <code>null</code> is returned. 
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	ICPPEvaluation getNonTypeEvaluation();
 	
 	/**
 	 * If this is a non-type value (suitable for a template non-type parameters), 

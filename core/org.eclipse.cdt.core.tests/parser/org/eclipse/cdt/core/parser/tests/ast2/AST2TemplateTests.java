@@ -6039,5 +6039,21 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	}
 	public void testFunctionSetWithNonMatchingTemplateArgs_379604() throws Exception {
 		parseAndCheckBindings(getAboveComment(), CPP, true);
-	}		
+	}	
+	
+	//	template <typename T> struct C {
+	//		typedef decltype(&T::m) dtm;
+	//	};
+	//	struct X {
+	//		int m() {return 0;}
+	//	};
+	//	void f(int (X::*)()) {}
+	//	void test() {
+	//		f(&X::m);
+	//		C<X>::dtm v;
+	//		f(v);
+	//	}
+	public void testPointerToMemberAsDependentExpression_391001() throws Exception {
+		parseAndCheckBindings(getAboveComment(), CPP, true);
+	}	
 }

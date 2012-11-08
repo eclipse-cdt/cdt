@@ -151,7 +151,7 @@ public class Bug246129 extends IndexTestBase {
 			fFalseFriendsAccepted = falseFriendDirectory.exists();
 			
 			CCorePlugin.getIndexManager().reindex(fProject);
-			assertTrue(CCorePlugin.getIndexManager().joinIndexer(10000, npm()));
+			waitForIndexer(fProject);
 			fIndex = CCorePlugin.getIndexManager().getIndex(fProject);
 		}
 	}

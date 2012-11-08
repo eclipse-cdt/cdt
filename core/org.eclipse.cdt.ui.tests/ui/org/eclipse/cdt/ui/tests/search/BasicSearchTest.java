@@ -22,11 +22,8 @@ import junit.framework.TestSuite;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -74,10 +71,10 @@ public class BasicSearchTest extends BaseUITestCase {
 
 		IFile file = TestSourceReader.createFile(fCProject.getProject(), new Path("header.h"), testData[0].toString());
 		CCorePlugin.getIndexManager().setIndexerId(fCProject, IPDOMManager.ID_FAST_INDEXER);
-		assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));
+		waitForIndexer(fCProject);
 
 		IFile cppfile= TestSourceReader.createFile(fCProject.getProject(), new Path("references.cpp"), testData[1].toString());
-		assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));
+		waitForIndexer(fCProject);
 	}
 
 	@Override
@@ -106,7 +103,7 @@ public class BasicSearchTest extends BaseUITestCase {
 		// rebuild the index
 		TestScannerProvider.sIncludes= new String[] {dir.getAbsolutePath()};
 		CCorePlugin.getIndexManager().reindex(fCProject);
-		assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));
+		waitForIndexer(fCProject);
 		
 		// open a query
 		CSearchQuery query= makeProjectQuery("foo");
@@ -149,7 +146,7 @@ public class BasicSearchTest extends BaseUITestCase {
 		// rebuild the index with no indexer
 		CCorePlugin.getIndexManager().setIndexerId(fCProject, IPDOMManager.ID_NO_INDEXER);
 		CCorePlugin.getIndexManager().reindex(fCProject);
-		assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));
+		waitForIndexer(fCProject);
 		
 		// open a query
 		CSearchQuery query= makeProjectQuery("x");
@@ -220,7 +217,7 @@ public class BasicSearchTest extends BaseUITestCase {
 			coreTestIndexerInProgress(false);
 		
 		// now join and test again to get the full results
-		assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));
+		waitForIndexer(fCProject);
 
 		coreTestIndexerInProgress(true);
 	}
@@ -322,8 +319,7 @@ public class BasicSearchTest extends BaseUITestCase {
 		String newContent= "void bar() {}";
 		IFile file = fCProject.getProject().getFile(new Path("references.cpp"));
 		file.setContents(new ByteArrayInputStream(newContent.getBytes()), IResource.FORCE, npm());
-		Job.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_REFRESH, null);
-		assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));
+		waitForIndexer(fCProject);
 
 		assertOccurrences(query, 1);
 	}
@@ -343,14 +339,13 @@ public class BasicSearchTest extends BaseUITestCase {
 		runEventQueue(1000);
 		IIndexManager indexManager = CCorePlugin.getIndexManager();
 		indexManager.update(new ICElement[] {fCProject}, IIndexManager.UPDATE_ALL);
-		assertTrue(indexManager.joinIndexer(360000, new NullProgressMonitor()));
+		waitForIndexer(fCProject);
 
 		assertOccurrences(query, 2);
 		
 		String newContent2= "void bar() {foo(); foo();}";
 		file.setContents(new ByteArrayInputStream(newContent2.getBytes()), IResource.FORCE, npm());
-		Job.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_REFRESH, null);
-		assertTrue(indexManager.joinIndexer(360000, new NullProgressMonitor()));
+		waitForIndexer(fCProject);
 
 		assertOccurrences(query, 3);
 	}

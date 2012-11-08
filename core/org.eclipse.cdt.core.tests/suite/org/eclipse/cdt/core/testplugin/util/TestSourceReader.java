@@ -327,10 +327,12 @@ public class TestSourceReader {
 			try {
 				IIndexFile[] files= index.getFiles(ILinkage.CPP_LINKAGE_ID, indexFileLocation);
 				if (files.length > 0 && areAllFilesNotOlderThan(files, fileTimestamp)) {
+					Assert.assertTrue(CCorePlugin.getIndexManager().joinIndexer(timeLeft, new NullProgressMonitor()));
 					return;
 				}
 				files= index.getFiles(ILinkage.C_LINKAGE_ID, indexFileLocation);
 				if (files.length > 0 && areAllFilesNotOlderThan(files, fileTimestamp)) {
+					Assert.assertTrue(CCorePlugin.getIndexManager().joinIndexer(timeLeft, new NullProgressMonitor()));
 					return;
 				}
 			} finally {

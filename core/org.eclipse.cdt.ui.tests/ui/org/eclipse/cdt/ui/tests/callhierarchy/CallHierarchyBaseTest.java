@@ -53,7 +53,7 @@ public class CallHierarchyBaseTest extends BaseUITestCase {
 		CallHierarchyUI.setIsJUnitTest(true);
 		String prjName= "chTest"+sProjectCounter++;
 		fCProject= CProjectHelper.createCCProject(prjName, "bin", IPDOMManager.ID_FAST_INDEXER);
-		CCorePlugin.getIndexManager().joinIndexer(INDEXER_WAIT_TIME, npm());
+		waitForIndexer(fCProject);
 		fIndex= CCorePlugin.getIndexManager().getIndex(fCProject);
 		IWorkbenchPage page= PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		IViewReference[] refs= page.getViewReferences();

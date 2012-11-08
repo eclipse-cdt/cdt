@@ -14,7 +14,6 @@ import java.util.Arrays;
 
 import junit.framework.Test;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -40,7 +39,6 @@ import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
 /**
@@ -67,11 +65,7 @@ public class CPPClassTemplateTests extends PDOMTestBase {
 			IFile file= TestSourceReader.createFile(cproject.getProject(), new Path("refs.cpp"), content.toString());
 		}
 		IndexerPreferences.set(cproject.getProject(), IndexerPreferences.KEY_INDEXER_ID, IPDOMManager.ID_FAST_INDEXER);
-		for(int i=0; i<5 && !CCoreInternals.getPDOMManager().isProjectRegistered(cproject); i++) {
-			Thread.sleep(200);
-		}
-		assertTrue(CCoreInternals.getPDOMManager().isProjectRegistered(cproject));
-		assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));
+		waitForIndexer(cproject);
 		pdom= (PDOM) CCoreInternals.getPDOMManager().getPDOM(cproject);
 		pdom.acquireReadLock();
 	}

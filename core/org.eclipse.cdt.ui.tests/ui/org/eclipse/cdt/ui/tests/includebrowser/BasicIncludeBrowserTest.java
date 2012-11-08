@@ -48,7 +48,7 @@ public class BasicIncludeBrowserTest extends IncludeBrowserBaseTest {
 		IFile user= createFile(project, "user.h", "");
 		IFile system= createFile(project, "system.h", "");
 		IFile source= createFile(project, "source.cpp", contents[0].toString());
-		waitForIndexer(fIndex, source, INDEXER_WAIT_TIME);
+		waitUntilFileIsIndexed(fIndex, source);
 
 		openIncludeBrowser(source);
 		Tree tree = getIBTree();
@@ -83,7 +83,7 @@ public class BasicIncludeBrowserTest extends IncludeBrowserBaseTest {
 			IFile system= createFile(op.getProject(), "system.h", "");
 			IFile source= createFile(getProject().getProject(), "source.cpp", contents[0].toString());
 			CCorePlugin.getIndexManager().reindex(op);
-			CCorePlugin.getIndexManager().joinIndexer(INDEXER_WAIT_TIME, NPM);
+			waitForIndexer(op);
 
 			openIncludeBrowser(source);
 			Tree tree = getIBTree();

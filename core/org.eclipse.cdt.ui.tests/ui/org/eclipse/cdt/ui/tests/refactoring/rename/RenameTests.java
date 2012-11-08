@@ -18,9 +18,6 @@ import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.RefactoringStatusEntry;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.index.IIndexManager;
-
 import org.eclipse.cdt.internal.ui.refactoring.rename.CRefactoringArgument;
 import org.eclipse.cdt.internal.ui.refactoring.rename.CRefactory;
 import org.eclipse.cdt.internal.ui.refactoring.rename.CRenameProcessor;
@@ -140,15 +137,7 @@ public class RenameTests extends RefactoringTests {
     }
     
 	protected void waitForIndexer() throws InterruptedException {
-		final IIndexManager im = CCorePlugin.getIndexManager();
-		assertTrue(im.joinIndexer(10000, NPM));
-		int sleep= 1;
-		while (im.isIndexerSetupPostponed(cproject)) {
-			Thread.sleep(sleep);
-			sleep *= 2;
-			assertTrue(sleep < 2000);
-		}
-		assertTrue(im.joinIndexer(10000, NPM));
+		waitForIndexer(cproject);
 	}
 
 	@Override

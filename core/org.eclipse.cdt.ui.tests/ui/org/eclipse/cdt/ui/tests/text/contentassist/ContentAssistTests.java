@@ -31,7 +31,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -51,26 +50,25 @@ import org.eclipse.cdt.internal.ui.text.contentassist.CContentAssistProcessor;
  * @author aniefer
  */
 public class ContentAssistTests extends BaseUITestCase {
-    private NullProgressMonitor		monitor= new NullProgressMonitor();
+    private final NullProgressMonitor		monitor= new NullProgressMonitor();
     static IProject 				project;
+    static ICProject				cproject;
     static boolean 					disabledHelpContributions = false;
     
     @Override
-	public void setUp() {
+	public void setUp() throws InterruptedException {
 		//(CCorePlugin.getDefault().getCoreModel().getIndexManager()).reset();
     	
     	if (project == null) {
-    		ICProject cPrj;
     		try {
-    			cPrj = CProjectHelper.createCCProject("ContentAssistTestProject", "bin", IPDOMManager.ID_FAST_INDEXER); //$NON-NLS-1$ //$NON-NLS-2$
-
-    			project = cPrj.getProject();
+    			cproject = CProjectHelper.createCCProject("ContentAssistTestProject", "bin", IPDOMManager.ID_FAST_INDEXER); //$NON-NLS-1$ //$NON-NLS-2$
+    			project = cproject.getProject();
+        		waitForIndexer(cproject);
     		} catch ( CoreException e ) {
     			/*boo*/
     		}
     		if (project == null)
     			fail("Unable to create project"); //$NON-NLS-1$
-    		assertTrue(CCorePlugin.getIndexManager().joinIndexer(10000, monitor));
     	}
 	}
     public ContentAssistTests()
@@ -125,7 +123,7 @@ public class ContentAssistTests extends BaseUITestCase {
         closeAllEditors();
 
         // wait for indexer before deleting project to avoid errors in the log
-        CCorePlugin.getIndexManager().joinIndexer(10000, monitor);
+        waitForIndexer(cproject);
 		
         IResource [] members = project.members();
         for (IResource member : members) {

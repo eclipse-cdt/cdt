@@ -59,8 +59,7 @@ public abstract class ChangeGeneratorTest extends BaseTestFramework {
 
 		ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.FULL_BUILD, new NullProgressMonitor());
 
-		boolean joined = CCorePlugin.getIndexManager().joinIndexer(20000, new NullProgressMonitor());
-		assertTrue("The indexing operation of the test CProject has not finished jet. This should not happen...", joined);
+		waitForIndexer(cproject);
 
 		IASTTranslationUnit unit = CoreModelUtil.findTranslationUnit(testFile).getAST();
 		final ChangeGenerator changeGenerator =

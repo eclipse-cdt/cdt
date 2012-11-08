@@ -58,7 +58,7 @@ public class PDOMCBugsTest extends BaseTestCase {
 
 		IFile file = TestSourceReader.createFile(cproject.getProject(), new Path("header.h"), testData[0].toString());
 		CCorePlugin.getIndexManager().setIndexerId(cproject, IPDOMManager.ID_FAST_INDEXER);
-		assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));
+		waitForIndexer(cproject);
 
 		pdom= (PDOM) CCoreInternals.getPDOMManager().getPDOM(cproject);
 		super.setUp();

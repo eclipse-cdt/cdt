@@ -90,7 +90,7 @@ public class TypeHierarchyAcrossProjectsTest extends TypeHierarchyBaseTest {
 		String source = content[1].toString();
 		IFile headerFile= createFile(fCProject.getProject(), "simpleHeader.h", header);
 		IFile sourceFile= createFile(fCProject2.getProject(), "simple.cpp", source);
-		waitForIndexer(fIndex, sourceFile, TypeHierarchyBaseTest.INDEXER_WAIT_TIME);
+		waitUntilFileIsIndexed(fIndex, sourceFile);
 		
 		CEditor editor= openEditor(sourceFile);
 		Tree tree;

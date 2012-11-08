@@ -94,8 +94,8 @@ public class IndexIncludeTest extends IndexTestBase {
 		checkContext();
 	}
 
-	private void waitForIndexer() {
-		assertTrue(CCorePlugin.getIndexManager().joinIndexer(10000, npm()));
+	private void waitForIndexer() throws InterruptedException {
+		waitForIndexer(fProject);
 	}
 
 	private void checkHeader(boolean all) throws Exception {
@@ -564,9 +564,9 @@ public class IndexIncludeTest extends IndexTestBase {
 		final IFile h1= TestSourceReader.createFile(fProject.getProject(), "h1.h", h1Contents.toString());
 		IFile h2= TestSourceReader.createFile(fProject.getProject(), "h2.h", contents[1].toString());
 		IFile s1= TestSourceReader.createFile(fProject.getProject(), "s1.cpp", contents[2].toString());
+		waitUntilFileIsIndexed(fIndex, s1);
 		IFile s2= TestSourceReader.createFile(fProject.getProject(), "s2.cpp", contents[3].toString());
-		TestSourceReader.waitUntilFileIsIndexed(fIndex, s1, INDEXER_WAIT_TIME);
-		TestSourceReader.waitUntilFileIsIndexed(fIndex, s2, INDEXER_WAIT_TIME);
+		waitUntilFileIsIndexed(fIndex, s2);
 
 		fIndex.acquireReadLock();
 		try {

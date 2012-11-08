@@ -28,7 +28,6 @@ import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.NullProgressMonitor;
 
 public class IndexListenerTest extends BaseTestCase {
 	private ICProject fProject1;
@@ -42,7 +41,8 @@ public class IndexListenerTest extends BaseTestCase {
 	protected void setUp() throws Exception {
 		fProject1 = CProjectHelper.createCCProject("testIndexListener1", null, IPDOMManager.ID_FAST_INDEXER);
 		fProject2 = CProjectHelper.createCCProject("testIndexListener2", null, IPDOMManager.ID_FAST_INDEXER);
-		assertTrue(CCorePlugin.getIndexManager().joinIndexer(2000, new NullProgressMonitor()));
+		waitForIndexer(fProject1);
+		waitForIndexer(fProject2);
 	}
 
 	@Override
@@ -55,7 +55,8 @@ public class IndexListenerTest extends BaseTestCase {
 		final Object mutex= new Object();
 		final int[] state= new int[] {0, 0, 0};
 		IIndexManager im= CCorePlugin.getIndexManager();
-		assertTrue(im.joinIndexer(10000, npm()));
+		waitForIndexer(fProject1);
+		waitForIndexer(fProject2);
 		
 		IIndexerStateListener listener = new IIndexerStateListener() {
 			@Override
@@ -99,7 +100,8 @@ public class IndexListenerTest extends BaseTestCase {
 		final List projects= new ArrayList();
 		IIndexManager im= CCorePlugin.getIndexManager();
 		
-		assertTrue(im.joinIndexer(10000, npm()));
+		waitForIndexer(fProject1);
+		waitForIndexer(fProject2);
 		IIndexChangeListener listener = new IIndexChangeListener() {
 			@Override
 			public void indexChanged(IIndexChangeEvent event) {

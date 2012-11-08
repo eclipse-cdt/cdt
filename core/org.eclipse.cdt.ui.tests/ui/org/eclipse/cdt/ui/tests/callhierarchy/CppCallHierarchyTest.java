@@ -19,8 +19,6 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 
-import org.eclipse.cdt.core.CCorePlugin;
-
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 
 
@@ -62,7 +60,7 @@ public class CppCallHierarchyTest extends CallHierarchyBaseTest {
 		String source = content[1].toString();
 		IFile headerFile= createFile(getProject(), "testMethods.h", header);
 		IFile sourceFile= createFile(getProject(), "testMethods.cpp", source);
-		waitForIndexer(fIndex, sourceFile, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
+		waitUntilFileIsIndexed(fIndex, sourceFile);
 		
 		CEditor editor= openEditor(sourceFile);
 		editor.selectAndReveal(source.indexOf("method"), 2);
@@ -136,7 +134,7 @@ public class CppCallHierarchyTest extends CallHierarchyBaseTest {
 		IFile sourceFile2= createFile(getProject(), "testMethods2.cpp", source2);
 
 		CEditor editor= openEditor(sourceFile1);
-		waitForIndexer(fIndex, sourceFile2, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
+		waitUntilFileIsIndexed(fIndex, sourceFile2);
 		
 		editor.selectAndReveal(source1.indexOf("method3"), 2);
 		openCallHierarchy(editor);
@@ -185,7 +183,7 @@ public class CppCallHierarchyTest extends CallHierarchyBaseTest {
 		IFile sourceFile1= createFile(getProject(), "testMethods1.cpp", source1);
 		IFile sourceFile2= createFile(getProject(), "testMethods2.cpp", source2);
 
-		waitForIndexer(fIndex, sourceFile2, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
+		waitUntilFileIsIndexed(fIndex, sourceFile2);
 		
 		CEditor editor= openEditor(sourceFile1);
 		editor.selectAndReveal(source1.indexOf("method3"), 2);
@@ -246,7 +244,7 @@ public class CppCallHierarchyTest extends CallHierarchyBaseTest {
 		IFile sourceFile2= createFile(getProject(), "testMethods2.cpp", source2);
 
 		CEditor editor= openEditor(sourceFile2);
-		waitForIndexer(fIndex, sourceFile2, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
+		waitUntilFileIsIndexed(fIndex, sourceFile2);
 		
 		editor.selectAndReveal(source2.indexOf("main"), 2);
 		openCallHierarchy(editor, false);
@@ -300,8 +298,7 @@ public class CppCallHierarchyTest extends CallHierarchyBaseTest {
 		IFile cFile= createFile(getProject(), "s.c", cSource);
 		IFile cppFile= createFile(getProject(), "s.cpp", cppSource);
 		CEditor editor= openEditor(cFile);
-		waitForIndexer(fIndex, cppFile, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
-		CCorePlugin.getIndexManager().joinIndexer(INDEXER_WAIT_TIME, npm());
+		waitUntilFileIsIndexed(fIndex, cppFile);
 		
 		editor.selectAndReveal(cSource.indexOf("cfunc"), 2);
 		openCallHierarchy(editor);
@@ -346,8 +343,7 @@ public class CppCallHierarchyTest extends CallHierarchyBaseTest {
 		IFile cppFile= createFile(getProject(), "s.cpp", cppSource);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		CEditor editor= openEditor(cFile);
-		waitForIndexer(fIndex, cppFile, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
-		CCorePlugin.getIndexManager().joinIndexer(INDEXER_WAIT_TIME, npm());
+		waitUntilFileIsIndexed(fIndex, cppFile);
 		
 		editor.selectAndReveal(cSource.indexOf("cfunc"), 2);
 		openCallHierarchy(editor, false);
@@ -415,8 +411,7 @@ public class CppCallHierarchyTest extends CallHierarchyBaseTest {
 		String source = content[0].toString();
 		IFile file= createFile(getProject(), "testTemplates.cpp", source);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		waitForIndexer(fIndex, file, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
-		CCorePlugin.getIndexManager().joinIndexer(INDEXER_WAIT_TIME, npm());
+		waitUntilFileIsIndexed(fIndex, file);
 		
 		CEditor editor= openEditor(file);
 		int pos= source.indexOf("f(");
@@ -479,8 +474,7 @@ public class CppCallHierarchyTest extends CallHierarchyBaseTest {
 		String source = content[0].toString();
 		IFile file= createFile(getProject(), "testClosures.cpp", source);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		waitForIndexer(fIndex, file, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
-		CCorePlugin.getIndexManager().joinIndexer(INDEXER_WAIT_TIME, npm());
+		waitUntilFileIsIndexed(fIndex, file);
 		
 		CEditor editor= openEditor(file);
 		int pos= source.indexOf("a(");

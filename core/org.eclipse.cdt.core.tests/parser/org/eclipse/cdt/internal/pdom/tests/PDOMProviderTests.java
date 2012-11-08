@@ -57,7 +57,7 @@ public class PDOMProviderTests extends PDOMTestBase {
 		{
 			ICProject cproject= CProjectHelper.createCCProject("foo" + System.currentTimeMillis(), null, IPDOMManager.ID_FAST_INDEXER);
 			TestSourceReader.createFile(cproject.getProject(), new Path("/this.h"), "class A {};\n\n");
-			CCorePlugin.getIndexManager().joinIndexer(INDEXER_TIMEOUT_SEC * 1000, npm());
+			waitForIndexer(cproject);
 
 			IIndex index= CCorePlugin.getIndexManager().getIndex(cproject, A_FRAGMENT_OPTIONS);
 			index.acquireReadLock();
@@ -78,7 +78,7 @@ public class PDOMProviderTests extends PDOMTestBase {
 		final URI baseURI= new File("c:/ExternalSDK/").toURI();
 		final ICProject cproject2= CProjectHelper.createCCProject("bar" + System.currentTimeMillis(), null, IPDOMManager.ID_FAST_INDEXER);
 		TestSourceReader.createFile(cproject2.getProject(), new Path("/source.cpp"), "namespace X { class A {}; }\n\n");
-		CCorePlugin.getIndexManager().joinIndexer(INDEXER_TIMEOUT_SEC * 1000, npm());
+		waitForIndexer(cproject2);
 
 		IndexProviderManager ipm= CCoreInternals.getPDOMManager().getIndexProviderManager();
 		ipm.addIndexProvider(new ReadOnlyPDOMProviderBridge(
@@ -129,7 +129,7 @@ public class PDOMProviderTests extends PDOMTestBase {
 		{
 			ICProject cproject= CProjectHelper.createCCProject("foo" + System.currentTimeMillis(), null, IPDOMManager.ID_FAST_INDEXER);
 			TestSourceReader.createFile(cproject.getProject(), new Path("/this.h"), "class A {};\n\n");
-			CCorePlugin.getIndexManager().joinIndexer(INDEXER_TIMEOUT_SEC * 1000, npm());
+			waitForIndexer(cproject);
 
 			IIndex index= CCorePlugin.getIndexManager().getIndex(cproject, A_FRAGMENT_OPTIONS);
 			index.acquireReadLock();
@@ -149,12 +149,12 @@ public class PDOMProviderTests extends PDOMTestBase {
 
 		final ICProject cproject3= CProjectHelper.createCCProject("bar" + System.currentTimeMillis(), null, IPDOMManager.ID_FAST_INDEXER);
 		TestSourceReader.createFile(cproject3.getProject(), new Path("/source.cpp"), "namespace Y { class A {}; }\n\n");
-		CCorePlugin.getIndexManager().joinIndexer(INDEXER_TIMEOUT_SEC * 1000, npm());
+		waitForIndexer(cproject3);
 
 		final URI baseURI= new File("c:/ExternalSDK/").toURI();
 		final ICProject cproject2= CProjectHelper.createCCProject("baz" + System.currentTimeMillis(), null, IPDOMManager.ID_FAST_INDEXER);
 		TestSourceReader.createFile(cproject2.getProject(), new Path("/source.cpp"), "namespace X { class A {}; }\n\n");
-		CCorePlugin.getIndexManager().joinIndexer(INDEXER_TIMEOUT_SEC * 1000, npm());
+		waitForIndexer(cproject2);
 
 		IndexProviderManager ipm= CCoreInternals.getPDOMManager().getIndexProviderManager();
 		ipm.addIndexProvider(new ReadOnlyPDOMProviderBridge(
@@ -247,7 +247,7 @@ public class PDOMProviderTests extends PDOMTestBase {
 		{
 			ICProject cproject= CProjectHelper.createCCProject("foo" + System.currentTimeMillis(), null, IPDOMManager.ID_FAST_INDEXER);
 			TestSourceReader.createFile(cproject.getProject(), new Path("/this.h"), "class A {};\n\n");
-			CCorePlugin.getIndexManager().joinIndexer(INDEXER_TIMEOUT_SEC * 1000, npm());
+			waitForIndexer(cproject);
 			ResourceContainerRelativeLocationConverter cvr= new ResourceContainerRelativeLocationConverter(cproject.getProject());
 			CCoreInternals.getPDOMManager().exportProjectPDOM(cproject, tempPDOM, cvr);
 			CProjectHelper.delete(cproject);
@@ -266,7 +266,7 @@ public class PDOMProviderTests extends PDOMTestBase {
 		final URI baseURI= new File("c:/ExternalSDK/").toURI();
 		final ICProject cproject2= CProjectHelper.createCCProject("baz" + System.currentTimeMillis(), null, IPDOMManager.ID_FAST_INDEXER);
 		TestSourceReader.createFile(cproject2.getProject(), new Path("/source.cpp"), "namespace X { class A {}; }\n\n");
-		CCorePlugin.getIndexManager().joinIndexer(INDEXER_TIMEOUT_SEC * 1000, npm());
+		waitForIndexer(cproject2);
 
 		IndexProviderManager ipm= CCoreInternals.getPDOMManager().getIndexProviderManager();
 		ipm.addIndexProvider(new ReadOnlyPDOMProviderBridge(

@@ -15,10 +15,8 @@ import java.io.FileNotFoundException;
 import java.util.List;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -48,12 +46,13 @@ import org.eclipse.cdt.core.model.IVariableDeclaration;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
-public class CModelElementsTests extends TestCase {	
+public class CModelElementsTests extends BaseTestCase {	
 	private ICProject fCProject;
 	private IFile headerFile;
 	private IFile includedFile;
@@ -90,7 +89,7 @@ public class CModelElementsTests extends TestCase {
 			}
 		}
 		// make sure the index is up-to-date
-		assertTrue(CCorePlugin.getIndexManager().joinIndexer(10000, new NullProgressMonitor()));
+		waitForIndexer(fCProject);
 	}
 
 	

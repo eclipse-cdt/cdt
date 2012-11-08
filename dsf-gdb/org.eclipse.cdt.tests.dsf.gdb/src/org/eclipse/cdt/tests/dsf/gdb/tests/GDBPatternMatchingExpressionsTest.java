@@ -404,7 +404,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	 */
 	@Test
 	public void testGroupAllRegsAllLocals() throws Throwable {
-		final String exprString = "$*, *";
+		final String exprString = "$*; *";
 		List<String> list = get_X86_REGS();
 		Collections.sort(list);
 		list.addAll(Arrays.asList(new String[] { "firstarg", "firstvar", "secondarg", "secondvar" }));
@@ -427,7 +427,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	 */
 	@Test
 	public void testGroupAllLocalsAllRegs() throws Throwable {
-		final String exprString = "*, $*";
+		final String exprString = "*; $*";
 		List<String> list = get_X86_REGS();
 		Collections.sort(list);
 		list.addAll(0, Arrays.asList(new String[] { "firstarg", "firstvar", "secondarg", "secondvar" }));
@@ -449,7 +449,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	 */
 	@Test
 	public void testGroupSubExprRange() throws Throwable {
-		final String exprString = "$eax, $es, *";
+		final String exprString = "$eax; $es; *";
 		final String[] children = new String[] { "$es", "firstarg", "firstvar", "secondarg" };
 
 		SyncUtil.runToLocation("foo");
@@ -468,7 +468,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	 */
 	@Test
 	public void testGroupOneLocalAllReg() throws Throwable {
-		final String exprString = "firstvar, $*";
+		final String exprString = "firstvar; $*";
 		List<String> list = get_X86_REGS();
 		Collections.sort(list);
 		list.addAll(0, Arrays.asList(new String[] { "firstvar" }));
@@ -492,7 +492,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	 */
 	@Test
 	public void testUniqueWhenOverlapReg() throws Throwable {
-		final String exprString = "$eax, $e?x, $eb?";
+		final String exprString = "$eax; $e?x; $eb?";
 		final String[] children = new String[] { "$eax","$ebx","$ecx","$edx", "$ebp" };
 
 		SyncUtil.runToLocation("foo");
@@ -513,7 +513,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	 */
 	@Test
 	public void testUniqueWhenOverlapLocal() throws Throwable {
-		final String exprString = "firstvar,*,firstvar";
+		final String exprString = "firstvar;*;firstvar";
 		final String[] children = new String[] { "firstvar", "firstarg", "secondarg", "secondvar" };
 
 		SyncUtil.runToLocation("foo");
@@ -577,7 +577,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	 */
 	@Test
 	public void testSeparatlySorted() throws Throwable {
-		final String exprString = "$*, *";
+		final String exprString = "$*; *";
 		List<String> list = get_X86_REGS();
 		Collections.sort(list);
 		List<String> localsList = Arrays.asList(new String[] { "firstarg", "firstvar", "secondarg", "secondvar" });
@@ -596,24 +596,25 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		checkChildrenCount(exprDmc, children.length);
 	}
 
-	/**
-	 * Test that group-expression can use a comma as a separator
-	 */
-	@Test
-	public void testCommaSeparation() throws Throwable {
-		final String exprString = "firstvar,$eax";
-		final String[] children = new String[] { "firstvar","$eax" };
-
-		SyncUtil.runToLocation("foo");
-		MIStoppedEvent stoppedEvent = SyncUtil.step(2, StepType.STEP_OVER);
-
-		IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
-
-		final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, exprString);
-
-		checkChildren(exprDmc, -1, -1, children);
-		checkChildrenCount(exprDmc, children.length);
-	}
+	// Cannot use comma separator because of templates (bug 393474)
+//	/**
+//	 * Test that group-expression can use a comma as a separator
+//	 */
+//	@Test
+//	public void testCommaSeparation() throws Throwable {
+//		final String exprString = "firstvar,$eax";
+//		final String[] children = new String[] { "firstvar","$eax" };
+//
+//		SyncUtil.runToLocation("foo");
+//		MIStoppedEvent stoppedEvent = SyncUtil.step(2, StepType.STEP_OVER);
+//
+//		IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
+//
+//		final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, exprString);
+//
+//		checkChildren(exprDmc, -1, -1, children);
+//		checkChildrenCount(exprDmc, children.length);
+//	}
 
 	/**
 	 * Test that group-expression can use a semi-colon as a separator
@@ -634,46 +635,46 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		checkChildrenCount(exprDmc, children.length);
 
 	}
-
-	/**
-	 * Test that group-expression can use a comma and a semi-colon as a 
-	 * separator at the same time
-	 */
-	@Test
-	public void testCommaAndSemiColonSeparation() throws Throwable {
-		final String exprString = "firstvar,$eax;$es";
-		final String[] children = new String[] { "firstvar","$eax","$es" };
-
-		SyncUtil.runToLocation("foo");
-		MIStoppedEvent stoppedEvent = SyncUtil.step(2, StepType.STEP_OVER);
-
-		IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
-
-		final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, exprString);
-
-		checkChildren(exprDmc, -1, -1, children);
-		checkChildrenCount(exprDmc, children.length);
-
-	}
+	// Cannot use comma separator because of templates (bug 393474)
+//	/**
+//	 * Test that group-expression can use a comma and a semi-colon as a 
+//	 * separator at the same time
+//	 */
+//	@Test
+//	public void testCommaAndSemiColonSeparation() throws Throwable {
+//		final String exprString = "firstvar,$eax;$es";
+//		final String[] children = new String[] { "firstvar","$eax","$es" };
+//
+//		SyncUtil.runToLocation("foo");
+//		MIStoppedEvent stoppedEvent = SyncUtil.step(2, StepType.STEP_OVER);
+//
+//		IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
+//
+//		final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, exprString);
+//
+//		checkChildren(exprDmc, -1, -1, children);
+//		checkChildrenCount(exprDmc, children.length);
+//	}
 	
-	/**
-	 * Test that group-expression can have empty terms with commas.
-	 */
-	@Test
-	public void testGroupCommaEmptyTerm() throws Throwable {
-		final String exprString = ",,firstvar,,$eax,,";
-		final String[] children = new String[] { "firstvar","$eax" };
-
-		SyncUtil.runToLocation("foo");
-		MIStoppedEvent stoppedEvent = SyncUtil.step(2, StepType.STEP_OVER);
-
-		IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
-
-		final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, exprString);
-
-		checkChildren(exprDmc, -1, -1, children);
-		checkChildrenCount(exprDmc, children.length);
-	}
+	// Cannot use comma separator because of templates (bug 393474)
+//	/**
+//	 * Test that group-expression can have empty terms with commas.
+//	 */
+//	@Test
+//	public void testGroupCommaEmptyTerm() throws Throwable {
+//		final String exprString = ",,firstvar,,$eax,,";
+//		final String[] children = new String[] { "firstvar","$eax" };
+//
+//		SyncUtil.runToLocation("foo");
+//		MIStoppedEvent stoppedEvent = SyncUtil.step(2, StepType.STEP_OVER);
+//
+//		IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
+//
+//		final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, exprString);
+//
+//		checkChildren(exprDmc, -1, -1, children);
+//		checkChildrenCount(exprDmc, children.length);
+//	}
 
 	/**
 	 * Test that group-expression can have empty terms with semi-colon.
@@ -699,7 +700,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	 */
 	@Test
 	public void testExtraSpaces() throws Throwable {
-		final String exprString = "  firstvar  ,  $eax  , ,  ";
+		final String exprString = "  firstvar  ;  $eax  ; ;  ";
 		final String[] children = new String[] { "firstvar","$eax" };
 
 		SyncUtil.runToLocation("foo");
@@ -718,7 +719,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	 */
 	@Test
 	public void testGroupExpressionData() throws Throwable {
-		final String exprString = "$eax,*";
+		final String exprString = "$eax;*";
 //		final String[] children = new String[] { "$eax", "firstarg", "firstvar", "secondarg", "secondvar" };
 
 		SyncUtil.runToLocation("foo");
@@ -763,7 +764,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	 */
 	@Test
 	public void testGroupExpressionAddressData() throws Throwable {
-		final String exprString = "$eax,*";
+		final String exprString = "$eax;*";
 //		final String[] children = new String[] { "$eax", "firstarg", "firstvar", "secondarg", "secondvar" };
 
 		SyncUtil.runToLocation("foo");
@@ -795,7 +796,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	 */
 	@Test
 	public void testGroupGetSubExpressions() throws Throwable {
-		final String exprString = "$eax,*";
+		final String exprString = "$eax;*";
 		final String[] children = new String[] { "$eax", "firstarg", "firstvar", "secondarg", "secondvar" };
 
 		SyncUtil.runToLocation("foo");
@@ -837,7 +838,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	 */
 	@Test
 	public void testGroupExpressionNotModifiable() throws Throwable {
-		final String exprString = "$eax,*";
+		final String exprString = "$eax;*";
 //		final String[] children = new String[] { "$eax", "firstarg", "firstvar", "secondarg", "secondvar" };
 
 		SyncUtil.runToLocation("foo");
@@ -865,7 +866,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	 */
 	@Test
 	public void testGroupExpressionAvailableFormats() throws Throwable {
-		final String exprString = "$eax,*";
+		final String exprString = "$eax;*";
 //		final String[] children = new String[] { "$eax", "firstarg", "firstvar", "secondarg", "secondvar" };
 
 		SyncUtil.runToLocation("foo");
@@ -895,8 +896,8 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 	@Test
 	public void testGroupExpressionValue() throws Throwable {
 		final String noMatchExpr = "$zzz*";
-		final String singleMatchExpr = "$eax,";
-		final String doubleMatchExpr = "$eax,$ebx";
+		final String singleMatchExpr = "$eax;";
+		final String doubleMatchExpr = "$eax;$ebx";
 
 		SyncUtil.runToLocation("foo");
 		MIStoppedEvent stoppedEvent = SyncUtil.step(2, StepType.STEP_OVER);

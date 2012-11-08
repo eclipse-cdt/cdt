@@ -11,12 +11,9 @@
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
-import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateNonTypeArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTypeArgument;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
@@ -28,9 +25,7 @@ import org.eclipse.core.runtime.CoreException;
  * Collects methods to store an argument list in the database
  */
 public class PDOMCPPTemplateParameterMap {
-	private static final int TYPE_OFFSET= 0;
-	private static final int VALUE_OFFSET= TYPE_OFFSET + Database.TYPE_SIZE;
-	private static final int NODE_SIZE = VALUE_OFFSET + Database.VALUE_SIZE;
+	private static final int NODE_SIZE = Database.ARGUMENT_SIZE;
 
 	/**
 	 * Stores the given template parameter map in the database.
@@ -78,12 +73,7 @@ public class PDOMCPPTemplateParameterMap {
 
 	private static void storeArgument(final Database db, final PDOMLinkage linkage, long p,
 			final ICPPTemplateArgument arg) throws CoreException {
-		if (arg.isNonTypeValue()) {
-			linkage.storeType(p + TYPE_OFFSET, arg.getTypeOfNonTypeValue());
-			linkage.storeValue(p + VALUE_OFFSET, arg.getNonTypeValue());
-		} else {
-			linkage.storeType(p + TYPE_OFFSET, arg.getTypeValue());
-		}
+		linkage.storeTemplateArgument(p, arg);
 	}
 
 	/**
@@ -102,8 +92,7 @@ public class PDOMCPPTemplateParameterMap {
 			if (packSize == -1) 
 				packSize= 1;
 			for (int j = 0; j < packSize; j++) {
-				linkage.storeType(p + TYPE_OFFSET, null);
-				linkage.storeValue(p + VALUE_OFFSET, null);
+				linkage.storeTemplateArgument(p, null);
 				p+= NODE_SIZE;
 			}
 		}
@@ -143,16 +132,9 @@ public class PDOMCPPTemplateParameterMap {
 
 	private static ICPPTemplateArgument readArgument(long rec, final PDOMLinkage linkage, final Database db)
 			throws CoreException {
-		IType type= linkage.loadType(rec + TYPE_OFFSET);
-		if (type == null) {
-			type= new ProblemType(ISemanticProblem.TYPE_NOT_PERSISTED);
-		}
-		IValue val= linkage.loadValue(rec + VALUE_OFFSET);
-		ICPPTemplateArgument arg;
-		if (val != null) {
-			arg= new CPPTemplateNonTypeArgument(val, type);
-		} else {
-			arg= new CPPTemplateTypeArgument(type);
+		ICPPTemplateArgument arg = linkage.loadTemplateArgument(rec);
+		if (arg == null) {
+			arg= new CPPTemplateTypeArgument(new ProblemType(ISemanticProblem.TYPE_NOT_PERSISTED));
 		}
 		return arg;
 	}

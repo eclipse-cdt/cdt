@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 IBM Corporation and others.
+ * Copyright (c) 2006, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,9 +24,12 @@ import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser;
 import org.eclipse.cdt.make.core.scannerconfig.ScannerInfoTypes;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.TraceUtil;
 import org.eclipse.cdt.make.xlc.core.activator.Activator;
+import org.eclipse.cdt.managedbuilder.scannerconfig.IManagedScannerInfoCollector;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.cdt.core.CCProjectNature;
+import org.eclipse.cdt.core.CProjectNature;
 
 /**
  * Parses output of ppuxlc -E -v specs.c or ppuxlc -E -v specs.cpp command
@@ -47,8 +50,12 @@ public class XlCSpecsConsoleParser implements IScannerInfoConsoleParser {
 	final Pattern includePattern = Pattern
 			.compile("-(?:qgcc_c_stdinc|qc_stdinc|qgcc_cpp_stdinc|qcpp_stdinc)=(.*)"); //$NON-NLS-1$
 
+	final Pattern C_includePattern = Pattern.compile("-(?:qgcc_c_stdinc|qc_stdinc)=(.*)"); //$NON-NLS-1$
+	final Pattern CXX_includePattern = Pattern.compile("-(?:qgcc_cpp_stdinc|qcpp_stdinc)=(.*)"); //$NON-NLS-1$
+	
 	// xlC compiler constants
 	protected final static String [] compilerConstants = {
+	    	"_Builtin", //$NON-NLS-1$
 			"__IBMCPP__", //$NON-NLS-1$
 			"__xlC__",    //$NON-NLS-1$
 			"__IBMC__",   //$NON-NLS-1$
@@ -61,7 +68,18 @@ public class XlCSpecsConsoleParser implements IScannerInfoConsoleParser {
 
 	protected List<String> symbols = new ArrayList<String>();
 
-	protected List<String> includes = new ArrayList<String>();
+	protected List<String> includes = new ArrayList<String>();	
+	protected List<String> c_includes = new ArrayList<String>();
+	protected List<String> cpp_includes = new ArrayList<String>();
+	
+	boolean c_lang;  // if language is C only search for the C include paths from the XL Compiler, otherwise get the C++ ones.
+	public boolean isC_lang() {
+		return c_lang;
+	}
+
+	public void setC_lang(boolean c_lang) {
+		this.c_lang = c_lang;
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -77,6 +95,20 @@ public class XlCSpecsConsoleParser implements IScannerInfoConsoleParser {
 			IScannerInfoCollector collector, IMarkerGenerator markerGenerator) {
 		this.fProject = project;
 		this.fCollector = collector;
+		
+		try {
+			if (project.hasNature(CCProjectNature.CC_NATURE_ID)) {
+				// use C++ pattern
+				c_lang = false;
+			}
+			else {
+				// use C pattern
+				c_lang = true;
+			}			
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/*
@@ -119,7 +151,7 @@ public class XlCSpecsConsoleParser implements IScannerInfoConsoleParser {
 				} else {
 					// if it is not a symbol, check to see if it is an
 					// include
-					Matcher includeMatcher = includePattern.matcher(args[i]);
+					Matcher includeMatcher =  c_lang ? C_includePattern.matcher(args[i]) : CXX_includePattern.matcher(args[i]);
 					if (includeMatcher.matches()) {
 						// if it is a set of include paths, split it
 						String[] includePaths = includeMatcher.group(1).split(

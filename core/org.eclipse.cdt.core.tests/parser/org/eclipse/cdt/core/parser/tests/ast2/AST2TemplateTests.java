@@ -6181,4 +6181,14 @@ public class AST2TemplateTests extends AST2BaseTest {
 	public void testAddressAsTemplateArgument_391190() throws Exception {
 		parseAndCheckBindings(getAboveComment(), CPP, true);
 	}	
+	
+	//	template <typename T> struct CT {
+	//		const static int const_min= 1;
+	//	};
+	//	void test(int off) {
+	//	    off < CT<int>::const_min || off > CT<int>::const_min;
+	//	}
+	public void testTemplateIDAmbiguity_393959() throws Exception {
+		parseAndCheckBindings(getAboveComment(), CPP, true);
+	}		
 }

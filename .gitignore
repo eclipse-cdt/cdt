@@ -8,3 +8,8 @@ debug-workspace
 artifacts/
 bin/
 target/
+
+rse/plugins/org.eclipse.dstore.core/dstore_core.jar	bin
+rse/plugins/org.eclipse.dstore.extra/dstore_extra_server.jar
+rse/plugins/org.eclipse.rse.services.dstore/dstore_miners.jar
+rse/plugins/org.eclipse.rse.services/clientserver.jar

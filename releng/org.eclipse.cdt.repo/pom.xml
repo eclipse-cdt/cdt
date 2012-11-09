@@ -7,23 +7,77 @@
 	<parent>
 		<groupId>org.eclipse.cdt</groupId>
 		<artifactId>cdt-parent</artifactId>
-		<version>8.0.2-SNAPSHOT</version>
+		<version>8.0.3-SNAPSHOT</version>
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 
-	<version>8.0.2-SNAPSHOT</version>
+	<version>8.0.3-SNAPSHOT</version>
 	<artifactId>org.eclipse.cdt.repo</artifactId>
 	<packaging>eclipse-repository</packaging>
 
 	<properties>
-		<cdt-install>/home/data/httpd/download.eclipse.org/tools/cdt/builds/hudson/cdt-maint</cdt-install>
+		<cdt-stream>indigo</cdt-stream>
+		<cdt-zipfile>org.eclipse.cdt.repo.zip</cdt-zipfile>
+		<cdt-install>/home/data/httpd/download.eclipse.org/tools/cdt/builds/hudson/${cdt-stream}/nightly</cdt-install>
 	</properties>
+	
+	<pluginRepositories>
+		<pluginRepository>
+			<id>maven.eclipse.org</id>
+			<url>http://maven.eclipse.org/nexus/content/repositories/public</url>
+		</pluginRepository>
+	</pluginRepositories>
 	
 	<profiles>
 		<profile>
 			<id>production</id>
 			<build>
 				<plugins>
+					<plugin>
+						<groupId>org.eclipse.dash.maven</groupId>
+						<artifactId>eclipse-signing-maven-plugin</artifactId>
+						<version>1.0.3</version>
+						<executions>
+							<execution>
+								<id>pack</id>
+								<configuration>
+									<inputFile>${project.build.directory}/${cdt-zipfile}</inputFile>
+								</configuration>
+								<phase>package</phase>
+								<goals>
+									<goal>pack</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>sign</id>
+								<configuration>
+									<inputFile>${project.build.directory}/${cdt-zipfile}</inputFile>
+									<signerInputDirectory>/home/data/httpd/download-staging.priv/tools/cdt/hudson</signerInputDirectory>
+								</configuration>
+								<phase>package</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>repack</id>
+								<configuration>
+									<inputFile>${project.build.directory}/signed/site_assembly.zip</inputFile>
+								</configuration>
+								<phase>package</phase>
+								<goals>
+									<goal>pack</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>fixCheckSums</id>
+								<phase>package</phase>
+								<goals>
+									<goal>fixCheckSums</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
 					<plugin>
 						<artifactId>maven-antrun-plugin</artifactId>
 						<executions>
@@ -35,18 +89,26 @@
 								</goals>
 								<configuration>
 									<tasks>
-										<mkdir dir="${cdt-install}"/>
-										<delete>
+										<delete includeemptydirs="false">
 											<fileset dir="${cdt-install}">
 												<include name="**" />
 											</fileset>
 										</delete>
-										<copy
-											file="target/org.eclipse.cdt.repo.zip"
-											tofile="${cdt-install}/org.eclipse.cdt.repo.${unqualifiedVersion}.${buildQualifier}.zip"/>
-										<unzip
-											src="target/org.eclipse.cdt.repo.zip"
-											dest="${cdt-install}"/>
+										<zip destfile="${cdt-install}/org.eclipse.cdt.repo.zip">
+											<fileset dir="target/checksumFix">
+												<include name="**"/>
+											</fileset>
+										</zip>
+										<copy includeemptydirs="false" todir="${cdt-install}">
+											<fileset dir="target/checksumFix">
+												<include name="**"/>
+											</fileset>
+										</copy>
+										<chmod perm="g+w">
+											<fileset dir="${cdt-install}">
+												<include name="**"/>
+											</fileset>
+										</chmod>
 									</tasks>
 								</configuration>
 							</execution>

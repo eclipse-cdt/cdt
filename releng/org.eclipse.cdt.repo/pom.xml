@@ -18,7 +18,7 @@
 	<properties>
 		<cdt-stream>indigo</cdt-stream>
 		<cdt-zipfile>org.eclipse.cdt.repo.zip</cdt-zipfile>
-		<cdt-install>/home/data/httpd/download.eclipse.org/tools/cdt/builds/hudson/${cdt-stream}/nightly</cdt-install>
+		<cdt-install>/home/data/httpd/download.eclipse.org/tools/cdt/builds/${cdt-stream}/nightly</cdt-install>
 	</properties>
 	
 	<pluginRepositories>

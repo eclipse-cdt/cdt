@@ -318,7 +318,7 @@ public class SemanticUtil {
 	/**
 	 * Simplifies type by resolving typedefs within the given type.
 	 */
-	static IType getSimplifiedType(IType type) {
+	public static IType getSimplifiedType(IType type) {
 		if (type instanceof ICPPFunctionType) {
 			final ICPPFunctionType ft = (ICPPFunctionType) type;
 			IType ret = null;

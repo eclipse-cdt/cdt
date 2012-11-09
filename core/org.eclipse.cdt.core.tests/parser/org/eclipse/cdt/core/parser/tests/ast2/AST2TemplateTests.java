@@ -3704,6 +3704,25 @@ public class AST2TemplateTests extends AST2BaseTest {
 		bh.assertNonProblem("func(p)", 4, ICPPFunction.class);
     }
 
+	//	template <class T>
+	//	struct C {
+	//	  typedef void (T::*PMF)();
+	//	  C(PMF member);
+	//	};
+	//
+	//	struct A {
+	//	  void m();
+	//	};
+	//
+	//	typedef A B;
+	//
+	//	void test() {
+	//	  new C<B>(&B::m);
+	//	}
+	public void testTypedef() throws Exception {
+		parseAndCheckBindings();
+	}
+
 	//	template<typename T>
 	//	struct basic_string {
 	//	  basic_string& operator+=(const T* s);
@@ -3759,34 +3778,34 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//
 	//	template<typename _Iterator>
 	//	struct iterator_traits {
-	//		typedef typename _Iterator::reference reference;
+	//	  typedef typename _Iterator::reference reference;
 	//	};
 	//
 	//	template<typename _Tp>
 	//	struct iterator_traits<_Tp*> {
-	//		typedef _Tp& reference;
+	//	  typedef _Tp& reference;
 	//	};
 	//
 	//	template<typename _Iterator, typename _Container>
 	//	struct normal_iterator {
-	//	    typedef iterator_traits<_Iterator> traits_type;
-	//	    typedef typename traits_type::reference reference;
-	//	    reference operator*() const;
+	//	  typedef iterator_traits<_Iterator> traits_type;
+	//	  typedef typename traits_type::reference reference;
+	//	  reference operator*() const;
 	//	};
 	//
 	//	template <typename T> struct vector {
-	//	    typedef T* pointer;
-	//	    typedef normal_iterator<pointer, vector> iterator;
-	//		iterator begin();
-	//		iterator end();
+	//	  typedef T* pointer;
+	//	  typedef normal_iterator<pointer, vector> iterator;
+	//	  iterator begin();
+	//	  iterator end();
 	//	};
 	//
 	//	typedef basic_string<char> string;
 	//
 	//	void test() {
-	//		vector<string> v;
-	//		for (auto s : v) {
-	//		}
+	//	  vector<string> v;
+	//	  for (auto s : v) {
+	//	  }
 	//	}
 	public void testTypedefPreservation_380498_3() throws Exception {
 		BindingAssertionHelper ba= getAssertionHelper();

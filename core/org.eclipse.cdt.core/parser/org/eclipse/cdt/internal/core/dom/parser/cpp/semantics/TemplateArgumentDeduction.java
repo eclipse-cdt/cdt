@@ -615,7 +615,8 @@ public class TemplateArgumentDeduction {
 	private int fPackOffset;
 	private final int fPackSize;
 	
-	private TemplateArgumentDeduction(ICPPTemplateParameter[] tpars, CPPTemplateParameterMap explicit, CPPTemplateParameterMap result, int packSize) {
+	private TemplateArgumentDeduction(ICPPTemplateParameter[] tpars, CPPTemplateParameterMap explicit,
+			CPPTemplateParameterMap result, int packSize) {
 		fExplicitArgs= explicit;
 		fDeducedArgs= result;
 		fPackSize= packSize;
@@ -654,7 +655,8 @@ public class TemplateArgumentDeduction {
 	/**
 	 * Deduces the template parameter mapping from one pair of template arguments.
 	 */
-	private boolean fromTemplateArgument(ICPPTemplateArgument p, ICPPTemplateArgument a, IASTNode point) throws DOMException {
+	private boolean fromTemplateArgument(ICPPTemplateArgument p, ICPPTemplateArgument a, IASTNode point)
+			throws DOMException {
 		if (p.isNonTypeValue() != a.isNonTypeValue()) 
 			return false;
 		
@@ -735,7 +737,8 @@ public class TemplateArgumentDeduction {
 					if (parID >= 0) { 
 						ICPPTemplateArgument old= fDeducedArgs.getArgument(parID, fPackOffset);
 						if (old == null) {
-							if (!deduce(parID, new CPPTemplateNonTypeArgument(as, new CPPBasicType(ICPPBasicType.Kind.eInt, 0)))) {
+							if (!deduce(parID,
+									new CPPTemplateNonTypeArgument(as, new CPPBasicType(ICPPBasicType.Kind.eInt, 0)))) {
 								return false;
 							} 
 						} else if (!as.equals(old.getNonTypeValue())) {
@@ -761,14 +764,16 @@ public class TemplateArgumentDeduction {
 				if (p instanceof IQualifierType)
 					return false;
 				if (remaining != CVQualifier.NONE) {
-					a= SemanticUtil.addQualifiers(a, remaining.isConst(), remaining.isVolatile(), remaining.isRestrict());
+					a= SemanticUtil.addQualifiers(a, remaining.isConst(), remaining.isVolatile(),
+							remaining.isRestrict());
 				}
 			} else if (p instanceof ICPPFunctionType) {
 				if (!(a instanceof ICPPFunctionType))
 					return false;
 				return fromFunctionType((ICPPFunctionType) p, (ICPPFunctionType) a, point);
 			} else if (p instanceof ICPPTemplateParameter) {
-				ICPPTemplateArgument current= fDeducedArgs.getArgument(((ICPPTemplateParameter) p).getParameterID(), fPackOffset);
+				ICPPTemplateArgument current=
+						fDeducedArgs.getArgument(((ICPPTemplateParameter) p).getParameterID(), fPackOffset);
 				if (current != null) {
 					if (current.isNonTypeValue())
 						return false;
@@ -776,7 +781,8 @@ public class TemplateArgumentDeduction {
 				}
 				if (a == null)
 					return false;
-				return deduce(((ICPPTemplateParameter) p).getParameterID(), new CPPTemplateTypeArgument(a, argumentTypeBeforeTypedefResolution));
+				return deduce(((ICPPTemplateParameter) p).getParameterID(),
+						new CPPTemplateTypeArgument(a, argumentTypeBeforeTypedefResolution));
 			} else if (p instanceof ICPPTemplateInstance) {
 				if (!(a instanceof ICPPTemplateInstance))
 					return false;
@@ -791,8 +797,8 @@ public class TemplateArgumentDeduction {
 		return false;
 	}
 
-	private boolean fromTemplateInstance(ICPPTemplateInstance pInst, ICPPTemplateInstance aInst, IASTNode point)
-			throws DOMException {
+	private boolean fromTemplateInstance(ICPPTemplateInstance pInst, ICPPTemplateInstance aInst,
+			IASTNode point) throws DOMException {
 		ICPPClassTemplate pTemplate= getPrimaryTemplate(pInst);
 		ICPPClassTemplate aTemplate= getPrimaryTemplate(aInst);
 		if (pTemplate == null || aTemplate == null)
@@ -853,7 +859,8 @@ public class TemplateArgumentDeduction {
 		return true;
 	}
 
-	private boolean fromFunctionType(ICPPFunctionType ftp, ICPPFunctionType fta, IASTNode point) throws DOMException {
+	private boolean fromFunctionType(ICPPFunctionType ftp, ICPPFunctionType fta, IASTNode point)
+			throws DOMException {
 		if (ftp.isConst() != fta.isConst() || ftp.isVolatile() != fta.isVolatile())
 			return false;
 		

@@ -217,16 +217,14 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  123.0 - Combined file size and encoding hash code.
 	 *  124.0 - GCC attributes and NO_RETURN flag for functions.
 	 *  #125.0# - Indexes for unresolved includes and files indexed with I/O errors. <<CDT 8.1>>
-<<<<<<< cdt_8_1
-<<<<<<< cdt_8_1
-<<<<<<< cdt_8_1
 	 *  126.0 - Dependent expressions, bug 299911.
 	 *  127.0 - Explicit virtual overrides, bug 380623.
-	 *  128.0 - Merged several changes affecting index from the master branch.
+	 *  128.0 - Preservation of typedefs in template arguments.
+	 *  129.0 - Merged several changes affecting index from the master branch.
 	 */
-	private static final int MIN_SUPPORTED_VERSION= version(128, 0);
-	private static final int MAX_SUPPORTED_VERSION= version(128, Short.MAX_VALUE);
-	private static final int DEFAULT_VERSION = version(128, 0);
+	private static final int MIN_SUPPORTED_VERSION= version(129, 0);
+	private static final int MAX_SUPPORTED_VERSION= version(129, Short.MAX_VALUE);
+	private static final int DEFAULT_VERSION = version(129, 0);
 
 	private static int version(int major, int minor) {
 		return (major << 16) + minor;

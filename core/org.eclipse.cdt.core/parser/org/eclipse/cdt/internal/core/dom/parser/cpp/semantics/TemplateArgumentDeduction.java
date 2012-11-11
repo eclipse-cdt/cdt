@@ -737,8 +737,11 @@ public class TemplateArgumentDeduction {
 					if (parID >= 0) { 
 						ICPPTemplateArgument old= fDeducedArgs.getArgument(parID, fPackOffset);
 						if (old == null) {
-							if (!deduce(parID,
-									new CPPTemplateNonTypeArgument(as, new CPPBasicType(ICPPBasicType.Kind.eInt, 0)))) {
+							// Template-argument deduced from an array bound may be of any integral
+							// type (14.8.2.5 - 17).
+							CPPBasicType wildcardIntegralType =
+									new CPPBasicType(ICPPBasicType.Kind.eInt, CPPBasicType.UNSPECIFIED_MODIFIERS);
+							if (!deduce(parID, new CPPTemplateNonTypeArgument(as, wildcardIntegralType))) {
 								return false;
 							} 
 						} else if (!as.equals(old.getNonTypeValue())) {

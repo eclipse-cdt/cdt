@@ -90,7 +90,7 @@ public class DeclaratorWriter extends NodeWriter {
 	private void writeFunctionDeclarator(IASTStandardFunctionDeclarator funcDec) {
 		IASTPointerOperator[] pointOps = funcDec.getPointerOperators();
 		writePointerOperators(funcDec, pointOps);
-		// XXX: Lambda declarators happen to have null names rather than empty ones when parsed
+		// Lambda declarators happen to have null names rather than empty ones when parsed.
 		if (funcDec.getName() != null) {
 			funcDec.getName().accept(visitor);
 		}

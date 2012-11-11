@@ -4205,8 +4205,18 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	  S(a);
 	//	}
 	public void testFunctionTemplateWithArrayReferenceParameter_269926() throws Exception {
-		final String code = getAboveComment();
-		parseAndCheckBindings(code);
+		parseAndCheckBindings();
+	}
+
+	//	template <unsigned int N>
+	//	void S(int (&array)[N]);
+	//
+	//	int a[1];
+	//	void test() {
+	//	  S(a);
+	//	}
+	public void testFunctionTemplateWithArrayReferenceParameter_394024() throws Exception {
+		parseAndCheckBindings();
 	}
 
 	//	template <typename T>

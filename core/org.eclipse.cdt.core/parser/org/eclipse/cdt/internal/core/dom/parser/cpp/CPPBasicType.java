@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2011 IBM Corporation and others.
+ *  Copyright (c) 2004, 2012 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  *  Contributors:
  *      Andrew Niefer (IBM Corporation) - initial API and implementation
  *      Markus Schorn (Wind River Systems)
+ *      Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -31,6 +32,7 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class CPPBasicType implements ICPPBasicType, ISerializableType {
 	private static final int FROM_STRING_LITERAL = 1 << 31;
+	public static final int UNSPECIFIED_MODIFIERS = 1 << 30;
 	public static final CPPBasicType BOOLEAN = new CPPBasicType(Kind.eBoolean, 0, null);
 	public static final CPPBasicType NULL_PTR = new CPPBasicType(Kind.eNullPtr, 0, null);
 	
@@ -119,16 +121,20 @@ public class CPPBasicType implements ICPPBasicType, ISerializableType {
 		if (!(object instanceof ICPPBasicType))
 			return false;
 
-		ICPPBasicType t = (ICPPBasicType) object;
-		if (fKind != t.getKind())
+		ICPPBasicType other = (ICPPBasicType) object;
+		if (fKind != other.getKind())
 			return false;
 
 		int modifiers = getModifiers();
+		int otherModifiers = other.getModifiers();
+		if ((modifiers & UNSPECIFIED_MODIFIERS) != 0 || (otherModifiers & UNSPECIFIED_MODIFIERS) != 0) {
+			return true;
+		}
 		if (fKind == Kind.eInt) {
 			// Signed int and int are equivalent.
-			return (modifiers & ~IS_SIGNED) == (t.getModifiers() & ~IS_SIGNED);
+			return (modifiers & ~IS_SIGNED) == (otherModifiers & ~IS_SIGNED);
 		}
-		return modifiers == t.getModifiers();
+		return modifiers == otherModifiers;
 	}
 
 	@Override

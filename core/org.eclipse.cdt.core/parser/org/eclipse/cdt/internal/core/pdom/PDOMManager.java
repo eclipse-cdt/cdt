@@ -1153,9 +1153,25 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 				sourceCount += info.fCompletedSources;
 				sourceEstimate += info.fRequestedFilesCount - info.fPrimaryHeaderCount;
 				headerCount += info.fCompletedHeaders;
-				// For the ticks we don't consider additional headers.
-				tickCount += info.fCompletedSources + info.fPrimaryHeaderCount;
-				tickEstimate += info.getEstimatedTicks();
+				int completedPrimary = info.fCompletedSources + info.fPrimaryHeaderCount;
+				if (info.fRequestedFilesCount != 0) {
+					// We estimate the number of additional header files that will be encountered
+					// through resolution of includes by assuming that the number of the completed
+					// additional header files is proportional to the square root of the number of
+					// the completed requested files. This assumption reflects the fact that more
+					// additional header files are encountered at the beginning of indexing than
+					// towards the end.
+					tickCount += completedPrimary;
+					int additionalHeaders = info.fCompletedHeaders - info.fPrimaryHeaderCount;
+					tickEstimate += info.fRequestedFilesCount;
+					if (completedPrimary != 0)
+						tickCount += additionalHeaders;
+						tickEstimate += additionalHeaders * Math.sqrt((double) info.fRequestedFilesCount / completedPrimary);
+				} else {
+					// For the ticks we don't consider additional headers.
+					tickCount += completedPrimary;
+					tickEstimate += info.fTimeEstimate;
+				}
 				detail= PDOMIndexerJob.sMonitorDetail;
 			}
 		}

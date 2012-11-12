@@ -32,7 +32,6 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class CPPBasicType implements ICPPBasicType, ISerializableType {
 	private static final int FROM_STRING_LITERAL = 1 << 31;
-	public static final int UNSPECIFIED_MODIFIERS = 1 << 30;
 	public static final CPPBasicType BOOLEAN = new CPPBasicType(Kind.eBoolean, 0, null);
 	public static final CPPBasicType NULL_PTR = new CPPBasicType(Kind.eNullPtr, 0, null);
 	
@@ -127,9 +126,6 @@ public class CPPBasicType implements ICPPBasicType, ISerializableType {
 
 		int modifiers = getModifiers();
 		int otherModifiers = other.getModifiers();
-		if ((modifiers & UNSPECIFIED_MODIFIERS) != 0 || (otherModifiers & UNSPECIFIED_MODIFIERS) != 0) {
-			return true;
-		}
 		if (fKind == Kind.eInt) {
 			// Signed int and int are equivalent.
 			return (modifiers & ~IS_SIGNED) == (otherModifiers & ~IS_SIGNED);
@@ -284,7 +280,7 @@ public class CPPBasicType implements ICPPBasicType, ISerializableType {
 	}
 
     /**
-     * @deprecated types don't have values
+     * @deprecated Types don't have values
      */
 	@Override
 	@Deprecated

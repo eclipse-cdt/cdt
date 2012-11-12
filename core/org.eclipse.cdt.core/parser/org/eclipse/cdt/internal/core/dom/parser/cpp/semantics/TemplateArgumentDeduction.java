@@ -73,6 +73,12 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
  * Algorithms for deducing template arguments in various contexts.
  */
 public class TemplateArgumentDeduction {
+	private static class TypeOfValueDeducedFromArraySize extends CPPBasicType {
+		public TypeOfValueDeducedFromArraySize() {
+			super(ICPPBasicType.Kind.eInt, 0);
+		}
+	}
+
 	/**
 	 * Deduce arguments for a template function from the template id and the template function
 	 * parameters.
@@ -194,8 +200,16 @@ public class TemplateArgumentDeduction {
 						IType type1 = ((ICPPTemplateNonTypeParameter) tpar).getType();
 						type1= CPPTemplates.instantiateType(type1, map, -1, null, point);
 						IType type2= arg.getTypeOfNonTypeValue();
-						if (!type1.isSameType(type2))
+						// Template-argument deduced from an array bound may be of any integral
+						// type.
+						if (type2 instanceof TypeOfValueDeducedFromArraySize &&
+								type1 instanceof IBasicType &&
+								((IBasicType) type1).getKind() == IBasicType.Kind.eInt) {
+							arg = new CPPTemplateNonTypeArgument(arg.getNonTypeValue(), type1);
+							deduct.fDeducedArgs.put(tpar, arg);
+						} else if (!type1.isSameType(type2)) {
 							return false;
+						}
 					}
 				}
 			}
@@ -737,11 +751,7 @@ public class TemplateArgumentDeduction {
 					if (parID >= 0) { 
 						ICPPTemplateArgument old= fDeducedArgs.getArgument(parID, fPackOffset);
 						if (old == null) {
-							// Template-argument deduced from an array bound may be of any integral
-							// type (14.8.2.5 - 17).
-							CPPBasicType wildcardIntegralType =
-									new CPPBasicType(ICPPBasicType.Kind.eInt, CPPBasicType.UNSPECIFIED_MODIFIERS);
-							if (!deduce(parID, new CPPTemplateNonTypeArgument(as, wildcardIntegralType))) {
+							if (!deduce(parID, new CPPTemplateNonTypeArgument(as, new TypeOfValueDeducedFromArraySize()))) {
 								return false;
 							} 
 						} else if (!as.equals(old.getNonTypeValue())) {

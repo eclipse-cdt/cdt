@@ -1164,9 +1164,8 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 					tickCount += completedPrimary;
 					int additionalHeaders = info.fCompletedHeaders - info.fPrimaryHeaderCount;
 					tickEstimate += info.fRequestedFilesCount;
-					if (completedPrimary != 0)
-						tickCount += additionalHeaders;
-						tickEstimate += additionalHeaders * Math.sqrt((double) info.fRequestedFilesCount / completedPrimary);
+					tickCount += additionalHeaders;
+					tickEstimate += additionalHeaders * Math.sqrt((double) info.fRequestedFilesCount / Math.max(completedPrimary, 1));
 				} else {
 					// For the ticks we don't consider additional headers.
 					tickCount += completedPrimary;

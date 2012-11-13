@@ -189,8 +189,14 @@ public class TypeMarshalBuffer implements ITypeMarshalBuffer {
 			putByte(VALUE);
 			arg.getNonTypeEvaluation().marshal(this, true);
 		} else {
-			marshalType(arg.getTypeValue());
-			marshalType(arg.getOriginalTypeValue());
+			final IType typeValue = arg.getTypeValue();
+			final IType originalTypeValue = arg.getOriginalTypeValue();
+			marshalType(typeValue);
+			if (typeValue != originalTypeValue) {
+				marshalType(originalTypeValue);
+			} else {
+				marshalType(null);
+			}
 		}
 	}
 
@@ -203,6 +209,8 @@ public class TypeMarshalBuffer implements ITypeMarshalBuffer {
 			fPos--;
 			IType type = unmarshalType();
 			IType originalType = unmarshalType();
+			if (originalType == null)
+				originalType= type;
 			return new CPPTemplateTypeArgument(type, originalType);
 		}
 	}

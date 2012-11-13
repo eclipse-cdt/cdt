@@ -9934,4 +9934,16 @@ public class AST2CPPTests extends AST2BaseTest {
 	public void testFinalParameter() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	struct S1 {};
+	//	S1 s1;
+	//	const int i= 1;
+	//	template<int I> struct CT {};
+	//	typedef int TD;
+	//	bool operator==(S1 a, int r );
+	//	static const int x = sizeof(CT<i>((TD * (CT<sizeof(s1 == 1)>::*)) 0 ));
+	//	template<int I> bool operator==(S1 a, const CT<I>& r );
+	public void testOrderInAmbiguityResolution_390759() throws Exception {
+		parseAndCheckBindings();
+	}
 }

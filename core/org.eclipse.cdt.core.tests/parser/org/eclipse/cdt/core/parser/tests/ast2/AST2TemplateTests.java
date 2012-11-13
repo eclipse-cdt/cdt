@@ -4189,7 +4189,8 @@ public class AST2TemplateTests extends AST2BaseTest {
 		parseAndCheckBindings();
 	}
 
-	//	template <unsigned int N>
+	//	typedef unsigned int uint;
+	//	template <uint N>
 	//	void S(int (&array)[N]);
 	//
 	//	int a[1];

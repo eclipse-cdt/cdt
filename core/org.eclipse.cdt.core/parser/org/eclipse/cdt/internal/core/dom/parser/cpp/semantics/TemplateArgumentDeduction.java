@@ -202,9 +202,7 @@ public class TemplateArgumentDeduction {
 						IType type2= arg.getTypeOfNonTypeValue();
 						// Template-argument deduced from an array bound may be of any integral
 						// type.
-						if (type2 instanceof TypeOfValueDeducedFromArraySize &&
-								type1 instanceof IBasicType &&
-								((IBasicType) type1).getKind() == IBasicType.Kind.eInt) {
+						if (type2 instanceof TypeOfValueDeducedFromArraySize && isIntegerType(type1)) {
 							arg = new CPPTemplateNonTypeArgument(arg.getNonTypeValue(), type1);
 							deduct.fDeducedArgs.put(tpar, arg);
 						} else if (!type1.isSameType(type2)) {
@@ -220,11 +218,18 @@ public class TemplateArgumentDeduction {
 		return false;
 	}
 
-	private static boolean deduceFromFunctionArg(IType par, IType arg, ValueCategory valueCat, TemplateArgumentDeduction deduct, IASTNode point) throws DOMException {
+	private static boolean isIntegerType(IType type) {
+		type = SemanticUtil.getNestedType(type, SemanticUtil.TDEF);
+		return type instanceof IBasicType && ((IBasicType) type).getKind() == IBasicType.Kind.eInt;
+	}
+
+	private static boolean deduceFromFunctionArg(IType par, IType arg, ValueCategory valueCat,
+			TemplateArgumentDeduction deduct, IASTNode point) throws DOMException {
 		boolean isReferenceTypeParameter= false;
 		if (par instanceof ICPPReferenceType) {
-			// If P is an rvalue reference to a cv-unqualified template parameter and the argument is an
-			// lvalue, the type "lvalue reference to A" is used in place of A for type deduction.
+			// If P is an rvalue reference to a cv-unqualified template parameter and the argument
+			// is an lvalue, the type "lvalue reference to A" is used in place of A for type
+			// deduction.
 			isReferenceTypeParameter= true;
 			final ICPPReferenceType refPar = (ICPPReferenceType) par;
 			if (refPar.isRValueReference() && refPar.getType() instanceof ICPPTemplateParameter && 

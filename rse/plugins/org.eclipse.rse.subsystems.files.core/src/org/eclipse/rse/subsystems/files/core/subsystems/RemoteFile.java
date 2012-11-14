@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2010 IBM Corporation and others.
+ * Copyright (c) 2002, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@
  * David McKnight   (IBM)        - [289387] Remote Search does not return line nodes in result tree
  * David McKnight (IBM)  - [283033] remoteFileTypes extension point should include "xml" type
  * David McKnight   (IBM)        - [328098] infinite loop when opening file from an UNC path
+ * Rob Stryker (Red Hat)         - [393384] isArchive returning true on remote folders ending in .jar
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.subsystems;
@@ -336,7 +337,7 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 	public boolean isArchive()
 	{
 		File file = new File(getAbsolutePath());
-		return ArchiveHandlerManager.getInstance().isArchive(file);
+		return isFile() && ArchiveHandlerManager.getInstance().isArchive(file);
 	}
 
    	/**

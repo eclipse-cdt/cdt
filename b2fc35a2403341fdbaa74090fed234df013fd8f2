@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOJX///0o\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/OSResourcesView.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 342,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-11-14T16:37:37Z",
+      "side": 1,
+      "message": "How about checking fMultiple first, and then fWrongType.  I find that selecting multiple entries in different sessions and getting the \"Invalid debug object\" message is more confusing than getting the \"multiple sessions\" message.\n\nWhat do you think?",
+      "revId": "b2fc35a2403341fdbaa74090fed234df013fd8f2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

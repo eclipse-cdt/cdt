@@ -82,6 +82,8 @@ public class OSResourcesView extends ViewPart implements DsfSession.SessionEnded
 	
 	// Indicates that we've selected objects from different debug sessions.
 	boolean fMultiple = false;
+	// Indicates that we have selected object with a wrong type
+	boolean fWrongType = false;
 
 
 	// UI objects
@@ -225,14 +227,20 @@ public class OSResourcesView extends ViewPart implements DsfSession.SessionEnded
 				
 		ICommandControlDMContext context = null;
 		fMultiple = false;
+		fWrongType = false;
 		if (s instanceof IStructuredSelection) {
 			IStructuredSelection ss = (IStructuredSelection) s;
 			if (ss.size() > 0) {
 				@SuppressWarnings("rawtypes")
 				Iterator i = ss.iterator();
 				context = getCommandControlContext(i.next());
+				if (context == null)
+					fWrongType = true;
+				
 				while (i.hasNext()) {
-					ICommandControlDMContext nextContext = getCommandControlContext(i.next()); 
+					ICommandControlDMContext nextContext = getCommandControlContext(i.next());
+					if (nextContext == null)
+						fWrongType = true;
 					if (nextContext == null && context != null 
 						|| nextContext != null && context == null
 						|| nextContext != null && context != null && !nextContext.equals(context)) 
@@ -300,18 +308,13 @@ public class OSResourcesView extends ViewPart implements DsfSession.SessionEnded
 					public void update() {
 						// Note that fSessionData always calls the listener in
 						// UI thread, so we can directly call 'update' here.
-						OSResourcesView.this.update();
+						OSResourcesView.this.updateSessionDataContents();
 					}
 				}, fViewer.getControl());
 			}
 		}
 
-		
-		if (newSessionData != fSessionData)
-		{
-			fSessionData = newSessionData;
-			update();
-		}
+		update(newSessionData);
 	}
 
 	@Override
@@ -323,7 +326,39 @@ public class OSResourcesView extends ViewPart implements DsfSession.SessionEnded
 		}
 	}
 
-	private void update() {
+	// Update UI to showing new session data. If this session data is already
+	// shown, does nothing.
+	private void update(SessionOSData newSessionData)
+	{
+		if (fViewer == null || fViewer.getControl() == null)
+			return;
+
+		if (fViewer.getControl().isDisposed())
+			return;
+				
+		if (newSessionData == null)
+		{	
+			fSessionData = null;
+			if (fMultiple)
+				hideTable(Messages.OSView_14);
+			else if (fWrongType)
+				hideTable(Messages.OSView_4);
+			else 
+				hideTable(Messages.OSView_15);
+			fResourceClassEditor.setEnabled(false);
+			fRefreshAction.setEnabled(false);
+			return;
+		}
+		
+		if (newSessionData != fSessionData) {
+			fSessionData = newSessionData;
+			updateSessionDataContents();
+		}
+	}
+	
+	// Update the UI according to actual content of fSessionData,
+	// which must be not null.
+	private void updateSessionDataContents() {
 		
 		if (fViewer == null || fViewer.getControl() == null)
 			return;
@@ -331,14 +366,6 @@ public class OSResourcesView extends ViewPart implements DsfSession.SessionEnded
 		if (fViewer.getControl().isDisposed())
 			return;
 
-		if (fSessionData == null)
-		{			
-			hideTable(fMultiple ? Messages.OSView_14 : Messages.OSView_4);
-			fResourceClassEditor.setEnabled(false);
-			fRefreshAction.setEnabled(false);
-			return;
-		}
-		
 		boolean enable = fSessionData.canFetchData();	
 		fRefreshAction.setEnabled(enable);
 		fResourceClass = fResourceClassEditor.updateClasses(fSessionData.getResourceClasses());

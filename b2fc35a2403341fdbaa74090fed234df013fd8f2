@@ -16,6 +16,24 @@
       "revId": "b2fc35a2403341fdbaa74090fed234df013fd8f2",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJX///tE\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/osview/OSResourcesView.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 342,
+      "author": {
+        "id": 570
+      },
+      "writtenOn": "2012-11-15T05:52:36Z",
+      "side": 1,
+      "message": "Actually, I thought the currently implemented behaviour is more logical, but I don\u0027t have a strong position. I\u0027ll reverse the order of checks and resubmit.",
+      "parentUuid": "AABOJX///0o\u003d",
+      "revId": "b2fc35a2403341fdbaa74090fed234df013fd8f2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

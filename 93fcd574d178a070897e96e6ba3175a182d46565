@@ -1,0 +1,140 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOJX///Tc\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/DebugNewProcessSequence.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 206,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-11-16T21:08:44Z",
+      "side": 1,
+      "message": "Can you put a comment stating that arguments should be passed to GDB \"as-is\".  And put the number of the bug please, because this piece of code has been changed a couple of times, so it would be nice to know why it is now so simple :)",
+      "revId": "93fcd574d178a070897e96e6ba3175a182d46565",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJX///S8\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/MICommand.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-11-16T21:08:44Z",
+      "side": 1,
+      "message": "Update to use whatever name you choose (see below)",
+      "revId": "93fcd574d178a070897e96e6ba3175a182d46565",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJX///TY\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/MICommand.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 217,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-11-16T21:08:44Z",
+      "side": 1,
+      "message": "I don\u0027t think this javadoc is correct anymore, based on how you handle the quoting in this version of the patch.",
+      "revId": "93fcd574d178a070897e96e6ba3175a182d46565",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJX///TA\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/MICommand.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 352,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-11-16T21:08:44Z",
+      "side": 1,
+      "message": "I gather you no longer just want to prevent quoting, but you want to prevent all adjusting of the value.  If that is the case, I think you should rename \n\nfQuote to fPerformAdjustment\nquoteParametersWithSpaces() to shouldAdjustParameters()",
+      "revId": "93fcd574d178a070897e96e6ba3175a182d46565",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJX///S0\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/MIGDBSet.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-11-16T21:08:44Z",
+      "side": 1,
+      "message": "Please put 2008, 2012",
+      "revId": "93fcd574d178a070897e96e6ba3175a182d46565",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJX///S4\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/MIGDBSet.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-11-16T21:08:44Z",
+      "side": 1,
+      "message": "Update to new name (see previous comment)",
+      "revId": "93fcd574d178a070897e96e6ba3175a182d46565",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJX///Sw\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/MIGDBSet.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-11-16T21:08:44Z",
+      "side": 1,
+      "message": "Please put a comment indicating why this command should not be adjusting its parameters.",
+      "revId": "93fcd574d178a070897e96e6ba3175a182d46565",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJX///Ss\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/MITargetSelect.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-11-16T21:08:44Z",
+      "side": 1,
+      "message": "target-select was not mentioned before in the bug discussion, so I don\u0027t know why it is being changed.  Can you explain?",
+      "revId": "93fcd574d178a070897e96e6ba3175a182d46565",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

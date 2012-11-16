@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Ericsson - Initial API and implementation
+ *     Dmitry Kozlov (Mentor) - Added quoteParametersWithSpaces (Bug 317675)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service.command.commands;
 
@@ -23,4 +24,11 @@ public class MIGDBSet extends MICommand<MIInfo>
     public MIGDBSet(IDMContext ctx, String[] params) {
         super(ctx, "-gdb-set", null, params); //$NON-NLS-1$
     }
+
+    @Override
+	protected boolean quoteParametersWithSpaces() {
+    	return false;
+	}
+
 }
+

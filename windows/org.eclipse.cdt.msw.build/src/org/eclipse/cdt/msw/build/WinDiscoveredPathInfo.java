@@ -35,6 +35,13 @@ public class WinDiscoveredPathInfo implements IDiscoveredPathInfo {
 		symbols.put("__unaligned", "");
 		symbols.put("__uptr", "");
 		symbols.put("__w64", "");
+		
+		// Redefine some things so that the CDT parser can handle them, until there is a VC specific parser
+		symbols.put("__forceinline", "__inline");
+		symbols.put("__int8", "char");
+		symbols.put("__int16", "short");
+		symbols.put("__int32", "int");
+		symbols.put("__int64", "long long");
 	}
 	
 	public IPath[] getIncludePaths() {

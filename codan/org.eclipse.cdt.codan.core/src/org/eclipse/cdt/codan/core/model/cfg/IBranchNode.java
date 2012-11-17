@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Alena Laskavaia 
+ * Copyright (c) 2009, 2012 Alena Laskavaia and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Alena Laskavaia  - initial API and implementation
+ *    Alena Laskavaia   - initial API and implementation
+ *    Tomasz Wesolowski - Bug 348387
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.model.cfg;
 
@@ -29,6 +30,14 @@ public interface IBranchNode extends IBasicBlock, ISingleIncoming, ISingleOutgoi
 	 * Default branch of "switch" statement
 	 */
 	public static String DEFAULT = "default"; //$NON-NLS-1$
+	/**
+	 * Try branch of "try" block statement
+	 */
+	public static String TRY_BODY = "try"; //$NON-NLS-1$
+	/**
+	 * Catch "..." branch of "try" block statement
+	 */
+	public static String CATCH_ANY = "..."; //$NON-NLS-1$
 
 	/**
 	 * @return label of a branch

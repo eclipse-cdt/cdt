@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 Alena Laskavaia
+ * Copyright (c) 2009, 2012 Alena Laskavaia
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *    Alena Laskavaia  - initial API and implementation
  *    Felipe Martinez  - ReturnCheckerTest implementation
+ *    Tomasz Wesolowski - Bug 348387
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.internal.checkers;
 
@@ -309,5 +310,40 @@ public class ReturnCheckerTest extends CheckerTestCase {
 	public void testNoReturn() {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
+	}
+
+	//	int try1() {
+	//		try {
+	//			return 5;
+	//		} catch (...) {
+	//			return 5;
+	//		}
+	//	}
+	public void testTryBlock1() throws Exception {
+		// bug 348387
+		loadCodeAndRunCpp(getAboveComment());
+		checkNoErrors();
+	}
+
+	//	int try2() {
+	//		try {
+	//			return 5;
+	//		} catch (int) {
+	//		}
+	//	}
+	public void testTryBlock2() throws Exception {
+		loadCodeAndRunCpp(getAboveComment());
+		checkErrorLine(1);
+	}
+
+	//	int try3() {
+	//		try {
+	//		} catch (int a) {
+	//			return 5;
+	//		}
+	//	}
+	public void testTryBlock3() throws Exception {
+			loadCodeAndRunCpp(getAboveComment());
+			checkErrorLine(1);
 	}
 }

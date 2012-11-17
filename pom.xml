@@ -134,6 +134,7 @@
 		<module>util/org.eclipse.cdt.util-feature</module>
 
 		<module>memory/org.eclipse.cdt.debug.ui.memory.memorybrowser</module>
+		<module>memory/org.eclipse.cdt.debug.ui.memory.floatingpoint</module>
 		<module>memory/org.eclipse.cdt.debug.ui.memory.search</module>
 		<module>memory/org.eclipse.cdt.debug.ui.memory.traditional</module>
 		<module>memory/org.eclipse.cdt.debug.ui.memory.transport</module>

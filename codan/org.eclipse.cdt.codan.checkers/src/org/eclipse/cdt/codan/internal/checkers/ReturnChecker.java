@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 Alena Laskavaia 
+ * Copyright (c) 2009, 2012 Alena Laskavaia 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Alena Laskavaia  - initial API and implementation
+ *     Tomasz Wesolowski - Bug 348387
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.checkers;
 
@@ -47,6 +48,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLambdaExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTryBlockStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 
@@ -205,8 +207,9 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 	 */
 	private boolean isCompoundStatement(IASTStatement last) {
 		return last instanceof IASTIfStatement || last instanceof IASTWhileStatement ||
-				last instanceof IASTDoStatement	|| last instanceof IASTForStatement ||
-				last instanceof IASTSwitchStatement || last instanceof IASTCompoundStatement;
+				last instanceof IASTDoStatement || last instanceof IASTForStatement || 
+				last instanceof IASTSwitchStatement || last instanceof IASTCompoundStatement || 
+				last instanceof ICPPASTTryBlockStatement;
 	}
 
 	protected boolean isFuncExitStatement(IASTStatement statement) {

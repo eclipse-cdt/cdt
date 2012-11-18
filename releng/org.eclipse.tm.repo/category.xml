@@ -25,18 +25,18 @@
    <feature url="features/org.eclipse.tm.terminal.local.sdk_0.3.0.qualifier.jar" id="org.eclipse.tm.terminal.local.sdk" version="0.3.0.qualifier">
       <category name="tm_34_optional"/>
    </feature>
-   <feature url="features/org.eclipse.tm.terminal.sdk_3.3.1.qualifier.jar" id="org.eclipse.tm.terminal.sdk" version="3.3.1.qualifier">
+   <feature url="features/org.eclipse.tm.terminal.sdk_3.3.2.qualifier.jar" id="org.eclipse.tm.terminal.sdk" version="3.3.2.qualifier">
       <category name="tm_34_main"/>
    </feature>
    <feature url="features/org.eclipse.tm.terminal.core.sdk_3.3.1.qualifier.jar" id="org.eclipse.tm.terminal.core.sdk" version="3.3.1.qualifier">
       <category name="tm_34_main"/>
    </feature>
-   <category-def name="tm_34_main" label="TM and RSE 3.4.1 Main Features">
+   <category-def name="tm_34_main" label="TM and RSE 3.4.2 Main Features">
       <description>
          TM and RSE Main Features
       </description>
    </category-def>
-   <category-def name="tm_34_optional" label="TM and RSE 3.4.1 Optional Add-Ons">
+   <category-def name="tm_34_optional" label="TM and RSE 3.4.2 Optional Add-Ons">
       <description>
          Examples, Tests and Incubation Plug-ins.
       </description>

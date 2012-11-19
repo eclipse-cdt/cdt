@@ -44,7 +44,8 @@
     <eclipse-site>http://download.eclipse.org/releases/${platform-version-name}</eclipse-site>
     <orbit-site>http://download.eclipse.org/tools/orbit/downloads/drops/R20120526062928/repository</orbit-site>
     <rxtx-version>1.0.0.7837QcJa5vE7MnhE77YA7AU3SWUlbntVZAnlDoIGojcQd</rxtx-version>
-    <rxtx-site>http://rxtx.qbang.org/eclipse</rxtx-site>
+    <!-- <rxtx-site>http://rxtx.qbang.org/eclipse</rxtx-site>-->
+    <rxtx-site>http://archive.eclipse.org/tm/updates/rxtx</rxtx-site>
   </properties>
   <pluginRepositories>
     <pluginRepository>

@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM Rational Software - Initial API and implementation
- *    Ed Swartz (Nokia)
- *    Markus Schorn (Wind River Systems)
+ *     IBM Rational Software - Initial API and implementation
+ *     Ed Swartz (Nokia)
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.parser.c;
 
@@ -21,6 +21,7 @@ import org.eclipse.cdt.internal.core.dom.parser.GCCBuiltinSymbolProvider;
  */
 public class GCCParserExtensionConfiguration extends AbstractCParserExtensionConfiguration {
 	private static GCCParserExtensionConfiguration sInstance= new GCCParserExtensionConfiguration();
+
 	/**
 	 * @since 5.1
 	 */
@@ -28,65 +29,41 @@ public class GCCParserExtensionConfiguration extends AbstractCParserExtensionCon
 		return sInstance;
 	}
 
-    /*
-     * @see org.eclipse.cdt.core.dom.parser.c.AbstractCParserExtensionConfiguration#supportStatementsInExpressions()
-     */
     @Override
 	public boolean supportStatementsInExpressions() {
         return true;
     }
 
-    /*
-     * @see org.eclipse.cdt.core.dom.parser.c.AbstractCParserExtensionConfiguration#supportGCCStyleDesignators()
-     */
     @Override
 	public boolean supportGCCStyleDesignators() {
         return true;
     }
 
-    /*
-     * @see org.eclipse.cdt.core.dom.parser.c.AbstractCParserExtensionConfiguration#supportTypeofUnaryExpressions()
-     */
     @Override
 	public boolean supportTypeofUnaryExpressions() {
         return true;
     }
 
-    /*
-     * @see org.eclipse.cdt.core.dom.parser.c.AbstractCParserExtensionConfiguration#supportAlignOfUnaryExpression()
-     */
     @Override
 	public boolean supportAlignOfUnaryExpression() {
         return true;
     }
 
-	/*
-	 * @see org.eclipse.cdt.core.dom.parser.c.AbstractCParserExtensionConfiguration#supportKnRC()
-	 */
 	@Override
 	public boolean supportKnRC() {
 		return true;
 	}
 
-	/*
-	 * @see org.eclipse.cdt.core.dom.parser.c.AbstractCParserExtensionConfiguration#supportAttributeSpecifiers()
-	 */
 	@Override
 	public boolean supportAttributeSpecifiers() {
 		return true;
 	}
 
-	/*
-	 * @see org.eclipse.cdt.core.dom.parser.c.AbstractCParserExtensionConfiguration#supportDeclspecSpecifiers()
-	 */
 	@Override
 	public boolean supportDeclspecSpecifiers() {		
 		return true;
 	}
 
-	/*
-	 * @see org.eclipse.cdt.core.dom.parser.c.AbstractCParserExtensionConfiguration#getBuiltinSymbolProvider()
-	 */
 	@Override
 	public IBuiltinBindingsProvider getBuiltinBindingsProvider() {
 		return new GCCBuiltinSymbolProvider(ParserLanguage.C, true);

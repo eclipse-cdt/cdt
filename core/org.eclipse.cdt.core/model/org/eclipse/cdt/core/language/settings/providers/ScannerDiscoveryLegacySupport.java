@@ -63,6 +63,22 @@ public class ScannerDiscoveryLegacySupport {
 	}
 
 	/**
+	 * Checks if Language Settings functionality is defined for given project in preferences.
+	 *
+	 * @param project - project to check the preference
+	 * @return {@code true} if functionality is defined
+	 *
+	 * @noreference This method is temporary and not intended to be referenced by clients.
+	 * 
+	 * @since 5.5
+	 */
+	public static boolean isLanguageSettingsProvidersFunctionalityDefined(IProject project) {
+		Preferences pref = getPreferences(project);
+		String value = pref.get(DISABLE_LSP_PREFERENCE, null);
+		return value != null;
+	}
+
+	/**
 	 * Checks if Language Settings functionality is enabled for given project.
 	 *
 	 * @param project - project to check the preference

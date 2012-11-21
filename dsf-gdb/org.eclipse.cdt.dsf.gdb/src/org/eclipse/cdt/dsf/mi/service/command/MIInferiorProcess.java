@@ -77,13 +77,13 @@ public class MIInferiorProcess extends Process
 	// Indicates that the inferior has been terminated
     private boolean fTerminated;
 
-    private final OutputStream fOutputStream;
-    private final InputStream fInputStream;
+    private OutputStream fOutputStream;
+    private InputStream fInputStream;
 
-    private final PipedOutputStream fInputStreamPiped;
+    private PipedOutputStream fInputStreamPiped;
 
-    private final PipedInputStream fErrorStream;
-    private final PipedOutputStream fErrorStreamPiped;
+    private PipedInputStream fErrorStream;
+    private PipedOutputStream fErrorStreamPiped;
 
     private final DsfSession fSession;
 
@@ -329,18 +329,28 @@ public class MIInferiorProcess extends Process
     private void closeIO() {
         try {
             fOutputStream.close();
+            // Make sure things get GCed
+            fOutputStream = null;
         } catch (IOException e) {}
         try {
             fInputStream.close();
+            // Make sure things get GCed
+            fInputStream = null;
         } catch (IOException e) {}
         try {
             if (fInputStreamPiped != null) fInputStreamPiped.close();
+            // Make sure things get GCed
+            fInputStreamPiped = null;
         } catch (IOException e) {}
         try {
             fErrorStream.close();
+            // Make sure things get GCed
+            fErrorStream = null;
         } catch (IOException e) {}
         try {
             fErrorStreamPiped.close();
+            // Make sure things get GCed
+            fErrorStreamPiped = null;
         } catch (IOException e) {}
     }
     

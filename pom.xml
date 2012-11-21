@@ -73,6 +73,10 @@
         <enabled>true</enabled>
       </releases>
     </pluginRepository>
+    <pluginRepository>
+      <id>m2e-cbi</id>
+      <url>http://download.eclipse.org/technology/m2e/maven/</url>
+    </pluginRepository>
   </pluginRepositories>
   <repositories>
     <repository>
@@ -442,7 +446,7 @@
             </execution>
           </executions>
         </plugin>
-	<!--    </plugins>
+        <!--    </plugins>
     </pluginManagement>
     <pluginManagement>
 	    <plugins>-->

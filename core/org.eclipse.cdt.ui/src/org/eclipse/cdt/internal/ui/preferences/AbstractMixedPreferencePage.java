@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Jens Elmenthaler and others
+ * Copyright (c) 2011, 2012 Jens Elmenthaler and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,16 +15,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.preferences.ScopedPreferenceStore;
-
-import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
  * A preference that on preference from the UI plugin, as well the CDT core.
@@ -49,8 +46,8 @@ public abstract class AbstractMixedPreferencePage extends AbstractPreferencePage
 	};
 
 	public AbstractMixedPreferencePage() {
-		corePrefsOverlayStore = new OverlayPreferenceStore(new ScopedPreferenceStore(InstanceScope.INSTANCE,
-				CCorePlugin.PLUGIN_ID), createCorePrefsOverlayStoreKeys());
+		corePrefsOverlayStore = new OverlayPreferenceStore(CUIPlugin.getDefault().getCorePreferenceStore(),
+				createCorePrefsOverlayStoreKeys());
 	}
 
 	protected Button addCorePrefsCheckBox(Composite parent, String label, String key, int indentation) {

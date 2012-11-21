@@ -41,7 +41,6 @@ import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
-import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.help.IContext;
 import org.eclipse.help.IContextProvider;
 import org.eclipse.jface.action.GroupMarker;
@@ -149,7 +148,6 @@ import org.eclipse.ui.part.EditorActionBarContributor;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.IShowInTargetList;
 import org.eclipse.ui.part.ShowInContext;
-import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel;
 import org.eclipse.ui.texteditor.AnnotationPreference;
@@ -3649,7 +3647,7 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 		}
 
 		stores.add(CUIPlugin.getDefault().getPreferenceStore());
-		stores.add(new ScopedPreferenceStore(InstanceScope.INSTANCE, CCorePlugin.PLUGIN_ID));
+		stores.add(CUIPlugin.getDefault().getCorePreferenceStore());
 		stores.add(EditorsUI.getPreferenceStore());
 
 		return new ChainedPreferenceStore(stores.toArray(new IPreferenceStore[stores.size()]));

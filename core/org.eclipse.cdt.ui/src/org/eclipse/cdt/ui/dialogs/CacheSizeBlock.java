@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2012 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,9 +14,9 @@ package org.eclipse.cdt.ui.dialogs;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.jface.preference.FieldEditor;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -26,13 +26,12 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.preferences.ScopedPreferenceStore;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CCorePreferenceConstants;
 import org.eclipse.cdt.core.dom.CDOM;
 import org.eclipse.cdt.core.parser.CodeReaderCache;
 import org.eclipse.cdt.core.parser.ICodeReaderCache;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
@@ -140,7 +139,7 @@ public class CacheSizeBlock extends AbstractCOptionPage {
     }
 
     private void initializeValues() {
-    	ScopedPreferenceStore prefStore= new ScopedPreferenceStore(InstanceScope.INSTANCE, CCorePlugin.PLUGIN_ID);
+    	IPreferenceStore prefStore= CUIPlugin.getDefault().getCorePreferenceStore();
 
     	fDBLimitPct.setPreferenceStore(prefStore);
     	fDBLimitPct.setPropertyChangeListener(validityChangeListener);

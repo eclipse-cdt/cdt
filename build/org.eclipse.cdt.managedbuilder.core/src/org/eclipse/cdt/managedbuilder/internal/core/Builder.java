@@ -632,26 +632,27 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 
 	private int decodeParallelizationNumber(String value) {
 		int parallelNumber = -1;
-		if (VALUE_OPTIMAL.equals(value)) {
+		if (value == null || VALUE_OPTIMAL.equals(value)) {
 			parallelNumber = -getOptimalParallelJobNum();
 		} else if (VALUE_UNLIMITED.equals(value)) {
 			parallelNumber = UNLIMITED_JOBS;
 		} else {
 			try {
 				parallelNumber = Integer.decode(value);
+				if (parallelNumber <= 0) {
+					// compatibility with legacy representation - it was that inconsistent
+					if (isInternalBuilder()) {
+						// "optimal" for Internal Builder
+						parallelNumber = -getOptimalParallelJobNum();
+					} else {
+						// unlimited for External Builder
+						parallelNumber = UNLIMITED_JOBS;
+					}
+				}
 			} catch (NumberFormatException e) {
 				ManagedBuilderCorePlugin.log(e);
-				parallelNumber = getOptimalParallelJobNum();
-			}
-			if (parallelNumber <= 0) {
-				// compatibility with legacy representation - it was that inconsistent
-				if (isInternalBuilder()) {
-					// "optimal" for Internal Builder
-					parallelNumber = -getOptimalParallelJobNum();
-				} else {
-					// unlimited for External Builder
-					parallelNumber = UNLIMITED_JOBS;
-				}
+				// default to "optimal" if not recognized
+				parallelNumber = -getOptimalParallelJobNum();
 			}
 		}
 		return parallelNumber;

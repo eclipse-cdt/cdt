@@ -22,39 +22,24 @@ public interface IBasicType extends IType {
 	 * @since 5.2
 	 */
 	enum Kind {
-		eUnspecified, eVoid, eChar, eWChar, eInt, eFloat, eDouble, eBoolean, eChar16, eChar32,
-		/** @since 5.4 */ eNullPtr
+		eUnspecified, eVoid, eChar, eWChar, eInt, /** @since 5.5 */ eInt128, eFloat, eDouble,
+		eBoolean, eChar16, eChar32, /** @since 5.4 */ eNullPtr
 	}
 
-	/**
-	 * @since 5.2
-	 */
+	/** @since 5.2 */
 	final int IS_LONG     = 1;
-	/**
-	 * @since 5.2
-	 */
+	/** @since 5.2 */
 	final int IS_SHORT    = 1 << 1;
-	/**
-	 * @since 5.2
-	 */
+	/** @since 5.2 */
 	final int IS_SIGNED   = 1 << 2;
-	/**
-	 * @since 5.2
-	 */
+	/** @since 5.2 */
 	final int IS_UNSIGNED = 1 << 3;
-	/**
-	 * @since 5.2
-	 */
+	/** @since 5.2 */
 	final int IS_COMPLEX  = 1 << 4;
-	/**
-	 * @since 5.2
-	 */
+	/** @since 5.2 */
 	final int IS_IMAGINARY = 1 << 5;
-	/**
-	 * @since 5.2
-	 */
+	/** @since 5.2 */
 	final int IS_LONG_LONG = 1 << 6;
-
 
 	/**
 	 * This returns the kind of basic type you are looking at. The type is

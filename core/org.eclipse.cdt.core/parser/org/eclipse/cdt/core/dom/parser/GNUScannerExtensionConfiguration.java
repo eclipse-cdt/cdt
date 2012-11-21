@@ -27,7 +27,14 @@ import org.eclipse.cdt.core.parser.util.CharArrayIntMap;
  */
 public abstract class GNUScannerExtensionConfiguration extends AbstractScannerExtensionConfiguration {
 	private static GNUScannerExtensionConfiguration sInstance;
-	
+
+	/**
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	protected static int version(int major, int minor) {
+		return (major << 16) + minor;
+	}
+
 	@SuppressWarnings("nls")
 	public GNUScannerExtensionConfiguration() {
 		addMacro("__complex__", "_Complex");

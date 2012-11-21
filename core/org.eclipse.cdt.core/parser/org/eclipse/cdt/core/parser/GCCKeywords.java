@@ -23,6 +23,8 @@ public class GCCKeywords {
 	public static final String __ALIGNOF__ = "__alignof__"; 
 	public static final String __ATTRIBUTE__ = "__attribute__"; 
 	public static final String __DECLSPEC = "__declspec"; 
+	/** @since 5.5 */
+	public static final String __INT128 = "__int128";
 
 	public static final char[] 
 		cpTYPEOF = 			TYPEOF.toCharArray(),
@@ -46,9 +48,7 @@ public class GCCKeywords {
 		cp__TYPEOF= 		"__typeof".toCharArray(), 
 		cp__TYPEOF__= 		"__typeof__".toCharArray();
 
-	/**
-	 * @since 5.3
-	 */
+	/** @since 5.3 */
 	public static final char[] 
 		cp__has_nothrow_assign= 		"__has_nothrow_assign".toCharArray(),
 		cp__has_nothrow_copy= 			"__has_nothrow_copy".toCharArray(),
@@ -67,10 +67,9 @@ public class GCCKeywords {
 		cp__is_polymorphic= 			"__is_polymorphic".toCharArray(),
 		cp__is_union= 					"__is_union".toCharArray();
 
-	/**
-	 * @since 5.5
-	 */
+	/** @since 5.5 */
 	public static final char[] 
+		cp__int128= 					__INT128.toCharArray(),
 		cp__is_literal_type= 			"__is_literal_type".toCharArray(),
 		cp__is_standard_layout= 		"__is_standard_layout".toCharArray(),
 		cp__is_trivial= 			    "__is_trivial".toCharArray();

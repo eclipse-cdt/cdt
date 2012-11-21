@@ -2591,6 +2591,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 		case IToken.t_short:
         case IToken.t_int:
         case IToken.t_long:
+        case IGCCToken.t__int128:
         case IToken.t_float:
         case IToken.t_double:
         case IToken.t__Bool:

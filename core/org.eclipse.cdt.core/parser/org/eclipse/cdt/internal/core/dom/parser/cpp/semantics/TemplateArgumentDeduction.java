@@ -202,8 +202,9 @@ public class TemplateArgumentDeduction {
 						IType type2= arg.getTypeOfNonTypeValue();
 						// Template-argument deduced from an array bound may be of any integral
 						// type.
-						if (type2 instanceof TypeOfValueDeducedFromArraySize && isIntegerType(type1)) {
-							arg = new CPPTemplateNonTypeArgument(arg.getNonTypeValue(), type1);
+						if (type2 instanceof TypeOfValueDeducedFromArraySize && isIntegralType(type1)) {
+							IValue value = isBooleanType(type1) ? Value.create(true) : arg.getNonTypeValue();
+							arg = new CPPTemplateNonTypeArgument(value, type1);
 							deduct.fDeducedArgs.put(tpar, arg);
 						} else if (!type1.isSameType(type2)) {
 							return false;
@@ -218,9 +219,28 @@ public class TemplateArgumentDeduction {
 		return false;
 	}
 
-	private static boolean isIntegerType(IType type) {
+	// 3.9.1 - 7
+	private static boolean isIntegralType(IType type) {
 		type = SemanticUtil.getNestedType(type, SemanticUtil.TDEF);
-		return type instanceof IBasicType && ((IBasicType) type).getKind() == IBasicType.Kind.eInt;
+		if (!(type instanceof IBasicType))
+			return false;
+		switch (((IBasicType) type).getKind()) {
+		case eInt:
+		case eInt128:
+		case eBoolean:
+		case eChar:
+		case eChar16:
+		case eChar32:
+		case eWChar:
+			return true;
+		default:
+			return false;
+		}
+	}
+
+	private static boolean isBooleanType(IType type) {
+		type = SemanticUtil.getNestedType(type, SemanticUtil.TDEF);
+		return type instanceof IBasicType && ((IBasicType) type).getKind() == IBasicType.Kind.eBoolean;
 	}
 
 	private static boolean deduceFromFunctionArg(IType par, IType arg, ValueCategory valueCat,

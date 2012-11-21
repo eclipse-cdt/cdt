@@ -98,7 +98,7 @@ public class CASTSimpleDeclSpecifier extends CASTBaseDeclSpecifier implements IC
     }
     
     private int getType(Kind kind) {
-    	switch(kind) {
+    	switch (kind) {
     	case eBoolean:
     		return t_bool;
 		case eChar:
@@ -112,6 +112,8 @@ public class CASTSimpleDeclSpecifier extends CASTBaseDeclSpecifier implements IC
 			return t_float;
 		case eInt:
 			return t_int;
+		case eInt128:
+			return t_int128;
 		case eUnspecified:
 			return t_unspecified;
 		case eVoid:

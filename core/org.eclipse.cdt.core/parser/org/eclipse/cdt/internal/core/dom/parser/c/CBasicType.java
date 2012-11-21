@@ -71,6 +71,8 @@ public class CBasicType implements ICBasicType, ISerializableType {
 			return Kind.eFloat;
 		case IASTSimpleDeclSpecifier.t_int:
 			return Kind.eInt;
+		case IASTSimpleDeclSpecifier.t_int128:
+			return Kind.eInt128;
 		case IASTSimpleDeclSpecifier.t_void:
 			return Kind.eVoid;
 		default:

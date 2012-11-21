@@ -417,4 +417,12 @@ public class GCCCompleteParseExtensionsTest extends AST2BaseTest {
 	public void testTypeTraits_Bug342683() throws Exception {
 		parseGPP(getAboveComment());
 	}
+
+	// __int128 a;
+	// unsigned __int128 b;
+	public void test__int128() throws Exception {
+		String code= getAboveComment();
+		parseGCC(code);
+		parseGPP(code);
+	}
 }

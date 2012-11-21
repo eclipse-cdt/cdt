@@ -28,6 +28,10 @@
       <build>
         <plugins>
           <plugin>
+            <groupId>org.eclipse.cbi.maven.plugins</groupId>
+            <artifactId>eclipse-jarsigner-plugin</artifactId>
+          </plugin>
+          <!--<plugin>
             <groupId>org.eclipse.dash.maven</groupId>
             <artifactId>eclipse-signing-maven-plugin</artifactId>
             <version>1.0.5</version>
@@ -71,28 +75,27 @@
                 </goals>
               </execution>
             </executions>
-          </plugin>
+    </plugin> -->
           <plugin>
             <artifactId>maven-antrun-plugin</artifactId>
             <executions>
-          <execution>
-            <id>prepare-serverruntime</id>
-            <phase>prepare-package</phase>
-            <goals>
-              <goal>run</goal>
-            </goals>
-            <configuration>
-              <target>
-                <property name="buildDirectory" value="${project.build.directory}/../../../"/>
-                <property name="builder" value="${project.build.directory}/../../../releng/org.eclipse.rse.build/"/>
-                <property name="buildId" value="3.4.2"/>
-                <ant antfile="${project.build.directory}/../../../dstoreTargets-git.xml">
-                  <target name="serverruntime"/>
-                </ant>
-              </target>
-            </configuration>
-          </execution>
-            
+              <execution>
+                <id>prepare-serverruntime</id>
+                <phase>prepare-package</phase>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+                <configuration>
+                  <target>
+                    <property name="buildDirectory" value="${project.build.directory}/../../../"/>
+                    <property name="builder" value="${project.build.directory}/../../../releng/org.eclipse.rse.build/"/>
+                    <property name="buildId" value="3.4.2"/>
+                    <ant antfile="${project.build.directory}/../../../dstoreTargets-git.xml">
+                      <target name="serverruntime"/>
+                    </ant>
+                  </target>
+                </configuration>
+              </execution>
               <execution>
                 <id>deploy</id>
                 <phase>install</phase>
@@ -106,7 +109,7 @@
                         <include name="**"/>
                       </fileset>
                     </delete>
-                    <zip destfile="${tm-install}/org.eclipse.tm.repo.zip">
+		    <!--<zip destfile="${tm-install}/org.eclipse.tm.repo.zip">
                       <fileset dir="target/checksumFix">
                         <include name="**"/>
                       </fileset>
@@ -115,7 +118,8 @@
                       <fileset dir="target/checksumFix">
                         <include name="**"/>
                       </fileset>
-                    </copy>
+	      </copy>
+	      -->
                     <chmod perm="g+w">
                       <fileset dir="${tm-install}">
                         <include name="**"/>
@@ -151,11 +155,6 @@
                 </goals>
                 <configuration>
                   <target>
-                    <!--   <delete includeemptydirs="false">
-                      <fileset dir="${tm-install}">
-                        <include name="**"/>
-                      </fileset>
-	      </delete> -->
                     <copy file="target/${tm-zipfile}" todir="${tm-install}">
                     </copy>
                     <chmod perm="g+w">

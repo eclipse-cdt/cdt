@@ -43,7 +43,7 @@
     <maven-resources-version>2.6</maven-resources-version>
     <maven-antrun-version>1.7</maven-antrun-version>
     <gmaven-version>1.4</gmaven-version>
-    <eclipse-jarsigner-version>1.0.2-SNAPSHOT</eclipse-jarsigner-version>
+    <eclipse-jarsigner-version>1.0.2</eclipse-jarsigner-version>
     <platform-version-name>juno</platform-version-name>
     <tm-stream>juno</tm-stream>
     <eclipse-site>http://download.eclipse.org/releases/${platform-version-name}</eclipse-site>

@@ -16,6 +16,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.internal.ui.editor.IMakefileDocumentProvider;
 import org.eclipse.cdt.make.internal.ui.editor.MakefileDocumentProvider;
 import org.eclipse.cdt.make.internal.ui.editor.WorkingCopyManager;
@@ -26,6 +27,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
@@ -36,6 +38,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 import org.osgi.framework.BundleContext;
 
@@ -50,6 +53,7 @@ public class MakeUIPlugin extends AbstractUIPlugin {
 
 	private IWorkingCopyManager fWorkingCopyManager;
 	private IMakefileDocumentProvider fMakefileDocumentProvider;
+	private ScopedPreferenceStore fCorePreferenceStore;
 
 	/**
 	 * The constructor.
@@ -269,6 +273,16 @@ public class MakeUIPlugin extends AbstractUIPlugin {
 		return chainedStore;
 	}
 
+	/**
+	 * Returns a preference store for org.eclipse.cdt.make.core preferences
+	 * @return the preference store
+	 */
+	public IPreferenceStore getCorePreferenceStore() {
+		if (fCorePreferenceStore == null) {
+			fCorePreferenceStore= new ScopedPreferenceStore(InstanceScope.INSTANCE, MakeCorePlugin.PLUGIN_ID);
+		}
+		return fCorePreferenceStore;
+	}
 
 	@Override
 	public void start(BundleContext context) throws Exception {

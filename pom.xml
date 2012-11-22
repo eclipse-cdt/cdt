@@ -177,12 +177,10 @@
     <module>rse/examples/org.eclipse.rse.examples.tutorial</module>
     <module>rse/features/org.eclipse.rse-feature</module>
     <module>rse/features/org.eclipse.rse.core-feature</module>
-    <module>rse/features/org.eclipse.rse.core-patch</module>
     <module>rse/features/org.eclipse.rse.core.source</module>
     <module>rse/features/org.eclipse.rse.dstore-feature</module>
     <module>rse/features/org.eclipse.rse.dstore.source</module>
     <module>rse/features/org.eclipse.rse.ftp-feature</module>
-    <module>rse/features/org.eclipse.rse.ftp-patch</module>
     <module>rse/features/org.eclipse.rse.ftp.source</module>
     <module>rse/features/org.eclipse.rse.local-feature</module>
     <module>rse/features/org.eclipse.rse.local.source</module>
@@ -195,7 +193,6 @@
     <module>rse/features/org.eclipse.rse.terminals-feature</module>
     <module>rse/features/org.eclipse.rse.terminals.source</module>
     <module>rse/features/org.eclipse.rse.useractions-feature</module>
-    <module>rse/features/org.eclipse.rse.useractions.wrapper-feature</module>
     <module>rse/plugins/org.eclipse.dstore.core</module>
     <module>rse/plugins/org.eclipse.dstore.extra</module>
     <module>rse/plugins/org.eclipse.rse</module>

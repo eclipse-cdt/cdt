@@ -1,5 +1,0 @@
-This plugin has been decommissioned on 30-Mar-2007.
-
-Its contents has been merged into org.eclipse.rse.core 
-and org.eclipse.rse.ui plugins, respectively.
- 

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
+ *     Thomas Corbat
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
 
@@ -34,6 +35,7 @@ public interface ITypeMarshalBuffer {
 	final static byte UNKNOWN_MEMBER=			     12;
 	final static byte UNKNOWN_MEMBER_CLASS_INSTANCE= 13;
 	final static byte DEFERRED_CLASS_INSTANCE=     	 14;
+	final static byte ALIAS_TEMPLATE =				 15;
 
 	final static byte
 		EVAL_BINARY= 1,

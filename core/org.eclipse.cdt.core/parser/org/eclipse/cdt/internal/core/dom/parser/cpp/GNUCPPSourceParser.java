@@ -94,6 +94,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerList;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLambdaExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLambdaExpression.CaptureDefault;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAliasDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
@@ -1892,7 +1893,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             default:
                 throw backtrack;
             }
-
             ICPPASTUsingDirective astUD = nodeFactory.newUsingDirective(name);
             if (attributes != null) {
             	for (IASTAttribute attribute : attributes) {
@@ -1903,9 +1903,32 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             return astUD;
         }
 
+        if(LT(1) == IToken.tIDENTIFIER && LT(2) == IToken.tASSIGN){
+        	return aliasDeclaration(offset);
+        	
+        }
         ICPPASTUsingDeclaration result = usingDeclaration(offset);
         return result;
     }
+
+	private IASTDeclaration aliasDeclaration(final int offset) throws EndOfFileException,
+			BacktrackException {
+		IToken identifierToken = consume();
+		IASTName aliasName = buildName(-1, identifierToken);
+		
+		consume();
+		
+		ICPPASTTypeId aliasedType = typeId(DeclarationOptions.TYPEID);
+		
+		if(LT(1) != IToken.tSEMI){
+			throw backtrack;
+		}
+		int endOffset = consume().getEndOffset();
+		
+		ICPPASTAliasDeclaration aliasDeclaration = nodeFactory.newAliasDeclaration(aliasName, aliasedType);
+		setRange(aliasDeclaration, offset, endOffset);
+		return aliasDeclaration;
+	}
 
 	private ICPPASTUsingDeclaration usingDeclaration(final int offset) throws EndOfFileException, BacktrackException {
 		boolean typeName = false;

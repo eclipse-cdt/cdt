@@ -10,6 +10,7 @@
  *     Markus Schorn (Wind River Systems)
  *     Andrew Ferguson (Symbian)
  *     Sergey Prigogin (Google)
+ *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
@@ -93,6 +94,7 @@ import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAliasDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
@@ -196,6 +198,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPReferenceType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPScope;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPAliasTemplate;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTypeArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTypedef;
@@ -656,6 +659,36 @@ public class CPPVisitor extends ASTQueries {
 			}
 
 			return binding;
+		}
+		else if (declaration instanceof ICPPASTAliasDeclaration){
+			ICPPASTAliasDeclaration alias = (ICPPASTAliasDeclaration) declaration;
+			ICPPScope scope = (ICPPScope) getContainingScope(declaration);
+			IBinding binding = scope.getBinding(alias.getAlias(), false);
+			if(!(binding instanceof ICPPInternalBinding)) {
+				
+				IType type = createType(alias.getMappingTypeId());
+				if (type instanceof IProblemBinding) {
+			    	IProblemBinding problem = (IProblemBinding) type;
+			    	type = new CPPClassType.CPPClassTypeProblem(problem.getASTNode(), problem.getID(), alias.getMappingTypeId().getAbstractDeclarator().getName().toCharArray());
+			    }
+			    if (type != null) {
+			    	if(alias.getParent() instanceof ICPPASTTemplateDeclaration){
+			    		CPPAliasTemplate templateAlias = new CPPAliasTemplate(alias.getAlias());
+		    			templateAlias.setType(type);
+			    		binding = templateAlias;
+			    	}
+			    	else{
+				    	CPPTypedef typedef = new CPPTypedef(alias.getAlias());
+				    	typedef.setType(type);
+				        binding = typedef;
+			    	}
+			    } else {
+			        binding = new ProblemBinding(alias.getAlias(), IProblemBinding.SEMANTIC_NAME_NOT_FOUND);
+			    }
+			}
+
+			return binding;	
+			
 		}
 
 		return null;

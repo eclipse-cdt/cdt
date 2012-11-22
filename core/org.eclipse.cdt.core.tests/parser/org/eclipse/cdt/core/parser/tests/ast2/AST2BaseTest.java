@@ -366,6 +366,14 @@ public class AST2BaseTest extends BaseTestCase {
         assertEquals(num, count);
     }
 
+	protected void assertSameType(IType expected, IType actual) {
+		assertNotNull(expected);
+		assertNotNull(actual);
+		assertTrue("Expected same types, but the types were: '" +
+				ASTTypeUtil.getType(expected, false) + "' and '" + ASTTypeUtil.getType(actual, false) + "'",
+				expected.isSameType(actual));
+	}
+
 	protected void isExpressionStringEqual(IASTInitializerClause exp, String str) {
 		String expressionString = ASTStringUtil.getExpressionString((IASTExpression) exp);
 		assertEquals(str, expressionString);
@@ -526,7 +534,25 @@ public class AST2BaseTest extends BaseTestCase {
     				binding instanceof IProblemBinding);
     		return (IProblemBinding) binding;
     	}
-    	
+
+    	public IProblemBinding assertProblem(String context, int len, int problemId) {
+    		IProblemBinding problemBinding = assertProblem(context, len);
+   			assertEquals(problemId, problemBinding.getID());
+    		return problemBinding;
+    	}
+
+    	public IProblemBinding assertProblem(String context, String name) {
+    		IBinding binding= binding(context, name);
+    		assertTrue("Non-ProblemBinding for name: " + name, binding instanceof IProblemBinding);
+    		return (IProblemBinding) binding;
+    	}
+
+    	public IProblemBinding assertProblem(String context, String name, int problemId) {
+    		IProblemBinding problemBinding = assertProblem(context, name);
+   			assertEquals(problemId, problemBinding.getID());
+    		return problemBinding;
+    	}
+
     	public <T extends IBinding> T assertNonProblem(String section, int len) {
     		if (len <= 0)
     			len= section.length() + len;

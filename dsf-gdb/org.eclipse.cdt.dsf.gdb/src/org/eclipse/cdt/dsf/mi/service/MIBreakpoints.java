@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Immutable;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
@@ -913,26 +914,16 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints, I
 			return;
 		}
 
-	    final Step deleteBreakpointStep = new Step() {
-    		@Override
-    		public void execute(final RequestMonitor rm) {
-    			// Queue the command
-    			fConnection.queueCommand(
-    					fCommandFactory.createMIBreakDelete(context, new int[] { reference }),
-    					new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
-    						@Override
-    						protected void handleCompleted() {
-    							if (isSuccess()) {
-    								getSession().dispatchEvent(new BreakpointRemovedEvent(dmc), getProperties());
-    								contextBreakpoints.remove(reference);
-    							}
-    							rm.done();
-    						}
-    					});
-    		}
-	    };
-		
-		fRunControl.executeWithTargetAvailable(context, new Step[] { deleteBreakpointStep }, finalRm);
+		deleteBreakpointFromTarget(context, reference, new RequestMonitor(ImmediateExecutor.getInstance(), finalRm) {
+			@Override
+			protected void handleCompleted() {
+				if (isSuccess()) {
+					getSession().dispatchEvent(new BreakpointRemovedEvent(dmc), getProperties());
+					contextBreakpoints.remove(reference);
+				}
+				finalRm.done();
+			}
+		});
 	}
 
 	// -------------------------------------------------------------------------
@@ -1279,6 +1270,24 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints, I
 		fRunControl.executeWithTargetAvailable(context, new Step[] { disableBreakpointStep }, finalRm);
 	}
 
+	/**
+	 * This method deletes the target breakpoint with the given reference number.
+	 * @since 4.2
+	 */
+	protected void deleteBreakpointFromTarget(final IBreakpointsTargetDMContext context, final int reference, RequestMonitor finalRm) {
+	    final Step deleteBreakpointStep = new Step() {
+    		@Override
+    		public void execute(final RequestMonitor rm) {
+    			// Queue the command
+    			fConnection.queueCommand(
+					fCommandFactory.createMIBreakDelete(context, new int[] { reference }), 
+					new DataRequestMonitor<MIInfo>(getExecutor(), rm));
+    		}
+	    };
+		
+		fRunControl.executeWithTargetAvailable(context, new Step[] { deleteBreakpointStep }, finalRm);
+	}
+
     /**
      * @nooverride This method is not intended to be re-implemented or extended by clients.
      * @noreference This method is not intended to be referenced by clients.
@@ -1334,5 +1343,18 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints, I
         }
         fBreakpointHitMap.remove(container);
     }
-    
+
+    /**
+     * Returns a breakpoint target context for given breakpoint number.
+	 * @since 4.2
+	 */
+    protected IBreakpointsTargetDMContext getBreakpointTargetContext(int reference) {
+    	for (IBreakpointsTargetDMContext context : fBreakpoints.keySet()) {
+    		Map<Integer, MIBreakpointDMData> map = fBreakpoints.get(context);
+    		if (map != null && map.keySet().contains(Integer.valueOf(reference))) {
+    			return context;
+    		}
+    	}
+    	return null;
+    }
 }

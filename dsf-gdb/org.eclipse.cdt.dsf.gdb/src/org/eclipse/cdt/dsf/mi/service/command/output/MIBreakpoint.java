@@ -81,7 +81,8 @@ public class MIBreakpoint  {
     String  threadId = "0"; //$NON-NLS-1$
     int     ignore   = 0;
     String  commands = ""; //$NON-NLS-1$
-    
+    String  originalLocation = ""; //$NON-NLS-1$
+
     // For tracepoints
     int     passcount = 0;
 
@@ -145,6 +146,7 @@ public class MIBreakpoint  {
         isCatchpoint = other.isCatchpoint;
         catchpointType = other.catchpointType;
         pending = other.pending;
+        originalLocation = other.originalLocation;
         if (other.groupIds != null) {
         	groupIds = Arrays.copyOf(other.groupIds, other.groupIds.length);
         }
@@ -290,6 +292,13 @@ public class MIBreakpoint  {
 
     public String getExpression() {
         return exp;
+    }
+
+    /**
+	 * @since 4.2
+	 */
+    public String getOriginalLocation() {
+    	return originalLocation;
     }
 
 	/**
@@ -487,6 +496,9 @@ public class MIBreakpoint  {
                     type.startsWith("fast tracepoint")) { //$NON-NLS-1$
                 	isTpt = true;
                 }
+                if (type.startsWith("catchpoint")) { //$NON-NLS-1$
+                    isCatchpoint = true;
+                }
                 // type="breakpoint"
                 // default ok.
             } else if (var.equals("disp")) { //$NON-NLS-1$
@@ -541,6 +553,8 @@ public class MIBreakpoint  {
                 if (value instanceof MIList) {
             		parseGroups((MIList)value);
             	}
+            } else if (var.equals("original-location")) { //$NON-NLS-1$
+                originalLocation = str;
             }
         }
     }

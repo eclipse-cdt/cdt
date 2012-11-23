@@ -38,7 +38,7 @@ public interface IBuildMacroProvider{
 	 * @param contextData represents the additional data needed by the Build Macro Provider
 	 * and Macro Suppliers in order to obtain the macro value. The type of the context data
 	 * differs depending on the context type and can be one of the following: 
-	 * 1. IFileContextData interface � used to represent currently selected file context
+	 * 1. IFileContextData interface - used to represent currently selected file context
 	 *      the IFileContextData interface is defined as follows:
 	 * 	    public interface IFileContextData{
 	 *     		IFile getFile();
@@ -46,13 +46,13 @@ public interface IBuildMacroProvider{
 	 *  	    }
 	 *     NOTE: the IFileContextData is passed that represents the current file and the option 
 	 *     for that file because Macro Value Provider needs to know what option should be used 
-	 *     as a context in case macro is not found for �current file� context
+	 *     as a context in case macro is not found for "current file" context
 	 * 2.  IOptionContextData interface used to represent the currently selected option context
-	 * 3.  IConfiguration � used to represent the currently selected configuration context
-	 * 4.  IProject � used to represent current project context
-	 * 5.  IWorkspace � used to represent current workspace context
-	 * 6.  null � to represent the CDT and Eclipse installation context
-	 * 7.  null � to represent process environment context
+	 * 3.  IConfiguration - used to represent the currently selected configuration context
+	 * 4.  IProject - used to represent current project context
+	 * 5.  IWorkspace - used to represent current workspace context
+	 * 6.  null - to represent the CDT and Eclipse installation context
+	 * 7.  null - to represent process environment context
 	 * @param includeParentContexts specifies whether lower-precedence context macros should 
 	 *     be included
 	 */
@@ -107,7 +107,7 @@ public interface IBuildMacroProvider{
 	 * expanded to. If null the BuildMacroException is thrown in case the string to be resolved 
 	 * references inexistent macros
 	 * @param listDelimiter if not null, StringList macros are expanded as
-	 * �<value_1>< listDelimiter ><value_2>< listDelimiter > ... <value_n>�
+	 * "<value_1>< listDelimiter ><value_2>< listDelimiter > ... <value_n>"
 	 * otherwise the BuildMacroException is thrown in case the string to be resolved references 
 	 * string-list macros 
 	 * @param contextType context from which the macro search should be started
@@ -157,7 +157,7 @@ public interface IBuildMacroProvider{
 	 * expanded to. If null the BuildMacroException is thrown in case the string to be resolved 
 	 * references inexistent macros
 	 * @param listDelimiter if not null, StringList macros are expanded as
-	 * �<value_1>< listDelimiter ><value_2>< listDelimiter > ... <value_n>�
+	 * "<value_1>< listDelimiter ><value_2>< listDelimiter > ... <value_n>"
 	 * otherwise the BuildMacroException is thrown in case the string to be resolved references 
 	 * string-list macros 
 	 * @param contextType context from which the macro search should be started
@@ -200,7 +200,7 @@ public interface IBuildMacroProvider{
 	/**
 	 * 
 	 * @return true if the specified expression can be treated as StringList
-	 * 1. The string value is �${<some_StringList_Macro_name>}�
+	 * 1. The string value is "${<some_StringList_Macro_name>}"
 	 */
 	public boolean isStringListValue(String value, int contextType, Object contextData)
 							throws BuildMacroException;
@@ -213,7 +213,7 @@ public interface IBuildMacroProvider{
 	 * The BuildMacroException will contain the human-readable string describing  
 	 * the inconsistency and the array of the IBuildMacro interfaces that will represent the macros that
 	 * caused the inconsistency. This information will be used in the UI to notify the user about 
-	 * the macro inconsistencies (see also the �User interface for viewing and editing Build Macros�
+	 * the macro inconsistencies (see also the "User interface for viewing and editing Build Macros"
 	 * section of this design)
 	 */
 	public void checkIntegrity(int contextType,

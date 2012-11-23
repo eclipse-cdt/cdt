@@ -26,7 +26,7 @@ public interface IConfigurationBuildMacroSupplier {
 	 * @param configuration configuration
 	 * @param provider the instance of the build macro provider to be used for querying the
 	 * build macros from within the supplier. The supplier should use this provider to obtain
-	 * the already defined build macros instead of using the �default� provider returned by the
+	 * the already defined build macros instead of using the "default" provider returned by the
 	 * ManagedBuildManager.getBuildMacroProvider().
 	 * The provider passed to a supplier will ignore searching macros for the levels 
 	 * higher than the current supplier level, will query only the lower-precedence suppliers 
@@ -46,7 +46,7 @@ public interface IConfigurationBuildMacroSupplier {
 	 * @param configuration configuration
 	 * @param provider the instance of the build macro provider to be used for querying the
 	 * build macros from within the supplier. The supplier should use this provider to obtain
-	 * the already defined build macros instead of using the �default� provider returned by the
+	 * the already defined build macros instead of using the "default" provider returned by the
 	 * ManagedBuildManager.getBuildMacroProvider().
 	 * The provider passed to a supplier will ignore searching macros for the levels 
 	 * higher than the current supplier level, will query only the lower-precedence suppliers 

@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "AABOJX///Cs\u003d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-11-23T17:59:38Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOJX///0Y\u003d",
+      "revId": "991bb3f62c5ebfc2898f1d726fbfc164ba5fa1a6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOJX///0I\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/ServicesLaunchSequence.java",
         "patchSetId": 3
@@ -30,6 +48,24 @@
       "writtenOn": "2012-11-14T20:58:03Z",
       "side": 1,
       "message": "I don\u0027t know why the starting the other bp services create a new RM here, but it is not necessary I believe.",
+      "revId": "991bb3f62c5ebfc2898f1d726fbfc164ba5fa1a6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJX//+uo\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/ServicesLaunchSequence.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-11-23T17:59:38Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOJX///0I\u003d",
       "revId": "991bb3f62c5ebfc2898f1d726fbfc164ba5fa1a6",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -70,6 +106,24 @@
     },
     {
       "key": {
+        "uuid": "AABOJX//+ug\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIBreakpoints.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1285,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-11-23T17:59:38Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOJX///zg\u003d",
+      "revId": "991bb3f62c5ebfc2898f1d726fbfc164ba5fa1a6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOJX///zc\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIBreakpoints.java",
         "patchSetId": 3
@@ -81,6 +135,24 @@
       "writtenOn": "2012-11-14T20:58:03Z",
       "side": 1,
       "message": "Please update javadoc since we only return one targetDmc now",
+      "revId": "991bb3f62c5ebfc2898f1d726fbfc164ba5fa1a6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJX//+uc\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIBreakpoints.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1353,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-11-23T17:59:38Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOJX///zc\u003d",
       "revId": "991bb3f62c5ebfc2898f1d726fbfc164ba5fa1a6",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -104,6 +176,24 @@
     },
     {
       "key": {
+        "uuid": "AABOJX//+uY\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIBreakpointsSynchronizer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 148,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-11-23T17:59:38Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOJX///xg\u003d",
+      "revId": "991bb3f62c5ebfc2898f1d726fbfc164ba5fa1a6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOJX///xc\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIBreakpointsSynchronizer.java",
         "patchSetId": 3
@@ -115,6 +205,24 @@
       "writtenOn": "2012-11-14T20:58:03Z",
       "side": 1,
       "message": "Missing:\n  \t\tgetSession().removeServiceEventListener(this);",
+      "revId": "991bb3f62c5ebfc2898f1d726fbfc164ba5fa1a6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJX//+uU\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIBreakpointsSynchronizer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 167,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-11-23T17:59:38Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOJX///xc\u003d",
       "revId": "991bb3f62c5ebfc2898f1d726fbfc164ba5fa1a6",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -138,6 +246,24 @@
     },
     {
       "key": {
+        "uuid": "AABOJX///Bw\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIBreakpointsSynchronizer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 230,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-11-23T17:59:38Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOJX///yo\u003d",
+      "revId": "991bb3f62c5ebfc2898f1d726fbfc164ba5fa1a6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOJX///yk\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIBreakpointsSynchronizer.java",
         "patchSetId": 3
@@ -149,6 +275,24 @@
       "writtenOn": "2012-11-14T20:58:03Z",
       "side": 1,
       "message": "Was I wrong in the old comment?\n\nI believe bm.breakpointAdded() will do much more than increment the install count. It will behave as if a new platformBp was created, instead of re-using the existing platform bp.\nIn fact testing that case gives me:\n!ENTRY org.eclipse.cdt.dsf 4 10005 2012-10-24 15:34:53.193 !MESSAGE Breakpoint already installed !SUBENTRY 1 org.eclipse.cdt.dsf.gdb 4 10005 2012-10-24 15:34:53.193 !MESSAGE Breakpoint already installed",
+      "revId": "991bb3f62c5ebfc2898f1d726fbfc164ba5fa1a6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJn///+k\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIBreakpointsSynchronizer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 264,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-11-23T17:59:38Z",
+      "side": 1,
+      "message": "For some reason my previous reply disappeared. Anyway, using \"breakpointAdded()\" is the right approach if a platform breakpoint already exists, but is not installed in the session. This happens when a breakpoint is deleted from the console and then set again.\nI believe you get \"Breakpoint already installed\" when you try to set a duplicate breakpoint from the console. In this case the problem is in MIBreakpointsManager. It doesn\u0027t allow duplicate breakpoints. I think it is wrong, a platform breakpoint can be associated with multiple target breakpoints. Removing \"Minimal validation\" code from MIBreakpointsManager.installBreakpoint() seems to work fine.",
+      "parentUuid": "AABOJX///yk\u003d",
       "revId": "991bb3f62c5ebfc2898f1d726fbfc164ba5fa1a6",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -172,6 +316,24 @@
     },
     {
       "key": {
+        "uuid": "AABOJX//+uQ\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIBreakpointsSynchronizer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 417,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-11-23T17:59:38Z",
+      "side": 1,
+      "message": "Is it implemented in GDB 7.5?",
+      "parentUuid": "AABOJX///xY\u003d",
+      "revId": "991bb3f62c5ebfc2898f1d726fbfc164ba5fa1a6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOJX///x4\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIBreakpointsSynchronizer.java",
         "patchSetId": 3
@@ -183,6 +345,24 @@
       "writtenOn": "2012-11-14T20:58:03Z",
       "side": 1,
       "message": "We cannot use MIRunControl here,  as not every RunControl service extends MIRunControl.  GDBRunControl_7_0_NS does not.\n\nInstead, use something like:\nIProcessDMContext procDmc \u003d \nDMContexts.getAncestorOfType(containerDmc, IProcessDMContext.class);\nIMIExecutionDMContext execDmc \u003d \n      createExecutionContext(containerDmc, \n                                                 createThreadContext(procDmc, threadId),\n      threadId);",
+      "revId": "991bb3f62c5ebfc2898f1d726fbfc164ba5fa1a6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJX//+uM\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIBreakpointsSynchronizer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 457,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-11-23T17:59:38Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOJX///x4\u003d",
       "revId": "991bb3f62c5ebfc2898f1d726fbfc164ba5fa1a6",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -206,6 +386,24 @@
     },
     {
       "key": {
+        "uuid": "AABOJX//+tw\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIBreakpointsSynchronizer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 712,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-11-23T17:59:38Z",
+      "side": 1,
+      "message": "I changed the code as you suggested but not sure what kind of comment to put. What do you mean by \"also broken in processes.createContainerContextFromThreadId\"?",
+      "parentUuid": "AABOJX///xw\u003d",
+      "revId": "991bb3f62c5ebfc2898f1d726fbfc164ba5fa1a6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOJX///xk\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIBreakpointsSynchronizer.java",
         "patchSetId": 3
@@ -217,6 +415,24 @@
       "writtenOn": "2012-11-14T20:58:03Z",
       "side": 1,
       "message": "Is this right? The OriginalLocation does not seem to be the same as the Function in the notification.\n38-break-insert --thread-group i1 -f /home/lmckhou/runtime-TestDSF/Producer/src/Producer.cpp:produce 38^done,bkpt\u003d{number\u003d\"11\",type\u003d\"breakpoint\",disp\u003d\"keep\",enabled\u003d\"y\",addr\u003d\"0x08048d02\",func\u003d\"produce(void*)\",file\u003d\"../src/Producer.cpp\",fullname\u003d\"/home/lmckhou/runtime-TestDSF/Producer/src/Producer.cpp\",line\u003d\"107\",times\u003d\"0\",original-location\u003d\"/home/lmckhou/runtime-TestDSF/Producer/src/Producer.cpp:produce\"}\nor\n68-break-insert --thread-group i2 -f /home/lmckhou/testing/loopfirst.cc:main 68^done,bkpt\u003d{number\u003d\"24\",type\u003d\"breakpoint\",disp\u003d\"keep\",enabled\u003d\"y\",addr\u003d\"0x0804850d\",func\u003d\"main()\",file\u003d\"loopfirst.cc\",fullname\u003d\"/home/lmckhou/testing/loopfirst.cc\",line\u003d\"5\",times\u003d\"0\",original-location\u003d\"/home/lmckhou/testing/loopfirst.cc:main\"}",
+      "revId": "991bb3f62c5ebfc2898f1d726fbfc164ba5fa1a6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJX//+uI\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIBreakpointsSynchronizer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1097,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-11-23T17:59:38Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOJX///xk\u003d",
       "revId": "991bb3f62c5ebfc2898f1d726fbfc164ba5fa1a6",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

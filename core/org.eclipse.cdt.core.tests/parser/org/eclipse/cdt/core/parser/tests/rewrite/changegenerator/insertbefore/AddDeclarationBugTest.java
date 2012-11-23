@@ -35,14 +35,14 @@ import org.eclipse.cdt.internal.core.dom.rewrite.ASTModificationStore;
 /**
  * @author Emanuel Graf IFS
  */
-public class AddDeclarationBug extends ChangeGeneratorTest {
+public class AddDeclarationBugTest extends ChangeGeneratorTest {
 
-	AddDeclarationBug() {
+	AddDeclarationBugTest() {
 		super("AddDeclarationBug");
 	}
 
 	public static Test suite() {
-		return new AddDeclarationBug();
+		return new AddDeclarationBugTest();
 	}
 
 	@Override
@@ -65,16 +65,16 @@ public class AddDeclarationBug extends ChangeGeneratorTest {
 					ICPPASTCompositeTypeSpecifier classNode = (ICPPASTCompositeTypeSpecifier) declSpec;
 					IASTSimpleDeclaration newDecl = new CPPASTSimpleDeclaration();
 
-					IASTSimpleDeclSpecifier returnTyp = new CPPASTSimpleDeclSpecifier();
-					returnTyp.setType(IASTSimpleDeclSpecifier.t_int);
-					newDecl.setDeclSpecifier(returnTyp);
+					IASTSimpleDeclSpecifier returnType = new CPPASTSimpleDeclSpecifier();
+					returnType.setType(IASTSimpleDeclSpecifier.t_int);
+					newDecl.setDeclSpecifier(returnType);
 
 					IASTStandardFunctionDeclarator declarator = new CPPASTFunctionDeclarator(
 							new CPPASTName("exp".toCharArray())); //$NON-NLS-1$
-					IASTSimpleDeclSpecifier paramTyp = new CPPASTSimpleDeclSpecifier();
-					paramTyp.setType(IASTSimpleDeclSpecifier.t_int);
+					IASTSimpleDeclSpecifier paramType = new CPPASTSimpleDeclSpecifier();
+					paramType.setType(IASTSimpleDeclSpecifier.t_int);
 					IASTDeclarator decl = new CPPASTDeclarator(new CPPASTName("i".toCharArray())); //$NON-NLS-1$
-					ICPPASTParameterDeclaration param = new CPPASTParameterDeclaration(paramTyp, decl);
+					ICPPASTParameterDeclaration param = new CPPASTParameterDeclaration(paramType, decl);
 					declarator.addParameterDeclaration(param);
 					newDecl.addDeclarator(declarator);
 

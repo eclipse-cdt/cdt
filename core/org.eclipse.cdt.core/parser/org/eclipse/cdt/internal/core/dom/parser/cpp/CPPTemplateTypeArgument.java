@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.core.runtime.Assert;
 
 /**
@@ -25,7 +26,7 @@ public class CPPTemplateTypeArgument implements ICPPTemplateArgument {
 	private final IType fOriginalType;
 
 	public CPPTemplateTypeArgument(IType type) {
-		this(type, type);
+		this(SemanticUtil.getSimplifiedType(type), type);
 	}
 
 	public CPPTemplateTypeArgument(IType simplifiedType, IType originalType) {

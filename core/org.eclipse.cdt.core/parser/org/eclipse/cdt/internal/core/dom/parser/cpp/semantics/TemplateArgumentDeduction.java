@@ -73,6 +73,12 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
  * Algorithms for deducing template arguments in various contexts.
  */
 public class TemplateArgumentDeduction {
+	private static class TypeOfValueDeducedFromArraySize extends CPPBasicType {
+		public TypeOfValueDeducedFromArraySize() {
+			super(ICPPBasicType.Kind.eInt, 0);
+		}
+	}
+
 	/**
 	 * Deduce arguments for a template function from the template id and the template function
 	 * parameters.
@@ -194,8 +200,15 @@ public class TemplateArgumentDeduction {
 						IType type1 = ((ICPPTemplateNonTypeParameter) tpar).getType();
 						type1= CPPTemplates.instantiateType(type1, map, -1, null, point);
 						IType type2= arg.getTypeOfNonTypeValue();
-						if (!type1.isSameType(type2))
+						// Template-argument deduced from an array bound may be of any integral
+						// type.
+						if (type2 instanceof TypeOfValueDeducedFromArraySize && isIntegralType(type1)) {
+							IValue value = isBooleanType(type1) ? Value.create(true) : arg.getNonTypeValue();
+							arg = new CPPTemplateNonTypeArgument(value, type1);
+							deduct.fDeducedArgs.put(tpar, arg);
+						} else if (!type1.isSameType(type2)) {
 							return false;
+						}
 					}
 				}
 			}
@@ -206,11 +219,37 @@ public class TemplateArgumentDeduction {
 		return false;
 	}
 
-	private static boolean deduceFromFunctionArg(IType par, IType arg, ValueCategory valueCat, TemplateArgumentDeduction deduct, IASTNode point) throws DOMException {
+	// 3.9.1 - 7
+	private static boolean isIntegralType(IType type) {
+		type = SemanticUtil.getNestedType(type, SemanticUtil.TDEF);
+		if (!(type instanceof IBasicType))
+			return false;
+		switch (((IBasicType) type).getKind()) {
+		case eInt:
+		case eInt128:
+		case eBoolean:
+		case eChar:
+		case eChar16:
+		case eChar32:
+		case eWChar:
+			return true;
+		default:
+			return false;
+		}
+	}
+
+	private static boolean isBooleanType(IType type) {
+		type = SemanticUtil.getNestedType(type, SemanticUtil.TDEF);
+		return type instanceof IBasicType && ((IBasicType) type).getKind() == IBasicType.Kind.eBoolean;
+	}
+
+	private static boolean deduceFromFunctionArg(IType par, IType arg, ValueCategory valueCat,
+			TemplateArgumentDeduction deduct, IASTNode point) throws DOMException {
 		boolean isReferenceTypeParameter= false;
 		if (par instanceof ICPPReferenceType) {
-			// If P is an rvalue reference to a cv-unqualified template parameter and the argument is an
-			// lvalue, the type "lvalue reference to A" is used in place of A for type deduction.
+			// If P is an rvalue reference to a cv-unqualified template parameter and the argument
+			// is an lvalue, the type "lvalue reference to A" is used in place of A for type
+			// deduction.
 			isReferenceTypeParameter= true;
 			final ICPPReferenceType refPar = (ICPPReferenceType) par;
 			if (refPar.isRValueReference() && refPar.getType() instanceof ICPPTemplateParameter && 
@@ -615,7 +654,8 @@ public class TemplateArgumentDeduction {
 	private int fPackOffset;
 	private final int fPackSize;
 	
-	private TemplateArgumentDeduction(ICPPTemplateParameter[] tpars, CPPTemplateParameterMap explicit, CPPTemplateParameterMap result, int packSize) {
+	private TemplateArgumentDeduction(ICPPTemplateParameter[] tpars, CPPTemplateParameterMap explicit,
+			CPPTemplateParameterMap result, int packSize) {
 		fExplicitArgs= explicit;
 		fDeducedArgs= result;
 		fPackSize= packSize;
@@ -654,7 +694,8 @@ public class TemplateArgumentDeduction {
 	/**
 	 * Deduces the template parameter mapping from one pair of template arguments.
 	 */
-	private boolean fromTemplateArgument(ICPPTemplateArgument p, ICPPTemplateArgument a, IASTNode point) throws DOMException {
+	private boolean fromTemplateArgument(ICPPTemplateArgument p, ICPPTemplateArgument a, IASTNode point)
+			throws DOMException {
 		if (p.isNonTypeValue() != a.isNonTypeValue()) 
 			return false;
 		
@@ -735,7 +776,7 @@ public class TemplateArgumentDeduction {
 					if (parID >= 0) { 
 						ICPPTemplateArgument old= fDeducedArgs.getArgument(parID, fPackOffset);
 						if (old == null) {
-							if (!deduce(parID, new CPPTemplateNonTypeArgument(as, new CPPBasicType(ICPPBasicType.Kind.eInt, 0)))) {
+							if (!deduce(parID, new CPPTemplateNonTypeArgument(as, new TypeOfValueDeducedFromArraySize()))) {
 								return false;
 							} 
 						} else if (!as.equals(old.getNonTypeValue())) {
@@ -761,14 +802,16 @@ public class TemplateArgumentDeduction {
 				if (p instanceof IQualifierType)
 					return false;
 				if (remaining != CVQualifier.NONE) {
-					a= SemanticUtil.addQualifiers(a, remaining.isConst(), remaining.isVolatile(), remaining.isRestrict());
+					a= SemanticUtil.addQualifiers(a, remaining.isConst(), remaining.isVolatile(),
+							remaining.isRestrict());
 				}
 			} else if (p instanceof ICPPFunctionType) {
 				if (!(a instanceof ICPPFunctionType))
 					return false;
 				return fromFunctionType((ICPPFunctionType) p, (ICPPFunctionType) a, point);
 			} else if (p instanceof ICPPTemplateParameter) {
-				ICPPTemplateArgument current= fDeducedArgs.getArgument(((ICPPTemplateParameter) p).getParameterID(), fPackOffset);
+				ICPPTemplateArgument current=
+						fDeducedArgs.getArgument(((ICPPTemplateParameter) p).getParameterID(), fPackOffset);
 				if (current != null) {
 					if (current.isNonTypeValue())
 						return false;
@@ -776,7 +819,8 @@ public class TemplateArgumentDeduction {
 				}
 				if (a == null)
 					return false;
-				return deduce(((ICPPTemplateParameter) p).getParameterID(), new CPPTemplateTypeArgument(a, argumentTypeBeforeTypedefResolution));
+				return deduce(((ICPPTemplateParameter) p).getParameterID(),
+						new CPPTemplateTypeArgument(a, argumentTypeBeforeTypedefResolution));
 			} else if (p instanceof ICPPTemplateInstance) {
 				if (!(a instanceof ICPPTemplateInstance))
 					return false;
@@ -791,8 +835,8 @@ public class TemplateArgumentDeduction {
 		return false;
 	}
 
-	private boolean fromTemplateInstance(ICPPTemplateInstance pInst, ICPPTemplateInstance aInst, IASTNode point)
-			throws DOMException {
+	private boolean fromTemplateInstance(ICPPTemplateInstance pInst, ICPPTemplateInstance aInst,
+			IASTNode point) throws DOMException {
 		ICPPClassTemplate pTemplate= getPrimaryTemplate(pInst);
 		ICPPClassTemplate aTemplate= getPrimaryTemplate(aInst);
 		if (pTemplate == null || aTemplate == null)
@@ -853,7 +897,8 @@ public class TemplateArgumentDeduction {
 		return true;
 	}
 
-	private boolean fromFunctionType(ICPPFunctionType ftp, ICPPFunctionType fta, IASTNode point) throws DOMException {
+	private boolean fromFunctionType(ICPPFunctionType ftp, ICPPFunctionType fta, IASTNode point)
+			throws DOMException {
 		if (ftp.isConst() != fta.isConst() || ftp.isVolatile() != fta.isVolatile())
 			return false;
 		

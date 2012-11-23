@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Alena Laskavaia 
+ * Copyright (c) 2009, 2012 Alena Laskavaia and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Alena Laskavaia  - initial API and implementation
+ *    Alena Laskavaia   - initial API and implementation
+ *    Tomasz Wesolowski - Bug 348387
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.cxx.internal.model.cfg;
 
@@ -32,6 +33,7 @@ import org.eclipse.cdt.core.dom.ast.IASTBreakStatement;
 import org.eclipse.cdt.core.dom.ast.IASTCaseStatement;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTContinueStatement;
+import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDefaultStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDoStatement;
@@ -231,14 +233,20 @@ public class ControlFlowGraphBuilder {
 		addOutgoing(prev, ifNode);
 		IConnectorNode mergeNode = factory.createConnectorNode();
 		ifNode.setMergeNode(mergeNode);
-		IBranchNode thenNode = factory.createBranchNode(IBranchNode.THEN);
-		addOutgoing(ifNode, thenNode);
-		IBasicBlock then = createSubGraph(thenNode, body.getTryBody());
-		addJump(then, mergeNode);
+		IBranchNode tryBodyNode = factory.createBranchNode(IBranchNode.TRY_BODY);
+		addOutgoing(ifNode, tryBodyNode);
+		IBasicBlock tryBody = createSubGraph(tryBodyNode, body.getTryBody());
+		addJump(tryBody, mergeNode);
 		ICPPASTCatchHandler[] catchHandlers = body.getCatchHandlers();
 		for (int i = 0; i < catchHandlers.length; i++) {
 			ICPPASTCatchHandler handler = catchHandlers[i];
-			IBranchNode handlerNode = factory.createBranchNode(handler.getDeclaration());
+			IBranchNode handlerNode;
+			IASTDeclaration declaration = handler.getDeclaration();
+			if (declaration != null) {
+				handlerNode = factory.createBranchNode(declaration);
+			} else {
+				handlerNode = factory.createBranchNode(IBranchNode.CATCH_ANY);
+			}
 			addOutgoing(ifNode, handlerNode);
 			IBasicBlock els = createSubGraph(handlerNode, handler.getCatchBody());
 			addJump(els, mergeNode);

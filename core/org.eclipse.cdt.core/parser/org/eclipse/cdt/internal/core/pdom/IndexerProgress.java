@@ -6,18 +6,16 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-
 package org.eclipse.cdt.internal.core.pdom;
 
 public class IndexerProgress {
-
 	public int fRequestedFilesCount;
 	public int fCompletedSources;	
-	public int fPrimaryHeaderCount;	// headers parsed that were actually requested
-	public int fCompletedHeaders;	// all headers including those found through inclusions
-	public int fTimeEstimate;		// fall-back for the time where no file-count is available
+	public int fPrimaryHeaderCount;	// Headers parsed that were actually requested
+	public int fCompletedHeaders;	// All headers including those found through inclusions
+	public int fTimeEstimate;		// Fall-back for the time where no file-count is available
 
 	public IndexerProgress() {
 	}

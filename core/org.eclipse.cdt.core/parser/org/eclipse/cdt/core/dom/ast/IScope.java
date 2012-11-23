@@ -128,7 +128,7 @@ public interface IScope {
 			fLookupPoint= point;
 			fLookupPointIsName= false;
 			fLookupKey= name;
-			fIgnorePointOfDeclaration= true;
+			fIgnorePointOfDeclaration= false;
 			if (fLookupPoint == null) {
 				fTu= null;
 				fIgnorePointOfDeclaration= true;

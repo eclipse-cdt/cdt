@@ -111,9 +111,7 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
 import com.ibm.icu.text.MessageFormat;
 
 /**
- * The PDOM Provider. This is likely temporary since I hope
- * to integrate the PDOM directly into the core once it has
- * stabilized.
+ * Manages PDOM updates and events associated with them. Provides methods for index access.
  */
 public class PDOMManager implements IWritableIndexManager, IListener {
 	private static final String TRACE_INDEXER_SETUP = CCorePlugin.PLUGIN_ID + "/debug/indexer/setup"; //$NON-NLS-1$
@@ -697,10 +695,10 @@ public class PDOMManager implements IWritableIndexManager, IListener {
     		} else {
     			if (fCurrentTask != null) {
     				IndexerProgress info= fCurrentTask.getProgressInformation();
-    				fSourceCount+= info.fCompletedSources;
-    				fHeaderCount+= info.fCompletedHeaders;
+    				fSourceCount += info.fCompletedSources;
+    				fHeaderCount += info.fCompletedHeaders;
     				// for the ticks we don't consider additional headers
-    				fTickCount+= info.fCompletedSources + info.fPrimaryHeaderCount;
+    				fTickCount += info.fCompletedSources + info.fPrimaryHeaderCount;
     			}
     			result= fCurrentTask= fTaskQueue.removeFirst();
     		}
@@ -1138,26 +1136,41 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		int sourceCount, sourceEstimate, headerCount, tickCount, tickEstimate;
 		String detail= null;
 		synchronized (fTaskQueue) {
-			// add historic data
+			// Add historic data.
 			sourceCount= sourceEstimate= fSourceCount;
 			headerCount= fHeaderCount;
 			tickCount= tickEstimate= fTickCount;
 
-			// add future data
+			// Add future data.
 			for (IPDOMIndexerTask task : fTaskQueue) {
 				final IndexerProgress info= task.getProgressInformation();
-				sourceEstimate+= info.fRequestedFilesCount;
-				tickEstimate+= info.getEstimatedTicks();
+				sourceEstimate += info.fRequestedFilesCount;
+				tickEstimate += info.getEstimatedTicks();
 			}
-			// add current data
+			// Add current data.
 			if (fCurrentTask != null) {
 				final IndexerProgress info= fCurrentTask.getProgressInformation();
-				sourceCount+= info.fCompletedSources;
-				sourceEstimate+= info.fRequestedFilesCount - info.fPrimaryHeaderCount;
-				headerCount+= info.fCompletedHeaders;
-				// for the ticks we don't consider additional headers
-				tickCount+= info.fCompletedSources + info.fPrimaryHeaderCount;
-				tickEstimate+= info.getEstimatedTicks();
+				sourceCount += info.fCompletedSources;
+				sourceEstimate += info.fRequestedFilesCount - info.fPrimaryHeaderCount;
+				headerCount += info.fCompletedHeaders;
+				int completedPrimary = info.fCompletedSources + info.fPrimaryHeaderCount;
+				if (info.fRequestedFilesCount != 0) {
+					// We estimate the number of additional header files that will be encountered
+					// through resolution of includes by assuming that the number of the completed
+					// additional header files is proportional to the square root of the number of
+					// the completed requested files. This assumption reflects the fact that more
+					// additional header files are encountered at the beginning of indexing than
+					// towards the end.
+					tickCount += completedPrimary;
+					int additionalHeaders = info.fCompletedHeaders - info.fPrimaryHeaderCount;
+					tickEstimate += info.fRequestedFilesCount;
+					tickCount += additionalHeaders;
+					tickEstimate += additionalHeaders * Math.sqrt((double) info.fRequestedFilesCount / Math.max(completedPrimary, 1));
+				} else {
+					// For the ticks we don't consider additional headers.
+					tickCount += completedPrimary;
+					tickEstimate += info.fTimeEstimate;
+				}
 				detail= PDOMIndexerJob.sMonitorDetail;
 			}
 		}
@@ -1171,9 +1184,9 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 
 		job.subTask(msg);
 		if (tickCount > 0 && tickCount <= tickEstimate) {
-			int newTick= tickCount*base/tickEstimate;
+			int newTick= tickCount * base / tickEstimate;
 			if (newTick > currentTicks) {
-				job.worked(newTick-currentTicks);
+				job.worked(newTick - currentTicks);
 				return newTick;
 			}
 		}

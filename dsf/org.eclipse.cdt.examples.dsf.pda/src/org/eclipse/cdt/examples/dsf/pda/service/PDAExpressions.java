@@ -316,7 +316,7 @@ public class PDAExpressions extends AbstractDsfService implements ICachingServic
                                     int end = lengthArg > 0 ? (start + lengthArg) : getData().fValues.length;
                                     IExpressionDMContext[] contexts = new IExpressionDMContext[end - start];                                     
                                     for (int i = start; i < end && i < getData().fValues.length; i++) {
-                                        contexts[i] = new ExpressionDMContext(
+                                        contexts[i - start] = new ExpressionDMContext(
                                             getSession().getId(), frameCtx, getData().fValues[i]);
                                     }
                                     rm.setData(contexts);

@@ -27,7 +27,9 @@
      		<url>http://maven.eclipse.org/nexus/content/repositories/public</url>
     	</pluginRepository>
   	</pluginRepositories>
-
+	<build>
+		<finalName>${project.artifactId}</finalName>
+	</build>
 	<profiles>
 		<profile>
 			<id>production</id>

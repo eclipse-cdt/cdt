@@ -73,6 +73,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
+import org.eclipse.cdt.core.parser.GCCKeywords;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
@@ -624,6 +625,9 @@ public class ASTStringUtil {
 				break;
 			case IASTSimpleDeclSpecifier.t_int:
 				buffer.append(Keywords.INT).append(' ');
+				break;
+			case IASTSimpleDeclSpecifier.t_int128:
+				buffer.append(GCCKeywords.cp__int128).append(' ');
 				break;
 			case IASTSimpleDeclSpecifier.t_float:
 				buffer.append(Keywords.FLOAT).append(' ');

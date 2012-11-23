@@ -15,8 +15,8 @@
 	<name>CDT Parent</name>
 
 	<properties>
-		<tycho-version>0.14.1</tycho-version>
-		<tycho-extras-version>0.14.0</tycho-extras-version>
+		<tycho-version>0.16.0</tycho-version>
+		<tycho-extras-version>0.16.0</tycho-extras-version>
 		<platform-version>3.8</platform-version>
 		<platform-site>http://download.eclipse.org/eclipse/updates/${platform-version}</platform-site>
 		<orbit-version>R20110523182458</orbit-version>
@@ -134,6 +134,7 @@
 		<module>util/org.eclipse.cdt.util-feature</module>
 
 		<module>memory/org.eclipse.cdt.debug.ui.memory.memorybrowser</module>
+		<module>memory/org.eclipse.cdt.debug.ui.memory.floatingpoint</module>
 		<module>memory/org.eclipse.cdt.debug.ui.memory.search</module>
 		<module>memory/org.eclipse.cdt.debug.ui.memory.traditional</module>
 		<module>memory/org.eclipse.cdt.debug.ui.memory.transport</module>

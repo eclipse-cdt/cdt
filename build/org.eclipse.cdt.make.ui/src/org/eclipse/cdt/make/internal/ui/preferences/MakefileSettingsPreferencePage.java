@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2010 QNX Software Systems and others.
+ * Copyright (c) 2002, 2012 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,8 +13,8 @@
 package org.eclipse.cdt.make.internal.ui.preferences;
 
 import org.eclipse.cdt.make.core.MakeCorePlugin;
+import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.make.ui.IMakeHelpContextIds;
-import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PathEditor;
@@ -23,7 +23,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.preferences.ScopedPreferenceStore;
 
 /**
  * MakePreferencePage
@@ -37,7 +36,7 @@ public class MakefileSettingsPreferencePage extends FieldEditorPreferencePage im
 
 	public MakefileSettingsPreferencePage() {
 		super(GRID);
-		IPreferenceStore store = new ScopedPreferenceStore(new InstanceScope(), MakeCorePlugin.PLUGIN_ID);
+		IPreferenceStore store = MakeUIPlugin.getDefault().getCorePreferenceStore();
 		setPreferenceStore(store);
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 QNX Software Systems and others.
+ * Copyright (c) 2005, 2012 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Symbian - Add some non-javadoc implementation notes
  *     Markus Schorn (Wind River Systems)
  *     IBM Corporation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.db;
 
@@ -72,10 +73,10 @@ public class Database {
 	public static final int BLOCK_SIZE_DELTA_BITS = 3;
 	public static final int BLOCK_SIZE_DELTA= 1 << BLOCK_SIZE_DELTA_BITS;
 	public static final int MIN_BLOCK_DELTAS = 2;	// a block must at least be 2 + 2*4 bytes to link the free blocks.
-	public static final int MAX_BLOCK_DELTAS = CHUNK_SIZE/BLOCK_SIZE_DELTA;	
-	public static final int MAX_MALLOC_SIZE = MAX_BLOCK_DELTAS*BLOCK_SIZE_DELTA - BLOCK_HEADER_SIZE;  
+	public static final int MAX_BLOCK_DELTAS = CHUNK_SIZE / BLOCK_SIZE_DELTA;	
+	public static final int MAX_MALLOC_SIZE = MAX_BLOCK_DELTAS * BLOCK_SIZE_DELTA - BLOCK_HEADER_SIZE;  
 	public static final int PTR_SIZE = 4;  // size of a pointer in the database in bytes  
-	public static final int TYPE_SIZE = 2+PTR_SIZE;  // size of a type in the database in bytes
+	public static final int TYPE_SIZE = 2 + PTR_SIZE;  // size of a type in the database in bytes
 	public static final int VALUE_SIZE = TYPE_SIZE;  // size of a value in the database in bytes
 	public static final int ARGUMENT_SIZE = TYPE_SIZE;  // size of a template argument in the database in bytes
 	public static final long MAX_DB_SIZE= ((long) 1 << (Integer.SIZE + BLOCK_SIZE_DELTA_BITS));
@@ -90,9 +91,9 @@ public class Database {
 	private final File fLocation;
 	private final boolean fReadOnly;
 	private RandomAccessFile fFile;
-	private boolean fExclusiveLock= false;	// necessary for any write operation
+	private boolean fExclusiveLock;	// necessary for any write operation
 	private boolean fLocked;				// necessary for any operation.
-	private boolean fIsMarkedIncomplete= false;
+	private boolean fIsMarkedIncomplete;
 
 	private int fVersion;
 	private final Chunk fHeaderChunk;
@@ -150,7 +151,7 @@ public class Database {
 				fFile.getChannel().read(buf, position);
 				return;
 			} catch (ClosedChannelException e) {
-				// bug 219834 file may have be closed by interrupting a thread during an I/O operation.
+				// Bug 219834 file may have be closed by interrupting a thread during an I/O operation.
 				reopen(e, ++retries);
 			} 
 		} while (true);
@@ -163,14 +164,14 @@ public class Database {
 				fFile.getChannel().write(buf, position);
 				return;
 			} catch (ClosedChannelException e) {
-				// bug 219834 file may have be closed by interrupting a thread during an I/O operation.
+				// Bug 219834 file may have be closed by interrupting a thread during an I/O operation.
 				reopen(e, ++retries);
 			} 
 		}
 	}
 
 	private void reopen(ClosedChannelException e, int attempt) throws ClosedChannelException, FileNotFoundException {
-		// only if the current thread was not interrupted we try to reopen the file.
+		// Only if the current thread was not interrupted we try to reopen the file.
 		if (e instanceof ClosedByInterruptException || attempt >= 20) {
 			throw e;
 		}
@@ -184,9 +185,9 @@ public class Database {
         long position = 0;
         long size = from.size();
         while (position < size) {
-        	nRead = from.transferTo(position, 4096*16, target);
+        	nRead = from.transferTo(position, 4096 * 16, target);
         	if (nRead == 0) {
-        		break;		// should not happen
+        		break;		// Should not happen
         	} else {
         		position+= nRead;
         	}
@@ -530,8 +531,16 @@ public class Database {
 		getChunk(offset).put(offset, data, len);
 	}
 
+	public void putBytes(long offset, byte[] data, int dataPos, int len) throws CoreException {
+		getChunk(offset).put(offset, data, dataPos, len);
+	}
+
 	public void getBytes(long offset, byte[] data) throws CoreException {
 		getChunk(offset).get(offset, data);
+	}
+
+	public void getBytes(long offset, byte[] data, int dataPos, int len) throws CoreException {
+		getChunk(offset).get(offset, data, dataPos, len);
 	}
 
 	public IString newString(String string) throws CoreException {
@@ -545,7 +554,7 @@ public class Database {
 		if (useBytes) {
 			bytelen= len;
 		} else {
-			bytelen= 2*len;
+			bytelen= 2 * len;
 		}
 		
 		if (bytelen > ShortString.MAX_BYTE_LENGTH) {
@@ -607,7 +616,7 @@ public class Database {
 		// chunks have been removed from the cache, so we are fine
 		fHeaderChunk.clear(0, CHUNK_SIZE);
 		fHeaderChunk.fDirty= false;
-		fChunks= new Chunk[] {null};
+		fChunks= new Chunk[] { null };
 		fChunksUsed = fChunksAllocated = fChunks.length;
 		try {
 			fFile.close();
@@ -686,8 +695,7 @@ public class Database {
 				}
 				// also handles header chunk
 				flushAndUnlockChunks(dirtyChunks, flush);
-			}
-			finally {
+			} finally {
 				fExclusiveLock= false;
 			}
 		}
@@ -721,7 +729,7 @@ public class Database {
 
 	private void flushAndUnlockChunks(final ArrayList<Chunk> dirtyChunks, boolean isComplete) throws CoreException {
 		assert !Thread.holdsLock(fCache);
-		synchronized(fHeaderChunk) {
+		synchronized (fHeaderChunk) {
 			final boolean haveDirtyChunks = !dirtyChunks.isEmpty();
 			if (haveDirtyChunks || fHeaderChunk.fDirty) {
 				markFileIncomplete();

@@ -33,6 +33,7 @@ import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTArrayRangeDesignator;
+import org.eclipse.cdt.core.parser.GCCKeywords;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.internal.core.dom.parser.ASTProblem;
 import org.eclipse.cdt.internal.core.model.ASTStringUtil;
@@ -773,6 +774,14 @@ public class ASTSignatureUtil {
 					needSpace = false;
 				}
 				result.append(Keywords.INT);
+				needSpace = true;
+				break;
+			case IASTSimpleDeclSpecifier.t_int128:
+				if (needSpace) {
+					result.append(SPACE);
+					needSpace = false;
+				}
+				result.append(GCCKeywords.__INT128);
 				needSpace = true;
 				break;
 			case IASTSimpleDeclSpecifier.t_void:

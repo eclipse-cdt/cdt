@@ -91,7 +91,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
@@ -1535,6 +1534,43 @@ public class AST2CPPTests extends AST2BaseTest {
 		}
 	}
 
+	//	struct A {
+	//	  A(int x);
+	//	  A(char x);
+	//	};
+	//
+	//	A a = A(1);
+	public void testConstructorCall() throws Exception {
+		BindingAssertionHelper bh = new BindingAssertionHelper(getAboveComment(), CPP);
+		ICPPConstructor ctor = bh.assertNonProblem("A(int x)", "A", ICPPConstructor.class);
+		ICPPClassType classType = bh.assertNonProblem("A(1)", "A", ICPPClassType.class);
+		assertSame(ctor.getOwner(), classType);
+		IASTName name = bh.findName("A(1)", "A");
+		IASTImplicitName[] implicitNames = ((IASTImplicitNameOwner) name.getParent().getParent()).getImplicitNames();
+		assertEquals(1, implicitNames.length);
+		IBinding ctor2 = implicitNames[0].getBinding();
+		assertSame(ctor, ctor2);
+	}
+
+	//	struct A {
+	//	  A(int x);
+	//	};
+	//	struct B {
+	//	  operator A();
+	//	};
+	//
+	//	void test() {
+	//	  B b;
+	//	  A a = A(b);
+	//	}
+	public void _testConversionOperator() throws Exception {
+		BindingAssertionHelper bh = new BindingAssertionHelper(getAboveComment(), CPP);
+		ICPPMethod oper = bh.assertNonProblem("operator A", "operator A", ICPPMethod.class);
+		ICPPMethod conv = bh.assertNonProblem("A(b)", "A", ICPPMethod.class);
+		// This assertion fails because conv is the copy ctor A(const A&), not the conversion operator B::operator A()
+		assertSame(oper, conv);
+	}
+
 	// namespace A { int x; }
 	// namespace B = A;
 	// int f(){ B::x;  }
@@ -2581,25 +2617,25 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertTrue(d.getNestedDeclarator().getPointerOperators()[0] instanceof ICPPASTPointerToMember);
 	}
 
-	// struct T1 {
-	//    T1 operator() (int x) {
-	//       return T1(x);
+	// struct A {
+	//    A operator()(int x) {
+	//       return A(x);
 	//    }
-	//    T1(int) {}
+	//    A(int) {}
 	// };
 	public void testBug86336() throws Exception {
-		IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.CPP);
-		CPPNameCollector col = new CPPNameCollector();
-		tu.accept(col);
-
-		ICPPConstructor T1_ctor = (ICPPConstructor) col.getName(6).resolveBinding();
-		ICPPClassType T1 = (ICPPClassType) col.getName(0).resolveBinding();
-		assertInstances(col, T1_ctor, 1);
-		assertInstances(col, T1, 3);
-
-		ICPPASTFunctionCallExpression fc= (ICPPASTFunctionCallExpression) col.getName(4).getParent().getParent();
-		IBinding ctor2 = fc.getImplicitNames()[0].resolveBinding();
-		assertSame(T1_ctor, ctor2);
+		BindingAssertionHelper bh = getAssertionHelper();
+		ICPPClassType clazz = bh.assertNonProblem("A {", "A", ICPPClassType.class);
+		ICPPConstructor ctor = bh.assertNonProblem("A(int)", "A", ICPPConstructor.class);
+		ICPPClassType clazz2 = bh.assertNonProblem("A(x)", "A", ICPPClassType.class);
+		assertSame(clazz, clazz2);
+		clazz2 = bh.assertNonProblem("A operator", "A", ICPPClassType.class);
+		assertSame(clazz, clazz2);
+		IASTName name = bh.findName("A(x)", "A");
+		IASTImplicitName[] implicitNames = ((IASTImplicitNameOwner) name.getParent().getParent()).getImplicitNames();
+		assertEquals(1, implicitNames.length);
+		IBinding ctor2 = implicitNames[0].getBinding();
+		assertSame(ctor, ctor2);
 	}
 
 	// struct S { int i; };
@@ -3783,6 +3819,24 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertTrue(((ITypedef) binding).getType() instanceof IFunctionType);
 	}
 
+	//	struct A {
+	//	  A(int x);
+	//	};
+	//	typedef A B;
+	//
+	//	B a = B(1);
+	public void testTypedefConstructorCall() throws Exception {
+		BindingAssertionHelper bh = new BindingAssertionHelper(getAboveComment(), CPP);
+		ICPPConstructor ctor = bh.assertNonProblem("A(int x)", "A", ICPPConstructor.class);
+		ITypedef typedef = bh.assertNonProblem("B(1)", "B", ITypedef.class);
+		assertSame(ctor.getOwner(), typedef.getType());
+		IASTName name = bh.findName("B(1)", "B");
+		IASTImplicitName[] implicitNames = ((IASTImplicitNameOwner) name.getParent().getParent()).getImplicitNames();
+		assertEquals(1, implicitNames.length);
+		IBinding ctor2 = implicitNames[0].getBinding();
+		assertSame(ctor, ctor2);
+	}
+
 	// void f(int);
 	// void foo(){
 	//    f((1, 2));
@@ -4707,97 +4761,6 @@ public class AST2CPPTests extends AST2BaseTest {
 
 		ICPPField i = (ICPPField) col.getName(1).resolveBinding();
 		assertSame(i, col.getName(7).resolveBinding());
-	}
-
-	//	template<typename T>
-	//	struct basic_string {
-	//	  basic_string& operator+=(const T* s);
-	//	  basic_string& append(const T* s);
-	//	};
-	//
-	//	template<typename T>
-	//	basic_string<T> operator+(const T* cs, const basic_string<T>& s);
-	//
-	//	template<typename T>
-	//	basic_string<T> operator+(const basic_string<T>& s, const T* cs);
-	//
-	//	typedef basic_string<char> string;
-	//
-	//	void test(const string& s) {
-	//	  auto s1 = "" + s + "";
-	//	  auto s2 = s1 += "";
-	//	  auto s3 = s2.append("foo");
-	//	}
-	public void testTypedefPreservation_380498_1() throws Exception {
-		BindingAssertionHelper ba= getAssertionHelper();
-		ICPPVariable s1 = ba.assertNonProblem("s1", ICPPVariable.class);
-		assertTrue(s1.getType() instanceof ITypedef);
-		assertEquals("string", ((ITypedef) s1.getType()).getName());
-		ICPPVariable s2 = ba.assertNonProblem("s2", ICPPVariable.class);
-		assertTrue(s2.getType() instanceof ITypedef);
-		assertEquals("string", ((ITypedef) s2.getType()).getName());
-		ICPPVariable s3 = ba.assertNonProblem("s3", ICPPVariable.class);
-		assertTrue(s3.getType() instanceof ITypedef);
-		assertEquals("string", ((ITypedef) s3.getType()).getName());
-	}
-
-	//	template <typename T>
-	//	struct vector {
-	//	  typedef T* const_iterator;
-	//	  const_iterator begin() const;
-	//	};
-	//
-	//	typedef int Element;
-	//
-	//	void test(const vector<Element>& v) {
-	//	  auto it = v.begin();
-	//	}
-	public void testTypedefPreservation_380498_2() throws Exception {
-		BindingAssertionHelper ba= getAssertionHelper();
-		ICPPVariable it = ba.assertNonProblem("it =", "it", ICPPVariable.class);
-		assertTrue(it.getType() instanceof ITypedef);
-		assertEquals("vector<Element>::const_iterator", ASTTypeUtil.getType(it.getType(), false));
-	}
-
-	//	template <typename T> class char_traits {};
-	//	template <typename C, typename T = char_traits<C>> class basic_string {};
-	//
-	//	template<typename _Iterator>
-	//	struct iterator_traits {
-	//		typedef typename _Iterator::reference reference;
-	//	};
-	//
-	//	template<typename _Tp>
-	//	struct iterator_traits<_Tp*> {
-	//		typedef _Tp& reference;
-	//	};
-	//
-	//	template<typename _Iterator, typename _Container>
-	//	struct normal_iterator {
-	//	    typedef iterator_traits<_Iterator> traits_type;
-	//	    typedef typename traits_type::reference reference;
-	//	    reference operator*() const;
-	//	};
-	//
-	//	template <typename T> struct vector {
-	//	    typedef T* pointer;
-	//	    typedef normal_iterator<pointer, vector> iterator;
-	//		iterator begin();
-	//		iterator end();
-	//	};
-	//
-	//	typedef basic_string<char> string;
-	//
-	//	void test() {
-	//		vector<string> v;
-	//		for (auto s : v) {
-	//		}
-	//	}
-	public void testTypedefPreservation_380498_3() throws Exception {
-		BindingAssertionHelper ba= getAssertionHelper();
-		ICPPVariable s = ba.assertNonProblem("s :", "s", ICPPVariable.class);
-		assertTrue(s.getType() instanceof ITypedef);
-		assertEquals("string", ASTTypeUtil.getType(s.getType(), false));
 	}
 
 	// int f() {
@@ -9969,6 +9932,18 @@ public class AST2CPPTests extends AST2BaseTest {
 	//     final.i = 23;
 	// }
 	public void testFinalParameter() throws Exception {
+		parseAndCheckBindings();
+	}
+	
+	//	struct S1 {};
+	//	S1 s1;
+	//	const int i= 1;
+	//	template<int I> struct CT {};
+	//	typedef int TD;
+	//	bool operator==(S1 a, int r );
+	//	static const int x = sizeof(CT<i>((TD * (CT<sizeof(s1 == 1)>::*)) 0 ));
+	//	template<int I> bool operator==(S1 a, const CT<I>& r );
+	public void testOrderInAmbiguityResolution_390759() throws Exception {
 		parseAndCheckBindings();
 	}
 }

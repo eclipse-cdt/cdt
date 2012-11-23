@@ -1178,7 +1178,6 @@ public class LanguageSettingsProvidersSerializer {
 							} else {
 								providers.add(LanguageSettingsManager.getExtensionProviderCopy(id, true));
 							}
-
 						}
 						((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(providers);
 					}
@@ -1192,6 +1191,11 @@ public class LanguageSettingsProvidersSerializer {
 						((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(ScannerDiscoveryLegacySupport.getDefaultProvidersLegacy());
 					}
 				}
+			}
+			
+			if (!ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityDefined(project)) {
+				// if not yet defined by user - set preference to tell if this is legacy .cproject (i.e. no LSP storageElement)
+				ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, storageElement != null);
 			}
 
 		}

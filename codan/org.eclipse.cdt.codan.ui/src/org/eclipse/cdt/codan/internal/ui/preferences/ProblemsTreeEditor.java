@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 Alena Laskavaia and others.
+ * Copyright (c) 2009, 2012 Alena Laskavaia and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,8 +8,11 @@
  * Contributors:
  *     Alena Laskavaia  - initial API and implementation
  *     IBM Corporation
+ *     Marc-Andre Laperle
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.ui.preferences;
+
+import java.text.MessageFormat;
 
 import org.eclipse.cdt.codan.core.CodanRuntime;
 import org.eclipse.cdt.codan.core.PreferenceConstants;
@@ -23,7 +26,9 @@ import org.eclipse.cdt.codan.core.param.IProblemPreference;
 import org.eclipse.cdt.codan.core.param.LaunchModeProblemPreference;
 import org.eclipse.cdt.codan.core.param.RootProblemPreference;
 import org.eclipse.cdt.codan.internal.core.CodanPreferencesLoader;
+import org.eclipse.cdt.codan.internal.ui.CodanUIActivator;
 import org.eclipse.cdt.codan.internal.ui.CodanUIMessages;
+import org.eclipse.cdt.codan.internal.ui.ImageConstants;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
@@ -40,10 +45,6 @@ import org.eclipse.jface.window.ToolTip;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.PlatformUI;
-
-import java.text.MessageFormat;
 
 public class ProblemsTreeEditor extends CheckedTreeEditor {
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
@@ -261,16 +262,15 @@ public class ProblemsTreeEditor extends CheckedTreeEditor {
 		column2.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public Image getImage(Object element) {
-				final ISharedImages images = PlatformUI.getWorkbench().getSharedImages();
 				if (element instanceof IProblem) {
 					IProblem p = (IProblem) element;
 					switch (p.getSeverity().intValue()) {
 						case IMarker.SEVERITY_INFO:
-							return images.getImage(ISharedImages.IMG_OBJS_INFO_TSK);
+							return CodanUIActivator.getDefault().getImage(ImageConstants.ICON_INFO);
 						case IMarker.SEVERITY_WARNING:
-							return images.getImage(ISharedImages.IMG_OBJS_WARN_TSK);
+							return CodanUIActivator.getDefault().getImage(ImageConstants.ICON_WARNING);
 						case IMarker.SEVERITY_ERROR:
-							return images.getImage(ISharedImages.IMG_OBJS_ERROR_TSK);
+							return CodanUIActivator.getDefault().getImage(ImageConstants.ICON_ERROR);
 					}
 				}
 				return null;

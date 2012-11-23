@@ -9,6 +9,7 @@
  *     Ericsson   - Initial API and implementation
  *     Ericsson   - Added support for Mac OS
  *     Sergey Prigogin (Google)
+ *     Marc Khouzam (Ericsson) - Add timer when fetching GDB version (Bug 376203)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.launching;
 
@@ -48,11 +49,13 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -290,7 +293,7 @@ public class LaunchUtils {
 	 * only once and the resulting version string stored for future uses.
 	 */
 	public static String getGDBVersion(final ILaunchConfiguration configuration) throws CoreException {        
-        Process process = null;
+        final Process process;
         String cmd = getGDBPath(configuration).toOSString() + " --version"; //$NON-NLS-1$ 
         try {
         	process = ProcessFactory.getFactory().exec(cmd, getLaunchEnvironment(configuration));
@@ -299,6 +302,21 @@ public class LaunchUtils {
         			"Error while launching command: " + cmd, e.getCause()));//$NON-NLS-1$
         }
 
+        // Start a timeout job to make sure we don't get stuck waiting for
+        // an answer from a gdb that is hanging
+        // Bug 376203
+        Job timeoutJob = new Job("GDB version timeout job") { //$NON-NLS-1$
+			{ setSystem(true); }
+			@Override
+			protected IStatus run(IProgressMonitor arg) {
+				// Took too long.  Kill the gdb process and 
+				// let things clean up.
+	        	process.destroy();
+				return Status.OK_STATUS;
+			}
+		};
+		timeoutJob.schedule(10000);
+		
         InputStream stream = null;
         StringBuilder cmdOutput = new StringBuilder(200);
         try {
@@ -314,6 +332,10 @@ public class LaunchUtils {
         	throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, 
         			"Error reading GDB STDOUT after sending: " + cmd, e.getCause()));//$NON-NLS-1$
         } finally {
+        	// If we get here we are obviously not stuck so we can cancel the timeout job.
+        	// Note that it may already have executed, but that is not a problem.
+        	timeoutJob.cancel();
+        	
         	// Cleanup to avoid leaking pipes
         	// Close the stream we used, and then destroy the process
         	// Bug 345164
@@ -325,7 +347,12 @@ public class LaunchUtils {
         	process.destroy();
         }
 
-        return getGDBVersionFromText(cmdOutput.toString());
+        String gdbVersion = getGDBVersionFromText(cmdOutput.toString());
+        if (gdbVersion == null || gdbVersion.isEmpty()) {
+        	throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, 
+        			"Could not determine GDB version after sending: " + cmd, null));//$NON-NLS-1$
+        }
+        return gdbVersion;
 	}
 	
 	public static boolean getIsAttach(ILaunchConfiguration config) {

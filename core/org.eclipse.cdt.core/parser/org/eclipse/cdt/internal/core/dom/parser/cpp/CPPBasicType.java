@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2011 IBM Corporation and others.
+ *  Copyright (c) 2004, 2012 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  *  Contributors:
  *      Andrew Niefer (IBM Corporation) - initial API and implementation
  *      Markus Schorn (Wind River Systems)
+ *      Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -101,6 +102,8 @@ public class CPPBasicType implements ICPPBasicType, ISerializableType {
 			return Kind.eFloat;
 		case IASTSimpleDeclSpecifier.t_int:
 			return Kind.eInt;
+		case IASTSimpleDeclSpecifier.t_int128:
+			return Kind.eInt128;
 		case IASTSimpleDeclSpecifier.t_void:
 			return Kind.eVoid;
 		default:
@@ -119,16 +122,17 @@ public class CPPBasicType implements ICPPBasicType, ISerializableType {
 		if (!(object instanceof ICPPBasicType))
 			return false;
 
-		ICPPBasicType t = (ICPPBasicType) object;
-		if (fKind != t.getKind())
+		ICPPBasicType other = (ICPPBasicType) object;
+		if (fKind != other.getKind())
 			return false;
 
 		int modifiers = getModifiers();
+		int otherModifiers = other.getModifiers();
 		if (fKind == Kind.eInt) {
 			// Signed int and int are equivalent.
-			return (modifiers & ~IS_SIGNED) == (t.getModifiers() & ~IS_SIGNED);
+			return (modifiers & ~IS_SIGNED) == (otherModifiers & ~IS_SIGNED);
 		}
-		return modifiers == t.getModifiers();
+		return modifiers == otherModifiers;
 	}
 
 	@Override
@@ -278,7 +282,7 @@ public class CPPBasicType implements ICPPBasicType, ISerializableType {
 	}
 
     /**
-     * @deprecated types don't have values
+     * @deprecated Types don't have values
      */
 	@Override
 	@Deprecated

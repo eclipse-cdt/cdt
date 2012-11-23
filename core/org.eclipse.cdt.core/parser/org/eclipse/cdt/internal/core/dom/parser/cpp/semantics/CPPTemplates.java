@@ -14,6 +14,7 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.CVTYPE;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getNestedType;
 
@@ -44,12 +45,12 @@ import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
-import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IValue;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAmbiguousTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
@@ -1201,11 +1202,9 @@ public class CPPTemplates {
 					ICPPPointerToMemberType ptm = (ICPPPointerToMemberType) typeContainer;
 					IType memberOfClass = ptm.getMemberOfClass();
 					IType newMemberOfClass = instantiateType(memberOfClass, tpMap, packOffset, within, point);
-					if (newMemberOfClass instanceof IQualifierType) {
-						newMemberOfClass = ((IQualifierType) newMemberOfClass).getType();
-					}
-					if (!(newMemberOfClass instanceof ICPPClassType || newMemberOfClass instanceof UniqueType
-							|| newMemberOfClass instanceof ICPPUnknownBinding)) {
+					IType classType = SemanticUtil.getNestedType(newMemberOfClass, CVTYPE | TDEF);
+					if (!(classType instanceof ICPPClassType || classType instanceof UniqueType
+							|| classType instanceof ICPPUnknownBinding)) {
 						return new ProblemType(ISemanticProblem.BINDING_INVALID_TYPE);
 					}
 					if (newNestedType != nestedType || newMemberOfClass != memberOfClass) {
@@ -1669,7 +1668,7 @@ public class CPPTemplates {
 	 * @return an array of template arguments, currently modeled as IType objects.
 	 *     The empty ICPPTemplateArgument array is returned if id is {@code null}
 	 */
-	public static ICPPTemplateArgument[] createTemplateArgumentArray(ICPPASTTemplateId id) {
+	public static ICPPTemplateArgument[] createTemplateArgumentArray(ICPPASTTemplateId id) throws DOMException {
 		ICPPTemplateArgument[] result= ICPPTemplateArgument.EMPTY_ARGUMENTS;
 		if (id != null) {
 			IASTNode[] args= id.getTemplateArguments();
@@ -1681,6 +1680,9 @@ public class CPPTemplates {
 				} else if (arg instanceof ICPPASTExpression) {
 					ICPPASTExpression expr= (ICPPASTExpression) arg;
 					result[i]= new CPPTemplateNonTypeArgument(expr.getEvaluation(), expr);
+				} else if (arg instanceof ICPPASTAmbiguousTemplateArgument) {
+					IProblemBinding problem = new ProblemBinding(id, IProblemBinding.SEMANTIC_INVALID_TEMPLATE_ARGUMENTS);
+					throw new DOMException(problem);
 				} else {
 					throw new IllegalArgumentException("Unexpected type: " + arg.getClass().getName()); //$NON-NLS-1$
 				}

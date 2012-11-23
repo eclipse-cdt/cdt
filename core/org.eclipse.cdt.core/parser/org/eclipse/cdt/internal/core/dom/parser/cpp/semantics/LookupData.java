@@ -20,7 +20,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -116,11 +118,15 @@ public class LookupData extends ScopeLookupData {
 		if (n == null)
 			throw new IllegalArgumentException();
 
+		ICPPTemplateArgument[] args = null;
 		if (n instanceof ICPPASTTemplateId) {
-			fTemplateArguments= CPPTemplates.createTemplateArgumentArray((ICPPASTTemplateId) n);
-		} else {
-			fTemplateArguments= null;
+			try {
+				args= CPPTemplates.createTemplateArgumentArray((ICPPASTTemplateId) n);
+			} catch (DOMException e) {
+				CCorePlugin.log(e);
+			}
 		}
+		fTemplateArguments= args;
 		configureWith(n);
 	}
 	

@@ -197,9 +197,55 @@ public class PDAVirtualMachine {
             fPC = pc;
         }
         
+        private int parseArrayParam(String name) {
+            int lb = name.indexOf('[');
+            int rb = name.indexOf(']', lb);
+            if (rb < 0) return -1;
+            String paramStr = name.substring(lb + 1, rb);
+            if (paramStr.length() == 0) return -1;
+            
+            try {
+                return Integer.parseInt(name.substring(lb + 1, rb));
+            } catch (NumberFormatException e) {} // Not a number
+            
+            Object paramVar = fLocalVariables.get(paramStr);
+            if (paramVar instanceof Integer) {
+                return (Integer)paramVar;
+            }
+            return -1;
+        }
+        
+        void declare(String name) {
+            Object value = Integer.valueOf(0);
+            if (name.startsWith("$")) {
+                setRegisterValue(name, value);
+            } else if (name.indexOf('[') >= 0) {
+                int size = parseArrayParam(name);
+                if (size >= 0) {
+                    String arrayName = name.substring(0, name.indexOf('['));
+                    Object[] array = new Object[size];
+                    for (int i = 0; i < size; i++) {
+                        array[i] = value;
+                    }
+                    fLocalVariables.put(arrayName, array);
+                }
+            } else {
+                fLocalVariables.put(name, value);
+            }
+        }
+        
         void set(String name, Object value) {
             if (name.startsWith("$")) {
                 setRegisterValue(name, value);
+            } else if (name.indexOf('[') >= 0) {
+                int index = parseArrayParam(name);
+                if (index >=0) {
+                    String arrayName = name.substring(0, name.indexOf('['));
+                    Object array = fLocalVariables.get(arrayName);
+                    if (array instanceof Object[] && ((Object[])array).length > index) {
+                        ((Object[])array)[index] = value;
+                    }
+                }
             } else {
                 fLocalVariables.put(name, value);
             }
@@ -208,6 +254,16 @@ public class PDAVirtualMachine {
         Object get(String name) {
             if (name.startsWith("$")) {
                 return getRegisterValue(name);
+            } else if (name.indexOf('[') >= 0) {
+                int index = parseArrayParam(name);
+                if (index >= 0) {
+                    String arrayName = name.substring(0, name.indexOf('['));
+                    Object array = fLocalVariables.get(arrayName);
+                    if (array instanceof Object[] && ((Object[])array).length > index) {
+                        return ((Object[])array)[index];
+                    }
+                }
+                return null;
             } else { 
                 return fLocalVariables.get(name);
             }
@@ -716,6 +772,14 @@ public class PDAVirtualMachine {
             }
         }
 
+        Object value = frame.fLocalVariables.get(var); 
+        if (value instanceof Object[]) {
+            int size = ((Object[])value).length;
+            for (int i = 0; i < size; i++) {
+                children.add(var + "[" + Integer.toString(i) + "]");
+            }
+        }
+        
         StringBuffer result = new StringBuffer();
         for (String child : children) {
             result.append(child);
@@ -1032,10 +1096,12 @@ public class PDAVirtualMachine {
         buf.append('|');
         buf.append(frame.fFunction);
         for (String var : frame.fLocalVariables.keySet()) {
-            if (var.indexOf('.') == -1) {
-                buf.append('|');
-                buf.append(var);
+            if (var.indexOf('.') >= 0) continue;
+            if (var.indexOf('[') >= 0) {
+                var = var.substring(0, var.indexOf('['));
             }
+            buf.append('|');
+            buf.append(var);
         }
         return buf.toString();
     }
@@ -1153,6 +1219,8 @@ public class PDAVirtualMachine {
         Object val = frame.get(var);
         if (val == null) {
             sendCommandResponse("error: variable undefined\n");
+        } else if (val instanceof Object[]) {
+            sendCommandResponse("[" + Integer.toString(((Object[])val).length) + "]" + "\n");
         } else {
             sendCommandResponse(val.toString() + "\n");
         }
@@ -1362,7 +1430,7 @@ public class PDAVirtualMachine {
 
     void iVar(PDAThread thread, Args args) {
         String var = args.getNextStringArg();
-        thread.fCurrentFrame.set(var, 0);
+        thread.fCurrentFrame.declare(var);
     }
 
     void iInternalEndEval(PDAThread thread, Args args) {

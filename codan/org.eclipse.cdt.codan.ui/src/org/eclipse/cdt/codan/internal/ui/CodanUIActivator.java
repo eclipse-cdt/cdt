@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Alena Laskavaia 
+ * Copyright (c) 2010, 2012 Alena Laskavaia and others 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,10 @@ import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.osgi.framework.BundleContext;
@@ -70,6 +74,26 @@ public class CodanUIActivator extends AbstractUIPlugin {
 	 */
 	public static ImageDescriptor getImageDescriptor(String path) {
 		return imageDescriptorFromPlugin(PLUGIN_ID, path);
+	}
+	
+	/**
+	 * 
+	 * @param key - key is usually plug-in relative path to image like icons/xxx.gif
+	 * @return Image loaded from key location or from registry cache, it will be stored in plug-in registry and disposed when plug-in unloads
+	 */
+	public Image getImage(String key) {
+		ImageRegistry registry = getImageRegistry();
+		Image image = registry.get(key);
+		if (image == null) {
+			ImageDescriptor descriptor = imageDescriptorFromPlugin(PLUGIN_ID, key);
+			if (descriptor==null) {
+				ISharedImages sharedImages = PlatformUI.getWorkbench().getSharedImages();
+				return sharedImages.getImage(key);
+			}
+			registry.put(key, descriptor);
+			image = registry.get(key);
+		}
+		return image;
 	}
 
 	/**

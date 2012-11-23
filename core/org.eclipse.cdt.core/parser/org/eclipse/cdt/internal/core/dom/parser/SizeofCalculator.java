@@ -58,10 +58,12 @@ public class SizeofCalculator {
 	public final SizeAndAlignment size_2;
 	public final SizeAndAlignment size_4;
 	public final SizeAndAlignment size_8;
+	public final SizeAndAlignment size_16;
 	public final SizeAndAlignment sizeof_pointer;
 	public final SizeAndAlignment sizeof_int;
 	public final SizeAndAlignment sizeof_long;
 	public final SizeAndAlignment sizeof_long_long;
+	public final SizeAndAlignment sizeof_int128;
 	public final SizeAndAlignment sizeof_short;
 	public final SizeAndAlignment sizeof_bool;
 	public final SizeAndAlignment sizeof_wchar_t;
@@ -118,10 +120,12 @@ public class SizeofCalculator {
 		size_2 = new SizeAndAlignment(2, Math.min(2, maxAlignment));
 		size_4 = new SizeAndAlignment(4, Math.min(4, maxAlignment));
 		size_8 = new SizeAndAlignment(8, Math.min(8, maxAlignment));
+		size_16 = new SizeAndAlignment(16, Math.min(16, maxAlignment));
 		sizeof_pointer = getSize(sizeofMacros, "__SIZEOF_POINTER__", maxAlignment); //$NON-NLS-1$
 		sizeof_int = getSize(sizeofMacros, "__SIZEOF_INT__", maxAlignment); //$NON-NLS-1$
 		sizeof_long = getSize(sizeofMacros, "__SIZEOF_LONG__", maxAlignment); //$NON-NLS-1$
 		sizeof_long_long = getSize(sizeofMacros, "__SIZEOF_LONG_LONG__", maxAlignment); //$NON-NLS-1$
+		sizeof_int128 = getSize(sizeofMacros, "__SIZEOF_INT128__", maxAlignment); //$NON-NLS-1$
 		sizeof_short = getSize(sizeofMacros, "__SIZEOF_SHORT__", maxAlignment); //$NON-NLS-1$
 		sizeof_bool = getSize(sizeofMacros, "__SIZEOF_BOOL__", maxAlignment); //$NON-NLS-1$
 		sizeof_wchar_t = getSize(sizeofMacros, "__SIZEOF_WCHAR_T__", maxAlignment); //$NON-NLS-1$
@@ -137,10 +141,12 @@ public class SizeofCalculator {
 		size_2 = new SizeAndAlignment(2, 2);
 		size_4 = new SizeAndAlignment(4, 4);
 		size_8 = new SizeAndAlignment(8, 8);
+		size_16 = new SizeAndAlignment(16, 16);
 		sizeof_pointer = null;
 		sizeof_int = null;
 		sizeof_long = null;
 		sizeof_long_long = null;
+		sizeof_int128 = size_16;
 		sizeof_short = null;
 		sizeof_bool = null;
 		sizeof_wchar_t = null;
@@ -201,9 +207,10 @@ public class SizeofCalculator {
 		case eInt:
 			return type.isShort() ?	sizeof_short : type.isLong() ? sizeof_long :
 					type.isLongLong() ? sizeof_long_long : sizeof_int;
-		case eFloat: {
+		case eInt128:
+			return sizeof_int128;
+		case eFloat:
 			return type.isComplex() ? sizeof_complex_float : sizeof_float;
-		}
 		case eDouble:
 			return type.isComplex() ?
 					(type.isLong() ? sizeof_long_double : sizeof_double) :
@@ -215,7 +222,7 @@ public class SizeofCalculator {
 		case eChar32:
 			return size_4;
 		case eNullPtr:
-			return sizeAndAlignmentOfPointer();
+			return sizeof_pointer;
 		default:
 			return null;
 		}

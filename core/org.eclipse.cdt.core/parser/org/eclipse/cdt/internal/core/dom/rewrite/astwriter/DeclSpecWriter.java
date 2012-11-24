@@ -87,6 +87,8 @@ public class DeclSpecWriter extends NodeWriter {
 			return Keywords.FLOAT;
 		case IASTSimpleDeclSpecifier.t_double:
 			return Keywords.DOUBLE;
+		case IASTSimpleDeclSpecifier.t_float128:
+			return GCCKeywords.__FLOAT128;
 			
 		case IASTSimpleDeclSpecifier.t_bool:
 			return isCpp ? Keywords.BOOL : Keywords._BOOL;

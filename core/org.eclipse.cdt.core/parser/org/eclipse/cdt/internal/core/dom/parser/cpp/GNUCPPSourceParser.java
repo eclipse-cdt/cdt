@@ -66,6 +66,7 @@ import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAliasDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAmbiguousTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCapture;
@@ -2848,6 +2849,13 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         			if (encounteredTypename)
         				break declSpecifiers;
         			simpleType = IASTSimpleDeclSpecifier.t_double;
+        			encounteredRawType= true;
+        			endOffset= consume().getEndOffset();
+        			break;
+        		case IGCCToken.t__float128:
+        			if (encounteredTypename)
+        				break declSpecifiers;
+        			simpleType = IASTSimpleDeclSpecifier.t_float128;
         			encounteredRawType= true;
         			endOffset= consume().getEndOffset();
         			break;

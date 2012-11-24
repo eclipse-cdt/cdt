@@ -100,6 +100,8 @@ public class CPPBasicType implements ICPPBasicType, ISerializableType {
 			return Kind.eDouble;
 		case IASTSimpleDeclSpecifier.t_float:
 			return Kind.eFloat;
+		case IASTSimpleDeclSpecifier.t_float128:
+			return Kind.eFloat128;
 		case IASTSimpleDeclSpecifier.t_int:
 			return Kind.eInt;
 		case IASTSimpleDeclSpecifier.t_int128:

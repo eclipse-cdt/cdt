@@ -635,6 +635,9 @@ public class ASTStringUtil {
 			case IASTSimpleDeclSpecifier.t_double:
 				buffer.append(Keywords.DOUBLE).append(' ');
 				break;
+			case IASTSimpleDeclSpecifier.t_float128:
+				buffer.append(GCCKeywords.cp__float128).append(' ');
+				break;
 			case IASTSimpleDeclSpecifier.t_bool:
 				if (simpleDeclSpec instanceof ICASTSimpleDeclSpecifier) {
 					buffer.append(Keywords.cBOOL).append(' ');

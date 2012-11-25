@@ -68,6 +68,13 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="parser/org/eclipse/cdt/core/dom/ast/cpp/ICPPASTAliasDeclaration.java" type="org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAliasDeclaration">
+        <filter id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAliasDeclaration"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="parser/org/eclipse/cdt/core/dom/ast/cpp/ICPPASTExpression.java" type="org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression">
         <filter id="1110441988">
             <message_arguments>
@@ -79,6 +86,32 @@
         <filter id="1110441988">
             <message_arguments>
                 <message_argument value="org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="parser/org/eclipse/cdt/core/dom/ast/cpp/ICPPASTTypeId.java" type="org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeId">
+        <filter id="1211105284">
+            <message_arguments>
+                <message_argument value="copy()"/>
+            </message_arguments>
+        </filter>
+        <filter id="1211105284">
+            <message_arguments>
+                <message_argument value="copy(IASTNode.CopyStyle)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="parser/org/eclipse/cdt/core/dom/ast/cpp/ICPPAliasTemplate.java" type="org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplate">
+        <filter id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplate"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="parser/org/eclipse/cdt/core/dom/ast/cpp/ICPPAliasTemplateInstance.java" type="org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplateInstance">
+        <filter id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplateInstance"/>
             </message_arguments>
         </filter>
     </resource>

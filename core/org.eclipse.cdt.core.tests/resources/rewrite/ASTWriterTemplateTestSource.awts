@@ -10,4 +10,10 @@ void f(T* p)
     T::template adjust<100>();
 }
 
-
+//![temp.alias] Template alias declaration
+//%CPP
+template<typename T> struct S
+{
+};
+template<typename T> using Alias = S<T>;
+Alias<int> sInt;

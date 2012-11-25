@@ -259,6 +259,12 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertEquals(declNames.length, i);
 		assertEquals(defNames.length, j);
 	}
+	
+	protected void assertSameType(IType first, IType second){
+		assertNotNull(first);
+		assertNotNull(second);
+		assertTrue("Expected types to be the same, but first was: '" + first.toString() + "' and second was: '" + second + "'", first.isSameType(second));
+	}
 
 	// #define CURLOPTTYPE_OBJECTPOINT   10000
 	// #define CINIT(name,type,number) CURLOPT_ ## name = CURLOPTTYPE_ ## type + number
@@ -9868,7 +9874,7 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertEquals(expectOverride, declarator.isOverride());
 		assertEquals(expectFinal, declarator.isFinal());
 	}
-	
+
 	// struct Base {
 	// };
 	// struct S final : public Base {
@@ -9893,9 +9899,8 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertInstance(sDefinition, ICPPASTCompositeTypeSpecifier.class);
 		assertTrue(((ICPPASTCompositeTypeSpecifier)sDefinition).isFinal());
 	}
-	
-	
-	// struct S{
+
+	// struct S {
 	//     template<typename T>
 	// 	   void foo(T t) final {
 	// 	   }
@@ -9915,8 +9920,8 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertFalse(fooTemplate.isOverride());
 		assertTrue(fooTemplate.isFinal());
 	}
-	
-	// void foo(){
+
+	// void foo() {
 	//     int final, override;
 	//     final = 4;
 	//     override = 2;
@@ -9924,17 +9929,17 @@ public class AST2CPPTests extends AST2BaseTest {
 	public void testFinalAndOverrideVariables() throws Exception {
 		parseAndCheckBindings();
 	}
-	
-	// struct S{
+
+	// struct S {
 	//     int i;
 	// };
-	// void foo(struct S final){
+	// void foo(struct S final) {
 	//     final.i = 23;
 	// }
 	public void testFinalParameter() throws Exception {
 		parseAndCheckBindings();
 	}
-	
+
 	//	struct S1 {};
 	//	S1 s1;
 	//	const int i= 1;

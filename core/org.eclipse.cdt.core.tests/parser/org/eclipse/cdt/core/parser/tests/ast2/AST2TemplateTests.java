@@ -11,6 +11,7 @@
  *     Bryan Wilkinson (QNX)
  *     Andrew Ferguson (Symbian)
  *     Sergey Prigogin (Google)
+ *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
@@ -50,6 +51,7 @@ import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
@@ -58,6 +60,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
@@ -87,6 +91,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPReferenceType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknownScope;
@@ -6143,4 +6149,539 @@ public class AST2TemplateTests extends AST2BaseTest {
 	public void testAddressAsTemplateArgument_391190() throws Exception {
 		parseAndCheckBindings(getAboveComment(), CPP, true);
 	}	
+	
+	//	template <typename T> struct CT {
+	//		const static int const_min= 1;
+	//	};
+	//	void test(int off) {
+	//	    off < CT<int>::const_min || off > CT<int>::const_min;
+	//	}
+	public void testTemplateIDAmbiguity_393959() throws Exception {
+		parseAndCheckBindings(getAboveComment(), CPP, true);
+	}		
+
+	// template<typename T> class CT {
+    //     void m() {
+    //         template<typename T> using Alias= T;   // nesting level 1
+    //         Alias<int> x;
+    //     }
+    // };
+	public void testNestedAliasDeclarationNestingLevel() throws Exception {
+		final String code = getAboveComment();
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+
+		ICPPAliasTemplate templateParameterAlias = bh.assertNonProblem("Alias=", "Alias", ICPPAliasTemplate.class);
+		ICPPTemplateParameter aliasParameterT= templateParameterAlias.getTemplateParameters()[0];
+		assertEquals(1, aliasParameterT.getTemplateNestingLevel());
+
+		ICPPAliasTemplateInstance aliasIntInstance = bh.assertNonProblem("Alias<int>", ICPPAliasTemplateInstance.class);
+		IType typeOfAliasIntInstance = aliasIntInstance.getType();
+		assertTrue(typeOfAliasIntInstance instanceof ICPPBasicType);
+		assertEquals(((ICPPBasicType)typeOfAliasIntInstance).getKind(), IBasicType.Kind.eInt);
+
+		parseAndCheckBindings(code);
+	}
+
+	// template<typename T> class CT;
+	// template<typename T> using Alias= CT<T>;  // nesting level 0
+	// template<typename T> class CT {           // nesting level 0
+	//     typedef Alias<T> TYPE;
+	// };
+	public void testAliasDeclarationNestingLevel() throws Exception {
+		final String code = getAboveComment();
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+
+		ICPPAliasTemplate templateParameterAlias = bh.assertNonProblem("Alias=", "Alias", ICPPAliasTemplate.class);
+		ICPPTemplateParameter aliasParameterT = templateParameterAlias.getTemplateParameters()[0];
+		assertEquals(0, aliasParameterT.getTemplateNestingLevel());
+
+		ICPPTemplateDefinition templateCT = bh.assertNonProblem("CT {", "CT", ICPPTemplateDefinition.class);
+		ICPPTemplateParameter templateParameterT = templateCT.getTemplateParameters()[0];
+		assertEquals(0, templateParameterT.getTemplateNestingLevel());
+
+		parseAndCheckBindings(code);
+	}
+
+	// struct S {
+	//     int x;
+	// };
+	// using Alias = S;
+	// void foo() {
+	//     Alias myA;
+	//     myA.x = 42;
+	// }
+	public void testSimpleAliasDeclaration() throws Exception {
+		final String code = getAboveComment();
+		IASTTranslationUnit ast = parseAndCheckBindings(code);
+		CPPNameCollector collector = new CPPNameCollector();
+		ast.accept(collector);
+		ICPPClassType S = (ICPPClassType) collector.getName(0).resolveBinding();
+		ICPPField x = (ICPPField) collector.getName(1).resolveBinding();
+		ITypedef Alias = (ITypedef) collector.getName(2).resolveBinding();
+		IFunction foo = (IFunction) collector.getName(4).resolveBinding();
+		IVariable myA = (IVariable) collector.getName(6).resolveBinding();
+
+		assertInstances(collector, S, 2);
+		assertInstances(collector, x, 2);
+		assertInstances(collector, Alias, 2);
+		assertInstances(collector, foo, 1);
+		assertInstances(collector, myA, 2);
+	}
+
+	// template<typename T>
+	// struct S {
+	//     T x;
+	// };
+	// using Alias = S<int>;
+	// void foo() {
+	//     Alias myA;
+	//     myA.x = 42;
+	// }
+	public void testSpecifiedTemplateAliasDeclaration() throws Exception {
+		final String code = getAboveComment();
+		IASTTranslationUnit ast = parseAndCheckBindings(code);
+		CPPNameCollector collector = new CPPNameCollector();
+		ast.accept(collector);
+		ICPPClassType S = (ICPPClassType) collector.getName(1).resolveBinding();
+		ICPPField x = (ICPPField) collector.getName(3).resolveBinding();
+		ITypedef Alias = (ITypedef) collector.getName(4).resolveBinding();
+		IVariable myA = (IVariable) collector.getName(9).resolveBinding();
+		ICPPSpecialization xRef = (ICPPSpecialization) collector.getName(11).resolveBinding();
+
+		assertInstances(collector, S, 2);
+		assertInstances(collector, Alias, 2);
+		assertInstances(collector, myA, 2);
+		assertEquals(x, xRef.getSpecializedBinding());
+	}
+
+	// template<typename T>
+	// using Alias = int;
+	// void foo() {
+	//     Alias<float> myA;
+	//     myA = 42;
+	// }
+	public void testTemplatedAliasBasicType() throws Exception {
+		final String code = getAboveComment();
+		IASTTranslationUnit ast = parseAndCheckBindings(code);
+		CPPNameCollector collector = new CPPNameCollector();
+		ast.accept(collector);
+		ICPPAliasTemplate Alias = (ICPPAliasTemplate) collector.getName(1).resolveBinding();
+		ICPPAliasTemplateInstance AliasFloatInstance = (ICPPAliasTemplateInstance) collector.getName(3).resolveBinding();
+		assertInstances(collector, Alias, 2);
+		assertSameType(AliasFloatInstance, new CPPBasicType(IBasicType.Kind.eInt, 0));
+	}
+
+	// template<typename T>
+	// struct S {
+	//     T t;
+	// };
+	// template<typename T>
+	// using TAlias = S<T>;
+	// void foo() {
+	//     TAlias<int> myA;
+	//     myA.t = 42;
+	// }
+	public void testTemplatedAliasDeclaration() throws Exception {
+		final String code = getAboveComment();
+		IASTTranslationUnit ast = parseAndCheckBindings(code);
+		CPPNameCollector collector = new CPPNameCollector();
+		ast.accept(collector);
+		ICPPClassType S = (ICPPClassType) collector.getName(1).resolveBinding();
+		ICPPField t = (ICPPField) collector.getName(3).resolveBinding();
+		ICPPTemplateParameter T = (ICPPTemplateParameter) collector.getName(4).resolveBinding();
+		ICPPTemplateParameter TRef = (ICPPTemplateParameter) collector.getName(8).resolveBinding();
+		ICPPAliasTemplate TAlias = (ICPPAliasTemplate) collector.getName(5).resolveBinding();
+		ICPPVariable myA = (ICPPVariable) collector.getName(12).resolveBinding();
+		ICPPSpecialization tRef = (ICPPSpecialization) collector.getName(14).resolveBinding();
+
+		assertInstances(collector, S, 2);
+		assertInstances(collector, T, 2);
+		assertEquals(T, TRef);
+		assertInstances(collector, TAlias, 2);
+		assertInstances(collector, myA, 2);
+		assertEquals(t, tRef.getSpecializedBinding());
+		ICPPDeferredClassInstance aliasedType = (ICPPDeferredClassInstance) TAlias.getType();
+		assertEquals(S, aliasedType.getClassTemplate());
+	}
+
+	// template<typename T1, typename T2, typename T3>
+	// struct S {
+	//     T1 t1;
+	//     T2 t2;
+	//     T3 t3;
+	// };
+	// template<typename P1, typename P2>
+	// using TAlias = S<int, P2, P1>;
+	// void foo() {
+	//     TAlias<bool, float> myA;
+	//     myA.t1 = 42;
+	//     myA.t2 = 42.0f;
+	//     myA.t3 = true;
+	// }
+	public void testTemplatedAliasDeclarationMultipleParameters() throws Exception {
+		final String code = getAboveComment();
+		IASTTranslationUnit ast = parseAndCheckBindings(code);
+		CPPNameCollector collector = new CPPNameCollector();
+		ast.accept(collector);
+		ICPPField t1 = (ICPPField) collector.getName(5).resolveBinding();
+		ICPPField t2 = (ICPPField) collector.getName(7).resolveBinding();
+		ICPPField t3 = (ICPPField) collector.getName(9).resolveBinding();
+
+		ICPPTemplateParameter P1 = (ICPPTemplateParameter) collector.getName(10).resolveBinding();
+		ICPPTemplateParameter P2 = (ICPPTemplateParameter) collector.getName(11).resolveBinding();
+
+		ICPPTemplateParameter P1Ref = (ICPPTemplateParameter) collector.getName(16).resolveBinding();
+		ICPPTemplateParameter P2Ref = (ICPPTemplateParameter) collector.getName(15).resolveBinding();
+
+		ICPPAliasTemplateInstance TAliasInstance = (ICPPAliasTemplateInstance) collector.getName(18).resolveBinding();
+		ICPPTemplateInstance aliasedTypeInstance = (ICPPTemplateInstance) TAliasInstance.getType();
+
+		ICPPSpecialization t1Ref = (ICPPSpecialization) collector.getName(22).resolveBinding();
+		ICPPSpecialization t2Ref = (ICPPSpecialization) collector.getName(24).resolveBinding();
+		ICPPSpecialization t3Ref = (ICPPSpecialization) collector.getName(26).resolveBinding();
+
+		assertEquals(P1, P1Ref);
+		assertEquals(P2, P2Ref);
+
+		assertEquals(t1, t1Ref.getSpecializedBinding());
+		assertEquals(t2, t2Ref.getSpecializedBinding());
+		assertEquals(t3, t3Ref.getSpecializedBinding());
+		assertSameType(new CPPBasicType(IBasicType.Kind.eInt, 0), aliasedTypeInstance.getTemplateArguments()[0].getTypeValue());
+		assertSameType(new CPPBasicType(IBasicType.Kind.eFloat, 0), aliasedTypeInstance.getTemplateArguments()[1].getTypeValue());
+		assertSameType(new CPPBasicType(IBasicType.Kind.eBoolean, 0), aliasedTypeInstance.getTemplateArguments()[2].getTypeValue());
+	}
+
+	// template<typename T>
+	// struct S {
+	//     T t;
+	// };
+	// template<typename P>
+	// using TAlias = S<P>;
+	// void foo() {
+	//     TAlias<S<int> > myA;
+	//     myA.t = S<int>();
+	// }
+	public void testTemplatedAliasDeclarationTemplateArgument() throws Exception {
+		final String code = getAboveComment();
+		IASTTranslationUnit ast = parseAndCheckBindings(code);
+		CPPNameCollector collector = new CPPNameCollector();
+		ast.accept(collector);
+		ICPPField t = (ICPPField) collector.getName(3).resolveBinding();
+		IType TAliasSInt = (IType) collector.getName(10).resolveBinding();
+		ICPPSpecialization tRef = (ICPPSpecialization) collector.getName(16).resolveBinding();
+
+		assertEquals(t, tRef.getSpecializedBinding());
+		assertSameType(TAliasSInt, (IType)tRef.getOwner());
+	}
+
+	// template<typename T>
+	// struct S {
+	//     T t;
+	// };
+	// template<typename P>
+	// using TAlias = S<P>;
+	// void foo() {
+	//     S<TAlias<int> > myA;
+	//     myA.t = S<int>();
+	// }
+	public void testTemplatedAliasAsTemplateArgument() throws Exception {
+		final String code = getAboveComment();
+		IASTTranslationUnit ast = parseAndCheckBindings(code);
+		CPPNameCollector collector = new CPPNameCollector();
+		ast.accept(collector);
+		ICPPField t = (ICPPField) collector.getName(3).resolveBinding();
+		ICPPTemplateInstance STAliasInt = (ICPPTemplateInstance) collector.getName(10).resolveBinding();
+		ICPPSpecialization tRef = (ICPPSpecialization) collector.getName(16).resolveBinding();
+
+		assertEquals(t, tRef.getSpecializedBinding());
+		assertEquals(STAliasInt, tRef.getOwner());
+	}
+
+	// template<int Size, int Size2>
+	// struct S {
+	//     int buff [Size];
+	// };
+	// template<int SizeArg, int SizeArg2>
+	// using TAlias = S<SizeArg2, SizeArg>;
+	// void foo() {
+	//     TAlias<5, 4> myA;
+	//     myA.buff[0] = 1;
+	// }
+	public void testTemplatedAliasDeclarationValueArgument() throws Exception {
+		final String code = getAboveComment();
+		IASTTranslationUnit ast = parseAndCheckBindings(code);
+		CPPNameCollector collector = new CPPNameCollector();
+		ast.accept(collector);
+		ICPPField buff = (ICPPField) collector.getName(3).resolveBinding();
+		ICPPSpecialization buffRef = (ICPPSpecialization) collector.getName(17).resolveBinding();
+
+		assertEquals(buff, buffRef.getSpecializedBinding());
+		assertEquals(buffRef.getTemplateParameterMap().getArgument(0).getNonTypeValue().numericalValue(), new Long(4));
+		assertEquals(buffRef.getTemplateParameterMap().getArgument(1).getNonTypeValue().numericalValue(), new Long(5));
+	}
+
+	// template<typename T, int Size>
+	// struct S {
+	//     T buff [Size];
+	// };
+	// template<typename Type = int, int Items = 5>
+	// using TAlias = S<Type, Items>;
+	// void foo() {
+	//     TAlias<> myA;
+	//     myA.buff[0] = 1;
+	// }
+	public void testTemplatedAliasDefaultArguments() throws Exception {
+		final String code = getAboveComment();
+		IASTTranslationUnit ast = parseAndCheckBindings(code);
+		CPPNameCollector collector = new CPPNameCollector();
+		ast.accept(collector);
+		ICPPField buff = (ICPPField) collector.getName(4).resolveBinding();
+		ICPPAliasTemplateInstance myA = (ICPPAliasTemplateInstance) collector.getName(14).resolveBinding();
+		ICPPSpecialization buffRef = (ICPPSpecialization) collector.getName(18).resolveBinding();
+
+		assertEquals(buff, buffRef.getSpecializedBinding());
+		assertSameType(buffRef.getTemplateParameterMap().getArgument(0).getTypeValue(), new CPPBasicType(IBasicType.Kind.eInt, 0));
+		assertEquals(buffRef.getTemplateParameterMap().getArgument(1).getNonTypeValue().numericalValue(), new Long(5));
+	}
+
+	// template<typename T>
+	// struct S {
+	//     T t;
+	// };
+	// template<typename A, typename A2>
+	// using TAlias = S<S<A2> >;
+	// void foo() {
+	//     TAlias<float, int> myA;
+	//     myA.t = S<int>();
+	// }
+	public void testTemplatedAliasTemplateArgument() throws Exception {
+		final String code = getAboveComment();
+		IASTTranslationUnit ast = parseAndCheckBindings(code);
+		CPPNameCollector collector = new CPPNameCollector();
+		ast.accept(collector);
+
+		ICPPField t = (ICPPField) collector.getName(3).resolveBinding();
+		ICPPSpecialization tRef = (ICPPSpecialization) collector.getName(17).resolveBinding();
+		ICPPClassSpecialization Sint = (ICPPClassSpecialization) collector.getName(18).resolveBinding();
+
+		assertEquals(t, tRef.getSpecializedBinding());
+		assertSameType(tRef.getTemplateParameterMap().getArgument(0).getTypeValue(), Sint);
+	}
+
+	// template<typename T>
+	// struct S {
+	//     T t;
+	// };
+	// template<typename A>
+	// using TAlias = S<A>;
+	// void bar(TAlias<int> arg){
+	// }
+	// void foo() {
+	//     TAlias<int> myA;
+	//     bar(myA);
+	//     S<int> myS;
+	//     bar(myS);
+	// }
+	public void testTemplatedAliasAsFunctionParameter() throws Exception {
+		final String code = getAboveComment();
+		IASTTranslationUnit ast = parseAndCheckBindings(code);
+		CPPNameCollector collector = new CPPNameCollector();
+		ast.accept(collector);
+
+		ICPPFunction bar = (ICPPFunction) collector.getName(9).resolveBinding();
+		ICPPFunction barRefAlias = (ICPPFunction) collector.getName(17).resolveBinding();
+		ICPPFunction barRefSInt = (ICPPFunction) collector.getName(22).resolveBinding();
+
+		assertEquals(bar, barRefAlias);
+		assertEquals(bar, barRefSInt);
+	}
+
+	// template<typename T>
+	// struct S {
+	//     T t;
+	// };
+	// template<typename A>
+	// using TAlias = S<A>;
+	// void bar(S<int> arg){
+	// }
+	// void foo() {
+	//     TAlias<int> myA;
+	//     bar(myA);
+	// }
+	public void testTemplatedAliasAsFunctionArgument() throws Exception {
+		final String code = getAboveComment();
+		IASTTranslationUnit ast = parseAndCheckBindings(code);
+		CPPNameCollector collector = new CPPNameCollector();
+		ast.accept(collector);
+
+		ICPPFunction bar = (ICPPFunction) collector.getName(9).resolveBinding();
+		ICPPFunction barRefAlias = (ICPPFunction) collector.getName(17).resolveBinding();
+
+		assertEquals(bar, barRefAlias);
+	}
+
+	// template<typename T>
+	// struct S {
+	//     T t;
+	// };
+	// template<typename A>
+	// using TAlias = S<A>;
+	// void bar(S<int> arg){
+	// }
+	// void bar(TAlias<int> arg){
+	// }
+	public void testTemplatedAliasRedefinitionOfSameFunction() throws Exception {
+		BindingAssertionHelper bh= getAssertionHelper();
+		bh.assertNonProblem("bar(S", "bar", ICPPFunction.class);
+		bh.assertProblem("bar(TAlias", "bar", ISemanticProblem.BINDING_INVALID_REDEFINITION);
+	}
+
+	// template<typename VT, typename Allocator> struct vector{};
+	// template<typename AT> struct Alloc{};
+	// template<typename T> using Vec = vector<T, Alloc<T> >;
+	// template<template<typename> class TT>
+	// void f(TT<int>);
+	// template<template<typename, typename> class TT>
+	// void g(TT<int, Alloc<int> >);
+	// void foo(){
+	//     Vec<int> v;
+	//     g(v);
+	//     f(v);
+	// }
+	public void testTemplatedAliasDeduction() throws Exception {
+		BindingAssertionHelper bh= getAssertionHelper();
+		bh.assertNonProblem("g(v)", "g", ICPPFunction.class);
+		bh.assertProblem("f(v)", "f", ISemanticProblem.BINDING_NOT_FOUND);
+	}
+
+	// using function = void (&)(int);
+	// void foo(int) {
+	//     function f = &foo;
+	// }
+	public void testSimpleFunctionAliasDeclaration() throws Exception {
+		final String code = getAboveComment();
+		IASTTranslationUnit ast = parseAndCheckBindings(code);
+		CPPNameCollector collector = new CPPNameCollector();
+		ast.accept(collector);
+
+		ITypedef function = (ITypedef) collector.getName(0).resolveBinding();
+		ICPPFunction foo = (ICPPFunction) collector.getName(2).resolveBinding();
+
+		assertInstances(collector, function, 2);
+		assertInstances(collector, foo, 2);
+		assertSameType(((ICPPReferenceType)function.getType()).getType(), foo.getType());
+	}
+
+	// template<typename T>
+	// struct S {
+	//     T t;
+	// };
+	// template<typename T>
+	// using TAlias = S<T>&;
+	// void foo() {
+	//     S<int> myS;
+	//     TAlias<int> myA = myS;
+	//     myA.t = 42;
+	// }
+	public void testTemplatedAliasForTemplateReference() throws Exception {
+		final String code = getAboveComment();
+		IASTTranslationUnit ast = parseAndCheckBindings(code);
+		CPPNameCollector collector = new CPPNameCollector();
+		ast.accept(collector);
+		ICPPClassSpecialization SInt = (ICPPClassSpecialization) collector.getName(10).resolveBinding();
+		ICPPAliasTemplateInstance TAliasInt = (ICPPAliasTemplateInstance) collector.getName(13).resolveBinding();
+		assertSameType(new CPPReferenceType(SInt, false), TAliasInt);
+
+	}
+
+	// template<typename T>
+	// using function = void (int);
+	// void foo(int) {
+	//     function<int> f = &foo;
+	// }
+	public void testSimpleFunctionTemplateAliasDeclaration() throws Exception {
+		final String code = getAboveComment();
+		IASTTranslationUnit ast = parseAndCheckBindings(code);
+		CPPNameCollector collector = new CPPNameCollector();
+		ast.accept(collector);
+
+		ICPPAliasTemplate function = (ICPPAliasTemplate) collector.getName(1).resolveBinding();
+		ICPPFunction foo = (ICPPFunction) collector.getName(3).resolveBinding();
+		ICPPAliasTemplateInstance functionInt = (ICPPAliasTemplateInstance) collector.getName(5).resolveBinding();
+
+		assertInstances(collector, function, 2);
+		assertInstances(collector, foo, 2);
+		assertSameType(foo.getType(),functionInt);
+	}
+
+	// template<typename T>
+	// using function = void (&)(int);
+	// void foo(int) {
+	//     function<int> f = &foo;
+	// }
+	public void testSimpleFunctionReferenceTemplateAliasDeclaration() throws Exception {
+		final String code = getAboveComment();
+		IASTTranslationUnit ast = parseAndCheckBindings(code);
+		CPPNameCollector collector = new CPPNameCollector();
+		ast.accept(collector);
+
+		ICPPAliasTemplate function = (ICPPAliasTemplate) collector.getName(1).resolveBinding();
+		ICPPFunction foo = (ICPPFunction) collector.getName(3).resolveBinding();
+		ICPPAliasTemplateInstance functionInt = (ICPPAliasTemplateInstance) collector.getName(5).resolveBinding();
+
+		assertInstances(collector, function, 2);
+		assertInstances(collector, foo, 2);
+		assertSameType(new CPPReferenceType(foo.getType(), false),functionInt.getType());
+	}
+
+	// template<typename T>
+	// struct S {
+	//     T t;
+	// };
+	// template<template<typename> class TA>
+	// using TAlias = S<TA>;
+	// void foo() {
+	//     TAlias<S<int> > myA;
+	//     myA.t = S<int>();
+	// }
+	public void testTemplatedAliasTemplateParameter() throws Exception {
+		final String code = getAboveComment();
+		IASTTranslationUnit ast = parseAndCheckBindings(code);
+		CPPNameCollector collector = new CPPNameCollector();
+		ast.accept(collector);
+
+		ICPPField t = (ICPPField) collector.getName(3).resolveBinding();
+		ICPPSpecialization tRef = (ICPPSpecialization) collector.getName(17).resolveBinding();
+		ICPPClassSpecialization Sint = (ICPPClassSpecialization) collector.getName(18).resolveBinding();
+
+		assertEquals(t, tRef.getSpecializedBinding());
+		assertSameType(tRef.getTemplateParameterMap().getArgument(0).getTypeValue(), Sint);
+	}
+
+	// namespace NS {
+	//     template<typename T>
+	//     struct S {
+	//         T t;
+	//     };
+	//     template<typename T>
+	//     using Alias = S<T>;
+	// }
+	// using namespace NS;
+	// Alias<int> intAlias;
+	public void testAliasDeclarationContext() throws Exception {
+		final String code = getAboveComment();
+		IASTTranslationUnit ast = parseAndCheckBindings(code);
+		CPPNameCollector collector = new CPPNameCollector();
+		ast.accept(collector);
+
+		ICPPAliasTemplateInstance AliasInt = (ICPPAliasTemplateInstance) collector.getName(11).resolveBinding();
+		assertEquals("Alias<int>", AliasInt.getName());
+		assertEquals("NS", AliasInt.getQualifiedName()[0]);
+		assertEquals("Alias<int>", AliasInt.getQualifiedName()[1]);
+
+		ICPPNamespace namespaceNS = (ICPPNamespace) collector.getName(0).resolveBinding();
+		assertEquals(namespaceNS, AliasInt.getOwner());
+
+		assertTrue(AliasInt.getScope() instanceof ICPPTemplateScope);
+	}
 }

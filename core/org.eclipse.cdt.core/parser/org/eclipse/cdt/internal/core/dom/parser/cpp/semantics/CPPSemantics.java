@@ -12,6 +12,7 @@
  *     Andrew Ferguson (Symbian)
  *     Sergey Prigogin (Google)
  *     Mike Kucera (IBM)
+ *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
@@ -92,6 +93,7 @@ import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAliasDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
@@ -1667,6 +1669,9 @@ public class CPPSemantics {
 			ASTInternal.addName(scope, namespaceName);
 		} else if (declaration instanceof ICPPASTNamespaceAlias) {
 			IASTName alias = ((ICPPASTNamespaceAlias) declaration).getAlias();
+			ASTInternal.addName(scope, alias);
+		} else if (declaration instanceof ICPPASTAliasDeclaration) {
+			IASTName alias = ((ICPPASTAliasDeclaration) declaration).getAlias();
 			ASTInternal.addName(scope, alias);
 		} else if (declaration instanceof IASTFunctionDefinition) {
  			IASTFunctionDefinition functionDef = (IASTFunctionDefinition) declaration;

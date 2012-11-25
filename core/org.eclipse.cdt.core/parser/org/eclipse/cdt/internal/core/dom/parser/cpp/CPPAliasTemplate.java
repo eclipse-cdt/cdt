@@ -29,22 +29,19 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.core.runtime.PlatformObject;
 
 public class CPPAliasTemplate extends PlatformObject implements ICPPAliasTemplate {
-	private IASTName aliasName;
-	private IType aliasedType;
+	private final IASTName aliasName;
+	private final IType aliasedType;
 	private ICPPTemplateParameter[] templateParameters;
 	
-	public CPPAliasTemplate(IASTName aliasName){
+	public CPPAliasTemplate(IASTName aliasName, IType aliasedType) {
 		this.aliasName = aliasName;
+		this.aliasedType = aliasedType;
 		aliasName.setBinding(this);
 	}
 	
 	@Override
 	public IType getType() {
 		return aliasedType;
-	}
-
-	public void setType(IType type) {
-		this.aliasedType = type;
 	}
 
 	@Override
@@ -74,7 +71,7 @@ public class CPPAliasTemplate extends PlatformObject implements ICPPAliasTemplat
 
 	@Override
 	public boolean isSameType(IType type) {
-		if(type == null){
+		if (type == null) {
 			return false;
 		}
 		IType aliasedType = getType();
@@ -87,7 +84,7 @@ public class CPPAliasTemplate extends PlatformObject implements ICPPAliasTemplat
    		try {
             t = (IType) super.clone();
         } catch (CloneNotSupportedException e) {
-            //not going to happen
+            // Not going to happen
         }
         return t;
     }

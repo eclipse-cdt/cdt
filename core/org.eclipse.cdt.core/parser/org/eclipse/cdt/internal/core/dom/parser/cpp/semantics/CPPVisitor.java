@@ -672,9 +672,7 @@ public class CPPVisitor extends ASTQueries {
 			    }
 			    if (type != null) {
 			    	if (alias.getParent() instanceof ICPPASTTemplateDeclaration) {
-			    		CPPAliasTemplate templateAlias = new CPPAliasTemplate(alias.getAlias());
-		    			templateAlias.setType(type);
-			    		binding = templateAlias;
+			    		binding = new CPPAliasTemplate(alias.getAlias(), type);
 			    	} else {
 				    	CPPTypedef typedef = new CPPTypedef(alias.getAlias());
 				    	typedef.setType(type);

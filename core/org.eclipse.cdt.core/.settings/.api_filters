@@ -68,6 +68,16 @@
     <resource path="parser/org/eclipse/cdt/core/parser/GCCKeywords.java" type="org.eclipse.cdt.core.parser.GCCKeywords">
         <filter id="1143996420">
             <message_arguments>
+                <message_argument value="__INT128"/>
+            </message_arguments>
+        </filter>
+        <filter id="1143996420">
+            <message_arguments>
+                <message_argument value="cp__int128"/>
+            </message_arguments>
+        </filter>
+        <filter id="1143996420">
+            <message_arguments>
                 <message_argument value="cp__is_literal_type"/>
             </message_arguments>
         </filter>
@@ -96,6 +106,11 @@
         <filter id="1211105284">
             <message_arguments>
                 <message_argument value="tTT_is_trivial"/>
+            </message_arguments>
+        </filter>
+        <filter id="1211105284">
+            <message_arguments>
+                <message_argument value="t__int128"/>
             </message_arguments>
         </filter>
     </resource>

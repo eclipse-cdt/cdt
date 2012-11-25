@@ -153,18 +153,20 @@ public class AST2BaseTest extends BaseTestCase {
         AbstractGNUSourceCodeParser parser = null;
         if (lang == ParserLanguage.CPP) {
             ICPPParserExtensionConfiguration config = null;
-            if (useGNUExtensions)
+            if (useGNUExtensions) {
             	config = new GPPParserExtensionConfiguration();
-            else
+            } else {
             	config = new ANSICPPParserExtensionConfiguration();
+            }
             parser = new GNUCPPSourceParser(scanner, ParserMode.COMPLETE_PARSE, NULL_LOG,config, null);
         } else {
             ICParserExtensionConfiguration config = null;
 
-            if (useGNUExtensions)
+            if (useGNUExtensions) {
             	config = new GCCParserExtensionConfiguration();
-            else
+            } else {
             	config = new ANSICParserExtensionConfiguration();
+            }
             
             parser = new GNUCSourceParser(scanner, ParserMode.COMPLETE_PARSE, NULL_LOG, config, null);
         }
@@ -204,10 +206,11 @@ public class AST2BaseTest extends BaseTestCase {
 	public static IScanner createScanner(FileContent codeReader, ParserLanguage lang, ParserMode mode,
 			IScannerInfo scannerInfo) {
 		IScannerExtensionConfiguration configuration = null;
-        if (lang == ParserLanguage.C)
-            configuration= GCCScannerExtensionConfiguration.getInstance();
-        else
+        if (lang == ParserLanguage.C) {
+            configuration= GCCScannerExtensionConfiguration.getInstance(scannerInfo);
+        } else {
             configuration= GPPScannerExtensionConfiguration.getInstance(scannerInfo);
+        }
         IScanner scanner;
         scanner= new CPreprocessor(codeReader, scannerInfo, lang, NULL_LOG, configuration, 
         		IncludeFileContentProvider.getSavedFilesProvider());

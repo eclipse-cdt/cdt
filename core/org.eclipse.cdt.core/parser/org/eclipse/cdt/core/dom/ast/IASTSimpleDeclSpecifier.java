@@ -100,6 +100,11 @@ public interface IASTSimpleDeclSpecifier extends IASTDeclSpecifier {
 	 */
 	public static final int t_char32_t = 12;
 
+	/**
+	 * <code>__int128 i;</code>
+	 * @since 5.5
+	 */
+	public static final int t_int128 = 13;
 
 	/**
 	 * @since 5.1

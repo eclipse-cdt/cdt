@@ -1002,6 +1002,13 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
     				encounteredRawType= true;
     				endOffset= consume().getEndOffset();
     				break;
+    			case IGCCToken.t__int128:
+    				if (encounteredTypename)
+    					break declSpecifiers;
+    				simpleType = IASTSimpleDeclSpecifier.t_int128;
+    				encounteredRawType= true;
+    				endOffset= consume().getEndOffset();
+    				break;
     			case IToken.t_long:
     				if (encounteredTypename)
     					break declSpecifiers;

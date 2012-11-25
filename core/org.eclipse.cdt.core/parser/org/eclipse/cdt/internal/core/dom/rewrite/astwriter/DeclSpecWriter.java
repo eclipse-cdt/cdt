@@ -34,6 +34,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
+import org.eclipse.cdt.core.parser.GCCKeywords;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 
@@ -79,6 +80,8 @@ public class DeclSpecWriter extends NodeWriter {
 			return Keywords.CHAR;
 		case IASTSimpleDeclSpecifier.t_int:
 			return Keywords.INT;
+		case IASTSimpleDeclSpecifier.t_int128:
+			return GCCKeywords.__INT128;
 
 		case IASTSimpleDeclSpecifier.t_float:
 			return Keywords.FLOAT;

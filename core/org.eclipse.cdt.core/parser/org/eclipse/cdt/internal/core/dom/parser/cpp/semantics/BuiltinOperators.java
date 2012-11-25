@@ -586,22 +586,24 @@ class BuiltinOperators {
 		return type instanceof ICPPPointerToMemberType;
 	}
 
-	private boolean isBoolean(IType type) {
+	private static boolean isBoolean(IType type) {
 		return type instanceof IBasicType && ((IBasicType) type).getKind() == Kind.eBoolean;
 	}
 
-	private boolean isFloatingPoint(IType type) {
+	private static boolean isFloatingPoint(IType type) {
 		if (type instanceof IBasicType) {
 			IBasicType.Kind kind= ((IBasicType) type).getKind();
 			switch (kind) {
 			case eDouble:
 			case eFloat:
+			case eFloat128:
 				return true;
 			case eBoolean:
 			case eChar:
 			case eChar16:
 			case eChar32:
 			case eInt:
+			case eInt128:
 			case eWChar:
 			case eUnspecified:
 			case eVoid:
@@ -612,7 +614,7 @@ class BuiltinOperators {
 		return false;
 	}
 
-	private boolean isArithmetic(IType type) {
+	private static boolean isArithmetic(IType type) {
 		if (type instanceof IBasicType) {
 			IBasicType.Kind kind= ((IBasicType) type).getKind();
 			switch (kind) {
@@ -622,7 +624,9 @@ class BuiltinOperators {
 			case eChar32:
 			case eDouble:
 			case eFloat:
+			case eFloat128:
 			case eInt:
+			case eInt128:
 			case eWChar:
 				return true;
 			case eUnspecified:
@@ -634,7 +638,7 @@ class BuiltinOperators {
 		return false;
 	}
 
-	private boolean isIntegral(IType type) {
+	private static boolean isIntegral(IType type) {
 		if (type instanceof IBasicType) {
 			IBasicType.Kind kind= ((IBasicType) type).getKind();
 			switch (kind) {
@@ -643,10 +647,12 @@ class BuiltinOperators {
 			case eChar16:
 			case eChar32:
 			case eInt:
+			case eInt128:
 			case eWChar:
 				return true;
 			case eDouble:
 			case eFloat:
+			case eFloat128:
 			case eUnspecified:
 			case eVoid:
 			case eNullPtr:

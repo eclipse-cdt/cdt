@@ -23,7 +23,9 @@ public interface IBasicType extends IType {
 	 */
 	enum Kind {
 		eUnspecified, eVoid, eChar, eWChar, eInt, eFloat, eDouble,
-		eBoolean, eChar16, eChar32, /** @since 5.4 */ eNullPtr, /** @since 5.5 */ eInt128
+		eBoolean, eChar16, eChar32, /** @since 5.4 */ eNullPtr,
+		/** Experimental constant. May change without notice. */ eInt128,
+		/** Experimental constant. May change without notice. */ eFloat128
 	}
 
 	/** @since 5.2 */

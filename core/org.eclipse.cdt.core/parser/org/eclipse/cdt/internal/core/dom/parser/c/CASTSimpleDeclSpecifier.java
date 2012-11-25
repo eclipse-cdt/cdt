@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM Rational Software) - Initial API and implementation
- *    Yuan Zhang / Beth Tibbitts (IBM Research)
- *    Markus Schorn (Wind River Systems)
+ *     John Camelon (IBM Rational Software) - Initial API and implementation
+ *     Yuan Zhang / Beth Tibbitts (IBM Research)
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -19,17 +19,16 @@ import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
-public class CASTSimpleDeclSpecifier extends CASTBaseDeclSpecifier implements ICASTSimpleDeclSpecifier,
-		IASTAmbiguityParent {
-    
+public class CASTSimpleDeclSpecifier extends CASTBaseDeclSpecifier
+		implements ICASTSimpleDeclSpecifier, IASTAmbiguityParent {
     private int simpleType;
     private boolean isSigned;
     private boolean isUnsigned;
     private boolean isShort;
     private boolean isLong;
     private boolean longlong;
-    private boolean complex=false;
-    private boolean imaginary=false;
+    private boolean complex;
+    private boolean imaginary;
 	private IASTExpression fDeclTypeExpression;
 
     @Override
@@ -109,6 +108,8 @@ public class CASTSimpleDeclSpecifier extends CASTBaseDeclSpecifier implements IC
 		case eDouble:
 			return t_double;
 		case eFloat:
+			return t_float;
+		case eFloat128:
 			return t_float;
 		case eInt:
 			return t_int;

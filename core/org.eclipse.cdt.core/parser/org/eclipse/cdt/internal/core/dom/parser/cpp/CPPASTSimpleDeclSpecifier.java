@@ -90,6 +90,8 @@ public class CPPASTSimpleDeclSpecifier extends CPPASTBaseDeclSpecifier
 			return t_double;
 		case eFloat:
 			return t_float;
+		case eFloat128:
+			return t_float128;
 		case eInt:
 			return t_int;
 		case eInt128:

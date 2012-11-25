@@ -73,6 +73,8 @@ public class SizeofCalculator {
 	public final SizeAndAlignment sizeof_complex_double;
 	public final SizeAndAlignment sizeof_long_double;
 	public final SizeAndAlignment sizeof_complex_long_double;
+	public final SizeAndAlignment sizeof_float128;
+	public final SizeAndAlignment sizeof_complex_float128;
 
 	private final IASTTranslationUnit ast;
 
@@ -135,6 +137,8 @@ public class SizeofCalculator {
 		sizeof_complex_double = getSizeOfPair(sizeof_double);
 		sizeof_long_double = getSize(sizeofMacros, "__SIZEOF_LONG_DOUBLE__", maxAlignment); //$NON-NLS-1$
 		sizeof_complex_long_double = getSizeOfPair(sizeof_long_double);
+		sizeof_float128 = size_16;  // GCC does not define __SIZEOF_FLOAT128__
+		sizeof_complex_float128 = getSizeOfPair(sizeof_float128);
 	}
 
 	private SizeofCalculator() {
@@ -156,6 +160,8 @@ public class SizeofCalculator {
 		sizeof_complex_double = null;
 		sizeof_long_double = null;
 		sizeof_complex_long_double = null;
+		sizeof_float128 = size_16;
+		sizeof_complex_float128 = getSizeOfPair(sizeof_float128);
 		ast = null;
 	}
 
@@ -215,6 +221,8 @@ public class SizeofCalculator {
 			return type.isComplex() ?
 					(type.isLong() ? sizeof_long_double : sizeof_double) :
 					(type.isLong() ? sizeof_complex_long_double : sizeof_complex_double);
+		case eFloat128:
+			return type.isComplex() ? sizeof_complex_float128 : sizeof_float128;
 		case eWChar:
 			return sizeof_wchar_t;
 		case eChar16:

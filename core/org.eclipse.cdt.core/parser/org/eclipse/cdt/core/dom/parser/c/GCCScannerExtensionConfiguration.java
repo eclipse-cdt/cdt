@@ -36,7 +36,7 @@ public class GCCScannerExtensionConfiguration extends GNUScannerExtensionConfigu
 	}
 
 	/**
-	 * @since 5.5
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public static GCCScannerExtensionConfiguration getInstance(IScannerInfo info) {
 		if (info != null) {
@@ -60,7 +60,7 @@ public class GCCScannerExtensionConfiguration extends GNUScannerExtensionConfigu
 	}
 
 	/**
-	 * @since 5.5
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@SuppressWarnings("nls")
 	public GCCScannerExtensionConfiguration(int version) {
@@ -68,6 +68,7 @@ public class GCCScannerExtensionConfiguration extends GNUScannerExtensionConfigu
 		addMacro("__builtin_offsetof(T,m)", "((size_t) &((T *)0)->m)");
 
 		if (version >= VERSION_4_7) {
+			addKeyword(GCCKeywords.cp__float128, IGCCToken.t__float128);
 			addKeyword(GCCKeywords.cp__int128, IGCCToken.t__int128);
 		}
 	}

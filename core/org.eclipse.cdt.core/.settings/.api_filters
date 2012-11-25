@@ -8,6 +8,18 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="parser/org/eclipse/cdt/core/dom/ast/IASTSimpleDeclSpecifier.java" type="org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier">
+        <filter id="1211105284">
+            <message_arguments>
+                <message_argument value="t_float128"/>
+            </message_arguments>
+        </filter>
+        <filter id="1211105284">
+            <message_arguments>
+                <message_argument value="t_int128"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="parser/org/eclipse/cdt/core/dom/ast/IASTTypeIdExpression.java" type="org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression">
         <filter id="1209008130">
             <message_arguments>
@@ -34,6 +46,18 @@
         <filter id="1211105284">
             <message_arguments>
                 <message_argument value="op_noexcept"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="parser/org/eclipse/cdt/core/dom/ast/IBasicType.java" type="org.eclipse.cdt.core.dom.ast.IBasicType$Kind">
+        <filter id="1177550852">
+            <message_arguments>
+                <message_argument value="eFloat128"/>
+            </message_arguments>
+        </filter>
+        <filter id="1177550852">
+            <message_arguments>
+                <message_argument value="eInt128"/>
             </message_arguments>
         </filter>
     </resource>
@@ -68,7 +92,17 @@
     <resource path="parser/org/eclipse/cdt/core/parser/GCCKeywords.java" type="org.eclipse.cdt.core.parser.GCCKeywords">
         <filter id="1143996420">
             <message_arguments>
+                <message_argument value="__FLOAT128"/>
+            </message_arguments>
+        </filter>
+        <filter id="1143996420">
+            <message_arguments>
                 <message_argument value="__INT128"/>
+            </message_arguments>
+        </filter>
+        <filter id="1143996420">
+            <message_arguments>
+                <message_argument value="cp__float128"/>
             </message_arguments>
         </filter>
         <filter id="1143996420">
@@ -106,6 +140,11 @@
         <filter id="1211105284">
             <message_arguments>
                 <message_argument value="tTT_is_trivial"/>
+            </message_arguments>
+        </filter>
+        <filter id="1211105284">
+            <message_arguments>
+                <message_argument value="t__float128"/>
             </message_arguments>
         </filter>
         <filter id="1211105284">

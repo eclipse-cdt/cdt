@@ -23,8 +23,10 @@ public class GCCKeywords {
 	public static final String __ALIGNOF__ = "__alignof__"; 
 	public static final String __ATTRIBUTE__ = "__attribute__"; 
 	public static final String __DECLSPEC = "__declspec"; 
-	/** Experimental API. May change without notice. */
+	/** Experimental constant. May change without notice. */
 	public static final String __INT128 = "__int128";
+	/** Experimental constant. May change without notice. */
+	public static final String __FLOAT128 = "__float128";
 
 	public static final char[] 
 		cpTYPEOF = 			TYPEOF.toCharArray(),
@@ -68,9 +70,10 @@ public class GCCKeywords {
 		cp__is_union= 					"__is_union".toCharArray();
 
 	/**
-	 * Experimental API. May change without notice.
+	 * Experimental constants. May change without notice.
 	 */
 	public static final char[] 
+		cp__float128= 					__FLOAT128.toCharArray(),
 		cp__int128= 					__INT128.toCharArray(),
 		cp__is_literal_type= 			"__is_literal_type".toCharArray(),
 		cp__is_standard_layout= 		"__is_standard_layout".toCharArray(),

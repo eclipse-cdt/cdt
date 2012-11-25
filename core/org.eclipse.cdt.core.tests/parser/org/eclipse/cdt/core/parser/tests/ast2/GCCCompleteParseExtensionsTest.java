@@ -425,4 +425,11 @@ public class GCCCompleteParseExtensionsTest extends AST2BaseTest {
 		parseGCC(code);
 		parseGPP(code);
 	}
+
+	// __float128 f;
+	public void test__float128() throws Exception {
+		String code= getAboveComment();
+		parseGCC(code);
+		parseGPP(code);
+	}
 }

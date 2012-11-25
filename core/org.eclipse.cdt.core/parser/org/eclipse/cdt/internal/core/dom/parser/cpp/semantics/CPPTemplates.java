@@ -648,8 +648,8 @@ public class CPPTemplates {
 			IBinding result= null;
 			IASTName templateName = id.getTemplateName();
 			IBinding template = templateName.resolvePreBinding();
-			
-			// Template alias.
+
+			// Alias Template.
 			if (template instanceof ICPPAliasTemplate) {
 				ICPPAliasTemplate aliasTemplate = (ICPPAliasTemplate) template;
 				IType aliasedType = aliasTemplate.getType();
@@ -661,7 +661,7 @@ public class CPPTemplates {
 				IType instantiatedType = instantiateType(aliasedType, parameterMap, -1,	within, id);
 				return new CPPAliasTemplateInstance(id.toCharArray(), instantiatedType, aliasTemplate);
 			}
-			
+
 			// Class template.
 			if (template instanceof ICPPConstructor) {
 				template= template.getOwner();

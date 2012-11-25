@@ -174,6 +174,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTUnaryExpression;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPAliasTemplate;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPArrayType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassTemplate;
@@ -198,7 +199,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPReferenceType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPScope;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPAliasTemplate;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTypeArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTypedef;
@@ -659,12 +659,11 @@ public class CPPVisitor extends ASTQueries {
 			}
 
 			return binding;
-		}
-		else if (declaration instanceof ICPPASTAliasDeclaration){
+		} else if (declaration instanceof ICPPASTAliasDeclaration) {
 			ICPPASTAliasDeclaration alias = (ICPPASTAliasDeclaration) declaration;
 			ICPPScope scope = (ICPPScope) getContainingScope(declaration);
 			IBinding binding = scope.getBinding(alias.getAlias(), false);
-			if(!(binding instanceof ICPPInternalBinding)) {
+			if (!(binding instanceof ICPPInternalBinding)) {
 				
 				IType type = createType(alias.getMappingTypeId());
 				if (type instanceof IProblemBinding) {
@@ -672,12 +671,11 @@ public class CPPVisitor extends ASTQueries {
 			    	type = new CPPClassType.CPPClassTypeProblem(problem.getASTNode(), problem.getID(), alias.getMappingTypeId().getAbstractDeclarator().getName().toCharArray());
 			    }
 			    if (type != null) {
-			    	if(alias.getParent() instanceof ICPPASTTemplateDeclaration){
+			    	if (alias.getParent() instanceof ICPPASTTemplateDeclaration) {
 			    		CPPAliasTemplate templateAlias = new CPPAliasTemplate(alias.getAlias());
 		    			templateAlias.setType(type);
 			    		binding = templateAlias;
-			    	}
-			    	else{
+			    	} else {
 				    	CPPTypedef typedef = new CPPTypedef(alias.getAlias());
 				    	typedef.setType(type);
 				        binding = typedef;
@@ -686,11 +684,8 @@ public class CPPVisitor extends ASTQueries {
 			        binding = new ProblemBinding(alias.getAlias(), IProblemBinding.SEMANTIC_NAME_NOT_FOUND);
 			    }
 			}
-
 			return binding;	
-			
 		}
-
 		return null;
 	}
 

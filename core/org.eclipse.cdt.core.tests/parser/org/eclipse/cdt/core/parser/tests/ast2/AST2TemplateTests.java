@@ -6684,4 +6684,49 @@ public class AST2TemplateTests extends AST2BaseTest {
 
 		assertTrue(AliasInt.getScope() instanceof ICPPTemplateScope);
 	}
+
+	//	template<typename U>
+	//	struct A {
+	//	  template<typename V>
+	//	  struct rebind {
+	//	    typedef A<V> other;
+	//	  };
+	//	};
+	//
+	//	template<typename T, typename U>
+	//	struct B {
+	//	  typedef typename T::template rebind<U>::other type1;
+	//	};
+	//
+	//	template<typename T>
+	//	struct C {
+	//	  template<typename U>
+	//	  using rebind2 = typename B<T, U>::type1;
+	//	};
+	//
+	//	template<typename T>
+	//	struct D : C<T> {
+	//	  typedef int type0;
+	//
+	//	  template<typename U>
+	//	  struct rebind {
+	//	    typedef typename C<T>::template rebind2<U> other2;
+	//	  };
+	//	};
+	//
+	//	template<typename T>
+	//	struct E {
+	//	  typedef typename D<T>::template rebind<int>::other2 type2;
+	//	  typedef D<type2> type3;
+	//	  typedef typename type3::type0 type;
+	//	};
+	//
+	//	void f(int x);
+	//
+	//	void test(E<A<int>>::type v) {
+	//	  f(v);
+	//	}
+	public void testAliasTemplate_395026() throws Exception {
+		parseAndCheckBindings();
+	}
 }

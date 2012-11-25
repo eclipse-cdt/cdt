@@ -827,6 +827,10 @@ public class CPPTemplates {
 		} else if (decl instanceof ITypedef) {
 			IType type= instantiateType(((ITypedef) decl).getType(), tpMap, -1, getSpecializationContext(owner), point);
 		    spec = new CPPTypedefSpecialization(decl, owner, tpMap, type);
+		} else if (decl instanceof ICPPAliasTemplate) {
+			ICPPAliasTemplate aliasTemplate = (ICPPAliasTemplate) decl;
+			IType type= instantiateType(aliasTemplate.getType(), tpMap, -1, getSpecializationContext(owner), point);
+		    spec = new CPPAliasTemplateInstance(decl.getNameCharArray(), type, aliasTemplate);
 		} else if (decl instanceof IEnumeration || decl instanceof IEnumerator) {
 			// TODO(sprigogin): Deal with a case when an enumerator value depends on a template parameter.
 		    spec = decl;

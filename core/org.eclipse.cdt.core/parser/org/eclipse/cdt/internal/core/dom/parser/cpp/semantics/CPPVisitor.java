@@ -657,18 +657,17 @@ public class CPPVisitor extends ASTQueries {
 			        binding = new ProblemBinding(alias.getAlias(), IProblemBinding.SEMANTIC_NAME_NOT_FOUND);
 			    }
 			}
-
 			return binding;
 		} else if (declaration instanceof ICPPASTAliasDeclaration) {
 			ICPPASTAliasDeclaration alias = (ICPPASTAliasDeclaration) declaration;
 			ICPPScope scope = (ICPPScope) getContainingScope(declaration);
 			IBinding binding = scope.getBinding(alias.getAlias(), false);
 			if (!(binding instanceof ICPPInternalBinding)) {
-				
 				IType type = createType(alias.getMappingTypeId());
 				if (type instanceof IProblemBinding) {
 			    	IProblemBinding problem = (IProblemBinding) type;
-			    	type = new CPPClassType.CPPClassTypeProblem(problem.getASTNode(), problem.getID(), alias.getMappingTypeId().getAbstractDeclarator().getName().toCharArray());
+			    	type = new CPPClassType.CPPClassTypeProblem(problem.getASTNode(), problem.getID(),
+			    			alias.getMappingTypeId().getAbstractDeclarator().getName().toCharArray());
 			    }
 			    if (type != null) {
 			    	if (alias.getParent() instanceof ICPPASTTemplateDeclaration) {
@@ -1792,7 +1791,7 @@ public class CPPVisitor extends ASTQueries {
 		if (pDtor != null) {
 			pt = createType(pt, pDtor);
 		}
-		pt=  adjustParameterType(pt, forFuncType);
+		pt= adjustParameterType(pt, forFuncType);
 
 		if (pDtor != null && CPPVisitor.findInnermostDeclarator(pDtor).declaresParameterPack()) {
 			pt= new CPPParameterPackType(pt);
@@ -1836,13 +1835,12 @@ public class CPPVisitor extends ASTQueries {
 		return pTypes;
 	}
 
-
 	/**
 	 * Adjusts the parameter type according to 8.3.5-3:
 	 * cv-qualifiers are deleted, arrays and function types are converted to pointers.
 	 */
 	static IType adjustParameterType(final IType pt, boolean forFunctionType) {
-		// bug 239975
+		// Bug 239975
 		IType t= SemanticUtil.getNestedType(pt, TDEF);
 		if (t instanceof IArrayType) {
 			IArrayType at = (IArrayType) t;

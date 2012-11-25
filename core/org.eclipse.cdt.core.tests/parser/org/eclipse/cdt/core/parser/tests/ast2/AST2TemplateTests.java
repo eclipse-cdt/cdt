@@ -6085,7 +6085,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	public void testIsPOD_367993() throws Exception {
 		parseAndCheckBindings(getAboveComment(), CPP, true);
 	}
-	
+
 	//	template<typename T, void (T::*M)()> class A {
 	//	public:
 	//		static void Delegate(void* thiz) { ((T*)thiz->*M)(); }
@@ -6108,7 +6108,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	public void testDeductionOfNonTypeTemplateArg_372587() throws Exception {
 		parseAndCheckBindings(getAboveComment(), CPP, true);
 	}
-	
+
 	//	template<typename _Functor> void b(_Functor __f) {}
 	//	template<typename T, typename V> void f(T __first, T __last, const V& __val) {}
 	//	template<typename T> void f(T __first, T __last, const T& __val) {}
@@ -6117,8 +6117,8 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	}
 	public void testFunctionSetWithNonMatchingTemplateArgs_379604() throws Exception {
 		parseAndCheckBindings(getAboveComment(), CPP, true);
-	}	
-	
+	}
+
 	//	template <typename T> struct C {
 	//		typedef decltype(&T::m) dtm;
 	//	};
@@ -6133,8 +6133,8 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	}
 	public void testPointerToMemberAsDependentExpression_391001() throws Exception {
 		parseAndCheckBindings(getAboveComment(), CPP, true);
-	}	
-	
+	}
+
 	//	class Memory { };
 	//	Memory memory;
 	//	template<Memory* m> struct Container {
@@ -6148,8 +6148,8 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	}
 	public void testAddressAsTemplateArgument_391190() throws Exception {
 		parseAndCheckBindings(getAboveComment(), CPP, true);
-	}	
-	
+	}
+
 	//	template <typename T> struct CT {
 	//		const static int const_min= 1;
 	//	};
@@ -6158,7 +6158,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	}
 	public void testTemplateIDAmbiguity_393959() throws Exception {
 		parseAndCheckBindings(getAboveComment(), CPP, true);
-	}		
+	}
 
 	// template<typename T> class CT {
     //     void m() {

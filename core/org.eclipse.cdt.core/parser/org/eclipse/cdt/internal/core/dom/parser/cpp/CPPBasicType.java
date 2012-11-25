@@ -277,6 +277,8 @@ public class CPPBasicType implements ICPPBasicType, ISerializableType {
 		case eUnspecified:
 			return t_unspecified;
 		case eNullPtr:
+		case eInt128:
+		case eFloat128:
 			// Null pointer type cannot be expressed wit ha simple decl specifier.
 			break;
 		}

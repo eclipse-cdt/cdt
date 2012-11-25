@@ -1,13 +1,13 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2010 IBM Corporation and others.
- *  All rights reserved. This program and the accompanying materials
- *  are made available under the terms of the Eclipse Public License v1.0
- *  which accompanies this distribution, and is available at
- *  http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  * 
- *  Contributors:
- *    Devin Steffler (IBM Rational Software) - Initial API and implementation 
- *    Markus Schorn (Wind River Systems)
+ * Contributors:
+ *     Devin Steffler (IBM Rational Software) - Initial API and implementation 
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -24,8 +24,8 @@ import org.eclipse.core.runtime.CoreException;
 
 public class CBasicType implements ICBasicType, ISerializableType {
 	private final Kind fKind;
-	private int fModifiers = 0;
-	private IASTExpression value = null;
+	private int fModifiers;
+	private IASTExpression value;
 	
 	public CBasicType(Kind kind, int modifiers, IASTExpression value) {
 		if (kind == Kind.eUnspecified) {
@@ -124,16 +124,16 @@ public class CBasicType implements ICBasicType, ISerializableType {
 		if (obj instanceof ITypedef)
 			return obj.isSameType(this);
 	    
-		if (!(obj instanceof ICBasicType)) return false;
+		if (!(obj instanceof ICBasicType))
+			return false;
 		
 		ICBasicType cObj = (ICBasicType)obj;
 		
-		if (fKind != cObj.getKind()) {
+		if (fKind != cObj.getKind())
 			return false;
-		}
 		
 		if (fKind == Kind.eInt) {
-			//signed int and int are equivalent
+			// Signed int and int are equivalent
 			return (fModifiers & ~IS_SIGNED) == (cObj.getModifiers() & ~IS_SIGNED);
 		} else {
 			return (fModifiers == cObj.getModifiers());
@@ -146,7 +146,7 @@ public class CBasicType implements ICBasicType, ISerializableType {
    		try {
             t = (IType) super.clone();
         } catch (CloneNotSupportedException e) {
-            //not going to happen
+            // Not going to happen
         }
         return t;
     }
@@ -157,17 +157,11 @@ public class CBasicType implements ICBasicType, ISerializableType {
 		return value;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.c.ICBasicType#isComplex()
-	 */
 	@Override
 	public boolean isComplex() {
 		return (fModifiers & IS_COMPLEX) != 0;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.c.ICBasicType#isImaginary()
-	 */
 	@Override
 	public boolean isImaginary() {
 		return (fModifiers & IS_IMAGINARY) != 0;
@@ -222,6 +216,8 @@ public class CBasicType implements ICBasicType, ISerializableType {
 		case eUnspecified:
 			return t_unspecified;
 		case eNullPtr:
+		case eInt128:
+		case eFloat128:
 			// Null pointer type cannot be expressed wit ha simple decl specifier.
 			break;
 		}

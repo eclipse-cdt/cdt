@@ -36,7 +36,7 @@ class CompositeCPPEnumeration extends CompositeCPPBinding implements ICPPEnumera
 
 	@Override
 	public boolean isSameType(IType type) {
-		return ((IEnumeration)rbinding).isSameType(type);
+		return ((IEnumeration) rbinding).isSameType(type);
 	}
 	
 	@Override
@@ -48,17 +48,17 @@ class CompositeCPPEnumeration extends CompositeCPPBinding implements ICPPEnumera
 	}
 	@Override
 	public long getMinValue() {
-		return ((IEnumeration)rbinding).getMinValue();
+		return ((IEnumeration) rbinding).getMinValue();
 	}
 
 	@Override
 	public long getMaxValue() {
-		return ((IEnumeration)rbinding).getMaxValue();
+		return ((IEnumeration) rbinding).getMaxValue();
 	}
 
 	@Override
 	public boolean isScoped() {
-		return ((ICPPEnumeration)rbinding).isScoped();
+		return ((ICPPEnumeration) rbinding).isScoped();
 	}
 
 	@Override

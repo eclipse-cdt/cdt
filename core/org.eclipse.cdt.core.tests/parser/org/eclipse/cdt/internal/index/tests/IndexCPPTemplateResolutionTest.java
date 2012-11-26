@@ -2046,4 +2046,19 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	public void testMemberOfTemplateTemplateParameter_Bug381824() throws Exception {
 		checkBindings();
 	}
+
+	// template<typename T>
+	// struct S {
+	//     T t;
+	// };
+	// template<typename T>
+	// using TAlias = S<T>;
+
+	// void foo() {
+	//     TAlias<int> myA;
+	//     myA.t = 42;
+	// }
+	public void testAliasTemplate() throws Exception {
+		checkBindings();
+	}
 }

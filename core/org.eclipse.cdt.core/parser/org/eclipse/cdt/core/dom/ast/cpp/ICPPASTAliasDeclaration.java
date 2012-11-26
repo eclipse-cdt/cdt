@@ -25,7 +25,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPASTAliasDeclaration extends IASTDeclaration, IASTNameOwner {
-	public static final ICPPASTAliasDeclaration[] EMPTY_USINGDIRECTIVE_ARRAY = {};
+	public static final ICPPASTAliasDeclaration[] EMPTY_ALIAS_DECLARATION_ARRAY = {};
 
 	/**
 	 * <code>ALIAS_NAME</code> is the name that is brought into local

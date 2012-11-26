@@ -17,7 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
 
 /**
- * This interface represents a C++ alias declaration.
+ * Represents a C++ alias declaration.
  * e.g. struct Type {}; using Alias = Type;
  *
  * Experimental API. May change without notice.
@@ -28,8 +28,7 @@ public interface ICPPASTAliasDeclaration extends IASTDeclaration, IASTNameOwner 
 	public static final ICPPASTAliasDeclaration[] EMPTY_ALIAS_DECLARATION_ARRAY = {};
 
 	/**
-	 * <code>ALIAS_NAME</code> is the name that is brought into local
-	 * scope.
+	 * <code>ALIAS_NAME</code> is the name that is brought into the local scope.
 	 */
 	public static final ASTNodeProperty ALIAS_NAME = new ASTNodeProperty(
 			"ICPPASTAliasDeclaration.ALIAS_NAME - Introduced alias name"); //$NON-NLS-1$
@@ -42,28 +41,28 @@ public interface ICPPASTAliasDeclaration extends IASTDeclaration, IASTNameOwner 
 			"ICPPASTAliasDeclaration.TARGET_TYPEID - Pre-existing type ID the new symbol aliases"); //$NON-NLS-1$
 
 	/**
-	 * Get the alias name.
+	 * Returns the alias name.
 	 *
 	 * @return <code>IASTName</code>
 	 */
 	public IASTName getAlias();
 
 	/**
-	 * Set the alias name.
+	 * Sets the alias name.
 	 *
 	 * @param aliasName <code>IASTName</code>
 	 */
 	public void setAlias(IASTName aliasName);
 
 	/**
-	 * Get the mapping type id.
+	 * Returns the mapping type id.
 	 *
 	 * @return <code>ICPPASTTypeId</code>
 	 */
 	public ICPPASTTypeId getMappingTypeId();
 
 	/**
-	 * Set the mapping type id.
+	 * Sets the mapping type id.
 	 *
 	 * @param mappingTypeId <code>ICPPASTTypeId</code>
 	 */

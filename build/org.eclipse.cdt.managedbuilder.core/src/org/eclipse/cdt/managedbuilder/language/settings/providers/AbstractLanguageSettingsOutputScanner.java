@@ -564,6 +564,9 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	}
 
 	// AG FIXME - temporary, remove me
+	/**
+	 * @since 8.2
+	 */
 	@Deprecated
 	protected String getPrefixForLog() {
 		String str;

@@ -815,12 +815,5 @@
             name="%ScannerInfoExtensionLanguageSettingsProvider.name">
       </provider>
    </extension>
-   <extension
-         point="org.eclipse.cdt.core.EFSExtensionProvider">
-      <EFSExtensionProvider
-            class="org.eclipse.cdt.internal.core.resources.CygwinEFSExtensionProvider"
-            scheme="cygwin">
-      </EFSExtensionProvider>
-   </extension>
 
 </plugin>

@@ -91,10 +91,12 @@ public class EnvironmentVariableManager implements IEnvironmentVariableManager {
 		protected int getVarMacroSupplierNum(EnvVarDescriptor var, IVariableContextInfo varMacroInfo) {
 			int varSupplierNum = -1;
 			ICdtVariableSupplier macroSuppliers[] = varMacroInfo.getSuppliers();
-			for(int i = 0; i < macroSuppliers.length; i++) {
-				if (macroSuppliers[i] instanceof EnvironmentVariableSupplier) {
-					varSupplierNum = i;
-					break;
+			if (macroSuppliers != null) {
+				for(int i = 0; i < macroSuppliers.length; i++) {
+					if (macroSuppliers[i] instanceof EnvironmentVariableSupplier) {
+						varSupplierNum = i;
+						break;
+					}
 				}
 			}
 			return varSupplierNum;

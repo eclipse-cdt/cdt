@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
+ *     Thomas Corbat (IFS) - Added copy methods
  *******************************************************************************/ 
 package org.eclipse.cdt.core.dom.ast.cpp;
 
@@ -20,4 +21,15 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
  * @since 5.2
  */
 public interface ICPPASTTypeId extends IASTTypeId, ICPPASTPackExpandable {
+	/**
+	 * @since 5.5
+	 */
+	@Override
+	public ICPPASTTypeId copy();
+
+	/**
+	 * @since 5.5
+	 */
+	@Override
+	public ICPPASTTypeId copy(CopyStyle style);
 }

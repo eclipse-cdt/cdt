@@ -24,7 +24,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPASTUsingDirective extends IASTDeclaration, IASTNameOwner, IASTAttributeOwner {
-	public static final ICPPASTUsingDirective[] EMPTY_USINGDIRECTIVE_ARRAY = new ICPPASTUsingDirective[0];
+	public static final ICPPASTUsingDirective[] EMPTY_USINGDIRECTIVE_ARRAY = {};
 
 	/**
 	 * <code>QUALIFIED_NAME</code> is the name that is brought into local

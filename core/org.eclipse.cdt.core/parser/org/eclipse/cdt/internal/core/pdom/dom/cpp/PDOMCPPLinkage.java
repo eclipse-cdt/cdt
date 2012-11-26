@@ -10,6 +10,7 @@
  *     Markus Schorn (Wind River Systems)
  *     Andrew Ferguson (Symbian)
  *     Sergey Prigogin (Google)
+ *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -60,6 +61,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
@@ -86,6 +89,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPQualifierType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPReferenceType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPAliasTemplateInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownMember;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
@@ -409,6 +413,8 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			}
 		} else if (binding instanceof ITypedef) {
 			pdomBinding = new PDOMCPPTypedef(this, parent, (ITypedef) binding);
+		} else if (binding instanceof ICPPAliasTemplate) {
+			pdomBinding = new PDOMCPPAliasTemplate(this, parent, (ICPPAliasTemplate) binding);
 		}
 
 		if (pdomBinding != null) {
@@ -601,9 +607,16 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			return CPPENUMERATOR;
 		} else if (binding instanceof ITypedef) {
 			return CPPTYPEDEF;
+		} else if (binding instanceof ICPPAliasTemplate) {
+			return CPP_TEMPLATE_ALIAS;
 		}
 
 		return 0;
+	}
+
+	@Override
+	protected boolean cannotAdapt(final IBinding inputBinding) throws CoreException {
+		return super.cannotAdapt(inputBinding) || inputBinding instanceof ICPPAliasTemplateInstance;
 	}
 
 	@Override
@@ -825,6 +838,8 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			return new PDOMCPPTypedefSpecialization(this, record);
 		case CPP_USING_DECLARATION_SPECIALIZATION:
 			return new PDOMCPPUsingDeclarationSpecialization(this, record);
+		case CPP_TEMPLATE_ALIAS:
+			return new PDOMCPPAliasTemplate(this, record);
 		}
 		assert false : "nodeid= " + nodeType; //$NON-NLS-1$
 		return null;
@@ -1044,6 +1059,8 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			return CPPUnknownClassInstance.unmarshal(getPDOM(), firstByte, buffer);
 		case ITypeMarshalBuffer.DEFERRED_CLASS_INSTANCE:
 			return CPPDeferredClassInstance.unmarshal(getPDOM(), firstByte, buffer);
+		case ITypeMarshalBuffer.ALIAS_TEMPLATE:
+			return CPPAliasTemplateInstance.unmarshal(firstByte, buffer);
 		}
 
 		throw new CoreException(CCorePlugin.createStatus("Cannot unmarshal a type, first byte=" + firstByte)); //$NON-NLS-1$

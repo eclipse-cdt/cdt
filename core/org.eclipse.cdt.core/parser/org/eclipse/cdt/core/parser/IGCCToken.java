@@ -45,5 +45,6 @@ public interface IGCCToken extends IToken {
 	/** @since 5.5 */ int tTT_is_standard_layout= 		FIRST_RESERVED_IGCCToken + 23;
 	/** @since 5.5 */ int tTT_is_trivial= 				FIRST_RESERVED_IGCCToken + 24;
 
-	/** @since 5.5 */ int t__int128 = 					FIRST_RESERVED_IGCCToken + 25;
+	/** @since 5.5 */ int t__int128= 					FIRST_RESERVED_IGCCToken + 25;
+	/** @since 5.5 */ int t__float128=					FIRST_RESERVED_IGCCToken + 26;
 }

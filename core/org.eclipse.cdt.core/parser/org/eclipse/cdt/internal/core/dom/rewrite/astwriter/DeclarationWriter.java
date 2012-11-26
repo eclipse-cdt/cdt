@@ -10,6 +10,7 @@
  *     Institute for Software - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     Sergey Prigogin (Google)
+ *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.astwriter;
 
@@ -18,9 +19,11 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTProblemDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAliasDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
@@ -32,6 +35,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
@@ -93,6 +97,8 @@ public class DeclarationWriter extends NodeWriter {
 			writeUsingDirective((ICPPASTUsingDirective) declaration);
 		} else if (declaration instanceof ICPPASTVisibilityLabel) {
 			writeVisibilityLabel((ICPPASTVisibilityLabel) declaration);
+		} else if (declaration instanceof ICPPASTAliasDeclaration) {
+			writeAliasDeclaration((ICPPASTAliasDeclaration) declaration);
 		}
 
 		writeTrailingComments(declaration, addNewLine);
@@ -102,6 +108,20 @@ public class DeclarationWriter extends NodeWriter {
 			}
 			writeFreestandingComments(declaration);
 		}
+	}
+
+	private void writeAliasDeclaration(ICPPASTAliasDeclaration aliasDeclaration) {
+		scribe.printStringSpace(Keywords.USING);
+		IASTName alias = aliasDeclaration.getAlias();
+		if (alias != null) {
+			alias.accept(visitor);
+		}
+		scribe.print(EQUALS);
+		ICPPASTTypeId aliasedType = aliasDeclaration.getMappingTypeId();
+		if (aliasedType != null) {
+			aliasedType.accept(visitor);
+		}
+		scribe.printSemicolon();
 	}
 
 	private void writeVisibilityLabel(ICPPASTVisibilityLabel visiblityLabel) {

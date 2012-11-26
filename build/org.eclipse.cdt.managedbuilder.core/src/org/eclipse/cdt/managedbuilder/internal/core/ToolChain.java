@@ -165,8 +165,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 		ManagedBuildManager.addExtensionToolChain(this);
 
 		// Load the TargetPlatform child
-		IManagedConfigElement[] targetPlatforms =
-			element.getChildren(ITargetPlatform.TARGET_PLATFORM_ELEMENT_NAME);
+		IManagedConfigElement[] targetPlatforms = element.getChildren(ITargetPlatform.TARGET_PLATFORM_ELEMENT_NAME);
 		if (targetPlatforms.length < 1 || targetPlatforms.length > 1) {
 			// TODO: Report error
 		}
@@ -175,8 +174,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 		}
 
 		// Load the Builder child
-		IManagedConfigElement[] builders =
-			element.getChildren(IBuilder.BUILDER_ELEMENT_NAME);
+		IManagedConfigElement[] builders = element.getChildren(IBuilder.BUILDER_ELEMENT_NAME);
 		if (builders.length < 1 || builders.length > 1) {
 			// TODO: Report error
 		}
@@ -342,13 +340,13 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 		if (toolChain.isAbstract != null) {
 			isAbstract = new Boolean(toolChain.isAbstract.booleanValue());
 		}
-        if (toolChain.scannerConfigDiscoveryProfileId != null) {
-            scannerConfigDiscoveryProfileId = new String(toolChain.scannerConfigDiscoveryProfileId);
-        }
+		if (toolChain.scannerConfigDiscoveryProfileId != null) {
+			scannerConfigDiscoveryProfileId = new String(toolChain.scannerConfigDiscoveryProfileId);
+		}
 
 		isRcTypeBasedDiscovery = toolChain.isRcTypeBasedDiscovery;
 
-       	supportsManagedBuild = toolChain.supportsManagedBuild;
+		supportsManagedBuild = toolChain.supportsManagedBuild;
 
 		managedIsToolChainSupportedElement = toolChain.managedIsToolChainSupportedElement;
 		managedIsToolChainSupported = toolChain.managedIsToolChainSupported;
@@ -377,9 +375,8 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 			String subName;
 
 			if (toolChain.builder.getSuperClass() != null) {
-				subId = copyIds ? toolChain.builder.getId() : ManagedBuildManager.calculateChildId(
-							toolChain.builder.getSuperClass().getId(),
-							null);
+				subId = copyIds ? toolChain.builder.getId() :
+						ManagedBuildManager.calculateChildId(toolChain.builder.getSuperClass().getId(), null);
 				subName = toolChain.builder.getSuperClass().getName();
 			} else {
 				subId = copyIds ? toolChain.builder.getId() : ManagedBuildManager.calculateChildId(
@@ -392,32 +389,31 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 		}
 //		if (toolChain.targetPlatform != null)
 		{
-		ITargetPlatform tpBase = toolChain.getTargetPlatform();
-		if(tpBase != null){
-		ITargetPlatform extTp = tpBase;
-		for(;extTp != null && !extTp.isExtensionElement();extTp = extTp.getSuperClass()) {
-			// empty body, the loop is to find extension element
-		}
+			ITargetPlatform tpBase = toolChain.getTargetPlatform();
+			if(tpBase != null){
+				ITargetPlatform extTp = tpBase;
+				for(;extTp != null && !extTp.isExtensionElement();extTp = extTp.getSuperClass()) {
+					// empty body, the loop is to find extension element
+				}
 
-		String subId;
-		if(copyIds){
-			subId = tpBase.getId();
-		} else {
-			subId = extTp != null ? ManagedBuildManager.calculateChildId(extTp.getId(), null):
-				ManagedBuildManager.calculateChildId(getId(), null);
-		}
-		String subName = tpBase.getName();
+				String subId;
+				if(copyIds){
+					subId = tpBase.getId();
+				} else {
+					subId = extTp != null ? ManagedBuildManager.calculateChildId(extTp.getId(), null):
+						ManagedBuildManager.calculateChildId(getId(), null);
+				}
+				String subName = tpBase.getName();
 
-//			if (toolChain.targetPlatform.getSuperClass() != null) {
-//				subId = toolChain.targetPlatform.getSuperClass().getId() + "." + nnn;		//$NON-NLS-1$
-//				subName = toolChain.targetPlatform.getSuperClass().getName();
-//			} else {
-//				subId = toolChain.targetPlatform.getId() + "." + nnn;		//$NON-NLS-1$
-//				subName = toolChain.targetPlatform.getName();
-//			}
-			targetPlatform = new TargetPlatform(this, subId, subName, (TargetPlatform)tpBase);
-		}
-//
+//				if (toolChain.targetPlatform.getSuperClass() != null) {
+//					subId = toolChain.targetPlatform.getSuperClass().getId() + "." + nnn;		//$NON-NLS-1$
+//					subName = toolChain.targetPlatform.getSuperClass().getName();
+//				} else {
+//					subId = toolChain.targetPlatform.getId() + "." + nnn;		//$NON-NLS-1$
+//					subName = toolChain.targetPlatform.getName();
+//				}
+				targetPlatform = new TargetPlatform(this, subId, subName, (TargetPlatform)tpBase);
+			}
 		}
 
 		IConfiguration cfg = parentFolderInfo.getParent();
@@ -439,10 +435,10 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 				if(subId == null){
 					if (extTool != null) {
 						subId = copyIds ? toolChild.getId() : ManagedBuildManager.calculateChildId(extTool.getId(), null);
-	//					subName = toolChild.getSuperClass().getName();
+//						subName = toolChild.getSuperClass().getName();
 					} else {
 						subId = copyIds ? toolChild.getId() : ManagedBuildManager.calculateChildId(toolChild.getId(), null);
-	//					subName = toolChild.getName();
+//						subName = toolChild.getName();
 					}
 				}
 //				version = ManagedBuildManager.getVersionFromIdAndVersion(tmpId);
@@ -544,10 +540,10 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 		unusedChildren = SafeStringInterner.safeIntern(element.getAttribute(IProjectType.UNUSED_CHILDREN));
 
 		// isAbstract
-        String isAbs = element.getAttribute(IProjectType.IS_ABSTRACT);
-        if (isAbs != null){
-    		isAbstract = new Boolean("true".equals(isAbs)); //$NON-NLS-1$
-        }
+		String isAbs = element.getAttribute(IProjectType.IS_ABSTRACT);
+		if (isAbs != null){
+			isAbstract = new Boolean("true".equals(isAbs)); //$NON-NLS-1$
+		}
 
 		// Get the semicolon separated list of IDs of the error parsers
 		errorParserIds = SafeStringInterner.safeIntern(element.getAttribute(ERROR_PARSERS));
@@ -562,10 +558,10 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 		defaultLanguageSettingsProviderIds = element.getAttribute(LANGUAGE_SETTINGS_PROVIDERS);
 
 		// Get the scanner config discovery profile id
-        scannerConfigDiscoveryProfileId = SafeStringInterner.safeIntern(element.getAttribute(SCANNER_CONFIG_PROFILE_ID));
-        String tmp = element.getAttribute(RESOURCE_TYPE_BASED_DISCOVERY);
-        if(tmp != null)
-        	isRcTypeBasedDiscovery = Boolean.valueOf(tmp);
+		scannerConfigDiscoveryProfileId = SafeStringInterner.safeIntern(element.getAttribute(SCANNER_CONFIG_PROFILE_ID));
+		String tmp = element.getAttribute(RESOURCE_TYPE_BASED_DISCOVERY);
+		if(tmp != null)
+			isRcTypeBasedDiscovery = Boolean.valueOf(tmp);
 
 		// Get the 'versionsSupported' attribute
 		versionsSupported = SafeStringInterner.safeIntern(element.getAttribute(VERSIONS_SUPPORTED));
@@ -577,9 +573,9 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 		if(tmp != null)
 			supportsManagedBuild = Boolean.valueOf(tmp);
 
-        tmp = element.getAttribute(IS_SYSTEM);
-        if(tmp != null)
-        	isTest = Boolean.valueOf(tmp).booleanValue();
+		tmp = element.getAttribute(IS_SYSTEM);
+		if(tmp != null)
+			isTest = Boolean.valueOf(tmp).booleanValue();
 
 
 		// Get the comma-separated list of valid OS
@@ -630,7 +626,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 	}
 
 
-	/* (non-Javadoc)
+	/**
 	 * Initialize the tool-chain information from the XML element
 	 * specified in the argument
 	 *
@@ -659,7 +655,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 
 		// Get the unused children, if any
 		if (element.getAttribute(IProjectType.UNUSED_CHILDREN) != null) {
-				unusedChildren = SafeStringInterner.safeIntern(element.getAttribute(IProjectType.UNUSED_CHILDREN));
+			unusedChildren = SafeStringInterner.safeIntern(element.getAttribute(IProjectType.UNUSED_CHILDREN));
 		}
 
 		// isAbstract
@@ -685,10 +681,10 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 			targetToolIds = SafeStringInterner.safeIntern(element.getAttribute(TARGET_TOOL));
 		}
 
-        // Get the scanner config discovery profile id
-        if (element.getAttribute(SCANNER_CONFIG_PROFILE_ID) != null) {
-            scannerConfigDiscoveryProfileId = SafeStringInterner.safeIntern(element.getAttribute(SCANNER_CONFIG_PROFILE_ID));
-        }
+		// Get the scanner config discovery profile id
+		if (element.getAttribute(SCANNER_CONFIG_PROFILE_ID) != null) {
+			scannerConfigDiscoveryProfileId = SafeStringInterner.safeIntern(element.getAttribute(SCANNER_CONFIG_PROFILE_ID));
+		}
 
 		// Get the 'versionSupported' attribute
 		if (element.getAttribute(VERSIONS_SUPPORTED) != null) {
@@ -731,10 +727,10 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 		}
 
 		// Get the scanner config discovery profile id
-        scannerConfigDiscoveryProfileId = element.getAttribute(SCANNER_CONFIG_PROFILE_ID);
-        String tmp = element.getAttribute(RESOURCE_TYPE_BASED_DISCOVERY);
-        if(tmp != null)
-        	isRcTypeBasedDiscovery = Boolean.valueOf(tmp);
+		scannerConfigDiscoveryProfileId = element.getAttribute(SCANNER_CONFIG_PROFILE_ID);
+		String tmp = element.getAttribute(RESOURCE_TYPE_BASED_DISCOVERY);
+		if(tmp != null)
+			isRcTypeBasedDiscovery = Boolean.valueOf(tmp);
 
 		nonInternalBuilderId = SafeStringInterner.safeIntern(element.getAttribute(NON_INTERNAL_BUILDER_ID));
 
@@ -774,13 +770,13 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 				element.setAttribute(SECONDARY_OUTPUTS, secondaryOutputIds);
 			}
 
-	        if (targetToolIds != null) {
-	            element.setAttribute(TARGET_TOOL, targetToolIds);
-	        }
+			if (targetToolIds != null) {
+				element.setAttribute(TARGET_TOOL, targetToolIds);
+			}
 
-	        if (scannerConfigDiscoveryProfileId != null) {
-	            element.setAttribute(SCANNER_CONFIG_PROFILE_ID, scannerConfigDiscoveryProfileId);
-	        }
+			if (scannerConfigDiscoveryProfileId != null) {
+				element.setAttribute(SCANNER_CONFIG_PROFILE_ID, scannerConfigDiscoveryProfileId);
+			}
 
 			// versionsSupported
 			if (versionsSupported != null) {
@@ -854,11 +850,11 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 			}
 
 			//serialize user-defined macros
-/*			if(userDefinedMacros != null){
-				ICStorageElement macrosElement = element.createChild(StorableMacros.MACROS_ELEMENT_NAME);
-				userDefinedMacros.serialize(macrosElement);
-			}
-*/
+//			if(userDefinedMacros != null){
+//				ICStorageElement macrosElement = element.createChild(StorableMacros.MACROS_ELEMENT_NAME);
+//				userDefinedMacros.serialize(macrosElement);
+//			}
+
 			// Note: optionPathConverter cannot be specified in a project file because
 			//       an IConfigurationElement is needed to load it!
 			if (pathconverterElement != null) {
@@ -883,23 +879,17 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 		} catch (Exception e) {
 			// TODO: issue an error message
 		}
-}
+	}
 
 	/*
 	 *  P A R E N T   A N D   C H I L D   H A N D L I N G
 	 */
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IToolChain#getConfiguration()
-	 */
 	@Override
 	public IConfiguration getParent() {
 		return config;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IToolChain#createTargetPlatform(ITargetPlatform, String, String, boolean)
-	 */
 	@Override
 	public ITargetPlatform createTargetPlatform(ITargetPlatform superClass, String id, String name, boolean isExtensionElement) {
 		targetPlatform = new TargetPlatform(this, superClass, id, name, isExtensionElement);
@@ -907,9 +897,6 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 		return targetPlatform;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IToolChain#getTargetPlatform()
-	 */
 	@Override
 	public ITargetPlatform getTargetPlatform() {
 		if (targetPlatform == null) {
@@ -920,9 +907,6 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 		return targetPlatform;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IToolChain#removeLocalTargetPlatform()
-	 */
 	@Override
 	public void removeLocalTargetPlatform() {
 		if (targetPlatform == null) return;
@@ -930,9 +914,6 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 		setDirty(true);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IToolChain#createBuilder(IBuilder, String, String, boolean)
-	 */
 	@Override
 	public IBuilder createBuilder(IBuilder superClass, String id, String name, boolean isExtensionElement) {
 		builder = new Builder(this, superClass, id, name, isExtensionElement);
@@ -944,9 +925,6 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 		this.builder = builder;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IToolChain#getBuilder()
-	 */
 	@Override
 	public IBuilder getBuilder() {
 		if (builder == null) {
@@ -957,9 +935,6 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 		return builder;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IToolChain#removeLocalBuilder()
-	 */
 	@Override
 	public void removeLocalBuilder() {
 		if (builder == null) return;
@@ -967,9 +942,6 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 		setDirty(true);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IToolChain#createTool(ITool, String, String, boolean)
-	 */
 	@Override
 	public ITool createTool(ITool superClass, String id, String name, boolean isExtensionElement) {
 		Tool tool = new Tool(this, superClass, id, name, isExtensionElement);
@@ -978,9 +950,6 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 		return tool;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IToolChain#getTools()
-	 */
 	@Override
 	public ITool[] getTools() {
 		ITool tools[] = getAllTools(false);
@@ -1015,7 +984,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 							break;
 						}
 					}
- 				}
+				}
 				//  No Match?  Insert it (may be re-ordered)
 				if (j == tools.length) {
 					Tool[] newTools = new Tool[tools.length + 1];
@@ -1071,18 +1040,12 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 		return filterUsedTools(all, false);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IToolChain#getTool(java.lang.String)
-	 */
 	@Override
 	public ITool getTool(String id) {
 		Tool tool = getToolMap().get(id);
 		return tool;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IToolChain#getToolsBySuperClassId(java.lang.String)
-	 */
 	@Override
 	public ITool[] getToolsBySuperClassId(String id) {
 		List<ITool> retTools = new ArrayList<ITool>();
@@ -1160,15 +1123,12 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 	 *  M O D E L   A T T R I B U T E   A C C E S S O R S
 	 */
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IToolChain#getSuperClass()
-	 */
 	@Override
 	public IToolChain getSuperClass() {
 		return (IToolChain)superClass;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * Access function to set the superclass element that is defined in
 	 * the base class.
 	 */
@@ -1190,17 +1150,11 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IToolChain#getName()
-	 */
 	@Override
 	public String getName() {
 		return (name == null && getSuperClass() != null) ? getSuperClass().getName() : name;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IToolChain#isAbstract()
-	 */
 	@Override
 	public boolean isAbstract() {
 		if (isAbstract != null) {
@@ -1210,9 +1164,6 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IToolChain#getUnusedChildren()
-	 */
 	@Override
 	public String getUnusedChildren() {
 		if (unusedChildren != null) {
@@ -1221,9 +1172,6 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 			return EMPTY_STRING;	// Note: no inheritance from superClass
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IToolChain#getErrorParserIds()
-	 */
 	@Override
 	public String getErrorParserIds() {
 		String ids = errorParserIds;
@@ -1264,9 +1212,6 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 		return ids;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IToolChain#getSecondaryOutputs()
-	 */
 	@Override
 	public IOutputType[] getSecondaryOutputs() {
 		IOutputType[] types = null;
@@ -1297,9 +1242,6 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 		return types;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IToolChain#getTargetToolIds()
-	 */
 	@Override
 	public String getTargetToolIds() {
 		if (targetToolIds == null) {
@@ -1313,9 +1255,6 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 		return targetToolIds;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IToolChain#getTargetToolList()
-	 */
 	@Override
 	public String[] getTargetToolList() {
 		String IDs = getTargetToolIds();
@@ -1339,9 +1278,6 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 		return targetTools;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IToolChain#getErrorParserIds(IConfiguration)
-	 */
 	@Override
 	public String getErrorParserIds(IConfiguration config) {
 		String ids = errorParserIds;
@@ -1353,9 +1289,9 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 		}
 		if (ids == null) {
 			// Collect the error parsers from my children
-		    if (builder != null) {
-		        ids = builder.getErrorParserIds();
-		    }
+			if (builder != null) {
+				ids = builder.getErrorParserIds();
+			}
 			ITool[] tools = config.getFilteredTools();
 			for (int i = 0; i < tools.length; i++) {
 				ITool tool = tools[i];
@@ -1373,9 +1309,6 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 		return ids;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IToolChain#getErrorParserList()
-	 */
 	@Override
 	public String[] getErrorParserList() {
 		String parserIDs = getErrorParserIds();
@@ -1424,9 +1357,6 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 		return set;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IToolChain#getArchList()
-	 */
 	@Override
 	public String[] getArchList() {
 		if (archList == null) {
@@ -1441,9 +1371,6 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 		return archList.toArray(new String[archList.size()]);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IToolChain#getOSList()
-	 */
 	@Override
 	public String[] getOSList() {
 		if (osList == null) {
@@ -1458,18 +1385,12 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 		return osList.toArray(new String[osList.size()]);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IToolChain#setIsAbstract(boolean)
-	 */
 	@Override
 	public void setIsAbstract(boolean b) {
 		isAbstract = new Boolean(b);
 		setDirty(true);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IToolChain#setErrorParserIds(String)
-	 */
 	@Override
 	public void setErrorParserIds(String ids) {
 		String currentIds = getErrorParserIds();
@@ -1480,9 +1401,6 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IToolChain#setSecondaryOutputs()
-	 */
 	@Override
 	public void setSecondaryOutputs(String newIds) {
 		if (secondaryOutputIds == null && newIds == null) return;
@@ -1492,9 +1410,6 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IToolChain#setTargetToolIds()
-	 */
 	@Override
 	public void setTargetToolIds(String newIds) {
 		if (targetToolIds == null && newIds == null) return;
@@ -1504,9 +1419,6 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IToolChain#setOSList(String[])
-	 */
 	@Override
 	public void setOSList(String[] OSs) {
 		if (osList == null) {
@@ -1520,9 +1432,6 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 		setDirty(true);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IToolChain#setArchList(String[])
-	 */
 	@Override
 	public void setArchList(String[] archs) {
 		if (archList == null) {
@@ -1602,18 +1511,15 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 		return scannerConfigDiscoveryProfileId;
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.managedbuilder.core.IToolChain#setScannerConfigDiscoveryProfileId(java.lang.String)
-     */
-    @Override
+	@Override
 	public void setScannerConfigDiscoveryProfileId(String profileId) {
 		if (scannerConfigDiscoveryProfileId == null && profileId == null) return;
-        if (scannerConfigDiscoveryProfileId == null ||
-                !scannerConfigDiscoveryProfileId.equals(profileId)) {
-            scannerConfigDiscoveryProfileId = profileId;
-            setDirty(true);
-        }
-    }
+		if (scannerConfigDiscoveryProfileId == null ||
+				!scannerConfigDiscoveryProfileId.equals(profileId)) {
+			scannerConfigDiscoveryProfileId = profileId;
+			setDirty(true);
+		}
+	}
 
 	/**
 	 * @return the pathconverterElement
@@ -1622,9 +1528,6 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 		return pathconverterElement;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IToolChain#getPathConverter()
-	 */
 	@Override
 	public IOptionPathConverter getOptionPathConverter() {
 		if (optionPathConverter != null) {
@@ -1653,21 +1556,15 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 	 *  O B J E C T   S T A T E   M A I N T E N A N C E
 	 */
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IToolChain#isExtensionElement()
-	 */
 	@Override
 	public boolean isExtensionElement() {
 		return isExtensionToolChain;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IToolChain#isDirty()
-	 */
 	@Override
 	public boolean isDirty() {
 		// This shouldn't be called for an extension tool-chain
- 		if (isExtensionToolChain) return false;
+		if (isExtensionToolChain) return false;
 
 		// If I need saving, just say yes
 		if (isDirty) return true;
@@ -1696,9 +1593,6 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 		return isDirty;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IToolChain#setDirty(boolean)
-	 */
 	@Override
 	public void setDirty(boolean isDirty) {
 		this.isDirty = isDirty;
@@ -1766,15 +1660,12 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 				}
 				if (extensions.length == 0){
 					tool.setOutputsAttribute(""); //$NON-NLS-1$
-				    continue;
+					continue;
 				}
 			}
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IToolChain#getConvertToId()
-	 */
 	@Override
 	public String getConvertToId() {
 		if (convertToId == null) {
@@ -1788,9 +1679,6 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 		return convertToId;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IToolChain#setConvertToId(String)
-	 */
 	@Override
 	public void setConvertToId(String convertToId) {
 		if (convertToId == null && this.convertToId == null) return;
@@ -1801,9 +1689,6 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 		return;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IToolChain#getVersionsSupported()
-	 */
 	@Override
 	public String getVersionsSupported() {
 		if (versionsSupported == null) {
@@ -1817,9 +1702,6 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 		return versionsSupported;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IToolChain#setVersionsSupported(String)
-	 */
 	@Override
 	public void setVersionsSupported(String versionsSupported) {
 		if (versionsSupported == null && this.versionsSupported == null) return;
@@ -1839,9 +1721,6 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 		return managedIsToolChainSupportedElement;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IToolChain#isSupported()
-	 */
 	@Override
 	public boolean isSupported(){
 		if (managedIsToolChainSupported  == null) {
@@ -1857,7 +1736,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 
 		if(managedIsToolChainSupported != null)
 			return managedIsToolChainSupported.isSupported(this,null,null);
-			return true;
+		return true;
 	}
 
 	/**
@@ -1875,9 +1754,6 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 	}
 
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IToolChain#getEnvironmentVariableSupplier()
-	 */
 	@Override
 	public IConfigurationEnvironmentVariableSupplier getEnvironmentVariableSupplier(){
 		if (environmentVariableSupplier != null) {
@@ -1895,19 +1771,19 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 		return null;
 	}
 
-	/*
-	 * this method is called by the UserDefinedMacroSupplier to obtain user-defined
-	 * macros available for this tool-chain
-	 */
-/*	public StorableMacros getUserDefinedMacros(){
-		if(isExtensionToolChain)
-			return null;
+//	/*
+//	 * this method is called by the UserDefinedMacroSupplier to obtain user-defined
+//	 * macros available for this tool-chain
+//	 */
+//	public StorableMacros getUserDefinedMacros(){
+//		if(isExtensionToolChain)
+//			return null;
+//
+//		if(userDefinedMacros == null)
+//			userDefinedMacros = new StorableMacros();
+//		return userDefinedMacros;
+//	}
 
-		if(userDefinedMacros == null)
-			userDefinedMacros = new StorableMacros();
-		return userDefinedMacros;
-	}
-*/
 //	public StorableEnvironment getUserDefinedEnvironment(){
 //		if(isExtensionToolChain)
 //			return null;
@@ -1936,9 +1812,6 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 	}
 
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IToolChain#getBuildMacroSupplier()
-	 */
 	@Override
 	public IConfigurationBuildMacroSupplier getBuildMacroSupplier(){
 		if (buildMacroSupplier != null) {
@@ -2139,9 +2012,6 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 		return currentMbsVersionConversionElement;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.internal.core.BuildObject#updateManagedBuildRevision(java.lang.String)
-	 */
 	@Override
 	public void updateManagedBuildRevision(String revision){
 		super.updateManagedBuildRevision(revision);
@@ -2153,9 +2023,6 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 			builder.updateManagedBuildRevision(revision);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.internal.core.HoldsOptions#needsRebuild()
-	 */
 	@Override
 	public boolean needsRebuild() {
 		if(rebuildState)
@@ -2170,9 +2037,6 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 		return super.needsRebuild();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.internal.core.HoldsOptions#setRebuildState(boolean)
-	 */
 	@Override
 	public void setRebuildState(boolean rebuild) {
 		if(isExtensionElement() && rebuild)
@@ -2643,10 +2507,10 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 		} else {
 			String version = ManagedBuildManager.getVersionFromIdAndVersion(getId());
 			if(version != null){
-			StringBuffer buf = new StringBuffer();
-			buf.append(name);
-			buf.append(" (v").append(version).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
-			name = buf.toString();
+				StringBuffer buf = new StringBuffer();
+				buf.append(name);
+				buf.append(" (v").append(version).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
+				name = buf.toString();
 			}
 		}
 		return name;

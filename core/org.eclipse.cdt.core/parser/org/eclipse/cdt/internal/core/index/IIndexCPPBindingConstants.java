@@ -8,6 +8,7 @@
  * Contributors:
  *     Andrew Ferguson (Symbian) - Initial implementation
  *     Markus Schorn (Wind River Systems)
+ *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index;
 
@@ -60,4 +61,5 @@ public interface IIndexCPPBindingConstants {
 	int CPP_UNKNOWN_FIELD = IIndexBindingConstants.LAST_CONSTANT + 48;
 	int CPP_USING_DECLARATION_SPECIALIZATION= IIndexBindingConstants.LAST_CONSTANT + 49;
 	int CPP_UNKNOWN_METHOD = IIndexBindingConstants.LAST_CONSTANT + 50;
+	int CPP_TEMPLATE_ALIAS = IIndexBindingConstants.LAST_CONSTANT + 51;
 }

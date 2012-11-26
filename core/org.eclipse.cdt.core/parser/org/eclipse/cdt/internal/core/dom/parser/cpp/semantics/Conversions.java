@@ -183,7 +183,7 @@ public class Conversions {
 						return cost;
 					}
 				}
-				// � otherwise, the program is ill-formed.
+				// otherwise, the program is ill-formed.
 				return Cost.NO_CONVERSION;
 			}
 			

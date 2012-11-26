@@ -25,6 +25,8 @@ public class GCCKeywords {
 	public static final String __DECLSPEC = "__declspec"; 
 	/** @since 5.5 */
 	public static final String __INT128 = "__int128";
+	/** @since 5.5 */
+	public static final String __FLOAT128 = "__float128";
 
 	public static final char[] 
 		cpTYPEOF = 			TYPEOF.toCharArray(),
@@ -69,6 +71,7 @@ public class GCCKeywords {
 
 	/** @since 5.5 */
 	public static final char[] 
+		cp__float128= 					__FLOAT128.toCharArray(),
 		cp__int128= 					__INT128.toCharArray(),
 		cp__is_literal_type= 			"__is_literal_type".toCharArray(),
 		cp__is_standard_layout= 		"__is_standard_layout".toCharArray(),

@@ -10,6 +10,7 @@
  *     Bryan Wilkinson (QNX)
  *     Markus Schorn (Wind River Systems)
  *     Sergey Prigogin (Google)
+ *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
@@ -66,6 +67,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
@@ -103,6 +105,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPAliasTemplateInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPArrayType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassSpecialization;
@@ -393,7 +396,7 @@ public class CPPTemplates {
 		return instance;
 	}
 
-	private static ICPPTemplateArgument[] addDefaultArguments(ICPPClassTemplate template,
+	private static ICPPTemplateArgument[] addDefaultArguments(ICPPTemplateDefinition template,
 			ICPPTemplateArgument[] arguments, IASTNode point) throws DOMException {
 		if (template instanceof ICPPClassTemplatePartialSpecialization)
 			return arguments;
@@ -642,17 +645,30 @@ public class CPPTemplates {
 			}
 		}
 		try {
-			// Class template instance.
 			IBinding result= null;
 			IASTName templateName = id.getTemplateName();
 			IBinding template = templateName.resolvePreBinding();
 
+			// Alias Template.
+			if (template instanceof ICPPAliasTemplate) {
+				ICPPAliasTemplate aliasTemplate = (ICPPAliasTemplate) template;
+				IType aliasedType = aliasTemplate.getType();
+				ICPPTemplateArgument[] args = createTemplateArgumentArray(id);
+				args = addDefaultArguments(aliasTemplate, args, id);
+				ICPPTemplateParameterMap parameterMap = createParameterMap(aliasTemplate, args);
+				IBinding owner = template.getOwner();
+				ICPPClassSpecialization within = getSpecializationContext(owner);
+				IType instantiatedType = instantiateType(aliasedType, parameterMap, -1,	within, id);
+				return new CPPAliasTemplateInstance(id.toCharArray(), instantiatedType, aliasTemplate);
+			}
+
+			// Class template.
 			if (template instanceof ICPPConstructor) {
 				template= template.getOwner();
 			}
 
 			if (template instanceof ICPPUnknownMemberClass) {
-				IType owner= ((ICPPUnknownMemberClass)template).getOwnerType();
+				IType owner= ((ICPPUnknownMemberClass) template).getOwnerType();
 				ICPPTemplateArgument[] args= createTemplateArgumentArray(id);
 				args= SemanticUtil.getSimplifiedArguments(args);
 				return new CPPUnknownClassInstance(owner, id.getSimpleID(), args);
@@ -716,8 +732,9 @@ public class CPPTemplates {
 		if (parentOfName instanceof ICPPASTElaboratedTypeSpecifier ||
 				parentOfName instanceof ICPPASTCompositeTypeSpecifier ||
 				parentOfName instanceof ICPPASTNamedTypeSpecifier ||
-				parentOfName instanceof ICPPASTBaseSpecifier)
+				parentOfName instanceof ICPPASTBaseSpecifier) {
 			return true;
+		}
 
 		if (parentOfName instanceof IASTDeclarator) {
 			IASTDeclarator rel= ASTQueries.findTypeRelevantDeclarator((IASTDeclarator) parentOfName);
@@ -725,7 +742,6 @@ public class CPPTemplates {
 		}
 		return false;
 	}
-
 
 	public static ICPPTemplateInstance createInstance(IBinding owner, ICPPTemplateDefinition template,
 			CPPTemplateParameterMap tpMap, ICPPTemplateArgument[] args, IASTNode point) {
@@ -811,6 +827,10 @@ public class CPPTemplates {
 		} else if (decl instanceof ITypedef) {
 			IType type= instantiateType(((ITypedef) decl).getType(), tpMap, -1, getSpecializationContext(owner), point);
 		    spec = new CPPTypedefSpecialization(decl, owner, tpMap, type);
+		} else if (decl instanceof ICPPAliasTemplate) {
+			ICPPAliasTemplate aliasTemplate = (ICPPAliasTemplate) decl;
+			IType type= instantiateType(aliasTemplate.getType(), tpMap, -1, getSpecializationContext(owner), point);
+		    spec = new CPPAliasTemplateInstance(decl.getNameCharArray(), type, aliasTemplate);
 		} else if (decl instanceof IEnumeration || decl instanceof IEnumerator) {
 			// TODO(sprigogin): Deal with a case when an enumerator value depends on a template parameter.
 		    spec = decl;

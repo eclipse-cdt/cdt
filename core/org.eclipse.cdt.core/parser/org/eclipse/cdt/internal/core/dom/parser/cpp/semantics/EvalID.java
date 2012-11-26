@@ -336,7 +336,7 @@ public class EvalID extends CPPEvaluation {
 
 	@Override
 	public int determinePackSize(ICPPTemplateParameterMap tpMap) {
-		int r = fFieldOwner.determinePackSize(tpMap);
+		int r = fFieldOwner != null ? fFieldOwner.determinePackSize(tpMap) : CPPTemplates.PACK_SIZE_NOT_FOUND;
 		for (ICPPTemplateArgument arg : fTemplateArgs) {
 			r = CPPTemplates.combinePackSize(r, CPPTemplates.determinePackSize(arg, tpMap));
 		}
@@ -345,6 +345,6 @@ public class EvalID extends CPPEvaluation {
 
 	@Override
 	public boolean referencesTemplateParameter() {
-		return fFieldOwner.referencesTemplateParameter();
+		return fFieldOwner != null && fFieldOwner.referencesTemplateParameter();
 	}
 }

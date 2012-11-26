@@ -784,6 +784,14 @@ public class ASTSignatureUtil {
 				result.append(GCCKeywords.__INT128);
 				needSpace = true;
 				break;
+			case IASTSimpleDeclSpecifier.t_float128:
+				if (needSpace) {
+					result.append(SPACE);
+					needSpace = false;
+				}
+				result.append(GCCKeywords.__FLOAT128);
+				needSpace = true;
+				break;
 			case IASTSimpleDeclSpecifier.t_void:
 				if (needSpace) {
 					result.append(SPACE);

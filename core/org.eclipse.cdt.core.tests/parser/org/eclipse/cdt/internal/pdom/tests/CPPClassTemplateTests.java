@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Andrew Ferguson (Symbian) - Initial implementation
+ *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
@@ -21,10 +22,16 @@ import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplateInstance;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.index.IndexFilter;
@@ -34,7 +41,9 @@ import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.internal.core.CCoreInternals;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
@@ -315,6 +324,245 @@ public class CPPClassTemplateTests extends PDOMTestBase {
 
 		}
 	}
+	
+	// template<typename xT>
+	// struct S {
+	//     xT x;
+	// };
+	// template<typename aT>
+	// using A = S<aT>;
+	public void testSimpleAliasDefinition() throws Exception {
+		assertDeclarationCount(pdom, "A", 1);
+		IIndexFragmentBinding[] bindingA= pdom.findBindings(new char[][] {{'A'}}, IndexFilter.ALL_DECLARED, npm());
+		assertEquals(1, bindingA.length);
+		assertTrue(bindingA[0] instanceof ICPPAliasTemplate);
+		ICPPAliasTemplate aliasA= (ICPPAliasTemplate) bindingA[0];
+		ICPPTemplateParameter[] aliasParameters= aliasA.getTemplateParameters();
+		assertEquals(1, aliasParameters.length);
+		
+		assertTrue(aliasParameters[0] instanceof ICPPTemplateTypeParameter);
+		ICPPTemplateTypeParameter templateParameterAT= (ICPPTemplateTypeParameter) aliasParameters[0];
+		assertEquals("aT", templateParameterAT.getName());
+		assertNull(templateParameterAT.getDefault());
+		assertEquals(0, templateParameterAT.getTemplateNestingLevel());
+		
+		assertDeclarationCount(pdom, "S", 1);
+		IIndexFragmentBinding[] bindingS= pdom.findBindings(new char[][] {{'S'}}, IndexFilter.ALL_DECLARED, npm());
+		IType aliasedType = aliasA.getType();
+		assertTrue(aliasedType instanceof ICPPDeferredClassInstance);
+		ICPPDeferredClassInstance deferredClassInstanceS= (ICPPDeferredClassInstance) aliasedType;
+		assertEquals(1, bindingA.length);
+		assertEquals(bindingS[0], deferredClassInstanceS.getSpecializedBinding());
+	}
+	
+	// struct D {
+	// };
+	// template<typename sT1, typename sT2>
+	// struct S {
+	//     xT x;
+	// };
+	// template<typename aT1, typename aT2 = D>
+	// using A = S<aT1, aT2>;
+	public void testSimpleAliasDefinitionDefaultTemplateArgument() throws Exception {
+		assertDeclarationCount(pdom, "A", 1);
+		IIndexFragmentBinding[] bindingA= pdom.findBindings(new char[][] {{'A'}}, IndexFilter.ALL_DECLARED, npm());
+		assertEquals(1, bindingA.length);
+		assertTrue(bindingA[0] instanceof ICPPAliasTemplate);
+		ICPPAliasTemplate aliasA= (ICPPAliasTemplate) bindingA[0];
+		ICPPTemplateParameter[] aliasParameters= aliasA.getTemplateParameters();
+		assertEquals(2, aliasParameters.length);
+		
+		assertTrue(aliasParameters[0] instanceof ICPPTemplateTypeParameter);
+		ICPPTemplateTypeParameter templateParameterAT1= (ICPPTemplateTypeParameter) aliasParameters[0];
+		assertEquals("aT1", templateParameterAT1.getName());
+		assertNull(templateParameterAT1.getDefault());
+		assertEquals(0, templateParameterAT1.getTemplateNestingLevel());
+		
+		assertTrue(aliasParameters[1] instanceof ICPPTemplateTypeParameter);
+		ICPPTemplateTypeParameter templateParameterAT2= (ICPPTemplateTypeParameter) aliasParameters[1];
+		assertEquals("aT2", templateParameterAT2.getName());
+		IType aT2DefaultArgument = templateParameterAT2.getDefault();
+		assertNotNull(aT2DefaultArgument);
+		assertDeclarationCount(pdom, "D", 1);
+		IIndexFragmentBinding[] bindingD= pdom.findBindings(new char[][] {{'D'}}, IndexFilter.ALL_DECLARED, npm());
+		assertEquals(1, bindingD.length);
+		assertTrue(bindingD[0] instanceof IType);
+		assertTrue(((IType)bindingD[0]).isSameType(aT2DefaultArgument));
+		assertEquals(0, templateParameterAT2.getTemplateNestingLevel());
+		
+		assertDeclarationCount(pdom, "S", 1);
+		IIndexFragmentBinding[] bindingS= pdom.findBindings(new char[][] {{'S'}}, IndexFilter.ALL_DECLARED, npm());
+		IType aliasedType = aliasA.getType();
+		assertTrue(aliasedType instanceof ICPPDeferredClassInstance);
+		ICPPDeferredClassInstance deferredClassInstanceS= (ICPPDeferredClassInstance) aliasedType;
+		assertEquals(1, bindingS.length);
+		assertEquals(bindingS[0], deferredClassInstanceS.getSpecializedBinding());
+	}
+	
+	// template<boolean sT1, int sT2>
+	// struct S {
+	//     xT x;
+	// };
+	// template<boolean aT1, int aT2 = 5>
+	// using A = S<aT1, aT2>;
+	public void testSimpleAliasDefinitionValueTemplateArguments() throws Exception {
+		assertDeclarationCount(pdom, "A", 1);
+		IIndexFragmentBinding[] bindingA= pdom.findBindings(new char[][] {{'A'}}, IndexFilter.ALL_DECLARED, npm());
+		assertEquals(1, bindingA.length);
+		assertTrue(bindingA[0] instanceof ICPPAliasTemplate);
+		ICPPAliasTemplate aliasA= (ICPPAliasTemplate) bindingA[0];
+		ICPPTemplateParameter[] aliasParameters= aliasA.getTemplateParameters();
+		assertEquals(2, aliasParameters.length);
+		
+		assertTrue(aliasParameters[0] instanceof ICPPTemplateNonTypeParameter);
+		ICPPTemplateNonTypeParameter templateParameterAT1= (ICPPTemplateNonTypeParameter) aliasParameters[0];
+		assertEquals("aT1", templateParameterAT1.getName());
+		assertNull(templateParameterAT1.getDefaultValue());
+		assertEquals(0, templateParameterAT1.getTemplateNestingLevel());
+		
+		assertTrue(aliasParameters[1] instanceof ICPPTemplateNonTypeParameter);
+		ICPPTemplateNonTypeParameter templateParameterAT2= (ICPPTemplateNonTypeParameter) aliasParameters[1];
+		assertEquals("aT2", templateParameterAT2.getName());
+		ICPPTemplateArgument aT2DefaultArgument = templateParameterAT2.getDefaultValue();
+		assertNotNull(aT2DefaultArgument);
+		assertTrue(new CPPBasicType(IBasicType.Kind.eInt, 0).isSameType(aT2DefaultArgument.getTypeOfNonTypeValue()));
+		assertEquals(5, aT2DefaultArgument.getNonTypeValue().numericalValue().longValue());
+		assertEquals(0, templateParameterAT2.getTemplateNestingLevel());
+		
+		assertDeclarationCount(pdom, "S", 1);
+		IIndexFragmentBinding[] bindingS= pdom.findBindings(new char[][] {{'S'}}, IndexFilter.ALL_DECLARED, npm());
+		IType aliasedType = aliasA.getType();
+		assertTrue(aliasedType instanceof ICPPDeferredClassInstance);
+		ICPPDeferredClassInstance deferredClassInstanceS= (ICPPDeferredClassInstance) aliasedType;
+		assertEquals(1, bindingS.length);
+		assertEquals(bindingS[0], deferredClassInstanceS.getSpecializedBinding());
+	}
+	
+	// template<typename T>
+	// struct S {
+	//     T t;
+	// };
+	// template<template<typename> class TT>
+	// using A = S<TT>;
+	public void testSimpleAliasTemplateParameter() throws Exception {
+		assertDeclarationCount(pdom, "A", 1);
+		IIndexFragmentBinding[] bindingA= pdom.findBindings(new char[][] {{'A'}}, IndexFilter.ALL_DECLARED, npm());
+		assertEquals(1, bindingA.length);
+		assertTrue(bindingA[0] instanceof ICPPAliasTemplate);
+		ICPPAliasTemplate aliasA= (ICPPAliasTemplate) bindingA[0];
+		ICPPTemplateParameter[] aliasParameters= aliasA.getTemplateParameters();
+		assertEquals(1, aliasParameters.length);
+		
+		assertTrue(aliasParameters[0] instanceof ICPPTemplateTemplateParameter);
+		ICPPTemplateTemplateParameter templateParameterTT= (ICPPTemplateTemplateParameter) aliasParameters[0];
+		assertEquals("TT", templateParameterTT.getName());
+		assertNull(templateParameterTT.getDefaultValue());
+		assertEquals(0, templateParameterTT.getTemplateNestingLevel());
+	}
+	
+	// struct B{};
+	// template<typename xT>
+	// struct S {
+	//     xT x;
+	// };
+	// template<typename aT>
+	// using A = S<aT>;
+	// A<B> aB;
+	// S<B> sB;
+	public void testSimpleAliasReference() throws Exception {
+		assertDeclarationCount(pdom, "A", 1);
+		IIndexFragmentBinding[] bindingA= pdom.findBindings(new char[][] {{'A'}}, IndexFilter.ALL_DECLARED, npm());
+		assertEquals(1, bindingA.length);
+		assertTrue(bindingA[0] instanceof ICPPAliasTemplate);
+		ICPPAliasTemplate aliasA= (ICPPAliasTemplate) bindingA[0];
+		ICPPTemplateParameter[] aliasParameters= aliasA.getTemplateParameters();
+		assertEquals(1, aliasParameters.length);
+		
+		assertReferenceCount(pdom, "S", 2);
+		assertReferenceCount(pdom, "A", 1);
+		assertDeclarationCount(pdom, "aB", 1);
+		assertDeclarationCount(pdom, "sB", 1);
+		
+		IIndexFragmentBinding[] bindingVarSB= pdom.findBindings(new char[][] {"sB".toCharArray()}, IndexFilter.ALL, npm());
+		assertEquals(1, bindingVarSB.length);
+		assertTrue(bindingVarSB[0] instanceof ICPPVariable);
+		ICPPVariable variableSB = (ICPPVariable) bindingVarSB[0];
+		IType varSBType = variableSB.getType();
+		assertTrue(varSBType instanceof ICPPClassSpecialization);
+		ICPPClassSpecialization templateInstanceSB = (ICPPClassSpecialization) varSBType;
+						
+		IIndexFragmentBinding[] bindingVarAB= pdom.findBindings(new char[][] {"aB".toCharArray()}, IndexFilter.ALL, npm());
+		assertEquals(1, bindingVarAB.length);
+		assertTrue(bindingVarAB[0] instanceof ICPPVariable);
+		ICPPVariable variableAB = (ICPPVariable) bindingVarAB[0];
+		IType varABType = variableAB.getType();
+		assertTrue(varABType instanceof ICPPAliasTemplateInstance);
+		ICPPAliasTemplateInstance aliasInstanceAB = (ICPPAliasTemplateInstance) varABType;
+		assertTrue(varABType.isSameType(templateInstanceSB));
+		assertTrue(aliasInstanceAB.getTemplateDefinition().isSameType(aliasA));
+		assertEquals("A<B>", aliasInstanceAB.getName());
+	}
+	
+	// template<typename T> class CT {
+	//     template<typename T> using A= T;   // nesting level 1
+	//     A<int> x;
+    // };
+	public void testPDOMNestedAliasDeclarationNestingLevel() throws Exception {
+		IIndexFragmentBinding[] bindingCT = pdom.findBindings(new char[][] { "CT".toCharArray() }, IndexFilter.ALL_DECLARED, npm());
+		assertEquals(1, bindingCT.length);
+		assertTrue(bindingCT[0] instanceof ICPPClassTemplate);
+		ICPPClassTemplate templateCT = (ICPPClassTemplate) bindingCT[0];
+
+		IField[] fields = templateCT.getFields();
+		assertEquals(1, fields.length);
+		IField x = fields[0];
+		IType xType = x.getType();
+		assertTrue(xType instanceof ICPPAliasTemplateInstance);
+		
+		ICPPAliasTemplateInstance aliasInstance = (ICPPAliasTemplateInstance) xType;
+		ICPPAliasTemplate alias = aliasInstance.getTemplateDefinition();
+		ICPPTemplateParameter[] aliasParameters = alias.getTemplateParameters();
+		assertEquals(1, aliasParameters.length);
+		ICPPTemplateParameter aliasParameterT = aliasParameters[0];
+		assertEquals(1, aliasParameterT.getTemplateNestingLevel());
+	}
+	
+	// template<typename T> class CT;
+	// template<typename T> using A= CT<T>;  	// nesting level 0
+	// template<typename T> class CT {           // nesting level 0
+	//     typedef Alias<T> TYPE;                  
+	// };
+	public void testPDOMAliasDeclarationNestingLevel() throws Exception {
+		assertDeclarationCount(pdom, "A", 1);
+		IIndexFragmentBinding[] bindingA= pdom.findBindings(new char[][] {{'A'}}, IndexFilter.ALL_DECLARED, npm());
+		assertEquals(1, bindingA.length);
+		assertTrue(bindingA[0] instanceof ICPPAliasTemplate);
+		ICPPAliasTemplate aliasA= (ICPPAliasTemplate) bindingA[0];
+		ICPPTemplateParameter[] aliasParameters= aliasA.getTemplateParameters();
+		assertEquals(1, aliasParameters.length);
+		
+		assertTrue(aliasParameters[0] instanceof ICPPTemplateTypeParameter);
+		ICPPTemplateTypeParameter templateParameterT= (ICPPTemplateTypeParameter) aliasParameters[0];
+		assertEquals("T", templateParameterT.getName());
+		assertNull(templateParameterT.getDefault());
+		assertEquals(0, templateParameterT.getTemplateNestingLevel());
+		
+		assertDeclarationCount(pdom, "CT", 2);
+		IIndexFragmentBinding[] bindingCT= pdom.findBindings(new char[][] {"CT".toCharArray()}, IndexFilter.ALL_DECLARED, npm());
+		assertEquals(1, bindingCT.length);
+		assertTrue(bindingCT[0] instanceof ICPPClassTemplate);
+		ICPPClassTemplate templateCT= (ICPPClassTemplate) bindingCT[0];
+		ICPPTemplateParameter[] ctParameters= templateCT.getTemplateParameters();
+		assertEquals(1, ctParameters.length);
+		
+		assertTrue(ctParameters[0] instanceof ICPPTemplateTypeParameter);
+		ICPPTemplateTypeParameter templateParameterTofCT= (ICPPTemplateTypeParameter) ctParameters[0];
+		assertEquals("T", templateParameterTofCT.getName());
+		assertNull(templateParameterTofCT.getDefault());
+		assertEquals(0, templateParameterTofCT.getTemplateNestingLevel());
+	}
+	
+	
 	
 	@Override
 	protected void assertInstance(Object o, Class c) {

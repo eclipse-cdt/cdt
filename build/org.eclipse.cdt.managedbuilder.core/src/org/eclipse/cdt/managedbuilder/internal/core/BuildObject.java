@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 IBM Corporation and others.
+ * Copyright (c) 2003, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,42 +24,32 @@ public class BuildObject implements IBuildObject {
 	protected Version version = null;
 	protected String managedBuildRevision = null;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IBuildObject#getId()
-	 */
 	@Override
 	public String getId() {
 		return id;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IBuildObject#setId(java.lang.String)
-	 */
 	public void setId(String id) {
 		this.id = id;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IBuildObject#getName()
-	 */
 	@Override
 	public String getName() {
 		return name;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IBuildObject#setName(java.lang.String)
-	 */
 	public void setName(String name) {
 		this.name = name;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
+	@SuppressWarnings("nls")
 	@Override
 	public String toString() {
-		return name;
+		if (name != null) {
+			return name;
+		} else {
+			return "id=" + id;
+		}
 	}
 
 	/**
@@ -126,7 +116,7 @@ public class BuildObject implements IBuildObject {
 		this.managedBuildRevision = managedBuildRevision;
 	}
 
-	/*
+	/**
 	 * updates revision for this build object and all its children
 	 */
 	public void updateManagedBuildRevision(String revision){

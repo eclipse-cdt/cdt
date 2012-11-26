@@ -107,6 +107,12 @@ public interface IASTSimpleDeclSpecifier extends IASTDeclSpecifier {
 	public static final int t_int128 = 13;
 
 	/**
+	 * <code>__float128 i;</code>
+	 * @since 5.5
+	 */
+	public static final int t_float128 = 14;
+
+	/**
 	 * @since 5.1
 	 */
 	@Override

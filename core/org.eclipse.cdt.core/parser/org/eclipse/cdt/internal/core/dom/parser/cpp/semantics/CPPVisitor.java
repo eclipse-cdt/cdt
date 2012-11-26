@@ -10,6 +10,7 @@
  *     Markus Schorn (Wind River Systems)
  *     Andrew Ferguson (Symbian)
  *     Sergey Prigogin (Google)
+ *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
@@ -93,6 +94,7 @@ import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAliasDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
@@ -172,6 +174,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTUnaryExpression;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPAliasTemplate;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPArrayType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassTemplate;
@@ -654,10 +657,32 @@ public class CPPVisitor extends ASTQueries {
 			        binding = new ProblemBinding(alias.getAlias(), IProblemBinding.SEMANTIC_NAME_NOT_FOUND);
 			    }
 			}
-
 			return binding;
+		} else if (declaration instanceof ICPPASTAliasDeclaration) {
+			ICPPASTAliasDeclaration alias = (ICPPASTAliasDeclaration) declaration;
+			ICPPScope scope = (ICPPScope) getContainingScope(declaration);
+			IBinding binding = scope.getBinding(alias.getAlias(), false);
+			if (!(binding instanceof ICPPInternalBinding)) {
+				IType type = createType(alias.getMappingTypeId());
+				if (type instanceof IProblemBinding) {
+			    	IProblemBinding problem = (IProblemBinding) type;
+			    	type = new CPPClassType.CPPClassTypeProblem(problem.getASTNode(), problem.getID(),
+			    			alias.getMappingTypeId().getAbstractDeclarator().getName().toCharArray());
+			    }
+			    if (type != null) {
+			    	if (alias.getParent() instanceof ICPPASTTemplateDeclaration) {
+			    		binding = new CPPAliasTemplate(alias.getAlias(), type);
+			    	} else {
+				    	CPPTypedef typedef = new CPPTypedef(alias.getAlias());
+				    	typedef.setType(type);
+				        binding = typedef;
+			    	}
+			    } else {
+			        binding = new ProblemBinding(alias.getAlias(), IProblemBinding.SEMANTIC_NAME_NOT_FOUND);
+			    }
+			}
+			return binding;	
 		}
-
 		return null;
 	}
 
@@ -1766,7 +1791,7 @@ public class CPPVisitor extends ASTQueries {
 		if (pDtor != null) {
 			pt = createType(pt, pDtor);
 		}
-		pt=  adjustParameterType(pt, forFuncType);
+		pt= adjustParameterType(pt, forFuncType);
 
 		if (pDtor != null && CPPVisitor.findInnermostDeclarator(pDtor).declaresParameterPack()) {
 			pt= new CPPParameterPackType(pt);
@@ -1810,13 +1835,12 @@ public class CPPVisitor extends ASTQueries {
 		return pTypes;
 	}
 
-
 	/**
 	 * Adjusts the parameter type according to 8.3.5-3:
 	 * cv-qualifiers are deleted, arrays and function types are converted to pointers.
 	 */
 	static IType adjustParameterType(final IType pt, boolean forFunctionType) {
-		// bug 239975
+		// Bug 239975
 		IType t= SemanticUtil.getNestedType(pt, TDEF);
 		if (t instanceof IArrayType) {
 			IArrayType at = (IArrayType) t;

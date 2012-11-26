@@ -100,6 +100,8 @@ public class CPPBasicType implements ICPPBasicType, ISerializableType {
 			return Kind.eDouble;
 		case IASTSimpleDeclSpecifier.t_float:
 			return Kind.eFloat;
+		case IASTSimpleDeclSpecifier.t_float128:
+			return Kind.eFloat128;
 		case IASTSimpleDeclSpecifier.t_int:
 			return Kind.eInt;
 		case IASTSimpleDeclSpecifier.t_int128:
@@ -275,6 +277,8 @@ public class CPPBasicType implements ICPPBasicType, ISerializableType {
 		case eUnspecified:
 			return t_unspecified;
 		case eNullPtr:
+		case eInt128:
+		case eFloat128:
 			// Null pointer type cannot be expressed wit ha simple decl specifier.
 			break;
 		}

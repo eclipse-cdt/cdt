@@ -8,7 +8,11 @@
  * Contributors:
  *     Marc Khouzam (Ericsson) - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.dsf.mi.service;
+package org.eclipse.cdt.dsf.gdb.service;
+
+import java.util.List;
+
+import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
 
 
 /**
@@ -16,5 +20,10 @@ package org.eclipse.cdt.dsf.mi.service;
  * Glob-style expression pattern matching.
  * @since 4.2
  */
-public interface IGDBPatternMatchingExpressions extends IMIExpressions {
+public interface IGDBPatternMatchingExpressions {
+	
+	public interface IGroupExpressionDMContext extends IExpressionDMContext {
+		List<String> getExpressionsInGroup();
+		
+	}
 }

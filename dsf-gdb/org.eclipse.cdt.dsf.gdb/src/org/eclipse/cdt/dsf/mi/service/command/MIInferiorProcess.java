@@ -328,12 +328,12 @@ public class MIInferiorProcess extends Process
     
     private void closeIO() {
         try {
-            fOutputStream.close();
+        	if (fOutputStream != null) fOutputStream.close();
             // Make sure things get GCed
             fOutputStream = null;
         } catch (IOException e) {}
         try {
-            fInputStream.close();
+        	if (fInputStream != null) fInputStream.close();
             // Make sure things get GCed
             fInputStream = null;
         } catch (IOException e) {}
@@ -343,12 +343,12 @@ public class MIInferiorProcess extends Process
             fInputStreamPiped = null;
         } catch (IOException e) {}
         try {
-            fErrorStream.close();
+        	if (fErrorStream != null) fErrorStream.close();
             // Make sure things get GCed
             fErrorStream = null;
         } catch (IOException e) {}
         try {
-            fErrorStreamPiped.close();
+        	if (fErrorStreamPiped != null) fErrorStreamPiped.close();
             // Make sure things get GCed
             fErrorStreamPiped = null;
         } catch (IOException e) {}

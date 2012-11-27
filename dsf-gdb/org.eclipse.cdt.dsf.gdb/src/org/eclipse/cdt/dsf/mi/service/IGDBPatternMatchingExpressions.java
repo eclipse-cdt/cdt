@@ -10,11 +10,20 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service;
 
+import java.util.List;
+
+import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
+
 
 /**
  * Interface that will indicate that the implementing service supports
  * Glob-style expression pattern matching.
  * @since 4.2
  */
-public interface IGDBPatternMatchingExpressions extends IMIExpressions {
+public interface IGDBPatternMatchingExpressions {
+	
+	public interface IGroupExpressionDMContext extends IExpressionDMContext {
+		List<String> getExpressionsInGroup();
+		
+	}
 }

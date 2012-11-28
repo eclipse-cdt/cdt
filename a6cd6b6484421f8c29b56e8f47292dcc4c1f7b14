@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOJ3////s\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/DebugNewProcessSequence.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 433,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-11-28T19:43:59Z",
+      "side": 1,
+      "message": "What do we need to do here?  We want to have the MIBreakpointsManager start tracking breakpoints for trace files, because we need that to increment the install count when a tracepoint is loaded?\n\nI wonder if this is the right thing to do.  For a post-mortem session (core or trace), I think it makes sense _not_ to push new breakpoints or tracepoints from Eclipse to GDB, why would we need them?\n\nIs the only problem with leaving this code in, the fact that the little installed checkmark decorator won\u0027t be shown?  I think we should try to find a way to fix that specifically, and not push breakpoints/tracepoints from Eclipse to GDB.\n\nAlso, if that is the only problem, I suggest we open a separate but about the checkmark and not delay committing this patch any longer.",
+      "revId": "a6cd6b6484421f8c29b56e8f47292dcc4c1f7b14",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3///5k\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIBreakpointsSynchronizer.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1250,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-11-28T19:43:59Z",
+      "side": 1,
+      "message": "I don\u0027t think you need to specify origLocation.length().  There is a substring(beginIndex) method, which I think would be simpler to use.",
+      "revId": "a6cd6b6484421f8c29b56e8f47292dcc4c1f7b14",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

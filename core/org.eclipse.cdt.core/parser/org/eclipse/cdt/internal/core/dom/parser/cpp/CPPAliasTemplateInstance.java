@@ -8,6 +8,7 @@
  *
  * Contributors:
  *     Thomas Corbat (IFS) - Initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -22,21 +23,22 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableType;
+import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.PlatformObject;
 
 public class CPPAliasTemplateInstance extends PlatformObject
-		implements ICPPAliasTemplateInstance, ISerializableType {
+		implements ICPPAliasTemplateInstance, ITypeContainer, ISerializableType {
 	private final char[] name;
-	private final IType aliasedType;
 	private final ICPPAliasTemplate aliasTemplate;
+	private IType aliasedType;
 
 	public CPPAliasTemplateInstance(char[] name, IType aliasedType, ICPPAliasTemplate aliasTemplate) {
 		this.name = name;
-		this.aliasedType = aliasedType;
 		this.aliasTemplate = aliasTemplate;
+		this.aliasedType = aliasedType;
 	}
 
 	@Override
@@ -57,6 +59,11 @@ public class CPPAliasTemplateInstance extends PlatformObject
 	@Override
 	public IType getType() {
 		return aliasedType;
+	}
+
+	@Override
+	public void setType(IType type) {
+		aliasedType = type;
 	}
 
 	@Override

@@ -6726,7 +6726,52 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	void test(E<A<int>>::type v) {
 	//	  f(v);
 	//	}
-	public void testAliasTemplate_395026() throws Exception {
+	public void testAliasTemplate_395026_1() throws Exception {
+		parseAndCheckBindings();
+	}
+
+	//	template<typename U>
+	//	struct A {
+	//	  template<typename V>
+	//	  struct rebind {
+	//	    typedef A<V> other;
+	//	  };
+	//	};
+	//
+	//	template<typename T, typename U>
+	//	struct B {
+	//	  typedef typename T::template rebind<U>::other type1;
+	//	};
+	//
+	//	template<typename T>
+	//	struct C {
+	//	  template<typename U>
+	//	  using rebind2 = typename B<T, U>::type1;
+	//	};
+	//
+	//	template<typename T>
+	//	struct D : C<T> {
+	//	  typedef int* type0;
+	//	  template<typename U>
+	//	  struct rebind {
+	//	    typedef typename C<T>::template rebind2<U> other;
+	//	  };
+	//	};
+	//
+	//	template<typename U>
+	//	struct E {
+	//	  typedef typename D<A<U>>::template rebind<U>::other type2;
+	//	  typedef typename D<type2>::type0 type;
+	//	  type operator[](int n);
+	//	};
+	//
+	//	void f(int);
+	//
+	//	void test() {
+	//	  E<int*> v;
+	//	  f(*v[0]);
+	//	}
+	public void testAliasTemplate_395026_2() throws Exception {
 		parseAndCheckBindings();
 	}
 }

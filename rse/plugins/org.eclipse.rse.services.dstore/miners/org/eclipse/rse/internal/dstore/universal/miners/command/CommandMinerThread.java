@@ -36,6 +36,7 @@
  *  David McKnight   (IBM)     [339741] [dstore][shells] consecutive prompt line is ignored
  *  Noriaki Takatsu  (IBM)     [369767] [multithread][dstore] Invalid Default directory in shell Launch
  *  David McKnight   (IBM)     [372968] [dstore][shell] provide support for csh and tcsh shells
+ *  David McKnight   (IBM)     [395306] [dstore] Regression for CommandMinerThread authority
  *******************************************************************************/
 
 package org.eclipse.rse.internal.dstore.universal.miners.command;
@@ -192,12 +193,12 @@ public class CommandMinerThread extends MinerThread
 			String userHome = null;			
 			Client client = _dataStore.getClient();
 			
-			if (client != null){ //$NON-NLS-1$
-				String clientActualUserId = client.getProperty("client.username");//$NON-NLS-1$
+			if (client != null){ 
+				String clientActualUserId = client.getProperty("user.name");//$NON-NLS-1$
 				String clientUserId = client.getUserid();
 				
 				userHome = client.getProperty("user.home");//$NON-NLS-1$							
-				if (!theOS.equals("z/OS") && clientUserId != null && !clientActualUserId.equals(clientUserId)){
+				if (!theOS.equals("z/OS") && clientUserId != null && !clientActualUserId.equals(clientUserId)){ //$NON-NLS-1$
 					suCommand = "su " + clientUserId + " -c "; //$NON-NLS-1$ //$NON-NLS-2$					
 				}					
 			}

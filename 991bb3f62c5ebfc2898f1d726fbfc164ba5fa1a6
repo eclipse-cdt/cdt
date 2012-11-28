@@ -299,6 +299,24 @@
     },
     {
       "key": {
+        "uuid": "AABOJ3///5M\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIBreakpointsSynchronizer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 264,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-11-28T19:32:37Z",
+      "side": 1,
+      "message": "You are right.  I now understand it thanks to your explanation.",
+      "parentUuid": "AABOJn///+k\u003d",
+      "revId": "991bb3f62c5ebfc2898f1d726fbfc164ba5fa1a6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOJX///xY\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIBreakpointsSynchronizer.java",
         "patchSetId": 3
@@ -328,6 +346,24 @@
       "side": 1,
       "message": "Is it implemented in GDB 7.5?",
       "parentUuid": "AABOJX///xY\u003d",
+      "revId": "991bb3f62c5ebfc2898f1d726fbfc164ba5fa1a6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3///5I\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIBreakpointsSynchronizer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 417,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-11-28T19:32:37Z",
+      "side": 1,
+      "message": "No, it will only be part of GDB 7.6",
+      "parentUuid": "AABOJX//+uQ\u003d",
       "revId": "991bb3f62c5ebfc2898f1d726fbfc164ba5fa1a6",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -398,6 +434,24 @@
       "side": 1,
       "message": "I changed the code as you suggested but not sure what kind of comment to put. What do you mean by \"also broken in processes.createContainerContextFromThreadId\"?",
       "parentUuid": "AABOJX///xw\u003d",
+      "revId": "991bb3f62c5ebfc2898f1d726fbfc164ba5fa1a6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3///5E\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIBreakpointsSynchronizer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 712,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-11-28T19:32:37Z",
+      "side": 1,
+      "message": "If you look in GDBProcesses_7_0.processes.createContainerContextFromThreadId() you will see a comment saying it is broken for multi-process :(\n\nForget about putting a special comment here, the one in GDBProcesses_7_0 is enough",
+      "parentUuid": "AABOJX//+tw\u003d",
       "revId": "991bb3f62c5ebfc2898f1d726fbfc164ba5fa1a6",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

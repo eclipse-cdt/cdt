@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "AABOJ3///2U\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/DebugNewProcessSequence.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 433,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-11-28T22:02:16Z",
+      "side": 1,
+      "message": "Yes, that\u0027s the only problem. I don\u0027t think we need to modify or delete a tracepoint from UI in a trace file session. Opening a separate bug is fine with me.",
+      "parentUuid": "AABOJ3////s\u003d",
+      "revId": "a6cd6b6484421f8c29b56e8f47292dcc4c1f7b14",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOJ3///5k\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIBreakpointsSynchronizer.java",
         "patchSetId": 5
@@ -30,6 +48,24 @@
       "writtenOn": "2012-11-28T19:43:59Z",
       "side": 1,
       "message": "I don\u0027t think you need to specify origLocation.length().  There is a substring(beginIndex) method, which I think would be simpler to use.",
+      "revId": "a6cd6b6484421f8c29b56e8f47292dcc4c1f7b14",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3///14\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIBreakpointsSynchronizer.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1250,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-11-28T22:02:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOJ3///5k\u003d",
       "revId": "a6cd6b6484421f8c29b56e8f47292dcc4c1f7b14",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

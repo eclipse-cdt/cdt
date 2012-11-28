@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPQualifierType;
+import org.eclipse.cdt.core.parser.GCCKeywords;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
@@ -310,9 +311,17 @@ public class ASTTypeUtil {
 				if (needSpace) result.append(SPACE);
 				result.append(Keywords.FLOAT);
 				break;
+			case eFloat128:
+				if (needSpace) result.append(SPACE);
+				result.append(GCCKeywords.__FLOAT128);
+				break;
 			case eInt:
 				if (needSpace) result.append(SPACE);
 				result.append(Keywords.INT);
+				break;
+			case eInt128:
+				if (needSpace) result.append(SPACE);
+				result.append(GCCKeywords.__INT128);
 				break;
 			case eVoid:
 				if (needSpace) result.append(SPACE);

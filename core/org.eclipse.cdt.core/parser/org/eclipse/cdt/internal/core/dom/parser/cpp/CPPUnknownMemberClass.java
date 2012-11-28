@@ -33,6 +33,7 @@ public class CPPUnknownMemberClass extends CPPUnknownMember implements ICPPUnkno
 	public static CPPUnknownMemberClass createUnnamedInstance() {
     	return new CPPUnknownMemberClass(null, CharArrayUtils.EMPTY);
     }
+
     public CPPUnknownMemberClass(IType owner, char[] name) {
     	super(owner, name);
     }

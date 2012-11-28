@@ -24,7 +24,6 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
-import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
@@ -123,7 +122,7 @@ public class EvalFunctionCall extends CPPEvaluation {
 		final ICPPEvaluation arg0 = fArguments[0];
 		IType t= SemanticUtil.getNestedType(arg0.getTypeOrFunctionSet(point), TDEF|REF|CVTYPE);
 		if (t instanceof ICPPClassType) {
-			return new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
+			return ProblemType.UNKNOWN_FOR_EXPRESSION;
 		}
 
 		if (t instanceof IPointerType) {
@@ -136,7 +135,7 @@ public class EvalFunctionCall extends CPPEvaluation {
 			}
 			return t;
 		}
-		return new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
+		return ProblemType.UNKNOWN_FOR_EXPRESSION;
 	}
 
 	@Override
@@ -150,7 +149,6 @@ public class EvalFunctionCall extends CPPEvaluation {
 		ICPPFunction overload = getOverload(point);
     	if (overload != null)
     		return valueCategoryFromFunctionCall(overload);
-
 
 		IType t= fArguments[0].getTypeOrFunctionSet(point);
 		if (t instanceof IPointerType) {

@@ -16,7 +16,6 @@ import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryTypeIdExpression.Operator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
@@ -73,7 +72,7 @@ public class EvalBinaryTypeId extends CPPEvaluation {
 		case __is_base_of:
 			return CPPBasicType.BOOLEAN;
 		}
-		return new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
+		return ProblemType.UNKNOWN_FOR_EXPRESSION;
 	}
 
 	@Override

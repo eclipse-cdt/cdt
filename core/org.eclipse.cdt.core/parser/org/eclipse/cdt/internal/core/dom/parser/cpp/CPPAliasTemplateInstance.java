@@ -35,7 +35,7 @@ public class CPPAliasTemplateInstance extends PlatformObject
 	private final ICPPAliasTemplate aliasTemplate;
 	private IType aliasedType;
 
-	public CPPAliasTemplateInstance(char[] name, IType aliasedType, ICPPAliasTemplate aliasTemplate) {
+	public CPPAliasTemplateInstance(char[] name, ICPPAliasTemplate aliasTemplate, IType aliasedType) {
 		this.name = name;
 		this.aliasTemplate = aliasTemplate;
 		this.aliasedType = aliasedType;
@@ -122,7 +122,7 @@ public class CPPAliasTemplateInstance extends PlatformObject
 		char[] name = buffer.getCharArray();
 		IType unmarshalledAliasedTypeInstance = buffer.unmarshalType();
 		ICPPAliasTemplate unmarshalledAlias = (ICPPAliasTemplate)buffer.unmarshalBinding();
-		return new CPPAliasTemplateInstance(name, unmarshalledAliasedTypeInstance, unmarshalledAlias);
+		return new CPPAliasTemplateInstance(name, unmarshalledAlias, unmarshalledAliasedTypeInstance);
 	}
 
 	@Override

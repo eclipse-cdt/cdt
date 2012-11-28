@@ -32,7 +32,6 @@ import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IScope;
-import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
@@ -196,7 +195,7 @@ public class EvalMemberAccess extends CPPEvaluation {
 		if (CPPTemplates.isDependentType(type))
 			return returnUnnamed ? CPPUnknownMemberClass.createUnnamedInstance() : null;
 
-		return new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
+		return ProblemType.UNKNOWN_FOR_EXPRESSION;
 	}
 
 	@Override

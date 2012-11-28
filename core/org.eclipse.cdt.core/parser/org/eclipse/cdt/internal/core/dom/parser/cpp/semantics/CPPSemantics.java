@@ -241,7 +241,7 @@ public class CPPSemantics {
 
 	private static final char[] CALL_FUNCTION = "call-function".toCharArray(); //$NON-NLS-1$
 	private static final ICPPEvaluation[] NO_INITCLAUSE_EVALUATION = {};
-	
+
 	// Set to true for debugging.
 	public static boolean traceBindingResolution = false;
 	public static int traceIndent= 0;
@@ -308,7 +308,7 @@ public class CPPSemantics {
         final IASTName lookupName = data.getLookupName();
         if (lookupName == null)
         	return binding;
-        
+
 		IASTNode lookupPoint = data.getLookupPoint();
 
         if (binding == null && data.checkClassContainingFriend()) {
@@ -904,7 +904,7 @@ public class CPPSemantics {
 			IASTName lookupName= data.getLookupName();
 			if (lookupName == null)
 				return;
-			
+
 			nextScope= getLookupScope(lookupName);
 
 			if (nextScope instanceof ICPPTemplateScope) {
@@ -1087,7 +1087,7 @@ public class CPPSemantics {
 		IBinding[] typedefs = ld2.getFoundBindings();
 		if (typedefs.length < 1 || !(typedefs[0] instanceof ITypedef))
 			return false;
-		
+
 		IType t= SemanticUtil.getNestedType((ITypedef) typedefs[0], TDEF);
 		if (t instanceof ICPPUnknownBinding || t instanceof ISemanticProblem ||
 				!(t instanceof ICPPClassType)) {
@@ -1224,7 +1224,7 @@ public class CPPSemantics {
 					}
 				}
 			}
-		} 
+		}
 		return expandUsingDeclarationsAndRemoveObjects(bindings, data);
 	}
 
@@ -1489,7 +1489,7 @@ public class CPPSemantics {
 			} else {
 				populateCache(scope, item);
 			}
-		
+
 			if (nodes != null && ++idx < nodes.length) {
 				item = nodes[idx];
 			} else {
@@ -1531,7 +1531,7 @@ public class CPPSemantics {
 				        idx = nodeIdxStack[nodeStackPos--];
 				        if (++idx >= nodes.length)
 				            continue;
-				
+
 			            item = nodes[idx];
 				    }
 				    break;
@@ -1764,16 +1764,16 @@ public class CPPSemantics {
 	        	// Bug 238180
 	        	if (candidate instanceof ICPPClassTemplatePartialSpecialization)
 	        		return null;
-	
+
 		        // Specialization is selected during instantiation
 		        if (candidate instanceof ICPPTemplateInstance)
 		        	candidate= ((ICPPTemplateInstance) candidate).getSpecializedBinding();
-	
+
 		        if (!(candidate instanceof ICPPFunctionTemplate))
 		        	return candidate;
 	        }
 	    }
-	
+
 	    LookupData data = createLookupData(name);
 	    data.foundItems = bindings;
 	    try {
@@ -1781,7 +1781,7 @@ public class CPPSemantics {
 	    } catch (DOMException e) {
 	    	return e.getProblem();
 	    }
-//	
+//
 //        IBinding[] result = null;
 //        for (Object binding : bindings) {
 //            if (binding instanceof IASTName) {
@@ -1796,13 +1796,13 @@ public class CPPSemantics {
 	public static boolean declaredBefore(Object obj, IASTNode node, boolean indexBased) {
 	    if (node == null)
 	    	return true;
-	
+
 	    final int pointOfRef= ((ASTNode) node).getOffset();
 	    ASTNode nd = null;
 	    if (obj instanceof ICPPSpecialization) {
 	        obj = ((ICPPSpecialization) obj).getSpecializedBinding();
 	    }
-	
+
 	    int pointOfDecl= -1;
 	    if (obj instanceof ICPPInternalBinding) {
 	        ICPPInternalBinding cpp = (ICPPInternalBinding) obj;
@@ -1838,7 +1838,7 @@ public class CPPSemantics {
 	    		pointOfDecl= ((ICPPUsingDirective) obj).getPointOfDeclaration();
 	    	}
 	    }
-	
+
 	    if (pointOfDecl < 0 && nd != null) {
             ASTNodeProperty prop = nd.getPropertyInParent();
             if (prop == IASTDeclarator.DECLARATOR_NAME || nd instanceof IASTDeclarator) {
@@ -1903,13 +1903,13 @@ public class CPPSemantics {
 	    final IASTName lookupName = data.getLookupName();
         IASTNode lookupPoint = data.getLookupPoint();
 	    final boolean indexBased= data.getIndex() != null;
-	    final boolean checkWholeClass= lookupName == null || LookupData.checkWholeClassScope(lookupName); 
+	    final boolean checkWholeClass= lookupName == null || LookupData.checkWholeClassScope(lookupName);
 	    @SuppressWarnings("unchecked")
 	    ObjectSet<ICPPFunction> fns= ObjectSet.EMPTY_SET;
 	    IBinding type = null;
 	    IBinding obj  = null;
 	    IBinding temp = null;
-	
+
 	    final CPPASTTranslationUnit tu = data.getTranslationUnit();
 	    Object[] items = (Object[]) data.foundItems;
 		for (int i = 0; i < items.length && items[i] != null; i++) {
@@ -2059,7 +2059,7 @@ public class CPPSemantics {
 	    	if (type != null && overrulesByRelevance(data, type, fnArray)) {
 	    		return type;
 	    	}
-	
+
 	    	if (obj != null) {
 	    		int cmp= compareByRelevance(data, obj, fnArray);
 	    		if (cmp == 0) {
@@ -2072,7 +2072,7 @@ public class CPPSemantics {
 	    	}
 			return resolveFunction(data, fnArray, true);
 	    }
-	
+
 	    if (obj != null) {
 	    	return obj;
 	    }
@@ -2342,9 +2342,9 @@ public class CPPSemantics {
 		if (fns == null || fns.length == 0 || fns[0] == null)
 	        return null;
 	    fns= ArrayUtil.trim(fns);
-	
+
 	    sortAstBeforeIndex(fns);
-	    	
+
 		if (data.forUsingDeclaration)
 			return new CPPUsingDeclaration(lookupName, fns);
 
@@ -2355,7 +2355,7 @@ public class CPPSemantics {
 	    if (data.forDeclaration() != null) {
 	    	return resolveFunctionDeclaration(data, fns);
 	    }
-	
+
 		// No arguments to resolve function
 		final IASTNode lookupPoint = data.getLookupPoint();
 		if (!data.hasFunctionArguments()) {
@@ -2365,9 +2365,9 @@ public class CPPSemantics {
 		// Reduce our set of candidate functions to only those who have the right number of parameters
 	    final IType[] argTypes = data.getFunctionArgumentTypes();
 		ICPPFunction[] tmp= selectByArgumentCount(data, fns);
-	    tmp= CPPTemplates.instantiateForFunctionCall(tmp, data.fTemplateArguments, 
+	    tmp= CPPTemplates.instantiateForFunctionCall(tmp, data.fTemplateArguments,
 	    		Arrays.asList(argTypes),
-	    		Arrays.asList(data.getFunctionArgumentValueCategories()), 
+	    		Arrays.asList(data.getFunctionArgumentValueCategories()),
 	    		data.argsContainImpliedObject, lookupPoint);
 	    if (tmp.length == 0 || tmp[0] == null) {
 			return new ProblemBinding(lookupName, lookupPoint, IProblemBinding.SEMANTIC_NAME_NOT_FOUND, fns);
@@ -2522,7 +2522,7 @@ public class CPPSemantics {
 			}
 		}
 
-		if (result instanceof ICPPFunctionTemplate) 
+		if (result instanceof ICPPFunctionTemplate)
 			return CPPTemplates.instantiateForAddressOfFunction((ICPPFunctionTemplate) result, null, args, point);
 
 		return result;
@@ -2677,7 +2677,7 @@ public class CPPSemantics {
 				    	IType t= getNestedType(implicitParameterType, TDEF|REF|CVTYPE);
 				    	if (SemanticUtil.calculateInheritanceDepth(s, t, data.getLookupPoint()) >= 0)
 				    		return null;
-				
+
 				    	return CONTAINS_DEPENDENT_TYPES;
 				    }
 			    }
@@ -2714,7 +2714,7 @@ public class CPPSemantics {
 			} else {
 			    if (CPPTemplates.isDependentType(paramType))
 			    	return CONTAINS_DEPENDENT_TYPES;
-			
+
 			    Context ctx= Context.ORDINARY;
 			    if (j == 0 && sourceLen == 1 && fn instanceof ICPPConstructor) {
 			    	if (paramType instanceof ICPPReferenceType) {
@@ -2805,7 +2805,7 @@ public class CPPSemantics {
     		prop= node.getPropertyInParent();
     		parent= node.getParent();
     	}
-    	
+
     	IType targetType= null;
     	if (prop == IASTDeclarator.INITIALIZER) {
     		// Target is an object or reference being initialized
@@ -2989,7 +2989,7 @@ public class CPPSemantics {
     		ICPPEvaluation arg1, ICPPEvaluation arg2) {
 		if (op == null || arg1 == null || arg2 == null)
 			return null;
-		
+
 		IType op1type = getNestedType(arg1.getTypeOrFunctionSet(point), TDEF | REF | CVTYPE);
 		if (!isUserDefined(op1type) && !isUserDefined(
 				getNestedType(arg2.getTypeOrFunctionSet(point), TDEF | REF | CVTYPE)))
@@ -3001,7 +3001,7 @@ public class CPPSemantics {
 		} else {
 			lookupNonMember= LookupMode.LIMITED_GLOBALS;
 		}
-		return findOverloadedOperator(point, new ICPPEvaluation[] {arg1, arg2}, 
+		return findOverloadedOperator(point, new ICPPEvaluation[] {arg1, arg2},
 				op1type, op, lookupNonMember);
     }
 
@@ -3041,7 +3041,7 @@ public class CPPSemantics {
     	if (type == null)
     		return null;
 
-    	ICPPEvaluation[] args = {new EvalFixed(type, LVALUE, Value.UNKNOWN), 
+    	ICPPEvaluation[] args = {new EvalFixed(type, LVALUE, Value.UNKNOWN),
     			((ICPPASTExpression) expr.getOperand()).getEvaluation()};
 		return findOverloadedOperator(expr, args, type, op, LookupMode.GLOBALS_IF_NO_MEMBERS);
     }
@@ -3102,7 +3102,7 @@ public class CPPSemantics {
 	    		return null;
 	    	if (type instanceof ICPPClassTemplate || type instanceof ICPPUnknownType || type instanceof ISemanticProblem)
 	    		return null;
-	
+
 	    	final ICPPClassType classType = (ICPPClassType) type;
 	    	if (initializer instanceof IASTEqualsInitializer) {
 		    	// Copy initialization
@@ -3204,7 +3204,7 @@ public class CPPSemantics {
 		return idExpression;
 	}
 
-	
+
 
     /**
      * For simplicity returns an operator of form RT (T, T) rather than RT (boolean, T, T)
@@ -3231,11 +3231,11 @@ public class CPPSemantics {
 
 
     static enum LookupMode {NO_GLOBALS, GLOBALS_IF_NO_MEMBERS, LIMITED_GLOBALS, ALL_GLOBALS}
-    static ICPPFunction findOverloadedOperator(IASTNode point, ICPPEvaluation[] args, IType methodLookupType, 
+    static ICPPFunction findOverloadedOperator(IASTNode point, ICPPEvaluation[] args, IType methodLookupType,
     		OverloadableOperator operator, LookupMode mode) {
-    	while (point instanceof IASTName) 
+    	while (point instanceof IASTName)
     		point= point.getParent();
-    		
+
     	ICPPClassType callToObjectOfClassType= null;
 		IType type2= null;
 		if (args.length >= 2) {
@@ -3252,7 +3252,7 @@ public class CPPSemantics {
     	    methodData = new LookupData(operator.toCharArray(), null, point);
     	    methodData.setFunctionArguments(true, args);
     	    methodData.qualified = true; // (13.3.1.2.3)
-    	
+
 			try {
 				IScope scope = classType.getCompositeScope();
 				if (scope == null)
@@ -3407,7 +3407,7 @@ public class CPPSemantics {
     		} else if (methodData != null) {
     			binding = resolveAmbiguities(methodData);
     		}
-		
+
 		    if (binding instanceof ICPPFunction)
 		    	return (ICPPFunction) binding;
 		} catch (DOMException e) {

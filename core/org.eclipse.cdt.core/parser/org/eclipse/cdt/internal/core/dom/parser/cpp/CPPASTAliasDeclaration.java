@@ -72,12 +72,8 @@ public class CPPASTAliasDeclaration extends ASTNode implements ICPPASTAliasDecla
 	public ICPPASTAliasDeclaration copy(CopyStyle style) {
 		CPPASTAliasDeclaration copy = new CPPASTAliasDeclaration(
 				aliasName == null ? null : aliasName.copy(style),
-						mappingTypeId == null ? null : mappingTypeId.copy(style));
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+				mappingTypeId == null ? null : mappingTypeId.copy(style));
+		return copy(copy, style);
 	}
 
 	@Override

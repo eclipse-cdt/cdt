@@ -27,8 +27,8 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
- * Models a function definition without a try-block. If used for a constructor definition it may contain
- * member initializers.
+ * Models a function definition without a try-block. If used for a constructor definition
+ * it may contain member initializers.
  */
 public class CPPASTFunctionDefinition extends ASTNode
 		implements ICPPASTFunctionDefinition, IASTAmbiguityParent {
@@ -68,16 +68,13 @@ public class CPPASTFunctionDefinition extends ASTNode
 
 		copy.setBody(bodyStatement == null ? null : bodyStatement.copy(style));
 
-		for (ICPPASTConstructorChainInitializer initializer : getMemberInitializers())
+		for (ICPPASTConstructorChainInitializer initializer : getMemberInitializers()) {
 			copy.addMemberInitializer(initializer == null ? null : initializer.copy(style));
+		}
 
 		copy.fDefaulted = fDefaulted;
 		copy.fDeleted = fDeleted;
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 
 	@Override

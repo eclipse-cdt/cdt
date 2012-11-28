@@ -37,6 +37,7 @@ import org.eclipse.cdt.dsf.mi.service.CSourceLookup;
 import org.eclipse.cdt.dsf.mi.service.IMIBackend;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpoints;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpointsManager;
+import org.eclipse.cdt.dsf.mi.service.MIBreakpointsSynchronizer;
 import org.eclipse.cdt.dsf.mi.service.MIDisassembly;
 import org.eclipse.cdt.dsf.mi.service.MIExpressions;
 import org.eclipse.cdt.dsf.mi.service.MIMemory;
@@ -106,6 +107,9 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 				}
 			}
 		}
+		else if (MIBreakpointsSynchronizer.class.isAssignableFrom(clazz)) {
+			return (V)createBreakpointsSynchronizerService(session);
+		} 
 
         return super.createService(clazz, session);
 	}
@@ -116,6 +120,9 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 
 	@Override
 	protected IBreakpoints createBreakpointService(DsfSession session) {
+		if (GDB_7_4_VERSION.compareTo(fVersion) <= 0) {
+			return new GDBBreakpoints_7_4(session);
+		}
 		// This service is available for GDB 7.2 but there is a pre-release of GDB that
 		// supports the same features and has version of 6.8.50.20090414
 		if (GDB_7_2_VERSION.compareTo(fVersion) <= 0 || "6.8.50.20090414".equals(fVersion)) { //$NON-NLS-1$
@@ -236,5 +243,12 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 			return new GDBHardwareAndOS_7_5(session);
 		}
 		return new GDBHardwareAndOS(session);
+	}
+	
+	/**
+	 * @since 4.2
+	 */
+	protected MIBreakpointsSynchronizer createBreakpointsSynchronizerService(DsfSession session) {
+		return new MIBreakpointsSynchronizer(session);
 	}
 }

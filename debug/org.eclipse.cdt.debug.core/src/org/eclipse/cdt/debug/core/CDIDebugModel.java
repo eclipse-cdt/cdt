@@ -706,6 +706,52 @@ public class CDIDebugModel {
      * @param resource
      *            the resource on which to create the associated watchpoint
      *            marker
+     * @param type
+     *            a type constant from ICBreakpointType
+     * @param writeAccess
+     *            whether this is write watchpoint
+     * @param readAccess
+     *            whether this is read watchpoint
+     * @param expression
+     *            the expression on which the watchpoint is set
+     * @param enabled
+     *            whether to enable or disable this breakpoint
+     * @param ignoreCount
+     *            the number of times this breakpoint will be ignored
+     * @param condition
+     *            the breakpoint condition
+     * @param register
+     *            whether to add this breakpoint to the breakpoint manager
+     * @return a watchpoint
+     * @throws CoreException
+     *             if this method fails. Reasons include:
+     *             <ul>
+     *             <li>Failure creating underlying marker. The exception's
+     *             status contains the underlying exception responsible for the
+     *             failure.</li>
+     *             </ul>
+     *             
+	 * @since 7.3
+	 */
+    public static ICWatchpoint createWatchpoint(String sourceHandle, IResource resource, int type, boolean writeAccess,
+            boolean readAccess, String expression, boolean enabled, int ignoreCount, String condition, boolean register)
+            throws CoreException {
+            HashMap<String, Object> attributes = new HashMap<String, Object>(10);
+            setWatchPointAttributes(attributes, sourceHandle, resource, type, writeAccess, readAccess, expression, "", //$NON-NLS-1$ 
+                BigInteger.ZERO, enabled, ignoreCount, condition);
+            return new CWatchpoint(resource, attributes, register);
+    }
+
+    /**
+     * Creates and returns a watchpoint for the source defined by the given
+     * source handle, at the given expression. The marker associated with the
+     * watchpoint will be created on the specified resource.
+     * 
+     * @param sourceHandle
+     *            the handle to the watchpoint source
+     * @param resource
+     *            the resource on which to create the associated watchpoint
+     *            marker
      * @param charStart
      *            the first character index associated with the watchpoint, or
      *            -1 if unspecified, in the source file in which the watchpoint
@@ -848,6 +894,47 @@ public class CDIDebugModel {
         attributes.put(ICWatchpoint2.RANGE, range.toString());
         attributes.put(ICWatchpoint.READ, Boolean.valueOf(readAccess));
         attributes.put(ICWatchpoint.WRITE, Boolean.valueOf(writeAccess));
+    }
+
+    /**
+     * Helper function for setting common watchpoint attributes.
+     * 
+     * @param attributes
+     *            Map to write the attributes into.
+     * @param sourceHandle
+     *            the handle to the watchpoint source
+     * @param resource
+     *            the resource on which to create the associated watchpoint
+     *            marker
+     * @param type
+     *            a type constant from ICBreakpointType
+     * @param writeAccess
+     *            whether this is write watchpoint
+     * @param readAccess
+     *            whether this is read watchpoint
+     * @param expression
+     *            the expression on which the watchpoint is set
+     * @param memorySpace
+     *            the memory space in which the watchpoint is set
+     * @param range
+     *            the range of the watchpoint in addressable units
+     * @param enabled
+     *            whether to enable or disable this breakpoint
+     * @param ignoreCount
+     *            the number of times this breakpoint will be ignored
+     * @param condition
+     *            the breakpoint condition
+     * @param register
+     *            whether to add this breakpoint to the breakpoint manager
+     *            
+	 * @since 7.3
+	 */
+    public static void setWatchPointAttributes(Map<String, Object> attributes, String sourceHandle, IResource resource,
+            int type, boolean writeAccess, boolean readAccess, String expression, String memorySpace, BigInteger range,
+            boolean enabled, int ignoreCount, String condition) {
+    	setWatchPointAttributes(attributes, sourceHandle, resource, 
+    		writeAccess, readAccess, expression, memorySpace, range, enabled, ignoreCount, condition);
+        attributes.put(ICBreakpointType.TYPE, type);
     }
 
     /**

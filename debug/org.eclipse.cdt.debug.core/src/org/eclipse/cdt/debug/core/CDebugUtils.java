@@ -357,6 +357,7 @@ public class CDebugUtils {
 			appendWatchMemorySpace(wp2, label);
 			appendWatchRange(wp2, label);
 		}
+		appendBreakpointType(watchpoint, label);
 		appendIgnoreCount(watchpoint, label);
 		appendCondition(watchpoint, label);
 		return label.toString();

@@ -34,6 +34,7 @@ import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpointExtension;
 import org.eclipse.cdt.debug.core.model.ICBreakpointType;
 import org.eclipse.cdt.debug.core.model.ICEventBreakpoint;
+import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICTracepoint;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint;
@@ -41,6 +42,7 @@ import org.eclipse.cdt.debug.internal.core.breakpoints.BreakpointProblems;
 import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
+import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ThreadSafe;
@@ -82,6 +84,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
@@ -104,7 +107,19 @@ import com.ibm.icu.text.MessageFormat;
  */
 public class MIBreakpointsManager extends AbstractDsfService implements IBreakpointManagerListener, IBreakpointListener
 {
-    // Note: Find a way to import this (careful of circular dependencies)
+    /**
+     * A listener is notified by {@link MIBreakpointsManager} when 
+     * the breakpoints tracking starts or stops. 
+     * @since 4.2
+     */
+    public interface IMIBreakpointsTrackingListener {
+
+    	public void breakpointTrackingStarted(IBreakpointsTargetDMContext bpTargetDMC);
+    	
+    	public void breakpointTrackingStopped(IBreakpointsTargetDMContext bpTargetDMC);
+	}
+
+	// Note: Find a way to import this (careful of circular dependencies)
     public final static String GDB_DEBUG_MODEL_ID = "org.eclipse.cdt.dsf.gdb"; //$NON-NLS-1$
 
     // Extra breakpoint attributes
@@ -176,6 +191,8 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
 
     private Map<ICBreakpoint, IMarker> fBreakpointMarkerProblems =
         new HashMap<ICBreakpoint, IMarker>();
+
+    private ListenerList fTrackingListeners = new ListenerList();
 
     ///////////////////////////////////////////////////////////////////////////
     // String constants
@@ -284,6 +301,7 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
         getSession().removeServiceEventListener(this);
         fBreakpointManager.removeBreakpointListener(this);
         fBreakpointManager.removeBreakpointManagerListener(this);
+        fTrackingListeners.clear();
 
         // Cleanup the breakpoints that are still installed by the service.
         // Use a counting monitor which will call mom to complete the shutdown
@@ -369,7 +387,16 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
                 getExecutor().submit(new Runnable() {
                 	@Override
                 	public void run() {
-                        installInitialBreakpoints(dmc, rm);
+                        installInitialBreakpoints(dmc, new RequestMonitor(ImmediateExecutor.getInstance(), rm) {
+                        	@Override
+                        	protected void handleSuccess() {
+                        		// Notify breakpoints tracking listeners that the tracking is started.
+                        		for (Object o : fTrackingListeners.getListeners()) {
+                        			((IMIBreakpointsTrackingListener)o).breakpointTrackingStarted(dmc);
+                        		}
+                    			rm.done();
+                        	};
+                        });
                     }
                 });
 
@@ -491,6 +518,10 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
                 fBreakpointIDs.remove(dmc);
                 fTargetBPs.remove(dmc);
                 fBreakpointThreads.remove(dmc);
+        		// Notify breakpoints tracking listeners that the tracking is stopped.
+        		for (Object o : fTrackingListeners.getListeners()) {
+        			((IMIBreakpointsTrackingListener)o).breakpointTrackingStopped(dmc);
+        		}
                 rm.done();
             }
         };
@@ -549,7 +580,9 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
         }
 
         // Ensure the breakpoint has a valid debugger source path
-        if (breakpoint instanceof ICLineBreakpoint && !(breakpoint instanceof ICAddressBreakpoint)) {
+        if (breakpoint instanceof ICLineBreakpoint 
+        	&& !(breakpoint instanceof ICAddressBreakpoint)
+        	&& !(breakpoint instanceof ICFunctionBreakpoint)) {
             String debuggerPath = (String) attributes.get(ATTR_DEBUGGER_PATH);
             if (debuggerPath == null || debuggerPath == NULL_STRING) {
                 rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, NO_DEBUGGER_PATH, null));
@@ -719,8 +752,10 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
      * @param dmc
      * @param breakpoint
      * @param rm
+     * 
+     * @since 4.2
      */
-    private void uninstallBreakpoint(final IBreakpointsTargetDMContext dmc,
+    public void uninstallBreakpoint(final IBreakpointsTargetDMContext dmc,
             final ICBreakpoint breakpoint, final RequestMonitor rm)
     {
         // Retrieve the breakpoint maps
@@ -1809,16 +1844,6 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
                 properties.put(MIBreakpoints.PASS_COUNT, attributes.get(ICTracepoint.PASS_COUNT));
             }
             
-            // checks for the breakpoint type, and adds the hardware/temporary flags 
-            Object breakpointType = attributes.get(ICBreakpointType.TYPE);
-            if(breakpointType != null) {
-            	if(breakpointType instanceof Integer) {
-		            boolean isHardware = ((Integer) breakpointType & ICBreakpointType.HARDWARE) == ICBreakpointType.HARDWARE;
-		            boolean isTemporary = ((Integer) breakpointType & ICBreakpointType.TEMPORARY) == ICBreakpointType.TEMPORARY;
-		            properties.put(MIBreakpointDMData.IS_HARDWARE, isHardware);
-		            properties.put(MIBreakpointDMData.IS_TEMPORARY, isTemporary);
-            	}
-            }
         }
         else if (breakpoint instanceof ICEventBreakpoint) {
         	properties.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.CATCHPOINT);
@@ -1844,6 +1869,17 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
         properties.put(MIBreakpoints.IGNORE_COUNT,        attributes.get(ICBreakpoint.IGNORE_COUNT));
         properties.put(MIBreakpoints.IS_ENABLED,          attributes.get(ICBreakpoint.ENABLED));
         properties.put(MIBreakpointDMData.THREAD_ID,      attributes.get(ATTR_THREAD_ID));
+
+        // checks for the breakpoint type, and adds the hardware/temporary flags 
+        Object breakpointType = attributes.get(ICBreakpointType.TYPE);
+        if(breakpointType != null) {
+        	if(breakpointType instanceof Integer) {
+	            boolean isHardware = ((Integer) breakpointType & ICBreakpointType.HARDWARE) == ICBreakpointType.HARDWARE;
+	            boolean isTemporary = ((Integer) breakpointType & ICBreakpointType.TEMPORARY) == ICBreakpointType.TEMPORARY;
+	            properties.put(MIBreakpointDMData.IS_HARDWARE, isHardware);
+	            properties.put(MIBreakpointDMData.IS_TEMPORARY, isTemporary);
+        	}
+        }
 
         // Adjust for "skip-all"
         // Tracepoints are not affected by "skip-all"
@@ -1927,5 +1963,19 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
 		catch(CoreException e) {
 		}
     	return true;
+    }
+
+    /**
+	 * @since 4.2
+	 */
+    public void addBreakpointsTrackingListener(IMIBreakpointsTrackingListener listener) {
+    	fTrackingListeners.add(listener);
+    }
+
+    /**
+	 * @since 4.2
+	 */
+    public void removeBreakpointsTrackingListener(IMIBreakpointsTrackingListener listener) {
+    	fTrackingListeners.remove(listener);
     }
 }

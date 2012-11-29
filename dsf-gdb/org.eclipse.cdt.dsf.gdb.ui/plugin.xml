@@ -436,6 +436,17 @@
             </and>  
          </enablement>
       </toggleTargetFactory>
+      <toggleTargetFactory
+            id="org.eclipse.cdt.dsf.gdb.ui.ToggleHWBreakpointsTargetFactory"
+            class="org.eclipse.cdt.dsf.debug.internal.ui.ToggleHWBreakpointsTargetFactory">
+         <enablement>
+            <and>
+               <reference
+                     definitionId="org.eclipse.cdt.debug.ui.testIsHardwareBreakpointActionSetActive">
+               </reference>
+            </and>
+         </enablement>
+      </toggleTargetFactory>
    </extension>
    <extension
          point="org.eclipse.debug.core.statusHandlers">

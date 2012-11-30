@@ -49,7 +49,10 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 
 public class BaseTestCase extends TestCase {
-	protected static final int INDEXER_TIMEOUT_SEC = 10;
+	private static final String DEFAULT_INDEXER_TIMEOUT_SEC = "10";
+	private static final String INDEXER_TIMEOUT_PROPERTY = "indexer.timeout";
+	protected static final int INDEXER_TIMEOUT_SEC =
+			Integer.parseInt(System.getProperty(INDEXER_TIMEOUT_PROPERTY, DEFAULT_INDEXER_TIMEOUT_SEC));
 	private boolean fExpectFailure;
 	private int fBugNumber;
 	private int fExpectedLoggedNonOK;

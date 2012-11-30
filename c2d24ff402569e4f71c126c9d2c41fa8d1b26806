@@ -1,0 +1,157 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOIn//yFE\u003d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-11-30T20:28:08Z",
+      "side": 1,
+      "message": "Please change the commit message to:\n\nBug 388064: Initial implementation of a TE-based remote launcher over DSF\n\nIn the current form, Gerrit does not trigger a hyperlink",
+      "revId": "c2d24ff402569e4f71c126c9d2c41fa8d1b26806",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//x+I\u003d",
+        "filename": "cross/org.eclipse.cdt.launch.remote.te/META-INF/MANIFEST.MF",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-11-30T20:28:08Z",
+      "side": 1,
+      "message": "Please remove.  Apparently not needed.",
+      "revId": "c2d24ff402569e4f71c126c9d2c41fa8d1b26806",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//x+E\u003d",
+        "filename": "cross/org.eclipse.cdt.launch.remote.te/META-INF/MANIFEST.MF",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-11-30T20:28:08Z",
+      "side": 1,
+      "message": "Please remove.  Apparently not needed.",
+      "revId": "c2d24ff402569e4f71c126c9d2c41fa8d1b26806",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//x94\u003d",
+        "filename": "cross/org.eclipse.cdt.launch.remote.te/OSGI-INF/l10n/bundle.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-11-30T20:28:08Z",
+      "side": 1,
+      "message": "Copyright header",
+      "revId": "c2d24ff402569e4f71c126c9d2c41fa8d1b26806",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//x90\u003d",
+        "filename": "cross/org.eclipse.cdt.launch.remote.te/OSGI-INF/l10n/bundle.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-11-30T20:28:08Z",
+      "side": 1,
+      "message": "For consistency can you move this file to plugin.properties like the rest of CDT",
+      "revId": "c2d24ff402569e4f71c126c9d2c41fa8d1b26806",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//x+A\u003d",
+        "filename": "cross/org.eclipse.cdt.launch.remote.te/build.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-11-30T20:28:08Z",
+      "side": 1,
+      "message": "Copyright header",
+      "revId": "c2d24ff402569e4f71c126c9d2c41fa8d1b26806",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//yEs\u003d",
+        "filename": "cross/org.eclipse.cdt.launch.remote.te/src/org/eclipse/cdt/launch/remote/te/Activator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-11-30T20:28:08Z",
+      "side": 1,
+      "message": "Copyright header",
+      "revId": "c2d24ff402569e4f71c126c9d2c41fa8d1b26806",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//yEw\u003d",
+        "filename": "cross/org.eclipse.cdt.launch.remote.te/src/org/eclipse/cdt/launch/remote/te/launching/TERunLaunchDelegate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-11-30T20:28:08Z",
+      "side": 1,
+      "message": "Copyright header",
+      "revId": "c2d24ff402569e4f71c126c9d2c41fa8d1b26806",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOIn//yE8\u003d",
+        "filename": "cross/org.eclipse.cdt.launch.remote.te/src/org/eclipse/cdt/launch/remote/te/utils/ProcessStreamsProxy.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-11-30T20:28:08Z",
+      "side": 1,
+      "message": "Add your copyright",
+      "revId": "c2d24ff402569e4f71c126c9d2c41fa8d1b26806",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Andrew Ferguson (Symbian) - Initial implementation
+ *     Andrew Ferguson (Symbian) - Initial implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.c;
 
@@ -24,28 +24,28 @@ class CompositeCParameter extends CompositeCBinding implements IParameter {
 
 	@Override
 	public IType getType() {
-		IType rtype = ((IParameter)rbinding).getType();
+		IType rtype = ((IParameter) rbinding).getType();
 		return cf.getCompositeType(rtype);
 	}
 
 	@Override
 	public boolean isAuto() {
-		return ((IParameter)rbinding).isAuto();
+		return ((IParameter) rbinding).isAuto();
 	}
 
 	@Override
 	public boolean isExtern() {
-		return ((IParameter)rbinding).isExtern();
+		return ((IParameter) rbinding).isExtern();
 	}
 
 	@Override
 	public boolean isRegister() {
-		return ((IParameter)rbinding).isRegister();
+		return ((IParameter) rbinding).isRegister();
 	}
 
 	@Override
 	public boolean isStatic() {
-		return ((IParameter)rbinding).isStatic();
+		return ((IParameter) rbinding).isStatic();
 	}
 
 	@Override

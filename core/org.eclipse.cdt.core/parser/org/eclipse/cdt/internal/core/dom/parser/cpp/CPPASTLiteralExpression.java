@@ -263,7 +263,7 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 			if (image.length > 1 && image[0] == 'L') 
 				return Value.create(ExpressionEvaluator.getChar(image, 2));
 			return Value.create(ExpressionEvaluator.getChar(image, 1));
-		} catch (EvalException e1) {
+		} catch (EvalException e) {
 			return Value.UNKNOWN;
 		}
 	}
@@ -271,7 +271,7 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 	private IValue createIntValue() {
 		try {
 			return Value.create(ExpressionEvaluator.getNumber(getValue()));
-		} catch (EvalException e1) {
+		} catch (EvalException e) {
 			return Value.UNKNOWN;
 		}
 	}

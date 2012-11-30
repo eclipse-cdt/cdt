@@ -183,10 +183,10 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
 
 	protected ICPPASTDeclSpecifier getDeclSpecifier(IASTDeclaration decl) {
 		if (decl instanceof IASTSimpleDeclaration) {
-		    return (ICPPASTDeclSpecifier) ((IASTSimpleDeclaration)decl).getDeclSpecifier();
+		    return (ICPPASTDeclSpecifier) ((IASTSimpleDeclaration) decl).getDeclSpecifier();
 		} 
 		if (decl instanceof IASTFunctionDefinition) {
-		    return (ICPPASTDeclSpecifier) ((IASTFunctionDefinition)decl).getDeclSpecifier();
+		    return (ICPPASTDeclSpecifier) ((IASTFunctionDefinition) decl).getDeclSpecifier();
 		}
 		return null;
 	}

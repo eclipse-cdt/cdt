@@ -96,7 +96,7 @@ public class EvalFunctionCall extends CPPEvaluation {
 		if (isTypeDependent())
 			return null;
 
-		IType t= SemanticUtil.getNestedType(fArguments[0].getTypeOrFunctionSet(point), TDEF|REF|CVTYPE);
+		IType t= SemanticUtil.getNestedType(fArguments[0].getTypeOrFunctionSet(point), TDEF | REF | CVTYPE);
 		if (t instanceof ICPPClassType) {
 	    	return CPPSemantics.findOverloadedOperator(point, fArguments, t, OverloadableOperator.PAREN, LookupMode.NO_GLOBALS);
 		}
@@ -118,9 +118,8 @@ public class EvalFunctionCall extends CPPEvaluation {
 		if (overload != null)
 			return ExpressionTypes.typeFromFunctionCall(overload);
 
-
 		final ICPPEvaluation arg0 = fArguments[0];
-		IType t= SemanticUtil.getNestedType(arg0.getTypeOrFunctionSet(point), TDEF|REF|CVTYPE);
+		IType t= SemanticUtil.getNestedType(arg0.getTypeOrFunctionSet(point), TDEF | REF | CVTYPE);
 		if (t instanceof ICPPClassType) {
 			return ProblemType.UNKNOWN_FOR_EXPRESSION;
 		}

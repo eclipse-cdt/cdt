@@ -417,8 +417,9 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 		copy.fForContentAssist = fForContentAssist;
 		copy.fOriginatingTranslationUnit = fOriginatingTranslationUnit;
 		
-		for (IASTDeclaration declaration : getDeclarations())
+		for (IASTDeclaration declaration : getDeclarations()) {
 			copy.addDeclaration(declaration == null ? null : declaration.copy(style));
+		}
 
 		copy.setOffsetAndLength(this);
 	}

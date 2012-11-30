@@ -1,11 +1,11 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2009 IBM Corporation and others.
- *  All rights reserved. This program and the accompanying materials
- *  are made available under the terms of the Eclipse Public License v1.0
- *  which accompanies this distribution, and is available at
- *  http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  * 
- *  Contributors:
+ * Contributors:
  *     IBM Corporation - initial implementation
  *     Markus Schorn (Wind River Systems)
  *     Bryan Wilkinson (QNX) - https://bugs.eclipse.org/bugs/show_bug.cgi?id=151207
@@ -73,9 +73,9 @@ public class ExpressionEvaluator {
         if (LA() == IToken.tQUESTION) {
             consume();
             long r2 = expression();
-            if (LA() == IToken.tCOLON)
+            if (LA() == IToken.tCOLON) {
                 consume();
-            else {
+            } else {
                 throw new EvalException(IProblem.SCANNER_BAD_CONDITIONAL_EXPRESSION, null); 
             }
             long r3 = conditionalExpression();
@@ -139,11 +139,12 @@ public class ExpressionEvaluator {
         for (int t = LA(); t == IToken.tEQUAL || t == IToken.tNOTEQUAL; t = LA()) {
             consume();
             long r2 = relationalExpression();
-            if (t == IToken.tEQUAL)
+            if (t == IToken.tEQUAL) {
                 r1 = (r1 == r2) ? 1 : 0;
-            else
+            } else {
                 // t == tNOTEQUAL
                 r1 = (r1 != r2) ? 1 : 0;
+            }
         }
         return r1;
     }
@@ -179,11 +180,12 @@ public class ExpressionEvaluator {
         for (int t = LA(); t == IToken.tSHIFTL || t == IToken.tSHIFTR; t = LA()) {
             consume();
             long r2 = additiveExpression();
-            if (t == IToken.tSHIFTL)
+            if (t == IToken.tSHIFTL) {
                 r1 = r1 << r2;
-            else
+            } else {
                 // t == tSHIFTR
                 r1 = r1 >> r2;
+            }
         }
         return r1;
     }
@@ -193,11 +195,12 @@ public class ExpressionEvaluator {
         for (int t = LA(); t == IToken.tPLUS || t == IToken.tMINUS; t = LA()) {
             consume();
             long r2 = multiplicativeExpression();
-            if (t == IToken.tPLUS)
+            if (t == IToken.tPLUS) {
                 r1 = r1 + r2;
-            else
+            } else {
                 // t == tMINUS
                 r1 = r1 - r2;
+            }
         }
         return r1;
     }
@@ -207,13 +210,14 @@ public class ExpressionEvaluator {
         for (int t = LA(); t == IToken.tSTAR || t == IToken.tDIV || t == IToken.tMOD; t = LA()) {
             consume();
             long r2 = unaryExpression();
-            if (t == IToken.tSTAR)
+            if (t == IToken.tSTAR) {
                 r1 = r1 * r2;
-            else if (r2 != 0) {
-            	if (t == IToken.tDIV)
+            } else if (r2 != 0) {
+            	if (t == IToken.tDIV) {
             		r1 = r1 / r2;
-            	else
+            	} else {
             		r1 = r1 % r2;	//tMOD
+            	}
             } else {
                 throw new EvalException(IProblem.SCANNER_DIVIDE_BY_ZERO, null); 
             }
@@ -328,7 +332,7 @@ public class ExpressionEvaluator {
     }
     
     long getValue(Token t) throws EvalException {
-    	switch(t.getType()) {
+    	switch (t.getType()) {
     	case IToken.tCHAR:
     		return getChar(t.getCharImage(), 1);
     	case IToken.tLCHAR:
@@ -386,7 +390,7 @@ public class ExpressionEvaluator {
     }
 
 	public static long getChar(char[] tokenImage, int i) throws EvalException {
-		if (i>=tokenImage.length) {
+		if (i >= tokenImage.length) {
 			throw new EvalException(IProblem.SCANNER_BAD_CHARACTER, tokenImage);
 		}
 		final char c= tokenImage[i];
@@ -398,7 +402,7 @@ public class ExpressionEvaluator {
 			throw new EvalException(IProblem.SCANNER_BAD_CHARACTER, tokenImage);
 		}
 		final char d= tokenImage[i];
-		switch(d) {
+		switch (d) {
 		case '\\': case '"': case '\'':
 			return d;
 		case 'a': return 7;
@@ -433,7 +437,7 @@ public class ExpressionEvaluator {
 			result= result*base + digit;
 		}
 		for (; i < to; i++) {
-			switch(tokenImage[i]) {
+			switch (tokenImage[i]) {
 			case 'u' : case 'l': case 'U': case 'L':
 				break;
 			default:
@@ -444,13 +448,13 @@ public class ExpressionEvaluator {
 	}
 
 	private static int getDigit(char c) {
-		switch(c) {
+		switch (c) {
 		case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
-			return c-'0';
+			return c - '0';
 		case 'a': case 'b': case 'c': case 'd': case 'e': case 'f':
-			return c-'a' + 10;
+			return c - 'a' + 10;
 		case 'A': case 'B': case 'C': case 'D': case 'E': case 'F':
-			return c-'A'+10;
+			return c - 'A' + 10;
 		}
 		return Integer.MAX_VALUE;
 	}

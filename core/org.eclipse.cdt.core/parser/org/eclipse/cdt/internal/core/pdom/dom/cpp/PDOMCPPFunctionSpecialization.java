@@ -86,7 +86,7 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICP
 			getLinkage().storeType(record + FUNCTION_TYPE, astFt);
 		}
 
-		ICPPFunction origAstFunc= (ICPPFunction) ((ICPPSpecialization)astFunction).getSpecializedBinding();
+		ICPPFunction origAstFunc= (ICPPFunction) ((ICPPSpecialization) astFunction).getSpecializedBinding();
 		ICPPParameter[] origAstParams= origAstFunc.getParameters();
 		if (origAstParams.length == 0) {
 			db.putInt(record + NUM_PARAMS, 0);
@@ -98,14 +98,14 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICP
 			db.putRecPtr(record + FIRST_PARAM, 0);
 			PDOMCPPParameter origPar= null;
 			PDOMCPPParameterSpecialization next= null;
-			for (int i= length-1; i >= 0; --i) {
+			for (int i= length; --i >= 0;) {
 				// There may be fewer or less original parameters, because of parameter packs.
 				if (i < origAstParams.length - 1) {
 					// Normal case
 					origPar= new PDOMCPPParameter(linkage, specialized, origAstParams[i], null);
 				} else if (origPar == null) {
 					// Use last parameter
-					origPar= new PDOMCPPParameter(linkage, specialized, origAstParams[origAstParams.length-1], null);
+					origPar= new PDOMCPPParameter(linkage, specialized, origAstParams[origAstParams.length - 1], null);
 				}
 				next= new PDOMCPPParameterSpecialization(linkage, this, astParams[i], origPar, next);
 			}
@@ -205,8 +205,8 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICP
 		if (fType == null) {
 			try {
 				fType= (ICPPFunctionType) getLinkage().loadType(record + FUNCTION_TYPE);
-			} catch(CoreException ce) {
-				CCorePlugin.log(ce);
+			} catch (CoreException e) {
+				CCorePlugin.log(e);
 				fType= new ProblemFunctionType(ISemanticProblem.TYPE_NOT_PERSISTED);
 			}
 		}
@@ -287,7 +287,7 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICP
 	@Override
 	public int pdomCompareTo(PDOMBinding other) {
 		int cmp= super.pdomCompareTo(other);
-		return cmp==0 ? PDOMCPPFunction.compareSignatures(this, other) : cmp;
+		return cmp == 0 ? PDOMCPPFunction.compareSignatures(this, other) : cmp;
 	}
 
 	@Override

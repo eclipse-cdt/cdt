@@ -175,8 +175,9 @@ public class EvalMemberAccess extends CPPEvaluation {
     		 * examine for type information.
     		 */
 
-    		ICPPEvaluation[] args= {new EvalFixed(type, LVALUE, Value.UNKNOWN)};
-			ICPPFunction op= CPPSemantics.findOverloadedOperator(point, args, classType, OverloadableOperator.ARROW, LookupMode.NO_GLOBALS);
+    		ICPPEvaluation[] args= { new EvalFixed(type, LVALUE, Value.UNKNOWN) };
+			ICPPFunction op= CPPSemantics.findOverloadedOperator(point, args, classType,
+					OverloadableOperator.ARROW, LookupMode.NO_GLOBALS);
     		if (op == null)
     			break;
 

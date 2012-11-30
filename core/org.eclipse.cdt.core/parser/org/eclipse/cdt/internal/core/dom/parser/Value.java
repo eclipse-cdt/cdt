@@ -227,7 +227,7 @@ public class Value implements IValue {
 	}
 
 	/**
-	 * Creates a value object representing the given boolean value.  
+	 * Creates a value object representing the given boolean value.
 	 */
 	public static IValue create(boolean value) {
 		return create(value ? 1 : 0);
@@ -357,7 +357,7 @@ public class Value implements IValue {
 	}
 	/**
 	 * Tests whether the value is a template parameter (or a parameter pack).
-	 * 
+	 *
 	 * @return the parameter id of the parameter, or <code>-1</code> if it is not a template
 	 *         parameter.
 	 */

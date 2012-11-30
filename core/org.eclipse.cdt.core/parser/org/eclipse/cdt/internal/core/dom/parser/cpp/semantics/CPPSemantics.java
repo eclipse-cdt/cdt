@@ -3041,8 +3041,10 @@ public class CPPSemantics {
     	if (type == null)
     		return null;
 
-    	ICPPEvaluation[] args = {new EvalFixed(type, LVALUE, Value.UNKNOWN),
-    			((ICPPASTExpression) expr.getOperand()).getEvaluation()};
+    	ICPPEvaluation[] args = {
+    			new EvalFixed(type, LVALUE, Value.UNKNOWN),
+    			((ICPPASTExpression) expr.getOperand()).getEvaluation()
+    		};
 		return findOverloadedOperator(expr, args, type, op, LookupMode.GLOBALS_IF_NO_MEMBERS);
     }
 

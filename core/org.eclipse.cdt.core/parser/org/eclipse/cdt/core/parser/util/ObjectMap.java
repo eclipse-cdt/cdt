@@ -6,10 +6,11 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Andrew Niefer (IBM Corporation) - Initial API and implementation 
+ *     Andrew Niefer (IBM Corporation) - Initial API and implementation 
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.util;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -42,9 +43,7 @@ public class ObjectMap extends ObjectTable<Object> {
 	@Override
 	final public void clear() {
 	    super.clear();
-	    for(int i = 0; i < valueTable.length; i++) {
-	        valueTable[i] = null;
-	    }
+	    Arrays.fill(valueTable, null);
 	}
 	
 	@Override

@@ -8,10 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-/*
- * Created on Jun 3, 2003
- * by bnicolle
- */
 package org.eclipse.cdt.core.model.tests;
 
 import java.io.FileInputStream;
@@ -33,18 +29,13 @@ import org.eclipse.core.runtime.Path;
 
 /**
  * @author bnicolle
- *
  */
 public abstract class IntegratedCModelTest extends BaseTestCase {
-
 	private ICProject fCProject;
 	private IFile sourceFile;
 	private NullProgressMonitor monitor;
 	private boolean structuralParse = false;
 
-	/**
-	 * 
-	 */
 	public IntegratedCModelTest() {
 		super();
 	}
@@ -113,5 +104,4 @@ public abstract class IntegratedCModelTest extends BaseTestCase {
 	public void setStructuralParse(boolean structuralParse) {
 		this.structuralParse = structuralParse;
 	}
-
 }

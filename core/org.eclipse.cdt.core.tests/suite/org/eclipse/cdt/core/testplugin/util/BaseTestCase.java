@@ -160,7 +160,7 @@ public class BaseTestCase extends TestCase {
 			try {
 				super.runBare();
 			} catch (Throwable e) {
-				testThrowable=e;
+				testThrowable= e;
 			}
 
 			if (statusLog.size() != fExpectedLoggedNonOK) {
@@ -168,7 +168,7 @@ public class BaseTestCase extends TestCase {
 				msg.append("non-OK status objects in log differs from actual (" + statusLog.size() + ").\n");
 				Throwable cause= null;
 				if (!statusLog.isEmpty()) {
-					synchronized(statusLog) {
+					synchronized (statusLog) {
 						for (IStatus status : statusLog) {
 							IStatus[] ss= {status};
 							ss= status instanceof MultiStatus ? ((MultiStatus) status).getChildren() : ss;

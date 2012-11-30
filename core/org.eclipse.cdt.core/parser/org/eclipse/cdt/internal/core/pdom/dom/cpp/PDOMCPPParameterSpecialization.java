@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Bryan Wilkinson (QNX) - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     Bryan Wilkinson (QNX) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -44,7 +44,7 @@ class PDOMCPPParameterSpecialization extends PDOMCPPSpecialization implements IC
 	public PDOMCPPParameterSpecialization(PDOMLinkage linkage, PDOMCPPFunctionSpecialization parent, ICPPParameter astParam,
 			PDOMCPPParameter original, PDOMCPPParameterSpecialization next) throws CoreException {
 		super(linkage, parent, (ICPPSpecialization) astParam, original);
-		fType= null;  // this constructor is used for adding parameters to the database, only.
+		fType= null;  // This constructor is used for adding parameters to the database, only.
 		
 		Database db = getDB();
 		db.putRecPtr(record + NEXT_PARAM, next == null ? 0 : next.getRecord());
@@ -79,7 +79,7 @@ class PDOMCPPParameterSpecialization extends PDOMCPPSpecialization implements IC
 		if (parent instanceof ICPPSpecialization && parent instanceof ICPPFunction) {
 			IParameter[] pars= ((ICPPFunction) parent).getParameters();
 			int parPos= -1;
-			for (parPos= 0; parPos<pars.length; parPos++) {
+			for (parPos= 0; parPos < pars.length; parPos++) {
 				IParameter par= pars[parPos];
 				if (equals(par)) {
 					break;

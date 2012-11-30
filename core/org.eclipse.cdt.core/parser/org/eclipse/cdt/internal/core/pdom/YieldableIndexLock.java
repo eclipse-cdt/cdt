@@ -14,7 +14,7 @@ import org.eclipse.cdt.internal.core.index.IWritableIndex;
 
 /**
  * Write lock on the index that can be yielded temporarily to unblock threads that need
- * read access to the index. 
+ * read access to the index.
  * @since 5.2
  */
 public class YieldableIndexLock {
@@ -30,7 +30,7 @@ public class YieldableIndexLock {
 
 	/**
 	 * Acquires the lock.
-	 * 
+	 *
 	 * @throws InterruptedException
 	 */
 	public void acquire() throws InterruptedException {
@@ -51,7 +51,7 @@ public class YieldableIndexLock {
 
 	/**
 	 * Yields the lock temporarily if it was held for YIELD_INTERVAL or more, and somebody is waiting
-	 * for a read lock. 
+	 * for a read lock.
 	 * @throws InterruptedException
 	 */
 	public void yield() throws InterruptedException {
@@ -64,7 +64,7 @@ public class YieldableIndexLock {
 	}
 
 	/**
-	 * @return Total time the lock was held in milliseconds. 
+	 * @return Total time the lock was held in milliseconds.
 	 */
 	public long getCumulativeLockTime() {
 		return cumulativeLockTime;

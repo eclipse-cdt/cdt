@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Andrew Niefer (IBM) - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     Andrew Niefer (IBM) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -28,7 +28,8 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 public class CPPFunctionInstance extends CPPFunctionSpecialization implements ICPPTemplateInstance {
 	private final ICPPTemplateArgument[] fArguments;
 
-	public CPPFunctionInstance(ICPPFunction orig, IBinding owner, CPPTemplateParameterMap argMap, ICPPTemplateArgument[] args, ICPPFunctionType type, IType[] exceptionSpecs) {
+	public CPPFunctionInstance(ICPPFunction orig, IBinding owner, CPPTemplateParameterMap argMap,
+			ICPPTemplateArgument[] args, ICPPFunctionType type, IType[] exceptionSpecs) {
 		super(orig, owner, argMap, type, exceptionSpecs);
 		fArguments = args;
 	}
@@ -73,11 +74,11 @@ public class CPPFunctionInstance extends CPPFunctionSpecialization implements IC
 	
     @Override
 	public boolean equals(Object obj) {
-    	if( (obj instanceof ICPPTemplateInstance) && (obj instanceof ICPPFunction)){
-    		final ICPPTemplateInstance inst = (ICPPTemplateInstance)obj;
-			ICPPFunctionType ct1= ((ICPPFunction)getSpecializedBinding()).getType();
-			ICPPFunctionType ct2= ((ICPPFunction)inst.getTemplateDefinition()).getType();
-			if(!ct1.isSameType(ct2))
+    	if ((obj instanceof ICPPTemplateInstance) && (obj instanceof ICPPFunction)) {
+    		final ICPPTemplateInstance inst = (ICPPTemplateInstance) obj;
+			ICPPFunctionType ct1= ((ICPPFunction) getSpecializedBinding()).getType();
+			ICPPFunctionType ct2= ((ICPPFunction) inst.getTemplateDefinition()).getType();
+			if (!ct1.isSameType(ct2))
 				return false;
 
 			return CPPTemplates.haveSameArguments(this, inst);

@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Andrew Niefer (IBM) - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     Andrew Niefer (IBM) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -29,8 +29,7 @@ import org.eclipse.cdt.core.parser.util.ObjectMap;
  */
 public class CPPFunctionTemplateSpecialization extends CPPFunctionSpecialization
 		implements ICPPFunctionTemplate, ICPPInternalTemplate {
-
-	private ObjectMap instances = null;
+	private ObjectMap instances;
 	
 	public CPPFunctionTemplateSpecialization(ICPPFunction original, ICPPClassType owner, ICPPTemplateParameterMap argumentMap, ICPPFunctionType type, IType[] exceptionSpecs) {
 		super(original, owner, argumentMap, type, exceptionSpecs);

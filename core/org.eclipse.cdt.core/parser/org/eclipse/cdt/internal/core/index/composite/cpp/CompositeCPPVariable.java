@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Andrew Ferguson (Symbian) - Initial implementation
- *    Markus Schorn (Wind River Systems)
+ *     Andrew Ferguson (Symbian) - Initial implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
@@ -25,42 +25,42 @@ class CompositeCPPVariable extends CompositeCPPBinding implements ICPPVariable {
 	
 	@Override
 	public boolean isMutable() {
-		return ((ICPPVariable)rbinding).isMutable();
+		return ((ICPPVariable) rbinding).isMutable();
 	}
 
 	@Override
 	public boolean isExternC() {
-		return ((ICPPVariable)rbinding).isExternC();
+		return ((ICPPVariable) rbinding).isExternC();
 	}
 
 	@Override
 	public IType getType() {
-		IType rtype = ((ICPPVariable)rbinding).getType();
+		IType rtype = ((ICPPVariable) rbinding).getType();
 		return cf.getCompositeType(rtype);
 	}
 
 	@Override
 	public boolean isAuto() {
-		return ((ICPPVariable)rbinding).isAuto();
+		return ((ICPPVariable) rbinding).isAuto();
 	}
 
 	@Override
 	public boolean isExtern() {
-		return ((ICPPVariable)rbinding).isExtern();
+		return ((ICPPVariable) rbinding).isExtern();
 	}
 
 	@Override
 	public boolean isRegister() {
-		return ((ICPPVariable)rbinding).isRegister();
+		return ((ICPPVariable) rbinding).isRegister();
 	}
 
 	@Override
 	public boolean isStatic() {
-		return ((ICPPVariable)rbinding).isStatic();
+		return ((ICPPVariable) rbinding).isStatic();
 	}
 	
 	@Override
 	public IValue getInitialValue() {
-		return ((ICPPVariable)rbinding).getInitialValue();
+		return ((ICPPVariable) rbinding).getInitialValue();
 	}
 }

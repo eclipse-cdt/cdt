@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Doug Schaefer (QNX) - Initial API and implementation
- *    Andrew Ferguson (Symbian)
- *    Markus Schorn (Wind River Systems)
+ *     Doug Schaefer (QNX) - Initial API and implementation
+ *     Andrew Ferguson (Symbian)
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.c;
 
@@ -31,15 +31,14 @@ import org.eclipse.core.runtime.CoreException;
  * Binding for a function parameter in the index.
  */
 final class PDOMCParameter extends PDOMNamedNode implements IParameter, IPDOMBinding {
-
 	private static final int NEXT_PARAM = PDOMNamedNode.RECORD_SIZE;
-	private static final int FLAG_OFFSET = NEXT_PARAM + Database.PTR_SIZE;	
+	private static final int FLAG_OFFSET = NEXT_PARAM + Database.PTR_SIZE;
 	@SuppressWarnings("hiding")
 	public static final int RECORD_SIZE = FLAG_OFFSET + 1;
 	static {
 		assert RECORD_SIZE <= 22; // 23 would yield a 32-byte block
 	}
-	
+
 	private final IType fType;
 	public PDOMCParameter(PDOMLinkage linkage, long record, IType type) {
 		super(linkage, record);
@@ -50,7 +49,7 @@ final class PDOMCParameter extends PDOMNamedNode implements IParameter, IPDOMBin
 			throws CoreException {
 		super(linkage, parent, param.getNameCharArray());
 		fType= null; // this constructor is used for adding parameters to the database, only.
-		
+
 		Database db = getDB();
 
 		db.putRecPtr(record + NEXT_PARAM, 0);
@@ -67,7 +66,7 @@ final class PDOMCParameter extends PDOMNamedNode implements IParameter, IPDOMBin
 	public int getNodeType() {
 		return IIndexCBindingConstants.CPARAMETER;
 	}
-		
+
 	@Override
 	public IType getType() {
 		return fType;
@@ -75,13 +74,13 @@ final class PDOMCParameter extends PDOMNamedNode implements IParameter, IPDOMBin
 
 	@Override
 	public boolean isAuto() {
-		byte flag = 1<<PDOMCAnnotation.AUTO_OFFSET;
+		byte flag = 1 << PDOMCAnnotation.AUTO_OFFSET;
 		return hasFlag(flag, true);
 	}
 
 	@Override
 	public boolean isRegister() {
-		byte flag = 1<<PDOMCAnnotation.REGISTER_OFFSET;
+		byte flag = 1 << PDOMCAnnotation.REGISTER_OFFSET;
 		return hasFlag(flag, false);
 	}
 
@@ -137,15 +136,14 @@ final class PDOMCParameter extends PDOMNamedNode implements IParameter, IPDOMBin
 	public int getBindingConstant() {
 		return getNodeType();
 	}
-	
-	
+
 	@Override
 	public void delete(PDOMLinkage linkage) throws CoreException {
 		PDOMCParameter p= this;
 		for (;;) {
 			long rec = p.getNextPtr();
 			p.flatDelete(linkage);
-			if (rec == 0) 
+			if (rec == 0)
 				return;
 			p= new PDOMCParameter(linkage, rec, null);
 		}
@@ -153,8 +151,8 @@ final class PDOMCParameter extends PDOMNamedNode implements IParameter, IPDOMBin
 
 	private void flatDelete(PDOMLinkage linkage) throws CoreException {
 		super.delete(linkage);
-	}	
-	
+	}
+
 	public long getNextPtr() throws CoreException {
 		long rec = getDB().getRecPtr(record + NEXT_PARAM);
 		return rec;
@@ -164,7 +162,7 @@ final class PDOMCParameter extends PDOMNamedNode implements IParameter, IPDOMBin
 	public boolean isFileLocal() throws CoreException {
 		return false;
 	}
-	
+
 	@Override
 	public IIndexFile getLocalToFile() throws CoreException {
 		return null;
@@ -192,8 +190,7 @@ final class PDOMCParameter extends PDOMNamedNode implements IParameter, IPDOMBin
 		}
 		return defValue;
 	}
-	
-	
+
 	@Override
 	public boolean isExtern() {
 		return false;

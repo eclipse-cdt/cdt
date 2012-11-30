@@ -1710,6 +1710,14 @@
             class="org.eclipse.cdt.debug.ui.breakpointactions.ExternalToolAction"
             id="org.eclipse.cdt.debug.ui.breakpointactions.ExternalToolAction"/>
    </extension>
+  <extension
+        point="org.eclipse.cdt.debug.core.BreakpointActionType">
+     <actionType
+           class="org.eclipse.cdt.debug.ui.breakpointactions.ReverseDebugAction"
+           id="org.eclipse.cdt.debug.ui.breakpointactions.ReverseDebugAction"
+           name="%ReverseDebugAction.name">
+     </actionType>
+  </extension>
  <extension
          point="org.eclipse.cdt.debug.ui.BreakpointActionPage">
       <actionPage
@@ -2668,6 +2676,14 @@
            properties="createBreakpointAdapt"
            type="org.eclipse.cdt.debug.ui.breakpoints.ICBreakpointContext">
      </propertyTester>
+  </extension>
+  <extension
+        point="org.eclipse.cdt.debug.ui.BreakpointActionPage">
+     <actionPage
+           actionType="org.eclipse.cdt.debug.ui.breakpointactions.ReverseDebugAction"
+           class="org.eclipse.cdt.debug.ui.breakpointactions.ReverseDebugActionPage"
+           id="org.eclipse.cdt.debug.ui.breakpointactions.ReverseDebugActionPage">
+     </actionPage>
   </extension>
     
 </plugin>

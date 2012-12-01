@@ -115,7 +115,7 @@ public class FindBinding {
 		public PDOMBinding getResult() {
 			return fResult;
 		}
-		// IPDOMVisitor
+
 		@Override
 		public boolean visit(IPDOMNode node) throws CoreException {
 			if (node instanceof PDOMBinding) {
@@ -127,7 +127,7 @@ public class FindBinding {
 			}
 			return false; /* do not visit children of node */
 		}
-		// IPDOMVisitor
+
 		@Override
 		public void leave(IPDOMNode node) throws CoreException {
 		}

@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.internal.core.index.IndexCPPSignatureUtil;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
 import org.eclipse.cdt.internal.core.pdom.dom.FindBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.IPDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMOverloader;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
@@ -34,12 +35,13 @@ public class CPPFindBinding extends FindBinding {
 		public CPPBindingBTreeComparator(PDOMLinkage linkage) {
 			super(linkage);
 		}
+
 		@Override
 		public int compare(long record1, long record2) throws CoreException {
 			int cmp = super.compare(record1, record2);
 			if (cmp == 0) {
-				PDOMBinding binding1 = linkage.getBinding(record1);
-				PDOMBinding binding2 = linkage.getBinding(record2);
+				IPDOMBinding binding1 = linkage.getBinding(record1);
+				IPDOMBinding binding2 = linkage.getBinding(record2);
 				if (binding1 instanceof IPDOMOverloader && binding2 instanceof IPDOMOverloader) {
 					int ty1 = ((IPDOMOverloader) binding1).getSignatureHash();
 					int ty2 = ((IPDOMOverloader) binding2).getSignatureHash();
@@ -66,7 +68,7 @@ public class CPPFindBinding extends FindBinding {
 				int c1 = PDOMNode.getNodeType(fLinkage.getDB(), record);
 				int c2= fConstant;
 				if (c1 == c2) {
-					PDOMBinding binding = fLinkage.getBinding(record);
+					IPDOMBinding binding = fLinkage.getBinding(record);
 					if (binding instanceof IPDOMOverloader) {
 						c1 = ((IPDOMOverloader) binding).getSignatureHash();
 						c2= fSigHash;

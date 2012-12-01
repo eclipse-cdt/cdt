@@ -185,9 +185,7 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 		} else {
 			ICConfigurationDescription cfgDescription = getConfigurationDescription();
 			List<ILanguageSettingsProvider> initialProviders = initialProvidersByCfg.get(cfgDescription.getId());
-			if (initialProviders != null) {
-				initialProvider = findProvider(id, initialProviders);
-			}
+			initialProvider = findProvider(id, initialProviders);
 		}
 		return initialProvider;
 	}
@@ -203,7 +201,7 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 			if (!LanguageSettingsManager.isWorkspaceProvider(provider)) {
 				ICConfigurationDescription cfgDescription = getConfigurationDescription();
 				List<ILanguageSettingsProvider> initialProviders = initialProvidersByCfg.get(cfgDescription.getId());
-				isWorkingCopy = ! initialProviders.contains(provider);
+				isWorkingCopy = initialProviders != null && ! initialProviders.contains(provider);
 			}
 
 		}
@@ -325,9 +323,11 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 	 * Find provider with a given ID in the list or {@code null}.
 	 */
 	private ILanguageSettingsProvider findProvider(String id, List<ILanguageSettingsProvider> providers) {
-		for (ILanguageSettingsProvider provider : providers) {
-			if (provider.getId().equals(id)) {
-				return provider;
+		if (providers != null) {
+			for (ILanguageSettingsProvider provider : providers) {
+				if (provider.getId().equals(id)) {
+					return provider;
+				}
 			}
 		}
 		return null;
@@ -1072,6 +1072,15 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 	public void updateData(ICResourceDescription rcDes) {
 		if (!canBeVisible())
 			return;
+
+		ICConfigurationDescription cfgDescription = getConfigurationDescription();
+		String cfgId = cfgDescription.getId();
+		if (!initialProvidersByCfg.containsKey(cfgId)) {
+			if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
+				List<ILanguageSettingsProvider> initialProviders = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
+				initialProvidersByCfg.put(cfgId, initialProviders);
+			}
+		}
 
 		if (rcDes!=null) {
 			if (page.isMultiCfg()) {

@@ -534,8 +534,9 @@ public class CPPTemplates {
 
 			ICPPASTTemplateDeclaration templateDeclaration = templates[0];
 			IASTDeclaration decl = templateDeclaration.getDeclaration();
-			while (decl instanceof ICPPASTTemplateDeclaration)
+			while (decl instanceof ICPPASTTemplateDeclaration) {
 				decl = ((ICPPASTTemplateDeclaration) decl).getDeclaration();
+			}
 
 			IASTName name = null;
 			if (decl instanceof IASTSimpleDeclaration) {

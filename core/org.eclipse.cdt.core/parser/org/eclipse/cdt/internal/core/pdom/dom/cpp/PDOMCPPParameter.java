@@ -56,7 +56,7 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 	public PDOMCPPParameter(PDOMLinkage linkage, PDOMNode parent, ICPPParameter param, PDOMCPPParameter next)
 			throws CoreException {
 		super(linkage, parent, param.getNameCharArray());
-		fType= null;	// this constructor is used for adding parameters to the database, only.
+		fType= null;	// This constructor is used for adding parameters to the database, only.
 
 		Database db = getDB();
 		db.putByte(record + FLAGS, param.hasDefaultValue() ? FLAG_DEFAULT_VALUE : 0);

@@ -17,6 +17,8 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableType;
@@ -26,8 +28,8 @@ import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateNonTypeArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTypeArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -38,7 +40,8 @@ public class TypeMarshalBuffer implements ITypeMarshalBuffer {
 	public static final byte NULL_TYPE= 0;
 	public static final byte INDIRECT_TYPE= (byte) -1;
 	public static final byte BINDING_TYPE= (byte) -2;
-	public static final byte UNSTORABLE_TYPE= (byte) -3;
+	public static final byte PARAMETER_TYPE= (byte) -3;
+	public static final byte UNSTORABLE_TYPE= (byte) -4;
 
 	public static final IType UNSTORABLE_TYPE_PROBLEM = new ProblemType(ISemanticProblem.TYPE_NOT_PERSISTED);
 
@@ -79,16 +82,37 @@ public class TypeMarshalBuffer implements ITypeMarshalBuffer {
 			((ISerializableType) binding).marshal(this);
 		} else if (binding == null) {
 			putByte(NULL_TYPE);
+		} else if (binding instanceof ICPPParameter) {
+			// A function parameter cannot be stored in PDOM by itself. We are storing a reference
+			// to the containing function and the position of the parameter in the parameter list. 
+			ICPPFunction function = (ICPPFunction) binding.getOwner();
+			int pos = findInArray(function.getParameters(), binding);
+			PDOMNode pb= fLinkage.addTypeBinding(function);
+			if (pb == null) {
+				putByte(UNSTORABLE_TYPE);
+			} else {
+				putByte(PARAMETER_TYPE);
+				putRecordPointer(pb.getRecord());
+				putShort((short) pos);
+			}
 		} else {
-			PDOMBinding pb= fLinkage.addTypeBinding(binding);
+			PDOMNode pb= fLinkage.addTypeBinding(binding);
 			if (pb == null) {
 				putByte(UNSTORABLE_TYPE);
 			} else {
 				putByte(BINDING_TYPE);
-				putByte((byte) 0);
+				putByte((byte) 0);  // TODO(sprigogin): Do we need this padding?
 				putRecordPointer(pb.getRecord());
 			}
 		}
+	}
+
+	private int findInArray(Object[] array, Object obj) {
+		for (int i = 0; i < array.length; i++) {
+			if (obj == array[i])
+				return i;
+		}
+		return -1;
 	}
 
 	@Override
@@ -101,6 +125,12 @@ public class TypeMarshalBuffer implements ITypeMarshalBuffer {
 			fPos += 2;
 			long rec= getRecordPointer();
 			return (IBinding) fLinkage.getNode(rec);
+		} else if (firstByte == PARAMETER_TYPE) {
+			fPos++;
+			long rec= getRecordPointer();
+			ICPPFunction function = (ICPPFunction) fLinkage.getNode(rec);
+			int pos = getShort();
+			return function.getParameters()[pos];
 		} else if (firstByte == NULL_TYPE || firstByte == UNSTORABLE_TYPE) {
 			fPos++;
 			return null;

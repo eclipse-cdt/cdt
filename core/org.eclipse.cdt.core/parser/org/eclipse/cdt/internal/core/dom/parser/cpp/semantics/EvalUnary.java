@@ -325,6 +325,16 @@ public class EvalUnary extends CPPEvaluation {
 	}
 
 	@Override
+	public ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap,
+			int maxdepth, IASTNode point) {
+		ICPPEvaluation argument = fArgument.computeForFunctionCall(parameterMap, maxdepth, point);
+		if (argument == fArgument)
+			return this;
+		
+		return new EvalUnary(fOperator, argument, fAddressOfQualifiedNameBinding);
+	}
+
+	@Override
 	public int determinePackSize(ICPPTemplateParameterMap tpMap) {
 		return fArgument.determinePackSize(tpMap);
 	}

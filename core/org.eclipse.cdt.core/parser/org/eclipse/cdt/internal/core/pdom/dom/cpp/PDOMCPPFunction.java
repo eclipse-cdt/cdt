@@ -24,6 +24,9 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemFunctionType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPComputableFunction;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IndexCPPSignatureUtil;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
@@ -37,9 +40,10 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * Binding for c++ functions in the index.
  */
-class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverloader {
+class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverloader, ICPPComputableFunction {
 	private static final short ANNOT_PARAMETER_PACK = 8;
 	private static final short ANNOT_IS_DELETED = 9;
+	private static final short ANNOT_IS_CONSTEXPR = 10;
 
 	/**
 	 * Offset of total number of function parameters (relative to the beginning of the record).
@@ -72,13 +76,16 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 	 */
 	private static final int ANNOTATION = EXCEPTION_SPEC + Database.PTR_SIZE; // short
 
-	private static final int REQUIRED_ARG_COUNT = ANNOTATION + 2;
+	/** Offset of the number of the required arguments. */
+	private static final int REQUIRED_ARG_COUNT = ANNOTATION + 2; // short
 
+	/** Offset of the return expression for constexpr functions. */
+	private static final int RETURN_EXPRESSION = REQUIRED_ARG_COUNT + 2; // Database.EVALUATION_SIZE
 	/**
 	 * The size in bytes of a PDOMCPPFunction record in the database.
 	 */
 	@SuppressWarnings("hiding")
-	protected static final int RECORD_SIZE = REQUIRED_ARG_COUNT + 4;
+	protected static final int RECORD_SIZE = RETURN_EXPRESSION + Database.EVALUATION_SIZE;
 
 	private short fAnnotation = -1;
 	private int fRequiredArgCount = -1;
@@ -91,9 +98,10 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 		Integer sigHash = IndexCPPSignatureUtil.getSignatureHash(function);
 		getDB().putInt(record + SIGNATURE_HASH, sigHash != null ? sigHash.intValue() : 0);
 		db.putShort(record + ANNOTATION, getAnnotation(function));
-		db.putInt(record + REQUIRED_ARG_COUNT, function.getRequiredArgumentCount());
+		db.putShort(record + REQUIRED_ARG_COUNT, (short) function.getRequiredArgumentCount());
 		if (setTypes) {
-			initData(function.getType(), function.getParameters(), extractExceptionSpec(function));
+			initData(function.getType(), function.getParameters(), extractExceptionSpec(function),
+					CPPFunction.getReturnExpression(function));
 		}
 	}
 
@@ -105,14 +113,19 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 		if (function.isDeleted()) {
 			annot |= (1 << ANNOT_IS_DELETED);
 		}
+		if (function.isConstexpr()) {
+			annot |= (1 << ANNOT_IS_CONSTEXPR);
+		}
 		return (short) annot;
 	}
 
-	public void initData(ICPPFunctionType ftype, ICPPParameter[] params, IType[] exceptionSpec) {
+	public void initData(ICPPFunctionType ftype, ICPPParameter[] params, IType[] exceptionSpec,
+			ICPPEvaluation returnExpression) {
 		try {
 			setType(ftype);
 			setParameters(params);
 			storeExceptionSpec(exceptionSpec);
+			getLinkage().storeEvaluation(record + RETURN_EXPRESSION, returnExpression);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}
@@ -120,57 +133,59 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 
 	@Override
 	public void update(final PDOMLinkage linkage, IBinding newBinding) throws CoreException {
-		if (newBinding instanceof ICPPFunction) {
-			ICPPFunction func = (ICPPFunction) newBinding;
-			ICPPFunctionType newType;
-			ICPPParameter[] newParams;
-			short newAnnotation;
-			int newBindingRequiredArgCount;
-			newType = func.getType();
-			newParams = func.getParameters();
-			newAnnotation = getAnnotation(func);
-			newBindingRequiredArgCount = func.getRequiredArgumentCount();
+		if (!(newBinding instanceof ICPPFunction))
+			return;
 
-			fType = null;
-			linkage.storeType(record + FUNCTION_TYPE, newType);
+		ICPPFunction func = (ICPPFunction) newBinding;
+		ICPPFunctionType newType;
+		ICPPParameter[] newParams;
+		short newAnnotation;
+		int newBindingRequiredArgCount;
+		newType = func.getType();
+		newParams = func.getParameters();
+		newAnnotation = getAnnotation(func);
+		newBindingRequiredArgCount = func.getRequiredArgumentCount();
 
-			PDOMCPPParameter oldParams = getFirstParameter(null);
-			int requiredCount;
-			if (oldParams != null && hasDeclaration()) {
-				int parCount = 0;
-				requiredCount = 0;
-				for (ICPPParameter newPar : newParams) {
-					parCount++;
-					if (parCount <= newBindingRequiredArgCount && !oldParams.hasDefaultValue())
-						requiredCount = parCount;
-					oldParams.update(newPar);
-					long next = oldParams.getNextPtr();
-					if (next == 0)
-						break;
-					oldParams = new PDOMCPPParameter(linkage, next, null);
-				}
-				if (parCount < newBindingRequiredArgCount) {
-					requiredCount = newBindingRequiredArgCount;
-				}
-			} else {
-				requiredCount = newBindingRequiredArgCount;
-				setParameters(newParams);
-				if (oldParams != null) {
-					oldParams.delete(linkage);
-				}
+		fType = null;
+		linkage.storeType(record + FUNCTION_TYPE, newType);
+
+		PDOMCPPParameter oldParams = getFirstParameter(null);
+		int requiredCount;
+		if (oldParams != null && hasDeclaration()) {
+			int parCount = 0;
+			requiredCount = 0;
+			for (ICPPParameter newPar : newParams) {
+				parCount++;
+				if (parCount <= newBindingRequiredArgCount && !oldParams.hasDefaultValue())
+					requiredCount = parCount;
+				oldParams.update(newPar);
+				long next = oldParams.getNextPtr();
+				if (next == 0)
+					break;
+				oldParams = new PDOMCPPParameter(linkage, next, null);
 			}
-			final Database db = getDB();
-			db.putShort(record + ANNOTATION, newAnnotation);
-			fAnnotation = newAnnotation;
-			db.putInt(record + REQUIRED_ARG_COUNT, requiredCount);
-			fRequiredArgCount = requiredCount;
-
-			long oldRec = db.getRecPtr(record + EXCEPTION_SPEC);
-			storeExceptionSpec(extractExceptionSpec(func));
-			if (oldRec != 0) {
-				PDOMCPPTypeList.clearTypes(this, oldRec);
+			if (parCount < newBindingRequiredArgCount) {
+				requiredCount = newBindingRequiredArgCount;
+			}
+		} else {
+			requiredCount = newBindingRequiredArgCount;
+			setParameters(newParams);
+			if (oldParams != null) {
+				oldParams.delete(linkage);
 			}
 		}
+		final Database db = getDB();
+		db.putShort(record + ANNOTATION, newAnnotation);
+		fAnnotation = newAnnotation;
+		db.putShort(record + REQUIRED_ARG_COUNT, (short) requiredCount);
+		fRequiredArgCount = requiredCount;
+
+		long oldRec = db.getRecPtr(record + EXCEPTION_SPEC);
+		storeExceptionSpec(extractExceptionSpec(func));
+		if (oldRec != 0) {
+			PDOMCPPTypeList.clearTypes(this, oldRec);
+		}
+		linkage.storeEvaluation(record + RETURN_EXPRESSION, CPPFunction.getReturnExpression(func));
 	}
 
 	private void storeExceptionSpec(IType[] exceptionSpec) throws CoreException {
@@ -243,7 +258,7 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 	public int getRequiredArgumentCount() {
 		if (fRequiredArgCount == -1) {
 			try {
-				fRequiredArgCount = getDB().getInt(record + REQUIRED_ARG_COUNT);
+				fRequiredArgCount = getDB().getShort(record + REQUIRED_ARG_COUNT);
 			} catch (CoreException e) {
 				fRequiredArgCount = 0;
 			}
@@ -322,6 +337,11 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 	}
 
 	@Override
+	public boolean isConstexpr() {
+		return getBit(getAnnotation(), ANNOT_IS_CONSTEXPR);
+	}
+
+	@Override
 	public boolean isDeleted() {
 		return getBit(getAnnotation(), ANNOT_IS_DELETED);
 	}
@@ -389,6 +409,19 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 		try {
 			final long rec = getPDOM().getDB().getRecPtr(record + EXCEPTION_SPEC);
 			return PDOMCPPTypeList.getTypes(this, rec);
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return null;
+		}
+	}
+
+	@Override
+	public ICPPEvaluation getReturnExpression() {
+		if (!isConstexpr())
+			return null;
+
+		try {
+			return (ICPPEvaluation) getLinkage().loadEvaluation(record + RETURN_EXPRESSION);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return null;

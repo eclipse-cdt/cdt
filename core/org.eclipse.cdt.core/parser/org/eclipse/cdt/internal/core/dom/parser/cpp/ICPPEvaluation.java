@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -17,6 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPFunctionParameterMap;
 
 /**
  * Assists in evaluating expressions.
@@ -69,6 +71,17 @@ public interface ICPPEvaluation extends ISerializableEvaluation {
 	 */
 	ICPPEvaluation instantiate(ICPPTemplateParameterMap tpMap, int packOffset,
 			ICPPClassSpecialization within, int maxdepth, IASTNode point);
+
+	/**
+	 * Computes the evaluation produced by substituting function parameters by their values.
+	 * 
+	 * @param parameterMap maps function parameters to their values
+	 * @param maxdepth allowed recursion depth 
+	 * @param point determines the scope for name lookups
+	 * @return the computed evaluation
+	 */
+	ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap, int maxdepth,
+			IASTNode point);
 
 	/**
 	 * Determines size of the template parameter pack.

@@ -24,7 +24,9 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
@@ -43,7 +45,8 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 	private ICPPParameter[] fParams;
 	private final IType[] fExceptionSpecs;
 
-	public CPPFunctionSpecialization(ICPPFunction orig, IBinding owner, ICPPTemplateParameterMap argMap, ICPPFunctionType type, IType[] exceptionSpecs) {
+	public CPPFunctionSpecialization(ICPPFunction orig, IBinding owner, ICPPTemplateParameterMap argMap,
+			ICPPFunctionType type, IType[] exceptionSpecs) {
 		super(orig, owner, argMap);
 		fType= type;
 		fExceptionSpecs= exceptionSpecs;
@@ -104,19 +107,6 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 	}
 
 	@Override
-	public boolean isDeleted() {
-		IASTNode def = getDefinition();
-		if (def != null)
-			return CPPFunction.isDeletedDefinition(def);
-		
-		IBinding f = getSpecializedBinding();
-		if (f instanceof ICPPFunction) {
-			return ((ICPPFunction) f).isDeleted();
-		}
-		return false;
-	}
-
-	@Override
 	public boolean isInline() {
 		if (getDefinition() != null) {
 			IASTNode def = getDefinition();
@@ -166,6 +156,33 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 		if (f != null)
 			return f.isAuto();
 		return CPPFunction.hasStorageClass(this, IASTDeclSpecifier.sc_auto);
+	}
+
+	@Override
+	public boolean isConstexpr() {
+		IASTNode def = getDefinition();
+		if (def != null) {
+			ICPPASTFunctionDefinition functionDefinition = CPPFunction.getFunctionDefinition(def);
+			return ((ICPPASTDeclSpecifier) functionDefinition.getDeclSpecifier()).isConstexpr();
+		}
+		IBinding f = getSpecializedBinding();
+		if (f instanceof ICPPFunction) {
+			return ((ICPPFunction) f).isConstexpr();
+		}
+		return false;
+	}
+
+	@Override
+	public boolean isDeleted() {
+		IASTNode def = getDefinition();
+		if (def != null)
+			return CPPFunction.isDeletedDefinition(def);
+		
+		IBinding f = getSpecializedBinding();
+		if (f instanceof ICPPFunction) {
+			return ((ICPPFunction) f).isDeleted();
+		}
+		return false;
 	}
 
 	@Override
@@ -313,5 +330,22 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 	@Override
 	public IType[] getExceptionSpecification() {
 		return fExceptionSpecs;
+	}
+
+	@Override
+	public ICPPEvaluation getReturnExpression() {
+		if (!isConstexpr())
+			return null;
+
+		IASTNode def = getDefinition();
+		if (def != null) {
+			ICPPASTFunctionDefinition functionDefinition = CPPFunction.getFunctionDefinition(def);
+			return CPPFunction.getReturnExpression(functionDefinition);
+		}
+		IBinding f = getSpecializedBinding();
+		if (f instanceof ICPPComputableFunction) {
+			return ((ICPPComputableFunction) f).getReturnExpression();
+		}
+		return null;
 	}
 }

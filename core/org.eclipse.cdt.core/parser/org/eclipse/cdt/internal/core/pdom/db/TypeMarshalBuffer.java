@@ -26,8 +26,8 @@ import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateNonTypeArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTypeArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -80,7 +80,7 @@ public class TypeMarshalBuffer implements ITypeMarshalBuffer {
 		} else if (binding == null) {
 			putByte(NULL_TYPE);
 		} else {
-			PDOMBinding pb= fLinkage.addTypeBinding(binding);
+			PDOMNode pb= fLinkage.addTypeBinding(binding);
 			if (pb == null) {
 				putByte(UNSTORABLE_TYPE);
 			} else {

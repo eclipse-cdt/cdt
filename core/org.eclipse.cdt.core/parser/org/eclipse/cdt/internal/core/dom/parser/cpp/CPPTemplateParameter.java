@@ -255,8 +255,8 @@ public abstract class CPPTemplateParameter extends PlatformObject
 			return current;
 		
 		ICPPTemplateDefinition template= CPPTemplates.getContainingTemplate(getASTTemplateParameter());
-		if (template instanceof ICPPInternalTemplate) {
-			return ((ICPPInternalTemplate) template).resolveTemplateParameter(this);
+		if (template instanceof ICPPTemplateParameterOwner) {
+			return ((ICPPTemplateParameterOwner) template).resolveTemplateParameter(this);
 		}
 
 		// problem finding the containing template

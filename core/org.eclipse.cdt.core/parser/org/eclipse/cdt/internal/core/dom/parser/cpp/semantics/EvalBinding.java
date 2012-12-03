@@ -25,7 +25,9 @@ import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
@@ -42,7 +44,22 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.core.runtime.CoreException;
 
 public class EvalBinding extends CPPEvaluation {
-	private final IBinding fBinding;
+	/**
+	 * The function owning the parameter if the binding is a function parameter, otherwise
+	 * {@code null}. May be computed lazily and remains {@code null} until computed.
+	 */
+	private ICPPFunction fParameterOwner;
+	/**
+	 * The position of the parameter in the parameter list if the binding is a function parameter,
+	 * otherwise -1.
+	 */
+	private int fParameterPosition;
+	/**
+	 * The binding represented by this evaluation. For a function parameter binding may be computed
+	 * lazily to avoid infinite recursion during unmarshalling of the evaluation. If #fBinding is
+	 * {@code null}, {@link #fParameterOwner} is guaranteed to be not {@code null} and vice versa. 
+	 */
+	private IBinding fBinding;
 	private final boolean fFixedType;
 
 	private IType fType;
@@ -52,13 +69,77 @@ public class EvalBinding extends CPPEvaluation {
 	private boolean fCheckedIsTypeDependent;
 
 	public EvalBinding(IBinding binding, IType type) {
+		fParameterPosition = -1;
 		fBinding= binding;
 		fType= type;
 		fFixedType= type != null;
 	}
 
+	public EvalBinding(ICPPFunction parameterOwner, int parameterPosition, IType type) {
+		fParameterOwner = parameterOwner;
+		fParameterPosition = parameterPosition;
+		fType= type;
+		fFixedType= type != null;
+	}
+
 	public IBinding getBinding() {
+		if (fBinding == null) {
+			// fParameterOwner is guaranteed to be not null.
+			ICPPParameter[] parameters = fParameterOwner.getParameters();
+			fBinding = parameters[fParameterPosition];
+		}
 		return fBinding;
+	}
+
+	/**
+	 * @return if the binding is a function parameter, returns its position in the parameter list,
+	 * otherwise returns -1
+	 */
+	public int getFunctionParameterPosition() {
+		if (fParameterPosition < 0) {
+			ICPPFunction parameterOwner = getParameterOwner();
+			if (parameterOwner != null) {
+				ICPPParameter[] parameters = fParameterOwner.getParameters();
+				fParameterPosition = findInArray(parameters, fBinding);
+			}
+		}
+		return fParameterPosition;
+	}
+
+	/**
+	 * @return the function owning the parameter if the binding is a function parameter,
+	 *     otherwise {@code null}.
+	 */
+	public ICPPFunction getParameterOwner() {
+		if (fParameterOwner == null && fBinding instanceof ICPPParameter) {
+			fParameterOwner = (ICPPFunction) ((ICPPParameter) fBinding).getOwner();
+		}
+		return fParameterOwner;
+	}
+
+	/**
+	 * Finds a given object in an array.
+	 *  
+	 * @param array the array to find the object in
+	 * @param obj the object to find
+	 * @return the index of the object in the array, or -1 if the object is not in the array 
+	 */
+	private static int findInArray(Object[] array, Object obj) {
+		for (int i = 0; i < array.length; i++) {
+			if (obj == array[i])
+				return i;
+		}
+		return -1;
+	}
+
+	/**
+	 * @return if the binding is a template parameter, returns its ID, otherwise returns -1
+	 */
+	public int getTemplateParameterID() {
+		// No need to call getBinding method since fBinding cannot be null if the evaluation
+		// represents a template parameter.
+		return fBinding instanceof ICPPTemplateParameter ?
+				((ICPPTemplateParameter) fBinding).getParameterID() : -1;
 	}
 
 	public IType getFixedType() {
@@ -88,18 +169,21 @@ public class EvalBinding extends CPPEvaluation {
 		IType t= null;
 		if (fFixedType) {
 			t = fType;
-		} else if (fBinding instanceof IEnumerator) {
-			t= ((IEnumerator) fBinding).getType();
-		} else if (fBinding instanceof ICPPTemplateNonTypeParameter) {
-			t= ((ICPPTemplateNonTypeParameter) fBinding).getType();
-		} else if (fBinding instanceof IVariable) {
-			t = ((IVariable) fBinding).getType();
-		} else if (fBinding instanceof ICPPUnknownBinding) {
-			return true;
-		} else if (fBinding instanceof IFunction) {
-			t= ((IFunction) fBinding).getType();
-		} else {
-			return false;
+		} else  {
+			IBinding binding = getBinding();
+			if (binding instanceof IEnumerator) {
+				t= ((IEnumerator) binding).getType();
+			} else if (binding instanceof ICPPTemplateNonTypeParameter) {
+				t= ((ICPPTemplateNonTypeParameter) binding).getType();
+			} else if (binding instanceof IVariable) {
+				t = ((IVariable) binding).getType();
+			} else if (binding instanceof ICPPUnknownBinding) {
+				return true;
+			} else if (binding instanceof IFunction) {
+				t= ((IFunction) binding).getType();
+			} else {
+				return false;
+			}
 		}
 		return CPPTemplates.isDependentType(t);
 	}
@@ -114,6 +198,7 @@ public class EvalBinding extends CPPEvaluation {
  	}
 
  	private boolean computeIsValueDependent() {
+ 		// No need to call getBinding() since a function parameter never has an initial value.
 		if (fBinding instanceof IEnumerator) {
 			return Value.isDependentValue(((IEnumerator) fBinding).getValue());
 		}
@@ -141,23 +226,24 @@ public class EvalBinding extends CPPEvaluation {
 	}
 
 	private IType computeType(IASTNode point) {
-		if (fBinding instanceof IEnumerator) {
-			return ((IEnumerator) fBinding).getType();
+		IBinding binding = getBinding();
+		if (binding instanceof IEnumerator) {
+			return ((IEnumerator) binding).getType();
 		}
-		if (fBinding instanceof ICPPTemplateNonTypeParameter) {
-			IType type= ((ICPPTemplateNonTypeParameter) fBinding).getType();
+		if (binding instanceof ICPPTemplateNonTypeParameter) {
+			IType type= ((ICPPTemplateNonTypeParameter) binding).getType();
 			if (CPPTemplates.isDependentType(type))
 				return new TypeOfDependentExpression(this);
 			return prvalueType(type);
 		}
-		if (fBinding instanceof IVariable) {
-			final IType type = ((IVariable) fBinding).getType();
+		if (binding instanceof IVariable) {
+			final IType type = ((IVariable) binding).getType();
 			if (CPPTemplates.isDependentType(type))
 				return new TypeOfDependentExpression(this);
 			return SemanticUtil.mapToAST(glvalueType(type), point);
 		}
-		if (fBinding instanceof IFunction) {
-			final IFunctionType type = ((IFunction) fBinding).getType();
+		if (binding instanceof IFunction) {
+			final IFunctionType type = ((IFunction) binding).getType();
 			if (CPPTemplates.isDependentType(type))
 				return new TypeOfDependentExpression(this);
 			return SemanticUtil.mapToAST(type, point);
@@ -171,6 +257,7 @@ public class EvalBinding extends CPPEvaluation {
 			return Value.create(this);
 
 		IValue value= null;
+ 		// No need to call getBinding() since a function parameter never has an initial value.
 		if (fBinding instanceof IInternalVariable) {
 			value= ((IInternalVariable) fBinding).getInitialValue(Value.MAX_RECURSION_DEPTH);
 		} else if (fBinding instanceof IVariable) {
@@ -189,7 +276,8 @@ public class EvalBinding extends CPPEvaluation {
         if (fBinding instanceof ICPPTemplateNonTypeParameter)
         	return ValueCategory.PRVALUE;
 
-		if (fBinding instanceof IVariable || fBinding instanceof IFunction) {
+        // fBinding can be null only when the evaluation represents a function parameter.
+		if (fBinding instanceof IFunction || fBinding instanceof IVariable || fBinding == null) {
 			return ValueCategory.LVALUE;
 		}
 		return ValueCategory.PRVALUE;
@@ -197,22 +285,39 @@ public class EvalBinding extends CPPEvaluation {
 
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer, boolean includeValue) throws CoreException {
-		buffer.putByte(ITypeMarshalBuffer.EVAL_BINDING);
-		buffer.marshalBinding(fBinding);
+		byte firstByte = ITypeMarshalBuffer.EVAL_BINDING;
+		ICPPFunction parameterOwner = getParameterOwner();
+		if (parameterOwner != null) {
+			// A function parameter cannot be marshalled directly. We are storing the owning
+			// function and the parameter position instead.
+			buffer.putByte((byte) (ITypeMarshalBuffer.EVAL_BINDING | ITypeMarshalBuffer.FLAG1));
+			buffer.marshalBinding(parameterOwner);
+			buffer.putShort((short) getFunctionParameterPosition());
+		} else {
+			buffer.putByte(firstByte);
+			buffer.marshalBinding(fBinding);
+		}
 		buffer.marshalType(fFixedType ? fType : null);
 	}
 
 	public static ISerializableEvaluation unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
-		IBinding binding= buffer.unmarshalBinding();
-		IType type= buffer.unmarshalType();
-		return new EvalBinding(binding, type);
+		if ((firstByte & ITypeMarshalBuffer.FLAG1) != 0) {
+			ICPPFunction parameterOwner= (ICPPFunction) buffer.unmarshalBinding();
+			int parameterPosition= buffer.getShort();
+			IType type= buffer.unmarshalType();
+			return new EvalBinding(parameterOwner, parameterPosition, type);
+		} else {
+			IBinding binding= buffer.unmarshalBinding();
+			IType type= buffer.unmarshalType();
+			return new EvalBinding(binding, type);
+		}
 	}
 
 	@Override
 	public ICPPEvaluation instantiate(ICPPTemplateParameterMap tpMap, int packOffset,
 			ICPPClassSpecialization within, int maxdepth, IASTNode point) {
-		IBinding binding = fBinding;
-		if (fBinding instanceof IEnumerator) {
+		IBinding binding = getBinding();
+		if (binding instanceof IEnumerator) {
 			IEnumerator enumerator = (IEnumerator) binding;
 			IType originalType = enumerator.getType();
 			IType type = CPPTemplates.instantiateType(originalType, tpMap, packOffset, within, point);
@@ -221,23 +326,23 @@ public class EvalBinding extends CPPEvaluation {
 			// TODO(sprigogin): Not sure if following condition is correct.
 			if (type != originalType || value != originalValue)
 				return new EvalFixed(type, ValueCategory.PRVALUE, value);
-		} else if (fBinding instanceof ICPPTemplateNonTypeParameter) {
-			ICPPTemplateArgument argument = tpMap.getArgument((ICPPTemplateNonTypeParameter) fBinding);
+		} else if (binding instanceof ICPPTemplateNonTypeParameter) {
+			ICPPTemplateArgument argument = tpMap.getArgument((ICPPTemplateNonTypeParameter) binding);
 			if (argument != null && argument.isNonTypeValue()) {
 				return argument.getNonTypeEvaluation();
 			}
 			// TODO(sprigogin): Do we need something similar for pack expansion?
-		} else if (fBinding instanceof ICPPUnknownBinding) {
-			binding = resolveUnknown((ICPPUnknownBinding) fBinding, tpMap, packOffset, within, point);
-		} else if (fBinding instanceof ICPPMethod) {
-			IBinding owner = fBinding.getOwner();
+		} else if (binding instanceof ICPPUnknownBinding) {
+			binding = resolveUnknown((ICPPUnknownBinding) binding, tpMap, packOffset, within, point);
+		} else if (binding instanceof ICPPMethod) {
+			IBinding owner = binding.getOwner();
 			if (owner instanceof ICPPClassTemplate) {
 				owner = resolveUnknown(CPPTemplates.createDeferredInstance((ICPPClassTemplate) owner),
 						tpMap, packOffset, within, point);
 			}
 			if (owner instanceof ICPPClassSpecialization) {
 				binding = CPPTemplates.createSpecialization((ICPPClassSpecialization) owner,
-						fBinding, point);
+						binding, point);
 			}
 		}
 		if (binding == fBinding)
@@ -246,20 +351,32 @@ public class EvalBinding extends CPPEvaluation {
 	}
 
 	@Override
+	public ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap,
+			int maxdepth, IASTNode point) {
+		int pos = getFunctionParameterPosition();
+		if (pos >= 0) {
+			ICPPEvaluation eval = parameterMap.getArgument(pos);
+			if (eval != null)
+				return eval;
+		}
+		return this;
+	}
+
+	@Override
 	public int determinePackSize(ICPPTemplateParameterMap tpMap) {
-		if (fBinding instanceof IEnumerator) {
-			return CPPTemplates.determinePackSize(((IEnumerator) fBinding).getValue(), tpMap);
+		IBinding binding = getBinding();
+		if (binding instanceof IEnumerator) {
+			return CPPTemplates.determinePackSize(((IEnumerator) binding).getValue(), tpMap);
 		}
-		if (fBinding instanceof ICPPTemplateNonTypeParameter) {
-			return CPPTemplates.determinePackSize((ICPPTemplateNonTypeParameter) fBinding, tpMap);
+		if (binding instanceof ICPPTemplateNonTypeParameter) {
+			return CPPTemplates.determinePackSize((ICPPTemplateNonTypeParameter) binding, tpMap);
 		}
-		if (fBinding instanceof ICPPUnknownBinding) {
-			return CPPTemplates.determinePackSize((ICPPUnknownBinding) fBinding, tpMap);
+		if (binding instanceof ICPPUnknownBinding) {
+			return CPPTemplates.determinePackSize((ICPPUnknownBinding) binding, tpMap);
 		}
 		
-		IBinding binding = fBinding;
-		if (fBinding instanceof ICPPSpecialization) {
-			binding = ((ICPPSpecialization) fBinding).getSpecializedBinding();
+		if (binding instanceof ICPPSpecialization) {
+			binding = ((ICPPSpecialization) binding).getSpecializedBinding();
 		}
 
 		int r = CPPTemplates.PACK_SIZE_NOT_FOUND;
@@ -275,6 +392,8 @@ public class EvalBinding extends CPPEvaluation {
 
 	@Override
 	public boolean referencesTemplateParameter() {
+		// No need to call getBinding method since fBinding cannot be null if the evaluation
+		// represents a template parameter.
 		return fBinding instanceof ICPPTemplateParameter;
 	}
 }

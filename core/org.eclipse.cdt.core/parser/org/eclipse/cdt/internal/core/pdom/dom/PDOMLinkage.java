@@ -423,7 +423,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		return map;
 	}
 
-	public abstract PDOMBinding addTypeBinding(IBinding type) throws CoreException;
+	public abstract PDOMBinding addTypeBinding(IBinding binding) throws CoreException;
 	public abstract IType unmarshalType(ITypeMarshalBuffer buffer) throws CoreException;
 	public abstract IBinding unmarshalBinding(ITypeMarshalBuffer buffer) throws CoreException;
 	public abstract ISerializableEvaluation unmarshalEvaluation(ITypeMarshalBuffer typeMarshalBuffer) throws CoreException;
@@ -633,9 +633,41 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	}
 
 	public IValue loadValue(long offset) throws CoreException {
+		TypeMarshalBuffer buffer = loadBuffer(offset, Database.VALUE_SIZE);
+		if (buffer == null)
+			return null;
+		return buffer.unmarshalValue();
+	}
+
+	public void storeEvaluation(long offset, ISerializableEvaluation eval) throws CoreException {
+		final Database db= getDB();
+		deleteEvaluation(db, offset);
+		storeEvaluation(db, offset, eval);
+	}
+	
+	private void storeEvaluation(Database db, long offset, ISerializableEvaluation eval) throws CoreException {
+		if (eval != null) {
+			TypeMarshalBuffer bc= new TypeMarshalBuffer(this);
+			bc.marshalEvaluation(eval, true);
+			storeBuffer(db, offset, bc, Database.EVALUATION_SIZE);
+		}
+	}
+
+	private void deleteEvaluation(Database db, long offset) throws CoreException {
+		deleteSerializedData(db, offset, Database.EVALUATION_SIZE);
+	}
+
+	public ISerializableEvaluation loadEvaluation(long offset) throws CoreException {
+		TypeMarshalBuffer buffer = loadBuffer(offset, Database.EVALUATION_SIZE);
+		if (buffer == null)
+			return null;
+		return buffer.unmarshalEvaluation();
+	}
+
+	private TypeMarshalBuffer loadBuffer(long offset, int size) throws CoreException {
 		final Database db= getDB();
 		final byte firstByte= db.getByte(offset);
-		byte[] data= null;
+		byte[] data;
 		switch (firstByte) {
 		case TypeMarshalBuffer.INDIRECT_TYPE:
 			data = loadLinkedSerializedData(db, offset + 1);			
@@ -643,13 +675,13 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		case TypeMarshalBuffer.NULL_TYPE:
 			return null;
 		default:
-			data= new byte[Database.VALUE_SIZE];
+			data= new byte[size];
 			db.getBytes(offset, data);
 			break;
 		}
-		return new TypeMarshalBuffer(this, data).unmarshalValue();
+		return new TypeMarshalBuffer(this, data);
 	}
-	
+
 	public IIndexScope[] getInlineNamespaces() {
 		return IIndexScope.EMPTY_INDEX_SCOPE_ARRAY;
 	}

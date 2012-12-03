@@ -8,6 +8,7 @@
  * Contributors:
  *     Andrew Ferguson (Symbian) - Initial implementation
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
@@ -255,13 +256,24 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 		}
 		if (eval instanceof EvalBinding) {
 			EvalBinding e= (EvalBinding) eval;
-			IBinding a = e.getBinding();
-			IType b = e.getFixedType();
-			
-			IBinding a2 = getCompositeBinding((IIndexFragmentBinding) a);
-			IType b2 = getCompositeType(b);
-			if (a != a2 || b != b2)
-				e= new EvalBinding(a2, b2);
+			ICPPFunction parameterOwner = e.getParameterOwner();
+			if (parameterOwner != null) {
+				IType b = e.getFixedType();
+				IBinding a2 = getCompositeBinding((IIndexFragmentBinding) parameterOwner);
+				IType b2 = getCompositeType(b);
+				if (parameterOwner != a2 || b != b2) {
+					int parameterPosition = e.getFunctionParameterPosition();
+					e= new EvalBinding((ICPPFunction) a2, parameterPosition, b2);
+				}
+			} else {
+				IBinding a = e.getBinding();
+				IType b = e.getFixedType();
+				
+				IBinding a2 = getCompositeBinding((IIndexFragmentBinding) a);
+				IType b2 = getCompositeType(b);
+				if (a != a2 || b != b2)
+					e= new EvalBinding(a2, b2);
+			}
 			return e;
 		}
 		if (eval instanceof EvalComma) {

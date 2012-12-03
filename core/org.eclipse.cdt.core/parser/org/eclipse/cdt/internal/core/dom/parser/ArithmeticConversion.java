@@ -33,6 +33,7 @@ public abstract class ArithmeticConversion {
 		eComplex(IBasicType.IS_COMPLEX);
 	
 		private final int fModifier;
+
 		private Domain(int modifier) {
 			fModifier= modifier;
 		}
@@ -120,11 +121,13 @@ public abstract class ArithmeticConversion {
 			case eChar16:
 			case eChar32:
 			case eInt:
+			case eInt128:
 			case eWChar:
 				return true;
 				
 			case eDouble:
 			case eFloat:
+			case eFloat128:
 			case eUnspecified:
 			case eVoid:
 			case eNullPtr:
@@ -219,6 +222,7 @@ public abstract class ArithmeticConversion {
 			case eWChar:
 			case eChar16:
 				return createBasicType(Kind.eInt, domain.getModifier());
+
 			case eChar32:
 				// Assuming 32 bits
 				return createBasicType(Kind.eInt, domain.getModifier() | IBasicType.IS_UNSIGNED);
@@ -227,11 +231,15 @@ public abstract class ArithmeticConversion {
 				if (bt.isShort())
 					return createBasicType(Kind.eInt, domain.getModifier());
 				return adjustDomain(bt, domain);
-				
+
+			case eInt128:
+				return createBasicType(Kind.eInt128, domain.getModifier() | IBasicType.IS_UNSIGNED);
+
 			case eVoid:
 			case eUnspecified:
 			case eDouble:
 			case eFloat:
+			case eFloat128:
 			case eNullPtr:
 				assert false;
 			}
@@ -271,6 +279,8 @@ public abstract class ArithmeticConversion {
 	}
 
 	private Rank getIntegerRank(IBasicType type) {
+		if (type.getKind() == Kind.eInt128)
+			return Rank.eLongLong;
 		assert type.getKind() == Kind.eInt;
 		if (type.isLongLong())
 			return Rank.eLongLong;
@@ -282,7 +292,7 @@ public abstract class ArithmeticConversion {
 	private boolean isLongDouble(IType type) {
 		if (type instanceof IBasicType) {
 			final IBasicType bt= (IBasicType) type;
-			return bt.isLong() && bt.getKind() == Kind.eDouble;
+			return bt.isLong() && bt.getKind() == Kind.eDouble || bt.getKind() == Kind.eFloat128;
 		}
 		return false;
 	}

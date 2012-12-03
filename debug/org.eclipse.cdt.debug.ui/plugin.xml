@@ -47,6 +47,12 @@
          <launchMode mode="run"/>
       </launchConfigurationTabGroup>
       <launchConfigurationTabGroup
+            type="org.eclipse.cdt.launch.applicationLaunchType"
+            class="org.eclipse.cdt.debug.internal.ui.launch.PlaceHolderLaunchConfigurationTabGroup"
+            id="org.eclipse.cdt.launch.applicationProfileLaunchTabGroup">
+         <launchMode mode="profile"/>
+      </launchConfigurationTabGroup>
+      <launchConfigurationTabGroup
             type="org.eclipse.cdt.launch.attachLaunchType"
             class="org.eclipse.cdt.debug.internal.ui.launch.PlaceHolderLaunchConfigurationTabGroup"
             id="org.eclipse.cdt.launch.attachLaunchTabGroup">
@@ -75,7 +81,7 @@
       <shortcut
             label="%CApplicationShortcut.label"
             icon="icons/obj16/c_app.gif"
-            modes="run, debug"
+            modes="run, debug, profile"
             class="org.eclipse.cdt.debug.internal.ui.launch.CApplicationLaunchShortcut"
             id="org.eclipse.cdt.debug.ui.localCShortcut">
          <contextualLaunch>
@@ -109,6 +115,9 @@
           <description
              mode="debug"
              description="%ContextualDebugCApplication.description"/>
+          <description
+             mode="profile"
+             description="%ContextualProfileCApplication.description"/>
          <configurationType
                id="org.eclipse.cdt.launch.applicationLaunchType">
          </configurationType>

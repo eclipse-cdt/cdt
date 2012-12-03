@@ -166,27 +166,6 @@ public class EvalTypeId extends CPPEvaluation {
 	}
 
 	@Override
-	public ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap,
-			int maxdepth, IASTNode point) {
-		ICPPEvaluation[] args = fArguments;
-		if (fArguments != null) {
-			for (int i = 0; i < fArguments.length; i++) {
-				ICPPEvaluation arg = fArguments[i].computeForFunctionCall(parameterMap, maxdepth, point);
-				if (arg != fArguments[i]) {
-					if (args == fArguments) {
-						args = new ICPPEvaluation[fArguments.length];
-						System.arraycopy(fArguments, 0, args, 0, fArguments.length);
-					}
-					args[i] = arg;
-				}
-			}
-		}
-		if (args == fArguments)
-			return this;
-		return new EvalTypeId(fInputType, args);
-	}
-
-	@Override
 	public int determinePackSize(ICPPTemplateParameterMap tpMap) {
 		int r = CPPTemplates.determinePackSize(fInputType, tpMap);
 		for (ICPPEvaluation arg : fArguments) {

@@ -227,11 +227,10 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  135.0 - Changed marshalling of EvalUnary, bug 391001.
 	 *  136.0 - Extended CPPTemplateTypeArgument to include the original type, bug 392278.
 	 *  137.0 - Fixed serialization of very large types and template arguments, bug 392278.
-	 *  138.0 - Constexpr functions, bug 395238.
 	 */
-	private static final int MIN_SUPPORTED_VERSION= version(138, 0);
-	private static final int MAX_SUPPORTED_VERSION= version(138, Short.MAX_VALUE);
-	private static final int DEFAULT_VERSION = version(138, 0);
+	private static final int MIN_SUPPORTED_VERSION= version(137, 0);
+	private static final int MAX_SUPPORTED_VERSION= version(137, Short.MAX_VALUE);
+	private static final int DEFAULT_VERSION = version(137, 0);
 
 	private static int version(int major, int minor) {
 		return (major << 16) + minor;

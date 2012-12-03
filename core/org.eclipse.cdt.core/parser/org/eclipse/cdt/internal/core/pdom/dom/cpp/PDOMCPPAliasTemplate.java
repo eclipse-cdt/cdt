@@ -8,7 +8,6 @@
  *
  * Contributors:
  *     Thomas Corbat (IFS) - Initial API and implementation
- *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -16,10 +15,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplate;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -28,38 +24,39 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * PDOM binding for alias template.
  */
-class PDOMCPPAliasTemplate extends PDOMCPPBinding implements ICPPAliasTemplate, IPDOMCPPTemplateParameterOwner {
+class PDOMCPPAliasTemplate extends PDOMCPPBinding implements ICPPAliasTemplate {
 	private static final int ALIASED_TYPE_SIZE = Database.TYPE_SIZE;
 	private static final int TEMPLATE_PARAMS_SIZE = PDOMCPPTemplateTemplateParameter.RECORD_SIZE;
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPBinding.RECORD_SIZE + ALIASED_TYPE_SIZE + TEMPLATE_PARAMS_SIZE;
 
-	private static final int ALIASED_TYPE = PDOMCPPBinding.RECORD_SIZE + 0;
-	private static final int TEMPLATE_PARAMS = ALIASED_TYPE + ALIASED_TYPE_SIZE;
+	private static final int ALIASED_TYPE_OFFSET = PDOMCPPBinding.RECORD_SIZE + 0;
+	private static final int TEMPLATE_PARAMS_OFFSET = ALIASED_TYPE_OFFSET + ALIASED_TYPE_SIZE;
 
 	private volatile IPDOMCPPTemplateParameter[] parameters;
 
-	public PDOMCPPAliasTemplate(PDOMCPPLinkage linkage, PDOMNode parent, ICPPAliasTemplate template)
-			throws CoreException, DOMException {
-		super(linkage, parent, template.getNameCharArray());
-		final ICPPTemplateParameter[] origParams= template.getTemplateParameters();
-		parameters = PDOMTemplateParameterArray.createPDOMTemplateParameters(linkage, this, origParams);
-		final Database db = getDB();
-		long rec= PDOMTemplateParameterArray.putArray(db, parameters);
-		db.putRecPtr(record + TEMPLATE_PARAMS, rec);
-		linkage.new ConfigureAliasTemplate(template, this);
+	public PDOMCPPAliasTemplate(PDOMCPPLinkage linkage, PDOMNode parent,
+			ICPPAliasTemplate templateAlias) throws CoreException, DOMException {
+		super(linkage, parent, templateAlias.getNameCharArray());
+		setTemplateParameters(linkage, templateAlias.getTemplateParameters());
+		setType(linkage, templateAlias.getType());
 	}
 
 	public PDOMCPPAliasTemplate(PDOMCPPLinkage linkage, long record) {
 		super(linkage, record);
 	}
 
-	public void initData(IType aliasedType) {
-		try {
-			getLinkage().storeType(record + ALIASED_TYPE, aliasedType);
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-		}
+	private void setTemplateParameters(PDOMCPPLinkage linkage,
+			final ICPPTemplateParameter[] origParams) throws CoreException, DOMException {
+		parameters = PDOMTemplateParameterArray.createPDOMTemplateParameters(linkage, this, origParams);
+		final Database db = getDB();
+		long rec= PDOMTemplateParameterArray.putArray(db, parameters);
+		db.putRecPtr(record + TEMPLATE_PARAMS_OFFSET, rec);
+		linkage.new ConfigureTemplateParameters(origParams, parameters);
+	}
+
+	private void setType(PDOMCPPLinkage linkage, IType aliasedType) throws CoreException {
+		linkage.storeType(record + ALIASED_TYPE_OFFSET, aliasedType);
 	}
 
 	@Override
@@ -77,11 +74,11 @@ class PDOMCPPAliasTemplate extends PDOMCPPBinding implements ICPPAliasTemplate, 
 	}
 
 	@Override
-	public IPDOMCPPTemplateParameter[] getTemplateParameters() {
+	public ICPPTemplateParameter[] getTemplateParameters() {
 		if (parameters == null) {
 			try {
 				Database db = getDB();
-				long rec= db.getRecPtr(record + TEMPLATE_PARAMS);
+				long rec= db.getRecPtr(record + TEMPLATE_PARAMS_OFFSET);
 				if (rec == 0) {
 					parameters= IPDOMCPPTemplateParameter.EMPTY_ARRAY;
 				} else {
@@ -98,7 +95,7 @@ class PDOMCPPAliasTemplate extends PDOMCPPBinding implements ICPPAliasTemplate, 
 	@Override
 	public IType getType() {
 		try {
-			return getLinkage().loadType(record + ALIASED_TYPE);
+			return getLinkage().loadType(record + ALIASED_TYPE_OFFSET);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return null;
@@ -115,29 +112,6 @@ class PDOMCPPAliasTemplate extends PDOMCPPBinding implements ICPPAliasTemplate, 
 		try {
 			return super.clone();
 		} catch (CloneNotSupportedException e) {
-		}
-		return null;
-	}
-
-	@Override
-	public ICPPTemplateParameter adaptTemplateParameter(ICPPTemplateParameter param) {
-		// Template parameters are identified by their position in the parameter list.
-		int pos = param.getParameterPosition();
-		ICPPTemplateParameter[] pars = getTemplateParameters();
-		
-		if (pars == null || pos >= pars.length)
-			return null;
-		
-		ICPPTemplateParameter result= pars[pos];
-		if (param instanceof ICPPTemplateTypeParameter) {
-			if (result instanceof ICPPTemplateTypeParameter)
-				return result;
-		} else if (param instanceof ICPPTemplateNonTypeParameter) {
-			if (result instanceof ICPPTemplateNonTypeParameter)
-				return result;
-		} else if (param instanceof ICPPTemplateTemplateParameter) {
-			if (result instanceof ICPPTemplateTemplateParameter)
-				return result;
 		}
 		return null;
 	}

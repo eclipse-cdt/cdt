@@ -51,7 +51,6 @@ import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IValue;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAliasDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAmbiguousTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
@@ -559,8 +558,6 @@ public class CPPTemplates {
 				IASTDeclarator dtor = ((IASTFunctionDefinition) decl).getDeclarator();
 				dtor= ASTQueries.findInnermostDeclarator(dtor);
 				name = dtor.getName();
-			} else if (decl instanceof ICPPASTAliasDeclaration) {
-				name = ((ICPPASTAliasDeclaration) decl).getAlias();
 			}
 			if (name == null)
 				return null;

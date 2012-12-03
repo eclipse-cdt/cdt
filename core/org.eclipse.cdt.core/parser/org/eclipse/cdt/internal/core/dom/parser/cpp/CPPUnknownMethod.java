@@ -156,9 +156,4 @@ public class CPPUnknownMethod extends CPPUnknownMember implements ICPPMethod {
 	public boolean isFinal() {
 		return false;
 	}
-
-	@Override
-	public boolean isConstexpr() {
-		return false;
-	}
 }

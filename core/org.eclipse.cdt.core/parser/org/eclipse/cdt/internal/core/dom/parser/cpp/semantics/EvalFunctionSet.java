@@ -170,12 +170,6 @@ public class EvalFunctionSet extends CPPEvaluation {
 		return new EvalFunctionSet(new CPPFunctionSet(functions, arguments, null), fAddressOf);
 	}
 
-	@Override
-	public ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap,
-			int maxdepth, IASTNode point) {
-		return this;
-	}
-
 	/**
 	 * Attempts to resolve the function using the parameters of a function call.
 	 *

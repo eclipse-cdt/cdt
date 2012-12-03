@@ -8,7 +8,6 @@
  *
  * Contributors:
  *     Thomas Corbat (IFS) - Initial API and implementation
- *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -29,8 +28,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.core.runtime.PlatformObject;
 
-public class CPPAliasTemplate extends PlatformObject
-		implements ICPPAliasTemplate, ICPPTemplateParameterOwner {
+public class CPPAliasTemplate extends PlatformObject implements ICPPAliasTemplate {
 	private final IASTName aliasName;
 	private final IType aliasedType;
 	private ICPPTemplateParameter[] templateParameters;
@@ -129,17 +127,5 @@ public class CPPAliasTemplate extends PlatformObject
 	@Override
 	public String toString() {
 		return ASTTypeUtil.getQualifiedName(this) + " -> " + ASTTypeUtil.getType(aliasedType, true); //$NON-NLS-1$
-	}
-
-	@Override
-	public IBinding resolveTemplateParameter(ICPPTemplateParameter templateParameter) {
-		int pos= templateParameter.getParameterPosition();
-		
-		ICPPASTTemplateParameter[] params = CPPTemplates.getTemplateDeclaration(aliasName).getTemplateParameters();
-		if (pos < params.length) {
-			final IASTName oName = CPPTemplates.getTemplateParameterName(params[pos]);
-			return oName.resolvePreBinding();
-		}
-    	return templateParameter;
 	}
 }

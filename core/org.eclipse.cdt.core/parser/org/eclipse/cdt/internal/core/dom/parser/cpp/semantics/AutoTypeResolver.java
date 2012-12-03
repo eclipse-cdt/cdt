@@ -73,11 +73,6 @@ class AutoTypeResolver implements ICPPFunctionTemplate {
 	}
 
 	@Override
-	public boolean isConstexpr() {
-		return false;
-	}
-
-	@Override
 	public IType[] getExceptionSpecification() {
 		return null;
 	}

@@ -26,7 +26,6 @@ import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
@@ -244,18 +243,6 @@ public class EvalBinding extends CPPEvaluation {
 		if (binding == fBinding)
 			return this;
 		return new EvalBinding(binding, getFixedType());
-	}
-
-
-	@Override
-	public ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap,
-			int maxdepth, IASTNode point) {
-		if (fBinding instanceof ICPPParameter) {
-			ICPPEvaluation eval = parameterMap.getArgument((ICPPParameter) fBinding);
-			if (eval != null)
-				return eval;
-		}
-		return this;
 	}
 
 	@Override

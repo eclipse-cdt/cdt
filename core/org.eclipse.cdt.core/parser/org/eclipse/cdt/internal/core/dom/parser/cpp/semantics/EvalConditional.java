@@ -337,18 +337,6 @@ public class EvalConditional extends CPPEvaluation {
 	}
 
 	@Override
-	public ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap,
-			int maxdepth, IASTNode point) {
-		ICPPEvaluation condition = fCondition.computeForFunctionCall(parameterMap, maxdepth, point);
-		ICPPEvaluation positive = fPositive == null ?
-				null : fPositive.computeForFunctionCall(parameterMap, maxdepth, point);
-		ICPPEvaluation negative = fNegative.computeForFunctionCall(parameterMap, maxdepth, point);
-		if (condition == fCondition && positive == fPositive && negative == fNegative)
-			return this;
-		return new EvalConditional(condition, positive, negative, fPositiveThrows, fNegativeThrows);
-	}
-
-	@Override
 	public int determinePackSize(ICPPTemplateParameterMap tpMap) {
 		int r = fCondition.determinePackSize(tpMap);
 		r = CPPTemplates.combinePackSize(r, fNegative.determinePackSize(tpMap));

@@ -7,7 +7,6 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *     Sergey Prigogin (Google)
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -26,7 +25,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
  * Represents a reference to a (member) function (instance), which cannot be resolved because 
  * an argument depends on a template parameter. A compiler would resolve it during instantiation.
  */
-public class CPPDeferredFunction extends CPPUnknownBinding implements ICPPFunction, ICPPComputableFunction {
+public class CPPDeferredFunction extends CPPUnknownBinding implements ICPPFunction {
 	private static final ICPPFunctionType FUNCTION_TYPE=
 			new CPPFunctionType(ProblemType.UNKNOWN_FOR_EXPRESSION, IType.EMPTY_TYPE_ARRAY);
 
@@ -67,11 +66,6 @@ public class CPPDeferredFunction extends CPPUnknownBinding implements ICPPFuncti
 
 	@Override
 	public boolean isMutable() {
-		return false;
-	}
-
-	@Override
-	public boolean isConstexpr() {
 		return false;
 	}
 
@@ -133,10 +127,5 @@ public class CPPDeferredFunction extends CPPUnknownBinding implements ICPPFuncti
 	@Override
 	public IBinding getOwner() {
 		return fOwner;
-	}
-
-	@Override
-	public ICPPEvaluation getReturnExpression() {
-		return null;
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,7 +33,6 @@ import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
@@ -42,7 +41,6 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemFunctionType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 
 /**
  * Implementation of function templates
@@ -318,23 +316,15 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
         return hasStorageClass(IASTDeclSpecifier.sc_extern);
     }
 
-    @Override
-	public boolean isAuto() {
-        return hasStorageClass(IASTDeclSpecifier.sc_auto);
-    }
-
-	@Override
-	public boolean isConstexpr() {
-		ICPPASTFunctionDefinition functionDefinition = CPPFunction.getFunctionDefinition(getDefinition());
-		if (functionDefinition == null)
-			return false;
-		return ((ICPPASTDeclSpecifier) functionDefinition.getDeclSpecifier()).isConstexpr();
-	}
-
 	@Override
 	public boolean isDeleted() {
 		return CPPFunction.isDeletedDefinition(getDefinition());
 	}
+
+    @Override
+	public boolean isAuto() {
+        return hasStorageClass(IASTDeclSpecifier.sc_auto);
+    }
 
     @Override
 	public boolean isRegister() {
@@ -403,15 +393,5 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
 			return typeIds;
 		}
 		return null;
-	}
-
-	@Override
-	public ICPPEvaluation getReturnExpression() {
-		if (!isConstexpr())
-			return null;
-		ICPPASTFunctionDefinition functionDefinition = CPPFunction.getFunctionDefinition(getDefinition());
-		if (functionDefinition == null)
-			return EvalFixed.INCOMPLETE;
-		return CPPFunction.getReturnExpression(functionDefinition);
 	}
 }

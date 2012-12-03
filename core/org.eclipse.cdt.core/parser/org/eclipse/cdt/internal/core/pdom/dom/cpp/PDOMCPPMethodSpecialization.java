@@ -123,7 +123,7 @@ class PDOMCPPMethodSpecialization extends PDOMCPPFunctionSpecialization
 
 	@Override
 	public int getVisibility() {
-		return PDOMCPPAnnotation.getVisibility(getByte(record + ANNOTATION));
+		return PDOMCPPAnnotation.getVisibility(getByte(record + ANNOTATION_OFFSET));
 	}
 	
 	@Override

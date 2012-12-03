@@ -309,17 +309,6 @@ public class EvalID extends CPPEvaluation {
 		return new EvalID(fieldOwner, nameOwner, fName, fAddressOf, fQualified, templateArgs);
 	}
 
-	@Override
-	public ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap,
-			int maxdepth, IASTNode point) {
-		if (fFieldOwner == null)
-			return this;
-		ICPPEvaluation fieldOwner = fFieldOwner.computeForFunctionCall(parameterMap, maxdepth, point);
-		if (fieldOwner == fFieldOwner)
-			return this;
-		return new EvalID(fieldOwner, fNameOwner, fName, fAddressOf, fQualified, fTemplateArgs);
-	}
-
 	private ICPPEvaluation resolveName(ICPPClassType nameOwner, ICPPTemplateArgument[] templateArgs,
 			IASTNode point) {
 		LookupData data = new LookupData(fName, templateArgs, point);

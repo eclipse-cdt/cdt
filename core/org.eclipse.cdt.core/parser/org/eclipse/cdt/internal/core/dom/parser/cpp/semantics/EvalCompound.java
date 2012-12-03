@@ -95,15 +95,6 @@ public class EvalCompound extends CPPEvaluation {
 	}
 
 	@Override
-	public ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap,
-			int maxdepth, IASTNode point) {
-		ICPPEvaluation delegate = fDelegate.computeForFunctionCall(parameterMap, maxdepth, point);
-		if (delegate == fDelegate)
-			return this;
-		return new EvalCompound(delegate);
-	}
-
-	@Override
 	public int determinePackSize(ICPPTemplateParameterMap tpMap) {
 		return fDelegate.determinePackSize(tpMap);
 	}

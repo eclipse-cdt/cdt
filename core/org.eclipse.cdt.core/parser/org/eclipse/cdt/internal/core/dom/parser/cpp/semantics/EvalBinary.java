@@ -348,16 +348,6 @@ public class EvalBinary extends CPPEvaluation {
 	}
 
 	@Override
-	public ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap,
-			int maxdepth, IASTNode point) {
-		ICPPEvaluation arg1 = fArg1.computeForFunctionCall(parameterMap, maxdepth, point);
-		ICPPEvaluation arg2 = fArg2.computeForFunctionCall(parameterMap, maxdepth, point);
-		if (arg1 == fArg1 && arg2 == fArg2)
-			return this;
-		return new EvalBinary(fOperator, arg1, arg2);
-	}
-
-	@Override
 	public int determinePackSize(ICPPTemplateParameterMap tpMap) {
 		return CPPTemplates.combinePackSize(fArg1.determinePackSize(tpMap), fArg2.determinePackSize(tpMap));
 	}

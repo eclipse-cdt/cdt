@@ -122,25 +122,6 @@ public class EvalInitList extends CPPEvaluation {
 	}
 
 	@Override
-	public ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap,
-			int maxdepth, IASTNode point) {
-		ICPPEvaluation[] clauses = fClauses;
-		for (int i = 0; i < fClauses.length; i++) {
-			ICPPEvaluation clause = fClauses[i].computeForFunctionCall(parameterMap, maxdepth, point);
-			if (clause != fClauses[i]) {
-				if (clauses == fClauses) {
-					clauses = new ICPPEvaluation[fClauses.length];
-					System.arraycopy(fClauses, 0, clauses, 0, fClauses.length);
-				}
-				clauses[i] = clause;
-			}
-		}
-		if (clauses == fClauses)
-			return this;
-		return new EvalInitList(clauses);
-	}
-
-	@Override
 	public int determinePackSize(ICPPTemplateParameterMap tpMap) {
 		int r = CPPTemplates.PACK_SIZE_NOT_FOUND;
 		for (ICPPEvaluation arg : fClauses) {

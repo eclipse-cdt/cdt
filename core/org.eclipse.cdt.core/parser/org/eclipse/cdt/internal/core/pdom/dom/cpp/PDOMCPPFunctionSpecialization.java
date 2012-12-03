@@ -23,9 +23,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemFunctionType;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPComputableFunction;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
@@ -37,8 +34,7 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * Binding for function specialization in the index. 
  */
-class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization
-		implements ICPPFunction, ICPPComputableFunction {
+class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICPPFunction {
 	/**
 	 * Offset of total number of function parameters (relative to the beginning of the record).
 	 */
@@ -63,29 +59,24 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization
 	/**
 	 * Offset of annotation information (relative to the beginning of the record).
 	 */
-	protected static final int ANNOTATION = EXCEPTION_SPEC + Database.PTR_SIZE; // short
+	protected static final int ANNOTATION_OFFSET = EXCEPTION_SPEC + Database.PTR_SIZE; // short
+	
+	private static final int REQUIRED_ARG_COUNT_OFFSET= ANNOTATION_OFFSET + 2;
 
-	/** Offset of the number of the required arguments. */
-	private static final int REQUIRED_ARG_COUNT = ANNOTATION + 2; // short
-
-	/** Offset of the return expression for constexpr functions. */
-	private static final int RETURN_EXPRESSION = REQUIRED_ARG_COUNT + 2; // Database.EVALUATION_SIZE
 	/**
-	 * The size in bytes of a PDOMCPPFunctionSpecialization record in the database.
+	 * The size in bytes of a PDOMCPPFunction record in the database.
 	 */
 	@SuppressWarnings("hiding")
-	protected static final int RECORD_SIZE = RETURN_EXPRESSION + Database.EVALUATION_SIZE;
+	protected static final int RECORD_SIZE = REQUIRED_ARG_COUNT_OFFSET + 4;
 
 	private static final short ANNOT_PARAMETER_PACK = 8;
 	private static final short ANNOT_IS_DELETED = 9;
-	private static final short ANNOT_IS_CONSTEXPR = 10;
 
 	private ICPPFunctionType fType; // No need for volatile, all fields of ICPPFunctionTypes are final.
 	private short fAnnotation= -1;
 	private int fRequiredArgCount= -1;
 	
-	public PDOMCPPFunctionSpecialization(PDOMLinkage linkage, PDOMNode parent, ICPPFunction astFunction,
-			PDOMBinding specialized) throws CoreException {
+	public PDOMCPPFunctionSpecialization(PDOMLinkage linkage, PDOMNode parent, ICPPFunction astFunction, PDOMBinding specialized) throws CoreException {
 		super(linkage, parent, (ICPPSpecialization) astFunction, specialized);
 		
 		Database db = getDB();
@@ -121,12 +112,8 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization
 			db.putRecPtr(record + FIRST_PARAM, next == null ? 0 : next.getRecord());
 		}
 		fAnnotation = getAnnotation(astFunction);
-		db.putShort(record + ANNOTATION, fAnnotation);	
-		db.putShort(record + REQUIRED_ARG_COUNT , (short) astFunction.getRequiredArgumentCount());
-		ICPPEvaluation returnExpression = CPPFunction.getReturnExpression(astFunction);
-		if (returnExpression != null) {
-			linkage.storeEvaluation(record + RETURN_EXPRESSION, returnExpression);
-		}
+		db.putShort(record + ANNOTATION_OFFSET, fAnnotation);	
+		db.putInt(record + REQUIRED_ARG_COUNT_OFFSET, astFunction.getRequiredArgumentCount());
 		long typelist= 0;
 		if (astFunction instanceof ICPPMethod && ((ICPPMethod) astFunction).isImplicit()) {
 			// Don't store the exception specification, it is computed on demand.
@@ -143,9 +130,6 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization
 		}
 		if (astFunction.isDeleted()) {
 			annot |= (1 << ANNOT_IS_DELETED);
-		}
-		if (astFunction.isConstexpr()) {
-			annot |= (1 << ANNOT_IS_CONSTEXPR);
 		}
 		return (short) annot;
 	}
@@ -172,7 +156,7 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization
 	private short readAnnotation() {
 		if (fAnnotation == -1) {
 			try {
-				fAnnotation= getDB().getShort(record + ANNOTATION);
+				fAnnotation= getDB().getShort(record + ANNOTATION_OFFSET);
 			} catch (CoreException e) {
 				fAnnotation= 0;
 			}
@@ -236,11 +220,6 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization
 	}
 
 	@Override
-	public boolean isConstexpr() {
-		return getBit(readAnnotation(), ANNOT_IS_CONSTEXPR);
-	}
-
-	@Override
 	public boolean isExtern() {
 		return getBit(readAnnotation(), PDOMCAnnotation.EXTERN_OFFSET);
 	}
@@ -275,7 +254,7 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization
 	public int getRequiredArgumentCount() {
 		if (fRequiredArgCount == -1) {
 			try {
-				fRequiredArgCount= getDB().getShort(record + REQUIRED_ARG_COUNT );
+				fRequiredArgCount= getDB().getInt(record + REQUIRED_ARG_COUNT_OFFSET);
 			} catch (CoreException e) {
 				fRequiredArgCount= 0;
 			}
@@ -316,19 +295,6 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization
 		try {
 			final long rec = getPDOM().getDB().getRecPtr(record + EXCEPTION_SPEC);
 			return PDOMCPPTypeList.getTypes(this, rec);
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-			return null;
-		}
-	}
-
-	@Override
-	public ICPPEvaluation getReturnExpression() {
-		if (!isConstexpr())
-			return null;
-
-		try {
-			return (ICPPEvaluation) getLinkage().loadEvaluation(record + RETURN_EXPRESSION);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return null;

@@ -128,12 +128,6 @@ public class EvalBinaryTypeId extends CPPEvaluation {
 	}
 
 	@Override
-	public ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap,
-			int maxdepth, IASTNode point) {
-		return this;
-	}
-
-	@Override
 	public int determinePackSize(ICPPTemplateParameterMap tpMap) {
 		return CPPTemplates.combinePackSize(CPPTemplates.determinePackSize(fType1, tpMap),
 				CPPTemplates.determinePackSize(fType2, tpMap));

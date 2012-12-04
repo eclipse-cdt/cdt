@@ -266,7 +266,7 @@ public class CPPASTFunctionCallExpression extends ASTNode
 		
 		if (eval instanceof EvalTypeId) {
 			if (!eval.isTypeDependent()) {
-				IType t= getNestedType(((EvalTypeId) eval).getInputType(), TDEF|CVTYPE|REF);
+				IType t= getNestedType(((EvalTypeId) eval).getInputType(), TDEF | CVTYPE | REF);
 				if (t instanceof ICPPClassType && !(t instanceof ICPPUnknownBinding)) {
 					ICPPClassType cls= (ICPPClassType) t;
 					LookupData data= CPPSemantics.createLookupData(((IASTIdExpression) functionName).getName());

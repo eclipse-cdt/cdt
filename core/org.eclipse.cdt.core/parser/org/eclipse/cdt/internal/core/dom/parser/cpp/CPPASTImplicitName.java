@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Mike Kucera (IBM) - Initial API and implementation
+ *     Mike Kucera (IBM) - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -25,7 +25,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 public class CPPASTImplicitName extends CPPASTName implements IASTImplicitName {
 	private boolean alternate;
 	private boolean isOperator;
-	private boolean isDefinition= false;
+	private boolean isDefinition;
 
 	public CPPASTImplicitName(char[] name, IASTNode parent) {
 		super(name);

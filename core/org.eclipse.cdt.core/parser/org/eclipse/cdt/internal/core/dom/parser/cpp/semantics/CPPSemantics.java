@@ -3017,12 +3017,12 @@ public class CPPSemantics {
 
 		ICPPEvaluation[] args;
 		if (placement == null) {
-    		args= new ICPPEvaluation[] {arg1, arg2};
+    		args= new ICPPEvaluation[] { arg1, arg2 };
     	} else {
-    		args= new ICPPEvaluation[2+placement.length];
+    		args= new ICPPEvaluation[2 + placement.length];
     		args[0]= arg1;
     		args[1]= arg2;
-    		int i=2;
+    		int i= 2;
     		for (IASTInitializerClause p : placement) {
     			final ICPPASTInitializerClause arg = (ICPPASTInitializerClause) p;
 				final ICPPEvaluation a = arg.getEvaluation();

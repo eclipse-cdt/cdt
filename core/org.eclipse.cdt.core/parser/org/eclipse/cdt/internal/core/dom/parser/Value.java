@@ -55,7 +55,6 @@ import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator.SizeAndAlignment;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
@@ -355,6 +354,7 @@ public class Value implements IValue {
 			 return VALUE_CANNOT_BE_DETERMINED;
 		return sizeAndAlignment.size;
 	}
+
 	/**
 	 * Tests whether the value is a template parameter (or a parameter pack).
 	 *
@@ -364,10 +364,7 @@ public class Value implements IValue {
 	public static int isTemplateParameter(IValue tval) {
 		ICPPEvaluation eval = tval.getEvaluation();
 		if (eval instanceof EvalBinding) {
-			IBinding binding = ((EvalBinding) eval).getBinding();
-			if (binding instanceof ICPPTemplateParameter) {
-				return ((ICPPTemplateParameter) binding).getParameterID();
-			}
+			return ((EvalBinding) eval).getTemplateParameterID();
 		}
 		return -1;
 	}

@@ -221,10 +221,11 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  127.0 - Explicit virtual overrides, bug 380623.
 	 *  128.0 - Preservation of typedefs in template arguments.
 	 *  129.0 - Merged several changes affecting index from the master branch.
+	 *  130.0 - Constexpr functions, bug 395238.
 	 */
-	private static final int MIN_SUPPORTED_VERSION= version(129, 0);
-	private static final int MAX_SUPPORTED_VERSION= version(129, Short.MAX_VALUE);
-	private static final int DEFAULT_VERSION = version(129, 0);
+	private static final int MIN_SUPPORTED_VERSION= version(130, 0);
+	private static final int MAX_SUPPORTED_VERSION= version(130, Short.MAX_VALUE);
+	private static final int DEFAULT_VERSION = version(130, 0);
 
 	private static int version(int major, int minor) {
 		return (major << 16) + minor;

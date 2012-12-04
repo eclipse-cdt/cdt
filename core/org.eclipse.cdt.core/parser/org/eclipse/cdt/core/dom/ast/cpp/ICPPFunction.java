@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Andrew Niefer (IBM Corporation) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
@@ -37,6 +38,12 @@ public interface ICPPFunction extends IFunction, ICPPBinding {
 	 * @since 5.0
 	 */
 	public boolean isExternC();
+
+	/**
+	 * Returns whether this function is declared constexpr.
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public boolean isConstexpr();
 
 	/**
 	 * Returns the exception specification for this function or <code>null</code> if there

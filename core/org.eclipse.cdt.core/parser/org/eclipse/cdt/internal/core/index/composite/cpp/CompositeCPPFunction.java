@@ -18,10 +18,13 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPComputableFunction;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
-class CompositeCPPFunction extends CompositeCPPBinding implements ICPPFunction {
+class CompositeCPPFunction extends CompositeCPPBinding implements ICPPFunction, ICPPComputableFunction {
 
 	public CompositeCPPFunction(ICompositesFactory cf, ICPPFunction rbinding) {
 		super(cf, rbinding);
@@ -40,6 +43,11 @@ class CompositeCPPFunction extends CompositeCPPBinding implements ICPPFunction {
 	@Override
 	public boolean isMutable() {
 		return ((ICPPFunction) rbinding).isMutable();
+	}
+
+	@Override
+	public boolean isConstexpr() {
+		return ((ICPPFunction) rbinding).isConstexpr();
 	}
 
 	@Override
@@ -128,5 +136,10 @@ class CompositeCPPFunction extends CompositeCPPBinding implements ICPPFunction {
 			result[i]= cf.getCompositeType(es[i]);
 		}
 		return result;
+	}
+
+	@Override
+	public ICPPEvaluation getReturnExpression() {
+		return CPPFunction.getReturnExpression((ICPPFunction) rbinding);
 	}
 }

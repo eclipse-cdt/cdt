@@ -1035,6 +1035,7 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 	private void updateProvidersTable() {
 		ILanguageSettingsProvider selectedProvider = getSelectedProvider();
 		String selectedId = selectedProvider != null ? selectedProvider.getId() : null;
+		boolean wasChecked = selectedProvider != null && tableProvidersViewer.getChecked(selectedProvider);
 
 		// update viewer if the list of providers changed
 		int pos = tableProviders.getSelectionIndex();
@@ -1049,8 +1050,14 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 
 		if (selectedId != null) {
 			for (int i = 0; i < presentedProviders.size(); i++) {
-				if (selectedId.equals(presentedProviders.get(i).getId())) {
-					tableProviders.setSelection(i);
+				ILanguageSettingsProvider provider = presentedProviders.get(i);
+				if (selectedId.equals(provider.getId())) {
+					boolean isChecked = tableProvidersViewer.getChecked(provider);
+					if (isChecked || isChecked == wasChecked) {
+						tableProviders.setSelection(i);
+					} else {
+						tableProviders.setSelection(0);
+					}
 					break;
 				}
 			}

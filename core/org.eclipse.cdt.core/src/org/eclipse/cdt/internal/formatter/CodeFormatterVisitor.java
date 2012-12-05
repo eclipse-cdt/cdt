@@ -1326,12 +1326,11 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		Runnable tailFormatter = null;
 		IASTStatement bodyStmt= node.getBody();
 		if (DefaultCodeFormatterConstants.END_OF_LINE.equals(preferences.brace_position_for_method_declaration) &&
-				!hasMemberInitializers(node) && !(node instanceof ICPPASTFunctionWithTryBlock)) {
-			if (bodyStmt instanceof IASTCompoundStatement && !startsWithMacroExpansion(bodyStmt)) {
-				tailFormatter = new TrailingTokenFormatter(Token.tLBRACE, nodeOffset(bodyStmt),
-						preferences.insert_space_before_opening_brace_in_method_declaration, false);
-				scribe.setTailFormatter(tailFormatter);
-			}
+				!hasMemberInitializers(node) &&	!(node instanceof ICPPASTFunctionWithTryBlock) &&
+				bodyStmt instanceof IASTCompoundStatement && !startsWithMacroExpansion(bodyStmt)) {
+			tailFormatter = new TrailingTokenFormatter(Token.tLBRACE, nodeOffset(bodyStmt),
+					preferences.insert_space_before_opening_brace_in_method_declaration, false);
+			scribe.setTailFormatter(tailFormatter);
 		}
 		declarator.accept(this);
 
@@ -1342,8 +1341,9 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		}
 
 		if (node instanceof ICPPASTFunctionDefinition) {
+			ICPPASTFunctionDefinition cppFunctionDefinition = (ICPPASTFunctionDefinition) node;
 			final ICPPASTConstructorChainInitializer[] constructorChain=
-					((ICPPASTFunctionDefinition) node).getMemberInitializers();
+					cppFunctionDefinition.getMemberInitializers();
 			if (constructorChain != null && constructorChain.length > 0) {
 				if (preferences.insert_new_line_before_colon_in_constructor_initializer_list) {
 					scribe.printTrailingComment();
@@ -1362,6 +1362,25 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 				options.fTieBreakRule = Alignment.R_OUTERMOST;
 				formatList(Arrays.asList(constructorChain), options, false, false, null);
 				scribe.unIndentForContinuation();
+			}
+
+			if (cppFunctionDefinition.isDefaulted() || cppFunctionDefinition.isDeleted()) {
+				int token = peekNextToken();
+				if (token == Token.tASSIGN) {
+					if (preferences.insert_space_before_assignment_operator)
+						scribe.space();
+					scribe.printNextToken(token);
+					if (preferences.insert_space_after_assignment_operator)
+						scribe.space();
+				}
+				token = peekNextToken();
+				if (token == Token.t_default || token == Token.t_delete) {
+					scribe.printNextToken(token);
+				}
+				if (bodyStmt == null) {
+					tailFormatter = new TrailingSemicolonFormatter(node);
+					scribe.setTailFormatter(tailFormatter);
+				}
 			}
 		}
 
@@ -1385,7 +1404,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 					exitNode(bodyStmt);
 				}
 			}
-		} else {
+		} else if (bodyStmt != null) {
 			bodyStmt.accept(this);
 		}
 		scribe.printTrailingComment();
@@ -1563,7 +1582,11 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 				scribe.space();
 			}
 			if (pointer instanceof ICPPASTReferenceOperator) {
-				scribe.printNextToken(Token.tAMPER, false);
+				if (((ICPPASTReferenceOperator) pointer).isRValueReference()) {
+					scribe.printNextToken(Token.tAND, false);
+				} else {
+					scribe.printNextToken(Token.tAMPER, false);
+				}
 			} else if (pointer instanceof ICPPASTPointerToMember) {
 				final ICPPASTPointerToMember ptrToMember= (ICPPASTPointerToMember) pointer;
 				final IASTName name= ptrToMember.getName();

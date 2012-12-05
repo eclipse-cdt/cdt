@@ -124,13 +124,10 @@ class DefaultCBreakpointUIContribution implements ICBreakpointsUIContribution {
 
 	@Override
 	public boolean isApplicable(Map<String, Object> properties) {
-		for (Object key : properties.keySet()) {
-			String value = conditions.get(key);
-			if (value != null) {
-				String realValue = (String) properties.get(key);
-				if (!value.equals(realValue)) {
-					return false;
-				}
+        for (Object key : conditions.keySet()) {
+			Object bpValue = properties.get(key);
+			if ( bpValue == null || !bpValue.equals(conditions.get(key)) ) {
+				return false;
 			}
 		}
 		return true;

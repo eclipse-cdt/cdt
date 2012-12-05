@@ -165,24 +165,31 @@ public class VariableReadWriteFlagsTest extends AST2BaseTest {
 	//	};
 	//
 	//	void test(int a, int b, int c) {
-	//	  A(&a, b);
-	//	  A x(&a, b);
-	//	  A(&a, b, c);
-	//	  A y(&a, b, c);
+	//	  A u = A(&a, b);
+	//	  A* v = new A(&a, b);
+	//	  A w(&a, b);
+	//	  A x = A(&a, b, c);
+	//	  A* y = new A(&a, b, c);
+	//	  A z(&a, b, c);
 	//	};
 	public void testConstructorCall_393068() throws Exception {
 		AssertionHelper a = getCPPAssertionHelper();
-//		a.assertReadWriteFlags("A(&a, b)", "a", READ | WRITE);
-//		a.assertReadWriteFlags("A(&a, b)", "b", READ | WRITE);
-//		a.assertReadWriteFlags("x(&a, b)", "a", READ | WRITE);
-//		a.assertReadWriteFlags("x(&a, b)", "b", READ | WRITE);
-//		a.assertReadWriteFlags("x(&a, b)", "x", WRITE);
-		a.assertReadWriteFlags("A(&a, b, c)", "a", READ);
-		a.assertReadWriteFlags("A(&a, b, c)", "b", READ);
-		a.assertReadWriteFlags("A(&a, b, c)", "c", READ);
-		a.assertReadWriteFlags("y(&a, b, c)", "a", READ);
-		a.assertReadWriteFlags("y(&a, b, c)", "b", READ);
-		a.assertReadWriteFlags("y(&a, b, c)", "c", READ);
+		a.assertReadWriteFlags("= A(&a, b)", "a", READ | WRITE);
+		a.assertReadWriteFlags("= A(&a, b)", "b", READ | WRITE);
+		a.assertReadWriteFlags("new A(&a, b)", "a", READ | WRITE);
+		a.assertReadWriteFlags("new A(&a, b)", "b", READ | WRITE);
+		a.assertReadWriteFlags("w(&a, b)", "a", READ | WRITE);
+		a.assertReadWriteFlags("w(&a, b)", "b", READ | WRITE);
+		a.assertReadWriteFlags("w(&a, b)", "w", WRITE);
+		a.assertReadWriteFlags("= A(&a, b, c)", "a", READ);
+		a.assertReadWriteFlags("= A(&a, b, c)", "b", READ);
+		a.assertReadWriteFlags("= A(&a, b, c)", "c", READ);
+		a.assertReadWriteFlags("new A(&a, b, c)", "a", READ);
+		a.assertReadWriteFlags("new A(&a, b, c)", "b", READ);
+		a.assertReadWriteFlags("new A(&a, b, c)", "c", READ);
+		a.assertReadWriteFlags("z(&a, b, c)", "a", READ);
+		a.assertReadWriteFlags("z(&a, b, c)", "b", READ);
+		a.assertReadWriteFlags("z(&a, b, c)", "c", READ);
 	}
 
 	//	struct A {

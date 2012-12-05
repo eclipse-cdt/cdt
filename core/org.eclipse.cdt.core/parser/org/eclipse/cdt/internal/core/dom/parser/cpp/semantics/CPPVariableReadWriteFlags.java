@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
@@ -68,7 +69,7 @@ public final class CPPVariableReadWriteFlags extends VariableReadWriteFlags {
 
 	private int rwInCtorInitializer(IASTNode node, int indirection, ICPPASTConstructorInitializer parent) {
 		IASTNode grand= parent.getParent();
-		if (grand instanceof IASTDeclarator) {
+		if (grand instanceof IASTDeclarator || grand instanceof ICPPASTNewExpression) {
 			// Look for a constructor being called.
 			if (grand instanceof IASTImplicitNameOwner) {
 				IASTImplicitName[] names = ((IASTImplicitNameOwner) grand).getImplicitNames();

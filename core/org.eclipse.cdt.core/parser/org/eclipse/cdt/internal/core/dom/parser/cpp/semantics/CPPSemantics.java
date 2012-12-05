@@ -3097,9 +3097,10 @@ public class CPPSemantics {
     	IBinding binding = name.resolveBinding();
     	if (!(binding instanceof ICPPVariable))
     		return null;
-    	IType type;
+
+    	IType type = ((ICPPVariable) binding).getType();
 		try {
-			type = SemanticUtil.getNestedType(((ICPPVariable) binding).getType(), TDEF | CVTYPE);
+			type = SemanticUtil.getNestedType(type, TDEF | CVTYPE);
 	    	if (!(type instanceof ICPPClassType))
 	    		return null;
 	    	if (type instanceof ICPPClassTemplate || type instanceof ICPPUnknownType || type instanceof ISemanticProblem)
@@ -3107,7 +3108,7 @@ public class CPPSemantics {
 
 	    	final ICPPClassType classType = (ICPPClassType) type;
 	    	if (initializer instanceof IASTEqualsInitializer) {
-		    	// Copy initialization
+		    	// Copy initialization.
 	    		IASTEqualsInitializer eqInit= (IASTEqualsInitializer) initializer;
 	    		ICPPASTInitializerClause initClause = (ICPPASTInitializerClause) eqInit.getInitializerClause();
 	    		final ICPPEvaluation evaluation = initClause.getEvaluation();
@@ -3128,7 +3129,7 @@ public class CPPSemantics {
 	    			}
 	    		}
 	    	} else if (initializer instanceof ICPPASTInitializerList) {
-	    		// List initialization
+	    		// List initialization.
 	    		ICPPEvaluation eval= ((ICPPASTInitializerList) initializer).getEvaluation();
 	    		if (eval instanceof EvalInitList) {
 	    			Cost c= Conversions.listInitializationSequence((EvalInitList) eval, type, UDCMode.ALLOWED, true, name);
@@ -3139,24 +3140,11 @@ public class CPPSemantics {
 	    			}
 	    		}
 	    	} else if (initializer instanceof ICPPASTConstructorInitializer) {
-		    	// Direct Initialization
-			    final IASTInitializerClause[] arguments = ((ICPPASTConstructorInitializer) initializer).getArguments();
-				CPPASTName astName = new CPPASTName();
-			    astName.setName(classType.getNameCharArray());
-			    astName.setOffsetAndLength((ASTNode) name);
-				CPPASTIdExpression idExp = new CPPASTIdExpression(astName);
-				idExp.setParent(name.getParent());
-				idExp.setPropertyInParent(IASTFunctionCallExpression.FUNCTION_NAME);
-
-			    LookupData data = new LookupData(astName);
-				data.setFunctionArguments(false, arguments);
-			    data.qualified = true;
-			    data.foundItems = ClassTypeHelper.getConstructors(classType, name);
-			    binding = resolveAmbiguities(data);
-			    if (binding instanceof ICPPConstructor)
-			    	return (ICPPConstructor) binding;
+		    	// Direct initialization.
+			    return findImplicitlyCalledConstructor(classType,
+			    		(ICPPASTConstructorInitializer) initializer, name);
 	    	} else if (initializer == null) {
-	    		// Default initialization
+	    		// Default initialization.
 	    		ICPPConstructor[] ctors = ClassTypeHelper.getConstructors(classType, name);
 				for (ICPPConstructor ctor : ctors) {
 					if (ctor.getRequiredArgumentCount() == 0)
@@ -3168,6 +3156,43 @@ public class CPPSemantics {
 		}
 		return null;
     }
+
+	public static ICPPConstructor findImplicitlyCalledConstructor(ICPPASTNewExpression expr) {
+		IType type = getNestedType(expr.getExpressionType(), TDEF | REF | CVTYPE);
+		if (!(type instanceof IPointerType))
+			return null;
+		type = ((IPointerType) type).getType();
+		IASTInitializer initializer = expr.getInitializer();
+		if (type instanceof ICPPClassType && initializer instanceof ICPPASTConstructorInitializer) {
+			return findImplicitlyCalledConstructor((ICPPClassType) type,
+					(ICPPASTConstructorInitializer) initializer, expr.getTypeId());
+		}
+		return null;
+	}
+
+	private static ICPPConstructor findImplicitlyCalledConstructor(ICPPClassType classType,
+			ICPPASTConstructorInitializer initializer, IASTNode typeId) {
+		final IASTInitializerClause[] arguments = initializer.getArguments();
+		CPPASTName astName = new CPPASTName();
+		astName.setName(classType.getNameCharArray());
+		astName.setOffsetAndLength((ASTNode) typeId);
+		CPPASTIdExpression idExp = new CPPASTIdExpression(astName);
+		idExp.setParent(typeId.getParent());
+		idExp.setPropertyInParent(IASTFunctionCallExpression.FUNCTION_NAME);
+
+		LookupData data = new LookupData(astName);
+		data.setFunctionArguments(false, arguments);
+		data.qualified = true;
+		data.foundItems = ClassTypeHelper.getConstructors(classType, typeId);
+		IBinding binding;
+		try {
+			binding = resolveAmbiguities(data);
+			if (binding instanceof ICPPConstructor)
+				return (ICPPConstructor) binding;
+		} catch (DOMException e) {
+		}
+		return null;
+	}
 
     public static ICPPFunction findImplicitlyCalledDestructor(ICPPASTDeleteExpression expr) {
     	IType t = getTypeOfPointer(expr.getOperand().getExpressionType());

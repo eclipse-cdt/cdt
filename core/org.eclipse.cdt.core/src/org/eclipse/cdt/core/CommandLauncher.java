@@ -190,6 +190,8 @@ public class CommandLauncher implements ICommandLauncher {
 			fCommandArgs[0] = command; // to print original command on the console
 			fErrorMessage = ""; //$NON-NLS-1$
 		} catch (IOException e) {
+			CCorePlugin.log(e);
+
 			if (isFound == null) {
 				IPath location = PathUtil.findProgramLocation(command, envPathValue);
 				isFound = location != null;

@@ -2521,7 +2521,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 			default:
 				throwBacktrack(kind);
 			}
-			return adjustEndOffset(fdef, consume(IToken.tSEMI).getEndOffset());
+			return setRange(fdef, firstOffset, consume(IToken.tSEMI).getEndOffset());
 		}
 
 		if (LT(1) == IToken.tCOLON) {

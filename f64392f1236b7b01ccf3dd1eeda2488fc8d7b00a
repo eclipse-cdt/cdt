@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOJ3//+bY\u003d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2TemplateTests.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 6900,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-12-06T22:10:20Z",
+      "side": 1,
+      "message": "parseAndCheckBindings() is sufficient because the test does not depend on GNU extensions.",
+      "revId": "f64392f1236b7b01ccf3dd1eeda2488fc8d7b00a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3//+bQ\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalBinding.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 355,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-12-06T22:10:20Z",
+      "side": 1,
+      "message": "All instances of fBinding in this code fragment should be replaced with binding.",
+      "revId": "f64392f1236b7b01ccf3dd1eeda2488fc8d7b00a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

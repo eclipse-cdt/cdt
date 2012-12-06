@@ -9953,8 +9953,8 @@ public class AST2CPPTests extends AST2BaseTest {
 	//	template<int I> struct CT {};
 	//	typedef int TD;
 	//	bool operator==(S1 a, int r );
-	//	static const int x = sizeof(CT<i>((TD * (CT<sizeof(s1 == 1)>::*)) 0 ));
-	//	template<int I> bool operator==(S1 a, const CT<I>& r );
+	//	static const int x = sizeof(CT<i>((TD * (CT<sizeof(s1 == 1)>::*)) 0));
+	//	template<int I> bool operator==(S1 a, const CT<I>& r);
 	public void testOrderInAmbiguityResolution_390759() throws Exception {
 		parseAndCheckBindings();
 	}
@@ -9972,5 +9972,17 @@ public class AST2CPPTests extends AST2BaseTest {
 	//	}
 	public void testADLForFunctionObject_388287() throws Exception {
 		parseAndCheckBindings();
+	}
+
+	//	template <bool> struct A {};
+	//	template <>
+	//	struct A<false> {
+	//	    typedef int type;
+	//	};
+	//	struct S {};
+	//	const bool b = __is_base_of(S, int);
+	//	typedef A<b>::type T;
+	public void testIsBaseOf_395019() throws Exception {
+		parseAndCheckBindings(getAboveComment(), CPP, true);
 	}
 }

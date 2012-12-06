@@ -297,16 +297,17 @@ abstract public class PDOMWriter {
 							}
 						}
 					}
-					} catch (RuntimeException e) {
+				} catch (RuntimeException e) {
 					th= e;
 				} catch (StackOverflowError e) {
 					th= e;
 				} catch (AssertionError e) {
 					th= e;
 				} finally {
-					// Because the caller holds a read-lock, the result cache of the index is never cleared.
-					// ==> Before releasing the lock for the last time in this ast, we clear the result cache.
-					if (i == data.fSelectedFiles.length-1) {
+					// Because the caller holds a read-lock, the result cache of the index is never
+					// cleared. Before releasing the lock for the last time in this AST, we clear
+					// the result cache.
+					if (i == data.fSelectedFiles.length - 1) {
 						data.fIndex.clearResultCache();
 					}
 					lock.release();

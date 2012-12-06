@@ -39,6 +39,7 @@ import org.eclipse.cdt.core.dom.ast.IASTBinaryTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -54,13 +55,13 @@ import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator.SizeAndAlignment;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.TypeTraits;
 import org.eclipse.cdt.internal.core.parser.scanner.ExpressionEvaluator;
@@ -77,6 +78,20 @@ public class Value implements IValue {
 	public static final Value UNKNOWN= new Value("<unknown>".toCharArray(), null); //$NON-NLS-1$
 	public static final Value NOT_INITIALIZED= new Value("<__>".toCharArray(), null); //$NON-NLS-1$
 
+	private static final Number VALUE_CANNOT_BE_DETERMINED = new Number() {
+		@Override
+		public int intValue() {	throw new UnsupportedOperationException(); }
+
+		@Override
+		public long longValue() { throw new UnsupportedOperationException(); }
+
+		@Override
+		public float floatValue() { throw new UnsupportedOperationException(); }
+
+		@Override
+		public double doubleValue() { throw new UnsupportedOperationException(); }
+	};
+
 	private static final char UNIQUE_CHAR = '_';
 
 	private final static IValue[] TYPICAL= {
@@ -89,8 +104,6 @@ public class Value implements IValue {
 		new Value(new char[] {'6'}, null)};
 
 
-	private static class UnknownValueException extends Exception {}
-	private static UnknownValueException UNKNOWN_EX= new UnknownValueException();
 	private static int sUnique= 0;
 
 	// The following invariant always holds: (fFixedValue == null) != (fEvaluation == null)
@@ -213,7 +226,7 @@ public class Value implements IValue {
 	}
 
 	/**
-	 * Creates a value object representing the given boolean value.  
+	 * Creates a value object representing the given boolean value.
 	 */
 	public static IValue create(boolean value) {
 		return create(value ? 1 : 0);
@@ -235,44 +248,40 @@ public class Value implements IValue {
 	}
 
 	public static IValue evaluateBinaryExpression(final int op, final long v1, final long v2) {
-		try {
-			return create(applyBinaryOperator(op, v1, v2));
-		} catch (UnknownValueException e) {
-		}
+		Number val = applyBinaryOperator(op, v1, v2);
+		if (val != null && val != VALUE_CANNOT_BE_DETERMINED)
+			return create(val.longValue());
 		return UNKNOWN;
 	}
 
 	public static IValue evaluateUnaryExpression(final int unaryOp, final long value) {
-		try {
-			return create(applyUnaryOperator(unaryOp, value));
-		} catch (UnknownValueException e) {
-		}
+		Number val = applyUnaryOperator(unaryOp, value);
+		if (val != null && val != VALUE_CANNOT_BE_DETERMINED)
+			return create(val.longValue());
 		return UNKNOWN;
 	}
 
 	public static IValue evaluateUnaryTypeIdExpression(int operator, IType type, IASTNode point) {
-		try {
-			return create(applyUnaryTypeIdOperator(operator, type, point));
-		} catch (UnknownValueException e) {
-		}
+		Number val = applyUnaryTypeIdOperator(operator, type, point);
+		if (val != null && val != VALUE_CANNOT_BE_DETERMINED)
+			return create(val.longValue());
 		return UNKNOWN;
 	}
 
 	public static IValue evaluateBinaryTypeIdExpression(IASTBinaryTypeIdExpression.Operator operator,
 			IType type1, IType type2, IASTNode point) {
-		try {
-			return create(applyBinaryTypeIdOperator(operator, type1, type2, point));
-		} catch (UnknownValueException e) {
-		}
+		Number val = applyBinaryTypeIdOperator(operator, type1, type2, point);
+		if (val != null && val != VALUE_CANNOT_BE_DETERMINED)
+			return create(val.longValue());
 		return UNKNOWN;
 	}
 
-	private static long applyUnaryTypeIdOperator(int operator, IType type, IASTNode point) throws UnknownValueException{
+	private static Number applyUnaryTypeIdOperator(int operator, IType type, IASTNode point) {
 		switch (operator) {
 			case op_sizeof:
-				return getSizeAndAlignment(type, point).size;
+				return getSize(type, point);
 			case op_alignof:
-				return getSizeAndAlignment(type, point).alignment;
+				return getAlignment(type, point);
 			case op_typeid:
 				break;  // TODO(sprigogin): Implement
 			case op_has_nothrow_copy:
@@ -318,40 +327,44 @@ public class Value implements IValue {
 			case op_typeof:
 				break;  // TODO(sprigogin): Implement
 		}
-		throw UNKNOWN_EX;
+		return VALUE_CANNOT_BE_DETERMINED;
 	}
 
-	public static long applyBinaryTypeIdOperator(IASTBinaryTypeIdExpression.Operator operator,
-			IType type1, IType type2, IASTNode point) throws UnknownValueException {
+	public static Number applyBinaryTypeIdOperator(IASTBinaryTypeIdExpression.Operator operator,
+			IType type1, IType type2, IASTNode point) {
 		switch (operator) {
 		case __is_base_of:
 			if (type1 instanceof ICPPClassType && type1 instanceof ICPPClassType) {
 				return ClassTypeHelper.isSubclass((ICPPClassType) type2, (ICPPClassType) type1) ? 1 : 0;
 			}
 		}
-		throw UNKNOWN_EX;
+		return VALUE_CANNOT_BE_DETERMINED;
 	}
 
-	private static SizeAndAlignment getSizeAndAlignment(IType type, IASTNode point) throws UnknownValueException {
+	private static Number getAlignment(IType type, IASTNode point) {
 		SizeAndAlignment sizeAndAlignment = SizeofCalculator.getSizeAndAlignment(type, point);
 		if (sizeAndAlignment == null)
-			throw UNKNOWN_EX;
-		return sizeAndAlignment;
+			 return VALUE_CANNOT_BE_DETERMINED;
+		return sizeAndAlignment.alignment;
+	}
+
+	private static Number getSize(IType type, IASTNode point) {
+		SizeAndAlignment sizeAndAlignment = SizeofCalculator.getSizeAndAlignment(type, point);
+		if (sizeAndAlignment == null)
+			 return VALUE_CANNOT_BE_DETERMINED;
+		return sizeAndAlignment.size;
 	}
 
 	/**
 	 * Tests whether the value is a template parameter (or a parameter pack).
-	 * 
+	 *
 	 * @return the parameter id of the parameter, or <code>-1</code> if it is not a template
 	 *         parameter.
 	 */
 	public static int isTemplateParameter(IValue tval) {
 		ICPPEvaluation eval = tval.getEvaluation();
 		if (eval instanceof EvalBinding) {
-			IBinding binding = ((EvalBinding) eval).getBinding();
-			if (binding instanceof ICPPTemplateParameter) {
-				return ((ICPPTemplateParameter) binding).getParameterID();
-			}
+			return ((EvalBinding) eval).getTemplateParameterID();
 		}
 		return -1;
 	}
@@ -380,16 +393,15 @@ public class Value implements IValue {
 	 * Creates the value for an expression.
 	 */
 	public static IValue create(IASTExpression expr, int maxRecursionDepth) {
-		try {
-			Object obj= evaluate(expr, maxRecursionDepth);
-			if (obj instanceof Long)
-				return create(((Long) obj).longValue());
+		Number val= evaluate(expr, maxRecursionDepth);
+		if (val == VALUE_CANNOT_BE_DETERMINED)
+			return UNKNOWN;
+		if (val != null)
+			return create(val.longValue());
 
-			if (expr instanceof ICPPASTInitializerClause) {
-				ICPPEvaluation evaluation = ((ICPPASTInitializerClause) expr).getEvaluation();
-				return new Value(null, evaluation);
-			}
-		} catch (UnknownValueException e) {
+		if (expr instanceof ICPPASTInitializerClause) {
+			ICPPEvaluation evaluation = ((ICPPASTInitializerClause) expr).getEvaluation();
+			return new Value(null, evaluation);
 		}
 		return UNKNOWN;
 	}
@@ -413,15 +425,15 @@ public class Value implements IValue {
 
 	/**
 	 * Computes the canonical representation of the value of the expression.
-	 * Returns a {@code Long} for numerical values or {@code null}, otherwise.
+	 * Returns a {@code Number} for numerical values or {@code null}, otherwise.
 	 * @throws UnknownValueException
 	 */
-	private static Long evaluate(IASTExpression exp, int maxdepth) throws UnknownValueException {
+	private static Number evaluate(IASTExpression exp, int maxdepth) {
 		if (maxdepth < 0 || exp == null)
-			throw UNKNOWN_EX;
+			return VALUE_CANNOT_BE_DETERMINED;
 
 		if (exp instanceof IASTArraySubscriptExpression) {
-			throw UNKNOWN_EX;
+			return VALUE_CANNOT_BE_DETERMINED;
 		}
 		if (exp instanceof IASTBinaryExpression) {
 			return evaluateBinaryExpression((IASTBinaryExpression) exp, maxdepth);
@@ -434,9 +446,9 @@ public class Value implements IValue {
 		}
 		if (exp instanceof IASTConditionalExpression) {
 			IASTConditionalExpression cexpr= (IASTConditionalExpression) exp;
-			Long v= evaluate(cexpr.getLogicalConditionExpression(), maxdepth);
-			if (v == null)
-				return null;
+			Number v= evaluate(cexpr.getLogicalConditionExpression(), maxdepth);
+			if (v == null || v == VALUE_CANNOT_BE_DETERMINED)
+				return v;
 			if (v.longValue() == 0) {
 				return evaluate(cexpr.getNegativeResultExpression(), maxdepth);
 			}
@@ -461,7 +473,7 @@ public class Value implements IValue {
 				try {
 					return ExpressionEvaluator.getNumber(litEx.getValue());
 				} catch (EvalException e) {
-					throw UNKNOWN_EX;
+					return VALUE_CANNOT_BE_DETERMINED;
 				}
 			case IASTLiteralExpression.lk_char_constant:
 				try {
@@ -470,30 +482,39 @@ public class Value implements IValue {
 						return ExpressionEvaluator.getChar(image, 2);
 					return ExpressionEvaluator.getChar(image, 1);
 				} catch (EvalException e) {
-					throw UNKNOWN_EX;
+					return VALUE_CANNOT_BE_DETERMINED;
 				}
 			}
 		}
 		if (exp instanceof IASTTypeIdExpression) {
+			IASTTypeIdExpression typeIdExp = (IASTTypeIdExpression) exp;
 			ASTTranslationUnit ast = (ASTTranslationUnit) exp.getTranslationUnit();
-			final IType type = ast.createType(((IASTTypeIdExpression) exp).getTypeId());
+			final IType type = ast.createType(typeIdExp.getTypeId());
 			if (type instanceof ICPPUnknownType)
 				return null;
-			return applyUnaryTypeIdOperator(((IASTTypeIdExpression) exp).getOperator(), type, exp);
+			return applyUnaryTypeIdOperator(typeIdExp.getOperator(), type, exp);
 		}
-
 		if (exp instanceof IASTBinaryTypeIdExpression) {
-			
+			IASTBinaryTypeIdExpression typeIdExp = (IASTBinaryTypeIdExpression) exp;
+			ASTTranslationUnit ast = (ASTTranslationUnit) exp.getTranslationUnit();
+			IType t1= ast.createType(typeIdExp.getOperand1());
+			IType t2= ast.createType(typeIdExp.getOperand2());
+			if (CPPTemplates.isDependentType(t1) || CPPTemplates.isDependentType(t2))
+				return null;
+			return applyBinaryTypeIdOperator(typeIdExp.getOperator(), t1, t2, exp);
 		}
-		throw UNKNOWN_EX;
+		if (exp instanceof IASTFunctionCallExpression) {
+			return null;  // The value will be obtained from the evaluation.
+		}
+		return VALUE_CANNOT_BE_DETERMINED;
 	}
 
 	/**
 	 * Extract a value off a binding.
 	 */
-	private static Long evaluateBinding(IBinding b, int maxdepth) throws UnknownValueException {
+	private static Number evaluateBinding(IBinding b, int maxdepth) {
 		if (b instanceof IType) {
-			throw UNKNOWN_EX;
+			return VALUE_CANNOT_BE_DETERMINED;
 		}
 		if (b instanceof ICPPTemplateNonTypeParameter) {
 			return null;
@@ -515,11 +536,10 @@ public class Value implements IValue {
 			return value.numericalValue();
 		}
 
-		throw UNKNOWN_EX;
+		return VALUE_CANNOT_BE_DETERMINED;
 	}
 
-	private static Long evaluateUnaryExpression(IASTUnaryExpression exp, int maxdepth)
-			throws UnknownValueException {
+	private static Number evaluateUnaryExpression(IASTUnaryExpression exp, int maxdepth) {
 		final int unaryOp= exp.getOperator();
 
 		if (unaryOp == IASTUnaryExpression.op_sizeof) {
@@ -534,21 +554,21 @@ public class Value implements IValue {
 				if (info != null)
 					return info.size;
 			}
-			throw UNKNOWN_EX;
+			return VALUE_CANNOT_BE_DETERMINED;
 		}
 
 		if (unaryOp == IASTUnaryExpression.op_amper || unaryOp == IASTUnaryExpression.op_star ||
 				unaryOp == IASTUnaryExpression.op_sizeofParameterPack) {
-			throw UNKNOWN_EX;
+			return VALUE_CANNOT_BE_DETERMINED;
 		}
 
-		final Long value= evaluate(exp.getOperand(), maxdepth);
-		if (value == null)
-			return null;
-		return applyUnaryOperator(unaryOp, value);
+		final Number value= evaluate(exp.getOperand(), maxdepth);
+		if (value == null || value == VALUE_CANNOT_BE_DETERMINED)
+			return value;
+		return applyUnaryOperator(unaryOp, value.longValue());
 	}
 
-	private static long applyUnaryOperator(final int unaryOp, final long value) throws UnknownValueException {
+	private static Number applyUnaryOperator(final int unaryOp, final long value) {
 		switch (unaryOp) {
 		case IASTUnaryExpression.op_bracketedPrimary:
 		case IASTUnaryExpression.op_plus:
@@ -569,11 +589,10 @@ public class Value implements IValue {
 		case IASTUnaryExpression.op_not:
 			return value == 0 ? 1 : 0;
 		}
-		throw UNKNOWN_EX;
+		return VALUE_CANNOT_BE_DETERMINED;
 	}
 
-	private static Long evaluateBinaryExpression(IASTBinaryExpression exp, int maxdepth)
-			throws UnknownValueException {
+	private static Number evaluateBinaryExpression(IASTBinaryExpression exp, int maxdepth) {
 		final int op= exp.getOperator();
 		switch (op) {
 		case IASTBinaryExpression.op_equals:
@@ -586,28 +605,27 @@ public class Value implements IValue {
 			break;
 		}
 
-		final Long o1= evaluate(exp.getOperand1(), maxdepth);
-		if (o1 == null)
-			return null;
-		final Long o2= evaluate(exp.getOperand2(), maxdepth);
-		if (o2 == null)
-			return null;
+		final Number o1= evaluate(exp.getOperand1(), maxdepth);
+		if (o1 == null || o1 == VALUE_CANNOT_BE_DETERMINED)
+			return o1;
+		final Number o2= evaluate(exp.getOperand2(), maxdepth);
+		if (o2 == null || o2 == VALUE_CANNOT_BE_DETERMINED)
+			return o2;
 
-		return applyBinaryOperator(op, o1, o2);
+		return applyBinaryOperator(op, o1.longValue(), o2.longValue());
 	}
 
-	private static long applyBinaryOperator(final int op, final long v1, final long v2)
-			throws UnknownValueException {
+	private static Number applyBinaryOperator(final int op, final long v1, final long v2) {
 		switch (op) {
 		case IASTBinaryExpression.op_multiply:
 			return v1 * v2;
 		case IASTBinaryExpression.op_divide:
 			if (v2 == 0)
-				throw UNKNOWN_EX;
+				return VALUE_CANNOT_BE_DETERMINED;
 			return v1 / v2;
 		case IASTBinaryExpression.op_modulo:
 			if (v2 == 0)
-				throw UNKNOWN_EX;
+				return VALUE_CANNOT_BE_DETERMINED;
 			return v1 % v2;
 		case IASTBinaryExpression.op_plus:
 			return v1 + v2;
@@ -644,7 +662,7 @@ public class Value implements IValue {
         case IASTBinaryExpression.op_min:
 			return Math.min(v1, v2);
 		}
-		throw UNKNOWN_EX;
+		return VALUE_CANNOT_BE_DETERMINED;
 	}
 
 	/**

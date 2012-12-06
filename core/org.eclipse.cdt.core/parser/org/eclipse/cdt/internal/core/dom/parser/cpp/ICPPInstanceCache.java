@@ -15,12 +15,10 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 
-
 /**
  * Caches instances per template, the template definitions need to implement this interface
  */
 public interface ICPPInstanceCache {
-	
 	/**
 	 * Attempts to cache an instance with this template
 	 */

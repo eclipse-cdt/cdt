@@ -42,6 +42,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
@@ -61,8 +63,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplate;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
@@ -79,21 +79,23 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPAliasTemplateInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPArrayType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClosureType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredClassInstance;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPParameterPackType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPQualifierType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPReferenceType;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPAliasTemplateInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownMember;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalBinary;
@@ -219,6 +221,29 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		}
 	}
 
+	class ConfigureFunction implements Runnable {
+		private final PDOMCPPFunction fFunction;
+		private final ICPPFunctionType fOriginalFunctionType;
+		private final ICPPParameter[] fOriginalParameters;
+		private final IType[] fOriginalExceptionSpec;
+		private final ICPPEvaluation fReturnExpression;
+
+		public ConfigureFunction(ICPPFunction original, PDOMCPPFunction function) throws DOMException {
+			fFunction = function;
+			fOriginalFunctionType= original.getType();
+			fOriginalParameters= original.getParameters();
+			fOriginalExceptionSpec= function.extractExceptionSpec(original);
+			fReturnExpression= CPPFunction.getReturnExpression(original);
+			postProcesses.add(this);
+		}
+
+		@Override
+		public void run() {
+			fFunction.initData(fOriginalFunctionType, fOriginalParameters, fOriginalExceptionSpec,
+					fReturnExpression);
+		}
+	}
+
 	class ConfigureFunctionTemplate implements Runnable {
 		private final PDOMCPPFunctionTemplate fTemplate;
 		private final IPDOMCPPTemplateParameter[] fTemplateParameters;
@@ -226,6 +251,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		private final ICPPFunctionType fOriginalFunctionType;
 		private final ICPPParameter[] fOriginalParameters;
 		private final IType[] fOriginalExceptionSpec;
+		private final ICPPEvaluation fReturnExpression;
 
 		public ConfigureFunctionTemplate(ICPPFunctionTemplate original, PDOMCPPFunctionTemplate template) throws DOMException {
 			fTemplate = template;
@@ -234,6 +260,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			fOriginalFunctionType= original.getType();
 			fOriginalParameters= original.getParameters();
 			fOriginalExceptionSpec= template.extractExceptionSpec(original);
+			fReturnExpression= CPPFunction.getReturnExpression(original);
 			postProcesses.add(this);
 		}
 
@@ -244,7 +271,33 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 				if (tp != null)
 					tp.configure(fOriginalTemplateParameters[i]);
 			}
-			fTemplate.initData(fOriginalFunctionType, fOriginalParameters, fOriginalExceptionSpec);
+			fTemplate.initData(fOriginalFunctionType, fOriginalParameters, fOriginalExceptionSpec,
+					fReturnExpression);
+		}
+	}
+
+	class ConfigureAliasTemplate implements Runnable {
+		private final PDOMCPPAliasTemplate fTemplate;
+		private final IPDOMCPPTemplateParameter[] fTemplateParameters;
+		private final ICPPTemplateParameter[] fOriginalTemplateParameters;
+		private final IType fOriginalAliasedType;
+
+		public ConfigureAliasTemplate(ICPPAliasTemplate original, PDOMCPPAliasTemplate template) throws DOMException {
+			fTemplate = template;
+			fTemplateParameters= template.getTemplateParameters();
+			fOriginalTemplateParameters= original.getTemplateParameters();
+			fOriginalAliasedType= original.getType();
+			postProcesses.add(this);
+		}
+
+		@Override
+		public void run() {
+			for (int i = 0; i < fOriginalTemplateParameters.length; i++) {
+				final IPDOMCPPTemplateParameter tp = fTemplateParameters[i];
+				if (tp != null)
+					tp.configure(fOriginalTemplateParameters[i]);
+			}
+			fTemplate.initData(fOriginalAliasedType);
 		}
 	}
 
@@ -270,7 +323,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 	}
 
 	/**
-	 * Adds or returns existing binding for the given one. If <code>fromName</code> is not <code>null</code>
+	 * Adds or returns existing binding for the given one. If {@code fromName} is not {@code null},
 	 * then an existing binding is updated with the properties of the name.
 	 */
 	private PDOMBinding addBinding(IBinding inputBinding, IASTName fromName) throws CoreException {
@@ -624,8 +677,8 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		return adaptBinding(null, inputBinding, includeLocal ? FILE_LOCAL_REC_DUMMY : null);
 	}
 
-	private final PDOMBinding adaptBinding(final PDOMNode parent, IBinding inputBinding, long[] fileLocalRecHolder)
-			throws CoreException {
+	private final PDOMBinding adaptBinding(final PDOMNode parent, IBinding inputBinding,
+			long[] fileLocalRecHolder) throws CoreException {
 		if (cannotAdapt(inputBinding)) {
 			return null;
 		}
@@ -634,8 +687,8 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		if (result != null) {
 			return result;
 		}
-
-		// assign names to anonymous types.
+		
+		// Assign names to anonymous types.
 		IBinding binding= PDOMASTAdapter.getAdapterForAnonymousASTBinding(inputBinding);
 		if (binding == null) {
 			return null;
@@ -1022,8 +1075,8 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 	}
 
 	@Override
-	public PDOMBinding addTypeBinding(IBinding type) throws CoreException {
-		return addBinding(type, null);
+	public PDOMBinding addTypeBinding(IBinding binding) throws CoreException {
+		return addBinding(binding, null);
 	}
 
 	@Override

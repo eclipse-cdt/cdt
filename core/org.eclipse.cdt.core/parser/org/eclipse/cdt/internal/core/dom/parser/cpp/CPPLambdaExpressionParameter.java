@@ -31,8 +31,8 @@ import org.eclipse.core.runtime.PlatformObject;
  * Binding for a c++ function parameter
  */
 public class CPPLambdaExpressionParameter extends PlatformObject implements ICPPParameter {
-	private IType fType = null;
-	private IASTName fDeclaration = null;
+	private IType fType;
+	private IASTName fDeclaration;
 	
 	public CPPLambdaExpressionParameter(IASTName name) {
 		fDeclaration = name;
@@ -77,14 +77,17 @@ public class CPPLambdaExpressionParameter extends PlatformObject implements ICPP
 	public boolean isStatic() {
         return false;
     }
+
     @Override
 	public String[] getQualifiedName() {
         return new String[] { getName() };
     }
+
     @Override
 	public char[][] getQualifiedNameCharArray() {
         return new char[][] { getNameCharArray() };
     }
+
     @Override
 	public boolean isGloballyQualified() {
         return false;

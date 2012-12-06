@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2010 QNX Software Systems and others.
+ * Copyright (c) 2002, 2012 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,21 +48,9 @@ public class BuildConsoleViewer extends TextViewer
 	 * Internal document listener.
 	 */
 	class InternalDocumentListener implements IDocumentListener {
-
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see org.eclipse.jface.text.IDocumentListener#documentAboutToBeChanged(org.eclipse.jface.text.DocumentEvent)
-		 */
 		@Override
 		public void documentAboutToBeChanged(DocumentEvent e) {
 		}
-
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see org.eclipse.jface.text.IDocumentListener#documentChanged(org.eclipse.jface.text.DocumentEvent)
-		 */
 		@Override
 		public void documentChanged(DocumentEvent e) {
 			revealEndOfDocument();
@@ -97,13 +85,15 @@ public class BuildConsoleViewer extends TextViewer
 	public BuildConsoleViewer(Composite parent) {
 		super(parent, getSWTStyles());
 		StyledText styledText = getTextWidget();
-		styledText.addLineStyleListener(this);
-		styledText.addLineBackgroundListener(this);
-		styledText.addMouseTrackListener(this);
-		styledText.setFont(parent.getFont());
-		styledText.setDoubleClickEnabled(true);
-		styledText.setEditable(false);
-		styledText.setWordWrap(true);
+		if (styledText != null) {
+			styledText.addLineStyleListener(this);
+			styledText.addLineBackgroundListener(this);
+			styledText.addMouseTrackListener(this);
+			styledText.setFont(parent.getFont());
+			styledText.setDoubleClickEnabled(true);
+			styledText.setEditable(false);
+			styledText.setWordWrap(true);
+		}
 	}
 
 	/**
@@ -119,30 +109,27 @@ public class BuildConsoleViewer extends TextViewer
 	 */
 	protected void revealEndOfDocument() {
 		if (isAutoScroll()) {
-			IDocument doc = getDocument();
-			int lines = doc.getNumberOfLines();
-			try {
-				// lines are 0-based
-				int lineStartOffset = doc.getLineOffset(lines - 1);
-				StyledText widget = getTextWidget();
-				if (lineStartOffset > 0) {
-					widget.setCaretOffset(lineStartOffset);
-					widget.showSelection();
+			StyledText widget = getTextWidget();
+			if (widget != null) {
+				IDocument doc = getDocument();
+				int lines = doc.getNumberOfLines();
+				try {
+					// lines are 0-based
+					int lineStartOffset = doc.getLineOffset(lines - 1);
+					if (lineStartOffset > 0) {
+						widget.setCaretOffset(lineStartOffset);
+						widget.showSelection();
+					}
+					int lineEndOffset = lineStartOffset + doc.getLineLength(lines - 1);
+					if (lineEndOffset > 0) {
+						widget.setCaretOffset(lineEndOffset);
+					}
+				} catch (BadLocationException e) {
 				}
-				int lineEndOffset = lineStartOffset + doc.getLineLength(lines - 1);
-				if (lineEndOffset > 0) {
-					widget.setCaretOffset(lineEndOffset);
-				}
-			} catch (BadLocationException e) {
 			}
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.text.ITextViewer#setDocument(org.eclipse.jface.text.IDocument)
-	 */
 	@Override
 	public void setDocument(IDocument doc) {
 		IDocument oldDoc = getDocument();
@@ -165,11 +152,6 @@ public class BuildConsoleViewer extends TextViewer
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.swt.custom.LineStyleListener#lineGetStyle(org.eclipse.swt.custom.LineStyleEvent)
-	 */
 	@Override
 	public void lineGetStyle(LineStyleEvent event) {
 		IDocument document = getDocument();
@@ -202,38 +184,46 @@ public class BuildConsoleViewer extends TextViewer
 	}
 
 	public void selectPartition(BuildConsolePartitioner partitioner, BuildConsolePartition p) {
-		try {
-			int start = partitioner.getDocument().getLineOfOffset(p.getOffset());
-			int end = partitioner.getDocument().getLineOfOffset(p.getOffset()+p.getLength()-1);
-
-			if ( fAutoScroll ) {
-				// Check if area around this line is visible, scroll if needed
-				int top = getTopIndex();
-				int bottom = getBottomIndex();
-				if ( start < top + 1 ) {
-					setTopIndex(start - 1 > 0 ? start - 1 : 0);
-				} else if ( end > bottom -1 ) {
-					setTopIndex(top + start - bottom + 1);
+		StyledText st = getTextWidget();
+		if (st != null) {
+			try {
+				int start = partitioner.getDocument().getLineOfOffset(p.getOffset());
+				int end = partitioner.getDocument().getLineOfOffset(p.getOffset()+p.getLength()-1);
+	
+				if ( fAutoScroll ) {
+					// Check if area around this line is visible, scroll if needed
+					int top = getTopIndex();
+					int bottom = getBottomIndex();
+					if ( start < top + 1 ) {
+						setTopIndex(start - 1 > 0 ? start - 1 : 0);
+					} else if ( end > bottom -1 ) {
+						setTopIndex(top + start - bottom + 1);
+					}
 				}
+	
+				// Select line
+				st.redrawRange(0, partitioner.getDocument().getLength(), true);
+	
+			} catch (BadLocationException e) {
+				CUIPlugin.log(e);
 			}
-
-			// Select line
-			StyledText st = getTextWidget();
-			st.redrawRange(0, partitioner.getDocument().getLength(), true);
-
-		} catch (BadLocationException e) {
-			CUIPlugin.log(e);
 		}
 	}
 
 	@Override
 	public void mouseEnter(MouseEvent e) {
-		getTextWidget().addMouseListener(this);
+		StyledText widget = getTextWidget();
+		if (widget != null) {
+			widget.addMouseListener(this);
+		}
 	}
 
 	@Override
 	public void mouseExit(MouseEvent e) {
-		getTextWidget().removeMouseListener(this);
+		StyledText widget = getTextWidget();
+		if (widget != null) {
+			widget.removeMouseListener(this);
+		}
 	}
 
 	@Override
@@ -242,12 +232,15 @@ public class BuildConsoleViewer extends TextViewer
 
 	@Override
 	public void mouseDoubleClick(MouseEvent e) {
-		int offset = -1;
-		try {
-			Point p = new Point(e.x, e.y);
-			offset = getTextWidget().getOffsetAtLocation(p);
-			BuildConsole.getCurrentPage().moveToError(offset);
-		} catch (IllegalArgumentException ex) {
+		StyledText widget = getTextWidget();
+		if (widget != null) {
+			int offset = -1;
+			try {
+				Point p = new Point(e.x, e.y);
+				offset = widget.getOffsetAtLocation(p);
+				BuildConsole.getCurrentPage().moveToError(offset);
+			} catch (IllegalArgumentException ex) {
+			}
 		}
 	}
 

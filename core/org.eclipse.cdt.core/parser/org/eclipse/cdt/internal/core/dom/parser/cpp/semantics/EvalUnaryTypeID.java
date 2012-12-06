@@ -191,6 +191,12 @@ public class EvalUnaryTypeID extends CPPEvaluation {
 	}
 
 	@Override
+	public ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap,
+			int maxdepth, IASTNode point) {
+		return this;
+	}
+
+	@Override
 	public int determinePackSize(ICPPTemplateParameterMap tpMap) {
 		return CPPTemplates.determinePackSize(fOrigType, tpMap);
 	}

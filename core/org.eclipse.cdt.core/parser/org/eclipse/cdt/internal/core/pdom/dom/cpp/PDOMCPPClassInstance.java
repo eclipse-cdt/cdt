@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Bryan Wilkinson (QNX) - Initial API and implementation
- *    Andrew Ferguson (Symbian)
- *    Markus Schorn (Wind River Systems)
+ *     Bryan Wilkinson (QNX) - Initial API and implementation
+ *     Andrew Ferguson (Symbian)
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -32,7 +32,6 @@ import org.eclipse.core.runtime.CoreException;
  * Result of instantiating a class template.
  */
 class PDOMCPPClassInstance extends PDOMCPPClassSpecialization implements ICPPTemplateInstance {
-	
 	private static final int ARGUMENTS = PDOMCPPClassSpecialization.RECORD_SIZE + 0;
 	
 	/**

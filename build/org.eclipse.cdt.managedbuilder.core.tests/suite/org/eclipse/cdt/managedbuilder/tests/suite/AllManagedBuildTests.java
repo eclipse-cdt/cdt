@@ -58,6 +58,9 @@ public class AllManagedBuildTests {
 
 		TestSuite suite = new TestSuite("Test for org.eclipse.cdt.managedbuild.core.tests");
 		//$JUnit-BEGIN$
+		// Preconditions
+		suite.addTestSuite(Preconditions.class);
+
 		// build.core.scannerconfig.tests
 		suite.addTest(CfgScannerConfigProfileManagerTests.suite());
 		suite.addTestSuite(GCCSpecsConsoleParserTest.class);

@@ -80,27 +80,28 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 
 	@Override
 	public void update(final PDOMLinkage linkage, IBinding newBinding) throws CoreException {
-		if (newBinding instanceof IFunction) {
-			IFunction func= (IFunction) newBinding;
-			IFunctionType newType;
-			IParameter[] newParams;
-			byte newAnnotation;
-			newType= func.getType();
-			newParams = func.getParameters();
-			newAnnotation = PDOMCAnnotation.encodeAnnotation(func);
-				
-			setType(linkage, newType);
-			PDOMCParameter oldParams= getFirstParameter(null);
-			setParameters(newParams);
-			if (oldParams != null) {
-				oldParams.delete(linkage);
-			}
-			getDB().putByte(record + ANNOTATIONS, newAnnotation);
+		if (!(newBinding instanceof IFunction))
+			return;
+
+		IFunction func= (IFunction) newBinding;
+		IFunctionType newType;
+		IParameter[] newParams;
+		byte newAnnotation;
+		newType= func.getType();
+		newParams = func.getParameters();
+		newAnnotation = PDOMCAnnotation.encodeAnnotation(func);
+			
+		setType(linkage, newType);
+		PDOMCParameter oldParams= getFirstParameter(null);
+		setParameters(newParams);
+		if (oldParams != null) {
+			oldParams.delete(linkage);
 		}
+		getDB().putByte(record + ANNOTATIONS, newAnnotation);
 	}
 
 	private void setType(PDOMLinkage linkage, IFunctionType ft) throws CoreException {
-		linkage.storeType(record+FUNCTION_TYPE, ft);
+		linkage.storeType(record + FUNCTION_TYPE, ft);
 	}
 
 	private void setParameters(IParameter[] params) throws CoreException {
@@ -109,7 +110,7 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 		db.putInt(record + NUM_PARAMS, params.length);
 		db.putRecPtr(record + FIRST_PARAM, 0);
 		PDOMCParameter next= null;
-		for (int i= params.length-1; i >= 0; --i) {
+		for (int i= params.length; --i >= 0;) {
 			next= new PDOMCParameter(linkage, this, params[i], next);
 		}
 		db.putRecPtr(record + FIRST_PARAM, next == null ? 0 : next.getRecord());
@@ -134,8 +135,8 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 	public IFunctionType getType() {
 		try {
 			return (IFunctionType) getLinkage().loadType(record + FUNCTION_TYPE);
-		} catch(CoreException ce) {
-			CCorePlugin.log(ce);
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
 			return new ProblemFunctionType(ISemanticProblem.TYPE_NOT_PERSISTED);
 		}
 	}
@@ -163,7 +164,7 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 			
 			long next = db.getRecPtr(record + FIRST_PARAM);
  			for (int i = 0; i < n && next != 0; i++) {
- 				IType type= i<ptypes.length ? ptypes[i] : null;
+ 				IType type= i < ptypes.length ? ptypes[i] : null;
 				final PDOMCParameter par = new PDOMCParameter(linkage, next, type);
 				next= par.getNextPtr();
 				result[i]= par;

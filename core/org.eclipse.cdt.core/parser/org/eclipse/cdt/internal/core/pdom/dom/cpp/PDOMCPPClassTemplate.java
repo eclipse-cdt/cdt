@@ -6,10 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Bryan Wilkinson (QNX) - Initial API and implementation
- *    Andrew Ferguson (Symbian)
- *    Markus Schorn (Wind River Systems)
- *    Sergey Prigogin (Google)
+ *     Bryan Wilkinson (QNX) - Initial API and implementation
+ *     Andrew Ferguson (Symbian)
+ *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -64,8 +64,9 @@ public class PDOMCPPClassTemplate extends PDOMCPPClassType
 		super(linkage, parent, template);
 		
 		final Database db = getDB();
-		final ICPPTemplateParameter[] origParams= template.getTemplateParameters();
-		final IPDOMCPPTemplateParameter[] params = PDOMTemplateParameterArray.createPDOMTemplateParameters(linkage, this, origParams);
+		ICPPTemplateParameter[] origParams= template.getTemplateParameters();
+		IPDOMCPPTemplateParameter[] params =
+				PDOMTemplateParameterArray.createPDOMTemplateParameters(linkage, this, origParams);
 		long rec= PDOMTemplateParameterArray.putArray(db, params);
 		db.putRecPtr(record + PARAMETERS, rec);
 		db.putShort(record + RELEVANT_PARAMETERS, (short) params.length);
@@ -247,8 +248,9 @@ public class PDOMCPPClassTemplate extends PDOMCPPClassType
 		// exclude other kinds of class templates
 		if (type instanceof ICPPClassTemplatePartialSpecialization ||
 				type instanceof ICPPTemplateTemplateParameter ||
-				type instanceof ICPPClassSpecialization)
+				type instanceof ICPPClassSpecialization) {
 			return false;
+		}
 				
 		ICPPClassType ctype= (ICPPClassType) type;
 		if (ctype.getKey() != getKey())

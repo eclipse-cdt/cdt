@@ -174,7 +174,7 @@ public class EvalConditional extends CPPEvaluation {
 			} else if (void2 && void3) {
 				fType= uqt2;
 			} else {
-				fType= new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
+				fType= ProblemType.UNKNOWN_FOR_EXPRESSION;
 			}
 			return;
 		}
@@ -204,10 +204,10 @@ public class EvalConditional extends CPPEvaluation {
 			if (cost2.converts() || cost3.converts()) {
 				if (cost2.converts()) {
 					if (cost3.converts() || cost2.isAmbiguousUDC()) {
-						fType= new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
+						fType= ProblemType.UNKNOWN_FOR_EXPRESSION;
 					}
 				} else if (cost3.isAmbiguousUDC()) {
-					fType= new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
+					fType= ProblemType.UNKNOWN_FOR_EXPRESSION;
 				}
 				return;
 			}
@@ -222,7 +222,7 @@ public class EvalConditional extends CPPEvaluation {
 				fType= t3;
 				fValueCategory= vcat3;
 			} else {
-				fType= new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
+				fType= ProblemType.UNKNOWN_FOR_EXPRESSION;
 			}
 			return;
 		}
@@ -233,7 +233,7 @@ public class EvalConditional extends CPPEvaluation {
 			if (fOverload != null) {
 				fType= ExpressionTypes.typeFromFunctionCall(fOverload);
 			} else {
-				fType= new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
+				fType= ProblemType.UNKNOWN_FOR_EXPRESSION;
 			}
 			return;
 		}
@@ -248,7 +248,7 @@ public class EvalConditional extends CPPEvaluation {
 	    	if (fType == null) {
 	    		fType= Conversions.compositePointerType(t2, t3);
 		    	if (fType == null) {
-					fType= new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
+					fType= ProblemType.UNKNOWN_FOR_EXPRESSION;
 		    	}
 	    	}
 		}
@@ -331,6 +331,18 @@ public class EvalConditional extends CPPEvaluation {
 		ICPPEvaluation positive = fPositive == null ?
 				null : fPositive.instantiate(tpMap, packOffset, within, maxdepth, point);
 		ICPPEvaluation negative = fNegative.instantiate(tpMap, packOffset, within, maxdepth, point);
+		if (condition == fCondition && positive == fPositive && negative == fNegative)
+			return this;
+		return new EvalConditional(condition, positive, negative, fPositiveThrows, fNegativeThrows);
+	}
+
+	@Override
+	public ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap,
+			int maxdepth, IASTNode point) {
+		ICPPEvaluation condition = fCondition.computeForFunctionCall(parameterMap, maxdepth, point);
+		ICPPEvaluation positive = fPositive == null ?
+				null : fPositive.computeForFunctionCall(parameterMap, maxdepth, point);
+		ICPPEvaluation negative = fNegative.computeForFunctionCall(parameterMap, maxdepth, point);
 		if (condition == fCondition && positive == fPositive && negative == fNegative)
 			return this;
 		return new EvalConditional(condition, positive, negative, fPositiveThrows, fNegativeThrows);

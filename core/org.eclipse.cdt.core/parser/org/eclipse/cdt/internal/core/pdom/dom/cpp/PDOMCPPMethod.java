@@ -64,7 +64,7 @@ class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod {
 
 	private byte annotation1= -1;
 
-	public PDOMCPPMethod(PDOMLinkage linkage, PDOMNode parent, ICPPMethod method) throws CoreException, DOMException {
+	public PDOMCPPMethod(PDOMCPPLinkage linkage, PDOMNode parent, ICPPMethod method) throws CoreException, DOMException {
 		super(linkage, parent, method, true);
 
 		Database db = getDB();

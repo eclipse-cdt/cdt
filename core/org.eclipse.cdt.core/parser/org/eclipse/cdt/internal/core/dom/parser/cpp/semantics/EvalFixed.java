@@ -169,6 +169,18 @@ public class EvalFixed extends CPPEvaluation {
 	}
 
 	@Override
+	public ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap,
+			int maxdepth, IASTNode point) {
+		ICPPEvaluation eval = fValue.getEvaluation();
+		if (eval == null)
+			return this;
+		eval = eval.computeForFunctionCall(parameterMap, maxdepth, point);
+		if (eval == fValue.getEvaluation())
+			return this;
+		return new EvalFixed(fType, fValueCategory, Value.create(eval));
+	}
+
+	@Override
 	public int determinePackSize(ICPPTemplateParameterMap tpMap) {
 		return CPPTemplates.determinePackSize(fValue, tpMap);
 	}

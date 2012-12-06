@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Bryan Wilkinson (QNX) - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     Bryan Wilkinson (QNX) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -40,7 +40,6 @@ import org.eclipse.core.runtime.CoreException;
  */
 class PDOMCPPClassTemplatePartialSpecialization extends	PDOMCPPClassTemplate 
 		implements IPDOMPartialSpecialization, ICPPSpecialization, IPDOMOverloader {
-	
 	private static final int ARGUMENTS = PDOMCPPClassTemplate.RECORD_SIZE + 0;
 	private static final int SIGNATURE_HASH = PDOMCPPClassTemplate.RECORD_SIZE + 4;
 	private static final int PRIMARY = PDOMCPPClassTemplate.RECORD_SIZE + 8;
@@ -116,9 +115,9 @@ class PDOMCPPClassTemplatePartialSpecialization extends	PDOMCPPClassTemplate
 	@Override
 	public void setArguments(ICPPTemplateArgument[] templateArguments) throws CoreException {
 		final Database db = getPDOM().getDB();
-		long oldRec = db.getRecPtr(record+ARGUMENTS);
+		long oldRec = db.getRecPtr(record + ARGUMENTS);
 		long rec= PDOMCPPArgumentList.putArguments(this, templateArguments);
-		db.putRecPtr(record+ARGUMENTS, rec);
+		db.putRecPtr(record + ARGUMENTS, rec);
 		if (oldRec != 0) {
 			PDOMCPPArgumentList.clearArguments(this, oldRec);
 		}
@@ -127,7 +126,7 @@ class PDOMCPPClassTemplatePartialSpecialization extends	PDOMCPPClassTemplate
 	@Override
 	public ICPPTemplateArgument[] getTemplateArguments() {
 		try {
-			final long rec= getPDOM().getDB().getRecPtr(record+ARGUMENTS);
+			final long rec= getPDOM().getDB().getRecPtr(record + ARGUMENTS);
 			return PDOMCPPArgumentList.getArguments(this, rec);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
@@ -144,7 +143,7 @@ class PDOMCPPClassTemplatePartialSpecialization extends	PDOMCPPClassTemplate
 	@Override
 	public int pdomCompareTo(PDOMBinding other) {
 		int cmp = super.pdomCompareTo(other);
-		if(cmp==0) {
+		if(cmp == 0) {
 			if(other instanceof PDOMCPPClassTemplatePartialSpecialization) {
 				try {
 					PDOMCPPClassTemplatePartialSpecialization otherSpec = (PDOMCPPClassTemplatePartialSpecialization) other;

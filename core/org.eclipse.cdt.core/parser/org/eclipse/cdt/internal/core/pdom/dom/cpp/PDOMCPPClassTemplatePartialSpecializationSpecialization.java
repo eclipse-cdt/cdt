@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -31,7 +31,6 @@ import org.eclipse.core.runtime.CoreException;
  */
 class PDOMCPPClassTemplatePartialSpecializationSpecialization extends PDOMCPPClassTemplateSpecialization 
 		implements IPDOMPartialSpecialization, ICPPClassTemplatePartialSpecializationSpecialization {
-
 	private static final int PRIMARY_TEMPLATE = PDOMCPPClassTemplateSpecialization.RECORD_SIZE;
 	private static final int ARGUMENTS = PDOMCPPClassTemplateSpecialization.RECORD_SIZE+4;
 	private static final int NEXT_PARTIAL = PDOMCPPClassTemplateSpecialization.RECORD_SIZE+8;
@@ -48,7 +47,6 @@ class PDOMCPPClassTemplatePartialSpecializationSpecialization extends PDOMCPPCla
 		getDB().putRecPtr(record + PRIMARY_TEMPLATE, primary.getRecord());
 		
 		linkage.new ConfigurePartialSpecialization(this, partial);
-	
 	}
 
 	public PDOMCPPClassTemplatePartialSpecializationSpecialization(PDOMLinkage linkage, long bindingRecord) {
@@ -117,9 +115,9 @@ class PDOMCPPClassTemplatePartialSpecializationSpecialization extends PDOMCPPCla
 	@Override
 	public void setArguments(ICPPTemplateArgument[] templateArguments) throws CoreException {
 		final Database db = getPDOM().getDB();
-		long oldRec = db.getRecPtr(record+ARGUMENTS);
+		long oldRec = db.getRecPtr(record + ARGUMENTS);
 		long rec= PDOMCPPArgumentList.putArguments(this, templateArguments);
-		db.putRecPtr(record+ARGUMENTS, rec);
+		db.putRecPtr(record + ARGUMENTS, rec);
 		if (oldRec != 0) {
 			PDOMCPPArgumentList.clearArguments(this, oldRec);
 		}
@@ -128,7 +126,7 @@ class PDOMCPPClassTemplatePartialSpecializationSpecialization extends PDOMCPPCla
 	@Override
 	public ICPPTemplateArgument[] getTemplateArguments() {
 		try {
-			final long rec= getPDOM().getDB().getRecPtr(record+ARGUMENTS);
+			final long rec= getPDOM().getDB().getRecPtr(record + ARGUMENTS);
 			return PDOMCPPArgumentList.getArguments(this, rec);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

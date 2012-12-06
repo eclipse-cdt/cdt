@@ -46,7 +46,7 @@ public abstract class PDOMCPPBinding extends PDOMBinding implements ICPPBinding 
 
 	@Override
 	public final boolean isGloballyQualified() throws DOMException {
-		// local stuff is not stored in the index.
+		// Local stuff is not stored in the index.
 		return true;
 	}
 }

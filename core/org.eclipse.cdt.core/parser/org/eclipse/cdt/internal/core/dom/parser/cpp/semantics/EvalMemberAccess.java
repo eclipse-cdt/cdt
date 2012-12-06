@@ -32,7 +32,6 @@ import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IScope;
-import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
@@ -176,8 +175,9 @@ public class EvalMemberAccess extends CPPEvaluation {
     		 * examine for type information.
     		 */
 
-    		ICPPEvaluation[] args= {new EvalFixed(type, LVALUE, Value.UNKNOWN)};
-			ICPPFunction op= CPPSemantics.findOverloadedOperator(point, args, classType, OverloadableOperator.ARROW, LookupMode.NO_GLOBALS);
+    		ICPPEvaluation[] args= { new EvalFixed(type, LVALUE, Value.UNKNOWN) };
+			ICPPFunction op= CPPSemantics.findOverloadedOperator(point, args, classType,
+					OverloadableOperator.ARROW, LookupMode.NO_GLOBALS);
     		if (op == null)
     			break;
 
@@ -196,7 +196,7 @@ public class EvalMemberAccess extends CPPEvaluation {
 		if (CPPTemplates.isDependentType(type))
 			return returnUnnamed ? CPPUnknownMemberClass.createUnnamedInstance() : null;
 
-		return new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
+		return ProblemType.UNKNOWN_FOR_EXPRESSION;
 	}
 
 	@Override
@@ -332,6 +332,12 @@ public class EvalMemberAccess extends CPPEvaluation {
 			member = CPPTemplates.createSpecialization((ICPPClassSpecialization) ownerType, fMember, point);
 		}
 		return new EvalMemberAccess(ownerType, fOwnerValueCategory, member, fIsPointerDeref);
+	}
+
+	@Override
+	public ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap,
+			int maxdepth, IASTNode point) {
+		return this;
 	}
 
 	@Override

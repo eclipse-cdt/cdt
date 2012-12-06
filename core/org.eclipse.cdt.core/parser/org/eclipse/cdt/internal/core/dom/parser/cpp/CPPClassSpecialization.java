@@ -135,6 +135,11 @@ public class CPPClassSpecialization extends CPPSpecialization
 		public boolean isFinal() {
 			return false;
 		}
+
+		@Override
+		public boolean isConstexpr() {
+			return false;
+		}
 	}
 
 	private ICPPClassSpecializationScope specScope;

@@ -1140,6 +1140,28 @@ public class CodeFormatterTest extends BaseUITestCase {
 		assertFormatterResult();
 	}
 
+	//struct moveonly {
+	//moveonly()=default;
+	//moveonly(const moveonly&)=delete;
+	//moveonly(moveonly&&)=default;
+	//moveonly& operator=(const moveonly&)=delete;
+	//moveonly& operator=(moveonly&&)=default;
+	//~moveonly()=default;
+	//};
+
+	//struct moveonly {
+	//    moveonly() = default;
+	//    moveonly(const moveonly&) = delete;
+	//    moveonly(moveonly&&) = default;
+	//    moveonly& operator=(const moveonly&) = delete;
+	//    moveonly& operator=(moveonly&&) = default;
+	//    ~moveonly() = default;
+	//};
+	public void testFunctionDefinitionWithoutBody() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
+		assertFormatterResult();
+	}
+
 	//int f1(int a, int b, int c, int d, int e, int f, int g);
 	//int f2(int a, int b, int c, int d, int e, int f, int g);
 	//

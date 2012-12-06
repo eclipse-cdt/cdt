@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.CoreException;
  * @author Bryan Wilkinson
  */
 public interface IPDOMOverloader {
-	
 	/**
 	 * @return the signature hash for this PDOM element, which will be unique
 	 * for all sibling IPDOMOverloaders with the same name.

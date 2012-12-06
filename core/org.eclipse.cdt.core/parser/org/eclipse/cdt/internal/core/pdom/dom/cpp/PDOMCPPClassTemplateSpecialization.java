@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Bryan Wilkinson (QNX) - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     Bryan Wilkinson (QNX) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -40,7 +40,6 @@ import org.eclipse.core.runtime.CoreException;
  */
 class PDOMCPPClassTemplateSpecialization extends PDOMCPPClassSpecialization 
 		implements ICPPClassTemplate, ICPPInstanceCache {
-
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPClassSpecialization.RECORD_SIZE;
 

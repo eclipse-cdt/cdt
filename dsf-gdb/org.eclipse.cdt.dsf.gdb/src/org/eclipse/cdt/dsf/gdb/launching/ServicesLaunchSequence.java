@@ -35,6 +35,7 @@ import org.eclipse.cdt.dsf.mi.service.CSourceLookup;
 import org.eclipse.cdt.dsf.mi.service.IMIBackend;
 import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpointsManager;
+import org.eclipse.cdt.dsf.mi.service.MIBreakpointsSynchronizer;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -129,6 +130,11 @@ public class ServicesLaunchSequence extends Sequence {
            	} else {
            		requestMonitor.done();
            	}
+        }},
+        new Step() { @Override
+        public void execute(final RequestMonitor requestMonitor) {
+            // Create breakpoint synchronization service.
+        	fLaunch.getServiceFactory().createService(MIBreakpointsSynchronizer.class, fSession).initialize(requestMonitor); 
         }},
     };
 

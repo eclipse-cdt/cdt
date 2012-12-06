@@ -49,7 +49,10 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 
 public class BaseTestCase extends TestCase {
-	protected static final int INDEXER_TIMEOUT_SEC = 10;
+	private static final String DEFAULT_INDEXER_TIMEOUT_SEC = "10";
+	private static final String INDEXER_TIMEOUT_PROPERTY = "indexer.timeout";
+	protected static final int INDEXER_TIMEOUT_SEC =
+			Integer.parseInt(System.getProperty(INDEXER_TIMEOUT_PROPERTY, DEFAULT_INDEXER_TIMEOUT_SEC));
 	private boolean fExpectFailure;
 	private int fBugNumber;
 	private int fExpectedLoggedNonOK;
@@ -160,7 +163,7 @@ public class BaseTestCase extends TestCase {
 			try {
 				super.runBare();
 			} catch (Throwable e) {
-				testThrowable=e;
+				testThrowable= e;
 			}
 
 			if (statusLog.size() != fExpectedLoggedNonOK) {
@@ -168,7 +171,7 @@ public class BaseTestCase extends TestCase {
 				msg.append("non-OK status objects in log differs from actual (" + statusLog.size() + ").\n");
 				Throwable cause= null;
 				if (!statusLog.isEmpty()) {
-					synchronized(statusLog) {
+					synchronized (statusLog) {
 						for (IStatus status : statusLog) {
 							IStatus[] ss= {status};
 							ss= status instanceof MultiStatus ? ((MultiStatus) status).getChildren() : ss;

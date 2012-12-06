@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Andrew Ferguson (Symbian) - Initial implementation
+ *     Andrew Ferguson (Symbian) - Initial implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.c;
 
@@ -24,18 +24,18 @@ class CompositeCVariable extends CompositeCBinding implements IVariable {
 
 	@Override
 	public IType getType() {
-		IType rtype = ((IVariable)rbinding).getType();
+		IType rtype = ((IVariable) rbinding).getType();
 		return cf.getCompositeType(rtype);
 	}
 
 	@Override
 	public boolean isAuto() {
-		return ((IVariable)rbinding).isAuto();
+		return ((IVariable) rbinding).isAuto();
 	}
 
 	@Override
 	public boolean isExtern() {
-		return ((IVariable)rbinding).isExtern();
+		return ((IVariable) rbinding).isExtern();
 	}
 
 	@Override
@@ -45,11 +45,11 @@ class CompositeCVariable extends CompositeCBinding implements IVariable {
 
 	@Override
 	public boolean isStatic() {
-		return ((IVariable)rbinding).isStatic();
+		return ((IVariable) rbinding).isStatic();
 	}
 
 	@Override
 	public IValue getInitialValue() {
-		return ((IVariable)rbinding).getInitialValue();
+		return ((IVariable) rbinding).getInitialValue();
 	}
 }

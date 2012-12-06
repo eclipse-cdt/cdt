@@ -51,11 +51,7 @@ public class CASTIdExpression extends ASTNode implements IASTIdExpression, IASTC
 	@Override
 	public CASTIdExpression copy(CopyStyle style) {
 		CASTIdExpression copy = new CASTIdExpression(name == null ? null : name.copy(style));
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 
 	@Override
@@ -105,13 +101,13 @@ public class CASTIdExpression extends ASTNode implements IASTIdExpression, IASTC
 	public IType getExpressionType() {
 		IBinding binding = getName().resolveBinding();
 		if (binding instanceof IVariable) {
-			return ((IVariable)binding).getType();
+			return ((IVariable) binding).getType();
 		} 
 		if (binding instanceof IFunction) {
-			return ((IFunction)binding).getType();
+			return ((IFunction) binding).getType();
 		}
 		if (binding instanceof IEnumerator) {
-			return ((IEnumerator)binding).getType();
+			return ((IEnumerator) binding).getType();
 		}
 		if (binding instanceof IProblemBinding) {
 			return new ProblemType(ISemanticProblem.TYPE_UNRESOLVED_NAME);

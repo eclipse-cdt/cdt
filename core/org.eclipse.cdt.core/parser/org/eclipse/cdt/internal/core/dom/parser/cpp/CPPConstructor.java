@@ -19,5 +19,4 @@ public class CPPConstructor extends CPPMethod implements ICPPConstructor {
 	public CPPConstructor(ICPPASTFunctionDeclarator declarator) {
 		super(declarator);
 	}
-
 }

@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Doug Schaefer (QNX) - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
- *    IBM Corporation
+ *     Doug Schaefer (QNX) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -35,7 +35,6 @@ import org.eclipse.core.runtime.CoreException;
  * Binding for a parameter of a c++ function in the index.
  */
 class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBinding {
-
 	private static final int NEXT_PARAM = PDOMNamedNode.RECORD_SIZE;
 	private static final int ANNOTATIONS = NEXT_PARAM + Database.PTR_SIZE;
 	private static final int FLAGS = ANNOTATIONS + 1;
@@ -44,10 +43,11 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 	static {
 		assert RECORD_SIZE <= 22; // 23 would yield a 32-byte block
 	}
-	
+
 	private static final byte FLAG_DEFAULT_VALUE = 0x1;
 
 	private final IType fType;
+
 	public PDOMCPPParameter(PDOMLinkage linkage, long record, IType type) {
 		super(linkage, record);
 		fType= type;
@@ -56,8 +56,8 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 	public PDOMCPPParameter(PDOMLinkage linkage, PDOMNode parent, ICPPParameter param, PDOMCPPParameter next)
 			throws CoreException {
 		super(linkage, parent, param.getNameCharArray());
-		fType= null;	// this constructor is used for adding parameters to the database, only.
-		
+		fType= null;	// This constructor is used for adding parameters to the database, only.
+
 		Database db = getDB();
 		db.putByte(record + FLAGS, param.hasDefaultValue() ? FLAG_DEFAULT_VALUE : 0);
 		db.putRecPtr(record + NEXT_PARAM, next == null ? 0 : next.getRecord());
@@ -77,9 +77,9 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 			db.putByte(record + FLAGS, FLAG_DEFAULT_VALUE);
 		} else if (newPar.isParameterPack()) {
 			db.putByte(record + FLAGS, (byte) 0);
-		} 
+		}
 		storeAnnotations(db, newPar);
-		
+
 		final char[] newName = newPar.getNameCharArray();
 		if (!CharArrayUtils.equals(newName, getNameCharArray())) {
 			updateName(newName);
@@ -95,7 +95,7 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPPPARAMETER;
 	}
-	
+
 	@Override
 	public String[] getQualifiedName() {
 		return new String[] {getName()};
@@ -114,7 +114,7 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 	@Override
 	public boolean isMutable() {
 		// ISO/IEC 14882:2003 7.1.1.8
-		return false; 
+		return false;
 	}
 
 	@Override
@@ -125,14 +125,14 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 	@Override
 	public boolean isAuto() {
 		// ISO/IEC 14882:2003 7.1.1.2
-		byte flag = 1<<PDOMCAnnotation.AUTO_OFFSET;
+		byte flag = 1 << PDOMCAnnotation.AUTO_OFFSET;
 		return hasFlag(flag, true, ANNOTATIONS);
 	}
 
 	@Override
 	public boolean isExtern() {
 		// ISO/IEC 14882:2003 7.1.1.5
-		return false; 
+		return false;
 	}
 
 	@Override
@@ -143,14 +143,14 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 	@Override
 	public boolean isRegister() {
 		// ISO/IEC 14882:2003 7.1.1.2
-		byte flag = 1<<PDOMCAnnotation.REGISTER_OFFSET;
+		byte flag = 1 << PDOMCAnnotation.REGISTER_OFFSET;
 		return hasFlag(flag, true, ANNOTATIONS);
 	}
 
 	@Override
 	public boolean isStatic() {
 		// ISO/IEC 14882:2003 7.1.1.4
-		return false; 
+		return false;
 	}
 
 	@Override
@@ -198,12 +198,12 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 		}
 		return defValue;
 	}
-	
+
 	@Override
 	public IIndexFragment getFragment() {
 		return getPDOM();
-	}	
-	
+	}
+
 	@Override
 	public boolean hasDefinition() throws CoreException {
 		// parameter bindings do not span index fragments
@@ -215,7 +215,7 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 		// parameter bindings do not span index fragments
 		return true;
 	}
-	
+
 	@Override
 	public int getBindingConstant() {
 		return getNodeType();
@@ -227,7 +227,7 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 		for (;;) {
 			long rec = p.getNextPtr();
 			p.flatDelete(linkage);
-			if (rec == 0) 
+			if (rec == 0)
 				return;
 			p= new PDOMCPPParameter(linkage, rec, null);
 		}
@@ -246,7 +246,7 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 	public boolean isFileLocal() throws CoreException {
 		return false;
 	}
-	
+
 	@Override
 	public IIndexFile getLocalToFile() throws CoreException {
 		return null;

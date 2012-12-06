@@ -108,7 +108,7 @@ public class EvalUnary extends CPPEvaluation {
 		if (fType != null)
 			return fType instanceof TypeOfDependentExpression;
 
-		switch(fOperator) {
+		switch (fOperator) {
 		case op_alignOf:
 		case op_not:
 		case op_sizeof:
@@ -217,7 +217,7 @@ public class EvalUnary extends CPPEvaluation {
 	    	if (type instanceof ISemanticProblem) {
 	    		return type;
 	    	}
-			return new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
+			return ProblemType.UNKNOWN_FOR_EXPRESSION;
 		case op_noexcept:
 		case op_not:
 			return CPPBasicType.BOOLEAN;
@@ -322,6 +322,16 @@ public class EvalUnary extends CPPEvaluation {
 			return this;
 		
 		return new EvalUnary(fOperator, argument, aoqn);
+	}
+
+	@Override
+	public ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap,
+			int maxdepth, IASTNode point) {
+		ICPPEvaluation argument = fArgument.computeForFunctionCall(parameterMap, maxdepth, point);
+		if (argument == fArgument)
+			return this;
+		
+		return new EvalUnary(fOperator, argument, fAddressOfQualifiedNameBinding);
 	}
 
 	@Override

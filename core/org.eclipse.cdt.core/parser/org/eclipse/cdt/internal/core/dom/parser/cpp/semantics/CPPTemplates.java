@@ -51,6 +51,7 @@ import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IValue;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAliasDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAmbiguousTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
@@ -534,8 +535,9 @@ public class CPPTemplates {
 
 			ICPPASTTemplateDeclaration templateDeclaration = templates[0];
 			IASTDeclaration decl = templateDeclaration.getDeclaration();
-			while (decl instanceof ICPPASTTemplateDeclaration)
+			while (decl instanceof ICPPASTTemplateDeclaration) {
 				decl = ((ICPPASTTemplateDeclaration) decl).getDeclaration();
+			}
 
 			IASTName name = null;
 			if (decl instanceof IASTSimpleDeclaration) {
@@ -557,6 +559,8 @@ public class CPPTemplates {
 				IASTDeclarator dtor = ((IASTFunctionDefinition) decl).getDeclarator();
 				dtor= ASTQueries.findInnermostDeclarator(dtor);
 				name = dtor.getName();
+			} else if (decl instanceof ICPPASTAliasDeclaration) {
+				name = ((ICPPASTAliasDeclaration) decl).getAlias();
 			}
 			if (name == null)
 				return null;
@@ -659,7 +663,7 @@ public class CPPTemplates {
 				IBinding owner = template.getOwner();
 				ICPPClassSpecialization within = getSpecializationContext(owner);
 				IType instantiatedType = instantiateType(aliasedType, parameterMap, -1,	within, id);
-				return new CPPAliasTemplateInstance(id.toCharArray(), instantiatedType, aliasTemplate);
+				return new CPPAliasTemplateInstance(id.toCharArray(), aliasTemplate, instantiatedType);
 			}
 
 			// Class template.
@@ -830,7 +834,7 @@ public class CPPTemplates {
 		} else if (decl instanceof ICPPAliasTemplate) {
 			ICPPAliasTemplate aliasTemplate = (ICPPAliasTemplate) decl;
 			IType type= instantiateType(aliasTemplate.getType(), tpMap, -1, getSpecializationContext(owner), point);
-		    spec = new CPPAliasTemplateInstance(decl.getNameCharArray(), type, aliasTemplate);
+		    spec = new CPPAliasTemplateInstance(decl.getNameCharArray(), aliasTemplate, type);
 		} else if (decl instanceof IEnumeration || decl instanceof IEnumerator) {
 			// TODO(sprigogin): Deal with a case when an enumerator value depends on a template parameter.
 		    spec = decl;

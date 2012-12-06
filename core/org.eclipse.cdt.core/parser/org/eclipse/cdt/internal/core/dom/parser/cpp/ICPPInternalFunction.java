@@ -8,8 +8,8 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -17,8 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 /**
  * Interface for ast-internal implementations of function bindings.
  */
-public interface ICPPInternalFunction extends ICPPInternalBinding {
-
+public interface ICPPInternalFunction extends ICPPInternalBinding, ICPPComputableFunction {
 	/**
 	 * Called to resolve the parameter in the second phase.
 	 */

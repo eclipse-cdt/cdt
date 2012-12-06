@@ -1729,11 +1729,11 @@ public class CPPTemplates {
 				ICPPFunctionTemplate template= (ICPPFunctionTemplate) func;
 				try {
 					if (containsDependentType(fnArgs))
-						return new ICPPFunction[] {CPPDeferredFunction.createForSample(template)};
+						return new ICPPFunction[] {CPPDeferredFunction.createForCandidates(fns)};
 
 					if (requireTemplate) {
 						if (hasDependentArgument(tmplArgs))
-							return new ICPPFunction[] {CPPDeferredFunction.createForSample(template)};
+							return new ICPPFunction[] {CPPDeferredFunction.createForCandidates(fns)};
 					}
 				} catch (DOMException e) {
 					return NO_FUNCTIONS;
@@ -1805,7 +1805,7 @@ public class CPPTemplates {
 				if (!checkedForDependentType) {
 					try {
 						if (isDependentType(conversionType)) {
-							inst= CPPDeferredFunction.createForSample(template);
+							inst= CPPDeferredFunction.createForCandidates(functions);
 							done= true;
 						}
 						checkedForDependentType= true;
@@ -1869,7 +1869,7 @@ public class CPPTemplates {
 			ICPPTemplateArgument[] args, IASTNode point) {
 		try {
 			if (target != null && isDependentType(target)) {
-				return CPPDeferredFunction.createForSample(template);
+				return CPPDeferredFunction.createForCandidate(template);
 			}
 
 			if (template instanceof ICPPConstructor || args == null)

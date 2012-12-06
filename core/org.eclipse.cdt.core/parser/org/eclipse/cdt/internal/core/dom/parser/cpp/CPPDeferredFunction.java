@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
@@ -30,19 +29,29 @@ public class CPPDeferredFunction extends CPPUnknownBinding implements ICPPFuncti
 	private static final ICPPFunctionType FUNCTION_TYPE=
 			new CPPFunctionType(ProblemType.UNKNOWN_FOR_EXPRESSION, IType.EMPTY_TYPE_ARRAY);
 
-	public static ICPPFunction createForSample(IFunction sample) throws DOMException {
-		if (sample instanceof ICPPConstructor)
-			return new CPPUnknownConstructor(((ICPPConstructor) sample).getClassOwner());
+	public static ICPPFunction createForCandidate(ICPPFunction candidate) throws DOMException {
+		return createForCandidates(new ICPPFunction[]{ candidate });
+	}
+	
+	public static ICPPFunction createForCandidates(ICPPFunction[] candidates) throws DOMException {
+		if (candidates[0] instanceof ICPPConstructor)
+			return new CPPUnknownConstructor(((ICPPConstructor) candidates[0]).getClassOwner(), candidates);
 		
-		final IBinding owner = sample.getOwner();
-		return new CPPDeferredFunction(owner, sample.getNameCharArray());
+		final IBinding owner = candidates[0].getOwner();
+		return new CPPDeferredFunction(owner, candidates[0].getNameCharArray(), candidates);
 	}
 
 	private final IBinding fOwner;
+	private final ICPPFunction[] fCandidates;
 
-	public CPPDeferredFunction(IBinding owner, char[] name) {
+	public CPPDeferredFunction(IBinding owner, char[] name, ICPPFunction[] candidates) {
 		super(name);
 		fOwner= owner;
+		fCandidates = candidates;
+	}
+	
+	public ICPPFunction[] getCandidates() {
+		return fCandidates;
 	}
 
 	@Override

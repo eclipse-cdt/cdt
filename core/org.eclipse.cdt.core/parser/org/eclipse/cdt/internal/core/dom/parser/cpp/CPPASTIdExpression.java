@@ -1,14 +1,14 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2011 IBM Corporation and others.
- *  All rights reserved. This program and the accompanying materials
- *  are made available under the terms of the Eclipse Public License v1.0
- *  which accompanies this distribution, and is available at
- *  http://www.eclipse.org/legal/epl-v10.html
- * 
- *  Contributors:
- *    John Camelon (IBM) - Initial API and implementation
- *    Bryan Wilkinson (QNX)
- *    Markus Schorn (Wind River Systems)
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     John Camelon (IBM) - Initial API and implementation
+ *     Bryan Wilkinson (QNX)
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -48,11 +48,7 @@ public class CPPASTIdExpression extends ASTNode implements IASTIdExpression, ICP
 	@Override
 	public CPPASTIdExpression copy(CopyStyle style) {
 		CPPASTIdExpression copy = new CPPASTIdExpression(name == null ? null : name.copy(style));
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 
 	@Override
@@ -94,7 +90,8 @@ public class CPPASTIdExpression extends ASTNode implements IASTIdExpression, ICP
 
 	@Override
 	public int getRoleForName(IASTName n) {
-		if (name == n) return r_reference;
+		if (name == n)
+			return r_reference;
 		return r_unclear;
 	}
 
@@ -107,12 +104,12 @@ public class CPPASTIdExpression extends ASTNode implements IASTIdExpression, ICP
 	public String toString() {
 		return name != null ? name.toString() : "<unnamed>"; //$NON-NLS-1$
 	}
-	
+
 	@Override
 	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
 		return findBindings(n, isPrefix, null);
 	}
-	
+
 	@Override
 	public ICPPEvaluation getEvaluation() {
 		if (fEvaluation == null) {
@@ -120,7 +117,7 @@ public class CPPASTIdExpression extends ASTNode implements IASTIdExpression, ICP
 		}
 		return fEvaluation;
 	}
-	
+
 	@Override
 	public IType getExpressionType() {
 		IType type= getEvaluation().getTypeOrFunctionSet(this);
@@ -128,12 +125,12 @@ public class CPPASTIdExpression extends ASTNode implements IASTIdExpression, ICP
 			IBinding binding= name.resolveBinding();
 			if (binding instanceof IFunction) {
 				return SemanticUtil.mapToAST(((IFunction) binding).getType(), this);
-			} 
+			}
 			return ProblemType.UNKNOWN_FOR_EXPRESSION;
 		}
 		return type;
 	}
-	
+
 	@Override
 	public boolean isLValue() {
 		return getValueCategory() == LVALUE;

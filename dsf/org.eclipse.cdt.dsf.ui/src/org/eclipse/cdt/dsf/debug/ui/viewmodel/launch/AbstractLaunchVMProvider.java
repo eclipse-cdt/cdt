@@ -156,6 +156,7 @@ public class AbstractLaunchVMProvider extends AbstractDMVMProvider
                 }
             }
         } else if (event instanceof IRunControl.ISuspendedDMEvent) {
+            final IRunControl.ISuspendedDMEvent suspendEvent = (IRunControl.ISuspendedDMEvent)event;
     		final IExecutionDMContext exeContext= ((IRunControl.ISuspendedDMEvent) event).getDMContext();
     		ScheduledFuture<?> refreshStackFramesFuture = getRefreshFuture(exeContext);
     		// trigger delayed full stack frame update
@@ -177,7 +178,7 @@ public class AbstractLaunchVMProvider extends AbstractDMVMProvider
     	                                ScheduledFuture<?> future= fRefreshStackFramesFutures.get(exeContext);
     	                                if (future != null && !isDisposed()) {
     	                                    fRefreshStackFramesFutures.remove(exeContext);
-    	                                    handleEvent(new FullStackRefreshEvent(exeContext), null);
+    	                                    handleEvent(new FullStackRefreshEvent(exeContext, suspendEvent), null);
     	                                }
     	                            }});
     	                    }

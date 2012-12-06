@@ -606,7 +606,9 @@ public class StackFramesVMNode extends AbstractDMVMNode
         // label has changed.
         if (e instanceof ISuspendedDMEvent) {
             return IModelDelta.CONTENT | IModelDelta.EXPAND | IModelDelta.SELECT;
-        } else if (e instanceof FullStackRefreshEvent) {
+        } else if (e instanceof FullStackRefreshEvent &&
+            !(((FullStackRefreshEvent)e).getTriggeringEvent() instanceof IContainerSuspendedDMEvent) ) 
+        {
         	return IModelDelta.CONTENT;
         } else if (e instanceof SteppingTimedOutEvent) {
             return IModelDelta.CONTENT;
@@ -657,8 +659,13 @@ public class StackFramesVMNode extends AbstractDMVMNode
                 rm.done();
             }
         } else if (e instanceof FullStackRefreshEvent) {
-            IExecutionDMContext execDmc = ((FullStackRefreshEvent)e).getDMContext();
-            buildDeltaForFullStackRefreshEvent(execDmc, execDmc, parent, nodeOffset, rm);
+            FullStackRefreshEvent refreshEvent = (FullStackRefreshEvent)e;
+            if ( !(refreshEvent.getTriggeringEvent() instanceof IContainerSuspendedDMEvent)) {
+                IExecutionDMContext execDmc = ((FullStackRefreshEvent)e).getDMContext();
+                buildDeltaForFullStackRefreshEvent(execDmc, execDmc, parent, nodeOffset, rm);
+            } else {
+                rm.done();
+            }
         } else if (e instanceof ISuspendedDMEvent) {
             resetStackFrameLimit( ((ISuspendedDMEvent)e).getDMContext() );
             IExecutionDMContext execDmc = ((ISuspendedDMEvent)e).getDMContext();

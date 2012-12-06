@@ -35,6 +35,7 @@ import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
@@ -636,7 +637,15 @@ public class TemplateArgumentDeduction {
 					if (deducedArg != null) {
 						deducedArg= CPPTemplates.instantiateArgument(deducedArg, tpMap, -1, null, point);
 						if (deducedArg != null) {
-							tpMap.put(tpar, deducedArg);
+							if (deducedArg instanceof CPPTemplateTypeArgument) {
+								CPPTemplateTypeArgument deducedTypeArg = (CPPTemplateTypeArgument) deducedArg;
+								if (!(deducedTypeArg.getTypeValue() instanceof IProblemBinding)) {
+									tpMap.put(tpar, deducedArg);
+								}
+							} else {
+								// TODO: check for ProblemBindings in non-type or template template parameters?
+								tpMap.put(tpar, deducedArg);
+							}
 						}
 					}
 				}

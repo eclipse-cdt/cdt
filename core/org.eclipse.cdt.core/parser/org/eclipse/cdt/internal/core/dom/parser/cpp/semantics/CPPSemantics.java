@@ -417,6 +417,9 @@ public class CPPSemantics {
 					if (cls instanceof ICPPUnknownBinding) {
 						binding= new CPPUnknownConstructor(cls);
 					} else {
+						// Do not interpret template arguments to a template class as being
+						// explicit template arguments to its templated constructor.
+						data.fTemplateArguments = null;
 						binding= CPPSemantics.resolveFunction(data, ClassTypeHelper.getConstructors(cls, lookupPoint), true);
 					}
 				} catch (DOMException e) {

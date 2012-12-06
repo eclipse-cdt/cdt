@@ -97,10 +97,33 @@ public class EvalBinding extends CPPEvaluation {
 	 * otherwise returns -1
 	 */
 	public int getFunctionParameterPosition() {
-		if (fParameterPosition < 0 && fBinding instanceof CPPParameter) {
-			fParameterPosition = ((CPPParameter) fBinding).getParameterPosition();
+		if (fParameterPosition < 0) {
+			if (fBinding instanceof CPPParameter) {
+				fParameterPosition = ((CPPParameter) fBinding).getParameterPosition();
+			} else {
+				ICPPFunction parameterOwner = getParameterOwner();
+				if (parameterOwner != null) {
+					ICPPParameter[] parameters = fParameterOwner.getParameters();
+					fParameterPosition = findInArray(parameters, fBinding);
+				}
+			}
 		}
 		return fParameterPosition;
+	}
+
+	/**
+	 * Finds a given object in an array.
+	 *  
+	 * @param array the array to find the object in
+	 * @param obj the object to find
+	 * @return the index of the object in the array, or -1 if the object is not in the array 
+	 */
+	private static int findInArray(Object[] array, Object obj) {
+		for (int i = 0; i < array.length; i++) {
+			if (obj == array[i])
+				return i;
+		}
+		return -1;
 	}
 
 	/**
@@ -108,7 +131,7 @@ public class EvalBinding extends CPPEvaluation {
 	 *     otherwise {@code null}.
 	 */
 	public ICPPFunction getParameterOwner() {
-		if (fParameterOwner == null && fBinding instanceof CPPParameter) {
+		if (fParameterOwner == null && fBinding instanceof ICPPParameter) {
 			IBinding owner = ((CPPParameter) fBinding).getOwner();
 			if (owner instanceof ICPPFunction)
 				fParameterOwner = (ICPPFunction) owner;

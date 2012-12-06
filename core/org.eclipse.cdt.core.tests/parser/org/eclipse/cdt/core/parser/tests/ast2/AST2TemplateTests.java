@@ -6883,4 +6883,16 @@ public class AST2TemplateTests extends AST2BaseTest {
 		assertEquals("bool", ASTTypeUtil.getType(td.getType()));
 		ah.assertProblem("B<int*>::type", "type");
 	}
+	
+	//	struct S {
+	//	    typedef int a_type;
+	//	};
+	//	template <typename T, typename = typename T::a_type> int foo(T);
+	//	template <typename T, typename = typename T::b_type> void foo(T);
+	//	int main() {
+	//	    foo(S());
+	//	}
+	public void testSFINAEInDefaultArgument() throws Exception {
+		parseAndCheckBindings();
+	}
 }

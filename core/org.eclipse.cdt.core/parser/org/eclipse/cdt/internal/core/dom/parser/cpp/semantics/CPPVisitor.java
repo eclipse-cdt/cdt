@@ -238,6 +238,7 @@ public class CPPVisitor extends ASTQueries {
 			return new HashSet<IASTDeclSpecifier>();
 		}
 	};
+
 	public static IBinding createBinding(IASTName name) {
 		IASTNode parent = name.getParent();
 		IBinding binding = null;
@@ -1999,7 +2000,7 @@ public class CPPVisitor extends ASTQueries {
 			IASTExpression beginExpr= null;
 			if (forInit instanceof IASTExpression) {
 				final IASTExpression expr = (IASTExpression) forInit;
-				IType type= SemanticUtil.getNestedType(expr.getExpressionType(), TDEF|CVTYPE);
+				IType type= SemanticUtil.getNestedType(expr.getExpressionType(), TDEF | CVTYPE);
 				if (type instanceof IArrayType) {
 					beginExpr= expr.copy();
 				}

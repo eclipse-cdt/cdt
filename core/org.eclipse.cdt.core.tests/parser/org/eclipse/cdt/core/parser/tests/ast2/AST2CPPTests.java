@@ -266,6 +266,14 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertTrue("Expected types to be the same, but first was: '" + first.toString() + "' and second was: '" + second + "'", first.isSameType(second));
 	}
 
+	private void assertProblemUntilOpenParen(BindingAssertionHelper helper, String section) {
+		helper.assertProblem(section, section.indexOf('('));
+	}
+	
+	private void assertNonProblemUntilOpenParen(BindingAssertionHelper helper, String section) {
+		helper.assertNonProblem(section, section.indexOf('('));
+	}
+
 	// #define CURLOPTTYPE_OBJECTPOINT   10000
 	// #define CINIT(name,type,number) CURLOPT_ ## name = CURLOPTTYPE_ ## type + number
 	// typedef enum {
@@ -9950,5 +9958,98 @@ public class AST2CPPTests extends AST2BaseTest {
 	//	template<int I> bool operator==(S1 a, const CT<I>& r );
 	public void testOrderInAmbiguityResolution_390759() throws Exception {
 		parseAndCheckBindings();
+	}
+
+	//  struct Bool { Bool(bool); };
+	//  struct Char { Char(char); };
+	//  struct Short { Short(short); };
+	//  struct Int { Int(int); };
+	//  struct UInt { UInt(unsigned int); };
+	//  struct Long { Long(long); };
+	//  struct ULong { ULong(unsigned long); };
+	//  struct Float { Float(float); };
+	//  struct Double { Double(double); };
+	//  struct LongDouble { LongDouble(long double); };
+	//  void fbool(Bool);
+	//  void fchar(Char);
+	//  void fshort(Short);
+	//  void fint(Int);
+	//  void flong(Long);
+	//  void fuint(UInt);
+	//  void fulong(ULong);
+	//  void ffloat(Float);
+	//  void fdouble(Double);
+	//  void flongdouble(LongDouble);
+	//  enum UnscopedEnum : int { x, y, z };
+	//  int main() {
+	//      bool vbool;
+	//      char vchar;
+	//      short vshort;
+	//      unsigned short vushort;
+	//      int vint;
+	//      unsigned int vuint;
+	//      long vlong;
+	//      float vfloat;
+	//      double vdouble;
+	//      long double vlongdouble;
+	//      UnscopedEnum vue;
+	//      
+	//      // Narrowing conversions
+	//      fint({vdouble});
+	//      ffloat({vlongdouble});
+	//      ffloat({vdouble});
+	//      fdouble({vlongdouble});
+	//      fdouble({vint});
+	//      fdouble({vue});
+	//      fshort({vint});
+	//      fuint({vint});
+	//      fint({vuint});
+	//      fulong({vshort});
+	//      fbool({vint});
+	//      fchar({vint});
+	//
+	//      // Non-narrowing conversions
+	//      fint({vshort});
+	//      flong({vint});
+	//      fuint({vushort});
+	//      flong({vshort});
+	//      fulong({vuint});
+	//      fulong({vushort});
+	//      fdouble({vfloat});
+	//      flongdouble({vfloat});
+	//      flongdouble({vdouble});
+	//      fint({vbool});
+	//      fint({vchar});
+	//  }
+	public void testNarrowingConversionsInListInitialization_389782() throws Exception {
+		
+		BindingAssertionHelper helper = getAssertionHelper();
+		
+		// Narrowing conversions
+		assertProblemUntilOpenParen(helper, "fint({vdouble");
+		assertProblemUntilOpenParen(helper, "ffloat({vlongdouble");
+		assertProblemUntilOpenParen(helper, "ffloat({vdouble");
+		assertProblemUntilOpenParen(helper, "fdouble({vlongdouble");
+		assertProblemUntilOpenParen(helper, "fdouble({vint");
+		assertProblemUntilOpenParen(helper, "fdouble({vue");
+		assertProblemUntilOpenParen(helper, "fshort({vint");
+		assertProblemUntilOpenParen(helper, "fuint({vint");
+		assertProblemUntilOpenParen(helper, "fint({vuint");
+		assertProblemUntilOpenParen(helper, "fulong({vshort");
+		assertProblemUntilOpenParen(helper, "fbool({vint");
+		assertProblemUntilOpenParen(helper, "fchar({vint");
+		
+		// Non-narrowing conversions
+		assertNonProblemUntilOpenParen(helper, "fint({vshort");
+		assertNonProblemUntilOpenParen(helper, "flong({vint");
+		assertNonProblemUntilOpenParen(helper, "fuint({vushort");
+		assertNonProblemUntilOpenParen(helper, "flong({vshort");
+		assertNonProblemUntilOpenParen(helper, "fulong({vuint");
+		assertNonProblemUntilOpenParen(helper, "fulong({vushort");
+		assertNonProblemUntilOpenParen(helper, "fdouble({vfloat");
+		assertNonProblemUntilOpenParen(helper, "flongdouble({vfloat");
+		assertNonProblemUntilOpenParen(helper, "flongdouble({vdouble");
+		assertNonProblemUntilOpenParen(helper, "fint({vbool");
+		assertNonProblemUntilOpenParen(helper, "fint({vchar");
 	}
 }

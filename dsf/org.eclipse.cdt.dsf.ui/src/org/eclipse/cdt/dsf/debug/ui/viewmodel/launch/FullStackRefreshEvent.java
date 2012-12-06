@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2014 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,8 @@
 package org.eclipse.cdt.dsf.debug.ui.viewmodel.launch;
 
 import org.eclipse.cdt.dsf.datamodel.AbstractDMEvent;
+import org.eclipse.cdt.dsf.datamodel.IDMContext;
+import org.eclipse.cdt.dsf.datamodel.IDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 
 /**
@@ -21,8 +23,18 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
  */
 public class FullStackRefreshEvent extends AbstractDMEvent<IExecutionDMContext> {
     
+    private final IDMEvent<? extends IDMContext> fTriggeringEvent;
+    
     public FullStackRefreshEvent(IExecutionDMContext execCtx) {
+        this(execCtx, null);
+    }
+    
+    public FullStackRefreshEvent(IExecutionDMContext execCtx, IDMEvent<? extends IDMContext> triggeringEvent) {
         super(execCtx);
+        fTriggeringEvent = triggeringEvent;
     }
 
+    public IDMEvent<? extends IDMContext> getTriggeringEvent() {
+        return fTriggeringEvent;
+    }
 }

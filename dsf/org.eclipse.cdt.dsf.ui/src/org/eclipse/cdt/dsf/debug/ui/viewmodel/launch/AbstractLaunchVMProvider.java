@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Wind River Systems and others.
+ * Copyright (c) 2006, 2013 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -156,7 +156,8 @@ public class AbstractLaunchVMProvider extends AbstractDMVMProvider
                 }
             }
         } else if (event instanceof IRunControl.ISuspendedDMEvent) {
-    		final IExecutionDMContext exeContext= ((IRunControl.ISuspendedDMEvent) event).getDMContext();
+            final IRunControl.ISuspendedDMEvent suspendEvent = (IRunControl.ISuspendedDMEvent)event;
+    		final IExecutionDMContext exeContext= suspendEvent.getDMContext();
     		ScheduledFuture<?> refreshStackFramesFuture = getRefreshFuture(exeContext);
     		// trigger delayed full stack frame update
     		if (refreshStackFramesFuture != null) {
@@ -177,7 +178,7 @@ public class AbstractLaunchVMProvider extends AbstractDMVMProvider
     	                                ScheduledFuture<?> future= fRefreshStackFramesFutures.get(exeContext);
     	                                if (future != null && !isDisposed()) {
     	                                    fRefreshStackFramesFutures.remove(exeContext);
-    	                                    handleEvent(new FullStackRefreshEvent(exeContext), null);
+    	                                    handleEvent(new FullStackRefreshEvent(exeContext, suspendEvent), null);
     	                                }
     	                            }});
     	                    }

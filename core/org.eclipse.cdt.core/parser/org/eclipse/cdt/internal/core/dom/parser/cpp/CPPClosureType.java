@@ -107,7 +107,7 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 
 		ICPPParameter[] params = new ICPPParameter[parameterTypes.length];
 		for (int i = 0; i < params.length; i++) {
-			params[i]= new CPPParameter(parameterTypes[i], 0);
+			params[i]= new CPPParameter(parameterTypes[i], i);
 		}
 		m= new CPPImplicitMethod(scope, OverloadableOperator.PAREN.toCharArray(), ft, params) {
 			@Override

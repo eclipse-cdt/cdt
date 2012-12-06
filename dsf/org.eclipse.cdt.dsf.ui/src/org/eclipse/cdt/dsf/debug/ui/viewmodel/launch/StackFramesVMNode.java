@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Wind River Systems and others.
+ * Copyright (c) 2006, 2014 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -606,7 +606,9 @@ public class StackFramesVMNode extends AbstractDMVMNode
         // label has changed.
         if (e instanceof ISuspendedDMEvent) {
             return IModelDelta.CONTENT | IModelDelta.EXPAND | IModelDelta.SELECT;
-        } else if (e instanceof FullStackRefreshEvent) {
+        } else if (e instanceof FullStackRefreshEvent &&
+            !(((FullStackRefreshEvent)e).getTriggeringEvent() instanceof IContainerSuspendedDMEvent) ) 
+        {
         	return IModelDelta.CONTENT;
         } else if (e instanceof SteppingTimedOutEvent) {
             return IModelDelta.CONTENT;
@@ -657,8 +659,15 @@ public class StackFramesVMNode extends AbstractDMVMNode
                 rm.done();
             }
         } else if (e instanceof FullStackRefreshEvent) {
-            IExecutionDMContext execDmc = ((FullStackRefreshEvent)e).getDMContext();
-            buildDeltaForFullStackRefreshEvent(execDmc, execDmc, parent, nodeOffset, rm);
+            FullStackRefreshEvent refreshEvent = (FullStackRefreshEvent)e;
+            if ( !(refreshEvent.getTriggeringEvent() instanceof IContainerSuspendedDMEvent)) {
+            	// Don't refresh each stack frame when we get an event for the entire container
+            	// Bug 386175
+            	IExecutionDMContext execDmc = ((FullStackRefreshEvent)e).getDMContext();
+            	buildDeltaForFullStackRefreshEvent(execDmc, execDmc, parent, nodeOffset, rm);
+            } else {
+                rm.done();
+            }
         } else if (e instanceof ISuspendedDMEvent) {
             resetStackFrameLimit( ((ISuspendedDMEvent)e).getDMContext() );
             IExecutionDMContext execDmc = ((ISuspendedDMEvent)e).getDMContext();

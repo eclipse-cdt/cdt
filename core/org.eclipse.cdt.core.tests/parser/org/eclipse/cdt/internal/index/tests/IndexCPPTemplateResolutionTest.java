@@ -2161,4 +2161,19 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		assertEquals("bool", ASTTypeUtil.getType(td.getType()));
 		getProblemFromASTName("type y", 4);
 	}
+	
+	//  template <typename T> int bar(T);
+	//  template <int N> struct S {
+	//      template <typename T> auto foo(T t) const -> decltype(bar(t));
+	//  };
+	
+	// #include "header.h"
+	//  void f(int);
+	//  int main() {
+	//      S<1> n;
+	//      f(n.foo(0));
+	//  }
+	public void testDependentExpression_395875() throws Exception {
+		getBindingFromASTName("f(n.foo(0))", 1, ICPPFunction.class);
+	}
 }

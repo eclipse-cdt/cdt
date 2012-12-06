@@ -8436,13 +8436,20 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertEquals(ISemanticProblem.TYPE_CANNOT_DEDUCE_AUTO_TYPE, pt.getID());
 	}
 
-	//	auto x = x;  // Self referring type.
+	//	auto x = y + z;
+	//	auto y = x;
+	//	auto z = x;
+	//	void test() {
+	//	  for (auto a : a) {}
+	//	}
 	public void testAutoType_305970() throws Exception {
-		String code= getAboveComment();
-		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
-		ICPPVariable x= bh.assertNonProblem("x =", 1);
-		IProblemType pt= (IProblemType) x.getType();
-		assertEquals(ISemanticProblem.TYPE_CANNOT_DEDUCE_AUTO_TYPE, pt.getID());
+		BindingAssertionHelper bh = getAssertionHelper();
+		ICPPVariable x= bh.assertNonProblem("x =", 1, ICPPVariable.class);
+		IProblemType xt= (IProblemType) x.getType();
+		assertEquals(ISemanticProblem.TYPE_CANNOT_DEDUCE_AUTO_TYPE, xt.getID());
+		ICPPVariable a= bh.assertNonProblem("a :", "a", ICPPVariable.class);
+		IProblemType at= (IProblemType) a.getType();
+		assertEquals(ISemanticProblem.TYPE_CANNOT_DEDUCE_AUTO_TYPE, at.getID());
 	}
 
 	// struct A { auto a = 1; };         // Auto-typed non-static fields are not allowed.

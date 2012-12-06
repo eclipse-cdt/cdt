@@ -487,4 +487,11 @@
             plugin="org.eclipse.cdt.dsf.gdb">
       </statusHandler>
    </extension>
+   <extension
+         point="org.eclipse.ui.elementFactories">
+      <factory
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.viewmodel.RegisterPersistableFactory"
+            id="org.eclipse.cdt.dsf.gdb.ui.registerPersistableFactory">
+      </factory>
+   </extension>
 </plugin>

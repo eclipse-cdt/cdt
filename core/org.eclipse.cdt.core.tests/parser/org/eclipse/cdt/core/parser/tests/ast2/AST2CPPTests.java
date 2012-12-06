@@ -9951,4 +9951,18 @@ public class AST2CPPTests extends AST2BaseTest {
 	public void testOrderInAmbiguityResolution_390759() throws Exception {
 		parseAndCheckBindings();
 	}
+	}
+	
+	//	template <bool> struct A {};
+	//	template <>
+	//	struct A<false>
+	//	{
+	//	    typedef int type;
+	//	};
+	//	struct S {};
+	//	const bool b = __is_base_of(S, int);
+	//	typedef A<b>::type T;
+	public void testIsBaseOf_bug395019() throws Exception {
+		parseAndCheckBindings(getAboveComment(), CPP, true);
+	}
 }

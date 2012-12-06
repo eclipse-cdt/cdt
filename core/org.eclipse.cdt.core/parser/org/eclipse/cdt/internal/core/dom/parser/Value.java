@@ -334,8 +334,10 @@ public class Value implements IValue {
 			IType type1, IType type2, IASTNode point) {
 		switch (operator) {
 		case __is_base_of:
-			if (type1 instanceof ICPPClassType && type1 instanceof ICPPClassType) {
+			if (type1 instanceof ICPPClassType && type2 instanceof ICPPClassType) {
 				return ClassTypeHelper.isSubclass((ICPPClassType) type2, (ICPPClassType) type1) ? 1 : 0;
+			} else {
+				return 0;
 			}
 		}
 		return VALUE_CANNOT_BE_DETERMINED;

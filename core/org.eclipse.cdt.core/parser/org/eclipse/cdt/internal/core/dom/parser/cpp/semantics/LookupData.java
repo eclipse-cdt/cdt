@@ -44,6 +44,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IScope.ScopeLookupData;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.c.ICASTFieldDesignator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
@@ -336,12 +337,12 @@ public class LookupData extends ScopeLookupData {
         return false;
     }
 
-    public boolean hasTypeOrMemberFunctionResult() {
+    public boolean hasTypeOrMemberFunctionOrVariableResult() {
     	if (foundItems == null)
     		return false;
     	if (foundItems instanceof Object[]) {
     		for (Object item : (Object[]) foundItems) {
-    			if (item instanceof ICPPMethod || item instanceof IType) {
+    			if (item instanceof ICPPMethod || item instanceof IType || item instanceof IVariable) {
     				return true;
     			}
     		}

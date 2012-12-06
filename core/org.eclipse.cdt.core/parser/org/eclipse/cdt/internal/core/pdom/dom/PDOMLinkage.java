@@ -202,7 +202,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	}
 
 	protected boolean cannotAdapt(final IBinding inputBinding) throws CoreException {
-		if (inputBinding == null || inputBinding instanceof IProblemBinding || inputBinding instanceof IParameter) {
+		if (inputBinding == null || inputBinding instanceof IProblemBinding) {
 			return true;
 		}
 		if (inputBinding instanceof PDOMBinding) {

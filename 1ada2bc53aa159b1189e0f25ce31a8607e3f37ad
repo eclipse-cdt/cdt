@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOJ3//+b0\u003d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2TemplateTests.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 6896,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-12-06T19:36:38Z",
+      "side": 1,
+      "message": "parseAndCheckBindings() is sufficient since GNU extensions are not needed.",
+      "revId": "1ada2bc53aa159b1189e0f25ce31a8607e3f37ad",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3//+cA\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/TemplateArgumentDeduction.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 642,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-12-06T19:36:38Z",
+      "side": 1,
+      "message": "I replaced IProblemBinding with ISemanticProblem since ProblemType is not a IProblemBinding.",
+      "revId": "1ada2bc53aa159b1189e0f25ce31a8607e3f37ad",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3//+b8\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/TemplateArgumentDeduction.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 646,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-12-06T19:36:38Z",
+      "side": 1,
+      "message": "We should probably add ICPPTemplateArgument.isProblem method to be able to check easily across different argument types.",
+      "revId": "1ada2bc53aa159b1189e0f25ce31a8607e3f37ad",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -577,4 +577,13 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 		runOnProject();
 		checkNoErrors();
 	}
+
+	//  struct S {
+	//      int i;
+	//      S() = default;
+	//  };
+	public void testBug365498_defaultedConstructor() throws Exception{
+		loadCodeAndRun(getAboveComment());
+		checkErrorLine(3);
+	}
 }

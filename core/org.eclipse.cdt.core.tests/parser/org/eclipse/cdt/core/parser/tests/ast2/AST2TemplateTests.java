@@ -6897,7 +6897,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	struct Cat {};
 	//	typedef S<is_convertible<Cat>::value>::type T;
 	public void testDependentExpressionInvolvingField_388623() throws Exception {
-		parseAndCheckBindings(getAboveComment(), CPP, true);
+		parseAndCheckBindings();
 	}
 
 	//	struct S {
@@ -6909,6 +6909,18 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	    foo(S());
 	//	}
 	public void testSFINAEInDefaultArgument() throws Exception {
+		parseAndCheckBindings();
+	}
+
+	//  template <typename>
+	//  struct M {
+	//      template <typename... Args>
+	//      M(Args...);
+	//  };
+	//  void foo() {
+	//      new M<int>((int*)0, 0);
+	//  }
+	public void testVariadicConstructor_395247() throws Exception {
 		parseAndCheckBindings();
 	}
 }

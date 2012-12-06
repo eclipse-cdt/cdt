@@ -9958,4 +9958,19 @@ public class AST2CPPTests extends AST2BaseTest {
 	public void testOrderInAmbiguityResolution_390759() throws Exception {
 		parseAndCheckBindings();
 	}
+
+	//	namespace N {
+	//	    enum E { A, B };
+	//	    void bar(E);
+	//	}
+	//	struct S {
+	//	    void operator()(N::E);
+	//	};
+	//	S bar;
+	//	int main() {
+	//	    bar(N::A);
+	//	}
+	public void testADLForFunctionObject_388287() throws Exception {
+		parseAndCheckBindings();
+	}
 }

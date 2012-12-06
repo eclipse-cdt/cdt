@@ -2161,4 +2161,18 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		assertEquals("bool", ASTTypeUtil.getType(td.getType()));
 		getProblemFromASTName("type y", 4);
 	}
+
+	//	template <class RandomAccessRange, class BinaryPredicate>
+	//	void sort(const RandomAccessRange& rng, BinaryPredicate pred);
+	//
+	//	struct S {};
+	//	const S* s[5];
+
+	//	template <typename BinaryPredicate>
+	//	void test(BinaryPredicate bp) {
+	//	    sort(s, [&bp](const S* a, const S* b){ return bp(*a, *b); });
+	//	}
+	public void testLambdaExpression_395884() throws Exception {
+		checkBindings();
+	}
 }

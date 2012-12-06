@@ -48,28 +48,32 @@ public interface IBinding extends IAdaptable {
 	 * Returns the binding that owns this binding, or <code>null</code> if there is no owner.
 	 * <p>
 	 * The owner is determined as follows:
-	 * <br> {@link ICPPUsingDeclaration}: The owner depends on where the declaration is found, within a
-	 * function or method, a class-type, a namespace or on global scope.
+	 * <br> {@link ICPPUsingDeclaration}: The owner depends on where the declaration is found,
+	 * within a function or method, a class-type, a namespace or on global scope.
 	 * <br> {@link ICPPTemplateParameter}: The owner is the {@link ICPPTemplateDefinition}.
-	 * <br> {@link IEnumerator}: The owner is the {@link IEnumeration}, independent of whether they are scoped or not.
-	 * <br> For all other bindings: The owner depends on where the binding can be defined (it could be
-	 * declared else where).
+	 * <br> {@link IEnumerator}: The owner is the {@link IEnumeration}, independent of whether they
+	 * are scoped or not.
+	 * <br> For all other bindings: The owner depends on where the binding can be defined (it could
+	 * be declared elsewhere).
 	 * <p> Possible owners are:
-	 * <br> {@link IFunction}: for parameters, local types, variables, enumerators, labels and using declarations;
-	 * <br> {@link ICPPClassType}: for class-, struct- and union-members, even if the composite type is anonymous;
-	 * also for enumerators and using declarations;
-	 * <br> {@link ICompositeType}: for struct- and union-members, even if the composite type is anonymous;
-	 * also for anonymous structs or unions found within another struct;
-	 * <br> {@link ICPPNamespace}: for global types, functions, variables, enumerators, namespaces and using declarations;
+	 * <br> {@link IFunction}: for parameters, local types, variables, enumerators, labels and using
+	 * declarations;
+	 * <br> Closure represented by {@link ICPPClassType}: for lambda expression parameters;
+	 * <br> {@link ICPPClassType}: for class-, struct- and union-members, even if the composite type
+	 * is anonymous; also for enumerators and using declarations;
+	 * <br> {@link ICompositeType}: for struct- and union-members, even if the composite type is
+	 * anonymous; also for anonymous structs or unions found within another struct;
+	 * <br> {@link ICPPNamespace}: for global types, functions, variables, enumerators, namespaces
+	 * and using declarations;
 	 * <br> {@link IEnumeration}: for enumerators.
-	 * <br> <code>null</code>: for types, functions, variables, namespaces and using declarations;
+	 * <br> {@code null}: for types, functions, variables, namespaces and using declarations;
 	 * @since 5.1
 	 */
 	public IBinding getOwner();
 
 	/**
-	 * Returns the parent scope for this binding. A binding may have declarations in multiple scopes,
-	 * this method returns the scope where the binding would potentially be defined.
+	 * Returns the parent scope for this binding. A binding may have declarations in multiple
+	 * scopes, this method returns the scope where the binding would potentially be defined.
 	 */
 	public IScope getScope() throws DOMException;
 }

@@ -39,6 +39,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.core.runtime.CoreException;
@@ -96,12 +97,8 @@ public class EvalBinding extends CPPEvaluation {
 	 * otherwise returns -1
 	 */
 	public int getFunctionParameterPosition() {
-		if (fParameterPosition < 0) {
-			ICPPFunction parameterOwner = getParameterOwner();
-			if (parameterOwner != null) {
-				ICPPParameter[] parameters = fParameterOwner.getParameters();
-				fParameterPosition = findInArray(parameters, fBinding);
-			}
+		if (fParameterPosition < 0 && fBinding instanceof CPPParameter) {
+			fParameterPosition = ((CPPParameter) fBinding).getParameterPosition();
 		}
 		return fParameterPosition;
 	}
@@ -111,25 +108,12 @@ public class EvalBinding extends CPPEvaluation {
 	 *     otherwise {@code null}.
 	 */
 	public ICPPFunction getParameterOwner() {
-		if (fParameterOwner == null && fBinding instanceof ICPPParameter) {
-			fParameterOwner = (ICPPFunction) ((ICPPParameter) fBinding).getOwner();
+		if (fParameterOwner == null && fBinding instanceof CPPParameter) {
+			IBinding owner = ((CPPParameter) fBinding).getOwner();
+			if (owner instanceof ICPPFunction)
+				fParameterOwner = (ICPPFunction) owner;
 		}
 		return fParameterOwner;
-	}
-
-	/**
-	 * Finds a given object in an array.
-	 *  
-	 * @param array the array to find the object in
-	 * @param obj the object to find
-	 * @return the index of the object in the array, or -1 if the object is not in the array 
-	 */
-	private static int findInArray(Object[] array, Object obj) {
-		for (int i = 0; i < array.length; i++) {
-			if (obj == array[i])
-				return i;
-		}
-		return -1;
 	}
 
 	/**

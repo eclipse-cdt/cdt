@@ -51,8 +51,8 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 	private static final String PROVIDER_ID = "provider.id";
 	private static final String PROVIDER_NAME = "provider name";
 	private static final String LANGUAGE_ID = "language.test.id";
-	private static final String CUSTOM_PARAMETER = "customParameter";
-	private static final String CUSTOM_PARAMETER_2 = "customParameter2";
+	private static final String CUSTOM_COMMAND_1 = "echo 1";
+	private static final String CUSTOM_COMMAND_2 = "echo 2";
 	private static final String ELEM_TEST = "test";
 
 	// those attributes must match that in AbstractBuiltinSpecsDetector
@@ -203,7 +203,7 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 			List<String> languages = new ArrayList<String>();
 			languages.add(LANGUAGE_ID);
 			Map<String, String> properties = new HashMap<String, String>();
-			properties.put(ATTR_PARAMETER, CUSTOM_PARAMETER);
+			properties.put(ATTR_PARAMETER, CUSTOM_COMMAND_1);
 			List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
 			ICLanguageSettingEntry entry = new CMacroEntry("MACRO", "VALUE", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY);
 			entries.add(entry);
@@ -213,13 +213,13 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 			assertEquals(PROVIDER_NAME, provider.getName());
 			assertEquals(languages, provider.getLanguageScope());
 			assertEquals(entries, provider.getSettingEntries(null, null, null));
-			assertEquals(CUSTOM_PARAMETER, provider.getCommand());
+			assertEquals(CUSTOM_COMMAND_1, provider.getCommand());
 			assertEquals(false, provider.isConsoleEnabled());
 			assertEquals(false, provider.isExecuted());
 
 			// setters
-			provider.setCommand(CUSTOM_PARAMETER_2);
-			assertEquals(CUSTOM_PARAMETER_2, provider.getCommand());
+			provider.setCommand(CUSTOM_COMMAND_2);
+			assertEquals(CUSTOM_COMMAND_2, provider.getCommand());
 			provider.setConsoleEnabled(true);
 			assertEquals(true, provider.isConsoleEnabled());
 
@@ -259,7 +259,7 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 
 		// configure provider
 		Map<String, String> properties = new HashMap<String, String>();
-		properties.put(ATTR_PARAMETER, CUSTOM_PARAMETER);
+		properties.put(ATTR_PARAMETER, CUSTOM_COMMAND_1);
 		provider.configureProvider(PROVIDER_ID, PROVIDER_NAME, languages, entries, properties);
 		assertEquals(false, provider.isConsoleEnabled());
 		provider.setConsoleEnabled(true);

@@ -1,0 +1,157 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOJ3//+XY\u003d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2CPPTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 269,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-12-06T22:57:33Z",
+      "side": 1,
+      "message": "I don\u0027t think introduction of these two helper methods is justified since they don\u0027t make the test any simpler to understand.",
+      "revId": "503377ca74218fa67147fa608582aa4a8140831f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3//+Wg\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/ArithmeticConversion.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 373,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-12-06T22:57:33Z",
+      "side": 1,
+      "message": "Please add Javadoc explaining the semantics of the returned value.",
+      "revId": "503377ca74218fa67147fa608582aa4a8140831f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3//+XQ\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/ArithmeticConversion.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 387,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-12-06T22:57:33Z",
+      "side": 1,
+      "message": "Should we fall back to the natural hierarchy of types if the sizes are not available?",
+      "revId": "503377ca74218fa67147fa608582aa4a8140831f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3//+Wk\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/ArithmeticConversion.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 392,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-12-06T22:57:33Z",
+      "side": 1,
+      "message": "This statement returns true for int to float conversion. Is it expected?",
+      "revId": "503377ca74218fa67147fa608582aa4a8140831f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3//+WU\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/Cost.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 282,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-12-06T22:57:33Z",
+      "side": 1,
+      "message": "Please always use braces when else-clause is present",
+      "revId": "503377ca74218fa67147fa608582aa4a8140831f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3//+WQ\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/Cost.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 291,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-12-06T22:57:33Z",
+      "side": 1,
+      "message": "Please always use braces for multi-line then-clauses",
+      "revId": "503377ca74218fa67147fa608582aa4a8140831f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3//+WM\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/Cost.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 292,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-12-06T22:57:33Z",
+      "side": 1,
+      "message": "Remove extra spaces.",
+      "revId": "503377ca74218fa67147fa608582aa4a8140831f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3//+Wc\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/Cost.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 305,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-12-06T22:57:33Z",
+      "side": 1,
+      "message": "For readability please add braces around all branches.",
+      "revId": "503377ca74218fa67147fa608582aa4a8140831f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3//+WY\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/Cost.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 309,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-12-06T22:57:33Z",
+      "side": 1,
+      "message": "Please remove extra spaces.",
+      "revId": "503377ca74218fa67147fa608582aa4a8140831f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

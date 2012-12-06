@@ -18,4 +18,14 @@ public class CPPConstructorTemplate extends CPPMethodTemplate implements ICPPCon
 	public CPPConstructorTemplate(IASTName name) {
 		super(name);
 	}
+
+	@Override
+	public boolean isMoveConstructor() {
+		return ClassTypeHelper.isMoveConstructor(this);
+	}
+
+	@Override
+	public boolean isCopyConstructor() {
+		return ClassTypeHelper.isCopyConstructor(this);
+	}
 }

@@ -27,4 +27,14 @@ public class CPPConstructorSpecialization extends CPPMethodSpecialization
 			ICPPTemplateParameterMap argMap, ICPPFunctionType type, IType[] exceptionSpecs) {
 		super(orig, owner, argMap, type, exceptionSpecs);
 	}
+
+	@Override
+	public boolean isMoveConstructor() {
+		return ClassTypeHelper.isMoveConstructor(this);
+	}
+
+	@Override
+	public boolean isCopyConstructor() {
+		return ClassTypeHelper.isCopyConstructor(this);
+	}
 }

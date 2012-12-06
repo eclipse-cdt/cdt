@@ -18,4 +18,14 @@ class CompositeCPPConstructor extends CompositeCPPMethod implements ICPPConstruc
 	public CompositeCPPConstructor(ICompositesFactory cf, ICPPFunction rbinding) {
 		super(cf, rbinding);
 	}
+
+	@Override
+	public boolean isMoveConstructor() {
+		return ((ICPPConstructor) rbinding).isMoveConstructor();
+	}
+
+	@Override
+	public boolean isCopyConstructor() {
+		return ((ICPPConstructor) rbinding).isCopyConstructor();
+	}
 }

@@ -16,4 +16,16 @@ package org.eclipse.cdt.core.dom.ast.cpp;
  */
 public interface ICPPConstructor extends ICPPMethod {
 	public static final ICPPConstructor[] EMPTY_CONSTRUCTOR_ARRAY = {};
+	
+	/**
+	 * Returns whether this is a move constructor.
+	 * @since 5.5
+	 */
+	public boolean isMoveConstructor();
+	
+	/**
+	 * Returns whether this is a copy constructor.
+	 * @since 5.5
+	 */
+	public boolean isCopyConstructor();
 }

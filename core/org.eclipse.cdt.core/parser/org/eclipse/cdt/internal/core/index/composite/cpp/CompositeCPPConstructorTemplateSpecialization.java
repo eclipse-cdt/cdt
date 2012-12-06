@@ -22,4 +22,14 @@ public class CompositeCPPConstructorTemplateSpecialization
 			ICPPFunction ft) {
 		super(cf, ft);
 	}
+
+	@Override
+	public boolean isMoveConstructor() {
+		return ((ICPPConstructor) rbinding).isMoveConstructor();
+	}
+
+	@Override
+	public boolean isCopyConstructor() {
+		return ((ICPPConstructor) rbinding).isCopyConstructor();
+	}
 }

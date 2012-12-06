@@ -19,4 +19,14 @@ public class CPPConstructor extends CPPMethod implements ICPPConstructor {
 	public CPPConstructor(ICPPASTFunctionDeclarator declarator) {
 		super(declarator);
 	}
+
+	@Override
+	public boolean isMoveConstructor() {
+		return ClassTypeHelper.isMoveConstructor(this);
+	}
+
+	@Override
+	public boolean isCopyConstructor() {
+		return ClassTypeHelper.isCopyConstructor(this);
+	}
 }

@@ -19,4 +19,14 @@ public class CompositeCPPConstructorSpecialization extends CompositeCPPMethodSpe
 	public CompositeCPPConstructorSpecialization(ICompositesFactory cf, ICPPConstructor cons) {
 		super(cf, cons);
 	}	
+
+	@Override
+	public boolean isMoveConstructor() {
+		return ((ICPPConstructor) rbinding).isMoveConstructor();
+	}
+
+	@Override
+	public boolean isCopyConstructor() {
+		return ((ICPPConstructor) rbinding).isCopyConstructor();
+	}
 }

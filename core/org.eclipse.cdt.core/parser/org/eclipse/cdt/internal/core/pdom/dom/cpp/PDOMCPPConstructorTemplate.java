@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -34,5 +35,15 @@ class PDOMCPPConstructorTemplate extends PDOMCPPMethodTemplate implements ICPPCo
 	@Override
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPP_CONSTRUCTOR_TEMPLATE;
+	}
+
+	@Override
+	public boolean isMoveConstructor() {
+		return ClassTypeHelper.isMoveConstructor(this);
+	}
+
+	@Override
+	public boolean isCopyConstructor() {
+		return ClassTypeHelper.isCopyConstructor(this);
 	}
 }

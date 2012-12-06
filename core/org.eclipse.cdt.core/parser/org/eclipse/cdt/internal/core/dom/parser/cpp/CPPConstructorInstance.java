@@ -26,4 +26,14 @@ public class CPPConstructorInstance extends CPPMethodInstance implements ICPPCon
 			CPPTemplateParameterMap tpmap, ICPPTemplateArgument[] args, ICPPFunctionType type, IType[] exceptionSpec) {
 		super(orig, owner, tpmap, args, type, exceptionSpec);
 	}
+
+	@Override
+	public boolean isMoveConstructor() {
+		return ClassTypeHelper.isMoveConstructor(this);
+	}
+
+	@Override
+	public boolean isCopyConstructor() {
+		return ClassTypeHelper.isCopyConstructor(this);
+	}
 }

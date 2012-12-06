@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
@@ -350,6 +351,16 @@ public class EvalBinding extends CPPEvaluation {
 			if (owner instanceof ICPPClassSpecialization) {
 				binding = CPPTemplates.createSpecialization((ICPPClassSpecialization) owner,
 						binding, point);
+			}
+		} else if (fBinding instanceof ICPPField) {
+			IBinding owner = fBinding.getOwner();
+			if (owner instanceof ICPPClassTemplate) {
+				owner = resolveUnknown(CPPTemplates.createDeferredInstance((ICPPClassTemplate) owner),
+						tpMap, packOffset, within, point);
+			}
+			if (owner instanceof ICPPClassSpecialization) {
+				binding = CPPTemplates.createSpecialization((ICPPClassSpecialization) owner, 
+						fBinding, point);
 			}
 		}
 		if (binding == fBinding)

@@ -6882,6 +6882,22 @@ public class AST2TemplateTests extends AST2BaseTest {
 		ITypedef td = ah.assertNonProblem("B<bool>::type", "type", ITypedef.class);
 		assertEquals("bool", ASTTypeUtil.getType(td.getType()));
 		ah.assertProblem("B<int*>::type", "type");
+	}		
+	
+	//	template <typename From>
+	//	struct is_convertible {
+	//	    static char check(From);
+	//	    static From from;
+	//	    static const int value = sizeof(check(from));
+	//	};
+	//	template <int>
+	//	struct S {
+	//	    typedef int type;
+	//	};
+	//	struct Cat {};
+	//	typedef S<is_convertible<Cat>::value>::type T;
+	public void testDependentExpressionInvolvingField_388623() throws Exception {
+		parseAndCheckBindings(getAboveComment(), CPP, true);
 	}
 	
 	//	struct S {

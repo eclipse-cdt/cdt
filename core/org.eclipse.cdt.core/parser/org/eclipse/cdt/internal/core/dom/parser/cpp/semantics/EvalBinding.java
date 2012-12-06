@@ -132,7 +132,7 @@ public class EvalBinding extends CPPEvaluation {
 	 */
 	public ICPPFunction getParameterOwner() {
 		if (fParameterOwner == null && fBinding instanceof ICPPParameter) {
-			IBinding owner = ((CPPParameter) fBinding).getOwner();
+			IBinding owner = fBinding.getOwner();
 			if (owner instanceof ICPPFunction)
 				fParameterOwner = (ICPPFunction) owner;
 		}

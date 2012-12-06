@@ -20,6 +20,7 @@ import java.util.List;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
@@ -151,7 +152,43 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 
 		return proposals;
 	}
+	
+	/**
+	 * Test whether the invocation offset is inside a using-declaration.
+	 * 
+	 * @param context  the invocation context
+	 * @return <code>true</code> if the invocation offset is inside a using-declaration
+	 */
+	private boolean inUsingDeclaration(CContentAssistInvocationContext context) {
+		IDocument doc = context.getDocument();
+		int offset = context.getInvocationOffset();
+		
+		try {
 
+			// Get the line on which completion is being invoked.
+			IRegion completionLineRegion = doc.getLineInformationOfOffset(offset);
+			String completionLine = doc.get(completionLineRegion.getOffset(), completionLineRegion.getLength());
+
+			// Get the prefix of the line prior to the invocation (so that statements
+			// following the invocation are ignored).
+			int completionLineNumber = doc.getLineOfOffset(offset);
+			int completionLineOffset = doc.getLineOffset(completionLineNumber);
+			String completionLinePrefix = completionLine.substring(0, offset - completionLineOffset);
+			
+			// Get the statement being completed (so that statements preceding the
+			// invocation are ignored).
+			int lastSemicolon = completionLinePrefix.lastIndexOf(';');
+			String completionStatement = lastSemicolon == -1 ? completionLinePrefix : completionLinePrefix.substring(lastSemicolon + 1);
+			
+			// Check if the statement being completed is a using-declaration.
+			if (completionStatement.matches("\\s*using\\s*(\\w*::)+\\w*")) //$NON-NLS-1$
+				return true;
+		} catch (BadLocationException exc) {
+		}
+		
+		return false;
+	}
+	
 	/**
 	 * Test whether the invocation offset is inside or before the preprocessor directive keyword.
 	 *
@@ -377,6 +414,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 
 		StringBuilder repStringBuff = new StringBuilder();
 		repStringBuff.append(function.getName());
+		
 		repStringBuff.append('(');
 
 		StringBuilder dispargs = new StringBuilder(); // for the dispargString
@@ -439,7 +477,17 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
         idStringBuff.append(')');
         String idString = idStringBuff.toString();
 
-        repStringBuff.append(')');
+        // In a using declaration, emitting parentheses after the function
+        // name is useless, since the user will just have to delete them.
+        // Instead, emitting a semicolon is useful.
+        boolean inUsingDeclaration = inUsingDeclaration(context); 
+        if (inUsingDeclaration) {
+        	repStringBuff.setLength(repStringBuff.length() - 1);  // remove opening parenthesis
+        	repStringBuff.append(';');
+        }
+        else
+        	repStringBuff.append(')');
+        
         String repString = repStringBuff.toString();
 
         final int relevance = function instanceof ICPPMethod ?
@@ -447,7 +495,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 		CCompletionProposal proposal = createProposal(repString, dispString, idString,
 				context.getCompletionNode().getLength(), image, baseRelevance + relevance, context);
 		if (!context.isContextInformationStyle()) {
-			int cursorPosition = hasArgs ? (repString.length() - 1) : repString.length();
+			int cursorPosition = (!inUsingDeclaration && hasArgs) ? (repString.length() - 1) : repString.length();
 			proposal.setCursorPosition(cursorPosition);
 		}
 

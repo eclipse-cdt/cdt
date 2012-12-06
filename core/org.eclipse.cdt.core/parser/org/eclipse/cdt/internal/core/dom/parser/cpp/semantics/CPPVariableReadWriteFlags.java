@@ -88,7 +88,7 @@ public final class CPPVariableReadWriteFlags extends VariableReadWriteFlags {
 				}
 			}
 			// Allow for initialization of primitive types.
-			if (parent.getArguments().length == 1) {
+			if (grand instanceof IASTDeclarator && parent.getArguments().length == 1) {
 				IBinding binding= ((IASTDeclarator) grand).getName().getBinding();
 				if (binding instanceof IVariable) {
 					IType type= ((IVariable) binding).getType();

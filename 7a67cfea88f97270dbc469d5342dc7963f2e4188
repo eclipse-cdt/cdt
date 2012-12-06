@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOJ3//+V4\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/cpp/ICPPConstructor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-12-06T23:14:34Z",
+      "side": 1,
+      "message": "Adding these methods to ICPPConstructor and all its implementations is unjustified since it\u0027s just as easy to call ClassTypeHelper methods directly. If we want to make these methods a part of the official API, we can split ClassTypeHelper into two classes, the internal and API ones.",
+      "revId": "7a67cfea88f97270dbc469d5342dc7963f2e4188",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3//+WA\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/ClassTypeHelper.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 952,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-12-06T23:14:34Z",
+      "side": 1,
+      "message": "I\u0027d use a more verbose name, isCallableWithNumberOfArguments, and rename the second parameter to numArguments",
+      "revId": "7a67cfea88f97270dbc469d5342dc7963f2e4188",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

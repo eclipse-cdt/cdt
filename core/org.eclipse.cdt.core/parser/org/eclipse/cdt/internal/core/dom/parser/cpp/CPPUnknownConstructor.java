@@ -33,6 +33,16 @@ public class CPPUnknownConstructor extends CPPDeferredFunction implements ICPPCo
 	public boolean isDestructor() {
 		return false;
 	}
+	
+	@Override
+	public boolean isMoveConstructor() {
+		return false;
+	}
+
+	@Override
+	public boolean isCopyConstructor() {
+		return false;
+	}
 
 	@Override
 	public boolean isImplicit() {

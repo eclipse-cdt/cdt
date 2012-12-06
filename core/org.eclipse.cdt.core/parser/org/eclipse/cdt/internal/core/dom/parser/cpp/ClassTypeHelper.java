@@ -16,6 +16,9 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.CVTYPE;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -55,6 +58,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
@@ -943,5 +947,40 @@ public class ClassTypeHelper {
 		} else {
 			return method.getName();
 		}
+	}
+
+	private static boolean isCallableWithNArguments(ICPPFunction function, int N) {
+		return function.getType().getParameterTypes().length >= N
+			&& function.getRequiredArgumentCount() <= N; 
+	}
+	
+	private static boolean isCopyOrMoveConstructor(ICPPConstructor constructor, boolean isRvalue) {
+		// 12.8/2-3 [class.copy]: 
+		// "A non-template constructor for class X is a copy [move] constructor
+		//  if its first parameter is of type X&[&], const X&[&], volatile X&[&] 
+		//  or const volatile X&[&], and either there are no other parametrs or
+		//  else all other parametrs have default arguments."
+		if (constructor instanceof ICPPFunctionTemplate)
+			return false;
+		if (!isCallableWithNArguments(constructor, 1))
+			return false;
+		IType firstArgumentType = constructor.getType().getParameterTypes()[0];
+		firstArgumentType = SemanticUtil.getNestedType(firstArgumentType, TDEF);
+		if (!(firstArgumentType instanceof ICPPReferenceType))
+			return false;
+		ICPPReferenceType firstArgReferenceType = (ICPPReferenceType) firstArgumentType;
+		if (firstArgReferenceType.isRValueReference() != isRvalue)
+			return false;
+		firstArgumentType = firstArgReferenceType.getType();
+		firstArgumentType = SemanticUtil.getNestedType(firstArgumentType, CVTYPE);
+		return firstArgumentType.isSameType(constructor.getClassOwner());
+	}
+	
+	public static boolean isMoveConstructor(ICPPConstructor constructor) {
+		return isCopyOrMoveConstructor(constructor, true);
+	}
+
+	public static boolean isCopyConstructor(ICPPConstructor constructor) {
+		return isCopyOrMoveConstructor(constructor, false);
 	}
 }

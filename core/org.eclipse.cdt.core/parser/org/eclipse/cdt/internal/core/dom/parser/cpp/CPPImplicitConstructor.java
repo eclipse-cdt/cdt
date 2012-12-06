@@ -33,4 +33,14 @@ public class CPPImplicitConstructor extends CPPImplicitMethod implements ICPPCon
 		IType returnType= new CPPBasicType(Kind.eUnspecified, 0);
 		return CPPVisitor.createImplicitFunctionType(returnType, params, false, false);
 	}
+
+	@Override
+	public boolean isMoveConstructor() {
+		return ClassTypeHelper.isMoveConstructor(this);
+	}
+
+	@Override
+	public boolean isCopyConstructor() {
+		return ClassTypeHelper.isCopyConstructor(this);
+	}
 }

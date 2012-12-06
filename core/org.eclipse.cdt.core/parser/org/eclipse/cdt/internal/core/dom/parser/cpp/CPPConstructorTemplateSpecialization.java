@@ -27,4 +27,14 @@ public class CPPConstructorTemplateSpecialization extends CPPMethodTemplateSpeci
 			ICPPClassType owner, ICPPTemplateParameterMap tpmap, ICPPFunctionType type, IType[] exceptionSpecs) {
 		super(original, owner, tpmap, type, exceptionSpecs);
 	}
+
+	@Override
+	public boolean isMoveConstructor() {
+		return ClassTypeHelper.isMoveConstructor(this);
+	}
+
+	@Override
+	public boolean isCopyConstructor() {
+		return ClassTypeHelper.isCopyConstructor(this);
+	}
 }

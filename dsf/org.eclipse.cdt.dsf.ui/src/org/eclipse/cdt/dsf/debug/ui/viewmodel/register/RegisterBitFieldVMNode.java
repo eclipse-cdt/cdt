@@ -95,7 +95,7 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
      */
     private static final String PROP_BITFIELD_SHOW_TYPE_NAMES = "bitfield_show_type_names"; //$NON-NLS-1$
     
-    protected class BitFieldVMC extends DMVMContext
+    public class BitFieldVMC extends DMVMContext
         implements IFormattedValueVMContext
     {
         private IExpression fExpression;

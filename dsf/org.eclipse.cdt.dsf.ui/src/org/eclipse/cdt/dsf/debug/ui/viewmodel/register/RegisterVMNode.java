@@ -97,7 +97,7 @@ public class RegisterVMNode extends AbstractExpressionVMNode
      */
     private static final String PROP_REGISTER_SHOW_TYPE_NAMES = "register_show_type_names"; //$NON-NLS-1$
     
-    protected class RegisterVMC extends DMVMContext
+    public class RegisterVMC extends DMVMContext
         implements IFormattedValueVMContext
     {
         private IExpression fExpression;

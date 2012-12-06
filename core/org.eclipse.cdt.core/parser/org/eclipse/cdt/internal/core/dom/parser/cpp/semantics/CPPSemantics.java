@@ -268,7 +268,7 @@ public class CPPSemantics {
             lookup(data, null);
 
             // Perform argument dependent lookup
-            if (data.checkAssociatedScopes() && !data.hasTypeOrMemberFunctionResult()) {
+            if (data.checkAssociatedScopes() && !data.hasTypeOrMemberFunctionOrVariableResult()) {
                 doKoenigLookup(data);
             }
         } catch (DOMException e) {

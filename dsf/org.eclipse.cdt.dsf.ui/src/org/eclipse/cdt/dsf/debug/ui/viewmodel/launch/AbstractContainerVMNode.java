@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2013 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -302,7 +302,10 @@ public abstract class AbstractContainerVMNode extends AbstractExecutionContextVM
             return IModelDelta.SELECT | IModelDelta.EXPAND;
 	    } else if (e instanceof StateChangedEvent) {
 	    	return IModelDelta.STATE;
-	    }
+	    } else if (e instanceof FullStackRefreshEvent &&
+            (((FullStackRefreshEvent)e).getTriggeringEvent() instanceof IContainerSuspendedDMEvent)) {
+            return IModelDelta.CONTENT;
+        }	    
 	    return IModelDelta.NO_CHANGE;
 	}
 
@@ -389,9 +392,72 @@ public abstract class AbstractContainerVMNode extends AbstractExecutionContextVM
 	    	// If there is a state change needed on the container, update the container
 	    	if (dmc instanceof IContainerDMContext)
 	    		parentDelta.addNode(createVMContext(dmc), IModelDelta.STATE);
+        } else if (e instanceof FullStackRefreshEvent) {
+            FullStackRefreshEvent refreshEvent = (FullStackRefreshEvent)e;
+            if (refreshEvent.getTriggeringEvent() instanceof IContainerSuspendedDMEvent) {
+            	// For a full container suspended event, issue a single change when we get
+            	// a FullStackRefreshEvent.  This avoids refreshing all threads, even those
+            	// there are not visible
+            	// bug 386175
+                IContainerSuspendedDMEvent containerTriggerEvent = 
+                    (IContainerSuspendedDMEvent)refreshEvent.getTriggeringEvent();
+                buildDeltaForFullStackRefreshEvent((IContainerDMContext)refreshEvent.getDMContext(), 
+                    containerTriggerEvent.getTriggeringContexts(), parentDelta, nodeOffset, requestMonitor);
+                return;
+            }
 	    }
 	
 		requestMonitor.done();
 	 }
+
+    /**
+     * Builds a delta in response to automatic refresh event generated after 
+     * every suspend event.  
+     * <p>
+     * As opposed to the StackFrameVMNode handling of the refresh event, the 
+     * container handles only the refresh events for container suspended events, 
+     * and it refreshes the entire container.
+     * <p>
+     * The default behavior is to check if the thread is still stepping or 
+     * suspended and refresh the stack trace.
+     */
+    protected void buildDeltaForFullStackRefreshEvent(final IContainerDMContext containerCtx, 
+        final IExecutionDMContext[] triggeringCtxs, final VMDelta parentDelta, final int nodeOffset, 
+        final RequestMonitor rm) 
+    {
+        try {
+            getSession().getExecutor().execute(new DsfRunnable() {
+                @Override
+                public void run() {
+                    IRunControl runControlService = getServicesTracker().getService(IRunControl.class); 
+                    if (runControlService == null) {
+                        // Required services have not initialized yet.  Ignore the event.
+                        rm.done();
+                        return;
+                    }         
+                    
+                    // Refresh the whole list of stack frames unless the target is already stepping the next command.  In 
+                    // which case, the refresh will occur when the stepping sequence slows down or stops.  Trying to
+                    // refresh the whole stack trace with every step would slow down stepping too much.
+                    boolean isStepping = false;
+                    for (IExecutionDMContext triggeringCtx : triggeringCtxs) {
+                        if (runControlService.isStepping(triggeringCtx)) {
+                            isStepping = true;
+                            break;
+                        }
+                    }
+                    if (!isStepping) {
+                        parentDelta.addNode(createVMContext(containerCtx), IModelDelta.CONTENT);
+                    }
+                    
+                    rm.done();
+                }
+            });
+        } catch (RejectedExecutionException e) {
+            // Session shut down, no delta to build.
+            rm.done();
+        }
+    }
+
 
 }

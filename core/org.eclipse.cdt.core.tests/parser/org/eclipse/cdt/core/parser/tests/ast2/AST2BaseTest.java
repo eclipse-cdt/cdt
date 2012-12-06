@@ -713,19 +713,20 @@ public class AST2BaseTest extends BaseTestCase {
 		}
 
     	private IBinding binding(String section, int len) {
-    		IASTName name = findName(section, len);
+    		IASTName astName = findName(section, len);
     		final String selection = section.substring(0, len);
-			assertNotNull("Did not find \"" + selection + "\"", name);
-    		assertEquals(selection, name.getRawSignature());
+			assertNotNull("No AST name for \"" + selection + "\"", astName);
+    		assertEquals(selection, astName.getRawSignature());
     			
-    		IBinding binding = name.resolveBinding();
-    		assertNotNull("No binding for " + name.getRawSignature(), binding);
+    		IBinding binding = astName.resolveBinding();
+    		assertNotNull("No binding for " + astName.getRawSignature(), binding);
     		
-    		return name.resolveBinding();
+    		return astName.resolveBinding();
     	}
 
     	private IBinding binding(String context, String name) {
     		IASTName astName = findName(context, name);
+			assertNotNull("No AST name for \"" + name + "\"", astName);
     		assertEquals(name, astName.getRawSignature());
     			
     		IBinding binding = astName.resolveBinding();

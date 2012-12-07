@@ -8,6 +8,7 @@
  * Contributors:
  *     Anton Gorenkov  - initial implementation
  *     Marc-Andre Laperle
+ *     Nathan Ridge
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.checkers;
 
@@ -47,6 +48,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.SemanticQueries;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVariableReadWriteFlags;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 
@@ -254,16 +256,19 @@ public class ClassMembersInitializationChecker extends AbstractIndexAstChecker {
 				IBinding binding = functionDefinition.getDeclarator().getName().resolveBinding();
 				if (binding instanceof ICPPConstructor) {
 					ICPPConstructor constructor = (ICPPConstructor) binding;
-					if (constructor.getClassOwner().getKey() != ICompositeType.k_union) {
-						return constructor;
-					}
+					// Skip defaulted copy and move constructors.
+					if (functionDefinition.isDefaulted() && SemanticQueries.isCopyOrMoveConstructor(constructor))
+						return null;
+					if (constructor.getClassOwner().getKey() == ICompositeType.k_union)
+						return null;
+					return constructor;
 				}
 			}
 			
 			return null;
 		}
 	}
-	
+
 	@Override
 	public void initPreferences(IProblemWorkingCopy problem) {
 		super.initPreferences(problem);

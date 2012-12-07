@@ -1202,4 +1202,31 @@ public final class CHeuristicScanner implements Symbols {
 		}
 	}
 
+	/**
+	 *  A more convenient interface to CHeuristicScanner's
+	 *  nextToken() and previousToken() methods. 
+	 */
+	public static class TokenStream {
+		private CHeuristicScanner fScanner;
+		private int fPos;
+		private final int fDocumentLength;
+		
+		public TokenStream(IDocument document, int startPos) {
+			fScanner = new CHeuristicScanner(document);
+			fPos = startPos;
+			fDocumentLength = document.getLength();
+		}
+		
+		public int nextToken() {
+			int result = fScanner.nextToken(fPos, fDocumentLength);
+			fPos = fScanner.getPosition();
+			return result;
+		}
+		
+		public int previousToken() {
+			int result = fScanner.previousToken(fPos, 0);
+			fPos = fScanner.getPosition();
+			return result;
+		}
+	}
 }

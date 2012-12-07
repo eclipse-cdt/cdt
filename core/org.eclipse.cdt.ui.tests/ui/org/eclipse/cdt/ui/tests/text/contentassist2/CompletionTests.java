@@ -1365,4 +1365,13 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected= { "__builtin_va_arg(ap, type)" };
 		assertCompletionResults(fCursorOffset, expected, COMPARE_ID_STRINGS);
 	}
+	
+	//  namespace N {
+	//    void foo(int);
+	//  }
+	//  using N::f/*cursor*/
+	public void testUsingDeclaration_Bug379631() throws Exception {
+		final String[] expected= { "foo;" };
+		assertCompletionResults(fCursorOffset, expected, COMPARE_REP_STRINGS);
+	}
 }

@@ -586,4 +586,18 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(3);
 	}
+
+	//      S(S&) = default;
+	//      S(const S&) = default;
+	//      S(volatile S&) = default;
+	//      S(const volatile S&) = default;
+	//      S(S&&) = default;
+	//      S(const S&&) = default;
+	//      S(volatile S&&) = default;
+	//      S(const volatile S&&) = default;
+	//  };
+	public void testBug395018_defaultedCopyOrMoveConstructor() throws Exception {
+		loadCodeAndRun(getAboveComment());
+		checkNoErrors();
+	}
 }

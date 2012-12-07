@@ -52,6 +52,24 @@
       "revId": "b2a86d450b23c0b78d9a5515011cb3ab63d85913",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3//+Nk\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/PDOMLinkage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 205,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2012-12-07T17:00:19Z",
+      "side": 1,
+      "message": "When the return type is serialized, and the serialization process encounters the CPPParameter, if cannotAdapt() returns true then it writes a null rather than writing the parameter. Then when it is deserialized, we get an EvalBinding with a null binding, which causes the enclosing TypeOfDependentExpression to resolve to a ProblemType down the line.",
+      "parentUuid": "AABOJ3//+Og\u003d",
+      "revId": "b2a86d450b23c0b78d9a5515011cb3ab63d85913",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

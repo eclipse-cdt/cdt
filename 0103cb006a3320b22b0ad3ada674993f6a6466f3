@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOJ3//+Sw\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPDeferredFunction.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-12-07T02:04:43Z",
+      "side": 1,
+      "message": "Add Javadoc explaining semantics of candidates.\n\nThe other ctor can be eliminated if this one is changed to take ICPPFunction... candidates",
+      "revId": "0103cb006a3320b22b0ad3ada674993f6a6466f3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3//+So\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPTemplates.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1735,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-12-07T02:04:43Z",
+      "side": 1,
+      "message": "Please combine the two conditions.",
+      "revId": "0103cb006a3320b22b0ad3ada674993f6a6466f3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3//+Sk\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalID.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 189,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-12-07T02:04:43Z",
+      "side": 1,
+      "message": "Unnecessary blank line.",
+      "revId": "0103cb006a3320b22b0ad3ada674993f6a6466f3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3//+SU\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/EvalID.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 203,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-12-07T02:04:43Z",
+      "side": 1,
+      "message": "For readability please extract a variable for new CPPFunctionSet",
+      "revId": "0103cb006a3320b22b0ad3ada674993f6a6466f3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Marc Khouzam (Ericsson) - initial API and implementation
+ *     Marc Dumais (Ericsson) : Bug 393193 
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;
@@ -151,6 +152,11 @@ public class MulticoreVisualizerEventListener {
 								assert cores.length == 1; // A thread belongs to a single core
 								int coreId = Integer.parseInt(cores[0]);
 								VisualizerCore vCore = fVisualizer.getModel().getCore(coreId);
+								// There seems to be a race condition that sometimes results in
+                                // a core being known to be running a thread but that core not
+                                // yet having being "created" in the model. 
+                                if (vCore == null)
+                                    return;
 								
 								int pid = Integer.parseInt(processContext.getProcId());
 								int tid = execDmc.getThreadId();

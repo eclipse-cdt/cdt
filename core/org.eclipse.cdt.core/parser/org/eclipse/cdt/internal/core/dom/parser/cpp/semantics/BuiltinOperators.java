@@ -590,7 +590,7 @@ class BuiltinOperators {
 		return type instanceof IBasicType && ((IBasicType) type).getKind() == Kind.eBoolean;
 	}
 
-	private static boolean isFloatingPoint(IType type) {
+	public static boolean isFloatingPoint(IType type) {
 		if (type instanceof IBasicType) {
 			IBasicType.Kind kind= ((IBasicType) type).getKind();
 			switch (kind) {
@@ -638,7 +638,7 @@ class BuiltinOperators {
 		return false;
 	}
 
-	private static boolean isIntegral(IType type) {
+	public static boolean isIntegral(IType type) {
 		if (type instanceof IBasicType) {
 			IBasicType.Kind kind= ((IBasicType) type).getKind();
 			switch (kind) {

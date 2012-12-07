@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,12 +10,16 @@
  *     Markus Schorn (Wind River Systems)
  *     Bryan Wilkinson (QNX)
  *     Andrew Ferguson (Symbian)
+ *     Nathan Ridge
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
+import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.internal.core.dom.parser.ArithmeticConversion;
@@ -261,22 +265,68 @@ public class Cost {
 		return buf.toString();
 	}
 
-	public boolean isNarrowingConversion() {
-		if (fCouldNarrow) {
-			if (source instanceof CPPBasicType && target instanceof ICPPBasicType) {
-				ICPPBasicType basicTarget= (ICPPBasicType) target;
-				final Kind targetKind = basicTarget.getKind();
-				if (targetKind != Kind.eInt && targetKind != Kind.eFloat && targetKind != Kind.eDouble) {
-					return true;
-				}
-				Long val= ((CPPBasicType) source).getAssociatedNumericalValue();
-				if (val != null) {
-					long n= val.longValue();
-					return !ArithmeticConversion.fitsIntoType(basicTarget, n);
+	public boolean isNarrowingConversion(IASTNode point) {
+		if (!fCouldNarrow)
+			return false;
+
+		// Determine whether this is a narrowing conversion, according to 8.5.4/7 (dcl.list.init).
+
+		if (!(target instanceof ICPPBasicType))
+			return false;
+		ICPPBasicType basicTarget = (ICPPBasicType) target;
+
+		// Deal with an enumeration source type.
+		// If it has a fixed underlying type, treat it as if it were that underlying type.
+		// If not, check whether the target type can represent its min and max values.
+		CPPBasicType basicSource = null;
+		if (source instanceof CPPBasicType) {
+			basicSource = (CPPBasicType) source;
+		} else if (source instanceof IEnumeration) {
+			IEnumeration enumSource = (IEnumeration) source;
+			if (enumSource instanceof ICPPEnumeration) {
+				IType fixedType = ((ICPPEnumeration) enumSource).getFixedType();
+				if (fixedType instanceof CPPBasicType) {
+					basicSource = (CPPBasicType) fixedType;
 				}
 			}
-			return true;
+			if (basicSource == null) {  // C enumeration or no fixed type
+				return !ArithmeticConversion.fitsIntoType(basicTarget, enumSource.getMinValue()) ||
+						!ArithmeticConversion.fitsIntoType(basicTarget, enumSource.getMaxValue());
+			}
 		}
+
+		if (basicSource == null)
+			return false;
+
+		// The standard provides for an exception in some cases where, based on the types only,
+		// a conversion would be narrowing, but the source expression is a constant-expression
+		// and its value is exactly representable by the target type.
+		boolean constantExprExceptionApplies = false;
+
+		if (BuiltinOperators.isFloatingPoint(basicSource) && BuiltinOperators.isIntegral(basicTarget)) {
+			// From a floating-point type to an integer type
+			return true;
+		} else if (basicSource.getKind() == Kind.eDouble
+				 && (basicTarget.getKind() == Kind.eFloat 
+				     || (basicTarget.getKind() == Kind.eDouble && !basicTarget.isLong() && basicSource.isLong()))) {
+			// From long double to double or float, or from double to float
+			constantExprExceptionApplies = true;
+		} else if (BuiltinOperators.isIntegral(basicSource) && BuiltinOperators.isFloatingPoint(basicTarget)) {
+			// From an integer type or unscoped enumeration type to a floating-point type
+			constantExprExceptionApplies = true;
+		} else if (BuiltinOperators.isIntegral(basicSource) 
+				 && BuiltinOperators.isIntegral(basicTarget) 
+				 && !ArithmeticConversion.fitsIntoType(basicTarget, basicSource, point)) {
+			// From an integer type or unscoped enumeration type to an integer type that
+			// cannot represent all the values of the original type
+			constantExprExceptionApplies = true;
+		}
+
+		if (constantExprExceptionApplies) {
+			Long val = basicSource.getAssociatedNumericalValue();
+			return val == null || !ArithmeticConversion.fitsIntoType(basicTarget, val.longValue());
+		}
+
 		return false;
 	}
 

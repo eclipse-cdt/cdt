@@ -351,7 +351,7 @@ public class Conversions {
 						clause.getValueCategory(point), UDCMode.ALLOWED, Context.ORDINARY, point);
 				if (!cost.converts())
 					return cost;
-				if (cost.isNarrowingConversion()) {
+				if (cost.isNarrowingConversion(point)) {
 					cost.setRank(Rank.NO_MATCH);
 					return cost;
 				}
@@ -381,7 +381,7 @@ public class Conversions {
 			final ICPPEvaluation firstArg = args[0];
 			if (!firstArg.isInitializerList()) {
 				Cost cost= checkImplicitConversionSequence(target, firstArg.getTypeOrFunctionSet(point), firstArg.getValueCategory(point), udc, Context.ORDINARY, point);
-				if (cost.isNarrowingConversion()) {
+				if (cost.isNarrowingConversion(point)) {
 					return Cost.NO_CONVERSION;
 				}
 				return cost;

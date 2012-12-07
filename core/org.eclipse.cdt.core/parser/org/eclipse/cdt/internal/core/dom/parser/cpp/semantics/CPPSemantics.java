@@ -2729,7 +2729,7 @@ public class CPPSemantics {
 			    }
 				cost = Conversions.checkImplicitConversionSequence(paramType, argType, sourceIsLValue,
 						udc, ctx, data.getLookupPoint());
-				if (data.fNoNarrowing && cost.isNarrowingConversion()) {
+				if (data.fNoNarrowing && cost.isNarrowingConversion(data.getLookupPoint())) {
 					cost= Cost.NO_CONVERSION;
 				}
 			}

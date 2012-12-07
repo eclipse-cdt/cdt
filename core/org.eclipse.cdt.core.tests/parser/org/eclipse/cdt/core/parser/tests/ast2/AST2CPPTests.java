@@ -9985,4 +9985,96 @@ public class AST2CPPTests extends AST2BaseTest {
 	public void testIsBaseOf_395019() throws Exception {
 		parseAndCheckBindings(getAboveComment(), CPP, true);
 	}
+	
+	//  struct Bool { Bool(bool); };
+	//  struct Char { Char(char); };
+	//  struct Short { Short(short); };
+	//  struct Int { Int(int); };
+	//  struct UInt { UInt(unsigned int); };
+	//  struct Long { Long(long); };
+	//  struct ULong { ULong(unsigned long); };
+	//  struct Float { Float(float); };
+	//  struct Double { Double(double); };
+	//  struct LongDouble { LongDouble(long double); };
+	//  void fbool(Bool);
+	//  void fchar(Char);
+	//  void fshort(Short);
+	//  void fint(Int);
+	//  void flong(Long);
+	//  void fuint(UInt);
+	//  void fulong(ULong);
+	//  void ffloat(Float);
+	//  void fdouble(Double);
+	//  void flongdouble(LongDouble);
+	//  enum UnscopedEnum : int { x, y, z };
+	//  int main() {
+	//      bool vbool;
+	//      char vchar;
+	//      short vshort;
+	//      unsigned short vushort;
+	//      int vint;
+	//      unsigned int vuint;
+	//      long vlong;
+	//      float vfloat;
+	//      double vdouble;
+	//      long double vlongdouble;
+	//      UnscopedEnum vue;
+	//      
+	//      // Narrowing conversions
+	//      fint({vdouble});
+	//      ffloat({vlongdouble});
+	//      ffloat({vdouble});
+	//      fdouble({vlongdouble});
+	//      fdouble({vint});
+	//      fdouble({vue});
+	//      fshort({vint});
+	//      fuint({vint});
+	//      fint({vuint});
+	//      fulong({vshort});
+	//      fbool({vint});
+	//      fchar({vint});
+	//
+	//      // Non-narrowing conversions
+	//      fint({vshort});
+	//      flong({vint});
+	//      fuint({vushort});
+	//      flong({vshort});
+	//      fulong({vuint});
+	//      fulong({vushort});
+	//      fdouble({vfloat});
+	//      flongdouble({vfloat});
+	//      flongdouble({vdouble});
+	//      fint({vbool});
+	//      fint({vchar});
+	//  }
+	public void testNarrowingConversionsInListInitialization_389782() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		
+		// Narrowing conversions
+		helper.assertProblemOnFirstToken("fint({vdouble");
+		helper.assertProblemOnFirstToken("ffloat({vlongdouble");
+		helper.assertProblemOnFirstToken("ffloat({vdouble");
+		helper.assertProblemOnFirstToken("fdouble({vlongdouble");
+		helper.assertProblemOnFirstToken("fdouble({vint");
+		helper.assertProblemOnFirstToken("fdouble({vue");
+		helper.assertProblemOnFirstToken("fshort({vint");
+		helper.assertProblemOnFirstToken("fuint({vint");
+		helper.assertProblemOnFirstToken("fint({vuint");
+		helper.assertProblemOnFirstToken("fulong({vshort");
+		helper.assertProblemOnFirstToken("fbool({vint");
+		helper.assertProblemOnFirstToken("fchar({vint");
+		
+		// Non-narrowing conversions
+		helper.assertNonProblemOnFirstToken("fint({vshort");
+		helper.assertNonProblemOnFirstToken("flong({vint");
+		helper.assertNonProblemOnFirstToken("fuint({vushort");
+		helper.assertNonProblemOnFirstToken("flong({vshort");
+		helper.assertNonProblemOnFirstToken("fulong({vuint");
+		helper.assertNonProblemOnFirstToken("fulong({vushort");
+		helper.assertNonProblemOnFirstToken("fdouble({vfloat");
+		helper.assertNonProblemOnFirstToken("flongdouble({vfloat");
+		helper.assertNonProblemOnFirstToken("flongdouble({vdouble");
+		helper.assertNonProblemOnFirstToken("fint({vbool");
+		helper.assertNonProblemOnFirstToken("fint({vchar");
+	}
 }

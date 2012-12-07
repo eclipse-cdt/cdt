@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "AABOJ3//+Mc\u003d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2CPPTests.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 277,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2012-12-07T16:58:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOJ3//+QA\u003d",
+      "revId": "5781174854b14ec2db92318d5eba6856cff7ed3f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOJ3//+P8\u003d",
         "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2CPPTests.java",
         "patchSetId": 3
@@ -30,6 +48,24 @@
       "writtenOn": "2012-12-07T03:45:36Z",
       "side": 1,
       "message": "This method should take an optional third argument like BindingAssertionHelper.assertNonProblem does.",
+      "revId": "5781174854b14ec2db92318d5eba6856cff7ed3f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3//+MY\u003d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2CPPTests.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 281,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2012-12-07T16:58:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOJ3//+P8\u003d",
       "revId": "5781174854b14ec2db92318d5eba6856cff7ed3f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "AABOJ3//+MU\u003d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2CPPTests.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 10067,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2012-12-07T16:58:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOJ3//+P4\u003d",
+      "revId": "5781174854b14ec2db92318d5eba6856cff7ed3f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOJ3//+QE\u003d",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/ArithmeticConversion.java",
         "patchSetId": 3
@@ -70,6 +124,24 @@
     },
     {
       "key": {
+        "uuid": "AABOJ3//+MA\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/ArithmeticConversion.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 394,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2012-12-07T16:58:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOJ3//+QE\u003d",
+      "revId": "5781174854b14ec2db92318d5eba6856cff7ed3f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOJ3//+Ps\u003d",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/Cost.java",
         "patchSetId": 3
@@ -81,6 +153,24 @@
       "writtenOn": "2012-12-07T03:45:36Z",
       "side": 1,
       "message": "Why not ICPPBasicType?",
+      "revId": "5781174854b14ec2db92318d5eba6856cff7ed3f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3//+MQ\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/Cost.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 280,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2012-12-07T16:58:07Z",
+      "side": 1,
+      "message": "Because later we need to call basicSource.getAssociatedNumericalValue() on it, and that\u0027s not in the interface. (This was like that prior to my changes).",
+      "parentUuid": "AABOJ3//+Ps\u003d",
       "revId": "5781174854b14ec2db92318d5eba6856cff7ed3f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

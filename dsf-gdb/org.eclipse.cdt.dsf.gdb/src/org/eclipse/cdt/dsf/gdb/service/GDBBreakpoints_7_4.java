@@ -14,6 +14,7 @@ package org.eclipse.cdt.dsf.gdb.service;
 import java.util.Hashtable;
 import java.util.Map;
 
+import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
@@ -169,72 +170,117 @@ public class GDBBreakpoints_7_4 extends GDBBreakpoints_7_2 implements IEventList
 	}
 
 	@Override
-	protected void addBreakpoint(IBreakpointsTargetDMContext context, Map<String, Object> attributes, DataRequestMonitor<IBreakpointDMContext> finalRm) {
-		MIBreakpointsSynchronizer bs = getServicesTracker().getService(MIBreakpointsSynchronizer.class);
+	protected void addBreakpoint(
+			final IBreakpointsTargetDMContext context, 
+			final Map<String, Object> attributes, 
+			final DataRequestMonitor<IBreakpointDMContext> finalRm) {
+		final MIBreakpointsSynchronizer bs = getServicesTracker().getService(MIBreakpointsSynchronizer.class);
 		if (bs != null) {
 			// Skip the breakpoints set from the console or from outside of Eclipse 
 			// because they are already installed on the target.
-			MIBreakpoint miBpt = bs.getTargetBreakpoint(context, attributes);
-			if (miBpt != null) {
-				bs.removeCreatedTargetBreakpoint(context, miBpt);
-				MIBreakpointDMData newBreakpoint = new MIBreakpointDMData(miBpt);
-				getBreakpointMap(context).put(newBreakpoint.getNumber(), newBreakpoint);
-				IBreakpointDMContext dmc = new MIBreakpointDMContext(this, new IDMContext[] { context }, newBreakpoint.getNumber());
-				finalRm.setData(dmc);
-
-				getSession().dispatchEvent(new BreakpointAddedEvent(dmc), getProperties());
-
-				finalRm.done();
-				return;
-			}
+			bs.getTargetBreakpoint(
+					context, 
+					attributes, 
+					new DataRequestMonitor<MIBreakpoint>(getExecutor(), finalRm) {
+						@Override
+						@ConfinedToDsfExecutor( "fExecutor" )
+						protected void handleSuccess() {
+							MIBreakpoint miBpt = getData();
+							if (miBpt != null) {
+								bs.removeCreatedTargetBreakpoint(context, miBpt);
+								MIBreakpointDMData newBreakpoint = new MIBreakpointDMData(miBpt);
+								getBreakpointMap(context).put(newBreakpoint.getNumber(), newBreakpoint);
+								IBreakpointDMContext dmc = 
+									new MIBreakpointDMContext(GDBBreakpoints_7_4.this, new IDMContext[] { context }, newBreakpoint.getNumber());
+								finalRm.setData(dmc);
+								getSession().dispatchEvent(new BreakpointAddedEvent(dmc), getProperties());
+								finalRm.done();
+							}
+							else {
+								GDBBreakpoints_7_4.super.addBreakpoint(context, attributes, finalRm);
+							}
+						}
+					});
 		}
-		super.addBreakpoint(context, attributes, finalRm);
+		else {
+			super.addBreakpoint(context, attributes, finalRm);
+		}
 	}
 
 	@Override
-	protected void addTracepoint(IBreakpointsTargetDMContext context, Map<String, Object> attributes, DataRequestMonitor<IBreakpointDMContext> drm) {
-		MIBreakpointsSynchronizer bs = getServicesTracker().getService(MIBreakpointsSynchronizer.class);
+	protected void addTracepoint(
+			final IBreakpointsTargetDMContext context, 
+			final Map<String, Object> attributes, 
+			final DataRequestMonitor<IBreakpointDMContext> drm) {
+		final MIBreakpointsSynchronizer bs = getServicesTracker().getService(MIBreakpointsSynchronizer.class);
 		if (bs != null) {
 			// Skip the breakpoints set from the console or from outside of Eclipse 
 			// because they are already installed on the target.
-			MIBreakpoint miBpt = bs.getTargetBreakpoint(context, attributes);
-			if (miBpt != null) {
-				bs.removeCreatedTargetBreakpoint(context, miBpt);
-				MIBreakpointDMData newBreakpoint = new MIBreakpointDMData(miBpt);
-				getBreakpointMap(context).put(newBreakpoint.getNumber(), newBreakpoint);
-				IBreakpointDMContext dmc = new MIBreakpointDMContext(this, new IDMContext[] { context }, newBreakpoint.getNumber());
-				drm.setData(dmc);
-	
-				getSession().dispatchEvent(new BreakpointAddedEvent(dmc), getProperties());
-	
-				drm.done();
-				return;
-			}
+			bs.getTargetBreakpoint(
+					context, 
+					attributes, 
+					new DataRequestMonitor<MIBreakpoint>(getExecutor(), drm) {
+						@Override
+						@ConfinedToDsfExecutor( "fExecutor" )
+						protected void handleSuccess() {
+							MIBreakpoint miBpt = getData();
+							if (miBpt != null) {
+								bs.removeCreatedTargetBreakpoint(context, miBpt);
+								MIBreakpointDMData newBreakpoint = new MIBreakpointDMData(miBpt);
+								getBreakpointMap(context).put(newBreakpoint.getNumber(), newBreakpoint);
+								IBreakpointDMContext dmc = 
+									new MIBreakpointDMContext(GDBBreakpoints_7_4.this, new IDMContext[] { context }, newBreakpoint.getNumber());
+								drm.setData(dmc);
+								getSession().dispatchEvent(new BreakpointAddedEvent(dmc), getProperties());
+								drm.done();
+							}
+							else {
+								GDBBreakpoints_7_4.super.addTracepoint(context, attributes, drm);
+							}
+						}
+					});
 		}
-		super.addTracepoint(context, attributes, drm);
+		else {
+			super.addTracepoint(context, attributes, drm);
+		}
 	}
 
 	@Override
-	protected void addWatchpoint(IBreakpointsTargetDMContext context, Map<String, Object> attributes, DataRequestMonitor<IBreakpointDMContext> drm) {
-		MIBreakpointsSynchronizer bs = getServicesTracker().getService(MIBreakpointsSynchronizer.class);
+	protected void addWatchpoint(
+			final IBreakpointsTargetDMContext context, 
+			final Map<String, Object> attributes, 
+			final DataRequestMonitor<IBreakpointDMContext> drm) {
+		final MIBreakpointsSynchronizer bs = getServicesTracker().getService(MIBreakpointsSynchronizer.class);
 		if (bs != null) {
 			// Skip the breakpoints set from the console or from outside of Eclipse 
 			// because they are already installed on the target.
-			MIBreakpoint miBpt = bs.getTargetBreakpoint(context, attributes);
-			if (miBpt != null) {
-				bs.removeCreatedTargetBreakpoint(context, miBpt);
-				MIBreakpointDMData newBreakpoint = new MIBreakpointDMData(miBpt);
-				getBreakpointMap(context).put(newBreakpoint.getNumber(), newBreakpoint);
-				IBreakpointDMContext dmc = new MIBreakpointDMContext(this, new IDMContext[] { context }, newBreakpoint.getNumber());
-				drm.setData(dmc);
-	
-				getSession().dispatchEvent(new BreakpointAddedEvent(dmc), getProperties());
-	
-				drm.done();
-				return;
-			}
+			bs.getTargetBreakpoint(
+					context, 
+					attributes, 
+					new DataRequestMonitor<MIBreakpoint>(getExecutor(), drm) {
+						@Override
+						@ConfinedToDsfExecutor( "fExecutor" )
+						protected void handleSuccess() {
+							MIBreakpoint miBpt = getData();
+							if (miBpt != null) {
+								bs.removeCreatedTargetBreakpoint(context, miBpt);
+								MIBreakpointDMData newBreakpoint = new MIBreakpointDMData(miBpt);
+								getBreakpointMap(context).put(newBreakpoint.getNumber(), newBreakpoint);
+								IBreakpointDMContext dmc = 
+									new MIBreakpointDMContext(GDBBreakpoints_7_4.this, new IDMContext[] { context }, newBreakpoint.getNumber());
+								drm.setData(dmc);
+								getSession().dispatchEvent(new BreakpointAddedEvent(dmc), getProperties());
+								drm.done();
+							}
+							else {
+								GDBBreakpoints_7_4.super.addWatchpoint(context, attributes, drm);
+							}
+						}
+					});
 		}
-		super.addWatchpoint(context, attributes, drm);
+		else {
+			super.addWatchpoint(context, attributes, drm);
+		}
 	}
 
 	@Override

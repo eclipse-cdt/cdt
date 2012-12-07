@@ -8,6 +8,7 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
+ *     Nathan Ridge
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
@@ -48,6 +49,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.core.runtime.CoreException;
@@ -184,15 +186,6 @@ public class EvalID extends CPPEvaluation {
 			return new EvalFunctionSet((CPPFunctionSet) binding, isAddressOf(expr));
 		}
 		if (binding instanceof ICPPUnknownBinding) {
-			IBinding owner = binding.getOwner();
-			if (owner instanceof IProblemBinding)
-				return EvalFixed.INCOMPLETE;
-
-			ICPPEvaluation fieldOwner= null;
-			IType fieldOwnerType= withinNonStaticMethod(expr);
-			if (fieldOwnerType != null) {
-				fieldOwner= new EvalFixed(fieldOwnerType, ValueCategory.LVALUE, Value.UNKNOWN);
-			}
 			ICPPTemplateArgument[] templateArgs = null;
 			final IASTName lastName = name.getLastName();
 			if (lastName instanceof ICPPASTTemplateId) {
@@ -202,12 +195,30 @@ public class EvalID extends CPPEvaluation {
 					return EvalFixed.INCOMPLETE;
 				}
 			}
+
+			if (binding instanceof CPPDeferredFunction) {
+				CPPDeferredFunction deferredFunction = (CPPDeferredFunction) binding;
+				if (deferredFunction.getCandidates() != null) {
+					CPPFunctionSet functionSet = new CPPFunctionSet(deferredFunction.getCandidates(), templateArgs, null);
+					return new EvalFunctionSet(functionSet, isAddressOf(expr));
+				}
+			}
+
+			IBinding owner = binding.getOwner();
+			if (owner instanceof IProblemBinding)
+				return EvalFixed.INCOMPLETE;
+
+			ICPPEvaluation fieldOwner= null;
+			IType fieldOwnerType= withinNonStaticMethod(expr);
+			if (fieldOwnerType != null) {
+				fieldOwner= new EvalFixed(fieldOwnerType, ValueCategory.LVALUE, Value.UNKNOWN);
+			}
+
 			return new EvalID(fieldOwner, owner, name.getSimpleID(), isAddressOf(expr),
 					name instanceof ICPPASTQualifiedName, templateArgs);
 		}
-		/**
-		 * 9.3.1-3 Transformation to class member access within a non-static member function.
-		 */
+
+		// 9.3.1-3 Transformation to class member access within a non-static member function.
 		if (binding instanceof ICPPMember && !(binding instanceof IType)
 				&& !(binding instanceof ICPPConstructor) &&!((ICPPMember) binding).isStatic()) {
 			IType fieldOwnerType= withinNonStaticMethod(expr);
@@ -305,7 +316,7 @@ public class EvalID extends CPPEvaluation {
 			if (eval != null)
 				return eval;
 		}
-
+		
 		return new EvalID(fieldOwner, nameOwner, fName, fAddressOf, fQualified, templateArgs);
 	}
 

@@ -2435,13 +2435,19 @@ public class CPPVisitor extends ASTQueries {
 	 * Searches for the function enclosing the given node. May return <code>null</code>.
 	 */
 	public static IBinding findEnclosingFunction(IASTNode node) {
-		while (node != null && !(node instanceof IASTFunctionDefinition)) {
+		IASTDeclarator dtor = null;
+		while (node != null) {
+			if (node instanceof IASTFunctionDeclarator) {
+				dtor = (IASTDeclarator) node;
+				break;
+			}
+			if (node instanceof IASTFunctionDefinition) {
+				dtor= findInnermostDeclarator(((IASTFunctionDefinition) node).getDeclarator());
+				break;
+			}
 			node= node.getParent();
 		}
-		if (node == null)
-			return null;
 
-		IASTDeclarator dtor= findInnermostDeclarator(((IASTFunctionDefinition) node).getDeclarator());
 		if (dtor != null) {
 			IASTName name= dtor.getName();
 			if (name != null) {

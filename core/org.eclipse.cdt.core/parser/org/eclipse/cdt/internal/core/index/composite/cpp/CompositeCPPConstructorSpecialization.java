@@ -18,5 +18,5 @@ public class CompositeCPPConstructorSpecialization extends CompositeCPPMethodSpe
 
 	public CompositeCPPConstructorSpecialization(ICompositesFactory cf, ICPPConstructor cons) {
 		super(cf, cons);
-	}	
+	}
 }

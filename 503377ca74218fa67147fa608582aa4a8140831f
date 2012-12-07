@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "AABOJ3//+T8\u003d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2CPPTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 269,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2012-12-07T02:51:53Z",
+      "side": 1,
+      "message": "I am trying to avoid having to count the number of characters until the parenthesis each time.\n\nHow about a more general function that goes until the first non-word character? That could replace almost all usages of assertProblem() and assertNonProblem() where we now give an explicit count.",
+      "parentUuid": "AABOJ3//+XY\u003d",
+      "revId": "503377ca74218fa67147fa608582aa4a8140831f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOJ3//+Wg\u003d",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/ArithmeticConversion.java",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2012-12-06T22:57:33Z",
       "side": 1,
       "message": "Please add Javadoc explaining the semantics of the returned value.",
+      "revId": "503377ca74218fa67147fa608582aa4a8140831f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3//+UA\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/ArithmeticConversion.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 373,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2012-12-07T02:51:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOJ3//+Wg\u003d",
       "revId": "503377ca74218fa67147fa608582aa4a8140831f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "AABOJ3//+UM\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/ArithmeticConversion.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 387,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2012-12-07T02:51:53Z",
+      "side": 1,
+      "message": "We could. That would allow us to answer some questions (e.g. does \u0027int\u0027 fit into \u0027long\u0027, since we know the standard guarantees sizeof(int) \u003c\u003d sizeof(long)) reliably even if we don\u0027t know their sizes.\n\nBut other questions still cannot be answered reliably. For example, does \u0027long\u0027 fit into \u0027int\u0027 (true only if sizeof(int) \u003d\u003d sizeof(long)), or does \u0027unsigned int\u0027 fit into \u0027long\u0027 (true only if sizeof(int) \u003c sizeof(long)).\n\nAlso, I\u0027m not sure where wchar_t, char16_t, and char32_t fit into the \"natural hierarchy of types\".\n\nPerhaps a cleaner solution would be to give SizeofCalculator some reasonable default values for the sizes of various types, and return those if the actual sizes are not known?",
+      "parentUuid": "AABOJ3//+XQ\u003d",
+      "revId": "503377ca74218fa67147fa608582aa4a8140831f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOJ3//+Wk\u003d",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/ArithmeticConversion.java",
         "patchSetId": 1
@@ -64,6 +118,24 @@
       "writtenOn": "2012-12-06T22:57:33Z",
       "side": 1,
       "message": "This statement returns true for int to float conversion. Is it expected?",
+      "revId": "503377ca74218fa67147fa608582aa4a8140831f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3//+UI\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/ArithmeticConversion.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 392,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2012-12-07T02:51:53Z",
+      "side": 1,
+      "message": "I intended for this function to be used only for integral types. I will clarify that in the Javadoc. (If there existed an interface ICPPIntegralType, I would have made the types of the arguments that.)",
+      "parentUuid": "AABOJ3//+Wk\u003d",
       "revId": "503377ca74218fa67147fa608582aa4a8140831f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "AABOJ3//+Tw\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/Cost.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 282,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2012-12-07T02:51:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOJ3//+WU\u003d",
+      "revId": "503377ca74218fa67147fa608582aa4a8140831f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOJ3//+WQ\u003d",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/Cost.java",
         "patchSetId": 1
@@ -98,6 +188,24 @@
       "writtenOn": "2012-12-06T22:57:33Z",
       "side": 1,
       "message": "Please always use braces for multi-line then-clauses",
+      "revId": "503377ca74218fa67147fa608582aa4a8140831f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3//+Ts\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/Cost.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 291,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2012-12-07T02:51:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOJ3//+WQ\u003d",
       "revId": "503377ca74218fa67147fa608582aa4a8140831f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "AABOJ3//+To\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/Cost.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 292,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2012-12-07T02:51:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOJ3//+WM\u003d",
+      "revId": "503377ca74218fa67147fa608582aa4a8140831f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOJ3//+Wc\u003d",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/Cost.java",
         "patchSetId": 1
@@ -138,6 +264,24 @@
     },
     {
       "key": {
+        "uuid": "AABOJ3//+Tk\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/Cost.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 305,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2012-12-07T02:51:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOJ3//+Wc\u003d",
+      "revId": "503377ca74218fa67147fa608582aa4a8140831f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOJ3//+WY\u003d",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/Cost.java",
         "patchSetId": 1
@@ -149,6 +293,24 @@
       "writtenOn": "2012-12-06T22:57:33Z",
       "side": 1,
       "message": "Please remove extra spaces.",
+      "revId": "503377ca74218fa67147fa608582aa4a8140831f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3//+Tg\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/Cost.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 309,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2012-12-07T02:51:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOJ3//+WY\u003d",
       "revId": "503377ca74218fa67147fa608582aa4a8140831f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

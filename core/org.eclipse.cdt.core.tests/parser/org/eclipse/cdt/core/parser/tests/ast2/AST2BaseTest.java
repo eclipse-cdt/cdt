@@ -106,6 +106,7 @@ public class AST2BaseTest extends BaseTestCase {
 		Map<String, String> map= new HashMap<String, String>();
 		map.put("__GNUC__", "4");
 		map.put("__GNUC_MINOR__", "7");
+		map.put("__SIZEOF_SHORT__", "2");
 		map.put("__SIZEOF_INT__", "4");
 		map.put("__SIZEOF_LONG__", "8");
 		return map;
@@ -113,6 +114,7 @@ public class AST2BaseTest extends BaseTestCase {
 
 	private static Map<String, String> getStdMap() {
 		Map<String, String> map= new HashMap<String, String>();
+		map.put("__SIZEOF_SHORT__", "2");
 		map.put("__SIZEOF_INT__", "4");
 		map.put("__SIZEOF_LONG__", "8");
 		return map;
@@ -508,10 +510,12 @@ public class AST2BaseTest extends BaseTestCase {
     }
 	
 	protected class BindingAssertionHelper {
+		private final String TOKEN_SEPARATORS = "(){}[] ;~!#%^&*-+=:'\"|\\/?<>,";  //$NON-NLS-1$
+		
 		protected IASTTranslationUnit tu;
 		protected String contents;
 		protected boolean isCPP;
-    	
+		
     	public BindingAssertionHelper(String contents, boolean isCPP) throws ParserException {
     		this(contents, isCPP ? ParserLanguage.CPP : ParserLanguage.C);
 		}
@@ -565,6 +569,28 @@ public class AST2BaseTest extends BaseTestCase {
     			fail("Null binding resolved for name: " + section.substring(0, len));
     		}
     		return (T) binding;
+    	}
+    	
+    	private int indexOfAny(String toSearch, String choices) {
+    		for (int i = 0; i < toSearch.length(); ++i) {
+    			if (choices.indexOf(toSearch.charAt(i)) != -1)
+    				return i;
+    		}
+    		return -1;
+    	}
+    	
+    	public IProblemBinding assertProblemOnFirstToken(String section) {
+    		return assertProblem(section, indexOfAny(section, TOKEN_SEPARATORS));
+    	}
+    	
+    	public IProblemBinding assertProblemOnFirstToken(String section, int problemId) {
+    		IProblemBinding problemBinding = assertProblemOnFirstToken(section);
+   			assertEquals(problemId, problemBinding.getID());
+    		return problemBinding;
+    	}
+    	
+    	public void assertNonProblemOnFirstToken(String section) {
+    		assertNonProblem(section, indexOfAny(section, TOKEN_SEPARATORS));
     	}
 
     	public void assertNoName(String section, int len) {

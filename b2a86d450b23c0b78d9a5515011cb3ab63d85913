@@ -34,6 +34,24 @@
       "revId": "b2a86d450b23c0b78d9a5515011cb3ab63d85913",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3//+Og\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/PDOMLinkage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 205,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-12-07T04:09:32Z",
+      "side": 1,
+      "message": "I\u0027ll have to take a look at it in debugger to see why cannotAdapt makes a difference.",
+      "parentUuid": "AABOJ3//+Q0\u003d",
+      "revId": "b2a86d450b23c0b78d9a5515011cb3ab63d85913",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

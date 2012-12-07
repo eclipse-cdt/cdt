@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOJ3//+RI\u003d",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/text/contentassist2/CompletionTests.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1373,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-12-07T02:41:48Z",
+      "side": 1,
+      "message": "The current convention for test names is to omit the word \"Bug\", i.e testUsingDeclaration_379631",
+      "revId": "5a70001d25e9366d5f101bfc1ff6d2282ac5cb0f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3//+Qw\u003d",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/text/contentassist/DOMCompletionProposalComputer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 174,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-12-07T02:41:48Z",
+      "side": 1,
+      "message": "It\u0027s undesirable to depend on location of line breaks. The code should work even for a weird case:\nusing\n    f/*cursor*/\n\nOne way to achieve that is to use CHeuristicScanner like CIndenter does.",
+      "revId": "5a70001d25e9366d5f101bfc1ff6d2282ac5cb0f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

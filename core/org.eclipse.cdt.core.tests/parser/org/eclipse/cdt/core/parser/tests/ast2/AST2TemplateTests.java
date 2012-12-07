@@ -6923,4 +6923,21 @@ public class AST2TemplateTests extends AST2BaseTest {
 	public void testVariadicConstructor_395247() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//  template <int> struct Int { };
+	//  template<typename T>
+	//  struct identity {
+	//      typedef T type;
+	//  };
+	//  template <typename T>
+	//  char waldo(T);
+	//  template<typename F = int>
+	//  struct S {
+	//      F f;
+	//      static const int value = sizeof(waldo(f));
+	//  };
+	//  typedef identity<Int<S<>::value>>::type reference;
+    public void testDependentExpressions_395243() throws Exception {
+            parseAndCheckBindings();
+    }
 }

@@ -38,6 +38,7 @@ import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.SemanticQueries;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
@@ -254,9 +255,13 @@ public class ClassMembersInitializationChecker extends AbstractIndexAstChecker {
 				IBinding binding = functionDefinition.getDeclarator().getName().resolveBinding();
 				if (binding instanceof ICPPConstructor) {
 					ICPPConstructor constructor = (ICPPConstructor) binding;
-					if (constructor.getClassOwner().getKey() != ICompositeType.k_union) {
-						return constructor;
-					}
+					// skip defaulted copy and move constructors
+					boolean isDefaulted = functionDefinition.isDefaulted();
+					if (isDefaulted && SemanticQueries.isCopyOrMoveConstructor(constructor))
+						return null;
+					if (constructor.getClassOwner().getKey() == ICompositeType.k_union)
+						return null;
+					return constructor;
 				}
 			}
 			

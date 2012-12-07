@@ -16,6 +16,24 @@
       "revId": "b2a86d450b23c0b78d9a5515011cb3ab63d85913",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3//+Q0\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/PDOMLinkage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 205,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2012-12-07T02:53:07Z",
+      "side": 1,
+      "message": "Here\u0027s the context in which this came up:\n\nint foo(int);\ndouble foo(...);\n\ntemplate \u003ctypename T\u003e\nauto bar(T t) -\u003e decltype(foo(t));\n\nWhen storing the return type of \u0027bar\u0027 in the index, it\u0027s stored as a TypeOfDependentExpression with an EvalFunctionCall as its evaluation. The EvalFunctionCall in turn stores an EvalBinding to represnt its argument \u0027t\u0027, and the binding that the EvalBinding stores is a CPPParameter.\n\nHow should this be handled?",
+      "parentUuid": "AABOJ3//+Rs\u003d",
+      "revId": "b2a86d450b23c0b78d9a5515011cb3ab63d85913",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

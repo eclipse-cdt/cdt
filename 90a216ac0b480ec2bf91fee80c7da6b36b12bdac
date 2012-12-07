@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "AABOJ3//+OU\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/SemanticQueries.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2012-12-07T04:13:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOJ3//+Pg\u003d",
+      "revId": "90a216ac0b480ec2bf91fee80c7da6b36b12bdac",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOJ3//+Pc\u003d",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/SemanticQueries.java",
         "patchSetId": 4
@@ -30,6 +48,24 @@
       "writtenOn": "2012-12-07T03:53:05Z",
       "side": 1,
       "message": "It probably makes sense to have a public isCopyOrMoveConstructor(ICPPConstructor constructor) method. It would be handy in ClassMemberInitializationChecker.",
+      "revId": "90a216ac0b480ec2bf91fee80c7da6b36b12bdac",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3//+OQ\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/ast/SemanticQueries.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 973
+      },
+      "writtenOn": "2012-12-07T04:13:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOJ3//+Pc\u003d",
       "revId": "90a216ac0b480ec2bf91fee80c7da6b36b12bdac",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

@@ -12,10 +12,9 @@
  *     IBM Corporation
  *     Sergey Prigogin (Google)
  *     Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
+ *     Nathan Ridge
  *******************************************************************************/
-package org.eclipse.cdt.ui.tests.text.contentassist2;
-
-import java.io.File;
+package org.eclipse.cdt.ui.tests.text.contentassist2;import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
@@ -28,6 +27,7 @@ import org.eclipse.jface.text.IDocument;
 
 import org.eclipse.cdt.core.testplugin.TestScannerProvider;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+;
 
 /**
  * A collection of code completion tests.
@@ -1364,5 +1364,14 @@ public class CompletionTests extends AbstractContentAssistTest {
 	public void testBuiltinMacroSegmentMatch() throws Exception {
 		final String[] expected= { "__builtin_va_arg(ap, type)" };
 		assertCompletionResults(fCursorOffset, expected, COMPARE_ID_STRINGS);
+	}
+
+	//	namespace N {
+	//	  void foo(int);
+	//	}
+	//	using N::f/*cursor*/
+	public void testUsingDeclaration_Bug379631() throws Exception {
+		final String[] expected= { "foo;" };
+		assertCompletionResults(fCursorOffset, expected, COMPARE_REP_STRINGS);
 	}
 }

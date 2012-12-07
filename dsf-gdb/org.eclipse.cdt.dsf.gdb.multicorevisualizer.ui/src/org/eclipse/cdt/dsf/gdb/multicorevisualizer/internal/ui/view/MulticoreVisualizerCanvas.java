@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     William R. Swanson (Tilera Corporation) - initial API and implementation
+ *     Marc Dumais (Ericsson) - Bug 396076 
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;
@@ -396,6 +397,11 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas
 		}
 		
 		if (m_recacheSizes) {
+			// avoid doing resize calculations if the model is not ready
+			if (m_model == null ) {
+				m_recacheSizes = false;
+				return;
+			}
 			// update cached size information
 			
 			// General margin/spacing constants.
@@ -418,7 +424,7 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas
 			if (cpu_size < 0) cpu_size = 0;
 			
 			// Calculate area on each CPU for placing cores.
-			int ncores  = m_cores.size();
+			int ncores  = m_cores.size() / ncpus;
 			int cpu_width  = cpu_size - core_margin * 2 + core_separation;
 			int cpu_height = cpu_size - core_margin * 2 + core_separation;
 			int core_edge  = fitSquareItems(ncores, cpu_width, cpu_height);

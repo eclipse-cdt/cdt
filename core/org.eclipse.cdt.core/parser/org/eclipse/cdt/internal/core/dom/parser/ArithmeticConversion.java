@@ -13,12 +13,14 @@ package org.eclipse.cdt.internal.core.dom.parser;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
 
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
+import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator.SizeAndAlignment;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 /**
@@ -366,5 +368,36 @@ public abstract class ArithmeticConversion {
 		default:
 			return false;
 		}
+	}
+
+	/**
+	 * Checks whether a target integral type can represent all values of a source integral type.
+	 * @param target the target integral type
+	 * @param source the source integral type
+	 * @param point point for sizeof lookup
+	 * @return whether the target integral type can represent all values of the source integral type
+	 */
+	public static boolean fitsIntoType(ICPPBasicType target, ICPPBasicType source, IASTNode point) {
+		
+		// A boolean cannot represent any other type.
+		if (target.getKind() == Kind.eBoolean && source.getKind() != Kind.eBoolean)
+			return false;
+		
+		// If the source is signed, it might be negative, and so an unsigned target cannot represent it.
+		if (!source.isUnsigned() && target.isUnsigned())
+			return false;
+		
+		// Otherwise, go by the size and signedness of the type.
+		SizeAndAlignment sourceSizeAndAlignment = SizeofCalculator.getSizeAndAlignment(source, point); 
+		SizeAndAlignment targetSizeAndAlignment = SizeofCalculator.getSizeAndAlignment(target, point);
+		if (sourceSizeAndAlignment == null || targetSizeAndAlignment == null)
+			return true;  // guess
+		long sizeofSource = sourceSizeAndAlignment.size;
+		long sizeofTarget = targetSizeAndAlignment.size;
+
+		if (sizeofSource == sizeofTarget)
+			return target.isUnsigned() == source.isUnsigned();
+		else
+			return sizeofSource < sizeofTarget;
 	}
 }

@@ -266,6 +266,22 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertTrue("Expected types to be the same, but first was: '" + first.toString() + "' and second was: '" + second + "'", first.isSameType(second));
 	}
 
+	private static int indexOfAny(String toSearch, String choices) {
+		for (int i = 0; i < toSearch.length(); ++i) {
+			if (choices.indexOf(toSearch.charAt(i)) != -1)
+				return i;
+		}
+		return -1;
+	}
+	
+	private void assertProblemOnFirstToken(BindingAssertionHelper helper, String section) {
+		helper.assertProblem(section, indexOfAny(section, "(){}[] ;"));  //$NON-NLS-1$
+	}
+	
+	private void assertNonProblemOnFirstToken(BindingAssertionHelper helper, String section) {
+		helper.assertNonProblem(section, indexOfAny(section, "(){}[] ;"));  //$NON-NLS-1$
+	}
+
 	// #define CURLOPTTYPE_OBJECTPOINT   10000
 	// #define CINIT(name,type,number) CURLOPT_ ## name = CURLOPTTYPE_ ## type + number
 	// typedef enum {
@@ -9950,5 +9966,98 @@ public class AST2CPPTests extends AST2BaseTest {
 	//	template<int I> bool operator==(S1 a, const CT<I>& r );
 	public void testOrderInAmbiguityResolution_390759() throws Exception {
 		parseAndCheckBindings();
+	}
+
+	//  struct Bool { Bool(bool); };
+	//  struct Char { Char(char); };
+	//  struct Short { Short(short); };
+	//  struct Int { Int(int); };
+	//  struct UInt { UInt(unsigned int); };
+	//  struct Long { Long(long); };
+	//  struct ULong { ULong(unsigned long); };
+	//  struct Float { Float(float); };
+	//  struct Double { Double(double); };
+	//  struct LongDouble { LongDouble(long double); };
+	//  void fbool(Bool);
+	//  void fchar(Char);
+	//  void fshort(Short);
+	//  void fint(Int);
+	//  void flong(Long);
+	//  void fuint(UInt);
+	//  void fulong(ULong);
+	//  void ffloat(Float);
+	//  void fdouble(Double);
+	//  void flongdouble(LongDouble);
+	//  enum UnscopedEnum : int { x, y, z };
+	//  int main() {
+	//      bool vbool;
+	//      char vchar;
+	//      short vshort;
+	//      unsigned short vushort;
+	//      int vint;
+	//      unsigned int vuint;
+	//      long vlong;
+	//      float vfloat;
+	//      double vdouble;
+	//      long double vlongdouble;
+	//      UnscopedEnum vue;
+	//      
+	//      // Narrowing conversions
+	//      fint({vdouble});
+	//      ffloat({vlongdouble});
+	//      ffloat({vdouble});
+	//      fdouble({vlongdouble});
+	//      fdouble({vint});
+	//      fdouble({vue});
+	//      fshort({vint});
+	//      fuint({vint});
+	//      fint({vuint});
+	//      fulong({vshort});
+	//      fbool({vint});
+	//      fchar({vint});
+	//
+	//      // Non-narrowing conversions
+	//      fint({vshort});
+	//      flong({vint});
+	//      fuint({vushort});
+	//      flong({vshort});
+	//      fulong({vuint});
+	//      fulong({vushort});
+	//      fdouble({vfloat});
+	//      flongdouble({vfloat});
+	//      flongdouble({vdouble});
+	//      fint({vbool});
+	//      fint({vchar});
+	//  }
+	public void testNarrowingConversionsInListInitialization_389782() throws Exception {
+		
+		BindingAssertionHelper helper = getAssertionHelper();
+		
+		// Narrowing conversions
+		assertProblemOnFirstToken(helper, "fint({vdouble");
+		assertProblemOnFirstToken(helper, "ffloat({vlongdouble");
+		assertProblemOnFirstToken(helper, "ffloat({vdouble");
+		assertProblemOnFirstToken(helper, "fdouble({vlongdouble");
+		assertProblemOnFirstToken(helper, "fdouble({vint");
+		assertProblemOnFirstToken(helper, "fdouble({vue");
+		assertProblemOnFirstToken(helper, "fshort({vint");
+		assertProblemOnFirstToken(helper, "fuint({vint");
+		assertProblemOnFirstToken(helper, "fint({vuint");
+		assertProblemOnFirstToken(helper, "fulong({vshort");
+		assertProblemOnFirstToken(helper, "fbool({vint");
+		assertProblemOnFirstToken(helper, "fchar({vint");
+		
+		// Non-narrowing conversions
+		assertNonProblemOnFirstToken(helper, "fint({vshort");
+		assertNonProblemOnFirstToken(helper, "flong({vint");
+		assertNonProblemOnFirstToken(helper, "fuint({vushort");
+		assertNonProblemOnFirstToken(helper, "flong({vshort");
+		assertNonProblemOnFirstToken(helper, "fulong({vuint");
+		assertNonProblemOnFirstToken(helper, "fulong({vushort");
+		assertNonProblemOnFirstToken(helper, "fdouble({vfloat");
+		assertNonProblemOnFirstToken(helper, "flongdouble({vfloat");
+		assertNonProblemOnFirstToken(helper, "flongdouble({vdouble");
+		assertNonProblemOnFirstToken(helper, "fint({vbool");
+		assertNonProblemOnFirstToken(helper, "fint({vchar");
 	}
 }

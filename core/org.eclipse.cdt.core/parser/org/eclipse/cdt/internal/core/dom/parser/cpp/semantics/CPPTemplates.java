@@ -11,6 +11,7 @@
  *     Markus Schorn (Wind River Systems)
  *     Sergey Prigogin (Google)
  *     Thomas Corbat (IFS)
+ *     Nathan Ridge
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
@@ -163,7 +164,6 @@ public class CPPTemplates {
 	static final int PACK_SIZE_DEFER = -1;
 	static final int PACK_SIZE_FAIL = -2;
 	static final int PACK_SIZE_NOT_FOUND = Integer.MAX_VALUE;
-	private static final ICPPFunction[] NO_FUNCTIONS = {};
 	static enum TypeSelection { PARAMETERS, RETURN_TYPE, PARAMETERS_AND_RETURN_TYPE }
 
 	/**
@@ -1726,18 +1726,12 @@ public class CPPTemplates {
 				requireTemplate= false;
 
 			if (func instanceof ICPPFunctionTemplate) {
-				ICPPFunctionTemplate template= (ICPPFunctionTemplate) func;
-				try {
-					if (containsDependentType(fnArgs))
-						return new ICPPFunction[] {CPPDeferredFunction.createForSample(template)};
+				if (containsDependentType(fnArgs))
+					return new ICPPFunction[] {CPPDeferredFunction.createForCandidates(fns)};
 
-					if (requireTemplate) {
-						if (hasDependentArgument(tmplArgs))
-							return new ICPPFunction[] {CPPDeferredFunction.createForSample(template)};
-					}
-				} catch (DOMException e) {
-					return NO_FUNCTIONS;
-				}
+				if (requireTemplate && hasDependentArgument(tmplArgs))
+					return new ICPPFunction[] {CPPDeferredFunction.createForCandidates(fns)};
+				
 				haveTemplate= true;
 				break;
 			}
@@ -1803,15 +1797,11 @@ public class CPPTemplates {
 
 				// Extract template arguments and parameter types.
 				if (!checkedForDependentType) {
-					try {
-						if (isDependentType(conversionType)) {
-							inst= CPPDeferredFunction.createForSample(template);
-							done= true;
-						}
-						checkedForDependentType= true;
-					} catch (DOMException e) {
-						return functions;
+					if (isDependentType(conversionType)) {
+						inst= CPPDeferredFunction.createForCandidates(functions);
+						done= true;
 					}
+					checkedForDependentType= true;
 				}
 				CPPTemplateParameterMap map= new CPPTemplateParameterMap(1);
 				try {
@@ -1869,7 +1859,7 @@ public class CPPTemplates {
 			ICPPTemplateArgument[] args, IASTNode point) {
 		try {
 			if (target != null && isDependentType(target)) {
-				return CPPDeferredFunction.createForSample(template);
+				return CPPDeferredFunction.createForCandidates(template);
 			}
 
 			if (template instanceof ICPPConstructor || args == null)

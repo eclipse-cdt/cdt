@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOJ3//+QA\u003d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2CPPTests.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 277,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-12-07T03:45:36Z",
+      "side": 1,
+      "message": "We should move these methods to BindingAssertionHelper helper and make sure that they support all token separators.",
+      "revId": "5781174854b14ec2db92318d5eba6856cff7ed3f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3//+P8\u003d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2CPPTests.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 281,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-12-07T03:45:36Z",
+      "side": 1,
+      "message": "This method should take an optional third argument like BindingAssertionHelper.assertNonProblem does.",
+      "revId": "5781174854b14ec2db92318d5eba6856cff7ed3f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3//+P4\u003d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/AST2CPPTests.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 10067,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-12-07T03:45:36Z",
+      "side": 1,
+      "message": "Unnecessary blank line.",
+      "revId": "5781174854b14ec2db92318d5eba6856cff7ed3f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3//+QE\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/ArithmeticConversion.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 394,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-12-07T03:45:36Z",
+      "side": 1,
+      "message": "Sizes may not be known if CDT is used with a compiler other than GCC. In situations like this we know for fact that some of the conversions are narrowing, for example char32_t to char16_t. Some other conversions are narrowing in most environments, for example, int to char.",
+      "revId": "5781174854b14ec2db92318d5eba6856cff7ed3f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3//+Ps\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/Cost.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 280,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-12-07T03:45:36Z",
+      "side": 1,
+      "message": "Why not ICPPBasicType?",
+      "revId": "5781174854b14ec2db92318d5eba6856cff7ed3f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

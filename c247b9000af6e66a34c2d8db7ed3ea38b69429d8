@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOJ3//+TA\u003d",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/ClassMembersInitializationChecker.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 255,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2012-12-07T01:43:32Z",
+      "side": 1,
+      "message": "Why do you calculate it here not inside if? It is only used after if",
+      "revId": "c247b9000af6e66a34c2d8db7ed3ea38b69429d8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3//+S8\u003d",
+        "filename": "codan/org.eclipse.cdt.codan.checkers/src/org/eclipse/cdt/codan/internal/checkers/ClassMembersInitializationChecker.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 260,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2012-12-07T01:43:32Z",
+      "side": 1,
+      "message": "The logic expression it too complecated, can you split it?\nIs this the same as\nif (isDeaulted) return null;\nif (isMoveConstructor) return null;\nif (isCopyConstructor) return null;\nif (isUnion) return null;\nreturn contructor;\n?",
+      "revId": "c247b9000af6e66a34c2d8db7ed3ea38b69429d8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3//+S4\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/index/composite/cpp/CompositeCPPConstructorSpecialization.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 592
+      },
+      "writtenOn": "2012-12-07T01:43:32Z",
+      "side": 1,
+      "message": "Why this is in the patch?",
+      "revId": "c247b9000af6e66a34c2d8db7ed3ea38b69429d8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

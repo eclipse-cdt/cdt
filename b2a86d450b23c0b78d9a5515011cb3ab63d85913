@@ -70,6 +70,24 @@
       "revId": "b2a86d450b23c0b78d9a5515011cb3ab63d85913",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3//+BY\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/dom/PDOMLinkage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 205,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2012-12-07T22:05:17Z",
+      "side": 1,
+      "message": "The problem was causes by CPPParameter.getOwner() method that returned null in this case.",
+      "parentUuid": "AABOJ3//+Nk\u003d",
+      "revId": "b2a86d450b23c0b78d9a5515011cb3ab63d85913",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

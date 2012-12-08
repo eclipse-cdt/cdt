@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Wind River Systems, Inc. and others.
+ * Copyright (c) 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,6 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *     Nathan Ridge
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
@@ -32,7 +31,7 @@ public class CPPFunctionSet implements ICPPTwoPhaseBinding {
 	private final ICPPFunction[] fBindings;
 	private final IASTName fName;
 	private final ICPPTemplateArgument[] fTemplateArguments;
-
+	
 	public CPPFunctionSet(ICPPFunction[] bindingList, ICPPTemplateArgument[] args, IASTName name) {
 		fBindings = ArrayUtil.removeNulls(bindingList);
 		fTemplateArguments= args;
@@ -90,10 +89,10 @@ public class CPPFunctionSet implements ICPPTwoPhaseBinding {
 			fName.setBinding(selectedFunction);
 		}
 	}
-
+	
 	public void setToUnknown() {
 		if (fName != null) {
-			fName.setBinding(new CPPDeferredFunction(null, fName.toCharArray(), fBindings));
+			fName.setBinding(new CPPDeferredFunction(null, fName.toCharArray()));
 		}
 	}
 }

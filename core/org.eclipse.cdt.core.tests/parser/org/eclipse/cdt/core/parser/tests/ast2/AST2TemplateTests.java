@@ -6938,7 +6938,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	    static const int value = sizeof(waldo(f));
 	//	};
 	//	typedef identity<Int<S<>::value>>::type reference;
-	public void testDependentExpressions_395243() throws Exception {
+	public void _testDependentExpressions_395243() throws Exception {
 		parseAndCheckBindings();
 	}
 }

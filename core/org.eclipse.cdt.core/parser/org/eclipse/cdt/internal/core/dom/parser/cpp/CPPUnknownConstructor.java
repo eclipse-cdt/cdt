@@ -8,13 +8,11 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Thomas Corbat (IFS)
- *     Nathan Ridge
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 
 /**
  * Represents a reference to a constructor (instance), which cannot be resolved because 
@@ -23,11 +21,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 public class CPPUnknownConstructor extends CPPDeferredFunction implements ICPPConstructor {
 
 	public CPPUnknownConstructor(ICPPClassType owner) {
-		super(owner, owner.getNameCharArray(), null);
-	}
-
-	public CPPUnknownConstructor(ICPPClassType owner, ICPPFunction[] candidates) {
-		super(owner, owner.getNameCharArray(), candidates);
+		super(owner, owner.getNameCharArray());
 	}
 
 	@Override

@@ -145,8 +145,7 @@ public class EvalFunctionSet extends CPPEvaluation {
 			ICPPClassSpecialization within, int maxdepth, IASTNode point) {
 		ICPPTemplateArgument[] originalArguments = fFunctionSet.getTemplateArguments();
 		ICPPTemplateArgument[] arguments = originalArguments;
-		if (originalArguments != null)
-			arguments = instantiateArguments(originalArguments, tpMap, packOffset, within, point);
+		arguments = instantiateArguments(originalArguments, tpMap, packOffset, within, point);
 
 		IBinding originalOwner = fFunctionSet.getOwner();
 		IBinding owner = originalOwner;

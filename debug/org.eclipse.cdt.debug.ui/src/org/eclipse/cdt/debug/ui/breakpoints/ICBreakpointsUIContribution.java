@@ -13,6 +13,7 @@
 
 package org.eclipse.cdt.debug.ui.breakpoints;
 
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jface.preference.FieldEditor;
@@ -60,7 +61,7 @@ public interface ICBreakpointsUIContribution {
 	 * @return ready to use FieldEditor
 	 */
 	public FieldEditor getFieldEditor(String name, String labelText, Composite parent);
-	
+
 	/**
 	 * Returns the element name under which this attribute was added.  The value should either be
 	 * "breakpointLabels" or "breakpointEditors".
@@ -74,6 +75,7 @@ public interface ICBreakpointsUIContribution {
 	 * @return class name
 	 */
 	public String getFieldEditorClassName();
+	
 	/**
 	 * Return list of possible values that attributes can take, of null of no restrictions
 	 * @return
@@ -111,4 +113,14 @@ public interface ICBreakpointsUIContribution {
      * @return
      */
     public boolean isApplicable(Map<String, Object> map);
+    
+    /**
+     * Returns contributions which are registered as child elements under  
+     * this contribution. Child <code>attribute</code> elements must be 
+     * specified under a <code>value</code> element, hence they are 
+     * conditional based on the value of the parent attribute.  
+     * 
+     * @since 7.3
+     */
+    public List<ICBreakpointsUIContribution> getChildren();
 }

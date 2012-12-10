@@ -132,27 +132,91 @@ public class CBreakpointUIContributionFactory {
         	debugModelIdsList = Arrays.asList(debugModelIds);
         }
         ArrayList<ICBreakpointsUIContribution> list = new ArrayList<ICBreakpointsUIContribution>();
-        for (ICBreakpointsUIContribution con : contributions) {
-            try {
-                if (con.getDebugModelId() == null || 
-                    ((debugModelIdsList == null || debugModelIdsList.contains(con.getDebugModelId()))))
-                {
-                    String contributedMarkerType = con.getMarkerType();
-                    if (isMarkerSubtypeOf(markerType, contributedMarkerType)) {
-                        if (attributes == null || con.isApplicable(attributes)) {
-                            list.add(con);
-                        }
-                    }
-                }
-            } catch (Exception e) {
-                CDebugUIPlugin.log(e);
-            }
-
-        }
+        doGetAllBreakpointUIContributions(contributions, list, debugModelIdsList, markerType, attributes);
         return list.toArray(new ICBreakpointsUIContribution[list.size()]);
     }
 
-	
+    private void doGetAllBreakpointUIContributions(List<ICBreakpointsUIContribution> cons, List<ICBreakpointsUIContribution> list, List<String> debugModelIds, String markerType, Map<String, Object> attributes) 
+    {
+        for (ICBreakpointsUIContribution con : cons) {
+            if (isApplicable(con, list, debugModelIds, markerType, attributes)) list.add(con);
+            doGetAllBreakpointUIContributions(con.getChildren(), list, debugModelIds, markerType, attributes);
+        }
+    }
+
+    
+    /**
+     * Calculates the child breakpoint UI contributions for the given 
+     * breakpoint and under the given parent.
+     * <p>
+     * Child <code>attribute</code> elements must be 
+     * specified under a <code>value</code> element, hence they are 
+     * conditional based on the value of the parent attribute.
+     * </p>
+     * @param parent Parent contribution or <code>null</code> for top-level
+     * contributions.
+     * @param debugModelId The debug model IDs of the active debug context for 
+     * which to calculate contributions.
+     * @param breakpoint Breakpoint to find UI contributions for.
+     * @param markerType Marker type of the breakpoint.
+     * @param attributes Attributes of the breakpoint
+     * @return non-null array of ICBreakpointsUIContribution 
+     * @throws CoreException 
+     * @throws CoreException if cannot get marker attributes from berakpoint
+     * 
+     * @since 7.3
+     */
+    public ICBreakpointsUIContribution[] getChildBreakpointUIContributions(ICBreakpointsUIContribution parent, String[] debugModelIds, IBreakpoint breakpoint,
+            Map<String, Object> attributes) 
+    {
+        IMarker bmarker = breakpoint.getMarker();
+        String markerType = CDIDebugModel.calculateMarkerType(breakpoint);
+        if (bmarker != null) {
+            try {
+                markerType = bmarker.getType();
+            } catch (CoreException e) {
+                CDebugUIPlugin.log(e);
+            }
+        }
+        List<String> debugModelIdsList = null;
+        if (debugModelIds != null ) {
+            debugModelIdsList = Arrays.asList(debugModelIds);
+        }
+        ArrayList<ICBreakpointsUIContribution> list = new ArrayList<ICBreakpointsUIContribution>();
+        doGetChildBreakpointUIContributions(parent, list, debugModelIdsList, markerType, attributes);
+        return list.toArray(new ICBreakpointsUIContribution[list.size()]);
+    }
+
+    /**
+     * @since 7.3
+     */
+    private void doGetChildBreakpointUIContributions(ICBreakpointsUIContribution parent, List<ICBreakpointsUIContribution> list, List<String> debugModelIds, String markerType, Map<String, Object> attributes) 
+    {
+        List<ICBreakpointsUIContribution> cons = parent == null 
+            ? contributions : parent.getChildren();
+        for (ICBreakpointsUIContribution con : cons) {
+            if (isApplicable(con, list, debugModelIds, markerType, attributes)) list.add(con);
+        }
+    }
+
+    private boolean isApplicable(ICBreakpointsUIContribution con, List<ICBreakpointsUIContribution> list, List<String> debugModelIds, String markerType, Map<String, Object> attributes) {
+        try {
+            if (con.getDebugModelId() == null || 
+                ((debugModelIds == null || debugModelIds.contains(con.getDebugModelId()))))
+            {
+                String contributedMarkerType = con.getMarkerType();
+                if (isMarkerSubtypeOf(markerType, contributedMarkerType)) {
+                    if (attributes == null || con.isApplicable(attributes)) {
+                        return true;
+                    }
+                }
+            }
+        } catch (CoreException e) {
+            CDebugUIPlugin.log(e);
+        }
+        return false;        
+    }
+
 	public boolean isMarkerSubtypeOf(String currentType, String type) throws CoreException {
 		return getWorkspace().getMarkerManager().isSubtype(currentType, type);
 	}
@@ -162,7 +226,6 @@ public class CBreakpointUIContributionFactory {
 	}
 
 	private void loadSubtypeContributions() {
-
 		IExtensionPoint ep = Platform.getExtensionRegistry().getExtensionPoint(CDebugUIPlugin.getUniqueIdentifier(),
 				EXTENSION_POINT_NAME);
 		if (ep == null)
@@ -180,14 +243,13 @@ public class CBreakpointUIContributionFactory {
 					continue;
 				IConfigurationElement[] children = configurationElement.getChildren("attribute"); //$NON-NLS-1$
 				for (IConfigurationElement att : children) {
-				    
 					DefaultCBreakpointUIContribution adapter = new DefaultCBreakpointUIContribution(att);
 					adapter.setMainElement(mainElement);
 					adapter.setMarkerType(markerType);
 					adapter.setDebugModelId(modelId);
-					if (processAttribute(att, adapter) == false)
-						continue;
-
+					if (processAttribute(att, adapter)) {
+					    addContribution(adapter);
+					}
 				}
 
 			}
@@ -223,7 +285,6 @@ public class CBreakpointUIContributionFactory {
         adapter.setFieldEditorFactory(fieldEditorFactoryClass);
 		adapter.setType(type);
 		adapter.setVisible(visible);
-		addContribution(adapter);
 
 		IConfigurationElement[] children = attrElement.getChildren("value"); //$NON-NLS-1$
 		for (IConfigurationElement value : children) {
@@ -241,6 +302,7 @@ public class CBreakpointUIContributionFactory {
 			return;
 		adapter.addValue(valueId, valueLabel);
 		IConfigurationElement[] children = valueElement.getChildren("attribute"); //$NON-NLS-1$
+		List<ICBreakpointsUIContribution> childList = new ArrayList<ICBreakpointsUIContribution>(1);
 		for (IConfigurationElement att : children) {
 			DefaultCBreakpointUIContribution adapter2 = new DefaultCBreakpointUIContribution(att);
 			// inherit values
@@ -250,9 +312,10 @@ public class CBreakpointUIContributionFactory {
 			adapter2.addContionsAll(adapter.getConditions());
 			// add value condition
 			adapter2.addContionEquals(adapter.getId(), valueId);
-			if (processAttribute(att, adapter2) == false)
-				continue;
+			childList.add(adapter2);
+			processAttribute(att, adapter2);
 		}
+		adapter.addChildren(childList);
 	}
 
 	public void addContribution(ICBreakpointsUIContribution contribution) {

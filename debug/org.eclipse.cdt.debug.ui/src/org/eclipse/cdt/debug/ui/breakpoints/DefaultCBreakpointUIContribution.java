@@ -13,8 +13,10 @@
 package org.eclipse.cdt.debug.ui.breakpoints;
 
 import java.lang.reflect.Constructor;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -39,11 +41,15 @@ class DefaultCBreakpointUIContribution implements ICBreakpointsUIContribution {
 	private String attType;
 	private Map<String, String> valueLabels = new LinkedHashMap<String, String>();
 	private Map<String, String> conditions = new HashMap<String, String>();
+	private List<ICBreakpointsUIContribution> children = new ArrayList<ICBreakpointsUIContribution>(1);
 
 	DefaultCBreakpointUIContribution(IConfigurationElement config) {
 	    fConfig = config;
 	}
 	
+	public void addChildren(List<ICBreakpointsUIContribution> children) {
+	    this.children.addAll(children);
+	}
 	
 	@Override
 	public String getId() {
@@ -95,10 +101,12 @@ class DefaultCBreakpointUIContribution implements ICBreakpointsUIContribution {
                 return null;
             }
         } else {
-            return new ReadOnlyFieldEditor(name, labelText, parent);
+            ReadOnlyFieldEditor fe = new ReadOnlyFieldEditor(name, labelText, parent);
+            fe.setContribution(this);
+            return fe;
         }
-	}
-
+    }	
+	
 	@Override
 	public String getLabelForValue(String value) {
 		if (valueLabels.containsKey(value))
@@ -194,5 +202,10 @@ class DefaultCBreakpointUIContribution implements ICBreakpointsUIContribution {
 	@Override
 	public String getFieldEditorClassName() {
 		return fieldEditorClassName;
+	}
+	
+	@Override
+    public List<ICBreakpointsUIContribution> getChildren() {
+	    return children;
 	}
 }

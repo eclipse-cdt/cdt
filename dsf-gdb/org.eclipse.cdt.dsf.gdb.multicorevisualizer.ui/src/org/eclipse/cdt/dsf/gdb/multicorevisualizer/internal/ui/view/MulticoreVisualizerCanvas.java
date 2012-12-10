@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     William R. Swanson (Tilera Corporation) - initial API and implementation
+ *     Marc Dumais (Ericsson) - Bug 396200
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;
@@ -451,6 +452,7 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas
 
 			m_recacheSizes = false;
 		}
+		m_recache = false;
 	}
 	
 	/** Invoked when canvas repaint event is raised.

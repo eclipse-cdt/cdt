@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     William R. Swanson (Tilera Corporation) - initial API and implementation
+ *     Marc Dumais (Ericsson) - Bug 396200
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;
@@ -353,6 +354,7 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas
 	// synchronized so we don't change recache flags while doing a recache
 	public synchronized void recache() {
 		if (! m_recache) return; // nothing to do, free the lock quickly
+		m_recache = false;
 
 		if (m_recacheState) {
 

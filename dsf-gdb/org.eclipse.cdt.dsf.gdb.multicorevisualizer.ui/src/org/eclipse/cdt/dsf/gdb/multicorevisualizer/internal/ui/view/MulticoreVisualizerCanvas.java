@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     William R. Swanson (Tilera Corporation) - initial API and implementation
+ *     Marc Dumais (Ericsson) - Bug 396184
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;
@@ -363,6 +364,8 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas
 			m_cpus.clear();
 			m_cores.clear();
 			m_threads.clear();
+			m_cpuMap.clear();
+			m_coreMap.clear();
 
 			// For debugging purposes only, allows us to force a CPU count.
 			//int cpu_count = 0;

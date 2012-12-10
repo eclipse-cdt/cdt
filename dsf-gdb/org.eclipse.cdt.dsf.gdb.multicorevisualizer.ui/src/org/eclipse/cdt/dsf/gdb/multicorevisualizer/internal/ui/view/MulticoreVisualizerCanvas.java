@@ -363,6 +363,8 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas
 			m_cpus.clear();
 			m_cores.clear();
 			m_threads.clear();
+			m_cpuMap.clear();
+			m_coreMap.clear();
 
 			// For debugging purposes only, allows us to force a CPU count.
 			//int cpu_count = 0;

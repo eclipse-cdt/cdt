@@ -159,7 +159,12 @@ public class LanguageSettingsScannerInfoProvider implements IScannerInfoProvider
 				// still, MBS does that and we need to handle that
 				String buildPathString = buildCWD.toString();
 				buildPathString = mngr.resolveValue(buildPathString, "", null, cfgDescription); //$NON-NLS-1$
-				buildCWD = new Path(buildPathString);
+				if (!buildPathString.isEmpty()) {
+					buildCWD = new Path(buildPathString);
+				} else {
+					IProject project = cfgDescription.getProjectDescription().getProject();
+					buildCWD = project.getLocation();
+				}
 			} catch (CdtVariableException e) {
 				CCorePlugin.log(e);
 			}

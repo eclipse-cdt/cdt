@@ -968,6 +968,8 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 		currentLanguageId = null;
 
 		List<String> languageIds = LanguageSettingsManager.getLanguages(rcDes);
+		// Not sure what to do with null language ID, ignoring for now
+		languageIds.remove(null);
 		Collections.sort(languageIds);
 		for (String langId : languageIds) {
 			ILanguage language = LanguageManager.getInstance().getLanguage(langId);
@@ -1124,9 +1126,12 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 		if (page.isForFile()) {
 			List<String> languageIds = LanguageSettingsManager.getLanguages(getResDesc());
 			for (String langId : languageIds) {
-				ILanguage language = LanguageManager.getInstance().getLanguage(langId);
-				if (language != null)
-					return true;
+				if (langId != null) {
+					ILanguage language = LanguageManager.getInstance().getLanguage(langId);
+					if (language != null) {
+						return true;
+					}
+				}
 			}
 			return false;
 		}

@@ -122,22 +122,22 @@ public class BuildSystemTestHelper {
 		return project;
 	}
 
-	static public void checkDiff(Object[] arr1, Object[] arr2){
-		LinkedHashSet<? extends Object> set1 = new LinkedHashSet<Object>(Arrays.asList(arr1));
-		LinkedHashSet<? extends Object> set2 = new LinkedHashSet<Object>(Arrays.asList(arr2));
+	static public void checkDiff(Object[] expected, Object[] actual){
+		LinkedHashSet<? extends Object> set1 = new LinkedHashSet<Object>(Arrays.asList(expected));
+		LinkedHashSet<? extends Object> set2 = new LinkedHashSet<Object>(Arrays.asList(actual));
 		LinkedHashSet<? extends Object> set1Copy = new LinkedHashSet<Object>(set1);
 		set1.removeAll(set2);
 		set2.removeAll(set1Copy);
 
 		String set1String = collectionToString(set1);
 		String set2String = collectionToString(set2);
-		String diffMsg = "array1 entries: " + set1String + ",\n array2 entries: " + set2String + "\n";
-		Assert.assertEquals("arrays have different size\n" + diffMsg, arr1.length, arr2.length);
-		Assert.assertEquals("arrays have different contents\n" + diffMsg, 0, set1.size());
-		Assert.assertEquals("arrays have different contents\n" + diffMsg, 0, set2.size());
+		String diffMsg = "expected entries: " + set1String + ",\n actual entries: " + set2String + "\n";
+		Assert.assertEquals("arrays have different size\n" + diffMsg, expected.length, actual.length);
+		Assert.assertTrue("arrays have different contents\n" + diffMsg, set1.size() == 0);
+		Assert.assertTrue("arrays have different contents\n" + diffMsg, set2.size() == 0);
 
-		if(!Arrays.equals(arr1, arr2)){
-			Assert.fail("different element order, dumping..\n array1 entries: " + arrayToString(arr1) + "\n array2 entries: " + arrayToString(arr2) + "\n");
+		if(!Arrays.equals(expected, actual)){
+			Assert.fail("different element order, dumping..\n expected entries: " + arrayToString(expected) + "\n actual entries: " + arrayToString(actual) + "\n");
 		}
 	}
 

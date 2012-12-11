@@ -10,6 +10,7 @@
  *     Marc Dumais (Ericsson) - Bug 396076 
  *     Marc Dumais (Ericsson) - Bug 396184
  *     Marc Dumais (Ericsson) - Bug 396200
+ *     Marc Dumais (Ericsson) - Bug 396293
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;
@@ -446,7 +447,7 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas
 					core.setBounds(cx, cy, core_size, core_size);
 					
 					cx += core_size + core_separation;
-					if (cx + core_size > x + cpu_size) {
+					if (cx + core_size + core_margin > x + cpu_size) {
 						cx = left;
 						cy += core_size + core_separation;
 					}

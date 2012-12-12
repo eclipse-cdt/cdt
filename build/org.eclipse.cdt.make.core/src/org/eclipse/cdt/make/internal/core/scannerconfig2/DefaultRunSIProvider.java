@@ -123,26 +123,28 @@ public class DefaultRunSIProvider implements IExternalScannerInfoProvider {
 			ICommandLauncher launcher = new CommandLauncher();
 			launcher.setProject(project);
 
-			String[] comandLineOptions = getCommandLineOptions();
 			IPath program = getCommandToLaunch();
-			URI workingDirectoryURI = MakeBuilderUtil.getBuildDirectoryURI(project, MakeBuilder.BUILDER_ID);
-			String[] envp = setEnvironment(launcher, env);
-
-			ErrorParserManager epm = new ErrorParserManager(project, markerGenerator, new String[] {GMAKE_ERROR_PARSER_ID});
-
-			List<IConsoleParser> parsers = new ArrayList<IConsoleParser>();
-			IConsoleParser parser = ScannerInfoConsoleParserFactory.getESIConsoleParser(project, context, providerId, buildInfo, collector, markerGenerator);
-			if (parser != null) {
-				parsers.add(parser);
+			if (! program.isEmpty()) {
+				String[] comandLineOptions = getCommandLineOptions();
+				URI workingDirectoryURI = MakeBuilderUtil.getBuildDirectoryURI(project, MakeBuilder.BUILDER_ID);
+				String[] envp = setEnvironment(launcher, env);
+	
+				ErrorParserManager epm = new ErrorParserManager(project, markerGenerator, new String[] {GMAKE_ERROR_PARSER_ID});
+	
+				List<IConsoleParser> parsers = new ArrayList<IConsoleParser>();
+				IConsoleParser parser = ScannerInfoConsoleParserFactory.getESIConsoleParser(project, context, providerId, buildInfo, collector, markerGenerator);
+				if (parser != null) {
+					parsers.add(parser);
+				}
+	
+				buildRunnerHelper.setLaunchParameters(launcher, program, comandLineOptions, workingDirectoryURI, envp );
+				buildRunnerHelper.prepareStreams(epm, parsers, console, new SubProgressMonitor(monitor, TICKS_STREAM_PROGRESS_MONITOR, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+	
+				buildRunnerHelper.greeting(MakeMessages.getFormattedString("ExternalScannerInfoProvider.Greeting", project.getName())); //$NON-NLS-1$
+				buildRunnerHelper.build(new SubProgressMonitor(monitor, TICKS_EXECUTE_PROGRAM, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+				buildRunnerHelper.close();
+				buildRunnerHelper.goodbye();
 			}
-
-			buildRunnerHelper.setLaunchParameters(launcher, program, comandLineOptions, workingDirectoryURI, envp );
-			buildRunnerHelper.prepareStreams(epm, parsers, console, new SubProgressMonitor(monitor, TICKS_STREAM_PROGRESS_MONITOR, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
-
-			buildRunnerHelper.greeting(MakeMessages.getFormattedString("ExternalScannerInfoProvider.Greeting", project.getName())); //$NON-NLS-1$
-			buildRunnerHelper.build(new SubProgressMonitor(monitor, TICKS_EXECUTE_PROGRAM, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
-			buildRunnerHelper.close();
-			buildRunnerHelper.goodbye();
 
 		} catch (Exception e) {
 			MakeCorePlugin.log(e);

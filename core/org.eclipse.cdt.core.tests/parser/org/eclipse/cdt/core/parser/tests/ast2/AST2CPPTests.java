@@ -12,6 +12,7 @@
  *     Andrew Ferguson (Symbian)
  *     Sergey Prigogin (Google)
  *     Thomas Corbat (IFS)
+ *     Nathan Ridge
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
@@ -9953,8 +9954,8 @@ public class AST2CPPTests extends AST2BaseTest {
 	//	template<int I> struct CT {};
 	//	typedef int TD;
 	//	bool operator==(S1 a, int r );
-	//	static const int x = sizeof(CT<i>((TD * (CT<sizeof(s1 == 1)>::*)) 0 ));
-	//	template<int I> bool operator==(S1 a, const CT<I>& r );
+	//	static const int x = sizeof(CT<i>((TD * (CT<sizeof(s1 == 1)>::*)) 0));
+	//	template<int I> bool operator==(S1 a, const CT<I>& r);
 	public void testOrderInAmbiguityResolution_390759() throws Exception {
 		parseAndCheckBindings();
 	}
@@ -9972,5 +9973,110 @@ public class AST2CPPTests extends AST2BaseTest {
 	//	}
 	public void testADLForFunctionObject_388287() throws Exception {
 		parseAndCheckBindings();
+	}
+
+	//	template <bool> struct A {};
+	//	template <>
+	//	struct A<false> {
+	//	    typedef int type;
+	//	};
+	//	struct S {};
+	//	const bool b = __is_base_of(S, int);
+	//	typedef A<b>::type T;
+	public void testIsBaseOf_395019() throws Exception {
+		parseAndCheckBindings(getAboveComment(), CPP, true);
+	}
+
+	//  struct Bool { Bool(bool); };
+	//  struct Char { Char(char); };
+	//  struct Short { Short(short); };
+	//  struct Int { Int(int); };
+	//  struct UInt { UInt(unsigned int); };
+	//  struct Long { Long(long); };
+	//  struct ULong { ULong(unsigned long); };
+	//  struct Float { Float(float); };
+	//  struct Double { Double(double); };
+	//  struct LongDouble { LongDouble(long double); };
+	//  void fbool(Bool);
+	//  void fchar(Char);
+	//  void fshort(Short);
+	//  void fint(Int);
+	//  void flong(Long);
+	//  void fuint(UInt);
+	//  void fulong(ULong);
+	//  void ffloat(Float);
+	//  void fdouble(Double);
+	//  void flongdouble(LongDouble);
+	//  enum UnscopedEnum : int { x, y, z };
+	//
+	//  int main() {
+	//      bool vbool;
+	//      char vchar;
+	//      short vshort;
+	//      unsigned short vushort;
+	//      int vint;
+	//      unsigned int vuint;
+	//      long vlong;
+	//      float vfloat;
+	//      double vdouble;
+	//      long double vlongdouble;
+	//      UnscopedEnum vue;
+	//      
+	//      // Narrowing conversions
+	//      fint({vdouble});
+	//      ffloat({vlongdouble});
+	//      ffloat({vdouble});
+	//      fdouble({vlongdouble});
+	//      fdouble({vint});
+	//      fdouble({vue});
+	//      fshort({vint});
+	//      fuint({vint});
+	//      fint({vuint});
+	//      fulong({vshort});
+	//      fbool({vint});
+	//      fchar({vint});
+	//
+	//      // Non-narrowing conversions
+	//      fint({vshort});
+	//      flong({vint});
+	//      fuint({vushort});
+	//      flong({vshort});
+	//      fulong({vuint});
+	//      fulong({vushort});
+	//      fdouble({vfloat});
+	//      flongdouble({vfloat});
+	//      flongdouble({vdouble});
+	//      fint({vbool});
+	//      fint({vchar});
+	//  }
+	public void testNarrowingConversionsInListInitialization_389782() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+
+		// Narrowing conversions
+		helper.assertProblemOnFirstIdentifier("fint({vdouble");
+		helper.assertProblemOnFirstIdentifier("ffloat({vlongdouble");
+		helper.assertProblemOnFirstIdentifier("ffloat({vdouble");
+		helper.assertProblemOnFirstIdentifier("fdouble({vlongdouble");
+		helper.assertProblemOnFirstIdentifier("fdouble({vint");
+		helper.assertProblemOnFirstIdentifier("fdouble({vue");
+		helper.assertProblemOnFirstIdentifier("fshort({vint");
+		helper.assertProblemOnFirstIdentifier("fuint({vint");
+		helper.assertProblemOnFirstIdentifier("fint({vuint");
+		helper.assertProblemOnFirstIdentifier("fulong({vshort");
+		helper.assertProblemOnFirstIdentifier("fbool({vint");
+		helper.assertProblemOnFirstIdentifier("fchar({vint");
+
+		// Non-narrowing conversions
+		helper.assertNonProblemOnFirstIdentifier("fint({vshort");
+		helper.assertNonProblemOnFirstIdentifier("flong({vint");
+		helper.assertNonProblemOnFirstIdentifier("fuint({vushort");
+		helper.assertNonProblemOnFirstIdentifier("flong({vshort");
+		helper.assertNonProblemOnFirstIdentifier("fulong({vuint");
+		helper.assertNonProblemOnFirstIdentifier("fulong({vushort");
+		helper.assertNonProblemOnFirstIdentifier("fdouble({vfloat");
+		helper.assertNonProblemOnFirstIdentifier("flongdouble({vfloat");
+		helper.assertNonProblemOnFirstIdentifier("flongdouble({vdouble");
+		helper.assertNonProblemOnFirstIdentifier("fint({vbool");
+		helper.assertNonProblemOnFirstIdentifier("fint({vchar");
 	}
 }

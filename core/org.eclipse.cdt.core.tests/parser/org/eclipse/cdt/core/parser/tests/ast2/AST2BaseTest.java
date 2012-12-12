@@ -11,6 +11,7 @@
  *     Andrew Ferguson (Symbian)
  *     Mike Kucera (IBM)
  *     Sergey Prigogin (Google)
+ *     Nathan Ridge
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
@@ -106,6 +107,7 @@ public class AST2BaseTest extends BaseTestCase {
 		Map<String, String> map= new HashMap<String, String>();
 		map.put("__GNUC__", "4");
 		map.put("__GNUC_MINOR__", "7");
+		map.put("__SIZEOF_SHORT__", "2");
 		map.put("__SIZEOF_INT__", "4");
 		map.put("__SIZEOF_LONG__", "8");
 		return map;
@@ -113,6 +115,7 @@ public class AST2BaseTest extends BaseTestCase {
 
 	private static Map<String, String> getStdMap() {
 		Map<String, String> map= new HashMap<String, String>();
+		map.put("__SIZEOF_SHORT__", "2");
 		map.put("__SIZEOF_INT__", "4");
 		map.put("__SIZEOF_LONG__", "8");
 		return map;
@@ -511,7 +514,7 @@ public class AST2BaseTest extends BaseTestCase {
 		protected IASTTranslationUnit tu;
 		protected String contents;
 		protected boolean isCPP;
-    	
+
     	public BindingAssertionHelper(String contents, boolean isCPP) throws ParserException {
     		this(contents, isCPP ? ParserLanguage.CPP : ParserLanguage.C);
 		}
@@ -566,6 +569,31 @@ public class AST2BaseTest extends BaseTestCase {
     		}
     		return (T) binding;
     	}
+
+    	private int getIdentifierLength(String str) {
+    		int i;
+    		for (i = 0; i < str.length() && Character.isJavaIdentifierPart(str.charAt(i)); ++i) {
+    		}
+    		return i;
+    	}
+
+		public IProblemBinding assertProblemOnFirstIdentifier(String section) {
+			return assertProblem(section, getIdentifierLength(section));
+		}
+
+		public IProblemBinding assertProblemOnFirstIdentifier(String section, int problemId) {
+			IProblemBinding problemBinding = assertProblemOnFirstIdentifier(section);
+			assertEquals(problemId, problemBinding.getID());
+			return problemBinding;
+		}
+
+		public <T extends IBinding> T assertNonProblemOnFirstIdentifier(String section, Class<T> type, Class... cs) {
+			return assertNonProblem(section, getIdentifierLength(section), type, cs);
+		}
+
+		public IBinding assertNonProblemOnFirstIdentifier(String section) {
+			return assertNonProblem(section, getIdentifierLength(section), IBinding.class);
+		}
 
     	public void assertNoName(String section, int len) {
 			IASTName name= findName(section, len);

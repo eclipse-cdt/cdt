@@ -56,11 +56,16 @@ public class MBSLanguageSettingsProvider extends AbstractExecutableExtensionBase
 			for (ICLanguageSetting langSetting : languageSettings) {
 				if (langSetting != null) {
 					String id = langSetting.getLanguageId();
-					if (id != null && id.equals(languageId)) {
+					if (id == languageId || (id != null && id.equals(languageId))) {
 						int kindsBits = langSetting.getSupportedEntryKinds();
 						for (int kind=1; kind <= kindsBits; kind <<= 1) {
 							if ((kindsBits & kind) != 0) {
-								list.addAll(langSetting.getSettingEntriesList(kind));
+								List<ICLanguageSettingEntry> additions = langSetting.getSettingEntriesList(kind);
+								for (ICLanguageSettingEntry entry : additions) {
+									if (! list.contains(entry)) {
+										list.add(entry);
+									}
+								}
 							}
 						}
 					}

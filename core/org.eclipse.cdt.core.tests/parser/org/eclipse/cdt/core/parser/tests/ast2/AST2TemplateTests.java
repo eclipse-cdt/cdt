@@ -12,6 +12,7 @@
  *     Andrew Ferguson (Symbian)
  *     Sergey Prigogin (Google)
  *     Thomas Corbat (IFS)
+ *     Nathan Ridge
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
@@ -6883,7 +6884,23 @@ public class AST2TemplateTests extends AST2BaseTest {
 		assertEquals("bool", ASTTypeUtil.getType(td.getType()));
 		ah.assertProblem("B<int*>::type", "type");
 	}
-	
+
+	//	template <typename From>
+	//	struct is_convertible {
+	//	    static char check(From);
+	//	    static From from;
+	//	    static const int value = sizeof(check(from));
+	//	};
+	//	template <int>
+	//	struct S {
+	//	    typedef int type;
+	//	};
+	//	struct Cat {};
+	//	typedef S<is_convertible<Cat>::value>::type T;
+	public void testDependentExpressionInvolvingField_388623() throws Exception {
+		parseAndCheckBindings();
+	}
+
 	//	struct S {
 	//	    typedef int a_type;
 	//	};
@@ -6893,6 +6910,35 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	    foo(S());
 	//	}
 	public void testSFINAEInDefaultArgument() throws Exception {
+		parseAndCheckBindings();
+	}
+
+	//	template <typename>
+	//	struct M {
+	//	    template <typename... Args>
+	//	    M(Args...);
+	//	};
+	//	void foo() {
+	//	    new M<int>((int*)0, 0);
+	//	}
+	public void testVariadicConstructor_395247() throws Exception {
+		parseAndCheckBindings();
+	}
+
+	//	template <int> struct Int {};
+	//	template<typename T>
+	//	struct identity {
+	//	    typedef T type;
+	//	};
+	//	template <typename T>
+	//	char waldo(T);
+	//	template<typename F = int>
+	//	struct S {
+	//	    F f;
+	//	    static const int value = sizeof(waldo(f));
+	//	};
+	//	typedef identity<Int<S<>::value>>::type reference;
+	public void _testDependentExpressions_395243() throws Exception {
 		parseAndCheckBindings();
 	}
 }

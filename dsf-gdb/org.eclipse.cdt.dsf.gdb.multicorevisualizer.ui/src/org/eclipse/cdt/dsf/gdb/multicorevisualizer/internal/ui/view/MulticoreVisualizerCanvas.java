@@ -7,6 +7,10 @@
  *
  * Contributors:
  *     William R. Swanson (Tilera Corporation) - initial API and implementation
+ *     Marc Dumais (Ericsson) - Bug 396076 
+ *     Marc Dumais (Ericsson) - Bug 396184
+ *     Marc Dumais (Ericsson) - Bug 396200
+ *     Marc Dumais (Ericsson) - Bug 396293
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;
@@ -363,6 +367,8 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas
 			m_cpus.clear();
 			m_cores.clear();
 			m_threads.clear();
+			m_cpuMap.clear();
+			m_coreMap.clear();
 
 			// For debugging purposes only, allows us to force a CPU count.
 			//int cpu_count = 0;
@@ -396,6 +402,11 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas
 		}
 		
 		if (m_recacheSizes) {
+			// avoid doing resize calculations if the model is not ready
+			if (m_model == null ) {
+				m_recacheSizes = false;
+				return;
+			}
 			// update cached size information
 			
 			// General margin/spacing constants.
@@ -418,7 +429,7 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas
 			if (cpu_size < 0) cpu_size = 0;
 			
 			// Calculate area on each CPU for placing cores.
-			int ncores  = m_cores.size();
+			int ncores = m_cores.size() / ((ncpus == 0) ? 1 : ncpus);
 			int cpu_width  = cpu_size - core_margin * 2 + core_separation;
 			int cpu_height = cpu_size - core_margin * 2 + core_separation;
 			int core_edge  = fitSquareItems(ncores, cpu_width, cpu_height);
@@ -436,7 +447,7 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas
 					core.setBounds(cx, cy, core_size, core_size);
 					
 					cx += core_size + core_separation;
-					if (cx + core_size > x + cpu_size) {
+					if (cx + core_size + core_margin > x + cpu_size) {
 						cx = left;
 						cy += core_size + core_separation;
 					}
@@ -451,6 +462,7 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas
 
 			m_recacheSizes = false;
 		}
+		m_recache = false;
 	}
 	
 	/** Invoked when canvas repaint event is raised.

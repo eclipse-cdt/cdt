@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Sergey Prigogin, Google
  *     Anton Leherbauer (Wind River Systems)
+ *     Nathan Ridge
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text;
 
@@ -1202,4 +1203,31 @@ public final class CHeuristicScanner implements Symbols {
 		}
 	}
 
+	/**
+	 *  A simplified interface to CHeuristicScanner's
+	 *  nextToken() and previousToken() methods. 
+	 */
+	public static class TokenStream {
+		private CHeuristicScanner fScanner;
+		private int fPos;
+		private final int fDocumentLength;
+
+		public TokenStream(IDocument document, int startPos) {
+			fScanner = new CHeuristicScanner(document);
+			fPos = startPos;
+			fDocumentLength = document.getLength();
+		}
+
+		public int nextToken() {
+			int result = fScanner.nextToken(fPos, fDocumentLength);
+			fPos = fScanner.getPosition();
+			return result;
+		}
+
+		public int previousToken() {
+			int result = fScanner.previousToken(fPos, 0);
+			fPos = fScanner.getPosition();
+			return result;
+		}
+	}
 }

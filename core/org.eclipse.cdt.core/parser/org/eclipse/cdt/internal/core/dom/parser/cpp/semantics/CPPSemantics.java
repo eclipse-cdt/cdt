@@ -417,6 +417,9 @@ public class CPPSemantics {
 					if (cls instanceof ICPPUnknownBinding) {
 						binding= new CPPUnknownConstructor(cls);
 					} else {
+						// Do not interpret template arguments to a template class as being
+						// explicit template arguments to its templated constructor.
+						data.fTemplateArguments = null;
 						binding= CPPSemantics.resolveFunction(data, ClassTypeHelper.getConstructors(cls, lookupPoint), true);
 					}
 				} catch (DOMException e) {
@@ -2726,7 +2729,7 @@ public class CPPSemantics {
 			    }
 				cost = Conversions.checkImplicitConversionSequence(paramType, argType, sourceIsLValue,
 						udc, ctx, data.getLookupPoint());
-				if (data.fNoNarrowing && cost.isNarrowingConversion()) {
+				if (data.fNoNarrowing && cost.isNarrowingConversion(data.getLookupPoint())) {
 					cost= Cost.NO_CONVERSION;
 				}
 			}

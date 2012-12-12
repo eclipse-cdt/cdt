@@ -9,6 +9,7 @@
  *     Andrew Ferguson (Symbian) - Initial implementation
  *     Markus Schorn (Wind River Systems)
  *     Sergey Prigogin (Google)
+ *     Nathan Ridge
  *******************************************************************************/
 package org.eclipse.cdt.internal.index.tests;
 
@@ -2174,5 +2175,19 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//	}
 	public void testLambdaExpression_395884() throws Exception {
 		checkBindings();
+	}
+
+	//	template <typename T> int bar(T);
+	//	template <int N> struct S {
+	//	    template <typename T> auto foo(T t) const -> decltype(bar(t));
+	//	};
+
+	//	void f(int);
+	//	void test() {
+	//	    S<1> n;
+	//	    f(n.foo(0));
+	//	}
+	public void testDependentExpression_395875() throws Exception {
+		getBindingFromASTName("f(n.foo(0))", 1, ICPPFunction.class);
 	}
 }

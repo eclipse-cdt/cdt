@@ -1,0 +1,310 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOJ3//9SM\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/GDBConsoleBreakpointsTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 218,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-12-12T16:59:35Z",
+      "side": 1,
+      "message": "It is not clear to me why we need the delays?  I\u0027m sure you are right, but I\u0027m curious :)",
+      "revId": "091f99de1ee5a2065a9d9a365f97d6b79e8c61f2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3//9U4\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/GDBConsoleBreakpointsTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 221,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-12-12T16:59:35Z",
+      "side": 1,
+      "message": "When running LaunchConfigurationAndRestartTest_?-? before running this new set of tests, a pending tracepoint is created.  See LaunchConfigurationAndRestartTest_7_0.testPendingBreakpointSetting().  Thanks to the new bp notification feature, this tracepoint is created as a platform breakpoint and remains there.  Therefore the check miBpts.length \u003d\u003d 1 fails, as there is a second platform breakpoint.\n\nI think that we should delete all platform breakpoints before each tests in GDBConsoleBreakpointsTest.doBeforeTest().  Or you could count the number of pre-existing bp in GDBConsoleBreakpointsTest.doBeforeTest() and account for those here and below.",
+      "revId": "091f99de1ee5a2065a9d9a365f97d6b79e8c61f2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3//9Us\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/GDBConsoleBreakpointsTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 314,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-12-12T16:59:35Z",
+      "side": 1,
+      "message": "Can we remove this one to shave a second off the tests?",
+      "revId": "091f99de1ee5a2065a9d9a365f97d6b79e8c61f2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3//9SE\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/GDBConsoleBreakpointsTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 374,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-12-12T16:59:35Z",
+      "side": 1,
+      "message": "Did you mean to leave those printouts?",
+      "revId": "091f99de1ee5a2065a9d9a365f97d6b79e8c61f2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3//9Tg\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/tests_7_4/GDBRemoteTracepointsTest_7_4.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-12-12T16:59:35Z",
+      "side": 1,
+      "message": "I\u0027m starting to wonder if you didn\u0027t mean to remove the changes from this file but forgot?",
+      "revId": "091f99de1ee5a2065a9d9a365f97d6b79e8c61f2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3//9UI\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/tests_7_4/GDBRemoteTracepointsTest_7_4.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-12-12T16:59:35Z",
+      "side": 1,
+      "message": "Cool!",
+      "revId": "091f99de1ee5a2065a9d9a365f97d6b79e8c61f2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3//9UE\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/tests_7_4/GDBRemoteTracepointsTest_7_4.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-12-12T16:59:35Z",
+      "side": 1,
+      "message": "Not used",
+      "revId": "091f99de1ee5a2065a9d9a365f97d6b79e8c61f2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3//9UA\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/tests_7_4/GDBRemoteTracepointsTest_7_4.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 136,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-12-12T16:59:35Z",
+      "side": 1,
+      "message": "stoppedEvent is not used and gives a warning",
+      "revId": "091f99de1ee5a2065a9d9a365f97d6b79e8c61f2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3//9Tk\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/tests_7_4/GDBRemoteTracepointsTest_7_4.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 140,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-12-12T16:59:35Z",
+      "side": 1,
+      "message": "Do we need to resume?\n\nWhere is the trace file saved?  I don\u0027t see that code.",
+      "revId": "091f99de1ee5a2065a9d9a365f97d6b79e8c61f2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3//9To\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/tests_7_4/GDBRemoteTracepointsTest_7_4.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-12-12T16:59:35Z",
+      "side": 1,
+      "message": "-trace-start fails in my case with:\n617,013 [MI]  31-trace-start\n617,017 [MI]  31^error,msg\u003d\"Target returns error code \u0027.In-process agent library not loaded in process.  Fast and static tracepoints unavailable.\u0027.\"\n\nDoes it work for you?\n\nIt would be nice to build a binary for the tests with the In-process library, but I haven\u0027t set that up.\n\nI\u0027m not sure what is easiest to fix this.  You could not use fast tracepoints in this case.  I think you can do that by setting the launch attribute IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_TRACEPOINT_MODE to IGDBLaunchConfigurationConstants.DEBUGGER_TRACEPOINT_NORMAL_ONLY\nbut you will need to override fastTracepointsSupported() just for this case.",
+      "revId": "091f99de1ee5a2065a9d9a365f97d6b79e8c61f2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3//9SU\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/tests_7_4/TraceFileTest_7_4.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-12-12T16:59:35Z",
+      "side": 1,
+      "message": "This is a cool test!  Nice work.",
+      "revId": "091f99de1ee5a2065a9d9a365f97d6b79e8c61f2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3//9Sg\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/tests_7_4/TraceFileTest_7_4.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-12-12T16:59:35Z",
+      "side": 1,
+      "message": "I don\u0027t think the test does #8, which is right, we don\u0027t need it.",
+      "revId": "091f99de1ee5a2065a9d9a365f97d6b79e8c61f2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3//9Sc\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/tests_7_4/TraceFileTest_7_4.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-12-12T16:59:35Z",
+      "side": 1,
+      "message": "Maybe remove an old trace file that may have been created by a previous test?  That way we are sure that this test does create it.",
+      "revId": "091f99de1ee5a2065a9d9a365f97d6b79e8c61f2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3//9Sk\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/tests_7_4/TraceFileTest_7_4.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-12-12T16:59:35Z",
+      "side": 1,
+      "message": "Maybe check existence of trace file after saveTraceData() is called?",
+      "revId": "091f99de1ee5a2065a9d9a365f97d6b79e8c61f2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3//9SY\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/tests_7_4/TraceFileTest_7_4.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 161,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-12-12T16:59:35Z",
+      "side": 1,
+      "message": "could be left-over breakpoints in the workspace, like it happened in the GDBConsoleBreakpointsTest",
+      "revId": "091f99de1ee5a2065a9d9a365f97d6b79e8c61f2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3//9TY\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/tests_7_4/TraceFileTest_7_4.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 238,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-12-12T16:59:35Z",
+      "side": 1,
+      "message": "Could we override doAfterTest() to do this?",
+      "revId": "091f99de1ee5a2065a9d9a365f97d6b79e8c61f2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3//9So\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/tests_7_4/TraceFileTest_7_4.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 252,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-12-12T16:59:35Z",
+      "side": 1,
+      "message": "Using a Query() is easier.  AsyncCompletionWaitor() was something we used very early on, but using Query proved simpler.\n\nBut it is fine to leave it as is since the code is written already.  I just wanted to mention it for next time.",
+      "revId": "091f99de1ee5a2065a9d9a365f97d6b79e8c61f2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3//9Ss\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/tests_7_4/TraceFileTest_7_4.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 261,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-12-12T16:59:35Z",
+      "side": 1,
+      "message": "Should check isSuccess() before using getData()",
+      "revId": "091f99de1ee5a2065a9d9a365f97d6b79e8c61f2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

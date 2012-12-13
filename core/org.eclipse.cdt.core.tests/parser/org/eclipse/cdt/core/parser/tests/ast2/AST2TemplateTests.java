@@ -6923,4 +6923,49 @@ public class AST2TemplateTests extends AST2BaseTest {
 	public void testVariadicConstructor_395247() throws Exception {
 		parseAndCheckBindings();
 	}
+
+	//	template <int> struct Int {};
+	//	template<typename T>
+	//	struct identity {
+	//	    typedef T type;
+	//	};
+	//	template <typename T>
+	//	char waldo(T);
+	//	template<typename F = int>
+	//	struct S {
+	//	    F f;
+	//	    static const int value = sizeof(waldo(f));
+	//	};
+	//	typedef identity<Int<S<>::value>>::type reference;
+	public void testDependentExpressions_395243a() throws Exception {
+		parseAndCheckBindings();
+	}
+	
+	//	typedef char one;
+	//	typedef struct {
+	//		char arr[2];
+	//	} two;
+	//	template <typename T>
+	//	struct has_foo_type {
+	//		template <typename _Up>
+	//		struct wrap_type { };
+	//		template <typename U>
+	//		static one test(wrap_type<typename U::foo_type>*);
+	//		template <typename U>
+	//		static two test(...);
+	//		static const bool value = sizeof(test<T>(0)) == 1;
+	//	};
+	//	template <bool>
+	//	struct traits;
+	//	template <>
+	//	struct traits<true> {
+	//		typedef int bar_type;
+	//	};
+	//	struct S {
+	//		typedef int foo_type;
+	//	};
+	//	traits<has_foo_type<S>::value>::bar_type a;
+	public void testDependentExpressions_395243b() throws Exception {
+		parseAndCheckBindings();
+	}
 }

@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
@@ -145,12 +146,16 @@ public class EvalFunctionSet extends CPPEvaluation {
 			ICPPClassSpecialization within, int maxdepth, IASTNode point) {
 		ICPPTemplateArgument[] originalArguments = fFunctionSet.getTemplateArguments();
 		ICPPTemplateArgument[] arguments = originalArguments;
-		arguments = instantiateArguments(originalArguments, tpMap, packOffset, within, point);
+		if (originalArguments != null)
+			arguments = instantiateArguments(originalArguments, tpMap, packOffset, within, point);
 
 		IBinding originalOwner = fFunctionSet.getOwner();
 		IBinding owner = originalOwner;
-		if (originalOwner instanceof ICPPUnknownBinding) {
+		if (owner instanceof ICPPUnknownBinding) {
 			owner = resolveUnknown((ICPPUnknownBinding) owner, tpMap, packOffset, within, point);
+		} else if (owner instanceof ICPPClassTemplate) {
+			owner = resolveUnknown(CPPTemplates.createDeferredInstance((ICPPClassTemplate) owner), 
+					tpMap, packOffset, within, point);
 		} else if (owner instanceof IType) {
 			IType type = CPPTemplates.instantiateType((IType) owner, tpMap, packOffset, within, point);
 			if (type instanceof IBinding)

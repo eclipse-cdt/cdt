@@ -39,6 +39,7 @@ import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.contexts.IDebugContextListener;
 import org.eclipse.debug.ui.contexts.IDebugContextProvider;
+import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -338,4 +339,20 @@ public class CDebugUIUtils {
         propertiesAction.run();
         propertiesAction.dispose();
     }
+    
+    /**
+     * Formats the given key stroke or click name and the modifier keys 
+     * to a key binding string that can be used in action texts. 
+     * 
+     * @param modifierKeys the modifier keys
+     * @param keyOrClick a key stroke or click, e.g. "Double Click"
+     * @return the formatted keyboard shortcut string, e.g. "Shift+Double Click"
+     * 
+     * @since 8.1
+     */
+    public static final String formatKeyBindingString(int modifierKeys, String keyOrClick) {
+        // this should actually all be delegated to KeyStroke class
+        return KeyStroke.getInstance(modifierKeys, KeyStroke.NO_KEY).format() + keyOrClick; 
+    }
+
 }

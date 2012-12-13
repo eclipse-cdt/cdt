@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions.breakpoints;
 
+import org.eclipse.cdt.debug.internal.ui.CDebugUIUtils;
 import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
 import org.eclipse.cdt.debug.internal.ui.IInternalCDebugUIConstants;
 import org.eclipse.cdt.debug.internal.ui.actions.ActionMessages;
@@ -19,6 +20,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
+import org.eclipse.swt.SWT;
 import org.eclipse.ui.IWorkbenchPart;
 
 public class EnableDisableBreakpointRulerAction extends AbstractBreakpointRulerAction {
@@ -30,7 +32,8 @@ public class EnableDisableBreakpointRulerAction extends AbstractBreakpointRulerA
 	 */
 	public EnableDisableBreakpointRulerAction( IWorkbenchPart part, IVerticalRulerInfo info ) {
 		super( part, info );
-		setText( ActionMessages.getString( "EnableDisableBreakpointRulerAction.Enable_Breakpoint_1" ) ); //$NON-NLS-1$
+		setText( ActionMessages.getString( "EnableDisableBreakpointRulerAction.Enable_Breakpoint_1" ) + "\t" + //$NON-NLS-1$ //$NON-NLS-2$
+            CDebugUIUtils.formatKeyBindingString(SWT.MOD2, ActionMessages.getString("CRulerToggleBreakpointAction_accelerator")) );  //$NON-NLS-1$
 		part.getSite().getWorkbenchWindow().getWorkbench().getHelpSystem().setHelp( this, ICDebugHelpContextIds.ENABLE_DISABLE_BREAKPOINT_ACTION );
 		setId( IInternalCDebugUIConstants.ACTION_ENABLE_DISABLE_BREAKPOINT );
 	}
@@ -61,8 +64,13 @@ public class EnableDisableBreakpointRulerAction extends AbstractBreakpointRulerA
 		setEnabled( fBreakpoint != null );
 		if ( isEnabled() ) {
 			try {
-				boolean enabled = getBreakpoint().isEnabled();
-				setText( enabled ? ActionMessages.getString( "EnableDisableBreakpointRulerAction.Disable_Breakpoint_1" ) : ActionMessages.getString( "EnableDisableBreakpointRulerAction.Enable_Breakpoint_1" ) ); //$NON-NLS-1$ //$NON-NLS-2$
+				if (getBreakpoint().isEnabled()) {
+				    setText( ActionMessages.getString("EnableDisableBreakpointRulerAction.Disable_Breakpoint_1") + "\t" + //$NON-NLS-1$ //$NON-NLS-2$
+			            CDebugUIUtils.formatKeyBindingString(SWT.MOD2, ActionMessages.getString("CRulerToggleBreakpointAction_accelerator")) );  //$NON-NLS-1$ 
+				} else {
+                    setText( ActionMessages.getString("EnableDisableBreakpointRulerAction.Enable_Breakpoint_1") + "\t" + //$NON-NLS-1$ //$NON-NLS-2$
+                        CDebugUIUtils.formatKeyBindingString(SWT.MOD2, ActionMessages.getString("CRulerToggleBreakpointAction_accelerator")) );  //$NON-NLS-1$ 
+				}
 			}
 			catch( CoreException e ) {
 				DebugPlugin.log( e );

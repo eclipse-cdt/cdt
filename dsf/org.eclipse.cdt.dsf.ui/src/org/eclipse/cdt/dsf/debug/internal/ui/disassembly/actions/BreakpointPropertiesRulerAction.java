@@ -11,6 +11,7 @@
 package org.eclipse.cdt.dsf.debug.internal.ui.disassembly.actions;
 
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
+import org.eclipse.cdt.debug.internal.ui.CDebugUIUtils;
 import org.eclipse.cdt.debug.ui.breakpoints.CBreakpointPropertyDialogAction;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.DisassemblyMessages;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional.IDisassemblyPart;
@@ -23,6 +24,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.swt.SWT;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
@@ -35,7 +37,8 @@ public class BreakpointPropertiesRulerAction extends AbstractDisassemblyBreakpoi
 
 	protected BreakpointPropertiesRulerAction(IDisassemblyPart disassemblyPart, IVerticalRulerInfo rulerInfo) {
 		super(disassemblyPart, rulerInfo);
-		setText(DisassemblyMessages.Disassembly_action_BreakpointProperties_label);
+		setText(DisassemblyMessages.Disassembly_action_BreakpointProperties_label + "\t" +  //$NON-NLS-1$
+            CDebugUIUtils.formatKeyBindingString(SWT.MOD1, DisassemblyMessages.Disassembly_action_ToggleBreakpoint_accelerator));
 	}
 	
 	/*

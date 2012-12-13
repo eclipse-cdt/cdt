@@ -31,6 +31,7 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.debug.internal.ui.CDebugUIUtils;
 import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.AbstractDisassemblyBackend;
 import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.AddressRangePosition;
 import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.DisassemblyPosition;
@@ -414,7 +415,8 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		private IBreakpoint fBreakpoint;
 		public ActionToggleBreakpointEnablement() {
 			super(DisassemblyPart.this);
-			setText(DisassemblyMessages.Disassembly_action_EnableBreakpoint_label);
+			setText(DisassemblyMessages.Disassembly_action_EnableBreakpoint_label + "\t" +  //$NON-NLS-1$
+	            CDebugUIUtils.formatKeyBindingString(SWT.MOD2, DisassemblyMessages.Disassembly_action_ToggleBreakpoint_accelerator));
 		}
 		@Override
 		public void run() {
@@ -436,9 +438,11 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 					fBreakpoint = bps[0];
 					try {
 						if (fBreakpoint.isEnabled()) {
-							setText(DisassemblyMessages.Disassembly_action_DisableBreakpoint_label);
+							setText(DisassemblyMessages.Disassembly_action_DisableBreakpoint_label + "\t" +  //$NON-NLS-1$
+				                CDebugUIUtils.formatKeyBindingString(SWT.MOD2, DisassemblyMessages.Disassembly_action_ToggleBreakpoint_accelerator));
 						} else {
-							setText(DisassemblyMessages.Disassembly_action_EnableBreakpoint_label);
+							setText(DisassemblyMessages.Disassembly_action_EnableBreakpoint_label + "\t" +  //$NON-NLS-1$
+				                CDebugUIUtils.formatKeyBindingString(SWT.MOD2, DisassemblyMessages.Disassembly_action_ToggleBreakpoint_accelerator));
 						}
 					} catch (CoreException e) {
 						setEnabled(false);

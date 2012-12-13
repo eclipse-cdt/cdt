@@ -2017,11 +2017,13 @@ public class CPPVisitor extends ASTQueries {
 						IBinding b= implicits[0].getBinding();
 						CPPASTName name= new CPPASTName();
 						name.setBinding(b);
+						IASTInitializerClause[] beginCallArguments = new IASTInitializerClause[] { forInit.copy() }; 
 						if (b instanceof ICPPMethod && forInit instanceof IASTExpression) {
 							beginExpr= new CPPASTFunctionCallExpression(
-									new CPPASTFieldReference(name, (IASTExpression) forInit.copy()), NO_ARGS);
+									new CPPASTFieldReference(name, (IASTExpression) forInit.copy()), 
+									beginCallArguments);
 						} else {
-							beginExpr= new CPPASTFunctionCallExpression(new CPPASTIdExpression(name), NO_ARGS);
+							beginExpr= new CPPASTFunctionCallExpression(new CPPASTIdExpression(name), beginCallArguments);
 						}
 					} else {
 						return new ProblemType(ISemanticProblem.TYPE_CANNOT_DEDUCE_AUTO_TYPE);

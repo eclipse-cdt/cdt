@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions.breakpoints;
 
+import org.eclipse.cdt.debug.internal.ui.CDebugUIUtils;
 import org.eclipse.cdt.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.debug.ui.breakpoints.IToggleBreakpointsTargetCExtension;
@@ -30,6 +31,7 @@ import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.swt.SWT;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
@@ -68,7 +70,8 @@ public class CAddBreakpointInteractiveRulerAction extends Action implements IUpd
 	 * @param rulerInfo specifies location the user has double-clicked
 	 */
 	public CAddBreakpointInteractiveRulerAction(IWorkbenchPart part, IDocument document, IVerticalRulerInfo rulerInfo) {
-		super(ActionMessages.getString("CAddBreakpointInteractiveRulerAction_label"));  //$NON-NLS-1$
+		super(ActionMessages.getString("CAddBreakpointInteractiveRulerAction_label") + "\t" + //$NON-NLS-1$ //$NON-NLS-2$
+		    CDebugUIUtils.formatKeyBindingString(SWT.MOD1, ActionMessages.getString("CRulerToggleBreakpointAction_accelerator")) );  //$NON-NLS-1$
 		fPart = part;
 		fDocument = document;
 		fRulerInfo = rulerInfo;

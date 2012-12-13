@@ -12,6 +12,7 @@
 package org.eclipse.cdt.debug.internal.ui.actions.breakpoints;
 
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
+import org.eclipse.cdt.debug.internal.ui.CDebugUIUtils;
 import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
 import org.eclipse.cdt.debug.internal.ui.IInternalCDebugUIConstants;
 import org.eclipse.cdt.debug.internal.ui.actions.ActionMessages;
@@ -25,6 +26,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.swt.SWT;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
@@ -40,7 +42,8 @@ public class CBreakpointPropertiesRulerAction extends AbstractBreakpointRulerAct
 	 */
 	public CBreakpointPropertiesRulerAction( IWorkbenchPart part, IVerticalRulerInfo info ) {
 		super( part, info );
-		setText( ActionMessages.getString( "CBreakpointPropertiesRulerAction.Breakpoint_Properties" ) ); //$NON-NLS-1$
+		setText( ActionMessages.getString( "CBreakpointPropertiesRulerAction.Breakpoint_Properties" )  + "\t" + //$NON-NLS-1$ //$NON-NLS-2$
+            CDebugUIUtils.formatKeyBindingString(SWT.MOD1, ActionMessages.getString("CRulerToggleBreakpointAction_accelerator")) );  //$NON-NLS-1$
 		part.getSite().getWorkbenchWindow().getWorkbench().getHelpSystem().setHelp( this, ICDebugHelpContextIds.BREAKPOINT_PROPERTIES_ACTION );
 		setId( IInternalCDebugUIConstants.ACTION_BREAKPOINT_PROPERTIES );
 	}

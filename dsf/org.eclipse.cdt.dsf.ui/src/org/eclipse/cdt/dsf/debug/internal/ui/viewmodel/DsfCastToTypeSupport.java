@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Nokia and others.
+ * Copyright (c) 2010, 2012 Nokia and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,8 @@
  *
  * Contributors:
  * Nokia - Initial API and implementation
+ * Marc Khouzam (Ericsson) - Turn off casting for expression-group or 
+ *                           pattern expressions (bug 394408)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.debug.internal.ui.viewmodel;
@@ -25,6 +27,7 @@ import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionChangedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMData;
+import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionGroupDMContext;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IIndexedPartitionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IExpressions2;
 import org.eclipse.cdt.dsf.debug.service.IExpressions2.CastInfo;
@@ -91,9 +94,11 @@ public class DsfCastToTypeSupport  {
 	    }
 
 		private boolean isValid() {
-			if (exprDMC instanceof IIndexedPartitionDMContext)
+			if (exprDMC instanceof IIndexedPartitionDMContext ||
+					exprDMC instanceof IExpressionGroupDMContext) {
 				return false;
-
+			}
+			
 	        TestExpressions2Query query = new TestExpressions2Query();
 	        dmvmProvider.getSession().getExecutor().execute(query);
 

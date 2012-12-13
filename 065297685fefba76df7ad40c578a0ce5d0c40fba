@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "AABOJ3//9PY\u003d",
+        "filename": "debug/org.eclipse.cdt.debug.ui/plugin.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2012-12-13T16:36:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOJ3//9P4\u003d",
+      "revId": "065297685fefba76df7ad40c578a0ce5d0c40fba",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOJ3//9Pw\u003d",
         "filename": "debug/org.eclipse.cdt.debug.ui/plugin.xml",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2012-12-12T19:22:11Z",
       "side": 1,
       "message": "Can you move next to other BreakpiontActionPage extensions?",
+      "revId": "065297685fefba76df7ad40c578a0ce5d0c40fba",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3//9PQ\u003d",
+        "filename": "debug/org.eclipse.cdt.debug.ui/plugin.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 2681,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2012-12-13T16:36:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOJ3//9Pw\u003d",
       "revId": "065297685fefba76df7ad40c578a0ce5d0c40fba",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "AABOJ3//9HY\u003d",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/ui/breakpointactions/ReverseDebugActionComposite.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2012-12-13T16:36:01Z",
+      "side": 1,
+      "message": "Correct!  Corrected.",
+      "parentUuid": "AABOJ3//9g8\u003d",
+      "revId": "065297685fefba76df7ad40c578a0ce5d0c40fba",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOJ3//9ho\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/breakpoint/actions/BreakpointActionAdapter.java",
         "patchSetId": 1
@@ -64,6 +118,24 @@
       "writtenOn": "2012-12-12T19:22:11Z",
       "side": 1,
       "message": "Please add your name",
+      "revId": "065297685fefba76df7ad40c578a0ce5d0c40fba",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3//9HM\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/breakpoint/actions/BreakpointActionAdapter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2012-12-13T16:36:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOJ3//9ho\u003d",
       "revId": "065297685fefba76df7ad40c578a0ce5d0c40fba",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "AABOJ3//9G8\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/breakpoint/actions/MIReverseDebugEnabler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2012-12-13T16:36:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOJ3//9hk\u003d",
+      "revId": "065297685fefba76df7ad40c578a0ce5d0c40fba",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOJ3//9hg\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/breakpoint/actions/MIReverseDebugEnabler.java",
         "patchSetId": 1
@@ -98,6 +188,24 @@
       "writtenOn": "2012-12-12T19:22:11Z",
       "side": 1,
       "message": "You don\u0027t need the above one.",
+      "revId": "065297685fefba76df7ad40c578a0ce5d0c40fba",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3//9G4\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/breakpoint/actions/MIReverseDebugEnabler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2012-12-13T16:36:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOJ3//9hg\u003d",
       "revId": "065297685fefba76df7ad40c578a0ce5d0c40fba",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "AABOJ3//9G0\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/breakpoint/actions/MIReverseDebugEnabler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2012-12-13T16:36:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOJ3//9hc\u003d",
+      "revId": "065297685fefba76df7ad40c578a0ce5d0c40fba",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOJ3//9hY\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/breakpoint/actions/MIReverseDebugEnabler.java",
         "patchSetId": 1
@@ -132,6 +258,24 @@
       "writtenOn": "2012-12-12T19:22:11Z",
       "side": 1,
       "message": "Use \u0027new RequestMonitor(fExecutor, null)\u0027 instead of \u0027rm\u0027",
+      "revId": "065297685fefba76df7ad40c578a0ce5d0c40fba",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3//9Gw\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/breakpoint/actions/MIReverseDebugEnabler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2012-12-13T16:36:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOJ3//9hY\u003d",
       "revId": "065297685fefba76df7ad40c578a0ce5d0c40fba",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -155,6 +299,24 @@
     },
     {
       "key": {
+        "uuid": "AABOJ3//9Ew\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/breakpoint/actions/MIReverseDebugEnabler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2012-12-13T16:36:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOJ3//9hE\u003d",
+      "revId": "065297685fefba76df7ad40c578a0ce5d0c40fba",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOJ3//9hM\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/breakpoint/actions/MIReverseDebugEnabler.java",
         "patchSetId": 1
@@ -172,6 +334,24 @@
     },
     {
       "key": {
+        "uuid": "AABOJ3//9FY\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/breakpoint/actions/MIReverseDebugEnabler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2012-12-13T16:36:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOJ3//9hM\u003d",
+      "revId": "065297685fefba76df7ad40c578a0ce5d0c40fba",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOJ3//9hA\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/breakpoint/actions/MIReverseDebugEnabler.java",
         "patchSetId": 1
@@ -183,6 +363,24 @@
       "writtenOn": "2012-12-12T19:22:11Z",
       "side": 1,
       "message": "You don\u0027t need this.  In fact, you cannot call it here or it will be called more than once, since you passed \u0027rm\u0027 to the enableReverseMode method.",
+      "revId": "065297685fefba76df7ad40c578a0ce5d0c40fba",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3//9Fc\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/breakpoint/actions/MIReverseDebugEnabler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2012-12-13T16:36:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOJ3//9hA\u003d",
       "revId": "065297685fefba76df7ad40c578a0ce5d0c40fba",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

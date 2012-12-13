@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Ericsson and others.
+ * Copyright (c) 2008, 2012 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,12 +7,14 @@
  *
  * Contributors:
  *     Ericsson - Initial API and implementation
+ *     Marc Dumais (Ericsson) - Added support for reverse debug action (Bug 365776)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.breakpoint.actions;
 
 import org.eclipse.cdt.debug.core.breakpointactions.ILogActionEnabler;
 import org.eclipse.cdt.debug.core.breakpointactions.IResumeActionEnabler;
+import org.eclipse.cdt.debug.core.breakpointactions.IReverseDebugEnabler;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
@@ -41,6 +43,9 @@ public class BreakpointActionAdapter implements IAdaptable {
         }
         if (adapter.equals(IResumeActionEnabler.class)) {
             return new MIResumeActionEnabler(fExecutor, fServiceTracker, fContext);
+        }
+        if (adapter.equals(IReverseDebugEnabler.class)) {
+        	return new MIReverseDebugEnabler(fExecutor, fServiceTracker, fContext);
         }
         return null;
     }

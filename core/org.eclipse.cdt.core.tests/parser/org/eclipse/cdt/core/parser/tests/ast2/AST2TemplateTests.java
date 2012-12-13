@@ -6938,7 +6938,70 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	    static const int value = sizeof(waldo(f));
 	//	};
 	//	typedef identity<Int<S<>::value>>::type reference;
-	public void _testDependentExpressions_395243() throws Exception {
+	public void testDependentExpressions_395243a() throws Exception {
+		parseAndCheckBindings();
+	}
+	
+	//	typedef char one;
+	//	typedef struct {
+	//		char arr[2];
+	//	} two;
+	//	template <typename T>
+	//	struct has_foo_type {
+	//		template <typename _Up>
+	//		struct wrap_type { };
+	//		template <typename U>
+	//		static one test(wrap_type<typename U::foo_type>*);
+	//		template <typename U>
+	//		static two test(...);
+	//		static const bool value = sizeof(test<T>(0)) == 1;
+	//	};
+	//	template <bool>
+	//	struct traits;
+	//	template <>
+	//	struct traits<true> {
+	//		typedef int bar_type;
+	//	};
+	//	struct S {
+	//		typedef int foo_type;
+	//	};
+	//	traits<has_foo_type<S>::value>::bar_type a;
+	public void testDependentExpressions_395243b() throws Exception {
+		parseAndCheckBindings();
+	}
+	
+	//  template <typename U> U bar(U);
+	//  template <typename T> auto waldo(T t) -> decltype(bar(t));
+	//  struct S {
+	//      void foo() const;
+	//  };
+	//  struct V {
+	//      S arr[5];
+	//  };
+	//  int main() {
+	//      V e;
+	//      auto v = waldo(e);
+	//      for (auto s : v.arr)
+	//          s.foo();
+	//  }	
+	public void testDependentExpressions_395243c() throws Exception {
+		parseAndCheckBindings();
+	}
+	
+	//	template <typename> class C {};
+	//	template <typename T> int begin(C<T>);
+	//	template <typename>
+	//	struct A {
+	//	    class B {
+	//	        void m();
+	//	    };
+	//	    void test() {
+	//	        B* v[5];
+	//	        for (auto x : v)
+	//	            x->m();
+	//	    }
+	//	};
+	public void testDependentExpressions_395243d() throws Exception {
 		parseAndCheckBindings();
 	}
 }

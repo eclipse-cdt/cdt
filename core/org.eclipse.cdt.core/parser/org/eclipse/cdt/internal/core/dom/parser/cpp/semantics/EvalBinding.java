@@ -362,6 +362,13 @@ public class EvalBinding extends CPPEvaluation {
 				binding = CPPTemplates.createSpecialization((ICPPClassSpecialization) owner,
 						binding, point);
 			}
+		} else if (binding instanceof ICPPParameter) {
+			ICPPParameter parameter = (ICPPParameter) binding;
+			IType originalType = parameter.getType();
+			IType type = CPPTemplates.instantiateType(originalType, tpMap, packOffset, within, point);
+			if (originalType != type) {
+				return new EvalFixed(type, ValueCategory.LVALUE, Value.create(this));
+			}
 		}
 		if (binding == fBinding)
 			return this;

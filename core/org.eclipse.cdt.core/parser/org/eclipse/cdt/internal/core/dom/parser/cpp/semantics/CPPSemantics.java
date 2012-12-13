@@ -13,6 +13,7 @@
  *     Sergey Prigogin (Google)
  *     Mike Kucera (IBM)
  *     Thomas Corbat (IFS)
+ *     Nathan Ridge
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
@@ -451,7 +452,7 @@ public class CPPSemantics {
 		final ASTNodeProperty namePropertyInParent = name.getPropertyInParent();
 		if (binding == null && data.skippedScope != null) {
 			if (data.hasFunctionArguments()) {
-				binding= new CPPDeferredFunction(data.skippedScope, name.getSimpleID());
+				binding= new CPPDeferredFunction(data.skippedScope, name.getSimpleID(), null);
 			} else {
 				if (namePropertyInParent == IASTNamedTypeSpecifier.NAME) {
 					binding= new CPPUnknownMemberClass(data.skippedScope, name.getSimpleID());
@@ -2395,7 +2396,7 @@ public class CPPSemantics {
 			if (viableCount == 1)
 				return fns[0];
 			setTargetedFunctionsToUnknown(argTypes);
-			return CPPDeferredFunction.createForSample(fns[0]);
+			return CPPDeferredFunction.createForCandidates(fns);
 		}
 
 		IFunction[] ambiguousFunctions= null;   // ambiguity, 2 functions are equally good
@@ -2403,7 +2404,7 @@ public class CPPSemantics {
 
 		// Loop over all functions
 		List<FunctionCost> potentialCosts= null;
-		IFunction unknownFunction= null;
+		ICPPFunction unknownFunction= null;
 		final CPPASTTranslationUnit tu = data.getTranslationUnit();
 		for (ICPPFunction fn : fns) {
 			if (fn == null)
@@ -2455,7 +2456,7 @@ public class CPPSemantics {
 				return null;
 
 			setTargetedFunctionsToUnknown(argTypes);
-			return CPPDeferredFunction.createForSample(unknownFunction);
+			return CPPDeferredFunction.createForCandidates(fns);
 		}
 
 		if (ambiguousFunctions != null) {

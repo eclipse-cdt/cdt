@@ -51,9 +51,11 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 
 /*
@@ -232,21 +234,39 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		}
 
 		//These are the expected path settings
-		final String[] expectedPaths = {
-				toOSString("/usr/include"),
-				toOSString("/opt/gnome/include"),
-				toOSString("C:\\home\\tester/include"),
-				// relative path makes 2 entries
-				project.getLocation().append("includes").toOSString(),
-				"includes",
-				"/usr/gnu/include", // This one set to ICSettingEntry.RESOLVED
-		};
+		IPath buildCWD = project.getLocation().append("Sub Config");
+
+		final String[] expectedPaths;
+		if (new Path("C:\\home\\tester/include").isAbsolute()) {
+			// Windows
+			expectedPaths = new String[] {
+					toOSString("/usr/include"),
+					toOSString("/opt/gnome/include"),
+					toOSString("C:\\home\\tester/include"),
+					// relative paths make 2 entries
+					project.getLocation().append("includes").toOSString(),
+					"includes", // FIXME this is incorrect, the original entry set via extension point is "../includes"
+					"/usr/gnu/include", // Not converted to OS string due to being flagged as ICSettingEntry.RESOLVED
+			};
+		} else {
+			// Unix
+			expectedPaths = new String[] {
+					toOSString("/usr/include"),
+					toOSString("/opt/gnome/include"),
+					// relative paths make 2 entries
+					buildCWD.append("C:\\home\\tester/include").toOSString(),
+					"C:\\home\\tester/include",
+					project.getLocation().append("includes").toOSString(),
+					"includes", // FIXME this is incorrect, the original entry set via extension point is "../includes"
+					"/usr/gnu/include", // Not converted to OS string due to being flagged as ICSettingEntry.RESOLVED
+			};
+		}
 
 		// Create a new managed project based on the sub project type
 		IProjectType projType = ManagedBuildManager.getExtensionProjectType("test.sub");
 		assertNotNull(projType);
 
-		// Create the managed-project (.cdtbuild) for our project
+		// Create the managed-project for our project
 		IManagedProject newProject = null;
 		try {
 			newProject = ManagedBuildManager.createManagedProject(project, projType);
@@ -527,7 +547,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		IProjectType projType = ManagedBuildManager.getExtensionProjectType("test.root");
 		assertNotNull(projType);
 
-		// Create the managed-project (.cdtbuild) for our project that builds a dummy executable
+		// Create the managed-project for our project that builds a dummy executable
 		IManagedProject newProject = ManagedBuildManager.createManagedProject(project, projType);
 		assertEquals(newProject.getName(), projType.getName());
 		assertFalse(newProject.equals(projType));

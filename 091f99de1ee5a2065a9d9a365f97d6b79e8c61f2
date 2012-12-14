@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "AABOJ3//8wc\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/GDBConsoleBreakpointsTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 218,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-12-14T20:14:31Z",
+      "side": 1,
+      "message": "I have removed the delays that I think are unnecessary and added comments to the code for the cases when the delays are required.\nThe test seems to work but I am still suspicious. There could be cases that I missed. Having delays after each operation seems to be safer. Let\u0027s see how it works for you.",
+      "parentUuid": "AABOJ3//9SM\u003d",
+      "revId": "091f99de1ee5a2065a9d9a365f97d6b79e8c61f2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOJ3//9U4\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/GDBConsoleBreakpointsTest.java",
         "patchSetId": 5
@@ -30,6 +48,24 @@
       "writtenOn": "2012-12-12T16:59:35Z",
       "side": 1,
       "message": "When running LaunchConfigurationAndRestartTest_?-? before running this new set of tests, a pending tracepoint is created.  See LaunchConfigurationAndRestartTest_7_0.testPendingBreakpointSetting().  Thanks to the new bp notification feature, this tracepoint is created as a platform breakpoint and remains there.  Therefore the check miBpts.length \u003d\u003d 1 fails, as there is a second platform breakpoint.\n\nI think that we should delete all platform breakpoints before each tests in GDBConsoleBreakpointsTest.doBeforeTest().  Or you could count the number of pre-existing bp in GDBConsoleBreakpointsTest.doBeforeTest() and account for those here and below.",
+      "revId": "091f99de1ee5a2065a9d9a365f97d6b79e8c61f2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3//8vw\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/GDBConsoleBreakpointsTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 221,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-12-14T20:14:31Z",
+      "side": 1,
+      "message": "Added cleanup to doBeforeTest() and doAfterTest().",
+      "parentUuid": "AABOJ3//9U4\u003d",
       "revId": "091f99de1ee5a2065a9d9a365f97d6b79e8c61f2",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "AABOJ3//8vs\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/GDBConsoleBreakpointsTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 314,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-12-14T20:14:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOJ3//9Us\u003d",
+      "revId": "091f99de1ee5a2065a9d9a365f97d6b79e8c61f2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOJ3//9SE\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/GDBConsoleBreakpointsTest.java",
         "patchSetId": 5
@@ -70,6 +124,24 @@
     },
     {
       "key": {
+        "uuid": "AABOJ3//8vo\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/GDBConsoleBreakpointsTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 374,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-12-14T20:14:31Z",
+      "side": 1,
+      "message": "Removed.",
+      "parentUuid": "AABOJ3//9SE\u003d",
+      "revId": "091f99de1ee5a2065a9d9a365f97d6b79e8c61f2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOJ3//9Tg\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/tests_7_4/GDBRemoteTracepointsTest_7_4.java",
         "patchSetId": 5
@@ -81,6 +153,24 @@
       "writtenOn": "2012-12-12T16:59:35Z",
       "side": 1,
       "message": "I\u0027m starting to wonder if you didn\u0027t mean to remove the changes from this file but forgot?",
+      "revId": "091f99de1ee5a2065a9d9a365f97d6b79e8c61f2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3//87Q\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/tests_7_4/GDBRemoteTracepointsTest_7_4.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-12-14T20:14:31Z",
+      "side": 1,
+      "message": "Yes, all these changes should be removed. Originally, I thought I could add my tests to this case but it didn\u0027t work.",
+      "parentUuid": "AABOJ3//9Tg\u003d",
       "revId": "091f99de1ee5a2065a9d9a365f97d6b79e8c61f2",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -189,6 +279,24 @@
     },
     {
       "key": {
+        "uuid": "AABOJ3//87M\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/tests_7_4/TraceFileTest_7_4.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-12-14T20:14:31Z",
+      "side": 1,
+      "message": "Thanks!",
+      "parentUuid": "AABOJ3//9SU\u003d",
+      "revId": "091f99de1ee5a2065a9d9a365f97d6b79e8c61f2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOJ3//9Sg\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/tests_7_4/TraceFileTest_7_4.java",
         "patchSetId": 5
@@ -200,6 +308,24 @@
       "writtenOn": "2012-12-12T16:59:35Z",
       "side": 1,
       "message": "I don\u0027t think the test does #8, which is right, we don\u0027t need it.",
+      "revId": "091f99de1ee5a2065a9d9a365f97d6b79e8c61f2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3//87I\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/tests_7_4/TraceFileTest_7_4.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-12-14T20:14:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOJ3//9Sg\u003d",
       "revId": "091f99de1ee5a2065a9d9a365f97d6b79e8c61f2",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -223,6 +349,24 @@
     },
     {
       "key": {
+        "uuid": "AABOJ3//87E\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/tests_7_4/TraceFileTest_7_4.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-12-14T20:14:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOJ3//9Sc\u003d",
+      "revId": "091f99de1ee5a2065a9d9a365f97d6b79e8c61f2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOJ3//9Sk\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/tests_7_4/TraceFileTest_7_4.java",
         "patchSetId": 5
@@ -234,6 +378,24 @@
       "writtenOn": "2012-12-12T16:59:35Z",
       "side": 1,
       "message": "Maybe check existence of trace file after saveTraceData() is called?",
+      "revId": "091f99de1ee5a2065a9d9a365f97d6b79e8c61f2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3//868\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/tests_7_4/TraceFileTest_7_4.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-12-14T20:14:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOJ3//9Sk\u003d",
       "revId": "091f99de1ee5a2065a9d9a365f97d6b79e8c61f2",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -257,6 +419,24 @@
     },
     {
       "key": {
+        "uuid": "AABOJ3//86w\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/tests_7_4/TraceFileTest_7_4.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 161,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-12-14T20:14:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOJ3//9SY\u003d",
+      "revId": "091f99de1ee5a2065a9d9a365f97d6b79e8c61f2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOJ3//9TY\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/tests_7_4/TraceFileTest_7_4.java",
         "patchSetId": 5
@@ -268,6 +448,24 @@
       "writtenOn": "2012-12-12T16:59:35Z",
       "side": 1,
       "message": "Could we override doAfterTest() to do this?",
+      "revId": "091f99de1ee5a2065a9d9a365f97d6b79e8c61f2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3//85A\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/tests_7_4/TraceFileTest_7_4.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 238,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-12-14T20:14:31Z",
+      "side": 1,
+      "message": "I did some refactoring and moved the second launch from testTraceFile() into a separate test and moved the termination code to \u0027doAfterTest()\u0027.",
+      "parentUuid": "AABOJ3//9TY\u003d",
       "revId": "091f99de1ee5a2065a9d9a365f97d6b79e8c61f2",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -291,6 +489,24 @@
     },
     {
       "key": {
+        "uuid": "AABOJ3//86c\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/tests_7_4/TraceFileTest_7_4.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 252,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-12-14T20:14:31Z",
+      "side": 1,
+      "message": "Thanks. I usually use Query() but copied this code from somewhere.",
+      "parentUuid": "AABOJ3//9So\u003d",
+      "revId": "091f99de1ee5a2065a9d9a365f97d6b79e8c61f2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOJ3//9Ss\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/tests_7_4/TraceFileTest_7_4.java",
         "patchSetId": 5
@@ -302,6 +518,24 @@
       "writtenOn": "2012-12-12T16:59:35Z",
       "side": 1,
       "message": "Should check isSuccess() before using getData()",
+      "revId": "091f99de1ee5a2065a9d9a365f97d6b79e8c61f2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3//86Y\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/tests_7_4/TraceFileTest_7_4.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 261,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2012-12-14T20:14:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOJ3//9Ss\u003d",
       "revId": "091f99de1ee5a2065a9d9a365f97d6b79e8c61f2",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

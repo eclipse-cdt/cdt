@@ -28,6 +28,7 @@
  * David McKnight   (IBM)  - [367449] [dstore] allow custom encoding for data transport layer
  * David McKnight     (IBM) - [378136][dstore] miner.finish is stuck
  * David McKnight   (IBM)   - [391966][dstore][performance] unnecessary call slows down large queries
+ * David McKnight   (IBM) - [396440] [dstore] fix issues with the spiriting mechanism and other memory improvements (phase 1)
  *******************************************************************************/
 
 package org.eclipse.dstore.internal.core.util;
@@ -881,6 +882,7 @@ public class XMLparser
 			if (attributes.length == DE.A_SIZE)
 			{
 				String type = attributes[DE.A_TYPE];
+				String id = attributes[DE.A_ID];
 				if (type.equals(DataStoreResources.KEEPALIVE_TYPE))
 				{
 					_isKeepAlive= true;
@@ -893,8 +895,7 @@ public class XMLparser
 				}
 				
 				else if (type.equals(DataStoreResources.DOCUMENT_TYPE))
-				{
-					String id = attributes[DE.A_ID];
+				{					
 					if (_dataStore.contains(id))
 					{
 						result = _dataStore.find(id);
@@ -905,7 +906,12 @@ public class XMLparser
 						result = _dataStore.createObject(null, attributes);
 					}
 				}
-
+				else if (id.equals(DataStoreResources.model_transient)){ // generic transient
+					result = _dataStore.createTransientObject(attributes);
+					if (parent != null){
+						parent.addNestedData(result, false);
+					}
+				}			
 				else if (_isFile || _isClass || _isSerialized || parent == null)
 				{
 					result = _dataStore.createTransientObject(attributes);
@@ -934,13 +940,6 @@ public class XMLparser
 					}
 					else
 					{
-						String id = attributes[DE.A_ID];
-						if (id == null)
-						{
-							handlePanic(new Exception(fullTag));
-							return null;
-						}
-	
 						if (_dataStore.contains(id))
 						{
 							result = _dataStore.find(id);
@@ -963,7 +962,7 @@ public class XMLparser
 								if (isSpirit)
 								{
 									if (!_dataStore.isVirtual()) attributes[DE.A_REF_TYPE] = DataStoreResources.VALUE;
-									result.setSpirit(_dataStore.isVirtual());
+									result.setSpirit(_dataStore.isVirtual()); // if this is the server, then the element is unspirited
 								}
 								else
 								{

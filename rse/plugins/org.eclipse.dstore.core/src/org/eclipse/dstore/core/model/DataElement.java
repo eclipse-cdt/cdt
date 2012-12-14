@@ -19,6 +19,7 @@
  * David McKnight   (IBM) - [389286] [dstore] element delete should not clear _attributes since elements get recycled
  * David McKnight   (IBM) - [390037] [dstore] Duplicated items in the System view
  * David McKnight   (IBM) - [391065] [dstore][regression] DataElement with "" type treated as deleted (when it's not)
+ * David McKnight   (IBM) - [396440] [dstore] fix issues with the spiriting mechanism and other memory improvements (phase 1)
  *******************************************************************************/
 
 package org.eclipse.dstore.core.model;
@@ -28,7 +29,6 @@ import java.util.List;
 
 import org.eclipse.dstore.core.util.StringCompare;
 import org.eclipse.dstore.extra.IDataElement;
-import org.eclipse.dstore.internal.core.util.DataElementRemover;
 import org.eclipse.dstore.internal.extra.DataElementActionFilter;
 import org.eclipse.dstore.internal.extra.DesktopElement;
 import org.eclipse.dstore.internal.extra.PropertySource;
@@ -76,7 +76,6 @@ public final class DataElement implements IDataElement
 	{
 		_dataStore = null;
 		_parent = null;
-		DataElementRemover.addToCreatedCount();
 	}
 
 	/**
@@ -88,7 +87,6 @@ public final class DataElement implements IDataElement
 	{
 		_dataStore = dataStore;
 		_parent = null;
-		DataElementRemover.addToCreatedCount();
 	}
 	
 	/* Apparently having this method causes the GC to delay
@@ -304,6 +302,7 @@ public final class DataElement implements IDataElement
 	public void reInitAsTransient(String attributes[])
 	{
 		_attributes = attributes;
+		setAttribute(DE.A_ID, DataStoreResources.model_transient); 
 		
 		_isReference = false;
 		_isDescriptor = false;
@@ -886,14 +885,19 @@ public final class DataElement implements IDataElement
 	 */
 	public void setSpirit(boolean flag)
 	{
-		_isSpirit = flag;
-		String refType = getAttribute(DE.A_REF_TYPE);
-		if (refType != null){
-			if (_isSpirit && !refType.equals(DataStoreResources.SPIRIT)) {
-				setAttribute(DE.A_REF_TYPE, DataStoreResources.SPIRIT);
-			}
-			else if (refType.equals(DataStoreResources.SPIRIT)){ // if it was a spirit, change it back
-				setAttribute(DE.A_REF_TYPE, DataStoreResources.VALUE);
+		if (flag && isDescriptor()){
+			// descriptors should not be spirited
+		}
+		else {
+			_isSpirit = flag;
+			String refType = getAttribute(DE.A_REF_TYPE);
+			if (refType != null){
+				if (_isSpirit && !refType.equals(DataStoreResources.SPIRIT)) {
+					setAttribute(DE.A_REF_TYPE, DataStoreResources.SPIRIT);
+				}
+				else if (refType.equals(DataStoreResources.SPIRIT)){ // if it was a spirit, change it back
+					setAttribute(DE.A_REF_TYPE, DataStoreResources.VALUE);
+				}
 			}
 		}
 	}
@@ -1454,6 +1458,8 @@ public final class DataElement implements IDataElement
 			+ getSource()
 			+ "\n\tDepth:\t" //$NON-NLS-1$
 			+ _depth
+			+ "\n\tisSpirit:\t" //$NON-NLS-1$
+			+ _isSpirit
 			+ "\n\tDataStore:\t" //$NON-NLS-1$
 			+ _dataStore.getName()
 			+ "\n}\n"; //$NON-NLS-1$

@@ -17,15 +17,16 @@
  * David McKnight   (IBM) - [385793] [dstore] DataStore spirit mechanism and other memory improvements needed
  * David McKnight   (IBM) - [389286] [dstore] element delete should not clear _attributes since elements get recycled
  * David McKnight   (IBM) - [390037] [dstore] Duplicated items in the System view
+ * David McKnight   (IBM) - [396440] [dstore] fix issues with the spiriting mechanism and other memory improvements (phase 1)
  *******************************************************************************/
 
 package org.eclipse.dstore.core.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.dstore.core.java.IRemoteClassInstance;
-import org.eclipse.dstore.internal.core.util.DataElementRemover;
 
 /**
  * <p>
@@ -75,49 +76,83 @@ public abstract class UpdateHandler extends Handler
 		clean(object, 2);
 	}
 
+	
+	private void unmap(DataElement element)
+	{	
+		if (element.isDeleted() || element.isSpirit()){
+			HashMap map = _dataStore.getHashMap();					
+			synchronized (map){
+				String id = element.getId();
+			//	_dataStore.memLog("unmapping " + id);
+				map.remove(id);
+				_dataStore.addToRecycled(element);
+			}
+		}
+	}
+	
 	protected void clean(DataElement object, int depth)
 	{
-		if ((depth > 0) && (object != null) && object.getNestedSize() > 0)
-		{
-			List deletedList = _dataStore.findDeleted(object);
+		boolean isServer = !_dataStore.isVirtual();
+		if ((depth > 0) && object != null){
+			if (object.isSpirit() || object.isDeleted()){
+				DataElement parent = object.getParent();
+				cleanChildren(object);
+				unmap(object);			
+				if (object.isSpirit() && isServer){						
+					// officially delete this now 
+					object.delete();								
+				}
+				if (isServer){
+					object.clear();
+				}
+				if (parent != null){
+					synchronized (parent){
+						parent.removeNestedData(object);
+					}
+				}
+			}
+			else if (object.getNestedSize() > 0){
+				cleanChildren(object);
+			}		
+		}
+		// remove objects under temproot
+		DataElement tmpRoot = _dataStore.getTempRoot();
+		if (tmpRoot != null){
+			tmpRoot.removeNestedData();
+		}
+	}
 
-			for (int i = 0; i < deletedList.size(); i++)
-			{
+	
+	/*
+	protected void clean(DataElement object, int depth)
+	{
+		boolean isServer = !_dataStore.isVirtual();
+		if ((depth > 0) && object != null){
+			List deletedList = _dataStore.findDeleted(object);
+			for (int i = 0; i < deletedList.size(); i++){
 				DataElement child = (DataElement) deletedList.get(i);
-				if (child != null && child.isDeleted())
-				{
+				if (child != null && child.isDeleted()){
 					DataElement parent = child.getParent();
-					DataElementRemover.addToRemovedCount();
 
 					cleanChildren(child); // clean the children
-
-
-					if (child.isSpirit())
-					{
+					unmap(child);
+					if (child.isSpirit() && isServer){						
 						// officially delete this now 
-						// will only happen on server since, on client, 
-						// the above call to isDeleted() returns false for spirited
 						child.delete();						
 					}
 
-					child.clear();
-					if (parent != null)
-					{
-						synchronized (parent)
-						{
+					if (parent != null){
+						synchronized (parent){
 							parent.removeNestedData(child);
 						}
 					}
-				//  _dataStore.addToRecycled(child);
 				}
 			}
 
 			deletedList.clear();
 		}
-		// delete objects under temproot
-		_dataStore.getTempRoot().removeNestedData();
-
 	}
+*/
 
 	/**
 	 * Recursively clean children for deletion
@@ -125,25 +160,26 @@ public abstract class UpdateHandler extends Handler
 	 */
 	protected void cleanChildren(DataElement parent)
 	{
+		boolean isServer = !_dataStore.isVirtual();
 		List nestedData = parent.getNestedData();
-		if (nestedData != null)
-		{
+		if (nestedData != null){
 			synchronized (nestedData){
 				for (int i = nestedData.size() - 1; i >= 0; i--){
 					DataElement child = (DataElement)nestedData.get(i);
-					cleanChildren(child);
-	
-					if (child.isSpirit())
-					{
-						// officially delete this now
-						child.delete();
+					if (child.isSpirit() || child.isDeleted()){
+						cleanChildren(child);
+						unmap(child);
+					
+						if (isServer){
+							// officially delete this now
+							child.delete();
+							child.clear();							
+						}
+						nestedData.remove(child);
 					}
-				
-					child.clear();
-					parent.removeNestedData(child);
 				}
 			}
-		}	
+		}
 	}
 
 	/**
@@ -172,51 +208,39 @@ public abstract class UpdateHandler extends Handler
 	 * @param object an object to get updated
 	 * @param immediate true indicates that this object should be first in the queue
 	 */
-	public void update(DataElement object, boolean immediate)
-	{
-		synchronized (_dataObjects)
-		{
-			if (object != null){
-				String type = object.getType();
-				boolean isStatus = DataStoreResources.model_status.equals(type);
-			if (immediate)
-			{
-				_dataObjects.add(0, object);
-				// none of this immediate stuff - just put it at the beginning
-				//handle();
+	public void update(DataElement object, boolean immediate){
+		if (object != null){
+			String type = object.getType();
+			boolean statusDone = false;
+			boolean isStatus = DataStoreResources.model_status.equals(type);				
+			if (isStatus){
+				statusDone = DataStoreResources.model_done.equals(object.getName()) || DataStoreResources.model_done.equals(object.getValue());
 			}
-			else 
-			{				
-				if (!_dataObjects.contains(object))
-				{
-						_dataObjects.add(object);
+			synchronized (_dataObjects){
+				if (immediate){
+					_dataObjects.add(0, object);
 				}
-				else
-				{
-
-					if (_dataStore != null && object != null && !object.isDeleted())
-					{
-						if (isStatus)
-						{
-							if (object.getName().equals(DataStoreResources.model_done))
-							{
-								//DKM
+				else {
+					if (!_dataObjects.contains(object)){
+						_dataObjects.add(object);
+					}
+					else {
+						if (_dataStore != null && object != null && !object.isDeleted()){
+							if (isStatus && statusDone){
 								// move to the back of the queue
 								// this is done so that if status that was already queued changed to done in between
 								// requests, and had not yet been transferred over comm layer, the completed status
 								// object does not come back to client (as "done") before the results of a query
 								_dataObjects.remove(object);
-								_dataObjects.add(object);
-								
+								_dataObjects.add(object);											
 							}
 						}
 					}
 				}
 			}
-				if (_dataStore != null && !_dataStore.isVirtual() && isStatus){
-					_dataStore.disconnectObjects(object); // spirit the status
-				}
-			
+			if (_dataStore != null && !_dataStore.isVirtual() && isStatus && statusDone){
+				_dataStore.disconnectObject(object.getParent()); // spirit the command and its children
+			//	_dataStore.disconnectObject(object);
 			}
 		}
 		notifyInput();

@@ -45,6 +45,7 @@
  * David McKnight   (IBM) - [385097] [dstore] DataStore spirit mechanism is not enabled
  * David McKnight   (IBM) - [385793] [dstore] DataStore spirit mechanism and other memory improvements needed
  * David McKnight   (IBM) - [390037] [dstore] Duplicated items in the System view
+ * David McKnight   (IBM) - [396440] [dstore] fix issues with the spiriting mechanism and other memory improvements (phase 1)
  *******************************************************************************/
 
 package org.eclipse.dstore.core.model;
@@ -199,7 +200,7 @@ public final class DataStore
 	 * 
 	 *  This needs to be updated for each major release.
 	 */
-	private String _RSE_version = "3.3.1"; //$NON-NLS-1$
+	private String _RSE_version = "3.4.2"; //$NON-NLS-1$
 	
 	/**
 	 * Creates a new <code>DataStore</code> instance
@@ -950,10 +951,6 @@ public final class DataStore
 			reference.reInit(parent, realObject, relationType);
 			parent.addNestedData(reference, false);
 
-			String sugId = reference.getId();
-			synchronized (_hashMap){
-				_hashMap.put(sugId, reference);
-			}
 			refresh(parent);
 
 			return reference;
@@ -1005,11 +1002,6 @@ public final class DataStore
 
 			parent.addNestedData(reference, false);
 
-			String sugId = reference.getId();
-			synchronized (_hashMap){
-				_hashMap.put(sugId, reference);
-			}
-			
 			if (doRefresh)
 			{
 			    refresh(parent);
@@ -1078,22 +1070,12 @@ public final class DataStore
 			toReference.reInit(parent, realObject, toRelation);
 
 			parent.addNestedData(toReference, false);
-
-			String toId = toReference.getId();
-			synchronized (_hashMap){
-				_hashMap.put(toId, toReference);
-			}
 			// reference with "from" relationship
 			DataElement fromReference = createElement();
 
 			fromReference.reInit(realObject, parent, fromRelation);
 
 			realObject.addNestedData(fromReference, false);
-
-			String fromId = fromReference.getId();
-			synchronized (_hashMap){
-				_hashMap.put(fromId, fromReference);
-			}
 			refresh(parent);
 
 
@@ -1128,12 +1110,6 @@ public final class DataStore
 			}
 
 			parent.addNestedData(toReference, false);
-
-			String toId = toReference.getId();
-			synchronized (_hashMap){
-				_hashMap.put(toId, toReference);
-			}
-
 			// reference with "from" relationship
 			DataElement fromReference = createElement();
 
@@ -1149,10 +1125,6 @@ public final class DataStore
 
 			realObject.addNestedData(fromReference, false);
 
-			String fromId = fromReference.getId();
-			synchronized (_hashMap){
-				_hashMap.put(fromId, fromReference);
-			}
 			 refresh(parent);
 
 
@@ -1207,7 +1179,7 @@ public final class DataStore
 
 	public DataElement createTransientObject(String attributes[])
 	{
-		DataElement newObject = createElement();
+		DataElement newObject = new DataElement(this);
 
 		newObject.reInitAsTransient(attributes);
 		return newObject;
@@ -2537,7 +2509,7 @@ public final class DataStore
 	 */
 	public DataElement command(DataElement commandDescriptor, ArrayList arguments, DataElement dataObject)
 	{
-		return command(commandDescriptor, arguments, dataObject, false);
+		return command(commandDescriptor, arguments, dataObject, true);
 	}
 
 	/**
@@ -2553,7 +2525,8 @@ public final class DataStore
 	{
 		if (_commandHandler != null)
 		{
-			return _commandHandler.command(commandDescriptor, arguments, dataObject, true, immediate);
+			// as per bug #396440, default is now to not use references
+			return _commandHandler.command(commandDescriptor, arguments, dataObject, false, immediate);
 		}
 		return null;
 	}
@@ -2584,7 +2557,8 @@ public final class DataStore
 	{
 		if (_commandHandler != null)
 		{
-			return _commandHandler.command(commandDescriptor, arg, dataObject, true, immediate);
+			// as per bug #396440, default is now to not use references
+			return _commandHandler.command(commandDescriptor, arg, dataObject, false, immediate);
 		}
 		return null;
 	}
@@ -2598,6 +2572,7 @@ public final class DataStore
 	 */
 	public DataElement command(DataElement commandDescriptor, DataElement dataObject)
 	{
+		// as per bug #396440, default is now to not use references
 		return command(commandDescriptor, dataObject, false);
 	}
 
@@ -2888,31 +2863,19 @@ public final class DataStore
 
 
 				List searchList = root.getNestedData();
-
-				if (searchList != null)
-				{
-					for (int i = 0; i < searchList.size(); i++)
-					{
+				if (searchList != null){
+					for (int i = 0; i < searchList.size(); i++){
 						DataElement child = (DataElement) searchList.get(i);
-						if (child != null)
-						{
-							synchronized (child)
-							{
-								if (child.isDeleted() && !results.contains(child))
-								{
-									results.add(child);
-									if (!child.isReference())
-									{
-										if (depth > 0)
-										{
-											List sResults = findDeleted(child, depth - 1);
-											for (int j = 0; j < sResults.size(); j++)
-											{
-												results.add(sResults.get(j));
-											}
+						if (child != null){
+							if (child.isDeleted() && !results.contains(child)){
+								results.add(child);
+								if (!child.isReference()){
+									if (depth > 0){
+										List sResults = findDeleted(child, depth - 1);
+										for (int j = 0; j < sResults.size(); j++){
+											results.add(sResults.get(j));
 										}
-
-									}
+									}									
 								}
 							}
 						}
@@ -3983,16 +3946,12 @@ public final class DataStore
 
 		int numRecycled = _recycled.size();
 
-		if (numRecycled > 1)
-		{
-			synchronized (_recycled)
-			{				
-				if (numRecycled > _MAX_FREE)
-				    {
+		if (numRecycled > 0){
+			synchronized (_recycled){				
+				if (numRecycled > _MAX_FREE){
 					int numRemoved = numRecycled - _MAX_FREE;
-					for (int i = 1; i <= numRemoved; i++)
-					 {
-						_recycled.remove(numRemoved - i);						
+					for (int i = numRemoved - 1; i >=0; i--){
+						_recycled.remove(i);						
 					 }
 				  }			
 				newObject = (DataElement) _recycled.remove((_recycled.size() - 1));
@@ -4076,16 +4035,16 @@ public final class DataStore
 
 	private void disconnectObjectHelper(DataElement toDisconnect, int depth)
 	{
-		if (depth > 0)
-		{
+		if (depth > 0){
 			depth--;
 			_deRemover.addToQueueForRemoval(toDisconnect);
-			for (int i = 0; i < toDisconnect.getNestedSize(); i++)
-			{
-				DataElement subDisconnect = toDisconnect.get(i);
-				if (subDisconnect != null && subDisconnect.getDataStore() == this && !subDisconnect.isSpirit())
-				{
-					disconnectObjectHelper(subDisconnect, depth);
+			List nestedData = toDisconnect.getNestedData();
+			if (nestedData != null){
+				for (int i = 0; i < nestedData.size(); i++){
+					DataElement subDisconnect = (DataElement)nestedData.get(i);
+					if (subDisconnect != null && !subDisconnect.isSpirit() && !subDisconnect.isDescriptor() && !subDisconnect.isReference()){
+						disconnectObjectHelper(subDisconnect, depth);
+					}
 				}
 			}
 		}
@@ -4105,17 +4064,7 @@ public final class DataStore
 		else
 		{
 			return generateId();
-			/*
-			String newId = String.valueOf(_random.nextInt());
-			while (_hashMap.containsKey(newId))
-			{
-				newId = String.valueOf(_random.nextInt());
-			}
-
-			return newId;
-			*/
 		}
-
 
 	}
 

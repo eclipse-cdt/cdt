@@ -13,6 +13,7 @@
  * Contributors:
  * David McKnight   (IBM) - [226561] [apidoc] Add API markup to RSE Javadocs where extend / implement is allowed
  * David McKnight   (IBM)  - [385097] [dstore] DataStore spirit mechanism is not enabled
+ * David McKnight   (IBM) - [396440] [dstore] fix issues with the spiriting mechanism and other memory improvements (phase 1)
  ********************************************************************************/
 
 package org.eclipse.dstore.core.model;
@@ -191,9 +192,6 @@ public class DataStoreSchema
 		// miner-specific descriptors are defined in the miners when they extend the schema
 
 		// these first elements are the most fundamental	  
-//		DataElement uiCmdD = _dataStore.createObject(schemaRoot, DE.T_UI_COMMAND_DESCRIPTOR, DE.T_UI_COMMAND_DESCRIPTOR);
-		_dataStore.createObject(schemaRoot, DE.T_UI_COMMAND_DESCRIPTOR, DE.T_UI_COMMAND_DESCRIPTOR);
-
 		_commandDescriptor = _dataStore.createCommandDescriptor(schemaRoot, DE.T_COMMAND_DESCRIPTOR);
 		_objectDescriptor = _dataStore.createObjectDescriptor(schemaRoot, DE.T_OBJECT_DESCRIPTOR);
 		_relationDescriptor = _dataStore.createRelationDescriptor(schemaRoot, DE.T_RELATION_DESCRIPTOR);

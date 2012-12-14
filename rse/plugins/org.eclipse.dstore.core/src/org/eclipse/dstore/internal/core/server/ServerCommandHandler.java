@@ -382,6 +382,7 @@ public class ServerCommandHandler extends CommandHandler
 				String property = dataObject.getName();
 				String value = dataObject.getValue();
 				_dataStore.setPreference(property, value);
+				status.setAttribute(DE.A_NAME,DataStoreResources.model_done);
 			}
 			else if (commandName.equals(DataStoreSchema.C_QUERY_INSTALL))
 			{

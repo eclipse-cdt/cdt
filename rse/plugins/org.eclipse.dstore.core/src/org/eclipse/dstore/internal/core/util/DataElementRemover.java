@@ -19,26 +19,41 @@
  *  David McKnight   (IBM) - [331922] [dstore] enable DataElement recycling
  *  David McKnight   (IBM) - [371401] [dstore][multithread] avoid use of static variables - causes memory leak after disconnect
  *  David McKnight   (IBM)  - [373507] [dstore][multithread] reduce heap memory on disconnect for server
- *  David McKnight   (IBM)  - [385097] [dstore] DataStore spirit mechanism is not enabled
+ *  David McKnight   (IBM) - [385097] [dstore] DataStore spirit mechanism is not enabled
  *  David McKnight   (IBM) - [390037] [dstore] Duplicated items in the System view
+ *  David McKnight   (IBM) - [396440] [dstore] fix issues with the spiriting mechanism and other memory improvements (phase 1)
  *******************************************************************************/
 
 package org.eclipse.dstore.internal.core.util;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 
 import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;
+import org.eclipse.dstore.core.model.DataStoreResources;
 import org.eclipse.dstore.core.model.Handler;
 
 
 public class DataElementRemover extends Handler 
-{
-	private LinkedList _queue;
-	private static int numDisconnected = 0;
-	//private int numGCed = 0;
+{	
+	protected class QueueItem
+	{
+		public DataElement dataElement;
+		public long timeStamp;
+		
+		public QueueItem(DataElement element, long stamp)
+		{
+			dataElement = element;
+			timeStamp = stamp;
+		}
+		
+		public boolean equals(QueueItem item){
+			return item.dataElement == dataElement;
+		}
+	}
+
+	private ArrayList _queue;
 	
 	// The following determine how DataElements are chosen to be removed once they
 	// are in the queue for removal. 	
@@ -52,12 +67,19 @@ public class DataElementRemover extends Handler
 	public static final String INTERVAL_TIME_PROPERTY_NAME = "SPIRIT_INTERVAL_TIME"; //$NON-NLS-1$
 	public MemoryManager _memoryManager;
 	
+	private int _lastLive = 0;
+	private int _lastFree = 0;
+	private long _lastMem = 0;
+	
+	private boolean DEBUG = false; // extra tracing of hashmap when on
+	private long _lastDumpTime = System.currentTimeMillis();
+	
 	public DataElementRemover(DataStore dataStore)
 	{
 		super();
 		_memoryManager = new MemoryManager(dataStore);
 		_dataStore = dataStore;
-		_queue = new LinkedList();
+		_queue = new ArrayList();
 		getTimes();
 		setWaitTime(_intervalTime);
 	}
@@ -84,41 +106,28 @@ public class DataElementRemover extends Handler
 		}
 	}
 	
-	public static void addToRemovedCount()
-	{
-		// not using this anymore - better to get this from DataStore
-	}
-	
-	public static void addToCreatedCount()
-	{
-		// not using this anymore - better to get this from DataStore
-	}
-	
-	public static void addToGCedCount()
-	{
-	}
 
 	
-	public synchronized void addToQueueForRemoval(DataElement element)
-	{
-		synchronized (_queue) 
-		{
-			if(isMemoryThresholdExceeded()) {
-				if(element.isSpirit()) {
-					unmap(element);
+	public synchronized void addToQueueForRemoval(DataElement element){
+		if(isMemoryThresholdExceeded()) {
+			// do immediate clearing of queue since we're low on memory
+			clearQueue(true);
+			return;
+		}
+		if (_dataStore.isDoSpirit() &&
+				!element.isReference() &&
+				!element.isSpirit() &&
+				!element.isDescriptor() && 
+				!element.isDeleted()){
+			//_dataStore.memLog("queuing " + element);
+			QueueItem item = new QueueItem(element, System.currentTimeMillis());			
+			if (!_queue.contains(item)){
+				synchronized (_queue){
+					_queue.add(item);				
 				}
-				
-				// do immediate clearing of queue since we're low on memory
-				clearQueue(true);
-				return;
-			}
-			if (_dataStore.isDoSpirit() && _dataStore == element.getDataStore())
-			{
-				QueueItem item = new QueueItem(element, System.currentTimeMillis());
-				_queue.add(item);
+				notifyInput();
 			}
 		}
-		notifyInput();
 	}
 
 	private boolean isMemoryThresholdExceeded(){
@@ -130,93 +139,79 @@ public class DataElementRemover extends Handler
 		clearQueue(false);
 	}
 	
-	public synchronized void clearQueue(boolean force)
-	{
-		synchronized (_queue)
-		{
-			_dataStore.memLog("           "); //$NON-NLS-1$
-			int disconnected = 0;
-			if (!_dataStore.isDoSpirit())
-			{
-				if (_queue.size() > 0) 
-				{
-					_dataStore.memLog("Clearing queue of size " + _queue.size() + ". DSTORE_SPIRIT_ON not set or set to false."); //$NON-NLS-1$ //$NON-NLS-2$
-					_queue.clear();
-				}
-				_dataStore.memLog("Total heap size: " + Runtime.getRuntime().totalMemory()); //$NON-NLS-1$
-				_dataStore.memLog("Live elements: " + _dataStore.getNumElements()); //$NON-NLS-1$
-				_dataStore.memLog("Recycled elements: " + _dataStore.getNumRecycled()); //$NON-NLS-1$
-				_dataStore.memLog("Elements disconnected so far: " + numDisconnected); //$NON-NLS-1$
-
-
-				// no longer a helpful stat since we no longer use finalize
-				// _dataStore.memLog("DataElements GCed so far: " + numGCed); //$NON-NLS-1$
-				return;
-			}
-			_dataStore.memLog("Total heap size before disconnection: " + Runtime.getRuntime().totalMemory()); //$NON-NLS-1$
-			
-			_dataStore.memLog("Size of queue: " + _queue.size()); //$NON-NLS-1$
-			
-			ArrayList toRefresh = new ArrayList();
-			while (_queue.size() > 0 && (force || System.currentTimeMillis() - ((QueueItem) _queue.getFirst()).timeStamp > _expiryTime))
-			{
-				DataElement toBeDisconnected = ((QueueItem) _queue.removeFirst()).dataElement;
-				if (!toBeDisconnected.isSpirit()) 
-				{
-					toBeDisconnected.setSpirit(true);
-					toBeDisconnected.setUpdated(false);
-					DataElement parent = toBeDisconnected.getParent();
-					if (!toRefresh.contains(parent))
-					{
-						//System.out.println("disconnect parent:"+parent.getName());
-						toRefresh.add(toBeDisconnected.getParent());
-					}
-						//_dataStore.refresh(toBeDisconnected);
-					disconnected++;
-					numDisconnected++;
-				}
-				else
-				{
-					//_dataStore.memLog(toBeDisconnected.toString());
-				}
-				unmap(toBeDisconnected);
-			}
-	
-			_dataStore.refresh(toRefresh);
-			
-			_dataStore.memLog("Disconnected " + disconnected + " DataElements."); //$NON-NLS-1$ //$NON-NLS-2$
-			_dataStore.memLog("Live elements: " + _dataStore.getNumElements()); //$NON-NLS-1$
-			_dataStore.memLog("Recycled elements: " + _dataStore.getNumRecycled()); //$NON-NLS-1$
-			_dataStore.memLog("Elements disconnected so far: " + numDisconnected); //$NON-NLS-1$
-			
-			// no longer a helpful stat since we no longer use finalize
-			// _dataStore.memLog("DataElements GCed so far: " + numGCed); //$NON-NLS-1$
-			System.gc();
-		}
-	}
-	
-	private void unmap(DataElement element)
-	{	 
-		HashMap map = _dataStore.getHashMap();					
-		synchronized (map){
-			map.remove(element.getId());
-			_dataStore.addToRecycled(element);
-		}
-	}
-	
-	
-	protected class QueueItem
-	{
-		public DataElement dataElement;
-		public long timeStamp;
+	private void logMemory(){
+		long mem = Runtime.getRuntime().totalMemory();
+		int liveElements = _dataStore.getNumElements();
+		int freeElements = _dataStore.getNumRecycled();
 		
-		public QueueItem(DataElement element, long stamp)
-		{
-			dataElement = element;
-			timeStamp = stamp;
+		if (mem != _lastMem || liveElements != _lastLive || freeElements != _lastFree){
+			_dataStore.memLog("                                        "); //$NON-NLS-1$
+			_dataStore.memLog("Total heap size: " + mem); //$NON-NLS-1$
+			_dataStore.memLog("Number of live DataStore elements: " + liveElements);  //$NON-NLS-1$
+			_dataStore.memLog("Number of free DataStore elements: " + freeElements);  //$NON-NLS-1$
+			
+			_lastMem = mem;
+			_lastLive = liveElements;
+			_lastFree = freeElements;
 		}
 	}
 	
+	public synchronized void clearQueue(boolean force){
+		if (!_dataStore.isDoSpirit()){ // spiriting disabled
+			if (_queue.size() > 0) {
+				_dataStore.memLog("Clearing queue of size " + _queue.size() + ". DSTORE_SPIRIT_ON not set or set to false."); //$NON-NLS-1$ //$NON-NLS-2$
+				synchronized (_queue){
+					_queue.clear();		
+				}
+			}				
+			logMemory();				
+			return;
+		}
+		else { // spiriting enabled
+			if (_queue.size() > 0){
+				int queueSize = _queue.size();
+
+				ArrayList toRefresh = new ArrayList();
+				long currentTime = System.currentTimeMillis();
+				for (int i = queueSize - 1; i >= 0; i--){
+					QueueItem qitem = null;
+					synchronized (_queue){
+						qitem = (QueueItem)_queue.get(i);
+					}
+					long deltaTime = currentTime - qitem.timeStamp;
+					if (force || (deltaTime > _expiryTime)){
+						DataElement toBeDisconnected = qitem.dataElement;
+						toBeDisconnected.setSpirit(true);
+						toBeDisconnected.setUpdated(false);
+						DataElement parent = toBeDisconnected.getParent();
+						if (!toRefresh.contains(parent)){
+							toRefresh.add(parent);
+						}
+						synchronized (_queue){ // if spirited, dequeue
+							_queue.remove(i);
+						}
+					}
+				}
+				if (!toRefresh.isEmpty()){
+					// refresh parents of spirited items
+					_dataStore.refresh(toRefresh);
+					System.gc();
+				}
+				// print dump of elements on interval
+				if (DEBUG){
+					if (currentTime - _lastDumpTime > 100000){
+						_lastDumpTime = currentTime;
+						printHashmap();											
+					}
+				}
+				
+				logMemory();															
+			}
+		}
+	}
+	
+
+
 	/**
 	 * Runs the handler loop in a thread.
 	 */
@@ -237,6 +232,39 @@ public class DataElementRemover extends Handler
 			}
 			handle();
 		}
+	}
+	
+	// just used for tracing 
+	private void printHashmap(){
+		_dataStore.memLog("                                        "); //$NON-NLS-1$	
+		_dataStore.memLog("------------------------------Current Hashmap--------------------------------:"); //$NON-NLS-1$	
+		HashMap map = _dataStore.getHashMap();
+		synchronized (map){
+			DataElement[] elements = (DataElement[])map.values().toArray(new DataElement[map.size()]);
+			for (int i = 0; i < elements.length; i++){
+				DataElement element = elements[i];
+				if (!element.isDescriptor()){
+					String type = element.getType();
+					if (type.equals(DataStoreResources.model_abstracted_by) || 
+							type.equals(DataStoreResources.model_abstracts) ||
+							type.equals("Environment Variable") ||
+							type.equals("system.property")){
+						// schema and environment stuff
+					}
+					else {
+						if (type.equals(DataStoreResources.model_status)){
+							String value = element.getValue();
+							DataElement parent = element.getParent();
+							_dataStore.memLog("Command: " + parent.getName() + " is " + value);							
+						}		
+						else {
+							_dataStore.memLog(element.toString());
+						}
+					}
+				}
+			}
+		}		
+		_dataStore.memLog("-----------------------------------------------------------------------------:"); //$NON-NLS-1$	
 	}
 }
 

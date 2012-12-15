@@ -2,6 +2,7 @@
 <?eclipse version="3.0"?>
 <plugin>
    <extension-point id="launchConfigAffinity" name="%launchConfigAffinity.name" schema="schema/launchConfigAffinity.exsd"/>
+   <extension-point id="profilingProvider" name="profilingProvider" schema="schema/profilingProvider.exsd"/>
 
      <extension
          point="org.eclipse.debug.core.launchDelegates">
@@ -9,7 +10,7 @@
             id="org.eclipse.cdt.cdi.launch.localCLaunch"
             type="org.eclipse.cdt.launch.applicationLaunchType"
             delegate="org.eclipse.cdt.launch.internal.LocalCDILaunchDelegate"
-            modes="run,debug"
+            modes="run,debug,profile"
             name="%LocalCDTLaunch.name"
             delegateDescription="%LocalCDTLaunch.description"
             sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"
@@ -73,7 +74,7 @@
         <associatedDelegate delegate="org.eclipse.cdt.cdi.launch.localCLaunch"/>
         <placement after="org.eclipse.cdt.cdi.launch.argumentsTab"/>
       </tab>
-      <tab
+       <tab
             id="org.eclipse.cdt.cdi.launch.applicationLaunch.debuggerTab"
             group="org.eclipse.cdt.launch.applicationLaunchTabGroup"
             name="%DebuggerLaunchTab.name"
@@ -220,6 +221,48 @@
         <associatedDelegate delegate="org.eclipse.cdt.cdi.launch.localCLaunch"/>
         <placement after="org.eclipse.debug.ui.environmentTab"/>
       </tab>
+      
+       <!-- Profiling launch tabs-->
+      <tab
+            id="org.eclipse.cdt.cdi.launch.profileApplicationLaunch.mainTab"
+            group="org.eclipse.cdt.launch.applicationProfileLaunchTabGroup"
+            name="%MainLaunchTab.name"
+            class="org.eclipse.cdt.launch.ui.CMainTab">
+        <associatedDelegate delegate="org.eclipse.cdt.cdi.launch.localCLaunch"/>
+      </tab>
+      <tab
+            id="org.eclipse.cdt.cdi.launch.profileApplicationLaunch.argumentsTab"
+            group="org.eclipse.cdt.launch.applicationProfileLaunchTabGroup"
+            name="%ArgumentsLaunchTab.name"
+            class="org.eclipse.cdt.launch.ui.CArgumentsTab">
+        <associatedDelegate delegate="org.eclipse.cdt.cdi.launch.localCLaunch"/>
+        <placement after="org.eclipse.cdt.cdi.launch.mainTab"/>
+      </tab>
+      <tab
+            id="org.eclipse.cdt.cdi.launch.profileApplicationLaunch.environmentTab"
+            group="org.eclipse.cdt.launch.applicationProfileLaunchTabGroup"
+            name="%EnvironmentLaunchTab.name"
+            class="org.eclipse.debug.ui.EnvironmentTab">
+        <associatedDelegate delegate="org.eclipse.cdt.cdi.launch.localCLaunch"/>
+        <placement after="org.eclipse.cdt.cdi.launch.argumentsTab"/>
+      </tab>
+      <tab
+            id="org.eclipse.cdt.cdi.launch.profileApplicationLaunch.commonTab"
+            group="org.eclipse.cdt.launch.applicationProfileLaunchTabGroup"
+            name="%CommonLaunchTab.name"
+            class="org.eclipse.debug.ui.CommonTab">
+        <associatedDelegate delegate="org.eclipse.cdt.cdi.launch.localCLaunch"/>
+        <placement after="org.eclipse.debug.ui.environmentTab"/>
+      </tab>
+            <tab
+            id="org.eclipse.cdt.cdi.launch.applicationLaunch.profilingTab"
+            group="org.eclipse.cdt.launch.applicationProfileLaunchTabGroup"
+            name="%ProfilingLaunchTab.name"
+            class="org.eclipse.cdt.launch.ui.CProfilingTab">
+        <associatedDelegate delegate="org.eclipse.cdt.cdi.launch.localCLaunch"/>
+        <placement after="org.eclipse.cdt.cdi.launch.applicationLaunch.commonTab"/>
+      </tab>
+      
    </extension>
    <extension
          point="org.eclipse.debug.core.statusHandlers">

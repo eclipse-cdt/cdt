@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 QNX Software Systems and others.
+ * Copyright (c) 2005, 2011, 2012 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     QNX Software Systems - Initial API and implementation
  *     Ken Ryall (Nokia) - bug 178731
  *     Ken Ryall (Nokia) - bug 246201
+ *     Jeff Johnston - add profiling support
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.launch;
 
@@ -29,6 +30,7 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
+import org.eclipse.cdt.debug.core.ICDTProfileDelegate;
 import org.eclipse.cdt.debug.core.ICDebugConfiguration;
 import org.eclipse.cdt.debug.core.executables.Executable;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
@@ -39,6 +41,8 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
@@ -70,6 +74,9 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.dialogs.TwoPaneElementSelector;
 
 public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
+
+	private static final String PROFILING_PROVIDER_EXTENSION_NAMESPACE = "org.eclipse.cdt.launch"; //$NON-NLS-1$
+	private static final String PROFILING_PROVIDER_EXTENSION_ID = "profilingProvider"; //$NON-NLS-1$
 
 	@Override
 	public void launch(IEditorPart editor, String mode) {
@@ -207,6 +214,32 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 				wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_BUILD_CONFIG_ID, buildConfigID);				
 			}
 
+			ICDTProfileDelegate profileDelegate = null;
+			IExtensionPoint extPoint = Platform.getExtensionRegistry()
+					.getExtensionPoint(PROFILING_PROVIDER_EXTENSION_NAMESPACE, PROFILING_PROVIDER_EXTENSION_ID);
+			IConfigurationElement[] configs = extPoint.getConfigurationElements();
+			for (IConfigurationElement configElement : configs) {
+				if (configElement.getName().equals("provider")) { //$NON-NLS-1$
+					try {
+						Object obj = configElement
+								.createExecutableExtension("delegate"); //$NON-NLS-1$
+						if (obj instanceof ICDTProfileDelegate) {
+							profileDelegate = (ICDTProfileDelegate)obj;
+							break;
+						}
+					} catch (CoreException e) {
+						// continue, perhaps another configuration will succeed
+					}
+				}
+			}
+			// Set any profiling specific attributes from the extension.  We do this now so that
+			// in the Launch Configuration Delegate we can determine the case where an old
+			// C Run/Debug launch configuration is being used for the first time and so we must
+			// set the defaults vs an existing C Run/Debug/Profile launch configuration where the
+			// user may have changed settings (we therefore don't want to reset the defaults).
+			if (profileDelegate != null)
+				profileDelegate.setDefaultProfileLaunchAttributes(wc);
+
 			// Load up the debugger page to set the defaults. There should probably be a separate
 			// extension point for this.
 			ICDebuggerPage page = CDebugUIPlugin.getDefault().getDebuggerPage(debugConfig.getID());
@@ -287,6 +320,8 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 			return LaunchMessages.getString("CApplicationLaunchShortcut.ChooseConfigToDebug");  //$NON-NLS-1$
 		} else if (mode.equals(ILaunchManager.RUN_MODE)) {
 			return LaunchMessages.getString("CApplicationLaunchShortcut.ChooseConfigToRun");  //$NON-NLS-1$
+		} else if (mode.equals(ILaunchManager.PROFILE_MODE)) {
+			return LaunchMessages.getString("CApplicationLaunchShortcut.ChooseConfigToProfile");  //$NON-NLS-1$
 		}
 		return LaunchMessages.getString("CApplicationLaunchShortcut.Invalid_launch_mode_1"); //$NON-NLS-1$
 	}
@@ -320,6 +355,8 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 			return LaunchMessages.getString("CApplicationLaunchShortcut.ChooseLaunchConfigToDebug");  //$NON-NLS-1$
 		} else if (mode.equals(ILaunchManager.RUN_MODE)) {
 			return LaunchMessages.getString("CApplicationLaunchShortcut.ChooseLaunchConfigToRun");  //$NON-NLS-1$
+		} else if (mode.equals(ILaunchManager.PROFILE_MODE)) {
+			return LaunchMessages.getString("CApplicationLaunchShortcut.ChooseLaunchConfigToProfile");  //$NON-NLS-1$
 		}
 		return LaunchMessages.getString("CApplicationLaunchShortcut.Invalid_launch_mode_2"); //$NON-NLS-1$
 	}
@@ -381,6 +418,8 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 			return LaunchMessages.getString("CApplicationLaunchShortcut.ChooseLocalAppToDebug");  //$NON-NLS-1$
 		} else if (mode.equals(ILaunchManager.RUN_MODE)) {
 			return LaunchMessages.getString("CApplicationLaunchShortcut.ChooseLocalAppToRun");  //$NON-NLS-1$
+		} else if (mode.equals(ILaunchManager.PROFILE_MODE)) {
+			return LaunchMessages.getString("CApplicationLaunchShortcut.ChooseLocalAppToProfile");  //$NON-NLS-1$
 		}
 		return LaunchMessages.getString("CApplicationLaunchShortcut.Invalid_launch_mode_3"); //$NON-NLS-1$
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 QNX Software Systems and others.
+ * Copyright (c) 2005, 2012 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
+ * Red Hat Inc. - add time tab image
  *******************************************************************************/
 package org.eclipse.cdt.launch.internal.ui;
 
@@ -39,12 +40,14 @@ public class LaunchImages {
 	public static String IMG_VIEW_ENVIRONMENT_TAB = NAME_PREFIX + "environment_tab.gif"; //$NON-NLS-1$
 	public static String IMG_VIEW_DEBUGGER_TAB = NAME_PREFIX + "debugger_tab.gif"; //$NON-NLS-1$
 	public static String IMG_VIEW_SOURCE_TAB = NAME_PREFIX + "source_tab.gif"; //$NON-NLS-1$
+	public static String IMG_VIEW_TIME_TAB = NAME_PREFIX + "time_tab.gif"; //$NON-NLS-1$
 
 	public static final ImageDescriptor DESC_TAB_MAIN= createManaged(T_TABS, IMG_VIEW_MAIN_TAB);
 	public static final ImageDescriptor DESC_TAB_ARGUMENTS = createManaged(T_TABS, IMG_VIEW_ARGUMENTS_TAB);
 	public static final ImageDescriptor DESC_TAB_ENVIRONMENT = createManaged(T_TABS, IMG_VIEW_ENVIRONMENT_TAB);
 	public static final ImageDescriptor DESC_TAB_DEBUGGER = createManaged(T_TABS, IMG_VIEW_DEBUGGER_TAB);
 	public static final ImageDescriptor DESC_TAB_SOURCE = createManaged(T_TABS, IMG_VIEW_SOURCE_TAB);
+	public static final ImageDescriptor DESC_TAB_TIME = createManaged(T_TABS, IMG_VIEW_TIME_TAB);
 
 	public static String IMG_OBJS_EXEC= NAME_PREFIX + "exec_obj.gif"; //$NON-NLS-1$
 	public static final ImageDescriptor DESC_OBJS_EXEC = createManaged(T_OBJS, IMG_OBJS_EXEC);

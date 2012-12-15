@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 QNX Software Systems and others.
+ * Copyright (c) 2004, 2010, 2012 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  * QNX Software Systems - Initial API and implementation
  * Anton Leherbauer (Wind River Systems) - bugs 205108, 212632, 224187
  * Ken Ryall (Nokia) - bug 188116
+ * Red Hat Inc. - add profile provider support
  *******************************************************************************/
 package org.eclipse.cdt.launch.internal; 
 
@@ -18,15 +19,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.core.IProcessInfo;
 import org.eclipse.cdt.core.IProcessList;
-import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.ICDIDebugger;
 import org.eclipse.cdt.debug.core.ICDIDebugger2;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
+import org.eclipse.cdt.debug.core.ICDTProfileDelegate;
 import org.eclipse.cdt.debug.core.ICDebugConfiguration;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
@@ -39,11 +41,14 @@ import org.eclipse.cdt.utils.pty.PTY;
 import org.eclipse.cdt.utils.spawner.ProcessFactory;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.debug.core.DebugPlugin;
@@ -73,6 +78,9 @@ public class LocalCDILaunchDelegate extends AbstractCLaunchDelegate {
 		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
 			launchDebugger(config, launch, monitor);
 		}
+		if (mode.equals(ILaunchManager.PROFILE_MODE)) {
+			profileLocalApplication(config, launch, monitor);
+		}
 	}
 
 	private void runLocalApplication(ILaunchConfiguration config, ILaunch launch, IProgressMonitor monitor) throws CoreException {
@@ -97,6 +105,69 @@ public class LocalCDILaunchDelegate extends AbstractCLaunchDelegate {
 			Process process = exec(commandArray, getEnvironment(config), wd, usePty);
 			monitor.worked(6);
 			DebugPlugin.newProcess(launch, process, renderProcessLabel(commandArray[0]));
+		} finally {
+			monitor.done();
+		}		
+	}
+	
+	private void profileLocalApplication(ILaunchConfiguration config, ILaunch launch, IProgressMonitor monitor) throws CoreException {
+		monitor.beginTask(LaunchMessages.LocalCDILaunchDelegate_11, 10); 
+		if (monitor.isCanceled()) {
+			return;
+		}
+		monitor.worked(1);
+		// Use the profilingProvider extension to find a delegate to launch.
+		ICDTProfileDelegate delegate = null;
+		IExtensionPoint extPoint = Platform.getExtensionRegistry()
+				.getExtensionPoint(LaunchUIPlugin.PLUGIN_ID,
+						"profilingProvider"); //$NON-NLS-1$
+		IConfigurationElement[] configs = extPoint.getConfigurationElements();
+		for (IConfigurationElement configElement : configs) {
+			if (configElement.getName().equals("provider")) { //$NON-NLS-1$
+				try {
+					Object obj = configElement
+							.createExecutableExtension("delegate"); //$NON-NLS-1$
+					if (obj instanceof ICDTProfileDelegate) {
+						delegate = (ICDTProfileDelegate)obj;
+						break;
+					}
+				} catch (CoreException e) {
+					// continue, perhaps another configuration will succeed
+				}
+			}
+		}
+
+		try {
+			if (delegate != null) {
+				// Verify that we have set a profiling provider for this configuration.
+				// In the case where an old configuration is being used either prior to the
+				// profiling extension being available or before any profilingProvider contributor
+				// is installed, it will not have the profiling attributes set up.  We can recognize this 
+				// initialize now.
+				if (config.getAttribute("org.eclipse.cdt.launch.profilingProvider", "").equals("")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					ILaunchConfigurationWorkingCopy wc = config.getWorkingCopy();
+					delegate.setDefaultProfileLaunchAttributes(wc);
+					config = wc.doSave();
+				}
+				// Launch the profiling delegate from the extension.
+				delegate.launch(config, ILaunchManager.PROFILE_MODE, launch, monitor);
+			} else { // run with no profiling performed
+				IPath exePath = CDebugUtils.verifyProgramPath(config);
+				File wd = getWorkingDirectory(config);
+				if (wd == null) {
+					wd = new File(System.getProperty("user.home", ".")); //$NON-NLS-1$ //$NON-NLS-2$
+				}
+				String arguments[] = getProgramArgumentsArray(config);
+				ArrayList command = new ArrayList(1 + arguments.length);
+				command.add(exePath.toOSString());
+				command.addAll(Arrays.asList(arguments));
+				String[] commandArray = (String[])command.toArray(new String[command.size()]);
+				boolean usePty = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_USE_TERMINAL, ICDTLaunchConfigurationConstants.USE_TERMINAL_DEFAULT);
+				monitor.worked(2);
+				Process process = exec(commandArray, getEnvironment(config), wd, usePty);
+				monitor.worked(6);
+				DebugPlugin.newProcess(launch, process, renderProcessLabel(commandArray[0]));
+			}
 		} finally {
 			monitor.done();
 		}		

@@ -1,0 +1,126 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.cdt.launch" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.cdt.launch" id="profilingProvider" name="CDT Local Profiling Provider"/>
+      </appInfo>
+      <documentation>
+         This extension point allows a third-party plug-in to provide profiling support for Local C/C++ Applications.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="provider"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="provider">
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The id of the provider.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="delegate" type="string">
+            <annotation>
+               <documentation>
+                  The profiling launch delegate which also implements ICDTProfileDelegate and provides a method to set the default profiling attributes for the launch configuration when invoking a shortcut.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.cdt.launch.AbstractCLaunchDelegate:org.eclipse.cdt.debug.core.ICDTProfileDelegate"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="tab" type="string">
+            <annotation>
+               <documentation>
+                  Class that returns a set of tabs to use in profiling configuration.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.cdt.launch.ui.CLaunchConfigurationTab:"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         8.2.0
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         &lt;extension
+      point=&quot;org.eclipse.cdt.launch.profileProvider&quot;&gt;
+   &lt;provider
+      id=&quot;com.acme.profileProvider&quot;
+      delegate=&quot;com.acme.ProfileDelegate&quot;
+      tabgroup=&quot;com.acme.ProfileTabGroup&quot;&gt;
+   &lt;/provider&gt;
+&lt;/extension&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiinfo"/>
+      </appInfo>
+      <documentation>
+         [Enter API information here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         [Enter information about supplied implementation of this extension point.]
+      </documentation>
+   </annotation>
+
+
+</schema>

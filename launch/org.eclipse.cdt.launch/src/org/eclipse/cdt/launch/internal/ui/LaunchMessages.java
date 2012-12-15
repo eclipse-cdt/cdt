@@ -93,6 +93,8 @@ public class LaunchMessages extends NLS {
 	public static String CMainTab_Workspace_settings_button_label;
 	public static String CMainTab_Workspace_settings_button_tooltip;
 	public static String CMainTab_Workspace_settings_link_label;
+	public static String CProfilingTab_Profiling;
+	public static String CProfilingTab_No_Profiling_Providers;
 	public static String CDebuggerTab_Advanced_Options_Dialog_Title;
 	public static String CDebuggerTab_Stop_at_main_on_startup;
 	public static String CDebuggerTab_Automatically_track_values_of;
@@ -152,6 +154,9 @@ public class LaunchMessages extends NLS {
 	public static String LocalCDILaunchDelegate_8;
 	public static String LocalCDILaunchDelegate_9;
 	public static String LocalCDILaunchDelegate_10;
+	public static String LocalCDILaunchDelegate_11;
+	public static String LocalCDILaunchDelegate_NoProfilingProvider_Title;
+	public static String LocalCDILaunchDelegate_NoProfilingProvider_Message;
 	public static String MultiLaunchConfigurationDelegate_0;
 	public static String MultiLaunchConfigurationDelegate_Cannot;
 	public static String MultiLaunchConfigurationDelegate_Loop;

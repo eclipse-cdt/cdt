@@ -261,7 +261,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 					toOSLocation("/usr/include"),
 					toOSLocation("/opt/gnome/include"),
 					buildCWD.append("C:\\home\\tester/include").toOSString(), // added on Unix being relative path
-					toOSLocation("C:\\home\\tester/include"),
+					toOSString("Sub Config/C:\\home\\tester/include"),
 					// relative paths make 2 entries
 					buildCWD.append("../includes").toOSString(),
 					toOSString("includes"),

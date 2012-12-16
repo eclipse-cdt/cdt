@@ -1841,11 +1841,10 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 //				}
 				
 				if(!buildPath.isAbsolute()){
-					buildPath = project.getFullPath().append(buildPath);
 					IStringVariableManager mngr = VariablesPlugin.getDefault().getStringVariableManager();
-	
-					result = buildPath.toString();
-					result = mngr.generateVariableExpression("workspace_loc", result); //$NON-NLS-1$
+					// build dir may not exist yet and non-existent paths will resolve to empty string by VariablesPlugin
+					// so append relative part outside of expression, i.e. ${workspace_loc:/Project}/BuildDir
+					result = mngr.generateVariableExpression("workspace_loc", project.getFullPath().toString()) + Path.SEPARATOR + buildPath.toString(); //$NON-NLS-1$
 				} else {
 					result = buildPath.toString();
 				}

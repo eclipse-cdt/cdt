@@ -148,7 +148,7 @@ public class LanguageSettingsScannerInfoProvider implements IScannerInfoProvider
 	 */
 	private static IPath getBuildCWD(ICConfigurationDescription cfgDescription) {
 		IPath buildCWD = cfgDescription.getBuildSetting().getBuilderCWD();
-		if (buildCWD==null) {
+		if (buildCWD == null) {
 			IProject project = cfgDescription.getProjectDescription().getProject();
 			buildCWD = project.getLocation();
 		} else {
@@ -178,7 +178,7 @@ public class LanguageSettingsScannerInfoProvider implements IScannerInfoProvider
 	 * Resolve location to file system location in a configuration context.
 	 * Resolving includes replacing build/environment variables with values, making relative path absolute etc.
 	 *
-	 * @param location - location to resolve. If relative, it is taken to be rooted in build working directory.
+	 * @param location - location to resolve. If relative, it is taken to be rooted in project directory.
 	 * @param cfgDescription - the configuration context.
 	 * @return resolved file system location.
 	 */
@@ -192,24 +192,35 @@ public class LanguageSettingsScannerInfoProvider implements IScannerInfoProvider
 			CCorePlugin.log(e);
 		}
 		// use OS file separators (i.e. '\' on Windows)
-		if (java.io.File.separatorChar != '/') {
-			location = location.replace('/', java.io.File.separatorChar);
+		if (java.io.File.separatorChar != IPath.SEPARATOR) {
+			location = location.replace(IPath.SEPARATOR, java.io.File.separatorChar);
 		}
 
-		// note that we avoid using org.eclipse.core.runtime.Path for manipulations being careful
-		// to preserve "../" segments and not let collapsing them which is not correct for symbolic links.
-		Path locPath = new Path(location);
-		if (locPath.isAbsolute() && locPath.getDevice()==null) {
+		IPath locPath = new Path(location);
+		if (locPath.isAbsolute() && locPath.getDevice() == null) {
+			IPath buildCWD = getBuildCWD(cfgDescription);
 			// prepend device (C:) for Windows
-			IPath buildCWD = getBuildCWD(cfgDescription);
 			String device = buildCWD.getDevice();
-			if (device!=null)
+			if (device != null) {
+				// note that we avoid using org.eclipse.core.runtime.Path for manipulations being careful
+				// to preserve "../" segments and not let collapsing them which is not correct for symbolic links.
 				location = device + location;
+			}
 		}
+
 		if (!locPath.isAbsolute()) {
-			// consider relative path to be from build working directory
-			IPath buildCWD = getBuildCWD(cfgDescription);
-			location = buildCWD.toOSString() + locPath;
+			ICProjectDescription projectDescription = cfgDescription.getProjectDescription();
+			if (projectDescription != null) {
+				IProject project = projectDescription.getProject();
+				if (project != null) {
+					IPath projectLocation = project.getLocation();
+					if (projectLocation != null) {
+						// again, we avoid using org.eclipse.core.runtime.Path for manipulations being careful
+						// to preserve "../" segments and not let collapsing them which is not correct for symbolic links.
+						location = projectLocation.addTrailingSeparator().toOSString() + locPath.toOSString();
+					}
+				}
+			}
 		}
 		return location;
 	}
@@ -222,7 +233,7 @@ public class LanguageSettingsScannerInfoProvider implements IScannerInfoProvider
 	 * @param cfgDescription - configuration description for resolving entries.
 	 * @return array of the locations.
 	 */
-	private String[] convertToLocations(LinkedHashSet<ICLanguageSettingEntry> entriesPath, ICConfigurationDescription cfgDescription){
+	private String[] convertToLocations(LinkedHashSet<ICLanguageSettingEntry> entriesPath, ICConfigurationDescription cfgDescription) {
 		List<String> locations = new ArrayList<String>(entriesPath.size());
 		for (ICLanguageSettingEntry entry : entriesPath) {
 			ACPathEntry entryPath = (ACPathEntry)entry;
@@ -261,7 +272,7 @@ public class LanguageSettingsScannerInfoProvider implements IScannerInfoProvider
 							IPath unresolvedPath = entryPath.getLocation();
 							if (!unresolvedPath.isAbsolute()) {
 								IPath expandedPath = expandVariables(unresolvedPath, cfgDescription);
-								if (!expandedPath.isAbsolute()) {
+								if (!expandedPath.isEmpty() && !expandedPath.isAbsolute()) {
 									locations.add(expandedPath.toOSString());
 								}
 							}

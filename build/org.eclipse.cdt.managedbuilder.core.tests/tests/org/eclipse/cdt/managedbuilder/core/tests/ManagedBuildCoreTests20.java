@@ -204,7 +204,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 	/**
 	 * Convert path to OS specific representation
 	 */
-	private String toOSString(String path) {
+	private String toOSLocation(String path) {
 		File file = new File(path);
 		try {
 			path = file.getCanonicalPath();
@@ -213,7 +213,14 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		
 		return path;
 	}
-	
+
+	/**
+	 * Convert path to OS specific representation
+	 */
+	private String toOSString(String path) {
+		return new Path(path).toOSString();
+	}
+
 	/**
 	 * The purpose of this test is to exercise the build path info interface.
 	 * To get to that point, a new project/config has to be created in the test
@@ -240,24 +247,24 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		if (new Path("C:\\home\\tester/include").isAbsolute()) {
 			// Windows
 			expectedPaths = new String[] {
-					toOSString("/usr/include"),
-					toOSString("/opt/gnome/include"),
-					toOSString("C:\\home\\tester/include"),
+					toOSLocation("/usr/include"),
+					toOSLocation("/opt/gnome/include"),
+					toOSLocation("C:\\home\\tester/include"),
 					// relative paths make 2 entries
-					project.getLocation().append("includes").toOSString(),
-					"includes", // FIXME this is incorrect, the original entry set via extension point is "../includes"
+					buildCWD.append("../includes").toOSString(),
+					toOSString("includes"),
 					"/usr/gnu/include", // Not converted to OS string due to being flagged as ICSettingEntry.RESOLVED
 			};
 		} else {
 			// Unix
 			expectedPaths = new String[] {
-					toOSString("/usr/include"),
-					toOSString("/opt/gnome/include"),
+					toOSLocation("/usr/include"),
+					toOSLocation("/opt/gnome/include"),
+					buildCWD.append("C:\\home\\tester/include").toOSString(), // added on Unix being relative path
+					toOSLocation("C:\\home\\tester/include"),
 					// relative paths make 2 entries
-					buildCWD.append("C:\\home\\tester/include").toOSString(),
-					"C:\\home\\tester/include",
-					project.getLocation().append("includes").toOSString(),
-					"includes", // FIXME this is incorrect, the original entry set via extension point is "../includes"
+					buildCWD.append("../includes").toOSString(),
+					toOSString("includes"),
 					"/usr/gnu/include", // Not converted to OS string due to being flagged as ICSettingEntry.RESOLVED
 			};
 		}

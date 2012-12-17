@@ -250,8 +250,9 @@ public class ManagedBuildCoreTests20 extends TestCase {
 					toOSLocation("/usr/include"),
 					toOSLocation("/opt/gnome/include"),
 					toOSLocation("C:\\home\\tester/include"),
-					// relative paths make 2 entries
-					buildCWD.append("../includes").toOSString(),
+					// relative paths from MBS will make 3 entries
+					project.getLocation().append("includes").toOSString(),
+					buildCWD.append("includes").toOSString(),
 					toOSString("includes"),
 					"/usr/gnu/include", // Not converted to OS string due to being flagged as ICSettingEntry.RESOLVED
 			};
@@ -260,10 +261,14 @@ public class ManagedBuildCoreTests20 extends TestCase {
 			expectedPaths = new String[] {
 					toOSLocation("/usr/include"),
 					toOSLocation("/opt/gnome/include"),
-					buildCWD.append("C:\\home\\tester/include").toOSString(), // added on Unix being relative path
+					// on unix "C:\\home\\tester/include" is relative path
+					// looks like nonsense but has to be this way as MBS converts entry to keep "Sub Config/C:\\home\\tester/include" in its storage
+					project.getLocation().append("Sub Config/C:\\home\\tester/include").toOSString(),
+					buildCWD.append("Sub Config/C:\\home\\tester/include").toOSString(),
 					toOSString("Sub Config/C:\\home\\tester/include"),
-					// relative paths make 2 entries
-					buildCWD.append("../includes").toOSString(),
+					// relative paths from MBS will make 3 entries
+					project.getLocation().append("includes").toOSString(),
+					buildCWD.append("includes").toOSString(),
 					toOSString("includes"),
 					"/usr/gnu/include", // Not converted to OS string due to being flagged as ICSettingEntry.RESOLVED
 			};

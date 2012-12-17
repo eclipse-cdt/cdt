@@ -30,10 +30,10 @@ import org.eclipse.cdt.core.parser.ExtendedScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoChangeListener;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
-import org.eclipse.cdt.core.settings.model.ACPathEntry;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICMacroEntry;
+import org.eclipse.cdt.core.settings.model.ICPathEntry;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
@@ -129,17 +129,15 @@ public class LanguageSettingsScannerInfoProvider implements IScannerInfoProvider
 		return new ExtendedScannerInfo(definedMacros, includePaths, macroFiles, includeFiles, includePathsLocal);
 	}
 
-	private IPath expandVariables(IPath path, ICConfigurationDescription cfgDescription) {
-		ICdtVariableManager varManager = CCorePlugin.getDefault().getCdtVariableManager();
-		String pathStr = path.toString();
+	private String expandVariables(String pathStr, ICConfigurationDescription cfgDescription) {
 		try {
+			ICdtVariableManager varManager = CCorePlugin.getDefault().getCdtVariableManager();
 			pathStr = varManager.resolveValue(pathStr, "", null, cfgDescription); //$NON-NLS-1$
-		} catch (CdtVariableException e) {
+		} catch (Exception e) {
 			// Swallow exceptions but also log them
 			CCorePlugin.log(e);
 		}
-		IPath resolvedLoc = new Path(pathStr);
-		return resolvedLoc;
+		return pathStr;
 	}
 
 	/**
@@ -178,7 +176,7 @@ public class LanguageSettingsScannerInfoProvider implements IScannerInfoProvider
 	 * Resolve location to file system location in a configuration context.
 	 * Resolving includes replacing build/environment variables with values, making relative path absolute etc.
 	 *
-	 * @param location - location to resolve. If relative, it is taken to be rooted in project directory.
+	 * @param location - location to resolve. If relative, it is taken to be rooted in build working directory.
 	 * @param cfgDescription - the configuration context.
 	 * @return resolved file system location.
 	 */
@@ -209,20 +207,25 @@ public class LanguageSettingsScannerInfoProvider implements IScannerInfoProvider
 		}
 
 		if (!locPath.isAbsolute()) {
-			ICProjectDescription projectDescription = cfgDescription.getProjectDescription();
-			if (projectDescription != null) {
-				IProject project = projectDescription.getProject();
-				if (project != null) {
-					IPath projectLocation = project.getLocation();
-					if (projectLocation != null) {
-						// again, we avoid using org.eclipse.core.runtime.Path for manipulations being careful
-						// to preserve "../" segments and not let collapsing them which is not correct for symbolic links.
-						location = projectLocation.addTrailingSeparator().toOSString() + locPath.toOSString();
-					}
-				}
-			}
+			// consider relative path to be from build working directory
+			IPath buildCWD = getBuildCWD(cfgDescription);
+			// again, we avoid using org.eclipse.core.runtime.Path for manipulations being careful
+			// to preserve "../" segments and not let collapsing them which is not correct for symbolic links.
+			location = buildCWD.addTrailingSeparator().toOSString() + location;
 		}
 		return location;
+	}
+
+	/**
+	 * Convert path delimiters to OS representation avoiding using org.eclipse.core.runtime.Path
+	 * being careful to preserve "../" segments and not let collapsing them which is not correct for symbolic links.
+	 */
+	private String toOSString(String loc) {
+		// use OS file separators (i.e. '\' on Windows)
+		if (java.io.File.separatorChar != IPath.SEPARATOR) {
+			loc = loc.replace(IPath.SEPARATOR, java.io.File.separatorChar);
+		}
+		return loc;
 	}
 
 	/**
@@ -236,7 +239,7 @@ public class LanguageSettingsScannerInfoProvider implements IScannerInfoProvider
 	private String[] convertToLocations(LinkedHashSet<ICLanguageSettingEntry> entriesPath, ICConfigurationDescription cfgDescription) {
 		List<String> locations = new ArrayList<String>(entriesPath.size());
 		for (ICLanguageSettingEntry entry : entriesPath) {
-			ACPathEntry entryPath = (ACPathEntry)entry;
+			ICPathEntry entryPath = (ICPathEntry)entry;
 			if (entryPath.isValueWorkspacePath()) {
 				ICLanguageSettingEntry[] entries = new ICLanguageSettingEntry[] {entry};
 				if (!entry.isResolved()) {
@@ -244,7 +247,7 @@ public class LanguageSettingsScannerInfoProvider implements IScannerInfoProvider
 				}
 
 				for (ICLanguageSettingEntry resolved : entries) {
-					IPath loc = ((ACPathEntry) resolved).getLocation();
+					IPath loc = ((ICPathEntry) resolved).getLocation();
 					if (loc != null) {
 						if (checkBit(resolved.getFlags(), ICSettingEntry.FRAMEWORKS_MAC)) {
 							// handle frameworks, see IScannerInfo.getIncludePaths()
@@ -256,24 +259,25 @@ public class LanguageSettingsScannerInfoProvider implements IScannerInfoProvider
 					}
 				}
 			} else {
-				String locStr = entryPath.getName();
+				// have to use getName() rather than getLocation() to avoid collapsing ".."
+				String loc = entryPath.getName();
 				if (entryPath.isResolved()) {
-					locations.add(locStr);
+					locations.add(loc);
 				} else {
-					locStr = resolveEntry(locStr, cfgDescription);
-					if (locStr!=null) {
+					loc = resolveEntry(loc, cfgDescription);
+					if (loc != null) {
 						if (checkBit(entryPath.getFlags(), ICSettingEntry.FRAMEWORKS_MAC)) {
 							// handle frameworks, see IScannerInfo.getIncludePaths()
-							locations.add(locStr+FRAMEWORK_HEADERS_INCLUDE);
-							locations.add(locStr+FRAMEWORK_PRIVATE_HEADERS_INCLUDE);
+							locations.add(toOSString(loc + FRAMEWORK_HEADERS_INCLUDE));
+							locations.add(toOSString(loc + FRAMEWORK_PRIVATE_HEADERS_INCLUDE));
 						} else {
-							locations.add(locStr);
-							// add relative paths again for indexer to resolve from source file location
-							IPath unresolvedPath = entryPath.getLocation();
-							if (!unresolvedPath.isAbsolute()) {
-								IPath expandedPath = expandVariables(unresolvedPath, cfgDescription);
-								if (!expandedPath.isEmpty() && !expandedPath.isAbsolute()) {
-									locations.add(expandedPath.toOSString());
+							locations.add(toOSString(loc));
+							String unresolvedPath = entryPath.getName();
+							if (!new Path(unresolvedPath).isAbsolute()) {
+								// add relative paths again for indexer to resolve from source file location
+								String expandedPath = expandVariables(unresolvedPath, cfgDescription);
+								if (!expandedPath.isEmpty() && !new Path(expandedPath).isAbsolute()) {
+									locations.add(toOSString(expandedPath));
 								}
 							}
 						}

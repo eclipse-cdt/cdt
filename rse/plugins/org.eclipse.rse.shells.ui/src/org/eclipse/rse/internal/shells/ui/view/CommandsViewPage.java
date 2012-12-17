@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2012 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -22,6 +22,7 @@
  * David McKnight (IBM) - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * Radoslav Gerganov (ProSyst) - [181563] Fix hardcoded Ctrl+Space for remote shell content assist
  * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
+ * David McKnight   (IBM)        - [396766] [shells] Eclipse up key events no longer contain "enter" so shell commands aren't sent
  ********************************************************************************/
 
 package org.eclipse.rse.internal.shells.ui.view;
@@ -322,6 +323,7 @@ FocusListener
 		idata.heightHint = 22;
 		_inputEntry.getTextWidget().setLayoutData(idata);
 		_inputEntry.getTextWidget().addListener(SWT.KeyUp, _keyListener);
+		_inputEntry.getTextWidget().addListener(SWT.KeyDown, _keyListener);
 
 		enableEntry(false);
 

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.internal.ui.disassembly.actions;
 
+import org.eclipse.cdt.debug.internal.ui.CDebugUIUtils;
 import org.eclipse.cdt.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.debug.ui.breakpoints.IToggleBreakpointsTargetCExtension;
@@ -31,6 +32,7 @@ import org.eclipse.jface.text.source.IVerticalRulerInfo;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.swt.SWT;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
@@ -41,7 +43,8 @@ public class AddBreakpointRulerAction extends AbstractDisassemblyBreakpointRuler
     
 	protected AddBreakpointRulerAction(IDisassemblyPart disassemblyPart, IVerticalRulerInfo rulerInfo) {
 		super(disassemblyPart, rulerInfo);
-		setText(DisassemblyMessages.Disassembly_action_AddBreakpoint_label);
+		setText(DisassemblyMessages.Disassembly_action_AddBreakpoint_label + "\t" +  //$NON-NLS-1$
+		    CDebugUIUtils.formatKeyBindingString(SWT.MOD1, DisassemblyMessages.Disassembly_action_ToggleBreakpoint_accelerator));
 	}
 	
 	/*

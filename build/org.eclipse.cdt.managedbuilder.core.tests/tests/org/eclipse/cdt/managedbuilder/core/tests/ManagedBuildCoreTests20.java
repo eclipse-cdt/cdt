@@ -51,9 +51,11 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 
 /*
@@ -202,7 +204,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 	/**
 	 * Convert path to OS specific representation
 	 */
-	private String toOSString(String path) {
+	private String toOSLocation(String path) {
 		File file = new File(path);
 		try {
 			path = file.getCanonicalPath();
@@ -211,7 +213,14 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		
 		return path;
 	}
-	
+
+	/**
+	 * Convert path to OS specific representation
+	 */
+	private String toOSString(String path) {
+		return new Path(path).toOSString();
+	}
+
 	/**
 	 * The purpose of this test is to exercise the build path info interface.
 	 * To get to that point, a new project/config has to be created in the test
@@ -232,21 +241,44 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		}
 
 		//These are the expected path settings
-		final String[] expectedPaths = {
-				toOSString("/usr/include"),
-				toOSString("/opt/gnome/include"),
-				toOSString("C:\\home\\tester/include"),
-				// relative path makes 2 entries
-				project.getLocation().append("includes").toOSString(),
-				"includes",
-				"/usr/gnu/include", // This one set to ICSettingEntry.RESOLVED
-		};
+		IPath buildCWD = project.getLocation().append("Sub Config");
+
+		final String[] expectedPaths;
+		if (new Path("C:\\home\\tester/include").isAbsolute()) {
+			// Windows
+			expectedPaths = new String[] {
+					toOSLocation("/usr/include"),
+					toOSLocation("/opt/gnome/include"),
+					toOSLocation("C:\\home\\tester/include"),
+					// relative paths from MBS will make 3 entries
+					project.getLocation().append("includes").toOSString(),
+					buildCWD.append("includes").toOSString(),
+					toOSString("includes"),
+					"/usr/gnu/include", // Not converted to OS string due to being flagged as ICSettingEntry.RESOLVED
+			};
+		} else {
+			// Unix
+			expectedPaths = new String[] {
+					toOSLocation("/usr/include"),
+					toOSLocation("/opt/gnome/include"),
+					// on unix "C:\\home\\tester/include" is relative path
+					// looks like nonsense but has to be this way as MBS converts entry to keep "Sub Config/C:\\home\\tester/include" in its storage
+					project.getLocation().append("Sub Config/C:\\home\\tester/include").toOSString(),
+					buildCWD.append("Sub Config/C:\\home\\tester/include").toOSString(),
+					toOSString("Sub Config/C:\\home\\tester/include"),
+					// relative paths from MBS will make 3 entries
+					project.getLocation().append("includes").toOSString(),
+					buildCWD.append("includes").toOSString(),
+					toOSString("includes"),
+					"/usr/gnu/include", // Not converted to OS string due to being flagged as ICSettingEntry.RESOLVED
+			};
+		}
 
 		// Create a new managed project based on the sub project type
 		IProjectType projType = ManagedBuildManager.getExtensionProjectType("test.sub");
 		assertNotNull(projType);
 
-		// Create the managed-project (.cdtbuild) for our project
+		// Create the managed-project for our project
 		IManagedProject newProject = null;
 		try {
 			newProject = ManagedBuildManager.createManagedProject(project, projType);
@@ -527,7 +559,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		IProjectType projType = ManagedBuildManager.getExtensionProjectType("test.root");
 		assertNotNull(projType);
 
-		// Create the managed-project (.cdtbuild) for our project that builds a dummy executable
+		// Create the managed-project for our project that builds a dummy executable
 		IManagedProject newProject = ManagedBuildManager.createManagedProject(project, projType);
 		assertEquals(newProject.getName(), projType.getName());
 		assertFalse(newProject.equals(projType));

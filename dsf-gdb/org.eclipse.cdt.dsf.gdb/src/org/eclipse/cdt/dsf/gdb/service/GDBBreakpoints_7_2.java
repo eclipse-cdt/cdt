@@ -225,20 +225,20 @@ public class GDBBreakpoints_7_2 extends GDBBreakpoints_7_0
 						contextBreakpoints.put(reference, newBreakpoint);
 
 						// Format the return value
-								MIBreakpointDMContext dmc = new MIBreakpointDMContext(GDBBreakpoints_7_2.this, new IDMContext[] { context }, reference);
-								drm.setData(dmc);
+						MIBreakpointDMContext dmc = new MIBreakpointDMContext(GDBBreakpoints_7_2.this, new IDMContext[] { context }, reference);
+						drm.setData(dmc);
 
-								// Flag the event
-								getSession().dispatchEvent(new BreakpointAddedEvent(dmc), getProperties());
+						// Flag the event
+						getSession().dispatchEvent(new BreakpointAddedEvent(dmc), getProperties());
 
-								// Tracepoints are created with no passcount (passcount are not 
-								// the same thing as ignore-count, which is not supported by
-								// tracepoints).  We have to set the passcount manually now.
-								// Same for commands.
-								Map<String,Object> delta = new HashMap<String,Object>();
-								delta.put(MIBreakpoints.PASS_COUNT, getProperty(attributes, MIBreakpoints.PASS_COUNT, 0));
-								delta.put(MIBreakpoints.COMMANDS, getProperty(attributes, MIBreakpoints.COMMANDS, "")); //$NON-NLS-1$
-								modifyBreakpoint(dmc, delta, drm, false);
+						// Tracepoints are created with no passcount (passcount are not 
+						// the same thing as ignore-count, which is not supported by
+						// tracepoints).  We have to set the passcount manually now.
+						// Same for commands.
+						Map<String,Object> delta = new HashMap<String,Object>();
+						delta.put(MIBreakpoints.PASS_COUNT, getProperty(attributes, MIBreakpoints.PASS_COUNT, 0));
+						delta.put(MIBreakpoints.COMMANDS, getProperty(attributes, MIBreakpoints.COMMANDS, "")); //$NON-NLS-1$
+						modifyBreakpoint(dmc, delta, drm, false);
 					}
 
 					@Override

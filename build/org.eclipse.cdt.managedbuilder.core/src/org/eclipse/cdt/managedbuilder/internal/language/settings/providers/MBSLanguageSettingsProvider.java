@@ -22,11 +22,16 @@ import org.eclipse.cdt.core.settings.model.ICFileDescription;
 import org.eclipse.cdt.core.settings.model.ICFolderDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSetting;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
+import org.eclipse.cdt.core.settings.model.ICPathEntry;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.core.settings.model.ICSettingBase;
+import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.variables.IStringVariableManager;
+import org.eclipse.core.variables.VariablesPlugin;
 
 /**
  * Implementation of language settings provider for CDT Managed Build System.
@@ -62,6 +67,20 @@ public class MBSLanguageSettingsProvider extends AbstractExecutableExtensionBase
 							if ((kindsBits & kind) != 0) {
 								List<ICLanguageSettingEntry> additions = langSetting.getSettingEntriesList(kind);
 								for (ICLanguageSettingEntry entry : additions) {
+									if (entry instanceof ICPathEntry) {
+										// have to use getName() rather than getLocation() and not use IPath operations to avoid collapsing ".."
+										String pathStr = ((ICPathEntry) entry).getName();
+										if (!new Path(pathStr).isAbsolute()) {
+											// We need to add project-rooted entry for relative path as MBS counts it this way in some UI
+											// The relative entry below also should be added for indexer to resolve from source file locations
+											IStringVariableManager mngr = VariablesPlugin.getDefault().getStringVariableManager();
+											String projectRootedPath = mngr.generateVariableExpression("workspace_loc", rc.getProject().getName()) + Path.SEPARATOR + pathStr; //$NON-NLS-1$
+											ICLanguageSettingEntry projectRootedEntry = (ICLanguageSettingEntry) CDataUtil.createEntry(kind, projectRootedPath, projectRootedPath, null, entry.getFlags());
+											if (! list.contains(projectRootedEntry)) {
+												list.add(projectRootedEntry);
+											}
+										}
+									}
 									if (! list.contains(entry)) {
 										list.add(entry);
 									}

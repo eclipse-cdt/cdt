@@ -1,0 +1,584 @@
+/*******************************************************************************
+ * Copyright (c) 2012 Mentor Graphics and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ * Mentor Graphics - Initial API and implementation
+ *******************************************************************************/
+
+package org.eclipse.cdt.tests.dsf.gdb.tests;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
+import org.eclipse.cdt.debug.core.model.ICBreakpoint;
+import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
+import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
+import org.eclipse.cdt.debug.core.model.ICWatchpoint;
+import org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpoint;
+import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.Query;
+import org.eclipse.cdt.dsf.datamodel.DMContexts;
+import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsAddedEvent;
+import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsChangedEvent;
+import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsRemovedEvent;
+import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
+import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsUpdatedEvent;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
+import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakListInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakpoint;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
+import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
+import org.eclipse.cdt.dsf.service.DsfServicesTracker;
+import org.eclipse.cdt.dsf.service.DsfSession;
+import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
+import org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase;
+import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
+import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
+import org.eclipse.cdt.utils.Addr64;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IBreakpointManager;
+import org.eclipse.debug.core.model.IBreakpoint;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+/**
+ * This test case verifies whether breakpoints or watchpoints set from GDB console
+ * are properly synchronized with platform breakpoints.
+ */
+@SuppressWarnings( "restriction" )
+@RunWith(BackgroundRunner.class)
+public class GDBConsoleBreakpointsTest extends BaseTestCase {
+
+	final static private int DEFAULT_TIMEOUT = 20000;
+	final static private TimeUnit DEFAULT_TIME_UNIT = TimeUnit.MILLISECONDS;
+
+	final static private String FILE_NAME_VALID = new Path("data/launch/src/GDBMIGenericTestApp.cc").toFile().getAbsolutePath();
+	final static private int LINE_NUMBER_VALID = 8;
+	final static private String FILE_NAME_INVALID = new Path("x.c").toFile().getAbsolutePath();
+	final static private int LINE_NUMBER_INVALID = 2;
+
+	final static private String FUNCTION_VALID = "main()";
+	final static private String FUNCTION_INVALID = "xxx";
+
+	final static private String EXPRESSION_VALID = "path";
+
+	final static private String ATTR_FILE_NAME = "FILE_NAME";
+	final static private String ATTR_LINE_NUMBER = "LINE_NUMBER";
+	final static private String ATTR_FUNCTION = "FUNCTION";
+	final static private String ATTR_ADDRESS = "ADDRESS";
+	final static private String ATTR_EXPRESSION = "EXPRESSION";
+	final static private String ATTR_READ = "READ";
+	final static private String ATTR_WRITE = "WRITE";
+
+	private DsfSession fSession;
+	private DsfServicesTracker fServicesTracker;
+    protected IBreakpointsTargetDMContext fBreakpointsDmc;
+	private IGDBControl fCommandControl;
+
+	private List<IBreakpointsChangedEvent> fBreakpointEvents = new ArrayList<IBreakpointsChangedEvent>();
+
+	@Override
+	@Before
+	public void doBeforeTest() throws Exception {
+		deleteAllPlatformBreakpoints();
+		
+		super.doBeforeTest();
+        
+		Runnable runnable = new Runnable() {
+            @Override
+			public void run() {
+                fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
+                Assert.assertTrue(fServicesTracker != null);
+        		    
+                fCommandControl = fServicesTracker.getService(IGDBControl.class);
+                Assert.assertTrue(fCommandControl != null);
+
+                // Register to breakpoint events
+                fSession.addServiceEventListener(GDBConsoleBreakpointsTest.this, null);
+            }
+        };
+		fSession = getGDBLaunch().getSession();
+        fSession.getExecutor().submit(runnable).get();
+
+        IContainerDMContext containerDmc = SyncUtil.getContainerContext();
+        fBreakpointsDmc = DMContexts.getAncestorOfType(containerDmc, IBreakpointsTargetDMContext.class);
+        Assert.assertTrue(fBreakpointsDmc != null);
+	}
+
+	@Override
+	@After
+	public void doAfterTest() throws Exception {
+        Runnable runnable = new Runnable() {
+            @Override
+			public void run() {
+            	fSession.removeServiceEventListener(GDBConsoleBreakpointsTest.this);
+            }
+        };
+        fSession.getExecutor().submit(runnable).get();
+		fBreakpointEvents.clear();
+        fServicesTracker.dispose();
+        fServicesTracker = null;
+		
+        super.doAfterTest();
+		
+		deleteAllPlatformBreakpoints();
+	}
+
+	@Test
+	public void testValidLineBreakpoints() throws Throwable {
+		testConsoleBreakpoint(
+				ICLineBreakpoint.class, 
+				getLocationBreakpointAttributes(ICLineBreakpoint.class, true));
+	}
+
+	@Test
+	public void testInvalidLineBreakpoints() throws Throwable {
+		testConsoleBreakpoint(
+				ICLineBreakpoint.class, 
+				getLocationBreakpointAttributes(ICLineBreakpoint.class, false));
+	}
+
+	@Test
+	public void testValidFunctionBreakpoints() throws Throwable {
+		testConsoleBreakpoint(
+				ICFunctionBreakpoint.class, 
+				getLocationBreakpointAttributes(ICFunctionBreakpoint.class, true));
+	}
+
+	@Test
+	public void testInvalidFunctionBreakpoints() throws Throwable {
+		testConsoleBreakpoint(
+				ICFunctionBreakpoint.class, 
+				getLocationBreakpointAttributes(ICFunctionBreakpoint.class, false));
+	}
+
+	@Test
+	public void testValidAddressBreakpoints() throws Throwable {
+		testConsoleBreakpoint(
+				ICAddressBreakpoint.class, 
+				getLocationBreakpointAttributes(ICAddressBreakpoint.class, true));
+	}
+
+	@Test
+	public void testAddressBreakpointsAtZeroAddress() throws Throwable {
+		testConsoleBreakpoint(
+				ICAddressBreakpoint.class, 
+				getLocationBreakpointAttributes(ICAddressBreakpoint.class, false));
+	}
+
+	@Test
+	public void testWriteWatchpoints() throws Throwable {
+		testConsoleBreakpoint(
+				ICWatchpoint.class, 
+				getWatchpointAttributes(ICWatchpoint.class, false, true));
+	}
+
+	@Test
+	public void testReadWatchpoints() throws Throwable {
+		testConsoleBreakpoint(
+				ICWatchpoint.class, 
+				getWatchpointAttributes(ICWatchpoint.class, true, false));
+	}
+
+	@Test
+	public void testAccessWatchpoints() throws Throwable {
+		testConsoleBreakpoint(
+				ICWatchpoint.class, 
+				getWatchpointAttributes(ICWatchpoint.class, true, true));
+	}
+
+	@DsfServiceEventHandler
+	public void eventDispatched(IBreakpointsChangedEvent e) {
+  		synchronized(this) {
+  			fBreakpointEvents.add(e);
+  			notifyAll();
+  		}
+	}
+
+	private void testConsoleBreakpoint(Class<? extends ICBreakpoint> type, Map<String, Object> attributes) throws Throwable {
+		// Set a console breakpoint and verify that 
+		// the corresponding platform breakpoint is created 
+		// and its install count is 1 if the breakpoint is installed
+		// and 0 if the breakpoint is pending. 
+		// Check for a duplicate target breakpoint.
+		setConsoleBreakpoint(type, attributes);
+		MIBreakpoint[] miBpts = getTargetBreakpoints();
+		Assert.assertTrue(miBpts.length == 1);
+		waitForBreakpointEvent(IBreakpointsAddedEvent.class);
+		Assert.assertTrue(getPlatformBreakpointCount() == 1);
+		ICBreakpoint plBpt = findPlatformBreakpoint(type, attributes);
+		Assert.assertTrue(plBpt instanceof CBreakpoint);
+		// We can't rely on IBreakpointsAddedEvent because it is fired 
+		// before the install count is incremented.
+		if (!miBpts[0].isPending()) {
+			// If the target breakpoint is not pending wait
+			// until the install count becomes 1.
+			waitForInstallCountChange((CBreakpoint)plBpt, 1);
+		}
+		else {
+			// For pending breakpoints the install count is expected to remain 
+			// unchanged. Give it some time and verify that it is 0.
+			Thread.sleep(1000);
+			Assert.assertTrue(((CBreakpoint)plBpt).getInstallCount() == 0);
+		}
+
+		// Disable the console breakpoint and verify that 
+		// the platform breakpoint is disabled.
+		enableConsoleBreakpoint(miBpts[0].getNumber(), false);
+		waitForBreakpointEvent(IBreakpointsUpdatedEvent.class);
+		Assert.assertTrue(!plBpt.isEnabled());
+
+		// Enable the console breakpoint and verify that 
+		// the platform breakpoint is enabled.
+		enableConsoleBreakpoint(miBpts[0].getNumber(), true);
+		waitForBreakpointEvent(IBreakpointsUpdatedEvent.class);
+		Assert.assertTrue(plBpt.isEnabled());
+
+		// Set the ignore count of the console breakpoint and 
+		// verify that the platform breakpoint's ignore count 
+		// is updated.
+		setConsoleBreakpointIgnoreCount(miBpts[0].getNumber(), 5);
+		waitForBreakpointEvent(IBreakpointsUpdatedEvent.class);
+		Assert.assertTrue(plBpt.getIgnoreCount() == 5);
+
+		// Reset the ignore count of the console breakpoint and 
+		// verify that the platform breakpoint's ignore count 
+		// is updated.
+		setConsoleBreakpointIgnoreCount(miBpts[0].getNumber(), 0);
+		waitForBreakpointEvent(IBreakpointsUpdatedEvent.class);
+		Assert.assertTrue(plBpt.getIgnoreCount() == 0);
+
+		// Set the condition of the console breakpoint and 
+		// verify that the platform breakpoint's condition 
+		// is updated.
+		setConsoleBreakpointCondition(miBpts[0].getNumber(), "path==0");
+		waitForBreakpointEvent(IBreakpointsUpdatedEvent.class);
+		Assert.assertTrue(plBpt.getCondition().equals("path==0"));
+
+		// Reset the condition of the console breakpoint and 
+		// verify that the platform breakpoint's condition 
+		// is updated.
+		setConsoleBreakpointCondition(miBpts[0].getNumber(), "");
+		waitForBreakpointEvent(IBreakpointsUpdatedEvent.class);
+		Assert.assertTrue(plBpt.getCondition().isEmpty());
+
+		// Delete the console breakpoint and verify that 
+		// the install count of the platform breakpoint is 0.
+		deleteConsoleBreakpoint(miBpts[0].getNumber());
+		waitForBreakpointEvent(IBreakpointsRemovedEvent.class);
+		Assert.assertTrue(getPlatformBreakpointCount() == 1);
+		plBpt = findPlatformBreakpoint(type, attributes);
+		Assert.assertTrue(plBpt instanceof CBreakpoint);
+		waitForInstallCountChange((CBreakpoint)plBpt, 0);
+
+		// Set the console breakpoint again and verify that 
+		// the install count of the platform breakpoint is 1 
+		// for installed breakpoints and 0 for pending breakpoints.
+		setConsoleBreakpoint(type, attributes);
+		miBpts = getTargetBreakpoints();
+		Assert.assertTrue(miBpts.length == 1);
+		waitForBreakpointEvent(IBreakpointsAddedEvent.class);
+		Assert.assertTrue(getPlatformBreakpointCount() == 1);
+		plBpt = findPlatformBreakpoint(type, attributes);
+		Assert.assertTrue(plBpt instanceof CBreakpoint);
+		if (!miBpts[0].isPending()) {
+			waitForInstallCountChange((CBreakpoint)plBpt, 1);
+		}
+		else {
+			// For pending breakpoints the install count is expected to remain 
+			// unchanged. Give it some time and verify that it is 0.
+			Thread.sleep(1000);
+			Assert.assertTrue(((CBreakpoint)plBpt).getInstallCount() == 0);
+		}
+
+		// Remove the platform breakpoint and verify that 
+		// the target breakpoint is deleted.
+		deletePlatformBreakpoint(plBpt);
+		waitForBreakpointEvent(IBreakpointsRemovedEvent.class);
+		Assert.assertTrue(getPlatformBreakpointCount() == 0);
+		miBpts = getTargetBreakpoints();
+		Assert.assertTrue(miBpts.length == 0);
+	}
+
+  	private void setConsoleLineBreakpoint(String fileName, int lineNumber) throws Throwable {
+  		queueConsoleCommand(String.format("break %s:%d", fileName, lineNumber));
+  	}
+
+  	private void setConsoleFunctionBreakpoint(String fileName, String function) throws Throwable {
+  		queueConsoleCommand(String.format("break %s:%s", fileName, function));
+  	}
+
+  	private void setConsoleAddressBreakpoint(String address) throws Throwable {
+  		queueConsoleCommand(String.format("break *%s", address));
+  	}
+
+  	private void setConsoleWatchpoint(String expression, boolean read, boolean write) throws Throwable {
+  		String command = (write) ? ((read) ? "awatch" : "watch") : "rwatch";
+  		queueConsoleCommand(String.format("%s %s", command, expression));
+  	}
+
+  	private void deleteConsoleBreakpoint(int bpId) throws Throwable {
+  		queueConsoleCommand(String.format("delete %d", bpId));
+  	}
+
+  	private void enableConsoleBreakpoint(int bpId, boolean enable) throws Throwable {
+  		String cmd = (enable) ? "enable" : "disable";
+  		queueConsoleCommand(String.format("%s %d", cmd, bpId));
+  	}
+
+  	private void setConsoleBreakpointIgnoreCount(int bpId, int ignoreCount) throws Throwable {
+  		Assert.assertTrue(ignoreCount >= 0);
+  		queueConsoleCommand(String.format("ignore %d %d", bpId, ignoreCount));
+  	}
+
+  	private void setConsoleBreakpointCondition(int bpId, String condition) throws Throwable {
+  		queueConsoleCommand(String.format("condition %d %s", bpId, condition));
+  	}
+
+  	private MIBreakpoint[] getTargetBreakpoints() throws Throwable {
+  		return getTargetBreakpoints(DEFAULT_TIMEOUT, DEFAULT_TIME_UNIT);
+  	}
+
+  	private MIBreakpoint[] getTargetBreakpoints(int timeout, TimeUnit unit) throws Throwable {
+		Query<MIBreakListInfo> query = new Query<MIBreakListInfo>() {
+			@Override
+			protected void execute(DataRequestMonitor<MIBreakListInfo> rm) {
+				fCommandControl.queueCommand(
+					fCommandControl.getCommandFactory().createMIBreakList(fBreakpointsDmc), 
+					rm);
+			}
+		};
+		fSession.getExecutor().execute(query);
+		return query.get(timeout, unit).getMIBreakpoints();
+  	}
+
+  	private void waitForBreakpointEvent(Class<? extends IBreakpointsChangedEvent> eventType) throws Exception {
+  		waitForBreakpointEvent(eventType, DEFAULT_TIMEOUT);
+  	}
+
+  	private void waitForBreakpointEvent(Class<? extends IBreakpointsChangedEvent> eventType, int timeout) throws Exception {
+		if (!breakpointEventReceived(eventType)) {
+			synchronized(this) {
+				try {
+					wait(timeout);
+				} 
+				catch (InterruptedException ex) {
+				}
+			}
+			if (!breakpointEventReceived(eventType)) {
+				throw new Exception(String.format("Timed out waiting for '%s' to occur.", eventType.getName()));
+			}
+		}
+	}
+
+  	private void queueConsoleCommand(String command) throws Throwable {
+  		queueConsoleCommand(command, DEFAULT_TIMEOUT, DEFAULT_TIME_UNIT);
+  	}
+
+  	private void queueConsoleCommand(final String command, int timeout, TimeUnit unit) throws Throwable {
+		Query<MIInfo> query = new Query<MIInfo>() {
+			@Override
+			protected void execute(DataRequestMonitor<MIInfo> rm) {
+				fCommandControl.queueCommand(
+					fCommandControl.getCommandFactory().createMIInterpreterExecConsole(
+						fCommandControl.getContext(), 
+						command),
+					rm);
+			}
+		};
+		fSession.getExecutor().execute(query);
+		query.get(timeout, unit);
+  	}
+
+  	private ICLineBreakpoint findPlatformLineBreakpoint(String fileName, int lineNumber) throws Throwable {
+  		for(IBreakpoint b : DebugPlugin.getDefault().getBreakpointManager().getBreakpoints()) {
+  			if (b instanceof ICLineBreakpoint 
+  				&& fileName.equals(((ICLineBreakpoint)b).getSourceHandle()) 
+  				&& lineNumber == ((ICLineBreakpoint)b).getLineNumber()) {
+  				return (ICLineBreakpoint)b;
+  			}
+  		}
+  		return null;
+  	}
+
+  	private ICFunctionBreakpoint findPlatformFunctionBreakpoint(String fileName, String function) throws Throwable {
+  		for(IBreakpoint b : DebugPlugin.getDefault().getBreakpointManager().getBreakpoints()) {
+  			if (b instanceof ICFunctionBreakpoint 
+  				&& fileName.equals(((ICLineBreakpoint)b).getSourceHandle()) 
+  				&& function.equals(((ICLineBreakpoint)b).getFunction())) {
+  				return (ICFunctionBreakpoint)b;
+  			}
+  		}
+  		return null;
+  	}
+
+  	private ICAddressBreakpoint findPlatformAddressBreakpoint(String address) throws Throwable {
+  		Addr64 a = new Addr64(address);
+  		for(IBreakpoint b : DebugPlugin.getDefault().getBreakpointManager().getBreakpoints()) {
+  			if (b instanceof ICAddressBreakpoint 
+  				&& a.toHexAddressString().equals(((ICAddressBreakpoint)b).getAddress())) {
+  				return (ICAddressBreakpoint)b;
+  			}
+  		}
+  		return null;
+  	}
+
+  	private ICWatchpoint findPlatformWatchpoint(String expression, boolean read, boolean write) throws Throwable {
+  		for(IBreakpoint b : DebugPlugin.getDefault().getBreakpointManager().getBreakpoints()) {
+  			if (b instanceof ICWatchpoint 
+  				&& ((ICWatchpoint)b).isReadType() == read
+  				&& ((ICWatchpoint)b).isWriteType() == write) {
+  				return (ICWatchpoint)b;
+  			}
+  		}
+  		return null;
+  	}
+
+  	private void deletePlatformBreakpoint(final IBreakpoint plBpt) throws Throwable {
+  		new Job("") {
+			
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+		  		IStatus result = Status.OK_STATUS;
+				try {
+					DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint(plBpt, true);
+				}
+				catch(CoreException e) {
+					result = e.getStatus();
+				}
+				return result;
+			}
+		}.schedule();
+  	}
+
+  	private int getPlatformBreakpointCount() {
+  		return DebugPlugin.getDefault().getBreakpointManager().getBreakpoints().length;
+  	}
+
+  	private void waitForInstallCountChange(CBreakpoint plBpt, int expected) throws Throwable {
+  		waitForInstallCountChange(plBpt, expected, DEFAULT_TIMEOUT);
+  	}
+
+  	private void waitForInstallCountChange(CBreakpoint plBpt, int expected, long timeout) throws Throwable {
+		long startMs = System.currentTimeMillis();
+		while(plBpt.getInstallCount() != expected) {
+			synchronized(this) {
+				try {
+					wait(30);
+				} 
+				catch (InterruptedException ex) {
+				}
+				if (System.currentTimeMillis() - startMs > timeout) {
+					throw new Exception("Timed out waiting for breakpoint's install count to change");
+				}
+			}
+		}
+  	}
+
+  	private synchronized boolean breakpointEventReceived(Class<? extends IBreakpointsChangedEvent> eventType) {
+		for (IBreakpointsChangedEvent e : fBreakpointEvents) {
+			if (eventType.isAssignableFrom(e.getClass())) {
+				return fBreakpointEvents.remove(e);
+			}
+		}
+		return false;
+  	}
+
+  	private Map<String, Object> getLocationBreakpointAttributes(Class<? extends ICBreakpoint> type, boolean valid) {
+  		Map<String, Object> map = new HashMap<String, Object>();
+  		if (ICFunctionBreakpoint.class.equals(type)) {
+  			map.put(ATTR_FILE_NAME, (valid) ? FILE_NAME_VALID : FILE_NAME_INVALID);
+  			map.put(ATTR_FUNCTION, (valid) ? FUNCTION_VALID : FUNCTION_INVALID);
+  		}
+  		else if (ICAddressBreakpoint.class.equals(type)) {
+  			// '0x0" is not invalid address
+  			map.put(ATTR_ADDRESS, (valid) ? 
+  					getInitialStoppedEvent().getFrame().getAddress() : 
+  					new Addr64("0x0").toHexAddressString());
+  		}
+  		else if (ICLineBreakpoint.class.equals(type)) {
+  			map.put(ATTR_FILE_NAME, (valid) ? FILE_NAME_VALID : FILE_NAME_INVALID);
+  			map.put(ATTR_LINE_NUMBER, (valid) ? LINE_NUMBER_VALID : LINE_NUMBER_INVALID);
+  		}
+  		return map;
+  	}
+
+	public Map<String, Object> getWatchpointAttributes(Class<? extends ICWatchpoint> type, boolean read, boolean write) throws Throwable {
+  		Assert.assertTrue(read || write);
+  		Map<String, Object> map = new HashMap<String, Object>();
+		map.put(ATTR_EXPRESSION, EXPRESSION_VALID);
+		map.put(ATTR_READ, Boolean.valueOf(read));
+		map.put(ATTR_WRITE, Boolean.valueOf(write));
+  		return map;
+  	}
+
+  	private void setConsoleBreakpoint(Class<? extends ICBreakpoint> type, Map<String, Object> attributes) throws Throwable {
+  		if (ICFunctionBreakpoint.class.equals(type)) {
+  			setConsoleFunctionBreakpoint(
+  				(String)attributes.get(ATTR_FILE_NAME), 
+  				(String)attributes.get(ATTR_FUNCTION));
+  		}
+  		else if (ICAddressBreakpoint.class.equals(type)) {
+  			setConsoleAddressBreakpoint((String)attributes.get(ATTR_ADDRESS));
+  		}
+  		else if (ICLineBreakpoint.class.equals(type)) {
+  			setConsoleLineBreakpoint(
+  				(String)attributes.get(ATTR_FILE_NAME), 
+  				((Integer)attributes.get(ATTR_LINE_NUMBER)).intValue());
+  		}
+  		else if (ICWatchpoint.class.equals(type)) {
+  			setConsoleWatchpoint(
+  				(String)attributes.get(ATTR_EXPRESSION), 
+  	  			((Boolean)attributes.get(ATTR_READ)).booleanValue(),
+  	  			((Boolean)attributes.get(ATTR_WRITE)).booleanValue());
+  		}
+  	}
+
+  	private ICBreakpoint findPlatformBreakpoint(Class<? extends ICBreakpoint> type, Map<String, Object> attributes) throws Throwable {
+  		if (ICFunctionBreakpoint.class.equals(type)) {
+  			return findPlatformFunctionBreakpoint(
+  				(String)attributes.get(ATTR_FILE_NAME), 
+  				(String)attributes.get(ATTR_FUNCTION));
+  		}
+  		else if (ICAddressBreakpoint.class.equals(type)) {
+  			return findPlatformAddressBreakpoint((String)attributes.get(ATTR_ADDRESS));
+  		}
+  		else if (ICLineBreakpoint.class.equals(type)) {
+  			return findPlatformLineBreakpoint(
+  				(String)attributes.get(ATTR_FILE_NAME), 
+  				((Integer)attributes.get(ATTR_LINE_NUMBER)).intValue());
+  		}
+  		else if (ICWatchpoint.class.equals(type)) {
+  			return findPlatformWatchpoint(
+  				(String)attributes.get(ATTR_EXPRESSION), 
+  				((Boolean)attributes.get(ATTR_READ)).booleanValue(),
+  				((Boolean)attributes.get(ATTR_WRITE)).booleanValue());
+  		}
+  		throw new Exception(String.format("Invalid breakpoint type: %s", type.getName()));
+  	}
+
+  	private void deleteAllPlatformBreakpoints() throws Exception {
+  		IBreakpointManager bm = DebugPlugin.getDefault().getBreakpointManager();
+  		for (IBreakpoint b : bm.getBreakpoints()) {
+  			bm.removeBreakpoint(b, true);
+  		}
+  	}
+}

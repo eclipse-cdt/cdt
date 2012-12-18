@@ -35,6 +35,7 @@ import org.eclipse.cdt.dsf.gdb.service.command.GDBControl_7_2;
 import org.eclipse.cdt.dsf.gdb.service.command.GDBControl_7_4;
 import org.eclipse.cdt.dsf.mi.service.CSourceLookup;
 import org.eclipse.cdt.dsf.mi.service.IMIBackend;
+import org.eclipse.cdt.dsf.mi.service.IMIExpressions;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpoints;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpointsManager;
 import org.eclipse.cdt.dsf.mi.service.MIDisassembly;
@@ -158,7 +159,7 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 		// Pass in the original service which will be used as a delegate.
 		// This way of doing things allows to keep the pattern matching aspect isolated
 		// and easy to remove.
-		IExpressions originialExpressionService = new MIExpressions(session);
+		IMIExpressions originialExpressionService = new MIExpressions(session);
 		return new GDBPatternMatchingExpressions(session, originialExpressionService);
 	}
 

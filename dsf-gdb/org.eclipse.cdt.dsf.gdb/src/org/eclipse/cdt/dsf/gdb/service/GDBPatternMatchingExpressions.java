@@ -689,6 +689,31 @@ public class GDBPatternMatchingExpressions extends AbstractDsfService implements
     				Collections.sort(matches, new Comparator<IExpressionDMContext>() {
     					@Override
     					public int compare(IExpressionDMContext o1, IExpressionDMContext o2) {
+    						// For elements of the same array, we need to sort by index
+    						if (isArrayPattern(o1.getExpression()) && isArrayPattern(o2.getExpression())) {
+    							// Extract the array names and the array indices specification.
+    							// The regex used will remove both [ and ]
+    							String[] arrayExprParts1 = o1.getExpression().split("[\\[\\]]"); //$NON-NLS-1$
+    							assert arrayExprParts1 != null && arrayExprParts1.length == 2;
+
+    							String[] arrayExprParts2 = o2.getExpression().split("[\\[\\]]"); //$NON-NLS-1$
+    							assert arrayExprParts2 != null && arrayExprParts2.length == 2;
+
+    							// Compare array names
+    							if (arrayExprParts1[0].compareTo(arrayExprParts2[0]) == 0) {
+    								// We are dealing with the same array
+    								try {
+    									int arrayIndex1 = Integer.parseInt(arrayExprParts1[1]);
+    									int arrayIndex2 = Integer.parseInt(arrayExprParts2[1]);
+
+    									if (arrayIndex1 == arrayIndex2) return 0;
+    									if (arrayIndex1 > arrayIndex2) return 1;
+    									return -1;
+    								} catch (NumberFormatException e) {
+    									// Invalid array index.  Fall-back to sorting lexically.
+    								}
+    							}
+    						}
     						return o1.getExpression().compareTo(o2.getExpression());
     					}
     				});

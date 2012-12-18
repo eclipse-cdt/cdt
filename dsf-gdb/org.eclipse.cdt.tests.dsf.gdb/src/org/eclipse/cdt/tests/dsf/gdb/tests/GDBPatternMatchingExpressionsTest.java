@@ -1226,6 +1226,37 @@ public class GDBPatternMatchingExpressionsTest extends BaseTestCase {
 		checkChildren(exprDmc, -1, -1, children);
 		checkChildrenCount(exprDmc, children.length);
 	}
+	
+	/**
+	 * Test that pattern-matched arrays are sorted properly by index instead
+	 * of completely alphabetically.  An alphabetical sorting would cause the
+	 * following poor sorting:
+	 *   =a[1-11]
+	 *     a[10]
+	 *     a[11]
+	 *     a[1]
+	 *     a[2]
+	 *     ...
+	 */
+	@Test
+	public void testArraySorting() throws Throwable {
+		final String exprString = "=array[1-11];=arrayInt[1-2,11,20-22]";
+		final String[] children = new String[] { 
+				"array[1]","array[2]","array[3]","array[4]","array[5]","array[6]",
+				"array[7]","array[8]","array[9]","array[10]","array[11]",
+				"arrayInt[1]","arrayInt[2]","arrayInt[11]","arrayInt[20]","arrayInt[21]","arrayInt[22]"};
+
+		SyncUtil.runToLocation("testArrayMatching");
+		MIStoppedEvent stoppedEvent = SyncUtil.step(6, StepType.STEP_OVER);
+
+		IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
+
+		final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, exprString);
+
+		checkChildren(exprDmc, -1, -1, children);
+		checkChildrenCount(exprDmc, children.length);
+
+	}
 
 	// Cannot use comma separator because of templates (bug 393474)
 //	/**

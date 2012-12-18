@@ -39,7 +39,7 @@
  *  David McKnight   (IBM)     [395306] [dstore] Regression for CommandMinerThread authority
  *  David McKnight   (IBM)     [395465] [dstore][shells] customer hit an NPE on shell cleanup
  *******************************************************************************/
-
+ 
 package org.eclipse.rse.internal.dstore.universal.miners.command;
 
 

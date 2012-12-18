@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "AABOJ3//8I0\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBPatternMatchingExpressions.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 231,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-12-18T18:58:49Z",
+      "side": 1,
+      "message": "You\u0027re right.  Changed.",
+      "parentUuid": "AABOJ3//8YY\u003d",
+      "revId": "0f87a3f3c7a3d50579a806ddabe6a2145da854a6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOJ3//8QU\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBPatternMatchingExpressions.java",
         "patchSetId": 3
@@ -30,6 +48,24 @@
       "writtenOn": "2012-12-18T17:32:18Z",
       "side": 1,
       "message": "Should be \u0027if\u0027 instead of \u0027of\u0027.",
+      "revId": "0f87a3f3c7a3d50579a806ddabe6a2145da854a6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3//8JI\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBPatternMatchingExpressions.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 541,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-12-18T18:58:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOJ3//8QU\u003d",
       "revId": "0f87a3f3c7a3d50579a806ddabe6a2145da854a6",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "AABOJ3//8JE\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBPatternMatchingExpressions.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 564,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-12-18T18:58:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOJ3//8QY\u003d",
+      "revId": "0f87a3f3c7a3d50579a806ddabe6a2145da854a6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOJ3//8WA\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBPatternMatchingExpressions.java",
         "patchSetId": 3
@@ -64,6 +118,24 @@
       "writtenOn": "2012-12-18T17:32:18Z",
       "side": 1,
       "message": "Unfinished comment or it\u0027s just my English?",
+      "revId": "0f87a3f3c7a3d50579a806ddabe6a2145da854a6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3//8I8\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBPatternMatchingExpressions.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 600,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-12-18T18:58:49Z",
+      "side": 1,
+      "message": "Woops.  Fixed.",
+      "parentUuid": "AABOJ3//8WA\u003d",
       "revId": "0f87a3f3c7a3d50579a806ddabe6a2145da854a6",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "AABOJ3//8Ik\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/GDBPatternMatchingExpressionsTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 284,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-12-18T18:58:49Z",
+      "side": 1,
+      "message": "Good catch!  And it brought out another typo where the result expected should be \"$esp\" and not \"esp\".  Fixed both.",
+      "parentUuid": "AABOJ3//8QI\u003d",
+      "revId": "0f87a3f3c7a3d50579a806ddabe6a2145da854a6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOJ3//8QE\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/GDBPatternMatchingExpressionsTest.java",
         "patchSetId": 3
@@ -98,6 +188,24 @@
       "writtenOn": "2012-12-18T17:32:18Z",
       "side": 1,
       "message": "Same as above.",
+      "revId": "0f87a3f3c7a3d50579a806ddabe6a2145da854a6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOJ3//8Is\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/GDBPatternMatchingExpressionsTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 303,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-12-18T18:58:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOJ3//8QE\u003d",
       "revId": "0f87a3f3c7a3d50579a806ddabe6a2145da854a6",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

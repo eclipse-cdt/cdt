@@ -15,6 +15,7 @@
  * Xuan Chen (IBM) - [160775] [api] rename (at least within a zip) blocks UI thread
  * Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
  * David McKnight  (IBM)  - [dstore] cancelable threads not removed fast enough from Hashmap, resulting in OOM
+ * David McKnight   (IBM)  - [396783] [dstore] fix issues with the spiriting mechanism and other memory improvements (phase 2)
  *******************************************************************************/
 
 package org.eclipse.rse.internal.dstore.universal.miners.filesystem;
@@ -64,9 +65,10 @@ public class UniversalDownloadHandler extends SecuredThread implements ICancella
 	{
 		super.run();
 		
-		handleDownload(_cmdElement, _status);				
+		handleDownload(_cmdElement, _status);	
 		_isDone = true;
 		removeFromCancellableList();
+		_dataStore.disconnectObject(_cmdElement);
 	}
 	
 	private void removeFromCancellableList(){

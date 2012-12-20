@@ -67,6 +67,7 @@
  * David McKnight    (IBM)       - [365780] [dstore] codepage conversion should only occur for different encodings
  * David McKnight   (IBM)        - [390037] [dstore] Duplicated items in the System view
  * David McKnight   (IBM)        - [391164] [dstore] don't clear cached elements when they're not spirited or deleted
+ * David McKnight   (IBM)        - [396783] [dstore] fix issues with the spiriting mechanism and other memory improvements (phase 2)
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.files;
@@ -304,7 +305,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		if (ds != null)
 		{
 			String[] clonedAttributes = (String[])_filterAttributes.clone();
-			clonedAttributes[DE.A_ID] = fileNameFilter;
+			//clonedAttributes[DE.A_ID] = fileNameFilter;
 
 			DataElement attributes = ds.createTransientObject(clonedAttributes);
 			String version = IServiceConstants.VERSION_1;

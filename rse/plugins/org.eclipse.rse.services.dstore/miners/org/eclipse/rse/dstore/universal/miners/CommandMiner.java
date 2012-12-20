@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 IBM Corporation and others.
+ * Copyright (c) 2006, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@
  * David McKnight   (IBM)     [320624] [dstore] shell &lt; and &gt; sequence conversion not being applied to thread
  * David McKnight   (IBM) - [283613] [dstore] Create a Constants File for all System Properties we support
  * Noriaki Takatsu  (IBM)  - [365765] [dstore][multithread]client environment cause harm to singe-process server
+ * David McKnight   (IBM)   - [396783] [dstore] fix issues with the spiriting mechanism and other memory improvements (phase 2)
  *******************************************************************************/
 
 package org.eclipse.rse.dstore.universal.miners;
@@ -32,6 +33,7 @@ package org.eclipse.rse.dstore.universal.miners;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.dstore.core.miners.Miner;
@@ -264,13 +266,19 @@ public class CommandMiner extends Miner
 		Iterator iter = _threads.keySet().iterator();
 		try
 		{
+			List threadsToRemove = new ArrayList();
 			while (iter.hasNext())
 			{
 				String threadName = (String) iter.next();
 				CommandMinerThread theThread = (CommandMinerThread) _threads.get(threadName);
 				if ((theThread == null) || (!theThread.isAlive()))
 				{
-					_threads.remove(threadName);
+					threadsToRemove.add(threadName);
+				}
+			}
+			if (!threadsToRemove.isEmpty()){
+				for (int i = 0; i < threadsToRemove.size(); i++){
+					_threads.remove(threadsToRemove.get(i));
 				}
 			}
 		}
@@ -278,6 +286,8 @@ public class CommandMiner extends Miner
 		{
 			_dataStore.trace(e);
 		}
+
+		
 		CommandMinerThread newCommand = new CommandMinerThread(subject, invocation, status, getPatterns(), _descriptors);
 		_threads.put(status.getAttribute(DE.A_ID), newCommand);
 		newCommand.start();

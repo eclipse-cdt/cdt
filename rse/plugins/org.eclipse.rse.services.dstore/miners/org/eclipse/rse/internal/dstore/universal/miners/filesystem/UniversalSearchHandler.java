@@ -30,6 +30,7 @@
  * Noriaki Takatsu  (IBM) - [362025] [dstore] Search for text hung in encountering a device definition
  * David McKnight   (IBM) - [371401] [dstore][multithread] avoid use of static variables - causes memory leak after disconnect
  * Noriaki Takatsu  (IBM) - [380562] [multithread][dstore] File Search is not canceled by the client UI on disconnect
+ * David McKnight   (IBM)        - [396783] [dstore] fix issues with the spiriting mechanism and other memory improvements (phase 2)
  ********************************************************************************/
 
 package org.eclipse.rse.internal.dstore.universal.miners.filesystem;
@@ -166,6 +167,7 @@ public class UniversalSearchHandler extends SecuredThread implements ICancellabl
 			// completed before setting the status to done
 			_status.setAttribute(DE.A_NAME, "done"); //$NON-NLS-1$
 	        _dataStore.refresh(_status);	// true indicates refresh immediately
+	        _miner.updateCancellableThreads(_status.getParent(), this);
 		}
 		
 		_alreadySearched.clear();
@@ -377,6 +379,7 @@ public class UniversalSearchHandler extends SecuredThread implements ICancellabl
 							checkAndClearupMemory();
 							File child = children[i];
 							internalSearch(child, depth - 1);
+							
 						}
 					}
 				}

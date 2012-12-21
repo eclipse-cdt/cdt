@@ -175,12 +175,15 @@ public class GDBProcesses_7_1 extends GDBProcesses_7_0 {
 				        	if (getData().getThreadList().length != 0) {
 				        		MIThread thread = getData().getThreadList()[0];
 				        		if (thread.getThreadId().equals(threadDmc.getId())) {
-        	        				String id = thread.getOsId();
+				        			String id = ""; //$NON-NLS-1$
+				        			if (thread.getOsId() != null) {
+				        				id = thread.getOsId() + " "; //$NON-NLS-1$
+				        			}
         	        				// append thread details (if any) to the thread ID
         	        				// as for GDB 6.x with CLIInfoThreadsInfo#getOsId()
         	        				final String details = thread.getDetails();
         	        				if (details != null && details.length() > 0) {
-        	        					id += " (" + details + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+        	        					id += "(" + details + ")"; //$NON-NLS-1$ //$NON-NLS-2$
         	        				}
 				        			
 				        			String core = thread.getCore();

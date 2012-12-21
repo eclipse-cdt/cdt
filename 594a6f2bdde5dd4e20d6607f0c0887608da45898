@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOJ3//7k0\u003d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2012-12-21T18:28:30Z",
+      "side": 1,
+      "message": "Please prefix the commit message with the but number in this format:\n\nBug 12345",
+      "revId": "594a6f2bdde5dd4e20d6607f0c0887608da45898",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

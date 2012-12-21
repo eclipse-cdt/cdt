@@ -10,6 +10,7 @@
  *     Onur Akdemir (TUBITAK BILGEM-ITI) - Multi-process debugging (Bug 237306)
  *     John Dallaway - GDB 7.x MI thread details field ignored (Bug 325556)
  *     Marc Khouzam (Ericsson) - Make each thread an IDisassemblyDMContext (bug 352748) 
+ *     Andy Jin (QNX) - Not output thread osId as a string when it is null (Bug 397039)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
@@ -774,12 +775,15 @@ public class GDBProcesses_7_0 extends AbstractDsfService
         	        		if (getData().getThreadList().length != 0) {
         	        			MIThread thread = getData().getThreadList()[0];
         	        			if (thread.getThreadId().equals(threadDmc.getId())) {
-        	        				String id = thread.getOsId();
+				        			String id = ""; //$NON-NLS-1$
+				        			if (thread.getOsId() != null) {
+				        				id = thread.getOsId() + " "; //$NON-NLS-1$
+				        			}
         	        				// append thread details (if any) to the thread ID
         	        				// as for GDB 6.x with CLIInfoThreadsInfo#getOsId()
         	        				final String details = thread.getDetails();
         	        				if (details != null && details.length() > 0) {
-        	        					id += " (" + details + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+        	        					id += "(" + details + ")"; //$NON-NLS-1$ //$NON-NLS-2$
         	        				}
         	        				threadData = new MIThreadDMData("", id); //$NON-NLS-1$
         	        			}

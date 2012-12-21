@@ -11,6 +11,7 @@
  * David Dykstal (IBM) = [226958] add status values to waitForInitCompletion(phase)
  * David Dykstal (IBM) - [235581] Initialize RSE should be a daemon job
  * David McKnight (IBM)  - [283033] remoteFileTypes extension point should include "xml" type
+ * David Dykstal (IBM) - [] RSEInitJob runs too early
  ********************************************************************************/
 package org.eclipse.rse.internal.core;
 
@@ -230,10 +231,10 @@ public final class RSEInitJob extends Job {
 						   return ResourcesPlugin.getEncoding();
 					   }
 				});
-*/
+		 */
 		
 		initializerPhase.done(result);
-		// finish up - propogate cancel if necessary
+		// finish up - propagate cancel if necessary
 		if (monitor.isCanceled()) {
 			result = Status.CANCEL_STATUS;
 		} else {

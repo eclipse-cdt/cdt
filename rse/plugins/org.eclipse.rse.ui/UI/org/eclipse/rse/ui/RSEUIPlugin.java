@@ -53,6 +53,7 @@ import org.eclipse.rse.core.model.ISystemProfileManager;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.ISubSystemConfigurationProxy;
+import org.eclipse.rse.internal.core.RSEInitJob;
 import org.eclipse.rse.internal.core.model.SystemProfileManager;
 import org.eclipse.rse.internal.core.model.SystemRegistry;
 import org.eclipse.rse.internal.ui.RSESystemTypeAdapterFactory;
@@ -385,6 +386,8 @@ public class RSEUIPlugin extends SystemBasePlugin
     public void start(BundleContext context) throws Exception
 	{
         super.start(context);
+        
+        RSEInitJob.getInstance().schedule();
 
 	   	messageFile = getMessageFile("systemmessages.xml"); //$NON-NLS-1$
 	   	defaultMessageFile = getDefaultMessageFile("systemmessages.xml"); //$NON-NLS-1$

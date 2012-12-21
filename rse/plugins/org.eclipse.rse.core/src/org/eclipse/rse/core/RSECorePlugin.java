@@ -307,8 +307,10 @@ public class RSECorePlugin extends Plugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		registerKeystoreProviders();
+		/*
 		RSEInitJob job = RSEInitJob.getInstance();
 		job.schedule();
+		*/
 	}
 
 	/*

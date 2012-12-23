@@ -777,14 +777,18 @@ public class GDBProcesses_7_0 extends AbstractDsfService
         	        			if (thread.getThreadId().equals(threadDmc.getId())) {
 				        			String id = ""; //$NON-NLS-1$
 				        			if (thread.getOsId() != null) {
-				        				id = thread.getOsId() + " "; //$NON-NLS-1$
+				        				id = thread.getOsId();
 				        			}
         	        				// append thread details (if any) to the thread ID
         	        				// as for GDB 6.x with CLIInfoThreadsInfo#getOsId()
         	        				final String details = thread.getDetails();
         	        				if (details != null && details.length() > 0) {
+        	        					if (!id.isEmpty()) id += " "; //$NON-NLS-1$
         	        					id += "(" + details + ")"; //$NON-NLS-1$ //$NON-NLS-2$
         	        				}
+        	        				// We must indicate and empty id by using null
+        	        				if (id.isEmpty()) id = null;
+
         	        				threadData = new MIThreadDMData("", id); //$NON-NLS-1$
         	        			}
         	        		}

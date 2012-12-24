@@ -56,7 +56,7 @@ public class DBTest extends BaseTestCase {
 	@Override
 	protected void tearDown() throws Exception {
 		db.close();
-		if(!db.getLocation().delete()) {
+		if (!db.getLocation().delete()) {
 			db.getLocation().deleteOnExit();
 		}
 		db= null;
@@ -87,15 +87,15 @@ public class DBTest extends BaseTestCase {
 			try {
 				new Database(tmp, ChunkCache.getSharedInstance(), 0, false);
 				fail("A readonly file should not be openable with write-access");
-			} catch(CoreException ioe) {
+			} catch (CoreException e) {
 				// we expect to get a failure here
 			}
 			
 			/* check opening a readonly file for read access does not fail */
 			try {
 				new Database(tmp, ChunkCache.getSharedInstance(), 0, true);
-			} catch(CoreException ce) {
-				fail("A readonly file should be readable by a permanently readonly database "+ce);
+			} catch (CoreException e) {
+				fail("A readonly file should be readable by a permanently readonly database "+e);
 			}
 		} finally {
 			tmp.delete(); // this may be pointless on some platforms
@@ -104,7 +104,7 @@ public class DBTest extends BaseTestCase {
 	
 	public void testFreeBlockLinking() throws Exception {
 		final int realsize = 42;
-		final int deltas = (realsize+Database.BLOCK_HEADER_SIZE + Database.BLOCK_SIZE_DELTA - 1) / Database.BLOCK_SIZE_DELTA;
+		final int deltas = (realsize + Database.BLOCK_HEADER_SIZE + Database.BLOCK_SIZE_DELTA - 1) / Database.BLOCK_SIZE_DELTA;
 		final int blocksize = deltas * Database.BLOCK_SIZE_DELTA;
 		final int freeDeltas= Database.MIN_BLOCK_DELTAS-deltas;
 
@@ -150,7 +150,6 @@ public class DBTest extends BaseTestCase {
 		public long getRecord() {
 			return record;
 		}
-		
 	}
 	
 	public void testStringsInBTree() throws Exception {
@@ -194,6 +193,7 @@ public class DBTest extends BaseTestCase {
 				return string1.compare(string2, true);
 			}
 		};
+
 		BTree btree = new BTree(db, Database.DATA_AREA, comparator);
 		for (int i = 0; i < names.length; ++i) {
 			String name = names[i];
@@ -224,8 +224,8 @@ public class DBTest extends BaseTestCase {
 		assertCMP("",  EQ, "", true);
 		assertCMP("",  EQ, "", false);
 		
-		doTrials(1000, 1, ShortString.MAX_BYTE_LENGTH/2, r, true);
-		doTrials(1000, 1, ShortString.MAX_BYTE_LENGTH/2, r, false);
+		doTrials(1000, 1, ShortString.MAX_BYTE_LENGTH / 2, r, true);
+		doTrials(1000, 1, ShortString.MAX_BYTE_LENGTH / 2, r, false);
 		doTrials(1000, 1, ShortString.MAX_BYTE_LENGTH, r, true);
 		doTrials(1000, 1, ShortString.MAX_BYTE_LENGTH, r, false);
 		
@@ -243,13 +243,13 @@ public class DBTest extends BaseTestCase {
 	
 	public void testLongStringComparison() throws CoreException {
 		Random r= new Random(314159265);
-		doTrials(100, ShortString.MAX_BYTE_LENGTH+1, ShortString.MAX_BYTE_LENGTH*2, r, true);
-		doTrials(100, ShortString.MAX_BYTE_LENGTH+1, ShortString.MAX_BYTE_LENGTH*2, r, false);
+		doTrials(100, ShortString.MAX_BYTE_LENGTH + 1, ShortString.MAX_BYTE_LENGTH * 2, r, true);
+		doTrials(100, ShortString.MAX_BYTE_LENGTH + 1, ShortString.MAX_BYTE_LENGTH * 2, r, false);
 	}
 		
 	private void doTrials(int n, int min, int max, Random r, boolean caseSensitive) throws CoreException {
 		long start = System.currentTimeMillis();
-		for(int i=0; i<n; i++) {
+		for(int i= 0; i < n; i++) {
 			String a = randomString(min, max, r);
 			String b = randomString(min, max, r);
 			int expected = caseSensitive ? a.compareTo(b) : a.compareToIgnoreCase(b);
@@ -262,7 +262,7 @@ public class DBTest extends BaseTestCase {
 	private String randomString(int min, int max, Random r) {
 		StringBuffer result = new StringBuffer();
 		int len = min + r.nextInt(max-min);
-		for(int i=0; i<len; i++) {
+		for(int i= 0; i < len; i++) {
 			result.append(randomChar(r));
 		}
 		return result.toString();
@@ -317,8 +317,8 @@ public class DBTest extends BaseTestCase {
 	}
 	
 	private void assertSignEquals(int a, int b) {
-		a= a<0 ? -1 : (a>0 ? 1 : 0);
-		b= b<0 ? -1 : (b>0 ? 1 : 0);
+		a= a < 0 ? -1 : (a > 0 ? 1 : 0);
+		b= b < 0 ? -1 : (b > 0 ? 1 : 0);
 		assertEquals(a, b);
 	}
 }

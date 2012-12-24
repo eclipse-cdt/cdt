@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * Collects methods to store an argument list in the database
+ * Collects methods to store an argument list in the database.
  */
 public class PDOMTemplateParameterArray {
 	/**
@@ -30,12 +30,12 @@ public class PDOMTemplateParameterArray {
 	 * @return the record by which the arguments can be referenced.
 	 */
 	public static long putArray(final Database db, IPDOMCPPTemplateParameter[] params) throws CoreException {
-		final short len= (short) Math.min(params.length, (Database.MAX_MALLOC_SIZE-2)/8); 
-		final long block= db.malloc(2+8*len);
+		final short len= (short) Math.min(params.length, (Database.MAX_MALLOC_SIZE - 2) / 8); 
+		final long block= db.malloc(2 + 8 * len);
 		long p= block;
 
-		db.putShort(p, len); p+=2;
-		for (int i=0; i<len; i++, p+=4) {
+		db.putShort(p, len); p += 2;
+		for (int i= 0; i < len; i++, p += 4) {
 			final IPDOMCPPTemplateParameter elem= params[i];
 			db.putRecPtr(p, elem == null ? 0 : elem.getRecord());
 		}
@@ -50,15 +50,15 @@ public class PDOMTemplateParameterArray {
 		final Database db= linkage.getDB();
 		final short len= db.getShort(rec);
 		
-		Assert.isTrue(len >= 0 && len <= (Database.MAX_MALLOC_SIZE-2)/8);
+		Assert.isTrue(len >= 0 && len <= (Database.MAX_MALLOC_SIZE - 2) / 8);
 		if (len == 0) {
 			return IPDOMCPPTemplateParameter.EMPTY_ARRAY;
 		}
 		
-		rec+=2;
+		rec += 2;
 		IPDOMCPPTemplateParameter[] result= new IPDOMCPPTemplateParameter[len];
-		for (int i=0; i<len; i++) {
-			final long nodeRec= db.getRecPtr(rec); rec+=4;
+		for (int i= 0; i < len; i++) {
+			final long nodeRec= db.getRecPtr(rec); rec += 4;
 			result[i]= nodeRec == 0 ? null : (IPDOMCPPTemplateParameter) linkage.getNode(nodeRec);
 		}
 		return result;
@@ -67,7 +67,8 @@ public class PDOMTemplateParameterArray {
 	/**
 	 * Creates template parameters in the pdom
 	 */
-	public static IPDOMCPPTemplateParameter[] createPDOMTemplateParameters(PDOMLinkage linkage, PDOMNode parent, ICPPTemplateParameter[] origParams) throws CoreException, DOMException {
+	public static IPDOMCPPTemplateParameter[] createPDOMTemplateParameters(PDOMLinkage linkage,
+			PDOMNode parent, ICPPTemplateParameter[] origParams) throws CoreException, DOMException {
 		IPDOMCPPTemplateParameter[] params= new IPDOMCPPTemplateParameter[origParams.length];
 		for (int i = 0; i < origParams.length; i++) {
 			params[i]= createPDOMTemplateParameter(linkage, parent, origParams[i]);
@@ -78,7 +79,8 @@ public class PDOMTemplateParameterArray {
 	/**
 	 * Creates a template parameter in the pdom
 	 */
-	public static IPDOMCPPTemplateParameter createPDOMTemplateParameter(PDOMLinkage linkage, PDOMNode parent, ICPPTemplateParameter origParam) throws CoreException, DOMException {
+	public static IPDOMCPPTemplateParameter createPDOMTemplateParameter(PDOMLinkage linkage,
+			PDOMNode parent, ICPPTemplateParameter origParam) throws CoreException, DOMException {
 		IPDOMCPPTemplateParameter param= null;
 		if (origParam instanceof ICPPTemplateNonTypeParameter) {
 			param= new PDOMCPPTemplateNonTypeParameter(linkage, parent, (ICPPTemplateNonTypeParameter) origParam);

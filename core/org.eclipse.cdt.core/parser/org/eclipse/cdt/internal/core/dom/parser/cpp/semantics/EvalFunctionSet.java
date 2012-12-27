@@ -110,12 +110,12 @@ public class EvalFunctionSet extends CPPEvaluation {
 			firstByte |= ITypeMarshalBuffer.FLAG2;
 
 		buffer.putByte((byte) firstByte);
-		buffer.putShort((short) bindings.length);
+		buffer.putInt(bindings.length);
 		for (ICPPFunction binding : bindings) {
 			buffer.marshalBinding(binding);
 		}
 		if (args != null) {
-			buffer.putShort((short) args.length);
+			buffer.putInt(args.length);
 			for (ICPPTemplateArgument arg : args) {
 				buffer.marshalTemplateArgument(arg);
 			}
@@ -124,14 +124,14 @@ public class EvalFunctionSet extends CPPEvaluation {
 
 	public static ISerializableEvaluation unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
 		final boolean addressOf= (firstByte & ITypeMarshalBuffer.FLAG1) != 0;
-		int bindingCount= buffer.getShort();
+		int bindingCount= buffer.getInt();
 		ICPPFunction[] bindings= new ICPPFunction[bindingCount];
 		for (int i = 0; i < bindings.length; i++) {
 			bindings[i]= (ICPPFunction) buffer.unmarshalBinding();
 		}
 		ICPPTemplateArgument[] args= null;
 		if ((firstByte & ITypeMarshalBuffer.FLAG2) != 0) {
-			int len= buffer.getShort();
+			int len= buffer.getInt();
 			args = new ICPPTemplateArgument[len];
 			for (int i = 0; i < args.length; i++) {
 				args[i]= buffer.unmarshalTemplateArgument();

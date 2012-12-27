@@ -60,7 +60,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * link time. These are generally global symbols specific to a given language.
  */
 public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage, IIndexBindingConstants {
-	// record offsets
+	// Record offsets.
 	private static final int ID_OFFSET   = PDOMNamedNode.RECORD_SIZE + 0;
 	private static final int NEXT_OFFSET = PDOMNamedNode.RECORD_SIZE + 4;
 	private static final int INDEX_OFFSET = PDOMNamedNode.RECORD_SIZE + 8;
@@ -71,7 +71,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	protected static final int RECORD_SIZE = PDOMNamedNode.RECORD_SIZE + 20;
 	protected static final long[] FILE_LOCAL_REC_DUMMY = new long[]{0};
 
-	// node types
+	// Node types
 	protected static final int LINKAGE= 0; // special one for myself
 
 	private BTree fMacroIndex= null;  // No need for volatile, all fields of BTree are final.
@@ -447,12 +447,14 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		if (len > 0) {
 			if (len <= maxInlineSize) {
 				db.putBytes(offset, buf.getBuffer(), len);
-			} else  {
+			} else {
 				db.putByte(offset, TypeMarshalBuffer.INDIRECT_TYPE);
 				long chainOffset = offset + 1;
+				buf.putInt(len);
+				int lenSize = buf.getPosition() - len;
 				int bufferPos = 0;
 				while (bufferPos < len) {
-					int chunkLength = len - bufferPos + 2;
+					int chunkLength = bufferPos == 0 ? len + lenSize : len - bufferPos;
 					boolean chainingRequired = false;
 					if (chunkLength > Database.MAX_MALLOC_SIZE) {
 						chunkLength = Database.MAX_MALLOC_SIZE;
@@ -460,36 +462,52 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 					}
 					long ptr = db.malloc(chunkLength);
 					db.putRecPtr(chainOffset, ptr);
-					db.putShort(ptr, (short) len);
-					int pos = 2;
+					if (bufferPos == 0) {
+						// Write length.
+						db.putBytes(ptr, buf.getBuffer(), len, lenSize);
+						ptr += lenSize;
+						chunkLength -= lenSize;
+					}
 					if (chainingRequired) {
 						// Reserve space for the chaining pointer.
-						chainOffset = ptr + 2; pos += Database.PTR_SIZE;
+						chainOffset = ptr;
+						ptr += Database.PTR_SIZE;
+						chunkLength -= Database.PTR_SIZE;
 					}
-					chunkLength -= pos;
-					db.putBytes(ptr + pos, buf.getBuffer(), bufferPos, chunkLength);
+					db.putBytes(ptr, buf.getBuffer(), bufferPos, chunkLength);
 					bufferPos += chunkLength;
 				}
+				buf.setPosition(len); // Restore buffer position.
 			}
 		}
 	}
 
 	private byte[] loadLinkedSerializedData(final Database db, long offset) throws CoreException {
 		long ptr= db.getRecPtr(offset);
-		int len= db.getShort(ptr) & 0xffff;
+		// Read the length in variable-length base-128 encoding, see ITypeMarshalBuffer.putInt(int).
+		int pos = 0;
+		int b = db.getByte(ptr + pos++);
+		int len = b & 0x7F;
+		for (int shift = 7; (b & 0x80) != 0; shift += 7) {
+			b = db.getByte(ptr + pos++);
+			len |= (b & 0x7F) << shift;
+		}
+
 		byte[] data= new byte[len];
 		int bufferPos = 0;
 		while (bufferPos < len) {
-			int chunkLength = len - bufferPos + 2;
-			int pos = 2;
-			long chunkPtr = ptr;
+			int chunkLength = len + pos - bufferPos;
+			long chunkPtr = ptr + pos;
 			if (chunkLength > Database.MAX_MALLOC_SIZE) {
 				chunkLength = Database.MAX_MALLOC_SIZE;
-				ptr= db.getRecPtr(chunkPtr + pos); pos += Database.PTR_SIZE;
+				ptr= db.getRecPtr(chunkPtr);
+				chunkPtr += Database.PTR_SIZE;
+				chunkLength -= Database.PTR_SIZE;
 			}
-			chunkLength -= pos;
-			db.getBytes(chunkPtr + pos, data, bufferPos, chunkLength);
+			chunkLength -= pos; 
+			db.getBytes(chunkPtr, data, bufferPos, chunkLength);
 			bufferPos += chunkLength;
+			pos = 0;
 		}
 		return data;
 	}
@@ -497,18 +515,26 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	private void deleteSerializedData(Database db, long offset, int maxInlineSize) throws CoreException {
 		byte firstByte= db.getByte(offset);
 		if (firstByte == TypeMarshalBuffer.INDIRECT_TYPE) {
-			long ptr= db.getRecPtr(offset + 1);
-			int len= db.getShort(ptr) & 0xffff;
+			long chunkPtr= db.getRecPtr(offset + 1);
+			long ptr = chunkPtr;
+			// Read the length in variable-length base-128 encoding, see ITypeMarshalBuffer.putInt(int).
+			int b = db.getByte(ptr++);
+			int len = b & 0x7F;
+			for (int shift = 7; (b & 0x80) != 0; shift += 7) {
+				b = db.getByte(ptr++);
+				len |= (b & 0x7F) << shift;
+			}
+			
+			len += ptr - chunkPtr;
 			while (len > 0) {
-				int chunkLength = len + 2;
-				int pos = 2;
-				long chunkPtr = ptr;
+				int chunkLength = len;
 				if (chunkLength > Database.MAX_MALLOC_SIZE) {
 					chunkLength = Database.MAX_MALLOC_SIZE;
-					ptr= db.getRecPtr(chunkPtr + pos); pos += Database.PTR_SIZE;
+					ptr= db.getRecPtr(ptr);
+					chunkLength -= Database.PTR_SIZE;
 				}
-				chunkLength -= pos;
 				db.free(chunkPtr);
+				chunkPtr = ptr;
 				len -= chunkLength;
 			}
 		}

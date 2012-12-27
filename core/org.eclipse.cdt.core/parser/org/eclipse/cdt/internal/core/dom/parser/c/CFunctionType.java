@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Devin Steffler (IBM Corporation) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -87,7 +88,7 @@ public class CFunctionType implements IFunctionType, ISerializableType {
 		} else {
 			firstByte |= ITypeMarshalBuffer.FLAG4;
 			buffer.putByte((byte) firstByte);
-			buffer.putShort((short) len);
+			buffer.putInt(len);
 		}
 		
 		buffer.marshalType(returnType);
@@ -99,7 +100,7 @@ public class CFunctionType implements IFunctionType, ISerializableType {
 	public static IType unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
 		int len;
 		if (((firstByte & ITypeMarshalBuffer.FLAG4) != 0)) {
-			len= buffer.getShort();
+			len= buffer.getInt();
 		} else {
 			len= (firstByte & (ITypeMarshalBuffer.FLAG4-1))/ITypeMarshalBuffer.FLAG1;
 		}

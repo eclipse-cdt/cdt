@@ -154,12 +154,12 @@ public class Value implements IValue {
 			Long num= numericalValue();
 			if (num != null) {
 				long lv= num;
-				if (lv >= Integer.MIN_VALUE && lv <= Integer.MAX_VALUE) {
+				if (lv >= 0) {
 					buf.putByte((byte) (ITypeMarshalBuffer.VALUE | ITypeMarshalBuffer.FLAG2));
-					buf.putInt((int) lv);
+					buf.putLong(lv);
 				} else {
 					buf.putByte((byte) (ITypeMarshalBuffer.VALUE | ITypeMarshalBuffer.FLAG3));
-					buf.putLong(lv);
+					buf.putLong(-lv);
 				}
 			} else if (fFixedValue != null) {
 				buf.putByte((byte) (ITypeMarshalBuffer.VALUE | ITypeMarshalBuffer.FLAG4));
@@ -177,18 +177,13 @@ public class Value implements IValue {
 			return null;
 		if ((firstByte & ITypeMarshalBuffer.FLAG1) != 0)
 			return Value.UNKNOWN;
-		if ((firstByte & ITypeMarshalBuffer.FLAG2) != 0) {
-			int val= buf.getInt();
-			return Value.create(val);
-		}
-		if ((firstByte & ITypeMarshalBuffer.FLAG3) != 0) {
-			long val= buf.getLong();
-			return Value.create(val);
-		}
-		if ((firstByte & ITypeMarshalBuffer.FLAG4) != 0) {
-			char[] fixedValue = buf.getCharArray();
-			return new Value(fixedValue, null);
-		}
+		if ((firstByte & ITypeMarshalBuffer.FLAG2) != 0)
+			return Value.create(buf.getLong());
+		if ((firstByte & ITypeMarshalBuffer.FLAG3) != 0)
+			return Value.create(-buf.getLong());
+		if ((firstByte & ITypeMarshalBuffer.FLAG4) != 0)
+			return new Value(buf.getCharArray(), null);
+
 		ISerializableEvaluation eval= buf.unmarshalEvaluation();
 		if (eval instanceof ICPPEvaluation)
 			return new Value(null, (ICPPEvaluation) eval);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2010, 2012 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser;
 
@@ -56,13 +57,13 @@ public class ProblemType implements IProblemType, ISerializableType {
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
 		buffer.putByte(ITypeMarshalBuffer.PROBLEM_TYPE);
-		buffer.putShort((short) getID());
+		buffer.putInt(getID());
 	}
 	
 	public static IType unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
 		if ((firstByte & ITypeMarshalBuffer.FLAG1) != 0)
 			return ProblemFunctionType.unmarshal(firstByte, buffer);
 		
-		return new ProblemType(buffer.getShort());
+		return new ProblemType(buffer.getInt());
 	}
 }

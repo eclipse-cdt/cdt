@@ -33,7 +33,7 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * For marshalling types to byte arrays.
  */
-public class TypeMarshalBuffer implements ITypeMarshalBuffer {
+public final class TypeMarshalBuffer implements ITypeMarshalBuffer {
 	public static final byte[] EMPTY= { 0, 0, 0, 0, 0, 0 };
 	public static final byte NULL_TYPE= 0;
 	public static final byte INDIRECT_TYPE= (byte) -1;
@@ -67,6 +67,11 @@ public class TypeMarshalBuffer implements ITypeMarshalBuffer {
 
 	public int getPosition() {
 		return fPos;
+	}
+
+	public void setPosition(int pos) {
+		assert 0 <= pos && pos <= fPos;
+		fPos = pos;
 	}
 
 	public byte[] getBuffer() {
@@ -257,23 +262,7 @@ public class TypeMarshalBuffer implements ITypeMarshalBuffer {
 	}
 
 	@Override
-	public void putShort(short value) {
-		request(2);
-		fBuffer[fPos++]= (byte) (value >> 8);
-		fBuffer[fPos++]= (byte) (value);
-	}
-
-	@Override
-	public int getShort() throws CoreException {
-		if (fPos + 2 > fBuffer.length)
-			throw unmarshallingError();
-		final int byte1 = 0xff & fBuffer[fPos++];
-		final int byte2 = 0xff & fBuffer[fPos++];
-		return (((byte1 << 8) | (byte2 & 0xff)));
-	}
-
-	@Override
-	public void putInt(int value) {
+	public void putFixedInt(int value) {
 		request(4);
 		fPos += 4;
 		int p= fPos;
@@ -284,7 +273,7 @@ public class TypeMarshalBuffer implements ITypeMarshalBuffer {
 	}
 
 	@Override
-	public int getInt() throws CoreException {
+	public int getFixedInt() throws CoreException {
 		if (fPos + 4 > fBuffer.length)
 			throw unmarshallingError();
 		int result= 0;
@@ -296,34 +285,47 @@ public class TypeMarshalBuffer implements ITypeMarshalBuffer {
 	}
 
 	@Override
+	public void putInt(int value) {
+		do {
+			int b = value & 0x7F;
+			value >>>= 7;
+			if (value != 0)
+				b |= 0x80;
+			putByte((byte) b);
+		} while (value != 0);
+	}
+
+	@Override
 	public void putLong(long value) {
-		request(8);
-		fPos += 8;
-		int p= fPos;
-		fBuffer[--p]= (byte) (value); value >>= 8;
-		fBuffer[--p]= (byte) (value); value >>= 8;
-		fBuffer[--p]= (byte) (value); value >>= 8;
-		fBuffer[--p]= (byte) (value); value >>= 8;
-		fBuffer[--p]= (byte) (value); value >>= 8;
-		fBuffer[--p]= (byte) (value); value >>= 8;
-		fBuffer[--p]= (byte) (value); value >>= 8;
-		fBuffer[--p]= (byte) (value);
+		do {
+			int b = (int) value & 0x7F;
+			value >>>= 7;
+			if (value != 0)
+				b |= 0x80;
+			putByte((byte) b);
+		} while (value != 0);
+	}
+
+	@Override
+	public int getInt() throws CoreException {
+		int b = getByte();
+		int value = b & 0x7F;
+		for (int shift = 7; (b & 0x80) != 0; shift += 7) {
+			b = getByte();
+			value |= (b & 0x7F) << shift;
+		}
+		return value;
 	}
 
 	@Override
 	public long getLong() throws CoreException {
-		if (fPos + 8 > fBuffer.length)
-			throw unmarshallingError();
-		long result= 0;
-		result |= fBuffer[fPos++] & 0xff; result <<= 8;
-		result |= fBuffer[fPos++] & 0xff; result <<= 8;
-		result |= fBuffer[fPos++] & 0xff; result <<= 8;
-		result |= fBuffer[fPos++] & 0xff; result <<= 8;
-		result |= fBuffer[fPos++] & 0xff; result <<= 8;
-		result |= fBuffer[fPos++] & 0xff; result <<= 8;
-		result |= fBuffer[fPos++] & 0xff; result <<= 8;
-		result |= fBuffer[fPos++] & 0xff;
-		return result;
+		int b = getByte();
+		long value = b & 0x7F;
+		for (int shift = 7; (b & 0x80) != 0; shift += 7) {
+			b = getByte();
+			value |= (b & 0x7F) << shift;
+		}
+		return value;
 	}
 
 	private void putRecordPointer(long record) {
@@ -344,19 +346,19 @@ public class TypeMarshalBuffer implements ITypeMarshalBuffer {
 
 	@Override
 	public void putCharArray(char[] chars) {
-		putShort((short) chars.length);
+		putInt(chars.length);
 		for (char c : chars) {
-			putShort((short) c);
+			putInt(c & 0xFFFF);
 		}
 	}
 
 	@Override
 	public char[] getCharArray() throws CoreException {
-		int len= getShort();
-		char[] expr= new char[len];
-		for (int i = 0; i < expr.length; i++) {
-			expr[i]= (char) getShort();
+		int len= getInt();
+		char[] chars= new char[len];
+		for (int i = 0; i < chars.length; i++) {
+			chars[i]= (char) getInt();
 		}
-		return expr;
+		return chars;
 	}
 }

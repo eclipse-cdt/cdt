@@ -32,9 +32,7 @@ import org.eclipse.cdt.ui.IWorkingCopyManager;
 
 import org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit;
 
-
 public class CReconcilingStrategy implements IReconcilingStrategy, IReconcilingStrategyExtension {
-
 	private ITextEditor fEditor;
 	private IWorkingCopyManager fManager;
 	private IProgressMonitor fProgressMonitor;
@@ -46,32 +44,20 @@ public class CReconcilingStrategy implements IReconcilingStrategy, IReconcilingS
 		fManager= CUIPlugin.getDefault().getWorkingCopyManager();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategy#setDocument(org.eclipse.jface.text.IDocument)
-	 */
 	@Override
 	public void setDocument(IDocument document) {
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategy#reconcile(org.eclipse.jface.text.reconciler.DirtyRegion, org.eclipse.jface.text.IRegion)
-	 */
 	@Override
 	public void reconcile(DirtyRegion dirtyRegion, IRegion subRegion) {
 		// only called for incremental reconciler
 	}
 
-	/*
-	 * @see IReconcilingStrategyExtension#setProgressMonitor(IProgressMonitor)
-	 */
 	@Override
 	public void setProgressMonitor(IProgressMonitor monitor) {
 		fProgressMonitor= monitor;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategy#reconcile(org.eclipse.jface.text.IRegion)
-	 */
 	@Override
 	public void reconcile(IRegion region) {
 		reconcile(false);
@@ -91,10 +77,11 @@ public class CReconcilingStrategy implements IReconcilingStrategy, IReconcilingS
 				forced= workingCopy.isConsistent();
 				ast= workingCopy.reconcile(computeAST, true, fProgressMonitor);
 			}
-		} catch (OperationCanceledException oce) {
+		} catch (OperationCanceledException e) {
 			// document was modified while parsing
 		} catch (CModelException e) {
-			IStatus status= new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, IStatus.OK, "Error in CDT UI during reconcile", e);  //$NON-NLS-1$
+			IStatus status= new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, IStatus.OK,
+					"Error in CDT UI during reconcile", e);  //$NON-NLS-1$
 			CUIPlugin.log(status);
 		} finally {
 			if (computeAST) {
@@ -117,8 +104,9 @@ public class CReconcilingStrategy implements IReconcilingStrategy, IReconcilingS
 					if (canceled) {
 						aboutToBeReconciled();
 					}
-				} catch(Exception e) {
-					IStatus status= new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, IStatus.OK, "Error in CDT UI during reconcile", e);  //$NON-NLS-1$
+				} catch (Exception e) {
+					IStatus status= new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, IStatus.OK,
+							"Error in CDT UI during reconcile", e);  //$NON-NLS-1$
 					CUIPlugin.log(status);
 				} finally {
 					if (index != null) {
@@ -129,9 +117,6 @@ public class CReconcilingStrategy implements IReconcilingStrategy, IReconcilingS
 		}
  	}
 
-	/*
-	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategyExtension#initialReconcile()
-	 */
 	@Override
 	public void initialReconcile() {
 		reconcile(true);
@@ -143,5 +128,4 @@ public class CReconcilingStrategy implements IReconcilingStrategy, IReconcilingS
 			((ICReconcilingListener)fEditor).aboutToBeReconciled();
 		}
 	}
-
 }

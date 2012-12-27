@@ -45,7 +45,6 @@ public class CodanRunner {
 	/** Do not instantiate. All methods are static */
 	private CodanRunner() {}
 
-
 	/**
 	 * Runs all checkers that support "run as you type" mode.
 	 *

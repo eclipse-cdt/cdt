@@ -151,7 +151,7 @@ public class EvalID extends CPPEvaluation {
 		buffer.putCharArray(fName);
 		buffer.marshalBinding(fNameOwner);
 		if (fTemplateArgs != null) {
-			buffer.putShort((short) fTemplateArgs.length);
+			buffer.putInt(fTemplateArgs.length);
 			for (ICPPTemplateArgument arg : fTemplateArgs) {
 				buffer.marshalTemplateArgument(arg);
 			}
@@ -166,7 +166,7 @@ public class EvalID extends CPPEvaluation {
 		IBinding nameOwner= buffer.unmarshalBinding();
 		ICPPTemplateArgument[] args= null;
 		if ((firstByte & ITypeMarshalBuffer.FLAG3) != 0) {
-			int len= buffer.getShort();
+			int len= buffer.getInt();
 			args = new ICPPTemplateArgument[len];
 			for (int i = 0; i < args.length; i++) {
 				args[i]= buffer.unmarshalTemplateArgument();

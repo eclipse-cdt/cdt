@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2010, 2012 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser;
 
@@ -28,11 +29,11 @@ public class ProblemFunctionType extends ProblemType implements ICPPFunctionType
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
 		buffer.putByte((byte) (ITypeMarshalBuffer.PROBLEM_TYPE | ITypeMarshalBuffer.FLAG1));
-		buffer.putShort((short) getID());
+		buffer.putInt(getID());
 	}
 	
 	public static IType unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
-		return new ProblemFunctionType(buffer.getShort());
+		return new ProblemFunctionType(buffer.getInt());
 	}
 
 	@Override

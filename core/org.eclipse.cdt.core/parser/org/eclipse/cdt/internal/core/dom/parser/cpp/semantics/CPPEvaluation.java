@@ -126,7 +126,7 @@ public abstract class CPPEvaluation implements ICPPEvaluation {
 		}
 
 		@Override
-		public void putShort(short value) {
+		public void putFixedInt(int value) {
 			appendSeparator();
 			fBuffer.append(value);
 		}
@@ -192,7 +192,7 @@ public abstract class CPPEvaluation implements ICPPEvaluation {
 		}
 
 		@Override
-		public int getShort() throws CoreException {
+		public int getFixedInt() throws CoreException {
 			throw new UnsupportedOperationException();
 		}
 

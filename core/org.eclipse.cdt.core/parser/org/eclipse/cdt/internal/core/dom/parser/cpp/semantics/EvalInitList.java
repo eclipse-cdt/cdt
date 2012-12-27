@@ -87,14 +87,14 @@ public class EvalInitList extends CPPEvaluation {
 	@Override
 	public void marshal(ITypeMarshalBuffer buffer, boolean includeValue) throws CoreException {
 		buffer.putByte(ITypeMarshalBuffer.EVAL_INIT_LIST);
-		buffer.putShort((short) fClauses.length);
+		buffer.putInt(fClauses.length);
 		for (ICPPEvaluation arg : fClauses) {
 			buffer.marshalEvaluation(arg, includeValue);
 		}
 	}
 
 	public static ISerializableEvaluation unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
-		int len= buffer.getShort();
+		int len= buffer.getInt();
 		ICPPEvaluation[] args = new ICPPEvaluation[len];
 		for (int i = 0; i < args.length; i++) {
 			args[i]= (ICPPEvaluation) buffer.unmarshalEvaluation();

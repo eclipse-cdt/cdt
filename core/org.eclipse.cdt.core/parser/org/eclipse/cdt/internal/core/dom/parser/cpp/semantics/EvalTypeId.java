@@ -123,7 +123,7 @@ public class EvalTypeId extends CPPEvaluation {
 		buffer.putByte((byte) firstByte);
 		buffer.marshalType(fInputType);
 		if (includeValue) {
-			buffer.putShort((short) fArguments.length);
+			buffer.putInt(fArguments.length);
 			for (ICPPEvaluation arg : fArguments) {
 				buffer.marshalEvaluation(arg, includeValue);
 			}
@@ -134,7 +134,7 @@ public class EvalTypeId extends CPPEvaluation {
 		IType type= buffer.unmarshalType();
 		ICPPEvaluation[] args= null;
 		if ((firstByte & ITypeMarshalBuffer.FLAG1) != 0) {
-			int len= buffer.getShort();
+			int len= buffer.getInt();
 			args = new ICPPEvaluation[len];
 			for (int i = 0; i < args.length; i++) {
 				args[i]= (ICPPEvaluation) buffer.unmarshalEvaluation();

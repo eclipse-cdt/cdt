@@ -125,12 +125,22 @@
     <resource path="parser/org/eclipse/cdt/core/parser/GCCKeywords.java" type="org.eclipse.cdt.core.parser.GCCKeywords">
         <filter id="1143996420">
             <message_arguments>
+                <message_argument value="__DECLTYPE"/>
+            </message_arguments>
+        </filter>
+        <filter id="1143996420">
+            <message_arguments>
                 <message_argument value="__FLOAT128"/>
             </message_arguments>
         </filter>
         <filter id="1143996420">
             <message_arguments>
                 <message_argument value="__INT128"/>
+            </message_arguments>
+        </filter>
+        <filter id="1143996420">
+            <message_arguments>
+                <message_argument value="cp__DECLTYPE"/>
             </message_arguments>
         </filter>
         <filter id="1143996420">

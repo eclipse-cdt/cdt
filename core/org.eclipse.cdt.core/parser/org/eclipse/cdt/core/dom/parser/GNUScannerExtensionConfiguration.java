@@ -66,6 +66,7 @@ public abstract class GNUScannerExtensionConfiguration extends AbstractScannerEx
 		addKeyword(GCCKeywords.cp__CONST, IToken.t_const); 
 		addKeyword(GCCKeywords.cp__CONST__, IToken.t_const); 
 		addKeyword(GCCKeywords.cp__DECLSPEC, IGCCToken.t__declspec);
+		addKeyword(GCCKeywords.cp__DECLTYPE, IToken.t_decltype);
 		addKeyword(GCCKeywords.cp__INLINE, IToken.t_inline); 
 		addKeyword(GCCKeywords.cp__INLINE__, IToken.t_inline); 
 		addKeyword(GCCKeywords.cp__RESTRICT, IToken.t_restrict); 

@@ -24,6 +24,8 @@ public class GCCKeywords {
 	public static final String __ATTRIBUTE__ = "__attribute__"; 
 	public static final String __DECLSPEC = "__declspec"; 
 	/** Experimental constant. May change without notice. */
+	public static final String __DECLTYPE = "__decltype";
+	/** Experimental constant. May change without notice. */
 	public static final String __INT128 = "__int128";
 	/** Experimental constant. May change without notice. */
 	public static final String __FLOAT128 = "__float128";
@@ -73,6 +75,7 @@ public class GCCKeywords {
 	 * Experimental constants. May change without notice.
 	 */
 	public static final char[] 
+		cp__DECLTYPE=			 		__DECLTYPE.toCharArray(),
 		cp__float128= 					__FLOAT128.toCharArray(),
 		cp__int128= 					__INT128.toCharArray(),
 		cp__is_literal_type= 			"__is_literal_type".toCharArray(),

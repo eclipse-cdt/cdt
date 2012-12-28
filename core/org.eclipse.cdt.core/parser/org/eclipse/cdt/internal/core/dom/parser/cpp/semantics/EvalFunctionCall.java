@@ -143,9 +143,11 @@ public class EvalFunctionCall extends CPPEvaluation {
 	@Override
 	public IValue getValue(IASTNode point) {
 		ICPPEvaluation eval = computeForFunctionCall(Value.MAX_RECURSION_DEPTH, point);
-		if (eval instanceof EvalFixed)
-			return ((EvalFixed) eval).getValue();
-		eval = new EvalFixed(getTypeOrFunctionSet(point), PRVALUE, eval.getValue(point));
+		if (eval != this) {
+			if (eval instanceof EvalFixed)
+				return ((EvalFixed) eval).getValue();
+			eval = new EvalFixed(getTypeOrFunctionSet(point), PRVALUE, eval.getValue(point));
+		}
 		return Value.create(eval);
 	}
 

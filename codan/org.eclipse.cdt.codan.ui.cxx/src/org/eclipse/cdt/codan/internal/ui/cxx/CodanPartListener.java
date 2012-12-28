@@ -66,7 +66,7 @@ class CodanPartListener implements IPartListener2 {
 		}
 	}
 
-	private void processResource(final IResource resource, final CheckerLaunchMode launchMode) {
+	private static void processResource(final IResource resource, final CheckerLaunchMode launchMode) {
 		if (resource != null) {
 			Job job = new Job(NLS.bind(Messages.Startup_AnalyzingFile, resource.getName())) {
 				@Override

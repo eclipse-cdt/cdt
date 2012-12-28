@@ -11,31 +11,17 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.core;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-
 import org.eclipse.cdt.codan.core.CodanCorePlugin;
 import org.eclipse.cdt.codan.core.model.CheckerLaunchMode;
 import org.eclipse.cdt.codan.core.model.IChecker;
 import org.eclipse.cdt.codan.core.model.ICheckerInvocationContext;
-import org.eclipse.cdt.codan.core.model.ICodanProblemMarker;
-import org.eclipse.cdt.codan.core.model.IProblem;
-import org.eclipse.cdt.codan.core.model.IProblemProfile;
 import org.eclipse.cdt.codan.core.model.IRunnableInEditorChecker;
 import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceRuleFactory;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.osgi.util.NLS;
 
 /**
@@ -132,73 +118,6 @@ public class CodanRunner {
 			}
 		} finally {
 			monitor.done();
-		}
-	}
-
-	public static void asynchronouslyRemoveMarkersForDisabledProblems(final IResource resource) {
-		Job job = new Job(Messages.CodanRunner_Update_markers) {
-			@Override
-			protected IStatus run(IProgressMonitor monitor) {
-				removeMarkersForDisabledProblems(resource, monitor);
-				return Status.OK_STATUS;
-			}
-		};
-        IResourceRuleFactory ruleFactory = ResourcesPlugin.getWorkspace().getRuleFactory();
-		job.setRule(ruleFactory.markerRule(resource));
-		job.setSystem(true);
-		job.schedule();
-	}
-
-	public static void removeMarkersForDisabledProblems(IResource resource, IProgressMonitor monitor) {
-		CheckersRegistry chegistry = CheckersRegistry.getInstance();
-		Set<String> markerTypes = new HashSet<String>();
-		for (IChecker checker : chegistry) {
-			Collection<IProblem> problems = chegistry.getRefProblems(checker);
-			for (IProblem problem : problems) {
-				markerTypes.add(problem.getMarkerType());
-			}
-		}
-		try {
-			removeMarkersForDisabledProblems(chegistry, markerTypes, resource, monitor);
-		} catch (CoreException e) {
-			CodanCorePlugin.log(e);
-		}
-	}
-
-	private static void removeMarkersForDisabledProblems(CheckersRegistry chegistry,
-			Set<String> markerTypes, IResource resource, IProgressMonitor monitor) throws CoreException {
-		if (!resource.isAccessible()) {
-			return;
-		}
-		IResource[] children = null;
-		if (resource instanceof IContainer) {
-			children = ((IContainer) resource).members();
-		}
-		int numChildren = children == null ? 0 : children.length;
-		int childWeight = 10;
-        SubMonitor progress = SubMonitor.convert(monitor, 1 + numChildren * childWeight);
-		IProblemProfile resourceProfile = null;
-		for (String markerType : markerTypes) {
-			IMarker[] markers = resource.findMarkers(markerType, false, IResource.DEPTH_ZERO);
-			for (IMarker marker : markers) {
-				String problemId = (String) marker.getAttribute(ICodanProblemMarker.ID);
-				if (resourceProfile == null) {
-					resourceProfile = chegistry.getResourceProfile(resource);
-				}
-				IProblem problem = resourceProfile.findProblem(problemId);
-				if (problem != null && !problem.isEnabled()) {
-					marker.delete();
-				}
-			}
-		}
-		progress.worked(1);
-		if (children != null) {
-			for (IResource child : children) {
-				if (monitor.isCanceled())
-					return;
-				removeMarkersForDisabledProblems(chegistry, markerTypes, child,
-						progress.newChild(childWeight));
-			}
 		}
 	}
 }

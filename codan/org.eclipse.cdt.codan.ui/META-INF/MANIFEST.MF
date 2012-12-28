@@ -5,17 +5,18 @@ Bundle-SymbolicName: org.eclipse.cdt.codan.ui; singleton:=true
 Bundle-Version: 2.1.0.qualifier
 Bundle-Activator: org.eclipse.cdt.codan.internal.ui.CodanUIActivator
 Bundle-Vendor: %Bundle-Vendor
-Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime,
- org.eclipse.core.resources,
- org.eclipse.ui.workbench.texteditor,
- org.eclipse.cdt.codan.core,
- org.eclipse.jface.text,
- org.eclipse.ui.ide,
+Require-Bundle: org.eclipse.cdt.codan.core,
+ org.eclipse.cdt.core,
  org.eclipse.cdt.ui,
  org.eclipse.core.filesystem,
+ org.eclipse.core.resources,
+ org.eclipse.core.runtime,
+ org.eclipse.jface.text,
+ org.eclipse.ui,
  org.eclipse.ui.console,
- org.eclipse.ui.editors
+ org.eclipse.ui.editors,
+ org.eclipse.ui.ide,
+ org.eclipse.ui.workbench.texteditor
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.cdt.codan.internal.ui;x-friends:="org.eclipse.cdt.codan.ui.cxx",

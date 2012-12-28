@@ -15,7 +15,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.cdt.codan.core.param.FileScopeProblemPreference;
-import org.eclipse.cdt.codan.internal.ui.CodanUIActivator;
 import org.eclipse.cdt.codan.internal.ui.CodanUIMessages;
 import org.eclipse.cdt.codan.internal.ui.dialogs.ExclusionInclusionEntryDialog;
 import org.eclipse.cdt.codan.internal.ui.widgets.BasicElementLabels;
@@ -33,7 +32,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.window.Window;
@@ -43,7 +41,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Shell;
 
 public class FileScopePreferencePage extends PreferencePage {
 	private ListDialogField<String> fInclusionPatternList;
@@ -106,18 +103,13 @@ public class FileScopePreferencePage extends PreferencePage {
 	}
 
 	private static class ExclusionInclusionLabelProvider extends LabelProvider {
-		private Image fElementImage;
 
 		public ExclusionInclusionLabelProvider(String descriptorPath) {
-			if (descriptorPath != null) {
-				ImageDescriptor d = CodanUIActivator.getImageDescriptor(descriptorPath);
-			}
-			fElementImage = null; // XXX
 		}
 
 		@Override
 		public Image getImage(Object element) {
-			return fElementImage;
+			return null;
 		}
 
 		@Override
@@ -126,10 +118,11 @@ public class FileScopePreferencePage extends PreferencePage {
 		}
 	}
 
-	private ListDialogField<String> createListContents(FileScopeProblemPreference entryToEdit, String key, String label, String descriptor,
-			String[] buttonLabels) {
+	private ListDialogField<String> createListContents(FileScopeProblemPreference entryToEdit,
+			String key, String label, String descriptor, String[] buttonLabels) {
 		ExclusionPatternAdapter adapter = new ExclusionPatternAdapter();
-		ListDialogField<String> patternList = new ListDialogField<String>(adapter, buttonLabels, new ExclusionInclusionLabelProvider(descriptor));
+		ListDialogField<String> patternList =
+				new ListDialogField<String>(adapter, buttonLabels, new ExclusionInclusionLabelProvider(descriptor));
 		patternList.setDialogFieldListener(adapter);
 		patternList.setLabelText(label);
 		patternList.enableButton(IDX_EDIT, false);
@@ -265,12 +258,6 @@ public class FileScopePreferencePage extends PreferencePage {
 		return getPattern(fInclusionPatternList);
 	}
 
-	/*
-	 * @see org.eclipse.jface.window.Window#configureShell(Shell)
-	 */
-	protected void configureShell(Shell newShell) {
-	}
-
 	private void addMultipleEntries(ListDialogField<String> field) {
 		String title, message;
 		if (isExclusion(field)) {
@@ -280,7 +267,8 @@ public class FileScopePreferencePage extends PreferencePage {
 			title = CodanUIMessages.ExclusionInclusionDialog_ChooseInclusionPattern_title;
 			message = CodanUIMessages.ExclusionInclusionDialog_ChooseInclusionPattern_description;
 		}
-		IPath[] res = ExclusionInclusionEntryDialog.chooseExclusionPattern(getShell(), fCurrSourceFolder, title, message, null, true);
+		IPath[] res = ExclusionInclusionEntryDialog.chooseExclusionPattern(getShell(),
+				fCurrSourceFolder, title, message, null, true);
 		if (res != null) {
 			for (int i = 0; i < res.length; i++) {
 				field.addElement(res[i].toString());

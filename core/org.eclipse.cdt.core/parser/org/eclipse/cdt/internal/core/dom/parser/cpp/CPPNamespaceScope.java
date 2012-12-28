@@ -80,8 +80,8 @@ public class CPPNamespaceScope extends CPPScope implements ICPPInternalNamespace
 	private void initUsingDirectives() {
 		if (fUsingDirectives == null) {
 			fUsingDirectives= new ArrayList<ICPPUsingDirective>(1);
-			// Insert a using directive for every inline namespace found in the index
-			for (ICPPInternalNamespaceScope inline: getIndexInlineNamespaces()) {
+			// Insert a using directive for every inline namespace found in the index.
+			for (ICPPInternalNamespaceScope inline : getIndexInlineNamespaces()) {
 				if (!(inline instanceof CPPNamespaceScope)) {
 					fUsingDirectives.add(new InlineNamespaceDirective(this, inline));
 				}

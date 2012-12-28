@@ -587,8 +587,8 @@ public class AST2BaseTest extends BaseTestCase {
 			return problemBinding;
 		}
 
-		public <T extends IBinding> T assertNonProblemOnFirstIdentifier(String section, Class<T> type, Class... cs) {
-			return assertNonProblem(section, getIdentifierLength(section), type, cs);
+		public <T extends IBinding> T assertNonProblemOnFirstIdentifier(String section, Class... cs) {
+			return assertNonProblem(section, getIdentifierLength(section), cs);
 		}
 
 		public IBinding assertNonProblemOnFirstIdentifier(String section) {
@@ -678,7 +678,7 @@ public class AST2BaseTest extends BaseTestCase {
     		return selector.findImplicitName(offset, len);
     	}
 
-    	public <T extends IASTNode> T assertNode(String context, String nodeText, Class<T> type, Class... cs) {
+    	public <T extends IASTNode> T assertNode(String context, String nodeText, Class... cs) {
     		if (context == null) {
     			context = contents;
     		}
@@ -688,11 +688,11 @@ public class AST2BaseTest extends BaseTestCase {
     		assertTrue("Node \"" + nodeText + "\" not found", nodeOffset >= 0);
     		IASTNodeSelector selector = tu.getNodeSelector(null);
     		IASTNode node = selector.findNode(offset + nodeOffset, nodeText.length());
-    		return assertType(node, type, cs);
+    		return assertType(node, cs);
     	}
 
-    	public <T extends IASTNode> T assertNode(String nodeText, Class<T> type, Class... cs) {
-    		return assertNode(contents, nodeText, type, cs);
+    	public <T extends IASTNode> T assertNode(String nodeText, Class... cs) {
+    		return assertNode(contents, nodeText, cs);
     	}
 
     	private String renderProblemID(int i) {
@@ -713,31 +713,30 @@ public class AST2BaseTest extends BaseTestCase {
     		return "Unknown problem ID";
     	}
     	
-    	public <T extends IBinding> T assertNonProblem(String section, int len, Class<T> type, Class... cs) {
+    	public <T extends IBinding> T assertNonProblem(String section, int len, Class... cs) {
     		if (len <= 0)
     			len += section.length();
     		IBinding binding= binding(section, len);
     		assertTrue("ProblemBinding for name: " + section.substring(0, len),
     				!(binding instanceof IProblemBinding));
-    		return assertType(binding, type, cs);
+    		return assertType(binding, cs);
     	}
 
-    	public <T extends IBinding> T assertNonProblem(String section, Class<T> type, Class... cs) {
-    		return assertNonProblem(section, section.length(), type, cs);
+    	public <T extends IBinding> T assertNonProblem(String section, Class... cs) {
+    		return assertNonProblem(section, section.length(), cs);
     	}
 
-    	public <T extends IBinding> T assertNonProblem(String context, String name, Class<T> type, Class... cs) {
+    	public <T extends IBinding> T assertNonProblem(String context, String name, Class... cs) {
     		IBinding binding= binding(context, name);
     		assertTrue("ProblemBinding for name: " + name, !(binding instanceof IProblemBinding));
-    		return assertType(binding, type, cs);
+    		return assertType(binding, cs);
     	}
 
-		public <T, U extends T> U assertType(T obj, Class<U> type, Class... cs) {
-			assertInstance(obj, type);
+		public <T, U extends T> U assertType(T obj, Class... cs) {
     		for (Class c : cs) {
     			assertInstance(obj, c);
     		}
-    		return type.cast(obj);
+    		return (U) obj;
 		}
 
     	private IBinding binding(String section, int len) {

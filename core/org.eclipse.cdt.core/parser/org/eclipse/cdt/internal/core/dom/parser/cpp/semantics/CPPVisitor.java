@@ -2038,6 +2038,10 @@ public class CPPVisitor extends ASTQueries {
 				IASTInitializer initClause= declarator.getInitializer();
 				if (initClause instanceof IASTEqualsInitializer) {
 					autoInitClause= (ICPPASTInitializerClause) ((IASTEqualsInitializer) initClause).getInitializerClause();
+				} else if (initClause instanceof ICPPASTConstructorInitializer) {
+					IASTInitializerClause[] arguments = ((ICPPASTConstructorInitializer) initClause).getArguments();
+					if (arguments.length == 1)
+						autoInitClause = (ICPPASTInitializerClause) arguments[0];
 				} else if (initClause instanceof ICPPASTInitializerClause) {
 					autoInitClause= (ICPPASTInitializerClause) initClause;
 				}

@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM) - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     John Camelon (IBM) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -23,9 +23,8 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 /**
  * Initializer list in parenthesis.
  */
-public class CPPASTConstructorInitializer extends ASTNode implements ICPPASTConstructorInitializer,
-		IASTAmbiguityParent {
-
+public class CPPASTConstructorInitializer extends ASTNode
+		implements ICPPASTConstructorInitializer, IASTAmbiguityParent {
     private IASTInitializerClause[] fArguments;
 
     public CPPASTConstructorInitializer() {
@@ -51,11 +50,7 @@ public class CPPASTConstructorInitializer extends ASTNode implements ICPPASTCons
 			}
 		}
 		CPPASTConstructorInitializer copy = new CPPASTConstructorInitializer(args);
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 
 	@Override

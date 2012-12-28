@@ -8404,6 +8404,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	//	}
 	//	struct A {};
 	//	A a;
+	//	auto c(a);
 	//	auto b = a;
 	//	const auto *p = &b, q = "";
 	//	static auto d = 0.0;
@@ -8417,6 +8418,8 @@ public class AST2CPPTests extends AST2BaseTest {
 		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
 		ICPPVariable b= bh.assertNonProblem("b =", 1);
 		assertEquals("A", ASTTypeUtil.getType(b.getType()));
+		ICPPVariable c= bh.assertNonProblem("c(a)", "c");
+		assertEquals("A", ASTTypeUtil.getType(c.getType()));
 		ICPPVariable p= bh.assertNonProblem("p =", 1);
 		assertEquals("const A *", ASTTypeUtil.getType(p.getType()));
 		ICPPVariable q= bh.assertNonProblem("q =", 1);

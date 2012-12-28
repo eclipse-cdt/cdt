@@ -8,23 +8,49 @@
  * Contributors:
  *     Alena Laskavaia  - initial API and implementation
  *     Alex Ruiz (Google)
+ *     Sergey Prigogin (Google) 
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.ui.preferences;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import org.eclipse.cdt.codan.core.CodanCorePlugin;
 import org.eclipse.cdt.codan.core.CodanRuntime;
+import org.eclipse.cdt.codan.core.model.CheckerLaunchMode;
+import org.eclipse.cdt.codan.core.model.IChecker;
 import org.eclipse.cdt.codan.core.model.ICheckersRegistry;
+import org.eclipse.cdt.codan.core.model.ICodanProblemMarker;
 import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemProfile;
+import org.eclipse.cdt.codan.internal.core.CheckersRegistry;
 import org.eclipse.cdt.codan.internal.core.CodanRunner;
 import org.eclipse.cdt.codan.internal.ui.CodanUIActivator;
 import org.eclipse.cdt.codan.internal.ui.CodanUIMessages;
 import org.eclipse.cdt.codan.internal.ui.dialogs.CustomizeProblemDialog;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.model.CoreModelUtil;
+import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
+import org.eclipse.cdt.internal.corext.util.CModelUtil;
+import org.eclipse.cdt.internal.ui.editor.ASTProvider;
+import org.eclipse.cdt.ui.ICEditor;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceRuleFactory;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -42,8 +68,13 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
 
 /**
@@ -163,7 +194,7 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements IWork
 			if (resource == null) {
 				resource = ResourcesPlugin.getWorkspace().getRoot();
 			}
-			CodanRunner.asynchronouslyRemoveMarkersForDisabledProblems(resource);
+			asynchronouslyUpdateMarkers(resource);
 		}
 		return success;
 	}
@@ -214,5 +245,112 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements IWork
 
 	private boolean hasSelectedProblems() {
 		return selectedProblems != null && !selectedProblems.isEmpty();
+	}
+
+	private static void asynchronouslyUpdateMarkers(final IResource resource) {
+		final Set<IFile> filesToUpdate = new HashSet<IFile>();
+		final IWorkbench workbench = PlatformUI.getWorkbench();
+		IWorkbenchWindow active = workbench.getActiveWorkbenchWindow();
+		final IWorkbenchPage page = active.getActivePage();
+		// Get the files open C/C++ editors.
+		for (IEditorReference partRef : page.getEditorReferences()) {
+			IEditorPart editor = partRef.getEditor(false);
+			if (editor instanceof ICEditor) {
+				IFile file = (IFile) editor.getEditorInput().getAdapter(IFile.class);
+				if (file != null && resource.getFullPath().isPrefixOf(file.getFullPath())) {
+					filesToUpdate.add(file);
+				}
+			}
+		}
+
+		Job job = new Job(CodanUIMessages.CodanPreferencePage_Update_markers) {
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				final SubMonitor submonitor = SubMonitor.convert(monitor, 1 + 2 * filesToUpdate.size());
+				removeMarkersForDisabledProblems(resource, submonitor.newChild(1));
+				if (filesToUpdate.isEmpty())
+					return Status.OK_STATUS;
+
+				// Run checkers on the currently open files to update the problem markers.
+				for (final IFile file : filesToUpdate) {
+					ITranslationUnit tu = CoreModelUtil.findTranslationUnit(file);
+					if (tu != null) {
+						tu = CModelUtil.toWorkingCopy(tu);
+						ASTProvider.getASTProvider().runOnAST(
+								tu, ASTProvider.WAIT_ACTIVE_ONLY, submonitor.newChild(1),
+								new ASTRunnable() {
+									@Override
+									public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) {
+										if (ast != null) {
+											CodanRunner.runInEditor(ast, file, submonitor.newChild(1));
+										} else {
+											CodanRunner.processResource(file, CheckerLaunchMode.RUN_ON_FILE_OPEN,
+													submonitor.newChild(1));
+										}
+										return Status.OK_STATUS;
+									}
+								});
+					}
+				}
+				return Status.OK_STATUS;
+			}
+		};
+        IResourceRuleFactory ruleFactory = ResourcesPlugin.getWorkspace().getRuleFactory();
+		job.setRule(ruleFactory.markerRule(resource));
+		job.setSystem(true);
+		job.schedule();
+	}
+
+	private static void removeMarkersForDisabledProblems(IResource resource, IProgressMonitor monitor) {
+		CheckersRegistry chegistry = CheckersRegistry.getInstance();
+		Set<String> markerTypes = new HashSet<String>();
+		for (IChecker checker : chegistry) {
+			Collection<IProblem> problems = chegistry.getRefProblems(checker);
+			for (IProblem problem : problems) {
+				markerTypes.add(problem.getMarkerType());
+			}
+		}
+		try {
+			removeMarkersForDisabledProblems(chegistry, markerTypes, resource, monitor);
+		} catch (CoreException e) {
+			CodanUIActivator.log(e);
+		}
+	}
+
+	private static void removeMarkersForDisabledProblems(CheckersRegistry chegistry,
+			Set<String> markerTypes, IResource resource, IProgressMonitor monitor) throws CoreException {
+		if (!resource.isAccessible()) {
+			return;
+		}
+		IResource[] children = null;
+		if (resource instanceof IContainer) {
+			children = ((IContainer) resource).members();
+		}
+		int numChildren = children == null ? 0 : children.length;
+		int childWeight = 10;
+        SubMonitor progress = SubMonitor.convert(monitor, 1 + numChildren * childWeight);
+		IProblemProfile resourceProfile = null;
+		for (String markerType : markerTypes) {
+			IMarker[] markers = resource.findMarkers(markerType, false, IResource.DEPTH_ZERO);
+			for (IMarker marker : markers) {
+				String problemId = (String) marker.getAttribute(ICodanProblemMarker.ID);
+				if (resourceProfile == null) {
+					resourceProfile = chegistry.getResourceProfile(resource);
+				}
+				IProblem problem = resourceProfile.findProblem(problemId);
+				if (problem != null && !problem.isEnabled()) {
+					marker.delete();
+				}
+			}
+		}
+		progress.worked(1);
+		if (children != null) {
+			for (IResource child : children) {
+				if (monitor.isCanceled())
+					return;
+				removeMarkersForDisabledProblems(chegistry, markerTypes, child,
+						progress.newChild(childWeight));
+			}
+		}
 	}
 }

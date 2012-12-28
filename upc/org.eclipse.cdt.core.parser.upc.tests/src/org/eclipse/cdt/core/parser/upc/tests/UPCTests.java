@@ -41,29 +41,29 @@ public class UPCTests extends LRTests {
 	@Override
 	public void testBug191450_attributesInBetweenPointers() throws Exception {}
 	@Override
-	public void testOmittedPositiveExpression_Bug212905() throws Exception {}
+	public void testOmittedPositiveExpression_212905() throws Exception {}
 	@Override
-	public void testRedefinedGCCKeywords_Bug226112() throws Exception {}
+	public void testRedefinedGCCKeywords_226112() throws Exception {}
 	@Override
-	public void testASMLabels_Bug226121() throws Exception {}
+	public void testASMLabels_226121() throws Exception {}
 	@Override
-	public void testCompoundStatementExpression_Bug226274() throws Exception {}
+	public void testCompoundStatementExpression_226274() throws Exception {}
 	@Override
-	public void testTypeofUnaryExpression_Bug226492() throws Exception {}
+	public void testTypeofUnaryExpression_226492() throws Exception {}
 	@Override
-	public void testTypeofExpression_Bug226492() throws Exception {}
+	public void testTypeofExpression_226492() throws Exception {}
 	@Override
-	public void testTypeofExpressionWithAttribute_Bug226492() throws Exception {}
+	public void testTypeofExpressionWithAttribute_226492() throws Exception {}
 	@Override
-	public void testAttributeInElaboratedTypeSpecifier_Bug227085() throws Exception {}
+	public void testAttributeInElaboratedTypeSpecifier_227085() throws Exception {}
 	@Override
-	public void testRedefinePtrdiff_Bug230895() throws Exception {}
+	public void testRedefinePtrdiff_230895() throws Exception {}
 	@Override
-	public void testDeclspecInEnumSpecifier_bug241203() throws Exception  {}
+	public void testDeclspecInEnumSpecifier_241203() throws Exception  {}
 	@Override
-	public void testBuiltinTypesCompatible_bug241570() throws Exception  {}
+	public void testBuiltinTypesCompatible_241570() throws Exception  {}
 	@Override
-	public void testThreadLocalVariables_Bug260387() throws Exception {}
+	public void testThreadLocalVariables_260387() throws Exception {}
 	@Override
 	public void testVaArgWithFunctionPtr_311030() throws Exception {}
 	@Override
@@ -71,10 +71,8 @@ public class UPCTests extends LRTests {
 	@Override
 	public void testPtrDiffRecursion_317004() throws Exception {}
 	
-
 	@Override
 	protected ILanguage getCLanguage() {
 		return UPCLanguage.getDefault();
 	}
-	
 }

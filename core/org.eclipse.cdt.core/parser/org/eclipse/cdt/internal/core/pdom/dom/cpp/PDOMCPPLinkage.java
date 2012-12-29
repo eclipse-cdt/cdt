@@ -1057,7 +1057,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 				IBinding owner= binding.getOwner();
 				if (owner instanceof ICPPNamespace) {
 					if (owner.getNameCharArray().length == 0) {
-						IASTNode node= ASTInternal.getDeclaredInSourceFileOnly(getPDOM(), owner, false, glob);
+						IASTNode node= ASTInternal.getDeclaredInSourceFileOnly(getPDOM(), binding, false, glob);
 						if (node != null) {
 							file= wpdom.getFileForASTNode(getLinkageID(), node);
 						}

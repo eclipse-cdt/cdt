@@ -1715,4 +1715,27 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 		getBindingFromASTName("f(a)", 1, ICPPFunction.class);
 		getBindingFromASTName("g(b)", 1, ICPPFunction.class);
 	}
+
+	//	namespace ns {
+	//	namespace {
+	//	const char str[] = "";
+	//	}
+	//	}
+
+	//	namespace {
+	//	const char str[] = "";
+	//	}
+	//
+	//	namespace ns {
+	//
+	//	void f(const char* s);
+	//
+	//	void test() {
+	//	  f(str);
+	//	}
+	//
+	//	}
+	public void testAnonymousNamespaces_392577() throws Exception {
+		getBindingFromASTName("f(str)", 1, ICPPFunction.class);
+	}
 }

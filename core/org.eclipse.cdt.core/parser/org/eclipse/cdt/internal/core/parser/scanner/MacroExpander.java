@@ -804,8 +804,8 @@ public class MacroExpander {
 		TokenList replacement= clone(macro.getTokens(fDefinitionParser, fLexOptions, this));
 
 		Token l= null;
-		Token n;
-		Token pasteArg1= null;
+		Token n;       
+		Token pasteArg1= null;  
 		for (Token t= replacement.first(); t != null; l= t, t= n) {
 			n= (Token) t.getNext();
 

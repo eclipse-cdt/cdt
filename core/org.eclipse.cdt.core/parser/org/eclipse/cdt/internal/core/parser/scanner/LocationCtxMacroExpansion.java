@@ -79,7 +79,7 @@ class LocationCtxMacroExpansion extends LocationCtx {
 		if (length == 0) {
 			return null;
 		}
-		final int end= offset+length;
+		final int end= offset + length;
 		int nextToCheck= offset;
 		ImageLocationInfo firstInfo= null;
 		ImageLocationInfo lastInfo= null;

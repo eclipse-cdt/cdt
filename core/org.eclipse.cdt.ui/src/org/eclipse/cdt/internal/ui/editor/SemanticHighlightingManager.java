@@ -1,15 +1,14 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
- *  All rights reserved. This program and the accompanying materials
- *  are made available under the terms of the Eclipse Public License v1.0
- *  which accompanies this distribution, and is available at
- *  http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  * 
- *  Contributors:
+ * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Anton Leherbauer (Wind River Systems) - Adapted for CDT
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.editor;
 
 import java.util.ArrayList;
@@ -42,12 +41,10 @@ import org.eclipse.cdt.internal.ui.text.CSourceViewerScalableConfiguration;
  * @since 4.0
  */
 public class SemanticHighlightingManager implements IPropertyChangeListener {
-
 	/**
 	 * Highlighting style.
 	 */
 	public static class HighlightingStyle {
-
 		/** Text attribute */
 		private TextAttribute fTextAttribute;
 		/** Enabled state */
@@ -96,7 +93,6 @@ public class SemanticHighlightingManager implements IPropertyChangeListener {
 	 * Highlighted Positions.
 	 */
 	public static class HighlightedPosition extends Position {
-
 		/** Highlighting of the position */
 		private HighlightingStyle fStyle;
 
@@ -169,9 +165,6 @@ public class SemanticHighlightingManager implements IPropertyChangeListener {
 			}
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.Position#setLength(int)
-		 */
 		@Override
 		public void setLength(int length) {
 			synchronized (fLock) {
@@ -179,9 +172,6 @@ public class SemanticHighlightingManager implements IPropertyChangeListener {
 			}
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.Position#setOffset(int)
-		 */
 		@Override
 		public void setOffset(int offset) {
 			synchronized (fLock) {
@@ -189,9 +179,6 @@ public class SemanticHighlightingManager implements IPropertyChangeListener {
 			}
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.Position#delete()
-		 */
 		@Override
 		public void delete() {
 			synchronized (fLock) {
@@ -199,9 +186,6 @@ public class SemanticHighlightingManager implements IPropertyChangeListener {
 			}
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.Position#undelete()
-		 */
 		@Override
 		public void undelete() {
 			synchronized (fLock) {
@@ -314,14 +298,16 @@ public class SemanticHighlightingManager implements IPropertyChangeListener {
 	}
 
 	/**
-	 * Install the semantic highlighting on the given source viewer infrastructure. No reconciliation will be performed.
+	 * Installs the semantic highlighting on the given source viewer infrastructure.
+	 * No reconciliation will be performed.
 	 *
 	 * @param sourceViewer the source viewer
 	 * @param colorManager the color manager
 	 * @param preferenceStore the preference store
 	 * @param hardcodedRanges the hard-coded ranges to be highlighted
 	 */
-	public void install(CSourceViewer sourceViewer, IColorManager colorManager, IPreferenceStore preferenceStore, HighlightedRange[][] hardcodedRanges) {
+	public void install(CSourceViewer sourceViewer, IColorManager colorManager,
+			IPreferenceStore preferenceStore, HighlightedRange[][] hardcodedRanges) {
 		fHardcodedRanges= hardcodedRanges;
 		install(null, sourceViewer, colorManager, preferenceStore);
 	}
@@ -383,7 +369,7 @@ public class SemanticHighlightingManager implements IPropertyChangeListener {
 	}
 
 	/**
-	 * Uninstall the semantic highlighting
+	 * Uninstalls the semantic highlighting
 	 */
 	public void uninstall() {
 		disable();
@@ -402,7 +388,7 @@ public class SemanticHighlightingManager implements IPropertyChangeListener {
 	}
 
 	/**
-	 * Disable semantic highlighting.
+	 * Disables semantic highlighting.
 	 */
 	private void disable() {
 		if (fReconciler != null) {
@@ -427,7 +413,7 @@ public class SemanticHighlightingManager implements IPropertyChangeListener {
 	}
 
 	/**
-	 * Initialize semantic highlightings.
+	 * Initializes semantic highlightings.
 	 */
 	protected void initializeHighlightings() {
 		fSemanticHighlightings= SemanticHighlightings.getSemanticHighlightings();
@@ -460,7 +446,7 @@ public class SemanticHighlightingManager implements IPropertyChangeListener {
 	}
 
 	/**
-	 * Dispose the semantic highlightings.
+	 * Disposes the semantic highlightings.
 	 */
 	protected void disposeHighlightings() {
 		for (int i= 0, n= fSemanticHighlightings.length; i < n; i++)
@@ -470,9 +456,6 @@ public class SemanticHighlightingManager implements IPropertyChangeListener {
 		fHighlightings= null;
 	}
 
-	/*
-	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
-	 */
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		handlePropertyChangeEvent(event);
@@ -626,7 +609,7 @@ public class SemanticHighlightingManager implements IPropertyChangeListener {
 	}
 
 	/**
-	 * Force refresh of highlighting.
+	 * Forces refresh of highlighting.
 	 */
 	public void refresh() {
 		if (fReconciler != null) {

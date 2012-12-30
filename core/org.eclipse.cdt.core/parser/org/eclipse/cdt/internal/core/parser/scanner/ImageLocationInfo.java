@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.parser.scanner;
 
@@ -15,13 +15,13 @@ import org.eclipse.cdt.core.dom.ast.IASTImageLocation;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 
 /**
- * Information needed for computing image-locations. An image location exists for a name and describes where the name
- * came from. This can be: source code, macro-expansion, parameter to macro-expansion or synthetic.
+ * Information needed for computing image-locations. An image location exists for a name and
+ * describes where the name came from. This can be: source code, macro-expansion, parameter to
+ * macro-expansion or synthetic.
  * 
  * @since 5.0
  */
 public abstract class ImageLocationInfo {
-
 	public static final ImageLocationInfo[] NO_LOCATION_INFOS= {};
 
 	int fTokenOffsetInExpansion= -1;
@@ -33,6 +33,7 @@ public abstract class ImageLocationInfo {
 		private final ObjectStyleMacro fMacro;
 		private final int fOffset;
 		private final int fEndOffset;
+
 		public MacroImageLocationInfo(ObjectStyleMacro macro, int offset, int endOffset) {
 			fMacro= macro;
 			fOffset= offset;
@@ -66,14 +67,16 @@ public abstract class ImageLocationInfo {
 	public static class ParameterImageLocationInfo extends ImageLocationInfo {
 		public int fSequenceNumber;
 		public int fSequenceEndNumber;
+
 		public ParameterImageLocationInfo(int sequenceNumber, int sequenceEndNumber) {
 			fSequenceNumber= sequenceNumber;
 			fSequenceEndNumber= sequenceEndNumber;
 		}
+
 		@Override
 		public IASTImageLocation createLocation(LocationMap lm, ImageLocationInfo upto) {
 			int sequenceEnd= ((ParameterImageLocationInfo) upto).fSequenceEndNumber;
-			IASTFileLocation loc= lm.getMappedFileLocation(fSequenceNumber, sequenceEnd-fSequenceNumber);
+			IASTFileLocation loc= lm.getMappedFileLocation(fSequenceNumber, sequenceEnd - fSequenceNumber);
 			if (loc != null) {
 				return new ASTImageLocation(IASTImageLocation.ARGUMENT_TO_MACRO_EXPANSION,
 						loc.getFileName(), loc.getNodeOffset(), loc.getNodeLength());

@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.parser.scanner;
 
@@ -139,7 +139,8 @@ public class MacroExpander {
 	private ScannerContext fReportMacros;
 	private boolean fReportUndefined;
 	
-	public MacroExpander(ILexerLog log, CharArrayMap<PreprocessorMacro> macroDictionary, LocationMap locationMap, LexerOptions lexOptions) {
+	public MacroExpander(ILexerLog log, CharArrayMap<PreprocessorMacro> macroDictionary,
+			LocationMap locationMap, LexerOptions lexOptions) {
 		fDictionary= macroDictionary;
 		fLocationMap= locationMap;
 		fDefinitionParser= new MacroDefinitionParser();
@@ -185,7 +186,7 @@ public class MacroExpander {
 
 			result= expandAll(input, forbidden, protectDefined, null);
 		} catch (CompletionInMacroExpansionException e) {
-			// for content assist in macro expansions, we return the list of tokens of the 
+			// For content assist in macro expansions, we return the list of tokens of the 
 			// parameter at the current cursor position and hope that they make sense if 
 			// they are inserted at the position of the expansion.
 			// For a better solution one would have to perform the expansion with artificial
@@ -201,7 +202,8 @@ public class MacroExpander {
 	 * Method for tracking macro expansions.
 	 * @since 5.0
 	 */
-	public void expand(String beforeExpansion, MacroExpansionTracker tracker, String filePath, int lineNumber, boolean protectDefinedConstructs) {
+	public void expand(String beforeExpansion, MacroExpansionTracker tracker, String filePath,
+			int lineNumber, boolean protectDefinedConstructs) {
 		fImplicitMacroExpansions.clear();
 		fImageLocationInfos.clear();
 		fFixedInput= beforeExpansion.toCharArray();
@@ -227,7 +229,8 @@ public class MacroExpander {
 			fStartOffset= identifier.getOffset();
 			fEndOffset= identifier.getEndOffset();
 			fCompletionMode= false;
-			IdentityHashMap<PreprocessorMacro, PreprocessorMacro> forbidden= new IdentityHashMap<PreprocessorMacro, PreprocessorMacro>();
+			IdentityHashMap<PreprocessorMacro, PreprocessorMacro> forbidden=
+					new IdentityHashMap<PreprocessorMacro, PreprocessorMacro>();
 
 			// setup input sequence
 			TokenSource input= new TokenSource(lexer);
@@ -245,15 +248,15 @@ public class MacroExpander {
 	}
 	
 	/**
-	 * Expects that the identifier of the macro expansion has been consumed. Expands the macro consuming
-	 * tokens from the input (to read the parameters) and stores the resulting tokens together
-	 * with boundary markers in the result token list.
-	 * Returns the last token of the expansion.
+	 * Expects that the identifier of the macro expansion has been consumed. Expands the macro
+	 * consuming tokens from the input (to read the parameters) and stores the resulting tokens
+	 * together with boundary markers in the result token list.
+	 * @return the last token of the expansion.
 	 * @throws AbortMacroExpansionException 
 	 */
 	private Token expandOne(Token lastConsumed, PreprocessorMacro macro, 
-			IdentityHashMap<PreprocessorMacro, PreprocessorMacro> forbidden, TokenSource input, TokenList result,
-			MacroExpansionTracker tracker) 
+			IdentityHashMap<PreprocessorMacro, PreprocessorMacro> forbidden, TokenSource input,
+			TokenList result, MacroExpansionTracker tracker)
 			throws OffsetLimitReachedException {
 		if (fReportMacros != null)
 			fReportMacros.significantMacro(macro);
@@ -290,8 +293,8 @@ public class MacroExpander {
 			TokenList[] expandedArgs= new TokenList[paramCount];
 			for (int i = 0; i < paramCount; i++) {
 				final TokenSource argInput = argInputs[i];
-				final boolean needCopy= paramUsage.get(2*i);
-				final boolean needExpansion = paramUsage.get(2*i+1);
+				final boolean needCopy= paramUsage.get(2 * i);
+				final boolean needExpansion = paramUsage.get(2 * i + 1);
 				clonedArgs[i]= needCopy ? argInput.cloneTokens() : EMPTY_TOKEN_LIST;
 				expandedArgs[i]= needExpansion ? expandAll(argInput, forbidden, false, tracker) : EMPTY_TOKEN_LIST;
 				if (!needExpansion) {
@@ -354,7 +357,7 @@ public class MacroExpander {
 		Token l= null;
 		Token t= input.removeFirst();
 		while(t != null) {
-			switch(t.getType()) {
+			switch (t.getType()) {
 			case CPreprocessor.tSCOPE_MARKER:
 				((ExpansionBoundary) t).execute(forbidden);
 				break;
@@ -451,8 +454,10 @@ public class MacroExpander {
 	/**
 	 * Expects that the identifier has been consumed.
 	 */
-	private Token parseArguments(TokenSource input, FunctionStyleMacro macro, IdentityHashMap<PreprocessorMacro, PreprocessorMacro> forbidden, 
-			TokenSource[] result, MacroExpansionTracker tracker) throws OffsetLimitReachedException, AbortMacroExpansionException {
+	private Token parseArguments(TokenSource input, FunctionStyleMacro macro,
+			IdentityHashMap<PreprocessorMacro, PreprocessorMacro> forbidden, 
+			TokenSource[] result, MacroExpansionTracker tracker)
+			throws OffsetLimitReachedException, AbortMacroExpansionException {
 		final int argCount= macro.getParameterPlaceholderList().length;
 		final boolean hasVarargs= macro.hasVarArgs() != FunctionStyleMacro.NO_VAARGS;
 		final int requiredArgs= hasVarargs ? argCount-1 : argCount;
@@ -475,7 +480,7 @@ public class MacroExpander {
     			break loop;
     		}
     		if (tracker != null) {
-    			switch(t.getType()) {
+    			switch (t.getType()) {
     			case IToken.tEND_OF_INPUT:        	
     			case IToken.tCOMPLETION:
     			case CPreprocessor.tSCOPE_MARKER:
@@ -487,7 +492,7 @@ public class MacroExpander {
     			}
     		}
 			lastToken= t;
-        	switch(t.getType()) {
+        	switch (t.getType()) {
         	case IToken.tEND_OF_INPUT:
         		assert nesting >= 0;
         		if (fCompletionMode) {
@@ -564,7 +569,6 @@ public class MacroExpander {
     		isFirstOfArg= false;
         }
 
-
 		if (missingRParenthesis) {
 			handleProblem(IProblem.PREPROCESSOR_MISSING_RPAREN_PARMLIST, macro.getNameCharArray());
 			throw new AbortMacroExpansionException();
@@ -572,7 +576,7 @@ public class MacroExpander {
 		
 		if (tooManyArgs) {
 			handleProblem(IProblem.PREPROCESSOR_MACRO_USAGE_ERROR, macro.getNameCharArray());
-		} else if (idx+1 < requiredArgs) {
+		} else if (idx + 1 < requiredArgs) {
 			handleProblem(IProblem.PREPROCESSOR_MACRO_USAGE_ERROR, macro.getNameCharArray());
 		}
         return lastToken;
@@ -591,7 +595,7 @@ public class MacroExpander {
 		for (Token t= replacement.first(); t != null; l=t, t=n) {
 			n= (Token) t.getNext();
 
-			switch(t.getType()) {
+			switch (t.getType()) {
 			case CPreprocessor.tMACRO_PARAMETER:
 				int idx= ((TokenParameterReference) t).getIndex();
 				if (idx < args.length) { // be defensive
@@ -750,7 +754,7 @@ public class MacroExpander {
 	}
 	
 	private boolean isKind(final IToken t, final int kind) {
-		return t!=null && t.getType() == kind;
+		return t != null && t.getType() == kind;
 	}
 
 	private BitSet getParamUsage(PreprocessorMacro macro) {
@@ -759,11 +763,11 @@ public class MacroExpander {
 		
 		Token l= null;
 		Token n;       
-		for (Token t= replacement.first(); t != null; l=t, t=n) {
+		for (Token t= replacement.first(); t != null; l= t, t= n) {
 			n= (Token) t.getNext();
-			switch(t.getType()) {
+			switch (t.getType()) {
 			case CPreprocessor.tMACRO_PARAMETER:
-				int idx= 2*((TokenParameterReference) t).getIndex();
+				int idx= 2 * ((TokenParameterReference) t).getIndex();
 				if (!isKind(n, IToken.tPOUNDPOUND)) {
 					idx++;
 				}
@@ -773,7 +777,7 @@ public class MacroExpander {
 			case IToken.tPOUND:
 				if (isKind(n, CPreprocessor.tMACRO_PARAMETER)) {
 					idx= ((TokenParameterReference) n).getIndex();
-					result.set(2*idx);
+					result.set(2 * idx);
 					t= n; n= (Token) n.getNext();
 				}
 				break;
@@ -783,10 +787,10 @@ public class MacroExpander {
 					idx= ((TokenParameterReference) n).getIndex();
 					// gcc-extension
 					if (isKind(l, IToken.tCOMMA) && macro.hasVarArgs() != FunctionStyleMacro.NO_VAARGS &&
-							idx == macro.getParameterPlaceholderList().length-1 && !isKind(n.getNext(), IToken.tPOUNDPOUND)) {
-						result.set(2*idx+1);
+							idx == macro.getParameterPlaceholderList().length - 1 && !isKind(n.getNext(), IToken.tPOUNDPOUND)) {
+						result.set(2 * idx + 1);
 					} else {
-						result.set(2*idx);
+						result.set(2 * idx);
 					}
 					t= n; n= (Token) n.getNext();
 				}
@@ -802,10 +806,10 @@ public class MacroExpander {
 		Token l= null;
 		Token n;       
 		Token pasteArg1= null;  
-		for (Token t= replacement.first(); t != null; l=t, t=n) {
+		for (Token t= replacement.first(); t != null; l= t, t= n) {
 			n= (Token) t.getNext();
 
-			switch(t.getType()) {
+			switch (t.getType()) {
 			case IToken.tPOUNDPOUND:
 				if (pasteArg1 != null) {
 					Token pasteArg2= null;
@@ -857,7 +861,7 @@ public class MacroExpander {
 		final char[] image2= arg2.getCharImage();
 		final int l1 = image1.length;
 		final int l2 = image2.length;
-		final char[] image= new char[l1+l2];
+		final char[] image= new char[l1 + l2];
 		System.arraycopy(image1, 0, image, 0, l1);
 		System.arraycopy(image2, 0, image, l1, l2);
 		Lexer lex= new Lexer(image, fLexOptions, ILexerLog.NULL, null);
@@ -882,13 +886,13 @@ public class MacroExpander {
 		Token l= null;
 		Token n;
 		boolean space= false;
-		for (; t != null; l=t, t=n) {
+		for (; t != null; l= t, t= n) {
 			n= (Token) t.getNext();
 			if (!space && hasImplicitSpace(l, t)) {
 				buf.append(' ');
 				space= true;
 			}
-			switch(t.getType()) {
+			switch (t.getType()) {
 			case IToken.tSTRING:
 			case IToken.tLSTRING:
 	        case IToken.tUTF16STRING:
@@ -941,8 +945,8 @@ public class MacroExpander {
 		final boolean createImageLocations= fLexOptions.fCreateImageLocations;
 		int offset= 0;
 		Token l= null;
-		for (Token t= replacement.first(); t!=null; t= (Token) t.getNext()) {
-			switch(t.getType()) {
+		for (Token t= replacement.first(); t != null; t= (Token) t.getNext()) {
+			switch (t.getType()) {
 			case CPreprocessor.tEXPANDED_IDENTIFIER:
 				t.setType(IToken.tIDENTIFIER);
 				if (createImageLocations) {
@@ -970,8 +974,8 @@ public class MacroExpander {
 				continue;
 
 			case IToken.tCOMPLETION:
-				// we need to preserve the length of the completion token.
-				t.setOffset(offset, offset+t.getLength());
+				// We need to preserve the length of the completion token.
+				t.setOffset(offset, offset + t.getLength());
 				t.setNext(null);
 				return;
 			}

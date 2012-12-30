@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     IBM - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner;
 
@@ -23,20 +23,19 @@ import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroExpansion;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit.IDependencyTree;
+import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNodeSpecification;
 import org.eclipse.cdt.internal.core.parser.scanner.Lexer.LexerOptions;
 
-
 /**
- * Interface between the ast and the location-resolver for resolving offsets.
+ * Interface between the AST and the location-resolver for resolving offsets.
  * @since 5.0
  */
 public interface ILocationResolver {    
 	/**
-	 * Introduces the ast translation unit to the location resolver. Must be called before any tokens from the
-	 * scanner are obtained.
+	 * Introduces the AST translation unit to the location resolver. Must be called before any
+	 * tokens from the scanner are obtained.
 	 */
 	void setRootNode(IASTTranslationUnit tu);
 
@@ -103,15 +102,17 @@ public interface ILocationResolver {
 	/**
 	 * Returns the smallest file location, that encloses the given global range. In case the range
 	 * spans over multiple files, the files are mapped to include statements until all of them are
-	 * found in the same file. So the resulting location contains the include directives that actually 
-	 * cause the range to be part of the AST.
+	 * found in the same file. So the resulting location contains the include directives that
+	 * actually cause the range to be part of the AST.
 	 * @param offset sequence number as stored in the ASTNodes.
 	 * @param length 
 	 */
 	IASTFileLocation getMappedFileLocation(int offset, int length);
 
 	/**
-	  * Returns an array of locations. This is a sequence of file locations and macro-expansion locations.
+	  * Returns an array of locations. This is a sequence of file locations and macro-expansion
+	  * locations.
+	  *
 	  * @param offset sequence number as stored in the ast nodes.
 	  * @param length
 	  * @return and array of locations.
@@ -124,8 +125,8 @@ public interface ILocationResolver {
 	IASTImageLocation getImageLocation(int offset, int length);
 
 	/**
-	 * Returns the sequence-number for the given file-path and offset, or <code>-1</code> if this file
-	 * is not part of the translation-unit.
+	 * Returns the sequence-number for the given file-path and offset, or <code>-1</code> if this
+	 * file is not part of the translation-unit.
 	 * @param filePath a file path or <code>null</code> to specify the root of the translation unit.
 	 * @param fileOffset an offset into the source of the file, or <code>-1</code>.
 	 */
@@ -158,7 +159,8 @@ public interface ILocationResolver {
 	boolean isPartOfSourceFile(int sequenceNumber);
 
 	/**
-	 * Same as {@link #getMappedFileLocation(int, int)} for the given array of consecutive node locations.
+	 * Same as {@link #getMappedFileLocation(int, int)} for the given array of consecutive node
+	 * locations.
 	 */
 	IASTFileLocation flattenLocations(IASTNodeLocation[] nodeLocations);
 

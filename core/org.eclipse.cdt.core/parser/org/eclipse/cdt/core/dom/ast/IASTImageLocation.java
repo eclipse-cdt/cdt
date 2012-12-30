@@ -6,10 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.core.dom.ast;
-
 
 /**
  * An image location explains how a name made it into the translation unit. 
@@ -19,7 +18,6 @@ package org.eclipse.cdt.core.dom.ast;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTImageLocation extends IASTFileLocation {
-	
 	/**
 	 * The image is part of the code that has not been modified by the preprocessor.
 	 */
@@ -34,8 +32,8 @@ public interface IASTImageLocation extends IASTFileLocation {
 	final int ARGUMENT_TO_MACRO_EXPANSION= 3;
 
 	/**
-	 * Returns the kind of image-location, one of {@link #REGULAR_CODE}, {@link #MACRO_DEFINITION} or
-	 * {@link #ARGUMENT_TO_MACRO_EXPANSION}.
+	 * Returns the kind of image-location, one of {@link #REGULAR_CODE}, {@link #MACRO_DEFINITION}
+	 * or {@link #ARGUMENT_TO_MACRO_EXPANSION}.
 	 */
 	public int getLocationKind();
 }

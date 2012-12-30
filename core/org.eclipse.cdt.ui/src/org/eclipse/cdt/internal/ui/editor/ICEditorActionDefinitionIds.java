@@ -13,7 +13,6 @@
  *     Sergey Prigogin (Google)
  *     Tomasz Wesolowski
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.editor;
 
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
@@ -27,7 +26,6 @@ import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
  * @noextend This interface is not intended to be extended by clients.
 */
 public interface ICEditorActionDefinitionIds extends ITextEditorActionDefinitionIds {
-
 	/**
 	 * Action definition ID of the source -> toggle comment action
 	 * (value <code>"org.eclipse.cdt.ui.edit.text.c.toggle.comment"</code>).

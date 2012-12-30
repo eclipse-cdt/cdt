@@ -51,7 +51,6 @@ import org.eclipse.cdt.internal.ui.editor.SemanticHighlightings;
 public class AbstractSemanticHighlightingTest extends TestCase {
 	
 	protected static class SemanticHighlightingTestSetup extends TestSetup {
-
 		private ICProject fCProject;
 		private final String fTestFilename;
 		private File fExternalFile;

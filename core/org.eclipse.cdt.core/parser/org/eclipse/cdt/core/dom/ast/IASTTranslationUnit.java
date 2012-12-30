@@ -254,24 +254,22 @@ public interface IASTTranslationUnit extends IASTDeclarationListOwner, IFileNomi
     /**
      * Return the set of files that have been skipped because they have been part of the index
      * prior to creating this AST, or <code>null</code> if not available.
-     * Applies only, if AST was created with an index and the option to skip headers found in the
-     * index.
+     * Applies only, if AST was created with an index and the option to skip headers found in
+     * the index.
      * @since 5.1
      */
     IIndexFileSet getIndexFileSet();
 
     /**
-     * Return the set of files in the index that are superseded by this AST, 
-     * or <code>null</code> if not available.
-     * Applies only, if AST was created with an index.
+     * Return the set of files in the index that are superseded by this AST,  or <code>null</code>
+     * if not available. Applies only, if AST was created with an index.
      * @since 5.3
      */
     IIndexFileSet getASTFileSet();
 
 	/**
-	 * In case the AST was created in a way that supports comment parsing,
-	 * all comments of the translation unit are returned. Otherwise an
-	 * empty array will be supplied.
+	 * In case the AST was created in a way that supports comment parsing, all comments of
+	 * the translation unit are returned. Otherwise an empty array will be supplied.
 	 * 
 	 * @return <code>IASTComment[]</code>
 	 * @since 4.0

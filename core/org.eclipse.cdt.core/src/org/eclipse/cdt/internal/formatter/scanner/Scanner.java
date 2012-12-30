@@ -31,9 +31,6 @@ public class Scanner extends SimpleScanner {
     	setSplitPreprocessor(false);
     }
 
-	/*
-	 * @see org.eclipse.cdt.internal.formatter.scanner.SimpleScanner#init(java.io.Reader, java.lang.String)
-	 */
 	@Override
 	protected void init(Reader reader, String filename) {
 		// not allowed
@@ -148,7 +145,7 @@ public class Scanner extends SimpleScanner {
 			do {
 				getChar();
 				++diff;
-			} while(diff < 0);
+			} while (diff < 0);
 		} else if (diff == 0) {
 			// no-op
 		} else if (diff > fTokenBuffer.length()) {

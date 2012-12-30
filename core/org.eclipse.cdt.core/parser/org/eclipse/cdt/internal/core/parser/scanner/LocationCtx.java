@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit.IDependencyTree.IASTIncl
 
 /**
  * Various location contexts which are suitable for interpreting local offsets. These offsets are
- * converted in a global sequence-number to make all ast nodes comparable with each other.
+ * converted in a global sequence-number to make all AST nodes comparable with each other.
  * @since 5.0
  */
 abstract class LocationCtx implements ILocationCtx {
@@ -29,11 +29,13 @@ abstract class LocationCtx implements ILocationCtx {
 	 */
 	final int fSequenceNumber;
 	/**
-	 * The offset of the denotation of this context in the parent's source. This is no sequence number.
+	 * The offset of the denotation of this context in the parent's source. This is no sequence
+	 * number.
 	 */
 	final int fOffsetInParent;
 	/**
-	 * The end-offset of the denotation of this context in the parent's source. This is no sequence number.
+	 * The end-offset of the denotation of this context in the parent's source. This is no sequence
+	 * number.
 	 */
 	final int fEndOffsetInParent;
 
@@ -46,40 +48,41 @@ abstract class LocationCtx implements ILocationCtx {
 			parent.addChild(this);
 		}
 	}
-	
+
 	@Override
 	public String getFilePath() {
 		return fParent.getFilePath();
 	}
-	
+
 	@Override
 	final public ILocationCtx getParent() {
 		return fParent;
 	}
+
 	/**
 	 * Returns the amount of sequence numbers occupied by this context including its children.
 	 */
 	public abstract int getSequenceLength();
-	
+
 	/**
-	 * Converts an offset within this context to the sequence number. In case there are child-contexts
-	 * behind the given offset, you need to set checkChildren to <code>true</code>.
+	 * Converts an offset within this context to the sequence number. In case there are
+	 * child-contexts behind the given offset, you need to set checkChildren to <code>true</code>.
 	 */
 	public int getSequenceNumberForOffset(int offset, boolean checkChildren) {
 		return fSequenceNumber+offset;
 	}
 
 	/**
-	 * When a child-context is finished it reports its total sequence length, such that offsets in this
-	 * context can be converted to sequence numbers.
+	 * When a child-context is finished it reports its total sequence length, such that offsets in
+	 * this context can be converted to sequence numbers.
 	 */
 	public void addChildSequenceLength(int childLength) {
 		assert false;
 	}
-	
+
 	/**
-	 * Returns the line number for an offset within this context. Not all contexts support line numbers,
-	 * so this may return 0.
+	 * Returns the line number for an offset within this context. Not all contexts support line
+	 * numbers, so this may return 0.
 	 */
 	public int getLineNumber(int offset) {
 		return 0;
@@ -109,7 +112,7 @@ abstract class LocationCtx implements ILocationCtx {
 	}
 
 	/**
-	 * Returns the minimal file location containing the specified sequence number range, assuming 
+	 * Returns the minimal file location containing the specified sequence number range, assuming
 	 * that it is contained in this context.
 	 */
 	public ASTFileLocation findMappedFileLocation(int sequenceNumber, int length) {
@@ -124,8 +127,8 @@ abstract class LocationCtx implements ILocationCtx {
 	}
 
 	/**
-	 * Returns the sequence of file locations spanning the given range. 
-	 * Assumes that the range starts within this context. 
+	 * Returns the sequence of file locations spanning the given range.
+	 * Assumes that the range starts within this context.
 	 */
 	public abstract boolean collectLocations(int sequenceNumber, int length, ArrayList<IASTNodeLocation> sofar);
 
@@ -136,7 +139,8 @@ abstract class LocationCtx implements ILocationCtx {
 	}
 
 	/**
-	 * Support for the dependency tree, returns inclusion statement that created this context, or <code>null</code>.
+	 * Support for the dependency tree, returns inclusion statement that created this context,
+	 * or <code>null</code>.
 	 */
 	@Override
 	public ASTInclusionStatement getInclusionStatement() {

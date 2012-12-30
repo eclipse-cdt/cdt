@@ -152,7 +152,7 @@ public class MacroDefinitionParser {
 			if (length > 0) {
 				char[] lastParam= paramList[length-1];
 				final int lpl = lastParam.length;
-				switch(lpl) {
+				switch (lpl) {
 				case 0: case 1: case 2:
 					break;
 				case 3:
@@ -258,7 +258,7 @@ public class MacroDefinitionParser {
 		fExpansionOffset= fExpansionEndOffset= candidate.getOffset();		
 
 		loop: while(true) {
-			switch(candidate.getType()) {
+			switch (candidate.getType()) {
 			case IToken.tCOMPLETION:
 				throw new OffsetLimitReachedException(ORIGIN_PREPROCESSOR_DIRECTIVE, candidate);
 			case IToken.tEND_OF_INPUT:

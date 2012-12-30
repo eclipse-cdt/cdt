@@ -9,14 +9,12 @@
  *     IBM Corporation - initial API and implementation
  *     Anton Leherbauer (Wind River Systems) - Adapted for CDT
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.text;
 
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.TextPresentation;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
-
 
 /**
  * Presentation reconciler, adding functionality for operation without a viewer.
@@ -25,7 +23,6 @@ import org.eclipse.jface.text.presentation.PresentationReconciler;
  * @since 4.0
  */
 public class CPresentationReconciler extends PresentationReconciler {
-
 	/** Last used document */
 	private IDocument fLastDocument;
 

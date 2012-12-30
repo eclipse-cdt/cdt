@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.parser.scanner;
 
@@ -116,8 +116,7 @@ public class MacroExpansionTracker {
 			toString(result, lexInput, replacementText, replacementText, replacementText);
 			fPreStep= new String(lexInput);
 			fReplacement= new ReplaceEdit(0, endOffset, replacementText.toString());
-		}
-		else {
+		} else {
 			// the regular case the result contains the text before the step
 			StringBuilder before= new StringBuilder();
 			StringBuilder replace= new StringBuilder();
@@ -142,7 +141,8 @@ public class MacroExpansionTracker {
 		fReplacement= new ReplaceEdit(0, 0, ""); //$NON-NLS-1$
 	}
 	
-	private void toString(TokenList tokenList, char[] rootInput, StringBuilder before, StringBuilder replace, StringBuilder after) {
+	private void toString(TokenList tokenList, char[] rootInput, StringBuilder before,
+			StringBuilder replace, StringBuilder after) {
 		StringBuilder buf= before;
 		Token t= tokenList.first();
 		if (t == null) {
@@ -150,17 +150,16 @@ public class MacroExpansionTracker {
 		}
 		Token l= null;
 		Token n;
-		for (; t != null; l=t, t=n) {
+		for (; t != null; l= t, t= n) {
 			n= (Token) t.getNext();
 			if (l != null && MacroExpander.hasImplicitSpace(l, t)) {
 				char[] input= getInputForSource(l.fSource, rootInput);
 				if (input == null) {
 					buf.append(' ');
-				}
-				else {
+				} else {
 					final int from = l.getEndOffset();
 					final int to = t.getOffset();
-					buf.append(input, from, to-from);
+					buf.append(input, from, to - from);
 				}
 			}
 			if (t == fReplaceFrom) {
@@ -169,8 +168,7 @@ public class MacroExpansionTracker {
 			char[] input= getInputForSource(t.fSource, rootInput);
 			if (input == null) {
 				buf.append(t.getCharImage());
-			}
-			else {
+			} else {
 				buf.append(input, t.getOffset(), t.getLength());
 			}
 			if (t == fReplaceTo) {
@@ -244,7 +242,7 @@ public class MacroExpansionTracker {
 
 		Token n;
 		Token l= null;
-		for (Token t = minfo.fMacroCall.first(); t != null; l=t, t=n) {
+		for (Token t = minfo.fMacroCall.first(); t != null; l= t, t= n) {
 			n = (Token) t.getNext();
 			switch (t.getType()) {
 			case IToken.tLPAREN:
@@ -324,7 +322,8 @@ public class MacroExpansionTracker {
 	 * @param replacement the replacement
 	 * @param result a list to store the macro in.
 	 */
-	public void storeObjectStyleMacroReplacement(PreprocessorMacro macro, Token identifier, TokenList replacement, TokenList result) {
+	public void storeObjectStyleMacroReplacement(PreprocessorMacro macro, Token identifier,
+			TokenList replacement, TokenList result) {
 		fMacroDefinition= macro;
 		fReplaceFrom= fReplaceTo= identifier;
 		result.append(identifier);

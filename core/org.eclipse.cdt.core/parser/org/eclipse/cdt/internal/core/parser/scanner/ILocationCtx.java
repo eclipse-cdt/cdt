@@ -6,9 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-
 package org.eclipse.cdt.internal.core.parser.scanner;
 
 /**
@@ -18,7 +17,6 @@ package org.eclipse.cdt.internal.core.parser.scanner;
  * @since 5.0
  */
 public interface ILocationCtx {
-	
 	/**
 	 * If this is a file context the filename of this context is returned,
 	 * otherwise the filename of the first enclosing context that is a file context is returned.

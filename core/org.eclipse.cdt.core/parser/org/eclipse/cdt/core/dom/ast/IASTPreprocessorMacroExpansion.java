@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.core.dom.ast;
 
@@ -20,9 +20,9 @@ package org.eclipse.cdt.core.dom.ast;
 public interface IASTPreprocessorMacroExpansion extends IASTNode {
 	public static final IASTPreprocessorMacroExpansion[] EMPTY_ARRAY = {};
     public static final ASTNodeProperty EXPANSION_NAME= 
-    	new ASTNodeProperty("IASTPreprocessorMacroExpansion.EXPANSION_NAME - macro name"); //$NON-NLS-1$
+    		new ASTNodeProperty("IASTPreprocessorMacroExpansion.EXPANSION_NAME - macro name"); //$NON-NLS-1$
     public static final ASTNodeProperty NESTED_EXPANSION_NAME= 
-    	new ASTNodeProperty("IASTPreprocessorMacroExpansion.NESTED_EXPANSION_NAME - nested macro name"); //$NON-NLS-1$
+    		new ASTNodeProperty("IASTPreprocessorMacroExpansion.NESTED_EXPANSION_NAME - nested macro name"); //$NON-NLS-1$
 
 	/**
 	 * Returns the macro definition used for the expansion.

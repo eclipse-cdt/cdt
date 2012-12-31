@@ -996,7 +996,7 @@ public class MacroExpander {
 
 	private int countNewlines(char[] input) {
 		int nl= 0;
-		for (int i = 0; i < input.length && i<fEndOffset; i++) {
+		for (int i = 0; i < input.length && i < fEndOffset; i++) {
 			if (input[i] == '\n') {
 				nl++;
 			}

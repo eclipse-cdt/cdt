@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 Alena Laskavaia
+ * Copyright (c) 2009, 2013 Alena Laskavaia
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -417,9 +417,7 @@ public class CheckersRegistry implements Iterable<IChecker>, ICheckersRegistry {
 			IProblem problem = resourceProfile.findProblem(p.getId());
 			if (problem == null)
 				throw new IllegalArgumentException(p.getId() + " is not registered"); //$NON-NLS-1$
-			if (!problem.isEnabled())
-				return false;
-			if (checker instanceof AbstractCheckerWithProblemPreferences) {
+			if (problem.isEnabled() && checker instanceof AbstractCheckerWithProblemPreferences) {
 				LaunchModeProblemPreference pref =
 						((AbstractCheckerWithProblemPreferences) checker).getLaunchModePreference(problem);
 				if (pref.isRunningInMode(mode)) {

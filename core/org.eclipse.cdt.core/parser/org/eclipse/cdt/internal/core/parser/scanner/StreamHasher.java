@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * 	  Sergey Prigogin (Google) - initial API and implementation
+ * 	   Sergey Prigogin (Google) - initial API and implementation
  *
  * Based on lookup3.c, by Bob Jenkins {@link "http://burtleburtle.net/bob/c/lookup3.c"}
  *
@@ -44,7 +44,6 @@
  * mixing with 12*3 instructions on 3 integers than you can with 3 instructions
  * on 1 byte), but shoehorning those bytes into integers efficiently is messy.
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.core.parser.scanner;
 
 /**

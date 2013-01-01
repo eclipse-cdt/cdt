@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *     Markus Schorn - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner;
 
 import org.eclipse.cdt.core.parser.IToken;
@@ -48,7 +48,7 @@ public class Token implements IToken, Cloneable {
 
 	@Override
 	final public int getLength() {
-		return fEndOffset-fOffset;
+		return fEndOffset - fOffset;
 	}
 
 	@Override
@@ -56,7 +56,6 @@ public class Token implements IToken, Cloneable {
 		return fNextToken;
 	}
 
-	
 	@Override
 	final public void setType(int kind) {
 		fKind= kind;
@@ -73,8 +72,8 @@ public class Token implements IToken, Cloneable {
 	}
 
 	public void shiftOffset(int shift) {
-		fOffset+= shift;
-		fEndOffset+= shift;
+		fOffset += shift;
+		fEndOffset += shift;
 	}
 
 	@Override
@@ -86,7 +85,7 @@ public class Token implements IToken, Cloneable {
 	public String toString() {
 		return getImage();
 	}
-	
+
 	@Override
 	final public boolean isOperator() {
 		return TokenUtil.isOperator(fKind);

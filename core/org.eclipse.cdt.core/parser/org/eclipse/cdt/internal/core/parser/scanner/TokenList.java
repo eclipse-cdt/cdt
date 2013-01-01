@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *     Markus Schorn - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner;
 
 class TokenList {
@@ -17,7 +17,8 @@ class TokenList {
 	final Token removeFirst() {
 		final Token first= fFirst;
 		if (first == fLast) {
-			fFirst= fLast= null;
+			fFirst= null;
+			fLast= null;
 			return first;
 		}
 		fFirst= (Token) first.getNext();
@@ -26,38 +27,38 @@ class TokenList {
 
 	public final void append(Token t) {
 		if (fFirst == null) {
-			fFirst= fLast= t;
-		}
-		else {
+			fFirst= t;
+			fLast= t;
+		} else {
 			fLast.setNext(t);
 			fLast= t;
 		}
 		t.setNext(null);
 	}
-	
+
 	public final void appendAll(TokenList tl) {
 		final Token t= tl.first();
 		if (t != null) {
 			if (fFirst == null) {
 				fFirst= tl.fFirst;
-			}
-			else {
+			} else {
 				fLast.setNext(tl.fFirst);
 			}
 			fLast= tl.fLast;
 		}
-		tl.fFirst= tl.fLast= null;
+		tl.fFirst= null;
+		tl.fLast= null;
 	}
 
 	public final void appendAllButLast(TokenList tl) {
 		Token t= tl.first();
 		if (t != null) {
-			for (Token n= (Token) t.getNext(); n != null; t=n, n= (Token) n.getNext()) {
+			for (Token n= (Token) t.getNext(); n != null; t= n, n= (Token) n.getNext()) {
 				append(t);
 			}
 		}
 	}
-	
+
 	public final void prepend(Token t) {
 		final Token first= t;
 		if (first != null) {
@@ -81,7 +82,7 @@ class TokenList {
 			}
 		}
 	}
-	
+
 	public final TokenList cloneTokens() {
 		TokenList result= new TokenList();
 		for (Token t= fFirst; t != null; t= (Token) t.getNext()) {
@@ -110,8 +111,7 @@ class TokenList {
 					fLast= null;
 				}
 			}
-		}
-		else {
+		} else {
 			final Token r= (Token) l.getNext();
 			if (r != null) {
 				l.setNext(r.getNext());
@@ -124,19 +124,20 @@ class TokenList {
 
 	void cutAfter(Token l) {
 		if (l == null) {
-			fFirst= fLast= null;
-		}
-		else {
+			fFirst= null;
+			fLast= null;
+		} else {
 			l.setNext(null);
 			fLast= l;
 		}
 	}
 
 	public void clear() {
-		fFirst= fLast= null;
+		fFirst= null;
+		fLast= null;
 	}
 
 	public boolean isEmpty() {
-		return fFirst==null;
+		return fFirst == null;
 	}
 }

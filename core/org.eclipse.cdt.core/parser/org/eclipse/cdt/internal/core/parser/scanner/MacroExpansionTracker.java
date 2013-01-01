@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.util.ArrayList;
@@ -35,7 +35,7 @@ public class MacroExpansionTracker {
 	}
 
 	private final int fStepToTrack;
-	
+
 	private int fStepCount;
 	private String fPreStep;
 	private ReplaceEdit fReplacement;
@@ -58,14 +58,14 @@ public class MacroExpansionTracker {
 	public boolean isDone() {
 		return fStepCount > fStepToTrack;
 	}
-	
+
 	/**
 	 * Returns whether we are currently looking at the requested step.
 	 */
 	public boolean isRequestedStep() {
 		return fStepCount == fStepToTrack;
 	}
-	
+
 	/**
 	 * Returns the total amount of steps encountered so far.
 	 */
@@ -79,7 +79,7 @@ public class MacroExpansionTracker {
 	public String getCodeBeforeStep() {
 		return fPreStep;
 	}
-	
+
 	/**
 	 * Returns the replacement that represents the change by the step that was tracked.
 	 */
@@ -132,7 +132,7 @@ public class MacroExpansionTracker {
 			fReplacement= new ReplaceEdit(offset, replace.length(), fReplacementText);
 		}
 	}
-	
+
 	/**
 	 * There was no macro at the beginning of the input.
 	 */
@@ -140,7 +140,7 @@ public class MacroExpansionTracker {
 		fPreStep= new String(fInput);
 		fReplacement= new ReplaceEdit(0, 0, ""); //$NON-NLS-1$
 	}
-	
+
 	private void toString(TokenList tokenList, char[] rootInput, StringBuilder before,
 			StringBuilder replace, StringBuilder after) {
 		StringBuilder buf= before;
@@ -176,7 +176,7 @@ public class MacroExpansionTracker {
 			}
 		}
 	}
-	
+
 	private char[] getInputForSource(Object source, char[] rootInput) {
 		if (source instanceof MacroExpander) {
 			return rootInput;
@@ -197,7 +197,7 @@ public class MacroExpansionTracker {
 	public void startFunctionStyleMacro(Token identifier) {
 		fMacroStack.add(new MacroInfo(identifier));
 	}
-	
+
 	/**
 	 * All tokens defining a function-style macro expansion are reported.
 	 */
@@ -235,7 +235,7 @@ public class MacroExpansionTracker {
 	 * Append the current function-style macro with the arguments substituted.
 	 */
 	public void appendFunctionStyleMacro(TokenList result) {
-		MacroInfo minfo= fMacroStack.getLast();		
+		MacroInfo minfo= fMacroStack.getLast();
 		boolean active= true;
 		int nesting= -1;
 		int pcount= 0;
@@ -298,7 +298,7 @@ public class MacroExpansionTracker {
 					result.append(t);
 				}
 				break;
-				
+
 			default:
 				if (active) {
 					result.append(t);

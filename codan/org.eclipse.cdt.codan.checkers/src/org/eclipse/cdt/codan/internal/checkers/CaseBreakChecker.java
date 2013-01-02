@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 Gil Barash
+ * Copyright (c) 2010, 2013 Gil Barash
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -116,7 +116,7 @@ public class CaseBreakChecker extends AbstractIndexAstChecker implements IChecke
 									if (str.toLowerCase().contains(fNoBreakComment.toLowerCase()))
 										continue;
 								}
-								reportProblem(curr, prevCase);
+								reportProblem(curr);
 							}
 						}
 					}
@@ -159,7 +159,7 @@ public class CaseBreakChecker extends AbstractIndexAstChecker implements IChecke
 		}
 	}
 
-	private void reportProblem(IASTStatement curr, IASTStatement prevCase) {
+	private void reportProblem(IASTStatement curr) {
 		reportProblem(ER_ID, getProblemLocationAtEndOfNode(curr));
 	}
 
@@ -218,7 +218,7 @@ public class CaseBreakChecker extends AbstractIndexAstChecker implements IChecke
 		super.initPreferences(problem);
 		addPreference(problem, PARAM_NO_BREAK_COMMENT, CheckersMessages.CaseBreakChecker_DefaultNoBreakCommentDescription,
 				DEFAULT_NO_BREAK_COMMENT);
-		addPreference(problem, PARAM_LAST_CASE, CheckersMessages.CaseBreakChecker_LastCaseDescription, Boolean.TRUE);
+		addPreference(problem, PARAM_LAST_CASE, CheckersMessages.CaseBreakChecker_LastCaseDescription, Boolean.FALSE);
 		addPreference(problem, PARAM_EMPTY_CASE, CheckersMessages.CaseBreakChecker_EmptyCaseDescription, Boolean.FALSE);
 	}
 

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOJ3//6vw\u003d",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/text/contentassist2/AbstractContentAssistTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-01-02T22:52:14Z",
+      "side": 1,
+      "message": "Please put a space before the opening parenthesis in this and other \u0027if\u0027 statemenents",
+      "revId": "2294e372cdaf7196ebfbf7c43811da7cae3d1389",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -563,7 +563,7 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 
 	private static List<ILanguageSettingsProvider> getDefaultLanguageSettingsProviders(IConfiguration cfg) {
 		List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
-		String[] ids = cfg.getDefaultLanguageSettingsProviderIds();
+		String[] ids = cfg != null ? cfg.getDefaultLanguageSettingsProviderIds() : null;
 		if (ids != null) {
 			for (String id : ids) {
 				ILanguageSettingsProvider provider = null;

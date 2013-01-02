@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2013 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1373,5 +1373,11 @@ public class CompletionTests extends AbstractContentAssistTest {
 	public void testUsingDeclaration_Bug379631() throws Exception {
 		final String[] expected= { "foo;" };
 		assertCompletionResults(fCursorOffset, expected, COMPARE_REP_STRINGS);
+	}
+
+	//	template <typen/*cursor*/
+	public void testTemplateDeclaration_Bug397288() throws Exception {
+		final String[] expected= { "typename" };
+		assertContentAssistResults(fCursorOffset, 0, expected, true, false, false, COMPARE_REP_STRINGS);
 	}
 }

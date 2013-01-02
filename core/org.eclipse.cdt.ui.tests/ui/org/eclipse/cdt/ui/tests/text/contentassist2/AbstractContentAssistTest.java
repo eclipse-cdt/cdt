@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 IBM Corporation and others.
+ * Copyright (c) 2004, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -96,8 +96,8 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 		fCFile= null;
 		super.tearDown();
 	}
-	
-	protected void assertContentAssistResults(int offset, int length, String[] expected, boolean isCompletion, boolean isTemplate, int compareType) throws Exception {
+
+	protected void assertContentAssistResults(int offset, int length, String[] expected, boolean isCompletion, boolean isTemplate, boolean filterResults, int compareType) throws Exception {
 		if (CTestPlugin.getDefault().isDebugging())  {
 			System.out.println("\n\n\n\n\nTesting "+this.getClass().getName());
 		}
@@ -116,10 +116,12 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 		long endTime= System.currentTimeMillis();
 		assertTrue(results != null);
 
-		if(isTemplate) {
-			results= filterResultsKeepTemplates(results);
-		} else {
-			results= filterResults(results, isCode);
+		if (filterResults) {
+			if (isTemplate) {
+				results= filterResultsKeepTemplates(results);
+			} else {
+				results= filterResults(results, isCode);
+			}
 		}
 		String[] resultStrings= toStringArray(results, compareType);
 		Arrays.sort(expected);
@@ -159,6 +161,10 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 			assertEquals("Extra results!", toString(expected), toString(resultStrings));
 		}
 
+	}
+	
+	protected void assertContentAssistResults(int offset, int length, String[] expected, boolean isCompletion, boolean isTemplate, int compareType) throws Exception {
+		assertContentAssistResults(offset, length, expected, isCompletion, isTemplate, true, compareType);
 	}
 
 	protected void assertContentAssistResults(int offset, String[] expected, boolean isCompletion, int compareType) throws Exception {

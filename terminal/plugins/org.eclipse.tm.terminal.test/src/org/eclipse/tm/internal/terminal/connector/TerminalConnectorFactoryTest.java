@@ -124,6 +124,10 @@ public class TerminalConnectorFactoryTest extends TestCase {
 				}
 				public boolean validateSettings() {
 					return false;
+				}
+				public void addListener(Listener listener) {
+				}
+				public void removeListener(Listener listener) {
 				}};
 		}
 

@@ -22,15 +22,19 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.tm.internal.terminal.provisional.api.ISettingsPage;
+import org.eclipse.tm.internal.terminal.provisional.api.AbstractSettingsPage;
 
-public class TelnetSettingsPage implements ISettingsPage {
+public class TelnetSettingsPage extends AbstractSettingsPage {
 	private Text fHostText;
 	private Combo fNetworkPortCombo;
 	private Text fTimeout;
@@ -123,6 +127,11 @@ public class TelnetSettingsPage implements ISettingsPage {
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
 		fHostText = new Text(composite, SWT.BORDER);
 		fHostText.setLayoutData(gridData);
+		fHostText.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				fireListeners(fHostText);
+			}
+		});
 
 		// Add label
 		ctlLabel = new Label(composite, SWT.RIGHT);
@@ -131,8 +140,17 @@ public class TelnetSettingsPage implements ISettingsPage {
 		// Add control
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
 		fNetworkPortCombo = new Combo(composite, SWT.DROP_DOWN);
-
 		fNetworkPortCombo.setLayoutData(gridData);
+		fNetworkPortCombo.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				fireListeners(fNetworkPortCombo);
+			}
+		});
+		fNetworkPortCombo.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				fireListeners(fNetworkPortCombo);
+			}
+		});
 
 		List table = getNetworkPortMap().getNameTable();
 		Collections.sort(table);
@@ -141,6 +159,11 @@ public class TelnetSettingsPage implements ISettingsPage {
 		new Label(composite, SWT.RIGHT).setText(TelnetMessages.TIMEOUT + ":"); //$NON-NLS-1$
 		fTimeout = new Text(composite, SWT.BORDER);
 		fTimeout.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		fTimeout.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				fireListeners(fTimeout);
+			}
+		});
 
 		loadSettings();
 	}

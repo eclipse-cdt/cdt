@@ -21,15 +21,19 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.tm.internal.terminal.provisional.api.ISettingsPage;
+import org.eclipse.tm.internal.terminal.provisional.api.AbstractSettingsPage;
 
-public class SerialSettingsPage implements ISettingsPage {
+public class SerialSettingsPage extends AbstractSettingsPage {
 	private Combo fSerialPortCombo;
 	private Combo fBaudRateCombo;
 	private Combo fDataBitsCombo;
@@ -137,6 +141,11 @@ public class SerialSettingsPage implements ISettingsPage {
 		new Label(composite, SWT.RIGHT).setText(SerialMessages.TIMEOUT + ":"); //$NON-NLS-1$
 		fTimeout = new Text(composite, SWT.BORDER);
 		fTimeout.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		fTimeout.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				fireListeners(fTimeout);
+			}
+		});
 		loadSettings();
 	}
 
@@ -148,8 +157,20 @@ public class SerialSettingsPage implements ISettingsPage {
 		int flags=SWT.DROP_DOWN;
 		if(readonly)
 			flags|=SWT.READ_ONLY;
-		Combo combo = new Combo(composite, flags);
+		final Combo combo = new Combo(composite, flags);
 		combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		if (!readonly) {
+			combo.addModifyListener(new ModifyListener() {
+				public void modifyText(ModifyEvent e) {
+					fireListeners(combo);
+				}
+			});
+		}
+		combo.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				fireListeners(combo);
+			}
+		});
 		return combo;
 	}
 

@@ -12,7 +12,7 @@
 <feature
       id="org.eclipse.tm.terminal.telnet"
       label="%featureName"
-      version="2.1.100.qualifier"
+      version="2.1.200.qualifier"
       provider-name="%providerName">
 
    <description>
@@ -35,7 +35,7 @@
    <requires>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.tm.terminal" version="3.2.0" match="equivalent"/>
+      <import plugin="org.eclipse.tm.terminal" version="3.2.2" match="equivalent"/>
    </requires>
 
    <plugin

@@ -13,7 +13,7 @@
 <feature
       id="org.eclipse.tm.terminal.local"
       label="%featureName"
-      version="0.2.100.qualifier"
+      version="0.2.200.qualifier"
       provider-name="%providerName"
       image="eclipse_update_120.jpg">
 
@@ -41,8 +41,8 @@
       <import plugin="org.eclipse.debug.core"/>
       <import plugin="org.eclipse.debug.ui"/>
       <import plugin="org.eclipse.jface"/>
-      <import plugin="org.eclipse.tm.terminal" version="3.2.0" match="equivalent"/>
-      <import plugin="org.eclipse.tm.terminal.view" version="2.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.tm.terminal" version="3.2.2" match="equivalent"/>
+      <import plugin="org.eclipse.tm.terminal.view" version="2.4.1" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.ui.externaltools"/>
    </requires>

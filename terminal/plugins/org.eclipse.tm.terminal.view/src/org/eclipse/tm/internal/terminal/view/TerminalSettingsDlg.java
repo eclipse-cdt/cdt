@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -121,6 +122,8 @@ class TerminalSettingsDlg extends Dialog {
 					public void loadSettings() {}
 					public void saveSettings() {}
 					public boolean validateSettings() {return false;}
+					public void addListener(Listener listener) {}
+					public void removeListener(Listener listener) {}
 				};
 			} else {
 				fPages[i]=fConnectors[i].makeSettingsPage();
@@ -259,11 +262,11 @@ class TerminalSettingsDlg extends Dialog {
 		fTerminalTitleText = new Text(wndGroup, SWT.BORDER);
 		fTerminalTitleText.setText(fTerminalTitle);
 		fTerminalTitleText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
+
 		Label encodingLabel=new Label(wndGroup,SWT.NONE);
 		encodingLabel.setText(ViewMessages.ENCODING);
 		encodingLabel.setLayoutData(new GridData(GridData.BEGINNING));
-		
+
 		fEncodingCombo = new Combo(wndGroup, SWT.DROP_DOWN);
 		fEncodingCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	}
@@ -294,7 +297,7 @@ class TerminalSettingsDlg extends Dialog {
 		fPageBook=new PageBook(group,SWT.NONE);
 		fPageBook.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	}
-	
+
 	private void setupListeners() {
 		if(fCtlConnTypeCombo==null)
 			return;
@@ -356,10 +359,10 @@ class TerminalSettingsDlg extends Dialog {
 			//TODO when moving to J2SE-1.5, restore the simpler way getting the default encoding
 			//String hostEncoding =Charset.defaultCharset().displayName();
 			String hostEncoding = new java.io.InputStreamReader(new java.io.ByteArrayInputStream(new byte[0])).getEncoding();
-			if (!encodings.contains(hostEncoding)) 
+			if (!encodings.contains(hostEncoding))
 				encodings.add(hostEncoding);
 			populateEncodingsCombo(encodings);
-	       
+
 		}
 	}
 	private void populateEncodingsCombo(List encodings) {
@@ -394,7 +397,7 @@ class TerminalSettingsDlg extends Dialog {
 		mb.open();
 		return;
 	}
-	
+
 	private void setCombo(Combo combo,String value) {
 		if(value==null)
 			return;

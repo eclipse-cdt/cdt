@@ -14,14 +14,16 @@
 package org.eclipse.tm.internal.terminal.ssh;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.tm.internal.terminal.provisional.api.ISettingsPage;
+import org.eclipse.tm.internal.terminal.provisional.api.AbstractSettingsPage;
 
-public class SshSettingsPage implements ISettingsPage {
+public class SshSettingsPage extends AbstractSettingsPage {
 	private Text fHostText;
 	private Text fUser;
 	private Text fTimeout;
@@ -107,8 +109,13 @@ public class SshSettingsPage implements ISettingsPage {
 
 		// Add control
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
-		Text text= new Text(composite, SWT.BORDER | textOptions);
+		final Text text= new Text(composite, SWT.BORDER | textOptions);
 		text.setLayoutData(gridData);
+		text.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				fireListeners(text);
+			}
+		});
 		return text;
 	}
 	private Text createTextField(Composite composite, String labelTxt) {

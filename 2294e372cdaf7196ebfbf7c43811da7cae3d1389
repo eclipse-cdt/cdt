@@ -16,6 +16,24 @@
       "revId": "2294e372cdaf7196ebfbf7c43811da7cae3d1389",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOKH////0\u003d",
+        "filename": "core/org.eclipse.cdt.ui.tests/ui/org/eclipse/cdt/ui/tests/text/contentassist2/AbstractContentAssistTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 598
+      },
+      "writtenOn": "2013-01-03T06:28:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOJ3//6vw\u003d",
+      "revId": "2294e372cdaf7196ebfbf7c43811da7cae3d1389",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

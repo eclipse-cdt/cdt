@@ -90,11 +90,15 @@ public class WinEnvironmentVariableSupplier
 		return value;
 	}
 	
-	// Current support is for Windows SDK 7.1 with Visual C++ 10.0
-	// Secondary support for Windows SDK 7.0 with Visual C++ 9.0 
+	// Current support is for Windows SDK 8.0 with Visual C++ 11.0
+	// or Windows SDK 7.1 with Visual C++ 10.0
+	// or Windows SDK 7.0 with Visual C++ 9.0 
 	private static String getSDKDir() {
 		WindowsRegistry reg = WindowsRegistry.getRegistry();
-		String sdkDir = getSoftwareKey(reg, "Microsoft\\Microsoft SDKs\\Windows\\v7.1", "InstallationFolder");
+		String sdkDir = getSoftwareKey(reg, "Microsoft\\Microsoft SDKs\\Windows\\v8.0", "InstallationFolder");
+		if (sdkDir != null)
+			return sdkDir;
+		sdkDir = getSoftwareKey(reg, "Microsoft\\Microsoft SDKs\\Windows\\v7.1", "InstallationFolder");
 		if (sdkDir != null)
 			return sdkDir;
 		return getSoftwareKey(reg, "Microsoft SDKs\\Windows\\v7.0", "InstallationFolder");
@@ -102,7 +106,10 @@ public class WinEnvironmentVariableSupplier
 	
 	private static String getVCDir() {
 		WindowsRegistry reg = WindowsRegistry.getRegistry();
-		String vcDir = getSoftwareKey(reg, "Microsoft\\VisualStudio\\SxS\\VC7", "10.0");
+		String vcDir = getSoftwareKey(reg, "Microsoft\\VisualStudio\\SxS\\VC7", "11.0");
+		if (vcDir != null)
+			return vcDir;
+		vcDir = getSoftwareKey(reg, "Microsoft\\VisualStudio\\SxS\\VC7", "10.0");
 		if (vcDir != null)
 			return vcDir;
 		return getSoftwareKey(reg, "Microsoft\\VisualStudio\\SxS\\VC7", "9.0");
@@ -151,8 +158,10 @@ public class WinEnvironmentVariableSupplier
 		buff = new StringBuffer();
 		if (vcDir != null)
 			buff.append(vcDir).append("Lib;");
-		if (sdkDir != null)
+		if (sdkDir != null) {
 			buff.append(sdkDir).append("Lib;");
+			buff.append(sdkDir).append("Lib\\win8\\um\\x86;");
+		}
 		
 		addvar(new WindowsBuildEnvironmentVariable("LIB", buff.toString(), IBuildEnvironmentVariable.ENVVAR_PREPEND));
 		

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Google, Inc and others.
+ * Copyright (c) 2011, 2013 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * 	   Sergey Prigogin (Google) - initial API and implementation
+ *     Nathan Ridge
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
 
@@ -178,7 +179,12 @@ public class SizeofCalculator {
 		if (type instanceof IBasicType) {
 			return sizeAndAlignment((IBasicType) type);
 		}
-		if (type instanceof IPointerType || type instanceof ICPPReferenceType) {
+		// [expr.sizeof]/2: "When applied to a reference or a reference type, the
+		// result is the size of the referenced type."
+		if (type instanceof ICPPReferenceType) {
+			return sizeAndAlignment(((ICPPReferenceType) type).getType());
+		}
+		if (type instanceof IPointerType) {
 			if (type instanceof ICPPPointerToMemberType)
 				return null;
 			return sizeof_pointer;
@@ -310,14 +316,24 @@ public class SizeofCalculator {
 			if (field.isStatic())
 				continue;
 			IType fieldType = field.getType();
-			SizeAndAlignment info = sizeAndAlignment(fieldType);
+			SizeAndAlignment info;
+			// sizeof() on a reference type returns the size of the referenced type.
+			// However, a reference field in a structure only occupies as much space
+			// as a pointer.
+			if (fieldType instanceof ICPPReferenceType) {
+				info = sizeof_pointer;
+			} else {
+				info = sizeAndAlignment(fieldType);
+			}
 			if (info == null)
 				return null;
 			if (union) {
 				if (size < info.size)
 					size = info.size;
 			} else {
-				size += info.alignment - (size - 1) % info.alignment - 1 + info.size;
+				if (size > 0)
+					size += info.alignment - (size - 1) % info.alignment - 1;
+				size += info.size;
 			}
 			if (maxAlignment < info.alignment)
 				maxAlignment = info.alignment;

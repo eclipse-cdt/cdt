@@ -51,6 +51,8 @@ import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IRunControl2;
+import org.eclipse.cdt.dsf.debug.service.ISourceLookup;
+import org.eclipse.cdt.dsf.debug.service.ISourceLookup.ISourceLookupDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommand;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
@@ -1727,13 +1729,15 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 	 * @since 3.0
 	 */
 	@Override
-	public void runToLine(IExecutionDMContext context, String sourceFile,
-			int lineNumber, boolean skipBreakpoints, RequestMonitor rm) {
+	public void runToLine(final IExecutionDMContext context, String sourceFile,
+			final int lineNumber, final boolean skipBreakpoints, final RequestMonitor rm) {
 		
-		// Hack around a MinGW bug; see 196154
-		sourceFile = adjustDebuggerPath(sourceFile);
-		
-		runToLocation(context, sourceFile + ":" + Integer.toString(lineNumber), skipBreakpoints, rm); //$NON-NLS-1$
+        determineDebuggerPath(context, sourceFile, new ImmediateDataRequestMonitor<String>(rm) {
+            @Override
+            protected void handleSuccess() {
+        		runToLocation(context, getData() + ":" + Integer.toString(lineNumber), skipBreakpoints, rm); //$NON-NLS-1$
+            }
+        });
 	}
 
 	/* (non-Javadoc)
@@ -1778,33 +1782,37 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 	 * @since 3.0
 	 */
 	@Override
-	public void moveToLine(IExecutionDMContext context, String sourceFile,
-			int lineNumber, boolean resume, RequestMonitor rm) {
-		IMIExecutionDMContext threadExecDmc = DMContexts.getAncestorOfType(context, IMIExecutionDMContext.class);
+	public void moveToLine(final IExecutionDMContext context, String sourceFile,
+			final int lineNumber, final boolean resume, final RequestMonitor rm) {
+		final IMIExecutionDMContext threadExecDmc = DMContexts.getAncestorOfType(context, IMIExecutionDMContext.class);
 		if (threadExecDmc == null) {
             rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, "Invalid thread context", null)); //$NON-NLS-1$
             rm.done();                        	
 		}
 		else
 		{
-			// Hack around a MinGW bug; see 369622 (and also 196154 and 232415)
-			sourceFile = adjustDebuggerPath(sourceFile);
-			
-			String location = sourceFile + ":" + lineNumber; //$NON-NLS-1$
-			if (resume)
-				resumeAtLocation(context, location, rm);
-			else
-			{
-				// Create the breakpoint attributes
-				Map<String,Object> attr = new HashMap<String,Object>();
-		    	attr.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.BREAKPOINT);
-		    	attr.put(MIBreakpoints.FILE_NAME, sourceFile);
-		    	attr.put(MIBreakpoints.LINE_NUMBER, lineNumber);
-		    	attr.put(MIBreakpointDMData.IS_TEMPORARY, true);
-		    	attr.put(MIBreakpointDMData.THREAD_ID, Integer.toString(threadExecDmc.getThreadId()));
-				// Now do the operation
-				moveToLocation(context, location, attr, rm);
-			}
+            determineDebuggerPath(context, sourceFile, new ImmediateDataRequestMonitor<String>(rm) {
+                @Override
+                protected void handleSuccess() {
+                	String debuggerPath = getData();
+
+                	String location = debuggerPath + ":" + lineNumber; //$NON-NLS-1$
+                	if (resume) {
+                		resumeAtLocation(context, location, rm);
+                	} else {
+                		// Create the breakpoint attributes
+                		Map<String,Object> attr = new HashMap<String,Object>();
+                		attr.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.BREAKPOINT);
+                		attr.put(MIBreakpoints.FILE_NAME, debuggerPath);
+                		attr.put(MIBreakpoints.LINE_NUMBER, lineNumber);
+                		attr.put(MIBreakpointDMData.IS_TEMPORARY, true);
+                		attr.put(MIBreakpointDMData.THREAD_ID, Integer.toString(threadExecDmc.getThreadId()));
+
+                		// Now do the operation
+                		moveToLocation(context, location, attr, rm);
+                	}
+                }
+            });
 		}
 	}
 
@@ -1866,6 +1874,34 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 	}
 
 	/**
+	 * Determine the path that should be sent to the debugger as per the source lookup service.
+	 * 
+	 * @param dmc A context that can be used to obtain the sourcelookup context.
+	 * @param hostPath The path of the file on the host, which must be converted.
+	 * @param rm The result of the conversion.
+	 */
+    private void determineDebuggerPath(IDMContext dmc, String hostPath, final DataRequestMonitor<String> rm)
+    {
+    	ISourceLookup sourceLookup = getServicesTracker().getService(ISourceLookup.class);
+    	ISourceLookupDMContext srcDmc = DMContexts.getAncestorOfType(dmc, ISourceLookupDMContext.class);
+    	if (sourceLookup == null || srcDmc == null) {
+    		// Source lookup not available for given context, use the host
+    		// path for the debugger path.
+    		// Hack around a MinGW bug; see 369622 (and also 196154 and 232415)
+    		rm.done(adjustDebuggerPath(hostPath));
+    		return;
+    	}
+
+    	sourceLookup.getDebuggerPath(srcDmc, hostPath, new DataRequestMonitor<String>(getExecutor(), rm) {
+    		@Override
+    		protected void handleSuccess() {
+    			// Hack around a MinGW bug; see 369622 (and also 196154 and 232415)
+    			rm.done(adjustDebuggerPath(getData()));
+    		}
+    	});
+    }
+
+    /**
 	 * See bug 196154
 	 * 
 	 * @param path

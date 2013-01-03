@@ -178,7 +178,12 @@ public class SizeofCalculator {
 		if (type instanceof IBasicType) {
 			return sizeAndAlignment((IBasicType) type);
 		}
-		if (type instanceof IPointerType || type instanceof ICPPReferenceType) {
+		// [expr.sizeof]/2: "When applied to a reference or a reference type, tje
+		// result is the size of the referenced type."
+		if (type instanceof ICPPReferenceType) {
+			return sizeAndAlignment(((ICPPReferenceType) type).getType());
+		}
+		if (type instanceof IPointerType) {
 			if (type instanceof ICPPPointerToMemberType)
 				return null;
 			return sizeof_pointer;

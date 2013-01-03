@@ -10121,4 +10121,17 @@ public class AST2CPPTests extends AST2BaseTest {
 		parseAndCheckBindings(getAboveComment(), CPP, true);
 	}
 
+	//	template <bool> struct B{};
+	//	template <>
+	//	struct B<true> {
+	//	    void waldo();
+	//	};
+	//	typedef char& one;
+	//	int main() {
+	//	    B<sizeof(one) == 1> b;
+	//	    b.waldo();
+	//	}
+	public void testSizeofReference_397342() throws Exception {
+		parseAndCheckBindings();
+	}
 }

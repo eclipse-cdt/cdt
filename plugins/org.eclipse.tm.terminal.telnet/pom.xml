@@ -10,6 +10,6 @@
   </parent>
   <groupId>org.eclipse.tm</groupId>
   <artifactId>org.eclipse.tm.terminal.telnet</artifactId>
-  <version>2.1.100-SNAPSHOT</version>
+  <version>2.1.200.qualifier</version>
   <packaging>eclipse-plugin</packaging>
 </project>

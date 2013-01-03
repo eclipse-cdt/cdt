@@ -38,6 +38,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.tm.internal.terminal.local.launch.LocalTerminalLaunchUtilities;
 import org.eclipse.tm.internal.terminal.local.ui.DependentHeightComposite;
+import org.eclipse.tm.internal.terminal.provisional.api.AbstractSettingsPage;
 import org.eclipse.tm.internal.terminal.provisional.api.ISettingsPage;
 import org.eclipse.tm.internal.terminal.provisional.api.Logger;
 import org.eclipse.ui.IWorkbench;
@@ -51,8 +52,8 @@ import org.eclipse.ui.PlatformUI;
  * @author Mirko Raner
  * @version $Revision: 1.3 $
  */
-public class LocalTerminalSettingsPage
-implements ISettingsPage, ISelectionChangedListener, SelectionListener {
+public class LocalTerminalSettingsPage extends AbstractSettingsPage
+implements ISelectionChangedListener, SelectionListener {
 
 	private ILocalTerminalSettings settings;
 	private TableViewer viewer;

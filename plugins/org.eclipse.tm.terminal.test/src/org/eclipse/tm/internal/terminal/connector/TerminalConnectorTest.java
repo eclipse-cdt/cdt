@@ -124,7 +124,12 @@ public class TerminalConnectorTest extends TestCase {
 				}
 				public boolean validateSettings() {
 					return false;
+				}
+				public void addListener(Listener listener) {
+				}
+				public void removeListener(Listener listener) {
 				}};
+
 		}
 
 		public void save(ISettingsStore store) {

@@ -381,7 +381,7 @@ abstract public class Sequence extends DsfRunnable implements Future<Object> {
         }
 
         /*
-         * If sequence was cencelled during last step (or before the sequence 
+         * If sequence was cancelled during last step (or before the sequence 
          * was ever executed), start rolling back the execution. 
          */
         if (isCancelled()) {

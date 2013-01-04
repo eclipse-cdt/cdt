@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.core;
 
+import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -54,7 +55,7 @@ public abstract class EFSExtensionProvider {
 	 *         physical file.
 	 */
 	public String getPathFromURI(URI locationURI) {
-		return locationURI.getPath();
+		return new File(locationURI).getAbsolutePath();
 	}
 
 	/**

@@ -221,7 +221,7 @@ public class ScannerInfoConsoleParserUtility extends AbstractGCCBOPConsoleParser
 					// appending fileName to cwd should yield file path
 					filePath = cwd.append(fileName);
 				}
-				if (!filePath.toString().equalsIgnoreCase(EFSExtensionManager.getDefault().getPathFromURI(file.getLocationURI()))) {
+				if (!filePath.toOSString().equalsIgnoreCase(EFSExtensionManager.getDefault().getPathFromURI(file.getLocationURI()))) {
 					// must be the cwd is wrong
 					// check if file name starts with ".."
 					if (fileName.startsWith("..")) {	//$NON-NLS-1$

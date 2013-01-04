@@ -549,7 +549,8 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
     /**
      * Install a platform breakpoint on the back-end. For a given context, a
      * platform breakpoint can resolve into multiple back-end breakpoints when
-     * threads are taken into account.
+     * threads are taken into account or if multiple breakpoints are created
+     * on the target using the console.
      * 
      * @param dmc
      * @param breakpoint
@@ -571,13 +572,6 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
 
         final Map<ICBreakpoint, Set<String>> threadsIDs = fBreakpointThreads.get(dmc);
         assert threadsIDs != null;
-
-        // Minimal validation
-        if (breakpointIDs.containsKey(breakpoint) || targetBPs.containsValue(breakpoint)) {
-            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, BREAKPOINT_ALREADY_INSTALLED, null));
-            rm.done();
-            return;
-        }
 
         // Ensure the breakpoint has a valid debugger source path
         if (breakpoint instanceof ICLineBreakpoint 

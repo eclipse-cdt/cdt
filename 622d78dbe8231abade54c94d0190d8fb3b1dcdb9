@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOKX///+s\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIBreakpointsSynchronizer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-01-04T15:26:52Z",
+      "side": 1,
+      "message": "If you agree it is simpler to do so, can we remove this class, and use a final value instead?  See below.\n\nIf not, please make the class private.",
+      "revId": "622d78dbe8231abade54c94d0190d8fb3b1dcdb9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOKX///8w\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIBreakpointsSynchronizer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 897,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-01-04T15:26:52Z",
+      "side": 1,
+      "message": "This is an interesting use of a sequence to perform multiple async operations.  I do like it.  The part I don\u0027t like is that we have to pre-define the number of steps when, in this case, we don\u0027t know that number.\n\nFYI, the pattern I\u0027ve used for such situations, is to have an RM class which keeps instantiating itself as the async calls complete.  It would look like this in this case:\n\tprivate void findTargetLineBreakpoint(\n\t\t\tfinal IBreakpointsTargetDMContext bpTargetDMC,\n\t\t\tfinal List\u003cMIBreakpoint\u003e candidates, \n\t\t\tfinal String fileName, \n\t\t\tfinal Integer lineNumber,\n\t\t\tfinal String function,\n\t\t\tfinal String address,\n\t\t\tfinal Boolean isHardware, \n\t\t\tfinal Boolean isTemporary,\n\t\t\tfinal DataRequestMonitor\u003cMIBreakpoint\u003e drm) {\n\n\t\tfinal List\u003cMIBreakpoint\u003e bps \u003d new ArrayList\u003cMIBreakpoint\u003e(candidates);\n\t\tclass GetSourceRM extends ImmediateDataRequestMonitor\u003cMIBreakpoint\u003e {\n\t\t\tpublic GetSourceRM() {\n\t\t\t\tsuper();\n\t\t\t}\n\n\t\t\t@Override\n\t\t\tprotected void handleCompleted() {\n\t\t\t\tif (bps.isEmpty()) {\n\t\t\t\t\tdrm.done();\n\t\t\t\t\treturn;\n\t\t\t\t}\n\n\t\t\t\tfinal MIBreakpoint fMIBpt \u003d bps.remove(0);\n\t\t\t\tgetSource(\n\t\t\t\t\t\tbpTargetDMC, \n\t\t\t\t\t\tgetFileName(fMIBpt), \n\t\t\t\t\t\tnew DataRequestMonitor\u003cString\u003e(getExecutor(), drm) {\n\t\t\t\t\t\t\t@Override\n\t\t\t\t\t\t\t@ConfinedToDsfExecutor( \"fExecutor\" )\n\t\t\t\t\t\t\tprotected void handleSuccess() {\n\t\t\t\t\t\t\t\tif (compareBreakpointAttributes(\n\t\t\t\t\t\t\t\t\t\tfMIBpt, \n\t\t\t\t\t\t\t\t\t\tgetData(), \n\t\t\t\t\t\t\t\t\t\tfileName, \n\t\t\t\t\t\t\t\t\t\tlineNumber, \n\t\t\t\t\t\t\t\t\t\tfunction, \n\t\t\t\t\t\t\t\t\t\taddress, \n\t\t\t\t\t\t\t\t\t\tisHardware, \n\t\t\t\t\t\t\t\t\t\tisTemporary)) {\n\t\t\t\t\t\t\t\t\tdrm.setData(fMIBpt);\n\t\t\t\t\t\t\t\t\tdrm.done();\n\t\t\t\t\t\t\t\t} else {\n\t\t\t\t\t\t\t\t\tnew GetSourceRM().done();\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t}\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t});\n\t\t\t}\n\t\t};\n\n\t\tnew GetSourceRM().done();\n\t}",
+      "revId": "622d78dbe8231abade54c94d0190d8fb3b1dcdb9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOKX////A\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIBreakpointsSynchronizer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 901,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-01-04T15:26:52Z",
+      "side": 1,
+      "message": "don\u0027t need to override, since nothing special is being done",
+      "revId": "622d78dbe8231abade54c94d0190d8fb3b1dcdb9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOKX///+o\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIBreakpointsSynchronizer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 911,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-01-04T15:26:52Z",
+      "side": 1,
+      "message": "Can you use a plain Step() but above the step creation, add the line:\nfinal MIBreakpoint fMIBpt \u003d candidates.get(i);\n(and refactor the name fMIBpt)",
+      "revId": "622d78dbe8231abade54c94d0190d8fb3b1dcdb9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

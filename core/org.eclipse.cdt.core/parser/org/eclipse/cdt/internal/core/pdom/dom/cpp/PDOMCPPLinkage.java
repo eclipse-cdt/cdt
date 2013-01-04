@@ -67,6 +67,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
@@ -77,6 +78,7 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
+import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPAliasTemplateInstance;
@@ -91,6 +93,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPQualifierType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPReferenceType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTypeArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownMember;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
@@ -401,6 +404,36 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		return false;
 	}
 
+	private boolean isLocalBinding(IBinding binding) {
+		IBinding owner = binding.getOwner();
+		return owner instanceof IFunction;
+	}
+	
+	private boolean isLocalType(IType type) {
+		if (type instanceof ICPPSpecialization) {
+			ICPPSpecialization asSpecialization = (ICPPSpecialization) type;
+			return isLocalBinding(asSpecialization.getSpecializedBinding()) || hasLocalArguments(asSpecialization);
+		} else if (type instanceof IBinding) {
+			return isLocalBinding((IBinding) type);
+		} else if (type instanceof ITypeContainer)
+			return isLocalType(((ITypeContainer) type).getType());
+		return false;
+	}
+	
+	private boolean isLocalArgument(ICPPTemplateArgument argument) {
+		if (argument instanceof CPPTemplateTypeArgument)
+			return isLocalType(((CPPTemplateTypeArgument) argument).getOriginalTypeValue());
+		return false;
+	}
+	
+	private boolean hasLocalArguments(ICPPSpecialization specialization) {
+		ICPPTemplateParameterMap tpMap = specialization.getTemplateParameterMap();
+		for (Integer paramID : tpMap.getAllParameterPositions())
+			if (isLocalArgument(tpMap.getArgument(paramID)))
+				return true;
+		return false;
+	}
+	
 	PDOMBinding createBinding(PDOMNode parent, IBinding binding, long fileLocalRec) throws CoreException, DOMException {
 		PDOMBinding pdomBinding= null;
 		PDOMNode parent2= null;
@@ -417,6 +450,12 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			if (pdomSpecialized == null)
 				return null;
 
+			// Types that are local to a function cannot be stored in the index.
+			// If a specialization has such a type as a template argument,
+			// don't store the specialization at all.
+			if (hasLocalArguments((ICPPSpecialization) binding))
+				return null;
+			
 			pdomBinding = createSpecialization(parent, pdomSpecialized, binding);
 		} else if (binding instanceof ICPPField) {
 			if (parent instanceof PDOMCPPClassType || parent instanceof PDOMCPPClassSpecialization) {

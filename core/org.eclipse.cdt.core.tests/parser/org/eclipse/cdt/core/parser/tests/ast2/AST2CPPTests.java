@@ -10121,4 +10121,18 @@ public class AST2CPPTests extends AST2BaseTest {
 		parseAndCheckBindings(getAboveComment(), CPP, true);
 	}
 
+	//	template <typename T>
+	//	T bar();
+	//	struct S {
+	//	    void waldo();
+	//	};
+	//	int main() {
+	//	    auto L = [](S s) { return s; };
+	//	    typedef decltype(L) lambda_type;
+	//	    decltype(bar<const lambda_type>()(S())) v;
+	//	    v.waldo();
+	//	}
+	public void testDecltypeWithConstantLambda_397494() throws Exception {
+		parseAndCheckBindings();
+	}
 }

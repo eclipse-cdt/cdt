@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOKn///6o\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIBreakpointsSynchronizer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 891,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-01-05T20:38:42Z",
+      "side": 1,
+      "message": "I think this must be out of the handleCompleted().  Currently, bpts will be created again and again with the original \u0027candidates\u0027.  What we need is one list that we gradually remove elements from.",
+      "revId": "33fb3fee13d9ac3e9670cd311c45f1232fa85640",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

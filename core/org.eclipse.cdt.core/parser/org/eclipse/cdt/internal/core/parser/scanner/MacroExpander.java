@@ -418,6 +418,14 @@ public class MacroExpander {
 		return result;
 	}
 
+	private void addImageLocationInfo(int offset, Token t) {
+		ImageLocationInfo info= createImageLocationInfo(t);
+		if (info != null) {
+			info.fTokenOffsetInExpansion= offset;
+			fImageLocationInfos.add(info);
+		}
+	}
+
 	private ImageLocationInfo createImageLocationInfo(Token t) {
 		if (fLocationMap != null) {
 			final Object s= t.fSource;
@@ -950,20 +958,12 @@ public class MacroExpander {
 			case CPreprocessor.tEXPANDED_IDENTIFIER:
 				t.setType(IToken.tIDENTIFIER);
 				if (createImageLocations) {
-					ImageLocationInfo info= createImageLocationInfo(t);
-					if (info != null) {
-						info.fTokenOffsetInExpansion= offset;
-						fImageLocationInfos.add(info);
-					}
+					addImageLocationInfo(offset, t);
 				}
 				break;
 			case IToken.tIDENTIFIER:
 				if (createImageLocations) {
-					ImageLocationInfo info= createImageLocationInfo(t);
-					if (info != null) {
-						info.fTokenOffsetInExpansion= offset;
-						fImageLocationInfos.add(info);
-					}
+					addImageLocationInfo(offset, t);
 				}
 				break;
 
@@ -978,6 +978,12 @@ public class MacroExpander {
 				t.setOffset(offset, offset + t.getLength());
 				t.setNext(null);
 				return;
+
+			default:
+				if (createImageLocations && t.fSource instanceof CPreprocessor) {
+					addImageLocationInfo(offset, t);
+				}
+				break;
 			}
 			t.setOffset(offset, ++offset);
 			l= t;

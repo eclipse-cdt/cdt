@@ -20,6 +20,7 @@ import junit.framework.TestSuite;
 import org.eclipse.cdt.utils.EFSExtensionManager;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 
 /**
  * Tests the EFSExtensionManager and EFSExtensionProvider classes, as well as the EFSExtensionProvider extension point.
@@ -235,7 +236,11 @@ public class EFSExtensionTests extends TestCase {
 		
 		String path = EFSExtensionManager.getDefault().getMappedPath(originalURI);
 		
-		assertEquals(path, "/c:/foo");
+		if (Platform.getOS().equals(Platform.WS_WIN32)) {
+			assertEquals(path, "c:/foo");
+		} else {
+			assertEquals(path, "/c:/foo");
+		}
 	}
 	
 	public void testGetPathFromURI() {
@@ -248,7 +253,11 @@ public class EFSExtensionTests extends TestCase {
 		
 		String path = EFSExtensionManager.getDefault().getMappedPath(originalURI);
 		
-		assertEquals(path, "/c:/foo");
+		if (Platform.getOS().equals(Platform.WS_WIN32)) {
+			assertEquals(path, "c:/foo");
+		} else {
+			assertEquals(path, "/c:/foo");
+		}
 	}
 	
 	public void testExtension() {

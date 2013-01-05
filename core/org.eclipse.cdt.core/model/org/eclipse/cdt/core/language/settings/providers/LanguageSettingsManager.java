@@ -184,7 +184,7 @@ public class LanguageSettingsManager {
 	 * commonly come from the input type(s).
 	 *
 	 * @param rcDescription - resource description
-	 * @return list of language IDs for the resource.
+	 * @return list of language IDs for the resource. The list can contain {@code null} ID.
 	 *    Never returns {@code null} but empty list if no languages can be found.
 	 *
 	 */
@@ -202,9 +202,9 @@ public class LanguageSettingsManager {
 		List<String> languageIds = new ArrayList<String>();
 		if (languageSettings != null) {
 			for (ICLanguageSetting languageSetting : languageSettings) {
-				if (languageSetting!=null) {
+				if (languageSetting != null) {
 					String languageId = languageSetting.getLanguageId();
-					if (languageId != null && !languageId.isEmpty()) {
+					if (! languageIds.contains(languageId)) {
 						languageIds.add(languageId);
 					}
 				}

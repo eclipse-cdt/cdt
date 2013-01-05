@@ -2051,8 +2051,10 @@ public class PathEntryTranslator {
 		IProject project = cfgDescription.getProjectDescription().getProject();
 		if (ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityEnabled(project)) {
 			IResource rc = findResourceInWorkspace(project, rcData.getPath());
-			for (CLanguageData lData : lDatas) {
-				list.addAll(LanguageSettingsProvidersSerializer.getSettingEntriesByKind(cfgDescription, rc, lData.getLanguageId(), kind));
+			if (rc != null) {
+				for (CLanguageData lData : lDatas) {
+					list.addAll(LanguageSettingsProvidersSerializer.getSettingEntriesByKind(cfgDescription, rc, lData.getLanguageId(), kind));
+				}
 			}
 			return list.size()>0;
 

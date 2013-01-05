@@ -21,6 +21,9 @@ public interface ICLanguageSetting extends ICSettingObject {
 
 //	String[] getHeaderExtensions();
 
+	/**
+	 * @return language id. Note that that id can be {@code null}.
+	 */
 	String getLanguageId();
 	
 //	ICLanguageSettingEntry[] getSettingEntries();

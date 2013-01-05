@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.core.tests;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Properties;
@@ -22,6 +24,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoChangeListener;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
+import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsScannerInfoProvider;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
@@ -199,6 +202,26 @@ public class ManagedBuildCoreTests20 extends TestCase {
 
 
 	/**
+	 * Convert path to OS specific representation
+	 */
+	private String toOSLocation(String path) {
+		File file = new File(path);
+		try {
+			path = file.getCanonicalPath();
+		} catch (IOException e) {
+		}
+		
+		return path;
+	}
+
+	/**
+	 * Convert path to OS specific representation
+	 */
+	private String toOSString(String path) {
+		return new Path(path).toOSString();
+	}
+
+	/**
 	 * The purpose of this test is to exercise the build path info interface.
 	 * To get to that point, a new project/config has to be created in the test
 	 * project and the default configuration changed.
@@ -218,24 +241,44 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		}
 
 		//These are the expected path settings
-		 final String[] expectedPaths = new String[5];
+		IPath buildCWD = project.getLocation().append("Sub Config");
 
-		 // This first path is a built-in, so it will not be manipulated by build manager
-		 expectedPaths[0] = (new Path("/usr/include")).toOSString();
-		 expectedPaths[1] = (new Path("/opt/gnome/include")).toOSString();
-		 IPath path = new Path("C:\\home\\tester/include");
-		 if(path.isAbsolute()) // for win32 path is treated as absolute
-			 expectedPaths[2] = path.toOSString();
-		 else // for Linux path is relative
-			 expectedPaths[2] = project.getLocation().append("Sub Config").append(path).toOSString();
-		 expectedPaths[3] = project.getLocation().append( "includes" ).toOSString();
-		 expectedPaths[4] = (new Path("/usr/gnu/include")).toOSString();
+		final String[] expectedPaths;
+		if (new Path("C:\\home\\tester/include").isAbsolute()) {
+			// Windows
+			expectedPaths = new String[] {
+					toOSLocation("/usr/include"),
+					toOSLocation("/opt/gnome/include"),
+					toOSLocation("C:\\home\\tester/include"),
+					// relative paths from MBS will make 3 entries
+					project.getLocation().append("includes").toOSString(),
+					buildCWD.append("includes").toOSString(),
+					toOSString("includes"),
+					"/usr/gnu/include", // Not converted to OS string due to being flagged as ICSettingEntry.RESOLVED
+			};
+		} else {
+			// Unix
+			expectedPaths = new String[] {
+					toOSLocation("/usr/include"),
+					toOSLocation("/opt/gnome/include"),
+					// on unix "C:\\home\\tester/include" is relative path
+					// looks like nonsense but has to be this way as MBS converts entry to keep "Sub Config/C:\\home\\tester/include" in its storage
+					project.getLocation().append("Sub Config/C:\\home\\tester/include").toOSString(),
+					buildCWD.append("Sub Config/C:\\home\\tester/include").toOSString(),
+					toOSString("Sub Config/C:\\home\\tester/include"),
+					// relative paths from MBS will make 3 entries
+					project.getLocation().append("includes").toOSString(),
+					buildCWD.append("includes").toOSString(),
+					toOSString("includes"),
+					"/usr/gnu/include", // Not converted to OS string due to being flagged as ICSettingEntry.RESOLVED
+			};
+		}
 
 		// Create a new managed project based on the sub project type
 		IProjectType projType = ManagedBuildManager.getExtensionProjectType("test.sub");
 		assertNotNull(projType);
 
-		// Create the managed-project (.cdtbuild) for our project
+		// Create the managed-project for our project
 		IManagedProject newProject = null;
 		try {
 			newProject = ManagedBuildManager.createManagedProject(project, projType);
@@ -281,6 +324,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		// Find the first IScannerInfoProvider that supplies build info for the project
 		IScannerInfoProvider provider = CCorePlugin.getDefault().getScannerInfoProvider(project);
 		assertNotNull(provider);
+		assertTrue(provider instanceof LanguageSettingsScannerInfoProvider);
 
 		// Now subscribe (note that the method will be called after a change
 		provider.subscribe(project, new IScannerInfoChangeListener () {
@@ -515,7 +559,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		IProjectType projType = ManagedBuildManager.getExtensionProjectType("test.root");
 		assertNotNull(projType);
 
-		// Create the managed-project (.cdtbuild) for our project that builds a dummy executable
+		// Create the managed-project for our project that builds a dummy executable
 		IManagedProject newProject = ManagedBuildManager.createManagedProject(project, projType);
 		assertEquals(newProject.getName(), projType.getName());
 		assertFalse(newProject.equals(projType));

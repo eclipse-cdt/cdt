@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2012 IBM Corporation and others.
+ * Copyright (c) 2002, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -942,7 +942,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     					lt1= LT(1);
     					if (lt1 != IToken.tCOLON && lt1 != IToken.tCOMMA)
     						stopWithNextOperator= true;
-    					break;
     				} else if (allowBraceInitializer && LT(1) == IToken.tLBRACE) {
     					// Brace initializer
     					expr= bracedInitList(true);
@@ -2058,7 +2057,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     	}
 
     	List<ICPPASTTemplateParameter> parms= outerTemplateParameterList();
-    	consume(IToken.tGT, IToken.tGT_in_SHIFTR);
+    	if (LT(1) != IToken.tEOC) {
+    		consume(IToken.tGT, IToken.tGT_in_SHIFTR);
+    	}
     	IASTDeclaration d = declaration(option);
     	ICPPASTTemplateDeclaration templateDecl = nodeFactory.newTemplateDeclaration(d);
 		setRange(templateDecl, offset, calculateEndOffset(d));

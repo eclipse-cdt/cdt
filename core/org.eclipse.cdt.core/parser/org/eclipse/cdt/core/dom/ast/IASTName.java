@@ -57,7 +57,7 @@ public interface IASTName extends IASTNode, IName {
 
 	/**
 	 * Get the role of this name. If the name needs to be resolved to determine that and 
-	 * <code>allowResolution</code> is set to <code>false</code>, then {@link IASTNameOwner#r_unclear}
+	 * {@code allowResolution} is set to {@code false}, then {@link IASTNameOwner#r_unclear}
 	 * is returned.  
 	 * 
 	 * @param allowResolution whether or not resolving the name is allowed.
@@ -80,21 +80,24 @@ public interface IASTName extends IASTNode, IName {
 	public ILinkage getLinkage();
 	
 	/**
-	 * Returns the image location for this name or <code>null</code> if the information is not available.
+	 * Returns the image location for this name or <code>null</code> if the information is not
+	 * available.
 	 * <p>
-	 * An image location can be computed when the name is either found directly in the code, is (part of) 
-	 * an argument to a macro expansion or is (part of) a macro definition found in the source code.
+	 * An image location can be computed when the name is either found directly in the code, is
+	 * (part of) an argument to a macro expansion or is (part of) a macro definition found in
+	 * the source code.
 	 * <p>
-	 * The image location is <code>null</code>, when the name consists of multiple tokens (qualified names)
-	 * and the tokens are not found side by side in the code, or if the name is the result of
-	 * a token-paste operation or the name is found in the definition of a built-in macro.
+	 * The image location is <code>null</code>, when the name consists of multiple tokens
+	 * (qualified names) and the tokens are not found side by side in the code, or if the name is
+	 * the result of a token-paste operation or the name is found in the definition of a built-in
+	 * macro.
 	 * @since 5.0
 	 */
 	public IASTImageLocation getImageLocation();
 	
 	/**
-	 * For convenience this method returns the last name of a qualified name or this if this is not a
-	 * qualified name.
+	 * For convenience this method returns the last name of a qualified name or this if this is not
+	 * a qualified name.
 	 * @since 5.1
 	 */
 	public IASTName getLastName();

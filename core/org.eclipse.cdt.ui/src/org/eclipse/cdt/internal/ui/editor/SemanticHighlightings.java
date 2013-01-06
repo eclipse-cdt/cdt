@@ -67,7 +67,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
  * @since 4.0
  */
 public class SemanticHighlightings {
-
 	private static final RGB RGB_BLACK = new RGB(0, 0, 0);
 
 	/**

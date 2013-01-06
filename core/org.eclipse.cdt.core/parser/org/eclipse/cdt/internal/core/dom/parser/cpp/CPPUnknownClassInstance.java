@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Google, Inc and others.
+ * Copyright (c) 2008, 2012 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -86,7 +86,7 @@ public class CPPUnknownClassInstance extends CPPUnknownMemberClass implements IC
 		buffer.putByte((byte) firstByte);
 		buffer.marshalType(getOwnerType());
 		buffer.putCharArray(getNameCharArray());
-		buffer.putShort((short) arguments.length);
+		buffer.putInt(arguments.length);
 		for (ICPPTemplateArgument arg : arguments) {
 			buffer.marshalTemplateArgument(arg);
 		}
@@ -95,7 +95,7 @@ public class CPPUnknownClassInstance extends CPPUnknownMemberClass implements IC
 	public static ICPPUnknownMemberClassInstance unmarshal(IIndexFragment fragment, int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
 		IType owner= buffer.unmarshalType();
 		char[] name = buffer.getCharArray();
-		int argcount= buffer.getShort() & 0xffff;
+		int argcount= buffer.getInt();
 		ICPPTemplateArgument[] args = new ICPPTemplateArgument[argcount];
 		for (int i = 0; i < argcount; i++) {
 			args[i]= buffer.unmarshalTemplateArgument();

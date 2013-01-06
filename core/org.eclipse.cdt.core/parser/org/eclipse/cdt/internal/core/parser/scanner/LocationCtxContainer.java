@@ -35,7 +35,8 @@ class LocationCtxContainer extends LocationCtx {
 	private AbstractCharArray fSource;
 	private int[] fLineOffsets;
 	
-	public LocationCtxContainer(LocationCtxContainer parent, AbstractCharArray source, int parentOffset, int parentEndOffset, int sequenceNumber) {
+	public LocationCtxContainer(LocationCtxContainer parent, AbstractCharArray source,
+			int parentOffset, int parentEndOffset, int sequenceNumber) {
 		super(parent, parentOffset, parentEndOffset, sequenceNumber);
 		fSource= source;
 	}

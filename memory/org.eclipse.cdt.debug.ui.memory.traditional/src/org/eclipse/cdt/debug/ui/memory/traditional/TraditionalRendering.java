@@ -268,8 +268,10 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
     				 * the model provider.
     				 */
     				fModel = factory.createModelProxy(block, context);
-    				fModel.installed(null);
-    				fModel.addModelChangedListener(TraditionalRendering.this);
+    				if ( fModel != null ) {
+    					fModel.installed(null);
+    					fModel.addModelChangedListener(TraditionalRendering.this);
+    				}
 
     			}});
     	}

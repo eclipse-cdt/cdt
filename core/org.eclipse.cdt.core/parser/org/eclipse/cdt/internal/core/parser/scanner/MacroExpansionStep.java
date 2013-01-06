@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *     Markus Schorn - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner;
 
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
@@ -30,12 +30,12 @@ public class MacroExpansionStep implements IMacroExpansionStep {
 		fMacroDefinition= def;
 		fMacroLocation= macroLoc;
 	}
-	
+
 	@Override
 	public String getCodeBeforeStep() {
 		return fBefore;
 	}
-	
+
 	@Override
 	public String getCodeAfterStep() {
 		StringBuilder result= new StringBuilder();
@@ -49,7 +49,7 @@ public class MacroExpansionStep implements IMacroExpansionStep {
 		result.append(fBefore, offset, fBefore.length());
 		return result.toString();
 	}
-	
+
 	@Override
 	public IMacroBinding getExpandedMacro() {
 		return fMacroDefinition;

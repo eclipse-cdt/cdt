@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2009, 2012 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Thomas Corbat
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
 
@@ -69,9 +70,18 @@ public interface ITypeMarshalBuffer {
 	ISerializableEvaluation unmarshalEvaluation() throws CoreException;
 	ICPPTemplateArgument unmarshalTemplateArgument() throws CoreException;
 	int getByte() throws CoreException;
-	int getShort() throws CoreException;
-	int getInt() throws CoreException;
-	long getLong() throws CoreException;
+	int getFixedInt() throws CoreException;
+
+	/**
+	 * Reads a 32-bit integer stored in the variable length base-128 encoding.
+	 */
+	public int getInt() throws CoreException;
+
+	/**
+	 * Reads a 64-bit integer stored in the variable length base-128 encoding.
+	 */
+	public long getLong() throws CoreException;
+
 	char[] getCharArray() throws CoreException;
 
 	void marshalType(IType type) throws CoreException;
@@ -80,8 +90,53 @@ public interface ITypeMarshalBuffer {
 	void marshalEvaluation(ISerializableEvaluation eval, boolean includeValue) throws CoreException;
 	void marshalTemplateArgument(ICPPTemplateArgument arg) throws CoreException;
 	void putByte(byte data);
-	void putShort(short data);
-	void putInt(int data);
-	void putLong(long data);
+	void putFixedInt(int data);
+
+	/**
+	 * Writes a 32-bit integer in the variable length base-128 encoding. Each byte, except the last
+	 * byte, has the most significant bit set – this indicates that there are further bytes to come.
+	 * The lower 7 bits of each byte are used to store the two-complement representation of
+	 * the number in groups of 7 bits, least significant group first.
+	 * 
+	 * <p>Here is number of bytes depending on the encoded value:
+	 * <pre>
+	 * Value                   Number of bytes
+	 * [0,127]                          1
+	 * [128,16383]                      2
+	 * [16384,2097151]                  3
+	 * [2097152,268435455]              4
+	 * [268435456,Integer.MAX_VALUE]    5
+	 * negative                         5
+	 * </pre>
+	 *
+	 * @param value the value to write
+	 */
+	public void putInt(int value);
+
+	/**
+	 * Writes a 64-bit integer in the variable length base-128 encoding. Each byte, except the last
+	 * byte, has the most significant bit set – this indicates that there are further bytes to come.
+	 * The lower 7 bits of each byte are used to store the two-complement representation of
+	 * the number in groups of 7 bits, least significant group first.
+	 * 
+	 * <p>Here is number of bytes depending on the encoded value:
+	 * <pre>
+	 * Value                   Number of bytes
+	 * [0,127]                          1
+	 * [128,16383]                      2
+	 * [16384,2097151]                  3
+	 * [2097152,268435455]              4
+	 * [268435456,2^35-1]               5
+	 * [2^35,2^42-1]                    6
+	 * [2^42,2^49-1]                    7
+	 * [2^49,2^56-1]                    8
+	 * [2^56,2^63-1]                    9
+	 * negative                        10
+	 * </pre>
+	 *
+	 * @param value the value to write
+	 */
+	public void putLong(long value);
+
 	void putCharArray(char[] data);
 }

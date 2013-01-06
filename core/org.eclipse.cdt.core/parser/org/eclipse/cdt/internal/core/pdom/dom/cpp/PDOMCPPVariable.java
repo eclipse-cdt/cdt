@@ -37,10 +37,10 @@ class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable {
 	protected static final int ANNOTATIONS = VALUE_OFFSET + Database.VALUE_SIZE; // byte
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = ANNOTATIONS + 1;
-	
+
 	public PDOMCPPVariable(PDOMLinkage linkage, PDOMNode parent, IVariable variable) throws CoreException {
 		super(linkage, parent, variable.getNameCharArray());
-		
+
 		// Find the type record
 		Database db = getDB();
 		setType(parent.getLinkage(), variable.getType());
@@ -73,11 +73,11 @@ class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable {
 	protected byte encodeFlags(IVariable variable) {
 		return PDOMCPPAnnotation.encodeAnnotation(variable);
 	}
-	
+
 	public PDOMCPPVariable(PDOMLinkage linkage, long record) {
 		super(linkage, record);
 	}
-	
+
 	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
@@ -87,11 +87,11 @@ class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable {
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPPVARIABLE;
 	}
-	
+
 	@Override
 	public boolean isMutable() {
 		// ISO/IEC 14882:2003 7.1.1.8
-		return false; 
+		return false;
 	}
 
 	@Override
@@ -103,7 +103,7 @@ class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable {
 			return null;
 		}
 	}
-	
+
 	@Override
 	public IValue getInitialValue() {
 		try {
@@ -146,4 +146,4 @@ class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable {
 		}
 		return 0;
 	}
-}	
+}

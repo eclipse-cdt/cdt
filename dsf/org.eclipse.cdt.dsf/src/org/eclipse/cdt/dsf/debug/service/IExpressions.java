@@ -8,6 +8,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Ericsson           - Update for GDB/MI
+ *     Marc Khouzam (Ericsson) - Added expression-groups (bug 394408)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.service;
 
@@ -67,6 +68,22 @@ public interface IExpressions extends IFormattedValues {
 		public int getLength();
 	}
 
+	/**
+	 * Represents a group of expressions.  A group of expressions is a list of
+	 * possibly unrelated expressions which are somehow described by an 
+	 * expression-group string.
+	 * 
+	 * Examples of expression-groups that the service could choose to support are:
+	 * 	"myVar1; myVar2"
+	 *  "=myVar*"
+	 * 
+	 * The sub-expressions of an expression-group are the individual expressions
+	 * making up this group.
+	 * 
+	 * @since 2.4
+	 */
+	public interface IExpressionGroupDMContext extends IExpressionDMContext {}
+		
     /**
      * The address and size of an expression.
      */

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -230,15 +230,16 @@ public class CPPDeferredClassInstance extends CPPUnknownBinding implements ICPPD
 		int firstByte= ITypeMarshalBuffer.DEFERRED_CLASS_INSTANCE;
 		buffer.putByte((byte) firstByte);
 		buffer.marshalBinding(fClassTemplate);
-		buffer.putShort((short) fArguments.length);
+		buffer.putInt(fArguments.length);
 		for (ICPPTemplateArgument arg : fArguments) {
 			buffer.marshalTemplateArgument(arg);
 		}
 	}
 	
-	public static ICPPDeferredClassInstance unmarshal(IIndexFragment fragment, int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
+	public static ICPPDeferredClassInstance unmarshal(IIndexFragment fragment, int firstByte,
+			ITypeMarshalBuffer buffer) throws CoreException {
 		IBinding template= buffer.unmarshalBinding();
-		int argcount= buffer.getShort() & 0xffff;
+		int argcount= buffer.getInt();
 		ICPPTemplateArgument[] args = new ICPPTemplateArgument[argcount];
 		for (int i = 0; i < argcount; i++) {
 			args[i]= buffer.unmarshalTemplateArgument();

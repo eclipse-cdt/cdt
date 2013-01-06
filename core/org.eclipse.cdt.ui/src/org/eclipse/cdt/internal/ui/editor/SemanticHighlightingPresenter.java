@@ -9,7 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *     Anton Leherbauer (Wind River Systems) - Adapted for CDT
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.editor;
 
 import java.util.ArrayList;
@@ -37,7 +36,6 @@ import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingManager.Highlighte
 import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingManager.HighlightingStyle;
 import org.eclipse.cdt.internal.ui.text.CPresentationReconciler;
 
-
 /**
  * Semantic highlighting presenter - UI thread implementation.
  * Cloned from JDT.
@@ -45,12 +43,10 @@ import org.eclipse.cdt.internal.ui.text.CPresentationReconciler;
  * @since 4.0
  */
 public class SemanticHighlightingPresenter implements ITextPresentationListener, ITextInputListener, IDocumentListener {
-
 	/**
 	 * Semantic highlighting position updater.
 	 */
 	private class HighlightingPositionUpdater implements IPositionUpdater {
-
 		/** The position category. */
 		private final String fCategory;
 
@@ -63,12 +59,8 @@ public class SemanticHighlightingPresenter implements ITextPresentationListener,
 			fCategory= category;
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.IPositionUpdater#update(org.eclipse.jface.text.DocumentEvent)
-		 */
 		@Override
 		public void update(DocumentEvent event) {
-
 			int eventOffset= event.getOffset();
 			int eventOldLength= event.getLength();
 			int eventEnd= eventOffset + eventOldLength;
@@ -77,10 +69,10 @@ public class SemanticHighlightingPresenter implements ITextPresentationListener,
 				Position[] positions= event.getDocument().getPositions(fCategory);
 
 				for (int i= 0; i != positions.length; i++) {
-
 					HighlightedPosition position= (HighlightedPosition) positions[i];
 
-					// Also update deleted positions because they get deleted by the background thread and removed/invalidated only in the UI runnable
+					// Also update deleted positions because they get deleted by the background
+					// thread and removed/invalidated only in the UI runnable.
 //					if (position.isDeleted())
 //						continue;
 
@@ -88,18 +80,19 @@ public class SemanticHighlightingPresenter implements ITextPresentationListener,
 					int length= position.getLength();
 					int end= offset + length;
 
-					if (offset > eventEnd)
+					if (offset > eventEnd) {
 						updateWithPrecedingEvent(position, event);
-					else if (end < eventOffset)
+					} else if (end < eventOffset) {
 						updateWithSucceedingEvent(position, event);
-					else if (offset <= eventOffset && end >= eventEnd)
+					} else if (offset <= eventOffset && end >= eventEnd) {
 						updateWithIncludedEvent(position, event);
-					else if (offset <= eventOffset)
+					} else if (offset <= eventOffset) {
 						updateWithOverEndEvent(position, event);
-					else if (end >= eventEnd)
+					} else if (end >= eventEnd) {
 						updateWithOverStartEvent(position, event);
-					else
+					} else {
 						updateWithIncludingEvent(position, event);
+					}
 				}
 			} catch (BadPositionCategoryException e) {
 				// ignore and return
@@ -107,7 +100,7 @@ public class SemanticHighlightingPresenter implements ITextPresentationListener,
 		}
 
 		/**
-		 * Update the given position with the given event. The event precedes the position.
+		 * Updates the given position with the given event. The event precedes the position.
 		 *
 		 * @param position The position
 		 * @param event The event
@@ -121,7 +114,7 @@ public class SemanticHighlightingPresenter implements ITextPresentationListener,
 		}
 
 		/**
-		 * Update the given position with the given event. The event succeeds the position.
+		 * Updates the given position with the given event. The event succeeds the position.
 		 *
 		 * @param position The position
 		 * @param event The event
@@ -130,7 +123,7 @@ public class SemanticHighlightingPresenter implements ITextPresentationListener,
 		}
 
 		/**
-		 * Update the given position with the given event. The event is included by the position.
+		 * Updates the given position with the given event. The event is included by the position.
 		 *
 		 * @param position The position
 		 * @param event The event
@@ -151,9 +144,9 @@ public class SemanticHighlightingPresenter implements ITextPresentationListener,
 			int includedLength= 0;
 			while (includedLength < eventNewLength && Character.isJavaIdentifierPart(newText.charAt(includedLength)))
 				includedLength++;
-			if (includedLength == eventNewLength)
+			if (includedLength == eventNewLength) {
 				position.setLength(length + deltaLength);
-			else {
+			} else {
 				int newLeftLength= eventOffset - offset + includedLength;
 
 				int excludedLength= eventNewLength;
@@ -176,7 +169,8 @@ public class SemanticHighlightingPresenter implements ITextPresentationListener,
 		}
 
 		/**
-		 * Update the given position with the given event. The event overlaps with the end of the position.
+		 * Updates the given position with the given event. The event overlaps with the end of
+		 * the position.
 		 *
 		 * @param position The position
 		 * @param event The event
@@ -194,7 +188,8 @@ public class SemanticHighlightingPresenter implements ITextPresentationListener,
 		}
 
 		/**
-		 * Update the given position with the given event. The event overlaps with the start of the position.
+		 * Updates the given position with the given event. The event overlaps with the start of
+		 * the position.
 		 *
 		 * @param position The position
 		 * @param event The event
@@ -353,12 +348,14 @@ public class SemanticHighlightingPresenter implements ITextPresentationListener,
 	}
 
 	/**
-	 * Invalidate the presentation of the positions based on the given added positions and the existing deleted positions.
-	 * Also unregisters the deleted positions from the document and patches the positions of this presenter.
+	 * Invalidates the presentation of the positions based on the given added positions and
+	 * the existing deleted positions. Also unregisters the deleted positions from the document
+	 * and patches the positions of this presenter.
 	 * <p>
 	 * NOTE: Indirectly called from background thread by UI runnable.
 	 * </p>
-	 * @param textPresentation the text presentation or <code>null</code>, if the presentation should computed in the UI thread
+	 * @param textPresentation the text presentation or <code>null</code>, if the presentation
+	 *     should computed in the UI thread
 	 * @param addedPositions the added positions
 	 * @param removedPositions the removed positions
 	 */
@@ -398,7 +395,8 @@ public class SemanticHighlightingPresenter implements ITextPresentationListener,
 				List<HighlightedPosition> newPositions= new ArrayList<HighlightedPosition>(newSize);
 				HighlightedPosition position= null;
 				HighlightedPosition addedPosition= null;
-				for (int i= 0, j= 0, n= oldPositions.size(), m= addedPositions.length; i < n || position != null || j < m || addedPosition != null;) {
+				for (int i= 0, j= 0, n= oldPositions.size(), m= addedPositions.length;
+						i < n || position != null || j < m || addedPosition != null;) {
 					// loop variant: i + j < old(i + j)
 					
 					// a) find the next non-deleted Position from the old list
@@ -489,7 +487,7 @@ public class SemanticHighlightingPresenter implements ITextPresentationListener,
 	}
 
 	/**
-	 * Insert the given position in <code>fPositions</code>, s.t. the offsets remain in linear order.
+	 * Inserts the given position in <code>fPositions</code>, s.t. the offsets remain in linear order.
 	 *
 	 * @param position The position for insertion
 	 */
@@ -540,13 +538,11 @@ public class SemanticHighlightingPresenter implements ITextPresentationListener,
 		return j;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.ITextPresentationListener#applyTextPresentation(org.eclipse.jface.text.TextPresentation)
-	 */
 	@Override
 	public void applyTextPresentation(TextPresentation textPresentation) {
 		IRegion region= textPresentation.getExtent();
-		int i= computeIndexAtOffset(fPositions, region.getOffset()), n= computeIndexAtOffset(fPositions, region.getOffset() + region.getLength());
+		int i= computeIndexAtOffset(fPositions, region.getOffset());
+		int n= computeIndexAtOffset(fPositions, region.getOffset() + region.getLength());
 		if (n - i > 2) {
 			List<StyleRange> ranges= new ArrayList<StyleRange>(n - i);
 			for (; i < n; i++) {
@@ -566,9 +562,6 @@ public class SemanticHighlightingPresenter implements ITextPresentationListener,
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.ITextInputListener#inputDocumentAboutToBeChanged(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.IDocument)
-	 */
 	@Override
 	public void inputDocumentAboutToBeChanged(IDocument oldInput, IDocument newInput) {
 		setCanceled(true);
@@ -576,25 +569,16 @@ public class SemanticHighlightingPresenter implements ITextPresentationListener,
 		resetState();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.ITextInputListener#inputDocumentChanged(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.IDocument)
-	 */
 	@Override
 	public void inputDocumentChanged(IDocument oldInput, IDocument newInput) {
 		manageDocument(newInput);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IDocumentListener#documentAboutToBeChanged(org.eclipse.jface.text.DocumentEvent)
-	 */
 	@Override
 	public void documentAboutToBeChanged(DocumentEvent event) {
 		setCanceled(true);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IDocumentListener#documentChanged(org.eclipse.jface.text.DocumentEvent)
-	 */
 	@Override
 	public void documentChanged(DocumentEvent event) {
 	}
@@ -664,7 +648,7 @@ public class SemanticHighlightingPresenter implements ITextPresentationListener,
 	}
 
 	/**
-	 * Uninstall this presenter.
+	 * Uninstalls this presenter.
 	 */
 	public void uninstall() {
 		setCanceled(true);

@@ -164,6 +164,9 @@ public class GdbConnectCommand extends AbstractDebugCommand implements IConnectH
  					fRequestMonitor.cancel();
  				} else if (result instanceof IProcessExtendedInfo[] || result instanceof String) {
     				fRequestMonitor.setData(result);
+    		    } else if (result instanceof Integer) {
+    		    	// This is the case where the user typed in a pid number directly
+    				fRequestMonitor.setData(new IProcessExtendedInfo[] { new ProcessInfo((Integer)result, "")}); //$NON-NLS-1$
     		    } else {
     				fRequestMonitor.setStatus(NO_PID_STATUS);
     			}
@@ -231,8 +234,10 @@ public class GdbConnectCommand extends AbstractDebugCommand implements IConnectH
                                 protected void handleSuccess() {
                                     // Store the path of the binary so we can use it again for another process
                                     // with the same name.  Only do this on success, to avoid being stuck with
-                                    // a path that is invalid
-                                    fProcessNameToBinaryMap.put(fProcName, finalBinaryPath);
+                                    // a path that is invalid.
+                                	if (fProcName != null && !fProcName.isEmpty()) {
+                                		fProcessNameToBinaryMap.put(fProcName, finalBinaryPath);
+                                	}
                                     fRm.done();
                                 };
                             });

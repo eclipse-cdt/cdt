@@ -60,7 +60,8 @@ public class PDOMCPPClassTemplate extends PDOMCPPClassType
 	
 	private volatile ICPPTemplateParameter[] params;  // Cached template parameters.
 	
-	public PDOMCPPClassTemplate(PDOMCPPLinkage linkage, PDOMNode parent, ICPPClassTemplate template)	throws CoreException, DOMException {
+	public PDOMCPPClassTemplate(PDOMCPPLinkage linkage, PDOMNode parent, ICPPClassTemplate template)
+			throws CoreException, DOMException {
 		super(linkage, parent, template);
 		
 		final Database db = getDB();
@@ -127,7 +128,8 @@ public class PDOMCPPClassTemplate extends PDOMCPPClassType
 		}
 	}
 
-	private void updateTemplateParameters(PDOMLinkage linkage, ICPPTemplateParameter[] newParams) throws CoreException, DOMException {
+	private void updateTemplateParameters(PDOMLinkage linkage, ICPPTemplateParameter[] newParams)
+			throws CoreException, DOMException {
 		final Database db = getDB();
 		long rec= db.getRecPtr(record + PARAMETERS);
 		IPDOMCPPTemplateParameter[] allParams;
@@ -167,7 +169,7 @@ public class PDOMCPPClassTemplate extends PDOMCPPClassType
 		
 		if (additionalPars > 0 || reorder) {
 			params= null;
-			IPDOMCPPTemplateParameter[] newAllParams= new IPDOMCPPTemplateParameter[allParams.length+additionalPars];
+			IPDOMCPPTemplateParameter[] newAllParams= new IPDOMCPPTemplateParameter[allParams.length + additionalPars];
 			for (int j = 0; j < newParamLength; j++) {
 				int idx= result[j];
 				if (idx >= 0) {

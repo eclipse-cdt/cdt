@@ -300,7 +300,7 @@ public class EvalBinding extends CPPEvaluation {
 			// function and the parameter position instead.
 			buffer.putByte((byte) (ITypeMarshalBuffer.EVAL_BINDING | ITypeMarshalBuffer.FLAG1));
 			buffer.marshalBinding(parameterOwner);
-			buffer.putShort((short) getFunctionParameterPosition());
+			buffer.putInt(getFunctionParameterPosition());
 		} else {
 			buffer.putByte(firstByte);
 			buffer.marshalBinding(fBinding);
@@ -311,7 +311,7 @@ public class EvalBinding extends CPPEvaluation {
 	public static ISerializableEvaluation unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
 		if ((firstByte & ITypeMarshalBuffer.FLAG1) != 0) {
 			ICPPFunction parameterOwner= (ICPPFunction) buffer.unmarshalBinding();
-			int parameterPosition= buffer.getShort();
+			int parameterPosition= buffer.getInt();
 			IType type= buffer.unmarshalType();
 			return new EvalBinding(parameterOwner, parameterPosition, type);
 		} else {

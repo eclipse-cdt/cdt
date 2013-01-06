@@ -29,7 +29,7 @@ public final class SemanticToken {
 	/** Binding */
 	private IBinding fBinding;
 	/** Is the binding resolved? */
-	private boolean fIsBindingResolved= false;
+	private boolean fIsBindingResolved;
 
 	/** AST root */
 	private IASTTranslationUnit fRoot;
@@ -69,7 +69,7 @@ public final class SemanticToken {
 	}
 
 	/**
-	 * Update this token with the given AST node.
+	 * Updates this token with the given AST node.
 	 * <p>
 	 * NOTE: Allowed to be used by {@link SemanticHighlightingReconciler} only.
 	 * </p>

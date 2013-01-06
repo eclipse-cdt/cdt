@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *     Markus Schorn - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner;
 
 import org.eclipse.cdt.core.parser.IGCCToken;
@@ -20,7 +20,7 @@ public class TokenUtil {
 	private static final char[] SPACE = {' '};
 	private static final char[] IMAGE_POUND_POUND = "##".toCharArray(); //$NON-NLS-1$
 	private static final char[] IMAGE_POUND = "#".toCharArray(); //$NON-NLS-1$
-	
+
 	private static final char[] DIGRAPH_LBRACE=   "<%".toCharArray(); //$NON-NLS-1$
 	private static final char[] DIGRAPH_RBRACE=   "%>".toCharArray(); //$NON-NLS-1$
 	private static final char[] DIGRAPH_LBRACKET= "<:".toCharArray(); //$NON-NLS-1$
@@ -40,7 +40,7 @@ public class TokenUtil {
 		case IToken.tSHIFTL: case IToken.tSHIFTLASSIGN:
 		case IToken.tSHIFTR: case IToken.tSHIFTRASSIGN:
 		case IToken.tXOR: case IToken.tXORASSIGN:
-		
+
         // logical operations
 		case IToken.tNOT: case IToken.tAND: case IToken.tOR:
 
@@ -52,25 +52,25 @@ public class TokenUtil {
 		case IToken.tPLUS: case IToken.tPLUSASSIGN:
 		case IToken.tSTAR: case IToken.tSTARASSIGN:
 		case IGCCToken.tMAX: case IGCCToken.tMIN:
-			
+
 		// comparison
 		case IToken.tEQUAL: case IToken.tNOTEQUAL:
 		case IToken.tGT: case IToken.tGTEQUAL:
 		case IToken.tLT: case IToken.tLTEQUAL:
-			
+
 		// other
 		case IToken.tASSIGN: case IToken.tCOMMA:
 			return true;
 		}
-		
+
 		return false;
 	}
 
 	public static char[] getImage(int type) {
         switch (type) {
     	case IToken.tPOUND:	       	return IMAGE_POUND;
-    	case IToken.tPOUNDPOUND:   	return IMAGE_POUND_POUND;	
-        case IToken.tCOLONCOLON:   	return Keywords.cpCOLONCOLON; 
+    	case IToken.tPOUNDPOUND:   	return IMAGE_POUND_POUND;
+        case IToken.tCOLONCOLON:   	return Keywords.cpCOLONCOLON;
         case IToken.tCOLON:        	return Keywords.cpCOLON;
         case IToken.tSEMI:         	return Keywords.cpSEMI;
         case IToken.tCOMMA:        	return Keywords.cpCOMMA;
@@ -120,34 +120,33 @@ public class TokenUtil {
         case IToken.tDOT:          	return Keywords.cpDOT;
         case IToken.tDIVASSIGN:    	return Keywords.cpDIVASSIGN;
         case IToken.tDIV:          	return Keywords.cpDIV;
-        
+
         case IGCCToken.tMIN:		return Keywords.cpMIN;
         case IGCCToken.tMAX:		return Keywords.cpMAX;
-        
-        case CPreprocessor.tSPACE:  return SPACE; 
+
+        case CPreprocessor.tSPACE:  return SPACE;
         case CPreprocessor.tNOSPACE: return CharArrayUtils.EMPTY;
-        
+
         default:
-            return CharArrayUtils.EMPTY; 
+            return CharArrayUtils.EMPTY;
         }
 	}
-	
+
 	public static char[] getDigraphImage(int type) {
         switch (type) {
     	case IToken.tPOUND:	       	return DIGRAPH_POUND;
-    	case IToken.tPOUNDPOUND:   	return DIGRAPH_POUNDPOUND;	
+    	case IToken.tPOUNDPOUND:   	return DIGRAPH_POUNDPOUND;
         case IToken.tLBRACKET:     	return DIGRAPH_LBRACKET;
         case IToken.tRBRACKET:     	return DIGRAPH_RBRACKET;
         case IToken.tLBRACE:       	return DIGRAPH_LBRACE;
         case IToken.tRBRACE:       	return DIGRAPH_RBRACE;
-        
+
         default:
         	assert false: type;
-            return CharArrayUtils.EMPTY; 
+            return CharArrayUtils.EMPTY;
         }
 	}
-	
-	
+
 	/**
 	 * Returns the last token in the given token list.
 	 * @throws NullPointerException if the argument is null
@@ -156,8 +155,7 @@ public class TokenUtil {
 		IToken last;
 		do {
 			last = tokenList;
-		} while((tokenList = tokenList.getNext()) != null);
+		} while ((tokenList = tokenList.getNext()) != null);
 		return last;
 	}
-	
 }

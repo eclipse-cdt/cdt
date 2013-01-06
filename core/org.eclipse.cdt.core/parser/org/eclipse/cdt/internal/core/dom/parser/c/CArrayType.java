@@ -1,12 +1,13 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2010 IBM Corporation and others.
- *  All rights reserved. This program and the accompanying materials
- *  are made available under the terms of the Eclipse Public License v1.0
- *  which accompanies this distribution, and is available at
- *  http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2004, 2012 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  * 
- *  Contributors:
- *      Devin Steffler (IBM Corporation) - initial API and implementation
+ * Contributors:
+ *     Devin Steffler (IBM Corporation) - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -161,7 +162,7 @@ public class CArrayType implements ICArrayType, ITypeContainer, ISerializableTyp
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
 		int firstByte= ITypeMarshalBuffer.ARRAY_TYPE;
 		int flags= 0;
-		short nval= -1;
+		long nval= -1;
 		IValue val= null;
 
 		if (isConst()) flags |= 0x01;
@@ -178,9 +179,8 @@ public class CArrayType implements ICArrayType, ITypeContainer, ISerializableTyp
 			firstByte |= ITypeMarshalBuffer.FLAG2;
 			Long num= val.numericalValue();
 			if (num != null) {
-				long l= num;
-				if (l >= 0 && l <= Short.MAX_VALUE) {
-					nval= (short) l;
+				nval= num;
+				if (nval >= 0) {
 					firstByte |= ITypeMarshalBuffer.FLAG3;
 				} 
 			}
@@ -190,7 +190,7 @@ public class CArrayType implements ICArrayType, ITypeContainer, ISerializableTyp
 			buffer.putByte((byte) flags);
 		}
 		if (nval >= 0) {
-			buffer.putShort(nval);
+			buffer.putLong(nval);
 		} else if (val != null) {
 			buffer.marshalValue(val);
 		}
@@ -200,11 +200,11 @@ public class CArrayType implements ICArrayType, ITypeContainer, ISerializableTyp
 	public static IType unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
 		int flags= 0;
 		IValue value= null;
-		if ( (firstByte & ITypeMarshalBuffer.FLAG1) != 0) {
+		if ((firstByte & ITypeMarshalBuffer.FLAG1) != 0) {
 			flags= buffer.getByte();
 		}
 		if ((firstByte & ITypeMarshalBuffer.FLAG3) != 0) {
-			value = Value.create(buffer.getShort());
+			value = Value.create(buffer.getLong());
 		} else if ((firstByte & ITypeMarshalBuffer.FLAG2) != 0) {
 			value = buffer.unmarshalValue();
 		}

@@ -18,6 +18,7 @@ import junit.framework.TestSuite;
 import org.eclipse.cdt.build.core.scannerconfig.CfgInfoContext;
 import org.eclipse.cdt.build.core.scannerconfig.ICfgScannerConfigBuilderInfo2Set;
 import org.eclipse.cdt.build.internal.core.scannerconfig2.CfgScannerConfigProfileManager;
+import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
@@ -106,6 +107,7 @@ public class CfgScannerConfigProfileManagerTests extends BaseTestCase {
 		Assert.isTrue("dummyFile".equals(scbi.getBuildOutputFilePath()));
 
 		// Test restore defaults
+		ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(fProject, false);
 		scbis.applyInfo(cic, null);
 		// Save the project description
 		CoreModel.getDefault().setProjectDescription(fProject, prjDesc);

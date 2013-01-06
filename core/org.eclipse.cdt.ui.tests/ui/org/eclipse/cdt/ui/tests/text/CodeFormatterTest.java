@@ -1765,7 +1765,6 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//	}
 	//#endif
 	//}
-
 	public void testMacroAsFunctionArguments_Bug253039() throws Exception {
 		assertFormatterResult();
 	}
@@ -1898,6 +1897,33 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//};
 	public void testMacroDeclaration() throws Exception {
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
+		assertFormatterResult();
+	}
+
+	//#define MACRO(a,b) f(a,b)
+	//void f(bool b, int i);
+	//int function_with_loooooooooooooooong_name();
+	//int another_function_with_loooooong_name();
+	//
+	//void test(){
+	//    MACRO("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"=="bbbbbbbbbbbbbbbbbbbbbbbbbbb",function_with_loooooooooooooooong_name()+another_function_with_loooooong_name());
+	//}
+
+	//#define MACRO(a,b) f(a,b)
+	//void f(bool b, int i);
+	//int function_with_loooooooooooooooong_name();
+	//int another_function_with_loooooong_name();
+	//
+	//void test() {
+	//    MACRO("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+	//                  == "bbbbbbbbbbbbbbbbbbbbbbbbbbb",
+	//          function_with_loooooooooooooooong_name()
+	//                  + another_function_with_loooooong_name());
+	//}
+	public void testMacroArguments() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ARGUMENTS_IN_METHOD_INVOCATION,
+				Integer.toString(Alignment.M_COMPACT_SPLIT | Alignment.M_INDENT_ON_COLUMN));
 		assertFormatterResult();
 	}
 
@@ -2892,7 +2918,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//void f() {
 	//	if (1) {
 	//	}
-	//	IF(1>0);
+	//	IF(1 > 0);
 	//}
 	public void testMacroAfterCompoundStatement_Bug356690() throws Exception {
 		assertFormatterResult();

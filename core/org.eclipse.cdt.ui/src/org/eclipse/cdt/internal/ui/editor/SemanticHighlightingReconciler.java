@@ -81,7 +81,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 
 		@Override
 		public int visit(IASTTranslationUnit tu) {
-			// visit macro definitions
+			// Visit macro definitions.
 			IASTPreprocessorMacroDefinition[] macroDefs= tu.getMacroDefinitions();
 			for (IASTPreprocessorMacroDefinition macroDef : macroDefs) {
 				if (macroDef.isPartOfTranslationUnitFile()) {
@@ -90,7 +90,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 			}
 			fMinLocation= -1;
 
-			// visit macro expansions
+			// Visit macro expansions.
 			IASTPreprocessorMacroExpansion[] macroExps= tu.getMacroExpansions();
 			for (IASTPreprocessorMacroExpansion macroExp : macroExps) {
 				if (macroExp.isPartOfTranslationUnitFile()) {
@@ -104,7 +104,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 			}
 			fMinLocation= -1;
 
-			// visit ordinary code
+			// Visit ordinary code.
 			return super.visit(tu);
 		}
 
@@ -130,9 +130,6 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 			return PROCESS_CONTINUE;
 		}
 		
-		/*
-		 * @see org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor#visit(org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition)
-		 */
 		@Override
 		public int visit(ICPPASTNamespaceDefinition namespace) {
 			if (!namespace.isPartOfTranslationUnitFile()) {
@@ -172,7 +169,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 				SemanticHighlighting semanticHighlighting= fJobSemanticHighlightings[i];
 				if (fJobHighlightings[i].isEnabled() && semanticHighlighting.consumes(fToken)) {
 					if (node instanceof IASTName) {
-						addNameLocation((IASTName)node, fJobHighlightings[i]);
+						addNameLocation((IASTName) node, fJobHighlightings[i]);
 					} else {
 						addNodeLocation(node.getFileLocation(), fJobHighlightings[i]);
 					}
@@ -197,14 +194,14 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 					int offset= imageLocation.getNodeOffset();
 					if (offset >= fMinLocation) {
 						int length= imageLocation.getNodeLength();
-						if (offset > -1 && length > 0) {
+						if (offset >= 0 && length > 0) {
 							fMinLocation= offset + length;
 							addPosition(offset, length, highlightingStyle);
 						}
 					}
 				}
 			} else {
-				// Fallback in case no image location available
+				// Fallback in case no image location available.
 				IASTNodeLocation[] nodeLocations= name.getNodeLocations();
 				if (nodeLocations.length == 1 && !(nodeLocations[0] instanceof IASTMacroExpansionLocation)) {
 					addNodeLocation(nodeLocations[0], highlightingStyle);
@@ -213,7 +210,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 		}
 
 		/**
-		 * Add the a location range for the given highlighting.
+		 * Adds the a location range for the given highlighting.
 		 * 
 		 * @param nodeLocation  The node location
 		 * @param highlighting The highlighting
@@ -233,7 +230,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 		}
 
 		/**
-		 * Add a position with the given range and highlighting iff it does not exist already.
+		 * Adds a position with the given range and highlighting iff it does not exist already.
 		 * 
 		 * @param offset The range offset
 		 * @param length The range length
@@ -290,11 +287,20 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 	 */
 	private boolean fIsReconciling= false;
 
-	/** The semantic highlighting presenter - cache for background thread, only valid during {@link #reconciled(IASTTranslationUnit, boolean, IProgressMonitor)} */
+	/**
+	 * The semantic highlighting presenter - cache for background thread, only valid during
+	 * {@link #reconciled(IASTTranslationUnit, boolean, IProgressMonitor)}
+	 */
 	protected SemanticHighlightingPresenter fJobPresenter;
-	/** Semantic highlightings - cache for background thread, only valid during {@link #reconciled(IASTTranslationUnit, boolean, IProgressMonitor)} */
+	/**
+	 * Semantic highlightings - cache for background thread, only valid during
+	 * {@link #reconciled(IASTTranslationUnit, boolean, IProgressMonitor)}
+	 */
 	protected SemanticHighlighting[] fJobSemanticHighlightings;
-	/** Highlightings - cache for background thread, only valid during {@link #reconciled(IASTTranslationUnit, boolean, IProgressMonitor)} */
+	/**
+	 * Highlightings - cache for background thread, only valid during
+	 * {@link #reconciled(IASTTranslationUnit, boolean, IProgressMonitor)}
+	 */
 	private HighlightingStyle[] fJobHighlightings;
 
 	@Override
@@ -304,7 +310,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 
 	@Override
 	public void reconciled(IASTTranslationUnit ast, boolean force, IProgressMonitor progressMonitor) {
-		// Ensure at most one thread can be reconciling at any time
+		// Ensure at most one thread can be reconciling at any time.
 		synchronized (fReconcileLock) {
 			if (fIsReconciling)
 				return;
@@ -359,7 +365,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 	}
 
 	/**
-	 * Start reconciling positions.
+	 * Starts reconciling positions.
 	 */
 	protected void startReconcilingPositions() {
 		fJobPresenter.addAllPositions(fRemovedPositions);
@@ -367,7 +373,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 	}
 
 	/**
-	 * Reconcile positions based on the AST.
+	 * Reconciles positions based on the AST.
 	 *
 	 * @param ast the AST
 	 * @param visitor the AST visitor
@@ -392,7 +398,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 	}
 
 	/**
-	 * Update the presentation.
+	 * Updates the presentation.
 	 *
 	 * @param textPresentation the text presentation
 	 * @param addedPositions the added positions
@@ -452,7 +458,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 	}
 
 	/**
-	 * Uninstalsl this reconciler from the editor
+	 * Uninstalls this reconciler from the editor
 	 */
 	public void uninstall() {
 		if (fPresenter != null)

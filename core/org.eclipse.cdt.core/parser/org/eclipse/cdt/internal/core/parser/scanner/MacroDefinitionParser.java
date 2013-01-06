@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.util.ArrayList;
@@ -45,22 +45,22 @@ public class MacroDefinitionParser {
 	 */
 	static class TokenParameterReference extends TokenWithImage {
 		private final int fIndex;
-	
+
 		public TokenParameterReference(int type, int idx, Object source, int offset, int endOffset, char[] name) {
 			super(type, source, offset, endOffset, name);
 			fIndex= idx;
 		}
-	
+
 		public int getIndex() {
 			return fIndex;
 		}
-		
+
 		@Override
 		public String toString() {
 			return "[" + fIndex + "]";  //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
-	
+
 	public static char[] getExpansion(AbstractCharArray expansionImage, int offset, int endOffset) {
 		TokenList tl= new TokenList();
 		Lexer lex= new Lexer(expansionImage, offset, endOffset, new LexerOptions(), ILexerLog.NULL, null);
@@ -83,7 +83,7 @@ public class MacroDefinitionParser {
 			buf.append(t.getCharImage());
 			endOffset= t.getEndOffset();
 		}
-		final int length= buf.length(); 
+		final int length= buf.length();
 		final char[] expansion= new char[length];
 		buf.getChars(0, length, expansion, 0);
 		return expansion;
@@ -93,10 +93,10 @@ public class MacroDefinitionParser {
 	private int fExpansionOffset;
 	private int fExpansionEndOffset;
 	private Token fNameToken;
-		
+
 	MacroDefinitionParser() {
 	}
-	
+
 	/**
 	 * In case the name was successfully parsed, the name token is returned.
 	 * Otherwise the return value is undefined.
@@ -105,10 +105,10 @@ public class MacroDefinitionParser {
 		return fNameToken;
 	}
 
-	/** 
+	/**
 	 * Parses an entire macro definition. Name must be the next token of the lexer.
 	 */
-	public ObjectStyleMacro parseMacroDefinition(final Lexer lexer, final ILexerLog log) 
+	public ObjectStyleMacro parseMacroDefinition(final Lexer lexer, final ILexerLog log)
 			throws OffsetLimitReachedException, InvalidMacroDefinitionException {
     	final Token name = parseName(lexer);
     	final AbstractCharArray source= lexer.getInput();
@@ -122,10 +122,10 @@ public class MacroDefinitionParser {
     	return new FunctionStyleMacro(nameChars, paramList, fHasVarArgs, fExpansionOffset, fExpansionEndOffset, replacement, source);
 	}
 
-	/** 
+	/**
 	 * Parses a macro definition without the replacement. Name must be the next token of the lexer.
 	 */
-	public PreprocessorMacro parseMacroDefinition(final Lexer lexer, final ILexerLog log, final char[] replacement) 
+	public PreprocessorMacro parseMacroDefinition(final Lexer lexer, final ILexerLog log, final char[] replacement)
 			throws InvalidMacroDefinitionException, OffsetLimitReachedException {
 		final Token name = parseName(lexer);
 
@@ -135,14 +135,14 @@ public class MacroDefinitionParser {
 		if (replacementToken.getType() != IToken.tEND_OF_INPUT) {
 			throw new InvalidMacroDefinitionException(nameChars, replacementToken.getOffset(), replacementToken.getEndOffset());
 		}
-		
-		if (paramList == null) { 
+
+		if (paramList == null) {
 			return new ObjectStyleMacro(nameChars, replacement);
 		}
 		return new FunctionStyleMacro(nameChars, paramList, fHasVarArgs, replacement);
 	}
 
-	/** 
+	/**
 	 * Parses a macro definition basically checking for var-args.
 	 */
 	public static PreprocessorMacro parseMacroDefinition(final char[] name, char[][] paramList, final char[] replacement) {
@@ -152,7 +152,7 @@ public class MacroDefinitionParser {
 			if (length > 0) {
 				char[] lastParam= paramList[length-1];
 				final int lpl = lastParam.length;
-				switch(lpl) {
+				switch (lpl) {
 				case 0: case 1: case 2:
 					break;
 				case 3:
@@ -176,8 +176,8 @@ public class MacroDefinitionParser {
 				}
 			}
 		}
-		
-		if (paramList == null) { 
+
+		if (paramList == null) {
 			return new ObjectStyleMacro(name, replacement);
 		}
 		return new FunctionStyleMacro(name, paramList, hasVarargs, replacement);
@@ -195,11 +195,11 @@ public class MacroDefinitionParser {
     	fNameToken= name;
 		return name;
 	}
-	
+
 	private char[][] parseParamList(Lexer lex, final Token name) throws OffsetLimitReachedException, InvalidMacroDefinitionException {
 	    final Token lparen= lex.nextToken();
 		fHasVarArgs= FunctionStyleMacro.NO_VAARGS;
-		if (lparen.getType() != IToken.tLPAREN || name.getEndOffset() != lparen.getOffset()) { 
+		if (lparen.getType() != IToken.tLPAREN || name.getEndOffset() != lparen.getOffset()) {
 			return null;
 		}
 		ArrayList<char[]> paramList= new ArrayList<char[]>();
@@ -224,7 +224,7 @@ public class MacroDefinitionParser {
 				paramList.add(Keywords.cVA_ARGS);
 				next= lex.nextToken();
 				break;
-				
+
 			case IToken.tRPAREN:
 				if (next == null) {
 					next= param;
@@ -255,10 +255,10 @@ public class MacroDefinitionParser {
 		Token needAnotherToken= null;
 
 		Token candidate= lexer.currentToken();
-		fExpansionOffset= fExpansionEndOffset= candidate.getOffset();		
+		fExpansionOffset= fExpansionEndOffset= candidate.getOffset();
 
 		loop: while(true) {
-			switch(candidate.getType()) {
+			switch (candidate.getType()) {
 			case IToken.tCOMPLETION:
 				throw new OffsetLimitReachedException(ORIGIN_PREPROCESSOR_DIRECTIVE, candidate);
 			case IToken.tEND_OF_INPUT:
@@ -266,18 +266,16 @@ public class MacroDefinitionParser {
 				break loop;
 			case IToken.tIDENTIFIER:
 				if (paramList != null) {
-					// convert the parameters to special tokens
+					// Convert the parameters to special tokens.
 					final char[] image = candidate.getCharImage();
 					int idx= CharArrayUtils.indexOf(image, paramList);
 					if (idx >= 0) {
 						candidate= new TokenParameterReference(CPreprocessor.tMACRO_PARAMETER, idx, lexer.getSource(), candidate.getOffset(), candidate.getEndOffset(), paramList[idx]);
 						needParam= false;
-					}
-					else {
+					} else {
 						if (needParam) {
 							log.handleProblem(IProblem.PREPROCESSOR_MACRO_PASTING_ERROR, name, fExpansionOffset, candidate.getEndOffset());
-						}
-						else if (CharArrayUtils.equals(Keywords.cVA_ARGS, image)) {
+						} else if (CharArrayUtils.equals(Keywords.cVA_ARGS, image)) {
 							log.handleProblem(IProblem.PREPROCESSOR_INVALID_VA_ARGS, null, fExpansionOffset, candidate.getEndOffset());
 						}
 						needParam= false;

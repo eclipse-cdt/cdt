@@ -16,6 +16,24 @@
       "revId": "33fb3fee13d9ac3e9670cd311c45f1232fa85640",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOLH///7U\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/MIBreakpointsSynchronizer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 891,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2013-01-07T16:11:05Z",
+      "side": 1,
+      "message": "Oops. Thanks for noticing it.",
+      "parentUuid": "AABOKn///6o\u003d",
+      "revId": "33fb3fee13d9ac3e9670cd311c45f1232fa85640",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

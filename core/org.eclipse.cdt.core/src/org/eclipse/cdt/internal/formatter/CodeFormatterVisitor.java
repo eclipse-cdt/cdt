@@ -3885,20 +3885,22 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		if (currentOffset > nodeEndOffset) {
 			return;
 		}
-		IASTNodeLocation[] locations= node.getNodeLocations();
-		for (int i= 0; i < locations.length; i++) {
-			IASTNodeLocation nodeLocation= locations[i];
-			if (nodeLocation instanceof IASTMacroExpansionLocation) {
-				IASTFileLocation expansionLocation= nodeLocation.asFileLocation();
-				int startOffset= expansionLocation.getNodeOffset();
-				int endOffset= startOffset + expansionLocation.getNodeLength();
-				if (currentOffset <= startOffset) {
-					break;
-				}
-				if (currentOffset < endOffset ||
-						currentOffset == endOffset && i == locations.length - 1) {
-					scribe.skipRange(startOffset, endOffset);
-					break;
+		if (!fInsideMacroArguments) {
+			IASTNodeLocation[] locations= node.getNodeLocations();
+			for (int i= 0; i < locations.length; i++) {
+				IASTNodeLocation nodeLocation= locations[i];
+				if (nodeLocation instanceof IASTMacroExpansionLocation) {
+					IASTFileLocation expansionLocation= nodeLocation.asFileLocation();
+					int startOffset= expansionLocation.getNodeOffset();
+					int endOffset= startOffset + expansionLocation.getNodeLength();
+					if (currentOffset <= startOffset) {
+						break;
+					}
+					if (currentOffset < endOffset ||
+							currentOffset == endOffset && i == locations.length - 1) {
+						scribe.skipRange(startOffset, endOffset);
+						break;
+					}
 				}
 			}
 		}

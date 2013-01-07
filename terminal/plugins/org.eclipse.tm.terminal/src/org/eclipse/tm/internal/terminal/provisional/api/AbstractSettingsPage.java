@@ -12,6 +12,10 @@ package org.eclipse.tm.internal.terminal.provisional.api;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.dialogs.IMessageProvider;
+import org.eclipse.jface.fieldassist.ControlDecoration;
+import org.eclipse.jface.fieldassist.FieldDecoration;
+import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
 
 /**
@@ -26,6 +30,9 @@ public abstract class AbstractSettingsPage implements ISettingsPage, IMessagePro
 
 	// Reference to the listener
 	private final ListenerList listeners = new ListenerList();
+
+	// Flag to control the control decorations
+	private boolean hasDecoration = false;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.provisional.api.ISettingsPage#addListener(org.eclipse.tm.internal.terminal.provisional.api.ISettingsPage.Listener)
@@ -81,4 +88,94 @@ public abstract class AbstractSettingsPage implements ISettingsPage, IMessagePro
 		this.message = message;
 		this.messageType = messageType;
 	}
+
+	/**
+	 * Sets if or if not the settings panel widgets will have control decorations
+	 * or not. The method has effect only if called before {@link #createControl(org.eclipse.swt.widgets.Composite)}.
+	 *
+	 * @param value <code>True</code> if the panel widgets have control decorations, <code>false</code> otherwise.
+	 */
+	public final void setHasControlDecoration(boolean value) {
+		this.hasDecoration = value;
+	}
+
+	/**
+	 * Returns if or if not the settings panel widgets will have control
+	 * decorations or not.
+	 *
+	 * @return <code>True</code> if the panel widgets have control decorations, <code>false</code> otherwise.
+	 */
+	protected final boolean hasControlDecoration() {
+		return hasDecoration;
+	}
+
+	/**
+	 * Creates a new instance of a {@link ControlDecoration} object associated with
+	 * the given control. The method is called after the control has been created.
+	 *
+	 * @param control The control. Must not be <code>null</code>.
+	 * @return The control decoration object instance.
+	 */
+	protected final ControlDecoration createControlDecoration(Control control) {
+		Assert.isNotNull(control);
+		if (!hasDecoration) return null;
+		ControlDecoration controlDecoration = new ControlDecoration(control, getControlDecorationPosition());
+		controlDecoration.setShowOnlyOnFocus(false);
+		control.setData("controlDecoration", controlDecoration); //$NON-NLS-1$
+		return controlDecoration;
+	}
+
+	/**
+	 * Returns the control decoration position. The default is
+	 * {@link SWT#TOP} | {@link SWT#LEFT}.
+	 *
+	 * @return The control position.
+	 */
+	protected int getControlDecorationPosition() {
+		return SWT.TOP | SWT.LEFT;
+	}
+
+	/**
+	 * Updates the control decoration of the given control to represent the given message
+	 * and message type. If the message is <code>null</code> or the message type is
+	 * {@link IMessageProvider#NONE} no decoration will be shown.
+	 *
+	 * @param control The control. Must not be <code>null</code>.
+	 * @param message The message.
+	 * @param messageType The message type.
+	 */
+	protected final void updateControlDecoration(Control control, String message, int messageType) {
+		Assert.isNotNull(control);
+
+		ControlDecoration controlDecoration = (ControlDecoration)control.getData("controlDecoration"); //$NON-NLS-1$
+		if (controlDecoration != null) {
+			// The description is the same as the message
+			controlDecoration.setDescriptionText(message);
+
+			// The icon depends on the message type
+			FieldDecorationRegistry registry = FieldDecorationRegistry.getDefault();
+
+			// Determine the id of the decoration to show
+			String decorationId = FieldDecorationRegistry.DEC_INFORMATION;
+			if (messageType == IMessageProvider.ERROR) {
+				decorationId = FieldDecorationRegistry.DEC_ERROR;
+			} else if (messageType == IMessageProvider.WARNING) {
+				decorationId = FieldDecorationRegistry.DEC_WARNING;
+			}
+
+			// Get the field decoration
+			FieldDecoration fieldDeco = registry.getFieldDecoration(decorationId);
+			if (fieldDeco != null) {
+				controlDecoration.setImage(fieldDeco.getImage());
+			}
+
+			if (message == null || messageType == IMessageProvider.NONE) {
+				controlDecoration.hide();
+			}
+			else {
+				controlDecoration.show();
+			}
+		}
+	}
+
 }

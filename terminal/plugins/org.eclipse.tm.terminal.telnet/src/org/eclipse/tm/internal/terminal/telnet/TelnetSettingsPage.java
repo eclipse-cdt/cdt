@@ -21,6 +21,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.jface.dialogs.IMessageProvider;
+import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -93,28 +95,53 @@ public class TelnetSettingsPage extends AbstractSettingsPage {
 	}
 
 	public boolean validateSettings() {
+		String message = null;
+		int messageType = IMessageProvider.NONE;
+		boolean valid = true;
+
 		if (fHostText.getText().trim().length() == 0) {
-			return false;
+			String m = "Please enter a host IP or name."; //$NON-NLS-1$
+			int mt = IMessageProvider.INFORMATION;
+			updateControlDecoration(fHostText, m, mt);
+			if (mt > messageType) { message = m; messageType = mt; }
+
+			valid = false;
 		}
+
 		try {
 			int p = Integer.parseInt(getNetworkPort().trim());
 			if (p <= 0 || p > 65535) {
-				return false;
+				String m = "Invalid network port. Must be between 0 and 65535."; //$NON-NLS-1$
+				int mt = IMessageProvider.ERROR;
+				updateControlDecoration(fNetworkPortCombo, m, mt);
+				if (mt > messageType) { message = m; messageType = mt; }
+
+				valid = false;
 			}
+
 			p = Integer.parseInt(fTimeout.getText().trim());
 			if (p < 0) {
-				return false;
+				String m = "Invalid timeout. Must be greater than 0."; //$NON-NLS-1$
+				int mt = IMessageProvider.ERROR;
+				updateControlDecoration(fTimeout, m, mt);
+				if (mt > messageType) { message = m; messageType = mt; }
+
+				valid = false;
 			}
+
 		} catch (Exception e) {
-			return false;
+			valid = false;
 		}
-		return true;
+
+		setMessage(message, messageType);
+		return valid;
 	}
 
 	public void createControl(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout gridLayout = new GridLayout(2, false);
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
+		gridData.horizontalIndent = FieldDecorationRegistry.getDefault().getMaximumDecorationWidth();
 
 		composite.setLayout(gridLayout);
 		composite.setLayoutData(gridData);
@@ -132,6 +159,7 @@ public class TelnetSettingsPage extends AbstractSettingsPage {
 				fireListeners(fHostText);
 			}
 		});
+		createControlDecoration(fHostText);
 
 		// Add label
 		ctlLabel = new Label(composite, SWT.RIGHT);
@@ -151,6 +179,7 @@ public class TelnetSettingsPage extends AbstractSettingsPage {
 				fireListeners(fNetworkPortCombo);
 			}
 		});
+		createControlDecoration(fNetworkPortCombo);
 
 		List table = getNetworkPortMap().getNameTable();
 		Collections.sort(table);
@@ -164,6 +193,7 @@ public class TelnetSettingsPage extends AbstractSettingsPage {
 				fireListeners(fTimeout);
 			}
 		});
+		createControlDecoration(fTimeout);
 
 		loadSettings();
 	}

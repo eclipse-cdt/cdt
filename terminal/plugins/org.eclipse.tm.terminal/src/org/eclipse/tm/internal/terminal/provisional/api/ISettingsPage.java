@@ -17,7 +17,6 @@ import org.eclipse.swt.widgets.Control;
 /**
  * @author Michael Scharf
  *
- * TODO: Michael Scharf: provide a mechanism to set an error string
  * TODO: Michael Scharf: provide a long description of a wizard
  * TODO: Michael Scharf: allow multiple pages to be generated
  * <p>

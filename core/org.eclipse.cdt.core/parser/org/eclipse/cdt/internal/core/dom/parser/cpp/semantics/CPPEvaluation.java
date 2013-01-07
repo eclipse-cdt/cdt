@@ -240,7 +240,7 @@ public abstract class CPPEvaluation implements ICPPEvaluation {
 	protected static ICPPTemplateArgument[] instantiateArguments(ICPPTemplateArgument[] args,
 			ICPPTemplateParameterMap tpMap, int packOffset, ICPPClassSpecialization within, IASTNode point) {
 		try {
-			return CPPTemplates.instantiateArguments(args, tpMap, packOffset, within, point);
+			return CPPTemplates.instantiateArguments(args, tpMap, packOffset, within, point, false);
 		} catch (DOMException e) {
 			CCorePlugin.log(e);
 		}

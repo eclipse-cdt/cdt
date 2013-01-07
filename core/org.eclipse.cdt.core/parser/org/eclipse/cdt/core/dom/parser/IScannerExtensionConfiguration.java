@@ -109,4 +109,10 @@ public interface IScannerExtensionConfiguration {
      * @see "http://publib.boulder.ibm.com/infocenter/comphelp/v101v121/index.jsp?topic=/com.ibm.xlcpp101.aix.doc/language_ref/unicode_standard.html"
 	 */
 	public boolean supportUTFLiterals();
+	
+	/**
+     * Support for C++ raw string literals.
+	 * @since 5.5
+	 */
+	public boolean supportRawStringLiterals();
 }

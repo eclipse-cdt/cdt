@@ -10,7 +10,7 @@
   </parent>
   <groupId>org.eclipse.tm</groupId>
   <artifactId>org.eclipse.rse.tests</artifactId>
-  <version>3.4.0-SNAPSHOT</version>
+  <version>3.4.1.qualifier</version>
   <packaging>eclipse-plugin</packaging>
 <!--  <packaging>eclipse-test-plugin</packaging>
   	<build>

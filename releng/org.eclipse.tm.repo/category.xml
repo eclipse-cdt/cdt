@@ -15,7 +15,7 @@
    <feature url="features/org.eclipse.rse.scp_0.2.0.qualifier.jar" id="org.eclipse.rse.scp" version="0.2.0.qualifier">
       <category name="tm_34_optional"/>
    </feature>
-   <feature url="features/org.eclipse.rse.tests_3.4.0.qualifier.jar" id="org.eclipse.rse.tests" version="3.4.0.qualifier">
+   <feature url="features/org.eclipse.rse.tests_3.4.1.qualifier.jar" id="org.eclipse.rse.tests" version="3.4.1.qualifier">
       <category name="tm_34_optional"/>
    </feature>
 <!--   <feature url="features/org.eclipse.rse.wince_0.3.100.qualifier.jar" id="org.eclipse.rse.wince" version="0.3.100.qualifier">

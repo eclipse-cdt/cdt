@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2012 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,11 +8,11 @@
  * Contributors:
  *     Andrew Ferguson (Symbian) - Initial implementation
  *     Markus Schorn (Wind River Systems)
+ *     Martin Oberhuber (Wind River) - [397652] fix up-to-date check for PDOM
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.export;
 
 import java.io.File;
-import com.ibm.icu.text.MessageFormat;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -26,8 +26,11 @@ import org.eclipse.cdt.internal.core.pdom.WritablePDOM;
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * An ISafeRunnable which
@@ -43,14 +46,26 @@ public class GeneratePDOM {
 	protected File targetLocation;
 	protected String indexerID;
 	protected boolean deleteOnExit;
+	protected boolean checkIndexStatus;
 	
-	public GeneratePDOM(IExportProjectProvider pm, String[] applicationArguments, File targetLocation, String indexerID) {
+	/**
+	 * Runnable to export a PDOM.
+	 * @param checkIndexStatus <code>true</code> to check Index completeness before exporting, or 
+	 *    <code>false</code> to export the index without checking anything
+	 * @since 5.4.2
+	 */
+	public GeneratePDOM(IExportProjectProvider pm, String[] applicationArguments, File targetLocation, String indexerID, boolean checkIndexStatus) {
 		this.pm= pm;
 		this.applicationArguments= applicationArguments;
 		this.targetLocation= targetLocation;
 		this.indexerID= indexerID;
+		this.checkIndexStatus= checkIndexStatus;
 	}
 	
+	public GeneratePDOM(IExportProjectProvider pm, String[] applicationArguments, File targetLocation, String indexerID) {
+		this(pm, applicationArguments, targetLocation, indexerID, true);
+	}
+
 	/**
 	 * When set, the project created by the associated {@link IExportProjectProvider} will
 	 * be deleted after {@link #run()} completes. By default this is not set.
@@ -66,8 +81,6 @@ public class GeneratePDOM {
 	 * @throws CoreException if an internal or invalid configuration error occurs
 	 */
 	public final IStatus run() throws CoreException {
-		boolean isContentSynced= false;
-		
 		// create the project
 		pm.setApplicationArguments(applicationArguments);
 		final ICProject cproject = pm.createProject();
@@ -98,30 +111,36 @@ public class GeneratePDOM {
 				Thread.sleep(200);
 			}
 		
-			// check status
-			isContentSynced= CCoreInternals.getPDOMManager().isProjectContentSynced(cproject);
-			
-			if(isContentSynced) {
-				// export a .pdom file
-				CCoreInternals.getPDOMManager().exportProjectPDOM(cproject, targetLocation, converter);
-
-				// write properties to exported PDOM
-				WritablePDOM exportedPDOM= new WritablePDOM(targetLocation, converter, LanguageManager.getInstance().getPDOMLinkageFactoryMappings());
-				exportedPDOM.acquireWriteLock(0);
-				try {
-					Map<String,String> exportProperties= pm.getExportProperties();
-					if(exportProperties!=null) {
-						for(Map.Entry<String,String> entry : exportProperties.entrySet()) {
-							exportedPDOM.setProperty(entry.getKey(), entry.getValue());
-						}
-					}
-					exportedPDOM.close();
-				}
-				finally {
-					exportedPDOM.releaseWriteLock();
+			if (this.checkIndexStatus) {
+				// check status
+				IStatus syncStatus = CCoreInternals.getPDOMManager().getProjectContentSyncState(cproject);
+				if (syncStatus!=null) {
+					//Add message and error severity
+					IStatus myStatus = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, Messages.GeneratePDOM_Incomplete);
+					MultiStatus m = new MultiStatus(CCorePlugin.PLUGIN_ID, 1, new IStatus[] {myStatus,syncStatus}, Messages.GeneratePDOM_Incomplete, null);
+					//Log the status right away since legacy clients did not return any status details
+					CCorePlugin.log(m);
+					return m;	
 				}
 			}
-			
+			// export a .pdom file
+			CCoreInternals.getPDOMManager().exportProjectPDOM(cproject, targetLocation, converter);
+
+			// write properties to exported PDOM
+			WritablePDOM exportedPDOM= new WritablePDOM(targetLocation, converter, LanguageManager.getInstance().getPDOMLinkageFactoryMappings());
+			exportedPDOM.acquireWriteLock(0);
+			try {
+				Map<String,String> exportProperties= pm.getExportProperties();
+				if(exportProperties!=null) {
+					for(Map.Entry<String,String> entry : exportProperties.entrySet()) {
+						exportedPDOM.setProperty(entry.getKey(), entry.getValue());
+					}
+				}
+				exportedPDOM.close();
+			}
+			finally {
+				exportedPDOM.releaseWriteLock();
+			}
 		} catch(InterruptedException ie) {
 			String msg= MessageFormat.format(Messages.GeneratePDOM_GenericGenerationFailed, new Object[] {ie.getMessage()});
 			throw new CoreException(CCorePlugin.createStatus(msg, ie));
@@ -131,9 +150,7 @@ public class GeneratePDOM {
 			}
 		}
 		
-		return isContentSynced ?
-			  new Status(IStatus.OK, CCorePlugin.PLUGIN_ID, Messages.GeneratePDOM_Success)
-			: new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, Messages.GeneratePDOM_Incomplete);
+		return new Status(IStatus.OK, CCorePlugin.PLUGIN_ID, Messages.GeneratePDOM_Success);
 	}
 	
 	private void fail(String message) throws CoreException {

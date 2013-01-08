@@ -13,6 +13,7 @@
  *     Tim Kelly (Nokia)
  *     Anna Dushistova (MontaVista)
  *     Marc-Andre Laperle
+ *     Martin Oberhuber (Wind River) - [397652] fix up-to-date check for PDOM
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
@@ -93,6 +94,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
@@ -1529,11 +1531,25 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	 * @throws CoreException
 	 */
 	public boolean isProjectContentSynced(ICProject cproject) throws CoreException {
+		IStatus s = getProjectContentSyncState(cproject);
+		return s==null;
+	}
+	
+	/**
+	 * Check whether the index is in sync with the file system. 
+	 * @param cproject the project to check
+	 * @return <code>null</code> when the content in the project fragment of the specified project's index
+	 *    is complete (contains all sources) and up to date; or an @link{IStatus} indicating the first
+	 *    occurrence of an index file found not up-to-date, along with its include trail.
+	 * @throws CoreException in case of a file access or other internal error
+	 */
+	public IStatus getProjectContentSyncState(ICProject cproject) throws CoreException {
 		if (!"true".equals(IndexerPreferences.get(cproject.getProject(), IndexerPreferences.KEY_INDEX_ALL_FILES, null)))  //$NON-NLS-1$
-			return true; // no check performed in this case
+			return null; // no check performed in this case
 
 		Set<ITranslationUnit> sources= new HashSet<ITranslationUnit>();
 		cproject.accept(new TranslationUnitCollector(sources, null, new NullProgressMonitor()));
+		IStatus syncStatus = null;
 
 		try {
 			IIndex index= getIndex(cproject);
@@ -1543,8 +1559,9 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 					IResource resource= tu.getResource();
 					if (resource instanceof IFile && isSubjectToIndexing(tu.getLanguage())) {
 						IIndexFileLocation location= IndexLocationFactory.getWorkspaceIFL((IFile) resource);
-						if (!areSynchronized(new HashSet<IIndexFileLocation>(), index, resource, location)) {
-							return false;
+						syncStatus = areSynchronized(new HashSet<IIndexFileLocation>(), index, resource, location); 
+						if (syncStatus!=null) {
+							return syncStatus;
 						}
 					}
 				}
@@ -1555,7 +1572,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 			CCorePlugin.log(e);
 		}
 
-		return true;
+		return null;
 	}
 
 	private boolean isSubjectToIndexing(ILanguage language) {
@@ -1573,21 +1590,22 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	 * @param index the index to check against
 	 * @param resource the resource to check from the workspace
 	 * @param location the location to check from the index
-	 * @return whether the specified file, and its includes are up-to-date.
+	 * @return <code>null</code> when whether the specified file, and its includes are up-to-date,
+	 *    or a MultiStatus indicating the file found to be not in sync along with it include trail.
 	 * @throws CoreException
 	 */
-	private static boolean areSynchronized(Set<IIndexFileLocation> trail, IIndex index, IResource resource, IIndexFileLocation location) throws CoreException {
+	private static MultiStatus areSynchronized(Set<IIndexFileLocation> trail, IIndex index, IResource resource, IIndexFileLocation location) throws CoreException {
 		if (!trail.contains(location)) {
 			trail.add(location);
 
 			IIndexFile[] file= index.getFiles(location);
 
-			// pre-includes may be listed twice (191989)
-			if (file.length < 1 || file.length > 2)
-				return false;
+			if (file.length < 1)
+				return new MultiStatus(CCorePlugin.PLUGIN_ID, 1, "No index file found for: "+location, null);
 
-			if (resource.getLocalTimeStamp() != file[0].getTimestamp())
-				return false;
+			if (resource.getLocalTimeStamp() != file[0].getTimestamp()) {
+				return new MultiStatus(CCorePlugin.PLUGIN_ID, 1, "Index timestamp: "+file[0].getTimestamp()+ " wrong for "+resource+" at "+location, null);
+			}
 
 			// if it is up-to-date, the includes have not changed and may
 			// be read from the index.
@@ -1598,15 +1616,16 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 					String path= newLocation.getFullPath();
 					if (path != null) {
 						IResource newResource= ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(path));
-						if (!areSynchronized(trail, index, newResource, newLocation)) {
-							return false;
+						MultiStatus m = areSynchronized(trail, index, newResource, newLocation); 
+						if (m!=null) {
+							m.add(new Status(IStatus.INFO, CCorePlugin.PLUGIN_ID, "Included by "+file[0]));
+							return m;
 						}
 					}
 				}
 			}
 		}
-
-		return true;
+		return null;
 	}
 
 	public boolean isFileIndexedUnconditionally(IIndexFileLocation ifl) {

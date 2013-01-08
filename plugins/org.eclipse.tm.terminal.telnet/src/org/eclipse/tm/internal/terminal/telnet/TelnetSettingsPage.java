@@ -106,6 +106,8 @@ public class TelnetSettingsPage extends AbstractSettingsPage {
 			if (mt > messageType) { message = m; messageType = mt; }
 
 			valid = false;
+		} else {
+			updateControlDecoration(fHostText, null, IMessageProvider.NONE);
 		}
 
 		try {
@@ -117,6 +119,8 @@ public class TelnetSettingsPage extends AbstractSettingsPage {
 				if (mt > messageType) { message = m; messageType = mt; }
 
 				valid = false;
+			} else {
+				updateControlDecoration(fNetworkPortCombo, null, IMessageProvider.NONE);
 			}
 
 			p = Integer.parseInt(fTimeout.getText().trim());
@@ -127,6 +131,8 @@ public class TelnetSettingsPage extends AbstractSettingsPage {
 				if (mt > messageType) { message = m; messageType = mt; }
 
 				valid = false;
+			} else {
+				updateControlDecoration(fTimeout, null, IMessageProvider.NONE);
 			}
 
 		} catch (Exception e) {

@@ -73,14 +73,18 @@ public class SshSettingsPage extends AbstractSettingsPage {
 			if (mt > messageType) { message = m; messageType = mt; }
 
 			valid = false;
+		} else {
+			updateControlDecoration(fHostText, null, IMessageProvider.NONE);
 		}
 		if (fUser.getText().trim().length() == 0) {
 			String m = "Please enter a username."; //$NON-NLS-1$
 			int mt = IMessageProvider.INFORMATION;
-			updateControlDecoration(fHostText, m, mt);
+			updateControlDecoration(fUser, m, mt);
 			if (mt > messageType) { message = m; messageType = mt; }
 
 			valid = false;
+		} else {
+			updateControlDecoration(fUser, null, IMessageProvider.NONE);
 		}
 		try {
 			int p = Integer.parseInt(fPort.getText().trim());
@@ -91,6 +95,8 @@ public class SshSettingsPage extends AbstractSettingsPage {
 				if (mt > messageType) { message = m; messageType = mt; }
 
 				valid = false;
+			} else {
+				updateControlDecoration(fPort, null, IMessageProvider.NONE);
 			}
 			p = Integer.parseInt(fTimeout.getText().trim());
 			if (p < 0) {
@@ -100,15 +106,19 @@ public class SshSettingsPage extends AbstractSettingsPage {
 				if (mt > messageType) { message = m; messageType = mt; }
 
 				valid = false;
+			} else {
+				updateControlDecoration(fTimeout, null, IMessageProvider.NONE);
 			}
 			p = Integer.parseInt(fKeepalive.getText().trim());
 			if (p < 0) {
 				String m = "Invalid keep alive. Must be greater than 0."; //$NON-NLS-1$
 				int mt = IMessageProvider.ERROR;
-				updateControlDecoration(fTimeout, m, mt);
+				updateControlDecoration(fKeepalive, m, mt);
 				if (mt > messageType) { message = m; messageType = mt; }
 
 				valid = false;
+			} else {
+				updateControlDecoration(fKeepalive, null, IMessageProvider.NONE);
 			}
 		} catch (Exception e) {
 			valid = false;

@@ -15,6 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.AbstractExecutableExtensionBase;
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
+import org.eclipse.cdt.core.cdtvariables.ICdtVariableManager;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsBroadcastingProvider;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsStorage;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
@@ -26,6 +29,7 @@ import org.eclipse.cdt.core.settings.model.ICPathEntry;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.core.settings.model.ICSettingBase;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
@@ -73,12 +77,24 @@ public class MBSLanguageSettingsProvider extends AbstractExecutableExtensionBase
 										if (!new Path(pathStr).isAbsolute()) {
 											// We need to add project-rooted entry for relative path as MBS counts it this way in some UI
 											// The relative entry below also should be added for indexer to resolve from source file locations
-											IStringVariableManager mngr = VariablesPlugin.getDefault().getStringVariableManager();
-											String projectRootedPath = mngr.generateVariableExpression("workspace_loc", rc.getProject().getName()) + Path.SEPARATOR + pathStr; //$NON-NLS-1$
-											ICLanguageSettingEntry projectRootedEntry = (ICLanguageSettingEntry) CDataUtil.createEntry(kind, projectRootedPath, projectRootedPath, null, entry.getFlags());
-											if (! list.contains(projectRootedEntry)) {
-												list.add(projectRootedEntry);
+
+											ICdtVariableManager varManager = CCorePlugin.getDefault().getCdtVariableManager();
+											try {
+												// Substitute build/environment variables
+												String location = varManager.resolveValue(pathStr, "", null, cfgDescription); //$NON-NLS-1$
+												if (!new Path(location).isAbsolute()) {
+													IStringVariableManager mngr = VariablesPlugin.getDefault().getStringVariableManager();
+													String projectRootedPath = mngr.generateVariableExpression("workspace_loc", rc.getProject().getName()) + Path.SEPARATOR + pathStr; //$NON-NLS-1$
+													ICLanguageSettingEntry projectRootedEntry = (ICLanguageSettingEntry) CDataUtil.createEntry(kind, projectRootedPath, projectRootedPath, null, entry.getFlags());
+													if (! list.contains(projectRootedEntry)) {
+														list.add(projectRootedEntry);
+													}
+												}
+											} catch (CdtVariableException e) {
+												// Swallow exceptions but also log them
+												ManagedBuilderCorePlugin.log(e);
 											}
+											
 										}
 									}
 									if (! list.contains(entry)) {

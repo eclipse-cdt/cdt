@@ -37,6 +37,7 @@ import org.eclipse.cdt.debug.core.model.ICTracepoint;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint;
 import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
@@ -731,86 +732,126 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService implements IMI
 		return DMContexts.getAncestorOfType(contContext, IBreakpointsTargetDMContext.class);
 	}
 
-	public MIBreakpoint getTargetBreakpoint(IBreakpointsTargetDMContext context, Map<String, Object> attributes) {
+	public void getTargetBreakpoint(
+			IBreakpointsTargetDMContext context, 
+			Map<String, Object> attributes,
+			DataRequestMonitor<MIBreakpoint> rm) {
 		Map<Integer, MIBreakpoint> map = fCreatedTargetBreakpoints.get(context);
-		if (map == null)
-			return null;
+		if (map == null) {
+			rm.done();
+			return;
+		}
 		String type = (String)attributes.get(MIBreakpoints.BREAKPOINT_TYPE);
 		if (MIBreakpoints.BREAKPOINT.equals(type)) {
-			return getTargetLineBreakpoint(
+			getTargetLineBreakpoint(
+				context,
 				map.values(),
 				(String)attributes.get(MIBreakpoints.FILE_NAME), 
 				(Integer)attributes.get(MIBreakpoints.LINE_NUMBER),
 				(String)attributes.get(MIBreakpoints.FUNCTION),
 				(String)attributes.get(MIBreakpoints.ADDRESS),
 				(Boolean)attributes.get(MIBreakpointDMData.IS_HARDWARE),
-				(Boolean)attributes.get(MIBreakpointDMData.IS_TEMPORARY));
+				(Boolean)attributes.get(MIBreakpointDMData.IS_TEMPORARY),
+				rm);
 			
 		}
 		else if (MIBreakpoints.TRACEPOINT.equals(type)) {
-			return getTargetTracepoint(
+			getTargetTracepoint(
+				context,
 				map.values(),
 				(String)attributes.get(MIBreakpoints.FILE_NAME), 
 				(Integer)attributes.get(MIBreakpoints.LINE_NUMBER),
 				(String)attributes.get(MIBreakpoints.FUNCTION),
 				(String)attributes.get(MIBreakpoints.ADDRESS),
 				(Boolean)attributes.get(MIBreakpointDMData.IS_HARDWARE),
-				(Boolean)attributes.get(MIBreakpointDMData.IS_TEMPORARY));
+				(Boolean)attributes.get(MIBreakpointDMData.IS_TEMPORARY),
+				rm);
 		}
 		else if (MIBreakpoints.WATCHPOINT.equals(type)) {
-			return getTargetWatchpoint(
+			getTargetWatchpoint(
+				context,
 				map.values(),
 				(String)attributes.get(MIBreakpoints.EXPRESSION), 
 				(Boolean)attributes.get(MIBreakpoints.READ),
 				(Boolean)attributes.get(MIBreakpoints.WRITE),
 				(Boolean)attributes.get(MIBreakpointDMData.IS_HARDWARE),
-				(Boolean)attributes.get(MIBreakpointDMData.IS_TEMPORARY));
+				(Boolean)attributes.get(MIBreakpointDMData.IS_TEMPORARY),
+				rm);
 			
 		}
-		return null;
+		else {
+			rm.done();
+		}
 	}
 	
-	private MIBreakpoint getTargetLineBreakpoint(
+	private void getTargetLineBreakpoint(
+			IBreakpointsTargetDMContext bpTargetDMC,
 			Collection<MIBreakpoint> targetBreakpoints, 
 			String fileName, 
 			Integer lineNumber,
 			String function,
 			String address,
 			Boolean isHardware, 
-			Boolean isTemporary) {
+			Boolean isTemporary,
+			DataRequestMonitor<MIBreakpoint> drm) {
+		List<MIBreakpoint> candidates = new ArrayList<MIBreakpoint>(targetBreakpoints.size());
 		for (MIBreakpoint miBpt : targetBreakpoints) {
-			if (!miBpt.isWatchpoint() && !isCatchpoint(miBpt) && !miBpt.isTracepoint() 
-				&& compareBreakpointAttributes(
-					miBpt, fileName, lineNumber, function, address, isHardware, isTemporary))
-				return miBpt;
+			if (!miBpt.isWatchpoint() && !isCatchpoint(miBpt) && !miBpt.isTracepoint()) {
+				// Filter out target breakpoints with different file names and line numbers
+				if (fileName == null 
+					|| (new File(fileName).getName().equals(new File(getFileName(miBpt)).getName()) 
+						&& getLineNumber(miBpt) == lineNumber)) {
+					candidates.add(miBpt);
+				}
+			}
 		}
-		return null;
+		if (candidates.size() == 0) {
+			drm.done();
+			return;
+		}
+
+		findTargetLineBreakpoint(bpTargetDMC, candidates, 
+			fileName, lineNumber, function, address, isHardware, isTemporary, drm);
 	}
 	
-	private MIBreakpoint getTargetTracepoint(
+	private void getTargetTracepoint(
+			IBreakpointsTargetDMContext bpTargetDMC,
 			Collection<MIBreakpoint> targetBreakpoints, 
 			String fileName, 
 			Integer lineNumber,
 			String function,
 			String address,
 			Boolean isHardware, 
-			Boolean isTemporary) {
+			Boolean isTemporary,
+			DataRequestMonitor<MIBreakpoint> rm) {
+		List<MIBreakpoint> candidates = new ArrayList<MIBreakpoint>(targetBreakpoints.size());
 		for (MIBreakpoint miBpt : targetBreakpoints) {
-			if (miBpt.isTracepoint() 
-				&& compareBreakpointAttributes(
-					miBpt, fileName, lineNumber, function, address, isHardware, isTemporary))
-				return miBpt;
+			if (miBpt.isTracepoint()) {
+				// Filter out target breakpoints with different file names and line numbers
+				if (new File(fileName).getName().equals(new File(getFileName(miBpt)).getName()) 
+					&& miBpt.getLine() == lineNumber) {
+					candidates.add(miBpt);
+				}
+			}
 		}
-		return null;
+		if (candidates.size() == 0) {
+			rm.done();
+			return;
+		}
+
+		findTargetLineBreakpoint(bpTargetDMC, candidates, 
+			fileName, lineNumber, function, address, isHardware, isTemporary, rm);
 	}
 	
-	private MIBreakpoint getTargetWatchpoint(
+	private void getTargetWatchpoint(
+			IBreakpointsTargetDMContext bpTargetDMC,
 			Collection<MIBreakpoint> targetBreakpoints, 
 			String expression,
 			boolean readAccess,
 			boolean writeAccess,
 			Boolean isHardware, 
-			Boolean isTemporary) {
+			Boolean isTemporary,
+			DataRequestMonitor<MIBreakpoint> rm) {
 		for (MIBreakpoint miBpt : targetBreakpoints) {
 			if (!miBpt.isWatchpoint())
 				continue;
@@ -824,25 +865,92 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService implements IMI
 				continue;
 			if (!compareBreakpointTypeAttributes(miBpt, isHardware, isTemporary))
 				continue;
-			return miBpt;
+			rm.setData(miBpt);
+			break;
 		}
-		return null;
+		rm.done();
+	}
+
+	private void findTargetLineBreakpoint(
+			final IBreakpointsTargetDMContext bpTargetDMC,
+			final List<MIBreakpoint> candidates, 
+			final String fileName, 
+			final Integer lineNumber,
+			final String function,
+			final String address,
+			final Boolean isHardware, 
+			final Boolean isTemporary,
+			final DataRequestMonitor<MIBreakpoint> drm) {
+		// We need to convert the debugger paths of the candidate target breakpoints
+		// before comparing them with the platform breakpoint's file name.
+		final List<MIBreakpoint> bpts = new ArrayList<MIBreakpoint>(candidates);
+
+		class FindBreakpointRM extends ImmediateDataRequestMonitor<MIBreakpoint> {
+
+			@Override
+			@ConfinedToDsfExecutor("fExecutor")
+			protected void handleCompleted() {
+				if (bpts.isEmpty()) {
+					drm.done();
+					return;
+				}
+				
+				final MIBreakpoint bpt = bpts.remove(0);
+				final String debuggerPath = getFileName(bpt);
+				getSource(
+						bpTargetDMC, 
+						debuggerPath, 
+						new DataRequestMonitor<String>(getExecutor(), drm) {
+							@Override
+							@ConfinedToDsfExecutor( "fExecutor" )
+							protected void handleCompleted() {
+								// If an error occur performing source lookup 
+								// log it and use the debugger path.
+								if (!isSuccess()) {
+									GdbPlugin.log(getStatus());
+								}
+								if (compareBreakpointAttributes(
+										bpt, 
+										isSuccess() ? getData() : debuggerPath, 
+										fileName, 
+										lineNumber, 
+										function, 
+										address, 
+										isHardware, 
+										isTemporary)) {
+									// The target breakpoint is found, we're done.
+									drm.setData(bpt);
+									drm.done();
+								}
+								else {
+									// Try the next candidate
+									new FindBreakpointRM().done();
+								}
+							}									
+						});
+			}			
+		};
+
+		// Start the search.
+		new FindBreakpointRM().done();				
 	}
 
 	private boolean compareBreakpointAttributes(
 			MIBreakpoint miBpt,
+			String miBptFileName,
 			String fileName, 
 			Integer lineNumber,
 			String function,
 			String address,
 			Boolean isHardware, 
 			Boolean isTemporary) {
-		return compareBreakpointLocationAttributes(miBpt, fileName, lineNumber, function, address)
+		return compareBreakpointLocationAttributes(miBpt, miBptFileName, fileName, lineNumber, function, address)
 				&& compareBreakpointTypeAttributes(miBpt, isHardware, isTemporary);
 	}
 
 	private boolean compareBreakpointLocationAttributes(
 			MIBreakpoint miBpt,
+			String miBptFileName,
 			String fileName, 
 			Integer lineNumber,
 			String function,
@@ -853,7 +961,7 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService implements IMI
 			&& (address == null || !address.equals(getPlatformAddress(miBpt.getAddress()).toHexAddressString()))) 
 			return false;
 		if (isLineBreakpoint(miBpt)) {
-			if (fileName == null || !fileName.equals(getFileName(miBpt)))
+			if (fileName == null || !fileName.equals(miBptFileName))
 				return false;
 			if (lineNumber == null || lineNumber.intValue() != getLineNumber(miBpt))
 				return false;

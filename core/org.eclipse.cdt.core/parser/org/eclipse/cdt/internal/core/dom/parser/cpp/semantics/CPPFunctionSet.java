@@ -92,7 +92,7 @@ public class CPPFunctionSet implements ICPPTwoPhaseBinding {
 	
 	public void setToUnknown() {
 		if (fName != null) {
-			fName.setBinding(new CPPDeferredFunction(null, fName.toCharArray()));
+			fName.setBinding(new CPPDeferredFunction(null, fName.toCharArray(), fBindings));
 		}
 	}
 }

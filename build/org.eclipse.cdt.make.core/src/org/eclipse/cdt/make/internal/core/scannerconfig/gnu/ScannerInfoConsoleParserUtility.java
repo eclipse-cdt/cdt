@@ -221,7 +221,8 @@ public class ScannerInfoConsoleParserUtility extends AbstractGCCBOPConsoleParser
 					// appending fileName to cwd should yield file path
 					filePath = cwd.append(fileName);
 				}
-				if (!filePath.toString().equalsIgnoreCase(EFSExtensionManager.getDefault().getPathFromURI(file.getLocationURI()))) {
+				IPath fileLocation = new Path(EFSExtensionManager.getDefault().getPathFromURI(file.getLocationURI()));
+				if (!filePath.toString().equalsIgnoreCase(fileLocation.toString())) {
 					// must be the cwd is wrong
 					// check if file name starts with ".."
 					if (fileName.startsWith("..")) {	//$NON-NLS-1$
@@ -238,7 +239,7 @@ public class ScannerInfoConsoleParserUtility extends AbstractGCCBOPConsoleParser
 							tPath = tPath.removeFirstSegments(1);
 						}
 						// get the file path from the file
-						filePath = new Path(EFSExtensionManager.getDefault().getPathFromURI(file.getLocationURI()));
+						filePath = fileLocation;
 						IPath lastFileSegment = filePath.removeFirstSegments(filePath.segmentCount() - tPath.segmentCount());
 						if (lastFileSegment.matchingFirstSegments(tPath) == tPath.segmentCount()) {
 							cwd = filePath.removeLastSegments(tPath.segmentCount());

@@ -7420,4 +7420,9 @@ public class AST2Tests extends AST2BaseTest {
 	public void testGCCDecltype_397227() throws Exception {
 		parseAndCheckBindings(getAboveComment(), CPP, true);
 	}
+	
+	// #define macro(R) #R""
+	public void testNoRawStringInPlainC_397127() throws Exception {
+		parseAndCheckBindings(getAboveComment(), ParserLanguage.C, true);
+	}
 }

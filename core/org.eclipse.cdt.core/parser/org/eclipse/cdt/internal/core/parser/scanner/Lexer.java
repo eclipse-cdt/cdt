@@ -54,6 +54,7 @@ final public class Lexer implements ITokenSequence {
 		public boolean fCreateImageLocations= true;
 		public boolean fSupportSlashPercentComments= false;
 		public boolean fSupportUTFLiterals= true;
+		public boolean fSupportRawStringLiterals= false;
 		
 		@Override
 		public Object clone() {
@@ -73,7 +74,7 @@ final public class Lexer implements ITokenSequence {
 	
 	// the input to the lexer
 	private final AbstractCharArray fInput;
-	private int fStart;
+	private final int fStart;
 	private int fLimit;
 
 	// after phase 3 (newline, trigraph, line-splice)
@@ -267,12 +268,14 @@ final public class Lexer implements ITokenSequence {
 			case 'L':
 				switch(d) {
 				case 'R':
-					markPhase3();
-					if (nextCharPhase3() == '"') {
-						nextCharPhase3();
-						return rawStringLiteral(start, 3, IToken.tLSTRING);
+					if (fOptions.fSupportRawStringLiterals) {
+						markPhase3();
+						if (nextCharPhase3() == '"') {
+							nextCharPhase3();
+							return rawStringLiteral(start, 3, IToken.tLSTRING);
+						}
+						restorePhase3();
 					}
-					restorePhase3();
 					break;
 				case '"':
 					nextCharPhase3();
@@ -288,12 +291,14 @@ final public class Lexer implements ITokenSequence {
 				if (fOptions.fSupportUTFLiterals) {
 					switch(d) {
 					case 'R':
-						markPhase3();
-						if (nextCharPhase3() == '"') {
-							nextCharPhase3();
-							return rawStringLiteral(start, 3, c == 'u' ? IToken.tUTF16STRING : IToken.tUTF32STRING);
+						if (fOptions.fSupportRawStringLiterals) {
+							markPhase3();
+							if (nextCharPhase3() == '"') {
+								nextCharPhase3();
+								return rawStringLiteral(start, 3, c == 'u' ? IToken.tUTF16STRING : IToken.tUTF32STRING);
+							}
+							restorePhase3();
 						}
-						restorePhase3();
 						break;
 					case '"':
 						nextCharPhase3();
@@ -306,7 +311,7 @@ final public class Lexer implements ITokenSequence {
 							markPhase3();
 							switch (nextCharPhase3()) {
 							case 'R':
-								if (nextCharPhase3() == '"') {
+								if (fOptions.fSupportRawStringLiterals && nextCharPhase3() == '"') {
 									nextCharPhase3();
 									return rawStringLiteral(start, 4, IToken.tSTRING);
 								}
@@ -323,7 +328,7 @@ final public class Lexer implements ITokenSequence {
 				return identifier(start, 1);
 				
 			case 'R':
-				if (d == '"') {
+				if (fOptions.fSupportRawStringLiterals && d == '"') {
 					nextCharPhase3();
 					return rawStringLiteral(start, 2, IToken.tSTRING);
 				}

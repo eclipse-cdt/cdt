@@ -29,8 +29,8 @@ public abstract class AbstractScannerExtensionConfiguration implements IScannerE
 	private CharArrayIntMap fAddPreprocessorKeywords;
 	
 	protected static class MacroDefinition implements IMacro {
-		private char[] fSignature;
-		private char[] fExpansion;
+		private final char[] fSignature;
+		private final char[] fExpansion;
 		
 		MacroDefinition(char[] signature, char[] expansion) {
 			fSignature= signature;
@@ -103,6 +103,14 @@ public abstract class AbstractScannerExtensionConfiguration implements IScannerE
 		return false;
 	}
 
+	/**
+	 * @since 5.5
+	 */
+	@Override
+	public boolean supportRawStringLiterals() {
+		return false;
+	}
+	
 	@Override
 	public CharArrayIntMap getAdditionalPreprocessorKeywords() {
 		return fAddPreprocessorKeywords;

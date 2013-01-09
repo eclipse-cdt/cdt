@@ -1081,11 +1081,13 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 			return;
 
 		ICConfigurationDescription cfgDescription = getConfigurationDescription();
-		String cfgId = cfgDescription.getId();
-		if (!initialProvidersByCfg.containsKey(cfgId)) {
-			if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
-				List<ILanguageSettingsProvider> initialProviders = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
-				initialProvidersByCfg.put(cfgId, initialProviders);
+		if (cfgDescription != null) {
+			String cfgId = cfgDescription.getId();
+			if (!initialProvidersByCfg.containsKey(cfgId)) {
+				if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
+					List<ILanguageSettingsProvider> initialProviders = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
+					initialProvidersByCfg.put(cfgId, initialProviders);
+				}
 			}
 		}
 

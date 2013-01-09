@@ -72,9 +72,13 @@ public class SRecordExporter implements IMemoryExporter
 				fProperties.put(TRANSFER_START, fStartText.getText());
 				fProperties.put(TRANSFER_END, fEndText.getText());
 				
-				fStartAddress = getStartAddress();
-				fEndAddress = getEndAddress();
-				fOutputFile = getFile();
+				try
+				{
+					fStartAddress = getStartAddress();
+					fEndAddress = getEndAddress();
+					fOutputFile = getFile();
+				}
+				catch(Exception e) {}
 				
 				super.dispose();
 			}
@@ -157,11 +161,38 @@ public class SRecordExporter implements IMemoryExporter
 
 		textValue = fProperties.get(TRANSFER_START);
 		fStartText.setText(textValue != null ? textValue : "0x0"); //$NON-NLS-1$
+		
+		try
+		{
+			getStartAddress();
+		}
+		catch(Exception e)
+		{
+			fStartText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+		}
+
 
 		textValue = fProperties.get(TRANSFER_END);
 		fEndText.setText(textValue != null ? textValue : "0x0"); //$NON-NLS-1$
-
-		fLengthText.setText(getEndAddress().subtract(getStartAddress()).toString());
+		
+		try
+		{
+			getEndAddress();
+		}
+		catch(Exception e)
+		{
+			fEndText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+		}
+		
+		try
+		{
+			fLengthText.setText(getEndAddress().subtract(getStartAddress()).toString());
+		}
+		catch(Exception e)
+		{
+			fLengthText.setText("0");
+			fLengthText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+		}
 		
 		fileButton.addSelectionListener(new SelectionListener() {
 
@@ -208,7 +239,6 @@ public class SRecordExporter implements IMemoryExporter
 				{
 					fStartText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
 					validate();
-					//fParentDialog.setValid(false);
 				}
 			}
 			
@@ -234,9 +264,8 @@ public class SRecordExporter implements IMemoryExporter
 				}
 				catch(Exception ex)
 				{
-					fEndText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+				fEndText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
 					validate();
-					//fParentDialog.setValid(false);
 				}
 			}
 			
@@ -253,9 +282,8 @@ public class SRecordExporter implements IMemoryExporter
 					String endString = "0x" + getStartAddress().add(length).toString(16); //$NON-NLS-1$
 					if(!fEndText.getText().equals(endString)) {
 						if ( ! length.equals( BigInteger.ZERO ) ) {
-							fLengthText.setText(endString);
+							fEndText.setText(endString);
 						}
-						fEndText.setText(endString);
 					}
 					validate();
 				}
@@ -263,7 +291,6 @@ public class SRecordExporter implements IMemoryExporter
 				{
 					fLengthText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
 					validate();
-					//fParentDialog.setValid(false);
 				}
 			}
 

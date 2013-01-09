@@ -351,8 +351,15 @@ public class BaseTestCase {
  	public static void setGdbProgramNamesLaunchAttributes(String version) {
 		// See bugzilla 303811 for why we have to append ".exe" on Windows
  		boolean isWindows = Platform.getOS().equals(Platform.OS_WIN32);
- 		setGlobalLaunchAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb." + version + (isWindows ? ".exe" : ""));
- 		setGlobalLaunchAttribute(ATTR_DEBUG_SERVER_NAME, "gdbserver." + version + (isWindows ? ".exe" : ""));
+ 		String gdbPath = System.getProperty("cdt.tests.dsf.gdb.path");
+ 		String debugName = "gdb." + version + (isWindows ? ".exe" : "");
+ 		String debugServerName = "gdbserver." + version + (isWindows ? ".exe" : "");
+ 		if (gdbPath != null) {
+ 			debugName = gdbPath + "/" + debugName;
+ 			debugServerName = gdbPath + "/" + debugServerName;
+ 		}
+ 		setGlobalLaunchAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME, debugName);
+ 		setGlobalLaunchAttribute(ATTR_DEBUG_SERVER_NAME, debugServerName);
  	}
 
  	protected void setGdbVersion() {

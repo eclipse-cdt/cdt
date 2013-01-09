@@ -24,6 +24,15 @@
 		</repository>
 	</repositories>-->
 
+	<profiles>
+		<profile>
+			<id>production</id>
+			<properties>
+				<gdbPathOption>-Dcdt.tests.dsf.gdb.path=/opt/public/download-staging.priv/tools/cdt/gdb</gdbPathOption>
+			</properties>
+		</profile>
+	</profiles>
+	
 	<build>
 		<plugins>
 			<plugin>
@@ -32,7 +41,7 @@
 				<version>${tycho-version}</version>
 				<configuration>
 					<useUIHarness>true</useUIHarness>
-					<argLine>-Xms256m -Xmx512m -XX:MaxPermSize=256M</argLine>
+					<argLine>-Xms256m -Xmx512m -XX:MaxPermSize=256M ${gdbPathOption}</argLine>
 					<includes>
 						<include>**/AutomatedSuite.*</include>
 					</includes>

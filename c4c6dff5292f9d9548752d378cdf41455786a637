@@ -1,0 +1,208 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOL3///5Q\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/PDOMManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1535,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-01-10T20:08:30Z",
+      "side": 1,
+      "message": "The convention is to put spaces around comparison operators.",
+      "revId": "c4c6dff5292f9d9548752d378cdf41455786a637",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOL3///5c\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/PDOMManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1539,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-01-10T20:08:30Z",
+      "side": 1,
+      "message": "It\u0027s preferable to use the descriptive form of the verb in method Javadocs, \"Checks\" instead of \"Check\".",
+      "revId": "c4c6dff5292f9d9548752d378cdf41455786a637",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOL3///5E\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/PDOMManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1563,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-01-10T20:08:30Z",
+      "side": 1,
+      "message": "The convention is to put spaces around comparison operators.",
+      "revId": "c4c6dff5292f9d9548752d378cdf41455786a637",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOL3///5M\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/PDOMManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1604,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-01-10T20:08:30Z",
+      "side": 1,
+      "message": "The convention is to put spaces around \u0027+\u0027 operator.",
+      "revId": "c4c6dff5292f9d9548752d378cdf41455786a637",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOL3///4A\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/PDOMManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1606,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-01-10T20:08:30Z",
+      "side": 1,
+      "message": "Checking just file[0] may not be enough since the file may be represented in multiple fragments with different timestamps. It\u0027s also possible although less likely that header variants with different significant macros may have different timestamps for files outside of the workspace.",
+      "revId": "c4c6dff5292f9d9548752d378cdf41455786a637",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOL3///5I\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/PDOMManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1607,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-01-10T20:08:30Z",
+      "side": 1,
+      "message": "Should the message use a human-readable representation of timestamp?\n\nThe convention is to put spaces around \u0027+\u0027 operator.",
+      "revId": "c4c6dff5292f9d9548752d378cdf41455786a637",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOL3///5A\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/PDOMManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1620,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-01-10T20:08:30Z",
+      "side": 1,
+      "message": "The convention is to put spaces around comparison operators.",
+      "revId": "c4c6dff5292f9d9548752d378cdf41455786a637",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOL3///48\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/PDOMManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1621,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-01-10T20:08:30Z",
+      "side": 1,
+      "message": "IIndexFile.toString method is not intended for user-visible messages.\n\nThe convention is to put spaces around \u0027+\u0027 operator.",
+      "revId": "c4c6dff5292f9d9548752d378cdf41455786a637",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOL3///34\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/export/GeneratePDOM.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-01-10T20:08:30Z",
+      "side": 1,
+      "message": "The convention is to put spaces around comparison operators.",
+      "revId": "c4c6dff5292f9d9548752d378cdf41455786a637",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOL3///38\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/export/GeneratePDOM.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-01-10T20:08:30Z",
+      "side": 1,
+      "message": "The convention is to put spaces after commas.",
+      "revId": "c4c6dff5292f9d9548752d378cdf41455786a637",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOL3///30\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/export/GeneratePDOM.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-01-10T20:08:30Z",
+      "side": 1,
+      "message": "The convention is to put spaces around comparison operators.",
+      "revId": "c4c6dff5292f9d9548752d378cdf41455786a637",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOL3///1I\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/export/GeneratePDOM.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-01-10T20:08:30Z",
+      "side": 1,
+      "message": "InterruptedException is likely an indication that the activity was canceled. It should not be rethrown or logged.",
+      "revId": "c4c6dff5292f9d9548752d378cdf41455786a637",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

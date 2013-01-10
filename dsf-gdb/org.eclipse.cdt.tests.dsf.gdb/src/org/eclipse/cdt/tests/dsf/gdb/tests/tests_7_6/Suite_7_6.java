@@ -48,6 +48,7 @@ import org.junit.runners.Suite;
 	GDBMultiNonStopRunControlTest_7_6.class,
 	Suite_Sessionless_Tests.class,
 	GDBConsoleBreakpointsTest_7_6.class,
+	GDBConsoleSynchronizingTest_7_6.class,
 	/* Add your test class here */
 })
 

@@ -192,6 +192,7 @@ public class Messages extends NLS {
 	public static String IncludeTab_import;
 	public static String LanguageSettingEntryDialog_Add;
 	public static String LanguageSettingEntryDialog_BuiltInFlag;
+	public static String LanguageSettingEntryDialog_ContainsSystemHeaders;
 	public static String LanguageSettingEntryDialog_Directory;
 	public static String LanguageSettingEntryDialog_File;
 	public static String LanguageSettingEntryDialog_Filesystem;

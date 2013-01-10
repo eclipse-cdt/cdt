@@ -49,6 +49,7 @@ import org.junit.runners.Suite;
 	Suite_Sessionless_Tests.class,
 	GDBConsoleBreakpointsTest_7_6.class,
 	TraceFileTest_7_6.class,
+	GDBConsoleSynchronizingTest_7_6.class,
 	/* Add your test class here */
 })
 

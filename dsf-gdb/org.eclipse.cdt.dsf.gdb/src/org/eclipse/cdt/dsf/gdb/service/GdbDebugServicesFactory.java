@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Ericsson and others.
+ * Copyright (c) 2008, 2013 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
  *     Marc Khouzam (Ericsson) - Support for GDB 7.4 (Bug 367788)
  *     Marc Khouzam (Ericsson) - Include IGDBHardware service for the multicore visualizer (Bug 335027)
  *     Vladimir Prus (Mentor Graphics) - Support for OS resources.
+ *     Marc Khouzam (Ericsson) - Support for GDB 7.6 memory service
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
@@ -67,6 +68,8 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 	public static final String GDB_7_4_VERSION = "7.4"; //$NON-NLS-1$
 	/** @since 4.2*/
 	public static final String GDB_7_5_VERSION = "7.5"; //$NON-NLS-1$
+	/** @since 4.2*/
+	public static final String GDB_7_6_VERSION = "7.5.50"; //$NON-NLS-1$
 
 	private final String fVersion;
 	
@@ -172,6 +175,10 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 
 	@Override
 	protected IMemory createMemoryService(DsfSession session) {
+		if (GDB_7_6_VERSION.compareTo(fVersion) <= 0) {
+			return new GDBMemory_7_6(session);
+		}
+
 		if (GDB_7_0_VERSION.compareTo(fVersion) <= 0) {
 			return new GDBMemory_7_0(session);
 		}

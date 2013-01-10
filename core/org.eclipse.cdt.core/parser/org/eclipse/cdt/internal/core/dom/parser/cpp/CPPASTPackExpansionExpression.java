@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPackExpansionExpression;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
@@ -74,7 +75,7 @@ public class CPPASTPackExpansionExpression extends ASTNode implements ICPPASTPac
 			} else {
 				type= new CPPParameterPackType(type);
 			}
-			fEvaluation= new EvalFixed(type, PRVALUE, Value.UNKNOWN);
+			fEvaluation= new EvalFixed(type, PRVALUE, Value.create(((ICPPASTExpression) fPattern).getEvaluation()));
 		}
 		return fEvaluation;
 	}

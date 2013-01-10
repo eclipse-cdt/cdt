@@ -7004,4 +7004,13 @@ public class AST2TemplateTests extends AST2BaseTest {
 	public void testDependentExpressions_395243d() throws Exception {
 		parseAndCheckBindings();
 	}
+		
+	//	template <int...> struct A {};
+	//	template <int... I> void foo(A<I...>); 
+	//	int main() {
+	//		foo(A<0>());
+	//	}
+	public void testVariadicNonTypeTemplateParameter_382074() throws Exception {
+		parseAndCheckBindings();
+	}
 }

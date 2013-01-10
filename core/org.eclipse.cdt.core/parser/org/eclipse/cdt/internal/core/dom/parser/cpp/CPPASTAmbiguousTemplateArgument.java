@@ -68,12 +68,19 @@ public class CPPASTAmbiguousTemplateArgument extends ASTAmbiguousNode implements
 				name.setBinding(null);
 				namedTypeSpec.setName(name);
 			}
-		} else if (node instanceof IASTIdExpression) {
-			IASTIdExpression id= (IASTIdExpression) node;
-			final IASTName name = id.getName();
-			name.setBinding(null);
-			id.setName(name);
-		}
+		} else {
+			
+			// Unwrap variadic pack expansion if necessary
+			if (node instanceof ICPPASTPackExpansionExpression)
+				node= ((ICPPASTPackExpansionExpression) node).getPattern();
+			
+			if (node instanceof IASTIdExpression) {
+				IASTIdExpression id= (IASTIdExpression) node;
+				final IASTName name = id.getName();
+				name.setBinding(null);
+				id.setName(name);
+			}
+		} 
 	}
 
 	@Override

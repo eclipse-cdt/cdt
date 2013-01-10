@@ -35,6 +35,35 @@
 	
 	<build>
 		<plugins>
+			<plugin>            
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>clean</id>
+						<phase>clean</phase>
+						<configuration>
+							<tasks>
+								<ant antfile="TestAppBuilder.xml" target="clean"/>
+							</tasks>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>prepare</id>
+						<phase>validate</phase>
+						<configuration>
+							<tasks>
+								<ant antfile="TestAppBuilder.xml" target="makeTestApps"/>
+							</tasks>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-surefire-plugin</artifactId>

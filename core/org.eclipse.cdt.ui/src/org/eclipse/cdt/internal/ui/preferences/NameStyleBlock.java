@@ -648,7 +648,6 @@ public class NameStyleBlock extends OptionsConfigurationBlock {
 
 	private class NameStyleAdapter extends ViewerComparator
 			implements ITreeListAdapter<Category>, IDialogFieldListener {
-
 		@Override
 		public void selectionChanged(TreeListDialogField<Category> field) {
 			updateConfigurationBlock(field.getSelectedElements());

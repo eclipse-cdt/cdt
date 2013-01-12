@@ -479,13 +479,16 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 			newProvider = LanguageSettingsManager.getWorkspaceProvider(id);
 		} else {
 			// Toggle to configuration-owned provider
-			try {
-				ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(provider);
-				if (rawProvider instanceof ILanguageSettingsEditableProvider) {
-					newProvider = ((ILanguageSettingsEditableProvider) rawProvider).cloneShallow();
+			newProvider = getInitialProvider(id);
+			if(newProvider == null) {
+				try {
+					ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(provider);
+					if (rawProvider instanceof ILanguageSettingsEditableProvider) {
+						newProvider = ((ILanguageSettingsEditableProvider) rawProvider).cloneShallow();
+					}
+				} catch (CloneNotSupportedException e) {
+					CUIPlugin.log("Error cloning provider " + id, e); //$NON-NLS-1$
 				}
-			} catch (CloneNotSupportedException e) {
-				CUIPlugin.log("Error cloning provider " + id, e); //$NON-NLS-1$
 			}
 		}
 		if (newProvider != null) {

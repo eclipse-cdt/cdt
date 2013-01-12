@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.cdt.core.templates">
+      <template
+            filterPattern=".*g\+\+"
+            id="org.eclipse.cdt.qt.core.template.helloWorld.qtQuick2"
+            location="templates/project/helloWorld/qtQuick2/template.xml"
+            projectType="org.eclipse.cdt.build.makefile.projectType">
+      </template>
+   </extension>
+
+   <extension
+         point="org.eclipse.cdt.core.templateAssociations">
+      <template id="org.eclipse.cdt.qt.core.template.helloWorld.qtQuick2">
+         <toolChain id="cdt.managedbuild.toolchain.gnu.mingw.base"/>
+         <toolChain id="cdt.managedbuild.toolchain.gnu.cygwin.base"/>
+         <toolChain id="cdt.managedbuild.toolchain.gnu.base"/>
+         <toolChain id="cdt.managedbuild.toolchain.gnu.macosx.base"/>
+         <toolChain id="cdt.managedbuild.toolchain.gnu.solaris.base"/>
+      </template>
+   </extension>
+</plugin>

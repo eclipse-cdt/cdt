@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Symbian Software Limited and others.
+ * Copyright (c) 2007, 2013 Symbian Software Limited and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Bala Torati (Symbian) - Initial API and implementation
+ * Doug Schaefer (QNX) - Added overridable start and end patterns
  *******************************************************************************/
 package org.eclipse.cdt.core.templateengine.process.processes;
 
@@ -29,7 +30,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 
-
 /**
  * Adds Files to the Project
  */
@@ -40,9 +40,30 @@ public class AddFiles extends ProcessRunner {
 	 */
 	@Override
 	public void process(TemplateCore template, ProcessArgument[] args, String processId, IProgressMonitor monitor) throws ProcessFailureException {
-		String projectName = args[0].getSimpleValue();
-		IProject projectHandle = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
-		ProcessArgument[][] files = args[1].getComplexArrayValue();
+		IProject projectHandle = null;
+		ProcessArgument[][] files = null;
+		String startPattern = null;
+		String endPattern = null;
+		
+		for (ProcessArgument arg : args) {
+			String argName = arg.getName();
+			if (argName.equals("projectName")) { //$NON-NLS-1$
+				projectHandle = ResourcesPlugin.getWorkspace().getRoot().getProject(arg.getSimpleValue());
+			} else if (argName.equals("files")) { //$NON-NLS-1$
+				files = arg.getComplexArrayValue();
+			} else if (argName.equals("startPattern")) { //$NON-NLS-1$
+				startPattern = arg.getSimpleValue();
+			} else if (argName.equals("endPattern")) { //$NON-NLS-1$
+				endPattern = arg.getSimpleValue();
+			}
+		}
+		
+		if (projectHandle == null)
+			throw new ProcessFailureException(getProcessMessage(processId, IStatus.ERROR, Messages.getString("AddFiles.8"))); //$NON-NLS-1$
+			
+		if (files == null)
+			throw new ProcessFailureException(getProcessMessage(processId, IStatus.ERROR, Messages.getString("AddFiles.9"))); //$NON-NLS-1$
+		
 		for(int i=0; i<files.length; i++) {
 			ProcessArgument[] file = files[i];
 			String fileSourcePath = file[0].getSimpleValue();
@@ -67,7 +88,12 @@ public class AddFiles extends ProcessRunner {
 				} catch (IOException e) {
 					throw new ProcessFailureException(Messages.getString("AddFiles.3") + fileSourcePath); //$NON-NLS-1$
 				}
-				fileContents = ProcessHelper.getValueAfterExpandingMacros(fileContents, ProcessHelper.getReplaceKeys(fileContents), template.getValueStore());
+				if (startPattern != null && endPattern != null)
+					fileContents = ProcessHelper.getValueAfterExpandingMacros(fileContents, ProcessHelper.getReplaceKeys(fileContents, startPattern, endPattern), template.getValueStore(),
+							startPattern, endPattern);
+				else
+					fileContents = ProcessHelper.getValueAfterExpandingMacros(fileContents, ProcessHelper.getReplaceKeys(fileContents), template.getValueStore());
+					
 				contents = new ByteArrayInputStream(fileContents.getBytes());
 			} else {
 				try {

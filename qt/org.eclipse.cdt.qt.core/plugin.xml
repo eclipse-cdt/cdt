@@ -19,6 +19,9 @@
          <toolChain id="cdt.managedbuild.toolchain.gnu.base"/>
          <toolChain id="cdt.managedbuild.toolchain.gnu.macosx.base"/>
          <toolChain id="cdt.managedbuild.toolchain.gnu.solaris.base"/>
+         <toolChain
+               id="cdt.managedbuild.toolchain.llvm.clang.macosx.base">
+         </toolChain>
       </template>
    </extension>
 </plugin>

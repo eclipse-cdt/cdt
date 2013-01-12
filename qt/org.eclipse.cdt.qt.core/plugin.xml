@@ -24,4 +24,21 @@
          </toolChain>
       </template>
    </extension>
+   <extension
+         point="org.eclipse.core.contenttype.contentTypes">
+      <content-type
+            base-type="org.eclipse.core.runtime.text"
+            file-extensions="pro"
+            id="qtProjectFile"
+            name="%qtProjectFile.name"
+            priority="normal">
+      </content-type>
+      <content-type
+            base-type="org.eclipse.core.runtime.text"
+            file-extensions="qml"
+            id="qmlFile"
+            name="%qmlFile.name"
+            priority="normal">
+      </content-type>
+   </extension>
 </plugin>

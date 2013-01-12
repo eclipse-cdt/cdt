@@ -7004,4 +7004,23 @@ public class AST2TemplateTests extends AST2BaseTest {
 	public void testDependentExpressions_395243d() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	template <typename... Args>
+	//	struct contains_waldo;
+	//	template <>
+	//	struct contains_waldo<> {
+	//	    static const bool value = false;
+	//	};
+	//	template <typename First, typename... Rest>
+	//	struct contains_waldo<First, Rest...> {
+	//	    static const bool value = contains_waldo<Rest...>::value;
+	//	};
+	//	int main() {
+	//	    bool b1 = contains_waldo<int>::value;
+	//	    bool b2 = contains_waldo<int, int>::value;
+	//	    bool b2 = contains_waldo<int, int, int>::value;
+	//	}
+	public void testRecursiveVariadicTemplate_397828() throws Exception {
+		parseAndCheckBindings();
+	}
 }

@@ -290,6 +290,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
         fLexOptions.fSupportMinAndMax = configuration.supportMinAndMaxOperators();
         fLexOptions.fSupportSlashPercentComments= configuration.supportSlashPercentComments();
         fLexOptions.fSupportUTFLiterals = configuration.supportUTFLiterals();
+        fLexOptions.fSupportRawStringLiterals = configuration.supportRawStringLiterals();
         fLocationMap= new LocationMap(fLexOptions);
         fKeywords= new CharArrayIntMap(40, -1);
         fPPKeywords= new CharArrayIntMap(40, -1);

@@ -183,6 +183,7 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		detector.processLine("#define \t MACRO_1 VALUE");
 		detector.processLine("#define MACRO_2 \t VALUE");
 		detector.processLine("#define MACRO_3 VALUE \t");
+		detector.processLine("#define MACRO_4 VALUE + 1");
 		detector.shutdownForLanguage();
 		detector.shutdown();
 
@@ -191,6 +192,7 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		assertEquals(new CMacroEntry("MACRO_1", "VALUE", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY), entries.get(index++));
 		assertEquals(new CMacroEntry("MACRO_2", "VALUE", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY), entries.get(index++));
 		assertEquals(new CMacroEntry("MACRO_3", "VALUE", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY), entries.get(index++));
+		assertEquals(new CMacroEntry("MACRO_4", "VALUE + 1", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY), entries.get(index++));
 		assertEquals(index, entries.size());
 	}
 

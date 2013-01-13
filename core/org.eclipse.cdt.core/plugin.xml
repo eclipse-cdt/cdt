@@ -757,6 +757,20 @@
          <simple name="valueName"/>
          <simple name="appName"/>
       </processType>
+      <processType
+            name="AddFiles2"
+            processRunner="org.eclipse.cdt.core.templateengine.process.processes.AddFiles">
+         <simple name="projectName"/>
+         <simple name="startPattern"/>
+         <simple name="endPattern"/>
+         <complexArray name="files">
+            <baseType>
+               <simple name="source"/>
+               <simple name="target"/>
+               <simple name="replaceable"/>
+            </baseType>
+         </complexArray>
+      </processType>
    </extension>
    <extension
          point="org.eclipse.cdt.core.CProjectDescriptionStorage">

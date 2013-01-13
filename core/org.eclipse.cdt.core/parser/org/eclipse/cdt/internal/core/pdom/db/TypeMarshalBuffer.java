@@ -214,7 +214,7 @@ public final class TypeMarshalBuffer implements ITypeMarshalBuffer {
 			fPos--;
 			IType type = unmarshalType();
 			IType originalType = unmarshalType();
-			if (originalType == null)
+			if (originalType == null || originalType == UNSTORABLE_TYPE_PROBLEM)
 				originalType= type;
 			return new CPPTemplateTypeArgument(type, originalType);
 		}

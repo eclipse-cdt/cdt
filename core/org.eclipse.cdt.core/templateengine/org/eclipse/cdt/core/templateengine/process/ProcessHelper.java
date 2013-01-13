@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Symbian Software Limited and others.
+ * Copyright (c) 2007, 2013 Symbian Software Limited and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     Bala Torati (Symbian) - Initial API and implementation
  *     Mark Espiritu (VastSystems) - bug 215283
  *     Raphael Zulliger (Indel AG) - [367482] fixed resource leak
+ *     Doug Schaefer (QNX) - added different start and end patterns for macros
  *******************************************************************************/
 package org.eclipse.cdt.core.templateengine.process;
 
@@ -77,21 +78,35 @@ public class ProcessHelper {
      * @since 4.0
 	 */
 	public static Set<String> getReplaceKeys(String str) {
+		return getReplaceKeys(str, START_PATTERN, END_PATTERN);
+	}
+
+	/**
+	 * This method returns a vector of all replace marker strings. (e.g.,
+	 * $(item), vector contains 'item' as one item) is the end pattern.
+	 * 
+	 * @param str A given string possibly containing markers.
+	 * @param startPattern token to start macro replacement
+	 * @param endPattern token to end macro replacement
+	 * @return the set of names occurring within markers
+     * @since 5.5
+	 */
+	public static Set<String> getReplaceKeys(String str, String startPattern, String endPattern) {
 		Set<String> replaceStrings = new HashSet<String>();
 		int start= 0;
 		int end= 0;
-		while ((start = str.indexOf(START_PATTERN, start)) >= 0) {
-			end = str.indexOf(END_PATTERN, start);
+		while ((start = str.indexOf(startPattern, start)) >= 0) {
+			end = str.indexOf(endPattern, start);
 			if (end != -1) {
-				replaceStrings.add(str.substring(start + START_PATTERN.length(), end));
-				start = end + END_PATTERN.length();
+				replaceStrings.add(str.substring(start + startPattern.length(), end));
+				start = end + endPattern.length();
 			} else {
 				start++;
 			}
 		}
 		return replaceStrings;
 	}
-
+	
 	/**
 	 * This method takes a URL as parameter to read the contents, and to add
 	 * into a string buffer.
@@ -183,12 +198,24 @@ public class ProcessHelper {
      * 
      * @since 4.0
 	 */
-	public static String getValueAfterExpandingMacros(String string, Set<String> macros,
-			Map<String, String> valueStore) {
+	public static String getValueAfterExpandingMacros(String string, Set<String> macros, Map<String, String> valueStore) {
+		return getValueAfterExpandingMacros(string, macros, valueStore, START_PATTERN, END_PATTERN);
+	}
+
+	/**
+	 * @param string
+	 * @param macros
+	 * @param valueStore
+	 * @return the macro value after expanding the macros.
+     * 
+     * @since 5.5
+	 */
+	public static String getValueAfterExpandingMacros(String string, Set<String> macros, Map<String, String> valueStore,
+			String startPattern, String endPattern) {
 		for (String key : macros) {
 			String value = valueStore.get(key);
 			if (value != null) {
-				string = string.replace(START_PATTERN + key + END_PATTERN, value);
+				string = string.replace(startPattern + key + endPattern, value);
 			}
 		}
 		return string;
@@ -203,4 +230,5 @@ public class ProcessHelper {
 	public static String getReplaceMarker(String macro) {
 		return START_PATTERN + macro + END_PATTERN;
 	}
+	
 }

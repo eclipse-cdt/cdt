@@ -624,7 +624,7 @@
       <provider
             class="org.eclipse.cdt.managedbuilder.internal.language.settings.providers.GCCBuiltinSpecsDetectorMinGW"
             id="org.eclipse.cdt.managedbuilder.core.GCCBuiltinSpecsDetectorMinGW"
-            name="CDT GCC Builtin Compiler Settings MinGW"
+            name="%GCCBuildinCompilerSettingsMinGW.name"
             parameter="${COMMAND} -E -P -v -dD ${INPUTS}">
          <language-scope id="org.eclipse.cdt.core.gcc"/>
          <language-scope id="org.eclipse.cdt.core.g++"/>

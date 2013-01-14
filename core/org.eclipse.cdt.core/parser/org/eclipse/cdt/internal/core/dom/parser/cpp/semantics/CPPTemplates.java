@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -81,6 +81,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
@@ -1958,13 +1959,34 @@ public class CPPTemplates {
 		return arg;
 	}
 
+	private static ICPPFunctionType getFunctionTypeIgnoringParametersWithDefaults(ICPPFunction function) {
+		ICPPParameter[] parameters = function.getParameters();
+		IType[] parameterTypes = new IType[parameters.length];
+		int i;
+		for (i = 0; i < parameters.length; ++i) {
+			ICPPParameter parameter = parameters[i];
+			if (!parameter.hasDefaultValue()) {
+				parameterTypes[i] = parameter.getType();
+			} else {
+				break;
+			}
+		}
+		ICPPFunctionType originalType = function.getType();
+		if (i == parameters.length)  // no parameters with default arguments
+			return originalType;
+		return new CPPFunctionType(originalType.getReturnType(), ArrayUtil.trim(parameterTypes),
+				originalType.isConst(), originalType.isVolatile(), originalType.takesVarArgs());
+	}
+
 	private static int compareSpecialization(ICPPFunctionTemplate f1, ICPPFunctionTemplate f2, TypeSelection mode, IASTNode point) throws DOMException {
 		ICPPFunction transF1 = transferFunctionTemplate(f1, point);
 		if (transF1 == null)
 			return -1;
 
 		final ICPPFunctionType ft2 = f2.getType();
-		final ICPPFunctionType transFt1 = transF1.getType();
+		// Ignore parameters with default arguments in the transformed function template
+		// as per [temp.func.order] p5.
+		final ICPPFunctionType transFt1 = getFunctionTypeIgnoringParametersWithDefaults(transF1);
 		IType[] pars;
 		IType[] args;
 		switch(mode) {

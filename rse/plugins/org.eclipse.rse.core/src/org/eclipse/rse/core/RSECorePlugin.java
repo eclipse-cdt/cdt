@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2011 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2013 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -25,6 +25,7 @@
  * Martin Oberhuber (Wind River) - [190231] Prepare API for UI/Non-UI Splitting
  * David Dykstal (IBM) = [226958] add status values to waitForInitCompletion(phase)
  * David McKnight (IBM) - [354874] persistence manager hits a NPE during shutdown
+ * David Dykstal (IBM) - [397995] RSEInitJob runs too early
  ********************************************************************************/
 package org.eclipse.rse.core;
 
@@ -307,10 +308,6 @@ public class RSECorePlugin extends Plugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		registerKeystoreProviders();
-		/*
-		RSEInitJob job = RSEInitJob.getInstance();
-		job.schedule();
-		*/
 	}
 
 	/*

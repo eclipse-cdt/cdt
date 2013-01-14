@@ -431,7 +431,7 @@ public class TemplateArgumentDeduction {
 					deduct.incPackOffset();
 				} else  {
 					if (j >= fnParCount) 
-						return result;
+						return -1;
 					
 					par= fnPars[j];
 					if (par instanceof ICPPParameterPackType) {

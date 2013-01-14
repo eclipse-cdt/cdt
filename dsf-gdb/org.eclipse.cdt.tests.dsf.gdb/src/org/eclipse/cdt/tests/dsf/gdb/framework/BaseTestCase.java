@@ -21,6 +21,8 @@ import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.datamodel.IDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.ISuspendedDMEvent;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
+import org.eclipse.cdt.dsf.gdb.internal.GdbDebugOptions;
+import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
 import org.eclipse.cdt.dsf.mi.service.command.events.IMIDMEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
@@ -218,10 +220,10 @@ public class BaseTestCase {
  	protected void doLaunch() throws Exception {
  		boolean remote = launchAttributes.get(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE).equals(IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE);
  		
-    	System.out.println("====================================================================================================");
-		System.out.println(String.format("Running test: %s using GDB: %s remote %s", 
-				                         testName.getMethodName(), launchAttributes.get(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME), remote ? "on" : "off"));
-    	System.out.println("====================================================================================================");
+    	if(GdbDebugOptions.DEBUG) GdbDebugOptions.trace("===============================================================================================\n");
+		System.out.println(String.format("%s \"%s\" launching %s %s", 
+				                         GdbPlugin.getDebugTime(), testName.getMethodName(), launchAttributes.get(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME), remote ? "with gdbserver" : ""));
+		if(GdbDebugOptions.DEBUG) GdbDebugOptions.trace("===============================================================================================\n");
 		
  		boolean postMortemLaunch = launchAttributes.get(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE)
 	                                               .equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_CORE);
@@ -320,7 +322,7 @@ public class BaseTestCase {
                     BufferedReader reader = new BufferedReader(r);
                     String line;
                     while ((line = reader.readLine()) != null) {
-                        System.out.println(line);
+                    	if(GdbDebugOptions.DEBUG) GdbDebugOptions.trace(line + "\n");
                         line = line.trim();
                         if (line.startsWith("Listening on port")) {
                             break;
@@ -351,8 +353,15 @@ public class BaseTestCase {
  	public static void setGdbProgramNamesLaunchAttributes(String version) {
 		// See bugzilla 303811 for why we have to append ".exe" on Windows
  		boolean isWindows = Platform.getOS().equals(Platform.OS_WIN32);
- 		setGlobalLaunchAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb." + version + (isWindows ? ".exe" : ""));
- 		setGlobalLaunchAttribute(ATTR_DEBUG_SERVER_NAME, "gdbserver." + version + (isWindows ? ".exe" : ""));
+ 		String gdbPath = System.getProperty("cdt.tests.dsf.gdb.path");
+ 		String debugName = "gdb." + version + (isWindows ? ".exe" : "");
+ 		String debugServerName = "gdbserver." + version + (isWindows ? ".exe" : "");
+ 		if (gdbPath != null) {
+ 			debugName = gdbPath + "/" + debugName;
+ 			debugServerName = gdbPath + "/" + debugServerName;
+ 		}
+ 		setGlobalLaunchAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME, debugName);
+ 		setGlobalLaunchAttribute(ATTR_DEBUG_SERVER_NAME, debugServerName);
  	}
 
  	protected void setGdbVersion() {

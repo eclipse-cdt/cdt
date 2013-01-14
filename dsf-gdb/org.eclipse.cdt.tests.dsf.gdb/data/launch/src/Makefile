@@ -1,6 +1,6 @@
 src = $(wildcard *.cc *.c)
 destDir = ../bin
-GCCFLAGS = -gdwarf-2 -pthread -m32
+GCCFLAGS = -gdwarf-2 -pthread
 
 all:
 	@mkdir -p $(destDir)

@@ -4405,6 +4405,17 @@ public class AST2TemplateTests extends AST2TestBase {
 		parseAndCheckBindings();
 	}
 
+	//	template <typename A>
+	//	void foo(A);
+	//	template <typename A, typename... B>
+	//	void foo(A, B...);
+	//	int main() {
+	//	    foo(0);
+	//	}
+	public void testFunctionTemplatePartialOrdering_388805() throws Exception {
+		parseAndCheckBindings();
+	}
+
 	//	template<typename T> class CT {};
 	//	template<int I> class CTI {};
 	//

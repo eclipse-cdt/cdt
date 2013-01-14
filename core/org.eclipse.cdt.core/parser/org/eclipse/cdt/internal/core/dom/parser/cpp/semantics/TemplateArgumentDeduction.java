@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Wind River Systems, Inc. and others.
+ * Copyright (c) 2009, 2013 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
+ *     Nathan Ridge
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
@@ -431,7 +432,7 @@ public class TemplateArgumentDeduction {
 					deduct.incPackOffset();
 				} else  {
 					if (j >= fnParCount) 
-						return result;
+						return -1;
 					
 					par= fnPars[j];
 					if (par instanceof ICPPParameterPackType) {

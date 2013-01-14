@@ -73,8 +73,8 @@ unsigned int __stdcall testTracepoints(void *threadid)
 void *testTracepoints(void *threadid)
 #endif
 {
-    int tid = (int)threadid;
-    printf("Hello World! It's me, thread #%d!\n", tid);
+    long tid = (long)threadid;
+    printf("Hello World! It's me, thread #%ld!\n", tid);
 
     int lIntVar = 12345;
     double lDoubleVar = 12345.12345;

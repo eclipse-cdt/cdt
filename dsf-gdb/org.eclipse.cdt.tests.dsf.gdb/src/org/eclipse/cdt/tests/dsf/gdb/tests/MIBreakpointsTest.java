@@ -37,7 +37,7 @@ import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMContex
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMData;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
-import org.eclipse.cdt.dsf.internal.DsfPlugin;
+import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpointDMData;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpoints;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpoints.MIBreakpointDMContext;
@@ -240,7 +240,7 @@ public class MIBreakpointsTest extends BaseTestCase {
   	@DsfServiceEventHandler
 	public void eventDispatched(IBreakpointsAddedEvent e) {
   		synchronized (lock) {
-  			System.out.println(DsfPlugin.getDebugTime() + " Got bp added event");
+  			GdbPlugin.debug(GdbPlugin.getDebugTime() + " Got bp added event\n");
   			fBreakpointEvents[BP_ADDED]++;
   			fBreakpointEventCount++;
   			fBreakpointRef = ((MIBreakpointDMContext) e.getBreakpoints()[0]).getReference();
@@ -251,7 +251,7 @@ public class MIBreakpointsTest extends BaseTestCase {
   	@DsfServiceEventHandler
 	public void eventDispatched(IBreakpointsUpdatedEvent e) {
   		synchronized (lock) {
-  			System.out.println(DsfPlugin.getDebugTime() + " Got bp updated event");
+  			GdbPlugin.debug(GdbPlugin.getDebugTime() + " Got bp updated event\n");
   			fBreakpointEvents[BP_UPDATED]++;
   			fBreakpointEventCount++;
   			fBreakpointRef = ((MIBreakpointDMContext) e.getBreakpoints()[0]).getReference();
@@ -262,7 +262,7 @@ public class MIBreakpointsTest extends BaseTestCase {
   	@DsfServiceEventHandler
 	public void eventDispatched(IBreakpointsRemovedEvent e) {
   		synchronized (lock) {
-  			System.out.println(DsfPlugin.getDebugTime() + " Got bp removed event");
+  			GdbPlugin.debug(GdbPlugin.getDebugTime() + " Got bp removed event\n");
   			fBreakpointEvents[BP_REMOVED]++;
   			fBreakpointEventCount++;
   			fBreakpointRef = ((MIBreakpointDMContext) e.getBreakpoints()[0]).getReference();
@@ -273,7 +273,7 @@ public class MIBreakpointsTest extends BaseTestCase {
   	@DsfServiceEventHandler
 	public void eventDispatched(MIBreakpointHitEvent e) {
   		synchronized (lock) {
-  			System.out.println(DsfPlugin.getDebugTime() + " Got bp hit event");
+  			GdbPlugin.debug(GdbPlugin.getDebugTime() + " Got bp hit event\n");
   			fBreakpointEvents[BP_HIT]++;
   			fBreakpointEventCount++;
   			fBreakpointRef = e.getNumber();
@@ -284,7 +284,7 @@ public class MIBreakpointsTest extends BaseTestCase {
   	@DsfServiceEventHandler
 	public void eventDispatched(MIWatchpointTriggerEvent e) {
   		synchronized (lock) {
-  			System.out.println(DsfPlugin.getDebugTime() + " Got wp hit event");
+  			GdbPlugin.debug(GdbPlugin.getDebugTime() + " Got wp hit event\n");
   			fBreakpointEvents[WP_HIT]++;
   			fBreakpointEventCount++;
   			fBreakpointRef = e.getNumber();
@@ -295,7 +295,7 @@ public class MIBreakpointsTest extends BaseTestCase {
   	@DsfServiceEventHandler
 	public void eventDispatched(MIWatchpointScopeEvent e) {
   		synchronized (lock) {
-  			System.out.println(DsfPlugin.getDebugTime() + " Got wp scope event");
+  			GdbPlugin.debug(GdbPlugin.getDebugTime() + " Got wp scope event\n");
   			fBreakpointEvents[WP_OOS]++;
   			fBreakpointEventCount++;
   			fBreakpointRef = e.getNumber();

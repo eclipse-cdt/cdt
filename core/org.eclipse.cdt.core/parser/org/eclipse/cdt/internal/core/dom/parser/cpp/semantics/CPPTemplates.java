@@ -2118,8 +2118,6 @@ public class CPPTemplates {
 		final ICPPTemplateParameter[] tpars2 = f2.getTemplateParameters();
 		final ICPPTemplateArgument[] targs1 = f1.getTemplateArguments();
 		final ICPPTemplateArgument[] targs2 = f2.getTemplateArguments();
-		if (targs1.length != targs2.length)
-			return false;
 
 		// Transfer arguments of specialization 1
 		final int tpars1Len = tpars1.length;
@@ -2129,22 +2127,18 @@ public class CPPTemplates {
 			final ICPPTemplateParameter param = tpars1[i];
 			final ICPPTemplateArgument arg = uniqueArg(param);
 			args[i]= arg;
-			transferMap.put(param, arg);
+			if (param.isParameterPack()) {
+				transferMap.put(param, new ICPPTemplateArgument[]{ arg });
+			} else {
+				transferMap.put(param, arg);
+			}
 		}
 		final ICPPTemplateArgument[] transferredArgs1 = instantiateArguments(targs1, transferMap, -1, null, point, false);
 
 		// Deduce arguments for specialization 2
 		final CPPTemplateParameterMap deductionMap= new CPPTemplateParameterMap(2);
-		if (!TemplateArgumentDeduction.fromTemplateArguments(tpars2, targs2, transferredArgs1, deductionMap, point))
-			return false;
+		return TemplateArgumentDeduction.fromTemplateArguments(tpars2, targs2, transferredArgs1, deductionMap, point);
 
-		// Compare
-		for (int i = 0; i < targs2.length; i++) {
-			ICPPTemplateArgument transferredArg2= instantiateArgument(targs2[i], deductionMap, -1, null, point);
-			if (!transferredArg2.isSameValue(transferredArgs1[i]))
-				return false;
-		}
-		return true;
 	}
 
 	static boolean isValidType(IType t) {

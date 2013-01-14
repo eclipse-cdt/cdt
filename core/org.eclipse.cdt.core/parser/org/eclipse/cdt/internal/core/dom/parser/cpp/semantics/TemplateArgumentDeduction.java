@@ -957,7 +957,7 @@ public class TemplateArgumentDeduction {
 				return false;
 			return fDeducedArgs.putPackElement(parID, fPackOffset, arg, fPackSize);
 		}
-		if (SemanticUtil.containsUniqueTypeForParameterPack(arg.getTypeValue()))
+		if (SemanticUtil.isUniqueTypeForParameterPack(arg.getTypeValue()))
 			return false;
 		fDeducedArgs.put(parID, arg);
 		return true;

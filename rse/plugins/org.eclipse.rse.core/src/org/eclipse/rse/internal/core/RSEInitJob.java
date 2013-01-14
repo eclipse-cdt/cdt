@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2008, 2013 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,6 +11,7 @@
  * David Dykstal (IBM) = [226958] add status values to waitForInitCompletion(phase)
  * David Dykstal (IBM) - [235581] Initialize RSE should be a daemon job
  * David McKnight (IBM)  - [283033] remoteFileTypes extension point should include "xml" type
+ * David Dykstal (IBM) - [397995] RSEInitJob runs too early
  ********************************************************************************/
 package org.eclipse.rse.internal.core;
 
@@ -230,10 +231,10 @@ public final class RSEInitJob extends Job {
 						   return ResourcesPlugin.getEncoding();
 					   }
 				});
-*/
+		 */
 		
 		initializerPhase.done(result);
-		// finish up - propogate cancel if necessary
+		// finish up - propagate cancel if necessary
 		if (monitor.isCanceled()) {
 			result = Status.CANCEL_STATUS;
 		} else {

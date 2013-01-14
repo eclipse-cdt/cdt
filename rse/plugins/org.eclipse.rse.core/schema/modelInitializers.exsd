@@ -2,19 +2,19 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.rse.core" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appinfo>
+      <appInfo>
          <meta.schema plugin="org.eclipse.rse.core" id="modelInitializers" name="Model Initializers"/>
-      </appinfo>
+      </appInfo>
       <documentation>
-         A model initializer is used to create supplemental connections and filter pools after the RSE model has been restored from its persistent form. The base RSE uses this extension point to supply the &quot;Local&quot; connection if one has not already been created for this workspace. Other extenders of RSE may use this to augment the mode in other ways. An initializer is run at the end of the initialization job begun by RSE when it is activated.
+         A model initializer is used to create supplemental connections and filter pools after the RSE model has been restored from its persistent form. The base RSE uses this extension point to supply the &quot;Local&quot; connection if one has not already been created for this workspace. Other extenders of RSE may use this to augment the model in other ways. An initializer is run at the end of the initialization job begun by RSE when it is activated.
       </documentation>
    </annotation>
 
    <element name="extension">
       <annotation>
-         <appinfo>
+         <appInfo>
             <meta.element />
-         </appinfo>
+         </appInfo>
       </annotation>
       <complexType>
          <sequence>
@@ -39,9 +39,9 @@
                <documentation>
                   
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute translatable="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -54,9 +54,9 @@
                <documentation>
                   A class that extends &lt;b&gt;org.eclipse.rse.core.IRSEModelInitializer&lt;/b&gt;.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="java" basedOn=":org.eclipse.rse.core.IRSEModelInitializer"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="type">
@@ -78,18 +78,18 @@
    </element>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="since"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          RSE 3.0
       </documentation>
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="examples"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          An example taken from the plug-in org.eclipse.rse.ui:
 &lt;pre&gt;
@@ -103,9 +103,9 @@
 
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="copyright"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          Copyright (c) 2008 IBM Corporation and others. All rights reserved.
 This program and the accompanying materials are made available under the terms

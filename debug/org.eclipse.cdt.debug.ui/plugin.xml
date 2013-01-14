@@ -128,17 +128,17 @@
 	<!-- Adapters for contextual launch -->
 	<extension point="org.eclipse.core.runtime.adapters">
          <factory 
-            class="" 
+            class="org.eclipse.cdt.debug.internal.ui.launch.InvalidLaunchableAdapterFactory" 
             adaptableType="org.eclipse.cdt.core.model.IBinary">
             <adapter type="org.eclipse.debug.ui.actions.ILaunchable"/>
          </factory>
          <factory 
-            class="" 
+            class="org.eclipse.cdt.debug.internal.ui.launch.InvalidLaunchableAdapterFactory"
             adaptableType="org.eclipse.core.resources.IResource">
             <adapter type="org.eclipse.debug.ui.actions.ILaunchable"/>
          </factory>         
          <factory 
-            class="" 
+            class="org.eclipse.cdt.debug.internal.ui.launch.InvalidLaunchableAdapterFactory"
             adaptableType="org.eclipse.cdt.core.model.ICProject">
             <adapter type="org.eclipse.debug.ui.actions.ILaunchable"/>
          </factory>         

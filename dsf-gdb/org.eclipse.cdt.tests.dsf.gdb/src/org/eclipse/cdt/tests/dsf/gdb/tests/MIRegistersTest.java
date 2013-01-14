@@ -46,6 +46,7 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
 import org.eclipse.cdt.dsf.mi.service.MIProcesses;
+import org.eclipse.cdt.dsf.mi.service.MIRegisters.MIRegisterDMC;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
@@ -189,6 +190,12 @@ public class MIRegistersTest extends BaseTestCase {
    		                protected void handleCompleted() {
    		                    if (isSuccess()) {
    		                        fWait.setReturnInfo(getData());
+   		                        // TODO Remove
+   		                        for (IRegisterDMContext dmcr : getData()) {
+   		                        	System.out.print(((MIRegisterDMC)dmcr).getName()+",");
+   		                        }
+   		                        System.out.println();
+   		                        // TODO Remove
    		                    }
 
    		                    fWait.waitFinished(getStatus());

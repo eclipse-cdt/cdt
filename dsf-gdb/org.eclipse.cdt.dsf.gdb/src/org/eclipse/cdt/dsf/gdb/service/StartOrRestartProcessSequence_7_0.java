@@ -296,11 +296,9 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 	 */
 	@Execute
 	public void stepCreateConsole(final RequestMonitor rm) {
-    	if (fBackend.getSessionType() == SessionType.REMOTE && !fBackend.getIsAttachSession()) {
-    		// Remote non-attach sessions don't support multi-process and therefore will not
-    		// start new processes.  Those sessions will only start the one process, which should
-    		// not have a console, because it's output is handled by GDB server.  Therefore,
-    		// no need to create an inferior process and add it to the launch
+    	if (fBackend.getSessionType() == SessionType.REMOTE) {
+    		// The program output for a remote session is handled by gdbserver. Therefore,
+    		// no need to create an inferior process and add it to the launch.
     		rm.done();
     		return;
     	}

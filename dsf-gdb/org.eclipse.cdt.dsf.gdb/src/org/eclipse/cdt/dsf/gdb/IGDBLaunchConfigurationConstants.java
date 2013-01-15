@@ -115,6 +115,13 @@ public class IGDBLaunchConfigurationConstants {
 	public static final String ATTR_DEBUGGER_TRACEPOINT_MODE = GdbPlugin.PLUGIN_ID + ".TRACEPOINT_MODE"; //$NON-NLS-1$
 	
 	/**
+	 * Launch configuration attribute key. The value is a String specifying the path of the executable 
+	 * on the target.
+	 * @since 4.2
+	 */
+	public static final String ATTR_DEBUGGER_REMOTE_BINARY = GdbPlugin.PLUGIN_ID + ".REMOTE_BINARY"; //$NON-NLS-1$
+	
+	/**
 	 * Launch configuration attribute value. The key is ATTR_DEBUG_NAME.
 	 */
 	public static final String DEBUGGER_DEBUG_NAME_DEFAULT = "gdb"; //$NON-NLS-1$

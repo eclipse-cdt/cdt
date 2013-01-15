@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2013 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
+ *     Martin Oberhuber (Wind River) - bug 398195: consider external API in IB
  *******************************************************************************/ 
 
 package org.eclipse.cdt.internal.ui.includebrowser;
@@ -21,6 +22,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexInclude;
+import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
@@ -70,7 +72,8 @@ public class IncludeBrowserUI {
 	private static ITranslationUnit findTargetTranslationUnit(IInclude input) throws CoreException, InterruptedException {
 		ICProject project= input.getCProject();
 		if (project != null) {
-			IIndex index= CCorePlugin.getIndexManager().getIndex(project);
+			IIndex index= CCorePlugin.getIndexManager().getIndex(project, 
+					IIndexManager.ADD_EXTENSION_FRAGMENTS_INCLUDE_BROWSER);
 			index.acquireReadLock();
 			try {
 				IIndexInclude include= IndexUI.elementToInclude(index, input);

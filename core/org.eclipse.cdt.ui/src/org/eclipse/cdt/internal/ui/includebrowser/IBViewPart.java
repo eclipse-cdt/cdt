@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2013 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Ed Swartz (Nokia)
+ *     Martin Oberhuber (Wind River) - bug 398195: consider external API in IB 
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.ui.includebrowser;
 
@@ -81,6 +82,7 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
+import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -214,7 +216,8 @@ public class IBViewPart extends ViewPart implements IShowInSource, IShowInTarget
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					final ICProject[] projects= CoreModel.getDefault().getCModel().getCProjects();
-					IIndex index= CCorePlugin.getIndexManager().getIndex(projects);
+					IIndex index= CCorePlugin.getIndexManager().getIndex(projects, 
+							IIndexManager.ADD_EXTENSION_FRAGMENTS_INCLUDE_BROWSER);
 					index.acquireReadLock();
 					try {
 						if (!IndexUI.isIndexed(index, input)) {

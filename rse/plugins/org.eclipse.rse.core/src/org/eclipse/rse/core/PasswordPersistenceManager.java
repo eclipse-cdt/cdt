@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2012 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2013 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -20,6 +20,7 @@
  * Martin Oberhuber (Wind River) - [cleanup] Add API "since" Javadoc tags
  * David Dykstal (IBM) - [210474] Deny save password function missing
  * David Dykstal (IBM) - [225320] Use equinox secure storage for passwords
+ * David Dykstal (IBM) - [379787] Fix secure storage usage in org.eclipse.rse.tests
  ********************************************************************************/
 
 package org.eclipse.rse.core;
@@ -48,6 +49,13 @@ import org.osgi.framework.Bundle;
 /**
  * PasswordPersistenceManager manages the saving and retrieving of user IDs /
  * passwords to Equinox secure storage for registered system types.
+ * <p>
+ * A PasswordPersistenceManager is sensitive to the "rse.enableSecureStoreAccess" property.
+ * If absent it defaults to <code>true</code>.
+ * If present then the value must be <code>true</code> to enable access to the secure store.
+ * The following code disables access to the secure store.
+ * <p>
+ * <code>System.setProperty("rse.enableSecureStoreAccess", "false");</code> 
  * 
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients. Use
@@ -382,7 +390,8 @@ public class PasswordPersistenceManager {
 
 	/**
 	 * Returns the preferences node that matches the system type.
-	 * It will not return null but will create the node if it does not exist.
+	 * It will only return null if secure store access is disallowed.
+	 * If secure store access is allowed it will create the node if it does not exist.
 	 * If the node does not previous exist then an attempt will be made
 	 * to migrate the values from the old map form to this newly created node
 	 * of the secure preferences tree.
@@ -390,14 +399,17 @@ public class PasswordPersistenceManager {
 	 * @return the matching secure preferences node. 
 	 */
 	private ISecurePreferences getNode(IRSESystemType systemType) {
-		String id = systemType.getId();
-		ISecurePreferences preferences = SecurePreferencesFactory.getDefault();
-		ISecurePreferences rseNode = preferences.node("org.eclipse.rse.core.security"); //$NON-NLS-1$
 		ISecurePreferences systemTypeNode = null;
-		if (!rseNode.nodeExists(id)) {
-			migrateMap(rseNode, id);
+		String enableSecureStoreAccess = System.getProperty("rse.enableSecureStoreAccess", "true");  //$NON-NLS-1$//$NON-NLS-2$
+		if (enableSecureStoreAccess.equals("true")) { //$NON-NLS-1$
+			String id = systemType.getId();
+			ISecurePreferences preferences = SecurePreferencesFactory.getDefault();
+			ISecurePreferences rseNode = preferences.node("org.eclipse.rse.core.security"); //$NON-NLS-1$
+			if (!rseNode.nodeExists(id)) {
+				migrateMap(rseNode, id);
+			}
+			systemTypeNode = rseNode.node(id);
 		}
-		systemTypeNode = rseNode.node(id);
 		return systemTypeNode;
 	}
 
@@ -473,20 +485,24 @@ public class PasswordPersistenceManager {
 	 * @return the number of passwords removed.
 	 */
 	private int removePassword(IRSESystemType systemType, String hostName, String userId) {
+		int result = 0;
 		ISecurePreferences passwords = getNode(systemType);
-		boolean respectCase = isUserIDCaseSensitive(systemType);
-		String keys[] = getMatchingKeys(passwords.keys(), hostName, userId, respectCase, false);
-		if (keys.length == 0) {
-			keys = getMatchingKeys(passwords.keys(), hostName, userId, respectCase, true);
+		if (passwords != null) {
+			boolean respectCase = isUserIDCaseSensitive(systemType);
+			String keys[] = getMatchingKeys(passwords.keys(), hostName, userId, respectCase, false);
+			if (keys.length == 0) {
+				keys = getMatchingKeys(passwords.keys(), hostName, userId, respectCase, true);
+			}
+			for (int i = 0; i < keys.length; i++) {
+				String key = keys[i];
+				basicRemove(passwords, key);
+			}
+			if (keys.length > 0) {
+				basicSave(passwords);
+			}
+			result = keys.length;
 		}
-		for (int i = 0; i < keys.length; i++) {
-			String key = keys[i];
-			basicRemove(passwords, key);
-		}
-		if (keys.length > 0) {
-			basicSave(passwords);
-		}
-		return keys.length;
+		return result;
 	}
 	
 	/**
@@ -502,14 +518,16 @@ public class PasswordPersistenceManager {
 	private String findPassword(IRSESystemType systemType, String hostName, String userId) {
 		String password = null;
 		ISecurePreferences passwords = getNode(systemType);
-		boolean respectCase = isUserIDCaseSensitive(systemType);
-		String keys[] = getMatchingKeys(passwords.keys(), hostName, userId, respectCase, false);
-		if (keys.length == 0) {
-			keys = getMatchingKeys(passwords.keys(), hostName, userId, respectCase, true);
-		}
-		if (keys.length > 0) {
-			String key = keys[0];
-			password = basicGet(passwords, key);
+		if (passwords != null) {
+			boolean respectCase = isUserIDCaseSensitive(systemType);
+			String keys[] = getMatchingKeys(passwords.keys(), hostName, userId, respectCase, false);
+			if (keys.length == 0) {
+				keys = getMatchingKeys(passwords.keys(), hostName, userId, respectCase, true);
+			}
+			if (keys.length > 0) {
+				String key = keys[0];
+				password = basicGet(passwords, key);
+			}
 		}
 		return password;
 	}
@@ -522,12 +540,18 @@ public class PasswordPersistenceManager {
 	 * @param hostName the name of the host we are examining for a password.
 	 * @param userId the user id to find passwords for.
 	 * @param password the password to save for this entry.
+	 * @return RC_OK if the password was updated, RC_DENIED if the password was not updated.
 	 */
-	private void updatePassword(IRSESystemType systemType, String hostName, String userId, String password) {
+	private int updatePassword(IRSESystemType systemType, String hostName, String userId, String password) {
+		int result = RC_DENIED;
 		ISecurePreferences passwords = getNode(systemType);
-		String key = getKey(hostName, userId);
-		basicPut(passwords, key, password);
-		basicSave(passwords);
+		if (passwords != null) {
+			String key = getKey(hostName, userId);
+			basicPut(passwords, key, password);
+			basicSave(passwords);
+			result = RC_OK;
+		}
+		return result;
 	}
 	
 	/**
@@ -551,8 +575,9 @@ public class PasswordPersistenceManager {
 	 * @param info The signon information to store
 	 * @param overwrite Whether to overwrite any existing entry
 	 * @return
-	 * 	RC_OK if the password was successfully stored
-	 *  RC_ALREADY_EXISTS if the password already exists and overwrite was false
+	 * RC_OK if the password was successfully stored
+	 * RC_ALREADY_EXISTS if the password already exists and overwrite was false
+	 * RC_DENIED if passwords may not be saved for this system type and host
 	 */
 	public int add(SystemSignonInformation info, boolean overwrite) {
 		return add(info, overwrite, false);
@@ -587,7 +612,7 @@ public class PasswordPersistenceManager {
 			}
 			String oldPassword = findPassword(systemType, hostName, userId);
 			if (oldPassword == null || (overwrite && !newPassword.equals(oldPassword))) {
-				updatePassword(systemType, hostName, userId, newPassword);
+				result = updatePassword(systemType, hostName, userId, newPassword);
 			} else if (oldPassword != null) {
 				result = RC_ALREADY_EXISTS;
 			}
@@ -629,7 +654,7 @@ public class PasswordPersistenceManager {
 	 * @param systemType the IRSESystemType instance to find a password for.
 	 * @param hostName the name of the host we are examining for a password.
 	 * @param userId the user id to find passwords for.
-	 * @return the {@link SystemSignonInformation} for the specified criteria.
+	 * @return the {@link SystemSignonInformation} for the specified criteria or null if no such password can be found.
 	 */
 	public SystemSignonInformation find(IRSESystemType systemType, String hostName, String userId) {
 		return find(systemType, hostName, userId, true);
@@ -644,7 +669,7 @@ public class PasswordPersistenceManager {
 	 * @param hostName the name of the host we are examining for a password.
 	 * @param userId the user id to find passwords for.
 	 * @param checkDefault true if the default system type should be checked if the specified system type is not found
-	 * @return the {@link SystemSignonInformation} for the specified criteria.
+	 * @return the {@link SystemSignonInformation} for the specified criteria or null if no such password can be found.
 	 */
 	public SystemSignonInformation find(IRSESystemType systemType, String hostName, String userId, boolean checkDefault) {
 		SystemSignonInformation result = null;
@@ -729,13 +754,15 @@ public class PasswordPersistenceManager {
 		for (int i = 0; i < systemTypes.length; i++) {
 			IRSESystemType systemType = systemTypes[i];
 			ISecurePreferences node = getNode(systemType);
-			String[] keys = node.keys();
-			for (int j = 0; j < keys.length; j++) {
-				String key = keys[j];
-				String hostName = getHostNameFromKey(key);
-				String userId = getUserIdFromKey(key);
-				SystemSignonInformation info = new SystemSignonInformation(hostName, userId, systemType);
-				savedUserIDs.add(info);
+			if (node != null) {
+				String[] keys = node.keys();
+				for (int j = 0; j < keys.length; j++) {
+					String key = keys[j];
+					String hostName = getHostNameFromKey(key);
+					String userId = getUserIdFromKey(key);
+					SystemSignonInformation info = new SystemSignonInformation(hostName, userId, systemType);
+					savedUserIDs.add(info);
+				}
 			}
 		}
 		return savedUserIDs;

@@ -752,7 +752,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	 *  E L E M E N T   A T T R I B U T E   R E A D E R S   A N D   W R I T E R S
 	 */
 	
-	/* (non-Javadoc)
+	/**
 	 * Initialize the configuration information from an element in the 
 	 * manifest file or provided by a dynamicElementProvider
 	 * 
@@ -803,7 +803,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
         	isTest = Boolean.valueOf(tmp).booleanValue();
 	}
 	
-	/* (non-Javadoc)
+	/**
 	 * Initialize the configuration information from the XML element 
 	 * specified in the argument
 	 * 
@@ -874,8 +874,8 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		if (element.getAttribute(CLEAN_COMMAND) != null) {
 			cleanCommand = SafeStringInterner.safeIntern(element.getAttribute(CLEAN_COMMAND));
 		}
-               
-        // Get the pre-build and post-build commands
+
+		// Get the pre-build and post-build commands
 		if (element.getAttribute(PREBUILD_STEP) != null) {
 			prebuildStep = SafeStringInterner.safeIntern(element.getAttribute(PREBUILD_STEP));
 		}
@@ -891,7 +891,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 
 		if (element.getAttribute(POSTANNOUNCEBUILD_STEP) != null) {
 			postannouncebuildStep = SafeStringInterner.safeIntern(element.getAttribute(POSTANNOUNCEBUILD_STEP));
-		}               
+		}
 	}
 
 	/**
@@ -1568,7 +1568,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
     /* (non-Javadoc) 
      * @see org.eclipse.cdt.core.build.managed.IConfiguration#setPrebuildStep(java.lang.String) 
      */ 
-    public void setPrebuildStep(String step) { 
+	public void setPrebuildStep(String step) { 
         if (step == null && prebuildStep == null) return; 
         if (prebuildStep == null || step == null || !prebuildStep.equals(step)) { 
             prebuildStep = step; 
@@ -1577,11 +1577,10 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
         } 
     } 
 	
- 
     /* (non-Javadoc) 
      * @see org.eclipse.cdt.core.build.managed.IConfiguration#setPostbuildStep(java.lang.String) 
      */ 
-    public void setPostbuildStep(String step) { 
+	public void setPostbuildStep(String step) { 
         if (step == null && postbuildStep == null) return; 
         if (postbuildStep == null || step == null || !postbuildStep.equals(step)) { 
             postbuildStep = step; 
@@ -1593,7 +1592,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
     /* (non-Javadoc) 
      * @see org.eclipse.cdt.core.build.managed.IConfiguration#setPreannouncebuildStep(java.lang.String) 
      */ 
-    public void setPreannouncebuildStep(String announceStep) { 
+	public void setPreannouncebuildStep(String announceStep) { 
         if (announceStep == null && preannouncebuildStep == null) return; 
         if (preannouncebuildStep == null || announceStep == null || !preannouncebuildStep.equals(announceStep)) {
             preannouncebuildStep = announceStep; 
@@ -1605,7 +1604,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
     /* (non-Javadoc) 
      * @see org.eclipse.cdt.core.build.managed.IConfiguration#setPostannouncebuildStep(java.lang.String) 
      */ 
-    public void setPostannouncebuildStep(String announceStep) { 
+	public void setPostannouncebuildStep(String announceStep) { 
         if (announceStep == null && postannouncebuildStep == null) return; 
         if (postannouncebuildStep == null || announceStep == null || !postannouncebuildStep.equals(announceStep)) {
             postannouncebuildStep = announceStep; 
@@ -1785,7 +1784,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		((FolderInfo)getRootFolderInfo()).resetOptionSettings();
 	}
 
-	/*
+	/**
 	 *  Create a resource configuration object for the passed-in file
 	 */
 	public IResourceConfiguration createResourceConfiguration(IFile file)
@@ -1932,7 +1931,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		return getRootFolderInfo().getToolFromInputExtension(sourceExtension);
 	}
 
-	/*
+	/**
 	 * The resource delta passed to the builder is not always up-to-date
 	 * for the given configuration because between two builds of the same configuration
 	 * any number of other configuration builds may occur
@@ -2004,7 +2003,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 				prefs.getBoolean(pref, false) : defaultValue;
 	}
 */	
-	/*
+	/**
 	 * this method is used for enabling/disabling the internal builder
 	 * for the given configuration
 	 * 
@@ -2121,7 +2120,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		return null;
 	}
 
-	/*
+	/**
 	 * returns whether the internal builder is enabled
 	 * @return boolean
 	 */
@@ -2129,7 +2128,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		return getBuilder().isInternalBuilder(); 
 	}
 	
-	/*
+	/**
 	 * 
 	 * sets the Internal Builder mode
 	 * 
@@ -2144,7 +2143,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		}
 	}
 
-	/*
+	/**
 	 * returns the Internal Builder mode
 	 * if true, internal builder will ignore build errors while building,
 	 * otherwise it will stop at the first build error
@@ -2156,73 +2155,73 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	}
 	
 	/**
-	 * 
 	 * sets the Internal Builder Parallel mode
-	 * 
 	 * @param parallel if true, internal builder will use parallel mode 
+	 * 
+	 * @deprecated since CDT 9.0. Use {@link #setParallelDef(boolean)}
 	 */
+	@Deprecated
 	public void setInternalBuilderParallel(boolean parallel){
-		if(getInternalBuilderParallel() == parallel)
-			return;
-		
-		try {
-			getEditableBuilder().setParallelBuildOn(parallel);
-		} catch (CoreException e) {
-		}
+		setParallelDef(parallel);
 	}
 	
 	/**
 	 * returns the Internal Builder parallel mode
 	 * if true, internal builder will work in parallel mode 
 	 * otherwise it will use only one thread
-	 * 
 	 * @return boolean
+	 * 
+	 * @deprecated since CDT 9.0. Use {@link #getParallelDef()}
 	 */
+	@Deprecated
 	public boolean getInternalBuilderParallel(){
-		return getBuilder().isParallelBuildOn();
+		return getParallelDef();
 	}
 	
 	/**
-	 * @param parallel if true, internal builder will use parallel mode 
+	 * Set parallel execution mode for the configuration's builder.
+	 * @see Builder#setParallelBuildOn(boolean)
+	 * 
+	 * @param parallel - the flag to enable or disable parallel mode.
 	 */
 	public void setParallelDef(boolean parallel){
 		if(getParallelDef() == parallel)
 			return;
 		
-		int num = getParallelNumber();
-		if(num != 0){
-			setParallelNumber(-num);
-		} else {
-			if(parallel){
-				setParallelNumber(-1);
-			} else {
-				setParallelNumber(1);
-			}
+		try {
+			getEditableBuilder().setParallelBuildOn(parallel);
+		} catch (CoreException e) {
+			ManagedBuilderCorePlugin.log(e);
 		}
 	}
 	
 	/**
-	 * @return boolean
+	 * Check if the configuration's builder is operating in parallel mode.
+	 * @return {@code true} if parallel mode is enabled, {@code false} otherwise.
 	 */
 	public boolean getParallelDef(){
-		int num = getBuilder().getParallelizationNum();
-		return num <= 0;
+		return getBuilder().isParallelBuildOn();
 	}
 	
 	/**
-	 * sets number of Parallel threads
+	 * Sets maximum number of parallel threads/jobs to be used by builder.
+	 * 
+	 * @param jobs - maximum number of jobs or threads. For details how
+	 *    the number is interpreted see {@link Builder#setParallelizationNum(int)}.
 	 */
-	public void setParallelNumber(int n){
+	public void setParallelNumber(int jobs){
 		try {
-			getEditableBuilder().setParallelizationNum(n);
+			getEditableBuilder().setParallelizationNum(jobs);
 		} catch (CoreException e) {
+			ManagedBuilderCorePlugin.log(e);
 		}
 	}
 	
 	/**
-	 * returns number of Parallel threads
+	 * Returns maximum number of parallel threads/jobs used by the configuration's builder.
+	 * @see #setParallelDef(boolean)
 	 * 
-	 * @return int
+	 * @return - maximum number of parallel threads or jobs used by the builder.
 	 */
 	public int getParallelNumber(){
 		return getBuilder().getParallelizationNum();

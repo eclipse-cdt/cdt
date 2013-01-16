@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     QNX Software System
  *     Anton Leherbauer (Wind River Systems)
  *     Andrew Ferguson (Symbian)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text;
 
@@ -518,14 +519,25 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 	 		case RAW_STRING:
 	 			switch (rawStringState) {
 	 			case OPEN_DELIMITER:
-	 				if (ch == '(') {
+	 				switch (ch) {
+	 				case '(':
 	 					rawStringState = RawStringState.CONTENT;
-	 				} else if (ch == '"') {
-	 					return postFix(RAW_STRING);
-	 				} else if (ch != ' ' && ch != '\\' && ch != ')' && fRawStringDelimiter.length() < 12) {
-	 					fRawStringDelimiter.append((char) ch);
-	 				} else {
+	 					break;
+					case ' ':
+	 				case '\\':
+	 				case ')':
+	 				case '\t':
+	 				case '\n':
+	 				case '\f':
+	 				case 11:  // Vertical tab
 	 					fState = STRING;
+	 					break;
+	 				default:
+	 					if (fRawStringDelimiter.length() < 12) {
+		 					fRawStringDelimiter.append((char) ch);
+	 					} else {
+		 					fState = STRING;
+	 					}
 	 				}
 		 			consume();
 	 				break;

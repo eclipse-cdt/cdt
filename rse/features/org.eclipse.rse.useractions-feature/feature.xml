@@ -12,7 +12,7 @@
 <feature
       id="org.eclipse.rse.useractions"
       label="%featureName"
-      version="1.1.400.qualifier"
+      version="1.1.401.qualifier"
       provider-name="%providerName"
       plugin="org.eclipse.rse.useractions"
       image="eclipse_update_120.jpg">
@@ -54,13 +54,6 @@
          id="org.eclipse.rse.useractions"
          download-size="105"
          install-size="339"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.rse.useractions.source"
-         download-size="281"
-         install-size="284"
          version="0.0.0"
          unpack="false"/>
 

@@ -199,7 +199,29 @@ public class LexerTests extends BaseTestCase {
 		id("ab");
 		eof();
 	}
-	
+
+	public void testLessColonColon() throws Exception {
+		// 2.5-3
+		// <: is treated as digraph [
+		init("<::>"); 
+		token(IToken.tLBRACKET);
+		token(IToken.tRBRACKET);
+		eof();
+
+		// <: is treated as digraph [
+		init("<:::"); 
+		token(IToken.tLBRACKET);
+		token(IToken.tCOLONCOLON);
+		eof();
+
+		// <:: is treated as < and ::
+		init("<::A"); 
+		token(IToken.tLT);
+		token(IToken.tCOLONCOLON);
+		token(IToken.tIDENTIFIER);
+		eof();
+	}
+
 	public void testWindowsLineEnding() throws Exception {
 		init("\n\n");
 		nl(); nl(); eof();

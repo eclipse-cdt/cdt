@@ -577,8 +577,19 @@ final public class Lexer implements ITokenSequence {
 					} 
 					break;
 				case ':':
-					nextCharPhase3();
-					return newDigraphToken(IToken.tLBRACKET, start);
+					// 2.5-3
+					markPhase3();
+					if (nextCharPhase3() != ':') {
+						return newDigraphToken(IToken.tLBRACKET, start);
+					}
+					switch (nextCharPhase3()) {
+					case ':': case '>':
+						restorePhase3();
+						nextCharPhase3();
+						return newDigraphToken(IToken.tLBRACKET, start);
+					}
+					restorePhase3();
+					break;
 				case '%':
 					nextCharPhase3();
 					return newDigraphToken(IToken.tLBRACE, start);

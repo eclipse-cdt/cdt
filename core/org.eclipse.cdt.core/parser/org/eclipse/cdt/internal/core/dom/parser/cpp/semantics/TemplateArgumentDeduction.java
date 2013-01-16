@@ -636,16 +636,8 @@ public class TemplateArgumentDeduction {
 					deducedArg= tpar.getDefaultValue();
 					if (deducedArg != null) {
 						deducedArg= CPPTemplates.instantiateArgument(deducedArg, tpMap, -1, null, point);
-						if (deducedArg != null) {
-							if (deducedArg instanceof CPPTemplateTypeArgument) {
-								CPPTemplateTypeArgument deducedTypeArg = (CPPTemplateTypeArgument) deducedArg;
-								if (!(deducedTypeArg.getTypeValue() instanceof ISemanticProblem)) {
-									tpMap.put(tpar, deducedArg);
-								}
-							} else {
-								// TODO: Check for problems in non-type or template template parameters?
-								tpMap.put(tpar, deducedArg);
-							}
+						if (CPPTemplates.isValidArgument(deducedArg)) {
+							tpMap.put(tpar, deducedArg);
 						}
 					}
 				}

@@ -113,7 +113,7 @@ public class PlainTextImporter implements IMemoryImporter {
 		data = new FormData();
 //		data.top = new FormAttachment(fComboRestoreToFileAddress);
 		data.left = new FormAttachment(labelStartText);
-		data.width = 100;
+		data.width = 120;
 		fStartText.setLayoutData(data);
 		
 		// file
@@ -226,8 +226,9 @@ public class PlainTextImporter implements IMemoryImporter {
 		try
 		{
 			getStartAddress();
-			if(!getFile().exists())
+			if(!getFile().exists()) {
 				isValid = false;
+			}
 		}
 		catch(Exception e)
 		{
@@ -245,6 +246,7 @@ public class PlainTextImporter implements IMemoryImporter {
 	public BigInteger getStartAddress()
 	{
 		String text = fStartText.getText();
+		text = text.trim();
 		boolean hex = text.startsWith("0x"); //$NON-NLS-1$
 		BigInteger startAddress = new BigInteger(hex ? text.substring(2) : text,
 			hex ? 16 : 10); 

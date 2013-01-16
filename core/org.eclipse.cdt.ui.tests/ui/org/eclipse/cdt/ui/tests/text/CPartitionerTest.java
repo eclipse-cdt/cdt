@@ -1335,7 +1335,7 @@ public class CPartitionerTest extends TestCase {
 
 	public void testEditingRawString3() {
 		try {
-			fDocument.replace(0, fDocument.getLength(), "/***/R\"(line 1\nline 2\nline 3\n)\" \"str\"");
+			fDocument.replace(0, fDocument.getLength(), "/***/R\"\"(line 1\nline 2\nline 3\n)\"\" \"str\"");
 			ITypedRegion[] result= fDocument.computePartitioning(0, fDocument.getLength());
 			TypedRegion[] expectation= {
 				new TypedRegion(0,  5,  ICPartitions.C_MULTI_LINE_COMMENT),

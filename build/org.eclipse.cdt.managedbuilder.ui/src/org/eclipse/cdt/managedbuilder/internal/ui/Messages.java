@@ -27,9 +27,10 @@ public class Messages extends NLS {
 	public static String BuilderSettingsTab_0;
 	public static String BuilderSettingsTab_1;
 	public static String BuilderSettingsTab_10;
-	public static String BuilderSettingsTab_11;
-	public static String BuilderSettingsTab_12;
-	public static String BuilderSettingsTab_13;
+	public static String BuilderSettingsTab_EnableParallelBuild;
+	public static String BuilderSettingsTab_UseOptimalJobs;
+	public static String BuilderSettingsTab_UseUnlimitedJobs;
+	public static String BuilderSettingsTab_UseParallelJobs;
 	public static String BuilderSettingsTab_14;
 	public static String BuilderSettingsTab_15;
 	public static String BuilderSettingsTab_16;

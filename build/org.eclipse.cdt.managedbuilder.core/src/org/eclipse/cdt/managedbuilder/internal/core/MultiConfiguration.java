@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Intel Corporation and others.
+ * Copyright (c) 2007, 2011 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,6 +44,7 @@ import org.eclipse.cdt.managedbuilder.envvar.IConfigurationEnvironmentVariableSu
 import org.eclipse.cdt.managedbuilder.macros.IConfigurationBuildMacroSupplier;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.osgi.framework.Version;
@@ -253,15 +254,23 @@ public class MultiConfiguration extends MultiItemsHolder implements
 		return s;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#getBuildArguments()
+	/**
+	 * @return build arguments if the arguments for all configurations match
+	 *    or {@code null} otherwise.
 	 */
 	public String getBuildArguments() {
-		String s = fCfgs[0].getBuildArguments();
-		for (int i=1; i<fCfgs.length; i++)
-			if (! s.equals(fCfgs[i].getBuildArguments()))
-				return EMPTY_STR;
-		return s;
+		String args0 = fCfgs[0].getBuildArguments();
+		if (args0 == null)
+			args0 = EMPTY_STR;
+		
+		for (IConfiguration cfg : fCfgs) {
+			String args = cfg.getBuildArguments();
+			if (args == null)
+				args = EMPTY_STR;
+			if (!args0.equals(args))
+				return null;
+		}
+		return args0;
 	}
 
 	/* (non-Javadoc)
@@ -1090,49 +1099,49 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	}
 
 	public boolean getParallelDef() {
-		for (int i=0; i<fCfgs.length; i++)
-			if (fCfgs[i] instanceof Configuration) {
-				if (!((Configuration)fCfgs[i]).getParallelDef())
+		for (IConfiguration cfg : fCfgs) {
+			if (cfg instanceof Configuration) {
+				if (!((Configuration)cfg).getParallelDef())
 					return false;
 			} else
 				return false;
+		}
 		return true; // all cfgs report true
 	}
 	
-	public void setParallelDef(boolean def) {
-		for (int i=0; i<fCfgs.length; i++)
-			if (fCfgs[i] instanceof Configuration)
-				((Configuration)fCfgs[i]).setParallelDef(def);
+	public void setParallelDef(boolean parallel) {
+		for (IConfiguration cfg : fCfgs) {
+			if (cfg instanceof Configuration)
+				((Configuration)cfg).setParallelDef(parallel);
+		}
 	}
 	
 	public int getParallelNumber() {
-		int res = -1;
-		for (int i=0; i<fCfgs.length; i++)
-			if (fCfgs[i] instanceof Configuration) {
-				int x = ((Configuration)fCfgs[i]).getParallelNumber();
-				if (res == -1) 
-					res = x;
-				else if (res != x)
+		int res = 0;
+		for (IConfiguration cfg : fCfgs) {
+			if (cfg instanceof Configuration) {
+				int num = ((Configuration)cfg).getParallelNumber();
+				Assert.isTrue(num != 0); // can't be 0, see IMakeCommonBuildInfo.getParallelizationNum()
+
+				if (res == 0) 
+					res = num;
+				else if (res != num)
 					return 0; // values are different !
 			} else
 				return 0;
-		return (res == -1 ? 0: res); // all cfgs report true
+		}
+		return res; // all cfgs report same value
 	}
 	
 	public void setParallelNumber(int num) {
-		for (int i=0; i<fCfgs.length; i++)
-			if (fCfgs[i] instanceof Configuration)
-				((Configuration)fCfgs[i]).setParallelNumber(num);
+		for (IConfiguration cfg : fCfgs) {
+			if (cfg instanceof Configuration)
+				((Configuration)cfg).setParallelNumber(num);
+		}
 	}
 	
 	public boolean getInternalBuilderParallel() {
-		for (int i=0; i<fCfgs.length; i++)
-			if (fCfgs[i] instanceof Configuration) {
-				if (!((Configuration)fCfgs[i]).getInternalBuilderParallel())
-					return false;
-			} else
-				return false;
-		return true; // all cfgs report true
+		return getParallelDef();
 	}
 	
 	public boolean isInternalBuilderEnabled() {

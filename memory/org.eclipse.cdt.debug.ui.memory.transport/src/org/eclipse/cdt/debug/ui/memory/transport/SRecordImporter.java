@@ -115,7 +115,7 @@ public class SRecordImporter implements IMemoryImporter {
 		data = new FormData();
 		data.top = new FormAttachment(fComboRestoreToFileAddress);
 		data.left = new FormAttachment(fComboRestoreToThisAddress);
-		data.width = 100;
+		data.width = 120;
 		fStartText.setLayoutData(data);
 		
 		fComboRestoreToFileAddress.addSelectionListener(new SelectionListener() {
@@ -168,7 +168,7 @@ public class SRecordImporter implements IMemoryImporter {
 		data.top = new FormAttachment(fStartText);
 		data.left = new FormAttachment(fFileText);
 		fileButton.setLayoutData(data);
-		
+				
 		String textValue = fProperties.get(TRANSFER_FILE);
 		fFileText.setText(textValue != null ? textValue : ""); //$NON-NLS-1$
 
@@ -247,6 +247,24 @@ public class SRecordImporter implements IMemoryImporter {
 		final boolean scrollToStart = fProperties.getBoolean(TRANSFER_SCROLL_TO_START);
 		fScrollToBeginningOnImportComplete.setSelection(scrollToStart);
 		
+		// Restriction notice about 32-bit support
+		
+		Label spacingLabel = new Label(composite, SWT.NONE);
+
+		spacingLabel.setText("");  //$NON-NLS-1$
+		data = new FormData();
+		data.left = new FormAttachment(0);
+		data.top = new FormAttachment(fScrollToBeginningOnImportComplete);
+		spacingLabel.setLayoutData(data);
+
+		Label restrictionLabel = new Label(composite, SWT.NONE);
+
+		restrictionLabel.setText(Messages.getString("SRecordImporter.32BitLimitationMessage"));  //$NON-NLS-1$
+		data = new FormData();
+		data.left = new FormAttachment(0);
+		data.top = new FormAttachment(spacingLabel);
+		restrictionLabel.setLayoutData(data);
+				
 		composite.pack();
 		parent.pack();
 
@@ -294,6 +312,7 @@ public class SRecordImporter implements IMemoryImporter {
 	public BigInteger getStartAddress()
 	{
 		String text = fStartText.getText();
+		text = text.trim();
 		boolean hex = text.startsWith("0x"); //$NON-NLS-1$
 		BigInteger startAddress = new BigInteger(hex ? text.substring(2) : text,
 			hex ? 16 : 10); 

@@ -32,13 +32,11 @@
 	     <importer 
 	        name="%importer.name.0"
 	        id="org.eclipse.cdt.debug.ui.memory.transport.SRecordImporter"
-	        maxmemorysize="32"
 	        class="org.eclipse.cdt.debug.ui.memory.transport.SRecordImporter">
 	    </importer>
 	    <exporter 
 	        name="%exporter.name.0"
 	        id="org.eclipse.cdt.debug.ui.memory.transport.SRecordExporter"
-	    	maxmemorysize="32"
 	        class="org.eclipse.cdt.debug.ui.memory.transport.SRecordExporter">
 	    </exporter>
 	    

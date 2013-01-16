@@ -994,7 +994,9 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 				CTabFolder tabFolder = fContextFolders.get(retrieval);
 				if(tabFolder != null) {
 					fStackLayout.topControl = tabFolder;
-					handleTabActivated(tabFolder.getSelection());
+					CTabItem tabItem = (CTabItem) tabFolder.getSelection();
+					getSite().getSelectionProvider().setSelection(new StructuredSelection(tabItem.getData(KEY_RENDERING)));
+					handleTabActivated(tabItem);
 				}
 				else {
 					tabFolder = createTabFolder(fRenderingsComposite);

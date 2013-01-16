@@ -98,7 +98,7 @@ public class SRecordExporter implements IMemoryExporter
 		fStartText = new Text(composite, SWT.BORDER);
 		data = new FormData();
 		data.left = new FormAttachment(startLabel);
-		data.width = 100;
+		data.width = 120;
 		fStartText.setLayoutData(data);
 		
 		// end address
@@ -114,7 +114,7 @@ public class SRecordExporter implements IMemoryExporter
 		data = new FormData();
 		data.top = new FormAttachment(fStartText, 0, SWT.CENTER);
 		data.left = new FormAttachment(endLabel);
-		data.width = 100;
+		data.width = 120;
 		fEndText.setLayoutData(data);
 		
 		// length
@@ -130,7 +130,7 @@ public class SRecordExporter implements IMemoryExporter
 		data = new FormData();
 		data.top = new FormAttachment(fStartText, 0, SWT.CENTER);
 		data.left = new FormAttachment(lengthLabel);
-		data.width = 100;
+		data.width = 120;
 		fLengthText.setLayoutData(data);
 		
 		// file
@@ -147,7 +147,7 @@ public class SRecordExporter implements IMemoryExporter
 		data = new FormData();
 		data.top = new FormAttachment(fileButton, 0, SWT.CENTER);
 		data.left = new FormAttachment(fileLabel);
-		data.width = 300;
+		data.width = 360;
 		fFileText.setLayoutData(data);
 		
 		fileButton.setText(Messages.getString("Exporter.Browse")); //$NON-NLS-1$
@@ -156,6 +156,24 @@ public class SRecordExporter implements IMemoryExporter
 		data.left = new FormAttachment(fFileText);
 		fileButton.setLayoutData(data);
 		
+		// Restriction notice about 32-bit support
+		
+		Label spacingLabel = new Label(composite, SWT.NONE);
+
+		spacingLabel.setText("");  //$NON-NLS-1$
+		data = new FormData();
+		data.left = new FormAttachment(0);
+		data.top = new FormAttachment(fileLabel);
+		spacingLabel.setLayoutData(data);
+		
+		Label restrictionLabel = new Label(composite, SWT.NONE);
+
+		restrictionLabel.setText(Messages.getString("SRecordExporter.32BitLimitationMessage"));  //$NON-NLS-1$
+		data = new FormData();
+		data.left = new FormAttachment(0);
+		data.top = new FormAttachment(spacingLabel);
+		restrictionLabel.setLayoutData(data);
+				
 		String textValue = fProperties.get(TRANSFER_FILE);
 		fFileText.setText(textValue != null ? textValue : ""); //$NON-NLS-1$
 
@@ -171,7 +189,6 @@ public class SRecordExporter implements IMemoryExporter
 			fStartText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
 		}
 
-
 		textValue = fProperties.get(TRANSFER_END);
 		fEndText.setText(textValue != null ? textValue : "0x0"); //$NON-NLS-1$
 		
@@ -186,7 +203,11 @@ public class SRecordExporter implements IMemoryExporter
 		
 		try
 		{
-			fLengthText.setText(getEndAddress().subtract(getStartAddress()).toString());
+			BigInteger length = getEndAddress().subtract(getStartAddress());
+			fLengthText.setText(length.toString());
+			if(length.compareTo(BigInteger.ZERO) <= 0) {
+				fLengthText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+			}
 		}
 		catch(Exception e)
 		{
@@ -225,21 +246,24 @@ public class SRecordExporter implements IMemoryExporter
 				try
 				{
 					fStartText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
-					BigInteger actualLength = getEndAddress().subtract(getStartAddress());
-					String lengthString = actualLength.toString();
+					fEndText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
+					fLengthText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
 					
-					if(!fLengthText.getText().equals(lengthString)) {
-						if ( ! actualLength.equals( BigInteger.ZERO ) ) {
-							fLengthText.setText(lengthString);
-						}
+					BigInteger actualLength = getEndAddress().subtract(getStartAddress());
+					fLengthText.setText(actualLength.toString());
+					
+					if(actualLength.compareTo(BigInteger.ZERO) <= 0) {
+						fStartText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+						fLengthText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
 					}
-					validate();
 				}
 				catch(Exception ex)
 				{
 					fStartText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
-					validate();
+					fLengthText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
 				}
+				
+				validate();
 			}
 			
 			public void keyPressed(KeyEvent e) {}
@@ -249,24 +273,25 @@ public class SRecordExporter implements IMemoryExporter
 			public void keyReleased(KeyEvent e) {
 				try
 				{
+					fStartText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
 					fEndText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
+					fLengthText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
 					
 					BigInteger actualLength = getEndAddress().subtract(getStartAddress());
-					String lengthString = actualLength.toString();
+					fLengthText.setText(actualLength.toString());
 					
-					if(!fLengthText.getText().equals(lengthString)) {
-						if ( ! actualLength.equals( BigInteger.ZERO ) ) {
-							fLengthText.setText(lengthString);
-						}
+					if(actualLength.compareTo(BigInteger.ZERO) <= 0) {
+						fEndText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+						fLengthText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
 					}
-					
-					validate();
 				}
 				catch(Exception ex)
 				{
-				fEndText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
-					validate();
+					fEndText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+					fLengthText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
 				}
+				
+				validate();
 			}
 			
 			public void keyPressed(KeyEvent e) {}
@@ -277,21 +302,29 @@ public class SRecordExporter implements IMemoryExporter
 			public void keyReleased(KeyEvent e) {
 				try
 				{
-					BigInteger length = getLength();
+					fStartText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
+					fEndText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
 					fLengthText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
+					
+					BigInteger length = getLength();
 					String endString = "0x" + getStartAddress().add(length).toString(16); //$NON-NLS-1$
-					if(!fEndText.getText().equals(endString)) {
-						if ( ! length.equals( BigInteger.ZERO ) ) {
-							fEndText.setText(endString);
-						}
+					fStartText.setText(fStartText.getText().trim());
+					fEndText.setText(endString);
+					
+					if(length.compareTo(BigInteger.ZERO) <= 0) {
+						fEndText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+						fLengthText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
 					}
-					validate();
 				}
 				catch(Exception ex)
 				{
+					if ( fLengthText.getText().trim().length() != 0 ) {
+						fEndText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+					}
 					fLengthText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
-					validate();
 				}
+				
+				validate();
 			}
 
 			public void keyPressed(KeyEvent e) {
@@ -333,6 +366,7 @@ public class SRecordExporter implements IMemoryExporter
 	public BigInteger getEndAddress()
 	{
 		String text = fEndText.getText();
+		text = text.trim();
 		boolean hex = text.startsWith("0x"); //$NON-NLS-1$
 		BigInteger endAddress = new BigInteger(hex ? text.substring(2) : text,
 			hex ? 16 : 10); 
@@ -347,6 +381,7 @@ public class SRecordExporter implements IMemoryExporter
 	public BigInteger getStartAddress()
 	{
 		String text = fStartText.getText();
+		text = text.trim();
 		boolean hex = text.startsWith("0x"); //$NON-NLS-1$
 		BigInteger startAddress = new BigInteger(hex ? text.substring(2) : text,
 			hex ? 16 : 10); 
@@ -361,6 +396,7 @@ public class SRecordExporter implements IMemoryExporter
 	public BigInteger getLength()
 	{
 		String text = fLengthText.getText();
+		text = text.trim();
 		boolean hex = text.startsWith("0x"); //$NON-NLS-1$
 		BigInteger lengthAddress = new BigInteger(hex ? text.substring(2) : text,
 			hex ? 16 : 10); 
@@ -381,7 +417,6 @@ public class SRecordExporter implements IMemoryExporter
 		try
 		{
 			getEndAddress();
-			
 			getStartAddress();
 			
 			BigInteger length = getLength();
@@ -389,8 +424,19 @@ public class SRecordExporter implements IMemoryExporter
 			if(length.compareTo(BigInteger.ZERO) <= 0)
 				isValid = false;
 			
-			if(!getFile().getParentFile().exists())
-				isValid = false;
+			File file = getFile();
+			if ( file != null ) {
+				File parentFile = file.getParentFile();
+				
+				if(parentFile != null && ! parentFile.exists() )
+					isValid = false;
+
+				if(parentFile != null && parentFile.exists() && ( ! parentFile.canRead() || ! parentFile.isDirectory() ) )
+					isValid = false;
+				
+				if ( file.isDirectory() ) 
+					isValid = false;
+			}
 		}
 		catch(Exception e)
 		{
@@ -399,7 +445,6 @@ public class SRecordExporter implements IMemoryExporter
 		
 		fParentDialog.setValid(isValid);
 	}
-
 	
 	public String getId()
 	{

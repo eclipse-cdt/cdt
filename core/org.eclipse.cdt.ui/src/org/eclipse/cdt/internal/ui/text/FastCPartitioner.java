@@ -23,7 +23,6 @@ import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
  * A slightly adapted FastPartitioner.
  */
 public class FastCPartitioner extends FastPartitioner {
-
 	/**
 	 * Creates a new partitioner for the given content types.
 	 * 
@@ -72,7 +71,7 @@ public class FastCPartitioner extends FastPartitioner {
 	 * @since 5.0
 	 */
 	public IDocCommentOwner getDocCommentOwner() {
-		if(fScanner instanceof FastCPartitionScanner) {
+		if (fScanner instanceof FastCPartitionScanner) {
 			return ((FastCPartitionScanner)fScanner).getDocCommentOwner();
 		}
 		return null;

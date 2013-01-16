@@ -765,7 +765,7 @@ final public class Lexer implements ITokenSequence {
 				break;
 			}
 			if (fInput.get(delimEndOffset) == '(') {
-				offset= delimEndOffset+1;
+				offset= delimEndOffset + 1;
 				break;
 			}
 		}
@@ -779,17 +779,17 @@ final public class Lexer implements ITokenSequence {
 				
 			final char c= fInput.get(offset);
 			if (c == ')') {
-				final int endingDoubleQuoteOffset= offset+delimLength+1;
+				final int endingDoubleQuoteOffset= offset + delimLength + 1;
 				if (fInput.isValidOffset(endingDoubleQuoteOffset) && fInput.get(endingDoubleQuoteOffset) == '"') {
 					boolean prefixMatches= true;
 					for (int i = 0; i < delimLength; i++) {
-						if (fInput.get(offset + i + 1) != fInput.get(delimOffset+i)) {
+						if (fInput.get(offset + i + 1) != fInput.get(delimOffset + i)) {
 							prefixMatches= false;
 							break;
 						}
 					}
 					if (prefixMatches) {
-						offset= endingDoubleQuoteOffset+1;
+						offset= endingDoubleQuoteOffset + 1;
 						break;
 					}
 				}

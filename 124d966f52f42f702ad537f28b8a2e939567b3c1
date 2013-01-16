@@ -1,0 +1,531 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABONX///zE\u003d",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/core/ICDTProfileDelegate.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-01-16T20:59:22Z",
+      "side": 1,
+      "message": "Should we extend ILaunchConfigurationDelegate2 instead?  Or is it not useful to do so?",
+      "revId": "124d966f52f42f702ad537f28b8a2e939567b3c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABONX///x8\u003d",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/core/ICDTProfileDelegate.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-01-16T20:59:22Z",
+      "side": 1,
+      "message": "I don\u0027t understand from the javadoc what this method should do",
+      "revId": "124d966f52f42f702ad537f28b8a2e939567b3c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABONX///+Q\u003d",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/launch/CApplicationLaunchShortcut.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-01-16T20:59:22Z",
+      "side": 1,
+      "message": "This is the namespace not the extension id.  I think we should have a constant for the id as well, and use the proper names for these constants",
+      "revId": "124d966f52f42f702ad537f28b8a2e939567b3c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABONX///+M\u003d",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/launch/CApplicationLaunchShortcut.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 228,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-01-16T20:59:22Z",
+      "side": 1,
+      "message": "So the first available delegate will be chosen.  What if there were more of them?",
+      "revId": "124d966f52f42f702ad537f28b8a2e939567b3c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABONX///xA\u003d",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/launch/CApplicationLaunchShortcut.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 237,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-01-16T20:59:22Z",
+      "side": 1,
+      "message": "Do we really need to do this here?  Couldn\u0027t we leave it for the launchDelegate to deal with?  LocalCDILaunchDelegate will do it later, no?",
+      "revId": "124d966f52f42f702ad537f28b8a2e939567b3c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABONX///+U\u003d",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/launch/LaunchMessages.properties",
+        "patchSetId": 4
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-01-16T20:59:22Z",
+      "side": 1,
+      "message": "Should be:\nCApplicationLaunchShortcut.ChooseLaunchConfigToProfile",
+      "revId": "124d966f52f42f702ad537f28b8a2e939567b3c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABONX///7M\u003d",
+        "filename": "launch/org.eclipse.cdt.launch/plugin.properties",
+        "patchSetId": 4
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-01-16T20:59:22Z",
+      "side": 1,
+      "message": "Should the tab be called \"Profiler\" to be similar to \"Debugger\"?",
+      "revId": "124d966f52f42f702ad537f28b8a2e939567b3c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABONX///+I\u003d",
+        "filename": "launch/org.eclipse.cdt.launch/plugin.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-01-16T20:59:22Z",
+      "side": 1,
+      "message": "Can you put the name (not the id one) field string \"profilingProvider\" in plugin.properties?  That should be translatable.",
+      "revId": "124d966f52f42f702ad537f28b8a2e939567b3c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABONX///2c\u003d",
+        "filename": "launch/org.eclipse.cdt.launch/plugin.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-01-16T20:59:22Z",
+      "side": 1,
+      "message": "Please undo",
+      "revId": "124d966f52f42f702ad537f28b8a2e939567b3c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABONX///2Q\u003d",
+        "filename": "launch/org.eclipse.cdt.launch/plugin.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 258,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-01-16T20:59:22Z",
+      "side": 1,
+      "message": "id should be\norg.eclipse.cdt.cdi.launch.profileApplicationLaunch.profilingTab",
+      "revId": "124d966f52f42f702ad537f28b8a2e939567b3c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABONX///2A\u003d",
+        "filename": "launch/org.eclipse.cdt.launch/plugin.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 263,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-01-16T20:59:22Z",
+      "side": 1,
+      "message": "The id to be used in the \"after\" field, is not the id defined here but the one returned by the tabs java class getId() method.  In this case org.eclipse.debug.ui.CommonTab.getId() which returns \"org.eclipse.debug.ui.commonTab\"\n\nThis is described when hovering over the \"after*\" attribute in the plugin.xml editor when seeing the placement field.",
+      "revId": "124d966f52f42f702ad537f28b8a2e939567b3c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABONX///xc\u003d",
+        "filename": "launch/org.eclipse.cdt.launch/schema/profilingProvider.exsd",
+        "patchSetId": 4
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-01-16T20:59:22Z",
+      "side": 1,
+      "message": "Shouldn\u0027t this be a mandatory field?  No value without it, no?",
+      "revId": "124d966f52f42f702ad537f28b8a2e939567b3c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABONX///xg\u003d",
+        "filename": "launch/org.eclipse.cdt.launch/schema/profilingProvider.exsd",
+        "patchSetId": 4
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-01-16T20:59:22Z",
+      "side": 1,
+      "message": "I\u0027d say something simpler like: \"A class extending AbstractCLaunchDelegate and implementing ICDTProfileDelegate.  This class will be used as the delegate to launch the profiling session.\"",
+      "revId": "124d966f52f42f702ad537f28b8a2e939567b3c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABONX///6c\u003d",
+        "filename": "launch/org.eclipse.cdt.launch/schema/profilingProvider.exsd",
+        "patchSetId": 4
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-01-16T20:59:22Z",
+      "side": 1,
+      "message": "Do we need to force that the delegate extends \"org.eclipse.cdt.launch.AbstractCLaunchDelegate\"?  I\u0027m wondering if this would work with LaunchConfigurationDelegate or even ILaunchConfigurationDelegate2 or even ILaunchConfigurationDelegate",
+      "revId": "124d966f52f42f702ad537f28b8a2e939567b3c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABONX///xY\u003d",
+        "filename": "launch/org.eclipse.cdt.launch/schema/profilingProvider.exsd",
+        "patchSetId": 4
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-01-16T20:59:22Z",
+      "side": 1,
+      "message": "Shouldn\u0027t this be a mandatory field?  No value without it, no?",
+      "revId": "124d966f52f42f702ad537f28b8a2e939567b3c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABONX///xk\u003d",
+        "filename": "launch/org.eclipse.cdt.launch/schema/profilingProvider.exsd",
+        "patchSetId": 4
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-01-16T20:59:22Z",
+      "side": 1,
+      "message": "Is it really a \"set of tabs\"?  Isn\u0027t \"a tab\"?",
+      "revId": "124d966f52f42f702ad537f28b8a2e939567b3c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABONX///zg\u003d",
+        "filename": "launch/org.eclipse.cdt.launch/schema/profilingProvider.exsd",
+        "patchSetId": 4
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-01-16T20:59:22Z",
+      "side": 1,
+      "message": "I wonder if the base class shouldn\u0027t be AbstractLaunchConfigurationTab?",
+      "revId": "124d966f52f42f702ad537f28b8a2e939567b3c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABONX///7I\u003d",
+        "filename": "launch/org.eclipse.cdt.launch/schema/profilingProvider.exsd",
+        "patchSetId": 4
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-01-16T20:59:22Z",
+      "side": 1,
+      "message": "7.2.0 no?",
+      "revId": "124d966f52f42f702ad537f28b8a2e939567b3c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABONX///7E\u003d",
+        "filename": "launch/org.eclipse.cdt.launch/schema/profilingProvider.exsd",
+        "patchSetId": 4
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-01-16T20:59:22Z",
+      "side": 1,
+      "message": "Should be \npoint\u003d\u0026quot;org.eclipse.cdt.launch.profilingProvider\u0026quot;\u0026gt;\n\nnote \"profiling\" instead of \"profile\"",
+      "revId": "124d966f52f42f702ad537f28b8a2e939567b3c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABONX///y8\u003d",
+        "filename": "launch/org.eclipse.cdt.launch/src/org/eclipse/cdt/launch/internal/LocalCDILaunchDelegate.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 131,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-01-16T20:59:22Z",
+      "side": 1,
+      "message": "First extensionPoint gives the delegate.  I\u0027m not sure how we should handle multiple extension to this extensionPoint.",
+      "revId": "124d966f52f42f702ad537f28b8a2e939567b3c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABONX///yA\u003d",
+        "filename": "launch/org.eclipse.cdt.launch/src/org/eclipse/cdt/launch/internal/LocalCDILaunchDelegate.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 147,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-01-16T20:59:22Z",
+      "side": 1,
+      "message": "This is not documented anywhere.  The string, the behavior.  We somehow need to document it, no?  Probably in ICDTProfileDelegate.setDefaultProfileLaunchAttributes() javadoc",
+      "revId": "124d966f52f42f702ad537f28b8a2e939567b3c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABONX///xI\u003d",
+        "filename": "launch/org.eclipse.cdt.launch/src/org/eclipse/cdt/launch/internal/LocalCDILaunchDelegate.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 149,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-01-16T20:59:22Z",
+      "side": 1,
+      "message": "Would it be bad calling delegate.setDefaultProfileLaunchAttributes() at each launch?  Must this method only be called once when the launch config is created?  If we called it each time, we wouldn\u0027t need to check for this obscure attribute above.",
+      "revId": "124d966f52f42f702ad537f28b8a2e939567b3c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABONX///yo\u003d",
+        "filename": "launch/org.eclipse.cdt.launch/src/org/eclipse/cdt/launch/internal/LocalCDILaunchDelegate.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-01-16T20:59:22Z",
+      "side": 1,
+      "message": "I\u0027m thinking a pop-dialog error may be more user-friendly and then aborting the launch.  The user will not understand why there is no profiling data without it.",
+      "revId": "124d966f52f42f702ad537f28b8a2e939567b3c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABONX///1A\u003d",
+        "filename": "launch/org.eclipse.cdt.launch/src/org/eclipse/cdt/launch/internal/ui/LaunchImages.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-01-16T20:59:22Z",
+      "side": 1,
+      "message": "Can we use the word \"profiler\" instead of \"time\"?  Here and below",
+      "revId": "124d966f52f42f702ad537f28b8a2e939567b3c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABONX///04\u003d",
+        "filename": "launch/org.eclipse.cdt.launch/src/org/eclipse/cdt/launch/internal/ui/LaunchMessages.properties",
+        "patchSetId": 4
+      },
+      "lineNbr": 136,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-01-16T20:59:22Z",
+      "side": 1,
+      "message": "Does it makes sense to say \"for this configuration\" or is it really for all configurations?  If true, maybe we can simply say:\n\"There are no C/C++ Profiling Tools currently installed\"",
+      "revId": "124d966f52f42f702ad537f28b8a2e939567b3c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABONX///98\u003d",
+        "filename": "launch/org.eclipse.cdt.launch/src/org/eclipse/cdt/launch/ui/CProfilingTab.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-01-16T20:59:22Z",
+      "side": 1,
+      "message": "Could you rename \"tab\" as \"tabDelegate\"?\n\nThe type may want to be AbstractLaunchConfigurationTab... see below.",
+      "revId": "124d966f52f42f702ad537f28b8a2e939567b3c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABONX///0I\u003d",
+        "filename": "launch/org.eclipse.cdt.launch/src/org/eclipse/cdt/launch/ui/CProfilingTab.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-01-16T20:59:22Z",
+      "side": 1,
+      "message": "I don\u0027t think this needs to be global",
+      "revId": "124d966f52f42f702ad537f28b8a2e939567b3c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABONX///zU\u003d",
+        "filename": "launch/org.eclipse.cdt.launch/src/org/eclipse/cdt/launch/ui/CProfilingTab.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-01-16T20:59:22Z",
+      "side": 1,
+      "message": "Are we expecting more than ILaunchConfigurationTab?  The exsd file mentions that we should get CLaunchConfigurationTab, although I think it should probably be AbstractLaunchConfigurationTab",
+      "revId": "124d966f52f42f702ad537f28b8a2e939567b3c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABONX///zs\u003d",
+        "filename": "launch/org.eclipse.cdt.launch/src/org/eclipse/cdt/launch/ui/CProfilingTab.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-01-16T20:59:22Z",
+      "side": 1,
+      "message": "So only the first extension will provide the tab.  What happens if another plugin extends the profilingProvider extensionPoint?",
+      "revId": "124d966f52f42f702ad537f28b8a2e939567b3c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABONX///1E\u003d",
+        "filename": "launch/org.eclipse.cdt.launch/src/org/eclipse/cdt/launch/ui/CProfilingTab.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 183,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-01-16T20:59:22Z",
+      "side": 1,
+      "message": "I believe you need to override getId() and return an id that is meant to be used for the placement field in plugin.xml.  You can use \n\"org.eclipse.cdt.cdi.launch.applicationLaunch.profilingTab\"\nas you did in plugin.xml, but personally, I\u0027d remove the \u0027cdi\u0027 part.",
+      "revId": "124d966f52f42f702ad537f28b8a2e939567b3c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABONX///0Q\u003d",
+        "filename": "launch/org.eclipse.cdt.launch/src/org/eclipse/cdt/launch/ui/CProfilingTab.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 184,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-01-16T20:59:22Z",
+      "side": 1,
+      "message": "Because you are using a tab \u0027delegate\u0027 it can be confusing to know if you forgot to override a method or if you really meant not to.  I suggest overriding all methods and calling super.\u003cmethod\u003e for the ones that should not be calling the delegate.  I\u0027m thinking of:\n\ngetLaunchConfigurationDialog(),\nupdateLaunchConfigurationDialog()\n\nwhile I\u0027m thinking you forgot to override the below and delegate their function?  I could be wrong...\n\nsetControl(),\ngetWarningMessage(),\nsetErrorMessage(),\nsetWarningMessage(),\nsetMessage(),\nisDirty(),\nsetDirty(),\nsetHelpContextId(),\ngetHelpContextId()",
+      "revId": "124d966f52f42f702ad537f28b8a2e939567b3c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

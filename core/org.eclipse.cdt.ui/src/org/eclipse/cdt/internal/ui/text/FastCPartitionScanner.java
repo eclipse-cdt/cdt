@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text;
 
-
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.rules.ICharacterScanner;
@@ -24,13 +23,11 @@ import org.eclipse.jface.text.rules.Token;
 import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
 
-
 /**
  * This scanner recognizes the C multi line comments, C single line comments,
  * C strings, C characters and C preprocessor directives.
  */
 public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPartitions {
-
 	// states
 	private static final int CCODE= 0;
 	private static final int SINGLE_LINE_COMMENT= 1;
@@ -115,7 +112,6 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 	 */
 	@Override
 	public IToken nextToken() {
-
 		fTokenOffset += fTokenLength;
 		fTokenLength= fPrefixLength;
 
@@ -135,7 +131,6 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 	 			fLast= NONE; // ignore last
 		 		if (fTokenLength > 0) {
 		 			return preFix(fState, CCODE, NONE, 0);
-
 		 		} else {
 		 			fPrefixLength= 0;
 					return Token.EOF;
@@ -165,7 +160,6 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 
 							fState= CCODE;
 							return token;
-
 						} else {
 							consume();
 							continue;
@@ -220,7 +214,6 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 					case STRING:
 					case PREPROCESSOR:
 					case PREPROCESSOR_STRING:
-
 						int last;
 						int newState;
 						switch (ch) {
@@ -304,7 +297,6 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 							fTokenLength= fPrefixLength;
 							break;
 						}
-	
 					} else {
 						fTokenLength++;
 						fLast= SLASH;
@@ -321,7 +313,6 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 							fTokenLength= fPrefixLength;
 							break;
 						}
-
 					} else {
 						consume();
 						break;
@@ -603,7 +594,6 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 		case BACKSLASH_CR:
 		case BACKSLASH_BACKSLASH:
 			return 2;
-
 		}
 	}
 
@@ -624,7 +614,6 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 		return fTokens[interceptTokenState(state)];
 	}
 
-
 	private final IToken preFix(int state, int newState, int last, int prefixLength) {
 		fTokenLength -= getLastLength(fLast);
 		fLast= last;
@@ -634,33 +623,25 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 	}
 
 	private static int getState(String contentType) {
-
-		if (contentType == null)
+		if (contentType == null) {
 			return CCODE;
-
-		else if (contentType.equals(C_SINGLE_LINE_COMMENT))
+		} else if (contentType.equals(C_SINGLE_LINE_COMMENT)) {
 			return SINGLE_LINE_COMMENT;
-
-		else if (contentType.equals(C_MULTI_LINE_COMMENT))
+		} else if (contentType.equals(C_MULTI_LINE_COMMENT)) {
 			return MULTI_LINE_COMMENT;
-
-		else if (contentType.equals(C_STRING))
+		} else if (contentType.equals(C_STRING)) {
 			return STRING;
-
-		else if (contentType.equals(C_CHARACTER))
+		} else if (contentType.equals(C_CHARACTER)) {
 			return CHARACTER;
-
-		else if (contentType.equals(C_PREPROCESSOR))
+		} else if (contentType.equals(C_PREPROCESSOR)) {
 			return PREPROCESSOR;
-		
-		else if (contentType.equals(C_SINGLE_LINE_DOC_COMMENT))
+		} else if (contentType.equals(C_SINGLE_LINE_DOC_COMMENT)) {
 			return SINGLE_LINE_COMMENT; // intentionally non-doc state: the state machine is doc-comment unaware
-
-		else if (contentType.equals(C_MULTI_LINE_DOC_COMMENT))
+		} else if (contentType.equals(C_MULTI_LINE_DOC_COMMENT)) {
 			return MULTI_LINE_COMMENT; // intentionally non-doc state: the state machine is doc-comment unaware
-		
-		else
+		} else {
 			return CCODE;
+		}
 	}
 
 	/*
@@ -705,9 +686,6 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 		}
 	}
 
-	/*
-	 * @see ITokenScanner#setRange(IDocument, int, int)
-	 */
 	@Override
 	public void setRange(IDocument document, int offset, int length) {
 		fDocument= document;
@@ -743,15 +721,15 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 	}
 
 	private int interceptTokenState(int proposedTokenState) {
-		if(fOwner!=null) {
-			switch(proposedTokenState) {
+		if (fOwner != null) {
+			switch (proposedTokenState) {
 			case MULTI_LINE_COMMENT:
-				if(fOwner.getMultilineConfiguration().isDocumentationComment(fDocument, fTokenOffset, fTokenLength))
+				if (fOwner.getMultilineConfiguration().isDocumentationComment(fDocument, fTokenOffset, fTokenLength))
 					return MULTI_LINE_DOC_COMMENT;
 				break;
 
 			case SINGLE_LINE_COMMENT:
-				if(fOwner.getSinglelineConfiguration().isDocumentationComment(fDocument, fTokenOffset, fTokenLength))
+				if (fOwner.getSinglelineConfiguration().isDocumentationComment(fDocument, fTokenOffset, fTokenLength))
 					return SINGLE_LINE_DOC_COMMENT;
 				break;
 

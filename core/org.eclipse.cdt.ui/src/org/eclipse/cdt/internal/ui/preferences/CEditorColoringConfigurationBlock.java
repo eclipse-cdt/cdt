@@ -10,7 +10,6 @@
  *     Anton Leherbauer (Wind River Systems
  *     Andrew Ferguson (Symbian)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.preferences;
 
 import java.io.BufferedReader;
@@ -81,7 +80,6 @@ import org.eclipse.cdt.internal.ui.text.util.CColorManager;
  * @since 4.0
  */
 class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
-	
 	/**
 	 * Item in the highlighting color list.
 	 */
@@ -161,7 +159,6 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 	}
 	
 	private static class SemanticHighlightingColorListItem extends HighlightingColorListItem {
-	
 		/** Enablement preference key */
 		private final String fEnableKey;
 		
@@ -175,7 +172,8 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 		 * @param underlineKey the underlineKey preference key
 		 * @param enableKey the enable preference key
 		 */
-		public SemanticHighlightingColorListItem(String displayName, String colorKey, String boldKey, String italicKey, String strikethroughKey, String underlineKey, String enableKey) {
+		public SemanticHighlightingColorListItem(String displayName, String colorKey, String boldKey,
+				String italicKey, String strikethroughKey, String underlineKey, String enableKey) {
 			super(displayName, colorKey, boldKey, italicKey, strikethroughKey, underlineKey);
 			fEnableKey= enableKey;
 		}
@@ -192,9 +190,6 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 	 * Color list label provider.
 	 */
 	private class ColorListLabelProvider extends LabelProvider implements IColorProvider {
-		/*
-		 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
-		 */
 		@Override
 		public String getText(Object element) {
 			if (element instanceof String)
@@ -202,17 +197,11 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 			return ((HighlightingColorListItem)element).getDisplayName();
 		}
 
-		/*
-		 * @see org.eclipse.jface.viewers.IColorProvider#getBackground(java.lang.Object)
-		 */
 		@Override
 		public Color getBackground(Object element) {
 			return null;
 		}
 
-		/*
-		 * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
-		 */
 		@Override
 		public Color getForeground(Object element) {
 			if (element instanceof SemanticHighlightingColorListItem) {
@@ -228,25 +217,15 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 	 * Color list content provider.
 	 */
 	private class ColorListContentProvider implements ITreeContentProvider {
-	
-		/*
-		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-		 */
 		@Override
 		public Object[] getElements(Object inputElement) {
 			return new String[] {fCodeCategory, fAssemblyCategory, fCommentsCategory, fPreprocessorCategory, fDoxygenCategory};
 		}
 	
-		/*
-		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
-		 */
 		@Override
 		public void dispose() {
 		}
 	
-		/*
-		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-		 */
 		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
@@ -564,7 +543,6 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 	}
 	
 	private Control createSyntaxPage(final Composite parent) {
-		
 		Composite colorComposite= new Composite(parent, SWT.NONE);
 		GridLayout layout= new GridLayout();
 		layout.marginHeight= 0;

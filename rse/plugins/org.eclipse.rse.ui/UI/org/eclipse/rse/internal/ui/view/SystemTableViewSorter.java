@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2011 IBM Corporation and others.
+ * Copyright (c) 2002, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,13 +15,16 @@
  * David McKnight   (IBM)        - [331986] Sort in Remote System Details view shows wrong results
  * David McKnight   (IBM)        - [355467] The result of sorting resources that contains null blank cells is not correct in Remote System Details view.
  * David McKnight   (IBM)        - [357587] Custom sorter is changed to SystemTableViewSorter
+ * David McKnight   (IBM)        - [398306] table sorting of RSE table views inconsistent with Eclipse
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
 
+import java.util.Comparator;
 import java.util.Date;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.util.Policy;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
@@ -44,14 +47,16 @@ public class SystemTableViewSorter extends ViewerSorter
 
 	private StructuredViewer _view;
 	private SystemTableViewColumnManager _columnManager;
+	private Comparator _comparator;
 
 	public SystemTableViewSorter(int columnNumber, StructuredViewer view, SystemTableViewColumnManager columnManager)
 	{
 		super();
-		_reverseSort = false;
+		_reverseSort = true; // reverse sort means ascending order
 		_columnNumber = columnNumber; 
 		_view = view;
 		_columnManager = columnManager;
+		_comparator = Policy.getComparator();
 	}
 	
 	public void setColumnNumber(int columnNumber){
@@ -112,12 +117,7 @@ public class SystemTableViewSorter extends ViewerSorter
 				return 1;
 			}
 			
-			
-			if (n1 instanceof String)
-			{
-				return ((String) n1).compareTo((String) n2);
-			}
-			else if (n1 instanceof Date)
+			if (n1 instanceof Date)
 			{
 				return ((Date) n1).compareTo((Date) n2);
 			}
@@ -131,7 +131,7 @@ public class SystemTableViewSorter extends ViewerSorter
 			}
 			else
 			{
-				return collator.compare(n1, n2);
+				return _comparator.compare(n1, n2);
 			}
 		}
 		catch (Exception e)

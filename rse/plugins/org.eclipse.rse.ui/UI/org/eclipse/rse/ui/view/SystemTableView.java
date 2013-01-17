@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2012 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2013 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -32,6 +32,7 @@
  * David McKnight   (IBM)        - [357587] Custom sorter is changed to SystemTableViewSorter
  * David McKnight   (IBM)        - [363392] system table views shows open view actions when they shouldn't
  * David McKnight   (IBM)        - [388947] column sort icon issue with Remote Systems Details view
+ * David McKnight   (IBM)        - [398306] table sorting of RSE table views inconsistent with Eclipse
  ********************************************************************************/
 
 package org.eclipse.rse.ui.view;
@@ -206,6 +207,7 @@ public class SystemTableView
 	    {
 	        _upI = RSEUIPlugin.getDefault().getImage(ISystemIconConstants.ICON_SYSTEM_MOVEUP_ID);
 	        _downI = RSEUIPlugin.getDefault().getImage(ISystemIconConstants.ICON_SYSTEM_MOVEDOWN_ID);
+	        
 	    }
 
 
@@ -230,19 +232,19 @@ public class SystemTableView
 				if (oldSorter != null)
 				{
 					if (column == oldSorter.getColumnNumber()){
-						oldSorter.setReversed(!oldSorter.isReversed());
-						if (tcolumn.getImage() == _upI)
-						{
-						    tcolumn.setImage(_downI);
+						boolean isReversed = !oldSorter.isReversed();
+						oldSorter.setReversed(isReversed);												
+						if (isReversed) {
+							tcolumn.setImage(_downI);
 						}
-						else
-						{
-						    tcolumn.setImage(_upI);
+						else {
+							tcolumn.setImage(_upI);
 						}
 					}
 					else {
 						oldSorter.setColumnNumber(column);
-						tcolumn.setImage(_downI);  
+						oldSorter.setReversed(false);						
+						tcolumn.setImage(_upI);  
 					}
 				} 
 				else

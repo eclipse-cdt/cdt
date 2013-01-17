@@ -1,0 +1,191 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABONn///6o\u003d",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/core/ICDTProfileDelegate.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-01-17T21:33:47Z",
+      "side": 1,
+      "message": "Reading this made me think that since we are the ones calling this method, why not set that attribute ourselves and make it easier for the extender?",
+      "revId": "681d833ad4b748de294a0f5aa406e13538eb655d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABONn///6g\u003d",
+        "filename": "debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/core/ICDTProfileDelegate.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-01-17T21:33:47Z",
+      "side": 1,
+      "message": "I think we should say instead that \"this method will only be called once, as the user is free...\".  Can we mention when in the cycle this will be called?",
+      "revId": "681d833ad4b748de294a0f5aa406e13538eb655d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABONn///4k\u003d",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/launch/CApplicationLaunchShortcut.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 220,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-01-17T21:33:47Z",
+      "side": 1,
+      "message": "I\u0027m concerned about accessing the extension point in different places.  Are we sure we will get the \u0027delegate\u0027 that corresponds to the \u0027tab\u0027 that was fetched elsewhere?\n\nWith a single provider we\u0027re safe, but if there\u0027s two or more....",
+      "revId": "681d833ad4b748de294a0f5aa406e13538eb655d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABONn///4g\u003d",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/launch/CApplicationLaunchShortcut.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 228,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-01-17T21:33:47Z",
+      "side": 1,
+      "message": "I need to think about this...",
+      "revId": "681d833ad4b748de294a0f5aa406e13538eb655d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABONn///4s\u003d",
+        "filename": "debug/org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/launch/CApplicationLaunchShortcut.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 241,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-01-17T21:33:47Z",
+      "side": 1,
+      "message": "How about we set the org.eclipse.cdt.launch.profilingProvider attribute ourselves here, and then not call setDefaultProfileLaunchAttributes(), but leave that call for later?",
+      "revId": "681d833ad4b748de294a0f5aa406e13538eb655d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABONn///xw\u003d",
+        "filename": "launch/org.eclipse.cdt.launch/schema/profilingProvider.exsd",
+        "patchSetId": 6
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-01-17T21:33:47Z",
+      "side": 1,
+      "message": "Please mention that the class must implement... (based on what you decide with respect to the next comment below)",
+      "revId": "681d833ad4b748de294a0f5aa406e13538eb655d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABONn///yA\u003d",
+        "filename": "launch/org.eclipse.cdt.launch/schema/profilingProvider.exsd",
+        "patchSetId": 6
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-01-17T21:33:47Z",
+      "side": 1,
+      "message": "Sorry, but now I wonder if we must force extenders to use AbstractLaunchConfigurationTab?  Why not simply accept ILaunchConfigurationTab?\n\nBut first we need to resolve the uncertainty in the CProfilingTab class, to know if we can or cannot make this change.",
+      "revId": "681d833ad4b748de294a0f5aa406e13538eb655d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABONn///xs\u003d",
+        "filename": "launch/org.eclipse.cdt.launch/src/org/eclipse/cdt/launch/internal/LocalCDILaunchDelegate.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-01-17T21:33:47Z",
+      "side": 1,
+      "message": "We could set the attribute org.eclipse.cdt.launch.profilingProvider ourselves",
+      "revId": "681d833ad4b748de294a0f5aa406e13538eb655d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABONn///z8\u003d",
+        "filename": "launch/org.eclipse.cdt.launch/src/org/eclipse/cdt/launch/internal/LocalCDILaunchDelegate.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 157,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-01-17T21:33:47Z",
+      "side": 1,
+      "message": "This bombs with InvalidThreadAccess.  The following worked for me:\n\n  LaunchUIPlugin.getShell().getDisplay().asyncExec( new Runnable() {\n    @Override\n    public void run() {\n\tMessageDialog.openInformation(LaunchUIPlugin.getShell(), LaunchMessages.LocalCDILaunchDelegate_NoProfilingProvider_Title, \n\tLaunchMessages.LocalCDILaunchDelegate_NoProfilingProvider_Message);\n    }\n  });",
+      "revId": "681d833ad4b748de294a0f5aa406e13538eb655d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABONn///x4\u003d",
+        "filename": "launch/org.eclipse.cdt.launch/src/org/eclipse/cdt/launch/ui/CProfilingTab.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-01-17T21:33:47Z",
+      "side": 1,
+      "message": "I get no compilation errors if I make this type ILaunchConfigurationTab, so maybe that should be all we need to request from the .exsd file?\n\nHowever, before making this decision, we need to understand if some of the CProfilingTab calls based on AbstractLaunchConfigurationTab need to be delegated to the delegate instead of the parent.  This is the comment at the end of this file.",
+      "revId": "681d833ad4b748de294a0f5aa406e13538eb655d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABONn///4o\u003d",
+        "filename": "launch/org.eclipse.cdt.launch/src/org/eclipse/cdt/launch/ui/CProfilingTab.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 190,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-01-17T21:33:47Z",
+      "side": 1,
+      "message": "I think getWarningMessage() which is defined in ILaunchConfigurationTab2 should be delegated, no?  I mean, getErrorMessage() is delegated, why not the warning one?\n\nI\u0027m not clear on the isDirty()/setDirty() methods.  Aren\u0027t those meant to indicate that the something in the tab has changed and must be saved?  Isn\u0027t the delegate tab that knows that information but must communicate it to the CProfilingTab?",
+      "revId": "681d833ad4b748de294a0f5aa406e13538eb655d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

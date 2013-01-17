@@ -41,4 +41,13 @@
             priority="normal">
       </content-type>
    </extension>
+   <extension
+         id="qtNature"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="org.eclipse.cdt.qt.core.QtNature">
+         </run>
+      </runtime>
+   </extension>
 </plugin>

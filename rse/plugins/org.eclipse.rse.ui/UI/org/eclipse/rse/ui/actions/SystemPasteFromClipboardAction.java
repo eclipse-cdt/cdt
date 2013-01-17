@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2011 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2013 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -16,6 +16,7 @@
  * Kenya Ishimoto   (IBM)        - [241197] Paste action causes IllegalArgumentException at Resource.copy
  * Zhou Renjian     (Kortide)    - [282241] "Paste" is enabled on file system when text is in clipboard
  * David McKnight   (IBM)        - [330398] RSE leaks SWT resources
+ * David McKnight   (IBM)        - [398324] cross systems folder transfer breaks due to scoping rule
  ********************************************************************************/
 
 package org.eclipse.rse.ui.actions;
@@ -101,35 +102,6 @@ public class SystemPasteFromClipboardAction extends SystemBaseAction implements 
 		{
 			// do the transfer
 			SystemDNDTransferRunnable runnable = new SystemDNDTransferRunnable(target, (ArrayList)srcObjects, getViewer(), _srcType);
-			if (target instanceof IAdaptable)
-			{
-				ISystemDragDropAdapter targetAdapter = (ISystemDragDropAdapter) ((IAdaptable) target).getAdapter(ISystemDragDropAdapter.class);
-
-				if (targetAdapter != null)
-				{
-					List rulesList = new ArrayList();
-				
-					if (target instanceof ISchedulingRule) {
-						rulesList.add(target);
-					}
-					
-					int j = 0;
-					for (int i = 0; i < srcObjects.size(); i++)
-					{
-						if (srcObjects.get(i) instanceof ISchedulingRule)
-						{
-							rulesList.add(srcObjects.get(i));
-							j++;
-						}
-					}
-					if (rulesList.size() > 0)
-					{
-						ISchedulingRule[] rules = (ISchedulingRule[])rulesList.toArray(new ISchedulingRule[rulesList.size()]);
-						MultiRule rule = new MultiRule(rules);
-						runnable.setRule(rule);
-					}
-				}
-			}
 			runnable.schedule();
 			RSEUIPlugin.getTheSystemRegistryUI().clearRunnableContext();
 		}

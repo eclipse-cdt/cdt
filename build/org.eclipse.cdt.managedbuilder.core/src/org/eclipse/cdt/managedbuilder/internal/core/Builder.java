@@ -2446,7 +2446,13 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 	 * The function never returns number smaller than 1.
 	 */
 	public int getOptimalParallelJobNum() {
-		return Runtime.getRuntime().availableProcessors();
+		// Bug 398426: On my Mac running parallel builds at full tilt hangs the desktop.
+		// Need to pull it back one.
+		int j = Runtime.getRuntime().availableProcessors();
+		if (j > 1 && Platform.getOS().equals(Platform.OS_MACOSX))
+			return j - 1;
+		else
+			return j;
 	}
 	
 	/**

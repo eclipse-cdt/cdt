@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2013 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -17,6 +17,7 @@
  * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  * David McKnight   (IBM)        - [234924] [ftp][dnd][Refresh] Copy/Paste file from Package Explorer doesn't refresh folder
  * David McKnight   (IBM)        - [248339] [dnd][encodings] Cannot drag&drop / copy&paste files or folders with turkish or arabic names
+ * David McKnight   (IBM)        - [398324] cross systems folder transfer breaks due to scoping rule
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -243,57 +244,7 @@ extends ViewerDropAdapter
 		        target = getViewer().getInput();
 		    }
 			
-			List rulesList = new ArrayList();
-			int j = 0;
-			for (int i = 0; i < srcObjects.size(); i++)
-			{
-				if (srcObjects.get(i) instanceof ISchedulingRule)
-				{
-					rulesList.add(srcObjects.get(i));
-					j++;
-				}
-				/** FIXME - can't be coupled with IRemoteFile
-				else if (srcObjects.get(i) instanceof IRemoteFile)
-				{
-					rulesList.add(new RemoteFileSchedulingRule((IRemoteFile)srcObjects.get(i)));
-					j++;
-				}
-				*/
-			}
-			/*
-			if (target instanceof ISchedulingRule)
-			{
-				rulesList.add(target);
-				j++;
-			}
-			*/
-			/** FIXME - can't be coupled with IRemoteFile
-			else if (target instanceof IRemoteFile)
-			{
-				rulesList.add(new RemoteFileSchedulingRule((IRemoteFile)target));
-			}
-			
-			else if (target instanceof IAdaptable)
-			{
-				ISystemDragDropAdapter targetAdapter = (ISystemDragDropAdapter) ((IAdaptable) target).getAdapter(ISystemDragDropAdapter.class);
-
-				if (targetAdapter != null)
-				{
-					ISubSystem targetSubSystem = targetAdapter.getSubSystem(target);
-					rulesList.add(targetSubSystem);
-					j++;
-				}
-			}
-			*/
-			MultiRule rule = null;
-			ISchedulingRule[] rules = (ISchedulingRule[])rulesList.toArray(new ISchedulingRule[rulesList.size()]);
-			
-			if (j > 0) rule = new MultiRule(rules);
-			
-			SystemDNDTransferRunnable runnable = new SystemDNDTransferRunnable(target, srcObjects, getViewer(), _sourceType);
-			// DKM - rules are causing problems at the moment
-			runnable.setRule(rule);
-			
+			SystemDNDTransferRunnable runnable = new SystemDNDTransferRunnable(target, srcObjects, getViewer(), _sourceType);			
 			if (target instanceof SystemScratchpad)
 			{
 				runnable.run(new NullProgressMonitor());

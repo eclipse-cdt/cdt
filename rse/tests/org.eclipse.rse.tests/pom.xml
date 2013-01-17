@@ -11,8 +11,8 @@
   <groupId>org.eclipse.tm</groupId>
   <artifactId>org.eclipse.rse.tests</artifactId>
   <version>3.4.1.qualifier</version>
-  <packaging>eclipse-plugin</packaging>
-<!--  <packaging>eclipse-test-plugin</packaging>
+  <!--  <packaging>eclipse-plugin</packaging> -->
+  <packaging>eclipse-test-plugin</packaging>
   	<build>
 		<plugins>
 			<plugin>
@@ -27,9 +27,9 @@
                     <product>org.eclipse.sdk.ide</product>
 					<testFailureIgnore>true</testFailureIgnore>
 					<failIfNoTests>false</failIfNoTests>
+					<argLine>-Drse.enableSecureStoreAccess=false</argLine>
 				</configuration>
 			</plugin>
 		</plugins>
 	</build>
--->	 
 </project>

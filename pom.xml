@@ -443,10 +443,6 @@
             </execution>
           </executions>
         </plugin>
-        <!--    </plugins>
-    </pluginManagement>
-    <pluginManagement>
-	    <plugins>-->
         <plugin>
           <groupId>org.eclipse.tycho</groupId>
           <artifactId>tycho-surefire-plugin</artifactId>
@@ -463,7 +459,7 @@
               </dependency>
             </dependencies>
             <product>org.eclipse.sdk.ide</product>
-            <argLine>-Xms512m -Xmx1024m -XX:PermSize=256m -XX:MaxPermSize=256m</argLine>
+            <argLine>-Xms512m -Xmx1024m -XX:PermSize=256m -XX:MaxPermSize=256m -Drse.enableSecureStoreAccess=false -Dorg.eclipse.swt.browser.UseWebKitGTK=true</argLine>
           </configuration>
         </plugin>
         <plugin>

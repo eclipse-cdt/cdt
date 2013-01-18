@@ -141,6 +141,6 @@ public abstract class FileContent {
 		CharArray chars = new CharArray(reader.buffer);
 		String filePath = reader.getPath();
 		File file = new File(filePath);
-		return new InternalFileContent(filePath, chars, file.lastModified(), file.length(),	fileReadTime);
+		return new InternalFileContent(filePath, chars, file.lastModified(), file.length(), fileReadTime);
 	}
 }

@@ -1409,8 +1409,17 @@ public final class CIndenter {
 				case Symbols.TokenPRIVATE:
 				case Symbols.TokenPROTECTED:
 				case Symbols.TokenPUBLIC:
-				case Symbols.TokenVIRTUAL:
 					continue; // Don't stop at colon in a class declaration
+
+				case Symbols.TokenVIRTUAL:
+					switch (peekToken()) {
+					case Symbols.TokenPRIVATE:
+					case Symbols.TokenPROTECTED:
+					case Symbols.TokenPUBLIC:
+						break;
+					default:
+						continue;
+					}
 				}
 				int pos= fPreviousPos;
 				if (!isConditional())

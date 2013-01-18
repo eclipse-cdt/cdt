@@ -13,7 +13,6 @@
 package org.eclipse.cdt.core.parser;
 
 import java.io.File;
-import java.io.InputStream;
 
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
@@ -139,14 +138,9 @@ public abstract class FileContent {
 			return null;
 		
 		long fileReadTime = System.currentTimeMillis();
-		String path = reader.getPath();
-		File file = new File(path);
-		
 		CharArray chars = new CharArray(reader.buffer);
-		
-		
-		FileContent fileContent =  new InternalFileContent(path, chars , file.lastModified(), file.length(), fileReadTime);
-		
-		return fileContent;
+		String filePath = reader.getPath();
+		File file = new File(filePath);
+		return new InternalFileContent(filePath, chars, file.lastModified(), file.length(), fileReadTime);
 	}
 }

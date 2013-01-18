@@ -249,11 +249,23 @@ public class SRecordExporter implements IMemoryExporter
 					fEndText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
 					fLengthText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
 					
-					BigInteger actualLength = getEndAddress().subtract(getStartAddress());
+					BigInteger startAddress = getStartAddress();
+					BigInteger actualLength = getEndAddress().subtract(startAddress);
 					fLengthText.setText(actualLength.toString());
 					
 					if(actualLength.compareTo(BigInteger.ZERO) <= 0) {
 						fStartText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+						fLengthText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+					}
+					
+					if(startAddress.compareTo(BigInteger.ZERO) < 0) {
+						fStartText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+						fLengthText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+					}
+					
+					BigInteger endAddress = getEndAddress();
+					if(endAddress.compareTo(BigInteger.ZERO) < 0) {
+						fEndText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
 						fLengthText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
 					}
 				}
@@ -284,6 +296,18 @@ public class SRecordExporter implements IMemoryExporter
 						fEndText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
 						fLengthText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
 					}
+					
+					BigInteger startAddress = getStartAddress();
+					if(startAddress.compareTo(BigInteger.ZERO) < 0) {
+						fStartText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+						fLengthText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+					}
+					
+					BigInteger endAddress = getEndAddress();
+					if(endAddress.compareTo(BigInteger.ZERO) < 0) {
+						fEndText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+						fLengthText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+					}
 				}
 				catch(Exception ex)
 				{
@@ -306,14 +330,38 @@ public class SRecordExporter implements IMemoryExporter
 					fEndText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
 					fLengthText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
 					
-					BigInteger length = getLength();
-					String endString = "0x" + getStartAddress().add(length).toString(16); //$NON-NLS-1$
 					fStartText.setText(fStartText.getText().trim());
+					
+					BigInteger length = getLength();
+					String endString;
+					BigInteger startAddress = getStartAddress();
+					BigInteger endAddress = startAddress.add(length);
+					
+					if(length.compareTo(BigInteger.ZERO) <= 0) {
+						if(endAddress.compareTo(BigInteger.ZERO) < 0) {
+							endString = endAddress.toString(16); //$NON-NLS-1$
+						}
+						else {
+							endString = "0x" + endAddress.toString(16); //$NON-NLS-1$
+						}
+					}
+					else {
+						endString = "0x" + endAddress.toString(16); //$NON-NLS-1$
+					}
+					
 					fEndText.setText(endString);
 					
 					if(length.compareTo(BigInteger.ZERO) <= 0) {
 						fEndText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
 						fLengthText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+					}
+					
+					if(startAddress.compareTo(BigInteger.ZERO) < 0) {
+						fStartText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+					}
+					
+					if(endAddress.compareTo(BigInteger.ZERO) < 0) {
+						fEndText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
 					}
 				}
 				catch(Exception ex)

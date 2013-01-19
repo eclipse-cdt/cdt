@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 Andrew Gvozdev and others.
+ * Copyright (c) 2009, 2011 Andrew Gvozdev and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,9 +12,7 @@
 package org.eclipse.cdt.managedbuilder.internal.language.settings.providers;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.eclipse.cdt.core.AbstractExecutableExtensionBase;
 import org.eclipse.cdt.core.CCorePlugin;
@@ -61,7 +59,7 @@ public class MBSLanguageSettingsProvider extends AbstractExecutableExtensionBase
 			languageSettings = getLanguageSettings(rcDescription);
 		}
 
-		Set<ICLanguageSettingEntry> set = new LinkedHashSet<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> list = new ArrayList<ICLanguageSettingEntry>();
 
 		if (languageSettings != null) {
 			for (ICLanguageSetting langSetting : languageSettings) {
@@ -88,8 +86,8 @@ public class MBSLanguageSettingsProvider extends AbstractExecutableExtensionBase
 													IStringVariableManager mngr = VariablesPlugin.getDefault().getStringVariableManager();
 													String projectRootedPath = mngr.generateVariableExpression("workspace_loc", rc.getProject().getName()) + Path.SEPARATOR + pathStr; //$NON-NLS-1$
 													ICLanguageSettingEntry projectRootedEntry = (ICLanguageSettingEntry) CDataUtil.createEntry(kind, projectRootedPath, projectRootedPath, null, entry.getFlags());
-													if (!set.contains(projectRootedEntry)) {
-														set.add(projectRootedEntry);
+													if (! list.contains(projectRootedEntry)) {
+														list.add(projectRootedEntry);
 													}
 												}
 											} catch (CdtVariableException e) {
@@ -99,8 +97,8 @@ public class MBSLanguageSettingsProvider extends AbstractExecutableExtensionBase
 											
 										}
 									}
-									if (!set.contains(entry)) {
-										set.add(entry);
+									if (! list.contains(entry)) {
+										list.add(entry);
 									}
 								}
 							}
@@ -109,7 +107,7 @@ public class MBSLanguageSettingsProvider extends AbstractExecutableExtensionBase
 				}
 			}
 		}
-		return LanguageSettingsStorage.getPooledList(new ArrayList<ICLanguageSettingEntry>(set));
+		return LanguageSettingsStorage.getPooledList(list);
 	}
 
 	/**

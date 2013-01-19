@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,10 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.viewsupport;
 
-import java.util.List;
-
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.CoreException;
@@ -30,20 +27,10 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.ui.texteditor.MarkerUtilities;
 
-import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
-import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvidersKeeper;
-import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
-import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
-import org.eclipse.cdt.core.settings.model.ICProjectDescription;
-import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.ui.CElementImageDescriptor;
 import org.eclipse.cdt.ui.CUIPlugin;
 
@@ -98,7 +85,6 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 
 	private static final int ERRORTICK_WARNING= CElementImageDescriptor.WARNING;
 	private static final int ERRORTICK_ERROR= CElementImageDescriptor.ERROR;
-	private static final int TICK_CONFIGURATION = CElementImageDescriptor.SETTINGS;
 
 	private ImageDescriptorRegistry fRegistry;
 	private boolean fUseNewRegistry= false;
@@ -114,14 +100,12 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 		fUseNewRegistry= true;
 	}
 
-	/*
+	/**
 	 * Creates decorator with a shared image registry.
+	 * Note: This constructor is for internal use only. Clients should not call this constructor.
 	 *
 	 * @param registry The registry to use or <code>null</code> to use the Java plugin's
 	 * image registry.
-	 */
-	/**
-	 * Note: This constructor is for internal use only. Clients should not call this constructor.
 	 */
 	public ProblemsLabelDecorator(ImageDescriptorRegistry registry) {
 		fRegistry= registry;
@@ -136,17 +120,11 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 	}
 
 
-	/* (non-Javadoc)
-	 * @see ILabelDecorator#decorateText(String, Object)
-	 */
 	@Override
 	public String decorateText(String text, Object element) {
 		return text;
 	}
 
-	/* (non-Javadoc)
-	 * @see ILabelDecorator#decorateImage(Image, Object)
-	 */
 	@Override
 	public Image decorateImage(Image image, Object obj) {
 		int adornmentFlags= computeAdornmentFlags(obj);
@@ -169,9 +147,9 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 				switch (type) {
 					case ICElement.C_PROJECT:
 					case ICElement.C_CCONTAINER:
-						return getErrorTicksFromMarkers(element.getResource(), IResource.DEPTH_INFINITE, null) | getTicks(element.getResource());
+						return getErrorTicksFromMarkers(element.getResource(), IResource.DEPTH_INFINITE, null);
 					case ICElement.C_UNIT:
-						return getErrorTicksFromMarkers(element.getResource(), IResource.DEPTH_ONE, null) | getTicks(element.getResource());
+						return getErrorTicksFromMarkers(element.getResource(), IResource.DEPTH_ONE, null);
 					case ICElement.C_FUNCTION:
 					case ICElement.C_CLASS:
 					case ICElement.C_UNION:
@@ -185,14 +163,9 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 						break;
 				}
 			} else if (obj instanceof IResource) {
-				return getErrorTicksFromMarkers((IResource) obj, IResource.DEPTH_INFINITE, null) | getTicks((IResource)obj);
+				return getErrorTicksFromMarkers((IResource) obj, IResource.DEPTH_INFINITE, null);
 			}
 		} catch (CoreException e) {
-			if (e instanceof CModelException) {
-//				if (((CModelException) e).isDoesNotExist()) {
-//					return 0;
-//				}
-			}
 			if (e.getStatus().getCode() == IResourceStatus.MARKER_NOT_FOUND) {
 				return 0;
 			}
@@ -240,42 +213,6 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 		return false;
 	}
 
-
-//	private int getErrorTicksFromWorkingCopy(ITranslationUnit original, ISourceReference sourceElement) throws CoreException {
-//		int info= 0;
-//		FileEditorInput editorInput= new FileEditorInput((IFile) original.getResource());
-//		IAnnotationModel model= CUIPlugin.getDefault().getTranslationUnitDocumentProvider().getAnnotationModel(editorInput);
-//		if (model != null) {
-//			Iterator iter= model.getAnnotationIterator();
-//			while ((info != ERRORTICK_ERROR) && iter.hasNext()) {
-//				Annotation curr= (Annotation) iter.next();
-//				IMarker marker= isAnnotationInRange(model, curr, sourceElement);
-//				if (marker != null) {
-//					int priority= marker.getAttribute(IMarker.SEVERITY, -1);
-//					if (priority == IMarker.SEVERITY_WARNING) {
-//						info= ERRORTICK_WARNING;
-//					} else if (priority == IMarker.SEVERITY_ERROR) {
-//						info= ERRORTICK_ERROR;
-//					}
-//				}
-//			}
-//		}
-//		return info;
-//	}
-
-//	private IMarker isAnnotationInRange(IAnnotationModel model, Annotation annot, ISourceReference sourceElement) throws CoreException {
-//		if (annot instanceof MarkerAnnotation) {
-//			IMarker marker= ((MarkerAnnotation) annot).getMarker();
-//			if (marker.exists() && marker.isSubtypeOf(IMarker.PROBLEM)) {
-//				Position pos= model.getPosition(annot);
-//				if (pos != null && (sourceElement == null || isInside(pos.getOffset(), -1, sourceElement))) {
-//					return marker;
-//				}
-//			}
-//		}
-//		return null;
-//	}
-
 	/**
 	 * Tests if a position is inside the source range of an element. Usually this is done
 	 * by looking at the offset. In case the offset equals <code>-1</code>, the line is
@@ -300,9 +237,6 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see IBaseLabelProvider#dispose()
-	 */
 	@Override
 	public void dispose() {
 		if (fProblemChangedListener != null) {
@@ -314,17 +248,11 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see IBaseLabelProvider#isLabelProperty(Object, String)
-	 */
 	@Override
 	public boolean isLabelProperty(Object element, String property) {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see IBaseLabelProvider#addListener(ILabelProviderListener)
-	 */
 	@Override
 	public void addListener(ILabelProviderListener listener) {
 		if (fListeners == null) {
@@ -342,9 +270,6 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see IBaseLabelProvider#removeListener(ILabelProviderListener)
-	 */
 	@Override
 	public void removeListener(ILabelProviderListener listener) {
 		if (fListeners != null) {
@@ -366,68 +291,14 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ILightweightLabelDecorator#decorate(java.lang.Object, org.eclipse.jface.viewers.IDecoration)
-	 */
 	@Override
 	public void decorate(Object element, IDecoration decoration) {
 		int adornmentFlags= computeAdornmentFlags(element);
-
-		if ((adornmentFlags & TICK_CONFIGURATION) != 0) {
-			decoration.addOverlay(CPluginImages.DESC_OVR_SETTING);
-			adornmentFlags &= ~TICK_CONFIGURATION;
-		}
 
 		if (adornmentFlags == ERRORTICK_ERROR) {
 			decoration.addOverlay(CPluginImages.DESC_OVR_ERROR);
 		} else if (adornmentFlags == ERRORTICK_WARNING) {
 			decoration.addOverlay(CPluginImages.DESC_OVR_WARNING);
 		}
-	}
-
-	private static boolean isCustomizedResource(ICConfigurationDescription cfgDescription, IResource rc) {
-		if (rc instanceof IProject)
-			return false;
-
-		if (!ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityEnabled(rc.getProject())) {
-			ICResourceDescription rcDescription = cfgDescription.getResourceDescription(rc.getProjectRelativePath(), true);
-			return rcDescription != null;
-		}
-
-		if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
-			for (ILanguageSettingsProvider provider: ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders()) {
-				for (String languageId : LanguageSettingsManager.getLanguages(rc, cfgDescription)) {
-					List<ICLanguageSettingEntry> list = provider.getSettingEntries(cfgDescription, rc, languageId);
-					if (list != null) {
-						List<ICLanguageSettingEntry> listDefault = provider.getSettingEntries(cfgDescription, rc.getParent(), languageId);
-						// != is OK here due as the equal lists will have the same reference in WeakHashSet
-						if (list != listDefault)
-							return true;
-					}
-				}
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * @param rc - resource to check
-	 * @return flags {@link TICK_CONFIGURATION} if the resource has custom settings and possibly needs
-	 * to be adorned or 0 otherwise.
-	 */
-	private int getTicks (IResource rc) {
-		if (rc == null || rc instanceof IProject)
-			return 0;
-
-		int result = 0;
-		ICProjectDescription prjDescription = CoreModel.getDefault().getProjectDescription(rc.getProject(), false);
-		if (prjDescription != null) {
-			ICConfigurationDescription cfgDescription = prjDescription.getDefaultSettingConfiguration();
-			if (cfgDescription != null) {
-				if (isCustomizedResource(cfgDescription, rc))
-					result |= TICK_CONFIGURATION;
-			}
-		}
-		return result;
 	}
 }

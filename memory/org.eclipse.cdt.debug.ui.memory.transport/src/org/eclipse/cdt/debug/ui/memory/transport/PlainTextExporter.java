@@ -69,13 +69,17 @@ public class PlainTextExporter implements IMemoryExporter {
 			@Override
 			public void dispose()
 			{
-				fProperties.put(TRANSFER_FILE, fFileText.getText());
-				fProperties.put(TRANSFER_START, fStartText.getText());
-				fProperties.put(TRANSFER_END, fEndText.getText());
+				fProperties.put(TRANSFER_FILE, fFileText.getText().trim());
+				fProperties.put(TRANSFER_START, fStartText.getText().trim());
+				fProperties.put(TRANSFER_END, fEndText.getText().trim());
 				
-				fStartAddress = getStartAddress();
-				fEndAddress = getEndAddress();
-				fOutputFile = getFile();
+				try
+				{
+					fStartAddress = getStartAddress();
+					fEndAddress = getEndAddress();
+					fOutputFile = getFile();
+				}
+				catch(Exception e) {}
 				
 				super.dispose();
 			}
@@ -203,7 +207,7 @@ public class PlainTextExporter implements IMemoryExporter {
 				dialog.setText(Messages.getString("PlainTextExporter.ChooseFile")); //$NON-NLS-1$
 				dialog.setFilterExtensions(new String[] { "*.*;*" } ); //$NON-NLS-1$
 				dialog.setFilterNames(new String[] { Messages.getString("Exporter.AllFiles") } ); //$NON-NLS-1$
-				dialog.setFileName(fFileText.getText());
+				dialog.setFileName(fFileText.getText().trim());
 				dialog.open();
 			
 				String filename = dialog.getFileName();
@@ -419,7 +423,7 @@ public class PlainTextExporter implements IMemoryExporter {
 	
 	public File getFile()
 	{
-		return new File(fFileText.getText());
+		return new File(fFileText.getText().trim());
 	}
 	
 	private void validate()
@@ -434,6 +438,9 @@ public class PlainTextExporter implements IMemoryExporter {
 			BigInteger length = getLength();
 			
 			if(length.compareTo(BigInteger.ZERO) <= 0)
+				isValid = false;
+			
+			if ( fFileText.getText().trim().length() == 0 )
 				isValid = false;
 			
 			File file = getFile();
@@ -457,7 +464,7 @@ public class PlainTextExporter implements IMemoryExporter {
 		
 		fParentDialog.setValid(isValid);
 	}
-
+	
 	public String getId()
 	{
 		return "PlainTextExporter"; //$NON-NLS-1$

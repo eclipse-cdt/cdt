@@ -1,0 +1,208 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOOn///6M\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/GdbAdapterFactory.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 257,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-01-21T16:52:47Z",
+      "side": 1,
+      "message": "Need to call fDebugNewExecutableCommand.dispose() a little below",
+      "revId": "28c8d82f32235a93e6167f13333482e920ddd7c9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOOX///6w\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/commands/GdbConnectCommand.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 165,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-01-21T16:52:47Z",
+      "side": 1,
+      "message": "I had to fix this case last month because of bug 396386.  The code was reviewed in https://git.eclipse.org/r/9352.\n\nI remembered that you had noticed this bug but I didn\u0027t remember that you had a fix as part of this patch.  Sorry I didn\u0027t let you know it had to be fixed last month.\n\nYou can remove all changes from this file.",
+      "revId": "28c8d82f32235a93e6167f13333482e920ddd7c9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOOX///60\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/commands/GdbDebugNewExecutableCommand.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-01-21T16:52:47Z",
+      "side": 1,
+      "message": "This string shows up in the progress bar for a long time while the user types the info.  I think we should make it translatable.",
+      "revId": "28c8d82f32235a93e6167f13333482e920ddd7c9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOOX///6s\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/commands/GdbDebugNewExecutableCommand.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 208,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-01-21T16:52:47Z",
+      "side": 1,
+      "message": "I think that in the remote case, this message should say \"host binary\".\n\nWhen I was testing, I started by putting a string in the remote binary text box and the error message said \"Invalid binary\" or something and I of course mistakenly thought it was about the binary I had entered.",
+      "revId": "28c8d82f32235a93e6167f13333482e920ddd7c9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOOX///6o\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/commands/GdbDebugNewExecutableCommand.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 210,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-01-21T16:52:47Z",
+      "side": 1,
+      "message": "Same comment as above about the remote case",
+      "revId": "28c8d82f32235a93e6167f13333482e920ddd7c9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOOn///44\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/commands/GdbDebugNewExecutableCommand.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 211,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-01-21T16:52:47Z",
+      "side": 1,
+      "message": "I think it would be nicer to use \u0027else if\u0027 here so that the above error messages have precedence over this error. Unless that is not what you want?\n\nOr we could concatenate both errors, which may be even nicer.",
+      "revId": "28c8d82f32235a93e6167f13333482e920ddd7c9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOOX///68\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/commands/GdbDebugNewExecutableCommand.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 262,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-01-21T16:52:47Z",
+      "side": 1,
+      "message": "Don\u0027t need the backend service",
+      "revId": "28c8d82f32235a93e6167f13333482e920ddd7c9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOOn///8A\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/commands/GdbDebugNewExecutableCommand.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 312,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-01-21T16:52:47Z",
+      "side": 1,
+      "message": "I don\u0027t think you need to create a new map.  getLaunchConfiguration().getAttributes() already returns a copy that can be modified.",
+      "revId": "28c8d82f32235a93e6167f13333482e920ddd7c9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOOX///64\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/commands/Messages.properties",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-01-21T16:52:47Z",
+      "side": 1,
+      "message": "Missing copyright header",
+      "revId": "28c8d82f32235a93e6167f13333482e920ddd7c9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOOn///6E\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/DebugNewProcessSequence_7_2.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-01-21T16:52:47Z",
+      "side": 1,
+      "message": "This constructor does not seem to be used.  And its new parameter fileOnTarget is not stored anyway :)",
+      "revId": "28c8d82f32235a93e6167f13333482e920ddd7c9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOOX///6k\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBProcesses_7_2.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 478,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-01-21T16:52:47Z",
+      "side": 1,
+      "message": "So we don\u0027t get confused in the future, can you change \u0027doing the attach\u0027 to \u0027starting the new process\u0027",
+      "revId": "28c8d82f32235a93e6167f13333482e920ddd7c9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOOX///6g\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/StartOrRestartProcessSequence_7_0.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 299,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-01-21T16:52:47Z",
+      "side": 1,
+      "message": "I think the same change should be done above for stepInitializeInputOutput()",
+      "revId": "28c8d82f32235a93e6167f13333482e920ddd7c9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

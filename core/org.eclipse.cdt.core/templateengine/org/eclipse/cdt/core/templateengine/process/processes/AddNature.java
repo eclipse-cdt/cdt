@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.IStatus;
 
 /**
  * @author dschaefer
+ * @since 5.5
  *
  */
 public class AddNature extends ProcessRunner {

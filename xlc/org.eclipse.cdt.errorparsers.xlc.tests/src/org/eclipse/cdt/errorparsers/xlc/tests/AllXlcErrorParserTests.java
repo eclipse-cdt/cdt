@@ -22,6 +22,8 @@ public class AllXlcErrorParserTests {
 		TestSuite suite = new TestSuite("Testsuite for xlc compiler error parser");
 		//$JUnit-BEGIN$
 		suite.addTestSuite(TestInformationalMessage_1.class);
+		suite.addTestSuite(TestInformationalMessage_2.class);
+		suite.addTestSuite(TestInformationalMessage_3.class);
 		suite.addTestSuite(TestWarning_1.class);
 		suite.addTestSuite(TestError_1.class);
 		suite.addTestSuite(TestSevereError_1.class);
@@ -30,15 +32,21 @@ public class AllXlcErrorParserTests {
 		suite.addTestSuite(TestSevereError_4.class);
 		suite.addTestSuite(TestSevereError_5.class);
 		suite.addTestSuite(TestUnrecoverableError_1.class);
+		suite.addTestSuite(TestUnrecoverableError_2.class);
+		suite.addTestSuite(TestUnrecoverableError_3.class);
 
 		suite.addTestSuite(TestCompatibility.class);
 		suite.addTestSuite(TestRedefinition.class);
 		suite.addTestSuite(TestRedeclaration.class);
+		suite.addTestSuite(TestCommandOptionNotRecognized.class);
+
+		suite.addTestSuite(TestLinkerCommandOptionNotRecognized.class);
 		suite.addTestSuite(TestLinkerUndefinedSymbol.class);
 		suite.addTestSuite(TestLinkerDuplicateSymbol.class);
 		suite.addTestSuite(TestLinkerSevereError.class);
 		suite.addTestSuite(TestLinkerErrorWhileReading.class);
 		suite.addTestSuite(TestLinkerInfo.class);
+
 		//$JUnit-END$
 		return suite;
 	}

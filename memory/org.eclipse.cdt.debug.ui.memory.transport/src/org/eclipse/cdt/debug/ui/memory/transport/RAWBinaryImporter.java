@@ -71,13 +71,17 @@ public class RAWBinaryImporter implements IMemoryImporter {
 			@Override
 			public void dispose()
 			{
-				fProperties.put(TRANSFER_FILE, fFileText.getText());
-				fProperties.put(TRANSFER_START, fStartText.getText());
+				fProperties.put(TRANSFER_FILE, fFileText.getText().trim());
+				fProperties.put(TRANSFER_START, fStartText.getText().trim());
 				fProperties.put(TRANSFER_SCROLL_TO_START, fScrollToBeginningOnImportComplete.getSelection());
 				
-				fStartAddress = getStartAddress();
-				fInputFile = getFile();
-				fScrollToStart = getScrollToStart();
+				try
+				{
+					fStartAddress = getStartAddress();
+					fInputFile = getFile();
+					fScrollToStart = getScrollToStart();
+				}
+				catch(Exception e) {}
 				
 				super.dispose();
 			}
@@ -137,7 +141,7 @@ public class RAWBinaryImporter implements IMemoryImporter {
 				dialog.setText(Messages.getString("RAWBinaryImporter.ChooseFile")); //$NON-NLS-1$
 				dialog.setFilterExtensions(new String[] { "*.*;*" } ); //$NON-NLS-1$
 				dialog.setFilterNames(new String[] { Messages.getString("Importer.AllFiles") } ); //$NON-NLS-1$
-				dialog.setFileName(fFileText.getText());
+				dialog.setFileName(fFileText.getText().trim());
 				dialog.open();
 			
 				String filename = dialog.getFileName();
@@ -206,6 +210,11 @@ public class RAWBinaryImporter implements IMemoryImporter {
 		try
 		{
 			getStartAddress();
+			
+
+			if ( fFileText.getText().trim().length() == 0 )
+				isValid = false;
+			
 			if(!getFile().exists()) {
 				isValid = false;
 			}
@@ -236,7 +245,7 @@ public class RAWBinaryImporter implements IMemoryImporter {
 	
 	public File getFile()
 	{
-		return new File(fFileText.getText());
+		return new File(fFileText.getText().trim());
 	}
 	
 	public String getId()

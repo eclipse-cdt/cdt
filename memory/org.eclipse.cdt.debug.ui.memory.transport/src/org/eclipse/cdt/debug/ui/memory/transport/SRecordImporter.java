@@ -77,14 +77,20 @@ public class SRecordImporter implements IMemoryImporter {
 		{
 			public void dispose()
 			{
-				fProperties.put(TRANSFER_FILE, fFileText.getText());
-				fProperties.put(TRANSFER_START, fStartText.getText());
+				fProperties.put(TRANSFER_FILE, fFileText.getText().trim());
+				fProperties.put(TRANSFER_START, fStartText.getText().trim());
 				fProperties.put(TRANSFER_SCROLL_TO_START, fScrollToBeginningOnImportComplete.getSelection());
 				fProperties.put(TRANSFER_CUSTOM_START_ADDRESS, fComboRestoreToThisAddress.getSelection());
 				
-				fStartAddress = getStartAddress();
-				fInputFile = getFile();
-				fScrollToStart = getScrollToStart();
+				try
+				{
+					if(fProperties.getBoolean(TRANSFER_CUSTOM_START_ADDRESS)) {
+						fStartAddress = getStartAddress();
+					}
+					fInputFile = getFile();
+					fScrollToStart = getScrollToStart();
+				}
+				catch(Exception e) {}
 				
 				super.dispose();
 			}
@@ -187,7 +193,7 @@ public class SRecordImporter implements IMemoryImporter {
 				dialog.setText(Messages.getString("SRecordImporter.ChooseFile"));  //$NON-NLS-1$
 				dialog.setFilterExtensions(new String[] { "*.*;*" } ); //$NON-NLS-1$
 				dialog.setFilterNames(new String[] { Messages.getString("Importer.AllFiles") } );  //$NON-NLS-1$
-				dialog.setFileName(fFileText.getText());
+				dialog.setFileName(fFileText.getText().trim());
 				dialog.open();
 			
 				String filename = dialog.getFileName();
@@ -289,11 +295,11 @@ public class SRecordImporter implements IMemoryImporter {
 				getStartAddress();
 			}
 			
-			boolean restoreToAddressFromFile = fComboRestoreToFileAddress.getSelection();
-			if ( restoreToAddressFromFile ) {
-				if(!getFile().exists()) {
-					isValid = false;
-				}
+			if ( fFileText.getText().trim().length() == 0 )
+				isValid = false;
+
+			if(!getFile().exists()) {
+				isValid = false;
 			}
 		}
 		catch(Exception e)
@@ -327,7 +333,7 @@ public class SRecordImporter implements IMemoryImporter {
 	
 	public File getFile()
 	{
-		return new File(fFileText.getText());
+		return new File(fFileText.getText().trim());
 	}
 	
 	public String getId()

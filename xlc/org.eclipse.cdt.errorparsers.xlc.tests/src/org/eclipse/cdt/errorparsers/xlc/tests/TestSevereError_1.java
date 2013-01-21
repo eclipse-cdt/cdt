@@ -14,7 +14,7 @@ import junit.framework.TestCase;
 
 import org.eclipse.cdt.core.IMarkerGenerator;
 
-public class TestSyntaxError extends TestCase {
+public class TestSevereError_1 extends TestCase {
 	String err_msg;
 	/**
 	 * This function tests parseLine function of the
@@ -31,7 +31,7 @@ public class TestSyntaxError extends TestCase {
 		assertEquals(IMarkerGenerator.SEVERITY_ERROR_RESOURCE, aix.getSeverity(0));
 		assertEquals("Syntax error: possible missing ')'?",aix.getMessage(0));
 	}
-	public TestSyntaxError( String name)
+	public TestSevereError_1( String name)
 	{
 		super(name);
 		err_msg = "\"temp1.c\", line 5.1: 1506-276 (S) " 

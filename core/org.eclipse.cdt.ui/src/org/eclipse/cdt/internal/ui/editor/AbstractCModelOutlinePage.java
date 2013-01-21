@@ -207,7 +207,7 @@ public abstract class AbstractCModelOutlinePage extends Page
 			PreferenceConstants.getPreferenceStore().setValue(PreferenceConstants.OUTLINE_GROUP_INCLUDES, isChecked());
 		}
 
-		public boolean isIncludesGroupingEnabled () {
+		public boolean isIncludesGroupingEnabled() {
 			return PreferenceConstants.getPreferenceStore().getBoolean(PreferenceConstants.OUTLINE_GROUP_INCLUDES);
 		}
 	}
@@ -240,7 +240,7 @@ public abstract class AbstractCModelOutlinePage extends Page
 			PreferenceConstants.getPreferenceStore().setValue(PreferenceConstants.OUTLINE_GROUP_MACROS, isChecked());
 		}
 
-		public boolean isMacroGroupingEnabled () {
+		public boolean isMacroGroupingEnabled() {
 			return PreferenceConstants.getPreferenceStore().getBoolean(PreferenceConstants.OUTLINE_GROUP_MACROS);
 		}
 	}
@@ -374,8 +374,8 @@ public abstract class AbstractCModelOutlinePage extends Page
 					} else if (fInput != null) {
 						try {
 							element= fInput.getElementAtOffset(offset);
-						} catch (CModelException exc) {
-							CUIPlugin.log(exc);
+						} catch (CModelException e) {
+							CUIPlugin.log(e);
 						}
 					}
 					if (element != null) {
@@ -526,7 +526,7 @@ public abstract class AbstractCModelOutlinePage extends Page
 		fTreeViewer.setInput(fInput);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(control, ICHelpContextIds.COUTLINE_VIEW);
 		
-		IHandlerService handlerService= (IHandlerService)site.getService(IHandlerService.class);
+		IHandlerService handlerService= (IHandlerService) site.getService(IHandlerService.class);
 		handlerService.activateHandler(CollapseAllHandler.COMMAND_ID, new ActionHandler(fCollapseAllAction));
 	}
 
@@ -761,7 +761,7 @@ public abstract class AbstractCModelOutlinePage extends Page
 	public void setInput(ITranslationUnit unit) {
 		fInput = unit;
 		if (fTreeViewer != null) {
-			fTreeViewer.setInput (fInput);
+			fTreeViewer.setInput(fInput);
 		}
 	}
 

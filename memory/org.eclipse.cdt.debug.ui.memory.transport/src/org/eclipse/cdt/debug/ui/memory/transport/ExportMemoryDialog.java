@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlock;
+import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
@@ -180,19 +181,46 @@ public class ExportMemoryDialog extends SelectionDialog
 	         registry.getExtensionPoint("org.eclipse.cdt.debug.ui.memory.transport.memoryTransport"); //$NON-NLS-1$
 	    IConfigurationElement points[] =
 	         extensionPoint.getConfigurationElements();
-	     
+	    
 		for (int i = 0; i < points.length; i++) 
 		{
 			IConfigurationElement element = points[i];
 			if("exporter".equals(element.getName())) //$NON-NLS-1$
 			{
+				String maxSizeStr = element.getAttribute("maxmemorysize");
+				if ( maxSizeStr != null ) {
+					if ( fMemoryBlock instanceof IMemoryBlockExtension ) {
+						IMemoryBlockExtension memBlock = (IMemoryBlockExtension) fMemoryBlock;
+						try {
+							BigInteger endAddress =  memBlock.getBigBaseAddress();
+							BigInteger length =  memBlock.getBigLength();
+							if ( length != null && ! length.equals(new BigInteger("-1",10) ) ) {
+								endAddress = endAddress.add( length ) ;
+							}
+							int maxAddressSizeInBits = endAddress.bitLength();
+							int maxSupportedAddressSizeInBits = Integer.decode(maxSizeStr);
+							if ( maxAddressSizeInBits > maxSupportedAddressSizeInBits ) {
+								continue;
+							}
+						} catch (DebugException e1) {
+							continue;
+						}
+					}
+					else {
+						int maxSupportedAddressSizeInBits = Integer.decode(maxSizeStr);
+						if ( maxSupportedAddressSizeInBits < 32 ) {
+							continue;
+						}
+					}
+				}
+				
 				try 
 				{
 					exporters.addElement((IMemoryExporter) element.createExecutableExtension("class")); //$NON-NLS-1$
 				}
 				catch(Exception e) {
 					MemoryTransportPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-			    		DebugException.INTERNAL_ERROR, "Failure", e)); //$NON-NLS-1$
+							DebugException.INTERNAL_ERROR, "Failure", e)); //$NON-NLS-1$
 				}
 			}
 		}

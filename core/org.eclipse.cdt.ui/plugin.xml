@@ -4156,6 +4156,22 @@
             </or>
          </enablement>
       </decorator>
+      <decorator
+            adaptable="true"
+            class="org.eclipse.cdt.internal.ui.viewsupport.CustomBuildSettingsDecorator"
+            id="org.eclipse.cdt.internal.ui.CustomBuildSettingsDecorator"
+            label="%CustomBuildSettingsDecorator.name"
+            lightweight="true"
+            location="TOP_RIGHT"
+            state="true">
+         <description>%CustomBuildSettingsDecorator.description</description>
+         <enablement>
+            <or>
+               <objectClass name="org.eclipse.core.resources.IFile" />
+               <objectClass name="org.eclipse.core.resources.IFolder" />
+            </or>
+         </enablement>
+      </decorator>
    </extension>
 
    <!-- Hyperlinking support -->

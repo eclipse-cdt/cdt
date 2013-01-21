@@ -56,6 +56,10 @@
 			</element>
 		</complex-array>
 	</process>
+	
+	<process type="org.eclipse.cdt.core.AddNature">
+		<simple name="projectName" value="$(projectName)"/>
+		<simple name="natureId" value="org.eclipse.cdt.qt.core.qtNature"/>
+	</process>
 
 </template>
-

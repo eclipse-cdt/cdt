@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2013 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.scanner;
 
@@ -201,7 +202,29 @@ public class LexerTests extends BaseTestCase {
 		id("ab");
 		eof();
 	}
-	
+
+	public void testLessColonColon() throws Exception {
+		// 2.5-3
+		// <: is treated as digraph [
+		init("<::>"); 
+		token(IToken.tLBRACKET);
+		token(IToken.tRBRACKET);
+		eof();
+
+		// <: is treated as digraph [
+		init("<:::"); 
+		token(IToken.tLBRACKET);
+		token(IToken.tCOLONCOLON);
+		eof();
+
+		// <:: is treated as < and ::
+		init("<::A"); 
+		token(IToken.tLT);
+		token(IToken.tCOLONCOLON);
+		token(IToken.tIDENTIFIER);
+		eof();
+	}
+
 	public void testWindowsLineEnding() throws Exception {
 		init("\n\n");
 		nl(); nl(); eof();

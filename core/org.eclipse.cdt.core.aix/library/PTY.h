@@ -7,14 +7,21 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-/* Inaccessible static: hasPTY */
 /*
  * Class:     org_eclipse_cdt_utils_pty_PTY
  * Method:    openMaster
- * Signature: ()Ljava/lang/String;
+ * Signature: (Z)Ljava/lang/String;
  */
 JNIEXPORT jstring JNICALL Java_org_eclipse_cdt_utils_pty_PTY_openMaster
-  (JNIEnv *, jobject);
+  (JNIEnv *, jobject, jboolean);
+
+/*
+ * Class:     org_eclipse_cdt_utils_pty_PTY
+ * Method:    change_window_size
+ * Signature: (III)I
+ */
+JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_pty_PTY_change_1window_1size
+  (JNIEnv *, jobject, jint, jint, jint);
 
 #ifdef __cplusplus
 }

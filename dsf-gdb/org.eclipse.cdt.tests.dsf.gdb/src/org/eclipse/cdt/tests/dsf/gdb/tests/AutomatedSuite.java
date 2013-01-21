@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.tests;
 
-import org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_4.Suite_7_4;
+import org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_5.Suite_7_5;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -21,7 +21,7 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-	Suite_7_4.class,
+	Suite_7_5.class,
 	// Can't run the Remote test just yet because they
 	// have the same names on the local tests, which is
 	// not handled by JUnit (https://bugs.eclipse.org/172256)

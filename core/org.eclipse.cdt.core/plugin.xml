@@ -771,6 +771,16 @@
             </baseType>
          </complexArray>
       </processType>
+      <processType
+            name="AddNature"
+            processRunner="org.eclipse.cdt.core.templateengine.process.processes.AddNature">
+         <simple
+               name="projectName">
+         </simple>
+         <simple
+               name="natureId">
+         </simple>
+      </processType>
    </extension>
    <extension
          point="org.eclipse.cdt.core.CProjectDescriptionStorage">

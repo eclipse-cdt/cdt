@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2008 IBM Corporation and others.
+ * Copyright (c) 2003, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     IBM Corporation - port of 248071
  *******************************************************************************/
 
 #include "exec0.h"
@@ -19,7 +20,7 @@
 #include <stdlib.h>
 
 /* from pfind.c */
-extern char *pfind(const char *name);
+extern char *pfind(const char *name, char * const envp[]);
 
 pid_t
 exec0(const char *path, char *const argv[], char *const envp[],
@@ -33,7 +34,7 @@ exec0(const char *path, char *const argv[], char *const envp[],
 	 * We use pfind() to check that the program exists and is an executable.
 	 * If not pass the error up.  Also execve() wants a full path.
 	 */ 
-	full_path = pfind(path);
+	full_path = pfind(path, envp);
 	if (full_path == NULL) {
 		fprintf(stderr, "Unable to find full path for \"%s\"\n", (path) ? path : "");
 		return -1;
@@ -91,6 +92,8 @@ exec0(const char *path, char *const argv[], char *const envp[],
 				close(fd++);
 		}
 
+		setpgid(getpid(), getpid());
+
 		if (envp[0] == NULL) {
 			execv(full_path, argv);
 		} else {
@@ -135,8 +138,18 @@ int wait0(pid_t pid)
 	int status;
 	int val = -1;
 
-	if (pid < 0 || waitpid(pid, &status, 0) < 0)
+	if (pid < 0)
 		return -1;
+
+	for (;;) {
+		if (waitpid(pid, &status, 0) < 0) {
+			if (errno == EINTR) {
+				// interrupted system call - retry
+				continue;
+			}
+		}
+		break;
+	}
 
 	if (WIFEXITED(status)) {
 		val = WEXITSTATUS(status);

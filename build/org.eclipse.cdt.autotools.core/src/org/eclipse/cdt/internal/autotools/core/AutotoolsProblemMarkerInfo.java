@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.IPath;
  */
 public class AutotoolsProblemMarkerInfo {
 
-	public static enum Type{PACKAGE, HEADER, PROG, FILE, GENERIC}
+	public static enum Type{PACKAGE, HEADER, PROG, LIB, FILE, GENERIC}
 
 	private ProblemMarkerInfo marker;
 

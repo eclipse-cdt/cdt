@@ -21,8 +21,8 @@ unsigned int __stdcall PrintHello(void *threadid)
 void *PrintHello(void *threadid)
 #endif
 {
-   int tid = (int)threadid;
-   printf("Hello World! It's me, thread #%d!\n", tid);
+   long tid = (long)threadid;
+   printf("Hello World! It's me, thread #%ld!\n", tid);
    SLEEP(2); // keep this thread around for a bit; the tests will check for its existence while the main thread is stopped at a breakpoint
 
 #ifdef __MINGW32__

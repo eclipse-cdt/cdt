@@ -6,7 +6,7 @@ clean: clean-debug clean-release
 
 build-debug/Makefile:
 	@mkdir -p $(dir $@)
-	$(QMAKE) -o $@ clangtest.pro CONFIG+=debug 
+	$(QMAKE) -o $@ {{baseName}}.pro CONFIG+=debug 
 
 debug:	build-debug/Makefile
 	$(MAKE) -w -C build-debug
@@ -16,7 +16,7 @@ clean-debug:
 
 build-release/Makefile:
 	@mkdir -p $(dir $@)
-	$(QMAKE) -o $@ clangtest.pro CONFIG+=release 
+	$(QMAKE) -o $@ {{baseName}}.pro CONFIG+=release 
 
 release:	build-release/Makefile
 	$(MAKE) -w -C build-release

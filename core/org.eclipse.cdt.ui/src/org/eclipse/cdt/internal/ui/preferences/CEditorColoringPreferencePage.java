@@ -9,7 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.preferences;
 
 import org.eclipse.swt.widgets.Composite;
@@ -18,8 +17,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-
-
 
 /**
  * Code coloring preference page.
@@ -30,41 +27,27 @@ import org.eclipse.cdt.internal.ui.ICHelpContextIds;
  * @since 4.0
  */
 public class CEditorColoringPreferencePage extends AbstractConfigurationBlockPreferencePage {
-
-	/*
-	 * @see org.eclipse.ui.internal.editors.text.AbstractConfigureationBlockPreferencePage#getHelpId()
-	 */
 	@Override
 	protected String getHelpId() {
 		return ICHelpContextIds.C_EDITOR_COLORS_PREF_PAGE;
 	}
 
-	/*
-	 * @see org.eclipse.ui.internal.editors.text.AbstractConfigurationBlockPreferencePage#setDescription()
-	 */
 	@Override
 	protected void setDescription() {
 		String description= PreferencesMessages.CEditorPreferencePage_colors; 
 		setDescription(description);
 	}
 	
-	
 	@Override
 	protected Label createDescriptionLabel(Composite parent) {
 		return null;
 	}
 	
-	/*
-	 * @see org.org.eclipse.ui.internal.editors.text.AbstractConfigurationBlockPreferencePage#setPreferenceStore()
-	 */
 	@Override
 	protected void setPreferenceStore() {
 		setPreferenceStore(CUIPlugin.getDefault().getPreferenceStore());
 	}
 
-	/*
-	 * @see org.eclipse.ui.internal.editors.text.AbstractConfigureationBlockPreferencePage#createConfigurationBlock(org.eclipse.ui.internal.editors.text.OverlayPreferenceStore)
-	 */
 	@Override
 	protected IPreferenceConfigurationBlock createConfigurationBlock(OverlayPreferenceStore overlayPreferenceStore) {
 		return new CEditorColoringConfigurationBlock(overlayPreferenceStore);

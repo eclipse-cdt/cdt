@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1637,7 +1637,7 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 			fOutlinePage = new CContentOutlinePage(this);
 			fOutlinePage.addSelectionChangedListener(this);
 		}
-		setOutlinePageInput(fOutlinePage, getEditorInput());
+		setOutlinePageInputIfNotSame(fOutlinePage, getEditorInput());
 		return fOutlinePage;
 	}
 
@@ -2564,6 +2564,16 @@ public class CEditor extends TextEditor implements ICEditor, ISelectionChangedLi
 		if (page != null) {
 			IWorkingCopyManager manager = CUIPlugin.getDefault().getWorkingCopyManager();
 			page.setInput(manager.getWorkingCopy(input));
+		}
+	}
+
+	private static void setOutlinePageInputIfNotSame(CContentOutlinePage page, IEditorInput input) {
+		if (page != null) {
+			IWorkingCopyManager manager = CUIPlugin.getDefault().getWorkingCopyManager();
+			IWorkingCopy workingCopy = manager.getWorkingCopy(input);
+			if (workingCopy != page.getRoot()) {
+				page.setInput(workingCopy);
+			}
 		}
 	}
 

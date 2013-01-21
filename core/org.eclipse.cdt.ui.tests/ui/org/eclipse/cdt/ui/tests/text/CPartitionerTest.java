@@ -1,11 +1,11 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2011 IBM Corporation and others.
- *  All rights reserved. This program and the accompanying materials
- *  are made available under the terms of the Eclipse Public License v1.0
- *  which accompanies this distribution, and is available at
- *  http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  * 
- *  Contributors:
+ * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
  *     Andrew Ferguson (Symbian)
@@ -28,18 +28,14 @@ import org.eclipse.cdt.ui.text.ICPartitions;
 
 import org.eclipse.cdt.internal.ui.text.CTextTools;
 
-
-
 /**
  * Tests to verify the C partitioning.
  * Derived from JavaPartitionerTest.
  */
 public class CPartitionerTest extends TestCase {
-
 	private CTextTools fTextTools;
 	private Document fDocument;
 	protected boolean fDocumentPartitioningChanged;
-
 
 	public CPartitionerTest(String name) {
 		super(name);
@@ -47,7 +43,6 @@ public class CPartitionerTest extends TestCase {
 
 	@Override
 	protected void setUp() {
-
 		fTextTools= new CTextTools();
 
 		fDocument= new Document();
@@ -84,7 +79,6 @@ public class CPartitionerTest extends TestCase {
 	}
 
 	protected void checkPartitioning(ITypedRegion[] expectation, ITypedRegion[] result) {
-
 		assertEquals("invalid number of partitions", expectation.length, result.length);
 
 		for (int i= 0; i < expectation.length; i++) {
@@ -92,12 +86,10 @@ public class CPartitionerTest extends TestCase {
 			ITypedRegion r= result[i];
 			assertTrue(print(r) + " != " + print(e), r.equals(e));
 		}
-
 	}
 
 	public void testInitialPartitioning() {
 		try {
-
 			//	"xxx\n/*xxx*/\nxxx\n/**xxx*/\nxxx\n/**/\nxxx\n/***/\nxxx"
 
 			ITypedRegion[] result= fDocument.computePartitioning(0, fDocument.getLength());
@@ -121,7 +113,6 @@ public class CPartitionerTest extends TestCase {
 
 	public void testIntraPartitionChange() {
 		try {
-
 			fDocument.replace(34, 3, "y");
 			//	"xxx\n/*xxx*/\nxxx\n/**xxx*/\nxxx\n/**/\ny\n/***/\nxxx");
 
@@ -148,7 +139,6 @@ public class CPartitionerTest extends TestCase {
 
 	public void testIntraPartitionChange2() {
 		try {
-
 			fDocument.replace(41, 0, "yyy");
 			//	"xxx\n/*xxx*/\nxxx\n/**xxx*/\nxxx\n/**/\nxxx\n/**yyy*/\nxxx");
 
@@ -172,9 +162,9 @@ public class CPartitionerTest extends TestCase {
 			assertTrue(false);
 		}
 	}
+
 	public void testInsertNewPartition() {
 		try {
-
 			fDocument.replace(35, 1, "/***/");
 			//	"xxx\n/*xxx*/\nxxx\n/**xxx*/\nxxx\n/**/\nx/***/x\n/***/\nxxx");
 
@@ -200,9 +190,9 @@ public class CPartitionerTest extends TestCase {
 			assertTrue(false);
 		}
 	}
+
 	public void testInsertStringPartition() {
 		try {
-
 			fDocument.replace(35, 1, "\"yyy\"");
 			//	"xxx\n/*xxx*/\nxxx\n/**xxx*/\nxxx\n/**/\nx\"yyy\"x\n/***/\nxxx");
 
@@ -228,9 +218,9 @@ public class CPartitionerTest extends TestCase {
 			assertTrue(false);
 		}
 	}
+
 	public void testInsertCharacterPartition() {
 		try {
-
 			fDocument.replace(35, 1, "'y'");
 			//	"xxx\n/*xxx*/\nxxx\n/**xxx*/\nxxx\n/**/\nx\"yyy\"x\n/***/\nxxx");
 
@@ -256,9 +246,9 @@ public class CPartitionerTest extends TestCase {
 			assertTrue(false);
 		}
 	}
+
 	public void testInsertPreprocessorPartition() {
 		try {
-
 			fDocument.replace(4, 0, " # include <x.h>\n");
 			//	"xxx\n/*xxx*/\nxxx\n/**xxx*/\nxxx\n/**/\nx\"yyy\"x\n/***/\nxxx");
 			//	"xxx\n # include <x.h>\n/*xxx*/\nxxx\n/**xxx*/\nxxx\n/**/\nx\"yyy\"x\n/***/\nxxx");
@@ -287,12 +277,10 @@ public class CPartitionerTest extends TestCase {
 
 	public void testRemovePartition1() {
 		try {
-
 			fDocument.replace(13, 16, null);
 			//	"xxx\n/*xxx*/\nx/**/\nxxx\n/***/\nxxx");
 
 			assertTrue(fDocumentPartitioningChanged);
-
 
 			ITypedRegion[] result= fDocument.computePartitioning(0, fDocument.getLength());
 			TypedRegion[] expectation= {
@@ -312,12 +300,10 @@ public class CPartitionerTest extends TestCase {
 	}
 
 	public void testRemovePartition2() {
-
 		testJoinPartition3();
 		fDocumentPartitioningChanged= false;
 
 		try {
-
 			fDocument.replace(5, 2, null);
 			//	"xxx\nxxx\nxxx\n/**xxx*/\nxxx\n/**/\nxxx\n/***/\nxxx"
 
@@ -340,10 +326,8 @@ public class CPartitionerTest extends TestCase {
 		}
 	}
 
-
 	public void testJoinPartitions1() {
 		try {
-
 			fDocument.replace(31, 1, null);
 			//	"xxx\n/*xxx*/\nxxx\n/**xxx*/\nxxx\n/*/\nxxx\n/***/\nxxx"
 
@@ -368,7 +352,6 @@ public class CPartitionerTest extends TestCase {
 
 	public void testJoinPartitions2() {
 		try {
-
 			fDocument.replace(32, 1, null);
 			//	"xxx\n/*xxx*/\nxxx\n/**xxx*/\nxxx\n/**\nxxx\n/***/\nxxx"
 
@@ -393,7 +376,6 @@ public class CPartitionerTest extends TestCase {
 
 	public void testJoinPartition3() {
 		try {
-
 			fDocument.replace(9, 2, null);
 			//	"xxx\n/*xxx\nxxx\n/**xxx*/\nxxx\n/**/\nxxx\n/***/\nxxx"
 
@@ -416,22 +398,16 @@ public class CPartitionerTest extends TestCase {
 		}
 	}
 
-
 	public void testSplitPartition1() {
-
 		testJoinPartitions1();
 		fDocumentPartitioningChanged= false;
 
-
 		try {
-
 			//	"xxx\n/*xxx*/\nxxx\n/**xxx*/\nxxx\n/*/\nxxx\n/***/\nxxx"
 			fDocument.replace(31, 0, "*");
 			//	"xxx\n/*xxx*/\nxxx\n/**xxx*/\nxxx\n/**/\nxxx\n/***/\nxxx"
 
 			assertTrue(fDocumentPartitioningChanged);
-
-
 		} catch (BadLocationException x) {
 			assertTrue(false);
 		}
@@ -440,18 +416,15 @@ public class CPartitionerTest extends TestCase {
 	}
 
 	public void testSplitPartition2() {
-
 		testJoinPartitions2();
 		fDocumentPartitioningChanged= false;
 
 		try {
-
 			//	"xxx\n/*xxx*/\nxxx\n/**xxx*/\nxxx\n/**\nxxx\n/***/\nxxx"
 			fDocument.replace(32, 0, "/");
 			//	"xxx\n/*xxx*/\nxxx\n/**xxx*/\nxxx\n/**/\nxxx\n/***/\nxxx"
 
 			assertTrue(fDocumentPartitioningChanged);
-
 		} catch (BadLocationException x) {
 			assertTrue(false);
 		}
@@ -460,11 +433,9 @@ public class CPartitionerTest extends TestCase {
 	}
 
 	public void testSplitPartition3() {
-
 		fDocumentPartitioningChanged= false;
 
 		try {
-
 			//	"xxx\n/*xxx*/\nxxx\n/**xxx*/\nxxx\n/**/\nxxx\n/***/\nxxx"
 			fDocument.replace(12, 9, "");
 			//	"xxx\n/*xxx*/\nx*/\nxxx\n/**/\nxxx\n/***/\nxxx"
@@ -490,7 +461,6 @@ public class CPartitionerTest extends TestCase {
 
 	public void testCorruptPartitioning1() {
 		try {
-
 			fDocument.replace(0, fDocument.getLength(), "/***/\n/***/");
 
 			ITypedRegion[] result= fDocument.computePartitioning(0, fDocument.getLength());
@@ -513,7 +483,6 @@ public class CPartitionerTest extends TestCase {
 				new TypedRegion(14, 1, IDocument.DEFAULT_CONTENT_TYPE),
 				new TypedRegion(15, 7, ICPartitions.C_MULTI_LINE_COMMENT)
 			};
-
 		} catch (BadLocationException x) {
 			assertTrue(false);
 		}
@@ -521,7 +490,6 @@ public class CPartitionerTest extends TestCase {
 
 	public void testCorruptPartitioning2() {
 		try {
-
 			fDocument.replace(0, fDocument.getLength(), "/***/\n/***/\n/***/");
 
 			ITypedRegion[] result= fDocument.computePartitioning(0, fDocument.getLength());
@@ -548,7 +516,6 @@ public class CPartitionerTest extends TestCase {
 				new TypedRegion(22, 1, IDocument.DEFAULT_CONTENT_TYPE),
 				new TypedRegion(23, 5, ICPartitions.C_MULTI_LINE_COMMENT)
 			};
-
 		} catch (BadLocationException x) {
 			assertTrue(false);
 		}
@@ -556,7 +523,6 @@ public class CPartitionerTest extends TestCase {
 
 	public void testCorruptPartitioning3() {
 		try {
-
 			fDocument.replace(0, fDocument.getLength(), "/***/\n/**/");
 
 			ITypedRegion[] result= fDocument.computePartitioning(0, fDocument.getLength());
@@ -581,7 +547,6 @@ public class CPartitionerTest extends TestCase {
 				new TypedRegion(17, 1, IDocument.DEFAULT_CONTENT_TYPE),
 				new TypedRegion(18, 5, ICPartitions.C_MULTI_LINE_COMMENT)
 			};
-
 		} catch (BadLocationException x) {
 			assertTrue(false);
 		}
@@ -589,7 +554,6 @@ public class CPartitionerTest extends TestCase {
 
 	public void testOpenPartition1() {
 		try {
-
 			fDocument.replace(42, 1, null);
 			//	"xxx\n/*xxx*/\nxxx\n/**xxx*/\nxxx\n/**/\nxxx\n/***\nxxx"
 
@@ -616,7 +580,6 @@ public class CPartitionerTest extends TestCase {
 
 	public void testOpenPartition2() {
 		try {
-
 			fDocument.replace(47, 0, "/*");
 			//	"xxx\n/*xxx*/\nxxx\n/**xxx*/\nxxx\n/**/\nxxx\n/***/\nxxx/*"
 
@@ -646,7 +609,6 @@ public class CPartitionerTest extends TestCase {
 
 	public void testPartitionFinder() {
 		try {
-
 			ITypedRegion[] partitioning= fDocument.computePartitioning(0, fDocument.getLength());
 
 			for (int i= 0; i < partitioning.length; i++) {
@@ -656,7 +618,6 @@ public class CPartitionerTest extends TestCase {
 					assertTrue(expected.equals(result));
 				}
 			}
-
 		} catch (BadLocationException x) {
 			assertTrue(false);
 		}
@@ -664,7 +625,6 @@ public class CPartitionerTest extends TestCase {
 
 	public void testExtendPartition() {
 		try {
-
 			fDocument.replace(0, fDocument.getLength(), "/*");
 
 			ITypedRegion[] result= fDocument.computePartitioning(0, fDocument.getLength());
@@ -681,7 +641,6 @@ public class CPartitionerTest extends TestCase {
 			};
 
 			checkPartitioning(expectation, result);
-
 		} catch (BadLocationException x) {
 			assertTrue(false);
 		}
@@ -689,7 +648,6 @@ public class CPartitionerTest extends TestCase {
 
 	public void testTogglePartition() {
 		try {
-
 			fDocument.replace(0, fDocument.getLength(), "\t/*\n\tx\n\t/*/\n\ty\n//\t*/");
 
 			ITypedRegion[] result= fDocument.computePartitioning(0, fDocument.getLength());
@@ -712,7 +670,6 @@ public class CPartitionerTest extends TestCase {
 				new TypedRegion(10,  12, ICPartitions.C_MULTI_LINE_COMMENT)
 			};
 			checkPartitioning(expectation2, result);
-
 		} catch (BadLocationException x) {
 			assertTrue(false);
 		}
@@ -720,7 +677,6 @@ public class CPartitionerTest extends TestCase {
 
 	public void testEditing1() {
 		try {
-
 			fDocument.replace(0, fDocument.getLength(), "");
 
 			ITypedRegion[] result= fDocument.computePartitioning(0, fDocument.getLength());
@@ -749,7 +705,6 @@ public class CPartitionerTest extends TestCase {
 			};
 			checkPartitioning(expectation, result);
 
-
 		} catch (BadLocationException x) {
 			assertTrue(false);
 		}
@@ -757,7 +712,6 @@ public class CPartitionerTest extends TestCase {
 
 	public void testEditing2() {
 		try {
-
 			fDocument.replace(0, fDocument.getLength(), "");
 
 			ITypedRegion[] result= fDocument.computePartitioning(0, fDocument.getLength());
@@ -794,7 +748,6 @@ public class CPartitionerTest extends TestCase {
 				new TypedRegion(0,  fDocument.getLength(),  ICPartitions.C_MULTI_LINE_COMMENT)
 			};
 			checkPartitioning(expectation, result);
-
 		} catch (BadLocationException x) {
 			assertTrue(false);
 		}
@@ -802,7 +755,6 @@ public class CPartitionerTest extends TestCase {
 
 	public void testEditing3() {
 		try {
-
 			fDocument.replace(0, fDocument.getLength(), "");
 
 			ITypedRegion[] result= fDocument.computePartitioning(0, fDocument.getLength());
@@ -831,7 +783,6 @@ public class CPartitionerTest extends TestCase {
 				new TypedRegion(8, 1, IDocument.DEFAULT_CONTENT_TYPE)
 			};
 			checkPartitioning(expectation, result);
-
 		} catch (BadLocationException x) {
 			assertTrue(false);
 		}
@@ -839,7 +790,6 @@ public class CPartitionerTest extends TestCase {
 
 	public void testEditingString() {
 		try {
-
 			fDocument.replace(0, fDocument.getLength(), "");
 
 			ITypedRegion[] result= fDocument.computePartitioning(0, fDocument.getLength());
@@ -904,7 +854,6 @@ public class CPartitionerTest extends TestCase {
 				new TypedRegion(5, 2,  ICPartitions.C_STRING)
 			};
 			checkPartitioning(expectation, result);
-
 		} catch (BadLocationException x) {
 			assertTrue(false);
 		}
@@ -912,7 +861,6 @@ public class CPartitionerTest extends TestCase {
 
 	public void testEditingCharacter() {
 		try {
-
 			fDocument.replace(0, fDocument.getLength(), "");
 
 			ITypedRegion[] result= fDocument.computePartitioning(0, fDocument.getLength());
@@ -977,7 +925,6 @@ public class CPartitionerTest extends TestCase {
 				new TypedRegion(5, 2,  ICPartitions.C_CHARACTER)
 			};
 			checkPartitioning(expectation, result);
-
 		} catch (BadLocationException x) {
 			assertTrue(false);
 		}
@@ -985,7 +932,6 @@ public class CPartitionerTest extends TestCase {
 
 	public void testEditingPreprocessor() {
 		try {
-
 			fDocument.replace(0, fDocument.getLength(), "");
 
 			ITypedRegion[] result= fDocument.computePartitioning(0, fDocument.getLength());
@@ -1096,7 +1042,6 @@ public class CPartitionerTest extends TestCase {
 				new TypedRegion(33, 1, IDocument.DEFAULT_CONTENT_TYPE)
 			};
 			checkPartitioning(expectation, result);
-
 		} catch (BadLocationException x) {
 			assertTrue(false);
 		}
@@ -1104,7 +1049,6 @@ public class CPartitionerTest extends TestCase {
 
 	public void testLineSplicing_Bug124113() {
 		try {
-
 			fDocument.replace(0, fDocument.getLength(), "// comment... \\\\\ncontinued");
 
 			ITypedRegion[] result= fDocument.computePartitioning(0, fDocument.getLength());
@@ -1136,7 +1080,6 @@ public class CPartitionerTest extends TestCase {
 				new TypedRegion(0,  fDocument.getLength(),  ICPartitions.C_CHARACTER)
 			};
 			checkPartitioning(expectation, result);
-
 		} catch (BadLocationException x) {
 			assertTrue(false);
 		}
@@ -1144,7 +1087,6 @@ public class CPartitionerTest extends TestCase {
 
 	public void testCommentInPreprocessorString() {
 		try {
-
 			fDocument.replace(0, fDocument.getLength(), "#define S \"http://www.foo.bar\"");
 
 			ITypedRegion[] result= fDocument.computePartitioning(0, fDocument.getLength());
@@ -1160,7 +1102,6 @@ public class CPartitionerTest extends TestCase {
 				new TypedRegion(0,  fDocument.getLength(),  ICPartitions.C_PREPROCESSOR)
 			};
 			checkPartitioning(expectation, result);
-
 		} catch (BadLocationException x) {
 			assertTrue(false);
 		}
@@ -1168,7 +1109,6 @@ public class CPartitionerTest extends TestCase {
 
 	public void testString1() {
 		try {
-
 			fDocument.replace(0, fDocument.getLength(), "\"[string]\"");
 			ITypedRegion[] result= fDocument.computePartitioning(0, fDocument.getLength());
 			TypedRegion[] expectation= {
@@ -1184,7 +1124,6 @@ public class CPartitionerTest extends TestCase {
 				new TypedRegion(10,  9,  ICPartitions.C_STRING)
 			};
 			checkPartitioning(expectation, result);
-
 		} catch (BadLocationException x) {
 			assertTrue(false);
 		}
@@ -1192,7 +1131,6 @@ public class CPartitionerTest extends TestCase {
 
 	public void testString2() {
 		try {
-
 			fDocument.replace(0, fDocument.getLength(), "\"string\"RRRRRRRR\"string\"nostring");
 			ITypedRegion[] result= fDocument.computePartitioning(0, fDocument.getLength());
 			TypedRegion[] expectation= {
@@ -1202,7 +1140,6 @@ public class CPartitionerTest extends TestCase {
 					new TypedRegion(24, 8,  IDocument.DEFAULT_CONTENT_TYPE)
 			};
 			checkPartitioning(expectation, result);
-
 		} catch (BadLocationException x) {
 			assertTrue(false);
 		}
@@ -1210,7 +1147,6 @@ public class CPartitionerTest extends TestCase {
 
 	public void testRawString1() {
 		try {
-
 			fDocument.replace(0, fDocument.getLength(), "R\"(line 1\n/*line 2*/\nline 3\n)\"");
 			ITypedRegion[] result= fDocument.computePartitioning(0, fDocument.getLength());
 			TypedRegion[] expectation= {
@@ -1235,7 +1171,6 @@ public class CPartitionerTest extends TestCase {
 				new TypedRegion(1,  fDocument.getLength() - 1,  ICPartitions.C_STRING)
 			};
 			checkPartitioning(expectation, result);
-
 		} catch (BadLocationException x) {
 			assertTrue(false);
 		}
@@ -1243,7 +1178,6 @@ public class CPartitionerTest extends TestCase {
 
 	public void testRawString2() {
 		try {
-
 			fDocument.replace(0, fDocument.getLength(), "/***/R\"(line 1\nline 2\nline 3\n)\"");
 			ITypedRegion[] result= fDocument.computePartitioning(0, fDocument.getLength());
 			TypedRegion[] expectation= {
@@ -1261,7 +1195,6 @@ public class CPartitionerTest extends TestCase {
 				new TypedRegion(13,  fDocument.getLength() - 13,  ICPartitions.C_STRING)
 			};
 			checkPartitioning(expectation, result);
-
 		} catch (BadLocationException x) {
 			assertTrue(false);
 		}
@@ -1269,7 +1202,6 @@ public class CPartitionerTest extends TestCase {
 
 	public void testRawString3() {
 		try {
-
 			fDocument.replace(0, fDocument.getLength(), "/***/R\"(line 1\nline 2\nline 3\n)\" \"str\"");
 			ITypedRegion[] result= fDocument.computePartitioning(0, fDocument.getLength());
 			TypedRegion[] expectation= {
@@ -1291,7 +1223,6 @@ public class CPartitionerTest extends TestCase {
 				new TypedRegion(fDocument.getLength() - 5, 5,  ICPartitions.C_STRING),
 			};
 			checkPartitioning(expectation, result);
-
 		} catch (BadLocationException x) {
 			assertTrue(false);
 		}
@@ -1299,7 +1230,6 @@ public class CPartitionerTest extends TestCase {
 
 	public void testRawString_Bug352544() {
 		try {
-
 			fDocument.replace(0, fDocument.getLength(), "BAR\"(\";");
 			ITypedRegion[] result= fDocument.computePartitioning(0, fDocument.getLength());
 			TypedRegion[] expectation= {
@@ -1308,7 +1238,6 @@ public class CPartitionerTest extends TestCase {
 				new TypedRegion(6,  1,  IDocument.DEFAULT_CONTENT_TYPE),
 			};
 			checkPartitioning(expectation, result);
-
 		} catch (BadLocationException x) {
 			assertTrue(false);
 		}
@@ -1316,7 +1245,6 @@ public class CPartitionerTest extends TestCase {
 
 	public void testEditingRawString1() {
 		try {
-
 			fDocument.replace(0, fDocument.getLength(), "/***/R\"(line 1\nline 2\nline 3\n)\" \"str\"");
 			ITypedRegion[] result= fDocument.computePartitioning(0, fDocument.getLength());
 			TypedRegion[] expectation= {
@@ -1351,7 +1279,6 @@ public class CPartitionerTest extends TestCase {
 				new TypedRegion(fDocument.getLength() - 5, 5,  ICPartitions.C_STRING),
 			};
 			checkPartitioning(expectation, result);
-
 		} catch (BadLocationException x) {
 			assertTrue(false);
 		}
@@ -1359,7 +1286,6 @@ public class CPartitionerTest extends TestCase {
 
 	public void testEditingRawString2() {
 		try {
-
 			fDocument.replace(0, fDocument.getLength(), "/***/R\"(line 1\nline 2\nline 3\n)\" \"str\"");
 			ITypedRegion[] result= fDocument.computePartitioning(0, fDocument.getLength());
 			TypedRegion[] expectation= {
@@ -1402,7 +1328,6 @@ public class CPartitionerTest extends TestCase {
 				new TypedRegion(6,  fDocument.getLength() - 6,  ICPartitions.C_STRING),
 			};
 			checkPartitioning(expectation, result);
-
 		} catch (BadLocationException x) {
 			assertTrue(false);
 		}
@@ -1410,8 +1335,7 @@ public class CPartitionerTest extends TestCase {
 
 	public void testEditingRawString3() {
 		try {
-
-			fDocument.replace(0, fDocument.getLength(), "/***/R\"(line 1\nline 2\nline 3\n)\" \"str\"");
+			fDocument.replace(0, fDocument.getLength(), "/***/R\"\"(line 1\nline 2\nline 3\n)\"\" \"str\"");
 			ITypedRegion[] result= fDocument.computePartitioning(0, fDocument.getLength());
 			TypedRegion[] expectation= {
 				new TypedRegion(0,  5,  ICPartitions.C_MULTI_LINE_COMMENT),
@@ -1433,7 +1357,6 @@ public class CPartitionerTest extends TestCase {
 				new TypedRegion(fDocument.getLength() - 5, 5,  ICPartitions.C_STRING),
 			};
 			checkPartitioning(expectation, result);
-
 		} catch (BadLocationException x) {
 			assertTrue(false);
 		}

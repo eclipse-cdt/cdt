@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2008 IBM Corporation and others.
+ * Copyright (c) 2003, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *	   IBM Corporation - initial API and implementation
  *     QNX Software Systems
+ *     IBM Corporation - port of 248071 
  *******************************************************************************/
 
 #include <unistd.h>
@@ -90,13 +91,13 @@ static void free_c_array(char **c_array)
  */
 JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec2
   (JNIEnv *env, jobject jobj, jobjectArray jcmd, jobjectArray jenv, jstring jdir, jintArray jchannels,
-   jstring jslaveName, jint masterFD)
+   jstring jslaveName, jint masterFD, jboolean console)
 {
     jint *channels = (*env)->GetIntArrayElements(env, jchannels, 0);
     const char *dirpath = (*env)->GetStringUTFChars(env, jdir, NULL);
     const char *pts_name = (*env)->GetStringUTFChars(env, jslaveName, NULL);
-    char **cmd;
-    char **envp;
+    char **cmd = NULL;
+    char **envp = NULL;
     int fd[3];
     pid_t pid = -1;
 
@@ -120,7 +121,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec2
     fprintf(stderr, "pts_name: %s\n", pts_name);
 #endif
 
-    pid = exec_pty(cmd[0], cmd, envp, dirpath, fd, pts_name, masterFD);
+    pid = exec_pty(cmd[0], cmd, envp, dirpath, fd, pts_name, masterFD, console);
     if (pid < 0)
         goto bail_out;
 
@@ -147,8 +148,8 @@ Java_org_eclipse_cdt_utils_spawner_Spawner_exec1(JNIEnv * env, jobject jobj,
                                                jstring jdir)
 {
     const char *dirpath = (*env)->GetStringUTFChars(env, jdir, NULL);
-    char **cmd;
-    char **envp;
+    char **cmd = NULL;
+    char **envp = NULL;
     pid_t pid = -1;
 
     cmd = alloc_c_array(env, jcmd);
@@ -194,8 +195,8 @@ Java_org_eclipse_cdt_utils_spawner_Spawner_exec0(JNIEnv * env, jobject jobj,
 {
     jint *channels = (*env)->GetIntArrayElements(env, jchannels, 0);
     const char *dirpath = (*env)->GetStringUTFChars(env, jdir, NULL);
-    char **cmd;
-    char **envp;
+    char **cmd = NULL;
+    char **envp = NULL;
     int fd[3];
     pid_t pid = -1;
 

@@ -200,13 +200,9 @@ public class DebugNewProcessSequence extends ReflectionSequence {
 	@Execute
 	public void stepSetArguments(RequestMonitor rm) {
 		try {
-			String args = CDebugUtils.getAttribute(
-					fAttributes,
-					ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS,
-					""); //$NON-NLS-1$
+			String args = fBackend.getProgramArguments();
 
-			if (args.length() != 0) {
-				args = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(args);
+			if (args != null) {
 				String[] argArray = CommandLineUtil.argumentsToArray(args);
 				fCommandControl.queueCommand(
 						fCommandFactory.createMIGDBSetArgs(getContainerContext(), argArray), 

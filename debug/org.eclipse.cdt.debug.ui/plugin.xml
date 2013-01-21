@@ -2012,12 +2012,7 @@
           id="org.eclipse.cdt.debug.ui.command.connect"
           name="%Connect.name">
     </command>
-    <command
-          categoryId="org.eclipse.cdt.debug.ui.category.debugViewLayout"
-          description="%DebugNewExecutable.description"
-          id="org.eclipse.cdt.debug.ui.command.debugNewExecutable"
-          name="%DebugNewExecutable.name">
-    </command>
+    
  </extension>
  <extension
          point="org.eclipse.ui.handlers">
@@ -2083,10 +2078,6 @@
       <handler
             class="org.eclipse.cdt.debug.internal.ui.commands.ConnectCommandHandler"
             commandId="org.eclipse.cdt.debug.ui.command.connect">
-      </handler>
-      <handler
-            class="org.eclipse.cdt.debug.internal.ui.commands.DebugNewExecutableHandler"
-            commandId="org.eclipse.cdt.debug.ui.command.debugNewExecutable">
       </handler>
  </extension>
  <extension
@@ -2527,28 +2518,6 @@
 			         	</with>
 			   		</and>
           	</visibleWhen>
-         </command>
-      </menuContribution>
-<!--
-      <menuContribution
-            locationURI="toolbar:org.eclipse.debug.ui.DebugView?before=stepGroup">
-         <command
-               commandId="org.eclipse.cdt.debug.ui.command.debugNewExecutable"
-               icon="icons/obj16/new_exec.gif"
-               label="%DebugNewExecutable.label"
-               style="push"
-               tooltip="%DebugNewExecutable.tooltip">
-         </command>
-      </menuContribution>
--->
-      <menuContribution
-            locationURI="popup:org.eclipse.debug.ui.DebugView?before=emptyLaunchGroup">
-         <command
-               commandId="org.eclipse.cdt.debug.ui.command.debugNewExecutable"
-               icon="icons/obj16/new_exec.gif"
-               label="%DebugNewExecutable.label"
-               style="push"
-               tooltip="%DebugNewExecutable.tooltip">
          </command>
       </menuContribution>
       

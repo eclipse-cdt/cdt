@@ -15,19 +15,15 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
-import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
-import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIAddInferiorInfo;
-import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -44,37 +40,14 @@ public class DebugNewProcessSequence_7_2 extends DebugNewProcessSequence {
 
 	private IGDBControl fGdbControl;
 	private IGDBProcesses fProcService;
-	private IGDBBackend fBackend;
-	private CommandFactory fCommandFactory;
 	private String fSessionId;
 	private final boolean fInitialProcess;
-	private final Map<String, Object> fAttributes;
 
-	public DebugNewProcessSequence_7_2(
-			DsfExecutor executor, 
-			boolean isInitial, 
-			IDMContext dmc, 
-			String file, 
-			Map<String, Object> attributes, 
-			DataRequestMonitor<IDMContext> rm) {
-		this(executor, isInitial, dmc, file, null, attributes, rm);
-	}
-
-	/**
-	 * @since 4.2
-	 */
-	public DebugNewProcessSequence_7_2(
-			DsfExecutor executor, 
-			boolean isInitial, 
-			IDMContext dmc, 
-			String fileOnHost, 
-			String fileOnTarget, 
-			Map<String, Object> attributes, 
-			DataRequestMonitor<IDMContext> rm) {
-		super(executor, isInitial, dmc, fileOnHost, attributes, rm);
+	public DebugNewProcessSequence_7_2(DsfExecutor executor, boolean isInitial, IDMContext dmc, String file, 
+			                           Map<String, Object> attributes, DataRequestMonitor<IDMContext> rm) {
+		super(executor, isInitial, dmc, file, attributes, rm);
 		fSessionId = dmc.getSessionId();
 		fInitialProcess = isInitial;
-		fAttributes = attributes;
 	}
 
 	@Override
@@ -87,14 +60,13 @@ public class DebugNewProcessSequence_7_2 extends DebugNewProcessSequence {
 			// Now insert our steps right after the initialization of the base class.
 			orderList.add(orderList.indexOf("stepInitializeBaseSequence") + 1, "stepInitializeSequence_7_2"); //$NON-NLS-1$ //$NON-NLS-2$
 			orderList.add(orderList.indexOf("stepInitializeSequence_7_2") + 1, "stepAddInferior"); //$NON-NLS-1$ //$NON-NLS-2$
-			orderList.add(orderList.indexOf("stepSetExecutable") + 1, "stepSetRemoteExecutable"); //$NON-NLS-1$ //$NON-NLS-2$
 			
 			return orderList.toArray(new String[orderList.size()]);
 		}
 
 		return null;
 	}
-
+	
 	/** 
 	 * Initialize the members of the DebugNewProcessSequence_7_2 class.
 	 * This step is mandatory for the rest of the sequence to complete.
@@ -104,16 +76,13 @@ public class DebugNewProcessSequence_7_2 extends DebugNewProcessSequence {
 		DsfServicesTracker tracker = new DsfServicesTracker(GdbPlugin.getBundleContext(), fSessionId);
 		fGdbControl = tracker.getService(IGDBControl.class);
 		fProcService = tracker.getService(IGDBProcesses.class);
-		fBackend = tracker.getService(IGDBBackend.class);
 		tracker.dispose();
 		
-        if (fGdbControl == null || fProcService == null || fBackend == null) {
+        if (fGdbControl == null || fProcService == null) {
 			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR, "Cannot obtain service", null)); //$NON-NLS-1$
 			rm.done();
 			return;
 		}
-		
-        fCommandFactory = fGdbControl.getCommandFactory();		
 		
 		rm.done();
 	}
@@ -150,37 +119,5 @@ public class DebugNewProcessSequence_7_2 extends DebugNewProcessSequence {
 						rm.done();
 					}
 				});
-	}
-
-	/**
-	 * Set remote executable.
-	 * @since 4.2
-	 */
-	@Execute
-	public void stepSetRemoteExecutable(final RequestMonitor rm) {
-		if (fBackend.getSessionType() == SessionType.REMOTE && fBackend.getIsAttachSession()) {
-			String remoteBinary = CDebugUtils.getAttribute(
-					fAttributes, 
-					IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REMOTE_BINARY, 
-					""); //$NON-NLS-1$
-			if (remoteBinary.length() == 0) {
-				rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, "Binary on host is not specified")); //$NON-NLS-1$
-				rm.done();
-				return;
-			}
-
-			fGdbControl.queueCommand(
-					fCommandFactory.createMIGDBSet(
-							getContainerContext(), 
-							new String[] {
-								"remote", //$NON-NLS-1$
-								"exec-file", //$NON-NLS-1$
-								remoteBinary,
-							}), 
-					new ImmediateDataRequestMonitor<MIInfo>(rm));
-		}
-		else {
-			rm.done();
 		}
 	}
-}

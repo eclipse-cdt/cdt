@@ -24,18 +24,13 @@
 		</repository>
 	</repositories>-->
 
-	<profiles>
-		<profile>
-			<id>production</id>
-			<properties>
-				<gdbPathOption>-Dcdt.tests.dsf.gdb.path=/opt/public/download-staging.priv/tools/cdt/gdb</gdbPathOption>
-			</properties>
-		</profile>
-	</profiles>
+	<properties>
+		<gdbPathOption>-Dcdt.tests.dsf.gdb.path=/opt/public/download-staging.priv/tools/cdt/gdb</gdbPathOption>
+	</properties>
 	
 	<build>
 		<plugins>
-			<plugin>            
+			<plugin>
 				<artifactId>maven-antrun-plugin</artifactId>
 				<executions>
 					<execution>

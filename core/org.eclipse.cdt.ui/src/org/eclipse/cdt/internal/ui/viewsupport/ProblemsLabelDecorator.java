@@ -7,8 +7,12 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.viewsupport;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -81,14 +85,43 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 		}
 	}
 
+	private static class MarkersCacheKey {
+		private IResource res;
+		private int depth;
+
+		public MarkersCacheKey(IResource res, int depth) {
+			this.res = res;
+			this.depth = depth;
+		}
+		
+		@Override
+		public int hashCode() {
+			return res.hashCode() + 31 * depth;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			MarkersCacheKey other = (MarkersCacheKey) obj;
+			return depth == other.depth && res.equals(other.res);
+		}
+	}
+
 	private static final int ERRORTICK_WARNING= CElementImageDescriptor.WARNING;
 	private static final int ERRORTICK_ERROR= CElementImageDescriptor.ERROR;
+	private static final IMarker[] EMPTY_MARKER_ARRAY = {};
 
 	private ImageDescriptorRegistry fRegistry;
 	private boolean fUseNewRegistry;
 	private IProblemChangedListener fProblemChangedListener;
 
 	private ListenerList fListeners;
+	private Map<MarkersCacheKey, IMarker[]> fMarkersCache = new HashMap<MarkersCacheKey, IMarker[]>();
 
 	/**
 	 * Creates a new <code>ProblemsLabelDecorator</code>.
@@ -179,17 +212,22 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 		}
 		int info= 0;
 
-		IMarker[] markers= res.findMarkers(IMarker.PROBLEM, true, depth);
-		if (markers != null) {
-			for (int i= 0; i < markers.length && (info != ERRORTICK_ERROR); i++) {
-				IMarker curr= markers[i];
-				if (sourceElement == null || isMarkerInRange(curr, sourceElement)) {
-					int priority= curr.getAttribute(IMarker.SEVERITY, -1);
-					if (priority == IMarker.SEVERITY_WARNING) {
-						info= ERRORTICK_WARNING;
-					} else if (priority == IMarker.SEVERITY_ERROR) {
-						info= ERRORTICK_ERROR;
-					}
+		MarkersCacheKey cacheKey = new MarkersCacheKey(res, depth);
+		IMarker[] markers = fMarkersCache .get(cacheKey);
+		if (markers == null) {
+			markers= res.findMarkers(IMarker.PROBLEM, true, depth);
+			if (markers == null)
+				markers = EMPTY_MARKER_ARRAY;
+			fMarkersCache.put(cacheKey, markers);
+		}
+		for (int i= 0; i < markers.length && (info != ERRORTICK_ERROR); i++) {
+			IMarker curr= markers[i];
+			if (sourceElement == null || isMarkerInRange(curr, sourceElement)) {
+				int priority= curr.getAttribute(IMarker.SEVERITY, -1);
+				if (priority == IMarker.SEVERITY_WARNING) {
+					info= ERRORTICK_WARNING;
+				} else if (priority == IMarker.SEVERITY_ERROR) {
+					info= ERRORTICK_ERROR;
 				}
 			}
 		}
@@ -226,7 +264,7 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 	protected boolean isInside(int offSet, int line, ISourceReference sourceElement) throws CoreException {
 		ISourceRange range= sourceElement.getSourceRange();
 		if (range != null) {
-			if (offSet ==-1) {
+			if (offSet == -1) {
 				return (line >= range.getStartLine() && line <= range.getEndLine());
 			}
 			int rangeOffset= range.getStartPos();
@@ -280,6 +318,7 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 	}
 
 	protected void fireProblemsChanged(IResource[] changedResources, boolean isMarkerChange) {
+		fMarkersCache.clear();
 		if (fListeners != null && !fListeners.isEmpty()) {
 			LabelProviderChangedEvent event= new ProblemsLabelChangedEvent(this, changedResources, isMarkerChange);
 			Object[] listeners= fListeners.getListeners();

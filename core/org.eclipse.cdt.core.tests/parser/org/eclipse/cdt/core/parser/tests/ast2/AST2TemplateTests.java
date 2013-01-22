@@ -7004,4 +7004,35 @@ public class AST2TemplateTests extends AST2BaseTest {
 	public void testDependentExpressions_395243d() throws Exception {
 		parseAndCheckBindings();
 	}
+
+	//	template<typename T, unsigned n> struct A {};
+	//
+	//	template<typename T>
+	//	struct A<T, 0> {
+	//	  static void m();
+	//	};
+	//
+	//	template <typename T>
+	//	struct B {
+	//	  enum { value = 1 };
+	//	};
+	//
+	//	template <typename T>
+	//	struct C {
+	//	  enum { id = B<T>::value ? 0 : -1 };
+	//	};
+	//
+	//	template<typename T>
+	//	struct D {
+	//	  typedef A<T, C<T>::id> E;
+	//	};
+	//
+	//	void test() {
+	//	  D<bool>::E::m();
+	//	}
+	public void testDependentEnum_398696() throws Exception {
+		BindingAssertionHelper ah = getAssertionHelper();
+		ah.assertNonProblem("D<bool>::E::m()", "m");
+//		parseAndCheckBindings();
+	}
 }

@@ -1,13 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM) - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     John Camelon (IBM) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -35,11 +35,6 @@ public class CPPASTEnumerator extends ASTEnumerator {
 
 	@Override
 	public CPPASTEnumerator copy(CopyStyle style) {
-		CPPASTEnumerator copy = new CPPASTEnumerator();
-		copyAbstractEnumerator(copy, style);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(new CPPASTEnumerator(), style);
 	}
 }

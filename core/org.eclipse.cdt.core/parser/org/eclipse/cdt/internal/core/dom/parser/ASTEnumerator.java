@@ -127,21 +127,21 @@ public abstract class ASTEnumerator extends ASTNode implements IASTEnumerator, I
 	private void createEnumValues(IASTEnumerationSpecifier parent) {
 		IASTEnumerator[] etors= parent.getEnumerators();
 		long cv= -1;
-		boolean isknown= true;
+		boolean isKnown= true;
 		for (IASTEnumerator etor : etors) {
 			cv++;
 			IASTExpression expr= etor.getValue();
 			if (expr != null) {
 				IValue val= Value.create(expr, Value.MAX_RECURSION_DEPTH);
 				Long nv= val.numericalValue();
-				isknown= false;
+				isKnown= false;
 				if (nv != null) {
-					isknown= true;
+					isKnown= true;
 					cv= nv.longValue();
 				}
 			}
 			if (etor instanceof ASTEnumerator) {
-				((ASTEnumerator) etor).integralValue=  isknown ? Value.create(cv) : Value.UNKNOWN;
+				((ASTEnumerator) etor).integralValue= isKnown ? Value.create(cv) : Value.UNKNOWN;
 			}
 		}
 	}

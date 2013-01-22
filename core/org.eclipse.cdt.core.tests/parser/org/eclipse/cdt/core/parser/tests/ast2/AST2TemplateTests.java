@@ -7031,8 +7031,6 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	  D<bool>::E::m();
 	//	}
 	public void testDependentEnum_398696() throws Exception {
-		BindingAssertionHelper ah = getAssertionHelper();
-		ah.assertNonProblem("D<bool>::E::m()", "m");
-//		parseAndCheckBindings();
+		parseAndCheckBindings();
 	}
 }

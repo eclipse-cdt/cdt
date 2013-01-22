@@ -39,6 +39,7 @@ import org.eclipse.cdt.core.dom.ast.IASTBinaryTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
@@ -53,16 +54,20 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator.SizeAndAlignment;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalBinary;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.TypeTraits;
 import org.eclipse.cdt.internal.core.parser.scanner.ExpressionEvaluator;
 import org.eclipse.cdt.internal.core.parser.scanner.ExpressionEvaluator.EvalException;
@@ -77,6 +82,7 @@ public class Value implements IValue {
 	public static final int MAX_RECURSION_DEPTH = 25;
 	public static final Value UNKNOWN= new Value("<unknown>".toCharArray(), null); //$NON-NLS-1$
 	public static final Value NOT_INITIALIZED= new Value("<__>".toCharArray(), null); //$NON-NLS-1$
+	private static final IType INT_TYPE= new CPPBasicType(ICPPBasicType.Kind.eInt, 0);
 
 	private static final Number VALUE_CANNOT_BE_DETERMINED = new Number() {
 		@Override
@@ -269,6 +275,16 @@ public class Value implements IValue {
 		if (val != null && val != VALUE_CANNOT_BE_DETERMINED)
 			return create(val.longValue());
 		return UNKNOWN;
+	}
+
+	public static IValue incrementedValue(IValue value, int increment) {
+		Long val = value.numericalValue();
+		if (val != null) {
+			return create(val.longValue() + increment);
+		}
+		ICPPEvaluation arg1 = value.getEvaluation();
+		EvalFixed arg2 = new EvalFixed(INT_TYPE, ValueCategory.PRVALUE, create(increment));
+		return create(new EvalBinary(IASTBinaryExpression.op_plus, arg1, arg2));
 	}
 
 	private static Number applyUnaryTypeIdOperator(int operator, IType type, IASTNode point) {

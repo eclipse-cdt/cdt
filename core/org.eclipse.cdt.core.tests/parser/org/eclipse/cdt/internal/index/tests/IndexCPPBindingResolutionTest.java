@@ -45,6 +45,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -1490,9 +1491,9 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
     	assertFalse(b0 instanceof IIndexBinding);
     	ICPPConstructor b1 = getBindingFromASTName("B(int x)", 1, ICPPConstructor.class);
     	assertFalse(b1 instanceof IIndexBinding);
-    	ICPPConstructor b2 = getBindingFromASTName("B(0)", 1, ICPPConstructor.class);
+    	ICPPClassType b2 = getBindingFromASTName("B(0)", 1, ICPPClassType.class);
     	assertFalse(b2 instanceof IIndexBinding);
-    	assertEquals(b1, b2);
+    	assertEquals(b1, b2.getConstructors()[0]);
     	ICPPMethod b3 = getBindingFromASTName("m(0)", 1, ICPPMethod.class);
     	assertFalse(b3 instanceof IIndexBinding);
 	}

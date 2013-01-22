@@ -2373,11 +2373,11 @@ public class AST2TemplateTests extends AST2BaseTest {
 	public void testCPPConstructorTemplateSpecialization() throws Exception {
 		IASTTranslationUnit tu = parse(getAboveComment(), CPP, true, true);
 
-		CPPNameCollector col = new CPPNameCollector();
+		CPPNameCollector col = new CPPNameCollector(true);
 		tu.accept(col);
 
-		ICPPASTTemplateId tid= (ICPPASTTemplateId) col.getName(20);
-		IASTName cn= col.getName(21);
+		IASTImplicitName tid= (IASTImplicitName) col.getName(20);
+		IASTName cn= col.getName(22);
 		assertInstance(cn.resolveBinding(), ICPPClassTemplate.class); // *D*<int>(5, 6)
 		assertInstance(cn.resolveBinding(), ICPPClassType.class); // *D*<int>(5, 6)
 		assertInstance(tid.resolveBinding(), ICPPTemplateInstance.class); // *D<int>*(5, 6)
@@ -3842,7 +3842,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//  };
     public void testNestedTemplates_259872_1() throws Exception {
 		BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), CPP);
-		bh.assertNonProblem("A<B, int>", 9, ICPPConstructor.class);
+		bh.assertNonProblem("A<B, int>", 9, ICPPClassType.class);
     }
 
 	//  template <typename CL, typename T>
@@ -3867,7 +3867,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//  };
     public void testNestedTemplates_259872_2() throws Exception {
 		BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), CPP);
-		bh.assertNonProblem("A<B, int>", 9, ICPPConstructor.class);
+		bh.assertNonProblem("A<B, int>", 9, ICPPClassType.class);
     }
 
     //    template <class T>

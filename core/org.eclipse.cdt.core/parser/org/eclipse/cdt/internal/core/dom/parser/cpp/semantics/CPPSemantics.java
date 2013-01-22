@@ -550,14 +550,6 @@ public class CPPSemantics {
 		if (parent instanceof ICPPASTConstructorChainInitializer) {
 			return true;
 		}
-		if (parent instanceof ICPPASTNamedTypeSpecifier) {
-			parent= parent.getParent();
-			if (parent instanceof IASTTypeId && parent.getParent() instanceof ICPPASTNewExpression) {
-				IASTDeclarator dtor = ((IASTTypeId) parent).getAbstractDeclarator();
-				if (dtor != null && dtor.getPointerOperators().length == 0)
-					return true;
-			}
-		}
 		return false;
 	}
 
@@ -3103,27 +3095,43 @@ public class CPPSemantics {
     		return null;
 
     	IType type = ((ICPPVariable) binding).getType();
-		try {
-			type = SemanticUtil.getNestedType(type, TDEF | CVTYPE);
-	    	if (!(type instanceof ICPPClassType))
-	    		return null;
-	    	if (type instanceof ICPPClassTemplate || type instanceof ICPPUnknownType || type instanceof ISemanticProblem)
-	    		return null;
+		type = SemanticUtil.getNestedType(type, TDEF | CVTYPE);
+    	if (!(type instanceof ICPPClassType))
+    		return null;
+    	if (type instanceof ICPPClassTemplate || type instanceof ICPPUnknownType || type instanceof ISemanticProblem)
+    		return null;
 
-	    	final ICPPClassType classType = (ICPPClassType) type;
+    	return findImplicitlyCalledConstructor((ICPPClassType) type, initializer, name);
+    }
+    
+	public static ICPPConstructor findImplicitlyCalledConstructor(ICPPASTNewExpression expr) {
+		IType type = getNestedType(expr.getExpressionType(), TDEF | REF | CVTYPE);
+		if (!(type instanceof IPointerType))
+			return null;
+		type = ((IPointerType) type).getType();
+		if (type instanceof ICPPClassType) {
+			return findImplicitlyCalledConstructor((ICPPClassType) type,
+					expr.getInitializer(), expr.getTypeId());
+		}
+		return null;
+	}
+
+    private static ICPPConstructor findImplicitlyCalledConstructor(ICPPClassType type, IASTInitializer initializer,
+    		IASTNode typeId) {
+    	try {
 	    	if (initializer instanceof IASTEqualsInitializer) {
 		    	// Copy initialization.
 	    		IASTEqualsInitializer eqInit= (IASTEqualsInitializer) initializer;
 	    		ICPPASTInitializerClause initClause = (ICPPASTInitializerClause) eqInit.getInitializerClause();
 	    		final ICPPEvaluation evaluation = initClause.getEvaluation();
-	    		IType sourceType= evaluation.getTypeOrFunctionSet(name);
-				ValueCategory isLValue= evaluation.getValueCategory(name);
+	    		IType sourceType= evaluation.getTypeOrFunctionSet(typeId);
+				ValueCategory isLValue= evaluation.getValueCategory(typeId);
 	    		if (sourceType != null) {
 	    			Cost c;
-	    			if (calculateInheritanceDepth(sourceType, classType, name) >= 0) {
-	    				c = Conversions.copyInitializationOfClass(isLValue, sourceType, classType, false, name);
+	    			if (calculateInheritanceDepth(sourceType, type, typeId) >= 0) {
+	    				c = Conversions.copyInitializationOfClass(isLValue, sourceType, type, false, typeId);
 	    			} else {
-	    				c = Conversions.checkImplicitConversionSequence(type, sourceType, isLValue, UDCMode.ALLOWED, Context.ORDINARY, name);
+	    				c = Conversions.checkImplicitConversionSequence(type, sourceType, isLValue, UDCMode.ALLOWED, Context.ORDINARY, typeId);
 	    			}
 	    			if (c.converts()) {
 						ICPPFunction f = c.getUserDefinedConversion();
@@ -3136,7 +3144,7 @@ public class CPPSemantics {
 	    		// List initialization.
 	    		ICPPEvaluation eval= ((ICPPASTInitializerList) initializer).getEvaluation();
 	    		if (eval instanceof EvalInitList) {
-	    			Cost c= Conversions.listInitializationSequence((EvalInitList) eval, type, UDCMode.ALLOWED, true, name);
+	    			Cost c= Conversions.listInitializationSequence((EvalInitList) eval, type, UDCMode.ALLOWED, true, typeId);
 	    			if (c.converts()) {
 	    				ICPPFunction f = c.getUserDefinedConversion();
 	    				if (f instanceof ICPPConstructor)
@@ -3145,34 +3153,21 @@ public class CPPSemantics {
 	    		}
 	    	} else if (initializer instanceof ICPPASTConstructorInitializer) {
 		    	// Direct initialization.
-			    return findImplicitlyCalledConstructor(classType,
-			    		(ICPPASTConstructorInitializer) initializer, name);
+			    return findImplicitlyCalledConstructor(type,
+			    		(ICPPASTConstructorInitializer) initializer, typeId);
 	    	} else if (initializer == null) {
 	    		// Default initialization.
-	    		ICPPConstructor[] ctors = ClassTypeHelper.getConstructors(classType, name);
+	    		ICPPConstructor[] ctors = ClassTypeHelper.getConstructors(type, typeId);
 				for (ICPPConstructor ctor : ctors) {
 					if (ctor.getRequiredArgumentCount() == 0)
 						return ctor;
 				}
 				return null;
 	    	}
-		} catch (DOMException e) {
+    	} catch (DOMException e) {
 		}
-		return null;
+    	return null;
     }
-
-	public static ICPPConstructor findImplicitlyCalledConstructor(ICPPASTNewExpression expr) {
-		IType type = getNestedType(expr.getExpressionType(), TDEF | REF | CVTYPE);
-		if (!(type instanceof IPointerType))
-			return null;
-		type = ((IPointerType) type).getType();
-		IASTInitializer initializer = expr.getInitializer();
-		if (type instanceof ICPPClassType && initializer instanceof ICPPASTConstructorInitializer) {
-			return findImplicitlyCalledConstructor((ICPPClassType) type,
-					(ICPPASTConstructorInitializer) initializer, expr.getTypeId());
-		}
-		return null;
-	}
 
 	private static ICPPConstructor findImplicitlyCalledConstructor(ICPPClassType classType,
 			ICPPASTConstructorInitializer initializer, IASTNode typeId) {

@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IField;
@@ -41,6 +42,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.core.resources.IFile;
 
 /**
@@ -352,9 +354,10 @@ public class AST2SelectionParseTest extends AST2SelectionParseBaseTest {
 					assertTrue(node instanceof IASTTypeId);
 					assertEquals(((IASTNamedTypeSpecifier)((IASTTypeId)node).getDeclSpecifier()).getName().toString(), "Gonzo"); //$NON-NLS-1$
 					name = ((IASTNamedTypeSpecifier)((IASTTypeId)node).getDeclSpecifier()).getName();
-					assertNotNull(name.resolveBinding());
-					assertTrue(name.resolveBinding() instanceof ICPPConstructor);
-					assertEquals(((ICPPConstructor)name.resolveBinding()).getName(), "Gonzo"); //$NON-NLS-1$
+					name = TestUtil.findImplicitName(name);
+					IBinding binding = name.resolveBinding(); 
+					assertTrue(binding instanceof ICPPConstructor);
+					assertEquals(((ICPPConstructor)binding).getName(), "Gonzo"); //$NON-NLS-1$
 					break;
 				default: 
 					assertTrue(node instanceof IASTName);
@@ -736,9 +739,10 @@ public class AST2SelectionParseTest extends AST2SelectionParseBaseTest {
 		assertTrue(node instanceof IASTTypeId);
 		assertEquals(((IASTNamedTypeSpecifier)((IASTTypeId)node).getDeclSpecifier()).getName().toString(), "B"); //$NON-NLS-1$
 		IASTName name = ((IASTNamedTypeSpecifier)((IASTTypeId)node).getDeclSpecifier()).getName();
-		assertNotNull(name.resolveBinding());
-	    assertTrue(name.resolveBinding() instanceof ICPPConstructor);
-		assertEquals(((ICPPConstructor)name.resolveBinding()).getName(), "B"); //$NON-NLS-1$
+		name = TestUtil.findImplicitName(name);
+		IBinding binding = name.resolveBinding(); 
+	    assertTrue(binding instanceof ICPPConstructor);
+		assertEquals(((ICPPConstructor)binding).getName(), "B"); //$NON-NLS-1$
 	}
 	
 	public void testBug72712_2() throws Exception{

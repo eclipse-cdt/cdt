@@ -329,9 +329,15 @@ public class AST2BaseTest extends BaseTestCase {
     }
 
     static protected class CPPNameCollector extends ASTVisitor {
-        {
-            shouldVisitNames = true;
+    	public CPPNameCollector() {
+    		this(false);  // don't visit implicit names by default
         }
+    	
+    	public CPPNameCollector(boolean shouldVisitImplicitNames) {
+    		this.shouldVisitNames = true;
+    		this.shouldVisitImplicitNames = shouldVisitImplicitNames;
+    	}
+    	
         public List<IASTName> nameList = new ArrayList<IASTName>();
 
         @Override

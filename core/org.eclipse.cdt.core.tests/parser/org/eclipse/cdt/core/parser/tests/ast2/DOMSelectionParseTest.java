@@ -37,6 +37,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.model.CProject;
 import org.eclipse.core.resources.IFile;
 
@@ -296,8 +297,12 @@ public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
 			}
 			IASTNode node = parse( code, startOffset, endOffset );
 			assertTrue( node instanceof IASTName );
-			assertTrue( ((IASTName)node).resolveBinding() instanceof ICPPMethod );
 			IBinding binding = ((IASTName)node).resolveBinding();
+			if (binding instanceof ICPPClassType) {
+				node = TestUtil.findImplicitName(node);
+				binding = ((IASTName)node).resolveBinding();
+			}
+			assertTrue( binding instanceof ICPPMethod );
 			IName[] decls = null;
 			switch( i )
 			{
@@ -599,14 +604,15 @@ public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
 	    int startIndex = code.indexOf( "new B" ) + 4; //$NON-NLS-1$
 	    
 	    IASTNode node = parse( code, startIndex, startIndex + 1 );
+	    node = TestUtil.findImplicitName(node);
 		assertTrue( node instanceof IASTName );
-		assertTrue( ((IASTName)node).resolveBinding() instanceof ICPPConstructor );
+		assertTrue( ((IASTName) node).resolveBinding() instanceof ICPPConstructor );
 		assertEquals( ((IASTName)node).toString(), "B" ); //$NON-NLS-1$
 		IName[] decls = getDeclarationOffTU((IASTName)node);
 		assertEquals(decls.length, 1);
 		assertEquals( decls[0].toString(), "B" ); //$NON-NLS-1$
-		assertEquals( ((ASTNode)decls[0]).getOffset(), 17);
-		assertEquals( ((ASTNode)decls[0]).getLength(), 1);
+		assertEquals( 17, ((ASTNode)decls[0]).getOffset() );
+		assertEquals( 1, ((ASTNode)decls[0]).getLength() );
 	}
 	
 	public void testBug72712_2() throws Exception{
@@ -1111,8 +1117,9 @@ public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
 					 							
 		int index = code.indexOf("Point(10)"); //$NON-NLS-1$
 		IASTNode node = parse( code, index, index + 5, true );
+		node = TestUtil.findImplicitName(node);
 		assertTrue( node instanceof IASTName );
-		assertTrue( ((IASTName)node).resolveBinding() instanceof ICPPConstructor );
+		assertTrue( ((IASTName) node).resolveBinding() instanceof ICPPConstructor );
 		assertEquals( ((IASTName)node).toString(), "Point" ); //$NON-NLS-1$
 		
 		IName[] decls = getDeclarationOffTU((IASTName)node);

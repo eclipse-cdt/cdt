@@ -102,9 +102,13 @@ public class CompleteParser2Tests extends BaseTestCase {
     }
 
 	static private class CPPNameCollector extends ASTVisitor {
-        {
-            shouldVisitNames = true;
+    	public CPPNameCollector() {
+    		this(false);  // don't visit implicit names by default
         }
+    	public CPPNameCollector(boolean shouldVisitImplicitNames) {
+    		this.shouldVisitNames = true;
+    		this.shouldVisitImplicitNames = shouldVisitImplicitNames;
+    	}
         public List nameList = new ArrayList();
         @Override
 		public int visit(IASTName name){
@@ -141,7 +145,7 @@ public class CompleteParser2Tests extends BaseTestCase {
             if (nameCollector.getName(i).resolveBinding() == binding)
                 count++;
 
-        assertEquals(count, num);
+        assertEquals(num, count);
     }
     protected void assertInstances(CNameCollector nameCollector, IBinding binding, int num) throws Exception {
         int count = 0;
@@ -149,7 +153,7 @@ public class CompleteParser2Tests extends BaseTestCase {
             if (nameCollector.getName(i).resolveBinding() == binding)
                 count++;
 
-        assertEquals(count, num);
+        assertEquals(num, count);
     }
     protected IASTTranslationUnit parse(String code, boolean expectedToPass,
             ParserLanguage lang) throws Exception {
@@ -1112,14 +1116,14 @@ public class CompleteParser2Tests extends BaseTestCase {
 
 	public void testBug43503A() throws Exception {
 	    IASTTranslationUnit tu = parse("class SD_01 { void f_SD_01() {}}; int main(){ SD_01 * a = new SD_01(); a->f_SD_01();	} ");
-		CPPNameCollector col = new CPPNameCollector();
+		CPPNameCollector col = new CPPNameCollector(true);
  		tu.accept(col);
 
- 		assertEquals(col.size(), 8);
+ 		assertEquals(col.size(), 9);
  		ICPPClassType SD_01 = (ICPPClassType) col.getName(0).resolveBinding();
  		ICPPMethod f_SD_01 = (ICPPMethod) col.getName(1).resolveBinding();
  		ICPPConstructor ctor = SD_01.getConstructors()[0];
- 		assertInstances(col, SD_01, 2);
+ 		assertInstances(col, SD_01, 3);
  		assertInstances(col, ctor, 1);
  		assertInstances(col, f_SD_01, 2);
 	}
@@ -1204,10 +1208,10 @@ public class CompleteParser2Tests extends BaseTestCase {
 		buff.append("}                          \n");
 		IASTTranslationUnit tu = parse(buff.toString());
 
-		CPPNameCollector col = new CPPNameCollector();
+		CPPNameCollector col = new CPPNameCollector(true);
  		tu.accept(col);
 
- 		assertEquals(col.size(), 17);
+ 		assertEquals(col.size(), 18);
  		ICompositeType SD_02 = (ICompositeType) col.getName(0).resolveBinding();
  		ICPPMethod f_SD_02 = (ICPPMethod) col.getName(1).resolveBinding();
  		ICPPClassType SD_01 = (ICPPClassType) col.getName(2).resolveBinding();
@@ -1217,7 +1221,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
  		assertInstances(col, SD_02, 2);
  		assertInstances(col, f_SD_02, 2);
- 		assertInstances(col, SD_01, 3);
+ 		assertInstances(col, SD_01, 4);
  		assertInstances(col, ctor, 1);
  		assertInstances(col, next, 2);
  		assertInstances(col, f_SD_01, 4);
@@ -1268,10 +1272,10 @@ public class CompleteParser2Tests extends BaseTestCase {
 
 	public void testBug44342() throws Exception {
 		IASTTranslationUnit tu = parse("class A { void f(){} void f(int){} }; int main(){ A * a = new A(); a->f();} ");
-		CPPNameCollector col = new CPPNameCollector();
+		CPPNameCollector col = new CPPNameCollector(true);
 		tu.accept(col);
 
-		assertEquals(col.size(), 10);
+		assertEquals(col.size(), 11);
 		ICPPClassType A = (ICPPClassType) col.getName(0).resolveBinding();
 		ICPPMethod f1 = (ICPPMethod) col.getName(1).resolveBinding();
 		ICPPMethod f2 = (ICPPMethod) col.getName(2).resolveBinding();
@@ -1279,7 +1283,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		ICPPConstructor ctor = A.getConstructors()[0];
 		IVariable a = (IVariable) col.getName(6).resolveBinding();
 
-		assertInstances(col, A, 2);
+		assertInstances(col, A, 3);
 		assertInstances(col, f1, 2);
 		assertInstances(col, f2, 1);
 		assertInstances(col, ctor, 1);
@@ -1420,23 +1424,23 @@ public class CompleteParser2Tests extends BaseTestCase {
 		buffer.append("void main() { N::A * a = new N::A();  a->f(); } ");
 		IASTTranslationUnit tu = parse(buffer.toString());
 
-		CPPNameCollector col = new CPPNameCollector();
+		CPPNameCollector col = new CPPNameCollector(true);
 		tu.accept(col);
 
-		assertEquals(col.size(), 13);
+		assertEquals(col.size(), 14);
 		ICPPNamespace N = (ICPPNamespace) col.getName(0).resolveBinding();
 		IFunction f = (IFunction) col.getName(1).resolveBinding();
 		ICPPClassType A = (ICPPClassType) col.getName(2).resolveBinding();
 
 		ICPPConstructor ctor = A.getConstructors()[0];
 
-		IProblemBinding fp = (IProblemBinding) col.getName(12).resolveBinding();
+		IProblemBinding fp = (IProblemBinding) col.getName(13).resolveBinding();
 		assertEquals(fp.getID(), IProblemBinding.SEMANTIC_NAME_NOT_FOUND);
 
 		assertInstances(col, N, 3);
 		assertInstances(col, f, 1);
-		assertInstances(col, A, 3);
-		assertInstances(col, ctor, 2);
+		assertInstances(col, A, 5);
+		assertInstances(col, ctor, 1);
 	}
 
 	public void testBug43110() throws Exception {

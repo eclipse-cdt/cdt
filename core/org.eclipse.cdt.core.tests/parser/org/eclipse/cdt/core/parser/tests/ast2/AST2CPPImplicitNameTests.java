@@ -445,11 +445,11 @@ public class AST2CPPImplicitNameTests extends AST2BaseTest {
 		IBinding f= bh.assertNonProblem("operator new(size_t b)", 12);
 		
 		IASTImplicitName[] names = bh.getImplicitNames("new A;", 3);
-		assertEquals(1, names.length);
+		assertEquals(2, names.length);
 		assertSame(m, names[0].resolveBinding());
 
 		names = bh.getImplicitNames("new B;", 3);
-		assertEquals(1, names.length);
+		assertEquals(2, names.length);
 		assertSame(f, names[0].resolveBinding());
 	}
 

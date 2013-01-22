@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 IBM Corporation and others.
+ * Copyright (c) 2004, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -329,9 +329,15 @@ public class AST2BaseTest extends BaseTestCase {
     }
 
     static protected class CPPNameCollector extends ASTVisitor {
-        {
-            shouldVisitNames = true;
+    	public CPPNameCollector() {
+    		this(false);  // don't visit implicit names by default
         }
+    	
+    	public CPPNameCollector(boolean shouldVisitImplicitNames) {
+    		this.shouldVisitNames = true;
+    		this.shouldVisitImplicitNames = shouldVisitImplicitNames;
+    	}
+    	
         public List<IASTName> nameList = new ArrayList<IASTName>();
 
         @Override

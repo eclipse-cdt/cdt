@@ -44,6 +44,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
+import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
@@ -55,6 +56,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
@@ -7005,13 +7007,6 @@ public class AST2TemplateTests extends AST2BaseTest {
 		parseAndCheckBindings();
 	}
 
-	//	template<typename T, unsigned n> struct A {};
-	//
-	//	template<typename T>
-	//	struct A<T, 0> {
-	//	  static void m();
-	//	};
-	//
 	//	template <typename T>
 	//	struct B {
 	//	  enum { value = 1 };
@@ -7022,15 +7017,16 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	  enum { id = B<T>::value ? 0 : -1 };
 	//	};
 	//
-	//	template<typename T>
-	//	struct D {
-	//	  typedef A<T, C<T>::id> E;
-	//	};
-	//
 	//	void test() {
-	//	  D<bool>::E::m();
+	//	  int x = C<bool>::id;
 	//	}
-	public void testDependentEnum_398696() throws Exception {
-		parseAndCheckBindings();
+	public void _testDependentEnum_398696() throws Exception {
+		BindingAssertionHelper ah = getAssertionHelper();
+		IEnumerator binding = ah.assertNonProblem("C<bool>::id", "id");
+		IBinding owner = binding.getOwner();
+		IValue value = binding.getValue();
+		Long num = value.numericalValue();
+		assertNotNull(num);
+		assertEquals(0, num.longValue());
 	}
 }

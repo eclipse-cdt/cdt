@@ -129,7 +129,11 @@ public class SizeofCalculator {
 		sizeof_long_long = getSize(sizeofMacros, "__SIZEOF_LONG_LONG__", maxAlignment); //$NON-NLS-1$
 		sizeof_int128 = getSize(sizeofMacros, "__SIZEOF_INT128__", maxAlignment); //$NON-NLS-1$
 		sizeof_short = getSize(sizeofMacros, "__SIZEOF_SHORT__", maxAlignment); //$NON-NLS-1$
-		sizeof_bool = getSize(sizeofMacros, "__SIZEOF_BOOL__", maxAlignment); //$NON-NLS-1$
+		SizeAndAlignment size = getSize(sizeofMacros, "__SIZEOF_BOOL__", maxAlignment); //$NON-NLS-1$
+		// __SIZEOF_BOOL__ is not defined by GCC but sizeof(bool) is needed for template resolution.
+		if (size == null)
+			size = SIZE_1;
+		sizeof_bool = size;
 		sizeof_wchar_t = getSize(sizeofMacros, "__SIZEOF_WCHAR_T__", maxAlignment); //$NON-NLS-1$
 		sizeof_float = getSize(sizeofMacros, "__SIZEOF_FLOAT__", maxAlignment); //$NON-NLS-1$
 		sizeof_complex_float = getSizeOfPair(sizeof_float);
@@ -152,7 +156,7 @@ public class SizeofCalculator {
 		sizeof_long_long = null;
 		sizeof_int128 = size_16;
 		sizeof_short = null;
-		sizeof_bool = null;
+		sizeof_bool = SIZE_1;
 		sizeof_wchar_t = null;
 		sizeof_float = null;
 		sizeof_complex_float = null;

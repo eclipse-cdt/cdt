@@ -14,6 +14,7 @@ package org.eclipse.cdt.dsf.gdb.internal.ui.launching;
 
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
+import org.eclipse.cdt.dsf.gdb.launching.IExecutableInfo;
 import org.eclipse.cdt.dsf.gdb.launching.IProcessExtendedInfo;
 import org.eclipse.cdt.dsf.gdb.launching.LaunchMessages;
 import org.eclipse.core.runtime.CoreException;
@@ -34,10 +35,12 @@ public class ProcessPrompter implements IStatusHandler {
 
 	public static class PrompterInfo {
 		public boolean supportsNewProcess;
+		public boolean remote;
 		public IProcessExtendedInfo[] processList;
 		
-		public PrompterInfo(boolean supportsNew, IProcessExtendedInfo[] list) {
+		public PrompterInfo(boolean supportsNew, boolean remote, IProcessExtendedInfo[] list) {
 			supportsNewProcess = supportsNew;
+			this.remote = remote;
 			processList = list;
 		}
 	}
@@ -162,7 +165,8 @@ public class ProcessPrompter implements IStatusHandler {
 			};
 
 			// Display the list of processes and have the user choose
-			ProcessPrompterDialog dialog = new ProcessPrompterDialog(shell, provider, qprovider, prompterInfo.supportsNewProcess);
+			ProcessPrompterDialog dialog = 
+				new ProcessPrompterDialog(shell, provider, qprovider, prompterInfo.supportsNewProcess, prompterInfo.remote);
 			dialog.setTitle(LaunchUIMessages.getString("LocalAttachLaunchDelegate.Select_Process")); //$NON-NLS-1$
 			dialog.setMessage(LaunchUIMessages.getString("LocalAttachLaunchDelegate.Select_Process_to_attach_debugger_to")); //$NON-NLS-1$
 
@@ -172,9 +176,9 @@ public class ProcessPrompter implements IStatusHandler {
 			dialog.setElements(plist);
 			if (dialog.open() == Window.OK) {
 				// First check if the user pressed the New button
-				String binaryPath = dialog.getBinaryPath();
-				if (binaryPath != null) {
-					return binaryPath;
+				IExecutableInfo execInfo = dialog.getExecutableInfo();
+				if (execInfo != null) {
+					return execInfo;
 				}
 				
 				Object[] results = dialog.getResult();

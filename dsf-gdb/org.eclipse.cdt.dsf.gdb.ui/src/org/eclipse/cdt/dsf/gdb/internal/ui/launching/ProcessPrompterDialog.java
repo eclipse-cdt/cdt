@@ -13,12 +13,13 @@ package org.eclipse.cdt.dsf.gdb.internal.ui.launching;
 
 import java.util.Arrays;
 
+import org.eclipse.cdt.dsf.gdb.launching.IExecutableInfo;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
@@ -42,13 +43,15 @@ import org.eclipse.ui.dialogs.TwoPaneElementSelector;
  */
 public class ProcessPrompterDialog extends TwoPaneElementSelector {
 	private static final int NEW_BUTTON_ID = 9876;
-	private String fBinaryPath;
+	private IExecutableInfo fExecInfo;
 	private boolean fSupportsNewProcess;
+	private boolean fRemote;
 
 	public ProcessPrompterDialog(Shell parent, ILabelProvider elementRenderer,
-			ILabelProvider qualifierRenderer, boolean supportsNewProcess) {
+			ILabelProvider qualifierRenderer, boolean supportsNewProcess, boolean remote) {
 		super(parent, elementRenderer, qualifierRenderer);
 		fSupportsNewProcess = supportsNewProcess;
+		fRemote = remote;
 	}
 
 	@Override
@@ -62,17 +65,14 @@ public class ProcessPrompterDialog extends TwoPaneElementSelector {
 	@Override
 	protected void buttonPressed(int buttonId) {
 		if (buttonId == NEW_BUTTON_ID) {
-			FileDialog fd = new FileDialog(getShell(), SWT.NONE);
-			fBinaryPath = fd.open();
-
-			setReturnCode(OK);
-			close();
+			NewExecutableDialog dialog = new NewExecutableDialog(getShell(), (fRemote) ? NewExecutableDialog.REMOTE : 0);
+			if (dialog.open() == IDialogConstants.OK_ID) {
+				fExecInfo = dialog.getExecutableInfo();
+				setReturnCode(OK);
+				close();
+			}
 		}
 		super.buttonPressed(buttonId);
-	}
-	
-	public String getBinaryPath() {
-		return fBinaryPath;
 	}
 	
 	/*
@@ -115,5 +115,9 @@ public class ProcessPrompterDialog extends TwoPaneElementSelector {
     	    }
     	});
     	return list;
+    }
+
+    public IExecutableInfo getExecutableInfo() {
+    	return fExecInfo;
     }
 }

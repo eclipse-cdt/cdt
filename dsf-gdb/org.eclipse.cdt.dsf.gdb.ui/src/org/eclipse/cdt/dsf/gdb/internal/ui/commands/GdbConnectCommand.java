@@ -20,6 +20,7 @@ import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.RejectedExecutionException;
 
+import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.model.IConnectHandler;
 import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
@@ -35,6 +36,7 @@ import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMData;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
+import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.actions.IConnect;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.cdt.dsf.gdb.internal.ui.actions.ProcessInfo;
@@ -42,6 +44,7 @@ import org.eclipse.cdt.dsf.gdb.internal.ui.launching.LaunchUIMessages;
 import org.eclipse.cdt.dsf.gdb.internal.ui.launching.ProcessPrompter;
 import org.eclipse.cdt.dsf.gdb.internal.ui.launching.ProcessPrompter.PrompterInfo;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
+import org.eclipse.cdt.dsf.gdb.launching.IExecutableInfo;
 import org.eclipse.cdt.dsf.gdb.launching.IProcessExtendedInfo;
 import org.eclipse.cdt.dsf.gdb.launching.LaunchMessages;
 import org.eclipse.cdt.dsf.gdb.service.IGDBBackend;
@@ -68,7 +71,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.progress.UIJob;
 
 public class GdbConnectCommand extends AbstractDebugCommand implements IConnectHandler, IConnect {
-    
+
+	private final GdbLaunch fLaunch;
 	private final DsfExecutor fExecutor;
     private final DsfServicesTracker fTracker;
     
@@ -82,7 +86,8 @@ public class GdbConnectCommand extends AbstractDebugCommand implements IConnectH
     // the binary location for a local attach session.
     private Map<String, String> fProcessNameToBinaryMap = new HashMap<String, String>();
     
-    public GdbConnectCommand(DsfSession session) {
+    public GdbConnectCommand(DsfSession session, GdbLaunch launch) {
+    	fLaunch = launch;
         fExecutor = session.getExecutor();
         fTracker = new DsfServicesTracker(GdbUIPlugin.getBundleContext(), session.getId());
     }    
@@ -143,10 +148,12 @@ public class GdbConnectCommand extends AbstractDebugCommand implements IConnectH
     	IProcessExtendedInfo[] fProcessList = null;
     	DataRequestMonitor<Object> fRequestMonitor;
     	boolean fNewProcessSupported;
+    	boolean fRemote;
 
-    	public PromptForPidJob(String name, boolean newProcessSupported, IProcessExtendedInfo[] procs, DataRequestMonitor<Object> rm) {
+    	public PromptForPidJob(String name, boolean newProcessSupported, boolean remote, IProcessExtendedInfo[] procs, DataRequestMonitor<Object> rm) {
     		super(name);
     		fNewProcessSupported = newProcessSupported;
+    		fRemote = remote;
     		fProcessList = procs;
     		fRequestMonitor = rm;
     	}
@@ -158,11 +165,11 @@ public class GdbConnectCommand extends AbstractDebugCommand implements IConnectH
     				null);
 
     		try {
-    			PrompterInfo info = new PrompterInfo(fNewProcessSupported, fProcessList);
+    			PrompterInfo info = new PrompterInfo(fNewProcessSupported, fRemote, fProcessList);
     			Object result = new ProcessPrompter().handleStatus(null, info);
     			 if (result == null) {
  					fRequestMonitor.cancel();
- 				} else if (result instanceof IProcessExtendedInfo[] || result instanceof String) {
+ 				} else if (result instanceof IProcessExtendedInfo[] || result instanceof IExecutableInfo) {
     				fRequestMonitor.setData(result);
     		    } else if (result instanceof Integer) {
     		    	// This is the case where the user typed in a pid number directly
@@ -288,9 +295,11 @@ public class GdbConnectCommand extends AbstractDebugCommand implements IConnectH
     		public void run() {
     			final IProcesses procService = fTracker.getService(IProcesses.class);
     			ICommandControlService commandControl = fTracker.getService(ICommandControlService.class);
+    			IGDBBackend backend = fTracker.getService(IGDBBackend.class);
 
-    			if (procService != null && commandControl != null) {
+    			if (procService != null && commandControl != null && backend != null) {
         			final ICommandControlDMContext controlCtx = commandControl.getContext();
+        			final boolean remote = backend.getSessionType() == SessionType.REMOTE;
         			
         			// First check if the "New..." button should be enabled.
         			procService.isDebugNewProcessSupported(controlCtx, new DataRequestMonitor<Boolean>(fExecutor, rm) {
@@ -314,7 +323,8 @@ public class GdbConnectCommand extends AbstractDebugCommand implements IConnectH
 											// Prompt the user to choose one or more processes, or to start a new one
 											new PromptForPidJob(
 													LaunchUIMessages.getString("ProcessPrompter.PromptJob"),    //$NON-NLS-1$
-													newProcessSupported, 
+													newProcessSupported,
+													remote,
 													procInfoList.toArray(new IProcessExtendedInfo[procInfoList.size()]),
 													new DataRequestMonitor<Object>(fExecutor, rm) {
 														@Override
@@ -325,9 +335,9 @@ public class GdbConnectCommand extends AbstractDebugCommand implements IConnectH
 														@Override
 														protected void handleSuccess() {
 															Object data = getData();
-															if (data instanceof String) {
+															if (data instanceof IExecutableInfo) {
 																// User wants to start a new process
-																startNewProcess(controlCtx, (String)data, rm);
+																startNewProcess(controlCtx, (IExecutableInfo)data, rm);
 															} else if (data instanceof IProcessExtendedInfo[]) {
 																attachToProcesses(controlCtx, (IProcessExtendedInfo[])data, rm);
 															} else {
@@ -412,11 +422,23 @@ public class GdbConnectCommand extends AbstractDebugCommand implements IConnectH
     	});
     }
     
-    private void startNewProcess(ICommandControlDMContext controlDmc, String binaryPath, RequestMonitor rm) {
+    private void startNewProcess(ICommandControlDMContext controlDmc, IExecutableInfo info, RequestMonitor rm) {
 		IGDBProcesses procService = fTracker.getService(IGDBProcesses.class);
-		procService.debugNewProcess(
-				controlDmc, binaryPath, 
-				new HashMap<String, Object>(), new DataRequestMonitor<IDMContext>(fExecutor, rm));
+		try {
+			@SuppressWarnings("unchecked")
+			Map<String, Object> attributes = fLaunch.getLaunchConfiguration().getAttributes();
+			attributes.put(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REMOTE_BINARY, info.getTargetPath());
+			attributes.put(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, info.getArguments());
+			procService.debugNewProcess(
+					controlDmc, 
+					info.getHostPath(), 
+					attributes, 
+					new DataRequestMonitor<IDMContext>(fExecutor, rm));
+		}
+		catch(CoreException e) {
+			rm.setStatus(e.getStatus());
+			rm.done();
+		}
     }
     
     private void attachToProcesses(final ICommandControlDMContext controlDmc, IProcessExtendedInfo[] processes, final RequestMonitor rm) {

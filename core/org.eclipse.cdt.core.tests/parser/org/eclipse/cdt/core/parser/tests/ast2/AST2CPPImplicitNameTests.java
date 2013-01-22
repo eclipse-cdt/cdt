@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     Mike Kucera (IBM)
  *     Sergey Prigogin (Google)
  *     Markus Schorn (Wind River Systems)
+ *     Nathan Ridge
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
@@ -445,11 +446,11 @@ public class AST2CPPImplicitNameTests extends AST2BaseTest {
 		IBinding f= bh.assertNonProblem("operator new(size_t b)", 12);
 		
 		IASTImplicitName[] names = bh.getImplicitNames("new A;", 3);
-		assertEquals(1, names.length);
+		assertEquals(2, names.length);
 		assertSame(m, names[0].resolveBinding());
 
 		names = bh.getImplicitNames("new B;", 3);
-		assertEquals(1, names.length);
+		assertEquals(2, names.length);
 		assertSame(f, names[0].resolveBinding());
 	}
 

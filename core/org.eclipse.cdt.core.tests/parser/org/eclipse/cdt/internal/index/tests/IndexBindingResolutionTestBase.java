@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 Symbian Software Systems and others.
+ * Copyright (c) 2006, 2013 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     IBM Corporation
  *     Markus Schorn (Wind River Systems)
  *     Sergey Prigogin (Google)
+ *     Nathan Ridge
  *******************************************************************************/
 package org.eclipse.cdt.internal.index.tests;
 
@@ -83,7 +84,7 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 		super.tearDown();
 	}
 
-	protected IASTName findName(String section, int len) {
+	protected IASTName findName(String section, int len, boolean preferImplicitName) {
 		if (len == 0)
 			len= section.length();
 		for (int i = 0; i < strategy.getAstCount(); i++) {
@@ -91,14 +92,26 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 			final IASTNodeSelector nodeSelector = ast.getNodeSelector(null);
 			final int offset = strategy.getAstSource(i).indexOf(section);
 			if (offset >= 0) {
-				IASTName name= nodeSelector.findName(offset, len);
-				if (name == null)
-					name= nodeSelector.findImplicitName(offset, len);
-				return name;
+				if (preferImplicitName) {
+					return nodeSelector.findImplicitName(offset, len);
+				} else {
+					IASTName name= nodeSelector.findName(offset, len);
+					if (name == null)
+						name= nodeSelector.findImplicitName(offset, len);
+					return name;
+				}
 			}
 		}
 	
 		return null;
+	}
+	
+	protected IASTName findName(String section, int len) {
+		return findName(section, len, false);
+	}
+	
+	protected IASTName findImplicitName(String section, int len) {
+		return findName(section, len, true);
 	}
 
 	/**
@@ -129,9 +142,37 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 		assertInstance(binding, clazz, cs);
 		return clazz.cast(binding);
 	}
+	
+	/**
+	 * Attempts to get an IBinding attached to an implicit name from the initial specified 
+	 * number of characters from the specified code fragment. Fails the test if
+	 * <ul>
+	 *  <li> There is not a unique implicit name with the specified criteria
+	 *  <li> The binding associated with the implicit name is null or a problem binding
+     *  <li> The binding is not an instance of the specified class
+	 * </ul>
+	 * @param section the code fragment to search for in the AST. The first occurrence of an identical section is used.
+	 * @param len the length of the specified section to use as a name
+	 * @param clazz an expected class type or interface that the binding should extend/implement
+	 * @return the associated implicit name's binding
+	 */
+	protected <T> T getBindingFromImplicitASTName(String section, int len, Class<T> clazz, Class ... cs) {
+		if (len < 1) {
+			len= section.length()+len;
+		}
+		IASTName name= findImplicitName(section, len);
+		assertNotNull("Name not found for \"" + section + "\"", name);
+		assertEquals(section.substring(0, len), name.getRawSignature());
+
+		IBinding binding = name.resolveBinding();
+		assertNotNull("No binding for " + name.getRawSignature(), binding);
+		assertFalse("Binding is a ProblemBinding for name \"" + name.getRawSignature() + "\"", IProblemBinding.class.isAssignableFrom(name.resolveBinding().getClass()));
+		assertInstance(binding, clazz, cs);
+		return clazz.cast(binding);
+	}
 
 	/*
-	 * @see IndexBindingResolutionTestBase#getBindingFromASTName(Class, String, int)
+	 * @see IndexBindingResolutionTestBase#getBindingFromASTName(String, int, Class<T>, Class ...)
 	 */
 	protected <T extends IBinding> T getBindingFromASTName(String section, int len) {
 		if (len <= 0)
@@ -141,6 +182,23 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 		assertNotNull("Name not found for \"" + section + "\"", name);
 		assertEquals(section.substring(0, len), name.getRawSignature());
 	
+		IBinding binding = name.resolveBinding();
+		assertNotNull("No binding for " + name.getRawSignature(), binding);
+		assertFalse("Binding is a ProblemBinding for name \"" + name.getRawSignature() + "\"", IProblemBinding.class.isAssignableFrom(name.resolveBinding().getClass()));
+		return (T) binding;
+	}
+	
+	/*
+	 * @see IndexBindingResolutionTestBase#getBindingFromImplicitASTName(String, int, Class<T>, Class ...)
+	 */
+	protected <T extends IBinding> T getBindingFromImplicitASTName(String section, int len) {
+		if (len <= 0)
+			len += section.length();
+
+		IASTName name= findImplicitName(section, len);
+		assertNotNull("Name not found for \"" + section + "\"", name);
+		assertEquals(section.substring(0, len), name.getRawSignature());
+
 		IBinding binding = name.resolveBinding();
 		assertNotNull("No binding for " + name.getRawSignature(), binding);
 		assertFalse("Binding is a ProblemBinding for name \"" + name.getRawSignature() + "\"", IProblemBinding.class.isAssignableFrom(name.resolveBinding().getClass()));

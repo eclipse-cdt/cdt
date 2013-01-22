@@ -7014,19 +7014,18 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//
 	//	template <typename T>
 	//	struct C {
-	//	  enum { id = B<T>::value ? 0 : -1 };
+	//	  enum { id = B<T>::value };
 	//	};
 	//
 	//	void test() {
 	//	  int x = C<bool>::id;
 	//	}
-	public void _testDependentEnum_398696() throws Exception {
+	public void _testDependentEnumValue_389009() throws Exception {
 		BindingAssertionHelper ah = getAssertionHelper();
 		IEnumerator binding = ah.assertNonProblem("C<bool>::id", "id");
-		IBinding owner = binding.getOwner();
 		IValue value = binding.getValue();
 		Long num = value.numericalValue();
 		assertNotNull(num);
-		assertEquals(0, num.longValue());
+		assertEquals(1, num.longValue());
 	}
 }

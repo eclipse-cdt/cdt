@@ -44,7 +44,7 @@ import org.eclipse.core.runtime.content.IContentType;
 /**
  * @author jcamelon
  */
-public class DOMLocationInclusionTests extends AST2FileBasePluginTest {
+public class DOMLocationInclusionTests extends AST2FileBasePluginTestCase {
 
     public DOMLocationInclusionTests() {
 	}

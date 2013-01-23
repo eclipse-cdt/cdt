@@ -17,7 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 
-public class AST2UtilOldTests extends AST2BaseTest {
+public class AST2UtilOldTests extends AST2TestBase {
 	public AST2UtilOldTests() {
 	}
 	public AST2UtilOldTests(String name) {

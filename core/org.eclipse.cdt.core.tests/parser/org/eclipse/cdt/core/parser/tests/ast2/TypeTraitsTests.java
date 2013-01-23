@@ -21,7 +21,7 @@ import org.eclipse.cdt.internal.core.parser.ParserException;
 /**
  * Tests for ClassTypeHelper class.
  */
-public class TypeTraitsTests extends AST2BaseTest {
+public class TypeTraitsTests extends AST2TestBase {
 
 	public TypeTraitsTests() {
 	}

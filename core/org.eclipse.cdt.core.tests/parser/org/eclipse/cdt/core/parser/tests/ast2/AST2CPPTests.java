@@ -139,7 +139,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.index.IndexCPPSignatureUtil;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 
-public class AST2CPPTests extends AST2BaseTest {
+public class AST2CPPTests extends AST2TestBase {
 
 	public AST2CPPTests() {
 	}

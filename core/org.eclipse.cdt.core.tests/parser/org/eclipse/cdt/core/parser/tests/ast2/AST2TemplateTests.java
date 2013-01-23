@@ -103,7 +103,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 
-public class AST2TemplateTests extends AST2BaseTest {
+public class AST2TemplateTests extends AST2TestBase {
 
 	public AST2TemplateTests() {
 	}

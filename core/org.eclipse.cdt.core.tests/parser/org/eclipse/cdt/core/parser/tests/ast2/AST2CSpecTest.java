@@ -15,7 +15,7 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 /**
  * @author dsteffle
  */
-public class AST2CSpecTest extends AST2SpecBaseTest {
+public class AST2CSpecTest extends AST2SpecTestBase {
 
 	public AST2CSpecTest() {
 	}

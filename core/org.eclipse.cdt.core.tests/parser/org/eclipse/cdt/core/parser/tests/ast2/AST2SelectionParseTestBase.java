@@ -29,7 +29,7 @@ import org.eclipse.cdt.core.parser.NullLogService;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerInfo;
-import org.eclipse.cdt.core.parser.tests.FileBasePluginTest;
+import org.eclipse.cdt.core.parser.tests.FileBasePluginTestCase;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.c.GNUCSourceParser;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPSourceParser;
@@ -40,18 +40,18 @@ import org.eclipse.core.resources.IFile;
 /**
  * @author dsteffle
  */
-public class AST2SelectionParseBaseTest extends FileBasePluginTest {
+public class AST2SelectionParseTestBase extends FileBasePluginTestCase {
 
-    public AST2SelectionParseBaseTest() {
+    public AST2SelectionParseTestBase() {
 	}
 
-	public AST2SelectionParseBaseTest(String name) {
+	public AST2SelectionParseTestBase(String name) {
 		super(name);
 	}
 
 	private static final IParserLogService NULL_LOG = new NullLogService();
         
-	public AST2SelectionParseBaseTest(String name, Class className) {
+	public AST2SelectionParseTestBase(String name, Class className) {
 		super(name, className);
 	}
 
@@ -76,7 +76,7 @@ public class AST2SelectionParseBaseTest extends FileBasePluginTest {
     protected IASTTranslationUnit parse(String code, ParserLanguage lang, boolean useGNUExtensions, boolean expectNoProblems) throws ParserException {
 		FileContent codeReader = FileContent.create("<test-code>", code.toCharArray());
         ScannerInfo scannerInfo = new ScannerInfo();
-        IScanner scanner= AST2BaseTest.createScanner(codeReader, lang, ParserMode.COMPLETE_PARSE, scannerInfo);
+        IScanner scanner= AST2TestBase.createScanner(codeReader, lang, ParserMode.COMPLETE_PARSE, scannerInfo);
         
         ISourceCodeParser parser2 = null;
         if (lang == ParserLanguage.CPP) {

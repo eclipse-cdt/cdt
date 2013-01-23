@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPH///9o\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/IExecutableInfo.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2013-01-23T14:59:03Z",
+      "side": 1,
+      "message": "I copied it from IProcessExtendedInfo. Don\u0027t really understand why do we need an interface in the first place but wanted these two features to be similar. Should I just use a class and move it to an \u0027internal\u0027 package?",
+      "parentUuid": "AABOO3///4c\u003d",
+      "revId": "598a8116e349b0c67ed565987811143e355527d8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOO3///4Y\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/IExecutableInfo.java",
         "patchSetId": 5

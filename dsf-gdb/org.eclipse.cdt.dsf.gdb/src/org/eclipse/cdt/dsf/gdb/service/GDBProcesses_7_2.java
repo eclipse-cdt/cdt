@@ -469,10 +469,14 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 {
 			return false;
 		}
 
-		// We don't yet support starting a new process on a remote target
-		// Bug 344890
-		if (type == SessionType.REMOTE && fBackend.getIsAttachSession()) {
-			return false;
+		// Multi-process does not work for all-stop right now
+		IMIRunControl runControl = getServicesTracker().getService(IMIRunControl.class);
+		if (runControl != null && runControl.getRunMode() == MIRunMode.ALL_STOP) {
+			// Only one process is allowed in all-stop (for now)
+			return getNumConnected() == 0;
+			// NOTE: when we support multi-process in all-stop mode,
+			// we will need to interrupt the target to when starting 
+			// the new process.
 		}
 
 		return true;

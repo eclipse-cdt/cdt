@@ -632,7 +632,9 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 
 	private int decodeParallelizationNumber(String value) {
 		int parallelNumber = -1;
-		if (VALUE_OPTIMAL.equals(value)) {
+		if(value == null) {
+			parallelNumber = getOptimalParallelJobNum();
+		} else if (VALUE_OPTIMAL.equals(value)) {
 			parallelNumber = -getOptimalParallelJobNum();
 		} else if (VALUE_UNLIMITED.equals(value)) {
 			parallelNumber = UNLIMITED_JOBS;

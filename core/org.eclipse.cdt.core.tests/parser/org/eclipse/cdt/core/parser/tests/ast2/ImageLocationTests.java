@@ -23,7 +23,7 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 /**
  * @author jcamelon
  */
-public class ImageLocationTests extends AST2BaseTest {
+public class ImageLocationTests extends AST2TestBase {
 
     private static final int CODE = IASTImageLocation.REGULAR_CODE;
     private static final int MACRO = IASTImageLocation.MACRO_DEFINITION;

@@ -29,7 +29,7 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 /**
  * Tests for classes implementing IASTImplicitNameOwner interface.
  */
-public class AST2CPPImplicitNameTests extends AST2BaseTest {
+public class AST2CPPImplicitNameTests extends AST2TestBase {
 
 	public AST2CPPImplicitNameTests() {
 	}

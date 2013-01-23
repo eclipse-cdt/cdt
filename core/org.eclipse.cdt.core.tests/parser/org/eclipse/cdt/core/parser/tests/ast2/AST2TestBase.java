@@ -95,7 +95,7 @@ import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
 /**
  * @author aniefer
  */
-public class AST2BaseTest extends BaseTestCase {
+public class AST2TestBase extends BaseTestCase {
 	public final static String TEST_CODE = "<testcode>";
     protected static final IParserLogService NULL_LOG = new NullLogService();
     protected static boolean sValidateCopy;
@@ -121,11 +121,11 @@ public class AST2BaseTest extends BaseTestCase {
 		return map;
 	}
 
-    public AST2BaseTest() {
+    public AST2TestBase() {
     	super();
     }
 
-	public AST2BaseTest(String name) {
+	public AST2TestBase(String name) {
     	super(name);
     }
 

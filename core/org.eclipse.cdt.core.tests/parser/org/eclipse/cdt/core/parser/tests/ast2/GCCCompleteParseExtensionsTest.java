@@ -31,7 +31,7 @@ import org.eclipse.cdt.internal.core.dom.parser.c.CFunction;
 import org.eclipse.cdt.internal.core.model.ASTStringUtil;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 
-public class GCCCompleteParseExtensionsTest extends AST2BaseTest {
+public class GCCCompleteParseExtensionsTest extends AST2TestBase {
 
 	public GCCCompleteParseExtensionsTest() {
 	}

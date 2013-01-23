@@ -48,7 +48,7 @@ import org.eclipse.core.resources.IFile;
 /**
  * @author dsteffle
  */
-public class AST2SelectionParseTest extends AST2SelectionParseBaseTest {
+public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 
 	public AST2SelectionParseTest() {
 	}

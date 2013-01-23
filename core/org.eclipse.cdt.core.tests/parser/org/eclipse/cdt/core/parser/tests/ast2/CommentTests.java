@@ -23,7 +23,7 @@ import org.eclipse.cdt.internal.core.parser.ParserException;
  * @author Guido Zgraggen
  * 
  */
-public class CommentTests extends AST2BaseTest {
+public class CommentTests extends AST2TestBase {
 	
 	public static TestSuite suite() {
 		return suite(CommentTests.class);

@@ -73,7 +73,7 @@ import org.eclipse.cdt.internal.core.parser.ParserException;
 /**
  * @author jcamelon
  */
-public class DOMLocationTests extends AST2BaseTest {
+public class DOMLocationTests extends AST2TestBase {
 
     public DOMLocationTests() {
 	}

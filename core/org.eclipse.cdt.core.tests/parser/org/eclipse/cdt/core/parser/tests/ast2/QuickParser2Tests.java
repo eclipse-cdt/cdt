@@ -1335,7 +1335,7 @@ public class QuickParser2Tests extends TestCase {
             ParserLanguage lang, boolean gcc) throws Exception {
 		FileContent codeReader = FileContent.create("<test-code>", code.toCharArray());
         IScannerInfo scannerInfo = new ScannerInfo();
-        IScanner scanner= AST2BaseTest.createScanner(codeReader, lang, ParserMode.COMPLETE_PARSE, scannerInfo);
+        IScanner scanner= AST2TestBase.createScanner(codeReader, lang, ParserMode.COMPLETE_PARSE, scannerInfo);
         ISourceCodeParser parser2 = null;
         if (lang == ParserLanguage.CPP) {
             ICPPParserExtensionConfiguration config = null;

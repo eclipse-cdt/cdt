@@ -128,7 +128,7 @@ import org.eclipse.cdt.internal.core.parser.ParserException;
 /**
  * Test cases on the AST.
  */
-public class AST2Tests extends AST2BaseTest {
+public class AST2Tests extends AST2TestBase {
 	private static final int NUM_TESTS = 3;
 
 	public static TestSuite suite() {

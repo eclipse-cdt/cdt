@@ -35,7 +35,7 @@ import org.eclipse.cdt.core.parser.NullLogService;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerInfo;
-import org.eclipse.cdt.core.parser.tests.ast2.AST2BaseTest;
+import org.eclipse.cdt.core.parser.tests.ast2.AST2TestBase;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.c.GNUCSourceParser;
@@ -83,7 +83,7 @@ public abstract class CodanFastCxxAstTestCase extends TestCase {
 	protected IASTTranslationUnit parse(String code, ParserLanguage lang, boolean gcc) {
 		FileContent codeReader = FileContent.create("code.c", code.toCharArray());
 		IScannerInfo scannerInfo = new ScannerInfo();
-		IScanner scanner = AST2BaseTest.createScanner(codeReader, lang, ParserMode.COMPLETE_PARSE, scannerInfo);
+		IScanner scanner = AST2TestBase.createScanner(codeReader, lang, ParserMode.COMPLETE_PARSE, scannerInfo);
 		ISourceCodeParser parser2 = null;
 		if (lang == ParserLanguage.CPP) {
 			ICPPParserExtensionConfiguration config = null;

@@ -35,7 +35,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 /**
  * @author dsteffle
  */
-public class AST2FileBasePluginTest extends TestCase {
+public class AST2FileBasePluginTestCase extends TestCase {
     static NullProgressMonitor		monitor;
     static IWorkspace 				workspace;
     static IProject 				project;
@@ -44,10 +44,10 @@ public class AST2FileBasePluginTest extends TestCase {
     static Class					className;
 	static ICProject cPrj;
 
-    public AST2FileBasePluginTest() {
+    public AST2FileBasePluginTestCase() {
 	}
 
-	public AST2FileBasePluginTest(String name) {
+	public AST2FileBasePluginTestCase(String name) {
 		super(name);
 	}
 
@@ -79,7 +79,7 @@ public class AST2FileBasePluginTest extends TestCase {
         }
     }
 
-    public AST2FileBasePluginTest(String name, Class className) {
+    public AST2FileBasePluginTestCase(String name, Class className) {
     	super(name);
     	initialize(className);
     }

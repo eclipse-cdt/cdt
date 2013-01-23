@@ -44,7 +44,7 @@ import org.eclipse.core.resources.IFile;
 /**
  * @author dsteffle
  */
-public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
+public class DOMSelectionParseTest extends DOMSelectionParseTestBase {
 
 	public DOMSelectionParseTest() {
 	}

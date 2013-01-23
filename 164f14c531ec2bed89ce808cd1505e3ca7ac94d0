@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOO3///1k\u003d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/ast2/TestUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-01-23T00:56:15Z",
+      "side": 1,
+      "message": "The convention is to keep the opening brace on the same line with the preceding code.",
+      "revId": "164f14c531ec2bed89ce808cd1505e3ca7ac94d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOO3///1g\u003d",
+        "filename": "core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/internal/index/tests/IndexCPPBindingResolutionTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1495,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-01-23T00:56:15Z",
+      "side": 1,
+      "message": "This assertion doesn\u0027t serve any useful purpose and can be removed.",
+      "revId": "164f14c531ec2bed89ce808cd1505e3ca7ac94d0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

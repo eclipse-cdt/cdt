@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPH///78\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/launching/NewExecutableDialog.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 190,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2013-01-23T17:55:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPH///+c\u003d",
+      "revId": "598a8116e349b0c67ed565987811143e355527d8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOO3///4c\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/IExecutableInfo.java",
         "patchSetId": 5
@@ -66,6 +84,24 @@
       "side": 1,
       "message": "My mistake in IProcessExtendedInfo.\nAs for why it is an interface, I guess I was playing safe, in case we needed to do a different implementation.\n\nSince all this stuff is internal, I think it is fine to use a class.  If we need the interface, we can add it later.",
       "parentUuid": "AABOPH///9o\u003d",
+      "revId": "598a8116e349b0c67ed565987811143e355527d8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPH///7w\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/IExecutableInfo.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2013-01-23T17:55:34Z",
+      "side": 1,
+      "message": "I replaced the interface by \"NewExecutableInfo\" class which is located in \"org.eclipse.cdt.dsf.gdb.internal.ui.launching\".",
+      "parentUuid": "AABOPH///9g\u003d",
       "revId": "598a8116e349b0c67ed565987811143e355527d8",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

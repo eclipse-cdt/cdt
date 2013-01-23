@@ -9,7 +9,7 @@
     <relativePath>../../../</relativePath>
   </parent>
   <groupId>org.eclipse.tm</groupId>
-  <artifactId>org.eclipse.rse.sdk</artifactId>
+  <artifactId>org.eclipse.rse.useractions.sdk</artifactId>
   <version>3.4.0-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 </project>

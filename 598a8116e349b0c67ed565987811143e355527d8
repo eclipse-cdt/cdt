@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPH///+c\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/launching/NewExecutableDialog.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 190,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-01-23T10:58:37Z",
+      "side": 1,
+      "message": "Could you add a space to make the alignment nicer?  \"\\n \"",
+      "revId": "598a8116e349b0c67ed565987811143e355527d8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOO3///4c\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/IExecutableInfo.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-01-23T10:58:37Z",
+      "side": 1,
+      "message": "Should there really be a @noimplement?  I causes a warning in NewExecutableDialog.PromptInfo which implements it.",
+      "revId": "598a8116e349b0c67ed565987811143e355527d8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOO3///4Y\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/IExecutableInfo.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-01-23T10:58:37Z",
+      "side": 1,
+      "message": "Please add javadoc.\n\nFor example, what happens to getTargetPath() when we are on a local machine?  That really should be mentioned.",
+      "revId": "598a8116e349b0c67ed565987811143e355527d8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

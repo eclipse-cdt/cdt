@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2013 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Andrew Ferguson (Symbian)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.index.tests;
 
@@ -474,5 +475,17 @@ public class IndexCBindingResolutionBugs extends IndexBindingResolutionTestBase 
 	//	};
 	public void testDesignatedInitializer_Bug210019() throws Exception {
 		IField f= getBindingFromASTName("f", 0);
+	}
+
+	//	struct S {
+	//	   int data;
+	//	};
+
+	//	void test(void (*f)(void*)) {
+	//		struct S *i;
+	//		f(&i->data);
+	//	}
+	public void testBug394151() throws Exception {
+		IParameter f= getBindingFromASTName("f(", 1);
 	}
 }

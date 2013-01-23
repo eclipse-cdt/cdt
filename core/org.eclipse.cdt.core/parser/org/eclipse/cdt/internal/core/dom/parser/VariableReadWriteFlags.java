@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2013 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser;
 
@@ -191,7 +192,7 @@ public abstract class VariableReadWriteFlags {
 					final IType type= functionNameExpression.getExpressionType();
 					if (type instanceof IFunctionType) {
 						return rwArgumentForFunctionCall((IFunctionType) type, i, indirection);
-					} else {
+					} else if (funcCall instanceof IASTImplicitNameOwner) {
 						IASTImplicitName[] implicitNames = ((IASTImplicitNameOwner) funcCall).getImplicitNames();
 						if (implicitNames.length == 1) {
 							IASTImplicitName name = implicitNames[0];

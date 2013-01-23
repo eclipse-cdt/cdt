@@ -1,14 +1,17 @@
 /********************************************************************************
- * Copyright (c) 2008, 2012 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2008, 2013 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
  * David Dykstal (IBM) - [210474] Deny save password function missing
+ * David Dykstal (IBM) - [379787] Fix secure storage usage in org.eclipse.rse.tests
  ********************************************************************************/
 
 package org.eclipse.rse.tests.core.passwords;
+
+import java.util.List;
 
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.PasswordPersistenceManager;
@@ -28,6 +31,7 @@ public class PasswordsTest extends RSECoreTestCase {
 	 */
 	protected void setUp() throws Exception {
 		super.setUp();
+//		System.setProperty("rse.enableSecureStoreAccess", "false");
 	}
 
 	/* (non-Javadoc)
@@ -39,8 +43,8 @@ public class PasswordsTest extends RSECoreTestCase {
 
 	public void testAddRemove() {
 		//-test-author-:DavidDykstal
-		if (isTestDisabled())
-			return;
+		if (isTestDisabled()) return;
+		if ("false".equals(System.getProperty("rse.enableSecureStoreAccess"))) return;
 		IRSESystemType systemType = RSECoreRegistry.getInstance().getSystemType(IRSESystemType.SYSTEMTYPE_UNIX_ID);
 		IRSESystemType defaultSystemType = PasswordPersistenceManager.DEFAULT_SYSTEM_TYPE;
 		String hostAddress = "somesystem.mycompany.com";
@@ -93,8 +97,8 @@ public class PasswordsTest extends RSECoreTestCase {
 
 	public void testSaveDenial() {
 		//-test-author-:DavidDykstal
-		if (isTestDisabled())
-			return;
+		if (isTestDisabled()) return;
+		if ("false".equals(System.getProperty("rse.enableSecureStoreAccess"))) return;
 		IRSESystemType systemType = RSECoreRegistry.getInstance().getSystemType(IRSESystemType.SYSTEMTYPE_UNIX_ID);
 		String hostAddress = "somesystem.mycompany.com";
 		boolean deny = RSEPreferencesManager.getDenyPasswordSave(systemType, hostAddress);
@@ -136,8 +140,8 @@ public class PasswordsTest extends RSECoreTestCase {
 
 	public void testMigration() {
 		//-test-author-:DavidDykstal
-		if (isTestDisabled())
-			return;
+		if (isTestDisabled()) return;
+		if ("false".equals(System.getProperty("rse.enableSecureStoreAccess"))) return;
 
 		// Setup
 		IRSESystemType systemType = RSECoreRegistry.getInstance().getSystemType(IRSESystemType.SYSTEMTYPE_LOCAL_ID);
@@ -167,11 +171,11 @@ public class PasswordsTest extends RSECoreTestCase {
 		}
 
 	}
-
+	
 	public void testAliasing() {
 		//-test-author-:DavidDykstal
-		if (isTestDisabled())
-			return;
+		if (isTestDisabled()) return;
+		if ("false".equals(System.getProperty("rse.enableSecureStoreAccess"))) return;
 		IRSESystemType systemType = RSECoreRegistry.getInstance().getSystemType(IRSESystemType.SYSTEMTYPE_LOCAL_ID);
 		PasswordPersistenceManager ppm = PasswordPersistenceManager.getInstance();
 		ppm.add(new SystemSignonInformation("LOUDHOST.mycompany.com", "thatguy", "abc", systemType), true, false);
@@ -187,13 +191,69 @@ public class PasswordsTest extends RSECoreTestCase {
 	}
 	
 	public void testBadArgs() {
-		if (isTestDisabled())
-			return;
+		if (isTestDisabled()) return;
+		if ("false".equals(System.getProperty("rse.enableSecureStoreAccess"))) return;
 		IRSESystemType systemType = RSECoreRegistry.getInstance().getSystemType(IRSESystemType.SYSTEMTYPE_LOCAL_ID);
 		PasswordPersistenceManager ppm = PasswordPersistenceManager.getInstance();
 		ppm.add(new SystemSignonInformation("myhost.mycompany.com", "me", "password", systemType), true, false);
 		SystemSignonInformation info = ppm.find(systemType, "myhost.mycompany.com", null);
 		assertNull(info);
 	}
+
+	public void testDisabledSecureStore() {
+		//-test-author-:DavidDykstal
+		if (isTestDisabled()) return;
+		String key = "rse.enableSecureStoreAccess";
+		String valueOnEntry = System.getProperty(key);
+		System.setProperty(key, "false");
+		PasswordPersistenceManager ppm = PasswordPersistenceManager.getInstance();
+		IRSESystemType systemType = RSECoreRegistry.getInstance().getSystemType(IRSESystemType.SYSTEMTYPE_UNIX_ID);
+		String hostAddress = "somesystem.mycompany.com";
+		String password = "password";
+		String userId = "me";
+		SystemSignonInformation info = new SystemSignonInformation(hostAddress, userId, password, systemType);
 	
+		// try saving and retrieving a password
+		int result = ppm.add(info, true);
+		assertEquals("result of first add was not RC_DENIED", PasswordPersistenceManager.RC_DENIED, result);
+		result = ppm.add(info, true, true);
+		assertEquals("result of second add was not RC_DENIED", PasswordPersistenceManager.RC_DENIED, result);
+		SystemSignonInformation returnedInfo = ppm.find(systemType, hostAddress, userId);
+		assertNull("signon info was found and should not be", returnedInfo);
+		
+		// test passwords for existence
+		assertFalse("found signon information where none should exist (1)", ppm.passwordExists(systemType, hostAddress, userId));
+		assertFalse("found signon information where none should exist (2)", ppm.passwordExists(systemType, hostAddress, userId, false));
+		assertFalse("found signon information where none should exist (3)", ppm.passwordExists(systemType, hostAddress, userId, true));
+	
+		// try finding password info
+		returnedInfo = ppm.find(systemType, hostAddress, userId);
+		assertNull("signon info was found and should not be (1)", returnedInfo);
+		returnedInfo = ppm.find(systemType, hostAddress, userId, false);
+		assertNull("signon info was found but should not be (2)", returnedInfo);
+		returnedInfo = ppm.find(systemType, hostAddress, userId, true);
+		assertNull("signon info was found but should not be (3)", returnedInfo);
+		
+		// try removal
+		ppm.remove(info);
+		ppm.remove(systemType, hostAddress, userId);
+		assertEquals("passwords were removed but none should be (2)", 0, ppm.remove(systemType, hostAddress));
+		
+		// get system types
+		IRSESystemType[] systemTypes = ppm.getRegisteredSystemTypes();
+		assertNotNull("returned system types is null", systemTypes);
+		assertTrue("no system types were found", systemTypes.length > 0);
+		
+		// get saved user ids
+		@SuppressWarnings("rawtypes")
+		List userInfo = ppm.getSavedUserIDs();
+		assertTrue("user info was found where none should exist", userInfo.size() == 0);
+		
+		if (valueOnEntry == null) {
+			System.clearProperty(key);
+		} else {
+			System.setProperty(key, valueOnEntry);
+		}
+	}
+
 }

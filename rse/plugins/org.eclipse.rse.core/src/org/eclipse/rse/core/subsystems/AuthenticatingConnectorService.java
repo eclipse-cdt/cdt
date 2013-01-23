@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2007, 2012 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,6 +12,7 @@
  * David Dykstal (IBM) - [210474] Deny save password function missing
  * David Dykstal (IBM) - [225089][ssh][shells][api] Canceling connection leads to exception
  * David McKnight (IBM)  [323648] SSH Terminals subsystem should re-use user id and password for the Files subsystem
+ * David McKnight (IBM)  [398234] Connect from host doesn't always propagate id/password to multiple contained connector services
  ********************************************************************************/
 package org.eclipse.rse.core.subsystems;
 
@@ -122,13 +123,33 @@ public abstract class AuthenticatingConnectorService extends AbstractConnectorSe
 	 * @see org.eclipse.rse.core.subsystems.IConnectorService#setPassword(java.lang.String, java.lang.String, boolean, boolean)
 	 */
 	public final void setPassword(String userId, String password, boolean persist, boolean propagate) {
-		if (getPrimarySubSystem().forceUserIdToUpperCase()) {
+		ISubSystem ss = getPrimarySubSystem();
+		if (ss.forceUserIdToUpperCase()) {
 			userId = userId.toUpperCase();
 		}
+		
 		String myUserId = credentialsProvider.getUserId();
+		
 		IHost host = getHost();
 		if (host.compareUserIds(userId, myUserId)) {
 			credentialsProvider.setPassword(password);
+		}
+		else {
+			String hostName = host.getHostName();
+			SystemSignonInformation existingSignon = null;
+			// check if there are any uid credentials saved here - if not, then use the new userID/password
+			List signonsWithIDs = PasswordPersistenceManager.getInstance().getSavedUserIDs();
+			for (int i = 0 ; i < signonsWithIDs.size() && existingSignon != null; i++){
+				SystemSignonInformation signon = (SystemSignonInformation)signonsWithIDs.get(i);	
+				if (hostName.equals(signon.getHostname())){
+					existingSignon = signon;
+				}
+			}
+			if (existingSignon == null){			
+				// update with propagated id/password
+				credentialsProvider.setUserId(userId);
+				credentialsProvider.setPassword(password);									
+			}
 		}
 		if (sharesCredentials() && propagate) {
 			updatePasswordForOtherSystemsInConnection(userId, password, persist);

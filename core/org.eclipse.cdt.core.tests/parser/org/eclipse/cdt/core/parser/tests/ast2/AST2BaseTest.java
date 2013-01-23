@@ -124,11 +124,11 @@ public class AST2BaseTest extends BaseTestCase {
     public AST2BaseTest() {
     	super();
     }
-    
+
 	public AST2BaseTest(String name) {
     	super(name);
     }
-    
+
     @Override
 	protected void setUp() throws Exception {
     	sValidateCopy= true;
@@ -138,7 +138,7 @@ public class AST2BaseTest extends BaseTestCase {
 	protected IASTTranslationUnit parse(String code, ParserLanguage lang) throws ParserException {
     	return parse(code, lang, false, true);
     }
-    
+
     protected IASTTranslationUnit parse(String code, ParserLanguage lang, boolean useGNUExtensions) throws ParserException {
     	return parse(code, lang, useGNUExtensions, true);
     }
@@ -147,10 +147,10 @@ public class AST2BaseTest extends BaseTestCase {
     		boolean expectNoProblems) throws ParserException {
     	return parse(code, lang, useGNUExtensions, expectNoProblems, false);
     }
-    
+
     protected IASTTranslationUnit parse(String code, ParserLanguage lang, boolean useGNUExtensions,
     		boolean expectNoProblems, boolean skipTrivialInitializers) throws ParserException {
-		IScanner scanner = createScanner(FileContent.create(TEST_CODE, code.toCharArray()), lang, ParserMode.COMPLETE_PARSE, 
+		IScanner scanner = createScanner(FileContent.create(TEST_CODE, code.toCharArray()), lang, ParserMode.COMPLETE_PARSE,
         		createScannerInfo(useGNUExtensions));
         configureScanner(scanner);
         AbstractGNUSourceCodeParser parser = null;
@@ -170,12 +170,12 @@ public class AST2BaseTest extends BaseTestCase {
             } else {
             	config = new ANSICParserExtensionConfiguration();
             }
-            
+
             parser = new GNUCSourceParser(scanner, ParserMode.COMPLETE_PARSE, NULL_LOG, config, null);
         }
         if (skipTrivialInitializers)
         	parser.setSkipTrivialExpressionsInAggregateInitializers(true);
-        
+
         IASTTranslationUnit tu = parser.parse();
         assertTrue(tu.isFrozen());
         if (sValidateCopy)
@@ -183,7 +183,7 @@ public class AST2BaseTest extends BaseTestCase {
 
         if (parser.encounteredError() && expectNoProblems)
             throw new ParserException("FAILURE"); //$NON-NLS-1$
-         
+
         if (lang == ParserLanguage.C && expectNoProblems) {
         	assertEquals(CVisitor.getProblems(tu).length, 0);
         	assertEquals(tu.getPreprocessorProblems().length, 0);
@@ -193,7 +193,7 @@ public class AST2BaseTest extends BaseTestCase {
         }
         if (expectNoProblems)
             assertEquals(0, tu.getPreprocessorProblems().length);
-        
+
         return tu;
     }
 
@@ -215,7 +215,7 @@ public class AST2BaseTest extends BaseTestCase {
             configuration= GPPScannerExtensionConfiguration.getInstance(scannerInfo);
         }
         IScanner scanner;
-        scanner= new CPreprocessor(codeReader, scannerInfo, lang, NULL_LOG, configuration, 
+        scanner= new CPreprocessor(codeReader, scannerInfo, lang, NULL_LOG, configuration,
         		IncludeFileContentProvider.getSavedFilesProvider());
 		return scanner;
 	}
@@ -263,7 +263,7 @@ public class AST2BaseTest extends BaseTestCase {
     }
 
     protected void validateSimpleBinaryExpressionC(String code, int operand) throws ParserException {
-        IASTBinaryExpression e = (IASTBinaryExpression) getExpressionFromStatementInCode(code, ParserLanguage.C); 
+        IASTBinaryExpression e = (IASTBinaryExpression) getExpressionFromStatementInCode(code, ParserLanguage.C);
         assertNotNull(e);
         assertEquals(e.getOperator(), operand);
         IASTIdExpression x = (IASTIdExpression) e.getOperand1();
@@ -290,8 +290,8 @@ public class AST2BaseTest extends BaseTestCase {
 		ASTComparer.assertCopy(tu, copy);
 		return (T) copy;
 	}
-	
-    
+
+
     static protected class CNameCollector extends ASTVisitor {
         {
             shouldVisitNames = true;
@@ -309,22 +309,22 @@ public class AST2BaseTest extends BaseTestCase {
                 return null;
             return nameList.get(idx);
         }
-        
+
         public int size() {
         	return nameList.size();
-        } 
+        }
     }
 
     protected void assertInstances(CNameCollector collector, IBinding binding, int num) throws Exception {
         int count = 0;
-        
+
         assertNotNull(binding);
-        
+
         for (int i = 0; i < collector.size(); i++) {
             if (collector.getName(i).resolveBinding() == binding)
                 count++;
         }
-        
+
         assertEquals(count, num);
     }
 
@@ -332,12 +332,12 @@ public class AST2BaseTest extends BaseTestCase {
     	public CPPNameCollector() {
     		this(false);  // don't visit implicit names by default
         }
-    	
+
     	public CPPNameCollector(boolean shouldVisitImplicitNames) {
     		this.shouldVisitNames = true;
     		this.shouldVisitImplicitNames = shouldVisitImplicitNames;
     	}
-    	
+
         public List<IASTName> nameList = new ArrayList<IASTName>();
 
         @Override
@@ -355,7 +355,7 @@ public class AST2BaseTest extends BaseTestCase {
         public int size() {
         	return nameList.size();
         }
-        
+
         public void dump() {
         	for (int i= 0; i < size(); i++) {
         		IASTName name= getName(i);
@@ -371,7 +371,7 @@ public class AST2BaseTest extends BaseTestCase {
             if (collector.getName(i).resolveBinding() == binding)
                 count++;
         }
-        
+
         assertEquals(num, count);
     }
 
@@ -392,42 +392,42 @@ public class AST2BaseTest extends BaseTestCase {
 		String expressionString = ASTStringUtil.getExpressionString(exp);
 		assertEquals(str, expressionString);
 	}
-	
+
 	protected void isParameterSignatureEqual(IASTDeclarator decltor, String str) {
 		assertTrue(decltor instanceof IASTFunctionDeclarator);
 		final String[] sigArray = ASTStringUtil.getParameterSignatureArray((IASTFunctionDeclarator) decltor);
 		assertEquals(str, "(" + ASTStringUtil.join(sigArray, ", ") + ")");
 	}
-	
+
 	protected void isSignatureEqual(IASTDeclarator declarator, String expected) {
 		String signature= ASTStringUtil.getSignatureString(declarator);
 		assertEquals(expected, signature);
 	}
-	
+
 	protected void isSignatureEqual(IASTDeclSpecifier declSpec, String str) {
 		assertEquals(str, ASTStringUtil.getSignatureString(declSpec, null));
 	}
-	
+
 	protected void isSignatureEqual(IASTTypeId typeId, String str) {
 		assertEquals(str, ASTStringUtil.getSignatureString(typeId.getDeclSpecifier(), typeId.getAbstractDeclarator()));
 	}
-	
+
 	protected void isTypeEqual(IASTDeclarator decltor, String str) {
 		assertEquals(str, ASTTypeUtil.getType(decltor));
 	}
-	
+
 	protected void isTypeEqual(IASTTypeId typeId, String str) {
 		assertEquals(str, ASTTypeUtil.getType(typeId));
 	}
-	
+
 	protected void isTypeEqual(IType type, String str) {
 		assertEquals(str, ASTTypeUtil.getType(type));
 	}
-	
+
 	protected void isParameterTypeEqual(IFunctionType fType, String str) {
 		assertEquals(str, ASTTypeUtil.getParameterTypeString(fType));
 	}
-	
+
 	static protected class CNameResolver extends ASTVisitor {
 		{
 			shouldVisitNames = true;
@@ -455,9 +455,9 @@ public class AST2BaseTest extends BaseTestCase {
 
 		public int size() {
 			return nameList.size();
-		} 
+		}
 	}
-	
+
 	static protected class CPPNameResolver extends ASTVisitor {
 		{
 			shouldVisitNames = true;
@@ -485,13 +485,13 @@ public class AST2BaseTest extends BaseTestCase {
 
 		public int size() {
 			return nameList.size();
-		} 
+		}
 	}
-	
+
 	protected String getAboveComment() throws IOException {
 		return getContents(1)[0].toString();
 	}
-	
+
 	protected CharSequence[] getContents(int sections) throws IOException {
 		CTestPlugin plugin = CTestPlugin.getDefault();
 		if (plugin == null)
@@ -508,14 +508,14 @@ public class AST2BaseTest extends BaseTestCase {
 		}
 		return clazz.cast(o);
 	}
-	
+
 	protected static void assertField(IBinding binding, String fieldName, String ownerName) {
     	assertInstance(binding, IField.class);
     	assertEquals(fieldName, binding.getName());
     	ICompositeType struct = ((IField) binding).getCompositeTypeOwner();
     	assertEquals(ownerName, struct.getName());
     }
-	
+
 	protected class BindingAssertionHelper {
 		protected IASTTranslationUnit tu;
 		protected String contents;
@@ -568,7 +568,7 @@ public class AST2BaseTest extends BaseTestCase {
     		IBinding binding= binding(section, len);
     		if (binding instanceof IProblemBinding) {
     			IProblemBinding problem= (IProblemBinding) binding;
-    			fail("ProblemBinding for name: " + section.substring(0, len) + " (" + renderProblemID(problem.getID()) + ")"); 
+    			fail("ProblemBinding for name: " + section.substring(0, len) + " (" + renderProblemID(problem.getID()) + ")");
     		}
     		if (binding == null) {
     			fail("Null binding resolved for name: " + section.substring(0, len));
@@ -617,12 +617,12 @@ public class AST2BaseTest extends BaseTestCase {
     		IASTName name = findImplicitName(section, len);
     		final String selection = section.substring(0, len);
 			assertNotNull("did not find \"" + selection + "\"", name);
-			
+
 			assertInstance(name, IASTImplicitName.class);
 			IASTImplicitNameOwner owner = (IASTImplicitNameOwner) name.getParent();
 			IASTImplicitName[] implicits = owner.getImplicitNames();
 			assertNotNull(implicits);
-			
+
 			if (implicits.length > 1) {
 				boolean found = false;
 				for (IASTImplicitName n : implicits) {
@@ -633,34 +633,34 @@ public class AST2BaseTest extends BaseTestCase {
 				}
 				assertTrue(found);
 			}
-			
+
     		assertEquals(selection, name.getRawSignature());
     		IBinding binding = name.resolveBinding();
     		assertNotNull(binding);
     		assertInstance(binding, bindingClass);
     		return (IASTImplicitName) name;
     	}
-    	
+
     	public void assertNoImplicitName(String section, int len) {
     		IASTName name = findImplicitName(section, len);
     		final String selection = section.substring(0, len);
     		assertNull("found name \"" + selection + "\"", name);
     	}
-    	
+
     	public IASTImplicitName[] getImplicitNames(String section, int len) {
     		IASTName name = findImplicitName(section, len);
     		IASTImplicitNameOwner owner = (IASTImplicitNameOwner) name.getParent();
 			IASTImplicitName[] implicits = owner.getImplicitNames();
 			return implicits;
     	}
-    	
+
     	public IASTName findName(String section, int len) {
     		final int offset = contents.indexOf(section);
     		assertTrue("Section \"" + section + "\" not found", offset >= 0);
     		IASTNodeSelector selector = tu.getNodeSelector(null);
     		return selector.findName(offset, len);
     	}
- 
+
     	public IASTName findName(String context, String name) {
     		if (context == null) {
     			context = contents;
@@ -718,7 +718,7 @@ public class AST2BaseTest extends BaseTestCase {
     		}
     		return "Unknown problem ID";
     	}
-    	
+
     	public <T extends IBinding> T assertNonProblem(String section, int len, Class... cs) {
     		if (len <= 0)
     			len += section.length();
@@ -750,10 +750,10 @@ public class AST2BaseTest extends BaseTestCase {
     		final String selection = section.substring(0, len);
 			assertNotNull("No AST name for \"" + selection + "\"", astName);
     		assertEquals(selection, astName.getRawSignature());
-    			
+
     		IBinding binding = astName.resolveBinding();
     		assertNotNull("No binding for " + astName.getRawSignature(), binding);
-    		
+
     		return astName.resolveBinding();
     	}
 
@@ -761,10 +761,10 @@ public class AST2BaseTest extends BaseTestCase {
     		IASTName astName = findName(context, name);
 			assertNotNull("No AST name for \"" + name + "\"", astName);
     		assertEquals(name, astName.getRawSignature());
-    			
+
     		IBinding binding = astName.resolveBinding();
     		assertNotNull("No binding for " + astName.getRawSignature(), binding);
-    		
+
     		return astName.resolveBinding();
     	}
 	}
@@ -776,10 +776,10 @@ public class AST2BaseTest extends BaseTestCase {
 	final protected IASTTranslationUnit parseAndCheckBindings(String code, ParserLanguage lang, boolean useGnuExtensions) throws Exception {
 		return parseAndCheckBindings(code, lang, useGnuExtensions, false);
 	}
-	
+
 	final protected IASTTranslationUnit parseAndCheckBindings(String code, ParserLanguage lang, boolean useGnuExtensions,
 			boolean skipTrivialInitializers) throws Exception {
-		IASTTranslationUnit tu = parse(code, lang, useGnuExtensions, true, skipTrivialInitializers); 
+		IASTTranslationUnit tu = parse(code, lang, useGnuExtensions, true, skipTrivialInitializers);
 		CNameCollector col = new CNameCollector();
 		tu.accept(col);
 		assertNoProblemBindings(col);

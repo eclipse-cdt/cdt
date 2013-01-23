@@ -260,7 +260,8 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertEquals(declNames.length, i);
 		assertEquals(defNames.length, j);
 	}
-	
+
+	@Override
 	protected void assertSameType(IType first, IType second){
 		assertNotNull(first);
 		assertNotNull(second);
@@ -8396,7 +8397,7 @@ public class AST2CPPTests extends AST2BaseTest {
 		// TODO(nathanridge): Perhaps we should store implicit names even if they
 		// resolve to ProblemBindings. Then we can do the stronger check in the
 		// 3 commented lines below.
-		//IASTImplicitName n= bh.assertImplicitName("H({1})", 1, IProblemBinding.class); 
+		//IASTImplicitName n= bh.assertImplicitName("H({1})", 1, IProblemBinding.class);
 		//problem= (IProblemBinding) n.resolveBinding();
 		//assertEquals(IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, problem.getID());
 		bh.assertProblem("fH(1)", 2);
@@ -9826,7 +9827,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	}
 
 	// struct Base {
-	//     virtual void mFuncDecl(); 
+	//     virtual void mFuncDecl();
 	//     virtual void mFuncDef(){}
 	// };
 	// struct S : public Base {
@@ -9854,9 +9855,9 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertInstance(declarator, ICPPASTFunctionDeclarator.class);
 		assertVirtualSpecifiers((ICPPASTFunctionDeclarator)declarator, true, false);
 	}
-	
+
 	// struct Base {
-	//     virtual void mFuncDecl(); 
+	//     virtual void mFuncDecl();
 	//     virtual void mFuncDef(){}
 	// };
 	// struct S : public Base {
@@ -10028,7 +10029,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	//      double vdouble;
 	//      long double vlongdouble;
 	//      UnscopedEnum vue;
-	//      
+	//
 	//      // Narrowing conversions
 	//      fint({vdouble});
 	//      ffloat({vlongdouble});

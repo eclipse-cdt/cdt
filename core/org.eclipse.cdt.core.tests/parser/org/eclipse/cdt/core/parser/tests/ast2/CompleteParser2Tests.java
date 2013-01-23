@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
- *    Nathan Ridge
+ *     IBM - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *     Nathan Ridge
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
@@ -755,7 +755,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 	}
 
 	public void testConstructorChain() throws Exception {
-		IASTTranslationUnit tu = parse("int x = 5;\n class A \n{ public : \n int a; \n A() : a(x) { } };"); 
+		IASTTranslationUnit tu = parse("int x = 5;\n class A \n{ public : \n int a; \n A() : a(x) { } };");
 		CPPNameCollector col = new CPPNameCollector();
  		tu.accept(col);
 
@@ -1058,7 +1058,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 	}
 
 	public void testScoping() throws Exception {
-	    IASTTranslationUnit tu = parse("void foo() { int x = 3; if (x == 1) { int x = 4; } else int x = 2; }"); 
+	    IASTTranslationUnit tu = parse("void foo() { int x = 3; if (x == 1) { int x = 4; } else int x = 2; }");
 		CPPNameCollector col = new CPPNameCollector();
  		tu.accept(col);
 
@@ -1103,7 +1103,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 	}
 
 	public void testBug42872() throws Exception {
-	    IASTTranslationUnit tu = parse("struct B {}; struct D : B {}; void foo(D* dp) { B* bp = dynamic_cast<B*>(dp); }"); 
+	    IASTTranslationUnit tu = parse("struct B {}; struct D : B {}; void foo(D* dp) { B* bp = dynamic_cast<B*>(dp); }");
 		CPPNameCollector col = new CPPNameCollector();
  		tu.accept(col);
 
@@ -1293,7 +1293,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
 	public void testCDesignatedInitializers() throws Exception {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("struct Inner { int a,b,c; };"); 
+		buffer.append("struct Inner { int a,b,c; };");
 		buffer.append("struct A { int x; int y[]; struct Inner innerArray[]; int z[]; };");
 		buffer.append("struct A myA = { .x = 4, .y[3] = 4, .y[4] = 3, .innerArray[0].a = 3, .innerArray[1].b = 5, .innerArray[2].c=6, .z = { 1,4,5} };");
 		parse(buffer.toString(), true, ParserLanguage.C);
@@ -1319,7 +1319,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 							"   _Bool b;  " +
 							"   f(b);" +
 							"	f(g((_Bool) 1) );" +
-							"}", 
+							"}",
 							true, ParserLanguage.C);
 	}
 
@@ -1342,7 +1342,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
 	public void testBug44925() throws Exception {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("class MyClass { };"); 
+		buffer.append("class MyClass { };");
 		buffer.append("class MyClass myObj1;");
 		buffer.append("enum MyEnum { Item1 };");
 		buffer.append("enum MyEnum myObj2;");
@@ -1999,7 +1999,7 @@ public class CompleteParser2Tests extends BaseTestCase {
     	writer.write("int	main(int argc, char **argv) {\n");
     	writer.write("FILE * file = 0;\n");
     	writer.write("static_function(file);\n");
-    	writer.write("return 0;\n");	
+    	writer.write("return 0;\n");
     	writer.write("}\n");
     	parse(writer.toString());
     }
@@ -2051,8 +2051,8 @@ public class CompleteParser2Tests extends BaseTestCase {
     	writer.write("};\n");
     	writer.write("\n");
     	writer.write("template<typename T>\n");
-    	writer.write("inline T526026< T >\n"); 
-    	writer.write("operator+(typename T526026<T>::diff d, const T526026<T> & x)\n"); 
+    	writer.write("inline T526026< T >\n");
+    	writer.write("operator+(typename T526026<T>::diff d, const T526026<T> & x)\n");
     	writer.write("{ return T526026< T >(); }\n");
     	writer.write("}\n");
     	parse(writer.toString(), false);
@@ -2060,7 +2060,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
     public void testBug71094() throws Exception {
     	Writer writer = new StringWriter();
-    	writer.write("using namespace DOESNOTEXIST;\n"); 
+    	writer.write("using namespace DOESNOTEXIST;\n");
     	writer.write("class A { int x; };\n");
     	parse(writer.toString(), false);
 	}
@@ -2228,7 +2228,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
     public void testBug74328() throws Exception {
     	Writer writer = new StringWriter();
-    	writer.write("int\n"); 
+    	writer.write("int\n");
     	writer.write("main(int argc, char **argv) {\n");
     	writer.write("	char *sign;\n");
     	writer.write("sign = \"\"; // IProblem generated here, syntax error\n");

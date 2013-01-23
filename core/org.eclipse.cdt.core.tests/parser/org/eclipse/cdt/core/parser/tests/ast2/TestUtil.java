@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 public class TestUtil {
 	/**
 	 * Searches the AST upward from the given starting node to find the
-	 * nearest IASTImplicitNameOwner and returns its first implicit name, 
+	 * nearest IASTImplicitNameOwner and returns its first implicit name,
 	 * or null if it has no implicit names.
 	 */
 	public static IASTName findImplicitName(IASTNode node) {

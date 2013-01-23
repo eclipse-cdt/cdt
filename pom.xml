@@ -193,6 +193,7 @@
     <module>rse/features/org.eclipse.rse.terminals-feature</module>
     <module>rse/features/org.eclipse.rse.terminals.source</module>
     <module>rse/features/org.eclipse.rse.useractions-feature</module>
+    <module>rse/features/org.eclipse.rse.useractions.sdk-feature</module>
     <module>rse/plugins/org.eclipse.dstore.core</module>
     <module>rse/plugins/org.eclipse.dstore.extra</module>
     <module>rse/plugins/org.eclipse.rse</module>
@@ -236,6 +237,7 @@
     <module>rse/plugins/org.eclipse.rse.ui</module>
     <module>rse/plugins/org.eclipse.rse.ui.capabilities</module>
     <module>rse/plugins/org.eclipse.rse.useractions</module>
+    <module>rse/plugins/org.eclipse.rse.useractions.sdk</module>
     <module>releng/org.eclipse.tm.repo</module>
     <module>terminal/plugins/org.eclipse.tm.terminal</module>
     <module>terminal/plugins/org.eclipse.tm.terminal.serial</module>

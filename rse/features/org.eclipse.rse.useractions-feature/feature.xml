@@ -12,7 +12,7 @@
 <feature
       id="org.eclipse.rse.useractions"
       label="%featureName"
-      version="1.1.401.qualifier"
+      version="1.1.400.qualifier"
       provider-name="%providerName"
       plugin="org.eclipse.rse.useractions"
       image="eclipse_update_120.jpg">

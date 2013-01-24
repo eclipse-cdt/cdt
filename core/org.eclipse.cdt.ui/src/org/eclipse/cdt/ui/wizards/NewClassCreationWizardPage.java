@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 QNX Software Systems and others.
+ * Copyright (c) 2004, 2013 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1591,17 +1591,8 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		ICProject project = getCurrentProject();
 
 		if (project != null) {
-			/* search for parent name space first */
-			int searchResult;
-			if (typeName.isQualified()) {
-				searchResult = NewClassWizardUtil.searchForCppType(typeName.getEnclosingTypeName(),project, ICPPNamespace.class);
-				if (searchResult != NewClassWizardUtil.SEARCH_MATCH_FOUND_EXACT) {
-					status.setError(NewClassWizardMessages.NewClassCreationWizardPage_error_EnclosingNamespaceNotExists);
-					return status;
-				}
-			}
-			searchResult = NewClassWizardUtil.searchForCppType(typeName, project, ICPPNamespace.class);
-			switch(searchResult) {
+			int searchResult = NewClassWizardUtil.searchForCppType(typeName, project, ICPPNamespace.class);
+			switch (searchResult) {
 			case NewClassWizardUtil.SEARCH_MATCH_FOUND_EXACT:
 				status.setOK();
 				return status;
@@ -1615,7 +1606,17 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 				status.setWarning(NewClassWizardMessages.NewClassCreationWizardPage_error_TypeMatchingNamespaceExistsDifferentCase);
 				return status;
 			case NewClassWizardUtil.SEARCH_MATCH_NOTFOUND:
-				status.setWarning(NewClassWizardMessages.NewClassCreationWizardPage_warning_NamespaceNotExists);
+				// Find the highest ancestor namespace that does not exist.
+				IQualifiedTypeName ns = typeName;
+				while (ns.isQualified()) {
+					IQualifiedTypeName ns1 = ns.getEnclosingTypeName();
+					if (NewClassWizardUtil.searchForCppType(ns1, project, ICPPNamespace.class) == NewClassWizardUtil.SEARCH_MATCH_FOUND_EXACT) {
+						break;
+					}
+					ns = ns1;
+				}
+				status.setWarning(NLS.bind(NewClassWizardMessages.NewClassCreationWizardPage_warning_NamespaceNotExists,
+						ns.getFullyQualifiedName()));
 				break;
 			}
 	    }
@@ -1638,7 +1639,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	    StatusInfo status = new StatusInfo();
 
 	    String className = getClassName();
-		// must not be empty
+		// Must not be empty.
 		if (className == null || className.length() == 0) {
 			status.setError(NewClassWizardMessages.NewClassCreationWizardPage_error_EnterClassName);
 			return status;
@@ -1669,7 +1670,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 			    }
 			}
 			int searchResult = NewClassWizardUtil.searchForCppType(fullyQualifiedName, project, ICPPClassType.class);
-			switch(searchResult) {
+			switch (searchResult) {
 			case NewClassWizardUtil.SEARCH_MATCH_FOUND_EXACT:
 				status.setError(NewClassWizardMessages.NewClassCreationWizardPage_error_ClassNameExists);
 				return status;
@@ -1729,7 +1730,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
         MultiStatus status = new MultiStatus(CUIPlugin.getPluginId(), IStatus.OK, "", null); //$NON-NLS-1$
         IScannerInfoProvider provider = CCorePlugin.getDefault().getScannerInfoProvider(project.getProject());
         if (provider != null) {
-            //TODO get the scanner info for the actual source folder
+            // TODO Get the scanner info for the actual source folder.
             IScannerInfo info = provider.getScannerInformation(project.getProject());
             if (info != null) {
                 String[] includePaths = info.getIncludePaths();

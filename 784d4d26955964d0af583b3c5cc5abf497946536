@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPH///0g\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBMemory_7_6.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 131,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-01-25T14:27:59Z",
+      "side": 1,
+      "message": "We could get an NPE if addr \u003d\u003d null.\n\nI\u0027ll put a check for groupId and addr and length.",
+      "parentUuid": "AABOPH///4Y\u003d",
+      "revId": "784d4d26955964d0af583b3c5cc5abf497946536",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPH///4U\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/tests_7_6/GDBConsoleSynchronizingTest_7_6.java",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2013-01-23T23:04:21Z",
       "side": 1,
       "message": "This test case only checks whether a change is fired or not. Does it make sense to check the new values of the expression and memory?",
+      "revId": "784d4d26955964d0af583b3c5cc5abf497946536",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPH///00\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/tests_7_6/GDBConsoleSynchronizingTest_7_6.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-01-25T14:27:59Z",
+      "side": 1,
+      "message": "I also wondered about that.  However, in our JUnit tests we can only test the DSF services right now, and they get their values from GDB.  Since the memory change event comes from GDB itself, testing the value would be testing GDB, not CDT.\n\nIf we could check what the memory view actually displays, that would make sense, but we don\u0027t do that in our tests (yet).\n\nThat\u0027s why I didn\u0027t test the values.",
+      "parentUuid": "AABOPH///4U\u003d",
       "revId": "784d4d26955964d0af583b3c5cc5abf497946536",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

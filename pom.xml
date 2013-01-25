@@ -47,7 +47,7 @@
     <platform-version-name>juno</platform-version-name>
     <tm-stream>juno</tm-stream>
     <eclipse-site>http://download.eclipse.org/releases/${platform-version-name}</eclipse-site>
-    <orbit-site>http://download.eclipse.org/tools/orbit/downloads/drops/R20120526062928/repository</orbit-site>
+    <orbit-site>http://download.eclipse.org/tools/orbit/downloads/drops/R20130118183705/repository</orbit-site>
     <rxtx-version>1.0.0.7837QcJa5vE7MnhE77YA7AU3SWUlbntVZAnlDoIGojcQd</rxtx-version>
     <!-- <rxtx-site>http://rxtx.qbang.org/eclipse</rxtx-site>-->
     <rxtx-site>http://archive.eclipse.org/tm/updates/rxtx</rxtx-site>

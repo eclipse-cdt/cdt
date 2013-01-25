@@ -339,6 +339,15 @@
             <resolver>p2</resolver>
             <ignoreTychoRepositories>true</ignoreTychoRepositories>
             <pomDependencies>consider</pomDependencies>
+            <filters>
+              <filter>
+                <type>eclipse-plugin</type>
+                <id>org.apache.commons.net</id>
+                <restrictTo>
+                  <version>2.2</version>
+                </restrictTo>
+              </filter>
+            </filters>
           </configuration>
         </plugin>
         <plugin>

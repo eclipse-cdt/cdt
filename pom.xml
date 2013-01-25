@@ -344,7 +344,14 @@
                 <type>eclipse-plugin</type>
                 <id>org.apache.commons.net</id>
                 <restrictTo>
-                  <version>2.2.0.v201101241833</version>
+                  <versionRange>[2.2,3.0)</versionRange>
+                </restrictTo>
+              </filter>
+              <filter>
+                <type>eclipse-plugin</type>
+                <id>org.apache.commons.net.source</id>
+                <restrictTo>
+                  <versionRange>[2.2,3.0)</versionRange>
                 </restrictTo>
               </filter>
             </filters>

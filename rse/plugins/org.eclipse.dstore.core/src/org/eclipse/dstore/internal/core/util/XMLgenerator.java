@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2012 IBM Corporation and others.
+ * Copyright (c) 2002, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@
  * David McKnight     (IBM)       - [232233] [dstore] Buffer in DataElement is not retained
  * David McKnight     (IBM)       - [245481] [dstore] CR/LF not restored for new client/old server
  * David McKnight     (IBM)       - [378136] [dstore] miner.finish is stuck
+ * David McKnight     (IBM)       - [399097] [dstore] xml generator should only ignore updated elements on server side
  *******************************************************************************/
 
 package org.eclipse.dstore.internal.core.util;
@@ -597,7 +598,8 @@ public class XMLgenerator
 			{
 				String tagType = XMLparser.STR_DATAELEMENT;
 	
-				if (object.isUpdated() && !object.isPendingTransfer())
+				// only ignore updated elements if this is the server-side
+				if (!_dataStore.isVirtual() && object.isUpdated() && !object.isPendingTransfer())
 				{
 				}
 				else

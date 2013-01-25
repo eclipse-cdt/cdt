@@ -89,10 +89,13 @@ import org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.ISourcePresentation;
 import org.eclipse.debug.ui.IValueDetailListener;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
@@ -105,7 +108,7 @@ import com.ibm.icu.text.MessageFormat;
 /**
  * @see IDebugModelPresentation
  */
-public class CDebugModelPresentation extends LabelProvider implements IDebugModelPresentation {
+public class CDebugModelPresentation extends LabelProvider implements IDebugModelPresentation, IColorProvider {
 
 	public final static String DISPLAY_FULL_PATHS = "DISPLAY_FULL_PATHS"; //$NON-NLS-1$
 
@@ -194,6 +197,14 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 			}
 			if ( file != null )
 				return new FileEditorInput( file );
+			// There is no file associated with this breakpoint. See if another editor is available from an adapter
+			ISourcePresentation srcPres = (ISourcePresentation) Platform.getAdapterManager().getAdapter(b, ISourcePresentation.class);
+			if ( srcPres != null ) {
+				IEditorInput editor = srcPres.getEditorInput(b);
+				if ( editor != null ) {
+					return editor;
+				}
+			}
 		}
 		if ( element instanceof FileStorage || element instanceof LocalFileStorage ) {
 			return new ExternalEditorInput( ((IStorage) element).getFullPath() );
@@ -220,7 +231,20 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 		if ( input != null ) {
 			IEditorRegistry registry = PlatformUI.getWorkbench().getEditorRegistry();
 			IEditorDescriptor descriptor = registry.getDefaultEditor( input.getName() );
-			id = (descriptor != null) ? descriptor.getId() : CUIPlugin.EDITOR_ID;
+			id = CUIPlugin.EDITOR_ID;
+			if ( descriptor != null ) {
+				id = descriptor.getId();
+			}
+			else if ( element instanceof ICBreakpoint ) {
+				// There is no associated editor ID for this breakpoint, see if an alternative can be supplied from an adapter.
+				ISourcePresentation sourcePres = (ISourcePresentation) Platform.getAdapterManager().getAdapter(element, ISourcePresentation.class);
+				if ( sourcePres != null ) {
+					String lid = sourcePres.getEditorId(input, element);
+					if ( lid != null ) {
+						id = lid;
+					}
+				}
+			}
 		}
 		return id;
 	}
@@ -797,4 +821,21 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 		return MessageFormat.format( string, (Object[]) args );
 	}
 
+	@Override
+	public Color getForeground(Object element) {
+		IColorProvider colorProv = (IColorProvider) Platform.getAdapterManager().getAdapter(element, IColorProvider.class);
+		if ( colorProv != null ) {
+			return colorProv.getForeground(element);
+		}
+		return null;
+	}
+
+	@Override
+	public Color getBackground(Object element) {
+		IColorProvider colorProv = (IColorProvider) Platform.getAdapterManager().getAdapter(element, IColorProvider.class);
+		if ( colorProv != null ) {
+			return colorProv.getBackground(element);
+		}
+		return null;
+	}
 }

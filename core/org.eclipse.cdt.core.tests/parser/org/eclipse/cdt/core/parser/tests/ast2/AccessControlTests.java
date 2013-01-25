@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.AccessContext;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 
-public class AccessControlTests extends AST2BaseTest {
+public class AccessControlTests extends AST2TestBase {
 	
 	protected class AccessAssertionHelper extends BindingAssertionHelper {
 		AccessAssertionHelper(String contents) throws ParserException {

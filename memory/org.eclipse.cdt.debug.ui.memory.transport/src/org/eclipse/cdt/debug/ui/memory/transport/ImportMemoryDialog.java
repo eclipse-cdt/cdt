@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlock;
+import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
 import org.eclipse.debug.ui.memory.IMemoryRenderingContainer;
 import org.eclipse.debug.ui.memory.IMemoryRenderingSite;
@@ -219,6 +220,30 @@ public class ImportMemoryDialog extends SelectionDialog
 			IConfigurationElement element = points[i];
 			if("importer".equals(element.getName())) //$NON-NLS-1$
 			{
+				String maxSizeStr = element.getAttribute("maxmemorysize");
+				if ( maxSizeStr != null ) {
+					if ( fMemoryBlock instanceof IMemoryBlockExtension ) {
+						IMemoryBlockExtension memBlock = (IMemoryBlockExtension) fMemoryBlock;
+						try {
+							int maxAddressSizeInBits = memBlock.getAddressSize() * 8;
+							int maxSupportedAddressSizeInBits = Integer.decode(maxSizeStr);
+							if ( maxAddressSizeInBits > maxSupportedAddressSizeInBits ) {
+								continue;
+							}
+						} catch (DebugException e1) {
+							continue;
+						}
+					}
+					else {
+						int maxSupportedAddressSizeInBits = Integer.decode(maxSizeStr);
+						if ( maxSupportedAddressSizeInBits < 32 ) {
+							continue;
+						}
+					}
+				}
+				
+				
+				
 				try 
 				{
 					importers.addElement(element.createExecutableExtension("class")); //$NON-NLS-1$

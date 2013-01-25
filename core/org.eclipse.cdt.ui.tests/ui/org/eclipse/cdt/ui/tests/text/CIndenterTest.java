@@ -432,7 +432,7 @@ public class CIndenterTest extends BaseUITestCase {
 	//class MyClass {
 	//typedef int MyType;
 	//public:
-	//int getA() {
+	//virtual int getA() {
 	//return a;
 	//}
 	//MyClass();
@@ -444,7 +444,7 @@ public class CIndenterTest extends BaseUITestCase {
 	//class MyClass {
 	//		typedef int MyType;
 	//	public:
-	//		int getA() {
+	//		virtual int getA() {
 	//			return a;
 	//		}
 	//		MyClass();

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.cdt.core.templates">
+      <template
+            filterPattern=".*g\+\+"
+            id="org.eclipse.cdt.qt.core.template.helloWorld.qtQuick2"
+            location="templates/project/helloWorld/qtQuick2/template.xml"
+            projectType="org.eclipse.cdt.build.makefile.projectType">
+      </template>
+   </extension>
+
+   <extension
+         point="org.eclipse.cdt.core.templateAssociations">
+      <template id="org.eclipse.cdt.qt.core.template.helloWorld.qtQuick2">
+         <toolChain id="cdt.managedbuild.toolchain.gnu.mingw.base"/>
+         <toolChain id="cdt.managedbuild.toolchain.gnu.cygwin.base"/>
+         <toolChain id="cdt.managedbuild.toolchain.gnu.base"/>
+         <toolChain id="cdt.managedbuild.toolchain.gnu.macosx.base"/>
+         <toolChain id="cdt.managedbuild.toolchain.gnu.solaris.base"/>
+         <toolChain
+               id="cdt.managedbuild.toolchain.llvm.clang.macosx.base">
+         </toolChain>
+      </template>
+   </extension>
+   <extension
+         point="org.eclipse.core.contenttype.contentTypes">
+      <content-type
+            base-type="org.eclipse.core.runtime.text"
+            file-extensions="pro"
+            id="qtProjectFile"
+            name="%qtProjectFile.name"
+            priority="normal">
+      </content-type>
+      <content-type
+            base-type="org.eclipse.core.runtime.text"
+            file-extensions="qml"
+            id="qmlFile"
+            name="%qmlFile.name"
+            priority="normal">
+      </content-type>
+   </extension>
+   <extension
+         id="qtNature"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="org.eclipse.cdt.qt.core.QtNature">
+         </run>
+      </runtime>
+   </extension>
+</plugin>

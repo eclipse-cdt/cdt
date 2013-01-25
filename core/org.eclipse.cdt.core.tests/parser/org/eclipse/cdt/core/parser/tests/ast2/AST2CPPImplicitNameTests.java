@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     Mike Kucera (IBM)
  *     Sergey Prigogin (Google)
  *     Markus Schorn (Wind River Systems)
+ *     Nathan Ridge
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
@@ -28,19 +29,19 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 /**
  * Tests for classes implementing IASTImplicitNameOwner interface.
  */
-public class AST2CPPImplicitNameTests extends AST2BaseTest {
+public class AST2CPPImplicitNameTests extends AST2TestBase {
 
 	public AST2CPPImplicitNameTests() {
 	}
-	
+
 	public AST2CPPImplicitNameTests(String name) {
 		super(name);
 	}
-	
+
 	public static TestSuite suite() {
 		return suite(AST2CPPImplicitNameTests.class);
 	}
-	
+
 	public IASTImplicitName[] getImplicitNames(IASTTranslationUnit tu, String contents, String section, int len) {
 		final int offset = contents.indexOf(section);
 		assertTrue(offset >= 0);
@@ -75,25 +76,25 @@ public class AST2CPPImplicitNameTests extends AST2BaseTest {
 		CPPNameCollector col = new CPPNameCollector();
 		tu.accept(col);
 		IASTImplicitName n;
-		
+
 		n = ba.assertImplicitName("+= 5", 2, ICPPMethod.class);
 		assertSame(n.resolveBinding(), col.getName(14).resolveBinding());
-		
+
 		n = ba.assertImplicitName("+ p", 1, ICPPMethod.class);
 		assertSame(n.resolveBinding(), col.getName(4).resolveBinding());
-		
+
 		n = ba.assertImplicitName("- p", 1, ICPPMethod.class);
 		assertSame(n.resolveBinding(), col.getName(8).resolveBinding());
-		
+
 		n = ba.assertImplicitName("* p", 1, ICPPFunction.class);
 		assertSame(n.resolveBinding(), col.getName(17).resolveBinding());
-		
+
 		n = ba.assertImplicitName("/ p", 1, ICPPFunction.class);
 		assertSame(n.resolveBinding(), col.getName(23).resolveBinding());
-		
+
 		n = ba.assertImplicitName("-p;", 1, ICPPMethod.class);
 		assertSame(n.resolveBinding(), col.getName(12).resolveBinding());
-		
+
 		ba.assertNoImplicitName("<< 6", 2);
 		ba.assertNoImplicitName("+p;", 1);
 	}
@@ -136,9 +137,9 @@ public class AST2CPPImplicitNameTests extends AST2BaseTest {
 		IASTTranslationUnit tu = ba.getTranslationUnit();
 		CPPNameCollector col = new CPPNameCollector();
 		tu.accept(col);
-		
+
 		ba.assertNoImplicitName("&Y::x;", 1);
-		
+
 		IASTImplicitName n = ba.assertImplicitName("&y;", 1, ICPPFunction.class);
 		assertSame(n.resolveBinding(), col.getName(9).resolveBinding());
 	}
@@ -165,20 +166,20 @@ public class AST2CPPImplicitNameTests extends AST2BaseTest {
 	//	  p2->doA();
 	//	}
 	public void testArrowOperator() throws Exception {
-		String contents = getAboveComment();		
+		String contents = getAboveComment();
 		IASTTranslationUnit tu = parse(contents, ParserLanguage.CPP);
 		CPPNameCollector col = new CPPNameCollector();
 		tu.accept(col);
-		
+
 		IASTImplicitName[] implicits = getImplicitNames(tu, contents, "->doA();", 2);
-		
+
 		assertNotNull(implicits);
 		assertEquals(2, implicits.length);
-		
+
 		assertSame(implicits[1].getBinding(), col.getName(4).resolveBinding());
 		assertSame(implicits[0].getBinding(), col.getName(12).resolveBinding());
 	}
-	
+
 	//	struct A {
 	//	  int x;
 	//	};
@@ -224,15 +225,15 @@ public class AST2CPPImplicitNameTests extends AST2BaseTest {
 		ba.assertNoImplicitName(", b, c, d); // func", 1);
 		ba.assertNoImplicitName(", c, d); // func", 1);
 		ba.assertNoImplicitName(", d); // func", 1);
-		
+
 		IASTImplicitName opAB = ba.assertImplicitName(", b, c, d; // expr", 1, ICPPFunction.class);
 		IASTImplicitName opCC = ba.assertImplicitName(", c, d; // expr", 1, ICPPFunction.class);
 		ba.assertNoImplicitName(", d; // expr", 1);
-		
+
 		IASTTranslationUnit tu = ba.getTranslationUnit();
 		CPPNameCollector col = new CPPNameCollector();
 		tu.accept(col);
-		
+
 		assertSame(opAB.resolveBinding(), col.getName(5).resolveBinding());
 		assertSame(opCC.resolveBinding(), col.getName(11).resolveBinding());
 	}
@@ -255,20 +256,20 @@ public class AST2CPPImplicitNameTests extends AST2BaseTest {
 	//	}
 	public void testCommaOperator2() throws Exception {
 		BindingAssertionHelper ba = new BindingAssertionHelper(getAboveComment(), true);
-		
+
 		IASTImplicitName opAB = ba.assertImplicitName(", b, c, d", 1, ICPPMethod.class);
 		IASTImplicitName opCC = ba.assertImplicitName(", c, d", 1, ICPPFunction.class);
 		IASTImplicitName opDD = ba.assertImplicitName(", d", 1, ICPPMethod.class);
-		
+
 		IASTTranslationUnit tu = ba.getTranslationUnit();
 		CPPNameCollector col = new CPPNameCollector();
 		tu.accept(col);
-		
+
 		// 6, 11, 15
 		assertSame(opAB.resolveBinding(), col.getName(6).resolveBinding());
 		assertSame(opCC.resolveBinding(), col.getName(15).resolveBinding());
 		assertSame(opDD.resolveBinding(), col.getName(11).resolveBinding());
-		
+
 		ba.assertNonProblem("ee;", 2);
 	}
 
@@ -289,7 +290,7 @@ public class AST2CPPImplicitNameTests extends AST2BaseTest {
 		IASTTranslationUnit tu = ba.getTranslationUnit();
 		CPPNameCollector col = new CPPNameCollector();
 		tu.accept(col);
-		
+
 		IASTImplicitName n1 = ba.assertImplicitName("(b); // 1", 1, ICPPMethod.class);
 		IASTImplicitName n2 = ba.assertImplicitName("); // 1", 1, ICPPMethod.class);
 		assertSame(n1.resolveBinding(), n2.resolveBinding());
@@ -298,14 +299,14 @@ public class AST2CPPImplicitNameTests extends AST2BaseTest {
 		// there should be no overlap
 		ba.assertNoImplicitName("b); // 1", 1);
 		assertSame(col.getName(1).resolveBinding(), n1.resolveBinding());
-		
+
 		n1 = ba.assertImplicitName("(); // 2", 1, ICPPMethod.class);
 		n2 = ba.assertImplicitName("); // 2", 1, ICPPMethod.class);
 		assertSame(n1.resolveBinding(), n2.resolveBinding());
 		assertFalse(n1.isAlternate());
 		assertTrue(n2.isAlternate());
 		assertSame(col.getName(3).resolveBinding(), n1.resolveBinding());
-		
+
 		n1 = ba.assertImplicitName("(1, 2); // 3", 1, ICPPMethod.class);
 		n2 = ba.assertImplicitName("); // 3", 1, ICPPMethod.class);
 		assertSame(n1.resolveBinding(), n2.resolveBinding());
@@ -348,7 +349,7 @@ public class AST2CPPImplicitNameTests extends AST2BaseTest {
 		IASTTranslationUnit tu = ba.getTranslationUnit();
 		CPPNameCollector col = new CPPNameCollector();
 		tu.accept(col);
-		
+
 		IASTImplicitName n1 = ba.assertImplicitName("[0]); //1", 1, ICPPMethod.class);
 		ba.assertNoImplicitName("0]); //1", 1);
 		IASTImplicitName n2 = ba.assertImplicitName("]); //1", 1, ICPPMethod.class);
@@ -356,7 +357,7 @@ public class AST2CPPImplicitNameTests extends AST2BaseTest {
 		assertFalse(n1.isAlternate());
 		assertTrue(n2.isAlternate());
 		assertSame(col.getName(1).resolveBinding(), n1.resolveBinding());
-		
+
 		n1 = ba.assertImplicitName("[q]); //2", 1, ICPPMethod.class);
 		ba.assertNoImplicitName("q]); //2", 1);
 		n2 = ba.assertImplicitName("]); //2", 1, ICPPMethod.class);
@@ -384,21 +385,21 @@ public class AST2CPPImplicitNameTests extends AST2BaseTest {
 		assertEquals(2, names.length);
 		IASTImplicitName destructor = names[0];
 		IASTImplicitName delete = names[1];
-		
+
 		IASTTranslationUnit tu = ba.getTranslationUnit();
 		CPPNameCollector col = new CPPNameCollector();
 		tu.accept(col);
-		
+
 		assertSame(col.getName(1).resolveBinding(), destructor.resolveBinding());
 		assertSame(col.getName(2).resolveBinding(), delete.resolveBinding());
-		
+
 		names = ba.getImplicitNames("delete[] x;", 6);
 		assertEquals(1, names.length);
 		assertSame(col.getName(4).resolveBinding(), names[0].resolveBinding());
-		
+
 		ba.assertNoImplicitName("delete 1;", 6);
 	}
-	
+
 	//	struct A {
 	//	    void operator delete(void * a);
 	//	};
@@ -416,15 +417,15 @@ public class AST2CPPImplicitNameTests extends AST2BaseTest {
 		BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), true);
 		IBinding m= bh.assertNonProblem("operator delete(void * a)", 15);
 		IBinding f= bh.assertNonProblem("operator delete(void * b)", 15);
-		
+
 		IASTImplicitName[] names = bh.getImplicitNames("delete a;", 6);
-		assertEquals(2, names.length); 
+		assertEquals(2, names.length);
 		assertTrue(((ICPPMethod) names[0].resolveBinding()).isDestructor());
 		assertSame(m, names[1].resolveBinding());
 
 		names = bh.getImplicitNames("delete b;", 6);
 		assertTrue(((ICPPMethod) names[0].resolveBinding()).isDestructor());
-		assertEquals(2, names.length); 
+		assertEquals(2, names.length);
 		assertSame(f, names[1].resolveBinding());
 	}
 
@@ -443,13 +444,13 @@ public class AST2CPPImplicitNameTests extends AST2BaseTest {
 		BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), true);
 		IBinding m= bh.assertNonProblem("operator new(size_t a)", 12);
 		IBinding f= bh.assertNonProblem("operator new(size_t b)", 12);
-		
+
 		IASTImplicitName[] names = bh.getImplicitNames("new A;", 3);
-		assertEquals(1, names.length);
+		assertEquals(2, names.length);
 		assertSame(m, names[0].resolveBinding());
 
 		names = bh.getImplicitNames("new B;", 3);
-		assertEquals(1, names.length);
+		assertEquals(2, names.length);
 		assertSame(f, names[0].resolveBinding());
 	}
 
@@ -461,9 +462,9 @@ public class AST2CPPImplicitNameTests extends AST2BaseTest {
 	public void testImplicitNewAndDelete() throws Exception {
 		BindingAssertionHelper ba = new BindingAssertionHelper(getAboveComment(), true);
 		ba.assertNoImplicitName("new X", 3);
-		ba.assertNoImplicitName("delete[]", 6); 
+		ba.assertNoImplicitName("delete[]", 6);
 	}
-	
+
 	//  typedef long unsigned int size_t
 	//	struct nothrow_t {};
 	//	extern const nothrow_t nothrow;
@@ -491,7 +492,7 @@ public class AST2CPPImplicitNameTests extends AST2BaseTest {
 		assertSame(col.getName(9).resolveBinding(), n2.resolveBinding());
 		assertSame(col.getName(14).resolveBinding(), n3.resolveBinding());
 	}
-	
+
 	//	int test() {
 	//	  throw;
 	//	}
@@ -551,7 +552,7 @@ public class AST2CPPImplicitNameTests extends AST2BaseTest {
 		IASTImplicitName v = ba.assertImplicitName("v(p)", 1, ICPPConstructor.class);
 		assertSame(ctor1, v.resolveBinding());
 	}
-	
+
 	//	enum A {aa};
 	//	struct B{ operator A();};
 	//	bool operator==(A, A);   // overrides the built-in operator.
@@ -567,5 +568,5 @@ public class AST2CPPImplicitNameTests extends AST2BaseTest {
 		ICPPFunction op = ba.assertNonProblem("operator==", 0);
 		IASTImplicitName a = ba.assertImplicitName("==b", 2, ICPPFunction.class);
 		assertSame(op, a.resolveBinding());
-	}		
+	}
 }

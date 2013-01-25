@@ -29,6 +29,7 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
 	// We need specific name for the tests of this suite, because of bug https://bugs.eclipse.org/172256
+	GDBMultiNonStopRunControlTest_7_5.class,
 	MIRegistersTest_7_5.class,
 	MIRunControlTest_7_5.class,
 	MIRunControlTargetAvailableTest_7_5.class,
@@ -44,8 +45,7 @@ import org.junit.runners.Suite;
 	OperationsWhileTargetIsRunningTest_7_5.class,
 	OperationsWhileTargetIsRunningNonStopTest_7_5.class,
 	PostMortemCoreTest_7_5.class,
-	CommandTimeoutTest_7_5.class,
-	GDBMultiNonStopRunControlTest_7_5.class,
+//	CommandTimeoutTest_7_5.class,
 	Suite_Sessionless_Tests.class,
 	GDBConsoleBreakpointsTest_7_5.class,
 	/* Add your test class here */

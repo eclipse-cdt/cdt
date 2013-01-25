@@ -20,7 +20,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 /**
  * Directly tests parts of the semantics package
  */
-public class SemanticsTests extends AST2BaseTest {
+public class SemanticsTests extends AST2TestBase {
 
 	public SemanticsTests() {}
 	public SemanticsTests(String name) { super(name); }

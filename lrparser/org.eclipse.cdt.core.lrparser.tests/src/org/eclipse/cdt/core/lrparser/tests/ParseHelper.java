@@ -29,7 +29,7 @@ import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IncludeFileContentProvider;
 import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.parser.ScannerInfo;
-import org.eclipse.cdt.core.parser.tests.ast2.AST2BaseTest;
+import org.eclipse.cdt.core.parser.tests.ast2.AST2TestBase;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
 import org.eclipse.core.runtime.CoreException;
@@ -136,7 +136,7 @@ public class ParseHelper {
 	
 	public static IASTTranslationUnit parse(char[] code, ILanguage lang, Options options) {
 			
-		return parse(FileContent.create(AST2BaseTest.TEST_CODE, code), lang, new ScannerInfo(), null, options);
+		return parse(FileContent.create(AST2TestBase.TEST_CODE, code), lang, new ScannerInfo(), null, options);
 	}
 	
 
@@ -254,7 +254,7 @@ public class ParseHelper {
 		
 		IASTTranslationUnit tu;
 		try {
-			tu = language.getASTTranslationUnit(FileContent.create(AST2BaseTest.TEST_CODE, code.toCharArray()), new ScannerInfo(), null, null, ILanguage.OPTION_ADD_COMMENTS, ParserUtil.getParserLogService());
+			tu = language.getASTTranslationUnit(FileContent.create(AST2TestBase.TEST_CODE, code.toCharArray()), new ScannerInfo(), null, null, ILanguage.OPTION_ADD_COMMENTS, ParserUtil.getParserLogService());
 		} catch (CoreException e) {
 			throw new AssertionFailedError(e.toString());
 		}
@@ -273,7 +273,7 @@ public class ParseHelper {
 	public static IASTCompletionNode getCompletionNode(String code, ILanguage language, int offset) {
 		
 		try {
-			return language.getCompletionNode(FileContent.create(AST2BaseTest.TEST_CODE, code.toCharArray()), new ScannerInfo(), null, null, ParserUtil.getParserLogService(), offset);
+			return language.getCompletionNode(FileContent.create(AST2TestBase.TEST_CODE, code.toCharArray()), new ScannerInfo(), null, null, ParserUtil.getParserLogService(), offset);
 		} catch (CoreException e) {
 			throw new RuntimeException(e);
 		}

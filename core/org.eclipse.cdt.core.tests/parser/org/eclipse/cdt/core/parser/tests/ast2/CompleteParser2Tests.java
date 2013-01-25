@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     IBM - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *     Nathan Ridge
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
@@ -102,9 +103,13 @@ public class CompleteParser2Tests extends BaseTestCase {
     }
 
 	static private class CPPNameCollector extends ASTVisitor {
-        {
-            shouldVisitNames = true;
+    	public CPPNameCollector() {
+    		this(false);  // don't visit implicit names by default
         }
+    	public CPPNameCollector(boolean shouldVisitImplicitNames) {
+    		this.shouldVisitNames = true;
+    		this.shouldVisitImplicitNames = shouldVisitImplicitNames;
+    	}
         public List nameList = new ArrayList();
         @Override
 		public int visit(IASTName name){
@@ -141,7 +146,7 @@ public class CompleteParser2Tests extends BaseTestCase {
             if (nameCollector.getName(i).resolveBinding() == binding)
                 count++;
 
-        assertEquals(count, num);
+        assertEquals(num, count);
     }
     protected void assertInstances(CNameCollector nameCollector, IBinding binding, int num) throws Exception {
         int count = 0;
@@ -149,7 +154,7 @@ public class CompleteParser2Tests extends BaseTestCase {
             if (nameCollector.getName(i).resolveBinding() == binding)
                 count++;
 
-        assertEquals(count, num);
+        assertEquals(num, count);
     }
     protected IASTTranslationUnit parse(String code, boolean expectedToPass,
             ParserLanguage lang) throws Exception {
@@ -172,7 +177,7 @@ public class CompleteParser2Tests extends BaseTestCase {
         FileContent codeReader = FileContent.create("<test-code>", code.toCharArray());
         ScannerInfo scannerInfo = new ScannerInfo();
         ISourceCodeParser parser2 = null;
-        IScanner scanner= AST2BaseTest.createScanner(codeReader, lang, ParserMode.COMPLETE_PARSE, scannerInfo);
+        IScanner scanner= AST2TestBase.createScanner(codeReader, lang, ParserMode.COMPLETE_PARSE, scannerInfo);
         if (lang == ParserLanguage.CPP) {
             ICPPParserExtensionConfiguration config = null;
             if (gcc)
@@ -750,7 +755,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 	}
 
 	public void testConstructorChain() throws Exception {
-		IASTTranslationUnit tu = parse("int x = 5;\n class A \n{ public : \n int a; \n A() : a(x) { } };"); 
+		IASTTranslationUnit tu = parse("int x = 5;\n class A \n{ public : \n int a; \n A() : a(x) { } };");
 		CPPNameCollector col = new CPPNameCollector();
  		tu.accept(col);
 
@@ -1053,7 +1058,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 	}
 
 	public void testScoping() throws Exception {
-	    IASTTranslationUnit tu = parse("void foo() { int x = 3; if (x == 1) { int x = 4; } else int x = 2; }"); 
+	    IASTTranslationUnit tu = parse("void foo() { int x = 3; if (x == 1) { int x = 4; } else int x = 2; }");
 		CPPNameCollector col = new CPPNameCollector();
  		tu.accept(col);
 
@@ -1098,7 +1103,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 	}
 
 	public void testBug42872() throws Exception {
-	    IASTTranslationUnit tu = parse("struct B {}; struct D : B {}; void foo(D* dp) { B* bp = dynamic_cast<B*>(dp); }"); 
+	    IASTTranslationUnit tu = parse("struct B {}; struct D : B {}; void foo(D* dp) { B* bp = dynamic_cast<B*>(dp); }");
 		CPPNameCollector col = new CPPNameCollector();
  		tu.accept(col);
 
@@ -1112,14 +1117,14 @@ public class CompleteParser2Tests extends BaseTestCase {
 
 	public void testBug43503A() throws Exception {
 	    IASTTranslationUnit tu = parse("class SD_01 { void f_SD_01() {}}; int main(){ SD_01 * a = new SD_01(); a->f_SD_01();	} ");
-		CPPNameCollector col = new CPPNameCollector();
+		CPPNameCollector col = new CPPNameCollector(true);
  		tu.accept(col);
 
- 		assertEquals(col.size(), 8);
+ 		assertEquals(col.size(), 9);
  		ICPPClassType SD_01 = (ICPPClassType) col.getName(0).resolveBinding();
  		ICPPMethod f_SD_01 = (ICPPMethod) col.getName(1).resolveBinding();
  		ICPPConstructor ctor = SD_01.getConstructors()[0];
- 		assertInstances(col, SD_01, 2);
+ 		assertInstances(col, SD_01, 3);
  		assertInstances(col, ctor, 1);
  		assertInstances(col, f_SD_01, 2);
 	}
@@ -1204,10 +1209,10 @@ public class CompleteParser2Tests extends BaseTestCase {
 		buff.append("}                          \n");
 		IASTTranslationUnit tu = parse(buff.toString());
 
-		CPPNameCollector col = new CPPNameCollector();
+		CPPNameCollector col = new CPPNameCollector(true);
  		tu.accept(col);
 
- 		assertEquals(col.size(), 17);
+ 		assertEquals(col.size(), 18);
  		ICompositeType SD_02 = (ICompositeType) col.getName(0).resolveBinding();
  		ICPPMethod f_SD_02 = (ICPPMethod) col.getName(1).resolveBinding();
  		ICPPClassType SD_01 = (ICPPClassType) col.getName(2).resolveBinding();
@@ -1217,7 +1222,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
  		assertInstances(col, SD_02, 2);
  		assertInstances(col, f_SD_02, 2);
- 		assertInstances(col, SD_01, 3);
+ 		assertInstances(col, SD_01, 4);
  		assertInstances(col, ctor, 1);
  		assertInstances(col, next, 2);
  		assertInstances(col, f_SD_01, 4);
@@ -1268,10 +1273,10 @@ public class CompleteParser2Tests extends BaseTestCase {
 
 	public void testBug44342() throws Exception {
 		IASTTranslationUnit tu = parse("class A { void f(){} void f(int){} }; int main(){ A * a = new A(); a->f();} ");
-		CPPNameCollector col = new CPPNameCollector();
+		CPPNameCollector col = new CPPNameCollector(true);
 		tu.accept(col);
 
-		assertEquals(col.size(), 10);
+		assertEquals(col.size(), 11);
 		ICPPClassType A = (ICPPClassType) col.getName(0).resolveBinding();
 		ICPPMethod f1 = (ICPPMethod) col.getName(1).resolveBinding();
 		ICPPMethod f2 = (ICPPMethod) col.getName(2).resolveBinding();
@@ -1279,7 +1284,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		ICPPConstructor ctor = A.getConstructors()[0];
 		IVariable a = (IVariable) col.getName(6).resolveBinding();
 
-		assertInstances(col, A, 2);
+		assertInstances(col, A, 3);
 		assertInstances(col, f1, 2);
 		assertInstances(col, f2, 1);
 		assertInstances(col, ctor, 1);
@@ -1288,7 +1293,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
 	public void testCDesignatedInitializers() throws Exception {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("struct Inner { int a,b,c; };"); 
+		buffer.append("struct Inner { int a,b,c; };");
 		buffer.append("struct A { int x; int y[]; struct Inner innerArray[]; int z[]; };");
 		buffer.append("struct A myA = { .x = 4, .y[3] = 4, .y[4] = 3, .innerArray[0].a = 3, .innerArray[1].b = 5, .innerArray[2].c=6, .z = { 1,4,5} };");
 		parse(buffer.toString(), true, ParserLanguage.C);
@@ -1314,7 +1319,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 							"   _Bool b;  " +
 							"   f(b);" +
 							"	f(g((_Bool) 1) );" +
-							"}", 
+							"}",
 							true, ParserLanguage.C);
 	}
 
@@ -1337,7 +1342,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
 	public void testBug44925() throws Exception {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("class MyClass { };"); 
+		buffer.append("class MyClass { };");
 		buffer.append("class MyClass myObj1;");
 		buffer.append("enum MyEnum { Item1 };");
 		buffer.append("enum MyEnum myObj2;");
@@ -1420,23 +1425,23 @@ public class CompleteParser2Tests extends BaseTestCase {
 		buffer.append("void main() { N::A * a = new N::A();  a->f(); } ");
 		IASTTranslationUnit tu = parse(buffer.toString());
 
-		CPPNameCollector col = new CPPNameCollector();
+		CPPNameCollector col = new CPPNameCollector(true);
 		tu.accept(col);
 
-		assertEquals(col.size(), 13);
+		assertEquals(col.size(), 14);
 		ICPPNamespace N = (ICPPNamespace) col.getName(0).resolveBinding();
 		IFunction f = (IFunction) col.getName(1).resolveBinding();
 		ICPPClassType A = (ICPPClassType) col.getName(2).resolveBinding();
 
 		ICPPConstructor ctor = A.getConstructors()[0];
 
-		IProblemBinding fp = (IProblemBinding) col.getName(12).resolveBinding();
+		IProblemBinding fp = (IProblemBinding) col.getName(13).resolveBinding();
 		assertEquals(fp.getID(), IProblemBinding.SEMANTIC_NAME_NOT_FOUND);
 
 		assertInstances(col, N, 3);
 		assertInstances(col, f, 1);
-		assertInstances(col, A, 3);
-		assertInstances(col, ctor, 2);
+		assertInstances(col, A, 5);
+		assertInstances(col, ctor, 1);
 	}
 
 	public void testBug43110() throws Exception {
@@ -1994,7 +1999,7 @@ public class CompleteParser2Tests extends BaseTestCase {
     	writer.write("int	main(int argc, char **argv) {\n");
     	writer.write("FILE * file = 0;\n");
     	writer.write("static_function(file);\n");
-    	writer.write("return 0;\n");	
+    	writer.write("return 0;\n");
     	writer.write("}\n");
     	parse(writer.toString());
     }
@@ -2046,8 +2051,8 @@ public class CompleteParser2Tests extends BaseTestCase {
     	writer.write("};\n");
     	writer.write("\n");
     	writer.write("template<typename T>\n");
-    	writer.write("inline T526026< T >\n"); 
-    	writer.write("operator+(typename T526026<T>::diff d, const T526026<T> & x)\n"); 
+    	writer.write("inline T526026< T >\n");
+    	writer.write("operator+(typename T526026<T>::diff d, const T526026<T> & x)\n");
     	writer.write("{ return T526026< T >(); }\n");
     	writer.write("}\n");
     	parse(writer.toString(), false);
@@ -2055,7 +2060,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
     public void testBug71094() throws Exception {
     	Writer writer = new StringWriter();
-    	writer.write("using namespace DOESNOTEXIST;\n"); 
+    	writer.write("using namespace DOESNOTEXIST;\n");
     	writer.write("class A { int x; };\n");
     	parse(writer.toString(), false);
 	}
@@ -2223,7 +2228,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
     public void testBug74328() throws Exception {
     	Writer writer = new StringWriter();
-    	writer.write("int\n"); 
+    	writer.write("int\n");
     	writer.write("main(int argc, char **argv) {\n");
     	writer.write("	char *sign;\n");
     	writer.write("sign = \"\"; // IProblem generated here, syntax error\n");

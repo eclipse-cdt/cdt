@@ -19,7 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 
-public class ASTCPPSpecDefectTests extends AST2BaseTest {
+public class ASTCPPSpecDefectTests extends AST2TestBase {
 	
 	public ASTCPPSpecDefectTests() {
 	}

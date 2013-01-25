@@ -29,7 +29,7 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 /**
  * @author aniefer
  */
-public class GCCTests extends AST2BaseTest {
+public class GCCTests extends AST2TestBase {
 
     public GCCTests() {
 	}

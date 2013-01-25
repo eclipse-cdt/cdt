@@ -27,7 +27,7 @@ import org.eclipse.cdt.internal.core.parser.scanner.ExpressionEvaluator;
 /**
  * @author dsteffle
  */
-public class AST2UtilTests extends AST2BaseTest {
+public class AST2UtilTests extends AST2TestBase {
 	public AST2UtilTests() {
 	}
 

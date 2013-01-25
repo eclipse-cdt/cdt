@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 IBM Corporation and others.
+ * Copyright (c) 2004, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -139,7 +139,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.index.IndexCPPSignatureUtil;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 
-public class AST2CPPTests extends AST2BaseTest {
+public class AST2CPPTests extends AST2TestBase {
 
 	public AST2CPPTests() {
 	}
@@ -260,7 +260,7 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertEquals(declNames.length, i);
 		assertEquals(defNames.length, j);
 	}
-	
+
 	@Override
 	protected void assertSameType(IType first, IType second){
 		assertNotNull(first);
@@ -1201,10 +1201,10 @@ public class AST2CPPTests extends AST2BaseTest {
 	// }
 	public void testVirtualParentLookup() throws Exception {
 		IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.CPP);
-		CPPNameCollector collector = new CPPNameCollector();
+		CPPNameCollector collector = new CPPNameCollector(true);
 		tu.accept(collector);
 
-		assertEquals(collector.size(), 15);
+		assertEquals(collector.size(), 16);
 
 		ICPPClassType D = (ICPPClassType) collector.getName(0).resolveBinding();
 		ICPPField x = (ICPPField) collector.getName(1).resolveBinding();
@@ -1215,7 +1215,7 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertInstances(collector, D, 3);
 		assertInstances(collector, C, 2);
 		assertInstances(collector, B, 2);
-		assertInstances(collector, A, 2);
+		assertInstances(collector, A, 3);
 		assertInstances(collector, ctor, 1);
 		assertInstances(collector, x, 2);
 	}
@@ -1230,10 +1230,10 @@ public class AST2CPPTests extends AST2BaseTest {
 	// }
 	public void testAmbiguousVirtualParentLookup() throws Exception {
 		IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.CPP);
-		CPPNameCollector collector = new CPPNameCollector();
+		CPPNameCollector collector = new CPPNameCollector(true);
 		tu.accept(collector);
 
-		assertEquals(collector.size(), 15);
+		assertEquals(collector.size(), 16);
 
 		ICPPClassType D = (ICPPClassType) collector.getName(0).resolveBinding();
 		ICPPField x1 = (ICPPField) collector.getName(1).resolveBinding();
@@ -1241,13 +1241,13 @@ public class AST2CPPTests extends AST2BaseTest {
 		ICPPClassType B = (ICPPClassType) collector.getName(4).resolveBinding();
 		ICPPClassType A = (ICPPClassType) collector.getName(6).resolveBinding();
 		ICPPConstructor ctor = A.getConstructors()[0];
-		IProblemBinding x2 = (IProblemBinding) collector.getName(14).resolveBinding();
+		IProblemBinding x2 = (IProblemBinding) collector.getName(15).resolveBinding();
 		assertEquals(x2.getID(), IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP);
 
 		assertInstances(collector, D, 3);
 		assertInstances(collector, C, 2);
 		assertInstances(collector, B, 2);
-		assertInstances(collector, A, 2);
+		assertInstances(collector, A, 3);
 		assertInstances(collector, ctor, 1);
 		assertInstances(collector, x1, 1);
 	}
@@ -1843,7 +1843,7 @@ public class AST2CPPTests extends AST2BaseTest {
 		ICPPMethod dtor = (ICPPMethod) col.getName(13).resolveBinding();
 		assertNotNull(dtor);
 		assertEquals(dtor.getName(), "~C"); //$NON-NLS-1$
-		assertInstances(col, C, 6);
+		assertInstances(col, C, 7);
 
 		assertInstances(col, op, 3);
 		assertInstances(col, other, 4);
@@ -1993,7 +1993,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
 		assertInstances(col, pb, 2);
 		assertInstances(col, mutate, 2);
-		assertInstances(col, B, 2);
+		assertInstances(col, B, 3);
 	}
 
 	// struct S { int i; };
@@ -2511,7 +2511,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	// }
 	public void testBug86267() throws Exception {
 		IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.CPP);
-		CPPNameCollector col = new CPPNameCollector();
+		CPPNameCollector col = new CPPNameCollector(true);
 		tu.accept(col);
 
 		ICPPClassType D1 = (ICPPClassType) col.getName(2).resolveBinding();
@@ -2549,7 +2549,7 @@ public class AST2CPPTests extends AST2BaseTest {
 		ICPPMethod op = (ICPPMethod) col.getName(3).resolveBinding();
 		IParameter other = (IParameter) col.getName(5).resolveBinding();
 
-		assertInstances(col, C, 6);
+		assertInstances(col, C, 7);
 		assertInstances(col, f, 2);
 		assertInstances(col, op, 3);
 		assertInstances(col, other, 4);
@@ -4052,11 +4052,11 @@ public class AST2CPPTests extends AST2BaseTest {
 	// X x = new X(y);
 	public void testBug90654_1() throws Exception {
 		IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.CPP);
-		CPPNameCollector col = new CPPNameCollector();
+		CPPNameCollector col = new CPPNameCollector(true);
 		tu.accept(col);
 
 		ICPPConstructor ctor1 = (ICPPConstructor) col.getName(1).resolveBinding();
-		ICPPConstructor ctor = (ICPPConstructor) col.getName(11).resolveBinding();
+		ICPPConstructor ctor = (ICPPConstructor) col.getName(12).resolveBinding();
 		assertSame(ctor, ctor1);
 	}
 
@@ -8382,20 +8382,24 @@ public class AST2CPPTests extends AST2BaseTest {
 	//		fH({1});    // H(G(1))
 	//	}
 	public void testListInitialization_302412f() throws Exception {
-		ICPPConstructor ctor;
 		IProblemBinding problem;
 		String code= getAboveComment();
 		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
 		bh.assertProblem("f({1,1})", 1);
-		ctor= bh.assertNonProblem("F({1,1})", 1);
+		bh.assertImplicitName("F({1,1})", 1, ICPPConstructor.class);
 		bh.assertNonProblem("fF({1,1})", 2);
 
 		bh.assertNonProblem("fG(1)", 2);
 		bh.assertNonProblem("fG({1})", 2);
 
-		ctor= bh.assertNonProblem("H(1)", 1);
-		problem= bh.assertProblem("H({1})", 1);
-		assertEquals(IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, problem.getID());
+		bh.assertImplicitName("H(1)", 1, ICPPConstructor.class);
+		bh.assertNoImplicitName("H({1})", 1);
+		// TODO(nathanridge): Perhaps we should store implicit names even if they
+		// resolve to ProblemBindings. Then we can do the stronger check in the
+		// 3 commented lines below.
+		//IASTImplicitName n= bh.assertImplicitName("H({1})", 1, IProblemBinding.class);
+		//problem= (IProblemBinding) n.resolveBinding();
+		//assertEquals(IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, problem.getID());
 		bh.assertProblem("fH(1)", 2);
 		bh.assertNonProblem("fH({1})", 2);
 	}
@@ -9823,7 +9827,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	}
 
 	// struct Base {
-	//     virtual void mFuncDecl(); 
+	//     virtual void mFuncDecl();
 	//     virtual void mFuncDef(){}
 	// };
 	// struct S : public Base {
@@ -9851,9 +9855,9 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertInstance(declarator, ICPPASTFunctionDeclarator.class);
 		assertVirtualSpecifiers((ICPPASTFunctionDeclarator)declarator, true, false);
 	}
-	
+
 	// struct Base {
-	//     virtual void mFuncDecl(); 
+	//     virtual void mFuncDecl();
 	//     virtual void mFuncDef(){}
 	// };
 	// struct S : public Base {
@@ -10025,7 +10029,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	//      double vdouble;
 	//      long double vlongdouble;
 	//      UnscopedEnum vue;
-	//      
+	//
 	//      // Narrowing conversions
 	//      fint({vdouble});
 	//      ffloat({vlongdouble});
@@ -10083,7 +10087,7 @@ public class AST2CPPTests extends AST2BaseTest {
 		helper.assertNonProblemOnFirstIdentifier("fint({vbool");
 		helper.assertNonProblemOnFirstIdentifier("fint({vchar");
 	}
-	
+
 	//	namespace std {
 	//		struct string {};
 	//	 	struct exception {};

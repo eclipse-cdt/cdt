@@ -69,13 +69,17 @@ public class RAWBinaryExporter implements IMemoryExporter
 			@Override
 			public void dispose()
 			{
-				fProperties.put(TRANSFER_FILE, fFileText.getText());
-				fProperties.put(TRANSFER_START, fStartText.getText());
-				fProperties.put(TRANSFER_END, fEndText.getText());
+				fProperties.put(TRANSFER_FILE, fFileText.getText().trim());
+				fProperties.put(TRANSFER_START, fStartText.getText().trim());
+				fProperties.put(TRANSFER_END, fEndText.getText().trim());
 				
-				fStartAddress = getStartAddress();
-				fEndAddress = getEndAddress();
-				fOutputFile = getFile();
+				try
+				{
+					fStartAddress = getStartAddress();
+					fEndAddress = getEndAddress();
+					fOutputFile = getFile();
+				}
+				catch(Exception e) {}
 				
 				super.dispose();
 			}
@@ -95,7 +99,7 @@ public class RAWBinaryExporter implements IMemoryExporter
 		fStartText = new Text(composite, SWT.BORDER);
 		data = new FormData();
 		data.left = new FormAttachment(startLabel);
-		data.width = 100;
+		data.width = 120;
 		fStartText.setLayoutData(data);
 		
 		// end address
@@ -111,7 +115,7 @@ public class RAWBinaryExporter implements IMemoryExporter
 		data = new FormData();
 		data.top = new FormAttachment(fStartText, 0, SWT.CENTER);
 		data.left = new FormAttachment(endLabel);
-		data.width = 100;
+		data.width = 120;
 		fEndText.setLayoutData(data);
 		
 		// length
@@ -127,7 +131,7 @@ public class RAWBinaryExporter implements IMemoryExporter
 		data = new FormData();
 		data.top = new FormAttachment(fStartText, 0, SWT.CENTER);
 		data.left = new FormAttachment(lengthLabel);
-		data.width = 100;
+		data.width = 120;
 		fLengthText.setLayoutData(data);
 		
 		// file
@@ -144,7 +148,7 @@ public class RAWBinaryExporter implements IMemoryExporter
 		data = new FormData();
 		data.top = new FormAttachment(fileButton, 0, SWT.CENTER);
 		data.left = new FormAttachment(fileLabel);
-		data.width = 300;
+		data.width = 360;
 		fFileText.setLayoutData(data);
 		
 		fileButton.setText(Messages.getString("Exporter.Browse")); //$NON-NLS-1$
@@ -158,11 +162,41 @@ public class RAWBinaryExporter implements IMemoryExporter
 
 		textValue = fProperties.get(TRANSFER_START);
 		fStartText.setText(textValue != null ? textValue : "0x0"); //$NON-NLS-1$
+		
+		try
+		{
+			getStartAddress();
+		}
+		catch(Exception e)
+		{
+			fStartText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+		}
 
 		textValue = fProperties.get(TRANSFER_END);
 		fEndText.setText(textValue != null ? textValue : "0x0"); //$NON-NLS-1$
-
-		fLengthText.setText(getEndAddress().subtract(getStartAddress()).toString());
+		
+		try
+		{
+			getEndAddress();
+		}
+		catch(Exception e)
+		{
+			fEndText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+		}
+		
+		try
+		{
+			BigInteger length = getEndAddress().subtract(getStartAddress());
+			fLengthText.setText(length.toString());
+			if(length.compareTo(BigInteger.ZERO) <= 0) {
+				fLengthText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+			}
+		}
+		catch(Exception e)
+		{
+			fLengthText.setText("0");
+			fLengthText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+		}
 		
 		fileButton.addSelectionListener(new SelectionListener() {
 
@@ -174,7 +208,7 @@ public class RAWBinaryExporter implements IMemoryExporter
 				dialog.setText(Messages.getString("RAWBinaryExporter.ChooseFile")); //$NON-NLS-1$
 				dialog.setFilterExtensions(new String[] { "*.*;*" } ); //$NON-NLS-1$
 				dialog.setFilterNames(new String[] { Messages.getString("Exporter.AllFiles") } ); //$NON-NLS-1$
-				dialog.setFileName(fFileText.getText());
+				dialog.setFileName(fFileText.getText().trim());
 				dialog.open();
 			
 				String filename = dialog.getFileName();
@@ -190,25 +224,37 @@ public class RAWBinaryExporter implements IMemoryExporter
 		
 		fStartText.addKeyListener(new KeyListener() {
 			public void keyReleased(KeyEvent e) {
-				boolean valid = true;
 				try
 				{
-					getStartAddress();
+					fStartText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
+					fEndText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
+					fLengthText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
+					
+					BigInteger startAddress = getStartAddress();
+					BigInteger actualLength = getEndAddress().subtract(startAddress);
+					fLengthText.setText(actualLength.toString());
+					
+					if(actualLength.compareTo(BigInteger.ZERO) <= 0) {
+						fStartText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+						fLengthText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+					}
+					
+					if(startAddress.compareTo(BigInteger.ZERO) < 0) {
+						fStartText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+						fLengthText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+					}
+					
+					BigInteger endAddress = getEndAddress();
+					if(endAddress.compareTo(BigInteger.ZERO) < 0) {
+						fEndText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+						fLengthText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+					}
 				}
 				catch(Exception ex)
 				{
-					valid = false;
+					fStartText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+					fLengthText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
 				}
-				
-				fStartText.setForeground(valid ? Display.getDefault().getSystemColor(SWT.COLOR_BLACK) : 
-					Display.getDefault().getSystemColor(SWT.COLOR_RED));
-				
-				//
-				
-				BigInteger endAddress = getEndAddress();
-				BigInteger startAddress = getStartAddress();
-
-				fLengthText.setText(endAddress.subtract(startAddress).toString());
 				
 				validate();
 			}
@@ -220,20 +266,34 @@ public class RAWBinaryExporter implements IMemoryExporter
 			public void keyReleased(KeyEvent e) {
 				try
 				{
-					getEndAddress();
+					fStartText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
 					fEndText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
+					fLengthText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
+					
+					BigInteger actualLength = getEndAddress().subtract(getStartAddress());
+					fLengthText.setText(actualLength.toString());
+					
+					if(actualLength.compareTo(BigInteger.ZERO) <= 0) {
+						fEndText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+						fLengthText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+					}
+					
+					BigInteger startAddress = getStartAddress();
+					if(startAddress.compareTo(BigInteger.ZERO) < 0) {
+						fStartText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+						fLengthText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+					}
 					
 					BigInteger endAddress = getEndAddress();
-					BigInteger startAddress = getStartAddress();
-
-					String lengthString = endAddress.subtract(startAddress).toString();
-					
-					if(!fLengthText.getText().equals(lengthString))
-						fLengthText.setText(lengthString);
+					if(endAddress.compareTo(BigInteger.ZERO) < 0) {
+						fEndText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+						fLengthText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+					}
 				}
 				catch(Exception ex)
 				{
 					fEndText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+					fLengthText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
 				}
 				
 				validate();
@@ -247,22 +307,54 @@ public class RAWBinaryExporter implements IMemoryExporter
 			public void keyReleased(KeyEvent e) {
 				try
 				{
-					BigInteger length = getLength();
+					fStartText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
+					fEndText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
 					fLengthText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
+					
+					fStartText.setText(fStartText.getText().trim());
+					
+					BigInteger length = getLength();
+					String endString;
 					BigInteger startAddress = getStartAddress();
-					String endString = "0x" + startAddress.add(length).toString(16); //$NON-NLS-1$
-					if(!fEndText.getText().equals(endString))
-						fEndText.setText(endString);
+					BigInteger endAddress = startAddress.add(length);
+					
+					if(length.compareTo(BigInteger.ZERO) <= 0) {
+						if(endAddress.compareTo(BigInteger.ZERO) < 0) {
+							endString = endAddress.toString(16); //$NON-NLS-1$
+						}
+						else {
+							endString = "0x" + endAddress.toString(16); //$NON-NLS-1$
+						}
+					}
+					else {
+						endString = "0x" + endAddress.toString(16); //$NON-NLS-1$
+					}
+					
+					fEndText.setText(endString);
+					
+					if(length.compareTo(BigInteger.ZERO) <= 0) {
+						fEndText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+						fLengthText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+					}
+					
+					if(startAddress.compareTo(BigInteger.ZERO) < 0) {
+						fStartText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+					}
+					
+					if(endAddress.compareTo(BigInteger.ZERO) < 0) {
+						fEndText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+					}
 				}
 				catch(Exception ex)
 				{
+					if ( fLengthText.getText().trim().length() != 0 ) {
+						fEndText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+					}
 					fLengthText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
 				}
-		
+				
 				validate();
 			}
-			
-			
 
 			public void keyPressed(KeyEvent e) {
 				
@@ -274,9 +366,7 @@ public class RAWBinaryExporter implements IMemoryExporter
 				validate();
 			}
 			
-			public void keyPressed(KeyEvent e) {
-				
-			}
+			public void keyPressed(KeyEvent e) {}
 		});
 		
 		composite.pack();
@@ -303,6 +393,7 @@ public class RAWBinaryExporter implements IMemoryExporter
 	public BigInteger getEndAddress()
 	{
 		String text = fEndText.getText();
+		text = text.trim();
 		boolean hex = text.startsWith("0x"); //$NON-NLS-1$
 		BigInteger endAddress = new BigInteger(hex ? text.substring(2) : text,
 			hex ? 16 : 10); 
@@ -313,6 +404,7 @@ public class RAWBinaryExporter implements IMemoryExporter
 	public BigInteger getStartAddress()
 	{
 		String text = fStartText.getText();
+		text = text.trim();
 		boolean hex = text.startsWith("0x"); //$NON-NLS-1$
 		BigInteger startAddress = new BigInteger(hex ? text.substring(2) : text,
 			hex ? 16 : 10); 
@@ -323,6 +415,7 @@ public class RAWBinaryExporter implements IMemoryExporter
 	public BigInteger getLength()
 	{
 		String text = fLengthText.getText();
+		text = text.trim();
 		boolean hex = text.startsWith("0x"); //$NON-NLS-1$
 		BigInteger lengthAddress = new BigInteger(hex ? text.substring(2) : text,
 			hex ? 16 : 10); 
@@ -332,7 +425,7 @@ public class RAWBinaryExporter implements IMemoryExporter
 	
 	public File getFile()
 	{
-		return new File(fFileText.getText());
+		return new File(fFileText.getText().trim());
 	}
 	
 	private void validate()
@@ -342,7 +435,6 @@ public class RAWBinaryExporter implements IMemoryExporter
 		try
 		{
 			getEndAddress();
-			
 			getStartAddress();
 			
 			BigInteger length = getLength();
@@ -350,8 +442,22 @@ public class RAWBinaryExporter implements IMemoryExporter
 			if(length.compareTo(BigInteger.ZERO) <= 0)
 				isValid = false;
 			
-			if(!getFile().getParentFile().exists())
+			if ( fFileText.getText().trim().length() == 0 )
 				isValid = false;
+			
+			File file = getFile();
+			if ( file != null ) {
+				File parentFile = file.getParentFile();
+				
+				if(parentFile != null && ! parentFile.exists() )
+					isValid = false;
+
+				if(parentFile != null && parentFile.exists() && ( ! parentFile.canRead() || ! parentFile.isDirectory() ) )
+					isValid = false;
+				
+				if ( file.isDirectory() ) 
+					isValid = false;
+			}
 		}
 		catch(Exception e)
 		{
@@ -360,7 +466,6 @@ public class RAWBinaryExporter implements IMemoryExporter
 		
 		fParentDialog.setValid(isValid);
 	}
-
 	
 	public String getId()
 	{

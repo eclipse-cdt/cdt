@@ -439,9 +439,12 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 
 				if (event.getChecked()) {
 					if (LanguageSettingsManager.isWorkspaceProvider(checkedProvider) && !LanguageSettingsManager.isPreferShared(id)) {
-						ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(checkedProvider);
-						if (rawProvider instanceof ILanguageSettingsEditableProvider) {
-							newProvider = LanguageSettingsManager.getProviderCopy((ILanguageSettingsEditableProvider) rawProvider, false);
+						newProvider = getInitialProvider(id);
+						if(newProvider == null) {
+							ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(checkedProvider);
+							if (rawProvider instanceof ILanguageSettingsEditableProvider) {
+								newProvider = LanguageSettingsManager.getProviderCopy((ILanguageSettingsEditableProvider) rawProvider, false);
+							}
 						}
 					}
 				} else {
@@ -479,13 +482,16 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 			newProvider = LanguageSettingsManager.getWorkspaceProvider(id);
 		} else {
 			// Toggle to configuration-owned provider
-			try {
-				ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(provider);
-				if (rawProvider instanceof ILanguageSettingsEditableProvider) {
-					newProvider = ((ILanguageSettingsEditableProvider) rawProvider).cloneShallow();
+			newProvider = getInitialProvider(id);
+			if(newProvider == null) {
+				try {
+					ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(provider);
+					if (rawProvider instanceof ILanguageSettingsEditableProvider) {
+						newProvider = ((ILanguageSettingsEditableProvider) rawProvider).cloneShallow();
+					}
+				} catch (CloneNotSupportedException e) {
+					CUIPlugin.log("Error cloning provider " + id, e); //$NON-NLS-1$
 				}
-			} catch (CloneNotSupportedException e) {
-				CUIPlugin.log("Error cloning provider " + id, e); //$NON-NLS-1$
 			}
 		}
 		if (newProvider != null) {

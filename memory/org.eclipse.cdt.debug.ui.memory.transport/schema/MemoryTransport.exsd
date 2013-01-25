@@ -77,6 +77,13 @@
                </appInfo>
             </annotation>
          </attribute>
+         <attribute name="maxmemorysize" type="string">
+            <annotation>
+               <documentation>
+                  Maximum size of the addressable  memory this exporter can support in bits.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -107,6 +114,13 @@
                <appInfo>
                   <meta.attribute kind="java" basedOn=":org.eclipse.cdt.debug.ui.memory.transport.model.IMemoryImporter"/>
                </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="maxmemorysize" type="string">
+            <annotation>
+               <documentation>
+                  Maximum size of the addressable  memory this importer can support in bits.
+               </documentation>
             </annotation>
          </attribute>
       </complexType>

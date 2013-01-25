@@ -8,17 +8,6 @@
 	      point="org.eclipse.cdt.debug.ui.memory.transport.memoryTransport">
 	      
 	    <importer 
-	        name="%importer.name.0"
-	        id="org.eclipse.cdt.debug.ui.memory.transport.SRecordImporter"
-	        class="org.eclipse.cdt.debug.ui.memory.transport.SRecordImporter">
-	    </importer>
-	    <exporter 
-	        name="%exporter.name.0"
-	        id="org.eclipse.cdt.debug.ui.memory.transport.SRecordExporter"
-	        class="org.eclipse.cdt.debug.ui.memory.transport.SRecordExporter">
-	    </exporter>
-	    
-	    <importer 
 	        name="%importer.name.1"
 	        id="org.eclipse.cdt.debug.ui.memory.transport.PlainTextImporter"
 	        class="org.eclipse.cdt.debug.ui.memory.transport.PlainTextImporter">
@@ -38,6 +27,17 @@
 	        name="%exporter.name.2"
 	        id="org.eclipse.cdt.debug.ui.memory.transport.RAWBinaryExporter"
 	        class="org.eclipse.cdt.debug.ui.memory.transport.RAWBinaryExporter">
+	    </exporter>
+	    
+	     <importer 
+	        name="%importer.name.0"
+	        id="org.eclipse.cdt.debug.ui.memory.transport.SRecordImporter"
+	        class="org.eclipse.cdt.debug.ui.memory.transport.SRecordImporter">
+	    </importer>
+	    <exporter 
+	        name="%exporter.name.0"
+	        id="org.eclipse.cdt.debug.ui.memory.transport.SRecordExporter"
+	        class="org.eclipse.cdt.debug.ui.memory.transport.SRecordExporter">
 	    </exporter>
 	    
 	</extension>

@@ -32,7 +32,6 @@ import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 public class CUILabelProvider extends LabelProvider implements IColorProvider, IStyledLabelProvider {
-	
 	protected CElementImageProvider fImageLabelProvider;
 	protected StorageLabelProvider fStorageLabelProvider;
 	
@@ -136,9 +135,6 @@ public class CUILabelProvider extends LabelProvider implements IColorProvider, I
 		return image;
 	}
 
-	/* (non-Javadoc)
-	 * @see ILabelProvider#getImage
-	 */
 	@Override
 	public Image getImage(Object element) {
 		Image result= fImageLabelProvider.getImageLabel(element, evaluateImageFlags(element));
@@ -159,10 +155,6 @@ public class CUILabelProvider extends LabelProvider implements IColorProvider, I
 		return text;
 	}
 
-
-	/* (non-Javadoc)
-	 * @see ILabelProvider#getText
-	 */
 	@Override
 	public String getText(Object element) {
 		String result= CElementLabels.getTextLabel(element, evaluateTextFlags(element));
@@ -186,10 +178,6 @@ public class CUILabelProvider extends LabelProvider implements IColorProvider, I
 		return string;
 	}
 	
-
-	/* (non-Javadoc)
-	 * @see IBaseLabelProvider#dispose
-	 */
 	@Override
 	public void dispose() {
 		if (fLabelDecorators != null) {
@@ -203,9 +191,6 @@ public class CUILabelProvider extends LabelProvider implements IColorProvider, I
 		fImageLabelProvider.dispose();
 	}
 	
-	/* (non-Javadoc)
-	 * @see IBaseLabelProvider#addListener(ILabelProviderListener)
-	 */
 	@Override
 	public void addListener(ILabelProviderListener listener) {
 		if (fLabelDecorators != null) {
@@ -217,17 +202,11 @@ public class CUILabelProvider extends LabelProvider implements IColorProvider, I
 		super.addListener(listener);	
 	}
 
-	/* (non-Javadoc)
-	 * @see IBaseLabelProvider#isLabelProperty(Object, String)
-	 */
 	@Override
 	public boolean isLabelProperty(Object element, String property) {
 		return true;	
 	}
 
-	/* (non-Javadoc)
-	 * @see IBaseLabelProvider#removeListener(ILabelProviderListener)
-	 */
 	@Override
 	public void removeListener(ILabelProviderListener listener) {
 		if (fLabelDecorators != null) {
@@ -252,9 +231,6 @@ public class CUILabelProvider extends LabelProvider implements IColorProvider, I
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
-	 */
 	@Override
 	public Color getForeground(Object element) {
 		if (element instanceof ISourceReference) {
@@ -270,12 +246,8 @@ public class CUILabelProvider extends LabelProvider implements IColorProvider, I
 		return fDefaultColor;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IColorProvider#getBackground(java.lang.Object)
-	 */
 	@Override
 	public Color getBackground(Object element) {
 		return null;
 	}	
-
 }

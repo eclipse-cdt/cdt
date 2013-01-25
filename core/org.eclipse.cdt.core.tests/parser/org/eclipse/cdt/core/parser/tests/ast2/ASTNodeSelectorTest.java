@@ -28,7 +28,7 @@ import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPSourceParser;
 
-public class ASTNodeSelectorTest extends AST2BaseTest {
+public class ASTNodeSelectorTest extends AST2TestBase {
 
 	static public TestSuite suite() {
 		return suite(ASTNodeSelectorTest.class);
@@ -55,7 +55,7 @@ public class ASTNodeSelectorTest extends AST2BaseTest {
 		fCode= getContents(1)[0].toString();
         FileContent codeReader = FileContent.create("<test-code>", fCode.toCharArray());
         ScannerInfo scannerInfo = new ScannerInfo();
-        IScanner scanner= AST2BaseTest.createScanner(codeReader, ParserLanguage.CPP, ParserMode.COMPLETE_PARSE, scannerInfo);
+        IScanner scanner= AST2TestBase.createScanner(codeReader, ParserLanguage.CPP, ParserMode.COMPLETE_PARSE, scannerInfo);
         GNUCPPSourceParser parser= new GNUCPPSourceParser(scanner, ParserMode.COMPLETE_PARSE, new NullLogService(), new GPPParserExtensionConfiguration());
         fTu= parser.parse();
         fSelector= fTu.getNodeSelector(null);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 QNX Software Systems and others.
+ * Copyright (c) 2005, 2013 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
  *     Tim Kelly (Nokia)
  *     Anna Dushistova (MontaVista)
  *     Marc-Andre Laperle
+ *     Martin Oberhuber (Wind River) - [397652] fix up-to-date check for PDOM
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
@@ -23,6 +24,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -93,6 +95,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
@@ -109,6 +112,7 @@ import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 
 import com.ibm.icu.text.MessageFormat;
+import com.ibm.icu.text.SimpleDateFormat;
 
 /**
  * Manages PDOM updates and events associated with them. Provides methods for index access.
@@ -1529,11 +1533,25 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	 * @throws CoreException
 	 */
 	public boolean isProjectContentSynced(ICProject cproject) throws CoreException {
+		IStatus s = getProjectContentSyncState(cproject);
+		return s == null;
+	}
+
+	/**
+	 * Checks whether the index is in sync with the file system. 
+	 * @param cproject the project to check
+	 * @return <code>null</code> when the content in the project fragment of the specified project's index
+	 *    is complete (contains all sources) and up to date; or an @link{IStatus} indicating the first
+	 *    occurrence of an index file found not up-to-date, along with its include trail.
+	 * @throws CoreException in case of a file access or other internal error
+	 */
+	public IStatus getProjectContentSyncState(ICProject cproject) throws CoreException {
 		if (!"true".equals(IndexerPreferences.get(cproject.getProject(), IndexerPreferences.KEY_INDEX_ALL_FILES, null)))  //$NON-NLS-1$
-			return true; // no check performed in this case
+			return null; // No check is performed in this case
 
 		Set<ITranslationUnit> sources= new HashSet<ITranslationUnit>();
 		cproject.accept(new TranslationUnitCollector(sources, null, new NullProgressMonitor()));
+		IStatus syncStatus = null;
 
 		try {
 			IIndex index= getIndex(cproject);
@@ -1543,8 +1561,9 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 					IResource resource= tu.getResource();
 					if (resource instanceof IFile && isSubjectToIndexing(tu.getLanguage())) {
 						IIndexFileLocation location= IndexLocationFactory.getWorkspaceIFL((IFile) resource);
-						if (!areSynchronized(new HashSet<IIndexFileLocation>(), index, resource, location)) {
-							return false;
+						syncStatus = areSynchronized(new HashSet<IIndexFileLocation>(), index, resource, location); 
+						if (syncStatus != null) {
+							return syncStatus;
 						}
 					}
 				}
@@ -1555,11 +1574,11 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 			CCorePlugin.log(e);
 		}
 
-		return true;
+		return null;
 	}
 
 	private boolean isSubjectToIndexing(ILanguage language) {
-		final int linkageID=language.getLinkageID();
+		final int linkageID = language.getLinkageID();
 		for (int id : IDS_FOR_LINKAGES_TO_INDEX) {
 			if (linkageID == id)
 				return true;
@@ -1568,45 +1587,57 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	}
 
 	/**
-	 * Recursively checks that the specified file, and its include are up-to-date.
+	 * Recursively checks that the specified file, and its includes are up-to-date.
 	 * @param trail a set of previously checked include file locations
 	 * @param index the index to check against
 	 * @param resource the resource to check from the workspace
 	 * @param location the location to check from the index
-	 * @return whether the specified file, and its includes are up-to-date.
+	 * @return <code>null</code> when whether the specified file, and its includes are up-to-date,
+	 *    or a MultiStatus indicating the file found to be not in sync along with it include trail.
 	 * @throws CoreException
 	 */
-	private static boolean areSynchronized(Set<IIndexFileLocation> trail, IIndex index, IResource resource, IIndexFileLocation location) throws CoreException {
+	private static MultiStatus areSynchronized(Set<IIndexFileLocation> trail, IIndex index,
+			IResource resource, IIndexFileLocation location) throws CoreException {
 		if (!trail.contains(location)) {
 			trail.add(location);
 
-			IIndexFile[] file= index.getFiles(location);
+			IIndexFile[] files= index.getFiles(location);
 
-			// pre-includes may be listed twice (191989)
-			if (file.length < 1 || file.length > 2)
-				return false;
+			if (files.length <= 0)
+				return new MultiStatus(CCorePlugin.PLUGIN_ID, IStatus.OK, "No index file found for: " + location, null); //$NON-NLS-1$
 
-			if (resource.getLocalTimeStamp() != file[0].getTimestamp())
-				return false;
+			for (IIndexFile file : files) {
+				long diff = resource.getLocalTimeStamp() - file.getTimestamp(); 
+				if (diff != 0) {
+					return new MultiStatus(CCorePlugin.PLUGIN_ID, IStatus.OK,
+							"Index timestamp for '" //$NON-NLS-1$
+							+ file.getLocation().getFullPath()
+							+ "' is " + diff + " msec older than " //$NON-NLS-1$ //$NON-NLS-2$
+							+ location
+							+ "(" + SimpleDateFormat.getDateTimeInstance().format(new Date(resource.getLocalTimeStamp())) //$NON-NLS-1$
+							+ ")", null); //$NON-NLS-1$
+				}
 
-			// if it is up-to-date, the includes have not changed and may
-			// be read from the index.
-			IIndexInclude[] includes= index.findIncludes(file[0]);
-			for (IIndexInclude inc : includes) {
-				IIndexFileLocation newLocation= inc.getIncludesLocation();
-				if (newLocation != null) {
-					String path= newLocation.getFullPath();
-					if (path != null) {
-						IResource newResource= ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(path));
-						if (!areSynchronized(trail, index, newResource, newLocation)) {
-							return false;
+				// If it is up-to-date, the includes have not changed and may be read from the index.
+				IIndexInclude[] includes= index.findIncludes(file);
+				for (IIndexInclude inc : includes) {
+					IIndexFileLocation newLocation= inc.getIncludesLocation();
+					if (newLocation != null) {
+						String path= newLocation.getFullPath();
+						if (path != null) {
+							IResource newResource= ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(path));
+							MultiStatus m = areSynchronized(trail, index, newResource, newLocation); 
+							if (m != null) {
+								m.add(new Status(IStatus.INFO, CCorePlugin.PLUGIN_ID,
+										"Included by " + file.getLocation().getFullPath())); //$NON-NLS-1$
+								return m;
+							}
 						}
 					}
 				}
 			}
 		}
-
-		return true;
+		return null;
 	}
 
 	public boolean isFileIndexedUnconditionally(IIndexFileLocation ifl) {

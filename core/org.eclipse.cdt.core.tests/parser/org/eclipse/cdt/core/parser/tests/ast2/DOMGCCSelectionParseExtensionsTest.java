@@ -19,7 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
  * @author jcamelon
  *
  */
-public class DOMGCCSelectionParseExtensionsTest extends DOMSelectionParseBaseTest {
+public class DOMGCCSelectionParseExtensionsTest extends DOMSelectionParseTestBase {
 
 	public DOMGCCSelectionParseExtensionsTest() {
 	}

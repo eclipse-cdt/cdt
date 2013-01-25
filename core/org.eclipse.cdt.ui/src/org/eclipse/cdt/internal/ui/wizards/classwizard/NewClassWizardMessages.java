@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 QNX Software Systems and others.
+ * Copyright (c) 2004, 2013 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,7 +29,6 @@ public final class NewClassWizardMessages extends NLS {
 	public static String NewClassCreationWizardPage_namespace_label;
 	public static String NewClassCreationWizardPage_namespace_button;
 	public static String NewClassCreationWizardPage_error_EnterNamespace;
-	public static String NewClassCreationWizardPage_error_EnclosingNamespaceNotExists;
 	public static String NewClassCreationWizardPage_error_NamespaceExistsDifferentCase;
 	public static String NewClassCreationWizardPage_error_TypeMatchingNamespaceExists;
 	public static String NewClassCreationWizardPage_error_TypeMatchingNamespaceExistsDifferentCase;

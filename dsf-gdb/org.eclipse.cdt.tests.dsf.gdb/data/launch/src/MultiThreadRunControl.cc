@@ -14,9 +14,9 @@ typedef pthread_t TID;
 #endif
 
 // Set a breakpoint here so that both threads stop.
-void firstBreakpoint(int id)
+void firstBreakpoint(long id)
 {
-  printf("First breakpoint method from thread %d\n", id);
+  printf("First breakpoint method from thread %ld\n", id);
 }
   
 
@@ -26,7 +26,7 @@ unsigned int __stdcall PrintHello(void *threadid)
 void *PrintHello(void *threadId)
 #endif
 {
-   int tId = (int)threadId;
+   long tId = (long)threadId;
    firstBreakpoint(tId);  // Stop a first time
 
    SLEEP(1);  // Keep state running a little

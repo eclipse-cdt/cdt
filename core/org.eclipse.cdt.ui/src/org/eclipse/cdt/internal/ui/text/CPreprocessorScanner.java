@@ -32,7 +32,6 @@ import org.eclipse.cdt.internal.ui.text.util.CWordDetector;
  * @since 4.0
  */
 public class CPreprocessorScanner extends AbstractCScanner {
-
     /** Properties for tokens. */
 	private static String[] fgTokenProperties= {
 		ICColorConstants.C_KEYWORD,

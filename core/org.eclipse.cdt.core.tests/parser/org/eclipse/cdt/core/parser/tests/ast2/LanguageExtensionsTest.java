@@ -44,7 +44,7 @@ import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
 /**
  * Testcases for non-gnu language extensions.
  */
-public class LanguageExtensionsTest extends AST2BaseTest {
+public class LanguageExtensionsTest extends AST2TestBase {
 	
 	protected static final int SIZEOF_EXTENSION   = 0x1;
 	protected static final int FUNCTION_STYLE_ASM = 0x2;

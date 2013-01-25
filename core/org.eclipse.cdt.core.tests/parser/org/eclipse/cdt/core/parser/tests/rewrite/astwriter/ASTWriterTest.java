@@ -28,7 +28,7 @@ import org.eclipse.cdt.core.parser.NullLogService;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerInfo;
-import org.eclipse.cdt.core.parser.tests.ast2.AST2BaseTest;
+import org.eclipse.cdt.core.parser.tests.ast2.AST2TestBase;
 import org.eclipse.cdt.core.parser.tests.rewrite.RewriteBaseTest;
 import org.eclipse.cdt.core.parser.tests.rewrite.TestHelper;
 import org.eclipse.cdt.core.parser.tests.rewrite.TestSourceFile;
@@ -95,7 +95,7 @@ public class ASTWriterTest extends RewriteBaseTest {
         ParserLanguage language = getLanguage(testFile);
     	boolean useGNUExtensions = getGNUExtension(testFile);
                 
-        IScanner scanner = AST2BaseTest.createScanner(codeReader, language, ParserMode.COMPLETE_PARSE, scannerInfo);
+        IScanner scanner = AST2TestBase.createScanner(codeReader, language, ParserMode.COMPLETE_PARSE, scannerInfo);
         
         ISourceCodeParser parser = null;
         if (language == ParserLanguage.CPP) {

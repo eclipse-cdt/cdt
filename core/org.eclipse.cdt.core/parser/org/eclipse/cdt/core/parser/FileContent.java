@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Wind River Systems, Inc. and others.
+ * Copyright (c) 2009, 2013 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,8 +8,11 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
+ *     Chris Recoskie (IBM Corporation)
  *******************************************************************************/ 
 package org.eclipse.cdt.core.parser;
+
+import java.io.File;
 
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
@@ -133,6 +136,11 @@ public abstract class FileContent {
 	public static FileContent adapt(CodeReader reader) {
 		if (reader == null)
 			return null;
-		return create(reader.getPath(), reader.buffer);
+
+		long fileReadTime = System.currentTimeMillis();
+		CharArray chars = new CharArray(reader.buffer);
+		String filePath = reader.getPath();
+		File file = new File(filePath);
+		return new InternalFileContent(filePath, chars, file.lastModified(), file.length(), fileReadTime);
 	}
 }

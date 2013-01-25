@@ -24,15 +24,48 @@
 		</repository>
 	</repositories>-->
 
+	<properties>
+		<gdbPathOption>-Dcdt.tests.dsf.gdb.path=/opt/public/download-staging.priv/tools/cdt/gdb</gdbPathOption>
+	</properties>
+	
 	<build>
 		<plugins>
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>clean</id>
+						<phase>clean</phase>
+						<configuration>
+							<tasks>
+								<ant antfile="TestAppBuilder.xml" target="clean"/>
+							</tasks>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>prepare</id>
+						<phase>validate</phase>
+						<configuration>
+							<tasks>
+								<ant antfile="TestAppBuilder.xml" target="makeTestApps"/>
+							</tasks>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-surefire-plugin</artifactId>
 				<version>${tycho-version}</version>
 				<configuration>
 					<useUIHarness>true</useUIHarness>
-					<argLine>-Xms256m -Xmx512m -XX:MaxPermSize=256M</argLine>
+					<argLine>-Xms256m -Xmx512m -XX:MaxPermSize=256M ${gdbPathOption}</argLine>
 					<includes>
 						<include>**/AutomatedSuite.*</include>
 					</includes>

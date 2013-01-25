@@ -43,7 +43,8 @@ import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMContex
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMData;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
-import org.eclipse.cdt.dsf.internal.DsfPlugin;
+import org.eclipse.cdt.dsf.gdb.internal.GdbDebugOptions;
+import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpointDMData;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpoints;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpoints.MIBreakpointDMContext;
@@ -225,7 +226,7 @@ public class MICatchpointsTest extends BaseTestCase {
   		synchronized (fEventHandlerLock) {
   			fBreakpointEvents[BP_ADDED]++;
   			fBreakpointRef = ((MIBreakpointDMContext) e.getBreakpoints()[0]).getReference();
-  			System.out.println(DsfPlugin.getDebugTime() + " Got bp added event (#" + fBreakpointRef + ")");
+  			if(GdbDebugOptions.DEBUG) GdbDebugOptions.trace(GdbPlugin.getDebugTime() + " Got bp added event (#" + fBreakpointRef + ")\n");
   			fEventHandlerLock.notifyAll();
   		}
 	}
@@ -235,7 +236,7 @@ public class MICatchpointsTest extends BaseTestCase {
   		synchronized (fEventHandlerLock) {
   			fBreakpointEvents[BP_UPDATED]++;
   			fBreakpointRef = ((MIBreakpointDMContext) e.getBreakpoints()[0]).getReference();
-  			System.out.println(DsfPlugin.getDebugTime() + " Got bp updated event (#" + fBreakpointRef + ")");
+  			if(GdbDebugOptions.DEBUG) GdbDebugOptions.trace(GdbPlugin.getDebugTime() + " Got bp updated event (#" + fBreakpointRef + ")\n");
   			fEventHandlerLock.notifyAll();
   		}
 	}
@@ -245,7 +246,7 @@ public class MICatchpointsTest extends BaseTestCase {
   		synchronized (fEventHandlerLock) {
   			fBreakpointEvents[BP_REMOVED]++;
   			fBreakpointRef = ((MIBreakpointDMContext) e.getBreakpoints()[0]).getReference();
-  			System.out.println(DsfPlugin.getDebugTime() + " Got bp removed event (#" + fBreakpointRef + ")");
+  			if(GdbDebugOptions.DEBUG) GdbDebugOptions.trace(GdbPlugin.getDebugTime() + " Got bp removed event (#" + fBreakpointRef + ")\n");
   			fEventHandlerLock.notifyAll();
   		}
 	}
@@ -255,7 +256,7 @@ public class MICatchpointsTest extends BaseTestCase {
   		synchronized (fEventHandlerLock) {
   			fBreakpointEvents[BP_HIT]++;
   			fBreakpointRef = e.getNumber();
-  			System.out.println(DsfPlugin.getDebugTime() + " Got bp hit event (#" + fBreakpointRef + ")");
+  			if(GdbDebugOptions.DEBUG) GdbDebugOptions.trace(GdbPlugin.getDebugTime() + " Got bp hit event (#" + fBreakpointRef + ")\n");
   			fEventHandlerLock.notifyAll();
   		}
 	}

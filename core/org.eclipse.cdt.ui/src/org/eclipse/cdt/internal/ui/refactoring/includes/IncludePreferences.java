@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Google, Inc and others.
+ * Copyright (c) 2012, 2013 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -279,6 +279,16 @@ public class IncludePreferences {
 	public static final String PREF_REMOVE_UNUSED_INCLUDES = "remove_unused_includes"; //$NON-NLS-1$
 
 	public static final String PREF_COMMENT_OUT_UNUSED_INCLUDES = "comment_out_unused_includes"; //$NON-NLS-1$
+
+	public static final String INCLUDE_STYLE_GROUP_RELATED = "allow_to_reorder_includes"; //$NON-NLS-1$
+
+	public static final String INCLUDE_STYLE_PARTNER = "include_style_partner"; //$NON-NLS-1$
+	public static final String INCLUDE_STYLE_GROUP_PARTNER = "include_style_group_partner"; //$NON-NLS-1$
+	public static final String INCLUDE_STYLE_SAME_FOLDER = "include_style_same_folder"; //$NON-NLS-1$
+	public static final String INCLUDE_STYLE_GROUP_SAME_FOLDER = "include_style_group_same_folder"; //$NON-NLS-1$
+	public static final String INCLUDE_STYLE_SUBFOLDER = "include_style_subfolder"; //$NON-NLS-1$
+	public static final String INCLUDE_STYLE_GROUP_SUBFOLDER = "include_style_group_subfolder"; //$NON-NLS-1$
+	public static final String INCLUDE_STYLE_GROUP_SYSTEM = "include_style_group_system"; //$NON-NLS-1$
 
 	/**
      * Initializes the given preference store with the default values.

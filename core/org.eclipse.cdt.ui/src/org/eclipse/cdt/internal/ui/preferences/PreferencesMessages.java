@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -364,6 +364,37 @@ public final class PreferencesMessages extends NLS {
 	public static String CodeTemplateBlock_export_error_hidden;
 	public static String CodeTemplateBlock_export_error_canNotWrite;
 
+	public static String IncludeStylePreferencePage_title;
+	public static String IncludeStyleBlock_categories_tab;
+	public static String IncludeStyleBlock_order_tab;
+	public static String IncludeCategoriesBlock_external_headers_node;
+	public static String IncludeCategoriesBlock_external_headers_node_description;
+	public static String IncludeCategoriesBlock_other_headers_node;
+	public static String IncludeCategoriesBlock_other_headers_node_description;
+	public static String IncludeCategoriesBlock_other_project_headers_node;
+	public static String IncludeCategoriesBlock_other_project_headers_node_description;
+	public static String IncludeCategoriesBlock_partner_header_node;
+	public static String IncludeCategoriesBlock_partner_header_node_description;
+	public static String IncludeCategoriesBlock_same_project_headers_node;
+	public static String IncludeCategoriesBlock_same_project_headers_node_description;
+	public static String IncludeCategoriesBlock_related_headers_node;
+	public static String IncludeCategoriesBlock_related_headers_node_description;
+	public static String IncludeCategoriesBlock_same_folder_header_node;
+	public static String IncludeCategoriesBlock_same_folder_header_node_description;
+	public static String IncludeCategoriesBlock_subfolder_header_node;
+	public static String IncludeCategoriesBlock_subfolder_header_node_description;
+	public static String IncludeCategoriesBlock_system_headers_node;
+	public static String IncludeCategoriesBlock_system_headers_node_description;
+	public static String IncludeCategoriesBlock_system_headers_with_extension_node;
+	public static String IncludeCategoriesBlock_system_headers_with_extension_node_description;
+	public static String IncludeCategoriesBlock_system_headers_without_extension_node;
+	public static String IncludeCategoriesBlock_system_headers_without_extension_node_description;
+	public static String IncludeCategoriesBlock_user_defined_categories_node;
+	public static String IncludeCategoriesBlock_user_defined_categories_node_description;
+	public static String IncludeGroupStyleBlock_keep_includes_together;
+	public static String IncludeGroupStyleBlock_use_relative_path;
+	public static String IncludeGroupStyleBlock_use_angle_brackets;
+	
 	public static String NameStylePreferencePage_title;
 	public static String NameStyleBlock_code_node;
 	public static String NameStyleBlock_files_node;

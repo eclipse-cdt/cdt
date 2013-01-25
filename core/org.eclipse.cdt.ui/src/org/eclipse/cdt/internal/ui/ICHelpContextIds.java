@@ -87,6 +87,7 @@ public interface ICHelpContextIds {
 	public static final String SPELLING_CONFIGURATION_BLOCK= PREFIX + "spelling_configuration_block_context"; //$NON-NLS-1$
 	public static final String CODE_STYLE_PREFERENCE_PAGE = PREFIX + "code_style_preference_context"; //$NON-NLS-1$
 	public static final String CODE_TEMPLATES_PREFERENCE_PAGE = PREFIX + "code_templates_preference_context"; //$NON-NLS-1$
+	public static final String INCLUDE_STYLE_PREFERENCE_PAGE = PREFIX + "include_style_preference_context"; //$NON-NLS-1$
 	public static final String NAME_STYLE_PREFERENCE_PAGE = PREFIX + "name_style_preference_context"; //$NON-NLS-1$
 
 	// Console view

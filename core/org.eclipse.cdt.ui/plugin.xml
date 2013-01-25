@@ -1224,6 +1224,14 @@
           <keywordReference id="org.eclipse.cdt.ui.common"/>
       </page>
       <page
+            name="%includeStylePreferencePage.name"
+            category="org.eclipse.cdt.ui.preferences.CodeStylePreferencePage"
+            class="org.eclipse.cdt.internal.ui.preferences.IncludeStylePreferencePage"
+            id="org.eclipse.cdt.ui.preferences.IncludeStylePreferencePage">
+          <keywordReference id="org.eclipse.cdt.ui.includestyle"/>
+          <keywordReference id="org.eclipse.cdt.ui.common"/>
+      </page>
+      <page
             name="%nameStylePreferencePage.name"
             category="org.eclipse.cdt.ui.preferences.CodeStylePreferencePage"
             class="org.eclipse.cdt.internal.ui.preferences.NameStylePreferencePage"
@@ -1281,6 +1289,9 @@
       <keyword
             label="%preferenceKeywords.codetemplates"
             id="org.eclipse.cdt.ui.codetemplates"/>
+      <keyword
+            label="%preferenceKeywords.includestyle"
+            id="org.eclipse.cdt.ui.includestyle"/>
       <keyword
             label="%preferenceKeywords.namestyle"
             id="org.eclipse.cdt.ui.namestyle"/>

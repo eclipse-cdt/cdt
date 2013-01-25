@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@
  * Javier Montalvo Orus (Symbian) - [198692] FTP should mark files starting with "." as hidden
  * David McKnight   (IBM)         - [209593] [api] add support for "file permissions" and "owner" properties for unix files
  * Martin Oberhuber (Wind River) - [235360][ftp][ssh][local] Return proper "Root" IHostFile
+ * Samuel Wu        (IBM)         - [398988] [ftp] FTP Only support to zVM
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.files.ftp;
@@ -67,7 +68,7 @@ public class FTPHostFile implements IHostFile, IHostFilePermissionsContainer
 		_size = size;
 		_isArchive = internalIsArchive();
 		_canRead = true;
-		_canWrite = false;
+		_canWrite = true;
 		_isRoot = isRoot;
 		_exists = exists;
 	}

@@ -99,18 +99,18 @@ public class ShellServiceTest extends RSEBaseConnectionTestCase {
 	}
 
 	protected IShellServiceSubSystem getShellServiceSubSystem() {
-		if (fPropertiesFileName == null) {
-			return null;
-		}
+		IShellServiceSubSystem result = null;
+		assertNotNull("Properties file name was null.", fPropertiesFileName);
 		IHost host = getHost(fPropertiesFileName);
-		ISubSystem[] ss = RSECorePlugin.getTheSystemRegistry()
-				.getServiceSubSystems(host, IShellService.class);
+		ISubSystem[] ss = RSECorePlugin.getTheSystemRegistry().getServiceSubSystems(host, IShellService.class);
 		for (int i = 0; i < ss.length; i++) {
 			if (ss[i] instanceof ShellServiceSubSystem) {
-				return (ShellServiceSubSystem) ss[i];
+				result = (ShellServiceSubSystem) ss[i];
+				break;
 			}
 		}
-		return null;
+		assertNotNull(String.format("Shell service subsystem was not found for host %s.", host.getAliasName()), result);
+		return result;
 	}
 
 	public void setUp() throws Exception {

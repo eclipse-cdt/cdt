@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,6 +52,7 @@
  * David McKnight   (IBM)        - [337612] Failed to copy the content of a tar file
  * David McKnight   (IBM)        - [232084] [local] local file service should not throw operation cancelled exception due to file sizes
  * David McKnight   (IBM)        - [374538] [local] localFile service tries to set modified time on virtual files
+ * Samuel Wu		(IBM)		 - [395981] Local file encoding is not handled properly 
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.local.files;
@@ -419,7 +420,7 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 				parentDir.mkdirs();
 			}
 			// encoding conversion required if it a text file but not an xml file
-			String systemEncoding = SystemEncodingUtil.getInstance().getEnvironmentEncoding();
+			String systemEncoding = SystemEncodingUtil.getInstance().getLocalDefaultEncoding();
 			boolean isEncodingConversionRequired = !isBinary && !systemEncoding.equals(hostEncoding); // should not convert if both encodings are the same
 
 			inputStream = new FileInputStream(file);
@@ -435,7 +436,7 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 
 			if (isEncodingConversionRequired)
 			{
-				outputWriter = new OutputStreamWriter(outputStream, hostEncoding);
+				outputWriter = new OutputStreamWriter(outputStream, systemEncoding);
 				bufWriter = new BufferedWriter(outputWriter);
 			}
 			else
@@ -1450,9 +1451,10 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 			archiveOperationMonitor = new SystemOperationMonitor();
 			checkArchiveOperationStatusThread = new CheckArchiveOperationStatusThread(archiveOperationMonitor, monitor);
 		}
+
+		boolean targetExists = targetFolder.exists();
 		boolean isTempFile = isTempFile(targetFolder);
-		
-		if (!(ArchiveHandlerManager.isVirtual(targetFolder.getAbsolutePath()) && !isTempFile) && !ArchiveHandlerManager.getInstance().isArchive(targetFolder))
+		if (!(targetExists && (ArchiveHandlerManager.isVirtual(targetFolder.getAbsolutePath()) && !isTempFile)) && !ArchiveHandlerManager.getInstance().isArchive(targetFolder))
 		{
 			// this is an optimization to speed up extractions from large zips. Instead of
 			// extracting to a temp location and then copying the temp files to the target location

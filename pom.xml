@@ -401,7 +401,10 @@
             <baselineMode>warn</baselineMode>
             <baselineRepositories>
               <repository>
+                <!--
                 <url>http://download.eclipse.org/tm/builds/${tm-stream}/nightly</url>
+                -->
+                <url>http://download.eclipse.org/tm/updates/3.4/</url>
               </repository>
             </baselineRepositories>
           </configuration>

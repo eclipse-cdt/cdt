@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2013 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -15,6 +15,7 @@
  * Rupen Mardirossian (IBM)		 - [208435] When validating name, check for previously used names for multiple renaming instances
  * David Dykstal (IBM) - [231828] make rename dialog a bit wider
  * David McKnight    (IBM)      - [251148] {0} appears in Collision Dialog
+ * David McKnight    (IBM)      - [399083] Rename of workstation file name not possibleby lowering the case of one character of the initial name
  ********************************************************************************/
 
 package org.eclipse.rse.ui.dialogs;
@@ -626,6 +627,7 @@ public class SystemRenameSingleDialog extends SystemPromptDialog
 	 */
 	protected SystemMessage validateNameInput(String theNewName)
 	{
+		boolean windowsDiffersByCase = false;
 	    errorMessage= null;
 
 	    if (theNewName == null)
@@ -640,13 +642,28 @@ public class SystemRenameSingleDialog extends SystemPromptDialog
 		  errorMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_NAME_EMPTY);
 		if (errorMessage == null)
 		{
-          if (adapter != null && adapter.namesAreEqual(inputElement, theNewName))
-		    errorMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_RENAME_OLDEQUALSNEW).makeSubstitution(inputName);
-		}
+          if (adapter != null && adapter.namesAreEqual(inputElement, theNewName)){
+       		  errorMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_RENAME_OLDEQUALSNEW).makeSubstitution(inputName);       		 
+       		  // need to allow changes in case though on Windows
+       		  IHost host = adapter.getSubSystem(inputElement).getHost();
+        	  if (host.getSystemType().isWindows()){
+        		  String originalName = adapter.getName(inputElement);
+        		  if (!originalName.equals(theNewName)){ // doesn't match case
+        			 // therefore this is legal
+        			  windowsDiffersByCase = true;
+        			  errorMessage = null;
+        		  }
+        	  }
+          }
+	    }
 	    }
 
-		if ((errorMessage == null) && (uniqueNameValidator != null))
+		if ((errorMessage == null) && (uniqueNameValidator != null)){
 		  errorMessage = uniqueNameValidator.validate(theNewName);
+		  if (errorMessage != null && windowsDiffersByCase){
+			  errorMessage = null;
+		  }
+		}
 		if(_namesInUse != null && _namesInUse.size()>0)
 		{
 			for(int i=0;i<_namesInUse.size();i++)
@@ -689,6 +706,16 @@ public class SystemRenameSingleDialog extends SystemPromptDialog
 		  	pageComplete = !adapter.namesAreEqual(inputElement, theNewName);
 		  	//System.out.println("back from namesAreEqual: " + pageComplete);
 
+			if (!pageComplete){
+				IHost host = adapter.getSubSystem(inputElement).getHost();
+				boolean isWindows = host.getSystemType().isWindows();
+				if (isWindows){
+					String originalName = adapter.getName(inputElement);
+					if (!originalName.equals(theNewName)){ // doesn't match case
+						pageComplete = true;
+					}
+				}
+			}
 		  }
 		}
 		return pageComplete;

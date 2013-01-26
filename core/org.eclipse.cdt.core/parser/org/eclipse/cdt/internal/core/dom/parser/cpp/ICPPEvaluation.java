@@ -84,8 +84,16 @@ public interface ICPPEvaluation extends ISerializableEvaluation {
 			IASTNode point);
 
 	/**
-	 * Determines size of the template parameter pack.
+	 * Searches the evaluation for a usage of a template parameter which is a parameter pack,
+	 * and returns the number of arguments bound to that parameter pack in the given
+	 * template parameter map.
+	 * 
+	 * Can also return one of the special values CPPTemplates.PACK_SIZE_DEFER,
+	 * CPPTemplates.PACK_SIZE_FAIL, and CPPTemplates.PACK_SIZE_NOT_FOUND. See their
+	 * declarations for their meanings.
 	 *
+	 * See also CPPTemplates.determinePackSize().
+	 * 
 	 * @noreference This method is not intended to be referenced by clients. 
 	 */
 	int determinePackSize(ICPPTemplateParameterMap tpMap);

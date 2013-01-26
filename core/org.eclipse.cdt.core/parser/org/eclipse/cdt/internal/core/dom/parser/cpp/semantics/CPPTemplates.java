@@ -161,9 +161,24 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Conversions.UDCMod
  * type instantiation.
  */
 public class CPPTemplates {
+	
+	// The three constants below are used as special return values for the various overloads
+	// of CPPTemplates.determinePackSize() and for ICPPEvaluation.determinePackSize(), which
+	// search a type, template argument, or value for a usage of a template parameter pack
+	// and return the number of arguments bound to that parameter pack in an 
+	// ICPPTemplateParameterMap.
+	
+	// Used to indicate that the parameter pack is not bound to any arguments in the
+	// template parameter map. Computation of the pack size needs to be deferred until
+	// arguments for it become available.
 	static final int PACK_SIZE_DEFER = -1;
+	
+	// Used to indicate that two different packs with different sizes were found.
 	static final int PACK_SIZE_FAIL = -2;
+	
+	// Used to indicate that no template parameter packs were found.
 	static final int PACK_SIZE_NOT_FOUND = Integer.MAX_VALUE;
+	
 	static enum TypeSelection { PARAMETERS, RETURN_TYPE, PARAMETERS_AND_RETURN_TYPE }
 
 	/**

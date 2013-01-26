@@ -15,12 +15,9 @@ import java.util.Map;
 import org.eclipse.cdt.debug.gdbjtag.core.GDBJtagDSFFinalLaunchSequence;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitorWithProgress;
 import org.eclipse.cdt.dsf.concurrent.Sequence;
-import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
-import org.eclipse.cdt.dsf.gdb.service.IGDBBackend;
 import org.eclipse.cdt.dsf.gdb.service.command.GDBControl;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.service.DsfSession;
-import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 
 
@@ -36,8 +33,6 @@ public class GDBJtagControl extends GDBControl {
 
 	@Override
 	protected Sequence getCompleteInitializationSequence(Map<String,Object> attributes, RequestMonitorWithProgress rm) {
-		GdbLaunch launch = (GdbLaunch)getSession().getModelAdapter(ILaunch.class);
-		IGDBBackend backend = getServicesTracker().getService(IGDBBackend.class);
-		return new GDBJtagDSFFinalLaunchSequence(getExecutor(), launch, backend.getSessionType(), backend.getIsAttachSession(), rm);
+		return new GDBJtagDSFFinalLaunchSequence(getSession(), attributes, rm);
 	}
 }

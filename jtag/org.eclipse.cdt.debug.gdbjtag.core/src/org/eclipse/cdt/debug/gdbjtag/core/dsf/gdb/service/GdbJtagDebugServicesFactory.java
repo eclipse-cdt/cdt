@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Ericsson - initial API and implementation
+ *     Marc Khouzam (Ericsson) - Added support for the different GDBControl versions (Bug 324101)
  *******************************************************************************/
 package org.eclipse.cdt.debug.gdbjtag.core.dsf.gdb.service;
 
@@ -29,6 +30,9 @@ public class GdbJtagDebugServicesFactory extends GdbDebugServicesFactory {
 
 	@Override
 	protected ICommandControl createCommandControl(DsfSession session, ILaunchConfiguration config) {
+		if (GDB_7_4_VERSION.compareTo(getVersion()) <= 0) {
+			return new GDBJtagControl_7_4(session, config, new CommandFactory_6_8());
+		}
 		if (GDB_7_2_VERSION.compareTo(getVersion()) <= 0) {
 			return new GDBJtagControl_7_2(session, config, new CommandFactory_6_8());
 		}

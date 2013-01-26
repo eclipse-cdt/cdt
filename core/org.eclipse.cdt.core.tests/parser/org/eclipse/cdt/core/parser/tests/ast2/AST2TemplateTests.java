@@ -7029,4 +7029,31 @@ public class AST2TemplateTests extends AST2TestBase {
 		assertNotNull(num);
 		assertEquals(1, num.longValue());
 	}
+	
+	//	template <bool...>
+	//	struct ice_or {
+	//	    static const bool value = false;
+	//	};
+	//	template <typename T>
+	//	struct is_foo {
+	//	    static const bool value = false;
+	//	};
+	//	template <typename... Args>
+	//	struct contains_foo {
+	//	    static const bool value = ice_or<is_foo<Args>::value...>::value;
+	//	};
+	//	template <bool> 
+	//	struct meta;
+	//	struct S { void bar(); };
+	//	template <> 
+	//	struct meta<false> {
+	//	    typedef S type;
+	//	};
+	//	int main() {
+	//	    meta<contains_foo<>::value>::type t;
+	//	    t.bar();
+	//	}
+	public void testVariadicNonTypeTemplateParameter_399039() throws Exception {
+		parseAndCheckBindings();
+	}
 }

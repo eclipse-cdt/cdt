@@ -102,7 +102,22 @@ public class ShellServiceTest extends RSEBaseConnectionTestCase {
 		IShellServiceSubSystem result = null;
 		assertNotNull("Properties file name was null.", fPropertiesFileName);
 		IHost host = getHost(fPropertiesFileName);
-		ISubSystem[] ss = RSECorePlugin.getTheSystemRegistry().getServiceSubSystems(host, IShellService.class);
+		System.out.printf("\nconnection name = %s", host.getAliasName());
+		System.out.printf("\nsystem type id = %s", host.getSystemType().getId());
+		ISubSystem[] ss = host.getSubSystems();
+		System.out.printf("\nall subsystems found = %d", new Integer(ss.length));
+		for (int i = 0; i < ss.length; i++) {
+			ISubSystem subsystem = ss[i];
+			String id = subsystem.getConfigurationId();
+			System.out.printf("\nsubsystem id = %s", id);
+		}
+		ss = RSECorePlugin.getTheSystemRegistry().getServiceSubSystems(host, IShellService.class);
+		System.out.printf("\nshell service subsystems found = %d", new Integer(ss.length));
+		for (int i = 0; i < ss.length; i++) {
+			ISubSystem subsystem = ss[i];
+			String id = subsystem.getConfigurationId();
+			System.out.printf("\nsubsystem configuration id = %s", id);
+		}
 		for (int i = 0; i < ss.length; i++) {
 			if (ss[i] instanceof ShellServiceSubSystem) {
 				result = (ShellServiceSubSystem) ss[i];

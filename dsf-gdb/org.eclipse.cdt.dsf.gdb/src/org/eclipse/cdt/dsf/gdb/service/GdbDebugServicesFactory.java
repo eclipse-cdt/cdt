@@ -215,6 +215,9 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 
 	@Override
 	protected IRunControl createRunControlService(DsfSession session) {
+		if (GDB_7_6_VERSION.compareTo(fVersion) <= 0) {
+			return new GDBRunControl_7_6(session);
+		}
 		if (GDB_7_0_VERSION.compareTo(fVersion) <= 0) {
 			return new GDBRunControl_7_0(session);
 		}

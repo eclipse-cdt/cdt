@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 Ericsson and others.
+ * Copyright (c) 2010, 2013 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,11 +15,7 @@ import java.util.Map;
 import org.eclipse.cdt.debug.core.model.IReverseToggleHandler;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IAdapterManager;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.debug.core.IRequest;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.actions.DebugCommandHandler;
 import org.eclipse.debug.ui.contexts.DebugContextEvent;
@@ -32,8 +28,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.commands.IElementUpdater;
 import org.eclipse.ui.menus.UIElement;
-import org.eclipse.ui.progress.WorkbenchJob;
-import org.eclipse.ui.services.IEvaluationService;
 
 /**
  * Command handler to toggle reverse debugging mode
@@ -122,30 +116,6 @@ public class ReverseToggleCommandHandler extends DebugCommandHandler implements 
             }
         }
         return adapter;
-    }
-
-    @Override
-    protected void postExecute(IRequest request, Object[] targets) {
-    	super.postExecute(request, targets);
-    	new WorkbenchJob("") { //$NON-NLS-1$
-			@Override
-			public IStatus runInUIThread(IProgressMonitor monitor) {
-		        // Request re-evaluation of property "org.eclipse.cdt.debug.ui.isReverseDebuggingEnabled" to update 
-			    // visibility of reverse stepping commands.
-			    IEvaluationService exprService = (IEvaluationService) PlatformUI.getWorkbench().getService(IEvaluationService.class);
-			    if (exprService != null) {
-			        exprService.requestEvaluation("org.eclipse.cdt.debug.ui.isReverseDebuggingEnabled"); //$NON-NLS-1$
-			    }
-			    // Refresh reverse toggle commands with the new state of reverse enabled. 
-			    // This is in order to keep multiple toggle actions in UI in sync.
-			    ICommandService commandService = (ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class);
-		        if (commandService != null) {
-		           commandService.refreshElements(REVERSE_TOGGLE_COMMAND_ID, null);
-		        }
-		        
-				return Status.OK_STATUS;
-			}
-		}.schedule();
     }
 
     @Override

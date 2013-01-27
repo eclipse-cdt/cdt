@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Wind River Systems and others.
+ * Copyright (c) 2008, 2013 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *     Ericsson           - Version 7.0
  *     Nokia              - create and use backend service. 
  *     Ericsson           - Added IReverseControl support
+ *     Marc Khouzam (Ericsson) - Added IReverseModeChangedDMEvent (Bug 399163) 
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.service;
@@ -21,6 +22,7 @@ import java.util.Hashtable;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
+import org.eclipse.cdt.dsf.datamodel.AbstractDMEvent;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
@@ -52,6 +54,22 @@ import org.eclipse.core.runtime.Status;
 
 public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunControl {
 	
+	/** @since 4.2 */
+	protected static class GdbReverseModeChangedDMEvent extends AbstractDMEvent<ICommandControlDMContext>
+	implements IReverseModeChangedDMEvent {
+		private boolean fIsEnabled;
+		
+		public GdbReverseModeChangedDMEvent(ICommandControlDMContext context, boolean enabled) {
+			super(context);
+			fIsEnabled = enabled;
+		}
+		
+		@Override
+		public boolean isReverseModeEnabled() {
+			return fIsEnabled;
+		}
+	}
+
 	private static class RunToLineActiveOperation {
 		private IMIExecutionDMContext fThreadContext;
 		private int fBpId;
@@ -75,6 +93,7 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
 		public boolean shouldSkipBreakpoints() { return fSkipBreakpoints; }
 	}
 
+	private IMICommandControl fCommandControl;
     private IGDBBackend fGdb;
 	private IMIProcesses fProcService;
 	private CommandFactory fCommandFactory;
@@ -111,7 +130,8 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
     	
         fGdb = getServicesTracker().getService(IGDBBackend.class);
         fProcService = getServicesTracker().getService(IMIProcesses.class);
-        fCommandFactory = getServicesTracker().getService(IMICommandControl.class).getCommandFactory();
+        fCommandControl = getServicesTracker().getService(IMICommandControl.class);
+        fCommandFactory = fCommandControl.getCommandFactory();
 
 		if (fGdb.getSessionType() == SessionType.CORE) {
 			// No execution for core files, so no support for reverse
@@ -629,5 +649,7 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
     /** @since 2.0 */
     public void setReverseModeEnabled(boolean enabled) {
     	fReverseModeEnabled = enabled;
+		getSession().dispatchEvent(new GdbReverseModeChangedDMEvent(fCommandControl.getContext(), fReverseModeEnabled), 
+				                   getProperties());
     }
 }

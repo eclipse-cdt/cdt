@@ -12,6 +12,7 @@
 package org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_6;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
@@ -31,7 +33,10 @@ import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
 import org.eclipse.cdt.dsf.debug.service.IMemory;
 import org.eclipse.cdt.dsf.debug.service.IMemory.IMemoryChangedEvent;
 import org.eclipse.cdt.dsf.debug.service.IMemory.IMemoryDMContext;
+import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
+import org.eclipse.cdt.dsf.gdb.service.IReverseRunControl;
+import org.eclipse.cdt.dsf.gdb.service.IReverseRunControl.IReverseModeChangedDMEvent;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
@@ -63,6 +68,7 @@ public class GDBConsoleSynchronizingTest_7_6 extends BaseTestCase {
 	private IGDBControl fCommandControl;
 	private IMemory fMemoryService;
 	private IExpressions fExprService;
+	private IRunControl fRunControl;
 
 	private List<IDMEvent<? extends IDMContext>> fEventsReceived = new ArrayList<IDMEvent<? extends IDMContext>>();
 
@@ -97,6 +103,9 @@ public class GDBConsoleSynchronizingTest_7_6 extends BaseTestCase {
 
                 fExprService = fServicesTracker.getService(IExpressions.class);
                 Assert.assertTrue(fExprService != null);
+
+                fRunControl = fServicesTracker.getService(IRunControl.class);
+                Assert.assertTrue(fRunControl != null);
 
                 // Register to breakpoint events
                 fSession.addServiceEventListener(GDBConsoleSynchronizingTest_7_6.this, null);
@@ -293,6 +302,105 @@ public class GDBConsoleSynchronizingTest_7_6 extends BaseTestCase {
         assertEquals(newValue, exprValue);
 	}
 	
+	/**
+     * This test verifies that enabling reverse debugging from the 
+     * console will properly trigger a DSF event to indicate the change and
+     * will be processed by the service.
+     */
+	@Test
+	public void testEnableRecord() throws Throwable {
+		assertTrue("Reverse debugging is not supported", fRunControl instanceof IReverseRunControl);
+		final IReverseRunControl reverseService = (IReverseRunControl)fRunControl;
+		
+		SyncUtil.runToLocation("testMemoryChanges");
+
+		// check starting state
+		Query<Boolean> query = new Query<Boolean>() {
+			@Override
+			protected void execute(final DataRequestMonitor<Boolean> rm) {
+				reverseService.isReverseModeEnabled(fCommandControl.getContext(), rm); 
+			}
+		};
+
+		fSession.getExecutor().execute(query);
+		Boolean enabled = query.get();
+		assertTrue("Reverse debugging should not be enabled", !enabled);
+		
+        fEventsReceived.clear();
+
+        queueConsoleCommand("record");
+
+        // Wait for the event
+        IReverseModeChangedDMEvent event = waitForEvent(IReverseModeChangedDMEvent.class);
+        assertEquals(true, event.isReverseModeEnabled());
+        
+        // Check the service
+        query = new Query<Boolean>() {
+			@Override
+			protected void execute(final DataRequestMonitor<Boolean> rm) {
+				reverseService.isReverseModeEnabled(fCommandControl.getContext(), rm); 
+			}
+		};
+		fSession.getExecutor().execute(query);
+		enabled = query.get();
+		assertTrue("Reverse debugging should be enabled", enabled);
+	}
+
+	/**
+     * This test verifies that disabling reverse debugging from the 
+     * console will properly trigger a DSF event to indicate the change and
+     * will be processed by the service.
+     */
+	@Test
+	public void testDisableRecord() throws Throwable {
+		assertTrue("Reverse debugging is not supported", fRunControl instanceof IReverseRunControl);
+		final IReverseRunControl reverseService = (IReverseRunControl)fRunControl;
+		
+		SyncUtil.runToLocation("testMemoryChanges");
+
+		fEventsReceived.clear();
+
+		// check starting state
+		Query<Boolean> query = new Query<Boolean>() {
+			@Override
+			protected void execute(final DataRequestMonitor<Boolean> rm) {
+				reverseService.enableReverseMode(fCommandControl.getContext(), true,
+						                         new ImmediateRequestMonitor(rm) {
+					@Override
+					protected void handleSuccess() {
+						reverseService.isReverseModeEnabled(fCommandControl.getContext(), rm); 						
+					}
+				});
+			}
+		};
+
+		fSession.getExecutor().execute(query);
+		Boolean enabled = query.get();
+		assertTrue("Reverse debugging should be enabled", enabled);
+		
+        // Wait for the event to avoid confusing it with the next one
+        IReverseModeChangedDMEvent event = waitForEvent(IReverseModeChangedDMEvent.class);
+        assertEquals(true, event.isReverseModeEnabled());
+		fEventsReceived.clear();
+
+        queueConsoleCommand("record stop");
+
+        // Wait for the event
+        event = waitForEvent(IReverseModeChangedDMEvent.class);
+        assertEquals(false, event.isReverseModeEnabled());
+        
+        // Check the service
+        query = new Query<Boolean>() {
+			@Override
+			protected void execute(final DataRequestMonitor<Boolean> rm) {
+				reverseService.isReverseModeEnabled(fCommandControl.getContext(), rm); 
+			}
+		};
+		fSession.getExecutor().execute(query);
+		enabled = query.get();
+		assertTrue("Reverse debugging should not be enabled", !enabled);
+	}
+
 	//////////////////////////////////////////////////////////////////////////////////////
 	// End of tests
 	//////////////////////////////////////////////////////////////////////////////////////

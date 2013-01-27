@@ -124,6 +124,12 @@ public class ReverseToggleCommandHandler extends DebugCommandHandler implements 
         return adapter;
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.debug.ui.actions.DebugCommandHandler#postExecute(org.eclipse.debug.core.IRequest, java.lang.Object[])
+     * 
+     * We keep this logic for users that may not do the refresh themselves.
+     */
     @Override
     protected void postExecute(IRequest request, Object[] targets) {
     	super.postExecute(request, targets);

@@ -1149,7 +1149,7 @@ public class CPPTemplates {
 		return new CPPTemplateTypeArgument(inst);
 	}
 
-	private static CPPTemplateParameterMap instantiateArgumentMap(ICPPTemplateParameterMap orig, ICPPTemplateParameterMap tpMap,
+	public static CPPTemplateParameterMap instantiateArgumentMap(ICPPTemplateParameterMap orig, ICPPTemplateParameterMap tpMap,
 			int packOffset, ICPPClassSpecialization within, IASTNode point) {
 		final Integer[] positions = orig.getAllParameterPositions();
 		CPPTemplateParameterMap newMap= new CPPTemplateParameterMap(positions.length);
@@ -2410,7 +2410,8 @@ public class CPPTemplates {
 		if (arg.isTypeValue())
 			return isDependentType(arg.getTypeValue());
 
-		return arg.getNonTypeEvaluation().isValueDependent();
+		ICPPEvaluation evaluation = arg.getNonTypeEvaluation();
+		return evaluation.isTypeDependent() || evaluation.isValueDependent();
 	}
 
 	public static boolean containsDependentType(List<IType> ts) {

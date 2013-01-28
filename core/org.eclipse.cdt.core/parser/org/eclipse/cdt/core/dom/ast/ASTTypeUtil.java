@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     Rational Software - initial implementation
  *     Markus Schorn (Wind River Systems)
  *     Sergey Prigogin (Google)
+ *     Nathan Ridge
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
@@ -182,6 +183,7 @@ public class ASTTypeUtil {
 	private static void appendArgument(ICPPTemplateArgument arg, boolean normalize, StringBuilder buf) {
 		IValue val= arg.getNonTypeValue();
 		if (val != null) {
+			appendType(arg.getTypeOfNonTypeValue(), normalize, buf);
 			buf.append(val.getSignature());
 		} else {
 			IType type = normalize ? arg.getTypeValue() : arg.getOriginalTypeValue();

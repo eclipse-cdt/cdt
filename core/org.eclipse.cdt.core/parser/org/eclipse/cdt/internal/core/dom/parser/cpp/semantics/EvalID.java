@@ -61,6 +61,7 @@ public class EvalID extends CPPEvaluation {
 	private final boolean fAddressOf;
 	private final boolean fQualified;
 	private final ICPPTemplateArgument[] fTemplateArgs;
+	private IType fType = null;
 
 	public EvalID(ICPPEvaluation fieldOwner, IBinding nameOwner, char[] simpleID, boolean addressOf,
 			boolean qualified, ICPPTemplateArgument[] templateArgs) {
@@ -124,7 +125,12 @@ public class EvalID extends CPPEvaluation {
 
 	@Override
 	public IType getTypeOrFunctionSet(IASTNode point) {
-		return new TypeOfDependentExpression(this);
+		// Cache the type so that ASTTypeUtil.getType() returns the same string
+		// across successive calls.
+		if (fType == null) {
+			fType = new TypeOfDependentExpression(this);
+		}
+		return fType;
 	}
 
 	@Override

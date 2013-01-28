@@ -182,6 +182,7 @@ public class ASTTypeUtil {
 	private static void appendArgument(ICPPTemplateArgument arg, boolean normalize, StringBuilder buf) {
 		IValue val= arg.getNonTypeValue();
 		if (val != null) {
+			appendType(arg.getTypeOfNonTypeValue(), normalize, buf);
 			buf.append(val.getSignature());
 		} else {
 			IType type = normalize ? arg.getTypeValue() : arg.getOriginalTypeValue();

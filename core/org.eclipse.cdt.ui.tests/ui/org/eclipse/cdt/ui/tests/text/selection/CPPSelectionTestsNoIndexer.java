@@ -1205,4 +1205,23 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
 	    assertEquals(offsetV, ((ASTNode) decl).getOffset());
 	}
 
+	//	template <typename>
+	//	struct A {
+	//	    struct S {
+	//	        void foo();
+	//	    };
+	//	    void test() {
+	//	        S s;
+	//	        s.foo();
+	//	    }
+	//	};
+	public void testBug399142() throws Exception {
+	    String code = getAboveComment();
+	    IFile file = importFile("testBug399142.cpp", code); //$NON-NLS-1$
+	    
+	    int offset = code.indexOf("s.foo()") + 2; 
+	    IASTNode decl = testF3(file, offset);
+	    assertTrue(decl instanceof IASTName);
+	}
+
 }

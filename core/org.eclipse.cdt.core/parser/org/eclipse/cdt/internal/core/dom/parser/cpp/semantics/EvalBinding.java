@@ -15,6 +15,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.glvalueType;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.prvalueType;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -28,6 +29,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
@@ -41,7 +43,9 @@ import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPParameter;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.core.runtime.CoreException;
@@ -241,20 +245,14 @@ public class EvalBinding extends CPPEvaluation {
 		}
 		if (binding instanceof ICPPTemplateNonTypeParameter) {
 			IType type= ((ICPPTemplateNonTypeParameter) binding).getType();
-			if (CPPTemplates.isDependentType(type))
-				return new TypeOfDependentExpression(this);
 			return prvalueType(type);
 		}
 		if (binding instanceof IVariable) {
 			final IType type = ((IVariable) binding).getType();
-			if (CPPTemplates.isDependentType(type))
-				return new TypeOfDependentExpression(this);
 			return SemanticUtil.mapToAST(glvalueType(type), point);
 		}
 		if (binding instanceof IFunction) {
 			final IFunctionType type = ((IFunction) binding).getType();
-			if (CPPTemplates.isDependentType(type))
-				return new TypeOfDependentExpression(this);
 			return SemanticUtil.mapToAST(type, point);
 		}
 		return ProblemType.UNKNOWN_FOR_EXPRESSION;
@@ -369,6 +367,23 @@ public class EvalBinding extends CPPEvaluation {
 			IType type = CPPTemplates.instantiateType(originalType, tpMap, packOffset, within, point);
 			if (originalType != type) {
 				return new EvalFixed(type, ValueCategory.LVALUE, Value.create(this));
+			}
+		} else if (binding instanceof CPPFunctionInstance) {
+			try {
+				CPPFunctionInstance origInstance = (CPPFunctionInstance) binding;
+				ICPPTemplateArgument[] origArgs = origInstance.getTemplateArguments();
+				ICPPTemplateArgument[] newArgs = CPPTemplates.instantiateArguments(origArgs, tpMap, packOffset, within, point, false);
+				if (origArgs != newArgs) {
+					CPPTemplateParameterMap newMap = CPPTemplates.instantiateArgumentMap(origInstance.getTemplateParameterMap(), 
+							tpMap, packOffset, within, point);
+					IType newType = CPPTemplates.instantiateType(origInstance.getType(), tpMap, packOffset, within, point);
+					IType[] newExceptionSpecs = CPPTemplates.instantiateTypes(origInstance.getExceptionSpecification(), 
+							tpMap, packOffset, within, point);
+					binding = new CPPFunctionInstance((ICPPFunction) origInstance.getTemplateDefinition(), origInstance.getOwner(), 
+							newMap, newArgs, (ICPPFunctionType) newType, newExceptionSpecs);
+					fType = null;  // trigger a recomputation of the type
+				}
+			} catch (DOMException e) {				
 			}
 		}
 		if (binding == fBinding)

@@ -6060,14 +6060,14 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
 		ICPPTemplateInstance inst;
 		inst= bh.assertNonProblem("f1(v)", 2);
-		assertEquals("<20>", ASTTypeUtil.getArgumentListString(inst.getTemplateArguments(), true));
+		assertEquals("<int20>", ASTTypeUtil.getArgumentListString(inst.getTemplateArguments(), true));
 		inst= bh.assertNonProblem("f1<20>(v)", -3);
-		assertEquals("<20>", ASTTypeUtil.getArgumentListString(inst.getTemplateArguments(), true));
+		assertEquals("<int20>", ASTTypeUtil.getArgumentListString(inst.getTemplateArguments(), true));
 		bh.assertProblem("f2(v)", 2);
 		inst= bh.assertNonProblem("f2<10>(v)", -3);
-		assertEquals("<10>", ASTTypeUtil.getArgumentListString(inst.getTemplateArguments(), true));
+		assertEquals("<int10>", ASTTypeUtil.getArgumentListString(inst.getTemplateArguments(), true));
 		inst= bh.assertNonProblem("f3(v)", 2);
-		assertEquals("<10>", ASTTypeUtil.getArgumentListString(inst.getTemplateArguments(), true));
+		assertEquals("<int10>", ASTTypeUtil.getArgumentListString(inst.getTemplateArguments(), true));
 	}
 
 	//	template <int i> class A { };
@@ -6086,9 +6086,9 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 		ICPPTemplateInstance inst;
 		bh.assertProblem("g(a1)", 1);
 		inst= bh.assertNonProblem("g<0>(a1)", -4);
-		assertEquals("<0>", ASTTypeUtil.getArgumentListString(inst.getTemplateArguments(), true));
+		assertEquals("<int0>", ASTTypeUtil.getArgumentListString(inst.getTemplateArguments(), true));
 		inst= bh.assertNonProblem("f(a1, a2)", 1);
-		assertEquals("<1>", ASTTypeUtil.getArgumentListString(inst.getTemplateArguments(), true));
+		assertEquals("<int1>", ASTTypeUtil.getArgumentListString(inst.getTemplateArguments(), true));
 	}
 
 	//	template<typename T> class A {
@@ -6134,9 +6134,9 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 		ICPPTemplateInstance inst;
 		bh.assertProblem("f(a)", 1);
 		inst= bh.assertNonProblem("f<1>(a)", -3);
-		assertEquals("<1>", ASTTypeUtil.getArgumentListString(inst.getTemplateArguments(), true));
+		assertEquals("<short int1>", ASTTypeUtil.getArgumentListString(inst.getTemplateArguments(), true));
 		inst= bh.assertNonProblem("g(b)", 1);
-		assertEquals("<1>", ASTTypeUtil.getArgumentListString(inst.getTemplateArguments(), true));
+		assertEquals("<short int1>", ASTTypeUtil.getArgumentListString(inst.getTemplateArguments(), true));
 	}
 
 	//	template<class T> void f(void(*)(T,int));

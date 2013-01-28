@@ -27,6 +27,7 @@ import org.eclipse.cdt.dsf.datamodel.IDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IExpressions;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMAddress;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
+import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
 import org.eclipse.cdt.dsf.debug.service.IMemory;
 import org.eclipse.cdt.dsf.debug.service.IMemory.IMemoryChangedEvent;
 import org.eclipse.cdt.dsf.debug.service.IMemory.IMemoryDMContext;
@@ -147,14 +148,24 @@ public class GDBConsoleSynchronizingTest_7_6 extends BaseTestCase {
 		IExpressionDMAddress data = query.get();
 		
         IMemoryDMContext memoryDmc = DMContexts.getAncestorOfType(frameDmc, IMemoryDMContext.class);
-        readMemory(memoryDmc, data.getAddress(), data.getSize());
+        readMemory(memoryDmc, data.getAddress(), 1);
         
         fEventsReceived.clear();
-        queueConsoleCommand("set variable i=100");
+        
+        final String NEW_VALUE = "100";
+        queueConsoleCommand("set variable i=" + NEW_VALUE);
         
         IMemoryChangedEvent memoryEvent = waitForEvent(IMemoryChangedEvent.class);
         assertEquals(1, memoryEvent.getAddresses().length);
         assertEquals(data.getAddress(), memoryEvent.getAddresses()[0]);
+
+        // Now verify the memory service knows the new memory value
+        MemoryByte[] memory = readMemory(memoryDmc, data.getAddress(), 1);
+        assertEquals(NEW_VALUE, Byte.toString(memory[0].getValue()));
+        
+        // Now verify the expressions service knows the new value
+        String exprValue = SyncUtil.getExpressionValue(exprDmc, IFormattedValues.DECIMAL_FORMAT);
+        assertEquals(NEW_VALUE, exprValue);
 	}
 
     /**
@@ -181,11 +192,22 @@ public class GDBConsoleSynchronizingTest_7_6 extends BaseTestCase {
 		IExpressionDMAddress data = query.get();
 		
         fEventsReceived.clear();
-        queueConsoleCommand("set variable i=100");
+
+        final String NEW_VALUE = "100";
+        queueConsoleCommand("set variable i=" + NEW_VALUE);
         
         IMemoryChangedEvent memoryEvent = waitForEvent(IMemoryChangedEvent.class);
         assertEquals(1, memoryEvent.getAddresses().length);
         assertEquals(data.getAddress(), memoryEvent.getAddresses()[0]);
+
+        // Now verify the memory service knows the new memory value
+        IMemoryDMContext memoryDmc = DMContexts.getAncestorOfType(frameDmc, IMemoryDMContext.class);
+        MemoryByte[] memory = readMemory(memoryDmc, data.getAddress(), 1);
+        assertEquals(NEW_VALUE, Byte.toString(memory[0].getValue()));
+
+        // Now verify the expressions service knows the new value
+        String exprValue = SyncUtil.getExpressionValue(exprDmc, IFormattedValues.DECIMAL_FORMAT);
+        assertEquals(NEW_VALUE, exprValue);
 	}
 
     /**
@@ -212,11 +234,22 @@ public class GDBConsoleSynchronizingTest_7_6 extends BaseTestCase {
 		IExpressionDMAddress data = query.get();
 
 		fEventsReceived.clear();
-        queueConsoleCommand("print i=100");
+		
+        final String NEW_VALUE = "100";
+        queueConsoleCommand("print i=" + NEW_VALUE);
         
         IMemoryChangedEvent memoryEvent = waitForEvent(IMemoryChangedEvent.class);
         assertEquals(1, memoryEvent.getAddresses().length);
         assertEquals(data.getAddress(), memoryEvent.getAddresses()[0]);
+        
+        // Now verify the memory service knows the new memory value
+        IMemoryDMContext memoryDmc = DMContexts.getAncestorOfType(frameDmc, IMemoryDMContext.class);
+        MemoryByte[] memory = readMemory(memoryDmc, data.getAddress(), 1);
+        assertEquals(NEW_VALUE, Byte.toString(memory[0].getValue()));
+
+        // Now verify the expressions service knows the new value
+        String exprValue = SyncUtil.getExpressionValue(exprDmc, IFormattedValues.DECIMAL_FORMAT);
+        assertEquals(NEW_VALUE, exprValue);
 	}
 
 	/**
@@ -242,11 +275,22 @@ public class GDBConsoleSynchronizingTest_7_6 extends BaseTestCase {
 		IExpressionDMAddress data = query.get();
 		
         fEventsReceived.clear();
-        queueConsoleCommand("set {int}&i=100");
-        
+
+        final String NEW_VALUE = "100";
+        queueConsoleCommand("set {int}&i=" + NEW_VALUE);
+
         IMemoryChangedEvent memoryEvent = waitForEvent(IMemoryChangedEvent.class);
         assertEquals(1, memoryEvent.getAddresses().length);
         assertEquals(data.getAddress(), memoryEvent.getAddresses()[0]);
+        
+        // Now verify the memory service knows the new memory value
+        IMemoryDMContext memoryDmc = DMContexts.getAncestorOfType(frameDmc, IMemoryDMContext.class);
+        MemoryByte[] memory = readMemory(memoryDmc, data.getAddress(), 1);
+        assertEquals(NEW_VALUE, Byte.toString(memory[0].getValue()));
+
+        // Now verify the expressions service knows the new value
+        String exprValue = SyncUtil.getExpressionValue(exprDmc, IFormattedValues.DECIMAL_FORMAT);
+        assertEquals(NEW_VALUE, exprValue);
 	}
 	
 	//////////////////////////////////////////////////////////////////////////////////////

@@ -1452,9 +1452,8 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 			checkArchiveOperationStatusThread = new CheckArchiveOperationStatusThread(archiveOperationMonitor, monitor);
 		}
 
-		boolean targetExists = targetFolder.exists();
 		boolean isTempFile = isTempFile(targetFolder);
-		if (!(targetExists && (ArchiveHandlerManager.isVirtual(targetFolder.getAbsolutePath()) && !isTempFile)) && !ArchiveHandlerManager.getInstance().isArchive(targetFolder))
+		if (!((ArchiveHandlerManager.isVirtual(targetFolder.getAbsolutePath()) && !isTempFile)) && !ArchiveHandlerManager.getInstance().isArchive(targetFolder))
 		{
 			// this is an optimization to speed up extractions from large zips. Instead of
 			// extracting to a temp location and then copying the temp files to the target location

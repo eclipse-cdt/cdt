@@ -30,6 +30,7 @@ import org.eclipse.cdt.dsf.debug.service.IExpressions;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMContext;
+import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMData;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues.IFormattedDataDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMContext;
@@ -432,6 +433,26 @@ public class SyncUtil {
         return fSession.getExecutor().submit(callable).get();
     }
 
+    public static String getExpressionValue(final IExpressionDMContext exprDmc, final String format) 
+        throws Throwable {
+		Query<String> query = new Query<String>() {
+			@Override
+			protected void execute(final DataRequestMonitor<String> rm) {
+				FormattedValueDMContext valueDmc = fExpressions.getFormattedValueContext(exprDmc, format);
+				fExpressions.getFormattedExpressionValue(valueDmc,
+						new ImmediateDataRequestMonitor<FormattedValueDMData>(rm) {
+					@Override
+					protected void handleSuccess() {
+						rm.done(getData().getFormattedValue());
+					}
+				});
+			}
+		};
+
+		fSession.getExecutor().execute(query);
+		return query.get(); 
+	}
+	
     public static FormattedValueDMContext getFormattedValue(
         final IFormattedValues service, final IFormattedDataDMContext dmc, final String formatId) throws Throwable 
     {

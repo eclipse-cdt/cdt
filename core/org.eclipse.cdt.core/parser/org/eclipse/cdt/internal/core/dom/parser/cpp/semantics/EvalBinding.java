@@ -238,20 +238,14 @@ public class EvalBinding extends CPPEvaluation {
 		}
 		if (binding instanceof ICPPTemplateNonTypeParameter) {
 			IType type= ((ICPPTemplateNonTypeParameter) binding).getType();
-			if (CPPTemplates.isDependentType(type))
-				return new TypeOfDependentExpression(this);
 			return prvalueType(type);
 		}
 		if (binding instanceof IVariable) {
 			final IType type = ((IVariable) binding).getType();
-			if (CPPTemplates.isDependentType(type))
-				return new TypeOfDependentExpression(this);
 			return SemanticUtil.mapToAST(glvalueType(type), point);
 		}
 		if (binding instanceof IFunction) {
 			final IFunctionType type = ((IFunction) binding).getType();
-			if (CPPTemplates.isDependentType(type))
-				return new TypeOfDependentExpression(this);
 			return SemanticUtil.mapToAST(type, point);
 		}
 		return ProblemType.UNKNOWN_FOR_EXPRESSION;
@@ -339,7 +333,7 @@ public class EvalBinding extends CPPEvaluation {
 		} else {
 			IBinding instantiatedBinding = instantiateBinding(origBinding, tpMap, packOffset, within, maxdepth, point);
 			if (instantiatedBinding != origBinding)
-				return new EvalBinding(instantiatedBinding, getFixedType());
+				return new EvalBinding(instantiatedBinding, null);
 		}
 		return this;
 	}

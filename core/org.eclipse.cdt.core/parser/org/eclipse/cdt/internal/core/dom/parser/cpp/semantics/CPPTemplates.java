@@ -1344,12 +1344,28 @@ public class CPPTemplates {
 		} else if (binding instanceof ICPPMethod || binding instanceof ICPPField || binding instanceof ICPPEnumeration) {
 			IBinding owner = binding.getOwner();
 			if (owner instanceof ICPPClassTemplate) {
-				owner = resolveUnknown(CPPTemplates.createDeferredInstance((ICPPClassTemplate) owner),
+				owner = resolveUnknown(createDeferredInstance((ICPPClassTemplate) owner),
 						tpMap, packOffset, within, point);
 			}
 			if (owner instanceof ICPPClassSpecialization) {
-				// TODO(nathanridge): use specializeMember instead, then combine with ICPPEnumeration branch
 				return ((ICPPClassSpecialization) owner).specializeMember(binding, point);
+			}
+		} else if (binding instanceof CPPFunctionInstance) {
+			// TODO(nathanridge): 
+			//   Maybe we should introduce a CPPDeferredFunctionInstance and have things that can return 
+			//   a dependent CPPFunctionInstance (like instantiateForAddressOfFunction) return that when
+			//   appropriate?
+			CPPFunctionInstance origInstance = (CPPFunctionInstance) binding;
+			ICPPTemplateArgument[] origArgs = origInstance.getTemplateArguments();
+			ICPPTemplateArgument[] newArgs = instantiateArguments(origArgs, tpMap, packOffset, within, point, false);
+			if (origArgs != newArgs) {
+				CPPTemplateParameterMap newMap = instantiateArgumentMap(origInstance.getTemplateParameterMap(), 
+						tpMap, packOffset, within, point);
+				IType newType = instantiateType(origInstance.getType(), tpMap, packOffset, within, point);
+				IType[] newExceptionSpecs = instantiateTypes(origInstance.getExceptionSpecification(), 
+						tpMap, packOffset, within, point);
+				return new CPPFunctionInstance((ICPPFunction) origInstance.getTemplateDefinition(), origInstance.getOwner(), 
+						newMap, newArgs, (ICPPFunctionType) newType, newExceptionSpecs);
 			}
 		}
 		return binding;
@@ -2460,7 +2476,8 @@ public class CPPTemplates {
 		if (arg.isTypeValue())
 			return isDependentType(arg.getTypeValue());
 
-		return arg.getNonTypeEvaluation().isValueDependent();
+		ICPPEvaluation evaluation = arg.getNonTypeEvaluation();
+		return evaluation.isTypeDependent() || evaluation.isValueDependent();
 	}
 
 	public static boolean containsDependentType(List<IType> ts) {

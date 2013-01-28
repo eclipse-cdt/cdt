@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Nathan Ridge
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text.selection;
 
@@ -1202,6 +1203,25 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
 	    assertTrue(decl instanceof IASTName);
 	    assertEquals("V", ((IASTName) decl).toString()); 
 	    assertEquals(offsetV, ((ASTNode) decl).getOffset());
+	}
+
+	//	template <typename>
+	//	struct A {
+	//	    struct S {
+	//	        void foo();
+	//	    };
+	//	    void test() {
+	//	        S s;
+	//	        s.foo();
+	//	    }
+	//	};
+	public void testBug399142() throws Exception {
+	    String code = getAboveComment();
+	    IFile file = importFile("testBug399142.cpp", code); //$NON-NLS-1$
+	    
+	    int offset = code.indexOf("s.foo()") + 2; 
+	    IASTNode decl = testF3(file, offset);
+	    assertTrue(decl instanceof IASTName);
 	}
 
 }

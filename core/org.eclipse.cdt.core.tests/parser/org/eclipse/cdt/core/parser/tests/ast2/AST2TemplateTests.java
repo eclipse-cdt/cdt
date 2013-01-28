@@ -7125,4 +7125,28 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testClassTemplateSpecializationPartialOrdering_398044b() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	template <typename>
+	//	struct meta {
+	//	    static const bool value = 1;
+	//	};
+	//	template <bool>
+	//	struct enable_if {};
+	//	template <>
+	//	struct enable_if<true> {
+	//	    typedef void type;
+	//	};
+	//	template <class T>
+	//	struct pair {
+	//	    template <typename = typename enable_if<meta<T>::value>::type>
+	//	    pair(int);
+	//	};
+	//	void push_back(pair<long>&&);
+	//	void push_back(const pair<long>&);
+	//	void test() {
+	//	    push_back(0);
+	//	}
+	public void testRegression_399142() throws Exception {
+		parseAndCheckBindings();
+	}
 }

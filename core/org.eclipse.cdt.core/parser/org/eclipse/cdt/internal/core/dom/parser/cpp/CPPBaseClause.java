@@ -47,8 +47,10 @@ public class CPPBaseClause implements ICPPBase, ICPPInternalBase {
     public IType getBaseClassType() {
 		if (baseClass == null) {
 	    	IBinding b = base.getName().resolveBinding();
-	    	if (b instanceof IProblemBinding || ! (b instanceof IType)) {
+	    	if (b instanceof IProblemBinding) {
 	    		baseClass =  new CPPClassType.CPPClassTypeProblem(base.getName(), ((IProblemBinding) b).getID());
+	    	} else if (! (b instanceof IType)) {
+	    		baseClass =  new CPPClassType.CPPClassTypeProblem(base.getName(), ISemanticProblem.BINDING_NO_CLASS);
 	    	} else {
 	    		baseClass= (IType) b;
 	    		IType check= getNestedType(baseClass, TDEF);

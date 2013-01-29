@@ -16,6 +16,23 @@
       "revId": "a0b796a37ce9a533e49cf576e995d7c69a5483ca",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPH//+s0\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/SizeofCalculator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 184,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-01-29T22:16:33Z",
+      "side": 1,
+      "message": "The following program prints 8, but SizeofCalculator with this change would return 100.\n#include \u003ccstdio\u003e\n\nstruct A {\n  char a[100];\n};\n\nstruct B {\n  A\u0026 b;\n};\n\nint main() {\n  printf(\"sizeof(B) \u003d %ld\\n\", sizeof(B));\n  return 0;\n}",
+      "revId": "a0b796a37ce9a533e49cf576e995d7c69a5483ca",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

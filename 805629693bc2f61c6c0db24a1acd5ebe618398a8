@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPH//+ps\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/CPPBaseClause.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-01-29T23:01:28Z",
+      "side": 1,
+      "message": "Should we check for ISemanticProblem instead of IProblemBinding?",
+      "revId": "805629693bc2f61c6c0db24a1acd5ebe618398a8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

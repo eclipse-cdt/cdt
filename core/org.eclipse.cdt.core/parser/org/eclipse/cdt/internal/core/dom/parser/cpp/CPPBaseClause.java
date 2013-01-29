@@ -1,14 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Andrew Niefer (IBM Corporation) - initial API and implementation
- *	  Bryan Wilkinson (QNX)
- *    Markus Schorn (Wind River Systems)
+ *     Andrew Niefer (IBM Corporation) - initial API and implementation
+ *	   Bryan Wilkinson (QNX)
+ *     Markus Schorn (Wind River Systems)
+ *     Nathan Ridge
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -47,8 +48,10 @@ public class CPPBaseClause implements ICPPBase, ICPPInternalBase {
     public IType getBaseClassType() {
 		if (baseClass == null) {
 	    	IBinding b = base.getName().resolveBinding();
-	    	if (b instanceof IProblemBinding || ! (b instanceof IType)) {
+	    	if (b instanceof IProblemBinding) {
 	    		baseClass =  new CPPClassType.CPPClassTypeProblem(base.getName(), ((IProblemBinding) b).getID());
+	    	} else if (!(b instanceof IType)) {
+	    		baseClass =  new CPPClassType.CPPClassTypeProblem(base.getName(), ISemanticProblem.BINDING_NO_CLASS);
 	    	} else {
 	    		baseClass= (IType) b;
 	    		IType check= getNestedType(baseClass, TDEF);

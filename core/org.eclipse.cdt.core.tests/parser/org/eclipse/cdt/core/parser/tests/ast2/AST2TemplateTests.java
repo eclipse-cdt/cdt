@@ -7068,4 +7068,34 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testVariadicNonTypeTemplateParameter_382074() throws Exception {
 		parseAndCheckBindings();
 	}
+
+	//	template <typename...>
+	//	struct common_type;
+	//	template <typename T>
+	//	struct common_type<T> {
+	//	    typedef int type;
+	//	};
+	//	template <typename T, typename... U>
+	//	struct common_type<T, U...> {
+	//	    typedef int type;
+	//	};
+	//	typedef common_type<int>::type type;
+	public void testClassTemplateSpecializationPartialOrdering_398044a() throws Exception {
+		parseAndCheckBindings();
+	}
+
+	//	template <typename>
+	//	class A;
+	//	template <typename R, typename... Args>
+	//	class A<R(*)(Args...)> {
+	//	};
+	//	template <typename R>
+	//	class A<R*> {
+	//	};
+	//	int main() {
+	//	    A<bool(*)()> mf;
+	//	}
+	public void testClassTemplateSpecializationPartialOrdering_398044b() throws Exception {
+		parseAndCheckBindings();
+	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 IBM Corporation and others.
+ * Copyright (c) 2004, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *     Bryan Wilkinson (QNX)
  *     Andrew Ferguson (Symbian)
  *     Sergey Prigogin (Google)
+ *     Nathan Ridge
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
@@ -49,7 +50,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
@@ -663,46 +663,7 @@ public class SemanticUtil {
 		return -1;
 	}
 
-	public static boolean containsUniqueTypeForParameterPack(IType type) {
-		if (type instanceof ICPPFunctionType) {
-			final ICPPFunctionType ft = (ICPPFunctionType) type;
-			if (containsUniqueTypeForParameterPack(ft.getReturnType()))
-				return true;
-
-			for (IType pt : ft.getParameterTypes()) {
-				if (containsUniqueTypeForParameterPack(pt))
-					return true;
-			}
-			return false;
-		}
-
-		if (type instanceof ICPPPointerToMemberType) {
-			if (containsUniqueTypeForParameterPack(((ICPPPointerToMemberType) type).getMemberOfClass()))
-				return true;
-		}
-
-		if (type instanceof IBinding) {
-			IBinding owner = ((IBinding) type).getOwner();
-			if (owner instanceof IType) {
-				if (containsUniqueTypeForParameterPack((IType) owner))
-					return true;
-			}
-		}
-
-		if (type instanceof ICPPTemplateInstance) {
-			ICPPTemplateArgument[] args = ((ICPPTemplateInstance) type).getTemplateArguments();
-			for (ICPPTemplateArgument arg : args) {
-				if (containsUniqueTypeForParameterPack(arg.getTypeValue()))
-					return true;
-			}
-		}
-
-		if (type instanceof ITypeContainer) {
-			final ITypeContainer tc = (ITypeContainer) type;
-			final IType nestedType= tc.getType();
-			return containsUniqueTypeForParameterPack(nestedType);
-		}
-
+	public static boolean isUniqueTypeForParameterPack(IType type) {
 		if (type instanceof UniqueType) {
 			return ((UniqueType) type).isForParameterPack();
 		}

@@ -7029,4 +7029,13 @@ public class AST2TemplateTests extends AST2TestBase {
 		assertNotNull(num);
 		assertEquals(1, num.longValue());
 	}
+
+	//	template <int...> struct A {};
+	//	template <int... I> void foo(A<I...>); 
+	//	int main() {
+	//		foo(A<0>());
+	//	}
+	public void testVariadicNonTypeTemplateParameter_382074() throws Exception {
+		parseAndCheckBindings();
+	}
 }

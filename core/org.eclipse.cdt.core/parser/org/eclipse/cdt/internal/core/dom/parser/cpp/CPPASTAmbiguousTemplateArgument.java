@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Symbian Software Systems and others.
+ * Copyright (c) 2008, 2013 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     Andrew Ferguson (Symbian) - Initial Implementation
  *     Markus Schorn (Wind River Systems)
  *     IBM Corporation
+ *     Nathan Ridge
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -68,12 +69,18 @@ public class CPPASTAmbiguousTemplateArgument extends ASTAmbiguousNode implements
 				name.setBinding(null);
 				namedTypeSpec.setName(name);
 			}
-		} else if (node instanceof IASTIdExpression) {
-			IASTIdExpression id= (IASTIdExpression) node;
-			final IASTName name = id.getName();
-			name.setBinding(null);
-			id.setName(name);
-		}
+		} else {
+			// Unwrap variadic pack expansion if necessary.
+			if (node instanceof ICPPASTPackExpansionExpression)
+				node= ((ICPPASTPackExpansionExpression) node).getPattern();
+
+			if (node instanceof IASTIdExpression) {
+				IASTIdExpression id= (IASTIdExpression) node;
+				final IASTName name = id.getName();
+				name.setBinding(null);
+				id.setName(name);
+			}
+		} 
 	}
 
 	@Override

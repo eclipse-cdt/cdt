@@ -2226,6 +2226,9 @@ public class CPPTemplates {
 					pType= instantiateType(pType, map, -1, null, point);
 				}
 
+				if (argType instanceof ICPPParameterPackType) {
+					argType = ((ICPPParameterPackType) argType).getType();
+				}
 				if (argType instanceof ICPPUnknownType) {
 					return new CPPTemplateNonTypeArgument(arg.getNonTypeValue(), pType);
 				}

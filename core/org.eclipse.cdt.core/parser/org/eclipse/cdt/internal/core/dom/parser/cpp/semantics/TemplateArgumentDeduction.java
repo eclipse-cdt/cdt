@@ -37,7 +37,6 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
-import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IValue;
@@ -607,15 +606,36 @@ public class TemplateArgumentDeduction {
 			final ICPPTemplateArgument[] p, final ICPPTemplateArgument[] a, CPPTemplateParameterMap map,
 			IASTNode point) throws DOMException {
 		TemplateArgumentDeduction deduct= new TemplateArgumentDeduction(pars, null, map, 0);
-		final int len= a.length;
-		if (p == null || p.length != len) {
+		if (p == null) {
 			return false;
 		}
-		for (int j= 0; j < len; j++) {
-			if (!deduct.fromTemplateArgument(p[j], a[j], point)) {
-				return false;
+		boolean containsPackExpansion= false;
+		for (int j= 0; j < p.length; j++) {
+			if (p[j].isPackExpansion()) {
+				deduct = new TemplateArgumentDeduction(deduct, a.length - j);
+				containsPackExpansion= true;
+				if (j != p.length - 1) {
+					return false;  // A pack expansion must be the last argument to the specialization.
+				}
+				ICPPTemplateArgument pattern = p[j].getExpansionPattern();
+				for (int i= j; i < a.length; i++) {
+					if (!deduct.fromTemplateArgument(pattern, a[i], point)) {
+						return false;
+					}
+					deduct.incPackOffset();
+				}
+				break;
+			} else {
+				if (j >= a.length) {
+					return false;  // Not enough arguments.
+				}
+				if (!deduct.fromTemplateArgument(p[j], a[j], point)) {
+					return false;
+				}
 			}
 		}
+		if (!containsPackExpansion && p.length < a.length)
+			return false;  // Too many arguments.
 		return verifyDeduction(pars, map, false, point);
 	}
 

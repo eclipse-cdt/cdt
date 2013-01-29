@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPH//+rs\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/parser/InternalParserUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 163,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-01-29T22:43:32Z",
+      "side": 1,
+      "message": "What is the purpose of the job? Have you measured performance implications of this change for a large project with local files?",
+      "revId": "5b374c3b275d441f6906f5a1561290c6f67fd4a6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

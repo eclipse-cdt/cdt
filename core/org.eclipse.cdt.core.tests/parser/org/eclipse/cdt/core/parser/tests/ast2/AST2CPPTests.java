@@ -10125,4 +10125,17 @@ public class AST2CPPTests extends AST2TestBase {
 		parseAndCheckBindings(getAboveComment(), CPP, true);
 	}
 
+	//	template <bool>
+	//	struct enable_if {
+	//	};
+	//	template <>
+	//	struct enable_if<true> {
+	//	    typedef void type;
+	//	};
+	//	struct base {};
+	//	struct derived : base {};
+	//	typedef enable_if<__is_base_of(base, derived)>::type T;
+	public void testIsBaseOf_399353() throws Exception {
+		parseAndCheckBindings(getAboveComment(), CPP, true);
+	}
 }

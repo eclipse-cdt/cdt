@@ -1,0 +1,140 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPH//+W4\u003d",
+        "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/internal/core/model/PathEntryUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 517,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-01-30T23:52:53Z",
+      "side": 1,
+      "message": "It makes sense to introduce UNCPathConverter.isUNC(IPath) method that operates on path directly without calling toString().",
+      "revId": "408da76a4a781a4cc55ab3e1a2156f17baa17550",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPH//+XE\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/parser/InternalParserUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 178,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-01-30T23:52:53Z",
+      "side": 1,
+      "message": "For readability the non-local case should be handled in a separate method.",
+      "revId": "408da76a4a781a4cc55ab3e1a2156f17baa17550",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPH//+WM\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/parser/InternalParserUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 232,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-01-30T23:52:53Z",
+      "side": 1,
+      "message": "Should this job be hidden from the user to avoid too much flicker in the Progress view?",
+      "revId": "408da76a4a781a4cc55ab3e1a2156f17baa17550",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPH//+WE\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/parser/InternalParserUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 234,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-01-30T23:52:53Z",
+      "side": 1,
+      "message": "This code doesn\u0027t prevent blockage of the calling thread unless somebody would call Thread.interrupt(). I don\u0027t think this will happen if this code is called from CEditor.",
+      "revId": "408da76a4a781a4cc55ab3e1a2156f17baa17550",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPH//+Xg\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/parser/scanner/InternalFileContentProvider.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-01-30T23:52:53Z",
+      "side": 1,
+      "message": "exists[0] is never read from.",
+      "revId": "408da76a4a781a4cc55ab3e1a2156f17baa17550",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPH//+WI\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/parser/scanner/InternalFileContentProvider.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-01-30T23:52:53Z",
+      "side": 1,
+      "message": "Should this job be hidden from the user to avoid too much flicker in the Progress view?",
+      "revId": "408da76a4a781a4cc55ab3e1a2156f17baa17550",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPH//+XI\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/parser/scanner/InternalFileContentProvider.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-01-30T23:52:53Z",
+      "side": 1,
+      "message": "This code doesn\u0027t prevent blockage of the calling thread unless somebody would call Thread.interrupt(). I don\u0027t think this will happen if this code is called from CEditor.",
+      "revId": "408da76a4a781a4cc55ab3e1a2156f17baa17550",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPH//+W0\u003d",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/core/CCorePluginResources.properties",
+        "patchSetId": 2
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-01-30T23:52:53Z",
+      "side": 1,
+      "message": "include -\u003e existence of",
+      "revId": "408da76a4a781a4cc55ab3e1a2156f17baa17550",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

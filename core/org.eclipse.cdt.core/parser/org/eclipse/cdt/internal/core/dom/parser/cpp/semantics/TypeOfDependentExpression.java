@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Wind River Systems, Inc. and others.
+ * Copyright (c) 2012, 2013 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,9 +7,11 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
+ *     Sergey Prigogin (Google) 
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableType;
@@ -46,6 +48,17 @@ public class TypeOfDependentExpression implements ICPPUnknownType, ISerializable
 		} catch (CloneNotSupportedException e) {
 			return null;
 		}
+	}
+
+	public char[] getSignature() {
+		SignatureBuilder buf = new SignatureBuilder();
+		try {
+			marshal(buf);
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return new char[] { '?' };
+		}
+		return buf.getSignature();
 	}
 
 	@Override

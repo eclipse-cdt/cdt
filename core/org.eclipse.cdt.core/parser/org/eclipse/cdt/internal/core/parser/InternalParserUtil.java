@@ -35,7 +35,13 @@ import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * Utility for creating code readers
@@ -149,37 +155,87 @@ public class InternalParserUtil extends ParserFactory {
 		return createExternalFileContent(ifl.getURI().getPath(), SYSTEM_DEFAULT_ENCODING);
 	}
 	
-	public static InternalFileContent createWorkspaceFileContent(IFile file) {
-		String path= file.getLocationURI().getPath();
-		path= normalizePath(path, file);
-
+	public static InternalFileContent createWorkspaceFileContent(final IFile file) {
+		String filePath = file.getLocationURI().getPath();
+		final String path = normalizePath(filePath, file);
 		InputStream input;
 		try {
-			long fileReadTime = System.currentTimeMillis();
-			IFileStore store = EFS.getStore(file.getLocationURI());
-			IFileInfo fileInfo = store.fetchInfo();
-			input= file.getContents(true);
-			if (!(input instanceof FileInputStream)) {
-				/*
-				 * In general, non-local file-systems will not use FileInputStream.
-				 * Instead make a cached copy of the file and open an input stream to that.
-				 */
-				File fileCache = store.toLocalFile(EFS.CACHE, null);
+			final long fileReadTime = System.currentTimeMillis();
+			final IFileStore store = EFS.getStore(file.getLocationURI());
+			if (store.getFileSystem().equals(EFS.getLocalFileSystem())) {
+				IFileInfo fileInfo = store.fetchInfo();
+				input = file.getContents(true);
 				try {
-					input = new FileInputStream(fileCache);
-				} catch (FileNotFoundException e) {
-					CCorePlugin.log(e);
+					  return createFileContent(path, null, file.getCharset(), input, 
+							  fileInfo.getLastModified(), fileInfo.getLength(), fileReadTime);
+				} finally {
+					  try {	
+						  input.close();
+					  } catch (IOException e) {
+					  }
+				}
+			} else {
+				final InternalFileContent[] fileContent = new InternalFileContent[1];
+			
+				Job getContentsJob = new Job(NLS.bind(CCorePlugin.getResourceString("InternalParserUtil.getContentsJob"), path)){ //$NON-NLS-1$
+					@Override
+					protected IStatus run(IProgressMonitor monitor) {
+						SubMonitor subMon = SubMonitor.convert(monitor, 100);
+						InputStream input;
+						try {
+							String localPath = null;
+							IFileInfo fileInfo = store.fetchInfo(EFS.NONE, subMon.newChild(10));
+							if (subMon.isCanceled()) {
+								return Status.CANCEL_STATUS;
+							}
+							/*
+							 * In general, non-local file-systems will not use FileInputStream.
+							 * Instead make a cached copy of the file and open an input stream to that.
+							 */
+							File fileCache = store.toLocalFile(EFS.CACHE, subMon.newChild(90));
+							if (subMon.isCanceled()) {
+								return Status.CANCEL_STATUS;
+							}
+							try {
+								input = new FileInputStream(fileCache);
+								localPath = fileCache.getAbsolutePath();
+							} catch (FileNotFoundException e) {
+								CCorePlugin.log(e);
+								return null;
+							}
+							try {
+								fileContent[0] = createFileContent(path, localPath, file.getCharset(), input,
+										fileInfo.getLastModified(), fileInfo.getLength(), fileReadTime);
+							} finally {
+								try {
+									input.close();
+								} catch (IOException e) {
+								}
+							}
+						} catch (CoreException e) {
+							switch (e.getStatus().getCode()) {
+							case IResourceStatus.NOT_FOUND_LOCAL:
+							case IResourceStatus.NO_LOCATION_LOCAL:
+							case IResourceStatus.FAILED_READ_LOCAL:
+							case IResourceStatus.RESOURCE_NOT_LOCAL:
+							case IResourceStatus.RESOURCE_NOT_FOUND:
+								break;
+							default:
+								CCorePlugin.log(e);
+								break;
+							}
+							return e.getStatus();
+						}					
+						return Status.OK_STATUS;
+					}
+				};
+				getContentsJob.schedule();
+				try {
+					getContentsJob.join();
+				} catch (InterruptedException e) {
 					return null;
 				}
-			}
-			try {
-				return createFileContent(path, file.getCharset(), input,
-						fileInfo.getLastModified(), fileInfo.getLength(), fileReadTime);
-			} finally {
-				try {
-					input.close();
-				} catch (IOException e) {
-				}
+				return fileContent[0];
 			}
 		} catch (CoreException e) {
 			switch (e.getStatus().getCode()) {
@@ -193,8 +249,8 @@ public class InternalParserUtil extends ParserFactory {
 				CCorePlugin.log(e);
 				break;
 			}
-			return null;
 		}
+		return null;
 	}
 
 	/**
@@ -205,6 +261,7 @@ public class InternalParserUtil extends ParserFactory {
 		long fileReadTime = System.currentTimeMillis();
 		File includeFile = null;
 		String path = null;
+		String localPath = null;
 		if (!UNCPathConverter.isUNC(externalLocation)) {
 			includeFile = new File(externalLocation);
 		    // Use the canonical path so that in case of non-case-sensitive OSs
@@ -216,6 +273,7 @@ public class InternalParserUtil extends ParserFactory {
 				IFileStore store = EFS.getStore(UNCPathConverter.getInstance().toURI(externalLocation));
 				includeFile = store.toLocalFile(EFS.CACHE, null);
 				path = externalLocation;
+				localPath = includeFile.getAbsolutePath();
 			} catch (CoreException e) {
 			}
 		}
@@ -230,7 +288,7 @@ public class InternalParserUtil extends ParserFactory {
 				return null;
 			}
 			try {
-				return createFileContent(path, encoding, in, timestamp, fileSize, fileReadTime);
+				return createFileContent(path, localPath, encoding, in, timestamp, fileSize, fileReadTime);
 			} finally {
 				try {
 					in.close();
@@ -241,10 +299,13 @@ public class InternalParserUtil extends ParserFactory {
 		return null;
 	}
 
-	private static InternalFileContent createFileContent(String path, String charset, InputStream in,
+	private static InternalFileContent createFileContent(String path, String localPath, String charset, InputStream in,
 			long fileTimestamp, long fileSize, long fileReadTime) {
+		if (localPath == null) {
+			localPath = path;
+		}
 		try {
-			AbstractCharArray chars= FileCharArray.create(path, charset, in);
+			AbstractCharArray chars= FileCharArray.create(localPath, charset, in);
 			if (chars == null)
 				return null;
 			

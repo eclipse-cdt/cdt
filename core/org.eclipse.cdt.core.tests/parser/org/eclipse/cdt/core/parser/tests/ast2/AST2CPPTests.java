@@ -128,6 +128,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPMethod;
@@ -10152,5 +10153,37 @@ public class AST2CPPTests extends AST2TestBase {
 	//	typedef enable_if<__is_base_of(base, derived)>::type T;
 	public void testIsBaseOf_399353() throws Exception {
 		parseAndCheckBindings(getAboveComment(), CPP, true);
+	}
+
+	//	template <bool> struct B{};
+	//	template <>
+	//	struct B<true> {
+	//	    void waldo();
+	//	};
+	//	typedef char& one;
+	//	int main() {
+	//	    B<sizeof(one) == 1> b;
+	//	    b.waldo();
+	//	}
+	public void testSizeofReference_397342() throws Exception {
+		parseAndCheckBindings();
+	}
+
+	//	struct A {
+	//		char a[100];
+	//	};
+	//	struct B {
+	//		A& b;
+	//	};
+	//	A* p;
+	public void testSizeofStructWithReferenceField_397342() throws Exception {
+		BindingAssertionHelper bh = getAssertionHelper();
+		IASTName nameB = bh.findName("B");
+		IASTName namep = bh.findName("p");
+		ICPPClassType B = (ICPPClassType) nameB.resolveBinding();
+		IPointerType ptrToA = (IPointerType) ((ICPPVariable) namep.resolveBinding()).getType();
+		long pointerSize = SizeofCalculator.getSizeAndAlignment(ptrToA, namep).size;
+		long BSize = SizeofCalculator.getSizeAndAlignment(B, nameB).size;
+		assertEquals(pointerSize, BSize);
 	}
 }

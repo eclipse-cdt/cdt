@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2012 IBM Corporation and others.
+ * Copyright (c) 2002, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,6 +49,7 @@
  * David McKnight   (IBM)        - [385420] double-click to open System editor from Remote Systems view not working
  * David McKnight   (IBM)        - [385416] NPE during shutdown with remote editor open
  * David McKnight   (IBM)        - [390609] Cached file opened twice in case of eclipse linked resource..
+ * Xuan Chen        (IBM)        - [399101] RSE edit actions on local files that map to actually workspace resources should not use temp files
  *******************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -1009,6 +1010,16 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 	 */
 	private String getDownloadPath()
 	{
+		//If this remote file is actually local, and it is part of a project in this workspace, just return the absolute path of the remote file.
+		IFile file = null;
+		if (remoteFile.getHost().getSystemType().isLocal())
+		{
+			String absolutePath = remoteFile.getAbsolutePath();
+			file = getProjectFileForLocation(absolutePath);
+		}
+		if (file != null) {
+			return remotePath;
+		}
 
 		IPath path = new Path(root);
 
@@ -2172,6 +2183,13 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 	 */
 	public void setEditorDescriptor(IEditorDescriptor descriptor){
 		_editorDescriptor = descriptor;
+	}
+	
+	private static IFile getProjectFileForLocation(String absolutePath)
+	{
+		IPath workspacePath = new Path(absolutePath);
+		IFile file = SystemBasePlugin.getWorkspaceRoot().getFileForLocation(workspacePath);
+		return file;
 	}
 	
 }

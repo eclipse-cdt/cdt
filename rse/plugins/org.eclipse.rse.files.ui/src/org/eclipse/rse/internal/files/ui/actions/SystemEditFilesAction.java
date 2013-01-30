@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2010 IBM Corporation and others.
+ * Copyright (c) 2002, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@
  * David McKnight   (IBM)        - [276103] Files with names in different cases are not handled properly
  * David McKnight   (IBM)        - [309813] RSE permits opening of file after access removed
  * David McKnight   (IBM)        - [312362] Editing Unix file after it changes on host edits old data
+ * Xuan Chen        (IBM)        - [399101] RSE edit actions on local files that map to actually workspace resources should not use temp files
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
@@ -26,6 +27,8 @@ package org.eclipse.rse.internal.files.ui.actions;
 import java.util.Iterator;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.files.ui.resources.SystemEditableRemoteFile;
@@ -35,6 +38,7 @@ import org.eclipse.rse.internal.files.ui.view.DownloadAndOpenJob;
 import org.eclipse.rse.subsystems.files.core.SystemIFileProperties;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
+import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.actions.SystemBaseAction;
 import org.eclipse.rse.ui.view.ISystemEditableRemoteObject;
 import org.eclipse.swt.widgets.Shell;
@@ -188,6 +192,31 @@ public class SystemEditFilesAction extends SystemBaseAction {
 			editorId = "org.eclipse.ui.DefaultTextEditor"; //$NON-NLS-1$
 		}
 		
+		//If this is a local file in the workspace projects, just open it up.
+		String absolutePath = remoteFile.getAbsolutePath();
+		IFile localFile = null;
+		if (remoteFile.getHost().getSystemType().isLocal())
+		{
+			localFile = SystemFileActionUtility.getProjectFileForLocation(absolutePath);
+		}
+		if (localFile != null) {
+			if (!localFile.exists()) {
+				try {
+					localFile.refreshLocal(IResource.DEPTH_ZERO, null);
+				} catch (CoreException e) {
+					SystemBasePlugin.logError(e.getLocalizedMessage(), e);
+				}
+			}
+			try {
+				SystemFileActionUtility.openEditor(localFile, !remoteFile.canWrite());
+			}
+			catch (Exception e) {
+				SystemBasePlugin.logError(e.getLocalizedMessage(), e);
+				return;
+			}
+			return;
+		}
+		
 		SystemEditableRemoteFile editable = SystemRemoteEditManager.getEditableRemoteObject(remoteFile, des);
 		if (editable == null){
 			// case for cancelled operation when user was prompted to save file of different case
@@ -230,7 +259,5 @@ public class SystemEditFilesAction extends SystemBaseAction {
 					
 		}
 	}
-
-
 
 }

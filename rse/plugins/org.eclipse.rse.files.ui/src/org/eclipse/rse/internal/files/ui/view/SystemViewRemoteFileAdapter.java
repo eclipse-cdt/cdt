@@ -80,6 +80,7 @@
  * David McKnight   (IBM)        - [389838] Fast folder transfer does not account for code page
  * David Mcknight   (IBM)        - [374681] Incorrect number of children on the properties page of a directory
  * Samuel Wu        (IBM)        - [398988] [ftp] FTP Only support to zVM
+ * Xuan Chen        (IBM)        - [399101] RSE edit actions on local files that map to actually workspace resources should not use temp files
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -96,12 +97,14 @@ import java.util.StringTokenizer;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
@@ -215,8 +218,11 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.progress.IElementCollector;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
@@ -630,7 +636,16 @@ public class SystemViewRemoteFileAdapter
 	 */
 	private IFile getLocalResource(IRemoteFile remoteFile) 
 	{
-	    return (IFile)UniversalFileTransferUtility.getTempFileFor(remoteFile);
+		IFile file = null;
+		if (remoteFile.getHost().getSystemType().isLocal())
+		{
+			String absolutePath = remoteFile.getAbsolutePath();
+			file = getProjectFileForLocation(absolutePath);
+		}
+		if (file == null) {
+			file = (IFile)UniversalFileTransferUtility.getTempFileFor(remoteFile);
+		}
+	    return file;
 	}
 	
 	/**
@@ -3043,6 +3058,7 @@ public class SystemViewRemoteFileAdapter
 			}
 			catch (Exception e)
 			{
+				SystemBasePlugin.logError(e.getLocalizedMessage(), e);
 			}
 
 		}
@@ -3106,6 +3122,22 @@ public class SystemViewRemoteFileAdapter
 
 			String newRemotePath = file.getParentPath() + "/" + newName; //$NON-NLS-1$
 			IResource localResource = null;
+			IResource localProjectResource = null;
+			if (file.getHost().getSystemType().isLocal())
+			{
+				if (file.isFile()) {
+					localProjectResource = getProjectFileForLocation(file.getAbsolutePath());
+				}
+				else {
+					localProjectResource = getProjectFolderForLocation(file.getAbsolutePath());
+				}
+			}
+			if (localProjectResource != null) {
+				//This is a local project file.  So we will rename it directly in the workbench.
+				IPath newLocalPath = localProjectResource.getParent().getFullPath().append(newName);
+				localProjectResource.move(newLocalPath, true, null);
+				return true;
+			}
 			if (SystemRemoteEditManager.getInstance().doesRemoteEditProjectExist())
 			{
 				localResource = UniversalFileTransferUtility.getTempFileFor(file);
@@ -3433,6 +3465,26 @@ public class SystemViewRemoteFileAdapter
 			}
 			
 			// only handle double click if object is a file
+			String absolutePath = remoteFile.getAbsolutePath();
+			IFile localFile = null;
+			if (remoteFile.getHost().getSystemType().isLocal())
+			{
+				localFile = getProjectFileForLocation(absolutePath);
+			}
+			if (localFile != null) {
+				try {
+					if (!localFile.exists()) {
+						
+						localFile.refreshLocal(IResource.DEPTH_ZERO, null);
+					}
+					openEditor(localFile,  !remoteFile.canWrite());
+				}
+				catch (Exception e) {
+					SystemBasePlugin.logError(e.getLocalizedMessage(), e);
+					return false;
+				}
+				return true;
+			}
 			ISystemEditableRemoteObject editable = getEditableRemoteObject(remoteFile);	
 			if (editable != null)
 			{
@@ -3470,6 +3522,7 @@ public class SystemViewRemoteFileAdapter
 					// open new editor for correct replica
 					editable = getEditableRemoteObject(remoteFile);
 				}
+				
 				
 				/* Commenting out - no longer needed with fix to bug #376535
 				if (editable instanceof SystemEditableRemoteFile){
@@ -3540,6 +3593,12 @@ public class SystemViewRemoteFileAdapter
 		// in the system editor)
 		IFile file = editable.getLocalResource();
 		SystemIFileProperties properties = new SystemIFileProperties(file);
+		try {
+			// refresh workspace with just added resource
+			file.refreshLocal(IResource.DEPTH_ZERO, null);
+		} catch (CoreException e) {
+			SystemBasePlugin.logError(e.getLocalizedMessage(), e);
+		}
 		boolean newFile = !file.exists();
 
 		// detect whether there exists a temp copy already
@@ -3611,9 +3670,21 @@ public class SystemViewRemoteFileAdapter
 		RemoteFile remoteFile = (RemoteFile) element;
 		if (remoteFile.isFile())
 		{
+			String absolutePath = remoteFile.getAbsolutePath();
+			IFile localProjectFile = null;
+			if (remoteFile.getHost().getSystemType().isLocal())
+			{
+				localProjectFile = getProjectFileForLocation(absolutePath);
+			}
 			try
 			{
-				IFile file = getCachedCopy(remoteFile); // Note that this is a case-sensitive check
+				IFile file = null;
+				if (localProjectFile == null) {
+					file = getCachedCopy(remoteFile); // Note that this is a case-sensitive check
+				}
+				else {
+					file = localProjectFile;
+				}
 				if (file != null)
 				{
 					SystemIFileProperties properties = new SystemIFileProperties(file);
@@ -3898,4 +3969,111 @@ public class SystemViewRemoteFileAdapter
 	{
 	    return new SystemFetchOperation(null, o, this, collector, true);
 	}
+	
+	private static IFile getProjectFileForLocation(String absolutePath)
+	{
+		IPath workspacePath = new Path(absolutePath);
+		IFile file = SystemBasePlugin.getWorkspaceRoot().getFileForLocation(workspacePath);
+		return file;
+	}
+	
+	private static IContainer getProjectFolderForLocation(String absolutePath)
+	{
+		IPath workspacePath = new Path(absolutePath);
+		IContainer container = SystemBasePlugin.getWorkspaceRoot().getContainerForLocation(workspacePath);
+		return container;
+	}
+	
+	private static void openEditor(IFile localFile, boolean readOnly) throws PartInitException {
+		IEditorDescriptor editorDescriptor = null;
+		
+		try {
+			editorDescriptor = IDE.getEditorDescriptor(localFile);
+		} catch (PartInitException e) {
+			SystemBasePlugin.logError(e.getLocalizedMessage(), e);
+		}
+		
+		if (editorDescriptor == null) {
+			if (PlatformUI.isWorkbenchRunning())
+			{
+				IEditorRegistry registry = PlatformUI.getWorkbench().getEditorRegistry();
+				editorDescriptor = registry.findEditor("org.eclipse.ui.DefaultTextEditor"); //$NON-NLS-1$
+			}
+		}
+		
+		//This file is from local connection, and it is inside a project in the work
+		IWorkbenchPage activePage = SystemBasePlugin.getActiveWorkbenchWindow().getActivePage();
+		
+		ResourceAttributes attr = localFile.getResourceAttributes();
+		if (attr!=null) {
+			attr.setReadOnly(readOnly);
+			try
+			{
+				localFile.setResourceAttributes(attr);
+			}
+			catch (Exception e)
+			{
+				SystemBasePlugin.logError(e.getLocalizedMessage(), e);
+			}
+		}
+
+		// set editor as preferred editor for this file
+		String editorId = null;
+		if (editorDescriptor != null) {
+				editorId = editorDescriptor.getId();
+		}
+
+		IDE.setDefaultEditor(localFile, editorId);
+		if (editorDescriptor.isOpenExternal()){
+			openSystemEditor(localFile); // opening regular way doesn't work anymore
+		}
+		else {
+			FileEditorInput finput = new FileEditorInput(localFile);
+			// check for files already open
+			if (editorDescriptor != null && editorDescriptor.isOpenExternal()){
+				((WorkbenchPage)activePage).openEditorFromDescriptor(new FileEditorInput(localFile), editorDescriptor, true, null);
+			}
+			else {
+				activePage.openEditor(finput, editorDescriptor.getId());
+			}
+	
+			return;
+		}
+	}
+	
+	private static void openSystemEditor(IFile localFile) throws PartInitException {
+		IEditorDescriptor editorDescriptor = null;
+		
+		try {
+			editorDescriptor = IDE.getEditorDescriptor(localFile);
+		} catch (PartInitException e) {
+			SystemBasePlugin.logError(e.getLocalizedMessage(), e);
+		}
+		
+		if (editorDescriptor == null) {
+			if (PlatformUI.isWorkbenchRunning())
+			{
+				IEditorRegistry registry = PlatformUI.getWorkbench().getEditorRegistry();
+				editorDescriptor = registry.findEditor("org.eclipse.ui.DefaultTextEditor"); //$NON-NLS-1$
+			}
+		}
+		
+		//This file is from local connection, and it is inside a project in the work
+		IWorkbenchPage activePage = SystemBasePlugin.getActiveWorkbenchWindow().getActivePage();
+
+		// set editor as preferred editor for this file
+		String editorId = null;
+		if (editorDescriptor != null) {
+				editorId = editorDescriptor.getId();
+		}
+
+		IDE.setDefaultEditor(localFile, editorId);
+		
+		FileEditorInput fileInput = new FileEditorInput(localFile);
+		activePage.openEditor(fileInput, IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
+	
+		return;
+		
+	}
+	
 }

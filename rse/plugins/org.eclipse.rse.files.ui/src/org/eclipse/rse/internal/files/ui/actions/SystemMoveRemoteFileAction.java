@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2011 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2013 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -27,6 +27,7 @@
  * David Dykstal (IBM) [230821] fix IRemoteFileSubSystem API to be consistent with IFileService
  * David McKnight   (IBM)        - [240699] Problem with moving a file which has been opened in an editor
  * David McKnight   (IBM)        - [191132] Incorrect error message when trying to edit a file that has been moved
+ * Xuan Chen        (IBM)        - [399101] RSE edit actions on local files that map to actually workspace resources should not use temp files
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
@@ -64,6 +65,7 @@ import org.eclipse.rse.subsystems.files.core.SystemIFileProperties;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.ui.RSEUIPlugin;
+import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.actions.SystemBaseCopyAction;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.rse.ui.validators.IValidatorRemoteSelection;
@@ -454,14 +456,50 @@ public class SystemMoveRemoteFileAction extends SystemCopyRemoteFileAction
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			IResource oldLocalResource = null;
-			if (SystemRemoteEditManager.getInstance().doesRemoteEditProjectExist()){				
-				oldLocalResource = UniversalFileTransferUtility.getTempFileFor(oldRemoteFile);
+			IResource oldLocalTempResource = null;
+			IResource newLocalTempResource = null;
+			IResource resourceInProjectForOldRemoteFile = null;
+			IResource resourceInProjectForNewRemoteFile = null;
+			if (oldRemoteFile.getHost().getSystemType().isLocal()) {
+				String absolutePath = oldRemoteFile.getAbsolutePath();
+				resourceInProjectForOldRemoteFile = SystemFileActionUtility.getProjectFileForLocation(absolutePath);
+			} 
+			
+			if (resourceInProjectForOldRemoteFile == null) {
+				//The source file is not one of the file inside an eclipse project
+				oldLocalTempResource = UniversalFileTransferUtility.getTempFileFor(oldRemoteFile);
+				
+				if (newRemoteFile.getHost().getSystemType().isLocal()) {
+					String absolutePath = newRemoteFile.getAbsolutePath();
+					resourceInProjectForNewRemoteFile = SystemFileActionUtility.getProjectFileForLocation(absolutePath);
+				} 
+				if (resourceInProjectForNewRemoteFile == null) {
+					//The destination file is not one of the files inside an eclipse project.
+					//We need to do regular moving of temp file.
+					if (SystemRemoteEditManager.getInstance().doesRemoteEditProjectExist()){				
+						newLocalTempResource = UniversalFileTransferUtility.getTempFileFor(newRemoteFile);	
+					}
+				}
 			}
 	
-			if (oldLocalResource != null){
-				IResource newLocalResource = UniversalFileTransferUtility.getTempFileFor(newRemoteFile);			
-				moveTempResource(oldLocalResource, newLocalResource, newRemoteFile, ss);
+			if (oldLocalTempResource != null && oldLocalTempResource.exists()) {
+				if (newLocalTempResource != null) {
+					moveTempResource(oldLocalTempResource, newLocalTempResource, newRemoteFile, ss);
+				}
+				else {
+					//Source file is not inside an eclipse project, but destination file is.  So we need to delete the temp file for source file only.
+					try
+					{
+						oldLocalTempResource.delete(false, null);
+						// get rid of associated editable if there was one before
+						SystemIFileProperties properties = new SystemIFileProperties(oldLocalTempResource);
+						properties.setRemoteFileObject(null);					
+					}
+					catch (Exception e)
+					{
+						SystemBasePlugin.logError(e.getLocalizedMessage(), e);
+					}
+				}
 			}
 		}
 		

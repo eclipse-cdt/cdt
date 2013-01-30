@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@
  * David McKnight   (IBM)        - [309755] SystemRemoteFileOpenWithMenu.getPreferredEditor(), the listed default editor is not always correct
  * David McKnight   (IBM)        - [312362] Editing Unix file after it changes on host edits old data
  * Rick Sawyer      (IBM)        - [376535] RSE does not respect editor overrides
+ * Xuan Chen        (IBM)        - [399101] RSE edit actions on local files that map to actually workspace resources should not use temp files
  *******************************************************************************/
 package org.eclipse.rse.internal.files.ui.actions;
 import java.lang.reflect.Method;
@@ -32,7 +33,9 @@ import java.util.Comparator;
 import java.util.Hashtable;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourceAttributes;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.action.ContributionItem;
@@ -243,14 +246,49 @@ protected void openEditor(IRemoteFile remoteFile, IEditorDescriptor descriptor) 
 	catch (Exception e){				
 	}
 	
+	boolean systemEditor = descriptor != null && descriptor.getId().equals(IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
+
+	String absolutePath = remoteFile.getAbsolutePath();
+	IFile localFile = null;
+	if (remoteFile.getHost().getSystemType().isLocal())
+	{
+		localFile = SystemFileActionUtility.getProjectFileForLocation(absolutePath);
+	}
+	if (localFile != null) {
+		//It is a local file which inside an eclipse project.
+		try {
+			if (!localFile.exists()) {
+				try {
+					localFile.refreshLocal(IResource.DEPTH_ZERO, null);
+				} catch (CoreException e) {
+					SystemBasePlugin.logError(e.getLocalizedMessage(), e);
+				}
+			}
+			if (systemEditor) {
+				SystemFileActionUtility.openSystemEditor(localFile);
+			}
+			else if (descriptor != null){
+				SystemFileActionUtility.hackOpenEditor(localFile, descriptor, !remoteFile.canWrite());
+			}
+			else {
+				SystemFileActionUtility.openEditor(localFile, !remoteFile.canWrite());
+			}
+		}
+		catch (Exception e) {
+			SystemBasePlugin.logError(e.getLocalizedMessage(), e);
+			return;
+		}
+		return;
+	}
+	
 	SystemEditableRemoteFile editable = SystemRemoteEditManager.getEditableRemoteObject(remoteFile, descriptor);
 	if (editable == null){
 		// case for cancelled operation when user was prompted to save file of different case
 		return;
 	}
 	
-	boolean systemEditor = descriptor != null && descriptor.getId().equals(IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
-
+	
+	
 	if (isFileCached(editable, remoteFile)) {
 		
 		try {

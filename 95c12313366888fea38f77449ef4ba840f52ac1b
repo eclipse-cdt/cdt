@@ -1,0 +1,9 @@
+Change-Id: I61b19e1fc5aac9372ad756c1e33e412f4bee86e2
+Code-Review+2: Sergey Prigogin <eclipse.sprigogin@gmail.com>
+IP-Clean+1: Sergey Prigogin <eclipse.sprigogin@gmail.com>
+Verified+1: Sergey Prigogin <eclipse.sprigogin@gmail.com>
+Submitted-by: Sergey Prigogin <eclipse.sprigogin@gmail.com>
+Submitted-at: Tue, 29 Jan 2013 19:41:48 -0500
+Reviewed-on: https://git.eclipse.org/r/9943
+Project: cdt/org.eclipse.cdt
+Branch: refs/heads/master

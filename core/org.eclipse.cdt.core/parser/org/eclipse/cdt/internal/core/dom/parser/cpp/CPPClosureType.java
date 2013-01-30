@@ -103,7 +103,7 @@ public class CPPClosureType extends PlatformObject implements ICPPClassType, ICP
 		// Function call operator
 		final IType returnType= getReturnType();
 		final IType[] parameterTypes= getParameterTypes();
-		ft= new CPPFunctionType(returnType, parameterTypes, isMutable(), false, false);
+		ft= new CPPFunctionType(returnType, parameterTypes, !isMutable(), false, false);
 
 		ICPPParameter[] params = new ICPPParameter[parameterTypes.length];
 		for (int i = 0; i < params.length; i++) {

@@ -360,8 +360,13 @@ public class EvalID extends CPPEvaluation {
 	@Override
 	public int determinePackSize(ICPPTemplateParameterMap tpMap) {
 		int r = fFieldOwner != null ? fFieldOwner.determinePackSize(tpMap) : CPPTemplates.PACK_SIZE_NOT_FOUND;
-		for (ICPPTemplateArgument arg : fTemplateArgs) {
-			r = CPPTemplates.combinePackSize(r, CPPTemplates.determinePackSize(arg, tpMap));
+		if (fNameOwner instanceof ICPPUnknownBinding) {
+			r = CPPTemplates.combinePackSize(r, CPPTemplates.determinePackSize((ICPPUnknownBinding) fNameOwner, tpMap));
+		}
+		if (fTemplateArgs != null) {
+			for (ICPPTemplateArgument arg : fTemplateArgs) {
+				r = CPPTemplates.combinePackSize(r, CPPTemplates.determinePackSize(arg, tpMap));
+			}
 		}
 		return r;
 	}

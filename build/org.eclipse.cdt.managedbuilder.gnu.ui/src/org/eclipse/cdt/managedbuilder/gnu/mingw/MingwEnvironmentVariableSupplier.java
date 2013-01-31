@@ -29,7 +29,6 @@ import org.eclipse.core.runtime.Platform;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class MingwEnvironmentVariableSupplier implements IConfigurationEnvironmentVariableSupplier {
-	private static final String ENV_MINGW_HOME = "MINGW_HOME"; //$NON-NLS-1$
 	private static final String ENV_PATH = "PATH"; //$NON-NLS-1$
 
 	private static String envPathValueCached = null;
@@ -99,7 +98,7 @@ public class MingwEnvironmentVariableSupplier implements IConfigurationEnvironme
 	private static void locateMingw() {
 		IEnvironmentVariable varPath = CCorePlugin.getDefault().getBuildEnvironmentManager().getVariable(ENV_PATH, null, true);
 		String envPathValue = varPath != null ? varPath.getValue() : null;
-		IEnvironmentVariable varMingwHome = CCorePlugin.getDefault().getBuildEnvironmentManager().getVariable(ENV_MINGW_HOME, null, true);
+		IEnvironmentVariable varMingwHome = CCorePlugin.getDefault().getBuildEnvironmentManager().getVariable("MINGW_HOME", null, true); //$NON-NLS-1$
 		String envMingwHomeValue = varMingwHome != null ? varMingwHome.getValue() : null;
 
 		if (CDataUtil.objectsEqual(envPathValue, envPathValueCached) && CDataUtil.objectsEqual(envMingwHomeValue, envMingwHomeValueCached)) {
@@ -182,18 +181,7 @@ public class MingwEnvironmentVariableSupplier implements IConfigurationEnvironme
 
 	@Override
 	public IBuildEnvironmentVariable getVariable(String variableName, IConfiguration configuration, IEnvironmentVariableProvider provider) {
-		if (variableName.equals(ENV_MINGW_HOME)) {
-			locateMingw();
-			String home = envMingwHomeValueCached;
-			if (home == null) {
-				if (binDir != null) {
-					home = binDir.removeLastSegments(1).toOSString();
-				} else {
-					home = ""; //$NON-NLS-1$
-				}
-			}
-			return new MingwBuildEnvironmentVariable(ENV_MINGW_HOME, home, IBuildEnvironmentVariable.ENVVAR_REPLACE);
-		} else if (variableName.equals(ENV_PATH)) {
+		if (variableName.equals(ENV_PATH)) {
 			locateMingw();
 			if (binDir != null) {
 				String pathStr = binDir.toOSString();
@@ -209,11 +197,10 @@ public class MingwEnvironmentVariableSupplier implements IConfigurationEnvironme
 
 	@Override
 	public IBuildEnvironmentVariable[] getVariables(IConfiguration configuration, IEnvironmentVariableProvider provider) {
-		IBuildEnvironmentVariable home = getVariable(ENV_MINGW_HOME, configuration, provider);
 		IBuildEnvironmentVariable path = getVariable(ENV_PATH, configuration, provider);
 		return path != null
-			? new IBuildEnvironmentVariable[] { home, path }
-			: new IBuildEnvironmentVariable[] { home };
+			? new IBuildEnvironmentVariable[] { path }
+			: new IBuildEnvironmentVariable[0];
 	}
 
 }

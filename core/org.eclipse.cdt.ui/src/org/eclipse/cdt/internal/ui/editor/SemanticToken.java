@@ -15,14 +15,15 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.ui.text.ISemanticToken;
 
 /**
  * Semantic token.
  * Cloned from JDT.
- * 
+ *
  * @since 4.0
  */
-public final class SemanticToken {
+public final class SemanticToken implements ISemanticToken {
 	/** AST node */
 	private IASTNode fNode;
 
@@ -38,26 +39,29 @@ public final class SemanticToken {
 	/**
 	 * @return Returns the binding, can be <code>null</code>.
 	 */
+	@Override
 	public IBinding getBinding() {
 		if (!fIsBindingResolved) {
 			fIsBindingResolved= true;
 			if (fNode instanceof IASTName)
 				fBinding= ((IASTName) fNode).resolveBinding();
 		}
-		
+
 		return fBinding;
 	}
 
 	/**
 	 * @return the AST node
 	 */
+	@Override
 	public IASTNode getNode() {
 		return fNode;
 	}
-	
+
 	/**
 	 * @return the AST root
 	 */
+	@Override
 	public IASTTranslationUnit getRoot() {
 		if (!fIsRootResolved) {
 			fIsRootResolved= true;

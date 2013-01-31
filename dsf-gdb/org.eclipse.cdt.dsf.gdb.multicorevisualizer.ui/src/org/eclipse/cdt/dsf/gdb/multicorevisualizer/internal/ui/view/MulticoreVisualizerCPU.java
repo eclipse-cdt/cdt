@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     William R. Swanson (Tilera Corporation) - initial API and implementation
+ *     Marc Dumais (Ericsson) - Add CPU/core load information to the multicore visualizer (Bug 396268)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;
@@ -32,6 +33,11 @@ public class MulticoreVisualizerCPU extends MulticoreVisualizerGraphicObject
 	/** Child cores. */
 	protected ArrayList<MulticoreVisualizerCore> m_cores;
 	
+	/**
+	 * @since 1.1
+	 */
+	protected MulticoreVisualizerLoadMeter m_loadMeter;
+	
 
 	// --- constructors/destructors ---
 	
@@ -40,12 +46,18 @@ public class MulticoreVisualizerCPU extends MulticoreVisualizerGraphicObject
 	{
 		m_id = id;
 		m_cores = new ArrayList<MulticoreVisualizerCore>();
+		
+		// default load meter
+		m_loadMeter = new MulticoreVisualizerLoadMeter(null, null);
 	}
 	
 	/** Dispose method */
 	@Override
 	public void dispose() {
 		super.dispose();
+		if (m_loadMeter != null) {
+			m_loadMeter.dispose();
+		}
 	}
 	
 	
@@ -77,6 +89,19 @@ public class MulticoreVisualizerCPU extends MulticoreVisualizerGraphicObject
 		return m_cores;
 	}
 
+	/**
+	 * @since 1.1
+	 */
+	public void setLoadMeter (MulticoreVisualizerLoadMeter meter) {
+		m_loadMeter = meter;
+	}
+	
+	/**
+	 * @since 1.1
+	 */
+	public MulticoreVisualizerLoadMeter getLoadMeter() {
+		return m_loadMeter;
+	}
 	
 	// --- paint methods ---
 	
@@ -88,6 +113,9 @@ public class MulticoreVisualizerCPU extends MulticoreVisualizerGraphicObject
 		bg = Colors.getColor(0,64,0);
 		gc.setForeground(fg);
 		gc.setBackground(bg);
+		// Explicitly set colors so children objects can get to them
+		this.setForeground(fg);
+		this.setBackground(bg);
 		
 		gc.fillRectangle(m_bounds);
 		gc.drawRectangle(m_bounds);
@@ -103,15 +131,13 @@ public class MulticoreVisualizerCPU extends MulticoreVisualizerGraphicObject
 	@Override
 	public void paintDecorations(GC gc) {
 		if (m_bounds.height > 20) {
-			Color fg, bg;
-			fg = Colors.getColor(0,255,0);
-			bg = Colors.getColor(0,64,0);
-			gc.setForeground(fg);
-			gc.setBackground(bg);
+			gc.setForeground(this.getForeground());
+			gc.setBackground(this.getBackground());
 			
-			int text_indent = 6;
-			int tx = m_bounds.x + m_bounds.width  - text_indent;
-			int ty = m_bounds.y + m_bounds.height - text_indent;
+			int text_indent_x = 6;
+			int text_indent_y = 2;
+			int tx = m_bounds.x + m_bounds.width  - text_indent_x;
+			int ty = m_bounds.y + m_bounds.height - text_indent_y;
 			GUIUtils.drawTextAligned(gc, Integer.toString(m_id), tx, ty, false, false);
 		}
 	}

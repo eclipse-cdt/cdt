@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui" version="2">
+    <resource path="src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/DSFDebugModelListener.java" type="org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.utils.DSFDebugModelListener">
+        <filter id="403804204">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.utils.DSFDebugModelListener"/>
+                <message_argument value="getLoadDone(IDMContext, IGDBHardwareAndOS2.ILoadInfo, Object)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

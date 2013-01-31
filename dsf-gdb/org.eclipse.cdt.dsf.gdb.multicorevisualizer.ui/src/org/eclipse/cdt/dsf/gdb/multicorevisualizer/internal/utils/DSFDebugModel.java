@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     William R. Swanson (Tilera Corporation) - initial API and implementation
+ *     Marc Dumais (Ericsson) - Add CPU/core load information to the multicore visualizer (Bug 396268)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.utils;
@@ -17,6 +18,7 @@ import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateCountingRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses;
@@ -34,6 +36,8 @@ import org.eclipse.cdt.dsf.gdb.service.IGDBHardwareAndOS;
 import org.eclipse.cdt.dsf.gdb.service.IGDBHardwareAndOS.ICPUDMContext;
 import org.eclipse.cdt.dsf.gdb.service.IGDBHardwareAndOS.ICoreDMContext;
 import org.eclipse.cdt.dsf.gdb.service.IGDBHardwareAndOS.IHardwareTargetDMContext;
+import org.eclipse.cdt.dsf.gdb.service.IGDBHardwareAndOS2;
+import org.eclipse.cdt.dsf.gdb.service.IGDBHardwareAndOS2.ILoadInfo;
 import org.eclipse.cdt.dsf.gdb.service.IGDBProcesses.IGdbThreadDMData;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 
@@ -79,6 +83,32 @@ public class DSFDebugModel {
 				}
 			}
 		);
+	}
+	
+	/** Request load information for a single CPU or core
+	 * @since 1.1*/
+	@ConfinedToDsfExecutor("getSession().getExecutor()")
+	public static void getLoad(DSFSessionState sessionState,
+			final IDMContext context,
+			final DSFDebugModelListener listener,
+			final Object arg,
+			final RequestMonitor rm)
+	{
+		IGDBHardwareAndOS2 hwService = sessionState.getService(IGDBHardwareAndOS2.class);
+		if (hwService == null) {
+			return;
+		}
+		
+		hwService.getLoadInfo(context,
+				new ImmediateDataRequestMonitor<ILoadInfo>(rm) {
+					@Override
+					protected void handleSuccess() {
+						ILoadInfo loadInfo = getData();
+						listener.getLoadDone(context, loadInfo, arg);
+						rm.done();
+					}
+				}
+			);
 	}
 	
 	/** Requests list of Cores.

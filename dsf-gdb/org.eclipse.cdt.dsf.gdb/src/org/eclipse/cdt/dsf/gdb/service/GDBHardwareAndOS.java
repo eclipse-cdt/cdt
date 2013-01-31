@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Ericsson and others.
+ * Copyright (c) 2012-2013 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,10 +8,12 @@
  * Contributors:
  *     Marc Khouzam (Ericsson) - initial API and implementation
  *     Marc Khouzam (Ericsson) - Updated to use /proc/cpuinfo for remote targets (Bug 374024)
+ *     Marc Dumais (Ericsson) - Add CPU/core load information to the multicore visualizer (Bug 396268)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -19,6 +21,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
 import java.util.Vector;
+import java.util.concurrent.TimeUnit;
 
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
@@ -27,6 +30,7 @@ import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.Immutable;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.AbstractDMContext;
+import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.DataModelInitializedEvent;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.datamodel.IDMData;
@@ -42,6 +46,8 @@ import org.eclipse.cdt.dsf.debug.service.command.IEventListener;
 import org.eclipse.cdt.dsf.gdb.internal.CoreInfo;
 import org.eclipse.cdt.dsf.gdb.internal.CoreList;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.gdb.internal.ProcStatCoreLoads;
+import org.eclipse.cdt.dsf.gdb.internal.ProcStatParser;
 import org.eclipse.cdt.dsf.gdb.internal.service.command.commands.MIMetaGetCPUInfo;
 import org.eclipse.cdt.dsf.gdb.internal.service.command.output.MIMetaGetCPUInfoInfo;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
@@ -65,7 +71,10 @@ import org.osgi.framework.BundleContext;
  * 
  * @since 4.1
  */
-public class GDBHardwareAndOS extends AbstractDsfService implements IGDBHardwareAndOS, ICachingService {
+public class GDBHardwareAndOS extends AbstractDsfService implements IGDBHardwareAndOS2, ICachingService {
+	private long fLastCpuLoadRefresh = 0;
+	ProcStatCoreLoads fCachedLoads = null;
+	boolean fLoadRequestOngoing = false;
 
 	@Immutable
 	protected static class GDBCPUDMC extends AbstractDMContext 
@@ -152,6 +161,60 @@ public class GDBHardwareAndOS extends AbstractDsfService implements IGDBHardware
     }
 
 
+    /**
+	 * @since 4.2
+	 */
+    @Immutable
+    protected class GDBLoadInfo implements ILoadInfo {
+    	String fLoad;
+    	String fHighWaterMark;
+    	String[] fDetailedLoad;
+
+    	public GDBLoadInfo(String load, String waterMark) {
+    		fLoad = load;
+   			fHighWaterMark = waterMark;
+    	}
+    	public GDBLoadInfo(String load) {
+    		this(load, null); //$NON-NLS-1$
+    	}
+    	
+		@Override
+		public String getLoad() {
+			return fLoad;
+		}
+		@Override
+		public String getHighLoadWaterMark() {
+			return fHighWaterMark;
+		}
+		@Override
+		public String[] getDetailedLoad() {
+			// TODO:  return the detailed breakdown of load.
+			// ex: user, nice, system, iowait, irq, softirq
+			return null;
+		}
+    }
+    
+    /**
+	 * @since 4.2
+	 */
+    protected class LoadInfoRequest {
+    	private IDMContext ctx;
+    	private DataRequestMonitor<ILoadInfo> reqMon;
+    	LoadInfoRequest(IDMContext c, DataRequestMonitor<ILoadInfo> rm) {
+    		ctx = c;
+    		reqMon = rm;
+    	}
+    	IDMContext getContext() {
+    		return ctx;
+    	}
+    	DataRequestMonitor<ILoadInfo> getRequestMonitor() {
+    		return reqMon;
+    	}
+    }
+
+    // to save queued load info requests for later processing
+    private List<LoadInfoRequest> fLoadInfoRequestCache;
+    
     private IGDBControl fCommandControl;
     private IGDBBackend fBackend;
     private CommandFactory fCommandFactory;
@@ -211,6 +274,7 @@ public class GDBHardwareAndOS extends AbstractDsfService implements IGDBHardware
 		// handle getting the required cpu info
 		fFetchCPUInfoCache = new CommandCache(getSession(), new CPUInfoManager());
         fFetchCPUInfoCache.setContextAvailable(fCommandControl.getContext(), true);
+        fLoadInfoRequestCache = new ArrayList<LoadInfoRequest>();
 
         getSession().addServiceEventListener(this, null);
 
@@ -234,6 +298,7 @@ public class GDBHardwareAndOS extends AbstractDsfService implements IGDBHardware
 	public void shutdown(RequestMonitor requestMonitor) {
         getSession().removeServiceEventListener(this);
         fFetchCPUInfoCache.reset();
+        fLoadInfoRequestCache.clear();
 		unregister();
 		super.shutdown(requestMonitor);
 	}
@@ -502,4 +567,230 @@ public class GDBHardwareAndOS extends AbstractDsfService implements IGDBHardware
 		public void removeCommand(ICommandToken token) { assert false : "Not supported"; } //$NON-NLS-1$
 
 	}
+
+	/**
+	 * @since 4.2
+	 */
+	@Override
+	public boolean isAvailable() {
+		return false;
+	}
+
+	/**
+	 * @since 4.2
+	 */
+	@Override
+	public void getResourceClasses(IDMContext dmc,
+			DataRequestMonitor<IResourceClass[]> rm) {
+		rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Operation not supported", null)); //$NON-NLS-1$
+	}
+
+	/**
+	 * @since 4.2
+	 */
+	@Override
+	public void getResourcesInformation(IDMContext dmc, String resourceClassId,
+			DataRequestMonitor<IResourcesInformation> rm) {
+		rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Operation not supported", null)); //$NON-NLS-1$
+	}
+
+
+    /**
+     * This method processes "load info" requests.  The load is computed using a
+     * sampling method; two readings of a local or remote /proc/stat file are done
+     * with a delay in between.  Then the load is computed from the two samples,
+     * for all CPUs/cores known in the system.  
+     * 
+     * Because of the method used, it's possible that fast variations in CPU usage will
+     * be missed.  However longer load trends should be reflected in the results.   
+     * 
+     * To avoid generating too much load in the remote case, there is a cache that will 
+     * return the already computed load, if requested multiple times in a short period. 
+     * There is also a mechanism to queue subsequent requests if one is ongoing.  Upon 
+     * completion of the ongoing request, any queued request is answered with the load 
+     * that was just computed.
+     *  
+     * @since 4.2
+     */
+	@Override
+	public synchronized void getLoadInfo(final IDMContext context, final DataRequestMonitor<ILoadInfo> rm) {
+		final String statFile = "/proc/stat"; //$NON-NLS-1$
+		final int loadSampleDelay = 100; // length of the measured sample in ms
+		final int loadCacheLifetime = 400; // to avoid bombarding the remote GDB server
+		
+		// The measurement interval must be of a minimum length to be meaningful
+		assert (loadSampleDelay >= 100);
+		// so the cache is useful
+		assert (loadCacheLifetime > 2 * loadSampleDelay);
+		
+		// This way of computing the CPU load is only applicable to Linux
+		if (!Platform.getOS().equals(Platform.OS_LINUX)) {
+			rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Operation not supported", null)); //$NON-NLS-1$
+			return;
+		}
+		
+		// Is a request is already ongoing?  
+		if(fLoadRequestOngoing) {
+			// queue current request
+			fLoadInfoRequestCache.add(new LoadInfoRequest(context, rm));
+			return;
+		}
+		// no request ongoing, so proceed
+		fLoadRequestOngoing = true;
+		
+		// caching mechanism to keep things sane, even if the views(s) 
+		// request load information very often.   
+		long currentTime = System.currentTimeMillis();
+		
+		// time to fetch fresh load information?
+		if (fLastCpuLoadRefresh + loadCacheLifetime < currentTime) {
+			fLastCpuLoadRefresh = currentTime;
+		}
+		else {
+			// re-use cached load data
+			processLoads(context, rm, fCachedLoads);
+			fLoadRequestOngoing = false;
+			return;
+		}
+
+		final ProcStatParser procStatParser = new ProcStatParser();
+        final ICommandControlDMContext dmc = DMContexts.getAncestorOfType(context, ICommandControlDMContext.class);
+        final String localFile = "/tmp/" + GdbPlugin.PLUGIN_ID + ".proc.stat." + getSession().getId(); //$NON-NLS-1$ //$NON-NLS-2$
+        
+        // Remote debugging? We will ask GDB to get us the /proc/stat file from target, twice, with a delay between.
+        if (fBackend.getSessionType() == SessionType.REMOTE) {
+            fCommandControl.queueCommand(
+                    fCommandFactory.createCLIRemoteGet(dmc, statFile, localFile),
+                    new ImmediateDataRequestMonitor<MIInfo>(rm) {
+                        @Override
+                        protected void handleSuccess() {
+                            // parse first set of stat counters
+                        	try {
+								procStatParser.parseStatFile(localFile);
+							} catch (FileNotFoundException e) {
+								rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, "Internal error: Can't get load info for CPU", null)); //$NON-NLS-1$
+								return;
+							}
+                        	// delete temp file
+							new File(localFile).delete();
+                            
+                            getExecutor().schedule(new Runnable() {
+                                @Override
+                                public void run() {
+                                    fCommandControl.queueCommand(
+                                            fCommandFactory.createCLIRemoteGet(dmc, statFile, localFile),
+                                            new ImmediateDataRequestMonitor<MIInfo>(rm) {
+                                                @Override
+                                                protected void handleSuccess() {
+                                                	// parse the second set of stat counters and compute loads
+                                                	try {
+														procStatParser.parseStatFile(localFile);
+													} catch (FileNotFoundException e) {
+														rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, "Internal error: Can't get load info for CPU", null)); //$NON-NLS-1$
+													}
+                                                	// delete temp file
+                        							new File(localFile).delete();
+                        							
+                        							// Compute load
+                                                	fCachedLoads = procStatParser.getCpuLoad();
+                                                	processLoads(context, rm, fCachedLoads);
+                                                	
+                                                	// done with request
+                                                	fLoadRequestOngoing = false;                                                	
+                                                	// process any queued request
+                                                	for(LoadInfoRequest r : fLoadInfoRequestCache) {
+                                                		processLoads(r.getContext(), r.getRequestMonitor(), fCachedLoads);
+                                                	}
+                                                	fLoadInfoRequestCache.clear();
+                                                }
+                                            });
+                                }
+                            }, loadSampleDelay, TimeUnit.MILLISECONDS);
+                        }
+                    });
+        // Local debugging?  Then we can read /proc/stat directly 
+        } else {
+        	// Read /proc/stat file for the first time
+        	try {
+				procStatParser.parseStatFile(statFile);
+			} catch (FileNotFoundException e) {
+				rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, "Internal error: Can't get load info for CPU", null)); //$NON-NLS-1$
+			}
+        	
+        	// Read /proc/stat file again after a delay
+        	getExecutor().schedule(new Runnable() {
+        		@Override
+        		public void run() {
+        			try {
+        				procStatParser.parseStatFile(statFile);
+        			} catch (FileNotFoundException e) {
+        				rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, "Internal error: Can't get load info for CPU", null)); //$NON-NLS-1$
+        			}
+        			// compute load
+        			fCachedLoads = procStatParser.getCpuLoad();
+        			processLoads(context, rm, fCachedLoads);
+        			
+        			// done with request
+                	fLoadRequestOngoing = false;                                                	
+                	// process any queued request
+                	for(LoadInfoRequest r : fLoadInfoRequestCache) {
+                		processLoads(r.getContext(), r.getRequestMonitor(), fCachedLoads);
+                	}
+                	fLoadInfoRequestCache.clear();
+        		}
+        	}, loadSampleDelay, TimeUnit.MILLISECONDS);
+        }
+    }
+	
+	/**
+	 * For a given "load info" request, this method processes the load obtained from the 
+	 * proc stat parser and creates/sends the response.
+	 * @param context
+	 * @param rm
+	 * @param loads
+	 */
+	private void processLoads(final IDMContext context, final DataRequestMonitor<ILoadInfo> rm, final ProcStatCoreLoads loads) {
+		// core context?
+		if (context instanceof ICoreDMContext) {
+			String coreId = ((ICoreDMContext) context).getId();
+			// Integer precision sufficient for our purpose
+			int load = (int)loads.get("cpu"+coreId).floatValue(); //$NON-NLS-1$
+			rm.done(new GDBLoadInfo(Integer.toString(load)));
+		}
+		else if (context instanceof ICPUDMContext) {
+			// get the list of cores in that CPU
+			getCores(context,
+					new ImmediateDataRequestMonitor<ICoreDMContext[]>() {
+						@Override
+						protected void handleCompleted() {
+							ICoreDMContext[] coreContexts = getData();
+
+							if (!isSuccess() || coreContexts == null || coreContexts.length < 1) {
+								// Unable to get any core data
+								rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, "Can't get load info for CPU", null)); //$NON-NLS-1$
+								return;
+							}
+
+							int i = 0;
+							float load = 0.0f;
+							// compute the average load of cores in that CPU
+							for (ICoreDMContext coreCtx : coreContexts) {
+								String coreId = coreCtx.getId();
+								load += loads.get("cpu"+coreId); //$NON-NLS-1$
+								i++;
+							}
+							load /= i;
+							// TODO: implement watermark
+							String wm = null;
+							rm.done(new GDBLoadInfo(Integer.toString((int)load), wm));
+						}
+					}
+					);
+		}
+		else {
+			// problem
+			rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, "Wrong context type", null)); //$NON-NLS-1$
+		}
+	}
+	
 }

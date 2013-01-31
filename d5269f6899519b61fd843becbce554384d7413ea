@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPH//+DE\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/parser/InternalParserUtil.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 161,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-01-31T23:11:22Z",
+      "side": 1,
+      "message": "Redundant parentheses.",
+      "revId": "d5269f6899519b61fd843becbce554384d7413ea",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IFileNomination;
 import org.eclipse.cdt.core.index.IIndexFile;
@@ -28,6 +29,15 @@ import org.eclipse.cdt.internal.core.dom.IIncludeFileResolutionHeuristics;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
 import org.eclipse.cdt.internal.core.parser.IMacroDictionary;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent.InclusionKind;
+import org.eclipse.cdt.utils.UNCPathConverter;
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * Internal implementation of the file content providers
@@ -49,7 +59,34 @@ public abstract class InternalFileContentProvider extends IncludeFileContentProv
 	/**
 	 * Checks whether the specified inclusion exists.
 	 */
-	public boolean getInclusionExists(String path) {
+	public boolean getInclusionExists(final String path) {
+		if (UNCPathConverter.isUNC(path)) {
+			final boolean[] exists = new boolean[1];
+			Job checkJob = new Job(NLS.bind(CCorePlugin.getResourceString("InternalFileContentProvider.checkExistsJob"), path)){ //$NON-NLS-1$
+				@Override
+				protected IStatus run(IProgressMonitor monitor) {
+					try {
+						IFileStore store = EFS.getStore(UNCPathConverter.getInstance().toURI(path));
+						exists[0] = store.fetchInfo(EFS.NONE, monitor).exists();
+						if (monitor.isCanceled()) {
+							return Status.CANCEL_STATUS;
+						}
+					} catch (CoreException e) {
+						return e.getStatus();
+					}
+					return Status.OK_STATUS;
+				}
+			};
+			checkJob.setSystem(true);
+			checkJob.schedule();
+			try {
+				checkJob.join();
+			} catch (InterruptedException e) {
+				return false;
+			}
+			return exists[0];
+		}
+
 		return new File(path).exists();
 	}
 

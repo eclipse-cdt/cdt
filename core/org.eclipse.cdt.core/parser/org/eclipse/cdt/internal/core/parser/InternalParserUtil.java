@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.core.parser;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -159,26 +158,15 @@ public class InternalParserUtil extends ParserFactory {
 			IFileStore store = EFS.getStore(file.getLocationURI());
 			IFileInfo fileInfo = store.fetchInfo();
 			input= file.getContents(true);
-			if (!(input instanceof FileInputStream)) {
-				/*
-				 * In general, non-local file-systems will not use FileInputStream.
-				 * Instead make a cached copy of the file and open an input stream to that.
-				 */
-				File fileCache = store.toLocalFile(EFS.CACHE, null);
+			if ((input instanceof FileInputStream)) {
 				try {
-					input = new FileInputStream(fileCache);
-				} catch (FileNotFoundException e) {
-					CCorePlugin.log(e);
-					return null;
-				}
-			}
-			try {
-				return createFileContent(path, file.getCharset(), input,
-						fileInfo.getLastModified(), fileInfo.getLength(), fileReadTime);
-			} finally {
-				try {
-					input.close();
-				} catch (IOException e) {
+					return createFileContent(path, file.getCharset(), input,
+							fileInfo.getLastModified(), fileInfo.getLength(), fileReadTime);
+				} finally {
+					try {
+						input.close();
+					} catch (IOException e) {
+					}
 				}
 			}
 		} catch (CoreException e) {
@@ -193,8 +181,8 @@ public class InternalParserUtil extends ParserFactory {
 				CCorePlugin.log(e);
 				break;
 			}
-			return null;
 		}
+		return null;
 	}
 
 	/**

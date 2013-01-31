@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPH//+Ew\u003d",
+        "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/internal/core/model/PathEntryUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 517,
+      "author": {
+        "id": 1041
+      },
+      "writtenOn": "2013-01-31T22:47:21Z",
+      "side": 1,
+      "message": "I\u0027ve replaced this with path.isUNC() since IPath already provides a method to check for UNC",
+      "parentUuid": "AABOPH//+W4\u003d",
+      "revId": "408da76a4a781a4cc55ab3e1a2156f17baa17550",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPH//+XE\u003d",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/parser/InternalParserUtil.java",
         "patchSetId": 2
@@ -87,6 +105,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPH//+Eg\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/parser/scanner/InternalFileContentProvider.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 1041
+      },
+      "writtenOn": "2013-01-31T22:47:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPH//+Xg\u003d",
+      "revId": "408da76a4a781a4cc55ab3e1a2156f17baa17550",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPH//+WI\u003d",
         "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/parser/scanner/InternalFileContentProvider.java",
         "patchSetId": 2
@@ -98,6 +134,24 @@
       "writtenOn": "2013-01-30T23:52:53Z",
       "side": 1,
       "message": "Should this job be hidden from the user to avoid too much flicker in the Progress view?",
+      "revId": "408da76a4a781a4cc55ab3e1a2156f17baa17550",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPH//+Ek\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/parser/scanner/InternalFileContentProvider.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 1041
+      },
+      "writtenOn": "2013-01-31T22:47:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPH//+WI\u003d",
       "revId": "408da76a4a781a4cc55ab3e1a2156f17baa17550",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -121,6 +175,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPH//+Es\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/parser/scanner/InternalFileContentProvider.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 1041
+      },
+      "writtenOn": "2013-01-31T22:47:21Z",
+      "side": 1,
+      "message": "The user should be able to cancel the progress monitor so that at least the UI is not blocked forever. It\u0027s not ideal, but without an API change, I\u0027m not sure what else to do.",
+      "parentUuid": "AABOPH//+XI\u003d",
+      "revId": "408da76a4a781a4cc55ab3e1a2156f17baa17550",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPH//+W0\u003d",
         "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/core/CCorePluginResources.properties",
         "patchSetId": 2
@@ -132,6 +204,24 @@
       "writtenOn": "2013-01-30T23:52:53Z",
       "side": 1,
       "message": "include -\u003e existence of",
+      "revId": "408da76a4a781a4cc55ab3e1a2156f17baa17550",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPH//+Eo\u003d",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/core/CCorePluginResources.properties",
+        "patchSetId": 2
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 1041
+      },
+      "writtenOn": "2013-01-31T22:47:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPH//+W0\u003d",
       "revId": "408da76a4a781a4cc55ab3e1a2156f17baa17550",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

@@ -65,7 +65,7 @@ class PDOMCPPEnumScope implements ICPPScope, IIndexScope {
 	@Override
 	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) {
 		try {
-			CharArrayMap<PDOMCPPEnumerator> map= getBindingMap(fBinding);
+			CharArrayMap<IPDOMCPPEnumerator> map= getBindingMap(fBinding);
 			return map.get(name.toCharArray());
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
@@ -81,7 +81,7 @@ class PDOMCPPEnumScope implements ICPPScope, IIndexScope {
 	@Override
 	public IBinding[] getBindings(ScopeLookupData lookup) {
 		try {
-			CharArrayMap<PDOMCPPEnumerator> map= getBindingMap(fBinding);
+			CharArrayMap<IPDOMCPPEnumerator> map= getBindingMap(fBinding);
 			if (lookup.isPrefixLookup()) {
 				final List<IBinding> result= new ArrayList<IBinding>();
 				final char[] nc= lookup.getLookupKey();
@@ -135,36 +135,36 @@ class PDOMCPPEnumScope implements ICPPScope, IIndexScope {
 		return fBinding.hashCode();
 	}
 
-	private static CharArrayMap<PDOMCPPEnumerator> getBindingMap(IPDOMCPPEnumType enumeration) throws CoreException {
+	private static CharArrayMap<IPDOMCPPEnumerator> getBindingMap(IPDOMCPPEnumType enumeration) throws CoreException {
 		final Long key= enumeration.getRecord() + PDOMCPPLinkage.CACHE_MEMBERS;
 		final PDOM pdom = enumeration.getPDOM();
 		@SuppressWarnings("unchecked")
-		Reference<CharArrayMap<PDOMCPPEnumerator>> cached= (Reference<CharArrayMap<PDOMCPPEnumerator>>) pdom.getCachedResult(key);
-		CharArrayMap<PDOMCPPEnumerator> map= cached == null ? null : cached.get();
+		Reference<CharArrayMap<IPDOMCPPEnumerator>> cached= (Reference<CharArrayMap<IPDOMCPPEnumerator>>) pdom.getCachedResult(key);
+		CharArrayMap<IPDOMCPPEnumerator> map= cached == null ? null : cached.get();
 
 		if (map == null) {
 			// there is no cache, build it:
-			map= new CharArrayMap<PDOMCPPEnumerator>();
+			map= new CharArrayMap<IPDOMCPPEnumerator>();
 			enumeration.loadEnumerators(map);
 			pdom.putCachedResult(key, new SoftReference<CharArrayMap<?>>(map));
 		}
 		return map;
 	}
 
-	public static void updateCache(PDOMCPPEnumeration enumType, PDOMCPPEnumerator enumItem) {
+	public static void updateCache(IPDOMCPPEnumType enumType, IPDOMCPPEnumerator enumItem) {
 		final Long key= enumType.getRecord() + PDOMCPPLinkage.CACHE_MEMBERS;
 		final PDOM pdom = enumType.getPDOM();
 		@SuppressWarnings("unchecked")
-		Reference<CharArrayMap<PDOMCPPEnumerator>> cached= (Reference<CharArrayMap<PDOMCPPEnumerator>>) pdom.getCachedResult(key);
-		CharArrayMap<PDOMCPPEnumerator> map= cached == null ? null : cached.get();
+		Reference<CharArrayMap<IPDOMCPPEnumerator>> cached= (Reference<CharArrayMap<IPDOMCPPEnumerator>>) pdom.getCachedResult(key);
+		CharArrayMap<IPDOMCPPEnumerator> map= cached == null ? null : cached.get();
 		if (map != null) {
 			map.put(enumType.getNameCharArray(), enumItem);
 		}
 	}
 
-	public static IEnumerator[] getEnumerators(PDOMCPPEnumeration enumType) {
+	public static IEnumerator[] getEnumerators(IPDOMCPPEnumType enumType) {
 		try {
-			CharArrayMap<PDOMCPPEnumerator> map = getBindingMap(enumType);
+			CharArrayMap<IPDOMCPPEnumerator> map = getBindingMap(enumType);
 			List<IEnumerator> result= new ArrayList<IEnumerator>();
 			for (IEnumerator value : map.values()) {
 				if (IndexFilter.ALL_DECLARED.acceptBinding(value)) {
@@ -179,10 +179,10 @@ class PDOMCPPEnumScope implements ICPPScope, IIndexScope {
 		return new IEnumerator[0];
 	}
 
-	public static void acceptViaCache(PDOMCPPEnumeration enumType, IPDOMVisitor visitor) {
+	public static void acceptViaCache(IPDOMCPPEnumType enumType, IPDOMVisitor visitor) {
 		try {
-			CharArrayMap<PDOMCPPEnumerator> map = getBindingMap(enumType);
-			for (PDOMCPPEnumerator enumItem : map.values()) {
+			CharArrayMap<IPDOMCPPEnumerator> map = getBindingMap(enumType);
+			for (IPDOMCPPEnumerator enumItem : map.values()) {
 				visitor.visit(enumItem);
 				visitor.leave(enumItem);
 			}

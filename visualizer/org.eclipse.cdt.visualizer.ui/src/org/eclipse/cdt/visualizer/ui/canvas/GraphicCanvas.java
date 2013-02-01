@@ -7,12 +7,15 @@
  *
  * Contributors:
  *     William R. Swanson (Tilera Corporation)
+ *     Marc Dumais (Ericsson) - Bug 399281
  *******************************************************************************/
 
 package org.eclipse.cdt.visualizer.ui.canvas;
 
 import java.util.ArrayList;
 
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Composite;
 
@@ -43,15 +46,15 @@ public class GraphicCanvas extends BufferedCanvas
 	public GraphicCanvas(Composite parent) {
 		super(parent);
 		m_objects = new ArrayList<IGraphicObject>();
-	}
-	
-	/** Dispose method. */
-	public void dispose() {
-		if (m_objects != null) {
-			m_objects.clear();
-			m_objects = null;
-		}
-		super.dispose();
+        addDisposeListener(new DisposeListener() {
+            @Override
+            public void widgetDisposed(DisposeEvent e) {
+            	if (m_objects != null) {
+        			m_objects.clear();
+        			m_objects = null;
+        		}
+            }
+        });
 	}
 	
 	

@@ -11,6 +11,7 @@
  *     Marc Dumais (Ericsson) - Bug 396184
  *     Marc Dumais (Ericsson) - Bug 396200
  *     Marc Dumais (Ericsson) - Bug 396293
+ *     Marc Dumais (Ericsson) - Bug 399281
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;
@@ -35,6 +36,8 @@ import org.eclipse.cdt.visualizer.ui.util.Timer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
@@ -133,13 +136,12 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas
 	public MulticoreVisualizerCanvas(Composite parent) {
 		super(parent);
 		initMulticoreVisualizerCanvas(parent);
-	}
-	
-	/** Dispose method. */
-	@Override
-	public void dispose() {
-		cleanupMulticoreVisualizerCanvas();
-		super.dispose();
+        addDisposeListener(new DisposeListener() {              
+            @Override
+            public void widgetDisposed(DisposeEvent e) {
+            	cleanupMulticoreVisualizerCanvas();
+            }
+        });
 	}
 
 	

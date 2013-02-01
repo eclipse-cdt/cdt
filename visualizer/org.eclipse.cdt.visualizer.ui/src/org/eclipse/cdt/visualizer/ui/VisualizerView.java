@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     William R. Swanson (Tilera Corporation)
+ *     Marc Dumais (Ericsson) - Bug 399281
  *******************************************************************************/
 
 // Package declaration
@@ -116,7 +117,9 @@ public class VisualizerView
 	public void setViewer(IVisualizerViewer viewer)
 	{
 		if (m_viewer != null) {
-			m_viewer.removeSelectionChangedListener(this);
+			// TODO: remove after review:
+			// This listener was already cleared when the selection manager was disposed.
+//			m_viewer.removeSelectionChangedListener(this);
 			m_viewer.removeVisualizerViewerListener(this);
 		}
 		

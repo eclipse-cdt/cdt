@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     William R. Swanson (Tilera Corporation)
+ *     Marc Dumais (Ericsson) - Bug 399281
  *******************************************************************************/
 
 package org.eclipse.cdt.visualizer.ui.canvas;
@@ -14,6 +15,8 @@ package org.eclipse.cdt.visualizer.ui.canvas;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.GC;
@@ -50,13 +53,14 @@ public class BufferedCanvas extends Canvas
         		SWT.NO_REDRAW_RESIZE   // don't automatically repaint on resize event
         	); 
 		initBufferedCanvas();
+        addDisposeListener(new DisposeListener() {
+            @Override
+            public void widgetDisposed(DisposeEvent e) {
+            	cleanupBufferedCanvas();
+            }
+        });
 	}
 	
-	/** Dispose method. */
-	public void dispose() {
-		super.dispose();
-		cleanupBufferedCanvas();
-	}
 	
 	// --- init methods ---
 

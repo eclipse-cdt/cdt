@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     William R. Swanson (Tilera Corporation)
+ *     Marc Dumais (Ericsson) - Bug 399281
  *******************************************************************************/
 
 package org.eclipse.cdt.visualizer.ui;
@@ -29,6 +30,8 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MenuDetectEvent;
 import org.eclipse.swt.events.MenuDetectListener;
 import org.eclipse.swt.events.PaintEvent;
@@ -97,13 +100,14 @@ public class VisualizerViewer extends PageBook
 	public VisualizerViewer(VisualizerView view, Composite parent) {
 		super(parent, SWT.NONE);
 		initVisualizerViewer(view, parent);
+        addDisposeListener(new DisposeListener() {
+            @Override
+            public void widgetDisposed(DisposeEvent e) {
+                cleanupVisualizerViewer();
+            }
+        });
 	}
 	
-	/** Dispose method. */
-	public void dispose() {
-		cleanupVisualizerViewer();
-		super.dispose();
-	}
 
 	/** Overridden to permit subclassing of SWT component */
 	protected void checkSubclass() {
@@ -291,8 +295,12 @@ public class VisualizerViewer extends PageBook
 	{
 		for (String id : m_visualizers.keySet()) {
 			IVisualizer v = m_visualizers.get(id);
-			Control c = v.getControl();
-			c.dispose();
+			// TODO: remove after review:
+//			Control c = v.getControl();
+			// No need to dispose of the Control here - it should be done in
+			// the visualizer(s).  For the multicore visualizer, it's done 
+			// in MulticoreVisualizer.disposeCanvas(), for instance.
+//			c.dispose();
 			v.disposeVisualizer();
 		}
 		m_visualizers.clear();

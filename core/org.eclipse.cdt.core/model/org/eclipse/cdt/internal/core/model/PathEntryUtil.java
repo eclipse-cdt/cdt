@@ -513,6 +513,9 @@ public class PathEntryUtil {
 
 	private static boolean isValidExternalPath(IPath path) {
 		if (path != null) {
+			if (path.isUNC()) {
+				return true;
+			}
 			File file = path.toFile();
 			if (file != null) {
 				return file.exists();

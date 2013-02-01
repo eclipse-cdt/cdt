@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2013 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     Andrew Ferguson (Symbian) - Initial implementation
  *     Markus Schorn (Wind River Systems)
  *     Thomas Corbat (IFS)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index;
 
@@ -16,8 +17,6 @@ package org.eclipse.cdt.internal.core.index;
  * Constants used by IIndexFragment implementations for identifying persisted binding types.
  */
 public interface IIndexCPPBindingConstants {
-	int CPPENUMERATOR = IIndexBindingConstants.ENUMERATOR;
-
 	int CPPVARIABLE = IIndexBindingConstants.LAST_CONSTANT + 1;
 	int CPPFUNCTION = IIndexBindingConstants.LAST_CONSTANT + 2;
 	int CPPCLASSTYPE = IIndexBindingConstants.LAST_CONSTANT + 3;
@@ -27,6 +26,7 @@ public interface IIndexCPPBindingConstants {
 	int CPPNAMESPACEALIAS = IIndexBindingConstants.LAST_CONSTANT + 7;
 	int CPPPARAMETER = IIndexBindingConstants.LAST_CONSTANT + 9;
 	int CPPENUMERATION = IIndexBindingConstants.LAST_CONSTANT + 10;
+	int CPPENUMERATOR = IIndexBindingConstants.LAST_CONSTANT + 11;
 	int CPPTYPEDEF = IIndexBindingConstants.LAST_CONSTANT + 12;
 	int CPP_CONSTRUCTOR= IIndexBindingConstants.LAST_CONSTANT + 14;
 	int CPP_FUNCTION_TEMPLATE= IIndexBindingConstants.LAST_CONSTANT + 16;
@@ -62,4 +62,6 @@ public interface IIndexCPPBindingConstants {
 	int CPP_USING_DECLARATION_SPECIALIZATION= IIndexBindingConstants.LAST_CONSTANT + 49;
 	int CPP_UNKNOWN_METHOD = IIndexBindingConstants.LAST_CONSTANT + 50;
 	int CPP_TEMPLATE_ALIAS = IIndexBindingConstants.LAST_CONSTANT + 51;
+	int CPP_ENUMERATION_SPECIALIZATION = IIndexBindingConstants.LAST_CONSTANT + 52;
+	int CPP_ENUMERATOR_SPECIALIZATION = IIndexBindingConstants.LAST_CONSTANT + 53;
 }

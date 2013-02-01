@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2010, 2013 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -23,7 +24,7 @@ import org.eclipse.cdt.internal.core.pdom.dom.IPDOMBinding;
  */
 public interface IPDOMCPPEnumType extends ICPPEnumeration, IPDOMBinding, IIndexType {
 	/**
-	 * Return the scope name, for use in {@link IScope#getScopeName()}
+	 * Returns the scope name, for use in {@link IScope#getScopeName()}
 	 */
 	IIndexName getScopeName();
 	
@@ -33,5 +34,5 @@ public interface IPDOMCPPEnumType extends ICPPEnumeration, IPDOMBinding, IIndexT
 	/**
 	 * Called by the scope to access the enumerators.
 	 */
-	void loadEnumerators(CharArrayMap<PDOMCPPEnumerator> map);
+	void loadEnumerators(CharArrayMap<IPDOMCPPEnumerator> map);
 }

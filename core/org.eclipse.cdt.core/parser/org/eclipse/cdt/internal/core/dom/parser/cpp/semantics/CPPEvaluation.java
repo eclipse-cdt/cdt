@@ -7,6 +7,7 @@
  *
  * Contributors:
  * 	   Sergey Prigogin (Google) - initial API and implementation
+ *     Nathan Ridge
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
@@ -56,5 +57,15 @@ public abstract class CPPEvaluation implements ICPPEvaluation {
 			CCorePlugin.log(e);
 		}
 		return args;
+	}
+
+	protected static IBinding instantiateBinding(IBinding binding, ICPPTemplateParameterMap tpMap, int packOffset,
+			ICPPClassSpecialization within, int maxdepth, IASTNode point) {
+		try {
+			return CPPTemplates.instantiateBinding(binding, tpMap, packOffset, within, maxdepth, point);
+		} catch (DOMException e) {
+			CCorePlugin.log(e);
+		}
+		return binding;
 	}
 }

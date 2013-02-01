@@ -9,6 +9,7 @@
  *     Andrew Niefer (IBM Corporation) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     Sergey Prigogin (Google)
+ *     Nathan Ridge
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -29,7 +30,6 @@ import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
-import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
@@ -42,6 +42,7 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.core.runtime.PlatformObject;
 
 /**
@@ -220,20 +221,7 @@ public class CPPEnumeration extends PlatformObject implements ICPPEnumeration, I
 		if (fMinValue != null)
 			return fMinValue.longValue();
 
-		long minValue = Long.MAX_VALUE;
-		IEnumerator[] enumerators = getEnumerators();
-		for (IEnumerator enumerator : enumerators) {
-			IValue value = enumerator.getValue();
-			if (value != null) {
-				Long val = value.numericalValue();
-				if (val != null) {
-					long v = val.longValue();
-					if (v < minValue) {
-						minValue = v;
-					}
-				}
-			}
-		}
+		long minValue = SemanticUtil.computeMinValue(this);
 		fMinValue= minValue;
 		return minValue;
 	}
@@ -243,20 +231,7 @@ public class CPPEnumeration extends PlatformObject implements ICPPEnumeration, I
 		if (fMaxValue != null)
 			return fMaxValue.longValue();
 
-		long maxValue = Long.MIN_VALUE;
-		IEnumerator[] enumerators = getEnumerators();
-		for (IEnumerator enumerator : enumerators) {
-			IValue value = enumerator.getValue();
-			if (value != null) {
-				Long val = value.numericalValue();
-				if (val != null) {
-					long v = val.longValue();
-					if (v > maxValue) {
-						maxValue = v;
-					}
-				}
-			}
-		}
+		long maxValue = SemanticUtil.computeMaxValue(this);
 		fMaxValue= maxValue;
 		return maxValue;
 	}
@@ -278,10 +253,7 @@ public class CPPEnumeration extends PlatformObject implements ICPPEnumeration, I
 		if (definition == null) {
 			ICPPEnumeration typeInIndex= getIndexBinding();
 			if (typeInIndex != null) {
-				try {
-					return typeInIndex.getEnumerators();
-				} catch (DOMException e) {
-				}
+				return typeInIndex.getEnumerators();
 			}
     		return EMPTY_ENUMERATORS;
     	}

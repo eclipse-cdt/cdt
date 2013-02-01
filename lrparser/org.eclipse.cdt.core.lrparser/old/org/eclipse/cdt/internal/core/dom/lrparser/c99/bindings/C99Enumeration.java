@@ -21,9 +21,9 @@ import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
-import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.core.runtime.PlatformObject;
 
 @SuppressWarnings("restriction")
@@ -114,38 +114,10 @@ public class C99Enumeration extends PlatformObject implements IC99Binding, IEnum
 	}
 
 	public long getMinValue() {
-		long minValue = Long.MAX_VALUE;
-		IEnumerator[] enumerators = getEnumerators();
-		for (IEnumerator enumerator : enumerators) {
-			IValue value = enumerator.getValue();
-			if (value != null) {
-				Long val = value.numericalValue();
-				if (val != null) {
-					long v = val.longValue();
-					if (v < minValue) {
-						minValue = v;
-					}
-				}
-			}
-		}
-		return minValue;
+		return SemanticUtil.computeMinValue(this);
 	}
 
 	public long getMaxValue() {
-		long maxValue = Long.MIN_VALUE;
-		IEnumerator[] enumerators = getEnumerators();
-		for (IEnumerator enumerator : enumerators) {
-			IValue value = enumerator.getValue();
-			if (value != null) {
-				Long val = value.numericalValue();
-				if (val != null) {
-					long v = val.longValue();
-					if (v > maxValue) {
-						maxValue = v;
-					}
-				}
-			}
-		}
-		return maxValue;
+		return SemanticUtil.computeMaxValue(this);
 	}
 }

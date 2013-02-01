@@ -50,6 +50,7 @@
  * David McKnight   (IBM)        - [385416] NPE during shutdown with remote editor open
  * David McKnight   (IBM)        - [390609] Cached file opened twice in case of eclipse linked resource..
  * Xuan Chen        (IBM)        - [399101] RSE edit actions on local files that map to actually workspace resources should not use temp files
+ * Xuan Chen        (IBM)        - [399752] Cannot download remote file due to scoping rule
  *******************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -530,7 +531,10 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 			listener.addIgnoreFile(localFile);
 
 			//pmd.run(false, true, downloadFileRunnable);
-			downloadFileRunnable.setRule(getRemoteFile());
+			//Probably in the early day of eclipse, we need to explicitly set those schedule rule.  But now, since the change of eclipse scheduling rule, 
+			//those rule settings are not necessary, and will probable also cause problem.
+			//Removed the explicit rule setting fixed the problem.
+			//downloadFileRunnable.setRule(getRemoteFile());
 			downloadFileRunnable.schedule();
 			Display display = Display.getDefault();
 			try {

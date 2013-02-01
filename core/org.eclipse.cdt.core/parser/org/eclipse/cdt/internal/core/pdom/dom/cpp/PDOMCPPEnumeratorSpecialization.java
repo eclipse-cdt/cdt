@@ -1,14 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 QNX Software Systems and others.
+ * Copyright (c) 2013 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Doug Schaefer (QNX) - Initial API and implementation
- *     Markus Schorn (Wind River Systems)
- *     Sergey Prigogin (Google)
+ * 	   Sergey Prigogin (Google) - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -17,30 +15,32 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * Binding for a c++ enumerator in the index.
+ * Binding for a specialization of an enumerator in the index.
  */
-class PDOMCPPEnumerator extends PDOMCPPBinding implements IPDOMCPPEnumerator {
-	private static final int VALUE= PDOMCPPBinding.RECORD_SIZE;
-	
+class PDOMCPPEnumeratorSpecialization extends PDOMCPPSpecialization implements IPDOMCPPEnumerator {
+	private static final int VALUE= PDOMCPPSpecialization.RECORD_SIZE;
+
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = VALUE + Database.VALUE_SIZE;
-		
-	public PDOMCPPEnumerator(PDOMLinkage linkage, PDOMNode parent, IEnumerator enumerator)
-			throws CoreException {
-		super(linkage, parent, enumerator.getNameCharArray());
+
+	public PDOMCPPEnumeratorSpecialization(PDOMLinkage linkage, PDOMNode parent,
+			IEnumerator enumerator, PDOMBinding specialized) throws CoreException {
+		super(linkage, parent, (ICPPSpecialization) enumerator, specialized);
 		storeValue(enumerator);
 	}
 
-	public PDOMCPPEnumerator(PDOMLinkage linkage, long record) {
+	public PDOMCPPEnumeratorSpecialization(PDOMLinkage linkage, long record) {
 		super(linkage, record);
 	}
 
@@ -48,10 +48,10 @@ class PDOMCPPEnumerator extends PDOMCPPBinding implements IPDOMCPPEnumerator {
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
-	
+
 	@Override
 	public int getNodeType() {
-		return IIndexCPPBindingConstants.CPPENUMERATOR;
+		return IIndexCPPBindingConstants.CPP_ENUMERATOR_SPECIALIZATION;
 	}
 
 	private void storeValue(IEnumerator enumerator) throws CoreException {
@@ -74,7 +74,7 @@ class PDOMCPPEnumerator extends PDOMCPPBinding implements IPDOMCPPEnumerator {
 			return (IType) owner;
 		return null;
 	}
-	
+
 	@Override
 	public IValue getValue() {
 		try {

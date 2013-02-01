@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.core.parser;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -159,26 +158,15 @@ public class InternalParserUtil extends ParserFactory {
 			IFileStore store = EFS.getStore(file.getLocationURI());
 			IFileInfo fileInfo = store.fetchInfo();
 			input= file.getContents(true);
-			if (!(input instanceof FileInputStream)) {
-				/*
-				 * In general, non-local file-systems will not use FileInputStream.
-				 * Instead make a cached copy of the file and open an input stream to that.
-				 */
-				File fileCache = store.toLocalFile(EFS.CACHE, null);
+			if (input instanceof FileInputStream) {
 				try {
-					input = new FileInputStream(fileCache);
-				} catch (FileNotFoundException e) {
-					CCorePlugin.log(e);
-					return null;
-				}
-			}
-			try {
-				return createFileContent(path, file.getCharset(), input,
-						fileInfo.getLastModified(), fileInfo.getLength(), fileReadTime);
-			} finally {
-				try {
-					input.close();
-				} catch (IOException e) {
+					return createFileContent(path, null, file.getCharset(), input,
+							fileInfo.getLastModified(), fileInfo.getLength(), fileReadTime);
+				} finally {
+					try {
+						input.close();
+					} catch (IOException e) {
+					}
 				}
 			}
 		} catch (CoreException e) {
@@ -193,18 +181,19 @@ public class InternalParserUtil extends ParserFactory {
 				CCorePlugin.log(e);
 				break;
 			}
-			return null;
 		}
+		return null;
 	}
 
 	/**
 	 * Creates a code reader for an external location, normalizing path to 
 	 * canonical path. 
 	 */
-	public static InternalFileContent createExternalFileContent(String externalLocation, String encoding) {
+	public static InternalFileContent createExternalFileContent(final String externalLocation, String encoding) {
 		long fileReadTime = System.currentTimeMillis();
 		File includeFile = null;
 		String path = null;
+		String localPath = null;
 		if (!UNCPathConverter.isUNC(externalLocation)) {
 			includeFile = new File(externalLocation);
 		    // Use the canonical path so that in case of non-case-sensitive OSs
@@ -216,6 +205,7 @@ public class InternalParserUtil extends ParserFactory {
 				IFileStore store = EFS.getStore(UNCPathConverter.getInstance().toURI(externalLocation));
 				includeFile = store.toLocalFile(EFS.CACHE, null);
 				path = externalLocation;
+				localPath = includeFile.getAbsolutePath();
 			} catch (CoreException e) {
 			}
 		}
@@ -230,7 +220,7 @@ public class InternalParserUtil extends ParserFactory {
 				return null;
 			}
 			try {
-				return createFileContent(path, encoding, in, timestamp, fileSize, fileReadTime);
+				return createFileContent(path, localPath, encoding, in, timestamp, fileSize, fileReadTime);
 			} finally {
 				try {
 					in.close();
@@ -241,10 +231,13 @@ public class InternalParserUtil extends ParserFactory {
 		return null;
 	}
 
-	private static InternalFileContent createFileContent(String path, String charset, InputStream in,
+	private static InternalFileContent createFileContent(String path, String localPath, String charset, InputStream in,
 			long fileTimestamp, long fileSize, long fileReadTime) {
+		if (localPath == null) {
+			localPath = path;
+		}
 		try {
-			AbstractCharArray chars= FileCharArray.create(path, charset, in);
+			AbstractCharArray chars= FileCharArray.create(localPath, charset, in);
 			if (chars == null)
 				return null;
 			

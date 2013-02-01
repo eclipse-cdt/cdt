@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.c;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -25,7 +24,7 @@ class CompositeCEnumeration extends CompositeCBinding implements IEnumeration, I
 	}
 
 	@Override
-	public IEnumerator[] getEnumerators() throws DOMException {
+	public IEnumerator[] getEnumerators() {
 		IEnumerator[] result = ((IEnumeration)rbinding).getEnumerators();
 		for (int i= 0; i < result.length; i++)
 			result[i] = (IEnumerator) cf.getCompositeBinding((IIndexFragmentBinding) result[i]);

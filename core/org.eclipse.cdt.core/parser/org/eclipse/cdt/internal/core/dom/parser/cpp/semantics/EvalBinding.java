@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Wind River Systems, Inc. and others.
+ * Copyright (c) 2012, 2013 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,10 +25,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
@@ -325,55 +322,26 @@ public class EvalBinding extends CPPEvaluation {
 	@Override
 	public ICPPEvaluation instantiate(ICPPTemplateParameterMap tpMap, int packOffset,
 			ICPPClassSpecialization within, int maxdepth, IASTNode point) {
-		IBinding binding = getBinding();
-		if (binding instanceof IEnumerator) {
-			IEnumerator enumerator = (IEnumerator) binding;
-			IType originalType = enumerator.getType();
-			IType type = CPPTemplates.instantiateType(originalType, tpMap, packOffset, within, point);
-			IValue originalValue = enumerator.getValue();
-			IValue value = CPPTemplates.instantiateValue(originalValue, tpMap, packOffset, within, maxdepth, point);
-			// TODO(sprigogin): Not sure if following condition is correct.
-			if (type != originalType || value != originalValue)
-				return new EvalFixed(type, ValueCategory.PRVALUE, value);
-		} else if (binding instanceof ICPPTemplateNonTypeParameter) {
-			ICPPTemplateArgument argument = tpMap.getArgument((ICPPTemplateNonTypeParameter) binding);
+		IBinding origBinding = getBinding();
+		if (origBinding instanceof ICPPTemplateNonTypeParameter) {
+			ICPPTemplateArgument argument = tpMap.getArgument((ICPPTemplateNonTypeParameter) origBinding);
 			if (argument != null && argument.isNonTypeValue()) {
 				return argument.getNonTypeEvaluation();
 			}
 			// TODO(sprigogin): Do we need something similar for pack expansion?
-		} else if (binding instanceof ICPPUnknownBinding) {
-			binding = resolveUnknown((ICPPUnknownBinding) binding, tpMap, packOffset, within, point);
-		} else if (binding instanceof ICPPMethod) {
-			IBinding owner = binding.getOwner();
-			if (owner instanceof ICPPClassTemplate) {
-				owner = resolveUnknown(CPPTemplates.createDeferredInstance((ICPPClassTemplate) owner),
-						tpMap, packOffset, within, point);
+		} else if (origBinding instanceof ICPPParameter) {
+			ICPPParameter parameter = (ICPPParameter) origBinding;
+			IType origType = parameter.getType();
+			IType instantiatedType = CPPTemplates.instantiateType(origType, tpMap, packOffset, within, point);
+			if (origType != instantiatedType) {
+				return new EvalFixed(instantiatedType, ValueCategory.LVALUE, Value.create(this));
 			}
-			if (owner instanceof ICPPClassSpecialization) {
-				binding = CPPTemplates.createSpecialization((ICPPClassSpecialization) owner,
-						binding, point);
-			}
-		} else if (binding instanceof ICPPField) {
-			IBinding owner = binding.getOwner();
-			if (owner instanceof ICPPClassTemplate) {
-				owner = resolveUnknown(CPPTemplates.createDeferredInstance((ICPPClassTemplate) owner),
-						tpMap, packOffset, within, point);
-			}
-			if (owner instanceof ICPPClassSpecialization) {
-				binding = CPPTemplates.createSpecialization((ICPPClassSpecialization) owner,
-						binding, point);
-			}
-		} else if (binding instanceof ICPPParameter) {
-			ICPPParameter parameter = (ICPPParameter) binding;
-			IType originalType = parameter.getType();
-			IType type = CPPTemplates.instantiateType(originalType, tpMap, packOffset, within, point);
-			if (originalType != type) {
-				return new EvalFixed(type, ValueCategory.LVALUE, Value.create(this));
-			}
+		} else {
+			IBinding instantiatedBinding = instantiateBinding(origBinding, tpMap, packOffset, within, maxdepth, point);
+			if (instantiatedBinding != origBinding)
+				return new EvalBinding(instantiatedBinding, getFixedType());
 		}
-		if (binding == fBinding)
-			return this;
-		return new EvalBinding(binding, getFixedType());
+		return this;
 	}
 
 	@Override

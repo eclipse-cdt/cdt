@@ -8,6 +8,7 @@
  * Contributors:
  *     Andrew Niefer (IBM Corporation) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Nathan Ridge
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -25,18 +26,17 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
-import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.c.ICASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTEnumerationSpecifier;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.internal.core.dom.Linkage;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.core.runtime.PlatformObject;
 
 /**
  * Binding for enumerations in C.
  */
 public class CEnumeration extends PlatformObject implements IEnumeration, ICInternalBinding {
-
     private IASTName[] declarations = null;
     private IASTName definition = null;
 	private Long fMinValue;
@@ -204,20 +204,7 @@ public class CEnumeration extends PlatformObject implements IEnumeration, ICInte
 		if (fMinValue != null)
 			return fMinValue.longValue();
 
-		long minValue = Long.MAX_VALUE;
-		IEnumerator[] enumerators = getEnumerators();
-		for (IEnumerator enumerator : enumerators) {
-			IValue value = enumerator.getValue();
-			if (value != null) {
-				Long val = value.numericalValue();
-				if (val != null) {
-					long v = val.longValue();
-					if (v < minValue) {
-						minValue = v;
-					}
-				}
-			}
-		}
+		long minValue = SemanticUtil.computeMinValue(this);
 		fMinValue= minValue;
 		return minValue;
 	}
@@ -227,20 +214,7 @@ public class CEnumeration extends PlatformObject implements IEnumeration, ICInte
 		if (fMaxValue != null)
 			return fMaxValue.longValue();
 
-		long maxValue = Long.MIN_VALUE;
-		IEnumerator[] enumerators = getEnumerators();
-		for (IEnumerator enumerator : enumerators) {
-			IValue value = enumerator.getValue();
-			if (value != null) {
-				Long val = value.numericalValue();
-				if (val != null) {
-					long v = val.longValue();
-					if (v > maxValue) {
-						maxValue = v;
-					}
-				}
-			}
-		}
+		long maxValue = SemanticUtil.computeMaxValue(this);
 		fMaxValue= maxValue;
 		return maxValue;
 	}

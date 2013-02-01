@@ -309,7 +309,7 @@ public class PDOMASTAdapter {
 		}
 
 		@Override
-		public IEnumerator[] getEnumerators() throws DOMException {
+		public IEnumerator[] getEnumerators() {
 			return fDelegate.getEnumerators();
 		}
 
@@ -507,7 +507,7 @@ public class PDOMASTAdapter {
 		}
 
 		@Override
-		public IEnumerator[] getEnumerators() throws DOMException {
+		public IEnumerator[] getEnumerators() {
 			return ((IEnumeration) fDelegate).getEnumerators();
 		}
 

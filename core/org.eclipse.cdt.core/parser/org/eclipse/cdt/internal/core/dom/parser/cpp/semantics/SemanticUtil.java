@@ -34,12 +34,15 @@ import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IEnumeration;
+import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
@@ -668,5 +671,41 @@ public class SemanticUtil {
 			return ((UniqueType) type).isForParameterPack();
 		}
 		return false;
+	}
+
+	public static long computeMaxValue(IEnumeration enumeration) {
+		long maxValue = Long.MIN_VALUE;
+		IEnumerator[] enumerators = enumeration.getEnumerators();
+		for (IEnumerator enumerator : enumerators) {
+			IValue value = enumerator.getValue();
+			if (value != null) {
+				Long val = value.numericalValue();
+				if (val != null) {
+					long v = val.longValue();
+					if (v > maxValue) {
+						maxValue = v;
+					}
+				}
+			}
+		}
+		return maxValue;
+	}
+
+	public static long computeMinValue(IEnumeration enumeration) {
+		long minValue = Long.MAX_VALUE;
+		IEnumerator[] enumerators = enumeration.getEnumerators();
+		for (IEnumerator enumerator : enumerators) {
+			IValue value = enumerator.getValue();
+			if (value != null) {
+				Long val = value.numericalValue();
+				if (val != null) {
+					long v = val.longValue();
+					if (v < minValue) {
+						minValue = v;
+					}
+				}
+			}
+		}
+		return minValue;
 	}
 }

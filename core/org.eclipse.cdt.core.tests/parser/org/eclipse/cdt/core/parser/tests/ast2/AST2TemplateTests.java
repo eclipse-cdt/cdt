@@ -7051,7 +7051,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	void test() {
 	//	  int x = C<bool>::id;
 	//	}
-	public void _testDependentEnumValue_389009() throws Exception {
+	public void testDependentEnumValue_389009() throws Exception {
 		BindingAssertionHelper ah = getAssertionHelper();
 		IEnumerator binding = ah.assertNonProblem("C<bool>::id", "id");
 		IValue value = binding.getValue();

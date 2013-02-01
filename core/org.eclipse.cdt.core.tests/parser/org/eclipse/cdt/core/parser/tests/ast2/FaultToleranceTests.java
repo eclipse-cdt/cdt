@@ -30,7 +30,7 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 /**
  * Testcases related to recovery from invalid syntax.
  */
-public class FaultToleranceTests extends AST2BaseTest {
+public class FaultToleranceTests extends AST2TestBase {
 	
 	public static TestSuite suite() {
 		return suite(FaultToleranceTests.class);

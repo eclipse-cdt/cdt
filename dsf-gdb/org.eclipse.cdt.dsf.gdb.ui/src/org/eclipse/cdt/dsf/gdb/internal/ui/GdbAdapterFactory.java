@@ -19,6 +19,7 @@ import java.util.WeakHashMap;
 
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.IConnectHandler;
+import org.eclipse.cdt.debug.core.model.IDebugNewExecutableHandler;
 import org.eclipse.cdt.debug.core.model.IResumeWithoutSignalHandler;
 import org.eclipse.cdt.debug.core.model.IReverseResumeHandler;
 import org.eclipse.cdt.debug.core.model.IReverseStepIntoHandler;
@@ -49,6 +50,7 @@ import org.eclipse.cdt.dsf.gdb.internal.ui.actions.GdbDisconnectCommand;
 import org.eclipse.cdt.dsf.gdb.internal.ui.actions.GdbRestartCommand;
 import org.eclipse.cdt.dsf.gdb.internal.ui.actions.GdbSteppingModeTarget;
 import org.eclipse.cdt.dsf.gdb.internal.ui.commands.GdbConnectCommand;
+import org.eclipse.cdt.dsf.gdb.internal.ui.commands.GdbDebugNewExecutableCommand;
 import org.eclipse.cdt.dsf.gdb.internal.ui.commands.GdbResumeWithoutSignalCommand;
 import org.eclipse.cdt.dsf.gdb.internal.ui.commands.GdbReverseResumeCommand;
 import org.eclipse.cdt.dsf.gdb.internal.ui.commands.GdbReverseStepIntoCommand;
@@ -114,6 +116,7 @@ public class GdbAdapterFactory
         final GdbResumeWithoutSignalCommand fResumeWithoutSignalCommand;
         final GdbRestartCommand fRestartCommand;
         final DsfTerminateCommand fTerminateCommand;
+        final GdbDebugNewExecutableCommand fDebugNewExecutableCommand;
         final GdbConnectCommand fConnectCommand;
         final GdbDisconnectCommand fDisconnectCommand;
         final IDebugModelProvider fDebugModelProvider;
@@ -162,7 +165,8 @@ public class GdbAdapterFactory
             fResumeWithoutSignalCommand = new GdbResumeWithoutSignalCommand(session);
             fRestartCommand = new GdbRestartCommand(session, fLaunch);
             fTerminateCommand = new DsfTerminateCommand(session);
-            fConnectCommand = new GdbConnectCommand(session);
+            fDebugNewExecutableCommand = new GdbDebugNewExecutableCommand(session, fLaunch);
+            fConnectCommand = new GdbConnectCommand(session, fLaunch);
             fDisconnectCommand = new GdbDisconnectCommand(session);
             fSuspendTrigger = new GdbSuspendTrigger(session, fLaunch);
             fModelSelectionPolicyFactory = new DefaultDsfModelSelectionPolicyFactory();
@@ -189,6 +193,7 @@ public class GdbAdapterFactory
             session.registerModelAdapter(IRestartHandler.class, fRestartCommand);
             session.registerModelAdapter(ITerminateHandler.class, fTerminateCommand);
             session.registerModelAdapter(IConnectHandler.class, fConnectCommand);
+            session.registerModelAdapter(IDebugNewExecutableHandler.class, fDebugNewExecutableCommand);
             session.registerModelAdapter(IDisconnectHandler.class, fDisconnectCommand);
             session.registerModelAdapter(IModelSelectionPolicyFactory.class, fModelSelectionPolicyFactory);
             session.registerModelAdapter(IRefreshAllTarget.class, fRefreshAllTarget);
@@ -249,6 +254,7 @@ public class GdbAdapterFactory
             session.unregisterModelAdapter(IRestartHandler.class);
             session.unregisterModelAdapter(ITerminateHandler.class);
             session.unregisterModelAdapter(IConnectHandler.class);
+            session.unregisterModelAdapter(IDebugNewExecutableHandler.class);
             session.unregisterModelAdapter(IDisconnectHandler.class);
             session.unregisterModelAdapter(IModelSelectionPolicyFactory.class);
             session.unregisterModelAdapter(IRefreshAllTarget.class);
@@ -279,6 +285,7 @@ public class GdbAdapterFactory
             fRestartCommand.dispose();
             fTerminateCommand.dispose();
             fConnectCommand.dispose();
+            fDebugNewExecutableCommand.dispose();
             fDisconnectCommand.dispose();
             fSuspendTrigger.dispose();
             fReverseToggleTarget.dispose();

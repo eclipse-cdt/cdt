@@ -39,7 +39,6 @@ import org.eclipse.cdt.internal.corext.codemanipulation.StubUtility;
 import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.cdt.internal.ui.util.NameComposer;
-import org.eclipse.cdt.internal.ui.viewsupport.ProjectTemplateStore;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.ITreeListAdapter;
@@ -255,17 +254,6 @@ public class NameStyleBlock extends OptionsConfigurationBlock {
 	}
 
 	@Override
-	public boolean hasProjectSpecificOptions(IProject project) {
-		if (super.hasProjectSpecificOptions(project))
-			return true;
-
-		if (project != null) {
-			return ProjectTemplateStore.hasProjectSpecificTempates(project);
-		}
-		return false;
-	}
-
-	@Override
 	protected Control createContents(Composite parent) {
 		pixelConverter =  new PixelConverter(parent);
 
@@ -414,11 +402,6 @@ public class NameStyleBlock extends OptionsConfigurationBlock {
 		// Refresh
 		categoryTree.refresh();
 		updateConfigurationBlock(categoryTree.getSelectedElements());
-	}
-
-	@Override
-	public boolean performOk() {
-		return super.performOk();
 	}
 
 	@Override
@@ -648,7 +631,6 @@ public class NameStyleBlock extends OptionsConfigurationBlock {
 
 	private class NameStyleAdapter extends ViewerComparator
 			implements ITreeListAdapter<Category>, IDialogFieldListener {
-
 		@Override
 		public void selectionChanged(TreeListDialogField<Category> field) {
 			updateConfigurationBlock(field.getSelectedElements());

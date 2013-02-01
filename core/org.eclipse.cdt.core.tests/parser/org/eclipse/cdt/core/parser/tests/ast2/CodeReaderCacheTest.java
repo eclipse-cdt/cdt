@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.jobs.Job;
 /**
  * @author dsteffle
  */
-public class CodeReaderCacheTest extends CDOMBaseTest {
+public class CodeReaderCacheTest extends CDOMTestBase {
 	
 	public CodeReaderCacheTest() {
 	}

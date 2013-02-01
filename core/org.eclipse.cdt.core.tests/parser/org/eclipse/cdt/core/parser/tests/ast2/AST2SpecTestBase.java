@@ -41,12 +41,12 @@ import org.eclipse.cdt.internal.core.parser.ParserException;
 /**
  * @author dsteffle
  */
-public class AST2SpecBaseTest extends AST2BaseTest {
-	public AST2SpecBaseTest() {
+public class AST2SpecTestBase extends AST2TestBase {
+	public AST2SpecTestBase() {
 		super();
 	}
 
-	public AST2SpecBaseTest(String name) {
+	public AST2SpecTestBase(String name) {
 		super(name);
 	}
 
@@ -101,7 +101,7 @@ public class AST2SpecBaseTest extends AST2BaseTest {
 			boolean useGNUExtensions, boolean expectNoProblems, boolean checkBindings,
 			int expectedProblemBindings, String[] problems) throws ParserException {
         ScannerInfo scannerInfo = new ScannerInfo();
-        IScanner scanner= AST2BaseTest.createScanner(codeReader, lang, ParserMode.COMPLETE_PARSE, scannerInfo);
+        IScanner scanner= AST2TestBase.createScanner(codeReader, lang, ParserMode.COMPLETE_PARSE, scannerInfo);
         
         ISourceCodeParser parser2 = null;
         if (lang == ParserLanguage.CPP) {

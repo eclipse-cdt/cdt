@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Nathan Ridge
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
@@ -26,6 +27,7 @@ import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IField;
@@ -46,7 +48,7 @@ import org.eclipse.core.resources.IFile;
 /**
  * @author dsteffle
  */
-public class AST2SelectionParseTest extends AST2SelectionParseBaseTest {
+public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 
 	public AST2SelectionParseTest() {
 	}
@@ -352,9 +354,10 @@ public class AST2SelectionParseTest extends AST2SelectionParseBaseTest {
 					assertTrue(node instanceof IASTTypeId);
 					assertEquals(((IASTNamedTypeSpecifier)((IASTTypeId)node).getDeclSpecifier()).getName().toString(), "Gonzo"); //$NON-NLS-1$
 					name = ((IASTNamedTypeSpecifier)((IASTTypeId)node).getDeclSpecifier()).getName();
-					assertNotNull(name.resolveBinding());
-					assertTrue(name.resolveBinding() instanceof ICPPConstructor);
-					assertEquals(((ICPPConstructor)name.resolveBinding()).getName(), "Gonzo"); //$NON-NLS-1$
+					name = TestUtil.findImplicitName(name);
+					IBinding binding = name.resolveBinding(); 
+					assertTrue(binding instanceof ICPPConstructor);
+					assertEquals(((ICPPConstructor)binding).getName(), "Gonzo"); //$NON-NLS-1$
 					break;
 				default: 
 					assertTrue(node instanceof IASTName);
@@ -736,9 +739,10 @@ public class AST2SelectionParseTest extends AST2SelectionParseBaseTest {
 		assertTrue(node instanceof IASTTypeId);
 		assertEquals(((IASTNamedTypeSpecifier)((IASTTypeId)node).getDeclSpecifier()).getName().toString(), "B"); //$NON-NLS-1$
 		IASTName name = ((IASTNamedTypeSpecifier)((IASTTypeId)node).getDeclSpecifier()).getName();
-		assertNotNull(name.resolveBinding());
-	    assertTrue(name.resolveBinding() instanceof ICPPConstructor);
-		assertEquals(((ICPPConstructor)name.resolveBinding()).getName(), "B"); //$NON-NLS-1$
+		name = TestUtil.findImplicitName(name);
+		IBinding binding = name.resolveBinding(); 
+	    assertTrue(binding instanceof ICPPConstructor);
+		assertEquals(((ICPPConstructor)binding).getName(), "B"); //$NON-NLS-1$
 	}
 	
 	public void testBug72712_2() throws Exception{

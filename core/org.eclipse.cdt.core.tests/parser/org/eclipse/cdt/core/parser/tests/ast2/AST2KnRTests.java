@@ -59,7 +59,7 @@ import org.eclipse.cdt.internal.core.dom.parser.c.ICInternalBinding;
 /**
  * @author dsteffle
  */
-public class AST2KnRTests extends AST2BaseTest {
+public class AST2KnRTests extends AST2TestBase {
 	
     public AST2KnRTests() {
 	}

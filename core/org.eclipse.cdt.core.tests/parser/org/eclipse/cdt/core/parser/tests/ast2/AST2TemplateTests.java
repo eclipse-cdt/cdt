@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,6 +44,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
+import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
@@ -55,6 +56,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
@@ -101,7 +103,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 
-public class AST2TemplateTests extends AST2BaseTest {
+public class AST2TemplateTests extends AST2TestBase {
 
 	public AST2TemplateTests() {
 	}
@@ -2371,11 +2373,11 @@ public class AST2TemplateTests extends AST2BaseTest {
 	public void testCPPConstructorTemplateSpecialization() throws Exception {
 		IASTTranslationUnit tu = parse(getAboveComment(), CPP, true, true);
 
-		CPPNameCollector col = new CPPNameCollector();
+		CPPNameCollector col = new CPPNameCollector(true);
 		tu.accept(col);
 
-		ICPPASTTemplateId tid= (ICPPASTTemplateId) col.getName(20);
-		IASTName cn= col.getName(21);
+		IASTImplicitName tid= (IASTImplicitName) col.getName(20);
+		IASTName cn= col.getName(22);
 		assertInstance(cn.resolveBinding(), ICPPClassTemplate.class); // *D*<int>(5, 6)
 		assertInstance(cn.resolveBinding(), ICPPClassType.class); // *D*<int>(5, 6)
 		assertInstance(tid.resolveBinding(), ICPPTemplateInstance.class); // *D<int>*(5, 6)
@@ -3840,7 +3842,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//  };
     public void testNestedTemplates_259872_1() throws Exception {
 		BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), CPP);
-		bh.assertNonProblem("A<B, int>", 9, ICPPConstructor.class);
+		bh.assertNonProblem("A<B, int>", 9, ICPPClassType.class);
     }
 
 	//  template <typename CL, typename T>
@@ -3865,7 +3867,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//  };
     public void testNestedTemplates_259872_2() throws Exception {
 		BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), CPP);
-		bh.assertNonProblem("A<B, int>", 9, ICPPConstructor.class);
+		bh.assertNonProblem("A<B, int>", 9, ICPPClassType.class);
     }
 
     //    template <class T>
@@ -4403,6 +4405,17 @@ public class AST2TemplateTests extends AST2BaseTest {
 		parseAndCheckBindings();
 	}
 
+	//	template <typename A>
+	//	void foo(A);
+	//	template <typename A, typename... B>
+	//	void foo(A, B...);
+	//	int main() {
+	//	    foo(0);
+	//	}
+	public void testFunctionTemplatePartialOrdering_388805() throws Exception {
+		parseAndCheckBindings();
+	}
+
 	//	template<typename T> class CT {};
 	//	template<int I> class CTI {};
 	//
@@ -4826,6 +4839,25 @@ public class AST2TemplateTests extends AST2BaseTest {
 		ub= bh.assertNonProblem("f(5 ...)", 1);	// no diagnostics in CDT, treated as unknown function.
 		ub= bh.assertNonProblem("f(args)", 1);  // no diagnostics in CDT
 		ub= bh.assertNonProblem("f(h(args...) + args...)", 1);
+	}
+
+	//	template <typename... Args>
+	//	struct contains_waldo;
+	//	template <>
+	//	struct contains_waldo<> {
+	//	    static const bool value = false;
+	//	};
+	//	template <typename First, typename... Rest>
+	//	struct contains_waldo<First, Rest...> {
+	//	    static const bool value = contains_waldo<Rest...>::value;
+	//	};
+	//	int main() {
+	//	    bool b1 = contains_waldo<int>::value;
+	//	    bool b2 = contains_waldo<int, int>::value;
+	//	    bool b2 = contains_waldo<int, int, int>::value;
+	//	}
+	public void testRecursiveVariadicTemplate_397828() throws Exception {
+		parseAndCheckBindings();
 	}
 
 	//	struct Test {
@@ -6219,24 +6251,24 @@ public class AST2TemplateTests extends AST2BaseTest {
 	// }
 	public void testSimpleAliasDeclaration() throws Exception {
 		parseAndCheckBindings();
-		
+
 		BindingAssertionHelper assertionHelper = getAssertionHelper();
 		CPPNameCollector collector = getCPPNameCollector(assertionHelper.getTranslationUnit());
-		
+
 		ICPPClassType S = assertionHelper.assertNonProblem("struct S {", "S", ICPPClassType.class);
 		ICPPField x = assertionHelper.assertNonProblem("int x", "x", ICPPField.class);
 		ITypedef Alias = assertionHelper.assertNonProblem("using Alias = S", "Alias", ITypedef.class);
 		IFunction foo = assertionHelper.assertNonProblem("void foo() {", "foo", IFunction.class);
 		IVariable myA = assertionHelper.assertNonProblem("Alias myA", "myA", IVariable.class);
-		
-		
+
+
 		assertInstances(collector, S, 2);
 		assertInstances(collector, x, 2);
 		assertInstances(collector, Alias, 2);
 		assertInstances(collector, foo, 1);
 		assertInstances(collector, myA, 2);
 	}
-	
+
 	// template<typename T>
 	// struct S {
 	//     T x;
@@ -6248,7 +6280,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	// }
 	public void testSpecifiedTemplateAliasDeclaration() throws Exception {
 		parseAndCheckBindings();
-		
+
 		BindingAssertionHelper assertionHelper = getAssertionHelper();
 		CPPNameCollector collector = getCPPNameCollector(assertionHelper.getTranslationUnit());
 
@@ -6257,7 +6289,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 		ITypedef Alias = assertionHelper.assertNonProblem("using Alias = S<int>;", "Alias", ITypedef.class);
 		IVariable myA = assertionHelper.assertNonProblem("Alias myA;", "myA", IVariable.class);
 		ICPPSpecialization xRef = assertionHelper.assertNonProblem("myA.x = 42;", "x", ICPPSpecialization.class);
-				
+
 
 		assertInstances(collector, S, 2);
 		assertInstances(collector, Alias, 2);
@@ -6273,13 +6305,13 @@ public class AST2TemplateTests extends AST2BaseTest {
 	// }
 	public void testTemplatedAliasBasicType() throws Exception {
 		parseAndCheckBindings();
-		
+
 		BindingAssertionHelper assertionHelper = getAssertionHelper();
 		CPPNameCollector collector = getCPPNameCollector(assertionHelper.getTranslationUnit());
-		
+
 		ICPPAliasTemplate Alias = assertionHelper.assertNonProblem("using Alias = int;", "Alias", ICPPAliasTemplate.class);
 		ICPPAliasTemplateInstance aliasFloatInstance = assertionHelper.assertNonProblem("Alias<float> myA;", "Alias<float>", ICPPAliasTemplateInstance.class);
-				
+
 		assertInstances(collector, Alias, 2);
 		assertSameType(aliasFloatInstance, new CPPBasicType(IBasicType.Kind.eInt, 0));
 	}
@@ -6296,7 +6328,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	// }
 	public void testTemplatedAliasDeclaration() throws Exception {
 		parseAndCheckBindings();
-		
+
 		BindingAssertionHelper assertionHelper = getAssertionHelper();
 		CPPNameCollector collector = getCPPNameCollector(assertionHelper.getTranslationUnit());
 
@@ -6334,9 +6366,9 @@ public class AST2TemplateTests extends AST2BaseTest {
 	// }
 	public void testTemplatedAliasDeclarationMultipleParameters() throws Exception {
 		parseAndCheckBindings();
-		
+
 		BindingAssertionHelper assertionHelper = getAssertionHelper();
-		
+
 		ICPPField t1 = assertionHelper.assertNonProblem("T1 t1;", "t1", ICPPField.class);
 		ICPPField t2 = assertionHelper.assertNonProblem("T2 t2;", "t2", ICPPField.class);
 		ICPPField t3 = assertionHelper.assertNonProblem("T3 t3;", "t3", ICPPField.class);
@@ -6377,9 +6409,9 @@ public class AST2TemplateTests extends AST2BaseTest {
 	// }
 	public void testTemplatedAliasDeclarationTemplateArgument() throws Exception {
 		parseAndCheckBindings();
-		
+
 		BindingAssertionHelper assertionHelper = getAssertionHelper();
-				
+
 		ICPPField t = assertionHelper.assertNonProblem("T t;", "t", ICPPField.class);
 		ICPPAliasTemplateInstance TAliasSInt = assertionHelper.assertNonProblem("TAlias<S<int>> myA;", "TAlias<S<int>>", ICPPAliasTemplateInstance.class);
 		ICPPSpecialization tRef = assertionHelper.assertNonProblem("myA.t = S<int>()", "t", ICPPSpecialization.class);
@@ -6400,9 +6432,9 @@ public class AST2TemplateTests extends AST2BaseTest {
 	// }
 	public void testTemplatedAliasAsTemplateArgument() throws Exception {
 		parseAndCheckBindings();
-		
+
 		BindingAssertionHelper assertionHelper = getAssertionHelper();
-				
+
 		ICPPField t = assertionHelper.assertNonProblem("T t;", "t", ICPPField.class);
 		ICPPTemplateInstance STAliasInt = assertionHelper.assertNonProblem("S<TAlias<int>> myA;", "S<TAlias<int>>", ICPPTemplateInstance.class);
 		ICPPSpecialization tRef = assertionHelper.assertNonProblem("myA.t = S<int>();", "t", ICPPSpecialization.class);
@@ -6423,9 +6455,9 @@ public class AST2TemplateTests extends AST2BaseTest {
 	// }
 	public void testTemplatedAliasDeclarationValueArgument() throws Exception {
 		parseAndCheckBindings();
-		
+
 		BindingAssertionHelper assertionHelper = getAssertionHelper();
-						
+
 		ICPPField buff = assertionHelper.assertNonProblem("int buff [Size];", "buff", ICPPField.class);
 		ICPPSpecialization buffRef = assertionHelper.assertNonProblem("myA.buff[0] = 1;", "buff", ICPPSpecialization.class);
 
@@ -6446,9 +6478,9 @@ public class AST2TemplateTests extends AST2BaseTest {
 	// }
 	public void testTemplatedAliasDefaultArguments() throws Exception {
 		parseAndCheckBindings();
-		
+
 		BindingAssertionHelper assertionHelper = getAssertionHelper();
-		
+
 		ICPPField buff = assertionHelper.assertNonProblem("T buff [Size];", "buff", ICPPField.class);
 		ICPPAliasTemplateInstance myA = assertionHelper.assertNonProblem("TAlias<> myA;", "TAlias<>", ICPPAliasTemplateInstance.class);
 		ICPPSpecialization buffRef = assertionHelper.assertNonProblem("myA.buff[0] = 1;", "buff", ICPPSpecialization.class);
@@ -6470,9 +6502,9 @@ public class AST2TemplateTests extends AST2BaseTest {
 	// }
 	public void testTemplatedAliasTemplateArgument() throws Exception {
 		parseAndCheckBindings();
-		
+
 		BindingAssertionHelper assertionHelper = getAssertionHelper();
-		
+
 		ICPPField t = assertionHelper.assertNonProblem("T t;", "t", ICPPField.class);
 		ICPPSpecialization tRef = assertionHelper.assertNonProblem(" myA.t = S<int>();", "t", ICPPSpecialization.class);
 		ICPPClassSpecialization Sint = assertionHelper.assertNonProblem("myA.t = S<int>();", "S<int>", ICPPClassSpecialization.class);
@@ -6497,9 +6529,9 @@ public class AST2TemplateTests extends AST2BaseTest {
 	// }
 	public void testTemplatedAliasAsFunctionParameter() throws Exception {
 		parseAndCheckBindings();
-		
+
 		BindingAssertionHelper assertionHelper = getAssertionHelper();
-		
+
 		ICPPFunction bar = assertionHelper.assertNonProblem("void bar(TAlias<int> arg){", "bar", ICPPFunction.class);
 		ICPPFunction barRefAlias =  assertionHelper.assertNonProblem("bar(myA);", "bar", ICPPFunction.class);
 		ICPPFunction barRefSInt = assertionHelper.assertNonProblem("bar(myS);", "bar", ICPPFunction.class);
@@ -6522,7 +6554,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	// }
 	public void testTemplatedAliasAsFunctionArgument() throws Exception {
 		parseAndCheckBindings();
-		
+
 		BindingAssertionHelper assertionHelper = getAssertionHelper();
 
 		ICPPFunction bar = assertionHelper.assertNonProblem("void bar(S<int> arg){", "bar", ICPPFunction.class);
@@ -6571,7 +6603,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	// }
 	public void testSimpleFunctionAliasDeclaration() throws Exception {
 		parseAndCheckBindings();
-		
+
 		BindingAssertionHelper assertionHelper = getAssertionHelper();
 		CPPNameCollector collector = getCPPNameCollector(assertionHelper.getTranslationUnit());
 
@@ -6596,7 +6628,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	// }
 	public void testTemplatedAliasForTemplateReference() throws Exception {
 		parseAndCheckBindings();
-		
+
 		BindingAssertionHelper assertionHelper = getAssertionHelper();
 
 		ICPPClassSpecialization SInt = assertionHelper.assertNonProblem("S<int> myS;", "S<int>", ICPPClassSpecialization.class);
@@ -6612,7 +6644,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	// }
 	public void testSimpleFunctionTemplateAliasDeclaration() throws Exception {
 		parseAndCheckBindings();
-		
+
 		BindingAssertionHelper assertionHelper = getAssertionHelper();
 		CPPNameCollector collector = getCPPNameCollector(assertionHelper.getTranslationUnit());
 
@@ -6632,7 +6664,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	// }
 	public void testSimpleFunctionReferenceTemplateAliasDeclaration() throws Exception {
 		parseAndCheckBindings();
-		
+
 		BindingAssertionHelper assertionHelper = getAssertionHelper();
 		CPPNameCollector collector = getCPPNameCollector(assertionHelper.getTranslationUnit());
 
@@ -6657,7 +6689,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	// }
 	public void testTemplatedAliasTemplateParameter() throws Exception {
 		parseAndCheckBindings();
-		
+
 		BindingAssertionHelper assertionHelper = getAssertionHelper();
 
 		ICPPField t = assertionHelper.assertNonProblem("T t;", "t", ICPPField.class);
@@ -6680,10 +6712,11 @@ public class AST2TemplateTests extends AST2BaseTest {
 	// Alias<int> intAlias;
 	public void testAliasDeclarationContext() throws Exception {
 		parseAndCheckBindings();
-		
+
 		BindingAssertionHelper assertionHelper = getAssertionHelper();
 
-		ICPPAliasTemplateInstance AliasInt = assertionHelper.assertNonProblem("Alias<int> intAlias;", "Alias<int>", ICPPAliasTemplateInstance.class);
+		ICPPAliasTemplateInstance AliasInt =
+				assertionHelper.assertNonProblem("Alias<int> intAlias;", "Alias<int>", ICPPAliasTemplateInstance.class);
 		assertEquals("Alias<int>", AliasInt.getName());
 		assertEquals("NS", AliasInt.getQualifiedName()[0]);
 		assertEquals("Alias<int>", AliasInt.getQualifiedName()[1]);
@@ -7002,6 +7035,94 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	    }
 	//	};
 	public void testDependentExpressions_395243d() throws Exception {
+		parseAndCheckBindings();
+	}
+
+	//	template <typename T>
+	//	struct B {
+	//	  enum { value = 1 };
+	//	};
+	//
+	//	template <typename T>
+	//	struct C {
+	//	  enum { id = B<T>::value };
+	//	};
+	//
+	//	void test() {
+	//	  int x = C<bool>::id;
+	//	}
+	public void _testDependentEnumValue_389009() throws Exception {
+		BindingAssertionHelper ah = getAssertionHelper();
+		IEnumerator binding = ah.assertNonProblem("C<bool>::id", "id");
+		IValue value = binding.getValue();
+		Long num = value.numericalValue();
+		assertNotNull(num);
+		assertEquals(1, num.longValue());
+	}
+
+	//	template <int...> struct A {};
+	//	template <int... I> void foo(A<I...>); 
+	//	int main() {
+	//		foo(A<0>());
+	//	}
+	public void testVariadicNonTypeTemplateParameter_382074() throws Exception {
+		parseAndCheckBindings();
+	}
+
+	//	template <bool...>
+	//	struct ice_or {
+	//	    static const bool value = false;
+	//	};
+	//	template <typename T>
+	//	struct is_foo {
+	//	    static const bool value = false;
+	//	};
+	//	template <typename... Args>
+	//	struct contains_foo {
+	//	    static const bool value = ice_or<is_foo<Args>::value...>::value;
+	//	};
+	//	template <bool> 
+	//	struct meta;
+	//	struct S { void bar(); };
+	//	template <> 
+	//	struct meta<false> {
+	//	    typedef S type;
+	//	};
+	//	int main() {
+	//	    meta<contains_foo<>::value>::type t;
+	//	    t.bar();
+	//	}
+	public void testVariadicNonTypeTemplateParameter_399039() throws Exception {
+		parseAndCheckBindings();
+	}
+
+	//	template <typename...>
+	//	struct common_type;
+	//	template <typename T>
+	//	struct common_type<T> {
+	//	    typedef int type;
+	//	};
+	//	template <typename T, typename... U>
+	//	struct common_type<T, U...> {
+	//	    typedef int type;
+	//	};
+	//	typedef common_type<int>::type type;
+	public void testClassTemplateSpecializationPartialOrdering_398044a() throws Exception {
+		parseAndCheckBindings();
+	}
+
+	//	template <typename>
+	//	class A;
+	//	template <typename R, typename... Args>
+	//	class A<R(*)(Args...)> {
+	//	};
+	//	template <typename R>
+	//	class A<R*> {
+	//	};
+	//	int main() {
+	//	    A<bool(*)()> mf;
+	//	}
+	public void testClassTemplateSpecializationPartialOrdering_398044b() throws Exception {
 		parseAndCheckBindings();
 	}
 }

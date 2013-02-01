@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2013 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -300,7 +300,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//   X<A> xa= new X<A>();
 	// }
 	public void testUnindexedConstructorInstance() {
-		IBinding b0= getBindingFromASTName("X<A>()", 4);
+		IBinding b0= getBindingFromImplicitASTName("X<A>()", 4);
 		assertInstance(b0, ICPPConstructor.class);
 	}
 
@@ -409,7 +409,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
     	// assertEquals(3, _ctcs.length); // two implicit plus the constructor template
 
     	IBinding b2= getBindingFromASTName("D<int>(", 1);
-    	IBinding b3= getBindingFromASTName("D<int>(", 6);
+    	IBinding b3= getBindingFromImplicitASTName("D<int>(", 6);
 
     	assertInstance(b2, ICPPClassTemplate.class); // *D*<int>(5, 6)
     	assertInstance(b2, ICPPClassType.class); // *D*<int>(5, 6)

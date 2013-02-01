@@ -13,22 +13,22 @@ package org.eclipse.cdt.core.parser.tests.ast2;
 import org.eclipse.cdt.core.dom.CDOM;
 import org.eclipse.cdt.core.dom.IASTServiceProvider.UnsupportedDialectException;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.parser.tests.FileBasePluginTest;
+import org.eclipse.cdt.core.parser.tests.FileBasePluginTestCase;
 import org.eclipse.core.resources.IFile;
 
 /**
  * @author dsteffle
  */
-public class CDOMBaseTest extends FileBasePluginTest {
+public class CDOMTestBase extends FileBasePluginTestCase {
 
-	public CDOMBaseTest() {
+	public CDOMTestBase() {
 	}
 
-	public CDOMBaseTest(String name) {
+	public CDOMTestBase(String name) {
 		super(name);
 	}
 
-	public CDOMBaseTest(String name, Class className) {
+	public CDOMTestBase(String name, Class className) {
 		super(name, className);
 	}
 	

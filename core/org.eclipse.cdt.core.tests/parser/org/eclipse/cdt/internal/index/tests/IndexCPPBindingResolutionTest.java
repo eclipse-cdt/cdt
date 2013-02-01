@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2013 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     Andrew Ferguson (Symbian) - Initial implementation
  *     Markus Schorn (Wind River Systems)
  *     Sergey Prigogin (Google)
+ *     Nathan Ridge
  *******************************************************************************/
 package org.eclipse.cdt.internal.index.tests;
 
@@ -1490,9 +1491,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
     	assertFalse(b0 instanceof IIndexBinding);
     	ICPPConstructor b1 = getBindingFromASTName("B(int x)", 1, ICPPConstructor.class);
     	assertFalse(b1 instanceof IIndexBinding);
-    	ICPPConstructor b2 = getBindingFromASTName("B(0)", 1, ICPPConstructor.class);
-    	assertFalse(b2 instanceof IIndexBinding);
-    	assertEquals(b1, b2);
+    	ICPPClassType b2 = getBindingFromASTName("B(0)", 1, ICPPClassType.class);
     	ICPPMethod b3 = getBindingFromASTName("m(0)", 1, ICPPMethod.class);
     	assertFalse(b3 instanceof IIndexBinding);
 	}

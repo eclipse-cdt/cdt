@@ -32,7 +32,7 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
  * @author Emanuel Graf
  *
  */
-public class DOMPreprocessorInformationTest extends AST2BaseTest {
+public class DOMPreprocessorInformationTest extends AST2TestBase {
 	
 	public void testPragma() throws Exception {
 		String msg = "GCC poison printf sprintf fprintf";

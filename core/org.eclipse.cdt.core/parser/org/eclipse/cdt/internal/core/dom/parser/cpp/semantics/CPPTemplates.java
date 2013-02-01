@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -81,6 +81,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
@@ -161,9 +162,23 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Conversions.UDCMod
  * type instantiation.
  */
 public class CPPTemplates {
+	// The three constants below are used as special return values for the various overloads
+	// of CPPTemplates.determinePackSize() and for ICPPEvaluation.determinePackSize(), which
+	// search a type, template argument, or value for a usage of a template parameter pack
+	// and return the number of arguments bound to that parameter pack in an 
+	// ICPPTemplateParameterMap.
+
+	// Used to indicate that the parameter pack is not bound to any arguments in the
+	// template parameter map. Computation of the pack size needs to be deferred until
+	// arguments for it become available.
 	static final int PACK_SIZE_DEFER = -1;
+
+	// Used to indicate that two different packs with different sizes were found.
 	static final int PACK_SIZE_FAIL = -2;
+
+	// Used to indicate that no template parameter packs were found.
 	static final int PACK_SIZE_NOT_FOUND = Integer.MAX_VALUE;
+
 	static enum TypeSelection { PARAMETERS, RETURN_TYPE, PARAMETERS_AND_RETURN_TYPE }
 
 	/**
@@ -1958,13 +1973,34 @@ public class CPPTemplates {
 		return arg;
 	}
 
+	private static ICPPFunctionType getFunctionTypeIgnoringParametersWithDefaults(ICPPFunction function) {
+		ICPPParameter[] parameters = function.getParameters();
+		IType[] parameterTypes = new IType[parameters.length];
+		int i;
+		for (i = 0; i < parameters.length; ++i) {
+			ICPPParameter parameter = parameters[i];
+			if (!parameter.hasDefaultValue()) {
+				parameterTypes[i] = parameter.getType();
+			} else {
+				break;
+			}
+		}
+		ICPPFunctionType originalType = function.getType();
+		if (i == parameters.length)  // no parameters with default arguments
+			return originalType;
+		return new CPPFunctionType(originalType.getReturnType(), ArrayUtil.trim(parameterTypes),
+				originalType.isConst(), originalType.isVolatile(), originalType.takesVarArgs());
+	}
+
 	private static int compareSpecialization(ICPPFunctionTemplate f1, ICPPFunctionTemplate f2, TypeSelection mode, IASTNode point) throws DOMException {
 		ICPPFunction transF1 = transferFunctionTemplate(f1, point);
 		if (transF1 == null)
 			return -1;
 
 		final ICPPFunctionType ft2 = f2.getType();
-		final ICPPFunctionType transFt1 = transF1.getType();
+		// Ignore parameters with default arguments in the transformed function template
+		// as per [temp.func.order] p5.
+		final ICPPFunctionType transFt1 = getFunctionTypeIgnoringParametersWithDefaults(transF1);
 		IType[] pars;
 		IType[] args;
 		switch(mode) {
@@ -2118,8 +2154,6 @@ public class CPPTemplates {
 		final ICPPTemplateParameter[] tpars2 = f2.getTemplateParameters();
 		final ICPPTemplateArgument[] targs1 = f1.getTemplateArguments();
 		final ICPPTemplateArgument[] targs2 = f2.getTemplateArguments();
-		if (targs1.length != targs2.length)
-			return false;
 
 		// Transfer arguments of specialization 1
 		final int tpars1Len = tpars1.length;
@@ -2129,22 +2163,17 @@ public class CPPTemplates {
 			final ICPPTemplateParameter param = tpars1[i];
 			final ICPPTemplateArgument arg = uniqueArg(param);
 			args[i]= arg;
-			transferMap.put(param, arg);
+			if (param.isParameterPack()) {
+				transferMap.put(param, new ICPPTemplateArgument[] { arg });
+			} else {
+				transferMap.put(param, arg);
+			}
 		}
 		final ICPPTemplateArgument[] transferredArgs1 = instantiateArguments(targs1, transferMap, -1, null, point, false);
 
 		// Deduce arguments for specialization 2
 		final CPPTemplateParameterMap deductionMap= new CPPTemplateParameterMap(2);
-		if (!TemplateArgumentDeduction.fromTemplateArguments(tpars2, targs2, transferredArgs1, deductionMap, point))
-			return false;
-
-		// Compare
-		for (int i = 0; i < targs2.length; i++) {
-			ICPPTemplateArgument transferredArg2= instantiateArgument(targs2[i], deductionMap, -1, null, point);
-			if (!transferredArg2.isSameValue(transferredArgs1[i]))
-				return false;
-		}
-		return true;
+		return TemplateArgumentDeduction.fromTemplateArguments(tpars2, targs2, transferredArgs1, deductionMap, point);
 	}
 
 	static boolean isValidType(IType t) {
@@ -2226,6 +2255,9 @@ public class CPPTemplates {
 					pType= instantiateType(pType, map, -1, null, point);
 				}
 
+				if (argType instanceof ICPPParameterPackType) {
+					argType = ((ICPPParameterPackType) argType).getType();
+				}
 				if (argType instanceof ICPPUnknownType) {
 					return new CPPTemplateNonTypeArgument(arg.getNonTypeValue(), pType);
 				}

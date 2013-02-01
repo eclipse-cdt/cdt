@@ -23,16 +23,16 @@ import org.eclipse.core.resources.IFile;
  * @author johnc
  *
  */
-public class DOMSelectionParseBaseTest extends DOMFileBasePluginTest {
+public class DOMSelectionParseTestBase extends DOMFileBasePluginTest {
 
-	public DOMSelectionParseBaseTest() {
+	public DOMSelectionParseTestBase() {
 	}
 
-	public DOMSelectionParseBaseTest(String name) {
+	public DOMSelectionParseTestBase(String name) {
 		super(name);
 	}
 
-	public DOMSelectionParseBaseTest(String name, Class className) {
+	public DOMSelectionParseTestBase(String name, Class className) {
 		super(name, className);
 	}
 

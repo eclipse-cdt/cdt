@@ -20,7 +20,7 @@ import junit.framework.TestSuite;
 import org.eclipse.jface.text.IRegion;
 
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.parser.tests.ast2.AST2BaseTest;
+import org.eclipse.cdt.core.parser.tests.ast2.AST2TestBase;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.ui.testplugin.CTestPlugin;
 
@@ -31,7 +31,7 @@ import org.eclipse.cdt.internal.ui.search.LinkedNamesFinder;
 /**
  * Tests for LinkedNamesFinder class.
  */
-public class LinkedNamesFinderTest extends AST2BaseTest {
+public class LinkedNamesFinderTest extends AST2TestBase {
 	private static class RegionComparator implements Comparator<IRegion> {
 		@Override
 		public int compare(IRegion r1, IRegion r2) {

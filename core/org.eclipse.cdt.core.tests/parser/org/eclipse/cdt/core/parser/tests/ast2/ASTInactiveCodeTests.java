@@ -28,7 +28,7 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 /**
  * Testcases for inactive code in ast.
  */
-public class ASTInactiveCodeTests extends AST2BaseTest {
+public class ASTInactiveCodeTests extends AST2TestBase {
 	
 	public static TestSuite suite() {
 		return suite(ASTInactiveCodeTests.class);

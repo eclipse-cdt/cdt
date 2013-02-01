@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2013 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Andrew Ferguson (Symbian)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.index.tests;
 
@@ -42,20 +43,20 @@ public class IndexCBindingResolutionBugs extends IndexBindingResolutionTestBase 
 		public ProjectWithDepProj() { setStrategy(new ReferencedProject(false)); }
 		public static TestSuite suite() { return suite(ProjectWithDepProj.class); }
 	}
-	
-	public static void addTests(TestSuite suite) {		
+
+	public static void addTests(TestSuite suite) {
 		suite.addTest(SingleProject.suite());
 		suite.addTest(ProjectWithDepProj.suite());
 	}
 
-	// #include <stdio.h>	
+	// #include <stdio.h>
 	// void func1(void) {
 	//	    int i = 0;
 	//	    for (i=0; i<10;i++) {
 	//	        printf("%i", i);
 	//	    }
 	//	}
-	
+
 	//  #include "header.h"
 	//
 	//	int main(void) {
@@ -77,7 +78,7 @@ public class IndexCBindingResolutionBugs extends IndexBindingResolutionTestBase 
 	}
 
 	//  void func1(void);
-	
+
 	//  #include "header.h"
 	//
 	//	int main(void) {
@@ -87,7 +88,7 @@ public class IndexCBindingResolutionBugs extends IndexBindingResolutionTestBase 
 		IBinding b0 = getBindingFromASTName("func1;", 5);
 		assertTrue(b0 instanceof IFunction);
 	}
-	
+
     // typedef struct {
     //    int utm;
     // } usertype;
@@ -132,7 +133,7 @@ public class IndexCBindingResolutionBugs extends IndexBindingResolutionTestBase 
 		assertInstance(type, IEnumeration.class);
 		assertTrue(type instanceof IEnumeration);
     }
-    
+
     // int globalVar;
 
 	// // don't include header
@@ -268,10 +269,10 @@ public class IndexCBindingResolutionBugs extends IndexBindingResolutionTestBase 
 		e= (IEnumeration) b1;
 		ei= e.getEnumerators();
 		assertEquals(1, ei.length);
-    } 
+    }
 
     // // no header needed
-    
+
     // typedef struct {
     //    int member;
     // } t_struct;
@@ -289,7 +290,7 @@ public class IndexCBindingResolutionBugs extends IndexBindingResolutionTestBase 
 		assertTrue(tdIndex instanceof IIndexBinding);
 		assertTrue(tdAST instanceof ITypedef);
 		assertTrue(tdIndex instanceof ITypedef);
-		
+
 		IType tAST= ((ITypedef) tdAST).getType();
 		IType tIndex= ((ITypedef) tdIndex).getType();
 		assertTrue(tAST instanceof ICompositeType);
@@ -304,7 +305,7 @@ public class IndexCBindingResolutionBugs extends IndexBindingResolutionTestBase 
 		assertTrue(tdIndex instanceof IIndexBinding);
 		assertTrue(tdAST instanceof ITypedef);
 		assertTrue(tdIndex instanceof ITypedef);
-		
+
 		tAST= ((ITypedef) tdAST).getType();
 		tIndex= ((ITypedef) tdIndex).getType();
 		assertTrue(tAST instanceof ICompositeType);
@@ -319,7 +320,7 @@ public class IndexCBindingResolutionBugs extends IndexBindingResolutionTestBase 
 		assertTrue(tdIndex instanceof IIndexBinding);
 		assertTrue(tdAST instanceof ITypedef);
 		assertTrue(tdIndex instanceof ITypedef);
-		
+
 		tAST= ((ITypedef) tdAST).getType();
 		tIndex= ((ITypedef) tdIndex).getType();
 		assertTrue(tAST instanceof IEnumeration);
@@ -327,13 +328,13 @@ public class IndexCBindingResolutionBugs extends IndexBindingResolutionTestBase 
 		assertTrue(tAST.isSameType(tIndex));
 		assertTrue(tIndex.isSameType(tAST));
 	}
-	
+
 	// struct outer {
 	//    union {
 	//       int var1;
 	//    };
 	// };
-	  
+
 	// #include "header.h"
 	// void test() {
 	//    struct outer x;
@@ -354,7 +355,7 @@ public class IndexCBindingResolutionBugs extends IndexBindingResolutionTestBase 
 	//       int var1;
 	//    };
 	// };
-	  
+
 	// #include "header.h"
 	// void test() {
 	//    union outer x;
@@ -369,14 +370,14 @@ public class IndexCBindingResolutionBugs extends IndexBindingResolutionTestBase 
 		assertTrue(outer instanceof ICCompositeTypeScope);
 		assertEquals("outer", outer.getScopeName().toString());
 	}
-	
+
 	// int myFunc();
-	
+
 	// int myFunc(var)
-	// int var; 
-	// { 
-	//   return var; 
-	// } 
+	// int var;
+	// {
+	//   return var;
+	// }
 	// int main(void) {
 	//    return myFunc(0);
 	// }
@@ -390,7 +391,7 @@ public class IndexCBindingResolutionBugs extends IndexBindingResolutionTestBase 
 		assertTrue(params[0].getType() instanceof IBasicType);
 		assertEquals(IBasicType.Kind.eInt, ((IBasicType) params[0].getType()).getKind());
 	}
-	
+
 	//	typedef struct S S;
 	//	void setValue(S *pSelf, int value);
 
@@ -404,7 +405,7 @@ public class IndexCBindingResolutionBugs extends IndexBindingResolutionTestBase 
 		IBinding b = getBindingFromASTName("value =", 5);
 		assertTrue(b instanceof IField);
 	}
-	
+
 	//	void f255(
 	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int,
 	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int,
@@ -439,8 +440,8 @@ public class IndexCBindingResolutionBugs extends IndexBindingResolutionTestBase 
 	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int,
 	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int,
 	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int);
-	
-	//	void test() {	
+
+	//	void test() {
 	//     f255(
 	//          0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 	//          0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -463,8 +464,8 @@ public class IndexCBindingResolutionBugs extends IndexBindingResolutionTestBase 
 	public void testFunctionsWithManyParameters_Bug319186() throws Exception {
 		getBindingFromASTName("f255", 0);
 		getBindingFromASTName("f256", 0);
-	}		
-	
+	}
+
 	//	struct B {
 	//		float f;
 	//	};
@@ -474,5 +475,17 @@ public class IndexCBindingResolutionBugs extends IndexBindingResolutionTestBase 
 	//	};
 	public void testDesignatedInitializer_Bug210019() throws Exception {
 		IField f= getBindingFromASTName("f", 0);
-	}		
+	}
+
+	//	struct S {
+	//	   int data;
+	//	};
+
+	//	void test(void (*f)(void*)) {
+	//		struct S *i;
+	//		f(&i->data);
+	//	}
+	public void testBug394151() throws Exception {
+		IParameter f= getBindingFromASTName("f(", 1);
+	}
 }

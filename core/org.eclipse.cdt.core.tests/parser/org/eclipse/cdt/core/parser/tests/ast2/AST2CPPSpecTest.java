@@ -46,7 +46,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 /**
  * Examples taken from the c++-specification.
  */
-public class AST2CPPSpecTest extends AST2SpecBaseTest {
+public class AST2CPPSpecTest extends AST2SpecTestBase {
 
 	public AST2CPPSpecTest() {
 	}

@@ -23,7 +23,7 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 /**
  * Unit tests for CPPVariableReadWriteFlags and CVariableReadWriteFlags classes.
  */
-public class VariableReadWriteFlagsTest extends AST2BaseTest {
+public class VariableReadWriteFlagsTest extends AST2TestBase {
 	private static final int READ = PDOMName.READ_ACCESS;
 	private static final int WRITE = PDOMName.WRITE_ACCESS;
 

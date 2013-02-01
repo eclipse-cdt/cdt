@@ -25,7 +25,7 @@ class LocationCtxMacroExpansion extends LocationCtx {
 	private final LocationMap fLocationMap;
 	private final int fLength;
 	private final ImageLocationInfo[] fLocationInfos;
-	private ASTMacroReferenceName fExpansionName;
+	private final ASTMacroReferenceName fExpansionName;
 
 	public LocationCtxMacroExpansion(LocationMap map, LocationCtxContainer parent, int parentOffset, int parentEndOffset,
 			int sequenceNumber, int length, ImageLocationInfo[] imageLocations,	ASTMacroReferenceName expansionName) {
@@ -45,17 +45,15 @@ class LocationCtxMacroExpansion extends LocationCtx {
 	}
 	
 	@Override
-	public boolean collectLocations(int start, int length, ArrayList<IASTNodeLocation> locations) {
+	public void collectLocations(int start, int length, ArrayList<IASTNodeLocation> locations) {
 		final int offset= start - fSequenceNumber;
 		assert offset >= 0 && length >= 0;
 		
 		if (offset + length <= fLength) {
 			locations.add(new ASTMacroExpansionLocation(this, offset, length));
-			return true;
+		} else {
+			locations.add(new ASTMacroExpansionLocation(this, offset, fLength-offset));
 		}
-
-		locations.add(new ASTMacroExpansionLocation(this, offset, fLength-offset));
-		return false;
 	}	
 	
 	public ASTMacroExpansion getExpansion() {

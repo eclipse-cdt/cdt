@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.pdom.indexer.TodoTaskParser;
 import org.eclipse.cdt.internal.core.pdom.indexer.TodoTaskParser.Task;
 
-public class TaskParserTest extends AST2BaseTest {
+public class TaskParserTest extends AST2TestBase {
 	
 	public static TestSuite suite() {
 		return suite(TaskParserTest.class);

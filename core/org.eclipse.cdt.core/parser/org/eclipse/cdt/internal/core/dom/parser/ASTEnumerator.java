@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2013 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser;
 
@@ -33,11 +34,11 @@ public abstract class ASTEnumerator extends ASTNode implements IASTEnumerator, I
 		setName(name);
 		setValue(value);
 	}
-	
-	protected void copyAbstractEnumerator(ASTEnumerator copy, CopyStyle style) {
+
+	protected <T extends ASTEnumerator> T copy(T copy, CopyStyle style) {
 		copy.setName(name == null ? null : name.copy(style));
 		copy.setValue(value == null ? null : value.copy(style));
-		copy.setOffsetAndLength(this);
+		return super.copy(copy, style);
 	}
 
 	@Override
@@ -125,23 +126,26 @@ public abstract class ASTEnumerator extends ASTNode implements IASTEnumerator, I
 	}
 
 	private void createEnumValues(IASTEnumerationSpecifier parent) {
+		IValue previousExplicitValue = null;
+		int delta = 0;
 		IASTEnumerator[] etors= parent.getEnumerators();
-		long cv= -1;
-		boolean isknown= true;
 		for (IASTEnumerator etor : etors) {
-			cv++;
+			IValue val;
 			IASTExpression expr= etor.getValue();
 			if (expr != null) {
-				IValue val= Value.create(expr, Value.MAX_RECURSION_DEPTH);
-				Long nv= val.numericalValue();
-				isknown= false;
-				if (nv != null) {
-					isknown= true;
-					cv= nv.longValue();
+				val= Value.create(expr, Value.MAX_RECURSION_DEPTH);
+				previousExplicitValue = val;
+				delta = 1;
+			} else {
+				if (previousExplicitValue != null) {
+					val = Value.incrementedValue(previousExplicitValue, delta);
+				} else {
+					val = Value.create(delta);
 				}
+				delta++;
 			}
 			if (etor instanceof ASTEnumerator) {
-				((ASTEnumerator) etor).integralValue=  isknown ? Value.create(cv) : Value.UNKNOWN;
+				((ASTEnumerator) etor).integralValue= val;
 			}
 		}
 	}

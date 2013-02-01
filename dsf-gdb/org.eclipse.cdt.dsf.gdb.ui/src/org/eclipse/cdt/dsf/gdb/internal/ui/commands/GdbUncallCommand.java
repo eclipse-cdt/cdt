@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Ericsson - initial API and implementation
+ *     Marc Khouzam (Ericsson) - Instruction-level step-return does not make sense (bug 399123)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.commands;
 
@@ -26,7 +27,6 @@ public class GdbUncallCommand extends GdbAbstractReverseStepCommand implements I
     
     @Override
     protected final StepType getStepType() {
-    	boolean instructionSteppingEnabled = getSteppingMode() != null && getSteppingMode().isInstructionSteppingEnabled();
-    	return instructionSteppingEnabled ? StepType.INSTRUCTION_STEP_RETURN : StepType.STEP_RETURN;
+    	return StepType.STEP_RETURN;
     }
 }

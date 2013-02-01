@@ -38,7 +38,7 @@ import org.eclipse.cdt.core.parser.NullLogService;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerInfo;
-import org.eclipse.cdt.core.parser.tests.ast2.AST2BaseTest;
+import org.eclipse.cdt.core.parser.tests.ast2.AST2TestBase;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
@@ -53,7 +53,7 @@ public class CompletionTestBase extends BaseTestCase {
 	protected IASTCompletionNode getCompletionNode(String code, ParserLanguage lang, boolean useGNUExtensions) throws ParserException {
         FileContent codeReader = FileContent.create("<test-code>", code.trim().toCharArray());
         ScannerInfo scannerInfo = new ScannerInfo();
-        IScanner scanner= AST2BaseTest.createScanner(codeReader, lang, ParserMode.COMPLETE_PARSE, scannerInfo);
+        IScanner scanner= AST2TestBase.createScanner(codeReader, lang, ParserMode.COMPLETE_PARSE, scannerInfo);
         
         ISourceCodeParser parser = null;
         if( lang == ParserLanguage.CPP )

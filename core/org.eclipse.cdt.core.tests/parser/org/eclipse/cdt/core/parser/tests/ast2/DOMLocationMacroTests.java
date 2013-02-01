@@ -35,7 +35,7 @@ import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 
-public class DOMLocationMacroTests extends AST2BaseTest {
+public class DOMLocationMacroTests extends AST2TestBase {
 
 	final ParserLanguage[] languages = new ParserLanguage[] { ParserLanguage.C, ParserLanguage.CPP };
 	

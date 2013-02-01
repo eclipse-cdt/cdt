@@ -4499,6 +4499,7 @@
  <extension
        point="org.eclipse.ui.preferenceTransfer">
     <transfer
+          icon="icons/view16/c_pers.gif"
           id="org.eclipse.cdt.ui.transfer.editor.appearance"
           name="%transfer.EditorAppearance.name">
        <mapping scope="instance">
@@ -4557,6 +4558,7 @@
        </description>
     </transfer>
     <transfer
+          icon="icons/view16/c_pers.gif"
           id="org.eclipse.cdt.ui.transfer.editor.behavior"
           name="%transfer.EditorBehavior.name">
        <mapping scope="instance">
@@ -4590,13 +4592,29 @@
             <key name="stickyOccurrences"/>
             <key name="markOverloadedOperatorsOccurrences"/>
             <key name="scalability." match="prefix"/>
-            <key
-                  name="content_assist_proposals_timeout">
-            </key>
+            <key name="content_assist_proposals_timeout"/>
           </entry>
        </mapping>
        <description>
           %transfer.EditorBehavior.description 
+       </description>
+    </transfer>
+    <transfer
+          icon="icons/view16/c_pers.gif"
+          id="org.eclipse.cdt.ui.transfer.code_style"
+          name="%transfer.CodeStyle.name">
+       <mapping scope="instance">
+          <entry node="org.eclipse.cdt.ui">
+            <key name="codetemplates." match="prefix"/>
+            <key name="nameStyle." match="prefix"/>
+            <key name="formatter_profile"/>
+            <key name="class_member_ascending_visibility_order"/>
+            <key name="function_output_parameters_before_input"/>
+            <key name="function_pass_output_parameters_by_pointer"/>
+          </entry>
+       </mapping>
+       <description>
+          %transfer.CodeStyle.description 
        </description>
     </transfer>
 

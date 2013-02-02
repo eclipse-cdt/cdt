@@ -7,7 +7,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 /**
  * An interface for accessing details of the token that is being highlighted.
  *
- * @since 5.5
+ * @since 5.6
  */
 public interface ISemanticToken {
 	/**

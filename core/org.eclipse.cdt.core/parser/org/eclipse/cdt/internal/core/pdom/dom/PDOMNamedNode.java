@@ -6,10 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    QNX - Initial API and implementation
- *    IBM Corporation
- *    Andrew Ferguson (Symbian)
- *    Markus Schorn (Wind River Systems)
+ *     QNX - Initial API and implementation
+ *     IBM Corporation
+ *     Andrew Ferguson (Symbian)
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom;
 
@@ -24,7 +24,6 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author Doug Schaefer
- *
  */
 public abstract class PDOMNamedNode extends PDOMNode {
 	/**
@@ -103,7 +102,6 @@ public abstract class PDOMNamedNode extends PDOMNode {
 		}
 		fName= nameCharArray;
 	}
-
 
 	@Override
 	public void delete(PDOMLinkage linkage) throws CoreException {

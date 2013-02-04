@@ -68,8 +68,10 @@ public class BufferedCanvas extends Canvas
 	
 	/** Cleans up control. */
 	protected void cleanupBufferedCanvas() {
-		removePaintListener(this);
-		removeControlListener(this);
+		if(!this.isDisposed()) {
+			removePaintListener(this);
+			removeControlListener(this);
+		}
 		if (m_doubleBuffer != null) {
 			m_doubleBuffer.dispose();
 			m_doubleBuffer = null;

@@ -59,27 +59,29 @@
                 </goals>
                 <configuration>
                   <target>
-					<delete includeemptydirs="false">
-						<fileset dir="${tm-install}">
-							<include name="**" />
-						</fileset>
-					</delete>
-					<copy includeemptydirs="false" todir="${tm-install}">
-						<fileset dir="target/repository">
-							<include name="**"/>
-						</fileset>
-						<fileset dir="target">
-						    <include name="${tm-zipfile}"/>
-						</fileset>
-						<fileset dir="${project.build.directory}/../../../../">
-							<include name="rseserver*"/>
-						</fileset>
-					</copy>
-					<chmod perm="g+w">
-						<fileset dir="${tm-install}">
-							<include name="**"/>
-						</fileset>
-					</chmod>
+                    <delete includeemptydirs="false">
+                      <fileset dir="${tm-install}">
+                        <include name="**"/>
+                      </fileset>
+                    </delete>
+                    <copy includeemptydirs="false" todir="${tm-install}">
+                      <fileset dir="target/repository">
+                        <include name="**"/>
+                      </fileset>
+                      <fileset dir="target">
+                        <include name="${tm-zipfile}"/>
+                      </fileset>
+                    </copy>
+                    <copy includeemptydirs="false" todir="${tm-install}/rseserver">
+                      <fileset dir="${project.build.directory}/../../../">
+                        <include name="rseserver*"/>
+                      </fileset>
+                    </copy>
+                    <chmod perm="g+w">
+                      <fileset dir="${tm-install}">
+                        <include name="**"/>
+                      </fileset>
+                    </chmod>
                   </target>
                 </configuration>
               </execution>

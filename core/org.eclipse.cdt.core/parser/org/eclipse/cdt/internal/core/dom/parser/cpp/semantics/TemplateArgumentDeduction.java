@@ -709,8 +709,8 @@ public class TemplateArgumentDeduction {
 	}
 
 	private void incPackOffset() {
-		fPackOffset++;
 		assert fPackOffset < fPackSize;
+		fPackOffset++;
 	}
 
 	/**
@@ -727,6 +727,7 @@ public class TemplateArgumentDeduction {
 			if (Value.referencesTemplateParameter(tval)) {
 				int parId= Value.isTemplateParameter(tval);
 				if (parId >= 0) { 
+					assert fPackOffset < fPackSize;
 					ICPPTemplateArgument old= fDeducedArgs.getArgument(parId, fPackOffset);
 					if (old == null) {
 						return deduce(parId, a);
@@ -796,6 +797,7 @@ public class TemplateArgumentDeduction {
 					
 					int parID= Value.isTemplateParameter(ps);
 					if (parID >= 0) { 
+						assert fPackOffset < fPackSize;
 						ICPPTemplateArgument old= fDeducedArgs.getArgument(parID, fPackOffset);
 						if (old == null) {
 							if (!deduce(parID, new CPPTemplateNonTypeArgument(as, new TypeOfValueDeducedFromArraySize()))) {
@@ -866,6 +868,7 @@ public class TemplateArgumentDeduction {
 		
 		if (pTemplate instanceof ICPPTemplateTemplateParameter) {
 			final int tparId = ((ICPPTemplateTemplateParameter) pTemplate).getParameterID();
+			assert fPackOffset < fPackSize;
 			ICPPTemplateArgument current= fDeducedArgs.getArgument(tparId, fPackOffset);
 			if (current != null) {
 				if (current.isNonTypeValue() || !current.getTypeValue().isSameType(aTemplate))
@@ -945,6 +948,7 @@ public class TemplateArgumentDeduction {
 			if (parameterPack != null) {
 				p= parameterPack;
 				deduct.incPackOffset();
+				assert fPackOffset < fPackSize;
 				p= CPPTemplates.instantiateType(p, fExplicitArgs, deduct.fPackOffset, null, point);
 				if (!CPPTemplates.isValidType(p))
 					return false;
@@ -953,6 +957,7 @@ public class TemplateArgumentDeduction {
 				if (p instanceof ICPPParameterPackType) {
 					p= parameterPack= ((ICPPParameterPackType) p).getType();
 					deduct= new TemplateArgumentDeduction(this, aParams.length - i);
+					assert fPackOffset < fPackSize;
 					p= CPPTemplates.instantiateType(p, fExplicitArgs, deduct.fPackOffset, null, point);
 					if (!CPPTemplates.isValidType(p))
 						return false;
@@ -968,6 +973,7 @@ public class TemplateArgumentDeduction {
 		if (fTemplateParameterPacks != null && fTemplateParameterPacks.contains(parID)) {
 			if (fPackSize == 0)
 				return false;
+			assert fPackOffset < fPackSize;
 			return fDeducedArgs.putPackElement(parID, fPackOffset, arg, fPackSize);
 		}
 		if (SemanticUtil.isUniqueTypeForParameterPack(arg.getTypeValue()))

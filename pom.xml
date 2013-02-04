@@ -338,6 +338,7 @@
             </environments>
             <resolver>p2</resolver>
             <ignoreTychoRepositories>true</ignoreTychoRepositories>
+            <includePackedArtifacts>true</includePackedArtifacts>
             <pomDependencies>consider</pomDependencies>
             <filters>
               <filter>
@@ -404,16 +405,30 @@
           <groupId>org.eclipse.tycho</groupId>
           <artifactId>tycho-p2-plugin</artifactId>
           <version>${tycho-version}</version>
-          <configuration>
+          <!-- Signing appears to mess with the baseline repository logic.
+	                                               Disable the baseline repository until we've figured out what is going on. -->
+          <!--
+						                                                    
+	  <configuration>
             <baselineMode>warn</baselineMode>
             <baselineRepositories>
               <repository>
-                <!--
-                <url>http://download.eclipse.org/tm/builds/${tm-stream}/nightly</url>
-                -->
                 <url>http://download.eclipse.org/tm/updates/3.4/</url>
               </repository>
             </baselineRepositories>
+    </configuration>
+    -->
+          <executions>
+            <execution>
+              <id>p2-metadata</id>
+              <phase>verify</phase>
+              <goals>
+                <goal>p2-metadata</goal>
+              </goals>
+            </execution>
+          </executions>
+          <configuration>
+            <defaultP2Metadata>false</defaultP2Metadata>
           </configuration>
         </plugin>
         <plugin>

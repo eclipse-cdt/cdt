@@ -43,7 +43,6 @@ public class FinalLaunchSequence_7_0 extends FinalLaunchSequence {
 
 	private IGDBControl fCommandControl;
 	private CommandFactory fCommandFactory;
-	private DsfServicesTracker fTracker;
 	private DsfSession fSession;
 
 	public FinalLaunchSequence_7_0(DsfSession session, Map<String, Object> attributes, RequestMonitorWithProgress rm) {
@@ -76,9 +75,10 @@ public class FinalLaunchSequence_7_0 extends FinalLaunchSequence {
 	 */
 	@Execute
 	public void stepInitializeFinalLaunchSequence_7_0(RequestMonitor rm) {
-		fTracker = new DsfServicesTracker(GdbPlugin.getBundleContext(), fSession.getId());
+		DsfServicesTracker tracker = new DsfServicesTracker(GdbPlugin.getBundleContext(), fSession.getId());
+		fCommandControl = tracker.getService(IGDBControl.class);
+		tracker.dispose();
 
-		fCommandControl = fTracker.getService(IGDBControl.class);
 		if (fCommandControl == null) {
 			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot obtain control service", null)); //$NON-NLS-1$
 			rm.done();
@@ -96,8 +96,6 @@ public class FinalLaunchSequence_7_0 extends FinalLaunchSequence {
 	 */
 	@RollBack("stepInitializeFinalLaunchSequence_7_0")
 	public void rollBackInitializeFinalLaunchSequence_7_0(RequestMonitor rm) {
-		if (fTracker != null) fTracker.dispose();
-		fTracker = null;
 		rm.done();
 	}
 	

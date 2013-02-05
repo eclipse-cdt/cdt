@@ -619,10 +619,11 @@ public class TemplateArgumentDeduction {
 				}
 				ICPPTemplateArgument pattern = p[j].getExpansionPattern();
 				for (int i= j; i < a.length; i++) {
+					if (i != j)
+						deduct.incPackOffset();
 					if (!deduct.fromTemplateArgument(pattern, a[i], point)) {
 						return false;
 					}
-					deduct.incPackOffset();
 				}
 				break;
 			} else {

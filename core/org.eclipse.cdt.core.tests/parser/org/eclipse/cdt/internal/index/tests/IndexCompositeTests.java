@@ -46,6 +46,54 @@ import org.eclipse.core.runtime.Path;
  * Tests the behavior of the IIndex API when dealing with multiple projects
  */
 public class IndexCompositeTests extends BaseTestCase {
+	/*
+	 * Convenience class for setting up projects.
+	 */
+	private static class ProjectBuilder {
+		private final String name;
+		private final boolean cpp;
+		private List dependencies = new ArrayList();
+		private Map path2content = new HashMap();
+	
+		ProjectBuilder(String name, boolean cpp) {
+			this.name = name;
+			this.cpp = cpp;
+		}
+	
+		ProjectBuilder addDependency(IProject project) {
+			dependencies.add(project);
+			return this;
+		}
+	
+		ProjectBuilder addFile(String relativePath, CharSequence content) {
+			path2content.put(relativePath, content.toString());
+			return this;
+		}
+	
+		ICProject create() throws Exception {
+			ICProject result = cpp ?
+					CProjectHelper.createCCProject(name, "bin", IPDOMManager.ID_NO_INDEXER) :
+					CProjectHelper.createCCProject(name, "bin", IPDOMManager.ID_NO_INDEXER);
+	
+			IFile lastFile= null;
+			for (Iterator i = path2content.entrySet().iterator(); i.hasNext();) {
+				Map.Entry entry = (Map.Entry) i.next();
+				lastFile= TestSourceReader.createFile(result.getProject(), new Path((String)entry.getKey()), (String) entry.getValue());
+			}
+	
+			IProjectDescription desc = result.getProject().getDescription();
+			desc.setReferencedProjects((IProject[]) dependencies.toArray(new IProject[dependencies.size()]));
+			result.getProject().setDescription(desc, new NullProgressMonitor());
+	
+			CCorePlugin.getIndexManager().setIndexerId(result, IPDOMManager.ID_FAST_INDEXER);
+			if (lastFile != null) {
+				IIndex index= CCorePlugin.getIndexManager().getIndex(result);
+				TestSourceReader.waitUntilFileIsIndexed(index, lastFile, INDEXER_TIMEOUT_SEC * 1000);
+			} 
+			BaseTestCase.waitForIndexer(result);
+			return result;
+		}
+	}
 
 	public static Test suite() {
 		return suite(IndexCompositeTests.class);
@@ -438,13 +486,13 @@ public class IndexCompositeTests extends BaseTestCase {
 	private void assertNamespaceXMemberCount(int count) throws CoreException, DOMException {
 		IBinding[] bindings = index.findBindings(Pattern.compile("X"), true, FILTER, new NullProgressMonitor());
 		assertEquals(1, bindings.length);
-		assertEquals(count, ((ICPPNamespace)bindings[0]).getMemberBindings().length);
+		assertEquals(count, ((ICPPNamespace) bindings[0]).getMemberBindings().length);
 	}
 	
 	private void assertFieldCount(String qnPattern, int count) throws CoreException, DOMException {
 		IBinding[] bindings = index.findBindings(Pattern.compile(qnPattern), true, FILTER, new NullProgressMonitor());
 		assertEquals(1, bindings.length);
-		assertEquals(count, ((ICompositeType)bindings[0]).getFields().length);
+		assertEquals(count, ((ICompositeType) bindings[0]).getFields().length);
 	}
 	
 	private void setIndex(ICProject project, int options) throws CoreException, InterruptedException {
@@ -461,55 +509,5 @@ public class IndexCompositeTests extends BaseTestCase {
 			index.releaseReadLock();
 		}
 		super.tearDown();
-	}
-}
-
-/*
- * Convenience class for setting up projects.
- */
-class ProjectBuilder {
-	private static final int INDEXER_TIMEOUT_SEC = 10;
-	private final String name;
-	private final boolean cpp;
-	private List dependencies = new ArrayList();
-	private Map path2content = new HashMap();
-
-	ProjectBuilder(String name, boolean cpp) {
-		this.name = name;
-		this.cpp = cpp;
-	}
-
-	ProjectBuilder addDependency(IProject project) {
-		dependencies.add(project);
-		return this;
-	}
-
-	ProjectBuilder addFile(String relativePath, CharSequence content) {
-		path2content.put(relativePath, content.toString());
-		return this;
-	}
-
-	ICProject create() throws Exception {
-		ICProject result = cpp ?
-				CProjectHelper.createCCProject(name, "bin", IPDOMManager.ID_NO_INDEXER) :
-				CProjectHelper.createCCProject(name, "bin", IPDOMManager.ID_NO_INDEXER);
-
-		IFile lastFile= null;
-		for (Iterator i = path2content.entrySet().iterator(); i.hasNext();) {
-			Map.Entry entry = (Map.Entry) i.next();
-			lastFile= TestSourceReader.createFile(result.getProject(), new Path((String)entry.getKey()), (String) entry.getValue());
-		}
-
-		IProjectDescription desc = result.getProject().getDescription();
-		desc.setReferencedProjects((IProject[]) dependencies.toArray(new IProject[dependencies.size()]));
-		result.getProject().setDescription(desc, new NullProgressMonitor());
-
-		CCorePlugin.getIndexManager().setIndexerId(result, IPDOMManager.ID_FAST_INDEXER);
-		if (lastFile != null) {
-			IIndex index= CCorePlugin.getIndexManager().getIndex(result);
-			TestSourceReader.waitUntilFileIsIndexed(index, lastFile, INDEXER_TIMEOUT_SEC * 1000);
-		} 
-		BaseTestCase.waitForIndexer(result);
-		return result;
 	}
 }

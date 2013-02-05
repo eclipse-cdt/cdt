@@ -243,7 +243,6 @@ public class BaseTestCase extends TestCase {
      * in the log should fail the test. If the logged number of non-OK status objects
      * differs from the last value passed, the test is failed. If this method is not called
      * at all, the expected number defaults to zero.
-     * @param value
      */
     public void setExpectedNumberOfLoggedNonOKStatusObjects(int count) {
     	fExpectedLoggedNonOK= count;

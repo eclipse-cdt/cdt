@@ -378,9 +378,9 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 		tableProvidersViewer.refresh();
 		tableProvidersViewer.setChecked(newProvider, isChecked);
 		tableProviders.setSelection(pos);
-		tableProvidersViewer.refresh(newProvider);
 
 		saveCheckedProviders();
+		tableProvidersViewer.refresh(newProvider);
 	}
 
 	/**
@@ -460,8 +460,8 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 					replaceSelectedProvider(newProvider); // will refresh and save checked providers
 					createOptionsPage(newProvider);
 				} else {
-					tableProvidersViewer.refresh(checkedProvider);
 					saveCheckedProviders();
+					tableProvidersViewer.refresh(checkedProvider);
 					// option page is reused
 				}
 

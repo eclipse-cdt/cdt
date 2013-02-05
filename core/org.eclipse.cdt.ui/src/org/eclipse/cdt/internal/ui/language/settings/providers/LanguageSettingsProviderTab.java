@@ -483,7 +483,7 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 		} else {
 			// Toggle to configuration-owned provider
 			newProvider = getInitialProvider(id);
-			if(newProvider == null) {
+			if(newProvider == null || LanguageSettingsManager.isWorkspaceProvider(newProvider)) {
 				try {
 					ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(provider);
 					if (rawProvider instanceof ILanguageSettingsEditableProvider) {

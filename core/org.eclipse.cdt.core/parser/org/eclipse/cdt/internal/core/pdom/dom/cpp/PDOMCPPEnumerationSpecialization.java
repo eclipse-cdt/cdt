@@ -1,14 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 QNX Software Systems and others.
+ * Copyright (c) 2013 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Doug Schaefer (QNX) - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
- *    Sergey Prigogin (Google)
+ * 	   Sergey Prigogin (Google) - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -23,9 +21,11 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.parser.util.CharArrayMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEnumerationSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
@@ -38,11 +38,11 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * Enumerations in the index.
+ * Enumeration specialization in the index.
  */
-class PDOMCPPEnumeration extends PDOMCPPBinding implements IPDOMCPPEnumType, IPDOMMemberOwner {
-
-	private static final int OFFSET_ENUMERATOR_LIST = PDOMBinding.RECORD_SIZE;
+class PDOMCPPEnumerationSpecialization extends PDOMCPPSpecialization
+		implements IPDOMCPPEnumType, IPDOMMemberOwner, ICPPEnumerationSpecialization {
+	private static final int OFFSET_ENUMERATOR_LIST = PDOMCPPSpecialization.RECORD_SIZE;
 	private static final int OFFSET_MIN_VALUE= OFFSET_ENUMERATOR_LIST + Database.PTR_SIZE;
 	private static final int OFFSET_MAX_VALUE= OFFSET_MIN_VALUE + 8;
 	private static final int OFFSET_FIXED_TYPE = OFFSET_MAX_VALUE + 8;
@@ -56,14 +56,19 @@ class PDOMCPPEnumeration extends PDOMCPPBinding implements IPDOMCPPEnumType, IPD
 	private volatile IType fFixedType= ProblemBinding.NOT_INITIALIZED;
 	private PDOMCPPEnumScope fScope; // No need for volatile, all fields of PDOMCPPEnumScope are final.
 
-	public PDOMCPPEnumeration(PDOMLinkage linkage, PDOMNode parent, ICPPEnumeration enumeration)
-			throws CoreException {
-		super(linkage, parent, enumeration.getNameCharArray());
+	public PDOMCPPEnumerationSpecialization(PDOMLinkage linkage, PDOMNode parent,
+			ICPPEnumeration enumeration, PDOMBinding specialized) throws CoreException {
+		super(linkage, parent, (ICPPSpecialization) enumeration, specialized);
 		storeProperties(enumeration);
 	}
 
-	public PDOMCPPEnumeration(PDOMLinkage linkage, long record) {
+	public PDOMCPPEnumerationSpecialization(PDOMLinkage linkage, long record) {
 		super(linkage, record);
+	}
+
+	@Override
+	public ICPPEnumeration getSpecializedBinding() {
+		return (ICPPEnumeration) super.getSpecializedBinding();
 	}
 
 	@Override
@@ -81,8 +86,8 @@ class PDOMCPPEnumeration extends PDOMCPPBinding implements IPDOMCPPEnumType, IPD
 			if (((ICPPInternalBinding) enumeration).getDefinition() != null) {
 				final long minValue = enumeration.getMinValue();
 				final long maxValue = enumeration.getMaxValue();
-				db.putLong(record+ OFFSET_MIN_VALUE, minValue);
-				db.putLong(record+ OFFSET_MAX_VALUE, maxValue);
+				db.putLong(record + OFFSET_MIN_VALUE, minValue);
+				db.putLong(record + OFFSET_MAX_VALUE, maxValue);
 				fMinValue= minValue;
 				fMaxValue= maxValue;
 			}
@@ -96,7 +101,7 @@ class PDOMCPPEnumeration extends PDOMCPPBinding implements IPDOMCPPEnumType, IPD
 	
 	@Override
 	public int getNodeType() {
-		return IIndexCPPBindingConstants.CPPENUMERATION;
+		return IIndexCPPBindingConstants.CPP_ENUMERATION_SPECIALIZATION;
 	}
 
 	@Override
@@ -111,7 +116,7 @@ class PDOMCPPEnumeration extends PDOMCPPBinding implements IPDOMCPPEnumType, IPD
 
 	@Override
 	public void addChild(PDOMNode node) throws CoreException {
-		if (node instanceof PDOMCPPEnumerator) {
+		if (node instanceof IPDOMCPPEnumerator) {
 			PDOMNodeLinkedList list = new PDOMNodeLinkedList(getLinkage(), record + OFFSET_ENUMERATOR_LIST);
 			list.addMember(node);
 			PDOMCPPEnumScope.updateCache(this, (IPDOMCPPEnumerator) node);
@@ -236,5 +241,18 @@ class PDOMCPPEnumeration extends PDOMCPPBinding implements IPDOMCPPEnumType, IPD
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}
+	}
+
+	@Override
+	public IEnumerator specializeEnumerator(IEnumerator enumerator) {
+		// The specialized enumerators are already computed, just need to look up the right one.
+		IEnumerator[] unspecializedEnumerators = getSpecializedBinding().getEnumerators();
+		for (int i = 0; i < unspecializedEnumerators.length; ++i) {
+			if (enumerator.equals(unspecializedEnumerators[i])) {
+				IEnumerator[] enumerators = getEnumerators();
+				return i < enumerators.length ? enumerators[i] : enumerator;
+			}
+		}
+		return null;
 	}
 }

@@ -1330,26 +1330,29 @@ public class CPPTemplates {
 
 	public static IBinding instantiateBinding(IBinding binding, ICPPTemplateParameterMap tpMap, int packOffset,
 			ICPPClassSpecialization within, int maxdepth, IASTNode point) throws DOMException {
-		if (binding instanceof IEnumerator) {
-			IEnumerator enumerator = (IEnumerator) binding;
-			IBinding owner = enumerator.getOwner();
-			if (!(owner instanceof ICPPEnumerationSpecialization)) {
+		if (binding instanceof ICPPClassTemplate) {
+			binding = createDeferredInstance((ICPPClassTemplate) binding);
+		}
+		
+		if (binding instanceof ICPPUnknownBinding) {
+			return resolveUnknown((ICPPUnknownBinding) binding, tpMap, packOffset, within, point);
+		} else if (binding instanceof IEnumerator
+				|| binding instanceof ICPPMethod 
+				|| binding instanceof ICPPField 
+				|| binding instanceof ICPPEnumeration
+				|| binding instanceof ICPPClassType) {
+			IBinding owner = binding.getOwner();
+			if (!(owner instanceof ICPPSpecialization)) {
 				owner = instantiateBinding(owner, tpMap, packOffset, within, maxdepth, point);
 			}
-			if (owner instanceof ICPPEnumerationSpecialization) {
-				return ((ICPPEnumerationSpecialization) owner).specializeEnumerator(enumerator);
-			}
-		} else if (binding instanceof ICPPUnknownBinding) {
-			return resolveUnknown((ICPPUnknownBinding) binding, tpMap, packOffset, within, point);
-		} else if (binding instanceof ICPPMethod || binding instanceof ICPPField || binding instanceof ICPPEnumeration) {
-			IBinding owner = binding.getOwner();
-			if (owner instanceof ICPPClassTemplate) {
-				owner = resolveUnknown(CPPTemplates.createDeferredInstance((ICPPClassTemplate) owner),
-						tpMap, packOffset, within, point);
-			}
-			if (owner instanceof ICPPClassSpecialization) {
-				// TODO(nathanridge): use specializeMember instead, then combine with ICPPEnumeration branch
-				return ((ICPPClassSpecialization) owner).specializeMember(binding, point);
+			if (binding instanceof IEnumerator) {
+				if (owner instanceof ICPPEnumerationSpecialization) {
+					return ((ICPPEnumerationSpecialization) owner).specializeEnumerator((IEnumerator) binding);
+				}
+			} else {
+				if (owner instanceof ICPPClassSpecialization) {
+					return ((ICPPClassSpecialization) owner).specializeMember(binding, point);
+				}
 			}
 		}
 		return binding;

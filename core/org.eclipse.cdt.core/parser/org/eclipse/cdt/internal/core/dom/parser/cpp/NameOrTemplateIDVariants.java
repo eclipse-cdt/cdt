@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.AbstractGNUSourceCodeParser.BinaryOperator;
 
 /**
@@ -132,58 +131,30 @@ public class NameOrTemplateIDVariants {
 				if (v.getTargetOperator() == null) {
 					if (offset == v.getRightOffset()) {
 						v.setTargetOperator(lastOperator);
-					} else if (offset > v.getRightOffset()) {
-						// Should not happen
-						assert false;
-						remove(v);
-					}
+					} 
 				}
 			}
 		}
 	}
 	
-	public void discardOpenVariants(int operatorOffset) {
-		for (BranchPoint p = fFirst; p != null; p= p.getNext()) {
-			for (Variant v= p.getFirstVariant(); v != null; v= v.getNext()) {
-				if (v.getTargetOperator() == null && v.getRightOffset() != operatorOffset) {
-					remove(v);
-				}
-			}
-		}
-	}
-
-	public Variant findFallback(int operatorOffset) {
+	public Variant selectFallback() {
 		// Search for an open variant, with a small right offset and a large left offset
-		Variant best= null;
 		for (BranchPoint p = fFirst; p != null; p= p.getNext()) {
+			Variant best= null;
 			for (Variant v= p.getFirstVariant(); v != null; v= v.getNext()) {
-				if (v.fRightOffset > operatorOffset) {
+				if (v.getTargetOperator() == null) {
 					if (best == null || v.fRightOffset < best.fRightOffset) {
 						best= v;
 					} 
 				}
 			}
-		}
-		return best;
-	}
-
-	public void useFallback(Variant fallback) {
-		// Discard variants that end within the fallback
-		int begin= ((ASTNode) fallback.getExpression()).getOffset();
-		int end= fallback.getRightOffset();
-		for (BranchPoint p = fFirst; p != null; p= p.getNext()) {
-			for (Variant v= p.getFirstVariant(); v != null; v= v.getNext()) {
-				if (v == fallback) {
-					remove(v);
-				} else {
-					int vend= v.getRightOffset();
-					if (vend > begin && vend < end)
-						remove(v);
-				}
+			if (best != null) {
+				remove(best);
+				return best;
 			}
 		}
+		return null;
 	}
-
 
 	private void remove(Variant remove) {
 		final BranchPoint owner = remove.fOwner;
@@ -235,5 +206,42 @@ public class NameOrTemplateIDVariants {
 		}
 		fFirst= null;
 		return prev;
+	}
+
+	public boolean hasRightBound(int opOffset) {
+		// Search for an open variant, with a small right offset and a large left offset
+		for (BranchPoint p = fFirst; p != null; p= p.getNext()) {
+			for (Variant v= p.getFirstVariant(); v != null; v= v.getNext()) {
+				if (v.fRightOffset > opOffset) 
+					return false;
+			}
+		}
+		return true;
+	}
+
+	public void removeInvalid(BinaryOperator lastOperator) {
+		for (BranchPoint p = fFirst; p != null; p= p.getNext()) {
+			if (!isReachable(p, lastOperator)) {
+				remove(p);
+			} else { 
+				for (Variant v= p.getFirstVariant(); v != null; v= v.getNext()) {
+					if (v.getTargetOperator() == null) {
+						remove(v);
+					}
+				}
+			}
+		}
+	}	
+	
+	private boolean isReachable(BranchPoint bp, BinaryOperator endOperator) {
+		BinaryOperator op = bp.getLeftOperator();
+		if (op == null)
+			return true;
+		
+		for(; endOperator != null; endOperator= endOperator.getNext()) {
+			if (endOperator == op)
+				return true;
+		}
+		return false;
 	}
 }

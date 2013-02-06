@@ -17,7 +17,6 @@ import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
-import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -43,17 +42,14 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.NameOrTemplateIDVariants.Var
  */
 public class CPPASTTemplateIDAmbiguity extends ASTAmbiguousNode implements IASTAmbiguousExpression,
 		ICPPASTExpression {
-	private BinaryOperator fLastOperator;
-	private IASTInitializerClause fLastExpression;
+	private final BinaryOperator fEndOperator;
 	private final BranchPoint fVariants;
 	private IASTNode[] fNodes;
 	private final AbstractGNUSourceCodeParser fParser;
 
-	public CPPASTTemplateIDAmbiguity(AbstractGNUSourceCodeParser parser, BinaryOperator lastOperator, IASTInitializerClause expr,
-			BranchPoint variants) {
+	public CPPASTTemplateIDAmbiguity(AbstractGNUSourceCodeParser parser, BinaryOperator endOperator, BranchPoint variants) {
 		fParser= parser;
-		fLastOperator= lastOperator;
-		fLastExpression= expr;
+		fEndOperator= endOperator;
 		fVariants= variants;
 	}
 
@@ -92,10 +88,7 @@ public class CPPASTTemplateIDAmbiguity extends ASTAmbiguousNode implements IASTA
 			if (selected != null) {
 				minOffset= selected.getRightOffset();
 				BinaryOperator targetOp = selected.getTargetOperator();
-				if (targetOp == null) {
-					fLastExpression= selected.getExpression();
-					fLastOperator= v.getLeftOperator();
-				} else {
+				if (targetOp != null) {
 					targetOp.exchange(selected.getExpression());
 					targetOp.setNext(v.getLeftOperator());
 				}
@@ -106,7 +99,7 @@ public class CPPASTTemplateIDAmbiguity extends ASTAmbiguousNode implements IASTA
 		owner.replace(nodeToReplace, this);
 		
 		// Create the expression and replace it
-		IASTExpression expr = fParser.buildExpression(fLastOperator, fLastExpression);
+		IASTExpression expr = fParser.buildExpression(fEndOperator.getNext(), fEndOperator.getExpression());
 		owner.replace(this, expr);
 		
 		// Resolve further ambiguities within the new expression.
@@ -149,8 +142,7 @@ public class CPPASTTemplateIDAmbiguity extends ASTAmbiguousNode implements IASTA
 	public IASTNode[] getNodes() {
 		if (fNodes == null) {
 			List<IASTNode> nl= new ArrayList<IASTNode>();
-			nl.add(fLastExpression);
-			BinaryOperator op= fLastOperator;
+			BinaryOperator op= fEndOperator;
 			while (op != null) {
 				nl.add(op.getExpression());
 				op= op.getNext();

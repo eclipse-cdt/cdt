@@ -106,13 +106,16 @@ public class ShellSubSystemTest extends RSEBaseConnectionTestCase {
 				return (ShellServiceSubSystem) ss[i];
 			}
 		}
+		System.out.printf("\nShell subsystem not found for host %s", host.getAliasName());
 		return null;
 	}
 
 	public void setUp() throws Exception {
 		super.setUp();
 		shellSubSystem = getShellServiceSubSystem();
-		shellSubSystem.checkIsConnected(getDefaultProgressMonitor());
+		if (shellSubSystem != null) {
+			shellSubSystem.checkIsConnected(getDefaultProgressMonitor());
+		}
 	}
 
 	public void tearDown() throws Exception {
@@ -124,6 +127,7 @@ public class ShellSubSystemTest extends RSEBaseConnectionTestCase {
 	}
 
 	public void testRunShell() throws Exception {
+		if (shellSubSystem == null) return;
 		// the IRemoteCommandShell returned should have getOutputAt() and
 		// similar methods
 		if (shellSubSystem.canRunShell()) {
@@ -140,6 +144,7 @@ public class ShellSubSystemTest extends RSEBaseConnectionTestCase {
 	}
 
 	public void testRunCommand() throws Exception {
+		if (shellSubSystem == null) return;
 		if (shellSubSystem.canRunCommand()) {
 			//Bug 315055: Windows cmd invocation does not split commands on \r\n
 			//String cmd = "echo test\r\nexit"; //$NON-NLS-1$
@@ -169,6 +174,7 @@ public class ShellSubSystemTest extends RSEBaseConnectionTestCase {
 	}
 
 	public void testCancelShell() throws Exception {
+		if (shellSubSystem == null) return;
 		if (shellSubSystem.canRunShell()) {
 			IRemoteCommandShell cmd = shellSubSystem.runShell(null, mon);
 			shellSubSystem.cancelShell(cmd, mon);

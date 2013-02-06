@@ -681,7 +681,9 @@ public class CPPTemplates {
 				IBinding owner = template.getOwner();
 				ICPPClassSpecialization within = getSpecializationContext(owner);
 				IType instantiatedType = instantiateType(aliasedType, parameterMap, -1,	within, id);
-				return new CPPAliasTemplateInstance(id.toCharArray(), aliasTemplate, instantiatedType);
+				StringBuilder buf= new StringBuilder();
+				buf.append(id.getSimpleID()).append(ASTTypeUtil.getArgumentListString(args, false));
+				return new CPPAliasTemplateInstance(buf.toString().toCharArray(), aliasTemplate, instantiatedType);
 			}
 
 			// Class template.

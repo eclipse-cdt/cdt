@@ -10149,4 +10149,41 @@ public class AST2CPPTests extends AST2TestBase {
 		long BSize = SizeofCalculator.getSizeAndAlignment(B, nameB).size;
 		assertEquals(pointerSize, BSize);
 	}
+
+	//	namespace std {
+	//		struct string {};
+	//	 	struct exception {};
+	//	}
+	//	void f(){}
+	//
+	//	int problemA(int i) {
+	//		return i ? throw 7 : i;
+	//	}
+	//	int problemB(int i) {
+	//		return i ? throw std::string{} : i;
+	//	}
+	//	void ploblemC(int i) {
+	//		return i ? throw std::exception() : throw 3;
+	//	}
+	//	void ploblemD(int i) {
+	//		return i ? throw std::exception() : f();
+	//	}
+	//	std::string ploblemE(int i) {
+	//		return i ? throw 3 : "a";
+	//	}
+	//	std::string ploblemF(int i) {
+	//		return (i<2 ? throw 2 : "x") ? (i>2 ? throw 3 : "d") : (i>22 ? throw 4 : "e");
+	//	}
+	//	auto ploblemG(int i) ->decltype(i ? throw 3 : "d"){
+	//		return i ? throw 3 : "d" ;
+	//	}
+	//	void fine1(int i) {
+	//		return i ? f() : f();
+	//	}
+	//	std::string fine2(int i) {
+	//		return i ? "a" : "b";
+	//	}
+	public void testThrowExpressionInConditional_396663() throws Exception {
+		parseAndCheckBindings(getAboveComment(), CPP, true);
+	}
 }

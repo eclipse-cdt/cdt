@@ -942,7 +942,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     					lt1= LT(1);
     					if (lt1 != IToken.tCOLON && lt1 != IToken.tCOMMA)
     						stopWithNextOperator= true;
-    					break;
     				} else if (allowBraceInitializer && LT(1) == IToken.tLBRACE) {
     					// Brace initializer
     					expr= bracedInitList(true);

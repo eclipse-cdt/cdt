@@ -8,6 +8,7 @@
  * Contributors:
  *     William R. Swanson (Tilera Corporation) - initial API and implementation
  *     IBM Corporation
+ *     Marc Dumais (Ericsson) - Bug 399281
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;
@@ -705,10 +706,11 @@ public class MulticoreVisualizer extends GraphicCanvasVisualizer
 	protected void setCanvasModel(VisualizerModel model) {
 		final VisualizerModel model_f = model;
 		GUIUtils.exec(new Runnable() { @Override public void run() {
-			m_canvas.setModel(model_f);
-			
-			// Update the canvas's selection from the current workbench selection.
-			updateCanvasSelectionInternal();
+			if(m_canvas != null) {
+				m_canvas.setModel(model_f);
+				// Update the canvas's selection from the current workbench selection.
+				updateCanvasSelectionInternal();
+			}
 		}});
 	}
 	

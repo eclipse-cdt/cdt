@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     William R. Swanson (Tilera Corporation)
+ *     Marc Dumais (Ericsson) - Bug 399281
  *******************************************************************************/
 
 package org.eclipse.cdt.visualizer.ui.canvas;
@@ -68,8 +69,10 @@ public class BufferedCanvas extends Canvas
 	
 	/** Cleans up control. */
 	protected void cleanupBufferedCanvas() {
-		removePaintListener(this);
-		removeControlListener(this);
+		if(!this.isDisposed()) {
+			removePaintListener(this);
+			removeControlListener(this);
+		}
 		if (m_doubleBuffer != null) {
 			m_doubleBuffer.dispose();
 			m_doubleBuffer = null;

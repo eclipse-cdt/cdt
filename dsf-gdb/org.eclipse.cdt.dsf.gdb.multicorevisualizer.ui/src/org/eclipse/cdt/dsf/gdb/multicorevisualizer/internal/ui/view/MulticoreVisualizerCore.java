@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     William R. Swanson (Tilera Corporation) - initial API and implementation
+ *     Marc Dumais (Ericsson) - Add CPU/core load information to the multicore visualizer (Bug 396268)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;
@@ -36,6 +37,12 @@ public class MulticoreVisualizerCore extends MulticoreVisualizerGraphicObject
 	/** List of threads currently on this core. */
 	protected ArrayList<MulticoreVisualizerThread> m_threads;
 	
+	/**
+	 *  Load meter associated to this core
+	 * @since 1.1
+	 */
+	protected MulticoreVisualizerLoadMeter m_loadMeter;
+	
 	// --- constructors/destructors ---
 	
 	/** Constructor */
@@ -44,6 +51,9 @@ public class MulticoreVisualizerCore extends MulticoreVisualizerGraphicObject
 		if (m_cpu != null) m_cpu.addCore(this);
 		m_id = id;
 		m_threads = new ArrayList<MulticoreVisualizerThread>();
+		
+		// default load meter
+		m_loadMeter = new MulticoreVisualizerLoadMeter(null, null);
 	}
 	
 	/** Dispose method */
@@ -53,6 +63,9 @@ public class MulticoreVisualizerCore extends MulticoreVisualizerGraphicObject
 		if (m_threads != null) {
 			m_threads.clear();
 			m_threads = null;
+		}
+		if (m_loadMeter != null) {
+			m_loadMeter.dispose();
 		}
 	}
 	
@@ -94,6 +107,20 @@ public class MulticoreVisualizerCore extends MulticoreVisualizerGraphicObject
 	public List<MulticoreVisualizerThread> getThreads()
 	{
 		return m_threads;
+	}
+	
+	/**
+	 * @since 1.1
+	 */
+	public void setLoadMeter (MulticoreVisualizerLoadMeter meter) {
+		m_loadMeter = meter;
+	}
+	
+	/**
+	 * @since 1.1
+	 */
+	public MulticoreVisualizerLoadMeter getLoadMeter() {
+		return m_loadMeter;
 	}
 
 	/**
@@ -149,8 +176,12 @@ public class MulticoreVisualizerCore extends MulticoreVisualizerGraphicObject
 	/** Invoked to allow element to paint itself on the viewer canvas */
 	@Override
 	public void paintContent(GC gc) {
+		Color bg = getCoreStateColor(false);
+		
 		gc.setForeground(getCoreStateColor(true));
-		gc.setBackground(getCoreStateColor(false));
+		gc.setBackground(bg);
+		// We want the load meter to share the same BG color
+		m_loadMeter.setParentBgColor(bg);
 
 		gc.fillRectangle(m_bounds);
 		gc.drawRectangle(m_bounds);

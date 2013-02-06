@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Vladimir Prus (Mentor Graphics) - initial API and implementation
+ *     Marc Dumais (Ericsson) - Add CPU/core load information to the multicore visualizer (Bug 396268)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.service;
@@ -64,4 +65,17 @@ public interface IGDBHardwareAndOS2 extends IGDBHardwareAndOS {
      * Return table describing resources of specified class.
      */
     void getResourcesInformation(IDMContext dmc, String resourceClassId, DataRequestMonitor<IResourcesInformation> rm);
+    
+    // cpu load info for one core
+    public interface ILoadInfo
+    {
+		public String getLoad();
+		public String getHighLoadWaterMark();
+		public String[] getDetailedLoad();
+    }
+    
+    /**
+     * Computes CPU/core load information 
+     */
+    void getLoadInfo(IDMContext dmc, DataRequestMonitor<ILoadInfo> rm);
 }

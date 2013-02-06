@@ -49,6 +49,17 @@ public class IMulticoreVisualizerConstants
 	public static final Color COLOR_CRASHED_CORE_FG = Colors.RED;
 	public static final Color COLOR_CRASHED_CORE_BG = Colors.DARK_RED;
 	
+	// Colors for drawing CPUs
+	
+	/**
+	 * @since 1.1
+	 */
+	public static final Color COLOR_CPU_FG = Colors.GREEN;
+	/** 
+	 * @since 1.1
+	 */
+	public static final Color COLOR_CPU_BG = Colors.getColor(0,64,0);
+	
 	// Colors for text
 
 	/** Color to be used to draw a the text for a thread */
@@ -58,4 +69,28 @@ public class IMulticoreVisualizerConstants
 	/** Color to be used to draw a the text for a core */
 	public static final Color COLOR_CORE_TEXT_FG = Colors.WHITE; 
 	public static final Color COLOR_CORE_TEXT_BG = Colors.BLACK;
+	
+	/** Color to be used to draw the load text
+	 * @since 1.1
+	 */
+	public static final Color COLOR_LOAD_TEXT = Colors.GREEN;
+	
+	// Colors for load meters
+	
+	/**
+	 * @since 1.1
+	 */
+	public static final Color COLOR_LOAD_LOADBAR_NORMAL = Colors.GREEN;
+	/**
+	 * @since 1.1
+	 */
+	public static final Color COLOR_LOAD_LOADBAR_OVERLOAD = Colors.RED;
+	/**
+	 * @since 1.1
+	 */
+	public static final Color COLOR_LOAD_UNDERBAR_FG = Colors.getColor(0,200,0);
+	/**
+	 * @since 1.1
+	 */
+	public static final Color COLOR_LOAD_UNDERBAR_BG_DEFAULT = Colors.getColor(0,64,0);
 }

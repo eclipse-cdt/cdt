@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2013 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,13 +7,13 @@
  *
  * Contributors:
  *     Andrew Ferguson (Symbian) - Initial implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.index.tests;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -52,8 +52,8 @@ public class IndexCompositeTests extends BaseTestCase {
 	private static class ProjectBuilder {
 		private final String name;
 		private final boolean cpp;
-		private List dependencies = new ArrayList();
-		private Map path2content = new HashMap();
+		private List<IProject> dependencies = new ArrayList<IProject>();
+		private Map<String, String> path2content = new HashMap<String, String>();
 	
 		ProjectBuilder(String name, boolean cpp) {
 			this.name = name;
@@ -73,16 +73,15 @@ public class IndexCompositeTests extends BaseTestCase {
 		ICProject create() throws Exception {
 			ICProject result = cpp ?
 					CProjectHelper.createCCProject(name, "bin", IPDOMManager.ID_NO_INDEXER) :
-					CProjectHelper.createCCProject(name, "bin", IPDOMManager.ID_NO_INDEXER);
+					CProjectHelper.createCProject(name, "bin", IPDOMManager.ID_NO_INDEXER);
 	
 			IFile lastFile= null;
-			for (Iterator i = path2content.entrySet().iterator(); i.hasNext();) {
-				Map.Entry entry = (Map.Entry) i.next();
-				lastFile= TestSourceReader.createFile(result.getProject(), new Path((String)entry.getKey()), (String) entry.getValue());
+			for (Map.Entry<String, String> entry : path2content.entrySet()) {
+				lastFile= TestSourceReader.createFile(result.getProject(), new Path(entry.getKey()), entry.getValue());
 			}
 	
 			IProjectDescription desc = result.getProject().getDescription();
-			desc.setReferencedProjects((IProject[]) dependencies.toArray(new IProject[dependencies.size()]));
+			desc.setReferencedProjects(dependencies.toArray(new IProject[dependencies.size()]));
 			result.getProject().setDescription(desc, new NullProgressMonitor());
 	
 			IIndexManager indexManager = CCorePlugin.getIndexManager();
@@ -152,8 +151,9 @@ public class IndexCompositeTests extends BaseTestCase {
 			setIndex(cprojA, REFD);	assertBCount(1, 1);
 			setIndex(cprojA, BOTH);	assertBCount(2, 2);
 		} finally {
-			for (ICProject project : projects)
+			for (ICProject project : projects) {
 				project.getProject().delete(true, true, new NullProgressMonitor());
+			}
 		}
 	}
 
@@ -226,7 +226,6 @@ public class IndexCompositeTests extends BaseTestCase {
 			assertNamespaceXMemberCount(5);
 			assertFieldCount("C1", 1);
 
-			
 			setIndex(cprojB, NONE);
 			assertBCount(gBC, aBC);
 			assertNamespaceXMemberCount(2);
@@ -246,7 +245,6 @@ public class IndexCompositeTests extends BaseTestCase {
 			assertBCount(gABC, aABC);
 			assertNamespaceXMemberCount(5);
 			assertFieldCount("C1", 1);
-
 			
 			setIndex(cprojA, NONE);
 			assertBCount(gABC, aABC);
@@ -268,8 +266,9 @@ public class IndexCompositeTests extends BaseTestCase {
 			assertNamespaceXMemberCount(5);
 			assertFieldCount("C1", 1);
 		} finally {
-			for (ICProject project : projects)
+			for (ICProject project : projects) {
 				project.getProject().delete(true, true, new NullProgressMonitor());
+			}
 		}
 	}
 
@@ -310,7 +309,6 @@ public class IndexCompositeTests extends BaseTestCase {
 			ICProject cprojC = pb.create();
 			projects.add(cprojC);
 
-
 			/*  A   C    |
 		     *   \ /     | Depends On / References
 		     *    B      V
@@ -328,7 +326,6 @@ public class IndexCompositeTests extends BaseTestCase {
 			final int gBC= gB + gC - 1, aBC= aB + aC - 1;
 			final int gAB= gA + gB - 1, aAB= aA + aB - 1;
 			final int gABC= gA + gBC - 1, aABC= aA + aBC - 1;
-
 
 			setIndex(cprojC, NONE);
 			assertBCount(gBC, aBC);
@@ -369,8 +366,9 @@ public class IndexCompositeTests extends BaseTestCase {
 			assertBCount(gABC, aABC);
 			assertNamespaceXMemberCount(4);
 		} finally {
-			for (ICProject project : projects)
+			for (ICProject project : projects) {
 				project.getProject().delete(true, true, new NullProgressMonitor());
+			}
 		}
 	}
 
@@ -466,8 +464,9 @@ public class IndexCompositeTests extends BaseTestCase {
 			assertBCount(gABC, aABC);
 			assertNamespaceXMemberCount(4);
 		} finally {
-			for (ICProject project : projects)
+			for (ICProject project : projects) {
 				project.getProject().delete(true, true, new NullProgressMonitor());
+			}
 		}
 	}
 	

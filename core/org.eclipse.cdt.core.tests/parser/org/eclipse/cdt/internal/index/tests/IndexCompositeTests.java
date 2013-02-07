@@ -85,9 +85,11 @@ public class IndexCompositeTests extends BaseTestCase {
 			desc.setReferencedProjects((IProject[]) dependencies.toArray(new IProject[dependencies.size()]));
 			result.getProject().setDescription(desc, new NullProgressMonitor());
 	
-			CCorePlugin.getIndexManager().setIndexerId(result, IPDOMManager.ID_FAST_INDEXER);
+			IIndexManager indexManager = CCorePlugin.getIndexManager();
+			indexManager.setIndexerId(result, IPDOMManager.ID_FAST_INDEXER);
 			if (lastFile != null) {
-				IIndex index= CCorePlugin.getIndexManager().getIndex(result);
+				indexManager.reindex(result);
+				IIndex index= indexManager.getIndex(result);
 				TestSourceReader.waitUntilFileIsIndexed(index, lastFile, INDEXER_TIMEOUT_SEC * 1000);
 			} 
 			BaseTestCase.waitForIndexer(result);

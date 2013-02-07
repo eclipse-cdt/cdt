@@ -117,7 +117,7 @@ public interface IIndexManager extends IPDOMManager {
 	 * content provided via the ReadOnlyIndexFragmentProvider or ReadOnlyPDOMProvider, which is not 
 	 * disabled for the editor shall be included in the resulting index. 
 	 *
-	 * @since 5.5
+	 * @since 5.4
 	 */
 	public static final int ADD_EXTENSION_FRAGMENTS_EDITOR = 0x400;
 

@@ -276,11 +276,17 @@ public class ManageConfigDialog extends Dialog {
 		for (int i=0; i<cfgds.length; i++ ) {
 			TableItem t = new TableItem(table, 0);
 			t.setText(0, cfgds[i].getName());
-			t.setText(1, cfgds[i].getDescription());
+			String description = cfgds[i].getDescription();
+			if (description == null) {
+				description = ""; //$NON-NLS-1$
+			}
+			t.setText(1, description);
 			t.setText(2, cfgds[i].isActive() ? Messages.ManageConfigDialog_5 : ""); //$NON-NLS-1$ 
 			t.setData(cfgds[i]);
 		}
-		if (table.getItemCount() > 0) table.select(0);
+		if (table.getItemCount() > 0) {
+			table.select(0);
+		}
 		table.setFocus();
 		updateButtons();
 	}

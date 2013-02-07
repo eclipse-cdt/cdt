@@ -88,6 +88,7 @@ public class IndexCompositeTests extends BaseTestCase {
 			IIndexManager indexManager = CCorePlugin.getIndexManager();
 			indexManager.setIndexerId(result, IPDOMManager.ID_FAST_INDEXER);
 			if (lastFile != null) {
+				// Call reindex explicitly since setting indexer ID doesn't trigger reindexing.
 				indexManager.reindex(result);
 				IIndex index= indexManager.getIndex(result);
 				TestSourceReader.waitUntilFileIsIndexed(index, lastFile, INDEXER_TIMEOUT_SEC * 1000);

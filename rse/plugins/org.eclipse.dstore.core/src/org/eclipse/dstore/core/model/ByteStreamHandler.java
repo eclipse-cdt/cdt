@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2012 IBM Corporation and others.
+ * Copyright (c) 2002, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@
  *  David McKnight     (IBM)   [367424] [dstore] upload mechanism should provide backups of files
  *  David McKnight     (IBM)   [380023] [dstore] remote file permissions lost after upload
  *  David McKnight     (IBM)   [385630] [dstore] backup files created during upload should be removed when upload successful
+ *  David McKnight     (IBM)   [400251] [dstore] backup files cause problem when parent folder is read-only
  *******************************************************************************/
 
 package org.eclipse.dstore.core.model;
@@ -204,7 +205,7 @@ public class ByteStreamHandler implements IByteStreamHandler
 				{
 					if (!_dataStore.isVirtual()){ // only applies to server
 						// backup file on upload by default
-						if (_doBackups){ 
+						if (_doBackups && parent.canWrite()){ 
 							// backup the file first	
 							String n = file.getName();			
 							backupFile = new File(parent, '.' + n + '~');

@@ -1,0 +1,701 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPH//8y4\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/tracepoints/TraceControlView.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1395,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-02-07T19:20:30Z",
+      "side": 1,
+      "message": "There should be some safety checks here.  The time could be \"\" for GDB 7.2 and GDB 7.3.\n\njava.lang.NumberFormatException: For input string: \"\"\n\tat java.lang.NumberFormatException.forInputString(NumberFormatException.java:48)\n\tat java.lang.Long.parseLong(Long.java:431)\n\tat java.lang.Long.parseLong(Long.java:468)\n\tat org.eclipse.cdt.dsf.gdb.internal.ui.tracepoints.TraceControlView.formatTime(TraceControlView.java:1399)",
+      "revId": "5971554ba89e6c20166837af13cf507427da6795",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPH//9Aw\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/tracepoints/TracepointImageRegistry.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-02-07T19:20:30Z",
+      "side": 1,
+      "message": "Although the class is internal, it is better not to change the name of a public member, just in case someone is using it.  Let\u0027s try to be friendly to those people :)\n\nSo, can you rename \nICON_Refresh_Enabled to ICON_Refresh_enabled\nICON_Refresh_Disabled to ICON_Refresh_disabled",
+      "revId": "5971554ba89e6c20166837af13cf507427da6795",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPH//9Ao\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/tracepoints/TracepointImageRegistry.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-02-07T19:20:30Z",
+      "side": 1,
+      "message": "Let\u0027s name the circular_buffer icon without the \u00273\u0027.",
+      "revId": "5971554ba89e6c20166837af13cf507427da6795",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPH//9Ag\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/tracepoints/TracepointImageRegistry.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-02-07T19:20:30Z",
+      "side": 1,
+      "message": "The disabled one is never used.  I think it probably should be, which points to something missing in TraceControlView.java",
+      "revId": "5971554ba89e6c20166837af13cf507427da6795",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPH//9Ac\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/tracepoints/TracepointImageRegistry.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-02-07T19:20:30Z",
+      "side": 1,
+      "message": "Also never used",
+      "revId": "5971554ba89e6c20166837af13cf507427da6795",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPH//88c\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/tracepoints/TracepointsMessages.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-02-07T19:20:30Z",
+      "side": 1,
+      "message": "Not used",
+      "revId": "5971554ba89e6c20166837af13cf507427da6795",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPH//88Y\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/tracepoints/TracepointsMessages.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-02-07T19:20:30Z",
+      "side": 1,
+      "message": "Not used",
+      "revId": "5971554ba89e6c20166837af13cf507427da6795",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPH//88U\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/tracepoints/TracepointsMessages.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-02-07T19:20:30Z",
+      "side": 1,
+      "message": "Note used",
+      "revId": "5971554ba89e6c20166837af13cf507427da6795",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPH//9AY\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/tracepoints/TracepointsMessages.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-02-07T19:20:30Z",
+      "side": 1,
+      "message": "Please rename to what it was before:\nTraceControlView_action_Refresh_label, since it is public",
+      "revId": "5971554ba89e6c20166837af13cf507427da6795",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPH//88A\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/tracepoints/TracepointsMessages.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-02-07T19:20:30Z",
+      "side": 1,
+      "message": "Not used",
+      "revId": "5971554ba89e6c20166837af13cf507427da6795",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPH//878\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/tracepoints/TracepointsMessages.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-02-07T19:20:30Z",
+      "side": 1,
+      "message": "Not used",
+      "revId": "5971554ba89e6c20166837af13cf507427da6795",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPH//800\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/tracepoints/TracepointsMessages.properties",
+        "patchSetId": 3
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-02-07T19:20:30Z",
+      "side": 1,
+      "message": "Please rename as before, to avoid changing something that might be used by others.",
+      "revId": "5971554ba89e6c20166837af13cf507427da6795",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPH//9AI\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/tracepoints/TracepointsMessages.properties",
+        "patchSetId": 3
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-02-07T19:20:30Z",
+      "side": 1,
+      "message": "How about?\n\"Buffer used at {0}% ({1} of {2} bytes).  {3} trace frames collected.\"",
+      "revId": "5971554ba89e6c20166837af13cf507427da6795",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPH//8/8\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/tracepoints/TracepointsMessages.properties",
+        "patchSetId": 3
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-02-07T19:20:30Z",
+      "side": 1,
+      "message": "\"unknown reason\"  (missing \u0027n\u0027)",
+      "revId": "5971554ba89e6c20166837af13cf507427da6795",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPH//80w\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBTraceControl_7_2.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-02-07T19:20:30Z",
+      "side": 1,
+      "message": "You can remove IGDBTraceControl since IGDBTraceControl2 implements it anyway",
+      "revId": "5971554ba89e6c20166837af13cf507427da6795",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPH//8yw\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBTraceControl_7_2.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 217,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-02-07T19:20:30Z",
+      "side": 1,
+      "message": "The extra fields for the trace status will only be filled for GDB 7.4 and higher.  However, we can leave them here, as long as the default values passed to the constructors are ok to send to the view.  \n\nIf not, then this class must only use ITraceStatusDMData, while a new GDBTraceControl_7_4 will use ITraceStatusDMData2.  And then the view will need to do an \"instanceof ITraceStatusDMData2\" check before accessing the new fields.",
+      "revId": "5971554ba89e6c20166837af13cf507427da6795",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPH//80k\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBTraceControl_7_2.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 225,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-02-07T19:20:30Z",
+      "side": 1,
+      "message": "fIsOfflineTracing (missing \u0027l\u0027)",
+      "revId": "5971554ba89e6c20166837af13cf507427da6795",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPH//80Y\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBTraceControl_7_2.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 231,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-02-07T19:20:30Z",
+      "side": 1,
+      "message": "I don\u0027t think you need to initialize those variables, as the constructor will.\n\nNot initializing here makes debugging faster because we don\u0027t need to step through each of the above lines.",
+      "revId": "5971554ba89e6c20166837af13cf507427da6795",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPH//80U\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBTraceControl_7_2.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 264,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-02-07T19:20:30Z",
+      "side": 1,
+      "message": "Why not use null instead of \"\"?",
+      "revId": "5971554ba89e6c20166837af13cf507427da6795",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPH//80Q\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBTraceControl_7_2.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 343,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-02-07T19:20:30Z",
+      "side": 1,
+      "message": "This should not be done in the method because fCurrentRecordDmc can change in the service.  Instead it should be done in the constructor and the result stored in a field.",
+      "revId": "5971554ba89e6c20166837af13cf507427da6795",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPH//80M\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBTraceControl_7_2.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 344,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-02-07T19:20:30Z",
+      "side": 1,
+      "message": "getRecordId() is part of the base class so no need to cast",
+      "revId": "5971554ba89e6c20166837af13cf507427da6795",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPH//80I\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBTraceControl_7_2.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 352,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-02-07T19:20:30Z",
+      "side": 1,
+      "message": "Also must be done in constructor and stored",
+      "revId": "5971554ba89e6c20166837af13cf507427da6795",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPH//8zs\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBTraceControl_7_2.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 357,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-02-07T19:20:30Z",
+      "side": 1,
+      "message": "If this is no longer used by the TraceControlView (yes, this what where the original output was generated :O), then we can simplify this method, which is confusing.",
+      "revId": "5971554ba89e6c20166837af13cf507427da6795",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPH//8y8\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBTraceControl_7_2.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1221,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-02-07T19:20:30Z",
+      "side": 1,
+      "message": "The below 3 methods don\u0027t work for GDB 7.2.  We will need to create a new GDBTraceControl_7_4 when they started working.  The circular buffer one was supported since GDB 7.2 so it is ok",
+      "revId": "5971554ba89e6c20166837af13cf507427da6795",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPH//8/4\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/IGDBTraceControl2.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-02-07T19:20:30Z",
+      "side": 1,
+      "message": "Javadoc is needed for each new method and interface of an interface class.",
+      "revId": "5971554ba89e6c20166837af13cf507427da6795",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPH//8/0\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/IGDBTraceControl2.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-02-07T19:20:30Z",
+      "side": 1,
+      "message": "This new interface can be added to IGDBTraceControl directly.  You cannot extend an interface by adding new methods, but you can add a new interface to an existing interface.",
+      "revId": "5971554ba89e6c20166837af13cf507427da6795",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPH//80g\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/IGDBTraceControl2.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-02-07T19:20:30Z",
+      "side": 1,
+      "message": "Maybe this should be getNotes()",
+      "revId": "5971554ba89e6c20166837af13cf507427da6795",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPH//80E\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/IGDBTraceControl2.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-02-07T19:20:30Z",
+      "side": 1,
+      "message": "Can you add:\n  isDisconnectedTracing()\n  getNumberOfCreatedFrames()\nwith Javadoc",
+      "revId": "5971554ba89e6c20166837af13cf507427da6795",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPH//8zY\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/IGDBTraceControl2.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-02-07T19:20:30Z",
+      "side": 1,
+      "message": "Please add \"setDisconnectedTracing(...)\"",
+      "revId": "5971554ba89e6c20166837af13cf507427da6795",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPH//8/s\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/CommandFactory.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1000,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-02-07T19:20:30Z",
+      "side": 1,
+      "message": "The methods in this file are in alphabetical order.  Can you insert the new methods in the right place?",
+      "revId": "5971554ba89e6c20166837af13cf507427da6795",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPH//8/o\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/MIGDBSetCircularTraceBuffer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-02-07T19:20:30Z",
+      "side": 1,
+      "message": "DOS format for end of line",
+      "revId": "5971554ba89e6c20166837af13cf507427da6795",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPH//8/k\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/MIGDBSetTraceNote.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-02-07T19:20:30Z",
+      "side": 1,
+      "message": "DOS format",
+      "revId": "5971554ba89e6c20166837af13cf507427da6795",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPH//8/g\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/MIGDBSetTraceNote.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-02-07T19:20:30Z",
+      "side": 1,
+      "message": "Class name should be MIGDBSetTraceNotes (with an \u0027s\u0027)",
+      "revId": "5971554ba89e6c20166837af13cf507427da6795",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPH//8/U\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/MIGDBSetTraceStopNote.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-02-07T19:20:30Z",
+      "side": 1,
+      "message": "DOS format",
+      "revId": "5971554ba89e6c20166837af13cf507427da6795",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPH//8/c\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/MIGDBSetTraceStopNote.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-02-07T19:20:30Z",
+      "side": 1,
+      "message": "Class name should be MIGDBSetTraceStopNotes (with an \u0027s\u0027)",
+      "revId": "5971554ba89e6c20166837af13cf507427da6795",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPH//8/Y\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/MIGDBSetTraceUser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-02-07T19:20:30Z",
+      "side": 1,
+      "message": "DOS format",
+      "revId": "5971554ba89e6c20166837af13cf507427da6795",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPH//8/A\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MITraceStatusInfo.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-02-07T19:20:30Z",
+      "side": 1,
+      "message": "Please add:\n\nWith GDB 7.?:\n\nwith the proper GDB version, and add an example of the format like\n\n^done,supported\u003d\"1\",running\u003d\"0\",stop-reason\u003d\"request\",frames\u003d\"60\",frames-created\u003d\"60\",buffer-size\u003d\"5242880\",buffer-free\u003d\"5218310\",disconnected\u003d\"0\",circular\u003d\"0\",user-name\u003d\"\\\"myuser\\\"\",notes\u003d\"my notes\",start-time\u003d\"-2026.-485661\",stop-time\u003d\"-1986.-751928\"",
+      "revId": "5971554ba89e6c20166837af13cf507427da6795",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPH//8+k\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MITraceStatusInfo.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-02-07T19:20:30Z",
+      "side": 1,
+      "message": "offline, not offile :)",
+      "revId": "5971554ba89e6c20166837af13cf507427da6795",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPH//8+o\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MITraceStatusInfo.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-02-07T19:20:30Z",
+      "side": 1,
+      "message": "offline, not offile :)",
+      "revId": "5971554ba89e6c20166837af13cf507427da6795",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPH//88k\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MITraceStatusInfo.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 200,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-02-07T19:20:30Z",
+      "side": 1,
+      "message": "Looking at the GDB code (tracepoint.c:trace_status_mi), I don\u0027t see the \"stop-notes\" field anywhere.",
+      "revId": "5971554ba89e6c20166837af13cf507427da6795",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPH//88g\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MITraceStatusInfo.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 206,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-02-07T19:20:30Z",
+      "side": 1,
+      "message": "Could you also support parsing the fields:\n\n\"frames-created\"\n\"disconnected\"",
+      "revId": "5971554ba89e6c20166837af13cf507427da6795",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

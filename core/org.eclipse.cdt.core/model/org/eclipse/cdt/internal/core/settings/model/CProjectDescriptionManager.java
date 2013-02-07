@@ -52,6 +52,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvidersKeeper;
+import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
@@ -1141,7 +1142,15 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 			monitor = new NullProgressMonitor();
 
 		CConfigurationDataProvider provider = getProvider(des);
-		return provider.loadConfiguration(des, monitor);
+		CConfigurationData data = provider.loadConfiguration(des, monitor);
+
+		if (des instanceof ILanguageSettingsProvidersKeeper && ! des.isPreferenceConfiguration()) {
+			String[] defaultIds = ((ILanguageSettingsProvidersKeeper) des).getDefaultLanguageSettingsProvidersIds();
+			if (defaultIds == null) {
+				((ILanguageSettingsProvidersKeeper) des).setDefaultLanguageSettingsProvidersIds(ScannerDiscoveryLegacySupport.getDefaultProviderIdsLegacy(des));
+			}
+		}
+		return data;
 	}
 
 	CConfigurationData applyData(CConfigurationDescriptionCache des, ICConfigurationDescription baseDescription, CConfigurationData base, SettingsContext context, IProgressMonitor monitor) throws CoreException {

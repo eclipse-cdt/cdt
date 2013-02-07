@@ -926,7 +926,7 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 
 		for (ILanguageSettingsProvider provider : allAvailableProvidersSet) {
 			String id = provider.getId();
-			if (!idsList.contains(id)) {
+			if (!idsList.contains(id) && ScannerDiscoveryLegacySupport.isProviderCompatible(id, cfgDescription)) {
 				providers.add(provider);
 				idsList.add(id);
 			}

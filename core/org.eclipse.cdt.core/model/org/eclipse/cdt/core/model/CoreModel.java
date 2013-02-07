@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvidersKeeper;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
+import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
 import org.eclipse.cdt.core.resources.IPathEntryStore;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSetting;
@@ -1254,7 +1255,8 @@ public class CoreModel {
 		if(des != null){
 			ICConfigurationDescription indexCfg = des.getDefaultSettingConfiguration();
 			if(indexCfg != null){
-				if(!mngr.isNewStyleCfg(indexCfg)){
+				if (!ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityEnabled(project) ||
+						!mngr.isNewStyleCfg(indexCfg)) {
 					return oldIsScannerInformationEmpty(resource);
 				}
 				

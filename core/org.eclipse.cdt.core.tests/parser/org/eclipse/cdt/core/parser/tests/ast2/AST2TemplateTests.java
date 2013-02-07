@@ -7149,4 +7149,20 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testRegression_399142() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	template <class T>
+	//	struct A {
+	//	    struct impl {
+	//	        static T x;
+	//	    };
+	//	    static const int value = sizeof(impl::x);
+	//	};
+	//	template <int> struct W {};
+	//	template <> struct W<1> { typedef int type; };
+	//	int main() {
+	//	    W<A<char>::value>::type w;
+	//	}
+	public void testDependentExpressionInvolvingFieldInNestedClass_399362() throws Exception {
+		parseAndCheckBindings();
+	}
 }

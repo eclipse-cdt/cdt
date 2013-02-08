@@ -87,9 +87,13 @@ public class ScannerDiscoveryLegacySupport {
 	 * @noreference This method is temporary and not intended to be referenced by clients.
 	 */
 	public static boolean isLanguageSettingsProvidersFunctionalityEnabled(IProject project) {
+		// Disabling language settings providers at workspace level disables them for all projects. 
+		if (getPreferences(null).getBoolean(DISABLE_LSP_PREFERENCE, DISABLE_LSP_DEFAULT_WORKSPACE))
+			return false;
+		if (project == null)
+			return true;
 		Preferences pref = getPreferences(project);
-		boolean defaultValue = project != null ? DISABLE_LSP_DEFAULT_PROJECT : DISABLE_LSP_DEFAULT_WORKSPACE;
-		return !pref.getBoolean(DISABLE_LSP_PREFERENCE, defaultValue);
+		return !pref.getBoolean(DISABLE_LSP_PREFERENCE, DISABLE_LSP_DEFAULT_PROJECT);
 	}
 
 	/**

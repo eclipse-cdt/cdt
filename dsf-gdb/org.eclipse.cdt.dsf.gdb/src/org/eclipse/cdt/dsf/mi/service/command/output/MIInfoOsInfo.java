@@ -14,9 +14,8 @@ package org.eclipse.cdt.dsf.mi.service.command.output;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.cdt.dsf.gdb.service.IGDBHardwareAndOS2;
-import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
-import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
+import org.eclipse.cdt.dsf.gdb.service.IGDBHardwareAndOS2.IResourceClass;
+import org.eclipse.cdt.dsf.gdb.service.IGDBHardwareAndOS2.IResourcesInformation;
 
 /**
  * Example output:
@@ -63,7 +62,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 public class MIInfoOsInfo extends MIInfo {
 
 	// The fields below are used for response with list of classes.
-	private IGDBHardwareAndOS2.IResourceClass[] resourceClasses;
+	private IResourceClass[] resourceClasses;
 
 	// The below fields are used only for data with specific resource class
 	private String[] columnNames;
@@ -79,9 +78,9 @@ public class MIInfoOsInfo extends MIInfo {
 		}
 	}
 
-	public IGDBHardwareAndOS2.IResourcesInformation getResourcesInformation()
+	public IResourcesInformation getResourcesInformation()
 	{
-		return new IGDBHardwareAndOS2.IResourcesInformation() {
+		return new IResourcesInformation() {
 
 			@Override
 			public String[][] getContent() { return content; }
@@ -91,14 +90,14 @@ public class MIInfoOsInfo extends MIInfo {
 		};
 	}
 
-	public IGDBHardwareAndOS2.IResourceClass[] getResourceClasses()
+	public IResourceClass[] getResourceClasses()
 	{
 		return resourceClasses;
 	}
 
 	private void parseResourceClasses()
 	{
-		List<IGDBHardwareAndOS2.IResourceClass> classes = new ArrayList<IGDBHardwareAndOS2.IResourceClass>();
+		List<IResourceClass> classes = new ArrayList<IResourceClass>();
 
 		MITuple table = (MITuple)get(getMIOutput(), "OSDataTable");  //$NON-NLS-1$
 
@@ -109,7 +108,7 @@ public class MIInfoOsInfo extends MIInfo {
 			final String id = getString(row.getMIResults()[0]);
 			final String description = getString(row.getMIResults()[2]);
 
-			classes.add(new IGDBHardwareAndOS2.IResourceClass() {
+			classes.add(new IResourceClass() {
 
 				@Override
 				public String getId() { return id; }
@@ -120,7 +119,7 @@ public class MIInfoOsInfo extends MIInfo {
 			});
 		}
 
-		resourceClasses = classes.toArray(new IGDBHardwareAndOS2.IResourceClass[classes.size()]);
+		resourceClasses = classes.toArray(new IResourceClass[classes.size()]);
 	}
 
 	private void parseResourcesInformation()

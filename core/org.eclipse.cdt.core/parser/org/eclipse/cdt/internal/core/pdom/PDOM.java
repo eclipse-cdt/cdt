@@ -229,10 +229,11 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  137.0 - Fixed serialization of very large types and template arguments, bug 392278.
 	 *  138.0 - Constexpr functions, bug 395238.
 	 *  139.0 - More efficient and robust storage of types and template arguments, bug 395243.
+	 *  140.0 - Enumerators with dependent values, bug 389009.
 	 */
-	private static final int MIN_SUPPORTED_VERSION= version(139, 0);
-	private static final int MAX_SUPPORTED_VERSION= version(139, Short.MAX_VALUE);
-	private static final int DEFAULT_VERSION = version(139, 0);
+	private static final int MIN_SUPPORTED_VERSION= version(140, 0);
+	private static final int MAX_SUPPORTED_VERSION= version(140, Short.MAX_VALUE);
+	private static final int DEFAULT_VERSION = version(140, 0);
 
 	private static int version(int major, int minor) {
 		return (major << 16) + minor;

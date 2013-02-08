@@ -4,7 +4,7 @@
         <filter id="305365105">
             <message_arguments>
                 <message_argument value="org.eclipse.cdt.ui.refactoring.actions.Messages"/>
-                <message_argument value="org.eclipse.cdt.ui_5.5.0"/>
+                <message_argument value="org.eclipse.cdt.ui_5.6.0"/>
             </message_arguments>
         </filter>
     </resource>

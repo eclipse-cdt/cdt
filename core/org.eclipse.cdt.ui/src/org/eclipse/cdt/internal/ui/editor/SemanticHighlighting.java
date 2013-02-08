@@ -17,11 +17,12 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.PlatformUI;
 
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.text.ISemanticToken;
 
 /**
  * Semantic highlighting.
  * Cloned from JDT.
- * 
+ *
  * @since 4.0
  */
 public abstract class SemanticHighlighting {
@@ -81,9 +82,9 @@ public abstract class SemanticHighlighting {
 	 * @return the display name
 	 */
 	public abstract String getDisplayName();
-	
+
 	/**
-	 * Indicates that the highlighting needs to visit implicit names 
+	 * Indicates that the highlighting needs to visit implicit names
 	 * (e.g. overloaded operators)
 	 */
 	public boolean requiresImplicitNames() {
@@ -100,7 +101,7 @@ public abstract class SemanticHighlighting {
 	 * @param token the semantic token for a {@link org.eclipse.cdt.core.dom.ast.IASTName}
 	 * @return <code>true</code> iff the semantic highlighting consumes the semantic token
 	 */
-	public abstract boolean consumes(SemanticToken token);
+	public abstract boolean consumes(ISemanticToken token);
 
 	private String getThemeColorKey() {
 		return CUIPlugin.PLUGIN_ID + "." + getPreferenceKey() + "Highlighting";  //$NON-NLS-1$//$NON-NLS-2$

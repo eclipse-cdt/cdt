@@ -23,12 +23,14 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
@@ -2061,6 +2063,27 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	// }
 	public void testAliasTemplate() throws Exception {
 		checkBindings();
+	}
+
+	//	template <typename T>
+	//	struct B {
+	//	  enum { value = 1 };
+	//	};
+	//
+	//	template <typename T>
+	//	struct C {
+	//	  enum { id = B<T>::value };
+	//	};
+
+	//	void test() {
+	//	  int x = C<bool>::id;
+	//	}
+	public void testDependentEnumValue_389009() throws Exception {
+		IEnumerator binding = getBindingFromASTName("id;", 2, IEnumerator.class);
+		IValue value = binding.getValue();
+		Long num = value.numericalValue();
+		assertNotNull(num);
+		assertEquals(1, num.longValue());
 	}
 
 	//	template<typename U>

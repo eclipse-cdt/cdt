@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 Andrew Gvozdev and others.
+ * Copyright (c) 2009, 2013 Andrew Gvozdev and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,8 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.internal.core.LocalProjectScope;
 import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsExtensionManager;
 import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsProvidersSerializer;
+import org.eclipse.cdt.internal.core.language.settings.providers.ScannerInfoExtensionLanguageSettingsProvider;
+import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.osgi.service.prefs.BackingStoreException;
@@ -42,6 +44,8 @@ public class ScannerDiscoveryLegacySupport {
 	public static final String USER_LANGUAGE_SETTINGS_PROVIDER_ID = "org.eclipse.cdt.ui.UserLanguageSettingsProvider"; //$NON-NLS-1$
 	/** ID of MBS language settings provider (from org.eclipse.cdt.managedbuilder.core) */
 	public static final String MBS_LANGUAGE_SETTINGS_PROVIDER_ID = "org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider"; //$NON-NLS-1$
+	/** ID of ScannerInfo language settings provider wrapping ScannerInfoProvider defined by org.eclipse.cdt.core.ScannerInfoProvider extension point */
+	private static final String SI_LANGUAGE_SETTINGS_PROVIDER_ID = "org.eclipse.cdt.core.LegacyScannerInfoLanguageSettingsProvider"; //$NON-NLS-1$
 
 	private static String DISABLE_LSP_PREFERENCE = "language.settings.providers.disabled"; //$NON-NLS-1$
 	//	the default for project needs to be "disabled" - for legacy projects to be open with old SD enabled for MBS provider
@@ -156,15 +160,60 @@ public class ScannerDiscoveryLegacySupport {
 	}
 
 	/**
-	 * Return list containing MBS and User provider. Used to initialize for unaware tool-chains (backward compatibility).
+	 * Return list containing User provider and one of wrapper providers to support legacy projects (backward compatibility).
+	 * 
+	 * @noreference This is internal helper method to support compatibility with previous versions
+	 * which is not intended to be referenced by clients.
+	 * @since 5.5
+	 */
+	public static String[] getDefaultProviderIdsLegacy(ICConfigurationDescription cfgDescription) {
+		boolean useScannerInfoProviderExtension = new ScannerInfoExtensionLanguageSettingsProvider().getScannerInfoProvider(cfgDescription) != null;
+		if (useScannerInfoProviderExtension) {
+			return new String[] {USER_LANGUAGE_SETTINGS_PROVIDER_ID, SI_LANGUAGE_SETTINGS_PROVIDER_ID};
+		}
+		if (CProjectDescriptionManager.getInstance().isNewStyleCfg(cfgDescription)) {
+			return new String[] {USER_LANGUAGE_SETTINGS_PROVIDER_ID, MBS_LANGUAGE_SETTINGS_PROVIDER_ID};
+		}
+		return null;
+
+	}
+	
+	/**
+	 * Checks if the provider is applicable for configuration from backward compatibility point of view
+	 * 
+	 * @noreference This is internal helper method to support compatibility with previous versions
+	 * which is not intended to be referenced by clients.
+	 * @since 5.5
+	 */
+	public static boolean isProviderCompatible(String providerId, ICConfigurationDescription cfgDescription) {
+		if (cfgDescription != null) {
+			boolean useScannerInfoProviderExtension = new ScannerInfoExtensionLanguageSettingsProvider().getScannerInfoProvider(cfgDescription) != null;
+			if (SI_LANGUAGE_SETTINGS_PROVIDER_ID.equals(providerId)) {
+				return useScannerInfoProviderExtension;
+			}
+
+			if (MBS_LANGUAGE_SETTINGS_PROVIDER_ID.equals(providerId)) {
+				boolean isNewStyleCfg = CProjectDescriptionManager.getInstance().isNewStyleCfg(cfgDescription);
+				return !useScannerInfoProviderExtension && isNewStyleCfg;
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * Return list containing User and MBS providers. Used to initialize older MBS tool-chains (backward compatibility).
+	 * 
+	 * @noreference This is internal helper method to support compatibility with previous versions
+	 * which is not intended to be referenced by clients.
 	 */
 	public static List<ILanguageSettingsProvider> getDefaultProvidersLegacy() {
 		List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>(2);
-		ILanguageSettingsProvider provider = LanguageSettingsExtensionManager.getExtensionProviderCopy((ScannerDiscoveryLegacySupport.USER_LANGUAGE_SETTINGS_PROVIDER_ID), false);
+		ILanguageSettingsProvider provider = LanguageSettingsExtensionManager.getExtensionProviderCopy((USER_LANGUAGE_SETTINGS_PROVIDER_ID), false);
 		if (provider != null) {
 			providers.add(provider);
 		}
-		providers.add(LanguageSettingsProvidersSerializer.getWorkspaceProvider(ScannerDiscoveryLegacySupport.MBS_LANGUAGE_SETTINGS_PROVIDER_ID));
+		providers.add(LanguageSettingsProvidersSerializer.getWorkspaceProvider(MBS_LANGUAGE_SETTINGS_PROVIDER_ID));
 		return providers;
 	}
 

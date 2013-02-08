@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 Andrew Gvozdev and others.
+ * Copyright (c) 2009, 2013 Andrew Gvozdev and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -82,7 +82,7 @@ public class LanguageSettingsProvidersSerializer {
 	public static final String JOB_FAMILY_SERIALIZE_LANGUAGE_SETTINGS_WORKSPACE = "CDT_JOB_FAMILY_SERIALIZE_LANGUAGE_SETTINGS_WORKSPACE"; //$NON-NLS-1$
 
 	private static final String PREFERENCE_WORSPACE_PROVIDERS_SET = "language.settings.providers.workspace.prefs.toggle"; //$NON-NLS-1$
-	private static final String CPROJECT_STORAGE_MODULE = "org.eclipse.cdt.core.LanguageSettingsProviders"; //$NON-NLS-1$
+	private static final String CPROJECT_STORAGE_MODULE_LANGUAGE_SETTINGS_PROVIDERS = "org.eclipse.cdt.core.LanguageSettingsProviders"; //$NON-NLS-1$
 	private static final String STORAGE_WORKSPACE_LANGUAGE_SETTINGS = "language.settings.xml"; //$NON-NLS-1$
 	private static final String STORAGE_PROJECT_PATH = ".settings/language.settings.xml"; //$NON-NLS-1$
 
@@ -833,8 +833,13 @@ public class LanguageSettingsProvidersSerializer {
 		LanguageSettingsLogger.logWarning("LanguageSettingsProvidersSerializer.serializeLanguageSettings() for " + project);
 
 		try {
-			// Using side effect of adding the module to the storage
-			prjDescription.getStorage(CPROJECT_STORAGE_MODULE, true);
+			// Add the storage module to .cpoject and persist on disk as a side effect of adding
+			prjDescription.getStorage(CPROJECT_STORAGE_MODULE_LANGUAGE_SETTINGS_PROVIDERS, true);
+			if (!ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityDefined(project)) {
+				// set the flag if was not previously set by the user - to the default value
+				ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project,
+						ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityEnabled(project));
+			}
 		} catch (CoreException e) {
 			CCorePlugin.log("Internal error while trying to serialize language settings", e); //$NON-NLS-1$
 		}
@@ -1131,7 +1136,9 @@ public class LanguageSettingsProvidersSerializer {
 	public static void loadLanguageSettings(ICProjectDescription prjDescription) {
 		IProject project = prjDescription.getProject();
 		IFile storeInPrjArea = getStoreInProjectArea(project);
-		if (storeInPrjArea.exists()) {
+		boolean isStoreInProjectAreaExist = storeInPrjArea.exists();
+		boolean enableLSP = isStoreInProjectAreaExist;
+		if (isStoreInProjectAreaExist) {
 			Document doc = null;
 			try {
 				doc = XmlUtil.loadXml(storeInPrjArea);
@@ -1156,19 +1163,18 @@ public class LanguageSettingsProvidersSerializer {
 				CCorePlugin.log("Can't load preferences from file " + storeInPrjArea.getLocation(), e); //$NON-NLS-1$
 			}
 
-		} else {
-			// Storage in project area does not exist
-			ICStorageElement storageElement = null;
+		} else { // Storage in project area does not exist
+			ICStorageElement lspStorageModule = null;
 			try {
-				storageElement = prjDescription.getStorage(CPROJECT_STORAGE_MODULE, false);
+				lspStorageModule = prjDescription.getStorage(CPROJECT_STORAGE_MODULE_LANGUAGE_SETTINGS_PROVIDERS, false);
 			} catch (CoreException e) {
 				String msg = "Internal error while trying to load language settings"; //$NON-NLS-1$
 				CCorePlugin.log(msg, e);
 			}
 
-			if (storageElement != null) {
-				// set default providers defined in the tool-chain
-				for (ICConfigurationDescription cfgDescription : prjDescription.getConfigurations()) {
+			// set default providers defined in the tool-chain
+			for (ICConfigurationDescription cfgDescription : prjDescription.getConfigurations()) {
+				if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
 					String[] ids = ((ILanguageSettingsProvidersKeeper) cfgDescription).getDefaultLanguageSettingsProvidersIds();
 					if (ids != null) {
 						List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>(ids.length);
@@ -1182,23 +1188,16 @@ public class LanguageSettingsProvidersSerializer {
 						((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(providers);
 					}
 				}
-
-			} else {
-				// Older existing legacy projects unaware of Language Settings Providers and their persistence store
-				ICConfigurationDescription[] cfgDescriptions = prjDescription.getConfigurations();
-				for (ICConfigurationDescription cfgDescription : cfgDescriptions) {
-					if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
-						((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(ScannerDiscoveryLegacySupport.getDefaultProvidersLegacy());
-					}
-				}
-			}
-			
-			if (!ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityDefined(project)) {
-				// if not yet defined by user - set preference to tell if this is legacy .cproject (i.e. no LSP storageElement)
-				ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, storageElement != null);
 			}
 
+			enableLSP = lspStorageModule != null;
 		}
+
+		if (!ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityDefined(project)) {
+			// set the flag if was not previously set by the user
+			ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, enableLSP);
+		}
+
 	}
 
 	/**

@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.utils.UNCPathConverter;
 
 /**
  * Helper class to provide unified images for {@link ICLanguageSettingEntry}.
@@ -168,6 +169,8 @@ public class LanguageSettingsImages {
 			IPath path = new Path(entry.getValue());
 			IResource rc = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
 			exists = (rc !=null) && rc.isAccessible();
+		} else if (UNCPathConverter.isUNC(entry.getName())) {
+			return true;
 		} else {
 			String pathname = entry.getName();
 			java.io.File file = new java.io.File(pathname);

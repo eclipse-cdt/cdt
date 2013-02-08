@@ -39,23 +39,25 @@ public interface ICPPEvaluation extends ISerializableEvaluation {
 	boolean isValueDependent();
 
 	/**
-	 * TODO Add description
+	 * Returns the type of the expression, or a {@code FunctionSetType} if the expression evaluates
+	 * to a function set.
 	 *
-	 * @param point determines the scope for name lookups
+	 * @param point the point of instantiation, determines the scope for name lookups
 	 */
 	IType getTypeOrFunctionSet(IASTNode point);
 
 	/**
-	 * TODO Add description
+	 * Returns the value of the expression.
 	 *
-	 * @param point determines the scope for name lookups
+	 * @param point the point of instantiation, determines the scope for name lookups
 	 */
 	IValue getValue(IASTNode point);
 
 	/**
-	 * TODO Add description
+	 * Returns the category of the expression value.
+	 * @see ValueCategory
 	 *
-	 * @param point determines the scope for name lookups
+	 * @param point the point of instantiation, determines the scope for name lookups
 	 */
 	ValueCategory getValueCategory(IASTNode point);
 
@@ -78,7 +80,7 @@ public interface ICPPEvaluation extends ISerializableEvaluation {
 	 * 
 	 * @param parameterMap maps function parameters to their values
 	 * @param maxdepth allowed recursion depth 
-	 * @param point determines the scope for name lookups
+	 * @param point the point of instantiation, determines the scope for name lookups
 	 * @return the computed evaluation
 	 */
 	ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap, int maxdepth,
@@ -93,9 +95,7 @@ public interface ICPPEvaluation extends ISerializableEvaluation {
 	 * CPPTemplates.PACK_SIZE_FAIL, and CPPTemplates.PACK_SIZE_NOT_FOUND. See their
 	 * declarations for their meanings.
 	 *
-	 * See also CPPTemplates.determinePackSize().
-	 * 
-	 * @noreference This method is not intended to be referenced by clients. 
+	 * See also {@code CPPTemplates.determinePackSize()}.
 	 */
 	int determinePackSize(ICPPTemplateParameterMap tpMap);
 

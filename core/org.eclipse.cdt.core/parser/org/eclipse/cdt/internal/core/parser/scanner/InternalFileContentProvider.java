@@ -28,6 +28,10 @@ import org.eclipse.cdt.internal.core.dom.IIncludeFileResolutionHeuristics;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
 import org.eclipse.cdt.internal.core.parser.IMacroDictionary;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent.InclusionKind;
+import org.eclipse.cdt.utils.UNCPathConverter;
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * Internal implementation of the file content providers
@@ -49,7 +53,16 @@ public abstract class InternalFileContentProvider extends IncludeFileContentProv
 	/**
 	 * Checks whether the specified inclusion exists.
 	 */
-	public boolean getInclusionExists(String path) {
+	public boolean getInclusionExists(final String path) {
+		if (UNCPathConverter.isUNC(path)) {
+			try {
+				IFileStore store = EFS.getStore(UNCPathConverter.getInstance().toURI(path));
+				return store.fetchInfo().exists();
+			} catch (CoreException e) {
+				return false;
+			}
+		}
+
 		return new File(path).exists();
 	}
 

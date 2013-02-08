@@ -240,7 +240,8 @@ public class IndexUpdateTests extends IndexTestBase {
 		for (int i = 0; i < nchars.length; i++) {
 			nchars[i]= names[i].toCharArray();
 		}
-		return fIndex.findBindings(nchars, IndexFilter.ALL_DECLARED, npm())[0];
+		IIndexBinding[] bindings = fIndex.findBindings(nchars, IndexFilter.ALL_DECLARED, npm());
+		return bindings.length > 0 ? bindings[0] : null;
 	}
 
 	private String msg() {
@@ -256,7 +257,6 @@ public class IndexUpdateTests extends IndexTestBase {
 	// short globalVar;
 
 	// register int globalVar;
-
 	public void testGlobalCppVariable() throws Exception {
 		setupFile(3, true);
 		checkCppVariable("globalVar", INT, new String[]{});
@@ -345,7 +345,6 @@ public class IndexUpdateTests extends IndexTestBase {
 	// struct my_struct {int fField;};
 	
 	// struct my_struct {short fField;};
-	
 	public void testCField() throws Exception {
 		setupFile(2, false);
 		checkVariable("my_struct::fField", INT, new String[]{});
@@ -402,7 +401,6 @@ public class IndexUpdateTests extends IndexTestBase {
 		checkModifier(modifiers, PRIVATE, visibility == ICPPMember.v_private);
 	}
 
-
 	// class MyClass {int method(int a, int b);};
 	
 	// class MyClass {short method(int a, int b);};
@@ -422,7 +420,6 @@ public class IndexUpdateTests extends IndexTestBase {
 	// class MyClass {int method(char a){};};
 	
 	// class MyClass {virtual int method(char a) = 0;};
-
 	public void testCppMethod() throws Exception {
 		setupFile(10, true);
 		checkCppMethod("MyClass::method", new String[] {INT, INT, INT}, new String[]{PRIVATE});
@@ -453,7 +450,6 @@ public class IndexUpdateTests extends IndexTestBase {
 	
 	// #include "header.h"
 	// char MyClass::method(int a, int b);
-	
 	public void testFixedCppMethod() throws Exception {
 		setupHeader(3, true);
 		checkCppMethod("MyClass::method", new String[] {INT, INT, INT}, new String[]{PROTECTED});
@@ -493,7 +489,6 @@ public class IndexUpdateTests extends IndexTestBase {
 	// class MyClass {protected: MyClass(char a, int b);};
 
 	// class MyClass {private: MyClass(char a, int b);};
-
 	public void testCppConstructor() throws Exception {
 		setupFile(6, true);
 		checkCppConstructor("MyClass::MyClass", new String[] {"", INT, INT}, new String[]{PRIVATE});
@@ -587,7 +582,8 @@ public class IndexUpdateTests extends IndexTestBase {
 			}
 			checkCppConstructor((ICPPConstructor) ctors[0], new String[]{"", constRefType}, m2);
 
-			IIndexBinding[] assignmentOps= fIndex.findBindings(new char[][]{nchars, "operator =".toCharArray()}, IndexFilter.ALL_DECLARED_OR_IMPLICIT, npm());
+			IIndexBinding[] assignmentOps= fIndex.findBindings(
+					new char[][] {nchars, "operator =".toCharArray() }, IndexFilter.ALL_DECLARED_OR_IMPLICIT, npm());
 			count= 0;
 			for (int i = 0; i < assignmentOps.length; i++) {
 				IIndexBinding assignmentOp= assignmentOps[i];
@@ -716,7 +712,6 @@ public class IndexUpdateTests extends IndexTestBase {
 			fIndex.releaseReadLock();
 		}
 	}
-	
 	
 	// class myType {
 	//    int a;
@@ -1182,7 +1177,6 @@ public class IndexUpdateTests extends IndexTestBase {
 			fIndex.releaseReadLock();
 		}
 	}
-	
 	
 	// void funcTypeDeletion(int);
 

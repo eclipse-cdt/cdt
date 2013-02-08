@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2013 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,8 +19,6 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
-import org.eclipse.cdt.core.dom.IName;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
@@ -39,7 +37,7 @@ import org.eclipse.cdt.internal.core.model.ext.ICElementHandle;
 import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
 
 class THGraph {
-	private static final ICElement[] NO_MEMBERS = new ICElement[0];
+	private static final ICElement[] NO_MEMBERS = {};
 	private THGraphNode fInputNode= null;
 	private HashSet<THGraphNode> fRootNodes= new HashSet<THGraphNode>();
 	private HashSet<THGraphNode> fLeaveNodes= new HashSet<THGraphNode>();
@@ -251,25 +249,22 @@ class THGraph {
 	private void addMembers(IIndex index, THGraphNode graphNode, IBinding binding) throws CoreException {
 		if (graphNode.getMembers(false) == null) {
 			ArrayList<ICElement> memberList= new ArrayList<ICElement>();
-			try {
-				if (binding instanceof ICPPClassType) {
-					ICPPClassType ct= (ICPPClassType) binding;
-					IBinding[] members= ct.getDeclaredFields();
-					addMemberElements(index, members, memberList);
-					members= ct.getDeclaredMethods();
-					addMemberElements(index, members, memberList);
-				} else if (binding instanceof ICompositeType) {
-					ICompositeType ct= (ICompositeType) binding;
-					IBinding[] members= ct.getFields();
-					addMemberElements(index, members, memberList);
-				} else if (binding instanceof IEnumeration) {
-					IEnumeration ct= (IEnumeration) binding;
-					IBinding[] members= ct.getEnumerators();
-					addMemberElements(index, members, memberList);
-				}
-			} catch (DOMException e) {
-				// Problem bindings should not be reported to the log.
+			if (binding instanceof ICPPClassType) {
+				ICPPClassType ct= (ICPPClassType) binding;
+				IBinding[] members= ct.getDeclaredFields();
+				addMemberElements(index, members, memberList);
+				members= ct.getDeclaredMethods();
+				addMemberElements(index, members, memberList);
+			} else if (binding instanceof ICompositeType) {
+				ICompositeType ct= (ICompositeType) binding;
+				IBinding[] members= ct.getFields();
+				addMemberElements(index, members, memberList);
+			} else if (binding instanceof IEnumeration) {
+				IEnumeration ct= (IEnumeration) binding;
+				IBinding[] members= ct.getEnumerators();
+				addMemberElements(index, members, memberList);
 			}
+
 			if (memberList.isEmpty()) {
 				graphNode.setMembers(NO_MEMBERS);
 			} else {

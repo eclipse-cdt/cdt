@@ -7051,7 +7051,7 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	void test() {
 	//	  int x = C<bool>::id;
 	//	}
-	public void _testDependentEnumValue_389009() throws Exception {
+	public void testDependentEnumValue_389009() throws Exception {
 		BindingAssertionHelper ah = getAssertionHelper();
 		IEnumerator binding = ah.assertNonProblem("C<bool>::id", "id");
 		IValue value = binding.getValue();
@@ -7123,6 +7123,46 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	    A<bool(*)()> mf;
 	//	}
 	public void testClassTemplateSpecializationPartialOrdering_398044b() throws Exception {
+		parseAndCheckBindings();
+	}
+	
+	//	template <typename>
+	//	struct meta {
+	//	    static const bool value = 1;
+	//	};
+	//	template <bool>
+	//	struct enable_if {};
+	//	template <>
+	//	struct enable_if<true> {
+	//	    typedef void type;
+	//	};
+	//	template <class T>
+	//	struct pair {
+	//	    template <typename = typename enable_if<meta<T>::value>::type>
+	//	    pair(int);
+	//	};
+	//	void push_back(pair<long>&&);
+	//	void push_back(const pair<long>&);
+	//	void test() {
+	//	    push_back(0);
+	//	}
+	public void testRegression_399142() throws Exception {
+		parseAndCheckBindings();
+	}
+	
+	//	template <class T>
+	//	struct A {
+	//	    struct impl {
+	//	        static T x;
+	//	    };
+	//	    static const int value = sizeof(impl::x);
+	//	};
+	//	template <int> struct W {};
+	//	template <> struct W<1> { typedef int type; };
+	//	int main() {
+	//	    W<A<char>::value>::type w;
+	//	}
+	public void testDependentExpressionInvolvingFieldInNestedClass_399362() throws Exception {
 		parseAndCheckBindings();
 	}
 }

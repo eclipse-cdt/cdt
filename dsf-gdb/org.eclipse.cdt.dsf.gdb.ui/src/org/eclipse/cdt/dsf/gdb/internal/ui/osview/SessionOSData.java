@@ -27,6 +27,8 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.ISuspendedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.cdt.dsf.gdb.service.IGDBHardwareAndOS2;
+import org.eclipse.cdt.dsf.gdb.service.IGDBHardwareAndOS2.IResourceClass;
+import org.eclipse.cdt.dsf.gdb.service.IGDBHardwareAndOS2.IResourcesInformation;
 import org.eclipse.cdt.dsf.mi.service.IMIRunControl;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
@@ -48,7 +50,7 @@ public class SessionOSData {
 	private IGDBHardwareAndOS2 fHardwareOs;
 	private ICommandControlDMContext fContext;
 
-	private IGDBHardwareAndOS2.IResourceClass[] fResourceClasses = new IGDBHardwareAndOS2.IResourceClass[0];
+	private IResourceClass[] fResourceClasses = new IResourceClass[0];
 	private Map<String, OSData> fExistingData = new HashMap<String, OSData>();
 	private Map<String, Date> fTimestamp = new HashMap<String, Date>();
 
@@ -100,7 +102,7 @@ public class SessionOSData {
 	{	
 		fWaitingForSession = false;
 		fFetchingClasses = true;
-		fHardwareOs.getResourceClasses(fContext, new DataRequestMonitor<IGDBHardwareAndOS2.IResourceClass[]>(fSession.getExecutor(), null) {
+		fHardwareOs.getResourceClasses(fContext, new DataRequestMonitor<IResourceClass[]>(fSession.getExecutor(), null) {
 			@Override
 			@ConfinedToDsfExecutor("fExecutor")
 			protected void handleCompleted() {
@@ -145,7 +147,7 @@ public class SessionOSData {
 		fTracker.dispose();
 	}
 
-	public IGDBHardwareAndOS2.IResourceClass[] getResourceClasses()
+	public IResourceClass[] getResourceClasses()
 	{
 		return fResourceClasses;
 	}
@@ -202,7 +204,7 @@ public class SessionOSData {
 
 			@Override
 			public void run() {
-				fHardwareOs.getResourcesInformation(fContext, resourceClass, new DataRequestMonitor<IGDBHardwareAndOS2.IResourcesInformation>(executor, null) {
+				fHardwareOs.getResourcesInformation(fContext, resourceClass, new DataRequestMonitor<IResourcesInformation>(executor, null) {
 
 					@Override
 					@ConfinedToDsfExecutor("fExecutor")

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 QNX Software Systems and others.
+ * Copyright (c) 2005, 2013 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -534,6 +534,10 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			result= new PDOMCPPTypedefSpecialization(this, parent, (ITypedef) special, orig);
 		} else if (special instanceof ICPPUsingDeclaration) {
 			result= new PDOMCPPUsingDeclarationSpecialization(this, parent, (ICPPUsingDeclaration) special, orig);
+		} else if (special instanceof ICPPEnumeration) {
+			result= new PDOMCPPEnumerationSpecialization(this, parent, (ICPPEnumeration) special, orig);
+		} else if (special instanceof IEnumerator) {
+			result= new PDOMCPPEnumeratorSpecialization(this, parent, (IEnumerator) special, orig);
 		}
 
 		return result;
@@ -893,6 +897,10 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			return new PDOMCPPUsingDeclarationSpecialization(this, record);
 		case CPP_TEMPLATE_ALIAS:
 			return new PDOMCPPAliasTemplate(this, record);
+		case CPP_ENUMERATION_SPECIALIZATION:
+			return new PDOMCPPEnumeratorSpecialization(this, record);
+		case CPP_ENUMERATOR_SPECIALIZATION:
+			return new PDOMCPPEnumeratorSpecialization(this, record);
 		}
 		assert false : "nodeid= " + nodeType; //$NON-NLS-1$
 		return null;

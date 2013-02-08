@@ -16,10 +16,13 @@ import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.internal.ui.breakpoints.CBreakpointContext;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.debug.ui.contexts.IDebugContextProvider;
+import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.SelectionProviderAction;
@@ -56,10 +59,7 @@ public class CBreakpointPropertyDialogAction extends SelectionProviderAction {
     
     private IDebugContextProvider fDebugContextProvider;
     
-    /**
-     * The id of the page to open up on.
-     */
-    private String fInitialPageId = "org.eclipse.cdt.debug.ui.propertypages.breakpoint.common"; //$NON-NLS-1$
+    private static final String PAGE_ID_COMMON = "org.eclipse.cdt.debug.ui.propertypages.breakpoint.common"; //$NON-NLS-1$ 
     
     public CBreakpointPropertyDialogAction(IShellProvider shell, ISelectionProvider selectionProvider, IDebugContextProvider debugContextProvider) {
         super(selectionProvider, WorkbenchMessages.PropertyDialog_text); 
@@ -133,7 +133,6 @@ public class CBreakpointPropertyDialogAction extends SelectionProviderAction {
         return true;
     }
     
-    
     /* (non-Javadoc)
      * @see org.eclipse.jface.action.IAction#run()
      */
@@ -143,8 +142,31 @@ public class CBreakpointPropertyDialogAction extends SelectionProviderAction {
             PreferenceDialog dialog = createDialog(bpContext);
             
             if (dialog != null) {
+                TreeViewer viewer = dialog.getTreeViewer();
+                if (viewer != null) {
+                    viewer.setComparator(new ViewerComparator() {
+                        @Override
+                        public int category(Object element) {
+                            if (element instanceof IPreferenceNode) {
+                                IPreferenceNode node = (IPreferenceNode)element;
+                                if ( PAGE_ID_COMMON.equals(node.getId()) ) {
+                                    return 0;
+                                } else if (node.getSubNodes() == null || node.getSubNodes().length == 0) {
+                                    // Pages without children (not categories)
+                                    return super.category(element) + 1;
+                                }
+                            }
+                            // Categories last.
+                            return super.category(element) + 2;
+                        }
+                    });
+                    // Expand all categories
+                    viewer.expandToLevel(TreeViewer.ALL_LEVELS);
+                }
+                
                 dialog.open();
             }
+            
         }
     }
     
@@ -168,7 +190,7 @@ public class CBreakpointPropertyDialogAction extends SelectionProviderAction {
         if (ss.isEmpty())
             return null;
         
-        return PreferencesUtil.createPropertyDialogOn(fShellProvider.getShell(), bpContext, fInitialPageId, null, null);
+        return PreferencesUtil.createPropertyDialogOn(fShellProvider.getShell(), bpContext, null, null, null);
     }
 
     

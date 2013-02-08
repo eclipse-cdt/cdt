@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPH//8lY\u003d",
+        "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/core/model/CoreModel.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1258,
+      "author": {
+        "id": 599
+      },
+      "writtenOn": "2013-02-08T16:57:47Z",
+      "side": 1,
+      "message": "This place is not quite correct to check for LSP legacy support",
+      "revId": "e9cbb2df8dbc9b1034bde2dbfd5de64d27d54c49",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPH//8lU\u003d",
+        "filename": "core/org.eclipse.cdt.core/model/org/eclipse/cdt/core/model/CoreModel.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1263,
+      "author": {
+        "id": 599
+      },
+      "writtenOn": "2013-02-08T16:57:47Z",
+      "side": 1,
+      "message": "The check should be added here. This piece of code was added by commit 8194410514f1d38d1d045b9a88e5613605a8c6a1 and it really should be conditional on the LSP enabled",
+      "revId": "e9cbb2df8dbc9b1034bde2dbfd5de64d27d54c49",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

@@ -56,7 +56,6 @@ public class ScannerDiscoveryLegacySupport {
 	public static final String PATH_ENTRY_MANAGER_LANGUAGE_SETTINGS_PROVIDER_ID = "org.eclipse.cdt.core.PathEntryScannerInfoLanguageSettingsProvider"; //$NON-NLS-1$
 
 	private static String DISABLE_LSP_PREFERENCE = "language.settings.providers.disabled"; //$NON-NLS-1$
-	//	the default for project needs to be "disabled" - for legacy projects to be open with old SD enabled for MBS provider
 	private static boolean DISABLE_LSP_DEFAULT_PROJECT = false;
 	private static boolean DISABLE_LSP_DEFAULT_WORKSPACE = false;
 	private static final String PREFERENCES_QUALIFIER_CCORE = CCorePlugin.PLUGIN_ID;
@@ -65,6 +64,9 @@ public class ScannerDiscoveryLegacySupport {
 
 	/**
 	 * Get preferences node for org.eclipse.cdt.core.
+	 * 
+	 * @param project - project to get preferences or {@code null} for workspace preferences
+	 * @return
 	 */
 	private static Preferences getPreferences(IProject project) {
 		if (project == null) {
@@ -77,7 +79,7 @@ public class ScannerDiscoveryLegacySupport {
 	/**
 	 * Checks if Language Settings functionality is defined for given project in preferences.
 	 *
-	 * @param project - project to check the preference
+	 * @param project - project to check the preference or {@code null} for workspace preference
 	 * @return {@code true} if functionality is defined
 	 *
 	 * @noreference This method is temporary and not intended to be referenced by clients.
@@ -92,22 +94,25 @@ public class ScannerDiscoveryLegacySupport {
 
 	/**
 	 * Checks if Language Settings functionality is enabled for given project.
+	 * Note that disabling on workspace level will disable it for all projects.
 	 *
-	 * @param project - project to check the preference
+	 * @param project - project to check the preference or {@code null} for workspace preference
 	 * @return {@code true} if functionality is enabled
 	 *
 	 * @noreference This method is temporary and not intended to be referenced by clients.
 	 */
 	public static boolean isLanguageSettingsProvidersFunctionalityEnabled(IProject project) {
-		Preferences pref = getPreferences(project);
-		boolean defaultValue = project != null ? DISABLE_LSP_DEFAULT_PROJECT : DISABLE_LSP_DEFAULT_WORKSPACE;
-		return !pref.getBoolean(DISABLE_LSP_PREFERENCE, defaultValue);
+		boolean isEnabledInWorkspace = !getPreferences(null).getBoolean(DISABLE_LSP_PREFERENCE, DISABLE_LSP_DEFAULT_WORKSPACE);
+		if (isEnabledInWorkspace && project != null) {
+			return !getPreferences(project).getBoolean(DISABLE_LSP_PREFERENCE, DISABLE_LSP_DEFAULT_PROJECT);
+		}
+		return isEnabledInWorkspace;
 	}
 
 	/**
 	 * Enable/disable Language Settings functionality for the given project.
 	 *
-	 * @param project
+	 * @param project  or {@code null} for workspace preference
 	 * @param value {@code true} to enable or {@code false} to disable the functionality.
 	 *
 	 * @noreference This method is temporary and not intended to be referenced by clients.

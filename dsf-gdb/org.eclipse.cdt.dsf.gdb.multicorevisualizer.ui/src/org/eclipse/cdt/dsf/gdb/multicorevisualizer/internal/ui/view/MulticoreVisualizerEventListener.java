@@ -187,7 +187,10 @@ public class MulticoreVisualizerEventListener {
 
 			fVisualizer.getModel().markThreadExited(tid);
 			
-			fVisualizer.getMulticoreVisualizerCanvas().requestUpdate();
+			MulticoreVisualizerCanvas canvas = fVisualizer.getMulticoreVisualizerCanvas();
+			if (canvas != null) {
+				canvas.requestUpdate();
+			}
     	}
 	}	
 }

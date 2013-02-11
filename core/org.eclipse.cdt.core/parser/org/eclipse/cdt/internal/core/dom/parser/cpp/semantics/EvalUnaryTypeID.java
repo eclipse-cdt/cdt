@@ -36,7 +36,6 @@ import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_typeid;
 import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_typeof;
 
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
@@ -116,19 +115,19 @@ public class EvalUnaryTypeID extends CPPEvaluation {
 	}
 
 	@Override
-	public IType getTypeOrFunctionSet(IASTNode point) {
+	public IType getTypeOrFunctionSet(LookupContext context) {
 		if (fType == null)
-			fType= computeType(point);
+			fType= computeType(context);
 		return fType;
 	}
 
-	private IType computeType(IASTNode point) {
+	private IType computeType(LookupContext context) {
 		switch (fOperator) {
 		case op_sizeof:
 		case op_alignof:
-			return CPPVisitor.get_SIZE_T(point);
+			return CPPVisitor.get_SIZE_T(context);
 		case op_typeid:
-			return CPPVisitor.get_type_info(point);
+			return CPPVisitor.get_type_info(context);
 		case op_has_nothrow_copy:
 		case op_has_nothrow_constructor:
 		case op_has_trivial_assign:
@@ -156,15 +155,15 @@ public class EvalUnaryTypeID extends CPPEvaluation {
 	}
 
 	@Override
-	public IValue getValue(IASTNode point) {
+	public IValue getValue(LookupContext context) {
 		if (isValueDependent())
 			return Value.create(this);
 
-		return Value.evaluateUnaryTypeIdExpression(fOperator, fOrigType, point);
+		return Value.evaluateUnaryTypeIdExpression(fOperator, fOrigType, context.getPointOfInstantiation());
 	}
 
 	@Override
-	public ValueCategory getValueCategory(IASTNode point) {
+	public ValueCategory getValueCategory(LookupContext context) {
 		return fOperator == op_typeid ? LVALUE : PRVALUE;
     }
 
@@ -183,8 +182,8 @@ public class EvalUnaryTypeID extends CPPEvaluation {
 
 	@Override
 	public ICPPEvaluation instantiate(ICPPTemplateParameterMap tpMap, int packOffset,
-			ICPPClassSpecialization within, int maxdepth, IASTNode point) {
-		IType type = CPPTemplates.instantiateType(fOrigType, tpMap, packOffset, within, point);
+			ICPPClassSpecialization within, int maxdepth, LookupContext context) {
+		IType type = CPPTemplates.instantiateType(fOrigType, tpMap, packOffset, within, context);
 		if (type == fOrigType)
 			return this;
 		return new EvalUnaryTypeID(fOperator, type);
@@ -192,7 +191,7 @@ public class EvalUnaryTypeID extends CPPEvaluation {
 
 	@Override
 	public ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap,
-			int maxdepth, IASTNode point) {
+			int maxdepth, LookupContext context) {
 		return this;
 	}
 

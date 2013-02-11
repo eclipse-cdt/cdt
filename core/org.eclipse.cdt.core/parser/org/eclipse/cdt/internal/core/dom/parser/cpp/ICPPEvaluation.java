@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPFunctionParameterMap;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.LookupContext;
 
 /**
  * Assists in evaluating expressions.
@@ -42,24 +43,52 @@ public interface ICPPEvaluation extends ISerializableEvaluation {
 	 * Returns the type of the expression, or a {@code FunctionSetType} if the expression evaluates
 	 * to a function set.
 	 *
-	 * @param point the point of instantiation, determines the scope for name lookups
+	 * Use this version when not in a template instantiation context.
+	 *
+	 * @param context used to determine the scope for name lookups
 	 */
 	IType getTypeOrFunctionSet(IASTNode point);
+	
+	/**
+	 * Returns the type of the expression, or a {@code FunctionSetType} if the expression evaluates
+	 * to a function set.
+	 *
+	 * Use this version when in a template instantiation context.
+	 *
+	 * @param context the context for name lookups, storing both
+	 * the point of instantiation and the point of definition.
+	 * Name lookups are done from both points when appropriate.
+	 */
+	IType getTypeOrFunctionSet(LookupContext context);
 
 	/**
 	 * Returns the value of the expression.
 	 *
-	 * @param point the point of instantiation, determines the scope for name lookups
+	 * @param context the point of instantiation, determines the scope for name lookups
 	 */
-	IValue getValue(IASTNode point);
+	IValue getValue(LookupContext context);
 
 	/**
 	 * Returns the category of the expression value.
 	 * @see ValueCategory
 	 *
-	 * @param point the point of instantiation, determines the scope for name lookups
+	 * Use this version when not in a template instantiation context.
+	 *
+	 * @param context used to determine the scope for name lookups
 	 */
 	ValueCategory getValueCategory(IASTNode point);
+	
+	/**
+	 * Returns the category of the expression value.
+	 * @see ValueCategory
+	 *
+	 * Use this version when in a template instantiation context.
+	 *
+	 * @param context the context for name lookups, storing both
+	 * the point of instantiation and the point of definition.
+	 * Name lookups are done from both points when appropriate.
+	 */
+	ValueCategory getValueCategory(LookupContext context);
 
 	/**
 	 * Returns a signature uniquely identifying the evaluation. Two evaluations with identical
@@ -73,18 +102,18 @@ public interface ICPPEvaluation extends ISerializableEvaluation {
 	 * @return a fully or partially instantiated evaluation, or the original evaluation
 	 */
 	ICPPEvaluation instantiate(ICPPTemplateParameterMap tpMap, int packOffset,
-			ICPPClassSpecialization within, int maxdepth, IASTNode point);
+			ICPPClassSpecialization within, int maxdepth, LookupContext context);
 
 	/**
 	 * Computes the evaluation produced by substituting function parameters by their values.
 	 * 
 	 * @param parameterMap maps function parameters to their values
 	 * @param maxdepth allowed recursion depth 
-	 * @param point the point of instantiation, determines the scope for name lookups
+	 * @param context the point of instantiation, determines the scope for name lookups
 	 * @return the computed evaluation
 	 */
 	ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap, int maxdepth,
-			IASTNode point);
+			LookupContext context);
 
 	/**
 	 * Searches the evaluation for a usage of a template parameter which is a parameter pack,

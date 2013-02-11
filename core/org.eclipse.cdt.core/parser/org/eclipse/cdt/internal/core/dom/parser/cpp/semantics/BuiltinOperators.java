@@ -61,11 +61,11 @@ class BuiltinOperators {
 	private static final IType PTR_DIFF = new CPPBasicType(Kind.eInt, 0);
 
 	public static ICPPFunction[] create(OverloadableOperator operator, ICPPEvaluation[] args,
-			IASTNode point, Object[] globCandidates) {
+			LookupContext context, Object[] globCandidates) {
 		if (operator == null || args == null || args.length == 0)
 			return EMPTY;
 		
-		return new BuiltinOperators(operator, args, point, globCandidates).create();
+		return new BuiltinOperators(operator, args, context, globCandidates).create();
 	}
 
 	private final OverloadableOperator fOperator;
@@ -80,21 +80,21 @@ class BuiltinOperators {
 	private Set<String> fSignatures;
 	private Object[] fGlobalCandidates;
 
-	BuiltinOperators(OverloadableOperator operator, ICPPEvaluation[] args, IASTNode point,
+	BuiltinOperators(OverloadableOperator operator, ICPPEvaluation[] args, LookupContext context,
 			Object[] globCandidates) {
-		fFileScope= point.getTranslationUnit().getScope();
+		fPoint = context.getPointOfInstantiation();
+		fFileScope= fPoint.getTranslationUnit().getScope();
 		fOperator= operator;
-		fPoint = point;
 		fUnary= args.length < 2;
 		fGlobalCandidates= globCandidates;
 		if (args.length > 0) {
-			IType type= args[0].getTypeOrFunctionSet(point);
+			IType type= args[0].getTypeOrFunctionSet(context);
 			if (!(type instanceof ISemanticProblem)) 
 				fType1= type;
 			
 		}
 		if (args.length > 1) {
-			IType type= args[1].getTypeOrFunctionSet(point);
+			IType type= args[1].getTypeOrFunctionSet(context);
 			if (!(type instanceof ISemanticProblem))
 				fType2= type;
 		}

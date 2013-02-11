@@ -15,7 +15,6 @@ import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
 
 import org.eclipse.cdt.core.dom.ast.IASTBinaryTypeIdExpression.Operator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
@@ -67,7 +66,7 @@ public class EvalBinaryTypeId extends CPPEvaluation {
 	}
 
 	@Override
-	public IType getTypeOrFunctionSet(IASTNode point) {
+	public IType getTypeOrFunctionSet(LookupContext context) {
 		switch (fOperator) {
 		case __is_base_of:
 			return CPPBasicType.BOOLEAN;
@@ -76,11 +75,11 @@ public class EvalBinaryTypeId extends CPPEvaluation {
 	}
 
 	@Override
-	public IValue getValue(IASTNode point) {
+	public IValue getValue(LookupContext context) {
 		if (isValueDependent())
 			return Value.create(this);
 
-		return Value.evaluateBinaryTypeIdExpression(fOperator, fType1, fType2, point);
+		return Value.evaluateBinaryTypeIdExpression(fOperator, fType1, fType2, context.getPointOfInstantiation());
 	}
 
 	@Override
@@ -98,7 +97,7 @@ public class EvalBinaryTypeId extends CPPEvaluation {
 	}
 
 	@Override
-	public ValueCategory getValueCategory(IASTNode point) {
+	public ValueCategory getValueCategory(LookupContext context) {
 		return PRVALUE;
 	}
 
@@ -119,9 +118,9 @@ public class EvalBinaryTypeId extends CPPEvaluation {
 
 	@Override
 	public ICPPEvaluation instantiate(ICPPTemplateParameterMap tpMap, int packOffset,
-			ICPPClassSpecialization within, int maxdepth, IASTNode point) {
-		IType type1 = CPPTemplates.instantiateType(fType1, tpMap, packOffset, within, point);
-		IType type2 = CPPTemplates.instantiateType(fType2, tpMap, packOffset, within, point);
+			ICPPClassSpecialization within, int maxdepth, LookupContext context) {
+		IType type1 = CPPTemplates.instantiateType(fType1, tpMap, packOffset, within, context);
+		IType type2 = CPPTemplates.instantiateType(fType2, tpMap, packOffset, within, context);
 		if (type1 == fType1 && type2 == fType2)
 			return this;
 		return new EvalBinaryTypeId(fOperator, type1, type2);
@@ -129,7 +128,7 @@ public class EvalBinaryTypeId extends CPPEvaluation {
 
 	@Override
 	public ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap,
-			int maxdepth, IASTNode point) {
+			int maxdepth, LookupContext context) {
 		return this;
 	}
 

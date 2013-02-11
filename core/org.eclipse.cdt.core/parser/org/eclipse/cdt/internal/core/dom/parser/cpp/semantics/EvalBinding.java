@@ -16,7 +16,6 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionT
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.prvalueType;
 
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IFunction;
@@ -224,14 +223,14 @@ public class EvalBinding extends CPPEvaluation {
 	}
 
 	@Override
-	public IType getTypeOrFunctionSet(IASTNode point) {
+	public IType getTypeOrFunctionSet(LookupContext context) {
 		if (fType == null) {
-			fType= computeType(point);
+			fType= computeType(context);
 		}
 		return fType;
 	}
 
-	private IType computeType(IASTNode point) {
+	private IType computeType(LookupContext context) {
 		IBinding binding = getBinding();
 		if (binding instanceof IEnumerator) {
 			return ((IEnumerator) binding).getType();
@@ -242,17 +241,17 @@ public class EvalBinding extends CPPEvaluation {
 		}
 		if (binding instanceof IVariable) {
 			final IType type = ((IVariable) binding).getType();
-			return SemanticUtil.mapToAST(glvalueType(type), point);
+			return SemanticUtil.mapToAST(glvalueType(type), context);
 		}
 		if (binding instanceof IFunction) {
 			final IFunctionType type = ((IFunction) binding).getType();
-			return SemanticUtil.mapToAST(type, point);
+			return SemanticUtil.mapToAST(type, context);
 		}
 		return ProblemType.UNKNOWN_FOR_EXPRESSION;
 	}
 
 	@Override
-	public IValue getValue(IASTNode point) {
+	public IValue getValue(LookupContext context) {
 		if (isValueDependent())
 			return Value.create(this);
 
@@ -272,7 +271,7 @@ public class EvalBinding extends CPPEvaluation {
 	}
 
 	@Override
-	public ValueCategory getValueCategory(IASTNode point) {
+	public ValueCategory getValueCategory(LookupContext context) {
         if (fBinding instanceof ICPPTemplateNonTypeParameter)
         	return ValueCategory.PRVALUE;
 
@@ -315,7 +314,7 @@ public class EvalBinding extends CPPEvaluation {
 
 	@Override
 	public ICPPEvaluation instantiate(ICPPTemplateParameterMap tpMap, int packOffset,
-			ICPPClassSpecialization within, int maxdepth, IASTNode point) {
+			ICPPClassSpecialization within, int maxdepth, LookupContext context) {
 		IBinding origBinding = getBinding();
 		if (origBinding instanceof ICPPTemplateNonTypeParameter) {
 			ICPPTemplateArgument argument = tpMap.getArgument((ICPPTemplateNonTypeParameter) origBinding);
@@ -326,12 +325,13 @@ public class EvalBinding extends CPPEvaluation {
 		} else if (origBinding instanceof ICPPParameter) {
 			ICPPParameter parameter = (ICPPParameter) origBinding;
 			IType origType = parameter.getType();
-			IType instantiatedType = CPPTemplates.instantiateType(origType, tpMap, packOffset, within, point);
+			IType instantiatedType = CPPTemplates.instantiateType(origType, tpMap, packOffset, within, context);
 			if (origType != instantiatedType) {
 				return new EvalFixed(instantiatedType, ValueCategory.LVALUE, Value.create(this));
 			}
 		} else {
-			IBinding instantiatedBinding = instantiateBinding(origBinding, tpMap, packOffset, within, maxdepth, point);
+			IBinding instantiatedBinding = instantiateBinding(origBinding, tpMap, packOffset, within, maxdepth, 
+					context.getPointOfInstantiation());
 			if (instantiatedBinding != origBinding)
 				return new EvalBinding(instantiatedBinding, null);
 		}
@@ -340,7 +340,7 @@ public class EvalBinding extends CPPEvaluation {
 
 	@Override
 	public ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap,
-			int maxdepth, IASTNode point) {
+			int maxdepth, LookupContext context) {
 		int pos = getFunctionParameterPosition();
 		if (pos >= 0) {
 			ICPPEvaluation eval = parameterMap.getArgument(pos);

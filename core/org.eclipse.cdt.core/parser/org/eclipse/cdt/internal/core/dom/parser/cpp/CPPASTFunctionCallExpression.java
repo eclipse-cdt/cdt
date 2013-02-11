@@ -43,6 +43,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFunctionCall;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalTypeId;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.LookupContext;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.LookupData;
 
 public class CPPASTFunctionCallExpression extends ASTNode
@@ -262,7 +263,7 @@ public class CPPASTFunctionCallExpression extends ASTNode
 	public ICPPFunction getOverload() {
 		ICPPEvaluation eval = getEvaluation();
 		if (eval instanceof EvalFunctionCall)
-			return ((EvalFunctionCall) eval).getOverload(this);
+			return ((EvalFunctionCall) eval).getOverload(new LookupContext(this, null));
 		
 		if (eval instanceof EvalTypeId) {
 			if (!eval.isTypeDependent()) {

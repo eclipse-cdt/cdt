@@ -14,7 +14,6 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
 
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
@@ -60,17 +59,17 @@ public class EvalCompound extends CPPEvaluation {
 	}
 
 	@Override
-	public IType getTypeOrFunctionSet(IASTNode point) {
-		return fDelegate.getTypeOrFunctionSet(point);
+	public IType getTypeOrFunctionSet(LookupContext context) {
+		return fDelegate.getTypeOrFunctionSet(context);
 	}
 
 	@Override
-	public IValue getValue(IASTNode point) {
-		return fDelegate.getValue(point);
+	public IValue getValue(LookupContext context) {
+		return fDelegate.getValue(context);
 	}
 
 	@Override
-	public ValueCategory getValueCategory(IASTNode point) {
+	public ValueCategory getValueCategory(LookupContext context) {
 		return PRVALUE;
 	}
 
@@ -87,8 +86,8 @@ public class EvalCompound extends CPPEvaluation {
 
 	@Override
 	public ICPPEvaluation instantiate(ICPPTemplateParameterMap tpMap, int packOffset,
-			ICPPClassSpecialization within, int maxdepth, IASTNode point) {
-		ICPPEvaluation delegate = fDelegate.instantiate(tpMap, packOffset, within, maxdepth, point);
+			ICPPClassSpecialization within, int maxdepth, LookupContext context) {
+		ICPPEvaluation delegate = fDelegate.instantiate(tpMap, packOffset, within, maxdepth, context);
 		if (delegate == fDelegate)
 			return this;
 		return new EvalCompound(delegate);
@@ -96,8 +95,8 @@ public class EvalCompound extends CPPEvaluation {
 
 	@Override
 	public ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap,
-			int maxdepth, IASTNode point) {
-		ICPPEvaluation delegate = fDelegate.computeForFunctionCall(parameterMap, maxdepth, point);
+			int maxdepth, LookupContext context) {
+		ICPPEvaluation delegate = fDelegate.computeForFunctionCall(parameterMap, maxdepth, context);
 		if (delegate == fDelegate)
 			return this;
 		return new EvalCompound(delegate);

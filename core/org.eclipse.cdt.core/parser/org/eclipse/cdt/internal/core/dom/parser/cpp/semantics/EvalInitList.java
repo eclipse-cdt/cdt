@@ -14,7 +14,6 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
 
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
@@ -68,19 +67,19 @@ public class EvalInitList extends CPPEvaluation {
 	}
 
 	@Override
-	public IType getTypeOrFunctionSet(IASTNode point) {
+	public IType getTypeOrFunctionSet(LookupContext context) {
 		return new InitializerListType(this);
 	}
 
 	@Override
-	public IValue getValue(IASTNode point) {
+	public IValue getValue(LookupContext context) {
 		if (isValueDependent())
 			return Value.create(this);
 		return Value.UNKNOWN;  // TODO(sprigogin): Is this correct?
 	}
 
 	@Override
-	public ValueCategory getValueCategory(IASTNode point) {
+	public ValueCategory getValueCategory(LookupContext context) {
 		return PRVALUE;
 	}
 
@@ -104,10 +103,10 @@ public class EvalInitList extends CPPEvaluation {
 
 	@Override
 	public ICPPEvaluation instantiate(ICPPTemplateParameterMap tpMap, int packOffset,
-			ICPPClassSpecialization within, int maxdepth, IASTNode point) {
+			ICPPClassSpecialization within, int maxdepth, LookupContext context) {
 		ICPPEvaluation[] clauses = fClauses;
 		for (int i = 0; i < fClauses.length; i++) {
-			ICPPEvaluation clause = fClauses[i].instantiate(tpMap, packOffset, within, maxdepth, point);
+			ICPPEvaluation clause = fClauses[i].instantiate(tpMap, packOffset, within, maxdepth, context);
 			if (clause != fClauses[i]) {
 				if (clauses == fClauses) {
 					clauses = new ICPPEvaluation[fClauses.length];
@@ -123,10 +122,10 @@ public class EvalInitList extends CPPEvaluation {
 
 	@Override
 	public ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap,
-			int maxdepth, IASTNode point) {
+			int maxdepth, LookupContext context) {
 		ICPPEvaluation[] clauses = fClauses;
 		for (int i = 0; i < fClauses.length; i++) {
-			ICPPEvaluation clause = fClauses[i].computeForFunctionCall(parameterMap, maxdepth, point);
+			ICPPEvaluation clause = fClauses[i].computeForFunctionCall(parameterMap, maxdepth, context);
 			if (clause != fClauses[i]) {
 				if (clauses == fClauses) {
 					clauses = new ICPPEvaluation[fClauses.length];

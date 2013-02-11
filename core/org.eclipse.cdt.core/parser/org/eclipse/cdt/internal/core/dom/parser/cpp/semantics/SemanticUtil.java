@@ -439,14 +439,18 @@ public class SemanticUtil {
 		}
 	}
 
-	public static IType mapToAST(IType type, IASTNode node) {
+	public static IType mapToAST(IType type, IASTNode point) {
+		return mapToAST(type, new LookupContext(point, null));
+	}
+	public static IType mapToAST(IType type, LookupContext context) {
+		IASTNode node = context.getPointOfInstantiation();
 		if (node == null)
 			return type;
 
 		if (type instanceof IFunctionType) {
 			final ICPPFunctionType ft = (ICPPFunctionType) type;
 			final IType r = ft.getReturnType();
-			final IType ret = mapToAST(r, node);
+			final IType ret = mapToAST(r, context);
 			if (ret == r) {
 				return type;
 			}
@@ -458,7 +462,7 @@ public class SemanticUtil {
 			if (nestedType == null)
 				return type;
 
-			IType newType= mapToAST(nestedType, node);
+			IType newType= mapToAST(nestedType, context);
 			if (newType != nestedType) {
 				return replaceNestedType(tc, newType);
 			}
@@ -466,7 +470,7 @@ public class SemanticUtil {
 		} else if (type instanceof ICPPClassType && type instanceof IIndexBinding) {
 			IASTTranslationUnit tu = node.getTranslationUnit();
 			if (tu instanceof CPPASTTranslationUnit) {
-				return ((CPPASTTranslationUnit) tu).mapToAST((ICPPClassType) type, node);
+				return ((CPPASTTranslationUnit) tu).mapToAST((ICPPClassType) type, context);
 			}
 		}
 		return type;

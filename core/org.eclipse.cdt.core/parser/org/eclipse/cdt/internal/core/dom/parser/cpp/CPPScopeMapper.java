@@ -26,7 +26,6 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -42,6 +41,7 @@ import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.LookupContext;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 
 /**
@@ -369,14 +369,15 @@ public class CPPScopeMapper {
 		return scope;
 	}
 	
-	public ICPPClassType mapToAST(ICPPClassType type, IASTNode point) {
+	public ICPPClassType mapToAST(ICPPClassType type, LookupContext context) {
 		if (type instanceof ICPPTemplateInstance) {
 			ICPPTemplateInstance inst= (ICPPTemplateInstance) type;
 			ICPPTemplateDefinition template= inst.getTemplateDefinition();
 			if (template instanceof IIndexBinding && template instanceof ICPPClassType) {
-				IBinding mapped= mapToAST((ICPPClassType) template, point);
+				IBinding mapped= mapToAST((ICPPClassType) template, context);
 				if (mapped != template && mapped instanceof ICPPClassType) {
-					mapped= CPPTemplates.instantiate((ICPPClassTemplate) mapped, inst.getTemplateArguments(), point);
+					mapped= CPPTemplates.instantiate((ICPPClassTemplate) mapped, inst.getTemplateArguments(), 
+							context.getPointOfInstantiation());
 					if (mapped instanceof ICPPClassType)
 						return (ICPPClassType) mapped;
 				}

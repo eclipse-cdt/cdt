@@ -2067,7 +2067,7 @@ public class CPPVisitor extends ASTQueries {
 		ValueCategory valueCat= null;
 		ICPPClassTemplate initializer_list_template = null;
 		if (initClause instanceof ICPPASTInitializerList) {
-			initializer_list_template = get_initializer_list(declSpec);
+			initializer_list_template = get_initializer_list(new LookupContext(declSpec, null));
 			if (initializer_list_template == null) {
 				return new ProblemType(ISemanticProblem.TYPE_CANNOT_DEDUCE_AUTO_TYPE);
 			}
@@ -2079,15 +2079,15 @@ public class CPPVisitor extends ASTQueries {
 		}
 		type = decorateType(type, declSpec, declarator);
 		final ICPPEvaluation evaluation = initClause.getEvaluation();
-		initType= evaluation.getTypeOrFunctionSet(declarator);
-		valueCat= evaluation.getValueCategory(declarator);
+		initType= evaluation.getTypeOrFunctionSet(new LookupContext(declarator, null));
+		valueCat= evaluation.getValueCategory(new LookupContext(declarator, null));
 		if (initType == null || initType instanceof ISemanticProblem) {
 			return new ProblemType(ISemanticProblem.TYPE_CANNOT_DEDUCE_AUTO_TYPE);
 		}
 		ICPPFunctionTemplate template = new AutoTypeResolver(type);
 		CPPTemplateParameterMap paramMap = new CPPTemplateParameterMap(1);
 		TemplateArgumentDeduction.deduceFromFunctionArgs(template, Collections.singletonList(initType),
-				Collections.singletonList(valueCat), paramMap, initClause);
+				Collections.singletonList(valueCat), paramMap, new LookupContext(initClause, null));
 		ICPPTemplateArgument argument = paramMap.getArgument(0, 0);
 		if (argument == null) {
 			return new ProblemType(ISemanticProblem.TYPE_CANNOT_DEDUCE_AUTO_TYPE);
@@ -2270,12 +2270,14 @@ public class CPPVisitor extends ASTQueries {
 		return null;
 	}
 
-	public static IType getPointerDiffType(final IASTNode point) {
-		IType t= getStdType(point, PTRDIFF_T);
+	public static IType getPointerDiffType(final LookupContext context) {
+		IType t= getStdType(context, PTRDIFF_T);
 		return t != null ? t : INT_TYPE;
 	}
 
-	private static IType getStdType(final IASTNode node, char[] name) {
+	private static IType getStdType(final LookupContext context, char[] name) {
+		// TODO(nathanridge): also do lookup at point of definition?
+		IASTNode node = context.getPointOfInstantiation();
 		if (node == null)
 			return null;
 		ASTTranslationUnit ast = (ASTTranslationUnit) node.getTranslationUnit();
@@ -2296,18 +2298,18 @@ public class CPPVisitor extends ASTQueries {
 		return null;
 	}
 
-	public static IType get_type_info(IASTNode point) {
-		IType t= getStdType(point, TYPE_INFO);
+	public static IType get_type_info(LookupContext context) {
+		IType t= getStdType(context, TYPE_INFO);
 		return t != null ? t : INT_TYPE;
 	}
 
-	public static IType get_SIZE_T(IASTNode sizeofExpr) {
-		IType t= getStdType(sizeofExpr, SIZE_T);
+	public static IType get_SIZE_T(LookupContext context) {
+		IType t= getStdType(context, SIZE_T);
 		return t != null ? t : UNSIGNED_LONG;
 	}
 
-	public static ICPPClassTemplate get_initializer_list(IASTNode node) {
-		IType t= getStdType(node, INITIALIZER_LIST);
+	public static ICPPClassTemplate get_initializer_list(LookupContext context) {
+		IType t= getStdType(context, INITIALIZER_LIST);
 		if (t instanceof ICPPClassTemplate)
 			return (ICPPClassTemplate) t;
 		return null;

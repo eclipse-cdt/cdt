@@ -40,21 +40,21 @@ class FunctionCost {
 	private final ICPPFunction fFunction;
 	private final Cost[] fCosts;
 	private final ValueCategory[] fValueCategories;
-	private final IASTNode fPoint;
+	private final LookupContext fContext;
 	private boolean fIsDirectCopyCtor;
 	
-	public FunctionCost(ICPPFunction fn, int paramCount, IASTNode point) {
+	public FunctionCost(ICPPFunction fn, int paramCount, LookupContext context) {
 		fFunction= fn;
 		fCosts= new Cost[paramCount];
 		fValueCategories= new ValueCategory[paramCount];
-		fPoint = point;
+		fContext = context;
 	}
 	
-	public FunctionCost(ICPPFunction fn, Cost cost, IASTNode point) {
+	public FunctionCost(ICPPFunction fn, Cost cost, LookupContext context) {
 		fFunction= fn;
 		fCosts= new Cost[] {cost};
 		fValueCategories= null; // no udc will be performed
-		fPoint = point;
+		fContext = context;
 	}
 
 	public int getLength() {
@@ -93,6 +93,7 @@ class FunctionCost {
 	}
 	
 	public boolean performUDC(IASTNode point) throws DOMException {
+		LookupContext context = new LookupContext(point, fFunction);
 		for (int i = 0; i < fCosts.length; i++) {
 			Cost cost = fCosts[i];
 			Cost udcCost= null;
@@ -101,20 +102,20 @@ class FunctionCost {
 				continue;
 			case COPY_INIT_OF_CLASS:
 				udcCost = Conversions.copyInitializationOfClass(fValueCategories[i], cost.source,
-						(ICPPClassType) cost.target, false, point);
+						(ICPPClassType) cost.target, false, context);
 				break;
 			case INIT_BY_CONVERSION:
 				IType uqSource= getNestedType(cost.source, TDEF | REF | CVTYPE);
 				udcCost = Conversions.initializationByConversion(fValueCategories[i], cost.source,
-						(ICPPClassType) uqSource, cost.target, false, point);
+						(ICPPClassType) uqSource, cost.target, false, context);
 				break;
 			case LIST_INIT_OF_CLASS:
 				udcCost = Conversions.listInitializationOfClass(((InitializerListType) cost.source).getEvaluation(), 
-						(ICPPClassType) cost.target, false, false, point); 
+						(ICPPClassType) cost.target, false, false, context); 
 				break;
 			case DIRECT_LIST_INIT_OF_CLASS:
 				udcCost = Conversions.listInitializationOfClass(((InitializerListType) cost.source).getEvaluation(), 
-						(ICPPClassType) cost.target, true, false, point); 
+						(ICPPClassType) cost.target, true, false, context); 
 				break;
 			default:
 				return false;
@@ -171,7 +172,7 @@ class FunctionCost {
 				haveBetter = true;
 			} else if (isTemplate && otherIsTemplate) {
 				TypeSelection ts= SemanticUtil.isConversionOperator(f1) ? RETURN_TYPE : PARAMETERS;
- 				int order = CPPTemplates.orderFunctionTemplates(otherAsTemplate, asTemplate, ts, fPoint);
+ 				int order = CPPTemplates.orderFunctionTemplates(otherAsTemplate, asTemplate, ts, fContext);
 				if (order < 0) {
 					haveBetter= true;	 				
 				} else if (order > 0) {
@@ -217,10 +218,11 @@ class FunctionCost {
 		if (!parameterTypesMatch(ft1, ft2))
 			return 0;
 		
-		int diff= SemanticUtil.calculateInheritanceDepth(o2, o1, fPoint);
+		IASTNode point = fContext.getPointOfInstantiation();
+		int diff= SemanticUtil.calculateInheritanceDepth(o2, o1, point);
 		if (diff >= 0)
 			return diff;
-		return -SemanticUtil.calculateInheritanceDepth(o1, o2, fPoint);
+		return -SemanticUtil.calculateInheritanceDepth(o1, o2, point);
 	}
 
 	private boolean parameterTypesMatch(final ICPPFunctionType ft1, final ICPPFunctionType ft2) {

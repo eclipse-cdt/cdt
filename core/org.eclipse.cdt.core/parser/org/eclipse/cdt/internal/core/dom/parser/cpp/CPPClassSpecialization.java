@@ -47,6 +47,7 @@ import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemFunctionType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.LookupContext;
 import org.eclipse.core.runtime.Assert;
 
 /**
@@ -178,7 +179,7 @@ public class CPPClassSpecialization extends CPPSpecialization
 				return RecursionResolvingBinding.createFor(original, point);
 		}
 		
-		IBinding result= CPPTemplates.createSpecialization(this, original, point);
+		IBinding result= CPPTemplates.createSpecialization(this, original, new LookupContext(point, original));
 		set.remove(original);
 		synchronized (this) {
 			IBinding concurrent= (IBinding) specializationMap.get(original);

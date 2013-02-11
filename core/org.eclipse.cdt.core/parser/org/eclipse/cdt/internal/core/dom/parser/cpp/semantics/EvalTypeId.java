@@ -15,7 +15,6 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionT
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.valueCategoryFromReturnType;
 
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
@@ -59,7 +58,7 @@ public class EvalTypeId extends CPPEvaluation {
 	}
 
 	@Override
-	public IType getTypeOrFunctionSet(IASTNode point) {
+	public IType getTypeOrFunctionSet(LookupContext context) {
 		if (fOutputType == null) {
 			fOutputType= computeType();
 		}
@@ -73,7 +72,7 @@ public class EvalTypeId extends CPPEvaluation {
 	}
 
 	@Override
-	public IValue getValue(IASTNode point) {
+	public IValue getValue(LookupContext context) {
 		if (isValueDependent())
 			return Value.create(this);
 		if (fArguments == null)
@@ -86,7 +85,7 @@ public class EvalTypeId extends CPPEvaluation {
 			return Value.UNKNOWN;
 		}
 		if (fArguments.length == 1)
-			return fArguments[0].getValue(point);
+			return fArguments[0].getValue(context);
 		return Value.UNKNOWN;
 	}
 
@@ -110,7 +109,7 @@ public class EvalTypeId extends CPPEvaluation {
 	}
 
 	@Override
-	public ValueCategory getValueCategory(IASTNode point) {
+	public ValueCategory getValueCategory(LookupContext context) {
 		return valueCategoryFromReturnType(fInputType);
 	}
 
@@ -145,11 +144,11 @@ public class EvalTypeId extends CPPEvaluation {
 
 	@Override
 	public ICPPEvaluation instantiate(ICPPTemplateParameterMap tpMap, int packOffset,
-			ICPPClassSpecialization within, int maxdepth, IASTNode point) {
+			ICPPClassSpecialization within, int maxdepth, LookupContext context) {
 		ICPPEvaluation[] args = fArguments;
 		if (fArguments != null) {
 			for (int i = 0; i < fArguments.length; i++) {
-				ICPPEvaluation arg = fArguments[i].instantiate(tpMap, packOffset, within, maxdepth, point);
+				ICPPEvaluation arg = fArguments[i].instantiate(tpMap, packOffset, within, maxdepth, context);
 				if (arg != fArguments[i]) {
 					if (args == fArguments) {
 						args = new ICPPEvaluation[fArguments.length];
@@ -159,7 +158,7 @@ public class EvalTypeId extends CPPEvaluation {
 				}
 			}
 		}
-		IType type = CPPTemplates.instantiateType(fInputType, tpMap, packOffset, within, point);
+		IType type = CPPTemplates.instantiateType(fInputType, tpMap, packOffset, within, context);
 		if (args == fArguments && type == fInputType)
 			return this;
 		return new EvalTypeId(type, args);
@@ -167,11 +166,11 @@ public class EvalTypeId extends CPPEvaluation {
 
 	@Override
 	public ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap,
-			int maxdepth, IASTNode point) {
+			int maxdepth, LookupContext context) {
 		ICPPEvaluation[] args = fArguments;
 		if (fArguments != null) {
 			for (int i = 0; i < fArguments.length; i++) {
-				ICPPEvaluation arg = fArguments[i].computeForFunctionCall(parameterMap, maxdepth, point);
+				ICPPEvaluation arg = fArguments[i].computeForFunctionCall(parameterMap, maxdepth, context);
 				if (arg != fArguments[i]) {
 					if (args == fArguments) {
 						args = new ICPPEvaluation[fArguments.length];

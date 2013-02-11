@@ -40,6 +40,7 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.LookupContext;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 /**
@@ -136,9 +137,10 @@ public class AbstractCPPClassSpecializationScope implements ICPPClassSpecializat
 				final ICPPTemplateParameterMap tpmap = specialClass.getTemplateParameterMap();
 				for (ICPPBase base : bases) {
 					IBinding origClass = base.getBaseClass();
+					LookupContext context = new LookupContext(point, origClass);
 					if (origClass instanceof ICPPTemplateParameter && ((ICPPTemplateParameter) origClass).isParameterPack()) {
 						IType[] specClasses= CPPTemplates.instantiateTypes(new IType[] { new CPPParameterPackType((IType) origClass) },
-								tpmap, -1, specialClass, point);
+								tpmap, -1, specialClass, context);
 						if (specClasses.length == 1 && specClasses[0] instanceof ICPPParameterPackType) {
 							result= ArrayUtil.append(ICPPBase.class, result, base);
 						} else {
@@ -155,7 +157,7 @@ public class AbstractCPPClassSpecializationScope implements ICPPClassSpecializat
 					}
 					if (origClass instanceof IType) {
 						ICPPBase specBase = base.clone();
-						IType specClass= CPPTemplates.instantiateType((IType) origClass, tpmap, -1, specialClass, point);
+						IType specClass= CPPTemplates.instantiateType((IType) origClass, tpmap, -1, specialClass, context);
 						specClass = SemanticUtil.getUltimateType(specClass, false);
 						if (specClass instanceof IBinding && !(specClass instanceof IProblemBinding)) {
 							specBase.setBaseClass((IBinding) specClass);

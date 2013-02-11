@@ -22,7 +22,6 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 import java.util.Arrays;
 
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
@@ -88,41 +87,41 @@ public class EvalFunctionCall extends CPPEvaluation {
 		return false;
 	}
 
-	public ICPPFunction getOverload(IASTNode point) {
+	public ICPPFunction getOverload(LookupContext context) {
 		if (fOverload == CPPFunction.UNINITIALIZED_FUNCTION) {
-			fOverload= computeOverload(point);
+			fOverload= computeOverload(context);
 		}
 		return fOverload;
 	}
 
-	private ICPPFunction computeOverload(IASTNode point) {
+	private ICPPFunction computeOverload(LookupContext context) {
 		if (isTypeDependent())
 			return null;
 
-		IType t= SemanticUtil.getNestedType(fArguments[0].getTypeOrFunctionSet(point), TDEF | REF | CVTYPE);
+		IType t= SemanticUtil.getNestedType(fArguments[0].getTypeOrFunctionSet(context), TDEF | REF | CVTYPE);
 		if (t instanceof ICPPClassType) {
-	    	return CPPSemantics.findOverloadedOperator(point, fArguments, t, OverloadableOperator.PAREN, LookupMode.NO_GLOBALS);
+	    	return CPPSemantics.findOverloadedOperator(context, fArguments, t, OverloadableOperator.PAREN, LookupMode.NO_GLOBALS);
 		}
 		return null;
     }
 
 	@Override
-	public IType getTypeOrFunctionSet(IASTNode point) {
+	public IType getTypeOrFunctionSet(LookupContext context) {
 		if (fType == null)
-			fType= computeType(point);
+			fType= computeType(context);
 		return fType;
 	}
 
-	private IType computeType(IASTNode point) {
+	private IType computeType(LookupContext context) {
 		if (isTypeDependent())
 			return new TypeOfDependentExpression(this);
 
-		ICPPFunction overload = getOverload(point);
+		ICPPFunction overload = getOverload(context);
 		if (overload != null)
 			return ExpressionTypes.typeFromFunctionCall(overload);
 
 		final ICPPEvaluation arg0 = fArguments[0];
-		IType t= SemanticUtil.getNestedType(arg0.getTypeOrFunctionSet(point), TDEF | REF | CVTYPE);
+		IType t= SemanticUtil.getNestedType(arg0.getTypeOrFunctionSet(context), TDEF | REF | CVTYPE);
 		if (t instanceof ICPPClassType) {
 			return ProblemType.UNKNOWN_FOR_EXPRESSION;
 		}
@@ -141,23 +140,23 @@ public class EvalFunctionCall extends CPPEvaluation {
 	}
 
 	@Override
-	public IValue getValue(IASTNode point) {
-		ICPPEvaluation eval = computeForFunctionCall(Value.MAX_RECURSION_DEPTH, point);
+	public IValue getValue(LookupContext context) {
+		ICPPEvaluation eval = computeForFunctionCall(Value.MAX_RECURSION_DEPTH, context);
 		if (eval != this) {
 			if (eval instanceof EvalFixed)
 				return ((EvalFixed) eval).getValue();
-			eval = new EvalFixed(getTypeOrFunctionSet(point), PRVALUE, eval.getValue(point));
+			eval = new EvalFixed(getTypeOrFunctionSet(context), PRVALUE, eval.getValue(context));
 		}
 		return Value.create(eval);
 	}
 
 	@Override
-	public ValueCategory getValueCategory(IASTNode point) {
-		ICPPFunction overload = getOverload(point);
+	public ValueCategory getValueCategory(LookupContext context) {
+		ICPPFunction overload = getOverload(context);
     	if (overload != null)
     		return valueCategoryFromFunctionCall(overload);
 
-		IType t= fArguments[0].getTypeOrFunctionSet(point);
+		IType t= fArguments[0].getTypeOrFunctionSet(context);
 		if (t instanceof IPointerType) {
 			t= SemanticUtil.getNestedType(((IPointerType) t).getType(), TDEF | REF | CVTYPE);
 		}
@@ -187,10 +186,10 @@ public class EvalFunctionCall extends CPPEvaluation {
 
 	@Override
 	public ICPPEvaluation instantiate(ICPPTemplateParameterMap tpMap, int packOffset,
-			ICPPClassSpecialization within, int maxdepth, IASTNode point) {
+			ICPPClassSpecialization within, int maxdepth, LookupContext context) {
 		ICPPEvaluation[] args = fArguments;
 		for (int i = 0; i < fArguments.length; i++) {
-			ICPPEvaluation arg = fArguments[i].instantiate(tpMap, packOffset, within, maxdepth, point);
+			ICPPEvaluation arg = fArguments[i].instantiate(tpMap, packOffset, within, maxdepth, context);
 			if (arg != fArguments[i]) {
 				if (args == fArguments) {
 					args = new ICPPEvaluation[fArguments.length];
@@ -202,22 +201,22 @@ public class EvalFunctionCall extends CPPEvaluation {
 		if (args == fArguments)
 			return this;
 
-		if (args[0] instanceof EvalFunctionSet && getOverload(point) == null) {
+		if (args[0] instanceof EvalFunctionSet && getOverload(context) == null) {
 			// Resolve the function using the parameters of the function call.
-			args[0] = ((EvalFunctionSet) args[0]).resolveFunction(Arrays.copyOfRange(args, 1, args.length), point);
+			args[0] = ((EvalFunctionSet) args[0]).resolveFunction(Arrays.copyOfRange(args, 1, args.length), context);
 		}
 		return new EvalFunctionCall(args);
 	}
 
 	@Override
 	public ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap,
-			int maxdepth, IASTNode point) {
+			int maxdepth, LookupContext context) {
 		if (maxdepth == 0)
 			return EvalFixed.INCOMPLETE;
 
 		ICPPEvaluation[] args = fArguments;
 		for (int i = 0; i < fArguments.length; i++) {
-			ICPPEvaluation arg = fArguments[i].computeForFunctionCall(parameterMap, maxdepth, point);
+			ICPPEvaluation arg = fArguments[i].computeForFunctionCall(parameterMap, maxdepth, context);
 			if (arg != fArguments[i]) {
 				if (args == fArguments) {
 					args = new ICPPEvaluation[fArguments.length];
@@ -229,13 +228,13 @@ public class EvalFunctionCall extends CPPEvaluation {
 		EvalFunctionCall eval = this;
 		if (args != fArguments)
 			eval = new EvalFunctionCall(args);
-		return eval.computeForFunctionCall(maxdepth - 1, point);
+		return eval.computeForFunctionCall(maxdepth - 1, context);
 	}
 
-	private ICPPEvaluation computeForFunctionCall(int maxdepth, IASTNode point) {
+	private ICPPEvaluation computeForFunctionCall(int maxdepth, LookupContext context) {
 		if (isValueDependent())
 			return this;
-		ICPPFunction function = getOverload(point);
+		ICPPFunction function = getOverload(context);
 		if (function == null) {
 			if (fArguments[0] instanceof EvalBinding) {
 				IBinding binding = ((EvalBinding) fArguments[0]).getBinding();
@@ -249,7 +248,7 @@ public class EvalFunctionCall extends CPPEvaluation {
 		if (eval == null)
 			return EvalFixed.INCOMPLETE;
 		CPPFunctionParameterMap parameterMap = buildParameterMap(function);
-		return eval.computeForFunctionCall(parameterMap, maxdepth, point);
+		return eval.computeForFunctionCall(parameterMap, maxdepth, context);
 	}
 
 	private CPPFunctionParameterMap buildParameterMap(ICPPFunction function) {

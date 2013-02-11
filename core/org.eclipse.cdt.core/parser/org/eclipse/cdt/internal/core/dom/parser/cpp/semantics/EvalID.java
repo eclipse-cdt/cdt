@@ -123,18 +123,18 @@ public class EvalID extends CPPEvaluation {
 	}
 
 	@Override
-	public IType getTypeOrFunctionSet(IASTNode point) {
+	public IType getTypeOrFunctionSet(LookupContext context) {
 		return new TypeOfDependentExpression(this);
 	}
 
 	@Override
-	public IValue getValue(IASTNode point) {
+	public IValue getValue(LookupContext context) {
 		// Name lookup is not needed here because it was already done in the "instantiate" method.
 		return Value.create(this);
 	}
 
 	@Override
-	public ValueCategory getValueCategory(IASTNode point) {
+	public ValueCategory getValueCategory(LookupContext context) {
 		return PRVALUE;
 	}
 
@@ -285,23 +285,23 @@ public class EvalID extends CPPEvaluation {
 
 	@Override
 	public ICPPEvaluation instantiate(ICPPTemplateParameterMap tpMap, int packOffset,
-			ICPPClassSpecialization within, int maxdepth, IASTNode point) {
+			ICPPClassSpecialization within, int maxdepth, LookupContext context) {
 		ICPPTemplateArgument[] templateArgs = fTemplateArgs;
 		if (templateArgs != null) {
-			templateArgs = instantiateArguments(templateArgs, tpMap, packOffset, within, point);
+			templateArgs = instantiateArguments(templateArgs, tpMap, packOffset, within, context);
 		}
 
 		ICPPEvaluation fieldOwner = fFieldOwner;
 		if (fieldOwner != null) {
-			fieldOwner = fieldOwner.instantiate(tpMap, packOffset, within, maxdepth, point);
+			fieldOwner = fieldOwner.instantiate(tpMap, packOffset, within, maxdepth, context);
 		}
 
 		IBinding nameOwner = fNameOwner;
 		if (nameOwner instanceof ICPPClassTemplate) {
 			nameOwner = resolveUnknown(CPPTemplates.createDeferredInstance((ICPPClassTemplate) nameOwner),
-					tpMap, packOffset, within, point);
+					tpMap, packOffset, within, context);
 		} else if (nameOwner instanceof IType) {
-			IType type = CPPTemplates.instantiateType((IType) nameOwner, tpMap, packOffset, within, point);
+			IType type = CPPTemplates.instantiateType((IType) nameOwner, tpMap, packOffset, within, context);
 			if (type instanceof IBinding)
 				nameOwner = (IBinding) getNestedType(type, TDEF);
 		}
@@ -313,7 +313,7 @@ public class EvalID extends CPPEvaluation {
 			return this;
 
 		if (nameOwner instanceof ICPPClassType) {
-			ICPPEvaluation eval = resolveName((ICPPClassType) nameOwner, templateArgs, point);
+			ICPPEvaluation eval = resolveName((ICPPClassType) nameOwner, templateArgs, context);
 			if (eval != null)
 				return eval;
 		}
@@ -323,18 +323,19 @@ public class EvalID extends CPPEvaluation {
 
 	@Override
 	public ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap,
-			int maxdepth, IASTNode point) {
+			int maxdepth, LookupContext context) {
 		if (fFieldOwner == null)
 			return this;
-		ICPPEvaluation fieldOwner = fFieldOwner.computeForFunctionCall(parameterMap, maxdepth, point);
+		ICPPEvaluation fieldOwner = fFieldOwner.computeForFunctionCall(parameterMap, maxdepth, context);
 		if (fieldOwner == fFieldOwner)
 			return this;
 		return new EvalID(fieldOwner, fNameOwner, fName, fAddressOf, fQualified, fTemplateArgs);
 	}
 
 	private ICPPEvaluation resolveName(ICPPClassType nameOwner, ICPPTemplateArgument[] templateArgs,
-			IASTNode point) {
-		LookupData data = new LookupData(fName, templateArgs, point);
+			LookupContext context) {
+		// TODO(nathanridge): also do lookup at point of definition?
+		LookupData data = new LookupData(fName, templateArgs, context);
 		data.qualified = fQualified;
 		try {
 			CPPSemantics.lookup(data, nameOwner.getCompositeScope());

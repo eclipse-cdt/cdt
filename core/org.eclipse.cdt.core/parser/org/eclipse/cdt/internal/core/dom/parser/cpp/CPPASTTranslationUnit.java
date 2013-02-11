@@ -33,6 +33,7 @@ import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.LookupContext;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent;
 
@@ -177,7 +178,10 @@ public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPAST
 
 	// bug 262719: class types from the index have to be mapped back to the AST.
 	public ICPPClassType mapToAST(ICPPClassType binding, IASTNode point) {
-		return fScopeMapper.mapToAST(binding, point);
+		return mapToAST(binding, new LookupContext(point, null));
+	}
+	public ICPPClassType mapToAST(ICPPClassType binding, LookupContext context) {
+		return fScopeMapper.mapToAST(binding, context);
 	}
 
 	/**

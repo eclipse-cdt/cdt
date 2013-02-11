@@ -19,7 +19,6 @@ import java.util.Arrays;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
@@ -87,17 +86,17 @@ public class EvalFunctionSet extends CPPEvaluation {
 	}
 
 	@Override
-	public IType getTypeOrFunctionSet(IASTNode point) {
+	public IType getTypeOrFunctionSet(LookupContext context) {
 		return new FunctionSetType(fFunctionSet, fAddressOf);
 	}
 
 	@Override
-	public IValue getValue(IASTNode point) {
+	public IValue getValue(LookupContext context) {
 		return Value.UNKNOWN;
 	}
 
 	@Override
-	public ValueCategory getValueCategory(IASTNode point) {
+	public ValueCategory getValueCategory(LookupContext context) {
 		return PRVALUE;
 	}
 
@@ -144,21 +143,21 @@ public class EvalFunctionSet extends CPPEvaluation {
 
 	@Override
 	public ICPPEvaluation instantiate(ICPPTemplateParameterMap tpMap, int packOffset,
-			ICPPClassSpecialization within, int maxdepth, IASTNode point) {
+			ICPPClassSpecialization within, int maxdepth, LookupContext context) {
 		ICPPTemplateArgument[] originalArguments = fFunctionSet.getTemplateArguments();
 		ICPPTemplateArgument[] arguments = originalArguments;
 		if (originalArguments != null)
-			arguments = instantiateArguments(originalArguments, tpMap, packOffset, within, point);
+			arguments = instantiateArguments(originalArguments, tpMap, packOffset, within, context);
 
 		IBinding originalOwner = fFunctionSet.getOwner();
 		IBinding owner = originalOwner;
 		if (owner instanceof ICPPUnknownBinding) {
-			owner = resolveUnknown((ICPPUnknownBinding) owner, tpMap, packOffset, within, point);
+			owner = resolveUnknown((ICPPUnknownBinding) owner, tpMap, packOffset, within, context);
 		} else if (owner instanceof ICPPClassTemplate) {
 			owner = resolveUnknown(CPPTemplates.createDeferredInstance((ICPPClassTemplate) owner),
-					tpMap, packOffset, within, point);
+					tpMap, packOffset, within, context);
 		} else if (owner instanceof IType) {
-			IType type = CPPTemplates.instantiateType((IType) owner, tpMap, packOffset, within, point);
+			IType type = CPPTemplates.instantiateType((IType) owner, tpMap, packOffset, within, context);
 			if (type instanceof IBinding)
 				owner = (IBinding) type;
 		}
@@ -168,7 +167,7 @@ public class EvalFunctionSet extends CPPEvaluation {
 			functions = new ICPPFunction[originalFunctions.length];
 			for (int i = 0; i < originalFunctions.length; i++) {
 				functions[i] = (ICPPFunction) CPPTemplates.createSpecialization((ICPPClassSpecialization) owner,
-						originalFunctions[i], point);
+						originalFunctions[i], context);
 			}
 		}
 		if (Arrays.equals(arguments, originalArguments) && functions == originalFunctions)
@@ -178,7 +177,7 @@ public class EvalFunctionSet extends CPPEvaluation {
 
 	@Override
 	public ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap,
-			int maxdepth, IASTNode point) {
+			int maxdepth, LookupContext context) {
 		return this;
 	}
 
@@ -186,14 +185,15 @@ public class EvalFunctionSet extends CPPEvaluation {
 	 * Attempts to resolve the function using the parameters of a function call.
 	 *
 	 * @param args the arguments of a function call
-	 * @param point the name lookup context
+	 * @param context the name lookup context
 	 * @return the resolved or the original evaluation depending on whether function resolution
 	 *     succeeded or not
 	 */
-	public ICPPEvaluation resolveFunction(ICPPEvaluation[] args, IASTNode point) {
+	public ICPPEvaluation resolveFunction(ICPPEvaluation[] args, LookupContext context) {
+		// TODO(nathanridge): also do lookup at point of definition?
 		ICPPFunction[] functions = fFunctionSet.getBindings();
 		LookupData data = new LookupData(functions[0].getNameCharArray(),
-				fFunctionSet.getTemplateArguments(), point);
+				fFunctionSet.getTemplateArguments(), context);
 		data.setFunctionArguments(false, args);
 		try {
 			IBinding binding = CPPSemantics.resolveFunction(data, functions, true);

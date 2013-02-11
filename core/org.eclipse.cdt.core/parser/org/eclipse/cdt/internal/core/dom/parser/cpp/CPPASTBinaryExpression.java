@@ -32,6 +32,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalBinary;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.LookupContext;
 
 
 public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpression, IASTAmbiguityParent {
@@ -259,7 +260,7 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
 	public ICPPFunction getOverload() {
 		ICPPEvaluation eval = getEvaluation();
 		if (eval instanceof EvalBinary)
-			return ((EvalBinary) eval).getOverload(this);
+			return ((EvalBinary) eval).getOverload(new LookupContext(this, null));
 		return null;
     }
     

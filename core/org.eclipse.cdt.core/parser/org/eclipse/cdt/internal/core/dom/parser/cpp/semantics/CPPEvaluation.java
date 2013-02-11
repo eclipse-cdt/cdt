@@ -13,8 +13,10 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
@@ -38,11 +40,21 @@ public abstract class CPPEvaluation implements ICPPEvaluation {
 		}
 		return buf.getSignature();
 	}
+	
+	@Override
+	public IType getTypeOrFunctionSet(IASTNode point) {
+		return getTypeOrFunctionSet(new LookupContext(point, null));
+	}
+	
+	@Override
+	public ValueCategory getValueCategory(IASTNode point) {
+		return getValueCategory(new LookupContext(point, null));
+	}
 
 	protected static IBinding resolveUnknown(ICPPUnknownBinding unknown, ICPPTemplateParameterMap tpMap,
-			int packOffset, ICPPClassSpecialization within, IASTNode point) {
+			int packOffset, ICPPClassSpecialization within, LookupContext context) {
 		try {
-			return CPPTemplates.resolveUnknown(unknown, tpMap, packOffset, within, point);
+			return CPPTemplates.resolveUnknown(unknown, tpMap, packOffset, within, context);
 		} catch (DOMException e) {
 			CCorePlugin.log(e);
 		}
@@ -50,9 +62,9 @@ public abstract class CPPEvaluation implements ICPPEvaluation {
 	}
 
 	protected static ICPPTemplateArgument[] instantiateArguments(ICPPTemplateArgument[] args,
-			ICPPTemplateParameterMap tpMap, int packOffset, ICPPClassSpecialization within, IASTNode point) {
+			ICPPTemplateParameterMap tpMap, int packOffset, ICPPClassSpecialization within, LookupContext context) {
 		try {
-			return CPPTemplates.instantiateArguments(args, tpMap, packOffset, within, point, false);
+			return CPPTemplates.instantiateArguments(args, tpMap, packOffset, within, context, false);
 		} catch (DOMException e) {
 			CCorePlugin.log(e);
 		}

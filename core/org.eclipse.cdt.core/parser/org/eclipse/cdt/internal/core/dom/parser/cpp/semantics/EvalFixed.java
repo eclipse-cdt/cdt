@@ -16,7 +16,6 @@ import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.XVALUE;
 
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
@@ -99,17 +98,17 @@ public class EvalFixed extends CPPEvaluation {
 	}
 
 	@Override
-	public IType getTypeOrFunctionSet(IASTNode point) {
+	public IType getTypeOrFunctionSet(LookupContext context) {
 		return fType;
 	}
 
 	@Override
-	public IValue getValue(IASTNode point) {
+	public IValue getValue(LookupContext context) {
 		return fValue;
 	}
 
 	@Override
-	public ValueCategory getValueCategory(IASTNode point) {
+	public ValueCategory getValueCategory(LookupContext context) {
 		return fValueCategory;
 	}
 
@@ -160,9 +159,9 @@ public class EvalFixed extends CPPEvaluation {
 
 	@Override
 	public ICPPEvaluation instantiate(ICPPTemplateParameterMap tpMap, int packOffset,
-			ICPPClassSpecialization within, int maxdepth, IASTNode point) {
-		IType type = CPPTemplates.instantiateType(fType, tpMap, packOffset, within, point);
-		IValue value = CPPTemplates.instantiateValue(fValue, tpMap, packOffset, within, maxdepth, point);
+			ICPPClassSpecialization within, int maxdepth, LookupContext context) {
+		IType type = CPPTemplates.instantiateType(fType, tpMap, packOffset, within, context);
+		IValue value = CPPTemplates.instantiateValue(fValue, tpMap, packOffset, within, maxdepth, context);
 		if (type == fType && value == fValue)
 			return this;
 		return new EvalFixed(type, fValueCategory, value);
@@ -170,11 +169,11 @@ public class EvalFixed extends CPPEvaluation {
 
 	@Override
 	public ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap,
-			int maxdepth, IASTNode point) {
+			int maxdepth, LookupContext context) {
 		ICPPEvaluation eval = fValue.getEvaluation();
 		if (eval == null)
 			return this;
-		eval = eval.computeForFunctionCall(parameterMap, maxdepth, point);
+		eval = eval.computeForFunctionCall(parameterMap, maxdepth, context);
 		if (eval == fValue.getEvaluation())
 			return this;
 		return new EvalFixed(fType, fValueCategory, Value.create(eval));

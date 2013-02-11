@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalTypeId;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.LookupContext;
 import org.eclipse.core.runtime.Assert;
 
 /**
@@ -28,14 +29,14 @@ import org.eclipse.core.runtime.Assert;
 public class CPPTemplateNonTypeArgument implements ICPPTemplateArgument {
 	private final ICPPEvaluation fEvaluation;
 
-	public CPPTemplateNonTypeArgument(ICPPEvaluation evaluation, IASTNode point) {
+	public CPPTemplateNonTypeArgument(ICPPEvaluation evaluation, LookupContext context) {
 		Assert.isNotNull(evaluation);
-		if (evaluation instanceof EvalFixed || point == null ||
+		if (evaluation instanceof EvalFixed || context == null || context.getPointOfInstantiation() == null ||
 				evaluation.isTypeDependent() || evaluation.isValueDependent()) {
 			fEvaluation= evaluation;
 		} else {
-			fEvaluation= new EvalFixed(evaluation.getTypeOrFunctionSet(point),
-					evaluation.getValueCategory(point), evaluation.getValue(point));
+			fEvaluation= new EvalFixed(evaluation.getTypeOrFunctionSet(context),
+					evaluation.getValueCategory(context), evaluation.getValue(context));
 		}
 	}
 
@@ -75,17 +76,17 @@ public class CPPTemplateNonTypeArgument implements ICPPTemplateArgument {
 
 	@Override
 	public IType getTypeOfNonTypeValue() {
-		return fEvaluation.getTypeOrFunctionSet(null);
+		return fEvaluation.getTypeOrFunctionSet((IASTNode)null);
 	}
 
 	@Override
 	public boolean isPackExpansion() {
-		return fEvaluation.getTypeOrFunctionSet(null) instanceof ICPPParameterPackType;
+		return fEvaluation.getTypeOrFunctionSet((IASTNode)null) instanceof ICPPParameterPackType;
 	}
 
 	@Override
 	public ICPPTemplateArgument getExpansionPattern() {
-		IType type = fEvaluation.getTypeOrFunctionSet(null);
+		IType type = fEvaluation.getTypeOrFunctionSet((IASTNode)null);
 		if (type instanceof ICPPParameterPackType) {
 			IType t= ((ICPPParameterPackType) type).getType();
 			if (t != null) {

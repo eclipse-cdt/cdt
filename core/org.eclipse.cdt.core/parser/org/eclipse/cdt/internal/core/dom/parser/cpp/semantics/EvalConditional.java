@@ -95,36 +95,36 @@ public class EvalConditional extends CPPEvaluation {
 		return false;
 	}
 
-	public ICPPFunction getOverload(IASTNode point) {
-		evaluate(point);
+	public ICPPFunction getOverload(LookupContext context) {
+		evaluate(context);
 		return fOverload;
 	}
 
 	@Override
-	public IType getTypeOrFunctionSet(IASTNode point) {
-		evaluate(point);
+	public IType getTypeOrFunctionSet(LookupContext context) {
+		evaluate(context);
 		return fType;
 	}
 
 	@Override
-	public IValue getValue(IASTNode point) {
-		IValue condValue = fCondition.getValue(point);
+	public IValue getValue(LookupContext context) {
+		IValue condValue = fCondition.getValue(context);
 		if (condValue == Value.UNKNOWN)
 			return Value.UNKNOWN;
 		Long cond = condValue.numericalValue();
 		if (cond != null) {
 			if (cond.longValue() != 0) {
-				return fPositive == null ? condValue : fPositive.getValue(point);
+				return fPositive == null ? condValue : fPositive.getValue(context);
 			} else {
-				return fNegative.getValue(point);
+				return fNegative.getValue(context);
 			}
 		}
 		return Value.create(this);
 	}
 
 	@Override
-	public ValueCategory getValueCategory(IASTNode point) {
-		evaluate(point);
+	public ValueCategory getValueCategory(LookupContext context) {
+		evaluate(context);
 		return fValueCategory;
 	}
 
@@ -140,7 +140,7 @@ public class EvalConditional extends CPPEvaluation {
 				|| fNegative.isValueDependent();
 	}
 
-	private void evaluate(IASTNode point) {
+	private void evaluate(LookupContext context) {
     	if (fValueCategory != null)
     		return;
 
@@ -148,8 +148,8 @@ public class EvalConditional extends CPPEvaluation {
 
 		final ICPPEvaluation positive = fPositive == null ? fCondition : fPositive;
 
-		IType t2 = positive.getTypeOrFunctionSet(point);
-		IType t3 = fNegative.getTypeOrFunctionSet(point);
+		IType t2 = positive.getTypeOrFunctionSet(context);
+		IType t3 = fNegative.getTypeOrFunctionSet(context);
 
 		final IType uqt2= getNestedType(t2, TDEF | REF | CVTYPE);
 		final IType uqt3= getNestedType(t3, TDEF | REF | CVTYPE);
@@ -179,8 +179,8 @@ public class EvalConditional extends CPPEvaluation {
 			return;
 		}
 
-		final ValueCategory vcat2= positive.getValueCategory(point);
-		final ValueCategory vcat3= fNegative.getValueCategory(point);
+		final ValueCategory vcat2= positive.getValueCategory(context);
+		final ValueCategory vcat3= fNegative.getValueCategory(context);
 
 		// Same type
 		if (t2.isSameType(t3)) {
@@ -199,8 +199,8 @@ public class EvalConditional extends CPPEvaluation {
 
 		// Different types with at least one class type
 		if (isClassType2 || isClassType3) {
-			final Cost cost2= convertToMatch(t2, vcat2, uqt2, t3, vcat3, uqt3, point); // sets fType and fValueCategory
-			final Cost cost3= convertToMatch(t3, vcat3, uqt3, t2, vcat2, uqt2, point); // sets fType and fValueCategory
+			final Cost cost2= convertToMatch(t2, vcat2, uqt2, t3, vcat3, uqt3, context); // sets fType and fValueCategory
+			final Cost cost3= convertToMatch(t3, vcat3, uqt3, t2, vcat2, uqt2, context); // sets fType and fValueCategory
 			if (cost2.converts() || cost3.converts()) {
 				if (cost2.converts()) {
 					if (cost3.converts() || cost2.isAmbiguousUDC()) {
@@ -229,7 +229,7 @@ public class EvalConditional extends CPPEvaluation {
 
 		// 5.16-5: At least one class type but no conversion
 		if (isClassType2 || isClassType3) {
-			fOverload = CPPSemantics.findOverloadedConditionalOperator(point, positive, fNegative);
+			fOverload = CPPSemantics.findOverloadedConditionalOperator(context, positive, fNegative);
 			if (fOverload != null) {
 				fType= ExpressionTypes.typeFromFunctionCall(fOverload);
 			} else {
@@ -254,12 +254,12 @@ public class EvalConditional extends CPPEvaluation {
 		}
     }
 
-    private Cost convertToMatch(IType t1, ValueCategory vcat1, IType uqt1, IType t2, ValueCategory vcat2, IType uqt2, IASTNode point) {
+    private Cost convertToMatch(IType t1, ValueCategory vcat1, IType uqt1, IType t2, ValueCategory vcat2, IType uqt2, LookupContext context) {
 		// E2 is an lvalue or E2 is an xvalue
 		try {
 			if (vcat2.isGLValue()) {
 				IType target= new CPPReferenceType(t2, vcat2 == XVALUE);
-				Cost c= Conversions.checkImplicitConversionSequence(target, t1, vcat1, UDCMode.ALLOWED, Context.REQUIRE_DIRECT_BINDING, point);
+				Cost c= Conversions.checkImplicitConversionSequence(target, t1, vcat1, UDCMode.ALLOWED, Context.REQUIRE_DIRECT_BINDING, context);
 				if (c.converts()) {
 					fType= t2;
 					fValueCategory= vcat2;
@@ -267,6 +267,7 @@ public class EvalConditional extends CPPEvaluation {
 				}
 			}
 			// Both are class types and one derives from the other
+			IASTNode point = context.getPointOfInstantiation();
 			if (uqt1 instanceof ICPPClassType && uqt2 instanceof ICPPClassType) {
 				int dist= SemanticUtil.calculateInheritanceDepth(uqt1, uqt2, point);
 				if (dist >= 0) {
@@ -286,7 +287,7 @@ public class EvalConditional extends CPPEvaluation {
 			if (vcat2 != PRVALUE) {
 				t2= Conversions.lvalue_to_rvalue(t2, false);
 			}
-			Cost c= Conversions.checkImplicitConversionSequence(t2, t1, vcat1, UDCMode.ALLOWED, Context.ORDINARY, point);
+			Cost c= Conversions.checkImplicitConversionSequence(t2, t1, vcat1, UDCMode.ALLOWED, Context.ORDINARY, context);
 			if (c.converts()) {
 				fType= t2;
 				fValueCategory= PRVALUE;
@@ -326,11 +327,11 @@ public class EvalConditional extends CPPEvaluation {
 
 	@Override
 	public ICPPEvaluation instantiate(ICPPTemplateParameterMap tpMap, int packOffset,
-			ICPPClassSpecialization within, int maxdepth, IASTNode point) {
-		ICPPEvaluation condition = fCondition.instantiate(tpMap, packOffset, within, maxdepth, point);
+			ICPPClassSpecialization within, int maxdepth, LookupContext context) {
+		ICPPEvaluation condition = fCondition.instantiate(tpMap, packOffset, within, maxdepth, context);
 		ICPPEvaluation positive = fPositive == null ?
-				null : fPositive.instantiate(tpMap, packOffset, within, maxdepth, point);
-		ICPPEvaluation negative = fNegative.instantiate(tpMap, packOffset, within, maxdepth, point);
+				null : fPositive.instantiate(tpMap, packOffset, within, maxdepth, context);
+		ICPPEvaluation negative = fNegative.instantiate(tpMap, packOffset, within, maxdepth, context);
 		if (condition == fCondition && positive == fPositive && negative == fNegative)
 			return this;
 		return new EvalConditional(condition, positive, negative, fPositiveThrows, fNegativeThrows);
@@ -338,11 +339,11 @@ public class EvalConditional extends CPPEvaluation {
 
 	@Override
 	public ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap,
-			int maxdepth, IASTNode point) {
-		ICPPEvaluation condition = fCondition.computeForFunctionCall(parameterMap, maxdepth, point);
+			int maxdepth, LookupContext context) {
+		ICPPEvaluation condition = fCondition.computeForFunctionCall(parameterMap, maxdepth, context);
 		ICPPEvaluation positive = fPositive == null ?
-				null : fPositive.computeForFunctionCall(parameterMap, maxdepth, point);
-		ICPPEvaluation negative = fNegative.computeForFunctionCall(parameterMap, maxdepth, point);
+				null : fPositive.computeForFunctionCall(parameterMap, maxdepth, context);
+		ICPPEvaluation negative = fNegative.computeForFunctionCall(parameterMap, maxdepth, context);
 		if (condition == fCondition && positive == fPositive && negative == fNegative)
 			return this;
 		return new EvalConditional(condition, positive, negative, fPositiveThrows, fNegativeThrows);

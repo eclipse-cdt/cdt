@@ -42,6 +42,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassSpecialization.Recur
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPClassSpecializationScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.LookupContext;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.db.PDOMNodeLinkedList;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
@@ -146,7 +147,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 			if (!set.add(original))
 				return RecursionResolvingBinding.createFor(original, point);
 		}
-		IBinding newSpec= CPPTemplates.createSpecialization(this, original, point);
+		IBinding newSpec= CPPTemplates.createSpecialization(this, original, new LookupContext(point, original));
 		set.remove(original);
 
 		synchronized (specializationMap) {

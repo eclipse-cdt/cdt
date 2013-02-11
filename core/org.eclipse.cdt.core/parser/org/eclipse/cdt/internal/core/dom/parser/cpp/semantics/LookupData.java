@@ -109,11 +109,12 @@ public class LookupData extends ScopeLookupData {
 	private ICPPEvaluation[] functionArgs;
 	private IType[] functionArgTypes;
 	private ValueCategory[] functionArgValueCategories;
+	private LookupContext fLookupContext;
 
 	public ICPPClassType skippedScope;
 	public Object foundItems = null;
 	public ProblemBinding problem;
-		
+	
 	public LookupData(IASTName n) {
 		super(n, true, false);
 		if (n == null)
@@ -127,13 +128,19 @@ public class LookupData extends ScopeLookupData {
 				CCorePlugin.log(e);
 			}
 		}
+		fLookupContext= new LookupContext(n, null);
 		fTemplateArguments= args;
 		configureWith(n);
 	}
 	
-	public LookupData(char[] name, ICPPTemplateArgument[] templateArgs, IASTNode lookupPoint) {
-		super(name, lookupPoint);
+	public LookupData(char[] name, ICPPTemplateArgument[] templateArgs, LookupContext context) {
+		super(name, context.getPointOfInstantiation());
+		fLookupContext= context;
 		fTemplateArguments= templateArgs;
+	}
+	
+	public LookupData(char[] name, ICPPTemplateArgument[] templateArgs, IASTNode point) {
+		this(name, templateArgs, new LookupContext(point, null));
 	}
 	
 	@Override
@@ -487,7 +494,7 @@ public class LookupData extends ScopeLookupData {
 				functionArgTypes= new IType[exprs.length];
 				for (int i = 0; i < exprs.length; i++) {
 					ICPPEvaluation e = exprs[i];
-					functionArgTypes[i]= getSimplifiedType(e.getTypeOrFunctionSet(getLookupPoint()));
+					functionArgTypes[i]= getSimplifiedType(e.getTypeOrFunctionSet(getLookupContext()));
 				}
 			}  
 		}
@@ -518,7 +525,7 @@ public class LookupData extends ScopeLookupData {
 		int count= 0;
 		if (functionArgs != null) {
 			for (ICPPEvaluation arg : functionArgs) {
-				if (arg instanceof EvalFixed && arg.getTypeOrFunctionSet(null) instanceof ICPPParameterPackType)
+				if (arg instanceof EvalFixed && arg.getTypeOrFunctionSet((IASTNode) null) instanceof ICPPParameterPackType)
 					count++;
 			}
 		}
@@ -548,5 +555,9 @@ public class LookupData extends ScopeLookupData {
 			}
 		}
 		return IBinding.EMPTY_BINDING_ARRAY;
+	}
+	
+	public LookupContext getLookupContext() {
+		return fLookupContext;
 	}
 }

@@ -39,7 +39,6 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
@@ -138,14 +137,14 @@ public class EvalUnary extends CPPEvaluation {
 		}
 	}
 
-	public ICPPFunction getOverload(IASTNode point) {
+	public ICPPFunction getOverload(LookupContext context) {
 		if (fOverload == CPPFunction.UNINITIALIZED_FUNCTION) {
-			fOverload= computeOverload(point);
+			fOverload= computeOverload(context);
 		}
 		return fOverload;
 	}
 
-	private ICPPFunction computeOverload(IASTNode point) {
+	private ICPPFunction computeOverload(LookupContext context) {
     	OverloadableOperator op = OverloadableOperator.fromUnaryExpression(fOperator);
 		if (op == null)
 			return null;
@@ -159,7 +158,7 @@ public class EvalUnary extends CPPEvaluation {
 				return null;
 		}
 
-    	IType type = fArgument.getTypeOrFunctionSet(point);
+    	IType type = fArgument.getTypeOrFunctionSet(context);
 		type = SemanticUtil.getNestedType(type, TDEF | REF | CVTYPE);
 		if (!CPPSemantics.isUserDefined(type))
 			return null;
@@ -170,30 +169,30 @@ public class EvalUnary extends CPPEvaluation {
 	    } else {
 	    	args = new ICPPEvaluation[] { fArgument };
 	    }
-    	return CPPSemantics.findOverloadedOperator(point, args, type, op, LookupMode.LIMITED_GLOBALS);
+    	return CPPSemantics.findOverloadedOperator(context, args, type, op, LookupMode.LIMITED_GLOBALS);
 	}
 
 	@Override
-	public IType getTypeOrFunctionSet(IASTNode point) {
+	public IType getTypeOrFunctionSet(LookupContext context) {
 		if (fType == null)
-			fType= computeType(point);
+			fType= computeType(context);
 		return fType;
 	}
 
-	private IType computeType(IASTNode point) {
+	private IType computeType(LookupContext context) {
 		if (isTypeDependent())
 			return new TypeOfDependentExpression(this);
 
-		ICPPFunction overload = getOverload(point);
+		ICPPFunction overload = getOverload(context);
 		if (overload != null)
 			return ExpressionTypes.typeFromFunctionCall(overload);
 
     	switch (fOperator) {
 		case op_sizeof:
 		case op_sizeofParameterPack:
-			return CPPVisitor.get_SIZE_T(point);
+			return CPPVisitor.get_SIZE_T(context);
 		case op_typeid:
-			return CPPVisitor.get_type_info(point);
+			return CPPVisitor.get_type_info(context);
 		case op_throw:
 			return CPPSemantics.VOID_TYPE;
 		case op_amper:
@@ -207,9 +206,9 @@ public class EvalUnary extends CPPEvaluation {
 					}
 				}
 			}
-			return new CPPPointerType(fArgument.getTypeOrFunctionSet(point));
+			return new CPPPointerType(fArgument.getTypeOrFunctionSet(context));
 		case op_star:
-			IType type= fArgument.getTypeOrFunctionSet(point);
+			IType type= fArgument.getTypeOrFunctionSet(context);
 			type = prvalueTypeWithResolvedTypedefs(type);
 	    	if (type instanceof IPointerType) {
 	    		return glvalueType(((IPointerType) type).getType());
@@ -223,35 +222,37 @@ public class EvalUnary extends CPPEvaluation {
 			return CPPBasicType.BOOLEAN;
 		case op_postFixDecr:
 		case op_postFixIncr:
-			return prvalueType(fArgument.getTypeOrFunctionSet(point));
+			return prvalueType(fArgument.getTypeOrFunctionSet(context));
 		case op_minus:
 		case op_plus:
 		case op_tilde:
-	    	final IType t1 = prvalueType(fArgument.getTypeOrFunctionSet(point));
+	    	final IType t1 = prvalueType(fArgument.getTypeOrFunctionSet(context));
 			final IType t2 = SemanticUtil.getNestedType(t1, TDEF);
 			final IType t3= CPPArithmeticConversion.promoteCppType(t2);
 			return (t3 == null || t3 == t2) ? t1 : t3;
 		}
-		return fArgument.getTypeOrFunctionSet(point);
+		return fArgument.getTypeOrFunctionSet(context);
 	}
 
 	@Override
-	public IValue getValue(IASTNode point) {
+	public IValue getValue(LookupContext context) {
 		if (isValueDependent())
 			return Value.create(this);
 			
-		if (getOverload(point) != null) {
+		if (getOverload(context) != null) {
 			// TODO(sprigogin): Simulate execution of a function call.
 			return Value.create(this);
 		}
 
 		switch (fOperator) {
 			case op_sizeof: {
-				SizeAndAlignment info = SizeofCalculator.getSizeAndAlignment(fArgument.getTypeOrFunctionSet(point), point);
+				SizeAndAlignment info = SizeofCalculator.getSizeAndAlignment(fArgument.getTypeOrFunctionSet(context), 
+						context.getPointOfInstantiation());
 				return info == null ? Value.UNKNOWN : Value.create(info.size);
 			}
 			case op_alignOf: {
-				SizeAndAlignment info = SizeofCalculator.getSizeAndAlignment(fArgument.getTypeOrFunctionSet(point), point);
+				SizeAndAlignment info = SizeofCalculator.getSizeAndAlignment(fArgument.getTypeOrFunctionSet(context), 
+						context.getPointOfInstantiation());
 				return info == null ? Value.UNKNOWN : Value.create(info.alignment);
 			}
 			case op_noexcept:
@@ -264,7 +265,7 @@ public class EvalUnary extends CPPEvaluation {
 				return Value.UNKNOWN;  // TODO(sprigogin): Implement
 		}
 
-		IValue val = fArgument.getValue(point);
+		IValue val = fArgument.getValue(context);
 		if (val == null)
 			return Value.UNKNOWN;
 		
@@ -276,8 +277,8 @@ public class EvalUnary extends CPPEvaluation {
 	}
 
 	@Override
-	public ValueCategory getValueCategory(IASTNode point) {
-		ICPPFunction overload = getOverload(point);
+	public ValueCategory getValueCategory(LookupContext context) {
+		ICPPFunction overload = getOverload(context);
     	if (overload != null)
     		return valueCategoryFromFunctionCall(overload);
 
@@ -309,12 +310,12 @@ public class EvalUnary extends CPPEvaluation {
 
 	@Override
 	public ICPPEvaluation instantiate(ICPPTemplateParameterMap tpMap, int packOffset,
-			ICPPClassSpecialization within, int maxdepth, IASTNode point) {
-		ICPPEvaluation argument = fArgument.instantiate(tpMap, packOffset, within, maxdepth, point);
+			ICPPClassSpecialization within, int maxdepth, LookupContext context) {
+		ICPPEvaluation argument = fArgument.instantiate(tpMap, packOffset, within, maxdepth, context);
 		IBinding aoqn = fAddressOfQualifiedNameBinding;
 		if (aoqn instanceof ICPPUnknownBinding) {
 			try {
-				aoqn= CPPTemplates.resolveUnknown((ICPPUnknownBinding) aoqn, tpMap, packOffset, within, point);
+				aoqn= CPPTemplates.resolveUnknown((ICPPUnknownBinding) aoqn, tpMap, packOffset, within, context);
 			} catch (DOMException e) {
 			}
 		}
@@ -326,8 +327,8 @@ public class EvalUnary extends CPPEvaluation {
 
 	@Override
 	public ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap,
-			int maxdepth, IASTNode point) {
-		ICPPEvaluation argument = fArgument.computeForFunctionCall(parameterMap, maxdepth, point);
+			int maxdepth, LookupContext context) {
+		ICPPEvaluation argument = fArgument.computeForFunctionCall(parameterMap, maxdepth, context);
 		if (argument == fArgument)
 			return this;
 		

@@ -35,6 +35,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPClassSpecializationScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.LookupContext;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
@@ -116,7 +117,7 @@ public class CompositeCPPClassSpecialization extends CompositeCPPClassType imple
 			if (!set.add(original)) 
 				return RecursionResolvingBinding.createFor(original, point);
 		}
-		IBinding newSpec= CPPTemplates.createSpecialization(this, original, point);
+		IBinding newSpec= CPPTemplates.createSpecialization(this, original, new LookupContext(point, original));
 		set.remove(original);
 
 		synchronized (specializationMap) {

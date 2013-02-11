@@ -45,7 +45,6 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
 
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -109,18 +108,18 @@ public class EvalBinary extends CPPEvaluation {
 	}
 
 	@Override
-	public IType getTypeOrFunctionSet(IASTNode point) {
+	public IType getTypeOrFunctionSet(LookupContext context) {
 		if (fType == null) {
 			if (isTypeDependent()) {
 				fType= new TypeOfDependentExpression(this);
 			} else {
-				ICPPFunction overload = getOverload(point);
+				ICPPFunction overload = getOverload(context);
 				if (overload != null) {
 					fType= ExpressionTypes.restoreTypedefs(
 							ExpressionTypes.typeFromFunctionCall(overload),
-							fArg1.getTypeOrFunctionSet(point), fArg2.getTypeOrFunctionSet(point));
+							fArg1.getTypeOrFunctionSet(context), fArg2.getTypeOrFunctionSet(context));
 				} else {
-					fType= computeType(point);
+					fType= computeType(context);
 				}
 			}
 		}
@@ -128,16 +127,16 @@ public class EvalBinary extends CPPEvaluation {
 	}
 
 	@Override
-	public IValue getValue(IASTNode point) {
-		if (getOverload(point) != null) {
+	public IValue getValue(LookupContext context) {
+		if (getOverload(context) != null) {
 			// TODO(sprigogin): Simulate execution of a function call.
 			return Value.create(this);
 		}
 
-		IValue v1 = fArg1.getValue(point);
+		IValue v1 = fArg1.getValue(context);
 		if (v1 == Value.UNKNOWN)
 			return Value.UNKNOWN;
-		IValue v2 = fArg2.getValue(point);
+		IValue v2 = fArg2.getValue(context);
 		if (v2 == Value.UNKNOWN)
 			return Value.UNKNOWN;
 
@@ -182,11 +181,11 @@ public class EvalBinary extends CPPEvaluation {
 	}
 
 	@Override
-	public ValueCategory getValueCategory(IASTNode point) {
+	public ValueCategory getValueCategory(LookupContext context) {
 		if (isTypeDependent())
 			return ValueCategory.PRVALUE;
 
-		ICPPFunction overload = getOverload(point);
+		ICPPFunction overload = getOverload(context);
 		if (overload != null)
 			return ExpressionTypes.valueCategoryFromFunctionCall(overload);
 
@@ -206,12 +205,12 @@ public class EvalBinary extends CPPEvaluation {
 			return LVALUE;
 
 		case op_pmdot:
-			if (!(getTypeOrFunctionSet(point) instanceof ICPPFunctionType))
-				return fArg1.getValueCategory(point);
+			if (!(getTypeOrFunctionSet(context) instanceof ICPPFunctionType))
+				return fArg1.getValueCategory(context);
 			break;
 
 		case op_pmarrow:
-			if (!(getTypeOrFunctionSet(point) instanceof ICPPFunctionType))
+			if (!(getTypeOrFunctionSet(context) instanceof ICPPFunctionType))
 				return LVALUE;
 			break;
 		}
@@ -219,45 +218,45 @@ public class EvalBinary extends CPPEvaluation {
 		return ValueCategory.PRVALUE;
 	}
 
-	public ICPPFunction getOverload(IASTNode point) {
+	public ICPPFunction getOverload(LookupContext context) {
 		if (fOverload == CPPFunction.UNINITIALIZED_FUNCTION) {
-			fOverload= computeOverload(point);
+			fOverload= computeOverload(context);
 		}
 		return fOverload;
 	}
 
-	private ICPPFunction computeOverload(IASTNode point) {
+	private ICPPFunction computeOverload(LookupContext context) {
 		if (isTypeDependent())
 			return null;
 
 		if (fOperator == op_arrayAccess) {
-			IType type = fArg1.getTypeOrFunctionSet(point);
+			IType type = fArg1.getTypeOrFunctionSet(context);
 			type= SemanticUtil.getNestedType(type, TDEF | REF | CVTYPE);
     		if (type instanceof ICPPClassType) {
-    			return CPPSemantics.findOverloadedBinaryOperator(point, OverloadableOperator.BRACKET, fArg1, fArg2);
+    			return CPPSemantics.findOverloadedBinaryOperator(context, OverloadableOperator.BRACKET, fArg1, fArg2);
     		}
 		} else {
 			final OverloadableOperator op = OverloadableOperator.fromBinaryExpression(fOperator);
 			if (op != null) {
-				return CPPSemantics.findOverloadedBinaryOperator(point, op, fArg1, fArg2);
+				return CPPSemantics.findOverloadedBinaryOperator(context, op, fArg1, fArg2);
 			}
 		}
     	return null;
 	}
 
-	public IType computeType(IASTNode point) {
+	public IType computeType(LookupContext context) {
 		// Check for overloaded operator.
-		ICPPFunction o= getOverload(point);
+		ICPPFunction o= getOverload(context);
 		if (o != null)
 			return typeFromFunctionCall(o);
 
-		final IType originalType1 = fArg1.getTypeOrFunctionSet(point);
+		final IType originalType1 = fArg1.getTypeOrFunctionSet(context);
 		final IType type1 = prvalueTypeWithResolvedTypedefs(originalType1);
 		if (type1 instanceof ISemanticProblem) {
 			return type1;
 		}
 
-    	final IType originalType2 = fArg2.getTypeOrFunctionSet(point);
+    	final IType originalType2 = fArg2.getTypeOrFunctionSet(context);
 		final IType type2 = prvalueTypeWithResolvedTypedefs(originalType2);
 		if (type2 instanceof ISemanticProblem) {
 			return type2;
@@ -300,7 +299,7 @@ public class EvalBinary extends CPPEvaluation {
     	case op_minus:
     		if (type1 instanceof IPointerType) {
     			if (type2 instanceof IPointerType) {
-    				return CPPVisitor.getPointerDiffType(point);
+    				return CPPVisitor.getPointerDiffType(context);
     			}
     			return originalType1;
     		}
@@ -312,7 +311,7 @@ public class EvalBinary extends CPPEvaluation {
     			IType t= ((ICPPPointerToMemberType) type2).getType();
     			if (t instanceof ICPPFunctionType)
     				return t;
-    			if (fOperator == op_pmdot && fArg1.getValueCategory(point) == PRVALUE) {
+    			if (fOperator == op_pmdot && fArg1.getValueCategory(context) == PRVALUE) {
     				return prvalueType(t);
     			}
     			return glvalueType(t);
@@ -339,9 +338,9 @@ public class EvalBinary extends CPPEvaluation {
 
 	@Override
 	public ICPPEvaluation instantiate(ICPPTemplateParameterMap tpMap, int packOffset,
-			ICPPClassSpecialization within, int maxdepth, IASTNode point) {
-		ICPPEvaluation arg1 = fArg1.instantiate(tpMap, packOffset, within, maxdepth, point);
-		ICPPEvaluation arg2 = fArg2.instantiate(tpMap, packOffset, within, maxdepth, point);
+			ICPPClassSpecialization within, int maxdepth, LookupContext context) {
+		ICPPEvaluation arg1 = fArg1.instantiate(tpMap, packOffset, within, maxdepth, context);
+		ICPPEvaluation arg2 = fArg2.instantiate(tpMap, packOffset, within, maxdepth, context);
 		if (arg1 == fArg1 && arg2 == fArg2)
 			return this;
 		return new EvalBinary(fOperator, arg1, arg2);
@@ -349,9 +348,9 @@ public class EvalBinary extends CPPEvaluation {
 
 	@Override
 	public ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap,
-			int maxdepth, IASTNode point) {
-		ICPPEvaluation arg1 = fArg1.computeForFunctionCall(parameterMap, maxdepth, point);
-		ICPPEvaluation arg2 = fArg2.computeForFunctionCall(parameterMap, maxdepth, point);
+			int maxdepth, LookupContext context) {
+		ICPPEvaluation arg1 = fArg1.computeForFunctionCall(parameterMap, maxdepth, context);
+		ICPPEvaluation arg2 = fArg2.computeForFunctionCall(parameterMap, maxdepth, context);
 		if (arg1 == fArg1 && arg2 == fArg2)
 			return this;
 		return new EvalBinary(fOperator, arg1, arg2);

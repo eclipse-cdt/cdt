@@ -15,7 +15,6 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionT
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.valueCategoryFromFunctionCall;
 
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
@@ -75,14 +74,14 @@ public class EvalComma extends CPPEvaluation {
 		return false;
 	}
 
-	public ICPPFunction[] getOverloads(IASTNode point) {
+	public ICPPFunction[] getOverloads(LookupContext context) {
 		if (fOverloads == null) {
-			fOverloads= computeOverloads(point);
+			fOverloads= computeOverloads(context);
 		}
 		return fOverloads;
 	}
 
-	private ICPPFunction[] computeOverloads(IASTNode point) {
+	private ICPPFunction[] computeOverloads(LookupContext context) {
 		if (fArguments.length < 2)
 			return NO_FUNCTIONS;
 
@@ -93,13 +92,13 @@ public class EvalComma extends CPPEvaluation {
 		ICPPEvaluation e1= fArguments[0];
 		for (int i = 1; i < fArguments.length; i++) {
 			ICPPEvaluation e2 = fArguments[i];
-			ICPPFunction overload = CPPSemantics.findOverloadedOperatorComma(point, e1, e2);
+			ICPPFunction overload = CPPSemantics.findOverloadedOperatorComma(context, e1, e2);
 			if (overload == null) {
 				e1= e2;
 			} else {
 				overloads[i - 1] = overload;
 				e1= new EvalFixed(typeFromFunctionCall(overload), valueCategoryFromFunctionCall(overload), Value.UNKNOWN);
-				if (e1.getTypeOrFunctionSet(point) instanceof ISemanticProblem) {
+				if (e1.getTypeOrFunctionSet(context) instanceof ISemanticProblem) {
 					e1= e2;
 				}
 			}
@@ -108,48 +107,48 @@ public class EvalComma extends CPPEvaluation {
 	}
 
 	@Override
-	public IType getTypeOrFunctionSet(IASTNode point) {
+	public IType getTypeOrFunctionSet(LookupContext context) {
 		if (fType == null) {
-			fType= computeType(point);
+			fType= computeType(context);
 		}
 		return fType;
 	}
 
-	private IType computeType(IASTNode point) {
+	private IType computeType(LookupContext context) {
 		if (isTypeDependent()) {
 			return new TypeOfDependentExpression(this);
 		}
-		ICPPFunction[] overloads = getOverloads(point);
+		ICPPFunction[] overloads = getOverloads(context);
 		if (overloads.length > 0) {
 			ICPPFunction last = overloads[overloads.length - 1];
 			if (last != null) {
 				return typeFromFunctionCall(last);
 			}
 		}
-		return fArguments[fArguments.length - 1].getTypeOrFunctionSet(point);
+		return fArguments[fArguments.length - 1].getTypeOrFunctionSet(context);
 	}
 
 	@Override
-	public IValue getValue(IASTNode point) {
-		ICPPFunction[] overloads = getOverloads(point);
+	public IValue getValue(LookupContext context) {
+		ICPPFunction[] overloads = getOverloads(context);
 		if (overloads.length > 0) {
 			// TODO(sprigogin): Simulate execution of a function call.
 			return Value.create(this);
 		}
 
-		return fArguments[fArguments.length - 1].getValue(point);
+		return fArguments[fArguments.length - 1].getValue(context);
 	}
 
 	@Override
-	public ValueCategory getValueCategory(IASTNode point) {
-		ICPPFunction[] overloads = getOverloads(point);
+	public ValueCategory getValueCategory(LookupContext context) {
+		ICPPFunction[] overloads = getOverloads(context);
 		if (overloads.length > 0) {
 			ICPPFunction last = overloads[overloads.length - 1];
 			if (last != null) {
 				return valueCategoryFromFunctionCall(last);
 			}
 		}
-		return fArguments[fArguments.length - 1].getValueCategory(point);
+		return fArguments[fArguments.length - 1].getValueCategory(context);
 	}
 
 	@Override
@@ -172,10 +171,10 @@ public class EvalComma extends CPPEvaluation {
 
 	@Override
 	public ICPPEvaluation instantiate(ICPPTemplateParameterMap tpMap, int packOffset,
-			ICPPClassSpecialization within, int maxdepth, IASTNode point) {
+			ICPPClassSpecialization within, int maxdepth, LookupContext context) {
 		ICPPEvaluation[] args = fArguments;
 		for (int i = 0; i < fArguments.length; i++) {
-			ICPPEvaluation arg = fArguments[i].instantiate(tpMap, packOffset, within, maxdepth, point);
+			ICPPEvaluation arg = fArguments[i].instantiate(tpMap, packOffset, within, maxdepth, context);
 			if (arg != fArguments[i]) {
 				if (args == fArguments) {
 					args = new ICPPEvaluation[fArguments.length];
@@ -191,10 +190,10 @@ public class EvalComma extends CPPEvaluation {
 
 	@Override
 	public ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap,
-			int maxdepth, IASTNode point) {
+			int maxdepth, LookupContext context) {
 		ICPPEvaluation[] args = fArguments;
 		for (int i = 0; i < fArguments.length; i++) {
-			ICPPEvaluation arg = fArguments[i].computeForFunctionCall(parameterMap, maxdepth, point);
+			ICPPEvaluation arg = fArguments[i].computeForFunctionCall(parameterMap, maxdepth, context);
 			if (arg != fArguments[i]) {
 				if (args == fArguments) {
 					args = new ICPPEvaluation[fArguments.length];

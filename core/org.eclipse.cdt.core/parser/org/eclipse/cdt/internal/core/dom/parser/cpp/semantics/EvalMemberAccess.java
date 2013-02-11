@@ -175,8 +175,9 @@ public class EvalMemberAccess extends CPPEvaluation {
     		 * examine for type information.
     		 */
 
+    		LookupContext context= new LookupContext(point, null);
     		ICPPEvaluation[] args= { new EvalFixed(type, LVALUE, Value.UNKNOWN) };
-			ICPPFunction op= CPPSemantics.findOverloadedOperator(point, args, classType,
+			ICPPFunction op= CPPSemantics.findOverloadedOperator(context, args, classType,
 					OverloadableOperator.ARROW, LookupMode.NO_GLOBALS);
     		if (op == null)
     			break;
@@ -185,7 +186,7 @@ public class EvalMemberAccess extends CPPEvaluation {
     			functionBindings.add(op);
 
     		type= typeFromFunctionCall(op);
-			type= SemanticUtil.mapToAST(type, point);
+			type= SemanticUtil.mapToAST(type, context);
     	}
 
 		IType prValue=  prvalueTypeWithResolvedTypedefs(type);
@@ -200,14 +201,14 @@ public class EvalMemberAccess extends CPPEvaluation {
 	}
 
 	@Override
-	public IType getTypeOrFunctionSet(IASTNode point) {
+	public IType getTypeOrFunctionSet(LookupContext context) {
 		if (fType == null) {
-			fType= computeType(point);
+			fType= computeType(context);
 		}
 		return fType;
 	}
 
-	private IType computeType(IASTNode point) {
+	private IType computeType(LookupContext context) {
 		if (fMember instanceof ICPPUnknownBinding) {
 			return new TypeOfDependentExpression(this);
 		}
@@ -229,10 +230,10 @@ public class EvalMemberAccess extends CPPEvaluation {
 					e2= glvalueType(e2);
 				}
 			}
-		    return SemanticUtil.mapToAST(e2, point);
+		    return SemanticUtil.mapToAST(e2, context);
 		}
 		if (fMember instanceof IFunction) {
-			return SemanticUtil.mapToAST(((IFunction) fMember).getType(), point);
+			return SemanticUtil.mapToAST(((IFunction) fMember).getType(), context);
 		}
 		return ProblemType.UNKNOWN_FOR_EXPRESSION;
 	}
@@ -253,7 +254,7 @@ public class EvalMemberAccess extends CPPEvaluation {
 	}
 
 	@Override
-	public IValue getValue(IASTNode point) {
+	public IValue getValue(LookupContext context) {
 		if (fMember instanceof IEnumerator) {
 			return ((IEnumerator) fMember).getValue();
 		}
@@ -267,7 +268,7 @@ public class EvalMemberAccess extends CPPEvaluation {
 	}
 
 	@Override
-	public ValueCategory getValueCategory(IASTNode point) {
+	public ValueCategory getValueCategory(LookupContext context) {
 		if (fMember instanceof IVariable) {
 			IType e2= ((IVariable) fMember).getType();
 			e2= SemanticUtil.getNestedType(e2, TDEF);
@@ -322,21 +323,21 @@ public class EvalMemberAccess extends CPPEvaluation {
 
 	@Override
 	public ICPPEvaluation instantiate(ICPPTemplateParameterMap tpMap, int packOffset,
-			ICPPClassSpecialization within, int maxdepth, IASTNode point) {
-		IType ownerType = CPPTemplates.instantiateType(fOwnerType, tpMap, packOffset, within, point);
+			ICPPClassSpecialization within, int maxdepth, LookupContext context) {
+		IType ownerType = CPPTemplates.instantiateType(fOwnerType, tpMap, packOffset, within, context);
 		if (ownerType == fOwnerType)
 			return this;
 
 		IBinding member = fMember;
 		if (ownerType instanceof ICPPClassSpecialization) {
-			member = CPPTemplates.createSpecialization((ICPPClassSpecialization) ownerType, fMember, point);
+			member = CPPTemplates.createSpecialization((ICPPClassSpecialization) ownerType, fMember, context);
 		}
 		return new EvalMemberAccess(ownerType, fOwnerValueCategory, member, fIsPointerDeref);
 	}
 
 	@Override
 	public ICPPEvaluation computeForFunctionCall(CPPFunctionParameterMap parameterMap,
-			int maxdepth, IASTNode point) {
+			int maxdepth, LookupContext context) {
 		return this;
 	}
 

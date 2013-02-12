@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Marc Khouzam (Ericsson) - initial API and implementation
+ *     Marc Dumais (Ericsson) - Bug 400231
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;
@@ -187,7 +188,10 @@ public class MulticoreVisualizerEventListener {
 
 			fVisualizer.getModel().markThreadExited(tid);
 			
-			fVisualizer.getMulticoreVisualizerCanvas().requestUpdate();
+			MulticoreVisualizerCanvas canvas = fVisualizer.getMulticoreVisualizerCanvas();
+			if (canvas != null) {
+				canvas.requestUpdate();
+			}
     	}
 	}	
 }

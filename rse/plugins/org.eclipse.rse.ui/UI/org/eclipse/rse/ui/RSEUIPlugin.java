@@ -388,9 +388,7 @@ public class RSEUIPlugin extends SystemBasePlugin
 	{
         super.start(context);
         
-        RSEInitJob.getInstance().schedule();
-
-	   	messageFile = getMessageFile("systemmessages.xml"); //$NON-NLS-1$
+ 	   	messageFile = getMessageFile("systemmessages.xml"); //$NON-NLS-1$
 	   	defaultMessageFile = getDefaultMessageFile("systemmessages.xml"); //$NON-NLS-1$
 
 	   	//Force load the SystemRegistry - TODO Is this really necessary?

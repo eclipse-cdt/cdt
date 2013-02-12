@@ -21,6 +21,7 @@ Anna Dushistova  (MontaVista) - [234274][api] Launch Shell / Terminal commands m
 David McKnight   (IBM)        - [160105] [usability] Universal action needed to locate a resource in the Remote Systems View        
 David McKnight   (IBM)        - [260792] Default prompt text color/background color for Remote Shell view is difficult to see
 Uwe Stieber      (Wind River) - [245039] [contributions][api] Provide property tester implementations in parallel to the older action filters
+David Dykstal    (IBM)        - [397995] RSEInitJob runs too early
 -->
 <?eclipse version="3.1"?>
 <plugin>
@@ -51,6 +52,10 @@ Uwe Stieber      (Wind River) - [245039] [contributions][api] Provide property t
          	class="org.eclipse.rse.core.RemoteSystemsTempProjectNature">
          </run>
       </runtime>
+   </extension>
+   
+   <extension point="org.eclipse.ui.startup">
+     <startup class="org.eclipse.rse.internal.ui.RSEUIStartup"/>
    </extension>
 
 <!-- ============================================ -->

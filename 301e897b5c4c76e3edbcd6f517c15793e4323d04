@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPX///ak\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/commands/GdbConnectCommand.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 273,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-02-13T18:44:25Z",
+      "side": 1,
+      "message": "I concerned that the cancellation state is handled properly.  To be safe how about doing:\n{\n  super.handleCompleted();\n  updateEnablement();\n}",
+      "revId": "301e897b5c4c76e3edbcd6f517c15793e4323d04",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///ao\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/commands/GdbConnectCommand.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 275,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-02-13T18:44:25Z",
+      "side": 1,
+      "message": "Shouldn\u0027t this be\n  rm.setData(getData());",
+      "revId": "301e897b5c4c76e3edbcd6f517c15793e4323d04",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///ag\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/commands/GdbDebugNewExecutableCommand.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-02-13T18:44:25Z",
+      "side": 1,
+      "message": "same comments as for connect",
+      "revId": "301e897b5c4c76e3edbcd6f517c15793e4323d04",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

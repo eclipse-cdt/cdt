@@ -75,6 +75,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.Util;
+import org.eclipse.cdt.internal.core.dom.ast.tag.TagManager;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ISerializableEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
@@ -358,6 +359,9 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 						if (inputBinding instanceof CPPClosureType) {
 							addImplicitMethods(pdomBinding, (ICPPClassType) binding, fromName);
 						}
+
+						// copy all of the source bindings tags to the new pdom binding
+						TagManager.copyTags( pdomBinding, binding );
 					}
 				} catch (DOMException e) {
 					throw new CoreException(Util.createStatus(e));
@@ -408,7 +412,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		// template parameters are created directly by their owners.
 		if (binding instanceof ICPPTemplateParameter)
 			return null;
-		if (binding instanceof ICPPUnknownBinding) 
+		if (binding instanceof ICPPUnknownBinding)
 			return null;
 
 		if (binding instanceof ICPPSpecialization) {
@@ -691,7 +695,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		if (result != null) {
 			return result;
 		}
-		
+
 		// Assign names to anonymous types.
 		IBinding binding= PDOMASTAdapter.getAdapterForAnonymousASTBinding(inputBinding);
 		if (binding == null) {
@@ -1111,7 +1115,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			return CPPPointerToMemberType.unmarshal(firstByte, buffer);
 		case ITypeMarshalBuffer.DEPENDENT_EXPRESSION_TYPE:
 			return TypeOfDependentExpression.unmarshal(firstByte, buffer);
-		case ITypeMarshalBuffer.UNKNOWN_MEMBER: 
+		case ITypeMarshalBuffer.UNKNOWN_MEMBER:
 			IBinding binding= CPPUnknownMember.unmarshal(getPDOM(), firstByte, buffer);
 			if (binding instanceof IType)
 				return (IType) binding;

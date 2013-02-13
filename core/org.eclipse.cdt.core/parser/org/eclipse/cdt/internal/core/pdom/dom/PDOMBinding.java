@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.IScope.ScopeLookupData;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
+import org.eclipse.cdt.core.dom.ast.tag.ITaggable;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
@@ -36,6 +37,7 @@ import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.db.IString;
+import org.eclipse.cdt.internal.core.pdom.tag.PDOMTaggable;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -66,6 +68,8 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 	public Object getAdapter(Class adapter) {
 		if (adapter.isAssignableFrom(PDOMBinding.class))
 			return this;
+		if (adapter == ITaggable.class)
+			return new PDOMTaggable( getPDOM(), getRecord() );
 
 		return null;
 	}

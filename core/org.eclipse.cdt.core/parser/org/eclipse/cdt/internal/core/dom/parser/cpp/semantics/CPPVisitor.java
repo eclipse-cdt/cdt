@@ -338,10 +338,10 @@ public class CPPVisitor extends ASTQueries {
 				return false;
 			}
 		}
-		
+
 		if (inScope == null)
 			return false;
-		
+
 		IBinding pb= names[names.length-2].resolvePreBinding();
 		if (pb instanceof IProblemBinding)
 			return false;
@@ -355,7 +355,7 @@ public class CPPVisitor extends ASTQueries {
 		} else if (pb instanceof ICPPNamespace) {
 			scope= ((ICPPNamespace)pb).getNamespaceScope();
 		}
-		
+
 		return scope == inScope;
 	}
 

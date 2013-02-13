@@ -34,6 +34,7 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalUnary;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.FunctionSetType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 /**
  * Unary expression in c++
@@ -204,7 +205,8 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
 					return EvalFixed.INCOMPLETE;
 			}
 		}
-    	return new EvalUnary(fOperator, nestedEval, addressOfQualifiedNameBinding);
+    	return new EvalUnary(fOperator, nestedEval, addressOfQualifiedNameBinding,
+    			SemanticUtil.findEnclosingTemplate(this));
 	}
     
     @Override

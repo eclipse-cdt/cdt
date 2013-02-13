@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalCompound;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 /**
  * Gnu-extension: ({ ... })
@@ -42,7 +43,8 @@ public class CPPASTCompoundStatementExpression extends ASTNode implements IGNUAS
 			if (statements.length > 0) {
 				IASTStatement st = statements[statements.length - 1];
 				if (st instanceof IASTExpressionStatement) {
-					fEval= new EvalCompound(((ICPPASTExpression) ((IASTExpressionStatement) st).getExpression()).getEvaluation());
+					fEval= new EvalCompound(((ICPPASTExpression) ((IASTExpressionStatement) st).getExpression()).getEvaluation(),
+							SemanticUtil.findEnclosingTemplate(this));
 				}
 			}
 			if (fEval == null)

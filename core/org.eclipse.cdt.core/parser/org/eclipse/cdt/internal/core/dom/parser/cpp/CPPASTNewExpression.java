@@ -41,6 +41,7 @@ import org.eclipse.cdt.internal.core.dom.parser.c.CASTExpressionList;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.core.runtime.Assert;
 
 
@@ -275,7 +276,8 @@ public class CPPASTNewExpression extends ASTNode implements ICPPASTNewExpression
 			if (t instanceof IArrayType) {
 				t= ((IArrayType) t).getType();
 			}
-			fEvaluation= new EvalFixed(new CPPPointerType(t), PRVALUE, Value.UNKNOWN);
+			fEvaluation= new EvalFixed(new CPPPointerType(t), PRVALUE, Value.UNKNOWN,
+					SemanticUtil.findEnclosingTemplate(this));
 		}
 		return fEvaluation;
 	}

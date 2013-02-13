@@ -27,6 +27,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalComma;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 public class CPPASTExpressionList extends ASTNode implements ICPPASTExpressionList, IASTAmbiguityParent {
 
@@ -178,7 +179,7 @@ public class CPPASTExpressionList extends ASTNode implements ICPPASTExpressionLi
 		for (int i = 0; i < evals.length; i++) {
 			evals[i]= ((ICPPASTExpression) exprs[i]).getEvaluation();
 		}
-		return new EvalComma(evals);
+		return new EvalComma(evals, SemanticUtil.findEnclosingTemplate(this));
 	}
 
     @Override

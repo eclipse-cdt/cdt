@@ -7165,4 +7165,48 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testDependentExpressionInvolvingFieldInNestedClass_399362() throws Exception {
 		parseAndCheckBindings();
 	}
+
+	// struct S {
+	//     void kind();
+	// };
+	// struct T {};
+	// namespace N {
+	//     S operator++(T);
+	//     template <class T>
+	//     struct impl {
+	//         static T x;
+	//         typedef decltype(++x) type;
+	//     };
+	// }
+	// void test() {
+	//     N::impl<T>::type operand;
+	//     operand.kind();  // ERROR HERE: Method 'kind' could not be resolved
+	// }
+    public void testNameLookupInDependentExpression_399829a() throws Exception {
+        parseAndCheckBindings();
+    }
+
+	// struct S {
+	//     void kind();
+	// };
+	// namespace N {
+	//   struct tag {};
+	//   struct any { template <class T> any(T); };
+	//   tag operator++(any);
+	//   tag operator,(tag,int);
+	//   S check(tag);
+	//   int check(int);
+	//   template <class T>
+	//   struct impl {
+	//       static T& x;
+	//       typedef decltype(N::check((++x,0))) type;
+	//   };
+	// }
+	// void test() {
+	//     N::impl<S>::type operand;
+	//     operand.kind();  // ERROR HERE: Method 'kind' could not be resolved
+	// }
+    public void testNameLookupInDependentExpression_399829b() throws Exception {
+        parseAndCheckBindings();
+    }
 }

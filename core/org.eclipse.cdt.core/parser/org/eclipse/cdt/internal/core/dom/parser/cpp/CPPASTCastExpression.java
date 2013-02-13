@@ -26,6 +26,7 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalTypeId;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 /**
  * Cast expression for C++
@@ -155,7 +156,7 @@ public class CPPASTCastExpression extends ASTNode implements ICPPASTCastExpressi
 		if (type == null || type instanceof IProblemType)
 			return EvalFixed.INCOMPLETE;
 		
-		return new EvalTypeId(type, operand.getEvaluation());
+		return new EvalTypeId(type, SemanticUtil.findEnclosingTemplate(this), operand.getEvaluation());
 	}
 
     @Override

@@ -24,6 +24,7 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 /**
  * Implementation of pack expansion expression.
@@ -76,7 +77,8 @@ public class CPPASTPackExpansionExpression extends ASTNode implements ICPPASTPac
 			} else {
 				type= new CPPParameterPackType(type);
 			}
-			fEvaluation= new EvalFixed(type, PRVALUE, Value.create(((ICPPASTExpression) fPattern).getEvaluation()));
+			fEvaluation= new EvalFixed(type, PRVALUE, Value.create(((ICPPASTExpression) fPattern).getEvaluation()),
+					SemanticUtil.findEnclosingTemplate(this));
 		}
 		return fEvaluation;
 	}

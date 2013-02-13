@@ -17,6 +17,7 @@ import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
@@ -26,6 +27,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.parser.scanner.ExpressionEvaluator;
 import org.eclipse.cdt.internal.core.parser.scanner.ExpressionEvaluator.EvalException;
 
@@ -33,9 +35,9 @@ import org.eclipse.cdt.internal.core.parser.scanner.ExpressionEvaluator.EvalExce
  * Represents a C++ literal.
  */
 public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralExpression {
-	private static final EvalFixed EVAL_TRUE = new EvalFixed(CPPBasicType.BOOLEAN, PRVALUE, Value.create(1));
-	private static final EvalFixed EVAL_FALSE = new EvalFixed(CPPBasicType.BOOLEAN, PRVALUE, Value.create(0));
-	private static final EvalFixed EVAL_NULL_PTR = new EvalFixed(CPPBasicType.NULL_PTR, PRVALUE, Value.create(0));
+	private static final EvalFixed EVAL_TRUE = new EvalFixed(CPPBasicType.BOOLEAN, PRVALUE, Value.create(1), null);
+	private static final EvalFixed EVAL_FALSE = new EvalFixed(CPPBasicType.BOOLEAN, PRVALUE, Value.create(0), null);
+	private static final EvalFixed EVAL_NULL_PTR = new EvalFixed(CPPBasicType.NULL_PTR, PRVALUE, Value.create(0), null);
 
 	public static final CPPASTLiteralExpression INT_ZERO =
 			new CPPASTLiteralExpression(lk_integer_constant, new char[] {'0'});
@@ -229,28 +231,29 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 	}
 	
 	private ICPPEvaluation createEvaluation() {
+		IBinding enclosingTemplate = SemanticUtil.findEnclosingTemplate(this);
     	switch (kind) {
     		case lk_this: {
     			IScope scope = CPPVisitor.getContainingScope(this);
     			IType type= CPPVisitor.getImpliedObjectType(scope);
     			if (type == null) 
     				return EvalFixed.INCOMPLETE;
-    			return new EvalFixed(new CPPPointerType(type), PRVALUE, Value.UNKNOWN);
+    			return new EvalFixed(new CPPPointerType(type), PRVALUE, Value.UNKNOWN, enclosingTemplate);
     		}
     		case lk_true:
     			return EVAL_TRUE;
     		case lk_false:
     			return EVAL_FALSE;
     		case lk_char_constant:
-    			return new EvalFixed(new CPPBasicType(getCharType(), 0, this), PRVALUE, createCharValue());
+    			return new EvalFixed(new CPPBasicType(getCharType(), 0, this), PRVALUE, createCharValue(), enclosingTemplate);
     		case lk_float_constant: 
-    			return new EvalFixed(classifyTypeOfFloatLiteral(), PRVALUE, Value.UNKNOWN);
+    			return new EvalFixed(classifyTypeOfFloatLiteral(), PRVALUE, Value.UNKNOWN, enclosingTemplate);
     		case lk_integer_constant: 
-    			return new EvalFixed(classifyTypeOfIntLiteral(), PRVALUE, createIntValue());
+    			return new EvalFixed(classifyTypeOfIntLiteral(), PRVALUE, createIntValue(), enclosingTemplate);
     		case lk_string_literal:
     			IType type = new CPPBasicType(getCharType(), 0, this);
     			type = new CPPQualifierType(type, true, false);
-    			return new EvalFixed(new CPPArrayType(type, getStringLiteralSize()), LVALUE, Value.UNKNOWN);
+    			return new EvalFixed(new CPPArrayType(type, getStringLiteralSize()), LVALUE, Value.UNKNOWN, enclosingTemplate);
     		case lk_nullptr:
     			return EVAL_NULL_PTR;
     	}

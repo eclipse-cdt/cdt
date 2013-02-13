@@ -17,6 +17,7 @@ import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.XVALUE;
 
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
@@ -34,7 +35,7 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class EvalFixed extends CPPEvaluation {
 	public static final ICPPEvaluation INCOMPLETE =
-			new EvalFixed(ProblemType.UNKNOWN_FOR_EXPRESSION, PRVALUE, Value.UNKNOWN);
+			new EvalFixed(ProblemType.UNKNOWN_FOR_EXPRESSION, PRVALUE, Value.UNKNOWN, null);
 
 	private final IType fType;
 	private final IValue fValue;
@@ -44,7 +45,8 @@ public class EvalFixed extends CPPEvaluation {
 	private boolean fIsValueDependent;
 	private boolean fCheckedIsValueDependent;
 
-	public EvalFixed(IType type, ValueCategory cat, IValue value) {
+	public EvalFixed(IType type, ValueCategory cat, IValue value, IBinding templateDefinition) {
+		super(templateDefinition);
 		if (type instanceof CPPBasicType) {
 			Long num = value.numericalValue();
 			if (num != null) {
@@ -135,6 +137,7 @@ public class EvalFixed extends CPPEvaluation {
 		if (includeValue) {
 			buffer.marshalValue(fValue);
 		}
+		marshalTemplateDefinition(buffer);
 	}
 
 	public static ISerializableEvaluation unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
@@ -155,7 +158,8 @@ public class EvalFixed extends CPPEvaluation {
 
 		IType type= buffer.unmarshalType();
 		value= readValue ? buffer.unmarshalValue() : Value.UNKNOWN;
-		return new EvalFixed(type, cat, value);
+		IBinding templateDefinition= buffer.unmarshalBinding();
+		return new EvalFixed(type, cat, value, templateDefinition);
 	}
 
 	@Override
@@ -165,7 +169,7 @@ public class EvalFixed extends CPPEvaluation {
 		IValue value = CPPTemplates.instantiateValue(fValue, tpMap, packOffset, within, maxdepth, point);
 		if (type == fType && value == fValue)
 			return this;
-		return new EvalFixed(type, fValueCategory, value);
+		return new EvalFixed(type, fValueCategory, value, getTemplateDefinition());
 	}
 
 	@Override
@@ -177,7 +181,7 @@ public class EvalFixed extends CPPEvaluation {
 		eval = eval.computeForFunctionCall(parameterMap, maxdepth, point);
 		if (eval == fValue.getEvaluation())
 			return this;
-		return new EvalFixed(fType, fValueCategory, Value.create(eval));
+		return new EvalFixed(fType, fValueCategory, Value.create(eval), getTemplateDefinition());
 	}
 
 	@Override

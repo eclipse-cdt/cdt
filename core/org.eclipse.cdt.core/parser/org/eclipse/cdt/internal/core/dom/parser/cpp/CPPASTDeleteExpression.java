@@ -29,7 +29,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 
 
 public class CPPASTDeleteExpression extends ASTNode implements ICPPASTDeleteExpression {
-    private static final ICPPEvaluation EVALUATION = new EvalFixed(CPPSemantics.VOID_TYPE, PRVALUE, Value.UNKNOWN);
+    private static final ICPPEvaluation EVALUATION = new EvalFixed(CPPSemantics.VOID_TYPE, PRVALUE, Value.UNKNOWN, null);
 	
     private IASTExpression operand;
     private boolean isGlobal;

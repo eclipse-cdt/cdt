@@ -68,14 +68,16 @@ public class EvalBinding extends CPPEvaluation {
 	private boolean fIsTypeDependent;
 	private boolean fCheckedIsTypeDependent;
 
-	public EvalBinding(IBinding binding, IType type) {
+	public EvalBinding(IBinding binding, IType type, IBinding templateDefinition) {
+		super(templateDefinition);
 		fParameterPosition = -1;
 		fBinding= binding;
 		fType= type;
 		fFixedType= type != null;
 	}
 
-	public EvalBinding(ICPPFunction parameterOwner, int parameterPosition, IType type) {
+	public EvalBinding(ICPPFunction parameterOwner, int parameterPosition, IType type, IBinding templateDefinition) {
+		super(templateDefinition);
 		fParameterOwner = parameterOwner;
 		fParameterPosition = parameterPosition;
 		fType= type;
@@ -298,6 +300,7 @@ public class EvalBinding extends CPPEvaluation {
 			buffer.marshalBinding(fBinding);
 		}
 		buffer.marshalType(fFixedType ? fType : null);
+		marshalTemplateDefinition(buffer);
 	}
 
 	public static ISerializableEvaluation unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
@@ -305,11 +308,13 @@ public class EvalBinding extends CPPEvaluation {
 			ICPPFunction parameterOwner= (ICPPFunction) buffer.unmarshalBinding();
 			int parameterPosition= buffer.getInt();
 			IType type= buffer.unmarshalType();
-			return new EvalBinding(parameterOwner, parameterPosition, type);
+			IBinding templateDefinition= buffer.unmarshalBinding();
+			return new EvalBinding(parameterOwner, parameterPosition, type, templateDefinition);
 		} else {
 			IBinding binding= buffer.unmarshalBinding();
 			IType type= buffer.unmarshalType();
-			return new EvalBinding(binding, type);
+			IBinding templateDefinition= buffer.unmarshalBinding();
+			return new EvalBinding(binding, type, templateDefinition);
 		}
 	}
 
@@ -328,12 +333,12 @@ public class EvalBinding extends CPPEvaluation {
 			IType origType = parameter.getType();
 			IType instantiatedType = CPPTemplates.instantiateType(origType, tpMap, packOffset, within, point);
 			if (origType != instantiatedType) {
-				return new EvalFixed(instantiatedType, ValueCategory.LVALUE, Value.create(this));
+				return new EvalFixed(instantiatedType, ValueCategory.LVALUE, Value.create(this), getTemplateDefinition());
 			}
 		} else {
 			IBinding instantiatedBinding = instantiateBinding(origBinding, tpMap, packOffset, within, maxdepth, point);
 			if (instantiatedBinding != origBinding)
-				return new EvalBinding(instantiatedBinding, null);
+				return new EvalBinding(instantiatedBinding, null, getTemplateDefinition());
 		}
 		return this;
 	}

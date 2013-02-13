@@ -28,6 +28,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
@@ -43,6 +44,7 @@ import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IValue;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
@@ -59,6 +61,7 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArraySet;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
+import org.eclipse.cdt.internal.core.dom.parser.DeferredResolutionBinding;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionType;
@@ -707,5 +710,23 @@ public class SemanticUtil {
 			}
 		}
 		return minValue;
+	}
+	
+	/**
+	 * If the given node is contained in some template declaration,
+	 * return the binding for that template. Otherwise return null. 
+	 */
+	public static IBinding findEnclosingTemplate(IASTNode node) {
+		while (node != null) {
+			if (node instanceof ICPPASTTemplateDeclaration) {
+				ICPPASTTemplateDeclaration templateDecl = (ICPPASTTemplateDeclaration) node;
+				IASTName templateName = CPPTemplates.getTemplateName(templateDecl);
+				if (templateName == null)
+					return null;
+				return new DeferredResolutionBinding(templateName);
+			}
+			node = node.getParent();
+		}
+		return null;
 	}
 }

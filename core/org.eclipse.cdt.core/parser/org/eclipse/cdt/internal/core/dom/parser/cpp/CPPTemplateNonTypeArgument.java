@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
 
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
@@ -35,12 +36,15 @@ public class CPPTemplateNonTypeArgument implements ICPPTemplateArgument {
 			fEvaluation= evaluation;
 		} else {
 			fEvaluation= new EvalFixed(evaluation.getTypeOrFunctionSet(point),
-					evaluation.getValueCategory(point), evaluation.getValue(point));
+					evaluation.getValueCategory(point), evaluation.getValue(point),
+					evaluation.getTemplateDefinition());
 		}
 	}
 
 	public CPPTemplateNonTypeArgument(IValue value, IType type) {
-		fEvaluation = new EvalFixed(type, PRVALUE, value);
+		ICPPEvaluation eval = value.getEvaluation();
+		IBinding templateDefinition = eval == null ? null : eval.getTemplateDefinition();
+		fEvaluation = new EvalFixed(type, PRVALUE, value, templateDefinition);
 	}
 
 	@Override
@@ -92,9 +96,9 @@ public class CPPTemplateNonTypeArgument implements ICPPTemplateArgument {
 				ICPPEvaluation evaluation;
 				if (fEvaluation instanceof EvalFixed) {
 					EvalFixed fixed = (EvalFixed) fEvaluation;
-					evaluation = new EvalFixed(t, fixed.getValueCategory(), fixed.getValue());
+					evaluation = new EvalFixed(t, fixed.getValueCategory(), fixed.getValue(), fEvaluation.getTemplateDefinition());
 				} else {
-					evaluation = new EvalTypeId(t, fEvaluation);
+					evaluation = new EvalTypeId(t, fEvaluation.getTemplateDefinition(), fEvaluation);
 				}
 				return new CPPTemplateNonTypeArgument(evaluation, null);
 			}

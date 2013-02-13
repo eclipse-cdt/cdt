@@ -218,18 +218,25 @@ public class CLIEventProcessor
         {
             // We know something change, we just do not know what.
             // So the easiest way is to let the top layer handle it. 
-            MIEvent<?> event = new MIBreakpointChangedEvent(
-                DMContexts.getAncestorOfType(dmc, IBreakpointsTargetDMContext.class), 0);
-            fCommandControl.getSession().dispatchEvent(event, fCommandControl.getProperties());
+        	IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(dmc, IBreakpointsTargetDMContext.class);
+        	if (bpTargetDmc != null) {
+        		MIEvent<?> event = new MIBreakpointChangedEvent(bpTargetDmc, 0);
+            	fCommandControl.getSession().dispatchEvent(event, fCommandControl.getProperties());
+            }
         } else if (isSettingSignal(operation)) {
-            // We do no know which signal let the upper layer find it.
-            MIEvent<?> event = new MISignalChangedEvent(
-                DMContexts.getAncestorOfType(dmc, ISignalsDMContext.class), ""); //$NON-NLS-1$
-            fCommandControl.getSession().dispatchEvent(event, fCommandControl.getProperties());
+        	// We do no know which signal let the upper layer find it.
+        	ISignalsDMContext signalDmc = DMContexts.getAncestorOfType(dmc, ISignalsDMContext.class);
+        	if (signalDmc != null) {
+        		MIEvent<?> event = new MISignalChangedEvent(signalDmc, ""); //$NON-NLS-1$
+        		fCommandControl.getSession().dispatchEvent(event, fCommandControl.getProperties());
+        	}
         } else if (isDetach(operation)) {
             // if it was a "detach" command change the state.
-            MIEvent<?> event = new MIDetachedEvent(DMContexts.getAncestorOfType(dmc, ICommandControlDMContext.class), token);
-            fCommandControl.getSession().dispatchEvent(event, fCommandControl.getProperties());
+        	ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(dmc, ICommandControlDMContext.class);
+        	if (controlDmc != null) {
+        		MIEvent<?> event = new MIDetachedEvent(controlDmc, token);
+        		fCommandControl.getSession().dispatchEvent(event, fCommandControl.getProperties());
+        	}
         }
     }
 

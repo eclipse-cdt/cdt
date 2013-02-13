@@ -15,6 +15,7 @@ import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
 
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
@@ -28,10 +29,14 @@ import org.eclipse.core.runtime.CoreException;
  * Performs evaluation of a compound statement expression. Most but not all methods
  * delegate to the evaluation of the last expression in the compound one.
  */
-public class EvalCompound extends CPPEvaluation {
+public class EvalCompound extends CPPDependentEvaluation {
 	private final ICPPEvaluation fDelegate;
 
-	public EvalCompound(ICPPEvaluation delegate) {
+	public EvalCompound(ICPPEvaluation delegate, IASTNode pointOfDefinition) {
+		this(delegate, findEnclosingTemplate(pointOfDefinition));
+	}
+	public EvalCompound(ICPPEvaluation delegate, IBinding templateDefinition) {
+		super(templateDefinition);
 		fDelegate= delegate;
 	}
 
@@ -78,11 +83,13 @@ public class EvalCompound extends CPPEvaluation {
 	public void marshal(ITypeMarshalBuffer buffer, boolean includeValue) throws CoreException {
 		buffer.putByte(ITypeMarshalBuffer.EVAL_COMPOUND);
 		buffer.marshalEvaluation(fDelegate, includeValue);
+		marshalTemplateDefinition(buffer);
 	}
 
 	public static ISerializableEvaluation unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
 		ICPPEvaluation arg= (ICPPEvaluation) buffer.unmarshalEvaluation();
-		return new EvalCompound(arg);
+		IBinding templateDefinition= buffer.unmarshalBinding();
+		return new EvalCompound(arg, templateDefinition);
 	}
 
 	@Override
@@ -91,7 +98,7 @@ public class EvalCompound extends CPPEvaluation {
 		ICPPEvaluation delegate = fDelegate.instantiate(tpMap, packOffset, within, maxdepth, point);
 		if (delegate == fDelegate)
 			return this;
-		return new EvalCompound(delegate);
+		return new EvalCompound(delegate, getTemplateDefinition());
 	}
 
 	@Override
@@ -100,7 +107,7 @@ public class EvalCompound extends CPPEvaluation {
 		ICPPEvaluation delegate = fDelegate.computeForFunctionCall(parameterMap, maxdepth, point);
 		if (delegate == fDelegate)
 			return this;
-		return new EvalCompound(delegate);
+		return new EvalCompound(delegate, getTemplateDefinition());
 	}
 
 	@Override

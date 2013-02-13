@@ -28,6 +28,11 @@ public abstract class CPPEvaluation implements ICPPEvaluation {
 	}
 
 	@Override
+	public IBinding getTemplateDefinition() {	
+		return null;
+	}
+	
+	@Override
 	public char[] getSignature() {
 		SignatureBuilder buf = new SignatureBuilder();
 		try {

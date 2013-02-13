@@ -43,7 +43,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.core.runtime.CoreException;
 
-public class EvalBinding extends CPPEvaluation {
+public class EvalBinding extends CPPDependentEvaluation {
 	/**
 	 * The function owning the parameter if the binding is a function parameter, otherwise
 	 * {@code null}. May be computed lazily and remains {@code null} until computed.
@@ -68,14 +68,22 @@ public class EvalBinding extends CPPEvaluation {
 	private boolean fIsTypeDependent;
 	private boolean fCheckedIsTypeDependent;
 
-	public EvalBinding(IBinding binding, IType type) {
+	public EvalBinding(IBinding binding, IType type, IASTNode pointOfDefinition) {
+		this(binding, type, findEnclosingTemplate(pointOfDefinition));
+	}
+	public EvalBinding(IBinding binding, IType type, IBinding templateDefinition) {
+		super(templateDefinition);
 		fParameterPosition = -1;
 		fBinding= binding;
 		fType= type;
 		fFixedType= type != null;
 	}
 
-	public EvalBinding(ICPPFunction parameterOwner, int parameterPosition, IType type) {
+	public EvalBinding(ICPPFunction parameterOwner, int parameterPosition, IType type, IASTNode pointOfDefinition) {
+		this(parameterOwner, parameterPosition, type, findEnclosingTemplate(pointOfDefinition));
+	}
+	public EvalBinding(ICPPFunction parameterOwner, int parameterPosition, IType type, IBinding templateDefinition) {
+		super(templateDefinition);
 		fParameterOwner = parameterOwner;
 		fParameterPosition = parameterPosition;
 		fType= type;
@@ -298,6 +306,7 @@ public class EvalBinding extends CPPEvaluation {
 			buffer.marshalBinding(fBinding);
 		}
 		buffer.marshalType(fFixedType ? fType : null);
+		marshalTemplateDefinition(buffer);
 	}
 
 	public static ISerializableEvaluation unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
@@ -305,11 +314,13 @@ public class EvalBinding extends CPPEvaluation {
 			ICPPFunction parameterOwner= (ICPPFunction) buffer.unmarshalBinding();
 			int parameterPosition= buffer.getInt();
 			IType type= buffer.unmarshalType();
-			return new EvalBinding(parameterOwner, parameterPosition, type);
+			IBinding templateDefinition= buffer.unmarshalBinding();
+			return new EvalBinding(parameterOwner, parameterPosition, type, templateDefinition);
 		} else {
 			IBinding binding= buffer.unmarshalBinding();
 			IType type= buffer.unmarshalType();
-			return new EvalBinding(binding, type);
+			IBinding templateDefinition= buffer.unmarshalBinding();
+			return new EvalBinding(binding, type, templateDefinition);
 		}
 	}
 
@@ -333,7 +344,7 @@ public class EvalBinding extends CPPEvaluation {
 		} else {
 			IBinding instantiatedBinding = instantiateBinding(origBinding, tpMap, packOffset, within, maxdepth, point);
 			if (instantiatedBinding != origBinding)
-				return new EvalBinding(instantiatedBinding, null);
+				return new EvalBinding(instantiatedBinding, null, getTemplateDefinition());
 		}
 		return this;
 	}

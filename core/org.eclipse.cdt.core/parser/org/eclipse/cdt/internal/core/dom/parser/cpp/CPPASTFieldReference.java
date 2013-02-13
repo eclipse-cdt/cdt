@@ -260,7 +260,7 @@ public class CPPASTFieldReference extends ASTNode
 				if (binding instanceof IProblemBinding || binding instanceof IType || binding instanceof ICPPConstructor) 
 					return EvalFixed.INCOMPLETE;
 
-				return new EvalMemberAccess(ownerType, ownerEval.getValueCategory(this), binding, isDeref);
+				return new EvalMemberAccess(ownerType, ownerEval.getValueCategory(this), binding, isDeref, this);
 			}
 		}
 
@@ -283,7 +283,7 @@ public class CPPASTFieldReference extends ASTNode
 				return EvalFixed.INCOMPLETE;
 			}
 		}		
-		return new EvalID(ownerEval, qualifier, name.getSimpleID(), false, true, args);
+		return new EvalID(ownerEval, qualifier, name.getSimpleID(), false, true, args, this);
 	}
 
 	@Override

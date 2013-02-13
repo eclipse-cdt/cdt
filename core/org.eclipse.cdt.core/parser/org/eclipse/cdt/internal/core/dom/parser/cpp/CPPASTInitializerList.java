@@ -172,6 +172,6 @@ public class CPPASTInitializerList extends ASTNode implements ICPPASTInitializer
 		for (int i = 0; i < evals.length; i++) {
 			evals[i]= clauses[i].getEvaluation();
 		}
-		return new EvalInitList(evals);
+		return new EvalInitList(evals, this);
 	}
 }

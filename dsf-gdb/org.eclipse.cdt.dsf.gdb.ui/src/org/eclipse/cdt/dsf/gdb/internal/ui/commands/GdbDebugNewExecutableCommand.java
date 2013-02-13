@@ -18,10 +18,12 @@ import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.model.IDebugNewExecutableHandler;
+import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
@@ -29,8 +31,8 @@ import org.eclipse.cdt.dsf.debug.service.IProcesses;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
-import org.eclipse.cdt.dsf.gdb.internal.ui.launching.NewExecutableInfo;
 import org.eclipse.cdt.dsf.gdb.internal.ui.launching.NewExecutableDialog;
+import org.eclipse.cdt.dsf.gdb.internal.ui.launching.NewExecutableInfo;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
 import org.eclipse.cdt.dsf.gdb.service.IGDBBackend;
 import org.eclipse.cdt.dsf.gdb.service.SessionType;
@@ -43,12 +45,11 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.IRequest;
-import org.eclipse.debug.core.commands.AbstractDebugCommand;
 import org.eclipse.debug.core.commands.IEnabledStateRequest;
 import org.eclipse.jface.window.Window;
 import org.eclipse.ui.progress.UIJob;
 
-public class GdbDebugNewExecutableCommand extends AbstractDebugCommand implements IDebugNewExecutableHandler {
+public class GdbDebugNewExecutableCommand extends RefreshableDebugCommand implements IDebugNewExecutableHandler {
 
 	private class PromptJob extends UIJob {
 
@@ -170,8 +171,18 @@ public class GdbDebugNewExecutableCommand extends AbstractDebugCommand implement
 		Query<Boolean> query = new Query<Boolean>() {
 
 			@Override
-			protected void execute( DataRequestMonitor<Boolean> rm ) {
-				debugNewExecutable( rm );
+			protected void execute( final DataRequestMonitor<Boolean> rm ) {
+				debugNewExecutable( new DataRequestMonitor<Boolean>( ImmediateExecutor.getInstance(), rm ) {
+       				@Override
+       				@ConfinedToDsfExecutor( "fExecutor" )
+       				protected void handleCompleted() {
+       					if ( isSuccess()) {
+       						setData( rm.getData() );
+       					}
+       					rm.done();
+       					updateEnablement();
+       				}
+       			} );
 			}
 		};
 		try {

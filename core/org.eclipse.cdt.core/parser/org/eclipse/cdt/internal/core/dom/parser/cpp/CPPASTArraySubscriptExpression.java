@@ -197,7 +197,7 @@ public class CPPASTArraySubscriptExpression extends ASTNode
 	private ICPPEvaluation computeEvaluation() {
 		if (arrayExpression == null || subscriptExp == null)
 			return EvalFixed.INCOMPLETE;
-		return new EvalBinary(EvalBinary.op_arrayAccess, arrayExpression.getEvaluation(), subscriptExp.getEvaluation());
+		return new EvalBinary(EvalBinary.op_arrayAccess, arrayExpression.getEvaluation(), subscriptExp.getEvaluation(), this);
 	}
     
     @Override

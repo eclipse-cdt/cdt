@@ -100,9 +100,10 @@ public class CPPASTSimpleTypeConstructorExpression extends ASTNode implements
 				for (int i = 0; i < a.length; i++) {
 					args[i]= ((ICPPASTInitializerClause) a[i]).getEvaluation();
 				}
-				fEvaluation= new EvalTypeId(type, args);
+				fEvaluation= new EvalTypeId(type, this, args);
 			} else if (fInitializer instanceof ICPPASTInitializerList) {
-				fEvaluation= new EvalTypeId(type, ((ICPPASTInitializerList) fInitializer).getEvaluation());
+				fEvaluation= new EvalTypeId(type, this,
+						((ICPPASTInitializerList) fInitializer).getEvaluation());
 			} else {
 				fEvaluation= EvalFixed.INCOMPLETE;
 			}

@@ -94,7 +94,7 @@ public class CPPTemplateNonTypeArgument implements ICPPTemplateArgument {
 					EvalFixed fixed = (EvalFixed) fEvaluation;
 					evaluation = new EvalFixed(t, fixed.getValueCategory(), fixed.getValue());
 				} else {
-					evaluation = new EvalTypeId(t, fEvaluation);
+					evaluation = new EvalTypeId(t, fEvaluation.getTemplateDefinition(), fEvaluation);
 				}
 				return new CPPTemplateNonTypeArgument(evaluation, null);
 			}

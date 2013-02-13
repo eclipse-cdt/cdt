@@ -56,6 +56,7 @@ import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator.SizeAndAlignment;
@@ -234,10 +235,11 @@ public class Value implements IValue {
 	}
 
 	/**
-	 * Creates a value representing the given template parameter.
+	 * Creates a value representing the given template parameter
+	 * in the given template.
 	 */
-	public static IValue create(ICPPTemplateNonTypeParameter tntp) {
-		EvalBinding eval = new EvalBinding(tntp, null);
+	public static IValue create(ICPPTemplateDefinition template, ICPPTemplateNonTypeParameter tntp) {
+		EvalBinding eval = new EvalBinding(tntp, null, template);
 		return new Value(null, eval);
 	}
 
@@ -284,7 +286,7 @@ public class Value implements IValue {
 		}
 		ICPPEvaluation arg1 = value.getEvaluation();
 		EvalFixed arg2 = new EvalFixed(INT_TYPE, ValueCategory.PRVALUE, create(increment));
-		return create(new EvalBinary(IASTBinaryExpression.op_plus, arg1, arg2));
+		return create(new EvalBinary(IASTBinaryExpression.op_plus, arg1, arg2, arg1.getTemplateDefinition()));
 	}
 
 	private static Number applyUnaryTypeIdOperator(int operator, IType type, IASTNode point) {

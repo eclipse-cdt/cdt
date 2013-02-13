@@ -90,7 +90,7 @@ public class TemplateArgumentDeduction {
 			CPPTemplateParameterMap map, IASTNode point) throws DOMException {
 		final ICPPTemplateParameter[] tmplParams = template.getTemplateParameters();
 		
-		if (tmplArgs != null && !addExplicitArguments(tmplParams, tmplArgs, map, point))
+		if (tmplArgs != null && !addExplicitArguments(template, tmplParams, tmplArgs, map, point))
 			return null;
 				
 		if (!deduceFromFunctionArgs(template, fnArgs, argIsLValue, map, point)) 
@@ -315,7 +315,7 @@ public class TemplateArgumentDeduction {
 	static ICPPTemplateArgument[] deduceForAddressOf(ICPPFunctionTemplate template,
 			ICPPTemplateArgument[] tmplArgs, IFunctionType arg, CPPTemplateParameterMap map, IASTNode point) throws DOMException {
 		final ICPPTemplateParameter[] tmplParams = template.getTemplateParameters();
-		if (!addExplicitArguments(tmplParams, tmplArgs, map, point))
+		if (!addExplicitArguments(template, tmplParams, tmplArgs, map, point))
 			return null;
 				
 		IType par= template.getType();
@@ -387,7 +387,7 @@ public class TemplateArgumentDeduction {
 			ICPPTemplateArgument[] args, ICPPFunctionType ftype, CPPTemplateParameterMap map, IASTNode point) throws DOMException {
 		final ICPPTemplateParameter[] tmplParams = template.getTemplateParameters();
 		
-		if (!addExplicitArguments(tmplParams, args, map, point))
+		if (!addExplicitArguments(template, tmplParams, args, map, point))
 			return null;
 
 		IType a= SemanticUtil.getSimplifiedType(ftype);
@@ -479,7 +479,7 @@ public class TemplateArgumentDeduction {
 	/**
 	 * Adds the explicit arguments to the map.
 	 */
-	public static boolean addExplicitArguments(final ICPPTemplateParameter[] tmplParams,
+	public static boolean addExplicitArguments(ICPPFunctionTemplate template, final ICPPTemplateParameter[] tmplParams,
 			ICPPTemplateArgument[] tmplArgs, CPPTemplateParameterMap map, IASTNode point) {
 		tmplArgs= SemanticUtil.getSimplifiedArguments(tmplArgs);
 		ICPPTemplateParameter tmplParam= null;
@@ -495,7 +495,7 @@ public class TemplateArgumentDeduction {
 				}
 			}
 			ICPPTemplateArgument tmplArg= tmplArgs[i];
-			tmplArg= CPPTemplates.matchTemplateParameterAndArgument(tmplParam, tmplArg, map, point);
+			tmplArg= CPPTemplates.matchTemplateParameterAndArgument(template, tmplParam, tmplArg, map, point);
 			if (tmplArg == null)
 				return false;
 	

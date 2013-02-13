@@ -275,7 +275,7 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
 		if (operand1 == null || operand2 == null)
 			return EvalFixed.INCOMPLETE;
 		
-		return new EvalBinary(op, operand1.getEvaluation(), operand2.getEvaluation());
+		return new EvalBinary(op, operand1.getEvaluation(), operand2.getEvaluation(), this);
 	}
     
     @Override

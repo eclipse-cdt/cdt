@@ -15,6 +15,7 @@ import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
 
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
@@ -28,10 +29,14 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * Performs evaluation of an expression.
  */
-public class EvalInitList extends CPPEvaluation {
+public class EvalInitList extends CPPDependentEvaluation {
 	private final ICPPEvaluation[] fClauses;
 
-	public EvalInitList(ICPPEvaluation[] clauses) {
+	public EvalInitList(ICPPEvaluation[] clauses, IASTNode pointOfDefinition) {
+		this(clauses, findEnclosingTemplate(pointOfDefinition));
+	}
+	public EvalInitList(ICPPEvaluation[] clauses, IBinding templateDefinition) {
+		super(templateDefinition);
 		fClauses= clauses;
 	}
 
@@ -91,6 +96,7 @@ public class EvalInitList extends CPPEvaluation {
 		for (ICPPEvaluation arg : fClauses) {
 			buffer.marshalEvaluation(arg, includeValue);
 		}
+		marshalTemplateDefinition(buffer);
 	}
 
 	public static ISerializableEvaluation unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
@@ -99,7 +105,8 @@ public class EvalInitList extends CPPEvaluation {
 		for (int i = 0; i < args.length; i++) {
 			args[i]= (ICPPEvaluation) buffer.unmarshalEvaluation();
 		}
-		return new EvalInitList(args);
+		IBinding templateDefinition= buffer.unmarshalBinding();
+		return new EvalInitList(args, templateDefinition);
 	}
 
 	@Override
@@ -118,7 +125,7 @@ public class EvalInitList extends CPPEvaluation {
 		}
 		if (clauses == fClauses)
 			return this;
-		return new EvalInitList(clauses);
+		return new EvalInitList(clauses, getTemplateDefinition());
 	}
 
 	@Override
@@ -137,7 +144,7 @@ public class EvalInitList extends CPPEvaluation {
 		}
 		if (clauses == fClauses)
 			return this;
-		return new EvalInitList(clauses);
+		return new EvalInitList(clauses, getTemplateDefinition());
 	}
 
 	@Override

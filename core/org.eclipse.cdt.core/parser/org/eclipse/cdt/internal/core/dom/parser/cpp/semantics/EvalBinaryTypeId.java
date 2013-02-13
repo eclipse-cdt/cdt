@@ -16,6 +16,7 @@ import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryTypeIdExpression.Operator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
@@ -31,14 +32,18 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * Performs evaluation of an expression.
  */
-public class EvalBinaryTypeId extends CPPEvaluation {
+public class EvalBinaryTypeId extends CPPDependentEvaluation {
 	private final Operator fOperator;
 	private final IType fType1, fType2;
 
 	private boolean fCheckedValueDependent;
 	private boolean fIsValueDependent;
 
-	public EvalBinaryTypeId(Operator kind, IType type1, IType type2) {
+	public EvalBinaryTypeId(Operator kind, IType type1, IType type2, IASTNode pointOfDefinition) {
+		this(kind, type1, type2, findEnclosingTemplate(pointOfDefinition));		
+	}
+	public EvalBinaryTypeId(Operator kind, IType type1, IType type2, IBinding templateDefinition) {
+		super(templateDefinition);
 		fOperator= kind;
 		fType1= type1;
 		fType2= type2;
@@ -108,13 +113,15 @@ public class EvalBinaryTypeId extends CPPEvaluation {
 		buffer.putByte((byte) fOperator.ordinal());
 		buffer.marshalType(fType1);
 		buffer.marshalType(fType2);
+		marshalTemplateDefinition(buffer);
 	}
 
 	public static ISerializableEvaluation unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
 		int op= buffer.getByte();
 		IType arg1= buffer.unmarshalType();
 		IType arg2= buffer.unmarshalType();
-		return new EvalBinaryTypeId(Operator.values()[op], arg1, arg2);
+		IBinding templateDefinition= buffer.unmarshalBinding();
+		return new EvalBinaryTypeId(Operator.values()[op], arg1, arg2, templateDefinition);
 	}
 
 	@Override
@@ -124,7 +131,7 @@ public class EvalBinaryTypeId extends CPPEvaluation {
 		IType type2 = CPPTemplates.instantiateType(fType2, tpMap, packOffset, within, point);
 		if (type1 == fType1 && type2 == fType2)
 			return this;
-		return new EvalBinaryTypeId(fOperator, type1, type2);
+		return new EvalBinaryTypeId(fOperator, type1, type2, getTemplateDefinition());
 	}
 
 	@Override

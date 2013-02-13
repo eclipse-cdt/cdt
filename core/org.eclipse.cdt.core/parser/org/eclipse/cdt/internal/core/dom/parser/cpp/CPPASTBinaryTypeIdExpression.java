@@ -128,7 +128,7 @@ public class CPPASTBinaryTypeIdExpression extends ASTNode implements ICPPASTExpr
 				if (t1 == null || t2 == null) {
 					fEvaluation= EvalFixed.INCOMPLETE;
 				} else {
-					fEvaluation= new EvalBinaryTypeId(fOperator, t1, t2);
+					fEvaluation= new EvalBinaryTypeId(fOperator, t1, t2, this);
 				}
 			}
 		}

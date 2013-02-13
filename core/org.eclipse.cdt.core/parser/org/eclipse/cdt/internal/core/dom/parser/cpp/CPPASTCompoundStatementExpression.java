@@ -42,7 +42,7 @@ public class CPPASTCompoundStatementExpression extends ASTNode implements IGNUAS
 			if (statements.length > 0) {
 				IASTStatement st = statements[statements.length - 1];
 				if (st instanceof IASTExpressionStatement) {
-					fEval= new EvalCompound(((ICPPASTExpression) ((IASTExpressionStatement) st).getExpression()).getEvaluation());
+					fEval= new EvalCompound(((ICPPASTExpression) ((IASTExpressionStatement) st).getExpression()).getEvaluation(), this);
 				}
 			}
 			if (fEval == null)

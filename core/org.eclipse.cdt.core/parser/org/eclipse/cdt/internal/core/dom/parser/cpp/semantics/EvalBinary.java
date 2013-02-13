@@ -46,6 +46,7 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -70,7 +71,7 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * Performs evaluation of an expression.
  */
-public class EvalBinary extends CPPEvaluation {
+public class EvalBinary extends CPPDependentEvaluation {
 	public final static int op_arrayAccess= Byte.MAX_VALUE;
 	private final int fOperator;
 
@@ -80,7 +81,11 @@ public class EvalBinary extends CPPEvaluation {
 	private ICPPFunction fOverload= CPPFunction.UNINITIALIZED_FUNCTION;
 	private IType fType;
 
-	public EvalBinary(int operator, ICPPEvaluation arg1, ICPPEvaluation arg2) {
+	public EvalBinary(int operator, ICPPEvaluation arg1, ICPPEvaluation arg2, IASTNode pointOfDefinition) {
+		this(operator, arg1, arg2, findEnclosingTemplate(pointOfDefinition));
+	}
+	public EvalBinary(int operator, ICPPEvaluation arg1, ICPPEvaluation arg2, IBinding templateDefinition) {
+		super(templateDefinition);
 		fOperator= operator;
 		fArg1= arg1;
 		fArg2= arg2;
@@ -234,12 +239,14 @@ public class EvalBinary extends CPPEvaluation {
 			IType type = fArg1.getTypeOrFunctionSet(point);
 			type= SemanticUtil.getNestedType(type, TDEF | REF | CVTYPE);
     		if (type instanceof ICPPClassType) {
-    			return CPPSemantics.findOverloadedBinaryOperator(point, OverloadableOperator.BRACKET, fArg1, fArg2);
+    			return CPPSemantics.findOverloadedBinaryOperator(point, getTemplateDefinitionScope(), 
+    					OverloadableOperator.BRACKET, fArg1, fArg2);
     		}
 		} else {
 			final OverloadableOperator op = OverloadableOperator.fromBinaryExpression(fOperator);
 			if (op != null) {
-				return CPPSemantics.findOverloadedBinaryOperator(point, op, fArg1, fArg2);
+				return CPPSemantics.findOverloadedBinaryOperator(point, getTemplateDefinitionScope(),
+						op, fArg1, fArg2);
 			}
 		}
     	return null;
@@ -328,13 +335,15 @@ public class EvalBinary extends CPPEvaluation {
 		buffer.putByte((byte) fOperator);
 		buffer.marshalEvaluation(fArg1, includeValue);
 		buffer.marshalEvaluation(fArg2, includeValue);
+		marshalTemplateDefinition(buffer);
 	}
 
 	public static ISerializableEvaluation unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
 		int op= buffer.getByte();
 		ICPPEvaluation arg1= (ICPPEvaluation) buffer.unmarshalEvaluation();
 		ICPPEvaluation arg2= (ICPPEvaluation) buffer.unmarshalEvaluation();
-		return new EvalBinary(op, arg1, arg2);
+		IBinding templateDefinition= buffer.unmarshalBinding();
+		return new EvalBinary(op, arg1, arg2, templateDefinition);
 	}
 
 	@Override
@@ -344,7 +353,7 @@ public class EvalBinary extends CPPEvaluation {
 		ICPPEvaluation arg2 = fArg2.instantiate(tpMap, packOffset, within, maxdepth, point);
 		if (arg1 == fArg1 && arg2 == fArg2)
 			return this;
-		return new EvalBinary(fOperator, arg1, arg2);
+		return new EvalBinary(fOperator, arg1, arg2, getTemplateDefinition());
 	}
 
 	@Override
@@ -354,7 +363,7 @@ public class EvalBinary extends CPPEvaluation {
 		ICPPEvaluation arg2 = fArg2.computeForFunctionCall(parameterMap, maxdepth, point);
 		if (arg1 == fArg1 && arg2 == fArg2)
 			return this;
-		return new EvalBinary(fOperator, arg1, arg2);
+		return new EvalBinary(fOperator, arg1, arg2, getTemplateDefinition());
 	}
 
 	@Override

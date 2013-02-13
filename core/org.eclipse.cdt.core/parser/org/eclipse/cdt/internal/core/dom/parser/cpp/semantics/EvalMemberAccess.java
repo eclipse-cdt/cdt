@@ -54,7 +54,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics.LookupMode;
 import org.eclipse.core.runtime.CoreException;
 
-public class EvalMemberAccess extends CPPEvaluation {
+public class EvalMemberAccess extends CPPDependentEvaluation {
 	private final IType fOwnerType;
 	private final IBinding fMember;
 	private final ValueCategory fOwnerValueCategory;
@@ -67,7 +67,12 @@ public class EvalMemberAccess extends CPPEvaluation {
 	private boolean fCheckedIsValueDependent;
 
 	public EvalMemberAccess(IType ownerType, ValueCategory ownerValueCat, IBinding member,
-			boolean isPointerDeref) {
+			boolean isPointerDeref, IASTNode pointOfDefinition) {
+		this(ownerType, ownerValueCat, member, isPointerDeref, findEnclosingTemplate(pointOfDefinition));
+	}
+	public EvalMemberAccess(IType ownerType, ValueCategory ownerValueCat, IBinding member,
+			boolean isPointerDeref, IBinding templateDefinition) {
+		super(templateDefinition);
 		fOwnerType= ownerType;
 		fOwnerValueCategory= ownerValueCat;
 		fMember= member;
@@ -176,7 +181,7 @@ public class EvalMemberAccess extends CPPEvaluation {
     		 */
 
     		ICPPEvaluation[] args= { new EvalFixed(type, LVALUE, Value.UNKNOWN) };
-			ICPPFunction op= CPPSemantics.findOverloadedOperator(point, args, classType,
+			ICPPFunction op= CPPSemantics.findOverloadedOperator(point, null, args, classType,
 					OverloadableOperator.ARROW, LookupMode.NO_GLOBALS);
     		if (op == null)
     			break;
@@ -302,6 +307,7 @@ public class EvalMemberAccess extends CPPEvaluation {
 		buffer.putByte((byte) firstByte);
 		buffer.marshalType(fOwnerType);
 		buffer.marshalBinding(fMember);
+		marshalTemplateDefinition(buffer);
 	}
 
 	public static ISerializableEvaluation unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
@@ -317,7 +323,8 @@ public class EvalMemberAccess extends CPPEvaluation {
 
 		IType ownerType= buffer.unmarshalType();
 		IBinding member= buffer.unmarshalBinding();
-		return new EvalMemberAccess(ownerType, ownerValueCat, member, isDeref);
+		IBinding templateDefinition= buffer.unmarshalBinding();
+		return new EvalMemberAccess(ownerType, ownerValueCat, member, isDeref, templateDefinition);
 	}
 
 	@Override
@@ -331,7 +338,7 @@ public class EvalMemberAccess extends CPPEvaluation {
 		if (ownerType instanceof ICPPClassSpecialization) {
 			member = CPPTemplates.createSpecialization((ICPPClassSpecialization) ownerType, fMember, point);
 		}
-		return new EvalMemberAccess(ownerType, fOwnerValueCategory, member, fIsPointerDeref);
+		return new EvalMemberAccess(ownerType, fOwnerValueCategory, member, fIsPointerDeref, getTemplateDefinition());
 	}
 
 	@Override

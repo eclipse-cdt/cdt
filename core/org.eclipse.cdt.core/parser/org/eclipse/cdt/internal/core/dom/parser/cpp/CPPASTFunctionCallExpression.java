@@ -303,7 +303,7 @@ public class CPPASTFunctionCallExpression extends ASTNode
 		for (int i = 1; i < args.length; i++) {
 			args[i]= ((ICPPASTInitializerClause) fArguments[i - 1]).getEvaluation();
 		}
-		return new EvalFunctionCall(args);
+		return new EvalFunctionCall(args, this);
 	}
 	
 	private ICPPEvaluation checkForExplicitTypeConversion() {
@@ -315,7 +315,7 @@ public class CPPASTFunctionCallExpression extends ASTNode
 				for (int i = 0; i < args.length; i++) {
 					args[i]= ((ICPPASTInitializerClause) fArguments[i]).getEvaluation();
 				}
-				return new EvalTypeId((IType) b, args);
+				return new EvalTypeId((IType) b, this, args);
 			}
 		}
 		return null;

@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
@@ -104,4 +105,11 @@ public interface ICPPEvaluation extends ISerializableEvaluation {
 	 * evaluations. 
 	 */
 	boolean referencesTemplateParameter();
+	
+	/**
+	 * If the evaluation is dependent (or instantiated from a dependent
+	 * evaluation), returns the template definition in which the
+	 * evaluation occurs. Otherwise returns null. 
+	 */
+	IBinding getTemplateDefinition();
 }

@@ -178,7 +178,7 @@ public class CPPASTExpressionList extends ASTNode implements ICPPASTExpressionLi
 		for (int i = 0; i < evals.length; i++) {
 			evals[i]= ((ICPPASTExpression) exprs[i]).getEvaluation();
 		}
-		return new EvalComma(evals);
+		return new EvalComma(evals, this);
 	}
 
     @Override

@@ -177,6 +177,8 @@ public class ErrorParser extends MarkerGenerator implements IErrorParser {
 						return AutotoolsProblemMarkerInfo.Type.FILE;
 					if (typeString.equals("lib"))
 						return AutotoolsProblemMarkerInfo.Type.LIB;
+					if (typeString.equals("func"))
+						return AutotoolsProblemMarkerInfo.Type.FUNC;
 
 					return null;
 				}

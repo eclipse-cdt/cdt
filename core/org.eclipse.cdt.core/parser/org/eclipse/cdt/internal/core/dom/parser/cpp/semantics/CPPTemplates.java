@@ -231,7 +231,7 @@ public class CPPTemplates {
 				}
 				if (i < numArgs) {
 					ICPPTemplateArgument arg= arguments[i];
-					ICPPTemplateArgument newArg = matchTemplateParameterAndArgument(param, arg, map, point);
+					ICPPTemplateArgument newArg = matchTemplateParameterAndArgument(template, param, arg, map, point);
 					if (newArg == null)
 						return createProblem(template, IProblemBinding.SEMANTIC_INVALID_TEMPLATE_ARGUMENTS, point);
 					if (newArg != arg) {
@@ -499,12 +499,13 @@ public class CPPTemplates {
 		if (ct instanceof ICPPClassTemplatePartialSpecialization) {
 			args= ((ICPPClassTemplatePartialSpecialization) ct).getTemplateArguments();
 		} else {
-			args = templateParametersAsArguments(ct.getTemplateParameters());
+			args = templateParametersAsArguments(ct);
 		}
 		return new CPPDeferredClassInstance(ct, args, (ICPPScope) ct.getCompositeScope());
 	}
 
-	public static ICPPTemplateArgument[] templateParametersAsArguments(ICPPTemplateParameter[] tpars) {
+	public static ICPPTemplateArgument[] templateParametersAsArguments(ICPPClassTemplate template) {
+		ICPPTemplateParameter[] tpars = template.getTemplateParameters();
 		ICPPTemplateArgument[] args;
 		args = new ICPPTemplateArgument[tpars.length];
 		for (int i = 0; i < tpars.length; i++) {
@@ -518,7 +519,7 @@ public class CPPTemplates {
 			} else if (tp instanceof ICPPTemplateNonTypeParameter) {
 				// Non-type template parameter pack already has type 'ICPPParameterPackType'
 				final ICPPTemplateNonTypeParameter nttp = (ICPPTemplateNonTypeParameter) tp;
-				args[i] = new CPPTemplateNonTypeArgument(Value.create(nttp), nttp.getType());
+				args[i] = new CPPTemplateNonTypeArgument(Value.create(template, nttp), nttp.getType());
 			} else {
 				assert false;
 			}
@@ -2274,8 +2275,8 @@ public class CPPTemplates {
 		return arg != null && isValidType(arg.isTypeValue() ? arg.getTypeValue() : arg.getTypeOfNonTypeValue());
 	}
 
-	static ICPPTemplateArgument matchTemplateParameterAndArgument(ICPPTemplateParameter param,
-			ICPPTemplateArgument arg, CPPTemplateParameterMap map, IASTNode point) {
+	static ICPPTemplateArgument matchTemplateParameterAndArgument(ICPPTemplateDefinition template, 
+			ICPPTemplateParameter param, ICPPTemplateArgument arg, CPPTemplateParameterMap map, IASTNode point) {
 		if (arg == null || !isValidType(arg.getTypeValue())) {
 			return null;
 		}
@@ -2331,7 +2332,7 @@ public class CPPTemplates {
 				if (argType instanceof ICPPUnknownType) {
 					return new CPPTemplateNonTypeArgument(arg.getNonTypeValue(), pType);
 				}
-				return convertNonTypeTemplateArgument(pType, arg, point);
+				return convertNonTypeTemplateArgument(template, pType, arg, point);
 			} catch (DOMException e) {
 				return null;
 			}
@@ -2399,7 +2400,8 @@ public class CPPTemplates {
 	 * specified in 14.3.2 - 5.
 	 * @throws DOMException
 	 */
-	private static ICPPTemplateArgument convertNonTypeTemplateArgument(final IType paramType, ICPPTemplateArgument arg, IASTNode point) throws DOMException {
+	private static ICPPTemplateArgument convertNonTypeTemplateArgument(ICPPTemplateDefinition template, 
+			final IType paramType, ICPPTemplateArgument arg, IASTNode point) throws DOMException {
 		//14.1s8 function to pointer and array to pointer conversions
 		IType a= arg.getTypeOfNonTypeValue();
 		IType p;
@@ -2422,7 +2424,7 @@ public class CPPTemplates {
 				for (ICPPFunction f : functionSet.getBindings()) {
 					if (p.isSameType(f.getType())) {
 						functionSet.applySelectedFunction(f);
-						return new CPPTemplateNonTypeArgument(new EvalBinding(f, null), point);
+						return new CPPTemplateNonTypeArgument(new EvalBinding(f, null, template), point);
 					}
 				}
 			}

@@ -44,6 +44,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFunctionCall;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalTypeId;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.LookupData;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 public class CPPASTFunctionCallExpression extends ASTNode
 		implements ICPPASTFunctionCallExpression, IASTAmbiguityParent {
@@ -303,7 +304,7 @@ public class CPPASTFunctionCallExpression extends ASTNode
 		for (int i = 1; i < args.length; i++) {
 			args[i]= ((ICPPASTInitializerClause) fArguments[i - 1]).getEvaluation();
 		}
-		return new EvalFunctionCall(args);
+		return new EvalFunctionCall(args, SemanticUtil.findEnclosingTemplate(this));
 	}
 	
 	private ICPPEvaluation checkForExplicitTypeConversion() {
@@ -315,7 +316,7 @@ public class CPPASTFunctionCallExpression extends ASTNode
 				for (int i = 0; i < args.length; i++) {
 					args[i]= ((ICPPASTInitializerClause) fArguments[i]).getEvaluation();
 				}
-				return new EvalTypeId((IType) b, args);
+				return new EvalTypeId((IType) b, SemanticUtil.findEnclosingTemplate(this), args);
 			}
 		}
 		return null;

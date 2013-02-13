@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
@@ -47,7 +48,7 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * Performs evaluation of an expression.
  */
-public class EvalConditional extends CPPEvaluation {
+public class EvalConditional extends CPPDependentEvaluation {
 	private final ICPPEvaluation fCondition, fPositive, fNegative;
 	private final boolean fPositiveThrows, fNegativeThrows;
 
@@ -56,7 +57,8 @@ public class EvalConditional extends CPPEvaluation {
 	private ICPPFunction fOverload;
 
 	public EvalConditional(ICPPEvaluation condition, ICPPEvaluation positive, ICPPEvaluation negative,
-			boolean positiveThrows, boolean negativeThrows) {
+			boolean positiveThrows, boolean negativeThrows, IBinding templateDefinition) {
+		super(templateDefinition);
     	// Gnu-extension: Empty positive expression is replaced by condition.
 		fCondition= condition;
 		fPositive= positive;
@@ -229,7 +231,7 @@ public class EvalConditional extends CPPEvaluation {
 
 		// 5.16-5: At least one class type but no conversion
 		if (isClassType2 || isClassType3) {
-			fOverload = CPPSemantics.findOverloadedConditionalOperator(point, positive, fNegative);
+			fOverload = CPPSemantics.findOverloadedConditionalOperator(getLookupContext(point), positive, fNegative);			
 			if (fOverload != null) {
 				fType= ExpressionTypes.typeFromFunctionCall(fOverload);
 			} else {
@@ -313,6 +315,7 @@ public class EvalConditional extends CPPEvaluation {
 		buffer.marshalEvaluation(fCondition, includeValue);
 		buffer.marshalEvaluation(fPositive, includeValue);
 		buffer.marshalEvaluation(fNegative, includeValue);
+		marshalTemplateDefinition(buffer);
 	}
 
 	public static ISerializableEvaluation unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
@@ -321,7 +324,8 @@ public class EvalConditional extends CPPEvaluation {
 		ICPPEvaluation cond= (ICPPEvaluation) buffer.unmarshalEvaluation();
 		ICPPEvaluation pos= (ICPPEvaluation) buffer.unmarshalEvaluation();
 		ICPPEvaluation neg= (ICPPEvaluation) buffer.unmarshalEvaluation();
-		return new EvalConditional(cond, pos, neg, pth, nth);
+		IBinding templateDefinition= buffer.unmarshalBinding();
+		return new EvalConditional(cond, pos, neg, pth, nth, templateDefinition);
 	}
 
 	@Override
@@ -333,7 +337,7 @@ public class EvalConditional extends CPPEvaluation {
 		ICPPEvaluation negative = fNegative.instantiate(tpMap, packOffset, within, maxdepth, point);
 		if (condition == fCondition && positive == fPositive && negative == fNegative)
 			return this;
-		return new EvalConditional(condition, positive, negative, fPositiveThrows, fNegativeThrows);
+		return new EvalConditional(condition, positive, negative, fPositiveThrows, fNegativeThrows, getTemplateDefinition());
 	}
 
 	@Override
@@ -345,7 +349,7 @@ public class EvalConditional extends CPPEvaluation {
 		ICPPEvaluation negative = fNegative.computeForFunctionCall(parameterMap, maxdepth, point);
 		if (condition == fCondition && positive == fPositive && negative == fNegative)
 			return this;
-		return new EvalConditional(condition, positive, negative, fPositiveThrows, fNegativeThrows);
+		return new EvalConditional(condition, positive, negative, fPositiveThrows, fNegativeThrows, getTemplateDefinition());
 	}
 
 	@Override

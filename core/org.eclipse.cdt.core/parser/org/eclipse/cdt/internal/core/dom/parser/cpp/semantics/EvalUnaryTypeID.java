@@ -37,6 +37,7 @@ import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_typeof;
 
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
@@ -49,12 +50,13 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.core.runtime.CoreException;
 
-public class EvalUnaryTypeID extends CPPEvaluation {
+public class EvalUnaryTypeID extends CPPDependentEvaluation {
 	private final int fOperator;
 	private final IType fOrigType;
 	private IType fType;
 
-	public EvalUnaryTypeID(int operator, IType type) {
+	public EvalUnaryTypeID(int operator, IType type, IBinding templateDefinition) {
+		super(templateDefinition);
 		fOperator= operator;
 		fOrigType= type;
 	}
@@ -173,12 +175,14 @@ public class EvalUnaryTypeID extends CPPEvaluation {
 		buffer.putByte(ITypeMarshalBuffer.EVAL_UNARY_TYPE_ID);
 		buffer.putByte((byte) fOperator);
 		buffer.marshalType(fOrigType);
+		marshalTemplateDefinition(buffer);
 	}
 
 	public static ISerializableEvaluation unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
 		int op= buffer.getByte();
 		IType arg= buffer.unmarshalType();
-		return new EvalUnaryTypeID(op, arg);
+		IBinding templateDefinition= buffer.unmarshalBinding();
+		return new EvalUnaryTypeID(op, arg, templateDefinition);
 	}
 
 	@Override
@@ -187,7 +191,7 @@ public class EvalUnaryTypeID extends CPPEvaluation {
 		IType type = CPPTemplates.instantiateType(fOrigType, tpMap, packOffset, within, point);
 		if (type == fOrigType)
 			return this;
-		return new EvalUnaryTypeID(fOperator, type);
+		return new EvalUnaryTypeID(fOperator, type, getTemplateDefinition());
 	}
 
 	@Override

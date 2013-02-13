@@ -54,7 +54,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.core.runtime.CoreException;
 
-public class EvalID extends CPPEvaluation {
+public class EvalID extends CPPDependentEvaluation {
 	private final ICPPEvaluation fFieldOwner;
 	private final char[] fName;
 	private final IBinding fNameOwner;
@@ -63,7 +63,8 @@ public class EvalID extends CPPEvaluation {
 	private final ICPPTemplateArgument[] fTemplateArgs;
 
 	public EvalID(ICPPEvaluation fieldOwner, IBinding nameOwner, char[] simpleID, boolean addressOf,
-			boolean qualified, ICPPTemplateArgument[] templateArgs) {
+			boolean qualified, ICPPTemplateArgument[] templateArgs, IBinding templateDefinition) {
+		super(templateDefinition);
 		fFieldOwner= fieldOwner;
 		fName= simpleID;
 		fNameOwner= nameOwner;
@@ -158,6 +159,7 @@ public class EvalID extends CPPEvaluation {
 				buffer.marshalTemplateArgument(arg);
 			}
 		}
+		marshalTemplateDefinition(buffer);
 	}
 
 	public static ISerializableEvaluation unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
@@ -174,7 +176,8 @@ public class EvalID extends CPPEvaluation {
 				args[i]= buffer.unmarshalTemplateArgument();
 			}
 		}
-		return new EvalID(fieldOwner, nameOwner, name, addressOf, qualified, args);
+		IBinding templateDefinition= buffer.unmarshalBinding();
+		return new EvalID(fieldOwner, nameOwner, name, addressOf, qualified, args, templateDefinition);
 	}
 
 	public static ICPPEvaluation create(IASTIdExpression expr) {
@@ -182,8 +185,9 @@ public class EvalID extends CPPEvaluation {
 		IBinding binding = name.resolvePreBinding();
 		if (binding instanceof IProblemBinding || binding instanceof IType || binding instanceof ICPPConstructor)
 			return EvalFixed.INCOMPLETE;
+		IBinding enclosingTemplateDefinition= SemanticUtil.findEnclosingTemplate(expr);
 		if (binding instanceof CPPFunctionSet) {
-			return new EvalFunctionSet((CPPFunctionSet) binding, isAddressOf(expr));
+			return new EvalFunctionSet((CPPFunctionSet) binding, isAddressOf(expr), enclosingTemplateDefinition);
 		}
 		if (binding instanceof ICPPUnknownBinding) {
 			ICPPTemplateArgument[] templateArgs = null;
@@ -200,7 +204,7 @@ public class EvalID extends CPPEvaluation {
 				CPPDeferredFunction deferredFunction = (CPPDeferredFunction) binding;
 				if (deferredFunction.getCandidates() != null) {
 					CPPFunctionSet functionSet = new CPPFunctionSet(deferredFunction.getCandidates(), templateArgs, null);
-					return new EvalFunctionSet(functionSet, isAddressOf(expr));
+					return new EvalFunctionSet(functionSet, isAddressOf(expr), enclosingTemplateDefinition);
 				}
 			}
 
@@ -215,7 +219,7 @@ public class EvalID extends CPPEvaluation {
 			}
 
 			return new EvalID(fieldOwner, owner, name.getSimpleID(), isAddressOf(expr),
-					name instanceof ICPPASTQualifiedName, templateArgs);
+					name instanceof ICPPASTQualifiedName, templateArgs, enclosingTemplateDefinition);
 		}
 		/**
 		 * 9.3.1-3 Transformation to class member access within a non-static member function.
@@ -224,7 +228,7 @@ public class EvalID extends CPPEvaluation {
 				&& !(binding instanceof ICPPConstructor) &&!((ICPPMember) binding).isStatic()) {
 			IType fieldOwnerType= withinNonStaticMethod(expr);
 			if (fieldOwnerType != null) {
-				return new EvalMemberAccess(fieldOwnerType, LVALUE, binding, true);
+				return new EvalMemberAccess(fieldOwnerType, LVALUE, binding, true, enclosingTemplateDefinition);
 			}
 		}
 
@@ -241,14 +245,14 @@ public class EvalID extends CPPEvaluation {
 						// of the enumerator.
 						type= CPPSemantics.INT_TYPE;
 					}
-					return new EvalBinding(binding, type);
+					return new EvalBinding(binding, type, enclosingTemplateDefinition);
 				}
 			}
-			return new EvalBinding(binding, null);
+			return new EvalBinding(binding, null, enclosingTemplateDefinition);
 		}
 		if (binding instanceof ICPPTemplateNonTypeParameter || binding instanceof IVariable
 				|| binding instanceof IFunction) {
-			return new EvalBinding(binding, null);
+			return new EvalBinding(binding, null, enclosingTemplateDefinition);
 		}
 		return EvalFixed.INCOMPLETE;
 	}
@@ -318,7 +322,7 @@ public class EvalID extends CPPEvaluation {
 				return eval;
 		}
 
-		return new EvalID(fieldOwner, nameOwner, fName, fAddressOf, fQualified, templateArgs);
+		return new EvalID(fieldOwner, nameOwner, fName, fAddressOf, fQualified, templateArgs, getTemplateDefinition());
 	}
 
 	@Override
@@ -329,7 +333,7 @@ public class EvalID extends CPPEvaluation {
 		ICPPEvaluation fieldOwner = fFieldOwner.computeForFunctionCall(parameterMap, maxdepth, point);
 		if (fieldOwner == fFieldOwner)
 			return this;
-		return new EvalID(fieldOwner, fNameOwner, fName, fAddressOf, fQualified, fTemplateArgs);
+		return new EvalID(fieldOwner, fNameOwner, fName, fAddressOf, fQualified, fTemplateArgs, getTemplateDefinition());
 	}
 
 	private ICPPEvaluation resolveName(ICPPClassType nameOwner, ICPPTemplateArgument[] templateArgs,
@@ -344,15 +348,15 @@ public class EvalID extends CPPEvaluation {
 		if (bindings.length > 1 && bindings[0] instanceof ICPPFunction) {
 			ICPPFunction[] functions = new ICPPFunction[bindings.length];
 			System.arraycopy(bindings, 0, functions, 0, bindings.length);
-			return new EvalFunctionSet(new CPPFunctionSet(functions, templateArgs, null), fAddressOf);
+			return new EvalFunctionSet(new CPPFunctionSet(functions, templateArgs, null), fAddressOf, getTemplateDefinition());
 		}
 		IBinding binding = bindings.length == 1 ? bindings[0] : null;
 		if (binding instanceof IEnumerator) {
-			return new EvalBinding(binding, null);
+			return new EvalBinding(binding, null, getTemplateDefinition());
 		} else if (binding instanceof ICPPMember) {
-			return new EvalMemberAccess(nameOwner, ValueCategory.PRVALUE, binding, false);
+			return new EvalMemberAccess(nameOwner, ValueCategory.PRVALUE, binding, false, getTemplateDefinition());
 		} else if (binding instanceof CPPFunctionSet) {
-			return new EvalFunctionSet((CPPFunctionSet) binding, fAddressOf);
+			return new EvalFunctionSet((CPPFunctionSet) binding, fAddressOf, getTemplateDefinition());
 		}
 		return null;
 	}

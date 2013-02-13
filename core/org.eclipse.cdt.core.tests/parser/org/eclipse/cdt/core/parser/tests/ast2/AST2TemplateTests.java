@@ -7165,4 +7165,71 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testDependentExpressionInvolvingFieldInNestedClass_399362() throws Exception {
 		parseAndCheckBindings();
 	}
+
+	// struct S {
+	//     void kind();
+	// };
+	// struct T {};
+	// namespace N {
+	//     S operator++(T);
+	//     template <class T>
+	//     struct impl {
+	//         static T x;
+	//         typedef decltype(++x) type;
+	//     };
+	// }
+	// void test() {
+	//     N::impl<T>::type operand;
+	//     operand.kind();  // ERROR HERE: Method 'kind' could not be resolved
+	// }
+    public void testNameLookupInDependentExpression_399829a() throws Exception {
+        parseAndCheckBindings();
+    }
+
+	// struct S {
+	//     void kind();
+	// };
+	// namespace N {
+	//   struct tag {};
+	//   struct any { template <class T> any(T); };
+	//   tag operator++(any);
+	//   tag operator,(tag,int);
+	//   S check(tag);
+	//   int check(int);
+	//   template <class T>
+	//   struct impl {
+	//       static T& x;
+	//       typedef decltype(N::check((++x,0))) type;
+	//   };
+	// }
+	// void test() {
+	//     N::impl<S>::type operand;
+	//     operand.kind();  // ERROR HERE: Method 'kind' could not be resolved
+	// }
+    public void testNameLookupInDependentExpression_399829b() throws Exception {
+        parseAndCheckBindings();
+    }
+    
+	//    template <bool> int assertion_failed(void*);
+	//    struct assert_ {};
+	//    assert_ arg;
+	//    char operator==(assert_, assert_);
+	//    template <unsigned> struct assert_relation {};
+	//    template<class>
+	//    struct concept {
+	//        typedef decltype(assertion_failed<true>((assert_relation<sizeof(arg == arg) >*)0)) type;
+	//    };
+	//    template <bool> struct S {};
+	//    template <typename>
+	//    struct is_int
+	//    {
+	//        static const bool value = false;
+	//    };
+	//    template<typename T>
+	//    S<true> operator==(T, T*);
+	//    template<typename T>
+	//    S<(is_int<T>::value)> operator==(T, T);
+    public void testRegression_399829() throws Exception {
+    	parseAndCheckBindings();
+    }
 }

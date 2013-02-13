@@ -22,6 +22,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalBinaryTypeId;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 public class CPPASTBinaryTypeIdExpression extends ASTNode implements ICPPASTExpression, IASTBinaryTypeIdExpression {
     private Operator fOperator;
@@ -128,7 +129,8 @@ public class CPPASTBinaryTypeIdExpression extends ASTNode implements ICPPASTExpr
 				if (t1 == null || t2 == null) {
 					fEvaluation= EvalFixed.INCOMPLETE;
 				} else {
-					fEvaluation= new EvalBinaryTypeId(fOperator, t1, t2);
+					fEvaluation= new EvalBinaryTypeId(fOperator, t1, t2,
+							SemanticUtil.findEnclosingTemplate(this));
 				}
 			}
 		}

@@ -22,6 +22,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalUnaryTypeID;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 public class CPPASTTypeIdExpression extends ASTNode implements ICPPASTTypeIdExpression {
     private int op;
@@ -103,7 +104,7 @@ public class CPPASTTypeIdExpression extends ASTNode implements ICPPASTTypeIdExpr
 			if (type == null || type instanceof IProblemType) {
 				fEvaluation= EvalFixed.INCOMPLETE;
 			} else {
-				fEvaluation= new EvalUnaryTypeID(op, type);
+				fEvaluation= new EvalUnaryTypeID(op, type, SemanticUtil.findEnclosingTemplate(this));
 			}
 		}
 		return fEvaluation;

@@ -21,6 +21,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTTypeIdInitializerExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalTypeId;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 /**
  * C++ variant of type id initializer expression. type-id { initializer }
@@ -65,7 +66,8 @@ public class CPPASTTypeIdInitializerExpression extends ASTTypeIdInitializerExpre
 		if (type == null || type instanceof IProblemType)
 			return EvalFixed.INCOMPLETE;
 		
-		return new EvalTypeId(type, ((ICPPASTInitializerClause) initializer).getEvaluation());
+		return new EvalTypeId(type, SemanticUtil.findEnclosingTemplate(this),
+				((ICPPASTInitializerClause) initializer).getEvaluation());
 	}
 
     @Override

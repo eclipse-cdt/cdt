@@ -24,6 +24,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalConditional;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 public class CPPASTConditionalExpression extends ASTNode implements IASTConditionalExpression,
 		ICPPASTExpression, IASTAmbiguityParent {
@@ -170,7 +171,8 @@ public class CPPASTConditionalExpression extends ASTNode implements IASTConditio
 				final ICPPEvaluation condEval = fCondition.getEvaluation();
 				final ICPPEvaluation posEval = fPositive == null ? null : fPositive.getEvaluation();
 				fEval= new EvalConditional(condEval, posEval, fNegative.getEvaluation(),
-						isThrowExpression(fPositive), isThrowExpression(fNegative));
+						isThrowExpression(fPositive), isThrowExpression(fNegative),
+						SemanticUtil.findEnclosingTemplate(this));
 			}
 		}
 		return fEval;

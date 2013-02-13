@@ -45,6 +45,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalID;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalMemberAccess;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 public class CPPASTFieldReference extends ASTNode
 		implements ICPPASTFieldReference, IASTAmbiguityParent, ICPPASTCompletionContext {
@@ -260,7 +261,8 @@ public class CPPASTFieldReference extends ASTNode
 				if (binding instanceof IProblemBinding || binding instanceof IType || binding instanceof ICPPConstructor) 
 					return EvalFixed.INCOMPLETE;
 
-				return new EvalMemberAccess(ownerType, ownerEval.getValueCategory(this), binding, isDeref);
+				return new EvalMemberAccess(ownerType, ownerEval.getValueCategory(this), binding, isDeref,
+						SemanticUtil.findEnclosingTemplate(this));
 			}
 		}
 
@@ -283,7 +285,8 @@ public class CPPASTFieldReference extends ASTNode
 				return EvalFixed.INCOMPLETE;
 			}
 		}		
-		return new EvalID(ownerEval, qualifier, name.getSimpleID(), false, true, args);
+		return new EvalID(ownerEval, qualifier, name.getSimpleID(), false, true, args,
+				SemanticUtil.findEnclosingTemplate(this));
 	}
 
 	@Override

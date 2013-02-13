@@ -27,6 +27,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalTypeId;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 public class CPPASTSimpleTypeConstructorExpression extends ASTNode implements
         ICPPASTSimpleTypeConstructorExpression {
@@ -100,9 +101,10 @@ public class CPPASTSimpleTypeConstructorExpression extends ASTNode implements
 				for (int i = 0; i < a.length; i++) {
 					args[i]= ((ICPPASTInitializerClause) a[i]).getEvaluation();
 				}
-				fEvaluation= new EvalTypeId(type, args);
+				fEvaluation= new EvalTypeId(type, SemanticUtil.findEnclosingTemplate(this), args);
 			} else if (fInitializer instanceof ICPPASTInitializerList) {
-				fEvaluation= new EvalTypeId(type, ((ICPPASTInitializerList) fInitializer).getEvaluation());
+				fEvaluation= new EvalTypeId(type, SemanticUtil.findEnclosingTemplate(this),
+						((ICPPASTInitializerList) fInitializer).getEvaluation());
 			} else {
 				fEvaluation= EvalFixed.INCOMPLETE;
 			}

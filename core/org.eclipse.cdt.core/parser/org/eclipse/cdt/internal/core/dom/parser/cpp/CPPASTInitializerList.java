@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalInitList;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 /**
  * e.g.: int a[]= {1,2,3};
@@ -172,6 +173,6 @@ public class CPPASTInitializerList extends ASTNode implements ICPPASTInitializer
 		for (int i = 0; i < evals.length; i++) {
 			evals[i]= clauses[i].getEvaluation();
 		}
-		return new EvalInitList(evals);
+		return new EvalInitList(evals, SemanticUtil.findEnclosingTemplate(this));
 	}
 }

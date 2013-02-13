@@ -66,7 +66,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics.LookupMode;
 import org.eclipse.core.runtime.CoreException;
 
-public class EvalUnary extends CPPEvaluation {
+public class EvalUnary extends CPPDependentEvaluation {
 	private static final ICPPEvaluation ZERO_EVAL = new EvalFixed(CPPSemantics.INT_TYPE, PRVALUE, Value.create(0));
 
 	private final int fOperator;
@@ -75,7 +75,8 @@ public class EvalUnary extends CPPEvaluation {
 	private ICPPFunction fOverload= CPPFunction.UNINITIALIZED_FUNCTION;
 	private IType fType;
 
-	public EvalUnary(int operator, ICPPEvaluation operand, IBinding addressOfQualifiedNameBinding) {
+	public EvalUnary(int operator, ICPPEvaluation operand, IBinding addressOfQualifiedNameBinding, IBinding templateDefinition) {
+		super(templateDefinition);
 		fOperator= operator;
 		fArgument= operand;
 		fAddressOfQualifiedNameBinding= addressOfQualifiedNameBinding;
@@ -170,7 +171,7 @@ public class EvalUnary extends CPPEvaluation {
 	    } else {
 	    	args = new ICPPEvaluation[] { fArgument };
 	    }
-    	return CPPSemantics.findOverloadedOperator(point, args, type, op, LookupMode.LIMITED_GLOBALS);
+    	return CPPSemantics.findOverloadedOperator(getLookupContext(point), args, type, op, LookupMode.LIMITED_GLOBALS);
 	}
 
 	@Override
@@ -298,13 +299,15 @@ public class EvalUnary extends CPPEvaluation {
 		buffer.putByte((byte) fOperator);
 		buffer.marshalEvaluation(fArgument, includeValue);
 		buffer.marshalBinding(fAddressOfQualifiedNameBinding);
+		marshalTemplateDefinition(buffer);
 	}
 
 	public static ISerializableEvaluation unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
 		int op= buffer.getByte();
 		ICPPEvaluation arg= (ICPPEvaluation) buffer.unmarshalEvaluation();
 		IBinding binding= buffer.unmarshalBinding();
-		return new EvalUnary(op, arg, binding);
+		IBinding templateDefinition= buffer.unmarshalBinding();
+		return new EvalUnary(op, arg, binding, templateDefinition);
 	}
 
 	@Override
@@ -321,7 +324,7 @@ public class EvalUnary extends CPPEvaluation {
 		if (argument == fArgument && aoqn == fAddressOfQualifiedNameBinding)
 			return this;
 		
-		return new EvalUnary(fOperator, argument, aoqn);
+		return new EvalUnary(fOperator, argument, aoqn, getTemplateDefinition());
 	}
 
 	@Override
@@ -331,7 +334,7 @@ public class EvalUnary extends CPPEvaluation {
 		if (argument == fArgument)
 			return this;
 		
-		return new EvalUnary(fOperator, argument, fAddressOfQualifiedNameBinding);
+		return new EvalUnary(fOperator, argument, fAddressOfQualifiedNameBinding, getTemplateDefinition());
 	}
 
 	@Override

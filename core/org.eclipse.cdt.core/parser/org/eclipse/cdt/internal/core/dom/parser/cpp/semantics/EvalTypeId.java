@@ -16,6 +16,7 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionT
 
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
@@ -30,12 +31,13 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * Performs evaluation of an expression.
  */
-public class EvalTypeId extends CPPEvaluation {
+public class EvalTypeId extends CPPDependentEvaluation {
 	private final IType fInputType;
 	private final ICPPEvaluation[] fArguments;
 	private IType fOutputType;
 
-	public EvalTypeId(IType type, ICPPEvaluation... argument) {
+	public EvalTypeId(IType type, IBinding templateDefinition, ICPPEvaluation... argument) {
+		super(templateDefinition);
 		fInputType= type;
 		fArguments= argument;
 	}
@@ -128,6 +130,7 @@ public class EvalTypeId extends CPPEvaluation {
 				buffer.marshalEvaluation(arg, includeValue);
 			}
 		}
+		marshalTemplateDefinition(buffer);
 	}
 
 	public static ISerializableEvaluation unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
@@ -140,7 +143,8 @@ public class EvalTypeId extends CPPEvaluation {
 				args[i]= (ICPPEvaluation) buffer.unmarshalEvaluation();
 			}
 		}
-		return new EvalTypeId(type, args);
+		IBinding templateDefinition= buffer.unmarshalBinding();
+		return new EvalTypeId(type, templateDefinition, args);
 	}
 
 	@Override
@@ -162,7 +166,7 @@ public class EvalTypeId extends CPPEvaluation {
 		IType type = CPPTemplates.instantiateType(fInputType, tpMap, packOffset, within, point);
 		if (args == fArguments && type == fInputType)
 			return this;
-		return new EvalTypeId(type, args);
+		return new EvalTypeId(type, getTemplateDefinition(), args);
 	}
 
 	@Override
@@ -183,7 +187,7 @@ public class EvalTypeId extends CPPEvaluation {
 		}
 		if (args == fArguments)
 			return this;
-		return new EvalTypeId(fInputType, args);
+		return new EvalTypeId(fInputType, getTemplateDefinition(), args);
 	}
 
 	@Override

@@ -28,6 +28,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalBinary;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 public class CPPASTArraySubscriptExpression extends ASTNode
 		implements ICPPASTArraySubscriptExpression, IASTAmbiguityParent {
@@ -197,7 +198,8 @@ public class CPPASTArraySubscriptExpression extends ASTNode
 	private ICPPEvaluation computeEvaluation() {
 		if (arrayExpression == null || subscriptExp == null)
 			return EvalFixed.INCOMPLETE;
-		return new EvalBinary(EvalBinary.op_arrayAccess, arrayExpression.getEvaluation(), subscriptExp.getEvaluation());
+		return new EvalBinary(EvalBinary.op_arrayAccess, arrayExpression.getEvaluation(), subscriptExp.getEvaluation(),
+				SemanticUtil.findEnclosingTemplate(this));
 	}
     
     @Override

@@ -22,12 +22,14 @@ import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.model.IConnectHandler;
+import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
@@ -40,8 +42,8 @@ import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.actions.IConnect;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.cdt.dsf.gdb.internal.ui.actions.ProcessInfo;
-import org.eclipse.cdt.dsf.gdb.internal.ui.launching.NewExecutableInfo;
 import org.eclipse.cdt.dsf.gdb.internal.ui.launching.LaunchUIMessages;
+import org.eclipse.cdt.dsf.gdb.internal.ui.launching.NewExecutableInfo;
 import org.eclipse.cdt.dsf.gdb.internal.ui.launching.ProcessPrompter;
 import org.eclipse.cdt.dsf.gdb.internal.ui.launching.ProcessPrompter.PrompterInfo;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
@@ -61,7 +63,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.IRequest;
-import org.eclipse.debug.core.commands.AbstractDebugCommand;
 import org.eclipse.debug.core.commands.IDebugCommandRequest;
 import org.eclipse.debug.core.commands.IEnabledStateRequest;
 import org.eclipse.swt.SWT;
@@ -70,7 +71,7 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.progress.UIJob;
 
-public class GdbConnectCommand extends AbstractDebugCommand implements IConnectHandler, IConnect {
+public class GdbConnectCommand extends RefreshableDebugCommand implements IConnectHandler, IConnect {
 
 	private final GdbLaunch fLaunch;
 	private final DsfExecutor fExecutor;
@@ -265,8 +266,15 @@ public class GdbConnectCommand extends AbstractDebugCommand implements IConnectH
 	protected void doExecute(Object[] targets, IProgressMonitor monitor, IRequest request) throws CoreException {
        	Query<Boolean> connectQuery = new Query<Boolean>() {
             @Override
-            public void execute(DataRequestMonitor<Boolean> rm) {
-       			connect(rm);
+            public void execute(final DataRequestMonitor<Boolean> rm) {
+       			connect(new DataRequestMonitor<Boolean>(ImmediateExecutor.getInstance(), rm) {
+       				@Override
+       				@ConfinedToDsfExecutor("fExecutor")
+       				protected void handleCompleted() {
+       					super.handleCompleted();
+       					updateEnablement();
+       				}
+       			});
        		}
        	};
     	try {

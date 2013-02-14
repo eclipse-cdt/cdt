@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX///NA\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/commands/GdbConnectCommand.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 273,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2013-02-14T21:29:11Z",
+      "side": 1,
+      "message": "I changed the code as you suggested but it doesn\u0027t really matter. Even my (incorrect) code worked because no data is passed to the monitor.",
+      "parentUuid": "AABOPX///ak\u003d",
+      "revId": "301e897b5c4c76e3edbcd6f517c15793e4323d04",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX///ao\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/commands/GdbConnectCommand.java",
         "patchSetId": 1
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX///Ms\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/commands/GdbConnectCommand.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 275,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2013-02-14T21:29:11Z",
+      "side": 1,
+      "message": "The code is removed.",
+      "parentUuid": "AABOPX///ao\u003d",
+      "revId": "301e897b5c4c76e3edbcd6f517c15793e4323d04",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX///ag\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/commands/GdbDebugNewExecutableCommand.java",
         "patchSetId": 1
@@ -47,6 +83,24 @@
       "writtenOn": "2013-02-13T18:44:25Z",
       "side": 1,
       "message": "same comments as for connect",
+      "revId": "301e897b5c4c76e3edbcd6f517c15793e4323d04",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///Mo\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/commands/GdbDebugNewExecutableCommand.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2013-02-14T21:29:11Z",
+      "side": 1,
+      "message": "Code is changed according your suggestion.",
+      "parentUuid": "AABOPX///ag\u003d",
       "revId": "301e897b5c4c76e3edbcd6f517c15793e4323d04",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

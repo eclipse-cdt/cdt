@@ -7,9 +7,12 @@
  *
  * Contributors:
  *     Vladimir Prus (Mentor Graphics) - initial API and implementation
+ *     Marc Dumais (Ericsson) - Add CPU/core load information to the multicore visualizer (Bug 396268)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.service;
+
+import java.util.Map;
 
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
@@ -64,4 +67,33 @@ public interface IGDBHardwareAndOS2 extends IGDBHardwareAndOS {
      * Return table describing resources of specified class.
      */
     void getResourcesInformation(IDMContext dmc, String resourceClassId, DataRequestMonitor<IResourcesInformation> rm);
+    
+    
+    /**
+     * Information about the CPU/core load for one given CPU or core 
+     */
+    public interface ILoadInfo
+    {
+		/**
+		 * A string representing the current load (between "0" and "100")
+		 */
+		public String getLoad();
+		/**
+		 * A string representing the highest load recorded for that CPU/core.  
+		 * (between "0" and "100")
+		 */
+		public String getHighLoadWaterMark();
+		/**
+		 * Used to give more details about a CPU's/core's load.  For instance 
+		 * the breakdown of the different load types and their proportion: system, 
+		 * user, I/O, interrupts, etc.
+		 */
+		public Map<String,String> getDetailedLoad();
+    }
+    
+    /**
+     * Computes CPU/core load information according to context and 
+     * asynchronously returns the result in a ILoadInfo object
+     */
+    void getLoadInfo(IDMContext dmc, DataRequestMonitor<ILoadInfo> rm);
 }

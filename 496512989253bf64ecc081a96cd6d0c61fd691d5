@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//++g\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/tasks/cdt_t_rename.htm",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-02-15T22:19:26Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//+/E\u003d",
+      "revId": "496512989253bf64ecc081a96cd6d0c61fd691d5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//++0\u003d",
         "filename": "doc/org.eclipse.cdt.doc.user/tasks/cdt_t_rename.htm",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2013-02-15T21:50:21Z",
       "side": 1,
       "message": "Please mention the preview page of the refactoring wizard.",
+      "revId": "496512989253bf64ecc081a96cd6d0c61fd691d5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//++c\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/tasks/cdt_t_rename.htm",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-02-15T22:19:26Z",
+      "side": 1,
+      "message": "Done. \n\nI\u0027ll also add a paragraph about the preview to the toplevel Tasks page on Refactoring, as it\u0027s common to all the different refactorings available.",
+      "parentUuid": "AABOPX//++0\u003d",
       "revId": "496512989253bf64ecc081a96cd6d0c61fd691d5",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//++k\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/tasks/cdt_t_rename.htm",
+        "patchSetId": 1
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-02-15T22:19:26Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//++4\u003d",
+      "revId": "496512989253bf64ecc081a96cd6d0c61fd691d5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//+/A\u003d",
         "filename": "doc/org.eclipse.cdt.doc.user/tasks/cdt_t_rename.htm",
         "patchSetId": 1
@@ -70,6 +124,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//++o\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/tasks/cdt_t_rename.htm",
+        "patchSetId": 1
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-02-15T22:19:26Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//+/A\u003d",
+      "revId": "496512989253bf64ecc081a96cd6d0c61fd691d5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//++8\u003d",
         "filename": "doc/org.eclipse.cdt.doc.user/tasks/cdt_t_rename.htm",
         "patchSetId": 1
@@ -81,6 +153,24 @@
       "writtenOn": "2013-02-15T21:50:21Z",
       "side": 1,
       "message": "It\u0027s necessary to mention that, if the dialog box is not used, the refactoring options are the same as in the last executed refactoring.",
+      "revId": "496512989253bf64ecc081a96cd6d0c61fd691d5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//++s\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/tasks/cdt_t_rename.htm",
+        "patchSetId": 1
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-02-15T22:19:26Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//++8\u003d",
       "revId": "496512989253bf64ecc081a96cd6d0c61fd691d5",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

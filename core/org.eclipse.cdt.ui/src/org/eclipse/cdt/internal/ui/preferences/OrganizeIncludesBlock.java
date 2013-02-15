@@ -73,22 +73,22 @@ public class OrganizeIncludesBlock extends OptionsConfigurationBlock {
 		composite.setLayout(layout);
 
 		Control control = addCheckBox(composite, PreferencesMessages.OrganizeIncludesBlock_allow_reordering,
-				KEY_INCLUDES_REORDERING, FALSE_TRUE, 0);
+				KEY_INCLUDES_REORDERING, TRUE_FALSE, 0);
 		LayoutUtil.setHorizontalSpan(control, 2);
 		control = addCheckBox(composite, PreferencesMessages.OrganizeIncludesBlock_heuristic_header_substitution,
-				KEY_HEURISTIC_HEADER_SUBSTITUTION, FALSE_TRUE, 0);
+				KEY_HEURISTIC_HEADER_SUBSTITUTION, TRUE_FALSE, 0);
 		LayoutUtil.setHorizontalSpan(control, 2);
 		control = addCheckBox(composite, PreferencesMessages.OrganizeIncludesBlock_forward_declare_composite_types,
-				KEY_FORWARD_DECLARE_COMPOSITE_TYPES, FALSE_TRUE, 0);
+				KEY_FORWARD_DECLARE_COMPOSITE_TYPES, TRUE_FALSE, 0);
 		LayoutUtil.setHorizontalSpan(control, 2);
 		control = addCheckBox(composite, PreferencesMessages.OrganizeIncludesBlock_forward_declare_enums,
-				KEY_FORWARD_DECLARE_ENUMS, FALSE_TRUE, 0);
+				KEY_FORWARD_DECLARE_ENUMS, TRUE_FALSE, 0);
 		LayoutUtil.setHorizontalSpan(control, 2);
 		control = addCheckBox(composite, PreferencesMessages.OrganizeIncludesBlock_forward_declare_functions,
-				KEY_FORWARD_DECLARE_FUNCTIONS, FALSE_TRUE, 0);
+				KEY_FORWARD_DECLARE_FUNCTIONS, TRUE_FALSE, 0);
 		LayoutUtil.setHorizontalSpan(control, 2);
 		control = addCheckBox(composite, PreferencesMessages.OrganizeIncludesBlock_forward_declare_namespace_elements,
-				KEY_FORWARD_DECLARE_NAMESPACE_ELEMENTS, FALSE_TRUE, 0);
+				KEY_FORWARD_DECLARE_NAMESPACE_ELEMENTS, TRUE_FALSE, 0);
 		LayoutUtil.setHorizontalSpan(control, 2);
 		control = addComboBox(composite, PreferencesMessages.OrganizeIncludesBlock_unused_statements,
 				KEY_UNUSED_STATEMENTS_DISPOSITION, DISPOSITION_VALUES, DISPOSITION_LABELS, 0);

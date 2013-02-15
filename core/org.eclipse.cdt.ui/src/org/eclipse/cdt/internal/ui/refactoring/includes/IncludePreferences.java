@@ -54,6 +54,8 @@ public class IncludePreferences {
 		loadStyle(IncludeKind.IN_SAME_PROJECT, PREF_INCLUDE_STYLE_SAME_PROJECT, project);
 		loadStyle(IncludeKind.IN_OTHER_PROJECT, PREF_INCLUDE_STYLE_OTHER_PROJECT, project);
 		loadStyle(IncludeKind.EXTERNAL, PREF_INCLUDE_STYLE_EXTERNAL, project);
+		// Unclassified includes are always kept together.
+		includeStyles.get(IncludeKind.OTHER).setKeepTogether(true);
 		// Normalize order property of the styles to make sure that the numbers are sequential.
 		List<IncludeGroupStyle> styles = new ArrayList<IncludeGroupStyle>(includeStyles.values());
 		Collections.sort(styles);

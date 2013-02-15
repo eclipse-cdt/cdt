@@ -288,12 +288,18 @@ public class IncludeOrganizer {
 		}
 
 		List<String> includeDirectives = new ArrayList<String>();
+		IncludeGroupStyle previousParentStyle = null;
 		for (List<IPath> headers : orderedHeaders) {
 			if (headers != null && !headers.isEmpty()) {
 				Collections.sort(headers, PATH_COMPARATOR);
 				IncludeGroupStyle style = classifiedHeaders.get(headers.get(0));
 				IncludeGroupStyle groupingStyle = getGroupingStyle(style);
-				if (!includeDirectives.isEmpty() && groupingStyle.isBlankLineBefore())
+				IncludeGroupStyle parentStyle = getParentStyle(groupingStyle);
+				boolean blankLineBefore = groupingStyle.isBlankLineBefore() ||
+						(parentStyle != null && parentStyle != previousParentStyle &&
+						parentStyle.isKeepTogether() && parentStyle.isBlankLineBefore());
+				previousParentStyle = parentStyle;
+				if (!includeDirectives.isEmpty() && blankLineBefore)
 					includeDirectives.add(""); // Blank line separator //$NON-NLS-1$
 				for (IPath header : headers) {
 					style = classifiedHeaders.get(header);
@@ -335,13 +341,17 @@ public class IncludeOrganizer {
 	private IncludeGroupStyle getGroupingStyle(IncludeGroupStyle style) {
 		if (style.isKeepTogether())
 			return style;
-		IncludeKind kind = style.getIncludeKind().parent;
-		if (kind != null) {
-			IncludeGroupStyle parent = fContext.getPreferences().includeStyles.get(kind);
-			if (parent != null && (parent.isKeepTogether() || parent.getIncludeKind() == IncludeKind.OTHER))
-				return parent;
-		}
+		IncludeGroupStyle parent = getParentStyle(style);
+		if (parent != null && (parent.isKeepTogether() || parent.getIncludeKind() == IncludeKind.OTHER))
+			return parent;
 		return fContext.getPreferences().includeStyles.get(IncludeKind.OTHER);
+	}
+
+	private IncludeGroupStyle getParentStyle(IncludeGroupStyle style) {
+		IncludeKind kind = style.getIncludeKind().parent;
+		if (kind == null)
+			return null;
+		return fContext.getPreferences().includeStyles.get(kind);
 	}
 
 	private IncludeGroupStyle getIncludeStyle(IPath headerPath) {

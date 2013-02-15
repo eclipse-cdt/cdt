@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPX//+/E\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/tasks/cdt_t_rename.htm",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-02-15T21:50:21Z",
+      "side": 1,
+      "message": "Why in Project Explorer and not in editor?",
+      "revId": "496512989253bf64ecc081a96cd6d0c61fd691d5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//++0\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/tasks/cdt_t_rename.htm",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-02-15T21:50:21Z",
+      "side": 1,
+      "message": "Please mention the preview page of the refactoring wizard.",
+      "revId": "496512989253bf64ecc081a96cd6d0c61fd691d5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//++4\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/tasks/cdt_t_rename.htm",
+        "patchSetId": 1
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-02-15T21:50:21Z",
+      "side": 1,
+      "message": "Try to avoid the word \"engine\".",
+      "revId": "496512989253bf64ecc081a96cd6d0c61fd691d5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//+/A\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/tasks/cdt_t_rename.htm",
+        "patchSetId": 1
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-02-15T21:50:21Z",
+      "side": 1,
+      "message": "The description has to start from the inline renaming since it\u0027s most frequently used.",
+      "revId": "496512989253bf64ecc081a96cd6d0c61fd691d5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//++8\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/tasks/cdt_t_rename.htm",
+        "patchSetId": 1
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-02-15T21:50:21Z",
+      "side": 1,
+      "message": "It\u0027s necessary to mention that, if the dialog box is not used, the refactoring options are the same as in the last executed refactoring.",
+      "revId": "496512989253bf64ecc081a96cd6d0c61fd691d5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

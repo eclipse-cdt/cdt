@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//+9s\u003d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-02-15T23:50:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX//+94\u003d",
+      "revId": "72c2d226c69e3e66c9395ed3556607a24d7e5f68",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//++M\u003d",
         "filename": "doc/org.eclipse.cdt.doc.user/tasks/cdt_t_rename.htm",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2013-02-15T22:53:10Z",
       "side": 1,
       "message": "Indentation is not necessary.",
+      "revId": "72c2d226c69e3e66c9395ed3556607a24d7e5f68",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//+9w\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/tasks/cdt_t_rename.htm",
+        "patchSetId": 2
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1060
+      },
+      "writtenOn": "2013-02-15T23:50:01Z",
+      "side": 1,
+      "message": "The indentation is produced by running Format on the file in Eclipse. I don\u0027t see any options that let me do it differently -- is it really recommended not to use Eclipse\u0027s own formatter on Eclipse\u0027s own HTML help files? ;-)",
+      "parentUuid": "AABOPX//++M\u003d",
       "revId": "72c2d226c69e3e66c9395ed3556607a24d7e5f68",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

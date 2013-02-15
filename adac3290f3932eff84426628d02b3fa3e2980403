@@ -1,0 +1,344 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPX///KI\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 279,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-02-15T16:13:00Z",
+      "side": 1,
+      "message": "You can still put the assert if you want.  assert (p \u003e m_LoadMeterTimerPeriodMin);  It will warn the designer that something is wrong, but the code below will recover when in production.",
+      "revId": "adac3290f3932eff84426628d02b3fa3e2980403",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///KE\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 976,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-02-15T16:13:00Z",
+      "side": 1,
+      "message": "So you didnt\u0027 need a copy of the model?",
+      "revId": "adac3290f3932eff84426628d02b3fa3e2980403",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///FE\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/ProcStatCoreLoads.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-02-15T16:13:00Z",
+      "side": 1,
+      "message": "This coreId requires the prefix \"cpu\", while the one in getLoad() does not, this seems tricky.  It needs to be documented in javadoc as it is not obvious.",
+      "revId": "adac3290f3932eff84426628d02b3fa3e2980403",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///FI\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/ProcStatCoreLoads.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-02-15T16:13:00Z",
+      "side": 1,
+      "message": "I guess we can remove the below commented code?",
+      "revId": "adac3290f3932eff84426628d02b3fa3e2980403",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///FA\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/ProcStatCounters.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-02-15T16:13:00Z",
+      "side": 1,
+      "message": "I think you should also have\nif (c \u003d\u003d null || c.length \u003c 7) return;\nor else we\u0027ll hav an NPE",
+      "revId": "adac3290f3932eff84426628d02b3fa3e2980403",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///E0\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/ProcStatParser.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-02-15T16:13:00Z",
+      "side": 1,
+      "message": "I think we should move his one also after the file check",
+      "revId": "adac3290f3932eff84426628d02b3fa3e2980403",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///EQ\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-02-15T16:13:00Z",
+      "side": 1,
+      "message": "Constructor with parameter to fill fDetailedLoad",
+      "revId": "adac3290f3932eff84426628d02b3fa3e2980403",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///EM\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-02-15T16:13:00Z",
+      "side": 1,
+      "message": "do we need this one?",
+      "revId": "adac3290f3932eff84426628d02b3fa3e2980403",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///EU\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 194,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-02-15T16:13:00Z",
+      "side": 1,
+      "message": "Nothing TODO here.  What is left to do is to call the constructor that actually fills in fDetailedLoad :)",
+      "revId": "adac3290f3932eff84426628d02b3fa3e2980403",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///EE\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 225,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-02-15T16:13:00Z",
+      "side": 1,
+      "message": "Was it intentional to go from 100 to 250? Fine with me, just asking.",
+      "revId": "adac3290f3932eff84426628d02b3fa3e2980403",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///EA\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 230,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-02-15T16:13:00Z",
+      "side": 1,
+      "message": "Was it intentional to go from 400 to 500?  Fine with me, just asking.",
+      "revId": "adac3290f3932eff84426628d02b3fa3e2980403",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///EI\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 615,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-02-15T16:13:00Z",
+      "side": 1,
+      "message": "How about:\nif (!(context instanceof ICoreDMContext) \u0026\u0026 !(context instanceof ICPUDMContext)) {\n\nto avoid the empty if",
+      "revId": "adac3290f3932eff84426628d02b3fa3e2980403",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///D8\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 672,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-02-15T16:13:00Z",
+      "side": 1,
+      "message": "missing rm.done(), maybe with an error status?",
+      "revId": "adac3290f3932eff84426628d02b3fa3e2980403",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///D4\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 696,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-02-15T16:13:00Z",
+      "side": 1,
+      "message": "missing rm.done(), maybe with an error status?",
+      "revId": "adac3290f3932eff84426628d02b3fa3e2980403",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///Dw\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 718,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-02-15T16:13:00Z",
+      "side": 1,
+      "message": "I think it would be more efficient to do:\n\nfor (Entry\u003cIDMContext, DataRequestMonitor\u003cILoadInfo\u003e\u003e e: fLoadInfoRequestCache.entrySet()) {\n\tprocessLoads(e.getKey(), e.getValue(), fCachedLoads);\n}",
+      "revId": "adac3290f3932eff84426628d02b3fa3e2980403",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///Ds\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 759,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-02-15T16:13:00Z",
+      "side": 1,
+      "message": "Same comment as above about iterating over maps",
+      "revId": "adac3290f3932eff84426628d02b3fa3e2980403",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///Ew\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/IGDBHardwareAndOS2.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-02-15T16:13:00Z",
+      "side": 1,
+      "message": "You can document it properly in the API, no need for TODO.  The API is complete.  The fact that we don\u0027t actually use it is a different problem.  If someone else wants to use it, they can, the way it is now.",
+      "revId": "adac3290f3932eff84426628d02b3fa3e2980403",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///Es\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/IGDBHardwareAndOS2.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-02-15T16:13:00Z",
+      "side": 1,
+      "message": "Do we need a highWaterMark for each detailed load?",
+      "revId": "adac3290f3932eff84426628d02b3fa3e2980403",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///Ek\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/ProcStatParserTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-02-15T16:13:00Z",
+      "side": 1,
+      "message": "Don\u0027t have this global",
+      "revId": "adac3290f3932eff84426628d02b3fa3e2980403",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///Eo\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/ProcStatParserTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-02-15T16:13:00Z",
+      "side": 1,
+      "message": "I would create this in each test case because later on you may want to add a testcase that does not use it.  To make sure we don\u0027t forget to create a new instance, don\u0027t have the variable global.",
+      "revId": "adac3290f3932eff84426628d02b3fa3e2980403",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

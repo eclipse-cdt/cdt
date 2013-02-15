@@ -10,8 +10,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences;
 
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.layout.PixelConverter;
@@ -33,7 +36,6 @@ import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle;
 import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle.IncludeKind;
-import org.eclipse.cdt.internal.ui.refactoring.includes.IncludePreferences;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.ITreeListAdapter;
@@ -43,63 +45,39 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.TreeListDialogField;
  * The preference block for configuring styles of different categories of include statements.
  */
 public class IncludeCategoriesBlock extends OptionsConfigurationBlock {
-	private static final Key KEY_STYLE_GROUP_RELATED = getCDTUIKey(IncludePreferences.INCLUDE_STYLE_GROUP_RELATED);
-	private static final Key KEY_STYLE_PARTNER = getCDTUIKey(IncludePreferences.INCLUDE_STYLE_PARTNER);
-	private static final Key KEY_STYLE_GROUP_PARTNER = getCDTUIKey(IncludePreferences.INCLUDE_STYLE_GROUP_PARTNER);
-	private static final Key KEY_STYLE_SAME_FOLDER = getCDTUIKey(IncludePreferences.INCLUDE_STYLE_SAME_FOLDER);
-	private static final Key KEY_STYLE_GROUP_SAME_FOLDER = getCDTUIKey(IncludePreferences.INCLUDE_STYLE_GROUP_SAME_FOLDER);
-	private static final Key KEY_STYLE_SUBFOLDER = getCDTUIKey(IncludePreferences.INCLUDE_STYLE_SUBFOLDER);
-	private static final Key KEY_STYLE_GROUP_SUBFOLDER = getCDTUIKey(IncludePreferences.INCLUDE_STYLE_GROUP_SUBFOLDER);
-	private static final Key KEY_STYLE_GROUP_SYSTEM = getCDTUIKey(IncludePreferences.INCLUDE_STYLE_GROUP_SYSTEM);
-
-	private static Key[] getAllKeys() {
-		return new Key[] {
-				KEY_STYLE_GROUP_RELATED,
-				KEY_STYLE_PARTNER,
-				KEY_STYLE_GROUP_PARTNER,
-				KEY_STYLE_SAME_FOLDER,
-				KEY_STYLE_GROUP_SAME_FOLDER,
-				KEY_STYLE_SUBFOLDER,
-				KEY_STYLE_GROUP_SUBFOLDER,
-				KEY_STYLE_GROUP_SYSTEM,
-			};
-	}
-
-	private final Category[] rootCategories; 
+	private final List<IncludeGroupStyle> styles;
+	private final Map<IncludeKind, Category> categories = new HashMap<IncludeKind, Category>();
 	private TreeListDialogField<Category> categoryTree;
 	private PixelConverter pixelConverter;
 	private StackLayout editorAreaStack;
 	private Category selectedCategory;
 
 	public IncludeCategoriesBlock(IStatusChangeListener context, IProject project,
-			IWorkbenchPreferenceContainer container) {
-		super(context, project, getAllKeys(), container);
-		rootCategories = createCategories();
+			IWorkbenchPreferenceContainer container, List<IncludeGroupStyle> styles) {
+		super(context, project, new Key[0], container);
+		this.styles = styles;
+		createCategories();
 	}
 
-	private static Category[] createCategories() {
-		Category related = new Category(PreferencesMessages.IncludeCategoriesBlock_related_headers_node,
-				PreferencesMessages.IncludeCategoriesBlock_related_headers_node_description)
-				.setGroupingKey(KEY_STYLE_GROUP_RELATED);
-		new Category(PreferencesMessages.IncludeCategoriesBlock_partner_header_node,
-				PreferencesMessages.IncludeCategoriesBlock_partner_header_node_description, related)
-				.setIncludeKind(IncludeKind.PARTNER)
-				.setGroupingKey(KEY_STYLE_GROUP_PARTNER)
-				.setStyleKey(KEY_STYLE_PARTNER);
-		new Category(PreferencesMessages.IncludeCategoriesBlock_same_folder_header_node,
-				PreferencesMessages.IncludeCategoriesBlock_same_folder_header_node_description, related)
-				.setIncludeKind(IncludeKind.IN_SAME_FOLDER)
-				.setGroupingKey(KEY_STYLE_GROUP_SAME_FOLDER)
-				.setStyleKey(KEY_STYLE_SAME_FOLDER);
-		new Category(PreferencesMessages.IncludeCategoriesBlock_subfolder_header_node,
-				PreferencesMessages.IncludeCategoriesBlock_subfolder_header_node_description, related)
-				.setIncludeKind(IncludeKind.IN_SUBFOLDERS)
-				.setGroupingKey(KEY_STYLE_GROUP_SUBFOLDER)
-				.setStyleKey(KEY_STYLE_SUBFOLDER);
-		Category system = new Category(PreferencesMessages.IncludeCategoriesBlock_system_headers_node,
-				PreferencesMessages.IncludeCategoriesBlock_system_headers_node_description)
-				.setGroupingKey(KEY_STYLE_GROUP_SYSTEM);
-		return new Category[] { related, system };
+	private void createCategories() {
+		createCategory(IncludeKind.RELATED);
+		createCategory(IncludeKind.PARTNER);
+		createCategory(IncludeKind.IN_SAME_FOLDER);
+		createCategory(IncludeKind.IN_SUBFOLDER);
+		createCategory(IncludeKind.SYSTEM);
+		createCategory(IncludeKind.SYSTEM_WITH_EXTENSION);
+		createCategory(IncludeKind.SYSTEM_WITHOUT_EXTENSION);
+		createCategory(IncludeKind.OTHER);
+		createCategory(IncludeKind.IN_SAME_PROJECT);
+		createCategory(IncludeKind.IN_OTHER_PROJECT);
+		createCategory(IncludeKind.EXTERNAL);
+	}
+
+	private Category createCategory(IncludeKind includeKind) {
+		Category parentCategory = categories.get(includeKind.parent);
+		Category category = new Category(includeKind, parentCategory);
+		categories.put(category.getIncludeKind(), category);
+		return category;
 	}
 
 	public void postSetSelection(Object element) {
@@ -123,31 +101,24 @@ public class IncludeCategoriesBlock extends OptionsConfigurationBlock {
 		IncludeStyleAdapter adapter = new IncludeStyleAdapter();
 		categoryTree = new TreeListDialogField<Category>(adapter, null, new IncludeStyleLabelProvider());
 		categoryTree.setDialogFieldListener(adapter);
-		categoryTree.setLabelText(PreferencesMessages.NameStyleBlock_categories_label);
+		categoryTree.setLabelText(PreferencesMessages.IncludeCategoriesBlock_header_categories);
 		categoryTree.setViewerComparator(adapter);
 
-		createCategories();
-
-		for (Category category : rootCategories) {
-			categoryTree.addElement(category);
+		for (Category category : categories.values()) {
+			if (category.parent == null)
+				categoryTree.addElement(category);
 		}
 
 		Label label = categoryTree.getLabelControl(composite);
-		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd.verticalAlignment = GridData.BEGINNING;
-		label.setLayoutData(gd);
+		label.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, false, false));
 
 		Control tree = categoryTree.getTreeControl(composite);
-		gd = new GridData();
-		gd.horizontalAlignment = GridData.FILL;
-		gd.grabExcessHorizontalSpace = true;
-		gd.verticalAlignment = GridData.FILL;
-		gd.grabExcessVerticalSpace = false;
+		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.widthHint = pixelConverter.convertWidthInCharsToPixels(50);
-		gd.heightHint = pixelConverter.convertHeightInCharsToPixels(12);
+		gd.heightHint = pixelConverter.convertHeightInCharsToPixels(2);
 		tree.setLayoutData(gd);
 
-		createCategoryEditorArea(composite);
+		createCategoryEditors(composite);
 
 		categoryTree.setTreeExpansionLevel(2);
 		categoryTree.selectFirstElement();
@@ -156,43 +127,37 @@ public class IncludeCategoriesBlock extends OptionsConfigurationBlock {
 		return composite;
 	}
 
-	private void createCategoryEditorArea(Composite parent) {
+	private void createCategoryEditors(Composite parent) {
 		Composite editorArea =  new Composite(parent, SWT.NONE);
-		editorArea.setLayoutData(new GridData(GridData.FILL_BOTH));
+		editorArea.setLayoutData(new GridData(SWT.FILL, SWT.BOTTOM, true, false));
 		editorArea.setFont(parent.getFont());
 		editorAreaStack = new StackLayout();
 		editorArea.setLayout(editorAreaStack);
-		for (Category category : rootCategories) {
-			createCategoryEditor(editorArea, category);
+		Map<IncludeKind, IncludeGroupStyle> stylesByKind = new HashMap<IncludeKind, IncludeGroupStyle>();
+		for (IncludeGroupStyle style : styles) {
+			if (style.getIncludeKind() != IncludeKind.MATCHING_PATTERN)
+				stylesByKind.put(style.getIncludeKind(), style);
 		}
-	}
 
-	private void createCategoryEditor(Composite parent, Category category) {
-		IncludeGroupStyle style = null;
-		Key styleKey = category.getStyleKey();
-		if (styleKey != null) {
-			IncludeKind includeKind = category.getIncludeKind();
-			String str = getValue(styleKey);
-			if (str != null)
-				style = IncludeGroupStyle.fromString(str, includeKind);
-			if (style == null)
-				style = new IncludeGroupStyle(includeKind);
-		}
-		IncludeGroupStyleBlock block = new IncludeGroupStyleBlock(fContext, fProject, fContainer,
-				category.getDescription(), category.getGroupingKey(), style);
-		Control composite = block.createContents(parent);
-
-		category.setEditorArea(composite);
-
-		for (Category child : category.getChildren()) {
-			createCategoryEditor(parent, child);
+		for (Category category : categories.values()) {
+			IncludeGroupStyleBlock block = new IncludeGroupStyleBlock(fContext, fProject, fContainer,
+					category.getDescription());
+			IncludeGroupStyle style = stylesByKind.get(category.getIncludeKind());
+			block.setStyle(style);
+			Control composite = block.createContents(editorArea);
+			category.setEditor(block, composite);
 		}
 	}
 
 	@Override
 	protected void updateControls() {
 		super.updateControls();
-		// XXX Implement
+		// Refresh
+		categoryTree.refresh();
+		updateConfigurationBlock(categoryTree.getSelectedElements());
+		for (Category category : categories.values()) {
+			category.getEditor().updateControls();
+		}
 	}
 
 	private void updateConfigurationBlock(List<Object> selection) {
@@ -204,53 +169,26 @@ public class IncludeCategoriesBlock extends OptionsConfigurationBlock {
 	}
 
 	@Override
-	public void performDefaults() {
-		super.performDefaults();
-
-		// Refresh
-		categoryTree.refresh();
-		updateConfigurationBlock(categoryTree.getSelectedElements());
-	}
-
-	@Override
-	public boolean performOk() {
-		return super.performOk();
-	}
-
-	@Override
 	protected void validateSettings(Key changedKey, String oldValue, String newValue) {
-		StatusInfo status = new StatusInfo();
-		fContext.statusChanged(status);
+		fContext.statusChanged(new StatusInfo());
 	}
 
     /**
      * Represents a category of settings.
      */
 	private final static class Category {
-		public final String name;
-		public final String description;
 		public final Category parent;
 		public final int index;  // Index in the siblings list
 		private final List<Category> children;
-		private IncludeKind includeKind;
-		private Key styleKey;
-		private Key groupingKey;
-
+		private final IncludeKind includeKind;
 		private Control editorArea;
+		private IncludeGroupStyleBlock editor;
 
-		Category(String name, String description, Category parent) {
-			this.name = name;
-			this.description = description;
+		Category(IncludeKind includeKind, Category parent) {
+			this.includeKind = includeKind;
 			this.parent = parent;
 			children = new ArrayList<Category>();
 			index = parent != null ? parent.addChild(this) : 0;
-		}
-
-		/**
-		 * @param name Category name
-		 */
-		Category(String name, String description) {
-		    this(name, description, null);
 		}
 
 		private int addChild(Category category) {
@@ -268,47 +206,32 @@ public class IncludeCategoriesBlock extends OptionsConfigurationBlock {
 
 		@Override
 		public String toString() {
-			return name;
+			return includeKind.name;
 		}
 
 		IncludeKind getIncludeKind() {
 			return includeKind;
 		}
 
-		Category setIncludeKind(IncludeKind includeKind) {
-			this.includeKind = includeKind;
-			return this;
-		}
-
-		Key getStyleKey() {
-			return styleKey;
-		}
-
-		Category setStyleKey(Key key) {
-			this.styleKey = key;
-			return this;
-		}
-
-		Key getGroupingKey() {
-			return groupingKey;
-		}
-
-		Category setGroupingKey(Key key) {
-			this.groupingKey = key;
-			return this;
+		IncludeGroupStyleBlock getEditor() {
+			return editor;
 		}
 
 		Control getEditorArea() {
 			return editorArea;
 		}
 
-		Category setEditorArea(Control editorArea) {
+		void setEditor(IncludeGroupStyleBlock editor, Control editorArea) {
+			this.editor = editor;
 			this.editorArea = editorArea;
-			return this;
 		}
 
-		public String getDescription() {
-			return description;
+		String getName() {
+			return includeKind.name;
+		}
+
+		String getDescription() {
+			return includeKind.description;
 		}
 	}
 
@@ -364,7 +287,7 @@ public class IncludeCategoriesBlock extends OptionsConfigurationBlock {
 
 		@Override
 		public String getText(Object element) {
-			return ((Category) element).name;
+			return ((Category) element).getName();
 		}
 	}
 }

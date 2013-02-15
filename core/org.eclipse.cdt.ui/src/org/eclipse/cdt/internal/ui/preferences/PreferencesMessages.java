@@ -369,8 +369,8 @@ public final class PreferencesMessages extends NLS {
 	public static String IncludeStyleBlock_order_tab;
 	public static String IncludeCategoriesBlock_external_headers_node;
 	public static String IncludeCategoriesBlock_external_headers_node_description;
-	public static String IncludeCategoriesBlock_other_headers_node;
-	public static String IncludeCategoriesBlock_other_headers_node_description;
+	public static String IncludeCategoriesBlock_unrelated_headers_node;
+	public static String IncludeCategoriesBlock_unrelated_headers_node_description;
 	public static String IncludeCategoriesBlock_other_project_headers_node;
 	public static String IncludeCategoriesBlock_other_project_headers_node_description;
 	public static String IncludeCategoriesBlock_partner_header_node;
@@ -392,9 +392,14 @@ public final class PreferencesMessages extends NLS {
 	public static String IncludeCategoriesBlock_user_defined_categories_node;
 	public static String IncludeCategoriesBlock_user_defined_categories_node_description;
 	public static String IncludeGroupStyleBlock_keep_includes_together;
+	public static String IncludeCategoriesBlock_header_categories;
+	public static String IncludeGroupStyleBlock_blank_line_before;
 	public static String IncludeGroupStyleBlock_use_relative_path;
 	public static String IncludeGroupStyleBlock_use_angle_brackets;
-	
+	public static String IncludeOrderBlock_up;
+	public static String IncludeOrderBlock_down;
+	public static String IncludeOrderBlock_order_of_includes;
+
 	public static String NameStylePreferencePage_title;
 	public static String NameStyleBlock_code_node;
 	public static String NameStyleBlock_files_node;
@@ -432,6 +437,18 @@ public final class PreferencesMessages extends NLS {
 	public static String NameStyleBlock_invalid_prefix;
 	public static String NameStyleBlock_invalid_word_delimiter;
 	public static String NameStyleBlock_invalid_suffix;
+
+	public static String OrganizeIncludesPreferencePage_title;
+	public static String OrganizeIncludesBlock_allow_reordering;
+	public static String OrganizeIncludesBlock_forward_declare_composite_types;
+	public static String OrganizeIncludesBlock_forward_declare_enums;
+	public static String OrganizeIncludesBlock_forward_declare_functions;
+	public static String OrganizeIncludesBlock_forward_declare_namespace_elements;
+	public static String OrganizeIncludesBlock_heuristic_header_substitution;
+	public static String OrganizeIncludesBlock_unused_statements;
+	public static String OrganizeIncludesBlock_comment_out;
+	public static String OrganizeIncludesBlock_keep;
+	public static String OrganizeIncludesBlock_remove;
 
 	public static String EditTemplateDialog_error_noname;
 	public static String EditTemplateDialog_error_invalidName;

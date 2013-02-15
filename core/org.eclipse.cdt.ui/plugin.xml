@@ -1224,19 +1224,27 @@
           <keywordReference id="org.eclipse.cdt.ui.common"/>
       </page>
       <page
-            name="%includeStylePreferencePage.name"
-            category="org.eclipse.cdt.ui.preferences.CodeStylePreferencePage"
-            class="org.eclipse.cdt.internal.ui.preferences.IncludeStylePreferencePage"
-            id="org.eclipse.cdt.ui.preferences.IncludeStylePreferencePage">
-          <keywordReference id="org.eclipse.cdt.ui.includestyle"/>
-          <keywordReference id="org.eclipse.cdt.ui.common"/>
-      </page>
-      <page
             name="%nameStylePreferencePage.name"
             category="org.eclipse.cdt.ui.preferences.CodeStylePreferencePage"
             class="org.eclipse.cdt.internal.ui.preferences.NameStylePreferencePage"
             id="org.eclipse.cdt.ui.preferences.NameStylePreferencePage">
           <keywordReference id="org.eclipse.cdt.ui.namestyle"/>
+          <keywordReference id="org.eclipse.cdt.ui.common"/>
+      </page>
+      <page
+            name="%organizeIncludesPreferencePage.name"
+            category="org.eclipse.cdt.ui.preferences.CodeStylePreferencePage"
+            class="org.eclipse.cdt.internal.ui.preferences.OrganizeIncludesPreferencePage"
+            id="org.eclipse.cdt.ui.preferences.OrganizeIncludesPreferencePage">
+          <keywordReference id="org.eclipse.cdt.ui.organizeincludes"/>
+          <keywordReference id="org.eclipse.cdt.ui.common"/>
+      </page>
+      <page
+            name="%includeStylePreferencePage.name"
+            category="org.eclipse.cdt.ui.preferences.OrganizeIncludesPreferencePage"
+            class="org.eclipse.cdt.internal.ui.preferences.IncludeStylePreferencePage"
+            id="org.eclipse.cdt.ui.preferences.IncludeStylePreferencePage">
+          <keywordReference id="org.eclipse.cdt.ui.includestyle"/>
           <keywordReference id="org.eclipse.cdt.ui.common"/>
       </page>
       <page
@@ -1290,11 +1298,14 @@
             label="%preferenceKeywords.codetemplates"
             id="org.eclipse.cdt.ui.codetemplates"/>
       <keyword
+            label="%preferenceKeywords.namestyle"
+            id="org.eclipse.cdt.ui.namestyle"/>
+      <keyword
             label="%preferenceKeywords.includestyle"
             id="org.eclipse.cdt.ui.includestyle"/>
       <keyword
-            label="%preferenceKeywords.namestyle"
-            id="org.eclipse.cdt.ui.namestyle"/>
+            label="%preferenceKeywords.organizeincludes"
+            id="org.eclipse.cdt.ui.organizeincludes"/>
       <keyword
             label="%preferenceKeywords.codeformatter"
             id="org.eclipse.cdt.ui.codeformatter"/>

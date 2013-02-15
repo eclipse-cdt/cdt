@@ -14,17 +14,19 @@ package org.eclipse.cdt.internal.ui.refactoring.includes;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -33,6 +35,8 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.texteditor.ITextEditor;
+
+import com.ibm.icu.text.Collator;
 
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -63,17 +67,30 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.utils.PathUtil;
 
-import org.eclipse.cdt.internal.core.resources.PathCanonicalizationStrategy;
+import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 
 import org.eclipse.cdt.internal.ui.editor.CEditorMessages;
-import org.eclipse.cdt.internal.ui.refactoring.includes.IncludePreferences.IncludeType;
+import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle.IncludeKind;
 
 /**
  * Organizes the include directives and forward declarations of a source or header file.
  */
 public class IncludeOrganizer {
-	// TODO(sprigogin): Move to a preference.
-	private static final String[] PARTNER_FILE_SUFFIXES = { "test", "unittest" };  //$NON-NLS-1$//$NON-NLS-2$
+	private static final Collator COLLATOR = Collator.getInstance();
+
+	private static final Comparator<IPath> PATH_COMPARATOR = new Comparator<IPath>() {
+		@Override
+		public int compare(IPath path1, IPath path2) {
+			int length1 = path1.segmentCount();
+			int length2 = path2.segmentCount();
+			for (int i = 0; i < length1 && i < length2; i++) {
+				int c = COLLATOR.compare(path1.segment(i), path2.segment(i));
+				if (c != 0)
+					return c;
+			}
+			return length1 - length2;
+		}
+	};
 
 	private final ITextEditor fEditor;
 	private final InclusionContext fContext;
@@ -114,7 +131,8 @@ public class IncludeOrganizer {
 
 		// Create the forward declarations by examining the list of bindings which have to be
 		// declared.
-		Set<IBinding> bindings = removeBindingsDefinedInIncludedHeaders(resolver.getBindingsToDeclare(), reachableHeaders);
+		Set<IBinding> bindings =
+				removeBindingsDefinedInIncludedHeaders(resolver.getBindingsToDeclare(), reachableHeaders);
 		for (IBinding binding : bindings) {
 			// Create the text of the forward declaration of this binding.
 			StringBuilder declarationText = new StringBuilder();
@@ -245,121 +263,124 @@ public class IncludeOrganizer {
 			forwardDeclarationListToUse.add(declarationText.toString());
 		}
 
-		// Obtain the final lists of library, project, and relative headers.
-		List<String> relativeIncludeDirectives = new ArrayList<String>();
-		List<String> projectIncludeDirectives = new ArrayList<String>();
-		List<String> libraryIncludeDirectives = new ArrayList<String>();
-		List<String> allIncludeDirectives = new ArrayList<String>();
+		Collections.sort(forwardDeclarations);
+		Collections.sort(functionForwardDeclarations);
+
 		IncludePreferences preferences = fContext.getPreferences();
+		Map<IPath, IncludeGroupStyle> classifiedHeaders =
+				new HashMap<IPath, IncludeGroupStyle>(fContext.getHeadersToInclude().size());
 		for (IPath file : fContext.getHeadersToInclude()) {
-			if (preferences.allowReordering && preferences.sortByHeaderLocation) {
-				// Add the created include directives to different lists.
-				createIncludeDirective(file, relativeIncludeDirectives, projectIncludeDirectives, libraryIncludeDirectives);
-			} else {
-				// Add all created include directives to the same list, making sure that no sort
-				// order is applied.
-				createIncludeDirective(file, allIncludeDirectives, allIncludeDirectives, allIncludeDirectives);
+			classifiedHeaders.put(file, getIncludeStyle(file));
+		}
+		@SuppressWarnings("unchecked")
+		List<IPath>[] orderedHeaders = (List<IPath>[]) new List<?>[classifiedHeaders.size()];
+		for (Map.Entry<IPath, IncludeGroupStyle> entry : classifiedHeaders.entrySet()) {
+			IPath path = entry.getKey();
+			IncludeGroupStyle style = entry.getValue();
+			IncludeGroupStyle groupingStyle = getGroupingStyle(style);
+			int position = groupingStyle.getOrder();
+			List<IPath> headers = orderedHeaders[position];
+			if (headers == null) {
+				headers = new ArrayList<IPath>();
+				orderedHeaders[position] = headers;
+			}
+			headers.add(path);
+		}
+
+		List<String> includeDirectives = new ArrayList<String>();
+		for (List<IPath> headers : orderedHeaders) {
+			if (headers != null && !headers.isEmpty()) {
+				Collections.sort(headers, PATH_COMPARATOR);
+				IncludeGroupStyle style = classifiedHeaders.get(headers.get(0));
+				IncludeGroupStyle groupingStyle = getGroupingStyle(style);
+				if (!includeDirectives.isEmpty() && groupingStyle.isBlankLineBefore())
+					includeDirectives.add(""); // Blank line separator //$NON-NLS-1$
+				for (IPath header : headers) {
+					style = classifiedHeaders.get(header);
+					includeDirectives.add(createIncludeDirective(header, style, "")); //$NON-NLS-1$
+				}
 			}
 		}
 
 		// Create the source code to insert into the editor.
 		IBuffer fBuffer = fContext.getTranslationUnit().getBuffer();
 		String lineSep = getLineSeparator(fBuffer);
-		String insertText = new String();
 
-		if (preferences.allowReordering) {
-			if (preferences.removeUnusedIncludes) {
-				// Remove *all* existing includes and forward declarations. Those which are required
-				// will be added again right afterwards.
+		StringBuilder buf = new StringBuilder();
+		for (String include : includeDirectives) {
+			buf.append(include);
+			buf.append(lineSep);
+		}
 
-				// TODO implement this
+		if (buf.length() != 0 && !forwardDeclarations.isEmpty())
+			buf.append(lineSep);
+		for (String declaration : forwardDeclarations) {
+			buf.append(declaration);
+			buf.append(lineSep);
+		}
+
+		if (buf.length() != 0 && !functionForwardDeclarations.isEmpty())
+			buf.append(lineSep);
+		for (String declaration : functionForwardDeclarations) {
+			buf.append(declaration);
+			buf.append(lineSep);
+		}
+
+		if (buf.length() != 0) {
+			buf.append(lineSep);
+			fBuffer.replace(0, 0, buf.toString());
+		}
+	}
+
+	private IncludeGroupStyle getGroupingStyle(IncludeGroupStyle style) {
+		if (style.isKeepTogether())
+			return style;
+		IncludeKind kind = style.getIncludeKind().parent;
+		if (kind != null) {
+			IncludeGroupStyle parent = fContext.getPreferences().includeStyles.get(kind);
+			if (parent != null && (parent.isKeepTogether() || parent.getIncludeKind() == IncludeKind.OTHER))
+				return parent;
+		}
+		return fContext.getPreferences().includeStyles.get(IncludeKind.OTHER);
+	}
+
+	private IncludeGroupStyle getIncludeStyle(IPath headerPath) {
+		IncludeKind includeKind;
+		IncludeInfo includeInfo = fContext.getIncludeForHeaderFile(headerPath);
+		if (includeInfo.isSystem()) {
+			if (headerPath.getFileExtension() == null) {
+				includeKind = IncludeKind.SYSTEM_WITHOUT_EXTENSION;
+			} else {
+				includeKind = IncludeKind.SYSTEM_WITH_EXTENSION;
 			}
-
-			if (preferences.sortByHeaderLocation) {
-				// Sort by header file location.
-
-				// Process the different types of include directives separately.
-				for (IncludeType includeType : preferences.groupOrder) {
-					List<String> stringList = null;
-
-					if (includeType == IncludeType.RELATIVE_HEADER) {
-						stringList = relativeIncludeDirectives;
-					} else if (includeType == IncludeType.PROJECT_HEADER) {
-						stringList = projectIncludeDirectives;
-					} else if (includeType == IncludeType.LIBRARY_HEADER) {
-						stringList = libraryIncludeDirectives;
-					} else if (includeType == IncludeType.FORWARD_DECLARATION) {
-						stringList = forwardDeclarations;
-					} else if (includeType == IncludeType.FUNCTION_FORWARD_DECLARATION) {
-						stringList = functionForwardDeclarations;
-					}
-					if (stringList == null || stringList.isEmpty()) {
-						continue;
-					}
-
-					// Sort alphabetically
-					if (preferences.sortAlphabetically) {
-						Collections.sort(stringList);
-					}
-
-					// Insert the actual text.
-					for (String str : stringList) {
-						insertText += str + lineSep;
-					}
-
-					// Insert blank line
-					if (preferences.separateIncludeBlocks) {
-						insertText += lineSep;
-					}
+		} else if (isPartnerFile(headerPath)) {
+			includeKind = IncludeKind.PARTNER;
+		} else {
+			IPath dir = fContext.getCurrentDirectory();
+			if (dir.isPrefixOf(headerPath)) {
+				if (headerPath.segmentCount() == dir.segmentCount() + 1) {
+					includeKind = IncludeKind.IN_SAME_FOLDER;
+				} else {
+					includeKind = IncludeKind.IN_SUBFOLDER;
 				}
 			} else {
-				// Don't sort by header file location.
-
-				// Sort alphabetically
-				if (preferences.sortAlphabetically) {
-					Collections.sort(allIncludeDirectives);
-				}
-
-				// Insert the actual text.
-				for (String str : allIncludeDirectives) {
-					insertText += str + lineSep;
-				}
-			}
-		} else {
-			// Existing include directives must not be reordered.
-
-			// Compare the list of existing include directives with the list of required include directives.
-			// TODO: Implement this. The following code template may be used for that:
-			/*for (IInclude includeDirective : fTu.getIncludes()) {
-				if (!allIncludeDirectives.contains(includeDirective)) {
-					// This include directive from the editor isn't present within the list of required includes and is therefore unused.
-					// Remove it from the editor, if enabled within the preferences.
-					if (OrganizeIncludesPreferences.getPreferenceStore().getBoolean(PREF_REMOVE_UNUSED_INCLUDES)) {
-						removeIncludeDirective(fTu, includeDirective);
-					}
+				IFile[] files = ResourceLookup.findFilesForLocation(headerPath);
+				if (files.length == 0) {
+					includeKind = IncludeKind.EXTERNAL;
 				} else {
-					// This include directive from the editor is required. Remove it from the list of required includes.
-					allIncludeDirectives.remove(includeDirective);
+					IProject project = fContext.getProject();
+					includeKind = IncludeKind.IN_OTHER_PROJECT;
+					for (IFile file : files) {
+						if (file.getProject().equals(project)) {
+							includeKind = IncludeKind.IN_SAME_PROJECT;
+							break;
+						}
+					}
 				}
-			}*/
-
-			// Insert those includes which still remain within the list of required includes (i.e. those include directives which have
-			// been added now).
-			for (String str : allIncludeDirectives) {
-				insertText += str + lineSep;
-			}
-
-			// Insert forward declarations.
-			for (String str : forwardDeclarations) {
-				insertText += str + lineSep;
 			}
 		}
-
-		if (!insertText.isEmpty()) {
-			// Insert the text plus a separating blank line into the editor.
-			insertText = insertText.trim() + lineSep + lineSep;
-			fBuffer.replace(0, 0, insertText);
-		}
+		Map<IncludeKind, IncludeGroupStyle> styles = fContext.getPreferences().includeStyles;
+		return styles.get(includeKind);
 	}
 
 	private Set<IBinding> removeBindingsDefinedInIncludedHeaders(Set<IBinding> bindings,
@@ -513,7 +534,7 @@ public class IncludeOrganizer {
 			if (pos == sourceName.length())
 				return true;
 			String suffix = sourceName.substring(pos);
-			for (String s : PARTNER_FILE_SUFFIXES) {
+			for (String s : fContext.getPreferences().partnerFileSuffixes) {
 				if (suffix.equalsIgnoreCase(s))
 					return true;
 			}
@@ -652,53 +673,22 @@ public class IncludeOrganizer {
 		}
 	}
 
-	/**
-	 * Adds an include directive.
-	 * @param headerFile The header file which should be included.
-	 * @param relativeIncludeDirectives Out parameter. The list of relative headers to include.
-	 * @param projectIncludeDirectives Out parameter. The list of project headers to include.
-	 * @param libraryIncludeDirectives Out parameter. The list of library headers to include.
-	 * @throws CoreException
-	 */
-	private void createIncludeDirective(IPath headerFile,
-			Collection<String> relativeIncludeDirectives,
-			Collection<String> projectIncludeDirectives,
-			Collection<String> libraryIncludeDirectives) throws CoreException {
-		IPath targetLocation = headerFile;
-		IPath targetDirectory = targetLocation.removeLastSegments(1);
-		targetDirectory = new Path(PathCanonicalizationStrategy.getCanonicalPath(targetDirectory.toFile()));
-		IPath sourceDirectory = fContext.getCurrentDirectory();
-		sourceDirectory = new Path(PathCanonicalizationStrategy.getCanonicalPath(sourceDirectory.toFile()));
-
-		IncludePreferences preferences = fContext.getPreferences();
-		boolean relativeToSource = false;
-		if (preferences.relativeHeaderInSameDir &&
-				PathUtil.equalPath(sourceDirectory, targetDirectory)) {
-			// The header is located within the same directory as the source file.
-			relativeToSource = true;
-		} else if (preferences.relativeHeaderInSubdir &&
-				PathUtil.isPrefix(sourceDirectory, targetLocation)) {
-			// The header is located within a subdirectory of the source file's directory.
-			relativeToSource = true;
-		} else if (preferences.relativeHeaderInParentDir &&
-				PathUtil.isPrefix(targetDirectory, sourceDirectory)) {
-			// The header is located within a parent directory of the source file's directory.
-			relativeToSource = true;
+	private String createIncludeDirective(IPath header, IncludeGroupStyle style, String lineComment) {
+		StringBuilder buf = new StringBuilder("#include "); //$NON-NLS-1$
+		buf.append(style.isAngleBrackets() ? '<' : '"');
+		String name = null;
+		if (style.isRelativePath()) {
+			IPath relativePath = PathUtil.makeRelativePath(header, fContext.getCurrentDirectory());
+			if (relativePath != null)
+				name = relativePath.toPortableString();
 		}
-
-		IncludeInfo includeInfo = null;
-		if (!relativeToSource)
-			includeInfo = fContext.getIncludeForHeaderFile(targetLocation);
-		Collection<String> headerList;
-		if (includeInfo != null) {
-			headerList = includeInfo.isSystem() ? libraryIncludeDirectives : projectIncludeDirectives;
-		} else {
-			// Include the header relative to the source file.
-			includeInfo = new IncludeInfo(PathUtil.makeRelativePath(targetLocation, sourceDirectory).toPortableString());
-			// Add this header to the relative headers.
-			headerList = relativeIncludeDirectives;
+		if (name == null) {
+			IncludeInfo includeInfo = fContext.getIncludeForHeaderFile(header);
+			name = includeInfo.getName();
 		}
-
-		headerList.add("#include " + includeInfo.toString()); //$NON-NLS-1$
+		buf.append(name);
+		buf.append(style.isAngleBrackets() ? '>' : '"');
+		buf.append(lineComment);
+		return buf.toString();
 	}
 }

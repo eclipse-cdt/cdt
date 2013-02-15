@@ -12,47 +12,56 @@ package org.eclipse.cdt.internal.ui.refactoring.includes;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.ui.PreferenceConstants;
 
+import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle.IncludeKind;
+
 /**
  * Preferences for managing of includes.
  */
 public class IncludePreferences {
+	private static final String DEFAULT_PARTNER_FILE_SUFFIXES = "test,unittest"; //$NON-NLS-1$
+
+	public static enum UnusedStatementDisposition { REMOVE, COMMENT_OUT, KEEP }
+
+	public final Map<IncludeKind, IncludeGroupStyle> includeStyles;
 	public final boolean allowReordering;
+	public final boolean heuristicHeaderSubstitution;
 	public final boolean forwardDeclareCompositeTypes;
 	public final boolean forwardDeclareEnums;
 	public final boolean forwardDeclareFunctions;
 	public final boolean forwardDeclareNamespaceElements;
-	public final boolean relativeHeaderInSameDir;
-	public final boolean relativeHeaderInSubdir;
-	public final boolean relativeHeaderInParentDir;
-	public final boolean heuristicHeaderSubstitution;
-	public final boolean separateIncludeBlocks;
-	public final boolean sortAlphabetically;
-	public final boolean removeUnusedIncludes;
-	public final boolean commentOutUnusedIncludes;
-	public final boolean sortByHeaderLocation;
-	public final List<IncludeType> groupOrder;  // TODO(sprigogin): Change to IncludeGroupOrder
-
-	public static enum IncludeGroupType {
-		SIBLING_HEADER, HEADERS_IN_SAME_FOLDER, HEADERS_IN_SUBFOLDERS,
-		SYSTEM_HEADERS, SYSTEM_C_HEADERS, SYSTEM_CPP_HEADERS,
-		PROJECT_HEADERS, EXTERNAL_HEADERS, SPECIAL_HEADERS,
-		TYPE_FORWARD_DECLARATIONS, FUNCTION_FORWARD_DECLARATIONS, USING_DECLARATIONS
-	}
-
-	public static class GroupStyle {
-		public boolean useRelativePath;
-		public boolean useAngleBrackets;
-		public boolean separateByBlankLine;
-	}
+	public final UnusedStatementDisposition unusedStatementsDisposition;
+	public final String[] partnerFileSuffixes;
 
 	public IncludePreferences(ICProject project) {
+		includeStyles = new HashMap<IncludeKind, IncludeGroupStyle>();
+		loadStyle(IncludeKind.RELATED, PREF_INCLUDE_STYLE_RELATED, project);
+		loadStyle(IncludeKind.PARTNER, PREF_INCLUDE_STYLE_PARTNER, project);
+		loadStyle(IncludeKind.IN_SAME_FOLDER, PREF_INCLUDE_STYLE_SAME_FOLDER, project);
+		loadStyle(IncludeKind.IN_SUBFOLDER, PREF_INCLUDE_STYLE_SUBFOLDER, project);
+		loadStyle(IncludeKind.SYSTEM, PREF_INCLUDE_STYLE_SYSTEM, project);
+		loadStyle(IncludeKind.SYSTEM_WITH_EXTENSION, PREF_INCLUDE_STYLE_SYSTEM_WITH_EXTENSION, project);
+		loadStyle(IncludeKind.SYSTEM_WITHOUT_EXTENSION, PREF_INCLUDE_STYLE_SYSTEM_WITHOUT_EXTENSION, project);
+		loadStyle(IncludeKind.OTHER, PREF_INCLUDE_STYLE_OTHER, project);
+		loadStyle(IncludeKind.IN_SAME_PROJECT, PREF_INCLUDE_STYLE_SAME_PROJECT, project);
+		loadStyle(IncludeKind.IN_OTHER_PROJECT, PREF_INCLUDE_STYLE_OTHER_PROJECT, project);
+		loadStyle(IncludeKind.EXTERNAL, PREF_INCLUDE_STYLE_EXTERNAL, project);
+		// Normalize order property of the styles to make sure that the numbers are sequential.
+		List<IncludeGroupStyle> styles = new ArrayList<IncludeGroupStyle>(includeStyles.values());
+		Collections.sort(styles);
+		for (int i = 0; i < styles.size(); i++) {
+			styles.get(i).setOrder(i);
+		}
+		// TODO(sprigogin): Load styles for headers matching patterns.
+
 		forwardDeclareCompositeTypes = PreferenceConstants.getPreference(
 				PREF_FORWARD_DECLARE_COMPOSITE_TYPES, project, true);
 		forwardDeclareEnums = PreferenceConstants.getPreference(
@@ -62,107 +71,37 @@ public class IncludePreferences {
 		forwardDeclareNamespaceElements = PreferenceConstants.getPreference(
 				PREF_FORWARD_DECLARE_NAMESPACE_ELEMENTS, project, true);
 
-		// Relative headers preferences
-		relativeHeaderInSameDir = PreferenceConstants.getPreference(
-				PREF_RELATIVE_HEADER_IN_SAME_DIR, project, false);
-		relativeHeaderInSubdir = PreferenceConstants.getPreference(
-				PREF_RELATIVE_HEADER_IN_SUB_DIR, project, false);
-		relativeHeaderInParentDir = PreferenceConstants.getPreference(
-				PREF_RELATIVE_HEADER_IN_PARENT_DIR, project, false);
-
-		// Header resolution preferences
+		String value = PreferenceConstants.getPreference(
+				PREF_PARTNER_FILE_SUFFIXES, project, DEFAULT_PARTNER_FILE_SUFFIXES);
+		partnerFileSuffixes = value.split(","); //$NON-NLS-1$
+		
 		heuristicHeaderSubstitution = PreferenceConstants.getPreference(
 				PREF_HEURISTIC_HEADER_SUBSTITUTION, project, true);
 
-		// Header sort order preferences
 		allowReordering = PreferenceConstants.getPreference(
-				PREF_ALLOW_TO_REORDER_INCLUDES, project, true);
-		sortByHeaderLocation = PreferenceConstants.getPreference(
-				PREF_SORT_BY_HEADER_LOCATION, project, true);
-		String order = PreferenceConstants.getPreference(
-				PREF_HEADER_LOCATION_SORT_ORDER, project,
-				IncludeType.RELATIVE_HEADER.toString() + ',' +
-				IncludeType.LIBRARY_HEADER.toString() + ',' +
-				IncludeType.PROJECT_HEADER.toString() + ',' +
-				IncludeType.FORWARD_DECLARATION.toString() + ',' +
-				IncludeType.FUNCTION_FORWARD_DECLARATION.toString());
-		String[] textSortOrder = order.split(","); //$NON-NLS-1$
-		List<IncludeType> list = new ArrayList<IncludeType>(textSortOrder.length);
-		for (String type : textSortOrder) {
-			list.add(IncludeType.valueOf(type));
-		}
-		groupOrder = Collections.unmodifiableList(list);
-
-		separateIncludeBlocks = PreferenceConstants.getPreference(
-				PREF_SEPARATE_INCLUDE_BLOCKS, project, true);
-		sortAlphabetically = PreferenceConstants.getPreference(
-				PREF_SORT_ALPHABETICALLY, project, true);
+				PREF_INCLUDES_REORDERING, project, true);
 
 		// Unused include handling preferences
-		removeUnusedIncludes = PreferenceConstants.getPreference(
-				PREF_REMOVE_UNUSED_INCLUDES, project, false);
-		commentOutUnusedIncludes = PreferenceConstants.getPreference(
-				PREF_COMMENT_OUT_UNUSED_INCLUDES, project, true);
+		value = PreferenceConstants.getPreference(PREF_UNUSED_STATEMENTS_DISPOSITION, project, null);
+		UnusedStatementDisposition disposition = null;
+		if (value != null)
+			disposition = UnusedStatementDisposition.valueOf(value);
+		if (disposition == null)
+			disposition = UnusedStatementDisposition.COMMENT_OUT;
+		unusedStatementsDisposition = disposition;
+	}
+
+	private void loadStyle(IncludeKind includeKind, String preferenceKey, ICProject project) {
+		String value = PreferenceConstants.getPreference(preferenceKey, project, null);
+		IncludeGroupStyle style = null;
+		if (value != null)
+			style = IncludeGroupStyle.fromString(value, includeKind);
+		if (style == null)
+			style = new IncludeGroupStyle(includeKind);
+		includeStyles.put(includeKind, style);
 	}
 
 	// TODO(sprigogin): Move the constants and defaults to PreferenceConstants.
-
-	/**
-	 * Enumerates the different types of code constructs which the organize includes action can
-	 * generate.
-	 */
-	public enum IncludeType {
-		/**
-		 * A header which is located within the current file's directory.
-		 */
-		RELATIVE_HEADER,
-
-		/**
-		 * A header which is located within the current file's project directory.
-		 */
-		PROJECT_HEADER,
-
-		/**
-		 * A (library) header which is located outside of the current file's project directory.
-		 */
-		LIBRARY_HEADER,
-
-		/**
-		 * A forward declaration.
-		 */
-		FORWARD_DECLARATION,
-
-		/**
-		 * A forward declaration of a function.
-		 */
-		FUNCTION_FORWARD_DECLARATION,
-
-		/**
-		 * A problem like e.g. an unresolved symbol.
-		 */
-		FOUND_PROBLEM
-	}
-
-	/**
-	 * Enumerates the different options for having a protection against multiple header file
-	 * inclusion.
-	 */
-	public enum MultipleInclusionProtectionType {
-		/**
-		 * No protection against multiple header file inclusion.
-		 */
-		NONE,
-
-		/**
-		 * Use include guards to avoid multiple header file inclusion.
-		 */
-		INCLUDE_GUARDS,
-
-		/**
-		 * Use pragma once to avoid multiple header file inclusion.
-		 */
-		PRAGMA_ONCE
-	}
 
 	/**
 	 * Whether composite types should be forward declared if possible.
@@ -199,131 +138,162 @@ public class IncludePreferences {
 	public static final String PREF_FORWARD_DECLARE_NAMESPACE_ELEMENTS = "forward_declare_namespace_elements"; //$NON-NLS-1$
 
 	/**
-	 * Whether headers located within the same directory as the source file should always
-	 * be included relative to the source file.
+	 * Defines a list of file name suffixes. A header file and the including file are considered
+	 * partners if their file names without extensions are either identical or differ by one of
+	 * these suffixes.  
 	 */
-	public static final String PREF_RELATIVE_HEADER_IN_SAME_DIR = "relative_header_in_same_dir"; //$NON-NLS-1$
+	public static final String PREF_PARTNER_FILE_SUFFIXES = "include_partner_file_suffixes"; //$NON-NLS-1$
 
 	/**
-	 * Whether headers located within a subdirectory of the source file's directory should always
-	 * be included relative to the source file.
+	 * Whether a heuristic approach should be used to decide which C++ header files to include.
+	 * The heuristic prefers headers which have no file extension and / or are named like the symbol
+	 * which should be defined. This often works out nicely since it's a commonly used naming
+	 * convention for C++ library headers.
 	 */
-	public static final String PREF_RELATIVE_HEADER_IN_SUB_DIR = "relative_header_in_sub_dir"; //$NON-NLS-1$
+	public static final String PREF_HEURISTIC_HEADER_SUBSTITUTION = "organize_includes_heuristic_header_substitution"; //$NON-NLS-1$
 
 	/**
-	 * Whether headers located within a parent directory of the source file's directory should
-	 * always be included relative to the source file.
+	 * Whether it's allowed to reorder existing include directives. If this preference is set to
+	 * false, the original order is kept as far as possible. This may be necessary to avoid breaking
+	 * code which makes assumptions about the order of the include directives. If this is set to
+	 * true, a different sort order can be applied. Groups of includes are ordered according to
+	 * the values returned by
+	 * {@link org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle#getOrder()} method.
+	 * Includes within each group are ordered alphabetically.
 	 */
-	public static final String PREF_RELATIVE_HEADER_IN_PARENT_DIR = "relative_header_in_parent_dir"; //$NON-NLS-1$
+	public static final String PREF_INCLUDES_REORDERING = "organize_includes_allow_reordering"; //$NON-NLS-1$
 
 	/**
-	 * Whether a heuristic approach should be used to resolve C++ header files. The heuristic
-	 * prefers headers which have no file extension and / or are named like the symbol which should
-	 * be defined. This often works out nicely since it's a commonly used naming convention for C++
-	 * (library) headers.
+	 * Determines what should be done with any unused include directives and forward declarations.
+	 * This preference may have one of the three values defined by
+	 * {@link UnusedStatementDisposition} enumeration ("REMOVE", "COMMENT_OUT", "KEEP").
 	 */
-	public static final String PREF_HEURISTIC_HEADER_SUBSTITUTION = "heuristic_header_resolution"; //$NON-NLS-1$
+	public static final String PREF_UNUSED_STATEMENTS_DISPOSITION = "organize_includes_unused_statements"; //$NON-NLS-1$
 
 	/**
-	 * Whether it's allowed to reorder existing include directives. If this is set to false,
-	 * the original order is kept as far as possible. This may be necessary to avoid breaking code
-	 * which makes assumptions about the order of the include directives. If this is set to true,
-	 * a different sort order can be applied. Also see the other sort order preferences for further
-	 * details.
+	 * Include style for headers closely related to the including file.
+	 * The value of the preference is an XML representation of
+	 * {@link org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle}.
 	 */
-	public static final String PREF_ALLOW_TO_REORDER_INCLUDES = "allow_to_reorder_includes"; //$NON-NLS-1$
+	public static final String PREF_INCLUDE_STYLE_RELATED = "include_style_related"; //$NON-NLS-1$
+	/**
+	 * Include style for the header with the same name as the including file. 
+	 * The value of the preference is an XML representation of
+	 * {@link org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle}.
+	 */
+	public static final String PREF_INCLUDE_STYLE_PARTNER = "include_style_partner"; //$NON-NLS-1$
+	/**
+	 * Include style for headers in the same folder as the including file.
+	 * The value of the preference is an XML representation of
+	 * {@link org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle}.
+	 */
+	public static final String PREF_INCLUDE_STYLE_SAME_FOLDER = "include_style_same_folder"; //$NON-NLS-1$
+	/**
+	 * Include style for headers in subfolders of the folder containing the including file.
+	 * The value of the preference is an XML representation of
+	 * {@link org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle}.
+	 */
+	public static final String PREF_INCLUDE_STYLE_SUBFOLDER = "include_style_subfolder"; //$NON-NLS-1$
+	/**
+	 * Include style for system headers.
+	 * The value of the preference is an XML representation of
+	 * {@link org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle}.
+	 */
+	public static final String PREF_INCLUDE_STYLE_SYSTEM = "include_style_system"; //$NON-NLS-1$
+	/**
+	 * Include style for C-style system headers with a file name extension.
+	 * The value of the preference is an XML representation of
+	 * {@link org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle}.
+	 */
+	public static final String PREF_INCLUDE_STYLE_SYSTEM_WITH_EXTENSION = "include_style_system_with_extension"; //$NON-NLS-1$
+	/**
+	 * Include style for C++-style system headers without a file name extension.
+	 * The value of the preference is an XML representation of
+	 * {@link org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle}.
+	 */
+	public static final String PREF_INCLUDE_STYLE_SYSTEM_WITHOUT_EXTENSION = "include_style_system_without_extension"; //$NON-NLS-1$
+	/**
+	 * Include style for headers not closely related to the including file.
+	 * The value of the preference is an XML representation of
+	 * {@link org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle}.
+	 */
+	public static final String PREF_INCLUDE_STYLE_OTHER = "include_style_other"; //$NON-NLS-1$
+	/**
+	 * Include style for headers in the same project as the including file.
+	 * The value of the preference is an XML representation of
+	 * {@link org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle}.
+	 */
+	public static final String PREF_INCLUDE_STYLE_SAME_PROJECT = "include_style_in_same_project"; //$NON-NLS-1$
+	/**
+	 * Include style for headers in a different project than the including file.
+	 * The value of the preference is an XML representation of
+	 * {@link org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle}.
+	 */
+	public static final String PREF_INCLUDE_STYLE_OTHER_PROJECT = "include_style_in_other_project"; //$NON-NLS-1$
+	/**
+	 * Include style for headers outside Eclipse workspace.
+	 * The value of the preference is an XML representation of
+	 * {@link org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle}.
+	 */
+	public static final String PREF_INCLUDE_STYLE_EXTERNAL = "include_style_external"; //$NON-NLS-1$
+	/**
+	 * Include styles for headers matching user-defined patterns.
+	 * The value of the preference is an XML representation of one or more
+	 * {@link org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle}s.
+	 */
+	public static final String PREF_INCLUDE_STYLE_MATCHING_PATTERN = "include_style_matching_pattern"; //$NON-NLS-1$
 
 	/**
-	 * Whether the include directives should be sorted by header file location. Ignored if
-	 * PREF_ALLOW_TO_REORDER_INCLUDES is false.
-	 */
-	public static final String PREF_SORT_BY_HEADER_LOCATION = "sort_by_header_location"; //$NON-NLS-1$
-
-	/**
-	 * Defines the header location sort order. Ignored if either PREF_ALLOW_TO_REORDER_INCLUDES or
-	 * PREF_SORT_BY_HEADER_LOCATION is false. An example location sort order would be:
-	 * Relative headers > Project headers > Library headers > Forward declarations
-	 */
-	public static final String PREF_HEADER_LOCATION_SORT_ORDER = "header_location_sort_order"; //$NON-NLS-1$
-
-	/**
-	 * Whether the different blocks of include directives should be separated by a blank line.
-	 * Ignored if either PREF_ALLOW_TO_REORDER_INCLUDES or PREF_SORT_BY_HEADER_LOCATION is false.
+	 * Initializes the given preference store with the default values.
 	 *
-	 * Example:
-	 *  // Relative headers
-	 *  #include "..."
-	 *
-	 *  // Project headers
-	 *  #include "..."
-	 *
-	 *  // Library headers
-	 *  #include <...>
-	 *
-	 *  // Forward declarations
-	 *  class ...;
+	 * @param store the preference store to be initialized
 	 */
-	public static final String PREF_SEPARATE_INCLUDE_BLOCKS = "separate_include_blocks"; //$NON-NLS-1$
+	public static void initializeDefaultValues(IPreferenceStore store) {
+		IncludeGroupStyle style = new IncludeGroupStyle(IncludeKind.RELATED);
+		store.setDefault(PREF_INCLUDE_STYLE_RELATED, style.toString());
+		style = new IncludeGroupStyle(IncludeKind.PARTNER);
+		style.setKeepTogether(true);
+		style.setBlankLineBefore(true);
+		style.setOrder(0);
+		store.setDefault(PREF_INCLUDE_STYLE_PARTNER, style.toString());
+		style = new IncludeGroupStyle(IncludeKind.IN_SAME_FOLDER);
+		store.setDefault(PREF_INCLUDE_STYLE_SAME_FOLDER, style.toString());
+		style = new IncludeGroupStyle(IncludeKind.IN_SUBFOLDER);
+		store.setDefault(PREF_INCLUDE_STYLE_SUBFOLDER, style.toString());
+		style = new IncludeGroupStyle(IncludeKind.SYSTEM);
+		style.setKeepTogether(true);
+		style.setBlankLineBefore(true);
+		store.setDefault(PREF_INCLUDE_STYLE_SYSTEM, style.toString());
+		style = new IncludeGroupStyle(IncludeKind.SYSTEM_WITH_EXTENSION);
+		style.setKeepTogether(true);
+		style.setAngleBrackets(true);
+		style.setOrder(1);
+		store.setDefault(PREF_INCLUDE_STYLE_SYSTEM_WITH_EXTENSION, style.toString());
+		style = new IncludeGroupStyle(IncludeKind.SYSTEM_WITHOUT_EXTENSION);
+		style.setKeepTogether(true);
+		style.setAngleBrackets(true);
+		style.setOrder(2);
+		store.setDefault(PREF_INCLUDE_STYLE_SYSTEM_WITHOUT_EXTENSION, style.toString());
+		style = new IncludeGroupStyle(IncludeKind.OTHER);
+		style.setKeepTogether(true);
+		style.setBlankLineBefore(true);
+		style.setOrder(3);
+		store.setDefault(PREF_INCLUDE_STYLE_OTHER, style.toString());
+		style = new IncludeGroupStyle(IncludeKind.IN_SAME_PROJECT);
+		store.setDefault(PREF_INCLUDE_STYLE_SAME_PROJECT, style.toString());
+		style = new IncludeGroupStyle(IncludeKind.IN_OTHER_PROJECT);
+		store.setDefault(PREF_INCLUDE_STYLE_OTHER_PROJECT, style.toString());
+		style = new IncludeGroupStyle(IncludeKind.EXTERNAL);
+		store.setDefault(PREF_INCLUDE_STYLE_EXTERNAL, style.toString());
+		store.setDefault(PREF_INCLUDE_STYLE_MATCHING_PATTERN, ""); //$NON-NLS-1$
 
-	/**
-	 * Whether the include directives should be sorted alphabetically. Ignored if
-	 * PREF_ALLOW_TO_REORDER_INCLUDES is false.
-	 */
-	public static final String PREF_SORT_ALPHABETICALLY = "sort_alphabetically"; //$NON-NLS-1$
-
-	/**
-	 * Whether any unused include directives and forward declarations should be removed. It might be
-	 * helpful to disable this if some include directives tend to become removed incorrectly, as it
-	 * might happen when using e.g. conditional compilations.
-	 */
-	public static final String PREF_REMOVE_UNUSED_INCLUDES = "remove_unused_includes"; //$NON-NLS-1$
-
-	public static final String PREF_COMMENT_OUT_UNUSED_INCLUDES = "comment_out_unused_includes"; //$NON-NLS-1$
-
-	public static final String INCLUDE_STYLE_GROUP_RELATED = "allow_to_reorder_includes"; //$NON-NLS-1$
-
-	public static final String INCLUDE_STYLE_PARTNER = "include_style_partner"; //$NON-NLS-1$
-	public static final String INCLUDE_STYLE_GROUP_PARTNER = "include_style_group_partner"; //$NON-NLS-1$
-	public static final String INCLUDE_STYLE_SAME_FOLDER = "include_style_same_folder"; //$NON-NLS-1$
-	public static final String INCLUDE_STYLE_GROUP_SAME_FOLDER = "include_style_group_same_folder"; //$NON-NLS-1$
-	public static final String INCLUDE_STYLE_SUBFOLDER = "include_style_subfolder"; //$NON-NLS-1$
-	public static final String INCLUDE_STYLE_GROUP_SUBFOLDER = "include_style_group_subfolder"; //$NON-NLS-1$
-	public static final String INCLUDE_STYLE_GROUP_SYSTEM = "include_style_group_system"; //$NON-NLS-1$
-
-	/**
-     * Initializes the given preference store with the default values.
-     *
-     * @param store the preference store to be initialized
-     */
-    public static void initializeDefaultValues(IPreferenceStore store) {
+		store.setDefault(PREF_PARTNER_FILE_SUFFIXES, DEFAULT_PARTNER_FILE_SUFFIXES);
+		store.setDefault(PREF_HEURISTIC_HEADER_SUBSTITUTION, true);
+		store.setDefault(PREF_INCLUDES_REORDERING, true);
 		store.setDefault(PREF_FORWARD_DECLARE_COMPOSITE_TYPES, true);
 		store.setDefault(PREF_FORWARD_DECLARE_ENUMS, false);
 		store.setDefault(PREF_FORWARD_DECLARE_FUNCTIONS, false);
 		store.setDefault(PREF_FORWARD_DECLARE_NAMESPACE_ELEMENTS, true);
-
-		// Relative headers preferences
-		store.setDefault(PREF_RELATIVE_HEADER_IN_SAME_DIR, false);
-		store.setDefault(PREF_RELATIVE_HEADER_IN_SUB_DIR, false);
-		store.setDefault(PREF_RELATIVE_HEADER_IN_PARENT_DIR, false);
-
-		// Header resolution preferences
-		store.setDefault(PREF_HEURISTIC_HEADER_SUBSTITUTION, true);
-
-		// Header sort order preferences
-		store.setDefault(PREF_ALLOW_TO_REORDER_INCLUDES, true);
-		store.setDefault(PREF_SORT_BY_HEADER_LOCATION, true);
-		store.setDefault(PREF_HEADER_LOCATION_SORT_ORDER,
-				IncludeType.RELATIVE_HEADER.toString() + ' ' +
-				IncludeType.LIBRARY_HEADER.toString() + ' ' +
-				IncludeType.PROJECT_HEADER.toString() + ' ' +
-				IncludeType.FORWARD_DECLARATION.toString() + ' ' +
-				IncludeType.FUNCTION_FORWARD_DECLARATION.toString() + ' ' +
-				IncludeType.FOUND_PROBLEM.toString());
-		store.setDefault(PREF_SEPARATE_INCLUDE_BLOCKS, true);
-		store.setDefault(PREF_SORT_ALPHABETICALLY, true);
-
-		// Unused include handling preferences
-		store.setDefault(PREF_REMOVE_UNUSED_INCLUDES, true);
-		store.setDefault(PREF_COMMENT_OUT_UNUSED_INCLUDES, true);
-    }
+		store.setDefault(PREF_UNUSED_STATEMENTS_DISPOSITION, UnusedStatementDisposition.COMMENT_OUT.toString());
+	}
 }

@@ -13,6 +13,8 @@ package org.eclipse.cdt.internal.ui.refactoring.includes;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import org.eclipse.ui.IMemento;
@@ -21,34 +23,86 @@ import org.eclipse.ui.XMLMemento;
 
 import org.eclipse.cdt.ui.CUIPlugin;
 
+import org.eclipse.cdt.internal.ui.preferences.PreferencesMessages;
+
 /**
  * Style preferences for a category of include statements.
  */
-public class IncludeGroupStyle {
+public class IncludeGroupStyle implements Comparable<IncludeGroupStyle> {
+
 	public enum IncludeKind {
-		PARTNER,
-		IN_SAME_FOLDER,
-		IN_SUBFOLDERS,
-		SYSTEM_WITH_EXTENSION,
-		SYSTEM_WITHOUT_EXTENSION,
-		IN_WORKSPACE,
-		EXTERNAL,
-		MATCHING_PATTERN,
+		RELATED(PreferencesMessages.IncludeCategoriesBlock_related_headers_node,
+				PreferencesMessages.IncludeCategoriesBlock_related_headers_node_description,
+				null),
+		PARTNER(PreferencesMessages.IncludeCategoriesBlock_partner_header_node,
+				PreferencesMessages.IncludeCategoriesBlock_partner_header_node_description,
+				RELATED),
+		IN_SAME_FOLDER(PreferencesMessages.IncludeCategoriesBlock_same_folder_header_node,
+				PreferencesMessages.IncludeCategoriesBlock_same_folder_header_node_description,
+				RELATED),
+		IN_SUBFOLDER(PreferencesMessages.IncludeCategoriesBlock_subfolder_header_node,
+				PreferencesMessages.IncludeCategoriesBlock_subfolder_header_node_description,
+				RELATED),
+		SYSTEM(PreferencesMessages.IncludeCategoriesBlock_system_headers_node,
+				PreferencesMessages.IncludeCategoriesBlock_system_headers_node_description,
+				null),
+		SYSTEM_WITH_EXTENSION(PreferencesMessages.IncludeCategoriesBlock_system_headers_with_extension_node,
+				PreferencesMessages.IncludeCategoriesBlock_system_headers_with_extension_node_description,
+				SYSTEM),
+		SYSTEM_WITHOUT_EXTENSION(PreferencesMessages.IncludeCategoriesBlock_system_headers_without_extension_node,
+				PreferencesMessages.IncludeCategoriesBlock_system_headers_without_extension_node_description,
+				SYSTEM),
+		OTHER(PreferencesMessages.IncludeCategoriesBlock_unrelated_headers_node,
+				PreferencesMessages.IncludeCategoriesBlock_unrelated_headers_node_description,
+				null),
+		IN_SAME_PROJECT(PreferencesMessages.IncludeCategoriesBlock_same_project_headers_node,
+				PreferencesMessages.IncludeCategoriesBlock_same_project_headers_node_description,
+				OTHER),
+		IN_OTHER_PROJECT(PreferencesMessages.IncludeCategoriesBlock_other_project_headers_node,
+				PreferencesMessages.IncludeCategoriesBlock_other_project_headers_node_description,
+				OTHER),
+		EXTERNAL(PreferencesMessages.IncludeCategoriesBlock_external_headers_node,
+				PreferencesMessages.IncludeCategoriesBlock_external_headers_node_description,
+				OTHER),
+		MATCHING_PATTERN(PreferencesMessages.IncludeCategoriesBlock_user_defined_categories_node,
+				PreferencesMessages.IncludeCategoriesBlock_user_defined_categories_node_description,
+				null);
+
+		public final String name;
+		public final String description;
+		public final IncludeKind parent;
+		public final List<IncludeKind> children = new ArrayList<IncludeKind>();
+
+		private IncludeKind(String name, String description, IncludeKind parent) {
+			this.name = name;
+			this.description = description;
+			this.parent = parent;
+			if (parent != null)
+				parent.children.add(this);
+		}
+
+		public boolean hasChildren() {
+			return !children.isEmpty();
+		}
 	}
 
 	private static final String TAG_STYLE = "style"; //$NON-NLS-1$
 	private static final String TAG_NAME = "name"; //$NON-NLS-1$
 	private static final String TAG_PATTERN = "pattern"; //$NON-NLS-1$
-	private static final String TAG_DISABLED = "disabled"; //$NON-NLS-1$
+	private static final String TAG_KEEP_TOGETHER = "keep_together"; //$NON-NLS-1$
+	private static final String TAG_BLANK_LINE_BEFORE = "blank_line_before"; //$NON-NLS-1$
 	private static final String TAG_RELATIVE_PATH = "relative_path"; //$NON-NLS-1$
 	private static final String TAG_ANGLE_BRACKETS = "angle_brackets"; //$NON-NLS-1$
+	private static final String TAG_ORDER = "order"; //$NON-NLS-1$
 
 	private final IncludeKind includeKind;
-	private boolean disabled;
+	private boolean keepTogether;
+	private boolean blankLineBefore;
 	private boolean relativePath;
 	private boolean angleBrackets;
 	private Pattern headerNamePattern;
 	private String name;
+	private int order; // Relative position of the include group. Ignored if keepTogether is false.
 
 	public IncludeGroupStyle(IncludeKind includeKind) {
 		if (includeKind == null || includeKind == IncludeKind.MATCHING_PATTERN)
@@ -66,28 +120,38 @@ public class IncludeGroupStyle {
 		this.headerNamePattern = headerNamePattern;
 	}
 
-	public boolean isDisabled() {
-		return disabled;
+	public boolean isKeepTogether() {
+		return keepTogether;
 	}
 
-	public void setDisabled(boolean disabled) {
-		this.disabled = disabled;
+	public void setKeepTogether(boolean value) {
+		this.keepTogether = value;
+	}
+
+	public boolean isBlankLineBefore() {
+		return blankLineBefore;
+	}
+
+	public void setBlankLineBefore(boolean value) {
+		this.blankLineBefore = value;
 	}
 
 	public boolean isRelativePath() {
 		return relativePath;
 	}
 
-	public void setRelativePath(boolean relativePath) {
-		this.relativePath = relativePath;
+	public void setRelativePath(boolean value) {
+		assert !includeKind.hasChildren();
+		this.relativePath = value;
 	}
 
 	public boolean isAngleBrackets() {
 		return angleBrackets;
 	}
 
-	public void setAngleBrackets(boolean angleBrackets) {
-		this.angleBrackets = angleBrackets;
+	public void setAngleBrackets(boolean value) {
+		assert !includeKind.hasChildren();
+		this.angleBrackets = value;
 	}
 
 	public Pattern getHeaderNamePattern() {
@@ -110,6 +174,14 @@ public class IncludeGroupStyle {
 		return includeKind;
 	}
 
+	public int getOrder() {
+		return order;
+	}
+
+	public void setOrder(int order) {
+		this.order = order;
+	}
+
 	public static IncludeGroupStyle fromMemento(IMemento memento, IncludeKind includeKind) {
 		IncludeGroupStyle style;
 		if (includeKind == IncludeKind.MATCHING_PATTERN) {
@@ -119,14 +191,24 @@ public class IncludeGroupStyle {
 		} else {
 			style = new IncludeGroupStyle(includeKind);
 		}		
-		style.setDisabled(memento.getBoolean(TAG_DISABLED));
-		style.setRelativePath(memento.getBoolean(TAG_RELATIVE_PATH));
-		style.setAngleBrackets(memento.getBoolean(TAG_ANGLE_BRACKETS));
+		style.setKeepTogether(nullToFalse(memento.getBoolean(TAG_KEEP_TOGETHER)));
+		style.setBlankLineBefore(nullToFalse(memento.getBoolean(TAG_BLANK_LINE_BEFORE)));
+		if (!includeKind.hasChildren()) {
+			style.setRelativePath(nullToFalse(memento.getBoolean(TAG_RELATIVE_PATH)));
+			style.setAngleBrackets(nullToFalse(memento.getBoolean(TAG_ANGLE_BRACKETS)));
+		}
+		Integer order = memento.getInteger(TAG_ORDER);
+		if (order != null)
+			style.setOrder(order.intValue());
 		return style;
 	}
 
-	private static String nullToEmpty(String string) {
-		return string != null ? string : ""; //$NON-NLS-1$
+	private static boolean nullToFalse(Boolean val) {
+		return val != null && val.booleanValue();
+	}
+
+	private static String nullToEmpty(String val) {
+		return val != null ? val : ""; //$NON-NLS-1$
 	}
 
 	public void saveToMemento(IMemento memento) {
@@ -134,9 +216,14 @@ public class IncludeGroupStyle {
 			memento.putString(TAG_NAME, name);
 			memento.putString(TAG_PATTERN, headerNamePattern.toString());
 		}
-		memento.putBoolean(TAG_DISABLED, disabled);
-		memento.putBoolean(TAG_RELATIVE_PATH, relativePath);
-		memento.putBoolean(TAG_ANGLE_BRACKETS, angleBrackets);
+		memento.putBoolean(TAG_KEEP_TOGETHER, keepTogether);
+		memento.putBoolean(TAG_BLANK_LINE_BEFORE, blankLineBefore);
+		if (!includeKind.hasChildren()) {
+			memento.putBoolean(TAG_RELATIVE_PATH, relativePath);
+			memento.putBoolean(TAG_ANGLE_BRACKETS, angleBrackets);
+		}
+		if (keepTogether)
+			memento.putInteger(TAG_ORDER, order);
 	}
 
 	@Override
@@ -161,5 +248,18 @@ public class IncludeGroupStyle {
 			return null;
 		}
 		return fromMemento(memento, includeKind);
+	}
+
+	/**
+	 * Compares styles according to their sorting order.
+	 */
+	@Override
+	public int compareTo(IncludeGroupStyle other) {
+		if (keepTogether != other.keepTogether)
+			return keepTogether ? -1 : 1;
+		int c = order - other.order;
+		if (c != 0)
+			return c;
+		return includeKind.ordinal() - other.includeKind.ordinal();
 	}
 }

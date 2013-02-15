@@ -48,6 +48,10 @@ public class IncludeInfo {
 		this.isSystem = isSystem;
 	}
 
+	/**
+	 * Returns the part of the include statement identifying the included header file without
+	 * quotes or angle brackets.
+	 */
 	public final String getName() {
 		return name;
 	}

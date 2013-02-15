@@ -1,0 +1,106 @@
+/*******************************************************************************
+ * Copyright (c) 2013 Google, Inc and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ * 	   Sergey Prigogin (Google) - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.cdt.internal.ui.preferences;
+
+import org.eclipse.core.resources.IProject;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
+
+import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
+import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
+import org.eclipse.cdt.internal.ui.refactoring.includes.IncludePreferences;
+import org.eclipse.cdt.internal.ui.refactoring.includes.IncludePreferences.UnusedStatementDisposition;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
+
+/**
+ * The preference block for configuring Organize Includes command.
+ */
+public class OrganizeIncludesBlock extends OptionsConfigurationBlock {
+	private static final Key KEY_HEURISTIC_HEADER_SUBSTITUTION = getCDTUIKey(IncludePreferences.PREF_HEURISTIC_HEADER_SUBSTITUTION);
+	private static final Key KEY_INCLUDES_REORDERING = getCDTUIKey(IncludePreferences.PREF_INCLUDES_REORDERING);
+	private static final Key KEY_UNUSED_STATEMENTS_DISPOSITION = getCDTUIKey(IncludePreferences.PREF_UNUSED_STATEMENTS_DISPOSITION);
+	private static final Key KEY_FORWARD_DECLARE_COMPOSITE_TYPES = getCDTUIKey(IncludePreferences.PREF_FORWARD_DECLARE_COMPOSITE_TYPES);
+	private static final Key KEY_FORWARD_DECLARE_ENUMS = getCDTUIKey(IncludePreferences.PREF_FORWARD_DECLARE_ENUMS);
+	private static final Key KEY_FORWARD_DECLARE_FUNCTIONS = getCDTUIKey(IncludePreferences.PREF_FORWARD_DECLARE_FUNCTIONS);
+	private static final Key KEY_FORWARD_DECLARE_NAMESPACE_ELEMENTS = getCDTUIKey(IncludePreferences.PREF_FORWARD_DECLARE_NAMESPACE_ELEMENTS);
+
+	private static final String[] DISPOSITION_VALUES = {
+		UnusedStatementDisposition.REMOVE.toString(),
+		UnusedStatementDisposition.COMMENT_OUT.toString(),
+		UnusedStatementDisposition.KEEP.toString(),
+	};
+	private static final String[] DISPOSITION_LABELS = {
+		PreferencesMessages.OrganizeIncludesBlock_remove,
+		PreferencesMessages.OrganizeIncludesBlock_comment_out,
+		PreferencesMessages.OrganizeIncludesBlock_keep,
+	};
+
+	private static Key[] ALL_KEYS = {
+		KEY_HEURISTIC_HEADER_SUBSTITUTION,
+		KEY_INCLUDES_REORDERING,
+		KEY_UNUSED_STATEMENTS_DISPOSITION,
+		KEY_FORWARD_DECLARE_COMPOSITE_TYPES,
+		KEY_FORWARD_DECLARE_ENUMS,
+		KEY_FORWARD_DECLARE_FUNCTIONS,
+		KEY_FORWARD_DECLARE_NAMESPACE_ELEMENTS,
+	};
+
+	public OrganizeIncludesBlock(IStatusChangeListener context, IProject project,
+			IWorkbenchPreferenceContainer container) {
+		super(context, project, ALL_KEYS, container);
+	}
+
+	@Override
+	protected Control createContents(Composite parent) {
+		setShell(parent.getShell());
+
+		Composite composite =  new Composite(parent, SWT.NONE);
+		composite.setFont(parent.getFont());
+		GridLayout layout = new GridLayout(2, false);
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		composite.setLayout(layout);
+
+		Control control = addCheckBox(composite, PreferencesMessages.OrganizeIncludesBlock_allow_reordering,
+				KEY_INCLUDES_REORDERING, FALSE_TRUE, 0);
+		LayoutUtil.setHorizontalSpan(control, 2);
+		control = addCheckBox(composite, PreferencesMessages.OrganizeIncludesBlock_heuristic_header_substitution,
+				KEY_HEURISTIC_HEADER_SUBSTITUTION, FALSE_TRUE, 0);
+		LayoutUtil.setHorizontalSpan(control, 2);
+		control = addCheckBox(composite, PreferencesMessages.OrganizeIncludesBlock_forward_declare_composite_types,
+				KEY_FORWARD_DECLARE_COMPOSITE_TYPES, FALSE_TRUE, 0);
+		LayoutUtil.setHorizontalSpan(control, 2);
+		control = addCheckBox(composite, PreferencesMessages.OrganizeIncludesBlock_forward_declare_enums,
+				KEY_FORWARD_DECLARE_ENUMS, FALSE_TRUE, 0);
+		LayoutUtil.setHorizontalSpan(control, 2);
+		control = addCheckBox(composite, PreferencesMessages.OrganizeIncludesBlock_forward_declare_functions,
+				KEY_FORWARD_DECLARE_FUNCTIONS, FALSE_TRUE, 0);
+		LayoutUtil.setHorizontalSpan(control, 2);
+		control = addCheckBox(composite, PreferencesMessages.OrganizeIncludesBlock_forward_declare_namespace_elements,
+				KEY_FORWARD_DECLARE_NAMESPACE_ELEMENTS, FALSE_TRUE, 0);
+		LayoutUtil.setHorizontalSpan(control, 2);
+		control = addComboBox(composite, PreferencesMessages.OrganizeIncludesBlock_unused_statements,
+				KEY_UNUSED_STATEMENTS_DISPOSITION, DISPOSITION_VALUES, DISPOSITION_LABELS, 0);
+		LayoutUtil.setHorizontalSpan(getLabel(control), 1);
+
+		updateControls();
+		return composite;
+	}
+
+	@Override
+	protected void validateSettings(Key changedKey, String oldValue, String newValue) {
+		StatusInfo status = new StatusInfo();
+		fContext.statusChanged(status);
+	}
+}

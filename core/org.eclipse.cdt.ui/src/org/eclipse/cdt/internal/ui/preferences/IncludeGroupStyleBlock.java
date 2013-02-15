@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
@@ -36,20 +37,24 @@ import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle;
  */
 public class IncludeGroupStyleBlock extends OptionsConfigurationBlock {
 	private final String description;
-	private final Key groupingKey;
-	private final IncludeGroupStyle style;
-	@SuppressWarnings("hiding")
-	private final ArrayList<Button> fCheckBoxes = new ArrayList<Button>();
-	@SuppressWarnings("hiding")
-	private final ArrayList<Text> fTextBoxes = new ArrayList<Text>();
+	private IncludeGroupStyle style;
+	private final ArrayList<Button> checkBoxes = new ArrayList<Button>();
+	private final ArrayList<Text> textBoxes = new ArrayList<Text>();
 	private PixelConverter pixelConverter;
+	private Button checkBoxBlankLine;
+	private static final Key[] EMPTY_KEY_ARRAY = {};
 
 	public IncludeGroupStyleBlock(IStatusChangeListener context, IProject project,
-			IWorkbenchPreferenceContainer container, String description, Key groupingKey,
-			IncludeGroupStyle style) {
-		super(context, project, new Key[] { groupingKey }, container);
+			IWorkbenchPreferenceContainer container, String description) {
+		super(context, project, EMPTY_KEY_ARRAY, container);
 		this.description = description;
-		this.groupingKey = groupingKey;
+	}
+
+	public IncludeGroupStyle getStyle() {
+		return style;
+	}
+
+	public void setStyle(IncludeGroupStyle style) {
 		this.style = style;
 	}
 
@@ -59,7 +64,7 @@ public class IncludeGroupStyleBlock extends OptionsConfigurationBlock {
 
 		setShell(parent.getShell());
 
-		Composite composite =  new Composite(parent, SWT.NONE);
+		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setFont(parent.getFont());
 
 		GridLayout layout = new GridLayout();
@@ -77,28 +82,51 @@ public class IncludeGroupStyleBlock extends OptionsConfigurationBlock {
 		layout.marginWidth = 0;
 		envelope.setLayout(layout);
 
-		addCheckBox(envelope, PreferencesMessages.IncludeGroupStyleBlock_keep_includes_together,
-				groupingKey, TRUE_FALSE, 0);
-		if (style != null) {
-			addCheckBox(envelope, PreferencesMessages.IncludeGroupStyleBlock_use_relative_path,
+		addCheckBox(envelope, PreferencesMessages.IncludeGroupStyleBlock_keep_includes_together, 0,
+				new BooleanDataSource() {
+			@Override
+			public boolean get() {
+				return style.isKeepTogether();
+			}
+
+			@Override
+			public void set(boolean value) {
+				style.setKeepTogether(value);
+			}
+		});
+		checkBoxBlankLine = addCheckBox(envelope, PreferencesMessages.IncludeGroupStyleBlock_blank_line_before,
+				pixelConverter.convertHorizontalDLUsToPixels(10),
+				new BooleanDataSource() {
+			@Override
+			public boolean get() {
+				return style.isBlankLineBefore();
+			}
+
+			@Override
+			public void set(boolean value) {
+				style.setBlankLineBefore(value);
+			}
+		});
+		if (!style.getIncludeKind().hasChildren()) {
+			addCheckBox(envelope, PreferencesMessages.IncludeGroupStyleBlock_use_relative_path, 0,
 					new BooleanDataSource() {
 				@Override
 				public boolean get() {
 					return style.isRelativePath();
 				}
-
+	
 				@Override
 				public void set(boolean value) {
 					style.setRelativePath(value);
 				}
 			});
-			addCheckBox(envelope, PreferencesMessages.IncludeGroupStyleBlock_use_angle_brackets,
+			addCheckBox(envelope, PreferencesMessages.IncludeGroupStyleBlock_use_angle_brackets, 0,
 					new BooleanDataSource() {
 				@Override
 				public boolean get() {
 					return style.isAngleBrackets();
 				}
-
+	
 				@Override
 				public void set(boolean value) {
 					style.setAngleBrackets(value);
@@ -107,12 +135,14 @@ public class IncludeGroupStyleBlock extends OptionsConfigurationBlock {
 		}
 
 		updateControls();
+		updateDependent();
 		return composite;
 	}
 
-	private Button addCheckBox(Composite parent, String label, BooleanDataSource dataSource) {
+	private Button addCheckBox(Composite parent, String label, int indent, BooleanDataSource dataSource) {
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan= 3;
+		gd.horizontalIndent= indent;
 
 		Button checkBox= new Button(parent, SWT.CHECK);
 		checkBox.setFont(JFaceResources.getDialogFont());
@@ -125,7 +155,7 @@ public class IncludeGroupStyleBlock extends OptionsConfigurationBlock {
 
 		checkBox.setSelection(dataSource.get());
 
-		fCheckBoxes.add(checkBox);
+		checkBoxes.add(checkBox);
 
 		return checkBox;
 	}
@@ -133,19 +163,28 @@ public class IncludeGroupStyleBlock extends OptionsConfigurationBlock {
 	@Override
 	protected void updateControls() {
 		super.updateControls();
-		// XXX Implement
+		for (int i= checkBoxes.size() - 1; i >= 0; i--) {
+			updateCheckBox(checkBoxes.get(i));
+		}
 	}
 
 	@Override
-	public void performDefaults() {
-		super.performDefaults();
-		// XXX Implement
+	protected void updateCheckBox(Button checkBox) {
+		BooleanDataSource dataSource = (BooleanDataSource) checkBox.getData();
+		checkBox.setSelection(dataSource.get());
 	}
 
 	@Override
-	public boolean performOk() {
-		return super.performOk();
-		// XXX Implement
+	protected void controlChanged(Widget widget) {
+		if (widget instanceof Button) {
+			BooleanDataSource dataSource = (BooleanDataSource) widget.getData();
+			dataSource.set(((Button) widget).getSelection());
+		}
+		updateDependent();
+	}
+
+	private void updateDependent() {
+		checkBoxBlankLine.setEnabled(style.isKeepTogether());
 	}
 
 	@Override

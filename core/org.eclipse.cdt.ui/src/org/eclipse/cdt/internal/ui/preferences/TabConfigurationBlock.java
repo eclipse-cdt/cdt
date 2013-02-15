@@ -18,6 +18,8 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -75,7 +77,7 @@ public class TabConfigurationBlock extends OptionsConfigurationBlock {
 		PixelConverter pixelConverter =  new PixelConverter(parent);
 		final TabFolder folder = new TabFolder(parent, SWT.NONE);
 		folder.setLayout(new TabFolderLayout());
-		folder.setLayoutData(new GridData(GridData.FILL_BOTH));
+		folder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 
 		for (int i = 0; i < fTabs.length; i++) {
 			TabItem item = new TabItem(folder, SWT.NONE);
@@ -90,6 +92,18 @@ public class TabConfigurationBlock extends OptionsConfigurationBlock {
 			fTabs[i].createContents(composite);
 		}
 		Dialog.applyDialogFont(folder);
+		folder.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				for (OptionsConfigurationBlock tab : fTabs) {
+					tab.updateControls();
+				}
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
 		return folder;		
 	}
 
@@ -102,5 +116,37 @@ public class TabConfigurationBlock extends OptionsConfigurationBlock {
 				break;
 		}
 		fContext.statusChanged(fStatus);
+	}
+
+	@Override
+	public boolean performOk() {
+		for (OptionsConfigurationBlock tab : fTabs) {
+			tab.performOk();
+		}
+		return super.performOk();
+	}
+
+	@Override
+	public boolean performApply() {
+		for (OptionsConfigurationBlock tab : fTabs) {
+			tab.performApply();
+		}
+		return super.performApply();
+	}
+
+	@Override
+	public void performDefaults() {
+		super.performDefaults();
+		for (OptionsConfigurationBlock tab : fTabs) {
+			tab.performDefaults();
+		}
+	}
+
+	@Override
+	public void performRevert() {
+		super.performRevert();
+		for (OptionsConfigurationBlock tab : fTabs) {
+			tab.performRevert();
+		}
 	}
 }

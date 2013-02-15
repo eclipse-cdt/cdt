@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPX///KY\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/commands/GdbConnectCommand.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 282,
+      "author": {
+        "id": 457
+      },
+      "writtenOn": "2013-02-15T11:09:44Z",
+      "side": 1,
+      "message": "I hadn\u0027t thought about this before, but wouldn\u0027t it be easier to call updateEnablement() here instead?",
+      "revId": "b8bade69616f42bc5b096c79c8930323c193a643",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

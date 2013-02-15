@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX///u0\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/.settings/.api_filters",
+        "patchSetId": 4
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPH//8mw\u003d",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPH//8mo\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/resources/messages.properties",
         "patchSetId": 4
@@ -30,6 +48,24 @@
       "writtenOn": "2013-02-12T02:04:44Z",
       "side": 1,
       "message": "Copyright",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///uY\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/resources/messages.properties",
+        "patchSetId": 4
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPH//8mo\u003d",
       "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX///u4\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/resources/messages.properties",
+        "patchSetId": 4
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX///2k\u003d",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX///2g\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/actions/EnableLoadMetersAction.java",
         "patchSetId": 4
@@ -64,6 +118,24 @@
       "writtenOn": "2013-02-12T02:04:44Z",
       "side": 1,
       "message": "I think we should pass in the current enablement",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///uo\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/actions/EnableLoadMetersAction.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX///2g\u003d",
       "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX///ug\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/model/VisualizerCPU.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX///2U\u003d",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX///2E\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/model/VisualizerCore.java",
         "patchSetId": 4
@@ -98,6 +188,24 @@
       "writtenOn": "2013-02-12T02:04:44Z",
       "side": 1,
       "message": "Don\u0027t initialize",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///uc\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/model/VisualizerCore.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX///2E\u003d",
       "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX///uU\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/model/VisualizerLoadInfo.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX///2I\u003d",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX///2c\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/model/VisualizerLoadInfo.java",
         "patchSetId": 4
@@ -132,6 +258,24 @@
       "writtenOn": "2013-02-12T02:04:44Z",
       "side": 1,
       "message": "Only one uses intValue().  Let\u0027s remove it.",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///uQ\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/model/VisualizerLoadInfo.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX///2c\u003d",
       "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -155,6 +299,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX///uM\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/model/VisualizerLoadInfo.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX///2Y\u003d",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPH//8mk\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/IMulticoreVisualizerConstants.java",
         "patchSetId": 4
@@ -166,6 +328,24 @@
       "writtenOn": "2013-02-12T02:04:44Z",
       "side": 1,
       "message": "Copyright",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///uI\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/IMulticoreVisualizerConstants.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPH//8mk\u003d",
       "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -189,6 +369,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX///uE\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 148,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX///0U\u003d",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX///0Q\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
         "patchSetId": 4
@@ -200,6 +398,24 @@
       "writtenOn": "2013-02-12T02:04:44Z",
       "side": 1,
       "message": "I think this should be a constant so LOAD_METER_TIMER_MIN",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///t8\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX///0Q\u003d",
       "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -223,6 +439,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX///t4\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 279,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX///0I\u003d",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX///z8\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
         "patchSetId": 4
@@ -234,6 +468,24 @@
       "writtenOn": "2013-02-12T02:04:44Z",
       "side": 1,
       "message": "Maybe \n  if (m_LoadMeterTimerPeriod \u003d\u003d p) return;",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///tM\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 280,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX///z8\u003d",
       "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -257,6 +509,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX///tI\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 281,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX///0E\u003d",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX///0A\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
         "patchSetId": 4
@@ -268,6 +538,24 @@
       "writtenOn": "2013-02-12T02:04:44Z",
       "side": 1,
       "message": "Maybe \n  if (m_loadMetersEnabled \u003d\u003d enabled) return;",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///tQ\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 289,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX///0A\u003d",
       "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -291,6 +579,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX///s8\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 829,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Done - good catch!",
+      "parentUuid": "AABOPX///xw\u003d",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX///zw\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
         "patchSetId": 4
@@ -302,6 +608,24 @@
       "writtenOn": "2013-02-12T02:04:44Z",
       "side": 1,
       "message": "Can you add\n  \t@ConfinedToDsfExecutor(\"getSession().getExecutor()\")",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///s4\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 937,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX///zw\u003d",
       "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -325,6 +649,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX///s0\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 938,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX///1c\u003d",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX///z4\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
         "patchSetId": 4
@@ -336,6 +678,24 @@
       "writtenOn": "2013-02-12T02:04:44Z",
       "side": 1,
       "message": "I believe this just copies the reference to the model and does not make a full copy.  If need to make a full copy, you\u0027ll need a copy constructor in the VisualizerModel class",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///so\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 951,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Indeed.  The intent is not to make a copy of the model, so I removed that code.  The initial intent is preserved since we pass a reference to the model to the getLoad() method, so if the model is replaced in the meantime, the old version is updated without causing an issue.",
+      "parentUuid": "AABOPX///z4\u003d",
       "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -393,6 +753,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX///sY\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1080,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX///zo\u003d",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX///14\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerCPU.java",
         "patchSetId": 4
@@ -404,6 +782,24 @@
       "writtenOn": "2013-02-12T02:04:44Z",
       "side": 1,
       "message": "protected",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///sM\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerCPU.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX///14\u003d",
       "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -427,6 +823,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX///sI\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerCPU.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX///10\u003d",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX///1k\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerCPU.java",
         "patchSetId": 4
@@ -438,6 +852,24 @@
       "writtenOn": "2013-02-12T02:04:44Z",
       "side": 1,
       "message": "Why are we using CPU colors for non CPU items?",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///sQ\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizerCPU.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "The goal is to have the load meter have the same background color as the object (CPU, core) it\u0027s being drawed-on.",
+      "parentUuid": "AABOPX///1k\u003d",
       "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -478,6 +910,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX///ro\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/DSFDebugModel.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX///0o\u003d",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX///zs\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/DSFDebugModel.java",
         "patchSetId": 4
@@ -489,6 +939,24 @@
       "writtenOn": "2013-02-12T02:04:44Z",
       "side": 1,
       "message": "Change to handleCompleted() because we need to call getLoadDone() for failures too",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///rk\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/utils/DSFDebugModel.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX///zs\u003d",
       "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -529,6 +997,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX///o8\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/ProcStatCoreLoads.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX///0M\u003d",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX///4I\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/ProcStatCounters.java",
         "patchSetId": 4
@@ -540,6 +1026,24 @@
       "writtenOn": "2013-02-12T02:04:44Z",
       "side": 1,
       "message": "For safety, how about checking c !\u003d null \u0026\u0026 c.length \u003e\u003d7 and if not, leave everything at 0.",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///m0\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/ProcStatCounters.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Not sure about \"leave everything at 0\" part: in this context, zero has a meaning that will influence the load calculations done later.  If there is ever a problem it will be easier to notice if we do not put artificial values in there.",
+      "parentUuid": "AABOPX///4I\u003d",
       "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -563,6 +1067,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX///mw\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/ProcStatCounters.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX///34\u003d",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX///38\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/ProcStatCounters.java",
         "patchSetId": 4
@@ -574,6 +1096,24 @@
       "writtenOn": "2013-02-12T02:04:44Z",
       "side": 1,
       "message": "if someones messes up and calls this with the same old and new counters, we\u0027ll get a division by 0.  Let\u0027s protect against that.",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///m8\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/ProcStatCounters.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Is adding an assert to prevent division by zero enough?  \n\nChecking that the two sets of counters are not the same objects would not be a complete check, as two sets of counters could have been created from the same /proc/stat file.",
+      "parentUuid": "AABOPX///38\u003d",
       "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -597,6 +1137,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX///ms\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/ProcStatParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX///4g\u003d",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX///4Y\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/ProcStatParser.java",
         "patchSetId": 4
@@ -608,6 +1166,24 @@
       "writtenOn": "2013-02-12T02:04:44Z",
       "side": 1,
       "message": "I think you can replace {1,} with a +, unless you don\u0027t like that syntax",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///mo\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/ProcStatParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX///4Y\u003d",
       "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -648,6 +1224,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX///mk\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/ProcStatParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Old code from a pre-refactoring version.  In that old version the load was computed as we parsed.   It\u0027s no longer the case so we can\u0027t catch a problem at this level - removed the code.",
+      "parentUuid": "AABOPX///4Q\u003d",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX///4c\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/ProcStatParser.java",
         "patchSetId": 4
@@ -659,6 +1253,24 @@
       "writtenOn": "2013-02-12T02:04:44Z",
       "side": 1,
       "message": "Why the \u0027continue\u0027?",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///mg\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/ProcStatParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "old code again. - removed.",
+      "parentUuid": "AABOPX///4c\u003d",
       "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -682,6 +1294,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX///O0\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPH//8iE\u003d",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPH//8iA\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
         "patchSetId": 4
@@ -693,6 +1323,24 @@
       "writtenOn": "2013-02-12T02:04:44Z",
       "side": 1,
       "message": "private",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///eY\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPH//8iA\u003d",
       "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -716,6 +1364,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX///eU\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPH//8h8\u003d",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPH//8gQ\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
         "patchSetId": 4
@@ -727,6 +1393,24 @@
       "writtenOn": "2013-02-12T02:04:44Z",
       "side": 1,
       "message": "Please move the above globals lower in the same section as the other global variables.",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///eQ\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPH//8gQ\u003d",
       "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -750,6 +1434,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX///eM\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPH//8gE\u003d",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPH//8f0\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
         "patchSetId": 4
@@ -761,6 +1463,24 @@
       "writtenOn": "2013-02-12T02:04:44Z",
       "side": 1,
       "message": "Let\u0027s create the full constructor, even if we don\u0027t use it, or if we only pass null to it for now.",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///d8\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 172,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPH//8f0\u003d",
       "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -784,6 +1504,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX///eE\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 178,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPH//8gM\u003d",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPH//8gI\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
         "patchSetId": 4
@@ -795,6 +1533,24 @@
       "writtenOn": "2013-02-12T02:04:44Z",
       "side": 1,
       "message": "Let\u0027s do \n\n  return fDetailedLoad;\n\neven if it is always null for now",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///eA\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 190,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPH//8gI\u003d",
       "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -818,6 +1574,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX///d4\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 202,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPH//8gA\u003d",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX///6k\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
         "patchSetId": 4
@@ -829,6 +1603,24 @@
       "writtenOn": "2013-02-12T02:04:44Z",
       "side": 1,
       "message": "Would it be easier to use a\n  Map\u003cIDMContext, DataRequestMonitor\u003cILoadInfo\u003e\u003e\n?",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///dk\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 216,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Yes - good idea!  - Done.",
+      "parentUuid": "AABOPX///6k\u003d",
       "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -852,6 +1644,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX///dY\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 282,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX///6w\u003d",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX///44\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
         "patchSetId": 4
@@ -863,6 +1673,24 @@
       "writtenOn": "2013-02-12T02:04:44Z",
       "side": 1,
       "message": "Check for validity of context right off the bat.  If it is not ICoreDMC and ICPUDMC, we can return an error status right away.",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///dQ\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 615,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX///44\u003d",
       "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -886,6 +1714,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX///dM\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 616,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX///6s\u003d",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX///6c\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
         "patchSetId": 4
@@ -897,6 +1743,24 @@
       "writtenOn": "2013-02-12T02:04:44Z",
       "side": 1,
       "message": "Could you move this down, closer to where it will be used?",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///dA\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 617,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX///6c\u003d",
       "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -920,6 +1784,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX///c8\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 619,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX///4w\u003d",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX///4s\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
         "patchSetId": 4
@@ -931,6 +1813,23 @@
       "writtenOn": "2013-02-12T02:04:44Z",
       "side": 1,
       "message": "fCachedLoads could be null here.  You should probably put a guard in processLoads() to be covered in all cases.\n\nIt could be null if fetching the loads failed for the first time.",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///bQ\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 651,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Done.",
       "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -954,6 +1853,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX///bE\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 666,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX///54\u003d",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX///6U\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
         "patchSetId": 4
@@ -965,6 +1882,24 @@
       "writtenOn": "2013-02-12T02:04:44Z",
       "side": 1,
       "message": "Before the string, please another parameter:\n  INTERNAL_ERROR\n\nand remove the \"Internal error: \" part of the error message",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///Qo\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 671,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX///6U\u003d",
       "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -988,6 +1923,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX///bA\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 672,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX///6A\u003d",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX///50\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
         "patchSetId": 4
@@ -999,6 +1952,24 @@
       "writtenOn": "2013-02-12T02:04:44Z",
       "side": 1,
       "message": "Change handleSucess() to handleCompleted() so we can set fLoadRequestOngoing to false in the case of an error.\n\nYou can use if (isSuccess()) to know if you are in the success or failure case.",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///aw\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 684,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX///50\u003d",
       "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -1022,6 +1993,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX///Qk\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 689,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX///6Q\u003d",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX///58\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
         "patchSetId": 4
@@ -1033,6 +2022,24 @@
       "writtenOn": "2013-02-12T02:04:44Z",
       "side": 1,
       "message": "Missing return, and we need to set fLoadRequestOngoing to false before returning, no?",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///as\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 690,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX///58\u003d",
       "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -1056,6 +2063,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX///Ow\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 717,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX///6Y\u003d",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX///6M\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
         "patchSetId": 4
@@ -1067,6 +2092,24 @@
       "writtenOn": "2013-02-12T02:04:44Z",
       "side": 1,
       "message": "do we need a return before closing the brace?\nand set fLoadRequestOngoing to false before returning, no?",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///a4\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 718,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX///6M\u003d",
       "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -1090,6 +2133,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX///Qg\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 727,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX///6I\u003d",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX///6E\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
         "patchSetId": 4
@@ -1101,6 +2162,24 @@
       "writtenOn": "2013-02-12T02:04:44Z",
       "side": 1,
       "message": "return, above? and set fLoadRequestOngoing to false before returning, no?",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///a0\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 728,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX///6E\u003d",
       "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -1124,6 +2203,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX///P0\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 757,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX///5U\u003d",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX///5E\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
         "patchSetId": 4
@@ -1135,6 +2232,24 @@
       "writtenOn": "2013-02-12T02:04:44Z",
       "side": 1,
       "message": "We\u0027ll need the watermark logic here to, I believe.",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///QQ\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 758,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX///5E\u003d",
       "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -1158,6 +2273,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX///Qc\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 770,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX///5I\u003d",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX///5M\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
         "patchSetId": 4
@@ -1175,6 +2308,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX///QY\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 792,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Done - The line was moved towards the beginning of getLoadInfo().",
+      "parentUuid": "AABOPX///5M\u003d",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPH//8jU\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/IGDBHardwareAndOS2.java",
         "patchSetId": 4
@@ -1186,6 +2337,24 @@
       "writtenOn": "2013-02-12T02:04:44Z",
       "side": 1,
       "message": "Need javadoc for each new method.  Since this is an interface we need to clearly document what the parameters and return values are.\n\nYou already have some of the javadoc in the service implementation",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///ek\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/IGDBHardwareAndOS2.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPH//8jU\u003d",
       "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -1226,6 +2395,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX///ec\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/IGDBHardwareAndOS2.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Done - yes, I do not think it makes sense to have a low watermark.",
+      "parentUuid": "AABOPX///64\u003d",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX///60\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/IGDBHardwareAndOS2.java",
         "patchSetId": 4
@@ -1237,6 +2424,24 @@
       "writtenOn": "2013-02-12T02:04:44Z",
       "side": 1,
       "message": "Should this be a Map\u003cString, String\u003e for \u003cname/type, load\u003e?",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///eg\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/IGDBHardwareAndOS2.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "yes, sounds good - done.",
+      "parentUuid": "AABOPX///60\u003d",
       "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -1260,6 +2465,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX///ew\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/Suite_Sessionless_Tests.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPH//8mg\u003d",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPH//8lw\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/ProcStatParserTest.java",
         "patchSetId": 4
@@ -1271,6 +2494,24 @@
       "writtenOn": "2013-02-12T02:04:44Z",
       "side": 1,
       "message": "Please remove all TODOs",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///fI\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/ProcStatParserTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPH//8lw\u003d",
       "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -1294,6 +2535,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX///fE\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/ProcStatParserTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPH//8js\u003d",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPH//8jo\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/ProcStatParserTest.java",
         "patchSetId": 4
@@ -1305,6 +2564,24 @@
       "writtenOn": "2013-02-12T02:04:44Z",
       "side": 1,
       "message": "These will now work, so I don\u0027t know if you want to re-enable them or if you are happy with the current method you used.  I don\u0027t have a preference, but if you don\u0027t re-enable them, please remove them.",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///e8\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/ProcStatParserTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "The annotations are awesone now that they work, so I kept them!",
+      "parentUuid": "AABOPH//8jo\u003d",
       "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -1328,6 +2605,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX///fA\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/ProcStatParserTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPH//8jc\u003d",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPH//8jY\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/ProcStatParserTest.java",
         "patchSetId": 4
@@ -1339,6 +2634,24 @@
       "writtenOn": "2013-02-12T02:04:44Z",
       "side": 1,
       "message": "Replace with\n\n  \t@Test(expected\u003dFileNotFoundException.class)\n\nand then you don\u0027t need to check for the exception in the method.",
+      "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///e4\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/ProcStatParserTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 244,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:20Z",
+      "side": 1,
+      "message": "Done - nice trick!",
+      "parentUuid": "AABOPH//8jY\u003d",
       "revId": "b45ed21600ea2b7f11f0dd0fc342ae8e49717a64",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

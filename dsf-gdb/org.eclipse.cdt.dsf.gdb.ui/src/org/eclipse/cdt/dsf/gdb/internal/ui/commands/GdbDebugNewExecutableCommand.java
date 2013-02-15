@@ -29,8 +29,8 @@ import org.eclipse.cdt.dsf.debug.service.IProcesses;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
-import org.eclipse.cdt.dsf.gdb.internal.ui.launching.NewExecutableInfo;
 import org.eclipse.cdt.dsf.gdb.internal.ui.launching.NewExecutableDialog;
+import org.eclipse.cdt.dsf.gdb.internal.ui.launching.NewExecutableInfo;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
 import org.eclipse.cdt.dsf.gdb.service.IGDBBackend;
 import org.eclipse.cdt.dsf.gdb.service.SessionType;
@@ -43,12 +43,11 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.IRequest;
-import org.eclipse.debug.core.commands.AbstractDebugCommand;
 import org.eclipse.debug.core.commands.IEnabledStateRequest;
 import org.eclipse.jface.window.Window;
 import org.eclipse.ui.progress.UIJob;
 
-public class GdbDebugNewExecutableCommand extends AbstractDebugCommand implements IDebugNewExecutableHandler {
+public class GdbDebugNewExecutableCommand extends RefreshableDebugCommand implements IDebugNewExecutableHandler {
 
 	private class PromptJob extends UIJob {
 
@@ -188,6 +187,8 @@ public class GdbDebugNewExecutableCommand extends AbstractDebugCommand implement
 		}
 		catch( RejectedExecutionException e ) {
 			// Can be thrown if the session is shutdown
+		} finally {
+			updateEnablement();
 		}
 	}
 

@@ -16,6 +16,24 @@
       "revId": "b8bade69616f42bc5b096c79c8930323c193a643",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//+/M\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/commands/GdbConnectCommand.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 282,
+      "author": {
+        "id": 572
+      },
+      "writtenOn": "2013-02-15T21:38:10Z",
+      "side": 1,
+      "message": "Yes, but rather in the \u0027finally\u0027 clause - when a query is canceled, \u0027get\u0027 throws  CancellationException.",
+      "parentUuid": "AABOPX///KY\u003d",
+      "revId": "b8bade69616f42bc5b096c79c8930323c193a643",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

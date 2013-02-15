@@ -38,6 +38,7 @@ import org.eclipse.cdt.core.model.IPathEntryContainer;
 import org.eclipse.cdt.core.model.IProjectEntry;
 import org.eclipse.cdt.core.model.ISourceEntry;
 import org.eclipse.cdt.core.resources.IPathEntryVariableManager;
+import org.eclipse.cdt.utils.UNCPathConverter;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -513,6 +514,9 @@ public class PathEntryUtil {
 
 	private static boolean isValidExternalPath(IPath path) {
 		if (path != null) {
+			if (path.isUNC()) {
+				return true;
+			}
 			File file = path.toFile();
 			if (file != null) {
 				return file.exists();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Wind River Systems, Inc. and others.
+ * Copyright (c) 2009, 2013 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
+ *     Nathan Ridge
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
@@ -36,7 +37,6 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
-import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IValue;
@@ -431,7 +431,7 @@ public class TemplateArgumentDeduction {
 					deduct.incPackOffset();
 				} else  {
 					if (j >= fnParCount) 
-						return result;
+						return -1;
 					
 					par= fnPars[j];
 					if (par instanceof ICPPParameterPackType) {
@@ -606,15 +606,37 @@ public class TemplateArgumentDeduction {
 			final ICPPTemplateArgument[] p, final ICPPTemplateArgument[] a, CPPTemplateParameterMap map,
 			IASTNode point) throws DOMException {
 		TemplateArgumentDeduction deduct= new TemplateArgumentDeduction(pars, null, map, 0);
-		final int len= a.length;
-		if (p == null || p.length != len) {
+		if (p == null) {
 			return false;
 		}
-		for (int j= 0; j < len; j++) {
-			if (!deduct.fromTemplateArgument(p[j], a[j], point)) {
-				return false;
+		boolean containsPackExpansion= false;
+		for (int j= 0; j < p.length; j++) {
+			if (p[j].isPackExpansion()) {
+				deduct = new TemplateArgumentDeduction(deduct, a.length - j);
+				containsPackExpansion= true;
+				if (j != p.length - 1) {
+					return false;  // A pack expansion must be the last argument to the specialization.
+				}
+				ICPPTemplateArgument pattern = p[j].getExpansionPattern();
+				for (int i= j; i < a.length; i++) {
+					if (i != j)
+						deduct.incPackOffset();
+					if (!deduct.fromTemplateArgument(pattern, a[i], point)) {
+						return false;
+					}
+				}
+				break;
+			} else {
+				if (j >= a.length) {
+					return false;  // Not enough arguments.
+				}
+				if (!deduct.fromTemplateArgument(p[j], a[j], point)) {
+					return false;
+				}
 			}
 		}
+		if (!containsPackExpansion && p.length < a.length)
+			return false;  // Too many arguments.
 		return verifyDeduction(pars, map, false, point);
 	}
 
@@ -636,16 +658,8 @@ public class TemplateArgumentDeduction {
 					deducedArg= tpar.getDefaultValue();
 					if (deducedArg != null) {
 						deducedArg= CPPTemplates.instantiateArgument(deducedArg, tpMap, -1, null, point);
-						if (deducedArg != null) {
-							if (deducedArg instanceof CPPTemplateTypeArgument) {
-								CPPTemplateTypeArgument deducedTypeArg = (CPPTemplateTypeArgument) deducedArg;
-								if (!(deducedTypeArg.getTypeValue() instanceof ISemanticProblem)) {
-									tpMap.put(tpar, deducedArg);
-								}
-							} else {
-								// TODO: Check for problems in non-type or template template parameters?
-								tpMap.put(tpar, deducedArg);
-							}
+						if (CPPTemplates.isValidArgument(deducedArg)) {
+							tpMap.put(tpar, deducedArg);
 						}
 					}
 				}
@@ -957,7 +971,7 @@ public class TemplateArgumentDeduction {
 				return false;
 			return fDeducedArgs.putPackElement(parID, fPackOffset, arg, fPackSize);
 		}
-		if (SemanticUtil.containsUniqueTypeForParameterPack(arg.getTypeValue()))
+		if (SemanticUtil.isUniqueTypeForParameterPack(arg.getTypeValue()))
 			return false;
 		fDeducedArgs.put(parID, arg);
 		return true;

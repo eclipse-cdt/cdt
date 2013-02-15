@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     Rational Software - initial implementation
  *     Markus Schorn (Wind River Systems)
  *     Sergey Prigogin (Google)
+ *     Nathan Ridge
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
@@ -45,6 +46,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownMemberClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.TypeOfDependentExpression;
 
 /**
  * This is a utility class to help convert AST elements to Strings corresponding to
@@ -182,6 +184,7 @@ public class ASTTypeUtil {
 	private static void appendArgument(ICPPTemplateArgument arg, boolean normalize, StringBuilder buf) {
 		IValue val= arg.getNonTypeValue();
 		if (val != null) {
+			appendType(arg.getTypeOfNonTypeValue(), normalize, buf);
 			buf.append(val.getSignature());
 		} else {
 			IType type = normalize ? arg.getTypeValue() : arg.getOriginalTypeValue();
@@ -408,6 +411,8 @@ public class ASTTypeUtil {
 			
 			IQualifierType qt= (IQualifierType) type;
 			needSpace= appendCVQ(result, needSpace, qt.isConst(), qt.isVolatile(), false);
+		} else if (type instanceof TypeOfDependentExpression) {
+			result.append(((TypeOfDependentExpression) type).getSignature());
 		} else if (type instanceof ISemanticProblem) {
 			result.append('?');
 		} else if (type != null) {
@@ -584,7 +589,7 @@ public class ASTTypeUtil {
 							if (parenthesis == null) {
 								parenthesis= new BitSet();
 							}
-							parenthesis.set(postfix.size()-1);
+							parenthesis.set(postfix.size() - 1);
 						}
 						appendTypeString(tj, normalize, result);
 						needParenthesis= false;

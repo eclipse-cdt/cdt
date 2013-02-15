@@ -4405,6 +4405,17 @@ public class AST2TemplateTests extends AST2TestBase {
 		parseAndCheckBindings();
 	}
 
+	//	template <typename A>
+	//	void foo(A);
+	//	template <typename A, typename... B>
+	//	void foo(A, B...);
+	//	int main() {
+	//	    foo(0);
+	//	}
+	public void testFunctionTemplatePartialOrdering_388805() throws Exception {
+		parseAndCheckBindings();
+	}
+
 	//	template<typename T> class CT {};
 	//	template<int I> class CTI {};
 	//
@@ -4828,6 +4839,25 @@ public class AST2TemplateTests extends AST2TestBase {
 		ub= bh.assertNonProblem("f(5 ...)", 1);	// no diagnostics in CDT, treated as unknown function.
 		ub= bh.assertNonProblem("f(args)", 1);  // no diagnostics in CDT
 		ub= bh.assertNonProblem("f(h(args...) + args...)", 1);
+	}
+
+	//	template <typename... Args>
+	//	struct contains_waldo;
+	//	template <>
+	//	struct contains_waldo<> {
+	//	    static const bool value = false;
+	//	};
+	//	template <typename First, typename... Rest>
+	//	struct contains_waldo<First, Rest...> {
+	//	    static const bool value = contains_waldo<Rest...>::value;
+	//	};
+	//	int main() {
+	//	    bool b1 = contains_waldo<int>::value;
+	//	    bool b2 = contains_waldo<int, int>::value;
+	//	    bool b2 = contains_waldo<int, int, int>::value;
+	//	}
+	public void testRecursiveVariadicTemplate_397828() throws Exception {
+		parseAndCheckBindings();
 	}
 
 	//	struct Test {
@@ -7021,12 +7051,118 @@ public class AST2TemplateTests extends AST2TestBase {
 	//	void test() {
 	//	  int x = C<bool>::id;
 	//	}
-	public void _testDependentEnumValue_389009() throws Exception {
+	public void testDependentEnumValue_389009() throws Exception {
 		BindingAssertionHelper ah = getAssertionHelper();
 		IEnumerator binding = ah.assertNonProblem("C<bool>::id", "id");
 		IValue value = binding.getValue();
 		Long num = value.numericalValue();
 		assertNotNull(num);
 		assertEquals(1, num.longValue());
+	}
+
+	//	template <int...> struct A {};
+	//	template <int... I> void foo(A<I...>); 
+	//	int main() {
+	//		foo(A<0>());
+	//	}
+	public void testVariadicNonTypeTemplateParameter_382074() throws Exception {
+		parseAndCheckBindings();
+	}
+
+	//	template <bool...>
+	//	struct ice_or {
+	//	    static const bool value = false;
+	//	};
+	//	template <typename T>
+	//	struct is_foo {
+	//	    static const bool value = false;
+	//	};
+	//	template <typename... Args>
+	//	struct contains_foo {
+	//	    static const bool value = ice_or<is_foo<Args>::value...>::value;
+	//	};
+	//	template <bool> 
+	//	struct meta;
+	//	struct S { void bar(); };
+	//	template <> 
+	//	struct meta<false> {
+	//	    typedef S type;
+	//	};
+	//	int main() {
+	//	    meta<contains_foo<>::value>::type t;
+	//	    t.bar();
+	//	}
+	public void testVariadicNonTypeTemplateParameter_399039() throws Exception {
+		parseAndCheckBindings();
+	}
+
+	//	template <typename...>
+	//	struct common_type;
+	//	template <typename T>
+	//	struct common_type<T> {
+	//	    typedef int type;
+	//	};
+	//	template <typename T, typename... U>
+	//	struct common_type<T, U...> {
+	//	    typedef int type;
+	//	};
+	//	typedef common_type<int>::type type;
+	public void testClassTemplateSpecializationPartialOrdering_398044a() throws Exception {
+		parseAndCheckBindings();
+	}
+
+	//	template <typename>
+	//	class A;
+	//	template <typename R, typename... Args>
+	//	class A<R(*)(Args...)> {
+	//	};
+	//	template <typename R>
+	//	class A<R*> {
+	//	};
+	//	int main() {
+	//	    A<bool(*)()> mf;
+	//	}
+	public void testClassTemplateSpecializationPartialOrdering_398044b() throws Exception {
+		parseAndCheckBindings();
+	}
+	
+	//	template <typename>
+	//	struct meta {
+	//	    static const bool value = 1;
+	//	};
+	//	template <bool>
+	//	struct enable_if {};
+	//	template <>
+	//	struct enable_if<true> {
+	//	    typedef void type;
+	//	};
+	//	template <class T>
+	//	struct pair {
+	//	    template <typename = typename enable_if<meta<T>::value>::type>
+	//	    pair(int);
+	//	};
+	//	void push_back(pair<long>&&);
+	//	void push_back(const pair<long>&);
+	//	void test() {
+	//	    push_back(0);
+	//	}
+	public void testRegression_399142() throws Exception {
+		parseAndCheckBindings();
+	}
+	
+	//	template <class T>
+	//	struct A {
+	//	    struct impl {
+	//	        static T x;
+	//	    };
+	//	    static const int value = sizeof(impl::x);
+	//	};
+	//	template <int> struct W {};
+	//	template <> struct W<1> { typedef int type; };
+	//	int main() {
+	//	    W<A<char>::value>::type w;
+	//	}
+	public void testDependentExpressionInvolvingFieldInNestedClass_399362() throws Exception {
+		parseAndCheckBindings();
 	}
 }

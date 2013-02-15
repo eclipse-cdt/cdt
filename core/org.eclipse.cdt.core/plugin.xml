@@ -2,7 +2,7 @@
 <?eclipse version="3.0"?>
 <plugin>
 
-    
+
 <!-- =================================================================================== -->
 <!-- Obsolete extension point no longer in use, will be remove.                          -->
 <!-- =================================================================================== -->
@@ -268,7 +268,7 @@
          <pattern description-expr="make: $3" eat-processed-line="true" file-expr="$1" line-expr="$2" regex="(.*):(\d*): (\*\*\* .*)" severity="Error"/>
          <pattern description-expr="$0" eat-processed-line="true" file-expr="" line-expr="" regex=".*make.*: \*\*\* .*" severity="Error"/>
          <pattern description-expr="$0" eat-processed-line="true" file-expr="" line-expr="" regex=".*make.*: Target (.*) not remade because of errors." severity="Error"/>
-         <pattern description-expr="$0" eat-processed-line="true" file-expr="" line-expr="" regex=".*command not found.*" severity="Error"/>
+         <pattern description-expr="$0" eat-processed-line="true" file-expr="" line-expr="" regex=".*[Cc]ommand not found.*" severity="Error"/>
          <pattern description-expr="$1" eat-processed-line="true" file-expr="" line-expr="" regex="Error:\s*(.*)" severity="Error"/>
          <pattern description-expr="make: $3" eat-processed-line="true" file-expr="$1" line-expr="$2" regex="(.*[Mm]akefile):(\d*): warning: (.*)" severity="Warning"/>
          <pattern description-expr="$0" eat-processed-line="true" file-expr="" line-expr="" regex=".*make.*\[.*\] Error [-]{0,1}\d*.*" severity="Warning"/>
@@ -805,6 +805,14 @@
             exclusionClass="org.eclipse.cdt.internal.core.resources.ResourceExclusion"
             factoryClass="org.eclipse.cdt.internal.core.resources.ResourceExclusionFactory">
       </exclusionFactory>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.core.LanguageSettingsProvider">
+      <provider
+            class="org.eclipse.cdt.internal.core.language.settings.providers.ScannerInfoExtensionLanguageSettingsProvider"
+            id="org.eclipse.cdt.core.LegacyScannerInfoLanguageSettingsProvider"
+            name="%ScannerInfoExtensionLanguageSettingsProvider.name">
+      </provider>
    </extension>
 
 </plugin>

@@ -10,17 +10,17 @@
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.tests;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.HashMap;
 import java.util.Map;
-
-import junit.framework.TestCase;
 
 import org.eclipse.cdt.dsf.gdb.launching.LaunchUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class LaunchUtilsTest extends TestCase {
+public class LaunchUtilsTest {
 	
     @Before
     public void init() {
@@ -31,7 +31,7 @@ public class LaunchUtilsTest extends TestCase {
     }
 	
     @Test
-	public void testGetGDBVersionFromText() {
+	public void tesetGDBVersionFromText() {
     	Map<String, String> versions = new HashMap<String, String>(10);
 
     	versions.put("GNU gdb 6.8.50.20080730", "6.8.50.20080730");

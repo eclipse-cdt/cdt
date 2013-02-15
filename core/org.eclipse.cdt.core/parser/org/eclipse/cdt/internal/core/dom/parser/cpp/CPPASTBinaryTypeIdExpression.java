@@ -1,11 +1,11 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2011 IBM Corporation and others.
- *  All rights reserved. This program and the accompanying materials
- *  are made available under the terms of the Eclipse Public License v1.0
- *  which accompanies this distribution, and is available at
- *  http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2004, 2013 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  * 
- *  Contributors:
+ * Contributors:
  *     John Camelon (IBM) - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
@@ -124,7 +124,7 @@ public class CPPASTBinaryTypeIdExpression extends ASTNode implements ICPPASTExpr
 				fEvaluation= EvalFixed.INCOMPLETE;
 			} else {
 				IType t1= CPPVisitor.createType(fOperand1);
-				IType t2= CPPVisitor.createType(fOperand1);
+				IType t2= CPPVisitor.createType(fOperand2);
 				if (t1 == null || t2 == null) {
 					fEvaluation= EvalFixed.INCOMPLETE;
 				} else {

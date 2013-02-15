@@ -32,7 +32,7 @@ class LocationCtxContainer extends LocationCtx {
 	private int fChildSequenceLength;
 
 	private ArrayList<LocationCtx> fChildren;
-	private AbstractCharArray fSource;
+	private final AbstractCharArray fSource;
 	private int[] fLineOffsets;
 	
 	public LocationCtxContainer(LocationCtxContainer parent, AbstractCharArray source,
@@ -138,47 +138,55 @@ class LocationCtxContainer extends LocationCtx {
 	}
 
 	@Override
-	public boolean collectLocations(int sequenceNumber, final int length, ArrayList<IASTNodeLocation> locations) {
+	public void collectLocations(int sequenceNumber, final int length, ArrayList<IASTNodeLocation> locations) {
+		if (length < 1)
+			return;
+		
 		final int endSequenceNumber= sequenceNumber + length;
 		if (fChildren != null) {
 			int childIdx= Math.max(0, findChildIdxLessOrEqualThan(sequenceNumber, false));
 			for (; childIdx < fChildren.size(); childIdx++) {
 				final LocationCtx child= fChildren.get(childIdx);
 
-				// create the location between start and the child
+				// Create the location between start and the child
 				if (sequenceNumber < child.fSequenceNumber) {
-					// compute offset backwards from the child's offset
+					// Compute offset backwards from the child's offset in this location
 					final int offset= child.fEndOffsetInParent - (child.fSequenceNumber - sequenceNumber);
-					// it the child is not affected, we are done.
+					
+					// Requested range ends before the child.
 					if (endSequenceNumber <= child.fSequenceNumber) {
 						addFileLocation(offset, endSequenceNumber - sequenceNumber, locations);
-						return true;
+						return;
 					}
-					if (offset < child.fOffsetInParent)
+					
+					final int gapLen = child.fOffsetInParent - offset;
+					if (gapLen > 0)
 						addFileLocation(offset, child.fOffsetInParent - offset, locations);
+					
 					sequenceNumber= child.fSequenceNumber;
+					assert sequenceNumber < endSequenceNumber;
 				}
 
-				// let the child create locations
+				// Let the child create locations
 				final int childEndSequenceNumber= child.fSequenceNumber + child.getSequenceLength();
-				if (sequenceNumber < childEndSequenceNumber) {
-					if (child.collectLocations(sequenceNumber, endSequenceNumber - sequenceNumber, locations)) {
-						return true;
-					}
+				if (sequenceNumber < childEndSequenceNumber
+						|| (sequenceNumber == childEndSequenceNumber && !locations.isEmpty())) {
+					child.collectLocations(sequenceNumber, endSequenceNumber - sequenceNumber, locations);
 					sequenceNumber= childEndSequenceNumber;
+					if (sequenceNumber >= endSequenceNumber)
+						return;
 				}
 			}
 		}
 
-		// create the location after the last child.
+		// Create the location after the last child.
 		final int myEndNumber = fSequenceNumber + getSequenceLength();
 		final int offset= fSource.getLength() - (myEndNumber - sequenceNumber);
 		if (endSequenceNumber <= myEndNumber) {
 			addFileLocation(offset, endSequenceNumber - sequenceNumber, locations);
-			return true;
+		} else {
+			addFileLocation(offset, fSource.getLength() - offset, locations);
 		}
-		addFileLocation(offset, fSource.getLength() - offset, locations);
-		return false;
 	}
 	
 	private ArrayList<IASTNodeLocation> addFileLocation(int offset, int length, ArrayList<IASTNodeLocation> sofar) {

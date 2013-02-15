@@ -11,7 +11,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
+import java.util.Map;
+import java.util.TreeMap;
+
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
@@ -56,6 +60,7 @@ import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.text.ISemanticToken;
 
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
@@ -228,7 +233,7 @@ public class SemanticHighlightings {
 		}
 
 		@Override
-		public boolean consumes(SemanticToken token) {
+		public boolean consumes(ISemanticToken token) {
 			IASTNode node= token.getNode();
 			if (node instanceof IASTName) {
 				IASTName name= (IASTName) node;
@@ -279,7 +284,7 @@ public class SemanticHighlightings {
 		}
 
 		@Override
-		public boolean consumes(SemanticToken token) {
+		public boolean consumes(ISemanticToken token) {
 			IASTNode node= token.getNode();
 			if (node instanceof IASTName) {
 				IASTName name= (IASTName) node;
@@ -330,7 +335,7 @@ public class SemanticHighlightings {
 		}
 
 		@Override
-		public boolean consumes(SemanticToken token) {
+		public boolean consumes(ISemanticToken token) {
 			IASTNode node= token.getNode();
 			if (node instanceof IASTImplicitName)
 				return false;
@@ -407,7 +412,7 @@ public class SemanticHighlightings {
 		}
 
 		@Override
-		public boolean consumes(SemanticToken token) {
+		public boolean consumes(ISemanticToken token) {
 			IASTNode node= token.getNode();
 			if (node instanceof IASTName) {
 				IASTName name= (IASTName) node;
@@ -461,7 +466,7 @@ public class SemanticHighlightings {
 		}
 
 		@Override
-		public boolean consumes(SemanticToken token) {
+		public boolean consumes(ISemanticToken token) {
 			IASTNode node= token.getNode();
 			if (node instanceof IASTImplicitName)
 				return false;
@@ -514,7 +519,7 @@ public class SemanticHighlightings {
 		}
 
 		@Override
-		public boolean consumes(SemanticToken token) {
+		public boolean consumes(ISemanticToken token) {
 			IASTNode node= token.getNode();
 			if (node instanceof IASTImplicitName)
 				return false;
@@ -585,7 +590,7 @@ public class SemanticHighlightings {
 		}
 
 		@Override
-		public boolean consumes(SemanticToken token) {
+		public boolean consumes(ISemanticToken token) {
 			IASTNode node= token.getNode();
 			if (node instanceof IASTImplicitName)
 				return false;
@@ -638,7 +643,7 @@ public class SemanticHighlightings {
 		}
 
 		@Override
-		public boolean consumes(SemanticToken token) {
+		public boolean consumes(ISemanticToken token) {
 			IASTNode node= token.getNode();
 			if (node instanceof IASTName) {
 				IASTName name= (IASTName) node;
@@ -698,7 +703,7 @@ public class SemanticHighlightings {
 		}
 
 		@Override
-		public boolean consumes(SemanticToken token) {
+		public boolean consumes(ISemanticToken token) {
 			IASTNode node= token.getNode();
 			if (node instanceof IASTName) {
 				IASTName name= (IASTName) node;
@@ -774,7 +779,7 @@ public class SemanticHighlightings {
 		}
 
 		@Override
-		public boolean consumes(SemanticToken token) {
+		public boolean consumes(ISemanticToken token) {
 			IASTNode node= token.getNode();
 			if (node instanceof IASTName) {
 				IASTName name= (IASTName) node;
@@ -836,7 +841,7 @@ public class SemanticHighlightings {
 		}
 
 		@Override
-		public boolean consumes(SemanticToken token) {
+		public boolean consumes(ISemanticToken token) {
 			IBinding binding= token.getBinding();
 			if (binding instanceof IParameter) {
 				return true;
@@ -880,7 +885,7 @@ public class SemanticHighlightings {
 		}
 
 		@Override
-		public boolean consumes(SemanticToken token) {
+		public boolean consumes(ISemanticToken token) {
 			IASTNode node= token.getNode();
 			if (node instanceof IASTName) {
 				IBinding binding= token.getBinding();
@@ -927,7 +932,7 @@ public class SemanticHighlightings {
 		}
 
 		@Override
-		public boolean consumes(SemanticToken token) {
+		public boolean consumes(ISemanticToken token) {
 			IASTNode node= token.getNode();
 			if (node instanceof ICPPASTQualifiedName || node instanceof ICPPASTTemplateId) {
 				return false;
@@ -977,7 +982,7 @@ public class SemanticHighlightings {
 		}
 
 		@Override
-		public boolean consumes(SemanticToken token) {
+		public boolean consumes(ISemanticToken token) {
 			IASTNode node= token.getNode();
 			if (node instanceof IASTName) {
 				IBinding binding= token.getBinding();
@@ -1024,7 +1029,7 @@ public class SemanticHighlightings {
 		}
 
 		@Override
-		public boolean consumes(SemanticToken token) {
+		public boolean consumes(ISemanticToken token) {
 			IBinding binding= token.getBinding();
 			if (binding instanceof IMacroBinding) {
 				IASTName name= (IASTName)token.getNode();
@@ -1071,7 +1076,7 @@ public class SemanticHighlightings {
 		}
 
 		@Override
-		public boolean consumes(SemanticToken token) {
+		public boolean consumes(ISemanticToken token) {
 			IBinding binding= token.getBinding();
 			if (binding instanceof IMacroBinding) {
 				IASTName name= (IASTName)token.getNode();
@@ -1118,7 +1123,7 @@ public class SemanticHighlightings {
 		}
 
 		@Override
-		public boolean consumes(SemanticToken token) {
+		public boolean consumes(ISemanticToken token) {
 			IASTNode node= token.getNode();
 			if (node instanceof IASTName) {
 				IASTName name= (IASTName) node;
@@ -1169,7 +1174,7 @@ public class SemanticHighlightings {
 		}
 
 		@Override
-		public boolean consumes(SemanticToken token) {
+		public boolean consumes(ISemanticToken token) {
 			IBinding binding= token.getBinding();
 			if (binding instanceof ICPPNamespace) {
 				return true;
@@ -1213,7 +1218,7 @@ public class SemanticHighlightings {
 		}
 
 		@Override
-		public boolean consumes(SemanticToken token) {
+		public boolean consumes(ISemanticToken token) {
 			IBinding binding= token.getBinding();
 			if (binding instanceof ILabel) {
 				return true;
@@ -1257,7 +1262,7 @@ public class SemanticHighlightings {
 		}
 
 		@Override
-		public boolean consumes(SemanticToken token) {
+		public boolean consumes(ISemanticToken token) {
 			IASTNode node= token.getNode();
 			if (node instanceof IASTName) {
 				IASTName name= (IASTName) node;
@@ -1313,7 +1318,7 @@ public class SemanticHighlightings {
 		}
 
 		@Override
-		public boolean consumes(SemanticToken token) {
+		public boolean consumes(ISemanticToken token) {
 			IASTNode node= token.getNode();
 			if (node.getTranslationUnit().isBasedOnIncompleteIndex()) {
 				// Do not highlight problems is the AST is unreliable.
@@ -1370,7 +1375,7 @@ public class SemanticHighlightings {
 		}
 
 		@Override
-		public boolean consumes(SemanticToken token) {
+		public boolean consumes(ISemanticToken token) {
 			IASTNode node= token.getNode();
 			if (node instanceof IASTName) {
 				IASTName name= (IASTName) node;
@@ -1459,7 +1464,7 @@ public class SemanticHighlightings {
 		}
 
 		@Override
-		public boolean consumes(SemanticToken token) {
+		public boolean consumes(ISemanticToken token) {
 			IASTNode node = token.getNode();
 			// So far we only have implicit names for overloaded operators and destructors,
 			// so this works.
@@ -1545,36 +1550,106 @@ public class SemanticHighlightings {
 		return PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX + semanticHighlighting.getPreferenceKey() + PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_ENABLED_SUFFIX;
 	}
 
+	private static class Key implements Comparable<Key> {
+		public final int priority;
+		public final String id;
+
+		public Key(int priority) {
+			this(priority, null);
+		}
+
+		public Key(int priority, String id) {
+			this.priority = priority;
+			this.id = id;
+		}
+
+		@Override
+		public int compareTo(Key o) {
+			if (priority < o.priority)
+				return -1;
+			if (o.priority < priority)
+				return 1;
+
+			if (id == null)
+				return o.id == null ? 0 : -1;
+
+			return o.id == null ? 1 : id.compareTo(o.id);
+		}
+
+		@Override
+		public String toString() {
+			StringBuilder str = new StringBuilder();
+			str.append(priority);
+			if (id != null) {
+				str.append(' ');
+				str.append(id);
+			}
+
+			return str.toString();
+		}
+	}
+
+	private static void loadBuiltInSemanticHighlightings(Map<Key, SemanticHighlighting> highlightings) {
+
+		highlightings.put(new Key(10), new MacroReferenceHighlighting()); // before all others!
+		highlightings.put(new Key(20), new ProblemHighlighting());
+		highlightings.put(new Key(30), new ExternalSDKHighlighting());
+		highlightings.put(new Key(40), new ClassHighlighting());
+		highlightings.put(new Key(50), new StaticFieldHighlighting());
+		highlightings.put(new Key(60), new FieldHighlighting()); // after all other fields
+		highlightings.put(new Key(70), new MethodDeclarationHighlighting());
+		highlightings.put(new Key(80), new StaticMethodInvocationHighlighting());
+		highlightings.put(new Key(90), new ParameterVariableHighlighting()); // before local variables
+		highlightings.put(new Key(100), new LocalVariableDeclarationHighlighting());
+		highlightings.put(new Key(110), new LocalVariableHighlighting());
+		highlightings.put(new Key(120), new GlobalVariableHighlighting());
+		highlightings.put(new Key(130), new TemplateParameterHighlighting()); // before template arguments!
+		highlightings.put(new Key(140), new OverloadedOperatorHighlighting()); // before both method and function
+		highlightings.put(new Key(150), new MethodHighlighting()); // before types to get ctors
+		highlightings.put(new Key(160), new EnumHighlighting());
+		highlightings.put(new Key(170), new MacroDefinitionHighlighting());
+		highlightings.put(new Key(180), new FunctionDeclarationHighlighting());
+		highlightings.put(new Key(190), new FunctionHighlighting());
+		highlightings.put(new Key(200), new TypedefHighlighting());
+		highlightings.put(new Key(210), new NamespaceHighlighting());
+		highlightings.put(new Key(220), new LabelHighlighting());
+		highlightings.put(new Key(230), new EnumeratorHighlighting());
+	}
+
+	private static final String ExtensionPoint = "semanticHighlighting"; //$NON-NLS-1$
+
+	private static SemanticHighlighting[] loadSemanticHighlightings() {
+
+		Map<Key, SemanticHighlighting> highlightings = new TreeMap<SemanticHighlightings.Key, SemanticHighlighting>();
+
+		// load the built-in highlightings
+		loadBuiltInSemanticHighlightings(highlightings);
+
+		// load the extensions
+		IConfigurationElement[] elements = Platform.getExtensionRegistry().getConfigurationElementsFor(
+				CUIPlugin.getPluginId(), ExtensionPoint);
+		for (IConfigurationElement element : elements) {
+			ContributedSemanticHighlighting contributedHighlighting = new ContributedSemanticHighlighting(
+					element);
+
+			Key key = new Key(contributedHighlighting.getPriority(), contributedHighlighting.getId());
+			highlightings.put(key, contributedHighlighting);
+		}
+
+		return highlightings.values().toArray(new SemanticHighlighting[highlightings.size()]);
+	}
+
+	private static final Object SemanticHighlightingsLock = new Object();
+
 	/**
 	 * @return The semantic highlightings, the order defines the precedence of matches, the first match wins.
 	 */
 	public static SemanticHighlighting[] getSemanticHighlightings() {
 		if (fgSemanticHighlightings == null)
-			fgSemanticHighlightings= new SemanticHighlighting[] {
-				new MacroReferenceHighlighting(),  // before all others!
-				new ProblemHighlighting(),
-				new ExternalSDKHighlighting(),
-				new ClassHighlighting(),
-				new StaticFieldHighlighting(),
-				new FieldHighlighting(),  // after all other fields
-				new MethodDeclarationHighlighting(),
-				new StaticMethodInvocationHighlighting(),
-				new ParameterVariableHighlighting(),  // before local variables
-				new LocalVariableDeclarationHighlighting(),
-				new LocalVariableHighlighting(),
-				new GlobalVariableHighlighting(),
-				new TemplateParameterHighlighting(), // before template arguments!
-				new OverloadedOperatorHighlighting(), // before both method and function
-				new MethodHighlighting(), // before types to get ctors
-				new EnumHighlighting(),
-				new MacroDefinitionHighlighting(),
-				new FunctionDeclarationHighlighting(),
-				new FunctionHighlighting(),
-				new TypedefHighlighting(),
-				new NamespaceHighlighting(),
-				new LabelHighlighting(),
-				new EnumeratorHighlighting(),
-			};
+			synchronized (SemanticHighlightingsLock) {
+				if (fgSemanticHighlightings == null)
+					fgSemanticHighlightings = loadSemanticHighlightings();
+			}
 		return fgSemanticHighlightings;
 	}
 

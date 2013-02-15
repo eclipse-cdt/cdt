@@ -114,7 +114,7 @@ class PDOMCPPEnumeration extends PDOMCPPBinding implements IPDOMCPPEnumType, IPD
 		if (node instanceof PDOMCPPEnumerator) {
 			PDOMNodeLinkedList list = new PDOMNodeLinkedList(getLinkage(), record + OFFSET_ENUMERATOR_LIST);
 			list.addMember(node);
-			PDOMCPPEnumScope.updateCache(this, (PDOMCPPEnumerator) node);
+			PDOMCPPEnumScope.updateCache(this, (IPDOMCPPEnumerator) node);
 		}
 	}
 
@@ -218,14 +218,14 @@ class PDOMCPPEnumeration extends PDOMCPPBinding implements IPDOMCPPEnumType, IPD
 	}
 
 	@Override
-	public void loadEnumerators(final CharArrayMap<PDOMCPPEnumerator> map) {
+	public void loadEnumerators(final CharArrayMap<IPDOMCPPEnumerator> map) {
 		try {
 			PDOMNodeLinkedList list = new PDOMNodeLinkedList(getLinkage(), record + OFFSET_ENUMERATOR_LIST);
 			list.accept(new IPDOMVisitor() {
 				@Override
 				public boolean visit(IPDOMNode node) throws CoreException {
-					if (node instanceof PDOMCPPEnumerator) {
-						final PDOMCPPEnumerator item = (PDOMCPPEnumerator) node;
+					if (node instanceof IPDOMCPPEnumerator) {
+						final IPDOMCPPEnumerator item = (IPDOMCPPEnumerator) node;
 						map.put(item.getNameCharArray(), item);
 					}
 					return true;

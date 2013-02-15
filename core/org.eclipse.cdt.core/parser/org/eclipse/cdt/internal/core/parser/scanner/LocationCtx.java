@@ -130,7 +130,7 @@ abstract class LocationCtx implements ILocationCtx {
 	 * Returns the sequence of file locations spanning the given range.
 	 * Assumes that the range starts within this context.
 	 */
-	public abstract boolean collectLocations(int sequenceNumber, int length, ArrayList<IASTNodeLocation> sofar);
+	public abstract void collectLocations(int sequenceNumber, int length, ArrayList<IASTNodeLocation> sofar);
 
 	/**
 	 * Support for the dependency tree, add inclusion statements found in this context.

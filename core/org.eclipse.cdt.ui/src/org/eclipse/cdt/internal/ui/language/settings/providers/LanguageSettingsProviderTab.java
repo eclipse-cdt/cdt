@@ -378,9 +378,9 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 		tableProvidersViewer.refresh();
 		tableProvidersViewer.setChecked(newProvider, isChecked);
 		tableProviders.setSelection(pos);
-		tableProvidersViewer.refresh(newProvider);
 
 		saveCheckedProviders();
+		tableProvidersViewer.refresh(newProvider);
 	}
 
 	/**
@@ -460,8 +460,8 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 					replaceSelectedProvider(newProvider); // will refresh and save checked providers
 					createOptionsPage(newProvider);
 				} else {
-					tableProvidersViewer.refresh(checkedProvider);
 					saveCheckedProviders();
+					tableProvidersViewer.refresh(checkedProvider);
 					// option page is reused
 				}
 
@@ -483,7 +483,7 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 		} else {
 			// Toggle to configuration-owned provider
 			newProvider = getInitialProvider(id);
-			if(newProvider == null) {
+			if(newProvider == null || LanguageSettingsManager.isWorkspaceProvider(newProvider)) {
 				try {
 					ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(provider);
 					if (rawProvider instanceof ILanguageSettingsEditableProvider) {
@@ -926,7 +926,7 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 
 		for (ILanguageSettingsProvider provider : allAvailableProvidersSet) {
 			String id = provider.getId();
-			if (!idsList.contains(id)) {
+			if (!idsList.contains(id) && ScannerDiscoveryLegacySupport.isProviderCompatible(id, cfgDescription)) {
 				providers.add(provider);
 				idsList.add(id);
 			}

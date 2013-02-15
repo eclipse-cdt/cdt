@@ -11,6 +11,7 @@
  *     Marc Dumais (Ericsson) - Bug 396184
  *     Marc Dumais (Ericsson) - Bug 396200
  *     Marc Dumais (Ericsson) - Bug 396293
+ *     Marc Dumais (Ericsson) - Bug 399281
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;
@@ -303,7 +304,9 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas
 	 */
 	public void requestUpdate() {
 		GUIUtils.exec(new Runnable() { @Override public void run() {
-			m_updateTimer.start();
+			if (m_updateTimer != null) {
+				m_updateTimer.start();
+			}
 		}});
 	}
 	
@@ -867,7 +870,9 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas
 	/** Removes external listener for selection change events. */
 	@Override
 	public void removeSelectionChangedListener(ISelectionChangedListener listener) {
-		m_selectionManager.removeSelectionChangedListener(listener);
+		if (m_selectionManager != null) {
+			m_selectionManager.removeSelectionChangedListener(listener);
+		}
 	}
 	
 	/** Raises selection changed event. */

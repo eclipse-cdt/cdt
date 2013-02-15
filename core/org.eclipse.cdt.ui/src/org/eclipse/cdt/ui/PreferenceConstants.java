@@ -2219,7 +2219,7 @@ public class PreferenceConstants {
 	 *     the workspace setting should be taken. Note that passing {@code null} should be avoided.
 	 * @param defaultValue The default value if not specified in the preferences.
 	 * @return Returns the current value of the preference.
-	 * @since 5.5
+	 * @since 5.6
 	 */
 	public static String getPreference(String key, ICProject project, String defaultValue) {
 		return getPreferenceNode(key, project).get(key, defaultValue);

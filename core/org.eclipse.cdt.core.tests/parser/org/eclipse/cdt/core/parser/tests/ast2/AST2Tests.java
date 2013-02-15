@@ -57,9 +57,11 @@ import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerList;
 import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
+import org.eclipse.cdt.core.dom.ast.IASTMacroExpansionLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTNullStatement;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
@@ -7425,5 +7427,30 @@ public class AST2Tests extends AST2TestBase {
 	// #define macro(R) #R""
 	public void testNoRawStringInPlainC_397127() throws Exception {
 		parseAndCheckBindings(getAboveComment(), C, true);
+	}
+	
+	// #define X 
+	// int a=X-1;X
+	public void testMacroReferences_399394() throws Exception {
+		IASTTranslationUnit tu= parseAndCheckBindings(getAboveComment());
+		assertEquals(2, countMacroRefs(tu));
+		
+		IASTSimpleDeclaration decl= getDeclaration(tu, 0);
+		assertEquals(1, countMacroRefs(decl));
+		
+		IASTEqualsInitializer init= (IASTEqualsInitializer) decl.getDeclarators()[0].getInitializer();
+		assertEquals(1, countMacroRefs(init));
+		
+		IASTUnaryExpression expr= (IASTUnaryExpression) init.getInitializerClause();
+		assertEquals(0, countMacroRefs(expr));
+	}
+
+	private int countMacroRefs(IASTNode node) {
+		int count = 0;
+		for (IASTNodeLocation loc : node.getNodeLocations()) {
+			if (loc instanceof IASTMacroExpansionLocation)
+				count++;
+		}
+		return count;
 	}
 }

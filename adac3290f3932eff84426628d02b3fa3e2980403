@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX///Dk\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 279,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX///KI\u003d",
+      "revId": "adac3290f3932eff84426628d02b3fa3e2980403",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX///KE\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
         "patchSetId": 5
@@ -30,6 +48,24 @@
       "writtenOn": "2013-02-15T16:13:00Z",
       "side": 1,
       "message": "So you didnt\u0027 need a copy of the model?",
+      "revId": "adac3290f3932eff84426628d02b3fa3e2980403",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///Dc\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui/src/org/eclipse/cdt/dsf/gdb/multicorevisualizer/internal/ui/view/MulticoreVisualizer.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 976,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:09Z",
+      "side": 1,
+      "message": "Correct; just a reference does the trick, and we already pass a reference to getLoad().",
+      "parentUuid": "AABOPX///KE\u003d",
       "revId": "adac3290f3932eff84426628d02b3fa3e2980403",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX///Cs\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/ProcStatCoreLoads.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX///FE\u003d",
+      "revId": "adac3290f3932eff84426628d02b3fa3e2980403",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX///FI\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/ProcStatCoreLoads.java",
         "patchSetId": 5
@@ -64,6 +118,24 @@
       "writtenOn": "2013-02-15T16:13:00Z",
       "side": 1,
       "message": "I guess we can remove the below commented code?",
+      "revId": "adac3290f3932eff84426628d02b3fa3e2980403",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///DY\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/ProcStatCoreLoads.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX///FI\u003d",
       "revId": "adac3290f3932eff84426628d02b3fa3e2980403",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX///Co\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/ProcStatCounters.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX///FA\u003d",
+      "revId": "adac3290f3932eff84426628d02b3fa3e2980403",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX///E0\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/ProcStatParser.java",
         "patchSetId": 5
@@ -98,6 +188,24 @@
       "writtenOn": "2013-02-15T16:13:00Z",
       "side": 1,
       "message": "I think we should move his one also after the file check",
+      "revId": "adac3290f3932eff84426628d02b3fa3e2980403",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///Ck\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/internal/ProcStatParser.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX///E0\u003d",
       "revId": "adac3290f3932eff84426628d02b3fa3e2980403",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX///Bw\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX///EQ\u003d",
+      "revId": "adac3290f3932eff84426628d02b3fa3e2980403",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX///EM\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
         "patchSetId": 5
@@ -132,6 +258,24 @@
       "writtenOn": "2013-02-15T16:13:00Z",
       "side": 1,
       "message": "do we need this one?",
+      "revId": "adac3290f3932eff84426628d02b3fa3e2980403",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///B4\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX///EM\u003d",
       "revId": "adac3290f3932eff84426628d02b3fa3e2980403",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -155,6 +299,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX///Bs\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 194,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX///EU\u003d",
+      "revId": "adac3290f3932eff84426628d02b3fa3e2980403",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX///EE\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
         "patchSetId": 5
@@ -166,6 +328,24 @@
       "writtenOn": "2013-02-15T16:13:00Z",
       "side": 1,
       "message": "Was it intentional to go from 100 to 250? Fine with me, just asking.",
+      "revId": "adac3290f3932eff84426628d02b3fa3e2980403",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///Bo\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 225,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:09Z",
+      "side": 1,
+      "message": "Yes.  Looking for the bug where two consecutive sets of /proc/stat counters were the same, I played with these values.  In short, a tick is 10ms on most platforms.  so 100ms sample contains only 10 ticks, which seemed a bit low to base the load-on.  We don\u0027t want it to be too long either.  So in the end I chose 25 ticks.",
+      "parentUuid": "AABOPX///EE\u003d",
       "revId": "adac3290f3932eff84426628d02b3fa3e2980403",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -189,6 +369,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX///Bk\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 230,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:09Z",
+      "side": 1,
+      "message": "Yes.",
+      "parentUuid": "AABOPX///EA\u003d",
+      "revId": "adac3290f3932eff84426628d02b3fa3e2980403",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX///EI\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
         "patchSetId": 5
@@ -200,6 +398,24 @@
       "writtenOn": "2013-02-15T16:13:00Z",
       "side": 1,
       "message": "How about:\nif (!(context instanceof ICoreDMContext) \u0026\u0026 !(context instanceof ICPUDMContext)) {\n\nto avoid the empty if",
+      "revId": "adac3290f3932eff84426628d02b3fa3e2980403",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///Bc\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 615,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX///EI\u003d",
       "revId": "adac3290f3932eff84426628d02b3fa3e2980403",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -223,6 +439,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX///BY\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 672,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX///D8\u003d",
+      "revId": "adac3290f3932eff84426628d02b3fa3e2980403",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX///D4\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
         "patchSetId": 5
@@ -234,6 +468,24 @@
       "writtenOn": "2013-02-15T16:13:00Z",
       "side": 1,
       "message": "missing rm.done(), maybe with an error status?",
+      "revId": "adac3290f3932eff84426628d02b3fa3e2980403",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///BU\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 696,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX///D4\u003d",
       "revId": "adac3290f3932eff84426628d02b3fa3e2980403",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -257,6 +509,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX///BI\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 718,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:09Z",
+      "side": 1,
+      "message": "Yes, nice suggestion - Done.",
+      "parentUuid": "AABOPX///Dw\u003d",
+      "revId": "adac3290f3932eff84426628d02b3fa3e2980403",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX///Ds\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
         "patchSetId": 5
@@ -268,6 +538,24 @@
       "writtenOn": "2013-02-15T16:13:00Z",
       "side": 1,
       "message": "Same comment as above about iterating over maps",
+      "revId": "adac3290f3932eff84426628d02b3fa3e2980403",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///BE\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBHardwareAndOS.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 759,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX///Ds\u003d",
       "revId": "adac3290f3932eff84426628d02b3fa3e2980403",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -291,6 +579,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX///BA\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/IGDBHardwareAndOS2.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX///Ew\u003d",
+      "revId": "adac3290f3932eff84426628d02b3fa3e2980403",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX///Es\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/IGDBHardwareAndOS2.java",
         "patchSetId": 5
@@ -302,6 +608,24 @@
       "writtenOn": "2013-02-15T16:13:00Z",
       "side": 1,
       "message": "Do we need a highWaterMark for each detailed load?",
+      "revId": "adac3290f3932eff84426628d02b3fa3e2980403",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///A8\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/IGDBHardwareAndOS2.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:09Z",
+      "side": 1,
+      "message": "Good question, but I do not think this would make sense in all cases, depending on how exactly we define the detailed load.   For instance we might define the detailed loads as proportion of overall load, not absolute values.   So if we have 10% overall load, the detailed load might be 75% user, 25% system, instead of 7.5% user and 2.5% system.",
+      "parentUuid": "AABOPX///Es\u003d",
       "revId": "adac3290f3932eff84426628d02b3fa3e2980403",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
@@ -325,6 +649,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX///CE\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/ProcStatParserTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX///Ek\u003d",
+      "revId": "adac3290f3932eff84426628d02b3fa3e2980403",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX///Eo\u003d",
         "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/ProcStatParserTest.java",
         "patchSetId": 5
@@ -336,6 +678,24 @@
       "writtenOn": "2013-02-15T16:13:00Z",
       "side": 1,
       "message": "I would create this in each test case because later on you may want to add a testcase that does not use it.  To make sure we don\u0027t forget to create a new instance, don\u0027t have the variable global.",
+      "revId": "adac3290f3932eff84426628d02b3fa3e2980403",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX///CU\u003d",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/ProcStatParserTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 938
+      },
+      "writtenOn": "2013-02-15T18:00:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AABOPX///Eo\u003d",
       "revId": "adac3290f3932eff84426628d02b3fa3e2980403",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false

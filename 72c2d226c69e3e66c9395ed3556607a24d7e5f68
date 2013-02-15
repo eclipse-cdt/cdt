@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPX//++M\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/tasks/cdt_t_rename.htm",
+        "patchSetId": 2
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-02-15T22:53:10Z",
+      "side": 1,
+      "message": "Indentation is not necessary.",
+      "revId": "72c2d226c69e3e66c9395ed3556607a24d7e5f68",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AABOPX//++I\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/tasks/cdt_t_rename.htm",
+        "patchSetId": 2
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-02-15T22:53:10Z",
+      "side": 1,
+      "message": "Indentation is not necessary.\n\nSame in other similar paragraphs.",
+      "revId": "72c2d226c69e3e66c9395ed3556607a24d7e5f68",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

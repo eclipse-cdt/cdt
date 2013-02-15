@@ -9,6 +9,8 @@
 package org.eclipse.cdt.internal.core.pdom.tag;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.tag.ITag;
@@ -22,11 +24,11 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * Not thread-safe.
  */
-public class PDOMTagIndex {
-
+public class PDOMTagIndex
+{
 	private final Database db;
 	private final long ptr;
-	private long record;
+	private long rootRecord;
 
 	private static enum Fields
 	{
@@ -45,24 +47,21 @@ public class PDOMTagIndex {
 	{
 		this.db = db;
 		this.ptr = ptr;
-		this.record = db.getRecPtr( ptr );
-	}
-
-	public void clear()
-	{
-		tags = null;
-		taggerIds = null;
+		this.rootRecord = 0;
 	}
 
 	private long getFieldAddress( Fields field ) throws CoreException
 	{
-		if( record == 0 )
+		if( rootRecord == 0 )
+			rootRecord = db.getRecPtr( ptr );
+
+		if( rootRecord == 0 )
 		{
-			record = db.malloc( Fields.sizeof );
-			db.putRecPtr( ptr, record );
+			rootRecord = db.malloc( Fields.sizeof );
+			db.putRecPtr( ptr, rootRecord );
 		}
 
-		return record + field.offset;
+		return rootRecord + field.offset;
 	}
 
 	private PDOMStringSet getTaggerIds() throws CoreException
@@ -75,27 +74,29 @@ public class PDOMTagIndex {
 	private BTree getTagsBTree() throws CoreException
 	{
 		if( tags == null )
-			tags = new BTree(db, getFieldAddress( Fields.Tags ), new PDOMTag.BTreeComparator(db));
+			tags = new BTree( db, getFieldAddress( Fields.Tags ), new PDOMTag.BTreeComparator( db ) );
 		return tags;
 	}
 
 	/**
 	 * Return the record storing the specified tagger id.  Create a new record if needed.
 	 */
-	private long getIdRecord( String taggerId )
+	private long getIdRecord( String taggerId, boolean createIfNeeded )
 	{
 		assert taggerId != null;
 		assert ! taggerId.isEmpty();
 
 		if( db == null
 		 || taggerId == null
-		 || taggerId.isEmpty())
+		 || taggerId.isEmpty()
+		 || ( taggerIds == null && ! createIfNeeded ) )
 			return 0L;
 
 		try
 		{
 			long record = getTaggerIds().find( taggerId );
-			if( record == 0 )
+			if( record == 0
+			 && createIfNeeded )
 				record = getTaggerIds().add( taggerId );
 			return record;
 		}
@@ -107,12 +108,12 @@ public class PDOMTagIndex {
 		return 0L;
 	}
 
-	public IWritableTag createTag( long record, String id, int len )
+	private IWritableTag createTag( long record, String id, int len )
 	{
 		if( db == null )
 			return null;
 
-		long idRecord = getIdRecord( id );
+		long idRecord = getIdRecord( id, true );
 		if( idRecord == 0L )
 			return null;
 
@@ -131,7 +132,7 @@ public class PDOMTagIndex {
 
 			// otherwise destroy this provisional one and return the tag that was actually inserted
 			// TODO figure out what this case means
-			tag.destroy();
+			tag.delete();
 			return inserted == 0 ? null : new PDOMTag( db, inserted );
 		}
 		catch( CoreException e )
@@ -142,35 +143,84 @@ public class PDOMTagIndex {
 		return null;
 	}
 
-	public ITag getTag( long record, String id )
+	private ITag getTag( long record, String id )
 	{
 		if( db == null )
 			return null;
 
-		long idRecord = getIdRecord( id );
+		long idRecord = getIdRecord( id, false );
 		if( idRecord == 0L )
 			return null;
 
 		PDOMTag.BTreeVisitor v = new PDOMTag.BTreeVisitor( db, record, idRecord );
-		try { getTagsBTree().accept(v); }
-		catch( CoreException e ) { CCorePlugin.log(e); }
+		try { getTagsBTree().accept( v ); }
+		catch( CoreException e ) { CCorePlugin.log( e ); }
 
 		return v.hasResult ? new PDOMTag( db, v.tagRecord ) : null;
 	}
 
-	public Iterable<ITag> getTags()
+	private Iterable<ITag> getTags( long binding_record )
 	{
 		BTree btree = null;
 		try { btree = getTagsBTree(); }
 		catch( CoreException e ) { CCorePlugin.log( e ); return Collections.emptyList(); }
 
+		final Long bindingRecord = Long.valueOf( binding_record );
 		return
 			new BTreeIterable<ITag>(
 					btree,
-					new BTreeIterable.Factory<ITag>()
+					new BTreeIterable.Descriptor<ITag>()
 					{
 						@Override public ITag create( long record ) { return new PDOMTag( db, record ); }
+						@Override
+						public int compare( long test_record ) throws CoreException
+						{
+							long test_node = new PDOMTag( db, test_record ).getNode();
+
+							// -1 if record < key, 0 if record == key, 1 if record > key
+							return Long.valueOf( test_node ).compareTo( bindingRecord );
+						}
 					} );
+	}
+
+	private boolean setTags( long binding_record, Iterable<ITag> tags )
+	{
+		// There could be several tags for the given record in the database, one for each taggerId.  We need
+		// to delete all of those tags and replace them with given list.  The incoming tags are first put
+		// into a map, indexed by their taggerId.  Then we examine the btree of tags to find all tags for this
+		// record.  In each case we decide whether to delete or update the tag.  Tags of the same size can be
+		// updated in place, otherwise the tag needs to be deleted and recreated.
+
+		final Map<String, ITag> newTags = new HashMap<String, ITag>();
+		for( ITag tag : tags )
+		{
+			ITag dupTag = newTags.put( tag.getTaggerId(), tag );
+			if( dupTag != null )
+				CCorePlugin.log( "Duplicate incoming tag for record " + binding_record + " from taggerId " + tag.getTaggerId() ); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+
+		BTree btree = null;
+		try { btree = getTagsBTree(); }
+		catch( CoreException e ) { CCorePlugin.log( e ); return false; }
+
+		PDOMTagSynchronizer sync = new PDOMTagSynchronizer( db, Long.valueOf( binding_record ), newTags );
+
+		// visit the full tree, then return true on success and false on failure
+		try { btree.accept( sync ); }
+		catch( CoreException e ) { CCorePlugin.log( e ); return false; }
+
+		// Complete the synchronization (delete/insert the records that could not be modified in-place).  This
+		// will only have something to do when a tag has changed length, which should be a rare.
+		sync.synchronize( btree );
+
+		// insert any new tags that are left in the incoming list
+		for( ITag newTag : newTags.values() )
+		{
+			IWritableTag pdomTag = createTag( binding_record, newTag.getTaggerId(), newTag.getDataLen() );
+			pdomTag.putBytes( 0, newTag.getBytes( 0, -1 ), -1 );
+		}
+
+		return true;
 	}
 
 	private static PDOMTagIndex getTagIndex( PDOM pdom )
@@ -178,7 +228,11 @@ public class PDOMTagIndex {
 		if( pdom == null )
 			return null;
 
-		try { return pdom.getTagIndex(); }
+		try
+		{
+			PDOMTagIndex index = pdom.getTagIndex();
+			return index.db == null ? null : index;
+		}
 		catch( CoreException e ) { CCorePlugin.log(e); }
 		return null;
 	}
@@ -202,12 +256,24 @@ public class PDOMTagIndex {
 		return index.getTag( record, id );
 	}
 
-	public static Iterable<ITag> getTags( PDOM pdom )
+	public static Iterable<ITag> getTags( PDOM pdom, long record )
 	{
 		PDOMTagIndex index = getTagIndex( pdom );
 		if( index == null )
 			return Collections.emptyList();
 
-		return index.getTags();
+		return index.getTags( record );
+	}
+
+	public static boolean setTags( PDOM pdom, long record, Iterable<ITag> tags )
+	{
+		if( record == 0 )
+			return true;
+
+		PDOMTagIndex index = getTagIndex( pdom );
+		if( index == null )
+			return false;
+
+		return index.setTags( record, tags );
 	}
 }

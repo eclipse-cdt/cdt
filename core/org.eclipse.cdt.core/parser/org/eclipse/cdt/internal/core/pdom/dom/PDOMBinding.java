@@ -26,7 +26,7 @@ import org.eclipse.cdt.core.dom.ast.IScope.ScopeLookupData;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
-import org.eclipse.cdt.core.dom.ast.tag.ITaggable;
+import org.eclipse.cdt.core.dom.ast.tag.ITagReader;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
@@ -68,7 +68,13 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 	public Object getAdapter(Class adapter) {
 		if (adapter.isAssignableFrom(PDOMBinding.class))
 			return this;
-		if (adapter == ITaggable.class)
+
+		// Any PDOMBinding can have a persistent tag.  These tags should be deleted when the PDOMBinding
+		// is deleted.  However, PDOMBinding's don't get deleted, so there is no way to trigger deleting
+		// of the tags.  If the implementation is changed so that PDOMBindings do get deleted, then call:
+		//		PDOMTagIndex.setTags( getPDOM(), pdomBinding.record, Collections.<ITag>emptyList() );
+		// to clear out all tags for the binding.
+		if (adapter == ITagReader.class)
 			return new PDOMTaggable( getPDOM(), getRecord() );
 
 		return null;

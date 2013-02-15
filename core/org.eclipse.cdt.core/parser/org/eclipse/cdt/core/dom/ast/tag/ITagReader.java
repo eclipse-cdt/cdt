@@ -10,26 +10,14 @@ package org.eclipse.cdt.core.dom.ast.tag;
 
 
 /**
- * A marker interface for IBindings that can be tagged.  The binding can specify a particular
- * implementation by returning for from #getAdapter( ITaggable.class ).  Otherwise a simple,
- * non-cached, in-memory implementation is provided.
+ * An interface that provides read-only access to the tags associated with a particular binding.
  *
  * @see ITag
- * @see ITaggableService
+ * @see ITagService
  * @since 5.5
  */
-public interface ITaggable
+public interface ITagReader
 {
-	/**
-	 * Create and return a new tag for the receiver.  E.g., if the ITaggable is associated with a persistent binding,
-	 * then returned tag will read and write from the PDOM database.
-	 *
-	 * @param id A string that uniquely identifies the tag to be returned.  This value will be used by the contributor
-	 *           when to find the tag (see {@link #getTag(String)}).
-	 * @param len The number of bytes that should be allocated to store the tag's data.
-	 */
-	public IWritableTag createTag( String id, int len );
-
 	/**
 	 * Look for a tag for the receiver, returns null if there is no such tag.
 	 *

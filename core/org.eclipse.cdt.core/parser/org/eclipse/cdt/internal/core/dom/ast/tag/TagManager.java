@@ -18,8 +18,10 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.tag.IBindingTagger;
 import org.eclipse.cdt.core.dom.ast.tag.ITag;
-import org.eclipse.cdt.core.dom.ast.tag.ITaggable;
-import org.eclipse.cdt.core.dom.ast.tag.IWritableTag;
+import org.eclipse.cdt.core.dom.ast.tag.ITagReader;
+import org.eclipse.cdt.core.dom.ast.tag.ITagWriter;
+import org.eclipse.cdt.internal.core.pdom.dom.IPDOMBinding;
+import org.eclipse.cdt.internal.core.pdom.tag.PDOMTaggable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 
@@ -61,18 +63,18 @@ public class TagManager
 
 	/** Provide an opportunity for the specified tagger to process the given values.  The tagger will only
 	 *  run if its enablement expression returns true for the arguments. */
-	public ITag process( String taggerId, ITaggable taggable, IBinding binding, IASTName ast )
+	public ITag process( String taggerId, ITagWriter tagWriter, IBinding binding, IASTName ast )
 	{
 		TaggerDescriptor desc = taggers.get( taggerId );
 		if( desc == null )
 			return null;
 
 		IBindingTagger tagger = desc.getBindingTaggerFor( binding, ast );
-		return tagger == null ? null : tagger.process( taggable, binding, ast );
+		return tagger == null ? null : tagger.process( tagWriter, binding, ast );
 	}
 
 	/** Provide an opportunity for all enabled taggers to process the given values. */
-	public Iterable<ITag> process( ITaggable taggable, IBinding binding, IASTName ast )
+	public Iterable<ITag> process( ITagWriter tagWriter, IBinding binding, IASTName ast )
 	{
 		List<ITag> tags = new LinkedList<ITag>();
 		for( TaggerDescriptor desc : taggers.values() )
@@ -80,34 +82,26 @@ public class TagManager
 			IBindingTagger tagger = desc.getBindingTaggerFor( binding, ast );
 			if( tagger != null )
 			{
-				ITag tag = tagger.process( taggable, binding, ast );
+				ITag tag = tagger.process( tagWriter, binding, ast );
 				if( tag != null )
 					tags.add( tag );
 			}
 		}
+
 		return tags;
 	}
 
-	/** Copy all tags from the source to the destination binding. */
-	public static void copyTags( IBinding dst, IBinding src )
+	/** Add or remove tags from the destination to ensure that it has the same tag information as the source. */
+	public void syncTags( IPDOMBinding dst, IBinding src )
 	{
-		ITaggable srcTaggable = CCorePlugin.getTaggableService().findTaggable( src );
-		if( srcTaggable == null )
+		if( dst == null )
 			return;
 
-		ITaggable dstTaggable = CCorePlugin.getTaggableService().findTaggable( dst );
-		if( dstTaggable == null )
+		ITagReader tagReader = CCorePlugin.getTagService().findTagReader( src );
+		if( tagReader == null )
 			return;
 
-		for( ITag srcTag : srcTaggable.getTags() )
-		{
-			byte[] srcData = srcTag.getBytes( 0, -1 );
-			if( srcData == null )
-				throw new RuntimeException( "unable to read tag data" ); //$NON-NLS-1$
-
-			IWritableTag dstTag = dstTaggable.createTag( srcTag.getTaggerId(), srcData.length );
-			if( ! dstTag.putBytes( 0, srcData, srcData.length ) )
-				throw new RuntimeException( "unable to write tag data" ); //$NON-NLS-1$
-		}
+		ITagWriter tagWriter = new PDOMTaggable( dst.getPDOM(), dst.getRecord() );
+		tagWriter.setTags( tagReader.getTags() );
 	}
 }

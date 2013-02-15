@@ -9,26 +9,26 @@
 package org.eclipse.cdt.internal.core.dom.ast.tag;
 
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.tag.ITaggable;
-import org.eclipse.cdt.core.dom.ast.tag.ITaggableService;
+import org.eclipse.cdt.core.dom.ast.tag.ITagReader;
+import org.eclipse.cdt.core.dom.ast.tag.ITagService;
 
-public class TaggableService implements ITaggableService
+public class TagService implements ITagService
 {
 	/**
-	 * First gives the IBinding instance a chance to convert itself, by calling IAdaptable#getAdapter( ITaggable.class )
+	 * First gives the IBinding instance a chance to convert itself, by calling IAdaptable#getAdapter( ITagReader.class )
 	 * on the binding.  If the binding doesn't provide an implementation then a simple, in-memory, non-cached
 	 * implementation is created and returned.
 	 */
 	@Override
-	public ITaggable findTaggable( IBinding binding )
+	public ITagReader findTagReader( IBinding binding )
 	{
 		if( binding == null )
 			return null;
 
-		// let the binding adapt to its own taggable
-		ITaggable taggable = (ITaggable)binding.getAdapter( ITaggable.class );
-		if( taggable != null )
-			return taggable;
+		// let the binding adapt to its own tag reader
+		ITagReader tagReader = (ITagReader)binding.getAdapter( ITagReader.class );
+		if( tagReader != null )
+			return tagReader;
 
 		return new NonCachedTaggable( binding );
 	}

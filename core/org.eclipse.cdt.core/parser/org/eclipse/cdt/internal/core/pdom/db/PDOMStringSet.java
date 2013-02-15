@@ -78,16 +78,10 @@ public class PDOMStringSet
 		}
 	}
 
-	public static String getString( Database db, long nodeRecord ) throws CoreException
-	{
-		long itemRecord = NodeType.Item.get( db, nodeRecord );
-		IString str = db.getString( itemRecord );
-		return str == null ? null : str.getString();
-	}
-
 	/**
 	 * Adds the given string to the receiving set.  May cause the entire list to be loaded from the
-	 * Database while testing for uniqueness.
+	 * Database while testing for uniqueness.  Returns the record of the string that was inserted into
+	 * the list.
 	 */
 	public long add( String str ) throws CoreException
 	{
@@ -120,7 +114,7 @@ public class PDOMStringSet
 	/**
 	 * Search for the given string in the receiver.  This could cause the entire list to be loaded from
 	 * the Database.  The results are cached, so the list will only be loaded one time during the lifetime
-	 * of this instance.
+	 * of this instance.  Returns the record of the String.
 	 */
 	public long find( String str ) throws CoreException
 	{
@@ -165,7 +159,7 @@ public class PDOMStringSet
 	}
 
 	/**
-	 * Return a pointer to the record that was removed.
+	 * Return a pointer to the record of the String that was removed.
 	 */
 	public long remove( String str ) throws CoreException
 	{

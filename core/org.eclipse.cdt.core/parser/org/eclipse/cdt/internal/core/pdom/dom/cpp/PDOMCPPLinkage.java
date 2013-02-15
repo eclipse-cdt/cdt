@@ -360,8 +360,9 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 							addImplicitMethods(pdomBinding, (ICPPClassType) binding, fromName);
 						}
 
-						// copy all of the source bindings tags to the new pdom binding
-						TagManager.copyTags( pdomBinding, binding );
+						// Synchronize the tags associated with the persistent binding to match the set that is
+						// associated with the input binding.
+						TagManager.getInstance().syncTags( pdomBinding, inputBinding );
 					}
 				} catch (DOMException e) {
 					throw new CoreException(Util.createStatus(e));
@@ -371,8 +372,15 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		}
 
 		if (shouldUpdate(pdomBinding, fromName)) {
-			pdomBinding.update(this, fromName.getBinding());
+			IBinding fromBinding = fromName.getBinding();
+
+			pdomBinding.update(this, fromBinding);
+
+			// Update the tags based on the tags from the new binding.  This was in PDOMBinding.update, but
+			// I found that not all subclasses (e.g., PDOMCPPFunction) call the parent implementation.
+			TagManager.getInstance().syncTags( pdomBinding, fromBinding );
 		}
+
 		return pdomBinding;
 	}
 
@@ -565,6 +573,10 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 						} else if (!getPDOM().hasLastingDefinition(pdomBinding)) {
 							pdomBinding.update(this, method);
 							old.remove(pdomBinding);
+
+							// Update the tags based on the tags from the new binding.  This was in PDOMBinding.update, but
+							// I found that not all subclasses (e.g., PDOMCPPFunction) call the parent implementation.
+							TagManager.getInstance().syncTags( pdomBinding, method );
 						}
 					}
 				}

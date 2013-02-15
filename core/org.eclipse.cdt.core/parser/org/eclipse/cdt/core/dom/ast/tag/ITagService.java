@@ -11,17 +11,20 @@ package org.eclipse.cdt.core.dom.ast.tag;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 
 /**
- * Provides ITaggables for specific bindings.  The kind of the taggable will vary based on
+ * Provides ITagReaders for specific bindings.  The kind of the reader will vary based on
  * the kind of the input binding.
  *
  * @see ITag
- * @see ITaggable
+ * @see ITagReader
  * @since 5.5
  */
-public interface ITaggableService
+public interface ITagService
 {
 	/**
-	 * Finds or creates a taggable for the specified binding.
+	 * Finds or creates a tag reader for the specified binding or null if a reader cannot
+	 * be associated with this binding.
+	 *
+	 * @param binding could be null
 	 */
-	public ITaggable findTaggable( IBinding binding );
+	public ITagReader findTagReader( IBinding binding );
 }

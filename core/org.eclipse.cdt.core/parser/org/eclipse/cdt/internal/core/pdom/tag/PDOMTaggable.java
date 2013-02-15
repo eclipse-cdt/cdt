@@ -9,11 +9,12 @@
 package org.eclipse.cdt.internal.core.pdom.tag;
 
 import org.eclipse.cdt.core.dom.ast.tag.ITag;
-import org.eclipse.cdt.core.dom.ast.tag.ITaggable;
+import org.eclipse.cdt.core.dom.ast.tag.ITagReader;
+import org.eclipse.cdt.core.dom.ast.tag.ITagWriter;
 import org.eclipse.cdt.core.dom.ast.tag.IWritableTag;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 
-public class PDOMTaggable implements ITaggable
+public class PDOMTaggable implements ITagReader, ITagWriter
 {
 	private final PDOM pdom;
 	private final long record;
@@ -39,6 +40,12 @@ public class PDOMTaggable implements ITaggable
 	@Override
 	public Iterable<ITag> getTags()
 	{
-		return PDOMTagIndex.getTags( pdom );
+		return PDOMTagIndex.getTags( pdom, record );
+	}
+
+	@Override
+	public boolean setTags( Iterable<ITag> tags )
+	{
+		return PDOMTagIndex.setTags( pdom, record, tags );
 	}
 }

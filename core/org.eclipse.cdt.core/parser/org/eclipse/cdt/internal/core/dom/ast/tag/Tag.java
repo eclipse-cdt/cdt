@@ -13,7 +13,8 @@ import org.eclipse.cdt.core.dom.ast.tag.IWritableTag;
 
 /**
  * A trivial implementation that stores all data in memory.
- * @see Taggable
+ *
+ * @see NonCachedTaggable
  */
 public class Tag implements IWritableTag
 {

@@ -15,6 +15,8 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.tag.IBindingTagger;
+import org.eclipse.cdt.core.dom.ast.tag.ITag;
+import org.eclipse.cdt.core.dom.ast.tag.ITagWriter;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -46,6 +48,13 @@ public class TaggerDescriptor
 
 	private static final String Var_projectNature = "projectNatures"; //$NON-NLS-1$
 	private static final String Var_languageId = "languageId"; //$NON-NLS-1$
+
+	/** An empty implementation of the tagger used as a placeholder in descriptors that are unable to
+	 *  load the contributed class. */
+	private static final IBindingTagger NullTagger = new IBindingTagger()
+	{
+		@Override public ITag process(ITagWriter tagWriter, IBinding binding, IASTName ast) {  return null; }
+	};
 
 	public TaggerDescriptor( IConfigurationElement element )
 	{
@@ -165,6 +174,9 @@ public class TaggerDescriptor
 						String id = element.getDeclaringExtension().getNamespaceIdentifier() + '.'
 								  + element.getDeclaringExtension().getSimpleIdentifier();
 						CCorePlugin.log( "Error in class attribute of " + id, e ); //$NON-NLS-1$
+
+						// mark the tagger with an empty implementation to prevent future load attempts
+						tagger = NullTagger;
 					}
 				}
 			}

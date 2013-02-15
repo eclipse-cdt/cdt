@@ -13,7 +13,6 @@ import org.eclipse.cdt.core.dom.ast.tag.IWritableTag;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeComparator;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
-import org.eclipse.cdt.internal.core.pdom.db.PDOMStringSet;
 import org.eclipse.core.runtime.CoreException;
 
 public class PDOMTag implements IWritableTag
@@ -91,6 +90,11 @@ public class PDOMTag implements IWritableTag
 		Fields.DataLen.put( db, record, 0, dataLen );
 	}
 
+	public long getNode() throws CoreException
+	{
+		return Fields.Node.getRecPtr( db, record, 0 );
+	}
+
 	@Override
 	public String getTaggerId()
 	{
@@ -98,7 +102,7 @@ public class PDOMTag implements IWritableTag
 			try
 			{
 				long taggerIdRecord = Fields.TaggerId.getRecPtr( db, record, 0 );
-				taggerId = taggerIdRecord == 0L ? new String() : PDOMStringSet.getString( db, taggerIdRecord );
+				taggerId = taggerIdRecord == 0L ? new String() : db.getString( taggerIdRecord ).getString();
 			}
 			catch( CoreException e )
 			{
@@ -120,11 +124,43 @@ public class PDOMTag implements IWritableTag
 
 	public long getRecord() { return record; }
 
-	public void destroy() throws CoreException
+	/**
+	 * Create and return a new PDOMTag that has the same node/taggerId as the receiver but with the
+	 * specified data.  Return null on failure.
+	 */
+	public PDOMTag cloneWith( byte[] data ) throws CoreException
+	{
+		PDOMTag partialTag = null;
+		try
+		{
+			long existing_node = Fields.Node.getRecPtr( db, record, 0 );
+			long existing_id = Fields.TaggerId.getRecPtr( db, record, 0 );
+
+			partialTag = new PDOMTag( db, data.length );
+			Fields.Node.putRecPtr( db, partialTag.record, 0, existing_node );
+			Fields.TaggerId.putRecPtr( db, partialTag.record, 0, existing_id );
+			if( partialTag.putBytes( 0, data, data.length ) )
+			{
+				PDOMTag tag = partialTag;
+				partialTag = null;
+				return tag;
+			}
+		}
+		finally
+		{
+			if( partialTag != null )
+				partialTag.delete();
+		}
+
+		return null;
+	}
+
+	public void delete()
 	{
 		if( db != null
 		 && record != 0 )
-			db.free( record );
+			try { db.free( record ); }
+			catch( CoreException e ) { CCorePlugin.log( e ); }
 	}
 
 	public static class BTreeComparator implements IBTreeComparator
@@ -228,11 +264,28 @@ public class PDOMTag implements IWritableTag
 	@Override
 	public boolean putBytes( int offset, byte[] data, int len )
 	{
-		len = len >= 0 ? len : data.length;
+		boolean fullWrite = len < 0;
+		if( fullWrite )
+			len = data.length;
 		if( ! isInBounds( offset, len ) )
 			return false;
 
-		try { Fields.Data.put( db, record, data, offset, len ); return true; }
+		try
+		{
+			Fields.Data.put( db, record, data, offset, len );
+
+			// if the new buffer replaces all of the existing one, then modify the receiver's stored length
+			int currLen = getDataLen();
+			if( fullWrite
+			 && offset == 0
+			 && currLen > len )
+			{
+				Fields.DataLen.put( db, record, 0, len );
+				dataLen = len;
+			}
+
+			return true;
+		}
 		catch( CoreException e ) { CCorePlugin.log( e ); return false; }
 	}
 

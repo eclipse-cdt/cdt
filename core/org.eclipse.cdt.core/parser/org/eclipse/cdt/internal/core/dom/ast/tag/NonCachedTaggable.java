@@ -13,11 +13,12 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.tag.ITag;
-import org.eclipse.cdt.core.dom.ast.tag.ITaggable;
+import org.eclipse.cdt.core.dom.ast.tag.ITagReader;
+import org.eclipse.cdt.core.dom.ast.tag.ITagWriter;
 import org.eclipse.cdt.core.dom.ast.tag.IWritableTag;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 
-public class NonCachedTaggable implements ITaggable
+public class NonCachedTaggable implements ITagReader, ITagWriter
 {
 	private final IBinding binding;
 	private IASTName ast;
@@ -43,6 +44,14 @@ public class NonCachedTaggable implements ITaggable
 	public Iterable<ITag> getTags()
 	{
 		return TagManager.getInstance().process( this, binding, getAST() );
+	}
+
+	@Override
+	public boolean setTags( Iterable<ITag> tags )
+	{
+		// this non-caching implementation has nothing to set, the tags will be regenerated
+		// when they are queried
+		return true;
 	}
 
 	private IASTName getAST()

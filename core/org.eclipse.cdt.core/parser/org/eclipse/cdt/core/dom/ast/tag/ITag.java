@@ -9,13 +9,13 @@
 package org.eclipse.cdt.core.dom.ast.tag;
 
 /**
- * Tags are used to annotate {@link ITaggable}'s with extra information.  They are created
+ * Tags are used to annotate {@link ITagReader}'s with extra information.  They are created
  * by implementations of {@link IBindingTagger} which are contributed using the
  * org.eclipse.cdt.core.tagger extension point.  The base tag interface is read-only, it
  * is extended by the writable {@link IWritableTag}.
  *
  * @see IBindingTagger
- * @see ITaggable
+ * @see ITagReader
  * @see IWritableTag
  * @since 5.5
  */

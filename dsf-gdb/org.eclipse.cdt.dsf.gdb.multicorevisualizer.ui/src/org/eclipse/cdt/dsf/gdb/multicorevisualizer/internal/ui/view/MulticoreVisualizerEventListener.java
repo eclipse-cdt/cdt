@@ -10,6 +10,7 @@
  *     Marc Dumais (Ericsson) - Bug 400231
  *     Marc Dumais (Ericsson) - Bug 399419
  *     Marc Dumais (Ericsson) - Bug 405390
+ *     Marc Dumais (Ericsson) - Bug 396269
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.view;
@@ -188,6 +189,14 @@ public class MulticoreVisualizerEventListener {
 								assert cores.length == 1; // A thread belongs to a single core
 								int coreId = Integer.parseInt(cores[0]);
 								VisualizerCore vCore = fVisualizer.getModel().getCore(coreId);
+								// There is a race condition that sometimes happens here.  We can reach
+                                // here because we were notified that a thread is started, but the model
+								// is not yet completely constructed.  If the model doesn't yet contain the
+								// core the thread runs-on, the getCore() call above will return null.  This
+								// will later cause a problem when we try to draw this thread, if we allow
+								// this to pass.  See Bug 396269/
+                                if (vCore == null)
+                                    return;
 								
 								int pid = Integer.parseInt(processContext.getProcId());
 								int tid = execDmc.getThreadId();

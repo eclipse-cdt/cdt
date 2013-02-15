@@ -40,8 +40,8 @@ import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.actions.IConnect;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.cdt.dsf.gdb.internal.ui.actions.ProcessInfo;
-import org.eclipse.cdt.dsf.gdb.internal.ui.launching.NewExecutableInfo;
 import org.eclipse.cdt.dsf.gdb.internal.ui.launching.LaunchUIMessages;
+import org.eclipse.cdt.dsf.gdb.internal.ui.launching.NewExecutableInfo;
 import org.eclipse.cdt.dsf.gdb.internal.ui.launching.ProcessPrompter;
 import org.eclipse.cdt.dsf.gdb.internal.ui.launching.ProcessPrompter.PrompterInfo;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
@@ -61,7 +61,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.IRequest;
-import org.eclipse.debug.core.commands.AbstractDebugCommand;
 import org.eclipse.debug.core.commands.IDebugCommandRequest;
 import org.eclipse.debug.core.commands.IEnabledStateRequest;
 import org.eclipse.swt.SWT;
@@ -70,7 +69,7 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.progress.UIJob;
 
-public class GdbConnectCommand extends AbstractDebugCommand implements IConnectHandler, IConnect {
+public class GdbConnectCommand extends RefreshableDebugCommand implements IConnectHandler, IConnect {
 
 	private final GdbLaunch fLaunch;
 	private final DsfExecutor fExecutor;
@@ -279,7 +278,9 @@ public class GdbConnectCommand extends AbstractDebugCommand implements IConnectH
 			// cancelled it.
         } catch (RejectedExecutionException e) {
         	// Can be thrown if the session is shutdown        	
-        }
+        } finally {
+    		updateEnablement();
+    	}
     }
     
     /* 

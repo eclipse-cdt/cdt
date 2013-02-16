@@ -1,36 +1,43 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html lang="en">
-
 <head>
 <meta http-equiv="Content-Language" content="en-us">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Toggle Function Definition Refactoring</title>
 <link rel="stylesheet" type="text/css" href="../help.css">
 </head>
-
 <body>
-
-<div role="main"><h1>Toggle Function Definition</h1>
-
-<p>Toggle Function Definition moves a function definition inside an C/C++ source editor from one 
-position to another and preserves correctness.</p>
-
-<p>Toggling is available whenever the cursor is inside a function declaration 
-or definition. Any selection between the first and the last character of 
-the function definition (without comments) is considered valid for toggling.</p>
-<p><img alt="Selection" src="../images/cdt_t_toggle_selection.png" title="Valid selection region"><br/>Valid selection region</p>
-
-<h2>Toggle free functions</h2>
-<p>The refactoring moves free functions from an implementation file to a header file with the same name and back.
- If the header file does not exist the file is created.</p>
-
-<h2>Toggle member functions</h2>
- <p>The function definition of a member function can by moved from the class declaration in the header file to an inline definition
-  in the header file to the implementation file and back to the class definition.</p>
-  <p><img alt="Toggle Member Function Definition" src="../images/cdt_t_toggle_member.png"></p>
-
-<img src="../images/ng00_07.gif" ALT="IBM Copyright Statement" >
-
-</div></body>
-
+	<div role="main">
+		<h1>Toggle Function Definition</h1>
+		<p>
+			Use the <strong>Refactor &gt; Toggle Function Definition</strong>
+			command to toggle the location where a function is defined.
+		</p>
+		<p>
+			In an Editor window, place the cursor inside a function declaration
+			or definition, then run <strong>Refactor &gt; Toggle
+				Function Definition</strong> from the context menu. Any cursor position
+			between the first and the last characters of the function definition
+			(but not including comments preceding the function) will cause that
+			function to be selected for the refactoring.
+		</p>
+		<p>
+			<img alt="" src="../images/cdt_t_toggle_selection.png">
+		</p>
+		<p>This refactoring switches a function definition from a header
+			file to a correspondingly-named implementation file. If the necessary
+			file does not exist, it will be created (after a confirmation
+			dialog).</p>
+		<p>
+			<img alt="" src="../images/cdt_t_toggle_selection2.png">
+		</p>
+		<p>For methods, it can also switch the method from being defined
+			within its parent class declaration to being defined using an inline
+			definition in the same header file.</p>
+		<p>
+			<img alt="" src="../images/cdt_t_toggle_selection3.png">
+		</p>
+		<img src="../images/ng00_07.gif" ALT="IBM Copyright Statement">
+	</div>
+</body>
 </html>

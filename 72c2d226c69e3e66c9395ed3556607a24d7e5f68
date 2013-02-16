@@ -108,6 +108,24 @@
     },
     {
       "key": {
+        "uuid": "AABOPX//+7U\u003d",
+        "filename": "doc/org.eclipse.cdt.doc.user/tasks/cdt_t_rename.htm",
+        "patchSetId": 2
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-02-16T19:19:01Z",
+      "side": 1,
+      "message": "Formatting style of html files is not that important. We can live with whatever the WST formatter produces.",
+      "parentUuid": "AABOPX//+9Q\u003d",
+      "revId": "72c2d226c69e3e66c9395ed3556607a24d7e5f68",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AABOPX//++I\u003d",
         "filename": "doc/org.eclipse.cdt.doc.user/tasks/cdt_t_rename.htm",
         "patchSetId": 2

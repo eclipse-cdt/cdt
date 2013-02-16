@@ -211,7 +211,12 @@ import org.eclipse.cdt.internal.ui.newui.Messages;
 	        		IFileInfo f = fs.fetchInfo();
 		        	if (f.exists()) {
 		        		if (f.isDirectory()) {
-		        			setMessage(Messages.CMainWizardPage_7, IMessageProvider.WARNING);
+		        			if (f.getAttribute(EFS.ATTRIBUTE_READ_ONLY)) {
+		        				setErrorMessage(Messages.CMainWizardPage_11);
+		        				return false;
+		        			}
+		        			else
+		        				setMessage(Messages.CMainWizardPage_7, IMessageProvider.WARNING);
 		        		} else {
 		        			setErrorMessage(Messages.CMainWizardPage_6);
 		        			return false;

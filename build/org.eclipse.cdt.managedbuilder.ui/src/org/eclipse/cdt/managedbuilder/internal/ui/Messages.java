@@ -178,6 +178,7 @@ public class Messages extends NLS {
 	public static String NewMakeProjFromExistingPage_1;
 	public static String NewMakeProjFromExistingPage_10;
 	public static String NewMakeProjFromExistingPage_11;
+	public static String NewMakeProjFromExistingPage_12;
 	public static String NewMakeProjFromExistingPage_2;
 	public static String NewMakeProjFromExistingPage_3;
 	public static String NewMakeProjFromExistingPage_4;

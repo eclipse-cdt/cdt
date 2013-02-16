@@ -101,6 +101,7 @@ public class Messages extends NLS {
 	public static String CMainWizardPage_0;
 	public static String CMainWizardPage_1;
 	public static String CMainWizardPage_10;
+	public static String CMainWizardPage_11;
 	public static String CMainWizardPage_3;
 	public static String CMainWizardPage_5;
 	public static String CMainWizardPage_6;

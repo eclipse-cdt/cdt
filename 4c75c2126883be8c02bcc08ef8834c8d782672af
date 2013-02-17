@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AABOPX//+5o\u003d",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/CPPSemantics.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 3264,
+      "author": {
+        "id": 577
+      },
+      "writtenOn": "2013-02-17T03:12:09Z",
+      "side": 1,
+      "message": "It\u0027s probably simpler and slightly more efficient to get rid of LookupContext and to pass the points of instantiation and definition separately.",
+      "revId": "4c75c2126883be8c02bcc08ef8834c8d782672af",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

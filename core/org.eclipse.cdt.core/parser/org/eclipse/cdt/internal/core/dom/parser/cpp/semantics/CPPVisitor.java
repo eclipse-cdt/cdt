@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 IBM Corporation and others.
+ * Copyright (c) 2004, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
  *     Sergey Prigogin (Google)
  *     Thomas Corbat (IFS)
  *     Nathan Ridge
+ *     Marc-Andre Laperle
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
@@ -405,6 +406,9 @@ public class CPPVisitor extends ASTQueries {
 		IBinding binding = scope.getBinding(name, false);
 		if (binding instanceof CPPEnumeration) {
 			CPPEnumeration e= (CPPEnumeration) binding;
+			if (name.equals(e.getDefinition())) {
+				return e;
+			}
 			if (e.isScoped() == specifier.isScoped()) {
 				IType ft2= e.getFixedType();
 				if (fixedType == ft2 || (fixedType != null && fixedType.isSameType(ft2))) {

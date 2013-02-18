@@ -49,7 +49,7 @@ public class LanguageSettingsChangeListener implements ILanguageSettingsChangeLi
 		IProject project = wspRoot.getProject(event.getProjectName());
 
 		if (project != null) {
-			ICProjectDescription prjDescription = CCorePlugin.getDefault().getProjectDescription(project);
+			ICProjectDescription prjDescription = CCorePlugin.getDefault().getProjectDescription(project, false);
 			if (prjDescription != null) {
 				// cfgDescription being indexed
 				ICConfigurationDescription cfgDescription = prjDescription.getDefaultSettingConfiguration();

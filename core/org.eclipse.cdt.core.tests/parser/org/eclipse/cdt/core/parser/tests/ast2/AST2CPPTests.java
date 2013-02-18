@@ -13,6 +13,7 @@
  *     Sergey Prigogin (Google)
  *     Thomas Corbat (IFS)
  *     Nathan Ridge
+ *     Marc-Andre Laperle
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
@@ -7480,6 +7481,14 @@ public class AST2CPPTests extends AST2TestBase {
 	public void testTypedefRecursion_285457() throws Exception {
 		BindingAssertionHelper ba= getAssertionHelper();
 		ba.assertProblem("enum_name", 9);
+	}
+	
+	// struct MyStruct {
+	// enum MyEnum {};
+	// MyStruct(MyEnum value) {}
+	// };
+	public void testEnumRedefinitionInStruct_385144() throws Exception {
+		parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP);
 	}
 
 	//	class CL {

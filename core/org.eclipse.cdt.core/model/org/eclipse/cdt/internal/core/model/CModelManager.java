@@ -82,13 +82,17 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SafeRunner;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.core.runtime.content.IContentTypeManager.ContentTypeChangeEvent;
 import org.eclipse.core.runtime.content.IContentTypeManager.IContentTypeChangeListener;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.Job;
 
 public class CModelManager implements IResourceChangeListener, IContentTypeChangeListener,
 		ICProjectDescriptionListener, ILanguageSettingsChangeListener {
@@ -979,28 +983,45 @@ public class CModelManager implements IResourceChangeListener, IContentTypeChang
 
 	@Override
 	public void handleEvent(ILanguageSettingsChangeEvent event) {
-		try {
-			IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(event.getProjectName());
+		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(event.getProjectName());
+		ICProject cproject = CModelManager.getDefault().getCModel().getCProject(project);
+		final CElementDelta delta = new CElementDelta(cproject);
+		// Just add all possible flags, listeners tend to recalculate themselves anyway
+		int flag = ICElementDelta.F_CHANGED_PATHENTRY_PROJECT
+				| ICElementDelta.F_CHANGED_PATHENTRY_INCLUDE
+				| ICElementDelta.F_CHANGED_PATHENTRY_MACRO
+				| ICElementDelta.F_ADDED_PATHENTRY_LIBRARY
+				| ICElementDelta.F_REMOVED_PATHENTRY_LIBRARY
+				| ICElementDelta.F_PATHENTRY_REORDER;
+		delta.changed(cproject, flag);
 
-			// Recalculate cached settings unless already inside CProjectDescriptionManager.setProjectDescription()
-			if (!CProjectDescriptionManager.getInstance().isCurrentThreadSetProjectDescription()) {
-				CoreModel.getDefault().updateProjectDescriptions(new IProject[] {project}, null);
-			}
-
-			// Notify listeners
-			ICProject cproject = CModelManager.getDefault().getCModel().getCProject(project);
-			CElementDelta delta = new CElementDelta(cproject);
-			// just add all possible flags, listeners tend to recalculate themselves anyway
-			int flag = ICElementDelta.F_CHANGED_PATHENTRY_PROJECT
-					| ICElementDelta.F_CHANGED_PATHENTRY_INCLUDE
-					| ICElementDelta.F_CHANGED_PATHENTRY_MACRO
-					| ICElementDelta.F_ADDED_PATHENTRY_LIBRARY
-					| ICElementDelta.F_REMOVED_PATHENTRY_LIBRARY
-					| ICElementDelta.F_PATHENTRY_REORDER;
-			delta.changed(cproject, flag);
+		if (CProjectDescriptionManager.getInstance().isCurrentThreadSetProjectDescription()) {
+			// If inside CProjectDescriptionManager.setProjectDescription() just send notifications
 			fire(delta, ElementChangedEvent.POST_CHANGE);
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
+		} else {
+			// If not inside CProjectDescriptionManager.setProjectDescription() recalculate cached settings
+			try {
+				CoreModel.getDefault().updateProjectDescriptions(new IProject[] {project}, null);
+			} catch (CoreException e) {
+				CCorePlugin.log(e);
+			}
+			// Fire notifications in a job with workspace rule to ensure running after the updateProjectDescriptions(...)
+			// which is run in separate thread with workspace rule
+			ISchedulingRule rule = ResourcesPlugin.getWorkspace().getRoot();
+			Job job = new Job(CoreModelMessages.getFormattedString("CModelManager.LanguageSettingsChangeEventNotifications")) { //$NON-NLS-1$
+				@Override
+				protected IStatus run(IProgressMonitor monitor) {
+					try {
+						fire(delta, ElementChangedEvent.POST_CHANGE);
+					} catch (Exception e){
+						CCorePlugin.log(e);
+					}
+					return Status.OK_STATUS;
+				}
+			};
+			job.setRule(rule);
+			job.setSystem(true);
+			job.schedule();
 		}
 	}
 

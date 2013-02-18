@@ -55,16 +55,12 @@ public class CPPASTTemplateId extends CPPASTNameBase implements ICPPASTTemplateI
 	
 	@Override
 	public CPPASTTemplateId copy(CopyStyle style) {
-		CPPASTTemplateId copy = new CPPASTTemplateId(templateName == null ?
-				null : templateName.copy(style));
+		CPPASTTemplateId copy =
+				new CPPASTTemplateId(templateName == null ? null : templateName.copy(style));
 		for (IASTNode arg : getTemplateArguments()) {
 			copy.internalAddTemplateArgument(arg == null ? null : arg.copy(style));
 		}
-		copy.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			copy.setCopyLocation(this);
-		}
-		return copy;
+		return copy(copy, style);
 	}
 
 	@Override

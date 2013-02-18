@@ -104,14 +104,17 @@ public class ChangeConfigurationTests extends PDOMTestBase {
 		Pattern testFunc2 = Pattern.compile("testFunc2");
 		int i = 0, noTrials = 50;
 		do {
+			boolean isFirstConfig = i % 2 == 0;
 			IIndex index = CCorePlugin.getIndexManager().getIndex(cProject);
 			index.acquireReadLock();
-			boolean isFirstConfig = i % 2 == 0;
-			IBinding[] bindings = index.findBindings(isFirstConfig ? testFunc1 : testFunc2, true, IndexFilter.ALL, new NullProgressMonitor());
-			IBinding[] noBindings = index.findBindings(isFirstConfig ? testFunc2 : testFunc1, true, IndexFilter.ALL, new NullProgressMonitor());
-			assertEquals(1, bindings.length);
-			assertEquals(0, noBindings.length);
-			index.releaseReadLock();
+			try {
+				IBinding[] bindings = index.findBindings(isFirstConfig ? testFunc1 : testFunc2, true, IndexFilter.ALL, new NullProgressMonitor());
+				IBinding[] noBindings = index.findBindings(isFirstConfig ? testFunc2 : testFunc1, true, IndexFilter.ALL, new NullProgressMonitor());
+				assertEquals(1, bindings.length);
+				assertEquals(0, noBindings.length);
+			} finally {
+				index.releaseReadLock();
+			}
 			
 			String nextConfig = isFirstConfig ? secondConfigName : firstConfigName;
 			changeProjectConfiguration(project, nextConfig);

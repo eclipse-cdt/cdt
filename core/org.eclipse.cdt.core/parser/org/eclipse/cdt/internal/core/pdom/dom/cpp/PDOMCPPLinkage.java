@@ -898,7 +898,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		case CPP_TEMPLATE_ALIAS:
 			return new PDOMCPPAliasTemplate(this, record);
 		case CPP_ENUMERATION_SPECIALIZATION:
-			return new PDOMCPPEnumeratorSpecialization(this, record);
+			return new PDOMCPPEnumerationSpecialization(this, record);
 		case CPP_ENUMERATOR_SPECIALIZATION:
 			return new PDOMCPPEnumeratorSpecialization(this, record);
 		}

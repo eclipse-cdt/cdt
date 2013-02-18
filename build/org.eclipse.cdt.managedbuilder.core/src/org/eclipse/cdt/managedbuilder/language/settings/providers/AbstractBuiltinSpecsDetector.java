@@ -325,9 +325,9 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 
 	@Override
 	protected URI getBuildDirURI(URI mappedRootURI) {
-		// Do not calculate buildDirURI for each line
 		if (buildDirURI == null) {
-			buildDirURI = super.getBuildDirURI(mappedRootURI);
+			// do not use build directory from MBS which could be not-existent when the provider runs
+			buildDirURI = currentProject != null ? currentProject.getLocationURI() : null;
 		}
 		return buildDirURI;
 	}
@@ -347,7 +347,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 		super.startup(cfgDescription, cwdTracker);
 
 		mappedRootURI = null;
-		buildDirURI = super.getBuildDirURI(mappedRootURI);
+		buildDirURI = getBuildDirURI(mappedRootURI);
 	}
 
 	@Override

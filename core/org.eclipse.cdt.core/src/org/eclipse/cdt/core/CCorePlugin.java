@@ -1332,6 +1332,34 @@ public class CCorePlugin extends Plugin {
 	}
 
 	/**
+	 * Print a message in the log
+	 * 
+	 * @param severity - desired severity of the message in the log,
+	 *    one of {@link IStatus#INFO}, {@link IStatus#WARNING} or {@link IStatus#ERROR}
+	 * @param msg - message
+	 * 
+	 * @since 5.5
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public static void log(int severity, String msg) {
+		log(new Status(severity, PLUGIN_ID, msg));
+	}
+	
+	/**
+	 * Print a message in the log accompanied by stack trace
+	 * 
+	 * @param severity - desired severity of the message in the log,
+	 *    one of {@link IStatus#INFO}, {@link IStatus#WARNING} or {@link IStatus#ERROR}
+	 * @param msg - message
+	 * 
+	 * @since 5.5
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public static void logStackTrace(int severity, String msg) {
+		log(new Status(severity, PLUGIN_ID, msg, new Exception()));
+	}
+	
+	/**
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public static void log(Throwable e) {

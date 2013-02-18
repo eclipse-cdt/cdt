@@ -4509,25 +4509,25 @@ public class AST2TemplateTests extends AST2TestBase {
 		parseAndCheckBindings(code);
 		BindingAssertionHelper bh= new BindingAssertionHelper(code, CPP);
 		ICPPFunctionTemplate f= bh.assertNonProblem("f1", 2);
-		assertEquals("void (int (*)(#0 ...))", ASTTypeUtil.getType(f.getType(), true));
+		assertEquals("void (int (*)(#0(...) ...))", ASTTypeUtil.getType(f.getType(), true));
 		assertFalse(f.getParameters()[0].isParameterPack());
 		f= bh.assertNonProblem("f2", 2);
-		assertEquals("void (int (* ...)(#0, int))", ASTTypeUtil.getType(f.getType(), true));
+		assertEquals("void (int (* ...)(#0(...), int))", ASTTypeUtil.getType(f.getType(), true));
 		assertTrue(f.getParameters()[0].isParameterPack());
 		f= bh.assertNonProblem("f3", 2);
-		assertEquals("void (#0 (* ...)())", ASTTypeUtil.getType(f.getType(), true));
+		assertEquals("void (#0(...) (* ...)())", ASTTypeUtil.getType(f.getType(), true));
 		assertTrue(f.getParameters()[0].isParameterPack());
 		f= bh.assertNonProblem("f4", 2);
 		assertEquals("void (int (& ...)[3 *0 0])", ASTTypeUtil.getType(f.getType(), true));
 		assertTrue(f.getParameters()[0].isParameterPack());
 		f= bh.assertNonProblem("f5", 2);
-		assertEquals("void (#0 ...)", ASTTypeUtil.getType(f.getType(), true));
+		assertEquals("void (#0(...) ...)", ASTTypeUtil.getType(f.getType(), true));
 		assertTrue(f.getParameters()[0].isParameterPack());
 		f= bh.assertNonProblem("f6", 2);
 		assertEquals("void (#0, ...)", ASTTypeUtil.getType(f.getType(), true));
 		assertFalse(f.getParameters()[0].isParameterPack());
 		f= bh.assertNonProblem("f7", 2);
-		assertEquals("#0 ...", ASTTypeUtil.getType(f.getExceptionSpecification()[0], true));
+		assertEquals("#0(...) ...", ASTTypeUtil.getType(f.getExceptionSpecification()[0], true));
 	}
 
 	//	template<typename... Pack> class C1 {};
@@ -7165,4 +7165,43 @@ public class AST2TemplateTests extends AST2TestBase {
 	public void testDependentExpressionInvolvingFieldInNestedClass_399362() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//    template <typename _Tp>
+	//    struct remove_reference {
+	//        typedef _Tp type;
+	//    };
+	//    template <typename>
+	//    struct A {};
+	//    template <typename From, typename To>
+	//    struct waldo {
+	//        typedef typename remove_reference<From>::type src_t;
+	//        typedef A<src_t> type;
+	//    };
+	//    template <bool First>
+	//    struct ice_or {
+	//        static const bool value = First;
+	//    };
+	//    template <typename T>
+	//    struct is_waldo {
+	//        static const bool value = false;
+	//    };
+	//    template <typename... Args>
+	//    struct contains_waldo {
+	//        static const bool value = ice_or<is_waldo<typename remove_reference<Args>::type>::value...>::value;
+	//    };
+	//    template <bool>
+	//    struct S {};
+	//    struct Cat {
+	//        void meow();
+	//    };
+	//    template <>
+	//    struct S<false> {
+	//        typedef Cat type;
+	//    };
+	//    int main() {
+	//        S<contains_waldo<int>::value>::type t;
+	//    }
+    public void testVariadicTemplates_401024() throws Exception {
+    	parseAndCheckBindings();
+    }
 }

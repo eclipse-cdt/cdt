@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Mentor Graphics - Initial API and implementation
+ *   Mentor Graphics - Initial API and implementation
+ *   Marc Khouzam (Ericsson) - Support for dynamic printf (Bug 400628)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service;
@@ -767,6 +768,18 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService implements IMI
 				(Boolean)attributes.get(MIBreakpointDMData.IS_TEMPORARY),
 				rm);
 		}
+		else if (MIBreakpoints.DYNAMICPRINTF.equals(type)) {
+			getTargetDPrintf(
+				context,
+				map.values(),
+				(String)attributes.get(MIBreakpoints.FILE_NAME), 
+				(Integer)attributes.get(MIBreakpoints.LINE_NUMBER),
+				(String)attributes.get(MIBreakpoints.FUNCTION),
+				(String)attributes.get(MIBreakpoints.ADDRESS),
+				(Boolean)attributes.get(MIBreakpointDMData.IS_HARDWARE),
+				(Boolean)attributes.get(MIBreakpointDMData.IS_TEMPORARY),
+				rm);
+		}
 		else if (MIBreakpoints.WATCHPOINT.equals(type)) {
 			getTargetWatchpoint(
 				context,
@@ -827,6 +840,35 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService implements IMI
 		List<MIBreakpoint> candidates = new ArrayList<MIBreakpoint>(targetBreakpoints.size());
 		for (MIBreakpoint miBpt : targetBreakpoints) {
 			if (miBpt.isTracepoint()) {
+				// Filter out target breakpoints with different file names and line numbers
+				if (new File(fileName).getName().equals(new File(getFileName(miBpt)).getName()) 
+					&& miBpt.getLine() == lineNumber) {
+					candidates.add(miBpt);
+				}
+			}
+		}
+		if (candidates.size() == 0) {
+			rm.done();
+			return;
+		}
+
+		findTargetLineBreakpoint(bpTargetDMC, candidates, 
+			fileName, lineNumber, function, address, isHardware, isTemporary, rm);
+	}
+	
+	private void getTargetDPrintf(
+			IBreakpointsTargetDMContext bpTargetDMC,
+			Collection<MIBreakpoint> targetBreakpoints, 
+			String fileName, 
+			Integer lineNumber,
+			String function,
+			String address,
+			Boolean isHardware, 
+			Boolean isTemporary,
+			DataRequestMonitor<MIBreakpoint> rm) {
+		List<MIBreakpoint> candidates = new ArrayList<MIBreakpoint>(targetBreakpoints.size());
+		for (MIBreakpoint miBpt : targetBreakpoints) {
+			if (miBpt.isDynamicPrintf()) {
 				// Filter out target breakpoints with different file names and line numbers
 				if (new File(fileName).getName().equals(new File(getFileName(miBpt)).getName()) 
 					&& miBpt.getLine() == lineNumber) {

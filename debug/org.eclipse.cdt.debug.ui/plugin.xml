@@ -1211,13 +1211,19 @@
                      <adapt type="org.eclipse.cdt.debug.core.model.ICTracepoint">
                      </adapt>
                   </not>
-                 
+                  <not>   
+                     <adapt type="org.eclipse.cdt.debug.core.model.ICDynamicPrintf">
+                     </adapt>
+                  </not>                 
                </and>
                <and>
                   <instanceof value="org.eclipse.cdt.debug.ui.breakpoints.ICBreakpointContext"/>
                   <test property="org.eclipse.cdt.debug.ui.createBreakpointAdapt" value="org.eclipse.cdt.debug.core.model.ICBreakpoint" />
                   <not>   
                      <test property="org.eclipse.cdt.debug.ui.createBreakpointAdapt" value="org.eclipse.cdt.debug.core.model.ICTracepoint"/>
+                  </not>
+                  <not>   
+                     <test property="org.eclipse.cdt.debug.ui.createBreakpointAdapt" value="org.eclipse.cdt.debug.core.model.ICDynamicPrintf"/>
                   </not>
                </and>
             </or>
@@ -1235,6 +1241,10 @@
                   <adapt type="org.eclipse.cdt.debug.core.model.ICTracepoint">
                   </adapt>
                </not>
+               <not>   
+                  <adapt type="org.eclipse.cdt.debug.core.model.ICDynamicPrintf">
+                  </adapt>
+               </not>                 
             </and>
          </enabledWhen>
       </page>
@@ -1250,6 +1260,10 @@
                   <adapt type="org.eclipse.cdt.debug.core.model.ICTracepoint">
                   </adapt>
                </not>
+               <not>   
+                  <adapt type="org.eclipse.cdt.debug.core.model.ICDynamicPrintf">
+                  </adapt>
+               </not>                 
             </and>
          </enabledWhen>
       </page>
@@ -1875,7 +1889,7 @@
             id="org.eclipse.cdt.debug.ui.ToggleCTracepointsTargetFactory"
             class="org.eclipse.cdt.debug.internal.ui.actions.breakpoints.ToggleCTracepointsTargetFactory">
             <enablement>
-            <!-- Enable the breakpoint toggle for CDT's editors and model elements -->
+            <!-- Enable the tracepoint toggle for CDT's editors and model elements -->
             <and>
                <reference
                      definitionId="org.eclipse.cdt.debug.ui.testIsTracepointActionSetActive">
@@ -1890,6 +1904,22 @@
                </with>
                </or>
             </and>
+         </enablement>
+      </toggleTargetFactory>
+            <toggleTargetFactory
+            id="org.eclipse.cdt.debug.ui.ToggleCDynamicPrintfTargetFactory"
+            class="org.eclipse.cdt.debug.internal.ui.actions.breakpoints.ToggleCDynamicPrintfTargetFactory">
+            <enablement>
+            <!-- Enable the DynamicPrintf toggle for CDT's editors and model elements -->
+              <or>
+               <test property="org.eclipse.cdt.debug.ui.isCEditorSupportsCBreakpoint"/>
+               <test property="org.eclipse.cdt.debug.ui.isAsmEditorSupportsCBreakpoint"/>
+               <test property="org.eclipse.cdt.debug.ui.isDisassemblyEditorSupportsCBreakpoint" />                                            
+               <with variable="selection">
+                  <count value="1"/>
+                   <test property="org.eclipse.cdt.debug.ui.isCDeclarationSupportsCBreakpoint"/>
+               </with>
+               </or>
          </enablement>
       </toggleTargetFactory>
    </extension>

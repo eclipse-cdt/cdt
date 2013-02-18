@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     William R. Swanson (Tilera Corporation) - initial API and implementation
+ *     Marc Dumais (Ericsson) - Add CPU/core load information to the multicore visualizer (Bug 396268)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.model;
@@ -23,6 +24,10 @@ public class VisualizerCore
 	/** Linux CPU ID of this core. */
 	public int m_id = 0;
 	
+	/** Contains load information
+	 * @since 1.1
+	 */
+	protected VisualizerLoadInfo m_loadinfo;
 	
 	// --- constructors/destructors ---
 	
@@ -34,6 +39,7 @@ public class VisualizerCore
 	
 	/** Dispose method */
 	public void dispose() {
+		m_loadinfo = null;
 	}
 	
 	
@@ -56,6 +62,24 @@ public class VisualizerCore
 	/** Gets Linux CPU ID of this core. */
 	public int getID() {
 		return m_id;
+	}
+	
+	/** sets the load info for this core 
+	 * @since 1.1*/
+	public synchronized void setLoadInfo (VisualizerLoadInfo info) {
+		m_loadinfo = info;
+	}
+	
+	/** Gets the CPU usage load of this core. 
+	 * @since 1.1*/
+	public synchronized Integer getLoad() {
+		return (m_loadinfo == null) ? null : m_loadinfo.getLoad();
+	}
+	
+	/** get the highest recorded load for this core
+	 * @since 1.1*/
+	public synchronized Integer getHighLoadWatermark() {
+		return (m_loadinfo == null) ? null : m_loadinfo.getHighLoadWaterMark();
 	}
 
 	

@@ -424,6 +424,8 @@ public class ASTTypeUtil {
 		if (normalize) {
 			result.append('#');
 			result.append(Integer.toString(type.getParameterID(), 16));
+			if (type.isParameterPack())
+				result.append("(...)");  //$NON-NLS-1$
 		} else {
 			result.append(type.getName());
 		}
